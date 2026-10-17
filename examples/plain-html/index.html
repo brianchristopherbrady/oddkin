@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mote plain-HTML consumer</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "@mote/core": "../../packages/core/dist/index.js",
+          "@mote/tokens": "../../packages/tokens/dist/index.js",
+          "@mote/state": "../../packages/state/dist/index.js",
+          "@mote/app": "../../packages/app/dist/index.js",
+          "@mote/components": "../../packages/components/dist/index.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Mote plain-HTML consumer</h1>
+      <p>Loads built packages through an import map, with no bundler.</p>
+      <ul id="packages" aria-label="Loaded packages"></ul>
+    </main>
+    <script type="module">
+      import { packageName as core } from '@mote/core';
+      import { packageName as tokens } from '@mote/tokens';
+      import { packageName as state, internalDependencies as stateDeps } from '@mote/state';
+      import { packageName as app } from '@mote/app';
+      import { packageName as components } from '@mote/components';
+
+      const list = document.getElementById('packages');
+      for (const name of [core, tokens, state, app, components]) {
+        const item = document.createElement('li');
+        item.textContent = name;
+        list.append(item);
+      }
+      document.body.dataset.stateDeps = stateDeps.join(',');
+      document.body.dataset.ready = 'true';
+    </script>
+  </body>
+</html>

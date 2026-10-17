@@ -1,0 +1,23 @@
+{
+  "name": "@mote/components",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Accessible, themed custom elements, Mote layout presets, and component metadata.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "dependencies": {
+    "@mote/core": "0.0.0",
+    "@mote/tokens": "0.0.0"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mote.dev/schemas/product/v1.json",
+  "title": "Mote product definition / manifest v1",
+  "description": "DRAFT. A product is distinct from mode, theme, density, and profiles (ADR 0026). Remote manifests are fetched and snapshotted at build time.",
+  "type": "object",
+  "required": ["schema", "id", "label", "theme"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://mote.dev/schemas/product/v1.json" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "label": { "type": "string" },
+    "description": { "type": "string" },
+    "version": { "type": "string" },
+    "theme": {
+      "type": "object",
+      "description": "Either a reference to a ThemeConfig product or inline overrides",
+      "oneOf": [
+        { "required": ["config", "product"], "additionalProperties": false, "properties": { "config": { "type": "string" }, "product": { "type": "string" } } },
+        { "required": ["overrides"], "additionalProperties": false, "properties": { "overrides": { "type": "object", "additionalProperties": { "type": ["string", "number"] } } } }
+      ]
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": { "density": { "type": "string" }, "profiles": { "type": "array", "items": { "type": "string" } } }
+    },
+    "components": { "type": "array", "items": { "type": "string" }, "description": "Applicable component tags; omitted means all" },
+    "examples": { "type": "array", "items": { "type": "string", "pattern": "^example:" } },
+    "guidance": { "type": "string" }
+  }
+}

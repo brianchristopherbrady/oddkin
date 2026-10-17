@@ -1,0 +1,1 @@
+{ "schema": "https://mote.dev/schemas/examples/v1.json", "component": "acme-button", "examples": { "default": { "slots": { "default": "Save" }, "preset": true }, "loading": { "props": { "loading": true }, "slots": { "default": "Saving" }, "preset": true }, "inForm": { "hasFixture": true, "guidance": "Submits the outer form." } } }

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mote.dev/schemas/examples/v1.json",
+  "title": "Serializable layer of defineExamples v1",
+  "description": "DRAFT. The portable description emitted from *.examples.ts files. Fixtures are code and appear only as a flag (ADR 0021).",
+  "type": "object",
+  "required": ["schema", "component", "examples"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://mote.dev/schemas/examples/v1.json" },
+    "component": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)+$" },
+    "examples": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-zA-Z][a-zA-Z0-9-]*$" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "label": { "type": "string" },
+          "props": { "type": "object" },
+          "attributes": { "type": "object", "additionalProperties": { "type": ["string", "null"] } },
+          "slots": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Plain text slot content keyed by slot name ('default' for the default slot)" },
+          "previewRoles": { "type": "array", "items": { "type": "string" } },
+          "preset": { "type": "boolean", "description": "Offered as a preset on the component detail page" },
+          "hasFixture": { "type": "boolean" },
+          "guidance": { "type": "string" },
+          "recommended": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

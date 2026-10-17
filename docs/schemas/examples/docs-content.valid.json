@@ -1,0 +1,8 @@
+{
+  "schema": "https://mote.dev/schemas/docs-content/v1.json",
+  "locale": "en",
+  "pages": {
+    "foundations/spacing": { "summary": "How Acme spaces things.", "sections": { "scale": { "guidance": "Acme uses {{spacing.stepCount}} steps." } } },
+    "components/acme-button": { "useFor": ["Form submission"], "notFor": ["Navigation"] }
+  }
+}

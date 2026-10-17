@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mote.dev/schemas/mote-metadata/v1.json",
+  "title": "Mote enrichment metadata (mote.metadata.json) v1",
+  "description": "DRAFT. Normalized Mote metadata that enriches a standard Custom Elements Manifest (custom-elements-manifest@2.1.0). See docs/architecture/metadata-and-analyzer.md and ADR 0016/0017.",
+  "type": "object",
+  "required": ["schema", "moteVersion", "library", "components", "diagnostics"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://mote.dev/schemas/mote-metadata/v1.json" },
+    "moteVersion": { "type": "string" },
+    "library": {
+      "type": "object",
+      "required": ["name", "version", "packages"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "prefix": { "type": "string", "pattern": "^[a-z][a-z0-9]*-$" },
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "version"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "customElements": { "type": "string", "description": "Path from package.json customElements" }
+            }
+          }
+        }
+      }
+    },
+    "components": { "type": "object", "propertyNames": { "pattern": "^component:[a-z][a-z0-9]*(-[a-z0-9]+)+$" }, "additionalProperties": { "$ref": "#/$defs/component" } },
+    "recipes": { "type": "object", "propertyNames": { "pattern": "^recipe:" }, "additionalProperties": { "$ref": "#/$defs/recipe" } },
+    "models": { "type": "object", "propertyNames": { "pattern": "^model:" }, "additionalProperties": { "$ref": "#/$defs/model" } },
+    "tokens": {
+      "type": "object",
+      "required": ["inspection"],
+      "additionalProperties": false,
+      "properties": { "inspection": { "type": "string", "description": "Path or export of the @mote/tokens inspection JSON; values are never duplicated here" } }
+    },
+    "examples": { "type": "object", "propertyNames": { "pattern": "^example:" }, "additionalProperties": { "$ref": "#/$defs/exampleRef" } },
+    "previewRoles": { "type": "object", "propertyNames": { "pattern": "^role:" }, "additionalProperties": { "$ref": "#/$defs/previewRole" } },
+    "foundations": { "type": "object", "propertyNames": { "pattern": "^foundation:" }, "additionalProperties": { "$ref": "#/$defs/foundation" } },
+    "categories": { "type": "object", "propertyNames": { "pattern": "^category:" }, "additionalProperties": { "$ref": "#/$defs/category" } },
+    "products": { "type": "object", "propertyNames": { "pattern": "^product:" }, "additionalProperties": { "$ref": "#/$defs/productRef" } },
+    "docs": { "type": "object", "description": "Keyed by stable page id", "additionalProperties": { "$ref": "#/$defs/docMeta" } },
+    "diagnostics": { "type": "array", "items": { "$ref": "#/$defs/diagnostic" } }
+  },
+  "$defs": {
+    "source": {
+      "oneOf": [
+        { "type": "object", "required": ["file", "line"], "additionalProperties": false, "properties": { "file": { "type": "string" }, "line": { "type": "integer", "minimum": 1 }, "column": { "type": "integer", "minimum": 1 } } },
+        { "type": "object", "required": ["test", "run"], "additionalProperties": false, "properties": { "test": { "type": "string" }, "run": { "type": "string" }, "date": { "type": "string", "format": "date-time" } } },
+        { "type": "object", "required": ["commit"], "additionalProperties": false, "properties": { "commit": { "type": "string" }, "files": { "type": "array", "items": { "type": "string" } } } }
+      ]
+    },
+    "provenance": { "enum": ["extracted", "authored", "observed", "verified"] },
+    "fact": {
+      "type": "object",
+      "required": ["provenance"],
+      "properties": {
+        "value": {},
+        "known": { "type": "boolean", "description": "false when the value cannot be determined; value must then be absent" },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "source": { "$ref": "#/$defs/source" }
+      },
+      "if": { "properties": { "known": { "const": false } }, "required": ["known"] },
+      "then": { "not": { "required": ["value"] } },
+      "else": { "required": ["value"] }
+    },
+    "stringFact": { "allOf": [{ "$ref": "#/$defs/fact" }, { "type": "object", "properties": { "value": { "type": "string" } } }] },
+    "dateFact": {
+      "allOf": [{ "$ref": "#/$defs/fact" }, { "type": "object", "properties": { "value": { "type": "string", "format": "date" }, "provenance": { "enum": ["authored", "extracted"] } } }],
+      "description": "Updated dates: authored metadata or source history only (ADR 0027). Never build time."
+    },
+    "cemRef": {
+      "type": "object",
+      "required": ["module", "name"],
+      "additionalProperties": false,
+      "properties": { "module": { "type": "string" }, "name": { "type": "string" } }
+    },
+    "component": {
+      "type": "object",
+      "required": ["tag", "cem"],
+      "additionalProperties": false,
+      "properties": {
+        "tag": { "type": "string" },
+        "cem": { "$ref": "#/$defs/cemRef" },
+        "registration": { "type": "string", "description": "Package export that registers the element, e.g. @acme/ui/define/button" },
+        "category": { "type": "string", "pattern": "^category:" },
+        "useFor": { "type": "array", "items": { "$ref": "#/$defs/stringFact" } },
+        "notFor": { "type": "array", "items": { "$ref": "#/$defs/stringFact" } },
+        "limitations": { "type": "array", "items": { "$ref": "#/$defs/stringFact" } },
+        "syncPairs": { "type": "array", "items": { "type": "object", "required": ["property", "event"], "additionalProperties": false, "properties": { "property": { "type": "string" }, "event": { "type": "string" } } } },
+        "previewRoles": { "type": "array", "items": { "type": "string", "pattern": "^role:" } },
+        "styleMappings": {
+          "type": "array",
+          "description": "property/state -> CSS property -> token traces where statically determinable",
+          "items": {
+            "type": "object",
+            "required": ["when", "cssProperty", "token", "provenance"],
+            "additionalProperties": false,
+            "properties": {
+              "when": { "type": "string", "examples": ["appearance=\"primary\"", "appearance=\"primary\" (hover)", "disabled"] },
+              "cssProperty": { "type": "string" },
+              "token": { "type": "string" },
+              "provenance": { "$ref": "#/$defs/provenance" }
+            }
+          }
+        },
+        "tokenReads": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["token", "kind"],
+            "additionalProperties": false,
+            "properties": {
+              "token": { "type": "string" },
+              "kind": { "enum": ["declared", "potential"], "description": "observed references are recorded at runtime by Workbench, not here" },
+              "readThrough": { "enum": ["stylesheet", "recipe", "role"] }
+            }
+          }
+        },
+        "recipe": { "type": "string", "pattern": "^recipe:" },
+        "model": { "type": "string", "pattern": "^model:" },
+        "a11y": { "type": "array", "items": { "$ref": "#/$defs/stringFact" } },
+        "keyboard": { "type": "array", "items": { "$ref": "#/$defs/stringFact" } },
+        "related": { "type": "array", "items": { "type": "string", "pattern": "^component:" } }
+      }
+    },
+    "recipe": {
+      "type": "object",
+      "required": ["name", "regions"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "container": { "type": "object", "additionalProperties": false, "properties": { "selector": { "type": "string" }, "name": { "type": "string" } } },
+        "regions": { "type": "object", "additionalProperties": { "type": "object", "required": ["helper"], "properties": { "helper": { "enum": ["stack", "row", "grid", "autoGrid", "split", "custom"] } } } },
+        "variants": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } },
+        "conditions": { "type": "array", "items": { "type": "string" } },
+        "parts": { "type": "array", "items": { "type": "string" } },
+        "layers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "model": {
+      "type": "object",
+      "required": ["name", "version", "schema"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "integer", "minimum": 0 },
+        "schema": { "type": "string", "description": "Path to the generated JSON Schema for the portable subset" },
+        "kinds": { "type": "array", "items": { "type": "string" } },
+        "regionSources": { "type": "object", "additionalProperties": { "enum": ["property", "slot", "property-or-children"] } },
+        "deprecations": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "exampleRef": {
+      "type": "object",
+      "required": ["component", "name", "file"],
+      "additionalProperties": false,
+      "properties": { "component": { "type": "string", "pattern": "^component:" }, "name": { "type": "string" }, "file": { "type": "string" }, "hasFixture": { "type": "boolean" }, "previewRoles": { "type": "array", "items": { "type": "string" } } }
+    },
+    "previewRole": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": { "name": { "type": "string" }, "description": { "type": "string" }, "requires": { "type": "array", "items": { "enum": ["label", "text-slot", "value", "checked", "disabled", "href"] } } }
+    },
+    "foundation": {
+      "type": "object",
+      "required": ["id", "sections", "tokens"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "enum": ["tokens", "color", "typography", "spacing", "borders-and-radii", "elevation", "motion", "themes", "responsive"] },
+        "categories": { "type": "array", "items": { "type": "string" } },
+        "sections": { "type": "array", "items": { "type": "object", "required": ["id", "available"], "additionalProperties": false, "properties": { "id": { "type": "string" }, "available": { "type": "boolean" }, "reason": { "type": "string" } } } },
+        "generation": { "$ref": "#/$defs/fact" },
+        "tokens": { "type": "array", "items": { "type": "string" } },
+        "vocabularies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "entries"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "entries": { "type": "array", "items": { "type": "object", "required": ["name", "token"], "additionalProperties": false, "properties": { "name": { "type": "string" }, "token": { "type": "string" }, "publicValue": { "type": "string" } } } }
+            }
+          }
+        },
+        "variations": { "type": "array", "items": { "enum": ["theme", "mode", "product", "density", "profile"] } },
+        "contracts": { "type": "array", "items": { "$ref": "#/$defs/fact" } },
+        "related": { "type": "object", "additionalProperties": false, "properties": { "recipes": { "type": "array", "items": { "type": "string" } }, "components": { "type": "array", "items": { "type": "string" } } } },
+        "specimens": { "type": "array", "items": { "type": "string", "pattern": "^example:" } }
+      }
+    },
+    "category": {
+      "type": "object",
+      "required": ["label"],
+      "additionalProperties": false,
+      "properties": { "label": { "type": "string" }, "description": { "type": "string" }, "order": { "type": "integer" } }
+    },
+    "productRef": {
+      "type": "object",
+      "required": ["id", "source"],
+      "additionalProperties": false,
+      "properties": { "id": { "type": "string" }, "source": { "type": "string", "description": "Resolved product source (local theme, package, or snapshotted manifest path)" }, "schemaVersion": { "type": "integer" } }
+    },
+    "docMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": { "$ref": "#/$defs/stringFact" },
+        "summary": { "$ref": "#/$defs/stringFact" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "updated": { "$ref": "#/$defs/dateFact" },
+        "order": { "type": "integer" },
+        "visible": { "type": "boolean" }
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "required": ["code", "severity", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "code": { "type": "string", "pattern": "^[a-z]+(\\.[a-zA-Z]+)+$" },
+        "severity": { "enum": ["error", "warning", "info"] },
+        "message": { "type": "string" },
+        "path": { "type": "string" },
+        "source": { "$ref": "#/$defs/source" },
+        "suggestion": { "type": "string" }
+      }
+    }
+  }
+}

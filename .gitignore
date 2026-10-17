@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.tsbuildinfo
+*.tgz
+coverage/
+test-results/
+playwright-report/
+.mote/
+.tmp/

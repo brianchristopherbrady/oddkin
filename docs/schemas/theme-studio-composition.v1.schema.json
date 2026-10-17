@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mote.dev/schemas/theme-studio-composition/v1.json",
+  "title": "Saved Theme Studio composition v1",
+  "description": "DRAFT. Specimen role mappings and layout (ADR 0020).",
+  "type": "object",
+  "required": ["schema", "recipe", "roles"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://mote.dev/schemas/theme-studio-composition/v1.json" },
+    "name": { "type": "string" },
+    "recipe": { "type": "string" },
+    "roles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "enum": ["component", "fallback"] },
+          "component": { "type": "string" },
+          "example": { "type": "string" },
+          "adapter": { "type": "string" },
+          "props": { "type": "object" }
+        },
+        "if": { "properties": { "kind": { "const": "component" } } },
+        "then": { "required": ["component"] }
+      }
+    },
+    "panels": { "type": "array", "items": { "type": "object", "required": ["mode"], "additionalProperties": false, "properties": { "mode": { "type": "string" }, "product": { "type": "string" }, "density": { "type": "string" }, "direction": { "enum": ["ltr", "rtl"] } } } }
+  }
+}

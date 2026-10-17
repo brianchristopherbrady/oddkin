@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mote.dev/schemas/share-payload/v1.json",
+  "title": "Workbench share payload v1",
+  "description": "DRAFT. Decoded form of share links. Only serializable values; non-serializable fixtures are excluded with a notice. Invalid or obsolete payloads are reported, never partially applied silently.",
+  "type": "object",
+  "required": ["v", "kind"],
+  "properties": {
+    "v": { "const": 1 },
+    "kind": { "enum": ["component", "theme"] }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "v": true, "kind": { "const": "component" },
+        "component": { "type": "string" },
+        "preset": { "type": "string" },
+        "props": { "type": "object" },
+        "attributes": { "type": "object", "additionalProperties": { "type": ["string", "null"] } },
+        "slots": { "type": "object", "additionalProperties": { "type": "string" } },
+        "preview": { "$ref": "#/$defs/preview" },
+        "excluded": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["component"],
+      "additionalProperties": false
+    },
+    {
+      "properties": {
+        "v": true, "kind": { "const": "theme" },
+        "config": { "type": "object", "description": "JSON-compatible ThemeConfig draft (validated by @mote/tokens schema)" },
+        "composition": { "type": "string" },
+        "preview": { "$ref": "#/$defs/preview" }
+      },
+      "required": ["config"],
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "preview": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string" }, "product": { "type": "string" }, "density": { "type": "string" },
+        "direction": { "enum": ["ltr", "rtl"] }, "profile": { "type": "string" },
+        "width": { "oneOf": [ { "type": "integer", "minimum": 160 }, { "const": "fill" } ] },
+        "sameAsSite": { "type": "boolean" }
+      }
+    }
+  }
+}

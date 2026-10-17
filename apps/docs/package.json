@@ -1,0 +1,14 @@
+{
+  "name": "@mote/docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Mote product documentation application (private). Consumes public package exports only.",
+  "type": "module",
+  "dependencies": {
+    "@mote/app": "0.0.0",
+    "@mote/components": "0.0.0",
+    "@mote/core": "0.0.0",
+    "@mote/state": "0.0.0",
+    "@mote/tokens": "0.0.0"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "https://mote.dev/schemas/mote-metadata/v1.json",
+  "moteVersion": "0.0.0",
+  "library": { "name": "acme-ui", "version": "1.0.0", "prefix": "acme-", "packages": [{ "name": "@acme/ui", "version": "1.0.0", "customElements": "./custom-elements.json" }] },
+  "components": {
+    "component:acme-button": {
+      "tag": "acme-button",
+      "cem": { "module": "src/button.ts", "name": "AcmeButton" },
+      "registration": "@acme/ui/define/button",
+      "category": "category:actions",
+      "useFor": [{ "value": "Actions that change something on this page", "provenance": "authored", "source": { "file": "src/button.ts", "line": 3 } }],
+      "styleMappings": [{ "when": "appearance=\"primary\"", "cssProperty": "background-color", "token": "button.primary.background", "provenance": "extracted" }],
+      "tokenReads": [{ "token": "button.primary.background", "kind": "declared", "readThrough": "stylesheet" }],
+      "previewRoles": ["role:primaryAction"]
+    }
+  },
+  "tokens": { "inspection": "@acme/ui/tokens/default.inspect.json" },
+  "foundations": {
+    "foundation:spacing": {
+      "id": "spacing",
+      "sections": [{ "id": "scale", "available": true }, { "id": "vocabulary", "available": false, "reason": "No semantic spacing roles declared" }],
+      "generation": { "value": { "strategy": "multiples", "unit": "0.25rem" }, "provenance": "extracted" },
+      "tokens": ["space.xs", "space.sm", "space.md"]
+    }
+  },
+  "categories": { "category:actions": { "label": "Actions", "order": 1 } },
+  "docs": {
+    "foundations/spacing": { "updated": { "value": "2026-10-05", "provenance": "extracted", "source": { "commit": "abc1234", "files": ["tokens/spacing.ts"] } }, "tags": ["tokens", "layout"] },
+    "components/acme-button": { "updated": { "known": false, "provenance": "extracted" } }
+  },
+  "diagnostics": [{ "code": "analyzer.dynamic.tagName", "severity": "warning", "message": "Tag name computed at runtime", "source": { "file": "src/legacy.ts", "line": 12 } }]
+}

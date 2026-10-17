@@ -1,0 +1,4 @@
+{
+  "library": { "packages": ["@acme/ui"] },
+  "playground": { "enabled": true }
+}

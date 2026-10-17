@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mote.dev/schemas/page-registry/v1.json",
+  "title": "Workbench page registry v1",
+  "description": "DRAFT. Single source for routes, navigation, sidebars, cards, search, visibility, and legacy redirects (ADR 0023, workbench-pages.md section 2).",
+  "type": "object",
+  "required": ["schema", "basePath", "pages"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://mote.dev/schemas/page-registry/v1.json" },
+    "basePath": { "type": "string", "pattern": "^/(.*/)?$" },
+    "routing": { "enum": ["history", "hash"], "default": "history" },
+    "primaryNav": { "type": "array", "items": { "type": "string" }, "description": "Ordered page ids shown in primary navigation" },
+    "pages": { "type": "array", "items": { "$ref": "#/$defs/page" } }
+  },
+  "$defs": {
+    "page": {
+      "type": "object",
+      "required": ["id", "route", "section", "kind", "title", "visible", "availability", "nav", "sections"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+(/[a-z0-9-]+)*$" },
+        "route": { "type": "string", "pattern": "^/" },
+        "section": { "type": "string" },
+        "kind": { "enum": ["home", "overview", "foundation", "component", "tool", "products", "guide"] },
+        "eyebrow": { "type": "string" },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "group": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "updated": { "type": "string", "format": "date", "description": "Omitted when unknown (ADR 0027)" },
+        "order": { "type": "integer" },
+        "visible": { "type": "boolean" },
+        "availability": { "enum": ["full", "partial", "unavailable"] },
+        "nav": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "primary": { "type": "boolean" }, "sidebar": { "type": "boolean" }, "card": { "type": "boolean" }, "search": { "type": "boolean" } }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "visible", "source"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+              "title": { "type": "string" },
+              "visible": { "type": "boolean" },
+              "source": { "enum": ["generated", "built-in", "authored"] }
+            }
+          }
+        },
+        "legacyRoutes": { "type": "array", "items": { "type": "string", "pattern": "^/" } }
+      },
+      "allOf": [
+        { "if": { "type": "object", "properties": { "kind": { "const": "tool" }, "id": { "const": "theme-studio" } }, "required": ["kind", "id"] }, "then": { "type": "object", "properties": { "section": { "const": "theme-studio" }, "nav": { "type": "object", "properties": { "card": { "const": false } }, "required": ["card"] } } } }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{ "v": 1, "kind": "component", "component": "acme-button", "preset": "loading", "props": { "appearance": "primary" }, "slots": { "default": "Save" }, "preview": { "mode": "dark", "density": "compact", "width": 600 }, "excluded": ["iconStart (requires fixture)"] }

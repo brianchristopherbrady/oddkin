@@ -1,0 +1,13 @@
+{
+  "schema": "https://mote.dev/schemas/page-registry/v1.json",
+  "basePath": "/docs/",
+  "routing": "history",
+  "primaryNav": ["foundations", "components", "theme-studio"],
+  "pages": [
+    { "id": "foundations", "route": "/foundations", "section": "foundations", "kind": "overview", "title": "Foundations", "visible": true, "availability": "full", "nav": { "primary": true, "search": true }, "sections": [] },
+    { "id": "foundations/spacing", "route": "/foundations/spacing", "section": "foundations", "kind": "foundation", "eyebrow": "Foundations", "title": "Spacing", "tags": ["tokens"], "visible": true, "availability": "partial", "nav": { "sidebar": true, "card": true, "search": true },
+      "sections": [{ "id": "scale", "title": "Scale", "visible": true, "source": "generated" }, { "id": "vocabulary", "title": "Semantic vocabulary", "visible": false, "source": "generated" }] },
+    { "id": "theme-studio", "route": "/theme-studio", "section": "theme-studio", "kind": "tool", "title": "Theme Studio", "visible": true, "availability": "full", "nav": { "primary": true, "card": false, "sidebar": false, "search": true }, "sections": [], "legacyRoutes": ["/foundations/theme-studio"] },
+    { "id": "components", "route": "/components", "section": "components", "kind": "overview", "title": "Components", "visible": true, "availability": "full", "nav": { "primary": true, "search": true }, "sections": [], "legacyRoutes": ["/playground"] }
+  ]
+}

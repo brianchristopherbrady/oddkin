@@ -1,0 +1,23 @@
+{
+  "name": "@mote/app",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Optional application lifetime, router, and async resources.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "dependencies": {
+    "@mote/core": "0.0.0",
+    "@mote/state": "0.0.0"
+  }
+}

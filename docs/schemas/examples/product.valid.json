@@ -1,0 +1,1 @@
+{ "schema": "https://mote.dev/schemas/product/v1.json", "id": "kiosk", "label": "Kiosk", "version": "2.1.0", "theme": { "overrides": { "color.action.primary": "#0f766e" } }, "defaults": { "density": "comfortable" } }

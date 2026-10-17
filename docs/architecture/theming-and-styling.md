@@ -1,0 +1,341 @@
+# Theming, token pipeline, and styling
+
+Status: **draft proposal**. Examples are design sketches to evaluate, not implemented features.
+
+## 1. Configuration model
+
+One authoritative model, `ThemeConfig`, is used by TypeScript files, JSON files, the CLI, and Theme Studio.
+
+```ts
+import { defineTheme } from '@mote/tokens/theme';
+
+export default defineTheme({
+  name: 'acme',
+  preset: 'mote-default',          // optional
+  brand: { primary: '#5b46e8' },   // the only required domain input
+  spacing: { strategy: 'multiples', unit: '0.25rem', steps: { xs: 1, sm: 2, md: 3, lg: 4.5, xl: 9 } },
+  modes: ['light', 'dark'],
+  products: { clinic: { brand: { primary: '#0f766e' } } },
+  density: { compact: { scale: 0.75 } },
+  conditions: { 'navigation.expanded': { container: 'side-nav', minInlineSize: '40rem' } },  // §11
+  profiles: { 'navigation.compact': { 'navigation.item.padding.inline': '{space.sm}' } },    // §11
+  overrides: { 'color.surface.default': '#fbfaff' },
+});
+```
+
+JSON form uses `"$schema": "https://…/@mote/tokens/schema.json"` with the same shape. The schema is generated from (or contract-tested against) the TypeScript types.
+
+### Precedence
+
+```
+Mote defaults → preset → user configuration → explicit overrides (by stable token name)
+```
+
+Each resolved token records its origin so tools can label values as *generated*, *preset*, *configured*, or *overridden*. Generated files are never edited by hand; overrides target stable names.
+
+## 2. Pipeline
+
+| Stage | Input → output | Notes |
+| --- | --- | --- |
+| 1. Load & validate | file / object → `ThemeConfig` | Schema + semantic checks; diagnostics carry JSON-pointer paths |
+| 2. Resolve defaults & preset | → complete recipe | Deep merge with documented rules (arrays replace, objects merge) |
+| 3. Generate scales & palettes | recipe → reference tokens | Per-domain generators |
+| 4. Resolve aliases | reference + semantic + component definitions → graph | Detect missing refs, cycles, tier violations |
+| 5. Compose | graph × modes × products × density → scoped graphs | Computes per-scope re-declaration sets (§5) |
+| 6. Context validation | scoped graphs → diagnostics | Contrast of real role pairs, unit validity per output, min target size under density |
+| 7. Emit | graphs → CSS, SCSS, DTCG JSON, TS types/refs/values, inspection metadata, report | Pure functions; Node layer writes files |
+
+Stages 1–7 are pure and live in `@mote/tokens/generate` (browser-compatible). File I/O and the CLI live in `@mote/tokens/node`. Generation is deterministic: stable key ordering, fixed number formatting, no timestamps.
+
+### Diagnostics
+
+```ts
+interface Diagnostic {
+  code: 'unit.invalid' | 'number.nonFinite' | 'scale.invalidParameter' | 'strategy.conflict'
+      | 'token.duplicate' | 'alias.missing' | 'alias.cycle' | 'tier.violation' | 'contrast.fail' | …;
+  severity: 'error' | 'warning';
+  path: string;        // e.g. '/spacing/scale/lg'
+  message: string;
+  suggestion?: string;
+}
+```
+
+## 3. Units and precision
+
+- Spacing and typography default to `rem`. Borders and optical adjustments may use `px`. Line heights are unitless. `em` is allowed where a value should track the local font size.
+- Source units are preserved; the generator never converts `rem` to `px`.
+- Numbers are rounded to 4 decimal places in their source unit, trailing zeros trimmed. Optional `snap` (e.g. to `0.125rem`) is explicit and documented.
+- Pixel equivalents shown in docs state their reference root size (16 px). Live values in previews come from `getComputedStyle` in the preview itself, so host root font settings are respected.
+- Each output validates its supported units. DTCG `dimension` output accepts `px` and `rem` in format 2025.10; other values are emitted as a documented extension or reported.
+
+## 4. Spacing strategies
+
+Exactly one strategy per spacing config (discriminated union on `strategy`; extra keys from another strategy are a `strategy.conflict` error).
+
+### `multiples`
+`value = unit × multiplier`
+
+| Name | Multiplier | Output | px @16 |
+| --- | --- | --- | --- |
+| xs | 1 | `0.25rem` | 4 |
+| sm | 2 | `0.5rem` | 8 |
+| md | 3 | `0.75rem` | 12 |
+| lg | 4.5 | `1.125rem` | 18 |
+| xl | 9 | `2.25rem` | 36 |
+
+### `ratio`
+`value(offset) = base × ratio^offset`, `offset ∈ [-stepsBelow, stepsAbove]`. The base is the anchor at offset 0.
+
+Default names are positional around `md`: offsets −2…+2 → `xs, sm, md, lg, xl`; further steps → `2xs, 3xs…` and `2xl, 3xl…`. Custom `names` may be supplied (length must equal step count).
+
+`base: '0.75rem', ratio: 1.5, stepsBelow: 2, stepsAbove: 2`:
+
+| Name | Offset | Output | px @16 |
+| --- | --- | --- | --- |
+| xs | −2 | `0.3333rem` | 5.33 |
+| sm | −1 | `0.5rem` | 8 |
+| md | 0 | `0.75rem` | 12 |
+| lg | +1 | `1.125rem` | 18 |
+| xl | +2 | `1.6875rem` | 27 |
+
+### `explicit`
+`steps: { xs: '0.25rem', sm: '0.5rem', … }` — named dimensions with units required.
+
+All strategies name their output map `steps` (resolves the `scale` / `steps` naming difference between the two source plans; `scale` is reserved for density multipliers).
+
+### Stability
+Adding steps never renames or revalues existing steps; a contract test compares before/after manifests. Ratio steps use stable signed indices with an optional explicit naming map.
+
+### Default preset (provisional)
+Mote's starting default is an explicit `rem` scale: `0, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4rem`, mapped to documented stable names. It is validated in real components (M2, M8) before being frozen. The examples above are supported configurations, not the default. Generation is a convenience; not every token family has to be geometric.
+
+### Scale vs semantics
+The scale produces reference tokens (`space.md`). Semantic tokens choose from it deliberately:
+
+```
+space.md  →  layout.gap.default  →  card.padding
+space.sm  →  control.padding.inline.md         (independent of layout.gap)
+```
+
+Changing `layout.gap.default` therefore does not change control dimensions.
+
+## 5. Tiers, scopes, and CSS alias re-declaration
+
+Tiers: **reference** (`--mote-ref-*`, raw scale and palette) → **semantic** (`--mote-color-text-primary`, `--mote-space-md`, `--mote-layout-gap-default`) → **component** (`--mote-button-radius`, owned by the component, normally unset with a fallback).
+
+### The inheritance problem
+CSS resolves `var()` at computed-value time on the element where a property is declared, then inherits the *resolved* value. If `:root` declares `--mote-color-action: var(--mote-ref-brand-600)` and a descendant scope overrides only `--mote-ref-brand-600`, descendants still inherit the ancestor's already-resolved `--mote-color-action`.
+
+### Proposed rule
+For every scope (`[data-mote-theme]`, `[data-mote-product]`, `[data-mote-mode]`, `[data-mote-density]`, `[data-mote-profile~=…]`, and profile rules inside recipe conditions), the generator emits:
+
+1. The tokens the scope overrides, **and**
+2. Every alias whose dependency closure includes an overridden token, re-declared with its `var()` expression.
+
+```css
+:root {
+  --mote-ref-brand-600: oklch(52% 0.2 280);
+  --mote-color-action: var(--mote-ref-brand-600);
+}
+[data-mote-product="clinic"] {
+  --mote-ref-brand-600: oklch(50% 0.12 180);
+  --mote-color-action: var(--mote-ref-brand-600); /* re-declared so it re-resolves here */
+}
+```
+
+The re-declaration set is computed from the token graph in stage 5 and recorded in inspection metadata. Verification happens in real browsers with nested scopes and Shadow DOM, not only in the generator.
+
+### Modes and density
+- `light`/`dark` via `[data-mote-mode]`; `system` via `@media (prefers-color-scheme)` applied when no explicit mode is set.
+- Density (`comfortable`/`compact`) changes spacing and control sizing only; it does not change font sizes (text-size preference belongs to the user agent) and never reduces targets below the documented minimum.
+- `mote-theme-scope` (component package) is a convenience that sets these attributes; plain elements with the same attributes work identically.
+
+## 6. Outputs
+
+| Output | Entry | Notes |
+| --- | --- | --- |
+| CSS custom properties | `css/tokens.css`, `css/default.css`, `css/themes/<name>.css` | No runtime engine, store, or provider required |
+| Typed references | `refs` | `token('space.md')` → `'var(--mote-space-md)'`; DOM-free; no registration |
+| Literal values | `values` | `values.space.md === '0.75rem'`; explicit, never substituted for refs silently |
+| Computed values | `inspect.computedToken(name, element)` | Requires an element; reads `getComputedStyle` |
+| Sass refs | `scss/refs` | `mote.token('space.md')` → `var(--mote-space-md)`; follows runtime themes |
+| Sass literals | `scss/values` | `mote.value('space.md')` → `0.75rem`; compiled in, does not follow runtime themes. Use for arithmetic, colour functions, query thresholds |
+| Conditions | `conditions`, `scss/refs` (`$mote-conditions`, `mote.when()`) | Literal query strings; DOM-free |
+| Profiles | Included in theme CSS as `[data-mote-profile~="…"]` rules; profile data in `inspect` | Role overrides + alias closure |
+| DTCG JSON | `json/<theme>.tokens.json` | Format Module 2025.10; conditions/profiles as documented `$extensions` |
+| Inspection metadata | `json/<theme>.inspect.json`, `inspect` | Config, formulas, origins, aliases, re-declaration sets, resolved values |
+| Validation report | CLI / `generate` | JSON + readable text |
+
+Breakpoints: media and container query conditions cannot use `var()`. Thresholds are defined as named conditions (§11.2) and emitted as literal query strings (`conditions`, Sass `$mote-conditions` / `mote.when()`), and optionally as `@custom-media` definitions for tooling that supports them.
+
+## 7. Styling contract
+
+CSS custom properties are the browser-facing theming interface. Authoring style is a separate, optional choice.
+
+### Plain CSS / SCSS (no Mote JavaScript)
+```html
+<link rel="stylesheet" href="https://cdn.example/@mote/tokens/css/default.css">
+```
+```css
+.panel {
+  padding: var(--mote-space-md);
+  color: var(--mote-color-text-primary);
+  background: var(--mote-color-surface-default);
+}
+```
+
+### CSS-in-TypeScript (optional)
+```ts
+import { css } from '@mote/core';          // generic, token-agnostic
+import { token } from '@mote/tokens/refs'; // Mote token knowledge
+
+export const styles = css`
+  :host {
+    display: block;
+    padding: ${token('space.md')};
+    color: ${token('color.text.primary')};
+    background: ${token('color.surface.default')};
+  }
+`;
+```
+Both forms emit the same `var(--mote-…)` references and respond identically to theme changes. `css` is also exported from `@mote/core/styles`.
+
+**Permitted interpolations in `css`:** nested `css` fragments, finite numbers, and constrained CSS-variable reference strings (`var(--name)` with a tested fallback grammar). Arbitrary strings require an explicit `unsafeCSS`. `css` is not a sanitizer and must never receive untrusted Workbench editor input.
+
+### Component authoring from `.css` / `.scss` files
+A build step (part of Mote's own tooling, a dev dependency) transforms component `.css` (or optional `.scss`) into a JS module exporting a `css` styles object. Published component modules already contain these; consumers need no CSS loader. Native CSS module scripts (`import s from './x.css' with { type: 'css' }`) are an optional future path, pending the browser support policy.
+
+### Stylesheet attachment (`@mote/core/styles`)
+- A `css` result is a `MoteStyles` object holding text. On first use per document, `adoptStyles` constructs one `CSSStyleSheet` and caches it on the object keyed by document; every instance in that document adopts the same sheet.
+- Fallback: a `<style>` element per render root when constructable sheets are unavailable, with a CSP nonce/policy option. Capability and scope tests decide which path runs. [R25]
+- Styles are attached once per render root, never mutated per instance or per render, and preserved across disconnect/reconnect. After cross-document adoption, a sheet for the new document is used.
+- Light DOM: a `<style>` in light DOM is **not** local. Light-DOM components use explicit selector scoping, classes, or supported scoped CSS, with a de-duplicated sheet in the nearest root.
+
+### Public styling surface of Shadow DOM components
+1. **Inherited theme variables** — semantic tokens from ancestors (theming).
+2. **Component variables** — e.g. `--mote-button-radius`, read with a fallback to a semantic token; normally unset.
+3. **Host styling** — `mote-button { margin: … }`.
+4. **Parts** — selected `::part(control)` hooks for structural overrides (styling, not theming).
+
+Global page selectors do not reach shadow internals. Component styles read inherited roles with fallbacks and never re-declare the full theme on `:host`, which would mask ancestor scopes.
+
+## 8. Theme Studio
+
+Edits a `ThemeConfig` in a docs store, runs `@mote/tokens/generate` in the browser, renders previews inside isolated scopes, and exports TS/JSON config plus CSS/SCSS/JSON outputs. Contrast uses WCAG 2.x as the normative check; colour-vision simulations and any supplementary metrics are labelled as such with cited methods.
+
+Theme Studio never executes pasted JS/TS to preview a configuration; it edits the JSON-compatible model. It also edits layout roles, conditions, and profiles (§11.6).
+
+Theme Studio is part of `@mote/workbench`, so any library documented with Workbench gets it, previewing the library's own components through specimen roles. It is a primary Workbench destination (`/theme-studio`), not a Foundations page; generated Foundations pages document the saved/generated baseline and show a Theme Studio draft only when explicitly selected and labelled ([workbench-pages.md §5.1, §8](./workbench-pages.md)). Full design (controls per category, live editing, latest-wins generation, specimen roles and adapters, token visualizations, comparison, sharing, export): [workbench.md](./workbench.md) §6–§9. The pure generator in `@mote/tokens/generate` is the only token engine; the CLI and browser must produce byte-identical outputs for the same config.
+
+**Products** defined in `products:` (§1) are the local product source for Workbench's optional Products and modes page. External products may come from installed packages or versioned manifests that follow the same product schema ([workbench-pages.md §9](./workbench-pages.md)). Product identity stays distinct from mode, theme, density, and profiles.
+
+## 9. Configuration tooling
+
+- CLI: `mote-tokens init`, `build <config> --out <dir> --format css,json,scss,ts`, `check <config>`. Theme Studio calls the same pure generator.
+- Config formats: JSON and native ESM JS first. Local erasable `.ts` configs via verified Node type stripping (proposed minimum Node 24.12); type-check separately because stripping does not type-check or honour path aliases. Precompiled JS is the fallback. Published packages ship JS. [R28]
+- DTCG: target Format Module 2025.10 explicitly and validate serialized types/aliases against it. It is a community-group format, not a browser standard or W3C Recommendation. [R29]
+
+## 10. Colour
+
+Original OKLCH-based generator with deterministic, documented sRGB gamut mapping (start with tested chroma reduction; record visual limits). Full authored palettes and semantic-role overrides are supported. Generated ramps do not guarantee role contrast, so actual foreground/background/state pairs are checked against WCAG; APCA and colour-vision simulations are labelled supplementary diagnostics. [R30]
+
+## 11. Layout roles, responsive conditions, and profiles
+
+Consumed by layout recipes ([layout-recipes.md](./layout-recipes.md)) and ordinary CSS alike. The token package defines them; it knows nothing about recipes or components.
+
+### 11.1 Token categories
+
+| Category | Example | Emitted as | Allowed use |
+| --- | --- | --- | --- |
+| Foundation value | `space.md` | `--mote-space-md` | Source for roles; avoid using directly in components |
+| Semantic layout role | `layout.gap`, `layout.inset`, `layout.item-min`, `layout.sidebar-width`, `layout.main-min` | `--mote-layout-gap` | Page and recipe layout |
+| Component role | `navigation.item.padding.inline` | `--mote-navigation-item-padding-inline` | Consumed by the owning component (and documented for adapters) |
+| Named condition | `navigation.expanded` | Literal query string in generated CSS, `conditions` export, Sass `$mote-conditions`, metadata | Recipes, `@container`/`@media` rules |
+| Profile | `navigation.compact` | Scope selector rule set re-declaring roles + affected alias closure | Coordinated overrides of explicit roles |
+
+Each token declares its category; the validator rejects disallowed references (e.g. a foundation token aliasing a component role, a profile overriding foundation values, a condition used as a value).
+
+### 11.2 Conditions
+
+```ts
+defineTheme({
+  // …
+  conditions: {
+    'navigation.expanded': { container: 'side-nav', minInlineSize: '40rem' },
+    'page.wide': { media: { minWidth: '64rem' } },
+  },
+});
+```
+
+- Serialized to literal CSS: `@container side-nav (min-width: 40rem)` / `@media (min-width: 64rem)`. `var()` cannot appear in query conditions, so thresholds are always literal lengths.
+- **Compatibility baseline:** the config accepts logical names (`minInlineSize`, `maxInlineSize`) and plain `minWidth`/`maxWidth`; the baseline emits `min-width`/`max-width` (and `inline-size` only where needed) with literal lengths, named or unnamed containers, and `prefers-*` media features. Range syntax, style queries, and newer features are progressive enhancements behind an explicit `syntax: 'range'` option, each requiring browser verification before docs present them as supported.
+- Units: `rem` default; validator flags `px` thresholds as a warning (they ignore user font-size changes) and rejects `var()`, percentages, and unitless numbers.
+- Outputs: `@mote/tokens/conditions` (DOM-free map of name → query string), Sass map `$mote-conditions` plus mixin `mote.when('navigation.expanded') { … }`, DTCG JSON as a documented Mote extension (`$extensions["mote.condition"]`), and inspection metadata.
+
+### 11.3 Profiles
+
+```ts
+defineTheme({
+  // …
+  profiles: {
+    'navigation.compact': {
+      'navigation.item.padding.inline': '{space.sm}',
+      'layout.gap': '{space.xs}',
+    },
+    'navigation.comfortable': {
+      'navigation.item.padding.inline': '{space.md}',
+    },
+  },
+});
+```
+
+- A profile is an explicit set of role overrides. It **never** inspects or rewrites descendants; it only declares custom properties on the element where it applies, and they inherit.
+- Applied by attribute (`data-mote-profile="navigation.compact"`, space-separated list allowed) or by a recipe condition (§6 of layout-recipes.md).
+- Each profile rule re-declares the overridden roles **and** their affected alias closure (same rule as §5), so nested component roles re-resolve inside the profile scope.
+- **Composition and precedence:** within one element, profiles in a `data-mote-profile` list apply left-to-right (later wins); nearer ancestors win over farther ones through normal inheritance. Overlapping profiles that set the same role are reported as a warning with both provenance paths. Profiles sit above theme/product/density for the roles they name and do not affect other roles.
+- Profiles may only target semantic layout roles and component roles. Validation rejects foundation or colour overrides in a profile unless the category explicitly allows it.
+
+### 11.4 Keep concerns separate
+
+| Concern | Mechanism | Must not |
+| --- | --- | --- |
+| Responsive layout | Recipe conditions + profiles | Shrink text or targets automatically |
+| Density | `data-mote-density` | Change font size |
+| Typography preference | User agent / root font size | Be overridden by layout conditions |
+| Interaction target size | Component roles with a documented minimum (WCAG 2.5.8 target size minimum as baseline) | Drop below the minimum in any profile or density |
+
+A narrow container changes arrangement; it does not automatically shrink every label and control. The validator checks that no profile/density combination sets a target-size role below the minimum.
+
+### 11.5 Equivalent consumption
+
+```css
+/* CSS */
+.toolbar { gap: var(--mote-layout-gap); }
+@container side-nav (min-width: 40rem) { .toolbar { gap: var(--mote-layout-gap-wide, var(--mote-layout-gap)); } }
+```
+```scss
+// SCSS
+@use '@mote/tokens/scss/refs' as mote;
+.toolbar { gap: mote.token('layout.gap'); @include mote.when('navigation.expanded') { flex-wrap: nowrap; } }
+```
+```ts
+// TS (CSS-in-TS)
+import { token } from '@mote/tokens/refs';
+import { conditions } from '@mote/tokens/conditions';
+css`.toolbar { gap: ${token('layout.gap')}; }
+     @container ${unsafeCSS(conditions['navigation.expanded'])} { .toolbar { flex-wrap: nowrap; } }`;
+```
+
+Recipes are the recommended way to use conditions in components; the raw outputs exist for ordinary CSS and tooling. (The TS example needs `unsafeCSS` because a query string is not a permitted value interpolation; a `condition()` helper in `@mote/components/layout` will wrap this safely.)
+
+### 11.6 Validation, provenance, Theme Studio
+
+- Diagnostics: `condition.unit.invalid`, `condition.syntax.unsupported`, `condition.container.unknown`, `profile.target.disallowed`, `profile.overlap`, `role.category.violation`, `role.targetSize.belowMinimum`.
+- Every role, condition, and profile records provenance (default / preset / config / override).
+- Theme Studio edits the same `conditions` and `profiles` config, previews the side-navigation fixture and other compositions in resizable containers side by side, shows which condition and profile are active in each preview, and traces each role through profile → alias → computed value.
+
+## Open questions
+
+- Whether `@custom-media` output is worth shipping (conditions now cover media thresholds; likely only as an optional build output).
+- Final scope selector syntax (data attributes proposed: `data-mote-theme`, `data-mote-mode`, `data-mote-product`, `data-mote-density`).
+

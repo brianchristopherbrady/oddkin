@@ -1,0 +1,1 @@
+{ "schema": "https://mote.dev/schemas/theme-studio-composition/v1.json", "recipe": "theme-specimen", "roles": { "primaryAction": { "kind": "component", "component": "acme-button", "example": "primary" }, "switch": { "kind": "fallback" } }, "panels": [{ "mode": "light" }, { "mode": "dark" }] }

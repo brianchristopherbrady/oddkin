@@ -1,0 +1,19 @@
+{
+  "name": "@mote/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Theme configuration, pure token generation, and CSS/SCSS/JSON/TS outputs. Browser entry points are DOM-free.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "schema": "https://mote.dev/schemas/mote-metadata/v1.json",
+  "moteVersion": "0.0.0",
+  "library": { "name": "acme-ui", "version": "1.0.0", "packages": [] },
+  "components": {},
+  "docs": { "foundations/spacing": { "updated": { "value": "2026-10-17", "provenance": "observed" } } },
+  "diagnostics": []
+}

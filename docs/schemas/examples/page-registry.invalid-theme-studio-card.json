@@ -1,0 +1,7 @@
+{
+  "schema": "https://mote.dev/schemas/page-registry/v1.json",
+  "basePath": "/",
+  "pages": [
+    { "id": "theme-studio", "route": "/theme-studio", "section": "theme-studio", "kind": "tool", "title": "Theme Studio", "visible": true, "availability": "full", "nav": { "primary": true, "card": true }, "sections": [] }
+  ]
+}

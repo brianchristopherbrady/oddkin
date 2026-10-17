@@ -1,0 +1,36 @@
+{
+  "name": "mote-workspace",
+  "private": true,
+  "type": "module",
+  "description": "Mote: a modular Web Component framework, design system, token pipeline, and documentation tooling.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=24.12"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "tsc -b --clean",
+    "typecheck": "tsc -b && tsc -p tsconfig.tests.json",
+    "lint": "npm run lint:boundaries && npm run format:check",
+    "lint:boundaries": "tsc -b && node scripts/architecture/check-boundaries.mjs --artifacts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "tsc -b && vitest run",
+    "test:e2e": "playwright test",
+    "verify:packs": "node scripts/verify-packs.mjs",
+    "verify": "npm run lint && npm run typecheck && npm test && npm run test:e2e && npm run verify:packs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^24.19.2",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "es-module-lexer": "^3.0.4",
+    "prettier": "^3.9.10",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}
