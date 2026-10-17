@@ -55,6 +55,19 @@ function isRepeat(value: unknown): value is RepeatDirective {
 
 const supportsMoveBefore = typeof Element !== 'undefined' && 'moveBefore' in Element.prototype;
 
+type Focusable = HTMLElement & {
+  selectionStart?: number | null;
+  selectionEnd?: number | null;
+  setSelectionRange?(a: number, b: number): void;
+};
+
+/** The focused element inside `root`, following open shadow roots to the deepest one. */
+function deepActiveElement(root: Node): Focusable | null {
+  let active = (root.getRootNode() as Document | ShadowRoot).activeElement as Focusable | null;
+  while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement as Focusable;
+  return active;
+}
+
 function moveRange(start: Node, end: Node, before: Node | null): void {
   const parent = start.parentNode as ParentNode & Node;
   const nodes: Node[] = [];
@@ -62,8 +75,29 @@ function moveRange(start: Node, end: Node, before: Node | null): void {
     nodes.push(node);
     if (node === end) break;
   }
+  const native = supportsMoveBefore && parent.isConnected;
+  // Without moveBefore, removing a focused subtree blurs it: remember and restore focus.
+  const retargeted = native
+    ? null
+    : ((parent.getRootNode() as Document | ShadowRoot).activeElement ?? null);
+  const focused =
+    retargeted && nodes.some((n) => n === retargeted || n.contains(retargeted))
+      ? deepActiveElement(parent)
+      : null;
+  let selection: [number, number] | undefined;
+  try {
+    if (
+      focused &&
+      typeof focused.selectionStart === 'number' &&
+      typeof focused.selectionEnd === 'number'
+    ) {
+      selection = [focused.selectionStart, focused.selectionEnd];
+    }
+  } catch {
+    // Inputs without selection support.
+  }
   for (const node of nodes) {
-    if (supportsMoveBefore && parent.isConnected) {
+    if (native) {
       try {
         // State-preserving move (focus, iframes, animations) where supported.
         (parent as unknown as { moveBefore(n: Node, ref: Node | null): void }).moveBefore(
@@ -77,8 +111,36 @@ function moveRange(start: Node, end: Node, before: Node | null): void {
     }
     parent.insertBefore(node, before);
   }
+  if (focused?.isConnected && deepActiveElement(parent) !== focused) {
+    focused.focus({ preventScroll: true });
+    try {
+      if (selection) focused.setSelectionRange?.(selection[0], selection[1]);
+    } catch {
+      // Selection unsupported.
+    }
+  }
 }
 
+/** Indices (into `sequence`) of one longest strictly increasing subsequence, ignoring negatives. */
+function longestIncreasing(sequence: readonly number[]): Set<number> {
+  const tails: number[] = [];
+  const previous: number[] = new Array<number>(sequence.length).fill(-1);
+  sequence.forEach((value, i) => {
+    if (value < 0) return;
+    let low = 0;
+    let high = tails.length;
+    while (low < high) {
+      const mid = (low + high) >> 1;
+      if ((sequence[tails[mid] as number] as number) < value) low = mid + 1;
+      else high = mid;
+    }
+    if (low > 0) previous[i] = tails[low - 1] as number;
+    tails[low] = i;
+  });
+  const out = new Set<number>();
+  for (let i = tails[tails.length - 1] ?? -1; i >= 0; i = previous[i] as number) out.add(i);
+  return out;
+}
 // ---------------------------------------------------------------------------
 // Child (node) parts
 
@@ -300,6 +362,7 @@ export class ChildPart implements Part {
     const old = new Map<unknown, ChildPart>();
     this.#keys.forEach((key, i) => old.set(key, this.#items[i] as ChildPart));
 
+    const previousIndex = new Map<ChildPart, number>(this.#items.map((part, i) => [part, i]));
     const items: ChildPart[] = [];
     const keys: unknown[] = [];
     const seen = new Set<unknown>();
@@ -333,13 +396,15 @@ export class ChildPart implements Part {
       part.remove();
       changedStructure = true;
     }
-    // Position from the end, moving only parts that are out of place.
+    // Keep a longest run of parts already in relative order where they are; move only the
+    // rest (fewest moves, so focused or stateful items usually stay in place).
+    const stable = longestIncreasing(items.map((part) => previousIndex.get(part) ?? -1));
     let ref: Node | null = this.#end;
     for (let i = items.length - 1; i >= 0; i--) {
       const part = items[i] as ChildPart;
       const start = part.startNode as Comment;
       const end = part.endNode as Node;
-      if (end.nextSibling !== ref) {
+      if (!stable.has(i) && end.nextSibling !== ref) {
         moveRange(start, end, ref);
         changedStructure = true;
       }

@@ -425,8 +425,8 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 - [x] Optional helpers (refs, `classMap`, `styleMap`, live input) with behavioral tests
 - [x] Styles: trusted fragments, interpolation grammar, per-document sheet reuse, `<style>` fallback + CSP nonce, light-DOM scoping; no rebuild on updates
 - [x] `@mote/core/layout`: `defineLayoutRecipe`, helpers with neutral defaults, region mapping, parts, variants, conditions, `extend()`; layered CSS generation; diagnostics; `describeRecipe`; byte-identical extraction
-- [ ] `@mote/core/collections`: keys, diagnostics, reconciliation, nesting, per-item `Scope`, state models; invalidation tests; keyboard controllers separate
-- [ ] `@mote/core/model`: `m`, `defineModel`, `Infer`, `validate`, `migrate`; `./model/schema`
+- [x] `@mote/core/collections`: keys, diagnostics, reconciliation, nesting, per-item `Scope`, state models; invalidation tests; keyboard controllers separate
+- [x] `@mote/core/model`: `m`, `defineModel`, `Infer`, `validate`, `migrate`; `./model/schema`
 - [ ] Assess `props()` helper
 - [x] `define()`: idempotence, collision error, dependency registration, tag-name typing
 - [x] `examples/core-counter/` and typed demos with their own visual identity
@@ -925,6 +925,7 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M2: `@mote/tokens` `./theme` (`ThemeConfig`, `defineTheme`), `./generate` (diagnostics, spacing strategies, OKLCH ramps with chroma-bisection gamut mapping, contrast-selected roles valid for every product, token graph with tier/cycle/reference validation, product and density scopes with alias closure, mode switching by inherited space toggles, CSS emit), `./schema.json`; provisional `mote-default` preset with button/input/card/side-nav roles | 127 Node + 231 browser tests; byte-identical output in Node and three engines; full pipeline passes |
 | 2026-10-17 | M2: `@mote/tokens/refs` (`token()`, `TokenName`), `./values`, inspection JSON, `./css/default.css`, `./node` and the `mote-tokens` CLI (`init`/`build`/`check`; JSON, JS, `.ts` configs); Worker generation; script-free `examples/tokens-css-only` built by the CLI | 138 Node + 234 browser tests; 12 e2e; installed CLI verified from tarball; full pipeline passes |
 | 2026-10-17 | M2: named conditions (container/media, logical sizes, preference features) with `@mote/tokens/conditions` and CLI output; profiles with alias closure, nested-scope re-application, configuration-order precedence, overlap warnings, and target checks per density; unit policy; schema and CSS-only example extended | 149 Node + 240 browser tests; 12 e2e; full pipeline passes. M2 complete except linking the M4 side-nav preview to the threshold-invalidation contract |
+| 2026-10-17 | M3: `@mote/core/layout` and `./layout/inspect` (recipes, helpers, layered CSS, `extend`, diagnostics); `@mote/core/collections` (keyed nested collections, per-entry scopes, selection/expansion/disabled/active models); `@mote/core/model` and `./model/schema` (builder, `Infer`, validation, rules, migrations, JSON Schema); `repeat()` minimal moves with focus restoration | All core entries DOM-free-importable; full pipeline passes |
 
 ## 11. Continuation
 

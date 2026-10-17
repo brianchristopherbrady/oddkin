@@ -272,6 +272,38 @@ describe('structural helpers', () => {
     expect(text()).toBe('a?b?');
   });
 
+  it('repeat() moves only items outside the longest stable run', async () => {
+    const order = signal(['a', 'b', 'c', 'd', 'e']);
+    render(
+      html`<ul>
+        ${repeat(
+          order,
+          (x) => x,
+          (x) => html`<li id=${x}>${x}</li>`,
+        )}
+      </ul>`,
+      container,
+    );
+    const moved = new Set<string>();
+    const observer = new MutationObserver((records) => {
+      for (const record of records)
+        for (const node of record.addedNodes) if (node instanceof HTMLElement) moved.add(node.id);
+    });
+    observer.observe(container.querySelector('ul') as HTMLElement, { childList: true });
+    order.value = ['e', 'b', 'c', 'd', 'a'];
+    flush();
+    await Promise.resolve();
+    observer.disconnect();
+    expect([...container.querySelectorAll('li')].map((li) => li.id)).toEqual([
+      'e',
+      'b',
+      'c',
+      'd',
+      'a',
+    ]);
+    expect([...moved].sort()).toEqual(['a', 'e']);
+  });
+
   it('repeat() reports duplicate keys', () => {
     render(
       html`<p>

@@ -1,6 +1,6 @@
 # Data-driven composition, collections, and models
 
-Status: **proposal**. Nothing here is implemented. APIs are sketches to prototype in M3–M4. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
+Status: §3 (collections) and §5 (models) are **implemented** in `@mote/core` (M3; settled behaviors in §11). Component data APIs, region sources, the `props()` experiment, and composition remain **proposals** for M4+. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
 
 ## 1. Direction
 
@@ -275,3 +275,14 @@ Bounded initial contract:
 - [ ] Typing in one row survives insertions, removals, and reorder elsewhere; selection/caret preserved
 - [ ] Validation diagnostics map to the right row and field; form submission data is correct
 - [ ] Undo of a removal restores the row with a new scope (no stale subscriptions)
+
+## 11. Behaviors settled in the M3 implementation
+
+`@mote/core/collections`, `@mote/core/model`, and `@mote/core/model/schema` are implemented (unbranded, DOM-free) and verified; component models, the `props()` helper, and composition remain later work.
+
+- **Collections.** `collection({ key, children?, disabled?, owner?, childrenPath? })` exposes `items`, `flat` (document order with `depth`, `parentKey`, `index`, `position`, `hasChildren`, `disabled`, and a JSON-pointer `path`), `diagnostics`, `byKey`, `childrenOf`, and `ancestorsOf`. Entries keep their identity when key, item, and position are unchanged. Missing and duplicate keys are reported (`collection.key.missing`, `collection.key.duplicate`) with paths, and those items are skipped.
+- **Per-entry ownership.** `scopeFor(key, init?)` returns the entry's scope, disposed when the key leaves or the owner ends. Item templates re-run whenever their entry changes, so one-time setup belongs in `init`, which runs only when the scope is created.
+- **State models.** `selectionModel` (none/single/multiple), `expansionModel` (+ `visibleEntries`), `disabledModel`, and `activeModel` (roving focus target that skips disabled and hidden entries and recovers when its entry disappears). Each is controlled (`{ value, onChange }`: the model only reports intent) or uncontrolled. Keyboard behavior is not included.
+- **Keyed reordering.** `repeat()` keeps a longest increasing subsequence of reused items in place and moves only the rest. Where `moveBefore()` is unavailable, a moved range containing the focused element has its focus and text selection restored after the move.
+- **Models.** `m` provides `string`, `id`, `label`, `url` (script URLs rejected), `actionRef`, `number`, `boolean`, `enum`, `optional`, `array`, `object`, `union(discriminator, variants)`, `recursive(self => …, name?)`, and the `uniqueIds(property)` rule. `defineModel(name, { version, schema, rules?, migrations?, description? })` returns `validate` (no copying or coercion; unknown properties are warnings) and `migrate(data, fromVersion)` (stepwise `migrations[n]`, `model.version.unsupported`, `model.migration.failed`). `Infer<typeof Model>` infers recursive discriminated types; optional fields are `?: T | undefined`, matching validation.
+- **JSON Schema.** `toJSONSchema(model)` (in `./model/schema`, never in component bundles) emits draft 2020-12 with `$defs` for recursion and lists unportable rules in `$comment`. Ajv and `validate()` agree on portable cases in tests. The method form `model.toJSONSchema()` sketched in §5 is a separate function, so validators do not pull in the emitter.

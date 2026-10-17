@@ -34,6 +34,18 @@
       "types": "./dist/layout/inspect.d.ts",
       "default": "./dist/layout/inspect.js"
     },
+    "./collections": {
+      "types": "./dist/collections/index.d.ts",
+      "default": "./dist/collections/index.js"
+    },
+    "./model": {
+      "types": "./dist/model/index.d.ts",
+      "default": "./dist/model/index.js"
+    },
+    "./model/schema": {
+      "types": "./dist/model/schema.d.ts",
+      "default": "./dist/model/schema.js"
+    },
     "./element": {
       "types": "./dist/element/index.d.ts",
       "default": "./dist/element/index.js"
