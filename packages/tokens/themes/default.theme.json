@@ -1,0 +1,5 @@
+{
+  "$schema": "../schema/theme-config.v1.schema.json",
+  "name": "default",
+  "brand": { "primary": "#5b46e8" }
+}

@@ -18,6 +18,19 @@
       "types": "./dist/generate/index.d.ts",
       "default": "./dist/generate/index.js"
     },
+    "./refs": {
+      "types": "./dist/refs/index.d.ts",
+      "default": "./dist/refs/index.js"
+    },
+    "./values": {
+      "types": "./dist/values/index.d.ts",
+      "default": "./dist/values/index.js"
+    },
+    "./node": {
+      "types": "./dist/node/index.d.ts",
+      "default": "./dist/node/index.js"
+    },
+    "./css/default.css": "./dist/css/default.css",
     "./schema.json": "./schema/theme-config.v1.schema.json",
     "./package.json": "./package.json"
   },
@@ -25,5 +38,11 @@
     "dist",
     "schema",
     "README.md"
-  ]
+  ],
+  "bin": {
+    "mote-tokens": "./dist/node/bin.js"
+  },
+  "engines": {
+    "node": ">=24.12"
+  }
 }

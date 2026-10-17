@@ -1,0 +1,68 @@
+/* Page styles: plain CSS that only reads --mote-* custom properties. */
+body {
+  margin: 0;
+  padding: var(--mote-layout-inset);
+  font-family: var(--mote-font-family-sans);
+  font-size: var(--mote-font-size-md);
+  line-height: var(--mote-line-height-normal);
+  color: var(--mote-color-text-primary);
+  background: var(--mote-color-surface-sunken);
+}
+
+main {
+  display: grid;
+  gap: var(--mote-layout-gap);
+  max-inline-size: 48rem;
+}
+
+.lede {
+  color: var(--mote-color-text-secondary);
+}
+
+.panel {
+  display: grid;
+  gap: var(--mote-space-sm);
+  padding: var(--mote-card-padding);
+  border: var(--mote-border-width-default) solid var(--mote-color-border-default);
+  border-radius: var(--mote-card-radius);
+  color: var(--mote-color-text-primary);
+  background: var(--mote-color-surface-default);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  line-height: var(--mote-line-height-tight);
+}
+
+a {
+  color: var(--mote-color-text-link);
+}
+
+.action {
+  justify-self: start;
+  min-block-size: var(--mote-control-height-md);
+  padding-inline: var(--mote-control-padding-inline-md);
+  border: 0;
+  border-radius: var(--mote-control-radius);
+  font: inherit;
+  font-weight: var(--mote-font-weight-semibold);
+  color: var(--mote-color-text-on-action);
+  background: var(--mote-color-action-default);
+  cursor: pointer;
+}
+
+.action:hover {
+  background: var(--mote-color-action-hover);
+}
+
+.action:active {
+  background: var(--mote-color-action-active);
+}
+
+:is(a, .action):focus-visible {
+  outline: var(--mote-focus-width) solid var(--mote-color-focus-ring);
+  outline-offset: var(--mote-focus-offset);
+}

@@ -6,4 +6,6 @@ coverage/
 test-results/
 playwright-report/
 .mote/
-.tmp/.vitest/
+.tmp/
+.vitest/
+examples/tokens-css-only/generated/

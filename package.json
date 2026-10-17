@@ -11,14 +11,14 @@
     "node": ">=24.12"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && node scripts/build-token-assets.mjs",
     "clean": "tsc -b --clean",
     "typecheck": "tsc -b && tsc -p tsconfig.tests.json",
     "lint": "npm run lint:boundaries && npm run format:check",
-    "lint:boundaries": "tsc -b && node scripts/architecture/check-boundaries.mjs --artifacts",
+    "lint:boundaries": "npm run build && node scripts/architecture/check-boundaries.mjs --artifacts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "tsc -b && vitest run",
+    "test": "npm run build && vitest run",
     "test:e2e": "playwright test",
     "verify:packs": "node scripts/verify-packs.mjs",
     "verify": "npm run lint && npm run typecheck && npm test && npm run test:e2e && npm run verify:packs"

@@ -3,6 +3,22 @@ import { generate, resolveToken, type ResolvedTheme } from '../src/index.js';
 import { cases } from './fixtures/cases.js';
 
 describe('browser generation', () => {
+  it('runs unchanged in a module Worker with byte-identical output', async () => {
+    const worker = new Worker(new URL('./fixtures/generate.worker.ts', import.meta.url), {
+      type: 'module',
+    });
+    const outputs = await new Promise<Record<string, string>>((resolve, reject) => {
+      worker.onmessage = (event: MessageEvent<Record<string, string>>) => resolve(event.data);
+      worker.onerror = (event) => reject(new Error(event.message));
+    });
+    worker.terminate();
+    for (const name of Object.keys(cases)) {
+      const expected = await (
+        await fetch(new URL(`./fixtures/${name}.css.txt`, import.meta.url))
+      ).text();
+      expect(outputs[name], name).toBe(expected);
+    }
+  });
   for (const [name, config] of Object.entries(cases)) {
     it(`${name}: byte-identical to the Node-generated fixture`, async () => {
       const expected = await (

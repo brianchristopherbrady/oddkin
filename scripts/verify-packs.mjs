@@ -75,6 +75,32 @@ try {
   await writeFile(join(consumer, 'runtime.mjs'), `${imports}\n${checks}\n`);
   node(['runtime.mjs'], consumer);
 
+  // @mote/tokens ships its CLI, default CSS, and JSON Schema, and the installed CLI works.
+  await writeFile(
+    join(consumer, 'assets.mjs'),
+    [
+      "import { readFileSync } from 'node:fs';",
+      "for (const spec of ['@mote/tokens/css/default.css', '@mote/tokens/schema.json']) {",
+      "  const text = readFileSync(new URL(import.meta.resolve(spec)), 'utf8');",
+      "  if (!text.includes(spec.endsWith('.css') ? '--mote-color-action-default' : 'Mote theme configuration')) throw new Error(spec + ' content mismatch');",
+      '}',
+    ].join('\n'),
+  );
+  node(['assets.mjs'], consumer);
+  const bin = join(consumer, 'node_modules', '@mote', 'tokens', 'dist', 'node', 'bin.js');
+  node([bin, 'init', 'theme.json'], consumer);
+  node([bin, 'build', 'theme.json', '--out', 'tokens', '--strict'], consumer);
+  const built = await readdir(join(consumer, 'tokens'));
+  for (const file of [
+    'default.css',
+    'default.refs.ts',
+    'default.values.ts',
+    'default.inspect.json',
+  ]) {
+    if (!built.includes(file))
+      failures.push(`mote-tokens build in a consumer did not write ${file}`);
+  }
+
   await writeFile(
     join(consumer, 'types.ts'),
     `${imports}\nexport const all: string[] = [${names.map((_, i) => `p${i}`).join(', ')}];\n`,

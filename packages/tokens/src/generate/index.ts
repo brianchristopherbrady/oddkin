@@ -23,6 +23,13 @@ export function generate(config: unknown): GenerateResult {
 }
 
 export { emitCss, cssStats } from './css.js';
+export {
+  emitInspectJson,
+  emitRefsModule,
+  emitTokenNameType,
+  emitValuesModule,
+  valuesTree,
+} from './ts.js';
 export { resolveTheme, resolveToken } from './resolve.js';
 export type { ResolveContext, ResolvedTheme, ResolveResult, ScopeTokens } from './resolve.js';
 export type { Diagnostic, DiagnosticSeverity } from './diagnostics.js';

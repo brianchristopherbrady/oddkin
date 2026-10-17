@@ -89,3 +89,18 @@ Recorded results of checks. Each entry states the date, environment, command, an
 **Findings:** (1) Per-mode role expressions cannot be re-declared correctly by product or density scopes using selectors, because CSS cannot select the nearest mode ancestor; solved with inherited space toggles (theming-and-styling.md §5.1). (2) Choosing a status text colour against the default surface alone failed on its tinted surface (4.39:1); roles now satisfy every paired surface. (3) An append to `.prettierignore` merged with its last line, which un-ignored `package-lock.json` and let Prettier rewrite fixtures; fixed and regenerated.
 
 **Not yet verified:** Worker execution, the script-free CSS-only fixture (first paint, system mode via emulated media), CLI, conditions, profiles, non-CSS outputs.
+## 2026-10-17 — M2 refs, values, CLI, Worker, and CSS-only example
+
+**Environment:** as the previous entry.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Generated modules | `packages/tokens/test/outputs.test.ts` | Pass — committed `src/generated/default-names.ts` and `default-values.ts` equal the emitters' output; `token()` builds `var()` references; unknown names are type errors; literal `values` include `{ light, dark }` for mode-dependent tokens; a value/group name clash is rejected |
+| Inspection JSON | same | Pass — definitions, compiled CSS, literals, provenance, and per-scope changed/re-declared lists |
+| CLI | `packages/tokens/test/cli.test.ts` | Pass — `init` never overwrites; `check` prints codes and paths, `--strict` fails on warnings, `--json` emits diagnostics; `build` writes CSS byte-identical to `generate()` plus refs, values, and inspection files; ESM JS and type-stripped `.ts` configs produce identical CSS; load errors exit 1, usage errors exit 2 |
+| Worker | `packages/tokens/test/generate.browser.test.ts` | Pass in Chromium, Firefox, WebKit — module Worker output is byte-identical to the Node fixtures |
+| CSS-only page | `npx playwright test e2e/tokens-css-only.spec.ts` | Pass in all three under emulated light and dark preferences — no scripts on the page; first render follows the preference; computed surface, text, action, on-action, control height, and card padding equal `resolveToken()` in root, explicit dark, product-in-dark, light-in-product, and compact scopes; `rem` values follow a changed root font size |
+| Packed consumer | `npm run verify:packs` | Pass — `@mote/tokens/css/default.css` and `schema.json` resolve through `exports` from the tarball; the installed `mote-tokens` binary runs `init` and `build --strict` in a project outside the workspace |
+| Full pipeline | `npm run verify` | Pass — 138 Node + 234 browser unit tests, 12 e2e, packed consumers |
+
+**Findings:** (1) Custom spacing scales without the step names the preset's roles use failed with bare `alias.missing`; the diagnostic now explains the requirement. (2) `.gitignore` and `.prettierignore` appends had merged with their last lines, so `.tmp/` and `.vitest/` were not ignored and six Vitest failure screenshots had been committed; they are removed from the index and both files end with newlines.

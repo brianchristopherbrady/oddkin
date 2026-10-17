@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tokens, CSS only — @mote/tokens without JavaScript</title>
+    <link rel="stylesheet" href="./generated/harbor.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Tokens, CSS only</h1>
+      <p class="lede">
+        A generated stylesheet and ordinary CSS. No script runs on this page; the root follows the
+        system colour scheme, and nested scopes are plain attributes.
+      </p>
+
+      <section class="panel" id="root-panel" aria-labelledby="root-heading">
+        <h2 id="root-heading">Root (system preference)</h2>
+        <p>Body text on the default surface. <a href="#root-panel">A link</a>.</p>
+        <button type="button" class="action">Primary action</button>
+      </section>
+
+      <section class="panel" id="dark-panel" data-mote-mode="dark" aria-labelledby="dark-heading">
+        <h2 id="dark-heading">Explicit dark mode</h2>
+        <p>Set with <code>data-mote-mode="dark"</code>.</p>
+        <button type="button" class="action">Primary action</button>
+
+        <div class="panel" id="dark-product-panel" data-mote-product="lighthouse">
+          <h3>Product inside dark mode</h3>
+          <p>The product changes brand references; mode-dependent roles re-resolve here.</p>
+          <button type="button" class="action">Lighthouse action</button>
+
+          <div class="panel" id="dark-product-light-panel" data-mote-mode="light">
+            <h4>Light mode inside the product</h4>
+            <button type="button" class="action">Lighthouse action</button>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="panel"
+        id="compact-panel"
+        data-mote-density="compact"
+        aria-labelledby="compact-heading"
+      >
+        <h2 id="compact-heading">Compact density</h2>
+        <p>Spacing and control sizes scale; text size does not.</p>
+        <button type="button" class="action">Compact action</button>
+      </section>
+    </main>
+  </body>
+</html>

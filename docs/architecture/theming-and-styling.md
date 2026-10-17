@@ -1,6 +1,6 @@
 # Theming, token pipeline, and styling
 
-Status: §1–§5 and §10 are **implemented** in `@mote/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Outputs other than CSS (§6), the CLI (§9), conditions, and profiles (§11.2–§11.3) remain **proposals**.
+Status: §1–§5 and §10 are **implemented** in `@mote/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Of the outputs (§6), CSS, typed `refs` (`token()`, `TokenName`), literal `values`, and inspection JSON are implemented, as is the CLI (§9: `init`, `build`, `check`; JSON, ESM JS, and type-stripped `.ts` configs). Sass and DTCG outputs, `inspect.computedToken`, conditions, and profiles (§11.2–§11.3) remain **proposals**.
 
 ## 1. Configuration model
 

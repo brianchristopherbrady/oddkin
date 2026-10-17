@@ -388,18 +388,18 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 - [ ] Unit policy: `rem` spacing/type, `px` borders/optical, unitless line height, intentional `em`; per-output unit validation
 - [x] Provisional brand palette + semantic roles sufficient for button/input/card/side-nav; explicit roles separate from generated ramps
 - [x] CSS emit: `:root` + `data-mote-theme|mode|product|density` scopes, alias-closure re-declaration, explicit vs system mode, nested combinations
-- [ ] `mote-tokens init|build|check`; JSON/JS loading; documented `.ts` path; browser generation independent of Node I/O
+- [x] `mote-tokens init|build|check`; JSON/JS loading; documented `.ts` path; browser generation independent of Node I/O
 - [x] Token categories with allowed-reference validation; initial layout roles and navigation component roles
 - [ ] Named `conditions` → literal queries; `@mote/tokens/conditions`; diagnostics
 - [ ] `profiles` → `[data-mote-profile~=…]` rules with alias closure; composition/precedence; overlap warnings; target-size minimum check
-- [ ] Generator runs in a Web Worker unchanged (prerequisite for live Theme Studio editing)
+- [x] Generator runs in a Web Worker unchanged (prerequisite for live Theme Studio editing)
 - [ ] Verify stable spacing names/count semantics, source-unit rounding, canonical serialization, root-size independence, scope-axis precedence, alias closure, and bounded emitted-rule growth. Theme-mode first paint works in the CSS-only fixture.
 - [ ] Define how changed condition thresholds invalidate generated query CSS; do not imply that changing an unrelated custom property rewrites a literal query. Link the side-nav preview to this contract.
 - [ ] `examples/tokens-css-only/`: HTML + `<link>` + own CSS, **no script**; Playwright verifies computed styles, nested aliases, dark mode, a nested profile
 
 **Verification**
 
-- [ ] `{ brand: { primary } }` alone → complete theme, byte-identical across runs and between Node and browser/Worker
+- [x] `{ brand: { primary } }` alone → complete theme, byte-identical across runs and between Node and browser/Worker
 - [x] Multiples (`0.25rem` × 1, 2, 3, 4.5, 9) → `0.25rem, 0.5rem, 0.75rem, 1.125rem, 2.25rem`
 - [x] Ratio (`0.75rem`, 1.5, 2/2) → `0.3333rem, 0.5rem, 0.75rem, 1.125rem, 1.6875rem`
 - [x] Invalid configs → expected codes and paths
@@ -456,7 +456,7 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 
 ### M4 — First interoperable components and validated metadata
 
-- [ ] `@mote/tokens/refs` and `@mote/tokens/values` — DOM-free, registration-free
+- [x] `@mote/tokens/refs` and `@mote/tokens/values` — DOM-free, registration-free
 - [ ] `mote-button`: native semantics, appearance/size/border/radius/loading/disabled/full-width; declared preview roles (`primaryAction`, `secondaryAction`)
 - [ ] `mote-input`: form-associated; value/default; label/description/error; reset/restore; disabled fieldsets; validation; focus; `value`/`input` sync pair; preview role `textInput`
 - [ ] `mote-card`: surface semantics (sectioning only when headed), padding/border/radius/elevation options backed by roles; header/body/footer slots; preview role `surface`
@@ -923,10 +923,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M3: `@mote/core/template` (lexer with case-preserved attribute names, cached preparation, child/attribute/boolean/property/event parts, readable bindings as commit-phase effects, `when`/`match`/keyed `repeat` with `moveBefore`, SVG, sink and URL rules, Trusted Types policy), `@mote/core/styles` (trusted `css`, per-document shared sheets, nonce fallback), `@mote/core/element` (`MoteElement.with()`/`prop.*`, lifecycle hooks, reflection, typed events, custom states, `define()`); all core entries import without a DOM; `examples/core-counter` under strict CSP + Trusted Types; `with()` analyzability probe on TypeScript 7's unstable API; ADRs 0003 and 0008 accepted | 147 browser tests (49 × 3 engines) + 90 Node tests; 6 e2e; full pipeline passes |
 | 2026-10-17 | M3: attribute-directive protocol; `helpers/class-map`, `style-map` (CSSOM, CSP-safe), `ref`, `live` (current-value comparison, IME, caret); event listener options; light-DOM styles shared per root with reference counting; `css` accepts constrained `var()` references | 192 browser tests (64 × 3 engines) + 93 Node tests; 6 e2e; full pipeline passes |
 | 2026-10-17 | M2: `@mote/tokens` `./theme` (`ThemeConfig`, `defineTheme`), `./generate` (diagnostics, spacing strategies, OKLCH ramps with chroma-bisection gamut mapping, contrast-selected roles valid for every product, token graph with tier/cycle/reference validation, product and density scopes with alias closure, mode switching by inherited space toggles, CSS emit), `./schema.json`; provisional `mote-default` preset with button/input/card/side-nav roles | 127 Node + 231 browser tests; byte-identical output in Node and three engines; full pipeline passes |
+| 2026-10-17 | M2: `@mote/tokens/refs` (`token()`, `TokenName`), `./values`, inspection JSON, `./css/default.css`, `./node` and the `mote-tokens` CLI (`init`/`build`/`check`; JSON, JS, `.ts` configs); Worker generation; script-free `examples/tokens-css-only` built by the CLI | 138 Node + 234 browser tests; 12 e2e; installed CLI verified from tarball; full pipeline passes |
 
 ## 11. Continuation
 
-**Next step:** continue M2 — script-free `examples/tokens-css-only/` (first paint, emulated system mode, nested scopes), Worker generation, `mote-tokens init|build|check` with Node I/O, typed `refs`/`values`, conditions and profiles; then finish M3 (`@mote/core/layout`, `collections`, `model`, the analyzer package with its TypeScript front-end decision per ADR 0018, minified size/startup/memory measurements). M4 can start once tokens are consumable by CSS and `token()`.
+**Next step:** finish M2 — named `conditions` (literal queries, `@mote/tokens/conditions`, unit diagnostics) and `profiles` (`data-mote-profile` rules with alias closure, left-to-right composition, overlap warnings, target-size checks), added to the CSS-only example; per-output unit policy. Then finish M3 (`@mote/core/layout`, `collections`, `model`, the analyzer with its TypeScript front-end decision per ADR 0018, minified size/startup/memory measurements). M4 can begin in parallel now that `token()` and the default CSS ship.
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 

@@ -1,0 +1,9 @@
+{
+  "$schema": "../../packages/tokens/schema/theme-config.v1.schema.json",
+  "name": "harbor",
+  "brand": { "primary": "#0f766e" },
+  "products": {
+    "lighthouse": { "brand": { "primary": "#c2410c" } }
+  },
+  "density": { "compact": { "scale": 0.75 } }
+}

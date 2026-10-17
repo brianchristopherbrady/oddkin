@@ -3,6 +3,7 @@
   "references": [
     { "path": "packages/core" },
     { "path": "packages/tokens" },
+    { "path": "packages/tokens/tsconfig.node.json" },
     { "path": "packages/state" },
     { "path": "packages/app" },
     { "path": "packages/components" },

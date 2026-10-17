@@ -124,12 +124,17 @@ export function validateGraph(tokens: TokenMap, diagnostics: DiagnosticList): vo
     for (const ref of references(token.value)) {
       const target = tokens.get(ref);
       if (!target) {
-        const suggestion = closest(ref, tokens.keys());
+        const near = closest(ref, tokens.keys());
+        const suggestion = ref.startsWith('space.')
+          ? `Custom spacing must define every step the preset's roles use (xs, sm, md, lg), or override the roles that reference "${ref}".`
+          : near
+            ? `Did you mean "{${near}}"?`
+            : undefined;
         diagnostics.error(
           'alias.missing',
           path,
           `"${token.name}" references unknown token "${ref}".`,
-          suggestion ? `Did you mean "{${suggestion}}"?` : undefined,
+          suggestion,
         );
       } else if (TIER[target.category] > TIER[token.category]) {
         diagnostics.error(
