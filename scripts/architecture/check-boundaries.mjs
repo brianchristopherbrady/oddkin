@@ -280,6 +280,19 @@ export async function checkBoundaries(root, options = {}) {
     });
   }
 
+  const examplesDir = join(root, 'examples');
+  const exampleSources = (await exists(examplesDir))
+    ? (await readdir(examplesDir, { withFileTypes: true }))
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => join(examplesDir, entry.name, 'src'))
+    : [];
+  await checkBarrels(
+    [...packages.map((pkg) => join(pkg.dir, 'src')), ...exampleSources],
+    report,
+    rel,
+  );
+  for (const pkg of packages) await checkSideEffects(pkg, report, rel);
+
   if (options.artifacts) await checkArtifacts(packages, byName, config, report, rel);
   return {
     diagnostics,
@@ -407,6 +420,125 @@ async function checkDomFree(pkg, rule, report, rel) {
         },
       );
     }
+  }
+}
+
+// Registration entries: `*.define.ts` by name; a `define.ts` or a module under `define/` when it
+// registers at module scope (a top-level define()/customElements.define() call or bare imports).
+// The latter check keeps the implementation of `define()` itself from matching.
+const DEFINE_ENTRY = /(?:^|[\\/])[^\\/]+\.define\.[cm]?[jt]sx?$/;
+const DEFINE_CANDIDATE = /(?:^|[\\/])define\.[cm]?[jt]sx?$|[\\/]define[\\/]/;
+const REGISTERS = /^(?:\s*(?:customElements\.)?define\(|import\s+['"])/m;
+async function isRegistrationModule(path) {
+  if (DEFINE_ENTRY.test(path)) return true;
+  return DEFINE_CANDIDATE.test(path) && REGISTERS.test(await readFile(path, 'utf8'));
+}
+// Package registration subpaths, e.g. `@mote/components/define/button`.
+const REGISTRATION_SPECIFIER = /^(?:@[^/]+\/)?[^/.@][^/]*\/define(?:\/|$)/;
+
+async function resolveSource(spec, from) {
+  const target = resolve(dirname(from), spec);
+  const stem = target.replace(/\.[cm]?[jt]sx?$/, '');
+  const candidates = [
+    target,
+    ...SOURCE_EXTENSIONS.map((ext) => stem + ext),
+    ...SOURCE_EXTENSIONS.map((ext) => join(target, `index${ext}`)),
+  ];
+  for (const candidate of candidates) if (await exists(candidate)) return candidate;
+  return undefined;
+}
+
+/**
+ * Ordinary barrels (`index.*`) must not reach a registration entry through any chain of
+ * relative imports, nor import a package's `define` subpath: importing a class or definition
+ * never registers an element (ADR 0036, IMPLEMENTATION_PLAN.md §3.3).
+ */
+async function checkBarrels(sourceDirs, report, rel) {
+  for (const dir of sourceDirs) {
+    const files = await listFiles(dir, SOURCE_EXTENSIONS);
+    for (const barrel of files.filter((file) => /(?:^|[\\/])index\.[cm]?[jt]sx?$/.test(file))) {
+      const seen = new Set([barrel]);
+      const queue = [barrel];
+      while (queue.length) {
+        const file = /** @type {string} */ (queue.shift());
+        const specifiers = await lexImports(await readFile(file, 'utf8'), file);
+        for (const spec of specifiers) {
+          if (!isRelative(spec)) {
+            if (REGISTRATION_SPECIFIER.test(spec))
+              report(
+                'boundary.registration.barrel',
+                `${rel(barrel)} imports the registration entry "${spec}"; importing a barrel must not register elements.`,
+                {
+                  file: rel(file),
+                  fix: 'Import registration entries only from application entry points or other registration entries.',
+                },
+              );
+            continue;
+          }
+          const target = await resolveSource(spec, file);
+          if (!target || seen.has(target)) continue;
+          seen.add(target);
+          if (await isRegistrationModule(target)) {
+            report(
+              'boundary.registration.barrel',
+              `${rel(barrel)} reaches the registration entry ${rel(target)}; importing a barrel must not register elements.`,
+              {
+                file: rel(file),
+                fix: 'Import registration entries only from application entry points or other registration entries.',
+              },
+            );
+            continue;
+          }
+          queue.push(target);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Bundlers drop modules of packages marked `"sideEffects": false` when nothing is imported from
+ * them, which would silently skip registration. Packages with registration entries must declare
+ * them as side-effectful (a `sideEffects` list that matches each built entry).
+ */
+async function checkSideEffects(pkg, report, rel) {
+  const entries = [];
+  for (const file of await listFiles(join(pkg.dir, 'src'), SOURCE_EXTENSIONS))
+    if (await isRegistrationModule(file)) entries.push(file);
+  if (!entries.length) return;
+  const declared = pkg.manifest.sideEffects;
+  // src/a/b.define.ts → dist/a/b.define.js (the built module the bundler sees).
+  const built = (file) =>
+    'dist/' +
+    rel(file)
+      .slice(rel(join(pkg.dir, 'src')).length + 1)
+      .replace(/\.[cm]?tsx?$/, '.js');
+  // Minimal glob support for "sideEffects": `**/` (any directories) and `*` (within a segment).
+  const escape = (text) => text.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+  const globToRegExp = (glob) =>
+    new RegExp(
+      '^' +
+        glob
+          .replace(/^\.\//, '')
+          .split('**/')
+          .map((part) => part.split('*').map(escape).join('[^/]*'))
+          .join('(?:.*/)?') +
+        '$',
+    );
+  const patterns = Array.isArray(declared) ? declared.map(globToRegExp) : [];
+  for (const file of entries) {
+    const target = built(file);
+    const covered =
+      declared === true || declared === undefined || patterns.some((re) => re.test(target));
+    if (!covered)
+      report(
+        'boundary.registration.sideEffects',
+        `${pkg.name} marks ${target} as side-effect free, but it registers elements.`,
+        {
+          file: rel(join(pkg.dir, 'package.json')),
+          fix: 'List registration entries in "sideEffects", e.g. ["./dist/**/*.define.js", "./dist/define.js"].',
+        },
+      );
   }
 }
 

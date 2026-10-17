@@ -41,6 +41,72 @@ afterEach(async () => {
 });
 
 describe('checkBoundaries', () => {
+  describe('registration entries and barrels', () => {
+    const componentFiles = {
+      'packages/core/src/card/card.ts': 'export class Card {}\n',
+      'packages/core/src/card/card.definition.ts':
+        "import { Card } from './card.js';\nexport const cardDefinition = { element: Card };\n",
+      'packages/core/src/card/card.define.ts':
+        "import { cardDefinition } from './card.definition.js';\ndeclare const define: (d: unknown) => void;\ndefine(cardDefinition);\n",
+    };
+
+    it('accepts side-effect-free barrels, the define() implementation, and app entries', async () => {
+      const root = await workspace({
+        ...componentFiles,
+        'packages/core/src/card/index.ts':
+          "export { Card } from './card.js';\nexport { cardDefinition } from './card.definition.js';\n",
+        'packages/core/src/element/define.ts': 'export function define(): void {}\n',
+        'packages/core/src/index.ts':
+          "export * from './card/index.js';\nexport { define } from './element/define.js';\n",
+        'examples/demo/src/define.ts': "import '../../../packages/core/src/card/card.define.js';\n",
+        'examples/demo/src/main.ts': "import './define.js';\n",
+      });
+      expect(await codes(root)).toEqual([]);
+    });
+
+    it('rejects a barrel that reaches a *.define module through other modules', async () => {
+      const root = await workspace({
+        ...componentFiles,
+        'packages/core/src/card/register.ts': "import './card.define.js';\nexport {};\n",
+        'packages/core/src/card/index.ts':
+          "export { Card } from './card.js';\nexport * from './register.js';\n",
+      });
+      const { diagnostics } = await checkBoundaries(root);
+      expect(diagnostics.map((d) => [d.code, d.file])).toEqual([
+        ['boundary.registration.barrel', 'packages/core/src/card/register.ts'],
+      ]);
+      expect(diagnostics[0]?.message).toContain('packages/core/src/card/card.define.ts');
+    });
+
+    it('requires registration entries to be declared side-effectful', async () => {
+      const files = (sideEffects: unknown) => ({
+        ...componentFiles,
+        'packages/core/package.json': manifest('@mote/core', { sideEffects }),
+      });
+      expect(await codes(await workspace(files(false)))).toEqual([
+        'boundary.registration.sideEffects',
+      ]);
+      expect(await codes(await workspace(files(['./dist/other.js'])))).toEqual([
+        'boundary.registration.sideEffects',
+      ]);
+      expect(await codes(await workspace(files(['./dist/**/*.define.js'])))).toEqual([]);
+      expect(await codes(await workspace(files(['dist/card/card.define.js'])))).toEqual([]);
+    });
+
+    it('rejects example barrels importing a define aggregator or a package define subpath', async () => {
+      const root = await workspace({
+        'examples/demo/src/define.ts': "import './card.define.js';\n",
+        'examples/demo/src/card.define.ts': 'customElements.define("x-card", class {});\n',
+        'examples/demo/src/index.ts': "import './define.js';\nexport {};\n",
+        'examples/other/src/index.ts': "import '@acme/ui/define/button';\nexport {};\n",
+      });
+      expect(await codes(root)).toEqual([
+        'boundary.registration.barrel',
+        'boundary.registration.barrel',
+      ]);
+    });
+  });
+
   it('accepts an allowed dependency through a public export', async () => {
     const root = await workspace({
       'packages/state/package.json': manifest('@mote/state', {

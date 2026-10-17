@@ -24,7 +24,7 @@ Repository components use one folder per component ([IMPLEMENTATION_PLAN.md](./I
 
 - Import sibling files directly, never through the folder's own `index.ts`.
 - External templates import their host class with `import type`.
-- Never import a `*.define.ts` file from an ordinary barrel.
+- Never import a `*.define.ts` file from an ordinary barrel; `npm run lint:boundaries` fails with `boundary.registration.barrel` if any `index.*` reaches one. Packages with registration entries list them in `"sideEffects"`.
 
 Recomposable components also have `name.structural.styles.ts` and a skin-free `foundation.ts` entry ([multi-product.md](./docs/architecture/multi-product.md) §4). Exporting a template or styles is a compatibility commitment; never export private helpers as customization API.
 

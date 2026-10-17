@@ -123,7 +123,7 @@ Component styles ship as pre-built JS modules; consumers need no CSS loader or S
 
 Recomposable components (multi-product.md §4, ADR 0033, planned) also have `card.structural.styles.ts` and a `foundation.ts` barrel reached through `./card/foundation`. That entry loads the behavior, template, and structural styles but no default visual styles. Installation dependencies and import graphs are documented separately: installing `@mote/components` does not mean a foundation consumer loads its default skins, theme generation, catalog, or tooling.
 
-Files inside a folder import siblings directly, never through their own `index.ts`. No ordinary barrel imports a `*.define.ts` module; the boundary check will enforce this once the convention lands.
+Files inside a folder import siblings directly, never through their own `index.ts`. No ordinary barrel reaches a registration entry. `npm run lint:boundaries` enforces it: from every `index.*` in package and example sources, it follows relative imports and fails with `boundary.registration.barrel` on a `*.define.*` module, a registering `define.*`/`define/` module, or a package `define` subpath. A package containing registration entries must list them in `"sideEffects"` (`boundary.registration.sideEffects`).
 
 ### `@mote/analyzer` (dev-only)
 `.` (Node API `analyze`, `compare`), `./schema/mote-metadata-v1.json`, proposed `./impact` (comparison snapshots, impact traversal, verification selection, `impact-report.v1`; [change-impact-and-verification.md](./change-impact-and-verification.md) §2), bin delegated through `mote analyze` and `mote impact`. Node only.

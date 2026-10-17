@@ -235,3 +235,10 @@ Command: `node research/benchmarks/run.mjs --samples 15` (results regenerated in
 | Migration acceptance | `npx vitest run tests/examples/core-counter-migration.browser.test.ts` | Pass — 4 tests × 3 engines: barrel registers nothing, `define.js` registers; a click writes only inside `<output>` and keeps `button`/`output` identity; tracked `label` update keeps `output`; `count-change` detail, `:state(positive)`, Escape reset; attributes, reflection, property-only `history`, one adopted sheet; `scopeStats()` unchanged after 10 reconnects |
 | Dependents | `npx vitest run packages/analyzer packages/workbench tests/examples tests/experiments` | Pass — 41 tests (types from emitted declarations, CSP hash, analyzability probe, Workbench page registry from the regenerated fixtures) |
 
+## 2026-10-17 — M4 registration-entry boundary checks
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Checker tests | `npx vitest run tests/architecture` | Pass — 15 tests (5 new): side-effect-free barrels, the `define()` implementation, and app entries accepted; a barrel reaching `card.define.ts` through another module rejected with the importing file; example barrels importing a registering `define.ts` or `@acme/ui/define/button` rejected; packages with registration entries and `"sideEffects": false` or a non-matching list rejected, matching globs accepted |
+| Deliberate violation | appended `import './define.js'` to `examples/core-counter/src/index.ts`, ran `node scripts/architecture/check-boundaries.mjs`, reverted | Fails as intended: `✖ [boundary.registration.barrel] examples/core-counter/src/index.ts reaches the registration entry examples/core-counter/src/define.ts …`; passes again after reverting |
+
