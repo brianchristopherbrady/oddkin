@@ -26,6 +26,8 @@ Repository components will use one folder per component ([IMPLEMENTATION_PLAN.md
 - External templates import their host class with `import type`.
 - Never import a `*.define.ts` file from an ordinary barrel.
 
+Recomposable components also have `name.structural.styles.ts` and a skin-free `foundation.ts` entry ([multi-product.md](./docs/architecture/multi-product.md) §4). Exporting a template or styles is a compatibility commitment; never export private helpers as customization API.
+
 Until the composition API lands, new code follows the existing colocated style. Intentionally colocated demonstrations (e.g. `examples/binding-rule`) and focused inline test fixtures stay colocated so both authoring paths remain exercised.
 
 ## Agent kit and guidance (planned)

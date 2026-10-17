@@ -132,6 +132,8 @@ export const compactSideNav = sideNav.extend({
 ```
 `extend` returns a new immutable recipe. Region declarations merge per property (later wins); unspecified regions, variants, and conditions are inherited. The original recipe's `styles` object is never mutated, so other components sharing it are unaffected.
 
+Product visual recipes use the same `extend()` mechanism. A recipe's region layout is structural and belongs with a component's structural styles; product-specific spacing and presentation are visual ([multi-product.md](./multi-product.md) §4, §6).
+
 ### Diagnostics
 | Code | When |
 | --- | --- |

@@ -102,6 +102,19 @@ These extend the same model; there is no separate agent catalog ([agent-tooling.
 
 Absent information remains unknown; nothing here is inferred from names or types.
 
+### 3.2 Multi-product extensions (planned, M4 prototype; reviewed at M8)
+
+Additive facts from [multi-product.md](./multi-product.md) §10:
+- foundation and derived-definition relationships (`extends`, recognized statically from `compose()` spreads or the chosen lineage form);
+- behavior, template, structural-style, and visual-style source references;
+- component-family mappings (role → definition) and composite dependencies;
+- anatomy and customization contracts (supported levels);
+- registration entries;
+- foundation compatibility ranges;
+- authored guidance and verification evidence bound to the implementation and configuration tested.
+
+Derived definitions get their own component ids. Standard CEM stays interoperable; the rest is enrichment. Template factories and configuration expressions are never executed; dynamic cases report diagnostics.
+
 ## 4. Outputs
 
 | # | Output | Location | Consumers |

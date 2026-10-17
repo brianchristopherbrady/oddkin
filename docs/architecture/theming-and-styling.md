@@ -245,6 +245,8 @@ Theme Studio is part of `@mote/workbench`, so any library documented with Workbe
 
 **Products** defined in `products:` (§1) are the local product source for Workbench's optional Products and modes page. External products may come from installed packages or versioned manifests that follow the same product schema ([workbench-pages.md §9](./workbench-pages.md)). Product identity stays distinct from mode, theme, density, and profiles.
 
+**Multi-product (planned, [multi-product.md](./multi-product.md), ADR 0033).** Any number of products uses the existing `products:` map and `data-mote-product` scopes; a single product needs no product configuration. A design language maps onto a theme, so no new scope axis or runtime provider is required. Resolving one product never mutates presets or another product's output. Current limits stay explicit until M9 closes them: product scopes change brand inputs only, and one theme per document is supported. Generated CSS growth is measured for 1, 2, 3, and 10 products. Scope boundaries for slotted content, overlays, relocated components, and adopted documents are specified in multi-product.md §9.
+
 ## 9. Configuration tooling
 
 - CLI: `mote-tokens init`, `build <config> --out <dir> --format css,json,scss,ts`, `check <config>`. Theme Studio calls the same pure generator.

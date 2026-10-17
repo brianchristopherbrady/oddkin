@@ -21,5 +21,7 @@ A versioned product schema and diagnostics for unavailable sources.
 ## Evidence
 Reference audit (Products and modes page). Pending: M9 cross-repository fixture.
 
+Extended by [0033](./0033-multi-product-foundations.md): any number of products, product identity independent of design language and component family, shared foundations with product-specific implementations, and product-scoped Workbench and agent tooling. The rules above are unchanged.
+
 ## Revisit when
 Products need runtime switching from live remote sources.

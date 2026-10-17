@@ -72,6 +72,8 @@ Requirements before acceptance (ADR in M4):
 - The size budgets in ADR 0031 still pass.
 - Names are final only after the clash with the planned `@mote/components/compose` schema renderer is resolved.
 
+**Recomposition (proposal, [multi-product.md](./multi-product.md) §5, ADR 0033).** `compose({ ...cardDefinition, name, element, styles })` creates a new frozen definition with its own identity and a traceable link to its foundation; it never mutates the source definition or class and never copies registration state or caches. An element resolves its definition by exact constructor, not through inheritance, so behavior classes stay safely subclassable. Definition `styles` are a complete ordered list (structural first by convention) and a definition `template` takes precedence over `render()`; sheets remain shared per document. Existing registration rules apply (`registry.collision`, `registry.constructorReused`), plus a proposed `registry.definitionConflict`.
+
 ### 1.2 Interpretable public APIs (design rule)
 
 Public APIs are designed to be understood from their declarations by people and coding assistants alike ([agent-tooling.md](./agent-tooling.md)):

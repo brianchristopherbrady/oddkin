@@ -45,3 +45,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0030](./0030-workbench-remount-policy.md) | Workbench preview remount policy | Accepted | Workbench |
 | [0031](./0031-dev-prod-builds-and-size-budget.md) | Development/production builds and core size budget | Accepted | Core |
 | [0032](./0032-generated-agent-kits.md) | Generated agent kits and project context | Proposed | Agent |
+| [0033](./0033-multi-product-foundations.md) | Multi-product foundations, recomposition, and product scale | Proposed | Components / Theming / Tooling |

@@ -120,6 +120,8 @@ Component styles ship as pre-built JS modules; consumers need no CSS loader or S
 | `src/card/card.define.ts` | `define(cardDefinition)` — the only side-effectful file | `./define/card`, `./define` |
 | `src/card/index.ts` | Side-effect-free public exports (`Card`, `cardDefinition`, public types) | `./card` |
 
+Recomposable components (multi-product.md §4, ADR 0033, planned) also have `card.structural.styles.ts` and a `foundation.ts` barrel reached through `./card/foundation`. That entry loads the behavior, template, and structural styles but no default visual styles. Installation dependencies and import graphs are documented separately: installing `@mote/components` does not mean a foundation consumer loads its default skins, theme generation, catalog, or tooling.
+
 Files inside a folder import siblings directly, never through their own `index.ts`. No ordinary barrel imports a `*.define.ts` module; the boundary check will enforce this once the convention lands.
 
 ### `@mote/analyzer` (dev-only)

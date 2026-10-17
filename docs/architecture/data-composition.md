@@ -127,6 +127,9 @@ Update work, allocations, and retained memory for insert/remove/reorder/replace 
 
 ## 4. Hybrid composition and customization
 
+This ladder applies within levels 2 and 4 of the multi-product customization ladder ([multi-product.md](./multi-product.md) §6). A data-driven composite that renders child components (e.g. editable-list rows) selects product-specific children through the component-family mechanism in multi-product.md §8, not through tag-name substitution.
+
+
 ### Region sources
 Each content region declares exactly one authoritative source:
 

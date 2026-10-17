@@ -191,6 +191,7 @@ export default defineWorkbenchConfig({
 - **Sources**: local workspace package, installed package, or an explicitly configured versioned manifest/config file (local path or URL). Other product repositories need not be checked out. Remote manifests are fetched at **build time** and snapshotted into the static build; published apps make no runtime cross-origin fetches. Unavailable, invalid, or incompatible sources produce diagnostics and are omitted, not guessed.
 - **Workspace discovery** (Node): inspects workspace declarations, dependency relationships, and explicit Mote metadata (`mote.product` in a package's manifest/enrichment, or a product entry in theme config) and reports **suggested** product mappings with reasons. Tooling, documentation apps, tests, examples, and internal packages are excluded by default; no package becomes a product without explicit configuration. Discovery never publishes a page.
 - Reuses existing generation, scope, and preview contracts; works in static deployment.
+- **Any number of products** (planned, [multi-product.md](./multi-product.md) §3, §10): no fixed comparison slots or product-count assumptions. The product picker is searchable, and the user chooses which products to compare. Only chosen previews mount, and implementation assets load per product on demand. The page remains absent unless enabled, whether there is one product or many. Products may name their design language, component family, and foundation compatibility (additive `product.v1` fields, M9).
 
 ## 10. Content layers and customization
 

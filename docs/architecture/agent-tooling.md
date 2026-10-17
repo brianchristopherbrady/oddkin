@@ -135,6 +135,7 @@ agent-kit/
 - **Discovery.** Docs static builds may publish clean Markdown pages and an [`llms.txt`](https://llmstxt.org/) index built from the kit. Loading behavior depends on the client: publishing a file does not mean every assistant reads it. The docs list which clients were tested and how each loads the kit.
 - **Small entry guide.** The entry guide has a recorded size budget. Operations return targeted references instead of requiring the whole library documentation in every context window.
 - **Mote uses its own kit.** `@mote/components` publishes a kit, and the Mote repository's own agent guidance comes from the same generator.
+- **Products (planned, [multi-product.md](./multi-product.md) §10).** Lookups and references take an optional `product`. Results cover only that product's family, tokens, styles, templates, and dependencies, and state which foundation each component uses, which customization level fits a request, and which contracts and checks must be preserved. Per-product references are produced on demand, never for every product × mode × density combination.
 
 ## 6. Operations
 

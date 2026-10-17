@@ -21,6 +21,7 @@ The aim is to make correct, maintainable components easy to write and easy to do
 | [docs/architecture/workbench-pages.md](./docs/architecture/workbench-pages.md) | Workbench information architecture: page registry, shell, Foundations, Components (docs + interactive example), Theme Studio destination, optional Products and modes, content layers |
 | [docs/reference/design-system-lab-audit.md](./docs/reference/design-system-lab-audit.md) | Rendered-browser audit of the reference application's structure and presentation |
 | [docs/architecture/agent-tooling.md](./docs/architecture/agent-tooling.md) | Optional dev-only `@mote/agent`: generated agent kits, project context and freshness, shared contracts, operations (CLI/MCP), diagnostics, preview feedback, evaluation |
+| [docs/architecture/multi-product.md](./docs/architecture/multi-product.md) | Multi-product design systems: product identity and scale, layered component exports, recomposition, customization ladder, anatomy contracts, component families, distribution, scope isolation, verification |
 | [docs/research/synthesis.md](./docs/research/synthesis.md) | Ecosystem research, conclusions, differentiation thesis, legacy source register plus direct research links in §12 |
 
 All API examples in these documents are proposed contracts, not existing exports.
@@ -180,6 +181,7 @@ define(cardDefinition);
 - `index.ts` exposes the supported public API and public types. Templates and styles are exported from it only when they are intentionally supported customization APIs.
 - Files inside a component import their siblings directly, never through their own `index.ts`, which can create cycles. External templates use `import type` for their host class where appropriate.
 - Package entries map onto the folders: `@mote/components/card` → `card/index.ts`; `@mote/components/define/card` → `card/card.define.ts`. Ordinary barrels never import a `*.define.ts` file.
+- Recomposable components (§5g) add `card.structural.styles.ts` and a skin-free `foundation.ts` barrel reached through `@mote/components/card/foundation`; exporting a template or styles is a deliberate compatibility commitment.
 
 ## 4. State, resources, applications (summary)
 
@@ -347,6 +349,26 @@ Research: [Intl / ECMA-402](https://tc39.es/ecma402/), [HTML language and direct
 
 ---
 
+## 5g. Multi-product design systems (summary)
+
+Detailed design: [multi-product.md](./docs/architecture/multi-product.md); decision: [ADR 0033](./docs/architecture/decisions/0033-multi-product-foundations.md) (extends ADR 0026).
+
+**Contract:** Mote supports shared interaction foundations, product-specific visual implementations, and scoped token themes. Teams reuse supported behavior and templates through public exports; product implementations keep documented interaction contracts and pass shared verification fixtures.
+
+- **Identity.** Product identity is independent of repository, component family, design language, theme, mode, density, and profile. Two products may share a design language; one product may support several themes. Design languages map onto existing theme scopes and product values onto existing product scopes; no new runtime provider or CSS scope axis is mandatory.
+- **Any number of products.** One, two, three, ten, or more products use one model keyed by stable ids: no hardcoded counts, fixed comparison slots, or product-specific schema fields. A single product needs no product configuration or selection ceremony. Shared presets, token contracts, families, and foundations are referenced, not duplicated; products override only what differs; changing one product never mutates shared presets or another product's resolved output. Products may live in one repository, several workspaces, separate repositories, or installed packages. Two-product fixtures are representative, not a limit.
+- **Layers.** Recomposable components export behavior, template (anatomy), documented structural styles, default visual styles, and a composed definition; a `foundation` entry loads no default skin. Mote's own components are built from the same public pieces. Import graphs are documented separately from installation dependencies.
+- **Recomposition.** `compose()` reuses an existing definition to create a new frozen definition with its own identity and a traceable foundation link, without mutating the source or copying registration state; elements resolve configuration by exact constructor. One style-ordering policy; sheets stay shared per document. Existing registration rules hold (`registry.collision`, `registry.constructorReused`) plus `registry.definitionConflict`; scoped registries are never assumed.
+- **Customization ladder:** theme values → component variables/parts/slots/options → product styles composed with structural styles → alternative template satisfying an anatomy contract → reused or extended behavior. Levels 1–2 update instances in place; levels 3–5 select a different implementation and follow the structural replacement rules.
+- **Anatomy contracts** for components that support alternative templates; alternative templates and styles are verified against shared interaction fixtures, and foundation verification never certifies downstream skins.
+- **Component families:** a composite renders the product's children through one explicit, analyzable mechanism connecting named roles, selected definitions, rendered references, registration, and compatibility — chosen by prototype, never tag guessing or global substitution.
+- **Distribution and scopes:** explicit package/config/manifest references; foundation compatibility ranges; scope behavior specified for Shadow DOM, slotted content, overlays, relocation, and adoption; resets and fonts opt-in; CSS growth measured, not emitted for every combination.
+- **Tooling:** metadata records foundations, derived definitions, layered sources, families, anatomy, and compatibility; Workbench compares chosen products with searchable selection and on-demand loading (Products and modes stays optional and absent by default); agent lookups are scoped to a product and generated on demand.
+
+Research: R26, R42–R46 in [synthesis.md](./docs/research/synthesis.md) and §12.1.
+
+---
+
 ## 6. Milestones
 
 | # | Milestone | Depends on |
@@ -365,7 +387,7 @@ Research: [Intl / ECMA-402](https://tc39.es/ecma402/), [HTML language and direct
 | M11 | Docs IA, guides, Workbench completion, migrations, onboarding, **`@mote/agent`** | M7, M9, M10 |
 | M12 | Packed consumers, release verification, deployment readiness | all |
 
-M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixtures start in M3. Metadata contracts are defined in M0, prototyped by the analyzer in M3, validated on four real components in M4–M5, and receive an initial compatibility checkpoint at M8. Additive M9–M11 capabilities must be validated before the final release freeze at M12; material schema changes require an explicit version/migration decision. Agent-kit metadata and diagnostic contracts are drafted with M4's metadata validation; local project context and generated references are piloted on the M4–M5 slice; agent-facing contracts are reviewed at M8; `@mote/agent` operations, packaging, and the MCP adapter can start once analyzer outputs exist (after M5) but ship in M11; packed verification and the evaluation complete before the M12 freeze. **Do not expand the catalog, recipe presets, data composition, or Workbench features beyond the vertical slices before M8 resolves foundation problems.**
+M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixtures start in M3. Metadata contracts are defined in M0, prototyped by the analyzer in M3, validated on four real components in M4–M5, and receive an initial compatibility checkpoint at M8. Additive M9–M11 capabilities must be validated before the final release freeze at M12; material schema changes require an explicit version/migration decision. Agent-kit metadata and diagnostic contracts are drafted with M4's metadata validation; local project context and generated references are piloted on the M4–M5 slice; agent-facing contracts are reviewed at M8; `@mote/agent` operations, packaging, and the MCP adapter can start once analyzer outputs exist (after M5) but ship in M11; packed verification and the evaluation complete before the M12 freeze. Multi-product customization levels are prototyped on M4 components before catalog expansion, reviewed at M8, and completed for tokens and Workbench in M9 and per component in M10. **Do not expand the catalog, recipe presets, data composition, or Workbench features beyond the vertical slices before M8 resolves foundation problems.**
 
 ---
 
@@ -523,6 +545,16 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
   8. Verify that no ordinary barrel accidentally imports a registration entry.
 - [ ] Migration acceptance, per migrated component (before/after comparison in three engines): the same properties, attributes, events, slots, parts, and styling behavior; the same reactive tracking (render counts and DOM writes), lifecycle ordering, `Scope` cleanup (`scopeStats()` baseline), and DOM identity; side-effect-free ordinary imports and explicit registration; equivalent analyzer metadata, public exports, emitted declarations, and packed-consumer behavior. Existing evidence (e.g. `e2e/core-counter.spec.ts`, its CEM fixture, and its strict-CSP check) must keep passing unchanged or be updated with a recorded reason.
 - [ ] Documentation for the convention: core-contracts.md (composition API), packages.md (folder → entry mapping), CONTRIBUTING.md (repository component layout), layout-recipes.md and data-composition.md examples, and agent-tooling.md (`scaffold` output). Docs state that colocated authoring remains supported for consumers.
+
+**Multi-product prototype** ([multi-product.md](./docs/architecture/multi-product.md), ADR 0033; prototype the customization levels before catalog expansion)
+
+- [ ] Include recomposition in the composition API ADR: `compose()` from an existing definition creates a new frozen definition with its own identity and traceable foundation link (self-referencing `source` field vs explicit `extend()` helper decided by prototype); runtime state in private maps; resolution by exact constructor; style-ordering and `template`-vs-`render()` policy; `registry.definitionConflict`
+- [ ] Layered exports for `mote-card` and `mote-button` (behavior, template + typed anatomy, documented structural styles, default visual styles, definition) plus `./card/foundation` and `./button/foundation` entries that load no default skin; import-graph tests prove it
+- [ ] Customization levels 1–3 demonstrated on both: two products sharing definitions with different scoped tokens; a second visual implementation (`studio-card`, `studio-button`) composed from the shared foundation; both implementations in one document with distinct names and constructors; reusing a constructor or conflicting definition reports the documented diagnostic
+- [ ] Prototype the product-aware composite candidates (element-reference parts, child directive, family-specific templates) on the editable list with product-specific input rows; record CSP/Trusted Types, analyzability, typing, size, and identity/focus results; decision at M8
+- [ ] Token fixtures with 1, 2, 3, and 10 products: deterministic output, configuration isolation (frozen inputs; other products byte-identical after one changes), single-product setup without product configuration, and generated CSS bytes/rules per product recorded
+- [ ] Shared interaction fixtures run unchanged against default and derived definitions in three engines: properties, methods, events, slots, keyboard, focus, disabled/loading, form semantics; per-instance sheet reuse and no mutation of shared sheets
+- [ ] Analyzer emits distinct ids and `extends` links for derived definitions, layered style sources, and family mappings without executing template factories; equal metadata accuracy for default and derived definitions
 
 - [ ] `mote-button`: native semantics, appearance/size/border/radius/loading/disabled/full-width; declared preview roles (`primaryAction`, `secondaryAction`)
 - [ ] `mote-input`: form-associated; value/default; label/description/error; reset/restore; disabled fieldsets; validation; focus; `value`/`input` sync pair; preview role `textInput`
@@ -683,6 +715,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] Recipe review from side-nav; conditions in all engines at baseline syntax
 - [ ] Data composition review; decide `props()`; composition-schema go/no-go (ADR)
 - [ ] **Metadata and tooling review:** analyzer coverage of real components, dynamic-definition diagnostics, provenance accuracy, CEM interoperability, Workbench control-matrix results, preview isolation, Theme Studio live-edit behavior, example reuse in tests
+- [ ] **Multi-product review:** recomposition semantics, layered exports and foundation entries, style-ordering policy, anatomy contracts, the composite dependency mechanism decision (ADR), metadata fields, and 1/2/3/10-product CSS growth; record candidate v1 contracts for the customization levels actually supported
 - [ ] **Agent-kit review:** agent-facing metadata fields, diagnostic envelope, project-context and kit schemas, freshness rules, and the pilot's references for the slice and the fixture library; record candidate v1 contracts alongside the metadata review (additive changes afterward follow ADR 0029)
 - [ ] 1,000-cycle lifetime instrumentation + retained memory (components, previews switching, Theme Studio edits)
 - [ ] Packed CSS-only, core-only, components-only, full-app consumers; optional and tooling code absent from actual import graphs
@@ -733,6 +766,10 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] When enabled: configurable placement; product definitions validated against the product schema; sources from local theme config, installed packages, or versioned manifests fetched and snapshotted at build time; diagnostics for unavailable/incompatible sources
 - [ ] Product comparison composed with mode/density/profile using the canonical generator and isolated previews; product identity kept distinct from mode, theme, density, profiles
 - [ ] Workspace discovery (`mote workbench products --discover`) reports suggestions with reasons; excludes tooling, docs apps, tests, examples, internal packages by default; never enables or publishes a page
+- [ ] Any number of products: searchable product selection, comparison of user-chosen products with only those previews mounted, per-product assets loaded on demand, deselected previews disposed; verified with 1-, 2-, 3-, and 10-product fixtures, including selection, comparison, loading, cleanup, and preview resource usage
+- [ ] Additive `product.v1` fields for design language, component family, and foundation compatibility ranges; `product.foundation.incompatible` diagnostics from installed or supplied artifacts without checking out other repositories
+- [ ] Token generator: product-specific semantic role overrides and several themes (design languages) per document, with nested-scope verification across shadow roots, slotted content, overlays/popovers, relocated components, and adopted documents; CSS growth re-measured for 1/2/3/10 products; no product × mode × density × profile emission
+- [ ] Shared and different design languages; shared and product-specific component families; independent and nested product/theme scopes; product-specific focus visibility, contrast, target size, direction, reduced motion, and forced colours where supported
 
 **Acceptance:** exported config and styles reproduce the preview in an independent consumer; SCSS consumer follows scoped themes; base-colour, spacing, sizing, and typography changes affect compatible components correctly; overrides and unrelated roles preserved; library components replace specimen roles with useful diagnostics; CSS-only adoption still needs no Mote JS; every supported foundation page renders from data with honest absence elsewhere; Products and modes is absent unless enabled and its source paths work in static builds.
 
@@ -748,9 +785,10 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] Form descriptions model consumed by `mote-field`/inputs
 - [ ] Composition schema (only if M8 go) in `@mote/components/compose`
 - [ ] Controllers extracted only from demonstrated shared needs
+- [ ] Declare each component's supported customization levels; recomposable components ship layered exports, a foundation entry, a typed anatomy contract, documented structural styles, and shared interaction fixtures; behavior controllers with explicit host requirements only where templates differ substantially and evidence justifies them
 - [ ] Extend analyzer and example coverage to each catalog component as it lands: authored design guidance (when appropriate, constraints, labelling and accessibility responsibilities, content relationships and companions, token roles and customization paths, recipes and responsive expectations) with validated references, and correct/incorrect example pairs for its common mistakes
 
-**Per-component definition of done:** typed runtime definition (statically analyzable) · analyzer-generated CEM + enrichment entry with provenance · defaults and allowed values · property/attribute/event-detail contracts · declared sync pairs · slots, parts, CSS variables, custom states, roles and tokens used · preview roles · recipe and container behavior · data model (if structured) · accessibility/keyboard/form guidance · known limitations · category, use-for/not-for, and property → CSS property → token mappings where determinable · `*.examples.ts` (default + key variants + presets + fixtures where needed) · Workbench detail page (documentation + interactive example + editable API table) renders with no gaps beyond labelled ones · docs page, source link · browser and lifetime tests driven by shared examples · narrow/wide check · metadata-vs-implementation contract check · agent-kit reference generated with validated guidance references (missing guidance labelled unavailable).
+**Per-component definition of done:** typed runtime definition (statically analyzable) · analyzer-generated CEM + enrichment entry with provenance · defaults and allowed values · property/attribute/event-detail contracts · declared sync pairs · slots, parts, CSS variables, custom states, roles and tokens used · preview roles · recipe and container behavior · data model (if structured) · accessibility/keyboard/form guidance · known limitations · category, use-for/not-for, and property → CSS property → token mappings where determinable · `*.examples.ts` (default + key variants + presets + fixtures where needed) · Workbench detail page (documentation + interactive example + editable API table) renders with no gaps beyond labelled ones · docs page, source link · browser and lifetime tests driven by shared examples · narrow/wide check · metadata-vs-implementation contract check · agent-kit reference generated with validated guidance references (missing guidance labelled unavailable) · supported customization levels declared; recomposable components verified with a derived definition against the same interaction fixtures.
 
 ---
 
@@ -782,12 +820,14 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] Standard-CEM-only fixture library (outside Mote) documented end to end at the baseline level with missing enrichment labelled; Foundations shows "No foundation data supplied" guidance rather than empty tables
 - [ ] Public API comparison wired into release checks (`mote analyze --compare`)
 - [ ] Content customization complete: typed `mote.docs.ts` and Markdown front matter for titles, summaries, introductions, section guidance, examples, tags, ordering, visibility, dates; fact interpolation tokens; content schema migrations; per-locale variants; regeneration never overwrites authored files
+- [ ] Compare product implementations (default vs derived definitions, product families) using shared examples and interaction fixtures; family/implementation switches follow the structural remount rules
 - [ ] Every catalog component's detail page renders without gaps beyond labelled "Not documented" sections; `apps/docs` foundation and component pages are Workbench panels, with no duplicate explorers
 
 **Migration walkthroughs** (prerequisites · start · small steps · before/after · verification · limitations; executed in CI)
 
 - [ ] Adopt Mote components; hard-coded CSS/SCSS → tokens; tokens without JS; `.css` ↔ CSS-in-TS; product theme; author a custom element; compose a feature; optional state/resources/router
 - [ ] From Lit / FAST authoring
+- [ ] Multi-product guide and walkthrough: second product by theme values; product skin from a foundation; product-aware composite; separate-repository product package with foundation compatibility ranges
 - [ ] Repeated layout CSS → recipes, conditions, profiles; repetitive markup → models (or back to templates)
 - [ ] **Existing component library → Workbench** (run analyzer, fix dynamic-definition diagnostics, add examples and preview roles, build static site)
 - [ ] Supported mappings recorded in metadata for `@mote/agent`
@@ -795,6 +835,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 **Agent tooling (`@mote/agent`)**
 
 - [ ] Package (Node only); boundary checks; no browser, ordinary-consumer, or docs-runtime graph reaches it; no mandatory hosted model, embedding service, or second analyzer
+- [ ] Product-scoped lookups and references (foundation used, fitting customization level, product-specific tokens/styles/templates/dependencies, contracts and checks to preserve), produced on demand; verified with the 10-product fixture
 - [ ] `./context`: project context, capability paths, fingerprints, freshness; local lookup offline; remote docs only when versions match and labelled
 - [ ] `./kit`: entry guide, task references, component/token/recipe/model references, JSON bundles; optional Agent Skills directory, managed `AGENTS.md` section (existing instructions preserved, diff before write), IDE adapters; `llms.txt` and clean Markdown pages in docs static builds; document client-dependent loading
 - [ ] Operations over analyzer outputs: inspect project, exact contracts, search, explain/validate config, scaffold, plan migrations, models/data validation, composition advice, **preview-role mapping**, **export verification**, **product suggestions**, **page/content explanation**, run checks — with provenance; never load element modules
@@ -825,6 +866,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] Tag-name conflicts documented honestly; scoped-registry/renaming tested separately
 - [ ] Independent consumers: plain HTML, CSS-only (incl. `layout.css`), Sass, typed refs, core-only, components-only, full app — none contains analyzer, Workbench, agent, unused presets, validators, or `compose`
 - [ ] Packed `@mote/analyzer` + `@mote/workbench` run in a fresh project against a packed component library (Mote and standard-CEM fixture); static build under a subpath with page-registry navigation, legacy redirects, share links, and Theme Studio editing
+- [ ] Packed multi-product consumers across independently versioned packages (foundation package, product skin package, product theme, application) installed in separate fresh directories; minimal foundation consumers contain no branded skins, theme generation, tooling, or application services; verification results recorded per implementation and configuration
 - [ ] Packed `@mote/agent` run against packed metadata
 - [ ] Agent kits regenerated from packed `@mote/components` and a packed consuming fixture library in a fresh directory: freshness check clean, references match installed exports, published examples pass against packed packages, `AGENTS.md` merge preserves existing text; evaluation results recorded before the freeze
 - [ ] Final v1 freeze covers the actually shipped APIs, token domains, supported DTCG mappings, examples/config/enrichment schemas, frame protocol, and migration/deprecation rules; run compatibility fixtures against an earlier released/pre-release artifact.
@@ -907,6 +949,13 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 | 62 | CLI and MCP share one deterministic implementation with schema-defined, bounded, structured results; scaffolds and migrations are reviewable dry-run patches with checked preconditions | M11, M12 |
 | 63 | Diagnostics are repairable (code, location, subject, expected/received, references, fix only when supported) and distinguish errors, recommendations, and unresolved analysis; preview feedback reports its conditions and never claims complete accessibility | M4, M8, M11 |
 | 64 | AI usability claims rest on the recorded four-condition evaluation with held-out tasks and configurations; AI tooling stays optional for every consumer path | M11, M12 |
+| 65 | Any number of products (verified at 1, 2, 3, 10) uses one model with stable ids, no count-specific fields or slots, and no single-product ceremony; product identity stays independent of repository, family, design language, theme, mode, density, and profile | M4, M9, M12 |
+| 66 | Recomposed definitions are new, frozen, traceable, and never mutate their source; registration conflicts are diagnosed, never silently replaced; both implementations coexist with distinct names/constructors | M4, M8 |
+| 67 | Derived definitions and alternative templates pass the same interaction fixtures (properties, methods, events, slots, keyboard, focus, states, forms) and product-specific accessibility checks; foundation results are never presented as certifying a skin | M4, M10, M12 |
+| 68 | Product-aware composites render and register product children through one explicit, analyzable mechanism without tag guessing, global substitution, or a provider | M4, M8, M10 |
+| 69 | Configuration changes to one product never alter shared presets or other products; generation is deterministic; CSS growth is measured per product without combinatorial emission | M4, M9 |
+| 70 | Workbench selection and comparison, on-demand loading and cleanup, and agent lookups stay scoped and usable as the product collection grows; Products and modes stays absent unless enabled | M9, M11 |
+| 71 | Minimal foundation consumers load no branded skins, theme generation, tooling, or application services; packed multi-repository product consumers work through public exports | M4, M12 |
 
 ---
 
@@ -927,6 +976,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 | CSS-native responsiveness is robust | Container queries + intrinsic layouts | No script work during resize; correct across widths, zoom, slots, shadow roots | Containment affects intrinsic sizing |
 | Data models make structured components safer | Typed models + collections + validators | Fewer authoring errors; precise diagnostics; update cost vs handwritten `repeat` | API surface and bytes when imported |
 | **Generated docs reduce documentation effort and drift** | Analyzer + Workbench + `defineExamples` | Time to document the four slice components vs a handwritten-story baseline; contract tests catch introduced drift; count of authored lines per component | Analyzer constraints on authoring patterns; explicit metadata for dynamic cases |
+| Shared foundations reduce multi-product cost | Layered exports + recomposition + shared sheets | Bytes, shared-code reuse, CSS size, startup, and update cost for 1/2/3/10-product fixtures vs per-product implementations; interaction fixtures pass for every derived definition | More public surface and compatibility commitments; anatomy contracts to maintain |
 | **Live Theme Studio editing stays responsive** | Worker generation, latest-wins, stylesheet replacement, no remount | p95 edit-to-preview latency for a typical config; no long tasks on the main thread over budget; focus/state preserved | Worker and message overhead; large configs may need incremental generation |
 | Project-aware agent tooling improves correctness | Generated agent kits + deterministic operations + preview feedback over analyzer outputs | Four-condition evaluation (docs alone → + generated references → + tools → + preview feedback) on Mote and a held-out consuming library: fewer invented APIs/tokens, higher compile/browser pass rates, fewer repairs and unnecessary edits, correct handling of unknowns | Schema and guidance maintenance; model/IDE/client dependence; context and tool-output volume |
 
@@ -1002,6 +1052,10 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 | Live binding and readiness semantics | **Settled:** `render()` is a tracked context (`.value` reads, incl. synchronous helpers, register render-level dependencies → deduplicated render); readables interpolated directly bind at part level without re-render; `.value` outside tracked contexts and in deferred/async callbacks is an untracked snapshot; binding-initialization reads don't register render dependencies; dual-path dependencies coalesce. Remaining: exact `updateComplete`/readiness boundaries | M3 / M8 |
 | Error ownership / production diagnostics | Small explicit owner error policy; opt-in bounded inspection; no silent catch-all | M3 / M8 |
 | Native form submission strategy | Prototype before API promise; retain a styled native-button path; disclose custom-host limits | M4 |
+| Definition lineage form | Self-referencing `source` field (spread-friendly) vs explicit `extend()` helper (ADR 0033) | M4 prototype / M8 |
+| Product-aware composite mechanism | Element-reference parts vs child directive vs family-specific templates, chosen by prototype on the editable list | M4 prototype / M8 ADR |
+| Recomposable components and supported customization levels | Card and button prototypes first; declared per component | M4 / M10 |
+| Product role overrides and several themes per document | Generator extension with nested-scope verification and measured CSS growth | M9 |
 | Component composition API | `compose()` definitions + `define(definition)`; one folder per repository component (§3.3), colocated authoring kept for consumers; name clash with the composition-schema `compose` resolved first; ADR | M4, review at M8 |
 | Live condition editing | Literal-query baseline; explicit generated-sheet invalidation; enhanced syntax only with browser evidence | M2 / M4 / M9 |
 | DTCG coverage / import | Publish exact export subset and mappings; import/round-trip only if separately justified | M9 |
@@ -1041,10 +1095,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M3: cold startup and click-to-next-frame measurements with a plain-DOM control in three engines; results regenerated | Measurement item closed; M3 open items: none besides M2's side-nav link (M4) |
 | 2026-10-17 | Plan: component folder convention (§3.3), public composition API and migration of existing component work added to M4, agent scaffolding (M11), criterion 58, decision row | Planning only; no source files reorganized |
 | 2026-10-17 | Plan: AI-friendly architecture and generated agent kits — §5e rewritten; agent-kit contract tasks (M4), local context and reference pilot (M5), review (M8), per-component guidance (M10), operations/packaging/MCP/preview feedback/evaluation (M11), packed verification (M12); criteria 59–64; decision and research rows; ADR 0032; agent-tooling, analyzer, packages, Workbench, styling, layout, composition, core, schema, contribution docs synchronized; research register R33–R41 | Planning only; sources resolved, no experiment completed, nothing implemented |
+| 2026-10-17 | Plan: multi-product design systems — §5g, any number of products (1/2/3/10 fixtures), layered exports and foundation entries, recomposition, customization ladder, anatomy contracts, component families, distribution and scope isolation; tasks in M4 (prototype), M8 (review), M9 (tokens, products page scale), M10, M11, M12; criteria 65–71; decision, hypothesis, research rows; ADR 0033; new multi-product.md; core, packages, theming, layout, composition, analyzer, Workbench, pages, agent, schema, contribution docs synchronized; register R42–R46 | Planning only; existing capabilities (product scopes, registration diagnostics, sheet sharing) cited with their evidence; nothing new implemented |
 
 ## 11. Continuation
 
-**Next step:** M4 — first the composition API ADR and implementation (`compose()`, `define(definition)`, analyzer support) and the component folder convention (§3.3), with the migration of `examples/core-counter`; then `mote-button`, `mote-input`, `mote-card`, and `mote-side-nav` in the new structure on core + tokens (side-nav links the last open M2 item), with examples through `@mote/workbench/examples` and analyzer metadata validated, drafting the agent-kit contracts (agent-facing metadata fields, diagnostic envelope, correct/incorrect examples) alongside that metadata work.
+**Next step:** M4 — first the composition API ADR and implementation (`compose()`, `define(definition)`, analyzer support) and the component folder convention (§3.3), with the migration of `examples/core-counter`; then `mote-button`, `mote-input`, `mote-card`, and `mote-side-nav` in the new structure on core + tokens (side-nav links the last open M2 item), with examples through `@mote/workbench/examples` and analyzer metadata validated, drafting the agent-kit contracts (agent-facing metadata fields, diagnostic envelope, correct/incorrect examples) alongside that metadata work. The composition API ADR also covers recomposition, and `mote-card`/`mote-button` carry the multi-product prototype (layered exports, foundation entries, customization levels 1–3, 1/2/3/10-product token fixtures).
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 
@@ -1071,6 +1126,7 @@ This register supplies source locations, not a claim that every linked project's
 | Stencil / Ionic | [Stencil introduction](https://stenciljs.com/docs/introduction), [Ionic components](https://ionicframework.com/docs/components) | Compile-time versus runtime tradeoffs, generated outputs/proxies, application versus component costs |
 | Optional Carbon / Fluent / Vaadin review | [Carbon docs](https://carbondesignsystem.com/), [Carbon source](https://github.com/carbon-design-system/carbon), [Fluent source](https://github.com/microsoft/fluentui), [Vaadin components](https://vaadin.com/docs/latest/components) | Review only where it answers a specific unresolved question; locate and pin the actual Web Component package rather than treating an entire monorepo as one implementation |
 | Native-first patterns | [Open UI](https://open-ui.org/), [APG patterns](https://www.w3.org/WAI/ARIA/apg/) | Which behavior the browser supplies, which controllers are needed, and which patterns require distinct keyboard models |
+| Multi-product foundations and recomposition | [FAST 1.x component libraries](https://fast.design/docs/1.x/design-systems/creating-a-component-library/) (historical), [FAST source](https://github.com/microsoft/fast), [Lit styles](https://lit.dev/docs/components/styles/), [Spectrum theme API](https://opensource.adobe.com/spectrum-web-components/tools/theme/api/), [custom element registration](https://html.spec.whatwg.org/multipage/custom-elements.html#dom-customelementregistry-define), [CSS custom properties](https://www.w3.org/TR/css-variables-1/), [CSS Shadow](https://drafts.csswg.org/css-shadow-1/) | Registration-time template/style configuration and why FAST changed it; style composition and inheritance; independently scoped system/colour/scale; one name per constructor; inheritance across shadow boundaries. Record versions; documentation and drafts do not establish browser support or performance |
 
 ### 12.2 Frameworks, state models, and consumer integration — M0, M4, M6–M8, M11–M12
 
