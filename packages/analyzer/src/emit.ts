@@ -3,7 +3,14 @@
  * Mote enrichment manifest (`mote.metadata.json`, schema v1) that references CEM
  * declarations by module path and name. Deterministic: no timestamps, stable ordering.
  */
-import type { AnalyzerDiagnostic, ComponentInfo, Extraction, Known } from './extract.js';
+import type {
+  AnalyzerDiagnostic,
+  ComponentInfo,
+  DefinitionInfo,
+  Extraction,
+  Known,
+  SourceRef,
+} from './extract.js';
 
 export interface ModulePaths {
   /** Map a source path (relative to the package root) to its published module path. */
@@ -158,6 +165,27 @@ export function buildManifest(extraction: Extraction, paths: ModulePaths): Recor
   };
 }
 
+const definitionOf = (definition: DefinitionInfo | undefined, paths: ModulePaths) => {
+  if (!definition) return undefined;
+  const ref = (source: SourceRef) => ({ module: paths.moduleOf(source.file), name: source.name });
+  return {
+    ...optional('ref', definition.ref && ref(definition.ref)),
+    ...optional('extends', definition.extends && `component:${definition.extends}`),
+    ...optional('template', definition.template && ref(definition.template)),
+    ...optional('styles', definition.styles.map(ref)),
+    ...optional(
+      'dependencies',
+      Object.keys(definition.dependencies).length
+        ? Object.fromEntries(
+            Object.entries(definition.dependencies)
+              .sort(([a], [b]) => (a < b ? -1 : 1))
+              .map(([role, tag]) => [role, `component:${tag}`]),
+          )
+        : undefined,
+    ),
+  };
+};
+
 const FACT_TAGS: Record<string, string> = {
   a11y: 'a11y',
   keyboard: 'keyboard',
@@ -201,6 +229,7 @@ export function buildMetadata(
       tag: registration.tag,
       cem: { module: paths.moduleOf(component.file), name: component.name },
       registration: paths.specifierOf(module) ?? module,
+      ...optional('definition', definitionOf(registration.definition, paths)),
       ...optional(
         'category',
         category ? `category:${category.trim().toLowerCase().replace(/\s+/g, '-')}` : undefined,

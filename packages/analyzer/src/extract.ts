@@ -82,6 +82,38 @@ export interface ComponentInfo {
   readonly exported: boolean;
   /** Facts supplied by explicit metadata (`@mote-metadata file.json`), as stable member ids. */
   readonly authored?: { readonly file: string; readonly ids: readonly string[] };
+  /**
+   * Names found only by scanning `render()` and `static styles` (here or in a base class), so a
+   * definition's template and styles can replace them. JSDoc-declared names are not included.
+   */
+  readonly derived?: {
+    readonly slots: readonly string[];
+    readonly parts: readonly string[];
+    readonly cssProperties: readonly string[];
+    readonly tokens: readonly string[];
+  };
+}
+
+/** A named export in a source file (definition, template, or styles). */
+export interface SourceRef {
+  readonly name: string;
+  readonly file: string;
+}
+
+/** A `compose()` definition resolved statically. */
+export interface DefinitionInfo {
+  readonly tag: string;
+  readonly className: string;
+  readonly classFile: string;
+  /** The variable holding the definition, when it is one. */
+  readonly ref?: SourceRef;
+  readonly template?: SourceRef;
+  readonly styles: readonly SourceRef[];
+  /** Named roles → tag names of dependency definitions. */
+  readonly dependencies: Readonly<Record<string, string>>;
+  /** Tag of the definition this one was recomposed from (`...base`). */
+  readonly extends?: string;
+  readonly location: SourceLocation;
 }
 
 export interface Registration {
@@ -90,6 +122,8 @@ export interface Registration {
   readonly classFile: string;
   readonly file: string;
   readonly location: SourceLocation;
+  /** Present when registered with `define(definition)`. */
+  readonly definition?: DefinitionInfo;
 }
 
 export interface RecipeInfo {
@@ -114,6 +148,7 @@ export interface Extraction {
   readonly registrations: readonly Registration[];
   readonly recipes: readonly RecipeInfo[];
   readonly models: readonly ModelInfo[];
+  readonly definitions: readonly DefinitionInfo[];
   readonly exports: ReadonlyMap<string, readonly string[]>;
   readonly diagnostics: readonly AnalyzerDiagnostic[];
 }
@@ -140,6 +175,7 @@ export function extract(program: ts.Program, root: string): Extraction {
   const registrations: Registration[] = [];
   const recipes: RecipeInfo[] = [];
   const models: ModelInfo[] = [];
+  const definitions = new Map<ts.CallExpression, Resolved | null>();
   const exportsBySource = new Map<string, string[]>();
 
   const rel = (file: string) => relative(root, file).split(sep).join('/');
@@ -409,6 +445,31 @@ export function extract(program: ts.Program, root: string): Extraction {
   const attributeValue = (attributes: string, name: string) =>
     new RegExp(`(?:^|\\s)${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'>]+))`).exec(attributes);
 
+  /** CSS custom properties read with `var()` and tokens read with `var(--mote-…)` or `token()`. */
+  function styleReads(node: ts.Node): { cssProperties: string[]; tokens: string[] } {
+    const cssProperties: string[] = [];
+    const tokens: string[] = [];
+    scanTemplates(node, 'css', (text, template) => {
+      for (const match of text.matchAll(/var\(\s*(--[\w-]+)/g)) {
+        const variable = match[1] as string;
+        (variable.startsWith('--mote-') ? tokens : cssProperties).push(variable);
+      }
+      const walk = (child: ts.Node) => {
+        if (
+          ts.isCallExpression(child) &&
+          ts.isIdentifier(child.expression) &&
+          child.expression.text === 'token'
+        ) {
+          const name = stringOf(child.arguments[0]);
+          if (name) tokens.push(name);
+        }
+        ts.forEachChild(child, walk);
+      };
+      walk(template);
+    });
+    return { cssProperties, tokens };
+  }
+
   // ---- classes ----
   function heritage(node: ts.ClassDeclaration) {
     return node.heritageClauses?.find((h) => h.token === ts.SyntaxKind.ExtendsKeyword)?.types[0]
@@ -495,6 +556,10 @@ export function extract(program: ts.Program, root: string): Extraction {
     const parts = new Map<string, NamedDoc>();
     const cssProperties = new Map<string, NamedDoc>();
     const tokenReads = new Map<string, { token: string; readThrough: 'stylesheet' }>();
+    const styleNames = new Set<string>();
+    const styleTokens = new Set<string>();
+    const renderSlots = new Set<string>();
+    const renderParts = new Set<string>();
 
     for (const member of node.members) {
       const modifiers = ts.canHaveModifiers(member) ? (ts.getModifiers(member) ?? []) : [];
@@ -504,7 +569,8 @@ export function extract(program: ts.Program, root: string): Extraction {
           (m) =>
             m.kind === ts.SyntaxKind.PrivateKeyword || m.kind === ts.SyntaxKind.ProtectedKeyword,
         ) ||
-        (member.name && ts.isPrivateIdentifier(member.name));
+        (member.name && ts.isPrivateIdentifier(member.name)) ||
+        ts.getJSDocTags(member).some((t) => t.tagName.text === 'internal');
       const memberName =
         member.name && (ts.isIdentifier(member.name) || ts.isStringLiteral(member.name))
           ? member.name.text
@@ -533,14 +599,15 @@ export function extract(program: ts.Program, root: string): Extraction {
         ts.isPropertyDeclaration(member) &&
         member.initializer
       ) {
-        scanTemplates(member.initializer, 'css', (text) => {
-          for (const match of text.matchAll(/var\(\s*(--[\w-]+)/g)) {
-            const variable = match[1] as string;
-            if (variable.startsWith('--mote-'))
-              tokenReads.set(variable, { token: variable, readThrough: 'stylesheet' });
-            else cssProperties.set(variable, { name: variable });
-          }
-        });
+        const read = styleReads(member.initializer);
+        for (const name of read.cssProperties) {
+          cssProperties.set(name, { name });
+          styleNames.add(name);
+        }
+        for (const token of read.tokens) {
+          tokenReads.set(token, { token, readThrough: 'stylesheet' });
+          styleTokens.add(token);
+        }
       }
       if (!isStatic && !hidden && memberName && !memberName.startsWith('_')) {
         if (
@@ -579,13 +646,16 @@ export function extract(program: ts.Program, root: string): Extraction {
             const name = attributeValue(match[1] ?? '', 'name');
             const slot = name ? (name[1] ?? name[2] ?? name[3] ?? '') : '';
             slots.set(slot, { name: slot });
+            renderSlots.add(slot);
           }
           for (const match of text.matchAll(/<[a-zA-Z][\w-]*\b([^>]*)>/g)) {
             const part = attributeValue(match[1] ?? '', 'part');
             for (const name of (part ? (part[1] ?? part[2] ?? part[3] ?? '') : '')
               .split(/\s+/)
-              .filter(Boolean))
+              .filter(Boolean)) {
               parts.set(name, { name });
+              renderParts.add(name);
+            }
           }
         });
       }
@@ -629,11 +699,16 @@ export function extract(program: ts.Program, root: string): Extraction {
       const [first = '', ...restWords] = comment.split(/\s+/);
       const rest = restWords.join(' ').replace(/^-\s*/, '');
       const named = { name: first, ...(rest ? { description: rest } : {}) };
-      if (tagName === 'slot')
+      if (tagName === 'slot') {
         slots.set(first === '-' ? '' : first, { ...named, name: first === '-' ? '' : first });
-      else if (tagName === 'csspart') parts.set(first, named);
-      else if (tagName === 'cssprop' || tagName === 'cssproperty') cssProperties.set(first, named);
-      else if (tagName === 'cssstate') cssStates.set(first, named);
+        renderSlots.delete(first === '-' ? '' : first);
+      } else if (tagName === 'csspart') {
+        parts.set(first, named);
+        renderParts.delete(first);
+      } else if (tagName === 'cssprop' || tagName === 'cssproperty') {
+        cssProperties.set(first, named);
+        styleNames.delete(first);
+      } else if (tagName === 'cssstate') cssStates.set(first, named);
       else if (DOC_TAGS.includes(tagName))
         (tags[tagName] ??= []).push({ value: comment, location: where(tag) });
     }
@@ -670,6 +745,12 @@ export function extract(program: ts.Program, root: string): Extraction {
       ),
       tags,
       exported,
+      derived: {
+        slots: [...(parent?.derived?.slots ?? []), ...renderSlots],
+        parts: [...(parent?.derived?.parts ?? []), ...renderParts],
+        cssProperties: [...(parent?.derived?.cssProperties ?? []), ...styleNames],
+        tokens: [...(parent?.derived?.tokens ?? []), ...styleTokens],
+      },
     };
     const merged = explicit ? mergeExplicit(info, explicit) : info;
     components.set(node, merged);
@@ -807,6 +888,255 @@ export function extract(program: ts.Program, root: string): Extraction {
       authored: { file: explicit.file, ids },
     };
   }
+  // ---- compose() definitions ----
+  interface Resolved {
+    readonly info: DefinitionInfo;
+    readonly classNode: ts.ClassDeclaration;
+    readonly templateNode?: ts.Node;
+    readonly styleNodes?: readonly ts.Node[];
+  }
+
+  /** Follow an identifier (through imports) to the expression it is initialized with. */
+  function initializerOf(
+    expression: ts.Expression,
+  ): { node: ts.Node; ref?: SourceRef } | undefined {
+    if (!ts.isIdentifier(expression)) return { node: expression };
+    const declaration = resolveSymbol(expression)?.declarations?.[0];
+    if (!declaration) return undefined;
+    const ref = { name: expression.text, file: rel(declaration.getSourceFile().fileName) };
+    if (ts.isVariableDeclaration(declaration) && declaration.initializer)
+      return {
+        node: declaration.initializer,
+        ref: { ...ref, name: (declaration.name as ts.Identifier).text },
+      };
+    if (ts.isFunctionDeclaration(declaration) && declaration.name)
+      return { node: declaration, ref: { ...ref, name: declaration.name.text } };
+    return undefined;
+  }
+
+  function stylesFrom(
+    expression: ts.Expression,
+    refs: SourceRef[],
+    nodes: ts.Node[],
+    owner: string,
+  ): void {
+    const found = initializerOf(expression);
+    if (!found) {
+      report('analyzer.dynamic.definition', expression, `${owner}: styles cannot be resolved.`);
+      return;
+    }
+    const node = found.node;
+    if (ts.isArrayLiteralExpression(node)) {
+      for (const element of node.elements) {
+        if (ts.isSpreadElement(element))
+          report(
+            'analyzer.dynamic.definition',
+            element,
+            `${owner}: spread styles are not analyzed.`,
+          );
+        else stylesFrom(element, refs, nodes, owner);
+      }
+      return;
+    }
+    if (found.ref) refs.push(found.ref);
+    nodes.push(node);
+  }
+
+  const definitionRef = (call: ts.CallExpression, ref?: SourceRef): SourceRef | undefined =>
+    ref ??
+    (ts.isVariableDeclaration(call.parent) && ts.isIdentifier(call.parent.name)
+      ? { name: call.parent.name.text, file: rel(call.getSourceFile().fileName) }
+      : undefined);
+
+  /** Resolve an expression to a `compose()` definition, following imports and spreads. */
+  function definitionFrom(expression: ts.Expression): Resolved | undefined {
+    const found = initializerOf(expression);
+    const call = found?.node;
+    if (
+      !call ||
+      !ts.isCallExpression(call) ||
+      !ts.isIdentifier(call.expression) ||
+      !fromMoteCore(call.expression, 'compose')
+    )
+      return undefined;
+    if (definitions.has(call)) return definitions.get(call) ?? undefined;
+    definitions.set(call, null);
+    const init = call.arguments[0];
+    if (!init || !ts.isObjectLiteralExpression(init)) {
+      report('analyzer.dynamic.definition', call, 'compose() needs an object literal.');
+      return undefined;
+    }
+    let base: Resolved | undefined;
+    let tag: string | undefined;
+    let classNode: ts.ClassDeclaration | undefined;
+    let template: { ref?: SourceRef; node?: ts.Node } | undefined;
+    let styles: { refs: SourceRef[]; nodes: ts.Node[] } | undefined;
+    let dependencies: Record<string, string> | undefined;
+    for (const property of init.properties) {
+      if (ts.isSpreadAssignment(property)) {
+        base = definitionFrom(property.expression);
+        if (!base) {
+          report(
+            'analyzer.dynamic.definition',
+            property,
+            'compose(): only a spread of another compose() definition can be analyzed.',
+          );
+          continue;
+        }
+        tag = base.info.tag;
+        classNode = base.classNode;
+        template = base.templateNode
+          ? {
+              node: base.templateNode,
+              ...(base.info.template ? { ref: base.info.template } : {}),
+            }
+          : undefined;
+        styles = base.styleNodes
+          ? { refs: [...base.info.styles], nodes: [...base.styleNodes] }
+          : undefined;
+        dependencies = { ...base.info.dependencies };
+        continue;
+      }
+      const key =
+        (ts.isPropertyAssignment(property) || ts.isShorthandPropertyAssignment(property)) &&
+        (ts.isIdentifier(property.name) || ts.isStringLiteral(property.name))
+          ? property.name.text
+          : undefined;
+      const value = ts.isPropertyAssignment(property)
+        ? property.initializer
+        : ts.isShorthandPropertyAssignment(property)
+          ? property.name
+          : undefined;
+      if (!key || !value) {
+        report(
+          'analyzer.dynamic.definition',
+          property,
+          'compose(): computed entries are not analyzed.',
+        );
+        continue;
+      }
+      if (key === 'name') {
+        tag = stringOf(value);
+        if (!tag || !TAG_NAME.test(tag))
+          report(
+            'analyzer.dynamic.tagName',
+            value,
+            'compose(): the name is computed or invalid; the definition cannot be documented.',
+            "Use a string literal, e.g. name: 'my-element'.",
+          );
+      } else if (key === 'element') {
+        classNode = resolveSymbol(value)?.declarations?.find(ts.isClassDeclaration);
+        if (!classNode)
+          report(
+            'analyzer.dynamic.registration',
+            value,
+            'compose(): the element class cannot be resolved.',
+          );
+      } else if (key === 'template') {
+        const resolved = initializerOf(value);
+        if (resolved)
+          template = { node: resolved.node, ...(resolved.ref ? { ref: resolved.ref } : {}) };
+        else
+          report(
+            'analyzer.dynamic.definition',
+            value,
+            'compose(): the template cannot be resolved.',
+          );
+      } else if (key === 'styles') {
+        styles = { refs: [], nodes: [] };
+        stylesFrom(value, styles.refs, styles.nodes, `compose(${tag ?? ''})`);
+      } else if (key === 'dependencies') {
+        dependencies = {};
+        if (ts.isObjectLiteralExpression(value)) {
+          for (const entry of value.properties) {
+            const role =
+              ts.isPropertyAssignment(entry) || ts.isShorthandPropertyAssignment(entry)
+                ? entry.name.getText().replace(/^['"]|['"]$/g, '')
+                : undefined;
+            const target = ts.isPropertyAssignment(entry)
+              ? entry.initializer
+              : ts.isShorthandPropertyAssignment(entry)
+                ? entry.name
+                : undefined;
+            const dependency = target ? definitionFrom(target) : undefined;
+            if (role && dependency) dependencies[role] = dependency.info.tag;
+            else
+              report(
+                'analyzer.dynamic.definition',
+                entry,
+                'compose(): each dependency must be a compose() definition.',
+              );
+          }
+        } else
+          report(
+            'analyzer.dynamic.definition',
+            value,
+            'compose(): dependencies must be an object literal.',
+          );
+      }
+    }
+    if (!tag || !TAG_NAME.test(tag) || !classNode?.name) return undefined;
+    const variable = definitionRef(call, found?.ref);
+    const resolved: Resolved = {
+      classNode,
+      ...(template?.node ? { templateNode: template.node } : {}),
+      ...(styles ? { styleNodes: styles.nodes } : {}),
+      info: {
+        tag,
+        className: classNode.name.text,
+        classFile: rel(classNode.getSourceFile().fileName),
+        ...(variable ? { ref: variable } : {}),
+        ...(template?.ref ? { template: template.ref } : {}),
+        styles: styles?.refs ?? [],
+        dependencies: dependencies ?? {},
+        ...(base ? { extends: base.info.tag } : {}),
+        location: where(call),
+      },
+    };
+    definitions.set(call, resolved);
+    return resolved;
+  }
+
+  /** Apply a definition's template and styles to its class's facts (they replace render()/static styles). */
+  function overlay(info: ComponentInfo, resolved: Resolved): ComponentInfo {
+    const derived = info.derived ?? { slots: [], parts: [], cssProperties: [], tokens: [] };
+    let { slots, parts, cssProperties, tokenReads } = info;
+    if (resolved.templateNode) {
+      const found = { slots: new Set<string>(), parts: new Set<string>() };
+      scanTemplates(resolved.templateNode, 'html', (text) => {
+        for (const match of text.matchAll(/<slot\b([^>]*)>/g)) {
+          const name = attributeValue(match[1] ?? '', 'name');
+          found.slots.add(name ? (name[1] ?? name[2] ?? name[3] ?? '') : '');
+        }
+        for (const match of text.matchAll(/<[a-zA-Z][\w-]*\b([^>]*)>/g)) {
+          const part = attributeValue(match[1] ?? '', 'part');
+          for (const name of (part ? (part[1] ?? part[2] ?? part[3] ?? '') : '').split(/\s+/))
+            if (name) found.parts.add(name);
+        }
+      });
+      slots = slots.filter((s) => !derived.slots.includes(s.name));
+      parts = parts.filter((s) => !derived.parts.includes(s.name));
+      for (const name of found.slots)
+        if (!slots.some((s) => s.name === name)) slots = [...slots, { name }];
+      for (const name of found.parts)
+        if (!parts.some((s) => s.name === name)) parts = [...parts, { name }];
+    }
+    if (resolved.styleNodes) {
+      cssProperties = cssProperties.filter((c) => !derived.cssProperties.includes(c.name));
+      tokenReads = tokenReads.filter((t) => !derived.tokens.includes(t.token));
+      for (const node of resolved.styleNodes) {
+        const read = styleReads(node);
+        for (const name of read.cssProperties)
+          if (!cssProperties.some((c) => c.name === name))
+            cssProperties = [...cssProperties, { name }];
+        for (const token of read.tokens)
+          if (!tokenReads.some((t) => t.token === token))
+            tokenReads = [...tokenReads, { token, readThrough: 'stylesheet' }];
+      }
+    }
+    return { ...info, slots, parts, cssProperties, tokenReads };
+  }
+
   // ---- module walk ----
   for (const file of program.getSourceFiles()) {
     if (!isLibrarySource(file)) continue;
@@ -820,7 +1150,30 @@ export function extract(program: ts.Program, root: string): Extraction {
           (ts.isPropertyAccessExpression(callee) &&
             callee.name.text === 'define' &&
             callee.expression.getText() === 'customElements');
-        if (isDefine) {
+        if (ts.isIdentifier(callee) && fromMoteCore(callee, 'compose')) definitionFrom(node);
+        const definitionArgument =
+          isDefine && node.arguments[0] && !ts.isStringLiteralLike(node.arguments[0])
+            ? node.arguments[0]
+            : undefined;
+        const registered = definitionArgument ? definitionFrom(definitionArgument) : undefined;
+        if (isDefine && definitionArgument && node.arguments.length === 1) {
+          if (!registered)
+            report(
+              'analyzer.dynamic.registration',
+              node,
+              'define(definition) needs a compose() definition the analyzer can resolve.',
+              'Export the definition as a const initialized with compose({ ... }).',
+            );
+          else
+            registrations.push({
+              tag: registered.info.tag,
+              className: registered.info.className,
+              classFile: registered.info.classFile,
+              file: rel(file.fileName),
+              location: where(node),
+              definition: registered.info,
+            });
+        } else if (isDefine) {
           const tag = stringOf(node.arguments[0]);
           const target = node.arguments[1];
           const declaration =
@@ -959,11 +1312,23 @@ export function extract(program: ts.Program, root: string): Extraction {
     exportsBySource.set(rel(file.fileName), exportedNames.sort());
   }
 
+  // Definitions replace the facts their class derives from render() and static styles.
+  for (const registration of registrations) {
+    if (!registration.definition) continue;
+    const resolved = [...definitions.values()].find((d) => d?.info === registration.definition);
+    const info = resolved && classify(resolved.classNode);
+    if (resolved && info) components.set(resolved.classNode, overlay(info, resolved));
+  }
+
   return {
     components: [...components.values()].filter((c): c is ComponentInfo => !!c),
     registrations,
     recipes,
     models,
+    definitions: [...definitions.values()]
+      .filter((d): d is Resolved => !!d)
+      .map((d) => d.info)
+      .sort((a, b) => (a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : 0)),
     exports: exportsBySource,
     diagnostics,
   };

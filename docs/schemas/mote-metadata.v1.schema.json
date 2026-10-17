@@ -347,6 +347,21 @@
           "type": "string",
           "description": "Package export that registers the element, e.g. @acme/ui/define/button"
         },
+        "definition": {
+          "type": "object",
+          "description": "The compose() definition registered for this element (ADR 0036): where it is exported, the definition it was recomposed from, its external template and styles, and named dependencies.",
+          "additionalProperties": false,
+          "properties": {
+            "ref": { "$ref": "#/$defs/cemRef" },
+            "extends": { "type": "string", "pattern": "^component:" },
+            "template": { "$ref": "#/$defs/cemRef" },
+            "styles": { "type": "array", "items": { "$ref": "#/$defs/cemRef" } },
+            "dependencies": {
+              "type": "object",
+              "additionalProperties": { "type": "string", "pattern": "^component:" }
+            }
+          }
+        },
         "category": {
           "type": "string",
           "pattern": "^category:"

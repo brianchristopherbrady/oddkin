@@ -14,7 +14,7 @@ Status: **proposal**, except where §1 lists an existing, verified capability. D
 | One constructed sheet per style object per document; `flattenStyles` keeps order and drops later duplicates | **Implemented** (M3) | theming-and-styling.md §7; `@mote/core/styles` |
 | `ref()` element references in templates | **Implemented** (M3) | `@mote/core/helpers/ref` |
 | Products and modes page: absent by default, local/installed/versioned-manifest sources, discovery suggests only, product schema v1 draft | **Designed**; implementation M9 | workbench-pages.md §9; ADR 0026; `docs/schemas/product.v1.schema.json` |
-| `compose()` / `define(definition)`, spread recomposition with `extends` lineage, `registry.definitionConflict` | **Implemented** (M4 runtime; analyzer pending) | core-contracts.md §1.1; ADR 0036; `definition.browser.test.ts` |
+| `compose()` / `define(definition)`, spread recomposition with `extends` lineage, `registry.definitionConflict` | **Implemented** (M4 runtime and analyzer) | core-contracts.md §1.1; ADR 0036; `definition.browser.test.ts` |
 | Recomposition, layered component exports, foundation entry points, anatomy contracts, component families, product-aware composites, product scale, multi-product metadata and tooling | **Proposed** (this document) | §2–§11 |
 
 ## 2. Vocabulary

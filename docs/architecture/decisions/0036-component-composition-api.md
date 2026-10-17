@@ -1,6 +1,6 @@
 # 0036. Component composition API: `compose()` and `define(definition)`
 
-- **Status:** Accepted (runtime); analyzer support pending
+- **Status:** Accepted
 - **Date:** 2026-10-17
 - **Area:** Core
 - **Detailed contract:** [core-contracts.md](../core-contracts.md) §1.1; recomposition: [multi-product.md](../multi-product.md) §5
@@ -24,11 +24,13 @@ Mote's own components use one folder per component (class, template, styles, def
 - **Merging definition styles with class styles** — makes ordering implicit; one complete list is easier to reason about.
 
 ## Consequences
-- External templates can only reach the host's public members. Members that exist only for a template use a leading `_` or `@internal` and are excluded from metadata (analyzer support pending).
+- External templates can only reach the host's public members. Members that exist only for a template use a leading `_` or `@internal` and are excluded from metadata.
 - `define()` carries the definition path for every consumer: the counter fixture grew from 9,280 to 9,521 B gzip (budget 9,728 B, 97.9%).
 
 ## Evidence
 `packages/core/test/definition.browser.test.ts` (17 tests × Chromium, Firefox, WebKit): frozen definitions and lineage; external templates with direct-binding skips, tracked re-runs, and preserved DOM identity; ordered, document-shared definition styles replacing class styles; recomposition coexisting with its foundation; no inherited definitions; idempotence, conflict, reuse, and collision codes with no leftover binding; dependency-first registration upgrading existing elements; `definition.render.ignored`; scope counts back to baseline after reconnects. Full core suite (416 tests) and size budgets pass.
+
+Analyzer: `packages/analyzer/test/analyzer.test.ts` — a folder-structured fixture with a recomposed definition gives CEM declarations identical to the colocated fixture; metadata `definition` records `ref`, `extends`, template, styles, and dependencies; `@internal` members excluded; unresolvable definitions report `analyzer.dynamic.*`.
 
 ## Revisit when
 Analyzer support shows the spread-based lineage cannot be extracted reliably, or the size budget is exceeded.

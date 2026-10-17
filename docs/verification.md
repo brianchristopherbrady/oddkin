@@ -219,3 +219,10 @@ Command: `node research/benchmarks/run.mjs --samples 15` (results regenerated in
 | Typecheck | `npm run typecheck` | Pass |
 | Size budgets | `npm run size` | Pass — counter 9,521 B (budget 9,728), component 10,792 B (11,264), list 11,301 B (11,776), reactive 1,892 B (2,048); the counter grew by 241 B because `define()` carries the definition path |
 
+## 2026-10-17 — M4 analyzer support for `compose()` definitions
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Analyzer suite | `npx vitest run packages/analyzer` | Pass — 17 tests (6 new): `tests/fixtures/analyzer-composed` (folder structure, recomposed `acme-alert`) is valid against CEM 2.1.0 and `mote-metadata.v1`, diagnostic-free, and its `AcmePanel`/`AcmeAlert` declarations equal the colocated `analyzer-library` declarations apart from module paths; metadata `definition` records `ref`, `extends: component:acme-panel`, template, styles, and dependencies; registrations carry `./define/*` specifiers; `@internal` template handlers are excluded; computed names, unresolvable `define(...)`, and unknown spreads report `analyzer.dynamic.tagName`/`registration`/`definition` with lines |
+| Typecheck, lint | `npm run typecheck`, `npm run lint` | Pass |
+

@@ -223,7 +223,11 @@ describe('dynamic definitions and explicit metadata', () => {
   const result = analyze({ project: path('tests/fixtures/analyzer-dynamic/tsconfig.json') });
 
   it('reports dynamic entries with locations, downgraded to info when explicit metadata covers the class', () => {
-    expect(result.diagnostics.map((d) => [d.code, d.severity, d.source?.line])).toEqual([
+    expect(
+      result.diagnostics
+        .filter((d) => d.source?.file === 'src/elements.ts')
+        .map((d) => [d.code, d.severity, d.source?.line]),
+    ).toEqual([
       ['analyzer.dynamic.property', 'info', 11],
       ['analyzer.dynamic.property', 'info', 12],
       ['analyzer.dynamic.value', 'info', 13],
@@ -259,5 +263,90 @@ describe('dynamic definitions and explicit metadata', () => {
     ]);
     expect(validateMote(result.metadata), JSON.stringify(validateMote.errors)).toBe(true);
     expect(validateCem(result.manifest)).toBe(true);
+  });
+});
+
+describe('compose() definitions in a folder-structured library', () => {
+  const composed = analyze({ project: path('tests/fixtures/analyzer-composed/tsconfig.json') });
+  const colocated = analyze({ project: path('tests/fixtures/analyzer-library/tsconfig.json') });
+  const anyModule = (value: unknown) =>
+    JSON.parse(JSON.stringify(value).replaceAll(/"module":"[^"]*"/g, '"module":"*"')) as unknown;
+
+  it('emits valid, diagnostic-free outputs without executing modules', () => {
+    expect(validateCem(composed.manifest), JSON.stringify(validateCem.errors)).toBe(true);
+    expect(validateMote(composed.metadata), JSON.stringify(validateMote.errors)).toBe(true);
+    expect(composed.diagnostics).toEqual([]);
+  });
+
+  it('describes each element exactly as the equivalent colocated class does', () => {
+    for (const name of ['AcmePanel', 'AcmeAlert']) {
+      expect(anyModule(declaration(composed.manifest, name))).toEqual(
+        anyModule(declaration(colocated.manifest, name)),
+      );
+    }
+  });
+
+  it('excludes @internal members used only by templates', () => {
+    const names = declaration(composed.manifest, 'AcmePanel').members.map((m) => m['name']);
+    expect(names).not.toContain('onDismissClick');
+  });
+
+  it('records registrations from define(definition) entries with their export specifiers', () => {
+    const metadata = composed.metadata as {
+      components: Record<string, { registration: string; definition?: Record<string, unknown> }>;
+    };
+    expect(metadata.components['component:acme-panel']?.registration).toBe(
+      '@acme/ui-composed/define/panel',
+    );
+    expect(metadata.components['component:acme-panel']?.definition).toEqual({
+      ref: { module: 'dist/panel/panel.definition.js', name: 'panelDefinition' },
+      template: { module: 'dist/panel/panel.template.js', name: 'panelTemplate' },
+      styles: [{ module: 'dist/panel/panel.styles.js', name: 'panelStyles' }],
+    });
+    expect(metadata.components['component:acme-alert']?.definition).toEqual({
+      ref: { module: 'dist/alert/alert.definition.js', name: 'alertDefinition' },
+      extends: 'component:acme-panel',
+      template: { module: 'dist/panel/panel.template.js', name: 'panelTemplate' },
+      styles: [{ module: 'dist/panel/panel.styles.js', name: 'panelStyles' }],
+      dependencies: { panel: 'component:acme-panel' },
+    });
+    const exportsOf = (path: string) =>
+      (composed.manifest['modules'] as Array<{ path: string; exports: Array<{ kind: string }> }>)
+        .find((m) => m.path === path)
+        ?.exports.map((e) => e.kind);
+    expect(exportsOf('dist/panel/panel.define.js')).toEqual(['custom-element-definition']);
+    expect(exportsOf('dist/panel/index.js')).toEqual(['js']);
+  });
+
+  it('takes slots, parts, CSS properties, and token reads from the template and styles', () => {
+    const metadata = composed.metadata as {
+      components: Record<string, { tokenReads?: Array<{ token: string }> }>;
+    };
+    expect(metadata.components['component:acme-panel']?.tokenReads?.map((t) => t.token)).toEqual([
+      '--mote-color-text-primary',
+      'layout.inset',
+    ]);
+    expect(declaration(composed.manifest, 'AcmePanel')['cssParts']).toEqual([
+      { name: 'body', description: 'The content area.' },
+      { name: 'dismiss', description: '' },
+      { name: 'frame', description: '' },
+    ]);
+  });
+
+  it('reports definitions it cannot resolve', () => {
+    const dynamic = analyze({ project: path('tests/fixtures/analyzer-dynamic/tsconfig.json') });
+    expect(
+      dynamic.diagnostics
+        .filter((d) => d.source?.file === 'src/definitions.ts')
+        .map((d) => [d.code, d.source?.line]),
+    ).toEqual([
+      ['analyzer.dynamic.tagName', 7],
+      ['analyzer.dynamic.registration', 10],
+      ['analyzer.dynamic.definition', 13],
+    ]);
+    const registered = Object.keys(
+      (dynamic.metadata as { components: Record<string, unknown> }).components,
+    );
+    expect(registered).toEqual(['component:dynamic-element']);
   });
 });

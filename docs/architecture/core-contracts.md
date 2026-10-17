@@ -44,7 +44,7 @@ render() { return html`<span>${this.count}</span>`; }
 
 ### 1.1 Composed definitions (implemented, M4; [ADR 0036](./decisions/0036-component-composition-api.md))
 
-`compose()` and `define(definition)` are implemented in `@mote/core/element` and verified in three engines (`packages/core/test/definition.browser.test.ts`). Analyzer support is pending. Colocated authoring (above) stays supported. The public composition API lets the class, template, and styles live in separate modules. Mote's own components use it with one folder per component ([IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).
+`compose()` and `define(definition)` are implemented in `@mote/core/element` and verified in three engines (`packages/core/test/definition.browser.test.ts`); the analyzer extracts them (metadata-and-analyzer.md §8). Colocated authoring (above) stays supported. The public composition API lets the class, template, and styles live in separate modules. Mote's own components use it with one folder per component ([IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).
 
 ```ts
 // card/card.template.ts

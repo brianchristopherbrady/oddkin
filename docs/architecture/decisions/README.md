@@ -48,4 +48,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0033](./0033-multi-product-foundations.md) | Multi-product foundations, recomposition, and product scale | Proposed | Components / Theming / Tooling |
 | [0034](./0034-change-impact-and-conformance.md) | Change impact, portable conformance, explanations, and reproductions | Proposed | Tooling / Verification |
 | [0035](./0035-page-suspension-and-restoration.md) | Page suspension and back/forward cache restoration | Proposed | Core / App |
-| [0036](./0036-component-composition-api.md) | Component composition API: `compose()` and `define(definition)` | Accepted (runtime) | Core |
+| [0036](./0036-component-composition-api.md) | Component composition API: `compose()` and `define(definition)` | Accepted | Core |

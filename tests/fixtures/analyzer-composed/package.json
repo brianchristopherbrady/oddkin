@@ -1,0 +1,13 @@
+{
+  "name": "@acme/ui-composed",
+  "version": "1.2.3",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./panel": "./dist/panel/index.js",
+    "./define/panel": "./dist/panel/panel.define.js",
+    "./alert": "./dist/alert/index.js",
+    "./define/alert": "./dist/alert/alert.define.js"
+  }
+}

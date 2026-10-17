@@ -20,6 +20,8 @@ import { extract, type AnalyzerDiagnostic, type Extraction } from './extract.js'
 export type {
   AnalyzerDiagnostic,
   ComponentInfo,
+  DefinitionInfo,
+  SourceRef,
   EventInfo,
   Extraction,
   PropertyInfo,
