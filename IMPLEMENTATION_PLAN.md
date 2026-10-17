@@ -424,7 +424,7 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 - [x] Security: unsafe sinks, URL policy, strict CSP, Trusted Types
 - [x] Optional helpers (refs, `classMap`, `styleMap`, live input) with behavioral tests
 - [x] Styles: trusted fragments, interpolation grammar, per-document sheet reuse, `<style>` fallback + CSP nonce, light-DOM scoping; no rebuild on updates
-- [ ] `@mote/core/layout`: `defineLayoutRecipe`, helpers with neutral defaults, region mapping, parts, variants, conditions, `extend()`; layered CSS generation; diagnostics; `describeRecipe`; byte-identical extraction
+- [x] `@mote/core/layout`: `defineLayoutRecipe`, helpers with neutral defaults, region mapping, parts, variants, conditions, `extend()`; layered CSS generation; diagnostics; `describeRecipe`; byte-identical extraction
 - [ ] `@mote/core/collections`: keys, diagnostics, reconciliation, nesting, per-item `Scope`, state models; invalidation tests; keyboard controllers separate
 - [ ] `@mote/core/model`: `m`, `defineModel`, `Infer`, `validate`, `migrate`; `./model/schema`
 - [ ] Assess `props()` helper

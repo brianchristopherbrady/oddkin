@@ -1,6 +1,6 @@
 # Layout recipes and container-responsive composition
 
-Status: **proposal**. Nothing here is implemented. Signatures are sketches to prototype in M3–M4. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification.
+Status: the unbranded mechanism (§2–§5, §8 `describeRecipe`) is **implemented** in `@mote/core/layout` and `@mote/core/layout/inspect` (M3) and verified in three engines; §11 lists behaviors settled in implementation. The Mote-bound helpers, `layout.css`, extraction CLI, and side-nav fixture (§7, §9, §10) are M4+ work. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification.
 
 ## 1. Purpose and boundaries
 
@@ -225,3 +225,14 @@ Location: `examples/side-nav/` (handwritten CSS version and recipe version side 
 - [ ] Minimal consumers exclude unused recipe catalogs and `@mote/agent`
 - [ ] Checks are scripted so an agent-generated version runs the same suite (M11)
 - [ ] Data-driven navigation (`.items`), declarative, and hybrid variants covered by [data-composition.md §10](./data-composition.md)
+
+## 11. Behaviors settled in the M3 implementation
+
+- **API.** `defineLayoutRecipe({ name?, container?, regions, variants?, when?, conditions?, profiles?, scope?, parts?, layer? })`. `when` keys are names from `conditions` (e.g. entries of `@mote/tokens/conditions`, which have `{ kind, query }`) or inline `'@container …'` / `'@media …'` strings. `profiles` maps a profile name to custom-property declarations; a condition's `profile` re-declares them on the recipe's **root region** (the first region), never on `:host`.
+- **Containers.** `container: { region? | selector?, name?, type? }` (default selector `:host` in shadow DOM, `.{scope}` in light DOM; default type `inline-size`). A `:host` container also gets `display: block`. `recipe.container.self` applies when the container is a region and a condition targeting that container styles the same region.
+- **Specificity.** Base and condition rules use one class (0,1,0); variant rules are `:host(:where([attr="v"])) .region` (0,2,0) or `:where(.scope[attr="v"]) .scope__region` (0,1,0). Specificity only orders rules within a layer; unlayered component CSS outranks every layer.
+- **Smaller variant and condition rules.** Later layers emit only declarations that differ from the base region, which leaves the cascade result unchanged.
+- **`split`.** `split({ side, main, sideWidth?, mainMin?, gap? })` sizes two named regions inside the split region. There is no `position` option: reordering visually would separate visual order from DOM and focus order, so DOM order decides.
+- **Helper conflicts.** A region given an array of helpers that set different `display` or `flex-direction` reports `recipe.helper.conflict`. A variant, condition, or `extend` replacing a region's helper merges per property instead.
+- **Values.** Helper and profile values are trusted module code but are still validated (`recipe.value.invalid` for `;`, braces, angle brackets, backslashes, or comments).
+- **Render-time definitions** report `recipe.render.definition` (not thrown). `checkRecipeRegions(recipe, root)` returns missing regions and parts; automatic post-`mounted` checks are left to M4 dev tooling.

@@ -5,6 +5,7 @@
  */
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 import { effect, settled, signal, untracked, type Signal } from '../reactive/index.js';
+import { enterRender, exitRender } from '../internal/render-context.js';
 import { Scope } from '../scope/index.js';
 import { adoptStyles, flattenStyles, retainStyles, type StyleInput } from '../styles/index.js';
 import { ChildPart } from '../template/parts.js';
@@ -321,7 +322,13 @@ export class MoteElement extends ElementBase {
       scope.add(
         effect(
           () => {
-            const result = this.render();
+            enterRender();
+            let result: unknown;
+            try {
+              result = this.render();
+            } finally {
+              exitRender();
+            }
             untracked(() => root.setValue(result));
           },
           { phase: 'commit', name: `<${this.localName}> render` },

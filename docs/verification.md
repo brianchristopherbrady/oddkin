@@ -118,3 +118,9 @@ Recorded results of checks. Each entry states the date, environment, command, an
 | Full pipeline | `npm run verify` | Pass — 149 Node + 240 browser unit tests, 12 e2e, packed consumers |
 
 **Findings:** (1) A profile changes role expressions, so a nested density/product/mode/theme scope would re-declare base expressions and drop it; each profile rule also targets nested scopes inside its subtree. (2) CSS cannot honour `data-mote-profile` list order; precedence follows configuration order and overlaps are reported. (3) Preset profiles originally referenced `space.2xs`, which custom scales need not define; they now derive smaller values with `calc()` from required steps. (4) Duplicate unit diagnostics and repeated target unit-mismatch warnings were removed.
+## 2026-10-17 — M3 layout recipes
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Recipe CSS | `npx vitest run --project node packages/core/test/layout.test.ts` | Pass — committed side-nav (shadow) and page (light DOM) fixtures; layer order; changed-only variant/condition declarations; `extend` leaves the original untouched and merges per property; `describeRecipe`; branded helper defaults; diagnostics `recipe.helper.conflict`, `region.unknown`, `condition.unknown`, `container.missing`, `container.self`, `profile.unknown`, `region.reserved`, `value.invalid`, `region.missing` |
+| Cascade | `npx vitest run --project browser packages/core/test/layout.browser.test.ts` | Pass in Chromium, Firefox, WebKit — browser output byte-identical to Node fixtures; narrow (1 column) and wide (3 columns) instances on one page from container queries alone, switching when resized; condition profile inherits into slotted content; variant attribute; unlayered component CSS beats recipe layers; `extend` subclass does not change the shared sheet; light-DOM `split` sits side by side when wide and wraps when narrow; region/part check; render-time definition reported |
