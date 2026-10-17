@@ -171,3 +171,12 @@ Environment: Windows 11 (10.0.26300), Intel i5-1135G7 (8 threads), 16 GiB, Node 
 | Failure paths | `npx vitest run packages/core/test/failure-paths.browser.test.ts` | Pass in all three (13 tests): invalid attribute falls back and recovers; throwing derivation in `render()` keeps the last DOM, reports `reactive.effect.error` with origin `<tag> render`, and recovers; a throwing direct binding leaves sibling bindings updating without a re-render; failing effect does not stop others in the flush; throwing setter reported and later values written; all cleanups run with one `scope.cleanup.error`; throwing `mounted()` leaves rendering working; shared module signal unsubscribes per removed element; self-removing handler leaves no subscriptions or owned resources; disconnect during a flush cancels the other element's queued effect; six connections get six scopes with no listener accumulation; direct updates make no layout reads (spied getters, `getBoundingClientRect`, `getComputedStyle`) and no re-render; production build in the browser reports the same code and owner with the short message |
 
 **Findings:** (1) A test element named its handler `remove`, shadowing `Element.remove()`; the type check (`noImplicitOverride`) caught it. Worth a note in authoring docs: instance members on a `MoteElement` share the `HTMLElement` namespace. (2) No core behavior changes were needed: the failure contract held as documented.
+
+## 2026-10-17 — M3 `props()` assessment
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Prototype contract | `npx vitest run research/experiments/props` | Pass in Chromium, Firefox, WebKit (5 tests): declared keys set from a configuration object; unknown keys and native handler names (`onselect`) reported as `props.key.unknown` and skipped; readable values update without re-running the parent render; removed keys reset to declared defaults; pre-upgrade values replayed (keys unchecked before definition); precedence with an explicit `.label` binding is order-dependent (last change wins), so that contract row is **not met** |
+| Cost | esbuild bundle of the helper with core external | 662 B gzip (1,102 B minified) |
+
+**Outcome:** not added to `@mote/core` for M4–M7; the decision stays at M8 (`research/experiments/props/README.md`, data-composition.md §2).

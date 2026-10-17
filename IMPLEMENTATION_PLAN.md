@@ -427,7 +427,7 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 - [x] `@mote/core/layout`: `defineLayoutRecipe`, helpers with neutral defaults, region mapping, parts, variants, conditions, `extend()`; layered CSS generation; diagnostics; `describeRecipe`; byte-identical extraction
 - [x] `@mote/core/collections`: keys, diagnostics, reconciliation, nesting, per-item `Scope`, state models; invalidation tests; keyboard controllers separate
 - [x] `@mote/core/model`: `m`, `defineModel`, `Infer`, `validate`, `migrate`; `./model/schema`
-- [ ] Assess `props()` helper
+- [x] Assess `props()` helper *(prototype on public APIs, three-engine contract tests; not in core for M4–M7; decision stays at M8 — [assessment](./research/experiments/props/README.md))*
 - [x] `define()`: idempotence, collision error, dependency registration, tag-name typing
 - [x] `examples/core-counter/` and typed demos with their own visual identity
 
@@ -929,10 +929,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M3: `@mote/analyzer` (TypeScript 5.9 front end, ADR 0018 accepted; CEM 2.1.0 + `mote.metadata.json`; inheritance, events, slots/parts, states, registrations, re-exports, recipes, models, authored facts; `analyzer.dynamic.*`; `mote-analyze` CLI); 50-component performance experiment; core-counter fixture | Outputs validate against both schemas; packed analyzer runs; full pipeline passes |
 | 2026-10-17 | M3: development/production builds (`development` → `dist/`, default → `dist/prod/`, ADR 0031) with production tests; `repeat` reconciler made pay-for-use; batched WebKit reorder fallback (reversing 1,000 items: 319 → 9–28 ms); `scopeStats()` public; benchmark harness (`research/benchmarks`: sizes, mount/update, collection vs handwritten lists at 10/100/1,000, CDP memory, ownership after 100 cycles) with committed results; size budgets in `npm run verify` | Counter 9,280 B gzip (8 KiB target missed, revised to 9.5 KiB); full pipeline passes |
 | 2026-10-17 | M3: binding-rule walkthrough (`examples/binding-rule`, plain JS and TS, identical counts in three engines) with helper/directive/controller outcomes; failure-path suite (conversion, derivation, effect, commit, cleanup, hook, external signals, disposal during callbacks, reconnect scopes, no layout reads, production diagnostics in the browser); failure ownership table (core-contracts §6.2) | 512 tests; 15 e2e; full pipeline passes |
+| 2026-10-17 | M3: `props()` assessed with a public-API prototype and three-engine contract tests (element position unavailable, precedence not enforceable, 662 B gzip); not in core for M4–M7, decision stays at M8 | 527 tests; full pipeline passes |
 
 ## 11. Continuation
 
-**Next step:** finish M3 — the `props()` assessment; DOM-free `@mote/workbench/examples`, `config`, and `pages` contracts; page-level startup and update-to-paint measurements. Then M4's first components (side-nav links the last open M2 item).
+**Next step:** finish M3 — DOM-free `@mote/workbench/examples`, `config`, and `pages` contracts; page-level startup and update-to-paint measurements. Then M4's first components (side-nav links the last open M2 item).
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 

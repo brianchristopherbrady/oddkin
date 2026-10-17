@@ -88,6 +88,8 @@ html`<mote-side-nav ${props({ label: 'Primary', items: navigation, current })}><
 
 Decision at M8: keep, rename, or drop based on the ergonomics study.
 
+**M3 assessment** ([research/experiments/props](../../research/experiments/props/README.md)): a prototype on the public directive protocol meets the key, reset, cleanup, upgrade, and readable rows. It cannot use an element position: there is no element part, so it binds as `.props=${…}`. It cannot enforce precedence over explicit bindings: the last change wins. It costs 662 B gzip. Recommendation: not in core for M4–M7. If kept at M8, use the named binding, replace the precedence rule with "do not bind a key both ways", and add a typed `props<typeof Element>()` signature.
+
 ## 3. Shared collection infrastructure (`@mote/core/collections`)
 
 DOM-free models plus template integration, shared by navigation, menus, tabs, listboxes, trees, tables, and forms.
