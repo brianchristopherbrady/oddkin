@@ -3,12 +3,27 @@
   "modules": [
     {
       "kind": "javascript-module",
-      "path": "dist/demo-counter.js",
+      "path": "dist/demo-counter/demo-counter.define.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "demo-counter",
+          "declaration": {
+            "name": "DemoCounter",
+            "module": "dist/demo-counter/demo-counter.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dist/demo-counter/demo-counter.js",
       "declarations": [
         {
           "kind": "class",
           "name": "DemoCounter",
-          "description": "A counter with local state. The count text binds the signal directly, so clicks update\none text node without re-running `render()`.",
+          "description": "A counter with local state. The count text binds the signal directly, so clicks update\none text node without re-running the template.",
           "customElement": true,
           "tagName": "demo-counter",
           "superclass": {
@@ -104,14 +119,44 @@
           "name": "DemoCounter",
           "declaration": {
             "name": "DemoCounter",
-            "module": "dist/demo-counter.js"
+            "module": "dist/demo-counter/demo-counter.js"
           }
         }
       ]
     },
     {
       "kind": "javascript-module",
-      "path": "dist/demo-greeting.js",
+      "path": "dist/demo-counter/index.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "DemoCounter",
+          "declaration": {
+            "name": "DemoCounter",
+            "module": "dist/demo-counter/demo-counter.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dist/demo-greeting/demo-greeting.define.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "demo-greeting",
+          "declaration": {
+            "name": "DemoGreeting",
+            "module": "dist/demo-greeting/demo-greeting.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dist/demo-greeting/demo-greeting.js",
       "declarations": [
         {
           "kind": "class",
@@ -206,7 +251,22 @@
           "name": "DemoGreeting",
           "declaration": {
             "name": "DemoGreeting",
-            "module": "dist/demo-greeting.js"
+            "module": "dist/demo-greeting/demo-greeting.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dist/demo-greeting/index.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "DemoGreeting",
+          "declaration": {
+            "name": "DemoGreeting",
+            "module": "dist/demo-greeting/demo-greeting.js"
           }
         }
       ]
@@ -217,27 +277,11 @@
       "declarations": [],
       "exports": [
         {
-          "kind": "custom-element-definition",
-          "name": "demo-counter",
-          "declaration": {
-            "name": "DemoCounter",
-            "module": "dist/demo-counter.js"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "demo-greeting",
-          "declaration": {
-            "name": "DemoGreeting",
-            "module": "dist/demo-greeting.js"
-          }
-        },
-        {
           "kind": "js",
           "name": "DemoCounter",
           "declaration": {
             "name": "DemoCounter",
-            "module": "dist/demo-counter.js"
+            "module": "dist/demo-counter/demo-counter.js"
           }
         },
         {
@@ -245,7 +289,7 @@
           "name": "DemoGreeting",
           "declaration": {
             "name": "DemoGreeting",
-            "module": "dist/demo-greeting.js"
+            "module": "dist/demo-greeting/demo-greeting.js"
           }
         }
       ]

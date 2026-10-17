@@ -226,3 +226,12 @@ Command: `node research/benchmarks/run.mjs --samples 15` (results regenerated in
 | Analyzer suite | `npx vitest run packages/analyzer` | Pass — 17 tests (6 new): `tests/fixtures/analyzer-composed` (folder structure, recomposed `acme-alert`) is valid against CEM 2.1.0 and `mote-metadata.v1`, diagnostic-free, and its `AcmePanel`/`AcmeAlert` declarations equal the colocated `analyzer-library` declarations apart from module paths; metadata `definition` records `ref`, `extends: component:acme-panel`, template, styles, and dependencies; registrations carry `./define/*` specifiers; `@internal` template handlers are excluded; computed names, unresolvable `define(...)`, and unknown spreads report `analyzer.dynamic.tagName`/`registration`/`definition` with lines |
 | Typecheck, lint | `npm run typecheck`, `npm run lint` | Pass |
 
+## 2026-10-17 — M4 core-counter migration to component folders
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Metadata equivalence | analyzer on the pre-migration fixture vs the migrated example | `DemoGreeting` declaration identical; `DemoCounter` identical except its description (now says "template" instead of `render()`); module paths changed; `registration` now `dist/<name>/<name>.define.js`; new `definition` metadata; no diagnostics. Committed fixtures regenerated |
+| Strict-CSP e2e | `npx playwright test e2e/core-counter.spec.ts` | Pass — unchanged test, Chromium, Firefox, WebKit |
+| Migration acceptance | `npx vitest run tests/examples/core-counter-migration.browser.test.ts` | Pass — 4 tests × 3 engines: barrel registers nothing, `define.js` registers; a click writes only inside `<output>` and keeps `button`/`output` identity; tracked `label` update keeps `output`; `count-change` detail, `:state(positive)`, Escape reset; attributes, reflection, property-only `history`, one adopted sheet; `scopeStats()` unchanged after 10 reconnects |
+| Dependents | `npx vitest run packages/analyzer packages/workbench tests/examples tests/experiments` | Pass — 41 tests (types from emitted declarations, CSP hash, analyzability probe, Workbench page registry from the regenerated fixtures) |
+

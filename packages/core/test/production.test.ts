@@ -24,7 +24,8 @@ const files = (dir: string): string[] =>
         : [],
   );
 
-describe('production build', { timeout: 30_000 }, () => {
+// Imports every entry of both builds; allow for machine load while browser projects run in parallel.
+describe('production build', { timeout: 60_000 }, () => {
   it('mirrors every development module', () => {
     const dev = files(dist).map((f) => relative(dist, f));
     const production = files(prod).map((f) => relative(prod, f));

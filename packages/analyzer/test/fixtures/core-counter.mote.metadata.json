@@ -16,10 +16,26 @@
     "component:demo-counter": {
       "tag": "demo-counter",
       "cem": {
-        "module": "dist/demo-counter.js",
+        "module": "dist/demo-counter/demo-counter.js",
         "name": "DemoCounter"
       },
-      "registration": "dist/index.js",
+      "registration": "dist/demo-counter/demo-counter.define.js",
+      "definition": {
+        "ref": {
+          "module": "dist/demo-counter/demo-counter.definition.js",
+          "name": "demoCounterDefinition"
+        },
+        "template": {
+          "module": "dist/demo-counter/demo-counter.template.js",
+          "name": "demoCounterTemplate"
+        },
+        "styles": [
+          {
+            "module": "dist/demo-counter/demo-counter.styles.js",
+            "name": "demoCounterStyles"
+          }
+        ]
+      },
       "syncPairs": [
         {
           "property": "count",
@@ -30,10 +46,26 @@
     "component:demo-greeting": {
       "tag": "demo-greeting",
       "cem": {
-        "module": "dist/demo-greeting.js",
+        "module": "dist/demo-greeting/demo-greeting.js",
         "name": "DemoGreeting"
       },
-      "registration": "dist/index.js"
+      "registration": "dist/demo-greeting/demo-greeting.define.js",
+      "definition": {
+        "ref": {
+          "module": "dist/demo-greeting/demo-greeting.definition.js",
+          "name": "demoGreetingDefinition"
+        },
+        "template": {
+          "module": "dist/demo-greeting/demo-greeting.template.js",
+          "name": "demoGreetingTemplate"
+        },
+        "styles": [
+          {
+            "module": "dist/demo-greeting/demo-greeting.styles.js",
+            "name": "demoGreetingStyles"
+          }
+        ]
+      }
     }
   },
   "diagnostics": []

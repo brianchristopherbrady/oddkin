@@ -1,3 +1,4 @@
+import './define.js';
 import { countChange } from './index.js';
 
 // Ordinary DOM code: the page talks to the elements through properties, attributes, and events.
