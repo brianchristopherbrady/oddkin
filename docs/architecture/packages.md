@@ -94,12 +94,13 @@ Subpaths are created only when implemented; an empty export is not a delivered f
 ### `@mote/components`
 | Export | Contents | Side effects |
 | --- | --- | --- |
-| `./button`, `./input`, `./side-nav`, … | Element classes and their model types (e.g. `NavigationItem`, `navigationKinds`), no registration | none |
+| `./button`, `./input`, `./side-nav`, … | Element classes, templates, styles, definitions, and model types (e.g. `NavigationItem`, `navigationKinds`), no registration. **Implemented:** `./button` | none |
+| `./button/foundation`, … | Skin-free foundation: behavior class, template, structural styles (multi-product.md §4). **Implemented:** `./button/foundation` | none |
 | `./models` | Runtime validators and migrations for component models | none |
 | `./schemas/*.json` | Generated JSON Schemas for portable model subsets | data |
 | `./composition` | Data-composition schema renderer `renderComposition()` (later, experimental; never in ordinary consumers). Not the component-definition composer `compose()` | none |
 | `./define` | Registers every element | registers `mote-*` |
-| `./define/button`, … | Registers one element and its dependencies | registers |
+| `./define/button`, … | Registers one element and its dependencies. **Implemented:** `./define/button` | registers |
 | `./layout` | Mote-bound layout helpers (roles, named conditions), `condition()`, preset recipes (e.g. side navigation) | none |
 | `./layout/layout.css` | Page-author layout classes (`mote-stack`, `mote-split`, …) generated from the same helpers | CSS, no script |
 | `./metadata` | Rich docs metadata (separately loadable) | none |

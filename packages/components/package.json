@@ -4,11 +4,25 @@
   "private": true,
   "description": "Accessible, themed custom elements, Mote layout presets, and component metadata.",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/**/*.define.js"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./button": {
+      "types": "./dist/button/index.d.ts",
+      "default": "./dist/button/index.js"
+    },
+    "./button/foundation": {
+      "types": "./dist/button/foundation.d.ts",
+      "default": "./dist/button/foundation.js"
+    },
+    "./define/button": {
+      "types": "./dist/button/button.define.d.ts",
+      "default": "./dist/button/button.define.js"
     },
     "./package.json": "./package.json"
   },
