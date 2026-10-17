@@ -9,4 +9,6 @@ export type { Conversion, PropDefinition, PropDefinitions, PropKind, PropValues 
 export { event, emit } from './events.js';
 export type { EventDefinition, EventDefinitionInit, EventDetail } from './events.js';
 export { define } from './define.js';
+export { compose, isElementDefinition } from './definition.js';
+export type { ElementDefinition, ElementDefinitionInit, ElementTemplate } from './definition.js';
 export type { DefineOptions } from './define.js';

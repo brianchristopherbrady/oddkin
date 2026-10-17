@@ -42,9 +42,9 @@ render() { return html`<span>${this.count}</span>`; }
 - When a dependency participates in both paths, scheduling coalesces the work and avoids duplicate DOM writes. Both paths use the same reactive engine.
 - Arbitrary interpolated functions are never invoked automatically. Readables are identified by a defined protocol. Use `computed()` for derived readables and named helpers for dynamic structure.
 
-### 1.1 Composed definitions (proposal, M4)
+### 1.1 Composed definitions (implemented, M4; [ADR 0036](./decisions/0036-component-composition-api.md))
 
-Not implemented yet. Colocated authoring (above) stays supported. The public composition API lets the class, template, and styles live in separate modules. Mote's own components use it with one folder per component ([IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).
+`compose()` and `define(definition)` are implemented in `@mote/core/element` and verified in three engines (`packages/core/test/definition.browser.test.ts`). Analyzer support is pending. Colocated authoring (above) stays supported. The public composition API lets the class, template, and styles live in separate modules. Mote's own components use it with one folder per component ([IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).
 
 ```ts
 // card/card.template.ts
@@ -65,14 +65,16 @@ import { cardDefinition } from './card.definition.js';
 define(cardDefinition);
 ```
 
-Requirements before acceptance (ADR in M4):
+Settled behavior:
 
-- An external template runs in the same tracked render context as `render()`. The binding rule, lifecycle order, `Scope` cleanup, and DOM identity are unchanged.
-- Definitions are side-effect free and statically analyzable. Dependencies are registered only by `define(definition)`.
-- The size budgets in ADR 0031 still pass.
+- An external template runs in the same tracked render context as `render()`. The binding rule, lifecycle order, `Scope` cleanup, and DOM identity are unchanged. Templates reach only the host's public members; members that exist for a template only use a leading `_` or `@internal`.
+- Definitions are frozen and side-effect free. `define(definition)` registers dependencies first, then binds the definition to its exact constructor (a private `WeakMap`) before registering, so upgrades see it. Classes and definitions are never mutated.
+- A definition's `styles` is the complete, ordered style list and replaces the class's `static styles`; without `styles`, the class's styles apply. A definition's `template` replaces `render()`; development builds report `definition.render.ignored` when both exist.
+- Codes: `registry.definitionConflict`, `registry.constructorReused`, `registry.collision`, `registry.definition.invalid`, `definition.element.invalid`, `definition.template.invalid`, `definition.dependency.invalid`. A failed registration leaves no binding.
+- Size budgets (ADR 0031) still pass; the counter fixture is 9,521 B gzip of 9,728 B.
 - **Name clash resolved (2026-10-17):** `compose()` from `@mote/core/element` is the component-definition composer. The optional data-composition schema renderer is `renderComposition()` from `@mote/components/composition` (previously sketched as `@mote/components/compose`, never implemented). Prose, imports, examples, and dependency checks use these names; minimal-consumer checks exclude the renderer entry, not `compose()`.
 
-**Recomposition (proposal, [multi-product.md](./multi-product.md) §5, ADR 0033).** `compose({ ...cardDefinition, name, element, styles })` creates a new frozen definition with its own identity and a traceable link to its foundation; it never mutates the source definition or class and never copies registration state or caches. An element resolves its definition by exact constructor, not through inheritance, so behavior classes stay safely subclassable. Definition `styles` are a complete ordered list (structural first by convention) and a definition `template` takes precedence over `render()`; sheets remain shared per document. Existing registration rules apply (`registry.collision`, `registry.constructorReused`), plus a proposed `registry.definitionConflict`.
+**Recomposition (implemented in the runtime; [multi-product.md](./multi-product.md) §5, ADR 0033, ADR 0036).** Every definition carries `source` (itself); a spread copies it and `compose()` records it as `extends`. `compose({ ...cardDefinition, name, element, styles })` creates a new frozen definition with its own identity and a traceable link to its foundation; it never mutates the source definition or class and never copies registration state or caches. An element resolves its definition by exact constructor, not through inheritance, so behavior classes stay safely subclassable. Definition `styles` are a complete ordered list (structural first by convention) and a definition `template` takes precedence over `render()`; sheets remain shared per document. Registration rules: `registry.collision`, `registry.constructorReused`, and `registry.definitionConflict`.
 
 ### 1.2 Interpretable public APIs (design rule)
 

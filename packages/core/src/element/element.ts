@@ -7,6 +7,7 @@ import { DEV } from '../internal/dev.js';
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 import { effect, settled, signal, untracked, type Signal } from '../reactive/index.js';
 import { enterRender, exitRender } from '../internal/render-context.js';
+import { definitionFor } from '../internal/definitions.js';
 import { Scope } from '../scope/index.js';
 import { adoptStyles, flattenStyles, retainStyles, type StyleInput } from '../styles/index.js';
 import { ChildPart } from '../template/parts.js';
@@ -324,7 +325,9 @@ export class MoteElement extends ElementBase {
       );
     }
 
-    if (this.render !== MoteElement.prototype.render) {
+    const template = definitionFor(this.constructor)?.template as
+      ((host: this) => unknown) | undefined;
+    if (template || this.render !== MoteElement.prototype.render) {
       const root = this.#ensureRoot();
       scope.add(
         effect(
@@ -332,7 +335,7 @@ export class MoteElement extends ElementBase {
             enterRender();
             let result: unknown;
             try {
-              result = this.render();
+              result = template ? template(this) : this.render();
             } finally {
               exitRender();
             }
@@ -364,7 +367,7 @@ export class MoteElement extends ElementBase {
   adoptedCallback(oldDocument: Document, newDocument: Document): void {
     const ctor = this.constructor as typeof MoteElement;
     if (this.#root && this.shadowRoot)
-      adoptStyles(this.shadowRoot, ctor.styles, { nonce: ctor.styleNonce });
+      adoptStyles(this.shadowRoot, stylesOf(ctor), { nonce: ctor.styleNonce });
     this.#guard('adopted', () => this.adopted(oldDocument, newDocument));
   }
 
@@ -449,7 +452,7 @@ export class MoteElement extends ElementBase {
       const root = this.shadowRoot ?? this.attachShadow(options);
       // Server-rendered (declarative) content is replaced; hydration is not supported.
       root.replaceChildren();
-      adoptStyles(root, ctor.styles, { nonce: ctor.styleNonce });
+      adoptStyles(root, stylesOf(ctor), { nonce: ctor.styleNonce });
       container = root;
     }
 
@@ -459,12 +462,13 @@ export class MoteElement extends ElementBase {
 
   #retainLightDomStyles(scope: Scope): void {
     const ctor = this.constructor as typeof MoteElement;
-    if (ctor.shadowRootOptions || !ctor.styles) return;
+    const styles = stylesOf(ctor);
+    if (ctor.shadowRootOptions || !styles) return;
     const root = this.getRootNode();
     if (root.nodeType !== Node.DOCUMENT_NODE && !(root instanceof ShadowRoot)) return;
     if (DEV && !checkedLightDomStyles.has(ctor)) {
       checkedLightDomStyles.add(ctor);
-      if (flattenStyles(ctor.styles).some((s) => /:host\b/.test(s.cssText))) {
+      if (flattenStyles(styles).some((s) => /:host\b/.test(s.cssText))) {
         reportMoteError(
           new MoteError(
             'element.styles.lightDomHost',
@@ -477,7 +481,7 @@ export class MoteElement extends ElementBase {
       }
     }
     scope.add(
-      retainStyles(root as Document | ShadowRoot, ctor.styles, { nonce: ctor.styleNonce }),
+      retainStyles(root as Document | ShadowRoot, styles, { nonce: ctor.styleNonce }),
       'light-DOM styles',
     );
   }
@@ -506,4 +510,10 @@ export class MoteElement extends ElementBase {
       reportMoteError(error, { code: `element.${hook}.error`, origin: this.localName });
     }
   }
+}
+
+/** A registered definition's styles replace the class's `static styles`; otherwise the class's apply. */
+function stylesOf(ctor: typeof MoteElement): StyleInput | undefined {
+  const definition = definitionFor(ctor);
+  return definition && definition.styles !== undefined ? definition.styles : ctor.styles;
 }

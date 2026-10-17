@@ -207,3 +207,15 @@ Command: `node research/benchmarks/run.mjs --samples 15` (results regenerated in
 | Clicks over 16 ms by Event Timing (both buttons) | 12 of 90 | 0 of 90 | 46 of 90 |
 
 **Findings:** (1) Mote's click-to-next-frame time matches the plain-DOM control in every engine, so the update itself adds no measurable frame latency. WebKit's ~27 ms comes from headless WebKit's frame scheduling and affects the control equally. (2) Firefox's first render includes a slower cold context start (median 169 ms after navigation start) while its script-to-render time is 18 ms. (3) Timing on this machine varies between sessions; these are baselines for regression review (plan §8: flag > 15% timing change), not cross-library comparisons.
+
+## 2026-10-17 — M4 composition API (`compose()`, `define(definition)`)
+
+**Environment:** as above (Windows, Node 24.19, Vitest 5.0.5, Playwright 1.64.1 Chromium/Firefox/WebKit).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Definition contract | `npx vitest run packages/core/test/definition.browser.test.ts` | Pass — 17 tests × 3 engines (51): frozen definitions and `source`/`extends` lineage; external templates (direct binding skips the template, tracked `.value` reads re-run it once per batch, DOM identity kept); definition styles ordered, shared per document, replacing class styles; recomposed `studio-card` coexisting with its foundation; subclasses do not inherit definitions; idempotent `define(definition)`; `registry.definitionConflict`, `registry.constructorReused`, `registry.collision` with no leftover binding; dependencies registered first and existing elements upgraded; `definition.render.ignored`; scope counts back to baseline after 5 reconnects |
+| Core suite | `npx vitest run packages/core` | Pass — 30 files, 416 tests |
+| Typecheck | `npm run typecheck` | Pass |
+| Size budgets | `npm run size` | Pass — counter 9,521 B (budget 9,728), component 10,792 B (11,264), list 11,301 B (11,776), reactive 1,892 B (2,048); the counter grew by 241 B because `define()` carries the definition path |
+
