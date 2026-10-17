@@ -49,29 +49,55 @@ export function isCSSResult(value: unknown): value is CSSResult {
   );
 }
 
+const VAR_REFERENCE = /^var\(\s*--[A-Za-z0-9_-]+\s*(?:,(.*))?\)$/s;
+const FORBIDDEN_IN_FALLBACK =
+  /[;{}<>\\"'@!]|\/\*|url\s*\(|image\s*\(|image-set\s*\(|expression\s*\(/i;
+
 /**
- * Tagged CSS. Interpolations may be other `css` results or finite numbers; strings are
- * rejected so runtime data cannot inject rules. Use custom properties for dynamic values.
+ * True for a CSS custom-property reference such as `var(--mote-space-md)` or
+ * `var(--x, 0.75rem)`: one `var()` whose fallback is a plain value (numbers, units,
+ * keywords, colours, functions, nested `var()`) with balanced parentheses and no
+ * declaration, block, string, comment, `url()`, or at-rule syntax.
+ */
+export function isCSSVariableReference(value: string): boolean {
+  if (value.length > 512) return false;
+  const match = VAR_REFERENCE.exec(value.trim());
+  if (!match) return false;
+  const fallback = match[1];
+  if (fallback === undefined) return true;
+  if (FORBIDDEN_IN_FALLBACK.test(fallback)) return false;
+  let depth = 0;
+  for (const ch of fallback) {
+    if (ch === '(') depth++;
+    else if (ch === ')' && --depth < 0) return false;
+  }
+  return depth === 0;
+}
+
+/**
+ * Tagged CSS. Interpolations may be other `css` results, finite numbers, or custom-property
+ * references (`var(--name)` / `var(--name, fallback)`, e.g. from `token()`); other strings
+ * are rejected so runtime data cannot inject rules. Use custom properties for dynamic values.
  */
 export function css(
   strings: TemplateStringsArray,
-  ...values: ReadonlyArray<CSSResult | number>
+  ...values: ReadonlyArray<CSSResult | number | string>
 ): CSSResult {
   let text = strings[0] ?? '';
   values.forEach((value, i) => {
     if (isCSSResult(value)) text += value.cssText;
     else if (typeof value === 'number' && Number.isFinite(value)) text += String(value);
+    else if (typeof value === 'string' && isCSSVariableReference(value)) text += value.trim();
     else {
       throw new MoteError(
         'style.interpolation.untrusted',
-        `css\`\` interpolation ${i} is a ${typeof value}. Only css results and finite numbers are allowed; pass dynamic values through custom properties, or wrap vetted text with unsafeCSS().`,
+        `css\`\` interpolation ${i} (${typeof value === 'string' ? `"${value.slice(0, 40)}"` : typeof value}) is not allowed. Use css results, finite numbers, or var(--name[, fallback]) references; pass dynamic values through custom properties, or wrap vetted text with unsafeCSS().`,
       );
     }
     text += strings[i + 1] ?? '';
   });
   return new CSSResult(text, CONSTRUCT);
 }
-
 /** Wrap CSS text you have vetted. Never pass user input. */
 export function unsafeCSS(cssText: string): CSSResult {
   return new CSSResult(String(cssText), CONSTRUCT);
@@ -150,4 +176,65 @@ export function adoptStyles(
     }
   }
   adopted.set(root, record);
+}
+
+interface Retained {
+  count: number;
+  sheet: CSSStyleSheet | undefined;
+  element: HTMLStyleElement | undefined;
+}
+
+const retainedByRoot = new WeakMap<ShadowRoot | Document, Map<CSSResult, Retained>>();
+
+/**
+ * Add styles to a shared root (a document or shadow root) on behalf of one owner, such
+ * as a light-DOM component instance. Each style is added once per root however many
+ * owners retain it, and removed when the last owner releases it. Returns the release
+ * function. Selectors are not scoped: light-DOM styles must scope themselves (e.g. by
+ * tag name or class), because light DOM is not encapsulated.
+ */
+export function retainStyles(
+  root: ShadowRoot | Document,
+  styles: StyleInput | undefined,
+  options: AdoptOptions = {},
+): () => void {
+  const isDocument = root.nodeType === Node.DOCUMENT_NODE;
+  const doc = (isDocument ? root : root.ownerDocument) as Document;
+  const list = flattenStyles(styles);
+  let table = retainedByRoot.get(root);
+  if (!table) {
+    table = new Map();
+    retainedByRoot.set(root, table);
+  }
+  for (const style of list) {
+    let entry = table.get(style);
+    if (!entry) {
+      const sheet = options.fallback ? undefined : style.sheetFor(doc);
+      entry = { count: 0, sheet, element: undefined };
+      if (sheet) root.adoptedStyleSheets = [...root.adoptedStyleSheets, sheet];
+      else {
+        const el = doc.createElement('style');
+        if (options.nonce) el.nonce = options.nonce;
+        el.textContent = style.cssText;
+        if (isDocument) (root as Document).head.append(el);
+        else (root as ShadowRoot).prepend(el);
+        entry.element = el;
+      }
+      table.set(style, entry);
+    }
+    entry.count++;
+  }
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    for (const style of list) {
+      const entry = table.get(style);
+      if (!entry || --entry.count > 0) continue;
+      table.delete(style);
+      if (entry.sheet)
+        root.adoptedStyleSheets = root.adoptedStyleSheets.filter((s) => s !== entry.sheet);
+      entry.element?.remove();
+    }
+  };
 }

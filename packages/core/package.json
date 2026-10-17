@@ -30,6 +30,22 @@
       "types": "./dist/element/index.d.ts",
       "default": "./dist/element/index.js"
     },
+    "./helpers/class-map": {
+      "types": "./dist/helpers/class-map.d.ts",
+      "default": "./dist/helpers/class-map.js"
+    },
+    "./helpers/style-map": {
+      "types": "./dist/helpers/style-map.d.ts",
+      "default": "./dist/helpers/style-map.js"
+    },
+    "./helpers/ref": {
+      "types": "./dist/helpers/ref.d.ts",
+      "default": "./dist/helpers/ref.js"
+    },
+    "./helpers/live": {
+      "types": "./dist/helpers/live.d.ts",
+      "default": "./dist/helpers/live.js"
+    },
     "./diagnostics": {
       "types": "./dist/diagnostics/index.d.ts",
       "default": "./dist/diagnostics/index.js"

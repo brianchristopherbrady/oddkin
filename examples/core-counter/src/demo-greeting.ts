@@ -1,4 +1,7 @@
 import { MoteElement, css, html, prop, when } from '@mote/core';
+import { styleMap } from '@mote/core/helpers/style-map';
+
+const toneColors = { plain: 'currentcolor', warm: '#9a3412', formal: '#1e3a5f' } as const;
 
 /** A greeting with typed public properties, attribute conversion, and opt-in reflection. */
 export class DemoGreeting extends MoteElement.with({
@@ -28,7 +31,9 @@ export class DemoGreeting extends MoteElement.with({
     const salutation =
       this.tone === 'formal' ? 'Good day' : this.tone === 'warm' ? 'Lovely to see you' : 'Hello';
     return html`
-      <p>${salutation}, ${this.name}${this.excited ? '!' : '.'}</p>
+      <p style=${styleMap({ color: toneColors[this.tone] })}>
+        ${salutation}, ${this.name}${this.excited ? '!' : '.'}
+      </p>
       ${when(this.history.length > 0, () => html`<small>Earlier: ${this.history.join(', ')}</small>`)}
     `;
   }

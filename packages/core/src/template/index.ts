@@ -7,3 +7,11 @@ export type { TemplateResult, TemplateKind } from './result.js';
 export { render, BLOCKED_URL } from './parts.js';
 export type { ChildPart, RenderOptions } from './parts.js';
 export { when, match, repeat } from './directives.js';
+export { ATTRIBUTE_DIRECTIVE, isAttributeDirective } from './directive.js';
+export type {
+  AttributeDirective,
+  DirectiveBinding,
+  DirectiveHandler,
+  DirectivePartType,
+  DirectiveResult,
+} from './directive.js';

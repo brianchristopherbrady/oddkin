@@ -422,8 +422,8 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 - [x] Lifecycle ordering, paused detached bindings, generation guards, reconnect, adoption, supported moves, `updateComplete`
 - [x] Templates: cached parsing, all bindings, direct readables, nested templates/nodes, `when`, keyed `repeat`, `match`; disposal; render-failure recovery; SVG
 - [x] Security: unsafe sinks, URL policy, strict CSP, Trusted Types
-- [ ] Optional helpers (refs, `classMap`, `styleMap`, live input) with behavioral tests
-- [ ] Styles: trusted fragments, interpolation grammar, per-document sheet reuse, `<style>` fallback + CSP nonce, light-DOM scoping; no rebuild on updates
+- [x] Optional helpers (refs, `classMap`, `styleMap`, live input) with behavioral tests
+- [x] Styles: trusted fragments, interpolation grammar, per-document sheet reuse, `<style>` fallback + CSP nonce, light-DOM scoping; no rebuild on updates
 - [ ] `@mote/core/layout`: `defineLayoutRecipe`, helpers with neutral defaults, region mapping, parts, variants, conditions, `extend()`; layered CSS generation; diagnostics; `describeRecipe`; byte-identical extraction
 - [ ] `@mote/core/collections`: keys, diagnostics, reconciliation, nesting, per-item `Scope`, state models; invalidation tests; keyboard controllers separate
 - [ ] `@mote/core/model`: `m`, `defineModel`, `Infer`, `validate`, `migrate`; `./model/schema`
@@ -921,10 +921,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M0: reference audit extended to all primary routes, Theme Studio interactions, dark mode, and landmarks; CEM pinned to 2.1.0; ADRs 0001–0030 written (browser baseline from BCD 8.1.6); eight draft JSON Schemas with valid/invalid examples. M1: git, npm workspaces, TypeScript 7 project references, five package skeletons + docs app, boundary checker (manifests, sources, artifacts, DOM-free), Vitest, Playwright in three engines, plain-HTML consumer, packed-consumer verification, README/CONTRIBUTING/CI | M1 skeleton verified locally; CI not yet run |
 | 2026-10-17 | M3: `@mote/core/reactive` (push–pull versioned graph: signals, computed, batch, untracked, subscribe, commit/post effects, runaway and cycle diagnostics), `@mote/core/scope` (ordered isolated cleanup, abort signal, listeners, timers, children, per-run effect scopes, controllers, leak counters), `@mote/core/diagnostics` | 53 core tests; DOM-free entries verified; full pipeline passes |
 | 2026-10-17 | M3: `@mote/core/template` (lexer with case-preserved attribute names, cached preparation, child/attribute/boolean/property/event parts, readable bindings as commit-phase effects, `when`/`match`/keyed `repeat` with `moveBefore`, SVG, sink and URL rules, Trusted Types policy), `@mote/core/styles` (trusted `css`, per-document shared sheets, nonce fallback), `@mote/core/element` (`MoteElement.with()`/`prop.*`, lifecycle hooks, reflection, typed events, custom states, `define()`); all core entries import without a DOM; `examples/core-counter` under strict CSP + Trusted Types; `with()` analyzability probe on TypeScript 7's unstable API; ADRs 0003 and 0008 accepted | 147 browser tests (49 × 3 engines) + 90 Node tests; 6 e2e; full pipeline passes |
+| 2026-10-17 | M3: attribute-directive protocol; `helpers/class-map`, `style-map` (CSSOM, CSP-safe), `ref`, `live` (current-value comparison, IME, caret); event listener options; light-DOM styles shared per root with reference counting; `css` accepts constrained `var()` references | 192 browser tests (64 × 3 engines) + 93 Node tests; 6 e2e; full pipeline passes |
 
 ## 11. Continuation
 
-**Next step:** finish M3 — light-DOM style scoping; optional helpers (refs, `classMap`, `styleMap`, live input); `@mote/core/layout`, `collections`, and `model`; the `@mote/analyzer` package (choose its TypeScript front end per the ADR 0018 finding: TypeScript 7 offers only an unstable IPC API); first minified size/startup/update/memory measurements. M2 (`defineTheme`, spacing strategies, token diagnostics) in parallel. Reactivity, `Scope`, templates, elements, and the property API are done.
+**Next step:** finish M3 — `@mote/core/layout`, `collections`, and `model`; the `@mote/analyzer` package (choose its TypeScript front end per the ADR 0018 finding: TypeScript 7 offers only an unstable IPC API); first minified size/startup/update/memory measurements. M2 (`defineTheme`, spacing strategies, token diagnostics) in parallel. Reactivity, `Scope`, templates, helpers, styles, elements, and the property API are done.
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 

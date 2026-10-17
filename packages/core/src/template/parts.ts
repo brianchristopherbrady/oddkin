@@ -5,6 +5,13 @@
  */
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 import { effect, isReadable, untracked, type Readable } from '../reactive/index.js';
+import {
+  ATTRIBUTE_DIRECTIVE,
+  isAttributeDirective,
+  type AttributeDirective,
+  type DirectiveHandler,
+  type DirectivePartType,
+} from './directive.js';
 import { prepareTemplate, type AttributeDescriptor, type PreparedTemplate } from './prepare.js';
 import { isTemplateResult, type TemplateResult } from './result.js';
 
@@ -388,6 +395,8 @@ abstract class ValuePart implements Part {
   #bound: readonly unknown[] | undefined;
   #unbind: (() => void) | undefined;
   #last: unknown = UNSET;
+  #directive: DirectiveHandler<unknown, unknown> | undefined;
+  #directiveState: unknown;
 
   constructor(element: Element, descriptor: AttributeDescriptor, options: RenderOptions) {
     this.element = element;
@@ -431,6 +440,7 @@ abstract class ValuePart implements Part {
 
   dispose(): void {
     this.#release();
+    this.#clearDirective();
   }
 
   #release(): void {
@@ -439,18 +449,67 @@ abstract class ValuePart implements Part {
     this.#bound = undefined;
   }
 
+  #clearDirective(): void {
+    const handler = this.#directive;
+    if (!handler) return;
+    this.#directive = undefined;
+    const state = this.#directiveState;
+    this.#directiveState = undefined;
+    handler.clear?.(this.element, state);
+  }
+
+  #applyDirective(directive: AttributeDirective): void {
+    const handler = directive[ATTRIBUTE_DIRECTIVE];
+    const { type, name, strings } = this.descriptor;
+    if (type === 'event' || strings.length !== 2 || strings[0] !== '' || strings[1] !== '') {
+      throw new MoteError(
+        'template.directive.position',
+        `${handler.name}() must be the whole value of its binding, e.g. ${type === 'property' ? '.' : type === 'boolean' ? '?' : ''}${name}=\${${handler.name}(…)}.`,
+      );
+    }
+    if (
+      !handler.parts.includes(type as DirectivePartType) ||
+      (handler.bindingName && handler.bindingName !== name.toLowerCase())
+    ) {
+      throw new MoteError(
+        'template.directive.binding',
+        `${handler.name}() cannot be used in a ${type} binding named "${name}"${handler.bindingName ? `; bind it as ${handler.bindingName}=\${…}` : ''}.`,
+      );
+    }
+    if (this.#directive && this.#directive !== handler) this.#clearDirective();
+    const result = handler.apply(directive, this.element, { type, name }, this.#directiveState);
+    this.#directive = handler;
+    this.#directiveState = result.state;
+    this.#last = UNSET;
+    if (result.changed) this.options.onCommit?.();
+  }
+
   #compute(): unknown {
     const read = (v: unknown) => (isReadable(v) ? v.value : v);
     const { strings } = this.descriptor;
     if (strings.length === 2 && strings[0] === '' && strings[1] === '')
       return read(this.#values[0]);
     let text = strings[0] ?? '';
-    for (let i = 1; i < strings.length; i++)
-      text += String(read(this.#values[i - 1]) ?? '') + strings[i];
+    for (let i = 1; i < strings.length; i++) {
+      const value = read(this.#values[i - 1]);
+      if (isAttributeDirective(value)) {
+        const directive = value[ATTRIBUTE_DIRECTIVE].name;
+        throw new MoteError(
+          'template.directive.position',
+          `${directive}() must be the whole value of its binding, not interpolated into "${this.descriptor.name}" text.`,
+        );
+      }
+      text += String(value ?? '') + strings[i];
+    }
     return text;
   }
 
   #apply(value: unknown): void {
+    if (isAttributeDirective(value)) {
+      this.#applyDirective(value);
+      return;
+    }
+    if (this.#directive) this.#clearDirective();
     if (this.#last !== UNSET && Object.is(value, this.#last)) return;
     this.#last = value;
     this.write(value);
@@ -493,16 +552,36 @@ class PropertyPart extends ValuePart {
   }
 }
 
-type Handler = ((event: Event) => unknown) | { handleEvent(event: Event): unknown };
+type Handler =
+  | ((event: Event) => unknown)
+  | ({ handleEvent(event: Event): unknown } & Pick<
+      AddEventListenerOptions,
+      'capture' | 'passive' | 'once'
+    >);
 
+type ListenerOptions = { capture: boolean; passive: boolean | undefined; once: boolean };
+
+function listenerOptions(handler: Handler): ListenerOptions {
+  if (typeof handler === 'function') return { capture: false, passive: undefined, once: false };
+  return { capture: !!handler.capture, passive: handler.passive, once: !!handler.once };
+}
+
+const sameOptions = (a: ListenerOptions, b: ListenerOptions) =>
+  a.capture === b.capture && a.passive === b.passive && a.once === b.once;
+
+/**
+ * One listener per part. Swapping handlers keeps it; a listener object's `capture`,
+ * `passive`, and `once` become listener options (re-added only when they change).
+ */
 class EventPart implements Part {
   readonly #element: Element;
   readonly #type: string;
   readonly #options: RenderOptions;
   #handler: Handler | undefined;
-  #listening = false;
+  #listening: ListenerOptions | undefined;
   readonly #listener = (event: Event) => {
     const handler = this.#handler;
+    if (this.#listening?.once) this.#listening = undefined;
     if (typeof handler === 'function') handler.call(this.#options.host ?? this.#element, event);
     else handler?.handleEvent(event);
   };
@@ -533,24 +612,37 @@ class EventPart implements Part {
       );
     }
     this.#handler = (value ?? undefined) as Handler | undefined;
-    if (this.#handler && !this.#listening) {
-      this.#element.addEventListener(this.#type, this.#listener);
-      this.#listening = true;
-    } else if (!this.#handler && this.#listening) {
-      this.#element.removeEventListener(this.#type, this.#listener);
-      this.#listening = false;
+    if (!this.#handler) {
+      this.#stop();
+      return;
     }
+    const options = listenerOptions(this.#handler);
+    if (this.#listening && sameOptions(this.#listening, options)) return;
+    this.#stop();
+    const { capture, passive, once } = options;
+    this.#element.addEventListener(
+      this.#type,
+      this.#listener,
+      passive === undefined ? { capture, once } : { capture, passive, once },
+    );
+    this.#listening = options;
   }
 
   pause(): void {}
 
   dispose(): void {
-    if (this.#listening) this.#element.removeEventListener(this.#type, this.#listener);
-    this.#listening = false;
+    this.#stop();
     this.#handler = undefined;
   }
-}
 
+  #stop(): void {
+    if (!this.#listening) return;
+    this.#element.removeEventListener(this.#type, this.#listener, {
+      capture: this.#listening.capture,
+    });
+    this.#listening = undefined;
+  }
+}
 // ---------------------------------------------------------------------------
 // Template instances
 

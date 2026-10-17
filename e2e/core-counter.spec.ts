@@ -36,6 +36,8 @@ test('core-only elements run under a strict CSP with Trusted Types required', as
   // Public properties: attributes in, properties from ordinary DOM code, reflection out.
   const greeting = page.locator('demo-greeting');
   await expect(greeting.getByText('Lovely to see you, reader.')).toBeVisible();
+  // styleMap writes through the CSSOM, which style-src 'self' permits (a parsed style attribute would be blocked).
+  await expect(greeting.locator('p')).toHaveCSS('color', 'rgb(154, 52, 18)');
   await page.getByLabel('Name').fill('Ada');
   await page.getByLabel('Name').press('Enter');
   await page.getByLabel('Name').blur();

@@ -473,6 +473,56 @@ describe('styles', () => {
     expect(getComputedStyle(host).paddingTop).toBe('2px');
   });
 
+  it('shares light-DOM styles in the nearest root and removes them with the last instance', () => {
+    const name = tag('demo-plain');
+    // Light DOM is not encapsulated, so selectors scope themselves by tag name.
+    class Plain extends MoteElement {
+      static override shadowRootOptions = null;
+      static override styles = unsafeCSS(`${name} { display: block; padding-top: 6px; }`);
+      protected override render() {
+        return html`<span>light</span>`;
+      }
+    }
+    define(name, Plain);
+    const before = document.adoptedStyleSheets.length;
+    const a = mount<Plain>(name);
+    const b = mount<Plain>(name);
+    expect(document.adoptedStyleSheets.length).toBe(before + 1);
+    expect(getComputedStyle(a).paddingTop).toBe('6px');
+    expect(a.querySelector('span')?.textContent).toBe('light');
+
+    const host = mount<HTMLElement>('div');
+    const shadow = host.attachShadow({ mode: 'open' });
+    const inner = document.createElement(name);
+    shadow.append(inner);
+    expect(shadow.adoptedStyleSheets.length).toBe(1);
+    expect(getComputedStyle(inner).paddingTop).toBe('6px');
+
+    a.remove();
+    expect(document.adoptedStyleSheets.length).toBe(before + 1);
+    b.remove();
+    inner.remove();
+    expect(document.adoptedStyleSheets.length).toBe(before);
+    expect(shadow.adoptedStyleSheets.length).toBe(0);
+    expect(reported).toEqual([]);
+  });
+
+  it('reports :host in light-DOM styles', () => {
+    class HostInLight extends MoteElement {
+      static override shadowRootOptions = null;
+      static override styles = css`
+        :host {
+          display: block;
+        }
+      `;
+    }
+    const name = tag('demo-host-light');
+    define(name, HostInLight);
+    mount(name);
+    mount(name);
+    expect(reported.map((r) => r.code)).toEqual(['element.styles.lightDomHost']);
+  });
+
   it('re-adopts styles for a new document', () => {
     class Moving extends MoteElement {
       static override styles = shared;

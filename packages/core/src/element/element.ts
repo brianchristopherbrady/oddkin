@@ -6,7 +6,7 @@
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 import { effect, settled, signal, untracked, type Signal } from '../reactive/index.js';
 import { Scope } from '../scope/index.js';
-import { adoptStyles, type StyleInput } from '../styles/index.js';
+import { adoptStyles, flattenStyles, retainStyles, type StyleInput } from '../styles/index.js';
 import { ChildPart } from '../template/parts.js';
 import { emit, type EventDefinition } from './events.js';
 import {
@@ -86,6 +86,7 @@ export function elementProperties(
 }
 
 const NOT_RENDERED = Symbol('not rendered');
+const checkedLightDomStyles = new WeakSet<object>();
 
 // Importing element modules must not throw where no DOM exists (server rendering, Node tooling).
 // Constructing or defining elements there is still unsupported.
@@ -275,6 +276,7 @@ export class MoteElement extends ElementBase {
       this.#checkedFields = true;
       this.#rejectShadowingFields();
     }
+    this.#retainLightDomStyles(scope);
     this.#guard('connected', () => this.connected(scope));
     if (scope.disposed) return;
 
@@ -432,19 +434,34 @@ export class MoteElement extends ElementBase {
       root.replaceChildren();
       adoptStyles(root, ctor.styles, { nonce: ctor.styleNonce });
       container = root;
-    } else if (ctor.styles) {
-      reportMoteError(
-        new MoteError(
-          'element.styles.lightDom',
-          `<${this.localName}> renders into light DOM, so static styles are not applied. Use a shadow root or document-level styles.`,
-        ),
-        { code: 'element.styles.lightDom', origin: this.localName },
-      );
     }
+
     this.#root = new ChildPart(container, null, null, { host: this, onCommit: () => this.#bump() });
     return this.#root;
   }
 
+  #retainLightDomStyles(scope: Scope): void {
+    const ctor = this.constructor as typeof MoteElement;
+    if (ctor.shadowRootOptions || !ctor.styles) return;
+    const root = this.getRootNode();
+    if (root.nodeType !== Node.DOCUMENT_NODE && !(root instanceof ShadowRoot)) return;
+    if (!checkedLightDomStyles.has(ctor)) {
+      checkedLightDomStyles.add(ctor);
+      if (flattenStyles(ctor.styles).some((s) => /:host\b/.test(s.cssText))) {
+        reportMoteError(
+          new MoteError(
+            'element.styles.lightDomHost',
+            `<${this.localName}> renders into light DOM, where :host never matches. Select the element by tag name or class instead.`,
+          ),
+          { code: 'element.styles.lightDomHost', origin: this.localName },
+        );
+      }
+    }
+    scope.add(
+      retainStyles(root as Document | ShadowRoot, ctor.styles, { nonce: ctor.styleNonce }),
+      'light-DOM styles',
+    );
+  }
   #rejectShadowingFields(): void {
     for (const property of propsOf(this.constructor).values()) {
       if (!Object.hasOwn(this, property.name)) continue;

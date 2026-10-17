@@ -56,3 +56,17 @@ Recorded results of checks. Each entry states the date, environment, command, an
 **Findings:** (1) TypeScript 7.0.2 has no in-process compiler API; only `typescript/unstable/*` (IPC) — recorded in ADR 0018. (2) A trailing `<` before a binding (`<${tag}>`) was lexed as text; now rejected as a dynamic tag name. (3) Importing the core root in Node threw (`HTMLElement` undefined), which would also break server imports in framework apps; the base class now falls back to a stub and `define()` is a no-op without a registry. (4) Import-map consumers need an entry for every subpath loaded transitively (`@mote/core/reactive`).
 
 **Data point, not a measurement:** unminified `@mote/core` output with comments is 87.7 KB raw / 21.7 KB gzip in total (template 8.6 KB, element 6.7 KB, reactive 4.2 KB gzip). Minified per-entry sizes, startup, update, and memory measurements remain M3 work.
+## 2026-10-17 — M3 helpers, light-DOM styles, and `css` references
+
+**Environment:** as the previous entry.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| `css` grammar | `npx vitest run --project node packages/core/test/styles.test.ts` | Pass — accepts `var(--name)` with plain, nested-`var()`, `calc()`, colour-function, and font-list fallbacks; rejects declaration/block escapes, strings, comments, `!important`, `url()`/`image-set()`, at-rules, unbalanced parentheses, multiple references, over-long input, and `NaN` |
+| Helpers (browser) | `npx vitest run --project browser` | Pass in Chromium, Firefox, WebKit — `classMap` keeps static and external classes, binds readables, clears on disposal; `styleMap` sets properties, custom properties, and `!important` through the CSSOM and removes cleared ones; `createRef` is set while rendered, cleared on removal, never written as an attribute, and observable by effects; callback refs receive the element then `undefined`; `live` restores edited fields, defers during composition, keeps the caret; directive position and binding errors |
+| Event options | same | Pass — `once` fires once; `capture` runs before target listeners; `passive` ignores `preventDefault` |
+| Light-DOM styles | same | Pass — one sheet for many instances in the document; adopted into an enclosing shadow root; removed with the last instance; `:host` reported once per class |
+| Strict CSP with `styleMap` | `npx playwright test e2e/core-counter.spec.ts` | Pass in all three — tone colour applied through the CSSOM under `style-src 'self'`; zero policy violations |
+| Full pipeline | `npm run verify` | Pass — 93 Node + 192 browser unit tests, 6 e2e, packed consumers |
+
+**Finding:** a directive interpolated into a multi-value attribute (`class="x ${classMap(…)}"`) was stringified to `[object Object]`; it now reports `template.directive.position`.
