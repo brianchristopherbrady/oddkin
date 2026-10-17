@@ -46,3 +46,5 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0031](./0031-dev-prod-builds-and-size-budget.md) | Development/production builds and core size budget | Accepted | Core |
 | [0032](./0032-generated-agent-kits.md) | Generated agent kits and project context | Proposed | Agent |
 | [0033](./0033-multi-product-foundations.md) | Multi-product foundations, recomposition, and product scale | Proposed | Components / Theming / Tooling |
+| [0034](./0034-change-impact-and-conformance.md) | Change impact, portable conformance, explanations, and reproductions | Proposed | Tooling / Verification |
+| [0035](./0035-page-suspension-and-restoration.md) | Page suspension and back/forward cache restoration | Proposed | Core / App |

@@ -233,7 +233,7 @@ A build step (part of Mote's own tooling, a dev dependency) transforms component
 3. **Host styling** — `mote-button { margin: … }`.
 4. **Parts** — selected `::part(control)` hooks for structural overrides (styling, not theming).
 
-Global page selectors do not reach shadow internals. Component styles read inherited roles with fallbacks and never re-declare the full theme on `:host`, which would mask ancestor scopes.
+Global page selectors do not reach shadow internals. Styling explanations (planned, [change-impact-and-verification.md](./change-impact-and-verification.md) §4.1) trace observed computed values back through component variables, semantic roles, and alias chains using inspection provenance. They label declared, potential, and observed relationships and never claim full cascade reconstruction. Component styles read inherited roles with fallbacks and never re-declare the full theme on `:host`, which would mask ancestor scopes.
 
 ## 8. Theme Studio
 
@@ -252,6 +252,16 @@ Theme Studio is part of `@mote/workbench`, so any library documented with Workbe
 - CLI: `mote-tokens init`, `build <config> --out <dir> --format css,json,scss,ts`, `check <config>`. Theme Studio calls the same pure generator.
 - Config formats: JSON and native ESM JS first. Local erasable `.ts` configs via verified Node type stripping (proposed minimum Node 24.12); type-check separately because stripping does not type-check or honour path aliases. Precompiled JS is the fallback. Published packages ship JS. [R28]
 - DTCG: target Format Module 2025.10 explicitly and validate serialized types/aliases against it. It is a community-group format, not a browser standard or W3C Recommendation. [R29]
+- **DTCG Resolver 2025.10 (decision pending, experiment M9).** The Resolver module [R53] adds sets merged in array order, modifiers whose contexts select token sources (modifiers may not reference other modifiers), a required `resolutionOrder`, and permutations (one resolved token set per combination of modifier contexts). Format support does not imply Resolver support. The experiment maps Mote concepts through the canonical generator only:
+
+  | Mote | Resolver candidate | Expected gap |
+  | --- | --- | --- |
+  | Defaults → preset → configuration → overrides | Ordered sets in `resolutionOrder` | Mote generates scales and palettes before resolution; Resolver sets hold literal tokens, so generated values are exported, not their formulas |
+  | Modes, products, density | Modifiers with contexts | Mote emits one stylesheet with nested scopes and alias-closure re-declaration; Resolver describes per-permutation token sets |
+  | Profiles, conditions | No direct equivalent | Subtree role overrides and literal query thresholds become `$extensions` or stay unsupported |
+  | Aliases | References | Alias semantics and unit preservation must match |
+
+  The experiment covers shared presets, independent overrides, preserved units, and 1, 2, 3, and 10 products. It records output determinism and size (the number of permutations grows multiplicatively with modifiers), and checks output with an independent Resolver implementation where one exists. It ends in an explicit decision — a bounded export subset, import as well, or an evidence-backed deferral — listing supported, lossy, and unsupported mappings and precedence differences. Import and round-trip support remain a separate scope decision; any adapter maps into the canonical generator rather than reimplementing generation.
 
 ## 10. Colour
 

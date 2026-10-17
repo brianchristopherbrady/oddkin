@@ -70,7 +70,7 @@ Requirements before acceptance (ADR in M4):
 - An external template runs in the same tracked render context as `render()`. The binding rule, lifecycle order, `Scope` cleanup, and DOM identity are unchanged.
 - Definitions are side-effect free and statically analyzable. Dependencies are registered only by `define(definition)`.
 - The size budgets in ADR 0031 still pass.
-- Names are final only after the clash with the planned `@mote/components/compose` schema renderer is resolved.
+- **Name clash resolved (2026-10-17):** `compose()` from `@mote/core/element` is the component-definition composer. The optional data-composition schema renderer is `renderComposition()` from `@mote/components/composition` (previously sketched as `@mote/components/compose`, never implemented). Prose, imports, examples, and dependency checks use these names; minimal-consumer checks exclude the renderer entry, not `compose()`.
 
 **Recomposition (proposal, [multi-product.md](./multi-product.md) §5, ADR 0033).** `compose({ ...cardDefinition, name, element, styles })` creates a new frozen definition with its own identity and a traceable link to its foundation; it never mutates the source definition or class and never copies registration state or caches. An element resolves its definition by exact constructor, not through inheritance, so behavior classes stay safely subclassable. Definition `styles` are a complete ordered list (structural first by convention) and a definition `template` takes precedence over `render()`; sheets remain shared per document. Existing registration rules apply (`registry.collision`, `registry.constructorReused`), plus a proposed `registry.definitionConflict`.
 
@@ -127,6 +127,8 @@ The base class owns native callbacks; authors use these hooks without `super.con
 - Disconnect disposes connection work immediately. Reconnect creates new ownership and resumes retained bindings without resetting local state or replacing stable nodes.
 - Native `moveBefore()` / `connectedMoveCallback` may preserve a connection where supported (feature-detected). Ordinary remove/insert follows normal disconnect/reconnect; no global delayed-cleanup heuristic. [R21]
 - Queued callbacks recheck the connection generation before committing. Slot-dependent setup uses `slotchange` or an explicit parser-ready strategy.
+- Browser page suspension (back/forward cache) is **not** a disconnect: elements stay connected, their scopes stay alive, and paused timers and promises resume on restore. Components never listen to page-lifecycle events themselves; application-level policy lives in §9.1.
+- *(Proposed, development builds only.)* Commit causes (render-level vs direct binding), dependencies, and scope ownership can be recorded by the opt-in `@mote/core/inspect` entry for explanations ([change-impact-and-verification.md](./change-impact-and-verification.md) §4.2). It is absent from production builds.
 
 ## 4. Scope — ownership and cleanup
 
@@ -307,6 +309,7 @@ class DemoSearch extends MoteElement {
 - Invalidation revokes the previous generation's right to commit before its continuation can run (abort **and** generation guard). Stale completions from non-cooperative work are ignored. Expected aborts never surface as unhandled rejections; real failures stay visible; timeout and user cancellation have distinct reasons.
 - Explicit `refresh`, `cancel`, `retry`, `dispose`. Retries, debounce, caching, dedupe, stale-while-revalidate, and optimistic state are opt-in policies.
 - Resources are for reads. Mutations are explicit commands; cancelling a fetch does not roll back a server operation.
+- *(Proposed, §9.1.)* Restore policy: by default a resource keeps its state across page suspension. An opt-in `revalidateOnRestore` policy starts a new generation after a persisted `pageshow`, with the usual abort and generation guards. Failed revalidation surfaces as the resource's `error` state. Mutations are never retried automatically.
 
 ## 9. Application root and router (`@mote/app`)
 
@@ -314,3 +317,19 @@ class DemoSearch extends MoteElement {
 - Router on `URL`, `URLSearchParams`, History API, native anchors, dynamic `import()`. Nested routes, typed params/search parsing, not-found, route errors, lazy modules, navigation cancellation. The active route owns its resources and subscriptions.
 - Preserve modified clicks, external links, downloads, `target`, fragments, history. Explicit title, focus, announcements, scroll restoration. URL is authoritative for navigable state (precedence over persistence documented). Base-path support. Hash-router option for static hosts without rewrites.
 - SSR, streaming, hydration, a compiler, and preemptive scheduling are later, separate projects — not implied v1 capabilities.
+
+### 9.1 Page suspension and restoration (proposal, M7; [ADR 0035](./decisions/0035-page-suspension-and-restoration.md))
+
+| Lifecycle | Trigger | What happens |
+| --- | --- | --- |
+| Element disconnect/reconnect | DOM removal/insertion | Connection scope disposed; fresh scope on reconnect (§3, §4) |
+| Application stop/restart | Explicit `stop()` / `start()` | Root scope disposed; restart creates fresh scopes and services |
+| Temporary page suspension | `pagehide` with `persisted: true` (intent only; the browser may still discard the page) | Nothing is disposed; declared services may suspend external connections |
+| Back/forward cache restoration | `pageshow` with `persisted: true` | Same JS heap and DOM resume; declared services resume; resources with a restore policy revalidate |
+| Permanent disposal | Page discarded, or explicit `stop()` | Disposal only through explicit stop; the browser discarding a page runs no Mote code |
+
+- Navigation is never assumed to disconnect elements or rebuild the application. `pagehide` never disposes the application. A genuinely disposed `Scope` is still replaced by a fresh one and never reuses an aborted signal.
+- Lifecycle listeners are activated only by an explicit, owned application service (e.g. `app.use(pageLifecycle())`, name proposed). It registers `pagehide`, `pageshow`, and `visibilitychange` once in the app root scope; importing a module never adds listeners. No `unload` or `beforeunload` listeners. `freeze`/`resume` are verified enhancements where supported, never required.
+- Services declare `suspend()`/`resume()` behavior: which observations or external connections (sockets, event sources, polling) pause, how they resume without duplicate listeners (listeners registered once and never re-added), and how failed reconnections surface. Revalidation is limited to declared resource policies and respects stale-result guards. Mutations are not retried, and cancellation implies no rollback. Anything else requires an explicit consumer policy.
+- Core components inside other frameworks never take ownership of the host page lifecycle.
+- Tests prove an actual persisted restoration (`pageshow.persisted === true`) and separate it from reloads and ordinary history navigation. They cover repeated restoration, state preservation, listener counts, resource freshness, and explicit shutdown. When a browser or test environment prevents a real cache restoration, the scenario is recorded as not verified; a test that only calls "go back" proves nothing about the cache.

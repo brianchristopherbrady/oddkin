@@ -34,6 +34,11 @@ Until the composition API lands, new code follows the existing colocated style. 
 
 When the agent kit exists ([agent-tooling.md](./docs/architecture/agent-tooling.md), ADR 0032), changes to public APIs, tokens, recipes, examples, or authored guidance regenerate it with `mote-agent kit`, and `mote-agent kit --check` must report no stale artifacts. Authored guidance may only cite tags, properties, events, slots, parts, tokens, recipes, and imports that exist; the build rejects unknown references. Do not hand-edit generated references or the managed `AGENTS.md` section.
 
+## Verification evidence (planned tooling)
+
+Visual baselines are updated only through an explicit accept step that lists the differences being accepted. Conformance suites accept legitimate customizations and must reject their shipped mutants. Record results with the implementation, configuration, browser, and suite version tested ([change-impact-and-verification.md](./docs/architecture/change-impact-and-verification.md)).
+
+## Workflow
 
 - `npm run verify` must pass before a change is considered done. Run the smallest relevant command while iterating.
 - Code is formatted with Prettier (`npm run format`). Markdown is not auto-formatted.

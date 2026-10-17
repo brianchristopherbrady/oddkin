@@ -44,7 +44,7 @@ apps/docs         → core, state, app, tokens, components, workbench (browser p
 - The generic layout-recipe mechanism lives in core and is unbranded; Mote defaults and presets live in `@mote/components/layout`; tokens stay unaware of recipes. See [layout-recipes.md](./layout-recipes.md).
 - No browser package, minimal consumer, or the docs app's runtime graph may reach `@mote/agent` or `@mote/analyzer`. Ordinary component consumers never receive `@mote/workbench` either; components never depend on it.
 - Data models and collections are generic in core (`./model`, `./collections`); component models, validators, schemas, and the optional composition renderer live in components. Model metadata and JSON Schemas are produced at build time by `@mote/analyzer` (using `core/model/schema`), not by a runtime package. See [data-composition.md](./data-composition.md).
-- Minimal consumers must not contain `components/models`, `core/model/schema`, `components/compose`, or unused recipe presets.
+- Minimal consumers must not contain `components/models`, `core/model/schema`, the data-composition renderer `components/composition`, `core/inspect`, conformance or testing helpers, or unused recipe presets. The component-definition composer `compose()` (`@mote/core/element`) is ordinary authoring API and allowed.
 - No private deep imports, no cycles. Enforced by `scripts/architecture/check-boundaries.mjs`.
 
 ## Entry points (proposed)
@@ -63,7 +63,8 @@ apps/docs         → core, state, app, tokens, components, workbench (browser p
 | `./collections` | `collection` (keys, reconciliation, nesting), selection/expansion/disabled/active models | **no** | none |
 | `./model` | `m`, `defineModel`, `Infer`, `validate`, `migrate` (unbranded model builder) | **no** | none |
 | `./model/schema` | JSON Schema emitter for model portable subsets (tooling) | **no** | none |
-| `./registry` | `define`, collision diagnostics | yes | none until called |
+| `./element` (registration) | `define`, collision diagnostics — implemented in `./element` and the root entry; there is no separate `./registry` entry | yes | none until called |
+| `./inspect` (proposed) | Development-only explanation records (commit causes, dependencies, scope ownership); resolved only under the `development` condition, opt-in and bounded ([change-impact-and-verification.md](./change-impact-and-verification.md) §4.2) | yes | none until enabled |
 | `./controllers/*`, `./helpers/*` | Optional behaviors (observers, focus, form, refs, `classMap`, live input) | yes | none |
 | `./diagnostics` | Dev warnings configuration | no | none |
 
@@ -96,7 +97,7 @@ Subpaths are created only when implemented; an empty export is not a delivered f
 | `./button`, `./input`, `./side-nav`, … | Element classes and their model types (e.g. `NavigationItem`, `navigationKinds`), no registration | none |
 | `./models` | Runtime validators and migrations for component models | none |
 | `./schemas/*.json` | Generated JSON Schemas for portable model subsets | data |
-| `./compose` | Composition schema renderer (later, experimental; never in ordinary consumers) | none |
+| `./composition` | Data-composition schema renderer `renderComposition()` (later, experimental; never in ordinary consumers). Not the component-definition composer `compose()` | none |
 | `./define` | Registers every element | registers `mote-*` |
 | `./define/button`, … | Registers one element and its dependencies | registers |
 | `./layout` | Mote-bound layout helpers (roles, named conditions), `condition()`, preset recipes (e.g. side navigation) | none |
@@ -125,7 +126,7 @@ Recomposable components (multi-product.md §4, ADR 0033, planned) also have `car
 Files inside a folder import siblings directly, never through their own `index.ts`. No ordinary barrel imports a `*.define.ts` module; the boundary check will enforce this once the convention lands.
 
 ### `@mote/analyzer` (dev-only)
-`.` (Node API `analyze`, `compare`), `./schema/mote-metadata-v1.json`, bin delegated through `mote analyze`. Node only.
+`.` (Node API `analyze`, `compare`), `./schema/mote-metadata-v1.json`, proposed `./impact` (comparison snapshots, impact traversal, verification selection, `impact-report.v1`; [change-impact-and-verification.md](./change-impact-and-verification.md) §2), bin delegated through `mote analyze` and `mote impact`. Node only.
 
 ### `@mote/workbench`
 | Export | Contents | Environment |
@@ -135,9 +136,11 @@ Files inside a folder import siblings directly, never through their own `index.t
 | `./pages` | Page registry types, route/page contracts, legacy-redirect contracts (DOM-free) | any |
 | `./content` | Built-in localizable explanatory copy (message catalog keyed by page/section id) | any |
 | `./examples` | `defineExamples` (DOM-free definitions) and types | any |
-| `./testing` | `runExample` for browser tests | browser test runner |
+| `./testing` | `runExample`, `runConformance` for the project's Vitest browser or Playwright runner (proposed) | browser test runner |
+| `./conformance` | `defineConformance`, `conformance.v1` contract, adapter and result types (DOM-free, proposed) | any |
+| `./conformance/*` | Mote's conformance suites for its own components, written against public `@mote/components` exports (proposed) | browser test runner |
 | `./config` | `defineWorkbenchConfig` (incl. navigation, categories, products, content overrides), `defineDocs` and types | any |
-| `./node` + bin `mote` | `analyze`, `workbench dev`, `workbench build`, `workbench products --discover` | Node only |
+| `./node` + bin `mote` | `analyze`, `impact`, `workbench dev`, `workbench build`, `workbench products --discover`, `workbench repro export` (proposed) | Node only |
 
 ### `@mote/agent` (dev-only)
 `./operations`, `./context` (project context, capability paths, freshness), `./kit` (agent-kit generator: entry guide, references, JSON, Agent Skills packaging, managed `AGENTS.md` section, `llms.txt`), `./cli` (bin `mote-agent`), `./instructions` (thin IDE adapters generated from `./kit`), optional `./mcp`. Node only. Kit generation never requires the Workbench application ([agent-tooling.md](./agent-tooling.md) §5, ADR 0032).

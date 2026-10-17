@@ -13,6 +13,8 @@ Status: **draft v1 schemas** (JSON Schema 2020-12). They make the contracts in t
 | [theme-studio-composition.v1.schema.json](./theme-studio-composition.v1.schema.json) | Saved specimen compositions (ADR 0020) | `@mote/workbench` |
 | [share-payload.v1.schema.json](./share-payload.v1.schema.json) | Decoded share links | `@mote/workbench` |
 
+Planned (ADR 0034, not yet drafted): `comparison-snapshot.v1`, `impact-report.v1`, `conformance.v1`, `conformance-result.v1`, `explanation.v1`, and `reproduction.v1` ([change-impact-and-verification.md](../architecture/change-impact-and-verification.md)). `share-payload.v1` stays a settings-only link format.
+
 Planned (ADR 0033, not yet drafted): additive `product.v1` fields for design language, component family, and foundation compatibility, and `mote-metadata.v1` fields for foundation/derived-definition relationships, layered style sources, family mappings, and anatomy contracts ([multi-product.md](../architecture/multi-product.md) §9–§10).
 
 Planned (ADR 0032, not yet drafted): `diagnostic.v1` (shared diagnostic envelope), `project-context.v1`, and `agent-kit.v1` (kit manifest), plus additive `examples.v1` fields for explained incorrect examples and additive `mote-metadata.v1` fields for agent-facing facts ([metadata-and-analyzer.md](../architecture/metadata-and-analyzer.md) §3.1).

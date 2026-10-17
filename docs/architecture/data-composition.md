@@ -219,9 +219,9 @@ export type NavigationItem = Infer<typeof NavigationItemModel>;
 | `@mote/components/side-nav` | Element class, `NavigationItem` type, `navigationKinds` | Yes for side-nav users |
 | `@mote/components/models` | Runtime validators and migrations for all component models | No, unless imported |
 | `@mote/components/schemas/*.json` | Generated JSON Schemas | Data |
-| `@mote/components/compose` | Composition schema renderer (§8, experimental) | **Never** unless imported |
+| `@mote/components/composition` | Data-composition schema renderer `renderComposition()` (§8, experimental); unrelated to the component-definition composer `compose()` | **Never** unless imported |
 
-Boundary checks assert that a button-only or side-nav-only consumer contains no `models` validators, JSON Schema emitter, `compose`, or `@mote/agent`.
+Boundary checks assert that a button-only or side-nav-only consumer contains no `models` validators, JSON Schema emitter, `components/composition` renderer, or `@mote/agent`.
 
 ## 8. Composition schema (later, optional)
 
@@ -252,7 +252,7 @@ Bounded initial contract:
 - **Stable `id`s** for keyed reconciliation and migrations.
 - **References**, not code: `recipe`, `profile`, token names, `$ref` to data, `$binding` / `$action` names resolved by the host application. No executable strings, arbitrary HTML, event-handler attributes, or unrestricted DOM property assignment.
 - **Versioned** with migrations and diagnostics.
-- Rendered with the existing template renderer via `renderComposition(doc, { registry, bindings, actions })`; separately importable from `@mote/components/compose`.
+- Rendered with the existing template renderer via `renderComposition(doc, { registry, bindings, actions })`; separately importable from `@mote/components/composition`.
 
 AI support never makes this schema mandatory: agent tooling recommends templates, data models, or hybrids by the §9 criteria and works without the composition schema ([agent-tooling.md](./agent-tooling.md) §8).
 

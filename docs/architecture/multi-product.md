@@ -234,6 +234,8 @@ Fixtures use **1, 2, 3, and 10 products**; representative coverage plus targeted
 
 Results are recorded against the implementation and configuration tested. Performance benefits of shared foundations are hypotheses until measured.
 
+Shared interaction fixtures become portable conformance suites, and product-affecting changes are traced by impact reports ([change-impact-and-verification.md](./change-impact-and-verification.md) §2–§3). A change to shared structural styles, presets, or a foundation selects verification for every product that uses it.
+
 ## Open questions
 
 - Definition lineage: self-referencing `source` field vs an explicit `extend()` helper.

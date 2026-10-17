@@ -2,6 +2,8 @@
 
 Recorded results of checks. Each entry states the date, environment, command, and outcome. Never record a result that was not observed.
 
+**Evidence vocabulary.** Plan and architecture status uses: *implemented and verified* (entry below), *implemented with remaining verification*, *planned*, *experimental*, and *explicitly deferred*. Selected verification results use `selected`, `passed`, `failed`, `reused` (with the reused baseline's conditions), `not-executed`, and `unresolved` ([change-impact-and-verification.md](./architecture/change-impact-and-verification.md) §2.4). Results name the implementation, configuration, browser and version, and suite version they apply to; automated results never stand in for manual accessibility evidence, and a navigation test that only calls "go back" is not back/forward cache evidence.
+
 ## 2026-10-17 — M1 workspace skeleton
 
 **Environment:** Windows, Node 24.19.0, npm 11.17.0, TypeScript 7.0.2, Vitest 5.0.5, Playwright 1.64.1 (Chrome for Testing 156.0.8078.4, Firefox 157.0, WebKit 27.2), Prettier 3.9.10, es-module-lexer 3.0.4, Ajv 8 + ajv-formats 3.

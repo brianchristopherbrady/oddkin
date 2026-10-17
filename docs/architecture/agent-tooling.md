@@ -177,6 +177,10 @@ Results are structured JSON with source references (file, metadata path, version
 | Validate usage | `validateUsage(files \| snippet)` | Static checks with precise diagnostics: unknown tags, properties, attributes, events, slots, tokens, imports; rich values passed as attributes; `="false"` on boolean attributes; missing registration; private imports. Unresolved cases are listed separately |
 | Plan migration | `planMigration(source)` | Version-specific changes, affected locations, proposed edits |
 | Inspect preview | `inspectPreview(example, settings)` | Runtime errors, events, relevant state, verification evidence (§9.2) |
+| Explain impact | `explainImpact(base, head)` (planned) | `impact-report.v1`: changed contracts and values, affected products/definitions/examples with reasons, coverage gaps, selected checks and their states |
+| Explain element | `explainElement(preview, target)` (planned) | `explanation.v1` styling and runtime records with provenance and limitations — the same record Workbench shows |
+| Run conformance | `runConformance(suite, implementation, config)` (planned) | `conformance-result.v1` with suite version, implementation, configuration, browser |
+| Export reproduction | `exportReproduction(example, outDir)` (planned) | `reproduction.v1` directory plus the list of undeclared inputs that need adapters; dry run by default |
 
 - **Bounded responses:** limits and cursors, stable ids, and links to expanded detail; never the whole catalog by default.
 - **One implementation:** the CLI (`--json` for machine-readable output, readable terminal output by default) and the MCP adapter call the same operations.

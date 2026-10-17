@@ -134,6 +134,7 @@ Derived definitions get their own component ids. Standard CEM stays interoperabl
 - Metadata vs implementation contract tests: defaults, allowed values, reflection, events, and slots in metadata match runtime behavior in browser tests (results attach `verified` provenance).
 - Token references in component metadata exist in the token inspection output; recipe regions referenced by parts exist; model ids resolve.
 - **Public API comparison**: `mote analyze --compare <baseline-dir|package@version>` reports added/removed/changed contracts with a suggested semver impact; used in release checks.
+- **Change impact** (planned, [change-impact-and-verification.md](./change-impact-and-verification.md) §2): `comparison-snapshot.v1` manifests extend this comparison to definitions, foundations, styles, tokens, recipes, products, examples, and suites. Items match by stable id; renames are recognized only from authoritative identity or migration records (e.g. `@renamedFrom`). `mote impact` traverses edges with provenance, widens selection for unresolved ones, and writes `impact-report.v1`.
 - **Authored references** (planned): every tag, property, event, slot, part, token, recipe, and public import named in authored guidance or examples resolves against the metadata (`agent.guidance.unknownReference`); incorrect examples declare the diagnostic they should produce.
 
 ## 6. Operation modes
@@ -143,6 +144,7 @@ Derived definitions get their own component ids. Standard CEM stays interoperabl
 | One-shot | `mote analyze` writes outputs and a diagnostics report; non-zero exit on errors |
 | Watch | Incremental analysis via the compiler's incremental program; re-emits only changed artifacts; pushes updates to the Workbench dev server |
 | API | `analyze(config) → { metadata, diagnostics }` for tooling and `@mote/agent` (Node only) |
+| Impact (planned) | `snapshot()`, `compare(base, head)`, `impact(comparison, { select })` in `./impact`; local only, no hosted service |
 
 Stale generated artifacts are removed only inside directories that carry a Mote "generated" marker file; authored files (config, examples, guidance, explicit metadata) are never touched.
 

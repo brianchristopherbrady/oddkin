@@ -195,6 +195,7 @@ export default defineExamples('mote-button', {
 - Optional: fixtures, compositions (multiple components), interactions (scripted steps), supplemental guidance, preview roles.
 - `defineExamples` is a DOM-free definition in a dev-only entry; fixtures run only inside preview frames and tests.
 - Reused by Workbench, `apps/docs`, browser tests (`runExample` helper), visual tests, Theme Studio, and agents.
+- *(Planned, [change-impact-and-verification.md](./change-impact-and-verification.md).)* Examples link to their source metadata, token inspection, conformance results (with suite version, implementation, configuration, and browser), and impact reports. **Explain** on a selected element or part shows the shared `explanation.v1` record. **Copy example link** (settings only) stays distinct from **Export reproduction** (a runnable project with declared dependencies). Visual baselines change only through an explicit accept step.
 - Basic previews are generated from metadata when sufficient. Missing providers, services, fixtures, or complex children are reported explicitly. No automatic enumeration of every property combination.
 - *(Planned.)* Explained **incorrect** examples for common mistakes (attribute vs property, boolean removal, registration, event names, binding paths, reconnect) declare the diagnostic they should produce. They feed agent-kit references and `validateUsage` tests and are never rendered as recommended presets ([agent-tooling.md](./agent-tooling.md) §7).
 
@@ -222,6 +223,8 @@ mote analyze                # analyzer one-shot (diagnostics, outputs)
 mote workbench dev          # analyze + watch + validate + dev server with live preview updates
 mote workbench build        # validate metadata, emit static app (assets, lazy imports, deep links, base path, legacy redirects)
 mote workbench products --discover   # report suggested product mappings (never enables or publishes a page)
+mote impact <base> <head>   # planned: impact report + selected verification (delegates to @mote/analyzer)
+mote workbench repro export <example|share-link> --out <dir>   # planned: runnable reproduction; writes only to <dir>
 ```
 
 - Bin `mote` (in `@mote/workbench`, delegating `analyze` to `@mote/analyzer`). Builds never publish or deploy.
