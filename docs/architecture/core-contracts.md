@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: **proposal**. These are the contracts to prototype and test; none are implemented yet. Exact TypeScript signatures are stabilized in M3 before catalog work. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@mote/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -178,6 +178,20 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 - **Diagnostics:** component, template location/part, property, phase, likely fix; dev-only tracing; one error-reporting path; defined recovery after a failed commit.
 - **Collections and data models:** keyed `repeat` is fed by `@mote/core/collections` for components with structured content; item templates track external reactive reads, so output never goes stale when only a dependency changes. Model definitions (`@mote/core/model`) generate types, validators, and schemas. See [data-composition.md](./data-composition.md).
 - **Behavior tools** (built when catalog components need them): resize/intersection observers, refs/slot observation, form association, roving tabindex, focus return, `Intl` formatting. Prefer native CSS, `<dialog>`, popover/top layer, logical properties. Portals, advanced overlays, transitions, and virtualization follow concrete requirements and measurement.
+
+### 6.1 Behaviors settled in the M3 implementation
+
+- **Child values:** `null`, `undefined`, and `false` render nothing; other primitives render as text; iterables render unkeyed items; a readable inside a list binds like any readable. Functions are never called (`template.value.function`).
+- **Attribute values:** `null` and `undefined` remove the attribute; `false` renders `"false"` (so `aria-*` values work). Use `?name=` for presence.
+- **Event bindings:** one listener per part; swapping handlers never re-adds it. Handlers run with the component as `this`.
+- **Keyed `repeat`:** only out-of-place items move, using `moveBefore()` where supported so focus and element state survive; duplicate keys report `template.repeat.duplicateKey` and render without DOM reuse.
+- **First render** is synchronous during connection, so `mounted(scope)` sees committed DOM. Later renders and direct bindings commit in the microtask flush.
+- **`updated(changes)`** runs in the post phase after each commit batch, including the first; `changes` maps changed public properties to previous values and is empty for binding-only work.
+- **`updateComplete`** resolves when the shared flush settles; a disconnected element has no pending work for it.
+- **Declarative shadow DOM** content is replaced on first render; hydration is not supported.
+- **Invalid values** (`element.attribute.invalid`, `element.prop.invalid`) fall back to the property default.
+- **Shadowing class fields** report `element.prop.shadowed`; the field value is applied through the reactive accessor so the element still works.
+- **TypeScript:** subclasses use `override` on hooks (`noImplicitOverride`), and hooks are `protected`.
 
 ## 7. Optional shared stores (`@mote/state`)
 

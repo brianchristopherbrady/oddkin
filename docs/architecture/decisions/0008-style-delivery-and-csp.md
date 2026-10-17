@@ -1,6 +1,6 @@
 # 0008. Style delivery and CSP
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-17
 - **Area:** Core
 - **Detailed contract:** [theming-and-styling.md §7](../theming-and-styling.md)
@@ -22,7 +22,7 @@ Static component styles should be parsed once per document and shared across ins
 Document adoption must swap to the new document's sheet. CSP behavior of constructed sheets must be verified.
 
 ## Evidence
-R25. BCD 8.1.6: `adoptedStyleSheets` and `CSSStyleSheet()` Chrome/Edge 73/79, Firefox 101, Safari 16.4. Pending: M3 test of constructed sheets under strict `style-src` policies in all three engines.
+R25. BCD 8.1.6: `adoptedStyleSheets` and `CSSStyleSheet()` Chrome/Edge 73/79, Firefox 101, Safari 16.4. M3 (2026-10-17): `e2e/core-counter.spec.ts` runs under `default-src 'none'; style-src 'self'; require-trusted-types-for 'script'` with zero policy violations in Chromium, Firefox, and WebKit; components style through one adopted constructed sheet. 100 instances share one sheet per document; adoption into an iframe document swaps to that document's sheet (`element.browser.test.ts`). Light-DOM scoping is not yet implemented.
 
 ## Revisit when
 CSP testing shows constructed sheets are blocked under a policy we must support.

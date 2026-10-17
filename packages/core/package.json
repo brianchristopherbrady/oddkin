@@ -18,6 +18,18 @@
       "types": "./dist/scope/index.d.ts",
       "default": "./dist/scope/index.js"
     },
+    "./template": {
+      "types": "./dist/template/index.d.ts",
+      "default": "./dist/template/index.js"
+    },
+    "./styles": {
+      "types": "./dist/styles/index.d.ts",
+      "default": "./dist/styles/index.js"
+    },
+    "./element": {
+      "types": "./dist/element/index.d.ts",
+      "default": "./dist/element/index.js"
+    },
     "./diagnostics": {
       "types": "./dist/diagnostics/index.d.ts",
       "default": "./dist/diagnostics/index.js"

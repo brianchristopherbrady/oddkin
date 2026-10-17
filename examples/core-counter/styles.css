@@ -1,0 +1,43 @@
+:root {
+  --demo-ink: #1e3a5f;
+  --demo-paper: #fbf7ef;
+  --demo-focus: #c2410c;
+  color-scheme: light;
+  font-family: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  color: var(--demo-ink);
+  background: var(--demo-paper);
+}
+
+body {
+  margin: 0;
+  padding: 2rem;
+  max-width: 40rem;
+}
+
+h1 {
+  font-weight: normal;
+  letter-spacing: 0.02em;
+}
+
+section {
+  margin-block: 2rem;
+  padding: 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--demo-ink) 25%, transparent);
+  border-radius: 0.5rem;
+}
+
+label {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-inline-end: 1rem;
+}
+
+input {
+  font: inherit;
+}
+
+input:focus-visible {
+  outline: 3px solid var(--demo-focus);
+  outline-offset: 2px;
+}

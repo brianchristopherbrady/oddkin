@@ -12,9 +12,15 @@ export default {
     '@mote/core': {
       kind: 'browser',
       allow: [],
+      // Element, template, and style entries need a DOM to run but must import without one
+      // (server rendering, Node tooling); reactive and scope must also run without one.
       domFree: [
+        '.',
         './reactive',
         './scope',
+        './template',
+        './styles',
+        './element',
         './layout',
         './layout/inspect',
         './collections',

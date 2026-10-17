@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-+W4gTFdI7TkyhkyMeGHkdYTHfGg/M9QyPB+sARdlgAo='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types mote-template"
+    />
+    <title>Core counter — @mote/core without a design system</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      { "imports": { "@mote/core": "../../packages/core/dist/index.js" } }
+    </script>
+    <script type="module" src="./dist/main.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Core counter</h1>
+      <p>
+        Two elements authored with <code>@mote/core</code> only: no tokens, no components, no state
+        or app packages.
+      </p>
+      <section aria-labelledby="counter-heading">
+        <h2 id="counter-heading">Local state</h2>
+        <demo-counter step="2" label="Clicks"></demo-counter>
+        <ol id="log" aria-label="Event log"></ol>
+      </section>
+      <section aria-labelledby="greeting-heading">
+        <h2 id="greeting-heading">Public properties</h2>
+        <demo-greeting name="reader" tone="warm"></demo-greeting>
+        <p>
+          <label>Name <input id="name" autocomplete="off" /></label>
+          <label><input id="excited" type="checkbox" /> Excited</label>
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

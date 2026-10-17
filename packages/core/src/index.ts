@@ -4,6 +4,9 @@
  */
 export * from './reactive/index.js';
 export * from './scope/index.js';
+export * from './template/index.js';
+export * from './styles/index.js';
+export * from './element/index.js';
 export { MoteError, reportMoteError, setErrorHandler } from './diagnostics/index.js';
 export type { ErrorContext, ErrorHandler } from './diagnostics/index.js';
 

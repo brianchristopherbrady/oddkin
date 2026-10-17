@@ -6,6 +6,7 @@
     { "path": "packages/state" },
     { "path": "packages/app" },
     { "path": "packages/components" },
-    { "path": "apps/docs" }
+    { "path": "apps/docs" },
+    { "path": "examples/core-counter" }
   ]
 }

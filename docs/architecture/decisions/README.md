@@ -15,12 +15,12 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | --- | --- | --- | --- |
 | [0001](./0001-adr-process.md) | ADR process and change control | Accepted | Process |
 | [0002](./0002-reactivity-and-binding-rule.md) | One reactive graph, scheduling, and the binding rule | Accepted | Core |
-| [0003](./0003-property-definitions.md) | Typed property definitions via `MoteElement.with()` | Proposed | Core |
+| [0003](./0003-property-definitions.md) | Typed property definitions via `MoteElement.with()` | Accepted | Core |
 | [0004](./0004-scope-and-reconnection.md) | `Scope` ownership and reconnection | Accepted | Core |
 | [0005](./0005-rendering-and-template-security.md) | Tagged-template rendering and security model | Accepted | Core |
 | [0006](./0006-colour-generation.md) | OKLCH colour generation, gamut mapping, contrast | Proposed | Tokens |
 | [0007](./0007-alias-scope-redeclaration.md) | Alias-closure re-declaration in scopes | Accepted | Tokens |
-| [0008](./0008-style-delivery-and-csp.md) | Style delivery and CSP | Proposed | Core |
+| [0008](./0008-style-delivery-and-csp.md) | Style delivery and CSP | Accepted | Core |
 | [0009](./0009-browser-support-baseline.md) | Browser support baseline | Proposed | Platform |
 | [0010](./0010-layout-recipes-and-cascade-layers.md) | Layout recipe model and cascade layering | Proposed | Layout |
 | [0011](./0011-container-query-baseline.md) | Container/media query compatibility baseline | Accepted | Layout |
