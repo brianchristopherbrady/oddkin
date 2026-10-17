@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mote.dev/schemas/conformance/v1.json",
+  "title": "Mote conformance suite v1",
+  "description": "DRAFT (ADR 0034). Serializable description of a portable conformance suite: the contract it verifies, required public capabilities, and its cases. Case functions are not serialized.",
+  "type": "object",
+  "required": [
+    "schema",
+    "id",
+    "version",
+    "contract",
+    "requires",
+    "cases"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "https://mote.dev/schemas/conformance/v1.json"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][\\w.-]*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+"
+    },
+    "contract": {
+      "type": "object",
+      "required": [
+        "component",
+        "versions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "type": "string",
+          "pattern": "^component:"
+        },
+        "versions": {
+          "type": "string"
+        }
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "requires": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "slots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "anatomy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "assertion",
+              "invariant"
+            ]
+          },
+          "change": {
+            "enum": [
+              "theme-value",
+              "density",
+              "programmatic",
+              "keyed-reorder",
+              "reconnect",
+              "invalid-draft"
+            ]
+          }
+        },
+        "if": {
+          "properties": {
+            "kind": {
+              "const": "invariant"
+            }
+          }
+        },
+        "then": {
+          "required": [
+            "change"
+          ]
+        },
+        "else": {
+          "not": {
+            "required": [
+              "change"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

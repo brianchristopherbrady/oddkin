@@ -137,9 +137,9 @@ Files inside a folder import siblings directly, never through their own `index.t
 | `./pages` | Page registry types, route/page contracts, legacy-redirect contracts (DOM-free) | any |
 | `./content` | Built-in localizable explanatory copy (message catalog keyed by page/section id) | any |
 | `./examples` | `defineExamples` (DOM-free definitions) and types | any |
-| `./testing` | `runExample`, `runConformance` for the project's Vitest browser or Playwright runner (proposed) | browser test runner |
-| `./conformance` | `defineConformance`, `conformance.v1` contract, adapter and result types (DOM-free, proposed) | any |
-| `./conformance/*` | Mote's conformance suites for its own components, written against public `@mote/components` exports (proposed) | browser test runner |
+| `./testing` | `runConformance` (implemented), `runExample` (planned); the project's `expect` and user-input API are passed in | browser test runner |
+| `./conformance` | `defineConformance`, `checkConformance`, `toConformanceJSON`, adapter and result types (DOM-free, implemented) | any |
+| `./conformance/button`, … | Mote's conformance suites for its own components; implementation-agnostic. Implemented: `./conformance/button` | any (DOM touched only when run) |
 | `./config` | `defineWorkbenchConfig` (incl. navigation, categories, products, content overrides), `defineDocs` and types | any |
 | `./node` + bin `mote` | `analyze`, `impact`, `workbench dev`, `workbench build`, `workbench products --discover`, `workbench repro export` (proposed) | Node only |
 

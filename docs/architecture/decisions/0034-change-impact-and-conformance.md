@@ -28,7 +28,7 @@ Shared foundations and multiple products make two questions central: which produ
 - The development core build gains instrumentation, guarded by size and import-graph checks.
 
 ## Evidence
-Pending: the M4 conformance prototype (default + `studio-button` + mutants, three engines) and the M5 impact prototype (known-answer fixtures with 1/2/3/10 products). Research R47–R52 and R55 ([synthesis.md](../../research/synthesis.md)) are prior art, not evidence.
+Conformance prototype (M4): `packages/workbench/test/conformance.browser.test.ts` — the `mote.button` suite accepts `mote-button`, `studio-button`, and an alternative-template button and rejects five mutants (non-native control, events on programmatic changes, missing disabled binding, unowned reconnect listener, unfocusable loading) in Chromium, Firefox, and WebKit; zero false failures on the three legitimate variants. Pending: the M4 conformance prototype on further components (default + `studio-button` + mutants, three engines) and the M5 impact prototype (known-answer fixtures with 1/2/3/10 products). Research R47–R52 and R55 ([synthesis.md](../../research/synthesis.md)) are prior art, not evidence.
 
 ## Revisit when
 Known-answer fixtures show missed dependencies, legitimate variants fail suites, or instrumentation overhead or size checks fail.

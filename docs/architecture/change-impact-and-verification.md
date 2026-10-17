@@ -19,7 +19,9 @@ These are optional development capabilities built from existing sources through 
 | `scopeStats()` (counts of live scopes and owned work) | Implemented (M3) | Ownership baselines; no per-instance records yet |
 | Stable `MoteError` codes and development/production builds | Implemented (M3) | Diagnostics in reports and explanations |
 | Playwright and Vitest browser runners, size checks, packed-consumer checks | Implemented (M1–M3) | Executing selected checks, screenshots, clean-directory verification |
-| `mote analyze --compare`, Workbench previews, share payload, `runExample`, product configurations, composition API, agent operations | **Planned** (M4–M11) | Extended here |
+| Composition API (`compose()`, `define(definition)`, `extends`) | Implemented (M4, ADR 0036) | Definition edges, recomposed implementations under test |
+| Portable conformance: `conformance.v1`, `conformance-result.v1`, `@mote/workbench/conformance`, `./conformance/button`, `./testing` (`runConformance`) | **Prototype implemented** (M4) | §3; accepts `mote-button`, `studio-button`, and an alternative-template button; rejects 5 mutants in three engines |
+| `mote analyze --compare`, Workbench previews, share payload, `runExample`, product configurations, agent operations | **Planned** (M5–M11) | Extended here |
 | Reactive dependency and per-scope ownership records | **Not implemented**; proposed development-only instrumentation (§4.2) | Runtime explanations |
 
 Static dependency facts (*extracted*), authored guidance (*authored*), runtime observations (*observed*), and verification evidence (*verified*, with conditions) stay distinguishable in every output.
@@ -171,8 +173,8 @@ Each invariant names its change kind, and identity invariants apply only to valu
 | Entry | Contents | Environment |
 | --- | --- | --- |
 | `@mote/workbench/conformance` | `defineConformance`, contract/adapter/result types, serialization (DOM-free) | any |
-| `@mote/workbench/testing` | `runExample`, `runConformance` integrations for the project's Vitest browser or Playwright runner; assertion helpers built on those runners | browser test runner |
-| `@mote/workbench/conformance/<component>` | Mote's suites for its own components, written against public `@mote/components` exports | browser test runner |
+| `@mote/workbench/testing` | `runConformance` (implemented) and `runExample` (planned). The runner's `expect` and user-input API are passed in, so the entry imports no test framework | browser test runner |
+| `@mote/workbench/conformance/<component>` | Mote's suites for its own components; implementation-agnostic (tag, public properties, native events, documented anatomy roles). Implemented: `./conformance/button` | any (DOM touched only when run) |
 
 - Workbench already depends on components, so Mote's suites live there; `@mote/components` never imports Workbench.
 - Third-party libraries publish suites from their own development entry.

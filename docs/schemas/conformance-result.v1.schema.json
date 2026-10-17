@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mote.dev/schemas/conformance-result/v1.json",
+  "title": "Mote conformance result v1",
+  "description": "DRAFT (ADR 0034). Evidence for one suite version against one implementation, configuration, and browser. Untested cases are not-executed, never passed.",
+  "type": "object",
+  "required": [
+    "schema",
+    "suite",
+    "implementation",
+    "configuration",
+    "environment",
+    "date",
+    "results"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "https://mote.dev/schemas/conformance-result/v1.json"
+    },
+    "suite": {
+      "type": "object",
+      "required": [
+        "id",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "required": [
+        "tag"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "tag": {
+          "type": "string"
+        },
+        "package": {
+          "type": "string"
+        },
+        "definition": {
+          "type": "string"
+        }
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "environment": {
+      "type": "object",
+      "required": [
+        "userAgent"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "userAgent": {
+          "type": "string"
+        }
+      }
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "case",
+          "state"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "case": {
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "passed",
+              "failed",
+              "not-executed"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

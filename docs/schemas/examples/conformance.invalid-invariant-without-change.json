@@ -1,0 +1,41 @@
+{
+  "schema": "https://mote.dev/schemas/conformance/v1.json",
+  "id": "mote.button",
+  "version": "0.1.0",
+  "contract": {
+    "component": "component:mote-button",
+    "versions": "0.x"
+  },
+  "description": "Interaction contract shared by mote-button and its product implementations.",
+  "requires": {
+    "properties": [
+      "appearance",
+      "size",
+      "type",
+      "disabled",
+      "loading",
+      "fullWidth",
+      "name",
+      "value",
+      "label"
+    ],
+    "events": [
+      "click"
+    ],
+    "slots": [
+      "",
+      "start",
+      "end"
+    ],
+    "anatomy": [
+      "control"
+    ]
+  },
+  "cases": [
+    {
+      "id": "reconnect",
+      "title": "Invariant without its declared change",
+      "kind": "invariant"
+    }
+  ]
+}

@@ -251,3 +251,10 @@ Command: `node research/benchmarks/run.mjs --samples 15` (results regenerated in
 | Import graphs | `npx vitest run packages/components/test/graph.test.ts` | Pass — `dist/button/foundation.js` reaches only `button.js`, `button.template.js`, `button.structural.styles.js` and `@mote/core/{element,reactive,styles,template}`; `dist/button/index.js` adds `button.styles.js` and `@mote/tokens/refs` and reaches no `*.define.js` |
 | Full pipeline | `npm run verify` | Pass — 661 tests, 15 e2e, size budgets, boundaries over 85 source files, packed consumers |
 
+## 2026-10-17 — M4 conformance prototype (`mote.button` suite)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Suite against implementations | `npx vitest run packages/workbench/test/conformance.browser.test.ts` | Pass — 10 tests × 3 engines (30). All 11 cases pass for `mote-button`, `studio-button` (recomposed with product styles), and `alt-template-button` (different template keeping the anatomy). Mutants rejected on the targeted cases: `<div>` control → `native-control`, `keyboard-activation`; change events on programmatic writes → `programmatic-updates`; missing disabled binding → `disabled`; unowned listener added per connection → `reconnect`; control disabled while loading → `loading`. A filtered run reports the rest `not-executed` |
+| Contracts | `npx vitest run packages/workbench/test/conformance.test.ts tests/schemas` | Pass — the suite serializes to valid `conformance.v1` equal to the committed example; `checkConformance` reports id, version, contract, invariant-change, duplicate, and assertion-change problems with paths; schema examples (2 valid, 2 invalid) give the expected results |
+

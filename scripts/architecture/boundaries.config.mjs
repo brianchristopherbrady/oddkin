@@ -60,7 +60,14 @@ export default {
         '@mote/app',
         '@mote/analyzer',
       ],
-      domFree: ['./examples', './config', './pages', './content'],
+      domFree: [
+        './examples',
+        './config',
+        './pages',
+        './content',
+        './conformance',
+        './conformance/button',
+      ],
       nodeEntries: ['./node'],
       nodeSources: ['src/node/'],
       // Only Node entries and sources may reach these internal dependencies.

@@ -1,0 +1,94 @@
+{
+  "schema": "https://mote.dev/schemas/conformance/v1.json",
+  "id": "mote.button",
+  "version": "0.1.0",
+  "contract": {
+    "component": "component:mote-button",
+    "versions": "0.x"
+  },
+  "description": "Interaction contract shared by mote-button and its product implementations.",
+  "requires": {
+    "properties": [
+      "appearance",
+      "size",
+      "type",
+      "disabled",
+      "loading",
+      "fullWidth",
+      "name",
+      "value",
+      "label"
+    ],
+    "events": [
+      "click"
+    ],
+    "slots": [
+      "",
+      "start",
+      "end"
+    ],
+    "anatomy": [
+      "control"
+    ]
+  },
+  "cases": [
+    {
+      "id": "properties-attributes",
+      "title": "Attributes convert to properties; boolean and enum state reflects",
+      "kind": "assertion"
+    },
+    {
+      "id": "native-control",
+      "title": "The control is a native button and the default slot names it",
+      "kind": "assertion"
+    },
+    {
+      "id": "keyboard-activation",
+      "title": "Click, Enter, and Space each dispatch one click at the host",
+      "kind": "assertion"
+    },
+    {
+      "id": "focus",
+      "title": "Focusing the host focuses the control",
+      "kind": "assertion"
+    },
+    {
+      "id": "disabled",
+      "title": "Disabled ignores activation and is not focusable",
+      "kind": "assertion"
+    },
+    {
+      "id": "loading",
+      "title": "Loading ignores activation but stays focusable and exposes aria-disabled",
+      "kind": "assertion"
+    },
+    {
+      "id": "form-submission",
+      "title": "type=\"submit\" submits its form once, including name and value",
+      "kind": "assertion"
+    },
+    {
+      "id": "cancelled-click",
+      "title": "A cancelled click does not submit",
+      "kind": "assertion"
+    },
+    {
+      "id": "reconnect",
+      "title": "Reconnecting neither leaks owned work nor duplicates activation",
+      "kind": "invariant",
+      "change": "reconnect"
+    },
+    {
+      "id": "programmatic-updates",
+      "title": "Programmatic property changes dispatch no user-intent events",
+      "kind": "invariant",
+      "change": "programmatic"
+    },
+    {
+      "id": "theme-value",
+      "title": "A theme-value change keeps the control node and applies",
+      "kind": "invariant",
+      "change": "theme-value"
+    }
+  ]
+}

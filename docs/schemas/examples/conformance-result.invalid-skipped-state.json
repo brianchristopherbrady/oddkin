@@ -1,0 +1,27 @@
+{
+  "schema": "https://mote.dev/schemas/conformance-result/v1.json",
+  "suite": {
+    "id": "mote.button",
+    "version": "0.1.0"
+  },
+  "implementation": {
+    "tag": "studio-button",
+    "package": "@acme/studio-ui",
+    "definition": "studioButtonDefinition"
+  },
+  "configuration": {
+    "theme": "studio",
+    "product": "studio",
+    "density": "comfortable"
+  },
+  "environment": {
+    "userAgent": "Mozilla/5.0 (fixture)"
+  },
+  "date": "2026-10-17T22:00:00.000Z",
+  "results": [
+    {
+      "case": "native-control",
+      "state": "skipped"
+    }
+  ]
+}
