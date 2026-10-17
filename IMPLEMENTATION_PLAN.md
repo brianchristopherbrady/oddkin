@@ -413,8 +413,8 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 
 **Core**
 
-- [ ] Reactivity: `signal`/`computed`/`batch`/`untracked`/`effect`, `Readable`; tests for diamonds, dynamic deps, equality, nested batches, reentrancy, errors, cycles, disposal
-- [ ] `Scope`: lazy signal, children, timers, listeners, early release, effect-run scopes, controller activation; cleanup-error isolation and ordering
+- [x] Reactivity: `signal`/`computed`/`batch`/`untracked`/`effect`, `Readable`; tests for diamonds, dynamic deps, equality, nested batches, reentrancy, errors, cycles, disposal
+- [x] `Scope`: lazy signal, children, timers, listeners, early release, effect-run scopes, controller activation; cleanup-error isolation and ordering
 - [ ] Prototype `MoteElement.with()` + `prop.*` (types, declaration emit, subclassing, object defaults, pre-upgrade replay, reserved names, class-field shadowing, **static analyzability**). **Decide primary property API before M4**
 - [ ] Attribute/property conversion, opt-in reflection, boolean presence, diagnostics
 - [ ] Typed events (detail, bubbles, composed, cancelable); declared state/event sync pairs (e.g. `value` + `input`) for tooling
@@ -919,10 +919,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | Resolved review questions: render-tracked bindings (Q1); M8 checkpoint / M12 final freeze (Q2); cascade-layer encapsulation wording (Q3); Workbench remount policy (Q4); removed stale caveats, mapped R01–R32 to direct links, synced architecture docs (Q5) | Planning only |
 | 2026-10-17 | Rendered-browser audit of the reference (Foundations, Spacing, Components, Button, Playground, Theme Studio); Workbench restructured to the reference's presentation with project data: page registry, Foundations overview/detail generation, Components with integrated playground and editable API table, Theme Studio as a primary destination, optional Products and modes, content layers | Planning only |
 | 2026-10-17 | M0: reference audit extended to all primary routes, Theme Studio interactions, dark mode, and landmarks; CEM pinned to 2.1.0; ADRs 0001–0030 written (browser baseline from BCD 8.1.6); eight draft JSON Schemas with valid/invalid examples. M1: git, npm workspaces, TypeScript 7 project references, five package skeletons + docs app, boundary checker (manifests, sources, artifacts, DOM-free), Vitest, Playwright in three engines, plain-HTML consumer, packed-consumer verification, README/CONTRIBUTING/CI | M1 skeleton verified locally; CI not yet run |
+| 2026-10-17 | M3: `@mote/core/reactive` (push–pull versioned graph: signals, computed, batch, untracked, subscribe, commit/post effects, runaway and cycle diagnostics), `@mote/core/scope` (ordered isolated cleanup, abort signal, listeners, timers, children, per-run effect scopes, controllers, leak counters), `@mote/core/diagnostics` | 53 core tests; DOM-free entries verified; full pipeline passes |
 
 ## 11. Continuation
 
-**Next step:** begin M2 (token vertical slice) and M3 (core reactivity, `Scope`, and the `MoteElement.with()` prototype) in parallel, starting with M3's reactive graph and binding-rule tests since most later work depends on them. Remaining M0 research (per-library write-ups and rubric, platform-vs-Mote table, reference inventory, AT/forced-colors/zoom audit, CVD source verification) continues alongside and must finish before the decisions that depend on it. Push to a remote to run CI.
+**Next step:** M3's `MoteElement.with()` + `prop.*` prototype (including static analyzability; decide the primary property API before M4), then lifecycle and templates with the binding-rule tests; M2 (`defineTheme`, spacing strategies, token diagnostics) in parallel. Reactivity and `Scope` are done. Remaining M0 research (per-library write-ups and rubric, platform-vs-Mote table, reference inventory, AT/forced-colors/zoom audit, CVD source verification) continues alongside and must finish before the decisions that depend on it. Push to a remote to run CI.
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 

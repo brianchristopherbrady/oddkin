@@ -1,0 +1,56 @@
+/**
+ * Shared diagnostics for Mote packages. DOM-free.
+ *
+ * Every Mote error carries a stable `code` so documentation, tests, and tooling
+ * can refer to it. Errors that cannot be thrown to a caller (for example, an
+ * effect failing during a scheduled flush) go to one configurable handler.
+ */
+
+/** An error raised by Mote with a stable, documented code. */
+export class MoteError extends Error {
+  readonly code: string;
+
+  constructor(code: string, message: string, options?: { cause?: unknown }) {
+    super(`[${code}] ${message}`, options);
+    this.name = 'MoteError';
+    this.code = code;
+  }
+}
+
+/** Where an asynchronously reported error came from. */
+export interface ErrorContext {
+  /** Stable code describing the failure, e.g. `reactive.effect.error`. */
+  code: string;
+  /** Optional name of the effect, computed value, or owner involved. */
+  origin?: string | undefined;
+}
+
+export type ErrorHandler = (error: unknown, context: ErrorContext) => void;
+
+const defaultHandler: ErrorHandler = (error, context) => {
+  const report = (globalThis as { reportError?: (error: unknown) => void }).reportError;
+  if (typeof report === 'function') report(error);
+  else
+    console.error(`Mote ${context.code}${context.origin ? ` in ${context.origin}` : ''}:`, error);
+};
+
+let handler: ErrorHandler = defaultHandler;
+
+/**
+ * Replace the handler for errors that cannot be thrown to a caller.
+ * Pass `undefined` to restore the default. Returns the previous handler.
+ */
+export function setErrorHandler(next: ErrorHandler | undefined): ErrorHandler {
+  const previous = handler;
+  handler = next ?? defaultHandler;
+  return previous;
+}
+
+/** Report an error through the configured handler. Never throws. */
+export function reportMoteError(error: unknown, context: ErrorContext): void {
+  try {
+    handler(error, context);
+  } catch (handlerError) {
+    console.error('Mote error handler failed:', handlerError, 'while reporting:', error);
+  }
+}

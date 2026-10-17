@@ -10,6 +10,18 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./reactive": {
+      "types": "./dist/reactive/index.d.ts",
+      "default": "./dist/reactive/index.js"
+    },
+    "./scope": {
+      "types": "./dist/scope/index.d.ts",
+      "default": "./dist/scope/index.js"
+    },
+    "./diagnostics": {
+      "types": "./dist/diagnostics/index.d.ts",
+      "default": "./dist/diagnostics/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
