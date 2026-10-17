@@ -1,6 +1,6 @@
 # Metadata model and `@mote/analyzer`
 
-Status: **proposal**. Nothing here is implemented. `@mote/analyzer` is optional, Node-only development tooling and is never part of a browser or component-consumer graph. Related: [workbench.md](./workbench.md), [agent-tooling.md](./agent-tooling.md), [data-composition.md](./data-composition.md), [layout-recipes.md](./layout-recipes.md).
+Status: the analyzer core is **implemented** in `@mote/analyzer` (M3): extraction (§2) except explicit-metadata merging and theme/foundation/docs enrichment, outputs 1–2 (§4), API and one-shot CLI (§6). §8 lists settled behaviors. Workbench indexes, editor/agent outputs, watch mode, `--compare`, and contract tests against runtime behavior are later work. `@mote/analyzer` is optional, Node-only development tooling and is never part of a browser or component-consumer graph. Related: [workbench.md](./workbench.md), [agent-tooling.md](./agent-tooling.md), [data-composition.md](./data-composition.md), [layout-recipes.md](./layout-recipes.md).
 
 ## 1. Responsibilities
 
@@ -123,6 +123,14 @@ Stale generated artifacts are removed only inside directories that carry a Mote 
 - Mote's own packages run the analyzer at build time (dev dependency) and publish outputs 1–2.
 - Boundary check: no browser entry of any package and no published Workbench bundle reaches `@mote/analyzer`.
 
+## 8. Behaviors settled in the M3 implementation
+
+- **Front end:** TypeScript 5.9 compiler API, in-process (ADR 0018). `analyze({ project, root?, library?, oldProgram? })` returns `{ manifest, metadata, diagnostics, extraction, program }`; `writeOutputs(result, dir)` writes `custom-elements.json` and `mote.metadata.json`; `mote-analyze <tsconfig> [--out] [--name --version] [--strict] [--json]` exits 1 on errors (or warnings with `--strict`).
+- **No execution:** the analyzed library is never imported; a fixture module that throws on import is analyzed normally.
+- **Paths:** module paths are the published output paths, derived from the tsconfig `rootDir`/`outDir` relative to the package root (default: the tsconfig directory); `registration` is the package export specifier for the registering module when `package.json` `exports` maps to it.
+- **Extracted:** `MoteElement` subclasses and `with()` factories (including inheritance across files with CEM `inheritedFrom`), `prop.*` kind/type/attribute/reflection/literal default/description/enum values, public fields, getters (read-only without a setter) and methods, `static events` (including shorthand entries) with detail types, flags, `syncs` pairs, and JSDoc descriptions, slots and parts from `render()` templates plus `@slot`/`@csspart`, CSS custom properties from `var()` reads and `@cssprop`, custom states from `this.setState('…')` and `@cssstate`, `define()`/`customElements.define()` registrations, re-exports, `token('…')` and `var(--mote-…)` reads, `defineLayoutRecipe` and `defineModel` summaries, and Mote JSDoc tags (`@a11y`, `@keyboard`, `@category`, `@useFor`, `@notFor`, `@limitation`, `@related`) as `authored` facts with source locations.
+- **Unknowns and dynamics:** non-literal defaults are omitted from CEM (unknown, never guessed) and reported as `analyzer.dynamic.value`; spreads, computed keys, non-`prop.*` definitions, computed tag names, and unresolvable registrations report `analyzer.dynamic.*` with file, line, and column.
+- **Validation:** outputs validate against the pinned `custom-elements-manifest@2.1.0` schema and `docs/schemas/mote-metadata.v1.schema.json`; output is deterministic (stable ordering, two-space JSON, no timestamps).
 ## Open questions
 
 - TypeScript compiler API vs a faster parser plus TS for types only (performance experiment in M3).

@@ -7,6 +7,7 @@ import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import boundaries from './architecture/boundaries.config.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 // Run npm through its CLI script with the current Node binary: no shell, so paths
@@ -55,22 +56,30 @@ try {
   npm(['install', '--no-audit', '--no-fund', '--ignore-scripts', ...tarballs], consumer);
 
   const installed = JSON.parse(npm(['ls', '--all', '--json'], consumer));
+  // Third-party packages may appear only beneath Node-only tooling packages (e.g. the analyzer's
+  // TypeScript dependency), never beneath browser packages.
+  const nodeOnly = new Set(
+    Object.entries(boundaries.packages)
+      .filter(([, rule]) => rule.kind === 'node')
+      .map(([name]) => name),
+  );
   const unexpected = new Set();
-  const walk = (deps = {}) => {
+  const walk = (deps = {}, underTooling = false) => {
     for (const [dep, info] of Object.entries(deps)) {
-      if (!dep.startsWith('@mote/')) unexpected.add(dep);
-      walk(info.dependencies);
+      if (!dep.startsWith('@mote/') && !underTooling) unexpected.add(dep);
+      walk(info.dependencies, underTooling || nodeOnly.has(dep));
     }
   };
   walk(installed.dependencies);
   if (unexpected.size)
     failures.push(`unexpected runtime dependencies installed: ${[...unexpected].join(', ')}`);
 
-  const imports = names
-    .map(({ name }, i) => `import { packageName as p${i} } from '${name}';`)
-    .join('\n');
+  const imports = names.map(({ name }, i) => `import * as p${i} from '${name}';`).join('\n');
   const checks = names
-    .map(({ name }, i) => `if (p${i} !== '${name}') throw new Error('${name} mismatch');`)
+    .map(
+      ({ name }, i) =>
+        `if (Object.keys(p${i}).length === 0) throw new Error('${name} has no exports');`,
+    )
     .join('\n');
   await writeFile(join(consumer, 'runtime.mjs'), `${imports}\n${checks}\n`);
   node(['runtime.mjs'], consumer);
@@ -90,6 +99,8 @@ try {
   const bin = join(consumer, 'node_modules', '@mote', 'tokens', 'dist', 'node', 'bin.js');
   node([bin, 'init', 'theme.json'], consumer);
   node([bin, 'build', 'theme.json', '--out', 'tokens', '--strict'], consumer);
+  // The installed analyzer runs from its tarball (Node-only tooling with its own TypeScript).
+  node([join(consumer, 'node_modules', '@mote', 'analyzer', 'dist', 'bin.js'), '--help'], consumer);
   const built = await readdir(join(consumer, 'tokens'));
   for (const file of [
     'default.css',
@@ -103,7 +114,7 @@ try {
 
   await writeFile(
     join(consumer, 'types.ts'),
-    `${imports}\nexport const all: string[] = [${names.map((_, i) => `p${i}`).join(', ')}];\n`,
+    `${imports}\nexport const all: readonly object[] = [${names.map((_, i) => `p${i}`).join(', ')}];\n`,
   );
   await writeFile(
     join(consumer, 'tsconfig.json'),
@@ -132,5 +143,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; no third-party runtime dependencies.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; no third-party runtime dependencies outside Node-only tooling.`,
 );

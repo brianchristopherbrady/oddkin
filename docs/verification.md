@@ -134,3 +134,14 @@ Recorded results of checks. Each entry states the date, environment, command, an
 | Models | `npx vitest run --project node packages/core/test/model.test.ts` | Pass — recursive discriminated `Infer` types; codes and paths for empty labels, script URLs, unknown kinds, invalid action references, missing discriminators, invalid enums, unknown properties (warning), wrong types; tree-wide unique ids; migration from v1 and unsupported versions; JSON Schema with `$defs` agrees with `validate()` under Ajv 2020 strict |
 
 **Findings:** (1) WebKit's Playwright build lacks `moveBefore`, so the earlier keyed reorder could blur a focused input; reordering now moves the fewest items and restores focus where needed. (2) Item templates re-run when their entry changes, which re-registered per-entry cleanups; `scopeFor(key, init)` runs setup once. (3) Generic `defineModel` signatures made TypeScript expand recursive inference without bound; the value type is computed only where a model is defined.
+## 2026-10-17 — M3 analyzer
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Fixture library | `npx vitest run --project node packages/analyzer` | Pass — CEM validates against the pinned `custom-elements-manifest@2.1.0` schema and metadata against `mote-metadata.v1`; a module that throws on import is analyzed (never executed); properties, attributes, reflection, defaults, enum types, events with detail types and JSDoc, members (getters, methods), template and JSDoc slots/parts, CSS properties, custom states; inheritance across files with `inheritedFrom`; registrations, export specifiers, re-exports, recipe and model summaries, authored `@a11y`/`@keyboard`/`@category`/`@related` facts with locations; dynamic tag name reported with location; deterministic; incremental program reuse gives identical output |
+| core-counter | same | Pass — committed CEM and metadata fixtures; zero diagnostics; `count`/`count-change` sync pair |
+| Dynamic fixture | same | Pass — spread, computed key, and computed default reported with lines; unknown default omitted |
+| Performance | `node scripts/experiments/analyzer-performance.mjs 50` (two runs) | 50 components: TypeScript 5.9 0.9–1.2 s full in-process, 1.6–1.7 s cold process, 0.8 s after a one-file edit; TypeScript 7 probe 0.5–0.6 s cold but properties only. Recorded in ADR 0018 (Accepted) |
+| Packed | `npm run verify:packs` | Pass — `@mote/analyzer` installs from its tarball with `typescript` only beneath it, its declarations typecheck in a consumer, and `mote-analyze --help` runs |
+
+**Findings:** (1) Shorthand `static events = { countChange }` resolved to the property symbol; the analyzer now uses the shorthand value symbol. (2) Module paths were relative to the workspace root when the tsconfig had no `package.json` beside it; the root now defaults to the tsconfig directory. (3) Ajv strict mode needs `strictRequired: false` for the M0 metadata schema's `fact` definition, as in `tests/schemas`.

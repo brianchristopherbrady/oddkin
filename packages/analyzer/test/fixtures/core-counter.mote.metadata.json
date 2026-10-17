@@ -1,0 +1,40 @@
+{
+  "schema": "https://mote.dev/schemas/mote-metadata/v1.json",
+  "moteVersion": "0.0.0",
+  "library": {
+    "name": "core-counter",
+    "version": "0.0.0",
+    "packages": [
+      {
+        "name": "core-counter",
+        "version": "0.0.0",
+        "customElements": "./custom-elements.json"
+      }
+    ]
+  },
+  "components": {
+    "component:demo-counter": {
+      "tag": "demo-counter",
+      "cem": {
+        "module": "dist/demo-counter.js",
+        "name": "DemoCounter"
+      },
+      "registration": "dist/index.js",
+      "syncPairs": [
+        {
+          "property": "count",
+          "event": "count-change"
+        }
+      ]
+    },
+    "component:demo-greeting": {
+      "tag": "demo-greeting",
+      "cem": {
+        "module": "dist/demo-greeting.js",
+        "name": "DemoGreeting"
+      },
+      "registration": "dist/index.js"
+    }
+  },
+  "diagnostics": []
+}

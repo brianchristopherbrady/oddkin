@@ -1,0 +1,254 @@
+{
+  "schemaVersion": "2.1.0",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "dist/demo-counter.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "DemoCounter",
+          "description": "A counter with local state. The count text binds the signal directly, so clicks update\none text node without re-running `render()`.",
+          "customElement": true,
+          "tagName": "demo-counter",
+          "superclass": {
+            "name": "MoteElement",
+            "package": "@mote/core"
+          },
+          "members": [
+            {
+              "kind": "field",
+              "name": "step",
+              "type": {
+                "text": "number"
+              },
+              "default": "1",
+              "description": "Amount added per click.",
+              "attribute": "step"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Count'",
+              "description": "Visible label before the value.",
+              "attribute": "label"
+            },
+            {
+              "kind": "field",
+              "name": "count",
+              "type": {
+                "text": "number"
+              },
+              "readonly": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "step",
+              "type": {
+                "text": "number"
+              },
+              "fieldName": "step",
+              "default": "1",
+              "description": "Amount added per click."
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label",
+              "default": "'Count'",
+              "description": "Visible label before the value."
+            }
+          ],
+          "events": [
+            {
+              "name": "count-change",
+              "type": {
+                "text": "CustomEvent<{ count: number; }>"
+              },
+              "description": "Fired after the count changes through user interaction."
+            }
+          ],
+          "slots": [],
+          "cssParts": [],
+          "cssProperties": [
+            {
+              "name": "--demo-focus",
+              "description": ""
+            },
+            {
+              "name": "--demo-ink",
+              "description": ""
+            },
+            {
+              "name": "--demo-paper",
+              "description": ""
+            }
+          ],
+          "cssStates": [
+            {
+              "name": "positive",
+              "description": ""
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "DemoCounter",
+          "declaration": {
+            "name": "DemoCounter",
+            "module": "dist/demo-counter.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dist/demo-greeting.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "DemoGreeting",
+          "description": "A greeting with typed public properties, attribute conversion, and opt-in reflection.",
+          "customElement": true,
+          "tagName": "demo-greeting",
+          "superclass": {
+            "name": "MoteElement",
+            "package": "@mote/core"
+          },
+          "members": [
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "default": "'world'",
+              "description": "Who to greet.",
+              "attribute": "name"
+            },
+            {
+              "kind": "field",
+              "name": "excited",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Adds emphasis; reflected for styling.",
+              "attribute": "excited",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "tone",
+              "type": {
+                "text": "\"plain\" | \"warm\" | \"formal\""
+              },
+              "default": "'plain'",
+              "attribute": "tone",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "history",
+              "type": {
+                "text": "string[]"
+              },
+              "default": "[]",
+              "description": "Previous names (property only)."
+            }
+          ],
+          "attributes": [
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "name",
+              "default": "'world'",
+              "description": "Who to greet."
+            },
+            {
+              "name": "excited",
+              "type": {
+                "text": "boolean"
+              },
+              "fieldName": "excited",
+              "default": "false",
+              "description": "Adds emphasis; reflected for styling."
+            },
+            {
+              "name": "tone",
+              "type": {
+                "text": "\"plain\" | \"warm\" | \"formal\""
+              },
+              "fieldName": "tone",
+              "default": "'plain'"
+            }
+          ],
+          "events": [],
+          "slots": [],
+          "cssParts": [],
+          "cssProperties": [],
+          "cssStates": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "DemoGreeting",
+          "declaration": {
+            "name": "DemoGreeting",
+            "module": "dist/demo-greeting.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dist/index.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "custom-element-definition",
+          "name": "demo-counter",
+          "declaration": {
+            "name": "DemoCounter",
+            "module": "dist/demo-counter.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "demo-greeting",
+          "declaration": {
+            "name": "DemoGreeting",
+            "module": "dist/demo-greeting.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "DemoCounter",
+          "declaration": {
+            "name": "DemoCounter",
+            "module": "dist/demo-counter.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "DemoGreeting",
+          "declaration": {
+            "name": "DemoGreeting",
+            "module": "dist/demo-greeting.js"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -30,7 +30,7 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0015](./0015-model-builder-source-of-truth.md) | Model builder as source of truth | Proposed | Data |
 | [0016](./0016-normalized-metadata-model.md) | Normalized metadata model, stable ids, provenance | Accepted | Metadata |
 | [0017](./0017-cem-and-enrichment.md) | Standard CEM plus separate Mote enrichment | Accepted | Metadata |
-| [0018](./0018-analyzer-front-end.md) | Analyzer front end and no-execution rule | Proposed | Metadata |
+| [0018](./0018-analyzer-front-end.md) | Analyzer front end and no-execution rule | Accepted | Metadata |
 | [0019](./0019-preview-isolation.md) | Workbench preview isolation and frame protocol | Proposed | Workbench |
 | [0020](./0020-specimen-roles-and-adapters.md) | Theme Studio specimen roles and adapters | Accepted | Workbench |
 | [0021](./0021-define-examples.md) | `defineExamples` format | Proposed | Workbench |
