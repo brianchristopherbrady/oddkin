@@ -149,6 +149,37 @@ Research: [Lit expressions](https://lit.dev/docs/templates/expressions/), [FASTE
 
 ---
 
+### 3.3 Component composition and repository organization (planned — not yet implemented)
+
+Mote's own component implementations use **one folder per component**, assembled through the **same public composition API** that consumers use. Consumers may keep colocated authoring (class, template, and styles in one module, as in `examples/core-counter` today); both paths are supported and stay exercised. No source files have been reorganized yet; the API and migration are M4 work (see M4 "Composition API and component folders").
+
+```text
+card/
+  card.ts             element class: properties, state, methods, lifecycle
+  card.template.ts    external template (type-only import of the host class)
+  card.styles.ts      component styles
+  card.definition.ts  compose(): class + template + styles + optional dependencies
+  card.define.ts      explicit browser registration — the only file with side effects
+  index.ts            side-effect-free public exports
+```
+
+```ts
+// card/index.ts — never registers the component or its dependencies
+export { Card } from './card.js';
+export { cardDefinition } from './card.definition.js';
+
+// card/card.define.ts — registration stays explicit
+import { define } from '@mote/core/element';
+import { cardDefinition } from './card.definition.js';
+
+define(cardDefinition);
+```
+
+- Component-specific tests, examples (`card.examples.ts`), fixtures, and authored documentation live in or beside the folder where the repository's tooling supports it. Extra files are added only for a concrete purpose.
+- `index.ts` exposes the supported public API and public types. Templates and styles are exported from it only when they are intentionally supported customization APIs.
+- Files inside a component import their siblings directly, never through their own `index.ts`, which can create cycles. External templates use `import type` for their host class where appropriate.
+- Package entries map onto the folders: `@mote/components/card` → `card/index.ts`; `@mote/components/define/card` → `card/card.define.ts`. Ordinary barrels never import a `*.define.ts` file.
+
 ## 4. State, resources, applications (summary)
 
 Detailed contracts: [core-contracts.md](./docs/architecture/core-contracts.md) §7–§9.
@@ -457,6 +488,31 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 ### M4 — First interoperable components and validated metadata
 
 - [x] `@mote/tokens/refs` and `@mote/tokens/values` — DOM-free, registration-free
+**Composition API and component folders** (§3.3; build before the four components so they are born in the new structure)
+
+- [ ] Design and record (ADR) the public composition API: `compose({ name, element, template, styles, dependencies? })` returning a definition, and `define(definition)` alongside the existing `define(tagName, ctor)`. Requirements: an external template runs in the same tracked render context as `render()`, so the binding rule, lifecycle order, `Scope` cleanup, and DOM identity are unchanged; templates are typed from a type-only host import; definitions are side-effect free and statically analyzable; the counter, component, and list size budgets (ADR 0031) still pass. Resolve the name clash with the planned `@mote/components/compose` composition-schema renderer (§5b) before publishing either name.
+- [ ] Analyzer: follow `compose()` definitions and external template and style modules (slots, parts, CSS properties, token reads) and recognize `define(definition)` registrations; fixtures cover both the folder structure and colocated authoring.
+- [ ] Boundary check: no ordinary barrel or `index.ts` reaches a `*.define.ts` module; registration entries are listed as side-effectful in package metadata; each component folder's `index.ts` imports without registering anything.
+- [ ] **Migrate existing component work** to the folder structure. Current inventory (2026-10-17; nothing moved yet):
+  - `examples/core-counter` (`demo-counter`, `demo-greeting`) — reference examples that teach component authoring: **migrate**. Its `src/index.ts` registers on import today, so its registration moves to explicit define entries.
+  - `tests/fixtures/analyzer-library` (`acme-panel`, `acme-alert`) — analyzer fixtures: **add** a folder-structured counterpart; keep the colocated fixture so both paths stay covered.
+  - `tests/fixtures/analyzer-dynamic` (`dynamic-element`) — deliberately dynamic definition for diagnostics: **preserve**.
+  - `examples/binding-rule` (plain-JavaScript and TypeScript walkthrough elements) — intentionally colocated demonstration: **preserve**.
+  - Focused inline fixtures in `packages/*/test`, `research/benchmarks`, and `research/experiments`: **preserve**.
+  - `@mote/components`: no components yet; `mote-button`, `mote-input`, `mote-card`, and `mote-side-nav` are created in the new structure.
+
+  For each migrated component:
+  1. Inventory its current class, template, styles, registration, exports, and supporting files.
+  2. Move its implementation into the component folder structure.
+  3. Extract its template and styles without changing behavior.
+  4. Assemble its definition through `compose()`.
+  5. Keep registration in the explicit registration entry.
+  6. Update imports, package exports, examples, documentation, analyzer fixtures, and source references.
+  7. Preserve existing public import paths through compatible re-exports where practical.
+  8. Verify that no ordinary barrel accidentally imports a registration entry.
+- [ ] Migration acceptance, per migrated component (before/after comparison in three engines): the same properties, attributes, events, slots, parts, and styling behavior; the same reactive tracking (render counts and DOM writes), lifecycle ordering, `Scope` cleanup (`scopeStats()` baseline), and DOM identity; side-effect-free ordinary imports and explicit registration; equivalent analyzer metadata, public exports, emitted declarations, and packed-consumer behavior. Existing evidence (e.g. `e2e/core-counter.spec.ts`, its CEM fixture, and its strict-CSP check) must keep passing unchanged or be updated with a recorded reason.
+- [ ] Documentation for the convention: core-contracts.md (composition API), packages.md (folder → entry mapping), CONTRIBUTING.md (repository component layout), layout-recipes.md and data-composition.md examples, and agent-tooling.md (`scaffold` output). Docs state that colocated authoring remains supported for consumers.
+
 - [ ] `mote-button`: native semantics, appearance/size/border/radius/loading/disabled/full-width; declared preview roles (`primaryAction`, `secondaryAction`)
 - [ ] `mote-input`: form-associated; value/default; label/description/error; reset/restore; disabled fieldsets; validation; focus; `value`/`input` sync pair; preview role `textInput`
 - [ ] `mote-card`: surface semantics (sectioning only when headed), padding/border/radius/elevation options backed by roles; header/body/footer slots; preview role `surface`
@@ -713,10 +769,11 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] CLI, instruction generator, optional MCP adapter (ADR)
 - [ ] Evaluation (implementation, theming, explanation, migration, data composition, **Theme Studio role mapping**): API correctness, fabricated names, compilation, browser behavior, completion; with vs without tools
 - [ ] Agent-generated side nav, editable list, and an example file pass the same checks as handwritten ones
+- [ ] `scaffold` generates repository components in the §3.3 folder structure (class, template, styles, definition, define entry, side-effect-free `index.ts`, examples) through the public composition API, and offers colocated output for consumers who ask for it
 
 **Onboarding**
 
-- [ ] Optional scaffolding after APIs stabilize; not advertised until implemented
+- [ ] Optional scaffolding after APIs stabilize; not advertised until implemented (component scaffolds follow the §3.3 folder structure)
 - [ ] One recommended starter per adoption path, plain JS and TS, with only required imports/config. Add optional `mote doctor` over existing validators and an actionable installed-version report; focused token/analyzer commands still work independently.
 - [ ] Distribute agent instruction/plugin assets and installed-version manifests with the existing CLI/MCP layer; test them in at least one actual supported IDE setup.
 - [ ] Every copied/generated example and exported theme verified in fresh directories from packed releases
@@ -806,6 +863,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 | 55 | **Products and modes is absent by default; discovery suggests but never invents products; explicit local, installed, and versioned-manifest sources work, including cross-repository, and are snapshotted into static builds** | M9, M12 |
 | 56 | **Navigation, routes, cards, search, and visibility stay synchronized through one page registry; legacy routes redirect; static builds, deep links, assets, redirects, and sharing work under a hosting base path** | M3, M5, M7, M12 |
 | 57 | **Missing metadata produces honest unavailable/unknown states; Workbench stays accessible, responsive, lazy-loaded, and isolated; shell and preview appearance are independent** | M5, M8, M11 |
+| 58 | Mote's own components use one folder per component assembled through the public composition API; ordinary imports never register; migrated components keep their properties, attributes, events, slots, parts, styling, reactivity, lifecycle, cleanup, DOM identity, metadata, exports, and packed behavior; colocated consumer authoring stays supported and tested | M4, M8, M11 |
 
 ---
 
@@ -896,6 +954,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 | Live binding and readiness semantics | **Settled:** `render()` is a tracked context (`.value` reads, incl. synchronous helpers, register render-level dependencies → deduplicated render); readables interpolated directly bind at part level without re-render; `.value` outside tracked contexts and in deferred/async callbacks is an untracked snapshot; binding-initialization reads don't register render dependencies; dual-path dependencies coalesce. Remaining: exact `updateComplete`/readiness boundaries | M3 / M8 |
 | Error ownership / production diagnostics | Small explicit owner error policy; opt-in bounded inspection; no silent catch-all | M3 / M8 |
 | Native form submission strategy | Prototype before API promise; retain a styled native-button path; disclose custom-host limits | M4 |
+| Component composition API | `compose()` definitions + `define(definition)`; one folder per repository component (§3.3), colocated authoring kept for consumers; name clash with the composition-schema `compose` resolved first; ADR | M4, review at M8 |
 | Live condition editing | Literal-query baseline; explicit generated-sheet invalidation; enhanced syntax only with browser evidence | M2 / M4 / M9 |
 | DTCG coverage / import | Publish exact export subset and mappings; import/round-trip only if separately justified | M9 |
 | Localization contract | Inherited lang/dir, consumer labels, optional message dictionaries/Intl; independent of stores | M4 / M10 |
@@ -932,10 +991,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M3: `props()` assessed with a public-API prototype and three-engine contract tests (element position unavailable, precedence not enforceable, 662 B gzip); not in core for M4–M7, decision stays at M8 | 527 tests; full pipeline passes |
 | 2026-10-17 | M3: `@mote/workbench` DOM-free entries — `./examples` (typed `defineExamples`, `examples.v1`, `checkExamples`), `./config` (`resolveWorkbenchConfig` defaults and diagnostics, `defineDocs`), `./pages` (`buildPageRegistry` from CEM + enrichment + authored content, projections, legacy redirects); packed-consumer check covers subpath-only packages; CLI tests given a 30 s budget after a load-induced timeout | 547 tests; full pipeline passes |
 | 2026-10-17 | M3: cold startup and click-to-next-frame measurements with a plain-DOM control in three engines; results regenerated | Measurement item closed; M3 open items: none besides M2's side-nav link (M4) |
+| 2026-10-17 | Plan: component folder convention (§3.3), public composition API and migration of existing component work added to M4, agent scaffolding (M11), criterion 58, decision row | Planning only; no source files reorganized |
 
 ## 11. Continuation
 
-**Next step:** M4 — first interoperable components on core + tokens (`mote-button`, `mote-input`, `mote-card`, `mote-side-nav`; side-nav links the last open M2 item), with examples defined through `@mote/workbench/examples` and analyzer metadata validated.
+**Next step:** M4 — first the composition API ADR and implementation (`compose()`, `define(definition)`, analyzer support) and the component folder convention (§3.3), with the migration of `examples/core-counter`; then `mote-button`, `mote-input`, `mote-card`, and `mote-side-nav` in the new structure on core + tokens (side-nav links the last open M2 item), with examples through `@mote/workbench/examples` and analyzer metadata validated.
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 

@@ -18,6 +18,16 @@ The dependency map in [packages.md](./docs/architecture/packages.md) is enforced
 
 To add a package or entry point, update `scripts/architecture/boundaries.config.mjs` and `docs/architecture/packages.md` together.
 
+## Component organization (planned, M4)
+
+Repository components will use one folder per component ([IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) §3.3): `name.ts` (class), `name.template.ts`, `name.styles.ts`, `name.definition.ts` (`compose()`), `name.define.ts` (explicit registration), and a side-effect-free `index.ts`. Tests, examples, and fixtures for a component sit beside it where tooling allows.
+
+- Import sibling files directly, never through the folder's own `index.ts`.
+- External templates import their host class with `import type`.
+- Never import a `*.define.ts` file from an ordinary barrel.
+
+Until the composition API lands, new code follows the existing colocated style. Intentionally colocated demonstrations (e.g. `examples/binding-rule`) and focused inline test fixtures stay colocated so both authoring paths remain exercised.
+
 ## Workflow
 
 - `npm run verify` must pass before a change is considered done. Run the smallest relevant command while iterating.

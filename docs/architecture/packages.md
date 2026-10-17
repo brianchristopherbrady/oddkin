@@ -109,6 +109,19 @@ Component styles ship as pre-built JS modules; consumers need no CSS loader or S
 
 `custom-elements.json` and `mote.metadata.json` are produced by `@mote/analyzer` at build time; `package.json` declares `"customElements": "./custom-elements.json"`.
 
+**Source organization (planned, M4; see [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).** Each component lives in its own folder, assembled through the public composition API (`compose()`, `define(definition)` — [core-contracts.md](./core-contracts.md) §1.1). Entry points map onto the folders:
+
+| Source file | Purpose | Reached through |
+| --- | --- | --- |
+| `src/card/card.ts` | Element class: properties, state, methods, lifecycle | `./card` (via `index.ts`) |
+| `src/card/card.template.ts` | External template; type-only import of the host class | internal unless intentionally public |
+| `src/card/card.styles.ts` | Component styles | internal unless intentionally public |
+| `src/card/card.definition.ts` | `compose()` of class, template, styles, and dependencies | `./card` (via `index.ts`) |
+| `src/card/card.define.ts` | `define(cardDefinition)` — the only side-effectful file | `./define/card`, `./define` |
+| `src/card/index.ts` | Side-effect-free public exports (`Card`, `cardDefinition`, public types) | `./card` |
+
+Files inside a folder import siblings directly, never through their own `index.ts`. No ordinary barrel imports a `*.define.ts` module; the boundary check will enforce this once the convention lands.
+
 ### `@mote/analyzer` (dev-only)
 `.` (Node API `analyze`, `compare`), `./schema/mote-metadata-v1.json`, bin delegated through `mote analyze`. Node only.
 

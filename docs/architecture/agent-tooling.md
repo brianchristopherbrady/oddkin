@@ -47,7 +47,7 @@ One set of deterministic operations, used by both human CLI commands and agent t
 | `searchContracts(query)` | Find components, tokens, recipes by name/category; never invents names |
 | `explainConfig(path)` | Explain a theme configuration option, defaults, precedence, current value and provenance |
 | `validateConfig(change)` | Apply a proposed config change in memory and return the token pipeline's diagnostics |
-| `scaffold(kind, options)` | Generate a component, recipe, or composition from supported APIs only |
+| `scaffold(kind, options)` | Generate a component, recipe, or composition from supported APIs only || `scaffold(kind, options)` | Generate a component, recipe, or composition from supported APIs only. Repository components follow the folder convention (IMPLEMENTATION_PLAN.md §3.3: class, template, styles, `compose()` definition, explicit `*.define.ts`, side-effect-free `index.ts`, examples); colocated output on request |
 | `planMigration(source)` | Produce a targeted diff for supported mappings (e.g. Lit/FAST authoring, hard-coded CSS → tokens) and list unsupported cases explicitly |
 | `runChecks(scope)` | Run the project's typecheck, lint, tests, and contract checks relevant to changed files; return concrete results |
 | `getModel(name)` / `listModels()` | Installed component models, project kinds, supported schema versions |

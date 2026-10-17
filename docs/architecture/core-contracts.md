@@ -42,6 +42,36 @@ render() { return html`<span>${this.count}</span>`; }
 - When a dependency participates in both paths, scheduling coalesces the work and avoids duplicate DOM writes. Both paths use the same reactive engine.
 - Arbitrary interpolated functions are never invoked automatically. Readables are identified by a defined protocol. Use `computed()` for derived readables and named helpers for dynamic structure.
 
+### 1.1 Composed definitions (proposal, M4)
+
+Not implemented yet. Colocated authoring (above) stays supported. The public composition API lets the class, template, and styles live in separate modules. Mote's own components use it with one folder per component ([IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).
+
+```ts
+// card/card.template.ts
+import type { Card } from './card.js';
+import { html } from '@mote/core/template';
+export const cardTemplate = (card: Card) => html`<article part="base"><slot></slot></article>`;
+
+// card/card.definition.ts
+import { compose } from '@mote/core/element';
+import { Card } from './card.js';
+import { cardTemplate } from './card.template.js';
+import { cardStyles } from './card.styles.js';
+export const cardDefinition = compose({ name: 'mote-card', element: Card, template: cardTemplate, styles: cardStyles });
+
+// card/card.define.ts — explicit registration
+import { define } from '@mote/core/element';
+import { cardDefinition } from './card.definition.js';
+define(cardDefinition);
+```
+
+Requirements before acceptance (ADR in M4):
+
+- An external template runs in the same tracked render context as `render()`. The binding rule, lifecycle order, `Scope` cleanup, and DOM identity are unchanged.
+- Definitions are side-effect free and statically analyzable. Dependencies are registered only by `define(definition)`.
+- The size budgets in ADR 0031 still pass.
+- Names are final only after the clash with the planned `@mote/components/compose` schema renderer is resolved.
+
 ## 2. Public properties without decorators
 
 Preferred declaration (to prototype):
