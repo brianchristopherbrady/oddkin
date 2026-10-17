@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { generate, resolveToken, type ResolvedTheme } from '../src/index.js';
+import { generate, resolveToken, type ResolveContext, type ResolvedTheme } from '../src/index.js';
 import { cases } from './fixtures/cases.js';
 
 describe('browser generation', () => {
@@ -48,6 +48,9 @@ describe('generated CSS in a real cascade', () => {
           <div data-mote-density="compact" id="dark-compact"><i></i></div>
           <div data-mote-mode="system" id="system"><i></i></div>
           <div id="host"></div>
+          <div data-mote-profile="layout.compact" id="dark-profile"><i></i>
+            <div data-mote-density="compact" id="dark-profile-compact"><i></i></div>
+          </div>
         </div>
         <div data-mote-product="studio" id="studio"><i></i>
           <div data-mote-mode="dark" id="studio-dark"><i></i>
@@ -73,7 +76,7 @@ describe('generated CSS in a real cascade', () => {
       scope?.id === 'in-shadow' ? scope : scope?.querySelector(':scope > i')
     ) as HTMLElement;
     el.style.cssText =
-      'color: var(--mote-color-action-default); background-color: var(--mote-color-surface-default); padding-left: var(--mote-space-md); min-height: var(--mote-navigation-item-min-height); display: block';
+      'color: var(--mote-color-action-default); background-color: var(--mote-color-surface-default); padding-left: var(--mote-space-md); min-height: var(--mote-navigation-item-min-height); margin-left: var(--mote-card-padding); display: block';
     return getComputedStyle(el);
   };
 
@@ -81,12 +84,13 @@ describe('generated CSS in a real cascade', () => {
     const h = (hex ?? '').slice(1);
     return `rgb(${[0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)).join(', ')})`;
   };
+  // Engines may snap lengths to layout units (WebKit uses 1/64 px), so compare within 0.05px.
+  const expectLength = (actual: string, rem: string | undefined) =>
+    expect(Number.parseFloat(actual)).toBeCloseTo(Number.parseFloat(px(rem)), 1);
   const px = (rem: string | undefined) =>
     `${Number.parseFloat(rem ?? '') * Number.parseFloat(getComputedStyle(document.documentElement).fontSize)}px`;
 
-  const expectations: Array<
-    [id: string, context: { mode: 'light' | 'dark'; product?: string; density?: string }]
-  > = [
+  const expectations: Array<[id: string, context: ResolveContext]> = [
     ['light', { mode: 'light' }],
     ['dark', { mode: 'dark' }],
     ['dark-clinic', { mode: 'dark', product: 'clinic' }],
@@ -96,6 +100,9 @@ describe('generated CSS in a real cascade', () => {
     ['studio-dark', { mode: 'dark', product: 'studio' }],
     ['studio-dark-spacious', { mode: 'dark', product: 'studio', density: 'spacious' }],
     ['in-shadow', { mode: 'dark' }],
+    ['dark-profile', { mode: 'dark', profiles: ['layout.compact'] }],
+    // A nested density re-declares base expressions; the profile must survive inside it.
+    ['dark-profile-compact', { mode: 'dark', density: 'compact', profiles: ['layout.compact'] }],
   ];
 
   for (const [id, context] of expectations) {
@@ -105,8 +112,9 @@ describe('generated CSS in a real cascade', () => {
       expect(style.backgroundColor).toBe(
         rgb(resolveToken(theme, 'color.surface.default', context)),
       );
-      expect(style.paddingLeft).toBe(px(resolveToken(theme, 'space.md', context)));
-      expect(style.minHeight).toBe(px(resolveToken(theme, 'navigation.item.min-height', context)));
+      expectLength(style.paddingLeft, resolveToken(theme, 'space.md', context));
+      expectLength(style.minHeight, resolveToken(theme, 'navigation.item.min-height', context));
+      expectLength(style.marginLeft, resolveToken(theme, 'card.padding', context));
     });
   }
 

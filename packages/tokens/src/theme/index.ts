@@ -5,6 +5,10 @@ export { defineTheme } from './types.js';
 export type {
   BrandConfig,
   ColorInput,
+  ConditionConfig,
+  ContainerCondition,
+  MediaCondition,
+  ProfileConfig,
   DensityConfig,
   DimensionInput,
   ExplicitSpacing,

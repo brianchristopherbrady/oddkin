@@ -385,17 +385,17 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 - [x] `ThemeConfig` types, `defineTheme`, JSON Schema, defaults/preset resolution, stable naming, provenance, structured diagnostics (code, JSON-pointer path, message, suggestion)
 - [x] Validation: conflicting strategies, non-finite numbers, invalid units/names, missing refs, cycles, duplicate names, invalid CSS serialization
 - [x] Spacing `multiples` / `ratio` / `explicit`; 4-decimal rounding; explicit `snap` only; stable names on extension; provisional default preset
-- [ ] Unit policy: `rem` spacing/type, `px` borders/optical, unitless line height, intentional `em`; per-output unit validation
+- [x] Unit policy: `rem` spacing/type, `px` borders/optical, unitless line height, intentional `em`; per-output unit validation
 - [x] Provisional brand palette + semantic roles sufficient for button/input/card/side-nav; explicit roles separate from generated ramps
 - [x] CSS emit: `:root` + `data-mote-theme|mode|product|density` scopes, alias-closure re-declaration, explicit vs system mode, nested combinations
 - [x] `mote-tokens init|build|check`; JSON/JS loading; documented `.ts` path; browser generation independent of Node I/O
 - [x] Token categories with allowed-reference validation; initial layout roles and navigation component roles
-- [ ] Named `conditions` → literal queries; `@mote/tokens/conditions`; diagnostics
-- [ ] `profiles` → `[data-mote-profile~=…]` rules with alias closure; composition/precedence; overlap warnings; target-size minimum check
+- [x] Named `conditions` → literal queries; `@mote/tokens/conditions`; diagnostics
+- [x] `profiles` → `[data-mote-profile~=…]` rules with alias closure; composition/precedence; overlap warnings; target-size minimum check
 - [x] Generator runs in a Web Worker unchanged (prerequisite for live Theme Studio editing)
-- [ ] Verify stable spacing names/count semantics, source-unit rounding, canonical serialization, root-size independence, scope-axis precedence, alias closure, and bounded emitted-rule growth. Theme-mode first paint works in the CSS-only fixture.
+- [x] Verify stable spacing names/count semantics, source-unit rounding, canonical serialization, root-size independence, scope-axis precedence, alias closure, and bounded emitted-rule growth. Theme-mode first paint works in the CSS-only fixture.
 - [ ] Define how changed condition thresholds invalidate generated query CSS; do not imply that changing an unrelated custom property rewrites a literal query. Link the side-nav preview to this contract.
-- [ ] `examples/tokens-css-only/`: HTML + `<link>` + own CSS, **no script**; Playwright verifies computed styles, nested aliases, dark mode, a nested profile
+- [x] `examples/tokens-css-only/`: HTML + `<link>` + own CSS, **no script**; Playwright verifies computed styles, nested aliases, dark mode, a nested profile
 
 **Verification**
 
@@ -403,7 +403,7 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 - [x] Multiples (`0.25rem` × 1, 2, 3, 4.5, 9) → `0.25rem, 0.5rem, 0.75rem, 1.125rem, 2.25rem`
 - [x] Ratio (`0.75rem`, 1.5, 2/2) → `0.3333rem, 0.5rem, 0.75rem, 1.125rem, 1.6875rem`
 - [x] Invalid configs → expected codes and paths
-- [ ] Conditions and profiles emit deterministically; no profile lowers target size below minimum
+- [x] Conditions and profiles emit deterministically; no profile lowers target size below minimum
 
 **Acceptance:** config/diagnostics/spacing criteria and CSS-only consumption pass; roles, conditions, profiles validate and emit deterministically; Node and browser generation are identical.
 
@@ -924,10 +924,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M3: attribute-directive protocol; `helpers/class-map`, `style-map` (CSSOM, CSP-safe), `ref`, `live` (current-value comparison, IME, caret); event listener options; light-DOM styles shared per root with reference counting; `css` accepts constrained `var()` references | 192 browser tests (64 × 3 engines) + 93 Node tests; 6 e2e; full pipeline passes |
 | 2026-10-17 | M2: `@mote/tokens` `./theme` (`ThemeConfig`, `defineTheme`), `./generate` (diagnostics, spacing strategies, OKLCH ramps with chroma-bisection gamut mapping, contrast-selected roles valid for every product, token graph with tier/cycle/reference validation, product and density scopes with alias closure, mode switching by inherited space toggles, CSS emit), `./schema.json`; provisional `mote-default` preset with button/input/card/side-nav roles | 127 Node + 231 browser tests; byte-identical output in Node and three engines; full pipeline passes |
 | 2026-10-17 | M2: `@mote/tokens/refs` (`token()`, `TokenName`), `./values`, inspection JSON, `./css/default.css`, `./node` and the `mote-tokens` CLI (`init`/`build`/`check`; JSON, JS, `.ts` configs); Worker generation; script-free `examples/tokens-css-only` built by the CLI | 138 Node + 234 browser tests; 12 e2e; installed CLI verified from tarball; full pipeline passes |
+| 2026-10-17 | M2: named conditions (container/media, logical sizes, preference features) with `@mote/tokens/conditions` and CLI output; profiles with alias closure, nested-scope re-application, configuration-order precedence, overlap warnings, and target checks per density; unit policy; schema and CSS-only example extended | 149 Node + 240 browser tests; 12 e2e; full pipeline passes. M2 complete except linking the M4 side-nav preview to the threshold-invalidation contract |
 
 ## 11. Continuation
 
-**Next step:** finish M2 — named `conditions` (literal queries, `@mote/tokens/conditions`, unit diagnostics) and `profiles` (`data-mote-profile` rules with alias closure, left-to-right composition, overlap warnings, target-size checks), added to the CSS-only example; per-output unit policy. Then finish M3 (`@mote/core/layout`, `collections`, `model`, the analyzer with its TypeScript front-end decision per ADR 0018, minified size/startup/memory measurements). M4 can begin in parallel now that `token()` and the default CSS ship.
+**Next step:** finish M3 — `@mote/core/layout` (recipes consuming conditions), `collections`, `model`, the `@mote/analyzer` package (decide its TypeScript front end per ADR 0018), and minified size/startup/memory measurements; then start M4's first components on `@mote/core` + `@mote/tokens` (side-nav links the condition-invalidation contract, the last open M2 item).
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 

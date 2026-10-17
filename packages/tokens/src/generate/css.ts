@@ -80,12 +80,16 @@ export function emitCss(theme: ResolvedTheme): string {
   }
 
   for (const scope of theme.scopes) {
-    parts.push(
-      block(
-        [`[data-mote-${scope.kind}="${scope.name}"]`],
-        tokenDeclarations(scope.tokens.values(), modes),
-      ),
-    );
+    const selectors =
+      scope.kind === 'profile'
+        ? [
+            `[data-mote-profile~="${scope.name}"]`,
+            // Nested scopes re-declare base expressions for their closures; re-apply the
+            // profile inside them so it is not lost (specificity 0,2,0 over 0,1,0).
+            `[data-mote-profile~="${scope.name}"] :is([data-mote-mode], [data-mote-product], [data-mote-density], [data-mote-theme])`,
+          ]
+        : [`[data-mote-${scope.kind}="${scope.name}"]`];
+    parts.push(block(selectors, tokenDeclarations(scope.tokens.values(), modes)));
   }
   return parts.filter(Boolean).join('\n');
 }

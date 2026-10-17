@@ -7,24 +7,40 @@
   "additionalProperties": false,
   "required": ["brand"],
   "properties": {
-    "$schema": { "type": "string" },
-    "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "default": "default" },
-    "preset": { "const": "mote-default" },
+    "$schema": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "default": "default"
+    },
+    "preset": {
+      "const": "mote-default"
+    },
     "brand": {
       "type": "object",
       "additionalProperties": false,
       "required": ["primary"],
       "properties": {
-        "primary": { "$ref": "#/$defs/color" },
-        "neutral": { "$ref": "#/$defs/color" }
+        "primary": {
+          "$ref": "#/$defs/color"
+        },
+        "neutral": {
+          "$ref": "#/$defs/color"
+        }
       }
     },
     "status": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "danger": { "$ref": "#/$defs/color" },
-        "success": { "$ref": "#/$defs/color" }
+        "danger": {
+          "$ref": "#/$defs/color"
+        },
+        "success": {
+          "$ref": "#/$defs/color"
+        }
       }
     },
     "spacing": {
@@ -34,15 +50,26 @@
           "additionalProperties": false,
           "required": ["strategy", "unit", "steps"],
           "properties": {
-            "strategy": { "const": "multiples" },
-            "unit": { "$ref": "#/$defs/length" },
+            "strategy": {
+              "const": "multiples"
+            },
+            "unit": {
+              "$ref": "#/$defs/length"
+            },
             "steps": {
               "type": "object",
               "minProperties": 1,
-              "propertyNames": { "$ref": "#/$defs/segment" },
-              "additionalProperties": { "type": "number", "minimum": 0 }
+              "propertyNames": {
+                "$ref": "#/$defs/segment"
+              },
+              "additionalProperties": {
+                "type": "number",
+                "minimum": 0
+              }
             },
-            "snap": { "$ref": "#/$defs/length" }
+            "snap": {
+              "$ref": "#/$defs/length"
+            }
           }
         },
         {
@@ -50,13 +77,35 @@
           "additionalProperties": false,
           "required": ["strategy", "base", "ratio", "stepsBelow", "stepsAbove"],
           "properties": {
-            "strategy": { "const": "ratio" },
-            "base": { "$ref": "#/$defs/length" },
-            "ratio": { "type": "number", "exclusiveMinimum": 0 },
-            "stepsBelow": { "type": "integer", "minimum": 0, "maximum": 12 },
-            "stepsAbove": { "type": "integer", "minimum": 0, "maximum": 12 },
-            "names": { "type": "array", "items": { "$ref": "#/$defs/segment" } },
-            "snap": { "$ref": "#/$defs/length" }
+            "strategy": {
+              "const": "ratio"
+            },
+            "base": {
+              "$ref": "#/$defs/length"
+            },
+            "ratio": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "stepsBelow": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 12
+            },
+            "stepsAbove": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 12
+            },
+            "names": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/segment"
+              }
+            },
+            "snap": {
+              "$ref": "#/$defs/length"
+            }
           }
         },
         {
@@ -64,14 +113,22 @@
           "additionalProperties": false,
           "required": ["strategy", "steps"],
           "properties": {
-            "strategy": { "const": "explicit" },
+            "strategy": {
+              "const": "explicit"
+            },
             "steps": {
               "type": "object",
               "minProperties": 1,
-              "propertyNames": { "$ref": "#/$defs/segment" },
-              "additionalProperties": { "$ref": "#/$defs/length" }
+              "propertyNames": {
+                "$ref": "#/$defs/segment"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/length"
+              }
             },
-            "snap": { "$ref": "#/$defs/length" }
+            "snap": {
+              "$ref": "#/$defs/length"
+            }
           }
         }
       ]
@@ -80,11 +137,15 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "enum": ["light", "dark"] }
+      "items": {
+        "enum": ["light", "dark"]
+      }
     },
     "products": {
       "type": "object",
-      "propertyNames": { "$ref": "#/$defs/segment" },
+      "propertyNames": {
+        "$ref": "#/$defs/segment"
+      },
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
@@ -93,8 +154,12 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "primary": { "$ref": "#/$defs/color" },
-              "neutral": { "$ref": "#/$defs/color" }
+              "primary": {
+                "$ref": "#/$defs/color"
+              },
+              "neutral": {
+                "$ref": "#/$defs/color"
+              }
             }
           }
         }
@@ -102,37 +167,124 @@
     },
     "density": {
       "type": "object",
-      "propertyNames": { "$ref": "#/$defs/segment" },
+      "propertyNames": {
+        "$ref": "#/$defs/segment"
+      },
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
         "required": ["scale"],
-        "properties": { "scale": { "type": "number", "exclusiveMinimum": 0, "maximum": 2 } }
+        "properties": {
+          "scale": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 2
+          }
+        }
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/tokenName"
+      },
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["container"],
+            "properties": {
+              "container": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z_][\\w-]*$"
+                  },
+                  {
+                    "const": true
+                  }
+                ]
+              },
+              "minInlineSize": {
+                "$ref": "#/$defs/length"
+              },
+              "maxInlineSize": {
+                "$ref": "#/$defs/length"
+              },
+              "minWidth": {
+                "$ref": "#/$defs/length"
+              },
+              "maxWidth": {
+                "$ref": "#/$defs/length"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["media"],
+            "properties": {
+              "media": {
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "minWidth": {
+                    "$ref": "#/$defs/length"
+                  },
+                  "maxWidth": {
+                    "$ref": "#/$defs/length"
+                  },
+                  "prefersReducedMotion": {
+                    "enum": ["reduce", "no-preference"]
+                  },
+                  "prefersColorScheme": {
+                    "enum": ["light", "dark"]
+                  },
+                  "prefersContrast": {
+                    "enum": ["more", "less", "no-preference", "custom"]
+                  },
+                  "forcedColors": {
+                    "enum": ["active", "none"]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/tokenName"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "propertyNames": {
+          "$ref": "#/$defs/tokenName"
+        },
+        "additionalProperties": {
+          "$ref": "#/$defs/overrideValue"
+        }
       }
     },
     "overrides": {
       "type": "object",
       "propertyNames": {
-        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:\\.[a-z0-9]+(?:-[a-z0-9]+)*)*$"
+        "$ref": "#/$defs/tokenName"
       },
       "additionalProperties": {
-        "oneOf": [
-          { "type": "string", "minLength": 1 },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["light", "dark"],
-            "properties": {
-              "light": { "type": "string", "minLength": 1 },
-              "dark": { "type": "string", "minLength": 1 }
-            }
-          }
-        ]
+        "$ref": "#/$defs/overrideValue"
       }
     }
   },
   "$defs": {
-    "segment": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "segment": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
     "color": {
       "type": "string",
       "description": "#rgb, #rrggbb, or oklch(L C H).",
@@ -142,6 +294,33 @@
       "type": "string",
       "description": "A length with rem, px, or em, or 0.",
       "pattern": "^(0|-?(\\d+\\.?\\d*|\\.\\d+)(rem|px|em))$"
+    },
+    "tokenName": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:\\.[a-z0-9]+(?:-[a-z0-9]+)*)*$"
+    },
+    "overrideValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["light", "dark"],
+          "properties": {
+            "light": {
+              "type": "string",
+              "minLength": 1
+            },
+            "dark": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
     }
   }
 }

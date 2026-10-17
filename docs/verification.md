@@ -104,3 +104,17 @@ Recorded results of checks. Each entry states the date, environment, command, an
 | Full pipeline | `npm run verify` | Pass — 138 Node + 234 browser unit tests, 12 e2e, packed consumers |
 
 **Findings:** (1) Custom spacing scales without the step names the preset's roles use failed with bare `alias.missing`; the diagnostic now explains the requirement. (2) `.gitignore` and `.prettierignore` appends had merged with their last lines, so `.tmp/` and `.vitest/` were not ignored and six Vitest failure screenshots had been committed; they are removed from the index and both files end with newlines.
+## 2026-10-17 — M2 conditions, profiles, and unit policy
+
+**Environment:** as the previous entry.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Conditions | `packages/tokens/test/conditions-profiles.test.ts` | Pass — named and unnamed container queries (logical and physical sizes), media ranges and preference features serialize to literal `{ kind, query, atRule }`; `@mote/tokens/conditions` imports without a DOM; `var()`, `%`, unitless, logical media sizes, invalid preference values, empty ranges, reserved container names, missing features, and unknown kinds report codes and paths; `px` thresholds warn |
+| Profiles | same | Pass — attribute-scoped overrides with alias closure; nested-scope re-application selector emitted; profiles after products and densities; only layout/component roles; unknown roles, invalid values, missing references, and tier violations reported under `/profiles/…`; overlaps warn and name the winner; target minimums checked per profile and per profile × density for affected roles only |
+| Unit policy | same | Pass — unitless line heights, font weights 1–1000, lengths with units; `px` warns for type and control sizes, not borders |
+| Cascade | `packages/tokens/test/generate.browser.test.ts` | Pass in Chromium, Firefox, WebKit — a profile applies in dark mode and **survives inside a nested compact density**; lengths compared within 0.05px because WebKit snaps margins to 1/64px (`0.8438rem` → 13.5px vs 13.5008px elsewhere) |
+| CSS-only page | `npx playwright test e2e/tokens-css-only.spec.ts` | Pass in all three under light and dark preferences — profile padding, and profile + nested compact density, equal `resolveToken()` |
+| Full pipeline | `npm run verify` | Pass — 149 Node + 240 browser unit tests, 12 e2e, packed consumers |
+
+**Findings:** (1) A profile changes role expressions, so a nested density/product/mode/theme scope would re-declare base expressions and drop it; each profile rule also targets nested scopes inside its subtree. (2) CSS cannot honour `data-mote-profile` list order; precedence follows configuration order and overlaps are reported. (3) Preset profiles originally referenced `space.2xs`, which custom scales need not define; they now derive smaller values with `calc()` from required steps. (4) Duplicate unit diagnostics and repeated target unit-mismatch warnings were removed.

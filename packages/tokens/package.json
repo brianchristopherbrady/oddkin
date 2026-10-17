@@ -26,6 +26,10 @@
       "types": "./dist/values/index.d.ts",
       "default": "./dist/values/index.js"
     },
+    "./conditions": {
+      "types": "./dist/conditions/index.d.ts",
+      "default": "./dist/conditions/index.js"
+    },
     "./node": {
       "types": "./dist/node/index.d.ts",
       "default": "./dist/node/index.js"

@@ -3,7 +3,7 @@
  * M8) before being frozen. Brand and status roles are chosen by measured contrast at
  * generation time (see `ContrastRole`), not by fixed step numbers.
  */
-import type { ExplicitSpacing } from '../theme/types.js';
+import type { ConditionConfig, ExplicitSpacing, ProfileConfig } from '../theme/types.js';
 import type { TokenCategory, TokenType, TokenValue } from './graph.js';
 
 export interface PresetToken {
@@ -211,3 +211,28 @@ export const CONTRAST_PAIRS: ReadonlyArray<readonly [string, string, number]> = 
   ['color.text.success', 'color.surface.default', 4.5],
   ['color.text.success', 'color.surface.success', 4.5],
 ];
+
+/** Provisional named conditions. `shell` is the container the application shell declares. */
+export const PRESET_CONDITIONS: Readonly<Record<string, ConditionConfig>> = {
+  'page.medium': { media: { minWidth: '40rem' } },
+  'page.wide': { media: { minWidth: '64rem' } },
+  'navigation.expanded': { container: 'shell', minInlineSize: '48rem' },
+  'motion.reduced': { media: { prefersReducedMotion: 'reduce' } },
+};
+
+/**
+ * Provisional profiles: coordinated role overrides for denser regions. They reference only
+ * the spacing steps every scale must define (xs, sm, md, lg).
+ */
+export const PRESET_PROFILES: Readonly<Record<string, ProfileConfig>> = {
+  'navigation.compact': {
+    'navigation.item.padding.inline': '{space.xs}',
+    'navigation.item.padding.block': 'calc({space.xs} / 2)',
+    'navigation.item.gap': 'calc({space.xs} / 2)',
+    'navigation.indent': '{space.sm}',
+  },
+  'layout.compact': {
+    'layout.gap': '{space.sm}',
+    'layout.inset': '{space.md}',
+  },
+};

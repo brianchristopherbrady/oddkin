@@ -6,6 +6,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
+  emitConditionsModule,
   emitInspectJson,
   emitRefsModule,
   emitValuesModule,
@@ -96,6 +97,7 @@ export async function buildTheme(config: unknown, options: BuildOptions): Promis
     outputs.push(
       [`${name}.refs.ts`, emitRefsModule(result.theme)],
       [`${name}.values.ts`, emitValuesModule(result.theme)],
+      [`${name}.conditions.ts`, emitConditionsModule(result.theme)],
     );
   if (formats.includes('json'))
     outputs.push([`${name}.inspect.json`, emitInspectJson(result.theme, result.diagnostics)]);

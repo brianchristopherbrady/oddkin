@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 import {
+  emitConditionsModule,
   emitInspectJson,
   emitTokenNameType,
   emitValuesModule,
@@ -20,6 +21,7 @@ describe('generated default modules', () => {
   const files: Array<[string, string]> = [
     ['default-names.ts', emitTokenNameType(theme)],
     ['default-values.ts', emitValuesModule(theme)],
+    ['default-conditions.ts', emitConditionsModule(theme)],
   ];
   for (const [file, expected] of files) {
     it(`src/generated/${file} matches the generator (UPDATE_FIXTURES=1 to regenerate)`, async () => {
@@ -78,6 +80,8 @@ describe('inspection metadata', () => {
       '[data-mote-mode]',
       '[data-mote-product="clinic"]',
       '[data-mote-density="compact"]',
+      '[data-mote-profile~="navigation.compact"]',
+      '[data-mote-profile~="layout.compact"]',
     ]);
     expect(data.scopes[1]?.redeclared).toContain('color.action.default');
   });

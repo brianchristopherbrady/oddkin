@@ -26,6 +26,16 @@ describe('theme-config.v1 JSON Schema', () => {
       modes: ['light', 'dark'],
       products: { clinic: { brand: { primary: '#0f766e' } } },
       density: { compact: { scale: 0.75 } },
+      conditions: {
+        'navigation.expanded': { container: 'side-nav', minInlineSize: '40rem' },
+        'page.wide': { media: { minWidth: '64rem' } },
+      },
+      profiles: {
+        'navigation.compact': {
+          'navigation.item.padding.inline': '{space.sm}',
+          'layout.gap': '{space.xs}',
+        },
+      },
       overrides: { 'color.surface.default': { light: '#fbfaff', dark: '{ref.neutral.950}' } },
     };
     for (const config of [...Object.values(cases), documented]) {
@@ -64,6 +74,8 @@ describe('theme-config.v1 JSON Schema', () => {
       'modes',
       'products',
       'density',
+      'conditions',
+      'profiles',
       'overrides',
     ];
     expect(Object.keys(schema.properties).sort()).toEqual([...keys].sort());

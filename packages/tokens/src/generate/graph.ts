@@ -4,6 +4,7 @@
  */
 import type { Mode, ModeValues } from '../theme/types.js';
 import { closest, pointer, type DiagnosticList } from './diagnostics.js';
+import { parseDimension } from './units.js';
 
 /** Ordered tiers: a token may reference tokens of its own tier or lower. */
 export type TokenCategory = 'reference' | 'foundation' | 'semantic' | 'layout' | 'component';
@@ -121,6 +122,7 @@ export function validateGraph(tokens: TokenMap, diagnostics: DiagnosticList): vo
         );
       }
     }
+    for (const text of texts) checkUnits(token, text, path, diagnostics);
     for (const ref of references(token.value)) {
       const target = tokens.get(ref);
       if (!target) {
@@ -246,4 +248,54 @@ export function compareNames(a: string, b: string): number {
     return x < y ? -1 : 1;
   }
   return as.length - bs.length;
+}
+
+const EXPRESSION = /\{[^{}]+\}|calc\(|min\(|max\(|clamp\(/;
+const RELATIVE_SIZES = /^(font\.size|control|layout|navigation|card)\./;
+
+/**
+ * Unit policy: unitless numbers (line heights), integer font weights 1–1000, lengths with
+ * units, and a warning for px where sizes should follow the reader's font size.
+ */
+function checkUnits(
+  token: TokenDefinition,
+  text: string,
+  path: string,
+  diagnostics: DiagnosticList,
+): void {
+  if (typeof text !== 'string' || EXPRESSION.test(text)) return;
+  const value = text.trim();
+  if (token.type === 'number' && !/^-?(?:\d+\.?\d*|\.\d+)$/.test(value)) {
+    diagnostics.error(
+      'unit.invalid',
+      path,
+      `${token.name} must be a unitless number, not ${JSON.stringify(text)}.`,
+      'Line heights are unitless so they scale with the element’s font size.',
+    );
+  } else if (
+    token.type === 'fontWeight' &&
+    !(/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 1000)
+  ) {
+    diagnostics.error(
+      'unit.invalid',
+      path,
+      `${token.name} must be a font weight from 1 to 1000, not ${JSON.stringify(text)}.`,
+    );
+  } else if (token.type === 'dimension') {
+    const dimension = parseDimension(value);
+    if (!dimension)
+      diagnostics.error(
+        'unit.invalid',
+        path,
+        `${token.name} must be a length with a unit, not ${JSON.stringify(text)}.`,
+      );
+    else if (dimension.unit === 'px' && RELATIVE_SIZES.test(token.name)) {
+      diagnostics.warn(
+        'unit.discouraged',
+        path,
+        `${token.name} uses px, which ignores the reader’s font-size preference.`,
+        'Use rem for type, control, and layout sizes; keep px for borders and optical adjustments.',
+      );
+    }
+  }
 }

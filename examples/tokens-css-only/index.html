@@ -48,6 +48,23 @@
         <p>Spacing and control sizes scale; text size does not.</p>
         <button type="button" class="action">Compact action</button>
       </section>
+      <section
+        class="panel"
+        id="profile-panel"
+        data-mote-profile="layout.compact"
+        aria-labelledby="profile-heading"
+      >
+        <h2 id="profile-heading">Profile</h2>
+        <p>
+          <code>data-mote-profile="layout.compact"</code> overrides layout roles (gap and inset) and
+          the roles that reference them.
+        </p>
+        <div class="panel" id="profile-compact-panel" data-mote-density="compact">
+          <h3>Compact density inside the profile</h3>
+          <p>The profile still applies inside a nested scope.</p>
+          <button type="button" class="action">Action</button>
+        </div>
+      </section>
     </main>
   </body>
 </html>

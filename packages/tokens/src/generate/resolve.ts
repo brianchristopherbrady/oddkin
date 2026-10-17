@@ -13,6 +13,7 @@ import {
   toHex,
   type Oklch,
 } from './color.js';
+import { resolveConditions, type Condition } from './conditions.js';
 import { closest, DiagnosticList, pointer, type Diagnostic } from './diagnostics.js';
 import {
   compareNames,
@@ -23,6 +24,7 @@ import {
   type TokenDefinition,
   type TokenMap,
   type TokenValue,
+  TOKEN_NAME,
 } from './graph.js';
 import {
   CONTRAST_PAIRS,
@@ -30,6 +32,8 @@ import {
   DEFAULT_DENSITY,
   DEFAULT_SPACING,
   DEFAULT_STATUS,
+  PRESET_CONDITIONS,
+  PRESET_PROFILES,
   PRESET_TOKENS,
   type ContrastRole,
 } from './preset.js';
@@ -37,7 +41,7 @@ import { generateSpacing, SEGMENT } from './spacing.js';
 import { formatDimension, parseDimension, scaleDimension } from './units.js';
 
 export interface ScopeTokens {
-  readonly kind: 'product' | 'density';
+  readonly kind: 'product' | 'density' | 'profile';
   readonly name: string;
   /** Tokens declared in the scope: changed tokens plus their alias closure. */
   readonly tokens: TokenMap;
@@ -49,7 +53,9 @@ export interface ResolvedTheme {
   readonly name: string;
   readonly modes: readonly Mode[];
   readonly tokens: TokenMap;
+  /** Products, densities, then profiles, in emission (and therefore precedence) order. */
   readonly scopes: readonly ScopeTokens[];
+  readonly conditions: ReadonlyMap<string, Condition>;
 }
 
 export interface ResolveResult {
@@ -69,6 +75,8 @@ const TOP_LEVEL = [
   'modes',
   'products',
   'density',
+  'conditions',
+  'profiles',
   'overrides',
 ];
 const MODES: readonly Mode[] = ['light', 'dark'];
@@ -246,13 +254,20 @@ function asTokenValue(value: unknown): TokenValue | undefined {
   return undefined;
 }
 
-function checkTargets(tokens: TokenMap, path: (name: string) => string, d: DiagnosticList): void {
+function checkTargets(
+  tokens: TokenMap,
+  path: (name: string) => string,
+  d: DiagnosticList,
+  only?: ReadonlySet<string>,
+  reportUnitMismatch = true,
+): void {
   for (const token of tokens.values()) {
-    if (!token.minimum) continue;
+    if (!token.minimum || (only && !only.has(token.name))) continue;
     const value = parseDimension(resolveLiteral(tokens, token.name, 'light'));
     const minimum = parseDimension(resolveLiteral(tokens, token.minimum, 'light'));
     if (!value || !minimum) continue;
     if (value.unit !== minimum.unit && value.value !== 0) {
+      if (!reportUnitMismatch) continue;
       d.warn(
         'target.unitMismatch',
         path(token.name),
@@ -412,6 +427,11 @@ export function resolveTheme(input: unknown): ResolveResult {
     }
   }
 
+  const conditions = resolveConditions(PRESET_CONDITIONS, config.conditions, d);
+  if (config.profiles !== undefined && !isRecord(config.profiles)) {
+    d.error('config.type', '/profiles', 'profiles must be an object of named role-override sets.');
+  }
+
   const overrides = config.overrides ?? {};
   if (!isRecord(overrides))
     d.error('config.type', '/overrides', 'overrides must be an object of token names to values.');
@@ -469,27 +489,7 @@ export function resolveTheme(input: unknown): ResolveResult {
         d.error('override.invalid', path, 'An override is a string or { "light": …, "dark": … }.');
         continue;
       }
-      const effective = isModeValues(value) && modes.length === 1 ? value[modes[0] as Mode] : value;
-      if (existing.type === 'color') {
-        for (const text of isModeValues(effective)
-          ? [effective.light, effective.dark]
-          : [effective]) {
-          if (!/\{[^{}]+\}/.test(text) && !parseColor(text))
-            d.error(
-              'color.invalid',
-              path,
-              `${JSON.stringify(text)} is not a supported colour.`,
-              'Use #rrggbb, #rgb, oklch(L C H), or a {token} reference.',
-            );
-        }
-      } else if (existing.type === 'dimension') {
-        for (const text of isModeValues(effective)
-          ? [effective.light, effective.dark]
-          : [effective]) {
-          if (!/\{[^{}]+\}/.test(text) && !parseDimension(text))
-            d.error('unit.invalid', path, `${JSON.stringify(text)} is not a length with a unit.`);
-        }
-      }
+      const effective = checkValue(existing, value, modes, path, d);
       tokens.set(tokenName, {
         ...existing,
         value: effective,
@@ -533,11 +533,122 @@ export function resolveTheme(input: unknown): ResolveResult {
       withRefs(sorted, changed),
       (n) => `${pointer('density', entry.name)}${pointer('tokens', n)}`,
       d,
+      undefined,
+      false,
     );
     scopes.push(scope('density', entry.name, sorted, changed, modes));
   }
 
-  return { theme: { name, modes, tokens: sorted, scopes }, diagnostics: d.items };
+  // Profiles, after products and densities so they win where they apply to the same element.
+  const profileInputs = {
+    ...PRESET_PROFILES,
+    ...(isRecord(config.profiles) ? config.profiles : {}),
+  };
+  const roleOwners = new Map<string, string>();
+  for (const [profileName, input] of Object.entries(profileInputs)) {
+    const path = pointer('profiles', profileName);
+    const origin =
+      isRecord(config.profiles) && profileName in config.profiles ? 'configured' : 'preset';
+    if (!TOKEN_NAME.test(profileName)) {
+      d.error(
+        'profile.name.invalid',
+        path,
+        `"${profileName}" is not a valid profile name.`,
+        'Use dot-separated lowercase segments, e.g. "navigation.compact".',
+      );
+    }
+    if (!isRecord(input)) {
+      d.error('config.type', path, 'A profile is an object of role names to values.');
+      continue;
+    }
+    const changed: TokenDefinition[] = [];
+    for (const [tokenName, raw] of Object.entries(input)) {
+      const at = `${path}${pointer(tokenName)}`;
+      const target = sorted.get(tokenName);
+      if (!target) {
+        const suggestion = closest(tokenName, sorted.keys());
+        d.error(
+          'profile.unknown',
+          at,
+          `No token named "${tokenName}".`,
+          suggestion ? `Did you mean "${suggestion}"?` : undefined,
+        );
+        continue;
+      }
+      if (target.category !== 'layout' && target.category !== 'component') {
+        d.error(
+          'profile.category',
+          at,
+          `Profiles may override layout and component roles only; "${tokenName}" is a ${target.category} token.`,
+          'Override foundation and colour values with overrides, products, or modes instead.',
+        );
+        continue;
+      }
+      const value = asTokenValue(raw);
+      if (value === undefined) {
+        d.error(
+          'override.invalid',
+          at,
+          'A profile value is a string or { "light": …, "dark": … }.',
+        );
+        continue;
+      }
+      const owner = roleOwners.get(tokenName);
+      if (owner) {
+        d.warn(
+          'profile.overlap',
+          at,
+          `"${tokenName}" is also set by profile "${owner}" (${pointer('profiles', owner)}${pointer(tokenName)}).`,
+          `Where both apply to one element, "${profileName}" wins because it comes later in the configuration; data-mote-profile list order does not change this.`,
+        );
+      } else roleOwners.set(tokenName, profileName);
+      changed.push({
+        ...target,
+        value: checkValue(target, value, modes, at, d),
+        origin,
+        provenance: at,
+      });
+    }
+    const variant = withRefs(sorted, changed);
+    const names = new Set(changed.map((c) => c.name));
+    const graph = new DiagnosticList();
+    validateGraph(variant, graph);
+    for (const item of graph.items) {
+      const token = item.path
+        .replace(/^\/tokens\//, '')
+        .replace(/~1/g, '/')
+        .replace(/~0/g, '~');
+      if (!names.has(token) && item.code !== 'alias.cycle') continue;
+      const at = `${path}${pointer(token)}`;
+      if (item.severity === 'error') d.error(item.code, at, item.message, item.suggestion);
+      else d.warn(item.code, at, item.message, item.suggestion);
+    }
+    if (graph.hasErrors) continue;
+    // Only roles the profile changes, directly or through references, can newly fall below a minimum.
+    const affected = new Set([...names, ...dependents(sorted, names, modes)]);
+    checkTargets(variant, (n) => `${path}${pointer(n)}`, d, affected, false);
+    for (const s of scopes) {
+      if (s.kind !== 'density') continue;
+      const combined = withRefs(
+        withRefs(
+          sorted,
+          [...s.tokens.values()].filter((x) => s.changed.includes(x.name)),
+        ),
+        changed,
+      );
+      checkTargets(
+        combined,
+        (n) => `${path}${pointer('density', s.name)}${pointer(n)}`,
+        d,
+        affected,
+        false,
+      );
+    }
+    scopes.push(scope('profile', profileName, sorted, changed, modes));
+  }
+
+  if (d.hasErrors) return { theme: undefined, diagnostics: d.items };
+  return { theme: { name, modes, tokens: sorted, scopes, conditions }, diagnostics: d.items };
 }
 
 function scope(
@@ -564,6 +675,8 @@ export interface ResolveContext {
   readonly mode?: Mode;
   readonly product?: string;
   readonly density?: string;
+  /** Profiles applied, in any order (precedence follows the configuration). */
+  readonly profiles?: readonly string[];
 }
 
 /** Literal value of a token in a context (e.g. for docs, tests, and inspection). */
@@ -576,10 +689,39 @@ export function resolveToken(
   for (const s of theme.scopes) {
     if (
       (s.kind === 'product' && s.name === context.product) ||
-      (s.kind === 'density' && s.name === context.density)
+      (s.kind === 'density' && s.name === context.density) ||
+      (s.kind === 'profile' && (context.profiles ?? []).includes(s.name))
     ) {
       for (const [k, v] of s.tokens) map.set(k, v);
     }
   }
   return resolveLiteral(map, name, context.mode ?? theme.modes[0] ?? 'light');
+}
+
+const LITERAL_OR_EXPRESSION = /\{[^{}]+\}|calc\(|min\(|max\(|clamp\(/;
+
+/**
+ * Validate an override or profile colour for the target token; returns the effective value.
+ * Dimensions, numbers, and font weights are checked by the graph's unit policy.
+ */
+function checkValue(
+  target: TokenDefinition,
+  value: TokenValue,
+  modes: readonly Mode[],
+  path: string,
+  d: DiagnosticList,
+): TokenValue {
+  const effective = isModeValues(value) && modes.length === 1 ? value[modes[0] as Mode] : value;
+  for (const text of isModeValues(effective) ? [effective.light, effective.dark] : [effective]) {
+    if (LITERAL_OR_EXPRESSION.test(text)) continue;
+    if (target.type === 'color' && !parseColor(text)) {
+      d.error(
+        'color.invalid',
+        path,
+        `${JSON.stringify(text)} is not a supported colour.`,
+        'Use #rrggbb, #rgb, oklch(L C H), or a {token} reference.',
+      );
+    }
+  }
+  return effective;
 }

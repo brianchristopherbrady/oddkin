@@ -95,6 +95,23 @@ export function emitValuesModule(theme: ResolvedTheme): string {
   return `${header(theme, 'Literal token values')}export const values = ${serialize(valuesTree(theme), '')} as const;\n`;
 }
 
+/**
+ * Named conditions as literal query strings: `{ kind, query, atRule }` per name.
+ * DOM-free; queries cannot read custom properties, so thresholds are compiled in.
+ */
+export function emitConditionsModule(theme: ResolvedTheme): string {
+  const entries = [...theme.conditions.values()]
+    .map(
+      (c) =>
+        `  '${c.name}': {\n    kind: '${c.kind}',\n    query: '${c.query}',\n    atRule: '${c.atRule}',\n  },`,
+    )
+    .join('\n');
+  const names = theme.conditions.size
+    ? [...theme.conditions.keys()].map((n) => `  | '${n}'`).join('\n')
+    : '  never';
+  return `${header(theme, 'Named conditions')}export type ConditionName =\n${names};\n\nexport const conditions = {\n${entries}\n} as const;\n`;
+}
+
 /** Inspection metadata: definitions, provenance, literals, scopes, and diagnostics. */
 export function emitInspectJson(
   theme: ResolvedTheme,
@@ -119,6 +136,7 @@ export function emitInspectJson(
       ...(t.minimum ? { minimum: t.minimum } : {}),
       ...(t.description ? { description: t.description } : {}),
     })),
+    conditions: [...theme.conditions.values()],
     scopes: [
       ...(modeClosure.length
         ? [
@@ -130,7 +148,10 @@ export function emitInspectJson(
           ]
         : []),
       ...theme.scopes.map((s) => ({
-        selector: `[data-mote-${s.kind}="${s.name}"]`,
+        selector:
+          s.kind === 'profile'
+            ? `[data-mote-profile~="${s.name}"]`
+            : `[data-mote-${s.kind}="${s.name}"]`,
         changed: s.changed,
         redeclared: [...s.tokens.keys()].filter((n) => !s.changed.includes(n)),
       })),

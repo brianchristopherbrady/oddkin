@@ -360,3 +360,18 @@
   --mote-space-xl: 2.1094rem;
   --mote-space-xs: 0.4166rem;
 }
+
+[data-mote-profile~="navigation.compact"],
+[data-mote-profile~="navigation.compact"] :is([data-mote-mode], [data-mote-product], [data-mote-density], [data-mote-theme]) {
+  --mote-navigation-indent: var(--mote-space-sm);
+  --mote-navigation-item-gap: calc(var(--mote-space-xs) / 2);
+  --mote-navigation-item-padding-block: calc(var(--mote-space-xs) / 2);
+  --mote-navigation-item-padding-inline: var(--mote-space-xs);
+}
+
+[data-mote-profile~="layout.compact"],
+[data-mote-profile~="layout.compact"] :is([data-mote-mode], [data-mote-product], [data-mote-density], [data-mote-theme]) {
+  --mote-card-padding: var(--mote-layout-inset);
+  --mote-layout-gap: var(--mote-space-sm);
+  --mote-layout-inset: var(--mote-space-md);
+}

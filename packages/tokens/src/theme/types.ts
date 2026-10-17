@@ -73,6 +73,36 @@ export interface DensityConfig {
   readonly scale: number;
 }
 
+/** Literal thresholds; `rem` recommended. Logical sizes apply to container queries only. */
+export interface ContainerCondition {
+  /** Container name, or `true` for the nearest size container. */
+  readonly container: string | true;
+  readonly minInlineSize?: DimensionInput;
+  readonly maxInlineSize?: DimensionInput;
+  readonly minWidth?: DimensionInput;
+  readonly maxWidth?: DimensionInput;
+}
+
+export interface MediaCondition {
+  readonly media: {
+    readonly minWidth?: DimensionInput;
+    readonly maxWidth?: DimensionInput;
+    readonly prefersReducedMotion?: 'reduce' | 'no-preference';
+    readonly prefersColorScheme?: 'light' | 'dark';
+    readonly prefersContrast?: 'more' | 'less' | 'no-preference' | 'custom';
+    readonly forcedColors?: 'active' | 'none';
+  };
+}
+
+/** A named query condition, serialized to a literal container or media query. */
+export type ConditionConfig = ContainerCondition | MediaCondition;
+
+/**
+ * A profile: explicit overrides of layout and component roles, applied with
+ * `data-mote-profile="name"` (space-separated list allowed).
+ */
+export type ProfileConfig = Readonly<Record<string, OverrideValue>>;
+
 export interface ThemeConfig {
   readonly $schema?: string;
   /** Theme name, used for `data-mote-theme` and file names. Defaults to `default`. */
@@ -86,6 +116,10 @@ export interface ThemeConfig {
   readonly modes?: readonly Mode[];
   readonly products?: Readonly<Record<string, ProductConfig>>;
   readonly density?: Readonly<Record<string, DensityConfig>>;
+  /** Named container and media conditions; replace preset conditions with the same name. */
+  readonly conditions?: Readonly<Record<string, ConditionConfig>>;
+  /** Named role-override sets; replace preset profiles with the same name. Later profiles win where they overlap. */
+  readonly profiles?: Readonly<Record<string, ProfileConfig>>;
   /** Replace resolved tokens by stable name. The token must exist. */
   readonly overrides?: Readonly<Record<string, OverrideValue>>;
 }

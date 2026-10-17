@@ -1,6 +1,6 @@
 # Theming, token pipeline, and styling
 
-Status: §1–§5 and §10 are **implemented** in `@mote/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Of the outputs (§6), CSS, typed `refs` (`token()`, `TokenName`), literal `values`, and inspection JSON are implemented, as is the CLI (§9: `init`, `build`, `check`; JSON, ESM JS, and type-stripped `.ts` configs). Sass and DTCG outputs, `inspect.computedToken`, conditions, and profiles (§11.2–§11.3) remain **proposals**.
+Status: §1–§5 and §10 are **implemented** in `@mote/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Of the outputs (§6), CSS, typed `refs` (`token()`, `TokenName`), literal `values`, and inspection JSON are implemented, as is the CLI (§9: `init`, `build`, `check`; JSON, ESM JS, and type-stripped `.ts` configs). Conditions and profiles (§11.2–§11.3, with the implementation notes in §11.7) and the unit policy are implemented. Sass and DTCG outputs and `inspect.computedToken` remain **proposals**.
 
 ## 1. Configuration model
 
@@ -306,7 +306,7 @@ defineTheme({
 - A profile is an explicit set of role overrides. It **never** inspects or rewrites descendants; it only declares custom properties on the element where it applies, and they inherit.
 - Applied by attribute (`data-mote-profile="navigation.compact"`, space-separated list allowed) or by a recipe condition (§6 of layout-recipes.md).
 - Each profile rule re-declares the overridden roles **and** their affected alias closure (same rule as §5), so nested component roles re-resolve inside the profile scope.
-- **Composition and precedence:** within one element, profiles in a `data-mote-profile` list apply left-to-right (later wins); nearer ancestors win over farther ones through normal inheritance. Overlapping profiles that set the same role are reported as a warning with both provenance paths. Profiles sit above theme/product/density for the roles they name and do not affect other roles.
+- **Composition and precedence:** within one element, profiles that set the same role are ordered by the theme configuration (later wins; CSS cannot honour attribute-list order — see §11.7); nearer ancestors win over farther ones through normal inheritance. Overlapping profiles that set the same role are reported as a warning with both provenance paths. Profiles sit above theme/product/density for the roles they name and do not affect other roles.
 - Profiles may only target semantic layout roles and component roles. Validation rejects foundation or colour overrides in a profile unless the category explicitly allows it.
 
 ### 11.4 Keep concerns separate
@@ -337,7 +337,7 @@ A narrow container changes arrangement; it does not automatically shrink every l
 import { token } from '@mote/tokens/refs';
 import { conditions } from '@mote/tokens/conditions';
 css`.toolbar { gap: ${token('layout.gap')}; }
-     @container ${unsafeCSS(conditions['navigation.expanded'])} { .toolbar { flex-wrap: nowrap; } }`;
+     ${unsafeCSS(conditions['navigation.expanded'].atRule)} { .toolbar { flex-wrap: nowrap; } }`;
 ```
 
 Recipes are the recommended way to use conditions in components; the raw outputs exist for ordinary CSS and tooling. (The TS example needs `unsafeCSS` because a query string is not a permitted value interpolation; a `condition()` helper in `@mote/components/layout` will wrap this safely.)
@@ -348,8 +348,17 @@ Recipes are the recommended way to use conditions in components; the raw outputs
 - Every role, condition, and profile records provenance (default / preset / config / override).
 - Theme Studio edits the same `conditions` and `profiles` config, previews the side-navigation fixture and other compositions in resizable containers side by side, shows which condition and profile are active in each preview, and traces each role through profile → alias → computed value.
 
+### 11.7 Implementation notes (M2)
+
+- **Conditions export shape.** A condition is either a container query or a media query, so `@mote/tokens/conditions` (and the `<name>.conditions.ts` module the CLI emits) maps each name to `{ kind, query, atRule }`: `query` is the prelude after the keyword and `atRule` the complete prelude, as in the §11.5 example. Names sort alphabetically; configured conditions replace preset conditions with the same name.
+- **Features.** Container conditions accept a container name or `true` (nearest size container) with `minInlineSize`/`maxInlineSize` (emitted as `min-inline-size`/`max-inline-size`, supported wherever container queries are) and `minWidth`/`maxWidth`. Media conditions accept `minWidth`/`maxWidth` and `prefersReducedMotion`, `prefersColorScheme`, `prefersContrast`, `forcedColors`; logical sizes in media conditions report `condition.feature.unsupported`. Ranges that can never match report `condition.range.empty`; `px` thresholds warn.
+- **Invalidation.** Thresholds are compiled into query text. Changing one means regenerating the outputs that contain it (CLI build, or a preview-owned stylesheet in Workbench/Theme Studio); setting any custom property at runtime never changes a query.
+- **Profile precedence.** A `data-mote-profile` list is matched with `~=`, so CSS source order — not list order — decides between profiles that set the same role on one element. Profiles are emitted after products and densities in configuration order (preset first; a configured profile with a preset's name replaces it in place), and every overlap is reported as `profile.overlap` naming the winner.
+- **Profiles inside nested scopes.** Density, product, mode, and theme scopes re-declare their closures with base expressions, which would drop a profile's values in a nested scope. Each profile rule therefore also matches `[data-mote-profile~="p"] :is([data-mote-mode], [data-mote-product], [data-mote-density], [data-mote-theme])` — the same declaration block, specificity (0,2,0). Verified in three engines.
+- **Targets.** Target-size minimums are checked for each density, each profile, and each profile × density combination, limited to roles a profile actually changes or that depend on them.
+- **Unit policy.** Line heights are unitless numbers, font weights are integers 1–1000, dimension literals need units, and `px` warns for type, control, layout, navigation, and card sizes (borders and optical values may use `px`). Values with references or `calc()`/`min()`/`max()`/`clamp()` are checked through what they reference.
+
 ## Open questions
 
 - Whether `@custom-media` output is worth shipping (conditions now cover media thresholds; likely only as an optional build output).
 - Final scope selector syntax (data attributes proposed: `data-mote-theme`, `data-mote-mode`, `data-mote-product`, `data-mote-density`).
-

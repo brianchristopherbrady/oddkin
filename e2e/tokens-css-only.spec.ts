@@ -35,6 +35,10 @@ for (const scheme of ['light', 'dark'] as const) {
       ['#dark-product-panel', { mode: 'dark', product: 'lighthouse' }],
       ['#dark-product-light-panel', { mode: 'light', product: 'lighthouse' }],
       ['#compact-panel', { mode: scheme, density: 'compact' }],
+      [
+        '#profile-compact-panel',
+        { mode: scheme, density: 'compact', profiles: ['layout.compact'] },
+      ],
     ];
     for (const [selector, context] of scopes) {
       const panel = page.locator(selector);
@@ -64,6 +68,10 @@ for (const scheme of ['light', 'dark'] as const) {
         px(resolveToken(theme, 'card.padding', context)),
       );
     }
+    await expect(page.locator('#profile-panel')).toHaveCSS(
+      'padding-top',
+      px(resolveToken(theme, 'card.padding', { profiles: ['layout.compact'] })),
+    );
     await expect(page.locator('#dark-panel')).toHaveCSS('color-scheme', 'dark');
 
     // rem outputs follow the consumer's root font size; nothing assumes 16px.

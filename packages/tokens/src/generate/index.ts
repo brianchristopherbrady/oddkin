@@ -24,6 +24,7 @@ export function generate(config: unknown): GenerateResult {
 
 export { emitCss, cssStats } from './css.js';
 export {
+  emitConditionsModule,
   emitInspectJson,
   emitRefsModule,
   emitTokenNameType,
@@ -47,4 +48,6 @@ export type {
   TokenValue,
 } from './graph.js';
 export { formatDimension, parseDimension } from './units.js';
+export { parseCondition } from './conditions.js';
+export type { Condition } from './conditions.js';
 export type { Dimension, LengthUnit } from './units.js';
