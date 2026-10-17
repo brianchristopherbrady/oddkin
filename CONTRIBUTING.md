@@ -28,7 +28,10 @@ Repository components will use one folder per component ([IMPLEMENTATION_PLAN.md
 
 Until the composition API lands, new code follows the existing colocated style. Intentionally colocated demonstrations (e.g. `examples/binding-rule`) and focused inline test fixtures stay colocated so both authoring paths remain exercised.
 
-## Workflow
+## Agent kit and guidance (planned)
+
+When the agent kit exists ([agent-tooling.md](./docs/architecture/agent-tooling.md), ADR 0032), changes to public APIs, tokens, recipes, examples, or authored guidance regenerate it with `mote-agent kit`, and `mote-agent kit --check` must report no stale artifacts. Authored guidance may only cite tags, properties, events, slots, parts, tokens, recipes, and imports that exist; the build rejects unknown references. Do not hand-edit generated references or the managed `AGENTS.md` section.
+
 
 - `npm run verify` must pass before a change is considered done. Run the smallest relevant command while iterating.
 - Code is formatted with Prettier (`npm run format`). Markdown is not auto-formatted.

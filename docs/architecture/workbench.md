@@ -196,6 +196,7 @@ export default defineExamples('mote-button', {
 - `defineExamples` is a DOM-free definition in a dev-only entry; fixtures run only inside preview frames and tests.
 - Reused by Workbench, `apps/docs`, browser tests (`runExample` helper), visual tests, Theme Studio, and agents.
 - Basic previews are generated from metadata when sufficient. Missing providers, services, fixtures, or complex children are reported explicitly. No automatic enumeration of every property combination.
+- *(Planned.)* Explained **incorrect** examples for common mistakes (attribute vs property, boolean removal, registration, event names, binding paths, reconnect) declare the diagnostic they should produce. They feed agent-kit references and `validateUsage` tests and are never rendered as recommended presets ([agent-tooling.md](./agent-tooling.md) §7).
 
 ## 8. Token inspection and visualizations
 
@@ -231,6 +232,8 @@ mote workbench products --discover   # report suggested product mappings (never 
 
 - `apps/docs` is Mote's product documentation (tutorials, migrations, architecture, learning). It **consumes public Workbench panels** (foundation pages, component catalog and detail pages, previews, token inspector, Theme Studio) through `@mote/workbench` exports instead of maintaining duplicate foundation or component explorers or token engines. Mote's own Workbench (pointed at `@mote/components`) can be linked from or embedded in the docs.
 - `@mote/agent` uses the same contracts (metadata, examples, preview roles, Theme Studio config schema) to explain configuration, identify compatible components for roles, guide migrations, validate proposed changes, and verify exported results.
+- *(Planned, ADR 0032.)* Agent-kit generation reads the same inputs but never requires building or serving Workbench. Static docs builds may include the kit's clean Markdown references and an `llms.txt` index.
+- *(Planned.)* `inspectPreview` ([agent-tooling.md](./agent-tooling.md) §9.2) drives these preview frames through the same protocol and `Scope` ownership, under the same remount policy and trust model, and returns bounded structured results with browser and configuration conditions.
 - Standard CEM alone cannot describe token generation, theme configuration, or preview-role compatibility; those live in the Mote enrichment schema or adapters. The CEM baseline is preserved.
 
 ## 12. Vertical slice and acceptance

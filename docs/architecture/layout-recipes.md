@@ -206,6 +206,7 @@ Compose existing components and layout primitives with a few meaningful options,
 - `recipe.styles` is the only runtime artifact a component needs. Rich metadata is never bundled into element modules.
 - `@mote/core/layout/inspect` (`describeRecipe(recipe)`) returns regions, helpers, variants, conditions, parts, containers, and layer order — DOM-free.
 - `@mote/analyzer` statically extracts recipe contracts (regions, helpers, variants, conditions, profiles, parts) into `mote.metadata.json` ([metadata-and-analyzer.md](./metadata-and-analyzer.md)) so Workbench, docs, and `@mote/agent` read them without loading browser modules. Recipes using dynamic definitions are diagnosed and can supply explicit metadata.
+- *(Planned.)* The agent kit's recipe references and the `getRecipe` operation are rendered from this extracted contract plus authored guidance (regions, variants, conditions, responsive expectations); nothing about a recipe is inferred beyond it ([agent-tooling.md](./agent-tooling.md) §5, §8).
 
 ## 9. Optional build-time extraction
 

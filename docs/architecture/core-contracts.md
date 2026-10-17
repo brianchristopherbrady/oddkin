@@ -72,6 +72,18 @@ Requirements before acceptance (ADR in M4):
 - The size budgets in ADR 0031 still pass.
 - Names are final only after the clash with the planned `@mote/components/compose` schema renderer is resolved.
 
+### 1.2 Interpretable public APIs (design rule)
+
+Public APIs are designed to be understood from their declarations by people and coding assistants alike ([agent-tooling.md](./agent-tooling.md)):
+
+- explicit definitions and dependencies; consistent terminology;
+- strongly typed inputs and outputs in ordinary TypeScript, JavaScript, HTML, and CSS;
+- clear lifecycle and `Scope` ownership;
+- one recommended approach for each common task, with alternatives documented alongside concrete reasons to choose them;
+- precise errors for ambiguous or unsupported usage.
+
+Class-based colocated authoring and the proposed `compose()` model (§1.1) both stay supported. The settled binding, registration, styling, lifecycle, and remount contracts are what agent tooling explains; it never redefines them.
+
 ## 2. Public properties without decorators
 
 Preferred declaration (to prototype):

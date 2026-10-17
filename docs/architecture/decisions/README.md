@@ -44,3 +44,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0029](./0029-versioning-checkpoints.md) | M8 compatibility checkpoint and M12 final freeze | Accepted | Process |
 | [0030](./0030-workbench-remount-policy.md) | Workbench preview remount policy | Accepted | Workbench |
 | [0031](./0031-dev-prod-builds-and-size-budget.md) | Development/production builds and core size budget | Accepted | Core |
+| [0032](./0032-generated-agent-kits.md) | Generated agent kits and project context | Proposed | Agent |

@@ -20,7 +20,7 @@ The aim is to make correct, maintainable components easy to write and easy to do
 | [docs/architecture/workbench.md](./docs/architecture/workbench.md) | `@mote/workbench`: controls, isolated iframes, Theme Studio behavior, `defineExamples`, CLI |
 | [docs/architecture/workbench-pages.md](./docs/architecture/workbench-pages.md) | Workbench information architecture: page registry, shell, Foundations, Components (docs + interactive example), Theme Studio destination, optional Products and modes, content layers |
 | [docs/reference/design-system-lab-audit.md](./docs/reference/design-system-lab-audit.md) | Rendered-browser audit of the reference application's structure and presentation |
-| [docs/architecture/agent-tooling.md](./docs/architecture/agent-tooling.md) | Optional dev-only `@mote/agent`, shared contracts, evaluation |
+| [docs/architecture/agent-tooling.md](./docs/architecture/agent-tooling.md) | Optional dev-only `@mote/agent`: generated agent kits, project context and freshness, shared contracts, operations (CLI/MCP), diagnostics, preview feedback, evaluation |
 | [docs/research/synthesis.md](./docs/research/synthesis.md) | Ecosystem research, conclusions, differentiation thesis, legacy source register plus direct research links in §12 |
 
 All API examples in these documents are proposed contracts, not existing exports.
@@ -68,7 +68,7 @@ Full table and sources: [docs/research/synthesis.md](./docs/research/synthesis.m
 | `@mote/components` | Accessible, themed custom elements, Mote layout presets, component models, published CEM + enrichment | core, tokens |
 | `@mote/analyzer` (optional, dev-only, Node) | Static analysis → normalized metadata → CEM, `mote.metadata.json`, Workbench indexes, editor and agent outputs | tokens (Node/DOM-free), core (DOM-free model types); compiler/parser dependencies confined to Node tooling |
 | `@mote/workbench` (optional tooling) | Reusable metadata-driven documentation shell (Foundations, Components with integrated interactive examples, Theme Studio, optional Products and modes), page registry, isolated previews, `defineExamples`, `mote` CLI | browser: core, tokens, components; state/app integrated only after M6–M7; Node: analyzer, tokens/node; DOM-free examples/config entries independently buildable |
-| `@mote/agent` (optional, dev-only, Node) | Agent instructions, deterministic operations, optional MCP adapter | analyzer (API), tokens |
+| `@mote/agent` (optional, dev-only, Node) | Project context, generated agent kits (entry guide, references, JSON, optional Agent Skills / `AGENTS.md` / `llms.txt` packaging), deterministic operations, CLI, optional MCP adapter | analyzer (API), tokens |
 | `apps/docs` (private) | Product docs, tutorials, migrations, architecture; embeds Workbench panels | core, state, app, tokens, components, workbench panels — public exports only |
 
 **Forbidden:** core → tokens; tokens → any Mote package; components → state/app/analyzer/workbench/agent; any browser package, ordinary component consumer, or the docs runtime → `@mote/analyzer` or `@mote/agent`; ordinary component consumers → `@mote/workbench`; reverse deps; cycles; cross-package source aliases. Core is unbranded and works without Mote tokens.
@@ -87,7 +87,7 @@ Entry points per [packages.md](./docs/architecture/packages.md). Rules:
 
 ### 2.3 Developer questions the docs must answer
 
-What does Mote provide? · Which packages do I need? · How do I install and use them? · How do I create a theme or component? · How do I lay out a component or page? · How do I build an application? · How do I document my own component library? · How do I adopt Mote incrementally? · How do I get my IDE agent to use Mote correctly?
+What does Mote provide? · Which packages do I need? · How do I install and use them? · How do I create a theme or component? · How do I lay out a component or page? · How do I build an application? · How do I document my own component library? · How do I adopt Mote incrementally? · How do I get my IDE agent to use Mote correctly? · How do I generate accurate agent support for my own library?
 
 ---
 
@@ -120,6 +120,7 @@ Detailed contracts: [core-contracts.md](./docs/architecture/core-contracts.md) �
 - **Lifecycle:** constructor (local initialization only; no external work) → `connected(scope)` → `mounted(scope)` → `updated(changes)` → `disconnected()`; plus `adopted`, `moved`, `updateComplete` with precise boundaries.
 - **Scope:** `signal`, `listen`, `timeout`, `interval`, `add`, `child`, `effect`, `use`, `dispose`. No mirrored manual cleanup in normal code.
 - **Reactivity:** synchronous `signal`/`computed`/`batch`; glitch-free; `Object.is` default; microtask-deduplicated commits; derivation → DOM → post-commit effects.
+- **Interpretable APIs:** explicit definitions and dependencies, consistent terminology, strongly typed inputs and outputs in ordinary TS/JS/HTML/CSS, clear `Scope` ownership, one recommended approach per common task (alternatives with concrete reasons), and precise errors for ambiguous usage ([core-contracts.md](./docs/architecture/core-contracts.md) §1.2). Agent interpretability is a review criterion for every public API.
 - **Templates:** text, attribute, `?bool`, `.prop`, `@event`, readables, nested templates; `when`, keyed `repeat`, `match`. No `eval` or implicit untrusted string-to-HTML conversion. Static tagged-template markup is parsed through an explicit CSP/Trusted Types-compatible path; dynamic strings become text by default. Strict CSP and Trusted Types tested.
 
 ### 3.1 Authoring semantics that must be explicit
@@ -312,12 +313,22 @@ Detailed design: [workbench-pages.md](./docs/architecture/workbench-pages.md). R
 
 ---
 
-## 5e. Agent tooling (summary)
+## 5e. AI-friendly architecture and generated agent kits (summary)
 
-Detailed design: [agent-tooling.md](./docs/architecture/agent-tooling.md).
+Detailed design: [agent-tooling.md](./docs/architecture/agent-tooling.md); decision: [ADR 0032](./docs/architecture/decisions/0032-generated-agent-kits.md) (extends ADR 0022).
 
-- Optional, dev-only `@mote/agent` over analyzer outputs: instructions, operations (inspect project, exact contracts, explain/validate config, scaffold, migrations, data validation, composition advice, preview-role mapping, export verification, run checks), CLI and optional MCP adapter as separate layers. Uses the developer's IDE agent/model.
-- Reports provenance; schema validity is never presented as proof of accessibility, behavior, or design quality.
+**Central outcome:** a team adopting Mote can generate accurate, version-aware agent support for its own library from the same authoritative inputs used by its documentation and Workbench — component metadata, configuration, authored guidance, and examples. The kit covers that team's own packages and exports, prefix and component APIs, tokens and theme axes (themes, modes, density, profiles), recipes and conditions, examples and composition patterns, design guidance, repository conventions, and verification commands, and must help an assistant that starts with no knowledge of Mote or the library.
+
+- Optional, dev-only `@mote/agent` over analyzer outputs: project context, kit generation, instructions, operations (inspect project, find/inspect components, tokens, recipes, explain/validate config, validate usage, scaffold, migrations, data validation, composition advice, preview-role mapping, export verification, preview inspection, run checks), CLI and optional MCP adapter as separate layers. Uses the developer's IDE agent/model; Mote supplies contracts, deterministic operations, and evidence.
+- **One metadata model.** Agent-facing facts are views of the normalized model (CEM for interoperability, Mote enrichment kept separate), referencing existing property, event, model, and composition declarations by stable id. Provenance stays *extracted* / *authored* / *observed* / *verified* (with conditions); unresolved information is explicit; nothing is inferred from names or types; the no-execution guarantee holds.
+- **Project- and version-aware.** Installed versions, exports, registrations, project components, token configuration, recipes, examples, conventions, and commands are resolved locally; every artifact and result carries a fingerprint and freshness state; stale artifacts are detected and never silently replaced by newer website docs. Capability paths (core-only, tokens-only, components without state, full application) are respected.
+- **Generated kit.** A small entry guide plus focused references loaded on demand (install/consume, choosing components, authoring, theming, layout, data models, lifecycle and `Scope`, frameworks, debugging, migration), in Markdown and JSON. Exact API references are generated; authored design guidance is checked for valid API references at build time. Optional packaging: Agent Skills, a managed `AGENTS.md` section that preserves existing text, IDE adapters, and clean Markdown + `llms.txt` for static docs (client loading behavior documented, not assumed). Independent of building or publishing Workbench.
+- **Examples as shared evidence**, including explained incorrect examples for common mistakes; compiling, static validity, and browser verification stay distinct.
+- **Repairable diagnostics** through an optional envelope over the existing diagnostic shapes, and **preview feedback** through Workbench frames that execute only trusted project examples.
+- Reports provenance; schema validity is never presented as proof of accessibility, behavior, or design quality. AI support stays optional: ordinary component consumers need no agent tooling, Workbench, Mote state, application services, or hosted AI service; no mandatory embedding service, hosted model, or second analyzer.
+- Improved AI usability is a hypothesis verified by the evaluation in agent-tooling.md §11.
+
+Research: R33–R41 in [synthesis.md](./docs/research/synthesis.md) and §12.4.
 
 ---
 
@@ -354,7 +365,7 @@ Research: [Intl / ECMA-402](https://tc39.es/ecma402/), [HTML language and direct
 | M11 | Docs IA, guides, Workbench completion, migrations, onboarding, **`@mote/agent`** | M7, M9, M10 |
 | M12 | Packed consumers, release verification, deployment readiness | all |
 
-M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixtures start in M3. Metadata contracts are defined in M0, prototyped by the analyzer in M3, validated on four real components in M4–M5, and receive an initial compatibility checkpoint at M8. Additive M9–M11 capabilities must be validated before the final release freeze at M12; material schema changes require an explicit version/migration decision. `@mote/agent` operations can start once analyzer outputs exist (after M5) but ship in M11. **Do not expand the catalog, recipe presets, data composition, or Workbench features beyond the vertical slices before M8 resolves foundation problems.**
+M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixtures start in M3. Metadata contracts are defined in M0, prototyped by the analyzer in M3, validated on four real components in M4–M5, and receive an initial compatibility checkpoint at M8. Additive M9–M11 capabilities must be validated before the final release freeze at M12; material schema changes require an explicit version/migration decision. Agent-kit metadata and diagnostic contracts are drafted with M4's metadata validation; local project context and generated references are piloted on the M4–M5 slice; agent-facing contracts are reviewed at M8; `@mote/agent` operations, packaging, and the MCP adapter can start once analyzer outputs exist (after M5) but ship in M11; packed verification and the evaluation complete before the M12 freeze. **Do not expand the catalog, recipe presets, data composition, or Workbench features beyond the vertical slices before M8 resolves foundation problems.**
 
 ---
 
@@ -525,6 +536,15 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 - [ ] Colocated `*.examples.ts` (`defineExamples`) for all four components: default, key variants, preview roles, an in-form fixture for input/button
 - [ ] `examples/components-only/` from packed core/tokens/components, no state/app
 
+**Agent-kit contracts** ([agent-tooling.md](./docs/architecture/agent-tooling.md) §3–§9, ADR 0032; contracts only — the `@mote/agent` package ships in M11)
+
+- [ ] Extend the metadata model and `mote-metadata` schema additively with agent-facing facts ([metadata-and-analyzer.md](./docs/architecture/metadata-and-analyzer.md) §3.1): rich-object assignment, event intent, dependencies, contract references (`contract:core/*`), deprecations and migration references, customization paths, and `verified` conditions. Unknowns stay explicit. Extract them for the four slice components.
+- [ ] Analyzer recognizes `compose()` / `define(definition)` by following imports and definitions, not file names; folder-structured and colocated fixtures produce equivalent metadata.
+- [ ] Draft `diagnostic.v1` (optional envelope fields over the existing token, analyzer, model, Workbench, and collection shapes; add `severity` to `CollectionDiagnostic`), `project-context.v1`, and `agent-kit.v1` schemas with valid/invalid examples in the schema test.
+- [ ] `examples.v1` gains explained incorrect examples with an expected diagnostic code; add correct/incorrect pairs for the slice components covering attributes vs properties (incl. `.items`), boolean removal, explicit and dependency registration, event names and details, direct vs tracked bindings, reconnect-owned work, slots, and theme scopes.
+- [ ] Check every slice example against real public exports (workspace now; packed in M12) and keep compile, static, and browser evidence labelled separately.
+- [ ] Authored guidance and examples cite only existing tags, properties, events, slots, parts, tokens, recipes, and imports (`agent.guidance.unknownReference`).
+
 **Layout slice — side navigation** ([layout-recipes.md §10](./docs/architecture/layout-recipes.md))
 
 - [ ] `@mote/components/layout`: Mote-bound helpers, `condition()`, generated `layout.css`
@@ -608,6 +628,14 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] Default `theme-specimen` recipe with light/dark panels using the four components via declared preview roles; generic fallback specimens labelled
 - [ ] Foundation pages show the baseline; "View draft" is explicit and labelled; baseline and draft never mixed
 
+**Agent-kit pilot** (local context and generated references before broader tooling)
+
+- [ ] Prototype `resolveProjectContext` and kit generation as Node scripts over the M4 analyzer outputs, theme config, authored content, and examples, without building Workbench; promote them into `@mote/agent` in M11.
+- [ ] Generate the entry guide, per-component references for the four slice components, token and recipe references, and the JSON contract bundles (analyzer output 5) for `@mote/components` and for a fixture library with a different prefix, packages, and theme; record the entry-guide size against a budget.
+- [ ] Freshness fingerprints; `--check` detects stale artifacts after metadata, config, guidance, or example changes and names the refresh command.
+- [ ] Generate the Mote repository's own concise `AGENTS.md` section (setup, conventions incl. §3.3, verification commands) between managed markers; existing text is preserved.
+- [ ] Define the `inspectPreview` request/response over the existing frame protocol (design and types only; implementation in M11).
+
 **Docs app slice**
 
 - [ ] `apps/docs` shell from public packages; Getting started → tokens only; layout → side navigation (recipe, conditions, profile; data/declarative/hybrid); foundation and component pages embedding `@mote/workbench/panels/*`
@@ -655,6 +683,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] Recipe review from side-nav; conditions in all engines at baseline syntax
 - [ ] Data composition review; decide `props()`; composition-schema go/no-go (ADR)
 - [ ] **Metadata and tooling review:** analyzer coverage of real components, dynamic-definition diagnostics, provenance accuracy, CEM interoperability, Workbench control-matrix results, preview isolation, Theme Studio live-edit behavior, example reuse in tests
+- [ ] **Agent-kit review:** agent-facing metadata fields, diagnostic envelope, project-context and kit schemas, freshness rules, and the pilot's references for the slice and the fixture library; record candidate v1 contracts alongside the metadata review (additive changes afterward follow ADR 0029)
 - [ ] 1,000-cycle lifetime instrumentation + retained memory (components, previews switching, Theme Studio edits)
 - [ ] Packed CSS-only, core-only, components-only, full-app consumers; optional and tooling code absent from actual import graphs
 - [ ] Initial benchmark and ergonomics studies (§8)
@@ -719,8 +748,9 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] Form descriptions model consumed by `mote-field`/inputs
 - [ ] Composition schema (only if M8 go) in `@mote/components/compose`
 - [ ] Controllers extracted only from demonstrated shared needs
+- [ ] Extend analyzer and example coverage to each catalog component as it lands: authored design guidance (when appropriate, constraints, labelling and accessibility responsibilities, content relationships and companions, token roles and customization paths, recipes and responsive expectations) with validated references, and correct/incorrect example pairs for its common mistakes
 
-**Per-component definition of done:** typed runtime definition (statically analyzable) · analyzer-generated CEM + enrichment entry with provenance · defaults and allowed values · property/attribute/event-detail contracts · declared sync pairs · slots, parts, CSS variables, custom states, roles and tokens used · preview roles · recipe and container behavior · data model (if structured) · accessibility/keyboard/form guidance · known limitations · category, use-for/not-for, and property → CSS property → token mappings where determinable · `*.examples.ts` (default + key variants + presets + fixtures where needed) · Workbench detail page (documentation + interactive example + editable API table) renders with no gaps beyond labelled ones · docs page, source link · browser and lifetime tests driven by shared examples · narrow/wide check · metadata-vs-implementation contract check.
+**Per-component definition of done:** typed runtime definition (statically analyzable) · analyzer-generated CEM + enrichment entry with provenance · defaults and allowed values · property/attribute/event-detail contracts · declared sync pairs · slots, parts, CSS variables, custom states, roles and tokens used · preview roles · recipe and container behavior · data model (if structured) · accessibility/keyboard/form guidance · known limitations · category, use-for/not-for, and property → CSS property → token mappings where determinable · `*.examples.ts` (default + key variants + presets + fixtures where needed) · Workbench detail page (documentation + interactive example + editable API table) renders with no gaps beyond labelled ones · docs page, source link · browser and lifetime tests driven by shared examples · narrow/wide check · metadata-vs-implementation contract check · agent-kit reference generated with validated guidance references (missing guidance labelled unavailable).
 
 ---
 
@@ -764,10 +794,16 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 
 **Agent tooling (`@mote/agent`)**
 
-- [ ] Package (Node only); boundary checks
+- [ ] Package (Node only); boundary checks; no browser, ordinary-consumer, or docs-runtime graph reaches it; no mandatory hosted model, embedding service, or second analyzer
+- [ ] `./context`: project context, capability paths, fingerprints, freshness; local lookup offline; remote docs only when versions match and labelled
+- [ ] `./kit`: entry guide, task references, component/token/recipe/model references, JSON bundles; optional Agent Skills directory, managed `AGENTS.md` section (existing instructions preserved, diff before write), IDE adapters; `llms.txt` and clean Markdown pages in docs static builds; document client-dependent loading
 - [ ] Operations over analyzer outputs: inspect project, exact contracts, search, explain/validate config, scaffold, plan migrations, models/data validation, composition advice, **preview-role mapping**, **export verification**, **product suggestions**, **page/content explanation**, run checks — with provenance; never load element modules
-- [ ] CLI, instruction generator, optional MCP adapter (ADR)
+- [ ] Agent-facing capabilities (agent-tooling.md §6.1): inspect project, find components, inspect component, find/explain tokens, inspect recipes, scaffold component, validate usage, plan migration, inspect preview — bounded, searchable responses with stable ids and links to detail
+- [ ] CLI (`--json` and readable output), instruction generator, optional MCP adapter (ADR; pinned protocol revision; `inputSchema` and `outputSchema` per tool, `structuredContent`, tool execution errors carrying Mote diagnostics)
+- [ ] Scaffolding and migrations produce reviewable patches, default to dry run, and re-check source preconditions before applying
+- [ ] `inspectPreview` through Workbench frames: examples and supported compositions, documented properties/slots/interactions, viewport/container/direction/theme changes, runtime errors, events, applicable accessibility and browser checks; reports engine, configuration, and conditions; remount policy preserved; trusted project examples only
 - [ ] Evaluation (implementation, theming, explanation, migration, data composition, **Theme Studio role mapping**): API correctness, fabricated names, compilation, browser behavior, completion; with vs without tools
+- [ ] Expanded evaluation (agent-tooling.md §11) on Mote and a held-out consuming library: the ten task types × four conditions (docs alone; + generated references; + deterministic tools; + preview feedback); record model/version, starting repository, package versions, task, context, conditions; measure correctness, invented APIs/tokens/claims, selection quality, repairs, time, context/tool-output volume, unnecessary edits, unknown handling, regressions and unintended dependencies; example validity checked independently
 - [ ] Agent-generated side nav, editable list, and an example file pass the same checks as handwritten ones
 - [ ] `scaffold` generates repository components in the §3.3 folder structure (class, template, styles, definition, define entry, side-effect-free `index.ts`, examples) through the public composition API, and offers colocated output for consumers who ask for it
 
@@ -790,6 +826,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 - [ ] Independent consumers: plain HTML, CSS-only (incl. `layout.css`), Sass, typed refs, core-only, components-only, full app — none contains analyzer, Workbench, agent, unused presets, validators, or `compose`
 - [ ] Packed `@mote/analyzer` + `@mote/workbench` run in a fresh project against a packed component library (Mote and standard-CEM fixture); static build under a subpath with page-registry navigation, legacy redirects, share links, and Theme Studio editing
 - [ ] Packed `@mote/agent` run against packed metadata
+- [ ] Agent kits regenerated from packed `@mote/components` and a packed consuming fixture library in a fresh directory: freshness check clean, references match installed exports, published examples pass against packed packages, `AGENTS.md` merge preserves existing text; evaluation results recorded before the freeze
 - [ ] Final v1 freeze covers the actually shipped APIs, token domains, supported DTCG mappings, examples/config/enrichment schemas, frame protocol, and migration/deprecation rules; run compatibility fixtures against an earlier released/pre-release artifact.
 - [ ] Verify installed Node tool dependencies, optional framework declarations/adapters, duplicate-version diagnostics, production debug exclusion, shell accessibility, locale strings, and static-readable documentation. Record unsupported platform features explicitly.
 - [ ] Framework fixtures in `integration/`; verified versions recorded
@@ -864,6 +901,12 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 | 56 | **Navigation, routes, cards, search, and visibility stay synchronized through one page registry; legacy routes redirect; static builds, deep links, assets, redirects, and sharing work under a hosting base path** | M3, M5, M7, M12 |
 | 57 | **Missing metadata produces honest unavailable/unknown states; Workbench stays accessible, responsive, lazy-loaded, and isolated; shell and preview appearance are independent** | M5, M8, M11 |
 | 58 | Mote's own components use one folder per component assembled through the public composition API; ordinary imports never register; migrated components keep their properties, attributes, events, slots, parts, styling, reactivity, lifecycle, cleanup, DOM identity, metadata, exports, and packed behavior; colocated consumer authoring stays supported and tested | M4, M8, M11 |
+| 59 | A library built with Mote generates its own versioned agent kit from the same metadata, configuration, authored guidance, and examples as its docs and Workbench, without building Workbench; references match its installed packages, prefix, tokens, recipes, and conventions | M4, M5, M11, M12 |
+| 60 | Agent-facing facts come from the one metadata model with provenance and verification conditions; unknowns are explicit; authored guidance cites only existing APIs; nothing is inferred from names or types | M4, M8, M10, M11 |
+| 61 | Agent context is version-aware: stale artifacts are detected with a refresh path, results state source version and freshness, and capability paths are respected | M5, M11, M12 |
+| 62 | CLI and MCP share one deterministic implementation with schema-defined, bounded, structured results; scaffolds and migrations are reviewable dry-run patches with checked preconditions | M11, M12 |
+| 63 | Diagnostics are repairable (code, location, subject, expected/received, references, fix only when supported) and distinguish errors, recommendations, and unresolved analysis; preview feedback reports its conditions and never claims complete accessibility | M4, M8, M11 |
+| 64 | AI usability claims rest on the recorded four-condition evaluation with held-out tasks and configurations; AI tooling stays optional for every consumer path | M11, M12 |
 
 ---
 
@@ -885,7 +928,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 | Data models make structured components safer | Typed models + collections + validators | Fewer authoring errors; precise diagnostics; update cost vs handwritten `repeat` | API surface and bytes when imported |
 | **Generated docs reduce documentation effort and drift** | Analyzer + Workbench + `defineExamples` | Time to document the four slice components vs a handwritten-story baseline; contract tests catch introduced drift; count of authored lines per component | Analyzer constraints on authoring patterns; explicit metadata for dynamic cases |
 | **Live Theme Studio editing stays responsive** | Worker generation, latest-wins, stylesheet replacement, no remount | p95 edit-to-preview latency for a typical config; no long tasks on the main thread over budget; focus/state preserved | Worker and message overhead; large configs may need incremental generation |
-| Project-aware agent tooling improves correctness | `@mote/agent` over analyzer outputs | Fewer fabricated names, higher compile/browser pass rates with vs without tools | Schema maintenance; model/IDE dependence |
+| Project-aware agent tooling improves correctness | Generated agent kits + deterministic operations + preview feedback over analyzer outputs | Four-condition evaluation (docs alone → + generated references → + tools → + preview feedback) on Mote and a held-out consuming library: fewer invented APIs/tokens, higher compile/browser pass rates, fewer repairs and unnecessary edits, correct handling of unknowns | Schema and guidance maintenance; model/IDE/client dependence; context and tool-output volume |
 
 ### 8.2 Benchmarks (`research/benchmarks/`, outside shipped code)
 
@@ -948,6 +991,11 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 | **Products and modes sources** | Local theme config, installed package, versioned manifest fetched and snapshotted at build time; discovery only suggests | M9 |
 | **Overview/home page** | Optional; generated only when configured | M5 / M11 |
 | MCP adapter implementation | Original vs dev-only SDK | M11 ADR |
+| Agent-kit format and packaging targets | Markdown + JSON baseline; optional Agent Skills, managed `AGENTS.md` section, IDE adapters, `llms.txt` for static docs (ADR 0032) | M5 pilot / M11 |
+| Agent-facing metadata fields and diagnostic envelope | Additive `mote-metadata` v1 fields; optional envelope over existing diagnostic shapes | M4 draft / M8 review |
+| MCP protocol revision | Pin in the M11 adapter ADR (candidate: 2026-07-28 tools specification) | M11 |
+| Entry-guide size budget; `findComponents` ranking | Recorded budget measured in the pilot; deterministic ranking over authored guidance and categories, no embeddings | M5 / M11 |
+| Preview driver for `inspectPreview` | Workbench dev-server frames vs a project browser-automation tool | M5 design / M11 |
 | Native CSS module scripts | Optional future path | M9 / M12 |
 | Licence, npm scope ownership | Verify before publication | Before release |
 | Compiler, SSR/hydration, advanced scheduling, executable code editor | Deferred, separate designs | After client foundation |
@@ -992,10 +1040,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M3: `@mote/workbench` DOM-free entries — `./examples` (typed `defineExamples`, `examples.v1`, `checkExamples`), `./config` (`resolveWorkbenchConfig` defaults and diagnostics, `defineDocs`), `./pages` (`buildPageRegistry` from CEM + enrichment + authored content, projections, legacy redirects); packed-consumer check covers subpath-only packages; CLI tests given a 30 s budget after a load-induced timeout | 547 tests; full pipeline passes |
 | 2026-10-17 | M3: cold startup and click-to-next-frame measurements with a plain-DOM control in three engines; results regenerated | Measurement item closed; M3 open items: none besides M2's side-nav link (M4) |
 | 2026-10-17 | Plan: component folder convention (§3.3), public composition API and migration of existing component work added to M4, agent scaffolding (M11), criterion 58, decision row | Planning only; no source files reorganized |
+| 2026-10-17 | Plan: AI-friendly architecture and generated agent kits — §5e rewritten; agent-kit contract tasks (M4), local context and reference pilot (M5), review (M8), per-component guidance (M10), operations/packaging/MCP/preview feedback/evaluation (M11), packed verification (M12); criteria 59–64; decision and research rows; ADR 0032; agent-tooling, analyzer, packages, Workbench, styling, layout, composition, core, schema, contribution docs synchronized; research register R33–R41 | Planning only; sources resolved, no experiment completed, nothing implemented |
 
 ## 11. Continuation
 
-**Next step:** M4 — first the composition API ADR and implementation (`compose()`, `define(definition)`, analyzer support) and the component folder convention (§3.3), with the migration of `examples/core-counter`; then `mote-button`, `mote-input`, `mote-card`, and `mote-side-nav` in the new structure on core + tokens (side-nav links the last open M2 item), with examples through `@mote/workbench/examples` and analyzer metadata validated.
+**Next step:** M4 — first the composition API ADR and implementation (`compose()`, `define(definition)`, analyzer support) and the component folder convention (§3.3), with the migration of `examples/core-counter`; then `mote-button`, `mote-input`, `mote-card`, and `mote-side-nav` in the new structure on core + tokens (side-nav links the last open M2 item), with examples through `@mote/workbench/examples` and analyzer metadata validated, drafting the agent-kit contracts (agent-facing metadata fields, diagnostic envelope, correct/incorrect examples) alongside that metadata work.
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 
@@ -1056,7 +1105,9 @@ This register supplies source locations, not a claim that every linked project's
 | Reference application | [Design System Lab](https://brianchristopherbrady.github.io/design-system-lab/), [Foundations](https://brianchristopherbrady.github.io/design-system-lab/foundations/), [Spacing](https://brianchristopherbrady.github.io/design-system-lab/foundations/spacing), [Components](https://brianchristopherbrady.github.io/design-system-lab/components), [Button](https://brianchristopherbrady.github.io/design-system-lab/components/button), [Playground](https://brianchristopherbrady.github.io/design-system-lab/playground), [Theme Studio](https://brianchristopherbrady.github.io/design-system-lab/foundations/theme-studio) | Presentation and structure only — never its data. Partial rendered audit recorded in [design-system-lab-audit.md](./docs/reference/design-system-lab-audit.md); remaining routes, interactions, dark mode, and AT behavior pending (M0); no parity is claimed |
 | Distribution and CLI packaging | [Node packages/exports](https://nodejs.org/api/packages.html) | Native ESM/import maps, declarations, explicit registration, packed install dependencies, conditional/subpath exports; no private workspace resolution |
 | Browser checks and timing | [Playwright assertions](https://playwright.dev/docs/test-assertions), [Web Platform Tests](https://github.com/web-platform-tests/wpt), [High Resolution Time](https://www.w3.org/TR/hr-time-3/) | Browser correctness, timing/clock semantics, raw samples, environment/version pinning, production versus development artifacts; do not infer AT support from automated checks |
-| Optional agent protocol | [MCP specification](https://modelcontextprotocol.io/specification/latest) | Pin the selected protocol revision; keep deterministic operations, project/installed-version context, schemas and error contracts independent of any one model or IDE |
+| Optional agent protocol | [MCP specification](https://modelcontextprotocol.io/specification/latest), [MCP tools, revision 2026-07-28](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/server/tools.mdx) | Pin the selected protocol revision; keep deterministic operations, project/installed-version context, schemas and error contracts independent of any one model or IDE; `inputSchema`/`outputSchema`, `structuredContent`, tool execution errors |
+| Agent kit formats and discovery | [Agent Skills](https://agentskills.io/specification), [AGENTS.md](https://agents.md/), [llms.txt](https://llmstxt.org/) | Packaging constraints (front matter, references loaded on demand), repository guidance conventions, discovery index and clean Markdown pages; which clients actually load each format |
+| Existing agent integrations | [Web Awesome Agent Skills](https://webawesome.com/docs/ai/agent-skills), [Angular CLI MCP](https://angular.dev/ai/mcp), [shadcn registry MCP](https://ui.shadcn.com/docs/registry/mcp) | Generated-from-CEM references, build-checked design guidance, CLI-hosted tools, registry discovery; record the version/date reviewed; no comparative claim without the agent-tooling.md §11 evaluation |
 
 ### 12.5 Research completion format
 

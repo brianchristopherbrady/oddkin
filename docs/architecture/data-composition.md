@@ -251,6 +251,8 @@ Bounded initial contract:
 - **Versioned** with migrations and diagnostics.
 - Rendered with the existing template renderer via `renderComposition(doc, { registry, bindings, actions })`; separately importable from `@mote/components/compose`.
 
+AI support never makes this schema mandatory: agent tooling recommends templates, data models, or hybrids by the §9 criteria and works without the composition schema ([agent-tooling.md](./agent-tooling.md) §8).
+
 ## 9. When to use which
 
 | Situation | Prefer |

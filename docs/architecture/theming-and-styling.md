@@ -60,6 +60,8 @@ interface Diagnostic {
 }
 ```
 
+The shared diagnostic envelope planned in [agent-tooling.md](./agent-tooling.md) §9.1 only adds optional fields (`kind`, `subject`, `expected`/`received`, `docs`, `fix`) to this shape. Agent tooling explains tokens from the inspection output; it never recomputes them.
+
 ## 3. Units and precision
 
 - Spacing and typography default to `rem`. Borders and optical adjustments may use `px`. Line heights are unitless. `em` is allowed where a value should track the local font size.

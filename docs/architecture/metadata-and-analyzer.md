@@ -1,6 +1,6 @@
 # Metadata model and `@mote/analyzer`
 
-Status: the analyzer core is **implemented** in `@mote/analyzer` (M3): extraction (§2) except theme/foundation/docs enrichment, outputs 1–2 (§4), API and one-shot CLI (§6). §8 lists settled behaviors. Workbench indexes, editor/agent outputs, watch mode, `--compare`, and contract tests against runtime behavior are later work. `@mote/analyzer` is optional, Node-only development tooling and is never part of a browser or component-consumer graph. Related: [workbench.md](./workbench.md), [agent-tooling.md](./agent-tooling.md), [data-composition.md](./data-composition.md), [layout-recipes.md](./layout-recipes.md).
+Status: the analyzer core is **implemented** in `@mote/analyzer` (M3): extraction (§2) except theme/foundation/docs enrichment, outputs 1–2 (§4), API and one-shot CLI (§6). §8 lists settled behaviors. Workbench indexes, editor/agent outputs, watch mode, `--compare`, and contract tests against runtime behavior are later work. Agent-facing extensions (§3.1, output 5 in §4, §9) are **planned** ([ADR 0032](./decisions/0032-generated-agent-kits.md)). `@mote/analyzer` is optional, Node-only development tooling and is never part of a browser or component-consumer graph. Related: [workbench.md](./workbench.md), [agent-tooling.md](./agent-tooling.md), [data-composition.md](./data-composition.md), [layout-recipes.md](./layout-recipes.md).
 
 ## 1. Responsibilities
 
@@ -21,6 +21,7 @@ Recognized statically:
 - `MoteElement` subclasses, `MoteElement.with({...})` factories, `prop.*` definitions, inheritance chains, mixins written as typed factories, imports and re-exports across files and packages (via declaration files).
 - Public properties (type, default when statically known, allowed values, nullable/optional/read-only, reflection, attribute name, converter kind), attributes, public methods (signature only), events (from typed event definitions: name, detail type, `bubbles`/`composed`/`cancelable`), slots and parts (from templates and/or explicit declarations), CSS custom properties, custom states (`ElementInternals.states`).
 - Registration: `define('tag', Class)` calls in registration entries, `HTMLElementTagNameMap` augmentations, and package `exports` → browser module entry points.
+- Recognition follows actual imports, definitions, and registrations through the type checker, not file names. The planned composition API (`compose()` definitions that reference external template and style modules, and `define(definition)` registrations; [core-contracts.md](./core-contracts.md) §1.1) is resolved by following the imported symbols. The repository folder convention ([IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3) is a layout the analyzer understands, never a requirement; colocated components analyze identically. *(Planned, M4.)*
 - Token contracts used by component styles (`token('…')` references, `var(--mote-…)` in CSS files), recipes (`defineLayoutRecipe` — analyzed statically), variants, conditions, profiles, data models (`defineModel`).
 - JSDoc/TSDoc: descriptions, `@example`, `@deprecated`, `@since`, and Mote tags (`@a11y`, `@keyboard`, `@behavior`, `@previewRole`, `@related`, `@category`, `@useFor`, `@notFor`, `@limitation`).
 - Theme Studio preview capabilities, composition presets, adapter references from `mote.config.*` and colocated example files.
@@ -87,6 +88,20 @@ interface Fact<T> {
 - **Updated dates** (`docs[*].updated`) come only from authored metadata (`authored`) or source history (`extracted`, last commit touching the declared source files, when history is available in the build). The analyzer never uses build time. Absent dates are omitted.
 - **Page ids** (`foundations/spacing`, `components/<tag>`, `theme-studio`) and section ids are stable and shared with the Workbench page registry and authored content ([workbench-pages.md §2, §10](./workbench-pages.md)).
 
+### 3.1 Agent-facing extensions (planned, M4; reviewed at M8)
+
+These extend the same model; there is no separate agent catalog ([agent-tooling.md](./agent-tooling.md) §3.1).
+
+- **Rich-object assignment:** for `prop.object`/`prop.array` (and any property without an attribute), an explicit fact that values must be assigned as properties, are not parsed from attributes, and are not reflected.
+- **Event intent:** whether an event reports user intent or a state notification, and that programmatic property writes do not emit it, taken from event definitions or authored text; unknown otherwise.
+- **Dependencies:** the elements a `compose()` definition registers.
+- **Contract references:** stable ids such as `contract:core/binding-rule`, `contract:core/scope`, `contract:core/lifecycle`, `contract:core/update-complete`, pointing at the published contract text a component relies on, so references can be explained without restating them.
+- **Deprecations and migrations:** `@deprecated` with replacement ids, `@since`, and references to migration records.
+- **Customization paths:** documented component variables, parts, and slots grouped as the supported customization ladder.
+- **Verified conditions:** a `verified` fact's source adds `conditions` (browser engines and versions, package version, configuration), so evidence is never generalized beyond what ran.
+
+Absent information remains unknown; nothing here is inferred from names or types.
+
 ## 4. Outputs
 
 | # | Output | Location | Consumers |
@@ -95,7 +110,7 @@ interface Fact<T> {
 | 2 | `mote.metadata.json` (Mote enrichment, separately versioned) | package root; exported via `exports` | Workbench full mode, docs, agents |
 | 3 | Workbench indexes: page registry, search index, module/registration map, import-map data, asset list, legacy redirects | generated dir (`.mote/` in dev; inside the static build) | Workbench |
 | 4 | Editor and schema outputs: VS Code `html.customData` / `css.customData`, JSON Schemas for models and example files, TS declaration checks | generated dir / package | IDEs, validators |
-| 5 | Agent outputs: compact contract bundles keyed by stable id | generated dir | `@mote/agent` |
+| 5 | Agent outputs: compact contract bundles keyed by stable id, each with a freshness fingerprint (generator version, schema version, package versions, input hash) | generated dir; `json/` in the agent kit | `@mote/agent` (`./kit` renders the Markdown references, packaging, and discovery files from these bundles) |
 
 - CEM output is validated against the **pinned CEM schema: `custom-elements-manifest@2.1.0`** (npm `latest`, released 2024-05-06; repository HEAD `d2f79f0` on 2026-10-17; includes `readonly` on properties, clarified reflected attributes, and `CSSCustomState`). Re-check for newer releases at each Mote release. Mote-specific data never goes into CEM except standard-allowed fields; the enrichment manifest references CEM declarations by module path + name, so standard consumers stay interoperable.
 - Generation is deterministic: stable key ordering, normalized paths, no timestamps (the run date appears only in verification provenance).
@@ -106,6 +121,7 @@ interface Fact<T> {
 - Metadata vs implementation contract tests: defaults, allowed values, reflection, events, and slots in metadata match runtime behavior in browser tests (results attach `verified` provenance).
 - Token references in component metadata exist in the token inspection output; recipe regions referenced by parts exist; model ids resolve.
 - **Public API comparison**: `mote analyze --compare <baseline-dir|package@version>` reports added/removed/changed contracts with a suggested semver impact; used in release checks.
+- **Authored references** (planned): every tag, property, event, slot, part, token, recipe, and public import named in authored guidance or examples resolves against the metadata (`agent.guidance.unknownReference`); incorrect examples declare the diagnostic they should produce.
 
 ## 6. Operation modes
 
@@ -132,6 +148,10 @@ Stale generated artifacts are removed only inside directories that carry a Mote 
 - **Unknowns and dynamics:** non-literal defaults are omitted from CEM (unknown, never guessed) and reported as `analyzer.dynamic.value`; spreads, computed keys, non-`prop.*` definitions, computed tag names, and unresolvable registrations report `analyzer.dynamic.*` with file, line, and column.
 - **Explicit metadata:** `/** @mote-metadata ./file.json */` on a component class merges a JSON file (`description`, `properties`, `events`, `slots`, `parts`, `cssProperties`, `cssStates`; entries replace extracted ones by name) and records each merged member in `mote.metadata.json` `authored` with its source file. That class's `analyzer.dynamic.*` warnings become `info`. Unreadable or malformed files report `analyzer.metadata.missing`/`analyzer.metadata.invalid` as errors. The inline `static metadata = …` form sketched in §2 is not supported; JSON keeps explicit facts out of runtime bundles.
 - **Validation:** outputs validate against the pinned `custom-elements-manifest@2.1.0` schema and `docs/schemas/mote-metadata.v1.schema.json`; output is deterministic (stable ordering, two-space JSON, no timestamps).
+## 9. Diagnostics (planned extension)
+
+Analyzer diagnostics already carry `code`, `severity`, `message`, `source`, and `suggestion`. The shared envelope in [agent-tooling.md](./agent-tooling.md) §9.1 adds optional `kind` (error, recommendation, unresolved), `subject` (stable id), `expected`/`received`, `docs` references, and a `fix` only when it is sufficiently supported. Static analysis stays separate from executing trusted project examples in a preview.
+
 ## Open questions
 
 - TypeScript compiler API vs a faster parser plus TS for types only (performance experiment in M3).

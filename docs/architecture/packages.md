@@ -138,7 +138,7 @@ Files inside a folder import siblings directly, never through their own `index.t
 | `./node` + bin `mote` | `analyze`, `workbench dev`, `workbench build`, `workbench products --discover` | Node only |
 
 ### `@mote/agent` (dev-only)
-`./operations`, `./cli` (bin `mote-agent`), `./instructions`, optional `./mcp`. Node only.
+`./operations`, `./context` (project context, capability paths, freshness), `./kit` (agent-kit generator: entry guide, references, JSON, Agent Skills packaging, managed `AGENTS.md` section, `llms.txt`), `./cli` (bin `mote-agent`), `./instructions` (thin IDE adapters generated from `./kit`), optional `./mcp`. Node only. Kit generation never requires the Workbench application ([agent-tooling.md](./agent-tooling.md) §5, ADR 0032).
 
 ## Authoring, state, and resource contracts
 

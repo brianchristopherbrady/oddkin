@@ -20,5 +20,7 @@ Boundary checks cover agent reachability.
 ## Evidence
 MCP specification (§12.4). Pending: M11 evaluation.
 
+Extended by [0032](./0032-generated-agent-kits.md): generated agent kits, project context and freshness, capability contracts, and preview feedback. The boundaries above are unchanged.
+
 ## Revisit when
 The MCP specification revision we pin changes incompatibly.
