@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-4Pk7xfhtMqguw6aD4fTd930+YidPcqYOGQyKatjl90E='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types mote-template"
+    />
+    <title>Components only — @mote/components without state or app packages</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@mote/core/element": "../../packages/core/dist/element/index.js",
+          "@mote/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@mote/core/scope": "../../packages/core/dist/scope/index.js",
+          "@mote/core/styles": "../../packages/core/dist/styles/index.js",
+          "@mote/core/template": "../../packages/core/dist/template/index.js",
+          "@mote/tokens/refs": "../../packages/tokens/dist/refs/index.js",
+          "@mote/components/define/button": "../../packages/components/dist/button/button.define.js",
+          "@mote/components/define/card": "../../packages/components/dist/card/card.define.js"
+        }
+      }
+    </script>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Components only</h1>
+      <p>
+        <code>@mote/components</code> with <code>@mote/core</code> and <code>@mote/tokens</code>: no
+        state, app, or tooling packages, no build step for this page.
+      </p>
+      <mote-card label="Billing">
+        <h2 slot="header">Billing</h2>
+        <form id="billing">
+          <label>Email <input name="email" type="email" value="ada@example.com" required /></label>
+        </form>
+        <p id="result" role="status"></p>
+        <div slot="footer" class="actions">
+          <mote-button type="reset" form="billing">Reset</mote-button>
+          <mote-button
+            id="save"
+            appearance="primary"
+            type="submit"
+            name="intent"
+            value="save"
+            form="billing"
+            >Save</mote-button
+          >
+        </div>
+      </mote-card>
+      <mote-card variant="filled">
+        <p>A card with no name is not a landmark.</p>
+      </mote-card>
+    </main>
+  </body>
+</html>

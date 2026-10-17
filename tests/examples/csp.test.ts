@@ -2,11 +2,16 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 
-const page = new URL('../../examples/core-counter/index.html', import.meta.url);
+// Example pages that run under a strict CSP. After editing an import map, run
+// `node scripts/update-csp-hash.mjs <page>` (after formatting, which changes the hashed text).
+const pages = ['core-counter', 'components-only'];
 
-describe('core-counter CSP', () => {
+describe.each(pages)('%s CSP', (name) => {
   it('allows exactly the inline import map by hash', async () => {
-    const html = await readFile(page, 'utf8');
+    const html = await readFile(
+      new URL(`../../examples/${name}/index.html`, import.meta.url),
+      'utf8',
+    );
     const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map(
       (m) => m[1] ?? '',
     );
