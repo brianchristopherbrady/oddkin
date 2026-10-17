@@ -9,6 +9,7 @@
     { "path": "packages/components" },
     { "path": "packages/analyzer" },
     { "path": "apps/docs" },
-    { "path": "examples/core-counter" }
+    { "path": "examples/core-counter" },
+    { "path": "examples/binding-rule" }
   ]
 }

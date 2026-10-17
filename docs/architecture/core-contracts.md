@@ -199,6 +199,22 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 - **TypeScript:** subclasses use `override` on hooks (`noImplicitOverride`), and hooks are `protected`.
 - **Development and production builds** (ADR 0031): the `development` export condition selects `dist/` (full explanations, development-only checks); the default selects `dist/prod/`, where errors keep their stable `[code]` and every behavior and security check is unchanged. Development-only checks: the light-DOM `:host` scan and the recipe-defined-during-render warning. Size budgets are enforced by `npm run size`.
 
+### 6.2 Failure ownership (verified in `packages/core/test/failure-paths.browser.test.ts`)
+
+Errors that cannot be thrown to a caller go to the handler set with `setErrorHandler` (default: `reportError`), with a stable code and the owner's name in `origin`. Errors thrown synchronously by an API call (invalid template binding, `define` collision, writing a signal inside a computed) throw to the caller.
+
+| Failure | Code | Owner (`origin`) | What keeps working | Recovery |
+| --- | --- | --- | --- | --- |
+| Invalid attribute value | `element.attribute.invalid` | element | Property falls back to its default | Next valid value applies |
+| Derivation or `render()` throws | `reactive.effect.error` | `<tag> render` | Last committed DOM stays; other elements and bindings update | Re-runs when a dependency read before the throw changes |
+| Direct binding's readable throws | `reactive.effect.error` | template binding | Sibling bindings in the same template; no re-render | Re-runs when its dependencies change |
+| Effect throws | `reactive.effect.error` | effect name | Other effects in the same flush | Re-runs on its next dependency change |
+| Commit or property setter throws | `reactive.effect.error` | the effect or binding | Sibling bindings | Next value is written again |
+| Cleanup throws | `scope.cleanup.error` | scope name | Every other cleanup in the scope runs, in reverse order | — |
+| Lifecycle hook throws | `element.<hook>.error` | element | Rendering and bindings | Next connection calls the hook again |
+
+Disposal during callbacks is safe: a handler that removes its own host leaves no subscriptions or owned resources, and an effect that disconnects another element prevents that element's queued effect from running. Each connection gets a fresh scope. The previous scope is aborted, and listeners do not accumulate. Direct binding updates do not re-render the host or read layout (layout getters, `getBoundingClientRect`, and `getComputedStyle` were spied during updates). Production builds report the same codes and owners with short messages (ADR 0031).
+
 ## 7. Optional shared stores (`@mote/state`)
 
 ```ts

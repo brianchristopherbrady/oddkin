@@ -1,0 +1,32 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+main {
+  max-inline-size: 60rem;
+  margin-inline: auto;
+  padding: 1.5rem;
+}
+table {
+  border-collapse: collapse;
+  inline-size: 100%;
+  margin-block: 1rem;
+}
+caption {
+  text-align: start;
+  font-weight: 600;
+}
+th,
+td {
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  padding: 0.25rem 0.5rem;
+  text-align: start;
+  vertical-align: top;
+}
+.stage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  opacity: 0.8;
+}

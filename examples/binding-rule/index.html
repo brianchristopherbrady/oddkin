@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Binding rule walkthrough — @mote/core</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      { "imports": { "@mote/core": "../../packages/core/dist/index.js" } }
+    </script>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Binding rule walkthrough</h1>
+      <p>
+        Interpolating a readable (<code>${this.count}</code>) creates a direct binding that updates
+        one DOM position. Reading <code>.value</code> while <code>render()</code> runs subscribes
+        the render, which re-runs once per flush. Reading <code>.value</code> anywhere else (event
+        handlers, timers, promises) is a plain snapshot that subscribes nothing.
+      </p>
+      <p>
+        The same scenario runs against elements authored in plain JavaScript (no build step) and in
+        TypeScript. Each row counts <code>render()</code> runs and shadow-DOM mutations for one
+        step.
+      </p>
+      <section aria-labelledby="js-heading">
+        <h2 id="js-heading">Plain JavaScript</h2>
+        <div id="results-js"></div>
+        <div id="stage-js" class="stage"></div>
+      </section>
+      <section aria-labelledby="ts-heading">
+        <h2 id="ts-heading">TypeScript</h2>
+        <div id="results-ts"></div>
+        <div id="stage-ts" class="stage"></div>
+      </section>
+    </main>
+  </body>
+</html>
