@@ -10,10 +10,20 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "default": "./dist/theme/index.js"
+    },
+    "./generate": {
+      "types": "./dist/generate/index.d.ts",
+      "default": "./dist/generate/index.js"
+    },
+    "./schema.json": "./schema/theme-config.v1.schema.json",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "schema",
     "README.md"
   ]
 }

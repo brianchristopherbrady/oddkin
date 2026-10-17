@@ -1,0 +1,259 @@
+/* @mote/tokens — theme "default". Generated file: change the theme configuration instead of editing it. */
+
+:root,
+[data-mote-theme="default"] {
+  --mote-border-width-default: 1px;
+  --mote-border-width-strong: 2px;
+  --mote-card-padding: var(--mote-layout-inset);
+  --mote-card-radius: var(--mote-radius-lg);
+  --mote-color-action-active: var(--mote-mode-light, var(--mote-ref-brand-800)) var(--mote-mode-dark, var(--mote-ref-brand-200));
+  --mote-color-action-default: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400));
+  --mote-color-action-hover: var(--mote-mode-light, var(--mote-ref-brand-700)) var(--mote-mode-dark, var(--mote-ref-brand-300));
+  --mote-color-border-danger: var(--mote-mode-light, var(--mote-ref-danger-500)) var(--mote-mode-dark, var(--mote-ref-danger-600));
+  --mote-color-border-default: var(--mote-mode-light, var(--mote-ref-neutral-200)) var(--mote-mode-dark, var(--mote-ref-neutral-800));
+  --mote-color-border-strong: var(--mote-mode-light, var(--mote-ref-neutral-500)) var(--mote-mode-dark, var(--mote-ref-neutral-400));
+  --mote-color-focus-ring: var(--mote-mode-light, var(--mote-ref-brand-500)) var(--mote-mode-dark, var(--mote-ref-brand-600));
+  --mote-color-surface-danger: var(--mote-mode-light, var(--mote-ref-danger-50)) var(--mote-mode-dark, var(--mote-ref-danger-950));
+  --mote-color-surface-default: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-surface-hover: var(--mote-mode-light, var(--mote-ref-neutral-100)) var(--mote-mode-dark, var(--mote-ref-neutral-800));
+  --mote-color-surface-raised: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-900));
+  --mote-color-surface-selected: var(--mote-mode-light, var(--mote-ref-brand-50)) var(--mote-mode-dark, var(--mote-ref-brand-900));
+  --mote-color-surface-success: var(--mote-mode-light, var(--mote-ref-success-50)) var(--mote-mode-dark, var(--mote-ref-success-950));
+  --mote-color-surface-sunken: var(--mote-mode-light, var(--mote-ref-neutral-50)) var(--mote-mode-dark, var(--mote-ref-neutral-1000));
+  --mote-color-text-danger: var(--mote-mode-light, var(--mote-ref-danger-600)) var(--mote-mode-dark, var(--mote-ref-danger-400));
+  --mote-color-text-disabled: var(--mote-mode-light, var(--mote-ref-neutral-400)) var(--mote-mode-dark, var(--mote-ref-neutral-600));
+  --mote-color-text-inverse: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-text-link: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400));
+  --mote-color-text-on-action: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-text-primary: var(--mote-mode-light, var(--mote-ref-neutral-900)) var(--mote-mode-dark, var(--mote-ref-neutral-50));
+  --mote-color-text-secondary: var(--mote-mode-light, var(--mote-ref-neutral-700)) var(--mote-mode-dark, var(--mote-ref-neutral-300));
+  --mote-color-text-success: var(--mote-mode-light, var(--mote-ref-success-700)) var(--mote-mode-dark, var(--mote-ref-success-500));
+  --mote-control-gap: var(--mote-space-xs);
+  --mote-control-height-lg: 3rem;
+  --mote-control-height-md: 2.5rem;
+  --mote-control-height-sm: 2rem;
+  --mote-control-padding-inline-lg: var(--mote-space-md);
+  --mote-control-padding-inline-md: var(--mote-space-sm);
+  --mote-control-padding-inline-sm: var(--mote-space-xs);
+  --mote-control-radius: var(--mote-radius-md);
+  --mote-focus-offset: 2px;
+  --mote-focus-width: 2px;
+  --mote-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --mote-font-family-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mote-font-size-2xl: 1.5rem;
+  --mote-font-size-3xl: 1.875rem;
+  --mote-font-size-lg: 1.125rem;
+  --mote-font-size-md: 1rem;
+  --mote-font-size-sm: 0.875rem;
+  --mote-font-size-xl: 1.25rem;
+  --mote-font-size-xs: 0.75rem;
+  --mote-font-weight-bold: 700;
+  --mote-font-weight-medium: 500;
+  --mote-font-weight-regular: 400;
+  --mote-font-weight-semibold: 600;
+  --mote-layout-gap: var(--mote-space-md);
+  --mote-layout-inset: var(--mote-space-lg);
+  --mote-layout-item-min: 16rem;
+  --mote-layout-main-min: 20rem;
+  --mote-layout-sidebar-width: 16rem;
+  --mote-line-height-normal: 1.5;
+  --mote-line-height-tight: 1.25;
+  --mote-navigation-indent: var(--mote-space-md);
+  --mote-navigation-item-gap: var(--mote-space-xs);
+  --mote-navigation-item-min-height: var(--mote-control-height-md);
+  --mote-navigation-item-padding-block: var(--mote-space-xs);
+  --mote-navigation-item-padding-inline: var(--mote-space-sm);
+  --mote-radius-full: 9999px;
+  --mote-radius-lg: 0.75rem;
+  --mote-radius-md: 0.5rem;
+  --mote-radius-none: 0;
+  --mote-radius-sm: 0.25rem;
+  --mote-ref-brand-50: #f3f4ff;
+  --mote-ref-brand-100: #e7e9ff;
+  --mote-ref-brand-200: #cfd4ff;
+  --mote-ref-brand-300: #b1b6ff;
+  --mote-ref-brand-400: #9194ff;
+  --mote-ref-brand-500: #756dff;
+  --mote-ref-brand-600: #5f4cee;
+  --mote-ref-brand-700: #4c38c6;
+  --mote-ref-brand-800: #39299a;
+  --mote-ref-brand-900: #271a70;
+  --mote-ref-brand-950: #160c48;
+  --mote-ref-danger-50: #fff2f0;
+  --mote-ref-danger-100: #ffe4e0;
+  --mote-ref-danger-200: #ffc8c1;
+  --mote-ref-danger-300: #ffa196;
+  --mote-ref-danger-400: #f97165;
+  --mote-ref-danger-500: #e6443d;
+  --mote-ref-danger-600: #c92324;
+  --mote-ref-danger-700: #a50e15;
+  --mote-ref-danger-800: #80070d;
+  --mote-ref-danger-900: #5c0206;
+  --mote-ref-danger-950: #3a0002;
+  --mote-ref-neutral-0: #ffffff;
+  --mote-ref-neutral-50: #f5f5f6;
+  --mote-ref-neutral-100: #ebebed;
+  --mote-ref-neutral-200: #d6d7db;
+  --mote-ref-neutral-300: #bcbdc4;
+  --mote-ref-neutral-400: #a0a1aa;
+  --mote-ref-neutral-500: #84858f;
+  --mote-ref-neutral-600: #6d6e77;
+  --mote-ref-neutral-700: #565760;
+  --mote-ref-neutral-800: #414248;
+  --mote-ref-neutral-900: #2d2d32;
+  --mote-ref-neutral-950: #1a1a1e;
+  --mote-ref-neutral-1000: #000000;
+  --mote-ref-success-50: #edf9ef;
+  --mote-ref-success-100: #dcf2e0;
+  --mote-ref-success-200: #bce3c3;
+  --mote-ref-success-300: #90d09d;
+  --mote-ref-success-400: #61b876;
+  --mote-ref-success-500: #2e9e52;
+  --mote-ref-success-600: #00853c;
+  --mote-ref-success-700: #006b2e;
+  --mote-ref-success-800: #005121;
+  --mote-ref-success-900: #003915;
+  --mote-ref-success-950: #00220a;
+  --mote-space-2xl: 3rem;
+  --mote-space-2xs: 0.25rem;
+  --mote-space-3xl: 4rem;
+  --mote-space-lg: 1.5rem;
+  --mote-space-md: 1rem;
+  --mote-space-none: 0;
+  --mote-space-sm: 0.75rem;
+  --mote-space-xl: 2rem;
+  --mote-space-xs: 0.5rem;
+  --mote-target-min: 1.5rem;
+}
+
+:root {
+  color-scheme: light;
+  --mote-mode-light: initial;
+  --mote-mode-dark: ;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mote-mode]) {
+    color-scheme: dark;
+    --mote-mode-light: ;
+    --mote-mode-dark: initial;
+  }
+}
+
+[data-mote-mode="light"] {
+  color-scheme: light;
+  --mote-mode-light: initial;
+  --mote-mode-dark: ;
+  --mote-color-action-active: var(--mote-mode-light, var(--mote-ref-brand-800)) var(--mote-mode-dark, var(--mote-ref-brand-200));
+  --mote-color-action-default: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400));
+  --mote-color-action-hover: var(--mote-mode-light, var(--mote-ref-brand-700)) var(--mote-mode-dark, var(--mote-ref-brand-300));
+  --mote-color-border-danger: var(--mote-mode-light, var(--mote-ref-danger-500)) var(--mote-mode-dark, var(--mote-ref-danger-600));
+  --mote-color-border-default: var(--mote-mode-light, var(--mote-ref-neutral-200)) var(--mote-mode-dark, var(--mote-ref-neutral-800));
+  --mote-color-border-strong: var(--mote-mode-light, var(--mote-ref-neutral-500)) var(--mote-mode-dark, var(--mote-ref-neutral-400));
+  --mote-color-focus-ring: var(--mote-mode-light, var(--mote-ref-brand-500)) var(--mote-mode-dark, var(--mote-ref-brand-600));
+  --mote-color-surface-danger: var(--mote-mode-light, var(--mote-ref-danger-50)) var(--mote-mode-dark, var(--mote-ref-danger-950));
+  --mote-color-surface-default: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-surface-hover: var(--mote-mode-light, var(--mote-ref-neutral-100)) var(--mote-mode-dark, var(--mote-ref-neutral-800));
+  --mote-color-surface-raised: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-900));
+  --mote-color-surface-selected: var(--mote-mode-light, var(--mote-ref-brand-50)) var(--mote-mode-dark, var(--mote-ref-brand-900));
+  --mote-color-surface-success: var(--mote-mode-light, var(--mote-ref-success-50)) var(--mote-mode-dark, var(--mote-ref-success-950));
+  --mote-color-surface-sunken: var(--mote-mode-light, var(--mote-ref-neutral-50)) var(--mote-mode-dark, var(--mote-ref-neutral-1000));
+  --mote-color-text-danger: var(--mote-mode-light, var(--mote-ref-danger-600)) var(--mote-mode-dark, var(--mote-ref-danger-400));
+  --mote-color-text-disabled: var(--mote-mode-light, var(--mote-ref-neutral-400)) var(--mote-mode-dark, var(--mote-ref-neutral-600));
+  --mote-color-text-inverse: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-text-link: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400));
+  --mote-color-text-on-action: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-text-primary: var(--mote-mode-light, var(--mote-ref-neutral-900)) var(--mote-mode-dark, var(--mote-ref-neutral-50));
+  --mote-color-text-secondary: var(--mote-mode-light, var(--mote-ref-neutral-700)) var(--mote-mode-dark, var(--mote-ref-neutral-300));
+  --mote-color-text-success: var(--mote-mode-light, var(--mote-ref-success-700)) var(--mote-mode-dark, var(--mote-ref-success-500));
+}
+
+[data-mote-mode="dark"] {
+  color-scheme: dark;
+  --mote-mode-light: ;
+  --mote-mode-dark: initial;
+  --mote-color-action-active: var(--mote-mode-light, var(--mote-ref-brand-800)) var(--mote-mode-dark, var(--mote-ref-brand-200));
+  --mote-color-action-default: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400));
+  --mote-color-action-hover: var(--mote-mode-light, var(--mote-ref-brand-700)) var(--mote-mode-dark, var(--mote-ref-brand-300));
+  --mote-color-border-danger: var(--mote-mode-light, var(--mote-ref-danger-500)) var(--mote-mode-dark, var(--mote-ref-danger-600));
+  --mote-color-border-default: var(--mote-mode-light, var(--mote-ref-neutral-200)) var(--mote-mode-dark, var(--mote-ref-neutral-800));
+  --mote-color-border-strong: var(--mote-mode-light, var(--mote-ref-neutral-500)) var(--mote-mode-dark, var(--mote-ref-neutral-400));
+  --mote-color-focus-ring: var(--mote-mode-light, var(--mote-ref-brand-500)) var(--mote-mode-dark, var(--mote-ref-brand-600));
+  --mote-color-surface-danger: var(--mote-mode-light, var(--mote-ref-danger-50)) var(--mote-mode-dark, var(--mote-ref-danger-950));
+  --mote-color-surface-default: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-surface-hover: var(--mote-mode-light, var(--mote-ref-neutral-100)) var(--mote-mode-dark, var(--mote-ref-neutral-800));
+  --mote-color-surface-raised: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-900));
+  --mote-color-surface-selected: var(--mote-mode-light, var(--mote-ref-brand-50)) var(--mote-mode-dark, var(--mote-ref-brand-900));
+  --mote-color-surface-success: var(--mote-mode-light, var(--mote-ref-success-50)) var(--mote-mode-dark, var(--mote-ref-success-950));
+  --mote-color-surface-sunken: var(--mote-mode-light, var(--mote-ref-neutral-50)) var(--mote-mode-dark, var(--mote-ref-neutral-1000));
+  --mote-color-text-danger: var(--mote-mode-light, var(--mote-ref-danger-600)) var(--mote-mode-dark, var(--mote-ref-danger-400));
+  --mote-color-text-disabled: var(--mote-mode-light, var(--mote-ref-neutral-400)) var(--mote-mode-dark, var(--mote-ref-neutral-600));
+  --mote-color-text-inverse: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-text-link: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400));
+  --mote-color-text-on-action: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-text-primary: var(--mote-mode-light, var(--mote-ref-neutral-900)) var(--mote-mode-dark, var(--mote-ref-neutral-50));
+  --mote-color-text-secondary: var(--mote-mode-light, var(--mote-ref-neutral-700)) var(--mote-mode-dark, var(--mote-ref-neutral-300));
+  --mote-color-text-success: var(--mote-mode-light, var(--mote-ref-success-700)) var(--mote-mode-dark, var(--mote-ref-success-500));
+}
+
+[data-mote-mode="system"] {
+  color-scheme: light;
+  --mote-mode-light: initial;
+  --mote-mode-dark: ;
+  --mote-color-action-active: var(--mote-mode-light, var(--mote-ref-brand-800)) var(--mote-mode-dark, var(--mote-ref-brand-200));
+  --mote-color-action-default: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400));
+  --mote-color-action-hover: var(--mote-mode-light, var(--mote-ref-brand-700)) var(--mote-mode-dark, var(--mote-ref-brand-300));
+  --mote-color-border-danger: var(--mote-mode-light, var(--mote-ref-danger-500)) var(--mote-mode-dark, var(--mote-ref-danger-600));
+  --mote-color-border-default: var(--mote-mode-light, var(--mote-ref-neutral-200)) var(--mote-mode-dark, var(--mote-ref-neutral-800));
+  --mote-color-border-strong: var(--mote-mode-light, var(--mote-ref-neutral-500)) var(--mote-mode-dark, var(--mote-ref-neutral-400));
+  --mote-color-focus-ring: var(--mote-mode-light, var(--mote-ref-brand-500)) var(--mote-mode-dark, var(--mote-ref-brand-600));
+  --mote-color-surface-danger: var(--mote-mode-light, var(--mote-ref-danger-50)) var(--mote-mode-dark, var(--mote-ref-danger-950));
+  --mote-color-surface-default: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-surface-hover: var(--mote-mode-light, var(--mote-ref-neutral-100)) var(--mote-mode-dark, var(--mote-ref-neutral-800));
+  --mote-color-surface-raised: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-900));
+  --mote-color-surface-selected: var(--mote-mode-light, var(--mote-ref-brand-50)) var(--mote-mode-dark, var(--mote-ref-brand-900));
+  --mote-color-surface-success: var(--mote-mode-light, var(--mote-ref-success-50)) var(--mote-mode-dark, var(--mote-ref-success-950));
+  --mote-color-surface-sunken: var(--mote-mode-light, var(--mote-ref-neutral-50)) var(--mote-mode-dark, var(--mote-ref-neutral-1000));
+  --mote-color-text-danger: var(--mote-mode-light, var(--mote-ref-danger-600)) var(--mote-mode-dark, var(--mote-ref-danger-400));
+  --mote-color-text-disabled: var(--mote-mode-light, var(--mote-ref-neutral-400)) var(--mote-mode-dark, var(--mote-ref-neutral-600));
+  --mote-color-text-inverse: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-text-link: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400));
+  --mote-color-text-on-action: var(--mote-mode-light, var(--mote-ref-neutral-0)) var(--mote-mode-dark, var(--mote-ref-neutral-950));
+  --mote-color-text-primary: var(--mote-mode-light, var(--mote-ref-neutral-900)) var(--mote-mode-dark, var(--mote-ref-neutral-50));
+  --mote-color-text-secondary: var(--mote-mode-light, var(--mote-ref-neutral-700)) var(--mote-mode-dark, var(--mote-ref-neutral-300));
+  --mote-color-text-success: var(--mote-mode-light, var(--mote-ref-success-700)) var(--mote-mode-dark, var(--mote-ref-success-500));
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-mote-mode="system"] {
+    color-scheme: dark;
+    --mote-mode-light: ;
+    --mote-mode-dark: initial;
+  }
+}
+
+[data-mote-density="compact"] {
+  --mote-card-padding: var(--mote-layout-inset);
+  --mote-control-gap: var(--mote-space-xs);
+  --mote-control-height-lg: 2.25rem;
+  --mote-control-height-md: 1.875rem;
+  --mote-control-height-sm: 1.5rem;
+  --mote-control-padding-inline-lg: var(--mote-space-md);
+  --mote-control-padding-inline-md: var(--mote-space-sm);
+  --mote-control-padding-inline-sm: var(--mote-space-xs);
+  --mote-layout-gap: var(--mote-space-md);
+  --mote-layout-inset: var(--mote-space-lg);
+  --mote-navigation-indent: var(--mote-space-md);
+  --mote-navigation-item-gap: var(--mote-space-xs);
+  --mote-navigation-item-min-height: var(--mote-control-height-md);
+  --mote-navigation-item-padding-block: var(--mote-space-xs);
+  --mote-navigation-item-padding-inline: var(--mote-space-sm);
+  --mote-space-2xl: 2.25rem;
+  --mote-space-2xs: 0.1875rem;
+  --mote-space-3xl: 3rem;
+  --mote-space-lg: 1.125rem;
+  --mote-space-md: 0.75rem;
+  --mote-space-sm: 0.5625rem;
+  --mote-space-xl: 1.5rem;
+  --mote-space-xs: 0.375rem;
+}

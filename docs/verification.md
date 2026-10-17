@@ -70,3 +70,22 @@ Recorded results of checks. Each entry states the date, environment, command, an
 | Full pipeline | `npm run verify` | Pass — 93 Node + 192 browser unit tests, 6 e2e, packed consumers |
 
 **Finding:** a directive interpolated into a multi-value attribute (`class="x ${classMap(…)}"`) was stringified to `[object Object]`; it now reports `template.directive.position`.
+## 2026-10-17 — M2 token generator slice
+
+**Environment:** as the previous entry.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Spacing vectors | `npx vitest run --project node packages/tokens` | Pass — multiples `0.25rem` × 1, 2, 3, 4.5, 9 → `0.25rem, 0.5rem, 0.75rem, 1.125rem, 2.25rem`; ratio `0.75rem`, 1.5, 2/2 → `0.3333rem, 0.5rem, 0.75rem, 1.125rem, 1.6875rem`; extending a ratio scale keeps every existing name and value; explicit scales, custom names, explicit snapping |
+| Diagnostics | same | Pass — codes and JSON-pointer paths for strategy conflicts/unknown strategies, units, non-finite numbers, ratio and count parameters, name mismatches and duplicates, missing brand, bad colours, unknown keys (with suggestions), modes, product and density names/scales, unknown overrides, missing references, cycles, tier violations, unserializable values, and targets below the minimum under density |
+| Colour | same | Pass — in-gamut sRGB round-trips; out-of-gamut colours keep lightness and hue; WCAG ratios (21:1, 4.48:1); 14 brand vectors, and all 14 as products of one theme, generate with zero contrast diagnostics; failing overrides are warned about and kept |
+| Closure and growth | same | Pass — product scopes contain changed references plus dependents only; density scopes scale spacing and control sizes only; fixture theme: 122 tokens, 22 mode-dependent, 39 per brand product, 23 per density |
+| JSON Schema | `packages/tokens/test/schema.test.ts` | Pass — fixtures and the documented example validate under Ajv 2020 strict mode; structural errors are rejected by both the schema and the generator; schema keys equal `ThemeConfig` keys |
+| Determinism | node + browser projects | Pass — two committed fixtures regenerate byte-identically in Node and in Chromium, Firefox, and WebKit |
+| Cascade | `packages/tokens/test/generate.browser.test.ts` | Pass in all three — computed colours, spacing, and min-heights match `resolveToken()` for nested light/dark/system, product, and density scopes and inside a shadow root; the empty `--mote-mode-dark: ;` toggle is accepted |
+| DOM-free entries | `npm run lint:boundaries` | Pass — `@mote/tokens`, `./theme`, `./generate` import in Node without DOM globals |
+| Full pipeline | `npm run verify` | Pass — 127 Node + 231 browser unit tests, 6 e2e, packed consumers |
+
+**Findings:** (1) Per-mode role expressions cannot be re-declared correctly by product or density scopes using selectors, because CSS cannot select the nearest mode ancestor; solved with inherited space toggles (theming-and-styling.md §5.1). (2) Choosing a status text colour against the default surface alone failed on its tinted surface (4.39:1); roles now satisfy every paired surface. (3) An append to `.prettierignore` merged with its last line, which un-ignored `package-lock.json` and let Prettier rewrite fixtures; fixed and regenerated.
+
+**Not yet verified:** Worker execution, the script-free CSS-only fixture (first paint, system mode via emulated media), CLI, conditions, profiles, non-CSS outputs.

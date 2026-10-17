@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mote.dev/schemas/tokens/theme-config.v1.schema.json",
+  "title": "Mote theme configuration",
+  "description": "ThemeConfig for @mote/tokens. Structural checks only; the generator also validates units, references, cycles, tiers, contrast, and target sizes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["brand"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "default": "default" },
+    "preset": { "const": "mote-default" },
+    "brand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary"],
+      "properties": {
+        "primary": { "$ref": "#/$defs/color" },
+        "neutral": { "$ref": "#/$defs/color" }
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "danger": { "$ref": "#/$defs/color" },
+        "success": { "$ref": "#/$defs/color" }
+      }
+    },
+    "spacing": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["strategy", "unit", "steps"],
+          "properties": {
+            "strategy": { "const": "multiples" },
+            "unit": { "$ref": "#/$defs/length" },
+            "steps": {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": { "$ref": "#/$defs/segment" },
+              "additionalProperties": { "type": "number", "minimum": 0 }
+            },
+            "snap": { "$ref": "#/$defs/length" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["strategy", "base", "ratio", "stepsBelow", "stepsAbove"],
+          "properties": {
+            "strategy": { "const": "ratio" },
+            "base": { "$ref": "#/$defs/length" },
+            "ratio": { "type": "number", "exclusiveMinimum": 0 },
+            "stepsBelow": { "type": "integer", "minimum": 0, "maximum": 12 },
+            "stepsAbove": { "type": "integer", "minimum": 0, "maximum": 12 },
+            "names": { "type": "array", "items": { "$ref": "#/$defs/segment" } },
+            "snap": { "$ref": "#/$defs/length" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["strategy", "steps"],
+          "properties": {
+            "strategy": { "const": "explicit" },
+            "steps": {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": { "$ref": "#/$defs/segment" },
+              "additionalProperties": { "$ref": "#/$defs/length" }
+            },
+            "snap": { "$ref": "#/$defs/length" }
+          }
+        }
+      ]
+    },
+    "modes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "enum": ["light", "dark"] }
+    },
+    "products": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/segment" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "brand": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "primary": { "$ref": "#/$defs/color" },
+              "neutral": { "$ref": "#/$defs/color" }
+            }
+          }
+        }
+      }
+    },
+    "density": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/segment" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scale"],
+        "properties": { "scale": { "type": "number", "exclusiveMinimum": 0, "maximum": 2 } }
+      }
+    },
+    "overrides": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:\\.[a-z0-9]+(?:-[a-z0-9]+)*)*$"
+      },
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["light", "dark"],
+            "properties": {
+              "light": { "type": "string", "minLength": 1 },
+              "dark": { "type": "string", "minLength": 1 }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "segment": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "color": {
+      "type": "string",
+      "description": "#rgb, #rrggbb, or oklch(L C H).",
+      "pattern": "^(#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6}|oklch\\(.+\\))$"
+    },
+    "length": {
+      "type": "string",
+      "description": "A length with rem, px, or em, or 0.",
+      "pattern": "^(0|-?(\\d+\\.?\\d*|\\.\\d+)(rem|px|em))$"
+    }
+  }
+}

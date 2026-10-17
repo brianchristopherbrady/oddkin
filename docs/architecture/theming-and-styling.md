@@ -1,6 +1,6 @@
 # Theming, token pipeline, and styling
 
-Status: **draft proposal**. Examples are design sketches to evaluate, not implemented features.
+Status: §1–§5 and §10 are **implemented** in `@mote/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Outputs other than CSS (§6), the CLI (§9), conditions, and profiles (§11.2–§11.3) remain **proposals**.
 
 ## 1. Configuration model
 
@@ -144,6 +144,20 @@ For every scope (`[data-mote-theme]`, `[data-mote-product]`, `[data-mote-mode]`,
 ```
 
 The re-declaration set is computed from the token graph in stage 5 and recorded in inspection metadata. Verification happens in real browsers with nested scopes and Shadow DOM, not only in the generator.
+
+### 5.1 Mode switching without cross-products (implemented)
+
+A product or density scope must re-declare the roles that depend on it, and those roles have different expressions in light and dark. Selectors cannot target the *nearest* mode ancestor, so per-mode cross-product rules would break when scopes nest. Instead every mode-dependent role is one mode-agnostic expression switched by two inherited toggles:
+
+```css
+:root { --mote-mode-light: initial; --mote-mode-dark: ; }            /* light: light toggle invalid → its fallback is used */
+[data-mote-mode="dark"] { --mote-mode-light: ; --mote-mode-dark: initial; /* + mode-dependent roles */ }
+:root { --mote-color-action-default: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400)); }
+```
+
+A guaranteed-invalid toggle (`initial`) selects its fallback; an empty toggle contributes nothing. Each scope re-declares the same expression, which resolves on that element with its inherited toggles and reference tokens, so mode, product, and density scopes nest in any order. `:root` follows `prefers-color-scheme` unless `data-mote-mode` is set; `data-mote-mode="system"` restores system behavior inside an explicit subtree. `color-scheme` is set with each mode. Verified with computed styles in nested scopes and a shadow root in Chromium, Firefox, and WebKit (`packages/tokens/test/generate.browser.test.ts`).
+
+Consequences: product scopes may change only brand inputs (reference tokens), and contrast-selected roles choose steps that pass for the base brand and every product, so role expressions are identical in every scope. Product-specific role overrides are not supported yet. A nested `data-mote-theme` scope re-declares all tokens, but mode/product/density scopes inside it use the expressions of the last loaded theme file; one theme per document is the supported case for now.
 
 ### Modes and density
 - `light`/`dark` via `[data-mote-mode]`; `system` via `@media (prefers-color-scheme)` applied when no explicit mode is set.

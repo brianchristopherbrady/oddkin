@@ -6,3 +6,4 @@ playwright-report
 *.md
 docs/schemas
 package-lock.json
+packages/tokens/test/fixtures/*.css.txt
