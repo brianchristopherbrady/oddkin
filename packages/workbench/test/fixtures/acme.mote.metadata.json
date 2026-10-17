@@ -1,0 +1,72 @@
+{
+  "schema": "https://mote.dev/schemas/mote-metadata/v1.json",
+  "moteVersion": "0.0.0",
+  "library": {
+    "name": "@acme/ui",
+    "version": "1.4.0",
+    "prefix": "acme-",
+    "packages": [{ "name": "@acme/ui", "version": "1.4.0" }]
+  },
+  "components": {
+    "component:acme-button": {
+      "tag": "acme-button",
+      "cem": { "module": "dist/button.js", "name": "AcmeButton" },
+      "category": "category:actions"
+    },
+    "component:acme-card": {
+      "tag": "acme-card",
+      "cem": { "module": "dist/card.js", "name": "AcmeCard" },
+      "category": "category:layout"
+    }
+  },
+  "examples": {
+    "example:acme-button/default": {
+      "component": "component:acme-button",
+      "name": "default",
+      "file": "src/button.examples.ts"
+    }
+  },
+  "foundations": {
+    "foundation:spacing": {
+      "id": "spacing",
+      "sections": [
+        { "id": "scale", "available": true },
+        { "id": "vocabulary", "available": false, "reason": "No semantic spacing roles declared" },
+        { "id": "precedence", "available": true }
+      ],
+      "tokens": ["token:space.sm", "token:space.md"]
+    },
+    "foundation:color": {
+      "id": "color",
+      "sections": [
+        { "id": "palettes", "available": true },
+        { "id": "semantic-roles", "available": true }
+      ],
+      "tokens": ["token:color.brand.500"]
+    },
+    "foundation:motion": {
+      "id": "motion",
+      "sections": [{ "id": "durations-and-easing", "available": false }],
+      "tokens": []
+    }
+  },
+  "categories": {
+    "category:layout": { "label": "Layout", "order": 2 }
+  },
+  "products": {
+    "product:clinic": { "id": "clinic", "source": "./mote.theme.ts#clinic" }
+  },
+  "docs": {
+    "foundations/spacing": {
+      "updated": { "value": "2026-09-30", "provenance": "extracted" },
+      "tags": ["tokens", "layout"]
+    },
+    "foundations/color": {
+      "updated": { "known": false, "provenance": "extracted" }
+    },
+    "components/acme-card": {
+      "summary": { "value": "A surface for grouped content.", "provenance": "authored" }
+    }
+  },
+  "diagnostics": []
+}

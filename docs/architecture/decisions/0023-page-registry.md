@@ -18,7 +18,7 @@ One build-time page registry (stable page and section ids, routes, sections, vis
 DOM-free `@mote/workbench/pages` contracts land in M3.
 
 ## Evidence
-Reference audit: consistent shell across routes. Pending: M3 registry generation tests.
+Reference audit: consistent shell across routes. M3: `buildPageRegistry` (`packages/workbench/test/pages.test.ts`) generates schema-valid registries from the analyzer's core-counter output and an independent fixture library; navigation, sidebars, cards, search, and redirects are projections of the same entries; ids stay stable across base-path and route changes; output is deterministic and carries no build-time dates.
 
 ## Revisit when
 A section needs runtime-only pages not known at build time.

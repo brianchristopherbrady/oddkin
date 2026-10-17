@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "2.1.0",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "dist/button.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "AcmeButton",
+          "customElement": true,
+          "tagName": "acme-button",
+          "description": "Triggers an action. Submits forms when type is submit.",
+          "members": [
+            { "kind": "field", "name": "appearance" },
+            { "kind": "field", "name": "loading" },
+            { "kind": "field", "name": "#busy", "privacy": "private" }
+          ],
+          "attributes": [{ "name": "appearance" }, { "name": "loading" }],
+          "slots": [{ "name": "" }, { "name": "icon" }],
+          "cssProperties": [{ "name": "--acme-button-radius" }],
+          "cssStates": [{ "name": "busy" }]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dist/card.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "AcmeCard",
+          "customElement": true,
+          "tagName": "acme-card",
+          "summary": "Groups related content.",
+          "slots": [{ "name": "" }]
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "dist/side-nav.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "AcmeSideNav",
+          "customElement": true,
+          "tagName": "acme-side-nav",
+          "members": [{ "kind": "field", "name": "items" }]
+        },
+        { "kind": "function", "name": "navigationModel" }
+      ]
+    }
+  ]
+}

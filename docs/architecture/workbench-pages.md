@@ -1,6 +1,6 @@
 # Workbench pages, navigation, and content
 
-Status: **proposal**. Nothing here is implemented. Defines the information architecture and page contracts of a generated Mote Workbench. Detailed control, preview, and Theme Studio behavior: [workbench.md](./workbench.md). Metadata inputs: [metadata-and-analyzer.md](./metadata-and-analyzer.md). Reference observations: [design-system-lab-audit.md](../reference/design-system-lab-audit.md).
+Status: **proposal**, except the page registry (§2), which is implemented as the DOM-free `@mote/workbench/pages` entry in M3 ([packages/workbench](../../packages/workbench/README.md)); the shell and pages are later work. Defines the information architecture and page contracts of a generated Mote Workbench. Detailed control, preview, and Theme Studio behavior: [workbench.md](./workbench.md). Metadata inputs: [metadata-and-analyzer.md](./metadata-and-analyzer.md). Reference observations: [design-system-lab-audit.md](../reference/design-system-lab-audit.md).
 
 ## 1. Principles
 

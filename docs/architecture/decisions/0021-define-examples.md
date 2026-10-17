@@ -19,7 +19,7 @@ Colocated `*.examples.ts` files using `defineExamples(tag, {...})` from the DOM-
 Build order: runtime components → analyzer metadata → example typechecks/tests → Workbench shell.
 
 ## Evidence
-Pending: M3/M4 build-order experiment.
+M3: `@mote/workbench/examples` implemented (DOM-free; `@mote/core` types only). TypeScript rejects unknown property keys, wrong value types, and methods for registered tags (`packages/workbench/test/examples.types.ts`); `checkExamples` gives plain-JavaScript authors the same checks against the analyzer's CEM; `toExamplesJSON` validates against `examples.v1`. Build order holds through project references: core → workbench entries; components never reference workbench (boundary rules). Pending: M4 build-order check with real components.
 
 ## Revisit when
 Tests need examples without any Workbench dependency.

@@ -30,7 +30,12 @@ for (const entry of await readdir(packagesDir, { withFileTypes: true })) {
   const manifest = JSON.parse(
     await readFile(join(packagesDir, entry.name, 'package.json'), 'utf8'),
   );
-  names.push({ name: manifest.name, dir: join(packagesDir, entry.name) });
+  // Packages without a root entry (e.g. @mote/workbench) are checked through their subpaths.
+  const subpaths = Object.keys(manifest.exports ?? {}).filter((key) => key !== './package.json');
+  const specifiers = subpaths.includes('.')
+    ? [manifest.name]
+    : subpaths.map((key) => `${manifest.name}/${key.slice(2)}`);
+  names.push({ name: manifest.name, dir: join(packagesDir, entry.name), specifiers });
 }
 
 const work = await mkdtemp(join(tmpdir(), 'mote-packs-'));
@@ -74,11 +79,12 @@ try {
   if (unexpected.size)
     failures.push(`unexpected runtime dependencies installed: ${[...unexpected].join(', ')}`);
 
-  const imports = names.map(({ name }, i) => `import * as p${i} from '${name}';`).join('\n');
-  const checks = names
+  const specifiers = names.flatMap(({ specifiers }) => specifiers);
+  const imports = specifiers.map((spec, i) => `import * as p${i} from '${spec}';`).join('\n');
+  const checks = specifiers
     .map(
-      ({ name }, i) =>
-        `if (Object.keys(p${i}).length === 0) throw new Error('${name} has no exports');`,
+      (spec, i) =>
+        `if (Object.keys(p${i}).length === 0) throw new Error('${spec} has no exports');`,
     )
     .join('\n');
   await writeFile(join(consumer, 'runtime.mjs'), `${imports}\n${checks}\n`);
@@ -114,7 +120,7 @@ try {
 
   await writeFile(
     join(consumer, 'types.ts'),
-    `${imports}\nexport const all: readonly object[] = [${names.map((_, i) => `p${i}`).join(', ')}];\n`,
+    `${imports}\nexport const all: readonly object[] = [${specifiers.map((_, i) => `p${i}`).join(', ')}];\n`,
   );
   await writeFile(
     join(consumer, 'tsconfig.json'),

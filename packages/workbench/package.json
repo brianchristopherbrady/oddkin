@@ -1,0 +1,30 @@
+{
+  "name": "@mote/workbench",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Metadata-driven documentation tooling. M3: DOM-free example, configuration, and page-registry contracts.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./examples": {
+      "types": "./dist/examples/index.d.ts",
+      "default": "./dist/examples/index.js"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "default": "./dist/config/index.js"
+    },
+    "./pages": {
+      "types": "./dist/pages/index.d.ts",
+      "default": "./dist/pages/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "dependencies": {
+    "@mote/core": "0.0.0"
+  }
+}

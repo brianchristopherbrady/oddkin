@@ -1,6 +1,6 @@
 # Mote Workbench and Theme Studio
 
-Status: **proposal**. Nothing here is implemented. `@mote/workbench` is optional tooling: a reusable, metadata-driven documentation application with integrated interactive examples that teams point at their own component library. Related: [workbench-pages.md](./workbench-pages.md), [metadata-and-analyzer.md](./metadata-and-analyzer.md), [theming-and-styling.md](./theming-and-styling.md), [layout-recipes.md](./layout-recipes.md), [data-composition.md](./data-composition.md), [core-contracts.md](./core-contracts.md).
+Status: **proposal**, except the DOM-free M3 entries `@mote/workbench/examples` and `./config`, which are implemented ([packages/workbench](../../packages/workbench/README.md)). `@mote/workbench` is optional tooling: a reusable, metadata-driven documentation application with integrated interactive examples that teams point at their own component library. Related: [workbench-pages.md](./workbench-pages.md), [metadata-and-analyzer.md](./metadata-and-analyzer.md), [theming-and-styling.md](./theming-and-styling.md), [layout-recipes.md](./layout-recipes.md), [data-composition.md](./data-composition.md), [core-contracts.md](./core-contracts.md).
 
 ## 1. Product scope
 

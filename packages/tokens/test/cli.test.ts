@@ -24,7 +24,8 @@ afterAll(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-describe('mote-tokens CLI', () => {
+// Loading TypeScript configs starts Node processes; allow for a busy machine.
+describe('mote-tokens CLI', { timeout: 30_000 }, () => {
   it('init writes a starter config once', async () => {
     expect((await cli('init', at('mote.theme.json'))).code).toBe(0);
     const again = await cli('init', at('mote.theme.json'));
