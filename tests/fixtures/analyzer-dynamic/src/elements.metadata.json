@@ -1,0 +1,13 @@
+{
+  "description": "An element whose properties are partly defined at runtime.",
+  "properties": [
+    {
+      "name": "tone",
+      "type": "string | undefined",
+      "attribute": "tone",
+      "description": "Shared tone option."
+    },
+    { "name": "label", "type": "string | undefined", "attribute": "label" },
+    { "name": "size", "type": "number", "attribute": "size", "default": "3.141592653589793" }
+  ]
+}

@@ -2,7 +2,8 @@
  * Static extraction over a TypeScript program. Never imports or executes analyzed modules.
  * Contract: docs/architecture/metadata-and-analyzer.md §2.
  */
-import { relative, resolve, sep } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { dirname, relative, resolve, sep } from 'node:path';
 import ts from 'typescript';
 
 export interface SourceLocation {
@@ -79,6 +80,8 @@ export interface ComponentInfo {
   readonly tokenReads: readonly { readonly token: string; readonly readThrough: 'stylesheet' }[];
   readonly tags: Readonly<Record<string, readonly { value: string; location: SourceLocation }[]>>;
   readonly exported: boolean;
+  /** Facts supplied by explicit metadata (`@mote-metadata file.json`), as stable member ids. */
+  readonly authored?: { readonly file: string; readonly ids: readonly string[] };
 }
 
 export interface Registration {
@@ -415,6 +418,8 @@ export function extract(program: ts.Program, root: string): Extraction {
   function classify(node: ts.ClassDeclaration): ComponentInfo | null {
     if (components.has(node)) return components.get(node) as ComponentInfo | null;
     components.set(node, null);
+    // Diagnostics raised for this class (after its base is resolved) can be covered by explicit metadata.
+    let diagnosticsBefore = diagnostics.length;
     const expression = heritage(node);
     if (!expression || !node.name) return null;
     const className = node.name.text;
@@ -442,6 +447,7 @@ export function extract(program: ts.Program, root: string): Extraction {
       expression.expression.name.text === 'with'
     ) {
       if (!baseOf(expression.expression.expression)) return null;
+      diagnosticsBefore = diagnostics.length;
       const definitions = expression.arguments[0];
       if (definitions && ts.isObjectLiteralExpression(definitions))
         own = properties(definitions, className);
@@ -452,6 +458,7 @@ export function extract(program: ts.Program, root: string): Extraction {
           `${className}: with() needs an object literal of prop.*() definitions.`,
         );
     } else if (!baseOf(expression)) return null;
+    else diagnosticsBefore = diagnostics.length;
 
     const instanceType = checker.getDeclaredTypeOfSymbol(
       checker.getSymbolAtLocation(node.name) as ts.Symbol,
@@ -633,6 +640,7 @@ export function extract(program: ts.Program, root: string): Extraction {
 
     const description = docOf(node);
     const exported = !!ts.getModifiers(node)?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
+    const explicit = explicitMetadata(node, className, diagnosticsBefore);
     const info: ComponentInfo = {
       name: className,
       file: ref.file,
@@ -663,10 +671,142 @@ export function extract(program: ts.Program, root: string): Extraction {
       tags,
       exported,
     };
-    components.set(node, info);
-    return info;
+    const merged = explicit ? mergeExplicit(info, explicit) : info;
+    components.set(node, merged);
+    return merged;
   }
 
+  // ---- explicit metadata (@mote-metadata ./file.json) ----
+  interface Explicit {
+    readonly file: string;
+    readonly data: Record<string, unknown>;
+  }
+  const LISTS = ['properties', 'events', 'slots', 'parts', 'cssProperties', 'cssStates'] as const;
+
+  function explicitMetadata(
+    node: ts.ClassDeclaration,
+    className: string,
+    diagnosticsBefore: number,
+  ): Explicit | undefined {
+    const tag = ts.getJSDocTags(node).find((t) => t.tagName.text === 'mote-metadata');
+    if (!tag) return undefined;
+    const comment = (
+      typeof tag.comment === 'string' ? tag.comment : (ts.getTextOfJSDocComment(tag.comment) ?? '')
+    ).trim();
+    const absolutePath = resolve(dirname(node.getSourceFile().fileName), comment);
+    let data: unknown;
+    try {
+      data = JSON.parse(readFileSync(absolutePath, 'utf8'));
+    } catch (error) {
+      report(
+        'analyzer.metadata.missing',
+        tag,
+        `${className}: cannot read explicit metadata "${comment}": ${error instanceof Error ? error.message : String(error)}.`,
+        undefined,
+        'error',
+      );
+      return undefined;
+    }
+    const problems =
+      typeof data !== 'object' || data === null || Array.isArray(data)
+        ? ['the file must contain an object']
+        : Object.entries(data).flatMap(([key, value]) =>
+            key === 'description'
+              ? typeof value === 'string'
+                ? []
+                : ['description must be a string']
+              : (LISTS as readonly string[]).includes(key)
+                ? Array.isArray(value) &&
+                  value.every(
+                    (v) =>
+                      typeof v === 'object' &&
+                      v !== null &&
+                      typeof (v as { name?: unknown }).name === 'string',
+                  )
+                  ? []
+                  : [`${key} must be an array of objects with a name`]
+                : [`unknown key "${key}" (allowed: description, ${LISTS.join(', ')})`],
+          );
+    if (problems.length) {
+      report(
+        'analyzer.metadata.invalid',
+        tag,
+        `${className}: explicit metadata ${comment}: ${problems.join('; ')}.`,
+        undefined,
+        'error',
+      );
+      return undefined;
+    }
+    // Explicit metadata answers what static analysis could not: its dynamic warnings become info.
+    for (let i = diagnosticsBefore; i < diagnostics.length; i++) {
+      const d = diagnostics[i] as AnalyzerDiagnostic;
+      if (d.code.startsWith('analyzer.dynamic.'))
+        diagnostics[i] = {
+          ...d,
+          severity: 'info',
+          message: `${d.message} Explicit metadata (${comment}) is merged for this class.`,
+        };
+    }
+    return { file: rel(absolutePath), data: data as Record<string, unknown> };
+  }
+
+  function mergeExplicit(info: ComponentInfo, explicit: Explicit): ComponentInfo {
+    const ids: string[] = [];
+    const merge = <T extends { name: string }>(
+      list: readonly T[],
+      key: (typeof LISTS)[number],
+      idKind: string,
+      normalize: (raw: Record<string, unknown>) => T,
+    ): T[] => {
+      const authored = (explicit.data[key] as Record<string, unknown>[] | undefined) ?? [];
+      const out = [...list];
+      for (const raw of authored) {
+        const entry = normalize(raw);
+        const index = out.findIndex((x) => x.name === entry.name);
+        if (index >= 0) out[index] = entry;
+        else out.push(entry);
+        ids.push(`${idKind}#${entry.name}`);
+      }
+      return out;
+    };
+    const text = (raw: Record<string, unknown>, field: string) =>
+      typeof raw[field] === 'string' ? (raw[field] as string) : undefined;
+    const named = (raw: Record<string, unknown>): NamedDoc => ({
+      name: raw['name'] as string,
+      ...(text(raw, 'description') ? { description: text(raw, 'description') as string } : {}),
+    });
+    const description = text(explicit.data, 'description');
+    return {
+      ...info,
+      ...(description ? { description } : {}),
+      properties: merge(info.properties, 'properties', 'property', (raw) => ({
+        name: raw['name'] as string,
+        kind: 'authored',
+        type: text(raw, 'type') ?? 'unknown',
+        attribute: raw['attribute'] === null ? null : (text(raw, 'attribute') ?? null),
+        reflects: raw['reflects'] === true,
+        default:
+          text(raw, 'default') !== undefined
+            ? { known: true, value: text(raw, 'default') as string }
+            : { known: false },
+        ...(text(raw, 'description') ? { description: text(raw, 'description') as string } : {}),
+      })),
+      events: merge(info.events, 'events', 'event', (raw) => ({
+        name: raw['name'] as string,
+        detailType: text(raw, 'detailType') ?? 'void',
+        bubbles: raw['bubbles'] === true,
+        composed: raw['composed'] === true,
+        cancelable: raw['cancelable'] === true,
+        ...(text(raw, 'syncs') ? { syncs: text(raw, 'syncs') as string } : {}),
+        ...(text(raw, 'description') ? { description: text(raw, 'description') as string } : {}),
+      })),
+      slots: merge(info.slots, 'slots', 'slot', named),
+      parts: merge(info.parts, 'parts', 'part', named),
+      cssProperties: merge(info.cssProperties, 'cssProperties', 'cssprop', named),
+      cssStates: merge(info.cssStates, 'cssStates', 'state', named),
+      authored: { file: explicit.file, ids },
+    };
+  }
   // ---- module walk ----
   for (const file of program.getSourceFiles()) {
     if (!isLibrarySource(file)) continue;

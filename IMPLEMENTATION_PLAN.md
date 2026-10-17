@@ -435,7 +435,7 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 
 - [x] Create package (Node, dev-only); TypeScript compiler API program over a library's sources/declarations; no module execution (asserted by a test library whose modules throw on import)
 - [x] Extract: `MoteElement` subclasses and `with()` factories, `prop.*`, inheritance, re-exports, events, slots/parts (template + explicit), CSS custom properties, custom states, `define` entries, `exports` → module map, JSDoc/TSDoc + Mote tags, `token()` references, recipes, models
-- [ ] `analyzer.dynamic.*` diagnostics with locations; explicit static metadata merge with `authored` provenance
+- [x] `analyzer.dynamic.*` diagnostics with locations; explicit static metadata merge with `authored` provenance
 - [x] Normalized metadata model v1 draft: stable ids, provenance, unknowns; JSON Schema
 - [x] Emit CEM (validated against the pinned schema) and `mote.metadata.json`; deterministic output
 - [x] Analyze the core-counter example as a first fixture
@@ -930,7 +930,7 @@ Ordinary reversible choices inside these contracts can be made during implementa
 
 ## 11. Continuation
 
-**Next step:** finish M3 — explicit static metadata merge (`authored` provenance) in the analyzer; DOM-free `@mote/workbench/examples`, `config`, and `pages` contracts; the `props()` assessment; minified size/startup/update/memory and collection measurements; binding-rule and failure-path demonstrations. Then M4's first components (side-nav links the last open M2 item).
+**Next step:** finish M3 — DOM-free `@mote/workbench/examples`, `config`, and `pages` contracts; the `props()` assessment; minified size/startup/update/memory and collection measurements; binding-rule and failure-path demonstrations. Then M4's first components (side-nav links the last open M2 item).
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 

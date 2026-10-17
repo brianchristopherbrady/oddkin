@@ -219,22 +219,45 @@ describe('analyzer on the core-counter example', () => {
   });
 });
 
-describe('dynamic definitions', () => {
-  it('reports locations instead of guessing', () => {
-    const result = analyze({ project: path('tests/fixtures/analyzer-dynamic/tsconfig.json') });
-    expect(result.diagnostics.map((d) => [d.code, d.source?.line])).toEqual([
-      ['analyzer.dynamic.property', 10],
-      ['analyzer.dynamic.property', 11],
-      ['analyzer.dynamic.value', 12],
+describe('dynamic definitions and explicit metadata', () => {
+  const result = analyze({ project: path('tests/fixtures/analyzer-dynamic/tsconfig.json') });
+
+  it('reports dynamic entries with locations, downgraded to info when explicit metadata covers the class', () => {
+    expect(result.diagnostics.map((d) => [d.code, d.severity, d.source?.line])).toEqual([
+      ['analyzer.dynamic.property', 'info', 11],
+      ['analyzer.dynamic.property', 'info', 12],
+      ['analyzer.dynamic.value', 'info', 13],
     ]);
+  });
+
+  it('merges explicit metadata over extracted facts with authored provenance', () => {
+    const element = declaration(result.manifest, 'DynamicElement');
+    expect(element['description']).toBe(
+      'An element whose properties are partly defined at runtime.',
+    );
     expect(
-      declaration(result.manifest, 'DynamicElement').members.map((m) => [
+      element.members.map((m) => [
         m['name'],
+        (m['type'] as { text: string }).text,
         m['default'] ?? null,
       ]),
     ).toEqual([
-      ['size', null],
-      ['open', 'false'],
+      ['size', 'number', '3.141592653589793'],
+      ['open', 'boolean', 'false'],
+      ['tone', 'string | undefined', null],
+      ['label', 'string | undefined', null],
     ]);
+    const metadata = result.metadata as {
+      components: Record<string, { authored?: Array<{ id: string; source: { file: string } }> }>;
+    };
+    expect(
+      metadata.components['component:dynamic-element']?.authored?.map((a) => [a.id, a.source.file]),
+    ).toEqual([
+      ['property:dynamic-element#tone', 'src/elements.metadata.json'],
+      ['property:dynamic-element#label', 'src/elements.metadata.json'],
+      ['property:dynamic-element#size', 'src/elements.metadata.json'],
+    ]);
+    expect(validateMote(result.metadata), JSON.stringify(validateMote.errors)).toBe(true);
+    expect(validateCem(result.manifest)).toBe(true);
   });
 });

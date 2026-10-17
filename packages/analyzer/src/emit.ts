@@ -221,6 +221,17 @@ export function buildMetadata(
       ),
       ...facts,
       ...optional('related', related),
+      ...optional(
+        'authored',
+        component.authored?.ids.map((id) => {
+          const [kind, name] = id.split('#');
+          return {
+            id: `${kind}:${registration.tag}#${name}`,
+            provenance: 'authored',
+            source: { file: component.authored?.file as string, line: 1 },
+          };
+        }),
+      ),
     };
   }
   const recipes = Object.fromEntries(
