@@ -740,8 +740,12 @@ export function extract(program: ts.Program, root: string): Extraction {
       cssStates: [...(parent?.cssStates ?? []), ...cssStates.values()].filter(
         (s, i, all) => all.findIndex((x) => x.name === s.name) === i,
       ),
+      // A documented component variable (`@cssprop --mote-button-radius`) is not a token read.
       tokenReads: [...(parent?.tokenReads ?? []), ...tokenReads.values()].filter(
-        (s, i, all) => all.findIndex((x) => x.token === s.token) === i,
+        (s, i, all) =>
+          all.findIndex((x) => x.token === s.token) === i &&
+          !cssProperties.has(s.token) &&
+          !(parent?.cssProperties ?? []).some((c) => c.name === s.token),
       ),
       tags,
       exported,
@@ -1134,6 +1138,7 @@ export function extract(program: ts.Program, root: string): Extraction {
             tokenReads = [...tokenReads, { token, readThrough: 'stylesheet' }];
       }
     }
+    tokenReads = tokenReads.filter((t) => !cssProperties.some((c) => c.name === t.token));
     return { ...info, slots, parts, cssProperties, tokenReads };
   }
 

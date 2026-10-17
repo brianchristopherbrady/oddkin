@@ -30,11 +30,11 @@ for (const entry of await readdir(packagesDir, { withFileTypes: true })) {
   const manifest = JSON.parse(
     await readFile(join(packagesDir, entry.name, 'package.json'), 'utf8'),
   );
-  // Packages without a root entry (e.g. @mote/workbench) are checked through their subpaths.
-  const subpaths = Object.keys(manifest.exports ?? {}).filter((key) => key !== './package.json');
-  const specifiers = subpaths.includes('.')
-    ? [manifest.name]
-    : subpaths.map((key) => `${manifest.name}/${key.slice(2)}`);
+  // Every JavaScript export is imported from the installed tarball; assets are checked below.
+  const target = (value) => (typeof value === 'string' ? value : value?.default);
+  const specifiers = Object.entries(manifest.exports ?? {})
+    .filter(([, value]) => /\.m?js$/.test(target(value) ?? ''))
+    .map(([key]) => (key === '.' ? manifest.name : `${manifest.name}/${key.slice(2)}`));
   names.push({ name: manifest.name, dir: join(packagesDir, entry.name), specifiers });
 }
 
@@ -81,23 +81,31 @@ try {
 
   const specifiers = names.flatMap(({ specifiers }) => specifiers);
   const imports = specifiers.map((spec, i) => `import * as p${i} from '${spec}';`).join('\n');
+  // Registration entries (`…/define/…`) export nothing by design; they must still load.
   const checks = specifiers
-    .map(
-      (spec, i) =>
-        `if (Object.keys(p${i}).length === 0) throw new Error('${spec} has no exports');`,
+    .map((spec, i) =>
+      /\/define(\/|$)/.test(spec)
+        ? ''
+        : `if (Object.keys(p${i}).length === 0) throw new Error('${spec} has no exports');`,
     )
     .join('\n');
   await writeFile(join(consumer, 'runtime.mjs'), `${imports}\n${checks}\n`);
   node(['runtime.mjs'], consumer);
 
-  // @mote/tokens ships its CLI, default CSS, and JSON Schema, and the installed CLI works.
+  // Published assets: token CSS and schema, component metadata; the installed tokens CLI works.
   await writeFile(
     join(consumer, 'assets.mjs'),
     [
       "import { readFileSync } from 'node:fs';",
-      "for (const spec of ['@mote/tokens/css/default.css', '@mote/tokens/schema.json']) {",
+      'const expected = {',
+      "  '@mote/tokens/css/default.css': '--mote-color-action-default',",
+      "  '@mote/tokens/schema.json': 'Mote theme configuration',",
+      '  \'@mote/components/custom-elements.json\': \'"tagName": "mote-button"\',',
+      '  \'@mote/components/mote.metadata.json\': \'"registration": "@mote/components/define/button"\',',
+      '};',
+      'for (const [spec, needle] of Object.entries(expected)) {',
       "  const text = readFileSync(new URL(import.meta.resolve(spec)), 'utf8');",
-      "  if (!text.includes(spec.endsWith('.css') ? '--mote-color-action-default' : 'Mote theme configuration')) throw new Error(spec + ' content mismatch');",
+      "  if (!text.includes(needle)) throw new Error(spec + ' content mismatch');",
       '}',
     ].join('\n'),
   );

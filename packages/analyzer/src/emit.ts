@@ -248,6 +248,13 @@ export function buildMetadata(
           readThrough: t.readThrough,
         })),
       ),
+      ...optional(
+        'previewRoles',
+        (component.tags['previewRole'] ?? [])
+          .flatMap((e) => e.value.split(/[\s,]+/))
+          .filter(Boolean)
+          .map((role) => `role:${role}`),
+      ),
       ...facts,
       ...optional('related', related),
       ...optional(

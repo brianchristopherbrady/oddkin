@@ -11,7 +11,7 @@
     "node": ">=24.12"
   },
   "scripts": {
-    "build": "tsc -b && node scripts/build-token-assets.mjs && node scripts/build-production.mjs",
+    "build": "tsc -b && node scripts/build-token-assets.mjs && node scripts/build-production.mjs && node scripts/build-metadata.mjs",
     "clean": "tsc -b --clean",
     "typecheck": "tsc -b && tsc -p tsconfig.tests.json",
     "lint": "npm run lint:boundaries && npm run format:check",

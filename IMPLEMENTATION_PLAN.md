@@ -592,7 +592,7 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 - [ ] Shared interaction fixtures run unchanged against default and derived definitions in three engines: properties, methods, events, slots, keyboard, focus, disabled/loading, form semantics; per-instance sheet reuse and no mutation of shared sheets
 - [ ] Analyzer emits distinct ids and `extends` links for derived definitions, layered style sources, and family mappings without executing template factories; equal metadata accuracy for default and derived definitions
 
-- [~] `mote-button`: native semantics, appearance/size/border/radius/loading/disabled/full-width; declared preview roles (`primaryAction`, `secondaryAction`) *(In progress: `packages/components/src/button/` — native `<button part="control">` with delegated focus, `appearance`/`size`/`disabled`/`loading`/`full-width`/`label`/`type`/`name`/`value`, radius, border, height, padding, and colours through `--mote-button-*` component variables over semantic tokens, `@previewRole primaryAction`/`secondaryAction` in source; 13 browser tests × 3 engines. Remaining: preview roles emitted into metadata, examples, analyzer in the components build, axe/AT checks.)*
+- [~] `mote-button`: native semantics, appearance/size/border/radius/loading/disabled/full-width; declared preview roles (`primaryAction`, `secondaryAction`) *(In progress: `packages/components/src/button/` — native `<button part="control">` with delegated focus, `appearance`/`size`/`disabled`/`loading`/`full-width`/`label`/`type`/`name`/`value`, radius, border, height, padding, and colours through `--mote-button-*` component variables over semantic tokens, `@previewRole primaryAction`/`secondaryAction` in source; 13 browser tests × 3 engines. Preview roles, use-for/not-for, limitations, a11y, and keyboard facts are published in `mote.metadata.json`. Remaining: examples, axe/AT checks.)*
 - [ ] `mote-input`: form-associated; value/default; label/description/error; reset/restore; disabled fieldsets; validation; focus; `value`/`input` sync pair; preview role `textInput`
 - [ ] `mote-card`: surface semantics (sectioning only when headed), padding/border/radius/elevation options backed by roles; header/body/footer slots; preview role `surface`
 - [ ] Opt-in `formAssociated` + `ElementInternals` via form controller; reassociation and submission tests ([HTML form-associated custom elements](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements-face-example))
@@ -635,10 +635,10 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 
 **Metadata validation**
 
-- [ ] Analyzer runs in the components build; publishes `custom-elements.json` (+ `customElements` field) and `mote.metadata.json`
-- [ ] CEM validated against the pinned schema and consumed by an independent CEM tool (e.g. an IDE custom-data generator or a third-party CEM reader) in a fixture outside the workspace
+- [x] Analyzer runs in the components build; publishes `custom-elements.json` (+ `customElements` field) and `mote.metadata.json` *(`scripts/build-metadata.mjs` in `npm run build`, strict — any analyzer diagnostic fails the build; `packages/components/test/metadata.test.ts`; packed tarball contains both files and `verify-packs` reads them from the installed package)*
+- [~] CEM validated against the pinned schema and consumed by an independent CEM tool (e.g. an IDE custom-data generator or a third-party CEM reader) in a fixture outside the workspace *(Validated against `custom-elements-manifest@2.1.0` in `metadata.test.ts`. Remaining: an independent CEM consumer in a fixture outside the workspace.)*
 - [ ] Contract tests: metadata defaults, allowed values, reflection, events, slots, parts match browser behavior → results attached as `verified` provenance
-- [ ] All module and registration references resolve against `exports` and built files
+- [x] All module and registration references resolve against `exports` and built files *(`metadata.test.ts`: every CEM module path exists in `dist`, every registration is a package export; `verify-packs` now imports every JavaScript subpath of every package from its tarball)*
 - [ ] Minimal consumers exclude `components/models`, `core/model/schema`, the `components/composition` renderer, `core/inspect`, conformance/testing helpers, recipe presets, analyzer, Workbench, agent (the definition composer `compose()` is ordinary API)
 - [ ] Foundation and docs enrichment for the slice: spacing (strategy inputs, steps, semantic vocabulary, declared precedence), colour roles, and radii referenced from `@mote/tokens` inspection output (no recomputation); component categories, `@useFor`/`@notFor`/`@limitation`, property → CSS property → token mappings where statically determinable; updated dates only from authored metadata or source history
 
@@ -1177,6 +1177,7 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M4: boundary checks for registration entries (`boundary.registration.barrel`, `boundary.registration.sideEffects`) over packages and examples | 5 new checker tests; deliberate violation caught |
 | 2026-10-17 | M4: `mote-button` in component folders with layered exports and a skin-free foundation entry; form-strategy prototype (temporary native submitter); import-graph test | 13 browser tests × 3 engines + 2 graph tests; full verify passes |
 | 2026-10-17 | M4: conformance prototype — `conformance.v1`/`conformance-result.v1` schemas, `@mote/workbench/conformance` + `./conformance/button` + `./testing`; suite accepts 3 legitimate implementations and rejects 5 mutants | 10 browser tests × 3 engines, 3 node tests, 4 schema examples |
+| 2026-10-17 | M4: analyzer in the components build (published `custom-elements.json`, `mote.metadata.json`, `customElements` field); `previewRoles` emitted; documented component variables no longer counted as token reads; packed-consumer check imports every JS subpath and reads published metadata | 4 metadata tests; full verify |
 
 ## 11. Continuation
 

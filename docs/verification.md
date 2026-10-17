@@ -258,3 +258,11 @@ Command: `node research/benchmarks/run.mjs --samples 15` (results regenerated in
 | Suite against implementations | `npx vitest run packages/workbench/test/conformance.browser.test.ts` | Pass — 10 tests × 3 engines (30). All 11 cases pass for `mote-button`, `studio-button` (recomposed with product styles), and `alt-template-button` (different template keeping the anatomy). Mutants rejected on the targeted cases: `<div>` control → `native-control`, `keyboard-activation`; change events on programmatic writes → `programmatic-updates`; missing disabled binding → `disabled`; unowned listener added per connection → `reconnect`; control disabled while loading → `loading`. A filtered run reports the rest `not-executed` |
 | Contracts | `npx vitest run packages/workbench/test/conformance.test.ts tests/schemas` | Pass — the suite serializes to valid `conformance.v1` equal to the committed example; `checkConformance` reports id, version, contract, invariant-change, duplicate, and assertion-change problems with paths; schema examples (2 valid, 2 invalid) give the expected results |
 
+## 2026-10-17 — M4 published component metadata
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Metadata build | `npm run build` (`scripts/build-metadata.mjs`) | Writes `packages/components/custom-elements.json` and `mote.metadata.json` with no analyzer diagnostics (the step fails on any) |
+| Metadata contract | `npx vitest run packages/components/test/metadata.test.ts` | Pass — CEM valid against `custom-elements-manifest@2.1.0`, enrichment valid against `mote-metadata.v1`; `customElements` field, exports, and `files` declare both; module paths exist in `dist`; registrations are package exports; `mote-button` has `@mote/components/define/button`, `previewRoles` `role:primaryAction`/`role:secondaryAction`, definition template/styles, token reads without `--mote-button-*` component variables, parts `control`/`spinner`, slots `''`/`end`/`start`, no `_formDisabled` member |
+| Packed consumers | `node scripts/verify-packs.mjs` | Pass — now imports every JavaScript subpath export of every package from its tarball (registration entries are checked to load, not to export) and reads `@mote/components/custom-elements.json` and `mote.metadata.json` from the installed package |
+

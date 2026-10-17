@@ -7,6 +7,7 @@
   "sideEffects": [
     "./dist/**/*.define.js"
   ],
+  "customElements": "./custom-elements.json",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -24,10 +25,14 @@
       "types": "./dist/button/button.define.d.ts",
       "default": "./dist/button/button.define.js"
     },
+    "./custom-elements.json": "./custom-elements.json",
+    "./mote.metadata.json": "./mote.metadata.json",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "custom-elements.json",
+    "mote.metadata.json",
     "README.md"
   ],
   "dependencies": {
