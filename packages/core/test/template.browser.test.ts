@@ -304,6 +304,73 @@ describe('structural helpers', () => {
     expect([...moved].sort()).toEqual(['a', 'e']);
   });
 
+  it('repeat() restores focus and selection when the focused item itself moves', () => {
+    const order = signal(['a', 'b', 'c', 'd']);
+    render(
+      html`<ol>
+        ${repeat(
+          order,
+          (x) => x,
+          (x) => html`<li><input id=${`in-${x}`} value=${`value ${x}`} /></li>`,
+        )}
+      </ol>`,
+      container,
+    );
+    const input = container.querySelector('#in-a') as HTMLInputElement;
+    input.focus();
+    input.setSelectionRange(2, 5);
+    // b, c, d keep their relative order, so "a" is the item that moves.
+    order.value = ['b', 'c', 'd', 'a'];
+    flush();
+    expect([...container.querySelectorAll('input')].map((i) => i.id)).toEqual([
+      'in-b',
+      'in-c',
+      'in-d',
+      'in-a',
+    ]);
+    expect(document.activeElement).toBe(input);
+    expect([input.selectionStart, input.selectionEnd]).toEqual([2, 5]);
+  });
+
+  it('repeat() keeps order and DOM identity across randomized reorders, inserts, and removals', () => {
+    let seed = 42;
+    const random = () => {
+      seed = (seed * 1103515245 + 12345) % 2147483648;
+      return seed / 2147483648;
+    };
+    let next = 0;
+    const order = signal<number[]>(Array.from({ length: 30 }, () => next++));
+    render(
+      html`<ul>
+        ${repeat(
+          order,
+          (x) => x,
+          (x) => html`<li data-id=${x}>${x}</li>`,
+        )}
+      </ul>`,
+      container,
+    );
+    const nodes = new Map<number, Element>();
+    for (let round = 0; round < 60; round++) {
+      for (const li of container.querySelectorAll('li')) nodes.set(Number(li.textContent), li);
+      const current = order.value;
+      let updated = [...current];
+      const op = round % 4;
+      if (op === 0) updated.sort(() => random() - 0.5);
+      else if (op === 1) updated.splice(Math.floor(random() * updated.length), 0, next++, next++);
+      else if (op === 2) updated = updated.filter(() => random() > 0.2);
+      else updated = [...updated].reverse().concat(next++);
+      order.value = updated;
+      flush();
+      const lis = [...container.querySelectorAll('li')];
+      expect(lis.map((li) => Number(li.textContent))).toEqual(updated);
+      for (const li of lis) {
+        const id = Number(li.textContent);
+        if (current.includes(id)) expect(li, `item ${id} reused`).toBe(nodes.get(id));
+      }
+    }
+  });
+
   it('repeat() reports duplicate keys', () => {
     render(
       html`<p>

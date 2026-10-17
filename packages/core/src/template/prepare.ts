@@ -3,6 +3,7 @@
  * produce marker HTML, parse it once into a `<template>`, and record part positions.
  * Prepared templates are cached by strings identity.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError } from '../diagnostics/index.js';
 import type { TemplateKind } from './result.js';
 
@@ -98,13 +99,17 @@ export function buildTemplateHtml(strings: readonly string[]): {
       ) {
         throw new MoteError(
           'template.binding.mixed',
-          `The "${written}" binding must be a single interpolation with no surrounding text, e.g. ${written}=\${value}.`,
+          DEV
+            ? `The "${written}" binding must be a single interpolation with no surrounding text, e.g. ${written}=\${value}.`
+            : '',
         );
       }
       if (type === 'attribute' && /^on/i.test(name)) {
         throw new MoteError(
           'template.attribute.unsafe',
-          `Binding the "${name}" event-handler attribute is not allowed. Use @${name.slice(2)}=\${handler}.`,
+          DEV
+            ? `Binding the "${name}" event-handler attribute is not allowed. Use @${name.slice(2)}=\${handler}.`
+            : '',
         );
       }
       if (
@@ -113,7 +118,9 @@ export function buildTemplateHtml(strings: readonly string[]): {
       ) {
         throw new MoteError(
           'template.sink.unsafe',
-          `Binding "${written}" would parse a string as markup. Render a template or node in a child position instead.`,
+          DEV
+            ? `Binding "${written}" would parse a string as markup. Render a template or node in a child position instead.`
+            : '',
         );
       }
       out = out.slice(0, attr.start) + `${ATTRIBUTE_MARKER}${index}`;
@@ -285,7 +292,9 @@ export function buildTemplateHtml(strings: readonly string[]): {
         if (/<\/?$/.test(chunk)) {
           throw new MoteError(
             'template.binding.position',
-            `${location(strings, i)} is in a tag-name position. Dynamic tag names are not supported; branch with when() or match() between static tags.`,
+            DEV
+              ? `${location(strings, i)} is in a tag-name position. Dynamic tag names are not supported; branch with when() or match() between static tags.`
+              : '',
           );
         }
         out += `<!--${MARKER}-->`;
@@ -304,25 +313,29 @@ export function buildTemplateHtml(strings: readonly string[]): {
       case RAW:
         throw new MoteError(
           'template.binding.rawText',
-          `${location(strings, i)} is inside <${tagName.toLowerCase()}>, whose text is not parsed as markup. Bind its content as a property (e.g. .value=\${…} on <textarea>) or use css\`\` for styles.`,
+          DEV
+            ? `${location(strings, i)} is inside <${tagName.toLowerCase()}>, whose text is not parsed as markup. Bind its content as a property (e.g. .value=\${…} on <textarea>) or use css\`\` for styles.`
+            : '',
         );
       case COMMENT:
       case BOGUS:
         throw new MoteError(
           'template.binding.position',
-          `${location(strings, i)} is inside a comment.`,
+          DEV ? `${location(strings, i)} is inside a comment.` : '',
         );
       default:
         throw new MoteError(
           'template.binding.position',
-          `${location(strings, i)} is in a tag-name or attribute-name position. Bind attribute values (name=\${…}) or child content instead; dynamic tag and attribute names are not supported.`,
+          DEV
+            ? `${location(strings, i)} is in a tag-name or attribute-name position. Bind attribute values (name=\${…}) or child content instead; dynamic tag and attribute names are not supported.`
+            : '',
         );
     }
   }
   if (state !== TEXT && state !== RAW) {
     throw new MoteError(
       'template.parse.unclosed',
-      'The template ends inside a tag, attribute, or comment.',
+      DEV ? 'The template ends inside a tag, attribute, or comment.' : '',
     );
   }
   return { html: out, attributes };
@@ -406,7 +419,9 @@ export function prepareTemplate(
   if (actual !== expected) {
     throw new MoteError(
       'template.parse.mismatch',
-      `Found ${actual} of ${expected} bindings after parsing. Bindings inside a nested <template> element or in markup the HTML parser moves (e.g. text directly inside <table>) are not supported.`,
+      DEV
+        ? `Found ${actual} of ${expected} bindings after parsing. Bindings inside a nested <template> element or in markup the HTML parser moves (e.g. text directly inside <table>) are not supported.`
+        : '',
     );
   }
 

@@ -3,6 +3,7 @@
  * ordinary layered CSS. DOM-free; evaluated at module scope; no ResizeObserver or
  * re-render is involved in responsiveness. Contract: docs/architecture/layout-recipes.md.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 import { isRendering } from '../internal/render-context.js';
 import { unsafeCSS, type CSSResult } from '../styles/index.js';
@@ -92,7 +93,10 @@ const models = new WeakMap<LayoutRecipe, RecipeModel>();
 export function recipeModel(recipe: LayoutRecipe): RecipeModel {
   const model = models.get(recipe);
   if (!model)
-    throw new MoteError('recipe.unknown', 'Not a layout recipe created by defineLayoutRecipe.');
+    throw new MoteError(
+      'recipe.unknown',
+      DEV ? 'Not a layout recipe created by defineLayoutRecipe.' : '',
+    );
   return model;
 }
 
@@ -101,7 +105,7 @@ const RESERVED_REGIONS = new Set(['profile']);
 const CONFLICTING = ['display', 'flex-direction'];
 
 function fail(model: { name: string }, code: string, detail: string): never {
-  throw new MoteError(code, `Recipe "${model.name}": ${detail}`);
+  throw new MoteError(code, DEV ? `Recipe "${model.name}": ${detail}` : '');
 }
 
 function regionProps(
@@ -490,11 +494,13 @@ function createRecipe(model: RecipeModel): LayoutRecipe {
  * (`base → variant → condition`); unlayered component CSS overrides it.
  */
 export function defineLayoutRecipe(definition: RecipeDefinition): LayoutRecipe {
-  if (isRendering()) {
+  if (DEV && isRendering()) {
     reportMoteError(
       new MoteError(
         'recipe.render.definition',
-        `Recipe "${definition.name ?? 'recipe'}" was defined during render. Define recipes once at module scope; recreating them repeats CSS generation and creates new stylesheets.`,
+        DEV
+          ? `Recipe "${definition.name ?? 'recipe'}" was defined during render. Define recipes once at module scope; recreating them repeats CSS generation and creates new stylesheets.`
+          : '',
       ),
       { code: 'recipe.render.definition', origin: definition.name },
     );

@@ -1,0 +1,1090 @@
+{
+  "date": "2026-10-17T20:18:15.305Z",
+  "method": {
+    "timing": "performance.now() in the page around the operation plus a synchronous flush(); setup untimed; fresh setup per list sample; 3 warm-up rounds. List ops are applied to max(1, floor(1000/n)) independent copies and divided by the copy count; updateOneOf1000 is the mean of 100 increment+flush rounds (Firefox and WebKit clamp performance.now() to about 1 ms without cross-origin isolation)",
+    "samples": 15,
+    "memory": "Chromium only: CDP HeapProfiler.collectGarbage then Runtime.getHeapUsage().usedSize; allocation = heap after operation (no GC) minus heap before (after GC)",
+    "bundles": "esbuild bundle, minify, ESM, es2022; gzip level 9; Brotli quality 11",
+    "headless": true
+  },
+  "environment": {
+    "node": "v24.19.0",
+    "os": "win32 10.0.26300 x64",
+    "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "cores": 8,
+    "memoryGiB": 16
+  },
+  "esbuild": "0.28.2",
+  "sizes": {
+    "counter": {
+      "minified": 26246,
+      "gzip": 9280,
+      "brotli": 8429,
+      "modules": [
+        "packages/core/dist/prod/diagnostics/index.js",
+        "packages/core/dist/prod/element/define.js",
+        "packages/core/dist/prod/element/element.js",
+        "packages/core/dist/prod/element/events.js",
+        "packages/core/dist/prod/element/props.js",
+        "packages/core/dist/prod/internal/render-context.js",
+        "packages/core/dist/prod/reactive/graph.js",
+        "packages/core/dist/prod/scope/scope.js",
+        "packages/core/dist/prod/styles/index.js",
+        "packages/core/dist/prod/template/directive.js",
+        "packages/core/dist/prod/template/parts.js",
+        "packages/core/dist/prod/template/prepare.js",
+        "packages/core/dist/prod/template/result.js",
+        "research/benchmarks/size/counter.ts"
+      ]
+    },
+    "component": {
+      "minified": 29782,
+      "gzip": 10553,
+      "brotli": 9583,
+      "modules": [
+        "packages/core/dist/prod/diagnostics/index.js",
+        "packages/core/dist/prod/element/define.js",
+        "packages/core/dist/prod/element/element.js",
+        "packages/core/dist/prod/element/events.js",
+        "packages/core/dist/prod/element/props.js",
+        "packages/core/dist/prod/internal/render-context.js",
+        "packages/core/dist/prod/reactive/graph.js",
+        "packages/core/dist/prod/scope/scope.js",
+        "packages/core/dist/prod/styles/index.js",
+        "packages/core/dist/prod/template/directive.js",
+        "packages/core/dist/prod/template/directives.js",
+        "packages/core/dist/prod/template/parts.js",
+        "packages/core/dist/prod/template/prepare.js",
+        "packages/core/dist/prod/template/result.js",
+        "research/benchmarks/size/component.ts"
+      ]
+    },
+    "list": {
+      "minified": 30622,
+      "gzip": 11064,
+      "brotli": 10086,
+      "modules": [
+        "packages/core/dist/prod/collections/collection.js",
+        "packages/core/dist/prod/diagnostics/index.js",
+        "packages/core/dist/prod/element/define.js",
+        "packages/core/dist/prod/element/element.js",
+        "packages/core/dist/prod/element/events.js",
+        "packages/core/dist/prod/element/props.js",
+        "packages/core/dist/prod/internal/render-context.js",
+        "packages/core/dist/prod/reactive/graph.js",
+        "packages/core/dist/prod/scope/scope.js",
+        "packages/core/dist/prod/styles/index.js",
+        "packages/core/dist/prod/template/directive.js",
+        "packages/core/dist/prod/template/directives.js",
+        "packages/core/dist/prod/template/parts.js",
+        "packages/core/dist/prod/template/prepare.js",
+        "packages/core/dist/prod/template/repeat.js",
+        "packages/core/dist/prod/template/result.js",
+        "research/benchmarks/size/list.ts"
+      ]
+    },
+    "reactive": {
+      "minified": 5108,
+      "gzip": 1892,
+      "brotli": 1695,
+      "modules": [
+        "packages/core/dist/prod/diagnostics/index.js",
+        "packages/core/dist/prod/reactive/graph.js",
+        "research/benchmarks/size/reactive.ts"
+      ]
+    }
+  },
+  "runtime": {
+    "chromium": {
+      "version": "156.0.8078.4",
+      "counters": {
+        "bench-direct": {
+          "mount1000": {
+            "median": 12,
+            "p95": 16.4,
+            "min": 10.5,
+            "samples": [
+              16.3, 16.4, 13.1, 14.3, 15.3, 11.9, 11.5, 10.5, 11.5, 12.3, 11.1, 11.9, 12, 15.2, 11.1
+            ]
+          },
+          "updateAll1000": {
+            "median": 2.1,
+            "p95": 7,
+            "min": 1.3,
+            "samples": [5.4, 4.2, 4.2, 2.1, 1.7, 1.3, 1.7, 7, 2.1, 1.8, 2, 1.3, 2.3, 2.2, 1.6]
+          },
+          "updateOneOf1000": {
+            "median": 0.003,
+            "p95": 0.007,
+            "min": 0.002,
+            "samples": [
+              0.007, 0.004, 0.002, 0.003, 0.003, 0.003, 0.003, 0.003, 0.004, 0.004, 0.004, 0.002,
+              0.002, 0.004, 0.004
+            ]
+          },
+          "unmount1000": {
+            "median": 3.9,
+            "p95": 6,
+            "min": 2.9,
+            "samples": [4.6, 3.6, 3.5, 3.6, 5.9, 3.5, 3.5, 6, 3.9, 2.9, 4.7, 4.3, 5.7, 5, 3.1]
+          }
+        },
+        "bench-tracked": {
+          "mount1000": {
+            "median": 10.6,
+            "p95": 16,
+            "min": 9.8,
+            "samples": [
+              16, 13.5, 11.6, 10.6, 10, 10.4, 11.5, 10.6, 11.4, 11.1, 10, 10.3, 10.1, 9.8, 11.1
+            ]
+          },
+          "updateAll1000": {
+            "median": 2.1,
+            "p95": 4,
+            "min": 1.3,
+            "samples": [4, 3.3, 3.7, 2.1, 1.7, 2.7, 3.5, 3.7, 2.1, 1.8, 1.6, 1.4, 2.7, 1.5, 1.3]
+          },
+          "updateOneOf1000": {
+            "median": 0.003,
+            "p95": 0.006,
+            "min": 0.002,
+            "samples": [
+              0.006, 0.003, 0.004, 0.003, 0.003, 0.005, 0.003, 0.004, 0.004, 0.003, 0.002, 0.002,
+              0.003, 0.004, 0.002
+            ]
+          },
+          "unmount1000": {
+            "median": 3.6,
+            "p95": 6.6,
+            "min": 3,
+            "samples": [4.9, 5.1, 4, 3.1, 3.4, 3.6, 3.6, 6.6, 3.2, 3.5, 4.8, 3.1, 3.1, 5.3, 3]
+          }
+        }
+      },
+      "lists": {
+        "collection": {
+          "10": {
+            "replace": {
+              "median": 0.028,
+              "p95": 0.055,
+              "min": 0.015,
+              "samples": [
+                0.034, 0.031, 0.045, 0.024, 0.021, 0.015, 0.028, 0.025, 0.032, 0.029, 0.055, 0.032,
+                0.027, 0.026, 0.02
+              ]
+            },
+            "edit": {
+              "median": 0.019,
+              "p95": 0.03,
+              "min": 0.016,
+              "samples": [
+                0.017, 0.016, 0.021, 0.017, 0.03, 0.025, 0.016, 0.019, 0.019, 0.016, 0.028, 0.03,
+                0.027, 0.017, 0.02
+              ]
+            },
+            "insert": {
+              "median": 0.028,
+              "p95": 0.042,
+              "min": 0.02,
+              "samples": [
+                0.042, 0.029, 0.034, 0.031, 0.025, 0.026, 0.028, 0.029, 0.02, 0.025, 0.024, 0.032,
+                0.026, 0.023, 0.028
+              ]
+            },
+            "remove": {
+              "median": 0.025,
+              "p95": 0.034,
+              "min": 0.021,
+              "samples": [
+                0.025, 0.025, 0.031, 0.034, 0.025, 0.023, 0.03, 0.021, 0.023, 0.022, 0.033, 0.03,
+                0.026, 0.023, 0.032
+              ]
+            },
+            "reverse": {
+              "median": 0.037,
+              "p95": 0.049,
+              "min": 0.025,
+              "samples": [
+                0.04, 0.033, 0.049, 0.037, 0.037, 0.041, 0.033, 0.041, 0.025, 0.036, 0.048, 0.036,
+                0.049, 0.035, 0.033
+              ]
+            }
+          },
+          "100": {
+            "replace": {
+              "median": 0.24,
+              "p95": 0.6,
+              "min": 0.2,
+              "samples": [
+                0.31, 0.27, 0.26, 0.21, 0.23, 0.6, 0.28, 0.28, 0.22, 0.24, 0.23, 0.21, 0.23, 0.28,
+                0.2
+              ]
+            },
+            "edit": {
+              "median": 0.16,
+              "p95": 0.65,
+              "min": 0.07,
+              "samples": [
+                0.12, 0.14, 0.13, 0.1, 0.17, 0.17, 0.19, 0.16, 0.19, 0.65, 0.16, 0.26, 0.13, 0.07,
+                0.08
+              ]
+            },
+            "insert": {
+              "median": 0.11,
+              "p95": 0.17,
+              "min": 0.05,
+              "samples": [
+                0.06, 0.09, 0.14, 0.09, 0.06, 0.16, 0.17, 0.05, 0.12, 0.08, 0.14, 0.13, 0.1, 0.16,
+                0.11
+              ]
+            },
+            "remove": {
+              "median": 0.11,
+              "p95": 0.24,
+              "min": 0.05,
+              "samples": [
+                0.18, 0.05, 0.1, 0.07, 0.08, 0.15, 0.15, 0.13, 0.16, 0.07, 0.06, 0.11, 0.07, 0.24,
+                0.15
+              ]
+            },
+            "reverse": {
+              "median": 0.24,
+              "p95": 0.4,
+              "min": 0.17,
+              "samples": [
+                0.17, 0.29, 0.33, 0.32, 0.22, 0.29, 0.25, 0.24, 0.23, 0.4, 0.24, 0.23, 0.35, 0.22,
+                0.23
+              ]
+            }
+          },
+          "1000": {
+            "replace": {
+              "median": 1.6,
+              "p95": 5.8,
+              "min": 1.2,
+              "samples": [2.4, 1.2, 1.3, 1.9, 1.3, 2.6, 1.7, 1.6, 1.4, 1.2, 1.4, 1.6, 1.5, 5.8, 2.8]
+            },
+            "edit": {
+              "median": 0.8,
+              "p95": 1.1,
+              "min": 0.5,
+              "samples": [0.9, 0.8, 0.8, 0.8, 0.5, 0.8, 0.6, 0.7, 0.8, 0.9, 0.5, 0.9, 0.8, 0.6, 1.1]
+            },
+            "insert": {
+              "median": 1,
+              "p95": 2.1,
+              "min": 0.6,
+              "samples": [1.1, 0.9, 1.8, 1, 1, 1.5, 1.2, 0.6, 1, 0.7, 1.1, 0.8, 0.9, 2.1, 1]
+            },
+            "remove": {
+              "median": 1.3,
+              "p95": 4,
+              "min": 0.5,
+              "samples": [1.4, 1.6, 4, 1.7, 0.5, 0.6, 0.9, 0.7, 0.8, 1.6, 1.8, 1.3, 0.5, 1, 1.6]
+            },
+            "reverse": {
+              "median": 2.8,
+              "p95": 5.9,
+              "min": 1.6,
+              "samples": [2.1, 2.1, 1.6, 2.4, 1.7, 2.5, 3.5, 4.9, 4.2, 5.9, 2.8, 3.8, 2.2, 4.4, 3.1]
+            }
+          }
+        },
+        "handwritten": {
+          "10": {
+            "replace": {
+              "median": 0.022,
+              "p95": 0.031,
+              "min": 0.011,
+              "samples": [
+                0.023, 0.021, 0.024, 0.022, 0.031, 0.02, 0.019, 0.011, 0.023, 0.015, 0.026, 0.027,
+                0.016, 0.031, 0.016
+              ]
+            },
+            "edit": {
+              "median": 0.01,
+              "p95": 0.021,
+              "min": 0.006,
+              "samples": [
+                0.009, 0.014, 0.011, 0.009, 0.015, 0.021, 0.011, 0.006, 0.011, 0.012, 0.009, 0.01,
+                0.008, 0.01, 0.01
+              ]
+            },
+            "insert": {
+              "median": 0.02,
+              "p95": 0.038,
+              "min": 0.012,
+              "samples": [
+                0.021, 0.016, 0.022, 0.02, 0.022, 0.016, 0.022, 0.017, 0.012, 0.014, 0.018, 0.024,
+                0.028, 0.038, 0.014
+              ]
+            },
+            "remove": {
+              "median": 0.014,
+              "p95": 0.021,
+              "min": 0.008,
+              "samples": [
+                0.021, 0.018, 0.009, 0.014, 0.019, 0.021, 0.015, 0.008, 0.014, 0.012, 0.016, 0.013,
+                0.013, 0.013, 0.017
+              ]
+            },
+            "reverse": {
+              "median": 0.029,
+              "p95": 0.063,
+              "min": 0.022,
+              "samples": [
+                0.026, 0.063, 0.025, 0.034, 0.026, 0.047, 0.029, 0.026, 0.034, 0.031, 0.023, 0.037,
+                0.022, 0.03, 0.025
+              ]
+            }
+          },
+          "100": {
+            "replace": {
+              "median": 0.13,
+              "p95": 0.29,
+              "min": 0.08,
+              "samples": [
+                0.08, 0.13, 0.14, 0.14, 0.19, 0.13, 0.12, 0.29, 0.14, 0.12, 0.12, 0.17, 0.09, 0.15,
+                0.1
+              ]
+            },
+            "edit": {
+              "median": 0.08,
+              "p95": 1.03,
+              "min": 0.04,
+              "samples": [
+                0.06, 0.14, 0.08, 0.11, 1.03, 0.08, 0.08, 0.07, 0.14, 0.11, 0.05, 0.1, 0.04, 0.08,
+                0.06
+              ]
+            },
+            "insert": {
+              "median": 0.08,
+              "p95": 0.26,
+              "min": 0.06,
+              "samples": [
+                0.07, 0.09, 0.07, 0.07, 0.06, 0.2, 0.1, 0.07, 0.07, 0.08, 0.13, 0.1, 0.08, 0.06,
+                0.26
+              ]
+            },
+            "remove": {
+              "median": 0.07,
+              "p95": 0.2,
+              "min": 0.05,
+              "samples": [
+                0.05, 0.07, 0.07, 0.07, 0.06, 0.07, 0.11, 0.13, 0.06, 0.05, 0.06, 0.2, 0.14, 0.1,
+                0.17
+              ]
+            },
+            "reverse": {
+              "median": 0.25,
+              "p95": 0.4,
+              "min": 0.15,
+              "samples": [
+                0.34, 0.21, 0.21, 0.21, 0.26, 0.15, 0.26, 0.34, 0.24, 0.31, 0.4, 0.25, 0.32, 0.23,
+                0.22
+              ]
+            }
+          },
+          "1000": {
+            "replace": {
+              "median": 1.4,
+              "p95": 1.9,
+              "min": 0.7,
+              "samples": [0.7, 1.3, 1.4, 1.9, 1.7, 1.2, 1.2, 1.2, 1.2, 1.4, 1.4, 1.6, 1.3, 1.5, 1.4]
+            },
+            "edit": {
+              "median": 0.7,
+              "p95": 1,
+              "min": 0.4,
+              "samples": [0.8, 0.4, 0.9, 0.4, 0.8, 1, 0.6, 0.7, 0.4, 0.7, 0.6, 0.4, 0.7, 1, 0.6]
+            },
+            "insert": {
+              "median": 0.7,
+              "p95": 1,
+              "min": 0.4,
+              "samples": [0.7, 0.5, 0.9, 0.8, 0.7, 0.6, 1, 0.7, 0.8, 0.4, 0.6, 0.8, 0.6, 0.7, 0.8]
+            },
+            "remove": {
+              "median": 0.7,
+              "p95": 1.7,
+              "min": 0.4,
+              "samples": [0.7, 0.9, 0.6, 0.5, 0.7, 1, 1, 0.4, 0.6, 1.7, 0.6, 0.9, 1, 0.5, 0.7]
+            },
+            "reverse": {
+              "median": 2.3,
+              "p95": 4.7,
+              "min": 2,
+              "samples": [2, 2, 3.5, 3.1, 2.8, 2.3, 2.2, 2.1, 2.2, 3.5, 2.3, 3.6, 4.7, 2.2, 3.2]
+            }
+          }
+        }
+      },
+      "memory": {
+        "counters": {
+          "retainedBytesPerMountedCounter": 2335,
+          "heapAfterEachMountUnmountCycle": [1957364, 1997748, 2017552, 1994728, 2017364, 2015248],
+          "netGrowthAcrossCyclesBytes": 57884,
+          "largestCycleToCycleChangeBytes": 40384,
+          "heapAfter100MoreCyclesOf100Bytes": 1962520,
+          "growthFromFirstCycleTo106thBytes": 5156
+        },
+        "collection": {
+          "10": {
+            "retainedBytes": 11620,
+            "replaceAllocatedBytesMedian": 21672
+          },
+          "100": {
+            "retainedBytes": 73480,
+            "replaceAllocatedBytesMedian": 85096
+          },
+          "1000": {
+            "retainedBytes": 572964,
+            "replaceAllocatedBytesMedian": 645952
+          }
+        },
+        "handwritten": {
+          "10": {
+            "retainedBytes": 9136,
+            "replaceAllocatedBytesMedian": 19076
+          },
+          "100": {
+            "retainedBytes": 51388,
+            "replaceAllocatedBytesMedian": 70648
+          },
+          "1000": {
+            "retainedBytes": 482736,
+            "replaceAllocatedBytesMedian": 496268
+          }
+        }
+      },
+      "ownership": {
+        "cycles": 100,
+        "countersPerCycle": 100,
+        "before": {
+          "scopes": 0,
+          "listeners": 0,
+          "timers": 0,
+          "effects": 0
+        },
+        "after": {
+          "scopes": 0,
+          "listeners": 0,
+          "timers": 0,
+          "effects": 0
+        }
+      }
+    },
+    "firefox": {
+      "version": "157.0",
+      "counters": {
+        "bench-direct": {
+          "mount1000": {
+            "median": 51,
+            "p95": 70,
+            "min": 23,
+            "samples": [67, 61, 62, 70, 51, 60, 50, 51, 52, 44, 47, 36, 30, 23, 25]
+          },
+          "updateAll1000": {
+            "median": 7,
+            "p95": 13,
+            "min": 4,
+            "samples": [6, 11, 11, 7, 13, 7, 13, 7, 5, 6, 7, 8, 4, 6, 10]
+          },
+          "updateOneOf1000": {
+            "median": 0.01,
+            "p95": 0.07,
+            "min": 0,
+            "samples": [
+              0.01, 0.01, 0.01, 0.01, 0.01, 0.02, 0.01, 0.01, 0, 0, 0.01, 0.01, 0.01, 0.07, 0.01
+            ]
+          },
+          "unmount1000": {
+            "median": 17,
+            "p95": 44,
+            "min": 10,
+            "samples": [44, 21, 20, 17, 17, 18, 19, 27, 13, 15, 12, 12, 11, 10, 13]
+          }
+        },
+        "bench-tracked": {
+          "mount1000": {
+            "median": 25,
+            "p95": 55,
+            "min": 22,
+            "samples": [29, 24, 26, 23, 25, 24, 23, 22, 23, 25, 41, 55, 52, 46, 32]
+          },
+          "updateAll1000": {
+            "median": 5,
+            "p95": 10,
+            "min": 3,
+            "samples": [10, 10, 10, 3, 4, 5, 4, 5, 4, 3, 4, 6, 6, 5, 8]
+          },
+          "updateOneOf1000": {
+            "median": 0.01,
+            "p95": 0.05,
+            "min": 0,
+            "samples": [
+              0.01, 0.01, 0.01, 0.02, 0.05, 0.01, 0.02, 0.01, 0.01, 0, 0.01, 0.01, 0.01, 0.01, 0.01
+            ]
+          },
+          "unmount1000": {
+            "median": 11,
+            "p95": 19,
+            "min": 9,
+            "samples": [10, 11, 10, 11, 11, 15, 16, 19, 15, 11, 14, 10, 12, 9, 11]
+          }
+        }
+      },
+      "lists": {
+        "collection": {
+          "10": {
+            "replace": {
+              "median": 0.03,
+              "p95": 0.08,
+              "min": 0.02,
+              "samples": [
+                0.06, 0.07, 0.03, 0.03, 0.02, 0.08, 0.02, 0.03, 0.03, 0.02, 0.03, 0.03, 0.03, 0.02,
+                0.03
+              ]
+            },
+            "edit": {
+              "median": 0.02,
+              "p95": 0.08,
+              "min": 0.01,
+              "samples": [
+                0.02, 0.08, 0.02, 0.02, 0.01, 0.02, 0.02, 0.02, 0.07, 0.02, 0.02, 0.01, 0.02, 0.02,
+                0.02
+              ]
+            },
+            "insert": {
+              "median": 0.03,
+              "p95": 0.1,
+              "min": 0.03,
+              "samples": [
+                0.04, 0.03, 0.04, 0.03, 0.03, 0.04, 0.03, 0.08, 0.03, 0.03, 0.03, 0.03, 0.03, 0.03,
+                0.1
+              ]
+            },
+            "remove": {
+              "median": 0.02,
+              "p95": 0.09,
+              "min": 0.01,
+              "samples": [
+                0.03, 0.02, 0.03, 0.02, 0.02, 0.03, 0.09, 0.02, 0.02, 0.02, 0.01, 0.02, 0.02, 0.02,
+                0.02
+              ]
+            },
+            "reverse": {
+              "median": 0.07,
+              "p95": 0.13,
+              "min": 0.06,
+              "samples": [
+                0.07, 0.07, 0.13, 0.06, 0.07, 0.09, 0.06, 0.07, 0.06, 0.11, 0.07, 0.07, 0.07, 0.06,
+                0.07
+              ]
+            }
+          },
+          "100": {
+            "replace": {
+              "median": 0.3,
+              "p95": 0.7,
+              "min": 0.2,
+              "samples": [0.2, 0.3, 0.2, 0.7, 0.4, 0.3, 0.3, 0.3, 0.2, 0.3, 0.3, 0.2, 0.3, 0.2, 0.3]
+            },
+            "edit": {
+              "median": 0.1,
+              "p95": 0.8,
+              "min": 0,
+              "samples": [0.1, 0.1, 0.8, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0, 0.1, 0.2, 0.1, 0.1, 0.2]
+            },
+            "insert": {
+              "median": 0.2,
+              "p95": 0.9,
+              "min": 0.1,
+              "samples": [0.2, 0.2, 0.2, 0.9, 0.2, 0.1, 0.1, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.2, 0.1]
+            },
+            "remove": {
+              "median": 0.1,
+              "p95": 0.3,
+              "min": 0,
+              "samples": [0.1, 0.1, 0.3, 0.1, 0.2, 0.1, 0.2, 0.1, 0, 0.1, 0.1, 0.2, 0.2, 0.1, 0.2]
+            },
+            "reverse": {
+              "median": 0.6,
+              "p95": 1,
+              "min": 0.5,
+              "samples": [0.6, 0.7, 0.8, 0.5, 1, 0.8, 0.6, 0.5, 0.7, 0.7, 0.5, 0.6, 0.5, 0.5, 0.6]
+            }
+          },
+          "1000": {
+            "replace": {
+              "median": 2,
+              "p95": 3,
+              "min": 2,
+              "samples": [2, 2, 2, 3, 2, 2, 2, 3, 2, 3, 3, 2, 2, 2, 2]
+            },
+            "edit": {
+              "median": 1,
+              "p95": 2,
+              "min": 1,
+              "samples": [1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1]
+            },
+            "insert": {
+              "median": 1,
+              "p95": 3,
+              "min": 1,
+              "samples": [1, 1, 3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1]
+            },
+            "remove": {
+              "median": 1,
+              "p95": 2,
+              "min": 0,
+              "samples": [1, 2, 2, 1, 2, 1, 1, 1, 2, 2, 1, 0, 1, 1, 1]
+            },
+            "reverse": {
+              "median": 6,
+              "p95": 10,
+              "min": 5,
+              "samples": [6, 6, 6, 8, 6, 6, 6, 6, 6, 6, 10, 7, 5, 7, 6]
+            }
+          }
+        },
+        "handwritten": {
+          "10": {
+            "replace": {
+              "median": 0.03,
+              "p95": 0.12,
+              "min": 0.01,
+              "samples": [
+                0.03, 0.02, 0.03, 0.02, 0.03, 0.02, 0.02, 0.02, 0.01, 0.03, 0.04, 0.03, 0.02, 0.09,
+                0.12
+              ]
+            },
+            "edit": {
+              "median": 0.05,
+              "p95": 0.13,
+              "min": 0.01,
+              "samples": [
+                0.05, 0.06, 0.06, 0.05, 0.04, 0.04, 0.05, 0.09, 0.13, 0.05, 0.07, 0.02, 0.02, 0.01,
+                0.01
+              ]
+            },
+            "insert": {
+              "median": 0.03,
+              "p95": 0.11,
+              "min": 0.01,
+              "samples": [
+                0.05, 0.03, 0.11, 0.03, 0.07, 0.02, 0.06, 0.02, 0.02, 0.04, 0.01, 0.02, 0.02, 0.02,
+                0.03
+              ]
+            },
+            "remove": {
+              "median": 0.02,
+              "p95": 0.07,
+              "min": 0.01,
+              "samples": [
+                0.07, 0.06, 0.03, 0.02, 0.02, 0.02, 0.02, 0.01, 0.02, 0.03, 0.02, 0.02, 0.03, 0.02,
+                0.02
+              ]
+            },
+            "reverse": {
+              "median": 0.06,
+              "p95": 0.09,
+              "min": 0.05,
+              "samples": [
+                0.09, 0.08, 0.05, 0.06, 0.07, 0.05, 0.05, 0.06, 0.05, 0.06, 0.05, 0.07, 0.05, 0.06,
+                0.05
+              ]
+            }
+          },
+          "100": {
+            "replace": {
+              "median": 0.2,
+              "p95": 0.7,
+              "min": 0.1,
+              "samples": [0.2, 0.1, 0.2, 0.2, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.2, 0.1, 0.7]
+            },
+            "edit": {
+              "median": 0.1,
+              "p95": 0.1,
+              "min": 0,
+              "samples": [0, 0, 0.1, 0.1, 0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0]
+            },
+            "insert": {
+              "median": 0.1,
+              "p95": 0.6,
+              "min": 0.1,
+              "samples": [0.6, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+            },
+            "remove": {
+              "median": 0.1,
+              "p95": 0.6,
+              "min": 0,
+              "samples": [0.1, 0.2, 0, 0, 0.1, 0.1, 0.6, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1]
+            },
+            "reverse": {
+              "median": 0.7,
+              "p95": 1.7,
+              "min": 0.5,
+              "samples": [0.6, 0.8, 0.7, 0.8, 0.7, 0.6, 0.5, 1.7, 1.2, 0.9, 0.7, 0.7, 0.6, 0.8, 1.1]
+            }
+          },
+          "1000": {
+            "replace": {
+              "median": 2,
+              "p95": 3,
+              "min": 1,
+              "samples": [2, 2, 2, 2, 1, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1]
+            },
+            "edit": {
+              "median": 1,
+              "p95": 6,
+              "min": 0,
+              "samples": [1, 0, 1, 1, 0, 2, 6, 2, 0, 1, 1, 1, 0, 1, 0]
+            },
+            "insert": {
+              "median": 1,
+              "p95": 2,
+              "min": 0,
+              "samples": [1, 1, 1, 0, 1, 1, 0, 1, 2, 1, 1, 0, 1, 0, 1]
+            },
+            "remove": {
+              "median": 1,
+              "p95": 5,
+              "min": 0,
+              "samples": [5, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            },
+            "reverse": {
+              "median": 5,
+              "p95": 10,
+              "min": 3,
+              "samples": [7, 6, 5, 5, 7, 3, 4, 4, 5, 6, 4, 4, 5, 4, 10]
+            }
+          }
+        }
+      },
+      "memory": {},
+      "ownership": {
+        "cycles": 100,
+        "countersPerCycle": 100,
+        "before": {
+          "scopes": 0,
+          "listeners": 0,
+          "timers": 0,
+          "effects": 0
+        },
+        "after": {
+          "scopes": 0,
+          "listeners": 0,
+          "timers": 0,
+          "effects": 0
+        }
+      }
+    },
+    "webkit": {
+      "version": "27.2",
+      "counters": {
+        "bench-direct": {
+          "mount1000": {
+            "median": 15,
+            "p95": 182,
+            "min": 9,
+            "samples": [15, 13, 12, 12, 9, 13, 11, 11, 22, 182, 54, 55, 35, 53, 36]
+          },
+          "updateAll1000": {
+            "median": 3,
+            "p95": 7,
+            "min": 1,
+            "samples": [2, 2, 2, 1, 1, 2, 3, 2, 6, 5, 5, 7, 4, 5, 4]
+          },
+          "updateOneOf1000": {
+            "median": 0,
+            "p95": 0.01,
+            "min": 0,
+            "samples": [0.01, 0.01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0.01]
+          },
+          "unmount1000": {
+            "median": 7,
+            "p95": 513,
+            "min": 4,
+            "samples": [6, 6, 6, 4, 6, 4, 7, 6, 513, 22, 21, 25, 24, 32, 20]
+          }
+        },
+        "bench-tracked": {
+          "mount1000": {
+            "median": 74,
+            "p95": 680,
+            "min": 40,
+            "samples": [49, 52, 50, 680, 97, 40, 55, 74, 129, 291, 105, 67, 116, 73, 242]
+          },
+          "updateAll1000": {
+            "median": 7,
+            "p95": 3007005,
+            "min": 4,
+            "samples": [5, 6, 3007005, 38, 244, 15, 5, 4, 7, 5, 4, 32, 6, 20, 22]
+          },
+          "updateOneOf1000": {
+            "median": 0.01,
+            "p95": 0.55,
+            "min": 0,
+            "samples": [
+              0, 0.01, 0, 0.21, 0.01, 0.01, 0, 0.55, 0.01, 0.01, 0.01, 0.01, 0.01, 0, 0.01
+            ]
+          },
+          "unmount1000": {
+            "median": 44,
+            "p95": 138,
+            "min": 21,
+            "samples": [21, 25, 30, 131, 94, 85, 23, 138, 26, 43, 44, 46, 86, 26, 70]
+          }
+        }
+      },
+      "lists": {
+        "collection": {
+          "10": {
+            "replace": {
+              "median": 0.06,
+              "p95": 1.07,
+              "min": 0.05,
+              "samples": [
+                0.27, 0.3, 1.07, 0.05, 0.06, 0.09, 0.16, 0.06, 0.06, 0.05, 0.06, 0.15, 0.06, 0.08,
+                0.06
+              ]
+            },
+            "edit": {
+              "median": 0.05,
+              "p95": 0.22,
+              "min": 0.04,
+              "samples": [
+                0.05, 0.04, 0.13, 0.04, 0.04, 0.04, 0.05, 0.05, 0.22, 0.08, 0.04, 0.06, 0.04, 0.04,
+                0.15
+              ]
+            },
+            "insert": {
+              "median": 0.08,
+              "p95": 0.21,
+              "min": 0.06,
+              "samples": [
+                0.11, 0.08, 0.07, 0.1, 0.06, 0.08, 0.21, 0.08, 0.07, 0.09, 0.09, 0.08, 0.08, 0.08,
+                0.08
+              ]
+            },
+            "remove": {
+              "median": 0.22,
+              "p95": 4.83,
+              "min": 0.04,
+              "samples": [
+                0.1, 0.09, 0.07, 0.04, 0.05, 4.83, 0.33, 0.72, 0.54, 0.33, 0.1, 0.22, 0.06, 0.71,
+                0.41
+              ]
+            },
+            "reverse": {
+              "median": 0.24,
+              "p95": 0.64,
+              "min": 0.18,
+              "samples": [
+                0.64, 0.43, 0.54, 0.39, 0.32, 0.2, 0.18, 0.23, 0.25, 0.18, 0.22, 0.24, 0.22, 0.29,
+                0.2
+              ]
+            }
+          },
+          "100": {
+            "replace": {
+              "median": 0.6,
+              "p95": 5.1,
+              "min": 0.3,
+              "samples": [0.5, 5.1, 5, 0.6, 1.4, 2.2, 0.7, 0.3, 0.7, 0.6, 0.4, 0.5, 0.4, 0.6, 0.8]
+            },
+            "edit": {
+              "median": 0.3,
+              "p95": 0.4,
+              "min": 0.2,
+              "samples": [0.3, 0.3, 0.3, 0.4, 0.3, 0.3, 0.2, 0.3, 0.3, 0.2, 0.3, 0.2, 0.3, 0.3, 0.3]
+            },
+            "insert": {
+              "median": 0.4,
+              "p95": 1.5,
+              "min": 0.2,
+              "samples": [0.2, 0.3, 0.5, 0.3, 0.4, 0.4, 0.3, 0.3, 0.5, 0.8, 1, 0.4, 0.3, 1.5, 0.3]
+            },
+            "remove": {
+              "median": 0.5,
+              "p95": 0.6,
+              "min": 0.5,
+              "samples": [0.5, 0.5, 0.5, 0.5, 0.6, 0.5, 0.5, 0.5, 0.5, 0.6, 0.5, 0.5, 0.5, 0.6, 0.5]
+            },
+            "reverse": {
+              "median": 2.5,
+              "p95": 38.5,
+              "min": 2.1,
+              "samples": [
+                2.6, 2.2, 2.5, 2.6, 2.4, 2.1, 2.7, 2.1, 2.1, 6.8, 2.5, 2.7, 2.3, 2.8, 38.5
+              ]
+            }
+          },
+          "1000": {
+            "replace": {
+              "median": 4,
+              "p95": 31,
+              "min": 3,
+              "samples": [31, 5, 5, 4, 11, 4, 5, 4, 3, 3, 3, 4, 5, 4, 4]
+            },
+            "edit": {
+              "median": 3,
+              "p95": 5,
+              "min": 2,
+              "samples": [3, 3, 5, 3, 4, 4, 2, 3, 5, 3, 3, 4, 3, 3, 3]
+            },
+            "insert": {
+              "median": 4,
+              "p95": 26,
+              "min": 3,
+              "samples": [9, 5, 3, 6, 3, 4, 3, 4, 4, 3, 3, 4, 6, 3, 26]
+            },
+            "remove": {
+              "median": 5,
+              "p95": 15,
+              "min": 4,
+              "samples": [15, 5, 5, 7, 5, 7, 4, 7, 6, 10, 5, 7, 4, 4, 5]
+            },
+            "reverse": {
+              "median": 18,
+              "p95": 43,
+              "min": 11,
+              "samples": [24, 19, 16, 24, 18, 18, 15, 11, 18, 21, 18, 19, 15, 15, 43]
+            }
+          }
+        },
+        "handwritten": {
+          "10": {
+            "replace": {
+              "median": 0.06,
+              "p95": 0.08,
+              "min": 0.03,
+              "samples": [
+                0.06, 0.03, 0.08, 0.04, 0.07, 0.03, 0.06, 0.06, 0.03, 0.06, 0.04, 0.06, 0.07, 0.03,
+                0.04
+              ]
+            },
+            "edit": {
+              "median": 0.02,
+              "p95": 0.59,
+              "min": 0.01,
+              "samples": [
+                0.02, 0.01, 0.02, 0.02, 0.02, 0.02, 0.02, 0.01, 0.01, 0.01, 0.03, 0.04, 0.59, 0.04,
+                0.21
+              ]
+            },
+            "insert": {
+              "median": 0.08,
+              "p95": 0.39,
+              "min": 0.04,
+              "samples": [
+                0.09, 0.39, 0.05, 0.11, 0.05, 0.1, 0.08, 0.09, 0.04, 0.05, 0.05, 0.04, 0.06, 0.12,
+                0.08
+              ]
+            },
+            "remove": {
+              "median": 0.12,
+              "p95": 0.5,
+              "min": 0.04,
+              "samples": [
+                0.06, 0.04, 0.12, 0.05, 0.09, 0.39, 0.08, 0.12, 0.17, 0.07, 0.21, 0.16, 0.36, 0.5,
+                0.25
+              ]
+            },
+            "reverse": {
+              "median": 0.63,
+              "p95": 3.3,
+              "min": 0.33,
+              "samples": [
+                0.45, 0.63, 0.56, 0.82, 0.63, 0.55, 0.38, 1.35, 0.57, 0.33, 1.26, 1.81, 2.05, 3.3,
+                2.65
+              ]
+            }
+          },
+          "100": {
+            "replace": {
+              "median": 1.8,
+              "p95": 21.4,
+              "min": 0.3,
+              "samples": [4.6, 0.8, 21.4, 0.7, 7.3, 3.6, 6.9, 1.8, 0.4, 1.6, 3.8, 4.1, 1, 0.3, 0.7]
+            },
+            "edit": {
+              "median": 1.8,
+              "p95": 5,
+              "min": 0.4,
+              "samples": [5, 2, 2, 1.7, 1.8, 1.4, 1.2, 1.7, 2.2, 1.4, 3.7, 2.4, 3.9, 0.6, 0.4]
+            },
+            "insert": {
+              "median": 0.2,
+              "p95": 0.5,
+              "min": 0.1,
+              "samples": [0.3, 0.1, 0.5, 0.3, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.1, 0.2, 0.1, 0.2, 0.2]
+            },
+            "remove": {
+              "median": 0.3,
+              "p95": 0.4,
+              "min": 0.2,
+              "samples": [0.2, 0.2, 0.3, 0.3, 0.3, 0.2, 0.3, 0.3, 0.3, 0.3, 0.4, 0.3, 0.3, 0.4, 0.3]
+            },
+            "reverse": {
+              "median": 2.2,
+              "p95": 2.8,
+              "min": 1.8,
+              "samples": [2.2, 2.3, 2.5, 2.1, 1.8, 2.1, 2.8, 2.2, 1.9, 1.9, 2.1, 2.2, 2.6, 2.2, 1.9]
+            }
+          },
+          "1000": {
+            "replace": {
+              "median": 3,
+              "p95": 5,
+              "min": 1,
+              "samples": [3, 2, 3, 5, 3, 3, 3, 2, 2, 3, 3, 3, 2, 1, 3]
+            },
+            "edit": {
+              "median": 1,
+              "p95": 2,
+              "min": 1,
+              "samples": [1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2]
+            },
+            "insert": {
+              "median": 2,
+              "p95": 6,
+              "min": 1,
+              "samples": [2, 6, 1, 1, 1, 2, 1, 2, 2, 1, 3, 2, 3, 3, 2]
+            },
+            "remove": {
+              "median": 4,
+              "p95": 19,
+              "min": 2,
+              "samples": [19, 3, 2, 5, 4, 5, 3, 4, 4, 4, 2, 14, 3, 3, 3]
+            },
+            "reverse": {
+              "median": 28,
+              "p95": 48,
+              "min": 24,
+              "samples": [35, 28, 26, 25, 24, 28, 37, 32, 29, 28, 28, 32, 26, 48, 29]
+            }
+          }
+        }
+      },
+      "memory": {},
+      "ownership": {
+        "cycles": 100,
+        "countersPerCycle": 100,
+        "before": {
+          "scopes": 0,
+          "listeners": 0,
+          "timers": 0,
+          "effects": 0
+        },
+        "after": {
+          "scopes": 0,
+          "listeners": 0,
+          "timers": 0,
+          "effects": 0
+        }
+      }
+    }
+  }
+}

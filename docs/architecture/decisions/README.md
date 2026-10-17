@@ -43,3 +43,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0028](./0028-legacy-route-redirects.md) | Legacy route redirects | Proposed | Workbench |
 | [0029](./0029-versioning-checkpoints.md) | M8 compatibility checkpoint and M12 final freeze | Accepted | Process |
 | [0030](./0030-workbench-remount-policy.md) | Workbench preview remount policy | Accepted | Workbench |
+| [0031](./0031-dev-prod-builds-and-size-budget.md) | Development/production builds and core size budget | Accepted | Core |

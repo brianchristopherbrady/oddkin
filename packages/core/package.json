@@ -8,67 +8,83 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "development": "./dist/index.js",
+      "default": "./dist/prod/index.js"
     },
     "./reactive": {
       "types": "./dist/reactive/index.d.ts",
-      "default": "./dist/reactive/index.js"
+      "development": "./dist/reactive/index.js",
+      "default": "./dist/prod/reactive/index.js"
     },
     "./scope": {
       "types": "./dist/scope/index.d.ts",
-      "default": "./dist/scope/index.js"
+      "development": "./dist/scope/index.js",
+      "default": "./dist/prod/scope/index.js"
     },
     "./template": {
       "types": "./dist/template/index.d.ts",
-      "default": "./dist/template/index.js"
+      "development": "./dist/template/index.js",
+      "default": "./dist/prod/template/index.js"
     },
     "./styles": {
       "types": "./dist/styles/index.d.ts",
-      "default": "./dist/styles/index.js"
+      "development": "./dist/styles/index.js",
+      "default": "./dist/prod/styles/index.js"
     },
     "./layout": {
       "types": "./dist/layout/index.d.ts",
-      "default": "./dist/layout/index.js"
+      "development": "./dist/layout/index.js",
+      "default": "./dist/prod/layout/index.js"
     },
     "./layout/inspect": {
       "types": "./dist/layout/inspect.d.ts",
-      "default": "./dist/layout/inspect.js"
+      "development": "./dist/layout/inspect.js",
+      "default": "./dist/prod/layout/inspect.js"
     },
     "./collections": {
       "types": "./dist/collections/index.d.ts",
-      "default": "./dist/collections/index.js"
+      "development": "./dist/collections/index.js",
+      "default": "./dist/prod/collections/index.js"
     },
     "./model": {
       "types": "./dist/model/index.d.ts",
-      "default": "./dist/model/index.js"
+      "development": "./dist/model/index.js",
+      "default": "./dist/prod/model/index.js"
     },
     "./model/schema": {
       "types": "./dist/model/schema.d.ts",
-      "default": "./dist/model/schema.js"
+      "development": "./dist/model/schema.js",
+      "default": "./dist/prod/model/schema.js"
     },
     "./element": {
       "types": "./dist/element/index.d.ts",
-      "default": "./dist/element/index.js"
+      "development": "./dist/element/index.js",
+      "default": "./dist/prod/element/index.js"
     },
     "./helpers/class-map": {
       "types": "./dist/helpers/class-map.d.ts",
-      "default": "./dist/helpers/class-map.js"
+      "development": "./dist/helpers/class-map.js",
+      "default": "./dist/prod/helpers/class-map.js"
     },
     "./helpers/style-map": {
       "types": "./dist/helpers/style-map.d.ts",
-      "default": "./dist/helpers/style-map.js"
+      "development": "./dist/helpers/style-map.js",
+      "default": "./dist/prod/helpers/style-map.js"
     },
     "./helpers/ref": {
       "types": "./dist/helpers/ref.d.ts",
-      "default": "./dist/helpers/ref.js"
+      "development": "./dist/helpers/ref.js",
+      "default": "./dist/prod/helpers/ref.js"
     },
     "./helpers/live": {
       "types": "./dist/helpers/live.d.ts",
-      "default": "./dist/helpers/live.js"
+      "development": "./dist/helpers/live.js",
+      "default": "./dist/prod/helpers/live.js"
     },
     "./diagnostics": {
       "types": "./dist/diagnostics/index.d.ts",
-      "default": "./dist/diagnostics/index.js"
+      "development": "./dist/diagnostics/index.js",
+      "default": "./dist/prod/diagnostics/index.js"
     },
     "./package.json": "./package.json"
   },

@@ -3,6 +3,7 @@
  * from the factory — core's are neutral lengths; a design system binds them to its roles.
  * Contract: docs/architecture/layout-recipes.md §3.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError } from '../diagnostics/index.js';
 
 export type Declarations = ReadonlyArray<readonly [property: string, value: string]>;
@@ -51,7 +52,9 @@ export function cssValue(value: unknown, where: string): string {
   if (typeof value !== 'string' || value.trim() === '' || UNSAFE.test(value)) {
     throw new MoteError(
       'recipe.value.invalid',
-      `${where}: ${JSON.stringify(value)} is not a CSS value (no ;, braces, angle brackets, backslashes, or comments).`,
+      DEV
+        ? `${where}: ${JSON.stringify(value)} is not a CSS value (no ;, braces, angle brackets, backslashes, or comments).`
+        : '',
     );
   }
   return value.trim();
@@ -135,7 +138,7 @@ function keyword(
   if (!allowed.has(value))
     throw new MoteError(
       'recipe.value.invalid',
-      `${where}: "${value}" is not one of ${[...allowed].join(', ')}.`,
+      DEV ? `${where}: "${value}" is not one of ${[...allowed].join(', ')}.` : '',
     );
   return value;
 }
@@ -173,7 +176,7 @@ export function createLayoutHelpers(overrides: Partial<LayoutDefaults> = {}): La
       if (!Number.isInteger(columns) || columns < 1 || columns > 24) {
         throw new MoteError(
           'recipe.value.invalid',
-          `grid columns: ${JSON.stringify(columns)} must be an integer from 1 to 24.`,
+          DEV ? `grid columns: ${JSON.stringify(columns)} must be an integer from 1 to 24.` : '',
         );
       }
       const align = keyword(options.align, ALIGN, 'grid align');
@@ -192,7 +195,7 @@ export function createLayoutHelpers(overrides: Partial<LayoutDefaults> = {}): La
       if (fill !== 'auto-fill' && fill !== 'auto-fit')
         throw new MoteError(
           'recipe.value.invalid',
-          `autoGrid fill: "${String(fill)}" must be auto-fill or auto-fit.`,
+          DEV ? `autoGrid fill: "${String(fill)}" must be auto-fill or auto-fit.` : '',
         );
       const min = cssValue(options.min ?? defaults.itemMin, 'autoGrid min');
       return make('autoGrid', options, [
@@ -210,7 +213,7 @@ export function createLayoutHelpers(overrides: Partial<LayoutDefaults> = {}): La
       ) {
         throw new MoteError(
           'recipe.value.invalid',
-          'split needs distinct "side" and "main" region names.',
+          DEV ? 'split needs distinct "side" and "main" region names.' : '',
         );
       }
       return make(
@@ -242,7 +245,7 @@ export function createLayoutHelpers(overrides: Partial<LayoutDefaults> = {}): La
           if (!/^(--)?[a-z][a-z0-9-]*$/.test(property))
             throw new MoteError(
               'recipe.value.invalid',
-              `"${property}" is not a CSS property name.`,
+              DEV ? `"${property}" is not a CSS property name.` : '',
             );
           return [property, cssValue(value, `css ${property}`)] as const;
         }),

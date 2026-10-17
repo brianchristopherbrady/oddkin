@@ -12,6 +12,7 @@
  *   batch boundary. Effects are deduplicated into one microtask flush; commit-phase
  *   effects run before post-phase effects in each pass.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 
 /** Brand identifying any Mote readable (signals, computed values, readable adapters). */
@@ -156,7 +157,9 @@ class SignalNode<T> extends ReadableNode<T> implements Signal<T> {
     if (computingDepth > 0) {
       throw new MoteError(
         'reactive.write.inComputed',
-        `Cannot write ${label('signal', this.name)} while a computed value is evaluating. Computed values must be pure; use an effect instead.`,
+        DEV
+          ? `Cannot write ${label('signal', this.name)} while a computed value is evaluating. Computed values must be pure; use an effect instead.`
+          : '',
       );
     }
     if (this.equals(this.#value, next)) return;
@@ -219,7 +222,7 @@ class ComputedNode<T> extends ReadableNode<T> implements Consumer {
     if (this.#computing) {
       throw new MoteError(
         'reactive.cycle',
-        `${label('Computed value', this.name)} depends on itself.`,
+        DEV ? `${label('Computed value', this.name)} depends on itself.` : '',
       );
     }
     if (!this.#stale && this.#globalSeen === globalVersion) return;
@@ -436,7 +439,9 @@ function flushListeners(): void {
         reportMoteError(
           new MoteError(
             'reactive.flush.runaway',
-            `Subscribers kept changing values after ${MAX_LISTENER_PASSES} passes; notifications stopped.`,
+            DEV
+              ? `Subscribers kept changing values after ${MAX_LISTENER_PASSES} passes; notifications stopped.`
+              : '',
           ),
           { code: 'reactive.flush.runaway' },
         );
@@ -513,7 +518,9 @@ export function flush(): void {
         reportMoteError(
           new MoteError(
             'reactive.flush.runaway',
-            `Effects kept scheduling work after ${MAX_FLUSH_PASSES} passes; the flush stopped. An effect probably writes a value it also reads.`,
+            DEV
+              ? `Effects kept scheduling work after ${MAX_FLUSH_PASSES} passes; the flush stopped. An effect probably writes a value it also reads.`
+              : '',
           ),
           { code: 'reactive.flush.runaway' },
         );
@@ -558,7 +565,7 @@ export function effect(fn: EffectFn, options?: EffectOptions): () => void {
   if (computingDepth > 0) {
     throw new MoteError(
       'reactive.effect.inComputed',
-      'Cannot create an effect while a computed value is evaluating.',
+      DEV ? 'Cannot create an effect while a computed value is evaluating.' : '',
     );
   }
   const node = new EffectNode(fn, options);

@@ -9,3 +9,4 @@ playwright-report/
 .tmp/
 .vitest/
 examples/tokens-css-only/generated/
+research/benchmarks/.build/

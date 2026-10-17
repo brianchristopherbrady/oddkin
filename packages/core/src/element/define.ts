@@ -2,6 +2,7 @@
  * Registration. `define()` is idempotent for the same constructor, reports collisions
  * clearly, and registers declared dependencies first.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError } from '../diagnostics/index.js';
 
 export interface DefineOptions {
@@ -42,7 +43,9 @@ export function define<C extends CustomElementConstructor>(
   if (!VALID_NAME.test(tagName) || RESERVED.has(tagName)) {
     throw new MoteError(
       'registry.name.invalid',
-      `"${tagName}" is not a valid custom element name. Names start with a lowercase letter, contain a hyphen, and have no uppercase letters.`,
+      DEV
+        ? `"${tagName}" is not a valid custom element name. Names start with a lowercase letter, contain a hyphen, and have no uppercase letters.`
+        : '',
     );
   }
   for (const [name, dependency] of Object.entries((ctor as WithDependencies).dependencies ?? {})) {
@@ -53,14 +56,18 @@ export function define<C extends CustomElementConstructor>(
   if (existing) {
     throw new MoteError(
       'registry.collision',
-      `<${tagName}> is already defined by a different class (${existing.name || 'anonymous'}). This usually means two copies or versions of a package are loaded; deduplicate them, or use a scoped registry.`,
+      DEV
+        ? `<${tagName}> is already defined by a different class (${existing.name || 'anonymous'}). This usually means two copies or versions of a package are loaded; deduplicate them, or use a scoped registry.`
+        : '',
     );
   }
   const otherName = registry.getName?.(ctor);
   if (otherName) {
     throw new MoteError(
       'registry.constructorReused',
-      `${ctor.name || 'This class'} is already defined as <${otherName}>. A class can be registered under one name; extend it to register another.`,
+      DEV
+        ? `${ctor.name || 'This class'} is already defined as <${otherName}>. A class can be registered under one name; extend it to register another.`
+        : '',
     );
   }
   registry.define(tagName, ctor);

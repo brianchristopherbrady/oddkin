@@ -11,7 +11,7 @@
     "node": ">=24.12"
   },
   "scripts": {
-    "build": "tsc -b && node scripts/build-token-assets.mjs",
+    "build": "tsc -b && node scripts/build-token-assets.mjs && node scripts/build-production.mjs",
     "clean": "tsc -b --clean",
     "typecheck": "tsc -b && tsc -p tsconfig.tests.json",
     "lint": "npm run lint:boundaries && npm run format:check",
@@ -21,7 +21,8 @@
     "test": "npm run build && vitest run",
     "test:e2e": "playwright test",
     "verify:packs": "node scripts/verify-packs.mjs",
-    "verify": "npm run lint && npm run typecheck && npm test && npm run test:e2e && npm run verify:packs"
+    "verify": "npm run lint && npm run typecheck && npm test && npm run size && npm run test:e2e && npm run verify:packs",
+    "size": "node scripts/check-size.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
@@ -31,6 +32,7 @@
     "ajv-formats": "^3.0.1",
     "custom-elements-manifest": "2.1.0",
     "es-module-lexer": "^3.0.4",
+    "esbuild": "0.28.2",
     "playwright": "^1.64.1",
     "prettier": "^3.9.10",
     "typescript": "^7.0.2",

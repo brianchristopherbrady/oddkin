@@ -121,6 +121,7 @@ Required semantics:
 - Compose parent cancellation, caller signals, supersession, and timeouts; keep the real reason; release bridging listeners and timers when work settles. `AbortSignal.any()` / `timeout()` help but do not replace Mote's own bookkeeping. [R23]
 - Cancellation is cooperative. Guard results at the commit boundary even when a task ignores its signal. Expected cancellation is distinct from real failure.
 - Unowned standalone effects return an explicit disposer. Dev mode surfaces likely leaks; production needs no stack capture.
+- `scopeStats()` (public, both builds) returns live counts of scopes, listeners, timers, and effects owned through scopes, for leak tests: counts return to baseline after mount/remove cycles (`research/benchmarks`: 100 cycles × 100 counters in three engines).
 
 | Lifetime | Starts | Ends |
 | --- | --- | --- |
@@ -188,7 +189,7 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 - **Helpers** (separate subpaths, not in the root entry): `helpers/class-map` toggles only its own classes through `classList`; `helpers/style-map` writes through the CSSOM (works under strict `style-src`); `helpers/ref` provides `createRef()` (reactive `value`) and callback `ref()`, bound as `ref=${…}` and never written as an attribute; `helpers/live` compares with the element's current property, defers writes during IME composition, and keeps the caret of a focused field. Autofill is handled by the same current-value comparison.
 - **Light-DOM styles:** components with `shadowRootOptions = null` add their `styles` once to the nearest root (document or shadow root), reference-counted across instances and removed with the last one; selectors must scope themselves, and `:host` in such styles reports `element.styles.lightDomHost`.
 - **`css` interpolation:** `css` results, finite numbers, and `var(--name[, fallback])` strings whose fallback has balanced parentheses and no declaration, block, string, comment, `!`, `url()`/`image()`, or at-rule syntax (`isCSSVariableReference`).
-- **Keyed `repeat`:** a longest run of items already in order stays in place and only the others move, using `moveBefore()` where supported; otherwise focus and text selection are restored after the move; duplicate keys report `template.repeat.duplicateKey` and render without DOM reuse.
+- **Keyed `repeat`:** a longest run of items already in order stays in place and only the others move. With `moveBefore()` each item moves with its state preserved. Without it (WebKit), moved ranges are detached from the end of the list and each run is inserted before its stable anchor as one fragment, because per-item `insertBefore` is quadratic for `<li>` in WebKit: reversing 1,000 items took 319 ms before batching and 9 ms after. Focus and text selection are then restored once. Duplicate keys report `template.repeat.duplicateKey` and render without DOM reuse. The reconciler ships only with `repeat()`.
 - **First render** is synchronous during connection, so `mounted(scope)` sees committed DOM. Later renders and direct bindings commit in the microtask flush.
 - **`updated(changes)`** runs in the post phase after each commit batch, including the first; `changes` maps changed public properties to previous values and is empty for binding-only work.
 - **`updateComplete`** resolves when the shared flush settles; a disconnected element has no pending work for it.
@@ -196,6 +197,7 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 - **Invalid values** (`element.attribute.invalid`, `element.prop.invalid`) fall back to the property default.
 - **Shadowing class fields** report `element.prop.shadowed`; the field value is applied through the reactive accessor so the element still works.
 - **TypeScript:** subclasses use `override` on hooks (`noImplicitOverride`), and hooks are `protected`.
+- **Development and production builds** (ADR 0031): the `development` export condition selects `dist/` (full explanations, development-only checks); the default selects `dist/prod/`, where errors keep their stable `[code]` and every behavior and security check is unchanged. Development-only checks: the light-DOM `:host` scan and the recipe-defined-during-render warning. Size budgets are enforced by `npm run size`.
 
 ## 7. Optional shared stores (`@mote/state`)
 

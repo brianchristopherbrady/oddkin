@@ -4,6 +4,7 @@
  * `AbortController`, which exist in browsers and Node.
  * Contract: docs/architecture/core-contracts.md §4.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 import { effect as reactiveEffect, type EffectOptions } from '../reactive/graph.js';
 
@@ -29,7 +30,10 @@ interface Entry {
 
 const stats = { scopes: 0, listeners: 0, timers: 0, effects: 0 };
 
-/** @internal Live resource counts, for leak tests and dev inspection. */
+/**
+ * Live counts of resources owned through scopes (scopes, listeners, timers, effects), in both
+ * builds. Compare before and after mount/remove cycles to check that ownership returns to baseline.
+ */
 export function scopeStats(): Readonly<typeof stats> {
   return { ...stats };
 }
@@ -192,7 +196,9 @@ export class Scope {
       reportMoteError(
         new MoteError(
           'scope.cleanup.error',
-          `A ${entry.label} cleanup${this.name ? ` in scope "${this.name}"` : ''} threw.`,
+          DEV
+            ? `A ${entry.label} cleanup${this.name ? ` in scope "${this.name}"` : ''} threw.`
+            : '',
           { cause: error },
         ),
         { code: 'scope.cleanup.error', origin: this.name },

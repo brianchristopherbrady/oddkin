@@ -2,6 +2,7 @@
  * Collections: keyed, nested data with reconciliation, diagnostics, and per-entry
  * ownership. DOM-free. Contract: docs/architecture/data-composition.md §3.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 import { computed, signal, untracked, type Readable } from '../reactive/index.js';
 import type { Scope } from '../scope/index.js';
@@ -158,7 +159,7 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
       source.value = items;
       const { diagnostics } = untracked(() => model.value);
       for (const d of diagnostics)
-        reportMoteError(new MoteError(d.code, d.message), { code: d.code });
+        reportMoteError(new MoteError(d.code, DEV ? d.message : ''), { code: d.code });
       reconcileScopes();
     },
     items: source,
@@ -182,10 +183,13 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
       if (!owner)
         throw new MoteError(
           'collection.owner.missing',
-          'scopeFor() needs an owner scope: collection({ owner: scope, … }).',
+          DEV ? 'scopeFor() needs an owner scope: collection({ owner: scope, … }).' : '',
         );
       if (!untracked(() => model.value.byKey.has(key))) {
-        throw new MoteError('collection.key.unknown', `No entry with key ${JSON.stringify(key)}.`);
+        throw new MoteError(
+          'collection.key.unknown',
+          DEV ? `No entry with key ${JSON.stringify(key)}.` : '',
+        );
       }
       let scope = scopes.get(key);
       if (!scope || scope.disposed) {

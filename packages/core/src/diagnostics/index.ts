@@ -10,8 +10,15 @@
 export class MoteError extends Error {
   readonly code: string;
 
+  /**
+   * @param message Development explanation. Production builds pass `''` and keep only the
+   * stable code, so failures stay identifiable without shipping every message.
+   */
   constructor(code: string, message: string, options?: { cause?: unknown }) {
-    super(`[${code}] ${message}`, options);
+    super(
+      `[${code}] ${message || 'Use the development build (the "development" export condition) for details.'}`,
+      options,
+    );
     this.name = 'MoteError';
     this.code = code;
   }

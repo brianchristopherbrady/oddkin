@@ -2,6 +2,7 @@
  * `@mote/core/styles` — trusted CSS fragments and per-document sheet reuse.
  * Contract: docs/architecture/core-contracts.md §6, docs/architecture/theming-and-styling.md.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError } from '../diagnostics/index.js';
 
 const CSS_RESULT: unique symbol = Symbol.for('mote.cssResult') as never;
@@ -15,7 +16,7 @@ export class CSSResult {
   /** @internal Use `css` or `unsafeCSS`. */
   constructor(cssText: string, token: symbol) {
     if (token !== CONSTRUCT)
-      throw new MoteError('style.construct', 'Create CSS with css`` or unsafeCSS().');
+      throw new MoteError('style.construct', DEV ? 'Create CSS with css`` or unsafeCSS().' : '');
     this.cssText = cssText;
   }
 
@@ -91,7 +92,9 @@ export function css(
     else {
       throw new MoteError(
         'style.interpolation.untrusted',
-        `css\`\` interpolation ${i} (${typeof value === 'string' ? `"${value.slice(0, 40)}"` : typeof value}) is not allowed. Use css results, finite numbers, or var(--name[, fallback]) references; pass dynamic values through custom properties, or wrap vetted text with unsafeCSS().`,
+        DEV
+          ? `css\`\` interpolation ${i} (${typeof value === 'string' ? `"${value.slice(0, 40)}"` : typeof value}) is not allowed. Use css results, finite numbers, or var(--name[, fallback]) references; pass dynamic values through custom properties, or wrap vetted text with unsafeCSS().`
+          : '',
       );
     }
     text += strings[i + 1] ?? '';

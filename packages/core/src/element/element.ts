@@ -3,6 +3,7 @@
  * `connected`, `mounted`, `updated`, `disconnected`, `adopted`, and `moved`.
  * Contract: docs/architecture/core-contracts.md §1–§3.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 import { effect, settled, signal, untracked, type Signal } from '../reactive/index.js';
 import { enterRender, exitRender } from '../internal/render-context.js';
@@ -129,13 +130,17 @@ export class MoteElement extends ElementBase {
       if (inherited.has(name)) {
         throw new MoteError(
           'element.prop.duplicate',
-          `Property "${name}" is already declared by ${Base.name}. Each property is declared once.`,
+          DEV
+            ? `Property "${name}" is already declared by ${Base.name}. Each property is declared once.`
+            : '',
         );
       }
       if (name in Base.prototype) {
         throw new MoteError(
           'element.prop.reserved',
-          `Property "${name}" would replace an existing HTMLElement or MoteElement member. Choose another name.`,
+          DEV
+            ? `Property "${name}" would replace an existing HTMLElement or MoteElement member. Choose another name.`
+            : '',
         );
       }
       const attribute =
@@ -143,7 +148,7 @@ export class MoteElement extends ElementBase {
       if (definition.reflect && !attribute) {
         throw new MoteError(
           'element.prop.reflectWithoutAttribute',
-          `Property "${name}" reflects but has no attribute.`,
+          DEV ? `Property "${name}" reflects but has no attribute.` : '',
         );
       }
       if (attribute) {
@@ -154,14 +159,16 @@ export class MoteElement extends ElementBase {
         ) {
           throw new MoteError(
             'element.attribute.reserved',
-            `Attribute "${attribute}" for property "${name}" belongs to the platform. Pick another attribute name or use attribute: false.`,
+            DEV
+              ? `Attribute "${attribute}" for property "${name}" belongs to the platform. Pick another attribute name or use attribute: false.`
+              : '',
           );
         }
         const owner = attributes.get(attribute);
         if (owner) {
           throw new MoteError(
             'element.attribute.duplicate',
-            `Attribute "${attribute}" is used by both "${owner}" and "${name}".`,
+            DEV ? `Attribute "${attribute}" is used by both "${owner}" and "${name}".` : '',
           );
         }
         attributes.set(attribute, name);
@@ -406,7 +413,10 @@ export class MoteElement extends ElementBase {
 
   #invalid(code: string, subject: string, reason: string): void {
     reportMoteError(
-      new MoteError(code, `<${this.localName}> ${subject}: ${reason}. Using the default value.`),
+      new MoteError(
+        code,
+        DEV ? `<${this.localName}> ${subject}: ${reason}. Using the default value.` : '',
+      ),
       {
         code,
         origin: this.localName,
@@ -452,13 +462,15 @@ export class MoteElement extends ElementBase {
     if (ctor.shadowRootOptions || !ctor.styles) return;
     const root = this.getRootNode();
     if (root.nodeType !== Node.DOCUMENT_NODE && !(root instanceof ShadowRoot)) return;
-    if (!checkedLightDomStyles.has(ctor)) {
+    if (DEV && !checkedLightDomStyles.has(ctor)) {
       checkedLightDomStyles.add(ctor);
       if (flattenStyles(ctor.styles).some((s) => /:host\b/.test(s.cssText))) {
         reportMoteError(
           new MoteError(
             'element.styles.lightDomHost',
-            `<${this.localName}> renders into light DOM, where :host never matches. Select the element by tag name or class instead.`,
+            DEV
+              ? `<${this.localName}> renders into light DOM, where :host never matches. Select the element by tag name or class instead.`
+              : '',
           ),
           { code: 'element.styles.lightDomHost', origin: this.localName },
         );
@@ -477,7 +489,9 @@ export class MoteElement extends ElementBase {
       reportMoteError(
         new MoteError(
           'element.prop.shadowed',
-          `<${this.localName}> has a class field "${property.name}" that hides the reactive property. Remove the field and set the default in prop.*({ default }), or use "declare ${property.name}: …" for types only. The field value was applied through the property.`,
+          DEV
+            ? `<${this.localName}> has a class field "${property.name}" that hides the reactive property. Remove the field and set the default in prop.*({ default }), or use "declare ${property.name}: …" for types only. The field value was applied through the property.`
+            : '',
         ),
         { code: 'element.prop.shadowed', origin: this.localName },
       );

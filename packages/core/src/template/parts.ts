@@ -3,6 +3,7 @@
  * Readables bind through commit-phase effects on the shared reactive graph, so a value
  * reached by both a render rerun and a direct binding is written once.
  */
+import { DEV } from '../internal/dev.js';
 import { MoteError, reportMoteError } from '../diagnostics/index.js';
 import { effect, isReadable, untracked, type Readable } from '../reactive/index.js';
 import {
@@ -13,6 +14,7 @@ import {
   type DirectivePartType,
 } from './directive.js';
 import { prepareTemplate, type AttributeDescriptor, type PreparedTemplate } from './prepare.js';
+import type { REPEAT as RepeatKey, RepeatDirective } from './repeat.js';
 import { isTemplateResult, type TemplateResult } from './result.js';
 
 export interface RenderOptions {
@@ -27,120 +29,16 @@ export interface Part {
   dispose(): void;
 }
 
-const REPEAT: unique symbol = Symbol.for('mote.repeat') as never;
-
-/** @internal Keyed list description produced by `repeat()`. */
-export interface RepeatDirective<T = unknown> {
-  readonly [REPEAT]: true;
-  readonly items: Iterable<T>;
-  readonly key: (item: T, index: number) => unknown;
-  readonly template: (item: T, index: number) => unknown;
-}
-
-export function createRepeat<T>(
-  items: Iterable<T>,
-  key: (item: T, index: number) => unknown,
-  template: (item: T, index: number) => unknown,
-): RepeatDirective<T> {
-  return { [REPEAT]: true, items, key, template };
-}
+const REPEAT: typeof RepeatKey = Symbol.for('mote.repeat') as never;
 
 function isRepeat(value: unknown): value is RepeatDirective {
   return (
     typeof value === 'object' &&
     value !== null &&
-    (value as Record<symbol, unknown>)[REPEAT] === true
+    typeof (value as Record<symbol, unknown>)[REPEAT] === 'function'
   );
 }
 
-const supportsMoveBefore = typeof Element !== 'undefined' && 'moveBefore' in Element.prototype;
-
-type Focusable = HTMLElement & {
-  selectionStart?: number | null;
-  selectionEnd?: number | null;
-  setSelectionRange?(a: number, b: number): void;
-};
-
-/** The focused element inside `root`, following open shadow roots to the deepest one. */
-function deepActiveElement(root: Node): Focusable | null {
-  let active = (root.getRootNode() as Document | ShadowRoot).activeElement as Focusable | null;
-  while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement as Focusable;
-  return active;
-}
-
-function moveRange(start: Node, end: Node, before: Node | null): void {
-  const parent = start.parentNode as ParentNode & Node;
-  const nodes: Node[] = [];
-  for (let node: Node | null = start; node; node = node.nextSibling) {
-    nodes.push(node);
-    if (node === end) break;
-  }
-  const native = supportsMoveBefore && parent.isConnected;
-  // Without moveBefore, removing a focused subtree blurs it: remember and restore focus.
-  const retargeted = native
-    ? null
-    : ((parent.getRootNode() as Document | ShadowRoot).activeElement ?? null);
-  const focused =
-    retargeted && nodes.some((n) => n === retargeted || n.contains(retargeted))
-      ? deepActiveElement(parent)
-      : null;
-  let selection: [number, number] | undefined;
-  try {
-    if (
-      focused &&
-      typeof focused.selectionStart === 'number' &&
-      typeof focused.selectionEnd === 'number'
-    ) {
-      selection = [focused.selectionStart, focused.selectionEnd];
-    }
-  } catch {
-    // Inputs without selection support.
-  }
-  for (const node of nodes) {
-    if (native) {
-      try {
-        // State-preserving move (focus, iframes, animations) where supported.
-        (parent as unknown as { moveBefore(n: Node, ref: Node | null): void }).moveBefore(
-          node,
-          before,
-        );
-        continue;
-      } catch {
-        // Fall back to a normal insertion.
-      }
-    }
-    parent.insertBefore(node, before);
-  }
-  if (focused?.isConnected && deepActiveElement(parent) !== focused) {
-    focused.focus({ preventScroll: true });
-    try {
-      if (selection) focused.setSelectionRange?.(selection[0], selection[1]);
-    } catch {
-      // Selection unsupported.
-    }
-  }
-}
-
-/** Indices (into `sequence`) of one longest strictly increasing subsequence, ignoring negatives. */
-function longestIncreasing(sequence: readonly number[]): Set<number> {
-  const tails: number[] = [];
-  const previous: number[] = new Array<number>(sequence.length).fill(-1);
-  sequence.forEach((value, i) => {
-    if (value < 0) return;
-    let low = 0;
-    let high = tails.length;
-    while (low < high) {
-      const mid = (low + high) >> 1;
-      if ((sequence[tails[mid] as number] as number) < value) low = mid + 1;
-      else high = mid;
-    }
-    if (low > 0) previous[i] = tails[low - 1] as number;
-    tails[low] = i;
-  });
-  const out = new Set<number>();
-  for (let i = tails[tails.length - 1] ?? -1; i >= 0; i = previous[i] as number) out.add(i);
-  return out;
-}
 // ---------------------------------------------------------------------------
 // Child (node) parts
 
@@ -279,7 +177,9 @@ export class ChildPart implements Part {
       reportMoteError(
         new MoteError(
           'template.value.function',
-          'A function was interpolated in a child position. Functions are never called automatically; call it, pass a computed(), or bind it as an event (@event=${fn}).',
+          DEV
+            ? 'A function was interpolated in a child position. Functions are never called automatically; call it, pass a computed(), or bind it as an event (@event=${fn}).'
+            : '',
         ),
         { code: 'template.value.function' },
       );
@@ -359,60 +259,16 @@ export class ChildPart implements Part {
   #commitRepeat(directive: RepeatDirective): void {
     if (this.#content !== 'repeat') this.#clear();
     this.#content = 'repeat';
-    const old = new Map<unknown, ChildPart>();
-    this.#keys.forEach((key, i) => old.set(key, this.#items[i] as ChildPart));
-
-    const previousIndex = new Map<ChildPart, number>(this.#items.map((part, i) => [part, i]));
-    const items: ChildPart[] = [];
-    const keys: unknown[] = [];
-    const seen = new Set<unknown>();
-    let index = 0;
-    let changedStructure = false;
-    for (const item of directive.items) {
-      let key = directive.key(item, index);
-      if (seen.has(key)) {
-        reportMoteError(
-          new MoteError(
-            'template.repeat.duplicateKey',
-            `repeat() received the key ${String(key)} more than once; later duplicates are rendered without DOM reuse. Keys must be unique and stable.`,
-          ),
-          { code: 'template.repeat.duplicateKey' },
-        );
-        key = { duplicate: key, index };
-      }
-      seen.add(key);
-      let part = old.get(key);
-      if (part) old.delete(key);
-      else {
-        part = this.#createItem(null);
-        changedStructure = true;
-      }
-      part.setValue(directive.template(item, index));
-      items.push(part);
-      keys.push(key);
-      index++;
-    }
-    for (const part of old.values()) {
-      part.remove();
-      changedStructure = true;
-    }
-    // Keep a longest run of parts already in relative order where they are; move only the
-    // rest (fewest moves, so focused or stateful items usually stay in place).
-    const stable = longestIncreasing(items.map((part) => previousIndex.get(part) ?? -1));
-    let ref: Node | null = this.#end;
-    for (let i = items.length - 1; i >= 0; i--) {
-      const part = items[i] as ChildPart;
-      const start = part.startNode as Comment;
-      const end = part.endNode as Node;
-      if (!stable.has(i) && end.nextSibling !== ref) {
-        moveRange(start, end, ref);
-        changedStructure = true;
-      }
-      ref = start;
-    }
-    this.#items = items;
-    this.#keys = keys;
-    if (changedStructure) this.#committed();
+    const next = directive[REPEAT](
+      directive,
+      this.#items,
+      this.#keys,
+      () => this.#createItem(null),
+      this.#end,
+    );
+    this.#items = next.items;
+    this.#keys = next.keys;
+    if (next.changed) this.#committed();
   }
 }
 
@@ -443,7 +299,9 @@ function safeUrl(value: unknown, name: string): unknown {
     reportMoteError(
       new MoteError(
         'template.url.unsafe',
-        `Blocked a script URL bound to "${name}". Mote does not allow javascript: or vbscript: URLs in URL bindings.`,
+        DEV
+          ? `Blocked a script URL bound to "${name}". Mote does not allow javascript: or vbscript: URLs in URL bindings.`
+          : '',
       ),
       { code: 'template.url.unsafe' },
     );
@@ -529,7 +387,9 @@ abstract class ValuePart implements Part {
     if (type === 'event' || strings.length !== 2 || strings[0] !== '' || strings[1] !== '') {
       throw new MoteError(
         'template.directive.position',
-        `${handler.name}() must be the whole value of its binding, e.g. ${type === 'property' ? '.' : type === 'boolean' ? '?' : ''}${name}=\${${handler.name}(…)}.`,
+        DEV
+          ? `${handler.name}() must be the whole value of its binding, e.g. ${type === 'property' ? '.' : type === 'boolean' ? '?' : ''}${name}=\${${handler.name}(…)}.`
+          : '',
       );
     }
     if (
@@ -538,7 +398,9 @@ abstract class ValuePart implements Part {
     ) {
       throw new MoteError(
         'template.directive.binding',
-        `${handler.name}() cannot be used in a ${type} binding named "${name}"${handler.bindingName ? `; bind it as ${handler.bindingName}=\${…}` : ''}.`,
+        DEV
+          ? `${handler.name}() cannot be used in a ${type} binding named "${name}"${handler.bindingName ? `; bind it as ${handler.bindingName}=\${…}` : ''}.`
+          : '',
       );
     }
     if (this.#directive && this.#directive !== handler) this.#clearDirective();
@@ -561,7 +423,9 @@ abstract class ValuePart implements Part {
         const directive = value[ATTRIBUTE_DIRECTIVE].name;
         throw new MoteError(
           'template.directive.position',
-          `${directive}() must be the whole value of its binding, not interpolated into "${this.descriptor.name}" text.`,
+          DEV
+            ? `${directive}() must be the whole value of its binding, not interpolated into "${this.descriptor.name}" text.`
+            : '',
         );
       }
       text += String(value ?? '') + strings[i];
@@ -610,7 +474,9 @@ class PropertyPart extends ValuePart {
     if (/^on/.test(name) && typeof safe === 'string') {
       throw new MoteError(
         'template.property.unsafe',
-        `Refusing to assign a string to the "${name}" handler property. Use @${name.slice(2)}=\${handler}.`,
+        DEV
+          ? `Refusing to assign a string to the "${name}" handler property. Use @${name.slice(2)}=\${handler}.`
+          : '',
       );
     }
     (this.element as unknown as Record<string, unknown>)[name] = safe;
@@ -662,7 +528,9 @@ class EventPart implements Part {
     if (isReadable(value)) {
       throw new MoteError(
         'template.event.readable',
-        `@${this.#type} received a readable. Pass a function; read state inside the handler.`,
+        DEV
+          ? `@${this.#type} received a readable. Pass a function; read state inside the handler.`
+          : '',
       );
     }
     if (
@@ -673,7 +541,7 @@ class EventPart implements Part {
     ) {
       throw new MoteError(
         'template.event.invalid',
-        `@${this.#type} expects a function, an object with handleEvent, or null.`,
+        DEV ? `@${this.#type} expects a function, an object with handleEvent, or null.` : '',
       );
     }
     this.#handler = (value ?? undefined) as Handler | undefined;

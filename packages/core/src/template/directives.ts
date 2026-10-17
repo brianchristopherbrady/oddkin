@@ -4,7 +4,7 @@
  * so the binding updates without rerunning render.
  */
 import { computed, isReadable, type Readable } from '../reactive/index.js';
-import { createRepeat, type RepeatDirective } from './parts.js';
+import { createRepeat, type RepeatDirective } from './repeat.js';
 
 type MaybeReadable<T> = T | Readable<T>;
 

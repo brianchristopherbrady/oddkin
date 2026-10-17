@@ -143,7 +143,7 @@ Research: [Lit expressions](https://lit.dev/docs/templates/expressions/), [FASTE
 ### 3.2 Failure handling and production diagnostics
 
 - [ ] Define error ownership for property conversion, derivations, effects, render/commit, cleanup, example setup, lazy imports, and asynchronous commands. Decide propagation versus an explicit owner error hook/fallback. Preserve unrelated scopes and make retry/reset behavior testable; do not imply that a Scope can intercept every detached promise rejection or native callback error.
-- [ ] Use stable error codes and source/binding/phase context. Development diagnostics should explain a fix; production preserves essential failures without shipping full inspectors, source content, debug histories, or expensive validation by default. Test development and production builds.
+- [x] Use stable error codes and source/binding/phase context. Development diagnostics should explain a fix; production preserves essential failures without shipping full inspectors, source content, debug histories, or expensive validation by default. Test development and production builds. *(M3, ADR 0031: `development` → `dist/`, default → `dist/prod/`; production keeps `[code]`, behaviors and security checks; phase and owner are in the code (`element.<hook>.error`, `reactive.effect.cleanupError`) and `origin`; `packages/core/test/production.test.ts`.)*
 - [ ] Provide opt-in bounded graph/lifetime inspection using existing ownership records rather than a second reactive engine. Keep logs, histories, caches, and observers bounded and removable.
 - [ ] Batch writes and avoid hidden layout reads during binding commits. Any measurement helper must state its scheduling and cleanup; do not introduce preemptive scheduling or a compiler through this requirement.
 
@@ -445,8 +445,8 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 
 **Measurements**
 
-- [ ] Collection update work, allocations, retained memory at 10/100/1,000 items vs handwritten `repeat`
-- [ ] First honest size/startup/update/memory measurements and API walkthroughs (§8)
+- [x] Collection update work, allocations, retained memory at 10/100/1,000 items vs handwritten `repeat` *(`research/benchmarks/`; found and fixed quadratic WebKit reorders: 319 → 9 ms for reversing 1,000 items)*
+- [~] First honest size/startup/update/memory measurements and API walkthroughs (§8) — sizes, mount/update/unmount timing, retained heap and leak cycles recorded (`research/benchmarks/results/`); size budgets enforced by `npm run size` (ADR 0031). Remaining: page-level parse/execute startup and update-to-paint, API walkthroughs.
 - [ ] Demonstrate render-tracked `.value` reads vs direct readable bindings vs untracked snapshots (event handlers, async callbacks), public-property bindings, dual-path coalescing (no duplicate DOM writes), no-op writes, and update/ready boundaries in plain JS and TS. Document the outcome of helper/directive/controller experiments.
 - [ ] Exercise conversion/derivation/effect/commit/cleanup failures, production diagnostics, external signal composition, disposal during callbacks, and fresh reconnect scopes. Verify no implicit whole-host rerender or layout read on a direct binding update.
 
@@ -840,7 +840,7 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 
 **Initial engineering targets (not results):**
 
-- Minimal production counter incl. Mote code and registration ≤ 8 KiB gzip; revise via ADR if missed
+- Minimal production counter incl. Mote code and registration ≤ 8 KiB gzip; revise via ADR if missed — **missed at M3 (9,280 B); revised to 9.5 KiB by [ADR 0031](./docs/architecture/decisions/0031-dev-prod-builds-and-size-budget.md)**
 - Direct bindings update only dependent parts; no re-parse, host replacement, sheet rebuild, or listener accumulation
 - One sheet per style definition/document; one external listener per registration after any number of reconnects
 - After 1,000 mount/remove, route, or preview-switch cycles, owned resources return to baseline
@@ -927,10 +927,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M2: named conditions (container/media, logical sizes, preference features) with `@mote/tokens/conditions` and CLI output; profiles with alias closure, nested-scope re-application, configuration-order precedence, overlap warnings, and target checks per density; unit policy; schema and CSS-only example extended | 149 Node + 240 browser tests; 12 e2e; full pipeline passes. M2 complete except linking the M4 side-nav preview to the threshold-invalidation contract |
 | 2026-10-17 | M3: `@mote/core/layout` and `./layout/inspect` (recipes, helpers, layered CSS, `extend`, diagnostics); `@mote/core/collections` (keyed nested collections, per-entry scopes, selection/expansion/disabled/active models); `@mote/core/model` and `./model/schema` (builder, `Infer`, validation, rules, migrations, JSON Schema); `repeat()` minimal moves with focus restoration | All core entries DOM-free-importable; full pipeline passes |
 | 2026-10-17 | M3: `@mote/analyzer` (TypeScript 5.9 front end, ADR 0018 accepted; CEM 2.1.0 + `mote.metadata.json`; inheritance, events, slots/parts, states, registrations, re-exports, recipes, models, authored facts; `analyzer.dynamic.*`; `mote-analyze` CLI); 50-component performance experiment; core-counter fixture | Outputs validate against both schemas; packed analyzer runs; full pipeline passes |
+| 2026-10-17 | M3: development/production builds (`development` → `dist/`, default → `dist/prod/`, ADR 0031) with production tests; `repeat` reconciler made pay-for-use; batched WebKit reorder fallback (reversing 1,000 items: 319 → 9–28 ms); `scopeStats()` public; benchmark harness (`research/benchmarks`: sizes, mount/update, collection vs handwritten lists at 10/100/1,000, CDP memory, ownership after 100 cycles) with committed results; size budgets in `npm run verify` | Counter 9,280 B gzip (8 KiB target missed, revised to 9.5 KiB); full pipeline passes |
 
 ## 11. Continuation
 
-**Next step:** finish M3 — DOM-free `@mote/workbench/examples`, `config`, and `pages` contracts; the `props()` assessment; minified size/startup/update/memory and collection measurements; binding-rule and failure-path demonstrations. Then M4's first components (side-nav links the last open M2 item).
+**Next step:** finish M3 — binding-rule walkthrough (plain JS and TS) and failure-path demonstrations; the `props()` assessment; DOM-free `@mote/workbench/examples`, `config`, and `pages` contracts; page-level startup and update-to-paint measurements. Then M4's first components (side-nav links the last open M2 item).
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 
