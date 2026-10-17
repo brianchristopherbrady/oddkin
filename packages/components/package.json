@@ -37,6 +37,18 @@
       "types": "./dist/card/card.define.d.ts",
       "default": "./dist/card/card.define.js"
     },
+    "./input": {
+      "types": "./dist/input/index.d.ts",
+      "default": "./dist/input/index.js"
+    },
+    "./input/foundation": {
+      "types": "./dist/input/foundation.d.ts",
+      "default": "./dist/input/foundation.js"
+    },
+    "./define/input": {
+      "types": "./dist/input/input.define.d.ts",
+      "default": "./dist/input/input.define.js"
+    },
     "./custom-elements.json": "./custom-elements.json",
     "./mote.metadata.json": "./mote.metadata.json",
     "./package.json": "./package.json"

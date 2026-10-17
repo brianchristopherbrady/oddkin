@@ -1,0 +1,201 @@
+import { MoteElement, event, prop } from '@mote/core/element';
+import { computed, signal, type Readable } from '@mote/core/reactive';
+import type { Scope } from '@mote/core/scope';
+
+/** Native `input` events cross the shadow boundary once; declared here for metadata and sync. */
+export const inputEvent = event('input', {
+  bubbles: true,
+  composed: true,
+  cancelable: false,
+  syncs: 'value',
+});
+/** Re-dispatched at the host when the user commits a change (native `change` is not composed). */
+export const changeEvent = event('change', { bubbles: true, composed: false, cancelable: false });
+
+const VALIDITY_FLAGS = [
+  'valueMissing',
+  'typeMismatch',
+  'patternMismatch',
+  'tooLong',
+  'tooShort',
+  'rangeUnderflow',
+  'rangeOverflow',
+  'stepMismatch',
+  'badInput',
+] as const;
+
+/**
+ * A labelled single-line text field that participates in forms like a native input.
+ *
+ * @csspart field - Wrapper of label, description, control, and error.
+ * @csspart label - The visible label.
+ * @csspart description - Help text, referenced by `aria-describedby`.
+ * @csspart control - The native `<input>`.
+ * @csspart error - The error message, referenced by `aria-describedby`.
+ * @cssprop --mote-input-height - Minimum height (never below the target-size token).
+ * @cssprop --mote-input-radius - Corner radius.
+ * @cssprop --mote-input-border-color - Border colour.
+ * @cssprop --mote-input-background - Background colour.
+ * @a11y `label` names the native input inside the shadow root; a `<label for>` outside it cannot. Description and error are announced through `aria-describedby`; `aria-invalid` is set for `error`, or for an invalid value after the user leaves the field or a validity check fails (any `invalid` event, including `checkValidity()`, unlike native `:user-invalid`); reset clears it.
+ * @keyboard Native text-input behavior.
+ * @previewRole textInput
+ * @useFor Short free-text values in forms: names, email addresses, search terms.
+ * @notFor Multi-line text, choices from a fixed list, dates.
+ * @limitation Validation bubbles anchor to the inner input. `formStateRestoreCallback` restores the value; autofill depends on the inner input's `autocomplete`.
+ * @category Forms
+ */
+export class MoteInput extends MoteElement.with({
+  label: prop.string({ default: '', description: 'Visible label; names the control.' }),
+  description: prop.string({ default: '', description: 'Help text below the label.' }),
+  error: prop.string({
+    default: '',
+    description: 'Error message; marks the field invalid (custom validity) while set.',
+  }),
+  defaultValue: prop.string({
+    default: '',
+    attribute: 'value',
+    description: 'Initial value; the `value` attribute, as on native inputs.',
+  }),
+  type: prop.enum(['text', 'email', 'password', 'search', 'tel', 'url'], {
+    default: 'text',
+    reflect: true,
+    description: 'Native input type.',
+  }),
+  name: prop.string({ default: '', description: 'Name submitted with the form.' }),
+  placeholder: prop.string({
+    default: '',
+    description: 'Placeholder; never a substitute for a label.',
+  }),
+  autocomplete: prop.string({ default: '', description: 'Autofill hint for the native input.' }),
+  required: prop.boolean({ reflect: true, description: 'A value is required to submit.' }),
+  disabled: prop.boolean({ reflect: true, description: 'Prevents interaction and submission.' }),
+  readonly: prop.boolean({ reflect: true, description: 'Prevents editing; still submitted.' }),
+}) {
+  static formAssociated = true;
+  static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
+  static override events = { input: inputEvent, change: changeEvent };
+
+  // undefined until the value is set or typed ("dirty"), then independent of `defaultValue`.
+  readonly #value = signal<string | undefined>(undefined);
+
+  /** @internal Disabled by an ancestor `<fieldset disabled>`. */
+  readonly _formDisabled = signal(false);
+  /** @internal The user left the field or a submission was attempted. */
+  readonly _touched = signal(false);
+  /** @internal The current value failed validation. */
+  readonly _invalid = signal(false);
+  /** @internal The value as a readable for the template's live binding. */
+  readonly _currentValue: Readable<string> = computed(() => this.value);
+
+  constructor() {
+    super();
+    // A value assigned before the element was defined becomes the dirty value.
+    if (Object.hasOwn(this, 'value')) {
+      const early = (this as { value?: unknown }).value;
+      delete (this as { value?: unknown }).value;
+      this.value = String(early ?? '');
+    }
+  }
+
+  /** The current value. Setting it (or typing) detaches it from `defaultValue`. */
+  get value(): string {
+    return this.#value.value ?? this.defaultValue;
+  }
+  set value(value: string) {
+    this.#value.value = String(value ?? '');
+  }
+
+  /** The form this field belongs to, if any. */
+  get form(): HTMLFormElement | null {
+    return this.internals.form;
+  }
+  get validity(): ValidityState {
+    return this.internals.validity;
+  }
+  get validationMessage(): string {
+    return this.internals.validationMessage;
+  }
+  get willValidate(): boolean {
+    return this.internals.willValidate;
+  }
+  checkValidity(): boolean {
+    return this.internals.checkValidity();
+  }
+  reportValidity(): boolean {
+    return this.internals.reportValidity();
+  }
+
+  /** @internal Template handler: the user typed. */
+  readonly _onInput = (event: Event): void => {
+    this.#value.value = (event.target as HTMLInputElement).value;
+  };
+  /** @internal Template handler: the user committed a change. */
+  readonly _onChange = (): void => {
+    this.emit(changeEvent);
+  };
+  /** @internal Template handler: the user left the field. */
+  readonly _onBlur = (): void => {
+    this._touched.value = true;
+  };
+
+  protected override connected(scope: Scope): void {
+    // A failed form submission marks the field touched, so errors become visible.
+    scope.listen(this, 'invalid', () => (this._touched.value = true));
+  }
+
+  protected override mounted(scope: Scope): void {
+    // After the commit that wrote the inner input, so its validity is current.
+    scope.effect(
+      () => {
+        const value = this.value;
+        const deps = [
+          this.error,
+          this.required,
+          this.type,
+          this.disabled,
+          this._formDisabled.value,
+        ];
+        void deps;
+        this.internals.setFormValue(value);
+        this.#validate();
+      },
+      { phase: 'post', name: '<mote-input> validity' },
+    );
+  }
+
+  #validate(): void {
+    const control = this.shadowRoot?.querySelector('input');
+    if (!control) return;
+    const internals = this.internals;
+    if (this.error) {
+      internals.setValidity({ customError: true }, this.error, control);
+    } else if (!control.validity.valid) {
+      const flags: ValidityStateFlags = {};
+      for (const flag of VALIDITY_FLAGS) if (control.validity[flag]) flags[flag] = true;
+      internals.setValidity(flags, control.validationMessage, control);
+    } else {
+      internals.setValidity({});
+    }
+    this._invalid.value = !internals.validity.valid;
+  }
+
+  /** Native callback: the owning form was reset. */
+  formResetCallback(): void {
+    this.#value.value = undefined;
+    this._touched.value = false;
+  }
+  /** Native callback: restore after navigation or autofill restore. */
+  formStateRestoreCallback(state: string | File | FormData | null): void {
+    if (typeof state === 'string') this.value = state;
+  }
+  /** Native callback: an ancestor fieldset's disabled state changed. */
+  formDisabledCallback(disabled: boolean): void {
+    this._formDisabled.value = disabled;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mote-input': MoteInput;
+  }
+}

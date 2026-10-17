@@ -276,3 +276,11 @@ Command: `node research/benchmarks/run.mjs --samples 15` (results regenerated in
 | Import graphs, CSP hashes | `npx vitest run packages/components/test/graph.test.ts tests/examples/csp.test.ts` | Pass — card foundation loads only the class, template, and structural styles; both example pages allow exactly their import map by hash |
 | Full pipeline | `npm run verify` | Pass — 732 tests, 18 e2e, size budgets, packed consumers |
 
+## 2026-10-17 — M4 `mote-input`
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Input behavior | `npx vitest run packages/components/test/input.browser.test.ts` | Pass — 11 tests × 3 engines (33): entries register nothing; label `for` the native input, `aria-describedby` for description and error; `value` attribute acts as `defaultValue` until the value is set or typed; a value assigned before upgrade is kept; typing `x` at offset 1 gives `Axda` with the caret at 2; one `input` and one non-composed `change` at the host (reaching `document`); no events on programmatic writes; form data, `valueMissing`, `typeMismatch`, custom `error`; `aria-invalid` only after a failed submission, cleared on reset; reset restores `defaultValue`; a disabled fieldset disables and excludes it; typed value submitted through `mote-button`; scope baseline after reconnects |
+| Test notes | — | Firefox did not move focus on Tab inside the test frame, so the change test blurs the control directly. `checkValidity()` fires `invalid`, which the element cannot distinguish from a submission attempt; it therefore also marks the field touched (documented in the class). Firefox's validation bubble from a failed `requestSubmit()` swallowed the next test's click; the test cancels `invalid` to suppress the bubble (3 consecutive full-file runs pass in all engines afterwards) |
+| Full pipeline | `npm run verify`, then remaining stages separately | Lint and typecheck pass. The full parallel run hit 4 load timeouts (5 s and 30 s budgets in `tests/architecture/boundaries.test.ts` and `tests/experiments/analyzability.test.ts`) with CPU at 99% from other applications on the machine; both files pass when re-run (17 tests). `npm run size`, `npm run test:e2e` (18 passed), and `npm run verify:packs` pass. Re-run `npm run verify` on an idle machine before release |
+

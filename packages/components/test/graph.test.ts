@@ -74,3 +74,16 @@ describe('@mote/components/card import graphs', () => {
     expect(packages).toContain('@mote/tokens/refs');
   });
 });
+
+describe('@mote/components/input import graphs', () => {
+  it('the foundation entry loads no default skin, tokens, or registration', async () => {
+    const { files, packages } = await graph('input/foundation.js');
+    expect(files).toEqual([
+      'input/foundation.js',
+      'input/input.js',
+      'input/input.structural.styles.js',
+      'input/input.template.js',
+    ]);
+    expect(packages.every((p) => p.startsWith('@mote/core/'))).toBe(true);
+  });
+});

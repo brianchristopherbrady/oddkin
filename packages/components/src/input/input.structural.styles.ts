@@ -1,0 +1,33 @@
+import { css } from '@mote/core/styles';
+
+/** Layout the field depends on: stacked label, help, control, and error. No brand tokens. */
+export const inputStructuralStyles = css`
+  :host {
+    display: block;
+  }
+  :host([hidden]) {
+    display: none;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+  .control {
+    box-sizing: border-box;
+    inline-size: 100%;
+    margin: 0;
+    font: inherit;
+  }
+  [hidden] {
+    display: none;
+  }
+  @media (forced-colors: active) {
+    .control {
+      border: 1px solid FieldText;
+    }
+    .control[aria-invalid='true'] {
+      border-width: 2px;
+    }
+  }
+`;
