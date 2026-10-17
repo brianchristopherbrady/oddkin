@@ -191,3 +191,17 @@ Environment: Windows 11 (10.0.26300), Intel i5-1135G7 (8 threads), 16 GiB, Node 
 | DOM-free and packed | `npm run lint:boundaries`, `npm run verify:packs` | Pass — `./examples`, `./config`, `./pages` import in Node without DOM globals; the tarball installs and its subpath entries import and typecheck in a consumer |
 
 **Findings:** (1) `mote-metadata.v1` stores `library.prefix` with its trailing hyphen and example references as component ids (`component:<tag>`); the registry accepts both forms. (2) A Products page placed in both Foundations and primary navigation must belong to the Foundations section to appear in its cards and sidebar. (3) `verify-packs` assumed every package had a root entry; it now checks subpath-only packages. (4) As the suite grew, a process-spawning CLI test exceeded 5 s on a busy machine; it now has the analyzer's 30 s budget.
+
+## 2026-10-17 — M3 startup and update-to-paint
+
+Command: `node research/benchmarks/run.mjs --samples 15` (results regenerated in `research/benchmarks/results/2026-10-17-win32.json`; this run was on a busy shared machine, and timings were 1.2–2× slower than earlier runs: Chromium mount of 1,000 counters 18 ms vs 11–15 ms).
+
+| Measure (median, p95 ms) | Chromium 156 | Firefox 157 | WebKit 27.2 |
+| --- | --- | --- | --- |
+| First render after navigation start, cold context, minimal production counter | 36, 46 | 169, 367 | 46, 60 |
+| Bundle response end → first render (parse, execute, define, render) | 7.4 | 18 | 33 |
+| Click → next frame, Mote counter | 9.2, 11.5 | 3, 9 | 27, 42 |
+| Click → next frame, plain-DOM control button | 9.8, 16.4 | 3, 10 | 26, 39 |
+| Clicks over 16 ms by Event Timing (both buttons) | 12 of 90 | 0 of 90 | 46 of 90 |
+
+**Findings:** (1) Mote's click-to-next-frame time matches the plain-DOM control in every engine, so the update itself adds no measurable frame latency. WebKit's ~27 ms comes from headless WebKit's frame scheduling and affects the control equally. (2) Firefox's first render includes a slower cold context start (median 169 ms after navigation start) while its script-to-render time is 18 ms. (3) Timing on this machine varies between sessions; these are baselines for regression review (plan §8: flag > 15% timing change), not cross-library comparisons.

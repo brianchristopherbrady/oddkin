@@ -43,6 +43,14 @@ await build({
   target: 'es2022',
   outfile: join(out, 'bench.js'),
 });
+await build({
+  entryPoints: ['research/benchmarks/runtime/startup.ts'],
+  bundle: true,
+  minify: true,
+  format: 'esm',
+  target: 'es2022',
+  outfile: join(out, 'startup.js'),
+});
 const server = spawn(process.execPath, ['scripts/serve-static.mjs', '--port', String(PORT)], {
   stdio: 'ignore',
 });
@@ -185,6 +193,54 @@ try {
         }
       }
     }
+    // Cold startup: a fresh context (empty cache) per sample; three real clicks on the Mote
+    // counter and three on a plain-DOM control button, timed the same way.
+    const startup = {
+      firstRender: [],
+      scriptToRendered: [],
+      clickToNextFrame: [],
+      plainClickToNextFrame: [],
+      slowClicks: 0,
+      clicks: 0,
+    };
+    let eventTiming = false;
+    for (let i = 0; i < SAMPLES; i++) {
+      const context = await browser.newContext();
+      const cold = await context.newPage();
+      await cold.goto(`http://localhost:${PORT}/research/benchmarks/runtime/startup.html`);
+      await cold.waitForFunction(() => 'startup' in globalThis);
+      for (let c = 0; c < 3; c++) {
+        await cold.click('startup-counter button');
+        await cold.click('#plain');
+      }
+      await cold.waitForFunction(
+        () => globalThis.startup.clicks.length >= 3 && globalThis.startup.plainClicks.length >= 3,
+      );
+      const s = await cold.evaluate(() => ({
+        ...globalThis.startup,
+        supported: PerformanceObserver.supportedEntryTypes?.includes('event') ?? false,
+        text: document.querySelector('startup-counter').shadowRoot.textContent,
+      }));
+      if (!s.text.includes('Count: 3')) throw new Error(`${name} startup page shows "${s.text}"`);
+      eventTiming = s.supported;
+      startup.firstRender.push(s.renderedMs);
+      startup.scriptToRendered.push(s.renderedMs - s.scriptResponseEndMs);
+      startup.clickToNextFrame.push(...s.clicks.map((c) => c.nextFrameMs));
+      startup.plainClickToNextFrame.push(...s.plainClicks.map((c) => c.nextFrameMs));
+      startup.slowClicks += s.eventTiming.length;
+      startup.clicks += 6;
+      await context.close();
+    }
+    results.startup = {
+      firstRenderFromNavigationStartMs: summarize(startup.firstRender),
+      scriptResponseEndToFirstRenderMs: summarize(startup.scriptToRendered),
+      clickToNextFrameMs: summarize(startup.clickToNextFrame),
+      plainDomClickToNextFrameMs: summarize(startup.plainClickToNextFrame),
+      clicksOver16msByEventTimingBothButtons: eventTiming
+        ? `${startup.slowClicks} of ${startup.clicks}`
+        : 'Event Timing unsupported',
+    };
+
     runtime[name] = { version: browser.version(), ...results };
     await browser.close();
   }
@@ -201,6 +257,8 @@ const report = {
     memory:
       'Chromium only: CDP HeapProfiler.collectGarbage then Runtime.getHeapUsage().usedSize; allocation = heap after operation (no GC) minus heap before (after GC)',
     bundles: 'esbuild bundle, minify, ESM, es2022; gzip level 9; Brotli quality 11',
+    startup:
+      'startup.html loads one minified production bundle (core + one counter) from localhost in a fresh browser context per sample; first render = performance.now() after updateComplete of the first element (relative to navigation start); script-to-render starts at the bundle response end; click-to-next-frame = from event.timeStamp to a task after the next requestAnimationFrame; Event Timing (threshold 16 ms) counts slow clicks where supported',
     headless: true,
   },
   environment: {
@@ -239,6 +297,9 @@ for (const [name, r] of Object.entries(runtime)) {
   }
   console.log(
     `  owned after ${r.ownership.cycles} cycles: ${JSON.stringify(r.ownership.after)} (baseline ${JSON.stringify(r.ownership.before)})`,
+  );
+  console.log(
+    `  startup: first render ${r.startup.firstRenderFromNavigationStartMs.median} ms after navigation start (p95 ${r.startup.firstRenderFromNavigationStartMs.p95}); script to render ${r.startup.scriptResponseEndToFirstRenderMs.median}; click to next frame ${r.startup.clickToNextFrameMs.median} (p95 ${r.startup.clickToNextFrameMs.p95}); plain DOM ${r.startup.plainDomClickToNextFrameMs.median} (p95 ${r.startup.plainDomClickToNextFrameMs.p95}); slow clicks ${r.startup.clicksOver16msByEventTimingBothButtons}`,
   );
   if (r.memory?.counters) console.log(`  memory: ${JSON.stringify(r.memory)}`);
 }

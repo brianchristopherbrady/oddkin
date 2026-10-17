@@ -446,7 +446,7 @@ M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixt
 **Measurements**
 
 - [x] Collection update work, allocations, retained memory at 10/100/1,000 items vs handwritten `repeat` *(`research/benchmarks/`; found and fixed quadratic WebKit reorders: 319 → 9 ms for reversing 1,000 items)*
-- [~] First honest size/startup/update/memory measurements and API walkthroughs (§8) — sizes, mount/update/unmount timing, retained heap and leak cycles recorded (`research/benchmarks/results/`); size budgets enforced by `npm run size` (ADR 0031). Remaining: page-level parse/execute startup and update-to-paint, API walkthroughs.
+- [x] First honest size/startup/update/memory measurements and API walkthroughs (§8) *(`research/benchmarks/results/`: sizes, cold startup, click to next frame with a plain-DOM control, mount/update, lists, CDP memory, ownership after 100 cycles; size budgets in `npm run verify` (ADR 0031); walkthroughs: `examples/core-counter`, `examples/binding-rule`)*
 - [x] Demonstrate render-tracked `.value` reads vs direct readable bindings vs untracked snapshots (event handlers, async callbacks), public-property bindings, dual-path coalescing (no duplicate DOM writes), no-op writes, and update/ready boundaries in plain JS and TS. Document the outcome of helper/directive/controller experiments. *(`examples/binding-rule`: identical render/write counts for plain-JS and TS elements in three engines, `e2e/binding-rule.spec.ts`; outcomes in its README)*
 - [x] Exercise conversion/derivation/effect/commit/cleanup failures, production diagnostics, external signal composition, disposal during callbacks, and fresh reconnect scopes. Verify no implicit whole-host rerender or layout read on a direct binding update. *(`packages/core/test/failure-paths.browser.test.ts`, three engines; ownership table in core-contracts §6.2)*
 
@@ -931,10 +931,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M3: binding-rule walkthrough (`examples/binding-rule`, plain JS and TS, identical counts in three engines) with helper/directive/controller outcomes; failure-path suite (conversion, derivation, effect, commit, cleanup, hook, external signals, disposal during callbacks, reconnect scopes, no layout reads, production diagnostics in the browser); failure ownership table (core-contracts §6.2) | 512 tests; 15 e2e; full pipeline passes |
 | 2026-10-17 | M3: `props()` assessed with a public-API prototype and three-engine contract tests (element position unavailable, precedence not enforceable, 662 B gzip); not in core for M4–M7, decision stays at M8 | 527 tests; full pipeline passes |
 | 2026-10-17 | M3: `@mote/workbench` DOM-free entries — `./examples` (typed `defineExamples`, `examples.v1`, `checkExamples`), `./config` (`resolveWorkbenchConfig` defaults and diagnostics, `defineDocs`), `./pages` (`buildPageRegistry` from CEM + enrichment + authored content, projections, legacy redirects); packed-consumer check covers subpath-only packages; CLI tests given a 30 s budget after a load-induced timeout | 547 tests; full pipeline passes |
+| 2026-10-17 | M3: cold startup and click-to-next-frame measurements with a plain-DOM control in three engines; results regenerated | Measurement item closed; M3 open items: none besides M2's side-nav link (M4) |
 
 ## 11. Continuation
 
-**Next step:** close M3 — page-level startup and update-to-paint measurements and the API walkthrough remain under the measurement item; then M4's first components on core + tokens (`mote-button`, `mote-input`, `mote-card`, `mote-side-nav`; side-nav links the last open M2 item), with examples defined through `@mote/workbench/examples`.
+**Next step:** M4 — first interoperable components on core + tokens (`mote-button`, `mote-input`, `mote-card`, `mote-side-nav`; side-nav links the last open M2 item), with examples defined through `@mote/workbench/examples` and analyzer metadata validated.
 
 Use §12 as the direct-source reading map. Resolve Workbench/helper build ordering and the authoring/property prototype first, then the form/container slice; keep those decisions tied to executable evidence.
 
