@@ -126,6 +126,7 @@ describe('odd-card', () => {
   it('reflects variant and padding, and reads roles through component variables', async () => {
     container.style.setProperty('--odd-space-lg', '20px');
     container.style.setProperty('--odd-color-surface-sunken', 'rgb(4, 5, 6)');
+    container.style.setProperty('--odd-elevation-hover', '0 4px 12px rgb(36, 31, 71)');
     const { el, part } = await mount('<p>Body</p>');
     expect(el.getAttribute('variant')).toBe('outlined');
     expect(el.getAttribute('padding')).toBe('md');
@@ -136,7 +137,7 @@ describe('odd-card', () => {
     expect(getComputedStyle(part('base')).backgroundColor).toBe('rgb(4, 5, 6)');
     el.variant = 'elevated';
     await settle(el);
-    expect(getComputedStyle(part('base')).boxShadow).not.toBe('none');
+    expect(getComputedStyle(part('base')).boxShadow).toContain('rgb(36, 31, 71)');
     el.style.setProperty('--odd-card-shadow', 'none');
     expect(getComputedStyle(part('base')).boxShadow).toBe('none');
   });

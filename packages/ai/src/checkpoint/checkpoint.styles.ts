@@ -25,10 +25,10 @@ export const checkpointStyles = css`
     font-size: ${token('font.size.sm')};
   }
   .state[data-tone='success'] {
-    color: ${token('color.text.success')};
+    color: ${token('color.success.foreground')};
   }
   .state[data-tone='danger'] {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   .confirm {
     display: grid;

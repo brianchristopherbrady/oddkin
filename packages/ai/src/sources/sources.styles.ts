@@ -23,10 +23,10 @@ export const sourcesStyles = css`
     border-radius: ${token('radius.sm')};
   }
   .item[data-revealed='true'] {
-    background: ${token('color.surface.selected')};
+    background: ${token('color.surface.hover')};
   }
   .title {
-    color: ${token('color.text.link')};
+    color: ${token('color.link')};
     font-weight: ${token('font.weight.medium')};
   }
   span.title {

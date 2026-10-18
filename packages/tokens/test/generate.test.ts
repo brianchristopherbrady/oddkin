@@ -305,7 +305,9 @@ describe('colour', () => {
       overrides: { 'color.text.secondary': { light: '#bbbbbb', dark: '{ref.neutral.300}' } },
     });
     expect(result.ok).toBe(true);
+    // One warning per failing pair: secondary text on the default surface and on the canvas.
     expect(result.diagnostics.map((d) => [d.code, d.severity, d.path])).toEqual([
+      ['contrast.fail', 'warning', '/tokens/color.text.secondary'],
       ['contrast.fail', 'warning', '/tokens/color.text.secondary'],
     ]);
     expect(result.diagnostics[0]?.message).toContain('an override is involved');
@@ -362,7 +364,7 @@ describe('scopes and alias closure', () => {
     const clinic = scope('product:clinic');
     expect(clinic?.changed.every((n) => /^ref\.(brand|neutral)\./.test(n))).toBe(true);
     expect([...(clinic?.tokens.keys() ?? [])]).toEqual(
-      expect.arrayContaining(['ref.brand.600', 'color.action.default', 'color.surface.selected']),
+      expect.arrayContaining(['ref.brand.600', 'color.action.default', 'color.surface.specimen']),
     );
     expect(clinic?.tokens.has('space.md')).toBe(false);
     const compact = scope('density:compact');

@@ -17,7 +17,7 @@ const TIER: Record<TokenCategory, number> = {
   component: 3,
 };
 
-export type TokenType = 'color' | 'dimension' | 'number' | 'fontFamily' | 'fontWeight';
+export type TokenType = 'color' | 'dimension' | 'number' | 'fontFamily' | 'fontWeight' | 'shadow';
 export type TokenOrigin = 'preset' | 'generated' | 'configured' | 'overridden';
 export type TokenValue = string | ModeValues;
 

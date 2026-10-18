@@ -32,7 +32,7 @@ export const responseStyles = css`
     color: ${token('color.text.secondary')};
   }
   .content a {
-    color: ${token('color.text.link')};
+    color: ${token('color.link')};
   }
   .content .unsafe-link {
     text-decoration-line: underline;
@@ -62,18 +62,18 @@ export const responseStyles = css`
     margin: 0 ${token('space.2xs')} ${token('space.2xs')};
   }
   .tok-keyword {
-    color: ${token('color.text.link')};
+    color: ${token('color.link')};
     font-weight: ${token('font.weight.semibold')};
   }
   .tok-string {
-    color: ${token('color.text.success')};
+    color: ${token('color.success.foreground')};
   }
   .tok-comment {
     color: ${token('color.text.secondary')};
     font-style: italic;
   }
   .tok-number {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   .table-scroll {
     overflow-x: auto;
@@ -105,7 +105,7 @@ export const responseStyles = css`
     font-size: ${token('font.size.sm')};
   }
   .status-line[data-status='failed'] {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   .status-line[data-status='streaming']::before {
     content: '';

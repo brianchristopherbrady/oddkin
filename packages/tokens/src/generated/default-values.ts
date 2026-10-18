@@ -8,105 +8,122 @@ export const values = {
   },
   card: {
     padding: '1.5rem',
-    radius: '0.75rem',
+    radius: '0.5rem',
   },
   color: {
+    accent: {
+      decorative: '#dfedaa',
+    },
     action: {
-      active: {
-        light: '#39299a',
-        dark: '#cfd4ff',
-      },
       default: {
-        light: '#5f4cee',
-        dark: '#9194ff',
+        light: '#6250e8',
+        dark: '#b4a8ff',
       },
       hover: {
-        light: '#4c38c6',
-        dark: '#b1b6ff',
+        light: '#5140cc',
+        dark: '#c5bcff',
+      },
+      pressed: {
+        light: '#4333ad',
+        dark: '#9b8cf0',
       },
     },
     border: {
-      danger: {
-        light: '#e6443d',
-        dark: '#c92324',
-      },
       default: {
-        light: '#d6d7db',
-        dark: '#414248',
+        light: '#d9d8e1',
+        dark: '#555368',
       },
       strong: {
-        light: '#84858f',
-        dark: '#a0a1aa',
+        light: '#8c8f9d',
+        dark: '#858395',
+      },
+    },
+    canvas: {
+      light: '#f6f5f1',
+      dark: '#171821',
+    },
+    danger: {
+      foreground: {
+        light: '#b4233a',
+        dark: '#ff9bab',
+      },
+      surface: {
+        light: '#fff0f2',
+        dark: '#3d202a',
       },
     },
     focus: {
       ring: {
-        light: '#756dff',
-        dark: '#5f4cee',
+        light: '#6250e8',
+        dark: '#b4a8ff',
+      },
+    },
+    link: {
+      light: '#6250e8',
+      dark: '#b4a8ff',
+    },
+    selection: {
+      background: '#6250e8',
+      foreground: '#ffffff',
+    },
+    success: {
+      foreground: {
+        light: '#267653',
+        dark: '#8fd6b3',
+      },
+      surface: {
+        light: '#eaf6ef',
+        dark: '#1c352b',
       },
     },
     surface: {
-      danger: {
-        light: '#fff2f0',
-        dark: '#3a0002',
-      },
       default: {
         light: '#ffffff',
-        dark: '#1a1a1e',
+        dark: '#242631',
       },
       hover: {
-        light: '#ebebed',
-        dark: '#414248',
+        light: '#f0eff5',
+        dark: '#30323f',
       },
       raised: {
         light: '#ffffff',
-        dark: '#2d2d32',
+        dark: '#2d2f3b',
       },
-      selected: {
-        light: '#f3f4ff',
-        dark: '#271a70',
-      },
-      success: {
-        light: '#edf9ef',
-        dark: '#00220a',
+      specimen: {
+        light: '#efedfc',
+        dark: '#29263d',
       },
       sunken: {
-        light: '#f5f5f6',
-        dark: '#000000',
+        light: '#f0eff3',
+        dark: '#111219',
       },
     },
     text: {
-      danger: {
-        light: '#c92324',
-        dark: '#f97165',
-      },
       disabled: {
-        light: '#a0a1aa',
-        dark: '#6d6e77',
-      },
-      inverse: {
-        light: '#ffffff',
-        dark: '#1a1a1e',
-      },
-      link: {
-        light: '#5f4cee',
-        dark: '#9194ff',
+        light: '#767985',
+        dark: '#858393',
       },
       'on-action': {
         light: '#ffffff',
-        dark: '#1a1a1e',
+        dark: '#23252b',
       },
       primary: {
-        light: '#2d2d32',
-        dark: '#f5f5f6',
+        light: '#23252b',
+        dark: '#f5f3fd',
       },
       secondary: {
-        light: '#565760',
-        dark: '#bcbdc4',
+        light: '#5f626f',
+        dark: '#bdbbcd',
       },
-      success: {
-        light: '#006b2e',
-        dark: '#2e9e52',
+    },
+    warning: {
+      foreground: {
+        light: '#8a5900',
+        dark: '#e9c478',
+      },
+      surface: {
+        light: '#fff5de',
+        dark: '#3a2e18',
       },
     },
   },
@@ -124,7 +141,10 @@ export const values = {
         sm: '0.5rem',
       },
     },
-    radius: '0.5rem',
+    radius: '0.4375rem',
+  },
+  elevation: {
+    hover: '0 4px 12px rgb(36 31 71 / 0.09)',
   },
   focus: {
     offset: '2px',
@@ -132,15 +152,17 @@ export const values = {
   },
   font: {
     family: {
-      mono: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-      sans: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      display: '"Jost", "Inter", system-ui, sans-serif',
+      mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+      sans: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
     },
     size: {
-      '2xl': '1.5rem',
-      '3xl': '1.875rem',
+      '2xl': '1.625rem',
+      '2xs': '0.625rem',
+      '3xl': '3rem',
       lg: '1.125rem',
-      md: '1rem',
-      sm: '0.875rem',
+      md: '0.9375rem',
+      sm: '0.8125rem',
       xl: '1.25rem',
       xs: '0.75rem',
     },
@@ -157,6 +179,10 @@ export const values = {
     'item-min': '16rem',
     'main-min': '20rem',
     'sidebar-width': '16rem',
+  },
+  'letter-spacing': {
+    tight: '-0.015em',
+    wide: '0.08em',
   },
   'line-height': {
     normal: '1.5',
@@ -184,15 +210,15 @@ export const values = {
     brand: {
       '50': '#f3f4ff',
       '100': '#e7e9ff',
-      '200': '#cfd4ff',
-      '300': '#b1b6ff',
-      '400': '#9194ff',
-      '500': '#756dff',
-      '600': '#5f4cee',
-      '700': '#4c38c6',
-      '800': '#39299a',
-      '900': '#271a70',
-      '950': '#160c48',
+      '200': '#d0d4ff',
+      '300': '#b2b6ff',
+      '400': '#9393ff',
+      '500': '#776cff',
+      '600': '#624fe7',
+      '700': '#4d3bc0',
+      '800': '#3a2b95',
+      '900': '#281c6c',
+      '950': '#160e46',
     },
     danger: {
       '50': '#fff2f0',
@@ -211,9 +237,9 @@ export const values = {
       '0': '#ffffff',
       '50': '#f5f5f6',
       '100': '#ebebed',
-      '200': '#d6d7db',
+      '200': '#d7d7db',
       '300': '#bcbdc4',
-      '400': '#a0a1aa',
+      '400': '#a0a1a9',
       '500': '#84858f',
       '600': '#6d6e77',
       '700': '#565760',
@@ -235,6 +261,19 @@ export const values = {
       '900': '#003915',
       '950': '#00220a',
     },
+    warning: {
+      '50': '#fcf4e8',
+      '100': '#f9e9d3',
+      '200': '#efd3ac',
+      '300': '#e3b575',
+      '400': '#d09538',
+      '500': '#b37900',
+      '600': '#956300',
+      '700': '#774f00',
+      '800': '#5b3b00',
+      '900': '#402800',
+      '950': '#271700',
+    },
   },
   space: {
     '2xl': '3rem',
@@ -249,5 +288,57 @@ export const values = {
   },
   target: {
     min: '1.5rem',
+  },
+  type: {
+    body: {
+      family: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'line-height': '1.6',
+      size: '0.9375rem',
+      weight: '400',
+    },
+    code: {
+      family: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+      'line-height': '1.6667',
+      size: '0.75rem',
+      weight: '400',
+    },
+    display: {
+      family: '"Jost", "Inter", system-ui, sans-serif',
+      'letter-spacing': '-0.015em',
+      'line-height': '1.2083',
+      size: '3rem',
+      weight: '500',
+    },
+    eyebrow: {
+      family: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'letter-spacing': '0.08em',
+      'line-height': '1.6',
+      size: '0.625rem',
+      weight: '600',
+    },
+    section: {
+      family: '"Jost", "Inter", system-ui, sans-serif',
+      'line-height': '1.3077',
+      size: '1.625rem',
+      weight: '600',
+    },
+    small: {
+      family: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'line-height': '1.5',
+      size: '0.75rem',
+      weight: '400',
+    },
+    title: {
+      family: '"Jost", "Inter", system-ui, sans-serif',
+      'line-height': '1.2',
+      size: '1.25rem',
+      weight: '600',
+    },
+    ui: {
+      family: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'line-height': '1.5385',
+      size: '0.8125rem',
+      weight: '500',
+    },
   },
 } as const;

@@ -29,6 +29,6 @@ export const cardStyles = css`
   :host([variant='elevated']) .card {
     border-color: var(--odd-card-border-color, transparent);
     background: var(--odd-card-background, ${token('color.surface.raised')});
-    box-shadow: var(--odd-card-shadow, 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08));
+    box-shadow: var(--odd-card-shadow, ${token('elevation.hover')});
   }
 `;

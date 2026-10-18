@@ -64,7 +64,15 @@ export interface ResolveResult {
   readonly diagnostics: readonly Diagnostic[];
 }
 
-type Ramps = Record<'brand' | 'neutral' | 'danger' | 'success', ReturnType<typeof generateRamp>>;
+type Ramps = Record<
+  'brand' | 'neutral' | 'danger' | 'success' | 'warning',
+  ReturnType<typeof generateRamp>
+>;
+interface StatusSeeds {
+  readonly danger: Oklch;
+  readonly success: Oklch;
+  readonly warning: Oklch;
+}
 
 const TOP_LEVEL = [
   '$schema',
@@ -115,12 +123,7 @@ function color(value: unknown, path: string, d: DiagnosticList): Oklch | undefin
   return parsed;
 }
 
-function buildRamps(
-  primary: Oklch,
-  neutral: Oklch | undefined,
-  danger: Oklch,
-  success: Oklch,
-): Ramps {
+function buildRamps(primary: Oklch, neutral: Oklch | undefined, status: StatusSeeds): Ramps {
   const neutralSeed = neutral ?? {
     l: primary.l,
     c: Math.min(primary.c * 0.1, 0.015),
@@ -129,8 +132,9 @@ function buildRamps(
   return {
     brand: generateRamp(primary),
     neutral: generateRamp(neutralSeed, neutral ? Math.min(neutral.c, 0.04) : neutralSeed.c),
-    danger: generateRamp(danger),
-    success: generateRamp(success),
+    danger: generateRamp(status.danger),
+    success: generateRamp(status.success),
+    warning: generateRamp(status.warning),
   };
 }
 
@@ -362,9 +366,10 @@ export function resolveTheme(input: unknown): ResolveResult {
 
   const status = config.status ?? {};
   if (!isRecord(status)) d.error('config.type', '/status', 'status must be an object.');
-  else unknownKeys(status, ['danger', 'success'], '/status', d);
+  else unknownKeys(status, ['danger', 'success', 'warning'], '/status', d);
   const danger = color(status.danger ?? DEFAULT_STATUS.danger, '/status/danger', d);
   const success = color(status.success ?? DEFAULT_STATUS.success, '/status/success', d);
+  const warning = color(status.warning ?? DEFAULT_STATUS.warning, '/status/warning', d);
 
   const modes = config.modes ?? MODES;
   if (
@@ -437,11 +442,12 @@ export function resolveTheme(input: unknown): ResolveResult {
   if (!isRecord(overrides))
     d.error('config.type', '/overrides', 'overrides must be an object of token names to values.');
 
-  if (d.hasErrors || !primary || !danger || !success || !spacing)
+  if (d.hasErrors || !primary || !danger || !success || !warning || !spacing)
     return { theme: undefined, diagnostics: d.items };
 
   // Base graph: generated references, spacing, preset tokens.
-  const ramps = buildRamps(primary, neutral, danger, success);
+  const seeds: StatusSeeds = { danger, success, warning };
+  const ramps = buildRamps(primary, neutral, seeds);
   const tokens = new Map<string, TokenDefinition>();
   for (const ref of refTokens(ramps)) tokens.set(ref.name, ref);
   const spacingOrigin = config.spacing ? 'generated' : 'preset';
@@ -463,7 +469,7 @@ export function resolveTheme(input: unknown): ResolveResult {
   }
 
   // Contrast-selected roles, valid for the base brand and every product brand.
-  const productRamps = productInputs.map((p) => buildRamps(p.primary, p.neutral, danger, success));
+  const productRamps = productInputs.map((p) => buildRamps(p.primary, p.neutral, seeds));
   const variantRamps = [ramps, ...productRamps];
   const variants = variantRamps.map((r) => withRefs(tokens, refTokens(r)));
   for (const role of contrastRoles(variants, variantRamps, modes)) tokens.set(role.name, role);

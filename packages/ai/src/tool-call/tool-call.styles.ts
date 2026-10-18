@@ -56,6 +56,6 @@ export const toolCallStyles = css`
     align-items: center;
     gap: ${token('space.xs')};
     padding: ${token('space.xs')} ${token('space.sm')};
-    border-block-start: ${token('border.width.default')} solid ${token('color.border.danger')};
+    border-block-start: ${token('border.width.default')} solid ${token('color.danger.foreground')};
   }
 `;

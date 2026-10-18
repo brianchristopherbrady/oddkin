@@ -30,7 +30,7 @@ export const inputStyles = css`
     font-size: ${token('font.size.md')};
   }
   .control[aria-invalid='true'] {
-    border-color: ${token('color.border.danger')};
+    border-color: ${token('color.danger.foreground')};
   }
   .control:disabled {
     background: ${token('color.surface.sunken')};
@@ -38,6 +38,6 @@ export const inputStyles = css`
   }
   .error {
     font-size: ${token('font.size.sm')};
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
 `;

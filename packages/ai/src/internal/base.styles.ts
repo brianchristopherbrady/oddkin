@@ -35,13 +35,13 @@ export const aiElementStyles = css`
   }
   .status[data-tone='success'] {
     border-color: currentColor;
-    color: ${token('color.text.success')};
-    background: ${token('color.surface.success')};
+    color: ${token('color.success.foreground')};
+    background: ${token('color.success.surface')};
   }
   .status[data-tone='danger'] {
-    border-color: ${token('color.border.danger')};
-    color: ${token('color.text.danger')};
-    background: ${token('color.surface.danger')};
+    border-color: currentColor;
+    color: ${token('color.danger.foreground')};
+    background: ${token('color.danger.surface')};
   }
   .status[data-tone='active'] {
     border-color: ${token('color.border.strong')};
@@ -54,7 +54,7 @@ export const aiElementStyles = css`
     gap: ${token('space.xs')};
   }
   .error {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
     font-size: ${token('font.size.sm')};
   }
   .text-button {
@@ -70,15 +70,16 @@ export const aiElementStyles = css`
     cursor: pointer;
   }
   .text-button[aria-pressed='true'] {
-    border-color: ${token('color.border.strong')};
-    background: ${token('color.surface.selected')};
+    border-color: ${token('color.selection.background')};
+    background: ${token('color.selection.background')};
+    color: ${token('color.selection.foreground')};
   }
   .text-button:disabled {
     color: ${token('color.text.disabled')};
     cursor: not-allowed;
   }
   @media (hover: hover) {
-    .text-button:not(:disabled):hover {
+    .text-button:not(:disabled, [aria-pressed='true']):hover {
       background: ${token('color.surface.hover')};
     }
   }

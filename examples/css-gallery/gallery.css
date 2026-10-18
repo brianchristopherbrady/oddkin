@@ -31,7 +31,7 @@ h3 {
 }
 
 a {
-  color: var(--odd-color-text-link);
+  color: var(--odd-color-link);
 }
 
 :is(a, select, input, textarea, summary, [tabindex='0']):focus-visible {

@@ -303,6 +303,54 @@ Theme Studio is part of `@oddkin/workbench`, so any library documented with Work
 
 Original OKLCH-based generator with deterministic, documented sRGB gamut mapping (start with tested chroma reduction; record visual limits). Full authored palettes and semantic-role overrides are supported. Generated ramps do not guarantee role contrast, so actual foreground/background/state pairs are checked against WCAG; APCA and colour-vision simulations are labelled supplementary diagnostics. [R30]
 
+### 10.1 Approved default palette and role vocabulary (implemented, ADR 0041)
+
+Design source: Figma file `E7LfRysny8V3qU24tv082i`, frames 8:29 ("Oddkin · UI kit") and 31:441 ("Shared default theme / Palette approval"). Role names match the design. `themes/default.theme.json` sets `brand.primary` to Electric iris and pins each approved value as an override; the generic preset keeps ramp-step and contrast-selected roles so any other brand still gets a complete, checked theme.
+
+| Role | Light | Dark | Use |
+| --- | --- | --- | --- |
+| `color.canvas` | `#f6f5f1` | `#171821` | Page background |
+| `color.surface.default` | `#ffffff` | `#242631` | Cards, panels, controls |
+| `color.surface.raised` | `#ffffff` | `#2d2f3b` | Raised surfaces (dark mode steps up instead of shadowing) |
+| `color.surface.sunken` | `#f0eff3` | `#111219` | Wells, code, inset areas |
+| `color.surface.hover` | `#f0eff5` | `#30323f` | Hover and transient highlights |
+| `color.surface.specimen` | `#efedfc` | `#29263d` | Documentation specimen stages only (24 px inset); never a selected state |
+| `color.text.primary` | `#23252b` | `#f5f3fd` | Body and headings |
+| `color.text.secondary` | `#5f626f` | `#bdbbcd` | Supporting text |
+| `color.text.disabled` | `#767985` | `#858393` | Disabled text (exempt from contrast minimums) |
+| `color.action.default` / `hover` / `pressed` | `#6250e8` / `#5140cc` / `#4333ad` | `#b4a8ff` / `#c5bcff` / `#9b8cf0` | Primary actions |
+| `color.text.on-action` | `#ffffff` | `#23252b` | Text on actions and selections |
+| `color.link`, `color.focus.ring` | `#6250e8` | `#b4a8ff` | Links; 2 px focus ring at 2 px offset |
+| `color.border.default` / `strong` | `#d9d8e1` / `#8c8f9d` | `#555368` / `#858395` | Dividers / control borders (3:1) |
+| `color.selection.background` / `foreground` | action default / on-action | same | Selected controls, with a state marker |
+| `color.danger.foreground` / `surface` | `#b4233a` / `#fff0f2` | `#ff9bab` / `#3d202a` | Errors; also danger borders |
+| `color.success.foreground` / `surface` | `#267653` / `#eaf6ef` | `#8fd6b3` / `#1c352b` | Success |
+| `color.warning.foreground` / `surface` | `#8a5900` / `#fff5de` | `#e9c478` / `#3a2e18` | Warnings (`status.warning` seeds the `ref.warning.*` ramp) |
+| `color.accent.decorative` | `#dfedaa` | `#dfedaa` | Citron decoration; never status, text, or interaction |
+
+Brand foundations: Chalk `#f6f5f1`, White `#ffffff`, Ink `#23252b`, Electric iris `#6250e8`, Pale iris `#efedfc`, Citron `#dfedaa`. Every pair in `CONTRAST_PAIRS` (text on canvas, surfaces, specimen, actions, selection; links, focus ring, strong border; each status foreground on the default surface and its status surface) passes for the default theme in both modes.
+
+### 10.2 Text styles (implemented)
+
+`type.<style>.{family,size,weight,line-height}`, plus `letter-spacing` where the design sets one. Families: `font.family.display` (Jost), `font.family.sans` (Inter), `font.family.mono` (JetBrains Mono), each with system fallbacks. Oddkin does not ship or load font files; applications that want the exact faces load them (font-metric fallbacks are M9).
+
+| Style | Family | Size / line height | Weight | Letter spacing |
+| --- | --- | --- | --- | --- |
+| `display` | display | 3rem (48 px) / 1.2083 | 500 | -0.015em |
+| `section` | display | 1.625rem (26 px) / 1.3077 | 600 | |
+| `title` | display | 1.25rem (20 px) / 1.2 | 600 | |
+| `body` | sans | 0.9375rem (15 px) / 1.6 | 400 | |
+| `ui` | sans | 0.8125rem (13 px) / 1.5385 | 500 | |
+| `small` | sans | 0.75rem (12 px) / 1.5 | 400 | |
+| `eyebrow` | sans | 0.625rem (10 px) / 1.6 | 600 | 0.08em |
+| `code` | mono | 0.75rem (12 px) / 1.6667 | 400 | |
+
+Use a style as a set, e.g. `font: var(--odd-type-ui-weight) var(--odd-type-ui-size) / var(--odd-type-ui-line-height) var(--odd-type-ui-family)`.
+
+### 10.3 Radii and elevation (implemented)
+
+`control.radius` is 0.4375rem (7 px) and `card.radius` is `radius.md` (8 px). `elevation.hover` (type `shadow`) is `0 4px 12px rgb(36 31 71 / 0.09)` in both modes (Figma "Oddkin/Elevation/Hover"); in dark mode depth comes mainly from `surface.raised`. `odd-card variant="elevated"` uses it. Stacking levels and further elevations remain M9 work.
+
 ## 11. Layout roles, responsive conditions, and profiles
 
 Consumed by layout recipes ([layout-recipes.md](./layout-recipes.md)) and ordinary CSS alike. The token package defines them; it knows nothing about recipes or components.

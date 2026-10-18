@@ -34,6 +34,7 @@ export const DEFAULT_SPACING: ExplicitSpacing = {
 export const DEFAULT_STATUS = {
   danger: 'oklch(0.58 0.2 27)',
   success: 'oklch(0.6 0.15 150)',
+  warning: 'oklch(0.72 0.15 75)',
 } as const;
 export const DEFAULT_DENSITY = { compact: { scale: 0.75 } } as const;
 
@@ -45,6 +46,24 @@ const t = (
   extra: Partial<PresetToken> = {},
 ): PresetToken => ({ name, category, type, value, ...extra });
 const mode = (light: string, dark: string) => ({ light, dark });
+
+/** `type.<name>.*` roles: one text style built from the foundation scales. */
+const textStyle = (
+  name: string,
+  family: 'sans' | 'display' | 'mono',
+  size: string,
+  weight: 'regular' | 'medium' | 'semibold' | 'bold',
+  lineHeight: string,
+  letterSpacing?: string,
+): PresetToken[] => [
+  t(`type.${name}.family`, 'semantic', 'fontFamily', `{font.family.${family}}`),
+  t(`type.${name}.size`, 'semantic', 'dimension', `{font.size.${size}}`),
+  t(`type.${name}.weight`, 'semantic', 'fontWeight', `{font.weight.${weight}}`),
+  t(`type.${name}.line-height`, 'semantic', 'number', lineHeight),
+  ...(letterSpacing
+    ? [t(`type.${name}.letter-spacing`, 'semantic', 'dimension', letterSpacing)]
+    : []),
+];
 
 export const PRESET_TOKENS: readonly PresetToken[] = [
   // Foundation
@@ -61,27 +80,31 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
     'font.family.sans',
     'foundation',
     'fontFamily',
-    'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
   ),
+  t('font.family.display', 'foundation', 'fontFamily', '"Jost", "Inter", system-ui, sans-serif'),
   t(
     'font.family.mono',
     'foundation',
     'fontFamily',
-    'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+    '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
   ),
+  t('font.size.2xs', 'foundation', 'dimension', '0.625rem'),
   t('font.size.xs', 'foundation', 'dimension', '0.75rem'),
-  t('font.size.sm', 'foundation', 'dimension', '0.875rem'),
-  t('font.size.md', 'foundation', 'dimension', '1rem'),
+  t('font.size.sm', 'foundation', 'dimension', '0.8125rem'),
+  t('font.size.md', 'foundation', 'dimension', '0.9375rem'),
   t('font.size.lg', 'foundation', 'dimension', '1.125rem'),
   t('font.size.xl', 'foundation', 'dimension', '1.25rem'),
-  t('font.size.2xl', 'foundation', 'dimension', '1.5rem'),
-  t('font.size.3xl', 'foundation', 'dimension', '1.875rem'),
+  t('font.size.2xl', 'foundation', 'dimension', '1.625rem'),
+  t('font.size.3xl', 'foundation', 'dimension', '3rem'),
   t('font.weight.regular', 'foundation', 'fontWeight', '400'),
   t('font.weight.medium', 'foundation', 'fontWeight', '500'),
   t('font.weight.semibold', 'foundation', 'fontWeight', '600'),
   t('font.weight.bold', 'foundation', 'fontWeight', '700'),
   t('line-height.tight', 'foundation', 'number', '1.25'),
   t('line-height.normal', 'foundation', 'number', '1.5'),
+  t('letter-spacing.tight', 'foundation', 'dimension', '-0.015em'),
+  t('letter-spacing.wide', 'foundation', 'dimension', '0.08em'),
   t('target.min', 'foundation', 'dimension', '1.5rem', {
     description:
       'Minimum interactive target size (WCAG 2.2 SC 2.5.8, 24 CSS px at the default root size).',
@@ -98,23 +121,46 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
   t('control.padding.inline.md', 'semantic', 'dimension', '{space.sm}'),
   t('control.padding.inline.lg', 'semantic', 'dimension', '{space.md}'),
   t('control.gap', 'semantic', 'dimension', '{space.xs}'),
-  t('control.radius', 'semantic', 'dimension', '{radius.md}'),
+  t('control.radius', 'semantic', 'dimension', '0.4375rem'),
+
+  // Semantic: text styles (Figma "Oddkin/<Style>"): family, size, weight, line height
+  ...textStyle('display', 'display', '3xl', 'medium', '1.2083', '{letter-spacing.tight}'),
+  ...textStyle('section', 'display', '2xl', 'semibold', '1.3077'),
+  ...textStyle('title', 'display', 'xl', 'semibold', '1.2'),
+  ...textStyle('body', 'sans', 'md', 'regular', '1.6'),
+  ...textStyle('ui', 'sans', 'sm', 'medium', '1.5385'),
+  ...textStyle('small', 'sans', 'xs', 'regular', '1.5'),
+  ...textStyle('eyebrow', 'sans', '2xs', 'semibold', '1.6', '{letter-spacing.wide}'),
+  ...textStyle('code', 'mono', 'xs', 'regular', '1.6667'),
+
+  // Semantic: elevation (light shadows; dark appearances step surfaces up instead)
+  t('elevation.hover', 'semantic', 'shadow', '0 4px 12px rgb(36 31 71 / 0.09)'),
 
   // Semantic: neutral colour roles (fixed steps; checked by contrast pairs below)
+  t('color.canvas', 'semantic', 'color', mode('{ref.neutral.50}', '{ref.neutral.1000}')),
   t('color.surface.default', 'semantic', 'color', mode('{ref.neutral.0}', '{ref.neutral.950}')),
   t('color.surface.raised', 'semantic', 'color', mode('{ref.neutral.0}', '{ref.neutral.900}')),
   t('color.surface.sunken', 'semantic', 'color', mode('{ref.neutral.50}', '{ref.neutral.1000}')),
   t('color.surface.hover', 'semantic', 'color', mode('{ref.neutral.100}', '{ref.neutral.800}')),
-  t('color.surface.selected', 'semantic', 'color', mode('{ref.brand.50}', '{ref.brand.900}')),
-  t('color.surface.danger', 'semantic', 'color', mode('{ref.danger.50}', '{ref.danger.950}')),
-  t('color.surface.success', 'semantic', 'color', mode('{ref.success.50}', '{ref.success.950}')),
+  t('color.surface.specimen', 'semantic', 'color', mode('{ref.brand.50}', '{ref.brand.900}'), {
+    description: 'Specimen stages only (documentation previews); never a selected state.',
+  }),
+  t('color.selection.background', 'semantic', 'color', '{color.action.default}', {
+    description: 'Selected controls; selection is also shown by a check or marker.',
+  }),
+  t('color.selection.foreground', 'semantic', 'color', '{color.text.on-action}'),
+  t('color.danger.surface', 'semantic', 'color', mode('{ref.danger.50}', '{ref.danger.950}')),
+  t('color.success.surface', 'semantic', 'color', mode('{ref.success.50}', '{ref.success.950}')),
+  t('color.warning.surface', 'semantic', 'color', mode('{ref.warning.50}', '{ref.warning.950}')),
+  t('color.accent.decorative', 'semantic', 'color', '#dfedaa', {
+    description: 'Decoration only; never a status, text, or interactive colour.',
+  }),
   t('color.text.primary', 'semantic', 'color', mode('{ref.neutral.900}', '{ref.neutral.50}')),
   t('color.text.secondary', 'semantic', 'color', mode('{ref.neutral.700}', '{ref.neutral.300}')),
   t('color.text.disabled', 'semantic', 'color', mode('{ref.neutral.400}', '{ref.neutral.600}'), {
     description:
       'Disabled text is exempt from contrast minimums (WCAG 1.4.3) but must still be distinguishable.',
   }),
-  t('color.text.inverse', 'semantic', 'color', mode('{ref.neutral.0}', '{ref.neutral.950}')),
   t('color.text.on-action', 'semantic', 'color', mode('{ref.neutral.0}', '{ref.neutral.950}')),
   t('color.border.default', 'semantic', 'color', mode('{ref.neutral.200}', '{ref.neutral.800}'), {
     description:
@@ -124,7 +170,7 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
 
   // Card
   t('card.padding', 'component', 'dimension', '{layout.inset}'),
-  t('card.radius', 'component', 'dimension', '{radius.lg}'),
+  t('card.radius', 'component', 'dimension', '{radius.md}'),
 
   // Layout roles
   t('layout.gap', 'layout', 'dimension', '{space.md}'),
@@ -146,7 +192,7 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
 /** A role chosen from a ramp by measured WCAG contrast against another role. */
 export interface ContrastRole {
   readonly name: string;
-  readonly ramp: 'brand' | 'danger' | 'success';
+  readonly ramp: 'brand' | 'danger' | 'success' | 'warning';
   /** Roles the chosen colour must contrast with, all of them (resolved per mode). */
   readonly against: readonly string[];
   readonly minimum: number;
@@ -167,49 +213,58 @@ export const CONTRAST_ROLES: readonly ContrastRole[] = [
     shift: 1,
   },
   {
-    name: 'color.action.active',
+    name: 'color.action.pressed',
     ramp: 'brand',
     against: ['color.text.on-action'],
     minimum: 4.5,
     from: 'color.action.default',
     shift: 2,
   },
-  { name: 'color.text.link', ramp: 'brand', against: ['color.surface.default'], minimum: 4.5 },
+  { name: 'color.link', ramp: 'brand', against: ['color.surface.default'], minimum: 4.5 },
   { name: 'color.focus.ring', ramp: 'brand', against: ['color.surface.default'], minimum: 3 },
   {
-    name: 'color.text.danger',
+    name: 'color.danger.foreground',
     ramp: 'danger',
-    against: ['color.surface.default', 'color.surface.danger'],
+    against: ['color.surface.default', 'color.danger.surface'],
     minimum: 4.5,
   },
-  { name: 'color.border.danger', ramp: 'danger', against: ['color.surface.default'], minimum: 3 },
   {
-    name: 'color.text.success',
+    name: 'color.success.foreground',
     ramp: 'success',
-    against: ['color.surface.default', 'color.surface.success'],
+    against: ['color.surface.default', 'color.success.surface'],
+    minimum: 4.5,
+  },
+  {
+    name: 'color.warning.foreground',
+    ramp: 'warning',
+    against: ['color.surface.default', 'color.warning.surface'],
     minimum: 4.5,
   },
 ];
 
 /** Role pairs checked against WCAG 2.x after resolution (foreground, background, minimum). */
 export const CONTRAST_PAIRS: ReadonlyArray<readonly [string, string, number]> = [
+  ['color.text.primary', 'color.canvas', 4.5],
   ['color.text.primary', 'color.surface.default', 4.5],
   ['color.text.primary', 'color.surface.raised', 4.5],
   ['color.text.primary', 'color.surface.sunken', 4.5],
   ['color.text.primary', 'color.surface.hover', 4.5],
-  ['color.text.primary', 'color.surface.selected', 4.5],
+  ['color.text.primary', 'color.surface.specimen', 4.5],
   ['color.text.secondary', 'color.surface.default', 4.5],
+  ['color.text.secondary', 'color.canvas', 4.5],
   ['color.text.on-action', 'color.action.default', 4.5],
   ['color.text.on-action', 'color.action.hover', 4.5],
-  ['color.text.on-action', 'color.action.active', 4.5],
-  ['color.text.link', 'color.surface.default', 4.5],
+  ['color.text.on-action', 'color.action.pressed', 4.5],
+  ['color.selection.foreground', 'color.selection.background', 4.5],
+  ['color.link', 'color.surface.default', 4.5],
   ['color.focus.ring', 'color.surface.default', 3],
   ['color.border.strong', 'color.surface.default', 3],
-  ['color.text.danger', 'color.surface.default', 4.5],
-  ['color.text.danger', 'color.surface.danger', 4.5],
-  ['color.border.danger', 'color.surface.default', 3],
-  ['color.text.success', 'color.surface.default', 4.5],
-  ['color.text.success', 'color.surface.success', 4.5],
+  ['color.danger.foreground', 'color.surface.default', 4.5],
+  ['color.danger.foreground', 'color.danger.surface', 4.5],
+  ['color.success.foreground', 'color.surface.default', 4.5],
+  ['color.success.foreground', 'color.success.surface', 4.5],
+  ['color.warning.foreground', 'color.surface.default', 4.5],
+  ['color.warning.foreground', 'color.warning.surface', 4.5],
 ];
 
 /** Provisional named conditions. `shell` is the container the application shell declares. */

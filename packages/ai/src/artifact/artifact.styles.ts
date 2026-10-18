@@ -56,13 +56,13 @@ export const artifactStyles = css`
     white-space: pre-wrap;
   }
   .preview a {
-    color: ${token('color.text.link')};
+    color: ${token('color.link')};
   }
   .preview .tok-keyword {
-    color: ${token('color.text.link')};
+    color: ${token('color.link')};
   }
   .preview .tok-string {
-    color: ${token('color.text.success')};
+    color: ${token('color.success.foreground')};
   }
   .preview .tok-comment {
     color: ${token('color.text.secondary')};

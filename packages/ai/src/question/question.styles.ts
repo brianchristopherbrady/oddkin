@@ -52,6 +52,6 @@ export const questionStyles = css`
     color: ${token('color.text.secondary')};
   }
   .state[data-status='failed'] {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
 `;

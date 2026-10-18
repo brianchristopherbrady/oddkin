@@ -44,7 +44,7 @@ describe('refs and values', () => {
   it('exposes literals separately from references, per mode where needed', () => {
     expect(values.space.md).toBe('1rem');
     expect(values.control.height.md).toBe('2.5rem');
-    expect(values.color.action.default).toEqual({ light: '#5f4cee', dark: '#9194ff' });
+    expect(values.color.action.default).toEqual({ light: '#6250e8', dark: '#b4a8ff' });
     expect(values.layout['item-min']).toBe('16rem');
   });
 

@@ -49,7 +49,7 @@ export const messageStyles = css`
     font-size: ${token('font.size.sm')};
   }
   .file a {
-    color: ${token('color.text.link')};
+    color: ${token('color.link')};
   }
   .fallback {
     margin: 0;

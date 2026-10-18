@@ -22,7 +22,9 @@ import { generate } from '@oddkin/tokens/generate';
 const { ok, css, diagnostics } = generate({ brand: { primary: '#5b46e8' } });
 ```
 
-One brand colour produces a complete theme: OKLCH reference ramps (brand, neutral, danger, success), a provisional explicit `rem` spacing scale, typography, radii, control sizes, layout roles, navigation roles, and semantic colour roles chosen by measured WCAG contrast. Light, dark, and system modes; `data-odd-theme`, `data-odd-mode`, `data-odd-product`, and `data-odd-density` scopes re-declare their alias closures and nest in any order. Invalid input returns structured diagnostics (code, JSON-pointer path, message, suggestion) instead of throwing.
+One brand colour produces a complete theme: OKLCH reference ramps (brand, neutral, danger, success, warning), a provisional explicit `rem` spacing scale, typography with eight text-style roles (`type.display` … `type.code`), radii, an elevation, control sizes, layout roles, navigation roles, and semantic colour roles chosen by measured WCAG contrast. Light, dark, and system modes; `data-odd-theme`, `data-odd-mode`, `data-odd-product`, and `data-odd-density` scopes re-declare their alias closures and nest in any order. Invalid input returns structured diagnostics (code, JSON-pointer path, message, suggestion) instead of throwing.
+
+`@oddkin/tokens/css/default.css` is built from `themes/default.theme.json`: Electric iris (`#6250e8`) with the approved light and dark palette pinned as overrides (role table: docs/architecture/theming-and-styling.md §10.1, ADR 0041). Font families lead with Jost, Inter, and JetBrains Mono and fall back to system fonts; the package does not ship font files.
 
 ## CLI
 

@@ -40,6 +40,9 @@
         },
         "success": {
           "$ref": "#/$defs/color"
+        },
+        "warning": {
+          "$ref": "#/$defs/color"
         }
       }
     },

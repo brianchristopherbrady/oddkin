@@ -50,7 +50,7 @@ export const buttonStyles = css`
     }
   }
   :host([appearance='primary']) button:active:enabled:not([aria-disabled='true']) {
-    background: var(--odd-button-background, ${token('color.action.active')});
+    background: var(--odd-button-background, ${token('color.action.pressed')});
   }
   :host([appearance='secondary']) button {
     border-color: var(--odd-button-border-color, ${token('color.border.strong')});

@@ -12,7 +12,7 @@ export const activityStyles = css`
     font-size: ${token('font.size.sm')};
   }
   .base[data-status='failed'] {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   .indicator {
     inline-size: 0.5rem;

@@ -49,11 +49,11 @@ export const taskPlanStyles = css`
     color: ${token('color.text.secondary')};
   }
   [data-status='done'] > .symbol {
-    color: ${token('color.text.success')};
+    color: ${token('color.success.foreground')};
   }
   [data-status='failed'] > .symbol,
   [data-status='blocked'] > .symbol {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   [data-status='active'] > .body > .step-title,
   [data-status='needs-input'] > .body > .step-title {

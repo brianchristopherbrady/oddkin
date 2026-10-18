@@ -19,7 +19,7 @@ export const changeReviewStyles = css`
   }
   .proposal[data-status='stale'],
   .proposal[data-status='failed'] {
-    border-color: ${token('color.border.danger')};
+    border-color: ${token('color.danger.foreground')};
   }
   p {
     margin: 0;
@@ -40,12 +40,12 @@ export const changeReviewStyles = css`
     overflow-x: auto;
   }
   del {
-    background: ${token('color.surface.danger')};
-    color: ${token('color.text.danger')};
+    background: ${token('color.danger.surface')};
+    color: ${token('color.danger.foreground')};
   }
   ins {
-    background: ${token('color.surface.success')};
-    color: ${token('color.text.success')};
+    background: ${token('color.success.surface')};
+    color: ${token('color.success.foreground')};
     text-decoration: underline;
   }
   .split {
@@ -61,10 +61,10 @@ export const changeReviewStyles = css`
     color: ${token('color.text.secondary')};
   }
   .state:is([data-status='stale'], [data-status='failed']) {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   .state[data-status='applied'] {
-    color: ${token('color.text.success')};
+    color: ${token('color.success.foreground')};
   }
   @media (forced-colors: active) {
     del {

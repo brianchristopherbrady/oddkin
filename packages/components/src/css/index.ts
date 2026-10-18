@@ -70,7 +70,7 @@ export const base: DocumentStylesheet = {
       line-height: ${token('line-height.normal')};
     }
     a {
-      color: ${token('color.text.link')};
+      color: ${token('color.link')};
     }
     code,
     kbd,

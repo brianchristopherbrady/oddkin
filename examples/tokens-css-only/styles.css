@@ -38,7 +38,7 @@ h4 {
 }
 
 a {
-  color: var(--odd-color-text-link);
+  color: var(--odd-color-link);
 }
 
 .action {
@@ -59,7 +59,7 @@ a {
 }
 
 .action:active {
-  background: var(--odd-color-action-active);
+  background: var(--odd-color-action-pressed);
 }
 
 :is(a, .action):focus-visible {

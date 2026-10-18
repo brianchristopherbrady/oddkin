@@ -41,7 +41,7 @@ export const inlineAssistStyles = css`
     color: ${token('color.text.secondary')};
   }
   .message:is([data-status='failed'], [data-status='blocked']) {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   .result {
     padding: ${token('space.sm')};

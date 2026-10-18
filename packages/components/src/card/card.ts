@@ -22,7 +22,7 @@ const HEADING = 'h1, h2, h3, h4, h5, h6, [role="heading"]';
  * @cssprop --odd-card-radius - Corner radius.
  * @cssprop --odd-card-background - Background colour.
  * @cssprop --odd-card-border-color - Border colour.
- * @cssprop --odd-card-shadow - Shadow for `variant="elevated"` (literal fallback until elevation tokens exist).
+ * @cssprop --odd-card-shadow - Shadow for `variant="elevated"` (default `elevation.hover`).
  * @a11y Becomes a named region only with `label` or a slotted heading; otherwise it adds no landmark.
  * @previewRole surface
  * @useFor Grouping related content and actions into one visual unit.

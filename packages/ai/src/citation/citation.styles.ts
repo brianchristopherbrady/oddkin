@@ -17,7 +17,7 @@ export const citationStyles = css`
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('radius.sm')};
     background: ${token('color.surface.sunken')};
-    color: ${token('color.text.link')};
+    color: ${token('color.link')};
     font: inherit;
     font-size: 0.75em;
     line-height: 1;
@@ -49,7 +49,7 @@ export const citationStyles = css`
     display: none !important;
   }
   .link {
-    color: ${token('color.text.link')};
+    color: ${token('color.link')};
   }
   @media (forced-colors: active) {
     .trigger,

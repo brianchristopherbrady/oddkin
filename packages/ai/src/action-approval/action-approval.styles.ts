@@ -37,20 +37,20 @@ export const actionApprovalStyles = css`
     font-weight: ${token('font.weight.medium')};
   }
   del {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   ins {
-    color: ${token('color.text.success')};
+    color: ${token('color.success.foreground')};
     text-decoration: none;
   }
   .state {
     font-size: ${token('font.size.sm')};
   }
   .state[data-tone='success'] {
-    color: ${token('color.text.success')};
+    color: ${token('color.success.foreground')};
   }
   .state[data-tone='danger'] {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   .reason {
     display: grid;

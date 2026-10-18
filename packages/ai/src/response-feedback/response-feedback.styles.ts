@@ -42,9 +42,9 @@ export const responseFeedbackStyles = css`
     background: ${token('color.surface.default')};
   }
   .outcome[data-status='failed'] {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   .outcome[data-status='submitted'] {
-    color: ${token('color.text.success')};
+    color: ${token('color.success.foreground')};
   }
 `;

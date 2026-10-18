@@ -16,7 +16,7 @@ export const promptInputStyles = css`
   }
   .form[data-dragging='true'] {
     border-style: dashed;
-    background: ${token('color.surface.selected')};
+    background: ${token('color.surface.hover')};
   }
   .input {
     inline-size: 100%;
@@ -67,7 +67,7 @@ export const promptInputStyles = css`
     font-size: ${token('font.size.sm')};
   }
   .attachment[data-status='failed'] {
-    border-color: ${token('color.border.danger')};
+    border-color: ${token('color.danger.foreground')};
   }
   .thumb {
     inline-size: 2rem;
@@ -88,7 +88,7 @@ export const promptInputStyles = css`
     color: ${token('color.text.secondary')};
   }
   .status-text[data-failed='true'] {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   .drop-hint {
     position: absolute;

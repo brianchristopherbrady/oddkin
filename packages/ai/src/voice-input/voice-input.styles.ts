@@ -18,7 +18,7 @@ export const voiceInputStyles = css`
     background: ${token('color.text.secondary')};
   }
   .record[aria-pressed='true'] .dot {
-    background: ${token('color.text.danger')};
+    background: ${token('color.danger.foreground')};
     animation: odd-voice-pulse 1s ease-in-out infinite;
   }
   @keyframes odd-voice-pulse {
@@ -42,7 +42,7 @@ export const voiceInputStyles = css`
     [data-status='interrupted'],
     [data-status='error']
   ) {
-    color: ${token('color.text.danger')};
+    color: ${token('color.danger.foreground')};
   }
   @media (forced-colors: active) {
     .dot {

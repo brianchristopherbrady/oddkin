@@ -367,3 +367,17 @@ Environment as the previous entry. Contracts: [theming-and-styling.md §7](./arc
 
 **Findings:** (1) Inside a flex container the visible spinner's computed `display` is `block` (blockified), so the hidden test asserts "not `none`" rather than a specific value. (2) The architecture docs said Oddkin ships no `!important`; `@oddkin/ai` already did inside shadow roots. The statement now names the single shadow-root exception and keeps document stylesheets free of `!important`.
 
+## 2026-10-18 — Approved palette, role vocabulary, and text-style roles (ADR 0041)
+
+Environment as the previous entry. Design source: Figma file `E7LfRysny8V3qU24tv082i` (frames 8:29, 31:441, 49:579; variables read with `get_variable_defs`). Contract: [theming-and-styling.md §10.1–§10.3](./architecture/theming-and-styling.md#101-approved-default-palette-and-role-vocabulary-implemented-adr-0041).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Generator and fixtures | `$env:UPDATE_FIXTURES=1; npx vitest run --project node packages/tokens`, then without the variable | Pass, 66 tests — fixtures and `src/generated/default-{names,values}.ts` regenerated through the generator; `status.warning` accepted by config, schema, and ramps; overriding secondary text now reports two contrast pairs (default surface and canvas); `values.color.action.default` is `#6250e8` / `#b4a8ff` |
+| Default theme | `generate()` on `themes/default.theme.json` | `ok: true`, no diagnostics — every approved light/dark pair in `CONTRAST_PAIRS` meets its minimum (text on canvas, surfaces, and specimen; on-action and selection; link, focus ring, strong border; each status foreground on the default surface and its status surface) |
+| Renamed roles | `git grep` for the removed names outside generated output | No references remain in sources, tests, or examples; `token()` would reject them at type-check time |
+| Components | `npx vitest run packages/components/test/card.browser.test.ts` | Pass in three engines — `variant="elevated"` reads `--odd-elevation-hover`; `--odd-card-shadow: none` still removes it |
+| Full pipeline | `npm run verify` | Pass — lint (boundaries, CSS compatibility with 50 stylesheets, format), typecheck, 1,011 tests in 99 files, size budgets (default token CSS 2,380 B of 2,560 B, previously 1,827 B of 2,048 B; button 1,056 B, card 534 B, input 590 B, AI styles 4,387 B), 79 e2e passed including axe-core on the three AI demos with the new palette, packed consumers |
+
+**Findings:** (1) The approved values are hand-tuned rather than ramp steps, so the default theme pins them as overrides and the generic preset keeps contrast-selected roles for other brands. (2) Pale iris is reserved for specimen stages; the AI pressed text button now uses the selection roles, and transient highlights (prompt drag target, revealed source) use `surface.hover`. (3) Font files are not shipped; without Jost, Inter, or JetBrains Mono installed, text falls back to system fonts. (4) Components do not yet use the text-style roles, and the restyled components have not been compared visually with the Figma frames; that is the next slice.
+

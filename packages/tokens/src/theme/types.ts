@@ -19,6 +19,7 @@ export interface BrandConfig {
 export interface StatusConfig {
   readonly danger?: ColorInput;
   readonly success?: ColorInput;
+  readonly warning?: ColorInput;
 }
 
 interface SpacingBase {

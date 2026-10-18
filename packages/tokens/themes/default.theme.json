@@ -1,5 +1,30 @@
 {
   "$schema": "../schema/theme-config.v1.schema.json",
   "name": "default",
-  "brand": { "primary": "#5b46e8" }
+  "brand": { "primary": "#6250e8" },
+  "overrides": {
+    "color.canvas": { "light": "#f6f5f1", "dark": "#171821" },
+    "color.surface.default": { "light": "#ffffff", "dark": "#242631" },
+    "color.surface.raised": { "light": "#ffffff", "dark": "#2d2f3b" },
+    "color.surface.sunken": { "light": "#f0eff3", "dark": "#111219" },
+    "color.surface.hover": { "light": "#f0eff5", "dark": "#30323f" },
+    "color.surface.specimen": { "light": "#efedfc", "dark": "#29263d" },
+    "color.text.primary": { "light": "#23252b", "dark": "#f5f3fd" },
+    "color.text.secondary": { "light": "#5f626f", "dark": "#bdbbcd" },
+    "color.text.disabled": { "light": "#767985", "dark": "#858393" },
+    "color.text.on-action": { "light": "#ffffff", "dark": "#23252b" },
+    "color.action.default": { "light": "#6250e8", "dark": "#b4a8ff" },
+    "color.action.hover": { "light": "#5140cc", "dark": "#c5bcff" },
+    "color.action.pressed": { "light": "#4333ad", "dark": "#9b8cf0" },
+    "color.link": { "light": "#6250e8", "dark": "#b4a8ff" },
+    "color.focus.ring": { "light": "#6250e8", "dark": "#b4a8ff" },
+    "color.border.default": { "light": "#d9d8e1", "dark": "#555368" },
+    "color.border.strong": { "light": "#8c8f9d", "dark": "#858395" },
+    "color.danger.foreground": { "light": "#b4233a", "dark": "#ff9bab" },
+    "color.danger.surface": { "light": "#fff0f2", "dark": "#3d202a" },
+    "color.success.foreground": { "light": "#267653", "dark": "#8fd6b3" },
+    "color.success.surface": { "light": "#eaf6ef", "dark": "#1c352b" },
+    "color.warning.foreground": { "light": "#8a5900", "dark": "#e9c478" },
+    "color.warning.surface": { "light": "#fff5de", "dark": "#3a2e18" }
+  }
 }

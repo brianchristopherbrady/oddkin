@@ -119,7 +119,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 
 | Stylesheet | Shipped | Compatibility keys |
 | --- | --- | --- |
-| `packages/tokens/dist/css/default.css` | yes | 12 |
+| `packages/tokens/dist/css/default.css` | yes | 15 |
 | `packages/components/dist/css/reset.css` | yes | 16 |
 | `packages/components/dist/css/base.css` | yes | 10 |
 | `packages/components/dist/css/utilities.css` | yes | 18 |
@@ -168,4 +168,4 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `examples/css-gallery/enhancements.css` | example | 13 |
 | `examples/css-gallery/gallery.css` | example | 72 |
 | `examples/tokens-css-only/styles.css` | example | 29 |
-| `examples/tokens-css-only/generated/harbor.css` | example | 12 |
+| `examples/tokens-css-only/generated/harbor.css` | example | 15 |
