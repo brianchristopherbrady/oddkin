@@ -408,3 +408,17 @@ Environment as the previous entry. Contract: [theming-and-styling.md §10.2](./a
 
 **Findings:** (1) The research demo streams for 20–26 s per test alone in Firefox, so its e2e groups now have a 90 s timeout and wait up to 45 s for completion; nothing in the demos changed. (2) The input control stays at the body size (1rem) rather than `ui`, because iOS Safari zooms the page when a focused field is smaller than 16 px. (3) The card's heading default uses `::slotted()`, which loses to any light-DOM rule for the heading, so page styles keep control.
 
+
+## 2026-10-18 — Core controllers (M4 foundation completion)
+
+Environment as the previous entry. Contract: [core-contracts.md §4.1](./architecture/core-contracts.md#41-shared-controllers-oddkincorecontrollers-implemented-m4).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Controllers | `npx vitest run packages/core/test/controllers.browser.test.ts` | Pass, 18 tests in Chromium, Firefox, WebKit — roving focus (arrows by orientation, RTL mirroring, Home/End, wrap on and off, disabled skipped, pointer focus followed, callback mode writes no `tabindex`, no handling after disposal, Tab stop moved when the active item is removed); focus recovery after removal, `hidden`, and `disabled`, never after the user moved focus out, native focusability of a focusable fallback kept; announcer (two regions, keys once, joined messages, `reset()`, routed caller-named event cancelled by the nearest announcer only, nothing written after disposal); resize deliveries and disconnection, `'frame'` merging, intersection; form value, mirrored `valueMissing` and message, custom error first, reset, restore, and fieldset disabled |
+| Migration | `npx vitest run packages/components packages/ai packages/core` | Pass, 783 tests — no expectation changed for `odd-input` or the AI elements |
+| DOM-free imports | `npm run lint:boundaries` | The four controller entries import in Node without DOM globals |
+| Size | `npm run size` | `ai-chat` 48,782 B (was 48,157 B; budget raised to 50,176 B); other JavaScript and CSS budgets unchanged |
+| Full pipeline | `npm run verify`, then `npm run test:e2e` and `npm run verify:packs` after the import-map fix | Lint, typecheck, unit and browser tests, size pass; e2e first failed in 19 tests because the CSS gallery and the floor probe load `odd-input` through import maps that lacked `@oddkin/core/controllers/form`; after adding it (gallery CSP hash recomputed) 79 passed, 2 skipped; packed consumers OK |
+
+**Findings:** (1) Pages that load components through import maps must list every core subpath the components import; the failure is a page that never becomes ready, with no console error in the test output. (2) The previous AI focus helper set `tabindex=-1` on any fallback without one, which would have removed a natively focusable fallback (a button) from the Tab order; the controller only does so for elements that are not focusable. (3) Live-region creation is a separate function so elements that render their regions do not ship it.

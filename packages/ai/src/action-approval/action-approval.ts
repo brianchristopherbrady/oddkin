@@ -4,7 +4,7 @@ import type { Scope } from '@oddkin/core/scope';
 import { can, unavailableReason } from '../contracts/normalize.js';
 import type { ApprovalRecord, ApprovalStatus, Capabilities } from '../contracts/types.js';
 import { announceEvent, approvalDecideEvent, approvalEditEvent } from '../events.js';
-import { recoverFocus } from '../internal/focus.js';
+import { FocusRecovery } from '@oddkin/core/controllers/focus';
 import { format, formatTime, langOf, strings } from '../internal/strings.js';
 
 export const APPROVAL_STRINGS = {
@@ -131,11 +131,13 @@ export class OddkinActionApproval extends OddkinElement.with({
     return time ? format(this._strings.expires, { time }) : undefined;
   }
 
-  protected override updated(): void {
-    recoverFocus(this.shadowRoot, this.shadowRoot?.querySelector<HTMLElement>('.state'));
-  }
-
   protected override mounted(scope: Scope): void {
+    scope.use(
+      new FocusRecovery({
+        root: () => this.shadowRoot,
+        fallback: () => this.shadowRoot?.querySelector<HTMLElement>('.state'),
+      }),
+    );
     let seen: { key: string; status: ApprovalStatus } | undefined;
     scope.effect(
       () => {

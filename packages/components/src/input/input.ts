@@ -1,3 +1,4 @@
+import { FormValue } from '@oddkin/core/controllers/form';
 import { OddkinElement, event, prop } from '@oddkin/core/element';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
@@ -11,18 +12,6 @@ export const inputEvent = event('input', {
 });
 /** Re-dispatched at the host when the user commits a change (native `change` is not composed). */
 export const changeEvent = event('change', { bubbles: true, composed: false, cancelable: false });
-
-const VALIDITY_FLAGS = [
-  'valueMissing',
-  'typeMismatch',
-  'patternMismatch',
-  'tooLong',
-  'tooShort',
-  'rangeUnderflow',
-  'rangeOverflow',
-  'stepMismatch',
-  'badInput',
-] as const;
 
 /**
  * A labelled single-line text field that participates in forms like a native input.
@@ -79,12 +68,28 @@ export class OddkinInput extends OddkinElement.with({
   // undefined until the value is set or typed ("dirty"), then independent of `defaultValue`.
   readonly #value = signal<string | undefined>(undefined);
 
+  // Form value, validity mirrored from the inner input, reset, restore, and fieldset state.
+  readonly #form = new FormValue({
+    internals: () => this.internals,
+    value: () => this.value,
+    control: () => this.shadowRoot?.querySelector('input'),
+    error: () => this.error,
+    watch: () => [this.required, this.type, this.disabled],
+    onReset: () => {
+      this.#value.value = undefined;
+      this._touched.value = false;
+    },
+    onRestore: (state) => {
+      if (typeof state === 'string') this.value = state;
+    },
+  });
+
   /** @internal Disabled by an ancestor `<fieldset disabled>`. */
-  readonly _formDisabled = signal(false);
+  readonly _formDisabled: Readable<boolean> = this.#form.disabled;
   /** @internal The user left the field or a submission was attempted. */
   readonly _touched = signal(false);
   /** @internal The current value failed validation. */
-  readonly _invalid = signal(false);
+  readonly _invalid: Readable<boolean> = this.#form.invalid;
   /**
    * @internal The field shows its error: `error` is set, or the value is invalid after the user
    * left the field or a validity check failed. One source for `aria-invalid` and the
@@ -154,22 +159,7 @@ export class OddkinInput extends OddkinElement.with({
 
   protected override mounted(scope: Scope): void {
     // After the commit that wrote the inner input, so its validity is current.
-    scope.effect(
-      () => {
-        const value = this.value;
-        const deps = [
-          this.error,
-          this.required,
-          this.type,
-          this.disabled,
-          this._formDisabled.value,
-        ];
-        void deps;
-        this.internals.setFormValue(value);
-        this.#validate();
-      },
-      { phase: 'post', name: '<odd-input> validity' },
-    );
+    scope.use(this.#form);
     // Styling hook for consumers (`odd-input:state(user-invalid)`), derived from the same
     // state as aria-invalid; never a second source of truth.
     scope.effect(() => this.setState('user-invalid', this._userInvalid.value), {
@@ -178,34 +168,20 @@ export class OddkinInput extends OddkinElement.with({
     });
   }
 
-  #validate(): void {
-    const control = this.shadowRoot?.querySelector('input');
-    if (!control) return;
-    const internals = this.internals;
-    if (this.error) {
-      internals.setValidity({ customError: true }, this.error, control);
-    } else if (!control.validity.valid) {
-      const flags: ValidityStateFlags = {};
-      for (const flag of VALIDITY_FLAGS) if (control.validity[flag]) flags[flag] = true;
-      internals.setValidity(flags, control.validationMessage, control);
-    } else {
-      internals.setValidity({});
-    }
-    this._invalid.value = !internals.validity.valid;
-  }
-
   /** Native callback: the owning form was reset. */
   formResetCallback(): void {
-    this.#value.value = undefined;
-    this._touched.value = false;
+    this.#form.formResetCallback();
   }
   /** Native callback: restore after navigation or autofill restore. */
-  formStateRestoreCallback(state: string | File | FormData | null): void {
-    if (typeof state === 'string') this.value = state;
+  formStateRestoreCallback(
+    state: string | File | FormData | null,
+    mode: 'restore' | 'autocomplete',
+  ): void {
+    this.#form.formStateRestoreCallback(state, mode);
   }
   /** Native callback: an ancestor fieldset's disabled state changed. */
   formDisabledCallback(disabled: boolean): void {
-    this._formDisabled.value = disabled;
+    this.#form.formDisabledCallback(disabled);
   }
 }
 

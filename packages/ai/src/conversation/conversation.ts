@@ -1,3 +1,5 @@
+import { LiveAnnouncer } from '@oddkin/core/controllers/announce';
+import { ResizeController } from '@oddkin/core/controllers/observe';
 import { OddkinElement, prop } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
@@ -11,7 +13,6 @@ import {
 } from '../controllers/announcer.js';
 import { isActive } from '../controllers/transitions.js';
 import { historyRequestEvent } from '../events.js';
-import { LiveAnnouncer, routeAnnouncements } from '../internal/announce.js';
 import { format, strings } from '../internal/strings.js';
 import type { MarkdownOptions } from '../markdown/render.js';
 import type { DataRenderer } from '../message/message.js';
@@ -212,9 +213,13 @@ export class OddkinConversation extends OddkinElement.with({
     if (!root || !scroller || !feed || !polite || !assertive) return;
 
     // One announcer per surface; descendants' `ai-announce` events are routed to it.
-    const announcer = new LiveAnnouncer(polite, assertive);
-    scope.add(() => announcer.dispose(), 'announcer');
-    scope.add(routeAnnouncements(this, announcer), 'announcement routing');
+    const announcer = scope.use(
+      new LiveAnnouncer({
+        regions: () => ({ polite, assertive }),
+        event: 'ai-announce',
+        target: () => this,
+      }),
+    );
 
     let previous: ConversationState | undefined;
     let previousIds: readonly string[] = [];
@@ -269,12 +274,16 @@ export class OddkinConversation extends OddkinElement.with({
     // view when following, otherwise keep the reading anchor where it was. The correction is
     // measured from current geometry, so it is a no-op wherever native scroll anchoring already
     // kept the anchor in place (never a second adjustment), and it covers engines without it.
-    const observer = new ResizeObserver(() => {
-      if (this._following.peek()) this.#scrollToEnd();
-      else this.#restoreAnchor(scroller);
-    });
-    observer.observe(feed);
-    scope.add(() => observer.disconnect(), 'resize observer');
+    // Runs in the observer callback, before paint.
+    scope.use(
+      new ResizeController(
+        () => {
+          if (this._following.peek()) this.#scrollToEnd();
+          else this.#restoreAnchor(scroller);
+        },
+        { targets: () => [feed] },
+      ),
+    );
 
     scope.listen(feed, 'keydown', (event: KeyboardEvent) => this.#onFeedKey(event));
     scope.listen(feed, 'focusin', (event: FocusEvent) => {

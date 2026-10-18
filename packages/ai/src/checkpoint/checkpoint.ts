@@ -4,7 +4,7 @@ import type { Scope } from '@oddkin/core/scope';
 import { can, unavailableReason } from '../contracts/normalize.js';
 import type { Capabilities, CheckpointRecord } from '../contracts/types.js';
 import { announceEvent, checkpointRestoreEvent } from '../events.js';
-import { recoverFocus } from '../internal/focus.js';
+import { FocusRecovery } from '@oddkin/core/controllers/focus';
 import { format, formatTime, langOf, strings } from '../internal/strings.js';
 
 export const CHECKPOINT_STRINGS = {
@@ -95,16 +95,17 @@ export class OddkinCheckpoint extends OddkinElement.with({
     this.emit(checkpointRestoreEvent, { checkpointId: c.checkpointId });
   };
 
-  protected override updated(): void {
-    const root = this.shadowRoot;
-    if (this._confirming.peek()) {
-      const confirm = root?.querySelector<HTMLElement>('[data-confirm]');
-      if (confirm && root?.activeElement?.closest('[hidden]')) confirm.focus();
-    }
-    recoverFocus(root, root?.querySelector<HTMLElement>('.state'));
-  }
-
   protected override mounted(scope: Scope): void {
+    // While confirming, a vanished control hands focus to the confirmation, else to the status.
+    scope.use(
+      new FocusRecovery({
+        root: () => this.shadowRoot,
+        fallback: () =>
+          (this._confirming.peek()
+            ? this.shadowRoot?.querySelector<HTMLElement>('[data-confirm]')
+            : undefined) ?? this.shadowRoot?.querySelector<HTMLElement>('.state'),
+      }),
+    );
     let previous: CheckpointRecord['status'] | undefined;
     scope.effect(
       () => {

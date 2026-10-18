@@ -31,6 +31,10 @@ export default {
         './model',
         './model/schema',
         './diagnostics',
+        './controllers/focus',
+        './controllers/announce',
+        './controllers/observe',
+        './controllers/form',
       ],
     },
     '@oddkin/tokens': {

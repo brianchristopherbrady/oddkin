@@ -24,7 +24,10 @@ export const BUDGETS = {
   reactive: 2048, // 2 KiB; measured 1,892
   'ai-headless': 14336, // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation)
   'ai-response': 21504, // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations)
-  'ai-chat': 49152, // 48 KiB; measured 47,747 (odd-conversation + odd-prompt-input, all nested elements)
+  // 49 KiB; measured 48,782 on 2026-10-18 (odd-conversation + odd-prompt-input, all nested
+  // elements; +625 B since the shared core focus, announce, and observe controllers replaced
+  // AI-internal helpers and recover focus after removal too).
+  'ai-chat': 50176,
 };
 
 /**

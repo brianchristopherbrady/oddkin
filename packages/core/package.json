@@ -86,6 +86,26 @@
       "development": "./dist/diagnostics/index.js",
       "default": "./dist/prod/diagnostics/index.js"
     },
+    "./controllers/focus": {
+      "types": "./dist/controllers/focus.d.ts",
+      "development": "./dist/controllers/focus.js",
+      "default": "./dist/prod/controllers/focus.js"
+    },
+    "./controllers/announce": {
+      "types": "./dist/controllers/announce.d.ts",
+      "development": "./dist/controllers/announce.js",
+      "default": "./dist/prod/controllers/announce.js"
+    },
+    "./controllers/observe": {
+      "types": "./dist/controllers/observe.d.ts",
+      "development": "./dist/controllers/observe.js",
+      "default": "./dist/prod/controllers/observe.js"
+    },
+    "./controllers/form": {
+      "types": "./dist/controllers/form.d.ts",
+      "development": "./dist/controllers/form.js",
+      "default": "./dist/prod/controllers/form.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

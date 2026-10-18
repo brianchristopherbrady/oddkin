@@ -71,7 +71,8 @@ apps/docs         → core, state, app, tokens, components, workbench (browser p
 | `./model/schema` | JSON Schema emitter for model portable subsets (tooling) | **no** | none |
 | `./element` (registration) | `define`, collision diagnostics — implemented in `./element` and the root entry; there is no separate `./registry` entry | yes | none until called |
 | `./inspect` (proposed) | Development-only explanation records (commit causes, dependencies, scope ownership); resolved only under the `development` condition, opt-in and bounded ([change-impact-and-verification.md](./change-impact-and-verification.md) §4.2) | yes | none until enabled |
-| `./controllers/*`, `./helpers/*` | Optional behaviors (observers, focus, form, refs, `classMap`, live input) | yes | none |
+| `./controllers/focus`, `./controllers/announce`, `./controllers/observe`, `./controllers/form` | `RovingFocus`, `FocusRecovery`; `LiveAnnouncer`, `createLiveRegions`; `ResizeController`, `IntersectionController`; `FormValue` — `Scope`-owned, unbranded (core-contracts.md §4.1). **Implemented** | yes (after `connect`) | none |
+| `./helpers/*` | Optional template helpers (refs, `classMap`, `styleMap`, live input) | yes | none |
 | `./diagnostics` | Dev warnings configuration | no | none |
 
 Subpaths are created only when implemented; an empty export is not a delivered feature.

@@ -23,7 +23,6 @@ export const inlineAssistTemplate = (host: OddkinInlineAssist) => {
       role="toolbar"
       aria-label=${t.label}
       aria-describedby="message"
-      @keydown=${host._onKey}
     >
       ${host._actions.map(
         (action, i) =>
@@ -34,7 +33,6 @@ export const inlineAssistTemplate = (host: OddkinInlineAssist) => {
             data-action=${action.id}
             aria-disabled=${blocked || pending ? 'true' : null}
             @click=${host._request}
-            @focus=${() => (host._active.value = i)}
           >
             ${action.label}
           </button>`,

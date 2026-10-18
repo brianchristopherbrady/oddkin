@@ -1,3 +1,4 @@
+import { RovingFocus } from '@oddkin/core/controllers/focus';
 import { OddkinElement, prop } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
@@ -123,29 +124,6 @@ export class OddkinInlineAssist extends OddkinElement.with({
   readonly _onLanguage = (event: Event): void => {
     this._language.value = (event.target as HTMLSelectElement).value;
   };
-  /** @internal APG toolbar keyboard model. */
-  readonly _onKey = (event: KeyboardEvent): void => {
-    const count = this._actions.length;
-    const current = this._active.peek();
-    let next = current;
-    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (current + 1) % count;
-    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp')
-      next = (current - 1 + count) % count;
-    else if (event.key === 'Home') next = 0;
-    else if (event.key === 'End') next = count - 1;
-    else return;
-    event.preventDefault();
-    const rtl =
-      getComputedStyle(this).direction === 'rtl' &&
-      (event.key === 'ArrowRight' || event.key === 'ArrowLeft');
-    if (rtl)
-      next = event.key === 'ArrowRight' ? (current - 1 + count) % count : (current + 1) % count;
-    this._active.value = next;
-    void this.updateComplete.then(() =>
-      this.shadowRoot?.querySelectorAll<HTMLElement>('[part="toolbar"] button')[next]?.focus(),
-    );
-  };
-
   /** @internal */
   _pendingText(): string {
     const label =
@@ -154,6 +132,18 @@ export class OddkinInlineAssist extends OddkinElement.with({
   }
 
   protected override mounted(scope: Scope): void {
+    // APG toolbar: one tab stop; unavailable actions stay focusable (aria-disabled), so none
+    // are skipped. The template renders tabindex from `_active`.
+    const toolbar = this.shadowRoot?.querySelector<HTMLElement>('[part="toolbar"]');
+    scope.use(
+      new RovingFocus({
+        target: () => toolbar,
+        items: () => [...(toolbar?.querySelectorAll<HTMLElement>('button') ?? [])],
+        orientation: 'both',
+        skip: () => false,
+        onActiveChange: (index) => (this._active.value = index),
+      }),
+    );
     const result = this.shadowRoot?.querySelector<HTMLElement>('[part="result"] .content');
     if (!result) return;
     const view = new MarkdownView(result, this.markdown ?? {});

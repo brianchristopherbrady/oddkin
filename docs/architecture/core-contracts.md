@@ -179,6 +179,20 @@ Required semantics:
 | Request | Resource starts a load | Supersession, cancellation, settlement, or owner disposal |
 | Application | `start()` | `stop()`; other app roots unaffected |
 
+### 4.1 Shared controllers (`@oddkin/core/controllers/*`, implemented, M4)
+
+Controllers implement `connect(scope)` and are activated with `scope.use(controller)`, usually in `mounted(scope)` so the elements they read exist. They read their targets through functions at connect time, touch the DOM only after `connect`, register every listener, observer, and timer on the scope, and are unbranded (no `--odd-*` properties, no Oddkin event names; callers name events). Each lives in its own subpath, so an element pays only for the controllers it imports. Verified in `packages/core/test/controllers.browser.test.ts` in three engines.
+
+| Entry | Controller | Contract |
+| --- | --- | --- |
+| `./controllers/focus` | `RovingFocus` | WAI-ARIA roving tabindex: one Tab stop; arrows by `orientation` (`horizontal`, `vertical`, `both`), mirrored horizontally in right-to-left text; Home/End; `wrap` (default on); skips disabled, `aria-disabled`, and unrendered items unless `skip` says otherwise; follows focus that arrives by pointer; writes `tabindex` itself or reports `onActiveChange(index)` for templates that render it; `setActive()`, `sync()` after items change |
+| `./controllers/focus` | `FocusRecovery` | While focus is inside `root`, a `MutationObserver` watches for the focused element being removed, hidden, disabled, or made inert; focus then moves to `fallback()` (made focusable with `tabindex="-1"` only if it is not focusable already). Focus the user moved elsewhere is never taken back |
+| `./controllers/announce` | `LiveAnnouncer`, `createLiveRegions`, `createLiveRegion` | One polite and one assertive region that exist before content changes; each key announced once until `reset()` (500 keys remembered); messages within `delay` (120 ms) joined; optional routing of a caller-named event whose `detail` is `{ text, key?, priority? }`, cancelled and stopped by the nearest announcer; nothing is written after disposal |
+| `./controllers/observe` | `ResizeController`, `IntersectionController` | Observers created on connect and disconnected on disposal; `observe()`/`unobserve()` while connected; `timing: 'immediate'` (default, before paint, for layout corrections) or `'frame'` (one call per animation frame with the latest entry per target) |
+| `./controllers/form` | `FormValue` | For `formAssociated` elements: a post-commit tracked effect submits `value()` (and `state()`), mirrors the inner control's validity flags, message, and anchor, with `error()` as a custom error first; `invalid` and `disabled` (fieldset) readables; the element forwards `formResetCallback`, `formStateRestoreCallback`, and `formDisabledCallback` |
+
+Used by: `odd-input` (`FormValue`); `@oddkin/ai` — `odd-conversation` and `createAnnouncer` (`LiveAnnouncer`, `ResizeController`), `odd-inline-assist` (`RovingFocus`), approval, change review, checkpoint, question, and feedback elements (`FocusRecovery`).
+
 ## 5. Reactivity (`@oddkin/core/reactive`, DOM-free)
 
 ```ts

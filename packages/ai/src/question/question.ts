@@ -3,7 +3,7 @@ import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { JsonValue, QuestionRecord } from '../contracts/types.js';
 import { announceEvent, questionAnswerEvent, questionSkipEvent } from '../events.js';
-import { recoverFocus } from '../internal/focus.js';
+import { FocusRecovery } from '@oddkin/core/controllers/focus';
 import { format, formatTime, langOf, strings } from '../internal/strings.js';
 
 export const QUESTION_STRINGS = {
@@ -133,11 +133,13 @@ export class OddkinQuestion extends OddkinElement.with({
     }
   }
 
-  protected override updated(): void {
-    recoverFocus(this.shadowRoot, this.shadowRoot?.querySelector<HTMLElement>('.state'));
-  }
-
   protected override mounted(scope: Scope): void {
+    scope.use(
+      new FocusRecovery({
+        root: () => this.shadowRoot,
+        fallback: () => this.shadowRoot?.querySelector<HTMLElement>('.state'),
+      }),
+    );
     let seen: string | undefined;
     scope.effect(
       () => {

@@ -115,7 +115,7 @@ nav.byKey('theming');     // Entry | undefined
 | Nesting | Optional `children` accessor; parent/depth metadata |
 | Ownership | Each rendered entry gets a child `Scope`; removed entries dispose subscriptions and owned resources |
 | State models | Optional, separately importable: `selectionModel` (none/single/multiple), `expansionModel`, `disabledModel`, `activeModel` (roving focus target) — controlled or uncontrolled |
-| Keyboard | **Not** in the collection. Separate controllers per pattern in `@oddkin/core/controllers/*` (e.g. `rovingFocus`, `typeahead`), composed by each component according to WAI-ARIA APG: navigation links use Tab order; menus, tabs, listboxes, and trees each use their own model |
+| Keyboard | **Not** in the collection. Separate controllers per pattern in `@oddkin/core/controllers/*` (`RovingFocus` and `FocusRecovery` implemented, core-contracts.md §4.1; typeahead planned), composed by each component according to WAI-ARIA APG: navigation links use Tab order; menus, tabs, listboxes, and trees each use their own model |
 
 ### Cache invalidation
 - An item's rendered output depends on **(key, item object, renderer, and any reactive values read while rendering)**. Item templates are ordinary template parts, so reads of external signals (locale, `current`, a store selector) are tracked and re-run that item's parts when they change, even if the item object is unchanged.
