@@ -598,6 +598,84 @@
               }
             }
           }
+        },
+        "verification": {
+          "type": "array",
+          "description": "Facts verified by test runs, one entry per suite, with the conditions they ran under: every listed browser passed every listed fact against the inputs named by hash. Facts not listed are unverified.",
+          "items": {
+            "type": "object",
+            "required": [
+              "suite",
+              "provenance",
+              "source",
+              "conditions",
+              "facts"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "suite": {
+                "type": "string",
+                "pattern": "^[^@]+@[^@]+$",
+                "description": "Suite id and version, e.g. oddkin.cem-contract@1.0.0"
+              },
+              "provenance": {
+                "const": "verified"
+              },
+              "source": {
+                "$ref": "#/$defs/source"
+              },
+              "conditions": {
+                "type": "object",
+                "required": [
+                  "browsers",
+                  "inputs"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "browsers": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "version"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "package": {
+                    "type": "string",
+                    "description": "Package and version tested, name@version"
+                  },
+                  "inputs": {
+                    "type": "object",
+                    "description": "Hashes of the exact inputs tested (published manifest, implementation sources)",
+                    "additionalProperties": {
+                      "type": "string",
+                      "pattern": "^sha256-[0-9a-f]{64}$"
+                    }
+                  }
+                }
+              },
+              "facts": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "pattern": "^(property|event|slot|part|cssprop|state|component):[a-z][a-z0-9]*(-[a-z0-9]+)+(#[^/]*)?/[a-z-]+$"
+                }
+              }
+            }
+          }
         }
       }
     },

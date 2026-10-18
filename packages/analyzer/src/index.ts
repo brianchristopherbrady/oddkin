@@ -226,3 +226,5 @@ export async function writeOutputs(result: AnalyzeResult, outDir: string): Promi
 }
 
 export { stableJson } from './emit.js';
+export { attachVerification } from './verification.js';
+export type { ResultRecord, VerificationInputs, VerificationReport } from './verification.js';

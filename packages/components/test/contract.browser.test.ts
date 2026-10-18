@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it } from 'vitest';
+/// <reference types="vite/client" />
+import { afterAll, afterEach, describe, expect, it } from 'vitest';
+import { commands, server } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import type { CSSResult } from '@oddkin/core/styles';
 import { mountExample } from '@oddkin/workbench/testing';
@@ -35,7 +37,9 @@ interface Declaration {
   cssParts?: { name: string }[];
 }
 
-const cem = (await (await fetch(new URL('../custom-elements.json', import.meta.url))).json()) as {
+const manifestUrl = new URL('../custom-elements.json', import.meta.url);
+const manifestText = await (await fetch(manifestUrl)).text();
+const cem = JSON.parse(manifestText) as {
   modules: { declarations?: Declaration[] }[];
 };
 const declarations = cem.modules
@@ -89,73 +93,197 @@ const unionOf = (type: string | undefined) =>
 const fields = (d: Declaration) =>
   (d.members ?? []).filter((m) => m.kind === 'field' && !m.static && !m.readonly);
 
+// ---- evidence (metadata-and-analyzer.md §3: `verified` provenance) ----
+// Each foundation element gets one conformance-result.v1 record per engine, tied to the exact
+// manifest text and implementation sources tested; `npm run verify:metadata` attaches passing
+// facts to oddkin.metadata.json only while both still match. Derived tags record nothing.
+const SUITE = { id: 'oddkin.cem-contract', version: '1.0.0' };
+const sha256 = async (text: string) =>
+  `sha256-${[...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))].map((b) => b.toString(16).padStart(2, '0')).join('')}`;
+// The implementation under test: the files this page ran (component sources, and the development
+// builds of core and tokens the `development` export condition selects), hashed the way
+// `npm run verify:metadata` hashes them from disk: repository-relative paths, sorted. If the two
+// file sets ever differ, the hashes differ and nothing is verified.
+const sources = {
+  ...import.meta.glob<string>('../src/**/*.ts', { query: '?raw', import: 'default', eager: true }),
+  ...import.meta.glob<string>(['../../core/dist/**/*.js', '!../../core/dist/prod/**'], {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  }),
+  ...import.meta.glob<string>('../../tokens/dist/**/*.js', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  }),
+};
+const sourcesHash = await sha256(
+  Object.entries(sources)
+    .map(
+      ([path, text]) =>
+        [
+          path.replace(/^\.\.\/\.\.\//, 'packages/').replace(/^\.\.\//, 'packages/components/'),
+          text,
+        ] as const,
+    )
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    .map(([path, text]) => `${path}\n${text}\n`)
+    .join(''),
+);
+const manifestHash = await sha256(manifestText);
+const pkg = (await (await fetch(new URL('../package.json', import.meta.url))).json()) as {
+  name: string;
+  version: string;
+};
+
+type Outcome = { state: 'passed' } | { state: 'failed'; message: string };
+const evidence = new Map(declarations.map((d) => [d.tagName, new Map<string, Outcome>()]));
+const eventSet = (tag: string) => `component:${tag}/events`;
+/** Every case the checks below record for a foundation element, in a stable order. */
+function cases(d: Declaration & { tagName: string }): string[] {
+  const tag = d.tagName;
+  return [
+    ...fields(d).flatMap((f) => [
+      ...(literal(f.default) ? [`property:${tag}#${f.name}/default`] : []),
+      ...(f.attribute
+        ? [`property:${tag}#${f.name}/attribute`, `property:${tag}#${f.name}/reflects`]
+        : []),
+    ]),
+    ...(d.events ?? []).map((e) => `event:${tag}#${e.name}/defined`),
+    eventSet(tag),
+    ...(d.slots ?? []).map((s) => `slot:${tag}#${s.name || 'default'}/rendered`),
+    ...(d.cssParts ?? []).map((p) => `part:${tag}#${p.name}/rendered`),
+  ];
+}
+/** Run a check; for a foundation tag, record its outcome under `id` (failures still throw). */
+async function verify(tag: string, id: string, check: () => unknown): Promise<void> {
+  const recorded = evidence.get(tag);
+  try {
+    await check();
+    recorded?.set(id, { state: 'passed' });
+  } catch (error) {
+    recorded?.set(id, { state: 'failed', message: String((error as Error).message).slice(0, 500) });
+    throw error;
+  }
+}
+const browserVersion = () =>
+  (server.browser === 'firefox'
+    ? /Firefox\/([\d.]+)/
+    : server.browser === 'webkit'
+      ? /Version\/([\d.]+)/
+      : /Chrome\/([\d.]+)/
+  ).exec(navigator.userAgent)?.[1] ?? 'unknown';
+
+afterAll(async () => {
+  const date = new Date().toISOString();
+  for (const declaration of declarations) {
+    const recorded = evidence.get(declaration.tagName)!;
+    const record = {
+      schema: 'https://oddkin.dev/schemas/conformance-result/v1.json',
+      suite: SUITE,
+      implementation: { tag: declaration.tagName, package: `${pkg.name}@${pkg.version}` },
+      configuration: {
+        browser: server.browser,
+        browserVersion: browserVersion(),
+        manifest: manifestHash,
+        sources: sourcesHash,
+      },
+      environment: { userAgent: navigator.userAgent },
+      date,
+      results: cases(declaration).map((id) => ({
+        case: id,
+        ...(recorded.get(id) ?? { state: 'not-executed' }),
+      })),
+    };
+    await commands.writeFile(
+      `packages/components/.oddkin/verification/${SUITE.id}/${server.browser}/${declaration.tagName}.json`,
+      `${JSON.stringify(record, null, 2)}\n`,
+    );
+  }
+});
+
 describe.each(implementations)('<$tag> matches the published CEM', ({ tag, declaration }) => {
+  const id = (kind: string, name: string, aspect: string) =>
+    `${kind}:${declaration.tagName}#${name}/${aspect}`;
+
   it('property defaults', async () => {
     const el = await create(tag);
     // Fields without a literal default (accessors such as odd-input's `value`) make no claim.
     for (const field of fields(declaration)) {
       const expected = literal(field.default);
-      if (expected) expect(el[field.name], `${tag}.${field.name}`).toEqual(expected.value);
+      if (expected)
+        await verify(tag, id('property', field.name, 'default'), () =>
+          expect(el[field.name], `${tag}.${field.name}`).toEqual(expected.value),
+        );
     }
   });
 
   it('attributes convert to their properties, including every allowed value', async () => {
     const ctor = customElements.get(tag) as unknown as { observedAttributes: string[] };
     for (const attribute of declaration.attributes ?? []) {
-      expect(ctor.observedAttributes, `${tag}[${attribute.name}] observed`).toContain(
-        attribute.name,
-      );
       const field = fields(declaration).find((f) => f.name === attribute.fieldName)!;
-      const el = await create(tag);
-      const type = field.type?.text;
-      const samples: [string, unknown][] =
-        type === 'boolean'
-          ? [['', true]]
-          : (unionOf(type)?.map((v) => [v, v] as [string, unknown]) ?? [
-              ['Sample text', 'Sample text'],
-            ]);
-      for (const [text, value] of samples) {
-        el.setAttribute(attribute.name, text);
+      await verify(tag, id('property', field.name, 'attribute'), async () => {
+        expect(ctor.observedAttributes, `${tag}[${attribute.name}] observed`).toContain(
+          attribute.name,
+        );
+        const el = await create(tag);
+        const type = field.type?.text;
+        const samples: [string, unknown][] =
+          type === 'boolean'
+            ? [['', true]]
+            : (unionOf(type)?.map((v) => [v, v] as [string, unknown]) ?? [
+                ['Sample text', 'Sample text'],
+              ]);
+        for (const [text, value] of samples) {
+          el.setAttribute(attribute.name, text);
+          await settle(el);
+          expect(el[field.name], `${tag}[${attribute.name}="${text}"]`).toEqual(value);
+        }
+        el.removeAttribute(attribute.name);
         await settle(el);
-        expect(el[field.name], `${tag}[${attribute.name}="${text}"]`).toEqual(value);
-      }
-      el.removeAttribute(attribute.name);
-      await settle(el);
-      expect(el[field.name], `${tag}[${attribute.name}] removed`).toEqual(
-        literal(field.default)?.value,
-      );
+        expect(el[field.name], `${tag}[${attribute.name}] removed`).toEqual(
+          literal(field.default)?.value,
+        );
+      });
     }
   });
 
   it('reflects exactly the properties marked as reflecting', async () => {
     for (const field of fields(declaration).filter((f) => f.attribute)) {
-      const el = await create(tag);
-      const type = field.type?.text;
-      const union = unionOf(type);
-      const value =
-        type === 'boolean'
-          ? true
-          : (union?.find((v) => v !== literal(field.default)?.value) ?? 'Sample text');
-      el[field.name] = value;
-      await settle(el);
-      const attribute = el.getAttribute(field.attribute!);
-      if (field.reflects) {
-        expect(attribute, `${tag}.${field.name} reflects`).toBe(value === true ? '' : value);
-        el[field.name] = type === 'boolean' ? false : literal(field.default)?.value;
+      await verify(tag, id('property', field.name, 'reflects'), async () => {
+        const el = await create(tag);
+        const type = field.type?.text;
+        const union = unionOf(type);
+        const value =
+          type === 'boolean'
+            ? true
+            : (union?.find((v) => v !== literal(field.default)?.value) ?? 'Sample text');
+        el[field.name] = value;
         await settle(el);
-        if (type === 'boolean') expect(el.hasAttribute(field.attribute!)).toBe(false);
-      } else {
-        expect(attribute, `${tag}.${field.name} does not reflect`).toBeNull();
-      }
+        const attribute = el.getAttribute(field.attribute!);
+        if (field.reflects) {
+          expect(attribute, `${tag}.${field.name} reflects`).toBe(value === true ? '' : value);
+          el[field.name] = type === 'boolean' ? false : literal(field.default)?.value;
+          await settle(el);
+          if (type === 'boolean') expect(el.hasAttribute(field.attribute!)).toBe(false);
+        } else {
+          expect(attribute, `${tag}.${field.name} does not reflect`).toBeNull();
+        }
+      });
     }
   });
 
-  it('declares exactly the events the element defines', () => {
+  it('declares exactly the events the element defines', async () => {
     const ctor = customElements.get(tag) as unknown as {
       events?: Record<string, { type: string }>;
     };
     const defined = Object.values(ctor.events ?? {}).map((e) => e.type);
-    expect(defined.sort()).toEqual((declaration.events ?? []).map((e) => e.name).sort());
+    const declared = (declaration.events ?? []).map((e) => e.name);
+    for (const name of declared)
+      await verify(tag, id('event', name, 'defined'), () => expect(defined).toContain(name));
+    await verify(tag, eventSet(declaration.tagName), () =>
+      expect(defined.sort()).toEqual(declared.sort()),
+    );
   });
 
   it('every slot and part appears in at least one authored example', async () => {
@@ -179,9 +307,13 @@ describe.each(implementations)('<$tag> matches the published CEM', ({ tag, decla
       frame.remove();
     }
     for (const slot of declaration.slots ?? [])
-      expect(slots.has(slot.name), `${tag} slot "${slot.name}"`).toBe(true);
+      await verify(tag, id('slot', slot.name || 'default', 'rendered'), () =>
+        expect(slots.has(slot.name), `${tag} slot "${slot.name}"`).toBe(true),
+      );
     for (const part of declaration.cssParts ?? [])
-      expect(parts.has(part.name), `${tag} part "${part.name}"`).toBe(true);
+      await verify(tag, id('part', part.name, 'rendered'), () =>
+        expect(parts.has(part.name), `${tag} part "${part.name}"`).toBe(true),
+      );
   });
 });
 

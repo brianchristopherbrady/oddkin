@@ -659,3 +659,16 @@ Environment as the previous entry. Contract: [metadata-and-analyzer.md §3.2, §
 | Mutation probes | temporary edits, reverted | Without published-definition spreads: 3 failures, including the legacy case. Without published style reads in the overlay: 1 failure, the token-read test. |
 
 **Findings:** (1) Published CEM and definition facts were enough for the contract, but not for replacing a skin accurately: the per-component CSS properties and token reads do not say which style source provided them, so per-source facts were added. (2) Template anatomy is published per template for the same reason: a replaced template must drop the slots and parts only the old one rendered.
+
+## 2026-10-18 — Contract results as `verified` provenance (M4 metadata)
+
+Environment as the previous entry. Another agent had uncommitted changes to `odd-button` and `odd-input` source; the recorded implementation hash covers exactly the files that ran. Contract: [metadata-and-analyzer.md §3, §5](./architecture/metadata-and-analyzer.md#3-normalized-metadata-model).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Records | `npx vitest run --project browser packages/components/test/contract.browser.test.ts` | Pass in Chromium, Firefox, WebKit (144 tests). Twelve `conformance-result.v1` records (4 elements × 3 engines), each holding the browser version and SHA-256 hashes of the tested `custom-elements.json` and of the component sources plus the core and tokens development builds. |
+| Attach | `npm run verify:metadata` | 122 facts verified (odd-button 44, odd-card 17, odd-input 40, odd-side-nav 21). None failed, none skipped. Every record validates against `conformance-result.v1`, and the metadata with `verification` entries validates against `oddkin-metadata.v1`. The hashes computed in the browser (Vite raw imports) and in Node (from disk) agree. |
+| Staleness | temporary extra file in `packages/components/src`, removed | All 12 records ignored as stale, 0 facts verified, every element reported missing, exit 1. After removal: 122 facts, exit 0. |
+| Unit tests | `npx vitest run --project node packages/analyzer/test/verification.test.ts tests/metadata` | Pass (6 + 2). Covered: attach with conditions; stale records ignored; failed and not-executed cases never verified; earlier evidence replaced; required tags without evidence reported; latest record per browser. The implementation hash changes with sources and with the core and tokens builds, but not with the production build, declarations, or docs. |
+
+**Findings:** (1) The first design hashed `core/src`, but the page runs `@oddkin/core` from `dist` through the `development` export condition. The hash now covers the files that actually ran. (2) With every record stale, the attach step at first reported nothing missing and passed. It now requires current evidence for every component in the metadata.
