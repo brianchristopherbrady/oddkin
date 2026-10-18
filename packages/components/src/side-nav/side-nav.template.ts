@@ -31,14 +31,21 @@ export const sideNavTemplate = (nav: OddkinSideNav) => {
   </nav>`;
 };
 
-const entries = (nav: OddkinSideNav, items: readonly NavigationItem[]): unknown =>
+const entries = (nav: OddkinSideNav, items: readonly NavigationItem[], depth = 0): unknown =>
   repeat(
     items,
     (item) => item.id,
-    (item) => html`<li class="item">${entry(nav, item)}</li>`,
+    (item) => html`<li class="item">${entry(nav, item, depth)}</li>`,
   );
 
-function entry(nav: OddkinSideNav, item: NavigationItem): unknown {
+// A readable, so a custom renderer's reads (caller signals, `current`) update only this label.
+const label = (nav: OddkinSideNav, item: NavigationItem, depth: number) =>
+  computed(() => {
+    const render = nav.renderLabel;
+    return render ? render(item, { current: item.id === nav.current, depth }) : item.label;
+  });
+
+function entry(nav: OddkinSideNav, item: NavigationItem, depth: number): unknown {
   switch (item.kind) {
     case 'link':
       return html`<a
@@ -50,7 +57,7 @@ function entry(nav: OddkinSideNav, item: NavigationItem): unknown {
         aria-current=${computed(() => (item.id === nav.current ? 'page' : null))}
         aria-disabled=${item.disabled ? 'true' : null}
         role=${item.disabled ? 'link' : null}
-        ><span class="label">${item.label}</span>${
+        ><span class="label">${label(nav, item, depth)}</span>${
           item.badge ? html`<span part="badge" class="badge">${item.badge}</span>` : null
         }</a
       >`;
@@ -62,7 +69,7 @@ function entry(nav: OddkinSideNav, item: NavigationItem): unknown {
         ?disabled=${!!item.disabled}
         @click=${() => nav._action(item)}
       >
-        <span class="label">${item.label}</span>
+        <span class="label">${label(nav, item, depth)}</span>
       </button>`;
     case 'group': {
       const open = computed(() => nav._isExpanded(item));
@@ -75,10 +82,11 @@ function entry(nav: OddkinSideNav, item: NavigationItem): unknown {
           aria-controls=${id}
           @click=${() => nav._toggle(item)}
         >
-          <span class="label">${item.label}</span><span class="chevron" aria-hidden="true"></span>
+          <span class="label">${label(nav, item, depth)}</span
+          ><span class="chevron" aria-hidden="true"></span>
         </button>
         <ul part="group" class="group-items" id=${id} ?hidden=${computed(() => !open.value)}>
-          ${entries(nav, item.items)}
+          ${entries(nav, item.items, depth + 1)}
         </ul>`;
     }
   }

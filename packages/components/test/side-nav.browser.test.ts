@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { flush } from '@oddkin/core/reactive';
+import { setErrorHandler } from '@oddkin/core/diagnostics';
+import { flush, signal } from '@oddkin/core/reactive';
+import { html } from '@oddkin/core/template';
 import { scopeStats } from '@oddkin/core/scope';
 import type { NavigationItem } from '../src/models/navigation.js';
 import type { OddkinSideNav } from '../src/side-nav/side-nav.js';
@@ -200,6 +202,66 @@ describe('odd-side-nav from items', () => {
     expect(el.shadowRoot!.activeElement).toBe(before);
     expect($$('a').map((a) => a.textContent?.trim())[0]).toBe('New');
     expect($$('a[href="/overview"]')).toEqual([]);
+  });
+});
+
+describe('odd-side-nav label renderer', () => {
+  it('renders custom label content inside the element-owned link, action, and group wrappers', async () => {
+    const seen: Array<[string, boolean, number]> = [];
+    const { $$ } = await mount((el) => {
+      el.items = ITEMS;
+      el.current = 'theming';
+      el.renderLabel = (item, { current, depth }) => {
+        seen.push([item.id, current, depth]);
+        return html`<span class="custom">${item.label}</span>${current ? ' (here)' : ''}`;
+      };
+    });
+    const theming = $$<HTMLAnchorElement>('a').find((a) => a.textContent?.includes('Theming'))!;
+    expect(theming.getAttribute('href')).toBe('/guides/theming');
+    expect(theming.getAttribute('aria-current')).toBe('page');
+    expect(theming.textContent?.trim()).toBe('Theming (here)');
+    expect(theming.querySelector('.custom')).not.toBeNull();
+    expect($$('[part="group-toggle"] .custom').length).toBe(1);
+    expect($$('[part="action"] .custom').length).toBe(1);
+    expect(seen).toContainEqual(['theming', true, 1]);
+    expect(seen).toContainEqual(['overview', false, 0]);
+  });
+
+  it('updates only the labels that read a caller-owned signal when it changes', async () => {
+    const locale = signal('en');
+    const calls: string[] = [];
+    const { el, $$ } = await mount((el) => {
+      el.items = ITEMS;
+      el.renderLabel = (item) => {
+        calls.push(item.id);
+        return item.id === 'overview' ? `${item.label} [${locale.value}]` : item.label;
+      };
+    });
+    const link = $$<HTMLAnchorElement>('a')[0]!;
+    expect(link.textContent?.trim()).toBe('Overview [en]');
+    calls.length = 0;
+    locale.value = 'fr';
+    await settle(el);
+    expect($$<HTMLAnchorElement>('a')[0]).toBe(link);
+    expect(link.textContent?.trim()).toBe('Overview [fr]');
+    expect(calls).toEqual(['overview']);
+    // Removing the renderer goes back to the plain labels.
+    el.renderLabel = undefined;
+    await settle(el);
+    expect(link.textContent?.trim()).toBe('Overview');
+  });
+
+  it('rejects a renderer that is not a function', async () => {
+    const { el } = await mount((el) => (el.items = ITEMS));
+    const codes: string[] = [];
+    setErrorHandler((_error, context) => codes.push(context.code ?? ''));
+    try {
+      (el as unknown as { renderLabel: unknown }).renderLabel = 'label';
+    } finally {
+      setErrorHandler(undefined);
+    }
+    expect(el.renderLabel).toBeUndefined();
+    expect(codes).toEqual(['element.prop.invalid']);
   });
 });
 

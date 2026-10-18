@@ -12,6 +12,22 @@ export interface NavigationToggleDetail {
   readonly expanded: boolean;
 }
 
+/** What a label renderer knows about the entry besides its data. */
+export interface NavigationLabelContext {
+  /** The entry is the current link. */
+  readonly current: boolean;
+  /** Nesting depth: 0 for top-level entries. */
+  readonly depth: number;
+}
+/**
+ * Renders the content of an entry's label. The element keeps the link, button, or disclosure
+ * wrapper and its ARIA; the content must include the entry's visible name.
+ */
+export type NavigationLabelRenderer = (
+  item: NavigationItem,
+  context: NavigationLabelContext,
+) => unknown;
+
 /** The user activated an action entry. The host runs it; nothing happens implicitly. */
 export const actionEvent = event<NavigationActionDetail>('odd-action', {
   bubbles: true,
@@ -72,6 +88,15 @@ export class OddkinSideNav extends OddkinElement.with({
   expanded: prop.object<readonly string[]>({
     description:
       'Ids of expanded groups, owned by the caller. Omit it to let the element track expansion.',
+  }),
+  renderLabel: prop.custom<NavigationLabelRenderer | undefined>({
+    default: () => undefined,
+    coerce: (value) =>
+      value === undefined || typeof value === 'function'
+        ? { ok: true, value: value as NavigationLabelRenderer | undefined }
+        : { ok: false, reason: 'expected a function or undefined' },
+    description:
+      'Renders label content for each entry; signals it reads stay live. The element keeps the link, button, or disclosure semantics.',
   }),
 }) {
   static override events = { action: actionEvent, toggle: toggleEvent };

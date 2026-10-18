@@ -613,3 +613,14 @@ Environment as the previous entry. Contract: [data-composition.md §10, §12](./
 | Related | `npx vitest run --project browser packages/components/test/side-nav.browser.test.ts`, `npx playwright test e2e/side-nav.spec.ts`, `npm run size` | Pass (45 tests; 15 e2e); `side-nav` 14,543 B and `components:side-nav` 1,261 B of 1,536 B |
 
 **Findings:** (1) Slotted links were `display: block` and lacked the current-page marker, semibold weight, background, hover state, centred alignment, and link-colour reset that data entries have, so a page using native links looked different from one using `items`. They now share those rules (`::slotted(a)`, `::slotted(a[aria-current='page'])`, `::slotted(a:hover)`), +27 B gzip CSS. (2) Slotted links keep the author's markup: data entries are list items, slotted links are a list only if the author writes one, and `::slotted()` styles only top-level slotted links.
+
+## 2026-10-18 — Side navigation label renderer (M4 data slice, customization ladder level 3)
+
+Environment as the previous entry. Contract: [data-composition.md §4, §12](./architecture/data-composition.md#12-odd-side-nav-implemented-m4).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Renderer | `npx vitest run --project browser packages/components/test/side-nav.browser.test.ts` | Pass in Chromium, Firefox, WebKit (18 tests, 3 new) — custom content renders inside the element's link (keeping `href` and `aria-current`), action button, and group toggle, with `{ current, depth }` correct for a nested current link; a signal read by the renderer for one entry updates only that entry's label (one renderer call), keeps the link node, and `renderLabel = undefined` restores the plain label; a string assigned to `renderLabel` reports `element.prop.invalid` and keeps `undefined` |
+| Package | `npm run build`, `npx vitest run packages/components`, `npm run size` | Pass (369 tests in 42 files); `side-nav` 14,708 B of 15,360 B (+165 B) |
+
+**Findings:** (1) Item templates run outside render tracking, so the renderer runs inside a computed binding per label; reading `current` there also keeps the `current` flag of the context live. (2) Invalid property values are reported through the diagnostics handler (`setErrorHandler`), which tests must install to observe them.
