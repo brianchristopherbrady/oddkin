@@ -4,6 +4,8 @@ export {
   actionEvent,
   toggleEvent,
   type NavigationActionDetail,
+  type NavigationLabelContext,
+  type NavigationLabelRenderer,
   type NavigationToggleDetail,
 } from './side-nav.js';
 export { sideNavTemplate } from './side-nav.template.js';

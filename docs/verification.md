@@ -624,3 +624,13 @@ Environment as the previous entry. Contract: [data-composition.md §4, §12](./a
 | Package | `npm run build`, `npx vitest run packages/components`, `npm run size` | Pass (369 tests in 42 files); `side-nav` 14,708 B of 15,360 B (+165 B) |
 
 **Findings:** (1) Item templates run outside render tracking, so the renderer runs inside a computed binding per label; reading `current` there also keeps the `current` flag of the context live. (2) Invalid property values are reported through the diagnostics handler (`setErrorHandler`), which tests must install to observe them.
+
+## 2026-10-18 — Multi-product customization levels 1–3 (M4 multi-product prototype)
+
+Environment as the previous entry. Another agent had uncommitted changes to `odd-button` source during this run. Contract: [multi-product.md §5–§6](./architecture/multi-product.md#6-customization-ladder).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Levels 1–3 | `npx vitest run --project browser packages/components/test/multi-product.browser.test.ts` | Pass in Chromium, Firefox, WebKit (4 tests) — level 1: in `alpha` and `beta` product scopes the same `odd-button` constructor shows different primary backgrounds, and switching the scope attribute keeps the element and its control node; level 2: `--odd-card-radius` and `odd-button::part(control)` rules scoped to `beta` change only `beta`; level 3: `studio-button` and `studio-card` composed from `buttonDefinition` and `cardDefinition` render beside `odd-*` with their own styles, are subclasses with distinct constructors, and adopt the same `buttonStructuralStyles` sheet; registry: the same definition again is a no-op, `registry.constructorReused`, `registry.definitionConflict` |
+
+**Findings:** (1) The button's colour transition (`motion.duration.fast`) delays the computed colour after a product switch; the test turns transitions off for that part rather than waiting. (2) Composition from the public `@oddkin/components/button` and `./card` exports was enough for a second implementation; no internal module was needed.
