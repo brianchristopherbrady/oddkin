@@ -1,0 +1,54 @@
+data: {"type":"start","messageId":"msg_research_1"}
+
+data: {"type":"start-step"}
+
+data: {"type":"reasoning-start","id":"reasoning_1"}
+
+data: {"type":"reasoning-delta","id":"reasoning_1","delta":"Checking two sources."}
+
+data: {"type":"reasoning-end","id":"reasoning_1"}
+
+data: {"type":"tool-input-start","toolCallId":"call_search_1","toolName":"searchWeb"}
+
+data: {"type":"tool-input-delta","toolCallId":"call_search_1","inputTextDelta":"{\"query\":\"caf"}
+
+data: {"type":"tool-input-delta","toolCallId":"call_search_1","inputTextDelta":"é crème\"}"}
+
+data: {"type":"tool-input-available","toolCallId":"call_search_1","toolName":"searchWeb","input":{"query":"café crème"}}
+
+data: {"type":"tool-output-available","toolCallId":"call_search_1","output":{"results":2}}
+
+data: {"type":"finish-step"}
+
+data: {"type":"start-step"}
+
+data: {"type":"source-url","sourceId":"src-1","url":"https://example.com/coffee","title":"Coffee guide"}
+
+data: {"type":"source-document","sourceId":"src-2","mediaType":"application/pdf","title":"Roasting notes"}
+
+data: {"type":"text-start","id":"text_1"}
+
+data: {"type":"text-delta","id":"text_1","delta":"A café crème is "}
+
+data: {"type":"text-delta","id":"text_1","delta":"espresso with hot water [^src-1]. "}
+
+data: {"type":"text-delta","id":"text_1","delta":"Ha ha ha. "}
+
+data: {"type":"text-delta","id":"text_1","delta":"Ha ha ha. "}
+
+data: {"type":"text-delta","id":"text_1","delta":"Roasts vary 🌍 [^src-2]."}
+
+data: {"type":"text-end","id":"text_1"}
+
+data: {"type":"data-weather","data":{"city":"Lyon","celsius":18}}
+
+data: {"type":"message-metadata","messageMetadata":{"usage":{"tokens":42}}}
+
+data: {"type":"finish-step"}
+
+: keep-alive comment
+
+data: {"type":"finish"}
+
+data: [DONE]
+

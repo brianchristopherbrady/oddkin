@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.artifact.v1.schema.json",
+  "title": "oddkin.ai.artifact",
+  "description": "A generated artifact with a stable identity across revisions.",
+  "type": "object",
+  "properties": {
+    "artifactId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "description": "markdown, code, text, or a host renderer key.",
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string"
+    },
+    "currentRevisionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "revisionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "createdAt": {
+            "description": "ISO 8601 timestamp.",
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "content": {
+            "description": "Canonical source; exported as is.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "revisionId",
+          "number",
+          "content"
+        ]
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "artifactId",
+    "title",
+    "kind",
+    "currentRevisionId",
+    "revisions"
+  ]
+}

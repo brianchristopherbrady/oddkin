@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.plan.v1.schema.json",
+  "title": "oddkin.ai.plan",
+  "type": "object",
+  "properties": {
+    "planId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "detail": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "active",
+              "done",
+              "failed",
+              "blocked",
+              "skipped",
+              "needs-input"
+            ]
+          },
+          "blocker": {
+            "description": "Why the step cannot continue.",
+            "type": "string"
+          },
+          "inputRequest": {
+            "description": "What the agent needs from the user.",
+            "type": "string"
+          },
+          "tasks": {
+            "description": "Work running in parallel within the step.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "enum": [
+                    "pending",
+                    "active",
+                    "done",
+                    "failed",
+                    "blocked",
+                    "skipped",
+                    "needs-input"
+                  ]
+                },
+                "detail": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "status"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status"
+        ]
+      }
+    }
+  },
+  "required": [
+    "planId",
+    "steps"
+  ]
+}

@@ -1,0 +1,633 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.conversation.v1.schema.json",
+  "title": "oddkin.ai.conversation",
+  "description": "A persisted conversation as supplied by the host (untrusted until validated).",
+  "type": "object",
+  "properties": {
+    "conversationId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "enum": [
+              "user",
+              "assistant",
+              "system",
+              "tool"
+            ]
+          },
+          "parentId": {
+            "description": "Previous message on this branch; siblings are alternatives.",
+            "type": "string",
+            "minLength": 1
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "text"
+                    },
+                    "id": {
+                      "description": "Stable part id.",
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "text": {
+                      "description": "Canonical source text (Markdown for assistant text).",
+                      "type": "string"
+                    },
+                    "state": {
+                      "description": "Whether more text may arrive.",
+                      "enum": [
+                        "streaming",
+                        "done"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "text"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "reasoning"
+                    },
+                    "id": {
+                      "description": "Stable part id.",
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "text": {
+                      "description": "Canonical source text (Markdown for assistant text).",
+                      "type": "string"
+                    },
+                    "state": {
+                      "description": "Whether more text may arrive.",
+                      "enum": [
+                        "streaming",
+                        "done"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "text"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "file"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "description": "Untrusted file name; rendered as text.",
+                      "type": "string"
+                    },
+                    "mediaType": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "description": "Where the file can be fetched; checked by the URL policy.",
+                      "type": "string",
+                      "format": "uri-reference",
+                      "pattern": "^(?![\\u0000-\\u0020]*(?:[jJ]\\s*[aA]\\s*[vV]\\s*[aA]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT]|[vV]\\s*[bB]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT])\\s*:)"
+                    },
+                    "size": {
+                      "description": "Bytes.",
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "name",
+                    "mediaType"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "source"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sourceId": {
+                      "description": "Citation key referenced from text as [^sourceId].",
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string",
+                      "format": "uri-reference",
+                      "pattern": "^(?![\\u0000-\\u0020]*(?:[jJ]\\s*[aA]\\s*[vV]\\s*[aA]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT]|[vV]\\s*[bB]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT])\\s*:)"
+                    },
+                    "excerpt": {
+                      "type": "string"
+                    },
+                    "publisher": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "enum": [
+                        "web",
+                        "document",
+                        "file",
+                        "other"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "sourceId"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "tool-call"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "toolCallId": {
+                      "description": "Key of the tool call record; its state lives there.",
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "toolCallId"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "approval"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "approvalId": {
+                      "description": "Key of the approval record.",
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "approvalId"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "artifact"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "artifactId": {
+                      "description": "Key of the artifact record.",
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "revisionId": {
+                      "description": "Revision this message produced.",
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "artifactId"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "data"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "name": {
+                      "description": "Renderer registry key.",
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "data": {
+                      "description": "Validated by the registered renderer before use."
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "name",
+                    "data"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "const": "unsupported"
+                    },
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "originalType": {
+                      "description": "Type that could not be rendered.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "originalType"
+                  ]
+                }
+              ]
+            }
+          },
+          "attemptId": {
+            "description": "Attempt that produced an assistant message.",
+            "type": "string",
+            "minLength": 1
+          },
+          "createdAt": {
+            "description": "ISO 8601 timestamp.",
+            "type": "string"
+          },
+          "provenance": {
+            "description": "Application-supplied origin information. Displayed as supplied, never verified.",
+            "type": "object",
+            "properties": {
+              "kind": {
+                "description": "How the content was produced.",
+                "enum": [
+                  "generated",
+                  "assisted",
+                  "edited",
+                  "human"
+                ]
+              },
+              "label": {
+                "description": "Host-supplied visible label.",
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              },
+              "provider": {
+                "type": "string"
+              },
+              "generatedAt": {
+                "description": "ISO 8601 timestamp.",
+                "type": "string"
+              },
+              "notes": {
+                "description": "Host-supplied explanation, shown as is.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "parts"
+        ]
+      }
+    },
+    "activeLeafId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "toolCallId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "attemptId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "toolName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "description": "Human-readable tool name.",
+            "type": "string"
+          },
+          "purpose": {
+            "description": "Why the tool is being used.",
+            "type": "string"
+          },
+          "status": {
+            "description": "Argument generation, approval, and execution are separate states.",
+            "enum": [
+              "input-streaming",
+              "input-available",
+              "awaiting-approval",
+              "executing",
+              "output-available",
+              "output-error",
+              "denied",
+              "cancelled"
+            ]
+          },
+          "inputText": {
+            "description": "Streamed argument text, possibly partial.",
+            "type": "string"
+          },
+          "input": {
+            "description": "Complete arguments."
+          },
+          "output": {
+            "description": "Result; untrusted."
+          },
+          "error": {
+            "description": "An error safe to show to users. Diagnostic details stay in host logs.",
+            "type": "object",
+            "properties": {
+              "code": {
+                "description": "Stable application-defined code.",
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "description": "User-presentable message, localized by the host.",
+                "type": "string"
+              },
+              "retryable": {
+                "description": "Whether retrying the same operation may succeed.",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          },
+          "approvalId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "retryable": {
+            "description": "The host can retry this tool call.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "toolCallId",
+          "toolName",
+          "status"
+        ]
+      }
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "approvalId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "attemptId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "toolCallId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "description": "Proposal revision.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "summary": {
+            "type": "string"
+          },
+          "target": {
+            "description": "What the action affects.",
+            "type": "string"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "before": {
+                  "type": "string"
+                },
+                "after": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "label"
+              ]
+            }
+          },
+          "risk": {
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "status": {
+            "enum": [
+              "requested",
+              "decision-pending",
+              "approved",
+              "rejected",
+              "expired",
+              "superseded",
+              "decision-failed"
+            ]
+          },
+          "decision": {
+            "enum": [
+              "approve",
+              "reject"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "description": "ISO 8601 timestamp.",
+            "type": "string"
+          },
+          "error": {
+            "description": "An error safe to show to users. Diagnostic details stay in host logs.",
+            "type": "object",
+            "properties": {
+              "code": {
+                "description": "Stable application-defined code.",
+                "type": "string",
+                "minLength": 1
+              },
+              "message": {
+                "description": "User-presentable message, localized by the host.",
+                "type": "string"
+              },
+              "retryable": {
+                "description": "Whether retrying the same operation may succeed.",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "approvalId",
+          "revision",
+          "title",
+          "status"
+        ]
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "artifactId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "description": "markdown, code, text, or a host renderer key.",
+            "type": "string",
+            "minLength": 1
+          },
+          "language": {
+            "type": "string"
+          },
+          "currentRevisionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "revisionId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "number": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "createdAt": {
+                  "description": "ISO 8601 timestamp.",
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "content": {
+                  "description": "Canonical source; exported as is.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "revisionId",
+                "number",
+                "content"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "artifactId",
+          "title",
+          "kind",
+          "currentRevisionId",
+          "revisions"
+        ]
+      }
+    },
+    "hasMoreHistory": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "conversationId",
+    "messages"
+  ]
+}

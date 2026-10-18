@@ -51,6 +51,14 @@ export interface RecursiveNode<S extends Node = Node> extends Base<'recursive'> 
   readonly inner: S;
   readonly name?: string;
 }
+/** Any JSON value (null, boolean, finite number, string, array, plain object), depth-bounded. */
+export interface JsonNode extends Base<'json'> {
+  readonly maxDepth?: number;
+}
+
+/** A value JSON can represent without loss. */
+export type JsonValue =
+  null | boolean | number | string | readonly JsonValue[] | { readonly [key: string]: JsonValue };
 
 export type Node =
   | StringNode
@@ -62,7 +70,8 @@ export type Node =
   | ObjectNode<any>
   | UnionNode<any, any>
   | SelfNode
-  | RecursiveNode<any>;
+  | RecursiveNode<any>
+  | JsonNode;
 
 // ---- Type inference ----
 // `R` is the root of an enclosing recursive schema; `SelfNode` expands to it lazily.
@@ -88,27 +97,29 @@ type InferUnion<D extends string, V extends Readonly<Record<string, ObjectNode>>
 
 type Flatten<T> = T extends object ? { [K in keyof T]: T[K] } : T;
 
-export type InferNode<N, R> = N extends SelfNode
-  ? InferNode<R, R>
-  : N extends RecursiveNode<infer I>
-    ? InferNode<I, I>
-    : N extends StringNode
-      ? string
-      : N extends NumberNode
-        ? number
-        : N extends BooleanNode
-          ? boolean
-          : N extends EnumNode<infer V>
-            ? V
-            : N extends OptionalNode<infer I>
-              ? InferNode<I, R> | undefined
-              : N extends ArrayNode<infer I>
-                ? InferNode<I, R>[]
-                : N extends ObjectNode<infer S>
-                  ? Flatten<InferShape<S, R>>
-                  : N extends UnionNode<infer D, infer V>
-                    ? Flatten<InferUnion<D, V, R>>
-                    : unknown;
+export type InferNode<N, R> = N extends JsonNode
+  ? JsonValue
+  : N extends SelfNode
+    ? InferNode<R, R>
+    : N extends RecursiveNode<infer I>
+      ? InferNode<I, I>
+      : N extends StringNode
+        ? string
+        : N extends NumberNode
+          ? number
+          : N extends BooleanNode
+            ? boolean
+            : N extends EnumNode<infer V>
+              ? V
+              : N extends OptionalNode<infer I>
+                ? InferNode<I, R> | undefined
+                : N extends ArrayNode<infer I>
+                  ? InferNode<I, R>[]
+                  : N extends ObjectNode<infer S>
+                    ? Flatten<InferShape<S, R>>
+                    : N extends UnionNode<infer D, infer V>
+                      ? Flatten<InferUnion<D, V, R>>
+                      : unknown;
 
 /** The TypeScript type a schema node (or a defined model) describes. */
 export type Infer<T> = T extends { readonly schema: infer S } ? InferNode<S, S> : InferNode<T, T>;
@@ -179,6 +190,9 @@ export const m = {
       variants: Object.freeze({ ...variants }),
       ...extra({ description }),
     }) as UnionNode<D, V>,
+  /** Any JSON value, such as an opaque payload; nesting deeper than `maxDepth` (32) is rejected. */
+  json: (options?: { description?: string; maxDepth?: number }): JsonNode =>
+    freeze({ kind: 'json', ...extra(options) }),
   /** A self-referential schema; `self` stands for the whole recursive schema. */
   recursive: <S extends Node>(build: (self: SelfNode) => S, name?: string): RecursiveNode<S> => {
     let node: RecursiveNode<S> | undefined;

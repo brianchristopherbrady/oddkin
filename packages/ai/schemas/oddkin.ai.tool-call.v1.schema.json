@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.tool-call.v1.schema.json",
+  "title": "oddkin.ai.tool-call",
+  "type": "object",
+  "properties": {
+    "toolCallId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attemptId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "toolName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "description": "Human-readable tool name.",
+      "type": "string"
+    },
+    "purpose": {
+      "description": "Why the tool is being used.",
+      "type": "string"
+    },
+    "status": {
+      "description": "Argument generation, approval, and execution are separate states.",
+      "enum": [
+        "input-streaming",
+        "input-available",
+        "awaiting-approval",
+        "executing",
+        "output-available",
+        "output-error",
+        "denied",
+        "cancelled"
+      ]
+    },
+    "inputText": {
+      "description": "Streamed argument text, possibly partial.",
+      "type": "string"
+    },
+    "input": {
+      "description": "Complete arguments."
+    },
+    "output": {
+      "description": "Result; untrusted."
+    },
+    "error": {
+      "description": "An error safe to show to users. Diagnostic details stay in host logs.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Stable application-defined code.",
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "description": "User-presentable message, localized by the host.",
+          "type": "string"
+        },
+        "retryable": {
+          "description": "Whether retrying the same operation may succeed.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ]
+    },
+    "approvalId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "retryable": {
+      "description": "The host can retry this tool call.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "toolCallId",
+    "toolName",
+    "status"
+  ]
+}

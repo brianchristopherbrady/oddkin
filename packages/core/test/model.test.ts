@@ -191,3 +191,31 @@ describe('JSON Schema emitter', () => {
       );
   });
 });
+
+describe('m.json', () => {
+  const Payload = defineModel('acme.payload', {
+    version: 1,
+    schema: m.object({ id: m.id(), data: m.json({ description: 'Opaque payload.', maxDepth: 3 }) }),
+  });
+
+  it('accepts JSON values and infers JsonValue', () => {
+    for (const data of [null, true, 1.5, 'x', [1, 'a', null], { a: { b: [1] } }])
+      expect(Payload.validate({ id: 'p', data }).ok, JSON.stringify(data)).toBe(true);
+    expectTypeOf<Infer<typeof Payload>['data']>().toEqualTypeOf<
+      import('../src/model/index.js').JsonValue
+    >();
+  });
+
+  it('rejects non-JSON values and excessive depth', () => {
+    for (const data of [Number.NaN, Infinity, () => 1, new Date(0), { a: undefined }, [[[[1]]]]]) {
+      const result = Payload.validate({ id: 'p', data });
+      expect(result.ok, String(data)).toBe(false);
+      expect(result.diagnostics[0]?.path).toMatch(/^\/data/);
+    }
+  });
+
+  it('emits an unconstrained schema with its description', () => {
+    const schema = toJSONSchema(Payload) as { properties: Record<string, unknown> };
+    expect(schema.properties['data']).toEqual({ description: 'Opaque payload.' });
+  });
+});

@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.question.v1.schema.json",
+  "title": "oddkin.ai.question",
+  "type": "object",
+  "properties": {
+    "questionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "enum": [
+        "choice",
+        "multi-choice",
+        "form",
+        "text"
+      ]
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ]
+      }
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "type": {
+            "enum": [
+              "text",
+              "number",
+              "select",
+              "boolean"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "type"
+        ]
+      }
+    },
+    "allowCustom": {
+      "description": "Offer a free-text answer.",
+      "type": "boolean"
+    },
+    "status": {
+      "enum": [
+        "requested",
+        "submitting",
+        "submitted",
+        "skipped",
+        "expired",
+        "failed"
+      ]
+    },
+    "answer": {},
+    "expiresAt": {
+      "description": "ISO 8601 timestamp.",
+      "type": "string"
+    },
+    "error": {
+      "description": "An error safe to show to users. Diagnostic details stay in host logs.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Stable application-defined code.",
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "description": "User-presentable message, localized by the host.",
+          "type": "string"
+        },
+        "retryable": {
+          "description": "Whether retrying the same operation may succeed.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ]
+    }
+  },
+  "required": [
+    "questionId",
+    "revision",
+    "prompt",
+    "kind",
+    "status"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.model-option.v1.schema.json",
+  "title": "oddkin.ai.model-option",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "description": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "available": {
+      "type": "boolean"
+    },
+    "reason": {
+      "description": "Why the model is unavailable.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "available"
+  ]
+}

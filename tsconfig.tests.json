@@ -9,6 +9,7 @@
     "types": ["node"]
   },
   "include": [
+    "packages/components/test/**/*.ts",
     "packages/*/test/**/*.ts",
     "tests/**/*.ts",
     "e2e/**/*.ts",

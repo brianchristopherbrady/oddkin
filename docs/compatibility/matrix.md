@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 16 stylesheets, 150 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 44 stylesheets, 224 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -50,7 +50,7 @@ Legend: ✓ *n* — fully supported at the floor (first full version *n*); parti
 | user-pseudos | `:user-invalid, :user-valid` | evaluated | ✓ 119 | ✓ 119 | ✓ 88 | ✓ 16.5 | — | widely (2026-05-02) | Available at the floor. odd-input does not use them on its inner control: its error state also covers a custom error message and failed submissions, so the controller-derived :state(user-invalid) is the single source. | — |
 | dir-pseudo | `:dir()` | planned (M10) | ✓ 120 | ✓ 120 | ✓ 49 | ✓ 16.4 | — | widely (2026-06-07) | Direction-dependent icons (chevrons, arrows) flip with the inherited direction, including inside shadow roots. | — |
 | containment | `contain, contain-intrinsic-size` | planned (M8) | ✓ 83 | ✓ 83 | ✓ 107 | ✓ 17 | — | widely (2024-09-14) | Not applied by default. Containment changes containing blocks, stacking, intrinsic size, and overflow clipping, so it is added per component only with measurements and checks that focus rings, shadows, overlays, and sticky content still render. | — |
-| resize | `resize: vertical` | planned (M10) | ✓ 1 | ✓ 79 | ✓ 4 | ✓ 3 | Firefox Android: ✗ (none); Safari iOS: ✗ (none) | limited | examples/css-gallery (native textarea). Textareas can be resized vertically by the user where the platform offers a resize handle. **Floor exception:** Firefox Android: No resize handle on Firefox for Android; long content scrolls inside the textarea. Safari iOS: No resize handle on iOS; long content scrolls inside the textarea. | — |
+| resize | `resize: vertical` | planned (M10) | ✓ 1 | ✓ 79 | ✓ 4 | ✓ 3 | Firefox Android: ✗ (none); Safari iOS: ✗ (none) | limited | examples/css-gallery (native textarea). odd-prompt-input, odd-action-approval (auto-growing or vertical text areas). Textareas can be resized vertically by the user where the platform offers a resize handle; auto-growing text areas turn the handle off. **Floor exception:** Firefox Android: No resize handle on Firefox for Android; long content scrolls inside the textarea. Safari iOS: No resize handle on iOS; long content scrolls inside the textarea. | — |
 
 ## Enhancements (gated) (14)
 
@@ -126,8 +126,36 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/card/card.styles.js (cardStyles)` | yes | 11 |
 | `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 21 |
 | `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 18 |
+| `packages/ai/dist/action-approval/action-approval.styles.js (actionApprovalStyles)` | yes | 27 |
+| `packages/ai/dist/activity/activity.styles.js (activityStyles)` | yes | 26 |
+| `packages/ai/dist/ai-label/ai-label.styles.js (aiLabelStyles)` | yes | 25 |
+| `packages/ai/dist/artifact/artifact.styles.js (artifactStyles)` | yes | 32 |
+| `packages/ai/dist/change-review/change-review.styles.js (changeReviewStyles)` | yes | 32 |
+| `packages/ai/dist/checkpoint/checkpoint.styles.js (checkpointStyles)` | yes | 13 |
+| `packages/ai/dist/citation/citation.styles.js (citationStyles)` | yes | 44 |
+| `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 32 |
+| `packages/ai/dist/conversation/conversation.styles.js (conversationStyles)` | yes | 49 |
+| `packages/ai/dist/inline-assist/inline-assist.styles.js (inlineAssistStyles)` | yes | 25 |
+| `packages/ai/dist/internal/base.styles.js (aiBaseStyles)` | yes | 61 |
+| `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 31 |
+| `packages/ai/dist/message-branch/message-branch.styles.js (messageBranchStyles)` | yes | 6 |
+| `packages/ai/dist/model-select/model-select.styles.js (modelSelectStyles)` | yes | 17 |
+| `packages/ai/dist/prompt-input/prompt-input.styles.js (promptInputStyles)` | yes | 62 |
+| `packages/ai/dist/question/question.styles.js (questionStyles)` | yes | 19 |
+| `packages/ai/dist/response/response.styles.js (responseStyles)` | yes | 61 |
+| `packages/ai/dist/response-feedback/response-feedback.styles.js (responseFeedbackStyles)` | yes | 18 |
+| `packages/ai/dist/sources/sources.styles.js (sourcesStyles)` | yes | 15 |
+| `packages/ai/dist/suggestions/suggestions.styles.js (suggestionsStyles)` | yes | 36 |
+| `packages/ai/dist/task-plan/task-plan.styles.js (taskPlanStyles)` | yes | 30 |
+| `packages/ai/dist/tool-call/tool-call.styles.js (toolCallStyles)` | yes | 31 |
+| `packages/ai/dist/transcript/transcript.styles.js (transcriptStyles)` | yes | 16 |
+| `packages/ai/dist/usage-meter/usage-meter.styles.js (usageMeterStyles)` | yes | 16 |
+| `packages/ai/dist/voice-input/voice-input.styles.js (voiceInputStyles)` | yes | 25 |
 | `packages/core/test/fixtures/side-nav.recipe.css.txt` | yes | 27 |
 | `packages/core/test/fixtures/page.recipe.css.txt` | yes | 17 |
+| `examples/ai-agent/styles.css` | example | 32 |
+| `examples/ai-research/styles.css` | example | 41 |
+| `examples/ai-writing/styles.css` | example | 34 |
 | `examples/binding-rule/styles.css` | example | 32 |
 | `examples/components-only/styles.css` | example | 12 |
 | `examples/core-counter/styles.css` | example | 33 |

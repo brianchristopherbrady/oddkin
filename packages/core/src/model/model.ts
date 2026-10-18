@@ -37,6 +37,32 @@ const describe = (value: unknown) =>
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
+/** Why `value` is not a JSON value within `depth` levels, or undefined when it is. */
+function jsonProblem(value: unknown, depth: number): string | undefined {
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return;
+  if (typeof value === 'number')
+    return Number.isFinite(value)
+      ? undefined
+      : 'Expected a JSON value, received a non-finite number.';
+  if (typeof value !== 'object') return `Expected a JSON value, received a ${typeof value}.`;
+  if (depth <= 0) return 'JSON value is nested too deeply.';
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const problem = jsonProblem(item, depth - 1);
+      if (problem) return problem;
+    }
+    return;
+  }
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== Object.prototype && prototype !== null)
+    return 'Expected a JSON value, received a non-plain object.';
+  for (const item of Object.values(value)) {
+    const problem = jsonProblem(item, depth - 1);
+    if (problem) return problem;
+  }
+  return;
+}
+
 class Collector {
   readonly items: ModelDiagnostic[] = [];
   error(code: string, path: string, message: string, suggestion?: string) {
@@ -111,6 +137,11 @@ function check(node: Node, value: unknown, path: string, out: Collector): void {
       if (typeof value !== 'boolean')
         out.error('model.type.mismatch', at, `Expected a boolean, received ${describe(value)}.`);
       return;
+    case 'json': {
+      const problem = jsonProblem(value, node.maxDepth ?? 32);
+      if (problem) out.error('model.type.mismatch', at, problem);
+      return;
+    }
     case 'enum':
       if (!(node.values as readonly unknown[]).includes(value)) {
         out.error(

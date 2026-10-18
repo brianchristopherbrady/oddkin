@@ -952,6 +952,53 @@ export function extract(program: ts.Program, root: string): Extraction {
       ? { name: call.parent.name.text, file: rel(call.getSourceFile().fileName) }
       : undefined);
 
+  /**
+   * A definition published by another package (`ElementDefinition<Class>` in its declarations):
+   * its tag is the `HTMLElementTagNameMap` entry for that class in the class's declaration file.
+   * Declarations only; nothing is executed.
+   */
+  function publishedDefinitionTag(expression: ts.Expression): string | undefined {
+    const declaration = resolveSymbol(expression)?.declarations?.[0];
+    if (!declaration || !declaration.getSourceFile().isDeclarationFile) return undefined;
+    if (!ts.isVariableDeclaration(declaration) || !declaration.type) return undefined;
+    const type = declaration.type;
+    // Emitted declarations write `import("@oddkin/core/element").ElementDefinition<Class>`.
+    const typeName = ts.isTypeReferenceNode(type)
+      ? type.typeName
+      : ts.isImportTypeNode(type)
+        ? type.qualifier
+        : undefined;
+    const typeArguments =
+      ts.isTypeReferenceNode(type) || ts.isImportTypeNode(type) ? type.typeArguments : undefined;
+    if (!typeName || typeArguments?.length !== 1) return undefined;
+    if (!fromOddkinCore(typeName, 'ElementDefinition')) return undefined;
+    const argument = typeArguments[0];
+    if (!argument || !ts.isTypeReferenceNode(argument)) return undefined;
+    const classSymbol = resolveSymbol(argument.typeName);
+    const classFile = classSymbol?.declarations?.[0]?.getSourceFile();
+    if (!classSymbol || !classFile) return undefined;
+    let tag: string | undefined;
+    const visit = (node: ts.Node): void => {
+      if (tag) return;
+      if (ts.isInterfaceDeclaration(node) && node.name.text === 'HTMLElementTagNameMap') {
+        for (const member of node.members) {
+          if (
+            !ts.isPropertySignature(member) ||
+            !member.type ||
+            !ts.isTypeReferenceNode(member.type)
+          )
+            continue;
+          const name = ts.isStringLiteral(member.name) ? member.name.text : undefined;
+          if (name && TAG_NAME.test(name) && resolveSymbol(member.type.typeName) === classSymbol)
+            tag = name;
+        }
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(classFile);
+    return tag;
+  }
+
   /** Resolve an expression to a `compose()` definition, following imports and spreads. */
   function definitionFrom(expression: ts.Expression): Resolved | undefined {
     const found = initializerOf(expression);
@@ -1063,7 +1110,9 @@ export function extract(program: ts.Program, root: string): Extraction {
                 ? entry.name
                 : undefined;
             const dependency = target ? definitionFrom(target) : undefined;
+            const external = !dependency && target ? publishedDefinitionTag(target) : undefined;
             if (role && dependency) dependencies[role] = dependency.info.tag;
+            else if (role && external) dependencies[role] = external;
             else
               report(
                 'analyzer.dynamic.definition',

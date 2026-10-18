@@ -1,0 +1,22 @@
+data: {"type":"start","messageId":"msg_retry"}
+
+data: {"type":"start-step"}
+
+data: {"type":"text-start","id":"draft"}
+
+data: {"type":"text-delta","id":"draft","delta":"This partial step is discarded"}
+
+data: {"type":"reset-step"}
+
+data: {"type":"start-step"}
+
+data: {"type":"text-start","id":"final"}
+
+data: {"type":"text-delta","id":"final","delta":"Replacement output."}
+
+data: {"type":"text-end","id":"final"}
+
+data: {"type":"error","errorText":"Rate limited upstream."}
+
+data: [DONE]
+

@@ -5,6 +5,7 @@ Oddkin is a modular frontend framework built on custom elements and browser APIs
 - **`@oddkin/core`** — authoring foundation: reactive primitives, ownership (`Scope`), templates, styles, layout recipes, collections, and models.
 - **`@oddkin/tokens`** — theme configuration and a deterministic token pipeline that emits CSS, SCSS, JSON, and TypeScript. Use the tokens with plain CSS and no Oddkin JavaScript.
 - **`@oddkin/components`** — accessible, themeable custom elements that work in plain HTML or in any framework.
+- **`@oddkin/ai`** — optional AI interaction elements, headless controllers, and stream adapters for conversations, inline assistance, research tools, and agent workflows.
 - **`@oddkin/state`** and **`@oddkin/app`** — optional stores, context, routing, and async resources.
 - **Optional tooling** — `@oddkin/analyzer` (metadata), `@oddkin/workbench` (generated documentation, interactive component pages, Theme Studio), and `@oddkin/agent` (IDE agent support).
 
@@ -14,15 +15,15 @@ Packages are published under `@oddkin/*`; elements use the `odd-` prefix (`<odd-
 
 ## Status
 
-Early development; nothing is published. `@oddkin/core`, `@oddkin/tokens`, and `@oddkin/analyzer` have implemented, tested public APIs; `@oddkin/components` has its first three elements (M4 in progress). See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for milestones and current state, and [docs/verification.md](./docs/verification.md) for recorded results.
+Early development; nothing is published. `@oddkin/core`, `@oddkin/tokens`, and `@oddkin/analyzer` have implemented, tested public APIs; `@oddkin/components` has its first three elements (M4 in progress); `@oddkin/ai` is implemented with 24 elements, controllers, adapters, and three simulated demos. See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for milestones and current state, and [docs/verification.md](./docs/verification.md) for recorded results.
 
 ## Repository layout
 
 | Path | Contents |
 | --- | --- |
-| `packages/*` | `@oddkin/core`, `@oddkin/tokens`, `@oddkin/state`, `@oddkin/app`, `@oddkin/components`, `@oddkin/analyzer`, `@oddkin/workbench` |
+| `packages/*` | `@oddkin/core`, `@oddkin/tokens`, `@oddkin/state`, `@oddkin/app`, `@oddkin/components`, `@oddkin/ai`, `@oddkin/analyzer`, `@oddkin/workbench` |
 | `apps/docs` | Oddkin's product documentation application (private) |
-| `examples/` | Consumers that run without a bundler (`plain-html`, `tokens-css-only`, `core-counter`, `components-only`, `css-gallery`, `binding-rule`) |
+| `examples/` | Consumers that run without a bundler (`plain-html`, `tokens-css-only`, `core-counter`, `components-only`, `css-gallery`, `binding-rule`) and the bundled static `@oddkin/ai` demos (`ai-research`, `ai-writing`, `ai-agent`) |
 | `docs/architecture/` | Architecture documents and [decision records](./docs/architecture/decisions/README.md) |
 | `docs/compatibility/` | Browser floor and platform feature registry, and the generated [feature matrix](./docs/compatibility/matrix.md) |
 | `docs/research/`, `docs/reference/` | Ecosystem research and the reference-application audit |

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.usage.v1.schema.json",
+  "title": "oddkin.ai.usage",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "kind": {
+        "enum": [
+          "input-tokens",
+          "output-tokens",
+          "context",
+          "quota",
+          "cost",
+          "other"
+        ]
+      },
+      "label": {
+        "type": "string",
+        "minLength": 1
+      },
+      "used": {
+        "type": "number",
+        "minimum": 0
+      },
+      "limit": {
+        "type": "number",
+        "minimum": 0
+      },
+      "unit": {
+        "description": "tokens, requests, … (cost uses currency).",
+        "type": "string"
+      },
+      "currency": {
+        "description": "ISO 4217.",
+        "type": "string",
+        "pattern": "^[A-Z]{3}$"
+      },
+      "precision": {
+        "description": "Supplied by the host; never inferred.",
+        "enum": [
+          "measured",
+          "estimated",
+          "unknown"
+        ]
+      }
+    },
+    "required": [
+      "kind",
+      "label",
+      "precision"
+    ]
+  }
+}

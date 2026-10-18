@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.transcript-segment.v1.schema.json",
+  "title": "oddkin.ai.transcript-segment",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "text": {
+      "type": "string"
+    },
+    "final": {
+      "description": "Interim text may still change.",
+      "type": "boolean"
+    },
+    "speaker": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "text",
+    "final"
+  ]
+}

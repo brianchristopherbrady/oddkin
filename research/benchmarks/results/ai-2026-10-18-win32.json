@@ -1,0 +1,382 @@
+{
+  "date": "2026-10-18T05:08:09.358Z",
+  "workload": {
+    "history": "1000 messages on one branch, alternating user/assistant; assistant messages are Markdown (heading, paragraph with strong, code span and link; every 3rd a nested list; every 5th a fenced code block; every 7th two citations with two source parts; every 10th a tool call)",
+    "stream": "about 20000 characters of Markdown (headings, paragraphs, lists, fenced code, tables) in 3–13 character chunks, 3 chunks per animation frame, pushed through ConversationController into <odd-conversation> (600 px tall) with the history mounted, then into an empty conversation for comparison",
+    "samples": 5
+  },
+  "method": {
+    "timing": "performance.now() in the page. mountToCommit = append to updateComplete; mountToSettled adds two animation frames and a task. Stream push = synchronous cost of one sink.push (controller commit and subscriber notification; rendering is frame-coalesced); frame = requestAnimationFrame-to-requestAnimationFrame interval during the stream (includes rendering). Firefox and WebKit clamp performance.now() to about 1 ms without cross-origin isolation.",
+    "domNodes": "Elements and text nodes in the conversation, including every open shadow tree.",
+    "memory": "Chromium only: CDP HeapProfiler.collectGarbage then Runtime.getHeapUsage().usedSize before mounting, after mounting, after streaming, and after teardown.",
+    "bundle": "esbuild bundle of research/benchmarks/ai/bench.ts with the packages' production exports, minified, ES2022.",
+    "headless": true
+  },
+  "environment": {
+    "node": "v24.21.0",
+    "os": "win32 10.0.26300 x64",
+    "cpu": "11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz",
+    "cores": 8,
+    "memoryGiB": 16
+  },
+  "runtime": {
+    "chromium": {
+      "version": "156.0.8078.4",
+      "history": {
+        "messages": 1000,
+        "snapshotLoadMs": {
+          "median": 27.3,
+          "max": 55.1,
+          "samples": [23, 30.2, 20.5, 55.1, 27.3]
+        },
+        "mountToCommitMs": {
+          "median": 559.4,
+          "max": 1551.4,
+          "samples": [559.4, 571.5, 522.1, 1551.4, 480.7]
+        },
+        "mountToSettledMs": {
+          "median": 600.9,
+          "max": 1658.9,
+          "samples": [600.9, 609.6, 568.5, 1658.9, 518.5]
+        },
+        "domNodes": 74340
+      },
+      "streamIntoHistory": {
+        "chunks": 2508,
+        "characters": 20062,
+        "chunksPerFrame": 3,
+        "totalMs": {
+          "median": 14399.2,
+          "max": 21847.3,
+          "samples": [14150, 14399.2, 14066.4, 21847.3, 15067]
+        },
+        "pushMsMedian": {
+          "median": 0.2,
+          "max": 0.3,
+          "samples": [0.1, 0.2, 0.1, 0.3, 0.2]
+        },
+        "pushMsP95": {
+          "median": 0.3,
+          "max": 0.6,
+          "samples": [0.3, 0.3, 0.3, 0.6, 0.4]
+        },
+        "pushMsMax": {
+          "median": 1.8,
+          "max": 19,
+          "samples": [0.9, 1.8, 1.1, 19, 4.2]
+        },
+        "frameMsMedian": {
+          "median": 16.7,
+          "max": 16.7,
+          "samples": [16.7, 16.7, 16.7, 16.7, 16.7]
+        },
+        "frameMsP95": {
+          "median": 16.8,
+          "max": 50,
+          "samples": [16.7, 16.8, 16.8, 50, 33.3]
+        },
+        "frameMsMax": {
+          "median": 33.5,
+          "max": 200,
+          "samples": [33.4, 33.5, 33.4, 200, 49.9]
+        },
+        "framesOver50ms": {
+          "median": 0,
+          "max": 22,
+          "samples": [0, 0, 0, 22, 0]
+        },
+        "domNodesAfter": 76729
+      },
+      "streamIntoEmpty": {
+        "chunks": 2508,
+        "characters": 20062,
+        "chunksPerFrame": 3,
+        "totalMs": {
+          "median": 13966.1,
+          "max": 13970.2,
+          "samples": [13970.2, 13963.4, 13966.2, 13966.1, 13966]
+        },
+        "pushMsMedian": {
+          "median": 0,
+          "max": 0,
+          "samples": [0, 0, 0, 0, 0]
+        },
+        "pushMsP95": {
+          "median": 0.1,
+          "max": 0.1,
+          "samples": [0.1, 0.1, 0.1, 0.1, 0.1]
+        },
+        "pushMsMax": {
+          "median": 0.3,
+          "max": 1.1,
+          "samples": [0.3, 0.3, 1.1, 0.3, 0.4]
+        },
+        "frameMsMedian": {
+          "median": 16.7,
+          "max": 16.7,
+          "samples": [16.7, 16.7, 16.7, 16.7, 16.7]
+        },
+        "frameMsP95": {
+          "median": 16.7,
+          "max": 16.8,
+          "samples": [16.7, 16.8, 16.8, 16.7, 16.7]
+        },
+        "frameMsMax": {
+          "median": 16.8,
+          "max": 16.8,
+          "samples": [16.8, 16.8, 16.8, 16.8, 16.8]
+        },
+        "framesOver50ms": {
+          "median": 0,
+          "max": 0,
+          "samples": [0, 0, 0, 0, 0]
+        },
+        "domNodesAfter": 2443
+      },
+      "memory": {
+        "retainedBytesPerMessage": 20511,
+        "streamGrowthBytes": {
+          "median": 2019648,
+          "max": 2094556,
+          "samples": [2094556, 2019648, 1998776, 2023192, 2013768]
+        },
+        "afterTeardownMinusBeforeBytes": {
+          "median": -198672,
+          "max": 6144,
+          "samples": [-574792, -217700, -198672, 6144, -193344]
+        },
+        "heapBeforeEachSample": [3380176, 3052896, 3080564, 2891040, 3148044]
+      }
+    },
+    "firefox": {
+      "version": "157.0",
+      "history": {
+        "messages": 1000,
+        "snapshotLoadMs": {
+          "median": 29,
+          "max": 37,
+          "samples": [35, 37, 18, 25, 29]
+        },
+        "mountToCommitMs": {
+          "median": 671,
+          "max": 797,
+          "samples": [680, 638, 596, 671, 797]
+        },
+        "mountToSettledMs": {
+          "median": 681,
+          "max": 825,
+          "samples": [686, 662, 600, 681, 825]
+        },
+        "domNodes": 74340
+      },
+      "streamIntoHistory": {
+        "chunks": 2508,
+        "characters": 20062,
+        "chunksPerFrame": 3,
+        "totalMs": {
+          "median": 14583,
+          "max": 22233,
+          "samples": [13967, 13982, 14583, 14882, 22233]
+        },
+        "pushMsMedian": {
+          "median": 1,
+          "max": 1,
+          "samples": [1, 1, 1, 1, 1]
+        },
+        "pushMsP95": {
+          "median": 1,
+          "max": 2,
+          "samples": [1, 1, 1, 1, 2]
+        },
+        "pushMsMax": {
+          "median": 7,
+          "max": 38,
+          "samples": [6, 5, 7, 7, 38]
+        },
+        "frameMsMedian": {
+          "median": 16.66,
+          "max": 16.66,
+          "samples": [16.66, 16.66, 16.66, 16.66, 16.66]
+        },
+        "frameMsP95": {
+          "median": 16.68,
+          "max": 50,
+          "samples": [16.68, 16.68, 16.68, 16.68, 50]
+        },
+        "frameMsMax": {
+          "median": 83.34,
+          "max": 2883.14,
+          "samples": [19.02, 33.32, 133.32, 83.34, 2883.14]
+        },
+        "framesOver50ms": {
+          "median": 1,
+          "max": 25,
+          "samples": [0, 0, 1, 2, 25]
+        },
+        "domNodesAfter": 76729
+      },
+      "streamIntoEmpty": {
+        "chunks": 2508,
+        "characters": 20062,
+        "chunksPerFrame": 3,
+        "totalMs": {
+          "median": 14082,
+          "max": 15216,
+          "samples": [13966, 14031, 14082, 14400, 15216]
+        },
+        "pushMsMedian": {
+          "median": 0,
+          "max": 0,
+          "samples": [0, 0, 0, 0, 0]
+        },
+        "pushMsP95": {
+          "median": 1,
+          "max": 1,
+          "samples": [1, 1, 1, 1, 1]
+        },
+        "pushMsMax": {
+          "median": 2,
+          "max": 3,
+          "samples": [2, 2, 2, 3, 2]
+        },
+        "frameMsMedian": {
+          "median": 16.66,
+          "max": 16.66,
+          "samples": [16.66, 16.66, 16.66, 16.66, 16.66]
+        },
+        "frameMsP95": {
+          "median": 16.68,
+          "max": 18.78,
+          "samples": [16.68, 16.68, 16.68, 16.68, 18.78]
+        },
+        "frameMsMax": {
+          "median": 50,
+          "max": 149.98,
+          "samples": [23.48, 39.72, 50, 66.66, 149.98]
+        },
+        "framesOver50ms": {
+          "median": 0,
+          "max": 5,
+          "samples": [0, 0, 0, 1, 5]
+        },
+        "domNodesAfter": 2443
+      },
+      "memory": "Chromium only"
+    },
+    "webkit": {
+      "version": "27.2",
+      "history": {
+        "messages": 1000,
+        "snapshotLoadMs": {
+          "median": 21,
+          "max": 39,
+          "samples": [21, 23, 15, 12, 39]
+        },
+        "mountToCommitMs": {
+          "median": 738,
+          "max": 1939,
+          "samples": [1019, 646, 721, 738, 1939]
+        },
+        "mountToSettledMs": {
+          "median": 762,
+          "max": 1973,
+          "samples": [1058, 676, 740, 762, 1973]
+        },
+        "domNodes": 74340
+      },
+      "streamIntoHistory": {
+        "chunks": 2508,
+        "characters": 20062,
+        "chunksPerFrame": 3,
+        "totalMs": {
+          "median": 19101,
+          "max": 19900,
+          "samples": [19213, 18363, 19101, 19900, 17922]
+        },
+        "pushMsMedian": {
+          "median": 0,
+          "max": 0,
+          "samples": [0, 0, 0, 0, 0]
+        },
+        "pushMsP95": {
+          "median": 1,
+          "max": 1,
+          "samples": [1, 1, 1, 1, 1]
+        },
+        "pushMsMax": {
+          "median": 12,
+          "max": 143,
+          "samples": [143, 8, 12, 30, 10]
+        },
+        "frameMsMedian": {
+          "median": 19,
+          "max": 19,
+          "samples": [19, 17, 19, 19, 17]
+        },
+        "frameMsP95": {
+          "median": 32,
+          "max": 38,
+          "samples": [33, 32, 32, 38, 32]
+        },
+        "frameMsMax": {
+          "median": 93,
+          "max": 171,
+          "samples": [171, 46, 59, 93, 136]
+        },
+        "framesOver50ms": {
+          "median": 2,
+          "max": 10,
+          "samples": [4, 0, 1, 10, 2]
+        },
+        "domNodesAfter": 76729
+      },
+      "streamIntoEmpty": {
+        "chunks": 2508,
+        "characters": 20062,
+        "chunksPerFrame": 3,
+        "totalMs": {
+          "median": 13188,
+          "max": 13444,
+          "samples": [13188, 13084, 13209, 13444, 13073]
+        },
+        "pushMsMedian": {
+          "median": 0,
+          "max": 0,
+          "samples": [0, 0, 0, 0, 0]
+        },
+        "pushMsP95": {
+          "median": 0,
+          "max": 0,
+          "samples": [0, 0, 0, 0, 0]
+        },
+        "pushMsMax": {
+          "median": 4,
+          "max": 6,
+          "samples": [2, 4, 6, 6, 4]
+        },
+        "frameMsMedian": {
+          "median": 16,
+          "max": 16,
+          "samples": [16, 16, 16, 16, 16]
+        },
+        "frameMsP95": {
+          "median": 17,
+          "max": 17,
+          "samples": [17, 16, 17, 17, 16]
+        },
+        "frameMsMax": {
+          "median": 37,
+          "max": 46,
+          "samples": [33, 37, 43, 46, 30]
+        },
+        "framesOver50ms": {
+          "median": 0,
+          "max": 0,
+          "samples": [0, 0, 0, 0, 0]
+        },
+        "domNodesAfter": 2443
+      },
+      "memory": "Chromium only"
+    }
+  }
+}

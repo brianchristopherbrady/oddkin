@@ -441,7 +441,13 @@ export function lintCss(text, { file, registry }) {
 
 async function componentStyles() {
   const out = [];
-  const dist = join(root, 'packages/components/dist');
+  for (const pkg of ['components', 'ai']) out.push(...(await packageStyles(pkg)));
+  return out;
+}
+
+async function packageStyles(pkg) {
+  const out = [];
+  const dist = join(root, `packages/${pkg}/dist`);
   if (!existsSync(dist)) return out;
   for (const name of readdirSync(dist).sort()) {
     const dir = join(dist, name);
@@ -459,7 +465,7 @@ async function componentStyles() {
       for (const [exportName, value] of Object.entries(module))
         if (typeof value?.cssText === 'string')
           out.push({
-            file: `packages/components/dist/${name}/${file} (${exportName})`,
+            file: `packages/${pkg}/dist/${name}/${file} (${exportName})`,
             text: value.cssText,
             shipped: true,
           });

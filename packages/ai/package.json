@@ -1,0 +1,319 @@
+{
+  "name": "@oddkin/ai",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Optional AI interaction elements, headless controllers, and stream adapters for conversation, inline assistance, research, and agent workflows.",
+  "type": "module",
+  "sideEffects": [
+    "./dist/**/*.define.js"
+  ],
+  "customElements": "./custom-elements.json",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "development": "./dist/index.js",
+      "default": "./dist/prod/index.js"
+    },
+    "./contracts": {
+      "types": "./dist/contracts/index.d.ts",
+      "development": "./dist/contracts/index.js",
+      "default": "./dist/prod/contracts/index.js"
+    },
+    "./controllers": {
+      "types": "./dist/controllers/index.d.ts",
+      "development": "./dist/controllers/index.js",
+      "default": "./dist/prod/controllers/index.js"
+    },
+    "./events": {
+      "types": "./dist/events.d.ts",
+      "development": "./dist/events.js",
+      "default": "./dist/prod/events.js"
+    },
+    "./announce": {
+      "types": "./dist/announce.d.ts",
+      "development": "./dist/announce.js",
+      "default": "./dist/prod/announce.js"
+    },
+    "./stream": {
+      "types": "./dist/stream/index.d.ts",
+      "development": "./dist/stream/index.js",
+      "default": "./dist/prod/stream/index.js"
+    },
+    "./markdown": {
+      "types": "./dist/markdown/index.d.ts",
+      "development": "./dist/markdown/index.js",
+      "default": "./dist/prod/markdown/index.js"
+    },
+    "./highlight": {
+      "types": "./dist/highlight/index.d.ts",
+      "development": "./dist/highlight/index.js",
+      "default": "./dist/prod/highlight/index.js"
+    },
+    "./voice/web-speech": {
+      "types": "./dist/voice/web-speech.d.ts",
+      "development": "./dist/voice/web-speech.js",
+      "default": "./dist/prod/voice/web-speech.js"
+    },
+    "./voice/recorder": {
+      "types": "./dist/voice/recorder.d.ts",
+      "development": "./dist/voice/recorder.js",
+      "default": "./dist/prod/voice/recorder.js"
+    },
+    "./action-approval": {
+      "types": "./dist/action-approval/index.d.ts",
+      "development": "./dist/action-approval/index.js",
+      "default": "./dist/prod/action-approval/index.js"
+    },
+    "./define/action-approval": {
+      "types": "./dist/action-approval/action-approval.define.d.ts",
+      "development": "./dist/action-approval/action-approval.define.js",
+      "default": "./dist/prod/action-approval/action-approval.define.js"
+    },
+    "./activity": {
+      "types": "./dist/activity/index.d.ts",
+      "development": "./dist/activity/index.js",
+      "default": "./dist/prod/activity/index.js"
+    },
+    "./define/activity": {
+      "types": "./dist/activity/activity.define.d.ts",
+      "development": "./dist/activity/activity.define.js",
+      "default": "./dist/prod/activity/activity.define.js"
+    },
+    "./ai-label": {
+      "types": "./dist/ai-label/index.d.ts",
+      "development": "./dist/ai-label/index.js",
+      "default": "./dist/prod/ai-label/index.js"
+    },
+    "./define/ai-label": {
+      "types": "./dist/ai-label/ai-label.define.d.ts",
+      "development": "./dist/ai-label/ai-label.define.js",
+      "default": "./dist/prod/ai-label/ai-label.define.js"
+    },
+    "./artifact": {
+      "types": "./dist/artifact/index.d.ts",
+      "development": "./dist/artifact/index.js",
+      "default": "./dist/prod/artifact/index.js"
+    },
+    "./define/artifact": {
+      "types": "./dist/artifact/artifact.define.d.ts",
+      "development": "./dist/artifact/artifact.define.js",
+      "default": "./dist/prod/artifact/artifact.define.js"
+    },
+    "./change-review": {
+      "types": "./dist/change-review/index.d.ts",
+      "development": "./dist/change-review/index.js",
+      "default": "./dist/prod/change-review/index.js"
+    },
+    "./define/change-review": {
+      "types": "./dist/change-review/change-review.define.d.ts",
+      "development": "./dist/change-review/change-review.define.js",
+      "default": "./dist/prod/change-review/change-review.define.js"
+    },
+    "./checkpoint": {
+      "types": "./dist/checkpoint/index.d.ts",
+      "development": "./dist/checkpoint/index.js",
+      "default": "./dist/prod/checkpoint/index.js"
+    },
+    "./define/checkpoint": {
+      "types": "./dist/checkpoint/checkpoint.define.d.ts",
+      "development": "./dist/checkpoint/checkpoint.define.js",
+      "default": "./dist/prod/checkpoint/checkpoint.define.js"
+    },
+    "./citation": {
+      "types": "./dist/citation/index.d.ts",
+      "development": "./dist/citation/index.js",
+      "default": "./dist/prod/citation/index.js"
+    },
+    "./define/citation": {
+      "types": "./dist/citation/citation.define.d.ts",
+      "development": "./dist/citation/citation.define.js",
+      "default": "./dist/prod/citation/citation.define.js"
+    },
+    "./context-picker": {
+      "types": "./dist/context-picker/index.d.ts",
+      "development": "./dist/context-picker/index.js",
+      "default": "./dist/prod/context-picker/index.js"
+    },
+    "./define/context-picker": {
+      "types": "./dist/context-picker/context-picker.define.d.ts",
+      "development": "./dist/context-picker/context-picker.define.js",
+      "default": "./dist/prod/context-picker/context-picker.define.js"
+    },
+    "./conversation": {
+      "types": "./dist/conversation/index.d.ts",
+      "development": "./dist/conversation/index.js",
+      "default": "./dist/prod/conversation/index.js"
+    },
+    "./define/conversation": {
+      "types": "./dist/conversation/conversation.define.d.ts",
+      "development": "./dist/conversation/conversation.define.js",
+      "default": "./dist/prod/conversation/conversation.define.js"
+    },
+    "./inline-assist": {
+      "types": "./dist/inline-assist/index.d.ts",
+      "development": "./dist/inline-assist/index.js",
+      "default": "./dist/prod/inline-assist/index.js"
+    },
+    "./define/inline-assist": {
+      "types": "./dist/inline-assist/inline-assist.define.d.ts",
+      "development": "./dist/inline-assist/inline-assist.define.js",
+      "default": "./dist/prod/inline-assist/inline-assist.define.js"
+    },
+    "./message": {
+      "types": "./dist/message/index.d.ts",
+      "development": "./dist/message/index.js",
+      "default": "./dist/prod/message/index.js"
+    },
+    "./define/message": {
+      "types": "./dist/message/message.define.d.ts",
+      "development": "./dist/message/message.define.js",
+      "default": "./dist/prod/message/message.define.js"
+    },
+    "./message-branch": {
+      "types": "./dist/message-branch/index.d.ts",
+      "development": "./dist/message-branch/index.js",
+      "default": "./dist/prod/message-branch/index.js"
+    },
+    "./define/message-branch": {
+      "types": "./dist/message-branch/message-branch.define.d.ts",
+      "development": "./dist/message-branch/message-branch.define.js",
+      "default": "./dist/prod/message-branch/message-branch.define.js"
+    },
+    "./model-select": {
+      "types": "./dist/model-select/index.d.ts",
+      "development": "./dist/model-select/index.js",
+      "default": "./dist/prod/model-select/index.js"
+    },
+    "./define/model-select": {
+      "types": "./dist/model-select/model-select.define.d.ts",
+      "development": "./dist/model-select/model-select.define.js",
+      "default": "./dist/prod/model-select/model-select.define.js"
+    },
+    "./prompt-input": {
+      "types": "./dist/prompt-input/index.d.ts",
+      "development": "./dist/prompt-input/index.js",
+      "default": "./dist/prod/prompt-input/index.js"
+    },
+    "./define/prompt-input": {
+      "types": "./dist/prompt-input/prompt-input.define.d.ts",
+      "development": "./dist/prompt-input/prompt-input.define.js",
+      "default": "./dist/prod/prompt-input/prompt-input.define.js"
+    },
+    "./question": {
+      "types": "./dist/question/index.d.ts",
+      "development": "./dist/question/index.js",
+      "default": "./dist/prod/question/index.js"
+    },
+    "./define/question": {
+      "types": "./dist/question/question.define.d.ts",
+      "development": "./dist/question/question.define.js",
+      "default": "./dist/prod/question/question.define.js"
+    },
+    "./response": {
+      "types": "./dist/response/index.d.ts",
+      "development": "./dist/response/index.js",
+      "default": "./dist/prod/response/index.js"
+    },
+    "./define/response": {
+      "types": "./dist/response/response.define.d.ts",
+      "development": "./dist/response/response.define.js",
+      "default": "./dist/prod/response/response.define.js"
+    },
+    "./response-feedback": {
+      "types": "./dist/response-feedback/index.d.ts",
+      "development": "./dist/response-feedback/index.js",
+      "default": "./dist/prod/response-feedback/index.js"
+    },
+    "./define/response-feedback": {
+      "types": "./dist/response-feedback/response-feedback.define.d.ts",
+      "development": "./dist/response-feedback/response-feedback.define.js",
+      "default": "./dist/prod/response-feedback/response-feedback.define.js"
+    },
+    "./sources": {
+      "types": "./dist/sources/index.d.ts",
+      "development": "./dist/sources/index.js",
+      "default": "./dist/prod/sources/index.js"
+    },
+    "./define/sources": {
+      "types": "./dist/sources/sources.define.d.ts",
+      "development": "./dist/sources/sources.define.js",
+      "default": "./dist/prod/sources/sources.define.js"
+    },
+    "./suggestions": {
+      "types": "./dist/suggestions/index.d.ts",
+      "development": "./dist/suggestions/index.js",
+      "default": "./dist/prod/suggestions/index.js"
+    },
+    "./define/suggestions": {
+      "types": "./dist/suggestions/suggestions.define.d.ts",
+      "development": "./dist/suggestions/suggestions.define.js",
+      "default": "./dist/prod/suggestions/suggestions.define.js"
+    },
+    "./task-plan": {
+      "types": "./dist/task-plan/index.d.ts",
+      "development": "./dist/task-plan/index.js",
+      "default": "./dist/prod/task-plan/index.js"
+    },
+    "./define/task-plan": {
+      "types": "./dist/task-plan/task-plan.define.d.ts",
+      "development": "./dist/task-plan/task-plan.define.js",
+      "default": "./dist/prod/task-plan/task-plan.define.js"
+    },
+    "./tool-call": {
+      "types": "./dist/tool-call/index.d.ts",
+      "development": "./dist/tool-call/index.js",
+      "default": "./dist/prod/tool-call/index.js"
+    },
+    "./define/tool-call": {
+      "types": "./dist/tool-call/tool-call.define.d.ts",
+      "development": "./dist/tool-call/tool-call.define.js",
+      "default": "./dist/prod/tool-call/tool-call.define.js"
+    },
+    "./transcript": {
+      "types": "./dist/transcript/index.d.ts",
+      "development": "./dist/transcript/index.js",
+      "default": "./dist/prod/transcript/index.js"
+    },
+    "./define/transcript": {
+      "types": "./dist/transcript/transcript.define.d.ts",
+      "development": "./dist/transcript/transcript.define.js",
+      "default": "./dist/prod/transcript/transcript.define.js"
+    },
+    "./usage-meter": {
+      "types": "./dist/usage-meter/index.d.ts",
+      "development": "./dist/usage-meter/index.js",
+      "default": "./dist/prod/usage-meter/index.js"
+    },
+    "./define/usage-meter": {
+      "types": "./dist/usage-meter/usage-meter.define.d.ts",
+      "development": "./dist/usage-meter/usage-meter.define.js",
+      "default": "./dist/prod/usage-meter/usage-meter.define.js"
+    },
+    "./voice-input": {
+      "types": "./dist/voice-input/index.d.ts",
+      "development": "./dist/voice-input/index.js",
+      "default": "./dist/prod/voice-input/index.js"
+    },
+    "./define/voice-input": {
+      "types": "./dist/voice-input/voice-input.define.d.ts",
+      "development": "./dist/voice-input/voice-input.define.js",
+      "default": "./dist/prod/voice-input/voice-input.define.js"
+    },
+    "./schemas/*.json": "./schemas/*.json",
+    "./custom-elements.json": "./custom-elements.json",
+    "./oddkin.metadata.json": "./oddkin.metadata.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "custom-elements.json",
+    "oddkin.metadata.json",
+    "README.md"
+  ],
+  "dependencies": {
+    "@oddkin/components": "0.0.0",
+    "@oddkin/core": "0.0.0",
+    "@oddkin/tokens": "0.0.0"
+  }
+}

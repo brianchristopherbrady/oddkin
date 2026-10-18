@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>Agent task panel — @oddkin/ai demo (simulated)</title>
+    <link rel="stylesheet" href="./dist/tokens.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./dist/main.js"></script>
+  </head>
+  <body>
+    <div id="app" class="app">
+      <header class="banner">
+        <h1>Agent task panel</h1>
+        <p class="simulated" role="note">
+          Simulated: a local script plays the agent. No network requests, model, or credentials.
+        </p>
+        <div class="toolbar">
+          <button id="start" type="button" class="primary">Start run</button>
+          <details class="controls">
+            <summary>Simulation controls</summary>
+            <div class="control-form">
+              <label><input id="fail-tool" type="checkbox" /> Make one parallel tool fail</label>
+              <label><input id="expire" type="checkbox" /> Approval expires after 4 seconds</label>
+              <label><input id="restore-fails" type="checkbox" /> Checkpoint restore fails</label>
+              <label
+                >Pace (ms per step) <input id="delay" type="number" min="50" max="5000" value="600"
+              /></label>
+              <button id="revise" type="button">Change the pending proposal (new revision)</button>
+            </div>
+          </details>
+        </div>
+      </header>
+      <main class="grid">
+        <section class="panel" aria-labelledby="plan-heading">
+          <h2 id="plan-heading">Plan</h2>
+          <odd-activity></odd-activity>
+          <odd-task-plan></odd-task-plan>
+        </section>
+        <section class="panel" aria-labelledby="tools-heading">
+          <h2 id="tools-heading">Tools</h2>
+          <div id="tools" class="stack"></div>
+          <odd-question announce hidden></odd-question>
+          <odd-action-approval announce hidden></odd-action-approval>
+        </section>
+        <section class="panel" aria-labelledby="checkpoints-heading">
+          <h2 id="checkpoints-heading">Checkpoints</h2>
+          <p id="empty-checkpoints" class="muted">No checkpoints yet.</p>
+          <div id="checkpoints" class="stack"></div>
+        </section>
+        <section class="panel log-panel" aria-labelledby="log-heading">
+          <h2 id="log-heading">Run log</h2>
+          <odd-conversation id="run-log" label="Run log" announcements="none"></odd-conversation>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

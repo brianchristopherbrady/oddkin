@@ -107,13 +107,17 @@ function modulePaths(
   for (const [subpath, target] of Object.entries(
     typeof exportsField === 'object' ? exportsField : {},
   )) {
-    const file =
+    // Module paths are those of the emitted (development) build; with a dev/prod split
+    // (ADR 0031) the `development` target is the one that matches them.
+    const conditions = (target ?? {}) as Record<string, unknown>;
+    const files =
       typeof target === 'string'
-        ? target
-        : ((target as Record<string, unknown>)?.['default'] ??
-          (target as Record<string, unknown>)?.['import']);
-    if (typeof file === 'string' && name)
-      targets.set(file.replace(/^\.\//, ''), subpath === '.' ? name : `${name}${subpath.slice(1)}`);
+        ? [target]
+        : [conditions['development'], conditions['default'], conditions['import']];
+    const specifier = subpath === '.' ? name : `${name}${subpath.slice(1)}`;
+    for (const file of files)
+      if (typeof file === 'string' && name && !targets.has(file.replace(/^\.\//, '')))
+        targets.set(file.replace(/^\.\//, ''), specifier as string);
   }
   return { moduleOf, specifierOf: (modulePath) => targets.get(modulePath) };
 }

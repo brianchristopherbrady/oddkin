@@ -78,6 +78,8 @@ export function toJSONSchema(model: Model, options: SchemaOptions = {}): JSONSch
             node.variants as Record<string, { shape: Record<string, Node> }>,
           ).map(([tag, variant]) => objectSchema(variant.shape, [node.discriminator, tag])),
         });
+      case 'json':
+        return withDescription(node, {});
       case 'self':
         return { $ref: `#/$defs/${defName(node.target())}` };
       case 'recursive':

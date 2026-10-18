@@ -1,0 +1,34 @@
+data: {"type":"start","messageId":"msg_agent_1"}
+
+data: {"type":"tool-input-start","toolCallId":"call_delete","toolName":"deleteFile"}
+
+data: {"type":"tool-input-available","toolCallId":"call_delete","toolName":"deleteFile","input":{"path":"/tmp/report.txt"}}
+
+data: {"type":"tool-approval-request","toolCallId":"call_delete","approvalId":"approval_1","reason":"Deletes a file"}
+
+data: {"type":"tool-input-start","toolCallId":"call_list","toolName":"listFiles"}
+
+data: {"type":"tool-input-available","toolCallId":"call_list","toolName":"listFiles","input":{}}
+
+data: {"type":"tool-output-error","toolCallId":"call_list","errorText":"Permission denied"}
+
+data: {"type":"tool-approval-response","approvalId":"approval_1","approved":false,"reason":"User denied"}
+
+data: {"type":"tool-output-denied","toolCallId":"call_delete"}
+
+data: {"type":"unknown-future-chunk","value":1}
+
+data: {"type":"custom","kind":"openai.compaction","providerMetadata":{"openai":{"itemId":"cmp_1"}}}
+
+data: not json
+
+data: {"type":"text-start","id":"t1"}
+
+data: {"type":"text-delta","id":"t1","delta":"I did not delete the file."}
+
+data: {"type":"text-end","id":"t1"}
+
+data: {"type":"abort","reason":"user cancelled"}
+
+data: [DONE]
+

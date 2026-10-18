@@ -1,12 +1,20 @@
 // Shared bundle-size measurement for the benchmark runner and the size-budget check.
 // Production build (default export conditions), esbuild bundle + minify, ESM, es2022.
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 
-export const ENTRIES = ['counter', 'component', 'list', 'reactive'];
+export const ENTRIES = [
+  'counter',
+  'component',
+  'list',
+  'reactive',
+  'ai-headless',
+  'ai-response',
+  'ai-chat',
+];
 
 /** Budgets in gzip bytes (ADR 0019). Measured 2026-10-17 in the comments. */
 export const BUDGETS = {
@@ -14,6 +22,9 @@ export const BUDGETS = {
   component: 11264, // 11 KiB; measured 10,553
   list: 11776, // 11.5 KiB; measured 11,064
   reactive: 2048, // 2 KiB; measured 1,892
+  'ai-headless': 14336, // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation)
+  'ai-response': 21504, // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations)
+  'ai-chat': 49152, // 48 KiB; measured 47,747 (odd-conversation + odd-prompt-input, all nested elements)
 };
 
 /**
@@ -25,6 +36,7 @@ export const CSS_BUDGETS = {
   'components:button': 1280, // measured 1,100
   'components:card': 640, // measured 571
   'components:input': 768, // measured 647
+  'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
 };
 
 /** Gzip sizes of the shipped CSS: generated token CSS and component style modules. */
@@ -44,6 +56,20 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
       .join('\n');
     sizes[`components:${name}`] = gzip(text);
   }
+  // All @oddkin/ai sheets, deduplicated (shared base styles count once).
+  const aiDist = join(root, 'packages/ai/dist');
+  const sheets = new Set();
+  for (const dir of readdirSync(aiDist, { withFileTypes: true })) {
+    if (!dir.isDirectory() || dir.name === 'prod') continue;
+    for (const file of readdirSync(join(aiDist, dir.name)).filter((f) =>
+      f.endsWith('.styles.js'),
+    )) {
+      const module = await import(pathToFileURL(join(aiDist, dir.name, file)).href);
+      for (const value of Object.values(module))
+        if (typeof value?.cssText === 'string') sheets.add(value.cssText);
+    }
+  }
+  sizes['ai:styles'] = gzip([...sheets].join('\n'));
   return sizes;
 }
 

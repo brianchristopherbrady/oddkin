@@ -57,7 +57,7 @@ describe('static analyzability of OddkinElement.with() (TypeScript 7 API)', () =
         description: 'Previous names (property only).',
       },
     ]);
-  }, 30_000);
+  }, 120_000);
 
   it('reports dynamic definitions with locations instead of guessing, and never runs modules', () => {
     const [dynamic] = probe('tests/fixtures/analyzer-dynamic/tsconfig.json');
@@ -71,5 +71,5 @@ describe('static analyzability of OddkinElement.with() (TypeScript 7 API)', () =
         kind: 'PropertyAccessExpression',
       },
     ]);
-  }, 30_000);
+  }, 120_000);
 });

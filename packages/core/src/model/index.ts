@@ -24,6 +24,8 @@ export type {
   EnumNode,
   Infer,
   InferNode,
+  JsonNode,
+  JsonValue,
   Node,
   NumberNode,
   ObjectNode,

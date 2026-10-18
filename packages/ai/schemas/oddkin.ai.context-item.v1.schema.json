@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.context-item.v1.schema.json",
+  "title": "oddkin.ai.context-item",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "enum": [
+        "file",
+        "document",
+        "url",
+        "selection"
+      ]
+    },
+    "label": {
+      "description": "Untrusted; rendered as text.",
+      "type": "string",
+      "minLength": 1
+    },
+    "detail": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "selected",
+        "uploading",
+        "uploaded",
+        "processing",
+        "ready",
+        "failed",
+        "removed"
+      ]
+    },
+    "url": {
+      "type": "string",
+      "format": "uri-reference",
+      "pattern": "^(?![\\u0000-\\u0020]*(?:[jJ]\\s*[aA]\\s*[vV]\\s*[aA]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT]|[vV]\\s*[bB]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT])\\s*:)"
+    },
+    "preview": {
+      "description": "Plain-text excerpt for inspection.",
+      "type": "string"
+    },
+    "mediaType": {
+      "type": "string"
+    },
+    "size": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "error": {
+      "description": "An error safe to show to users. Diagnostic details stay in host logs.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Stable application-defined code.",
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "description": "User-presentable message, localized by the host.",
+          "type": "string"
+        },
+        "retryable": {
+          "description": "Whether retrying the same operation may succeed.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "label",
+    "status"
+  ]
+}

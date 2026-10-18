@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.feedback.v1.schema.json",
+  "title": "oddkin.ai.feedback",
+  "type": "object",
+  "properties": {
+    "messageId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rating": {
+      "enum": [
+        "positive",
+        "negative"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "comment": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "idle",
+        "pending",
+        "submitted",
+        "failed"
+      ]
+    },
+    "error": {
+      "description": "An error safe to show to users. Diagnostic details stay in host logs.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Stable application-defined code.",
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "description": "User-presentable message, localized by the host.",
+          "type": "string"
+        },
+        "retryable": {
+          "description": "Whether retrying the same operation may succeed.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ]
+    }
+  },
+  "required": [
+    "messageId",
+    "status"
+  ]
+}

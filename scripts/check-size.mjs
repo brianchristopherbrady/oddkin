@@ -27,6 +27,35 @@ for (const [entry, size] of Object.entries(sizes)) {
       }
     }
   }
+  // AI entries never load frameworks, Oddkin app services, or optional heavy integrations.
+  if (entry.startsWith('ai-')) {
+    const optional = [
+      'packages/ai/dist/prod/highlight',
+      'packages/ai/dist/prod/voice/',
+      'packages/ai/dist/prod/stream/',
+    ];
+    const headless =
+      entry === 'ai-headless'
+        ? [
+            'packages/components',
+            'packages/core/dist/prod/template',
+            'packages/ai/dist/prod/markdown',
+          ]
+        : [];
+    for (const forbidden of [
+      'packages/state',
+      'packages/app',
+      'node_modules/react',
+      'node_modules/vue',
+      ...optional,
+      ...headless,
+    ]) {
+      if (size.modules.some((m) => m.includes(forbidden))) {
+        console.log(`FAIL ${entry} pulls in ${forbidden}`);
+        failed = true;
+      }
+    }
+  }
 }
 for (const [entry, size] of Object.entries(await measureCssSizes()))
   failed = !report(entry, size, CSS_BUDGETS[entry]) || failed;

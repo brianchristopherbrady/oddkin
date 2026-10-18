@@ -10,7 +10,7 @@ import { analyze, writeOutputs } from '../packages/analyzer/dist/index.js';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 // Packages whose published contract includes component metadata.
-const PACKAGES = ['packages/components'];
+const PACKAGES = ['packages/components', 'packages/ai'];
 
 let failed = false;
 for (const dir of PACKAGES) {

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/ai/oddkin.ai.checkpoint.v1.schema.json",
+  "title": "oddkin.ai.checkpoint",
+  "description": "A restore point. Restoration is shown only after the host confirms it.",
+  "type": "object",
+  "properties": {
+    "checkpointId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "description": "Which state is restored.",
+      "type": "string"
+    },
+    "restores": {
+      "description": "Each item of state the restore replaces.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "createdAt": {
+      "description": "ISO 8601 timestamp.",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "available",
+        "restore-pending",
+        "restored",
+        "restore-failed",
+        "unavailable"
+      ]
+    },
+    "outcome": {
+      "description": "Host-confirmed result.",
+      "type": "string"
+    },
+    "error": {
+      "description": "An error safe to show to users. Diagnostic details stay in host logs.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Stable application-defined code.",
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "description": "User-presentable message, localized by the host.",
+          "type": "string"
+        },
+        "retryable": {
+          "description": "Whether retrying the same operation may succeed.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ]
+    }
+  },
+  "required": [
+    "checkpointId",
+    "label",
+    "description",
+    "restores",
+    "status"
+  ]
+}

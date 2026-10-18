@@ -53,6 +53,20 @@ export default {
       allow: ['@oddkin/core', '@oddkin/tokens'],
       domFree: [],
     },
+    // Optional AI interaction package (ADR 0040). Nothing general-purpose may depend on it.
+    '@oddkin/ai': {
+      kind: 'browser',
+      allow: ['@oddkin/core', '@oddkin/tokens', '@oddkin/components'],
+      domFree: [
+        '.',
+        './contracts',
+        './controllers',
+        './events',
+        './stream',
+        './markdown',
+        './highlight',
+      ],
+    },
     '@oddkin/analyzer': { kind: 'node', allow: ['@oddkin/tokens', '@oddkin/core'] },
     '@oddkin/workbench': {
       kind: 'mixed',

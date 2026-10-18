@@ -26,6 +26,7 @@ The aim is to make correct, maintainable components easy to write and easy to do
 | [docs/architecture/multi-product.md](./docs/architecture/multi-product.md) | Multi-product design systems: product identity and scale, layered component exports, recomposition, customization ladder, anatomy contracts, component families, distribution, scope isolation, verification |
 | [docs/architecture/change-impact-and-verification.md](./docs/architecture/change-impact-and-verification.md) | Comparison snapshots and change impact, verification selection and states, portable conformance suites, component explanations, runnable reproductions, prototype priorities |
 | [docs/architecture/css-architecture.md](./docs/architecture/css-architecture.md) | CSS architecture: support policy and floor, feature and fallback matrix, token and colour compatibility, cascade layers and precedence, typed custom properties, layout primitives, overlays, states and native controls, motion, typography and input modes, delivery, compatibility build strategy, experiments, regression scenarios F01–F16 |
+| [docs/architecture/ai-interaction.md](./docs/architecture/ai-interaction.md) | `@oddkin/ai`: package boundaries and state ownership, component/controller/adapter mapping, records, lifecycle tables, stream adapters (simulation, external store, AI SDK UI message stream v1; AG-UI and A2UI notes), element API and events, scrolling, ranges, rendering security, announcements, performance, host responsibilities |
 | [docs/compatibility/features.json](./docs/compatibility/features.json) | Platform feature registry (schema `compatibility.v1`): pinned floor and data versions, adoption category, gates, baselines, evidence; generates the [feature matrix](./docs/compatibility/matrix.md) |
 | [docs/research/synthesis.md](./docs/research/synthesis.md) | Ecosystem research, conclusions, differentiation thesis, legacy source register plus direct research links in §12 |
 
@@ -43,6 +44,7 @@ All API examples in these documents are proposed contracts, not existing exports
   - **M4** — in progress: composition API and component folders, analyzer support for definitions, registration-entry boundary checks, conformance prototype, published component metadata, and `odd-button`, `odd-card`, `odd-input` implemented and verified; the CSS compatibility slice (§5i) implemented and verified; side navigation, editable list, examples, and the remaining consumer checks open.
   - **CSS architecture (§5i)** — browser floor pinned with its compatibility data (ADR 0009 Accepted), compatibility policy (ADR 0038) and document layer order (ADR 0039); registry, lint, and generated matrix run in `npm run verify`; generated token CSS layered; above-floor token syntax diagnosed; component styling hardened; floor probe passes in Chrome 125 and Firefox 126; CSS gallery and CSS budgets. Overlays, motion between states, typography scales, and later layout primitives are planned (M8–M12); Safari 17.4 runtime evidence is a recorded gap.
   - **M5–M12** — planned. `@oddkin/state` and `@oddkin/app` are skeletons with root entries only; the Workbench shell, Theme Studio, docs app, and `@oddkin/agent` do not exist yet.
+  - **AI interaction (§5j, optional parallel track)** — `@oddkin/ai` implemented and verified: records with generated schemas, DOM-free controllers, simulation / external-store / AI SDK UI message stream v1 adapters, 24 `odd-*` elements (C01–C20), React 19 and Vue 3.5 bindings, three static demos under strict CSP, performance fixture, size budgets (ADR 0040). Open: screen-reader verification with real assistive technology, machine-readable examples (follows the M4/M5 `defineExamples` decision), AG-UI adapter (design note only).
 - **Status vocabulary:** *implemented and verified* (`[x]` with a verification entry) · *implemented with remaining verification* (`[~]`) · *planned* (`[ ]`) · *experimental* (`research/experiments`, e.g. the `props()` assessment) · *explicitly deferred* (§9). Of the capabilities added by later planning passes, the composition API and component folders (§3.3), the conformance prototype (§5h), and the CSS compatibility slice (§5i) are implemented; agent kits (§5e), multi-product foundations beyond the M4 prototypes (§5g), change impact, explanation, reproduction, page suspension (§5h), and the later CSS contracts (§5i) are planned.
 - Desk research (§1) is complete. Executable comparisons, the reference-site audit (including the reference Theme Studio), and usability studies are implementation tasks.
 - The docs site is devoted to Oddkin. A separate personal portfolio may link to it; portfolio pages, résumé routes, and employer review paths are out of scope.
@@ -79,12 +81,13 @@ Full table and sources: [docs/research/synthesis.md](./docs/research/synthesis.m
 | `@oddkin/state` | Stores, selectors, context, persistence, inspection | core |
 | `@oddkin/app` | App lifetime, router, resources, optional Node scaffolding | core, state |
 | `@oddkin/components` | Accessible, themed custom elements, Oddkin layout presets, component models, published CEM + enrichment | core, tokens |
+| `@oddkin/ai` (optional) | AI interaction records, DOM-free controllers, stream adapters, `odd-*` conversation/assistance/agent elements, published CEM + enrichment + record schemas (§5j) | core, tokens (refs), components (`odd-button`) |
 | `@oddkin/analyzer` (optional, dev-only, Node) | Static analysis → normalized metadata → CEM, `oddkin.metadata.json`, Workbench indexes, editor and agent outputs; comparison snapshots and change impact (planned, §5h) | tokens (Node/DOM-free), core (DOM-free model types); compiler/parser dependencies confined to Node tooling |
 | `@oddkin/workbench` (optional tooling) | Reusable metadata-driven documentation shell (Foundations, Components with integrated interactive examples, Theme Studio, optional Products and modes), page registry, isolated previews, `defineExamples`, `oddkin` CLI; portable conformance suites, explanations, and reproductions (planned, §5h) | browser: core, tokens, components; state/app integrated only after M6–M7; Node: analyzer, tokens/node; DOM-free examples/config entries independently buildable |
 | `@oddkin/agent` (optional, dev-only, Node) | Project context, generated agent kits (entry guide, references, JSON, optional Agent Skills / `AGENTS.md` / `llms.txt` packaging), deterministic operations, CLI, optional MCP adapter | analyzer (API), tokens |
 | `apps/docs` (private) | Product docs, tutorials, migrations, architecture; embeds Workbench panels | core, state, app, tokens, components, workbench panels — public exports only |
 
-**Forbidden:** core → tokens; tokens → any Oddkin package; components → state/app/analyzer/workbench/agent; any browser package, ordinary component consumer, or the docs runtime → `@oddkin/analyzer` or `@oddkin/agent`; ordinary component consumers → `@oddkin/workbench`; reverse deps; cycles; cross-package source aliases. Core is unbranded and works without Oddkin tokens.
+**Forbidden:** core → tokens; tokens → any Oddkin package; components → state/app/analyzer/workbench/agent; ai → state/app/analyzer/workbench/agent or any framework; any browser package, ordinary component consumer, or the docs runtime → `@oddkin/analyzer` or `@oddkin/agent`; ordinary component consumers → `@oddkin/workbench`; reverse deps; cycles; cross-package source aliases. Core is unbranded and works without Oddkin tokens.
 
 **Runtime dependencies:** none from third parties in shipped browser code (browser packages, the Workbench browser bundle, the deployed docs app, published static Workbench builds). Node-only tooling (`@oddkin/analyzer`, `@oddkin/agent`, Workbench CLI/dev server) may use third-party tools (TypeScript compiler, Vite, test runners, Sass for fixtures). These are development tools for Oddkin consumers; a dependency needed when running an installed CLI must be bundled, declared in that tooling package’s `dependencies`, or supplied through a documented peer contract. Do not place a required CLI dependency only in unpublished `devDependencies`. Research/integration fixtures may install competing frameworks outside shipped code.
 
@@ -426,6 +429,95 @@ A reliable CSS baseline at a pinned floor, with modern capabilities added as tes
 
 Research: §12.3 "CSS compatibility and progressive enhancement".
 
+## 5j. AI interaction package `@oddkin/ai` (summary)
+
+Detailed design: [ai-interaction.md](./docs/architecture/ai-interaction.md) (ADR 0040). Source requirement: AI-01–AI-13 with patterns C01–C20 and acceptance scenarios A01–A22 (prompt preserved in `docs/AI_COMPONENTS_IMPLEMENTATION_PLAN.md`). Package guide: [packages/ai/README.md](./packages/ai/README.md).
+
+An optional browser package, parallel to the milestone track (it needs only M3 core and the M4 composition API, `odd-button`, and analyzer support), for conversation interfaces, inline assistance, research tools, and agent workflows. Elements render host-owned records and request operations through typed events; DOM-free controllers and adapters own lifecycles; the host owns data, transport, policy, and persistence. Element names use `odd-` (ADR 0037) in place of the specification's `ok-`.
+
+- **Boundaries and ownership (AI-02):** depends on core, tokens (refs), components (`odd-button`); no state/app/tooling/framework/third-party runtime; one authoritative source per surface (controller or application store); presentation state only in elements.
+- **Records (AI-04):** 14 `@oddkin/core/model` definitions (message and parts, tool call, approval, artifact, usage, checkpoint, plan, question, context item, model option, feedback, suggestion, transcript segment, conversation snapshot) with generated JSON Schemas; core gains `m.json()`.
+- **Lifecycles (AI-05):** separate attempt, connection, stop, tool, and approval machines with transition tables; capabilities with reasons; stop ≠ disconnect; approval ≠ success; stale and late responses ignored.
+- **Adapters (AI-06):** simulation, external store, AI SDK UI message stream v1 (recorded fixtures; inspected 2026-10-17); WHATWG SSE parser; identity-only deduplication; AG-UI design note and A2UI evaluation.
+- **Elements (AI-03, AI-07):** 24 `odd-*` elements; properties for records, attributes for scalars; typed bubbling composed events; React 19 and Vue 3.5 fixtures.
+- **Input, scrolling, resources (AI-08), rendering (AI-09), accessibility (AI-10):** IME-safe composer with draft revisions; follow-latest scrolling with anchor preservation; UTF-16 ranges bound to revisions; streaming Markdown by DOM construction with a URL allow-list; one announcer per surface; localized `strings`.
+
+### 5j.1 Traceability
+
+| Requirement | Status | Implementation | Evidence |
+| --- | --- | --- | --- |
+| AI-01 Context and traceability | [x] | This section; plan rows; ADR 0040 | — |
+| AI-02 Boundaries and state ownership | [x] | `packages/ai`, `boundaries.config.mjs` | `npm run lint:boundaries`; `packages/ai/test/graph.test.ts`; `npm run size` forbidden-module checks |
+| AI-03 Component scope C01–C20 | [x] | §5j.2 | browser tests; demos; e2e |
+| AI-04 Typed data contracts | [x] | `src/contracts/*`, `schemas/*.json` | `conversation.test.ts` (A15), `metadata.test.ts` (schemas current) |
+| AI-05 Lifecycle, capabilities, cancellation, approvals | [x] | `controllers/conversation.ts`, `transitions.ts` | `conversation.test.ts` (A02, A05–A10, A17) |
+| AI-06 Streaming and adapters | [x] | `src/stream/*`, `controllers/external-store.ts`; AG-UI/A2UI notes (ai-interaction.md §5.5–5.6) | `stream.test.ts` (A03, A04, A06), fixtures `test/fixtures/ui-message-stream/` |
+| AI-07 Web Component API contracts | [x] | `events.ts`, element props | `frameworks.browser.test.ts`, `conversation.browser.test.ts` (A16), `metadata.test.ts` |
+| AI-08 Input, selection, scrolling, resources | [x] | composer, document, voice controllers; conversation scrolling | `prompt-input.browser.test.ts` (A01, A02, A18), `conversation.browser.test.ts` (A11, A12, A18), `controllers.test.ts` (A17, A19) |
+| AI-09 Incremental rendering and content boundaries | [x] | `src/markdown/*`, `src/highlight` | `markdown.test.ts`, `elements.browser.test.ts` (A13–A15) |
+| AI-10 Accessibility and localization | [~] | semantics, announcer, `strings` | keyboard/focus/announcement tests; axe-core on three demos in three engines; 320 px reflow and reduced-motion checks in e2e. Not done: screen-reader verification with real assistive technology; manual forced-colors and zoom review |
+| AI-11 Documentation, metadata, demonstrations | [~] | ai-interaction.md, README, CEM + enrichment (`@useFor`, `@notFor`, `@a11y`, `@keyboard`, `@limitation`), schemas, `examples/ai-*` | `metadata.test.ts`; `e2e/ai-demos.spec.ts` (A22). Not done: machine-readable tested examples and invalid-usage guidance (follow the M4/M5 `defineExamples` decision) |
+| AI-12 Acceptance scenarios, performance fixture, budgets | [x] except A21 [~] | §5j.3; `research/benchmarks/ai/`; budgets in `research/benchmarks/size/measure.mjs` | §5j.3; [verification.md](./docs/verification.md) |
+| AI-13 Vertical slices and completion | [x] | contracts → C01–C06 → C07–C20 → adapters and frameworks → demos, metadata, docs | §10 log |
+
+### 5j.2 Patterns
+
+| ID | Pattern | Element(s) | Status | Evidence |
+| --- | --- | --- | --- | --- |
+| C01 | Prompt composer | `odd-prompt-input` | [x] | `prompt-input.browser.test.ts`; research demo |
+| C02 | Conversation/messages | `odd-conversation`, `odd-message` | [x] | `conversation.browser.test.ts`; research demo |
+| C03 | Streaming response | `odd-response` | [x] | `elements.browser.test.ts` (A13, A14); `markdown.test.ts` |
+| C04 | Citations/sources | `odd-citation`, `odd-sources` | [x] | `elements.browser.test.ts` (A15); research demo e2e |
+| C05 | Tool execution | `odd-tool-call` | [x] | `elements.browser.test.ts` (A08); agent demo e2e (failure, retry) |
+| C06 | Action approval | `odd-action-approval` | [x] | `elements.browser.test.ts` (A10); agent demo e2e (revision, expiry) |
+| C07 | Context selection | `odd-context-picker` | [x] | `elements.browser.test.ts`; research demo |
+| C08 | Agent activity/plans | `odd-activity`, `odd-task-plan` | [x] | `elements.browser.test.ts`; agent demo e2e (Stop) |
+| C09 | Generated artifacts | `odd-artifact` | [x] | `elements.browser.test.ts`; research demo e2e |
+| C10 | Inline assistance | `odd-inline-assist` | [x] | `elements.browser.test.ts`; writing demo e2e |
+| C11 | Change review | `odd-change-review` | [x] | `elements.browser.test.ts` (A17); writing demo e2e (stale, undo) |
+| C12 | Alternative responses | `odd-message-branch` | [x] | `conversation.test.ts` (A17); `elements.browser.test.ts` |
+| C13 | Clarifying questions | `odd-question` | [x] | `elements.browser.test.ts`; agent demo e2e |
+| C14 | AI provenance | `odd-ai-label` | [x] | `elements.browser.test.ts`; writing demo e2e |
+| C15 | Suggested follow-ups | `odd-suggestions` | [x] | `elements.browser.test.ts`; research demo |
+| C16 | Response feedback | `odd-response-feedback` | [x] | `elements.browser.test.ts` |
+| C17 | Model selection | `odd-model-select` | [x] | `elements.browser.test.ts`; research demo |
+| C18 | Usage display | `odd-usage-meter` | [x] | `elements.browser.test.ts` (A15); research demo e2e |
+| C19 | Voice/transcription | `odd-voice-input`, `odd-transcript` | [x] | `controllers.test.ts`, `elements.browser.test.ts` (A19); writing demo e2e |
+| C20 | Checkpoints | `odd-checkpoint` | [x] | `elements.browser.test.ts` (A20); agent demo e2e (restored, failed) |
+
+### 5j.3 Acceptance scenarios
+
+| ID | Status | Evidence (`packages/ai/test/`, `e2e/`) |
+| --- | --- | --- |
+| A01 IME composition never submits | [x] | `prompt-input.browser.test.ts` |
+| A02 Failed submission and older acknowledgement keep drafts | [x] | `controllers.test.ts`, `prompt-input.browser.test.ts`, `conversation.test.ts` |
+| A03 Split UTF-8/SSE input | [x] | `stream.test.ts` (every byte split point, fixtures) |
+| A04 Identity-only deduplication | [x] | `conversation.test.ts`, `stream.test.ts` |
+| A05 Isolation across conversations/attempts | [x] | `conversation.test.ts`; research demo e2e (late event) |
+| A06 Disconnect/reconnect | [x] | `conversation.test.ts`, `stream.test.ts`; research demo e2e |
+| A07 Stop pending, stop racing completion | [x] | `conversation.test.ts`; research demo e2e |
+| A08 Finished arguments are not success | [x] | `conversation.test.ts`, `elements.browser.test.ts` |
+| A09 Independent tools and approvals | [x] | `conversation.test.ts`; agent demo e2e (parallel tools) |
+| A10 One decision per revision; stale/expired refused | [x] | `conversation.test.ts`, `elements.browser.test.ts`; agent demo e2e |
+| A11 History anchor; manual scrolling respected | [x] | `conversation.browser.test.ts` |
+| A12 Focus/selection kept; jump resumes following | [x] | `conversation.browser.test.ts` |
+| A13 Awkward Markdown splits; canonical copy | [x] | `markdown.test.ts`, `elements.browser.test.ts` |
+| A14 Adversarial content inert | [x] | `markdown.test.ts`, `elements.browser.test.ts` |
+| A15 Explicit fallbacks | [x] | `conversation.test.ts`, `elements.browser.test.ts` |
+| A16 Properties and events across Shadow DOM and frameworks | [x] | `conversation.browser.test.ts`, `frameworks.browser.test.ts` |
+| A17 Branches preserved; stale proposals refused | [x] | `conversation.test.ts`, `controllers.test.ts`, `elements.browser.test.ts`; writing demo e2e |
+| A18 No leaked subscriptions or resources | [x] | `conversation.browser.test.ts`, `prompt-input.browser.test.ts`, `elements.browser.test.ts` |
+| A19 Voice denial, interruption, interim/final, cleanup | [x] | `controllers.test.ts`, `elements.browser.test.ts`; writing demo e2e |
+| A20 Restore success only when confirmed | [x] | `elements.browser.test.ts`; agent demo e2e |
+| A21 Keyboard/screen-reader flows without chatter or focus theft | [~] | `conversation.browser.test.ts`, `conversation.test.ts` (announcements once, never streamed text; focus kept); axe in e2e. Real screen-reader output not verified |
+| A22 Three static demos from a production build | [x] | `e2e/ai-demos.spec.ts` (Chromium, Firefox, WebKit; strict CSP and Trusted Types) |
+
+- [x] Package, records, controllers, adapters, 24 elements, framework bindings, metadata, schemas, demos, docs, ADR 0040 *(verification.md 2026-10-18 entry)*
+- [x] Performance fixture (1,000 messages, sustained streaming, DOM and heap) and measured size budgets *(verification.md)*
+- [ ] Screen-reader verification (NVDA + Firefox, VoiceOver + Safari) of the conversation feed, announcements, approvals, and inline assist; manual forced-colors and 200 %/400 % zoom review
+- [ ] Machine-readable tested examples and invalid-usage guidance in metadata (with the M4/M5 `defineExamples` decision)
+- [ ] AG-UI adapter with recorded fixtures (only if requested; design note in ai-interaction.md §5.5)
+
 ---
 
 ## 6. Milestones
@@ -446,7 +538,7 @@ Research: §12.3 "CSS compatibility and progressive enhancement".
 | M11 | Docs IA, guides, Workbench completion, migrations, onboarding, **`@oddkin/agent`** | M7, M9, M10 |
 | M12 | Packed consumers, release verification, deployment readiness | all |
 
-M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixtures start in M3. Metadata contracts are defined in M0, prototyped by the analyzer in M3, validated on four real components in M4–M5, and receive an initial compatibility checkpoint at M8. Additive M9–M11 capabilities must be validated before the final release freeze at M12; material schema changes require an explicit version/migration decision. Agent-kit metadata and diagnostic contracts are drafted with M4's metadata validation; local project context and generated references are piloted on the M4–M5 slice; agent-facing contracts are reviewed at M8; `@oddkin/agent` operations, packaging, and the MCP adapter can start once analyzer outputs exist (after M5) but ship in M11; packed verification and the evaluation complete before the M12 freeze. Conformance and impact prototypes come first (M4, M5), with evidence reviewed at M8; explanation and reproduction expand in M9–M11; page-lifecycle policy follows the app services in M7. Multi-product customization levels are prototyped on M4 components before catalog expansion, reviewed at M8, and completed for tokens and Workbench in M9 and per component in M10. **Do not expand the catalog, recipe presets, data composition, or Workbench features beyond the vertical slices before M8 resolves foundation problems.**
+M2 and M3 run in parallel after M1. M6 can run alongside M4–M5. Benchmark fixtures start in M3. Metadata contracts are defined in M0, prototyped by the analyzer in M3, validated on four real components in M4–M5, and receive an initial compatibility checkpoint at M8. Additive M9–M11 capabilities must be validated before the final release freeze at M12; material schema changes require an explicit version/migration decision. Agent-kit metadata and diagnostic contracts are drafted with M4's metadata validation; local project context and generated references are piloted on the M4–M5 slice; agent-facing contracts are reviewed at M8; `@oddkin/agent` operations, packaging, and the MCP adapter can start once analyzer outputs exist (after M5) but ship in M11; packed verification and the evaluation complete before the M12 freeze. Conformance and impact prototypes come first (M4, M5), with evidence reviewed at M8; explanation and reproduction expand in M9–M11; page-lifecycle policy follows the app services in M7. Multi-product customization levels are prototyped on M4 components before catalog expansion, reviewed at M8, and completed for tokens and Workbench in M9 and per component in M10. **Do not expand the catalog, recipe presets, data composition, or Workbench features beyond the vertical slices before M8 resolves foundation problems.** The optional AI interaction track (§5j, `@oddkin/ai`) runs in parallel: it depends only on M3 core, the M4 composition API and `odd-button`, and analyzer metadata; its contracts are reviewed with the others at M8 and its packed verification joins M12.
 
 ---
 
@@ -1256,8 +1348,11 @@ Ordinary reversible choices inside these contracts can be made during implementa
 | 2026-10-17 | M4: `odd-input` (form association, native value semantics, validity, labelling, caret-safe typing, event contract) with layered exports | 11 browser tests × 3 engines + graph test |
 | 2026-10-17 | Naming contract applied repository-wide (ADR 0037): Oddkin, `@oddkin/*`, `<odd-*>`, `--odd-*`, `data-odd-*`, `Oddkin*` JavaScript names, `oddkin`/`oddkin-*` command-line tools, `oddkin.*` files, `https://oddkin.dev` schemas; lockfile and workspace links regenerated with npm; generated token, analyzer, and component metadata regenerated; CSP hashes recomputed; one test regex corrected to the library-internal `oddkin-` template marker | [verification.md](./docs/verification.md) entry; 766 tests; full verify passes in one run; implementation status unchanged |
 | 2026-10-17 | CSS architecture pass (§5i, css-architecture.md, ADRs 0038–0039, ADR 0009 Accepted): floor pinned with BCD 8.1.6 and web-features 3.43.0; platform feature registry (69 features), schema, generated matrix, and `npm run lint:css`; generated token CSS in `odd.tokens`; `value.syntax.aboveFloor`; component styling hardening and `odd-input` `:state(user-invalid)`; floor probe in Chrome for Testing 125 and Firefox 126; CSS gallery; CSS budgets; plan tasks in M4 (done), M8–M12, criteria 81–97. Corrected stale current-state lines (components were listed as skeletons), the ADR status count, and the components README | [verification.md](./docs/verification.md) entry; full verify; floor runs 16/16 in both floor browsers |
+| 2026-10-18 | AI interaction track (§5j, ADR 0040, ai-interaction.md): `@oddkin/ai` — 14 record models with generated schemas (core gains `m.json()`), conversation/composer/document/voice controllers with separate lifecycle tables, WHATWG SSE parser, AI SDK UI message stream v1 adapter with recorded fixtures, simulation and external-store adapters, 24 `odd-*` elements (C01–C20), React 19 and Vue 3.5 fixtures, three static simulated demos (`examples/ai-*`) under strict CSP and Trusted Types, performance fixture (`research/benchmarks/ai/`), measured size budgets; analyzer resolves cross-package `compose()` dependencies and `development` export targets; tests-typecheck include order fixed for mixed src/dist component declarations | [verification.md](./docs/verification.md) entry; A01–A22 mapped in §5j.3 (A21 screen-reader part open); full verify |
 
 ## 11. Continuation
+
+**AI interaction track (§5j):** last completed slice — demonstrations, metadata and graph tests, performance fixture, measured budgets, documentation (ai-interaction.md, ADR 0040, package README). No failing checks. Next concrete actions: screen-reader verification of the conversation feed, announcements, approvals, and inline assist (NVDA + Firefox, VoiceOver + Safari) and a manual forced-colors and zoom review; then machine-readable examples once the M4/M5 `defineExamples` decision lands. Commands: `npm run verify`; `npx playwright test e2e/ai-demos.spec.ts`; `node research/benchmarks/ai/run.mjs`.
 
 **Next step:** M4 — `odd-side-nav` on a layout recipe and the `NavigationItem` model (closing the last open M2 item), with page-author `layout.css` in the `odd.layout` layer and named containers, the editable list with `odd-input` rows, `defineExamples` examples for all four components, an independent CEM consumer, and a packed-tarball variant of `examples/components-only`; then the M5 change-impact prototype. New CSS features follow the registry workflow (CONTRIBUTING.md, `npm run compat`).
 

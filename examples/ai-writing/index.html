@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>Inline writing assistant — @oddkin/ai demo (simulated)</title>
+    <link rel="stylesheet" href="./dist/tokens.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./dist/main.js"></script>
+  </head>
+  <body>
+    <div id="app" class="app">
+      <header class="banner">
+        <h1>Inline writing assistant</h1>
+        <p class="simulated" role="note">
+          Simulated: suggestions come from deterministic local functions. No network requests,
+          model, or credentials.
+        </p>
+      </header>
+      <main class="editor-pane">
+        <label for="editor" class="editor-label">Document</label>
+        <textarea id="editor" rows="10" aria-describedby="editor-help"></textarea>
+        <p id="editor-help" class="muted">
+          Select text, then choose an action. Proposals apply only to the text they were made for.
+        </p>
+        <odd-ai-label hidden></odd-ai-label>
+        <h2>Dictation</h2>
+        <odd-voice-input></odd-voice-input>
+      </main>
+      <aside class="assist-pane">
+        <h2>Assist</h2>
+        <odd-inline-assist></odd-inline-assist>
+        <h2>Review</h2>
+        <odd-change-review announce></odd-change-review>
+        <details class="controls">
+          <summary>Simulation controls</summary>
+          <div class="control-form">
+            <label
+              >Response delay (ms) <input id="delay" type="number" min="0" max="10000" value="1200"
+            /></label>
+            <button id="edit-now" type="button">
+              Edit the document now (makes pending proposals stale)
+            </button>
+            <label><input id="deny" type="checkbox" /> Deny microphone permission</label>
+          </div>
+        </details>
+      </aside>
+    </div>
+  </body>
+</html>

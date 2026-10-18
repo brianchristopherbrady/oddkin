@@ -52,3 +52,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0037](./0037-naming-contract.md) | Naming contract: Oddkin, `odd-`, and `oddkin` | Accepted | Process / Distribution |
 | [0038](./0038-css-compatibility-and-progressive-enhancement.md) | CSS compatibility policy and progressive enhancement | Accepted | Platform |
 | [0039](./0039-cascade-layer-order.md) | Cascade layer order for document-level styles | Accepted | Platform |
+| [0040](./0040-ai-interaction-package.md) | AI interaction package: records, controllers, adapters, and elements | Accepted | Components / AI |

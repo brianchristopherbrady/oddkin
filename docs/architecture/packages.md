@@ -15,6 +15,7 @@ Status: **draft proposal**. APIs below are design sketches for evaluation and ar
 | `@oddkin/app` | npm package (optional) | Application startup/teardown, routing, navigation, async resources |
 | `@oddkin/tokens` | npm package | Theme configuration, generators, schema, generated CSS/SCSS/JSON, typed token references, inspection data |
 | `@oddkin/components` | npm package | Layout primitives and Oddkin layout presets, accessible controls, composites, component styles, metadata |
+| `@oddkin/ai` | npm package (optional, implemented) | AI interaction records, DOM-free controllers, stream adapters, and `odd-*` elements for conversations, inline assistance, research, and agent workflows — see [ai-interaction.md](./ai-interaction.md) |
 | `@oddkin/analyzer` | npm package (optional, **dev-only**, Node) | Static analysis → normalized metadata → CEM, `oddkin.metadata.json`, Workbench indexes, editor/agent outputs — see [metadata-and-analyzer.md](./metadata-and-analyzer.md) |
 | `@oddkin/workbench` | npm package (optional tooling) | Reusable metadata-driven documentation shell (Foundations, Components with integrated interactive examples, Theme Studio, optional Products and modes), page registry, isolated previews, `defineExamples`, `oddkin` CLI — see [workbench.md](./workbench.md), [workbench-pages.md](./workbench-pages.md) |
 | `@oddkin/agent` | npm package (optional, **dev-only**) | Portable agent instructions, deterministic project/metadata tools, optional MCP adapter — see [agent-tooling.md](./agent-tooling.md) |
@@ -30,6 +31,7 @@ All browser packages, the Workbench browser bundle, and the docs app have zero t
 @oddkin/state       → @oddkin/core
 @oddkin/app         → @oddkin/core, @oddkin/state
 @oddkin/components  → @oddkin/core, @oddkin/tokens
+@oddkin/ai          → @oddkin/core, @oddkin/tokens (refs), @oddkin/components (odd-button); never state/app/tooling or frameworks
 @oddkin/analyzer    → @oddkin/tokens (node/DOM-free), @oddkin/core (DOM-free model types); TypeScript compiler (dev tool)
 @oddkin/workbench   → phased:
                     M3  ./examples, ./config, ./pages — DOM-free, independently buildable, no browser deps
@@ -129,6 +131,21 @@ Component styles ship as pre-built JS modules; consumers need no CSS loader or S
 Recomposable components (multi-product.md §4, ADR 0033, planned) also have `card.structural.styles.ts` and a `foundation.ts` barrel reached through `./card/foundation`. That entry loads the behavior, template, and structural styles but no default visual styles. Installation dependencies and import graphs are documented separately: installing `@oddkin/components` does not mean a foundation consumer loads its default skins, theme generation, catalog, or tooling.
 
 Files inside a folder import siblings directly, never through their own `index.ts`. No ordinary barrel reaches a registration entry. `npm run lint:boundaries` enforces it: from every `index.*` in package and example sources, it follows relative imports and fails with `boundary.registration.barrel` on a `*.define.*` module, a registering `define.*`/`define/` module, or a package `define` subpath. A package containing registration entries must list them in `"sideEffects"` (`boundary.registration.sideEffects`).
+
+### `@oddkin/ai` (implemented)
+| Export | Contents | DOM? | Side effects |
+| --- | --- | --- | --- |
+| `.` | Records and contracts only (same as `./contracts`) | **no** | none |
+| `./contracts` | Record models (`MessageModel`, …), types, normalization, capabilities | **no** | none |
+| `./controllers` | `ConversationController`, `ComposerController`, `DocumentSession`, `VoiceController`, transitions, announcement policy, `bindIntents`, `selectSource`, `createConversationView` | **no** at import | none |
+| `./events` | Typed user-intent event definitions | **no** | none |
+| `./stream` | WHATWG SSE parser, AI SDK UI message stream v1 adapter, simulation adapter | **no** (fetch/streams when called) | none |
+| `./markdown`, `./highlight` | Streaming Markdown renderer and URL policy; optional highlighter | renders into a given node | none |
+| `./announce` | `createAnnouncer(container)` | when called | none |
+| `./voice/web-speech`, `./voice/recorder` | Optional voice adapters | when called | none |
+| `./<element>` | Element class, template, styles, definition, strings (24 elements, e.g. `./conversation`, `./prompt-input`) | yes | none |
+| `./define/<element>` | Registers one element and its dependencies | yes | registers `odd-*` |
+| `./schemas/*.json`, `./custom-elements.json`, `./oddkin.metadata.json` | Generated record schemas and metadata | data | — |
 
 ### `@oddkin/analyzer` (dev-only)
 `.` (Node API `analyze`, `compare`), `./schema/oddkin-metadata-v1.json`, proposed `./impact` (comparison snapshots, impact traversal, verification selection, `impact-report.v1`; [change-impact-and-verification.md](./change-impact-and-verification.md) §2), bin delegated through `oddkin analyze` and `oddkin impact`. Node only.

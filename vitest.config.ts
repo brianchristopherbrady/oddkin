@@ -13,6 +13,9 @@ export default defineConfig({
         },
       },
       {
+        // Framework fixtures (packages/ai/test/frameworks.browser.test.ts) are pre-bundled so a
+        // first run does not reload the page mid-test.
+        optimizeDeps: { include: ['react', 'react-dom', 'react-dom/client', 'vue'] },
         test: {
           name: 'browser',
           include: [

@@ -724,13 +724,20 @@
       "id": "resize",
       "syntax": "resize: vertical",
       "kind": "css",
-      "bcd": ["css.properties.resize", "css.properties.resize.vertical"],
+      "bcd": [
+        "css.properties.resize",
+        "css.properties.resize.vertical",
+        "css.properties.resize.none"
+      ],
       "webFeature": "resize",
       "adoption": "foundation",
       "status": "planned",
       "milestone": "M10",
-      "usedBy": ["examples/css-gallery (native textarea)"],
-      "baseline": "Textareas can be resized vertically by the user where the platform offers a resize handle.",
+      "usedBy": [
+        "examples/css-gallery (native textarea)",
+        "odd-prompt-input, odd-action-approval (auto-growing or vertical text areas)"
+      ],
+      "baseline": "Textareas can be resized vertically by the user where the platform offers a resize handle; auto-growing text areas turn the handle off.",
       "floorExceptions": {
         "firefox_android": "No resize handle on Firefox for Android; long content scrolls inside the textarea.",
         "safari_ios": "No resize handle on iOS; long content scrolls inside the textarea."

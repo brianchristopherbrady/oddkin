@@ -5,6 +5,7 @@ test-results
 playwright-report
 *.md
 docs/schemas
+packages/ai/schemas
 package-lock.json
 packages/tokens/test/fixtures/*.css.txt
 packages/tokens/src/generated
