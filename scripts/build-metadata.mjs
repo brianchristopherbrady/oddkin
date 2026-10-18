@@ -7,15 +7,11 @@ import { readFile } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { analyze, writeOutputs } from '../packages/analyzer/dist/index.js';
-import { attach } from './verification.mjs';
+import { CONTRACT_TESTS, attach } from './verification.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 // Packages whose published contract includes component metadata.
 const PACKAGES = ['packages/components', 'packages/ai'];
-// Packages whose contract tests record evidence (attached while it matches the current inputs).
-const CONTRACT_TESTS = {
-  'packages/components': 'packages/components/test/contract.browser.test.ts',
-};
 
 let failed = false;
 for (const dir of PACKAGES) {
@@ -32,8 +28,9 @@ for (const dir of PACKAGES) {
   }
   const files = await writeOutputs(result, pkgDir);
   console.log(`Metadata: ${files.map((f) => relative(root, f)).join(', ')}`);
+  // Evidence from earlier contract-test runs is attached while it matches the current inputs.
   if (CONTRACT_TESTS[dir]) {
-    const report = attach(root, pkgDir, CONTRACT_TESTS[dir]);
+    const report = attach(root, pkgDir);
     const total = Object.values(report.verified).reduce((sum, n) => sum + n, 0);
     console.log(`Verified facts from current contract-test records: ${total}`);
   }

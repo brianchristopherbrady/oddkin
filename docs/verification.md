@@ -672,3 +672,16 @@ Environment as the previous entry. Another agent had uncommitted changes to `odd
 | Unit tests | `npx vitest run --project node packages/analyzer/test/verification.test.ts tests/metadata` | Pass (6 + 2). Covered: attach with conditions; stale records ignored; failed and not-executed cases never verified; earlier evidence replaced; required tags without evidence reported; latest record per browser. The implementation hash changes with sources and with the core and tokens builds, but not with the production build, declarations, or docs. |
 
 **Findings:** (1) The first design hashed `core/src`, but the page runs `@oddkin/core` from `dist` through the `development` export condition. The hash now covers the files that actually ran. (2) With every record stale, the attach step at first reported nothing missing and passed. It now requires current evidence for every component in the metadata.
+
+## 2026-10-18 — Contract checks for @oddkin/ai (M4 metadata)
+
+Environment as the previous entry. Contract: [metadata-and-analyzer.md §3](./architecture/metadata-and-analyzer.md#3-normalized-metadata-model).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Shared harness, components | `npx vitest run --project browser packages/components/test/contract.browser.test.ts` | Pass in Chromium, Firefox, WebKit (144 tests, unchanged after moving the checks to `tests/contract/cem-contract.ts`); 122 facts verified as before. |
+| AI elements | `npx vitest run --project browser packages/ai/test/contract.browser.test.ts` | Pass in Chromium, Firefox, WebKit: 288 checks over all 24 published elements. Covered: defaults, attribute conversion for every allowed value (including number attributes, new in the harness), reflection, and declared events. The 72 slot and part checks are skipped: the package has no authored examples. |
+| Attach | `npm run verify:metadata` | `@oddkin/components` 122 facts, `@oddkin/ai` 196 facts across 24 elements, in three engines. AI slot and part cases are listed as not executed and stay unverified. Exit 0. |
+| Hash coverage | `npx vitest run --project node tests/metadata` | Pass (3): a package's hash covers exactly the dependency builds it declares (`@oddkin/ai` also hashes the `@oddkin/components` build). |
+
+**Findings:** (1) All 24 AI elements already matched their published manifest; the harness needed only number attribute samples. (2) Because slot and part facts can't be verified without examples, authored AI examples are the next step for full verification (AI track).

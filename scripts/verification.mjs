@@ -11,6 +11,21 @@ import { attachVerification, stableJson } from '../packages/analyzer/dist/index.
 
 export const BROWSERS = ['chromium', 'firefox', 'webkit'];
 
+/**
+ * Packages whose contract test records evidence: the test, and the Oddkin packages whose builds
+ * its page runs (it runs the package's own sources). Keep in step with each test's `sources`.
+ */
+export const CONTRACT_TESTS = {
+  'packages/components': {
+    test: 'packages/components/test/contract.browser.test.ts',
+    dependencies: ['core', 'tokens'],
+  },
+  'packages/ai': {
+    test: 'packages/ai/test/contract.browser.test.ts',
+    dependencies: ['core', 'tokens', 'components'],
+  },
+};
+
 const sha256 = (text) => `sha256-${createHash('sha256').update(text, 'utf8').digest('hex')}`;
 
 function files(dir, accept, skip = () => false) {
@@ -23,19 +38,20 @@ function files(dir, accept, skip = () => false) {
 }
 
 /**
- * Hash of the files the contract test runs: the package's TypeScript sources and the
- * development builds of @oddkin/core and @oddkin/tokens. Must match the browser-side hash in
- * packages/components/test/contract.browser.test.ts (repository-relative paths, sorted).
+ * Hash of the files a contract test runs: the package's TypeScript sources and the development
+ * builds (`dist`, without `dist/prod`) of the Oddkin packages it depends on. Must match the
+ * browser-side hash in tests/contract/cem-contract.ts (repository-relative paths, sorted).
  */
-export function implementationHash(root, pkgDir) {
+export function implementationHash(root, pkgDir, dependencies = ['core', 'tokens']) {
   const list = [
     ...files(join(pkgDir, 'src'), (p) => p.endsWith('.ts')),
-    ...files(
-      join(root, 'packages/core/dist'),
-      (p) => p.endsWith('.js'),
-      (p) => p === join(root, 'packages/core/dist/prod'),
+    ...dependencies.flatMap((name) =>
+      files(
+        join(root, 'packages', name, 'dist'),
+        (p) => p.endsWith('.js'),
+        (p) => p === join(root, 'packages', name, 'dist/prod'),
+      ),
     ),
-    ...files(join(root, 'packages/tokens/dist'), (p) => p.endsWith('.js')),
   ]
     .map((path) => [relative(root, path).split(sep).join('/'), path])
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
@@ -43,7 +59,8 @@ export function implementationHash(root, pkgDir) {
 }
 
 /** Attach current evidence to `<pkgDir>/oddkin.metadata.json`; returns the report. */
-export function attach(root, pkgDir, test, { requireAll = false } = {}) {
+export function attach(root, pkgDir, { requireAll = false } = {}) {
+  const { test, dependencies } = CONTRACT_TESTS[relative(root, pkgDir).split(sep).join('/')];
   const metadataPath = join(pkgDir, 'oddkin.metadata.json');
   const manifestPath = join(pkgDir, 'custom-elements.json');
   const records = files(join(pkgDir, '.oddkin/verification'), (p) => p.endsWith('.json')).map(
@@ -53,7 +70,7 @@ export function attach(root, pkgDir, test, { requireAll = false } = {}) {
   const { metadata, report } = attachVerification(current, records, {
     inputs: {
       manifest: sha256(readFileSync(manifestPath, 'utf8')),
-      sources: implementationHash(root, pkgDir),
+      sources: implementationHash(root, pkgDir, dependencies),
     },
     browsers: BROWSERS,
     test,

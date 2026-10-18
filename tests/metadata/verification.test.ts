@@ -41,4 +41,16 @@ describe('implementationHash', () => {
     write('packages/core/dist/element/index.d.ts', 'export {};');
     expect(hash()).toBe(before);
   });
+
+  it('covers exactly the dependency builds a package declares', () => {
+    const ai = join(root, 'packages/ai');
+    write('packages/ai/src/response/response.ts', 'export class R {}');
+    const withComponents = () => implementationHash(root, ai, ['core', 'tokens', 'components']);
+    const before = [implementationHash(root, ai), withComponents()];
+    write('packages/components/dist/button/index.js', 'export const button = 1;');
+    expect([implementationHash(root, ai), withComponents()]).toEqual([
+      before[0],
+      expect.not.stringMatching(before[1] as string),
+    ]);
+  });
 });
