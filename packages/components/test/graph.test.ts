@@ -38,6 +38,7 @@ describe('@oddkin/components/button import graphs', () => {
       'button/button.structural.styles.js',
       'button/button.template.js',
       'button/foundation.js',
+      'styles/host.styles.js',
     ]);
     expect(packages).toEqual([
       '@oddkin/core/element',
@@ -63,6 +64,7 @@ describe('@oddkin/components/card import graphs', () => {
       'card/card.structural.styles.js',
       'card/card.template.js',
       'card/foundation.js',
+      'styles/host.styles.js',
     ]);
     expect(packages.every((p) => p.startsWith('@oddkin/core/'))).toBe(true);
   });
@@ -83,6 +85,7 @@ describe('@oddkin/components/input import graphs', () => {
       'input/input.js',
       'input/input.structural.styles.js',
       'input/input.template.js',
+      'styles/host.styles.js',
     ]);
     expect(packages.every((p) => p.startsWith('@oddkin/core/'))).toBe(true);
   });

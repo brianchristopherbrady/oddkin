@@ -1,4 +1,5 @@
 import { compose } from '@oddkin/core/element';
+import { hostStyles } from '../styles/host.styles.js';
 import { OddkinCard } from './card.js';
 import { cardStructuralStyles } from './card.structural.styles.js';
 import { cardStyles } from './card.styles.js';
@@ -8,5 +9,5 @@ export const cardDefinition = compose({
   name: 'odd-card',
   element: OddkinCard,
   template: cardTemplate,
-  styles: [cardStructuralStyles, cardStyles],
+  styles: [hostStyles, cardStructuralStyles, cardStyles],
 });

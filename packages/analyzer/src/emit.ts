@@ -167,7 +167,10 @@ export function buildManifest(extraction: Extraction, paths: ModulePaths): Recor
 
 const definitionOf = (definition: DefinitionInfo | undefined, paths: ModulePaths) => {
   if (!definition) return undefined;
-  const ref = (source: SourceRef) => ({ module: paths.moduleOf(source.file), name: source.name });
+  const ref = (source: SourceRef) => ({
+    module: source.external ? source.file : paths.moduleOf(source.file),
+    name: source.name,
+  });
   return {
     ...optional('ref', definition.ref && ref(definition.ref)),
     ...optional('extends', definition.extends && `component:${definition.extends}`),

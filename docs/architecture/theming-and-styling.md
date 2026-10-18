@@ -259,6 +259,18 @@ A build step (part of Oddkin's own tooling, a dev dependency) transforms compone
 
 Global page selectors do not reach shadow internals. Styling explanations (planned, [change-impact-and-verification.md](./change-impact-and-verification.md) §4.1) trace observed computed values back through component variables, semantic roles, and alias chains using inspection provenance. They label declared, potential, and observed relationships and never claim full cascade reconstruction. Component styles read inherited roles with fallbacks and never re-declare the full theme on `:host`, which would mask ancestor scopes.
 
+### Shared style primitives (`@oddkin/components/styles`, implemented)
+
+Rules every component needs are written once and adopted as one constructed sheet per document, whatever the number of components:
+
+| Export | Contents | Tokens |
+| --- | --- | --- |
+| `hostStyles` | `box-sizing` inside the shadow root; the `hidden` attribute hides the host and internal elements even where a rule sets `display` | none (structural) |
+| `focusRingStyles` | `:focus-visible` outline from `focus.width`, `focus.offset`, `color.focus.ring` | yes |
+| `visuallyHiddenStyles` | `.visually-hidden` for text read by assistive technology without visual space | none (structural) |
+
+Definition order: `hostStyles`, the component's structural styles, `focusRingStyles`, then visual styles (`[hostStyles, buttonStructuralStyles, focusRingStyles, buttonStyles]`). Foundation entries re-export `hostStyles`, so a recomposed definition can start `[hostStyles, cardStructuralStyles, …]` from one import. Consumers' own components use the same exports. Opt-in document stylesheets for pages (`reset.css`, `base.css`, `utilities.css`) are described in [css-architecture.md](./css-architecture.md) §5.1.
+
 ## 8. Theme Studio
 
 Edits a `ThemeConfig` in a docs store, runs `@oddkin/tokens/generate` in the browser, renders previews inside isolated scopes, and exports TS/JSON config plus CSS/SCSS/JSON outputs. Contrast uses WCAG 2.x as the normative check; colour-vision simulations and any supplementary metrics are labelled as such with cited methods.

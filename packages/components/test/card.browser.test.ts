@@ -68,6 +68,7 @@ describe('imports', () => {
       'OddkinCard',
       'cardStructuralStyles',
       'cardTemplate',
+      'hostStyles',
     ]);
     await import('../src/card/index.js');
     expect(customElements.get('odd-card')).toBeUndefined();
@@ -161,6 +162,7 @@ describe('recomposition', () => {
   it('a product card reuses the foundation with its own styles beside odd-card', async () => {
     const { OddkinCard, cardDefinition, cardStructuralStyles } =
       await import('../src/card/index.js');
+    const { hostStyles } = await import('../src/card/foundation.js');
     await import('../src/card/card.define.js');
     class StudioCard extends OddkinCard {}
     const studio = compose({
@@ -168,6 +170,7 @@ describe('recomposition', () => {
       name: 'studio-card',
       element: StudioCard,
       styles: [
+        hostStyles,
         cardStructuralStyles,
         css`
           .card {
@@ -186,7 +189,9 @@ describe('recomposition', () => {
     await settle(b);
     const baseB = b.shadowRoot!.querySelector<HTMLElement>('[part="base"]')!;
     expect(getComputedStyle(baseB).paddingTop).toBe('2px');
+    // Host defaults and structural styles are the same shared sheets in both definitions.
     expect(a.shadowRoot!.adoptedStyleSheets[0]).toBe(b.shadowRoot!.adoptedStyleSheets[0]);
+    expect(a.shadowRoot!.adoptedStyleSheets[1]).toBe(b.shadowRoot!.adoptedStyleSheets[1]);
     expect(b.shadowRoot!.querySelector('[part="header"]')).not.toBeNull();
   });
 });

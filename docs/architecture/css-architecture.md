@@ -9,7 +9,7 @@ Oddkin uses a reliable CSS baseline and adds modern capabilities as tested enhan
 | Area | Existing equivalent | Gap closed or planned here |
 | --- | --- | --- |
 | Token definitions, resolution, theme composition, CSS generation | `@oddkin/tokens/generate` — the only token engine; alias-closure re-declaration per scope (ADR 0007); mode toggles (theming-and-styling.md §5.1); literal query thresholds (ADR 0011) | Cascade layer for generated CSS (§5); above-floor syntax diagnostics (§4.2) |
-| Global styles, resets, docs styles | None shipped; page defaults are opt-in assets (plan §5.1) | Layer slots `odd.reset`/`odd.base` reserved (§5.1) |
+| Global styles, resets, docs styles | None shipped; page defaults are opt-in assets (plan §5.1) | Opt-in `reset.css`, `base.css`, `utilities.css` in their layers (§5.1); shared shadow-root primitives (theming-and-styling.md §7) |
 | Component styles and Shadow DOM customization | Structural and default styles per component; component variables, parts, host styles (theming-and-styling.md §7) | Custom state for consumer styling (`:state(user-invalid)`), hover gating, long-content wrapping (§10, §12) |
 | Layout and responsive primitives | `@oddkin/core/layout` helpers `stack`, `row`, `grid`, `autoGrid`, `split`; container conditions (layout-recipes.md) | Contract audit and planned primitives (§8) |
 | Overlays and native controls | None yet (M10) | Overlay and control contracts (§9, §10) |
@@ -117,12 +117,12 @@ Every Oddkin document-level stylesheet that uses layers begins with the canonica
 
 | Layer | Responsibility | Status |
 | --- | --- | --- |
-| `odd.reset` | Optional focused reset; preserves inherited typography, direction, and user preferences | Reserved (opt-in asset, not shipped) |
+| `odd.reset` | Optional focused reset: border-box sizing, no body margin, media within their container, form controls inheriting fonts, long words wrapping; preserves inherited typography, direction, and user preferences | **Implemented** — opt-in `@oddkin/components/css/reset.css` |
 | `odd.tokens` | Generated custom properties, `color-scheme`, scope selectors | **Implemented** — `@oddkin/tokens` CSS |
-| `odd.base` | Optional page defaults (body text, links) | Reserved |
+| `odd.base` | Optional page defaults from the theme: body surface and text, links, code fonts, the focus ring | **Implemented** — opt-in `@oddkin/components/css/base.css` |
 | `odd.layout` | Page-author layout classes from `@oddkin/components/layout` | Planned (M4 layout slice) |
 | `odd.components` | Light-DOM component styles adopted into documents | Reserved (no light-DOM components yet) |
-| `odd.utilities` | Optional utilities (e.g. visually hidden) | Reserved |
+| `odd.utilities` | Optional utilities: `.odd-visually-hidden`, `.odd-focus-ring` (same rules as the shadow-root primitives) | **Implemented** — opt-in `@oddkin/components/css/utilities.css` |
 | *(unlayered)* | **Application overrides** | — |
 
 Emission options: `generate(config, { css: { layer } })`, `buildTheme(config, { cssLayer })`, `oddkin-tokens build --css-layer <name|none>`. A custom name emits only that layer (without the Oddkin order); `none` restores the unlayered output.
@@ -131,7 +131,7 @@ Emission options: `generate(config, { css: { layer } })`, `buildTheme(config, { 
 
 - Normal unlayered declarations outrank normal layered declarations in the same encapsulation context, regardless of specificity or order: an application's unlayered `:root { --odd-color-text-primary: … }` wins over `odd.tokens` wherever both match the same element.
 - Application layers win only when ordered after `odd`; an application that declares its own layers first states `@layer odd, app;`.
-- `!important` reverses layer order (important `odd.*` declarations would beat important application declarations). Oddkin ships no `!important` declarations.
+- `!important` reverses layer order (important `odd.*` declarations would beat important application declarations). Oddkin's document stylesheets contain no `!important`. The only `!important` declarations Oddkin ships are inside shadow roots: `hostStyles` makes the `hidden` attribute hide the host and internal elements even where a rule sets `display` (verified in `styling.browser.test.ts`).
 - Shadow DOM is a separate encapsulation context: for normal declarations, outer-context rules that reach the host or an exposed part (host selectors, `::part()`) win over the component's inner rules regardless of specificity; inner `!important` wins over outer normal. Document layer order never reaches into a shadow root, and global descendant selectors never style internals.
 - A root override does not cross a nested scope that re-declares the role (alias closure): theme-wide changes belong in the configuration's `overrides`, which the generator emits into every scope.
 

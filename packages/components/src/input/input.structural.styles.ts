@@ -5,9 +5,6 @@ export const inputStructuralStyles = css`
   :host {
     display: block;
   }
-  :host([hidden]) {
-    display: none;
-  }
   .field {
     display: flex;
     flex-direction: column;
@@ -20,9 +17,6 @@ export const inputStructuralStyles = css`
     inline-size: 100%;
     margin: 0;
     font: inherit;
-  }
-  [hidden] {
-    display: none;
   }
   @media (forced-colors: active) {
     .control {

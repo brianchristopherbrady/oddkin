@@ -8,9 +8,6 @@ export const cardStructuralStyles = css`
   :host {
     display: block;
   }
-  :host([hidden]) {
-    display: none;
-  }
   .card {
     box-sizing: border-box;
     display: flex;
@@ -23,9 +20,6 @@ export const cardStructuralStyles = css`
   .body {
     flex: 1 1 auto;
     min-block-size: 0;
-  }
-  [hidden] {
-    display: none;
   }
   @media (forced-colors: active) {
     .card {

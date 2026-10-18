@@ -18,6 +18,15 @@ Importing `@oddkin/components/button` gives the class, template, styles, and def
 
 Styles read semantic tokens through component variables (`--odd-button-radius`, `--odd-button-background`, …), so a theme or a scoped override restyles the button without JavaScript. Load a theme stylesheet such as `@oddkin/tokens/css/default.css`.
 
+## Shared styles for your own components and pages
+
+```js
+import { hostStyles, focusRingStyles, visuallyHiddenStyles } from '@oddkin/components/styles';
+// styles: [hostStyles, myStructuralStyles, focusRingStyles, visuallyHiddenStyles, myStyles]
+```
+
+Each primitive is one constructed sheet per document, shared by every component that adopts it. For pages, opt in to `@oddkin/components/css/reset.css`, `base.css` (theme-driven body text, links, focus ring), and `utilities.css` (`.odd-visually-hidden`, `.odd-focus-ring`); each sits in its Oddkin cascade layer, so unlayered page CSS overrides it.
+
 ## Styling and browser support
 
 - Customize through inherited tokens, documented component variables, host styles, parts, and custom states: `odd-input:state(user-invalid)::part(control) { … }` styles the field while it shows its error (the same state that sets `aria-invalid`).

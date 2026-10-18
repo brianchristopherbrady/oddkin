@@ -49,6 +49,13 @@
       "types": "./dist/input/input.define.d.ts",
       "default": "./dist/input/input.define.js"
     },
+    "./styles": {
+      "types": "./dist/styles/index.d.ts",
+      "default": "./dist/styles/index.js"
+    },
+    "./css/reset.css": "./dist/css/reset.css",
+    "./css/base.css": "./dist/css/base.css",
+    "./css/utilities.css": "./dist/css/utilities.css",
     "./custom-elements.json": "./custom-elements.json",
     "./oddkin.metadata.json": "./oddkin.metadata.json",
     "./package.json": "./package.json"

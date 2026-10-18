@@ -353,3 +353,17 @@ Windows 11 (10.0.26300), Intel Core i5-1135G7 (8 logical cores), 16 GiB; Node 24
 
 **Coverage gaps:** screen-reader output (NVDA, JAWS, VoiceOver, TalkBack) not exercised; forced-colors and 200 %/400 % zoom reviewed only through styles, not manually; Safari 17.4 not run; no live AI SDK backend (contract fixtures only); AG-UI is a design note without an adapter.
 
+## 2026-10-18 — Shared style primitives and opt-in document stylesheets (M4 foundation completion)
+
+Environment as the previous entry. Contracts: [theming-and-styling.md §7](./architecture/theming-and-styling.md#7-styling-contract), [css-architecture.md §5](./architecture/css-architecture.md#5-cascade-encapsulation-and-customization).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Primitives | `npx vitest run --project node packages/components/test/styles.test.ts` | Pass — `hostStyles` and `visuallyHiddenStyles` read no theme tokens; `focusRingStyles` reads the focus tokens; the only `!important` rules are `:host([hidden])` and `[hidden]` |
+| Document stylesheets | same | Pass — `reset.css`, `base.css`, `utilities.css` start with the canonical layer order and keep every rule in `odd.reset`, `odd.base`, `odd.utilities`; no `!important`; `.odd-visually-hidden` and the focus rules in `base.css`/`utilities.css` have exactly the declarations of the shadow-root primitives |
+| Behavior in browsers | `npx vitest run --project browser packages/components` | Pass in Chromium, Firefox, WebKit — a page rule setting `display` does not reveal a `hidden` host, and a component rule setting `display` does not reveal a `hidden` internal element; button and input draw the same 2 px solid ring from the focus tokens; button and input share the host-defaults and focus-ring constructed sheets. Existing button, input, and card tests unchanged except sheet counts (2 → 4) and foundation export lists (+ `hostStyles`); a recomposed card shares the host and structural sheets with `odd-card` |
+| Metadata | `npm run build` | Pass — the analyzer records styles imported from another package (`@oddkin/ai` definitions using `@oddkin/components/styles`) by specifier and name instead of failing; 0 diagnostics |
+| Full pipeline | `npm run verify` | Pass in one uninterrupted run — boundaries (9 packages, 288 source files, 959 imports), CSS compatibility (69 features, 50 stylesheets, 229 keys), format, typecheck, 1,011 tests in 99 files, size budgets (button CSS 1,054 B, input 586 B, card 557 B, shared primitives 297 B of 384 B, document stylesheets 612 B of 768 B; JavaScript budgets unchanged except `ai-response` 20,681 B and `ai-chat` 48,129 B, within their budgets), 79 e2e tests passed and 2 skipped, packed consumers for all 8 packages |
+
+**Findings:** (1) Inside a flex container the visible spinner's computed `display` is `block` (blockified), so the hidden test asserts "not `none`" rather than a specific value. (2) The architecture docs said Oddkin ships no `!important`; `@oddkin/ai` already did inside shadow roots. The statement now names the single shadow-root exception and keeps document stylesheets free of `!important`.
+

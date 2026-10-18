@@ -29,10 +29,6 @@ export const inputStyles = css`
     color: ${token('color.text.primary')};
     font-size: ${token('font.size.md')};
   }
-  .control:focus-visible {
-    outline: ${token('focus.width')} solid ${token('color.focus.ring')};
-    outline-offset: ${token('focus.offset')};
-  }
   .control[aria-invalid='true'] {
     border-color: ${token('color.border.danger')};
   }

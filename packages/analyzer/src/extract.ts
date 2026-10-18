@@ -97,7 +97,10 @@ export interface ComponentInfo {
 /** A named export in a source file (definition, template, or styles). */
 export interface SourceRef {
   readonly name: string;
+  /** Library-relative source path, or the package specifier when `external`. */
   readonly file: string;
+  /** Imported from another package's published declarations (e.g. shared styles). */
+  readonly external?: true;
 }
 
 /** A `compose()` definition resolved statically. */
@@ -926,7 +929,10 @@ export function extract(program: ts.Program, root: string): Extraction {
   ): void {
     const found = initializerOf(expression);
     if (!found) {
-      report('analyzer.dynamic.definition', expression, `${owner}: styles cannot be resolved.`);
+      const published = publishedStyles(expression);
+      if (published) refs.push(published);
+      else
+        report('analyzer.dynamic.definition', expression, `${owner}: styles cannot be resolved.`);
       return;
     }
     const node = found.node;
@@ -944,6 +950,29 @@ export function extract(program: ts.Program, root: string): Extraction {
     }
     if (found.ref) refs.push(found.ref);
     nodes.push(node);
+  }
+
+  /**
+   * Styles imported from another package (`import { hostStyles } from '@oddkin/components/styles'`)
+   * resolve to its declarations, which carry no CSS: they are recorded by specifier and name, and
+   * their token reads belong to the publishing package's metadata.
+   */
+  function publishedStyles(expression: ts.Expression): SourceRef | undefined {
+    if (!ts.isIdentifier(expression)) return undefined;
+    const declaration = resolveSymbol(expression)?.declarations?.[0];
+    if (!declaration?.getSourceFile().isDeclarationFile || !ts.isVariableDeclaration(declaration))
+      return undefined;
+    const specifier = checker
+      .getSymbolAtLocation(expression)
+      ?.declarations?.find(ts.isImportSpecifier);
+    const from = specifier?.parent.parent.parent.moduleSpecifier;
+    if (!specifier || !from || !ts.isStringLiteral(from) || from.text.startsWith('.'))
+      return undefined;
+    return {
+      name: (specifier.propertyName ?? specifier.name).text,
+      file: from.text,
+      external: true,
+    };
   }
 
   const definitionRef = (call: ts.CallExpression, ref?: SourceRef): SourceRef | undefined =>

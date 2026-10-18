@@ -3,7 +3,8 @@ import { css } from '@oddkin/core/styles';
 /**
  * Styles the button's layout and interaction depend on: host display, full width, content
  * alignment, the loading indicator, and forced-colors borders. No brand or visual tokens.
- * Keep these when replacing the visual styles; they do not make arbitrary overrides safe.
+ * Keep these (after `hostStyles`) when replacing the visual styles; they do not make arbitrary
+ * overrides safe.
  */
 export const buttonStructuralStyles = css`
   :host {
@@ -12,9 +13,6 @@ export const buttonStructuralStyles = css`
   }
   :host([full-width]) {
     display: block;
-  }
-  :host([hidden]) {
-    display: none;
   }
   button {
     box-sizing: border-box;

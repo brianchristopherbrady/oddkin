@@ -83,6 +83,7 @@ All three are free of registration side effects except the `define` entry. Class
 ```ts
 import { compose } from '@oddkin/core/element';
 import { Card, cardDefinition, cardStructuralStyles } from '@oddkin/components/card';
+import { hostStyles } from '@oddkin/components/styles';
 import { studioCardStyles } from './studio-card.styles.js';
 
 export class StudioCard extends Card {}
@@ -91,7 +92,7 @@ export const studioCardDefinition = compose({
   ...cardDefinition,
   name: 'studio-card',
   element: StudioCard,
-  styles: [cardStructuralStyles, studioCardStyles],
+  styles: [hostStyles, cardStructuralStyles, studioCardStyles],
 });
 ```
 

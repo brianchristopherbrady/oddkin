@@ -59,10 +59,6 @@ export const buttonStyles = css`
   :host([appearance='ghost']) button {
     background: var(--odd-button-background, transparent);
   }
-  button:focus-visible {
-    outline: ${token('focus.width')} solid ${token('color.focus.ring')};
-    outline-offset: ${token('focus.offset')};
-  }
   button:disabled {
     border-color: transparent;
     background: ${token('color.surface.sunken')};

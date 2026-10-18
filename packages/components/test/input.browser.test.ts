@@ -33,13 +33,16 @@ async function mount(markup: string) {
 describe('imports', () => {
   it('the foundation and the component entry register nothing', async () => {
     const foundation = await import('../src/input/foundation.js');
-    expect(Object.keys(foundation).sort()).toEqual([
-      'OddkinInput',
-      'changeEvent',
-      'inputEvent',
-      'inputStructuralStyles',
-      'inputTemplate',
-    ]);
+    expect(Object.keys(foundation).sort()).toEqual(
+      [
+        'OddkinInput',
+        'changeEvent',
+        'inputEvent',
+        'inputStructuralStyles',
+        'inputTemplate',
+        'hostStyles',
+      ].sort(),
+    );
     await import('../src/input/index.js');
     expect(customElements.get('odd-input')).toBeUndefined();
   });

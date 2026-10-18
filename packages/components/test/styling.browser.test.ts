@@ -144,3 +144,46 @@ describe('text enlargement (F14)', () => {
     expect(parseFloat(getComputedStyle(control).minHeight)).toBeCloseTo(before * 2, 0);
   });
 });
+
+describe('shared primitives', () => {
+  it('hide hosts and internals with the hidden attribute, even against display rules', async () => {
+    await render(`
+      <style>#b { display: block; }</style>
+      <odd-button id="b" hidden>Hidden</odd-button>
+      <odd-button id="l" loading>Loading</odd-button>
+      <odd-button id="v">Visible</odd-button>`);
+    expect(getComputedStyle($('#b')).display).toBe('none');
+    // `.spinner` sets display; `hidden` still wins inside the shadow root.
+    expect(getComputedStyle(inner($('#v'), '.spinner')).display).toBe('none');
+    expect(getComputedStyle(inner($('#l'), '.spinner')).display).not.toBe('none');
+  });
+
+  it('draw one focus ring from the focus tokens on every component', async () => {
+    await render(`
+      <odd-button id="b">Save</odd-button>
+      <odd-input id="i" label="Name"></odd-input>`);
+    const root = getComputedStyle(document.documentElement);
+    const width = root.getPropertyValue('--odd-focus-width').trim();
+    for (const [id, selector] of [
+      ['#b', 'button'],
+      ['#i', 'input'],
+    ] as const) {
+      const control = inner($(id), selector);
+      control.focus({ focusVisible: true } as FocusOptions);
+      if (!control.matches(':focus-visible')) continue;
+      const style = getComputedStyle(control);
+      expect(style.outlineStyle, id).toBe('solid');
+      expect(style.outlineWidth, id).toBe(width);
+      control.blur();
+    }
+  });
+
+  it('share one constructed sheet per primitive across components', async () => {
+    await render(`<odd-button id="b">A</odd-button><odd-input id="i" label="B"></odd-input>`);
+    const sheets = (id: string) => $(id).shadowRoot!.adoptedStyleSheets;
+    if (!sheets('#b').length) return;
+    const shared = sheets('#b').filter((sheet) => sheets('#i').includes(sheet));
+    // Host defaults and the focus ring.
+    expect(shared).toHaveLength(2);
+  });
+});
