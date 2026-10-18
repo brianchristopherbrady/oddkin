@@ -92,5 +92,8 @@
   "dependencies": {
     "@oddkin/core": "0.0.0",
     "@oddkin/tokens": "0.0.0"
+  },
+  "devDependencies": {
+    "@oddkin/workbench": "0.0.0"
   }
 }

@@ -1,7 +1,7 @@
 # 0021. `defineExamples` format
 
-- **Status:** Proposed
-- **Date:** 2026-10-17
+- **Status:** Accepted
+- **Date:** 2026-10-17 (accepted 2026-10-18)
 - **Area:** Workbench
 - **Detailed contract:** [workbench.md §7](../workbench.md)
 
@@ -20,6 +20,8 @@ Build order: runtime components → analyzer metadata → example typechecks/tes
 
 ## Evidence
 M3: `@oddkin/workbench/examples` implemented (DOM-free; `@oddkin/core` types only). TypeScript rejects unknown property keys, wrong value types, and methods for registered tags (`packages/workbench/test/examples.types.ts`); `checkExamples` gives plain-JavaScript authors the same checks against the analyzer's CEM; `toExamplesJSON` validates against `examples.v1`. Build order holds through project references: core → workbench entries; components never reference workbench (boundary rules). Pending: M4 build-order check with real components.
+
+M4: the four `@oddkin/components` elements have colocated examples (`src/<name>/<name>.examples.ts`). They are **development-only sources**: the package `tsconfig.json` excludes them, so they are never built, exported, or shipped, and `@oddkin/workbench` is only a `devDependency` of `@oddkin/components` (no cycle in runtime dependencies). They are type-checked by the tests program, which imports them; `HTMLElementTagNameMap` types their props. The boundary tool's `devSources` rule (`scripts/architecture/boundaries.config.mjs`) allows them to import `@oddkin/workbench`, reports a shipped module that imports one (`boundary.import.devSource`), and reports an example file in `dist` (`boundary.artifact.devSource`). `mountExample` (`@oddkin/workbench/testing`) runs an example, fixture included, in the project's own browser tests. Evidence: `packages/components/test/examples.test.ts`, `examples.browser.test.ts`, and `tests/architecture/boundaries.test.ts`.
 
 ## Revisit when
 Tests need examples without any Workbench dependency.

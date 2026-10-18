@@ -33,7 +33,7 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0018](./0018-analyzer-front-end.md) | Analyzer front end and no-execution rule | Accepted | Metadata |
 | [0019](./0019-preview-isolation.md) | Workbench preview isolation and frame protocol | Proposed | Workbench |
 | [0020](./0020-specimen-roles-and-adapters.md) | Theme Studio specimen roles and adapters | Accepted | Workbench |
-| [0021](./0021-define-examples.md) | `defineExamples` format | Proposed | Workbench |
+| [0021](./0021-define-examples.md) | `defineExamples` format | Accepted | Workbench |
 | [0022](./0022-agent-boundaries.md) | `@oddkin/agent` boundaries and MCP adapter | Proposed | Agent |
 | [0023](./0023-page-registry.md) | Page registry as single navigation source | Accepted | Workbench |
 | [0024](./0024-content-layers.md) | Content layers and precedence | Accepted | Workbench |

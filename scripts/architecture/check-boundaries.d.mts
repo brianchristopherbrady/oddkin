@@ -12,6 +12,8 @@ export interface PackageRule {
   nodeEntries?: string[];
   nodeSources?: string[];
   nodeOnlyDependencies?: string[];
+  /** Development-only sources such as `*.examples.ts`, which may also import `allow`. */
+  devSources?: { suffix: string; allow: string[] };
 }
 
 export interface BoundaryConfig {

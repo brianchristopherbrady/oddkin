@@ -14,11 +14,17 @@ const SOURCE_EXTENSIONS = ['.ts', '.mts', '.tsx', '.js', '.mjs'];
 
 /**
  * @typedef {{ code: string, message: string, file?: string, fix?: string }} Diagnostic
- * @typedef {{ kind: 'browser' | 'node' | 'mixed', allow: string[], domFree?: string[], nodeEntries?: string[], nodeSources?: string[], nodeOnlyDependencies?: string[] }} PackageRule
+ * @typedef {{ suffix: string, allow: string[] }} DevSources
+ * @typedef {{ kind: 'browser' | 'node' | 'mixed', allow: string[], domFree?: string[], nodeEntries?: string[], nodeSources?: string[], nodeOnlyDependencies?: string[], devSources?: DevSources }} PackageRule
  * @typedef {{ packages: Record<string, PackageRule> }} BoundaryConfig
  */
 
 const isBuiltin = (spec) => spec.startsWith('node:') || BUILTINS.has(spec.split('/')[0]);
+/** Development-only sources (e.g. `*.examples.ts`): type-checked and tested, never built or shipped. */
+const isDevSource = (rule, file) => {
+  const suffix = rule?.devSources?.suffix;
+  return !!suffix && new RegExp(`${suffix.replace(/\./g, '\\.')}\\.[cm]?[jt]sx?$`).test(file);
+};
 const isRelative = (spec) =>
   spec.startsWith('./') || spec.startsWith('../') || spec.startsWith('/');
 const packageNameOf = (spec) =>
@@ -197,6 +203,7 @@ export async function checkBoundaries(root, options = {}) {
       sourceFiles++;
       const specifiers = await lexImports(code, file);
       importsScanned += specifiers.length;
+      const dev = isDevSource(rule, file);
       for (const spec of specifiers) {
         const where = { file: rel(file) };
         if (isRelative(spec)) {
@@ -206,6 +213,12 @@ export async function checkBoundaries(root, options = {}) {
               ...where,
               fix: 'Import the other package by name through its public exports.',
             });
+          } else if (!dev && isDevSource(rule, target)) {
+            report(
+              'boundary.import.devSource',
+              `"${spec}" is a development-only source; shipped code of ${pkg.name} cannot import it.`,
+              { ...where, fix: 'Import examples only from tests and tooling.' },
+            );
           }
         } else if (isBuiltin(spec)) {
           if (!isNodeSource(file)) {
@@ -221,14 +234,23 @@ export async function checkBoundaries(root, options = {}) {
         } else if (spec.startsWith('@oddkin/')) {
           const target = packageNameOf(spec);
           if (target === pkg.name) continue;
-          if (!rule.allow.includes(target)) {
+          const devAllowed = dev && (rule.devSources?.allow ?? []).includes(target);
+          if (!rule.allow.includes(target) && !devAllowed) {
             report('boundary.import.forbidden', `${pkg.name} may not import ${target}.`, {
               ...where,
               fix: `Allowed internal dependencies: ${rule.allow.join(', ') || 'none'}.`,
             });
             continue;
           }
-          if (!(target in runtimeDeps)) {
+          if (devAllowed && !rule.allow.includes(target)) {
+            if (!(target in (pkg.manifest.devDependencies ?? {}))) {
+              report(
+                'boundary.import.undeclared',
+                `${pkg.name} imports ${target} from a development-only source without declaring it.`,
+                { ...where, fix: `Add "${target}" to devDependencies in ${manifestFile}.` },
+              );
+            }
+          } else if (!(target in runtimeDeps)) {
             report(
               'boundary.import.undeclared',
               `${pkg.name} imports ${target} without declaring it.`,
@@ -305,6 +327,17 @@ async function checkArtifacts(packages, byName, config, report, rel) {
   for (const pkg of packages) {
     const rule = config.packages[pkg.name];
     if (!rule || rule.kind === 'node' || !pkg.manifest.exports) continue;
+    if (rule.devSources) {
+      for (const file of await listFiles(join(pkg.dir, 'dist'), ['.js', '.d.ts'])) {
+        if (isDevSource(rule, file.replace(/\.d\.ts$/, '.ts'))) {
+          report(
+            'boundary.artifact.devSource',
+            `${pkg.name} ships the development-only source ${rel(file)}.`,
+            { fix: 'Exclude development-only sources from the package tsconfig.' },
+          );
+        }
+      }
+    }
     const nodeEntries = rule.nodeEntries ?? [];
     for (const key of exportKeys(pkg.manifest)) {
       if (key === './package.json' || key.includes('*') || nodeEntries.includes(key)) continue;

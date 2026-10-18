@@ -200,6 +200,40 @@ describe('checkBoundaries', () => {
     ]);
   });
 
+  it('lets development-only example sources import tooling that shipped code cannot', async () => {
+    const files = {
+      'packages/workbench/package.json': manifest('@oddkin/workbench', {
+        exports: { './examples': './dist/examples/index.js' },
+      }),
+      'packages/workbench/src/examples/index.ts': 'export const defineExamples = () => {};\n',
+      'packages/components/src/button/button.ts': 'export class Button {}\n',
+      'packages/components/src/button/button.examples.ts':
+        "import { defineExamples } from '@oddkin/workbench/examples';\nimport type {} from './button.js';\nexport default defineExamples();\n",
+    };
+    const declared = await workspace({
+      ...files,
+      'packages/components/package.json': manifest('@oddkin/components', {
+        devDependencies: { '@oddkin/workbench': '0.0.0' },
+      }),
+    });
+    expect(await codes(declared)).toEqual([]);
+
+    const misused = await workspace({
+      ...files,
+      'packages/components/package.json': manifest('@oddkin/components'),
+      'packages/components/src/index.ts':
+        "export { default } from './button/button.examples.js';\n",
+      'packages/components/src/button/button.ts':
+        "import '@oddkin/workbench/examples';\nexport class Button {}\n",
+    });
+    const { diagnostics } = await checkBoundaries(misused);
+    expect(diagnostics.map((d) => [d.code, d.file]).sort()).toEqual([
+      ['boundary.import.devSource', 'packages/components/src/index.ts'],
+      ['boundary.import.forbidden', 'packages/components/src/button/button.ts'],
+      ['boundary.import.undeclared', 'packages/components/src/button/button.examples.ts'],
+    ]);
+  });
+
   it('detects dependency cycles', async () => {
     const root = await workspace({
       'packages/core/package.json': manifest('@oddkin/core', {

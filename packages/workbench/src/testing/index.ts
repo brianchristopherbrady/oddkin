@@ -3,7 +3,8 @@
  * browser test runner. The runner's `expect` and user-input API are passed in, so this entry
  * depends on no test framework. Contract: change-impact-and-verification.md §3.
  */
-import { scopeStats } from '@oddkin/core/scope';
+import { createScope, scopeStats, type Scope } from '@oddkin/core/scope';
+import { render, type ChildPart } from '@oddkin/core/template';
 import type {
   Adapter,
   CaseResult,
@@ -14,6 +15,7 @@ import type {
   MountOptions,
   UserInput,
 } from '../conformance/index.js';
+import { exampleId, type ExampleSet } from '../examples/index.js';
 
 /** Default adapter: anatomy roles are named parts (`part~="role"`) in the shadow root. */
 export const partAdapter: Adapter = {
@@ -100,5 +102,80 @@ export async function runConformance(
     environment: { userAgent: navigator.userAgent },
     date: new Date().toISOString(),
     results,
+  };
+}
+
+export interface MountedExample<E extends Element> {
+  /** The example's element. */
+  readonly element: E;
+  /** Holds the element and everything the fixture mounted; `data-example` is the example id. */
+  readonly root: HTMLElement;
+  /** The scope passed to the fixture. */
+  readonly scope: Scope;
+  /** Dispose the fixture's scope and templates and remove the root. */
+  dispose(): void;
+}
+
+/**
+ * Mount one authored example the way a preview frame does: create the registered element, set
+ * its attributes, properties, and slot text, connect it, then run its fixture. The tag (and any
+ * element the fixture uses) must already be registered.
+ */
+export async function mountExample<E extends Element>(
+  set: ExampleSet<E>,
+  name: string,
+  container: HTMLElement = document.body,
+): Promise<MountedExample<E>> {
+  const example = set.examples[name];
+  if (!example) throw new Error(`mountExample: <${set.component}> has no example "${name}".`);
+  if (!customElements.get(set.component)) {
+    throw new Error(`mountExample: <${set.component}> is not registered.`);
+  }
+  const id = exampleId(set.component, name);
+  const root = document.createElement('div');
+  root.dataset['example'] = id;
+  container.append(root);
+  const element = document.createElement(set.component) as unknown as E;
+  for (const [attribute, value] of Object.entries(example.attributes ?? {}))
+    if (value !== null) element.setAttribute(attribute, value);
+  Object.assign(element, example.props ?? {});
+  for (const [slot, text] of Object.entries(example.slots ?? {})) {
+    if (slot === 'default') element.append(text);
+    else {
+      const span = document.createElement('span');
+      span.slot = slot;
+      span.textContent = text;
+      element.append(span);
+    }
+  }
+  root.append(element);
+  const scope = createScope({ name: id });
+  const parts: ChildPart[] = [];
+  try {
+    await example.fixture?.({
+      scope,
+      element,
+      mount(content) {
+        const host = document.createElement('div');
+        root.append(host);
+        parts.push(render(content, host));
+        return host.firstElementChild ?? host;
+      },
+    });
+    await (element as Element & { updateComplete?: Promise<void> }).updateComplete;
+  } catch (error) {
+    scope.dispose();
+    root.remove();
+    throw error;
+  }
+  return {
+    element,
+    root,
+    scope,
+    dispose() {
+      scope.dispose();
+      for (const part of parts) part.dispose();
+      root.remove();
+    },
   };
 }

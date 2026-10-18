@@ -7,8 +7,9 @@ Metadata-driven documentation tooling for any custom-element library. **M3 statu
 | `@oddkin/workbench/examples` | `defineExamples(tag, examples)`, typed from `HTMLElementTagNameMap` (unknown property keys and wrong value types are compile errors); `toExamplesJSON` (the `examples.v1` serializable layer, with fixtures reduced to `hasFixture`); `checkExamples(set, contract)` for plain-JavaScript authors; `exampleId` |
 | `@oddkin/workbench/config` | `defineWorkbenchConfig`, `resolveWorkbenchConfig` (defaults and diagnostics matching `workbench-config.v1`), `defineDocs` (`docs-content.v1`) |
 | `@oddkin/workbench/pages` | `buildPageRegistry({ config, cem, metadata?, docs? })` producing `page-registry.v1`, plus the projections every navigation surface uses: `primaryNavigation`, `sidebar`, `cards`, `searchEntries`, `onThisPage`, `href`, `resolveLegacyRoute`, `staticRedirects` |
+| `@oddkin/workbench/testing` | `mountExample(set, name, container?)` runs an authored example and its fixture in a browser test; `runConformance` runs a conformance suite with the project's own `expect` |
 
-All three import without a DOM and have no runtime dependencies (`@oddkin/core` is used for types only). Component packages never import them.
+The examples, config, and pages entries import without a DOM and have no runtime dependencies (`@oddkin/core` is used for types only). Shipped component code never imports them; colocated `*.examples.ts` files may, because they are development-only sources excluded from the package build (ADR 0021).
 
 ## Registry rules
 
