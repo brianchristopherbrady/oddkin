@@ -235,6 +235,14 @@ Fixtures use **1, 2, 3, and 10 products**; representative coverage plus targeted
 
 Results are recorded against the implementation and configuration tested. Performance benefits of shared foundations are hypotheses until measured.
 
+*Verified (M4):*
+
+- Items 1–3: `packages/components/test/multi-product.browser.test.ts`.
+- Items 5, 6, and 12, for `odd-button`, `odd-card`, `odd-input`, `odd-side-nav`, and a derived implementation of each: `contract.browser.test.ts` and `interactions.browser.test.ts`, with the derived definitions in `test/derived.ts`.
+- Item 14: `packages/tokens/test/products.test.ts`.
+
+All in Chromium, Firefox, and WebKit.
+
 Shared interaction fixtures become portable conformance suites, and product-affecting changes are traced by impact reports ([change-impact-and-verification.md](./change-impact-and-verification.md) §2–§3). A change to shared structural styles, presets, or a foundation selects verification for every product that uses it.
 
 ## Open questions
