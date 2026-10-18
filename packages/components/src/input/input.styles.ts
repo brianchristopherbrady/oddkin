@@ -5,15 +5,21 @@ import { token } from '@oddkin/tokens/refs';
 export const inputStyles = css`
   .field {
     gap: ${token('space.xs')};
-    font-family: ${token('font.family.sans')};
+    font-family: ${token('type.body.family')};
     color: ${token('color.text.primary')};
   }
   .label {
-    font-size: ${token('font.size.sm')};
-    font-weight: ${token('font.weight.semibold')};
+    font-size: ${token('type.ui.size')};
+    font-weight: ${token('type.ui.weight')};
+    line-height: ${token('type.ui.line-height')};
+    letter-spacing: ${token('type.ui.letter-spacing')};
+  }
+  .description,
+  .error {
+    font-size: ${token('type.small.size')};
+    line-height: ${token('type.small.line-height')};
   }
   .description {
-    font-size: ${token('font.size.sm')};
     color: ${token('color.text.secondary')};
   }
   .control {
@@ -27,7 +33,12 @@ export const inputStyles = css`
     border-radius: var(--odd-input-radius, ${token('control.radius')});
     background: var(--odd-input-background, ${token('color.surface.default')});
     color: ${token('color.text.primary')};
-    font-size: ${token('font.size.md')};
+    /* Body size: below 16px, iOS Safari zooms the page when the field takes focus. */
+    font-size: ${token('type.body.size')};
+    line-height: ${token('type.body.line-height')};
+    transition-property: border-color, background-color;
+    transition-duration: ${token('motion.duration.fast')};
+    transition-timing-function: ${token('motion.easing.standard')};
   }
   .control[aria-invalid='true'] {
     border-color: ${token('color.danger.foreground')};
@@ -37,7 +48,6 @@ export const inputStyles = css`
     color: ${token('color.text.disabled')};
   }
   .error {
-    font-size: ${token('font.size.sm')};
     color: ${token('color.danger.foreground')};
   }
 `;

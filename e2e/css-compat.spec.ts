@@ -210,9 +210,9 @@ test('hover feedback appears only where the primary pointer can hover', async ({
     const save = page.locator('#save');
     const before = await inner(save, 'button', 'background-color');
     await save.hover();
-    const after = await inner(save, 'button', 'background-color');
-    if (hovers) expect(after).not.toBe(before);
-    else expect(after).toBe(before);
+    // The background transitions over motion.duration.fast, so wait for it to settle.
+    if (hovers) await expect.poll(() => inner(save, 'button', 'background-color')).not.toBe(before);
+    else expect(await inner(save, 'button', 'background-color')).toBe(before);
     await context.close();
   }
 });

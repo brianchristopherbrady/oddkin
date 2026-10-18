@@ -63,11 +63,13 @@ export const base: DocumentStylesheet = {
   layer: 'odd.base',
   styles: css`
     body {
-      background-color: ${token('color.surface.default')};
+      background-color: ${token('color.canvas')};
       color: ${token('color.text.primary')};
-      font-family: ${token('font.family.sans')};
-      font-size: ${token('font.size.md')};
-      line-height: ${token('line-height.normal')};
+      font-family: ${token('type.body.family')};
+      font-size: ${token('type.body.size')};
+      font-weight: ${token('type.body.weight')};
+      line-height: ${token('type.body.line-height')};
+      letter-spacing: ${token('type.body.letter-spacing')};
     }
     a {
       color: ${token('color.link')};

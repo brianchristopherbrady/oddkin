@@ -394,3 +394,17 @@ Environment as the previous entry. Decision: only the colour palette comes from 
 
 **Findings:** (1) Two load-induced timeouts surfaced during this run and were fixed in the tests, not by retrying: the artifact boundary test spawns Node (now 30 s), and the slowest AI e2e test deliberately streams at 120 ms per chunk (~26 s alone in Firefox; now `test.slow()`). (2) Values reverted from ADR 0041 change component rendering back to the pre-0041 sizes: `font.size.md` 1rem, `control.radius` 8 px, `card.radius` 12 px. (3) Opacity and scrim tokens were not added; no component needs them.
 
+## 2026-10-18 — Components adopt text styles and motion tokens
+
+Environment as the previous entry. Contract: [theming-and-styling.md §10.2](./architecture/theming-and-styling.md#102-text-styles-implemented-adr-0042).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Components and AI | `npx vitest run packages/components packages/ai` | Pass, 310 tests in Chromium, Firefox, WebKit, and Node — no expectation changed |
+| Rendering | css-gallery card at `http://localhost:4180/examples/css-gallery/` (integrated browser screenshot) | Card heading in the `title` style, field label in `ui`, help text in `small`, control text at the body size, primary and secondary buttons in `ui` |
+| CSS | `npm run lint:css`, `npm run compat`, `npm run size` | Pass — 232 compatibility keys; button 1,119 B of 1,280 B; card 678 B (budget raised 640 → 768 B for the body text and slotted-heading default); input 743 B (budget 768 → 896 B); document stylesheets 621 B of 768 B |
+| End to end | `npm run test:e2e` | 79 passed, 2 skipped — the gallery hover check polls until the 100 ms background transition settles |
+| Full pipeline | `npm run verify`, then `npm run test:e2e` and `npm run verify:packs` after the e2e fix | Lint, typecheck, 1,013 tests, size budgets pass; first e2e run failed twice in Firefox under four workers (simulated research streaming exceeded 30 s, with a Firefox software-compositor crash in the log); passes alone and after the fix; packed consumers OK |
+
+**Findings:** (1) The research demo streams for 20–26 s per test alone in Firefox, so its e2e groups now have a 90 s timeout and wait up to 45 s for completion; nothing in the demos changed. (2) The input control stays at the body size (1rem) rather than `ui`, because iOS Safari zooms the page when a focused field is smaller than 16 px. (3) The card's heading default uses `::slotted()`, which loses to any light-DOM rule for the heading, so page styles keep control.
+

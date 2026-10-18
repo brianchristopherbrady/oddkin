@@ -347,6 +347,8 @@ Brand foundations: Chalk `#f6f5f1`, White `#ffffff`, Ink `#23252b`, Electric iri
 
 Use a style as a set, e.g. `font: var(--odd-type-ui-weight) var(--odd-type-ui-size) / var(--odd-type-ui-line-height) var(--odd-type-ui-family); letter-spacing: var(--odd-type-ui-letter-spacing)`.
 
+Component usage: `odd-button` text and `odd-input` labels use `ui` (`size="lg"` buttons use the body size); the `odd-input` control uses the body size, because iOS Safari zooms the page when a field under 16 px takes focus; descriptions and errors use `small`; `odd-card` sets `body` and gives slotted `h1`–`h6` in its header a `title` default (page styles for the heading still win, since `::slotted()` loses to light-DOM rules); `base.css` sets `body` on the page with the `canvas` background. Button and input colour changes transition over `motion.duration.fast` with `motion.easing.standard`, which become instant under reduced motion.
+
 ### 10.3 Foundation scales (implemented, ADR 0042)
 
 Only the colour palette comes from the design source (§10.1); every other value is Oddkin's own scale, and designs adopt these tokens. Every step is overridable by name through `overrides`.

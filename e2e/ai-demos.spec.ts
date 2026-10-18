@@ -61,6 +61,9 @@ async function open(page: Page, demo: string) {
 const state = (page: Page) => page.locator('#state');
 
 test.describe('research assistant', () => {
+  // Simulated streaming takes 20-26 s per test alone in Firefox; full-suite load adds more.
+  test.describe.configure({ timeout: 90_000 });
+
   test('streams a cited answer with tools, sources, artifact, usage, and history', async ({
     page,
   }) => {
@@ -77,7 +80,7 @@ test.describe('research assistant', () => {
     await composer.fill('Summarize ocean warming');
     await composer.press('Enter');
     await expect(composer).toHaveValue('');
-    await expect(state(page)).toContainText('attempt completed', { timeout: 15_000 });
+    await expect(state(page)).toContainText('attempt completed', { timeout: 45_000 });
 
     const conversation = page.locator('odd-conversation');
     await expect(conversation.getByRole('heading', { name: 'Summary' })).toBeVisible();
@@ -104,8 +107,6 @@ test.describe('research assistant', () => {
   });
 
   test('stop, disconnect and resume, and conversation isolation', async ({ page }) => {
-    // Deliberately slow streaming (120 ms chunks); takes ~26 s alone in Firefox.
-    test.slow();
     const check = await watch(page);
     await open(page, 'ai-research');
     await page.getByText('Simulation controls').click();
@@ -298,6 +299,7 @@ test.describe('agent task panel', () => {
 
 test.describe('reflow at 320 CSS px and reduced motion', () => {
   test.use({ viewport: { width: 320, height: 720 }, reducedMotion: 'reduce' });
+  test.describe.configure({ timeout: 90_000 });
   for (const demo of ['ai-research', 'ai-writing', 'ai-agent']) {
     test(`${demo} has no horizontal scrolling and no running animations`, async ({ page }) => {
       await open(page, demo);
@@ -306,7 +308,7 @@ test.describe('reflow at 320 CSS px and reduced motion', () => {
         await composer.fill('Summarize ocean warming');
         await composer.press('Enter');
         await expect(page.locator('#state')).toContainText('attempt completed', {
-          timeout: 15_000,
+          timeout: 45_000,
         });
       }
       if (demo === 'ai-agent') {
@@ -326,6 +328,7 @@ test.describe('reflow at 320 CSS px and reduced motion', () => {
 });
 
 test.describe('accessibility (axe-core)', () => {
+  test.describe.configure({ timeout: 90_000 });
   for (const demo of ['ai-research', 'ai-writing', 'ai-agent']) {
     test(`${demo} has no axe violations`, async ({ page }) => {
       await open(page, demo);
@@ -334,7 +337,7 @@ test.describe('accessibility (axe-core)', () => {
         await composer.fill('Summarize ocean warming');
         await composer.press('Enter');
         await expect(page.locator('#state')).toContainText('attempt completed', {
-          timeout: 15_000,
+          timeout: 45_000,
         });
       }
       if (demo === 'ai-agent') {

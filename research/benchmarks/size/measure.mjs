@@ -35,9 +35,9 @@ export const CSS_BUDGETS = {
   // Measured 2,764 (1,827 before the approved palette, text-style roles, warning ramp, and the
   // complete radius, elevation, motion, stacking, and icon scales; ADRs 0041-0042).
   'tokens:default.css': 3072,
-  'components:button': 1280, // measured 1,100
-  'components:card': 640, // measured 571
-  'components:input': 768, // measured 647
+  'components:button': 1280, // measured 1,119 with type.ui and motion tokens (1,100 before)
+  'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
+  'components:input': 896, // measured 743 with type.ui/body/small and motion tokens (647 before)
   'components:shared': 384, // measured 297 on 2026-10-18: host, focus-ring, and visually-hidden primitives
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together

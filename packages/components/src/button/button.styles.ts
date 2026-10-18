@@ -14,10 +14,14 @@ export const buttonStyles = css`
     border-radius: var(--odd-button-radius, ${token('control.radius')});
     background: var(--odd-button-background, ${token('color.surface.raised')});
     color: var(--odd-button-color, ${token('color.text.primary')});
-    font-family: ${token('font.family.sans')};
-    font-size: ${token('font.size.md')};
-    font-weight: ${token('font.weight.semibold')};
-    line-height: 1.25;
+    font-family: ${token('type.ui.family')};
+    font-size: ${token('type.ui.size')};
+    font-weight: ${token('type.ui.weight')};
+    line-height: ${token('type.ui.line-height')};
+    letter-spacing: ${token('type.ui.letter-spacing')};
+    transition-property: background-color, border-color, color;
+    transition-duration: ${token('motion.duration.fast')};
+    transition-timing-function: ${token('motion.easing.standard')};
   }
   :host([size='sm']) button {
     min-block-size: max(
@@ -25,7 +29,6 @@ export const buttonStyles = css`
       ${token('target.min')}
     );
     padding-inline: var(--odd-button-padding-inline, ${token('control.padding.inline.sm')});
-    font-size: ${token('font.size.sm')};
   }
   :host([size='lg']) button {
     min-block-size: max(
@@ -33,7 +36,7 @@ export const buttonStyles = css`
       ${token('target.min')}
     );
     padding-inline: var(--odd-button-padding-inline, ${token('control.padding.inline.lg')});
-    font-size: ${token('font.size.lg')};
+    font-size: ${token('type.body.size')};
   }
   :host([appearance='primary']) button {
     background: var(--odd-button-background, ${token('color.action.default')});
