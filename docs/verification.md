@@ -502,3 +502,14 @@ Environment as the previous entry; `custom-element-vs-code-integration` 1.5.0 ad
 Only the packed-consumer script changed, so the test suites were not rerun for this entry; the previous entry's run covers the same code.
 
 **Findings:** None: the generator needed no Oddkin-specific options, and no element, attribute, property, or part was dropped. It derives enumerated values from the attribute's type text, so union types written as string literals are what editors will offer.
+
+## 2026-10-18 — CEM contract tests (M4 metadata validation)
+
+Environment as the previous entry. Another agent was editing other files in the same working tree. Contract: [metadata-and-analyzer.md §4](./architecture/metadata-and-analyzer.md#4-outputs).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Published CEM against live elements | `npx vitest run --project browser packages/components/test/contract.browser.test.ts` | Pass in Chromium, Firefox, WebKit (5 tests × 4 elements) — literal defaults equal the property values; every CEM attribute is observed and converts to its field, for every value of a string-literal union, and removing it restores the default; exactly the fields marked `reflects` write their attribute (booleans remove it again); the declared events equal the element's defined events; every documented slot and part is rendered by at least one authored example (mounted in a 1,000 px frame) |
+| Mutation probe | Temporary script drifting the generated `custom-elements.json` (`size` default `'lg'`, `appearance` without `reflects`, an extra `icon` part), then `node scripts/build-metadata.mjs` | The drifted manifest fails the default, removal, reflection, and part checks in all three engines; the regenerated manifest passes 60/60 |
+
+**Findings:** (1) A CEM field without a literal default makes no claim: `odd-input`'s `value` is an accessor over `defaultValue` and reads `''`, so the test checks literal defaults only. (2) The enrichment manifest has no event facts (bubbles, composed, cancelable); the test can compare event names only. (3) The results are not yet attached as *verified* provenance; doing so needs a record tied to the inputs tested.
