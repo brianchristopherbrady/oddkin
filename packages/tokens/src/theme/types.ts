@@ -99,16 +99,16 @@ export type ConditionConfig = ContainerCondition | MediaCondition;
 
 /**
  * A profile: explicit overrides of layout and component roles, applied with
- * `data-mote-profile="name"` (space-separated list allowed).
+ * `data-odd-profile="name"` (space-separated list allowed).
  */
 export type ProfileConfig = Readonly<Record<string, OverrideValue>>;
 
 export interface ThemeConfig {
   readonly $schema?: string;
-  /** Theme name, used for `data-mote-theme` and file names. Defaults to `default`. */
+  /** Theme name, used for `data-odd-theme` and file names. Defaults to `default`. */
   readonly name?: string;
-  /** Token values to start from. Only `mote-default` exists today. */
-  readonly preset?: 'mote-default';
+  /** Token values to start from. Only `oddkin-default` exists today. */
+  readonly preset?: 'oddkin-default';
   readonly brand: BrandConfig;
   readonly status?: StatusConfig;
   readonly spacing?: SpacingConfig;
@@ -126,7 +126,7 @@ export interface ThemeConfig {
 
 /**
  * Identity function that types a theme configuration. JSON configs use the same shape
- * with `"$schema"` pointing at `@mote/tokens/schema.json`.
+ * with `"$schema"` pointing at `@oddkin/tokens/schema.json`.
  */
 export function defineTheme<const C extends ThemeConfig>(config: C): C {
   return config;

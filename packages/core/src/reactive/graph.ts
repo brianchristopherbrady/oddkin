@@ -1,5 +1,5 @@
 /**
- * Mote's single reactive graph (ADR 0002). DOM-free.
+ * Oddkin's single reactive graph (ADR 0002). DOM-free.
  *
  * Design: push–pull with versions.
  * - A signal write bumps the signal's version and pushes a "maybe stale" mark to
@@ -13,10 +13,10 @@
  *   effects run before post-phase effects in each pass.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError, reportMoteError } from '../diagnostics/index.js';
+import { OddkinError, reportOddkinError } from '../diagnostics/index.js';
 
-/** Brand identifying any Mote readable (signals, computed values, readable adapters). */
-export const READABLE: unique symbol = Symbol.for('mote.readable') as never;
+/** Brand identifying any Oddkin readable (signals, computed values, readable adapters). */
+export const READABLE: unique symbol = Symbol.for('oddkin.readable') as never;
 
 export interface Readable<T> {
   readonly [READABLE]: true;
@@ -155,7 +155,7 @@ class SignalNode<T> extends ReadableNode<T> implements Signal<T> {
 
   set value(next: T) {
     if (computingDepth > 0) {
-      throw new MoteError(
+      throw new OddkinError(
         'reactive.write.inComputed',
         DEV
           ? `Cannot write ${label('signal', this.name)} while a computed value is evaluating. Computed values must be pure; use an effect instead.`
@@ -220,7 +220,7 @@ class ComputedNode<T> extends ReadableNode<T> implements Consumer {
 
   refresh(): void {
     if (this.#computing) {
-      throw new MoteError(
+      throw new OddkinError(
         'reactive.cycle',
         DEV ? `${label('Computed value', this.name)} depends on itself.` : '',
       );
@@ -324,7 +324,7 @@ class ListenerNode<T> implements Consumer {
       try {
         source.peek();
       } catch (error) {
-        reportMoteError(error, { code: 'reactive.subscribe.sourceError', origin: source.name });
+        reportOddkinError(error, { code: 'reactive.subscribe.sourceError', origin: source.name });
       }
       return;
     }
@@ -376,7 +376,7 @@ class EffectNode implements Consumer {
       const cleanup = runTracked(this, next, this.#fn);
       if (typeof cleanup === 'function') this.#cleanup = cleanup;
     } catch (error) {
-      reportMoteError(error, { code: 'reactive.effect.error', origin: this.name });
+      reportOddkinError(error, { code: 'reactive.effect.error', origin: this.name });
     } finally {
       resubscribe(this, this.#sources, next);
       this.#sources = next;
@@ -417,7 +417,7 @@ class EffectNode implements Consumer {
     try {
       untracked(cleanup);
     } catch (error) {
-      reportMoteError(error, { code: 'reactive.effect.cleanupError', origin: this.name });
+      reportOddkinError(error, { code: 'reactive.effect.cleanupError', origin: this.name });
     }
   }
 }
@@ -436,8 +436,8 @@ function flushListeners(): void {
     while (pendingListeners.size > 0) {
       if (++passes > MAX_LISTENER_PASSES) {
         pendingListeners.clear();
-        reportMoteError(
-          new MoteError(
+        reportOddkinError(
+          new OddkinError(
             'reactive.flush.runaway',
             DEV
               ? `Subscribers kept changing values after ${MAX_LISTENER_PASSES} passes; notifications stopped.`
@@ -453,7 +453,7 @@ function flushListeners(): void {
         try {
           listener.check();
         } catch (error) {
-          reportMoteError(error, { code: 'reactive.subscribe.error' });
+          reportOddkinError(error, { code: 'reactive.subscribe.error' });
         }
       }
     }
@@ -515,8 +515,8 @@ export function flush(): void {
           for (const effect of queue) effect.scheduled = false;
           queue.clear();
         }
-        reportMoteError(
-          new MoteError(
+        reportOddkinError(
+          new OddkinError(
             'reactive.flush.runaway',
             DEV
               ? `Effects kept scheduling work after ${MAX_FLUSH_PASSES} passes; the flush stopped. An effect probably writes a value it also reads.`
@@ -563,7 +563,7 @@ export function computed<T>(fn: () => T, options?: ReactiveOptions<T>): Readable
  */
 export function effect(fn: EffectFn, options?: EffectOptions): () => void {
   if (computingDepth > 0) {
-    throw new MoteError(
+    throw new OddkinError(
       'reactive.effect.inComputed',
       DEV ? 'Cannot create an effect while a computed value is evaluating.' : '',
     );
@@ -598,7 +598,7 @@ export function untracked<R>(fn: () => R): R {
   }
 }
 
-/** True for any Mote readable (signal or computed value). */
+/** True for any Oddkin readable (signal or computed value). */
 export function isReadable(value: unknown): value is Readable<unknown> {
   return (
     typeof value === 'object' &&

@@ -9,7 +9,7 @@
 Components, stores, resources, and context all need reactivity. Separate engines would duplicate scheduling and break consistency guarantees. Developers also need a predictable rule for when templates update.
 
 ## Decision
-- One DOM-free signal graph in `@mote/core/reactive` (`signal`, `computed`, `effect`, `batch`, `untracked`, `Readable`) shared by components, stores, context, and resources.
+- One DOM-free signal graph in `@oddkin/core/reactive` (`signal`, `computed`, `effect`, `batch`, `untracked`, `Readable`) shared by components, stores, context, and resources.
 - Synchronous reads/writes; lazy, memoized, glitch-free `computed`; `Object.is` default equality; microtask-deduplicated commits; order derivation → DOM commits → post-commit effects.
 - **Binding rule:** `render()` runs in a tracking context, so `.value` reads (including synchronous helpers) register render-level dependencies and schedule a deduplicated render. Readables interpolated directly bind at part level without re-running `render()`. `.value` outside tracked contexts, in event handlers, and in async callbacks is an untracked snapshot. Binding-initialization reads register no render dependency. A dependency used both ways coalesces with no duplicate DOM writes.
 

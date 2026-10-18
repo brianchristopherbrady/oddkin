@@ -1,5 +1,5 @@
 /**
- * `@mote/core/template` — tagged templates with explicit binding parts.
+ * `@oddkin/core/template` — tagged templates with explicit binding parts.
  * Contract: docs/architecture/core-contracts.md §1, §6.
  */
 export { html, svg, nothing, isTemplateResult } from './result.js';

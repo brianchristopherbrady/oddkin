@@ -1,9 +1,9 @@
 /**
- * `@mote/workbench/examples` — authored examples, defined once and reused by Workbench,
+ * `@oddkin/workbench/examples` — authored examples, defined once and reused by Workbench,
  * documentation, browser tests, Theme Studio, and agents (ADR 0021). DOM-free: importing
  * this entry never touches the DOM; fixtures run only inside preview frames and tests.
  */
-import type { Scope } from '@mote/core';
+import type { Scope } from '@oddkin/core';
 import { DiagnosticList, type WorkbenchDiagnostic } from '../internal/diagnostics.js';
 
 export type { WorkbenchDiagnostic } from '../internal/diagnostics.js';
@@ -61,7 +61,7 @@ export function defineExamples<T extends string>(
   return Object.freeze({ component: tag, examples: Object.freeze({ ...examples }) });
 }
 
-export const EXAMPLES_SCHEMA = 'https://mote.dev/schemas/examples/v1.json';
+export const EXAMPLES_SCHEMA = 'https://oddkin.dev/schemas/examples/v1.json';
 
 /** The serializable layer (`examples.v1`); fixtures appear only as `hasFixture`. */
 export interface ExamplesJSON {

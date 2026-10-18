@@ -9,7 +9,7 @@
 Each collection component would otherwise implement its own keyed reconciliation, identity, and state models.
 
 ## Decision
-`@mote/core/collections` provides key extraction, duplicate/missing-key diagnostics, keyed reconciliation feeding `repeat`, nesting, a child `Scope` per item, and optional selection/expansion/disabled/active models. Keyboard behavior stays in per-pattern controllers. Item output tracks external reactive reads; there is no cache keyed only by item identity.
+`@oddkin/core/collections` provides key extraction, duplicate/missing-key diagnostics, keyed reconciliation feeding `repeat`, nesting, a child `Scope` per item, and optional selection/expansion/disabled/active models. Keyboard behavior stays in per-pattern controllers. Item output tracks external reactive reads; there is no cache keyed only by item identity.
 
 ## Alternatives considered
 - Per-component reconciliation — duplicated bugs.

@@ -1,13 +1,13 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@mote/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
 ```ts
-import { MoteElement, html, signal, define } from '@mote/core';
+import { OddkinElement, html, signal, define } from '@oddkin/core';
 
-class DemoCounter extends MoteElement {
+class DemoCounter extends OddkinElement {
   private count = signal(0);
   private increment = () => this.count.update(value => value + 1);
 
@@ -44,23 +44,23 @@ render() { return html`<span>${this.count}</span>`; }
 
 ### 1.1 Composed definitions (implemented, M4; [ADR 0036](./decisions/0036-component-composition-api.md))
 
-`compose()` and `define(definition)` are implemented in `@mote/core/element` and verified in three engines (`packages/core/test/definition.browser.test.ts`); the analyzer extracts them (metadata-and-analyzer.md §8). Colocated authoring (above) stays supported. The public composition API lets the class, template, and styles live in separate modules. Mote's own components use it with one folder per component ([IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).
+`compose()` and `define(definition)` are implemented in `@oddkin/core/element` and verified in three engines (`packages/core/test/definition.browser.test.ts`); the analyzer extracts them (metadata-and-analyzer.md §8). Colocated authoring (above) stays supported. The public composition API lets the class, template, and styles live in separate modules. Oddkin's own components use it with one folder per component ([IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).
 
 ```ts
 // card/card.template.ts
 import type { Card } from './card.js';
-import { html } from '@mote/core/template';
+import { html } from '@oddkin/core/template';
 export const cardTemplate = (card: Card) => html`<article part="base"><slot></slot></article>`;
 
 // card/card.definition.ts
-import { compose } from '@mote/core/element';
+import { compose } from '@oddkin/core/element';
 import { Card } from './card.js';
 import { cardTemplate } from './card.template.js';
 import { cardStyles } from './card.styles.js';
-export const cardDefinition = compose({ name: 'mote-card', element: Card, template: cardTemplate, styles: cardStyles });
+export const cardDefinition = compose({ name: 'odd-card', element: Card, template: cardTemplate, styles: cardStyles });
 
 // card/card.define.ts — explicit registration
-import { define } from '@mote/core/element';
+import { define } from '@oddkin/core/element';
 import { cardDefinition } from './card.definition.js';
 define(cardDefinition);
 ```
@@ -72,7 +72,7 @@ Settled behavior:
 - A definition's `styles` is the complete, ordered style list and replaces the class's `static styles`; without `styles`, the class's styles apply. A definition's `template` replaces `render()`; development builds report `definition.render.ignored` when both exist.
 - Codes: `registry.definitionConflict`, `registry.constructorReused`, `registry.collision`, `registry.definition.invalid`, `definition.element.invalid`, `definition.template.invalid`, `definition.dependency.invalid`. A failed registration leaves no binding.
 - Size budgets (ADR 0031) still pass; the counter fixture is 9,521 B gzip of 9,728 B.
-- **Name clash resolved (2026-10-17):** `compose()` from `@mote/core/element` is the component-definition composer. The optional data-composition schema renderer is `renderComposition()` from `@mote/components/composition` (previously sketched as `@mote/components/compose`, never implemented). Prose, imports, examples, and dependency checks use these names; minimal-consumer checks exclude the renderer entry, not `compose()`.
+- **Name clash resolved (2026-10-17):** `compose()` from `@oddkin/core/element` is the component-definition composer. The optional data-composition schema renderer is `renderComposition()` from `@oddkin/components/composition` (previously sketched as `@oddkin/components/compose`, never implemented). Prose, imports, examples, and dependency checks use these names; minimal-consumer checks exclude the renderer entry, not `compose()`.
 
 **Recomposition (implemented in the runtime; [multi-product.md](./multi-product.md) §5, ADR 0033, ADR 0036).** Every definition carries `source` (itself); a spread copies it and `compose()` records it as `extends`. `compose({ ...cardDefinition, name, element, styles })` creates a new frozen definition with its own identity and a traceable link to its foundation; it never mutates the source definition or class and never copies registration state or caches. An element resolves its definition by exact constructor, not through inheritance, so behavior classes stay safely subclassable. Definition `styles` are a complete ordered list (structural first by convention) and a definition `template` takes precedence over `render()`; sheets remain shared per document. Registration rules: `registry.collision`, `registry.constructorReused`, and `registry.definitionConflict`.
 
@@ -93,9 +93,9 @@ Class-based colocated authoring and the proposed `compose()` model (§1.1) both 
 Preferred declaration (to prototype):
 
 ```ts
-import { MoteElement, html, prop } from '@mote/core';
+import { OddkinElement, html, prop } from '@oddkin/core';
 
-class DemoGreeting extends MoteElement.with({
+class DemoGreeting extends OddkinElement.with({
   name: prop.string({ default: 'world', attribute: 'name' }),
   quiet: prop.boolean({ default: false, attribute: 'quiet', reflect: true }),
 }) {
@@ -107,7 +107,7 @@ class DemoGreeting extends MoteElement.with({
 
 - One definition infers instance types, installs normal DOM accessors, validates attribute conversion, and supplies runtime metadata. Consumers write `element.name = 'Ada'`; no signal wrapper leaks into the public DOM API.
 - The prototype must prove: declaration emission, subclassing, factory defaults for objects (no shared mutable defaults), pre-upgrade property replay, reserved-name diagnostics, native class-field compatibility, and rejection of fields that shadow reactive accessors.
-- If `MoteElement.with()` fails these tests, record why and pick a static-definition alternative **before M4**. Never ship two competing primary styles or a mandatory compiler to hide the problem.
+- If `OddkinElement.with()` fails these tests, record why and pick a static-definition alternative **before M4**. Never ship two competing primary styles or a mandatory compiler to hide the problem.
 - Reflection is opt-in; booleans use presence semantics; arrays/objects travel through properties, not implicit JSON attributes. Invalid values get precise dev diagnostics and a documented fallback.
 - Events have typed `detail` and explicit `bubbles` / `composed` / `cancelable` in their definitions. Preserve native `input`/`change` semantics; never re-emit across a shadow boundary twice or treat a programmatic assignment as a user edit. Event contracts appear in generated metadata.
 
@@ -130,14 +130,14 @@ The base class owns native callbacks; authors use these hooks without `super.con
 - Native `moveBefore()` / `connectedMoveCallback` may preserve a connection where supported (feature-detected). Ordinary remove/insert follows normal disconnect/reconnect; no global delayed-cleanup heuristic. [R21]
 - Queued callbacks recheck the connection generation before committing. Slot-dependent setup uses `slotchange` or an explicit parser-ready strategy.
 - Browser page suspension (back/forward cache) is **not** a disconnect: elements stay connected, their scopes stay alive, and paused timers and promises resume on restore. Components never listen to page-lifecycle events themselves; application-level policy lives in §9.1.
-- *(Proposed, development builds only.)* Commit causes (render-level vs direct binding), dependencies, and scope ownership can be recorded by the opt-in `@mote/core/inspect` entry for explanations ([change-impact-and-verification.md](./change-impact-and-verification.md) §4.2). It is absent from production builds.
+- *(Proposed, development builds only.)* Commit causes (render-level vs direct binding), dependencies, and scope ownership can be recorded by the opt-in `@oddkin/core/inspect` entry for explanations ([change-impact-and-verification.md](./change-impact-and-verification.md) §4.2). It is absent from production builds.
 
 ## 4. Scope — ownership and cleanup
 
 ```ts
-import { MoteElement, signal, type Scope } from '@mote/core';
+import { OddkinElement, signal, type Scope } from '@oddkin/core';
 
-class DemoClock extends MoteElement {
+class DemoClock extends OddkinElement {
   private now = signal(Date.now());
 
   connected(scope: Scope) {
@@ -149,7 +149,7 @@ class DemoClock extends MoteElement {
 }
 ```
 
-No controller field, teardown array, or matching `removeEventListener()` in the normal path. The browser already accepts an abort signal for listeners; Mote adds consistent ownership around it. [R22]
+No controller field, teardown array, or matching `removeEventListener()` in the normal path. The browser already accepts an abort signal for listeners; Oddkin adds consistent ownership around it. [R22]
 
 | API | Purpose |
 | --- | --- |
@@ -166,7 +166,7 @@ Required semantics:
 - Run all cleanups even if one throws; report errors with origin; reverse-registration order.
 - Setup on a disposed scope starts nothing. Early release drops retained closures.
 - Effects track synchronous reads only; async callbacks are not effects — use resources.
-- Compose parent cancellation, caller signals, supersession, and timeouts; keep the real reason; release bridging listeners and timers when work settles. `AbortSignal.any()` / `timeout()` help but do not replace Mote's own bookkeeping. [R23]
+- Compose parent cancellation, caller signals, supersession, and timeouts; keep the real reason; release bridging listeners and timers when work settles. `AbortSignal.any()` / `timeout()` help but do not replace Oddkin's own bookkeeping. [R23]
 - Cancellation is cooperative. Guard results at the commit boundary even when a task ignores its signal. Expected cancellation is distinct from real failure.
 - Unowned standalone effects return an explicit disposer. Dev mode surfaces likely leaks; production needs no stack capture.
 - `scopeStats()` (public, both builds) returns live counts of scopes, listeners, timers, and effects owned through scopes, for leak tests: counts return to baseline after mount/remove cycles (`research/benchmarks`: 100 cycles × 100 counters in three engines).
@@ -179,10 +179,10 @@ Required semantics:
 | Request | Resource starts a load | Supersession, cancellation, settlement, or owner disposal |
 | Application | `start()` | `stop()`; other app roots unaffected |
 
-## 5. Reactivity (`@mote/core/reactive`, DOM-free)
+## 5. Reactivity (`@oddkin/core/reactive`, DOM-free)
 
 ```ts
-import { signal, computed, batch } from '@mote/core/reactive';
+import { signal, computed, batch } from '@oddkin/core/reactive';
 
 const quantity = signal(1);
 const price = signal(12);
@@ -204,7 +204,7 @@ console.log(total.value); // 30, immediately
 - Mutations inside effects or `updated` schedule a defined next pass. Detect cycles and runaway flushes; isolate errors.
 - A manual flush helper exists for tests. Components never need `requestUpdate()` after changing a signal or declared property.
 
-## 6. Templates and rendering (`@mote/core/template`)
+## 6. Templates and rendering (`@oddkin/core/template`)
 
 Tagged `html` templates, cached static `<template>` structure, explicit binding parts. No virtual DOM, no compulsory compiler, no `innerHTML` update path.
 
@@ -223,9 +223,9 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 - Keyed lists need stable unique keys; reorder reuses DOM and item state; removal releases the item scope; duplicate/unstable keys get dev diagnostics. [R24]
 - Optional helper subpaths: `classMap`, `styleMap`, refs, live-input handling (cursor, IME composition, autofill), event options.
 - Deterministic cleanup for replaced templates, removed items, detached roots, and failed renders. Cache by template identity, document, and parsing context; handle SVG. Dynamic tag/attribute names are not v1.
-- **Security:** no `eval`, no string-to-HTML. Define unsafe sinks, URL policy, and event/property restrictions. Test strict CSP and document Trusted Types integration. Any trusted-markup escape hatch is a separate explicit API. Mote is not a general sanitizer.
+- **Security:** no `eval`, no string-to-HTML. Define unsafe sinks, URL policy, and event/property restrictions. Test strict CSP and document Trusted Types integration. Any trusted-markup escape hatch is a separate explicit API. Oddkin is not a general sanitizer.
 - **Diagnostics:** component, template location/part, property, phase, likely fix; dev-only tracing; one error-reporting path; defined recovery after a failed commit.
-- **Collections and data models:** keyed `repeat` is fed by `@mote/core/collections` for components with structured content; item templates track external reactive reads, so output never goes stale when only a dependency changes. Model definitions (`@mote/core/model`) generate types, validators, and schemas. See [data-composition.md](./data-composition.md).
+- **Collections and data models:** keyed `repeat` is fed by `@oddkin/core/collections` for components with structured content; item templates track external reactive reads, so output never goes stale when only a dependency changes. Model definitions (`@oddkin/core/model`) generate types, validators, and schemas. See [data-composition.md](./data-composition.md).
 - **Behavior tools** (built when catalog components need them): resize/intersection observers, refs/slot observation, form association, roving tabindex, focus return, `Intl` formatting. Prefer native CSS, `<dialog>`, popover/top layer, logical properties. Portals, advanced overlays, transitions, and virtualization follow concrete requirements and measurement.
 
 ### 6.1 Behaviors settled in the M3 implementation
@@ -263,10 +263,10 @@ Errors that cannot be thrown to a caller go to the handler set with `setErrorHan
 
 Disposal during callbacks is safe: a handler that removes its own host leaves no subscriptions or owned resources, and an effect that disconnects another element prevents that element's queued effect from running. Each connection gets a fresh scope. The previous scope is aborted, and listeners do not accumulate. Direct binding updates do not re-render the host or read layout (layout getters, `getBoundingClientRect`, and `getComputedStyle` were spied during updates). Production builds report the same codes and owners with short messages (ADR 0031).
 
-## 7. Optional shared stores (`@mote/state`)
+## 7. Optional shared stores (`@oddkin/state`)
 
 ```ts
-import { createStore } from '@mote/state/store';
+import { createStore } from '@oddkin/state/store';
 
 const cart = createStore({ items: [] as CartItem[] });
 const count = cart.select(state => state.items.length);
@@ -282,13 +282,13 @@ function addItem(item: CartItem) {
 - **Persistence** (separate import): schema versions, migrations, storage adapters, restore ordering, quota/parse errors. **Inspection** (separate import): live subscriptions, action causes, disposal counts.
 - Reusable components never create or require an application store. Framework adapters, if ever needed, are optional integrations with peer dependencies.
 
-## 8. Resources (`@mote/app/resource`)
+## 8. Resources (`@oddkin/app/resource`)
 
 ```ts
-import { MoteElement, signal, type Scope } from '@mote/core';
-import { resource } from '@mote/app/resource';
+import { OddkinElement, signal, type Scope } from '@oddkin/core';
+import { resource } from '@oddkin/app/resource';
 
-class DemoSearch extends MoteElement {
+class DemoSearch extends OddkinElement {
   query = signal('');
 
   results = resource({
@@ -313,7 +313,7 @@ class DemoSearch extends MoteElement {
 - Resources are for reads. Mutations are explicit commands; cancelling a fetch does not roll back a server operation.
 - *(Proposed, §9.1.)* Restore policy: by default a resource keeps its state across page suspension. An opt-in `revalidateOnRestore` policy starts a new generation after a persisted `pageshow`, with the usual abort and generation guards. Failed revalidation surfaces as the resource's `error` state. Mutations are never retried automatically.
 
-## 9. Application root and router (`@mote/app`)
+## 9. Application root and router (`@oddkin/app`)
 
 - `createApp({ root, setup })` owns a root scope and explicit services; `start()` / `stop()` idempotent with defined restart. No global singleton; multiple apps can coexist.
 - Router on `URL`, `URLSearchParams`, History API, native anchors, dynamic `import()`. Nested routes, typed params/search parsing, not-found, route errors, lazy modules, navigation cancellation. The active route owns its resources and subscriptions.
@@ -328,7 +328,7 @@ class DemoSearch extends MoteElement {
 | Application stop/restart | Explicit `stop()` / `start()` | Root scope disposed; restart creates fresh scopes and services |
 | Temporary page suspension | `pagehide` with `persisted: true` (intent only; the browser may still discard the page) | Nothing is disposed; declared services may suspend external connections |
 | Back/forward cache restoration | `pageshow` with `persisted: true` | Same JS heap and DOM resume; declared services resume; resources with a restore policy revalidate |
-| Permanent disposal | Page discarded, or explicit `stop()` | Disposal only through explicit stop; the browser discarding a page runs no Mote code |
+| Permanent disposal | Page discarded, or explicit `stop()` | Disposal only through explicit stop; the browser discarding a page runs no Oddkin code |
 
 - Navigation is never assumed to disconnect elements or rebuild the application. `pagehide` never disposes the application. A genuinely disposed `Scope` is still replaced by a fresh one and never reuses an aborted signal.
 - Lifecycle listeners are activated only by an explicit, owned application service (e.g. `app.use(pageLifecycle())`, name proposed). It registers `pagehide`, `pageshow`, and `visibilitychange` once in the app root scope; importing a module never adds listeners. No `unload` or `beforeunload` listeners. `freeze`/`resume` are verified enhancements where supported, never required.

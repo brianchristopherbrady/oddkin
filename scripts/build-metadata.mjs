@@ -1,6 +1,6 @@
 /**
  * Generate published metadata for component packages: `custom-elements.json` (standard CEM)
- * and `mote.metadata.json` at the package root, from @mote/analyzer. Fails on any analyzer
+ * and `oddkin.metadata.json` at the package root, from @oddkin/analyzer. Fails on any analyzer
  * error or warning so published metadata never contains unresolved dynamic definitions.
  */
 import { readFile } from 'node:fs/promises';
@@ -18,7 +18,7 @@ for (const dir of PACKAGES) {
   const manifest = JSON.parse(await readFile(join(pkgDir, 'package.json'), 'utf8'));
   const result = analyze({
     project: join(pkgDir, 'tsconfig.json'),
-    library: { name: manifest.name, version: manifest.version, prefix: 'mote-' },
+    library: { name: manifest.name, version: manifest.version, prefix: 'odd-' },
   });
   for (const d of result.diagnostics) {
     const at = d.source ? ` ${d.source.file}:${d.source.line}:${d.source.column}` : '';

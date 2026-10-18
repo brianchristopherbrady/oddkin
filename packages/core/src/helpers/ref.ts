@@ -1,5 +1,5 @@
 /**
- * `@mote/core/helpers/ref` — get the element a binding sits on.
+ * `@oddkin/core/helpers/ref` — get the element a binding sits on.
  * `ref=${inputRef}` (or any binding name); the attribute itself is never written.
  */
 import { signal, type Signal } from '../reactive/index.js';

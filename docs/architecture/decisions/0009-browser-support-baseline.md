@@ -6,7 +6,7 @@
 - **Detailed contract:** [IMPLEMENTATION_PLAN.md §2.5](../../../IMPLEMENTATION_PLAN.md)
 
 ## Context
-Mote relies on modern platform features. The baseline must be explicit, evidence-based, and tested in CI.
+Oddkin relies on modern platform features. The baseline must be explicit, evidence-based, and tested in CI.
 
 ## Decision
 Proposed minimum versions: **Chrome 125, Edge 125, Firefox 126, Safari 17.4** (all released by mid-2024). These cover every required feature below. Newer features are feature-detected with documented fallbacks.

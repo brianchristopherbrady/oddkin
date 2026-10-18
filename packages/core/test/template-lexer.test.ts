@@ -14,7 +14,7 @@ const codeOf = (fn: () => unknown) => {
 describe('template lexer', () => {
   it('marks child positions with comments and keeps static markup', () => {
     const { html, attributes } = buildTemplateHtml(strings`<p class="x">Hi ${0}!</p>${1}`);
-    expect(html).toMatch(/^<p class="x">Hi <!--mote-[a-z0-9]+-->!<\/p><!--mote-[a-z0-9]+-->$/);
+    expect(html).toMatch(/^<p class="x">Hi <!--oddkin-[a-z0-9]+-->!<\/p><!--oddkin-[a-z0-9]+-->$/);
     expect(attributes).toEqual([]);
   });
 
@@ -33,7 +33,7 @@ describe('template lexer', () => {
 
   it('replaces bound attributes with markers and leaves static ones', () => {
     const { html } = buildTemplateHtml(strings`<a href=${0} title='t' data-x=${1}>x</a>`);
-    expect(html).toMatch(/^<a mote-[a-z0-9]+-a0 title='t' mote-[a-z0-9]+-a1>x<\/a>$/);
+    expect(html).toMatch(/^<a oddkin-[a-z0-9]+-a0 title='t' oddkin-[a-z0-9]+-a1>x<\/a>$/);
   });
 
   it('ignores markup-like text in comments and raw-text elements', () => {

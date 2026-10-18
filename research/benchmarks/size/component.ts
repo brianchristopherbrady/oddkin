@@ -1,5 +1,5 @@
 // A typical component: typed properties, reflection, an event, styles, and a structural helper.
-import { MoteElement, css, define, event, html, prop, when } from '@mote/core';
+import { OddkinElement, css, define, event, html, prop, when } from '@oddkin/core';
 
 const toggled = event<{ open: boolean }>('x-toggle', {
   bubbles: true,
@@ -8,7 +8,7 @@ const toggled = event<{ open: boolean }>('x-toggle', {
   syncs: 'open',
 });
 
-class XDisclosure extends MoteElement.with({
+class XDisclosure extends OddkinElement.with({
   label: prop.string({ default: 'Details' }),
   open: prop.boolean({ reflect: true }),
 }) {

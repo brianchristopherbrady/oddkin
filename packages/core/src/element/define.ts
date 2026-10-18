@@ -3,10 +3,10 @@
  * collisions clearly, and registers declared dependencies first.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError, reportMoteError } from '../diagnostics/index.js';
+import { OddkinError, reportOddkinError } from '../diagnostics/index.js';
 import { bindDefinition, definitionFor, unbindDefinition } from '../internal/definitions.js';
 import { isElementDefinition, type ElementDefinition } from './definition.js';
-import { MoteElement } from './element.js';
+import { OddkinElement } from './element.js';
 
 export interface DefineOptions {
   /** Registry to define in (e.g. a scoped registry where supported). Defaults to `customElements`. */
@@ -63,7 +63,7 @@ function defineDefinition<D extends ElementDefinition<any>>(
   options: DefineOptions,
 ): D {
   if (!isElementDefinition(definition)) {
-    throw new MoteError(
+    throw new OddkinError(
       'registry.definition.invalid',
       DEV ? 'define(definition) needs a definition created by compose().' : '',
     );
@@ -77,7 +77,7 @@ function defineDefinition<D extends ElementDefinition<any>>(
   const current = definitionFor(ctor);
   if (registry.get(definition.name) === ctor) {
     if (current === definition) return definition;
-    throw new MoteError(
+    throw new OddkinError(
       'registry.definitionConflict',
       DEV
         ? `<${definition.name}> is already registered from a different definition with the same class. Register one definition per name, or extend the class to create a separate implementation.`
@@ -85,7 +85,7 @@ function defineDefinition<D extends ElementDefinition<any>>(
     );
   }
   if (current && current !== definition) {
-    throw new MoteError(
+    throw new OddkinError(
       'registry.constructorReused',
       DEV
         ? `${ctor.name || 'This class'} already belongs to the definition for <${(current as ElementDefinition).name}>. Extend the class to register another definition.`
@@ -96,10 +96,10 @@ function defineDefinition<D extends ElementDefinition<any>>(
     DEV &&
     definition.template &&
     (ctor.prototype as { render?: unknown }).render !==
-      (MoteElement.prototype as unknown as { render: unknown }).render
+      (OddkinElement.prototype as unknown as { render: unknown }).render
   ) {
-    reportMoteError(
-      new MoteError(
+    reportOddkinError(
+      new OddkinError(
         'definition.render.ignored',
         `<${definition.name}>: the definition's template replaces ${ctor.name || 'the class'}.render(). Remove render() or the template.`,
       ),
@@ -125,7 +125,7 @@ function defineElement<C extends CustomElementConstructor>(
   const registry = options.registry ?? globalThis.customElements;
   if (!registry) return ctor;
   if (!VALID_NAME.test(tagName) || RESERVED.has(tagName)) {
-    throw new MoteError(
+    throw new OddkinError(
       'registry.name.invalid',
       DEV
         ? `"${tagName}" is not a valid custom element name. Names start with a lowercase letter, contain a hyphen, and have no uppercase letters.`
@@ -138,7 +138,7 @@ function defineElement<C extends CustomElementConstructor>(
   const existing = registry.get(tagName);
   if (existing === ctor) return ctor;
   if (existing) {
-    throw new MoteError(
+    throw new OddkinError(
       'registry.collision',
       DEV
         ? `<${tagName}> is already defined by a different class (${existing.name || 'anonymous'}). This usually means two copies or versions of a package are loaded; deduplicate them, or use a scoped registry.`
@@ -147,7 +147,7 @@ function defineElement<C extends CustomElementConstructor>(
   }
   const otherName = registry.getName?.(ctor);
   if (otherName) {
-    throw new MoteError(
+    throw new OddkinError(
       'registry.constructorReused',
       DEV
         ? `${ctor.name || 'This class'} is already defined as <${otherName}>. A class can be registered under one name; extend it to register another.`

@@ -1,6 +1,6 @@
 /**
  * Outputs: a standard Custom Elements Manifest (custom-elements-manifest@2.1.0) and the
- * Mote enrichment manifest (`mote.metadata.json`, schema v1) that references CEM
+ * Oddkin enrichment manifest (`oddkin.metadata.json`, schema v1) that references CEM
  * declarations by module path and name. Deterministic: no timestamps, stable ordering.
  */
 import type {
@@ -198,7 +198,7 @@ export function buildMetadata(
   extraction: Extraction,
   paths: ModulePaths,
   library: LibraryInfo,
-  moteVersion: string,
+  oddkinVersion: string,
 ): Record<string, unknown> {
   const components: Record<string, unknown> = {};
   const byClass = new Map<string, ComponentInfo>(
@@ -305,8 +305,8 @@ export function buildMetadata(
     ]),
   );
   return {
-    schema: 'https://mote.dev/schemas/mote-metadata/v1.json',
-    moteVersion,
+    schema: 'https://oddkin.dev/schemas/oddkin-metadata/v1.json',
+    oddkinVersion,
     library,
     components,
     ...optional('recipes', Object.keys(recipes).length ? recipes : undefined),

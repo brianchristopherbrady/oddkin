@@ -1,7 +1,7 @@
-// Minimal production counter: Mote code + registration, nothing else.
-import { MoteElement, define, html, signal } from '@mote/core';
+// Minimal production counter: Oddkin code + registration, nothing else.
+import { OddkinElement, define, html, signal } from '@oddkin/core';
 
-class XCounter extends MoteElement {
+class XCounter extends OddkinElement {
   readonly count = signal(0);
   readonly increment = () => {
     this.count.value++;

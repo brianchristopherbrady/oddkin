@@ -1,5 +1,5 @@
 /**
- * `@mote/core/model` — the unbranded model builder: one definition for types (`Infer`),
+ * `@oddkin/core/model` — the unbranded model builder: one definition for types (`Infer`),
  * runtime validation of external data, migrations, and (via `./model/schema`) JSON Schema.
  * DOM-free. Contract: docs/architecture/data-composition.md §5.
  */

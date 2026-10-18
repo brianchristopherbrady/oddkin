@@ -1,6 +1,6 @@
 # Data-driven composition, collections, and models
 
-Status: §3 (collections) and §5 (models) are **implemented** in `@mote/core` (M3; settled behaviors in §11). Component data APIs, region sources, the `props()` experiment, and composition remain **proposals** for M4+. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
+Status: §3 (collections) and §5 (models) are **implemented** in `@oddkin/core` (M3; settled behaviors in §11). Component data APIs, region sources, the `props()` experiment, and composition remain **proposals** for M4+. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
 
 ## 1. Direction
 
@@ -14,7 +14,7 @@ Data-driven composition is first-class **for structured content**: navigation, m
 ## 2. Component data APIs
 
 ```ts
-import type { NavigationItem } from '@mote/components/side-nav';
+import type { NavigationItem } from '@oddkin/components/side-nav';
 
 const navigation = [
   { id: 'overview', kind: 'link', label: 'Overview', href: '/overview' },
@@ -27,14 +27,14 @@ const navigation = [
 ] satisfies readonly NavigationItem[];
 
 html`
-  <mote-side-nav
+  <odd-side-nav
     label="Primary"
     .items=${navigation}
     .current=${currentId}
-    @mote-action=${(e: MoteActionEvent) => run(e.detail.action, e.detail.id)}
+    @odd-action=${(e: OddkinActionEvent) => run(e.detail.action, e.detail.id)}
   >
     <span slot="header">My application</span>
-  </mote-side-nav>
+  </odd-side-nav>
 `;
 ```
 
@@ -56,7 +56,7 @@ A link without `href`, an action without `action`, or a group without `items` is
 | Transport | Complex objects via JS properties (`.items`). Never JSON in attributes. |
 | Ownership | Components never mutate caller objects. Internal derived state (e.g. flattened index) is private. |
 | Updates | Immutable replacement, same as other properties. Replacing `items` re-reconciles by key; mutating in place is unsupported (dev diagnostic when detectable via dev-only freezing). |
-| Events | Typed user-intent events (`mote-action`, `mote-toggle`, `mote-select`) with `detail: { id, … }`; `bubbles: true, composed: true`; documented `cancelable`. No store or router required. |
+| Events | Typed user-intent events (`odd-action`, `odd-toggle`, `odd-select`) with `detail: { id, … }`; `bubbles: true, composed: true`; documented `cancelable`. No store or router required. |
 | Links | Rendered as native `<a href>`; modified clicks, middle click, `target`, downloads, and context menus behave natively. Routers intercept at the document level as usual. |
 | Defaults | Small and visible: e.g. groups default to collapsed unless they contain `current`; `aria-current="page"` on the current link. Nothing consequential (navigation, actions) happens implicitly. |
 
@@ -75,12 +75,12 @@ Controlled mode: set `.current` (and optionally `.expanded`); the component emit
 Ordinary bindings stay sufficient. A helper is prototyped only to test whether it improves local configuration-object ergonomics:
 
 ```ts
-html`<mote-side-nav ${props({ label: 'Primary', items: navigation, current })}></mote-side-nav>`;
+html`<odd-side-nav ${props({ label: 'Primary', items: navigation, current })}></odd-side-nav>`;
 ```
 
 | Aspect | Proposed contract |
 | --- | --- |
-| Supported keys | Declared public properties of the target element (from its `MoteElement.with()` definition); unknown keys → dev diagnostic. Events are **not** accepted (use `@event`). |
+| Supported keys | Declared public properties of the target element (from its `OddkinElement.with()` definition); unknown keys → dev diagnostic. Events are **not** accepted (use `@event`). |
 | Precedence | Explicit `.prop` / attribute bindings on the same element win over `props()`; within `props()` last write wins. |
 | Removal/reset | A key removed between renders resets that property to its declared default. |
 | Cleanup | No listeners are created; nothing to dispose. Owned by the template part. |
@@ -90,12 +90,12 @@ Decision at M8: keep, rename, or drop based on the ergonomics study.
 
 **M3 assessment** ([research/experiments/props](../../research/experiments/props/README.md)): a prototype on the public directive protocol meets the key, reset, cleanup, upgrade, and readable rows. It cannot use an element position: there is no element part, so it binds as `.props=${…}`. It cannot enforce precedence over explicit bindings: the last change wins. It costs 662 B gzip. Recommendation: not in core for M4–M7. If kept at M8, use the named binding, replace the precedence rule with "do not bind a key both ways", and add a typed `props<typeof Element>()` signature.
 
-## 3. Shared collection infrastructure (`@mote/core/collections`)
+## 3. Shared collection infrastructure (`@oddkin/core/collections`)
 
 DOM-free models plus template integration, shared by navigation, menus, tabs, listboxes, trees, tables, and forms.
 
 ```ts
-import { collection } from '@mote/core/collections';
+import { collection } from '@oddkin/core/collections';
 
 const nav = collection<NavigationItem>({
   key: item => item.id,                              // configurable key extraction
@@ -115,7 +115,7 @@ nav.byKey('theming');     // Entry | undefined
 | Nesting | Optional `children` accessor; parent/depth metadata |
 | Ownership | Each rendered entry gets a child `Scope`; removed entries dispose subscriptions and owned resources |
 | State models | Optional, separately importable: `selectionModel` (none/single/multiple), `expansionModel`, `disabledModel`, `activeModel` (roving focus target) — controlled or uncontrolled |
-| Keyboard | **Not** in the collection. Separate controllers per pattern in `@mote/core/controllers/*` (e.g. `rovingFocus`, `typeahead`), composed by each component according to WAI-ARIA APG: navigation links use Tab order; menus, tabs, listboxes, and trees each use their own model |
+| Keyboard | **Not** in the collection. Separate controllers per pattern in `@oddkin/core/controllers/*` (e.g. `rovingFocus`, `typeahead`), composed by each component according to WAI-ARIA APG: navigation links use Tab order; menus, tabs, listboxes, and trees each use their own model |
 
 ### Cache invalidation
 - An item's rendered output depends on **(key, item object, renderer, and any reactive values read while rendering)**. Item templates are ordinary template parts, so reads of external signals (locale, `current`, a store selector) are tracked and re-run that item's parts when they change, even if the item object is unchanged.
@@ -133,10 +133,10 @@ This ladder applies within levels 2 and 4 of the multi-product customization lad
 ### Region sources
 Each content region declares exactly one authoritative source:
 
-| `mote-side-nav` region | Source | If both supplied |
+| `odd-side-nav` region | Source | If both supplied |
 | --- | --- | --- |
 | `header`, `footer` | Named slots | n/a (slot only) |
-| main list | `items` property **or** declarative children (`<mote-nav-item>` / native `<a>` in the default slot) | `items` wins when it is set (including `[]`); slotted list children are not rendered and a `collection.source.conflict` dev diagnostic is emitted. No merging. |
+| main list | `items` property **or** declarative children (`<odd-nav-item>` / native `<a>` in the default slot) | `items` wins when it is set (including `[]`); slotted list children are not rendered and a `collection.source.conflict` dev diagnostic is emitted. No merging. |
 
 Every collection component documents its regions the same way in metadata.
 
@@ -147,17 +147,17 @@ Every collection component documents its regions the same way in metadata.
 4. **Project item kinds** — explicit registration of new `kind`s with a model fragment and renderer:
 
 ```ts
-import { navigationKinds } from '@mote/components/side-nav';
+import { navigationKinds } from '@oddkin/components/side-nav';
 
 const kinds = navigationKinds.extend({
   'badge-link': {
     model: m.object({ id: m.string(), kind: m.literal('badge-link'), label: m.string(), href: m.url(), count: m.number() }),
     semantics: 'link',                          // reuse the built-in link wrapper and keyboard behavior
-    render: (item) => html`${item.label} <mote-badge>${item.count}</mote-badge>`,
+    render: (item) => html`${item.label} <odd-badge>${item.count}</odd-badge>`,
   },
 });
 
-html`<mote-side-nav .kinds=${kinds} .items=${items}></mote-side-nav>`;
+html`<odd-side-nav .kinds=${kinds} .items=${items}></odd-side-nav>`;
 ```
 
 Registration is per instance (`.kinds`), never a hidden global mutation. Unknown kinds → `model.kind.unknown`.
@@ -167,14 +167,14 @@ Framework-specific render adapters (React/Vue/Angular components as item rendere
 ### Local vs portable
 Functions, DOM nodes, signals, template results, and kind registries are **local JavaScript customization** and are not serializable. Portable configuration (JSON) contains only data allowed by the model's portable schema and references registered behavior by name (`kind`, `action`, recipe/profile/token names).
 
-## 5. Model definitions → types, validation, schema, metadata (`@mote/core/model`)
+## 5. Model definitions → types, validation, schema, metadata (`@oddkin/core/model`)
 
 A small, original, DOM-free model builder is the single source for each data contract.
 
 ```ts
-import { m, defineModel } from '@mote/core/model';
+import { m, defineModel } from '@oddkin/core/model';
 
-export const NavigationItemModel = defineModel('mote.navigation-item', {
+export const NavigationItemModel = defineModel('oddkin.navigation-item', {
   version: 1,
   schema: m.recursive(self =>
     m.union('kind', {
@@ -196,12 +196,12 @@ export type NavigationItem = Infer<typeof NavigationItemModel>;
 | `model.validate(data)` → `{ ok, value, diagnostics }` | Runtime validation of **external** data (TS types do not validate JSON) |
 | `model.toJSONSchema()` | JSON Schema (2020-12) for the portable subset; non-portable fields (functions) are excluded and documented |
 | `model.migrate(data, fromVersion)` | Versioned migrations with diagnostics for unmigratable data |
-| Model metadata | Docs tables, Workbench data editors, `mote.metadata.json` (extracted by `@mote/analyzer`), agent input contracts, deprecations |
+| Model metadata | Docs tables, Workbench data editors, `oddkin.metadata.json` (extracted by `@oddkin/analyzer`), agent input contracts, deprecations |
 
 - **Diagnostics:** JSON-pointer path, code (`model.type.mismatch`, `model.required.missing`, `model.kind.unknown`, `model.variant.unsupported`, `model.ref.invalid`, `model.id.duplicate`, `model.label.empty`, `model.option.incompatible`, `model.version.unsupported`, `model.state.conflict`), message, suggestion.
 - **Component rules** (labels required, incompatible options) live in the model. Schema validity is not proof of accessibility or behavior; browser and accessibility verification still apply.
 - **Validation cost:** components do not validate trusted local data by default in production; development mode validates property assignments; external data is validated explicitly by the application (`model.validate`) or by an opt-in `validate` attribute/property.
-- **Boundaries:** `@mote/core/model` is generic and unbranded. Component models live in `@mote/components/models` (and per-component entries). `@mote/tokens` keeps its own config validator and stays independent. Model metadata is extracted statically by `@mote/analyzer` (the single metadata generator, see [metadata-and-analyzer.md](./metadata-and-analyzer.md)), which calls the DOM-free `@mote/core/model/schema` emitter to publish JSON Schemas — no separate internal generator and no runtime coupling.
+- **Boundaries:** `@oddkin/core/model` is generic and unbranded. Component models live in `@oddkin/components/models` (and per-component entries). `@oddkin/tokens` keeps its own config validator and stays independent. Model metadata is extracted statically by `@oddkin/analyzer` (the single metadata generator, see [metadata-and-analyzer.md](./metadata-and-analyzer.md)), which calls the DOM-free `@oddkin/core/model/schema` emitter to publish JSON Schemas — no separate internal generator and no runtime coupling.
 
 ## 6. Connection to recipes and tokens
 
@@ -213,15 +213,15 @@ export type NavigationItem = Infer<typeof NavigationItemModel>;
 
 | Entry | Contents | In minimal consumers? |
 | --- | --- | --- |
-| `@mote/core/collections` | `collection`, state models | Only if a component uses it |
-| `@mote/core/model` | `m`, `defineModel`, `Infer` | Types only, unless the app validates at runtime |
-| `@mote/core/model/schema` | JSON Schema emitter | No (tooling) |
-| `@mote/components/side-nav` | Element class, `NavigationItem` type, `navigationKinds` | Yes for side-nav users |
-| `@mote/components/models` | Runtime validators and migrations for all component models | No, unless imported |
-| `@mote/components/schemas/*.json` | Generated JSON Schemas | Data |
-| `@mote/components/composition` | Data-composition schema renderer `renderComposition()` (§8, experimental); unrelated to the component-definition composer `compose()` | **Never** unless imported |
+| `@oddkin/core/collections` | `collection`, state models | Only if a component uses it |
+| `@oddkin/core/model` | `m`, `defineModel`, `Infer` | Types only, unless the app validates at runtime |
+| `@oddkin/core/model/schema` | JSON Schema emitter | No (tooling) |
+| `@oddkin/components/side-nav` | Element class, `NavigationItem` type, `navigationKinds` | Yes for side-nav users |
+| `@oddkin/components/models` | Runtime validators and migrations for all component models | No, unless imported |
+| `@oddkin/components/schemas/*.json` | Generated JSON Schemas | Data |
+| `@oddkin/components/composition` | Data-composition schema renderer `renderComposition()` (§8, experimental); unrelated to the component-definition composer `compose()` | **Never** unless imported |
 
-Boundary checks assert that a button-only or side-nav-only consumer contains no `models` validators, JSON Schema emitter, `components/composition` renderer, or `@mote/agent`.
+Boundary checks assert that a button-only or side-nav-only consumer contains no `models` validators, JSON Schema emitter, `components/composition` renderer, or `@oddkin/agent`.
 
 ## 8. Composition schema (later, optional)
 
@@ -231,7 +231,7 @@ Bounded initial contract:
 
 ```json
 {
-  "$schema": "https://…/mote-composition/v1.json",
+  "$schema": "https://…/oddkin-composition/v1.json",
   "version": 1,
   "root": {
     "id": "dashboard",
@@ -239,7 +239,7 @@ Bounded initial contract:
     "recipe": "page-shell",
     "profile": "navigation.compact",
     "regions": {
-      "nav": [{ "id": "primary-nav", "type": "mote-side-nav", "props": { "label": "Primary", "items": { "$ref": "#/data/nav" } } }],
+      "nav": [{ "id": "primary-nav", "type": "odd-side-nav", "props": { "label": "Primary", "items": { "$ref": "#/data/nav" } } }],
       "main": [{ "id": "stats", "type": "pattern.stat-grid", "props": { "source": { "$binding": "stats" } } }]
     }
   },
@@ -252,7 +252,7 @@ Bounded initial contract:
 - **Stable `id`s** for keyed reconciliation and migrations.
 - **References**, not code: `recipe`, `profile`, token names, `$ref` to data, `$binding` / `$action` names resolved by the host application. No executable strings, arbitrary HTML, event-handler attributes, or unrestricted DOM property assignment.
 - **Versioned** with migrations and diagnostics.
-- Rendered with the existing template renderer via `renderComposition(doc, { registry, bindings, actions })`; separately importable from `@mote/components/composition`.
+- Rendered with the existing template renderer via `renderComposition(doc, { registry, bindings, actions })`; separately importable from `@oddkin/components/composition`.
 
 AI support never makes this schema mandatory: agent tooling recommends templates, data models, or hybrids by the §9 criteria and works without the composition schema ([agent-tooling.md](./agent-tooling.md) §8).
 
@@ -269,23 +269,23 @@ AI support never makes this schema mandatory: agent tooling recommends templates
 
 ## 10. Acceptance fixtures
 
-**`mote-side-nav` (navigation collection)** — extends the side-nav fixture in [layout-recipes.md §10](./layout-recipes.md):
+**`odd-side-nav` (navigation collection)** — extends the side-nav fixture in [layout-recipes.md §10](./layout-recipes.md):
 - [ ] Typed local objects compile; invalid combinations fail typecheck; external JSON validated with path-precise diagnostics
 - [ ] Data-driven, declarative children, and hybrid (data + header/footer slots) versions render equivalently; conflict diagnostic when both sources supplied
-- [ ] Controlled and uncontrolled `current`/expansion; `mote-action` events; native link behavior
+- [ ] Controlled and uncontrolled `current`/expansion; `odd-action` events; native link behavior
 - [ ] Insert/remove/reorder keeps focus and DOM identity; external signal change updates items whose object is unchanged
 - [ ] Removed items dispose their scopes; 1,000 mount/unmount cycles return to baseline
 - [ ] Narrow/wide containers, nested themes, profiles
-- [ ] Plain JS and React/Vue/Angular/Svelte consumers without Mote state
+- [ ] Plain JS and React/Vue/Angular/Svelte consumers without Oddkin state
 
-**Editable collection** (`examples/editable-list/`): a reorderable list of items with `mote-input` fields and add/remove, driven by a model and a keyed collection:
+**Editable collection** (`examples/editable-list/`): a reorderable list of items with `odd-input` fields and add/remove, driven by a model and a keyed collection:
 - [ ] Typing in one row survives insertions, removals, and reorder elsewhere; selection/caret preserved
 - [ ] Validation diagnostics map to the right row and field; form submission data is correct
 - [ ] Undo of a removal restores the row with a new scope (no stale subscriptions)
 
 ## 11. Behaviors settled in the M3 implementation
 
-`@mote/core/collections`, `@mote/core/model`, and `@mote/core/model/schema` are implemented (unbranded, DOM-free) and verified; component models, the `props()` helper, and composition remain later work.
+`@oddkin/core/collections`, `@oddkin/core/model`, and `@oddkin/core/model/schema` are implemented (unbranded, DOM-free) and verified; component models, the `props()` helper, and composition remain later work.
 
 - **Collections.** `collection({ key, children?, disabled?, owner?, childrenPath? })` exposes `items`, `flat` (document order with `depth`, `parentKey`, `index`, `position`, `hasChildren`, `disabled`, and a JSON-pointer `path`), `diagnostics`, `byKey`, `childrenOf`, and `ancestorsOf`. Entries keep their identity when key, item, and position are unchanged. Missing and duplicate keys are reported (`collection.key.missing`, `collection.key.duplicate`) with paths, and those items are skipped.
 - **Per-entry ownership.** `scopeFor(key, init?)` returns the entry's scope, disposed when the key leaves or the owner ends. Item templates re-run whenever their entry changes, so one-time setup belongs in `init`, which runs only when the scope is created.

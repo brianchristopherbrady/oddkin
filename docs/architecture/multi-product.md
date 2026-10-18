@@ -2,17 +2,17 @@
 
 Status: **proposal**, except where §1 lists an existing, verified capability. Decision record: [ADR 0033](./decisions/0033-multi-product-foundations.md) (extends [ADR 0026](./decisions/0026-products-and-modes.md)). Planned work: [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §5g. Export names below are illustrative until reconciled with the composition API ADR (M4).
 
-**Contract.** Mote supports shared interaction foundations, product-specific visual implementations, and scoped token themes. Teams reuse supported behavior and templates through public exports. Product implementations keep the documented interaction contracts and pass shared verification fixtures.
+**Contract.** Oddkin supports shared interaction foundations, product-specific visual implementations, and scoped token themes. Teams reuse supported behavior and templates through public exports. Product implementations keep the documented interaction contracts and pass shared verification fixtures.
 
 ## 1. What exists today and what is proposed
 
 | Capability | Status | Evidence / owner |
 | --- | --- | --- |
-| Product scopes in theme config (`products:` → `[data-mote-product="…"]`), alias-closure re-declaration, nesting with mode/density/profile without cross-products | **Implemented** (M2) | theming-and-styling.md §5, §5.1; `packages/tokens/test/generate.browser.test.ts` |
+| Product scopes in theme config (`products:` → `[data-odd-product="…"]`), alias-closure re-declaration, nesting with mode/density/profile without cross-products | **Implemented** (M2) | theming-and-styling.md §5, §5.1; `packages/tokens/test/generate.browser.test.ts` |
 | Product scopes change brand inputs only; product-specific role overrides unsupported; one theme per document | **Current limitation** | theming-and-styling.md §5.1 |
 | `define()` idempotent for the same pair; `registry.collision` for a taken name; `registry.constructorReused` for one class under two names; `static dependencies` registered first | **Implemented** (M3) | `packages/core/src/element/define.ts`; `element.browser.test.ts` |
-| One constructed sheet per style object per document; `flattenStyles` keeps order and drops later duplicates | **Implemented** (M3) | theming-and-styling.md §7; `@mote/core/styles` |
-| `ref()` element references in templates | **Implemented** (M3) | `@mote/core/helpers/ref` |
+| One constructed sheet per style object per document; `flattenStyles` keeps order and drops later duplicates | **Implemented** (M3) | theming-and-styling.md §7; `@oddkin/core/styles` |
+| `ref()` element references in templates | **Implemented** (M3) | `@oddkin/core/helpers/ref` |
 | Products and modes page: absent by default, local/installed/versioned-manifest sources, discovery suggests only, product schema v1 draft | **Designed**; implementation M9 | workbench-pages.md §9; ADR 0026; `docs/schemas/product.v1.schema.json` |
 | `compose()` / `define(definition)`, spread recomposition with `extends` lineage, `registry.definitionConflict` | **Implemented** (M4 runtime and analyzer) | core-contracts.md §1.1; ADR 0036; `definition.browser.test.ts` |
 | Recomposition, layered component exports, foundation entry points, anatomy contracts, component families, product-aware composites, product scale, multi-product metadata and tooling | **Proposed** (this document) | §2–§11 |
@@ -23,13 +23,13 @@ Status: **proposal**, except where §1 lists an existing, verified capability. D
 | --- | --- | --- |
 | **Product** | A stable id (`^[a-z][a-z0-9-]*$`) naming something a company ships. It selects a design language, component family, theme values, and overrides | A repository, package, theme, mode, density, or profile |
 | **Design language** | A coherent visual system: a theme configuration (tokens, presets) plus the visual styles of a component family. Several products may share one | A product |
-| **Component family** | A named mapping from component roles (`button`, `input`, `card`, …) to definitions used together; `@mote/components` is Mote's default family | A package (one package may hold several families, one family may span packages) |
+| **Component family** | A named mapping from component roles (`button`, `input`, `card`, …) to definitions used together; `@oddkin/components` is Oddkin's default family | A package (one package may hold several families, one family may span packages) |
 | **Foundation** | A component's behavior class, template (anatomy), structural styles, and interaction contract, reusable through public exports | A skin |
 | **Visual implementation (skin)** | Visual styles, and optionally an alternative template, composed onto a foundation into a new definition | A theme |
-| **Theme / mode / density / profile** | Scoped token values (existing `data-mote-theme`, `-mode`, `-density`, `-profile` scopes) | A product |
+| **Theme / mode / density / profile** | Scoped token values (existing `data-odd-theme`, `-mode`, `-density`, `-profile` scopes) | A product |
 
 - One product may support several themes and modes; two products may share one design language and family.
-- A design language maps onto the existing `data-mote-theme` scope and a product's values onto the existing `data-mote-product` scope (or onto its own theme). No new CSS scope axis and no runtime provider is required to express these relationships.
+- A design language maps onto the existing `data-odd-theme` scope and a product's values onto the existing `data-odd-product` scope (or onto its own theme). No new CSS scope axis and no runtime provider is required to express these relationships.
 
 | Situation | Shared | Product-specific |
 | --- | --- | --- |
@@ -62,9 +62,9 @@ For components declared **recomposable**, the folder convention ([IMPLEMENTATION
 | Structural styles | Styles the implementation relies on for supported layout or interaction (display, positioning, focus-target sizing, visually-hidden helpers, overflow rules) | `card.structural.styles.ts` | `cardStructuralStyles` |
 | Visual styles | Default presentation: surfaces, colour, typography, borders, radii, elevation, motion, supported layout choices | `card.styles.ts` | `cardStyles` |
 | Definition | Composition of the above plus dependencies | `card.definition.ts` | `cardDefinition` |
-| Theme values | Scoped semantic tokens consumed by components and product styles | `@mote/tokens` output | — |
+| Theme values | Scoped semantic tokens consumed by components and product styles | `@oddkin/tokens` output | — |
 
-- Mote's default components are built from these same public pieces.
+- Oddkin's default components are built from these same public pieces.
 - Structural styles are documented per component. Including them does **not** make arbitrary visual overrides safe; it only preserves the layout and interaction behavior the implementation depends on. They read no brand or visual tokens; they may read component variables with neutral fallbacks and documented layout roles.
 - Only recomposable components export templates and styles, and doing so is a deliberate compatibility commitment covered by M8/M12 rules. Private helpers are never exported as customization APIs.
 
@@ -72,17 +72,17 @@ For components declared **recomposable**, the folder convention ([IMPLEMENTATION
 
 | Entry | Exports | Loads |
 | --- | --- | --- |
-| `@mote/components/card/foundation` | `Card`, `cardTemplate`, `cardStructuralStyles`, anatomy and contract types | Core, the behavior, template, and structural styles only — no default skin, theme generation, catalog, or tooling |
-| `@mote/components/card` | Everything above plus `cardStyles`, `cardDefinition` | Also the default visual styles |
-| `@mote/components/define/card` | Registers `cardDefinition` and its dependencies | The definition graph plus registration |
+| `@oddkin/components/card/foundation` | `Card`, `cardTemplate`, `cardStructuralStyles`, anatomy and contract types | Core, the behavior, template, and structural styles only — no default skin, theme generation, catalog, or tooling |
+| `@oddkin/components/card` | Everything above plus `cardStyles`, `cardDefinition` | Also the default visual styles |
+| `@oddkin/components/define/card` | Registers `cardDefinition` and its dependencies | The definition graph plus registration |
 
 All three are free of registration side effects except the `define` entry. Classes, templates, styles, definitions, `foundation.ts`, and `index.ts` never register anything.
 
 ## 5. Recomposing a definition
 
 ```ts
-import { compose } from '@mote/core/element';
-import { Card, cardDefinition, cardStructuralStyles } from '@mote/components/card';
+import { compose } from '@oddkin/core/element';
+import { Card, cardDefinition, cardStructuralStyles } from '@oddkin/components/card';
 import { studioCardStyles } from './studio-card.styles.js';
 
 export class StudioCard extends Card {}
@@ -183,7 +183,7 @@ Constraints for the selected mechanism:
 - static analyzability and type checking where practical;
 - safe template construction;
 - independent component families on the same page;
-- ordinary use without a global registry provider or Mote application state.
+- ordinary use without a global registry provider or Oddkin application state.
 
 Never tag-name guessing, implicit global substitution, or string replacement of internal tags. Validate with one real composite with product-specific interactive children — the editable list with input rows from the M4 data slice — before expanding.
 

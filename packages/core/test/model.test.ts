@@ -165,7 +165,7 @@ describe('JSON Schema emitter', () => {
   it('emits draft 2020-12 with $defs for recursion and lists unportable rules', () => {
     expect(schema).toMatchObject({
       $schema: 'https://json-schema.org/draft/2020-12/schema',
-      $id: 'https://mote.dev/schemas/models/acme.navigation-item.v2.json',
+      $id: 'https://oddkin.dev/schemas/models/acme.navigation-item.v2.json',
       title: 'acme.navigation-item',
       type: 'array',
       items: { $ref: '#/$defs/NavigationItem' },

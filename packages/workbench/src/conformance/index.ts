@@ -1,5 +1,5 @@
 /**
- * `@mote/workbench/conformance` — portable conformance suites (conformance.v1). DOM-free at
+ * `@oddkin/workbench/conformance` — portable conformance suites (conformance.v1). DOM-free at
  * import: suites are data plus case functions that touch the DOM only when a runner calls them.
  * Contract: docs/architecture/change-impact-and-verification.md §3; ADR 0034.
  */
@@ -47,7 +47,7 @@ export interface ConformanceContext {
   readonly adapter: Adapter;
   /** Mount the implementation in a fresh container owned by this case. */
   mount(options?: MountOptions): Promise<HTMLElement>;
-  /** Live counts of owned work (`scopeStats()` from `@mote/core/scope`). */
+  /** Live counts of owned work (`scopeStats()` from `@oddkin/core/scope`). */
   ownedWork(): Readonly<Record<string, number>>;
   /** Resolve after the current task, letting deferred default actions run. */
   nextTask(): Promise<void>;
@@ -63,7 +63,7 @@ export interface ConformanceCase {
 }
 
 export interface ConformanceSuite {
-  /** Stable suite id, e.g. `mote.button`. */
+  /** Stable suite id, e.g. `oddkin.button`. */
   readonly id: string;
   /** Suite version (semver), tied to the contract version range below. */
   readonly version: string;
@@ -104,7 +104,7 @@ export function checkConformance(suite: ConformanceSuite): WorkbenchDiagnostic[]
   if (!/^component:[a-z][\w.]*-[\w.-]*$/.test(suite.contract.component))
     out.error(
       'conformance.contract.invalid',
-      'Use a component id such as "component:mote-button".',
+      'Use a component id such as "component:odd-button".',
       '/contract/component',
     );
   if (!suite.cases.length) out.error('conformance.cases.empty', 'A suite needs cases.', '/cases');
@@ -124,7 +124,7 @@ export function checkConformance(suite: ConformanceSuite): WorkbenchDiagnostic[]
 /** The serializable `conformance.v1` description of a suite (no functions). */
 export function toConformanceJSON(suite: ConformanceSuite): Record<string, unknown> {
   return {
-    schema: 'https://mote.dev/schemas/conformance/v1.json',
+    schema: 'https://oddkin.dev/schemas/conformance/v1.json',
     id: suite.id,
     version: suite.version,
     contract: { ...suite.contract },
@@ -148,7 +148,7 @@ export interface CaseResult {
 
 /** A `conformance-result.v1` record: evidence for one implementation, configuration, and browser. */
 export interface ConformanceResult {
-  readonly schema: 'https://mote.dev/schemas/conformance-result/v1.json';
+  readonly schema: 'https://oddkin.dev/schemas/conformance-result/v1.json';
   readonly suite: { readonly id: string; readonly version: string };
   readonly implementation: {
     readonly tag: string;

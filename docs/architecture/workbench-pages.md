@@ -1,12 +1,12 @@
 # Workbench pages, navigation, and content
 
-Status: **proposal**, except the page registry (§2), which is implemented as the DOM-free `@mote/workbench/pages` entry in M3 ([packages/workbench](../../packages/workbench/README.md)); the shell and pages are later work. Defines the information architecture and page contracts of a generated Mote Workbench. Detailed control, preview, and Theme Studio behavior: [workbench.md](./workbench.md). Metadata inputs: [metadata-and-analyzer.md](./metadata-and-analyzer.md). Reference observations: [design-system-lab-audit.md](../reference/design-system-lab-audit.md).
+Status: **proposal**, except the page registry (§2), which is implemented as the DOM-free `@oddkin/workbench/pages` entry in M3 ([packages/workbench](../../packages/workbench/README.md)); the shell and pages are later work. Defines the information architecture and page contracts of a generated Oddkin Workbench. Detailed control, preview, and Theme Studio behavior: [workbench.md](./workbench.md). Metadata inputs: [metadata-and-analyzer.md](./metadata-and-analyzer.md). Reference observations: [design-system-lab-audit.md](../reference/design-system-lab-audit.md).
 
 ## 1. Principles
 
 - **Reference structure, project facts.** Workbench reproduces Design System Lab's presentation patterns (§3) with the consuming library's own data and branding. It never hardcodes Design System Lab's name, author, component inventory, taxonomy, token names, values, verification statements, or design decisions.
-- **One reusable application.** Pages are reusable Workbench routes and panels configured by metadata and `mote.config.*` — not a generated application fork per project.
-- **Generated facts are authoritative.** Values and contracts come from the canonical token pipeline (`@mote/tokens/generate` + inspection output) and normalized metadata. Workbench has no second token engine and no separate foundation parser.
+- **One reusable application.** Pages are reusable Workbench routes and panels configured by metadata and `oddkin.config.*` — not a generated application fork per project.
+- **Generated facts are authoritative.** Values and contracts come from the canonical token pipeline (`@oddkin/tokens/generate` + inspection output) and normalized metadata. Workbench has no second token engine and no separate foundation parser.
 - **Honest absence.** A section, card, or page appears only when the library supplies its contracts. Unknown data stays unknown ("Not documented", "No foundation data supplied"); palettes, scales, dates, and claims are never invented.
 
 ## 2. Page registry
@@ -15,7 +15,7 @@ One registry is the single source for routes, primary navigation, contextual sid
 
 ```ts
 interface PageEntry {
-  id: string;                          // stable: 'foundations/spacing', 'components/mote-button', 'theme-studio'
+  id: string;                          // stable: 'foundations/spacing', 'components/odd-button', 'theme-studio'
   route: string;                       // relative to base path: '/foundations/spacing'
   section: 'home' | 'foundations' | 'components' | 'theme-studio' | 'products' | 'guides' | string;
   kind: 'overview' | 'foundation' | 'component' | 'tool' | 'guide';
@@ -50,7 +50,7 @@ interface SectionEntry { id: string; title: string; visible: boolean; source: 'g
 | Content column | Readable measure for prose; wide tables and specimens may span the content area; restrained borders and surfaces |
 | Overview grids | Card grids via container queries: 3 columns wide, 2 medium, 1 narrow |
 
-- All shell styling comes from Mote tokens and the Workbench's own theme; project branding (name, logo, accent, fonts) is configurable.
+- All shell styling comes from Oddkin tokens and the Workbench's own theme; project branding (name, logo, accent, fonts) is configurable.
 - **Shell appearance is separate from preview appearance.** The header appearance control themes the shell only. Previews have their own settings (theme, mode, product, density, direction, width) and never restyle the shell; the shell never restyles previews except when a preview is explicitly set to "Same as site".
 - Accessibility: landmarks, one H1 per page, logical heading order, visible focus, `aria-current` on active nav items, keyboard-operable disclosures, frame titles, reduced motion, forced colors, 200%/400% zoom, narrow reflow.
 
@@ -84,7 +84,7 @@ Eyebrow "Foundations", title, summary, "All foundations" link, contextual sideba
 | Borders and radii | Widths, styles, colour roles, radii, component mappings | Border widths and styles · Border colour roles · Radii · Component mappings · Samples |
 | Elevation | Shadow definitions, levels/roles, theme variations | Levels · Theme variations · Surface specimens |
 | Motion | Durations, easings, semantic roles, reduced-motion behavior | Durations and easing · Roles · Try a duration (interactive demo honoring reduced motion) · Reduced motion |
-| Themes | Themes and modes, scope contracts, composition/override rules | Available themes and modes · Scope contract (`data-mote-*`) · Composition and precedence · Comparisons · Usage snippets · Link to Theme Studio |
+| Themes | Themes and modes, scope contracts, composition/override rules | Available themes and modes · Scope contract (`data-odd-*`) · Composition and precedence · Comparisons · Usage snippets · Link to Theme Studio |
 | Responsive behavior | Conditions, thresholds, profiles, responsive roles, recipes | Which query to use · Conditions and thresholds (Target · Condition · Why · Where) · Profiles · Responsive roles · Recipes · Resize a container (interactive) · Reflow and overflow |
 
 ### 5.3 Spacing — reference vertical slice
@@ -173,15 +173,15 @@ Examples, behavior, accessibility and keyboard contracts, methods, events, slots
 - **Product identity is distinct** from mode (light/dark), theme, density, and responsive profiles. The page shows each product's overrides relative to the base, composed with selectable mode/density/profile, using the canonical generator and isolated previews.
 
 ```ts
-// mote.config.ts (illustrative)
+// oddkin.config.ts (illustrative)
 export default defineWorkbenchConfig({
   products: {
     enabled: true,
     placement: ['foundations'],
     sources: [
-      { id: 'clinic', from: { theme: './mote.theme.ts', product: 'clinic' } },                // product defined in the local theme config
-      { id: 'portal', from: { package: '@acme/portal-theme' } },                               // installed package exporting a Mote product manifest
-      { id: 'kiosk', from: { manifest: 'https://cdn.acme.dev/kiosk/mote.product.v2.json', version: '2.x' } }, // versioned manifest, fetched at build time
+      { id: 'clinic', from: { theme: './oddkin.theme.ts', product: 'clinic' } },                // product defined in the local theme config
+      { id: 'portal', from: { package: '@acme/portal-theme' } },                               // installed package exporting an Oddkin product manifest
+      { id: 'kiosk', from: { manifest: 'https://cdn.acme.dev/kiosk/oddkin.product.v2.json', version: '2.x' } }, // versioned manifest, fetched at build time
     ],
     discovery: { workspace: true },     // produce suggestions only
   },
@@ -190,7 +190,7 @@ export default defineWorkbenchConfig({
 
 - **Product definition**: id, label, description, theme/config reference, token overrides, density/profile defaults, applicable components, examples, authored comparison guidance — validated against a versioned product schema.
 - **Sources**: local workspace package, installed package, or an explicitly configured versioned manifest/config file (local path or URL). Other product repositories need not be checked out. Remote manifests are fetched at **build time** and snapshotted into the static build; published apps make no runtime cross-origin fetches. Unavailable, invalid, or incompatible sources produce diagnostics and are omitted, not guessed.
-- **Workspace discovery** (Node): inspects workspace declarations, dependency relationships, and explicit Mote metadata (`mote.product` in a package's manifest/enrichment, or a product entry in theme config) and reports **suggested** product mappings with reasons. Tooling, documentation apps, tests, examples, and internal packages are excluded by default; no package becomes a product without explicit configuration. Discovery never publishes a page.
+- **Workspace discovery** (Node): inspects workspace declarations, dependency relationships, and explicit Oddkin metadata (`oddkin.product` in a package's manifest/enrichment, or a product entry in theme config) and reports **suggested** product mappings with reasons. Tooling, documentation apps, tests, examples, and internal packages are excluded by default; no package becomes a product without explicit configuration. Discovery never publishes a page.
 - Reuses existing generation, scope, and preview contracts; works in static deployment.
 - **Any number of products** (planned, [multi-product.md](./multi-product.md) §3, §10): no fixed comparison slots or product-count assumptions. The product picker is searchable, and the user chooses which products to compare. Only chosen previews mount, and implementation assets load per product on demand. The page remains absent unless enabled, whether there is one product or many. Products may name their design language, component family, and foundation compatibility (additive `product.v1` fields, M9).
 
@@ -198,9 +198,9 @@ export default defineWorkbenchConfig({
 
 | Layer | Source | Role |
 | --- | --- | --- |
-| 1. Built-in copy | `@mote/workbench/content` (localizable message catalog) | Generic explanations of recurring concepts (semantic tokens, spacing scales, typography, elevation, motion, themes, responsive layout). Phrased conditionally and never asserting facts about the library |
+| 1. Built-in copy | `@oddkin/workbench/content` (localizable message catalog) | Generic explanations of recurring concepts (semantic tokens, spacing scales, typography, elevation, motion, themes, responsive layout). Phrased conditionally and never asserting facts about the library |
 | 2. Generated facts | Normalized metadata + token inspection output | Values, names, counts, ranges, tables, aliases, contracts — authoritative |
-| 3. Authored guidance | Typed `mote.docs.ts` and/or Markdown files with front matter keyed by page/section id | Titles, summaries, introductions, section guidance, examples, tags, ordering, visibility, updated dates |
+| 3. Authored guidance | Typed `oddkin.docs.ts` and/or Markdown files with front matter keyed by page/section id | Titles, summaries, introductions, section guidance, examples, tags, ordering, visibility, updated dates |
 
 - **Precedence**: authored overrides built-in copy for prose and presentation (titles, summaries, intros, ordering, visibility, tags); generated facts always win for values and contracts. Prose cannot redefine spacing, colours, or component APIs. Authored text that references a generated fact uses an interpolation token (e.g. `{{spacing.stepCount}}`) rather than a literal copy.
 - **Stability**: authored content is keyed by stable page/section ids and is never overwritten by regeneration. Unknown ids produce diagnostics (`content.page.unknown`, `content.section.unknown`); renamed ids are handled by declared aliases/migrations in the content schema.
@@ -211,7 +211,7 @@ export default defineWorkbenchConfig({
 ## 11. Standard-CEM-only libraries
 
 - Components catalog and component detail pages work at the documented baseline.
-- Foundations shows only what a supplied Mote theme config, token files, or explicit adapter provides; otherwise the Foundations destination shows a single explanatory "No foundation data supplied" page with setup guidance, not empty tables. Unknown foundation data is never invented.
+- Foundations shows only what a supplied Oddkin theme config, token files, or explicit adapter provides; otherwise the Foundations destination shows a single explanatory "No foundation data supplied" page with setup guidance, not empty tables. Unknown foundation data is never invented.
 
 ## 12. Acceptance (Workbench pages)
 

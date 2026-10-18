@@ -1,12 +1,16 @@
-# Mote
+# Oddkin
 
-Mote is a modular frontend framework built on custom elements and browser APIs. It includes:
+Oddkin is a modular frontend framework built on custom elements and browser APIs. It includes:
 
-- **`@mote/core`** — authoring foundation: reactive primitives, ownership (`Scope`), templates, styles, layout recipes, collections, and models.
-- **`@mote/tokens`** — theme configuration and a deterministic token pipeline that emits CSS, SCSS, JSON, and TypeScript. Use the tokens with plain CSS and no Mote JavaScript.
-- **`@mote/components`** — accessible, themeable custom elements that work in plain HTML or in any framework.
-- **`@mote/state`** and **`@mote/app`** — optional stores, context, routing, and async resources.
-- **Optional tooling** — `@mote/analyzer` (metadata), `@mote/workbench` (generated documentation, interactive component pages, Theme Studio), and `@mote/agent` (IDE agent support).
+- **`@oddkin/core`** — authoring foundation: reactive primitives, ownership (`Scope`), templates, styles, layout recipes, collections, and models.
+- **`@oddkin/tokens`** — theme configuration and a deterministic token pipeline that emits CSS, SCSS, JSON, and TypeScript. Use the tokens with plain CSS and no Oddkin JavaScript.
+- **`@oddkin/components`** — accessible, themeable custom elements that work in plain HTML or in any framework.
+- **`@oddkin/state`** and **`@oddkin/app`** — optional stores, context, routing, and async resources.
+- **Optional tooling** — `@oddkin/analyzer` (metadata), `@oddkin/workbench` (generated documentation, interactive component pages, Theme Studio), and `@oddkin/agent` (IDE agent support).
+
+## Names
+
+Packages are published under `@oddkin/*`; elements use the `odd-` prefix (`<odd-button>`), CSS custom properties `--odd-*`, and theme scopes `data-odd-*`; command-line tools are `oddkin`, `oddkin-tokens`, `oddkin-analyze`, and `oddkin-agent`. See [ADR 0037](./docs/architecture/decisions/0037-naming-contract.md).
 
 ## Status
 
@@ -16,8 +20,8 @@ Early development. The repository holds the implementation plan, architecture re
 
 | Path | Contents |
 | --- | --- |
-| `packages/*` | `@mote/core`, `@mote/tokens`, `@mote/state`, `@mote/app`, `@mote/components` |
-| `apps/docs` | Mote's product documentation application (private) |
+| `packages/*` | `@oddkin/core`, `@oddkin/tokens`, `@oddkin/state`, `@oddkin/app`, `@oddkin/components` |
+| `apps/docs` | Oddkin's product documentation application (private) |
 | `examples/` | Consumers that run without a bundler (`plain-html`) |
 | `docs/architecture/` | Architecture documents and [decision records](./docs/architecture/decisions/README.md) |
 | `docs/research/`, `docs/reference/` | Ecosystem research and the reference-application audit |

@@ -1,5 +1,5 @@
 /**
- * Conformance suite for the `mote-button` foundation contract. Implementation-agnostic: it
+ * Conformance suite for the `odd-button` foundation contract. Implementation-agnostic: it
  * reaches the element only through its tag, public properties, native events, and the
  * documented `control` anatomy role (a native, focusable `<button>`).
  */
@@ -18,10 +18,10 @@ const countClicks = (host: HTMLElement) => {
 type ButtonLike = HTMLElement & Record<string, unknown>;
 
 export const buttonConformance = defineConformance({
-  id: 'mote.button',
+  id: 'oddkin.button',
   version: '0.1.0',
-  contract: { component: 'component:mote-button', versions: '0.x' },
-  description: 'Interaction contract shared by mote-button and its product implementations.',
+  contract: { component: 'component:odd-button', versions: '0.x' },
+  description: 'Interaction contract shared by odd-button and its product implementations.',
   requires: {
     properties: [
       'appearance',
@@ -225,7 +225,7 @@ export const buttonConformance = defineConformance({
       async run(ctx) {
         const host = await ctx.mount({ content: 'Save' });
         const before = control(ctx, host);
-        (host.parentElement as HTMLElement).style.setProperty('--mote-button-radius', '0px');
+        (host.parentElement as HTMLElement).style.setProperty('--odd-button-radius', '0px');
         await ctx.adapter.settle(host);
         ctx.expect(control(ctx, host)).toBe(before);
         ctx.expect(getComputedStyle(before).borderTopLeftRadius).toBe('0px');

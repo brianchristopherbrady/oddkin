@@ -1,6 +1,6 @@
 {
-  "schema": "https://mote.dev/schemas/mote-metadata/v1.json",
-  "moteVersion": "0.0.0",
+  "schema": "https://oddkin.dev/schemas/oddkin-metadata/v1.json",
+  "oddkinVersion": "0.0.0",
   "library": {
     "name": "core-counter",
     "version": "0.0.0",

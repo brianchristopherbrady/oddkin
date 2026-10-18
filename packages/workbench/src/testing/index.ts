@@ -1,9 +1,9 @@
 /**
- * `@mote/workbench/testing` — run examples and conformance suites inside the project's own
+ * `@oddkin/workbench/testing` — run examples and conformance suites inside the project's own
  * browser test runner. The runner's `expect` and user-input API are passed in, so this entry
  * depends on no test framework. Contract: change-impact-and-verification.md §3.
  */
-import { scopeStats } from '@mote/core/scope';
+import { scopeStats } from '@oddkin/core/scope';
 import type {
   Adapter,
   CaseResult,
@@ -93,7 +93,7 @@ export async function runConformance(
     }
   }
   return {
-    schema: 'https://mote.dev/schemas/conformance-result/v1.json',
+    schema: 'https://oddkin.dev/schemas/conformance-result/v1.json',
     suite: { id: suite.id, version: suite.version },
     implementation: { tag: options.tag, ...options.implementation },
     configuration: { ...options.configuration },

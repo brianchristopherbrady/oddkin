@@ -1,8 +1,8 @@
 {
-  "name": "@mote/core",
+  "name": "@oddkin/core",
   "version": "0.0.0",
   "private": true,
-  "description": "Authoring foundation: reactive primitives, Scope, MoteElement, templates, styles, layout recipes, collections, models, registration.",
+  "description": "Authoring foundation: reactive primitives, Scope, OddkinElement, templates, styles, layout recipes, collections, models, registration.",
   "type": "module",
   "sideEffects": false,
   "exports": {

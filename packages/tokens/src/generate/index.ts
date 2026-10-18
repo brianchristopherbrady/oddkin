@@ -1,5 +1,5 @@
 /**
- * `@mote/tokens/generate` — the only token engine. Pure, deterministic, DOM-free, and
+ * `@oddkin/tokens/generate` — the only token engine. Pure, deterministic, DOM-free, and
  * free of Node APIs, so the CLI, a browser, and a Worker produce identical bytes.
  */
 import { emitCss } from './css.js';

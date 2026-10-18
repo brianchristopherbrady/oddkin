@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tokens, CSS only — @mote/tokens without JavaScript</title>
+    <title>Tokens, CSS only — @oddkin/tokens without JavaScript</title>
     <link rel="stylesheet" href="./generated/harbor.css" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -21,17 +21,17 @@
         <button type="button" class="action">Primary action</button>
       </section>
 
-      <section class="panel" id="dark-panel" data-mote-mode="dark" aria-labelledby="dark-heading">
+      <section class="panel" id="dark-panel" data-odd-mode="dark" aria-labelledby="dark-heading">
         <h2 id="dark-heading">Explicit dark mode</h2>
-        <p>Set with <code>data-mote-mode="dark"</code>.</p>
+        <p>Set with <code>data-odd-mode="dark"</code>.</p>
         <button type="button" class="action">Primary action</button>
 
-        <div class="panel" id="dark-product-panel" data-mote-product="lighthouse">
+        <div class="panel" id="dark-product-panel" data-odd-product="lighthouse">
           <h3>Product inside dark mode</h3>
           <p>The product changes brand references; mode-dependent roles re-resolve here.</p>
           <button type="button" class="action">Lighthouse action</button>
 
-          <div class="panel" id="dark-product-light-panel" data-mote-mode="light">
+          <div class="panel" id="dark-product-light-panel" data-odd-mode="light">
             <h4>Light mode inside the product</h4>
             <button type="button" class="action">Lighthouse action</button>
           </div>
@@ -41,7 +41,7 @@
       <section
         class="panel"
         id="compact-panel"
-        data-mote-density="compact"
+        data-odd-density="compact"
         aria-labelledby="compact-heading"
       >
         <h2 id="compact-heading">Compact density</h2>
@@ -51,15 +51,15 @@
       <section
         class="panel"
         id="profile-panel"
-        data-mote-profile="layout.compact"
+        data-odd-profile="layout.compact"
         aria-labelledby="profile-heading"
       >
         <h2 id="profile-heading">Profile</h2>
         <p>
-          <code>data-mote-profile="layout.compact"</code> overrides layout roles (gap and inset) and
+          <code>data-odd-profile="layout.compact"</code> overrides layout roles (gap and inset) and
           the roles that reference them.
         </p>
-        <div class="panel" id="profile-compact-panel" data-mote-density="compact">
+        <div class="panel" id="profile-compact-panel" data-odd-density="compact">
           <h3>Compact density inside the profile</h3>
           <p>The profile still applies inside a nested scope.</p>
           <button type="button" class="action">Action</button>

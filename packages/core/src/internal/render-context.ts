@@ -1,5 +1,5 @@
 /**
- * Render-phase marker shared by DOM and DOM-free modules (no DOM access). `MoteElement`
+ * Render-phase marker shared by DOM and DOM-free modules (no DOM access). `OddkinElement`
  * increments it around `render()` so definition-time APIs can diagnose calls made
  * during rendering.
  * @internal

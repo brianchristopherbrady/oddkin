@@ -1,12 +1,12 @@
 # Agent tooling, generated agent kits, and shared metadata contracts
 
-Status: **proposal**. `@mote/agent` is optional, development-only, and not implemented. Nothing here is a browser runtime feature. §3.2 separates what exists today from what needs extension and what remains proposed. Decision record: [ADR 0032](./decisions/0032-generated-agent-kits.md) (extends [ADR 0022](./decisions/0022-agent-boundaries.md)).
+Status: **proposal**. `@oddkin/agent` is optional, development-only, and not implemented. Nothing here is a browser runtime feature. §3.2 separates what exists today from what needs extension and what remains proposed. Decision record: [ADR 0032](./decisions/0032-generated-agent-kits.md) (extends [ADR 0022](./decisions/0022-agent-boundaries.md)).
 
 ## 1. Purpose and central outcome
 
-**A team adopting Mote can generate accurate, version-aware agent support for its own library from the same authoritative inputs used by its documentation and Workbench.**
+**A team adopting Oddkin can generate accurate, version-aware agent support for its own library from the same authoritative inputs used by its documentation and Workbench.**
 
-Every library built with Mote can generate its own versioned **agent kit** from its component metadata, configuration, authored guidance, and examples. The kit describes the consuming team's own:
+Every library built with Oddkin can generate its own versioned **agent kit** from its component metadata, configuration, authored guidance, and examples. The kit describes the consuming team's own:
 
 - package names and public exports;
 - component names, prefixes, and APIs;
@@ -15,11 +15,11 @@ Every library built with Mote can generate its own versioned **agent kit** from 
 - examples, fixtures, composition patterns, and design guidance;
 - repository conventions and available verification commands.
 
-It must let an assistant work correctly even when it starts with no prior knowledge of Mote or of the consuming library.
+It must let an assistant work correctly even when it starts with no prior knowledge of Oddkin or of the consuming library.
 
-Help developers use their **existing** IDE agent and model with accurate, project-specific knowledge of Mote: the installed versions, public metadata, theme configuration, custom tokens, recipes, and extensions. Generic documentation is a fallback, not the source of truth. Mote tooling supplies contracts, deterministic operations, and evidence; the developer's model does the reasoning.
+Help developers use their **existing** IDE agent and model with accurate, project-specific knowledge of Oddkin: the installed versions, public metadata, theme configuration, custom tokens, recipes, and extensions. Generic documentation is a fallback, not the source of truth. Oddkin tooling supplies contracts, deterministic operations, and evidence; the developer's model does the reasoning.
 
-AI support is optional developer tooling. Ordinary component consumers never need agent tooling, Workbench, Mote state, application services, or a hosted AI service.
+AI support is optional developer tooling. Ordinary component consumers never need agent tooling, Workbench, Oddkin state, application services, or a hosted AI service.
 
 ## 2. Package boundaries
 
@@ -27,32 +27,32 @@ AI support is optional developer tooling. Ordinary component consumers never nee
 | --- | --- |
 | Dev-only | Installed as a dev dependency. Browser packages and deployed apps never import it; the boundary check fails if any browser entry or the docs app's runtime graph reaches it. |
 | Node-only | All entry points may use `node:*`. |
-| Reads, never loads, browser code | Inspects metadata files (`custom-elements.json`, `mote.metadata.json`, token inspection JSON, recipe contracts) produced by `@mote/analyzer` (or calls its Node API), and calls DOM-free entries (`@mote/tokens/generate`, `@mote/core/layout/inspect`). It never imports element modules. |
+| Reads, never loads, browser code | Inspects metadata files (`custom-elements.json`, `oddkin.metadata.json`, token inspection JSON, recipe contracts) produced by `@oddkin/analyzer` (or calls its Node API), and calls DOM-free entries (`@oddkin/tokens/generate`, `@oddkin/core/layout/inspect`). It never imports element modules. |
 | No bundled model | Uses whatever agent/model the developer's IDE provides. No network calls of its own. No mandatory hosted model, embedding service, or vector index; search is deterministic over local metadata. |
 | Local first | Every lookup works offline from the workspace and installed packages. Remote documentation may supplement local context only when requested, and only when its version matches the installed package; it is labelled as remote. |
 | Independent of Workbench | Agent-kit generation reads analyzer outputs, theme configuration, authored content, and example files. It never requires building, serving, or publishing the Workbench application. |
-| No second analyzer | Uses `@mote/analyzer` outputs or its Node API; never re-parses component sources itself. |
-| Dependencies | May depend on `@mote/tokens` (Node + DOM-free entries) and read other packages' published metadata files by path through their `exports`. The optional MCP adapter is isolated in its own entry; whether it uses a third-party protocol SDK (dev-only) or an original implementation is decided by ADR. |
+| No second analyzer | Uses `@oddkin/analyzer` outputs or its Node API; never re-parses component sources itself. |
+| Dependencies | May depend on `@oddkin/tokens` (Node + DOM-free entries) and read other packages' published metadata files by path through their `exports`. The optional MCP adapter is isolated in its own entry; whether it uses a third-party protocol SDK (dev-only) or an original implementation is decided by ADR. |
 
 ## 3. Shared contracts (generated from authoritative definitions)
 
 | Contract | Source of truth | File / format |
 | --- | --- | --- |
-| Components: tag, class, imports, registration entry, properties, attributes, events + detail, slots, parts, CSS custom properties | `MoteElement.with()` definitions + component definition metadata | Custom Elements Manifest `custom-elements.json` (for everything CEM represents) |
-| Tokens: names, categories, types, aliases, defaults, provenance, deprecations | Resolved token graph | `@mote/tokens/json/<theme>.inspect.json` |
-| Recipes: regions, helpers, variants, conditions, profiles, parts, containers, layer order | Recipe definitions via `describeRecipe` | `mote.metadata.json` |
-| Conditions and profiles | Theme configuration | `mote.metadata.json` + token inspection JSON |
-| Accessibility and lifecycle requirements, keyboard behavior, form participation | Component definitions | `mote.metadata.json` (CEM extension fields where appropriate) |
-| Executable examples and supported migration mappings | Docs examples and migration tests | `mote.metadata.json` references to example files |
-| Data models: kinds, fields, rules, portable subset, versions, migrations, deprecations, region sources | `defineModel` definitions ([data-composition.md](./data-composition.md) §5) | `mote.metadata.json` + `@mote/components/schemas/*.json` |
-| Registered project item kinds and composition types | Project registrations | Project-level `mote.metadata.json` generated by the same generator |
-| Authored examples, preview roles, Theme Studio config schema and saved compositions | `defineExamples`, `mote.config.*`, theme config | `mote.metadata.json` + Workbench config schema ([workbench.md](./workbench.md)) |
+| Components: tag, class, imports, registration entry, properties, attributes, events + detail, slots, parts, CSS custom properties | `OddkinElement.with()` definitions + component definition metadata | Custom Elements Manifest `custom-elements.json` (for everything CEM represents) |
+| Tokens: names, categories, types, aliases, defaults, provenance, deprecations | Resolved token graph | `@oddkin/tokens/json/<theme>.inspect.json` |
+| Recipes: regions, helpers, variants, conditions, profiles, parts, containers, layer order | Recipe definitions via `describeRecipe` | `oddkin.metadata.json` |
+| Conditions and profiles | Theme configuration | `oddkin.metadata.json` + token inspection JSON |
+| Accessibility and lifecycle requirements, keyboard behavior, form participation | Component definitions | `oddkin.metadata.json` (CEM extension fields where appropriate) |
+| Executable examples and supported migration mappings | Docs examples and migration tests | `oddkin.metadata.json` references to example files |
+| Data models: kinds, fields, rules, portable subset, versions, migrations, deprecations, region sources | `defineModel` definitions ([data-composition.md](./data-composition.md) §5) | `oddkin.metadata.json` + `@oddkin/components/schemas/*.json` |
+| Registered project item kinds and composition types | Project registrations | Project-level `oddkin.metadata.json` generated by the same generator |
+| Authored examples, preview roles, Theme Studio config schema and saved compositions | `defineExamples`, `oddkin.config.*`, theme config | `oddkin.metadata.json` + Workbench config schema ([workbench.md](./workbench.md)) |
 
-All contracts are produced by `@mote/analyzer` ([metadata-and-analyzer.md](./metadata-and-analyzer.md)); every fact carries provenance (`extracted` / `authored` / `observed` / `verified`), which the agent reports when citing it.
+All contracts are produced by `@oddkin/analyzer` ([metadata-and-analyzer.md](./metadata-and-analyzer.md)); every fact carries provenance (`extracted` / `authored` / `observed` / `verified`), which the agent reports when citing it.
 
-- **Versioned Mote schema:** `mote.metadata.json` carries `"schema": "https://…/mote-metadata/v1.json"` and `"moteVersion"`. Breaking schema changes bump the major version; tools state which versions they read.
-- Each package publishes its own metadata file through `exports` (e.g. `@mote/components/mote.metadata.json`). Application-level custom components can generate the same files with the shared generator.
-- The docs app, Workbench (including its integrated component examples and Theme Studio), and `@mote/agent` all read these same files. Contract tests ensure implementation, metadata, and docs agree.
+- **Versioned Oddkin schema:** `oddkin.metadata.json` carries `"schema": "https://…/oddkin-metadata/v1.json"` and `"oddkinVersion"`. Breaking schema changes bump the major version; tools state which versions they read.
+- Each package publishes its own metadata file through `exports` (e.g. `@oddkin/components/oddkin.metadata.json`). Application-level custom components can generate the same files with the shared generator.
+- The docs app, Workbench (including its integrated component examples and Theme Studio), and `@oddkin/agent` all read these same files. Contract tests ensure implementation, metadata, and docs agree.
 
 ### 3.1 Agent-facing contract coverage
 
@@ -60,7 +60,7 @@ Agent-facing contracts are **views of the normalized metadata model** ([metadata
 
 | Fact (where known) | Source | Status |
 | --- | --- | --- |
-| Component identity, package and version | CEM declaration + `mote.metadata.json` `library` | Extracted today (M3) |
+| Component identity, package and version | CEM declaration + `oddkin.metadata.json` `library` | Extracted today (M3) |
 | Public imports and registration entries | `exports` → module map; `registration` specifier | Extracted today for `define(tag, Class)`; `compose()` / `define(definition)` recognition planned (M4) |
 | Properties, attributes, types, defaults, conversion, reflection | `prop.*` definitions | Extracted today |
 | Rich-object assignment and serialization requirements (property-only, no attribute, not reflected, JSON not parsed from attributes) | `prop.object`/`prop.array` kind + absent attribute | Kind extracted today; explicit "assign as a property" fact planned (M4) |
@@ -77,38 +77,38 @@ Rules:
 
 - Provenance stays explicit: *extracted* (static analysis), *authored* (guidance, JSDoc, explicit metadata, examples), *observed* (recorded runtime inspection), *verified* (a passing test). A `verified` fact names its conditions: test id, run, date, package version, browser engines and versions.
 - Unresolved information is a value (`{ known: false }` or an `unresolved` diagnostic). Accessibility guarantees, intended usage, and complete behavior are never inferred from names or types.
-- The analyzer's no-execution guarantee holds. Dynamic expressions produce `analyzer.dynamic.*` diagnostics or use the existing explicit-metadata mechanism (`@mote-metadata`).
-- Standard CEM remains the interoperable output; Mote-specific facts stay in the separately versioned enrichment.
+- The analyzer's no-execution guarantee holds. Dynamic expressions produce `analyzer.dynamic.*` diagnostics or use the existing explicit-metadata mechanism (`@oddkin-metadata`).
+- Standard CEM remains the interoperable output; Oddkin-specific facts stay in the separately versioned enrichment.
 
 ### 3.2 What exists, what needs extension, what is proposed
 
 | Area | Exists and verified | Needs extension | Proposed |
 | --- | --- | --- | --- |
-| Metadata | `@mote/analyzer` (M3): CEM + `mote.metadata.json` v1, stable ids, provenance, unknowns, `analyzer.dynamic.*`, explicit JSON metadata, no execution | `compose()` / `define(definition)` recognition by following imports and definitions; rich-property, event-intent, dependency, contract-reference, deprecation and migration fields; `verified` conditions | Agent contract bundles (analyzer output 5) |
-| Examples | `@mote/workbench/examples`: `defineExamples` typed from `HTMLElementTagNameMap`, `examples.v1`, `checkExamples` | Incorrect examples with explanations and expected diagnostics; checks against public exports and packed packages | Kit references generated from examples |
-| Pages and content | `@mote/workbench/pages`, `./config`, `defineDocs` | Validation of API references inside authored guidance | Clean Markdown pages and `llms.txt` in static docs builds |
-| Diagnostics | Five shapes sharing `code`, `severity`, `message`, a location (`path` or `source`), and an optional `suggestion`: tokens `Diagnostic`, `AnalyzerDiagnostic`, `ModelDiagnostic`, `WorkbenchDiagnostic`, `CollectionDiagnostic`; core `MoteError` codes | Optional envelope fields (§9.1) | `diagnostic.v1` schema |
+| Metadata | `@oddkin/analyzer` (M3): CEM + `oddkin.metadata.json` v1, stable ids, provenance, unknowns, `analyzer.dynamic.*`, explicit JSON metadata, no execution | `compose()` / `define(definition)` recognition by following imports and definitions; rich-property, event-intent, dependency, contract-reference, deprecation and migration fields; `verified` conditions | Agent contract bundles (analyzer output 5) |
+| Examples | `@oddkin/workbench/examples`: `defineExamples` typed from `HTMLElementTagNameMap`, `examples.v1`, `checkExamples` | Incorrect examples with explanations and expected diagnostics; checks against public exports and packed packages | Kit references generated from examples |
+| Pages and content | `@oddkin/workbench/pages`, `./config`, `defineDocs` | Validation of API references inside authored guidance | Clean Markdown pages and `llms.txt` in static docs builds |
+| Diagnostics | Five shapes sharing `code`, `severity`, `message`, a location (`path` or `source`), and an optional `suggestion`: tokens `Diagnostic`, `AnalyzerDiagnostic`, `ModelDiagnostic`, `WorkbenchDiagnostic`, `CollectionDiagnostic`; core `OddkinError` codes | Optional envelope fields (§9.1) | `diagnostic.v1` schema |
 | Agent tooling | Nothing | — | Project context, agent kit, operations, CLI, MCP adapter, preview feedback, evaluation |
 
 ## 4. Project context and freshness
 
 `resolveProjectContext(root)` (Node) resolves the consuming workspace's **actual** installation and configuration:
 
-- installed Mote and library package versions, and the compatibility ranges they declare;
+- installed Oddkin and library package versions, and the compatibility ranges they declare;
 - available public exports and registration entries;
 - project-owned components and their dependencies;
 - the active token configuration and supported theme axes (themes, modes, density, profiles);
 - available recipes, conditions, examples, and fixtures;
 - repository component conventions (folder structure per [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3, or colocated), detected from real files and imports rather than file names alone;
-- relevant build, validation, browser, and test commands from `package.json` scripts and Mote config.
+- relevant build, validation, browser, and test commands from `package.json` scripts and Oddkin config.
 
-It also reports which **capability paths** are in use (core-only authoring, token-only consumption, components without Mote state, applications using optional services). Guidance and suggestions stay inside those paths; for example, a components-only consumer is never told to adopt `@mote/state`.
+It also reports which **capability paths** are in use (core-only authoring, token-only consumption, components without Oddkin state, applications using optional services). Guidance and suggestions stay inside those paths; for example, a components-only consumer is never told to adopt `@oddkin/state`.
 
-**Freshness.** Every generated artifact carries a fingerprint: generator name and version, schema version, installed package versions, and a content hash of its inputs (metadata files, theme config, authored content, example files). `mote-agent kit --check` recomputes it; a mismatch reports `agent.kit.stale` with the changed inputs and the refresh command, and exits non-zero in CI. Every operation result states its `source` (package, version, metadata path, fingerprint) and `freshness` (`current`, `stale`, or `unknown`). Current website documentation is never silently substituted for an older installed API.
+**Freshness.** Every generated artifact carries a fingerprint: generator name and version, schema version, installed package versions, and a content hash of its inputs (metadata files, theme config, authored content, example files). `oddkin-agent kit --check` recomputes it; a mismatch reports `agent.kit.stale` with the changed inputs and the refresh command, and exits non-zero in CI. Every operation result states its `source` (package, version, metadata path, fingerprint) and `freshness` (`current`, `stale`, or `unknown`). Current website documentation is never silently substituted for an older installed API.
 
 ## 5. Generated agent kit
 
-`mote-agent kit` (and the `./kit` API) writes a versioned kit from the library's own inputs. It works without Workbench.
+`oddkin-agent kit` (and the `./kit` API) writes a versioned kit from the library's own inputs. It works without Workbench.
 
 ```text
 agent-kit/
@@ -134,7 +134,7 @@ agent-kit/
   - thin IDE-specific instruction adapters generated from the same kit.
 - **Discovery.** Docs static builds may publish clean Markdown pages and an [`llms.txt`](https://llmstxt.org/) index built from the kit. Loading behavior depends on the client: publishing a file does not mean every assistant reads it. The docs list which clients were tested and how each loads the kit.
 - **Small entry guide.** The entry guide has a recorded size budget. Operations return targeted references instead of requiring the whole library documentation in every context window.
-- **Mote uses its own kit.** `@mote/components` publishes a kit, and the Mote repository's own agent guidance comes from the same generator.
+- **Oddkin uses its own kit.** `@oddkin/components` publishes a kit, and the Oddkin repository's own agent guidance comes from the same generator.
 - **Products (planned, [multi-product.md](./multi-product.md) §10).** Lookups and references take an optional `product`. Results cover only that product's family, tokens, styles, templates, and dependencies, and state which foundation each component uses, which customization level fits a request, and which contracts and checks must be preserved. Per-product references are produced on demand, never for every product × mode × density combination.
 
 ## 6. Operations
@@ -143,7 +143,7 @@ One set of deterministic operations, used by both human CLI commands and agent t
 
 | Operation | Purpose |
 | --- | --- |
-| `inspectProject()` | Installed Mote package versions, entry points in use, theme config location, custom metadata sources |
+| `inspectProject()` | Installed Oddkin package versions, entry points in use, theme config location, custom metadata sources |
 | `getComponent(tag)` / `getRecipe(name)` / `getToken(name)` / `getProfile(name)` | Exact contracts from the installed metadata |
 | `searchContracts(query)` | Find components, tokens, recipes by name/category; never invents names |
 | `explainConfig(path)` | Explain a theme configuration option, defaults, precedence, current value and provenance |
@@ -157,7 +157,7 @@ One set of deterministic operations, used by both human CLI commands and agent t
 | `planMigration(source)` (extended) | Also: repetitive markup → supported model + data; or the reverse (model → plain template) when a schema would be harder to maintain |
 | `mapPreviewRoles(library)` | Identify components compatible with Theme Studio specimen roles from declared capabilities/adapters, with diagnostics |
 | `verifyExport(config)` | Regenerate outputs with the canonical generator and run the independent-consumer check |
-| `suggestProducts()` | Run the same workspace product discovery as `mote workbench products --discover`; returns suggestions with reasons, never enables products |
+| `suggestProducts()` | Run the same workspace product discovery as `oddkin workbench products --discover`; returns suggestions with reasons, never enables products |
 | `explainPage(id)` | Explain which generated facts, built-in copy, and authored content produce a Workbench page/section, and which content key would fill a "Not documented" gap |
 
 Schema validity reported by these tools is never presented as proof of accessibility, application behavior, or design quality; `runChecks` and browser fixtures supply that evidence.
@@ -184,7 +184,7 @@ Results are structured JSON with source references (file, metadata path, version
 
 - **Bounded responses:** limits and cursors, stable ids, and links to expanded detail; never the whole catalog by default.
 - **One implementation:** the CLI (`--json` for machine-readable output, readable terminal output by default) and the MCP adapter call the same operations.
-- **MCP:** each tool declares an `inputSchema` and an `outputSchema` (JSON Schema 2020-12) and returns `structuredContent`. Invalid input or business-rule failures are tool execution errors (`isError: true`) carrying Mote diagnostics, so the model can correct itself ([MCP tools](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/server/tools.mdx)). The protocol revision is pinned in the M11 adapter ADR.
+- **MCP:** each tool declares an `inputSchema` and an `outputSchema` (JSON Schema 2020-12) and returns `structuredContent`. Invalid input or business-rule failures are tool execution errors (`isError: true`) carrying Oddkin diagnostics, so the model can correct itself ([MCP tools](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/server/tools.mdx)). The protocol revision is pinned in the M11 adapter ADR.
 - **Reviewable changes:** scaffolding and migrations return a patch and file list, default to dry run, and re-check their preconditions (expected file content hashes, installed versions) before applying. Nothing is applied silently.
 
 ## 7. Executable examples as shared evidence
@@ -224,7 +224,7 @@ References are generated from the consuming project's actual inventory and confi
 ### 9.1 Diagnostic envelope (planned; extends the existing shapes)
 
 ```ts
-interface MoteDiagnostic {
+interface OddkinDiagnostic {
   code: string;                                   // stable, e.g. 'analyzer.dynamic.tagName'
   severity: 'error' | 'warning' | 'info';
   kind?: 'error' | 'recommendation' | 'unresolved';
@@ -240,7 +240,7 @@ interface MoteDiagnostic {
 }
 ```
 
-- Existing fields keep their names and every new field is optional, so the token, analyzer, model, and Workbench shapes already conform; `CollectionDiagnostic` needs a `severity` added. Core `MoteError` codes map onto `code`.
+- Existing fields keep their names and every new field is optional, so the token, analyzer, model, and Workbench shapes already conform; `CollectionDiagnostic` needs a `severity` added. Core `OddkinError` codes map onto `code`.
 - Errors, recommendations, and unresolved analysis are distinguished; stylistic preferences are recommendations, never invalid code.
 - Production diagnostics stay lightweight (codes only, [ADR 0031](./decisions/0031-dev-prod-builds-and-size-budget.md)); detailed inspection is development tooling.
 
@@ -264,12 +264,12 @@ Rules:
 ## 10. Layers and entry points (proposed)
 
 ```text
-@mote/agent
+@oddkin/agent
   ./operations    deterministic Node functions above (the only place logic lives)
   ./context       project context, capability paths, fingerprints and freshness (§4)
   ./kit           agent-kit generator: entry guide, references, JSON, Agent Skills packaging,
                   managed AGENTS.md section, llms.txt index (§5)
-  ./cli           `mote-agent` bin; human-readable and --json output of the same operations
+  ./cli           `oddkin-agent` bin; human-readable and --json output of the same operations
   ./instructions  thin IDE-specific instruction adapters generated from ./kit
   ./mcp           optional MCP server adapter exposing operations as tools
 ```
@@ -285,10 +285,10 @@ Representative tasks, run against the side-navigation fixture and the theming sl
 | Implementation | Build a responsive side navigation using the installed recipe API and components |
 | Theme configuration | Add a product theme with a compact navigation profile |
 | Explanation | Explain why a nested scope's action colour did not change |
-| Migration | Convert a Lit element with a decorator property and a task to Mote |
+| Migration | Convert a Lit element with a decorator property and a task to Oddkin |
 | Data composition | Generate valid `NavigationItem[]` with a project-registered kind; convert repetitive nav markup to the model; decide data vs template for a one-off layout |
 
-Additional reproducible tasks, run against Mote itself **and** against at least one consuming fixture library with a different prefix, packages, and theme configuration:
+Additional reproducible tasks, run against Oddkin itself **and** against at least one consuming fixture library with a different prefix, packages, and theme configuration:
 
 - consume a component from public package exports;
 - author a component in the repository's file structure;
@@ -329,6 +329,6 @@ Tasks and fixture configurations are held out from kit authoring. Example validi
 - Entry-guide size budget and how it is measured.
 - Preview driver for `inspectPreview` (Workbench dev server frames vs a project browser-automation tool).
 - Deterministic ranking for `findComponents` without embeddings.
-- ~~Where the metadata generator lives~~ — **resolved:** `@mote/analyzer` is the single generator; `@mote/agent` only reads or calls its API.
+- ~~Where the metadata generator lives~~ — **resolved:** `@oddkin/analyzer` is the single generator; `@oddkin/agent` only reads or calls its API.
 
 Research: [CEM schema](https://github.com/webcomponents/custom-elements-manifest), [CEM analyzer](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/), [Agent Skills](https://agentskills.io/specification), [AGENTS.md](https://agents.md/), [llms.txt](https://llmstxt.org/), [MCP tools (2026-07-28)](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2026-07-28/server/tools.mdx), [Web Awesome agent skills](https://webawesome.com/docs/ai/agent-skills), [Angular CLI MCP](https://angular.dev/ai/mcp), [shadcn registry MCP](https://ui.shadcn.com/docs/registry/mcp) — register entries R33–R41 in [synthesis.md](../research/synthesis.md). These are implementation references; comparative claims require the §11 evidence.

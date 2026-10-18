@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/conformance/v1.json",
-  "title": "Mote conformance suite v1",
+  "$id": "https://oddkin.dev/schemas/conformance/v1.json",
+  "title": "Oddkin conformance suite v1",
   "description": "DRAFT (ADR 0034). Serializable description of a portable conformance suite: the contract it verifies, required public capabilities, and its cases. Case functions are not serialized.",
   "type": "object",
   "required": [
@@ -15,7 +15,7 @@
   "additionalProperties": false,
   "properties": {
     "schema": {
-      "const": "https://mote.dev/schemas/conformance/v1.json"
+      "const": "https://oddkin.dev/schemas/conformance/v1.json"
     },
     "id": {
       "type": "string",

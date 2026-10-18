@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Enforces Mote package boundaries on manifests, sources, and built artifacts.
+// Enforces Oddkin package boundaries on manifests, sources, and built artifacts.
 // Rules and rationale: docs/architecture/packages.md. Configuration: ./boundaries.config.mjs.
 import { spawnSync } from 'node:child_process';
 import { readdir, readFile, stat } from 'node:fs/promises';
@@ -166,10 +166,10 @@ export async function checkBoundaries(root, options = {}) {
     };
     graph.set(
       pkg.name,
-      Object.keys(runtimeDeps).filter((dep) => dep.startsWith('@mote/')),
+      Object.keys(runtimeDeps).filter((dep) => dep.startsWith('@oddkin/')),
     );
     for (const dep of Object.keys(runtimeDeps)) {
-      if (dep.startsWith('@mote/')) {
+      if (dep.startsWith('@oddkin/')) {
         if (!rule.allow.includes(dep)) {
           report('boundary.dependency.forbidden', `${pkg.name} may not depend on ${dep}.`, {
             file: manifestFile,
@@ -182,7 +182,7 @@ export async function checkBoundaries(root, options = {}) {
           `${pkg.name} ships browser code and may not have the third-party runtime dependency "${dep}".`,
           {
             file: manifestFile,
-            fix: 'Implement it in Mote or move it to devDependencies if it is build-time only.',
+            fix: 'Implement it in Oddkin or move it to devDependencies if it is build-time only.',
           },
         );
       }
@@ -218,7 +218,7 @@ export async function checkBoundaries(root, options = {}) {
               },
             );
           }
-        } else if (spec.startsWith('@mote/')) {
+        } else if (spec.startsWith('@oddkin/')) {
           const target = packageNameOf(spec);
           if (target === pkg.name) continue;
           if (!rule.allow.includes(target)) {
@@ -351,7 +351,7 @@ async function walkArtifact(file, chain, seen, byName, config, report, rel) {
       report('boundary.artifact.nodeBuiltin', `Browser entry reaches Node built-in: ${path}.`, {
         file: rel(file),
       });
-    } else if (spec.startsWith('@mote/')) {
+    } else if (spec.startsWith('@oddkin/')) {
       const target = packageNameOf(spec);
       const targetPkg = byName.get(target);
       const targetRule = config.packages[target];
@@ -433,7 +433,7 @@ async function isRegistrationModule(path) {
   if (DEFINE_ENTRY.test(path)) return true;
   return DEFINE_CANDIDATE.test(path) && REGISTERS.test(await readFile(path, 'utf8'));
 }
-// Package registration subpaths, e.g. `@mote/components/define/button`.
+// Package registration subpaths, e.g. `@oddkin/components/define/button`.
 const REGISTRATION_SPECIFIER = /^(?:@[^/]+\/)?[^/.@][^/]*\/define(?:\/|$)/;
 
 async function resolveSource(spec, from) {

@@ -1,5 +1,5 @@
 /**
- * `@mote/core/model/schema` — JSON Schema (draft 2020-12) for a model's portable subset.
+ * `@oddkin/core/model/schema` — JSON Schema (draft 2020-12) for a model's portable subset.
  * Tooling only; component bundles never import it. Rules that JSON Schema cannot express
  * (e.g. unique ids across a tree) are listed in `$comment`.
  */
@@ -12,7 +12,7 @@ const SCRIPT_URL_GUARD =
   '^(?![\\u0000-\\u0020]*(?:[jJ]\\s*[aA]\\s*[vV]\\s*[aA]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT]|[vV]\\s*[bB]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT])\\s*:)';
 
 export interface SchemaOptions {
-  /** `$id` for the document. Default `https://mote.dev/schemas/models/<name>.v<version>.json`. */
+  /** `$id` for the document. Default `https://oddkin.dev/schemas/models/<name>.v<version>.json`. */
   readonly id?: string;
 }
 
@@ -101,7 +101,7 @@ export function toJSONSchema(model: Model, options: SchemaOptions = {}): JSONSch
   const root = emit(model.schema);
   return {
     $schema: 'https://json-schema.org/draft/2020-12/schema',
-    $id: options.id ?? `https://mote.dev/schemas/models/${model.name}.v${model.version}.json`,
+    $id: options.id ?? `https://oddkin.dev/schemas/models/${model.name}.v${model.version}.json`,
     title: model.name,
     ...(model.description ? { description: model.description } : {}),
     ...(model.rules.length

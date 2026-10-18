@@ -1,8 +1,8 @@
 {
-  "name": "mote-workspace",
+  "name": "oddkin-workspace",
   "private": true,
   "type": "module",
-  "description": "Mote: a modular Web Component framework, design system, token pipeline, and documentation tooling.",
+  "description": "Oddkin: a modular Web Component framework, design system, token pipeline, and documentation tooling.",
   "workspaces": [
     "packages/*",
     "apps/*"

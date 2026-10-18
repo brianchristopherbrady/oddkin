@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { MoteError, setErrorHandler, type ErrorContext } from '../src/diagnostics/index.js';
+import { OddkinError, setErrorHandler, type ErrorContext } from '../src/diagnostics/index.js';
 import {
   compose,
   define,
   isElementDefinition,
-  MoteElement,
+  OddkinElement,
   prop,
   type ElementDefinition,
 } from '../src/element/index.js';
@@ -42,13 +42,13 @@ const codeOf = (run: () => unknown) => {
   try {
     run();
   } catch (error) {
-    return (error as MoteError).code;
+    return (error as OddkinError).code;
   }
   return undefined;
 };
 
 // A behavior class with no render() and no styles; template and styles live outside it.
-class Card extends MoteElement.with({
+class Card extends OddkinElement.with({
   heading: prop.string({ default: 'Title', attribute: 'heading' }),
 }) {
   readonly count = signal(0);
@@ -123,7 +123,7 @@ describe('external templates', () => {
   });
 
   it('track .value reads like render(): a tracked read re-runs the template once per batch', async () => {
-    class Tracked extends MoteElement {
+    class Tracked extends OddkinElement {
       readonly a = signal(1);
       readonly b = signal(2);
       runs = 0;
@@ -165,7 +165,7 @@ describe('definition styles', () => {
   });
 
   it('replace the class static styles; a definition without styles uses them', () => {
-    class Styled extends MoteElement {
+    class Styled extends OddkinElement {
       static override styles = css`
         :host {
           display: inline-block;
@@ -253,7 +253,7 @@ describe('registration of definitions', () => {
   });
 
   it('reports a different class for a taken name and leaves the registry unchanged', () => {
-    class Other extends MoteElement {}
+    class Other extends OddkinElement {}
     const taken = compose({ name: cardDefinition.name, element: Other });
     expect(codeOf(() => define(taken))).toBe('registry.collision');
     expect(customElements.get(cardDefinition.name)).toBe(Card);
@@ -263,8 +263,8 @@ describe('registration of definitions', () => {
   });
 
   it('registers dependencies first and upgrades existing elements with the definition', () => {
-    class Child extends MoteElement {}
-    class Parent extends MoteElement {}
+    class Child extends OddkinElement {}
+    class Parent extends OddkinElement {}
     const childDefinition = compose({
       name: tag('demo-child'),
       element: Child,
@@ -284,7 +284,7 @@ describe('registration of definitions', () => {
   });
 
   it('reports a template that replaces render()', () => {
-    class Both extends MoteElement {
+    class Both extends OddkinElement {
       protected override render() {
         return html`<p>render</p>`;
       }
@@ -298,7 +298,7 @@ describe('registration of definitions', () => {
 
 describe('ownership with external templates', () => {
   it('connection-owned work returns to baseline across reconnects', async () => {
-    class Listening extends MoteElement {
+    class Listening extends OddkinElement {
       clicks = 0;
       protected override connected(scope: Scope): void {
         scope.listen(document, 'click', () => this.clicks++);

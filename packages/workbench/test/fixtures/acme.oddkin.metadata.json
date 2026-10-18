@@ -1,6 +1,6 @@
 {
-  "schema": "https://mote.dev/schemas/mote-metadata/v1.json",
-  "moteVersion": "0.0.0",
+  "schema": "https://oddkin.dev/schemas/oddkin-metadata/v1.json",
+  "oddkinVersion": "0.0.0",
   "library": {
     "name": "@acme/ui",
     "version": "1.4.0",
@@ -54,7 +54,7 @@
     "category:layout": { "label": "Layout", "order": 2 }
   },
   "products": {
-    "product:clinic": { "id": "clinic", "source": "./mote.theme.ts#clinic" }
+    "product:clinic": { "id": "clinic", "source": "./oddkin.theme.ts#clinic" }
   },
   "docs": {
     "foundations/spacing": {

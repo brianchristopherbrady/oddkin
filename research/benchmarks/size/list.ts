@@ -1,13 +1,13 @@
 // Collections + keyed repeat for a data-driven list (what a navigation component would add).
-import { MoteElement, define, html, repeat } from '@mote/core';
-import { collection } from '@mote/core/collections';
+import { OddkinElement, define, html, repeat } from '@oddkin/core';
+import { collection } from '@oddkin/core/collections';
 
 interface Item {
   id: string;
   label: string;
 }
 
-class XList extends MoteElement.with({}) {
+class XList extends OddkinElement.with({}) {
   readonly items = collection<Item>({ key: (item) => item.id });
   protected override render() {
     return html`<ul>

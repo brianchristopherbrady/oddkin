@@ -1,13 +1,13 @@
 /**
- * Shared diagnostics for Mote packages. DOM-free.
+ * Shared diagnostics for Oddkin packages. DOM-free.
  *
- * Every Mote error carries a stable `code` so documentation, tests, and tooling
+ * Every Oddkin error carries a stable `code` so documentation, tests, and tooling
  * can refer to it. Errors that cannot be thrown to a caller (for example, an
  * effect failing during a scheduled flush) go to one configurable handler.
  */
 
-/** An error raised by Mote with a stable, documented code. */
-export class MoteError extends Error {
+/** An error raised by Oddkin with a stable, documented code. */
+export class OddkinError extends Error {
   readonly code: string;
 
   /**
@@ -19,7 +19,7 @@ export class MoteError extends Error {
       `[${code}] ${message || 'Use the development build (the "development" export condition) for details.'}`,
       options,
     );
-    this.name = 'MoteError';
+    this.name = 'OddkinError';
     this.code = code;
   }
 }
@@ -38,7 +38,7 @@ const defaultHandler: ErrorHandler = (error, context) => {
   const report = (globalThis as { reportError?: (error: unknown) => void }).reportError;
   if (typeof report === 'function') report(error);
   else
-    console.error(`Mote ${context.code}${context.origin ? ` in ${context.origin}` : ''}:`, error);
+    console.error(`Oddkin ${context.code}${context.origin ? ` in ${context.origin}` : ''}:`, error);
 };
 
 let handler: ErrorHandler = defaultHandler;
@@ -54,10 +54,10 @@ export function setErrorHandler(next: ErrorHandler | undefined): ErrorHandler {
 }
 
 /** Report an error through the configured handler. Never throws. */
-export function reportMoteError(error: unknown, context: ErrorContext): void {
+export function reportOddkinError(error: unknown, context: ErrorContext): void {
   try {
     handler(error, context);
   } catch (handlerError) {
-    console.error('Mote error handler failed:', handlerError, 'while reporting:', error);
+    console.error('Oddkin error handler failed:', handlerError, 'while reporting:', error);
   }
 }

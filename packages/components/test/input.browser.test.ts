@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
-import { flush } from '@mote/core/reactive';
-import { scopeStats } from '@mote/core/scope';
-import type { MoteInput } from '../src/input/input.js';
+import { flush } from '@oddkin/core/reactive';
+import { scopeStats } from '@oddkin/core/scope';
+import type { OddkinInput } from '../src/input/input.js';
 
 let container: HTMLElement;
 beforeEach(() => {
@@ -23,7 +23,7 @@ const settle = async (el: { updateComplete: Promise<void> }) => {
 async function mount(markup: string) {
   await import('../src/input/input.define.js');
   container.innerHTML = markup;
-  const el = container.querySelector('mote-input') as MoteInput;
+  const el = container.querySelector('odd-input') as OddkinInput;
   await settle(el);
   const control = el.shadowRoot!.querySelector('input')!;
   const part = (name: string) => el.shadowRoot!.querySelector<HTMLElement>(`[part="${name}"]`)!;
@@ -34,21 +34,21 @@ describe('imports', () => {
   it('the foundation and the component entry register nothing', async () => {
     const foundation = await import('../src/input/foundation.js');
     expect(Object.keys(foundation).sort()).toEqual([
-      'MoteInput',
+      'OddkinInput',
       'changeEvent',
       'inputEvent',
       'inputStructuralStyles',
       'inputTemplate',
     ]);
     await import('../src/input/index.js');
-    expect(customElements.get('mote-input')).toBeUndefined();
+    expect(customElements.get('odd-input')).toBeUndefined();
   });
 });
 
-describe('mote-input', () => {
+describe('odd-input', () => {
   it('labels the native input and describes it with description and error', async () => {
     const { el, control, part } = await mount(
-      '<mote-input label="Email" description="We never share it."></mote-input>',
+      '<odd-input label="Email" description="We never share it."></odd-input>',
     );
     expect(part('label').getAttribute('for')).toBe('control');
     expect(control.labels?.[0]?.textContent).toBe('Email');
@@ -62,7 +62,7 @@ describe('mote-input', () => {
   });
 
   it('treats the value attribute as defaultValue until the value is set or typed', async () => {
-    const { el, control } = await mount('<mote-input label="Name" value="Ada"></mote-input>');
+    const { el, control } = await mount('<odd-input label="Name" value="Ada"></odd-input>');
     expect(el.value).toBe('Ada');
     expect(control.value).toBe('Ada');
     el.setAttribute('value', 'Grace');
@@ -81,18 +81,18 @@ describe('mote-input', () => {
     await import('../src/input/input.define.js');
     // Elements parsed in a <template> are not upgraded until adopted into this document.
     const template = document.createElement('template');
-    template.innerHTML = '<mote-input label="Late"></mote-input>';
+    template.innerHTML = '<odd-input label="Late"></odd-input>';
     const early = template.content.firstElementChild as HTMLElement & { value?: string };
     early.value = 'early';
     container.append(early);
-    const upgraded = early as MoteInput;
+    const upgraded = early as OddkinInput;
     await settle(upgraded);
     expect(upgraded.value).toBe('early');
     expect(upgraded.shadowRoot!.querySelector('input')!.value).toBe('early');
   });
 
   it('typing updates value, keeps the caret, and dispatches input once and change at the host', async () => {
-    const { el, control } = await mount('<mote-input label="Name" value="Ada"></mote-input>');
+    const { el, control } = await mount('<odd-input label="Name" value="Ada"></odd-input>');
     const events: string[] = [];
     el.addEventListener('input', () => events.push(`input:${el.value}`));
     el.addEventListener('change', (e) => events.push(`change:${e.composed}`));
@@ -109,7 +109,7 @@ describe('mote-input', () => {
   });
 
   it('programmatic value changes dispatch no events', async () => {
-    const { el } = await mount('<mote-input label="Name"></mote-input>');
+    const { el } = await mount('<odd-input label="Name"></odd-input>');
     const events: string[] = [];
     for (const type of ['input', 'change']) el.addEventListener(type, () => events.push(type));
     el.value = 'set';
@@ -122,7 +122,7 @@ describe('mote-input', () => {
 describe('forms', () => {
   it('submits name=value, validates required and type, and supports custom errors', async () => {
     const { el, control } = await mount(
-      '<form><mote-input label="Email" name="email" type="email" required></mote-input></form>',
+      '<form><odd-input label="Email" name="email" type="email" required></odd-input></form>',
     );
     const form = container.querySelector('form')!;
     expect(el.form).toBe(form);
@@ -147,7 +147,7 @@ describe('forms', () => {
 
   it('shows aria-invalid only after a failed validity check or leaving the field', async () => {
     const { el, control } = await mount(
-      '<form><mote-input label="Email" name="email" required></mote-input></form>',
+      '<form><odd-input label="Email" name="email" required></odd-input></form>',
     );
     expect(el.validity.valid).toBe(false);
     expect(control.hasAttribute('aria-invalid')).toBe(false);
@@ -163,7 +163,7 @@ describe('forms', () => {
 
   it('reset restores defaultValue; a disabled fieldset disables and excludes it', async () => {
     const { el, control } = await mount(
-      '<form><fieldset><mote-input label="Name" name="n" value="Ada"></mote-input></fieldset></form>',
+      '<form><fieldset><odd-input label="Name" name="n" value="Ada"></odd-input></fieldset></form>',
     );
     const form = container.querySelector('form')!;
     el.value = 'changed';
@@ -178,10 +178,10 @@ describe('forms', () => {
     expect([...new FormData(form)]).toEqual([]);
   });
 
-  it('typing then submitting sends the typed value through a mote-button', async () => {
+  it('typing then submitting sends the typed value through an odd-button', async () => {
     await import('../src/button/button.define.js');
     const { el, control } = await mount(
-      '<form><mote-input label="Name" name="n"></mote-input><mote-button type="submit">Go</mote-button></form>',
+      '<form><odd-input label="Name" name="n"></odd-input><odd-button type="submit">Go</odd-button></form>',
     );
     const form = container.querySelector('form')!;
     const data: [string, FormDataEntryValue][][] = [];
@@ -191,7 +191,7 @@ describe('forms', () => {
     });
     await userEvent.click(control);
     await userEvent.keyboard('Ada');
-    await userEvent.click(container.querySelector('mote-button')!);
+    await userEvent.click(container.querySelector('odd-button')!);
     // The button submits after the click's dispatch (a task later); wait for it under load.
     await expect.poll(() => data.length).toBe(1);
     expect(el.value).toBe('Ada');
@@ -201,7 +201,7 @@ describe('forms', () => {
 
 describe('ownership', () => {
   it('returns to baseline after reconnects', async () => {
-    const { el } = await mount('<mote-input label="Name"></mote-input>');
+    const { el } = await mount('<odd-input label="Name"></odd-input>');
     const before = scopeStats();
     for (let i = 0; i < 10; i++) {
       el.remove();

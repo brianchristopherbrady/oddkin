@@ -3,7 +3,7 @@
  * no library facts. Moves to the localizable `./content` catalog with the shell (M5).
  */
 
-/** Foundation ids (mote-metadata v1) → page slug and title, in default order. */
+/** Foundation ids (oddkin-metadata v1) → page slug and title, in default order. */
 export const FOUNDATIONS: readonly { id: string; slug: string; title: string }[] = [
   { id: 'tokens', slug: 'token-architecture', title: 'Token architecture' },
   { id: 'color', slug: 'color', title: 'Color' },

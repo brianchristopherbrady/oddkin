@@ -1,7 +1,7 @@
 {
-  "schema": "https://mote.dev/schemas/conformance-result/v1.json",
+  "schema": "https://oddkin.dev/schemas/conformance-result/v1.json",
   "suite": {
-    "id": "mote.button",
+    "id": "oddkin.button",
     "version": "0.1.0"
   },
   "implementation": {

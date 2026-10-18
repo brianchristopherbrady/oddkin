@@ -1,5 +1,5 @@
 {
-  "name": "@mote/tokens",
+  "name": "@oddkin/tokens",
   "version": "0.0.0",
   "private": true,
   "description": "Theme configuration, pure token generation, and CSS/SCSS/JSON/TS outputs. Browser entry points are DOM-free.",
@@ -44,7 +44,7 @@
     "README.md"
   ],
   "bin": {
-    "mote-tokens": "./dist/node/bin.js"
+    "oddkin-tokens": "./dist/node/bin.js"
   },
   "engines": {
     "node": ">=24.12"

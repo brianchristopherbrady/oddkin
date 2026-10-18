@@ -1,6 +1,6 @@
-import { MoteElement, event, prop } from '@mote/core/element';
-import { computed, signal, type Readable } from '@mote/core/reactive';
-import type { Scope } from '@mote/core/scope';
+import { OddkinElement, event, prop } from '@oddkin/core/element';
+import { computed, signal, type Readable } from '@oddkin/core/reactive';
+import type { Scope } from '@oddkin/core/scope';
 
 /** Native `input` events cross the shadow boundary once; declared here for metadata and sync. */
 export const inputEvent = event('input', {
@@ -32,10 +32,10 @@ const VALIDITY_FLAGS = [
  * @csspart description - Help text, referenced by `aria-describedby`.
  * @csspart control - The native `<input>`.
  * @csspart error - The error message, referenced by `aria-describedby`.
- * @cssprop --mote-input-height - Minimum height (never below the target-size token).
- * @cssprop --mote-input-radius - Corner radius.
- * @cssprop --mote-input-border-color - Border colour.
- * @cssprop --mote-input-background - Background colour.
+ * @cssprop --odd-input-height - Minimum height (never below the target-size token).
+ * @cssprop --odd-input-radius - Corner radius.
+ * @cssprop --odd-input-border-color - Border colour.
+ * @cssprop --odd-input-background - Background colour.
  * @a11y `label` names the native input inside the shadow root; a `<label for>` outside it cannot. Description and error are announced through `aria-describedby`; `aria-invalid` is set for `error`, or for an invalid value after the user leaves the field or a validity check fails (any `invalid` event, including `checkValidity()`, unlike native `:user-invalid`); reset clears it.
  * @keyboard Native text-input behavior.
  * @previewRole textInput
@@ -44,7 +44,7 @@ const VALIDITY_FLAGS = [
  * @limitation Validation bubbles anchor to the inner input. `formStateRestoreCallback` restores the value; autofill depends on the inner input's `autocomplete`.
  * @category Forms
  */
-export class MoteInput extends MoteElement.with({
+export class OddkinInput extends OddkinElement.with({
   label: prop.string({ default: '', description: 'Visible label; names the control.' }),
   description: prop.string({ default: '', description: 'Help text below the label.' }),
   error: prop.string({
@@ -159,7 +159,7 @@ export class MoteInput extends MoteElement.with({
         this.internals.setFormValue(value);
         this.#validate();
       },
-      { phase: 'post', name: '<mote-input> validity' },
+      { phase: 'post', name: '<odd-input> validity' },
     );
   }
 
@@ -196,6 +196,6 @@ export class MoteInput extends MoteElement.with({
 
 declare global {
   interface HTMLElementTagNameMap {
-    'mote-input': MoteInput;
+    'odd-input': OddkinInput;
   }
 }

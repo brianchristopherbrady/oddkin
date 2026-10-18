@@ -1,5 +1,5 @@
-import { html, when } from '@mote/core';
-import { styleMap } from '@mote/core/helpers/style-map';
+import { html, when } from '@oddkin/core';
+import { styleMap } from '@oddkin/core/helpers/style-map';
 import type { DemoGreeting } from './demo-greeting.js';
 
 const toneColors = { plain: 'currentcolor', warm: '#9a3412', formal: '#1e3a5f' } as const;

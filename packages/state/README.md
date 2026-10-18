@@ -1,4 +1,4 @@
-# @mote/state
+# @oddkin/state
 
 Optional stores, selectors, context, persistence, and inspection.
 

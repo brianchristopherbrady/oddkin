@@ -2,7 +2,7 @@
 // unrelated work keeps running, and failed bindings recover when their inputs recover.
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { setErrorHandler, type ErrorContext } from '../src/diagnostics/index.js';
-import { define, MoteElement, prop } from '../src/element/index.js';
+import { define, OddkinElement, prop } from '../src/element/index.js';
 import { computed, flush, signal } from '../src/reactive/index.js';
 import { observerCount } from '../src/reactive/graph.js';
 import { scopeStats } from '../src/scope/scope.js';
@@ -37,7 +37,7 @@ function mount<E extends HTMLElement>(name: string): E {
 
 describe('failure paths', () => {
   it('conversion: an invalid attribute reports, falls back to the default, and later values work', () => {
-    class Sized extends MoteElement.with({ size: prop.number({ default: 1 }) }) {
+    class Sized extends OddkinElement.with({ size: prop.number({ default: 1 }) }) {
       protected override render() {
         return html`<p>${this.size}</p>`;
       }
@@ -60,7 +60,7 @@ describe('failure paths', () => {
       if (n.value > 2) throw new Error('too big');
       return n.value * 10;
     });
-    class Derived extends MoteElement {
+    class Derived extends OddkinElement {
       protected override render() {
         return html`<p>${checked.value}</p>`;
       }
@@ -86,7 +86,7 @@ describe('failure paths', () => {
       if (n.value > 2) throw new Error('too big');
       return n.value;
     });
-    class Direct extends MoteElement {
+    class Direct extends OddkinElement {
       renders = 0;
       protected override render() {
         this.renders++;
@@ -111,7 +111,7 @@ describe('failure paths', () => {
   it('effects: one failing effect does not stop the others in the same flush, and it re-runs later', () => {
     const trigger = signal(0);
     const seen: number[] = [];
-    class Effects extends MoteElement {
+    class Effects extends OddkinElement {
       protected override mounted(scope: Scope) {
         scope.effect(() => {
           if (trigger.value === 1) throw new Error('effect failed');
@@ -142,7 +142,7 @@ describe('failure paths', () => {
     const fragile = tag('fail-fragile');
     customElements.define(fragile, Fragile);
     const n = signal(1);
-    class Committing extends MoteElement {
+    class Committing extends OddkinElement {
       protected override render() {
         return html`<span>${n}</span>`;
       }
@@ -170,7 +170,7 @@ describe('failure paths', () => {
 
   it('cleanup: every cleanup runs even if one throws, each failure reported once', () => {
     const ran: string[] = [];
-    class Cleanups extends MoteElement {
+    class Cleanups extends OddkinElement {
       protected override mounted(scope: Scope) {
         scope.add(() => ran.push('first'));
         scope.add(() => {
@@ -188,7 +188,7 @@ describe('failure paths', () => {
   });
 
   it('hooks: a throwing mounted() is reported and the element still renders and updates', () => {
-    class Hooked extends MoteElement {
+    class Hooked extends OddkinElement {
       readonly count = signal(0);
       protected override render() {
         return html`<p>${this.count}</p>`;
@@ -208,7 +208,7 @@ describe('failure paths', () => {
 
   it('external signals: elements sharing a module-level signal unsubscribe when removed', () => {
     const shared = signal('x');
-    class Reader extends MoteElement {
+    class Reader extends OddkinElement {
       protected override render() {
         return html`<p>${shared}</p>`;
       }
@@ -230,7 +230,7 @@ describe('failure paths', () => {
   it('disposal during callbacks: a handler that removes its own host leaves no work behind', () => {
     const count = signal(0);
     const baseline = scopeStats();
-    class SelfRemoving extends MoteElement {
+    class SelfRemoving extends OddkinElement {
       readonly dismiss = (): void => {
         count.value++;
         this.parentNode?.removeChild(this);
@@ -255,7 +255,7 @@ describe('failure paths', () => {
   it('disposal during a flush: an effect that disposes another owner’s scope prevents its queued run', () => {
     const trigger = signal(0);
     const runs: string[] = [];
-    class Owner extends MoteElement {
+    class Owner extends OddkinElement {
       protected override mounted(scope: Scope) {
         scope.effect(() => {
           if (trigger.value) runs.push('owner');
@@ -264,7 +264,7 @@ describe('failure paths', () => {
     }
     const ownerName = tag('fail-owner');
     define(ownerName, Owner);
-    class Remover extends MoteElement {
+    class Remover extends OddkinElement {
       target: Element | undefined;
       protected override mounted(scope: Scope) {
         scope.effect(() => {
@@ -286,7 +286,7 @@ describe('failure paths', () => {
 
   it('reconnect: each connection gets a fresh scope; the old one is aborted; listeners do not accumulate', () => {
     const scopes: Scope[] = [];
-    class Reconnecting extends MoteElement {
+    class Reconnecting extends OddkinElement {
       clicks = 0;
       protected override mounted(scope: Scope) {
         scopes.push(scope);
@@ -313,7 +313,7 @@ describe('failure paths', () => {
 
   it('direct binding updates neither re-render the host nor read layout', () => {
     const count = signal(0);
-    class Plain extends MoteElement {
+    class Plain extends OddkinElement {
       renders = 0;
       protected override render() {
         this.renders++;
@@ -384,9 +384,9 @@ describe('production diagnostics in the browser', () => {
     );
     try {
       const n = prod.signal(1);
-      class ProdDerived extends prod.MoteElement {
+      class ProdDerived extends prod.OddkinElement {
         protected override render() {
-          if (n.value > 1) throw new prod.MoteError('demo.render.failed', '');
+          if (n.value > 1) throw new prod.OddkinError('demo.render.failed', '');
           return prod.html`<p>${n}</p>`;
         }
       }

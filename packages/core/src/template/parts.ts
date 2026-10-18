@@ -4,7 +4,7 @@
  * reached by both a render rerun and a direct binding is written once.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError, reportMoteError } from '../diagnostics/index.js';
+import { OddkinError, reportOddkinError } from '../diagnostics/index.js';
 import { effect, isReadable, untracked, type Readable } from '../reactive/index.js';
 import {
   ATTRIBUTE_DIRECTIVE,
@@ -29,7 +29,7 @@ export interface Part {
   dispose(): void;
 }
 
-const REPEAT: typeof RepeatKey = Symbol.for('mote.repeat') as never;
+const REPEAT: typeof RepeatKey = Symbol.for('oddkin.repeat') as never;
 
 function isRepeat(value: unknown): value is RepeatDirective {
   return (
@@ -174,8 +174,8 @@ export class ChildPart implements Part {
     } else if (typeof value === 'object' && Symbol.iterator in value) {
       this.#commitList(value as Iterable<unknown>);
     } else if (typeof value === 'function') {
-      reportMoteError(
-        new MoteError(
+      reportOddkinError(
+        new OddkinError(
           'template.value.function',
           DEV
             ? 'A function was interpolated in a child position. Functions are never called automatically; call it, pass a computed(), or bind it as an event (@event=${fn}).'
@@ -292,15 +292,15 @@ const URL_ATTRIBUTES = new Set([
 const URL_PROPERTIES = new Set(['href', 'src', 'action', 'formAction', 'poster', 'cite', 'data']);
 const UNSAFE_URL =
   /^[\u0000-\u0020]*(?:j[\s]*a[\s]*v[\s]*a[\s]*s[\s]*c[\s]*r[\s]*i[\s]*p[\s]*t|v[\s]*b[\s]*s[\s]*c[\s]*r[\s]*i[\s]*p[\s]*t)[\s]*:/i;
-export const BLOCKED_URL = 'about:invalid#mote-unsafe-url';
+export const BLOCKED_URL = 'about:invalid#oddkin-unsafe-url';
 
 function safeUrl(value: unknown, name: string): unknown {
   if (typeof value === 'string' && UNSAFE_URL.test(value)) {
-    reportMoteError(
-      new MoteError(
+    reportOddkinError(
+      new OddkinError(
         'template.url.unsafe',
         DEV
-          ? `Blocked a script URL bound to "${name}". Mote does not allow javascript: or vbscript: URLs in URL bindings.`
+          ? `Blocked a script URL bound to "${name}". Oddkin does not allow javascript: or vbscript: URLs in URL bindings.`
           : '',
       ),
       { code: 'template.url.unsafe' },
@@ -385,7 +385,7 @@ abstract class ValuePart implements Part {
     const handler = directive[ATTRIBUTE_DIRECTIVE];
     const { type, name, strings } = this.descriptor;
     if (type === 'event' || strings.length !== 2 || strings[0] !== '' || strings[1] !== '') {
-      throw new MoteError(
+      throw new OddkinError(
         'template.directive.position',
         DEV
           ? `${handler.name}() must be the whole value of its binding, e.g. ${type === 'property' ? '.' : type === 'boolean' ? '?' : ''}${name}=\${${handler.name}(…)}.`
@@ -396,7 +396,7 @@ abstract class ValuePart implements Part {
       !handler.parts.includes(type as DirectivePartType) ||
       (handler.bindingName && handler.bindingName !== name.toLowerCase())
     ) {
-      throw new MoteError(
+      throw new OddkinError(
         'template.directive.binding',
         DEV
           ? `${handler.name}() cannot be used in a ${type} binding named "${name}"${handler.bindingName ? `; bind it as ${handler.bindingName}=\${…}` : ''}.`
@@ -421,7 +421,7 @@ abstract class ValuePart implements Part {
       const value = read(this.#values[i - 1]);
       if (isAttributeDirective(value)) {
         const directive = value[ATTRIBUTE_DIRECTIVE].name;
-        throw new MoteError(
+        throw new OddkinError(
           'template.directive.position',
           DEV
             ? `${directive}() must be the whole value of its binding, not interpolated into "${this.descriptor.name}" text.`
@@ -472,7 +472,7 @@ class PropertyPart extends ValuePart {
     const { name } = this.descriptor;
     const safe = URL_PROPERTIES.has(name) ? safeUrl(value, name) : value;
     if (/^on/.test(name) && typeof safe === 'string') {
-      throw new MoteError(
+      throw new OddkinError(
         'template.property.unsafe',
         DEV
           ? `Refusing to assign a string to the "${name}" handler property. Use @${name.slice(2)}=\${handler}.`
@@ -526,7 +526,7 @@ class EventPart implements Part {
   setValue(values: readonly unknown[]): void {
     const value = values[0];
     if (isReadable(value)) {
-      throw new MoteError(
+      throw new OddkinError(
         'template.event.readable',
         DEV
           ? `@${this.#type} received a readable. Pass a function; read state inside the handler.`
@@ -539,7 +539,7 @@ class EventPart implements Part {
       typeof value !== 'function' &&
       typeof (value as { handleEvent?: unknown }).handleEvent !== 'function'
     ) {
-      throw new MoteError(
+      throw new OddkinError(
         'template.event.invalid',
         DEV ? `@${this.#type} expects a function, an object with handleEvent, or null.` : '',
       );

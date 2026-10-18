@@ -1,5 +1,5 @@
 /**
- * `@mote/workbench/config` — `defineWorkbenchConfig` and `defineDocs` with types matching the
+ * `@oddkin/workbench/config` — `defineWorkbenchConfig` and `defineDocs` with types matching the
  * `workbench-config.v1` and `docs-content.v1` schemas, plus default resolution and validation.
  * DOM-free. Values here describe presentation; generated facts always come from metadata
  * and token inspection (ADR 0024).
@@ -103,7 +103,7 @@ export interface ResolvedWorkbenchConfig {
   readonly assets: readonly string[];
 }
 
-/** Identity with types, for `mote.config.ts`. */
+/** Identity with types, for `oddkin.config.ts`. */
 export function defineWorkbenchConfig(config: WorkbenchConfig): WorkbenchConfig {
   return config;
 }
@@ -132,7 +132,7 @@ const TOP_LEVEL = new Set([
 const BASE_PATH = /^\/(.*\/)?$/;
 
 /**
- * Validate a configuration (from `mote.config.*` or JSON) and apply defaults. Returns
+ * Validate a configuration (from `oddkin.config.*` or JSON) and apply defaults. Returns
  * `config: undefined` when there are errors.
  */
 export function resolveWorkbenchConfig(input: unknown): {
@@ -284,9 +284,9 @@ export function resolveWorkbenchConfig(input: unknown): {
 }
 
 // ---------------------------------------------------------------------------
-// Authored content (mote.docs.ts / Markdown front matter), docs-content.v1
+// Authored content (oddkin.docs.ts / Markdown front matter), docs-content.v1
 
-export const DOCS_SCHEMA = 'https://mote.dev/schemas/docs-content/v1.json';
+export const DOCS_SCHEMA = 'https://oddkin.dev/schemas/docs-content/v1.json';
 
 export interface SectionContent {
   readonly title?: string;
@@ -321,7 +321,7 @@ export interface DocsContent {
   readonly pages: Readonly<Record<string, PageContent>>;
 }
 
-/** Identity with types, for `mote.docs.ts`; fills in the schema id. */
+/** Identity with types, for `oddkin.docs.ts`; fills in the schema id. */
 export function defineDocs(content: Omit<DocsContent, 'schema'>): DocsContent {
   return { schema: DOCS_SCHEMA, ...content };
 }

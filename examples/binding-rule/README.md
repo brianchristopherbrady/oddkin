@@ -1,6 +1,6 @@
 # binding-rule example
 
-A walkthrough of Mote's binding rule. One scenario (`scenario.js`, ordinary consumer code) drives two sets of identical elements: [`plain/components.js`](./plain/components.js), plain JavaScript loaded without a build step, and [`src/components.ts`](./src/components.ts), TypeScript compiled by `tsc`. For each step it counts `render()` runs and the mutations made in the element's shadow root, and shows both tables on the page.
+A walkthrough of Oddkin's binding rule. One scenario (`scenario.js`, ordinary consumer code) drives two sets of identical elements: [`plain/components.js`](./plain/components.js), plain JavaScript loaded without a build step, and [`src/components.ts`](./src/components.ts), TypeScript compiled by `tsc`. For each step it counts `render()` runs and the mutations made in the element's shadow root, and shows both tables on the page.
 
 ## The rule
 

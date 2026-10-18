@@ -12,7 +12,7 @@ const root = resolve('.tmp/synthetic-library');
 await rm(root, { recursive: true, force: true });
 await mkdir(join(root, 'src'), { recursive: true });
 
-const component = (i) => `import { MoteElement, css, event, html, prop } from '@mote/core';
+const component = (i) => `import { OddkinElement, css, event, html, prop } from '@oddkin/core';
 
 /** Fired when item ${i} changes. */
 export const change${i} = event<{ value: string; index: number }>('item-${i}-change', { bubbles: true, composed: true, cancelable: false, syncs: 'value' });
@@ -21,7 +21,7 @@ export const change${i} = event<{ value: string; index: number }>('item-${i}-cha
  * Synthetic component ${i}.
  * @csspart label - The label.
  */
-export class Item${i} extends MoteElement.with({
+export class Item${i} extends OddkinElement.with({
   value: prop.string({ default: 'v${i}', description: 'Current value.' }),
   label: prop.string({ default: 'Item ${i}' }),
   count: prop.number({ default: ${i} }),
@@ -29,7 +29,7 @@ export class Item${i} extends MoteElement.with({
   tone: prop.enum(['neutral', 'info', 'danger'], { default: 'neutral', reflect: true }),
   items: prop.array<string>(),
 }) {
-  static override styles = css\`:host { display: block; gap: var(--item-gap, 1rem); color: var(--mote-color-text-primary); }\`;
+  static override styles = css\`:host { display: block; gap: var(--item-gap, 1rem); color: var(--odd-color-text-primary); }\`;
   static override events = { change${i} };
 
   select(value: string): void {
@@ -48,7 +48,7 @@ const files = [];
 for (let i = 0; i < count; i++)
   files.push(writeFile(join(root, 'src', `item-${i}.ts`), component(i)));
 const index = [
-  "import { define } from '@mote/core';",
+  "import { define } from '@oddkin/core';",
   ...Array.from({ length: count }, (_, i) => `import { Item${i} } from './item-${i}.js';`),
   ...Array.from({ length: count }, (_, i) => `define('synthetic-item-${i}', Item${i});`),
 ].join('\n');

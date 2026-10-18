@@ -1,4 +1,4 @@
-import { compose } from '@mote/core';
+import { compose } from '@oddkin/core';
 import { DemoCounter } from './demo-counter.js';
 import { demoCounterStyles } from './demo-counter.styles.js';
 import { demoCounterTemplate } from './demo-counter.template.js';

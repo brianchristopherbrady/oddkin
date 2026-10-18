@@ -1,6 +1,6 @@
 // Plain JavaScript, no build: register the two elements and use ordinary DOM APIs.
-import '@mote/components/define/button';
-import '@mote/components/define/card';
+import '@oddkin/components/define/button';
+import '@oddkin/components/define/card';
 
 const form = document.querySelector('#billing');
 const result = document.querySelector('#result');

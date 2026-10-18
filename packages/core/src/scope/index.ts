@@ -1,5 +1,5 @@
 /**
- * `@mote/core/scope` — ownership and cleanup. DOM-free.
+ * `@oddkin/core/scope` — ownership and cleanup. DOM-free.
  * Contract: docs/architecture/core-contracts.md §4; ADR 0004.
  */
 export { Scope, createScope, scopeStats } from './scope.js';

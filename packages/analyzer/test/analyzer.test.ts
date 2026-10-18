@@ -14,20 +14,20 @@ const path = (relative: string) => new URL(relative, repo).pathname.replace(/^\/
 const cemSchema = JSON.parse(
   await readFile(new URL('node_modules/custom-elements-manifest/schema.json', repo), 'utf8'),
 ) as object;
-const moteSchema = JSON.parse(
-  await readFile(new URL('docs/schemas/mote-metadata.v1.schema.json', repo), 'utf8'),
+const oddkinSchema = JSON.parse(
+  await readFile(new URL('docs/schemas/oddkin-metadata.v1.schema.json', repo), 'utf8'),
 ) as object;
 const cemAjv = new Ajv({ allErrors: true, strict: false });
 const validateCem = cemAjv.compile(cemSchema);
 // Same options as tests/schemas: the fact definition's if/then uses "not: { required }".
-const moteAjv = new Ajv2020({
+const oddkinAjv = new Ajv2020({
   allErrors: true,
   strict: true,
   strictRequired: false,
   allowUnionTypes: true,
 });
-addFormats.default(moteAjv);
-const validateMote = moteAjv.compile(moteSchema);
+addFormats.default(oddkinAjv);
+const validateOddkin = oddkinAjv.compile(oddkinSchema);
 
 type Declaration = Record<string, unknown> & {
   name: string;
@@ -41,9 +41,9 @@ const declaration = (manifest: Record<string, unknown>, name: string) =>
 describe('analyzer on a fixture library', () => {
   const result = analyze({ project: path('tests/fixtures/analyzer-library/tsconfig.json') });
 
-  it('emits a valid Custom Elements Manifest (pinned 2.1.0 schema) and valid mote.metadata.json', () => {
+  it('emits a valid Custom Elements Manifest (pinned 2.1.0 schema) and valid oddkin.metadata.json', () => {
     expect(validateCem(result.manifest), JSON.stringify(validateCem.errors)).toBe(true);
-    expect(validateMote(result.metadata), JSON.stringify(validateMote.errors)).toBe(true);
+    expect(validateOddkin(result.metadata), JSON.stringify(validateOddkin.errors)).toBe(true);
   });
 
   it('never executes library modules', () => {
@@ -55,7 +55,7 @@ describe('analyzer on a fixture library', () => {
     const panel = declaration(result.manifest, 'AcmePanel');
     expect(panel).toMatchObject({
       tagName: 'acme-panel',
-      superclass: { name: 'MoteElement', package: '@mote/core' },
+      superclass: { name: 'OddkinElement', package: '@oddkin/core' },
       description: 'A surface with a heading and actions.',
       events: [
         {
@@ -203,7 +203,7 @@ describe('analyzer on the core-counter example', () => {
 
   for (const [file, data] of [
     ['core-counter.custom-elements.json', result.manifest],
-    ['core-counter.mote.metadata.json', result.metadata],
+    ['core-counter.oddkin.metadata.json', result.metadata],
   ] as const) {
     it(`${file} matches the committed fixture (UPDATE_FIXTURES=1 to regenerate)`, async () => {
       const url = new URL(`./fixtures/${file}`, import.meta.url);
@@ -214,7 +214,7 @@ describe('analyzer on the core-counter example', () => {
 
   it('is valid and diagnostic-free', () => {
     expect(validateCem(result.manifest)).toBe(true);
-    expect(validateMote(result.metadata)).toBe(true);
+    expect(validateOddkin(result.metadata)).toBe(true);
     expect(result.diagnostics).toEqual([]);
   });
 });
@@ -261,7 +261,7 @@ describe('dynamic definitions and explicit metadata', () => {
       ['property:dynamic-element#label', 'src/elements.metadata.json'],
       ['property:dynamic-element#size', 'src/elements.metadata.json'],
     ]);
-    expect(validateMote(result.metadata), JSON.stringify(validateMote.errors)).toBe(true);
+    expect(validateOddkin(result.metadata), JSON.stringify(validateOddkin.errors)).toBe(true);
     expect(validateCem(result.manifest)).toBe(true);
   });
 });
@@ -274,7 +274,7 @@ describe('compose() definitions in a folder-structured library', () => {
 
   it('emits valid, diagnostic-free outputs without executing modules', () => {
     expect(validateCem(composed.manifest), JSON.stringify(validateCem.errors)).toBe(true);
-    expect(validateMote(composed.metadata), JSON.stringify(validateMote.errors)).toBe(true);
+    expect(validateOddkin(composed.metadata), JSON.stringify(validateOddkin.errors)).toBe(true);
     expect(composed.diagnostics).toEqual([]);
   });
 
@@ -323,7 +323,7 @@ describe('compose() definitions in a folder-structured library', () => {
       components: Record<string, { tokenReads?: Array<{ token: string }> }>;
     };
     expect(metadata.components['component:acme-panel']?.tokenReads?.map((t) => t.token)).toEqual([
-      '--mote-color-text-primary',
+      '--odd-color-text-primary',
       'layout.inset',
     ]);
     expect(declaration(composed.manifest, 'AcmePanel')['cssParts']).toEqual([

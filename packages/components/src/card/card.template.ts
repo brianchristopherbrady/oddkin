@@ -1,12 +1,12 @@
-import { html } from '@mote/core/template';
-import type { MoteCard } from './card.js';
+import { html } from '@oddkin/core/template';
+import type { OddkinCard } from './card.js';
 
 /**
  * Anatomy: `part="base"` surface containing `header`, `body`, and `footer` parts with the
  * `header`, default, and `footer` slots. Empty header and footer are hidden. Slot changes
  * must call `_onSlotChange` so naming and visibility stay correct.
  */
-export const cardTemplate = (card: MoteCard) =>
+export const cardTemplate = (card: OddkinCard) =>
   html`<div part="base" class="card">
     <div part="header" class="header" ?hidden=${!card._hasHeader.value}>
       <slot name="header" @slotchange=${card._onSlotChange}></slot>

@@ -4,7 +4,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { generate } from '../src/index.js';
 import { run } from '../src/node/cli.js';
 
-// Inside the repository so `@mote/tokens` resolves for JS and TS configs.
+// Inside the repository so `@oddkin/tokens` resolves for JS and TS configs.
 const dir = join(process.cwd(), '.tmp', `cli-${process.pid}`);
 const at = (file: string) => join(dir, file);
 
@@ -25,13 +25,13 @@ afterAll(async () => {
 });
 
 // Loading TypeScript configs starts Node processes; allow for a busy machine.
-describe('mote-tokens CLI', { timeout: 30_000 }, () => {
+describe('oddkin-tokens CLI', { timeout: 30_000 }, () => {
   it('init writes a starter config once', async () => {
-    expect((await cli('init', at('mote.theme.json'))).code).toBe(0);
-    const again = await cli('init', at('mote.theme.json'));
+    expect((await cli('init', at('oddkin.theme.json'))).code).toBe(0);
+    const again = await cli('init', at('oddkin.theme.json'));
     expect(again.code).toBe(1);
     expect(again.err).toContain('already exists');
-    expect((await cli('check', at('mote.theme.json'))).code).toBe(0);
+    expect((await cli('check', at('oddkin.theme.json'))).code).toBe(0);
   });
 
   it('check reports diagnostics with codes and paths, and --strict fails on warnings', async () => {
@@ -78,7 +78,7 @@ describe('mote-tokens CLI', { timeout: 30_000 }, () => {
   });
 
   it('loads ESM JavaScript and TypeScript configs (type stripping) identically to JSON', async () => {
-    const body = `import { defineTheme } from '@mote/tokens/theme';\nexport default defineTheme({ name: 'typed', brand: { primary: '#0f766e' } });\n`;
+    const body = `import { defineTheme } from '@oddkin/tokens/theme';\nexport default defineTheme({ name: 'typed', brand: { primary: '#0f766e' } });\n`;
     await writeFile(at('typed.mjs'), body);
     await writeFile(
       at('typed.ts'),

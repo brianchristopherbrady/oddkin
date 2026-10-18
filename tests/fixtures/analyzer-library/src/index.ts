@@ -1,6 +1,6 @@
-import { define } from '@mote/core';
-import { defineLayoutRecipe, row, stack } from '@mote/core/layout';
-import { defineModel, m } from '@mote/core/model';
+import { define } from '@oddkin/core';
+import { defineLayoutRecipe, row, stack } from '@oddkin/core/layout';
+import { defineModel, m } from '@oddkin/core/model';
 import { AcmeAlert } from './alert.js';
 import { AcmePanel } from './panel.js';
 

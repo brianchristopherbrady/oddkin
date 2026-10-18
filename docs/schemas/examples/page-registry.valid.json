@@ -1,5 +1,5 @@
 {
-  "schema": "https://mote.dev/schemas/page-registry/v1.json",
+  "schema": "https://oddkin.dev/schemas/page-registry/v1.json",
   "basePath": "/docs/",
   "routing": "history",
   "primaryNav": ["foundations", "components", "theme-studio"],

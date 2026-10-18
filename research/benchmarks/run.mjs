@@ -1,4 +1,4 @@
-// Mote benchmarks (M3 baseline). Outside shipped code.
+// Oddkin benchmarks (M3 baseline). Outside shipped code.
 // Usage: node research/benchmarks/run.mjs [--samples 15] [--quick]
 // Writes research/benchmarks/results/<date>-<platform>.json with raw samples and summaries.
 import { spawn } from 'node:child_process';
@@ -193,7 +193,7 @@ try {
         }
       }
     }
-    // Cold startup: a fresh context (empty cache) per sample; three real clicks on the Mote
+    // Cold startup: a fresh context (empty cache) per sample; three real clicks on the Oddkin
     // counter and three on a plain-DOM control button, timed the same way.
     const startup = {
       firstRender: [],

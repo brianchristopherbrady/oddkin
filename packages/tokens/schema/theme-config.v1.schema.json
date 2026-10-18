@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/tokens/theme-config.v1.schema.json",
-  "title": "Mote theme configuration",
-  "description": "ThemeConfig for @mote/tokens. Structural checks only; the generator also validates units, references, cycles, tiers, contrast, and target sizes.",
+  "$id": "https://oddkin.dev/schemas/tokens/theme-config.v1.schema.json",
+  "title": "Oddkin theme configuration",
+  "description": "ThemeConfig for @oddkin/tokens. Structural checks only; the generator also validates units, references, cycles, tiers, contrast, and target sizes.",
   "type": "object",
   "additionalProperties": false,
   "required": ["brand"],
@@ -16,7 +16,7 @@
       "default": "default"
     },
     "preset": {
-      "const": "mote-default"
+      "const": "oddkin-default"
     },
     "brand": {
       "type": "object",

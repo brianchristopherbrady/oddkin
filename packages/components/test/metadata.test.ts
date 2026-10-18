@@ -10,29 +10,29 @@ const repo = new URL('../../../', import.meta.url);
 const json = (url: URL) => JSON.parse(readFileSync(url, 'utf8')) as Record<string, any>;
 const manifest = json(new URL('package.json', pkg));
 const cem = json(new URL('custom-elements.json', pkg));
-const metadata = json(new URL('mote.metadata.json', pkg));
+const metadata = json(new URL('oddkin.metadata.json', pkg));
 
-describe('@mote/components published metadata', () => {
-  it('validates against the pinned CEM schema and mote-metadata.v1', () => {
+describe('@oddkin/components published metadata', () => {
+  it('validates against the pinned CEM schema and oddkin-metadata.v1', () => {
     const validateCem = new Ajv({ strict: false }).compile(
       json(new URL('node_modules/custom-elements-manifest/schema.json', repo)),
     );
     const ajv = new Ajv2020({ strict: true, strictRequired: false, allowUnionTypes: true });
     addFormats.default(ajv);
-    const validateMote = ajv.compile(
-      json(new URL('docs/schemas/mote-metadata.v1.schema.json', repo)),
+    const validateOddkin = ajv.compile(
+      json(new URL('docs/schemas/oddkin-metadata.v1.schema.json', repo)),
     );
     expect(validateCem(cem), JSON.stringify(validateCem.errors)).toBe(true);
-    expect(validateMote(metadata), JSON.stringify(validateMote.errors)).toBe(true);
+    expect(validateOddkin(metadata), JSON.stringify(validateOddkin.errors)).toBe(true);
     expect(metadata['diagnostics']).toEqual([]);
   });
 
   it('is declared and published by the package', () => {
     expect(manifest['customElements']).toBe('./custom-elements.json');
     expect(manifest['exports']['./custom-elements.json']).toBe('./custom-elements.json');
-    expect(manifest['exports']['./mote.metadata.json']).toBe('./mote.metadata.json');
+    expect(manifest['exports']['./oddkin.metadata.json']).toBe('./oddkin.metadata.json');
     expect(manifest['files']).toEqual(
-      expect.arrayContaining(['custom-elements.json', 'mote.metadata.json']),
+      expect.arrayContaining(['custom-elements.json', 'oddkin.metadata.json']),
     );
   });
 
@@ -43,15 +43,15 @@ describe('@mote/components published metadata', () => {
       registration: string;
       cem: { module: string };
     }[]) {
-      const subpath = `.${component.registration.slice('@mote/components'.length)}`;
+      const subpath = `.${component.registration.slice('@oddkin/components'.length)}`;
       expect(manifest['exports'][subpath], component.registration).toBeDefined();
       expect(existsSync(new URL(component.cem.module, pkg))).toBe(true);
     }
   });
 
-  it('describes mote-button from its definition, template, and styles', () => {
-    const button = metadata['components']['component:mote-button'];
-    expect(button.registration).toBe('@mote/components/define/button');
+  it('describes odd-button from its definition, template, and styles', () => {
+    const button = metadata['components']['component:odd-button'];
+    expect(button.registration).toBe('@oddkin/components/define/button');
     expect(button.previewRoles).toEqual(['role:primaryAction', 'role:secondaryAction']);
     expect(button.definition.template).toEqual({
       module: 'dist/button/button.template.js',
@@ -59,11 +59,11 @@ describe('@mote/components published metadata', () => {
     });
     const tokens = (button.tokenReads as { token: string }[]).map((t) => t.token);
     expect(tokens).toContain('color.action.default');
-    expect(tokens.some((t) => t.startsWith('--mote-button-'))).toBe(false);
+    expect(tokens.some((t) => t.startsWith('--odd-button-'))).toBe(false);
     const declaration = (cem['modules'] as { declarations: Record<string, any>[] }[])
       .flatMap((m) => m.declarations)
-      .find((d) => d['name'] === 'MoteButton')!;
-    expect(declaration['tagName']).toBe('mote-button');
+      .find((d) => d['name'] === 'OddkinButton')!;
+    expect(declaration['tagName']).toBe('odd-button');
     expect((declaration['cssParts'] as { name: string }[]).map((p) => p.name)).toEqual([
       'control',
       'spinner',

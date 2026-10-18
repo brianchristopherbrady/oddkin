@@ -4,15 +4,15 @@
  * Contract: docs/architecture/core-contracts.md §1.1; recomposition: multi-product.md §5.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError } from '../diagnostics/index.js';
+import { OddkinError } from '../diagnostics/index.js';
 import type { StyleInput } from '../styles/index.js';
-import type { MoteElement } from './element.js';
+import type { OddkinElement } from './element.js';
 
 /** A template for `E`: runs in the same tracked render context as `render()`. */
 export type ElementTemplate<E> = (host: E) => unknown;
 
 /** Inputs to `compose()`. Spreading an existing definition is supported. */
-export interface ElementDefinitionInit<E extends MoteElement> {
+export interface ElementDefinitionInit<E extends OddkinElement> {
   /** Custom element name the definition registers. */
   readonly name: string;
   /** Element class. Each registered name needs its own constructor; extend to reuse behavior. */
@@ -30,7 +30,7 @@ export interface ElementDefinitionInit<E extends MoteElement> {
 }
 
 /** An immutable element definition produced by `compose()`. */
-export interface ElementDefinition<E extends MoteElement = MoteElement> {
+export interface ElementDefinition<E extends OddkinElement = OddkinElement> {
   readonly name: string;
   readonly element: new () => E;
   readonly template?: ElementTemplate<E> | undefined;
@@ -54,24 +54,24 @@ export function isElementDefinition(value: unknown): value is ElementDefinition<
  * `compose({ ...cardDefinition, name: 'studio-card', element: StudioCard, styles })`.
  * The source definition and classes are never mutated; registration state is not copied.
  */
-export function compose<E extends MoteElement>(
+export function compose<E extends OddkinElement>(
   init: ElementDefinitionInit<E>,
 ): ElementDefinition<E> {
   if (typeof init.element !== 'function') {
-    throw new MoteError(
+    throw new OddkinError(
       'definition.element.invalid',
       DEV ? `compose({ name: "${init.name}" }) needs an element class.` : '',
     );
   }
   if (init.template !== undefined && typeof init.template !== 'function') {
-    throw new MoteError(
+    throw new OddkinError(
       'definition.template.invalid',
       DEV ? `compose({ name: "${init.name}" }): template must be a function of the host.` : '',
     );
   }
   for (const [role, dependency] of Object.entries(init.dependencies ?? {})) {
     if (!isElementDefinition(dependency)) {
-      throw new MoteError(
+      throw new OddkinError(
         'definition.dependency.invalid',
         DEV
           ? `compose({ name: "${init.name}" }): dependency "${role}" is not a definition created by compose().`

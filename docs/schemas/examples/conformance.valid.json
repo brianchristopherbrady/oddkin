@@ -1,12 +1,12 @@
 {
-  "schema": "https://mote.dev/schemas/conformance/v1.json",
-  "id": "mote.button",
+  "schema": "https://oddkin.dev/schemas/conformance/v1.json",
+  "id": "oddkin.button",
   "version": "0.1.0",
   "contract": {
-    "component": "component:mote-button",
+    "component": "component:odd-button",
     "versions": "0.x"
   },
-  "description": "Interaction contract shared by mote-button and its product implementations.",
+  "description": "Interaction contract shared by odd-button and its product implementations.",
   "requires": {
     "properties": [
       "appearance",

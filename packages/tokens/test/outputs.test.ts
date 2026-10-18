@@ -34,9 +34,9 @@ describe('generated default modules', () => {
 
 describe('refs and values', () => {
   it('builds var() references without registration', () => {
-    expect(token('space.md')).toBe('var(--mote-space-md)');
-    expect(token('color.text.primary', '#000')).toBe('var(--mote-color-text-primary, #000)');
-    expect(tokenVariable('layout.item-min')).toBe('--mote-layout-item-min');
+    expect(token('space.md')).toBe('var(--odd-space-md)');
+    expect(token('color.text.primary', '#000')).toBe('var(--odd-color-text-primary, #000)');
+    expect(tokenVariable('layout.item-min')).toBe('--odd-layout-item-min');
     // @ts-expect-error -- unknown names are type errors
     token('space.huge');
   });
@@ -70,18 +70,18 @@ describe('inspection metadata', () => {
     };
     const action = data.tokens.find((t) => t['name'] === 'color.action.default');
     expect(action).toMatchObject({
-      cssVariable: '--mote-color-action-default',
+      cssVariable: '--odd-color-action-default',
       category: 'semantic',
       origin: 'generated',
       definition: { light: '{ref.brand.600}', dark: '{ref.brand.400}' },
-      css: 'var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400))',
+      css: 'var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400))',
     });
     expect(data.scopes.map((s) => s.selector)).toEqual([
-      '[data-mote-mode]',
-      '[data-mote-product="clinic"]',
-      '[data-mote-density="compact"]',
-      '[data-mote-profile~="navigation.compact"]',
-      '[data-mote-profile~="layout.compact"]',
+      '[data-odd-mode]',
+      '[data-odd-product="clinic"]',
+      '[data-odd-density="compact"]',
+      '[data-odd-profile~="navigation.compact"]',
+      '[data-odd-profile~="layout.compact"]',
     ]);
     expect(data.scopes[1]?.redeclared).toContain('color.action.default');
   });

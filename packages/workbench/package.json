@@ -1,5 +1,5 @@
 {
-  "name": "@mote/workbench",
+  "name": "@oddkin/workbench",
   "version": "0.0.0",
   "private": true,
   "description": "Metadata-driven documentation tooling. DOM-free example, configuration, page-registry, and conformance contracts; a test-runner integration.",
@@ -37,6 +37,6 @@
     "README.md"
   ],
   "dependencies": {
-    "@mote/core": "0.0.0"
+    "@oddkin/core": "0.0.0"
   }
 }

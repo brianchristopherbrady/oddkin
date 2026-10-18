@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/page-registry/v1.json",
+  "$id": "https://oddkin.dev/schemas/page-registry/v1.json",
   "title": "Workbench page registry v1",
   "description": "DRAFT. Single source for routes, navigation, sidebars, cards, search, visibility, and legacy redirects (ADR 0023, workbench-pages.md section 2).",
   "type": "object",
   "required": ["schema", "basePath", "pages"],
   "additionalProperties": false,
   "properties": {
-    "schema": { "const": "https://mote.dev/schemas/page-registry/v1.json" },
+    "schema": { "const": "https://oddkin.dev/schemas/page-registry/v1.json" },
     "basePath": { "type": "string", "pattern": "^/(.*/)?$" },
     "routing": { "enum": ["history", "hash"], "default": "history" },
     "primaryNav": { "type": "array", "items": { "type": "string" }, "description": "Ordered page ids shown in primary navigation" },

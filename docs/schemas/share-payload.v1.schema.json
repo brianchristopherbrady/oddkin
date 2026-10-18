@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/share-payload/v1.json",
+  "$id": "https://oddkin.dev/schemas/share-payload/v1.json",
   "title": "Workbench share payload v1",
   "description": "DRAFT. Decoded form of share links. Only serializable values; non-serializable fixtures are excluded with a notice. Invalid or obsolete payloads are reported, never partially applied silently.",
   "type": "object",
@@ -27,7 +27,7 @@
     {
       "properties": {
         "v": true, "kind": { "const": "theme" },
-        "config": { "type": "object", "description": "JSON-compatible ThemeConfig draft (validated by @mote/tokens schema)" },
+        "config": { "type": "object", "description": "JSON-compatible ThemeConfig draft (validated by @oddkin/tokens schema)" },
         "composition": { "type": "string" },
         "preview": { "$ref": "#/$defs/preview" }
       },

@@ -4,11 +4,11 @@
  * Contract: docs/architecture/layout-recipes.md §3.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError } from '../diagnostics/index.js';
+import { OddkinError } from '../diagnostics/index.js';
 
 export type Declarations = ReadonlyArray<readonly [property: string, value: string]>;
 
-const HELPER: unique symbol = Symbol.for('mote.layoutHelper') as never;
+const HELPER: unique symbol = Symbol.for('oddkin.layoutHelper') as never;
 
 /** One helper application to a region. `regions` adds rules for other named regions (e.g. `split`). */
 export interface LayoutHelper {
@@ -50,7 +50,7 @@ const UNSAFE = /[;{}<>\\]|\/\*/;
 /** Validate a CSS value supplied to a helper or recipe. Values come from trusted module code. */
 export function cssValue(value: unknown, where: string): string {
   if (typeof value !== 'string' || value.trim() === '' || UNSAFE.test(value)) {
-    throw new MoteError(
+    throw new OddkinError(
       'recipe.value.invalid',
       DEV
         ? `${where}: ${JSON.stringify(value)} is not a CSS value (no ;, braces, angle brackets, backslashes, or comments).`
@@ -136,7 +136,7 @@ function keyword(
 ): string | undefined {
   if (value === undefined) return undefined;
   if (!allowed.has(value))
-    throw new MoteError(
+    throw new OddkinError(
       'recipe.value.invalid',
       DEV ? `${where}: "${value}" is not one of ${[...allowed].join(', ')}.` : '',
     );
@@ -174,7 +174,7 @@ export function createLayoutHelpers(overrides: Partial<LayoutDefaults> = {}): La
     grid(options = {}) {
       const columns = options.columns ?? 1;
       if (!Number.isInteger(columns) || columns < 1 || columns > 24) {
-        throw new MoteError(
+        throw new OddkinError(
           'recipe.value.invalid',
           DEV ? `grid columns: ${JSON.stringify(columns)} must be an integer from 1 to 24.` : '',
         );
@@ -193,7 +193,7 @@ export function createLayoutHelpers(overrides: Partial<LayoutDefaults> = {}): La
     autoGrid(options = {}) {
       const fill = options.fill ?? 'auto-fill';
       if (fill !== 'auto-fill' && fill !== 'auto-fit')
-        throw new MoteError(
+        throw new OddkinError(
           'recipe.value.invalid',
           DEV ? `autoGrid fill: "${String(fill)}" must be auto-fill or auto-fit.` : '',
         );
@@ -211,7 +211,7 @@ export function createLayoutHelpers(overrides: Partial<LayoutDefaults> = {}): La
         typeof options.main !== 'string' ||
         options.side === options.main
       ) {
-        throw new MoteError(
+        throw new OddkinError(
           'recipe.value.invalid',
           DEV ? 'split needs distinct "side" and "main" region names.' : '',
         );
@@ -243,7 +243,7 @@ export function createLayoutHelpers(overrides: Partial<LayoutDefaults> = {}): La
         declarations,
         Object.entries(declarations).map(([property, value]) => {
           if (!/^(--)?[a-z][a-z0-9-]*$/.test(property))
-            throw new MoteError(
+            throw new OddkinError(
               'recipe.value.invalid',
               DEV ? `"${property}" is not a CSS property name.` : '',
             );

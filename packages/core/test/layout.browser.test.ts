@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { setErrorHandler, type ErrorContext } from '../src/diagnostics/index.js';
-import { define, MoteElement } from '../src/element/index.js';
+import { define, OddkinElement } from '../src/element/index.js';
 import { defineLayoutRecipe, stack } from '../src/layout/index.js';
 import { checkRecipeRegions } from '../src/layout/inspect.js';
 import { flush } from '../src/reactive/index.js';
@@ -26,7 +26,7 @@ afterEach(() => {
   setErrorHandler(undefined);
 });
 
-class DemoSideNav extends MoteElement {
+class DemoSideNav extends OddkinElement {
   static override styles = [sideNav.styles];
   protected override render() {
     return html`<nav class="root" aria-label="Sections">
@@ -150,7 +150,7 @@ describe('layout recipes in a real cascade', () => {
   });
 
   it('reports recipes defined during render', () => {
-    class Wrong extends MoteElement {
+    class Wrong extends OddkinElement {
       protected override render() {
         defineLayoutRecipe({ name: 'inline', regions: { root: stack() } });
         return html`<div class="root"></div>`;

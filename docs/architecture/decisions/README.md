@@ -15,7 +15,7 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | --- | --- | --- | --- |
 | [0001](./0001-adr-process.md) | ADR process and change control | Accepted | Process |
 | [0002](./0002-reactivity-and-binding-rule.md) | One reactive graph, scheduling, and the binding rule | Accepted | Core |
-| [0003](./0003-property-definitions.md) | Typed property definitions via `MoteElement.with()` | Accepted | Core |
+| [0003](./0003-property-definitions.md) | Typed property definitions via `OddkinElement.with()` | Accepted | Core |
 | [0004](./0004-scope-and-reconnection.md) | `Scope` ownership and reconnection | Accepted | Core |
 | [0005](./0005-rendering-and-template-security.md) | Tagged-template rendering and security model | Accepted | Core |
 | [0006](./0006-colour-generation.md) | OKLCH colour generation, gamut mapping, contrast | Proposed | Tokens |
@@ -29,12 +29,12 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0014](./0014-collections-and-invalidation.md) | Shared collections and keyed invalidation | Proposed | Data |
 | [0015](./0015-model-builder-source-of-truth.md) | Model builder as source of truth | Proposed | Data |
 | [0016](./0016-normalized-metadata-model.md) | Normalized metadata model, stable ids, provenance | Accepted | Metadata |
-| [0017](./0017-cem-and-enrichment.md) | Standard CEM plus separate Mote enrichment | Accepted | Metadata |
+| [0017](./0017-cem-and-enrichment.md) | Standard CEM plus separate Oddkin enrichment | Accepted | Metadata |
 | [0018](./0018-analyzer-front-end.md) | Analyzer front end and no-execution rule | Accepted | Metadata |
 | [0019](./0019-preview-isolation.md) | Workbench preview isolation and frame protocol | Proposed | Workbench |
 | [0020](./0020-specimen-roles-and-adapters.md) | Theme Studio specimen roles and adapters | Accepted | Workbench |
 | [0021](./0021-define-examples.md) | `defineExamples` format | Proposed | Workbench |
-| [0022](./0022-agent-boundaries.md) | `@mote/agent` boundaries and MCP adapter | Proposed | Agent |
+| [0022](./0022-agent-boundaries.md) | `@oddkin/agent` boundaries and MCP adapter | Proposed | Agent |
 | [0023](./0023-page-registry.md) | Page registry as single navigation source | Accepted | Workbench |
 | [0024](./0024-content-layers.md) | Content layers and precedence | Accepted | Workbench |
 | [0025](./0025-baseline-vs-draft.md) | Baseline vs draft on foundation pages | Accepted | Workbench |
@@ -49,3 +49,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0034](./0034-change-impact-and-conformance.md) | Change impact, portable conformance, explanations, and reproductions | Proposed | Tooling / Verification |
 | [0035](./0035-page-suspension-and-restoration.md) | Page suspension and back/forward cache restoration | Proposed | Core / App |
 | [0036](./0036-component-composition-api.md) | Component composition API: `compose()` and `define(definition)` | Accepted | Core |
+| [0037](./0037-naming-contract.md) | Naming contract: Oddkin, `odd-`, and `oddkin` | Accepted | Process / Distribution |

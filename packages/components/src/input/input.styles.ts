@@ -1,7 +1,7 @@
-import { css } from '@mote/core/styles';
-import { token } from '@mote/tokens/refs';
+import { css } from '@oddkin/core/styles';
+import { token } from '@oddkin/tokens/refs';
 
-/** Mote's default visual styles for the input. */
+/** Oddkin's default visual styles for the input. */
 export const inputStyles = css`
   .field {
     gap: ${token('space.xs')};
@@ -18,14 +18,14 @@ export const inputStyles = css`
   }
   .control {
     min-block-size: max(
-      var(--mote-input-height, ${token('control.height.md')}),
+      var(--odd-input-height, ${token('control.height.md')}),
       ${token('target.min')}
     );
     padding-inline: ${token('control.padding.inline.md')};
     border: ${token('border.width.default')} solid
-      var(--mote-input-border-color, ${token('color.border.strong')});
-    border-radius: var(--mote-input-radius, ${token('control.radius')});
-    background: var(--mote-input-background, ${token('color.surface.default')});
+      var(--odd-input-border-color, ${token('color.border.strong')});
+    border-radius: var(--odd-input-radius, ${token('control.radius')});
+    background: var(--odd-input-background, ${token('color.surface.default')});
     color: ${token('color.text.primary')};
     font-size: ${token('font.size.md')};
   }

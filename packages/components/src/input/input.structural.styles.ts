@@ -1,4 +1,4 @@
-import { css } from '@mote/core/styles';
+import { css } from '@oddkin/core/styles';
 
 /** Layout the field depends on: stacked label, help, control, and error. No brand tokens. */
 export const inputStructuralStyles = css`

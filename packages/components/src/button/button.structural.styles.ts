@@ -1,4 +1,4 @@
-import { css } from '@mote/core/styles';
+import { css } from '@oddkin/core/styles';
 
 /**
  * Styles the button's layout and interaction depend on: host display, full width, content
@@ -48,9 +48,9 @@ export const buttonStructuralStyles = css`
     border: 0.15em solid currentColor;
     border-inline-end-color: transparent;
     border-radius: 50%;
-    animation: mote-button-spin 0.8s linear infinite;
+    animation: odd-button-spin 0.8s linear infinite;
   }
-  @keyframes mote-button-spin {
+  @keyframes odd-button-spin {
     to {
       transform: rotate(1turn);
     }

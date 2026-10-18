@@ -1,5 +1,5 @@
 /**
- * `@mote/core/helpers/style-map` — set inline styles through the CSSOM
+ * `@oddkin/core/helpers/style-map` — set inline styles through the CSSOM
  * (`style.setProperty`), which strict `style-src` policies allow, unlike parsed
  * `style="…"` attributes.
  */

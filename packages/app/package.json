@@ -1,5 +1,5 @@
 {
-  "name": "@mote/app",
+  "name": "@oddkin/app",
   "version": "0.0.0",
   "private": true,
   "description": "Optional application lifetime, router, and async resources.",
@@ -17,7 +17,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@mote/core": "0.0.0",
-    "@mote/state": "0.0.0"
+    "@oddkin/core": "0.0.0",
+    "@oddkin/state": "0.0.0"
   }
 }

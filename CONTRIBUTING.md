@@ -1,4 +1,4 @@
-# Contributing to Mote
+# Contributing to Oddkin
 
 ## Before you change code
 
@@ -8,13 +8,15 @@
 
 ## Package boundaries
 
+Names follow [ADR 0037](./docs/architecture/decisions/0037-naming-contract.md): HTML and CSS use `odd` (`<odd-button>`, `--odd-*`, `data-odd-*`); packages, JavaScript, command-line tools, files, and protocol identifiers use `oddkin`.
+
 The dependency map in [packages.md](./docs/architecture/packages.md) is enforced by `npm run lint:boundaries`, which checks manifests, source imports, built artifacts, and DOM-free entry points. Rules in short:
 
-- `@mote/core` and `@mote/tokens` depend on no other Mote package; `@mote/tokens` never imports core.
-- `@mote/components` depends only on core and tokens; never on state, app, or tooling.
+- `@oddkin/core` and `@oddkin/tokens` depend on no other Oddkin package; `@oddkin/tokens` never imports core.
+- `@oddkin/components` depends only on core and tokens; never on state, app, or tooling.
 - Shipped browser code has **zero third-party runtime dependencies** and no Node built-ins.
 - Import other packages only through their public `exports`; never through `src/` or `dist/` paths.
-- Node-only tooling (`@mote/analyzer`, `@mote/agent`) is never reachable from browser code.
+- Node-only tooling (`@oddkin/analyzer`, `@oddkin/agent`) is never reachable from browser code.
 
 To add a package or entry point, update `scripts/architecture/boundaries.config.mjs` and `docs/architecture/packages.md` together.
 
@@ -32,7 +34,7 @@ The composition API (`compose()`, `define(definition)`; ADR 0036) is implemented
 
 ## Agent kit and guidance (planned)
 
-When the agent kit exists ([agent-tooling.md](./docs/architecture/agent-tooling.md), ADR 0032), changes to public APIs, tokens, recipes, examples, or authored guidance regenerate it with `mote-agent kit`, and `mote-agent kit --check` must report no stale artifacts. Authored guidance may only cite tags, properties, events, slots, parts, tokens, recipes, and imports that exist; the build rejects unknown references. Do not hand-edit generated references or the managed `AGENTS.md` section.
+When the agent kit exists ([agent-tooling.md](./docs/architecture/agent-tooling.md), ADR 0032), changes to public APIs, tokens, recipes, examples, or authored guidance regenerate it with `oddkin-agent kit`, and `oddkin-agent kit --check` must report no stale artifacts. Authored guidance may only cite tags, properties, events, slots, parts, tokens, recipes, and imports that exist; the build rejects unknown references. Do not hand-edit generated references or the managed `AGENTS.md` section.
 
 ## Verification evidence (planned tooling)
 

@@ -1,6 +1,6 @@
 /**
  * Resolve a `ThemeConfig` into a validated token graph plus product and density scopes.
- * Precedence: Mote defaults → preset → user configuration → explicit overrides.
+ * Precedence: Oddkin defaults → preset → user configuration → explicit overrides.
  * Pure and deterministic; no I/O. Contract: theming-and-styling.md §1–§5, §10, §11.4.
  */
 import type { Mode, ModeValues, ThemeConfig } from '../theme/types.js';
@@ -332,12 +332,12 @@ export function resolveTheme(input: unknown): ResolveResult {
       'Use lowercase letters, digits, and hyphens.',
     );
   }
-  if (config.preset !== undefined && config.preset !== 'mote-default') {
+  if (config.preset !== undefined && config.preset !== 'oddkin-default') {
     d.error(
       'preset.unknown',
       '/preset',
       `Unknown preset ${JSON.stringify(config.preset)}.`,
-      'Use "mote-default" or omit preset.',
+      'Use "oddkin-default" or omit preset.',
     );
   }
 
@@ -599,7 +599,7 @@ export function resolveTheme(input: unknown): ResolveResult {
           'profile.overlap',
           at,
           `"${tokenName}" is also set by profile "${owner}" (${pointer('profiles', owner)}${pointer(tokenName)}).`,
-          `Where both apply to one element, "${profileName}" wins because it comes later in the configuration; data-mote-profile list order does not change this.`,
+          `Where both apply to one element, "${profileName}" wins because it comes later in the configuration; data-odd-profile list order does not change this.`,
         );
       } else roleOwners.set(tokenName, profileName);
       changed.push({

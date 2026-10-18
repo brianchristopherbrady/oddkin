@@ -9,7 +9,7 @@
 Docs, Workbench, tests, and agents need one consistent description of components, tokens, recipes, models, foundations, and pages, with honest uncertainty.
 
 ## Decision
-One versioned `mote-metadata` model with stable ids (`component:<tag>`, `property:<tag>#<name>`, `foundation:<id>`, page ids, …) and per-fact provenance (`extracted`, `authored`, `observed`, `verified`). Unknown values are explicit (`{ known: false }`), never guessed. Foundation enrichment references token inspection output rather than recomputing values.
+One versioned `oddkin-metadata` model with stable ids (`component:<tag>`, `property:<tag>#<name>`, `foundation:<id>`, page ids, …) and per-fact provenance (`extracted`, `authored`, `observed`, `verified`). Unknown values are explicit (`{ known: false }`), never guessed. Foundation enrichment references token inspection output rather than recomputing values.
 
 ## Alternatives considered
 - Separate ad-hoc JSON per consumer — drift.

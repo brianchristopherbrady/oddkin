@@ -9,7 +9,7 @@
 Repeated layout CSS should be reusable without a second styling language or a build step.
 
 ## Decision
-- `defineLayoutRecipe` with `stack`, `row`, `grid`, `autoGrid`, `split`, evaluated at module scope into an ordinary reusable stylesheet; generic in `@mote/core/layout`, Mote defaults in `@mote/components/layout`.
+- `defineLayoutRecipe` with `stack`, `row`, `grid`, `autoGrid`, `split`, evaluated at module scope into an ordinary reusable stylesheet; generic in `@oddkin/core/layout`, Oddkin defaults in `@oddkin/components/layout`.
 - Layers `recipe.base → recipe.variant → recipe.condition`; among normal author rules in the same encapsulation context, unlayered rules win; shadow-root recipes are customized through roles, component variables, parts, and host styles; `!important` follows reversed layer and cross-context precedence.
 - `extend()` creates new recipes without mutating shared sheets.
 

@@ -19,7 +19,7 @@ Every generated scope (theme, product, mode, density, profile) emits its overrid
 CSS size grows with scope axes; M2/M9 measure rule growth and avoid generating unnecessary cross-products.
 
 ## Evidence
-R26 (CSS custom properties). M2 (2026-10-17): mode-dependent roles are single expressions switched by inherited `--mote-mode-light`/`--mote-mode-dark` toggles (theming-and-styling.md §5.1), so closures never need mode × product × density cross-products. Generated CSS resolves exactly as the generator predicts for nested light/dark/system, product, and density scopes and inside a shadow root in Chromium, Firefox, and WebKit (`packages/tokens/test/generate.browser.test.ts`). Closure sizes for the fixture theme: 22 mode-dependent declarations, 39 for a brand product, 23 for a density. Pending: the script-free CSS-only fixture and first-paint check.
+R26 (CSS custom properties). M2 (2026-10-17): mode-dependent roles are single expressions switched by inherited `--odd-mode-light`/`--odd-mode-dark` toggles (theming-and-styling.md §5.1), so closures never need mode × product × density cross-products. Generated CSS resolves exactly as the generator predicts for nested light/dark/system, product, and density scopes and inside a shadow root in Chromium, Firefox, and WebKit (`packages/tokens/test/generate.browser.test.ts`). Closure sizes for the fixture theme: 22 mode-dependent declarations, 39 for a brand product, 23 for a density. Pending: the script-free CSS-only fixture and first-paint check.
 
 ## Revisit when
 A standard mechanism (e.g. CSS `@property`-based late resolution) removes the inheritance problem across baseline browsers.

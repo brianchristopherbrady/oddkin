@@ -38,7 +38,7 @@ for (const entry of await readdir(packagesDir, { withFileTypes: true })) {
   names.push({ name: manifest.name, dir: join(packagesDir, entry.name), specifiers });
 }
 
-const work = await mkdtemp(join(tmpdir(), 'mote-packs-'));
+const work = await mkdtemp(join(tmpdir(), 'oddkin-packs-'));
 const failures = [];
 try {
   const tarballs = [];
@@ -71,7 +71,7 @@ try {
   const unexpected = new Set();
   const walk = (deps = {}, underTooling = false) => {
     for (const [dep, info] of Object.entries(deps)) {
-      if (!dep.startsWith('@mote/') && !underTooling) unexpected.add(dep);
+      if (!dep.startsWith('@oddkin/') && !underTooling) unexpected.add(dep);
       walk(info.dependencies, underTooling || nodeOnly.has(dep));
     }
   };
@@ -98,10 +98,10 @@ try {
     [
       "import { readFileSync } from 'node:fs';",
       'const expected = {',
-      "  '@mote/tokens/css/default.css': '--mote-color-action-default',",
-      "  '@mote/tokens/schema.json': 'Mote theme configuration',",
-      '  \'@mote/components/custom-elements.json\': \'"tagName": "mote-button"\',',
-      '  \'@mote/components/mote.metadata.json\': \'"registration": "@mote/components/define/button"\',',
+      "  '@oddkin/tokens/css/default.css': '--odd-color-action-default',",
+      "  '@oddkin/tokens/schema.json': 'Oddkin theme configuration',",
+      '  \'@oddkin/components/custom-elements.json\': \'"tagName": "odd-button"\',',
+      '  \'@oddkin/components/oddkin.metadata.json\': \'"registration": "@oddkin/components/define/button"\',',
       '};',
       'for (const [spec, needle] of Object.entries(expected)) {',
       "  const text = readFileSync(new URL(import.meta.resolve(spec)), 'utf8');",
@@ -110,11 +110,14 @@ try {
     ].join('\n'),
   );
   node(['assets.mjs'], consumer);
-  const bin = join(consumer, 'node_modules', '@mote', 'tokens', 'dist', 'node', 'bin.js');
+  const bin = join(consumer, 'node_modules', '@oddkin', 'tokens', 'dist', 'node', 'bin.js');
   node([bin, 'init', 'theme.json'], consumer);
   node([bin, 'build', 'theme.json', '--out', 'tokens', '--strict'], consumer);
   // The installed analyzer runs from its tarball (Node-only tooling with its own TypeScript).
-  node([join(consumer, 'node_modules', '@mote', 'analyzer', 'dist', 'bin.js'), '--help'], consumer);
+  node(
+    [join(consumer, 'node_modules', '@oddkin', 'analyzer', 'dist', 'bin.js'), '--help'],
+    consumer,
+  );
   const built = await readdir(join(consumer, 'tokens'));
   for (const file of [
     'default.css',
@@ -123,7 +126,7 @@ try {
     'default.inspect.json',
   ]) {
     if (!built.includes(file))
-      failures.push(`mote-tokens build in a consumer did not write ${file}`);
+      failures.push(`oddkin-tokens build in a consumer did not write ${file}`);
   }
 
   await writeFile(

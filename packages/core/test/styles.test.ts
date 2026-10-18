@@ -6,7 +6,7 @@ const text = (result: CSSResult) => result.cssText.replace(/\s+/g, ' ').trim();
 describe('css interpolation grammar', () => {
   it('accepts custom-property references with plain fallbacks', () => {
     for (const value of [
-      'var(--mote-space-md)',
+      'var(--odd-space-md)',
       ' var(--x) ',
       'var(--x, 0.75rem)',
       'var(--x,#fff)',
@@ -43,7 +43,7 @@ describe('css interpolation grammar', () => {
   });
 
   it('interpolates references, numbers, and fragments; rejects other strings', () => {
-    const gap = 'var(--mote-space-md, 0.75rem)';
+    const gap = 'var(--odd-space-md, 0.75rem)';
     const result = css`
       a {
         gap: ${gap};
@@ -53,7 +53,7 @@ describe('css interpolation grammar', () => {
         `}
       }
     `;
-    expect(text(result)).toBe('a { gap: var(--mote-space-md, 0.75rem); z-index: 2; color: red; }');
+    expect(text(result)).toBe('a { gap: var(--odd-space-md, 0.75rem); z-index: 2; color: red; }');
     expect(
       () => css`
         a {

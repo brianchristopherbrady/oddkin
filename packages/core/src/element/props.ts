@@ -1,5 +1,5 @@
 /**
- * Public property definitions for `MoteElement.with()`. One definition supplies the
+ * Public property definitions for `OddkinElement.with()`. One definition supplies the
  * instance type, attribute conversion, opt-in reflection, and runtime metadata.
  * Contract: docs/architecture/core-contracts.md §2.
  */

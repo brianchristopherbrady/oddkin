@@ -50,7 +50,7 @@ test('core-only elements run under a strict CSP with Trusted Types required', as
   // Styles come from constructed sheets, which style-src 'self' does not block.
   expect(await greeting.evaluate((el) => el.shadowRoot?.adoptedStyleSheets.length)).toBe(1);
 
-  // No policy violations from Mote or the page (checked before the deliberate probe below).
+  // No policy violations from Oddkin or the page (checked before the deliberate probe below).
   expect(
     await page.evaluate(() => (window as unknown as { __violations: string[] }).__violations),
   ).toEqual([]);

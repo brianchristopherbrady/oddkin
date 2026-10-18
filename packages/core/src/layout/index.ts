@@ -1,5 +1,5 @@
 /**
- * `@mote/core/layout` — unbranded layout recipes and helpers. DOM-free: recipes produce
+ * `@oddkin/core/layout` — unbranded layout recipes and helpers. DOM-free: recipes produce
  * CSS text and a shared stylesheet object. Contract: docs/architecture/layout-recipes.md.
  */
 import { createLayoutHelpers } from './helpers.js';

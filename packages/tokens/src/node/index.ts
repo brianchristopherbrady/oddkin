@@ -1,6 +1,6 @@
 /**
- * `@mote/tokens/node` — file I/O around the pure generator: config loading and writing
- * outputs. Node only. The generator itself is `@mote/tokens/generate`.
+ * `@oddkin/tokens/node` — file I/O around the pure generator: config loading and writing
+ * outputs. Node only. The generator itself is `@oddkin/tokens/generate`.
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
@@ -122,7 +122,7 @@ export function formatDiagnostics(diagnostics: readonly Diagnostic[]): string {
 }
 
 export const STARTER_CONFIG = `{
-  "$schema": "./node_modules/@mote/tokens/schema/theme-config.v1.schema.json",
+  "$schema": "./node_modules/@oddkin/tokens/schema/theme-config.v1.schema.json",
   "name": "default",
   "brand": { "primary": "#5b46e8" }
 }

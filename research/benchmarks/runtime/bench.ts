@@ -1,15 +1,24 @@
 // Browser benchmark module (bundled by research/benchmarks/run.mjs). Each function performs one
 // measured operation and returns elapsed milliseconds from performance.now(); setup is untimed.
-import { MoteElement, define, flush, html, render, repeat, scopeStats, signal } from '@mote/core';
-import { collection } from '@mote/core/collections';
+import {
+  OddkinElement,
+  define,
+  flush,
+  html,
+  render,
+  repeat,
+  scopeStats,
+  signal,
+} from '@oddkin/core';
+import { collection } from '@oddkin/core/collections';
 
-class BenchDirect extends MoteElement {
+class BenchDirect extends OddkinElement {
   readonly count = signal(0);
   protected override render() {
     return html`<button type="button">${this.count}</button>`;
   }
 }
-class BenchTracked extends MoteElement {
+class BenchTracked extends OddkinElement {
   readonly count = signal(0);
   protected override render() {
     return html`<button type="button">${this.count.value}</button>`;

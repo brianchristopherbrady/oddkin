@@ -1,7 +1,7 @@
-import { MoteElement, compose, define } from '@mote/core';
+import { OddkinElement, compose, define } from '@oddkin/core';
 
-class Computed extends MoteElement {}
-class Made extends MoteElement {}
+class Computed extends OddkinElement {}
+class Made extends OddkinElement {}
 
 const suffix = 'x';
 export const computedName = compose({ name: `dyn-${suffix}`, element: Computed });

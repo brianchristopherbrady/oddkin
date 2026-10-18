@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { setErrorHandler, type ErrorContext } from '../src/diagnostics/index.js';
-import { define, event, MoteElement, prop } from '../src/element/index.js';
+import { define, event, OddkinElement, prop } from '../src/element/index.js';
 import { flush, signal } from '../src/reactive/index.js';
 import { scopeStats } from '../src/scope/scope.js';
 import type { Scope } from '../src/scope/index.js';
@@ -35,7 +35,7 @@ const shadowText = (el: Element) => el.shadowRoot?.textContent?.replace(/\s+/g, 
 
 // ---------------------------------------------------------------------------
 
-class DemoCounter extends MoteElement {
+class DemoCounter extends OddkinElement {
   readonly count = signal(0);
   renders = 0;
   readonly increment = () => this.count.update((value) => value + 1);
@@ -48,7 +48,7 @@ class DemoCounter extends MoteElement {
 const counterTag = tag('demo-counter');
 define(counterTag, DemoCounter);
 
-class DemoGreeting extends MoteElement.with({
+class DemoGreeting extends OddkinElement.with({
   name: prop.string({ default: 'world' }),
   quiet: prop.boolean({ reflect: true }),
   size: prop.number({ default: 1 }),
@@ -78,7 +78,7 @@ describe('binding rule in components', () => {
   });
 
   it('re-runs render() once for tracked .value reads, however many writes', () => {
-    class Tracked extends MoteElement {
+    class Tracked extends OddkinElement {
       readonly count = signal(0);
       renders = 0;
       protected override render() {
@@ -97,7 +97,7 @@ describe('binding rule in components', () => {
   });
 
   it('coalesces a value reached by both render and a direct binding into one DOM write', async () => {
-    class Dual extends MoteElement {
+    class Dual extends OddkinElement {
       readonly count = signal(0);
       protected override render() {
         return html`<span>${this.count.value > 10 ? 'big' : 'small'}</span><b>${this.count}</b>`;
@@ -122,7 +122,7 @@ describe('binding rule in components', () => {
   });
 
   it('does not track reads in event handlers', () => {
-    class Handler extends MoteElement {
+    class Handler extends OddkinElement {
       readonly count = signal(0);
       renders = 0;
       readonly read = () => {
@@ -217,7 +217,7 @@ describe('public properties', () => {
     const el = document.createElement(name) as HTMLElement & { label?: string };
     el.label = 'early';
     container.append(el);
-    class Late extends MoteElement.with({ label: prop.string({ default: 'default' }) }) {
+    class Late extends OddkinElement.with({ label: prop.string({ default: 'default' }) }) {
       protected override render() {
         return html`${this.label}`;
       }
@@ -237,15 +237,19 @@ describe('public properties', () => {
       }
       return undefined;
     };
-    expect(codeOf(() => MoteElement.with({ title: prop.string() }))).toBe('element.prop.reserved');
-    expect(codeOf(() => MoteElement.with({ render: prop.string() }))).toBe('element.prop.reserved');
+    expect(codeOf(() => OddkinElement.with({ title: prop.string() }))).toBe(
+      'element.prop.reserved',
+    );
+    expect(codeOf(() => OddkinElement.with({ render: prop.string() }))).toBe(
+      'element.prop.reserved',
+    );
     expect(codeOf(() => DemoGreeting.with({ name: prop.string() }))).toBe('element.prop.duplicate');
-    expect(codeOf(() => MoteElement.with({ label: prop.string({ attribute: 'id' }) }))).toBe(
+    expect(codeOf(() => OddkinElement.with({ label: prop.string({ attribute: 'id' }) }))).toBe(
       'element.attribute.reserved',
     );
     expect(
       codeOf(() =>
-        MoteElement.with({
+        OddkinElement.with({
           a: prop.string({ attribute: 'x' }),
           b: prop.string({ attribute: 'x' }),
         }),
@@ -254,7 +258,7 @@ describe('public properties', () => {
   });
 
   it('rejects class fields that shadow reactive properties', () => {
-    class Shadowing extends MoteElement.with({ label: prop.string({ default: 'a' }) }) {
+    class Shadowing extends OddkinElement.with({ label: prop.string({ default: 'a' }) }) {
       // @ts-expect-error -- deliberately redeclared to test the runtime diagnostic
       label = 'field';
       protected override render() {
@@ -292,7 +296,7 @@ describe('public properties', () => {
 });
 
 describe('lifecycle', () => {
-  class Life extends MoteElement.with({ label: prop.string({ default: 'x' }) }) {
+  class Life extends OddkinElement.with({ label: prop.string({ default: 'x' }) }) {
     log: string[] = [];
     readonly local = signal(0);
     protected override connected(scope: Scope) {
@@ -358,7 +362,7 @@ describe('lifecycle', () => {
   });
 
   it('lets async work detect a stale connection by signal or generation', async () => {
-    class Loader extends MoteElement {
+    class Loader extends OddkinElement {
       readonly log: string[] = [];
       protected override connected(scope: Scope) {
         const generation = this.connectionGeneration;
@@ -391,7 +395,7 @@ describe('lifecycle', () => {
   });
 
   it('isolates hook and render errors and keeps the previous DOM', () => {
-    class Broken extends MoteElement {
+    class Broken extends OddkinElement {
       readonly fail = signal(false);
       protected override connected() {
         throw new Error('connect failed');
@@ -426,7 +430,7 @@ describe('styles', () => {
   `;
 
   it('shares one constructed sheet across 100 instances', () => {
-    class Styled extends MoteElement {
+    class Styled extends OddkinElement {
       static override styles = shared;
       protected override render() {
         return html`<slot></slot>`;
@@ -476,7 +480,7 @@ describe('styles', () => {
   it('shares light-DOM styles in the nearest root and removes them with the last instance', () => {
     const name = tag('demo-plain');
     // Light DOM is not encapsulated, so selectors scope themselves by tag name.
-    class Plain extends MoteElement {
+    class Plain extends OddkinElement {
       static override shadowRootOptions = null;
       static override styles = unsafeCSS(`${name} { display: block; padding-top: 6px; }`);
       protected override render() {
@@ -508,7 +512,7 @@ describe('styles', () => {
   });
 
   it('reports :host in light-DOM styles', () => {
-    class HostInLight extends MoteElement {
+    class HostInLight extends OddkinElement {
       static override shadowRootOptions = null;
       static override styles = css`
         :host {
@@ -524,7 +528,7 @@ describe('styles', () => {
   });
 
   it('re-adopts styles for a new document', () => {
-    class Moving extends MoteElement {
+    class Moving extends OddkinElement {
       static override styles = shared;
       adoptedCalls = 0;
       protected override adopted() {
@@ -559,7 +563,7 @@ describe('events, states, and registration', () => {
     syncs: 'value',
   });
 
-  class Emitter extends MoteElement {
+  class Emitter extends OddkinElement {
     static override events = { changed };
     fire(value: string) {
       return this.emit(changed, { value });
@@ -591,8 +595,8 @@ describe('events, states, and registration', () => {
   });
 
   it('defines idempotently, registers dependencies, and reports collisions', () => {
-    class Child extends MoteElement {}
-    class Parent extends MoteElement {
+    class Child extends OddkinElement {}
+    class Parent extends OddkinElement {
       static override dependencies = { [tag('demo-child')]: Child };
     }
     const parentTag = tag('demo-parent');
@@ -607,14 +611,14 @@ describe('events, states, and registration', () => {
       }
       return undefined;
     };
-    expect(codeOf(() => define(parentTag, class extends MoteElement {}))).toBe(
+    expect(codeOf(() => define(parentTag, class extends OddkinElement {}))).toBe(
       'registry.collision',
     );
     expect(codeOf(() => define(tag('demo-again'), Parent))).toBe('registry.constructorReused');
-    expect(codeOf(() => define('NoHyphen', class extends MoteElement {}))).toBe(
+    expect(codeOf(() => define('NoHyphen', class extends OddkinElement {}))).toBe(
       'registry.name.invalid',
     );
-    expect(codeOf(() => define('font-face', class extends MoteElement {}))).toBe(
+    expect(codeOf(() => define('font-face', class extends OddkinElement {}))).toBe(
       'registry.name.invalid',
     );
   });

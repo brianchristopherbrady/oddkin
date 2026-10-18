@@ -2,9 +2,9 @@
 
 Status: **proposal**. Nothing in this document is implemented unless §1 says so. Decision record: [ADR 0034](./decisions/0034-change-impact-and-conformance.md). Planned work: [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §5h.
 
-**Objective.** Mote helps teams author and customize components, understand why they behave and appear as they do, assess the consequences of changes, and verify that supported customizations preserve required behavior.
+**Objective.** Oddkin helps teams author and customize components, understand why they behave and appear as they do, assess the consequences of changes, and verify that supported customizations preserve required behavior.
 
-**Intended outcome.** Teams can customize shared Mote components, determine which products a change may affect, run the relevant verification, inspect supported explanations, and export reproducible failures, all through one coherent set of contracts and optional tools.
+**Intended outcome.** Teams can customize shared Oddkin components, determine which products a change may affect, run the relevant verification, inspect supported explanations, and export reproducible failures, all through one coherent set of contracts and optional tools.
 
 These are optional development capabilities built from existing sources through typed relationships. There is no second analyzer, token engine, reactive engine, component registry, or documentation catalog. Production runtime size, startup, dependencies, and package boundaries are unchanged; the size budgets (ADR 0031) and boundary checks enforce this.
 
@@ -12,16 +12,16 @@ These are optional development capabilities built from existing sources through 
 
 | Source | Status today | Used for |
 | --- | --- | --- |
-| Analyzer metadata (CEM + `mote.metadata.json`, stable ids, provenance) | Implemented (M3) | Contract snapshots, identity matching, definition → module edges |
+| Analyzer metadata (CEM + `oddkin.metadata.json`, stable ids, provenance) | Implemented (M3) | Contract snapshots, identity matching, definition → module edges |
 | Token generator + inspection JSON (aliases, origins, re-declaration sets) | Implemented (M2) | Token snapshots, alias edges, styling explanations |
 | Recipe descriptions (`describeRecipe`) and recipe metadata | Implemented (M3) | Recipe and condition edges |
 | `defineExamples` / `examples.v1` / `checkExamples` | Implemented (M3, DOM-free) | Example identity, fixtures, verification selection |
 | `scopeStats()` (counts of live scopes and owned work) | Implemented (M3) | Ownership baselines; no per-instance records yet |
-| Stable `MoteError` codes and development/production builds | Implemented (M3) | Diagnostics in reports and explanations |
+| Stable `OddkinError` codes and development/production builds | Implemented (M3) | Diagnostics in reports and explanations |
 | Playwright and Vitest browser runners, size checks, packed-consumer checks | Implemented (M1–M3) | Executing selected checks, screenshots, clean-directory verification |
 | Composition API (`compose()`, `define(definition)`, `extends`) | Implemented (M4, ADR 0036) | Definition edges, recomposed implementations under test |
-| Portable conformance: `conformance.v1`, `conformance-result.v1`, `@mote/workbench/conformance`, `./conformance/button`, `./testing` (`runConformance`) | **Prototype implemented** (M4) | §3; accepts `mote-button`, `studio-button`, and an alternative-template button; rejects 5 mutants in three engines |
-| `mote analyze --compare`, Workbench previews, share payload, `runExample`, product configurations, agent operations | **Planned** (M5–M11) | Extended here |
+| Portable conformance: `conformance.v1`, `conformance-result.v1`, `@oddkin/workbench/conformance`, `./conformance/button`, `./testing` (`runConformance`) | **Prototype implemented** (M4) | §3; accepts `odd-button`, `studio-button`, and an alternative-template button; rejects 5 mutants in three engines |
+| `oddkin analyze --compare`, Workbench previews, share payload, `runExample`, product configurations, agent operations | **Planned** (M5–M11) | Extended here |
 | Reactive dependency and per-scope ownership records | **Not implemented**; proposed development-only instrumentation (§4.2) | Runtime explanations |
 
 Static dependency facts (*extracted*), authored guidance (*authored*), runtime observations (*observed*), and verification evidence (*verified*, with conditions) stay distinguishable in every output.
@@ -32,7 +32,7 @@ Static dependency facts (*extracted*), authored guidance (*authored*), runtime o
 
 A `comparison-snapshot.v1` manifest references existing artifacts by content hash rather than copying them:
 
-- public component contracts and package exports (CEM, `mote.metadata.json`, `package.json` `exports`);
+- public component contracts and package exports (CEM, `oddkin.metadata.json`, `package.json` `exports`);
 - definitions, foundation relationships (`extends`), and dependencies;
 - templates, styles, and declared customization and anatomy contracts (by source reference and hash);
 - token definitions, aliases, resolved values, and provenance (token inspection JSON per theme);
@@ -117,7 +117,7 @@ Generation runs locally. It needs no hosted service and never publishes anything
 
 Visual differences reuse Playwright screenshot assertions. Baselines are files keyed by example id, configuration hash, browser, and browser version. They are updated only by an explicit accept command that lists the differences being accepted; current output is never silently accepted as a new baseline.
 
-**Ownership.** Snapshot creation, comparison, traversal, and selection live in `@mote/analyzer` (Node; extends the planned `compare`). Execution uses the project's existing Vitest/Playwright runners. Report rendering is shared by the CLI, the Workbench verification view, and `@mote/agent`.
+**Ownership.** Snapshot creation, comparison, traversal, and selection live in `@oddkin/analyzer` (Node; extends the planned `compare`). Execution uses the project's existing Vitest/Playwright runners. Report rendering is shared by the CLI, the Workbench verification view, and `@oddkin/agent`.
 
 ## 3. Portable conformance suites
 
@@ -162,7 +162,7 @@ Each invariant names its change kind, and identity invariants apply only to valu
 
 ### 3.3 Coverage and evidence
 
-- **Targets:** default Mote components, product-specific visual implementations, supported alternative templates.
+- **Targets:** default Oddkin components, product-specific visual implementations, supported alternative templates.
 - **Settings:** relevant theme, density, direction, viewport, and container settings, plus reduced motion, forced colours, and font-size preferences where applicable.
 - **Products:** configurations with 1, 2, 3, and 10 products. Coverage is representative, with targeted checks for declared differences, never an automatic product of every axis.
 - **Mutants:** each suite ships intentionally broken implementations it must reject (e.g. a button not activatable by keyboard, an input emitting `input` on programmatic writes, a list losing focus on reorder) and legitimate customized implementations it must accept (e.g. `studio-button`).
@@ -172,18 +172,18 @@ Each invariant names its change kind, and identity invariants apply only to valu
 
 | Entry | Contents | Environment |
 | --- | --- | --- |
-| `@mote/workbench/conformance` | `defineConformance`, contract/adapter/result types, serialization (DOM-free) | any |
-| `@mote/workbench/testing` | `runConformance` (implemented) and `runExample` (planned). The runner's `expect` and user-input API are passed in, so the entry imports no test framework | browser test runner |
-| `@mote/workbench/conformance/<component>` | Mote's suites for its own components; implementation-agnostic (tag, public properties, native events, documented anatomy roles). Implemented: `./conformance/button` | any (DOM touched only when run) |
+| `@oddkin/workbench/conformance` | `defineConformance`, contract/adapter/result types, serialization (DOM-free) | any |
+| `@oddkin/workbench/testing` | `runConformance` (implemented) and `runExample` (planned). The runner's `expect` and user-input API are passed in, so the entry imports no test framework | browser test runner |
+| `@oddkin/workbench/conformance/<component>` | Oddkin's suites for its own components; implementation-agnostic (tag, public properties, native events, documented anatomy roles). Implemented: `./conformance/button` | any (DOM touched only when run) |
 
-- Workbench already depends on components, so Mote's suites live there; `@mote/components` never imports Workbench.
+- Workbench already depends on components, so Oddkin's suites live there; `@oddkin/components` never imports Workbench.
 - Third-party libraries publish suites from their own development entry.
 - Ordinary component imports include no runner, assertion library, browser automation, or adapter.
 - A suite's version is tied to the foundation contract version it targets.
 
 ## 4. Component explanations
 
-One optional workflow connects a selected preview element to what Mote can actually explain, using one `explanation.v1` model for Workbench, CLI operations, and agent/MCP interfaces. Agents receive the same uncertainty and provenance shown to developers.
+One optional workflow connects a selected preview element to what Oddkin can actually explain, using one `explanation.v1` model for Workbench, CLI operations, and agent/MCP interfaces. Agents receive the same uncertainty and provenance shown to developers.
 
 ### 4.1 Styling
 
@@ -201,7 +201,7 @@ For a selected component or supported part, where available:
 
 Rules:
 
-- Relationships stay labelled *declared*, *potentially relevant*, or *observed*. Mote never claims a complete CSS cascade reconstruction from token metadata, and it reports ordinary external CSS, unreadable or cross-origin stylesheets, closed or unsupported roots, and missing source maps as limitations.
+- Relationships stay labelled *declared*, *potentially relevant*, or *observed*. Oddkin never claims a complete CSS cascade reconstruction from token metadata, and it reports ordinary external CSS, unreadable or cross-origin stylesheets, closed or unsupported roots, and missing source maps as limitations.
 - A responsive condition is reported as **active** only with reliable observation: `matchMedia` for media conditions, or verified instrumentation for container conditions (a candidate is a generated probe property inside the condition rule, adopted only after three-engine verification). Otherwise its state is unknown. No JavaScript responsiveness emulation.
 - Measurements run only in an explicit inspection action, never during ordinary binding commits (core contracts forbid hidden layout reads).
 
@@ -216,11 +216,11 @@ Where instrumentation supports it:
 - whether owned work is active, cancelled, superseded, suspended, or disposed;
 - relevant diagnostics and source references.
 
-Cancellation (aborted with a reason), supersession (a newer generation replaced it), stale-result rejection (a late completion ignored), suspension (page frozen; [core-contracts.md](./core-contracts.md) §9.1), and disposal (scope ended) stay distinct. Mote never invents causal histories for work it did not observe.
+Cancellation (aborted with a reason), supersession (a newer generation replaced it), stale-result rejection (a late completion ignored), suspension (page frozen; [core-contracts.md](./core-contracts.md) §9.1), and disposal (scope ended) stay distinct. Oddkin never invents causal histories for work it did not observe.
 
 **Instrumentation:**
 
-- a development-only core entry (proposed `@mote/core/inspect`, resolved only under the `development` export condition) that records, per enabled root, bounded ring buffers of commits and ownership changes;
+- a development-only core entry (proposed `@oddkin/core/inspect`, resolved only under the `development` export condition) that records, per enabled root, bounded ring buffers of commits and ownership changes;
 - opt-in per preview or development session, owned by that session's `Scope`, removable, and bounded;
 - no duplicate reactive graph: records are taken from the existing graph at commit time;
 - stale references are invalidated when instances, frames, registrations, or source versions change;
@@ -254,7 +254,7 @@ Rules:
 - **Repeatability, not replay.** Fixture inputs are deterministic and timing is controlled where the test infrastructure supports it. Repeatable fixture execution is distinguished from exact replay of an arbitrary browser session.
 - **Pinned sources.** Source references resolve against the captured version. Unavailable private dependencies, assets, fonts, services, or external setup are reported.
 - **No repository copy.** Exports never copy a whole repository or dependency tree. They use public exports and normal package resolution without workspace aliases.
-- **Ownership:** export is a Workbench Node command (`mote workbench repro export`) and an agent operation. It writes only to the chosen output directory, preserves authored files, and never publishes, deploys, or sends anything. Generation and replay stay outside ordinary component imports.
+- **Ownership:** export is a Workbench Node command (`oddkin workbench repro export`) and an agent operation. It writes only to the chosen output directory, preserves authored files, and never publishes, deploys, or sends anything. Generation and replay stay outside ordinary component imports.
 - **Verification:** representative exports run their declared failing scenario in a clean directory from packed or version-pinned packages.
 
 ## 6. Prototypes, priority, and measures
@@ -263,15 +263,15 @@ Priority:
 1. Portable interaction verification.
 2. Change-impact reporting.
 
-Both are prototyped on one real interactive foundation (`mote-button`) and customized implementations before any public tooling is generalized. Explanation and reproduction follow from the proven contracts.
+Both are prototyped on one real interactive foundation (`odd-button`) and customized implementations before any public tooling is generalized. Explanation and reproduction follow from the proven contracts.
 
 | Prototype | Developer task improved | Inputs | Authoritative | Unknown | Minimal acceptance | Cost | Owner / milestone | Expand, revise, or defer when |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Conformance | "Does my product button still behave like the foundation?" | Button foundation, anatomy contract, examples, `studio-button`, mutants | Authored assertions; public contracts | Behavior not asserted; manual AT results | Suite accepts default + `studio-button`, rejects every mutant, in three engines; results recorded with conditions | Dev-only entry; test time | `@mote/workbench/conformance` + `./testing` · M4 | Expand to input and editable list if false-failure rate is zero on legitimate variants; revise the adapter if overrides are needed per variant |
-| Change impact | "Which products and examples does this change affect, and what must I run?" | Two snapshots of analyzer outputs, token inspection, examples, 1/2/3/10-product fixtures | Stable ids, extracted edges, generator graph | Dynamic deps, external CSS, unavailable repos | Known-answer fixtures: no missed dependency; every unresolved edge widens selection; states correct | Node CLI time; snapshot size | `@mote/analyzer` · M5 (evidence at M8) | Expand to visual baselines and products when known-answer misses are zero; defer product traversal if product metadata is incomplete |
-| Styling explanation | "Why is this button this colour here?" | Preview frame, token inspection, metadata, scope attributes | Generator provenance; computed style (observed) | External cascade; container-condition state | Correct chain for fixture overrides in nested product scopes; limitations listed | Inspection action only | `@mote/workbench` · M9 | Expand to recipes once condition observation is verified |
-| Runtime explanation | "Why did this re-render, and who owns this listener?" | Dev-only core records | Recorded commits and scopes | Unrecorded work | Records match known fixtures; zero production bytes; bounded memory | Measured overhead in dev builds | `@mote/core/inspect` + Workbench · M11 | Defer if overhead or size checks fail |
-| Reproduction | "Send a failing case someone else can run" | Share payload, example, fixture, versions | Example and fixture definitions | Undeclared services and state | Representative failures re-fail in a clean directory from packed packages | Node export | `@mote/workbench` Node + agent · M11 | Expand fixture adapters from real reports |
+| Conformance | "Does my product button still behave like the foundation?" | Button foundation, anatomy contract, examples, `studio-button`, mutants | Authored assertions; public contracts | Behavior not asserted; manual AT results | Suite accepts default + `studio-button`, rejects every mutant, in three engines; results recorded with conditions | Dev-only entry; test time | `@oddkin/workbench/conformance` + `./testing` · M4 | Expand to input and editable list if false-failure rate is zero on legitimate variants; revise the adapter if overrides are needed per variant |
+| Change impact | "Which products and examples does this change affect, and what must I run?" | Two snapshots of analyzer outputs, token inspection, examples, 1/2/3/10-product fixtures | Stable ids, extracted edges, generator graph | Dynamic deps, external CSS, unavailable repos | Known-answer fixtures: no missed dependency; every unresolved edge widens selection; states correct | Node CLI time; snapshot size | `@oddkin/analyzer` · M5 (evidence at M8) | Expand to visual baselines and products when known-answer misses are zero; defer product traversal if product metadata is incomplete |
+| Styling explanation | "Why is this button this colour here?" | Preview frame, token inspection, metadata, scope attributes | Generator provenance; computed style (observed) | External cascade; container-condition state | Correct chain for fixture overrides in nested product scopes; limitations listed | Inspection action only | `@oddkin/workbench` · M9 | Expand to recipes once condition observation is verified |
+| Runtime explanation | "Why did this re-render, and who owns this listener?" | Dev-only core records | Recorded commits and scopes | Unrecorded work | Records match known fixtures; zero production bytes; bounded memory | Measured overhead in dev builds | `@oddkin/core/inspect` + Workbench · M11 | Defer if overhead or size checks fail |
+| Reproduction | "Send a failing case someone else can run" | Share payload, example, fixture, versions | Example and fixture definitions | Undeclared services and state | Representative failures re-fail in a clean directory from packed packages | Node export | `@oddkin/workbench` Node + agent · M11 | Expand fixture adapters from real reports |
 
 **Measures:**
 - incorrect impact predictions and missed dependencies in known-answer fixtures;

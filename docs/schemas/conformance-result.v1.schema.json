@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/conformance-result/v1.json",
-  "title": "Mote conformance result v1",
+  "$id": "https://oddkin.dev/schemas/conformance-result/v1.json",
+  "title": "Oddkin conformance result v1",
   "description": "DRAFT (ADR 0034). Evidence for one suite version against one implementation, configuration, and browser. Untested cases are not-executed, never passed.",
   "type": "object",
   "required": [
@@ -16,7 +16,7 @@
   "additionalProperties": false,
   "properties": {
     "schema": {
-      "const": "https://mote.dev/schemas/conformance-result/v1.json"
+      "const": "https://oddkin.dev/schemas/conformance-result/v1.json"
     },
     "suite": {
       "type": "object",

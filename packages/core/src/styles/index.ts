@@ -1,11 +1,11 @@
 /**
- * `@mote/core/styles` — trusted CSS fragments and per-document sheet reuse.
+ * `@oddkin/core/styles` — trusted CSS fragments and per-document sheet reuse.
  * Contract: docs/architecture/core-contracts.md §6, docs/architecture/theming-and-styling.md.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError } from '../diagnostics/index.js';
+import { OddkinError } from '../diagnostics/index.js';
 
-const CSS_RESULT: unique symbol = Symbol.for('mote.cssResult') as never;
+const CSS_RESULT: unique symbol = Symbol.for('oddkin.cssResult') as never;
 
 /** A trusted stylesheet fragment. Create with `css` or, for vetted strings, `unsafeCSS`. */
 export class CSSResult {
@@ -16,7 +16,7 @@ export class CSSResult {
   /** @internal Use `css` or `unsafeCSS`. */
   constructor(cssText: string, token: symbol) {
     if (token !== CONSTRUCT)
-      throw new MoteError('style.construct', DEV ? 'Create CSS with css`` or unsafeCSS().' : '');
+      throw new OddkinError('style.construct', DEV ? 'Create CSS with css`` or unsafeCSS().' : '');
     this.cssText = cssText;
   }
 
@@ -55,7 +55,7 @@ const FORBIDDEN_IN_FALLBACK =
   /[;{}<>\\"'@!]|\/\*|url\s*\(|image\s*\(|image-set\s*\(|expression\s*\(/i;
 
 /**
- * True for a CSS custom-property reference such as `var(--mote-space-md)` or
+ * True for a CSS custom-property reference such as `var(--odd-space-md)` or
  * `var(--x, 0.75rem)`: one `var()` whose fallback is a plain value (numbers, units,
  * keywords, colours, functions, nested `var()`) with balanced parentheses and no
  * declaration, block, string, comment, `url()`, or at-rule syntax.
@@ -90,7 +90,7 @@ export function css(
     else if (typeof value === 'number' && Number.isFinite(value)) text += String(value);
     else if (typeof value === 'string' && isCSSVariableReference(value)) text += value.trim();
     else {
-      throw new MoteError(
+      throw new OddkinError(
         'style.interpolation.untrusted',
         DEV
           ? `css\`\` interpolation ${i} (${typeof value === 'string' ? `"${value.slice(0, 40)}"` : typeof value}) is not allowed. Use css results, finite numbers, or var(--name[, fallback]) references; pass dynamic values through custom properties, or wrap vetted text with unsafeCSS().`
@@ -143,7 +143,7 @@ const adopted = new WeakMap<
 >();
 
 /**
- * Apply styles to a shadow root or document, replacing styles Mote applied before and
+ * Apply styles to a shadow root or document, replacing styles Oddkin applied before and
  * keeping sheets adopted by others. Uses one shared constructed sheet per document,
  * falling back to `<style>` elements (with an optional nonce).
  */

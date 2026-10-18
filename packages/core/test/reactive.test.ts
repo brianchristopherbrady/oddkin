@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MoteError, setErrorHandler, type ErrorContext } from '../src/diagnostics/index.js';
+import { OddkinError, setErrorHandler, type ErrorContext } from '../src/diagnostics/index.js';
 import { observerCount } from '../src/reactive/graph.js';
 import {
   batch,
@@ -154,11 +154,11 @@ describe('computed', () => {
   it('reports cycles with a stable code', () => {
     const a: { value: number } = computed((): number => b.value + 1);
     const b: { value: number } = computed((): number => a.value + 1);
-    expect(() => a.value).toThrow(MoteError);
+    expect(() => a.value).toThrow(OddkinError);
     try {
       a.value;
     } catch (error) {
-      expect((error as MoteError).code).toBe('reactive.cycle');
+      expect((error as OddkinError).code).toBe('reactive.cycle');
     }
   });
 

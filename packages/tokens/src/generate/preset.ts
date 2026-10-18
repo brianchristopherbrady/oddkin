@@ -1,5 +1,5 @@
 /**
- * Provisional `mote-default` preset (M2). Values are validated in real components (M4,
+ * Provisional `oddkin-default` preset (M2). Values are validated in real components (M4,
  * M8) before being frozen. Brand and status roles are chosen by measured contrast at
  * generation time (see `ContrastRole`), not by fixed step numbers.
  */

@@ -6,7 +6,7 @@ import type {
   DemoGreeting,
   countChange,
 } from '../../examples/core-counter/dist/index.js';
-import type { EventDetail, MoteElement } from '@mote/core';
+import type { EventDetail, OddkinElement } from '@oddkin/core';
 
 it('exposes inferred property types through emitted declarations', () => {
   expectTypeOf<DemoGreeting['name']>().toEqualTypeOf<string>();
@@ -15,7 +15,7 @@ it('exposes inferred property types through emitted declarations', () => {
   expectTypeOf<DemoGreeting['history']>().toEqualTypeOf<string[]>();
   expectTypeOf<DemoCounter['step']>().toEqualTypeOf<number>();
   expectTypeOf<DemoCounter['count']>().toEqualTypeOf<number>();
-  expectTypeOf<DemoGreeting>().toMatchTypeOf<MoteElement>();
+  expectTypeOf<DemoGreeting>().toMatchTypeOf<OddkinElement>();
   expectTypeOf<DemoGreeting>().toMatchTypeOf<HTMLElement>();
   expectTypeOf<EventDetail<typeof countChange>>().toEqualTypeOf<{ count: number }>();
   expectTypeOf<HTMLElementTagNameMap['demo-greeting']>().toEqualTypeOf<DemoGreeting>();

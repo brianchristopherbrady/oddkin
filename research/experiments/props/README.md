@@ -17,7 +17,7 @@ Evidence: [`props.browser.test.ts`](./props.browser.test.ts) passes in Chromium,
 | Explicit `.prop` / attribute bindings on the same element win | **Not met.** A directive cannot see other parts on its element. The later binding in source order commits first-render values, and afterwards whichever binding changed last wins. Enforcing precedence needs per-element part bookkeeping in core. |
 | Removed key resets to the declared default | **Met**, through `elementProperties()` and `definition.initial()`. |
 | No listeners, nothing to dispose | **Met.** Clearing the binding resets the keys it set. |
-| Pre-upgrade values replayed | **Met** by `MoteElement`'s constructor replay. Unknown keys stay as plain own properties, unchecked. |
+| Pre-upgrade values replayed | **Met** by `OddkinElement`'s constructor replay. Unknown keys stay as plain own properties, unchecked. |
 | Readable values | Update the target without re-running the parent `render()`, like `classMap`. |
 
 ## Costs and benefits
@@ -29,7 +29,7 @@ Evidence: [`props.browser.test.ts`](./props.browser.test.ts) passes in Chromium,
 
 ## Recommendation
 
-Do not add `props()` to `@mote/core` for M4–M7. Ordinary property bindings cover every catalog need, are explicit, and have no precedence ambiguity. If the M8 ergonomics study shows a need for configuration-object forwarding, the contract should change in three ways:
+Do not add `props()` to `@oddkin/core` for M4–M7. Ordinary property bindings cover every catalog need, are explicit, and have no precedence ambiguity. If the M8 ergonomics study shows a need for configuration-object forwarding, the contract should change in three ways:
 1. Use the named binding `.props=${…}` instead of an element-position part.
 2. Replace "explicit wins" with "do not bind the same key both ways" (development diagnostic only if core gains per-element bookkeeping).
 3. Ship a typed `props<typeof Element>()` signature.

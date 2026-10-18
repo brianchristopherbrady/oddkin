@@ -4,7 +4,7 @@
  * Directives are applied in the commit phase like any other part write.
  */
 
-export const ATTRIBUTE_DIRECTIVE: unique symbol = Symbol.for('mote.attributeDirective') as never;
+export const ATTRIBUTE_DIRECTIVE: unique symbol = Symbol.for('oddkin.attributeDirective') as never;
 
 export type DirectivePartType = 'attribute' | 'boolean' | 'property';
 

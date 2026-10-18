@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { compose, define } from '@mote/core/element';
-import { flush } from '@mote/core/reactive';
-import { scopeStats } from '@mote/core/scope';
-import { css } from '@mote/core/styles';
+import { compose, define } from '@oddkin/core/element';
+import { flush } from '@oddkin/core/reactive';
+import { scopeStats } from '@oddkin/core/scope';
+import { css } from '@oddkin/core/styles';
 
 let container: HTMLElement;
 beforeEach(() => {
@@ -28,9 +28,9 @@ const reflection = 'ariaLabelledByElements' in ElementInternals.prototype;
 type Semantics = { role: string | null; label: string | null; labelledBy: string[] | null };
 let semantics: (el: HTMLElement) => Semantics;
 async function probe() {
-  const { MoteCard, cardDefinition } = await import('../src/card/index.js');
+  const { OddkinCard, cardDefinition } = await import('../src/card/index.js');
   if (!customElements.get('probe-card')) {
-    class ProbeCard extends MoteCard {
+    class ProbeCard extends OddkinCard {
       get probe(): Semantics {
         const internals = this.internals as ElementInternals & {
           ariaLabelledByElements?: readonly Element[] | null;
@@ -49,10 +49,10 @@ async function probe() {
   semantics = (el) => (el as HTMLElement & { probe: Semantics }).probe;
 }
 
-async function mount(markup: string, attributes: Record<string, string> = {}, tag = 'mote-card') {
+async function mount(markup: string, attributes: Record<string, string> = {}, tag = 'odd-card') {
   await import('../src/card/card.define.js');
   await probe();
-  const el = document.createElement(tag) as HTMLElementTagNameMap['mote-card'];
+  const el = document.createElement(tag) as HTMLElementTagNameMap['odd-card'];
   for (const [name, value] of Object.entries(attributes)) el.setAttribute(name, value);
   el.innerHTML = markup;
   container.append(el);
@@ -65,16 +65,16 @@ describe('imports', () => {
   it('the foundation and the component entry register nothing', async () => {
     const foundation = await import('../src/card/foundation.js');
     expect(Object.keys(foundation).sort()).toEqual([
-      'MoteCard',
+      'OddkinCard',
       'cardStructuralStyles',
       'cardTemplate',
     ]);
     await import('../src/card/index.js');
-    expect(customElements.get('mote-card')).toBeUndefined();
+    expect(customElements.get('odd-card')).toBeUndefined();
   });
 });
 
-describe('mote-card', () => {
+describe('odd-card', () => {
   it('renders base, header, body, and footer parts; hides empty header and footer', async () => {
     const { el, part } = await mount('<p>Body</p>');
     expect(part('base')).not.toBeNull();
@@ -123,8 +123,8 @@ describe('mote-card', () => {
   });
 
   it('reflects variant and padding, and reads roles through component variables', async () => {
-    container.style.setProperty('--mote-space-lg', '20px');
-    container.style.setProperty('--mote-color-surface-sunken', 'rgb(4, 5, 6)');
+    container.style.setProperty('--odd-space-lg', '20px');
+    container.style.setProperty('--odd-color-surface-sunken', 'rgb(4, 5, 6)');
     const { el, part } = await mount('<p>Body</p>');
     expect(el.getAttribute('variant')).toBe('outlined');
     expect(el.getAttribute('padding')).toBe('md');
@@ -136,7 +136,7 @@ describe('mote-card', () => {
     el.variant = 'elevated';
     await settle(el);
     expect(getComputedStyle(part('base')).boxShadow).not.toBe('none');
-    el.style.setProperty('--mote-card-shadow', 'none');
+    el.style.setProperty('--odd-card-shadow', 'none');
     expect(getComputedStyle(part('base')).boxShadow).toBe('none');
   });
 
@@ -150,7 +150,7 @@ describe('mote-card', () => {
       await settle(el);
     }
     expect(scopeStats()).toEqual(before);
-    container.style.setProperty('--mote-card-radius', '0px');
+    container.style.setProperty('--odd-card-radius', '0px');
     await settle(el);
     expect(part('base')).toBe(base);
     expect(getComputedStyle(base).borderTopLeftRadius).toBe('0px');
@@ -158,10 +158,11 @@ describe('mote-card', () => {
 });
 
 describe('recomposition', () => {
-  it('a product card reuses the foundation with its own styles beside mote-card', async () => {
-    const { MoteCard, cardDefinition, cardStructuralStyles } = await import('../src/card/index.js');
+  it('a product card reuses the foundation with its own styles beside odd-card', async () => {
+    const { OddkinCard, cardDefinition, cardStructuralStyles } =
+      await import('../src/card/index.js');
     await import('../src/card/card.define.js');
-    class StudioCard extends MoteCard {}
+    class StudioCard extends OddkinCard {}
     const studio = compose({
       ...cardDefinition,
       name: 'studio-card',
@@ -178,7 +179,7 @@ describe('recomposition', () => {
     });
     define(studio);
     expect(studio.extends).toBe(cardDefinition);
-    const a = document.createElement('mote-card');
+    const a = document.createElement('odd-card');
     const b = document.createElement('studio-card') as InstanceType<typeof StudioCard>;
     a.textContent = b.textContent = 'Body';
     container.append(a, b);

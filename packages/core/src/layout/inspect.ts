@@ -1,5 +1,5 @@
 /**
- * `@mote/core/layout/inspect` — recipe metadata for tooling, and a region check for
+ * `@oddkin/core/layout/inspect` — recipe metadata for tooling, and a region check for
  * development. `describeRecipe` is DOM-free; `checkRecipeRegions` reads a rendered root.
  */
 import { recipeModel, regionSelector, type LayoutRecipe } from './recipe.js';

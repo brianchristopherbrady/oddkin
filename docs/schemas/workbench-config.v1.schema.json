@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/workbench-config/v1.json",
-  "title": "Workbench configuration (mote.config) v1",
+  "$id": "https://oddkin.dev/schemas/workbench-config/v1.json",
+  "title": "Workbench configuration (oddkin.config) v1",
   "description": "DRAFT. JSON-compatible shape of defineWorkbenchConfig (workbench.md, workbench-pages.md).",
   "type": "object",
   "required": ["library"],
@@ -14,7 +14,7 @@
       "additionalProperties": false,
       "properties": {
         "packages": { "type": "array", "minItems": 1, "items": { "type": "string" } },
-        "cem": { "type": "array", "items": { "type": "string" }, "description": "Explicit standard CEM inputs for libraries without Mote enrichment" }
+        "cem": { "type": "array", "items": { "type": "string" }, "description": "Explicit standard CEM inputs for libraries without Oddkin enrichment" }
       }
     },
     "branding": {

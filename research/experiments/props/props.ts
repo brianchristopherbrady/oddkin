@@ -3,7 +3,7 @@
  * entries to declared public properties of the bound element, written as
  * `<x-nav .props=${props({ label, items, current })}>`.
  *
- * Built only on public APIs: the attribute-directive protocol from `@mote/core` and
+ * Built only on public APIs: the attribute-directive protocol from `@oddkin/core` and
  * `elementProperties()` for declared properties and defaults.
  */
 import {
@@ -15,8 +15,8 @@ import {
   type DirectiveHandler,
   type ElementProperty,
   type Readable,
-} from '@mote/core';
-import { MoteError, reportMoteError } from '@mote/core/diagnostics';
+} from '@oddkin/core';
+import { OddkinError, reportOddkinError } from '@oddkin/core/diagnostics';
 
 interface PropsDirective extends AttributeDirective {
   readonly values: ReadonlyMap<string, unknown>;
@@ -46,8 +46,8 @@ const handler: DirectiveHandler<PropsDirective, Map<string, unknown>> = {
     let changed = false;
     for (const [key, value] of directive.values) {
       if (declared && !declared.has(key)) {
-        reportMoteError(
-          new MoteError(
+        reportOddkinError(
+          new OddkinError(
             'props.key.unknown',
             `props(): <${element.localName}> has no declared property "${key}"; it was not set. Events are bound with @event, attributes with name=\${…}.`,
           ),

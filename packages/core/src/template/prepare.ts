@@ -4,7 +4,7 @@
  * Prepared templates are cached by strings identity.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError } from '../diagnostics/index.js';
+import { OddkinError } from '../diagnostics/index.js';
 import type { TemplateKind } from './result.js';
 
 export type AttributePartType = 'attribute' | 'boolean' | 'property' | 'event';
@@ -27,7 +27,7 @@ export interface PreparedTemplate {
   readonly parts: readonly PartDescriptor[];
 }
 
-const MARKER = `mote-${Math.random().toString(36).slice(2, 9)}`;
+const MARKER = `oddkin-${Math.random().toString(36).slice(2, 9)}`;
 const ATTRIBUTE_MARKER = `${MARKER}-a`;
 const RAW_TEXT = new Set(['script', 'style', 'textarea', 'title']);
 const UNSAFE_PROPERTIES = new Set(['innerHTML', 'outerHTML', 'srcdoc']);
@@ -97,7 +97,7 @@ export function buildTemplateHtml(strings: readonly string[]): {
         type !== 'attribute' &&
         (attr.segments.length !== 2 || attr.segments.some((s) => s !== ''))
       ) {
-        throw new MoteError(
+        throw new OddkinError(
           'template.binding.mixed',
           DEV
             ? `The "${written}" binding must be a single interpolation with no surrounding text, e.g. ${written}=\${value}.`
@@ -105,7 +105,7 @@ export function buildTemplateHtml(strings: readonly string[]): {
         );
       }
       if (type === 'attribute' && /^on/i.test(name)) {
-        throw new MoteError(
+        throw new OddkinError(
           'template.attribute.unsafe',
           DEV
             ? `Binding the "${name}" event-handler attribute is not allowed. Use @${name.slice(2)}=\${handler}.`
@@ -116,7 +116,7 @@ export function buildTemplateHtml(strings: readonly string[]): {
         UNSAFE_PROPERTIES.has(name) ||
         (type === 'attribute' && name.toLowerCase() === 'srcdoc')
       ) {
-        throw new MoteError(
+        throw new OddkinError(
           'template.sink.unsafe',
           DEV
             ? `Binding "${written}" would parse a string as markup. Render a template or node in a child position instead.`
@@ -290,7 +290,7 @@ export function buildTemplateHtml(strings: readonly string[]): {
     switch (state) {
       case TEXT:
         if (/<\/?$/.test(chunk)) {
-          throw new MoteError(
+          throw new OddkinError(
             'template.binding.position',
             DEV
               ? `${location(strings, i)} is in a tag-name position. Dynamic tag names are not supported; branch with when() or match() between static tags.`
@@ -311,7 +311,7 @@ export function buildTemplateHtml(strings: readonly string[]): {
         break;
       }
       case RAW:
-        throw new MoteError(
+        throw new OddkinError(
           'template.binding.rawText',
           DEV
             ? `${location(strings, i)} is inside <${tagName.toLowerCase()}>, whose text is not parsed as markup. Bind its content as a property (e.g. .value=\${…} on <textarea>) or use css\`\` for styles.`
@@ -319,12 +319,12 @@ export function buildTemplateHtml(strings: readonly string[]): {
         );
       case COMMENT:
       case BOGUS:
-        throw new MoteError(
+        throw new OddkinError(
           'template.binding.position',
           DEV ? `${location(strings, i)} is inside a comment.` : '',
         );
       default:
-        throw new MoteError(
+        throw new OddkinError(
           'template.binding.position',
           DEV
             ? `${location(strings, i)} is in a tag-name or attribute-name position. Bind attribute values (name=\${…}) or child content instead; dynamic tag and attribute names are not supported.`
@@ -333,7 +333,7 @@ export function buildTemplateHtml(strings: readonly string[]): {
     }
   }
   if (state !== TEXT && state !== RAW) {
-    throw new MoteError(
+    throw new OddkinError(
       'template.parse.unclosed',
       DEV ? 'The template ends inside a tag, attribute, or comment.' : '',
     );
@@ -351,7 +351,7 @@ function toHTML(markup: string): string {
     try {
       // The input is author-written template source with markers, never runtime values.
       policy =
-        trustedTypes?.createPolicy('mote-template', { createHTML: (input: string) => input }) ??
+        trustedTypes?.createPolicy('oddkin-template', { createHTML: (input: string) => input }) ??
         null;
     } catch {
       policy = null;
@@ -417,7 +417,7 @@ export function prepareTemplate(
     0,
   );
   if (actual !== expected) {
-    throw new MoteError(
+    throw new OddkinError(
       'template.parse.mismatch',
       DEV
         ? `Found ${actual} of ${expected} bindings after parsing. Bindings inside a nested <template> element or in markup the HTML parser moves (e.g. text directly inside <table>) are not supported.`

@@ -27,8 +27,8 @@
           "customElement": true,
           "tagName": "demo-counter",
           "superclass": {
-            "name": "MoteElement",
-            "package": "@mote/core"
+            "name": "OddkinElement",
+            "package": "@oddkin/core"
           },
           "members": [
             {
@@ -165,8 +165,8 @@
           "customElement": true,
           "tagName": "demo-greeting",
           "superclass": {
-            "name": "MoteElement",
-            "package": "@mote/core"
+            "name": "OddkinElement",
+            "package": "@oddkin/core"
           },
           "members": [
             {

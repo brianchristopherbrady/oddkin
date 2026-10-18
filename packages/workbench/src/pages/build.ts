@@ -1,5 +1,5 @@
 /**
- * Build the page registry from standard CEM, optional Mote enrichment, authored content, and
+ * Build the page registry from standard CEM, optional Oddkin enrichment, authored content, and
  * configuration. Pure and deterministic; no build time enters the output.
  */
 import {
@@ -16,7 +16,7 @@ import {
   type Availability,
   type CemDeclaration,
   type CemPackage,
-  type MoteMetadataLike,
+  type OddkinMetadataLike,
   type PageEntry,
   type PageKind,
   type PageRegistry,
@@ -27,9 +27,9 @@ export interface RegistryInput {
   readonly config: WorkbenchConfig | ResolvedWorkbenchConfig;
   /** Standard Custom Elements Manifest(s). Enough for the Components baseline. */
   readonly cem?: CemPackage | readonly CemPackage[];
-  /** `mote.metadata.json` enrichment (foundations, categories, examples, products, docs). */
-  readonly metadata?: MoteMetadataLike;
-  /** Authored content (`mote.docs.ts` / Markdown front matter). */
+  /** `oddkin.metadata.json` enrichment (foundations, categories, examples, products, docs). */
+  readonly metadata?: OddkinMetadataLike;
+  /** Authored content (`oddkin.docs.ts` / Markdown front matter). */
   readonly docs?: DocsContent;
 }
 
@@ -242,7 +242,7 @@ export function buildPageRegistry(input: RegistryInput): {
       ...(summary ? { summary } : {}),
       group,
       groupOrder: category?.order ?? Number.MAX_SAFE_INTEGER,
-      // Full Mote support needs enrichment; standard CEM alone is the documented baseline.
+      // Full Oddkin support needs enrichment; standard CEM alone is the documented baseline.
       available: enriched ? 'full' : 'partial',
       nav: { sidebar: true, card: true, search: true },
       sections: [
@@ -394,7 +394,7 @@ export function buildPageRegistry(input: RegistryInput): {
 /** Layer 3 (authored) and enrichment `docs` facts over built-in and generated values (ADR 0024). */
 function applyContent(
   drafts: Draft[],
-  metadata: MoteMetadataLike,
+  metadata: OddkinMetadataLike,
   docs: DocsContent | undefined,
   out: DiagnosticList,
 ): void {

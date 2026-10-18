@@ -16,7 +16,7 @@ function probe(config: string): Probe[] {
   return JSON.parse(out) as Probe[];
 }
 
-describe('static analyzability of MoteElement.with() (TypeScript 7 API)', () => {
+describe('static analyzability of OddkinElement.with() (TypeScript 7 API)', () => {
   it('extracts complete property metadata from the core-counter example without executing it', () => {
     const [counter, greeting] = probe('examples/core-counter/tsconfig.json');
     expect(counter?.class).toBe('DemoCounter');

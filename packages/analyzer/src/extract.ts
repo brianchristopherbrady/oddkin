@@ -80,7 +80,7 @@ export interface ComponentInfo {
   readonly tokenReads: readonly { readonly token: string; readonly readThrough: 'stylesheet' }[];
   readonly tags: Readonly<Record<string, readonly { value: string; location: SourceLocation }[]>>;
   readonly exported: boolean;
-  /** Facts supplied by explicit metadata (`@mote-metadata file.json`), as stable member ids. */
+  /** Facts supplied by explicit metadata (`@oddkin-metadata file.json`), as stable member ids. */
   readonly authored?: { readonly file: string; readonly ids: readonly string[] };
   /**
    * Names found only by scanning `render()` and `static styles` (here or in a base class), so a
@@ -153,7 +153,7 @@ export interface Extraction {
   readonly diagnostics: readonly AnalyzerDiagnostic[];
 }
 
-const MOTE_CORE = /(?:[\\/]|^)(?:@mote[\\/]core|packages[\\/]core)[\\/]/;
+const ODDKIN_CORE = /(?:[\\/]|^)(?:@oddkin[\\/]core|packages[\\/]core)[\\/]/;
 const TAG_NAME = /^[a-z][a-z0-9._-]*-[a-z0-9._-]*$/;
 const DOC_TAGS = [
   'a11y',
@@ -205,12 +205,12 @@ export function extract(program: ts.Program, root: string): Extraction {
       ? checker.getAliasedSymbol(symbol)
       : symbol;
   };
-  const fromMoteCore = (node: ts.Node, name: string): boolean => {
+  const fromOddkinCore = (node: ts.Node, name: string): boolean => {
     const symbol = resolveSymbol(node);
     return (
       !!symbol &&
       symbol.name === name &&
-      !!symbol.declarations?.some((d) => MOTE_CORE.test(d.getSourceFile().fileName))
+      !!symbol.declarations?.some((d) => ODDKIN_CORE.test(d.getSourceFile().fileName))
     );
   };
   const isLibrarySource = (file: ts.SourceFile) =>
@@ -284,7 +284,7 @@ export function extract(program: ts.Program, root: string): Extraction {
         ts.isCallExpression(call) && ts.isPropertyAccessExpression(call.expression)
           ? call.expression
           : undefined;
-      if (!callee || !ts.isCallExpression(call) || !fromMoteCore(callee.expression, 'prop')) {
+      if (!callee || !ts.isCallExpression(call) || !fromOddkinCore(callee.expression, 'prop')) {
         report(
           'analyzer.dynamic.definition',
           initializer,
@@ -383,7 +383,7 @@ export function extract(program: ts.Program, root: string): Extraction {
         call = declaration.initializer;
       }
     }
-    if (!ts.isCallExpression(call) || !fromMoteCore(call.expression, 'event')) {
+    if (!ts.isCallExpression(call) || !fromOddkinCore(call.expression, 'event')) {
       report(
         'analyzer.dynamic.event',
         expression,
@@ -445,14 +445,14 @@ export function extract(program: ts.Program, root: string): Extraction {
   const attributeValue = (attributes: string, name: string) =>
     new RegExp(`(?:^|\\s)${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'>]+))`).exec(attributes);
 
-  /** CSS custom properties read with `var()` and tokens read with `var(--mote-…)` or `token()`. */
+  /** CSS custom properties read with `var()` and tokens read with `var(--odd-…)` or `token()`. */
   function styleReads(node: ts.Node): { cssProperties: string[]; tokens: string[] } {
     const cssProperties: string[] = [];
     const tokens: string[] = [];
     scanTemplates(node, 'css', (text, template) => {
       for (const match of text.matchAll(/var\(\s*(--[\w-]+)/g)) {
         const variable = match[1] as string;
-        (variable.startsWith('--mote-') ? tokens : cssProperties).push(variable);
+        (variable.startsWith('--odd-') ? tokens : cssProperties).push(variable);
       }
       const walk = (child: ts.Node) => {
         if (
@@ -489,8 +489,8 @@ export function extract(program: ts.Program, root: string): Extraction {
     let own: PropertyInfo[] = [];
 
     const baseOf = (target: ts.Expression): boolean => {
-      if (fromMoteCore(target, 'MoteElement')) {
-        superclass = { name: 'MoteElement', package: '@mote/core' };
+      if (fromOddkinCore(target, 'OddkinElement')) {
+        superclass = { name: 'OddkinElement', package: '@oddkin/core' };
         return true;
       }
       const declaration = resolveSymbol(target)?.declarations?.find(ts.isClassDeclaration);
@@ -687,7 +687,7 @@ export function extract(program: ts.Program, root: string): Extraction {
     };
     walk(node);
 
-    // JSDoc tags: CEM conventions (@slot, @csspart, @cssprop, @cssstate) and Mote tags.
+    // JSDoc tags: CEM conventions (@slot, @csspart, @cssprop, @cssstate) and Oddkin tags.
     const tags: Record<string, { value: string; location: SourceLocation }[]> = {};
     for (const tag of ts.getJSDocTags(node)) {
       const tagName = tag.tagName.text;
@@ -740,7 +740,7 @@ export function extract(program: ts.Program, root: string): Extraction {
       cssStates: [...(parent?.cssStates ?? []), ...cssStates.values()].filter(
         (s, i, all) => all.findIndex((x) => x.name === s.name) === i,
       ),
-      // A documented component variable (`@cssprop --mote-button-radius`) is not a token read.
+      // A documented component variable (`@cssprop --odd-button-radius`) is not a token read.
       tokenReads: [...(parent?.tokenReads ?? []), ...tokenReads.values()].filter(
         (s, i, all) =>
           all.findIndex((x) => x.token === s.token) === i &&
@@ -761,7 +761,7 @@ export function extract(program: ts.Program, root: string): Extraction {
     return merged;
   }
 
-  // ---- explicit metadata (@mote-metadata ./file.json) ----
+  // ---- explicit metadata (@oddkin-metadata ./file.json) ----
   interface Explicit {
     readonly file: string;
     readonly data: Record<string, unknown>;
@@ -773,7 +773,7 @@ export function extract(program: ts.Program, root: string): Extraction {
     className: string,
     diagnosticsBefore: number,
   ): Explicit | undefined {
-    const tag = ts.getJSDocTags(node).find((t) => t.tagName.text === 'mote-metadata');
+    const tag = ts.getJSDocTags(node).find((t) => t.tagName.text === 'oddkin-metadata');
     if (!tag) return undefined;
     const comment = (
       typeof tag.comment === 'string' ? tag.comment : (ts.getTextOfJSDocComment(tag.comment) ?? '')
@@ -960,7 +960,7 @@ export function extract(program: ts.Program, root: string): Extraction {
       !call ||
       !ts.isCallExpression(call) ||
       !ts.isIdentifier(call.expression) ||
-      !fromMoteCore(call.expression, 'compose')
+      !fromOddkinCore(call.expression, 'compose')
     )
       return undefined;
     if (definitions.has(call)) return definitions.get(call) ?? undefined;
@@ -1151,11 +1151,11 @@ export function extract(program: ts.Program, root: string): Extraction {
       if (ts.isCallExpression(node)) {
         const callee = node.expression;
         const isDefine =
-          (ts.isIdentifier(callee) && fromMoteCore(callee, 'define')) ||
+          (ts.isIdentifier(callee) && fromOddkinCore(callee, 'define')) ||
           (ts.isPropertyAccessExpression(callee) &&
             callee.name.text === 'define' &&
             callee.expression.getText() === 'customElements');
-        if (ts.isIdentifier(callee) && fromMoteCore(callee, 'compose')) definitionFrom(node);
+        if (ts.isIdentifier(callee) && fromOddkinCore(callee, 'compose')) definitionFrom(node);
         const definitionArgument =
           isDefine && node.arguments[0] && !ts.isStringLiteralLike(node.arguments[0])
             ? node.arguments[0]
@@ -1205,7 +1205,7 @@ export function extract(program: ts.Program, root: string): Extraction {
               location: where(node),
             });
         }
-        if (ts.isIdentifier(callee) && fromMoteCore(callee, 'defineLayoutRecipe')) {
+        if (ts.isIdentifier(callee) && fromOddkinCore(callee, 'defineLayoutRecipe')) {
           const definition = node.arguments[0];
           if (definition && ts.isObjectLiteralExpression(definition)) {
             const entries = objectEntries(definition, 'defineLayoutRecipe');
@@ -1275,7 +1275,7 @@ export function extract(program: ts.Program, root: string): Extraction {
           } else
             report('analyzer.dynamic.recipe', node, 'defineLayoutRecipe needs an object literal.');
         }
-        if (ts.isIdentifier(callee) && fromMoteCore(callee, 'defineModel')) {
+        if (ts.isIdentifier(callee) && fromOddkinCore(callee, 'defineModel')) {
           const name = stringOf(node.arguments[0]);
           const definition = node.arguments[1];
           const entries =

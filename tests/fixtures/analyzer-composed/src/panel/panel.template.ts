@@ -1,4 +1,4 @@
-import { html } from '@mote/core';
+import { html } from '@oddkin/core';
 import type { AcmePanel } from './panel.js';
 
 export const panelTemplate = (panel: AcmePanel) =>

@@ -1,4 +1,4 @@
-# 0022. `@mote/agent` boundaries and MCP adapter
+# 0022. `@oddkin/agent` boundaries and MCP adapter
 
 - **Status:** Proposed
 - **Date:** 2026-10-17

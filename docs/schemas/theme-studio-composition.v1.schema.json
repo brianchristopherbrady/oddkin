@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/theme-studio-composition/v1.json",
+  "$id": "https://oddkin.dev/schemas/theme-studio-composition/v1.json",
   "title": "Saved Theme Studio composition v1",
   "description": "DRAFT. Specimen role mappings and layout (ADR 0020).",
   "type": "object",
   "required": ["schema", "recipe", "roles"],
   "additionalProperties": false,
   "properties": {
-    "schema": { "const": "https://mote.dev/schemas/theme-studio-composition/v1.json" },
+    "schema": { "const": "https://oddkin.dev/schemas/theme-studio-composition/v1.json" },
     "name": { "type": "string" },
     "recipe": { "type": "string" },
     "roles": {

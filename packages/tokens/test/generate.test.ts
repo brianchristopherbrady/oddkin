@@ -347,10 +347,10 @@ describe('brand-only theme', () => {
   it('switches mode-dependent roles with toggles, not cross-product selectors', () => {
     const css = result.css ?? '';
     expect(css).toContain(
-      '--mote-color-action-default: var(--mote-mode-light, var(--mote-ref-brand-600)) var(--mote-mode-dark, var(--mote-ref-brand-400));',
+      '--odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));',
     );
-    expect(css).toContain('--mote-mode-dark: ;');
-    expect(css).not.toMatch(/\[data-mote-mode="dark"\]\s+\[data-mote-product/);
+    expect(css).toContain('--odd-mode-dark: ;');
+    expect(css).not.toMatch(/\[data-odd-mode="dark"\]\s+\[data-odd-product/);
   });
 });
 

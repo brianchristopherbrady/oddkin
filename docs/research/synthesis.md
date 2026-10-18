@@ -1,15 +1,15 @@
-# Research synthesis: existing approaches and what Mote should learn
+# Research synthesis: existing approaches and what Oddkin should learn
 
-Desk research reviewed 17 October 2026. Observations come from official documentation or upstream source. The Mote column is design judgment, not an upstream claim. Reference IDs resolve to the source register below.
+Desk research reviewed 17 October 2026. Observations come from official documentation or upstream source. The Oddkin column is design judgment, not an upstream claim. Reference IDs resolve to the source register below.
 
 Executable comparisons (equivalent samples, benchmarks, usability walkthroughs) are implementation tasks tracked in [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §8, M3, and M8; direct research links are in §12. Mutable docs and `main` branches must be pinned again before reproducible comparisons are published.
 
 ## Comparison
 
-| System | Existing approach and useful lesson | Proposed Mote response and trade-off |
+| System | Existing approach and useful lesson | Proposed Oddkin response and trade-off |
 | --- | --- | --- |
 | Lit | LitElement builds on ReactiveElement; cached templates, batched updates, controllers, and optional tasks provide a small authoring model. Tasks already combine request cancellation with ignoring superseded results. [R01–R03] | Retain familiar HTML bindings and composable behavior. Unify connection, effect, and request ownership through `Scope`; add direct readable bindings. Extra subscriptions and ownership bookkeeping must justify their cost. |
-| Microsoft FAST | FASTElement adds observed properties and template bindings to `HTMLElement`; directives and composition support reusable behavior. [R04] | Learn from targeted bindings and explicit property conversion. Offer a plain JS/TS path without mandatory decorators. Do not claim fine-grained binding is a Mote invention. |
+| Microsoft FAST | FASTElement adds observed properties and template bindings to `HTMLElement`; directives and composition support reusable behavior. [R04] | Learn from targeted bindings and explicit property conversion. Offer a plain JS/TS path without mandatory decorators. Do not claim fine-grained binding is an Oddkin invention. |
 | Web Awesome / Shoelace lineage | A component suite demonstrates discoverable property/event/slot contracts, CSS custom properties, parts, editor support, and adoption guides. [R05] | Make consuming components as important as authoring them. Generate docs and controls from verified metadata, and ship explicit registration entries. A custom framework alone does not provide this product quality. |
 | Spectrum Web Components | SpectrumElement combines LitElement with SpectrumMixin. Direction styling uses native `:dir()` and logical CSS instead of a JS observer per element. [R06] | Prefer browser inheritance and CSS when they solve the problem. Keep locale services and advanced overlays optional. |
 | Material Web | Buttons combine Lit with form, ARIA, focus, and interaction behaviors. README reports maintenance mode pending new maintainers. [R07] | Study concrete behavior contracts independently of project status. Give forms and accessible naming their own validation milestone; inheriting a base class does not make either automatic. |

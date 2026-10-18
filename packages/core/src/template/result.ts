@@ -3,7 +3,7 @@
  * Contract: docs/architecture/core-contracts.md §1, §6.
  */
 
-const TEMPLATE_RESULT: unique symbol = Symbol.for('mote.templateResult') as never;
+const TEMPLATE_RESULT: unique symbol = Symbol.for('oddkin.templateResult') as never;
 
 export type TemplateKind = 'html' | 'svg';
 

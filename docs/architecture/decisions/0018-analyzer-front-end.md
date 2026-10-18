@@ -9,7 +9,7 @@
 Metadata must be extracted without running component code, with types available, for JS and TS libraries.
 
 ## Decision
-Use the TypeScript 5.9 compiler API (program + checker, in-process; pinned `typescript@5.9.3` as a dependency of `@mote/analyzer` only) as the front end. The TypeScript 7 `unstable/*` IPC API is not used until it is stable. Never execute analyzed component modules, constructors, registrations, or arbitrary expressions. Unsupported dynamic definitions get `analyzer.dynamic.*` diagnostics and can supply explicit static metadata. Trusted Node configuration loading is separate and not described as a sandbox.
+Use the TypeScript 5.9 compiler API (program + checker, in-process; pinned `typescript@5.9.3` as a dependency of `@oddkin/analyzer` only) as the front end. The TypeScript 7 `unstable/*` IPC API is not used until it is stable. Never execute analyzed component modules, constructors, registrations, or arbitrary expressions. Unsupported dynamic definitions get `analyzer.dynamic.*` diagnostics and can supply explicit static metadata. Trusted Node configuration loading is separate and not described as a sandbox.
 
 ## Alternatives considered
 - Hand-written parser or regex extraction — fragile.

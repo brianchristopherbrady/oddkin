@@ -1,5 +1,5 @@
 /**
- * mote-tokens — init | build | check.
+ * oddkin-tokens — init | build | check.
  * Exit codes: 0 success, 1 diagnostics (errors, or warnings with --strict), 2 usage error.
  */
 import { access, writeFile } from 'node:fs/promises';
@@ -15,9 +15,9 @@ import {
 import { generate, type Diagnostic } from '../generate/index.js';
 
 const USAGE = `Usage:
-  mote-tokens init [file]                 Write a starter mote.theme.json (never overwrites)
-  mote-tokens build <config> [options]    Validate and write outputs
-  mote-tokens check <config> [options]    Validate only
+  oddkin-tokens init [file]                 Write a starter oddkin.theme.json (never overwrites)
+  oddkin-tokens build <config> [options]    Validate and write outputs
+  oddkin-tokens check <config> [options]    Validate only
 
 Options:
   --out <dir>          Output directory for build (default: tokens)
@@ -72,14 +72,14 @@ export async function run(argv: readonly string[], io: Io = stdio): Promise<numb
   }
 
   if (command === 'init') {
-    const file = target ?? 'mote.theme.json';
+    const file = target ?? 'oddkin.theme.json';
     try {
       await access(file);
       io.err(`${file} already exists; not overwriting.`);
       return 1;
     } catch {
       await writeFile(file, STARTER_CONFIG);
-      io.out(`Wrote ${file}. Next: mote-tokens build ${file} --out tokens`);
+      io.out(`Wrote ${file}. Next: oddkin-tokens build ${file} --out tokens`);
       return 0;
     }
   }

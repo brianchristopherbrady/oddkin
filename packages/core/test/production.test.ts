@@ -69,7 +69,7 @@ describe('production build', { timeout: 60_000 }, () => {
     const prodError = fail(prodGraph);
     expect(devError.code).toBe('reactive.write.inComputed');
     expect(prodError.code).toBe('reactive.write.inComputed');
-    expect(prodError.name).toBe('MoteError');
+    expect(prodError.name).toBe('OddkinError');
     expect(devError.message).toContain('Computed values must be pure');
     expect(prodError.message).toBe(
       '[reactive.write.inComputed] Use the development build (the "development" export condition) for details.',
@@ -103,7 +103,7 @@ describe('production build', { timeout: 60_000 }, () => {
           ...flags,
           '--input-type=module',
           '-e',
-          "console.log(import.meta.resolve('@mote/core/reactive'))",
+          "console.log(import.meta.resolve('@oddkin/core/reactive'))",
         ],
         { cwd: packageDir, encoding: 'utf8' },
       ).trim();

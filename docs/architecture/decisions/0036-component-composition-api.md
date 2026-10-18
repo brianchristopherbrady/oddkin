@@ -7,7 +7,7 @@
 - **Related:** 0003 (property definitions), 0031 (size budgets), 0033 (multi-product foundations)
 
 ## Context
-Mote's own components use one folder per component (class, template, styles, definition, registration, `index.ts`). Product teams need to reuse a component's behavior and template with different styles (ADR 0033). Class-only authoring puts the template in `render()` and styles in `static styles`, so neither can be swapped without subclassing and overriding, and subclasses inherit configuration they may not want.
+Oddkin's own components use one folder per component (class, template, styles, definition, registration, `index.ts`). Product teams need to reuse a component's behavior and template with different styles (ADR 0033). Class-only authoring puts the template in `render()` and styles in `static styles`, so neither can be swapped without subclassing and overriding, and subclasses inherit configuration they may not want.
 
 ## Decision
 - `compose({ name, element, template?, styles?, dependencies? })` returns a frozen `ElementDefinition`. `template` is a function of the host. It runs in the same tracked render context as `render()`, so the binding rule, scheduling, lifecycle, `Scope` ownership, and DOM identity are unchanged.
@@ -16,7 +16,7 @@ Mote's own components use one folder per component (class, template, styles, def
 - **Policy:** a definition's `styles` is the complete, ordered style list and replaces the class's `static styles`; without `styles`, the class's styles apply. A definition's `template` replaces `render()`. Development builds report `definition.render.ignored` when both exist.
 - **Registration codes:** `registry.definitionConflict` (a different definition for a name already registered with that class); `registry.constructorReused` (a class already bound to another definition, or registered under another name); `registry.collision` (a different class for a taken name); `registry.definition.invalid`. Composition errors: `definition.element.invalid`, `definition.template.invalid`, `definition.dependency.invalid`. A failed registration leaves no binding behind.
 - `define(tag, ctor)` and colocated class authoring stay fully supported.
-- **Naming:** `compose()` (`@mote/core/element`) is the component-definition composer. The optional data-composition schema renderer is `renderComposition()` from `@mote/components/composition`.
+- **Naming:** `compose()` (`@oddkin/core/element`) is the component-definition composer. The optional data-composition schema renderer is `renderComposition()` from `@oddkin/components/composition`.
 
 ## Alternatives considered
 - **Explicit `extend(definition, overrides)`** — clearer intent but one more API; spread already expresses it.

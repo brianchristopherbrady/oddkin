@@ -1,6 +1,6 @@
 /** Page registry contracts (`page-registry.v1`, ADR 0023, workbench-pages.md §2). */
 
-export const PAGE_REGISTRY_SCHEMA = 'https://mote.dev/schemas/page-registry/v1.json';
+export const PAGE_REGISTRY_SCHEMA = 'https://oddkin.dev/schemas/page-registry/v1.json';
 
 export type PageKind =
   'home' | 'overview' | 'foundation' | 'component' | 'tool' | 'products' | 'guide';
@@ -54,7 +54,7 @@ export interface PageRegistry {
 }
 
 // ---------------------------------------------------------------------------
-// Inputs (structural: standard CEM and the mote-metadata v1 JSON contract)
+// Inputs (structural: standard CEM and the oddkin-metadata v1 JSON contract)
 
 export interface CemDeclaration {
   readonly kind: string;
@@ -110,8 +110,8 @@ export interface DocMetaLike {
   readonly visible?: boolean;
 }
 
-/** The mote-metadata v1 fields the registry reads. */
-export interface MoteMetadataLike {
+/** The oddkin-metadata v1 fields the registry reads. */
+export interface OddkinMetadataLike {
   readonly library?: { readonly name?: string; readonly prefix?: string };
   readonly components?: Readonly<
     Record<

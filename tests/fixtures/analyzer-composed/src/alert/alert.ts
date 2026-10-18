@@ -1,4 +1,4 @@
-import { prop } from '@mote/core';
+import { prop } from '@oddkin/core';
 import { AcmePanel } from '../panel/panel.js';
 
 // Analysis must never execute library modules.

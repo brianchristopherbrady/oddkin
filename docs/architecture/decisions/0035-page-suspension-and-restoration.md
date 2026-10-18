@@ -7,12 +7,12 @@
 - **Builds on:** 0004 (Scope and reconnection), 0009 (browser baseline)
 
 ## Context
-Browsers may freeze a page and restore it from the back/forward cache without disconnecting elements or rerunning modules. Timers and promises pause and resume. Treating `pagehide` as disposal breaks restoration, while ignoring suspension can leave external connections stale or duplicated. Mote's lifecycle contracts cover element disconnect/reconnect and explicit application stop/restart, but not page suspension.
+Browsers may freeze a page and restore it from the back/forward cache without disconnecting elements or rerunning modules. Timers and promises pause and resume. Treating `pagehide` as disposal breaks restoration, while ignoring suspension can leave external connections stale or duplicated. Oddkin's lifecycle contracts cover element disconnect/reconnect and explicit application stop/restart, but not page suspension.
 
 ## Decision
 - Distinguish five lifecycles: element disconnect/reconnect, explicit application stop/restart, temporary page suspension, back/forward cache restoration, and permanent disposal. Navigation is never assumed to disconnect elements or rebuild the application.
 - `pagehide` never disposes the application or its scopes. Suspension is not disposal; a genuinely disposed `Scope` is still replaced by a fresh one and never reuses an aborted signal.
-- Lifecycle listeners are activated only by an explicit, owned application service (`@mote/app`). Importing a module never adds one. Core components never take ownership of the host page lifecycle.
+- Lifecycle listeners are activated only by an explicit, owned application service (`@oddkin/app`). Importing a module never adds one. Core components never take ownership of the host page lifecycle.
 - The required behavior uses baseline `pageshow`/`pagehide` and their `persisted` flags, plus `visibilitychange`. `freeze`/`resume` are verified enhancements only. No `unload` listeners.
 - Services declare suspend and resume behavior. Resources revalidate on restore only under a declared policy; stale-result guards apply. Mutations are never retried automatically, and cancellation never implies rollback.
 

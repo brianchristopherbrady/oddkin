@@ -1,4 +1,4 @@
-# 0017. Standard CEM plus separate Mote enrichment
+# 0017. Standard CEM plus separate Oddkin enrichment
 
 - **Status:** Accepted
 - **Date:** 2026-10-17
@@ -6,10 +6,10 @@
 - **Detailed contract:** [metadata-and-analyzer.md §4](../metadata-and-analyzer.md)
 
 ## Context
-Standard tooling understands Custom Elements Manifest; Mote needs more (tokens, recipes, models, foundations, preview roles, pages).
+Standard tooling understands Custom Elements Manifest; Oddkin needs more (tokens, recipes, models, foundations, preview roles, pages).
 
 ## Decision
-Publish standard `custom-elements.json` validated against **`custom-elements-manifest@2.1.0`** and referenced from `package.json` `customElements`, plus a separately versioned `mote.metadata.json` that references CEM declarations by module path and name. Mote-specific data never goes into CEM beyond standard fields.
+Publish standard `custom-elements.json` validated against **`custom-elements-manifest@2.1.0`** and referenced from `package.json` `customElements`, plus a separately versioned `oddkin.metadata.json` that references CEM declarations by module path and name. Oddkin-specific data never goes into CEM beyond standard fields.
 
 ## Alternatives considered
 - Extend CEM with custom fields — risks breaking standard consumers.

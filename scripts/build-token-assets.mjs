@@ -1,6 +1,6 @@
 // Build generated token assets after `tsc -b`:
-// - @mote/tokens/css/default.css from packages/tokens/themes/default.theme.json (Node API)
-// - examples/tokens-css-only/generated/*.css via the real `mote-tokens` CLI binary
+// - @oddkin/tokens/css/default.css from packages/tokens/themes/default.theme.json (Node API)
+// - examples/tokens-css-only/generated/*.css via the real `oddkin-tokens` CLI binary
 import { spawnSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { buildTheme, formatDiagnostics } from '../packages/tokens/dist/node/index.js';
@@ -31,7 +31,7 @@ const cli = spawnSync(
   ],
   { encoding: 'utf8' },
 );
-if (cli.status !== 0) fail(`mote-tokens failed (${cli.status}):\n${cli.stderr}${cli.stdout}`);
+if (cli.status !== 0) fail(`oddkin-tokens failed (${cli.status}):\n${cli.stderr}${cli.stdout}`);
 
 console.log(
   `Token assets: ${[

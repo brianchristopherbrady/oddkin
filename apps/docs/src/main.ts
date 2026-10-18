@@ -1,8 +1,8 @@
-import { packageName as app } from '@mote/app';
-import { packageName as components } from '@mote/components';
-import { packageName as core } from '@mote/core';
-import { packageName as state } from '@mote/state';
-import { packageName as tokens } from '@mote/tokens';
+import { packageName as app } from '@oddkin/app';
+import { packageName as components } from '@oddkin/components';
+import { packageName as core } from '@oddkin/core';
+import { packageName as state } from '@oddkin/state';
+import { packageName as tokens } from '@oddkin/tokens';
 
 /**
  * M1 skeleton: proves the docs app resolves every package through its public

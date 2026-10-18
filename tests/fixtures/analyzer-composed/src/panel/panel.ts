@@ -1,4 +1,4 @@
-import { MoteElement, event, prop } from '@mote/core';
+import { OddkinElement, event, prop } from '@oddkin/core';
 
 /** Fired when the user dismisses the panel. */
 export const dismiss = event<{ reason: 'button' | 'escape' }>('acme-dismiss', {
@@ -18,7 +18,7 @@ export const dismiss = event<{ reason: 'button' | 'escape' }>('acme-dismiss', {
  * @keyboard Escape dismisses the panel when `dismissible` is set.
  * @category Containers
  */
-export class AcmePanel extends MoteElement.with({
+export class AcmePanel extends OddkinElement.with({
   dismissible: prop.boolean({ reflect: true, description: 'Shows a dismiss button.' }),
   tone: prop.enum(['neutral', 'info'], { default: 'neutral', reflect: true }),
 }) {

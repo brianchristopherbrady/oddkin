@@ -1,5 +1,5 @@
 /**
- * `@mote/core/helpers/live` — write a property only when the element's *current* value
+ * `@oddkin/core/helpers/live` — write a property only when the element's *current* value
  * differs (the user may have typed or autofill may have run since the last render),
  * without clobbering IME composition or the caret.
  */

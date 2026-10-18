@@ -1,8 +1,8 @@
 // TypeScript authoring of the same elements. Types come from the public API: `prop.string`
 // infers `label: string`, `signal(0)` is `Signal<number>`, and hooks use `protected override`.
-import { MoteElement, define, html, prop, signal, type Signal } from '@mote/core';
+import { OddkinElement, define, html, prop, signal, type Signal } from '@oddkin/core';
 
-export class WalkDirectTs extends MoteElement {
+export class WalkDirectTs extends OddkinElement {
   readonly count: Signal<number> = signal(0);
   renders = 0;
   protected override render() {
@@ -11,7 +11,7 @@ export class WalkDirectTs extends MoteElement {
   }
 }
 
-export class WalkTrackedTs extends MoteElement {
+export class WalkTrackedTs extends OddkinElement {
   readonly count = signal(0);
   renders = 0;
   protected override render() {
@@ -20,7 +20,7 @@ export class WalkTrackedTs extends MoteElement {
   }
 }
 
-export class WalkDualTs extends MoteElement {
+export class WalkDualTs extends OddkinElement {
   readonly count = signal(0);
   renders = 0;
   protected override render() {
@@ -30,7 +30,7 @@ export class WalkDualTs extends MoteElement {
   }
 }
 
-export class WalkSnapshotTs extends MoteElement {
+export class WalkSnapshotTs extends OddkinElement {
   readonly count = signal(0);
   renders = 0;
   readonly seen: number[] = [];
@@ -45,7 +45,7 @@ export class WalkSnapshotTs extends MoteElement {
   }
 }
 
-export class WalkPropTs extends MoteElement.with({ label: prop.string({ default: 'reader' }) }) {
+export class WalkPropTs extends OddkinElement.with({ label: prop.string({ default: 'reader' }) }) {
   renders = 0;
   readonly changes: string[][] = [];
   protected override render() {

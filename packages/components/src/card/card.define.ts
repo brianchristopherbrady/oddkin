@@ -1,4 +1,4 @@
-import { define } from '@mote/core/element';
+import { define } from '@oddkin/core/element';
 import { cardDefinition } from './card.definition.js';
 
 define(cardDefinition);

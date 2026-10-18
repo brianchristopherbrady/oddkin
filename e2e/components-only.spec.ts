@@ -31,10 +31,10 @@ test('components work from plain HTML with only core and tokens', async ({ page,
   await page.keyboard.press('Enter');
   await expect(page.getByRole('status')).toHaveText(/intent=save/);
 
-  // Theme values from @mote/tokens/css/default.css reach the shadow DOM.
+  // Theme values from @oddkin/tokens/css/default.css reach the shadow DOM.
   const actionColor = await page.evaluate(() =>
     getComputedStyle(document.documentElement)
-      .getPropertyValue('--mote-color-action-default')
+      .getPropertyValue('--odd-color-action-default')
       .trim(),
   );
   expect(actionColor).not.toBe('');

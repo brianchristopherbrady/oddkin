@@ -1,13 +1,13 @@
-import { live } from '@mote/core/helpers/live';
-import { html } from '@mote/core/template';
-import type { MoteInput } from './input.js';
+import { live } from '@oddkin/core/helpers/live';
+import { html } from '@oddkin/core/template';
+import type { OddkinInput } from './input.js';
 
 /**
  * Anatomy: a `label` part labelling the native `<input part="control">` in the same shadow
  * root, `description` and `error` parts referenced by `aria-describedby`, and the input's
  * `input`, `change`, and `blur` handlers. The control keeps its value through `live()`.
  */
-export const inputTemplate = (input: MoteInput) => {
+export const inputTemplate = (input: OddkinInput) => {
   const invalid = !!input.error || (input._touched.value && input._invalid.value);
   const describedBy =
     [input.description ? 'description' : '', input.error ? 'error' : '']

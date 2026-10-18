@@ -1,4 +1,4 @@
-// Experiment (M3): can `MoteElement.with({...})` declarations be analyzed statically,
+// Experiment (M3): can `OddkinElement.with({...})` declarations be analyzed statically,
 // without executing modules, using TypeScript 7's (unstable) API?
 // Usage: node scripts/experiments/analyzability-probe.mjs [path/to/tsconfig.json]
 // Prints JSON: one entry per element class with its properties, as source-declared

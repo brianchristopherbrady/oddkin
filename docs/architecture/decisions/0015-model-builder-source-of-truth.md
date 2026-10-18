@@ -9,7 +9,7 @@
 Types, runtime validators, JSON Schemas, docs, Workbench editors, and agent inputs must agree. TypeScript types do not validate JSON at runtime.
 
 ## Decision
-An original DOM-free `m`/`defineModel` builder in `@mote/core/model` is the single source; it produces `Infer<T>` types, `validate` with path-precise codes, `migrate`, metadata, and (through `./model/schema`, used by the analyzer) JSON Schema 2020-12 for the portable subset.
+An original DOM-free `m`/`defineModel` builder in `@oddkin/core/model` is the single source; it produces `Infer<T>` types, `validate` with path-precise codes, `migrate`, metadata, and (through `./model/schema`, used by the analyzer) JSON Schema 2020-12 for the portable subset.
 
 ## Alternatives considered
 - Author JSON Schema and generate types — weaker TS ergonomics.

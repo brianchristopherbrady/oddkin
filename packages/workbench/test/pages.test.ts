@@ -14,7 +14,7 @@ import {
   sidebar,
   staticRedirects,
   type CemPackage,
-  type MoteMetadataLike,
+  type OddkinMetadataLike,
   type PageRegistry,
 } from '../src/pages/index.js';
 
@@ -27,28 +27,28 @@ const ajv = new Ajv2020({
 });
 addFormats.default(ajv);
 const validRegistry = ajv.compile(json('../../../docs/schemas/page-registry.v1.schema.json'));
-const validMetadata = ajv.compile(json('../../../docs/schemas/mote-metadata.v1.schema.json'));
+const validMetadata = ajv.compile(json('../../../docs/schemas/oddkin-metadata.v1.schema.json'));
 
 // Real analyzer output for examples/core-counter, and an independent "Acme" library.
 const counterCem = json(
   '../../analyzer/test/fixtures/core-counter.custom-elements.json',
 ) as CemPackage;
 const counterMeta = json(
-  '../../analyzer/test/fixtures/core-counter.mote.metadata.json',
-) as MoteMetadataLike;
+  '../../analyzer/test/fixtures/core-counter.oddkin.metadata.json',
+) as OddkinMetadataLike;
 const acmeCem = json('./fixtures/acme.custom-elements.json') as CemPackage;
-const acmeMeta = json('./fixtures/acme.mote.metadata.json') as MoteMetadataLike;
+const acmeMeta = json('./fixtures/acme.oddkin.metadata.json') as OddkinMetadataLike;
 
 const acmeConfig: WorkbenchConfig = {
   library: { packages: ['@acme/ui'] },
   branding: { name: 'Acme UI' },
   hosting: { basePath: '/acme-ui/' },
   categories: { definitions: [{ id: 'actions', label: 'Actions', order: 1 }] },
-  themeStudio: { themeConfig: './mote.theme.ts' },
+  themeStudio: { themeConfig: './oddkin.theme.ts' },
   products: {
     enabled: true,
     placement: ['foundations', 'primary'],
-    sources: [{ id: 'clinic', from: { theme: './mote.theme.ts', product: 'clinic' } }],
+    sources: [{ id: 'clinic', from: { theme: './oddkin.theme.ts', product: 'clinic' } }],
   },
 };
 const acmeDocs = defineDocs({

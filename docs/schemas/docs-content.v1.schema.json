@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/docs-content/v1.json",
+  "$id": "https://oddkin.dev/schemas/docs-content/v1.json",
   "title": "Authored Workbench content v1",
-  "description": "DRAFT. JSON-compatible shape of defineDocs (mote.docs.ts) and Markdown front matter. Overrides prose and presentation only; generated facts stay authoritative (ADR 0024). Use {{fact.path}} tokens to reference generated values.",
+  "description": "DRAFT. JSON-compatible shape of defineDocs (oddkin.docs.ts) and Markdown front matter. Overrides prose and presentation only; generated facts stay authoritative (ADR 0024). Use {{fact.path}} tokens to reference generated values.",
   "type": "object",
   "required": ["schema", "pages"],
   "additionalProperties": false,
   "properties": {
-    "schema": { "const": "https://mote.dev/schemas/docs-content/v1.json" },
+    "schema": { "const": "https://oddkin.dev/schemas/docs-content/v1.json" },
     "locale": { "type": "string" },
     "aliases": { "type": "object", "additionalProperties": { "type": "string" }, "description": "Renamed page/section id -> current id (migration)" },
     "pages": {

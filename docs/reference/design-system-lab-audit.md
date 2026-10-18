@@ -4,7 +4,7 @@ Status: **partial audit**, rendered in Chromium at a 1440×1000 desktop viewport
 
 **Screenshots:** an attempt to save screenshots from the embedded browser produced images that did not match the rendered page, so none are committed. Reproducible screenshots are a scripted Playwright task once M1 test tooling exists.
 
-This document records **presentation and structure** that Mote Workbench reproduces with each consuming library's own data. Everything here that is specific to Design System Lab — its name, author, component inventory, token names and values, taxonomy, verification statements, React snippets, and design decisions — is reference material only and must never be hardcoded into generated applications. See [workbench-pages.md](../architecture/workbench-pages.md).
+This document records **presentation and structure** that Oddkin Workbench reproduces with each consuming library's own data. Everything here that is specific to Design System Lab — its name, author, component inventory, token names and values, taxonomy, verification statements, React snippets, and design decisions — is reference material only and must never be hardcoded into generated applications. See [workbench-pages.md](../architecture/workbench-pages.md).
 
 Browser console showed a 404 for one asset on every route (not investigated; no visible effect). Each route shows a "Loading page…" status before content renders, so automated checks must wait for `main h1`.
 
@@ -42,16 +42,16 @@ Pattern across pages: tables pair a dotted token name with its CSS custom proper
 
 ## Other routes
 
-- **Overview** (`/`): eyebrow "Overview"; sections Review the work · About this project · From a design decision to a working interface · How this site is built · Principles · Implementation architecture · Contributing; a product-profile select. Portfolio framing is reference-only; Mote's optional home page is generated from project content.
-- **Patterns** (`/patterns`): Resource directory · Resource detail · Activity dashboard · Form validation (maps to Mote recipes in apps/docs).
-- **Design decisions** (`/decisions`): eyebrow "Reasoning"; decision list and labels (maps to Mote architecture/decision docs, not Workbench).
+- **Overview** (`/`): eyebrow "Overview"; sections Review the work · About this project · From a design decision to a working interface · How this site is built · Principles · Implementation architecture · Contributing; a product-profile select. Portfolio framing is reference-only; Oddkin's optional home page is generated from project content.
+- **Patterns** (`/patterns`): Resource directory · Resource detail · Activity dashboard · Form validation (maps to Oddkin recipes in apps/docs).
+- **Design decisions** (`/decisions`): eyebrow "Reasoning"; decision list and labels (maps to Oddkin architecture/decision docs, not Workbench).
 - **Other component pages** (Input, Card, Tabs): identical section structure to Button (Overview · Examples · Props · Tokens · Behavior and accessibility · Guidance · Source); Input's Props section uses examples rather than a props table.
 
 ## Foundations overview (`/foundations/`)
 
 - Eyebrow "DESIGN SYSTEM", H1 "Foundations", one-sentence summary.
 - Three-column card grid at 1440px. Each card: linked H2 title, one- or two-line description, then a metadata line `Updated <date> · <tag>, <tag>`.
-- Cards observed: Token architecture, Color, Typography, Spacing, Borders and radii, Elevation, Motion, Themes, Responsive behavior, Products and modes, Theme studio. (In Mote, the last two are moved: Theme Studio becomes a primary destination; Products and modes is optional and off by default.)
+- Cards observed: Token architecture, Color, Typography, Spacing, Borders and radii, Elevation, Motion, Themes, Responsive behavior, Products and modes, Theme studio. (In Oddkin, the last two are moved: Theme Studio becomes a primary destination; Products and modes is optional and off by default.)
 - No specimens or illustrations inside cards.
 
 ## Foundation detail — Spacing (`/foundations/spacing`)
@@ -64,14 +64,14 @@ Pattern across pages: tables pair a dotted token name with its CSS custom proper
 ## Components catalog (`/components`)
 
 - Grouped sidebar (see Shell).
-- Header + summary noting that filters are stored in the URL. A verification statement paragraph (reference-only; Mote shows only evidence-backed claims).
+- Header + summary noting that filters are stored in the URL. A verification statement paragraph (reference-only; Oddkin shows only evidence-backed claims).
 - **Search** ("Name, summary or tag") and **Component layer** select ("All layers"); result count ("Showing 29 of 29").
 - Groups: heading with count ("Layout (7)"), one-sentence group description, three-column grid of cards (title, description, `Updated <date> · tags`). No live previews in cards.
 
 ## Component detail — Button (`/components/button`)
 
 - Header: eyebrow "COMPONENTS · PRIMITIVE", H1, summary, "All components". On this page: Overview · Examples · Props · Tokens · Behavior and accessibility · Guidance · Source.
-- **Overview:** "Open in playground →" link (removed in Mote: interaction is integrated), explanatory paragraph, two columns "Use it for" / "Not for".
+- **Overview:** "Open in playground →" link (removed in Oddkin: interaction is integrated), explanatory paragraph, two columns "Use it for" / "Not for".
 - **Examples:** cards with title, a "RECOMMENDED USAGE" badge, description, live example grids (appearances × states; sizes, borders and radii; icons, loading and full width).
 - **Props:** table **Prop · Type · Default · Description**; sub-section "Defaults, combinations and precedence".
 - **Tokens:** "From prop to token" list (`prop="value" (state)` → CSS property → token), then "Every token read" table with a context caption ("N TOKENS READ, RESOLVED FOR <product> · <mode> · <density>") and columns **Token · Tier · Read through · In this context** (resolved value plus `{alias}`).
@@ -79,16 +79,16 @@ Pattern across pages: tables pair a dotted token name with its CSS custom proper
 - **Guidance:** Composition · Common mistakes · Tradeoffs.
 - **Source:** source references.
 
-## Playground (`/playground`) — merged into component detail pages in Mote
+## Playground (`/playground`) — merged into component detail pages in Oddkin
 
 - Header + summary noting that the header theme applies site-wide while preview settings apply only to the example.
 - Controls row: **Component** select, **Preset** select (e.g. Starting values, Primary action, Destructive, Toolbar, Loading, Pill), **Reset component props**, plus links "<Component> documentation →" and "Source →". A short contextual note about the component's token behavior.
 - **Preview** panel with "Copy example link".
 - **Preview settings** disclosure summarising `<product> · <mode> · <density> · <width>` and "Same as site"; width presets Narrow (320px) · Medium (600px) · Wide (960px) · Fill.
-- **Component props** table: **Prop · Control**, with description, default ("Default \"secondary\"") or unset semantics ("Unset: button.radius token") under the prop name. React-specific types (`children`, `ReactNode`) appear here; Mote uses real slots and properties instead.
+- **Component props** table: **Prop · Control**, with description, default ("Default \"secondary\"") or unset semantics ("Unset: button.radius token") under the prop name. React-specific types (`children`, `ReactNode`) appear here; Oddkin uses real slots and properties instead.
 - Generated usage code with **Copy code**.
 
-## Theme studio (`/foundations/theme-studio`) — becomes the primary `/theme-studio` destination in Mote
+## Theme studio (`/foundations/theme-studio`) — becomes the primary `/theme-studio` destination in Oddkin
 
 - Same detail-page header and On this page: Generate · Ramp and roles · Live preview · Contrast · Color vision · Token files · Method and limits.
 - **Generate:** explanatory paragraph (settings kept in the URL), "START FROM A PRESET" chips, **Brand color** (swatch + hex input; "Any sRGB color as hex. Hue and chroma are kept; lightness is rebuilt."), **Product id**, **Shape** radio group (Machined / Tight / Pill).
@@ -97,8 +97,8 @@ Pattern across pages: tables pair a dotted token name with its CSS custom proper
 - **Contrast**, **Status colors and color vision** (light/dark toggle), **Token files** (generated sources), **Method and limits** (explains methods and limitations).
 - **Interactions verified:** choosing a preset updates brand colour and product id and writes them to the URL (`?brand=c026d3&id=europa`); choosing a shape adds `&shape=pill`. Settings are therefore shareable by URL.
 - **Token files:** generated per product as one new DTCG-style token file plus objects to merge into existing sources (ramp, light roles, dark roles, resolver, profile), each with Copy and Download. Reference-only file paths and names.
-- **Method and limits (as stated by the reference):** lightness fixed per OKLCH step with chroma reduced only as far as sRGB requires; roles chosen by contrast, not step number; WCAG 2 ratios decide pass/fail; APCA Lc shown for comparison only; colour-vision simulation uses the Machado, Oliveira and Fernandes (2009) model at full severity, labelled an approximation; a 0.1 ΔEOK status-distance threshold is a review heuristic, not a standard. These are the reference's stated methods; Mote must verify its own implementation independently.
+- **Method and limits (as stated by the reference):** lightness fixed per OKLCH step with chroma reduced only as far as sRGB requires; roles chosen by contrast, not step number; WCAG 2 ratios decide pass/fail; APCA Lc shown for comparison only; colour-vision simulation uses the Machado, Oliveira and Fernandes (2009) model at full severity, labelled an approximation; a 0.1 ΔEOK status-distance threshold is a review heuristic, not a standard. These are the reference's stated methods; Oddkin must verify its own implementation independently.
 
-## Implications for Mote (summary)
+## Implications for Oddkin (summary)
 
 Recorded as requirements in [workbench-pages.md](../architecture/workbench-pages.md) and the implementation plan: keep the shell, header, card, table-of-contents, and table patterns; generate all facts from the consuming library; merge Playground into component detail pages; promote Theme Studio to a primary destination; make Products and modes optional; replace React-specific content with real slots, properties, and plain HTML/JS snippets.

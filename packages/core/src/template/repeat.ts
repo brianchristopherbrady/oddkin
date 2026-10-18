@@ -4,10 +4,10 @@
  * own reconciler and `ChildPart` only calls it.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError, reportMoteError } from '../diagnostics/index.js';
+import { OddkinError, reportOddkinError } from '../diagnostics/index.js';
 
 /** @internal Marker key on repeat directives; its value is the reconciler. */
-export const REPEAT: unique symbol = Symbol.for('mote.repeat') as never;
+export const REPEAT: unique symbol = Symbol.for('oddkin.repeat') as never;
 
 /** @internal What the reconciler needs from the owning child part. */
 export interface RepeatItemPart {
@@ -185,8 +185,8 @@ function reconcile<P extends RepeatItemPart>(
   for (const item of directive.items) {
     let key = directive.key(item, index);
     if (seen.has(key)) {
-      reportMoteError(
-        new MoteError(
+      reportOddkinError(
+        new OddkinError(
           'template.repeat.duplicateKey',
           DEV
             ? `repeat() received the key ${String(key)} more than once; later duplicates are rendered without DOM reuse. Keys must be unique and stable.`

@@ -1,6 +1,6 @@
-import { MoteElement, prop } from '@mote/core/element';
-import { signal } from '@mote/core/reactive';
-import type { Scope } from '@mote/core/scope';
+import { OddkinElement, prop } from '@oddkin/core/element';
+import { signal } from '@oddkin/core/reactive';
+import type { Scope } from '@oddkin/core/scope';
 
 const HEADING = 'h1, h2, h3, h4, h5, h6, [role="heading"]';
 
@@ -17,12 +17,12 @@ const HEADING = 'h1, h2, h3, h4, h5, h6, [role="heading"]';
  * @csspart header - The header region (hidden when empty).
  * @csspart body - The body region.
  * @csspart footer - The footer region (hidden when empty).
- * @cssprop --mote-card-padding - Inner padding.
- * @cssprop --mote-card-gap - Space between header, body, and footer.
- * @cssprop --mote-card-radius - Corner radius.
- * @cssprop --mote-card-background - Background colour.
- * @cssprop --mote-card-border-color - Border colour.
- * @cssprop --mote-card-shadow - Shadow for `variant="elevated"` (literal fallback until elevation tokens exist).
+ * @cssprop --odd-card-padding - Inner padding.
+ * @cssprop --odd-card-gap - Space between header, body, and footer.
+ * @cssprop --odd-card-radius - Corner radius.
+ * @cssprop --odd-card-background - Background colour.
+ * @cssprop --odd-card-border-color - Border colour.
+ * @cssprop --odd-card-shadow - Shadow for `variant="elevated"` (literal fallback until elevation tokens exist).
  * @a11y Becomes a named region only with `label` or a slotted heading; otherwise it adds no landmark.
  * @previewRole surface
  * @useFor Grouping related content and actions into one visual unit.
@@ -30,7 +30,7 @@ const HEADING = 'h1, h2, h3, h4, h5, h6, [role="heading"]';
  * @limitation Naming the region from a slotted heading needs `ElementInternals.ariaLabelledByElements` (newer than the browser baseline); without it, use `label`.
  * @category Containers
  */
-export class MoteCard extends MoteElement.with({
+export class OddkinCard extends OddkinElement.with({
   variant: prop.enum(['outlined', 'filled', 'elevated'], {
     default: 'outlined',
     reflect: true,
@@ -97,6 +97,6 @@ export class MoteCard extends MoteElement.with({
 
 declare global {
   interface HTMLElementTagNameMap {
-    'mote-card': MoteCard;
+    'odd-card': OddkinCard;
   }
 }

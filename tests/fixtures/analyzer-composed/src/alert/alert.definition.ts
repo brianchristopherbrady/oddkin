@@ -1,4 +1,4 @@
-import { compose } from '@mote/core';
+import { compose } from '@oddkin/core';
 import { panelDefinition } from '../panel/panel.definition.js';
 import { AcmeAlert } from './alert.js';
 

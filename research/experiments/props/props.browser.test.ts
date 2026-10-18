@@ -1,13 +1,13 @@
 // Assessment of the props() prototype against the proposed contract (data-composition.md §2).
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { MoteElement, define, flush, html, prop, render, signal } from '@mote/core';
-import { setErrorHandler, type ErrorContext } from '@mote/core/diagnostics';
+import { OddkinElement, define, flush, html, prop, render, signal } from '@oddkin/core';
+import { setErrorHandler, type ErrorContext } from '@oddkin/core/diagnostics';
 import { props } from './props.js';
 
 let reported: ErrorContext[];
 let container: HTMLElement;
 
-class PropsNav extends MoteElement.with({
+class PropsNav extends OddkinElement.with({
   label: prop.string({ default: 'Navigation' }),
   current: prop.string({ default: '' }),
   items: prop.array<string>(),

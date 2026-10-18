@@ -1,5 +1,5 @@
 /**
- * `@mote/workbench/pages` — the page registry (ADR 0023): one build-time source for routes,
+ * `@oddkin/workbench/pages` — the page registry (ADR 0023): one build-time source for routes,
  * primary navigation, sidebars, overview cards, search, visibility, and legacy redirects.
  * DOM-free; the M5 shell renders from it.
  */
@@ -25,7 +25,7 @@ export type {
   DocMetaLike,
   FactLike,
   FoundationMetaLike,
-  MoteMetadataLike,
+  OddkinMetadataLike,
   PageEntry,
   PageKind,
   PageRegistry,

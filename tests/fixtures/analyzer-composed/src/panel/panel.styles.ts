@@ -1,11 +1,11 @@
-import { css } from '@mote/core';
-import { token } from '@mote/tokens/refs';
+import { css } from '@oddkin/core';
+import { token } from '@oddkin/tokens/refs';
 
 export const panelStyles = css`
   :host {
     display: block;
     padding: ${token('layout.inset')};
     gap: var(--acme-panel-gap, 1rem);
-    color: var(--mote-color-text-primary);
+    color: var(--odd-color-text-primary);
   }
 `;

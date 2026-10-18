@@ -1,5 +1,5 @@
-import { MoteElement, css, event, html, prop } from '@mote/core';
-import { token } from '@mote/tokens/refs';
+import { OddkinElement, css, event, html, prop } from '@oddkin/core';
+import { token } from '@oddkin/tokens/refs';
 
 /** Fired when the user dismisses the panel. */
 export const dismiss = event<{ reason: 'button' | 'escape' }>('acme-dismiss', {
@@ -19,7 +19,7 @@ export const dismiss = event<{ reason: 'button' | 'escape' }>('acme-dismiss', {
  * @keyboard Escape dismisses the panel when `dismissible` is set.
  * @category Containers
  */
-export class AcmePanel extends MoteElement.with({
+export class AcmePanel extends OddkinElement.with({
   dismissible: prop.boolean({ reflect: true, description: 'Shows a dismiss button.' }),
   tone: prop.enum(['neutral', 'info'], { default: 'neutral', reflect: true }),
 }) {
@@ -28,7 +28,7 @@ export class AcmePanel extends MoteElement.with({
       display: block;
       padding: ${token('layout.inset')};
       gap: var(--acme-panel-gap, 1rem);
-      color: var(--mote-color-text-primary);
+      color: var(--odd-color-text-primary);
     }
   `;
   static override events = { dismiss };

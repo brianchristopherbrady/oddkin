@@ -1,4 +1,4 @@
-# 0003. Typed property definitions via `MoteElement.with()`
+# 0003. Typed property definitions via `OddkinElement.with()`
 
 - **Status:** Accepted
 - **Date:** 2026-10-17
@@ -9,7 +9,7 @@
 Public properties need types, attribute conversion, reflection, defaults, and metadata, without mandatory decorators or a compiler, and must be statically analyzable.
 
 ## Decision
-`class X extends MoteElement.with({ name: prop.string({...}) })` is the single primary property API (chainable on subclasses: `Base.with({...})`). Kinds: `string`, `number`, `boolean` (presence), `enum`, `object` and `array` (property-only, factory defaults), `custom`. Attributes default to kebab-case; reflection is opt-in and happens on commit. Invalid attribute or property values report `element.attribute.invalid` / `element.prop.invalid` and fall back to the default. One definition infers instance types, installs DOM accessors, validates conversion, and feeds metadata.
+`class X extends OddkinElement.with({ name: prop.string({...}) })` is the single primary property API (chainable on subclasses: `Base.with({...})`). Kinds: `string`, `number`, `boolean` (presence), `enum`, `object` and `array` (property-only, factory defaults), `custom`. Attributes default to kebab-case; reflection is opt-in and happens on commit. Invalid attribute or property values report `element.attribute.invalid` / `element.prop.invalid` and fall back to the default. One definition infers instance types, installs DOM accessors, validates conversion, and feeds metadata.
 
 ## Alternatives considered
 - Decorators — require a transform or the newest decorator semantics; analyzability varies.

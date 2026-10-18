@@ -1,7 +1,7 @@
-import { MoteElement, prop } from '@mote/core';
+import { OddkinElement, prop } from '@oddkin/core';
 
 /** A greeting with typed public properties, attribute conversion, and opt-in reflection. */
-export class DemoGreeting extends MoteElement.with({
+export class DemoGreeting extends OddkinElement.with({
   name: prop.string({ default: 'world', description: 'Who to greet.' }),
   excited: prop.boolean({ reflect: true, description: 'Adds emphasis; reflected for styling.' }),
   tone: prop.enum(['plain', 'warm', 'formal'], { default: 'plain', reflect: true }),

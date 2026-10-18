@@ -5,7 +5,7 @@
  * Contract: docs/architecture/core-contracts.md §4.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError, reportMoteError } from '../diagnostics/index.js';
+import { OddkinError, reportOddkinError } from '../diagnostics/index.js';
 import { effect as reactiveEffect, type EffectOptions } from '../reactive/graph.js';
 
 export type Cleanup = () => void;
@@ -182,7 +182,7 @@ export class Scope {
     try {
       this.#controller?.abort(reason);
     } catch (error) {
-      reportMoteError(error, { code: 'scope.abort.error', origin: this.name });
+      reportOddkinError(error, { code: 'scope.abort.error', origin: this.name });
     }
     const entries = [...this.#entries].reverse();
     this.#entries.clear();
@@ -193,8 +193,8 @@ export class Scope {
     try {
       entry.run();
     } catch (error) {
-      reportMoteError(
-        new MoteError(
+      reportOddkinError(
+        new OddkinError(
           'scope.cleanup.error',
           DEV
             ? `A ${entry.label} cleanup${this.name ? ` in scope "${this.name}"` : ''} threw.`
@@ -210,7 +210,7 @@ export class Scope {
     try {
       fn();
     } catch (error) {
-      reportMoteError(error, { code, origin: this.name });
+      reportOddkinError(error, { code, origin: this.name });
     }
   }
 }

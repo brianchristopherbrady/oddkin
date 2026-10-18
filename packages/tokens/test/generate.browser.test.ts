@@ -40,21 +40,21 @@ describe('generated CSS in a real cascade', () => {
     document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
     root = document.createElement('div');
     root.innerHTML = `
-      <div data-mote-mode="light" id="light"><i></i>
-        <div data-mote-mode="dark" id="dark"><i></i>
-          <div data-mote-product="clinic" id="dark-clinic"><i></i>
-            <div data-mote-mode="light" id="dark-clinic-light"><i></i></div>
+      <div data-odd-mode="light" id="light"><i></i>
+        <div data-odd-mode="dark" id="dark"><i></i>
+          <div data-odd-product="clinic" id="dark-clinic"><i></i>
+            <div data-odd-mode="light" id="dark-clinic-light"><i></i></div>
           </div>
-          <div data-mote-density="compact" id="dark-compact"><i></i></div>
-          <div data-mote-mode="system" id="system"><i></i></div>
+          <div data-odd-density="compact" id="dark-compact"><i></i></div>
+          <div data-odd-mode="system" id="system"><i></i></div>
           <div id="host"></div>
-          <div data-mote-profile="layout.compact" id="dark-profile"><i></i>
-            <div data-mote-density="compact" id="dark-profile-compact"><i></i></div>
+          <div data-odd-profile="layout.compact" id="dark-profile"><i></i>
+            <div data-odd-density="compact" id="dark-profile-compact"><i></i></div>
           </div>
         </div>
-        <div data-mote-product="studio" id="studio"><i></i>
-          <div data-mote-mode="dark" id="studio-dark"><i></i>
-            <div data-mote-density="spacious" id="studio-dark-spacious"><i></i></div>
+        <div data-odd-product="studio" id="studio"><i></i>
+          <div data-odd-mode="dark" id="studio-dark"><i></i>
+            <div data-odd-density="spacious" id="studio-dark-spacious"><i></i></div>
           </div>
         </div>
       </div>`;
@@ -76,7 +76,7 @@ describe('generated CSS in a real cascade', () => {
       scope?.id === 'in-shadow' ? scope : scope?.querySelector(':scope > i')
     ) as HTMLElement;
     el.style.cssText =
-      'color: var(--mote-color-action-default); background-color: var(--mote-color-surface-default); padding-left: var(--mote-space-md); min-height: var(--mote-navigation-item-min-height); margin-left: var(--mote-card-padding); display: block';
+      'color: var(--odd-color-action-default); background-color: var(--odd-color-surface-default); padding-left: var(--odd-space-md); min-height: var(--odd-navigation-item-min-height); margin-left: var(--odd-card-padding); display: block';
     return getComputedStyle(el);
   };
 
@@ -118,7 +118,7 @@ describe('generated CSS in a real cascade', () => {
     });
   }
 
-  it('follows the system preference in data-mote-mode="system"', () => {
+  it('follows the system preference in data-odd-mode="system"', () => {
     const dark = matchMedia('(prefers-color-scheme: dark)').matches;
     const style = probe('system');
     expect(style.color).toBe(
@@ -129,7 +129,7 @@ describe('generated CSS in a real cascade', () => {
 
   it('accepts the empty mode toggle value', () => {
     const style = getComputedStyle(root.querySelector('#light') as HTMLElement);
-    expect(style.getPropertyValue('--mote-mode-dark').trim()).toBe('');
+    expect(style.getPropertyValue('--odd-mode-dark').trim()).toBe('');
     expect(style.colorScheme).toBe('light');
   });
 });

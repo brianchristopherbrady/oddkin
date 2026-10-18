@@ -1,6 +1,6 @@
-import { MoteElement, prop } from '@mote/core/element';
-import { signal } from '@mote/core/reactive';
-import type { Scope } from '@mote/core/scope';
+import { OddkinElement, prop } from '@oddkin/core/element';
+import { signal } from '@oddkin/core/reactive';
+import type { Scope } from '@oddkin/core/scope';
 
 /**
  * A button for actions. Renders a native `<button>` in its shadow root, so keyboard
@@ -11,12 +11,12 @@ import type { Scope } from '@mote/core/scope';
  * @slot end - Content after the label.
  * @csspart control - The native button.
  * @csspart spinner - The loading indicator.
- * @cssprop --mote-button-radius - Corner radius.
- * @cssprop --mote-button-background - Background colour.
- * @cssprop --mote-button-color - Text colour.
- * @cssprop --mote-button-border-color - Border colour.
- * @cssprop --mote-button-height - Minimum height (never below the target-size token).
- * @cssprop --mote-button-padding-inline - Inline padding.
+ * @cssprop --odd-button-radius - Corner radius.
+ * @cssprop --odd-button-background - Background colour.
+ * @cssprop --odd-button-color - Text colour.
+ * @cssprop --odd-button-border-color - Border colour.
+ * @cssprop --odd-button-height - Minimum height (never below the target-size token).
+ * @cssprop --odd-button-padding-inline - Inline padding.
  * @a11y The slotted text names the button. Icon-only buttons must set `label`.
  * @a11y `loading` keeps the button focusable and sets `aria-disabled`; announce progress separately if it matters.
  * @keyboard Enter and Space activate the button (native behavior).
@@ -27,7 +27,7 @@ import type { Scope } from '@mote/core/scope';
  * @limitation In a form, submission goes through a temporary native submit button, so `SubmitEvent.submitter` is that button (carrying `name` and `value`), not this element, and it is removed after dispatch: build `new FormData(form, event.submitter)` synchronously in the `submit` listener. Implicit submission with Enter in a text field does not use this element as the form's default button.
  * @category Actions
  */
-export class MoteButton extends MoteElement.with({
+export class OddkinButton extends OddkinElement.with({
   appearance: prop.enum(['primary', 'secondary', 'ghost'], {
     default: 'secondary',
     reflect: true,
@@ -118,6 +118,6 @@ export class MoteButton extends MoteElement.with({
 
 declare global {
   interface HTMLElementTagNameMap {
-    'mote-button': MoteButton;
+    'odd-button': OddkinButton;
   }
 }

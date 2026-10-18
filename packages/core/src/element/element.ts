@@ -1,10 +1,10 @@
 /**
- * `MoteElement` — the authoring base class. Owns the native callbacks; authors use
+ * `OddkinElement` — the authoring base class. Owns the native callbacks; authors use
  * `connected`, `mounted`, `updated`, `disconnected`, `adopted`, and `moved`.
  * Contract: docs/architecture/core-contracts.md §1–§3.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError, reportMoteError } from '../diagnostics/index.js';
+import { OddkinError, reportOddkinError } from '../diagnostics/index.js';
 import { effect, settled, signal, untracked, type Signal } from '../reactive/index.js';
 import { enterRender, exitRender } from '../internal/render-context.js';
 import { definitionFor } from '../internal/definitions.js';
@@ -26,10 +26,10 @@ export interface ElementProperty {
   readonly definition: PropDefinition<unknown>;
 }
 
-export type MoteElementClass = abstract new () => MoteElement;
+export type OddkinElementClass = abstract new () => OddkinElement;
 
 /** The class returned by `with()`: the base's statics plus a typed instance. */
-export type WithProps<B extends MoteElementClass, D extends PropDefinitions> = Omit<
+export type WithProps<B extends OddkinElementClass, D extends PropDefinitions> = Omit<
   B,
   'prototype'
 > & {
@@ -37,7 +37,7 @@ export type WithProps<B extends MoteElementClass, D extends PropDefinitions> = O
   prototype: InstanceType<B> & PropValues<D>;
 };
 
-const PROPS: unique symbol = Symbol('mote.properties') as never;
+const PROPS: unique symbol = Symbol('oddkin.properties') as never;
 
 /** Attributes that belong to the platform or the host page, never to a component property. */
 const RESERVED_ATTRIBUTES = new Set([
@@ -83,7 +83,7 @@ function attributesOf(ctor: object): ReadonlyMap<string, ElementProperty> {
 
 /** Public properties declared on an element class (including inherited ones). For tooling. */
 export function elementProperties(
-  ctor: CustomElementConstructor | MoteElementClass,
+  ctor: CustomElementConstructor | OddkinElementClass,
 ): readonly ElementProperty[] {
   return [...propsOf(ctor).values()];
 }
@@ -96,7 +96,7 @@ const checkedLightDomStyles = new WeakSet<object>();
 const ElementBase: typeof HTMLElement =
   globalThis.HTMLElement ?? (class {} as unknown as typeof HTMLElement);
 
-export class MoteElement extends ElementBase {
+export class OddkinElement extends ElementBase {
   /** Styles adopted into the shadow root, shared per document. */
   static styles: StyleInput | undefined = undefined;
   /** Shadow root options, or `null` to render into the element itself (light DOM). */
@@ -116,11 +116,11 @@ export class MoteElement extends ElementBase {
    * Derive a base class with typed public properties: DOM accessors backed by signals,
    * attribute conversion, and opt-in reflection. Chain on subclasses to add properties.
    */
-  static with<B extends MoteElementClass, const D extends PropDefinitions>(
+  static with<B extends OddkinElementClass, const D extends PropDefinitions>(
     this: B,
     definitions: D,
   ): WithProps<B, D> {
-    const Base = this as unknown as typeof MoteElement;
+    const Base = this as unknown as typeof OddkinElement;
     const inherited = propsOf(Base);
     const table = new Map(inherited);
     const attributes = new Map(
@@ -129,7 +129,7 @@ export class MoteElement extends ElementBase {
 
     for (const [name, definition] of Object.entries(definitions)) {
       if (inherited.has(name)) {
-        throw new MoteError(
+        throw new OddkinError(
           'element.prop.duplicate',
           DEV
             ? `Property "${name}" is already declared by ${Base.name}. Each property is declared once.`
@@ -137,17 +137,17 @@ export class MoteElement extends ElementBase {
         );
       }
       if (name in Base.prototype) {
-        throw new MoteError(
+        throw new OddkinError(
           'element.prop.reserved',
           DEV
-            ? `Property "${name}" would replace an existing HTMLElement or MoteElement member. Choose another name.`
+            ? `Property "${name}" would replace an existing HTMLElement or OddkinElement member. Choose another name.`
             : '',
         );
       }
       const attribute =
         definition.attribute === false ? null : (definition.attribute ?? attributeNameFor(name));
       if (definition.reflect && !attribute) {
-        throw new MoteError(
+        throw new OddkinError(
           'element.prop.reflectWithoutAttribute',
           DEV ? `Property "${name}" reflects but has no attribute.` : '',
         );
@@ -158,7 +158,7 @@ export class MoteElement extends ElementBase {
           attribute.startsWith('aria-') ||
           (attribute.startsWith('on') && attribute in ElementBase.prototype)
         ) {
-          throw new MoteError(
+          throw new OddkinError(
             'element.attribute.reserved',
             DEV
               ? `Attribute "${attribute}" for property "${name}" belongs to the platform. Pick another attribute name or use attribute: false.`
@@ -167,7 +167,7 @@ export class MoteElement extends ElementBase {
         }
         const owner = attributes.get(attribute);
         if (owner) {
-          throw new MoteError(
+          throw new OddkinError(
             'element.attribute.duplicate',
             DEV ? `Attribute "${attribute}" is used by both "${owner}" and "${name}".` : '',
           );
@@ -178,17 +178,17 @@ export class MoteElement extends ElementBase {
     }
 
     const Derived = class extends Base {};
-    Object.defineProperty(Derived, 'name', { value: `${Base.name || 'MoteElement'}WithProps` });
+    Object.defineProperty(Derived, 'name', { value: `${Base.name || 'OddkinElement'}WithProps` });
     Object.defineProperty(Derived, PROPS, { value: table });
     for (const name of Object.keys(definitions)) {
       const property = table.get(name) as ElementProperty;
       Object.defineProperty(Derived.prototype, name, {
         configurable: true,
         enumerable: true,
-        get(this: MoteElement) {
+        get(this: OddkinElement) {
           return this.#read(property);
         },
-        set(this: MoteElement, value: unknown) {
+        set(this: OddkinElement, value: unknown) {
           this.#write(property, value);
         },
       });
@@ -327,7 +327,7 @@ export class MoteElement extends ElementBase {
 
     const template = definitionFor(this.constructor)?.template as
       ((host: this) => unknown) | undefined;
-    if (template || this.render !== MoteElement.prototype.render) {
+    if (template || this.render !== OddkinElement.prototype.render) {
       const root = this.#ensureRoot();
       scope.add(
         effect(
@@ -365,7 +365,7 @@ export class MoteElement extends ElementBase {
   }
 
   adoptedCallback(oldDocument: Document, newDocument: Document): void {
-    const ctor = this.constructor as typeof MoteElement;
+    const ctor = this.constructor as typeof OddkinElement;
     if (this.#root && this.shadowRoot)
       adoptStyles(this.shadowRoot, stylesOf(ctor), { nonce: ctor.styleNonce });
     this.#guard('adopted', () => this.adopted(oldDocument, newDocument));
@@ -415,8 +415,8 @@ export class MoteElement extends ElementBase {
   }
 
   #invalid(code: string, subject: string, reason: string): void {
-    reportMoteError(
-      new MoteError(
+    reportOddkinError(
+      new OddkinError(
         code,
         DEV ? `<${this.localName}> ${subject}: ${reason}. Using the default value.` : '',
       ),
@@ -445,7 +445,7 @@ export class MoteElement extends ElementBase {
 
   #ensureRoot(): ChildPart {
     if (this.#root) return this.#root;
-    const ctor = this.constructor as typeof MoteElement;
+    const ctor = this.constructor as typeof OddkinElement;
     const options = ctor.shadowRootOptions;
     let container: ShadowRoot | HTMLElement = this;
     if (options) {
@@ -461,7 +461,7 @@ export class MoteElement extends ElementBase {
   }
 
   #retainLightDomStyles(scope: Scope): void {
-    const ctor = this.constructor as typeof MoteElement;
+    const ctor = this.constructor as typeof OddkinElement;
     const styles = stylesOf(ctor);
     if (ctor.shadowRootOptions || !styles) return;
     const root = this.getRootNode();
@@ -469,8 +469,8 @@ export class MoteElement extends ElementBase {
     if (DEV && !checkedLightDomStyles.has(ctor)) {
       checkedLightDomStyles.add(ctor);
       if (flattenStyles(styles).some((s) => /:host\b/.test(s.cssText))) {
-        reportMoteError(
-          new MoteError(
+        reportOddkinError(
+          new OddkinError(
             'element.styles.lightDomHost',
             DEV
               ? `<${this.localName}> renders into light DOM, where :host never matches. Select the element by tag name or class instead.`
@@ -490,8 +490,8 @@ export class MoteElement extends ElementBase {
       if (!Object.hasOwn(this, property.name)) continue;
       const value = (this as unknown as Record<string, unknown>)[property.name];
       delete (this as unknown as Record<string, unknown>)[property.name];
-      reportMoteError(
-        new MoteError(
+      reportOddkinError(
+        new OddkinError(
           'element.prop.shadowed',
           DEV
             ? `<${this.localName}> has a class field "${property.name}" that hides the reactive property. Remove the field and set the default in prop.*({ default }), or use "declare ${property.name}: …" for types only. The field value was applied through the property.`
@@ -507,13 +507,13 @@ export class MoteElement extends ElementBase {
     try {
       run();
     } catch (error) {
-      reportMoteError(error, { code: `element.${hook}.error`, origin: this.localName });
+      reportOddkinError(error, { code: `element.${hook}.error`, origin: this.localName });
     }
   }
 }
 
 /** A registered definition's styles replace the class's `static styles`; otherwise the class's apply. */
-function stylesOf(ctor: typeof MoteElement): StyleInput | undefined {
+function stylesOf(ctor: typeof OddkinElement): StyleInput | undefined {
   const definition = definitionFor(ctor);
   return definition && definition.styles !== undefined ? definition.styles : ctor.styles;
 }

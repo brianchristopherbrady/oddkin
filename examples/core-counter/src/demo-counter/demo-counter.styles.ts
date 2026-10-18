@@ -1,4 +1,4 @@
-import { css } from '@mote/core';
+import { css } from '@oddkin/core';
 
 export const demoCounterStyles = css`
   :host {

@@ -16,7 +16,7 @@ describe('theme-config.v1 JSON Schema', () => {
   it('accepts the fixture and documentation configurations', () => {
     const documented: ThemeConfig = {
       name: 'acme',
-      preset: 'mote-default',
+      preset: 'oddkin-default',
       brand: { primary: '#5b46e8' },
       spacing: {
         strategy: 'multiples',

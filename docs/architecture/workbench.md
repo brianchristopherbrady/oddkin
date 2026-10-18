@@ -1,6 +1,6 @@
-# Mote Workbench and Theme Studio
+# Oddkin Workbench and Theme Studio
 
-Status: **proposal**, except the DOM-free M3 entries `@mote/workbench/examples` and `./config`, which are implemented ([packages/workbench](../../packages/workbench/README.md)). `@mote/workbench` is optional tooling: a reusable, metadata-driven documentation application with integrated interactive examples that teams point at their own component library. Related: [workbench-pages.md](./workbench-pages.md), [metadata-and-analyzer.md](./metadata-and-analyzer.md), [theming-and-styling.md](./theming-and-styling.md), [layout-recipes.md](./layout-recipes.md), [data-composition.md](./data-composition.md), [core-contracts.md](./core-contracts.md).
+Status: **proposal**, except the DOM-free M3 entries `@oddkin/workbench/examples` and `./config`, which are implemented ([packages/workbench](../../packages/workbench/README.md)). `@oddkin/workbench` is optional tooling: a reusable, metadata-driven documentation application with integrated interactive examples that teams point at their own component library. Related: [workbench-pages.md](./workbench-pages.md), [metadata-and-analyzer.md](./metadata-and-analyzer.md), [theming-and-styling.md](./theming-and-styling.md), [layout-recipes.md](./layout-recipes.md), [data-composition.md](./data-composition.md), [core-contracts.md](./core-contracts.md).
 
 ## 1. Product scope
 
@@ -21,20 +21,20 @@ Basic API exploration needs no authored story files. Meaningful examples, workfl
 ## 2. Architecture
 
 ```text
-library source ──► @mote/analyzer ──► custom-elements.json + mote.metadata.json + indexes
+library source ──► @oddkin/analyzer ──► custom-elements.json + oddkin.metadata.json + indexes
                                            │
-mote.config.ts (workbench + themeStudio) ──┤
-theme config (mote.theme.ts / .json) ──────┤
+oddkin.config.ts (workbench + themeStudio) ──┤
+theme config (oddkin.theme.ts / .json) ──────┤
 authored examples (*.examples.ts) ─────────┤
                                            ▼
-                           @mote/workbench (shell, panels, Theme Studio)
+                           @oddkin/workbench (shell, panels, Theme Studio)
                                            │  loads at runtime in preview iframes
                                            ▼
                       the library's real browser modules, registration entries, themes, fonts, assets
 ```
 
-- **One reusable shell**, configured by metadata and `mote.config.*`. No forked app per library. Generated artifacts (`.mote/` in dev, build output) are separate from authored config/examples.
-- The shell is built with Mote and has zero third-party runtime dependencies. Phasing: M3 ships only DOM-free `./examples` and `./config`; the M5 shell uses `@mote/core`, `@mote/tokens`, and `@mote/components` and runs without state/app; `@mote/state`/`@mote/app` are integrated from M6–M7. Reusable panels never require consumers to create an app root or router.
+- **One reusable shell**, configured by metadata and `oddkin.config.*`. No forked app per library. Generated artifacts (`.oddkin/` in dev, build output) are separate from authored config/examples.
+- The shell is built with Oddkin and has zero third-party runtime dependencies. Phasing: M3 ships only DOM-free `./examples` and `./config`; the M5 shell uses `@oddkin/core`, `@oddkin/tokens`, and `@oddkin/components` and runs without state/app; `@oddkin/state`/`@oddkin/app` are integrated from M6–M7. Reusable panels never require consumers to create an app root or router.
 - Build order: runtime components → analyzer metadata → example typechecks/tests → Workbench shell; no production dependency from components to tooling.
 - **Module resolution**: the analyzer emits a module map (tag → registration entry, dependency entries, package `exports`), plus required stylesheets, fonts, and assets declared in config. Workbench builds an import map per preview frame. Source analysis stays DOM-free; implementations load only in preview frames.
 - **Branding and prefixes**: any tag prefix; project name, logo, colours (via its own theme), and links from config.
@@ -43,8 +43,8 @@ authored examples (*.examples.ts) ─────────┤
 
 | Level | Input | Experience |
 | --- | --- | --- |
-| **Full Mote** | Mote-authored library + analyzer enrichment + theme config | Everything: typed controls, models, recipes, profiles, Theme Studio with generation, token provenance, examples |
-| **Standard CEM** | Any library with a valid `custom-elements.json` and loadable modules | API docs, controls for CEM-typed properties/attributes, slots, events log, CSS custom property editing, parts listing, snippets. Theme Studio limited to editing CSS custom properties the library declares (no generator) unless a Mote theme config is supplied |
+| **Full Oddkin** | Oddkin-authored library + analyzer enrichment + theme config | Everything: typed controls, models, recipes, profiles, Theme Studio with generation, token provenance, examples |
+| **Standard CEM** | Any library with a valid `custom-elements.json` and loadable modules | API docs, controls for CEM-typed properties/attributes, slots, events log, CSS custom property editing, parts listing, snippets. Theme Studio limited to editing CSS custom properties the library declares (no generator) unless an Oddkin theme config is supplied |
 | **Missing enrichment** | Any field not provided | Shown as "Not documented" / "Unknown default" / "No adapter" — never invented |
 
 ## 3. Component documentation
@@ -121,7 +121,7 @@ Every fully configured Workbench includes Theme Studio, generated from the libra
 The Design System Lab Theme Studio (https://brianchristopherbrady.github.io/design-system-lab/foundations/theme-studio) is the functional and visual reference. Its structure was inspected in a browser on 2026-10-17 ([design-system-lab-audit.md](../reference/design-system-lab-audit.md)); interaction details, exports, and accessibility remain to be audited. No parity is claimed without verification. The original React runtime is neither imported nor reimplemented line-for-line.
 
 ### 6.2 One configuration and generator
-- Uses the **same** `ThemeConfig` schema, validation, alias resolution, and pure generator (`@mote/tokens/generate`) as config files and the CLI. There is no separate browser token engine.
+- Uses the **same** `ThemeConfig` schema, validation, alias resolution, and pure generator (`@oddkin/tokens/generate`) as config files and the CLI. There is no separate browser token engine.
 - TS/JS theme configs are loaded by dev tooling (Node) and converted to the browser-editable JSON-compatible model; the published app never executes pasted TS/JS.
 - Form editor and schema-aware JSON editor operate on the **same draft**.
 
@@ -144,12 +144,12 @@ Base and additional brand colours · neutral and status colours · spacing (stra
 - Roles map to the library's components through declared preview capabilities, known contracts, examples, or explicit adapters — **never by tag name alone**.
 
 ```ts
-// mote.config.ts (illustrative)
+// oddkin.config.ts (illustrative)
 export default defineWorkbenchConfig({
   library: { packages: ['@acme/ui'] },
   themeStudio: {
     enabled: true,
-    themeConfig: './mote.theme.ts',
+    themeConfig: './oddkin.theme.ts',
     preview: {
       recipe: 'theme-specimen',
       roles: {
@@ -175,15 +175,15 @@ export default defineWorkbenchConfig({
 
 ```ts
 // button.examples.ts — colocated, typed from the component's metadata
-import { defineExamples } from '@mote/workbench/examples';
+import { defineExamples } from '@oddkin/workbench/examples';
 
-export default defineExamples('mote-button', {
+export default defineExamples('odd-button', {
   default: { slots: { default: 'Save' } },
   loading: { props: { loading: true }, slots: { default: 'Saving' } },
   primary: { props: { appearance: 'primary' }, slots: { default: 'Continue' }, previewRoles: ['primaryAction'] },
   inForm: {
     fixture: ({ scope, mount }) => {                 // owned setup/cleanup through Scope
-      const form = mount(html`<form><mote-button type="submit">Send</mote-button></form>`);
+      const form = mount(html`<form><odd-button type="submit">Send</odd-button></form>`);
       scope.listen(form, 'submit', e => e.preventDefault());
     },
     guidance: 'Submits the outer form; Enter in an input submits too.',
@@ -206,7 +206,7 @@ export default defineExamples('mote-button', {
 - Visualizations: brand/neutral ramps; light/dark semantic roles; foreground/background contrast pairs (WCAG 2.x normative, unknown contexts labelled, never presented as accessibility certification); proportional spacing; typography and line height; radius/border/elevation; control sizing and density; alias graph; baseline-vs-draft diff.
 - Specimens link to config fields, token names, aliases, and known consumers.
 - Configured, generated, and observed values are visually distinct.
-- Docs cover CSS, SCSS, and CSS-in-TS consumption equally; CSS-only consumption needs no Mote JS.
+- Docs cover CSS, SCSS, and CSS-in-TS consumption equally; CSS-only consumption needs no Oddkin JS.
 
 ## 9. Comparison, sharing, export
 
@@ -219,35 +219,35 @@ export default defineExamples('mote-button', {
 ## 10. Commands
 
 ```sh
-mote analyze                # analyzer one-shot (diagnostics, outputs)
-mote workbench dev          # analyze + watch + validate + dev server with live preview updates
-mote workbench build        # validate metadata, emit static app (assets, lazy imports, deep links, base path, legacy redirects)
-mote workbench products --discover   # report suggested product mappings (never enables or publishes a page)
-mote impact <base> <head>   # planned: impact report + selected verification (delegates to @mote/analyzer)
-mote workbench repro export <example|share-link> --out <dir>   # planned: runnable reproduction; writes only to <dir>
+oddkin analyze                # analyzer one-shot (diagnostics, outputs)
+oddkin workbench dev          # analyze + watch + validate + dev server with live preview updates
+oddkin workbench build        # validate metadata, emit static app (assets, lazy imports, deep links, base path, legacy redirects)
+oddkin workbench products --discover   # report suggested product mappings (never enables or publishes a page)
+oddkin impact <base> <head>   # planned: impact report + selected verification (delegates to @oddkin/analyzer)
+oddkin workbench repro export <example|share-link> --out <dir>   # planned: runnable reproduction; writes only to <dir>
 ```
 
-- Bin `mote` (in `@mote/workbench`, delegating `analyze` to `@mote/analyzer`). Builds never publish or deploy.
+- Bin `oddkin` (in `@oddkin/workbench`, delegating `analyze` to `@oddkin/analyzer`). Builds never publish or deploy.
 - Deterministic output; stale generated files removed only in marked generated directories; authored config, examples, and guidance preserved.
-- Base path configurable; deep links work via history routing with fallback or hash mode (same policy as `@mote/app` router).
+- Base path configurable; deep links work via history routing with fallback or hash mode (same policy as `@oddkin/app` router).
 
-## 11. Relationship to `apps/docs` and `@mote/agent`
+## 11. Relationship to `apps/docs` and `@oddkin/agent`
 
-- `apps/docs` is Mote's product documentation (tutorials, migrations, architecture, learning). It **consumes public Workbench panels** (foundation pages, component catalog and detail pages, previews, token inspector, Theme Studio) through `@mote/workbench` exports instead of maintaining duplicate foundation or component explorers or token engines. Mote's own Workbench (pointed at `@mote/components`) can be linked from or embedded in the docs.
+- `apps/docs` is Oddkin's product documentation (tutorials, migrations, architecture, learning). It **consumes public Workbench panels** (foundation pages, component catalog and detail pages, previews, token inspector, Theme Studio) through `@oddkin/workbench` exports instead of maintaining duplicate foundation or component explorers or token engines. Oddkin's own Workbench (pointed at `@oddkin/components`) can be linked from or embedded in the docs.
 - *(Planned, [multi-product.md](./multi-product.md) §10.)* Product implementations are compared with shared examples and interaction fixtures. Product selection is searchable and scales to many products; only the chosen products are previewed, their assets load on demand, and deselected previews are disposed. Changing a component family or implementation is structural (remount policy, §5).
-- `@mote/agent` uses the same contracts (metadata, examples, preview roles, Theme Studio config schema) to explain configuration, identify compatible components for roles, guide migrations, validate proposed changes, and verify exported results.
+- `@oddkin/agent` uses the same contracts (metadata, examples, preview roles, Theme Studio config schema) to explain configuration, identify compatible components for roles, guide migrations, validate proposed changes, and verify exported results.
 - *(Planned, ADR 0032.)* Agent-kit generation reads the same inputs but never requires building or serving Workbench. Static docs builds may include the kit's clean Markdown references and an `llms.txt` index.
 - *(Planned.)* `inspectPreview` ([agent-tooling.md](./agent-tooling.md) §9.2) drives these preview frames through the same protocol and `Scope` ownership, under the same remount policy and trust model, and returns bounded structured results with browser and configuration conditions.
-- Standard CEM alone cannot describe token generation, theme configuration, or preview-role compatibility; those live in the Mote enrichment schema or adapters. The CEM baseline is preserved.
+- Standard CEM alone cannot describe token generation, theme configuration, or preview-role compatibility; those live in the Oddkin enrichment schema or adapters. The CEM baseline is preserved.
 
 ## 12. Vertical slice and acceptance
 
-First slice with real `mote-button`, `mote-input`, `mote-card`, and `mote-side-nav`, plus the Foundations overview and Spacing detail page, before expanding. Page-level acceptance: [workbench-pages.md §12](./workbench-pages.md).
+First slice with real `odd-button`, `odd-input`, `odd-card`, and `odd-side-nav`, plus the Foundations overview and Spacing detail page, before expanding. Page-level acceptance: [workbench-pages.md §12](./workbench-pages.md).
 
 - [ ] Analyzer emits CEM that validates and is consumed by an independent CEM tool; enrichment manifest validates; references resolve against `exports`
 - [ ] Workbench renders documentation and the integrated interactive example for all four with no authored stories; no Playground destination exists
 - [ ] Property vs attribute, nullable, falsy (`''`, `0`, `false`), read-only, unset, and reset behave per §4
-- [ ] `mote-side-nav` items edited through its model editor; specimen roles via examples/adapters only
+- [ ] `odd-side-nav` items edited through its model editor; specimen roles via examples/adapters only
 - [ ] Preview registries, failures, styles, and scopes isolated; switching components disposes scopes (instrumented)
 - [ ] Base-colour, spacing, sizing, typography, and radius edits update palettes and the real components; overrides and unrelated roles unchanged
 - [ ] Invalid draft keeps last valid preview; rapid edits → latest wins; focus and component state preserved through theme edits
@@ -259,13 +259,13 @@ First slice with real `mote-button`, `mote-input`, `mote-card`, and `mote-side-n
 - [ ] Shared examples drive at least one docs page and one browser test
 - [ ] Watch mode and builds deterministic; authored files preserved
 - [ ] Static build under a hosting subpath with Theme Studio editing intact
-- [ ] Standard-CEM-only library (fixture outside Mote) gets the documented baseline with missing enrichment labelled
+- [ ] Standard-CEM-only library (fixture outside Oddkin) gets the documented baseline with missing enrichment labelled
 - [ ] Ordinary component consumers contain no analyzer, Workbench, or agent code
 
 ## Open questions
 
 - Iframe per preview vs a pooled frame with per-example realms (performance experiment).
 - Worker-based generation vs main-thread generation for typical config sizes.
-- Whether `defineExamples` lives in `@mote/workbench/examples` or a tiny shared dev package used by tests without Workbench.
+- Whether `defineExamples` lives in `@oddkin/workbench/examples` or a tiny shared dev package used by tests without Workbench.
 - How much of the Design System Lab Theme Studio layout to reproduce vs redesign (structure recorded in the audit; decide after the interaction/accessibility audit).
 - Page-level open questions: [workbench-pages.md](./workbench-pages.md).

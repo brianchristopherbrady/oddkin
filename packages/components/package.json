@@ -1,8 +1,8 @@
 {
-  "name": "@mote/components",
+  "name": "@oddkin/components",
   "version": "0.0.0",
   "private": true,
-  "description": "Accessible, themed custom elements, Mote layout presets, and component metadata.",
+  "description": "Accessible, themed custom elements, Oddkin layout presets, and component metadata.",
   "type": "module",
   "sideEffects": [
     "./dist/**/*.define.js"
@@ -50,17 +50,17 @@
       "default": "./dist/input/input.define.js"
     },
     "./custom-elements.json": "./custom-elements.json",
-    "./mote.metadata.json": "./mote.metadata.json",
+    "./oddkin.metadata.json": "./oddkin.metadata.json",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
     "custom-elements.json",
-    "mote.metadata.json",
+    "oddkin.metadata.json",
     "README.md"
   ],
   "dependencies": {
-    "@mote/core": "0.0.0",
-    "@mote/tokens": "0.0.0"
+    "@oddkin/core": "0.0.0",
+    "@oddkin/tokens": "0.0.0"
   }
 }

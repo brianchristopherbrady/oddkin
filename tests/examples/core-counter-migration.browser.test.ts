@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { flush, scopeStats } from '@mote/core';
+import { flush, scopeStats } from '@oddkin/core';
 
 // Migration acceptance for examples/core-counter (IMPLEMENTATION_PLAN.md M4, ADR 0036):
 // the folder-structured elements keep their public behavior, binding paths, DOM identity,

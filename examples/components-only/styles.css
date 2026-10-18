@@ -1,24 +1,24 @@
 body {
   margin: 0;
-  padding: var(--mote-space-xl);
+  padding: var(--odd-space-xl);
   max-inline-size: 40rem;
-  font-family: var(--mote-font-family-sans);
-  color: var(--mote-color-text-primary);
-  background: var(--mote-color-surface-sunken);
+  font-family: var(--odd-font-family-sans);
+  color: var(--odd-color-text-primary);
+  background: var(--odd-color-surface-sunken);
 }
 
 main {
   display: grid;
-  gap: var(--mote-space-lg);
+  gap: var(--odd-space-lg);
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--mote-space-sm);
+  gap: var(--odd-space-sm);
 }
 
 label {
   display: grid;
-  gap: var(--mote-space-xs);
+  gap: var(--odd-space-xs);
 }

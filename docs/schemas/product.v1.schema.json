@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/product/v1.json",
-  "title": "Mote product definition / manifest v1",
+  "$id": "https://oddkin.dev/schemas/product/v1.json",
+  "title": "Oddkin product definition / manifest v1",
   "description": "DRAFT. A product is distinct from mode, theme, density, and profiles (ADR 0026). Remote manifests are fetched and snapshotted at build time.",
   "type": "object",
   "required": ["schema", "id", "label", "theme"],
   "additionalProperties": false,
   "properties": {
-    "schema": { "const": "https://mote.dev/schemas/product/v1.json" },
+    "schema": { "const": "https://oddkin.dev/schemas/product/v1.json" },
     "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
     "label": { "type": "string" },
     "description": { "type": "string" },

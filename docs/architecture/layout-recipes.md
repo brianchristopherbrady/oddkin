@@ -1,6 +1,6 @@
 # Layout recipes and container-responsive composition
 
-Status: the unbranded mechanism (§2–§5, §8 `describeRecipe`) is **implemented** in `@mote/core/layout` and `@mote/core/layout/inspect` (M3) and verified in three engines; §11 lists behaviors settled in implementation. The Mote-bound helpers, `layout.css`, extraction CLI, and side-nav fixture (§7, §9, §10) are M4+ work. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification.
+Status: the unbranded mechanism (§2–§5, §8 `describeRecipe`) is **implemented** in `@oddkin/core/layout` and `@oddkin/core/layout/inspect` (M3) and verified in three engines; §11 lists behaviors settled in implementation. The Oddkin-bound helpers, `layout.css`, extraction CLI, and side-nav fixture (§7, §9, §10) are M4+ work. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification.
 
 ## 1. Purpose and boundaries
 
@@ -8,18 +8,18 @@ A **layout recipe** describes named regions, reusable arrangements, responsive c
 
 | Layer | Owns | Package |
 | --- | --- | --- |
-| Generic recipe mechanism | `defineLayoutRecipe`, `stack`, `row`, `grid`, `autoGrid`, `split`, `createLayoutHelpers`, region/variant/condition composition, diagnostics, CSS generation | `@mote/core/layout` (unbranded, DOM-free) |
-| Mote defaults and presets | Helpers pre-bound to Mote layout roles and named conditions; reusable recipes (e.g. side navigation); CSS utility classes for page authors | `@mote/components/layout` |
-| Roles, conditions, profiles | Token categories, thresholds, profile role sets | `@mote/tokens` (independent; no knowledge of recipes) |
-| Recipe metadata | Regions, variants, conditions, parts, precedence | `@mote/core/layout/inspect` + generated Mote metadata (§8) |
+| Generic recipe mechanism | `defineLayoutRecipe`, `stack`, `row`, `grid`, `autoGrid`, `split`, `createLayoutHelpers`, region/variant/condition composition, diagnostics, CSS generation | `@oddkin/core/layout` (unbranded, DOM-free) |
+| Oddkin defaults and presets | Helpers pre-bound to Oddkin layout roles and named conditions; reusable recipes (e.g. side navigation); CSS utility classes for page authors | `@oddkin/components/layout` |
+| Roles, conditions, profiles | Token categories, thresholds, profile role sets | `@oddkin/tokens` (independent; no knowledge of recipes) |
+| Recipe metadata | Regions, variants, conditions, parts, precedence | `@oddkin/core/layout/inspect` + generated Oddkin metadata (§8) |
 
-Core never references `--mote-*` names, Mote conditions, or presets. Tokens never import core or components.
+Core never references `--odd-*` names, Oddkin conditions, or presets. Tokens never import core or components.
 
 ## 2. Proposed API
 
 ```ts
 // side-nav.recipe.ts — module scope, DOM-free
-import { defineLayoutRecipe, stack, row, grid } from '@mote/components/layout';
+import { defineLayoutRecipe, stack, row, grid } from '@oddkin/components/layout';
 
 export const sideNav = defineLayoutRecipe({
   container: { selector: ':host', name: 'side-nav' },   // container-type: inline-size by default
@@ -49,10 +49,10 @@ export const sideNav = defineLayoutRecipe({
 
 ```ts
 // side-nav.ts
-import { MoteElement, html } from '@mote/core';
+import { OddkinElement, html } from '@oddkin/core';
 import { sideNav } from './side-nav.recipe.js';
 
-class DemoSideNav extends MoteElement {
+class DemoSideNav extends OddkinElement {
   static styles = [sideNav.styles];
 
   render() {
@@ -67,14 +67,14 @@ class DemoSideNav extends MoteElement {
 }
 ```
 
-- `defineLayoutRecipe` from `@mote/core/layout` takes the same shape but requires conditions to be supplied (`conditions: { … }`) or written inline as structured queries; the Mote-bound version resolves names from `@mote/tokens/conditions`.
-- Recipes are evaluated once at module scope and produce a `MoteStyles` object (ordinary CSS text). Calling `defineLayoutRecipe` during a render emits a dev diagnostic.
+- `defineLayoutRecipe` from `@oddkin/core/layout` takes the same shape but requires conditions to be supplied (`conditions: { … }`) or written inline as structured queries; the Oddkin-bound version resolves names from `@oddkin/tokens/conditions`.
+- Recipes are evaluated once at module scope and produce an `OddkinStyles` object (ordinary CSS text). Calling `defineLayoutRecipe` during a render emits a dev diagnostic.
 - Responsive behavior is pure CSS (container/media queries and intrinsic sizing). No `ResizeObserver`, reactive state, or re-render is involved.
 - No build transform is required. Optional extraction (§9) emits equivalent `.css`.
 
 ## 3. Helpers and explicit defaults
 
-All helpers use logical properties. `<gap>` and other defaults come from the helper factory: core's neutral factory uses plain lengths; `@mote/components/layout` binds them to Mote layout roles.
+All helpers use logical properties. `<gap>` and other defaults come from the helper factory: core's neutral factory uses plain lengths; `@oddkin/components/layout` binds them to Oddkin layout roles.
 
 | Helper | Generated CSS (defaults) | Options |
 | --- | --- | --- |
@@ -84,12 +84,12 @@ All helpers use logical properties. `<gap>` and other defaults come from the hel
 | `autoGrid({ min })` | `display:grid; grid-template-columns:repeat(auto-fill, minmax(min(<min>, 100%), 1fr)); gap:<gap>` | `min`, `fill` (`auto-fill`/`auto-fit`), `gap` |
 | `split({ side, main })` | Intrinsic wrapping sidebar: container `display:flex; flex-wrap:wrap; gap`; side `flex-basis:<sideWidth>; flex-grow:1`; main `flex-basis:0; flex-grow:999; min-inline-size:<mainMin>` | `side` / `main` region names, `sideWidth`, `mainMin`, `position` (`start`/`end`) |
 
-| Default | Neutral (core) | Mote (`@mote/components/layout`) |
+| Default | Neutral (core) | Oddkin (`@oddkin/components/layout`) |
 | --- | --- | --- |
-| `gap` | `1rem` | `var(--mote-layout-gap)` |
-| `autoGrid.min` | `16rem` | `var(--mote-layout-item-min)` → resolved at token level, see note |
-| `split.sideWidth` | `16rem` | `var(--mote-layout-sidebar-width)` |
-| `split.mainMin` | `50%` | `var(--mote-layout-main-min)` |
+| `gap` | `1rem` | `var(--odd-layout-gap)` |
+| `autoGrid.min` | `16rem` | `var(--odd-layout-item-min)` → resolved at token level, see note |
+| `split.sideWidth` | `16rem` | `var(--odd-layout-sidebar-width)` |
+| `split.mainMin` | `50%` | `var(--odd-layout-main-min)` |
 
 Note: `min()` inside `minmax()` accepts `var()` values, so item minimums can remain theme-responsive.
 
@@ -182,13 +182,13 @@ Native semantic elements + templates + recipes, as in §2. A recipe is enough wh
 Compose existing components and layout primitives with a few meaningful options, with or without JavaScript:
 
 ```html
-<link rel="stylesheet" href="@mote/tokens/css/default.css">
-<link rel="stylesheet" href="@mote/components/layout/layout.css">
+<link rel="stylesheet" href="@oddkin/tokens/css/default.css">
+<link rel="stylesheet" href="@oddkin/components/layout/layout.css">
 
-<main class="mote-split" style="--mote-split-side-width: 18rem">
-  <nav class="mote-stack">…</nav>
-  <section class="mote-auto-grid">
-    <mote-card>…</mote-card>
+<main class="odd-split" style="--odd-split-side-width: 18rem">
+  <nav class="odd-stack">…</nav>
+  <section class="odd-auto-grid">
+    <odd-card>…</odd-card>
     <article class="card-like">…</article>
   </section>
 </main>
@@ -196,43 +196,43 @@ Compose existing components and layout primitives with a few meaningful options,
 
 ```css
 /* Ordinary CSS using the same roles */
-.card-like { padding: var(--mote-layout-inset); gap: var(--mote-layout-gap); }
+.card-like { padding: var(--odd-layout-inset); gap: var(--odd-layout-gap); }
 ```
 
-- `layout.css` is generated from the same helpers and Mote defaults; classes expose override custom properties (`--mote-stack-gap`, `--mote-split-side-width`, …).
-- **Custom element or native element + recipe?** Use a custom element when it adds behavior, managed semantics/ARIA, keyboard handling, an attribute/property API that frameworks need, or establishes a container contract (`mote-theme-scope`, `mote-scroll-region`, `mote-container`). Use a native element with a recipe class when the wrapper would only apply layout (`stack`, `row`, `grid`, `autoGrid`, `split`). The final list of layout elements is decided in M10 from this rule.
+- `layout.css` is generated from the same helpers and Oddkin defaults; classes expose override custom properties (`--odd-stack-gap`, `--odd-split-side-width`, …).
+- **Custom element or native element + recipe?** Use a custom element when it adds behavior, managed semantics/ARIA, keyboard handling, an attribute/property API that frameworks need, or establishes a container contract (`odd-theme-scope`, `odd-scroll-region`, `odd-container`). Use a native element with a recipe class when the wrapper would only apply layout (`stack`, `row`, `grid`, `autoGrid`, `split`). The final list of layout elements is decided in M10 from this rule.
 - The same token contracts appear in native elements, custom components, and ordinary CSS; docs examples show all three side by side.
 
 ## 8. Metadata
 
 - `recipe.styles` is the only runtime artifact a component needs. Rich metadata is never bundled into element modules.
-- `@mote/core/layout/inspect` (`describeRecipe(recipe)`) returns regions, helpers, variants, conditions, parts, containers, and layer order — DOM-free.
-- `@mote/analyzer` statically extracts recipe contracts (regions, helpers, variants, conditions, profiles, parts) into `mote.metadata.json` ([metadata-and-analyzer.md](./metadata-and-analyzer.md)) so Workbench, docs, and `@mote/agent` read them without loading browser modules. Recipes using dynamic definitions are diagnosed and can supply explicit metadata.
+- `@oddkin/core/layout/inspect` (`describeRecipe(recipe)`) returns regions, helpers, variants, conditions, parts, containers, and layer order — DOM-free.
+- `@oddkin/analyzer` statically extracts recipe contracts (regions, helpers, variants, conditions, profiles, parts) into `oddkin.metadata.json` ([metadata-and-analyzer.md](./metadata-and-analyzer.md)) so Workbench, docs, and `@oddkin/agent` read them without loading browser modules. Recipes using dynamic definitions are diagnosed and can supply explicit metadata.
 - *(Planned.)* The agent kit's recipe references and the `getRecipe` operation are rendered from this extracted contract plus authored guidance (regions, variants, conditions, responsive expectations); nothing about a recipe is inferred beyond it ([agent-tooling.md](./agent-tooling.md) §5, §8).
 - *(Planned.)* Explanations and impact reports use recipe → region/condition/profile edges from this contract. A condition is reported as **active** only when reliably observed (`matchMedia` for media queries; container conditions only through instrumentation verified in three engines), never by emulating responsiveness in JavaScript ([change-impact-and-verification.md](./change-impact-and-verification.md) §4.1).
 
 ## 9. Optional build-time extraction
 
-Recipe modules are DOM-free, so Node tooling can import them and write `.css` files with identical output (`mote-layout extract <module> --out <dir>`, exposed from the components package's Node tooling). Extraction is optional; direct runtime authoring and extracted CSS must produce byte-identical rule text (contract test).
+Recipe modules are DOM-free, so Node tooling can import them and write `.css` files with identical output (`oddkin-layout extract <module> --out <dir>`, exposed from the components package's Node tooling). Extraction is optional; direct runtime authoring and extracted CSS must produce byte-identical rule text (contract test).
 
 ## 10. Side-navigation prototype (acceptance fixture)
 
 Location: `examples/side-nav/` (handwritten CSS version and recipe version side by side).
 
 - [ ] Renders simultaneously in a narrow and a wide container on one page
-- [ ] Uses named and default slots and nested custom elements (`mote-link`/`mote-button`, a nested component with its own shadow root)
+- [ ] Uses named and default slots and nested custom elements (`odd-link`/`odd-button`, a nested component with its own shadow root)
 - [ ] Responsive layout works with no JavaScript resize handling (no `ResizeObserver`, no re-render)
 - [ ] Nested themes, products, density, and profiles; role inheritance into slotted content and nested shadow roots
 - [ ] Overrides via `extend` and unlayered CSS never mutate the shared recipe stylesheet
 - [ ] Handwritten CSS and recipe-generated versions are computed-style-equivalent across widths
 - [ ] Keyboard behavior, focus visibility/order, 200%/400% zoom, wrapping, overflow, narrow reflow
-- [ ] Minimal consumers exclude unused recipe catalogs and `@mote/agent`
+- [ ] Minimal consumers exclude unused recipe catalogs and `@oddkin/agent`
 - [ ] Checks are scripted so an agent-generated version runs the same suite (M11)
 - [ ] Data-driven navigation (`.items`), declarative, and hybrid variants covered by [data-composition.md §10](./data-composition.md)
 
 ## 11. Behaviors settled in the M3 implementation
 
-- **API.** `defineLayoutRecipe({ name?, container?, regions, variants?, when?, conditions?, profiles?, scope?, parts?, layer? })`. `when` keys are names from `conditions` (e.g. entries of `@mote/tokens/conditions`, which have `{ kind, query }`) or inline `'@container …'` / `'@media …'` strings. `profiles` maps a profile name to custom-property declarations; a condition's `profile` re-declares them on the recipe's **root region** (the first region), never on `:host`.
+- **API.** `defineLayoutRecipe({ name?, container?, regions, variants?, when?, conditions?, profiles?, scope?, parts?, layer? })`. `when` keys are names from `conditions` (e.g. entries of `@oddkin/tokens/conditions`, which have `{ kind, query }`) or inline `'@container …'` / `'@media …'` strings. `profiles` maps a profile name to custom-property declarations; a condition's `profile` re-declares them on the recipe's **root region** (the first region), never on `:host`.
 - **Containers.** `container: { region? | selector?, name?, type? }` (default selector `:host` in shadow DOM, `.{scope}` in light DOM; default type `inline-size`). A `:host` container also gets `display: block`. `recipe.container.self` applies when the container is a region and a condition targeting that container styles the same region.
 - **Specificity.** Base and condition rules use one class (0,1,0); variant rules are `:host(:where([attr="v"])) .region` (0,2,0) or `:where(.scope[attr="v"]) .scope__region` (0,1,0). Specificity only orders rules within a layer; unlayered component CSS outranks every layer.
 - **Smaller variant and condition rules.** Later layers emit only declarations that differ from the base region, which leaves the cascade result unchanged.

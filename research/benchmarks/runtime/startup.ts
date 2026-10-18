@@ -1,9 +1,9 @@
 // Startup benchmark page module: a minimal production counter, as an application would ship it.
 // Marks: module evaluated (after define), first render committed. Click timing measures input to
 // the next frame (requestAnimationFrame + task), plus Event Timing duration where supported.
-import { MoteElement, define, html, signal } from '@mote/core';
+import { OddkinElement, define, html, signal } from '@oddkin/core';
 
-performance.mark('mote:evaluated-start');
+performance.mark('oddkin:evaluated-start');
 
 interface Startup {
   evaluatedMs: number;
@@ -23,7 +23,7 @@ const result: Startup = {
   eventTiming: [],
 };
 
-class StartupCounter extends MoteElement {
+class StartupCounter extends OddkinElement {
   readonly count = signal(0);
   readonly increment = (event: Event) => {
     this.count.value++;

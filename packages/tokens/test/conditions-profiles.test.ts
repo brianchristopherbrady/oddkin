@@ -83,7 +83,7 @@ describe('profiles', () => {
     expect(compact?.changed).toEqual(['layout.gap', 'layout.inset']);
     expect([...(compact?.tokens.keys() ?? [])]).toContain('card.padding');
     expect(css).toContain(
-      '[data-mote-profile~="layout.compact"],\n[data-mote-profile~="layout.compact"] :is([data-mote-mode], [data-mote-product], [data-mote-density], [data-mote-theme]) {',
+      '[data-odd-profile~="layout.compact"],\n[data-odd-profile~="layout.compact"] :is([data-odd-mode], [data-odd-product], [data-odd-density], [data-odd-theme]) {',
     );
     expect(resolveToken(theme as never, 'card.padding', { profiles: ['layout.compact'] })).toBe(
       '1rem',
@@ -98,9 +98,9 @@ describe('profiles', () => {
   it('emits profiles after products and densities so they win on the same element', () => {
     const { css } = generate({ ...base, products: { clinic: { brand: { primary: '#0f766e' } } } });
     const order = [
-      '[data-mote-product="clinic"]',
-      '[data-mote-density="compact"]',
-      '[data-mote-profile~="navigation.compact"]',
+      '[data-odd-product="clinic"]',
+      '[data-odd-density="compact"]',
+      '[data-odd-profile~="navigation.compact"]',
     ].map((s) => css?.indexOf(s) ?? -1);
     expect(order).toEqual([...order].sort((a, b) => a - b));
     expect(order.every((i) => i > 0)).toBe(true);

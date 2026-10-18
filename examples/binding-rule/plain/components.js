@@ -1,9 +1,9 @@
 // Plain JavaScript authoring: no build step, no decorators, no TypeScript.
 // Each element counts its own render() runs so the walkthrough can show which updates re-render.
-import { MoteElement, define, html, prop, signal } from '@mote/core';
+import { OddkinElement, define, html, prop, signal } from '@oddkin/core';
 
 /** Direct binding: the readable itself is interpolated, so only its text node updates. */
-class WalkDirectJs extends MoteElement {
+class WalkDirectJs extends OddkinElement {
   count = signal(0);
   renders = 0;
   render() {
@@ -13,7 +13,7 @@ class WalkDirectJs extends MoteElement {
 }
 
 /** Render-tracked: `.value` is read during render(), so a change re-runs render() (once per flush). */
-class WalkTrackedJs extends MoteElement {
+class WalkTrackedJs extends OddkinElement {
   count = signal(0);
   renders = 0;
   render() {
@@ -23,7 +23,7 @@ class WalkTrackedJs extends MoteElement {
 }
 
 /** Both paths: render() reads `.value` for a label, and a direct binding shows the number. */
-class WalkDualJs extends MoteElement {
+class WalkDualJs extends OddkinElement {
   count = signal(0);
   renders = 0;
   render() {
@@ -34,7 +34,7 @@ class WalkDualJs extends MoteElement {
 }
 
 /** Snapshots: an event handler and an async callback read `.value` without subscribing anything. */
-class WalkSnapshotJs extends MoteElement {
+class WalkSnapshotJs extends OddkinElement {
   count = signal(0);
   renders = 0;
   seen = [];
@@ -50,7 +50,7 @@ class WalkSnapshotJs extends MoteElement {
 }
 
 /** Public property: ordinary DOM code sets it; reading it in render() re-renders on change. */
-class WalkPropJs extends MoteElement.with({ label: prop.string({ default: 'reader' }) }) {
+class WalkPropJs extends OddkinElement.with({ label: prop.string({ default: 'reader' }) }) {
   renders = 0;
   changes = [];
   render() {

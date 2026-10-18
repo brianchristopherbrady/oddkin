@@ -1,4 +1,4 @@
-import { compose } from '@mote/core';
+import { compose } from '@oddkin/core';
 import { DemoGreeting } from './demo-greeting.js';
 import { demoGreetingStyles } from './demo-greeting.styles.js';
 import { demoGreetingTemplate } from './demo-greeting.template.js';

@@ -3,14 +3,14 @@
   "branding": { "name": "Acme UI" },
   "hosting": { "basePath": "/acme-ui/", "routing": "history" },
   "categories": { "definitions": [{ "id": "actions", "label": "Actions" }], "fallback": "Other components" },
-  "themeStudio": { "themeConfig": "./mote.theme.ts", "preview": { "roles": { "primaryAction": { "component": "acme-button", "example": "primary" }, "surface": "acme-card" } } },
+  "themeStudio": { "themeConfig": "./oddkin.theme.ts", "preview": { "roles": { "primaryAction": { "component": "acme-button", "example": "primary" }, "surface": "acme-card" } } },
   "products": {
     "enabled": true,
     "placement": ["foundations"],
     "sources": [
-      { "id": "clinic", "from": { "theme": "./mote.theme.ts", "product": "clinic" } },
+      { "id": "clinic", "from": { "theme": "./oddkin.theme.ts", "product": "clinic" } },
       { "id": "portal", "from": { "package": "@acme/portal-theme" } },
-      { "id": "kiosk", "from": { "manifest": "https://cdn.acme.dev/kiosk/mote.product.v2.json", "version": "2.x" } }
+      { "id": "kiosk", "from": { "manifest": "https://cdn.acme.dev/kiosk/oddkin.product.v2.json", "version": "2.x" } }
     ],
     "discovery": { "workspace": true }
   }

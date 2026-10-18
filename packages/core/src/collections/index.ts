@@ -1,5 +1,5 @@
 /**
- * `@mote/core/collections` — keyed nested collections and interaction-state models.
+ * `@oddkin/core/collections` — keyed nested collections and interaction-state models.
  * DOM-free. Contract: docs/architecture/data-composition.md §3.
  */
 export { collection } from './collection.js';

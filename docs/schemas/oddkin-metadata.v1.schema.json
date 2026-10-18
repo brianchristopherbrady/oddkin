@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://mote.dev/schemas/mote-metadata/v1.json",
-  "title": "Mote enrichment metadata (mote.metadata.json) v1",
-  "description": "DRAFT. Normalized Mote metadata that enriches a standard Custom Elements Manifest (custom-elements-manifest@2.1.0). See docs/architecture/metadata-and-analyzer.md and ADR 0016/0017.",
+  "$id": "https://oddkin.dev/schemas/oddkin-metadata/v1.json",
+  "title": "Oddkin enrichment metadata (oddkin.metadata.json) v1",
+  "description": "DRAFT. Normalized Oddkin metadata that enriches a standard Custom Elements Manifest (custom-elements-manifest@2.1.0). See docs/architecture/metadata-and-analyzer.md and ADR 0016/0017.",
   "type": "object",
   "required": [
     "schema",
-    "moteVersion",
+    "oddkinVersion",
     "library",
     "components",
     "diagnostics"
@@ -14,9 +14,9 @@
   "additionalProperties": false,
   "properties": {
     "schema": {
-      "const": "https://mote.dev/schemas/mote-metadata/v1.json"
+      "const": "https://oddkin.dev/schemas/oddkin-metadata/v1.json"
     },
-    "moteVersion": {
+    "oddkinVersion": {
       "type": "string"
     },
     "library": {
@@ -99,7 +99,7 @@
       "properties": {
         "inspection": {
           "type": "string",
-          "description": "Path or export of the @mote/tokens inspection JSON; values are never duplicated here"
+          "description": "Path or export of the @oddkin/tokens inspection JSON; values are never duplicated here"
         }
       }
     },
@@ -502,7 +502,7 @@
         },
         "authored": {
           "type": "array",
-          "description": "Contract members supplied by explicit metadata files (@mote-metadata), merged over extracted facts.",
+          "description": "Contract members supplied by explicit metadata files (@oddkin-metadata), merged over extracted facts.",
           "items": {
             "type": "object",
             "required": [

@@ -1,4 +1,4 @@
-import { MoteElement, event, prop, signal, type Readable, type Scope } from '@mote/core';
+import { OddkinElement, event, prop, signal, type Readable, type Scope } from '@oddkin/core';
 
 /** Fired after the count changes through user interaction. */
 export const countChange = event<{ count: number }>('count-change', {
@@ -12,7 +12,7 @@ export const countChange = event<{ count: number }>('count-change', {
  * A counter with local state. The count text binds the signal directly, so clicks update
  * one text node without re-running the template.
  */
-export class DemoCounter extends MoteElement.with({
+export class DemoCounter extends OddkinElement.with({
   step: prop.number({ default: 1, description: 'Amount added per click.' }),
   label: prop.string({ default: 'Count', description: 'Visible label before the value.' }),
 }) {

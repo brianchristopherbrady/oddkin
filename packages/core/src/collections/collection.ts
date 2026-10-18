@@ -3,7 +3,7 @@
  * ownership. DOM-free. Contract: docs/architecture/data-composition.md §3.
  */
 import { DEV } from '../internal/dev.js';
-import { MoteError, reportMoteError } from '../diagnostics/index.js';
+import { OddkinError, reportOddkinError } from '../diagnostics/index.js';
 import { computed, signal, untracked, type Readable } from '../reactive/index.js';
 import type { Scope } from '../scope/index.js';
 
@@ -159,7 +159,7 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
       source.value = items;
       const { diagnostics } = untracked(() => model.value);
       for (const d of diagnostics)
-        reportMoteError(new MoteError(d.code, DEV ? d.message : ''), { code: d.code });
+        reportOddkinError(new OddkinError(d.code, DEV ? d.message : ''), { code: d.code });
       reconcileScopes();
     },
     items: source,
@@ -181,12 +181,12 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
     scopeFor(key, init) {
       const owner = options.owner;
       if (!owner)
-        throw new MoteError(
+        throw new OddkinError(
           'collection.owner.missing',
           DEV ? 'scopeFor() needs an owner scope: collection({ owner: scope, … }).' : '',
         );
       if (!untracked(() => model.value.byKey.has(key))) {
-        throw new MoteError(
+        throw new OddkinError(
           'collection.key.unknown',
           DEV ? `No entry with key ${JSON.stringify(key)}.` : '',
         );

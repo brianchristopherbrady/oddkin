@@ -1,12 +1,12 @@
-import { html } from '@mote/core/template';
-import type { MoteButton } from './button.js';
+import { html } from '@oddkin/core/template';
+import type { OddkinButton } from './button.js';
 
 /**
  * Anatomy: a native `<button part="control">` (focus target, keyboard activation, accessible
  * name from the default slot or `label`), a `part="spinner"` shown while loading, and
  * `start`, default, and `end` slots. Alternative templates must keep these relationships.
  */
-export const buttonTemplate = (button: MoteButton) =>
+export const buttonTemplate = (button: OddkinButton) =>
   html`<button
     part="control"
     type="button"

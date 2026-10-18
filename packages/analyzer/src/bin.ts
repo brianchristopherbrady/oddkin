@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * mote-analyze <tsconfig> [--out dir] [--name n --version v] [--strict] [--json]
+ * oddkin-analyze <tsconfig> [--out dir] [--name n --version v] [--strict] [--json]
  * Exit codes: 0 success, 1 errors (or warnings with --strict), 2 usage error.
  */
 import { parseArgs } from 'node:util';
 import { analyze, writeOutputs } from './index.js';
 
 const USAGE =
-  'Usage: mote-analyze <tsconfig.json> [--out <dir>] [--name <library> --version <version>] [--strict] [--json]';
+  'Usage: oddkin-analyze <tsconfig.json> [--out <dir>] [--name <library> --version <version>] [--strict] [--json]';
 
 let parsed;
 try {

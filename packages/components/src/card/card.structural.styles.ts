@@ -1,4 +1,4 @@
-import { css } from '@mote/core/styles';
+import { css } from '@oddkin/core/styles';
 
 /**
  * Layout the card depends on: a column of header, body, and footer that fills the host, and

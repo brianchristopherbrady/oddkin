@@ -1,5 +1,5 @@
 /**
- * `@mote/core/helpers/class-map` — toggle classes through `classList`.
+ * `@oddkin/core/helpers/class-map` — toggle classes through `classList`.
  * Classes the directive did not add (static template classes, classes added by other
  * code) are left alone.
  */

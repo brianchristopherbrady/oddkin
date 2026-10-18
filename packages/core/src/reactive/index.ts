@@ -1,5 +1,5 @@
 /**
- * `@mote/core/reactive` — Mote's single reactive graph. DOM-free.
+ * `@oddkin/core/reactive` — Oddkin's single reactive graph. DOM-free.
  * Contract: docs/architecture/core-contracts.md §5; ADR 0002.
  */
 export {

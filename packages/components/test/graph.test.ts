@@ -30,7 +30,7 @@ async function graph(entry: string): Promise<{ files: string[]; packages: string
   };
 }
 
-describe('@mote/components/button import graphs', () => {
+describe('@oddkin/components/button import graphs', () => {
   it('the foundation entry loads no default skin, tokens, or registration', async () => {
     const { files, packages } = await graph('button/foundation.js');
     expect(files).toEqual([
@@ -40,10 +40,10 @@ describe('@mote/components/button import graphs', () => {
       'button/foundation.js',
     ]);
     expect(packages).toEqual([
-      '@mote/core/element',
-      '@mote/core/reactive',
-      '@mote/core/styles',
-      '@mote/core/template',
+      '@oddkin/core/element',
+      '@oddkin/core/reactive',
+      '@oddkin/core/styles',
+      '@oddkin/core/template',
     ]);
   });
 
@@ -51,11 +51,11 @@ describe('@mote/components/button import graphs', () => {
     const { files, packages } = await graph('button/index.js');
     expect(files).toContain('button/button.styles.js');
     expect(files.some((f) => f.endsWith('.define.js'))).toBe(false);
-    expect(packages).toContain('@mote/tokens/refs');
+    expect(packages).toContain('@oddkin/tokens/refs');
   });
 });
 
-describe('@mote/components/card import graphs', () => {
+describe('@oddkin/components/card import graphs', () => {
   it('the foundation entry loads no default skin, tokens, or registration', async () => {
     const { files, packages } = await graph('card/foundation.js');
     expect(files).toEqual([
@@ -64,18 +64,18 @@ describe('@mote/components/card import graphs', () => {
       'card/card.template.js',
       'card/foundation.js',
     ]);
-    expect(packages.every((p) => p.startsWith('@mote/core/'))).toBe(true);
+    expect(packages.every((p) => p.startsWith('@oddkin/core/'))).toBe(true);
   });
 
   it('the component entry adds the default skin but still registers nothing', async () => {
     const { files, packages } = await graph('card/index.js');
     expect(files).toContain('card/card.styles.js');
     expect(files.some((f) => f.endsWith('.define.js'))).toBe(false);
-    expect(packages).toContain('@mote/tokens/refs');
+    expect(packages).toContain('@oddkin/tokens/refs');
   });
 });
 
-describe('@mote/components/input import graphs', () => {
+describe('@oddkin/components/input import graphs', () => {
   it('the foundation entry loads no default skin, tokens, or registration', async () => {
     const { files, packages } = await graph('input/foundation.js');
     expect(files).toEqual([
@@ -84,6 +84,6 @@ describe('@mote/components/input import graphs', () => {
       'input/input.structural.styles.js',
       'input/input.template.js',
     ]);
-    expect(packages.every((p) => p.startsWith('@mote/core/'))).toBe(true);
+    expect(packages.every((p) => p.startsWith('@oddkin/core/'))).toBe(true);
   });
 });

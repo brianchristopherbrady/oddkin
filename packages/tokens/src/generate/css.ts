@@ -4,9 +4,9 @@
  * single mode-agnostic expressions switched by two inherited toggles, so mode, product,
  * and density scopes nest in any order without cross-product selectors:
  *
- *   light: --mote-mode-light: initial;  --mote-mode-dark: ;
- *   dark:  --mote-mode-light: ;         --mote-mode-dark: initial;
- *   role:  var(--mote-mode-light, LIGHT) var(--mote-mode-dark, DARK)
+ *   light: --odd-mode-light: initial;  --odd-mode-dark: ;
+ *   dark:  --odd-mode-light: ;         --odd-mode-dark: initial;
+ *   role:  var(--odd-mode-light, LIGHT) var(--odd-mode-dark, DARK)
  *
  * A guaranteed-invalid toggle (`initial`) selects its fallback; an empty toggle
  * contributes nothing. Contract: theming-and-styling.md §5.
@@ -52,11 +52,8 @@ function tokenDeclarations(
 export function emitCss(theme: ResolvedTheme): string {
   const { modes, tokens } = theme;
   const parts: string[] = [
-    `/* @mote/tokens — theme "${theme.name}". Generated file: change the theme configuration instead of editing it. */\n`,
-    block(
-      [':root', `[data-mote-theme="${theme.name}"]`],
-      tokenDeclarations(tokens.values(), modes),
-    ),
+    `/* @oddkin/tokens — theme "${theme.name}". Generated file: change the theme configuration instead of editing it. */\n`,
+    block([':root', `[data-odd-theme="${theme.name}"]`], tokenDeclarations(tokens.values(), modes)),
   ];
 
   if (modes.length === 1) {
@@ -69,13 +66,13 @@ export function emitCss(theme: ResolvedTheme): string {
     // The root follows the system preference unless a mode is set explicitly.
     parts.push(block([':root'], toggles('light')));
     parts.push(
-      `@media (prefers-color-scheme: dark) {\n${block([':root:not([data-mote-mode])'], toggles('dark'), '  ')}}\n`,
+      `@media (prefers-color-scheme: dark) {\n${block([':root:not([data-odd-mode])'], toggles('dark'), '  ')}}\n`,
     );
-    parts.push(block(['[data-mote-mode="light"]'], [...toggles('light'), ...closureDeclarations]));
-    parts.push(block(['[data-mote-mode="dark"]'], [...toggles('dark'), ...closureDeclarations]));
-    parts.push(block(['[data-mote-mode="system"]'], [...toggles('light'), ...closureDeclarations]));
+    parts.push(block(['[data-odd-mode="light"]'], [...toggles('light'), ...closureDeclarations]));
+    parts.push(block(['[data-odd-mode="dark"]'], [...toggles('dark'), ...closureDeclarations]));
+    parts.push(block(['[data-odd-mode="system"]'], [...toggles('light'), ...closureDeclarations]));
     parts.push(
-      `@media (prefers-color-scheme: dark) {\n${block(['[data-mote-mode="system"]'], toggles('dark'), '  ')}}\n`,
+      `@media (prefers-color-scheme: dark) {\n${block(['[data-odd-mode="system"]'], toggles('dark'), '  ')}}\n`,
     );
   }
 
@@ -83,12 +80,12 @@ export function emitCss(theme: ResolvedTheme): string {
     const selectors =
       scope.kind === 'profile'
         ? [
-            `[data-mote-profile~="${scope.name}"]`,
+            `[data-odd-profile~="${scope.name}"]`,
             // Nested scopes re-declare base expressions for their closures; re-apply the
             // profile inside them so it is not lost (specificity 0,2,0 over 0,1,0).
-            `[data-mote-profile~="${scope.name}"] :is([data-mote-mode], [data-mote-product], [data-mote-density], [data-mote-theme])`,
+            `[data-odd-profile~="${scope.name}"] :is([data-odd-mode], [data-odd-product], [data-odd-density], [data-odd-theme])`,
           ]
-        : [`[data-mote-${scope.kind}="${scope.name}"]`];
+        : [`[data-odd-${scope.kind}="${scope.name}"]`];
     parts.push(block(selectors, tokenDeclarations(scope.tokens.values(), modes)));
   }
   return parts.filter(Boolean).join('\n');

@@ -1,5 +1,5 @@
 /**
- * `@mote/tokens/theme` — theme configuration types and `defineTheme`. DOM-free.
+ * `@oddkin/tokens/theme` — theme configuration types and `defineTheme`. DOM-free.
  */
 export { defineTheme } from './types.js';
 export type {

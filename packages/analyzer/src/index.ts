@@ -1,5 +1,5 @@
 /**
- * `@mote/analyzer` — Node-only static analysis of Mote component libraries. Uses the
+ * `@oddkin/analyzer` — Node-only static analysis of Oddkin component libraries. Uses the
  * TypeScript 5.9 compiler API (in-process, stable API; ADR 0018) and never imports or
  * executes the analyzed modules. Contract: docs/architecture/metadata-and-analyzer.md.
  */
@@ -153,12 +153,12 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
   };
 }
 
-/** Write `custom-elements.json` and `mote.metadata.json` into `outDir`. */
+/** Write `custom-elements.json` and `oddkin.metadata.json` into `outDir`. */
 export async function writeOutputs(result: AnalyzeResult, outDir: string): Promise<string[]> {
   await mkdir(outDir, { recursive: true });
   const files: Array<[string, unknown]> = [
     ['custom-elements.json', result.manifest],
-    ['mote.metadata.json', result.metadata],
+    ['oddkin.metadata.json', result.metadata],
   ];
   const written: string[] = [];
   for (const [file, data] of files) {

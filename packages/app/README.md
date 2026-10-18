@@ -1,4 +1,4 @@
-# @mote/app
+# @oddkin/app
 
 Optional application lifetime, router, and async resources.
 

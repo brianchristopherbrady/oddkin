@@ -43,12 +43,12 @@ const REFERENCE = /\{([^{}]+)\}/g;
 const FORBIDDEN_LITERAL = /[;{}<>\\]|\/\*|!important/i;
 
 export const MODE_TOGGLE: Record<Mode, string> = {
-  light: '--mote-mode-light',
-  dark: '--mote-mode-dark',
+  light: '--odd-mode-light',
+  dark: '--odd-mode-dark',
 };
 
 export function cssVariable(name: string): string {
-  return `--mote-${name.replace(/\./g, '-')}`;
+  return `--odd-${name.replace(/\./g, '-')}`;
 }
 
 export function isModeValues(value: TokenValue): value is ModeValues {
@@ -71,7 +71,7 @@ function compileText(text: string): string {
 /**
  * CSS for a value. Per-mode values become one mode-agnostic expression switched by the
  * inherited mode toggles, so the same declaration is correct in every scope:
- * `var(--mote-mode-light, LIGHT) var(--mote-mode-dark, DARK)`.
+ * `var(--odd-mode-light, LIGHT) var(--odd-mode-dark, DARK)`.
  */
 export function compileValue(value: TokenValue, modes: readonly Mode[]): string {
   if (!isModeValues(value)) return compileText(value);

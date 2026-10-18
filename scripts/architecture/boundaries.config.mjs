@@ -1,6 +1,6 @@
 // Package boundary rules. Source of truth: docs/architecture/packages.md.
 // `kind`: 'browser' packages ship browser code and may not depend on third-party
-// runtime packages, Node built-ins, or Node-only Mote packages. 'node' packages
+// runtime packages, Node built-ins, or Node-only Oddkin packages. 'node' packages
 // are development tooling. 'mixed' packages have browser entries plus explicit
 // Node entries (`nodeEntries`, `nodeSources`).
 // `domFree`: export subpaths that must import in Node without DOM globals.
@@ -9,7 +9,7 @@
 /** @type {import('./check-boundaries.mjs').BoundaryConfig} */
 export default {
   packages: {
-    '@mote/core': {
+    '@oddkin/core': {
       kind: 'browser',
       allow: [],
       // Element, template, and style entries need a DOM to run but must import without one
@@ -33,32 +33,36 @@ export default {
         './diagnostics',
       ],
     },
-    '@mote/tokens': {
+    '@oddkin/tokens': {
       kind: 'mixed',
       allow: [],
       domFree: ['.', './theme', './generate', './refs', './values', './conditions'],
       nodeEntries: ['./node'],
       nodeSources: ['src/node/'],
     },
-    '@mote/state': { kind: 'browser', allow: ['@mote/core'], domFree: ['./store'] },
-    '@mote/app': {
+    '@oddkin/state': { kind: 'browser', allow: ['@oddkin/core'], domFree: ['./store'] },
+    '@oddkin/app': {
       kind: 'mixed',
-      allow: ['@mote/core', '@mote/state'],
+      allow: ['@oddkin/core', '@oddkin/state'],
       domFree: [],
       nodeEntries: ['./node'],
       nodeSources: ['src/node/'],
     },
-    '@mote/components': { kind: 'browser', allow: ['@mote/core', '@mote/tokens'], domFree: [] },
-    '@mote/analyzer': { kind: 'node', allow: ['@mote/tokens', '@mote/core'] },
-    '@mote/workbench': {
+    '@oddkin/components': {
+      kind: 'browser',
+      allow: ['@oddkin/core', '@oddkin/tokens'],
+      domFree: [],
+    },
+    '@oddkin/analyzer': { kind: 'node', allow: ['@oddkin/tokens', '@oddkin/core'] },
+    '@oddkin/workbench': {
       kind: 'mixed',
       allow: [
-        '@mote/core',
-        '@mote/tokens',
-        '@mote/components',
-        '@mote/state',
-        '@mote/app',
-        '@mote/analyzer',
+        '@oddkin/core',
+        '@oddkin/tokens',
+        '@oddkin/components',
+        '@oddkin/state',
+        '@oddkin/app',
+        '@oddkin/analyzer',
       ],
       domFree: [
         './examples',
@@ -71,18 +75,18 @@ export default {
       nodeEntries: ['./node'],
       nodeSources: ['src/node/'],
       // Only Node entries and sources may reach these internal dependencies.
-      nodeOnlyDependencies: ['@mote/analyzer'],
+      nodeOnlyDependencies: ['@oddkin/analyzer'],
     },
-    '@mote/agent': { kind: 'node', allow: ['@mote/analyzer', '@mote/tokens'] },
-    '@mote/docs': {
+    '@oddkin/agent': { kind: 'node', allow: ['@oddkin/analyzer', '@oddkin/tokens'] },
+    '@oddkin/docs': {
       kind: 'browser',
       allow: [
-        '@mote/core',
-        '@mote/state',
-        '@mote/app',
-        '@mote/tokens',
-        '@mote/components',
-        '@mote/workbench',
+        '@oddkin/core',
+        '@oddkin/state',
+        '@oddkin/app',
+        '@oddkin/tokens',
+        '@oddkin/components',
+        '@oddkin/workbench',
       ],
       domFree: [],
     },

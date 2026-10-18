@@ -9,7 +9,7 @@
 Responsive layout needs coordinated role changes without rewriting descendants or shrinking text and targets.
 
 ## Decision
-Categories: foundation values → semantic layout roles → component roles; plus named conditions (literal thresholds) and profiles (explicit role-override sets, applied by `data-mote-profile` or recipe conditions, with alias-closure re-declaration). Profiles may not override foundation or colour values; no profile or density may reduce target-size roles below the documented minimum.
+Categories: foundation values → semantic layout roles → component roles; plus named conditions (literal thresholds) and profiles (explicit role-override sets, applied by `data-odd-profile` or recipe conditions, with alias-closure re-declaration). Profiles may not override foundation or colour values; no profile or density may reduce target-size roles below the documented minimum.
 
 ## Alternatives considered
 - Generic "responsive scale" multipliers — ambiguous effects on nested components.

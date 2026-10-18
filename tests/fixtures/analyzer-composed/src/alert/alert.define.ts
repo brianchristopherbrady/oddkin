@@ -1,4 +1,4 @@
-import { define } from '@mote/core';
+import { define } from '@oddkin/core';
 import { alertDefinition } from './alert.definition.js';
 
 define(alertDefinition);
