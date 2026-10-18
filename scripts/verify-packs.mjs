@@ -40,6 +40,7 @@ for (const entry of await readdir(packagesDir, { withFileTypes: true })) {
 
 const work = await mkdtemp(join(tmpdir(), 'oddkin-packs-'));
 const failures = [];
+const cemConsumers = [];
 try {
   const tarballs = [];
   for (const { name, dir } of names) {
@@ -110,6 +111,51 @@ try {
     ].join('\n'),
   );
   node(['assets.mjs'], consumer);
+
+  // An independent CEM consumer (the VS Code custom-data generator, not Oddkin code) reads the
+  // manifest each installed package names in `customElements`; editors would get every
+  // element, attribute, CSS property, and part.
+  const { getVsCodeCssCustomData, getVsCodeHtmlCustomData } =
+    await import('custom-element-vs-code-integration');
+  for (const { name } of names) {
+    const dir = join(consumer, 'node_modules', ...name.split('/'));
+    const manifest = JSON.parse(await readFile(join(dir, 'package.json'), 'utf8'));
+    if (!manifest.customElements) continue;
+    const cem = JSON.parse(await readFile(join(dir, manifest.customElements), 'utf8'));
+    const html = JSON.parse(getVsCodeHtmlCustomData(cem, { hideLogs: true }));
+    const css = JSON.parse(getVsCodeCssCustomData(cem, { hideLogs: true }));
+    const tags = new Map(html.tags.map((tag) => [tag.name, tag]));
+    const cssNames = new Set([...css.properties, ...css.pseudoElements].map((item) => item.name));
+    const elements = cem.modules
+      .flatMap((module) => module.declarations ?? [])
+      .filter((declaration) => declaration.customElement && declaration.tagName);
+    for (const element of elements) {
+      const tag = tags.get(element.tagName);
+      if (!tag) {
+        failures.push(`${name}: custom data has no <${element.tagName}>`);
+        continue;
+      }
+      const attributes = new Set(tag.attributes.map((attribute) => attribute.name));
+      const missing = [
+        ...(element.attributes ?? []).filter((a) => !attributes.has(a.name)).map((a) => a.name),
+        ...(element.cssProperties ?? []).filter((p) => !cssNames.has(p.name)).map((p) => p.name),
+        ...(element.cssParts ?? [])
+          .filter((p) => !cssNames.has(`::part(${p.name})`))
+          .map((p) => `::part(${p.name})`),
+      ];
+      if (missing.length)
+        failures.push(`${name}: custom data for <${element.tagName}> lacks ${missing.join(', ')}`);
+    }
+    if (name === '@oddkin/components') {
+      const appearance = tags
+        .get('odd-button')
+        ?.attributes.find((attribute) => attribute.name === 'appearance');
+      const values = (appearance?.values ?? []).map((value) => value.name).join(',');
+      if (values !== 'primary,secondary,ghost')
+        failures.push(`custom data for odd-button appearance has values "${values}"`);
+    }
+    cemConsumers.push(`${name} (${elements.length} elements)`);
+  }
   const bin = join(consumer, 'node_modules', '@oddkin', 'tokens', 'dist', 'node', 'bin.js');
   node([bin, 'init', 'theme.json'], consumer);
   node([bin, 'build', 'theme.json', '--out', 'tokens', '--strict'], consumer);
@@ -160,5 +206,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; no third-party runtime dependencies outside Node-only tooling.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; no third-party runtime dependencies outside Node-only tooling; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}.`,
 );

@@ -489,3 +489,16 @@ Environment as the previous entry. A second agent was editing `odd-input` and th
 | Full pipeline | `npm run verify` steps one by one | Typecheck, size, and packed consumers pass. Lint failed only on formatting of the other agent's uncommitted `packages/core/test/form-association.browser.test.ts`. Tests: 1,202 passed and 1 failed (`input.browser.test.ts` "typing then submitting…" in Firefox); e2e: 106 passed, 3 failed in Firefox (two `css-compat.spec.ts` tests and the editable-list validation test). All four failures passed when rerun alone (`input.browser.test.ts` 39/39; the two e2e files 11/11 in Firefox), while both agents were running tests |
 
 **Findings:** (1) `odd-input` does not reflect `name`, and a form-associated element submits under its `name` **attribute**, so `input.name = 'email'` set as a property submits nothing; the example uses the attribute. Reported to the agent working on form association (it owns `input.ts`). (2) `odd-button` submits after the click's task, so tests must poll for the submission rather than read it right after the click. (3) The browser-test frame is narrower than 40rem, so a container-width example must be mounted in a wider container to show its wide layout. (4) Full runs from two agents in one working tree compete for CPU; Firefox timing failures there are not evidence until rerun alone.
+
+## 2026-10-18 — Independent CEM consumer (M4 metadata validation)
+
+Environment as the previous entry; `custom-element-vs-code-integration` 1.5.0 added as a pinned root dev dependency. Contract: [metadata-and-analyzer.md §4](./architecture/metadata-and-analyzer.md#4-outputs).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Third-party consumer outside the workspace | `npm run verify:packs` | Pass — the tarballs are installed into a temporary consumer; for each installed package with a `customElements` field, the third-party generator's `getVsCodeHtmlCustomData` and `getVsCodeCssCustomData` read that manifest. Every element of `@oddkin/components` (4) and `@oddkin/ai` (24) appears with all its attributes, CSS custom properties, and `::part()` names; `odd-button`'s `appearance` values are `primary`, `secondary`, `ghost` |
+| Formatting | `npx prettier --check scripts/verify-packs.mjs package.json` | Pass |
+
+Only the packed-consumer script changed, so the test suites were not rerun for this entry; the previous entry's run covers the same code.
+
+**Findings:** None: the generator needed no Oddkin-specific options, and no element, attribute, property, or part was dropped. It derives enumerated values from the attribute's type text, so union types written as string literals are what editors will offer.

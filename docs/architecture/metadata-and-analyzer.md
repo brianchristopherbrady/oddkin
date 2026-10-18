@@ -126,6 +126,7 @@ Derived definitions get their own component ids. Standard CEM stays interoperabl
 | 5 | Agent outputs: compact contract bundles keyed by stable id, each with a freshness fingerprint (generator version, schema version, package versions, input hash) | generated dir; `json/` in the agent kit | `@oddkin/agent` (`./kit` renders the Markdown references, packaging, and discovery files from these bundles) |
 
 - CEM output is validated against the **pinned CEM schema: `custom-elements-manifest@2.1.0`** (npm `latest`, released 2024-05-06; repository HEAD `d2f79f0` on 2026-10-17; includes `readonly` on properties, clarified reflected attributes, and `CSSCustomState`). Re-check for newer releases at each Oddkin release. Oddkin-specific data never goes into CEM except standard-allowed fields; the enrichment manifest references CEM declarations by module path + name, so standard consumers stay interoperable.
+- Interoperability is checked with an independent tool: `npm run verify:packs` runs the third-party VS Code custom-data generator (`custom-element-vs-code-integration`) on the manifests of the installed tarballs, outside the workspace, and requires every element, attribute, CSS custom property, and part to reach its output. Output 4's own VS Code custom data is therefore not needed for editor support today.
 - Generation is deterministic: stable key ordering, normalized paths, no timestamps (the run date appears only in verification provenance).
 
 ## 5. Validation
