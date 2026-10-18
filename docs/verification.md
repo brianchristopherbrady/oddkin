@@ -581,3 +581,13 @@ Environment as the previous entry. Contract: [multi-product.md §9](./architectu
 | Sizes | Temporary script (`generate()` from the built package, gzip level 9) | Default theme: 0 products 26,326 B raw / 2,720 B gzip; 1: 29,455 / 2,928; 2: 32,584 / 3,099; 3: 35,713 / 3,241; 10: 57,254 / 4,346 |
 
 **Findings:** (1) A product rule declares only values that differ from the base theme: a hue close to the base brand (`#6d28d9` against `#6250e8`) leaves the tinted neutral ramp unchanged and declares 36 properties instead of 41, so per-product size is bounded but not constant. (2) Products are emitted in configuration order, so reordering the `products` map changes the bytes but never the cascade (an element has one product). (3) Frozen configurations generate without errors, so the generator does not mutate its input.
+
+## 2026-10-18 — Condition-threshold invalidation (M2 item, M4 side navigation)
+
+Environment as the previous entry. Contract: [theming-and-styling.md §11](./architecture/theming-and-styling.md#11-layout-roles-responsive-conditions-and-profiles).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Thresholds | `npx vitest run --project browser packages/components/test/conditions.browser.test.ts` | Pass in Chromium, Firefox, WebKit (2 tests) — `odd-side-nav` in a 39rem frame stays one column after `--odd-layout-sidebar-width`, `--odd-layout-main-min`, `--odd-navigation-item-gap`, and `font-size: 8px` are set on it, and becomes three columns at 40rem; a recipe built with `defineLayoutRecipe` from `generate()` conditions for `navigation.expanded` at 40rem and at 30rem differs only in that query; the first recipe's constructed sheet has the same rules afterwards, and in a 35rem frame it gives one column while the regenerated one gives three |
+
+**Findings:** (1) `rem` thresholds follow the root font size, so a component's own `font-size` never moves them. (2) The side navigation's threshold is part of its extracted styles, not a theme condition: a theme can change named conditions for recipes it generates, while a component threshold changes only through a new recipe and extraction. The Workbench side-nav preview that regenerates its own sheet arrives with M5.
