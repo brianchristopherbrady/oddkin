@@ -591,3 +591,13 @@ Environment as the previous entry. Contract: [theming-and-styling.md §11](./arc
 | Thresholds | `npx vitest run --project browser packages/components/test/conditions.browser.test.ts` | Pass in Chromium, Firefox, WebKit (2 tests) — `odd-side-nav` in a 39rem frame stays one column after `--odd-layout-sidebar-width`, `--odd-layout-main-min`, `--odd-navigation-item-gap`, and `font-size: 8px` are set on it, and becomes three columns at 40rem; a recipe built with `defineLayoutRecipe` from `generate()` conditions for `navigation.expanded` at 40rem and at 30rem differs only in that query; the first recipe's constructed sheet has the same rules afterwards, and in a 35rem frame it gives one column while the regenerated one gives three |
 
 **Findings:** (1) `rem` thresholds follow the root font size, so a component's own `font-size` never moves them. (2) The side navigation's threshold is part of its extracted styles, not a theme condition: a theme can change named conditions for recipes it generates, while a component threshold changes only through a new recipe and extraction. The Workbench side-nav preview that regenerates its own sheet arrives with M5.
+
+## 2026-10-18 — Side navigation in product and density scopes (M4 layout slice)
+
+Environment as the previous entry. Contract: [layout-recipes.md §10](./architecture/layout-recipes.md#10-side-navigation-prototype-acceptance-fixture).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Scopes | `npx vitest run --project browser packages/components/test/side-nav.scopes.browser.test.ts` | Pass in Chromium, Firefox, WebKit (2 tests) — with the CSS generated for a theme with a `clinic` product adopted by the document, `data-odd-product="clinic"` changes the current-page marker colour and not the padding; `data-odd-density="compact"` reduces the padding and not the colour; both on one element combine; `data-odd-mode="dark"` changes the text colour; a compact scope nested in a product scope gives the product colour with the compact padding |
+
+**Findings:** None. The element's shadow styles needed no change: every scope re-declares roles on an ancestor and the shadow root inherits them.
