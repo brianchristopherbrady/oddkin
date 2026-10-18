@@ -570,3 +570,14 @@ Environment as the previous entry (React 19 and Vue 3.5 as already used by `@odd
 | React and Vue | `npx vitest run --project browser packages/components/test/frameworks.browser.test.ts` | Pass in Chromium, Firefox, WebKit (2 tests) — React 19 (`createElement`, `'onodd-toggle'`, `'onodd-action'`) and Vue 3.5 (`h`, `onOddToggle`, `onOddAction`) set `items`, `current`, and controlled `expanded` as properties (no `items` attribute); a toggle reaches framework state, which opens the group through `expanded`; an action reports `{ id: 'create', action: 'project.create' }`; replacing `items` with a reordered array keeps the link nodes; framework re-renders emit no intent events |
 
 **Findings:** (1) A deep Vue `ref` passes the element a reactive proxy of the array instead of the array itself; rendering is unaffected (entries are keyed by id), but the element no longer holds the caller's object. `shallowRef` passes the original immutable data and is the documented choice. (2) Angular and Svelte are not installed; their fixtures need new dev dependencies.
+
+## 2026-10-18 — Multi-product token fixtures (M4 multi-product prototype)
+
+Environment as the previous entry. Contract: [multi-product.md §9](./architecture/multi-product.md#9-product-configuration-distribution-and-scope-isolation).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Fixtures | `npx vitest run --project node packages/tokens/test/products.test.ts` | Pass (7 tests) — a theme without `products` emits no product rule; with 1, 2, 3, and 10 products (deep-frozen configurations) generation reports nothing, is identical on a second run, emits one `[data-odd-product]` rule per product that declares only `--odd-ref-*` and `--odd-color-*` properties, and with those rules removed equals the single-product output byte for byte; changing product 3 of 10 changes only its rule; the output grows by exactly the product rules, and gzip grows less than the raw bytes |
+| Sizes | Temporary script (`generate()` from the built package, gzip level 9) | Default theme: 0 products 26,326 B raw / 2,720 B gzip; 1: 29,455 / 2,928; 2: 32,584 / 3,099; 3: 35,713 / 3,241; 10: 57,254 / 4,346 |
+
+**Findings:** (1) A product rule declares only values that differ from the base theme: a hue close to the base brand (`#6d28d9` against `#6250e8`) leaves the tinted neutral ramp unchanged and declares 36 properties instead of 41, so per-product size is bounded but not constant. (2) Products are emitted in configuration order, so reordering the `products` map changes the bytes but never the cascade (an element has one product). (3) Frozen configurations generate without errors, so the generator does not mutate its input.
