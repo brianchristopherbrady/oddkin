@@ -12,7 +12,24 @@
       "styleMappings": [{ "when": "appearance=\"primary\"", "cssProperty": "background-color", "token": "button.primary.background", "provenance": "extracted" }],
       "tokenReads": [{ "token": "button.primary.background", "kind": "declared", "readThrough": "stylesheet" }],
       "previewRoles": ["role:primaryAction"]
+    },
+    "component:acme-quiet-button": {
+      "tag": "acme-quiet-button",
+      "cem": { "module": "src/quiet-button.ts", "name": "AcmeQuietButton" },
+      "registration": "@acme/ui/define/quiet-button",
+      "definition": {
+        "ref": { "module": "src/quiet-button.ts", "name": "quietButtonDefinition" },
+        "extends": "component:odd-button",
+        "template": { "package": "@oddkin/components", "module": "dist/button/button.template.js", "name": "buttonTemplate" },
+        "styles": [{ "package": "@oddkin/components", "module": "dist/button/button.structural.styles.js", "name": "buttonStructuralStyles" }, { "module": "src/quiet-button.styles.ts", "name": "quietButtonStyles" }]
+      }
     }
+  },
+  "templates": {
+    "src/button.template.ts#buttonTemplate": { "module": "src/button.template.ts", "name": "buttonTemplate", "slots": [""], "parts": ["control"] }
+  },
+  "styles": {
+    "src/quiet-button.styles.ts#quietButtonStyles": { "module": "src/quiet-button.styles.ts", "name": "quietButtonStyles", "cssProperties": ["--acme-quiet-ink"], "tokens": ["color.text.secondary"] }
   },
   "tokens": { "inspection": "@acme/ui/tokens/default.inspect.json" },
   "foundations": {

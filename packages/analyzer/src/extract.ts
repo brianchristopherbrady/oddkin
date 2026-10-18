@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
 import ts from 'typescript';
+import { createPublishedReader, type PublishedPackage } from './published.js';
 
 export interface SourceLocation {
   readonly file: string;
@@ -61,12 +62,17 @@ export interface NamedDoc {
 
 export interface ClassRef {
   readonly name: string;
+  /** Library-relative source path, or the module path in `package` when that is set. */
   readonly file: string;
+  /** Package that publishes the class, when it is not the analyzed library. */
+  readonly package?: string;
 }
 
 export interface ComponentInfo {
   readonly name: string;
   readonly file: string;
+  /** Package that publishes this class, for a base read from another package's metadata. */
+  readonly package?: string;
   readonly location: SourceLocation;
   readonly description?: string;
   readonly superclass: { readonly name: string; readonly package?: string; readonly file?: string };
@@ -97,10 +103,30 @@ export interface ComponentInfo {
 /** A named export in a source file (definition, template, or styles). */
 export interface SourceRef {
   readonly name: string;
-  /** Library-relative source path, or the package specifier when `external`. */
+  /** Library-relative source path, the package specifier when `external`, or the module path in `package`. */
   readonly file: string;
   /** Imported from another package's published declarations (e.g. shared styles). */
   readonly external?: true;
+  /** Inherited from a definition another package publishes; `file` is that package's module path. */
+  readonly package?: string;
+}
+
+/** What a style source reads: CSS custom properties and tokens (`var(--odd-…)` or `token('…')`). */
+export interface StyleReads {
+  readonly cssProperties: readonly string[];
+  readonly tokens: readonly string[];
+}
+
+/** An exported template's anatomy, published so recomposing packages know what it provides. */
+export interface TemplateSource {
+  readonly ref: SourceRef;
+  readonly slots: readonly string[];
+  readonly parts: readonly string[];
+}
+
+/** An exported style source and what it reads. */
+export interface StyleSource extends StyleReads {
+  readonly ref: SourceRef;
 }
 
 /** A `compose()` definition resolved statically. */
@@ -153,6 +179,11 @@ export interface Extraction {
   readonly models: readonly ModelInfo[];
   readonly definitions: readonly DefinitionInfo[];
   readonly exports: ReadonlyMap<string, readonly string[]>;
+  /** Exported templates and style sources of the analyzed library. */
+  readonly sources: {
+    readonly templates: readonly TemplateSource[];
+    readonly styles: readonly StyleSource[];
+  };
   readonly diagnostics: readonly AnalyzerDiagnostic[];
 }
 
@@ -182,6 +213,10 @@ export function extract(program: ts.Program, root: string): Extraction {
   const models: ModelInfo[] = [];
   const definitions = new Map<ts.CallExpression, Resolved | null>();
   const exportsBySource = new Map<string, string[]>();
+  const published = createPublishedReader();
+  const publishedComponents = new Map<ts.ClassDeclaration, ComponentInfo | null>();
+  const templateSources = new Map<string, TemplateSource>();
+  const styleSources = new Map<string, StyleSource>();
 
   const rel = (file: string) => relative(root, file).split(sep).join('/');
   const where = (node: ts.Node): SourceLocation => {
@@ -490,6 +525,47 @@ export function extract(program: ts.Program, root: string): Extraction {
     return { cssProperties, tokens };
   }
 
+  /** Slots and parts a template renders. */
+  function templateAnatomy(node: ts.Node): { slots: Set<string>; parts: Set<string> } {
+    const found = { slots: new Set<string>(), parts: new Set<string>() };
+    scanTemplates(node, 'html', (text) => {
+      for (const match of text.matchAll(/<slot\b([^>]*)>/g)) {
+        const name = attributeValue(match[1] ?? '', 'name');
+        found.slots.add(name ? (name[1] ?? name[2] ?? name[3] ?? '') : '');
+      }
+      for (const match of text.matchAll(/<[a-zA-Z][\w-]*\b([^>]*)>/g)) {
+        const part = attributeValue(match[1] ?? '', 'part');
+        for (const name of (part ? (part[1] ?? part[2] ?? part[3] ?? '') : '').split(/\s+/))
+          if (name) found.parts.add(name);
+      }
+    });
+    return found;
+  }
+
+  const sourceKey = (ref: SourceRef) => `${ref.file}#${ref.name}`;
+  /** Record an exported style source of the analyzed library. */
+  function recordStyles(ref: SourceRef, node: ts.Node) {
+    if (!styleSources.has(sourceKey(ref)))
+      styleSources.set(sourceKey(ref), { ref, ...styleReads(node) });
+  }
+
+  /** A section of another package's `oddkin.metadata.json` entry, by module path and name. */
+  function publishedSource<T>(
+    pkg: PublishedPackage,
+    section: 'templates' | 'styles',
+    module: string,
+    name: string,
+  ): T | undefined {
+    const entries = pkg.metadata?.[section] as Record<string, T> | undefined;
+    return entries?.[`${module}#${name}`];
+  }
+  const publishedReads = (pkg: PublishedPackage, module: string, name: string) => {
+    const entry = publishedSource<Partial<StyleReads>>(pkg, 'styles', module, name);
+    return entry
+      ? { cssProperties: entry.cssProperties ?? [], tokens: entry.tokens ?? [] }
+      : undefined;
+  };
+
   // ---- classes ----
   function heritage(node: ts.ClassDeclaration) {
     return node.heritageClauses?.find((h) => h.token === ts.SyntaxKind.ExtendsKeyword)?.types[0]
@@ -517,6 +593,12 @@ export function extract(program: ts.Program, root: string): Extraction {
       if (declaration && isLibrarySource(declaration.getSourceFile())) {
         base = classify(declaration);
         if (base) superclass = { name: base.name, file: base.file };
+        return !!base;
+      }
+      // An element class another package publishes: its contract comes from that package's CEM.
+      if (declaration?.getSourceFile().isDeclarationFile) {
+        base = publishedComponent(declaration, target);
+        if (base) superclass = { name: base.name, package: base.package as string };
         return !!base;
       }
       return false;
@@ -564,6 +646,9 @@ export function extract(program: ts.Program, root: string): Extraction {
               inheritedFrom: {
                 name: (from as ComponentInfo).name,
                 file: (from as ComponentInfo).file,
+                ...((from as ComponentInfo).package
+                  ? { package: (from as ComponentInfo).package as string }
+                  : {}),
               },
             },
       );
@@ -776,6 +861,196 @@ export function extract(program: ts.Program, root: string): Extraction {
         tokens: [...(parent?.derived?.tokens ?? []), ...styleTokens],
       },
     };
+
+    /** True when the class's instance type derives from `HTMLElement`. */
+    function isElementClass(declaration: ts.ClassDeclaration): boolean {
+      const symbol = declaration.name && checker.getSymbolAtLocation(declaration.name);
+      const pending: ts.Type[] = symbol ? [checker.getDeclaredTypeOfSymbol(symbol)] : [];
+      for (let depth = 0; pending.length && depth < 32; depth++) {
+        const type = pending.shift() as ts.Type;
+        if (type.getSymbol()?.name === 'HTMLElement') return true;
+        if (type.isClassOrInterface()) pending.push(...(checker.getBaseTypes(type) ?? []));
+        else if (type.isIntersection()) pending.push(...type.types);
+      }
+      return false;
+    }
+
+    /**
+     * A component class published by another package, read from its `custom-elements.json`
+     * (members, attributes, events, slots, parts, CSS properties and states) and
+     * `oddkin.metadata.json` (token reads, sync pairs, and the template and style sources of its
+     * definition). The package's modules are never executed.
+     */
+    function publishedComponent(
+      declaration: ts.ClassDeclaration,
+      at: ts.Node,
+    ): ComponentInfo | null {
+      if (publishedComponents.has(declaration)) return publishedComponents.get(declaration) ?? null;
+      publishedComponents.set(declaration, null);
+      const file = declaration.getSourceFile().fileName;
+      const pkg = published(file);
+      if (!pkg || !declaration.name) return null;
+      const name = declaration.name.text;
+      const module = pkg.moduleOf(file);
+      const cem = pkg.declaration(name, module);
+      if (!cem?.customElement) {
+        if (isElementClass(declaration))
+          report(
+            'analyzer.published.missing',
+            at,
+            `${pkg.name} publishes no custom-elements.json declaration for ${name}; classes extending it are not documented.`,
+            `Publish ${pkg.name} with its custom-elements.json (package.json "customElements").`,
+          );
+        return null;
+      }
+      const metadata = cem.tagName
+        ? ((pkg.metadata?.['components'] as Record<string, Record<string, unknown>> | undefined)?.[
+            `component:${cem.tagName}`
+          ] ?? undefined)
+        : undefined;
+      const from: ClassRef = { name, file: module, package: pkg.name };
+      const inherited = (value: unknown): ClassRef => {
+        const ref = value as { name?: string; module?: string; package?: string } | undefined;
+        return ref?.name
+          ? { name: ref.name, file: ref.module ?? module, package: ref.package ?? pkg.name }
+          : from;
+      };
+      const text = (value: unknown) => (typeof value === 'string' && value ? value : undefined);
+      const described = <T extends object>(item: T, description: unknown): T =>
+        text(description) ? { ...item, description: text(description) as string } : item;
+      const named = (list: readonly { name: string; description?: string }[] | undefined) =>
+        (list ?? []).map((item) => described({ name: item.name }, item.description));
+      const syncPairs = (metadata?.['syncPairs'] ?? []) as { property: string; event: string }[];
+      const typeText = (member: Record<string, unknown>) =>
+        (member['type'] as { text?: string } | undefined)?.text;
+
+      const properties: PropertyInfo[] = [];
+      const members: MemberInfo[] = [];
+      for (const member of cem.members ?? []) {
+        if (
+          member['static'] ||
+          member['privacy'] === 'private' ||
+          member['privacy'] === 'protected'
+        )
+          continue;
+        const memberName = member['name'] as string;
+        if (member['kind'] === 'method') {
+          members.push(
+            described(
+              { kind: 'method', name: memberName, type: '', readonly: false },
+              member['description'],
+            ),
+          );
+          continue;
+        }
+        if (member['kind'] !== 'field') continue;
+        // prop.*() fields carry an attribute or a known default; accessors and plain fields do not.
+        if (member['attribute'] !== undefined || member['default'] !== undefined) {
+          properties.push(
+            described(
+              {
+                name: memberName,
+                kind: 'published',
+                type: typeText(member) ?? 'unknown',
+                attribute: text(member['attribute']) ?? null,
+                reflects: member['reflects'] === true,
+                default:
+                  typeof member['default'] === 'string'
+                    ? { known: true, value: member['default'] }
+                    : { known: false },
+                inheritedFrom: inherited(member['inheritedFrom']),
+              },
+              member['description'],
+            ),
+          );
+        } else
+          members.push(
+            described(
+              {
+                kind: 'field',
+                name: memberName,
+                type: typeText(member) ?? 'unknown',
+                readonly: member['readonly'] === true,
+              },
+              member['description'],
+            ),
+          );
+      }
+      const events: EventInfo[] = (cem.events ?? []).map((event) => {
+        const type = typeText(event) ?? 'CustomEvent';
+        const detail = /^CustomEvent<(.*)>$/s.exec(type)?.[1];
+        const syncs = syncPairs.find((p) => p.event === event['name'])?.property;
+        return described(
+          {
+            name: event['name'] as string,
+            detailType: detail ?? 'void',
+            bubbles: false,
+            composed: false,
+            cancelable: false,
+            ...(syncs ? { syncs } : {}),
+            inheritedFrom: inherited(event['inheritedFrom']),
+          },
+          event['description'],
+        );
+      });
+
+      // What its definition's template and styles provide, so a recomposition can replace them.
+      const definition = metadata?.['definition'] as
+        | {
+            template?: { module: string; name: string };
+            styles?: { module: string; name: string }[];
+          }
+        | undefined;
+      const anatomy = definition?.template
+        ? publishedSource<{ slots?: string[]; parts?: string[] }>(
+            pkg,
+            'templates',
+            definition.template.module,
+            definition.template.name,
+          )
+        : undefined;
+      const reads = (definition?.styles ?? []).map((s) => publishedReads(pkg, s.module, s.name));
+      if ((definition?.template && !anatomy) || reads.some((r) => !r))
+        report(
+          'analyzer.published.sources',
+          at,
+          `${pkg.name} publishes no template or style facts for the definition of <${cem.tagName}>; facts its template and styles provide are kept when a definition replaces them.`,
+          `Rebuild ${pkg.name} with a current @oddkin/analyzer.`,
+          'info',
+        );
+      const superclass = cem.superclass;
+      const info: ComponentInfo = {
+        name,
+        file: module,
+        package: pkg.name,
+        location: { file: `${pkg.name}/${module}`, line: 1, column: 1 },
+        superclass: {
+          name: superclass?.name ?? 'OddkinElement',
+          package: superclass?.package ?? pkg.name,
+        },
+        properties,
+        events,
+        members,
+        slots: named(cem.slots),
+        parts: named(cem.cssParts),
+        cssProperties: named(cem.cssProperties),
+        cssStates: named(cem.cssStates),
+        tokenReads: ((metadata?.['tokenReads'] ?? []) as { token: string }[]).map((t) => ({
+          token: t.token,
+          readThrough: 'stylesheet' as const,
+        })),
+        tags: {},
+        exported: true,
+        derived: {
+          slots: anatomy?.slots ?? [],
+          parts: anatomy?.parts ?? [],
+          cssProperties: reads.flatMap((r) => r?.cssProperties ?? []),
+          tokens: reads.flatMap((r) => r?.tokens ?? []),
+        },
+      };
+      publishedComponents.set(declaration, info);
+      return info;
+    }
     const merged = explicit ? mergeExplicit(info, explicit) : info;
     components.set(node, merged);
     return merged;
@@ -918,6 +1193,10 @@ export function extract(program: ts.Program, root: string): Extraction {
     readonly classNode: ts.ClassDeclaration;
     readonly templateNode?: ts.Node;
     readonly styleNodes?: readonly ts.Node[];
+    /** Reads of style sources other packages publish (with `styleNodes`, the complete styles). */
+    readonly styleReads?: readonly StyleReads[];
+    /** Published by another package; its class cannot be registered again. */
+    readonly external?: true;
   }
 
   /** Follow an identifier (through imports) to the expression it is initialized with. */
@@ -942,14 +1221,26 @@ export function extract(program: ts.Program, root: string): Extraction {
     expression: ts.Expression,
     refs: SourceRef[],
     nodes: ts.Node[],
+    reads: StyleReads[],
     owner: string,
   ): void {
     const found = initializerOf(expression);
     if (!found) {
       const published = publishedStyles(expression);
-      if (published) refs.push(published);
-      else
+      if (!published) {
         report('analyzer.dynamic.definition', expression, `${owner}: styles cannot be resolved.`);
+        return;
+      }
+      refs.push(published.ref);
+      if (published.reads) reads.push(published.reads);
+      else
+        report(
+          'analyzer.published.sources',
+          expression,
+          `${owner}: ${published.ref.package ?? published.ref.file} publishes no facts for ${published.ref.name}; what it reads is unknown.`,
+          `Rebuild ${published.ref.package ?? published.ref.file} with a current @oddkin/analyzer.`,
+          'info',
+        );
       return;
     }
     const node = found.node;
@@ -961,20 +1252,25 @@ export function extract(program: ts.Program, root: string): Extraction {
             element,
             `${owner}: spread styles are not analyzed.`,
           );
-        else stylesFrom(element, refs, nodes, owner);
+        else stylesFrom(element, refs, nodes, reads, owner);
       }
       return;
     }
-    if (found.ref) refs.push(found.ref);
+    if (found.ref) {
+      refs.push(found.ref);
+      recordStyles(found.ref, node);
+    }
     nodes.push(node);
   }
 
   /**
    * Styles imported from another package (`import { hostStyles } from '@oddkin/components/styles'`)
    * resolve to its declarations, which carry no CSS: they are recorded by specifier and name, and
-   * their token reads belong to the publishing package's metadata.
+   * what they read comes from that package's published `styles` facts.
    */
-  function publishedStyles(expression: ts.Expression): SourceRef | undefined {
+  function publishedStyles(
+    expression: ts.Expression,
+  ): { ref: SourceRef; reads?: StyleReads } | undefined {
     if (!ts.isIdentifier(expression)) return undefined;
     const declaration = resolveSymbol(expression)?.declarations?.[0];
     if (!declaration?.getSourceFile().isDeclarationFile || !ts.isVariableDeclaration(declaration))
@@ -985,10 +1281,23 @@ export function extract(program: ts.Program, root: string): Extraction {
     const from = specifier?.parent.parent.parent.moduleSpecifier;
     if (!specifier || !from || !ts.isStringLiteral(from) || from.text.startsWith('.'))
       return undefined;
+    const file = declaration.getSourceFile().fileName;
+    const pkg = published(file);
+    // Recorded as the publisher's module path, the key of its published `styles` facts.
+    if (pkg && ts.isIdentifier(declaration.name)) {
+      const module = pkg.moduleOf(file);
+      const reads = publishedReads(pkg, module, declaration.name.text);
+      return {
+        ref: { name: declaration.name.text, file: module, package: pkg.name },
+        ...(reads ? { reads } : {}),
+      };
+    }
     return {
-      name: (specifier.propertyName ?? specifier.name).text,
-      file: from.text,
-      external: true,
+      ref: {
+        name: (specifier.propertyName ?? specifier.name).text,
+        file: from.text,
+        external: true,
+      },
     };
   }
 
@@ -1004,6 +1313,11 @@ export function extract(program: ts.Program, root: string): Extraction {
    * Declarations only; nothing is executed.
    */
   function publishedDefinitionTag(expression: ts.Expression): string | undefined {
+    return publishedDefinitionOf(expression)?.tag;
+  }
+  function publishedDefinitionOf(
+    expression: ts.Expression,
+  ): { tag: string; classNode: ts.ClassDeclaration } | undefined {
     const declaration = resolveSymbol(expression)?.declarations?.[0];
     if (!declaration || !declaration.getSourceFile().isDeclarationFile) return undefined;
     if (!ts.isVariableDeclaration(declaration) || !declaration.type) return undefined;
@@ -1042,7 +1356,64 @@ export function extract(program: ts.Program, root: string): Extraction {
       ts.forEachChild(node, visit);
     };
     visit(classFile);
-    return tag;
+    const classNode = classSymbol.declarations?.find(ts.isClassDeclaration);
+    return tag && classNode ? { tag, classNode } : undefined;
+  }
+
+  /**
+   * Spreading a definition another package publishes: its tag and class come from declarations,
+   * and its template, styles, and dependencies from that package's `oddkin.metadata.json`.
+   */
+  function publishedDefinition(expression: ts.Expression): Resolved | undefined {
+    const found = publishedDefinitionOf(expression);
+    if (!found?.classNode.name) return undefined;
+    const file = found.classNode.getSourceFile().fileName;
+    const pkg = published(file);
+    if (!pkg) return undefined;
+    const entry = (
+      pkg.metadata?.['components'] as Record<string, { definition?: unknown }> | undefined
+    )?.[`component:${found.tag}`]?.definition as
+      | {
+          template?: { module: string; name: string };
+          styles?: { module: string; name: string }[];
+          dependencies?: Record<string, string>;
+        }
+      | undefined;
+    if (!entry)
+      report(
+        'analyzer.published.sources',
+        expression,
+        `${pkg.name} publishes no definition facts for <${found.tag}>; its template and styles are unknown.`,
+        `Rebuild ${pkg.name} with a current @oddkin/analyzer.`,
+        'info',
+      );
+    const refOf = (ref: { module: string; name: string }): SourceRef => ({
+      name: ref.name,
+      file: ref.module,
+      package: pkg.name,
+    });
+    const reads = (entry?.styles ?? []).map((s) => publishedReads(pkg, s.module, s.name));
+    return {
+      external: true,
+      classNode: found.classNode,
+      info: {
+        tag: found.tag,
+        className: found.classNode.name.text,
+        classFile: pkg.moduleOf(file),
+        ...(entry?.template ? { template: refOf(entry.template) } : {}),
+        styles: (entry?.styles ?? []).map(refOf),
+        dependencies: Object.fromEntries(
+          Object.entries(entry?.dependencies ?? {}).map(([role, id]) => [
+            role,
+            id.replace(/^component:/, ''),
+          ]),
+        ),
+        location: where(expression),
+      },
+      ...(entry?.styles
+        ? { styleNodes: [], styleReads: reads.filter((r): r is StyleReads => !!r) }
+        : {}),
+    };
   }
 
   /** Resolve an expression to a `compose()` definition, following imports and spreads. */
@@ -1067,11 +1438,11 @@ export function extract(program: ts.Program, root: string): Extraction {
     let tag: string | undefined;
     let classNode: ts.ClassDeclaration | undefined;
     let template: { ref?: SourceRef; node?: ts.Node } | undefined;
-    let styles: { refs: SourceRef[]; nodes: ts.Node[] } | undefined;
+    let styles: { refs: SourceRef[]; nodes: ts.Node[]; reads: StyleReads[] } | undefined;
     let dependencies: Record<string, string> | undefined;
     for (const property of init.properties) {
       if (ts.isSpreadAssignment(property)) {
-        base = definitionFrom(property.expression);
+        base = definitionFrom(property.expression) ?? publishedDefinition(property.expression);
         if (!base) {
           report(
             'analyzer.dynamic.definition',
@@ -1082,14 +1453,20 @@ export function extract(program: ts.Program, root: string): Extraction {
         }
         tag = base.info.tag;
         classNode = base.classNode;
-        template = base.templateNode
-          ? {
-              node: base.templateNode,
-              ...(base.info.template ? { ref: base.info.template } : {}),
-            }
-          : undefined;
+        // A published base has no template node: its template's facts arrive with its class.
+        template =
+          base.templateNode || base.info.template
+            ? {
+                ...(base.templateNode ? { node: base.templateNode } : {}),
+                ...(base.info.template ? { ref: base.info.template } : {}),
+              }
+            : undefined;
         styles = base.styleNodes
-          ? { refs: [...base.info.styles], nodes: [...base.styleNodes] }
+          ? {
+              refs: [...base.info.styles],
+              nodes: [...base.styleNodes],
+              reads: [...(base.styleReads ?? [])],
+            }
           : undefined;
         dependencies = { ...base.info.dependencies };
         continue;
@@ -1131,17 +1508,25 @@ export function extract(program: ts.Program, root: string): Extraction {
           );
       } else if (key === 'template') {
         const resolved = initializerOf(value);
-        if (resolved)
+        if (resolved) {
           template = { node: resolved.node, ...(resolved.ref ? { ref: resolved.ref } : {}) };
-        else
+          if (resolved.ref && !templateSources.has(sourceKey(resolved.ref))) {
+            const anatomy = templateAnatomy(resolved.node);
+            templateSources.set(sourceKey(resolved.ref), {
+              ref: resolved.ref,
+              slots: [...anatomy.slots],
+              parts: [...anatomy.parts],
+            });
+          }
+        } else
           report(
             'analyzer.dynamic.definition',
             value,
             'compose(): the template cannot be resolved.',
           );
       } else if (key === 'styles') {
-        styles = { refs: [], nodes: [] };
-        stylesFrom(value, styles.refs, styles.nodes, `compose(${tag ?? ''})`);
+        styles = { refs: [], nodes: [], reads: [] };
+        stylesFrom(value, styles.refs, styles.nodes, styles.reads, `compose(${tag ?? ''})`);
       } else if (key === 'dependencies') {
         dependencies = {};
         if (ts.isObjectLiteralExpression(value)) {
@@ -1175,11 +1560,20 @@ export function extract(program: ts.Program, root: string): Extraction {
       }
     }
     if (!tag || !TAG_NAME.test(tag) || !classNode?.name) return undefined;
+    if (base?.external && classNode === base.classNode) {
+      report(
+        'analyzer.dynamic.definition',
+        call,
+        `compose(${tag}): a definition recomposed from a published one needs its own element class.`,
+        'Pass element: class extends Base {} (one constructor per registered name).',
+      );
+      return undefined;
+    }
     const variable = definitionRef(call, found?.ref);
     const resolved: Resolved = {
       classNode,
       ...(template?.node ? { templateNode: template.node } : {}),
-      ...(styles ? { styleNodes: styles.nodes } : {}),
+      ...(styles ? { styleNodes: styles.nodes, styleReads: styles.reads } : {}),
       info: {
         tag,
         className: classNode.name.text,
@@ -1200,34 +1594,25 @@ export function extract(program: ts.Program, root: string): Extraction {
   function overlay(info: ComponentInfo, resolved: Resolved): ComponentInfo {
     const derived = info.derived ?? { slots: [], parts: [], cssProperties: [], tokens: [] };
     let { slots, parts, cssProperties, tokenReads } = info;
+    // Names the new template or styles provide again keep their documentation.
+    const doc = <T extends { name: string }>(list: readonly T[], name: string) =>
+      list.find((item) => item.name === name) ?? { name };
     if (resolved.templateNode) {
-      const found = { slots: new Set<string>(), parts: new Set<string>() };
-      scanTemplates(resolved.templateNode, 'html', (text) => {
-        for (const match of text.matchAll(/<slot\b([^>]*)>/g)) {
-          const name = attributeValue(match[1] ?? '', 'name');
-          found.slots.add(name ? (name[1] ?? name[2] ?? name[3] ?? '') : '');
-        }
-        for (const match of text.matchAll(/<[a-zA-Z][\w-]*\b([^>]*)>/g)) {
-          const part = attributeValue(match[1] ?? '', 'part');
-          for (const name of (part ? (part[1] ?? part[2] ?? part[3] ?? '') : '').split(/\s+/))
-            if (name) found.parts.add(name);
-        }
-      });
+      const found = templateAnatomy(resolved.templateNode);
       slots = slots.filter((s) => !derived.slots.includes(s.name));
       parts = parts.filter((s) => !derived.parts.includes(s.name));
       for (const name of found.slots)
-        if (!slots.some((s) => s.name === name)) slots = [...slots, { name }];
+        if (!slots.some((s) => s.name === name)) slots = [...slots, doc(info.slots, name)];
       for (const name of found.parts)
-        if (!parts.some((s) => s.name === name)) parts = [...parts, { name }];
+        if (!parts.some((s) => s.name === name)) parts = [...parts, doc(info.parts, name)];
     }
     if (resolved.styleNodes) {
       cssProperties = cssProperties.filter((c) => !derived.cssProperties.includes(c.name));
       tokenReads = tokenReads.filter((t) => !derived.tokens.includes(t.token));
-      for (const node of resolved.styleNodes) {
-        const read = styleReads(node);
+      for (const read of [...resolved.styleNodes.map(styleReads), ...(resolved.styleReads ?? [])]) {
         for (const name of read.cssProperties)
           if (!cssProperties.some((c) => c.name === name))
-            cssProperties = [...cssProperties, { name }];
+            cssProperties = [...cssProperties, doc(info.cssProperties, name)];
         for (const token of read.tokens)
           if (!tokenReads.some((t) => t.token === token))
             tokenReads = [...tokenReads, { token, readThrough: 'stylesheet' }];
@@ -1243,6 +1628,22 @@ export function extract(program: ts.Program, root: string): Extraction {
     const exportedNames: string[] = [];
     const visit = (node: ts.Node) => {
       if (ts.isClassDeclaration(node)) classify(node);
+      // Exported style sources are published with what they read, used by a definition or not.
+      if (
+        ts.isVariableStatement(node) &&
+        ts.getModifiers(node)?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
+      ) {
+        for (const declaration of node.declarationList.declarations) {
+          const initializer = declaration.initializer;
+          if (
+            ts.isIdentifier(declaration.name) &&
+            initializer &&
+            ts.isTaggedTemplateExpression(initializer) &&
+            fromOddkinCore(initializer.tag, 'css')
+          )
+            recordStyles({ name: declaration.name.text, file: rel(file.fileName) }, initializer);
+        }
+      }
       if (ts.isCallExpression(node)) {
         const callee = node.expression;
         const isDefine =
@@ -1430,6 +1831,10 @@ export function extract(program: ts.Program, root: string): Extraction {
       .map((d) => d.info)
       .sort((a, b) => (a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : 0)),
     exports: exportsBySource,
+    sources: {
+      templates: [...templateSources.values()],
+      styles: [...styleSources.values()],
+    },
     diagnostics,
   };
 }

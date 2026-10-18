@@ -1,0 +1,7 @@
+{
+  "name": "@legacy/ui",
+  "version": "0.1.0",
+  "type": "module",
+  "types": "./index.d.ts",
+  "customElements": "custom-elements.json"
+}

@@ -68,5 +68,30 @@
       }
     }
   },
+  "templates": {
+    "dist/demo-counter/demo-counter.template.js#demoCounterTemplate": {
+      "module": "dist/demo-counter/demo-counter.template.js",
+      "name": "demoCounterTemplate"
+    },
+    "dist/demo-greeting/demo-greeting.template.js#demoGreetingTemplate": {
+      "module": "dist/demo-greeting/demo-greeting.template.js",
+      "name": "demoGreetingTemplate"
+    }
+  },
+  "styles": {
+    "dist/demo-counter/demo-counter.styles.js#demoCounterStyles": {
+      "module": "dist/demo-counter/demo-counter.styles.js",
+      "name": "demoCounterStyles",
+      "cssProperties": [
+        "--demo-focus",
+        "--demo-ink",
+        "--demo-paper"
+      ]
+    },
+    "dist/demo-greeting/demo-greeting.styles.js#demoGreetingStyles": {
+      "module": "dist/demo-greeting/demo-greeting.styles.js",
+      "name": "demoGreetingStyles"
+    }
+  },
   "diagnostics": []
 }

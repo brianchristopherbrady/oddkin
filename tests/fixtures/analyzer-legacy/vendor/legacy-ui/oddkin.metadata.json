@@ -1,0 +1,20 @@
+{
+  "schema": "https://oddkin.dev/schemas/oddkin-metadata/v1.json",
+  "oddkinVersion": "0.0.0",
+  "library": { "name": "@legacy/ui", "version": "0.1.0", "packages": [] },
+  "components": {
+    "component:legacy-button": {
+      "tag": "legacy-button",
+      "cem": { "module": "index.js", "name": "LegacyButton" },
+      "registration": "@legacy/ui",
+      "definition": {
+        "template": { "module": "template.js", "name": "legacyTemplate" },
+        "styles": [{ "module": "styles.js", "name": "legacyStyles" }]
+      },
+      "tokenReads": [
+        { "token": "color.text.primary", "kind": "declared", "readThrough": "stylesheet" }
+      ]
+    }
+  },
+  "diagnostics": []
+}

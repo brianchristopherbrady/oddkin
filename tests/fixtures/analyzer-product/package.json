@@ -1,0 +1,14 @@
+{
+  "name": "@acme/studio",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./button": "./dist/button/index.js",
+    "./define/button": "./dist/button/button.define.js"
+  },
+  "peerDependencies": {
+    "@oddkin/components": "0.x",
+    "@oddkin/core": "0.x"
+  }
+}

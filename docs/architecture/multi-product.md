@@ -239,6 +239,7 @@ Results are recorded against the implementation and configuration tested. Perfor
 
 - Items 1–3: `packages/components/test/multi-product.browser.test.ts`.
 - Items 5, 6, and 12, for `odd-button`, `odd-card`, `odd-input`, `odd-side-nav`, and a derived implementation of each: `contract.browser.test.ts` and `interactions.browser.test.ts`, with the derived definitions in `test/derived.ts`.
+- Item 9, for a product package deriving from the published `@oddkin/components`: `packages/analyzer/test/products.test.ts`. The metadata half is covered; documentation pages wait for M5.
 - Item 14: `packages/tokens/test/products.test.ts`.
 
 All in Chromium, Firefox, and WebKit.

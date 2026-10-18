@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "2.1.0",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "index.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "LegacyButton",
+          "customElement": true,
+          "tagName": "legacy-button",
+          "superclass": { "name": "OddkinElement", "package": "@oddkin/core" },
+          "members": [
+            {
+              "kind": "field",
+              "name": "tone",
+              "type": { "text": "string" },
+              "default": "'plain'",
+              "attribute": "tone",
+              "reflects": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "tone",
+              "type": { "text": "string" },
+              "fieldName": "tone",
+              "default": "'plain'"
+            }
+          ],
+          "slots": [{ "name": "", "description": "The label." }],
+          "cssParts": [{ "name": "control", "description": "" }],
+          "cssProperties": [],
+          "cssStates": []
+        }
+      ],
+      "exports": []
+    }
+  ]
+}

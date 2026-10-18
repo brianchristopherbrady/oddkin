@@ -112,6 +112,76 @@
         "$ref": "#/$defs/exampleRef"
       }
     },
+    "templates": {
+      "type": "object",
+      "description": "Exported templates used by definitions, keyed by module#name: the slots and parts each renders, so packages that recompose a definition can tell which facts come from its template.",
+      "propertyNames": {
+        "pattern": "^[^#]+#[^#]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "module",
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "styles": {
+      "type": "object",
+      "description": "Exported style sources, keyed by module#name: the CSS custom properties and tokens each reads, so packages that reuse or replace them get exact facts.",
+      "propertyNames": {
+        "pattern": "^[^#]+#[^#]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "module",
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "cssProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "previewRoles": {
       "type": "object",
       "propertyNames": {
@@ -321,6 +391,10 @@
       ],
       "additionalProperties": false,
       "properties": {
+        "package": {
+          "type": "string",
+          "description": "Package that publishes the module, when it is not this one (module is then that package's module path)."
+        },
         "module": {
           "type": "string"
         },

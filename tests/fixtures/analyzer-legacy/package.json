@@ -1,0 +1,9 @@
+{
+  "name": "@acme/legacy-consumer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./define": "./dist/legacy.js"
+  }
+}

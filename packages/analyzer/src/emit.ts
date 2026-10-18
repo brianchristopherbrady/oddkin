@@ -51,8 +51,12 @@ export function buildManifest(extraction: Extraction, paths: ModulePaths): Recor
     }
     return entry;
   };
-  const reference = (from: { name: string; file: string } | undefined) =>
-    from ? { name: from.name, module: paths.moduleOf(from.file) } : undefined;
+  const reference = (from: { name: string; file: string; package?: string } | undefined) =>
+    from
+      ? from.package
+        ? { name: from.name, package: from.package, module: from.file }
+        : { name: from.name, module: paths.moduleOf(from.file) }
+      : undefined;
 
   for (const component of extraction.components) {
     const module = paths.moduleOf(component.file);
@@ -167,10 +171,10 @@ export function buildManifest(extraction: Extraction, paths: ModulePaths): Recor
 
 const definitionOf = (definition: DefinitionInfo | undefined, paths: ModulePaths) => {
   if (!definition) return undefined;
-  const ref = (source: SourceRef) => ({
-    module: source.external ? source.file : paths.moduleOf(source.file),
-    name: source.name,
-  });
+  const ref = (source: SourceRef) =>
+    source.package
+      ? { package: source.package, module: source.file, name: source.name }
+      : { module: source.external ? source.file : paths.moduleOf(source.file), name: source.name };
   return {
     ...optional('ref', definition.ref && ref(definition.ref)),
     ...optional('extends', definition.extends && `component:${definition.extends}`),
@@ -307,6 +311,30 @@ export function buildMetadata(
       },
     ]),
   );
+  const sourceEntries = <T extends { ref: SourceRef }>(
+    list: readonly T[],
+    facts: (source: T) => Record<string, unknown>,
+  ) =>
+    Object.fromEntries(
+      list
+        .map((source) => {
+          const module = paths.moduleOf(source.ref.file);
+          return [
+            `${module}#${source.ref.name}`,
+            { module, name: source.ref.name, ...facts(source) },
+          ] as const;
+        })
+        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+    );
+  const unique = (list: readonly string[]) => [...new Set(list)].sort();
+  const templates = sourceEntries(extraction.sources.templates, (t) => ({
+    ...optional('slots', unique(t.slots)),
+    ...optional('parts', unique(t.parts)),
+  }));
+  const styles = sourceEntries(extraction.sources.styles, (s) => ({
+    ...optional('cssProperties', unique(s.cssProperties)),
+    ...optional('tokens', unique(s.tokens)),
+  }));
   return {
     schema: 'https://oddkin.dev/schemas/oddkin-metadata/v1.json',
     oddkinVersion,
@@ -314,6 +342,8 @@ export function buildMetadata(
     components,
     ...optional('recipes', Object.keys(recipes).length ? recipes : undefined),
     ...optional('models', Object.keys(models).length ? models : undefined),
+    ...optional('templates', Object.keys(templates).length ? templates : undefined),
+    ...optional('styles', Object.keys(styles).length ? styles : undefined),
     diagnostics: sortDiagnostics(extraction.diagnostics),
   };
 }
