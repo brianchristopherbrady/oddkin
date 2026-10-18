@@ -276,7 +276,7 @@ AI support never makes this schema mandatory: agent tooling recommends templates
 - [x] Insert/remove/reorder keeps focus and DOM identity; a `current` change updates entries whose objects are unchanged *(the external-signal case for a caller-owned signal waits for a render-function fixture)*
 - [x] Removed items dispose their scopes; 1,000 mount/replace/unmount cycles return to the scope and listener baseline
 - [x] Narrow/wide containers, nested themes, profiles *(`e2e/side-nav.spec.ts`: dark mode and `navigation.compact` scopes)*
-- [ ] Plain JS and React/Vue/Angular/Svelte consumers without Oddkin state *(plain JS done in `examples/side-nav/`; framework fixtures open)*
+- [~] Plain JS and React/Vue/Angular/Svelte consumers without Oddkin state *(plain JS in `examples/side-nav/`; React 19 and Vue 3.5 in `packages/components/test/frameworks.browser.test.ts`: `items`, `current`, and controlled `expanded` set as properties from framework state, `odd-toggle` and `odd-action` handled by the framework, keyed updates keep nodes, re-renders emit no intent events. In Vue, pass immutable data with `shallowRef`; a deep `ref` hands the element a reactive proxy. Remaining: Angular and Svelte, which are not installed)*
 
 **Editable collection** (`examples/editable-list/`): a reorderable list of items with `odd-input` fields and add/remove, driven by a model and a keyed collection (implemented, M4; §13):
 - [x] Typing in one row survives insertions, removals, and reorder elsewhere; selection/caret preserved *(also when the focused row itself moves)*

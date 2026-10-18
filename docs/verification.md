@@ -560,3 +560,13 @@ Environment as the previous entry. Contract: [layout-recipes.md §10](./architec
 | Side navigation | `npx vitest run --project browser packages/components/test/side-nav.browser.test.ts` | Pass in Chromium, Firefox, WebKit (15 tests, 3 new) — across width changes a `MutationObserver` on the shadow root and the host records no mutation and no `ResizeObserver` is created; two instances share their adopted sheets, `sideNavRecipe.extend()` returns different CSS and leaves the recipe's unchanged, a host role and an unlayered `#nav-a::part(link)` rule change only that instance, and the shared sheets' rule text is identical before and after; an `odd-button` in the footer slot shows the footer region, slots its label, takes focus, and reads `--odd-button-radius` set on the page through both shadow boundaries |
 
 **Findings:** (1) The first run of this file failed with Vitest "Unknown session id" errors while the other agent ran browser tests at the same time; a rerun alone passed 45/45. Two Vitest browser runs in one working tree interfere, so their results do not count until rerun alone. (2) 400% zoom was not tested separately: a 1,280 px window at 400% is 320 CSS px, which the existing reflow test covers (the equivalence WCAG 1.4.10 uses).
+
+## 2026-10-18 — Side navigation in React and Vue without Oddkin state (M4 data slice)
+
+Environment as the previous entry (React 19 and Vue 3.5 as already used by `@oddkin/ai`). Contract: [data-composition.md §10](./architecture/data-composition.md#10-acceptance-fixtures).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| React and Vue | `npx vitest run --project browser packages/components/test/frameworks.browser.test.ts` | Pass in Chromium, Firefox, WebKit (2 tests) — React 19 (`createElement`, `'onodd-toggle'`, `'onodd-action'`) and Vue 3.5 (`h`, `onOddToggle`, `onOddAction`) set `items`, `current`, and controlled `expanded` as properties (no `items` attribute); a toggle reaches framework state, which opens the group through `expanded`; an action reports `{ id: 'create', action: 'project.create' }`; replacing `items` with a reordered array keeps the link nodes; framework re-renders emit no intent events |
+
+**Findings:** (1) A deep Vue `ref` passes the element a reactive proxy of the array instead of the array itself; rendering is unaffected (entries are keyed by id), but the element no longer holds the caller's object. `shallowRef` passes the original immutable data and is the documented choice. (2) Angular and Svelte are not installed; their fixtures need new dev dependencies.
