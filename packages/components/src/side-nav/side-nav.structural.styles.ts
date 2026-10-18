@@ -41,10 +41,16 @@ export const sideNavStructuralStyles = css`
     cursor: not-allowed;
   }
   ::slotted(a) {
-    display: block;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    overflow-wrap: anywhere;
   }
   @media (forced-colors: active) {
-    .entry[aria-current='page'] {
+    .entry[aria-current='page'],
+    ::slotted(a[aria-current='page']) {
       border-inline-start-color: Highlight;
     }
     .entry:disabled,

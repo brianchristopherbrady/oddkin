@@ -28,12 +28,14 @@ export const sideNavStyles = css`
     transition-timing-function: ${token('motion.easing.standard')};
   }
   @media (hover: hover) {
-    .entry:not(:disabled, [aria-disabled='true']):hover {
+    .entry:not(:disabled, [aria-disabled='true']):hover,
+    ::slotted(a:hover) {
       background: ${token('color.surface.hover')};
     }
   }
   /* The current page is marked by a bar and weight, not colour alone. */
-  .entry[aria-current='page'] {
+  .entry[aria-current='page'],
+  ::slotted(a[aria-current='page']) {
     border-inline-start-color: ${token('color.action.default')};
     background: ${token('color.surface.hover')};
     font-weight: ${token('font.weight.semibold')};

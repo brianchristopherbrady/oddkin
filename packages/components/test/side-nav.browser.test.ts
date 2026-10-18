@@ -213,7 +213,7 @@ describe('odd-side-nav from slots', () => {
     expect($('slot:not([name])')).not.toBeNull();
     expect($('[part="header"]')!.hidden).toBe(false);
     expect($('[part="footer"]')!.hidden).toBe(true);
-    expect(getComputedStyle(el.querySelector('a')!).display).toBe('block');
+    expect(getComputedStyle(el.querySelector('a')!).display).toBe('flex');
     el.items = [];
     await settle(el);
     expect($('slot:not([name])')).toBeNull();

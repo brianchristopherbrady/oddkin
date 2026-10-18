@@ -84,3 +84,82 @@ describe('odd-side-nav in generated theme scopes', () => {
     expect(style.paddingInlineStart).toBe(inner.padding);
   });
 });
+
+describe('odd-side-nav sources render equivalently', () => {
+  const LINKS = [
+    ['Overview', '#overview'],
+    ['Components', '#components'],
+    ['A long label that wraps onto a second line in a narrow navigation', '#long'],
+  ] as const;
+
+  async function mount(setup: (nav: OddkinSideNav) => void, markup = '') {
+    const nav = document.createElement('odd-side-nav') as OddkinSideNav;
+    nav.label = 'Primary';
+    nav.innerHTML = markup;
+    setup(nav);
+    const frame = document.createElement('div');
+    frame.style.inlineSize = '16rem';
+    frame.append(nav);
+    document.body.append(frame);
+    roots.push(frame);
+    await nav.updateComplete;
+    flush();
+    return nav;
+  }
+  const fromData = (nav: OddkinSideNav) => {
+    nav.items = LINKS.map(([label, href], i) => ({ id: `l${i}`, kind: 'link', label, href }));
+    nav.current = 'l1';
+  };
+  const slottedMarkup = LINKS.map(
+    ([label, href], i) => `<a href="${href}"${i === 1 ? ' aria-current="page"' : ''}>${label}</a>`,
+  ).join('');
+  const project = (a: HTMLAnchorElement) => [
+    a.textContent?.trim(),
+    a.getAttribute('href'),
+    a.getAttribute('aria-current'),
+  ];
+  const box = (a: Element) => {
+    const s = getComputedStyle(a);
+    return [
+      s.display,
+      s.alignItems,
+      s.minHeight,
+      s.paddingInlineStart,
+      s.paddingBlockStart,
+      s.borderInlineStartWidth,
+      s.borderInlineStartColor,
+      s.borderTopLeftRadius,
+      s.backgroundColor,
+      s.color,
+      s.fontSize,
+      s.fontWeight,
+      s.lineHeight,
+      s.textDecorationLine,
+      Math.round(a.getBoundingClientRect().height),
+    ];
+  };
+
+  it('data, slotted, and hybrid sources expose the same links with the same computed boxes', async () => {
+    const data = await mount(fromData);
+    const slotted = await mount(() => {}, slottedMarkup);
+    const hybrid = await mount(
+      fromData,
+      '<strong slot="header">Acme</strong><small slot="footer">Signed in</small>',
+    );
+    const dataLinks = [...data.shadowRoot!.querySelectorAll('a')];
+    const slottedLinks = [...slotted.querySelectorAll('a')];
+    const hybridLinks = [...hybrid.shadowRoot!.querySelectorAll('a')];
+    expect(slottedLinks.map(project)).toEqual(dataLinks.map(project));
+    expect(hybridLinks.map(project)).toEqual(dataLinks.map(project));
+    for (let i = 0; i < LINKS.length; i++) {
+      expect(box(slottedLinks[i]!), `slotted link ${i}`).toEqual(box(dataLinks[i]!));
+      expect(box(hybridLinks[i]!), `hybrid link ${i}`).toEqual(box(dataLinks[i]!));
+    }
+    for (const nav of [data, slotted, hybrid])
+      expect(nav.shadowRoot!.querySelector('nav')!.getAttribute('aria-label')).toBe('Primary');
+    expect(hybrid.shadowRoot!.querySelector<HTMLElement>('[part="header"]')!.hidden).toBe(false);
+    expect(hybrid.shadowRoot!.querySelector<HTMLElement>('[part="footer"]')!.hidden).toBe(false);
+    // Data entries are list items; slotted links keep the author's markup (no list here).
+    expect(data.shadowRoot!.querySelectorAll('li')).toHaveLength(LINKS.length);
+  });
+});

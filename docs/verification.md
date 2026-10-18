@@ -601,3 +601,15 @@ Environment as the previous entry. Contract: [layout-recipes.md §10](./architec
 | Scopes | `npx vitest run --project browser packages/components/test/side-nav.scopes.browser.test.ts` | Pass in Chromium, Firefox, WebKit (2 tests) — with the CSS generated for a theme with a `clinic` product adopted by the document, `data-odd-product="clinic"` changes the current-page marker colour and not the padding; `data-odd-density="compact"` reduces the padding and not the colour; both on one element combine; `data-odd-mode="dark"` changes the text colour; a compact scope nested in a product scope gives the product colour with the compact padding |
 
 **Findings:** None. The element's shadow styles needed no change: every scope re-declares roles on an ancestor and the shadow root inherits them.
+
+## 2026-10-18 — Side navigation: data, slotted, and hybrid sources (M4 data slice)
+
+Environment as the previous entry. Contract: [data-composition.md §10, §12](./architecture/data-composition.md#12-odd-side-nav-implemented-m4).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Equivalence | `npx vitest run --project browser packages/components/test/side-nav.scopes.browser.test.ts` | Pass in Chromium, Firefox, WebKit (3 tests) — under a generated theme, the same three links from `items`, as slotted `<a>` elements, and from `items` with header and footer slots have the same names, targets, and `aria-current`, and identical display, alignment, minimum height, padding, marker width and colour, radius, background, colour, font, decoration, and rendered height (including a label that wraps); all three name the landmark "Primary" |
+| Mutation probe | The slotted current-page selector removed temporarily | The current slotted link differs from the data link in all three engines; restored |
+| Related | `npx vitest run --project browser packages/components/test/side-nav.browser.test.ts`, `npx playwright test e2e/side-nav.spec.ts`, `npm run size` | Pass (45 tests; 15 e2e); `side-nav` 14,543 B and `components:side-nav` 1,261 B of 1,536 B |
+
+**Findings:** (1) Slotted links were `display: block` and lacked the current-page marker, semibold weight, background, hover state, centred alignment, and link-colour reset that data entries have, so a page using native links looked different from one using `items`. They now share those rules (`::slotted(a)`, `::slotted(a[aria-current='page'])`, `::slotted(a:hover)`), +27 B gzip CSS. (2) Slotted links keep the author's markup: data entries are list items, slotted links are a list only if the author writes one, and `::slotted()` styles only top-level slotted links.
