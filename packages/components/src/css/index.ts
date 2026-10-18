@@ -1,4 +1,5 @@
-import { css, type CSSResult } from '@oddkin/core/styles';
+import { createLayoutHelpers, type Declarations } from '@oddkin/core/layout';
+import { css, unsafeCSS, type CSSResult } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 
 /**
@@ -7,7 +8,7 @@ import { token } from '@oddkin/tokens/refs';
  * (ADR 0039). Nothing loads them implicitly; unlayered application CSS overrides all of them.
  */
 export interface DocumentStylesheet {
-  readonly layer: 'odd.reset' | 'odd.base' | 'odd.utilities';
+  readonly layer: 'odd.reset' | 'odd.base' | 'odd.layout' | 'odd.utilities';
   readonly styles: CSSResult;
 }
 
@@ -87,6 +88,56 @@ export const base: DocumentStylesheet = {
   `,
 };
 
+/** A class's override property, falling back to the theme's layout role. */
+const knob = (name: string, fallback: string) => `var(--odd-${name}, ${fallback})`;
+const rule = (selector: string, declarations: Declarations) =>
+  `${selector} {\n${declarations.map(([property, value]) => `  ${property}: ${value};`).join('\n')}\n}`;
+
+function layoutClasses(): CSSResult {
+  const helpers = createLayoutHelpers();
+  const gap = (name: string) => knob(`${name}-gap`, token('layout.gap'));
+  const split = helpers.split({
+    side: 'side',
+    main: 'main',
+    gap: gap('split'),
+    sideWidth: knob('split-side-width', token('layout.sidebar-width')),
+    mainMin: knob('split-main-min', token('layout.main-min')),
+  });
+  return unsafeCSS(
+    [
+      rule('.odd-stack', helpers.stack({ gap: gap('stack') }).declarations),
+      rule('.odd-row', helpers.row({ gap: gap('row') }).declarations),
+      rule('.odd-cluster', helpers.row({ gap: gap('cluster'), wrap: true }).declarations),
+      rule(
+        '.odd-grid',
+        helpers.css({
+          display: 'grid',
+          'grid-template-columns': `repeat(${knob('grid-columns', '2')}, minmax(0, 1fr))`,
+          gap: gap('grid'),
+        }).declarations,
+      ),
+      rule(
+        '.odd-auto-grid',
+        helpers.autoGrid({
+          min: knob('auto-grid-min', token('layout.item-min')),
+          gap: gap('auto-grid'),
+        }).declarations,
+      ),
+      // Two children in DOM order: the first is the side, the last takes the remaining space.
+      rule('.odd-split', split.declarations),
+      rule('.odd-split > :first-child', split.regions?.['side'] ?? []),
+      rule('.odd-split > :last-child', split.regions?.['main'] ?? []),
+    ].join('\n'),
+  );
+}
+
+/**
+ * Page-author layout classes generated from the same helpers as recipes, with an override
+ * property per option (`--odd-stack-gap`, `--odd-split-side-width`, …) defaulting to the
+ * theme's layout roles.
+ */
+export const layout: DocumentStylesheet = { layer: 'odd.layout', styles: layoutClasses() };
+
 /** Page-level utilities with the same rules as the shadow-root primitives. */
 export const utilities: DocumentStylesheet = {
   layer: 'odd.utilities',
@@ -109,4 +160,4 @@ export const utilities: DocumentStylesheet = {
   `,
 };
 
-export const documentStylesheets = { reset, base, utilities } as const;
+export const documentStylesheets = { reset, base, layout, utilities } as const;

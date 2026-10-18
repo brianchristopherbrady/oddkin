@@ -43,6 +43,7 @@ export const CSS_BUDGETS = {
   'components:input': 896, // measured 743 with type.ui/body/small and motion tokens (647 before)
   'components:shared': 384, // measured 297 on 2026-10-18: host, focus-ring, and visually-hidden primitives
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
+  'components:layout': 512, // measured 411 on 2026-10-18: layout.css page-author classes
   'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
 };
 
@@ -75,6 +76,9 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
     ['reset', 'base', 'utilities']
       .map((name) => readFileSync(join(root, `packages/components/dist/css/${name}.css`), 'utf8'))
       .join('\n'),
+  );
+  sizes['components:layout'] = gzip(
+    readFileSync(join(root, 'packages/components/dist/css/layout.css'), 'utf8'),
   );
   // All @oddkin/ai sheets, deduplicated (shared base styles count once).
   const aiDist = join(root, 'packages/ai/dist');

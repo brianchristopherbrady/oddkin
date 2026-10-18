@@ -21,6 +21,11 @@ export const panelLayout = defineLayoutRecipe({
   parts: ['actions'],
 });
 
+// A recipe factory: calls inside functions are wrappers, not recipes, and are not reported.
+export function defineTeamRecipe(definition: Parameters<typeof defineLayoutRecipe>[0]) {
+  return defineLayoutRecipe({ layer: 'team', ...definition });
+}
+
 export const MessageModel = defineModel('acme.message', {
   version: 1,
   schema: m.union('kind', {

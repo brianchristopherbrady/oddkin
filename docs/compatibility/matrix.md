@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 50 stylesheets, 232 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 51 stylesheets, 232 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -122,6 +122,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/tokens/dist/css/default.css` | yes | 15 |
 | `packages/components/dist/css/reset.css` | yes | 16 |
 | `packages/components/dist/css/base.css` | yes | 12 |
+| `packages/components/dist/css/layout.css` | yes | 22 |
 | `packages/components/dist/css/utilities.css` | yes | 18 |
 | `packages/components/dist/button/button.structural.styles.js (buttonStructuralStyles)` | yes | 48 |
 | `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 27 |

@@ -461,7 +461,7 @@ css`.toolbar { gap: ${token('layout.gap')}; }
      ${unsafeCSS(conditions['navigation.expanded'].atRule)} { .toolbar { flex-wrap: nowrap; } }`;
 ```
 
-Recipes are the recommended way to use conditions in components; the raw outputs exist for ordinary CSS and tooling. (The TS example needs `unsafeCSS` because a query string is not a permitted value interpolation; a `condition()` helper in `@oddkin/components/layout` will wrap this safely.)
+Recipes are the recommended way to use conditions in components; the raw outputs exist for ordinary CSS and tooling. (The TS example needs `unsafeCSS` because a query string is not a permitted value interpolation; `condition()` from `@oddkin/components/layout` wraps this: ``css`${condition('navigation.expanded')} { … }` ``.)
 
 ### 11.6 Validation, provenance, Theme Studio
 

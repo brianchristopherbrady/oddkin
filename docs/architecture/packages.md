@@ -111,8 +111,8 @@ Subpaths are created only when implemented; an empty export is not a delivered f
 | `./define/button`, … | Registers one element and its dependencies. **Implemented:** `./define/button` | registers |
 | `./styles` | Shared style primitives for shadow roots: `hostStyles`, `focusRingStyles`, `visuallyHiddenStyles` (theming-and-styling.md §7). **Implemented** | none |
 | `./css/reset.css`, `./css/base.css`, `./css/utilities.css` | Opt-in document stylesheets in `odd.reset`, `odd.base`, `odd.utilities` (css-architecture.md §5.1). **Implemented** | CSS, no script |
-| `./layout` | Oddkin-bound layout helpers (roles, named conditions), `condition()`, preset recipes (e.g. side navigation) | none |
-| `./layout/layout.css` | Page-author layout classes (`odd-stack`, `odd-split`, …) generated from the same helpers | CSS, no script |
+| `./layout` | Oddkin-bound layout helpers (roles, named conditions), `defineLayoutRecipe` (`odd.layout` prefix), `condition()` (layout-recipes.md §12). **Implemented**; preset recipes (side navigation) planned | none |
+| `./css/layout.css` | Page-author layout classes (`odd-stack`, `odd-row`, `odd-cluster`, `odd-grid`, `odd-auto-grid`, `odd-split`) generated from the same helpers, in `odd.layout`. **Implemented** | CSS, no script |
 | `./metadata` | Rich docs metadata (separately loadable) | none |
 | `./custom-elements.json` | Custom Elements Manifest | data |
 | `./oddkin.metadata.json` | Versioned Oddkin schema: recipes, token usage, accessibility/lifecycle contracts, examples | data |

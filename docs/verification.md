@@ -434,3 +434,17 @@ Environment as the previous entry. Contract: [core-contracts.md §4.2](./archite
 | Full pipeline | `npm run verify` | Pass in one run — boundaries (291 files, 969 imports), CSS compatibility, format, typecheck, 1,076 tests in 106 files, size budgets (`ai-chat` 49,121 B of 50,176 B), 79 e2e passed and 2 skipped, packed consumers |
 
 **Findings:** (1) The AI number and date helpers constructed a new `Intl` formatter on every call (each render of a usage meter or timestamp); the cache removes that work. (2) `dirOf` reads computed style, which costs a style recalculation; call it on demand (key handling), not in render.
+
+## 2026-10-18 — Oddkin-bound layout and layout.css (M4 foundation completion)
+
+Environment as the previous entry. Contract: [layout-recipes.md §12](./architecture/layout-recipes.md#12-oddkin-bound-layout-oddkincomponentslayout-implemented-m4).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Helpers, recipes, stylesheet | `npx vitest run packages/components/test/layout.test.ts packages/core/test/layout.test.ts` | Pass — helper defaults are the layout roles; `condition()` returns the media and container at-rules; recipes resolve `navigation.expanded` and layer under `odd.layout.*`; caller conditions and layer prefixes win; unknown names report `recipe.condition.unknown`; `layout.css` starts with the canonical order and its declarations are the helpers' with one override property per option; core rejects `Odd.layout` and `odd..layout` and nests a dotted prefix |
+| Browsers | `npx vitest run packages/components/test/layout.browser.test.ts` | Pass in Chromium, Firefox, WebKit — `.odd-split` side by side at 500 px and wrapped at 250 px or with a wider `--odd-split-side-width`; `.odd-auto-grid` 4, 2, and 1 columns at 500, 220, and 80 px; gaps from the role, from `--odd-stack-gap`, and an unlayered page rule winning; a shadow-root recipe switches from 1 to 3 columns when its `shell` container reaches 48rem, with no script |
+| Metadata | `npm run build` | The analyzer now recognizes `defineLayoutRecipe` from `@oddkin/components/layout` and ignores calls inside functions (wrappers and factories); the fixture's factory adds no diagnostic |
+| CSS | `npm run lint:css`, `npm run compat`, `npm run size` | 51 stylesheets (layout.css added to the lint list), 232 keys; `components:layout` 411 B of 512 B |
+| Full pipeline | `npm run verify`, then `npm run test:e2e` | Lint, typecheck, 1,095 tests in 110 files, size pass; one e2e `locator.check` timed out under four workers and passed on the rerun (79 passed, 2 skipped); packed consumers OK |
+
+**Findings:** (1) The build's metadata step failed on the new wrapper until the analyzer distinguished recipe definitions (module scope) from factories that forward a definition. (2) `layout.css` was not in the CSS compatibility lint until the stylesheet list was extended; the lint's file list is explicit, so new document stylesheets must be added there. (3) The intermittent `locator.check` timeout is recorded rather than retried away; the test that hit it was not identified from the run output.

@@ -120,7 +120,7 @@ Every Oddkin document-level stylesheet that uses layers begins with the canonica
 | `odd.reset` | Optional focused reset: border-box sizing, no body margin, media within their container, form controls inheriting fonts, long words wrapping; preserves inherited typography, direction, and user preferences | **Implemented** — opt-in `@oddkin/components/css/reset.css` |
 | `odd.tokens` | Generated custom properties, `color-scheme`, scope selectors | **Implemented** — `@oddkin/tokens` CSS |
 | `odd.base` | Optional page defaults from the theme: canvas background and `type.body` text, links, code fonts, the focus ring | **Implemented** — opt-in `@oddkin/components/css/base.css` |
-| `odd.layout` | Page-author layout classes from `@oddkin/components/layout` | Planned (M4 layout slice) |
+| `odd.layout` | Page-author layout classes from `@oddkin/components/layout` | **Implemented** — opt-in `@oddkin/components/css/layout.css` (layout-recipes.md §12) |
 | `odd.components` | Light-DOM component styles adopted into documents | Reserved (no light-DOM components yet) |
 | `odd.utilities` | Optional utilities: `.odd-visually-hidden`, `.odd-focus-ring` (same rules as the shadow-root primitives) | **Implemented** — opt-in `@oddkin/components/css/utilities.css` |
 | *(unlayered)* | **Application overrides** | — |

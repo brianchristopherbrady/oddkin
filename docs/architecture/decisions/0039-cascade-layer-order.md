@@ -18,7 +18,7 @@ Every Oddkin document-level stylesheet that declares layers first states the can
 @layer odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities;
 ```
 
-Generated token CSS is emitted inside `odd.tokens` by default. Application overrides are unlayered (or in layers the application orders after `odd`, e.g. `@layer odd, app;`). Shadow-root styles keep their own encapsulation context; recipe layers inside components are unchanged (ADR 0010). Page-author recipes from `@oddkin/components/layout` will use the `odd.layout` prefix. Emission stays configurable: `generate(config, { css: { layer } })`, `buildTheme(config, { cssLayer })`, `oddkin-tokens build --css-layer <name|none>`.
+Generated token CSS is emitted inside `odd.tokens` by default. Application overrides are unlayered (or in layers the application orders after `odd`, e.g. `@layer odd, app;`). Shadow-root styles keep their own encapsulation context; recipe layers inside components are unchanged (ADR 0010). Page-author recipes from `@oddkin/components/layout` use the `odd.layout` prefix (implemented in M4 with `layout.css`). Emission stays configurable: `generate(config, { css: { layer } })`, `buildTheme(config, { cssLayer })`, `oddkin-tokens build --css-layer <name|none>`.
 
 ## Alternatives considered
 

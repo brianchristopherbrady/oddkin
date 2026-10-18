@@ -481,7 +481,7 @@ export async function cssSources() {
     if (existsSync(path)) sources.push({ file, text: readFileSync(path, 'utf8'), shipped });
   };
   add('packages/tokens/dist/css/default.css', true);
-  for (const sheet of ['reset', 'base', 'utilities'])
+  for (const sheet of ['reset', 'base', 'layout', 'utilities'])
     add(`packages/components/dist/css/${sheet}.css`, true);
   sources.push(...(await componentStyles()));
   for (const fixture of ['side-nav', 'page'])

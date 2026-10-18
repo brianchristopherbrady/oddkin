@@ -144,6 +144,19 @@ describe('layout recipes', () => {
     ).toBe('recipe.value.invalid');
     expect(codeOf(() => grid({ columns: 0 }))).toBe('recipe.value.invalid');
     expect(codeOf(() => defineLayoutRecipe({ regions: {} }))).toBe('recipe.region.missing');
+    expect(codeOf(() => defineLayoutRecipe({ regions, layer: 'Odd.layout' }))).toBe(
+      'recipe.layer.invalid',
+    );
+    expect(codeOf(() => defineLayoutRecipe({ regions, layer: 'odd..layout' }))).toBe(
+      'recipe.layer.invalid',
+    );
+  });
+
+  it('nests recipe layers under a dotted prefix', () => {
+    const recipe = defineLayoutRecipe({ regions: { root: stack() }, layer: 'odd.layout' });
+    expect(recipe.cssText).toContain(
+      '@layer odd.layout.base, odd.layout.variant, odd.layout.condition;',
+    );
   });
 
   it('accepts inline media conditions and named containers declared by ancestors', () => {

@@ -230,8 +230,13 @@ function buildModel(definition: RecipeDefinition, base?: RecipeModel): RecipeMod
   if (scope !== undefined && !IDENT.test(scope))
     fail(owner, 'recipe.scope.invalid', `scope "${scope}" must be a lowercase identifier.`);
   const layer = definition.layer ?? base?.layer ?? 'recipe';
-  if (!/^[a-z][a-z0-9-]*$/.test(layer))
-    fail(owner, 'recipe.layer.invalid', `layer prefix "${layer}" must be a lowercase identifier.`);
+  // Dotted prefixes nest recipe layers under a document layer, e.g. `odd.layout` (ADR 0039).
+  if (!/^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)*$/.test(layer))
+    fail(
+      owner,
+      'recipe.layer.invalid',
+      `layer prefix "${layer}" must be lowercase identifiers separated by dots.`,
+    );
 
   const helpers = new Map<string, string[]>(
     base ? [...base.helpers].map(([k, v]) => [k, [...v]]) : [],

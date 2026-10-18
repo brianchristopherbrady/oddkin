@@ -157,6 +157,8 @@ export interface Extraction {
 }
 
 const ODDKIN_CORE = /(?:[\\/]|^)(?:@oddkin[\\/]core|packages[\\/]core)[\\/]/;
+const ODDKIN_LAYOUT =
+  /(?:[\\/]|^)(?:@oddkin[\\/]components|packages[\\/]components)[\\/](?:src|dist)[\\/]layout[\\/]/;
 const TAG_NAME = /^[a-z][a-z0-9._-]*-[a-z0-9._-]*$/;
 const DOC_TAGS = [
   'a11y',
@@ -215,6 +217,21 @@ export function extract(program: ts.Program, root: string): Extraction {
       symbol.name === name &&
       !!symbol.declarations?.some((d) => ODDKIN_CORE.test(d.getSourceFile().fileName))
     );
+  };
+  // `defineLayoutRecipe` from core or from the Oddkin-bound `@oddkin/components/layout`.
+  const isRecipeDefinition = (node: ts.Node): boolean => {
+    if (fromOddkinCore(node, 'defineLayoutRecipe')) return true;
+    const symbol = resolveSymbol(node);
+    return (
+      symbol?.name === 'defineLayoutRecipe' &&
+      !!symbol.declarations?.some((d) => ODDKIN_LAYOUT.test(d.getSourceFile().fileName))
+    );
+  };
+  // Recipes are defined at module scope; a call inside a function is a wrapper or factory.
+  const insideFunction = (node: ts.Node): boolean => {
+    for (let parent = node.parent; parent; parent = parent.parent)
+      if (ts.isFunctionLike(parent)) return true;
+    return false;
   };
   const isLibrarySource = (file: ts.SourceFile) =>
     !file.isDeclarationFile &&
@@ -1283,7 +1300,7 @@ export function extract(program: ts.Program, root: string): Extraction {
               location: where(node),
             });
         }
-        if (ts.isIdentifier(callee) && fromOddkinCore(callee, 'defineLayoutRecipe')) {
+        if (ts.isIdentifier(callee) && isRecipeDefinition(callee) && !insideFunction(node)) {
           const definition = node.arguments[0];
           if (definition && ts.isObjectLiteralExpression(definition)) {
             const entries = objectEntries(definition, 'defineLayoutRecipe');

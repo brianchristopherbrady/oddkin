@@ -1,6 +1,6 @@
 # Layout recipes and container-responsive composition
 
-Status: the unbranded mechanism (§2–§5, §8 `describeRecipe`) is **implemented** in `@oddkin/core/layout` and `@oddkin/core/layout/inspect` (M3) and verified in three engines; §11 lists behaviors settled in implementation. The Oddkin-bound helpers, `layout.css`, extraction CLI, and side-nav fixture (§7, §9, §10) are M4+ work. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification.
+Status: the unbranded mechanism (§2–§5, §8 `describeRecipe`) is **implemented** in `@oddkin/core/layout` and `@oddkin/core/layout/inspect` (M3) and verified in three engines; §11 lists behaviors settled in implementation. The Oddkin-bound helpers, `defineLayoutRecipe`, `condition()`, and `layout.css` (§3, §7) are **implemented** in `@oddkin/components/layout` (M4, §12). The extraction CLI and side-nav fixture (§9, §10) are M4+ work. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification.
 
 ## 1. Purpose and boundaries
 
@@ -123,7 +123,7 @@ Recipe CSS is emitted into cascade layers inside the element's stylesheet:
 - These guarantees concern normal declarations. `!important` reverses layer precedence and follows different cross-context precedence.
 - Selectors are flattened with `:where()` so every recipe rule has the specificity of one class (0,1,0); variant host selectors use `:host(:where([align="end"]))`.
 - Layer names use a configurable prefix (default `recipe`) so multiple recipes in one root share layers predictably.
-- Page-author recipes from `@oddkin/components/layout` (planned, M4 layout slice) use the prefix `odd.layout`, so their layers (`odd.layout.base`, `odd.layout.variant`, `odd.layout.condition`) nest under the canonical document order `odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities` and stay below unlayered application CSS ([ADR 0039](./decisions/0039-cascade-layer-order.md), [css-architecture.md](./css-architecture.md) §5). Core's neutral default stays `recipe`.
+- Page-author recipes from `@oddkin/components/layout` (implemented, §12) use the prefix `odd.layout`, so their layers (`odd.layout.base`, `odd.layout.variant`, `odd.layout.condition`) nest under the canonical document order `odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities` and stay below unlayered application CSS ([ADR 0039](./decisions/0039-cascade-layer-order.md), [css-architecture.md](./css-architecture.md) §5). Core's neutral default stays `recipe`.
 
 ### Extending without duplication
 ```ts
@@ -184,7 +184,7 @@ Compose existing components and layout primitives with a few meaningful options,
 
 ```html
 <link rel="stylesheet" href="@oddkin/tokens/css/default.css">
-<link rel="stylesheet" href="@oddkin/components/layout/layout.css">
+<link rel="stylesheet" href="@oddkin/components/css/layout.css">
 
 <main class="odd-split" style="--odd-split-side-width: 18rem">
   <nav class="odd-stack">…</nav>
@@ -200,7 +200,7 @@ Compose existing components and layout primitives with a few meaningful options,
 .card-like { padding: var(--odd-layout-inset); gap: var(--odd-layout-gap); }
 ```
 
-- `layout.css` is generated from the same helpers and Oddkin defaults; classes expose override custom properties (`--odd-stack-gap`, `--odd-split-side-width`, …).
+- `layout.css` is generated from the same helpers and Oddkin defaults; classes expose override custom properties (`--odd-stack-gap`, `--odd-split-side-width`, …); §12 lists them.
 - **Custom element or native element + recipe?** Use a custom element when it adds behavior, managed semantics/ARIA, keyboard handling, an attribute/property API that frameworks need, or establishes a container contract (`odd-theme-scope`, `odd-scroll-region`, `odd-container`). Use a native element with a recipe class when the wrapper would only apply layout (`stack`, `row`, `grid`, `autoGrid`, `split`). The final list of layout elements is decided in M10 from this rule.
 - The same token contracts appear in native elements, custom components, and ordinary CSS; docs examples show all three side by side.
 
@@ -241,3 +241,26 @@ Location: `examples/side-nav/` (handwritten CSS version and recipe version side 
 - **Helper conflicts.** A region given an array of helpers that set different `display` or `flex-direction` reports `recipe.helper.conflict`. A variant, condition, or `extend` replacing a region's helper merges per property instead.
 - **Values.** Helper and profile values are trusted module code but are still validated (`recipe.value.invalid` for `;`, braces, angle brackets, backslashes, or comments).
 - **Render-time definitions** report `recipe.render.definition` (not thrown). `checkRecipeRegions(recipe, root)` returns missing regions and parts; automatic post-`mounted` checks are left to M4 dev tooling.
+- **Layer prefixes** may be dotted (`odd.layout`), so recipe layers nest under a document layer; each segment is a lowercase identifier (`recipe.layer.invalid` otherwise).
+
+## 12. Oddkin-bound layout (`@oddkin/components/layout`, implemented, M4)
+
+Verified in `packages/components/test/layout.test.ts` (Node) and `layout.browser.test.ts` (three engines); DOM-free import checked by the boundary tool.
+
+| Export | Contract |
+| --- | --- |
+| `stack`, `row`, `grid`, `autoGrid`, `split`, `declarations` | Core helpers created with `LAYOUT_DEFAULTS`: `gap` = `layout.gap`, `itemMin` = `layout.item-min`, `sideWidth` = `layout.sidebar-width`, `mainMin` = `layout.main-min`, as `var()` references, so themes, density, and profiles reach every recipe |
+| `defineLayoutRecipe(definition)` | Core `defineLayoutRecipe` with the default theme's named conditions available in `when` (caller `conditions` win on name clashes) and the `odd.layout` layer prefix unless `layer` is given |
+| `condition(name)` | The at-rule of a named condition as a `CSSResult`, for component styles: ``css`${condition('page.wide')} { … }` `` |
+| `./css/layout.css` | Page-author classes in `@layer odd.layout`, preceded by the canonical layer order |
+
+| Class | Arrangement | Override properties (default) |
+| --- | --- | --- |
+| `.odd-stack` | Column, `min-inline-size: 0` | `--odd-stack-gap` (`layout.gap`) |
+| `.odd-row` | Row, centred, no wrapping | `--odd-row-gap` |
+| `.odd-cluster` | Row that wraps | `--odd-cluster-gap` |
+| `.odd-grid` | Equal columns, `minmax(0, 1fr)` | `--odd-grid-columns` (`2`), `--odd-grid-gap` |
+| `.odd-auto-grid` | As many columns as fit, `min(item-min, 100%)` | `--odd-auto-grid-min` (`layout.item-min`), `--odd-auto-grid-gap` |
+| `.odd-split` | Two children in DOM order: the first is the side, the last takes the rest and wraps below its minimum | `--odd-split-side-width` (`layout.sidebar-width`), `--odd-split-main-min` (`layout.main-min`), `--odd-split-gap` |
+
+All classes have one-class specificity inside `odd.layout`, so any unlayered page rule overrides them. Budget: `components:layout` 512 B gzip.

@@ -53,8 +53,13 @@
       "types": "./dist/styles/index.d.ts",
       "default": "./dist/styles/index.js"
     },
+    "./layout": {
+      "types": "./dist/layout/index.d.ts",
+      "default": "./dist/layout/index.js"
+    },
     "./css/reset.css": "./dist/css/reset.css",
     "./css/base.css": "./dist/css/base.css",
+    "./css/layout.css": "./dist/css/layout.css",
     "./css/utilities.css": "./dist/css/utilities.css",
     "./custom-elements.json": "./custom-elements.json",
     "./oddkin.metadata.json": "./oddkin.metadata.json",
