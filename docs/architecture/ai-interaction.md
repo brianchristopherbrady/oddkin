@@ -258,7 +258,7 @@ Conversation: `role="feed"` of `article` messages with `aria-posinset`/`aria-set
 
 ### 9.3 Localization
 
-Every visible and announced string is in a `*_STRINGS` table and overridable per element through the `strings` property (`{placeholder}` formatting); numbers, times, and currencies use `Intl` with the element's `lang`. Layout uses logical properties, so right-to-left pages mirror; the inline-assist toolbar swaps arrow-key direction in RTL; content inherits the page's direction.
+Every visible and announced string is in a `*_STRINGS` table and overridable per element through the `strings` property (`{placeholder}` formatting); numbers, times, and currencies use `Intl` with the element's `lang`. The helpers are `@oddkin/core/i18n` (core-contracts.md §4.2), so formatters are cached per locale and options rather than constructed on every render. Layout uses logical properties, so right-to-left pages mirror; the inline-assist toolbar swaps arrow-key direction in RTL; content inherits the page's direction.
 
 ### 9.4 Visual
 

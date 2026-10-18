@@ -56,7 +56,12 @@ describe('@oddkin/ai import graphs', { timeout: 30_000 }, () => {
     ).toEqual([]);
     expect(
       packages.every((p) =>
-        ['@oddkin/core/model', '@oddkin/core/reactive', '@oddkin/core/element'].includes(p),
+        [
+          '@oddkin/core/model',
+          '@oddkin/core/reactive',
+          '@oddkin/core/element',
+          '@oddkin/core/i18n',
+        ].includes(p),
       ),
       packages.join(),
     ).toBe(true);

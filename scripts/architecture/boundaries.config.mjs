@@ -35,6 +35,7 @@ export default {
         './controllers/announce',
         './controllers/observe',
         './controllers/form',
+        './i18n',
       ],
     },
     '@oddkin/tokens': {

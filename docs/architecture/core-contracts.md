@@ -193,6 +193,19 @@ Controllers implement `connect(scope)` and are activated with `scope.use(control
 
 Used by: `odd-input` (`FormValue`); `@oddkin/ai` — `odd-conversation` and `createAnnouncer` (`LiveAnnouncer`, `ResizeController`), `odd-inline-assist` (`RovingFocus`), approval, change review, checkpoint, question, and feedback elements (`FocusRecovery`).
 
+### 4.2 Localization helpers (`@oddkin/core/i18n`, implemented, M4)
+
+DOM-free at import, unbranded, and stateless apart from a bounded formatter cache. Verified in `packages/core/test/i18n.test.ts` (Node) and `i18n.browser.test.ts` (three engines).
+
+| Export | Contract |
+| --- | --- |
+| `strings(defaults, overrides)` | String table with typed overrides (`StringOverrides<T>`: any subset of the table's keys). Unknown keys and non-strings are ignored; without overrides the defaults object itself is returned. Components expose the overrides as a `strings` property and keep every visible and announced string in a `*_STRINGS` table |
+| `format(template, values)` | `{name}` placeholders as plain text (never parsed as HTML); unknown placeholders stay as written |
+| `plural(count, forms, locale, values?)` | Chooses the `Intl.PluralRules` category (`zero`, `one`, `two`, `few`, `many`, `other`), falling back to `other`, and formats `{count}` as a localized number |
+| `langOf(node)`, `dirOf(element)` | Nearest `lang` attribute across shadow roots (`undefined` = user agent default); resolved direction from computed style, so it inherits through shadow roots and honours `dir="auto"` |
+| `numberFormat`, `dateTimeFormat`, `relativeTimeFormat`, `listFormat` | One cached `Intl` formatter per kind, locale, and options (64 kept); an invalid locale falls back to the default instead of throwing |
+| `formatNumber`, `formatDate` | Safe wrappers: invalid options fall back to `String(value)`; missing or invalid dates return `undefined` |
+
 ## 5. Reactivity (`@oddkin/core/reactive`, DOM-free)
 
 ```ts

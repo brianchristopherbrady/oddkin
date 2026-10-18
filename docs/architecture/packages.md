@@ -73,6 +73,7 @@ apps/docs         → core, state, app, tokens, components, workbench (browser p
 | `./inspect` (proposed) | Development-only explanation records (commit causes, dependencies, scope ownership); resolved only under the `development` condition, opt-in and bounded ([change-impact-and-verification.md](./change-impact-and-verification.md) §4.2) | yes | none until enabled |
 | `./controllers/focus`, `./controllers/announce`, `./controllers/observe`, `./controllers/form` | `RovingFocus`, `FocusRecovery`; `LiveAnnouncer`, `createLiveRegions`; `ResizeController`, `IntersectionController`; `FormValue` — `Scope`-owned, unbranded (core-contracts.md §4.1). **Implemented** | yes (after `connect`) | none |
 | `./helpers/*` | Optional template helpers (refs, `classMap`, `styleMap`, live input) | yes | none |
+| `./i18n` | `strings`, `format`, `plural`, `langOf`, `dirOf`, cached `Intl` formatters, `formatNumber`, `formatDate` (core-contracts.md §4.2). **Implemented** | **no** at import | none |
 | `./diagnostics` | Dev warnings configuration | no | none |
 
 Subpaths are created only when implemented; an empty export is not a delivered feature.

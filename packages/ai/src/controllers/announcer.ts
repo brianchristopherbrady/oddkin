@@ -4,6 +4,7 @@
  * never streamed text. Pure and DOM-free; `createAnnouncer` delivers the result through one
  * live region per surface. Contract: docs/architecture/ai-interaction.md §10.2.
  */
+import { format } from '@oddkin/core/i18n';
 import type { AnnounceDetail } from '../events.js';
 import type { ConversationState } from '../contracts/types.js';
 
@@ -53,14 +54,7 @@ export const DEFAULT_ANNOUNCEMENTS: AnnouncementStrings = {
 };
 
 /** Replace `{name}` placeholders. Values are plain text. */
-export function format(
-  template: string,
-  values: Readonly<Record<string, string | number>>,
-): string {
-  return template.replace(/\{(\w+)\}/g, (match, key: string) =>
-    key in values ? String(values[key]) : match,
-  );
-}
+export { format };
 
 type Entry = AnnounceDetail & { readonly level: 'important' | 'all' };
 

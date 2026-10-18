@@ -422,3 +422,15 @@ Environment as the previous entry. Contract: [core-contracts.md §4.1](./archite
 | Full pipeline | `npm run verify`, then `npm run test:e2e` and `npm run verify:packs` after the import-map fix | Lint, typecheck, unit and browser tests, size pass; e2e first failed in 19 tests because the CSS gallery and the floor probe load `odd-input` through import maps that lacked `@oddkin/core/controllers/form`; after adding it (gallery CSP hash recomputed) 79 passed, 2 skipped; packed consumers OK |
 
 **Findings:** (1) Pages that load components through import maps must list every core subpath the components import; the failure is a page that never becomes ready, with no console error in the test output. (2) The previous AI focus helper set `tabindex=-1` on any fallback without one, which would have removed a natively focusable fallback (a button) from the Tab order; the controller only does so for elements that are not focusable. (3) Live-region creation is a separate function so elements that render their regions do not ship it.
+
+## 2026-10-18 — Core localization helpers (M4 foundation completion)
+
+Environment as the previous entry. Contract: [core-contracts.md §4.2](./architecture/core-contracts.md#42-localization-helpers-oddkincorei18n-implemented-m4).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Helpers | `npx vitest run packages/core/test/i18n` | Pass — Node: typed overrides (defaults object returned unchanged without overrides; unknown keys and non-strings ignored), plain-text placeholders, plural categories in English, German, and Arabic with localized counts and `other` fallback, formatter caching per kind/locale/options, invalid locale falls back to the default, invalid options fall back to `String(value)`, dates from `Date`, ISO text, and timestamps with `undefined` for missing or invalid input; browsers (three engines): nearest `lang` and resolved `dir` across a shadow root, including a nested override |
+| AI migration | `npx vitest run packages/ai packages/core` | Pass — the AI string helpers re-export `@oddkin/core/i18n`; the controllers import-graph test now also allows that DOM-free entry |
+| Full pipeline | `npm run verify` | Pass in one run — boundaries (291 files, 969 imports), CSS compatibility, format, typecheck, 1,076 tests in 106 files, size budgets (`ai-chat` 49,121 B of 50,176 B), 79 e2e passed and 2 skipped, packed consumers |
+
+**Findings:** (1) The AI number and date helpers constructed a new `Intl` formatter on every call (each render of a usage meter or timestamp); the cache removes that work. (2) `dirOf` reads computed style, which costs a style recalculation; call it on demand (key handling), not in render.
