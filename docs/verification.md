@@ -538,3 +538,15 @@ Environment as the previous entry. Another agent was editing `odd-button` in the
 | Full pipeline | `npm run verify` steps one by one (`npm test -- --reporter=verbose`) | Pass — boundaries (308 files, 1,031 imports), CSS compatibility (57 stylesheets, 237 keys), format, typecheck, 1,288 tests in 129 files (1 skipped), size, 109 e2e passed and 2 skipped, packed consumers including the new `./side-nav/recipe` subpath |
 
 **Findings:** (1) `@oddkin/components/side-nav` exported `sideNavRecipe`, so importing the component entry loaded the recipe engine (about 3.4 KB gzip) even though the element itself uses extracted CSS. The recipe now lives in the opt-in `@oddkin/components/side-nav/recipe`; the registration entry was never affected, so the measured size is unchanged.
+
+## 2026-10-18 — Example references in published metadata (M4 metadata)
+
+Environment as the previous entry. Another agent had uncommitted changes to `odd-button`, `odd-input`, their tests, and a new stylesheet during the full run. Contract: [metadata-and-analyzer.md §2](./architecture/metadata-and-analyzer.md#2-supported-authoring-patterns).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Analyzer | `npx vitest run --project node packages/analyzer` | Pass (19 tests) — the composed fixture's `panel.examples.ts`, excluded from its program, yields `example:acme-panel/default` (preview role `role:surface`) and `example:acme-panel/dismissible` (`hasFixture`); in the dynamic fixture a computed tag and a computed role list are `analyzer.examples.dynamic` and an example for an unregistered tag is `analyzer.examples.unknownComponent`, each with its line |
+| Published metadata | `npm run build`, `npx vitest run --project node packages/components/test/examples.test.ts packages/components/test/metadata.test.ts packages/workbench` | Pass (31 tests) — the strict metadata build reports nothing; `oddkin.metadata.json` lists the 30 examples exactly as the runtime example sets define them, and validates against `oddkin-metadata.v1` |
+| Full pipeline | `npm run verify` steps one by one | Size, e2e (109 passed, 2 skipped), and packed consumers pass. Lint failed on the compatibility matrix and typecheck on `styling.browser.test.ts`, both from the other agent's uncommitted files; tests: 1,133 passed and 2 failed in Firefox (`button.browser.test.ts`, under the other agent's changes, and `examples.browser.test.ts`, which passed 81/81 with `contract.browser.test.ts` when rerun alone) |
+
+**Findings:** (1) Example files are outside the package program, so the analyzer finds them on disk under `rootDir` instead of through TypeScript's file list. (2) Static and runtime views agree for all 30 examples, so the published references can be trusted without running fixtures.

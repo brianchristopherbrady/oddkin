@@ -16,6 +16,9 @@ import {
   type ModulePaths,
 } from './emit.js';
 import { extract, type AnalyzerDiagnostic, type Extraction } from './extract.js';
+import { extractExamples, findExampleFiles, type ExampleInfo } from './examples.js';
+
+export type { ExampleInfo } from './examples.js';
 
 export type {
   AnalyzerDiagnostic,
@@ -39,6 +42,11 @@ export interface AnalyzeOptions {
   readonly library?: Partial<LibraryInfo> & { readonly name: string; readonly version: string };
   /** Reuse a previous program for incremental analysis. */
   readonly oldProgram?: ts.Program;
+  /**
+   * Example files (`*.examples.ts`). Defaults to those under the program's `rootDir`; they are
+   * development-only sources, so they need not be in the program.
+   */
+  readonly examples?: readonly string[];
 }
 
 export interface AnalyzeResult {
@@ -46,6 +54,7 @@ export interface AnalyzeResult {
   readonly metadata: Record<string, unknown>;
   readonly diagnostics: readonly AnalyzerDiagnostic[];
   readonly extraction: Extraction;
+  readonly examples: readonly ExampleInfo[];
   readonly program: ts.Program;
 }
 
@@ -135,6 +144,20 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
     options.oldProgram,
   );
   const extraction = extract(program, root);
+  const exampleFiles =
+    options.examples?.map((file) => resolve(root, file)) ??
+    findExampleFiles(program.getCompilerOptions().rootDir ?? projectDir);
+  const found = extractExamples(exampleFiles, root);
+  const registered = new Set(extraction.registrations.map((r) => r.tag));
+  const exampleDiagnostics: AnalyzerDiagnostic[] = [...found.diagnostics];
+  for (const example of found.examples)
+    if (!registered.has(example.component))
+      exampleDiagnostics.push({
+        code: 'analyzer.examples.unknownComponent',
+        severity: 'warning',
+        message: `Example "${example.name}" is for <${example.component}>, which this library does not register.`,
+        source: example.location,
+      });
   const paths = modulePaths(program, root, packageJson);
   const name = options.library?.name ?? (packageJson?.['name'] as string | undefined) ?? 'library';
   const version =
@@ -147,12 +170,41 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
       { name, version, customElements: './custom-elements.json' },
     ],
   };
-  const diagnostics = sortDiagnostics([...configDiagnostics, ...extraction.diagnostics]);
+  const diagnostics = sortDiagnostics([
+    ...configDiagnostics,
+    ...extraction.diagnostics,
+    ...exampleDiagnostics,
+  ]);
+  const examples = Object.fromEntries(
+    [...found.examples]
+      .sort((a, b) => (`${a.component}/${a.name}` < `${b.component}/${b.name}` ? -1 : 1))
+      .map((e) => [
+        `example:${e.component}/${e.name}`,
+        {
+          component: `component:${e.component}`,
+          name: e.name,
+          file: e.file,
+          ...(e.hasFixture ? { hasFixture: true } : {}),
+          ...(e.previewRoles ? { previewRoles: e.previewRoles.map((role) => `role:${role}`) } : {}),
+        },
+      ]),
+  );
+  const { diagnostics: metadataDiagnostics, ...metadata } = buildMetadata(
+    { ...extraction, diagnostics },
+    paths,
+    library,
+    ANALYZER_VERSION,
+  );
   return {
     manifest: buildManifest(extraction, paths),
-    metadata: buildMetadata({ ...extraction, diagnostics }, paths, library, ANALYZER_VERSION),
+    metadata: {
+      ...metadata,
+      ...(found.examples.length ? { examples } : {}),
+      diagnostics: metadataDiagnostics,
+    },
     diagnostics,
     extraction,
+    examples: found.examples,
     program,
   };
 }

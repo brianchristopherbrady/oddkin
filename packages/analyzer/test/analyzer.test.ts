@@ -272,6 +272,43 @@ describe('compose() definitions in a folder-structured library', () => {
   const anyModule = (value: unknown) =>
     JSON.parse(JSON.stringify(value).replaceAll(/"module":"[^"]*"/g, '"module":"*"')) as unknown;
 
+  it('records colocated examples by parsing them, though the program excludes them', () => {
+    expect((composed.metadata as { examples?: unknown }).examples).toEqual({
+      'example:acme-panel/default': {
+        component: 'component:acme-panel',
+        name: 'default',
+        file: 'src/panel/panel.examples.ts',
+        previewRoles: ['role:surface'],
+      },
+      'example:acme-panel/dismissible': {
+        component: 'component:acme-panel',
+        name: 'dismissible',
+        file: 'src/panel/panel.examples.ts',
+        hasFixture: true,
+      },
+    });
+    expect(composed.program.getSourceFiles().some((f) => f.fileName.endsWith('.examples.ts'))).toBe(
+      false,
+    );
+  });
+
+  it('reports examples it cannot read statically and examples of unknown elements', () => {
+    const dynamic = analyze({ project: path('tests/fixtures/analyzer-dynamic/tsconfig.json') });
+    expect(
+      dynamic.diagnostics
+        .filter((d) => d.source?.file === 'src/dynamic.examples.ts')
+        .map((d) => [d.code, d.severity, d.source?.line]),
+    ).toEqual([
+      ['analyzer.examples.dynamic', 'warning', 7],
+      ['analyzer.examples.dynamic', 'warning', 8],
+      ['analyzer.examples.unknownComponent', 'warning', 9],
+    ]);
+    expect(Object.keys((dynamic.metadata as { examples: object }).examples)).toEqual([
+      'example:acme-missing/default',
+      'example:dynamic-element/roles',
+    ]);
+  });
+
   it('emits valid, diagnostic-free outputs without executing modules', () => {
     expect(validateCem(composed.manifest), JSON.stringify(validateCem.errors)).toBe(true);
     expect(validateOddkin(composed.metadata), JSON.stringify(validateOddkin.errors)).toBe(true);

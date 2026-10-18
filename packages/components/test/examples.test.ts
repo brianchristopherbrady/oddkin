@@ -70,4 +70,27 @@ describe('component examples', () => {
       expect(set.examples['inForm']?.fixture, set.component).toBeTypeOf('function');
     }
   });
+
+  it('are listed in the published metadata exactly as the analyzer read them statically', async () => {
+    const metadata = await read<{ examples?: Record<string, Record<string, unknown>> }>(
+      '../oddkin.metadata.json',
+    );
+    const expected = Object.fromEntries(
+      sets.flatMap((set) =>
+        Object.entries(set.examples).map(([name, example]) => [
+          `example:${set.component}/${name}`,
+          {
+            component: `component:${set.component}`,
+            name,
+            file: `src/${set.component.replace(/^odd-/, '')}/${set.component.replace(/^odd-/, '')}.examples.ts`,
+            ...(example.fixture ? { hasFixture: true } : {}),
+            ...(example.previewRoles
+              ? { previewRoles: example.previewRoles.map((role) => `role:${role}`) }
+              : {}),
+          },
+        ]),
+      ),
+    );
+    expect(metadata.examples).toEqual(expected);
+  });
 });
