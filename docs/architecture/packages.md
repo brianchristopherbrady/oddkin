@@ -121,18 +121,23 @@ Component styles ship as pre-built JS modules; consumers need no CSS loader or S
 
 `custom-elements.json` and `oddkin.metadata.json` are produced by `@oddkin/analyzer` at build time; `package.json` declares `"customElements": "./custom-elements.json"`.
 
-**Source organization (planned, M4; see [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).** Each component lives in its own folder, assembled through the public composition API (`compose()`, `define(definition)` — [core-contracts.md](./core-contracts.md) §1.1). Entry points map onto the folders:
+**Source organization (implemented, M4; see [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) §3.3).** Each component lives in its own folder, assembled through the public composition API (`compose()`, `define(definition)` — [core-contracts.md](./core-contracts.md) §1.1). Entry points map onto the folders:
 
 | Source file | Purpose | Reached through |
 | --- | --- | --- |
 | `src/card/card.ts` | Element class: properties, state, methods, lifecycle | `./card` (via `index.ts`) |
-| `src/card/card.template.ts` | External template; type-only import of the host class | internal unless intentionally public |
-| `src/card/card.styles.ts` | Component styles | internal unless intentionally public |
+| `src/card/card.template.ts` | External template; type-only import of the host class | `./card`, `./card/foundation` |
+| `src/card/card.structural.styles.ts` | Styles the behavior depends on; no visual tokens | `./card`, `./card/foundation` |
+| `src/card/card.styles.ts` | Default visual styles | `./card` |
 | `src/card/card.definition.ts` | `compose()` of class, template, styles, and dependencies | `./card` (via `index.ts`) |
-| `src/card/card.define.ts` | `define(cardDefinition)` — the only side-effectful file | `./define/card`, `./define` |
-| `src/card/index.ts` | Side-effect-free public exports (`Card`, `cardDefinition`, public types) | `./card` |
+| `src/card/card.define.ts` | `define(cardDefinition)` — the only side-effectful file | `./define/card` |
+| `src/card/foundation.ts` | Behavior, template, and structural styles without the default skin | `./card/foundation` |
+| `src/card/index.ts` | Side-effect-free public exports (`OddkinCard`, `cardDefinition`, styles, public types) | `./card` |
+| `src/card/card.examples.ts` | `defineExamples` — development-only, excluded from the build (ADR 0021) | tests, analyzer metadata |
+| `src/side-nav/side-nav.recipe.ts` | Layout recipe (source of the arrangement) | `./side-nav/recipe` (opt-in) |
+| `src/side-nav/side-nav.recipe.styles.ts` | Recipe CSS extracted at build time; checked byte for byte against the recipe | used by the definition |
 
-Recomposable components (multi-product.md §4, ADR 0033, planned) also have `card.structural.styles.ts` and a `foundation.ts` barrel reached through `./card/foundation`. That entry loads the behavior, template, and structural styles but no default visual styles. Installation dependencies and import graphs are documented separately: installing `@oddkin/components` does not mean a foundation consumer loads its default skins, theme generation, catalog, or tooling.
+The foundation entry loads the behavior, template, and structural styles but no default visual styles (multi-product.md §4, ADR 0033). Installation dependencies and import graphs are documented separately: installing `@oddkin/components` does not mean a foundation consumer loads its default skins, theme generation, catalog, or tooling (`packages/components/test/consumers.test.ts`).
 
 Files inside a folder import siblings directly, never through their own `index.ts`. No ordinary barrel reaches a registration entry. `npm run lint:boundaries` enforces it: from every `index.*` in package and example sources, it follows relative imports and fails with `boundary.registration.barrel` on a `*.define.*` module, a registering `define.*`/`define/` module, or a package `define` subpath. A package containing registration entries must list them in `"sideEffects"` (`boundary.registration.sideEffects`).
 

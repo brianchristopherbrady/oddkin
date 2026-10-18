@@ -30,6 +30,10 @@ Repository components use one folder per component ([IMPLEMENTATION_PLAN.md](./I
 
 Recomposable components also have `name.structural.styles.ts` and a skin-free `foundation.ts` entry ([multi-product.md](./docs/architecture/multi-product.md) §4). Exporting a template or styles is a compatibility commitment; never export private helpers as customization API.
 
+- `name.examples.ts` holds the component's `defineExamples` set. It is development-only: the package `tsconfig.json` excludes it, only tests and the analyzer read it, and `lint:boundaries` rejects shipped code that imports it (`boundary.import.devSource`). Fixtures must not register elements.
+- A component with a layout recipe keeps it in `name.recipe.ts` and uses the generated `name.recipe.styles.ts`; after changing the recipe, regenerate with `UPDATE_FIXTURES=1 npx vitest run packages/components/test/recipes.test.ts`. Export the recipe from its own opt-in subpath, never from the component entry, so component consumers do not load the recipe engine (`packages/components/test/consumers.test.ts`).
+- A new component also gets: a size budget in `research/benchmarks/size/measure.mjs`, an import-graph check, a contract check against the published CEM (`contract.browser.test.ts` covers every element automatically), and examples covering every declared preview role.
+
 The composition API (`compose()`, `define(definition)`; ADR 0036) is implemented and `examples/core-counter` follows this layout. New repository components use it. Intentionally colocated demonstrations (e.g. `examples/binding-rule`) and focused inline test fixtures stay colocated so both authoring paths remain exercised.
 
 ## Agent kit and guidance (planned)
