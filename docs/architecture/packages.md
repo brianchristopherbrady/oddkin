@@ -102,7 +102,7 @@ Subpaths are created only when implemented; an empty export is not a delivered f
 ### `@oddkin/components`
 | Export | Contents | Side effects |
 | --- | --- | --- |
-| `./button`, `./input`, `./side-nav`, … | Element classes, templates, styles, definitions, and model types (e.g. `NavigationItem`, `navigationKinds`), no registration. **Implemented:** `./button`, `./card`, `./input`, `./side-nav` (with `NavigationItem` and `sideNavRecipe`; `navigationKinds` planned) | none |
+| `./button`, `./input`, `./side-nav`, … | Element classes, templates, styles, definitions, and model types (e.g. `NavigationItem`, `navigationKinds`), no registration. **Implemented:** `./button`, `./card`, `./input`, `./side-nav` (with `NavigationItem`; the recipe is the opt-in `./side-nav/recipe`; `navigationKinds` planned) | none |
 | `./button/foundation`, … | Skin-free foundation: behavior class, template, structural styles (multi-product.md §4). **Implemented:** `./button/foundation`, `./card/foundation`, `./input/foundation`, `./side-nav/foundation` | none |
 | `./models` | Runtime validators and migrations for component models. **Implemented:** `NavigationItemModel` | none |
 | `./schemas/*.json` | Generated JSON Schemas for portable model subsets. **Implemented:** `oddkin.navigation.v1.json` (`scripts/build-component-schemas.mjs`) | data |
@@ -111,7 +111,7 @@ Subpaths are created only when implemented; an empty export is not a delivered f
 | `./define/button`, … | Registers one element and its dependencies. **Implemented:** `./define/button`, `./define/card`, `./define/input`, `./define/side-nav` | registers |
 | `./styles` | Shared style primitives for shadow roots: `hostStyles`, `focusRingStyles`, `visuallyHiddenStyles` (theming-and-styling.md §7). **Implemented** | none |
 | `./css/reset.css`, `./css/base.css`, `./css/utilities.css` | Opt-in document stylesheets in `odd.reset`, `odd.base`, `odd.utilities` (css-architecture.md §5.1). **Implemented** | CSS, no script |
-| `./layout` | Oddkin-bound layout helpers (roles, named conditions), `defineLayoutRecipe` (`odd.layout` prefix), `condition()` (layout-recipes.md §12). **Implemented**; the side navigation's `sideNavRecipe` is exported from `./side-nav`, other preset recipes planned | none |
+| `./layout` | Oddkin-bound layout helpers (roles, named conditions), `defineLayoutRecipe` (`odd.layout` prefix), `condition()` (layout-recipes.md §12). **Implemented**; the side navigation's `sideNavRecipe` is exported from `./side-nav/recipe` (kept out of `./side-nav`, so component consumers never load the recipe engine), other preset recipes planned | none |
 | `./css/layout.css` | Page-author layout classes (`odd-stack`, `odd-row`, `odd-cluster`, `odd-grid`, `odd-auto-grid`, `odd-split`) generated from the same helpers, in `odd.layout`. **Implemented** | CSS, no script |
 | `./metadata` | Rich docs metadata (separately loadable) | none |
 | `./custom-elements.json` | Custom Elements Manifest | data |

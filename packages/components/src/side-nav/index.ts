@@ -7,7 +7,6 @@ export {
   type NavigationToggleDetail,
 } from './side-nav.js';
 export { sideNavTemplate } from './side-nav.template.js';
-export { sideNavRecipe } from './side-nav.recipe.js';
 export { sideNavRecipeStyles } from './side-nav.recipe.styles.js';
 export { sideNavStructuralStyles } from './side-nav.structural.styles.js';
 export { sideNavStyles } from './side-nav.styles.js';

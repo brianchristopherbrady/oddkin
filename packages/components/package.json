@@ -57,6 +57,10 @@
       "types": "./dist/side-nav/foundation.d.ts",
       "default": "./dist/side-nav/foundation.js"
     },
+    "./side-nav/recipe": {
+      "types": "./dist/side-nav/side-nav.recipe.d.ts",
+      "default": "./dist/side-nav/side-nav.recipe.js"
+    },
     "./define/side-nav": {
       "types": "./dist/side-nav/side-nav.define.d.ts",
       "default": "./dist/side-nav/side-nav.define.js"

@@ -526,3 +526,15 @@ Environment as the previous entry. Another agent was editing other files in the 
 | Mutation probe | Temporary script drifting the generated `custom-elements.json` (`size` default `'lg'`, `appearance` without `reflects`, an extra `icon` part), then `node scripts/build-metadata.mjs` | The drifted manifest fails the default, removal, reflection, and part checks in all three engines; the regenerated manifest passes 60/60 |
 
 **Findings:** (1) A CEM field without a literal default makes no claim: `odd-input`'s `value` is an accessor over `defaultValue` and reads `''`, so the test checks literal defaults only. (2) The enrichment manifest has no event facts (bubbles, composed, cancelable); the test can compare event names only. (3) The results are not yet attached as *verified* provenance; doing so needs a record tied to the inputs tested.
+
+## 2026-10-18 — Minimal component consumers (M4 metadata validation)
+
+Environment as the previous entry. Another agent was editing `odd-button` in the same working tree during the full run. Contract: [packages.md](./architecture/packages.md) (`@oddkin/components` entries).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reachable modules | `npx vitest run --project node packages/components/test/consumers.test.ts` | Pass (16 tests) — every JavaScript export of `@oddkin/components` except the opt-in `./models`, `./layout`, and `./side-nav/recipe` is walked across packages through their `exports`; none reaches model validators, `@oddkin/core/model`, `@oddkin/core/model/schema`, a composition renderer, `@oddkin/core/layout/inspect`, `@oddkin/core/layout`, layout presets, the token generator, Workbench, the analyzer, or agent tooling; the opt-in entries do reach the model builder and the recipe engine |
+| Related checks | `npx vitest run --project node packages/components/test/{consumers,metadata,recipes,graph}.test.ts`, `npm run size` | Pass (28 tests); `side-nav` 14,517 B and `components:side-nav` 1,234 B, unchanged |
+| Full pipeline | `npm run verify` steps one by one (`npm test -- --reporter=verbose`) | Pass — boundaries (308 files, 1,031 imports), CSS compatibility (57 stylesheets, 237 keys), format, typecheck, 1,288 tests in 129 files (1 skipped), size, 109 e2e passed and 2 skipped, packed consumers including the new `./side-nav/recipe` subpath |
+
+**Findings:** (1) `@oddkin/components/side-nav` exported `sideNavRecipe`, so importing the component entry loaded the recipe engine (about 3.4 KB gzip) even though the element itself uses extracted CSS. The recipe now lives in the opt-in `@oddkin/components/side-nav/recipe`; the registration entry was never affected, so the measured size is unchanged.
