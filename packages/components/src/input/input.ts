@@ -51,7 +51,11 @@ export class OddkinInput extends OddkinElement.with({
     reflect: true,
     description: 'Native input type.',
   }),
-  name: prop.string({ default: '', description: 'Name submitted with the form.' }),
+  name: prop.string({
+    reflect: true,
+    description:
+      'Name submitted with the form. Reflected: a form-associated element submits under its name attribute.',
+  }),
   placeholder: prop.string({
     default: '',
     description: 'Placeholder; never a substitute for a label.',
@@ -182,6 +186,10 @@ export class OddkinInput extends OddkinElement.with({
   /** Native callback: an ancestor fieldset's disabled state changed. */
   formDisabledCallback(disabled: boolean): void {
     this.#form.formDisabledCallback(disabled);
+  }
+  /** Native callback: the form owner changed (moved, `form` attribute, or the named form). */
+  formAssociatedCallback(form: HTMLFormElement | null): void {
+    this.#form.formAssociatedCallback(form);
   }
 }
 

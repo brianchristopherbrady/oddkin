@@ -1,10 +1,12 @@
 /**
- * `@oddkin/core/controllers/form` — form participation for form-associated custom elements
- * (`static formAssociated = true`): the submitted value and validity mirrored from an inner
- * native control, plus reset, restore, and disabled-fieldset state. The element forwards the
- * native form callbacks to the controller. Unbranded and `Scope`-owned.
- * Contract: docs/architecture/core-contracts.md §4.1.
+ * `@oddkin/core/controllers/form` — form participation for custom elements that opt in with
+ * `static formAssociated = true`: the submitted value and validity mirrored from an inner native
+ * control, the form owner, and reset, restore, and disabled-fieldset state. The element passes
+ * its `ElementInternals` and forwards the four native form callbacks to the controller.
+ * Unbranded and `Scope`-owned. Contract: docs/architecture/core-contracts.md §4.1.
  */
+import { OddkinError } from '../diagnostics/index.js';
+import { DEV } from '../internal/dev.js';
 import { signal, untracked, type Readable } from '../reactive/index.js';
 import type { Controller, Scope } from '../scope/index.js';
 
@@ -44,6 +46,7 @@ export class FormValue implements Controller {
   readonly #options: FormValueOptions;
   readonly #disabled = signal(false);
   readonly #invalid = signal(false);
+  readonly #form = signal<HTMLFormElement | null>(null);
 
   constructor(options: FormValueOptions) {
     this.#options = options;
@@ -59,7 +62,27 @@ export class FormValue implements Controller {
     return this.#invalid;
   }
 
+  /**
+   * The form owner: the form named by the element's `form` attribute, otherwise the nearest
+   * ancestor form, otherwise `null`. Read on connect and updated by `formAssociatedCallback`.
+   */
+  get form(): Readable<HTMLFormElement | null> {
+    return this.#form;
+  }
+
   connect(scope: Scope): void {
+    let owner: HTMLFormElement | null;
+    try {
+      owner = this.#options.internals().form;
+    } catch (cause) {
+      // ElementInternals throws NotSupportedError for elements that are not form-associated.
+      throw new OddkinError(
+        'controller.form.notAssociated',
+        DEV ? 'FormValue needs a form-associated element: add `static formAssociated = true`.' : '',
+        { cause },
+      );
+    }
+    this.#form.value = owner;
     scope.effect(
       () => {
         const options = this.#options;
@@ -72,6 +95,11 @@ export class FormValue implements Controller {
       },
       { phase: 'post', name: 'form value' },
     );
+  }
+
+  /** Forward from the element's `formAssociatedCallback`: the form owner changed. */
+  formAssociatedCallback(form: HTMLFormElement | null): void {
+    this.#form.value = form;
   }
 
   /** Forward from the element's `formDisabledCallback`. */

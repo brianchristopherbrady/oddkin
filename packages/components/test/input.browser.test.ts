@@ -191,6 +191,22 @@ describe('forms', () => {
     expect([...new FormData(form)]).toEqual([]);
   });
 
+  it('reflects a name set as a property, so frameworks that set properties submit it', async () => {
+    const { el } = await mount(
+      '<form><odd-input label="Email" value="ada@example.com"></odd-input></form>',
+    );
+    const form = container.querySelector('form')!;
+    expect(el.hasAttribute('name')).toBe(false);
+    expect([...new FormData(form)]).toEqual([]);
+    el.name = 'email';
+    await settle(el);
+    expect(el.getAttribute('name')).toBe('email');
+    expect([...new FormData(form)]).toEqual([['email', 'ada@example.com']]);
+    el.name = undefined;
+    await settle(el);
+    expect(el.hasAttribute('name')).toBe(false);
+  });
+
   it('typing then submitting sends the typed value through an odd-button', async () => {
     await import('../src/button/button.define.js');
     const { el, control } = await mount(
@@ -209,6 +225,49 @@ describe('forms', () => {
     await expect.poll(() => data.length).toBe(1);
     expect(el.value).toBe('Ada');
     expect(data).toEqual([[['n', 'Ada']]]);
+  });
+});
+
+describe('form reassociation', () => {
+  it('moved to another form, it submits, validates, and resets only with its new owner', async () => {
+    const { el } = await mount(
+      '<form id="a"><odd-input label="Email" name="email" required></odd-input></form><form id="b"></form>',
+    );
+    const [a, b] = [...container.querySelectorAll('form')] as [HTMLFormElement, HTMLFormElement];
+    expect(el.form).toBe(a);
+    expect(a.checkValidity()).toBe(false);
+    b.append(el);
+    await settle(el);
+    expect(el.form).toBe(b);
+    expect(a.checkValidity()).toBe(true);
+    expect(b.checkValidity()).toBe(false);
+    el.value = 'ada@example.com';
+    await settle(el);
+    expect([...new FormData(a)]).toEqual([]);
+    expect([...new FormData(b)]).toEqual([['email', 'ada@example.com']]);
+    a.reset();
+    await settle(el);
+    expect(el.value).toBe('ada@example.com');
+    b.reset();
+    await settle(el);
+    expect(el.value).toBe('');
+  });
+
+  it('follows its form attribute and the form it names', async () => {
+    const { el } = await mount(
+      '<odd-input label="Email" name="email" value="ada@example.com" form="signup"></odd-input>',
+    );
+    expect(el.form).toBe(null);
+    const signup = document.createElement('form');
+    signup.id = 'signup';
+    container.append(signup);
+    await settle(el);
+    expect(el.form).toBe(signup);
+    expect([...new FormData(signup)]).toEqual([['email', 'ada@example.com']]);
+    el.removeAttribute('form');
+    await settle(el);
+    expect(el.form).toBe(null);
+    expect([...new FormData(signup)]).toEqual([]);
   });
 });
 
