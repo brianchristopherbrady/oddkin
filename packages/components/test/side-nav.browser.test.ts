@@ -228,7 +228,11 @@ describe('odd-side-nav from slots', () => {
 describe('layout', () => {
   it('stacks entries when narrow and uses three columns from 40rem of its own width, with no resize observer', async () => {
     const created = vi.spyOn(window, 'ResizeObserver');
-    const { $ } = await mount((el) => (el.items = ITEMS));
+    const { el, $ } = await mount((el) => (el.items = ITEMS));
+    const writes: MutationRecord[] = [];
+    const observer = new MutationObserver((records) => writes.push(...records));
+    observer.observe(el.shadowRoot!, { subtree: true, childList: true, attributes: true });
+    observer.observe(el, { attributes: true });
     const content = $('.content')!;
     expect(getComputedStyle(content).display).toBe('flex');
     container.style.width = '800px';
@@ -236,7 +240,61 @@ describe('layout', () => {
     expect(getComputedStyle(content).gridTemplateColumns.split(' ').length).toBe(3);
     container.style.width = '300px';
     expect(getComputedStyle(content).display).toBe('flex');
+    await settle(el);
+    // The width change is pure CSS: no render, no DOM write in or on the element.
+    expect(writes.splice(0).length).toBe(0);
+    observer.disconnect();
     expect(created).not.toHaveBeenCalled();
+  });
+
+  it('overrides by extend(), host roles, and unlayered ::part() rules leave the shared sheets unchanged', async () => {
+    const { sideNavRecipe } = await import('../src/side-nav/side-nav.recipe.js');
+    const { row } = await import('../src/layout/index.js');
+    const a = (await mount((el) => (el.items = ITEMS))).el;
+    const b = (await mount((el) => (el.items = ITEMS))).el;
+    const sheets = a.shadowRoot!.adoptedStyleSheets;
+    expect(b.shadowRoot!.adoptedStyleSheets).toEqual(sheets);
+    const text = () => sheets.map((s) => [...s.cssRules].map((r) => r.cssText).join('\n'));
+    const before = text();
+    const recipeText = sideNavRecipe.cssText;
+
+    const wide = sideNavRecipe.extend({ regions: { footer: row({ justify: 'end' }) } });
+    expect(wide.cssText).not.toBe(recipeText);
+    expect(sideNavRecipe.cssText).toBe(recipeText);
+    a.id = 'nav-a';
+    a.style.setProperty('--odd-navigation-item-padding-inline', '2px');
+    const page = document.createElement('style');
+    page.textContent = '#nav-a::part(link) { padding-inline-start: 40px; }';
+    document.head.append(page);
+    try {
+      const link = (el: Element) => el.shadowRoot!.querySelector('a')!;
+      expect(getComputedStyle(link(a)).paddingInlineStart).toBe('40px');
+      expect(getComputedStyle(link(a)).paddingInlineEnd).toBe('2px');
+      expect(getComputedStyle(link(b)).paddingInlineStart).toBe('12px');
+      expect(getComputedStyle(link(b)).paddingInlineEnd).toBe('12px');
+      expect(text()).toEqual(before);
+    } finally {
+      page.remove();
+    }
+  });
+
+  it('renders a nested component in a slot, which inherits roles through both shadow boundaries', async () => {
+    await import('../src/button/button.define.js');
+    const { el } = await mount(
+      (el) => (el.items = ITEMS),
+      '<odd-button slot="footer" size="sm">Sign out</odd-button>',
+    );
+    const button = el.querySelector('odd-button')!;
+    await button.updateComplete;
+    expect(el.shadowRoot!.querySelector<HTMLElement>('[part="footer"]')!.hidden).toBe(false);
+    const inner = button.shadowRoot!.querySelector('button')!;
+    const label = inner.querySelector<HTMLSlotElement>('slot:not([name])')!;
+    expect(label.assignedNodes().map((n) => n.textContent)).toEqual(['Sign out']);
+    // A role set on the page scope reaches the button's own shadow root through the slot.
+    container.style.setProperty('--odd-button-radius', '7px');
+    expect(getComputedStyle(inner).borderTopLeftRadius).toBe('7px');
+    inner.focus();
+    expect(button.shadowRoot!.activeElement).toBe(inner);
   });
 
   it('reads navigation roles through the shadow boundary and never shrinks below the target', async () => {

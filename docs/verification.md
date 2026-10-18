@@ -550,3 +550,13 @@ Environment as the previous entry. Another agent had uncommitted changes to `odd
 | Full pipeline | `npm run verify` steps one by one | Size, e2e (109 passed, 2 skipped), and packed consumers pass. Lint failed on the compatibility matrix and typecheck on `styling.browser.test.ts`, both from the other agent's uncommitted files; tests: 1,133 passed and 2 failed in Firefox (`button.browser.test.ts`, under the other agent's changes, and `examples.browser.test.ts`, which passed 81/81 with `contract.browser.test.ts` when rerun alone) |
 
 **Findings:** (1) Example files are outside the package program, so the analyzer finds them on disk under `rootDir` instead of through TypeScript's file list. (2) Static and runtime views agree for all 30 examples, so the published references can be trusted without running fixtures.
+
+## 2026-10-18 — Side navigation: overrides, nested components, no resize work (M4 layout slice)
+
+Environment as the previous entry. Contract: [layout-recipes.md §10](./architecture/layout-recipes.md#10-side-navigation-prototype-acceptance-fixture).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Side navigation | `npx vitest run --project browser packages/components/test/side-nav.browser.test.ts` | Pass in Chromium, Firefox, WebKit (15 tests, 3 new) — across width changes a `MutationObserver` on the shadow root and the host records no mutation and no `ResizeObserver` is created; two instances share their adopted sheets, `sideNavRecipe.extend()` returns different CSS and leaves the recipe's unchanged, a host role and an unlayered `#nav-a::part(link)` rule change only that instance, and the shared sheets' rule text is identical before and after; an `odd-button` in the footer slot shows the footer region, slots its label, takes focus, and reads `--odd-button-radius` set on the page through both shadow boundaries |
+
+**Findings:** (1) The first run of this file failed with Vitest "Unknown session id" errors while the other agent ran browser tests at the same time; a rerun alone passed 45/45. Two Vitest browser runs in one working tree interfere, so their results do not count until rerun alone. (2) 400% zoom was not tested separately: a 1,280 px window at 400% is 320 CSS px, which the existing reflow test covers (the equivalence WCAG 1.4.10 uses).

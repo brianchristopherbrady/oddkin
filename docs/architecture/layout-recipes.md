@@ -223,12 +223,12 @@ Recipe modules are DOM-free, so Node tooling can import them and write `.css` fi
 Location: `examples/side-nav/` (handwritten CSS version and recipe version side by side). Implemented in M4: `odd-side-nav` with `sideNavRecipe` (one column; three columns from `40rem` of its own inline size), `examples/side-nav/` under a strict CSP, `packages/components/test/side-nav.browser.test.ts` and `e2e/side-nav.spec.ts` in three engines.
 
 - [x] Renders simultaneously in a narrow and a wide container on one page
-- [~] Uses named and default slots and nested custom elements (`odd-link`/`odd-button`, a nested component with its own shadow root) *(named and default slots done; a nested component in a slot is open)*
-- [~] Responsive layout works with no JavaScript resize handling (no `ResizeObserver`, no re-render) *(the browser test spies on `ResizeObserver` and reads computed styles immediately after each width change; a render counter is not instrumented yet)*
-- [~] Nested themes, products, density, and profiles; role inheritance into slotted content and nested shadow roots *(dark mode and `navigation.compact` scopes and roles read through the shadow boundary verified; products, density, and a nested shadow root inside a slot open)*
-- [ ] Overrides via `extend` and unlayered CSS never mutate the shared recipe stylesheet *(covered for core recipes in M3; not yet for the side navigation)*
+- [x] Uses named and default slots and nested custom elements (`odd-link`/`odd-button`, a nested component with its own shadow root) *(an `odd-button` in the footer slot renders, is focusable, and shows its slotted label)*
+- [x] Responsive layout works with no JavaScript resize handling (no `ResizeObserver`, no re-render) *(the browser test spies on `ResizeObserver` and records zero DOM mutations in or on the element across width changes)*
+- [~] Nested themes, products, density, and profiles; role inheritance into slotted content and nested shadow roots *(dark mode and `navigation.compact` scopes; roles read through the shadow boundary; a role set on the page reaches the slotted `odd-button`'s own shadow root. Remaining: products and density)*
+- [x] Overrides via `extend` and unlayered CSS never mutate the shared recipe stylesheet *(`extend()` leaves `sideNavRecipe.cssText` unchanged; a host role and an unlayered `::part()` rule change one instance only; the shared adopted sheets' rules are identical before and after)*
 - [x] Handwritten CSS and recipe-generated versions are computed-style-equivalent across widths *(11 properties at 12, 24, 36, 44, and 56rem)*
-- [~] Keyboard behavior, focus visibility/order, 200%/400% zoom, wrapping, overflow, narrow reflow *(keyboard, focus ring, 320 px and 200% text verified; 400% zoom open)*
+- [x] Keyboard behavior, focus visibility/order, 200%/400% zoom, wrapping, overflow, narrow reflow *(keyboard, focus ring, 200% text, and 320 CSS px reflow verified; 400% zoom of a 1,280 px window is 320 CSS px, the equivalence WCAG 1.4.10 uses)*
 - [x] Minimal consumers exclude unused recipe catalogs and `@oddkin/agent` *(import-graph test: the registration entry loads no layout engine, `@oddkin/core/model`, or schema emitter; the foundation loads only four core subpaths)*
 - [ ] Checks are scripted so an agent-generated version runs the same suite (M11)
 - [x] Data-driven navigation (`.items`), declarative, and hybrid variants covered by [data-composition.md §10](./data-composition.md)
