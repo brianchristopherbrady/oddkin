@@ -12,6 +12,7 @@
     { "path": "packages/workbench" },
     { "path": "apps/docs" },
     { "path": "examples/core-counter" },
-    { "path": "examples/binding-rule" }
+    { "path": "examples/binding-rule" },
+    { "path": "examples/editable-list" }
   ]
 }

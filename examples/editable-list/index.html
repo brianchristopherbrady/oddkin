@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-vnCQDa1vScHOJpDJTRbpubYLljAW/07/Q+t8lpAO7Xw='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>Editable list — keyed rows of odd-input in a form</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/base.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/layout.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/core/collections": "../../packages/core/dist/collections/index.js",
+          "@oddkin/core/controllers/form": "../../packages/core/dist/controllers/form.js",
+          "@oddkin/core/element": "../../packages/core/dist/element/index.js",
+          "@oddkin/core/helpers/live": "../../packages/core/dist/helpers/live.js",
+          "@oddkin/core/helpers/ref": "../../packages/core/dist/helpers/ref.js",
+          "@oddkin/core/model": "../../packages/core/dist/model/index.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/scope": "../../packages/core/dist/scope/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/template/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js",
+          "@oddkin/components/define/button": "../../packages/components/dist/button/button.define.js",
+          "@oddkin/components/define/input": "../../packages/components/dist/input/input.define.js"
+        }
+      }
+    </script>
+    <script type="module" src="./dist/main.js"></script>
+  </head>
+  <body>
+    <main class="odd-stack">
+      <h1>Editable list</h1>
+      <p>
+        Team members as keyed rows of <code>odd-input</code> fields inside a native form. Rows can
+        be added, moved, removed, and restored; what you typed, the caret, and focus stay put while
+        other rows change. Native validation checks required fields and address syntax; the
+        <code>example.team</code> model checks the whole list on save and points each problem at its
+        row and field. Addresses at <code>taken.example</code> are rejected by a simulated server
+        check.
+      </p>
+      <form id="team" class="odd-stack" aria-labelledby="team-title">
+        <h2 id="team-title">Team members</h2>
+        <ol id="members" class="members odd-stack"></ol>
+        <div class="odd-cluster">
+          <odd-button id="add">Add member</odd-button>
+          <odd-button type="submit" appearance="primary">Save team</odd-button>
+        </div>
+        <div class="odd-cluster">
+          <p id="status" role="status"></p>
+          <odd-button id="undo" size="sm" hidden>Undo</odd-button>
+        </div>
+      </form>
+      <section class="odd-stack" aria-labelledby="result-title">
+        <h2 id="result-title">Submitted data</h2>
+        <pre id="result">Nothing saved yet.</pre>
+      </section>
+    </main>
+  </body>
+</html>

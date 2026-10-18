@@ -1,6 +1,6 @@
 # Data-driven composition, collections, and models
 
-Status: §3 (collections) and §5 (models) are **implemented** in `@oddkin/core` (M3; settled behaviors in §11). The first component data API, `odd-side-nav` with `NavigationItemModel`, its JSON Schema, and §4 region sources, is **implemented** in `@oddkin/components` (M4; §12). Local render functions, `navigationKinds`, the `props()` experiment, and composition remain **proposals**. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
+Status: §3 (collections) and §5 (models) are **implemented** in `@oddkin/core` (M3; settled behaviors in §11). The first component data API, `odd-side-nav` with `NavigationItemModel`, its JSON Schema, and §4 region sources, is **implemented** in `@oddkin/components` (M4; §12), and the editable-list example (§13) passes the editable-collection fixture. Local render functions, `navigationKinds`, the `props()` experiment, and composition remain **proposals**. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
 
 ## 1. Direction
 
@@ -278,10 +278,10 @@ AI support never makes this schema mandatory: agent tooling recommends templates
 - [x] Narrow/wide containers, nested themes, profiles *(`e2e/side-nav.spec.ts`: dark mode and `navigation.compact` scopes)*
 - [ ] Plain JS and React/Vue/Angular/Svelte consumers without Oddkin state *(plain JS done in `examples/side-nav/`; framework fixtures open)*
 
-**Editable collection** (`examples/editable-list/`): a reorderable list of items with `odd-input` fields and add/remove, driven by a model and a keyed collection:
-- [ ] Typing in one row survives insertions, removals, and reorder elsewhere; selection/caret preserved
-- [ ] Validation diagnostics map to the right row and field; form submission data is correct
-- [ ] Undo of a removal restores the row with a new scope (no stale subscriptions)
+**Editable collection** (`examples/editable-list/`): a reorderable list of items with `odd-input` fields and add/remove, driven by a model and a keyed collection (implemented, M4; §13):
+- [x] Typing in one row survives insertions, removals, and reorder elsewhere; selection/caret preserved *(also when the focused row itself moves)*
+- [x] Validation diagnostics map to the right row and field; form submission data is correct
+- [x] Undo of a removal restores the row with a new scope (no stale subscriptions)
 
 ## 11. Behaviors settled in the M3 implementation
 
@@ -306,3 +306,12 @@ Verified in `packages/components/test/models.test.ts` (Node), `side-nav.browser.
 - **Events.** `odd-action` (`{ id, action }`) for enabled actions, `odd-toggle`; both bubble and are composed. Links emit nothing: routers intercept clicks at the document as usual.
 - **Regions.** `header` and `footer` slots are hidden while empty. `items` set (including `[]`) is the only source of entries: the default slot is not rendered and the first conflict logs `[collection.source.conflict]` once per element. Without `items`, slotted native links are styled through `::slotted()`.
 - **Size.** `side-nav` 14,517 B gzip registered (budget 15 KiB); `components:side-nav` CSS 1,234 B (budget 1,536 B). The recipe CSS is extracted at build time (layout-recipes.md §9), so the element does not load the recipe engine.
+
+## 13. Editable list example (implemented, M4)
+
+`examples/editable-list/` (TypeScript, built by `tsc -b`) renders team members as keyed rows of `odd-input` fields into an `<ol>` inside a native `<form>`, with no custom element for the list: `collection({ key, owner })`, `repeat(collection.flat, …)`, and `render()`. Verified in `tests/examples/editable-list.browser.test.ts` and `e2e/editable-list.spec.ts` (three engines, strict CSP).
+
+- **Rows in the light DOM**, so every `odd-input` belongs to the page's form: `FormData` lists ids, names, and addresses in display order. Each row is a `<fieldset>` whose `<legend>` ("Member 2") gives the repeated "Name", "Email", "Move up", and "Remove" controls their context.
+- **Two validation layers.** Native constraints (`required`, `type="email"`) block submission and mark only the offending row's fields. On submit, `TeamModel.validate()` checks the whole list; its diagnostics (`/2/email`) are mapped by index to the row's key and shown through `odd-input`'s `error` (custom validity), and the first one receives focus. Editing a field clears its error. Model rules run only when the schema passes, so a blank name (`model.label.empty`) is reported before duplicate addresses (`team.email.duplicate`).
+- **Per-row ownership.** `scopeFor(key)` owns the row's debounced address check: the timer, and an `AbortSignal` passed to the check. Typing again aborts the previous check; removing the row aborts the pending one, so a late answer never reaches a restored row. Undo re-inserts the member with the values it had, under a new scope. 200 add/remove/undo cycles and `dispose()` return `scopeStats()` to baseline.
+- **Focus.** Moving a row keeps focus on the pressed button; when the row reaches an edge and that button becomes disabled, focus moves to the row's other move button first. Remove focuses Undo; Undo and Add focus the row's Name field. Moves, removals, and restores are announced in a `role="status"` region.

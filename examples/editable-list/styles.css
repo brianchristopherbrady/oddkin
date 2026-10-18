@@ -1,0 +1,51 @@
+/* Page chrome for the editable-list example; the rows need only the shared layout classes. */
+main {
+  max-inline-size: 48rem;
+  margin-inline: auto;
+  padding: var(--odd-space-xl) var(--odd-space-md);
+}
+
+h1,
+h2 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.members {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.member fieldset {
+  /* Fieldsets default to their min-content width, which would overflow narrow screens. */
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--odd-space-md);
+  border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  border-radius: var(--odd-radius-lg);
+  background: var(--odd-color-surface-default);
+}
+
+.member legend {
+  padding-inline: var(--odd-space-2xs);
+  font-weight: var(--odd-type-title-weight);
+}
+
+.fields {
+  --odd-auto-grid-min: 14rem;
+}
+
+#status {
+  margin: 0;
+}
+
+#result {
+  margin: 0;
+  padding: var(--odd-space-md);
+  overflow-x: auto;
+  border-radius: var(--odd-radius-md);
+  background: var(--odd-color-surface-specimen);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
