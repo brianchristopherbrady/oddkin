@@ -90,3 +90,31 @@ describe('@oddkin/components/input import graphs', () => {
     expect(packages.every((p) => p.startsWith('@oddkin/core/'))).toBe(true);
   });
 });
+
+describe('@oddkin/components/side-nav import graphs', () => {
+  it('the foundation loads no skin, recipe engine, tokens, validators, or registration', async () => {
+    const { files, packages } = await graph('side-nav/foundation.js');
+    expect(files).toEqual([
+      'side-nav/foundation.js',
+      'side-nav/side-nav.js',
+      'side-nav/side-nav.recipe.styles.js',
+      'side-nav/side-nav.structural.styles.js',
+      'side-nav/side-nav.template.js',
+      'styles/host.styles.js',
+    ]);
+    expect(packages).toEqual([
+      '@oddkin/core/element',
+      '@oddkin/core/reactive',
+      '@oddkin/core/styles',
+      '@oddkin/core/template',
+    ]);
+  });
+
+  it('the registration entry loads neither the recipe engine nor the model validators', async () => {
+    const { files, packages } = await graph('side-nav/side-nav.define.js');
+    expect(files.some((f) => f.startsWith('models/') || f.startsWith('layout/'))).toBe(false);
+    expect(packages).not.toContain('@oddkin/core/layout');
+    expect(packages).not.toContain('@oddkin/core/model');
+    expect(packages).not.toContain('@oddkin/core/model/schema');
+  });
+});

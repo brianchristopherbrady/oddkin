@@ -1,6 +1,6 @@
 # Data-driven composition, collections, and models
 
-Status: §3 (collections) and §5 (models) are **implemented** in `@oddkin/core` (M3; settled behaviors in §11). Component data APIs, region sources, the `props()` experiment, and composition remain **proposals** for M4+. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
+Status: §3 (collections) and §5 (models) are **implemented** in `@oddkin/core` (M3; settled behaviors in §11). The first component data API, `odd-side-nav` with `NavigationItemModel`, its JSON Schema, and §4 region sources, is **implemented** in `@oddkin/components` (M4; §12). Local render functions, `navigationKinds`, the `props()` experiment, and composition remain **proposals**. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
 
 ## 1. Direction
 
@@ -270,13 +270,13 @@ AI support never makes this schema mandatory: agent tooling recommends templates
 ## 10. Acceptance fixtures
 
 **`odd-side-nav` (navigation collection)** — extends the side-nav fixture in [layout-recipes.md §10](./layout-recipes.md):
-- [ ] Typed local objects compile; invalid combinations fail typecheck; external JSON validated with path-precise diagnostics
-- [ ] Data-driven, declarative children, and hybrid (data + header/footer slots) versions render equivalently; conflict diagnostic when both sources supplied
-- [ ] Controlled and uncontrolled `current`/expansion; `odd-action` events; native link behavior
-- [ ] Insert/remove/reorder keeps focus and DOM identity; external signal change updates items whose object is unchanged
-- [ ] Removed items dispose their scopes; 1,000 mount/unmount cycles return to baseline
-- [ ] Narrow/wide containers, nested themes, profiles
-- [ ] Plain JS and React/Vue/Angular/Svelte consumers without Oddkin state
+- [x] Typed local objects compile; invalid combinations fail typecheck; external JSON validated with path-precise diagnostics *(`models.test.ts`: `@ts-expect-error` cases, diagnostics with JSON pointers, Ajv agrees with `validate()`)*
+- [~] Data-driven, declarative children, and hybrid (data + header/footer slots) versions render; conflict diagnostic when both sources supplied *(all three in `examples/side-nav/` and the browser tests; the warning is emitted once per element. Remaining: a structural equivalence comparison between the data and declarative versions.)*
+- [x] Controlled and uncontrolled `current`/expansion; `odd-action` events; native link behavior
+- [x] Insert/remove/reorder keeps focus and DOM identity; a `current` change updates entries whose objects are unchanged *(the external-signal case for a caller-owned signal waits for a render-function fixture)*
+- [x] Removed items dispose their scopes; 1,000 mount/replace/unmount cycles return to the scope and listener baseline
+- [x] Narrow/wide containers, nested themes, profiles *(`e2e/side-nav.spec.ts`: dark mode and `navigation.compact` scopes)*
+- [ ] Plain JS and React/Vue/Angular/Svelte consumers without Oddkin state *(plain JS done in `examples/side-nav/`; framework fixtures open)*
 
 **Editable collection** (`examples/editable-list/`): a reorderable list of items with `odd-input` fields and add/remove, driven by a model and a keyed collection:
 - [ ] Typing in one row survives insertions, removals, and reorder elsewhere; selection/caret preserved
@@ -293,3 +293,16 @@ AI support never makes this schema mandatory: agent tooling recommends templates
 - **Keyed reordering.** `repeat()` keeps a longest increasing subsequence of reused items in place and moves only the rest. Where `moveBefore()` is unavailable, a moved range containing the focused element has its focus and text selection restored after the move.
 - **Models.** `m` provides `string`, `id`, `label`, `url` (script URLs rejected), `actionRef`, `number`, `boolean`, `enum`, `optional`, `array`, `object`, `union(discriminator, variants)`, `recursive(self => …, name?)`, and the `uniqueIds(property)` rule. `defineModel(name, { version, schema, rules?, migrations?, description? })` returns `validate` (no copying or coercion; unknown properties are warnings) and `migrate(data, fromVersion)` (stepwise `migrations[n]`, `model.version.unsupported`, `model.migration.failed`). `Infer<typeof Model>` infers recursive discriminated types; optional fields are `?: T | undefined`, matching validation.
 - **JSON Schema.** `toJSONSchema(model)` (in `./model/schema`, never in component bundles) emits draft 2020-12 with `$defs` for recursion and lists unportable rules in `$comment`. Ajv and `validate()` agree on portable cases in tests. The method form `model.toJSONSchema()` sketched in §5 is a separate function, so validators do not pull in the emitter.
+
+## 12. `odd-side-nav` (implemented, M4)
+
+Verified in `packages/components/test/models.test.ts` (Node), `side-nav.browser.test.ts` (three engines), and `e2e/side-nav.spec.ts` against `examples/side-nav/` under a strict CSP.
+
+- **Model.** `NavigationItemModel` (`oddkin.navigation`, version 1) in `@oddkin/components/models` validates a whole navigation: an array of `link` (`id`, `label`, `href`, optional `target`, `rel`, `disabled`, `badge`), `action` (`id`, `label`, `action`, optional `disabled`), and `group` (`id`, `label`, `items`, optional `expanded`) entries, with ids unique across all levels. `m.url()` rejects script URLs (`model.url.unsafe`). Migration 0 → 1 renames `title` to `label` and `children` to `items`. `icon` from the §2 sketch is left out until an icon set exists. The types `Navigation` and `NavigationItem` are exported from `./models` and `./side-nav`; the element entry never imports the validators.
+- **Schema.** `scripts/build-component-schemas.mjs` (in `npm run build`; `--check` reports stale files) writes `packages/components/schemas/oddkin.navigation.v1.json` from the model with id `https://oddkin.dev/schemas/components/oddkin.navigation.v1.json`.
+- **Properties.** `label` (landmark name), `items`, `current` (id of the current link), `expanded` (caller-owned ids of open groups). Items are keyed by `id`; DOM nodes and focus survive insert, remove, and reorder. Item templates run outside the render's tracking, so `aria-current`, `aria-expanded`, and group `hidden` are bound as computed readables; a `current` or expansion change updates only those attributes.
+- **Rendering.** Links are native `<a href>`. A disabled link, or one whose scheme is `javascript:`, `vbscript:`, or `data:` after removing control characters and spaces (the browser does the same), renders without `href` as `role="link"` with `aria-disabled="true"`. `target="_blank"` without `rel` gets `noopener noreferrer`. Actions are `<button type="button">`, natively disabled. Groups use the disclosure pattern (`aria-expanded`, `aria-controls`) with a nested list.
+- **State.** Uncontrolled: a group starts open when its item says `expanded` or it contains `current`; the user's toggles are remembered; `odd-toggle` (`{ id, expanded }`) is cancelable. Controlled (`expanded` set, even to `[]`): toggles only emit `odd-toggle` and the element waits for a new `expanded`. When both item `expanded` and the property are given, the property wins silently; the `model.state.conflict` diagnostic is not emitted yet.
+- **Events.** `odd-action` (`{ id, action }`) for enabled actions, `odd-toggle`; both bubble and are composed. Links emit nothing: routers intercept clicks at the document as usual.
+- **Regions.** `header` and `footer` slots are hidden while empty. `items` set (including `[]`) is the only source of entries: the default slot is not rendered and the first conflict logs `[collection.source.conflict]` once per element. Without `items`, slotted native links are styled through `::slotted()`.
+- **Size.** `side-nav` 14,517 B gzip registered (budget 15 KiB); `components:side-nav` CSS 1,234 B (budget 1,536 B). The recipe CSS is extracted at build time (layout-recipes.md §9), so the element does not load the recipe engine.

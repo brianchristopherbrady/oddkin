@@ -2,7 +2,7 @@
 
 Accessible, themed custom elements, Oddkin layout presets, and component metadata.
 
-**Status:** M4 in progress. Implemented: `odd-button`, `odd-card`, `odd-input`. See [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) and [packages.md](../../docs/architecture/packages.md).
+**Status:** M4 in progress. Implemented: `odd-button`, `odd-card`, `odd-input`, `odd-side-nav`. See [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) and [packages.md](../../docs/architecture/packages.md).
 
 ## Use
 
@@ -17,6 +17,21 @@ import '@oddkin/components/define/button'; // registers <odd-button>
 Importing `@oddkin/components/button` gives the class, template, styles, and definition without registering anything. `@oddkin/components/button/foundation` gives the behavior class, template, and structural styles without the default visual styles, for product-specific skins composed with `compose()` (see [multi-product.md](../../docs/architecture/multi-product.md)).
 
 Styles read semantic tokens through component variables (`--odd-button-radius`, `--odd-button-background`, …), so a theme or a scoped override restyles the button without JavaScript. Load a theme stylesheet such as `@oddkin/tokens/css/default.css`.
+
+## Side navigation from data
+
+```js
+import '@oddkin/components/define/side-nav';
+import { NavigationItemModel } from '@oddkin/components/models'; // only to validate external data
+
+const nav = document.querySelector('odd-side-nav');
+const result = NavigationItemModel.validate(await (await fetch('/nav.json')).json());
+if (result.ok) nav.items = result.value; // replace the array to change entries; never mutate it
+nav.current = 'theming';
+nav.addEventListener('odd-action', (e) => run(e.detail.action));
+```
+
+Links render as native `<a href>` (script URLs never do), actions as buttons that emit `odd-action`, and groups as disclosure buttons. Without `items`, native links in the default slot are styled instead; `header` and `footer` slots work with both. Set `expanded` to own group expansion yourself; otherwise the element tracks it and emits a cancelable `odd-toggle`. The `side-nav` layout recipe arranges entries by the element's own width (container queries only). The JSON Schema for the same model is `@oddkin/components/schemas/oddkin.navigation.v1.json`.
 
 ## Shared styles for your own components and pages
 

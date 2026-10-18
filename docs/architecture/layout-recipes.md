@@ -1,6 +1,6 @@
 # Layout recipes and container-responsive composition
 
-Status: the unbranded mechanism (§2–§5, §8 `describeRecipe`) is **implemented** in `@oddkin/core/layout` and `@oddkin/core/layout/inspect` (M3) and verified in three engines; §11 lists behaviors settled in implementation. The Oddkin-bound helpers, `defineLayoutRecipe`, `condition()`, and `layout.css` (§3, §7) are **implemented** in `@oddkin/components/layout` (M4, §12). The extraction CLI and side-nav fixture (§9, §10) are M4+ work. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification.
+Status: the unbranded mechanism (§2–§5, §8 `describeRecipe`) is **implemented** in `@oddkin/core/layout` and `@oddkin/core/layout/inspect` (M3) and verified in three engines; §11 lists behaviors settled in implementation. The Oddkin-bound helpers, `defineLayoutRecipe`, `condition()`, and `layout.css` (§3, §7) are **implemented** in `@oddkin/components/layout` (M4, §12). The side-nav fixture (§10) and build-time extraction for component recipes (§9) are implemented (M4); the application extraction CLI is later work. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification.
 
 ## 1. Purpose and boundaries
 
@@ -216,20 +216,22 @@ Compose existing components and layout primitives with a few meaningful options,
 
 Recipe modules are DOM-free, so Node tooling can import them and write `.css` files with identical output (`oddkin-layout extract <module> --out <dir>`, exposed from the components package's Node tooling). Extraction is optional; direct runtime authoring and extracted CSS must produce byte-identical rule text (contract test).
 
+**Implemented for `@oddkin/components` (M4).** Each component recipe has a generated sibling module (`side-nav.recipe.styles.ts` exports `sideNavRecipeStyles` as one `unsafeCSS` string). The element definition uses the extracted module, so the element bundle does not contain the recipe engine (side-nav: 17,935 → 14,517 B gzip). `packages/components/test/recipes.test.ts` is the contract test: it fails when an extracted module differs byte for byte from `recipe.cssText`, and `UPDATE_FIXTURES=1` rewrites it. The recipe itself is still exported for `describeRecipe`, `extend()`, and metadata. The `oddkin-layout extract` command for applications is not built yet.
+
 ## 10. Side-navigation prototype (acceptance fixture)
 
-Location: `examples/side-nav/` (handwritten CSS version and recipe version side by side).
+Location: `examples/side-nav/` (handwritten CSS version and recipe version side by side). Implemented in M4: `odd-side-nav` with `sideNavRecipe` (one column; three columns from `40rem` of its own inline size), `examples/side-nav/` under a strict CSP, `packages/components/test/side-nav.browser.test.ts` and `e2e/side-nav.spec.ts` in three engines.
 
-- [ ] Renders simultaneously in a narrow and a wide container on one page
-- [ ] Uses named and default slots and nested custom elements (`odd-link`/`odd-button`, a nested component with its own shadow root)
-- [ ] Responsive layout works with no JavaScript resize handling (no `ResizeObserver`, no re-render)
-- [ ] Nested themes, products, density, and profiles; role inheritance into slotted content and nested shadow roots
-- [ ] Overrides via `extend` and unlayered CSS never mutate the shared recipe stylesheet
-- [ ] Handwritten CSS and recipe-generated versions are computed-style-equivalent across widths
-- [ ] Keyboard behavior, focus visibility/order, 200%/400% zoom, wrapping, overflow, narrow reflow
-- [ ] Minimal consumers exclude unused recipe catalogs and `@oddkin/agent`
+- [x] Renders simultaneously in a narrow and a wide container on one page
+- [~] Uses named and default slots and nested custom elements (`odd-link`/`odd-button`, a nested component with its own shadow root) *(named and default slots done; a nested component in a slot is open)*
+- [~] Responsive layout works with no JavaScript resize handling (no `ResizeObserver`, no re-render) *(the browser test spies on `ResizeObserver` and reads computed styles immediately after each width change; a render counter is not instrumented yet)*
+- [~] Nested themes, products, density, and profiles; role inheritance into slotted content and nested shadow roots *(dark mode and `navigation.compact` scopes and roles read through the shadow boundary verified; products, density, and a nested shadow root inside a slot open)*
+- [ ] Overrides via `extend` and unlayered CSS never mutate the shared recipe stylesheet *(covered for core recipes in M3; not yet for the side navigation)*
+- [x] Handwritten CSS and recipe-generated versions are computed-style-equivalent across widths *(11 properties at 12, 24, 36, 44, and 56rem)*
+- [~] Keyboard behavior, focus visibility/order, 200%/400% zoom, wrapping, overflow, narrow reflow *(keyboard, focus ring, 320 px and 200% text verified; 400% zoom open)*
+- [x] Minimal consumers exclude unused recipe catalogs and `@oddkin/agent` *(import-graph test: the registration entry loads no layout engine, `@oddkin/core/model`, or schema emitter; the foundation loads only four core subpaths)*
 - [ ] Checks are scripted so an agent-generated version runs the same suite (M11)
-- [ ] Data-driven navigation (`.items`), declarative, and hybrid variants covered by [data-composition.md §10](./data-composition.md)
+- [x] Data-driven navigation (`.items`), declarative, and hybrid variants covered by [data-composition.md §10](./data-composition.md)
 
 ## 11. Behaviors settled in the M3 implementation
 

@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 51 stylesheets, 232 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 56 stylesheets, 237 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -130,6 +130,9 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/card/card.styles.js (cardStyles)` | yes | 18 |
 | `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 20 |
 | `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 19 |
+| `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
+| `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 37 |
+| `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 40 |
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |
 | `packages/components/dist/styles/host.styles.js (hostStyles)` | yes | 7 |
 | `packages/components/dist/styles/visually-hidden.styles.js (visuallyHiddenStyles)` | yes | 13 |
@@ -168,5 +171,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `examples/core-counter/styles.css` | example | 33 |
 | `examples/css-gallery/enhancements.css` | example | 13 |
 | `examples/css-gallery/gallery.css` | example | 72 |
+| `examples/side-nav/hand.css` | example | 48 |
+| `examples/side-nav/styles.css` | example | 20 |
 | `examples/tokens-css-only/styles.css` | example | 29 |
 | `examples/tokens-css-only/generated/harbor.css` | example | 15 |

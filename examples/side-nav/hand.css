@@ -1,0 +1,71 @@
+/*
+ * The handwritten equivalent of odd-side-nav's arrangement and entry styles, written against the
+ * same token roles. `e2e/side-nav.spec.ts` compares its computed styles with the component's at
+ * several widths; keep both in step when either changes.
+ */
+.hand-nav {
+  display: block;
+  container: hand-nav / inline-size;
+}
+
+.hand-nav__root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--odd-navigation-item-gap);
+  min-inline-size: 0;
+  color: var(--odd-color-text-primary);
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+  line-height: var(--odd-type-ui-line-height);
+  letter-spacing: var(--odd-type-ui-letter-spacing);
+}
+
+.hand-nav__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--odd-navigation-item-gap);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@container hand-nav (min-inline-size: 40rem) {
+  .hand-nav__content {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.hand-nav__entry {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  inline-size: 100%;
+  gap: var(--odd-navigation-item-gap);
+  min-block-size: max(var(--odd-navigation-item-min-height), var(--odd-target-min));
+  padding: var(--odd-navigation-item-padding-block) var(--odd-navigation-item-padding-inline);
+  border-inline-start: var(--odd-border-width-strong) solid transparent;
+  border-radius: var(--odd-control-radius);
+  color: inherit;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.hand-nav__entry:focus-visible {
+  outline: var(--odd-focus-width) solid var(--odd-color-focus-ring);
+  outline-offset: var(--odd-focus-offset);
+}
+
+@media (hover: hover) {
+  .hand-nav__entry:hover {
+    background: var(--odd-color-surface-hover);
+  }
+}
+
+.hand-nav__entry[aria-current='page'] {
+  border-inline-start-color: var(--odd-color-action-default);
+  background: var(--odd-color-surface-hover);
+  font-weight: var(--odd-font-weight-semibold);
+}

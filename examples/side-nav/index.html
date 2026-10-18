@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-Ni7Xc2q8DLhpS0w6TJ9E49UkI6/ZEqrcDbO5XaWse9s='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>Side navigation — recipe, data, and a handwritten twin</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/layout.css" />
+    <link rel="stylesheet" href="./hand.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/core/element": "../../packages/core/dist/element/index.js",
+          "@oddkin/core/layout": "../../packages/core/dist/layout/index.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/scope": "../../packages/core/dist/scope/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/template/index.js",
+          "@oddkin/tokens/conditions": "../../packages/tokens/dist/conditions/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js",
+          "@oddkin/components/define/side-nav": "../../packages/components/dist/side-nav/side-nav.define.js"
+        }
+      }
+    </script>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <header class="intro odd-stack">
+      <h1>Side navigation</h1>
+      <p>
+        One <code>odd-side-nav</code> definition in a narrow and a wide container at the same time,
+        driven by data, by slotted links, and by both. Its arrangement comes from the
+        <code>side-nav</code> layout recipe and responds to the element's own width with container
+        queries only. A handwritten-CSS twin shows the same result without the recipe.
+      </p>
+    </header>
+    <main class="odd-stack">
+      <section class="odd-stack" aria-labelledby="widths-title">
+        <h2 id="widths-title">Narrow and wide</h2>
+        <div class="odd-cluster frames">
+          <div class="frame" id="narrow">
+            <odd-side-nav id="nav-narrow" label="Primary, narrow" current="theming">
+              <strong slot="header">Acme</strong>
+            </odd-side-nav>
+          </div>
+          <div class="frame frame--wide" id="wide">
+            <odd-side-nav id="nav-wide" label="Primary, wide" current="theming"></odd-side-nav>
+          </div>
+        </div>
+      </section>
+
+      <section class="odd-stack" aria-labelledby="compare-title">
+        <h2 id="compare-title">Recipe and handwritten CSS</h2>
+        <label class="odd-cluster" for="width"
+          >Container width <input id="width" type="range" min="12" max="56" step="1" value="16" />
+          <output id="width-value" for="width">16rem</output></label
+        >
+        <div class="odd-cluster frames">
+          <div class="frame" id="frame-recipe">
+            <odd-side-nav id="nav-recipe" label="Recipe" current="components"></odd-side-nav>
+          </div>
+          <div class="frame" id="frame-hand">
+            <div class="hand-nav">
+              <nav class="hand-nav__root" aria-label="Handwritten">
+                <ul class="hand-nav__content">
+                  <li><a class="hand-nav__entry" href="#overview">Overview</a></li>
+                  <li>
+                    <a class="hand-nav__entry" href="#components" aria-current="page">Components</a>
+                  </li>
+                  <li><a class="hand-nav__entry" href="#tokens">Tokens</a></li>
+                  <li><a class="hand-nav__entry" href="#layout">Layout</a></li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="odd-stack" aria-labelledby="sources-title">
+        <h2 id="sources-title">Slotted links and hybrid regions</h2>
+        <div class="odd-cluster frames">
+          <div class="frame">
+            <odd-side-nav id="nav-declarative" label="Declarative">
+              <a href="#overview">Overview</a>
+              <a href="#components" aria-current="page">Components</a>
+              <a href="#tokens">Tokens</a>
+            </odd-side-nav>
+          </div>
+          <div class="frame">
+            <odd-side-nav id="nav-hybrid" label="Hybrid">
+              <strong slot="header">Workspace</strong>
+              <small slot="footer">Signed in as Ada</small>
+            </odd-side-nav>
+          </div>
+        </div>
+      </section>
+
+      <section class="odd-stack" aria-labelledby="scopes-title">
+        <h2 id="scopes-title">Nested scopes</h2>
+        <div class="odd-cluster frames">
+          <div class="frame">
+            <odd-side-nav id="nav-default" label="Default density" current="tokens"></odd-side-nav>
+          </div>
+          <div class="frame scope" id="compact" data-odd-profile="navigation.compact">
+            <odd-side-nav id="nav-compact" label="Compact profile" current="tokens"></odd-side-nav>
+          </div>
+          <div class="frame scope" data-odd-mode="dark">
+            <odd-side-nav id="nav-dark" label="Dark mode" current="tokens"></odd-side-nav>
+          </div>
+        </div>
+      </section>
+
+      <p id="log" role="status" aria-live="polite"></p>
+    </main>
+  </body>
+</html>

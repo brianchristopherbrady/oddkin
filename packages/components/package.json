@@ -49,6 +49,22 @@
       "types": "./dist/input/input.define.d.ts",
       "default": "./dist/input/input.define.js"
     },
+    "./side-nav": {
+      "types": "./dist/side-nav/index.d.ts",
+      "default": "./dist/side-nav/index.js"
+    },
+    "./side-nav/foundation": {
+      "types": "./dist/side-nav/foundation.d.ts",
+      "default": "./dist/side-nav/foundation.js"
+    },
+    "./define/side-nav": {
+      "types": "./dist/side-nav/side-nav.define.d.ts",
+      "default": "./dist/side-nav/side-nav.define.js"
+    },
+    "./models": {
+      "types": "./dist/models/index.d.ts",
+      "default": "./dist/models/index.js"
+    },
     "./styles": {
       "types": "./dist/styles/index.d.ts",
       "default": "./dist/styles/index.js"
@@ -63,10 +79,12 @@
     "./css/utilities.css": "./dist/css/utilities.css",
     "./custom-elements.json": "./custom-elements.json",
     "./oddkin.metadata.json": "./oddkin.metadata.json",
+    "./schemas/*.json": "./schemas/*.json",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "schemas",
     "custom-elements.json",
     "oddkin.metadata.json",
     "README.md"

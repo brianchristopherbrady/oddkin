@@ -14,6 +14,7 @@ export const ENTRIES = [
   'ai-headless',
   'ai-response',
   'ai-chat',
+  'side-nav',
 ];
 
 /** Budgets in gzip bytes (ADR 0019). Measured 2026-10-17 in the comments. */
@@ -28,6 +29,9 @@ export const BUDGETS = {
   // elements; +625 B since the shared core focus, announce, and observe controllers replaced
   // AI-internal helpers and recover focus after removal too).
   'ai-chat': 50176,
+  // 15 KiB; measured 14,517 on 2026-10-18 (registered odd-side-nav with keyed repeat; the recipe
+  // CSS is extracted at build time, so the recipe engine (3.4 KiB) is not loaded).
+  'side-nav': 15360,
 };
 
 /**
@@ -41,6 +45,7 @@ export const CSS_BUDGETS = {
   'components:button': 1280, // measured 1,119 with type.ui and motion tokens (1,100 before)
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
   'components:input': 896, // measured 743 with type.ui/body/small and motion tokens (647 before)
+  'components:side-nav': 1536, // measured 1,234 on 2026-10-18: extracted recipe, structural, and default styles
   'components:shared': 384, // measured 297 on 2026-10-18: host, focus-ring, and visually-hidden primitives
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   'components:layout': 512, // measured 411 on 2026-10-18: layout.css page-author classes
@@ -54,14 +59,18 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
   sizes['tokens:default.css'] = gzip(
     readFileSync(join(root, 'packages/tokens/dist/css/default.css'), 'utf8'),
   );
-  for (const name of ['button', 'card', 'input']) {
+  for (const name of ['button', 'card', 'input', 'side-nav']) {
     const module = await import(
       pathToFileURL(join(root, `packages/components/dist/${name}/index.js`)).href
     );
-    const text = Object.values(module)
-      .filter((value) => typeof value?.cssText === 'string')
-      .map((value) => value.cssText)
-      .join('\n');
+    // Each distinct text once: an exported recipe and its extracted styles are the same CSS.
+    const text = [
+      ...new Set(
+        Object.values(module)
+          .filter((value) => typeof value?.cssText === 'string')
+          .map((value) => value.cssText),
+      ),
+    ].join('\n');
     sizes[`components:${name}`] = gzip(text);
   }
   const shared = await import(

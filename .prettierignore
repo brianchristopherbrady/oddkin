@@ -6,6 +6,7 @@ playwright-report
 *.md
 docs/schemas
 packages/ai/schemas
+packages/components/schemas
 package-lock.json
 packages/tokens/test/fixtures/*.css.txt
 packages/tokens/src/generated

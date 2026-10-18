@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/components/oddkin.navigation.v1.json",
+  "title": "oddkin.navigation",
+  "description": "Entries of a side navigation: links, actions, and groups of entries.",
+  "$comment": "Also enforced by validate(), not expressible here: uniqueIds(id).",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/NavigationItem"
+  },
+  "$defs": {
+    "NavigationItem": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "link"
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "href": {
+              "type": "string",
+              "format": "uri-reference",
+              "pattern": "^(?![\\u0000-\\u0020]*(?:[jJ]\\s*[aA]\\s*[vV]\\s*[aA]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT]|[vV]\\s*[bB]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT])\\s*:)"
+            },
+            "target": {
+              "enum": [
+                "_blank",
+                "_self"
+              ]
+            },
+            "rel": {
+              "type": "string"
+            },
+            "disabled": {
+              "type": "boolean"
+            },
+            "badge": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "label",
+            "href"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "action"
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "action": {
+              "type": "string",
+              "pattern": "^[a-z][a-zA-Z0-9-]*(?:\\.[a-zA-Z0-9-]+)*$"
+            },
+            "disabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "label",
+            "action"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "group"
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/NavigationItem"
+              }
+            },
+            "expanded": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "label",
+            "items"
+          ]
+        }
+      ]
+    }
+  }
+}

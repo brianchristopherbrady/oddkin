@@ -1,0 +1,47 @@
+/* Page chrome for the side-navigation fixture; the navigation itself needs none of this. */
+body {
+  margin: 0;
+  padding: var(--odd-space-xl);
+  background: var(--odd-color-canvas);
+  color: var(--odd-color-text-primary);
+  font-family: var(--odd-type-body-family);
+  font-size: var(--odd-type-body-size);
+  line-height: var(--odd-type-body-line-height);
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-family: var(--odd-type-section-family);
+  line-height: var(--odd-type-section-line-height);
+  /* Long words at 200% text in a 320 px viewport wrap instead of scrolling the page. */
+  overflow-wrap: anywhere;
+}
+
+.intro p {
+  margin: 0;
+  max-inline-size: 60ch;
+}
+
+.frames {
+  align-items: start;
+}
+
+.frame {
+  box-sizing: border-box;
+  inline-size: 16rem;
+  max-inline-size: 100%;
+  padding: var(--odd-space-sm);
+  border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  border-radius: var(--odd-radius-lg);
+  background: var(--odd-color-surface-default);
+}
+
+.frame--wide {
+  inline-size: 48rem;
+}
+
+.scope {
+  color: var(--odd-color-text-primary);
+  background: var(--odd-color-surface-default);
+}

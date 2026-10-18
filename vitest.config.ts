@@ -10,6 +10,9 @@ export default defineConfig({
           include: ['packages/*/test/**/*.test.ts', 'tests/**/*.test.ts'],
           exclude: ['**/*.browser.test.ts', '**/node_modules/**'],
           environment: 'node',
+          // Node tests share the machine with three browsers during `npm test`; tests that take
+          // under 250 ms alone (schema compilation, temporary workspaces) have exceeded 5 s there.
+          testTimeout: 20_000,
         },
       },
       {
