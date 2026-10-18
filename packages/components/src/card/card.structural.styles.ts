@@ -17,6 +17,8 @@ export const cardStructuralStyles = css`
     flex-direction: column;
     block-size: 100%;
     min-inline-size: 0;
+    /* Inherited by slotted content: long URLs and words wrap inside narrow cards. */
+    overflow-wrap: anywhere;
   }
   .body {
     flex: 1 1 auto;

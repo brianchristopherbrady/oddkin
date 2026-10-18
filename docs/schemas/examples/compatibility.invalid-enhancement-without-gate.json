@@ -1,0 +1,28 @@
+{
+  "checked": "2026-10-17",
+  "data": { "@mdn/browser-compat-data": "8.1.6", "web-features": "3.43.0" },
+  "floor": {
+    "chrome": "125",
+    "chrome_android": "125",
+    "edge": "125",
+    "firefox": "126",
+    "firefox_android": "126",
+    "safari": "17.4",
+    "safari_ios": "17.4"
+  },
+  "features": [
+    {
+      "id": "text-wrap-balance",
+      "syntax": "text-wrap: balance",
+      "kind": "css",
+      "bcd": ["css.properties.text-wrap.balance"],
+      "adoption": "enhancement",
+      "status": "implemented",
+      "usedBy": ["Headings"],
+      "baseline": "Normal wrapping.",
+      "enhanced": "Balanced heading lines.",
+      "differences": "Line breaks differ.",
+      "tests": []
+    }
+  ]
+}

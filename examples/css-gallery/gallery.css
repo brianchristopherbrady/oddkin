@@ -1,0 +1,183 @@
+/* Gallery page styles: only features every floor browser supports (ADR 0038). */
+body {
+  margin: 0;
+  padding: var(--odd-layout-inset);
+  font-family: var(--odd-font-family-sans);
+  font-size: var(--odd-font-size-md);
+  line-height: var(--odd-line-height-normal);
+  color: var(--odd-color-text-primary);
+  background: var(--odd-color-surface-sunken);
+  overflow-wrap: anywhere;
+}
+
+.intro,
+main {
+  max-inline-size: 72rem;
+  margin-inline: auto;
+}
+
+main {
+  display: grid;
+  /* minmax(0, 1fr): a definite-width child (the resizable frame) must not widen the page track. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--odd-space-xl);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: var(--odd-line-height-tight);
+}
+
+a {
+  color: var(--odd-color-text-link);
+}
+
+:is(a, select, input, textarea, summary, [tabindex='0']):focus-visible {
+  outline: var(--odd-focus-width) solid var(--odd-color-focus-ring);
+  outline-offset: var(--odd-focus-offset);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  gap: var(--odd-space-md);
+}
+
+fieldset {
+  display: grid;
+  gap: var(--odd-space-sm);
+  align-content: start;
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--odd-space-md);
+  border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  border-radius: var(--odd-radius-md);
+  background: var(--odd-color-surface-default);
+}
+
+legend {
+  padding-inline: var(--odd-space-2xs);
+  font-weight: var(--odd-font-weight-semibold);
+}
+
+label {
+  display: grid;
+  gap: var(--odd-space-2xs);
+}
+
+label.check {
+  display: flex;
+  align-items: center;
+  gap: var(--odd-space-xs);
+}
+
+select,
+textarea,
+input[type='range'] {
+  min-block-size: max(var(--odd-target-min), 1.5rem);
+  font: inherit;
+}
+
+.hint {
+  margin: 0;
+  color: var(--odd-color-text-secondary);
+  font-size: var(--odd-font-size-sm);
+}
+
+.stage {
+  padding: var(--odd-space-md);
+  border: var(--odd-border-width-default) dashed var(--odd-color-border-strong);
+  border-radius: var(--odd-radius-lg);
+  color: var(--odd-color-text-primary);
+  background: var(--odd-color-surface-default);
+}
+
+/* The frame is a named query container; the components inside never declare containers. */
+.frame {
+  display: grid;
+  gap: var(--odd-space-md);
+  inline-size: 36rem;
+  max-inline-size: 100%;
+  container: gallery-frame / inline-size;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--odd-space-sm);
+}
+
+.note {
+  margin: 0;
+  color: var(--odd-color-text-secondary);
+}
+
+.nested,
+.native {
+  display: grid;
+  gap: var(--odd-space-sm);
+  justify-items: start;
+  padding: var(--odd-layout-inset);
+  border-radius: var(--odd-radius-lg);
+  color: var(--odd-color-text-primary);
+  background: var(--odd-color-surface-raised);
+}
+
+.native-field {
+  justify-self: stretch;
+}
+
+textarea {
+  box-sizing: border-box;
+  inline-size: 100%;
+  resize: vertical;
+}
+
+details[open] > summary {
+  margin-block-end: var(--odd-space-xs);
+}
+
+/* Two columns once the frame, not the viewport, is wide enough. */
+@container gallery-frame (min-width: 44rem) {
+  .native {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .native > h3 {
+    grid-column: 1 / -1;
+  }
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--odd-font-size-sm);
+}
+
+th,
+td {
+  padding: var(--odd-space-xs);
+  border-block-end: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  text-align: start;
+  vertical-align: top;
+}
+
+pre {
+  max-block-size: 24rem;
+  overflow: auto;
+  margin: var(--odd-space-xs) 0 0;
+  padding: var(--odd-space-sm);
+  border-radius: var(--odd-radius-md);
+  background: var(--odd-color-surface-default);
+  font-family: var(--odd-font-family-mono);
+  font-size: var(--odd-font-size-xs);
+  overflow-wrap: normal;
+  white-space: pre;
+}

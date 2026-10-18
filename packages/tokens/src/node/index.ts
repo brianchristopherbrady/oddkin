@@ -77,6 +77,8 @@ export async function loadConfig(file: string): Promise<LoadResult> {
 export interface BuildOptions {
   readonly outDir: string;
   readonly formats?: readonly OutputFormat[];
+  /** CSS cascade layer (default `odd.tokens`); `false` writes unlayered CSS. */
+  readonly cssLayer?: string | false;
 }
 
 export interface BuildResult {
@@ -87,7 +89,10 @@ export interface BuildResult {
 
 /** Generate and write outputs: `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.inspect.json`. */
 export async function buildTheme(config: unknown, options: BuildOptions): Promise<BuildResult> {
-  const result = generate(config);
+  const result = generate(
+    config,
+    options.cssLayer === undefined ? {} : { css: { layer: options.cssLayer } },
+  );
   if (!result.ok || !result.theme || result.css === undefined) return { result, files: [] };
   const formats = options.formats ?? OUTPUT_FORMATS;
   const name = result.theme.name;

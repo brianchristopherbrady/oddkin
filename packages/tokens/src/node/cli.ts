@@ -12,7 +12,7 @@ import {
   STARTER_CONFIG,
   type OutputFormat,
 } from './index.js';
-import { generate, type Diagnostic } from '../generate/index.js';
+import { generate, isLayerName, type Diagnostic } from '../generate/index.js';
 
 const USAGE = `Usage:
   oddkin-tokens init [file]                 Write a starter oddkin.theme.json (never overwrites)
@@ -22,6 +22,7 @@ const USAGE = `Usage:
 Options:
   --out <dir>          Output directory for build (default: tokens)
   --format <list>      Comma-separated: ${OUTPUT_FORMATS.join(', ')} (default: all)
+  --css-layer <name>   Cascade layer for the CSS (default: odd.tokens; "none" for unlayered)
   --strict             Treat warnings as errors
   --json               Print diagnostics as JSON
   -h, --help           Show this help`;
@@ -55,6 +56,7 @@ export async function run(argv: readonly string[], io: Io = stdio): Promise<numb
       options: {
         out: { type: 'string', default: 'tokens' },
         format: { type: 'string' },
+        'css-layer': { type: 'string' },
         strict: { type: 'boolean', default: false },
         json: { type: 'boolean', default: false },
         help: { type: 'boolean', short: 'h', default: false },
@@ -98,6 +100,13 @@ export async function run(argv: readonly string[], io: Io = stdio): Promise<numb
     io.err(`Unknown format(s): ${unknown.join(', ')}. Use ${OUTPUT_FORMATS.join(', ')}.`);
     return 2;
   }
+  const layerOption = values['css-layer'];
+  if (layerOption !== undefined && layerOption !== 'none' && !isLayerName(layerOption)) {
+    io.err(`--css-layer "${layerOption}" is not a cascade layer name (e.g. odd.tokens) or none.`);
+    return 2;
+  }
+  const cssLayer =
+    layerOption === undefined ? undefined : layerOption === 'none' ? false : layerOption;
 
   const loaded = await loadConfig(target);
   if (loaded.diagnostics.length) {
@@ -119,6 +128,7 @@ export async function run(argv: readonly string[], io: Io = stdio): Promise<numb
   const { result, files } = await buildTheme(loaded.config, {
     outDir: values.out,
     formats: formats as OutputFormat[],
+    ...(cssLayer === undefined ? {} : { cssLayer }),
   });
   report(result.diagnostics, values.json, io);
   if (failed(result.diagnostics, values.strict)) return 1;

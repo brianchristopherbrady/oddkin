@@ -123,6 +123,7 @@ Recipe CSS is emitted into cascade layers inside the element's stylesheet:
 - These guarantees concern normal declarations. `!important` reverses layer precedence and follows different cross-context precedence.
 - Selectors are flattened with `:where()` so every recipe rule has the specificity of one class (0,1,0); variant host selectors use `:host(:where([align="end"]))`.
 - Layer names use a configurable prefix (default `recipe`) so multiple recipes in one root share layers predictably.
+- Page-author recipes from `@oddkin/components/layout` (planned, M4 layout slice) use the prefix `odd.layout`, so their layers (`odd.layout.base`, `odd.layout.variant`, `odd.layout.condition`) nest under the canonical document order `odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities` and stay below unlayered application CSS ([ADR 0039](./decisions/0039-cascade-layer-order.md), [css-architecture.md](./css-architecture.md) §5). Core's neutral default stays `recipe`.
 
 ### Extending without duplication
 ```ts

@@ -7,7 +7,7 @@ Theme configuration, the pure token generator, and its outputs. Browser entry po
 | Entry | Contents |
 | --- | --- |
 | `@oddkin/tokens/theme` | `ThemeConfig` types and `defineTheme()` |
-| `@oddkin/tokens/generate` | `generate(config)` → `{ ok, diagnostics, theme, css }`; `resolveTheme`, `resolveToken`, `emitCss`, spacing, colour, and contrast utilities |
+| `@oddkin/tokens/generate` | `generate(config, { css })` → `{ ok, diagnostics, theme, css }`; `resolveTheme`, `resolveToken`, `emitCss`, `LAYER_ORDER`, `BROWSER_FLOOR`, `ABOVE_FLOOR_SYNTAX`, spacing, colour, and contrast utilities |
 | `@oddkin/tokens/refs` | `token('space.md')` → `'var(--odd-space-md)'`, `tokenVariable()`, `TokenName` (default theme) |
 | `@oddkin/tokens/conditions` | Named conditions as `{ kind, query, atRule }` literal container/media queries |
 | `@oddkin/tokens/values` | Literal values of the default theme (`{ light, dark }` for mode-dependent tokens) |
@@ -29,10 +29,14 @@ One brand colour produces a complete theme: OKLCH reference ramps (brand, neutra
 ```sh
 oddkin-tokens init                                   # writes oddkin.theme.json
 oddkin-tokens check oddkin.theme.json [--strict] [--json]
-oddkin-tokens build oddkin.theme.json --out tokens [--format css,ts,json]
+oddkin-tokens build oddkin.theme.json --out tokens [--format css,ts,json] [--css-layer <name|none>]
 ```
 
 `build` writes `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.conditions.ts` (typed for that theme's token names), and `<name>.inspect.json`. Exit codes: 0 success, 1 diagnostics, 2 usage. Configs may be JSON, ESM JS, or `.ts` via Node's type stripping (erasable syntax only; type-check separately). JS and TS configs are executed: treat them as trusted code.
+
+Generated CSS starts with Oddkin's layer order (`@layer odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities;`) and places every declaration in `odd.tokens`, so unlayered page CSS overrides any generated value regardless of stylesheet order. `--css-layer vendor.theme` emits a different layer; `--css-layer none` emits unlayered CSS (ADR 0039).
+
+Token values must parse in every supported browser (Chrome and Edge 125, Firefox 126, Safari 17.4): a value such as `progress(…)` or `oklch(from …)` gets a `value.syntax.aboveFloor` warning, because declarations that read the token would be dropped at computed-value time in browsers without that syntax. Put enhancements in your own CSS behind `@supports` instead.
 
 The generated ramp step nearest a brand colour is used for its roles; the brand colour itself appears only if it falls on a step. Override `ref.brand.<step>` to pin an exact value. Custom spacing scales must define the steps the preset's roles use (`xs`, `sm`, `md`, `lg`) or override those roles.
 

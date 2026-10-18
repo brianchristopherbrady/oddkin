@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-FXTcvTSeogBsVoZMG6ibofTSFcAMt37OJFngqq8fEAQ='; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>CSS compatibility gallery — Oddkin</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="./gallery.css" />
+    <link rel="stylesheet" href="./enhancements.css" id="enhancements" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/core/element": "../../packages/core/dist/prod/element/index.js",
+          "@oddkin/core/helpers/live": "../../packages/core/dist/prod/helpers/live.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/prod/reactive/index.js",
+          "@oddkin/core/scope": "../../packages/core/dist/prod/scope/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/prod/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/prod/template/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js",
+          "@oddkin/components/button": "../../packages/components/dist/button/index.js",
+          "@oddkin/components/define/button": "../../packages/components/dist/button/button.define.js",
+          "@oddkin/components/define/card": "../../packages/components/dist/card/card.define.js",
+          "@oddkin/components/define/input": "../../packages/components/dist/input/input.define.js"
+        }
+      }
+    </script>
+    <script type="module" src="./gallery.js"></script>
+  </head>
+  <body>
+    <header class="intro">
+      <h1 class="balanced">CSS compatibility gallery</h1>
+      <p>
+        Oddkin components and tokens under the controls below. Everything shown works in the browser
+        floor (Chrome and Edge 125, Firefox 126, Safari 17.4); the enhancement stylesheet adds gated
+        improvements on top. See
+        <a href="../../docs/compatibility/matrix.md">the platform feature matrix</a>.
+      </p>
+    </header>
+
+    <main>
+      <form id="controls" class="controls" aria-label="Gallery settings">
+        <fieldset>
+          <legend>Theme</legend>
+          <label>
+            Mode
+            <select id="mode">
+              <option value="system">System</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </label>
+          <label>
+            Nested surface
+            <select id="nested-mode">
+              <option value="opposite">Opposite mode</option>
+              <option value="inherit">Inherit</option>
+            </select>
+          </label>
+          <label>
+            Density
+            <select id="density">
+              <option value="">Comfortable</option>
+              <option value="compact">Compact</option>
+            </select>
+          </label>
+          <label>
+            Profile
+            <select id="profile">
+              <option value="">None</option>
+              <option value="layout.compact">layout.compact</option>
+            </select>
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Layout and content</legend>
+          <label>
+            Direction
+            <select id="direction">
+              <option value="ltr">Left to right</option>
+              <option value="rtl">Right to left</option>
+            </select>
+          </label>
+          <label>
+            Container width
+            <input id="width" type="range" min="10" max="60" step="1" value="36" />
+            <output id="width-value" for="width">36rem</output>
+          </label>
+          <label class="check"
+            ><input id="long" type="checkbox" /> Long and localized content</label
+          >
+        </fieldset>
+        <fieldset>
+          <legend>States</legend>
+          <label class="check"><input id="disabled" type="checkbox" /> Disabled</label>
+          <label class="check"><input id="loading" type="checkbox" /> Loading</label>
+          <label class="check"><input id="invalid" type="checkbox" /> Invalid</label>
+        </fieldset>
+        <fieldset>
+          <legend>Enhancements and preferences</legend>
+          <label class="check">
+            <input id="enhanced" type="checkbox" checked /> Load the enhancement stylesheet
+          </label>
+          <p id="preferences" class="hint"></p>
+        </fieldset>
+      </form>
+
+      <section aria-labelledby="stage-heading">
+        <h2 id="stage-heading" class="balanced">Components in a resizable container</h2>
+        <p class="hint">
+          The container width changes independently of the viewport; components adapt to the space
+          they are given.
+        </p>
+        <div id="stage" class="stage" data-odd-mode="system">
+          <div id="frame" class="frame">
+            <odd-card id="card" label="Account">
+              <h3
+                slot="header"
+                class="balanced"
+                data-long="Elektrizitätswirtschaftsunternehmensverbandsvorsitzende"
+              >
+                Account settings
+              </h3>
+              <odd-input
+                id="email"
+                label="Email"
+                name="email"
+                type="email"
+                value="ada@example.com"
+                description="We send receipts here."
+              ></odd-input>
+              <p
+                class="note"
+                data-long="https://example.com/a/very/long/path/that/never/breaks/on/its/own?with=parameters"
+              >
+                Changes apply after you save.
+              </p>
+              <div slot="footer" class="actions">
+                <odd-button id="cancel" data-long="Abbrechen und Änderungen verwerfen"
+                  >Cancel</odd-button
+                >
+                <odd-button
+                  id="save"
+                  appearance="primary"
+                  data-long="Änderungen speichern und fortfahren"
+                >
+                  Save
+                </odd-button>
+              </div>
+            </odd-card>
+
+            <section
+              id="nested"
+              class="nested"
+              data-odd-mode="dark"
+              aria-labelledby="nested-heading"
+            >
+              <h3 id="nested-heading" class="balanced">Opposite-mode surface</h3>
+              <p>Roles re-resolve inside nested scopes, including inside component shadow roots.</p>
+              <odd-button appearance="primary">Nested action</odd-button>
+            </section>
+
+            <section class="native" aria-labelledby="native-heading">
+              <h3 id="native-heading" class="balanced">Native controls</h3>
+              <label class="native-field">
+                Notes
+                <textarea id="notes" rows="2">
+A native textarea that grows with its content where field-sizing is supported.</textarea>
+              </label>
+              <label class="check native-check">
+                <input type="checkbox" checked /> Native checkbox (accent colour where supported)
+              </label>
+              <details>
+                <summary>Native disclosure</summary>
+                <p>Open styling uses the open attribute, and :open where supported.</p>
+              </details>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="support-heading">
+        <h2 id="support-heading" class="balanced">Feature detection in this browser</h2>
+        <p class="hint">
+          From <code>docs/compatibility/features.json</code>. Detection uses
+          <code>CSS.supports()</code> and property checks in this browser; it does not change what
+          the parser accepts.
+        </p>
+        <div class="table-scroll" role="region" aria-labelledby="support-heading" tabindex="0">
+          <table id="support">
+            <thead>
+              <tr>
+                <th scope="col">Feature</th>
+                <th scope="col">Syntax</th>
+                <th scope="col">Adoption</th>
+                <th scope="col">Detected here</th>
+                <th scope="col">Baseline behaviour</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="css-heading">
+        <h2 id="css-heading" class="balanced">Emitted CSS</h2>
+        <details>
+          <summary>Token stylesheet (<code>@oddkin/tokens/css/default.css</code>)</summary>
+          <pre id="token-css" tabindex="0"></pre>
+        </details>
+        <details>
+          <summary><code>odd-button</code> structural and default styles</summary>
+          <pre id="button-css" tabindex="0"></pre>
+        </details>
+        <details>
+          <summary>Enhancement stylesheet (<code>enhancements.css</code>)</summary>
+          <pre id="enhancement-css" tabindex="0"></pre>
+        </details>
+      </section>
+
+      <section aria-labelledby="planned-heading">
+        <h2 id="planned-heading" class="balanced">Not covered yet</h2>
+        <p>
+          Menus, dialogs, popovers, overlay placement, motion between states, and AI interfaces
+          arrive with their components (M10). Their compatibility contracts are already planned in
+          <code>docs/architecture/css-architecture.md</code>.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

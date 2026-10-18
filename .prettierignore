@@ -10,3 +10,4 @@ packages/tokens/test/fixtures/*.css.txt
 packages/tokens/src/generated
 packages/core/test/fixtures/*.css.txt
 packages/analyzer/test/fixtures
+research/compatibility/floor-results.json

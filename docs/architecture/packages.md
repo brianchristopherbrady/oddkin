@@ -90,7 +90,7 @@ Subpaths are created only when implemented; an empty export is not a delivered f
 | `./conditions` | Named responsive conditions → literal query strings | any, no DOM |
 | `./inspect` | Resolved graph metadata; `computedToken(name, element)` with explicit element context | `computedToken` needs DOM |
 | `./schema.json` | JSON Schema for theme configuration | data |
-| `./css/default.css`, `./css/tokens.css`, `./css/themes/*.css` | Generated stylesheets | CSS, no script |
+| `./css/default.css`, `./css/tokens.css`, `./css/themes/*.css` | Generated stylesheets; declarations in the `odd.tokens` cascade layer after the canonical Oddkin layer order (ADR 0039) | CSS, no script |
 | `./scss/refs`, `./scss/values` | Sass map/function wrappers | Sass (dev tooling) |
 | `./json/*` | DTCG-format JSON, inspection metadata | data |
 | `./node` + bin `oddkin-tokens` | File loading, CLI `init`/`build`/`check` | Node only |

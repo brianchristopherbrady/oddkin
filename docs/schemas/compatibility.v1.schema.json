@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/compatibility/v1.json",
+  "title": "Oddkin platform feature registry",
+  "description": "The browser support floor, the compatibility-data versions it was resolved with, and every CSS, DOM, and HTML feature Oddkin adopts or has evaluated, with its adoption category, gate, fallback, expected differences, and evidence. Checked against the pinned data by scripts/compat/check-css.mjs (ADR 0038).",
+  "type": "object",
+  "required": ["checked", "data", "floor", "features"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "policy": { "type": "string", "description": "Decision records that govern the registry." },
+    "checked": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the floor and data were last resolved."
+    },
+    "data": {
+      "type": "object",
+      "required": ["@mdn/browser-compat-data", "web-features"],
+      "additionalProperties": false,
+      "properties": {
+        "@mdn/browser-compat-data": { "$ref": "#/$defs/version" },
+        "web-features": { "$ref": "#/$defs/version" }
+      }
+    },
+    "floor": {
+      "type": "object",
+      "description": "Minimum supported release per browser.",
+      "required": [
+        "chrome",
+        "chrome_android",
+        "edge",
+        "firefox",
+        "firefox_android",
+        "safari",
+        "safari_ios"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "chrome": { "$ref": "#/$defs/version" },
+        "chrome_android": { "$ref": "#/$defs/version" },
+        "edge": { "$ref": "#/$defs/version" },
+        "firefox": { "$ref": "#/$defs/version" },
+        "firefox_android": { "$ref": "#/$defs/version" },
+        "safari": { "$ref": "#/$defs/version" },
+        "safari_ios": { "$ref": "#/$defs/version" }
+      }
+    },
+    "features": { "type": "array", "items": { "$ref": "#/$defs/feature" } }
+  },
+  "$defs": {
+    "version": { "type": "string", "pattern": "^\\d+(\\.\\d+)*$" },
+    "text": { "type": "string", "minLength": 1 },
+    "feature": {
+      "type": "object",
+      "required": ["id", "syntax", "kind", "bcd", "adoption", "status", "baseline"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "syntax": {
+          "$ref": "#/$defs/text",
+          "description": "Exact property, selector, function, at-rule, or API."
+        },
+        "kind": { "enum": ["css", "api", "html"] },
+        "bcd": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "@mdn/browser-compat-data keys, one per subfeature actually relied on.",
+          "items": { "type": "string", "pattern": "^(css|api|html|javascript)\\.[\\w.-]+$" }
+        },
+        "webFeature": { "type": "string", "description": "web-features id (Baseline status)." },
+        "adoption": {
+          "enum": ["foundation", "enhancement", "experimental", "deferred", "declined"],
+          "description": "foundation: required and supported at the floor; enhancement: gated, with a working baseline; experimental: isolated evaluation only; deferred: not now, owner and reason recorded; declined: not adopted."
+        },
+        "status": { "enum": ["implemented", "planned", "evaluated"] },
+        "milestone": { "type": "string", "pattern": "^M\\d+$" },
+        "usedBy": { "type": "array", "items": { "$ref": "#/$defs/text" } },
+        "baseline": {
+          "$ref": "#/$defs/text",
+          "description": "Behavior in floor browsers (without the enhancement)."
+        },
+        "enhanced": { "$ref": "#/$defs/text" },
+        "gate": {
+          "$ref": "#/$defs/text",
+          "description": "How the enhancement is applied only where supported, e.g. an @supports condition or feature detection."
+        },
+        "detectCss": {
+          "$ref": "#/$defs/text",
+          "description": "CSS.supports() condition used by the floor probe."
+        },
+        "detectApi": {
+          "type": "string",
+          "pattern": "^[A-Za-z]+(\\.[A-Za-z]+)+$",
+          "description": "Dotted path whose last segment must exist, e.g. ElementInternals.prototype.states."
+        },
+        "differences": {
+          "$ref": "#/$defs/text",
+          "description": "Expected visual or behavioral differences between baseline and enhancement."
+        },
+        "floorExceptions": {
+          "type": "object",
+          "description": "Floor browsers without full support, each with its documented consequence.",
+          "propertyNames": {
+            "enum": [
+              "chrome",
+              "chrome_android",
+              "edge",
+              "firefox",
+              "firefox_android",
+              "safari",
+              "safari_ios"
+            ]
+          },
+          "additionalProperties": { "$ref": "#/$defs/text" }
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "name"],
+            "additionalProperties": false,
+            "properties": {
+              "file": { "type": "string", "pattern": "^[\\w./-]+$" },
+              "name": { "$ref": "#/$defs/text" }
+            }
+          }
+        },
+        "decision": { "$ref": "#/$defs/text" },
+        "useCase": { "$ref": "#/$defs/text" },
+        "notes": { "$ref": "#/$defs/text" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "adoption": { "const": "enhancement" } } },
+          "then": { "required": ["gate", "enhanced", "differences"] }
+        },
+        {
+          "if": {
+            "properties": { "adoption": { "enum": ["experimental", "deferred", "declined"] } }
+          },
+          "then": {
+            "required": ["decision"],
+            "properties": { "status": { "const": "evaluated" } }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "implemented" } } },
+          "then": {
+            "required": ["usedBy", "tests"],
+            "properties": {
+              "usedBy": { "type": "array", "minItems": 1 },
+              "tests": { "type": "array", "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "planned" } } },
+          "then": { "required": ["milestone"] }
+        }
+      ]
+    }
+  }
+}

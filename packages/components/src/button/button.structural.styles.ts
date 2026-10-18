@@ -39,6 +39,8 @@ export const buttonStructuralStyles = css`
     display: inline-flex;
     align-items: center;
     min-inline-size: 0;
+    /* Long unbroken labels (URLs, compound words, translations) wrap instead of overflowing. */
+    overflow-wrap: anywhere;
   }
   .spinner:not([hidden]) {
     display: inline-block;

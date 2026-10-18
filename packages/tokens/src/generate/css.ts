@@ -10,6 +10,10 @@
  *
  * A guaranteed-invalid toggle (`initial`) selects its fallback; an empty toggle
  * contributes nothing. Contract: theming-and-styling.md §5.
+ *
+ * Declarations are emitted into the `odd.tokens` cascade layer after the canonical Oddkin
+ * layer order (ADR 0039), so unlayered application CSS overrides generated values whatever
+ * the stylesheet order. Contract: css-architecture.md §5.
  */
 import type { Mode } from '../theme/types.js';
 import {
@@ -23,6 +27,39 @@ import {
 import type { ResolvedTheme } from './resolve.js';
 
 type Declaration = readonly [property: string, value: string];
+
+/**
+ * The canonical order of Oddkin's document-level layers (ADR 0039). Every Oddkin stylesheet
+ * that declares a layer repeats this statement first, so whichever loads first establishes
+ * the same order. Application CSS that is unlayered, or in layers declared after `odd`,
+ * overrides all of them.
+ */
+export const LAYER_ORDER = [
+  'odd.reset',
+  'odd.tokens',
+  'odd.base',
+  'odd.layout',
+  'odd.components',
+  'odd.utilities',
+] as const;
+
+export const DEFAULT_TOKEN_LAYER = 'odd.tokens';
+
+export interface CssOptions {
+  /**
+   * Cascade layer for the declarations. Default `odd.tokens`, preceded by the canonical
+   * layer order statement. Another name emits only that layer block; `false` emits
+   * unlayered CSS.
+   */
+  readonly layer?: string | false;
+}
+
+const LAYER_NAME = /^-?[A-Za-z_][\w-]*(?:\.-?[A-Za-z_][\w-]*)*$/;
+
+/** True for a valid cascade layer name such as `odd.tokens` or `vendor.theme`. */
+export function isLayerName(name: string): boolean {
+  return LAYER_NAME.test(name);
+}
 
 function block(
   selectors: readonly string[],
@@ -48,11 +85,25 @@ function tokenDeclarations(
   return [...tokens].map((t) => [cssVariable(t.name), compileValue(t.value, modes)] as const);
 }
 
-/** Emit the theme as CSS custom properties. Deterministic: same theme, same bytes. */
-export function emitCss(theme: ResolvedTheme): string {
+/** Emit the theme as CSS custom properties. Deterministic: same theme and options, same bytes. */
+export function emitCss(theme: ResolvedTheme, options: CssOptions = {}): string {
+  const layer = options.layer ?? DEFAULT_TOKEN_LAYER;
+  if (layer !== false && !isLayerName(layer))
+    throw new TypeError(`emitCss: "${layer}" is not a valid cascade layer name.`);
+  const header = `/* @oddkin/tokens — theme "${theme.name}". Generated file: change the theme configuration instead of editing it. */\n`;
+  const body = emitBlocks(theme);
+  if (layer === false) return [header, body].join('\n');
+  const order = layer === DEFAULT_TOKEN_LAYER ? `@layer ${LAYER_ORDER.join(', ')};\n\n` : '';
+  const indented = body
+    .split('\n')
+    .map((line) => (line ? `  ${line}` : line))
+    .join('\n');
+  return `${header}\n${order}@layer ${layer} {\n${indented.trimEnd()}\n}\n`;
+}
+
+function emitBlocks(theme: ResolvedTheme): string {
   const { modes, tokens } = theme;
   const parts: string[] = [
-    `/* @oddkin/tokens — theme "${theme.name}". Generated file: change the theme configuration instead of editing it. */\n`,
     block([':root', `[data-odd-theme="${theme.name}"]`], tokenDeclarations(tokens.values(), modes)),
   ];
 

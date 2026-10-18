@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" data-odd-mode="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oddkin floor probe</title>
+    <!-- Loaded before the token sheet on purpose: its unlayered rules must still win (ADR 0039). -->
+    <link rel="stylesheet" href="./probe.css" />
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/core/element": "../../packages/core/dist/prod/element/index.js",
+          "@oddkin/core/helpers/live": "../../packages/core/dist/prod/helpers/live.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/prod/reactive/index.js",
+          "@oddkin/core/scope": "../../packages/core/dist/prod/scope/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/prod/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/prod/template/index.js",
+          "@oddkin/tokens/generate": "../../packages/tokens/dist/generate/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js",
+          "@oddkin/components/define/button": "../../packages/components/dist/button/button.define.js",
+          "@oddkin/components/define/card": "../../packages/components/dist/card/card.define.js",
+          "@oddkin/components/define/input": "../../packages/components/dist/input/input.define.js"
+        }
+      }
+    </script>
+    <script type="module" src="./probe.js"></script>
+  </head>
+  <body>
+    <h1>Oddkin floor probe</h1>
+    <p>
+      Runs in named floor browsers (<code>npm run compat:floor</code>) and in current engines
+      (<code>e2e/floor-probe.spec.ts</code>). Results appear below.
+    </p>
+
+    <section id="layer-override" data-odd-mode="light">
+      <span class="swatch">Override</span>
+    </section>
+    <section id="scope-light" data-odd-mode="light">
+      <span class="swatch">Light</span>
+      <section id="scope-dark" data-odd-mode="dark"><span class="swatch">Dark</span></section>
+      <section id="scope-compact" data-odd-density="compact">
+        <span class="control">Compact</span>
+      </section>
+      <section id="scope-profile" data-odd-profile="layout.compact">
+        <span class="padded">Profile</span>
+      </section>
+    </section>
+
+    <span id="action-reference"></span>
+    <odd-button appearance="primary">Primary</odd-button>
+    <odd-button>Secondary</odd-button>
+    <odd-card label="Probe"><p>Card body</p></odd-card>
+    <form id="probe-form">
+      <odd-input id="probe-input" label="Email" name="email" type="email" required></odd-input>
+    </form>
+
+    <div id="cq-wide" class="cq"><span class="cq-item">wide</span></div>
+    <div id="cq-narrow" class="cq"><span class="cq-item">narrow</span></div>
+
+    <div id="naive">Naive</div>
+    <div id="gated">Gated</div>
+    <div id="registered">Registered</div>
+
+    <pre id="results">Running…</pre>
+  </body>
+</html>

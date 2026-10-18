@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 // Example pages that run under a strict CSP. After editing an import map, run
 // `node scripts/update-csp-hash.mjs <page>` (after formatting, which changes the hashed text).
-const pages = ['core-counter', 'components-only'];
+const pages = ['core-counter', 'components-only', 'css-gallery'];
 
 describe.each(pages)('%s CSP', (name) => {
   it('allows exactly the inline import map by hash', async () => {

@@ -36,6 +36,7 @@ const VALIDITY_FLAGS = [
  * @cssprop --odd-input-radius - Corner radius.
  * @cssprop --odd-input-border-color - Border colour.
  * @cssprop --odd-input-background - Background colour.
+ * @cssstate user-invalid - The field shows its error: `error` is set, or the value is invalid after the user left the field or a validity check failed. Matches `aria-invalid` on the inner control; style it with `odd-input:state(user-invalid)`.
  * @a11y `label` names the native input inside the shadow root; a `<label for>` outside it cannot. Description and error are announced through `aria-describedby`; `aria-invalid` is set for `error`, or for an invalid value after the user leaves the field or a validity check fails (any `invalid` event, including `checkValidity()`, unlike native `:user-invalid`); reset clears it.
  * @keyboard Native text-input behavior.
  * @previewRole textInput
@@ -84,6 +85,14 @@ export class OddkinInput extends OddkinElement.with({
   readonly _touched = signal(false);
   /** @internal The current value failed validation. */
   readonly _invalid = signal(false);
+  /**
+   * @internal The field shows its error: `error` is set, or the value is invalid after the user
+   * left the field or a validity check failed. One source for `aria-invalid` and the
+   * `user-invalid` custom state.
+   */
+  readonly _userInvalid: Readable<boolean> = computed(
+    () => !!this.error || (this._touched.value && this._invalid.value),
+  );
   /** @internal The value as a readable for the template's live binding. */
   readonly _currentValue: Readable<string> = computed(() => this.value);
 
@@ -161,6 +170,12 @@ export class OddkinInput extends OddkinElement.with({
       },
       { phase: 'post', name: '<odd-input> validity' },
     );
+    // Styling hook for consumers (`odd-input:state(user-invalid)`), derived from the same
+    // state as aria-invalid; never a second source of truth.
+    scope.effect(() => this.setState('user-invalid', this._userInvalid.value), {
+      phase: 'post',
+      name: '<odd-input> user-invalid state',
+    });
   }
 
   #validate(): void {

@@ -14,35 +14,39 @@ Packages are published under `@oddkin/*`; elements use the `odd-` prefix (`<odd-
 
 ## Status
 
-Early development. The repository holds the implementation plan, architecture records, and the M1 workspace skeleton. **No package has a public API yet**, and nothing is published. See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for milestones and current state, and [docs/verification.md](./docs/verification.md) for recorded results.
+Early development; nothing is published. `@oddkin/core`, `@oddkin/tokens`, and `@oddkin/analyzer` have implemented, tested public APIs; `@oddkin/components` has its first three elements (M4 in progress). See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for milestones and current state, and [docs/verification.md](./docs/verification.md) for recorded results.
 
 ## Repository layout
 
 | Path | Contents |
 | --- | --- |
-| `packages/*` | `@oddkin/core`, `@oddkin/tokens`, `@oddkin/state`, `@oddkin/app`, `@oddkin/components` |
+| `packages/*` | `@oddkin/core`, `@oddkin/tokens`, `@oddkin/state`, `@oddkin/app`, `@oddkin/components`, `@oddkin/analyzer`, `@oddkin/workbench` |
 | `apps/docs` | Oddkin's product documentation application (private) |
-| `examples/` | Consumers that run without a bundler (`plain-html`) |
+| `examples/` | Consumers that run without a bundler (`plain-html`, `tokens-css-only`, `core-counter`, `components-only`, `css-gallery`, `binding-rule`) |
 | `docs/architecture/` | Architecture documents and [decision records](./docs/architecture/decisions/README.md) |
+| `docs/compatibility/` | Browser floor and platform feature registry, and the generated [feature matrix](./docs/compatibility/matrix.md) |
 | `docs/research/`, `docs/reference/` | Ecosystem research and the reference-application audit |
 | `docs/schemas/` | Draft JSON Schemas (move into their packages in M3/M5) |
-| `scripts/` | Boundary checks, packed-consumer verification, static server |
-| `tests/`, `e2e/` | Workspace-level unit tests and browser tests |
+| `scripts/` | Boundary checks, CSS compatibility checks, packed-consumer verification, static server |
+| `tests/`, `e2e/` | Workspace-level unit tests, the floor-browser probe, and browser tests |
 
 ## Requirements and commands
 
-Node.js 24.12 or newer, npm 11.
+Node.js 24.12 or newer, npm 11. Supported browsers: Chrome and Edge 125, Firefox 126, Safari 17.4, and later ([css-architecture.md](./docs/architecture/css-architecture.md)).
 
 ```sh
 npm install
 npx playwright install chromium firefox webkit   # once, for browser tests
 npm run build          # TypeScript project build (tsc -b)
-npm run lint           # package boundaries (manifests, sources, built artifacts) + formatting
+npm run lint           # package boundaries (manifests, sources, built artifacts), CSS compatibility, formatting
 npm run typecheck      # packages, tests, and configs
 npm test               # unit tests (Vitest)
+npm run size           # bundle and stylesheet size budgets
 npm run test:e2e       # browser tests in Chromium, Firefox, and WebKit (Playwright)
 npm run verify:packs   # pack, install outside the workspace, verify imports and types
 npm run verify         # all of the above
+npm run compat         # regenerate docs/compatibility/matrix.md after editing features.json
+npm run compat:floor   # install Chrome 125 and Firefox 126 outside the repo and run the floor probe
 ```
 
 ## Licence

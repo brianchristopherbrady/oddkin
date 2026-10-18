@@ -83,7 +83,7 @@ describe('profiles', () => {
     expect(compact?.changed).toEqual(['layout.gap', 'layout.inset']);
     expect([...(compact?.tokens.keys() ?? [])]).toContain('card.padding');
     expect(css).toContain(
-      '[data-odd-profile~="layout.compact"],\n[data-odd-profile~="layout.compact"] :is([data-odd-mode], [data-odd-product], [data-odd-density], [data-odd-theme]) {',
+      '[data-odd-profile~="layout.compact"],\n  [data-odd-profile~="layout.compact"] :is([data-odd-mode], [data-odd-product], [data-odd-density], [data-odd-theme]) {',
     );
     expect(resolveToken(theme as never, 'card.padding', { profiles: ['layout.compact'] })).toBe(
       '1rem',

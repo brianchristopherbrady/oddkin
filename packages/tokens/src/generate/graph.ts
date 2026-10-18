@@ -4,6 +4,7 @@
  */
 import type { Mode, ModeValues } from '../theme/types.js';
 import { closest, pointer, type DiagnosticList } from './diagnostics.js';
+import { aboveFloorSyntax, floorLabel, type AboveFloorSyntax } from './floor.js';
 import { parseDimension } from './units.js';
 
 /** Ordered tiers: a token may reference tokens of its own tier or lower. */
@@ -123,6 +124,7 @@ export function validateGraph(tokens: TokenMap, diagnostics: DiagnosticList): vo
       }
     }
     for (const text of texts) checkUnits(token, text, path, diagnostics);
+    checkFloorSyntax(token, texts, path, diagnostics);
     for (const ref of references(token.value)) {
       const target = tokens.get(ref);
       if (!target) {
@@ -252,6 +254,33 @@ export function compareNames(a: string, b: string): number {
 
 const EXPRESSION = /\{[^{}]+\}|calc\(|min\(|max\(|clamp\(/;
 const RELATIVE_SIZES = /^(font\.size|control|layout|navigation|card)\./;
+
+/**
+ * Value syntax the browser floor cannot parse (floor.ts). Reported as a warning: the value is
+ * still emitted, but readers of the token lose their declaration in floor browsers.
+ */
+function checkFloorSyntax(
+  token: TokenDefinition,
+  texts: readonly unknown[],
+  path: string,
+  diagnostics: DiagnosticList,
+): void {
+  const found = new Set<AboveFloorSyntax>();
+  for (const text of texts) {
+    if (typeof text !== 'string') continue;
+    // Literal colours are parsed strictly by the resolver (color.invalid explains the floor).
+    if (token.type === 'color' && !EXPRESSION.test(text)) continue;
+    for (const entry of aboveFloorSyntax(text.replace(REFERENCE, ''))) found.add(entry);
+  }
+  for (const entry of found) {
+    diagnostics.warn(
+      'value.syntax.aboveFloor',
+      path,
+      `${token.name} uses ${entry.syntax}, which ${floorLabel(entry.unsupported)} cannot parse. Declarations that read this token become invalid at computed-value time there, and a var() fallback does not apply because the token is defined.`,
+      'Keep token values within the browser floor and add the enhancement in a stylesheet gated by @supports (css-architecture.md §4.2).',
+    );
+  }
+}
 
 /**
  * Unit policy: unitless numbers (line heights), integer font weights 1–1000, lengths with

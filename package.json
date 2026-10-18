@@ -14,8 +14,11 @@
     "build": "tsc -b && node scripts/build-token-assets.mjs && node scripts/build-production.mjs && node scripts/build-metadata.mjs",
     "clean": "tsc -b --clean",
     "typecheck": "tsc -b && tsc -p tsconfig.tests.json",
-    "lint": "npm run lint:boundaries && npm run format:check",
+    "lint": "npm run lint:boundaries && npm run lint:css && npm run format:check",
     "lint:boundaries": "npm run build && node scripts/architecture/check-boundaries.mjs --artifacts",
+    "lint:css": "node scripts/compat/check-css.mjs",
+    "compat": "node scripts/compat/check-css.mjs --write",
+    "compat:floor": "node scripts/compat/floor-browsers.mjs && node scripts/compat/run-floor.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "npm run build && vitest run",
@@ -25,17 +28,20 @@
     "size": "node scripts/check-size.mjs"
   },
   "devDependencies": {
+    "@mdn/browser-compat-data": "8.1.6",
     "@playwright/test": "^1.64.1",
     "@types/node": "^24.19.2",
     "@vitest/browser-playwright": "^5.0.5",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
+    "css-tree": "3.2.1",
     "custom-elements-manifest": "2.1.0",
     "es-module-lexer": "^3.0.4",
     "esbuild": "0.28.2",
     "playwright": "^1.64.1",
     "prettier": "^3.9.10",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.5"
+    "vitest": "^5.0.5",
+    "web-features": "3.43.0"
   }
 }

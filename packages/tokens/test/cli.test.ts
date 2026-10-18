@@ -103,4 +103,36 @@ describe('oddkin-tokens CLI', { timeout: 30_000 }, () => {
     expect((await cli('build', at('acme.json'), '--format', 'scss')).code).toBe(2);
     expect((await cli('--help')).code).toBe(0);
   });
+
+  it('--css-layer chooses the cascade layer or unlayered output', async () => {
+    const config = { name: 'layers', brand: { primary: '#5b46e8' } };
+    await writeFile(at('layers.json'), JSON.stringify(config));
+    const none = await cli(
+      'build',
+      at('layers.json'),
+      '--out',
+      at('none'),
+      '--format',
+      'css',
+      '--css-layer',
+      'none',
+    );
+    expect(none.code).toBe(0);
+    expect(await readFile(at('none/layers.css'), 'utf8')).toBe(
+      generate(config, { css: { layer: false } }).css,
+    );
+    const vendor = await cli(
+      'build',
+      at('layers.json'),
+      '--out',
+      at('vendor'),
+      '--format',
+      'css',
+      '--css-layer',
+      'vendor.theme',
+    );
+    expect(vendor.code).toBe(0);
+    expect(await readFile(at('vendor/layers.css'), 'utf8')).toContain('@layer vendor.theme {');
+    expect((await cli('build', at('layers.json'), '--css-layer', 'not a layer')).code).toBe(2);
+  });
 });

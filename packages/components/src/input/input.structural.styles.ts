@@ -12,6 +12,8 @@ export const inputStructuralStyles = css`
     display: flex;
     flex-direction: column;
     min-inline-size: 0;
+    /* Long labels, help, and errors wrap instead of widening the field. */
+    overflow-wrap: anywhere;
   }
   .control {
     box-sizing: border-box;

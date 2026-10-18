@@ -1,0 +1,34 @@
+/*
+ * Enhancements (ADR 0038). Every rule is either gated by @supports or a literal parse-time
+ * fallback after a floor value; nothing here is needed for the page to work. Untick "Load the
+ * enhancement stylesheet" to see the baseline. Checked by `npm run lint:css`.
+ */
+
+/* Literal fallback: browsers without `balance` drop the second declaration at parse time. */
+.balanced {
+  text-wrap: wrap;
+  text-wrap: balance;
+}
+
+/* Gated: the value would otherwise be dropped, but the min/max sizes only make sense with it. */
+@supports (field-sizing: content) {
+  .native-field textarea {
+    field-sizing: content;
+    min-block-size: 3lh;
+    max-block-size: 12lh;
+  }
+}
+
+/* Gated because the value reads a token: a var() reader cannot fall back at parse time. */
+@supports (accent-color: red) {
+  .native-check input {
+    accent-color: var(--odd-color-action-default);
+  }
+}
+
+/* In its own gated rule, never in a shared selector list with the [open] baseline. */
+@supports selector(:open) {
+  details:open > summary {
+    font-weight: var(--odd-font-weight-semibold);
+  }
+}

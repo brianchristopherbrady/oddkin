@@ -1,0 +1,1190 @@
+{
+  "$schema": "../schemas/compatibility.v1.schema.json",
+  "policy": "ADR 0009 (browser floor), ADR 0038 (compatibility and progressive enhancement), ADR 0039 (cascade layer order)",
+  "checked": "2026-10-17",
+  "data": {
+    "@mdn/browser-compat-data": "8.1.6",
+    "web-features": "3.43.0"
+  },
+  "floor": {
+    "chrome": "125",
+    "chrome_android": "125",
+    "edge": "125",
+    "firefox": "126",
+    "firefox_android": "126",
+    "safari": "17.4",
+    "safari_ios": "17.4"
+  },
+  "features": [
+    {
+      "id": "custom-properties",
+      "syntax": "--*, var()",
+      "kind": "css",
+      "bcd": ["css.properties.custom-property"],
+      "webFeature": "custom-properties",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": [
+        "@oddkin/tokens generated CSS (inherited tokens)",
+        "@oddkin/components styles (--odd-<component>-* variables over semantic tokens)"
+      ],
+      "baseline": "Tokens are inherited custom properties read with var(). Component variables are read with a fallback to a semantic token and are normally unset.",
+      "tests": [
+        {
+          "file": "packages/tokens/test/generate.browser.test.ts",
+          "name": "resolves ${id} like the generator"
+        },
+        {
+          "file": "packages/tokens/test/cascade.browser.test.ts",
+          "name": "a defined property holding unparseable syntax invalidates its reader"
+        }
+      ],
+      "notes": "A var() fallback is used only when the variable is undefined. A defined variable whose value does not parse for the reading property makes that declaration invalid at computed-value time, so var() fallbacks are not a compatibility mechanism (css-architecture.md §4.2)."
+    },
+    {
+      "id": "cascade-layers",
+      "syntax": "@layer",
+      "kind": "css",
+      "bcd": ["css.at-rules.layer"],
+      "webFeature": "cascade-layers",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": [
+        "@oddkin/tokens CSS (odd.tokens after the canonical order statement)",
+        "@oddkin/core/layout recipes (recipe.base, recipe.variant, recipe.condition)"
+      ],
+      "baseline": "Generated token declarations sit in odd.tokens, so unlayered application CSS overrides them whatever the stylesheet order. Recipes layer their rules inside each component's own stylesheet.",
+      "tests": [
+        {
+          "file": "packages/tokens/test/cascade.browser.test.ts",
+          "name": "an unlayered override wins over layered tokens whatever the stylesheet order"
+        },
+        {
+          "file": "packages/tokens/test/cascade.browser.test.ts",
+          "name": "an application layer wins only when it is ordered after odd"
+        },
+        {
+          "file": "packages/core/test/layout.browser.test.ts",
+          "name": "lets unlayered component CSS override recipe layers"
+        },
+        {
+          "file": "tests/floor/probe.js",
+          "name": "layer-order"
+        }
+      ]
+    },
+    {
+      "id": "where-is",
+      "syntax": ":where(), :is()",
+      "kind": "css",
+      "bcd": ["css.selectors.where", "css.selectors.is"],
+      "webFeature": "where",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": [
+        "@oddkin/core/layout recipes (:where() keeps every rule at one class of specificity)",
+        "@oddkin/tokens profile selectors (:is() re-applies profiles in nested scopes)"
+      ],
+      "baseline": "Forgiving selector lists; :where() contributes zero specificity.",
+      "tests": [
+        {
+          "file": "packages/core/test/layout.browser.test.ts",
+          "name": "applies variants from host attributes"
+        },
+        {
+          "file": "packages/tokens/test/generate.browser.test.ts",
+          "name": "resolves ${id} like the generator"
+        }
+      ]
+    },
+    {
+      "id": "shadow-styling",
+      "syntax": ":host, :host(), ::slotted(), ::part()",
+      "kind": "css",
+      "bcd": ["css.selectors.host", "css.selectors.slotted", "css.selectors.part"],
+      "webFeature": "shadow-parts",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": [
+        "@oddkin/components (host styles, public parts)",
+        "@oddkin/core/layout recipes (> ::slotted(*) item rules)"
+      ],
+      "baseline": "Components style their host and internals in their own shadow tree. Consumers customize through inherited tokens, component variables, host styles, and documented parts; page selectors never reach internals.",
+      "tests": [
+        {
+          "file": "packages/components/test/styling.browser.test.ts",
+          "name": "parts, component variables, and host styles override"
+        },
+        {
+          "file": "packages/core/test/layout.browser.test.ts",
+          "name": "responds to each instance"
+        }
+      ],
+      "notes": "::slotted() matches only top-level slotted elements; :has() does not see into shadow trees; ::part() cannot be followed by attribute selectors, so component states are exposed as custom states."
+    },
+    {
+      "id": "focus-selectors",
+      "syntax": ":focus-visible, :focus-within",
+      "kind": "css",
+      "bcd": ["css.selectors.focus-visible", "css.selectors.focus-within"],
+      "webFeature": "focus-visible",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["odd-button and odd-input focus rings (outline, never only a box-shadow)"],
+      "baseline": "Keyboard focus draws a focus.width outline in color.focus.ring at focus.offset. Outlines remain visible in forced-colors mode, where box shadows are removed.",
+      "tests": [
+        {
+          "file": "e2e/css-compat.spec.ts",
+          "name": "keyboard focus keeps a visible outline in forced colors"
+        }
+      ]
+    },
+    {
+      "id": "custom-states",
+      "syntax": ":state(), ElementInternals.states",
+      "kind": "css",
+      "bcd": ["css.selectors.state", "api.ElementInternals.states", "api.CustomStateSet"],
+      "webFeature": "state",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["@oddkin/core element setState()", "odd-input :state(user-invalid)"],
+      "baseline": "Components expose styling states on the host; consumers write odd-input:state(user-invalid)::part(control).",
+      "detectCss": "selector(:state(open))",
+      "detectApi": "ElementInternals.prototype.states",
+      "tests": [
+        {
+          "file": "packages/core/test/element.browser.test.ts",
+          "name": "toggles custom states"
+        },
+        {
+          "file": "packages/components/test/input.browser.test.ts",
+          "name": "shows aria-invalid only after a failed validity check or leaving the field"
+        },
+        {
+          "file": "tests/floor/probe.js",
+          "name": "custom-state"
+        }
+      ],
+      "notes": "This feature sets the floor above Baseline Widely Available on the checked date: newly available 2024-05-17, widely available 2026-11-17."
+    },
+    {
+      "id": "constructed-stylesheets",
+      "syntax": "new CSSStyleSheet(), replaceSync(), adoptedStyleSheets",
+      "kind": "api",
+      "bcd": [
+        "api.CSSStyleSheet.CSSStyleSheet",
+        "api.CSSStyleSheet.replaceSync",
+        "api.ShadowRoot.adoptedStyleSheets",
+        "api.Document.adoptedStyleSheets"
+      ],
+      "webFeature": "constructed-stylesheets",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["@oddkin/core/styles (one sheet per style definition per document)"],
+      "baseline": "Every instance in a document adopts the same constructed sheet. A <style> path with a CSP nonce remains for policy or legacy embedding.",
+      "detectApi": "CSSStyleSheet.prototype.replaceSync",
+      "tests": [
+        {
+          "file": "packages/core/test/element.browser.test.ts",
+          "name": "shares one constructed sheet across 100 instances"
+        },
+        {
+          "file": "packages/core/test/element.browser.test.ts",
+          "name": "falls back to <style> elements with a CSP nonce"
+        },
+        {
+          "file": "tests/floor/probe.js",
+          "name": "shared-sheet"
+        }
+      ]
+    },
+    {
+      "id": "container-queries",
+      "syntax": "@container, container-type, container-name",
+      "kind": "css",
+      "bcd": [
+        "css.at-rules.container",
+        "css.properties.container-type",
+        "css.properties.container-name"
+      ],
+      "webFeature": "container-queries",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["@oddkin/core/layout recipe conditions; @oddkin/tokens named conditions"],
+      "baseline": "Literal min-width/max-width size queries against named or nearest containers (ADR 0011). Primitives never declare containers; compositions own them.",
+      "detectCss": "(container-type: inline-size)",
+      "tests": [
+        {
+          "file": "packages/core/test/layout.browser.test.ts",
+          "name": "responds to each instance"
+        },
+        {
+          "file": "tests/floor/probe.js",
+          "name": "container-query"
+        }
+      ]
+    },
+    {
+      "id": "logical-properties",
+      "syntax": "padding-inline, inline-size, min-inline-size, block-size, min-block-size, border-inline-end-color",
+      "kind": "css",
+      "bcd": [
+        "css.properties.padding-inline",
+        "css.properties.inline-size",
+        "css.properties.min-inline-size",
+        "css.properties.block-size",
+        "css.properties.min-block-size",
+        "css.properties.border-inline-end-color"
+      ],
+      "webFeature": "logical-properties",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["@oddkin/components", "@oddkin/core/layout helpers"],
+      "baseline": "Spacing and sizing follow writing mode and direction; dir=rtl mirrors slots and padding without extra rules.",
+      "tests": [
+        {
+          "file": "packages/components/test/styling.browser.test.ts",
+          "name": "mirrors slots and spacing with direction"
+        }
+      ]
+    },
+    {
+      "id": "flexbox-gap",
+      "syntax": "gap (flex layout)",
+      "kind": "css",
+      "bcd": ["css.properties.gap.flex_context"],
+      "webFeature": "flexbox-gap",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": [
+        "odd-button content, odd-card regions, odd-input field",
+        "@oddkin/core/layout stack, row, split"
+      ],
+      "baseline": "Gaps between flex items without margins.",
+      "tests": [
+        {
+          "file": "packages/core/test/layout.browser.test.ts",
+          "name": "wraps a split layout intrinsically in light DOM"
+        }
+      ]
+    },
+    {
+      "id": "min-max-clamp",
+      "syntax": "min(), max(), clamp()",
+      "kind": "css",
+      "bcd": ["css.types.min", "css.types.max", "css.types.clamp"],
+      "webFeature": "min-max-clamp",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": [
+        "odd-button and odd-input: max(<height>, target.min) keeps targets at or above the minimum",
+        "@oddkin/core/layout autoGrid: minmax(min(<min>, 100%), 1fr)"
+      ],
+      "baseline": "Intrinsic sizing that respects the target-size minimum and never forces overflow.",
+      "tests": [
+        {
+          "file": "packages/components/test/styling.browser.test.ts",
+          "name": "controls grow with the root font size and never clip their text"
+        }
+      ]
+    },
+    {
+      "id": "grid-intrinsic",
+      "syntax": "repeat(auto-fill | auto-fit, minmax(min(<min>, 100%), 1fr)), minmax(0, 1fr)",
+      "kind": "css",
+      "bcd": [
+        "css.properties.grid-template-columns.minmax",
+        "css.properties.grid-template-columns.repeat"
+      ],
+      "webFeature": "grid",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["@oddkin/core/layout grid() and autoGrid()"],
+      "baseline": "Columns shrink below their content minimum instead of overflowing; auto-placed tracks wrap without queries.",
+      "tests": [
+        {
+          "file": "packages/core/test/layout.test.ts",
+          "name": "deterministic CSS matching the committed fixture"
+        }
+      ]
+    },
+    {
+      "id": "color-scheme",
+      "syntax": "color-scheme",
+      "kind": "css",
+      "bcd": ["css.properties.color-scheme"],
+      "webFeature": "color-scheme",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["@oddkin/tokens CSS: every mode scope sets color-scheme"],
+      "baseline": "Native controls, form fields, and scrollbars follow the active mode, including nested opposite-mode scopes.",
+      "tests": [
+        {
+          "file": "e2e/tokens-css-only.spec.ts",
+          "name": "CSS-only page follows a"
+        },
+        {
+          "file": "tests/floor/probe.js",
+          "name": "color-scheme"
+        }
+      ]
+    },
+    {
+      "id": "preference-media-features",
+      "syntax": "@media (prefers-color-scheme), (prefers-reduced-motion), (forced-colors), (prefers-contrast)",
+      "kind": "css",
+      "bcd": [
+        "css.at-rules.media.prefers-color-scheme",
+        "css.at-rules.media.prefers-reduced-motion",
+        "css.at-rules.media.forced-colors",
+        "css.at-rules.media.prefers-contrast"
+      ],
+      "webFeature": "prefers-reduced-motion",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": [
+        "@oddkin/tokens CSS (system mode)",
+        "odd-button spinner (reduced motion)",
+        "odd-button, odd-input, odd-card forced-colors rules",
+        "@oddkin/tokens conditions (prefersReducedMotion, prefersContrast, forcedColors)"
+      ],
+      "baseline": "The root follows the system colour scheme unless data-odd-mode is set; forced colours swap to system colours; reduced motion slows decorative motion.",
+      "tests": [
+        {
+          "file": "packages/tokens/test/generate.browser.test.ts",
+          "name": "follows the system preference"
+        },
+        {
+          "file": "e2e/css-compat.spec.ts",
+          "name": "reduced motion slows the spinner and clearing loading removes it"
+        },
+        {
+          "file": "e2e/css-compat.spec.ts",
+          "name": "keyboard focus keeps a visible outline in forced colors"
+        }
+      ]
+    },
+    {
+      "id": "interaction-media-features",
+      "syntax": "@media (hover: hover), (pointer: coarse)",
+      "kind": "css",
+      "bcd": ["css.at-rules.media.hover", "css.at-rules.media.pointer"],
+      "webFeature": "interaction",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["odd-button hover feedback"],
+      "baseline": "Hover feedback only where the primary pointer can hover, so taps leave no sticky state. Every action stays available without hover.",
+      "tests": [
+        {
+          "file": "e2e/css-compat.spec.ts",
+          "name": "hover feedback appears only where the primary pointer can hover"
+        }
+      ]
+    },
+    {
+      "id": "overflow-wrap-anywhere",
+      "syntax": "overflow-wrap: anywhere",
+      "kind": "css",
+      "bcd": ["css.properties.overflow-wrap.anywhere"],
+      "webFeature": "overflow-wrap",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": [
+        "odd-button label",
+        "odd-card (inherited by slotted content)",
+        "odd-input label, description, and error"
+      ],
+      "baseline": "Long URLs, compound words, and translated labels wrap inside narrow containers instead of overflowing them.",
+      "tests": [
+        {
+          "file": "packages/components/test/styling.browser.test.ts",
+          "name": "keeps long unbroken labels, URLs, and words inside a narrow container"
+        },
+        {
+          "file": "e2e/css-compat.spec.ts",
+          "name": "pages reflow at 320 CSS pixels without horizontal scrolling"
+        }
+      ]
+    },
+    {
+      "id": "system-colors",
+      "syntax": "ButtonText, GrayText, FieldText, CanvasText",
+      "kind": "css",
+      "bcd": ["css.types.color.system-color"],
+      "webFeature": "system-color",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["Forced-colors rules in odd-button, odd-input, odd-card"],
+      "baseline": "Control boundaries use system colours in forced-colors mode; no forced-color-adjust opt-out is used.",
+      "tests": [
+        {
+          "file": "e2e/css-compat.spec.ts",
+          "name": "keyboard focus keeps a visible outline in forced colors"
+        }
+      ]
+    },
+    {
+      "id": "form-associated-custom-elements",
+      "syntax": "static formAssociated, ElementInternals (setFormValue, setValidity), form callbacks",
+      "kind": "api",
+      "bcd": [
+        "api.ElementInternals",
+        "api.ElementInternals.setFormValue",
+        "api.ElementInternals.setValidity"
+      ],
+      "webFeature": "form-associated-custom-elements",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["odd-input", "odd-button"],
+      "baseline": "Custom controls submit, validate, reset, restore, and follow disabled fieldsets like native controls.",
+      "detectApi": "ElementInternals.prototype.setFormValue",
+      "tests": [
+        {
+          "file": "packages/components/test/input.browser.test.ts",
+          "name": "submits name=value, validates required and type, and supports custom errors"
+        },
+        {
+          "file": "packages/components/test/button.browser.test.ts",
+          "name": "submits with its name and value through a temporary native submitter"
+        },
+        {
+          "file": "tests/floor/probe.js",
+          "name": "form-association"
+        }
+      ]
+    },
+    {
+      "id": "delegates-focus",
+      "syntax": "attachShadow({ delegatesFocus: true })",
+      "kind": "api",
+      "bcd": ["api.ShadowRoot.delegatesFocus"],
+      "webFeature": "shadow-dom",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["odd-button", "odd-input"],
+      "baseline": "Focusing the host focuses the native control inside it.",
+      "tests": [
+        {
+          "file": "packages/components/test/button.browser.test.ts",
+          "name": "activates with click, Enter, and Space; delegates focus to the native button"
+        }
+      ]
+    },
+    {
+      "id": "cursor-keywords",
+      "syntax": "cursor: pointer, cursor: not-allowed",
+      "kind": "css",
+      "bcd": ["css.properties.cursor.pointer", "css.properties.cursor.not-allowed"],
+      "webFeature": "cursor",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["odd-button (interactive and disabled cursors)"],
+      "baseline": "Pointer cursors mark interactive and disabled controls where a mouse pointer exists.",
+      "floorExceptions": {
+        "safari_ios": "No mouse cursor on iOS (BCD records no support; iPad shows the default pointer). The declaration has no effect and nothing depends on it."
+      },
+      "tests": [
+        {
+          "file": "packages/components/test/styling.browser.test.ts",
+          "name": "marks interactive and disabled controls with cursors"
+        }
+      ]
+    },
+    {
+      "id": "import-maps",
+      "syntax": "<script type=\"importmap\">",
+      "kind": "html",
+      "bcd": ["html.elements.script.type.importmap"],
+      "webFeature": "import-maps",
+      "adoption": "foundation",
+      "status": "implemented",
+      "usedBy": ["No-build examples (plain-html, core-counter, components-only, css-gallery)"],
+      "baseline": "Bare package specifiers resolve in the browser without a bundler.",
+      "tests": [
+        {
+          "file": "e2e/plain-html.spec.ts",
+          "name": "plain-HTML consumer loads every package through an import map"
+        },
+        {
+          "file": "tests/floor/probe.js",
+          "name": "components-registered"
+        }
+      ]
+    },
+    {
+      "id": "has-selector",
+      "syntax": ":has()",
+      "kind": "css",
+      "bcd": ["css.selectors.has"],
+      "webFeature": "has",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Available at the floor. Use only for light-DOM or in-shadow structure the component owns; it cannot see into other shadow trees or combine with ::slotted().",
+      "notes": "Avoid broad, frequently invalidated relational selectors (e.g. :has() on html or large containers) in highly dynamic interfaces; measure before adopting in collections."
+    },
+    {
+      "id": "subgrid",
+      "syntax": "grid-template-columns: subgrid, grid-template-rows: subgrid",
+      "kind": "css",
+      "bcd": [
+        "css.properties.grid-template-columns.subgrid",
+        "css.properties.grid-template-rows.subgrid"
+      ],
+      "webFeature": "subgrid",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Available at the floor; planned where shared alignment matters (card grids with aligned headers and footers, form rows).",
+      "notes": "Subgrid needs the parent grid and child grid in the same tree; a component's shadow internals cannot subgrid onto a page grid."
+    },
+    {
+      "id": "aspect-ratio",
+      "syntax": "aspect-ratio",
+      "kind": "css",
+      "bcd": ["css.properties.aspect-ratio"],
+      "webFeature": "aspect-ratio",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Media frames keep their ratio with object-fit; content taller than the ratio may grow rather than clip text."
+    },
+    {
+      "id": "container-units",
+      "syntax": "cqi, cqb, cqw, cqh, cqmin, cqmax",
+      "kind": "css",
+      "bcd": ["css.types.length.container_query_length_units"],
+      "webFeature": "container-queries",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Only inside a declared size container: the units resolve against the nearest eligible container (or the small viewport when there is none), so a component never assumes an outer container exists."
+    },
+    {
+      "id": "css-nesting",
+      "syntax": "& nesting selector, nested rules",
+      "kind": "css",
+      "bcd": ["css.selectors.nesting"],
+      "webFeature": "nesting",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Available at the floor without a build step. Nested selectors take the specificity of :is() over their parent list, so specificity is reviewed when existing flat rules are nested."
+    },
+    {
+      "id": "oklch-color-mix",
+      "syntax": "oklch(), color-mix()",
+      "kind": "css",
+      "bcd": ["css.types.color.oklch", "css.types.color.color-mix"],
+      "webFeature": "oklab",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M9",
+      "baseline": "The generator computes palettes in OKLCH and emits sRGB hex today (ADR 0006). color-mix() is planned for translucent scrims and elevation, with contrast evaluated against the actual backgrounds."
+    },
+    {
+      "id": "round-function",
+      "syntax": "round()",
+      "kind": "css",
+      "bcd": ["css.types.round"],
+      "webFeature": "round-mod-rem",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M9",
+      "baseline": "Available at the floor (Chrome 125 is the first supporting Chrome). Candidate for snapping fluid spacing and type to a grid."
+    },
+    {
+      "id": "dynamic-viewport-units",
+      "syntax": "dvh, svh, lvh (and their inline and width forms)",
+      "kind": "css",
+      "bcd": [
+        "css.types.length.viewport_percentage_units_dynamic",
+        "css.types.length.viewport_percentage_units_small",
+        "css.types.length.viewport_percentage_units_large"
+      ],
+      "webFeature": "viewport-unit-variants",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Dialog and drawer maximum sizes use dvh/svh so mobile browser toolbars do not hide content."
+    },
+    {
+      "id": "dialog-element",
+      "syntax": "<dialog>, showModal(), ::backdrop",
+      "kind": "api",
+      "bcd": ["api.HTMLDialogElement.showModal", "css.selectors.backdrop"],
+      "webFeature": "dialog",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Modal dialogs use the native top layer, page inertness, focus handling, and Escape dismissal."
+    },
+    {
+      "id": "popover-api",
+      "syntax": "popover, showPopover(), :popover-open",
+      "kind": "api",
+      "bcd": ["api.HTMLElement.popover", "css.selectors.popover-open"],
+      "webFeature": "popover",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Nonmodal overlays (menus, listboxes, tooltips) render in the top layer with an explicit close path.",
+      "detectApi": "HTMLElement.prototype.showPopover",
+      "floorExceptions": {
+        "safari_ios": "Partial in Safari iOS 17.0–18.2: tapping outside a popover does not light-dismiss it (WebKit bug 267688). Overlays must offer an explicit close control and must not depend on light dismiss."
+      }
+    },
+    {
+      "id": "inert",
+      "syntax": "inert attribute",
+      "kind": "html",
+      "bcd": ["html.global_attributes.inert", "api.HTMLElement.inert"],
+      "webFeature": "inert",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Closing and hidden overlay content is inert so focus and assistive technology cannot reach it, independent of any animation."
+    },
+    {
+      "id": "user-pseudos",
+      "syntax": ":user-invalid, :user-valid",
+      "kind": "css",
+      "bcd": ["css.selectors.user-invalid", "css.selectors.user-valid"],
+      "webFeature": "user-pseudos",
+      "adoption": "foundation",
+      "status": "evaluated",
+      "baseline": "Available at the floor. odd-input does not use them on its inner control: its error state also covers a custom error message and failed submissions, so the controller-derived :state(user-invalid) is the single source.",
+      "decision": "Use :user-invalid for plain native fields in examples and docs; Oddkin form components expose :state(user-invalid) from their own validity controller."
+    },
+    {
+      "id": "dir-pseudo",
+      "syntax": ":dir()",
+      "kind": "css",
+      "bcd": ["css.selectors.dir"],
+      "webFeature": "dir-pseudo",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Direction-dependent icons (chevrons, arrows) flip with the inherited direction, including inside shadow roots."
+    },
+    {
+      "id": "containment",
+      "syntax": "contain, contain-intrinsic-size",
+      "kind": "css",
+      "bcd": ["css.properties.contain", "css.properties.contain-intrinsic-size"],
+      "webFeature": "contain",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M8",
+      "baseline": "Not applied by default. Containment changes containing blocks, stacking, intrinsic size, and overflow clipping, so it is added per component only with measurements and checks that focus rings, shadows, overlays, and sticky content still render."
+    },
+    {
+      "id": "wide-gamut-color",
+      "syntax": "@media (color-gamut: p3), color(display-p3 …) and oklch() beyond sRGB",
+      "kind": "css",
+      "bcd": ["css.at-rules.media.color-gamut", "css.types.color.color"],
+      "webFeature": "color-gamut",
+      "adoption": "deferred",
+      "status": "evaluated",
+      "baseline": "Generated colours are gamut-mapped to sRGB hex, which every floor browser and display renders.",
+      "useCase": "Richer brand ramps on P3 displays generated from the same OKLCH definitions.",
+      "decision": "Deferred to M9: emit P3 ramp values in a (color-gamut: p3) block from the canonical generator only after WCAG contrast is verified for the P3 values themselves; the sRGB values remain the baseline."
+    },
+    {
+      "id": "text-wrap-balance",
+      "syntax": "text-wrap: balance",
+      "kind": "css",
+      "bcd": ["css.properties.text-wrap.balance"],
+      "webFeature": "text-wrap-balance",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Normal wrapping.",
+      "enhanced": "Short multi-line headings get balanced line lengths.",
+      "gate": "Literal fallback (text-wrap: wrap; then text-wrap: balance; an unsupported value is dropped at parse time) or @supports (text-wrap: balance)",
+      "differences": "Only line-break positions differ; content, size, and order are unchanged.",
+      "detectCss": "(text-wrap: balance)"
+    },
+    {
+      "id": "text-wrap-pretty",
+      "syntax": "text-wrap: pretty",
+      "kind": "css",
+      "bcd": ["css.properties.text-wrap.pretty"],
+      "webFeature": "text-wrap-pretty",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Normal wrapping.",
+      "enhanced": "Fewer short last lines in long-form text.",
+      "gate": "Literal fallback (an unsupported value is dropped at parse time)",
+      "differences": "Line breaks differ slightly; never relied on for layout.",
+      "detectCss": "(text-wrap: pretty)"
+    },
+    {
+      "id": "resize",
+      "syntax": "resize: vertical",
+      "kind": "css",
+      "bcd": ["css.properties.resize", "css.properties.resize.vertical"],
+      "webFeature": "resize",
+      "adoption": "foundation",
+      "status": "planned",
+      "milestone": "M10",
+      "usedBy": ["examples/css-gallery (native textarea)"],
+      "baseline": "Textareas can be resized vertically by the user where the platform offers a resize handle.",
+      "floorExceptions": {
+        "firefox_android": "No resize handle on Firefox for Android; long content scrolls inside the textarea.",
+        "safari_ios": "No resize handle on iOS; long content scrolls inside the textarea."
+      }
+    },
+    {
+      "id": "field-sizing",
+      "syntax": "field-sizing: content",
+      "kind": "css",
+      "bcd": ["css.properties.field-sizing", "css.properties.field-sizing.content"],
+      "webFeature": "field-sizing",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Textareas have a fixed initial row count with user resizing; long content scrolls. No script autosizing unless a demonstrated need justifies a controller.",
+      "enhanced": "Textareas grow with their content between min-block-size and max-block-size.",
+      "gate": "@supports (field-sizing: content)",
+      "differences": "Height follows content in supporting browsers; caret, selection, scrolling, and resizing behave natively in both. Native and script sizing never run together.",
+      "detectCss": "(field-sizing: content)"
+    },
+    {
+      "id": "starting-style",
+      "syntax": "@starting-style, transition-behavior: allow-discrete",
+      "kind": "css",
+      "bcd": [
+        "css.at-rules.starting-style",
+        "css.properties.transition-behavior",
+        "css.properties.transition-behavior.allow-discrete"
+      ],
+      "webFeature": "starting-style",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Overlays and disclosures open and close immediately; visibility, inertness, and focus change at once.",
+      "enhanced": "Entry and exit transitions for top-layer and display:none content.",
+      "gate": "@supports (transition-behavior: allow-discrete) inside @media (prefers-reduced-motion: no-preference)",
+      "differences": "Animation only; final states, focus, and accessibility state are identical, and cleanup never waits on transitionend.",
+      "detectCss": "(transition-behavior: allow-discrete)"
+    },
+    {
+      "id": "anchor-positioning",
+      "syntax": "anchor-name, position-anchor, anchor(), position-area, position-try-fallbacks, anchor-scope",
+      "kind": "css",
+      "bcd": [
+        "css.properties.anchor-name",
+        "css.properties.position-anchor",
+        "css.types.anchor",
+        "css.properties.position-area",
+        "css.properties.position-try-fallbacks",
+        "css.properties.anchor-scope"
+      ],
+      "webFeature": "anchor-positioning",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "One shared Oddkin positioning controller (in @oddkin/components) places overlays from measured rectangles while they are open, with flip and shift fallbacks, and stops observing when they close.",
+      "enhanced": "Native anchoring places and re-places overlays without script when every subfeature the overlay contract needs is supported.",
+      "gate": "Per-subfeature detection (anchor-name, position-area, position-try-fallbacks, anchor-scope); exactly one backend owns positioning at a time",
+      "differences": "Placement should match within a pixel; fallback placement may update one frame later on scroll or resize.",
+      "detectCss": "(anchor-name: --a)",
+      "notes": "Value subfeatures (position-area keywords, position-try-fallbacks tactics such as flip-block) are registered individually when the overlay contract adopts them; the compatibility lint rejects unregistered ones."
+    },
+    {
+      "id": "content-visibility",
+      "syntax": "content-visibility: auto",
+      "kind": "css",
+      "bcd": ["css.properties.content-visibility", "css.properties.content-visibility.auto"],
+      "webFeature": "content-visibility",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M8",
+      "baseline": "Normal rendering of every item.",
+      "enhanced": "Off-screen sections of long collections and streaming transcripts skip rendering work.",
+      "gate": "@supports (content-visibility: auto), with contain-intrinsic-size",
+      "differences": "Rendering cost only; find-in-page, focus, and the accessibility tree must be unchanged (measured before adoption).",
+      "detectCss": "(content-visibility: auto)"
+    },
+    {
+      "id": "scrollbar-gutter",
+      "syntax": "scrollbar-gutter: stable",
+      "kind": "css",
+      "bcd": ["css.properties.scrollbar-gutter", "css.properties.scrollbar-gutter.stable"],
+      "webFeature": "scrollbar-gutter",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Layout may shift by the scrollbar width when content starts to scroll.",
+      "enhanced": "Scroll regions reserve the gutter, avoiding the shift.",
+      "gate": "Literal declaration (ignored where unsupported)",
+      "differences": "A possible layout shift in floor browsers without support.",
+      "detectCss": "(scrollbar-gutter: stable)"
+    },
+    {
+      "id": "overscroll-behavior",
+      "syntax": "overscroll-behavior: contain",
+      "kind": "css",
+      "bcd": ["css.properties.overscroll-behavior", "css.properties.overscroll-behavior.contain"],
+      "webFeature": "overscroll-behavior",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Scrolling past the end of an overlay may scroll the page behind it.",
+      "enhanced": "Overlay scrolling stays contained.",
+      "gate": "Literal declaration (ignored where unsupported)",
+      "differences": "Scroll chaining only.",
+      "detectCss": "(overscroll-behavior: contain)"
+    },
+    {
+      "id": "accent-color",
+      "syntax": "accent-color",
+      "kind": "css",
+      "bcd": ["css.properties.accent-color"],
+      "webFeature": "accent-color",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Native checkboxes, radios, and ranges use system accent colours.",
+      "enhanced": "Native controls take the brand action colour.",
+      "gate": "Literal declaration (ignored where unsupported)",
+      "differences": "Colour only; semantics and keyboard behaviour stay native.",
+      "detectCss": "(accent-color: red)"
+    },
+    {
+      "id": "customizable-select",
+      "syntax": "appearance: base-select, ::picker(select)",
+      "kind": "css",
+      "bcd": ["css.properties.appearance.base-select", "css.selectors.picker"],
+      "webFeature": "customizable-select",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "A styled native <select> (closed state only) keeps native semantics, keyboard behaviour, validation, and form participation.",
+      "enhanced": "The open picker and options take Oddkin styling.",
+      "gate": "@supports (appearance: base-select) gating the complete enhanced rule set",
+      "differences": "Picker appearance only; the control is never replaced to obtain styling.",
+      "detectCss": "(appearance: base-select)"
+    },
+    {
+      "id": "open-pseudo",
+      "syntax": ":open",
+      "kind": "css",
+      "bcd": ["css.selectors.open"],
+      "webFeature": "open-pseudo",
+      "adoption": "enhancement",
+      "status": "planned",
+      "milestone": "M10",
+      "baseline": "Open styling uses [open] attributes and :popover-open.",
+      "enhanced": ":open covers details, dialog, and select pickers uniformly.",
+      "gate": "@supports selector(:open), never inside a shared selector list",
+      "differences": "None when both selectors express the same state.",
+      "detectCss": "selector(:open)"
+    },
+    {
+      "id": "element-reflection",
+      "syntax": "ElementInternals.ariaLabelledByElements",
+      "kind": "api",
+      "bcd": ["api.ElementInternals.ariaLabelledByElements"],
+      "webFeature": "aria-attribute-reflection",
+      "adoption": "enhancement",
+      "status": "implemented",
+      "usedBy": ["odd-card (region named by a slotted heading)"],
+      "baseline": "A card is a named region only with label; without it, no landmark role is set.",
+      "enhanced": "A slotted heading names the region across the shadow boundary.",
+      "gate": "Feature detection: 'ariaLabelledByElements' in ElementInternals.prototype",
+      "differences": "Without element reflection, a heading-only card is not a landmark; set label for the region.",
+      "detectApi": "ElementInternals.prototype.ariaLabelledByElements",
+      "tests": [
+        {
+          "file": "packages/components/test/card.browser.test.ts",
+          "name": "is a region named by a slotted heading where element reflection exists"
+        },
+        {
+          "file": "packages/components/test/card.browser.test.ts",
+          "name": "is a region named by label"
+        }
+      ]
+    },
+    {
+      "id": "move-before",
+      "syntax": "Element.moveBefore()",
+      "kind": "api",
+      "bcd": ["api.Element.moveBefore"],
+      "webFeature": "move-before",
+      "adoption": "enhancement",
+      "status": "implemented",
+      "usedBy": ["@oddkin/core keyed repeat and supported element moves"],
+      "baseline": "Moves remove and re-insert nodes, restoring focus and selection afterwards.",
+      "enhanced": "State-preserving moves keep focus, iframes, and animations; elements that opt in keep their connection.",
+      "gate": "Feature detection: 'moveBefore' in Element.prototype",
+      "differences": "Iframes reload and animations restart during reorders without moveBefore.",
+      "detectApi": "Element.prototype.moveBefore",
+      "tests": [
+        {
+          "file": "packages/core/test/element.browser.test.ts",
+          "name": "keeps the connection across moveBefore where supported"
+        }
+      ]
+    },
+    {
+      "id": "trusted-types",
+      "syntax": "trustedTypes.createPolicy()",
+      "kind": "api",
+      "bcd": ["api.TrustedTypePolicyFactory"],
+      "webFeature": "trusted-types",
+      "adoption": "enhancement",
+      "status": "implemented",
+      "usedBy": ["@oddkin/core/template (policy oddkin-template)"],
+      "baseline": "Static template markup is parsed through the same code path without a policy object.",
+      "enhanced": "Pages that require Trusted Types run unchanged with the oddkin-template policy.",
+      "gate": "Feature detection: globalThis.trustedTypes",
+      "differences": "None in rendering; enforcement only where the browser supports it.",
+      "detectApi": "window.trustedTypes",
+      "tests": [
+        {
+          "file": "e2e/core-counter.spec.ts",
+          "name": "core-only elements run under a strict CSP with Trusted Types required"
+        }
+      ]
+    },
+    {
+      "id": "registered-custom-properties",
+      "syntax": "@property, CSS.registerProperty()",
+      "kind": "css",
+      "bcd": ["css.at-rules.property", "api.CSS.registerProperty_static"],
+      "webFeature": "registered-custom-properties",
+      "adoption": "deferred",
+      "status": "evaluated",
+      "baseline": "No registrations: tokens and component variables are ordinary custom properties in every browser.",
+      "useCase": "Interpolating component-private values (progress, skeleton shimmer) and validating their syntax.",
+      "decision": "Theme tokens and component variables are never registered: a registered initial value would always satisfy var(--odd-button-background, <semantic fallback>) and mask the fallback chain, and the mode toggles rely on guaranteed-invalid values. Component-private properties may be registered later (M10) once per document by the owning definition, with inherits: false, a valid initial value, a deterministic conflict policy, and unregistered behaviour as the baseline (Firefox 126 lacks @property).",
+      "tests": [
+        {
+          "file": "tests/floor/probe.js",
+          "name": "registration-masks-fallback"
+        }
+      ]
+    },
+    {
+      "id": "relative-color-syntax",
+      "syntax": "oklch(from …), rgb(from …)",
+      "kind": "css",
+      "bcd": ["css.types.color.oklch.relative_syntax", "css.types.color.rgb.relative_syntax"],
+      "webFeature": "relative-color",
+      "adoption": "deferred",
+      "status": "evaluated",
+      "baseline": "Hover, active, and selected colours are explicit roles chosen by measured contrast.",
+      "useCase": "Deriving state colours from a consumer-supplied component colour (e.g. --odd-button-background).",
+      "decision": "Deferred to M9 with contrast verification of derived pairs; never inside tokens (the generator warns with value.syntax.aboveFloor) and only in @supports-gated component rules.",
+      "tests": [
+        {
+          "file": "tests/floor/probe.js",
+          "name": "naive-token-syntax"
+        }
+      ]
+    },
+    {
+      "id": "light-dark-function",
+      "syntax": "light-dark()",
+      "kind": "css",
+      "bcd": ["css.types.color.light-dark"],
+      "webFeature": "light-dark",
+      "adoption": "declined",
+      "status": "evaluated",
+      "baseline": "Inherited --odd-mode-light/--odd-mode-dark toggles switch every mode-dependent role.",
+      "decision": "Not adopted for tokens: the toggles work at the floor for any value type, nest with product, density, and profile scopes, and keep color-scheme in step; light-dark() needs Safari 17.5 and applies to colours only."
+    },
+    {
+      "id": "contrast-color-function",
+      "syntax": "contrast-color()",
+      "kind": "css",
+      "bcd": ["css.types.color.contrast-color"],
+      "webFeature": "contrast-color",
+      "adoption": "declined",
+      "status": "evaluated",
+      "baseline": "Semantic foreground roles, verified against their real backgrounds, are authoritative.",
+      "decision": "Not an accessibility or palette mechanism: it chooses black or white only. Revisit in M9 as a bounded, gated enhancement for consumer-supplied backgrounds, with the semantic foreground as the baseline."
+    },
+    {
+      "id": "css-scope",
+      "syntax": "@scope",
+      "kind": "css",
+      "bcd": ["css.at-rules.scope"],
+      "webFeature": "scope",
+      "adoption": "deferred",
+      "status": "evaluated",
+      "baseline": "Light-DOM styles scope themselves with classes or tag names; components keep Shadow DOM encapsulation.",
+      "useCase": "Proximity-scoped documentation and page styles in the docs application.",
+      "decision": "Deferred to M11 as a docs-only enhancement: Firefox 126 and Safari 17.4 lack full support, so essential styles never depend on it."
+    },
+    {
+      "id": "view-transitions",
+      "syntax": "document.startViewTransition(), view-transition-name",
+      "kind": "api",
+      "bcd": ["api.Document.startViewTransition", "css.properties.view-transition-name"],
+      "webFeature": "view-transitions",
+      "adoption": "deferred",
+      "status": "evaluated",
+      "baseline": "Navigation and state changes are instant.",
+      "useCase": "Route transitions in the docs application and Workbench.",
+      "decision": "Deferred to M7/M11 as an optional router enhancement: instant navigation stays the baseline, reduced motion disables it, and transition names are generated per instance to avoid collisions."
+    },
+    {
+      "id": "scroll-driven-animations",
+      "syntax": "animation-timeline: scroll() | view()",
+      "kind": "css",
+      "bcd": ["css.properties.animation-timeline"],
+      "webFeature": "scroll-driven-animations",
+      "adoption": "declined",
+      "status": "evaluated",
+      "baseline": "No scroll-linked effects.",
+      "decision": "Decorative use only (docs pages), never functional; not adopted in components."
+    },
+    {
+      "id": "scoped-registries",
+      "syntax": "new CustomElementRegistry()",
+      "kind": "api",
+      "bcd": ["api.CustomElementRegistry.CustomElementRegistry"],
+      "webFeature": "scoped-custom-element-registries",
+      "adoption": "deferred",
+      "status": "evaluated",
+      "baseline": "One global registry; tag conflicts are diagnosed (ADR 0036).",
+      "decision": "Feature-detected and not relied on (ADR 0009); incompatible Workbench versions use isolated frames."
+    },
+    {
+      "id": "font-metric-overrides",
+      "syntax": "@font-face size-adjust, ascent-override, descent-override",
+      "kind": "css",
+      "bcd": [
+        "css.at-rules.font-face.size-adjust",
+        "css.at-rules.font-face.ascent-override",
+        "css.at-rules.font-face.descent-override"
+      ],
+      "webFeature": "font-metric-overrides",
+      "adoption": "deferred",
+      "status": "evaluated",
+      "baseline": "System font stacks; no web font is loaded by default.",
+      "useCase": "Matching fallback-font metrics to a configured web font to limit layout shift.",
+      "decision": "Deferred to M9 typography: size-adjust is at the floor; ascent and descent overrides are enhancements (Safari lacks them)."
+    },
+    {
+      "id": "container-style-queries",
+      "syntax": "@container style(--x: y)",
+      "kind": "css",
+      "bcd": ["css.at-rules.container.style_queries_for_custom_properties"],
+      "webFeature": "container-style-queries",
+      "adoption": "experimental",
+      "status": "evaluated",
+      "baseline": "Attributes and profiles express variants.",
+      "useCase": "Component internals reacting to an inherited role value without an attribute.",
+      "decision": "Experiment only (needs Firefox 151 and Safari 18); attributes and profiles remain the contract."
+    },
+    {
+      "id": "scroll-state-queries",
+      "syntax": "@container scroll-state(stuck: top)",
+      "kind": "css",
+      "bcd": ["css.at-rules.container.scroll-state_queries"],
+      "webFeature": "container-scroll-state-queries",
+      "adoption": "experimental",
+      "status": "evaluated",
+      "baseline": "Sticky headers have a constant border.",
+      "useCase": "Showing a separator only while a header is stuck.",
+      "decision": "Experiment only (Chrome 133 only); decorative even if adopted."
+    },
+    {
+      "id": "interpolate-size",
+      "syntax": "interpolate-size: allow-keywords, calc-size()",
+      "kind": "css",
+      "bcd": [
+        "css.properties.interpolate-size",
+        "css.types.calc-size",
+        "css.properties.interpolate-size.allow-keywords"
+      ],
+      "webFeature": "interpolate-size",
+      "adoption": "experimental",
+      "status": "evaluated",
+      "baseline": "Disclosures open and close at full height immediately.",
+      "useCase": "Animating disclosure height to auto.",
+      "decision": "Experiment only (Chromium only); never delays focus or content availability."
+    },
+    {
+      "id": "text-box-trim",
+      "syntax": "text-box: trim-both cap alphabetic",
+      "kind": "css",
+      "bcd": [
+        "css.properties.text-box",
+        "css.properties.text-box-trim",
+        "css.properties.text-box-trim.trim-both"
+      ],
+      "webFeature": "text-box",
+      "adoption": "experimental",
+      "status": "evaluated",
+      "baseline": "Normal line boxes with padding-based optical centring.",
+      "useCase": "Optically centred labels in buttons and badges.",
+      "decision": "Experiment only: labels with diacritics and non-Latin scripts must be tested; normal line boxes stay the fallback."
+    },
+    {
+      "id": "css-if",
+      "syntax": "if()",
+      "kind": "css",
+      "bcd": ["css.types.if"],
+      "webFeature": "if",
+      "adoption": "experimental",
+      "status": "evaluated",
+      "baseline": "Variants use selectors and custom properties.",
+      "useCase": "Inline conditional values for component variants.",
+      "decision": "Experiment only (Chromium only); the token generator warns when it appears in a token."
+    },
+    {
+      "id": "css-function",
+      "syntax": "@function",
+      "kind": "css",
+      "bcd": ["css.at-rules.function"],
+      "webFeature": "function",
+      "adoption": "experimental",
+      "status": "evaluated",
+      "baseline": "Token maths happens in the canonical generator at build time.",
+      "useCase": "Reusable runtime value functions.",
+      "decision": "Experiment only; build-time generation already covers the use case."
+    },
+    {
+      "id": "typed-attr",
+      "syntax": "attr(data-x type(<number>))",
+      "kind": "css",
+      "bcd": ["css.types.attr.type_function"],
+      "webFeature": "attr",
+      "adoption": "experimental",
+      "status": "evaluated",
+      "baseline": "Numeric values reach styles through custom properties set from script.",
+      "useCase": "Progress or rating values styled from attributes without inline styles.",
+      "decision": "Experiment only (Chrome 133, Firefox 155; no Safari)."
+    },
+    {
+      "id": "corner-shape",
+      "syntax": "corner-shape",
+      "kind": "css",
+      "bcd": ["css.properties.corner-shape"],
+      "webFeature": "corner-shape",
+      "adoption": "experimental",
+      "status": "evaluated",
+      "baseline": "border-radius.",
+      "useCase": "Product-specific corner styles (squircle, notch) as visual skins.",
+      "decision": "Experiment only (Chromium only); a skin may add it later as a literal enhancement with border-radius as the baseline."
+    },
+    {
+      "id": "scoped-view-transitions",
+      "syntax": "Element.startViewTransition()",
+      "kind": "api",
+      "bcd": ["api.Element.startViewTransition"],
+      "webFeature": "view-transitions-element-scoped",
+      "adoption": "experimental",
+      "status": "evaluated",
+      "baseline": "Component changes are instant.",
+      "useCase": "Component-local transitions without document-wide names.",
+      "decision": "Experiment only (Chrome 147 only); revisit with document view transitions (M11)."
+    }
+  ]
+}

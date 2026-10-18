@@ -21,7 +21,7 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0006](./0006-colour-generation.md) | OKLCH colour generation, gamut mapping, contrast | Proposed | Tokens |
 | [0007](./0007-alias-scope-redeclaration.md) | Alias-closure re-declaration in scopes | Accepted | Tokens |
 | [0008](./0008-style-delivery-and-csp.md) | Style delivery and CSP | Accepted | Core |
-| [0009](./0009-browser-support-baseline.md) | Browser support baseline | Proposed | Platform |
+| [0009](./0009-browser-support-baseline.md) | Browser support baseline | Accepted | Platform |
 | [0010](./0010-layout-recipes-and-cascade-layers.md) | Layout recipe model and cascade layering | Proposed | Layout |
 | [0011](./0011-container-query-baseline.md) | Container/media query compatibility baseline | Accepted | Layout |
 | [0012](./0012-token-categories-conditions-profiles.md) | Token categories, conditions, and profiles | Proposed | Tokens |
@@ -50,3 +50,5 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0035](./0035-page-suspension-and-restoration.md) | Page suspension and back/forward cache restoration | Proposed | Core / App |
 | [0036](./0036-component-composition-api.md) | Component composition API: `compose()` and `define(definition)` | Accepted | Core |
 | [0037](./0037-naming-contract.md) | Naming contract: Oddkin, `odd-`, and `oddkin` | Accepted | Process / Distribution |
+| [0038](./0038-css-compatibility-and-progressive-enhancement.md) | CSS compatibility policy and progressive enhancement | Accepted | Platform |
+| [0039](./0039-cascade-layer-order.md) | Cascade layer order for document-level styles | Accepted | Platform |

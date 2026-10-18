@@ -1,0 +1,52 @@
+/* Probe fixtures. Loaded before the token stylesheet; see probe.html. */
+
+/* Zero specificity and unlayered: wins over the layered [data-odd-mode] token rule only
+   because unlayered normal declarations outrank layered ones (ADR 0039). */
+:where(#layer-override) {
+  --odd-color-text-primary: rgb(1, 2, 3);
+}
+
+.swatch {
+  color: var(--odd-color-text-primary);
+}
+
+.control {
+  display: block;
+  min-block-size: var(--odd-control-height-md);
+}
+
+.padded {
+  display: block;
+  padding-block-start: var(--odd-card-padding);
+}
+
+#action-reference {
+  display: block;
+  background-color: var(--odd-color-action-default);
+}
+
+.cq {
+  container-type: inline-size;
+}
+
+#cq-wide {
+  inline-size: 30rem;
+}
+
+#cq-narrow {
+  inline-size: 10rem;
+}
+
+.cq-item {
+  color: rgb(0, 0, 255);
+}
+
+@container (min-width: 20rem) {
+  .cq-item {
+    color: rgb(0, 128, 0);
+  }
+}
+
+#registered {
+  background-color: var(--probe-registered, rgb(0, 128, 0));
+}

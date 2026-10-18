@@ -15,6 +15,7 @@ import {
 } from './color.js';
 import { resolveConditions, type Condition } from './conditions.js';
 import { closest, DiagnosticList, pointer, type Diagnostic } from './diagnostics.js';
+import { aboveFloorSyntax, floorLabel } from './floor.js';
 import {
   compareNames,
   dependents,
@@ -715,11 +716,14 @@ function checkValue(
   for (const text of isModeValues(effective) ? [effective.light, effective.dark] : [effective]) {
     if (LITERAL_OR_EXPRESSION.test(text)) continue;
     if (target.type === 'color' && !parseColor(text)) {
+      const outside = aboveFloorSyntax(text)
+        .map((e) => ` ${e.syntax} is not parsed by ${floorLabel(e.unsupported)}.`)
+        .join('');
       d.error(
         'color.invalid',
         path,
         `${JSON.stringify(text)} is not a supported colour.`,
-        'Use #rrggbb, #rgb, oklch(L C H), or a {token} reference.',
+        `Use #rrggbb, #rgb, oklch(L C H), or a {token} reference; mode-dependent colours use { "light": …, "dark": … }.${outside}`,
       );
     }
   }

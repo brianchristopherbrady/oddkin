@@ -1,6 +1,6 @@
 # Theming, token pipeline, and styling
 
-Status: §1–§5 and §10 are **implemented** in `@oddkin/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Of the outputs (§6), CSS, typed `refs` (`token()`, `TokenName`), literal `values`, and inspection JSON are implemented, as is the CLI (§9: `init`, `build`, `check`; JSON, ESM JS, and type-stripped `.ts` configs). Conditions and profiles (§11.2–§11.3, with the implementation notes in §11.7) and the unit policy are implemented. Sass and DTCG outputs and `inspect.computedToken` remain **proposals**.
+Status: §1–§5 and §10 are **implemented** in `@oddkin/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Of the outputs (§6), CSS, typed `refs` (`token()`, `TokenName`), literal `values`, and inspection JSON are implemented, as is the CLI (§9: `init`, `build`, `check`; JSON, ESM JS, and type-stripped `.ts` configs). Conditions and profiles (§11.2–§11.3, with the implementation notes in §11.7) and the unit policy are implemented. Generated CSS is emitted in the `odd.tokens` cascade layer (§5.2, ADR 0039), and token values outside the browser floor are diagnosed (`value.syntax.aboveFloor`, [css-architecture.md](./css-architecture.md) §4.2). Sass and DTCG outputs and `inspect.computedToken` remain **proposals**.
 
 ## 1. Configuration model
 
@@ -33,6 +33,8 @@ Oddkin defaults → preset → user configuration → explicit overrides (by sta
 
 Each resolved token records its origin so tools can label values as *generated*, *preset*, *configured*, or *overridden*. Generated files are never edited by hand; overrides target stable names.
 
+This is configuration precedence. Runtime precedence in the browser — component overrides, unlayered application CSS, scoped attributes, system preferences, library defaults — is defined in [css-architecture.md](./css-architecture.md) §5.3.
+
 ## 2. Pipeline
 
 | Stage | Input → output | Notes |
@@ -52,13 +54,16 @@ Stages 1–7 are pure and live in `@oddkin/tokens/generate` (browser-compatible)
 ```ts
 interface Diagnostic {
   code: 'unit.invalid' | 'number.nonFinite' | 'scale.invalidParameter' | 'strategy.conflict'
-      | 'token.duplicate' | 'alias.missing' | 'alias.cycle' | 'tier.violation' | 'contrast.fail' | …;
+      | 'token.duplicate' | 'alias.missing' | 'alias.cycle' | 'tier.violation' | 'contrast.fail'
+      | 'value.syntax.aboveFloor' | …;
   severity: 'error' | 'warning';
   path: string;        // e.g. '/spacing/scale/lg'
   message: string;
   suggestion?: string;
 }
 ```
+
+`value.syntax.aboveFloor` (warning) reports token values that use syntax the browser floor cannot parse (`light-dark()`, relative colour syntax, `contrast-color()`, `anchor-size()`, `if()`, …): readers of such a token become invalid at computed-value time in those browsers ([css-architecture.md](./css-architecture.md) §4.2). The list is `ABOVE_FLOOR_SYNTAX` in `@oddkin/tokens/generate`, verified against `@mdn/browser-compat-data` by `npm run lint:css`. Literal colour overrides already fail `color.invalid`; its suggestion names the floor browsers.
 
 The shared diagnostic envelope planned in [agent-tooling.md](./agent-tooling.md) §9.1 only adds optional fields (`kind`, `subject`, `expected`/`received`, `docs`, `fix`) to this shape. Agent tooling explains tokens from the inspection output; it never recomputes them.
 
@@ -161,6 +166,24 @@ A guaranteed-invalid toggle (`initial`) selects its fallback; an empty toggle co
 
 Consequences: product scopes may change only brand inputs (reference tokens), and contrast-selected roles choose steps that pass for the base brand and every product, so role expressions are identical in every scope. Product-specific role overrides are not supported yet. A nested `data-odd-theme` scope re-declares all tokens, but mode/product/density scopes inside it use the expressions of the last loaded theme file; one theme per document is the supported case for now.
 
+Mode toggles must never be registered with `@property`: registration would give them an initial value and break the guaranteed-invalid selection ([css-architecture.md](./css-architecture.md) §7).
+
+### 5.2 Cascade layer of the generated CSS (implemented, ADR 0039)
+
+Generated CSS begins with the canonical Oddkin layer order and places every declaration in `odd.tokens`:
+
+```css
+@layer odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities;
+
+@layer odd.tokens {
+  :root,
+  [data-odd-theme="default"] { --odd-space-md: 1rem; /* … */ }
+  /* modes, products, densities, profiles */
+}
+```
+
+Unlayered application CSS therefore overrides generated values whatever the stylesheet order and specificity (an override of a scope selector such as `[data-odd-mode="light"]` no longer depends on loading after the tokens). A root override still does not reach scopes that re-declare the role (§5); theme-wide changes belong in `overrides`. Options: `generate(config, { css: { layer } })`, `buildTheme(config, { cssLayer })`, `oddkin-tokens build --css-layer <name|none>`; a custom name emits only that layer, `none` emits the previous unlayered output. Layering adds 59 B gzip to the default theme.
+
 ### Modes and density
 - `light`/`dark` via `[data-odd-mode]`; `system` via `@media (prefers-color-scheme)` applied when no explicit mode is set.
 - Density (`comfortable`/`compact`) changes spacing and control sizing only; it does not change font sizes (text-size preference belongs to the user agent) and never reduces targets below the documented minimum.
@@ -170,7 +193,7 @@ Consequences: product scopes may change only brand inputs (reference tokens), an
 
 | Output | Entry | Notes |
 | --- | --- | --- |
-| CSS custom properties | `css/tokens.css`, `css/default.css`, `css/themes/<name>.css` | No runtime engine, store, or provider required |
+| CSS custom properties | `css/tokens.css`, `css/default.css`, `css/themes/<name>.css` | No runtime engine, store, or provider required; declarations in the `odd.tokens` layer (§5.2) |
 | Typed references | `refs` | `token('space.md')` → `'var(--odd-space-md)'`; DOM-free; no registration |
 | Literal values | `values` | `values.space.md === '0.75rem'`; explicit, never substituted for refs silently |
 | Computed values | `inspect.computedToken(name, element)` | Requires an element; reads `getComputedStyle` |
@@ -232,6 +255,7 @@ A build step (part of Oddkin's own tooling, a dev dependency) transforms compone
 2. **Component variables** — e.g. `--odd-button-radius`, read with a fallback to a semantic token; normally unset.
 3. **Host styling** — `odd-button { margin: … }`.
 4. **Parts** — selected `::part(control)` hooks for structural overrides (styling, not theming).
+5. **Custom states** — e.g. `odd-input:state(user-invalid)`, derived from the component's own state; combine with parts (`odd-input:state(user-invalid)::part(control)`), since `::part()` cannot be followed by attribute selectors.
 
 Global page selectors do not reach shadow internals. Styling explanations (planned, [change-impact-and-verification.md](./change-impact-and-verification.md) §4.1) trace observed computed values back through component variables, semantic roles, and alias chains using inspection provenance. They label declared, potential, and observed relationships and never claim full cascade reconstruction. Component styles read inherited roles with fallbacks and never re-declare the full theme on `:host`, which would mask ancestor scopes.
 
@@ -249,7 +273,7 @@ Theme Studio is part of `@oddkin/workbench`, so any library documented with Work
 
 ## 9. Configuration tooling
 
-- CLI: `oddkin-tokens init`, `build <config> --out <dir> --format css,json,scss,ts`, `check <config>`. Theme Studio calls the same pure generator.
+- CLI: `oddkin-tokens init`, `build <config> --out <dir> --format css,json,scss,ts [--css-layer <name|none>]`, `check <config>`. Theme Studio calls the same pure generator.
 - Config formats: JSON and native ESM JS first. Local erasable `.ts` configs via verified Node type stripping (proposed minimum Node 24.12); type-check separately because stripping does not type-check or honour path aliases. Precompiled JS is the fallback. Published packages ship JS. [R28]
 - DTCG: target Format Module 2025.10 explicitly and validate serialized types/aliases against it. It is a community-group format, not a browser standard or W3C Recommendation. [R29]
 - **DTCG Resolver 2025.10 (decision pending, experiment M9).** The Resolver module [R53] adds sets merged in array order, modifiers whose contexts select token sources (modifiers may not reference other modifiers), a required `resolutionOrder`, and permutations (one resolved token set per combination of modifier contexts). Format support does not imply Resolver support. The experiment maps Oddkin concepts through the canonical generator only:

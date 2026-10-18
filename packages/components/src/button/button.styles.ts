@@ -39,8 +39,15 @@ export const buttonStyles = css`
     background: var(--odd-button-background, ${token('color.action.default')});
     color: var(--odd-button-color, ${token('color.text.on-action')});
   }
-  :host([appearance='primary']) button:hover:enabled:not([aria-disabled='true']) {
-    background: var(--odd-button-background, ${token('color.action.hover')});
+  /* Hover feedback only where the primary pointer can hover, so taps leave no sticky state. */
+  @media (hover: hover) {
+    :host([appearance='primary']) button:hover:enabled:not([aria-disabled='true']) {
+      background: var(--odd-button-background, ${token('color.action.hover')});
+    }
+    :host([appearance='secondary']) button:hover:enabled:not([aria-disabled='true']),
+    :host([appearance='ghost']) button:hover:enabled:not([aria-disabled='true']) {
+      background: var(--odd-button-background, ${token('color.surface.hover')});
+    }
   }
   :host([appearance='primary']) button:active:enabled:not([aria-disabled='true']) {
     background: var(--odd-button-background, ${token('color.action.active')});
@@ -48,10 +55,6 @@ export const buttonStyles = css`
   :host([appearance='secondary']) button {
     border-color: var(--odd-button-border-color, ${token('color.border.strong')});
     background: var(--odd-button-background, ${token('color.surface.default')});
-  }
-  :host([appearance='secondary']) button:hover:enabled:not([aria-disabled='true']),
-  :host([appearance='ghost']) button:hover:enabled:not([aria-disabled='true']) {
-    background: var(--odd-button-background, ${token('color.surface.hover')});
   }
   :host([appearance='ghost']) button {
     background: var(--odd-button-background, transparent);

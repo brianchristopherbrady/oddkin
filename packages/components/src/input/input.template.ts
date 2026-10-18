@@ -8,7 +8,7 @@ import type { OddkinInput } from './input.js';
  * `input`, `change`, and `blur` handlers. The control keeps its value through `live()`.
  */
 export const inputTemplate = (input: OddkinInput) => {
-  const invalid = !!input.error || (input._touched.value && input._invalid.value);
+  const invalid = input._userInvalid.value;
   const describedBy =
     [input.description ? 'description' : '', input.error ? 'error' : '']
       .filter(Boolean)

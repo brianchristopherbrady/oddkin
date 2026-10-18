@@ -151,14 +151,24 @@ describe('forms', () => {
     );
     expect(el.validity.valid).toBe(false);
     expect(control.hasAttribute('aria-invalid')).toBe(false);
+    expect(el.matches(':state(user-invalid)')).toBe(false);
     // Suppress the browser's validation bubble, which can swallow later clicks in Firefox.
     el.addEventListener('invalid', (event) => event.preventDefault());
     container.querySelector('form')!.requestSubmit();
     await settle(el);
     expect(control.getAttribute('aria-invalid')).toBe('true');
+    // The custom state mirrors aria-invalid, so consumers can style the host and its parts.
+    expect(el.matches(':state(user-invalid)')).toBe(true);
     container.querySelector('form')!.reset();
     await settle(el);
     expect(control.hasAttribute('aria-invalid')).toBe(false);
+    expect(el.matches(':state(user-invalid)')).toBe(false);
+    el.error = 'Taken';
+    await settle(el);
+    expect([control.getAttribute('aria-invalid'), el.matches(':state(user-invalid)')]).toEqual([
+      'true',
+      true,
+    ]);
   });
 
   it('reset restores defaultValue; a disabled fieldset disables and excludes it', async () => {
