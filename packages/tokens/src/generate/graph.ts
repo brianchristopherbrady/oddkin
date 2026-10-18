@@ -17,7 +17,15 @@ const TIER: Record<TokenCategory, number> = {
   component: 3,
 };
 
-export type TokenType = 'color' | 'dimension' | 'number' | 'fontFamily' | 'fontWeight' | 'shadow';
+export type TokenType =
+  | 'color'
+  | 'dimension'
+  | 'number'
+  | 'fontFamily'
+  | 'fontWeight'
+  | 'shadow'
+  | 'duration'
+  | 'cubicBezier';
 export type TokenOrigin = 'preset' | 'generated' | 'configured' | 'overridden';
 export type TokenValue = string | ModeValues;
 
@@ -34,6 +42,8 @@ export interface TokenDefinition {
   readonly density?: boolean;
   /** Name of the token this one must never fall below (target-size minimum). */
   readonly minimum?: string;
+  /** Literal value declared under `prefers-reduced-motion: reduce`. */
+  readonly reducedMotion?: string;
   readonly description?: string;
 }
 
@@ -124,6 +134,8 @@ export function validateGraph(tokens: TokenMap, diagnostics: DiagnosticList): vo
       }
     }
     for (const text of texts) checkUnits(token, text, path, diagnostics);
+    if (token.reducedMotion !== undefined)
+      checkUnits(token, token.reducedMotion, `${path}/reducedMotion`, diagnostics);
     checkFloorSyntax(token, texts, path, diagnostics);
     for (const ref of references(token.value)) {
       const target = tokens.get(ref);
@@ -253,7 +265,19 @@ export function compareNames(a: string, b: string): number {
 }
 
 const EXPRESSION = /\{[^{}]+\}|calc\(|min\(|max\(|clamp\(/;
-const RELATIVE_SIZES = /^(font\.size|control|layout|navigation|card)\./;
+const RELATIVE_SIZES = /^(font\.size|control|layout|navigation|card|icon)\./;
+const DURATION = /^(?:\d+\.?\d*|\.\d+)m?s$/;
+const CUBIC_BEZIER = /^cubic-bezier\(([^()]*)\)$/;
+
+/** `cubic-bezier(x1, y1, x2, y2)` with both x values in [0, 1]. */
+function isCubicBezier(value: string): boolean {
+  const args = CUBIC_BEZIER.exec(value)?.[1]
+    ?.split(',')
+    .map((n) => n.trim());
+  if (args?.length !== 4 || args.some((n) => !/^-?(?:\d+\.?\d*|\.\d+)$/.test(n))) return false;
+  const [x1, , x2] = args.map(Number) as [number, number, number, number];
+  return x1 >= 0 && x1 <= 1 && x2 >= 0 && x2 <= 1;
+}
 
 /**
  * Value syntax the browser floor cannot parse (floor.ts). Reported as a warning: the value is
@@ -300,6 +324,28 @@ function checkUnits(
       path,
       `${token.name} must be a unitless number, not ${JSON.stringify(text)}.`,
       'Line heights are unitless so they scale with the element’s font size.',
+    );
+  } else if (
+    token.type === 'number' &&
+    token.name.startsWith('z-index.') &&
+    !/^-?\d+$/.test(value)
+  ) {
+    diagnostics.error(
+      'unit.invalid',
+      path,
+      `${token.name} must be an integer, not ${JSON.stringify(text)}.`,
+    );
+  } else if (token.type === 'duration' && !DURATION.test(value)) {
+    diagnostics.error(
+      'unit.invalid',
+      path,
+      `${token.name} must be a non-negative time in ms or s, not ${JSON.stringify(text)}.`,
+    );
+  } else if (token.type === 'cubicBezier' && !isCubicBezier(value)) {
+    diagnostics.error(
+      'unit.invalid',
+      path,
+      `${token.name} must be cubic-bezier(x1, y1, x2, y2) with x values from 0 to 1, not ${JSON.stringify(text)}.`,
     );
   } else if (
     token.type === 'fontWeight' &&

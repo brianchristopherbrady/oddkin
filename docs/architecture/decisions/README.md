@@ -54,3 +54,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0039](./0039-cascade-layer-order.md) | Cascade layer order for document-level styles | Accepted | Platform |
 | [0040](./0040-ai-interaction-package.md) | AI interaction package: records, controllers, adapters, and elements | Accepted | Components / AI |
 | [0041](./0041-approved-default-palette-and-roles.md) | Approved default palette, role vocabulary, and text-style roles | Accepted | Tokens |
+| [0042](./0042-complete-foundation-scales.md) | Complete foundation scales: radius, elevation, motion, stacking, and type | Accepted | Tokens |

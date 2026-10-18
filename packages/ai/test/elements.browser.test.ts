@@ -568,9 +568,12 @@ describe('voice and transcript', () => {
       },
     );
     ($(el, '.record') as HTMLElement).click();
-    await new Promise((r) => setTimeout(r, 20));
-    await settle(el);
-    expect(text($(el, '[part="status"]'))).toContain('permission was denied');
+    // Scripted adapters run on timers; poll so a loaded engine cannot outrun a fixed sleep.
+    const status = () => {
+      flush();
+      return text($(el, '[part="status"]'));
+    };
+    await expect.poll(status, { timeout: 2000, interval: 10 }).toContain('permission was denied');
     const adapter = createScriptedVoiceAdapter([
       { after: 5, interim: 'hel' },
       { after: 5, final: 'hello there' },
@@ -580,11 +583,13 @@ describe('voice and transcript', () => {
     await settle(el);
     const baseline = { ...scopeStats() };
     ($(el, '.record') as HTMLElement).click();
-    await new Promise((r) => setTimeout(r, 40));
+    const transcript = () => {
+      flush();
+      return text($(el, 'odd-transcript')?.shadowRoot?.querySelector('[part="list"]'));
+    };
+    await expect.poll(transcript, { timeout: 2000, interval: 10 }).toBe('hello there');
     await settle(el);
     expect($(el, '.record')!.getAttribute('aria-pressed')).toBe('true');
-    const transcript = $(el, 'odd-transcript')!;
-    expect(text(transcript.shadowRoot!.querySelector('[part="list"]'))).toBe('hello there');
     el.remove();
     flush();
     expect(adapter.openResources).toBe(0);

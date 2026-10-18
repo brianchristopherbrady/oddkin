@@ -5,14 +5,7 @@
  */
 import type { Mode } from '../theme/types.js';
 import type { Diagnostic } from './diagnostics.js';
-import {
-  compareNames,
-  compileValue,
-  cssVariable,
-  dependents,
-  isModeDependent,
-  resolveLiteral,
-} from './graph.js';
+import { compareNames, compileValue, cssVariable, dependents, resolveLiteral } from './graph.js';
 import type { ResolvedTheme } from './resolve.js';
 
 const header = (theme: ResolvedTheme, what: string) =>
@@ -40,11 +33,12 @@ interface Tree {
 }
 
 function literal(theme: ResolvedTheme, name: string): Literal {
-  const token = theme.tokens.get(name);
   const resolve = (mode: Mode) => resolveLiteral(theme.tokens, name, mode) ?? '';
-  if (token && isModeDependent(token.value, theme.modes))
-    return { light: resolve('light'), dark: resolve('dark') };
-  return resolve(theme.modes[0] ?? 'light');
+  if (theme.modes.length < 2) return resolve(theme.modes[0] ?? 'light');
+  // Aliases of mode-dependent tokens differ per mode too, so compare resolved literals.
+  const light = resolve('light');
+  const dark = resolve('dark');
+  return light === dark ? light : { light, dark };
 }
 
 const isLeaf = (value: Tree | Literal): value is Literal =>
@@ -134,6 +128,7 @@ export function emitInspectJson(
       ...(t.provenance ? { provenance: t.provenance } : {}),
       ...(t.density ? { density: true } : {}),
       ...(t.minimum ? { minimum: t.minimum } : {}),
+      ...(t.reducedMotion !== undefined ? { reducedMotion: t.reducedMotion } : {}),
       ...(t.description ? { description: t.description } : {}),
     })),
     conditions: [...theme.conditions.values()],

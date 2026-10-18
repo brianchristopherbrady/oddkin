@@ -248,7 +248,8 @@ describe('checkBoundaries', () => {
     expect(diagnostics.find((d) => d.code === 'boundary.domFree.failed')?.message).toContain(
       'HTMLElement',
     );
-  });
+    // Spawns Node for the DOM-free import check; slow under full-suite load.
+  }, 30_000);
 
   it('reports missing artifacts when checking before a build', async () => {
     const root = await workspace({});

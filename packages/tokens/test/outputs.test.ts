@@ -45,6 +45,9 @@ describe('refs and values', () => {
     expect(values.space.md).toBe('1rem');
     expect(values.control.height.md).toBe('2.5rem');
     expect(values.color.action.default).toEqual({ light: '#6250e8', dark: '#b4a8ff' });
+    // An alias of a mode-dependent role differs per mode too.
+    expect(values.color.selection.background).toEqual({ light: '#6250e8', dark: '#b4a8ff' });
+    expect(values.motion.duration.normal).toBe('200ms');
     expect(values.layout['item-min']).toBe('16rem');
   });
 

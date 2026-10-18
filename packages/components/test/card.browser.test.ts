@@ -126,7 +126,7 @@ describe('odd-card', () => {
   it('reflects variant and padding, and reads roles through component variables', async () => {
     container.style.setProperty('--odd-space-lg', '20px');
     container.style.setProperty('--odd-color-surface-sunken', 'rgb(4, 5, 6)');
-    container.style.setProperty('--odd-elevation-hover', '0 4px 12px rgb(36, 31, 71)');
+    container.style.setProperty('--odd-elevation-md', '0 4px 12px rgb(36, 31, 71)');
     const { el, part } = await mount('<p>Body</p>');
     expect(el.getAttribute('variant')).toBe('outlined');
     expect(el.getAttribute('padding')).toBe('md');

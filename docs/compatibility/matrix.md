@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 50 stylesheets, 229 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 50 stylesheets, 228 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -140,7 +140,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/checkpoint/checkpoint.styles.js (checkpointStyles)` | yes | 13 |
 | `packages/ai/dist/citation/citation.styles.js (citationStyles)` | yes | 44 |
 | `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 32 |
-| `packages/ai/dist/conversation/conversation.styles.js (conversationStyles)` | yes | 49 |
+| `packages/ai/dist/conversation/conversation.styles.js (conversationStyles)` | yes | 47 |
 | `packages/ai/dist/inline-assist/inline-assist.styles.js (inlineAssistStyles)` | yes | 25 |
 | `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 42 |
 | `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 31 |

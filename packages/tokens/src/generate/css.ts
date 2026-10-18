@@ -103,9 +103,8 @@ export function emitCss(theme: ResolvedTheme, options: CssOptions = {}): string 
 
 function emitBlocks(theme: ResolvedTheme): string {
   const { modes, tokens } = theme;
-  const parts: string[] = [
-    block([':root', `[data-odd-theme="${theme.name}"]`], tokenDeclarations(tokens.values(), modes)),
-  ];
+  const baseSelectors = [':root', `[data-odd-theme="${theme.name}"]`];
+  const parts: string[] = [block(baseSelectors, tokenDeclarations(tokens.values(), modes))];
 
   if (modes.length === 1) {
     parts.push(block([':root'], [['color-scheme', modes[0] as Mode]]));
@@ -126,6 +125,15 @@ function emitBlocks(theme: ResolvedTheme): string {
       `@media (prefers-color-scheme: dark) {\n${block(['[data-odd-mode="system"]'], toggles('dark'), '  ')}}\n`,
     );
   }
+
+  // Same selectors as the base block, so a nested theme scope cannot restore full motion.
+  const reduced: Declaration[] = [...tokens.values()]
+    .filter((t) => t.reducedMotion !== undefined)
+    .map((t) => [cssVariable(t.name), compileValue(t.reducedMotion as string, modes)]);
+  if (reduced.length)
+    parts.push(
+      `@media (prefers-reduced-motion: reduce) {\n${block(baseSelectors, reduced, '  ')}}\n`,
+    );
 
   for (const scope of theme.scopes) {
     const selectors =

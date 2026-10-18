@@ -32,9 +32,9 @@ export const BUDGETS = {
  * the generated default theme and each component's combined structural and default styles.
  */
 export const CSS_BUDGETS = {
-  // Measured 2,380 (was 1,827 before the approved Figma palette added text-style roles,
-  // the warning ramp, canvas/specimen/selection/accent roles, and elevation).
-  'tokens:default.css': 2560,
+  // Measured 2,764 (1,827 before the approved palette, text-style roles, warning ramp, and the
+  // complete radius, elevation, motion, stacking, and icon scales; ADRs 0041-0042).
+  'tokens:default.css': 3072,
   'components:button': 1280, // measured 1,100
   'components:card': 640, // measured 571
   'components:input': 768, // measured 647

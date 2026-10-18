@@ -104,6 +104,8 @@ test.describe('research assistant', () => {
   });
 
   test('stop, disconnect and resume, and conversation isolation', async ({ page }) => {
+    // Deliberately slow streaming (120 ms chunks); takes ~26 s alone in Firefox.
+    test.slow();
     const check = await watch(page);
     await open(page, 'ai-research');
     await page.getByText('Simulation controls').click();

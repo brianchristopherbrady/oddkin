@@ -13,6 +13,7 @@ export interface PresetToken {
   readonly value: TokenValue;
   readonly density?: boolean;
   readonly minimum?: string;
+  readonly reducedMotion?: string;
   readonly description?: string;
 }
 
@@ -20,6 +21,7 @@ export const DEFAULT_SPACING: ExplicitSpacing = {
   strategy: 'explicit',
   steps: {
     none: '0',
+    '3xs': '0.125rem',
     '2xs': '0.25rem',
     xs: '0.5rem',
     sm: '0.75rem',
@@ -28,6 +30,7 @@ export const DEFAULT_SPACING: ExplicitSpacing = {
     xl: '2rem',
     '2xl': '3rem',
     '3xl': '4rem',
+    '4xl': '6rem',
   },
 };
 
@@ -53,62 +56,133 @@ const textStyle = (
   family: 'sans' | 'display' | 'mono',
   size: string,
   weight: 'regular' | 'medium' | 'semibold' | 'bold',
-  lineHeight: string,
-  letterSpacing?: string,
+  lineHeight: 'none' | 'tight' | 'snug' | 'normal' | 'relaxed',
+  letterSpacing: 'tight' | 'normal' | 'wide' = 'normal',
 ): PresetToken[] => [
   t(`type.${name}.family`, 'semantic', 'fontFamily', `{font.family.${family}}`),
   t(`type.${name}.size`, 'semantic', 'dimension', `{font.size.${size}}`),
   t(`type.${name}.weight`, 'semantic', 'fontWeight', `{font.weight.${weight}}`),
-  t(`type.${name}.line-height`, 'semantic', 'number', lineHeight),
-  ...(letterSpacing
-    ? [t(`type.${name}.letter-spacing`, 'semantic', 'dimension', letterSpacing)]
-    : []),
+  t(`type.${name}.line-height`, 'semantic', 'number', `{line-height.${lineHeight}}`),
+  t(`type.${name}.letter-spacing`, 'semantic', 'dimension', `{letter-spacing.${letterSpacing}}`),
 ];
 
+/** Duration that drops to 0ms under `prefers-reduced-motion: reduce`. */
+const duration = (name: string, value: string) =>
+  t(`motion.duration.${name}`, 'foundation', 'duration', value, { reducedMotion: '0ms' });
+
 export const PRESET_TOKENS: readonly PresetToken[] = [
-  // Foundation
+  // Foundation: radii and borders
   t('radius.none', 'foundation', 'dimension', '0'),
+  t('radius.xs', 'foundation', 'dimension', '0.125rem'),
   t('radius.sm', 'foundation', 'dimension', '0.25rem'),
   t('radius.md', 'foundation', 'dimension', '0.5rem'),
   t('radius.lg', 'foundation', 'dimension', '0.75rem'),
+  t('radius.xl', 'foundation', 'dimension', '1rem'),
+  t('radius.2xl', 'foundation', 'dimension', '1.5rem'),
   t('radius.full', 'foundation', 'dimension', '9999px'),
   t('border.width.default', 'foundation', 'dimension', '1px'),
   t('border.width.strong', 'foundation', 'dimension', '2px'),
   t('focus.width', 'foundation', 'dimension', '2px'),
   t('focus.offset', 'foundation', 'dimension', '2px'),
+
+  // Foundation: typography
   t(
     'font.family.sans',
     'foundation',
     'fontFamily',
-    '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
   ),
-  t('font.family.display', 'foundation', 'fontFamily', '"Jost", "Inter", system-ui, sans-serif'),
+  t('font.family.display', 'foundation', 'fontFamily', '{font.family.sans}'),
   t(
     'font.family.mono',
     'foundation',
     'fontFamily',
-    '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+    'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
   ),
-  t('font.size.2xs', 'foundation', 'dimension', '0.625rem'),
   t('font.size.xs', 'foundation', 'dimension', '0.75rem'),
-  t('font.size.sm', 'foundation', 'dimension', '0.8125rem'),
-  t('font.size.md', 'foundation', 'dimension', '0.9375rem'),
+  t('font.size.sm', 'foundation', 'dimension', '0.875rem'),
+  t('font.size.md', 'foundation', 'dimension', '1rem'),
   t('font.size.lg', 'foundation', 'dimension', '1.125rem'),
   t('font.size.xl', 'foundation', 'dimension', '1.25rem'),
-  t('font.size.2xl', 'foundation', 'dimension', '1.625rem'),
-  t('font.size.3xl', 'foundation', 'dimension', '3rem'),
+  t('font.size.2xl', 'foundation', 'dimension', '1.5rem'),
+  t('font.size.3xl', 'foundation', 'dimension', '1.875rem'),
+  t('font.size.4xl', 'foundation', 'dimension', '2.25rem'),
   t('font.weight.regular', 'foundation', 'fontWeight', '400'),
   t('font.weight.medium', 'foundation', 'fontWeight', '500'),
   t('font.weight.semibold', 'foundation', 'fontWeight', '600'),
   t('font.weight.bold', 'foundation', 'fontWeight', '700'),
+  t('line-height.none', 'foundation', 'number', '1'),
   t('line-height.tight', 'foundation', 'number', '1.25'),
+  t('line-height.snug', 'foundation', 'number', '1.375'),
   t('line-height.normal', 'foundation', 'number', '1.5'),
-  t('letter-spacing.tight', 'foundation', 'dimension', '-0.015em'),
-  t('letter-spacing.wide', 'foundation', 'dimension', '0.08em'),
+  t('line-height.relaxed', 'foundation', 'number', '1.625'),
+  t('letter-spacing.tight', 'foundation', 'dimension', '-0.025em'),
+  t('letter-spacing.normal', 'foundation', 'dimension', '0'),
+  t('letter-spacing.wide', 'foundation', 'dimension', '0.05em'),
+
+  // Foundation: sizes
+  t('icon.size.sm', 'foundation', 'dimension', '1rem'),
+  t('icon.size.md', 'foundation', 'dimension', '1.25rem'),
+  t('icon.size.lg', 'foundation', 'dimension', '1.5rem'),
   t('target.min', 'foundation', 'dimension', '1.5rem', {
     description:
       'Minimum interactive target size (WCAG 2.2 SC 2.5.8, 24 CSS px at the default root size).',
   }),
+
+  // Foundation: elevation (dark appearances need stronger shadows to read at all)
+  t('elevation.none', 'foundation', 'shadow', 'none'),
+  t(
+    'elevation.sm',
+    'foundation',
+    'shadow',
+    mode(
+      '0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)',
+      '0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3)',
+    ),
+  ),
+  t(
+    'elevation.md',
+    'foundation',
+    'shadow',
+    mode(
+      '0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)',
+      '0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32)',
+    ),
+  ),
+  t(
+    'elevation.lg',
+    'foundation',
+    'shadow',
+    mode(
+      '0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)',
+      '0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48)',
+    ),
+  ),
+  t(
+    'elevation.xl',
+    'foundation',
+    'shadow',
+    mode(
+      '0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)',
+      '0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6)',
+    ),
+  ),
+
+  // Foundation: motion
+  duration('fast', '100ms'),
+  duration('normal', '200ms'),
+  duration('slow', '300ms'),
+  duration('slower', '500ms'),
+  t('motion.easing.standard', 'foundation', 'cubicBezier', 'cubic-bezier(0.4, 0, 0.2, 1)'),
+  t('motion.easing.enter', 'foundation', 'cubicBezier', 'cubic-bezier(0, 0, 0.2, 1)'),
+  t('motion.easing.exit', 'foundation', 'cubicBezier', 'cubic-bezier(0.4, 0, 1, 1)'),
+  t('motion.easing.linear', 'foundation', 'cubicBezier', 'cubic-bezier(0, 0, 1, 1)'),
+
+  // Foundation: in-flow stacking (top-layer overlays never use z-index)
+  t('z-index.base', 'foundation', 'number', '0'),
+  t('z-index.raised', 'foundation', 'number', '1'),
+  t('z-index.sticky', 'foundation', 'number', '100'),
+  t('z-index.overlay', 'foundation', 'number', '200'),
 
   // Semantic: controls (button, input)
   t('control.height.sm', 'semantic', 'dimension', '2rem', { density: true, minimum: 'target.min' }),
@@ -121,20 +195,17 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
   t('control.padding.inline.md', 'semantic', 'dimension', '{space.sm}'),
   t('control.padding.inline.lg', 'semantic', 'dimension', '{space.md}'),
   t('control.gap', 'semantic', 'dimension', '{space.xs}'),
-  t('control.radius', 'semantic', 'dimension', '0.4375rem'),
+  t('control.radius', 'semantic', 'dimension', '{radius.md}'),
 
-  // Semantic: text styles (Figma "Oddkin/<Style>"): family, size, weight, line height
-  ...textStyle('display', 'display', '3xl', 'medium', '1.2083', '{letter-spacing.tight}'),
-  ...textStyle('section', 'display', '2xl', 'semibold', '1.3077'),
-  ...textStyle('title', 'display', 'xl', 'semibold', '1.2'),
-  ...textStyle('body', 'sans', 'md', 'regular', '1.6'),
-  ...textStyle('ui', 'sans', 'sm', 'medium', '1.5385'),
-  ...textStyle('small', 'sans', 'xs', 'regular', '1.5'),
-  ...textStyle('eyebrow', 'sans', '2xs', 'semibold', '1.6', '{letter-spacing.wide}'),
-  ...textStyle('code', 'mono', 'xs', 'regular', '1.6667'),
-
-  // Semantic: elevation (light shadows; dark appearances step surfaces up instead)
-  t('elevation.hover', 'semantic', 'shadow', '0 4px 12px rgb(36 31 71 / 0.09)'),
+  // Semantic: text styles (family, size, weight, line height, letter spacing)
+  ...textStyle('display', 'display', '4xl', 'semibold', 'tight', 'tight'),
+  ...textStyle('section', 'display', '2xl', 'semibold', 'tight'),
+  ...textStyle('title', 'display', 'xl', 'semibold', 'snug'),
+  ...textStyle('body', 'sans', 'md', 'regular', 'normal'),
+  ...textStyle('ui', 'sans', 'sm', 'medium', 'snug'),
+  ...textStyle('small', 'sans', 'xs', 'regular', 'normal'),
+  ...textStyle('eyebrow', 'sans', 'xs', 'semibold', 'normal', 'wide'),
+  ...textStyle('code', 'mono', 'sm', 'regular', 'normal'),
 
   // Semantic: neutral colour roles (fixed steps; checked by contrast pairs below)
   t('color.canvas', 'semantic', 'color', mode('{ref.neutral.50}', '{ref.neutral.1000}')),
@@ -170,7 +241,7 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
 
   // Card
   t('card.padding', 'component', 'dimension', '{layout.inset}'),
-  t('card.radius', 'component', 'dimension', '{radius.md}'),
+  t('card.radius', 'component', 'dimension', '{radius.lg}'),
 
   // Layout roles
   t('layout.gap', 'layout', 'dimension', '{space.md}'),

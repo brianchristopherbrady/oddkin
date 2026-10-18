@@ -8,7 +8,7 @@ export const values = {
   },
   card: {
     padding: '1.5rem',
-    radius: '0.5rem',
+    radius: '0.75rem',
   },
   color: {
     accent: {
@@ -63,8 +63,14 @@ export const values = {
       dark: '#b4a8ff',
     },
     selection: {
-      background: '#6250e8',
-      foreground: '#ffffff',
+      background: {
+        light: '#6250e8',
+        dark: '#b4a8ff',
+      },
+      foreground: {
+        light: '#ffffff',
+        dark: '#23252b',
+      },
     },
     success: {
       foreground: {
@@ -141,10 +147,26 @@ export const values = {
         sm: '0.5rem',
       },
     },
-    radius: '0.4375rem',
+    radius: '0.5rem',
   },
   elevation: {
-    hover: '0 4px 12px rgb(36 31 71 / 0.09)',
+    lg: {
+      light: '0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)',
+      dark: '0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48)',
+    },
+    md: {
+      light: '0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)',
+      dark: '0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32)',
+    },
+    none: 'none',
+    sm: {
+      light: '0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)',
+      dark: '0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3)',
+    },
+    xl: {
+      light: '0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)',
+      dark: '0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6)',
+    },
   },
   focus: {
     offset: '2px',
@@ -152,17 +174,17 @@ export const values = {
   },
   font: {
     family: {
-      display: '"Jost", "Inter", system-ui, sans-serif',
-      mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-      sans: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      display: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      mono: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+      sans: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
     },
     size: {
-      '2xl': '1.625rem',
-      '2xs': '0.625rem',
-      '3xl': '3rem',
+      '2xl': '1.5rem',
+      '3xl': '1.875rem',
+      '4xl': '2.25rem',
       lg: '1.125rem',
-      md: '0.9375rem',
-      sm: '0.8125rem',
+      md: '1rem',
+      sm: '0.875rem',
       xl: '1.25rem',
       xs: '0.75rem',
     },
@@ -173,6 +195,13 @@ export const values = {
       semibold: '600',
     },
   },
+  icon: {
+    size: {
+      lg: '1.5rem',
+      md: '1.25rem',
+      sm: '1rem',
+    },
+  },
   layout: {
     gap: '1rem',
     inset: '1.5rem',
@@ -181,12 +210,30 @@ export const values = {
     'sidebar-width': '16rem',
   },
   'letter-spacing': {
-    tight: '-0.015em',
-    wide: '0.08em',
+    normal: '0',
+    tight: '-0.025em',
+    wide: '0.05em',
   },
   'line-height': {
+    none: '1',
     normal: '1.5',
+    relaxed: '1.625',
+    snug: '1.375',
     tight: '1.25',
+  },
+  motion: {
+    duration: {
+      fast: '100ms',
+      normal: '200ms',
+      slow: '300ms',
+      slower: '500ms',
+    },
+    easing: {
+      enter: 'cubic-bezier(0, 0, 0.2, 1)',
+      exit: 'cubic-bezier(0.4, 0, 1, 1)',
+      linear: 'cubic-bezier(0, 0, 1, 1)',
+      standard: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    },
   },
   navigation: {
     indent: '1rem',
@@ -200,11 +247,14 @@ export const values = {
     },
   },
   radius: {
+    '2xl': '1.5rem',
     full: '9999px',
     lg: '0.75rem',
     md: '0.5rem',
     none: '0',
     sm: '0.25rem',
+    xl: '1rem',
+    xs: '0.125rem',
   },
   ref: {
     brand: {
@@ -279,6 +329,8 @@ export const values = {
     '2xl': '3rem',
     '2xs': '0.25rem',
     '3xl': '4rem',
+    '3xs': '0.125rem',
+    '4xl': '6rem',
     lg: '1.5rem',
     md: '1rem',
     none: '0',
@@ -291,54 +343,66 @@ export const values = {
   },
   type: {
     body: {
-      family: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-      'line-height': '1.6',
-      size: '0.9375rem',
+      family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'letter-spacing': '0',
+      'line-height': '1.5',
+      size: '1rem',
       weight: '400',
     },
     code: {
-      family: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-      'line-height': '1.6667',
-      size: '0.75rem',
+      family: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+      'letter-spacing': '0',
+      'line-height': '1.5',
+      size: '0.875rem',
       weight: '400',
     },
     display: {
-      family: '"Jost", "Inter", system-ui, sans-serif',
-      'letter-spacing': '-0.015em',
-      'line-height': '1.2083',
-      size: '3rem',
-      weight: '500',
+      family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'letter-spacing': '-0.025em',
+      'line-height': '1.25',
+      size: '2.25rem',
+      weight: '600',
     },
     eyebrow: {
-      family: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-      'letter-spacing': '0.08em',
-      'line-height': '1.6',
-      size: '0.625rem',
+      family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'letter-spacing': '0.05em',
+      'line-height': '1.5',
+      size: '0.75rem',
       weight: '600',
     },
     section: {
-      family: '"Jost", "Inter", system-ui, sans-serif',
-      'line-height': '1.3077',
-      size: '1.625rem',
+      family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'letter-spacing': '0',
+      'line-height': '1.25',
+      size: '1.5rem',
       weight: '600',
     },
     small: {
-      family: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'letter-spacing': '0',
       'line-height': '1.5',
       size: '0.75rem',
       weight: '400',
     },
     title: {
-      family: '"Jost", "Inter", system-ui, sans-serif',
-      'line-height': '1.2',
+      family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'letter-spacing': '0',
+      'line-height': '1.375',
       size: '1.25rem',
       weight: '600',
     },
     ui: {
-      family: '"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-      'line-height': '1.5385',
-      size: '0.8125rem',
+      family: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+      'letter-spacing': '0',
+      'line-height': '1.375',
+      size: '0.875rem',
       weight: '500',
     },
+  },
+  'z-index': {
+    base: '0',
+    overlay: '200',
+    raised: '1',
+    sticky: '100',
   },
 } as const;

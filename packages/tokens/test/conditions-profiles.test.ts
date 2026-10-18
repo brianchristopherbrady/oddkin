@@ -183,6 +183,23 @@ describe('unit policy', () => {
     expect(result({ 'radius.md': 'calc({space.xs} / 2)' })).toEqual([]);
   });
 
+  it('requires times for durations, cubic-bezier easings, and integer stacking levels', () => {
+    expect(result({ 'motion.duration.fast': '100' })).toEqual([
+      ['unit.invalid', '/tokens/motion.duration.fast'],
+    ]);
+    expect(result({ 'motion.duration.fast': '0.15s' })).toEqual([]);
+    expect(result({ 'motion.easing.standard': 'ease-in' })).toEqual([
+      ['unit.invalid', '/tokens/motion.easing.standard'],
+    ]);
+    expect(result({ 'motion.easing.standard': 'cubic-bezier(1.2, 0, 0.2, 1)' })).toEqual([
+      ['unit.invalid', '/tokens/motion.easing.standard'],
+    ]);
+    expect(result({ 'motion.easing.standard': 'cubic-bezier(0.3, -0.5, 0.7, 1.5)' })).toEqual([]);
+    expect(result({ 'z-index.sticky': '10.5' })).toEqual([
+      ['unit.invalid', '/tokens/z-index.sticky'],
+    ]);
+  });
+
   it('warns about px where sizes should follow the reader’s font size, and allows px borders', () => {
     expect(result({ 'font.size.md': '16px' })).toEqual([
       ['unit.discouraged', '/tokens/font.size.md'],

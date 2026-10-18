@@ -8,7 +8,7 @@
     --odd-border-width-default: 1px;
     --odd-border-width-strong: 2px;
     --odd-card-padding: var(--odd-layout-inset);
-    --odd-card-radius: var(--odd-radius-md);
+    --odd-card-radius: var(--odd-radius-lg);
     --odd-color-accent-decorative: #dfedaa;
     --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
     --odd-color-action-hover: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
@@ -42,44 +42,66 @@
     --odd-control-padding-inline-lg: var(--odd-space-md);
     --odd-control-padding-inline-md: var(--odd-space-sm);
     --odd-control-padding-inline-sm: var(--odd-space-xs);
-    --odd-control-radius: 0.4375rem;
-    --odd-elevation-hover: 0 4px 12px rgb(36 31 71 / 0.09);
+    --odd-control-radius: var(--odd-radius-md);
+    --odd-elevation-lg: var(--odd-mode-light, 0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)) var(--odd-mode-dark, 0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48));
+    --odd-elevation-md: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32));
+    --odd-elevation-none: none;
+    --odd-elevation-sm: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3));
+    --odd-elevation-xl: var(--odd-mode-light, 0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)) var(--odd-mode-dark, 0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6));
     --odd-focus-offset: 2px;
     --odd-focus-width: 2px;
-    --odd-font-family-display: "Jost", "Inter", system-ui, sans-serif;
-    --odd-font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    --odd-font-family-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --odd-font-size-2xl: 1.625rem;
-    --odd-font-size-2xs: 0.625rem;
-    --odd-font-size-3xl: 3rem;
+    --odd-font-family-display: var(--odd-font-family-sans);
+    --odd-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --odd-font-family-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --odd-font-size-2xl: 1.5rem;
+    --odd-font-size-3xl: 1.875rem;
+    --odd-font-size-4xl: 2.25rem;
     --odd-font-size-lg: 1.125rem;
-    --odd-font-size-md: 0.9375rem;
-    --odd-font-size-sm: 0.8125rem;
+    --odd-font-size-md: 1rem;
+    --odd-font-size-sm: 0.875rem;
     --odd-font-size-xl: 1.25rem;
     --odd-font-size-xs: 0.75rem;
     --odd-font-weight-bold: 700;
     --odd-font-weight-medium: 500;
     --odd-font-weight-regular: 400;
     --odd-font-weight-semibold: 600;
+    --odd-icon-size-lg: 1.5rem;
+    --odd-icon-size-md: 1.25rem;
+    --odd-icon-size-sm: 1rem;
     --odd-layout-gap: var(--odd-space-md);
     --odd-layout-inset: var(--odd-space-lg);
     --odd-layout-item-min: 16rem;
     --odd-layout-main-min: 20rem;
     --odd-layout-sidebar-width: 16rem;
-    --odd-letter-spacing-tight: -0.015em;
-    --odd-letter-spacing-wide: 0.08em;
+    --odd-letter-spacing-normal: 0;
+    --odd-letter-spacing-tight: -0.025em;
+    --odd-letter-spacing-wide: 0.05em;
+    --odd-line-height-none: 1;
     --odd-line-height-normal: 1.5;
+    --odd-line-height-relaxed: 1.625;
+    --odd-line-height-snug: 1.375;
     --odd-line-height-tight: 1.25;
+    --odd-motion-duration-fast: 100ms;
+    --odd-motion-duration-normal: 200ms;
+    --odd-motion-duration-slow: 300ms;
+    --odd-motion-duration-slower: 500ms;
+    --odd-motion-easing-enter: cubic-bezier(0, 0, 0.2, 1);
+    --odd-motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+    --odd-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+    --odd-motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
     --odd-navigation-indent: var(--odd-space-md);
     --odd-navigation-item-gap: var(--odd-space-xs);
     --odd-navigation-item-min-height: var(--odd-control-height-md);
     --odd-navigation-item-padding-block: var(--odd-space-xs);
     --odd-navigation-item-padding-inline: var(--odd-space-sm);
+    --odd-radius-2xl: 1.5rem;
     --odd-radius-full: 9999px;
     --odd-radius-lg: 0.75rem;
     --odd-radius-md: 0.5rem;
     --odd-radius-none: 0;
     --odd-radius-sm: 0.25rem;
+    --odd-radius-xl: 1rem;
+    --odd-radius-xs: 0.125rem;
     --odd-ref-brand-50: #f3f4ff;
     --odd-ref-brand-100: #e7e9ff;
     --odd-ref-brand-200: #cfd4ff;
@@ -145,39 +167,49 @@
     --odd-space-xs: 0.3333rem;
     --odd-target-min: 1.5rem;
     --odd-type-body-family: var(--odd-font-family-sans);
-    --odd-type-body-line-height: 1.6;
+    --odd-type-body-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-body-line-height: var(--odd-line-height-normal);
     --odd-type-body-size: var(--odd-font-size-md);
     --odd-type-body-weight: var(--odd-font-weight-regular);
     --odd-type-code-family: var(--odd-font-family-mono);
-    --odd-type-code-line-height: 1.6667;
-    --odd-type-code-size: var(--odd-font-size-xs);
+    --odd-type-code-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-code-line-height: var(--odd-line-height-normal);
+    --odd-type-code-size: var(--odd-font-size-sm);
     --odd-type-code-weight: var(--odd-font-weight-regular);
     --odd-type-display-family: var(--odd-font-family-display);
     --odd-type-display-letter-spacing: var(--odd-letter-spacing-tight);
-    --odd-type-display-line-height: 1.2083;
-    --odd-type-display-size: var(--odd-font-size-3xl);
-    --odd-type-display-weight: var(--odd-font-weight-medium);
+    --odd-type-display-line-height: var(--odd-line-height-tight);
+    --odd-type-display-size: var(--odd-font-size-4xl);
+    --odd-type-display-weight: var(--odd-font-weight-semibold);
     --odd-type-eyebrow-family: var(--odd-font-family-sans);
     --odd-type-eyebrow-letter-spacing: var(--odd-letter-spacing-wide);
-    --odd-type-eyebrow-line-height: 1.6;
-    --odd-type-eyebrow-size: var(--odd-font-size-2xs);
+    --odd-type-eyebrow-line-height: var(--odd-line-height-normal);
+    --odd-type-eyebrow-size: var(--odd-font-size-xs);
     --odd-type-eyebrow-weight: var(--odd-font-weight-semibold);
     --odd-type-section-family: var(--odd-font-family-display);
-    --odd-type-section-line-height: 1.3077;
+    --odd-type-section-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-section-line-height: var(--odd-line-height-tight);
     --odd-type-section-size: var(--odd-font-size-2xl);
     --odd-type-section-weight: var(--odd-font-weight-semibold);
     --odd-type-small-family: var(--odd-font-family-sans);
-    --odd-type-small-line-height: 1.5;
+    --odd-type-small-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-small-line-height: var(--odd-line-height-normal);
     --odd-type-small-size: var(--odd-font-size-xs);
     --odd-type-small-weight: var(--odd-font-weight-regular);
     --odd-type-title-family: var(--odd-font-family-display);
-    --odd-type-title-line-height: 1.2;
+    --odd-type-title-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-title-line-height: var(--odd-line-height-snug);
     --odd-type-title-size: var(--odd-font-size-xl);
     --odd-type-title-weight: var(--odd-font-weight-semibold);
     --odd-type-ui-family: var(--odd-font-family-sans);
-    --odd-type-ui-line-height: 1.5385;
+    --odd-type-ui-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-ui-line-height: var(--odd-line-height-snug);
     --odd-type-ui-size: var(--odd-font-size-sm);
     --odd-type-ui-weight: var(--odd-font-weight-medium);
+    --odd-z-index-base: 0;
+    --odd-z-index-overlay: 200;
+    --odd-z-index-raised: 1;
+    --odd-z-index-sticky: 100;
   }
 
   :root {
@@ -221,6 +253,10 @@
     --odd-color-text-secondary: var(--odd-mode-light, var(--odd-ref-neutral-700)) var(--odd-mode-dark, var(--odd-ref-neutral-300));
     --odd-color-warning-foreground: var(--odd-mode-light, var(--odd-ref-warning-600)) var(--odd-mode-dark, var(--odd-ref-warning-500));
     --odd-color-warning-surface: var(--odd-mode-light, var(--odd-ref-warning-50)) var(--odd-mode-dark, var(--odd-ref-warning-950));
+    --odd-elevation-lg: var(--odd-mode-light, 0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)) var(--odd-mode-dark, 0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48));
+    --odd-elevation-md: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32));
+    --odd-elevation-sm: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3));
+    --odd-elevation-xl: var(--odd-mode-light, 0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)) var(--odd-mode-dark, 0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6));
     --odd-color-selection-foreground: var(--odd-color-text-on-action);
     --odd-color-selection-background: var(--odd-color-action-default);
   }
@@ -252,6 +288,10 @@
     --odd-color-text-secondary: var(--odd-mode-light, var(--odd-ref-neutral-700)) var(--odd-mode-dark, var(--odd-ref-neutral-300));
     --odd-color-warning-foreground: var(--odd-mode-light, var(--odd-ref-warning-600)) var(--odd-mode-dark, var(--odd-ref-warning-500));
     --odd-color-warning-surface: var(--odd-mode-light, var(--odd-ref-warning-50)) var(--odd-mode-dark, var(--odd-ref-warning-950));
+    --odd-elevation-lg: var(--odd-mode-light, 0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)) var(--odd-mode-dark, 0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48));
+    --odd-elevation-md: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32));
+    --odd-elevation-sm: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3));
+    --odd-elevation-xl: var(--odd-mode-light, 0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)) var(--odd-mode-dark, 0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6));
     --odd-color-selection-foreground: var(--odd-color-text-on-action);
     --odd-color-selection-background: var(--odd-color-action-default);
   }
@@ -283,6 +323,10 @@
     --odd-color-text-secondary: var(--odd-mode-light, var(--odd-ref-neutral-700)) var(--odd-mode-dark, var(--odd-ref-neutral-300));
     --odd-color-warning-foreground: var(--odd-mode-light, var(--odd-ref-warning-600)) var(--odd-mode-dark, var(--odd-ref-warning-500));
     --odd-color-warning-surface: var(--odd-mode-light, var(--odd-ref-warning-50)) var(--odd-mode-dark, var(--odd-ref-warning-950));
+    --odd-elevation-lg: var(--odd-mode-light, 0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)) var(--odd-mode-dark, 0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48));
+    --odd-elevation-md: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32));
+    --odd-elevation-sm: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3));
+    --odd-elevation-xl: var(--odd-mode-light, 0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)) var(--odd-mode-dark, 0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6));
     --odd-color-selection-foreground: var(--odd-color-text-on-action);
     --odd-color-selection-background: var(--odd-color-action-default);
   }
@@ -292,6 +336,16 @@
       color-scheme: dark;
       --odd-mode-light: ;
       --odd-mode-dark: initial;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root,
+    [data-odd-theme="acme"] {
+      --odd-motion-duration-fast: 0ms;
+      --odd-motion-duration-normal: 0ms;
+      --odd-motion-duration-slow: 0ms;
+      --odd-motion-duration-slower: 0ms;
     }
   }
 

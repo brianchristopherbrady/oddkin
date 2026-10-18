@@ -311,7 +311,7 @@ Design source: Figma file `E7LfRysny8V3qU24tv082i`, frames 8:29 ("Oddkin · UI k
 | --- | --- | --- | --- |
 | `color.canvas` | `#f6f5f1` | `#171821` | Page background |
 | `color.surface.default` | `#ffffff` | `#242631` | Cards, panels, controls |
-| `color.surface.raised` | `#ffffff` | `#2d2f3b` | Raised surfaces (dark mode steps up instead of shadowing) |
+| `color.surface.raised` | `#ffffff` | `#2d2f3b` | Raised surfaces (with an `elevation.*` shadow) |
 | `color.surface.sunken` | `#f0eff3` | `#111219` | Wells, code, inset areas |
 | `color.surface.hover` | `#f0eff5` | `#30323f` | Hover and transient highlights |
 | `color.surface.specimen` | `#efedfc` | `#29263d` | Documentation specimen stages only (24 px inset); never a selected state |
@@ -330,26 +330,47 @@ Design source: Figma file `E7LfRysny8V3qU24tv082i`, frames 8:29 ("Oddkin · UI k
 
 Brand foundations: Chalk `#f6f5f1`, White `#ffffff`, Ink `#23252b`, Electric iris `#6250e8`, Pale iris `#efedfc`, Citron `#dfedaa`. Every pair in `CONTRAST_PAIRS` (text on canvas, surfaces, specimen, actions, selection; links, focus ring, strong border; each status foreground on the default surface and its status surface) passes for the default theme in both modes.
 
-### 10.2 Text styles (implemented)
+### 10.2 Text styles (implemented, ADR 0042)
 
-`type.<style>.{family,size,weight,line-height}`, plus `letter-spacing` where the design sets one. Families: `font.family.display` (Jost), `font.family.sans` (Inter), `font.family.mono` (JetBrains Mono), each with system fallbacks. Oddkin does not ship or load font files; applications that want the exact faces load them (font-metric fallbacks are M9).
+`type.<style>.{family,size,weight,line-height,letter-spacing}`, each an alias into the foundation scales (§10.3), so a theme changes a scale step once and every style that uses it follows. `font.family.display` aliases `font.family.sans` by default; themes that want a separate display face override it. Oddkin does not ship or load font files.
 
-| Style | Family | Size / line height | Weight | Letter spacing |
-| --- | --- | --- | --- | --- |
-| `display` | display | 3rem (48 px) / 1.2083 | 500 | -0.015em |
-| `section` | display | 1.625rem (26 px) / 1.3077 | 600 | |
-| `title` | display | 1.25rem (20 px) / 1.2 | 600 | |
-| `body` | sans | 0.9375rem (15 px) / 1.6 | 400 | |
-| `ui` | sans | 0.8125rem (13 px) / 1.5385 | 500 | |
-| `small` | sans | 0.75rem (12 px) / 1.5 | 400 | |
-| `eyebrow` | sans | 0.625rem (10 px) / 1.6 | 600 | 0.08em |
-| `code` | mono | 0.75rem (12 px) / 1.6667 | 400 | |
+| Style | Family | Size | Weight | Line height | Letter spacing |
+| --- | --- | --- | --- | --- | --- |
+| `display` | display | `4xl` 2.25rem | semibold 600 | `tight` 1.25 | `tight` -0.025em |
+| `section` | display | `2xl` 1.5rem | semibold 600 | `tight` 1.25 | `normal` 0 |
+| `title` | display | `xl` 1.25rem | semibold 600 | `snug` 1.375 | `normal` 0 |
+| `body` | sans | `md` 1rem | regular 400 | `normal` 1.5 | `normal` 0 |
+| `ui` | sans | `sm` 0.875rem | medium 500 | `snug` 1.375 | `normal` 0 |
+| `small` | sans | `xs` 0.75rem | regular 400 | `normal` 1.5 | `normal` 0 |
+| `eyebrow` | sans | `xs` 0.75rem | semibold 600 | `normal` 1.5 | `wide` 0.05em |
+| `code` | mono | `sm` 0.875rem | regular 400 | `normal` 1.5 | `normal` 0 |
 
-Use a style as a set, e.g. `font: var(--odd-type-ui-weight) var(--odd-type-ui-size) / var(--odd-type-ui-line-height) var(--odd-type-ui-family)`.
+Use a style as a set, e.g. `font: var(--odd-type-ui-weight) var(--odd-type-ui-size) / var(--odd-type-ui-line-height) var(--odd-type-ui-family); letter-spacing: var(--odd-type-ui-letter-spacing)`.
 
-### 10.3 Radii and elevation (implemented)
+### 10.3 Foundation scales (implemented, ADR 0042)
 
-`control.radius` is 0.4375rem (7 px) and `card.radius` is `radius.md` (8 px). `elevation.hover` (type `shadow`) is `0 4px 12px rgb(36 31 71 / 0.09)` in both modes (Figma "Oddkin/Elevation/Hover"); in dark mode depth comes mainly from `surface.raised`. `odd-card variant="elevated"` uses it. Stacking levels and further elevations remain M9 work.
+Only the colour palette comes from the design source (§10.1); every other value is Oddkin's own scale, and designs adopt these tokens. Every step is overridable by name through `overrides`.
+
+| Domain | Tokens | Values |
+| --- | --- | --- |
+| Spacing | `space.{none,3xs,2xs,xs,sm,md,lg,xl,2xl,3xl,4xl}` | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6 rem (default explicit strategy, §4; scaled by density) |
+| Radius | `radius.{none,xs,sm,md,lg,xl,2xl,full}` | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5 rem, 9999px; `control.radius` = `md`, `card.radius` = `lg` |
+| Border | `border.width.{default,strong}`, `focus.{width,offset}` | 1px, 2px; 2px, 2px |
+| Font size | `font.size.{xs,sm,md,lg,xl,2xl,3xl,4xl}` | 0.75, 0.875, 1, 1.125, 1.25, 1.5, 1.875, 2.25 rem |
+| Font weight | `font.weight.{regular,medium,semibold,bold}` | 400, 500, 600, 700 |
+| Line height | `line-height.{none,tight,snug,normal,relaxed}` | 1, 1.25, 1.375, 1.5, 1.625 |
+| Letter spacing | `letter-spacing.{tight,normal,wide}` | -0.025em, 0, 0.05em |
+| Font family | `font.family.{sans,display,mono}` | system UI stack; alias of `sans`; system monospace stack |
+| Icon size | `icon.size.{sm,md,lg}` | 1, 1.25, 1.5 rem |
+| Target | `target.min` | 1.5rem (WCAG 2.5.8) |
+| Elevation (`shadow`) | `elevation.{none,sm,md,lg,xl}` | Two-layer shadows, stronger in dark mode so they stay visible; `sm` controls, `md` cards (`odd-card variant="elevated"`), `lg` popovers and menus, `xl` dialogs |
+| Motion duration (`duration`) | `motion.duration.{fast,normal,slow,slower}` | 100, 200, 300, 500 ms; **0ms under `prefers-reduced-motion: reduce`** |
+| Motion easing (`cubicBezier`) | `motion.easing.{standard,enter,exit,linear}` | `cubic-bezier(0.4, 0, 0.2, 1)`, `(0, 0, 0.2, 1)`, `(0.4, 0, 1, 1)`, `(0, 0, 1, 1)` |
+| Stacking | `z-index.{base,raised,sticky,overlay}` | 0, 1, 100, 200 — in-flow layers only; dialogs, popovers, and menus use the top layer (css-architecture.md §9) |
+
+Reduced motion is emitted by the generator: tokens with a `reducedMotion` value are re-declared inside `@media (prefers-reduced-motion: reduce)` on the same selectors as the base declarations, so nested theme scopes cannot restore full motion and every alias of a duration follows. Components therefore get reduced motion by reading the duration tokens; essential motion (a progress spinner) keeps its own reduced-motion rule. Durations must not be relied on for cleanup (no `transitionend`-dependent logic, css-architecture.md §11).
+
+Unit policy for the new types: durations are non-negative `ms`/`s` times, easings are `cubic-bezier()` with x values in [0, 1] (the DTCG `cubicBezier` type, so `linear` is written `cubic-bezier(0, 0, 1, 1)`), `z-index.*` values are integers; violations report `unit.invalid`. `values` literals of aliases are given per mode when the alias target is mode-dependent.
 
 ## 11. Layout roles, responsive conditions, and profiles
 

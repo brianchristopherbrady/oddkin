@@ -1,10 +1,10 @@
 # 0041. Approved default palette, role vocabulary, and text-style roles
 
-- **Status:** Accepted
+- **Status:** Accepted (amended 2026-10-18: non-colour values come from Oddkin's scales, ADR 0042)
 - **Date:** 2026-10-18
 - **Area:** Tokens
-- **Detailed contract:** [theming-and-styling.md](../theming-and-styling.md) §10.1–§10.3
-- **Related:** 0006 (colour generation), 0007 (alias re-declaration), 0012 (token categories), 0037 (naming), 0039 (layer order)
+- **Detailed contract:** [theming-and-styling.md](../theming-and-styling.md) §10.1–§10.2
+- **Related:** 0006 (colour generation), 0007 (alias re-declaration), 0012 (token categories), 0037 (naming), 0039 (layer order), 0042 (foundation scales)
 
 ## Context
 
@@ -15,9 +15,9 @@ The provisional preset (M2) named colour roles by the property they were first u
 1. **Role vocabulary.** The preset adopts the design's names: `color.canvas`, `color.surface.{default,raised,sunken,hover,specimen}`, `color.text.{primary,secondary,disabled,on-action}`, `color.action.{default,hover,pressed}`, `color.link`, `color.focus.ring`, `color.border.{default,strong}`, `color.selection.{background,foreground}`, `color.{danger,success,warning}.{foreground,surface}`, `color.accent.decorative`. Removed: `color.text.link`, `color.text.danger`, `color.text.success`, `color.text.inverse`, `color.surface.danger`, `color.surface.success`, `color.surface.selected`, `color.border.danger`, `color.action.active`. Danger borders use `color.danger.foreground` (it already meets 3:1 against surfaces).
 2. **Warning status.** `status.warning` joins `danger` and `success` in `ThemeConfig`, the schema, and the generator; it produces a `ref.warning.*` ramp and a contrast-selected `color.warning.foreground`.
 3. **Specimen and selection.** Pale iris (`surface.specimen`) belongs only around documentation specimens. Selected controls use `selection.background`/`selection.foreground` (solid action colour, also signalled by state such as `aria-pressed`); transient highlights (drag targets, a revealed source) use `surface.hover`.
-4. **Text styles.** `type.<style>.{family,size,weight,line-height}` (plus `letter-spacing` for `display` and `eyebrow`) for `display`, `section`, `title`, `body`, `ui`, `small`, `eyebrow`, `code`, built from foundation scales. `font.family.display` is new; `font.family.sans` and `font.family.mono` lead with Inter and JetBrains Mono and fall back to system fonts. Oddkin does not ship font files.
-5. **Elevation.** A `shadow` token type and `elevation.hover` (`0 4px 12px rgb(36 31 71 / 0.09)`, both modes). `odd-card variant="elevated"` uses it.
-6. **Default theme.** `themes/default.theme.json` sets `brand.primary` to Electric iris `#6250e8` and pins every approved light/dark value as an explicit override. The generic preset keeps contrast-selected and ramp-step roles so any other brand still gets a complete, checked theme.
+4. **Text styles.** `type.<style>.{family,size,weight,line-height,letter-spacing}` for `display`, `section`, `title`, `body`, `ui`, `small`, `eyebrow`, `code`, aliased into the foundation scales, plus a `font.family.display` role. Their values come from Oddkin's scales, not the design file (amendment, ADR 0042).
+5. **Elevation, radii, and other non-colour values.** Superseded by ADR 0042: the design's single hover shadow, 7 px control radius, 8 px card radius, typefaces, and type sizes are not adopted; designs adopt Oddkin's scales instead.
+6. **Default theme.** `themes/default.theme.json` sets `brand.primary` to Electric iris `#6250e8` and pins every approved light/dark colour as an explicit override. The generic preset keeps contrast-selected and ramp-step roles so any other brand still gets a complete, checked theme.
 
 ## Alternatives considered
 
@@ -29,15 +29,15 @@ The provisional preset (M2) named colour roles by the property they were first u
 ## Consequences
 
 - Public token names changed before M8; examples, components, AI styles, fixtures, and generated names were migrated in the same change. Consumers of the removed names get a TypeScript error from `token()` and a missing custom property in CSS.
-- Default token CSS grows from 1,827 to 2,380 B gzip (text-style roles, warning ramp, new roles, elevation); the budget moves to 2,560 B.
+- Default token CSS grew from 1,827 to 2,380 B gzip with this change (ADR 0042 records the current figure and budget).
 - Overriding secondary text now reports two contrast pairs (default surface and canvas).
-- Font loading, font-metric fallbacks, a fluid type scale, motion, and stacking remain M9 work. Navigation item height (34 px in the design) is decided with the side navigation.
-- Components still need to adopt the text-style roles (button and input use `ui`, card titles use `title`); that is the next design-alignment slice.
+- Navigation item height is decided with the side navigation.
+- Components still need to adopt the text-style roles (button and input use `ui`, card titles use `title`).
 
 ## Evidence
 
-Figma variables read with `get_variable_defs` on 31:472, 8:29, and 49:579 (colours, text styles, radii, spacing 4–48, elevation); `packages/tokens/test/*` (generator, fixtures regenerated through the generator, contrast diagnostics); the default theme resolves with `ok: true` and no diagnostics, so every approved light/dark pair in `CONTRAST_PAIRS` meets its WCAG minimum; `npm run verify` (1,011 unit and browser tests in three engines, 79 e2e including axe-core on the AI demos, size budgets, pack verification).
+Figma colour variables read with `get_variable_defs` on 31:472 and 8:29; `packages/tokens/test/*` (generator, fixtures regenerated through the generator, contrast diagnostics); the default theme resolves with `ok: true` and no diagnostics, so every approved light/dark pair in `CONTRAST_PAIRS` meets its WCAG minimum; `npm run verify` (1,011 unit and browser tests in three engines, 79 e2e including axe-core on the AI demos, size budgets, pack verification).
 
 ## Revisit when
 
-The design source changes a role or adds one (for example info status or additional elevations), a consumer needs a role the vocabulary lacks, or M9 typography work replaces the static scale.
+The design source changes a colour role or adds one (for example info status), or a consumer needs a role the vocabulary lacks.

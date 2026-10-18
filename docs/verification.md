@@ -381,3 +381,16 @@ Environment as the previous entry. Design source: Figma file `E7LfRysny8V3qU24tv
 
 **Findings:** (1) The approved values are hand-tuned rather than ramp steps, so the default theme pins them as overrides and the generic preset keeps contrast-selected roles for other brands. (2) Pale iris is reserved for specimen stages; the AI pressed text button now uses the selection roles, and transient highlights (prompt drag target, revealed source) use `surface.hover`. (3) Font files are not shipped; without Jost, Inter, or JetBrains Mono installed, text falls back to system fonts. (4) Components do not yet use the text-style roles, and the restyled components have not been compared visually with the Figma frames; that is the next slice.
 
+## 2026-10-18 — Complete foundation scales (ADR 0042; ADR 0041 amended)
+
+Environment as the previous entry. Decision: only the colour palette comes from the design; every other value is an Oddkin scale. Contract: [theming-and-styling.md §10.2–§10.3](./architecture/theming-and-styling.md#103-foundation-scales-implemented-adr-0042).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Generator | `$env:UPDATE_FIXTURES=1; npx vitest run --project node packages/tokens`, then without the variable | Pass, 68 tests — reduced-motion block on `:root` and `[data-odd-theme]` sets exactly the four durations to `0ms`, and an override keeps its reduced value; `unit.invalid` for a unitless duration, a keyword or out-of-range easing, and a fractional `z-index`; negative y control points accepted; `values.color.selection.background` is per mode (previously light only); fixtures and generated modules regenerated through the generator |
+| Card | `npx vitest run packages/components/test/card.browser.test.ts` | Pass in three engines — `variant="elevated"` reads `--odd-elevation-md` |
+| AI voice test | `npx vitest run packages/ai/test/elements.browser.test.ts -t A19` | Pass in three engines after replacing two fixed sleeps with `expect.poll` (WebKit missed the 40 ms window under full-suite load) |
+| Full pipeline | `npm run verify` | Pass — boundaries (9 packages, 288 files, 959 imports), CSS compatibility (69 features, 50 stylesheets, 228 keys), format, typecheck, 1,013 tests in 99 files, size budgets (default token CSS 2,764 B of 3,072 B; card 531 B; AI styles 4,374 B), 79 e2e passed and 2 skipped, packed consumers for all 8 packages |
+
+**Findings:** (1) Two load-induced timeouts surfaced during this run and were fixed in the tests, not by retrying: the artifact boundary test spawns Node (now 30 s), and the slowest AI e2e test deliberately streams at 120 ms per chunk (~26 s alone in Firefox; now `test.slow()`). (2) Values reverted from ADR 0041 change component rendering back to the pre-0041 sizes: `font.size.md` 1rem, `control.radius` 8 px, `card.radius` 12 px. (3) Opacity and scrim tokens were not added; no component needs them.
+

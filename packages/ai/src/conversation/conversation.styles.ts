@@ -58,7 +58,7 @@ export const conversationStyles = css`
     color: inherit;
     font: inherit;
     font-size: ${token('font.size.sm')};
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+    box-shadow: ${token('elevation.md')};
     cursor: pointer;
   }
   odd-activity {

@@ -354,6 +354,25 @@ describe('brand-only theme', () => {
     expect(css).toContain('--odd-mode-dark: ;');
     expect(css).not.toMatch(/\[data-odd-mode="dark"\]\s+\[data-odd-product/);
   });
+
+  it('drops durations to 0ms under reduced motion, on the same selectors as the base block', () => {
+    const css = result.css ?? '';
+    expect(css).toContain('--odd-motion-duration-normal: 200ms;');
+    const reduced = /@media \(prefers-reduced-motion: reduce\) \{([^}]*)\}/.exec(css)?.[1] ?? '';
+    expect(reduced).toContain(':root,\n    [data-odd-theme="default"] {');
+    expect(reduced.match(/--odd-[\w-]+: [^;]+;/g)).toEqual([
+      '--odd-motion-duration-fast: 0ms;',
+      '--odd-motion-duration-normal: 0ms;',
+      '--odd-motion-duration-slow: 0ms;',
+      '--odd-motion-duration-slower: 0ms;',
+    ]);
+    const overridden = generate({
+      brand: { primary: '#5b46e8' },
+      overrides: { 'motion.duration.normal': '250ms' },
+    });
+    expect(overridden.css).toContain('--odd-motion-duration-normal: 250ms;');
+    expect(overridden.css).toContain('--odd-motion-duration-normal: 0ms;');
+  });
 });
 
 describe('scopes and alias closure', () => {
