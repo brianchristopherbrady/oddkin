@@ -3,7 +3,8 @@ import { css } from '@oddkin/core/styles';
 /**
  * What the navigation's behavior depends on: list resets, full-width entries that wrap long
  * labels, the hidden state of collapsed groups, and forced-colors markers. No visual tokens;
- * the arrangement comes from the `side-nav` recipe.
+ * the arrangement comes from the `side-nav` recipe. The forced-colors markers are prefixed with
+ * `.root` to outrank a skin's state rules, which load later with equal specificity.
  */
 export const sideNavStructuralStyles = css`
   .content,
@@ -49,12 +50,12 @@ export const sideNavStructuralStyles = css`
     overflow-wrap: anywhere;
   }
   @media (forced-colors: active) {
-    .entry[aria-current='page'],
-    ::slotted(a[aria-current='page']) {
+    .root .entry[aria-current='page'],
+    .root ::slotted(a[aria-current='page']) {
       border-inline-start-color: Highlight;
     }
-    .entry:disabled,
-    .entry[aria-disabled='true'] {
+    .root .entry:disabled,
+    .root .entry[aria-disabled='true'] {
       color: GrayText;
     }
   }

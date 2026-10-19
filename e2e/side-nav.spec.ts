@@ -178,3 +178,36 @@ test('reflows at 320 CSS pixels and at 200% text without horizontal scrolling', 
   expect(clipped).toBe(false);
   await clean();
 });
+
+test('forced colors keep the current marker and the disabled state visible', async ({ page }) => {
+  await page.emulateMedia({ forcedColors: 'active' });
+  const clean = await open(page);
+  const active = await page.evaluate(() => matchMedia('(forced-colors: active)').matches);
+  test.skip(!active, 'this engine cannot emulate forced colors');
+  const nav = page.locator('#nav-narrow');
+  await nav.evaluate((el: HTMLElement & Record<string, unknown>) => {
+    el['items'] = [
+      { id: 'here', kind: 'link', label: 'Here', href: '#here' },
+      { id: 'off', kind: 'link', label: 'Off', href: '#off', disabled: true },
+    ];
+    el['current'] = 'here';
+  });
+  // The system colours as this engine resolves them.
+  const system = await page.evaluate(() => {
+    const probe = document.body.appendChild(document.createElement('span'));
+    probe.style.color = 'Highlight';
+    const highlight = getComputedStyle(probe).color;
+    probe.style.color = 'GrayText';
+    const gray = getComputedStyle(probe).color;
+    probe.remove();
+    return { highlight, gray };
+  });
+  await expect
+    .poll(() => inner(nav, 'a[aria-current="page"]', 'border-inline-start-color'))
+    .toBe(system.highlight);
+  expect(
+    parseFloat(await inner(nav, 'a[aria-current="page"]', 'border-inline-start-width')),
+  ).toBeGreaterThan(0);
+  expect(await inner(nav, 'a[aria-disabled="true"]', 'color')).toBe(system.gray);
+  await clean();
+});

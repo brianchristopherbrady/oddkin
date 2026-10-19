@@ -29,9 +29,10 @@ export const BUDGETS = {
   // elements; +625 B since the shared core focus, announce, and observe controllers replaced
   // AI-internal helpers and recover focus after removal too).
   'ai-chat': 50176,
-  // 15 KiB; measured 14,517 on 2026-10-18 (registered odd-side-nav with keyed repeat; the recipe
-  // CSS is extracted at build time, so the recipe engine (3.4 KiB) is not loaded).
-  'side-nav': 15360,
+  // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
+  // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
+  // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
+  'side-nav': 16384,
 };
 
 /**

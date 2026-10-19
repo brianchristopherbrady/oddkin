@@ -105,6 +105,7 @@ describe('@oddkin/components/side-nav import graphs', () => {
       'styles/host.styles.js',
     ]);
     expect(packages).toEqual([
+      '@oddkin/core/controllers/focus',
       '@oddkin/core/diagnostics',
       '@oddkin/core/element',
       '@oddkin/core/reactive',

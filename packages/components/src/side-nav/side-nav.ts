@@ -1,3 +1,4 @@
+import { FocusRecovery } from '@oddkin/core/controllers/focus';
 import { OddkinElement, event, prop } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
@@ -177,6 +178,14 @@ export class OddkinSideNav extends OddkinElement.with({
   readonly _onSlotChange = (): void => this.#refresh();
 
   protected override mounted(scope: Scope): void {
+    // A focused entry that is removed, or hidden in a collapsing group, hands focus to the
+    // landmark instead of the document body; the next Tab continues with the entries.
+    scope.use(
+      new FocusRecovery({
+        root: () => this.shadowRoot,
+        fallback: () => this.shadowRoot?.querySelector('nav'),
+      }),
+    );
     scope.effect(() => {
       this.items;
       this.#refresh();

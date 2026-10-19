@@ -708,3 +708,17 @@ Environment as the previous entry. The full pipeline after the project-kinds com
 | New static check | `npx vitest run --project node tests/examples/import-maps.test.ts` | Pass (5 pages). Each strict-CSP example's static import graph is walked from its module script through the import map, as the browser would; every specifier must resolve to a file. With the new mapping removed, the test fails naming `@oddkin/core/diagnostics (from packages/components/dist/side-nav/kinds.js)`. |
 
 **Full pipeline otherwise:** lint, typecheck, and one Firefox unit test fail only on another agent's uncommitted styling work (stale `docs/compatibility/matrix.md`, two type errors and one assertion in `styling.browser.test.ts`). Other results: 1,797 unit tests pass (73 skipped), `verify:metadata` 122 + 196 facts, size within budgets, packed consumers OK.
+
+## 2026-10-18 — Side navigation robustness: focus, bounds, direction, forced colors (M4)
+
+Environment as the previous entry. Contract: [data-composition.md §12](./architecture/data-composition.md#12-odd-side-nav-implemented-m4).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | temporary probe, reverted | In all three engines, removing the focused link left focus on `<body>`, and collapsing its group through `expanded` left focus on a link inside the hidden list. |
+| Robustness | `npx vitest run --project browser packages/components/test/side-nav.browser.test.ts -t robustness` | Pass in Chromium, Firefox, WebKit (3 tests). Removal and outside collapse move focus to the `<nav>` landmark (`tabIndex` -1, never in the Tab order). Focus that left for an outside button stays there. `dir="rtl"` puts the current marker on the right. 1,000 entries and five nested groups render with `aria-current` at depth 5, and all text comes from the caller. With the fallback disabled, only the focus test fails (3 engines). |
+| Forced colors | `npx playwright test e2e/side-nav.spec.ts` | 18 passed. The new test emulates `forced-colors: active` in Chromium, Firefox, and WebKit, and requires the current marker to be the engine's `Highlight` and disabled text `GrayText`. |
+| Static checks | `npx vitest run --project node tests/examples packages/components/test/graph.test.ts` | The import-map check flagged `@oddkin/core/controllers/focus` for `examples/side-nav/` before e2e ran; mapping and CSP hash updated. The foundation graph adds the focus controller. |
+| Size | `npm run size` | `side-nav` 15,715 B gzip; budget raised from 15 to 16 KiB for the shared focus controller (+374 B; the AI chat budget grew 625 B for the same controllers). `components:side-nav` CSS 1,274 B. |
+
+**Findings:** (1) The forced-colors rules were in the structural styles, but the default skin's state rules come later with equal specificity, so in forced-colors mode the current marker and disabled text were forced to the skin's colours. Prefixing the forced-colors selectors with `.root` fixes it without `!important`, which css-architecture.md reserves for the `hidden` guarantee. A first attempt with `!important` was replaced. (2) A CSS comment inside a `css` template ships in the bundle (+97 B gzip); explanations belong in the JSDoc.

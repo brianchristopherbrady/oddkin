@@ -527,3 +527,91 @@ describe('project item kinds (customization level 4)', () => {
     expect(codes).toEqual(['element.prop.invalid']);
   });
 });
+
+describe('robustness', () => {
+  const focusedPart = (el: HTMLElement) =>
+    document.activeElement === el ? (el.shadowRoot!.activeElement?.localName ?? null) : null;
+
+  it('moves focus to the landmark when the focused entry is removed or hidden', async () => {
+    const { el, $, $$ } = await mount((el) => {
+      el.items = ITEMS;
+      el.expanded = ['guides'];
+    });
+    $$<HTMLAnchorElement>('a[part="link"]')[1]!.focus();
+    el.items = ITEMS.filter((item) => item.id !== 'components');
+    await settle(el);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(focusedPart(el)).toBe('nav');
+    // The landmark is focusable by script only: it never joins the Tab order.
+    expect($('nav')!.tabIndex).toBe(-1);
+    // A collapse the caller makes while focus is inside the group.
+    $$<HTMLAnchorElement>('a[part="link"]')
+      .find((a) => a.textContent?.trim() === 'Layout')!
+      .focus();
+    el.expanded = [];
+    await settle(el);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(focusedPart(el)).toBe('nav');
+    // Focus that left the navigation is never pulled back.
+    const outside = document.createElement('button');
+    container.append(outside);
+    $$<HTMLAnchorElement>('a[part="link"]')[0]!.focus();
+    outside.focus();
+    el.items = [];
+    await settle(el);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(document.activeElement).toBe(outside);
+  });
+
+  it('marks the current entry on the inline-start side in either direction', async () => {
+    const { el, $ } = await mount((el) => {
+      el.items = ITEMS;
+      el.current = 'overview';
+      el.style.setProperty('--odd-border-width-strong', '3px');
+      el.style.setProperty('--odd-color-action-default', 'rgb(1, 2, 3)');
+    });
+    const marker = () => {
+      const s = getComputedStyle($('a[aria-current="page"]')!);
+      return { left: s.borderLeftColor, right: s.borderRightColor };
+    };
+    expect(marker().left).toBe('rgb(1, 2, 3)');
+    el.dir = 'rtl';
+    await settle(el);
+    expect(marker().right).toBe('rgb(1, 2, 3)');
+    expect(marker().left).not.toBe('rgb(1, 2, 3)');
+  });
+
+  it('renders 1,000 entries and five levels of groups, with every text from the caller', async () => {
+    const many: NavigationItem[] = Array.from({ length: 1000 }, (_, i) => ({
+      id: `e${i}`,
+      kind: 'link',
+      label: `Entry ${i}`,
+      href: `/e/${i}`,
+    }));
+    let nested: NavigationItem = { id: 'leaf', kind: 'link', label: 'Leaf', href: '/leaf' };
+    for (let depth = 5; depth >= 1; depth--)
+      nested = {
+        id: `g${depth}`,
+        kind: 'group',
+        label: `Level ${depth}`,
+        items: [nested],
+        expanded: true,
+      };
+    const { el, $$ } = await mount((el) => {
+      el.items = [...many, nested];
+      el.current = 'leaf';
+      el.lang = 'de';
+    });
+    expect($$('a[part="link"]')).toHaveLength(1001);
+    expect($$('ul[part="group"]')).toHaveLength(5);
+    expect($$('a[aria-current="page"]').map((a) => a.textContent?.trim())).toEqual(['Leaf']);
+    // No built-in visible text: every word comes from `label` or the entries.
+    const visible = [...el.shadowRoot!.querySelectorAll('.label')].map((l) =>
+      l.textContent?.trim(),
+    );
+    expect(el.shadowRoot!.textContent!.replace(/\s+/g, '')).toBe(
+      visible.join('').replace(/\s+/g, ''),
+    );
+    expect(el.lang).toBe('de');
+  });
+});
