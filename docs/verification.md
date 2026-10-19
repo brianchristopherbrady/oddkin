@@ -697,3 +697,14 @@ Environment as the previous entry. Contract: [data-composition.md §4, §12](./a
 | Suite, graph, size | `npx vitest run packages/components`; `npm run size` | 509 tests pass. The side-nav foundation graph adds only `side-nav/kinds.js` and `@oddkin/core/diagnostics`; the model builder stays out. `side-nav` is 15,328 B gzip (budget 15,360 B), after merging the registration messages into one. |
 
 **Findings:** (1) Building `NavigationItemModel` from a shared helper made it unreadable to the analyzer (`analyzer.dynamic.model`). The literal definition stays, and `navigationModel` derives its built-in variants from it, rebinding each group's `items` to the new recursive schema. (2) Inferring a model type over open variants exceeds the compiler's instantiation depth, so `navigationModel` is typed by the entries it accepts (`NavigationEntry[]`). (3) The side-nav budget is now 99.8% used.
+
+## 2026-10-18 — Example import maps cover every import (M4)
+
+Environment as the previous entry. The full pipeline after the project-kinds commit failed all 15 side-nav end-to-end tests: `side-nav/kinds.js` imports `@oddkin/core/diagnostics`, which `examples/side-nav/`'s import map did not map, so the page never started.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Fix | `node scripts/update-csp-hash.mjs examples/side-nav/index.html`; `npx playwright test e2e/side-nav.spec.ts` | Mapping added and the CSP hash updated; 15 passed. |
+| New static check | `npx vitest run --project node tests/examples/import-maps.test.ts` | Pass (5 pages). Each strict-CSP example's static import graph is walked from its module script through the import map, as the browser would; every specifier must resolve to a file. With the new mapping removed, the test fails naming `@oddkin/core/diagnostics (from packages/components/dist/side-nav/kinds.js)`. |
+
+**Full pipeline otherwise:** lint, typecheck, and one Firefox unit test fail only on another agent's uncommitted styling work (stale `docs/compatibility/matrix.md`, two type errors and one assertion in `styling.browser.test.ts`). Other results: 1,797 unit tests pass (73 skipped), `verify:metadata` 122 + 196 facts, size within budgets, packed consumers OK.
