@@ -1,7 +1,9 @@
+// Generated from card.styles.css by packages/components/test/css-sources.test.ts (UPDATE_FIXTURES=1).
+// Do not edit: change card.styles.css and regenerate.
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 
-/** Oddkin's default visual styles for the card. */
+/** Oddkin's default visual styles for the card, authored as plain CSS. */
 export const cardStyles = css`
   .card {
     gap: var(--odd-card-gap, ${token('space.sm')});

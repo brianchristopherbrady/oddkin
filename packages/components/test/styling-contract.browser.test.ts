@@ -259,6 +259,26 @@ describe.each(tags)('%s component variables', (tag) => {
 });
 
 describe('roles and attributes', () => {
+  it('styles authored as CSS (odd-card) and in CSS-in-TS (odd-button, odd-input) follow theme changes alike', async () => {
+    container.insertAdjacentHTML('beforeend', '<div id="scope" data-odd-mode="light"></div>');
+    const scope = container.querySelector<HTMLElement>('#scope')!;
+    const hosts = await render(
+      '<odd-card><p>Body</p></odd-card><odd-button>Save</odd-button><odd-input label="Name"></odd-input>',
+      scope,
+    );
+    const surfaces = () =>
+      hosts.map(
+        (host) => getComputedStyle(partOf(host, components[host.localName]!.part)).backgroundColor,
+      );
+    const role = () => resolve(hosts[0]!, 'background-color', 'var(--odd-color-surface-default)');
+    const light = surfaces();
+    expect(light).toEqual([role(), role(), role()]);
+    scope.dataset['oddMode'] = 'dark';
+    expect(surfaces()).toEqual([role(), role(), role()]);
+    expect(surfaces()[0]).not.toBe(light[0]);
+    scope.style.setProperty('--odd-color-surface-default', 'rgb(10, 20, 30)');
+    expect(surfaces()).toEqual(['rgb(10, 20, 30)', 'rgb(10, 20, 30)', 'rgb(10, 20, 30)']);
+  });
   it('odd-card padding steps replace the theme padding role, which follows the compact profile', async () => {
     container.insertAdjacentHTML(
       'beforeend',

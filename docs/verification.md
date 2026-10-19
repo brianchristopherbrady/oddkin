@@ -993,3 +993,16 @@ Environment as the previous entry. Contract: [data-composition.md §5, §11](./a
 | Mutation probes | either limit disabled | Killed: 2 model tests and 2 collection tests fail. |
 
 **Not covered:** `odd-side-nav` renders nested groups through its own template recursion and does not validate `items` in production. Its tested bounds remain 1,000 entries and five levels; deeper unvalidated data is the caller's responsibility (validate with `NavigationItemModel` first).
+
+## 2026-10-19 — A component authored in `.css` (M4 styling)
+
+Environment as the previous entry. Another agent was editing other files in the same working tree. Contract: [theming-and-styling.md §7](./architecture/theming-and-styling.md#component-authoring-from-css--scss-files).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Generation | `UPDATE_FIXTURES=1 npx vitest run --project node packages/components/test/css-sources.test.ts`, then without the flag | Pass (2). `card.styles.ts` is regenerated from `card.styles.css` and formatted with the repository's Prettier configuration. Its CSS is the handwritten module's apart from the header and doc comments. The shipped text equals the authored CSS (comments and whitespace aside). An unknown `--odd-colour-text-primary`, a token read with a fallback, and a file without a leading comment fail generation; a component variable with a token fallback becomes `var(--odd-x-gap, ${token('space.sm')})` |
+| Same output | Node, before and after (`dist/card/card.styles.js`, `custom-elements.json`, `oddkin.metadata.json`) | `cardStyles.cssText` byte-identical (1,538 characters); CEM declaration identical; component metadata identical apart from `verification`, the test-evidence records that a rebuild sets aside until the tests run again |
+| Theme behavior | `npx vitest run --project browser packages/components/test/styling-contract.browser.test.ts` | Pass in Chromium, Firefox, WebKit (18 tests each). The `.css`-authored card and the CSS-in-TS button and input give the same surface colour in light mode, again after the scope switches to dark (a different colour), and again after a page-level override of the role. The card also passes the same variable, scope, state, and part checks as the other two |
+| Full pipeline | `npm run verify` steps one by one (`npm test -- --reporter=verbose`, then `npm run verify:metadata`) | Pass: lint (boundaries, CSS compatibility, format), typecheck, 2,393 tests (34 skipped), metadata evidence (189 + 481 verified facts), size (`components:card` 668 B), e2e (122 passed, 4 skipped), packed consumers. An earlier test run that overlapped the other agent's browser runs was stopped after it stalled. In that run, single tests took 207–223 s, Firefox conformance suites timed out "waiting for click", Chromium reported 57 results and then nothing, and Firefox never reported `styling-contract.browser.test.ts`. All processes were idle when it was stopped. The rerun on a quiet machine passed |
+
+**Findings:** (1) Generating `token()` calls rather than embedding `var()` text keeps metadata stable: the analyzer records `token()` reads as token names, and literal `var(--odd-…)` text would have appeared as variable names. (2) Prettier formats CSS inside `css` templates, so the generator formats its output with the repository's Prettier configuration instead of reproducing the layout itself.

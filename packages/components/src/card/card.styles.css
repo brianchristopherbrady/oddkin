@@ -1,0 +1,40 @@
+/* Oddkin's default visual styles for the card, authored as plain CSS. */
+.card {
+  gap: var(--odd-card-gap, var(--odd-space-sm));
+  padding: var(--odd-card-padding);
+  border: var(--odd-border-width-default) solid
+    var(--odd-card-border-color, var(--odd-color-border-default));
+  border-radius: var(--odd-card-radius);
+  background: var(--odd-card-background, var(--odd-color-surface-default));
+  color: var(--odd-color-text-primary);
+  font-family: var(--odd-type-body-family);
+  font-size: var(--odd-type-body-size);
+  line-height: var(--odd-type-body-line-height);
+}
+/* A default for slotted headings; page styles for the heading still win. */
+.header ::slotted(:is(h1, h2, h3, h4, h5, h6)) {
+  margin: 0;
+  font-family: var(--odd-type-title-family);
+  font-size: var(--odd-type-title-size);
+  font-weight: var(--odd-type-title-weight);
+  line-height: var(--odd-type-title-line-height);
+  letter-spacing: var(--odd-type-title-letter-spacing);
+}
+:host([padding='none']) .card {
+  padding: 0;
+}
+:host([padding='sm']) .card {
+  padding: var(--odd-space-sm);
+}
+:host([padding='lg']) .card {
+  padding: var(--odd-space-lg);
+}
+:host([variant='filled']) .card {
+  border-color: var(--odd-card-border-color, transparent);
+  background: var(--odd-card-background, var(--odd-color-surface-sunken));
+}
+:host([variant='elevated']) .card {
+  border-color: var(--odd-card-border-color, transparent);
+  background: var(--odd-card-background, var(--odd-color-surface-raised));
+  box-shadow: var(--odd-card-shadow, var(--odd-elevation-md));
+}
