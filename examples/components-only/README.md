@@ -15,4 +15,14 @@ node scripts/serve-static.mjs
 # open http://localhost:4173/examples/components-only/
 ```
 
-Verified by `e2e/components-only.spec.ts` in Chromium, Firefox, and WebKit: the form flows, Playwright's ARIA snapshot (names across shadow boundaries and the invalid state; computed by Playwright from the DOM, so it cannot show `ElementInternals` regions), and, in Chromium only, the browser's own accessibility tree through the DevTools protocol (regions, names, the field's description, `required`, `invalid`). Native accessibility trees in Firefox and WebKit and screen readers are not verified.
+## From packed tarballs
+
+```sh
+npm run build
+node examples/components-only/packed.mjs --port 4174
+# open http://localhost:4174/ (the first request packs and installs, a few seconds)
+```
+
+`packed.mjs` packs `@oddkin/core`, `@oddkin/tokens`, and `@oddkin/components` with `npm pack`, installs the three tarballs into a consumer in the system temporary directory (outside the workspace), and copies this page there. It generates the import map by walking the installed modules through each package's `exports` (the default conditions, so core's production build), so the map lists exactly the specifiers the components import. It points the token stylesheet at the installed package, failing for a file the package does not publish, and recomputes the CSP hash. `/__ready` reports the installed packages and the import map. The Playwright configuration starts this server; packing happens only when a test requests the packed page.
+
+Verified by `e2e/components-only.spec.ts` in Chromium, Firefox, and WebKit, against both the workspace build and the packed tarballs: the form flows, Playwright's ARIA snapshot (names across shadow boundaries and the invalid state; computed by Playwright from the DOM, so it cannot show `ElementInternals` regions), and, in Chromium only, the browser's own accessibility tree through the DevTools protocol (regions, names, the field's description, `required`, `invalid`). For the packed page it also checks that only the three packages are installed and that every request is for the page's own files or published files of those packages. Native accessibility trees in Firefox and WebKit and screen readers are not verified.
