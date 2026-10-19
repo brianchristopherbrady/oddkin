@@ -880,3 +880,17 @@ Environment as the previous entry. Contract: [ADR 0021](./architecture/decisions
 | Mutation probe | slot mistake made correct (`toolbar` → `toolbar-start`), restored | Killed by both suites: `validateUsage` reports nothing for it, and its content is assigned. |
 
 **Not covered:** fixtures that compose AI elements with each other (no example uses another element), and AI event intent.
+
+## 2026-10-19 — `@oddkin/ai` event intent and undeclared events (M4 metadata, AI track)
+
+Environment as the previous entry. Contract: [metadata-and-analyzer.md §3.1, §8](./architecture/metadata-and-analyzer.md), [ai-interaction.md §7, §10](./architecture/ai-interaction.md).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Static | `npx vitest run --project node packages/analyzer/test/analyzer.test.ts` | Pass (22). A fixture class that emits a declared and an undeclared event reports one `analyzer.event.undeclared` warning at the undeclared `this.emit` call, naming the event; its CEM events stay the declared ones. |
+| Analyzer on the packages | `node scripts/build-metadata.mjs` | Before the fix: two warnings, both `odd-response` (`copy()` emits `ai-announce` without declaring it, so its CEM and metadata listed no events). None for `@oddkin/components` or any other AI element. After declaring it: no warnings. |
+| Metadata | same | All 44 AI element events declare intent: 34 requests are `user`, the 10 `ai-announce` declarations are `notification`. |
+| Browser (contract) | `npx vitest run --project browser packages/ai/test/contract.browser.test.ts`; `node scripts/verify-metadata.mjs` | Pass in Chromium, Firefox, and WebKit. The user-intent check now runs on the 20 AI elements with user events (scalar writes, then every authored example mounted and its values written again): 34 `not-programmatic` facts pass. 481 AI facts verified (was 446), 189 for `@oddkin/components` (rerun after the other lane's component edits made its records stale). |
+| Mutation probes | `odd-voice-input` emitting `voice-transcript` on connect; `odd-response` without its `static events` | Killed: the contract fails on `voice-transcript` not-programmatic; the analyzer reports the undeclared event. |
+
+**Not covered:** a notification mislabelled `user` survives when no harness write triggers it. `ai-announce` marked `user` passed, because announcements need the opt-in `announce` property and a status transition, and the harness never sets them. Events dispatched by controllers on other targets, or through a variable the analyzer cannot resolve, are not compared with the declarations.

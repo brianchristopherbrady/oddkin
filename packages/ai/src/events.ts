@@ -4,8 +4,9 @@
  * Dispatching an event *requests* an operation; the outcome arrives later as changed records
  * (or a controller method's result), never as the event's return value. A cancelable event's
  * `preventDefault()` is a synchronous veto of the element's local default action only.
- * Programmatic property changes never dispatch these events. Options are literal so the
- * analyzer can publish them. Contract: docs/architecture/ai-interaction.md §7.
+ * Programmatic property changes never dispatch these events (`intent: 'user'`); `ai-announce` is
+ * the exception, a notification from any source (`intent: 'notification'`). Options are literal
+ * so the analyzer can publish them. Contract: docs/architecture/ai-interaction.md §7.
  */
 import { event } from '@oddkin/core/element';
 import type { JsonValue } from './contracts/types.js';
@@ -24,6 +25,7 @@ export const promptSubmitEvent = event<PromptSubmitDetail>('prompt-submit', {
   bubbles: true,
   composed: true,
   cancelable: true,
+  intent: 'user',
   description: 'Request to send the draft. Acknowledge or fail it with the submission id.',
 });
 
@@ -31,6 +33,7 @@ export const promptStopEvent = event<{ readonly attemptId: string | undefined }>
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to stop the underlying work of the identified attempt (not a disconnect).',
 });
 
@@ -40,6 +43,7 @@ export const attachmentAddEvent = event<{ readonly attachments: readonly Attachm
     bubbles: true,
     composed: true,
     cancelable: false,
+    intent: 'user',
     description:
       'Attachments were validated and added to the draft (local; uploading is host-owned).',
   },
@@ -49,6 +53,7 @@ export const attachmentRemoveEvent = event<{ readonly attachmentId: string }>('a
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'An attachment was removed from the draft (local).',
 });
 
@@ -59,6 +64,7 @@ export const historyRequestEvent = event<{
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to load earlier messages.',
 });
 
@@ -68,6 +74,7 @@ export const messageEditEvent = event<{ readonly messageId: string; readonly tex
     bubbles: true,
     composed: true,
     cancelable: false,
+    intent: 'user',
     description: 'Request to edit a user message as a new branch.',
   },
 );
@@ -79,6 +86,7 @@ export const messageRegenerateEvent = event<{
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request an alternative answer as a new branch.',
 });
 
@@ -86,6 +94,7 @@ export const attemptRetryEvent = event<{ readonly attemptId: string }>('attempt-
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request a new attempt linked to a failed, interrupted, or cancelled one.',
 });
 
@@ -93,6 +102,7 @@ export const attemptResumeEvent = event<{ readonly attemptId: string }>('attempt
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to reattach to an existing attempt (never starts new work).',
 });
 
@@ -103,6 +113,7 @@ export const branchSwitchEvent = event<{
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to show another branch.',
 });
 
@@ -117,6 +128,7 @@ export const approvalDecideEvent = event<ApprovalDecideDetail>('approval-decide'
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to decide one approval revision. Pending until the record changes.',
 });
 
@@ -126,6 +138,7 @@ export const approvalEditEvent = event<{ readonly approvalId: string; readonly r
     bubbles: true,
     composed: true,
     cancelable: false,
+    intent: 'user',
     description: 'Request to edit the proposed action before deciding.',
   },
 );
@@ -134,6 +147,7 @@ export const toolRetryEvent = event<{ readonly toolCallId: string }>('tool-retry
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to retry a failed tool call.',
 });
 
@@ -143,6 +157,7 @@ export const citationOpenEvent = event<{ readonly sourceId: string; readonly res
     bubbles: true,
     composed: true,
     cancelable: true,
+    intent: 'user',
     description:
       'A citation was activated. The default reveals the source; cancel to navigate yourself.',
   },
@@ -156,6 +171,7 @@ export const artifactExportEvent = event<{
   bubbles: true,
   composed: true,
   cancelable: true,
+  intent: 'user',
   description:
     'Export requested. The default downloads the canonical source; cancel to export yourself.',
 });
@@ -167,6 +183,7 @@ export const artifactRevisionEvent = event<{
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'The viewed revision changed (presentation state).',
 });
 
@@ -177,6 +194,7 @@ export const suggestionSelectEvent = event<{
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Insert the suggestion into the composer without sending.',
 });
 
@@ -187,6 +205,7 @@ export const suggestionSubmitEvent = event<{
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Send the suggestion as a prompt.',
 });
 
@@ -200,6 +219,7 @@ export const feedbackSubmitEvent = event<FeedbackSubmitDetail>('feedback-submit'
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to submit feedback; confirmed through the feedback record.',
 });
 
@@ -210,6 +230,7 @@ export const modelChangeEvent = event<{
   bubbles: true,
   composed: true,
   cancelable: true,
+  intent: 'user',
   description: 'The user selected another model. Cancel to keep the previous one.',
 });
 
@@ -219,6 +240,7 @@ export const checkpointRestoreEvent = event<{ readonly checkpointId: string }>(
     bubbles: true,
     composed: true,
     cancelable: false,
+    intent: 'user',
     description:
       'Request to restore a checkpoint. Success is shown only after the record says restored.',
   },
@@ -232,6 +254,7 @@ export const questionAnswerEvent = event<{
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to submit an answer for one question revision.',
 });
 
@@ -241,6 +264,7 @@ export const questionSkipEvent = event<{ readonly questionId: string; readonly r
     bubbles: true,
     composed: true,
     cancelable: false,
+    intent: 'user',
     description: 'Request to skip a question.',
   },
 );
@@ -249,6 +273,7 @@ export const changeAcceptEvent = event<{ readonly proposalId: string }>('change-
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to apply a proposed change to its base revision.',
 });
 
@@ -256,6 +281,7 @@ export const changeRejectEvent = event<{ readonly proposalId: string }>('change-
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to discard a proposed change.',
 });
 
@@ -263,6 +289,7 @@ export const changeUndoEvent = event<{ readonly proposalId: string }>('change-un
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to undo an applied change.',
 });
 
@@ -276,6 +303,7 @@ export const assistRequestEvent = event<AssistRequestDetail>('assist-request', {
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request assistance for the captured selection.',
 });
 
@@ -286,6 +314,7 @@ export const contextAddEvent = event<ContextAddDetail>('context-add', {
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to add context; the item appears once the host adds its record.',
 });
 
@@ -293,6 +322,7 @@ export const contextRemoveEvent = event<{ readonly itemId: string }>('context-re
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'Request to remove a context item.',
 });
 
@@ -302,6 +332,7 @@ export const planInputEvent = event<{ readonly planId: string; readonly stepId: 
     bubbles: true,
     composed: true,
     cancelable: false,
+    intent: 'user',
     description: 'The user wants to answer a step that needs input.',
   },
 );
@@ -310,6 +341,7 @@ export const voiceTranscriptEvent = event<{ readonly text: string }>('voice-tran
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'A final transcript is ready to use (completed locally).',
 });
 
@@ -319,6 +351,7 @@ export const transcriptChangeEvent = event<{ readonly segmentId: string; readonl
     bubbles: true,
     composed: true,
     cancelable: false,
+    intent: 'user',
     description: 'The user edited a final transcript segment.',
   },
 );
@@ -333,6 +366,7 @@ export const announceEvent = event<AnnounceDetail>('ai-announce', {
   bubbles: true,
   composed: true,
   cancelable: true,
+  intent: 'notification',
   description:
     'A status message for the nearest announcer, which cancels it so outer announcers stay silent.',
 });

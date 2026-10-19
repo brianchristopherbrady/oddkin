@@ -22,6 +22,7 @@ export const revealSourceEvent = event<{ readonly sourceId: string }>('ai-reveal
   bubbles: true,
   composed: true,
   cancelable: true,
+  intent: 'user',
   description: 'Default action of citation-open: the nearest message reveals the source.',
 });
 

@@ -822,6 +822,8 @@ export function extract(program: ts.Program, root: string): Extraction {
       }
     }
     // Custom states set with this.setState('name', …) and token() references anywhere in the class.
+    // Events it emits (`this.emit(def)` or `emit(this, def)`) are compared with the declared ones.
+    const emitted: { name: string; node: ts.Node }[] = [];
     const walk = (child: ts.Node) => {
       if (ts.isCallExpression(child)) {
         const callee = child.expression;
@@ -843,10 +845,42 @@ export function extract(program: ts.Program, root: string): Extraction {
           const name = stringOf(child.arguments[0]);
           if (name) tokenReads.set(name, { token: name, readThrough: 'stylesheet' });
         }
+        const definition =
+          ts.isPropertyAccessExpression(callee) &&
+          callee.expression.kind === ts.SyntaxKind.ThisKeyword &&
+          callee.name.text === 'emit'
+            ? child.arguments[0]
+            : fromOddkinCore(callee, 'emit') &&
+                child.arguments[0]?.kind === ts.SyntaxKind.ThisKeyword
+              ? child.arguments[1]
+              : undefined;
+        const variable =
+          definition && ts.isIdentifier(definition)
+            ? resolveSymbol(definition)?.valueDeclaration
+            : undefined;
+        if (
+          variable &&
+          ts.isVariableDeclaration(variable) &&
+          variable.initializer &&
+          ts.isCallExpression(variable.initializer) &&
+          fromOddkinCore(variable.initializer.expression, 'event')
+        ) {
+          const name = stringOf(variable.initializer.arguments[0]);
+          if (name) emitted.push({ name, node: child });
+        }
       }
       ts.forEachChild(child, walk);
     };
     walk(node);
+    const declaredEvents = new Set([...(parent?.events ?? []), ...events].map((e) => e.name));
+    for (const { name, node: call } of emitted)
+      if (!declaredEvents.has(name))
+        report(
+          'analyzer.event.undeclared',
+          call,
+          `${className} emits "${name}" without declaring it in static events, so the published contract omits it.`,
+          `Add the event definition to ${className}.events.`,
+        );
 
     // JSDoc tags: CEM conventions (@slot, @csspart, @cssprop, @cssstate) and Oddkin tags.
     const tags: Record<string, { value: string; location: SourceLocation }[]> = {};

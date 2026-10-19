@@ -407,13 +407,31 @@ describe('compose() definitions in a folder-structured library', () => {
       dynamic.diagnostics
         .filter((d) => d.source?.file === 'src/events.ts')
         .map((d) => [d.code, d.source?.line]),
-    ).toEqual([['analyzer.dynamic.value', 10]]);
+    ).toEqual([
+      ['analyzer.dynamic.value', 10],
+      ['analyzer.event.undeclared', 25],
+    ]);
     const metadata = dynamic.metadata as {
       components: Record<string, { events?: unknown }>;
     };
     expect(metadata.components['component:dyn-events']?.events).toEqual([
       { event: 'event:dyn-events#dyn-computed', intent: { known: false, provenance: 'extracted' } },
     ]);
+  });
+
+  it('reports an event the element emits without declaring it', () => {
+    const dynamic = analyze({ project: path('tests/fixtures/analyzer-dynamic/tsconfig.json') });
+    const undeclared = dynamic.diagnostics.filter((d) => d.code === 'analyzer.event.undeclared');
+    expect(undeclared.map((d) => [d.severity, d.source?.file, d.source?.line])).toEqual([
+      ['warning', 'src/events.ts', 25],
+    ]);
+    expect(undeclared[0]?.message).toContain('"dyn-undeclared"');
+    // The declared event it also emits is not reported, and nothing is added to the contract.
+    expect(
+      (declaration(dynamic.manifest, 'EventsElement')['events'] as { name: string }[]).map(
+        (e) => e.name,
+      ),
+    ).toEqual(['dyn-computed']);
   });
 });
 

@@ -62,6 +62,8 @@ export class OddkinResponse extends OddkinElement.with({
     description: 'Localized string overrides.',
   }),
 }) {
+  static override events = { 'ai-announce': announceEvent };
+
   /** @internal Bumps when rendered output changes (for tests and hosts measuring work). */
   readonly _renders = signal(0);
   #view: MarkdownView | undefined;

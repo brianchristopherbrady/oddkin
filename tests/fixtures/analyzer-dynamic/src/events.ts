@@ -10,8 +10,20 @@ export const computedIntent = event('dyn-computed', {
   intent: intent,
 });
 
+/** Emitted below without being declared, so the published contract would omit it. */
+export const undeclared = event('dyn-undeclared', {
+  bubbles: true,
+  composed: true,
+  cancelable: false,
+});
+
 export class EventsElement extends OddkinElement {
   static override events = { computedIntent };
+
+  ping(): void {
+    this.emit(computedIntent);
+    this.emit(undeclared);
+  }
 }
 
 customElements.define('dyn-events', EventsElement);
