@@ -748,3 +748,15 @@ Environment as the previous entry. Contract: [agent-tooling.md §7](./architectu
 | Browser | `npx vitest run --project browser packages/components/test/examples.browser.test.ts packages/components/test/contract.browser.test.ts` | Existing: every authored example mounts and releases its resources in three engines; slots and parts are rendered from the examples. |
 
 Packed-package checks of the same examples are M12.
+
+## 2026-10-18 — Agent-kit contract schemas (M4)
+
+Environment as the previous entry. Contract: [agent-tooling.md §4, §5, §9.1](./architecture/agent-tooling.md#91-diagnostic-envelope-drafted-as-diagnosticv1-extends-the-existing-shapes).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Schemas | `npx vitest run --project node tests/schemas/schemas.test.ts` | Every schema compiles under Ajv 2020 strict mode. The six new examples give the expected result. Valid: a repairable analyzer diagnostic with subject, docs, and fix; a project context with packages, exports, registrations, a derived component, theme axes, conventions, commands, a capability path, and a fingerprint; a kit manifest with generated and authored entries, a guide budget, and packaging targets. Invalid: an unknown severity and an empty fix; an unknown capability path and a non-SHA-256 fingerprint; a missing guide budget and a guessed provenance. |
+| Envelope conformance | `npx vitest run --project node tests/schemas/diagnostics.test.ts` | Pass (5). Diagnostics produced by `generate()` (invalid colour, invalid product name), `analyze()` (the dynamic fixture), `NavigationItemModel.validate()`, `checkExamples()`, and `collection()` (missing and duplicate keys) all validate against `diagnostic.v1` unchanged. |
+| Collections | `npx vitest run --project node packages/core/test/collections.test.ts` | Pass (9); `CollectionDiagnostic` now carries `severity: 'error'`. |
+
+**Findings:** (1) Workbench diagnostics use `path` for a JSON Pointer or a stable id, so the envelope documents both rather than requiring a pointer. (2) A cross-file `$ref` between draft schemas depends on compile order in the test, so the kit manifest inlines the fingerprint shape it shares with the project context.

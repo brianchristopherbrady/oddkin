@@ -1,0 +1,13 @@
+{
+  "schema": "https://oddkin.dev/schemas/agent-kit/v1.json",
+  "library": { "name": "@oddkin/components", "version": "0.4.0" },
+  "fingerprint": {
+    "generator": { "name": "@oddkin/agent", "version": "0.1.0" },
+    "schemaVersion": 1,
+    "inputs": "sha256-afabf3dc4676782b883aa92c7e861fa8d44d0304b33e66a9ce687d375550da47"
+  },
+  "guide": { "path": "GUIDE.md" },
+  "entries": [
+    { "id": "component:odd-button", "path": "references/components/odd-button.md", "kind": "component", "provenance": "guessed" }
+  ]
+}

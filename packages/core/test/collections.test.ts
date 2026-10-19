@@ -85,9 +85,9 @@ describe('collection', () => {
       { label: 'no key' },
       { id: 'g', label: 'G', items: [{ id: 'a', label: 'dup' }] },
     ]);
-    expect(c.diagnostics.value.map((d) => [d.code, d.path])).toEqual([
-      ['collection.key.missing', '/1'],
-      ['collection.key.duplicate', '/2/items/0'],
+    expect(c.diagnostics.value.map((d) => [d.code, d.severity, d.path])).toEqual([
+      ['collection.key.missing', 'error', '/1'],
+      ['collection.key.duplicate', 'error', '/2/items/0'],
     ]);
     expect(reported.map((r) => r.code)).toEqual([
       'collection.key.missing',

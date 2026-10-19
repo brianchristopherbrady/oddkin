@@ -1,0 +1,16 @@
+{
+  "code": "analyzer.dynamic.tagName",
+  "severity": "warning",
+  "kind": "unresolved",
+  "message": "compose(): the name is computed or invalid; the definition cannot be documented.",
+  "source": { "file": "src/definitions.ts", "line": 7, "column": 31 },
+  "subject": { "kind": "component", "id": "component:dyn-x" },
+  "expected": "a string literal tag name",
+  "received": "`dyn-${suffix}`",
+  "docs": [{ "id": "metadata-and-analyzer#8" }],
+  "suggestion": "Use a string literal, e.g. name: 'my-element'.",
+  "fix": {
+    "description": "Use the literal tag name",
+    "edits": [{ "file": "src/definitions.ts", "range": [210, 225], "text": "'dyn-x'" }]
+  }
+}

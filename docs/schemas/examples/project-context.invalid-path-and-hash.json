@@ -1,0 +1,10 @@
+{
+  "schema": "https://oddkin.dev/schemas/project-context/v1.json",
+  "packages": [{ "name": "@oddkin/components", "version": "0.4.0" }],
+  "capabilityPaths": ["components-without-state", "everything"],
+  "fingerprint": {
+    "generator": { "name": "@oddkin/agent", "version": "0.1.0" },
+    "schemaVersion": 1,
+    "inputs": "md5-1234"
+  }
+}

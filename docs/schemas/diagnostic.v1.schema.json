@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/diagnostic/v1.json",
+  "title": "Oddkin diagnostic v1",
+  "description": "DRAFT (agent-tooling.md §9.1). The shared envelope of every Oddkin diagnostic: tokens, analyzer, model, Workbench, and collection diagnostics conform as they are; the optional fields let tools repair, explain, and link. Production keeps codes only.",
+  "type": "object",
+  "required": ["code", "severity", "message"],
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "type": "string",
+      "pattern": "^[a-z][a-zA-Z0-9-]*(\\.[a-zA-Z][a-zA-Z0-9-]*)+$",
+      "description": "Stable code, e.g. analyzer.dynamic.tagName or collection.key.duplicate"
+    },
+    "severity": { "enum": ["error", "warning", "info"] },
+    "kind": {
+      "enum": ["error", "recommendation", "unresolved"],
+      "description": "Errors make code invalid; recommendations are preferences; unresolved means analysis could not decide"
+    },
+    "message": { "type": "string", "minLength": 1 },
+    "path": {
+      "type": "string",
+      "description": "JSON Pointer into configuration or data (token, model, collection diagnostics), or the stable id a Workbench diagnostic is about"
+    },
+    "source": {
+      "type": "object",
+      "required": ["file"],
+      "additionalProperties": false,
+      "properties": {
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "column": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "required": ["kind", "id"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "component",
+            "property",
+            "event",
+            "slot",
+            "part",
+            "token",
+            "recipe",
+            "model",
+            "example",
+            "operation"
+          ]
+        },
+        "id": { "type": "string" }
+      }
+    },
+    "expected": { "type": "string", "description": "The contract" },
+    "received": { "type": "string", "description": "The value found" },
+    "docs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "properties": {
+          "id": { "type": "string" },
+          "href": { "type": "string", "format": "uri-reference" }
+        }
+      }
+    },
+    "suggestion": { "type": "string" },
+    "fix": {
+      "type": "object",
+      "required": ["description", "edits"],
+      "additionalProperties": false,
+      "description": "Only when the repair is sufficiently supported; tools show it as a diff first",
+      "properties": {
+        "description": { "type": "string" },
+        "edits": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["file", "range", "text"],
+            "additionalProperties": false,
+            "properties": {
+              "file": { "type": "string" },
+              "range": {
+                "type": "array",
+                "prefixItems": [
+                  { "type": "integer", "minimum": 0 },
+                  { "type": "integer", "minimum": 0 }
+                ],
+                "items": false,
+                "minItems": 2
+              },
+              "text": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/project-context/v1.json",
+  "title": "Oddkin project context v1",
+  "description": "DRAFT (agent-tooling.md §4). What resolveProjectContext(root) reports about a consuming workspace: its actual installation and configuration, the capability paths in use, and a freshness fingerprint. Values are detected from real files and imports; unknown stays unknown.",
+  "type": "object",
+  "required": ["schema", "packages", "capabilityPaths", "fingerprint"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://oddkin.dev/schemas/project-context/v1.json" },
+    "packages": {
+      "type": "array",
+      "description": "Installed Oddkin and library packages",
+      "items": {
+        "type": "object",
+        "required": ["name", "version"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "peerRanges": {
+            "type": "object",
+            "description": "Compatibility ranges the package declares",
+            "additionalProperties": { "type": "string" }
+          },
+          "exports": { "type": "array", "items": { "type": "string" } },
+          "registrations": {
+            "type": "object",
+            "description": "Tag → registration entry specifier",
+            "propertyNames": { "pattern": "^[a-z][a-z0-9._-]*-[a-z0-9._-]*$" },
+            "additionalProperties": { "type": "string" }
+          },
+          "metadata": { "type": "string", "description": "Path of its oddkin.metadata.json, when published" }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "description": "Project-owned components",
+      "items": {
+        "type": "object",
+        "required": ["tag", "source"],
+        "additionalProperties": false,
+        "properties": {
+          "tag": { "type": "string" },
+          "source": { "type": "string" },
+          "extends": { "type": "string", "pattern": "^component:" },
+          "dependencies": { "type": "array", "items": { "type": "string", "pattern": "^component:" } }
+        }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "config": { "type": "string" },
+        "themes": { "type": "array", "items": { "type": "string" } },
+        "modes": { "type": "array", "items": { "type": "string" } },
+        "densities": { "type": "array", "items": { "type": "string" } },
+        "profiles": { "type": "array", "items": { "type": "string" } },
+        "products": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "recipes": { "type": "array", "items": { "type": "string", "pattern": "^recipe:" } },
+    "examples": { "type": "array", "items": { "type": "string", "pattern": "^example:" } },
+    "conventions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "componentLayout": {
+          "enum": ["folders", "colocated", "mixed", "unknown"],
+          "description": "Detected from real files and imports, not file names alone"
+        }
+      }
+    },
+    "commands": {
+      "type": "object",
+      "description": "Build, validation, browser, and test commands from package.json scripts and Oddkin config",
+      "propertyNames": { "enum": ["build", "typecheck", "test", "browser", "e2e", "lint", "verify", "metadata"] },
+      "additionalProperties": { "type": "string" }
+    },
+    "capabilityPaths": {
+      "type": "array",
+      "description": "Guidance stays inside these paths; e.g. a components-only consumer is never told to adopt @oddkin/state",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["core-authoring", "tokens-only", "components-without-state", "application-services"]
+      }
+    },
+    "fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "freshness": { "enum": ["current", "stale", "unknown"] }
+  },
+  "$defs": {
+    "fingerprint": {
+      "type": "object",
+      "required": ["generator", "schemaVersion", "inputs"],
+      "additionalProperties": false,
+      "properties": {
+        "generator": {
+          "type": "object",
+          "required": ["name", "version"],
+          "additionalProperties": false,
+          "properties": { "name": { "type": "string" }, "version": { "type": "string" } }
+        },
+        "schemaVersion": { "type": "integer", "minimum": 1 },
+        "packages": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputs": {
+          "type": "string",
+          "pattern": "^sha256-[0-9a-f]{64}$",
+          "description": "Content hash of the metadata files, theme config, authored content, and example files read"
+        }
+      }
+    }
+  }
+}

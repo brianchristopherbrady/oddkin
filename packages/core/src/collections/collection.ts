@@ -27,6 +27,8 @@ export interface Entry<T> {
 
 export interface CollectionDiagnostic {
   readonly code: 'collection.key.duplicate' | 'collection.key.missing';
+  /** Always `error`: the item is not rendered. Shared with every Oddkin diagnostic shape. */
+  readonly severity: 'error';
   readonly path: string;
   readonly message: string;
 }
@@ -87,6 +89,7 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
         if (!isKey(key)) {
           diagnostics.push({
             code: 'collection.key.missing',
+            severity: 'error',
             path: at,
             message: `Item at ${at} has no key; it is not rendered.`,
           });
@@ -95,6 +98,7 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
         if (byKey.has(key)) {
           diagnostics.push({
             code: 'collection.key.duplicate',
+            severity: 'error',
             path: at,
             message: `Key ${JSON.stringify(key)} at ${at} duplicates ${byKey.get(key)?.path}; the later item is not rendered. Keys must be unique across the whole collection.`,
           });

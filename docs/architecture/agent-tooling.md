@@ -221,7 +221,7 @@ References are generated from the consuming project's actual inventory and confi
 
 ## 9. Repairable diagnostics and preview feedback
 
-### 9.1 Diagnostic envelope (planned; extends the existing shapes)
+### 9.1 Diagnostic envelope (drafted as `diagnostic.v1`; extends the existing shapes)
 
 ```ts
 interface OddkinDiagnostic {
@@ -240,7 +240,7 @@ interface OddkinDiagnostic {
 }
 ```
 
-- Existing fields keep their names and every new field is optional, so the token, analyzer, model, and Workbench shapes already conform; `CollectionDiagnostic` needs a `severity` added. Core `OddkinError` codes map onto `code`.
+- Existing fields keep their names and every new field is optional, so the token, analyzer, model, and Workbench shapes already conform; `CollectionDiagnostic` now has `severity` (`error`: the item is not rendered). Verified in `tests/schemas/diagnostics.test.ts` against [diagnostic.v1](../schemas/diagnostic.v1.schema.json). Core `OddkinError` codes map onto `code`.
 - Errors, recommendations, and unresolved analysis are distinguished; stylistic preferences are recommendations, never invalid code.
 - Production diagnostics stay lightweight (codes only, [ADR 0031](./decisions/0031-dev-prod-builds-and-size-budget.md)); detailed inspection is development tooling.
 

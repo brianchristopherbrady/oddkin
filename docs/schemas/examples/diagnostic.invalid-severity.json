@@ -1,0 +1,7 @@
+{
+  "code": "collection.key.duplicate",
+  "severity": "fatal",
+  "message": "Key \"a\" at /2/items/0 duplicates /0.",
+  "path": "/2/items/0",
+  "fix": { "description": "Rename the key", "edits": [] }
+}

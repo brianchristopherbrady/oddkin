@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/agent-kit/v1.json",
+  "title": "Oddkin agent kit manifest v1",
+  "description": "DRAFT (agent-tooling.md §5). kit.json: what a generated agent kit contains, which entries are generated from metadata and which are authored, the entry guide's size budget, packaging targets, and the fingerprint `oddkin-agent kit --check` recomputes (agent.kit.stale on mismatch).",
+  "type": "object",
+  "required": ["schema", "library", "fingerprint", "guide", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://oddkin.dev/schemas/agent-kit/v1.json" },
+    "library": {
+      "type": "object",
+      "required": ["name", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "product": { "type": "string", "description": "Set when the kit covers one product only" }
+      }
+    },
+    "fingerprint": {
+      "type": "object",
+      "description": "Same shape as project-context.v1 fingerprint",
+      "required": ["generator", "schemaVersion", "inputs"],
+      "additionalProperties": false,
+      "properties": {
+        "generator": {
+          "type": "object",
+          "required": ["name", "version"],
+          "additionalProperties": false,
+          "properties": { "name": { "type": "string" }, "version": { "type": "string" } }
+        },
+        "schemaVersion": { "type": "integer", "minimum": 1 },
+        "packages": { "type": "object", "additionalProperties": { "type": "string" } },
+        "inputs": { "type": "string", "pattern": "^sha256-[0-9a-f]{64}$" }
+      }
+    },
+    "guide": {
+      "type": "object",
+      "required": ["path", "budgetBytes"],
+      "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string" },
+        "budgetBytes": { "type": "integer", "minimum": 1 },
+        "bytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "kind", "provenance"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "Stable id, e.g. component:odd-button or task:theming" },
+          "path": { "type": "string" },
+          "kind": {
+            "enum": ["component", "choosing", "tokens", "recipe", "model", "task", "json"]
+          },
+          "provenance": {
+            "enum": ["extracted", "authored", "verified"],
+            "description": "Generated API references are extracted; design guidance is authored"
+          },
+          "notAuthored": {
+            "type": "boolean",
+            "description": "Guidance the library has not written; the entry says so instead of inventing it"
+          }
+        }
+      }
+    },
+    "packaging": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["agent-skills", "agents-md", "ide-instructions", "llms-txt"] }
+    }
+  }
+}

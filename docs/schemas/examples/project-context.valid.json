@@ -1,0 +1,40 @@
+{
+  "schema": "https://oddkin.dev/schemas/project-context/v1.json",
+  "packages": [
+    {
+      "name": "@oddkin/components",
+      "version": "0.4.0",
+      "peerRanges": { "@oddkin/core": "0.x" },
+      "exports": [".", "./button", "./define/button", "./side-nav", "./define/side-nav"],
+      "registrations": { "odd-button": "@oddkin/components/define/button" },
+      "metadata": "node_modules/@oddkin/components/oddkin.metadata.json"
+    },
+    { "name": "@acme/studio", "version": "1.2.0", "peerRanges": { "@oddkin/components": "0.x" } }
+  ],
+  "components": [
+    {
+      "tag": "studio-button",
+      "source": "src/button/button.definition.ts",
+      "extends": "component:odd-button"
+    }
+  ],
+  "theme": {
+    "config": "theme.json",
+    "themes": ["default"],
+    "modes": ["light", "dark"],
+    "densities": ["comfortable", "compact"],
+    "products": ["studio"]
+  },
+  "recipes": ["recipe:side-nav"],
+  "examples": ["example:studio-button/default"],
+  "conventions": { "componentLayout": "folders" },
+  "commands": { "build": "npm run build", "test": "npm test", "metadata": "npm run verify:metadata" },
+  "capabilityPaths": ["components-without-state"],
+  "fingerprint": {
+    "generator": { "name": "@oddkin/agent", "version": "0.1.0" },
+    "schemaVersion": 1,
+    "packages": { "@oddkin/components": "0.4.0" },
+    "inputs": "sha256-3a6f05d478860657feba8609de6d21ca5e7364c8af2ecff7ad7007311caf250d"
+  },
+  "freshness": "current"
+}
