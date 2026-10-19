@@ -842,3 +842,15 @@ Environment as the previous entry. Contract: [theming-and-styling.md §11](./arc
 | Mutation probe | `node .tmp/mutate-preview.mjs` (not committed) | 3 of 3 killed: `extend()` ignoring new condition inputs, preview edits written to the shared sheet, a preview swapping sheets outside its scope. |
 
 **Not covered:** preview frames themselves (M5 isolated previews) and elements that move into a preview after `refresh()`. Variable-based query syntax is not used anywhere, so it needs no browser evidence yet.
+
+## 2026-10-19 — Container, wrapper, and region contract (M2)
+
+Environment as the previous entry. Contract: [layout-recipes.md §5](./architecture/layout-recipes.md#5-container-responsive-composition), [css-architecture.md §5.4](./architecture/css-architecture.md#54-selectors-and-customization-surface).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Browser (plain shadow roots) | `npx vitest run --project browser packages/core/test/container-contract.browser.test.ts` | Pass (8 × 3 engines). An element that is its own query container never matches its own query; its descendants do. Inline-size containment gives an inline-block and an absolutely positioned box zero width (shrink-to-fit ignores content). Slotted light-DOM content resolves both an unnamed page query and the shadow tree's `::slotted()` query against a region inside the shadow tree (flat-tree ancestry). An unnamed query uses the nearest container; a named query skips to the named one. `::slotted()` styles top-level slotted elements only; a compound `::slotted(p) span` matches nothing. `::part()` reaches the declared part only: not its descendants, not `::part()[attr]`, and not a nested component's part unless forwarded with `exportparts`. Page selectors never match private shadow markup with the same class names. An inherited role reaches shadow internals, slotted content, and a nested shadow root, and a declaration on a region wins inside it. |
+| Finding | same test | Container names are **not** encapsulated in Chromium, Firefox, or WebKit: a page query `@container region (…)` styles slotted content against a container named `region` inside the component's shadow tree. Internal container names are therefore public; the contract now says to name only the host (as Oddkin recipes do) or to namespace internal names. |
+| Existing | `packages/core/test/layout.browser.test.ts`, `packages/components/test/styling.browser.test.ts`, `side-nav.browser.test.ts`, `tests/floor/probe.js` | Unchanged: a host container responds per instance, roles reach slotted content, parts and component variables override, page selectors never reach button internals, and container queries work in the floor browsers. |
+
+**Not covered:** floor-browser runs of the new checks (the floor probe covers basic container queries only).

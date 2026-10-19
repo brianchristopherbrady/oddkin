@@ -151,7 +151,8 @@ From strongest to weakest for a given element:
 
 - Recipes flatten selectors with `:where()` (one class of specificity); tokens use `:is()` to re-apply profiles in nested scopes. Nested CSS (at the floor) takes the specificity of `:is()` over its parent list; review specificity when nesting existing rules.
 - Customization surface: inherited semantic tokens; documented component variables (normally unset, read with a semantic fallback); stable parts; custom states (`odd-input:state(user-invalid)::part(control)`); appearance attributes. Component defaults never re-declare the theme on `:host`.
-- `:has()` does not see into other shadow trees and cannot be combined with `::slotted()`; `::slotted()` matches only top-level slotted elements; `::part()` cannot be followed by attribute selectors, so component states are exposed as custom states, not attributes on internal elements.
+- `:has()` does not see into other shadow trees and cannot be combined with `::slotted()`; `::slotted()` matches only top-level slotted elements; `::part()` cannot be followed by attribute selectors, so component states are exposed as custom states, not attributes on internal elements. *(`::slotted()`, `::part()`, and `exportparts` limits verified in `packages/core/test/container-contract.browser.test.ts`, three engines.)*
+- Container names are not encapsulated by shadow roots (same test): a page query by name finds a container named inside a component when it styles slotted content. Components name only their host as a container, or namespace internal names.
 - `@scope` is deferred to docs-only light-DOM styling (M11; Firefox 126 and Safari 17.4 lack full support). Light-DOM components scope by tag or class.
 
 ## 6. Component styling rules (implemented)
