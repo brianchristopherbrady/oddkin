@@ -244,6 +244,7 @@ Location: `examples/side-nav/` (handwritten CSS version and recipe version side 
 - **Values.** Helper and profile values are trusted module code but are still validated (`recipe.value.invalid` for `;`, braces, angle brackets, backslashes, or comments).
 - **Render-time definitions** report `recipe.render.definition` (not thrown). `checkRecipeRegions(recipe, root)` returns missing regions and parts; automatic post-`mounted` checks are left to M4 dev tooling.
 - **Layer prefixes** may be dotted (`odd.layout`), so recipe layers nest under a document layer; each segment is a lowercase identifier (`recipe.layer.invalid` otherwise).
+- **New condition inputs in `extend()`** (M4) re-resolve the queries of inherited conditions, named or inline, without restating `when`; inputs for conditions the recipe does not use change nothing.
 
 ## 12. Oddkin-bound layout (`@oddkin/components/layout`, implemented, M4)
 

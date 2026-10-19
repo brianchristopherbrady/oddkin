@@ -30,6 +30,10 @@
       "types": "./dist/testing/index.d.ts",
       "default": "./dist/testing/index.js"
     },
+    "./preview": {
+      "types": "./dist/preview/index.d.ts",
+      "default": "./dist/preview/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

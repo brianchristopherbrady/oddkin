@@ -53,6 +53,29 @@ describe('layout recipes', () => {
     expect(describeRecipe(wider).conditions[0]?.regions).toEqual(['content', 'header']);
   });
 
+  it('re-resolves inherited named conditions from new inputs, leaving the original as it was', () => {
+    const before = sideNav.cssText;
+    const narrower = sideNav.extend({
+      conditions: {
+        'navigation.expanded': { kind: 'container', query: 'side-nav (min-inline-size: 30rem)' },
+      },
+    });
+    expect(sideNav.cssText).toBe(before);
+    expect(narrower.cssText).toBe(
+      before.replace('min-inline-size: 40rem', 'min-inline-size: 30rem'),
+    );
+    expect(describeRecipe(narrower).conditions[0]).toMatchObject({
+      key: 'navigation.expanded',
+      query: 'side-nav (min-inline-size: 30rem)',
+      regions: ['content'],
+      profile: 'comfortable',
+    });
+    // Inputs for conditions the recipe never uses change nothing.
+    expect(
+      sideNav.extend({ conditions: { 'page.wide': '@media (min-width: 80rem)' } }).cssText,
+    ).toBe(before);
+  });
+
   it('describes regions, helpers, variants, conditions, parts, and layers', () => {
     const description = describeRecipe(sideNav);
     expect(description).toMatchObject({

@@ -308,6 +308,12 @@ function buildModel(definition: RecipeDefinition, base?: RecipeModel): RecipeMod
   }
 
   const conditions: ConditionModel[] = base ? [...base.conditions] : [];
+  // New inputs re-resolve inherited conditions, so a regenerated theme's thresholds reach an
+  // extended recipe (live condition editing) without restating its `when` entries.
+  conditions.forEach((inherited, index) => {
+    if (conditionInputs[inherited.key] === undefined || definition.when?.[inherited.key]) return;
+    conditions[index] = { ...inherited, ...parseCondition(owner, inherited.key, conditionInputs) };
+  });
   for (const [key, entry] of Object.entries(definition.when ?? {})) {
     const inherited = conditions.find((c) => c.key === key);
     const { kind, query } =

@@ -828,3 +828,17 @@ Environment as the previous entry. Contract: [metadata-and-analyzer.md §3.1](./
 | Mutation probe | `node .tmp/mutate-lifecycle.mjs` (not committed) | 4 of 4 killed: deprecations never read, replacements kept as written, any `@customization` accepted, publisher metadata ignored by derived definitions. |
 
 **Not covered:** contract references (`contract:core/*`) need published contract pages with stable anchors to point at.
+
+## 2026-10-19 — Live condition editing with preview-owned stylesheets (M2)
+
+Environment as the previous entry. Contract: [theming-and-styling.md §11](./architecture/theming-and-styling.md) (Invalidation, Live condition editing), [layout-recipes.md §11](./architecture/layout-recipes.md#11-behaviors-settled-in-the-m3-implementation).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Static: recipes | `npx vitest run --project node packages/core/test/layout.test.ts` | Pass (11). `sideNav.extend({ conditions: { 'navigation.expanded': … 30rem } })` differs from the original only in that threshold, keeps its regions and profile, and leaves the original's CSS unchanged. Inputs for a condition the recipe does not use change nothing. |
+| Browser | `npx vitest run --project browser packages/workbench/test/preview.browser.test.ts` | Pass in Chromium, Firefox, and WebKit. A recipe built from a generated theme's `navigation.expanded` (40rem) is extended with the theme regenerated at 30rem; `previewStyles(...).update()` switches the previewed element at 35rem to three columns while an identical element outside the preview stays one column, and the shared sheet keeps its rules. For `odd-side-nav`, the edited instance keeps every shadow node, its focused link, and its expanded group (no remount or re-render); another instance and the shared sheet are untouched. Repeated edits reuse one preview sheet, `refresh()` covers an element added later, and `restore()` puts the shared sheet back. |
+| Existing | `npx vitest run --project browser packages/components/test/conditions.browser.test.ts` | Unchanged: runtime custom properties and `font-size` never move the side-nav threshold, and a changed theme threshold arrives only through newly generated CSS. |
+| Size and packaging | `node scripts/check-size.mjs`; `node scripts/verify-packs.mjs`; `node scripts/architecture/check-boundaries.mjs --artifacts` | Within budgets; packed `@oddkin/workbench` resolves `./preview`; boundaries OK. |
+| Mutation probe | `node .tmp/mutate-preview.mjs` (not committed) | 3 of 3 killed: `extend()` ignoring new condition inputs, preview edits written to the shared sheet, a preview swapping sheets outside its scope. |
+
+**Not covered:** preview frames themselves (M5 isolated previews) and elements that move into a preview after `refresh()`. Variable-based query syntax is not used anywhere, so it needs no browser evidence yet.
