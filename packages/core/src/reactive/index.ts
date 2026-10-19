@@ -8,9 +8,11 @@ export {
   computed,
   effect,
   flush,
+  fromExternal,
   isReadable,
   settled,
   signal,
+  toExternal,
   untracked,
 } from './graph.js';
 export type {
@@ -18,6 +20,7 @@ export type {
   EffectFn,
   EffectOptions,
   EffectPhase,
+  ExternalSource,
   ReactiveOptions,
   Readable,
   Signal,

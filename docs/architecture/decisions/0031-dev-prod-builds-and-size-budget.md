@@ -22,7 +22,7 @@ Plan §8 targets a minimal production counter (Oddkin code plus registration) at
 | Keyed list: collection + `repeat` | 11,776 B | 11,064 B |
 | Reactive graph only (`@oddkin/core/reactive`) | 2,048 B | 1,892 B |
 
-The check also fails if a component bundle pulls in `@oddkin/state`, `@oddkin/app`, or `@oddkin/tokens`.
+The check also fails if a component bundle pulls in `@oddkin/state`, `@oddkin/app`, or `@oddkin/tokens`. Since 2026-10-19 it also fails if any measured graph loads tooling (`@oddkin/core/model/schema`, `@oddkin/core/layout/inspect`, the analyzer, Workbench, or TypeScript). It fails too if a graph loads an optional core feature it does not import: the counter and typical component load no layout, collections, model, helpers, i18n, or controllers; the keyed list loads no layout, model, or controllers; and the registered side navigation loads no layout, collections, model, helpers, or i18n.
 
 ## Alternatives considered
 - **Keep 8 KiB and golf the code.** The remaining bytes are the template parser that finds binding positions, parts with security rules, the phased scheduler, `Scope`, and constructable-stylesheet adoption. Each is required by an accepted contract (ADRs 0002, 0004, 0005, 0008). Reaching 8 KiB would mean removing a contract or obscuring the code, and was not judged worth 1.1 KiB.

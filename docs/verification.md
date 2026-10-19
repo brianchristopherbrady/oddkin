@@ -936,3 +936,17 @@ Environment as the previous entry. Contract: [multi-product.md §8](./architectu
 | Mutation probes | rewritten-strings cache removed; child properties written on every render | Killed: the first breaks identity across re-renders and the call-site cache test; the second overwrites typed text. |
 
 **Not covered:** Trusted Types and CSP were reasoned, not exercised under an enforced policy; no analyzer run over the variants (literal tags exist only in the family templates by construction); the full team editor (validation, undo) was not ported to each candidate.
+
+## 2026-10-19 — External stores and optional-feature graph guards (M2 core contracts)
+
+Environment as the previous entry. Contracts: [core-contracts.md §5](./architecture/core-contracts.md#5-reactivity-oddkincorereactive-dom-free), [ADR 0031](./architecture/decisions/0031-dev-prod-builds-and-size-budget.md).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Unit (DOM-free) | `npx vitest run --project node packages/core/test/external.test.ts packages/core/test/reactive.test.ts` | Pass (7 new, 36 existing). `fromExternal` reads a fresh snapshot while unobserved without subscribing, and computed values over it follow the store. The first observer subscribes once for effects, `subscribe` listeners, and observed computed values together. The last observer leaving unsubscribes, and so does disposing the `Scope` that owns the effect, with `scopeStats()` back at its baseline. Equal snapshots (`Object.is` or a custom `equals`) notify nothing. Store changes inside `batch` notify once. A change made while subscribing is not missed. `toExternal` calls listeners without arguments and round-trips through `fromExternal`. |
+| Browser | `npx vitest run --project browser tests/interop` | Pass in Chromium, Firefox, and WebKit. An `OddkinElement` rendering a plain store subscribes on connect and re-renders on change, but not for the same snapshot. It unsubscribes on disconnect with scopes back at baseline, and reads current state and resubscribes when reconnected. React 19 reads a signal through `useSyncExternalStore(toExternal(signal))`, skips a render for an equal value, and unsubscribes on unmount. |
+| Types | `npx tsc -b packages/ai` | `@oddkin/ai` re-exports core's `ExternalSource` in place of its identical interface. |
+| Size and graphs | `node scripts/build-production.mjs`; `node scripts/check-size.mjs` | Within budgets: counter 9,522 B, component 10,798 B, list 11,310 B, reactive 1,898 B gzip. `fromExternal` and `toExternal` add 168 B when imported and are tree-shaken otherwise. New graph rules hold: no measured graph loads schema emitters, recipe inspection, the analyzer, Workbench, or TypeScript. The counter and component load no layout, collections, model, helpers, i18n, or controllers; the list loads no layout, model, or controllers; side-nav loads no layout, collections, model, helpers, or i18n. |
+| Mutation probes | never unsubscribing; not refreshing while unobserved; a used `collections` import in the counter fixture | Killed: 3, 2, and the graph rule (plus the budget). |
+
+**Not covered:** stores that notify during a computed evaluation, and concurrent React rendering beyond `flushSync`.

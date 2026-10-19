@@ -38,6 +38,17 @@ export interface Signal<T> extends Readable<T> {
   update(fn: (current: T) => T): void;
 }
 
+/**
+ * The subscription contract Oddkin shares with external stores and other libraries (the shape
+ * React's `useSyncExternalStore` takes): `getSnapshot()` returns the current snapshot, the same
+ * value until the state changes; `subscribe(listener)` calls `listener` after a change and
+ * returns a function that unsubscribes.
+ */
+export interface ExternalSource<T> {
+  getSnapshot(): T;
+  subscribe(listener: () => void): () => void;
+}
+
 export interface ReactiveOptions<T> {
   /** Equality used to skip no-op changes. Defaults to `Object.is`. */
   equals?: (previous: T, next: T) => boolean;
@@ -62,7 +73,7 @@ export type EffectFn = () => void | EffectCleanup;
 const MAX_FLUSH_PASSES = 100;
 const MAX_LISTENER_PASSES = 1000;
 
-type Source = SignalNode<unknown> | ComputedNode<unknown>;
+type Source = ReadableNode<unknown>;
 interface Consumer {
   notify(): void;
 }
@@ -92,7 +103,7 @@ function runTracked<R>(consumer: Consumer, sources: Map<Source, number>, fn: () 
 
 function sourcesChanged(sources: Map<Source, number>): boolean {
   for (const [source, seen] of sources) {
-    if (source instanceof ComputedNode) source.refresh();
+    source.refresh();
     if (source.version !== seen) return true;
   }
   return false;
@@ -125,6 +136,9 @@ abstract class ReadableNode<T> implements Readable<T> {
 
   abstract get value(): T;
   abstract peek(): T;
+
+  /** Bring `version` up to date before it is compared. Signals are always current. */
+  refresh(): void {}
 
   readonly subscribe = (onChange: (value: T) => void): (() => void) => {
     const listener = new ListenerNode<T>(this as unknown as Source, onChange);
@@ -218,7 +232,7 @@ class ComputedNode<T> extends ReadableNode<T> implements Consumer {
     return this.#hasError;
   }
 
-  refresh(): void {
+  override refresh(): void {
     if (this.#computing) {
       throw new OddkinError(
         'reactive.cycle',
@@ -296,6 +310,70 @@ class ComputedNode<T> extends ReadableNode<T> implements Consumer {
   }
 }
 
+/**
+ * A store outside Oddkin's graph. Subscribed only while something observes it: the first
+ * observer subscribes, the last one leaving unsubscribes. Unobserved reads take a fresh snapshot.
+ */
+class ExternalNode<T> extends ReadableNode<T> {
+  #source: ExternalSource<T>;
+  #value: T;
+  #unsubscribe: (() => void) | undefined;
+
+  constructor(source: ExternalSource<T>, options: ReactiveOptions<T> | undefined) {
+    super(options);
+    this.#source = source;
+    this.#value = source.getSnapshot();
+  }
+
+  get value(): T {
+    this.refresh();
+    track(this as unknown as Source);
+    return this.#value;
+  }
+
+  peek(): T {
+    this.refresh();
+    return this.#value;
+  }
+
+  override refresh(): void {
+    // Observed: the store's notifications keep the snapshot current.
+    if (!this.#unsubscribe) this.#set(this.#source.getSnapshot());
+  }
+
+  #set(next: T): void {
+    if (this.equals(this.#value, next)) return;
+    this.#value = next;
+    this.version++;
+    globalVersion++;
+    if (this.observers.size === 0) return;
+    batchDepth++;
+    try {
+      for (const observer of [...this.observers]) observer.notify();
+    } finally {
+      batchDepth--;
+      if (batchDepth === 0) flushListeners();
+    }
+  }
+
+  override addObserver(consumer: Consumer): void {
+    if (this.observers.size === 0 && !this.#unsubscribe) {
+      this.#unsubscribe = this.#source.subscribe(() => this.#set(this.#source.getSnapshot()));
+      // A change between the last read and the subscription is not missed.
+      this.#set(this.#source.getSnapshot());
+    }
+    super.addObserver(consumer);
+  }
+
+  override removeObserver(consumer: Consumer): void {
+    super.removeObserver(consumer);
+    if (this.observers.size > 0 || !this.#unsubscribe) return;
+    const unsubscribe = this.#unsubscribe;
+    this.#unsubscribe = undefined;
+    unsubscribe();
+  }
+}
+
 class ListenerNode<T> implements Consumer {
   #source: Source;
   #onChange: (value: T) => void;
@@ -305,7 +383,7 @@ class ListenerNode<T> implements Consumer {
   constructor(source: Source, onChange: (value: T) => void) {
     this.#source = source;
     this.#onChange = onChange;
-    if (source instanceof ComputedNode) source.refresh();
+    source.refresh();
     this.#seen = source.version;
     source.addObserver(this);
   }
@@ -317,7 +395,7 @@ class ListenerNode<T> implements Consumer {
   check(): void {
     if (this.#disposed) return;
     const source = this.#source;
-    if (source instanceof ComputedNode) source.refresh();
+    source.refresh();
     if (source.version === this.#seen) return;
     this.#seen = source.version;
     if (source instanceof ComputedNode && source.failed) {
@@ -554,6 +632,31 @@ export function signal<T>(initial: T, options?: ReactiveOptions<T>): Signal<T> {
 /** Create a lazy, memoized derived value. `fn` must be pure and synchronous. */
 export function computed<T>(fn: () => T, options?: ReactiveOptions<T>): Readable<T> {
   return new ComputedNode(fn, options);
+}
+
+/**
+ * A readable over a store outside Oddkin (any {@link ExternalSource}). The store is subscribed
+ * only while the readable is observed (by an effect, a binding, a computed value that is itself
+ * observed, or `subscribe`) and unsubscribed when the last observer leaves, so ownership follows
+ * the observers' scopes. Unobserved reads take a fresh snapshot. Snapshots are compared with
+ * `equals` (default `Object.is`), so a store must return a new snapshot when its state changes.
+ */
+export function fromExternal<T>(
+  source: ExternalSource<T>,
+  options?: ReactiveOptions<T>,
+): Readable<T> {
+  return new ExternalNode(source, options);
+}
+
+/**
+ * The {@link ExternalSource} view of an Oddkin readable, for libraries that consume stores
+ * (e.g. React's `useSyncExternalStore(source.subscribe, source.getSnapshot)`).
+ */
+export function toExternal<T>(readable: Readable<T>): ExternalSource<T> {
+  return {
+    getSnapshot: () => readable.peek(),
+    subscribe: (listener) => readable.subscribe(() => listener()),
+  };
 }
 
 /**

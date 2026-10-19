@@ -125,11 +125,8 @@ export interface BranchPosition {
   readonly nextId?: string | undefined;
 }
 
-/** Interoperable subscription contract (same shape as React's `useSyncExternalStore`). */
-export interface ExternalSource<T> {
-  getSnapshot(): T;
-  subscribe(listener: () => void): () => void;
-}
+/** Interoperable subscription contract (same shape as React's `useSyncExternalStore`), from core. */
+export type { ExternalSource } from '@oddkin/core/reactive';
 
 // ---- Normalized events (adapter output) ----
 
