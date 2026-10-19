@@ -118,6 +118,12 @@ describe('component examples', () => {
     const metadata = await read<{ examples?: Record<string, Record<string, unknown>> }>(
       '../oddkin.metadata.json',
     );
+    // Elements each fixture renders besides its own, read from literal markup.
+    const uses: Record<string, string[]> = {
+      'odd-button/inForm': ['component:odd-input'],
+      'odd-card/headed': ['component:odd-button'],
+      'odd-input/inForm': ['component:odd-button'],
+    };
     const expected = Object.fromEntries(
       sets.flatMap((set) =>
         Object.entries(set.examples).map(([name, example]) => [
@@ -138,6 +144,7 @@ describe('component examples', () => {
                   },
                 }
               : {}),
+            ...(uses[`${set.component}/${name}`] ? { uses: uses[`${set.component}/${name}`] } : {}),
           },
         ]),
       ),

@@ -16,6 +16,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./impact": {
+      "types": "./dist/impact.d.ts",
+      "default": "./dist/impact.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

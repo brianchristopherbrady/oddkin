@@ -22,6 +22,7 @@ These are optional development capabilities built from existing sources through 
 | Composition API (`compose()`, `define(definition)`, `extends`) | Implemented (M4, ADR 0036) | Definition edges, recomposed implementations under test |
 | Portable conformance: `conformance.v1`, `conformance-result.v1`, `@oddkin/workbench/conformance`, `./conformance/button`, `./testing` (`runConformance`) | **Prototype implemented** (M4) | §3; accepts `odd-button`, `studio-button`, and an alternative-template button; rejects 5 mutants in three engines |
 | `oddkin analyze --compare`, Workbench previews, share payload, `runExample`, product configurations, agent operations | **Planned** (M5–M11) | Extended here |
+| Comparison snapshots and impact reports: `@oddkin/analyzer/impact` (`createSnapshot`, `compareSnapshots`, `renderImpactMarkdown`), `comparison-snapshot.v1`, `impact-report.v1` | **Prototype implemented** (M5) | §2.1–§2.6, without executing checks or visual baselines |
 | Reactive dependency and per-scope ownership records | **Not implemented**; proposed development-only instrumentation (§4.2) | Runtime explanations |
 
 Static dependency facts (*extracted*), authored guidance (*authored*), runtime observations (*observed*), and verification evidence (*verified*, with conditions) stay distinguishable in every output.
@@ -118,6 +119,18 @@ Generation runs locally. It needs no hosted service and never publishes anything
 Visual differences reuse Playwright screenshot assertions. Baselines are files keyed by example id, configuration hash, browser, and browser version. They are updated only by an explicit accept command that lists the differences being accepted; current output is never silently accepted as a new baseline.
 
 **Ownership.** Snapshot creation, comparison, traversal, and selection live in `@oddkin/analyzer` (Node; extends the planned `compare`). Execution uses the project's existing Vitest/Playwright runners. Report rendering is shared by the CLI, the Workbench verification view, and `@oddkin/agent`.
+
+### 2.7 Prototype (M5)
+
+`@oddkin/analyzer/impact` implements §2.1–§2.5 and the JSON and Markdown reports of §2.6. It is plain Node: it never loads TypeScript or executes analyzed code.
+
+- **Inputs** are the artifacts the tools already emit: each package's CEM, `oddkin.metadata.json`, `package.json` `exports`, and the source text of the modules its classes, definitions, and examples name (hashed, never stored); the token inspection JSON and its `ThemeConfig`; `product.v1` manifests; suite ids, versions, and targets; migration records; tool versions.
+- **Items** (by stable id): `component`, `class` (behavior source and the public API members `property`, `attribute`, `event`, `method`, `slot`, `part`, `cssprop`, `state`), `registration`, `export`, `definition`, `template`, `style`, `token`, `theme:base`, `theme:product/<id>`, `product`, `example` (explained mistakes excluded), `suite`. Each has a contract hash and, where it has descriptions, a separate documentation hash.
+- **Edges** (dependent → dependency): component → class, definition, registration; class → members; definition → template, styles, dependencies (`component:`), foundation (`class:` of the definition it extends, since a derived definition names its own template and styles); style → token (`reads`, through `--odd-*` variables too); token → token (`alias`); example → component, and → each element its fixture renders (`uses`, extracted from literal markup and `createElement()` by the analyzer); product → theme product, applicable components, and the tokens its scope sets; suite → targets.
+- **Products:** each product is a context. A token its scope sets is its own value, so base changes stop there; a change to its theme configuration makes every token it sets a root for that product only.
+- **Unresolved:** a module source that was not supplied, a package that was not read, a style read that is neither a token nor a declared component variable, and `analyzer.dynamic.*` diagnostics. They are listed as coverage gaps and widen selection to every example of an affected package.
+- **Checks:** `example:<tag>/<name>` and `suite:<id>#<tag>`, per product. With a baseline, unaffected checks are `reused` only from a passing result, whose conditions are copied; missing or failed results are `selected`. Without a baseline, unaffected checks are not part of the run. Any tool-version or snapshot-schema change gives full verification without reuse.
+- **Remaining:** the `oddkin impact` CLI and writing snapshots from a build, executing selected checks through the runners and merging their states (`passed`, `failed`, `not-executed`, `unresolved`), and visual baselines.
 
 ## 3. Portable conformance suites
 

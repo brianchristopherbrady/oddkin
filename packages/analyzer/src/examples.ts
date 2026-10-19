@@ -17,6 +17,8 @@ export interface ExampleInfo {
   readonly previewRoles?: readonly string[];
   /** A common mistake: the diagnostic it demonstrates and the correct example to use instead. */
   readonly incorrect?: { readonly diagnostic: string; readonly correct: string };
+  /** Other custom elements its fixture renders, read from literal markup and `createElement()`. */
+  readonly uses?: readonly string[];
   readonly location: SourceLocation;
 }
 
@@ -50,6 +52,34 @@ const text = (node: ts.Node | undefined): string | undefined =>
     : undefined;
 const keyOf = (name: ts.PropertyName): string | undefined =>
   ts.isIdentifier(name) || ts.isStringLiteral(name) ? name.text : undefined;
+
+const TAG = /<([a-z][a-z0-9]*-[a-z0-9-]*)[\s>/]/g;
+/** Custom-element tags written literally under `node`: markup in strings and templates, `createElement('x-y')`. */
+function literalTags(node: ts.Node): Set<string> {
+  const tags = new Set<string>();
+  const visit = (child: ts.Node): void => {
+    if (
+      ts.isStringLiteral(child) ||
+      ts.isNoSubstitutionTemplateLiteral(child) ||
+      ts.isTemplateHead(child) ||
+      ts.isTemplateMiddle(child) ||
+      ts.isTemplateTail(child)
+    ) {
+      for (const match of `${child.text} `.matchAll(TAG)) tags.add(match[1] as string);
+      if (
+        ts.isStringLiteral(child) &&
+        /^[a-z][a-z0-9]*-[a-z0-9-]*$/.test(child.text) &&
+        ts.isCallExpression(child.parent) &&
+        ts.isPropertyAccessExpression(child.parent.expression) &&
+        child.parent.expression.name.text === 'createElement'
+      )
+        tags.add(child.text);
+    }
+    ts.forEachChild(child, visit);
+  };
+  visit(node);
+  return tags;
+}
 
 export function extractExamples(
   files: readonly string[],
@@ -154,6 +184,9 @@ export function extractExamples(
             else previewRoles = roles as string[];
           }
           if (incorrect === null) continue;
+          const uses = [...literalTags(property.initializer)]
+            .filter((tag) => tag !== component)
+            .sort();
           examples.push({
             component,
             name,
@@ -161,6 +194,7 @@ export function extractExamples(
             hasFixture,
             ...(previewRoles ? { previewRoles } : {}),
             ...(incorrect ? { incorrect } : {}),
+            ...(uses.length ? { uses } : {}),
             location: at(property),
           });
         }

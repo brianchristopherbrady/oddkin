@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/comparison-snapshot/v1.json",
+  "title": "Comparison snapshot v1",
+  "description": "DRAFT (M5 prototype, change-impact-and-verification.md §2.1). Hashes of public contracts, definition sources, tokens, products, examples, and suites by stable id, with the edges between them. Sources are hashed, never copied.",
+  "type": "object",
+  "required": ["schema", "versions", "packages", "items", "edges", "unresolved", "products", "migrations"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://oddkin.dev/schemas/comparison-snapshot/v1.json" },
+    "versions": {
+      "type": "object",
+      "description": "Versions of what produced the inputs (analyzer, generator, core, schemas). Any difference invalidates reuse.",
+      "additionalProperties": { "type": "string" }
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "version", "artifacts"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "artifacts": { "type": "object", "additionalProperties": { "$ref": "#/$defs/hash" } }
+        }
+      }
+    },
+    "items": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z]+:" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind", "hash"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": ["component", "class", "property", "attribute", "event", "method", "slot", "part", "cssprop", "state", "registration", "export", "definition", "template", "style", "token", "theme", "product", "example", "suite"]
+          },
+          "hash": { "$ref": "#/$defs/hash" },
+          "docs": { "$ref": "#/$defs/hash", "description": "Hash of descriptions only, so documentation-only changes are told apart" },
+          "package": { "type": "string" },
+          "type": { "type": "string" },
+          "unit": { "type": "string" }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "description": "`from` depends on `to`.",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "kind", "provenance"],
+        "additionalProperties": false,
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "kind": {
+            "enum": ["class", "member", "definition", "template", "style", "dependency", "foundation", "reads", "alias", "example", "applies", "sets", "theme", "suite", "uses"]
+          },
+          "provenance": { "enum": ["extracted", "declared", "authored", "configuration"] }
+        }
+      }
+    },
+    "unresolved": {
+      "type": "array",
+      "description": "Dependencies that could not be resolved; they widen selection for their package.",
+      "items": {
+        "type": "object",
+        "required": ["item", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "item": { "type": "string" },
+          "package": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "sets"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "sets": { "type": "array", "items": { "type": "string" }, "description": "Tokens the product's scope sets itself" },
+          "components": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "migrations": {
+      "type": "array",
+      "description": "Authoritative renames; the only way a removed id matches an added one.",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "source"],
+        "additionalProperties": false,
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "source": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^sha256-[0-9a-f]{64}$" }
+  }
+}

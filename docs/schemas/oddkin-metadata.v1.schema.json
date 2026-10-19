@@ -896,6 +896,14 @@
               "pattern": "^example:"
             }
           }
+        },
+        "uses": {
+          "type": "array",
+          "description": "Other components the example's fixture renders, read from literal markup and createElement() calls (extracted); computed tags are not seen.",
+          "items": {
+            "type": "string",
+            "pattern": "^component:"
+          }
         }
       }
     },

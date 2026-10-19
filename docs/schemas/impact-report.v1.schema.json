@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/impact-report/v1.json",
+  "title": "Change-impact report v1",
+  "description": "DRAFT (M5 prototype, change-impact-and-verification.md §2.4, §2.6). Classified changes, affected products and components with the edge path that reached them, coverage gaps, and checks with exactly one state each. An untested check is never shown as passing.",
+  "type": "object",
+  "required": ["schema", "base", "head", "changes", "affected", "coverageGaps", "checks"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "https://oddkin.dev/schemas/impact-report/v1.json" },
+    "base": { "$ref": "#/$defs/revision" },
+    "head": { "$ref": "#/$defs/revision" },
+    "fallback": {
+      "type": "object",
+      "required": ["kind", "reasons"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "full" },
+        "reasons": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "change", "classification", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string" },
+          "change": { "enum": ["added", "removed", "changed", "renamed"] },
+          "classification": { "enum": ["incompatible", "review", "informational"] },
+          "reason": { "type": "string" },
+          "from": { "type": "string" },
+          "migration": { "type": "string", "description": "The authoritative record a rename comes from" },
+          "possibleRename": { "type": "string", "description": "Unconfirmed; never treated as a match" }
+        },
+        "if": { "properties": { "change": { "const": "renamed" } } },
+        "then": { "required": ["from", "migration"] }
+      }
+    },
+    "affected": {
+      "type": "object",
+      "required": ["products", "components"],
+      "additionalProperties": false,
+      "properties": {
+        "products": { "type": "array", "items": { "$ref": "#/$defs/affected" } },
+        "components": { "type": "array", "items": { "$ref": "#/$defs/affected" } }
+      }
+    },
+    "coverageGaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["item", "reason"],
+        "additionalProperties": false,
+        "properties": { "item": { "type": "string" }, "reason": { "type": "string" } }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "state", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^(example|suite):" },
+          "product": { "type": "string" },
+          "state": { "enum": ["selected", "passed", "failed", "reused", "not-executed", "unresolved"] },
+          "reason": { "type": "string" },
+          "via": { "type": "array", "items": { "type": "string" } },
+          "conditions": { "type": "object" }
+        },
+        "if": { "properties": { "state": { "const": "reused" } } },
+        "then": { "required": ["conditions"] }
+      }
+    }
+  },
+  "$defs": {
+    "revision": {
+      "type": "object",
+      "required": ["versions"],
+      "additionalProperties": false,
+      "properties": { "versions": { "type": "object", "additionalProperties": { "type": "string" } } }
+    },
+    "affected": {
+      "type": "object",
+      "required": ["id", "via"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "product": { "type": "string" },
+        "via": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

@@ -292,6 +292,13 @@ describe('compose() definitions in a folder-structured library', () => {
         file: 'src/panel/panel.examples.ts',
         incorrect: { diagnostic: 'usage.boolean.false', correct: 'example:acme-panel/default' },
       },
+      'example:acme-panel/withAlert': {
+        component: 'component:acme-panel',
+        name: 'withAlert',
+        file: 'src/panel/panel.examples.ts',
+        hasFixture: true,
+        uses: ['component:acme-alert'],
+      },
     });
     expect(composed.program.getSourceFiles().some((f) => f.fileName.endsWith('.examples.ts'))).toBe(
       false,

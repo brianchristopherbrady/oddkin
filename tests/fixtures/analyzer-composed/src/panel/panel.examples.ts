@@ -18,4 +18,13 @@ export default defineExamples('acme-panel', {
       correct: 'default',
     },
   },
+  withAlert: {
+    slots: { default: 'Saved.' },
+    fixture({ element }) {
+      element.append(document.createElement('acme-alert'));
+      // Computed tags are not read: only literal names count as uses.
+      const tag = ['acme', 'badge'].join('-');
+      element.append(document.createElement(tag));
+    },
+  },
 });
