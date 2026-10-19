@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { expect, request, test, type Page } from '@playwright/test';
 
 // The page runs from the workspace build through its import map, and from packed tarballs of
@@ -9,6 +11,32 @@ const sources = [
   { name: 'workspace build', url: '/examples/components-only/' },
   { name: 'packed tarballs', url: `${packed}/` },
 ];
+const axeSource = readFileSync(
+  createRequire(import.meta.url).resolve('axe-core/axe.min.js'),
+  'utf8',
+);
+
+/** axe-core WCAG 2.0, 2.1, and 2.2 A and AA rules over the whole document. */
+async function axeViolations(page: Page): Promise<string[]> {
+  // Evaluated through the automation channel, not a <script>, so the CSP stays as served.
+  await page.evaluate(axeSource);
+  return page.evaluate(async () => {
+    const axe = (
+      window as unknown as {
+        axe: {
+          run(
+            context: Document,
+            options: object,
+          ): Promise<{ violations: { id: string; nodes: { target: unknown }[] }[] }>;
+        };
+      }
+    ).axe;
+    const result = await axe.run(document, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] },
+    });
+    return result.violations.map((v) => `${v.id}: ${JSON.stringify(v.nodes.map((n) => n.target))}`);
+  });
+}
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -104,6 +132,26 @@ for (const source of sources) {
         'Receipts and invoices go to the email address above.',
       );
 
+      expect(await violations(page)).toEqual([]);
+      expect(errors).toEqual([]);
+    });
+
+    test('has no axe violations in light and dark mode or after a blocked submission', async ({
+      page,
+    }) => {
+      // The theme's durations are 0 ms under reduced motion, so colours are final when read.
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      const errors = await open(page, source.url);
+      expect(await axeViolations(page)).toEqual([]);
+      await page.evaluate(() => (document.documentElement.dataset['oddMode'] = 'dark'));
+      expect(await axeViolations(page)).toEqual([]);
+      await page.getByRole('textbox', { name: 'Email' }).fill('');
+      await page.getByRole('button', { name: 'Save' }).click();
+      await expect(page.getByRole('textbox', { name: 'Email' })).toHaveAttribute(
+        'aria-invalid',
+        'true',
+      );
+      expect(await axeViolations(page)).toEqual([]);
       expect(await violations(page)).toEqual([]);
       expect(errors).toEqual([]);
     });

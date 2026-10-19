@@ -1,0 +1,165 @@
+/// <reference types="vite/client" />
+import axeSource from 'axe-core/axe.min.js?raw';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { flush } from '@oddkin/core/reactive';
+
+// axe-core (WCAG 2.0, 2.1, 2.2 A and AA rules) over every state of odd-button and odd-input,
+// and odd-card's naming cases, with the shipped theme in light and dark mode, so colour
+// contrast is measured on real values. axe reads open shadow roots but not ElementInternals
+// semantics, so card regions are checked in e2e/components-only.spec.ts instead.
+interface AxeResult {
+  id: string;
+  impact?: string | null;
+  nodes: { target: unknown; failureSummary?: string }[];
+}
+interface Axe {
+  run(
+    context: Element,
+    options: object,
+  ): Promise<{ violations: AxeResult[]; incomplete: AxeResult[]; passes: AxeResult[] }>;
+}
+const axe = () => (window as unknown as { axe: Axe }).axe;
+const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+
+const icon =
+  '<svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M3 8h10" stroke="currentColor" /></svg>';
+const states = `
+  <h2>Buttons</h2>
+  ${['primary', 'secondary', 'ghost']
+    .flatMap((appearance) =>
+      ['sm', 'md', 'lg'].map(
+        (size) => `<odd-button appearance="${appearance}" size="${size}">Save changes</odd-button>`,
+      ),
+    )
+    .join('')}
+  ${['primary', 'secondary', 'ghost']
+    .map((a) => `<odd-button appearance="${a}" disabled>Disabled</odd-button>`)
+    .join('')}
+  <odd-button appearance="primary" loading>Saving</odd-button>
+  <odd-button label="Close">${icon}</odd-button>
+  <odd-button><span slot="start">${icon}</span>With icons<span slot="end">${icon}</span></odd-button>
+  <odd-button full-width>Full width</odd-button>
+  <form id="form">
+    <h2>Fields</h2>
+    <odd-input label="Name" name="name"></odd-input>
+    <odd-input label="Email" description="We never share it." type="email" name="email" required></odd-input>
+    <odd-input label="Password" type="password" name="password" autocomplete="current-password"></odd-input>
+    <odd-input label="Search" type="search" placeholder="Search the catalog" name="q"></odd-input>
+    <odd-input label="Phone" type="tel" name="tel" value="+1 555 0100"></odd-input>
+    <odd-input label="Website" type="url" name="url" value="https://example.com"></odd-input>
+    <odd-input label="Company" description="As registered." error="This name is taken." name="company"></odd-input>
+    <odd-input label="Reference" value="A-1024" readonly name="ref"></odd-input>
+    <odd-input label="Region" value="EU" disabled name="region"></odd-input>
+    <odd-input id="blocked" label="Postcode" name="postcode" required></odd-input>
+    <fieldset disabled><legend>Disabled group</legend><odd-input label="Notes" name="notes"></odd-input></fieldset>
+    <odd-button type="submit" appearance="primary">Submit</odd-button>
+    <odd-button type="reset">Reset</odd-button>
+  </form>
+  <h2>Cards</h2>
+  <odd-card label="Billing"><p>Named by its label.</p></odd-card>
+  <odd-card><h3 slot="header">Plan</h3><p>Named by its heading.</p><odd-button slot="footer">Upgrade</odd-button></odd-card>
+  <odd-card variant="filled"><p>No name, no landmark.</p></odd-card>
+  <odd-card variant="elevated" padding="sm"><p>Elevated.</p></odd-card>
+`;
+
+let tokens: HTMLLinkElement;
+let script: HTMLScriptElement;
+beforeAll(async () => {
+  await import('../src/button/button.define.js');
+  await import('../src/card/card.define.js');
+  await import('../src/input/input.define.js');
+  tokens = document.createElement('link');
+  tokens.rel = 'stylesheet';
+  tokens.href = new URL('../../tokens/dist/css/default.css', import.meta.url).href;
+  const loaded = new Promise((resolve, reject) => {
+    tokens.onload = resolve;
+    tokens.onerror = reject;
+  });
+  document.head.append(tokens);
+  await loaded;
+  script = document.createElement('script');
+  script.textContent = axeSource;
+  document.head.append(script);
+  expect(typeof axe().run).toBe('function');
+});
+afterAll(() => {
+  tokens.remove();
+  script.remove();
+});
+
+async function audit(mode: 'light' | 'dark') {
+  const container = document.createElement('div');
+  container.dataset['oddMode'] = mode;
+  // Transitions are not under test: colours must be final when axe reads them.
+  container.style.setProperty('--odd-motion-duration-fast', '0s');
+  // The page background and text behind the components, as base.css would set them.
+  container.style.backgroundColor = 'var(--odd-color-canvas)';
+  container.style.color = 'var(--odd-color-text-primary)';
+  container.innerHTML = states;
+  document.body.append(container);
+  try {
+    for (const el of container.querySelectorAll<HTMLElement & { updateComplete: Promise<void> }>(
+      'odd-button, odd-input, odd-card',
+    ))
+      await el.updateComplete;
+    flush();
+    // A blocked submission: the required, empty field shows aria-invalid.
+    const blocked = container.querySelector<HTMLElement & { updateComplete: Promise<void> }>(
+      '#blocked',
+    )!;
+    blocked.addEventListener('invalid', (event) => event.preventDefault());
+    container.querySelector<HTMLFormElement>('#form')!.requestSubmit();
+    await blocked.updateComplete;
+    flush();
+    expect(blocked.shadowRoot!.querySelector('input')!.getAttribute('aria-invalid')).toBe('true');
+    const result = await axe().run(container, { runOnly: { type: 'tag', values: TAGS } });
+    const summary = (results: AxeResult[]) =>
+      results.map((r) => `${r.id}: ${r.nodes.map((n) => JSON.stringify(n.target)).join(' ')}`);
+    console.log(
+      `${mode}: ${result.passes.length} rules passed; incomplete: ${JSON.stringify(summary(result.incomplete))}`,
+    );
+    return { violations: summary(result.violations), passes: result.passes.map((r) => r.id) };
+  } finally {
+    container.remove();
+  }
+}
+
+describe('axe-core, WCAG 2.2 A and AA', () => {
+  it.each(['light', 'dark'] as const)('%s mode: no violations in any state', async (mode) => {
+    const { violations, passes } = await audit(mode);
+    expect(violations).toEqual([]);
+    // The rules that matter here ran and found nodes to pass.
+    expect(passes).toEqual(
+      expect.arrayContaining(['button-name', 'label', 'color-contrast', 'aria-allowed-attr']),
+    );
+  });
+
+  it('finds misuse inside shadow roots, so a clean result is not vacuous', async () => {
+    const container = document.createElement('div');
+    container.style.setProperty('--odd-motion-duration-fast', '0s');
+    container.innerHTML = `
+      <odd-input></odd-input>
+      <odd-button>${icon}</odd-button>
+      <odd-button style="--odd-button-color: #f2f2f2">Faint</odd-button>`;
+    document.body.append(container);
+    try {
+      for (const el of container.querySelectorAll<HTMLElement & { updateComplete: Promise<void> }>(
+        'odd-button, odd-input',
+      ))
+        await el.updateComplete;
+      flush();
+      const { violations } = await axe().run(container, {
+        runOnly: { type: 'tag', values: TAGS },
+      });
+      // axe names a node in a shadow root by its host selector, then its inner selector.
+      const found = Object.fromEntries(violations.map((v) => [v.id, v.nodes.map((n) => n.target)]));
+      expect(found).toEqual({
+        label: [[['odd-input', '#control']]],
+        'button-name': [[['odd-button:nth-child(2)', 'button']]],
+        'color-contrast': [[['odd-button:nth-child(3)', '.label']]],
+      });
+    } finally {
+      container.remove();
+    }
+  });
+});
