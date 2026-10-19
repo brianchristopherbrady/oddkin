@@ -26,7 +26,8 @@ export interface Entry<T> {
 }
 
 export interface CollectionDiagnostic {
-  readonly code: 'collection.key.duplicate' | 'collection.key.missing';
+  readonly code:
+    'collection.key.duplicate' | 'collection.key.missing' | 'collection.depth.exceeded';
   /** Always `error`: the item is not rendered. Shared with every Oddkin diagnostic shape. */
   readonly severity: 'error';
   readonly path: string;
@@ -43,6 +44,12 @@ export interface CollectionOptions<T> {
   readonly owner?: Scope;
   /** Child path segment used in diagnostics (default `items`). */
   readonly childrenPath?: string;
+  /**
+   * Deepest nesting rendered (top-level items are depth 0; default 32). Children below it are
+   * reported once as `collection.depth.exceeded` and not rendered, so deep or hostile data cannot
+   * exhaust the stack.
+   */
+  readonly maxDepth?: number;
 }
 
 export interface Collection<T> {
@@ -74,6 +81,7 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
   const source = signal<readonly T[]>([]);
   let previous = new Map<Key, Entry<T>>();
   const childSegment = options.childrenPath ?? 'items';
+  const maxDepth = options.maxDepth ?? 32;
 
   const model = computed(() => {
     const items = source.value;
@@ -136,7 +144,17 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
         const siblings = children.get(parentKey) ?? [];
         siblings.push(entry);
         children.set(parentKey, siblings);
-        if (nested) visit(nested, depth + 1, key, `${at}/${childSegment}`);
+        if (!nested?.length) return;
+        if (depth >= maxDepth) {
+          diagnostics.push({
+            code: 'collection.depth.exceeded',
+            severity: 'error',
+            path: `${at}/${childSegment}`,
+            message: `Items nested deeper than ${maxDepth} levels at ${at}/${childSegment} are not rendered.`,
+          });
+          return;
+        }
+        visit(nested, depth + 1, key, `${at}/${childSegment}`);
       });
     };
     visit(items, 0, undefined, '');

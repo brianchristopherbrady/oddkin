@@ -190,3 +190,34 @@ describe('state models', () => {
     expect(wrapping.active.value).toBe('b');
   });
 });
+
+describe('nesting limit', () => {
+  const chain = (levels: number): Item => {
+    let node: Item = { id: 'leaf', label: 'Leaf' };
+    for (let i = 0; i < levels; i++) node = { id: `n${i}`, label: 'N', items: [node] };
+    return node;
+  };
+
+  it('renders nesting up to maxDepth and reports the first deeper level once', () => {
+    const c = make();
+    c.set([chain(32)]);
+    expect(c.flat.value).toHaveLength(33);
+    expect(c.diagnostics.value).toEqual([]);
+    c.set([chain(33)]);
+    expect(c.flat.value).toHaveLength(33);
+    expect(c.diagnostics.value.map((d) => [d.code, d.path])).toEqual([
+      ['collection.depth.exceeded', `/0${'/items/0'.repeat(32)}/items`],
+    ]);
+    expect(reported.map((r) => r.code)).toEqual(['collection.depth.exceeded']);
+  });
+
+  it('accepts a caller limit and survives hostile depth', () => {
+    const shallow = collection<Item>({ key: (i) => i.id, children: (i) => i.items, maxDepth: 1 });
+    shallow.set([chain(5)]);
+    expect(shallow.flat.value.map((e) => e.depth)).toEqual([0, 1]);
+    const c = make();
+    c.set([chain(100_000)]);
+    expect(c.flat.value).toHaveLength(33);
+    expect(c.diagnostics.value.map((d) => d.code)).toEqual(['collection.depth.exceeded']);
+  });
+});

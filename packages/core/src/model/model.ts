@@ -65,6 +65,9 @@ function jsonProblem(value: unknown, depth: number): string | undefined {
 
 class Collector {
   readonly items: ModelDiagnostic[] = [];
+  /** Nesting of recursive values entered so far, and the limit (`maxDepth`). */
+  depth = 0;
+  constructor(readonly maxDepth: number) {}
   error(code: string, path: string, message: string, suggestion?: string) {
     this.items.push(
       suggestion
@@ -199,8 +202,23 @@ function check(node: Node, value: unknown, path: string, out: Collector): void {
       }
       return checkObject(variant, value, path, out, node.discriminator);
     }
-    case 'self':
-      return check(node.target().inner, value, path, out);
+    case 'self': {
+      // Each recursion is one nesting level: deep or cyclic data is reported, never followed
+      // until the stack runs out.
+      if (out.depth >= out.maxDepth)
+        return out.error(
+          'model.depth.exceeded',
+          at,
+          `Nested more than ${out.maxDepth} levels deep.`,
+          'Flatten the data, or raise maxDepth in the model definition if this depth is intended.',
+        );
+      out.depth++;
+      try {
+        return check(node.target().inner, value, path, out);
+      } finally {
+        out.depth--;
+      }
+    }
     case 'recursive':
       return check(node.inner, value, path, out);
   }
@@ -283,6 +301,11 @@ export interface ModelDefinition<S extends Node> {
   /** `migrations[n]` converts version n − 1 data to version n. */
   readonly migrations?: Readonly<Record<number, Migration>>;
   readonly description?: string;
+  /**
+   * Deepest nesting of recursive values `validate()` follows (default 32). Deeper data, including
+   * cycles, is reported as `model.depth.exceeded` rather than exhausting the stack.
+   */
+  readonly maxDepth?: number;
 }
 
 /** `T` is the inferred value type, computed once where the model is defined. */
@@ -318,9 +341,10 @@ export function defineModel(name: string, definition: ModelDefinition<Node>): an
   if (!Number.isInteger(definition.version) || definition.version < 1)
     throw new TypeError(`Model "${name}" version must be a positive integer.`);
   const rules = Object.freeze([...(definition.rules ?? [])]);
+  const maxDepth = definition.maxDepth ?? 32;
 
   const validate = (data: unknown): ValidationResult<unknown> => {
-    const out = new Collector();
+    const out = new Collector(maxDepth);
     check(definition.schema, data, '', out);
     if (!out.items.some((d) => d.severity === 'error')) {
       for (const rule of rules)

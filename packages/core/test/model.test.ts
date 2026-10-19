@@ -219,3 +219,42 @@ describe('m.json', () => {
     expect(schema.properties['data']).toEqual({ description: 'Opaque payload.' });
   });
 });
+
+describe('nesting limit', () => {
+  const Tree = defineModel('acme.tree', {
+    version: 1,
+    schema: m.recursive((self) => m.object({ id: m.id(), items: m.optional(m.array(self)) })),
+  });
+  const chain = (levels: number) => {
+    let node: { id: string; items?: unknown[] } = { id: 'leaf' };
+    for (let i = 0; i < levels; i++) node = { id: `n${i}`, items: [node] };
+    return node;
+  };
+  const pointer = (levels: number) => '/items/0'.repeat(levels);
+
+  it('validates nesting up to maxDepth and reports deeper data at its path', () => {
+    expect(Tree.validate(chain(32)).ok).toBe(true);
+    const deep = Tree.validate(chain(33));
+    expect(deep.diagnostics.map((d) => [d.code, d.path])).toEqual([
+      ['model.depth.exceeded', pointer(33)],
+    ]);
+    const Shallow = defineModel('acme.shallow', {
+      version: 1,
+      schema: Tree.schema,
+      maxDepth: 2,
+    });
+    expect(Shallow.validate(chain(2)).ok).toBe(true);
+    expect(Shallow.validate(chain(3)).diagnostics.map((d) => d.code)).toEqual([
+      'model.depth.exceeded',
+    ]);
+  });
+
+  it('returns diagnostics for hostile depth and cycles instead of exhausting the stack', () => {
+    const result = Tree.validate(chain(100_000));
+    expect(result.ok).toBe(false);
+    expect(result.diagnostics.map((d) => d.code)).toEqual(['model.depth.exceeded']);
+    const cyclic: { id: string; items: unknown[] } = { id: 'loop', items: [] };
+    cyclic.items.push(cyclic);
+    expect(Tree.validate(cyclic).diagnostics.map((d) => d.code)).toEqual(['model.depth.exceeded']);
+  });
+});
