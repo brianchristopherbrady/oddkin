@@ -477,6 +477,61 @@
             }
           }
         },
+        "propertyOnly": {
+          "type": "array",
+          "description": "Public writable properties without an attribute (rich objects, arrays, functions, accessors): assign them as properties. Attribute strings are not parsed and values are not reflected.",
+          "items": {
+            "type": "object",
+            "required": [
+              "property",
+              "provenance"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "property": {
+                "type": "string",
+                "pattern": "^property:"
+              },
+              "provenance": {
+                "$ref": "#/$defs/provenance"
+              }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "description": "Agent-facing event facts. intent 'user': reports user interaction and is never emitted by property writes (checked by the contract suite as event:<tag>#<name>/not-programmatic); 'notification': reports a state change from any source; known: false when the definition does not say.",
+          "items": {
+            "type": "object",
+            "required": [
+              "event",
+              "intent"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "event": {
+                "type": "string",
+                "pattern": "^event:"
+              },
+              "intent": {
+                "type": "object",
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/fact"
+                  }
+                ],
+                "properties": {
+                  "value": {
+                    "enum": [
+                      "user",
+                      "notification"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
         "previewRoles": {
           "type": "array",
           "items": {

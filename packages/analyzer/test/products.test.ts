@@ -88,8 +88,35 @@ describe('a product package deriving from @oddkin/components', () => {
     expect(Object.keys((product.metadata as { components: object }).components).sort()).toEqual([
       'component:studio-button',
       'component:studio-icon-button',
+      'component:studio-nav',
       'component:studio-quiet-button',
     ]);
+  });
+
+  it('keeps the agent-facing facts of a published definition it derives from', () => {
+    // Same property-only fields and event intents as odd-side-nav, under the derived id.
+    type Facts = {
+      propertyOnly?: { property: string }[];
+      events?: { event: string; intent: Record<string, unknown> }[];
+    };
+    const derived = (product.metadata as { components: Record<string, Facts> }).components[
+      'component:studio-nav'
+    ]!;
+    const published = (foundation as unknown as { components: Record<string, Facts> }).components[
+      'component:odd-side-nav'
+    ]!;
+    const rename = (id: string) => id.replace(':odd-side-nav#', ':studio-nav#');
+    expect(derived.propertyOnly).toEqual(
+      published.propertyOnly!.map((p) => ({ ...p, property: rename(p.property) })),
+    );
+    expect(derived.events).toEqual(
+      published.events!.map((e) => ({
+        event: rename(e.event),
+        // The publisher's source location is not this package's.
+        intent: { value: e.intent['value'], provenance: 'authored' },
+      })),
+    );
+    expect(derived.events?.map((e) => e.intent['value'])).toEqual(['user', 'user']);
   });
 
   it('gives derived definitions their own ids, extends links, and layered style sources', () => {

@@ -774,3 +774,17 @@ Environment as the previous entry. Contract: [agent-tooling.md §7](./architectu
 | Mutation probe | `node .tmp/mutate-usage.mjs` (not committed) and a manual edit | 6 of 6 killed: ignoring `"false"` booleans, accepting any enum value, treating property-only names as unknown attributes, allowing incorrect presets, listing non-literal mistakes in metadata, counting mistakes as page examples. Mounting mistakes in the usable-example loop failed in all three engines (`disabled="false"` reflects as `disabled=""`). |
 
 **Not covered (code-level mistakes):** registration, event names and details, direct vs tracked bindings, reconnect-owned work, theme scopes, and framework differences are not expressible as props, attributes, and slots. They need code examples and a source-level checker (M11 authored references).
+
+## 2026-10-19 — Agent-facing metadata: property-only values and event intent (M4)
+
+Environment as the previous entry. Contract: [metadata-and-analyzer.md §3.1](./architecture/metadata-and-analyzer.md#31-agent-facing-extensions-planned-m4-reviewed-at-m8), [core-contracts.md §2](./architecture/core-contracts.md#2-public-properties-without-decorators).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Static: published facts | `npx vitest run --project node packages/components/test/metadata.test.ts` | Pass. `odd-side-nav`: `propertyOnly` = `expanded`, `items`, `kinds`, `renderLabel`; `odd-action` and `odd-toggle` have `user` intent (authored, with source). `odd-input`: `propertyOnly` = `value` (the `value` attribute sets `defaultValue`); `input` and `change` intents are `{ known: false }`, not inferred from their names. Button and card have neither. Metadata validates against `oddkin-metadata.v1`. |
+| Static: analyzer | `npx vitest run --project node packages/analyzer/test` | Pass. A computed `intent` gives `analyzer.dynamic.value` (dynamic fixture, `src/events.ts` line 10) and an unknown intent; the derived `studio-nav` (product fixture, `compose({ ...sideNavDefinition })` with its own class) has the same `propertyOnly` and intents as `odd-side-nav` under its own ids, without the publisher's source location; the core-counter golden file gains `events` (unknown) and `propertyOnly` (`history`). |
+| Browser: contract | `npx vitest run --project browser packages/components/test/contract.browser.test.ts packages/ai/test/contract.browser.test.ts` | Pass in Chromium, Firefox, and WebKit. New case `event:<tag>#<name>/not-programmatic` for each `user` event, on `odd-side-nav` and `derived-side-nav`: no event while setting every scalar property and every property of the six correct authored examples, connected. Verified facts: 189 (components, +2) and 370 (AI), current. |
+| Size | `node scripts/check-size.mjs` | `intent` is type-only in core; side-nav 15,725 B gzip (budget 16,384). |
+| Mutation probe | `node .tmp/mutate-facts.mjs` (not committed) and a manual edit | 5 of 5 killed: accessors left out of `propertyOnly`, declared intent dropped, published intents ignored by derived definitions, computed intent accepted silently; and a side-nav that emits `odd-action` when mounted fails `not-programmatic` in every engine. |
+
+**Not covered:** contract references (`contract:core/*`), deprecations and migrations, and customization paths are the remaining §3.1 facts. `odd-input` event intent is left to the forms lane (its source has uncommitted work).

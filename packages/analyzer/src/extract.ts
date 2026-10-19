@@ -43,6 +43,8 @@ export interface EventInfo {
   readonly composed: boolean;
   readonly cancelable: boolean;
   readonly syncs?: string;
+  /** Declared `intent`; absent when the definition does not state it (unknown). */
+  readonly intent?: { readonly value: 'user' | 'notification'; readonly source?: SourceLocation };
   readonly description?: string;
   readonly inheritedFrom?: ClassRef;
 }
@@ -462,6 +464,18 @@ export function extract(program: ts.Program, root: string): Extraction {
       ? checker.typeToString(checker.getTypeFromTypeNode(typeArgument))
       : 'void';
     const syncs = stringOf(options.get('syncs'));
+    const intentNode = options.get('intent');
+    const intentValue = stringOf(intentNode);
+    const intent =
+      intentNode && (intentValue === 'user' || intentValue === 'notification')
+        ? { value: intentValue as 'user' | 'notification', source: where(intentNode) }
+        : undefined;
+    if (intentNode && !intent)
+      report(
+        'analyzer.dynamic.value',
+        intentNode,
+        `${owner} event "${name}": intent must be the literal 'user' or 'notification'; it is recorded as unknown.`,
+      );
     const description =
       stringOf(options.get('description')) ?? (variable ? docOf(variable) : undefined);
     return {
@@ -471,6 +485,7 @@ export function extract(program: ts.Program, root: string): Extraction {
       composed: booleanOf(options.get('composed')) ?? false,
       cancelable: booleanOf(options.get('cancelable')) ?? false,
       ...(syncs ? { syncs } : {}),
+      ...(intent ? { intent } : {}),
       ...(description ? { description } : {}),
     };
   }
@@ -921,6 +936,11 @@ export function extract(program: ts.Program, root: string): Extraction {
       const named = (list: readonly { name: string; description?: string }[] | undefined) =>
         (list ?? []).map((item) => described({ name: item.name }, item.description));
       const syncPairs = (metadata?.['syncPairs'] ?? []) as { property: string; event: string }[];
+      const publishedIntents = (metadata?.['events'] ?? []) as {
+        event: string;
+        intent?: { value?: string };
+      }[];
+      const tag = cem.tagName;
       const typeText = (member: Record<string, unknown>) =>
         (member['type'] as { text?: string } | undefined)?.text;
 
@@ -980,6 +1000,10 @@ export function extract(program: ts.Program, root: string): Extraction {
         const type = typeText(event) ?? 'CustomEvent';
         const detail = /^CustomEvent<(.*)>$/s.exec(type)?.[1];
         const syncs = syncPairs.find((p) => p.event === event['name'])?.property;
+        // The publisher's declared intent; its source location belongs to that package.
+        const intent = publishedIntents.find(
+          (e) => e.event === `event:${tag}#${event['name'] as string}`,
+        )?.intent?.value;
         return described(
           {
             name: event['name'] as string,
@@ -988,6 +1012,9 @@ export function extract(program: ts.Program, root: string): Extraction {
             composed: false,
             cancelable: false,
             ...(syncs ? { syncs } : {}),
+            ...(intent === 'user' || intent === 'notification'
+              ? { intent: { value: intent } }
+              : {}),
             inheritedFrom: inherited(event['inheritedFrom']),
           },
           event['description'],

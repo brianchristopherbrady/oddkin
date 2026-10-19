@@ -97,13 +97,13 @@ interface Fact<T> {
 
 These extend the same model; there is no separate agent catalog ([agent-tooling.md](./agent-tooling.md) §3.1).
 
-- **Rich-object assignment:** for `prop.object`/`prop.array` (and any property without an attribute), an explicit fact that values must be assigned as properties, are not parsed from attributes, and are not reflected.
-- **Event intent:** whether an event reports user intent or a state notification, and that programmatic property writes do not emit it, taken from event definitions or authored text; unknown otherwise.
-- **Dependencies:** the elements a `compose()` definition registers.
+- **Rich-object assignment:** for `prop.object`/`prop.array` (and any property without an attribute), an explicit fact that values must be assigned as properties, are not parsed from attributes, and are not reflected. *(Implemented, M4: `components[…].propertyOnly` lists every public writable property without an attribute, accessors included (`property:odd-input#value`; its `value` attribute sets `defaultValue`), with `extracted` provenance.)*
+- **Event intent:** whether an event reports user intent or a state notification, and that programmatic property writes do not emit it, taken from event definitions or authored text; unknown otherwise. *(Implemented, M4: `components[…].events[]` holds `{ event, intent }`; `intent` is an `authored` fact from the definition's literal `intent` option ([core-contracts.md §2](./core-contracts.md#2-public-properties-without-decorators)), or `{ known: false }`. A computed `intent` is reported (`analyzer.dynamic.value`) and recorded as unknown. A derived definition keeps the publisher's intents, without the publisher's source location. The "not emitted by property writes" claim is verified per engine by the contract suite, not asserted by the analyzer.)*
+- **Dependencies:** the elements a `compose()` definition registers. *(Implemented as `definition.dependencies`, §3.2.)*
 - **Contract references:** stable ids such as `contract:core/binding-rule`, `contract:core/scope`, `contract:core/lifecycle`, `contract:core/update-complete`, pointing at the published contract text a component relies on, so references can be explained without restating them.
 - **Deprecations and migrations:** `@deprecated` with replacement ids, `@since`, and references to migration records.
 - **Customization paths:** documented component variables, parts, and slots grouped as the supported customization ladder.
-- **Verified conditions:** a `verified` fact's source adds `conditions` (browser engines and versions, package version, configuration), so evidence is never generalized beyond what ran.
+- **Verified conditions:** a `verified` fact's source adds `conditions` (browser engines and versions, package version, configuration), so evidence is never generalized beyond what ran. *(Implemented: `components[…].verification`, §3.)*
 
 Absent information remains unknown; nothing here is inferred from names or types.
 

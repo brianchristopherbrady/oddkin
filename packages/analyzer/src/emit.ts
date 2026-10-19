@@ -247,6 +247,32 @@ export function buildMetadata(
           .filter((e) => e.syncs)
           .map((e) => ({ property: e.syncs as string, event: e.name })),
       ),
+      // Rich values (arrays, objects, functions) and accessors have no attribute.
+      ...optional(
+        'propertyOnly',
+        [
+          ...component.properties.filter((p) => p.attribute === null).map((p) => p.name),
+          ...component.members.filter((m) => m.kind === 'field' && !m.readonly).map((m) => m.name),
+        ]
+          .sort()
+          .map((name) => ({
+            property: `property:${registration.tag}#${name}`,
+            provenance: 'extracted',
+          })),
+      ),
+      ...optional(
+        'events',
+        [...component.events].sort(byName).map((e) => ({
+          event: `event:${registration.tag}#${e.name}`,
+          intent: e.intent
+            ? {
+                value: e.intent.value,
+                provenance: 'authored',
+                ...(e.intent.source ? { source: e.intent.source } : {}),
+              }
+            : { known: false, provenance: 'extracted' },
+        })),
+      ),
       ...optional(
         'tokenReads',
         component.tokenReads.map((t) => ({

@@ -391,6 +391,21 @@ describe('compose() definitions in a folder-structured library', () => {
     const registered = Object.keys(
       (dynamic.metadata as { components: Record<string, unknown> }).components,
     );
-    expect(registered).toEqual(['component:dynamic-element']);
+    expect(registered).toEqual(['component:dyn-events', 'component:dynamic-element']);
+  });
+
+  it('records an event intent it cannot read literally as unknown, with a diagnostic', () => {
+    const dynamic = analyze({ project: path('tests/fixtures/analyzer-dynamic/tsconfig.json') });
+    expect(
+      dynamic.diagnostics
+        .filter((d) => d.source?.file === 'src/events.ts')
+        .map((d) => [d.code, d.source?.line]),
+    ).toEqual([['analyzer.dynamic.value', 10]]);
+    const metadata = dynamic.metadata as {
+      components: Record<string, { events?: unknown }>;
+    };
+    expect(metadata.components['component:dyn-events']?.events).toEqual([
+      { event: 'event:dyn-events#dyn-computed', intent: { known: false, provenance: 'extracted' } },
+    ]);
   });
 });

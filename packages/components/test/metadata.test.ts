@@ -77,4 +77,36 @@ describe('@oddkin/components published metadata', () => {
       '_formDisabled',
     );
   });
+
+  it('states which properties take only property values and what each event reports', () => {
+    const facts = (tag: string) => {
+      const entry = metadata['components'][`component:${tag}`];
+      return {
+        propertyOnly: (entry.propertyOnly ?? []).map((p: { property: string }) => p.property),
+        intents: Object.fromEntries(
+          (entry.events ?? []).map((e: { event: string; intent: Record<string, unknown> }) => [
+            e.event,
+            e.intent['known'] === false ? 'unknown' : e.intent['value'],
+          ]),
+        ),
+      };
+    };
+    expect(facts('odd-side-nav')).toEqual({
+      propertyOnly: [
+        'property:odd-side-nav#expanded',
+        'property:odd-side-nav#items',
+        'property:odd-side-nav#kinds',
+        'property:odd-side-nav#renderLabel',
+      ],
+      intents: { 'event:odd-side-nav#odd-action': 'user', 'event:odd-side-nav#odd-toggle': 'user' },
+    });
+    // `value` is an accessor; the `value` attribute sets `defaultValue`. Event intent is not
+    // declared yet, so it stays unknown rather than inferred from the event names.
+    expect(facts('odd-input')).toEqual({
+      propertyOnly: ['property:odd-input#value'],
+      intents: { 'event:odd-input#change': 'unknown', 'event:odd-input#input': 'unknown' },
+    });
+    expect(facts('odd-button')).toEqual({ propertyOnly: [], intents: {} });
+    expect(facts('odd-card')).toEqual({ propertyOnly: [], intents: {} });
+  });
 });

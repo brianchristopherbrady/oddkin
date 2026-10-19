@@ -37,6 +37,7 @@ export const actionEvent = event<NavigationActionDetail>('odd-action', {
   bubbles: true,
   composed: true,
   cancelable: false,
+  intent: 'user',
   description: 'An action entry was activated; `detail.action` names it.',
 });
 /** The user asked to expand or collapse a group. Cancel it to keep the current state. */
@@ -44,6 +45,7 @@ export const toggleEvent = event<NavigationToggleDetail>('odd-toggle', {
   bubbles: true,
   composed: true,
   cancelable: true,
+  intent: 'user',
   description: 'A group is about to expand or collapse; cancelable in uncontrolled mode.',
 });
 

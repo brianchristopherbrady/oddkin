@@ -11,6 +11,11 @@ export interface EventDefinitionInit {
   readonly cancelable: boolean;
   /** Property this event reports user changes to (e.g. `value` for `input`), for tooling. */
   readonly syncs?: string;
+  /**
+   * For tooling: `user` events report user interaction and are never emitted by property writes;
+   * `notification` events report a state change from any source. Omitted means unknown.
+   */
+  readonly intent?: 'user' | 'notification';
   readonly description?: string;
 }
 

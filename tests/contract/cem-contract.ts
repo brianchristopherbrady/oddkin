@@ -69,6 +69,17 @@ export const unionOf = (type: string | undefined) =>
     : undefined;
 export const fields = (d: Declaration) =>
   (d.members ?? []).filter((m) => m.kind === 'field' && !m.static && !m.readonly);
+/** Fields with a scalar published type, which `sample()` can produce a valid value for. */
+export const scalars = (d: Declaration) =>
+  fields(d).filter((f) => {
+    const type = f.type?.text;
+    return (
+      type === 'boolean' ||
+      type === 'number' ||
+      /^string( \| undefined)?$/.test(type ?? '') ||
+      !!unionOf(type)
+    );
+  });
 /** A value other than the default, valid for the field's published type. */
 export function sample(field: Field): unknown {
   const type = field.type?.text;
@@ -144,6 +155,15 @@ export async function describeCemContract(
   const declarations = manifest.modules
     .flatMap((module) => module.declarations ?? [])
     .filter((d): d is ElementDeclaration => !!d.tagName);
+  // Events the package's metadata declares as user intent: property writes must never emit them.
+  const metadataResponse = await fetch(new URL('oddkin.metadata.json', options.packageUrl));
+  const metadata = (metadataResponse.ok ? await metadataResponse.json() : {}) as {
+    components?: Record<string, { events?: { event: string; intent: { value?: string } }[] }>;
+  };
+  const userEvents = (d: ElementDeclaration) =>
+    (metadata.components?.[`component:${d.tagName}`]?.events ?? [])
+      .filter((e) => e.intent.value === 'user')
+      .map((e) => e.event.slice(e.event.indexOf('#') + 1));
   const configuration = {
     browser: server.browser,
     browserVersion: browserVersion(),
@@ -164,6 +184,7 @@ export async function describeCemContract(
         : []),
     ]),
     ...(d.events ?? []).map((e) => `event:${d.tagName}#${e.name}/defined`),
+    ...userEvents(d).map((name) => `event:${d.tagName}#${name}/not-programmatic`),
     `component:${d.tagName}/events`,
     ...(d.slots ?? []).map((s) => `slot:${d.tagName}#${s.name || 'default'}/rendered`),
     ...(d.cssParts ?? []).map((p) => `part:${d.tagName}#${p.name}/rendered`),
@@ -329,7 +350,47 @@ export async function describeCemContract(
     });
 
     const authored = options.examples?.[declaration.tagName] as
-      { examples: Record<string, unknown> } | undefined;
+      | { examples: Record<string, { props?: Record<string, unknown>; incorrect?: unknown }> }
+      | undefined;
+
+    it.skipIf(!userEvents(declaration).length)(
+      'user-intent events are not emitted by property writes',
+      async () => {
+        const names = userEvents(declaration);
+        const fired: string[] = [];
+        const listener = (event: Event) => fired.push(event.type);
+        for (const name of names) document.addEventListener(name, listener, true);
+        try {
+          const el = await create(tag);
+          for (const field of scalars(declaration)) {
+            el[field.name] = sample(field);
+            await settle(el);
+          }
+          // Rich values come from the authored examples: mounted, then written again connected.
+          for (const [name, example] of Object.entries(authored?.examples ?? {})) {
+            if (example.incorrect) continue;
+            const mounted = await mountExample({ ...authored!, component: tag } as never, name);
+            const host = mounted.element as unknown as Host;
+            await settle(host);
+            for (const [key, value] of Object.entries(example.props ?? {})) {
+              host[key] = Array.isArray(value) ? [...value] : value;
+              await settle(host);
+            }
+            mounted.dispose();
+          }
+        } finally {
+          for (const name of names) document.removeEventListener(name, listener, true);
+        }
+        for (const name of names)
+          await verify(tag, id('event', name, 'not-programmatic'), () =>
+            expect(
+              fired.filter((type) => type === name),
+              `${tag} ${name}`,
+            ).toEqual([]),
+          );
+      },
+    );
+
     // Without authored examples there is nothing to render slots and parts from: their cases are
     // recorded as not executed, never as passed.
     it.skipIf(!authored)(

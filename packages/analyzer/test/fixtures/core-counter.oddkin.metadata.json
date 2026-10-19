@@ -41,6 +41,15 @@
           "property": "count",
           "event": "count-change"
         }
+      ],
+      "events": [
+        {
+          "event": "event:demo-counter#count-change",
+          "intent": {
+            "known": false,
+            "provenance": "extracted"
+          }
+        }
       ]
     },
     "component:demo-greeting": {
@@ -65,7 +74,13 @@
             "name": "demoGreetingStyles"
           }
         ]
-      }
+      },
+      "propertyOnly": [
+        {
+          "property": "property:demo-greeting#history",
+          "provenance": "extracted"
+        }
+      ]
     }
   },
   "templates": {
