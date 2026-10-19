@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; script-src 'self' 'sha256-YfRSNstdfj1m02hEGdol/DTBhP0+TkiJtrHVxD8RkM8='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+      content="default-src 'none'; script-src 'self' 'sha256-oCZ1FtQFwI0HDgNF0eBgZ+EzHvb6uIRVjoa2cwtq6bU='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
     />
     <title>Components only — @oddkin/components without state or app packages</title>
     <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
@@ -13,14 +13,17 @@
     <script type="importmap">
       {
         "imports": {
+          "@oddkin/core/controllers/form": "../../packages/core/dist/controllers/form.js",
           "@oddkin/core/element": "../../packages/core/dist/element/index.js",
+          "@oddkin/core/helpers/live": "../../packages/core/dist/helpers/live.js",
           "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
           "@oddkin/core/scope": "../../packages/core/dist/scope/index.js",
           "@oddkin/core/styles": "../../packages/core/dist/styles/index.js",
           "@oddkin/core/template": "../../packages/core/dist/template/index.js",
           "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js",
           "@oddkin/components/define/button": "../../packages/components/dist/button/button.define.js",
-          "@oddkin/components/define/card": "../../packages/components/dist/card/card.define.js"
+          "@oddkin/components/define/card": "../../packages/components/dist/card/card.define.js",
+          "@oddkin/components/define/input": "../../packages/components/dist/input/input.define.js"
         }
       }
     </script>
@@ -37,7 +40,15 @@
       <odd-card label="Billing">
         <h2 slot="header">Billing</h2>
         <form id="billing">
-          <label>Email <input name="email" type="email" value="ada@example.com" required /></label>
+          <odd-input
+            label="Email"
+            description="Receipts go to this address."
+            name="email"
+            type="email"
+            autocomplete="email"
+            value="ada@example.com"
+            required
+          ></odd-input>
         </form>
         <p id="result" role="status"></p>
         <div slot="footer" class="actions">
@@ -51,7 +62,23 @@
             form="billing"
             >Save</odd-button
           >
+          <odd-button id="help" appearance="ghost" label="Billing help">
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none">
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5" />
+              <path
+                d="M6.2 6.3a1.9 1.9 0 1 1 2.6 1.7c-.5.2-.8.6-.8 1.1v.3"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+              <circle cx="8" cy="11.5" r="0.9" fill="currentColor" />
+            </svg>
+          </odd-button>
         </div>
+      </odd-card>
+      <odd-card variant="elevated">
+        <h2 slot="header">Plan</h2>
+        <p>Team plan, billed yearly.</p>
       </odd-card>
       <odd-card variant="filled">
         <p>A card with no name is not a landmark.</p>

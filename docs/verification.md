@@ -950,3 +950,17 @@ Environment as the previous entry. Contracts: [core-contracts.md §5](./architec
 | Mutation probes | never unsubscribing; not refreshing while unobserved; a used `collections` import in the counter fixture | Killed: 3, 2, and the graph rule (plus the budget). |
 
 **Not covered:** stores that notify during a computed evaluation, and concurrent React rendering beyond `flushSync`.
+
+## 2026-10-19 — Accessible names across shadow boundaries (M4 accessibility)
+
+Environment as the previous entry. Another agent was editing other files in the same working tree. Contract: [css-architecture.md §12.1](./architecture/css-architecture.md#121-implemented).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Example | `examples/components-only/` | Now registers `odd-input` (label and description in its shadow root, required email), an icon-only `odd-button` named by `label`, and a card named by its slotted heading beside the `label`-named and unnamed cards; import map extended (form controller, `live`), CSP hash recomputed |
+| Playwright ARIA snapshot (three engines) | `npx playwright test e2e/components-only.spec.ts` | Pass in Chromium, Firefox, WebKit. Identical snapshots: `textbox "Email": ada@example.com` named by the label in its own shadow root; buttons `Reset`, `Save` from slotted text and `Billing help` from `label`; headings; after emptying the field and a blocked submission, `textbox "Email" [invalid]`. Playwright computes this tree from each engine's DOM, styles, and open shadow roots, not from the browser's accessibility tree, and it does not read `ElementInternals`, so no card region appears in it |
+| Browser accessibility tree (Chromium only) | same, DevTools protocol `Accessibility.getFullAXTree` | Regions `Billing` (from `label`) and `Plan` (from the slotted heading, `ariaLabelledByElements`), none for the unnamed card; buttons `Reset`, `Save`, `Billing help`; textbox `Email` with description "Receipts go to this address.", `required` true, `invalid` false, then true after the blocked submission. Skipped in Firefox and WebKit: Playwright 1.64 offers no native accessibility tree for them |
+| Other users of the page | `npx playwright test e2e/css-compat.spec.ts`; `npx vitest run --project node tests/examples/csp.test.ts tests/examples/import-maps.test.ts` | Pass. The first version of the example named its icon button "Clear email", which made `getByLabel('Email')` in `css-compat.spec.ts` ambiguous (Playwright matches labels as case-insensitive substrings); the button became "Billing help" after Save, so Reset stays the first `odd-button` and the Tab target from the field |
+| Full pipeline | `npm run verify` steps one by one (`npm test -- --reporter=verbose`, then `npm run verify:metadata`) | Lint: boundaries and CSS compatibility pass; formatting failed only on the other agent's uncommitted `packages/core/test/external.test.ts` and `tests/interop/external-store.browser.test.ts`. Typecheck, 2,317 tests (34 skipped), metadata evidence (189 + 481 verified facts), size, e2e (122 passed, 4 skipped), packed consumers pass |
+
+**Not covered:** native accessibility trees in Firefox and WebKit, and any screen reader; no assistive technology was run. The Playwright snapshot is DOM-derived evidence about names and states, not about what a platform accessibility API exposes.

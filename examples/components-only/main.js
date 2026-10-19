@@ -1,6 +1,7 @@
-// Plain JavaScript, no build: register the two elements and use ordinary DOM APIs.
+// Plain JavaScript, no build: register the elements and use ordinary DOM APIs.
 import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
+import '@oddkin/components/define/input';
 
 const form = document.querySelector('#billing');
 const result = document.querySelector('#result');
@@ -13,6 +14,9 @@ form.addEventListener('submit', (event) => {
 });
 form.addEventListener('reset', () => {
   result.textContent = 'Reset';
+});
+document.querySelector('#help').addEventListener('click', () => {
+  result.textContent = 'Receipts and invoices go to the email address above.';
 });
 
 document.body.dataset.ready = 'true';

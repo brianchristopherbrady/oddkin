@@ -17,8 +17,3 @@ main {
   justify-content: flex-end;
   gap: var(--odd-space-sm);
 }
-
-label {
-  display: grid;
-  gap: var(--odd-space-xs);
-}
