@@ -685,3 +685,15 @@ Environment as the previous entry. Contract: [metadata-and-analyzer.md §3](./ar
 | Hash coverage | `npx vitest run --project node tests/metadata` | Pass (3): a package's hash covers exactly the dependency builds it declares (`@oddkin/ai` also hashes the `@oddkin/components` build). |
 
 **Findings:** (1) All 24 AI elements already matched their published manifest; the harness needed only number attribute samples. (2) Because slot and part facts can't be verified without examples, authored AI examples are the next step for full verification (AI track).
+
+## 2026-10-18 — Project item kinds for odd-side-nav (M4 data slice)
+
+Environment as the previous entry. Contract: [data-composition.md §4, §12](./architecture/data-composition.md#12-odd-side-nav-implemented-m4).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Element | `npx vitest run --project browser packages/components/test/side-nav.browser.test.ts -t "project item kinds"` | Pass in Chromium, Firefox, WebKit (4 tests). Project links and actions render inside the built-in wrappers, including in a group: `href`, a script URL rendered without `href`, `aria-current` and the group opening for a current project entry, and `odd-action` with the entry's action. An element without the kinds warns `model.kind.unknown` once per kind, renders the built-in entries, and leaves `navigationKinds` unchanged. A new registry re-renders project entries and keeps the built-in link node. Five invalid registrations throw `navigation.kind.invalid`; a non-registry `kinds` is `element.prop.invalid`. |
+| Model | `npx vitest run --project node packages/components/test/models.test.ts` | Pass (6). `navigationModel(kinds)` accepts project kinds at any depth; `NavigationItemModel` reports them as `model.kind.unknown` with paths; field types and unique ids are checked across kinds; the JSON Schema agrees. |
+| Suite, graph, size | `npx vitest run packages/components`; `npm run size` | 509 tests pass. The side-nav foundation graph adds only `side-nav/kinds.js` and `@oddkin/core/diagnostics`; the model builder stays out. `side-nav` is 15,328 B gzip (budget 15,360 B), after merging the registration messages into one. |
+
+**Findings:** (1) Building `NavigationItemModel` from a shared helper made it unreadable to the analyzer (`analyzer.dynamic.model`). The literal definition stays, and `navigationModel` derives its built-in variants from it, rebinding each group's `items` to the new recursive schema. (2) Inferring a model type over open variants exceeds the compiler's instantiation depth, so `navigationModel` is typed by the entries it accepts (`NavigationEntry[]`). (3) The side-nav budget is now 99.8% used.

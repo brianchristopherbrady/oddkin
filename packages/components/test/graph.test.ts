@@ -96,6 +96,8 @@ describe('@oddkin/components/side-nav import graphs', () => {
     const { files, packages } = await graph('side-nav/foundation.js');
     expect(files).toEqual([
       'side-nav/foundation.js',
+      // The kinds registry: the element checks `.kinds` against it; no model builder at runtime.
+      'side-nav/kinds.js',
       'side-nav/side-nav.js',
       'side-nav/side-nav.recipe.styles.js',
       'side-nav/side-nav.structural.styles.js',
@@ -103,6 +105,7 @@ describe('@oddkin/components/side-nav import graphs', () => {
       'styles/host.styles.js',
     ]);
     expect(packages).toEqual([
+      '@oddkin/core/diagnostics',
       '@oddkin/core/element',
       '@oddkin/core/reactive',
       '@oddkin/core/styles',

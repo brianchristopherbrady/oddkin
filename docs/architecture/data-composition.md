@@ -144,23 +144,23 @@ Every collection component documents its regions the same way in metadata.
 1. **Options** — documented properties, recipe variants, profiles, tokens.
 2. **Slots and parts** — named slots for adjacent regions; selected `::part`s for styling.
 3. **Local render functions** — e.g. `.renderLabel=${(item) => html`…`}`; receives the item and a context, returns a template result; runs inside the item's `Scope`. The component still renders the semantic wrapper (`<a>`, `<button>`, `role`, ARIA), so custom content cannot drop required semantics. *(Implemented for `odd-side-nav` as `renderLabel(item, { current, depth })`, §12.)*
-4. **Project item kinds** — explicit registration of new `kind`s with a model fragment and renderer:
+4. **Project item kinds** — explicit registration of new `kind`s with a model fragment and renderer *(implemented for `odd-side-nav`, §12)*:
 
 ```ts
 import { navigationKinds } from '@oddkin/components/side-nav';
 
 const kinds = navigationKinds.extend({
   'badge-link': {
-    model: m.object({ id: m.string(), kind: m.literal('badge-link'), label: m.string(), href: m.url(), count: m.number() }),
+    model: m.object({ id: m.id(), label: m.label(), href: m.url(), count: m.number() }), // `kind` is the registered name
     semantics: 'link',                          // reuse the built-in link wrapper and keyboard behavior
-    render: (item) => html`${item.label} <odd-badge>${item.count}</odd-badge>`,
+    render: (item) => html`${item.label} <span class="count">${item['count']}</span>`,
   },
 });
 
 html`<odd-side-nav .kinds=${kinds} .items=${items}></odd-side-nav>`;
 ```
 
-Registration is per instance (`.kinds`), never a hidden global mutation. Unknown kinds → `model.kind.unknown`.
+Registration is per instance (`.kinds`), never a hidden global mutation. Project kind names contain a hyphen, like custom element names, so they never collide with built-in or future kinds. External data with project kinds is validated with `navigationModel(kinds)` from `@oddkin/components/models`. An element meeting an unregistered kind reports `model.kind.unknown` once and skips those entries.
 
 Framework-specific render adapters (React/Vue/Angular components as item renderers) are optional integrations outside the shipped packages.
 
@@ -217,7 +217,7 @@ export type NavigationItem = Infer<typeof NavigationItemModel>;
 | `@oddkin/core/model` | `m`, `defineModel`, `Infer` | Types only, unless the app validates at runtime |
 | `@oddkin/core/model/schema` | JSON Schema emitter | No (tooling) |
 | `@oddkin/components/side-nav` | Element class, `NavigationItem` type, `navigationKinds` | Yes for side-nav users |
-| `@oddkin/components/models` | Runtime validators and migrations for all component models | No, unless imported |
+| `@oddkin/components/models` | Runtime validators and migrations for all component models (`navigationModel(kinds)` for project kinds) | No, unless imported |
 | `@oddkin/components/schemas/*.json` | Generated JSON Schemas | Data |
 | `@oddkin/components/composition` | Data-composition schema renderer `renderComposition()` (§8, experimental); unrelated to the component-definition composer `compose()` | **Never** unless imported |
 
@@ -304,9 +304,15 @@ Verified in `packages/components/test/models.test.ts` (Node), `side-nav.browser.
 - **Rendering.** Links are native `<a href>`. A disabled link, or one whose scheme is `javascript:`, `vbscript:`, or `data:` after removing control characters and spaces (the browser does the same), renders without `href` as `role="link"` with `aria-disabled="true"`. `target="_blank"` without `rel` gets `noopener noreferrer`. Actions are `<button type="button">`, natively disabled. Groups use the disclosure pattern (`aria-expanded`, `aria-controls`) with a nested list.
 - **State.** Uncontrolled: a group starts open when its item says `expanded` or it contains `current`; the user's toggles are remembered; `odd-toggle` (`{ id, expanded }`) is cancelable. Controlled (`expanded` set, even to `[]`): toggles only emit `odd-toggle` and the element waits for a new `expanded`. When both item `expanded` and the property are given, the property wins silently; the `model.state.conflict` diagnostic is not emitted yet.
 - **Events.** `odd-action` (`{ id, action }`) for enabled actions, `odd-toggle`; both bubble and are composed. Links emit nothing: routers intercept clicks at the document as usual.
-- **Label renderer.** `renderLabel(item, { current, depth })` (property only; anything but a function or `undefined` is `element.prop.invalid`) returns the content of each link, action, and group label. The element keeps the `<a>`, `<button>`, disclosure wrapper, badge, and ARIA, so custom content cannot remove semantics; it must contain the visible name. Each label is a computed binding, so signals the renderer reads (a locale, a store selector) update that label only; setting `renderLabel` back to `undefined` restores the plain labels. `navigationKinds` (ladder level 4) is not implemented.
+- **Label renderer.** `renderLabel(item, { current, depth })` (property only; anything but a function or `undefined` is `element.prop.invalid`) returns the content of each link, action, and group label. The element keeps the `<a>`, `<button>`, disclosure wrapper, badge, and ARIA, so custom content cannot remove semantics; it must contain the visible name. Each label is a computed binding, so signals the renderer reads (a locale, a store selector) update that label only; setting `renderLabel` back to `undefined` restores the plain labels.
+- **Project kinds.** `navigationKinds.extend({ 'badge-link': { semantics, model, render } })` returns a new frozen registry and leaves the original unchanged; `kinds` (property only) accepts only such registries (`element.prop.invalid` otherwise).
+  - **Rejected registrations** throw `navigation.kind.invalid`: a name without a hyphen or already registered, a model that is not an `m.object` with `id`, `label`, and `href` (semantics `link`) or `action` (semantics `action`), or a missing `render`.
+  - **Rendering:** entries of a registered kind render inside the built-in link or action wrapper, with its `href` safety, `aria-current`, disabled handling, and `odd-action`. `render(item, { current, depth })` supplies only the label content, at any depth, including inside groups.
+  - **Unknown kinds:** an element without the kind reports `model.kind.unknown` once per kind and renders the other entries.
+  - **Replacing the registry:** assigning a new registry re-renders project entries and keeps built-in nodes.
+  - **Validation:** `navigationModel(kinds)` validates external data with the project kinds; its built-in kinds are `NavigationItemModel`'s own. Verified in `models.test.ts` and `side-nav.browser.test.ts` ("project item kinds").
 - **Regions.** `header` and `footer` slots are hidden while empty. `items` set (including `[]`) is the only source of entries: the default slot is not rendered and the first conflict logs `[collection.source.conflict]` once per element. Without `items`, slotted native links get the same box, current-page marker (`aria-current="page"`), and hover state as data entries through `::slotted()`; they stay the author's markup, so they form a list only if the author writes one.
-- **Size.** `side-nav` 14,708 B gzip registered (budget 15 KiB); `components:side-nav` CSS 1,261 B (budget 1,536 B). The recipe CSS is extracted at build time (layout-recipes.md §9), so the element does not load the recipe engine.
+- **Size.** `side-nav` 15,328 B gzip registered (budget 15 KiB, 99.8%: further side-nav features need a budget decision); `components:side-nav` CSS 1,261 B (budget 1,536 B). The recipe CSS is extracted at build time (layout-recipes.md §9), so the element does not load the recipe engine.
 
 ## 13. Editable list example (implemented, M4)
 

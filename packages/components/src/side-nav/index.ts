@@ -13,4 +13,11 @@ export { sideNavRecipeStyles } from './side-nav.recipe.styles.js';
 export { sideNavStructuralStyles } from './side-nav.structural.styles.js';
 export { sideNavStyles } from './side-nav.styles.js';
 export { sideNavDefinition } from './side-nav.definition.js';
+export {
+  navigationKinds,
+  type CustomNavigationItem,
+  type NavigationEntry,
+  type NavigationKind,
+  type NavigationKinds,
+} from './kinds.js';
 export type { Navigation, NavigationItem } from '../models/navigation.js';

@@ -3,7 +3,9 @@ import { setErrorHandler } from '@oddkin/core/diagnostics';
 import { flush, signal } from '@oddkin/core/reactive';
 import { html } from '@oddkin/core/template';
 import { scopeStats } from '@oddkin/core/scope';
+import { m } from '@oddkin/core/model';
 import type { NavigationItem } from '../src/models/navigation.js';
+import { navigationKinds, type NavigationEntry } from '../src/side-nav/index.js';
 import type { OddkinSideNav } from '../src/side-nav/side-nav.js';
 
 let container: HTMLElement;
@@ -405,5 +407,123 @@ describe('lifecycle', () => {
     }
     expect(scopeStats().listeners).toBe(baseline.listeners);
     expect(scopeStats().scopes).toBe(baseline.scopes);
+  });
+});
+
+describe('project item kinds (customization level 4)', () => {
+  const kinds = navigationKinds.extend({
+    'badge-link': {
+      semantics: 'link',
+      model: m.object({ id: m.id(), label: m.label(), href: m.url(), count: m.number() }),
+      render: (item, { current }) =>
+        html`${item.label}
+          <span class="count">${String(item['count'])}</span>${current ? '*' : ''}`,
+    },
+    'run-task': {
+      semantics: 'action',
+      model: m.object({ id: m.id(), label: m.label(), action: m.actionRef() }),
+      render: (item) => html`<span class="run">Run</span> ${item.label}`,
+    },
+  });
+  const ENTRIES: readonly NavigationEntry[] = [
+    { id: 'overview', kind: 'link', label: 'Overview', href: '/overview' },
+    { id: 'inbox', kind: 'badge-link', label: 'Inbox', href: '/inbox', count: 3 },
+    {
+      id: 'more',
+      kind: 'group',
+      label: 'More',
+      items: [
+        { id: 'alerts', kind: 'badge-link', label: 'Alerts', href: '/alerts', count: 1 },
+      ] as unknown as NavigationItem[],
+    },
+    { id: 'sync', kind: 'run-task', label: 'Sync', action: 'tasks.sync' },
+    { id: 'evil', kind: 'badge-link', label: 'Evil', href: 'javascript:alert(1)', count: 0 },
+  ];
+
+  it('renders project kinds inside the built-in link and action wrappers, at any depth', async () => {
+    const { el, $$ } = await mount((el) => {
+      el.kinds = kinds;
+      el.items = ENTRIES;
+      el.current = 'alerts';
+    });
+    const links = $$<HTMLAnchorElement>('a[part="link"]');
+    expect(
+      links.map((a) => [a.getAttribute('href'), a.textContent?.replace(/\s+/g, ' ').trim()]),
+    ).toEqual([
+      ['/overview', 'Overview'],
+      ['/inbox', 'Inbox 3'],
+      ['/alerts', 'Alerts 1*'],
+      [null, 'Evil 0'],
+    ]);
+    // The current marker and the group that contains it work for project entries too.
+    expect(links[2]!.getAttribute('aria-current')).toBe('page');
+    expect($$('[part="group-toggle"]')[0]!.getAttribute('aria-expanded')).toBe('true');
+    const seen: unknown[] = [];
+    el.addEventListener('odd-action', (e) => seen.push((e as CustomEvent).detail));
+    const run = $$<HTMLButtonElement>('button[part="action"]')[0]!;
+    expect(run.querySelector('.run')?.textContent).toBe('Run');
+    run.click();
+    expect(seen).toEqual([{ id: 'sync', action: 'tasks.sync' }]);
+  });
+
+  it('is registered per instance: another element reports the unknown kind once and renders the rest', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { $$ } = await mount((el) => (el.items = ENTRIES));
+    expect($$('a[part="link"]').map((a) => a.textContent?.trim())).toEqual(['Overview']);
+    expect($$('button[part="action"]')).toHaveLength(0);
+    expect(warn.mock.calls.map((c) => String(c[0]).slice(0, 26))).toEqual([
+      '[model.kind.unknown] <odd-',
+      '[model.kind.unknown] <odd-',
+    ]);
+    expect(navigationKinds.names).toEqual([]);
+  });
+
+  it('a new registry renders project entries again and keeps built-in nodes', async () => {
+    const { el, $$ } = await mount((el) => {
+      el.kinds = kinds;
+      el.items = ENTRIES;
+    });
+    const [builtIn, project] = $$('a[part="link"]');
+    el.kinds = kinds.extend({
+      'note-link': {
+        semantics: 'link',
+        model: m.object({ id: m.id(), label: m.label(), href: m.url() }),
+        render: (item) => item.label,
+      },
+    });
+    await settle(el);
+    const [builtInAfter, projectAfter] = $$('a[part="link"]');
+    expect(builtInAfter).toBe(builtIn);
+    expect(projectAfter).not.toBe(project);
+    expect(projectAfter!.textContent?.replace(/\s+/g, ' ').trim()).toBe('Inbox 3');
+  });
+
+  it('rejects invalid registrations and anything but a registry as kinds', async () => {
+    const link = (extra: object) => ({
+      semantics: 'link' as const,
+      model: m.object({ id: m.id(), label: m.label(), href: m.url() }),
+      render: () => '',
+      ...extra,
+    });
+    for (const [name, kind] of [
+      ['badge', link({})],
+      ['badge-link', link({})],
+      ['plain-link', link({ model: m.object({ id: m.id(), label: m.label() }) })],
+      ['plain-link', link({ semantics: 'menu' })],
+      ['plain-link', link({ render: 'text' })],
+    ] as const)
+      expect(() => kinds.extend({ [name]: kind as never }), name).toThrow(
+        /navigation\.kind\.invalid/,
+      );
+    const { el } = await mount();
+    const codes: string[] = [];
+    setErrorHandler((_error, context) => codes.push(context.code ?? ''));
+    try {
+      (el as unknown as { kinds: unknown }).kinds = { get: () => undefined, names: [] };
+    } finally {
+      setErrorHandler(undefined);
+    }
+    expect(el.kinds).toBe(navigationKinds);
+    expect(codes).toEqual(['element.prop.invalid']);
   });
 });

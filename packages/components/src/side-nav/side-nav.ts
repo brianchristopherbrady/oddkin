@@ -2,6 +2,16 @@ import { OddkinElement, event, prop } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { NavigationItem } from '../models/navigation.js';
+import {
+  isNavigationKinds,
+  navigationKinds,
+  type CustomNavigationItem,
+  type NavigationEntry,
+  type NavigationKinds,
+  type NavigationLabelContext,
+} from './kinds.js';
+
+export type { NavigationLabelContext } from './kinds.js';
 
 export interface NavigationActionDetail {
   readonly id: string;
@@ -12,13 +22,6 @@ export interface NavigationToggleDetail {
   readonly expanded: boolean;
 }
 
-/** What a label renderer knows about the entry besides its data. */
-export interface NavigationLabelContext {
-  /** The entry is the current link. */
-  readonly current: boolean;
-  /** Nesting depth: 0 for top-level entries. */
-  readonly depth: number;
-}
 /**
  * Renders the content of an entry's label. The element keeps the link, button, or disclosure
  * wrapper and its ARIA; the content must include the entry's visible name.
@@ -44,6 +47,8 @@ export const toggleEvent = event<NavigationToggleDetail>('odd-toggle', {
 });
 
 type Group = Extract<NavigationItem, { kind: 'group' }>;
+type LinkEntry = Extract<NavigationItem, { kind: 'link' }> | CustomNavigationItem;
+type ActionEntry = Extract<NavigationItem, { kind: 'action' }> | CustomNavigationItem;
 
 const UNSAFE_SCHEME = /^(?:javascript|vbscript|data):/;
 
@@ -77,7 +82,7 @@ export class OddkinSideNav extends OddkinElement.with({
     default: '',
     description: 'Accessible name of the navigation landmark, e.g. "Primary".',
   }),
-  items: prop.object<readonly NavigationItem[]>({
+  items: prop.object<readonly NavigationEntry[]>({
     description:
       'Entries. When set (even to an empty array) it is the only source; slotted entries are not rendered.',
   }),
@@ -98,6 +103,15 @@ export class OddkinSideNav extends OddkinElement.with({
     description:
       'Renders label content for each entry; signals it reads stay live. The element keeps the link, button, or disclosure semantics.',
   }),
+  kinds: prop.custom<NavigationKinds>({
+    default: () => navigationKinds,
+    coerce: (value) =>
+      isNavigationKinds(value)
+        ? { ok: true, value }
+        : { ok: false, reason: 'expected a registry from navigationKinds.extend()' },
+    description:
+      'Project entry kinds for this element, from `navigationKinds.extend()`; built-in kinds need none.',
+  }),
 }) {
   static override events = { action: actionEvent, toggle: toggleEvent };
 
@@ -108,6 +122,7 @@ export class OddkinSideNav extends OddkinElement.with({
   // Groups the user toggled in uncontrolled mode; others follow their defaults.
   readonly #toggled = signal<ReadonlyMap<string, boolean>>(new Map());
   readonly #groupIds = new Map<string, string>();
+  readonly #unknownKinds = new Set<string>();
   #warnedConflict = false;
 
   /** @internal Whether a group is expanded (controlled, toggled, or its default). */
@@ -126,17 +141,26 @@ export class OddkinSideNav extends OddkinElement.with({
     return value;
   }
 
-  /** @internal The link's `href`, or `null` for disabled entries and script URLs. */
-  _href(item: Extract<NavigationItem, { kind: 'link' }>): string | null {
-    if (item.disabled) return null;
+  /** @internal The link's `href`, or `null` for disabled entries, script URLs, and non-strings. */
+  _href(item: LinkEntry): string | null {
+    if (item.disabled || typeof item.href !== 'string') return null;
     // Browsers ignore control characters and spaces inside a scheme ("java\tscript:").
     const scheme = item.href.replace(/[\u0000-\u0020]/g, '').toLowerCase();
     return UNSAFE_SCHEME.test(scheme) ? null : item.href;
   }
 
   /** @internal Template handler: an action entry was activated. */
-  _action(item: Extract<NavigationItem, { kind: 'action' }>): void {
-    if (!item.disabled) this.emit(actionEvent, { id: item.id, action: item.action });
+  _action(item: ActionEntry): void {
+    if (!item.disabled) this.emit(actionEvent, { id: item.id, action: String(item.action) });
+  }
+
+  /** @internal An entry whose kind is neither built in nor registered: reported once per kind. */
+  _unknownKind(kind: string): void {
+    if (this.#unknownKinds.has(kind)) return;
+    this.#unknownKinds.add(kind);
+    console.warn(
+      `[model.kind.unknown] <${this.localName}> has entries of kind "${kind}", which is not built in or registered in \`kinds\`; they are not rendered.`,
+    );
   }
 
   /** @internal Template handler: a group toggle was activated. */
@@ -188,8 +212,8 @@ export class OddkinSideNav extends OddkinElement.with({
 
 function containsCurrent(group: Group, current: string): boolean {
   if (!current) return false;
-  return group.items.some((item) =>
-    item.kind === 'group' ? containsCurrent(item, current) : item.id === current,
+  return (group.items as readonly NavigationEntry[]).some((item) =>
+    item.kind === 'group' ? containsCurrent(item as Group, current) : item.id === current,
   );
 }
 
