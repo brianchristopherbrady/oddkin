@@ -76,4 +76,14 @@ export default defineExamples('odd-side-nav', {
       element.style.maxInlineSize = '100%';
     },
   },
+  itemsAttribute: {
+    label: 'Entries written as an attribute',
+    attributes: { label: 'Primary', items: JSON.stringify(items) },
+    incorrect: {
+      explanation:
+        '`items` is rich data and is read only as a property; an attribute string is ignored and the navigation renders nothing. Assign an array to `.items` (a property binding in templates and frameworks).',
+      diagnostic: 'usage.attribute.propertyOnly',
+      correct: 'default',
+    },
+  },
 });

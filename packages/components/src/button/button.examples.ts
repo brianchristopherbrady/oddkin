@@ -39,6 +39,28 @@ export default defineExamples('odd-button', {
     slots: { default: 'Delete' },
     guidance: 'A disabled button cannot be focused; say nearby why the action is unavailable.',
   },
+  disabledFalse: {
+    label: 'Enabled with disabled="false"',
+    attributes: { disabled: 'false' },
+    slots: { default: 'Delete' },
+    incorrect: {
+      explanation:
+        'Boolean attributes are on when present, whatever their value: this button is disabled. Remove the attribute (or set `.disabled = false`) to enable it.',
+      diagnostic: 'usage.boolean.false',
+      correct: 'default',
+    },
+  },
+  dangerAppearance: {
+    label: 'Unsupported appearance',
+    attributes: { appearance: 'danger' },
+    slots: { default: 'Delete' },
+    incorrect: {
+      explanation:
+        '`appearance` accepts primary, secondary, or ghost. Other values are reported and the default (secondary) is used; there is no danger style to opt into.',
+      diagnostic: 'usage.attribute.value',
+      correct: 'primary',
+    },
+  },
   loading: {
     label: 'Loading',
     props: { loading: true, appearance: 'primary' },

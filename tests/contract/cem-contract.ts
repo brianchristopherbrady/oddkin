@@ -339,7 +339,9 @@ export async function describeCemContract(
         const set = { ...authored!, component: tag };
         const slots = new Set<string>();
         const parts = new Set<string>();
-        for (const name of Object.keys(set.examples)) {
+        for (const [name, example] of Object.entries(set.examples)) {
+          // Explained mistakes are not usage to render slots and parts from.
+          if ((example as { incorrect?: unknown }).incorrect) continue;
           const frame = document.createElement('div');
           frame.style.inlineSize = '1000px';
           document.body.append(frame);

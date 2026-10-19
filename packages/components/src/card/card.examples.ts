@@ -51,4 +51,14 @@ export default defineExamples('odd-card', {
       parts.remove();
     },
   },
+  bodySlot: {
+    label: 'Content in a "body" slot',
+    slots: { body: 'Revenue grew 12% since last week.' },
+    incorrect: {
+      explanation:
+        'A card has header, footer, and default slots. Content assigned to any other slot name is not shown; put the body in the default slot.',
+      diagnostic: 'usage.slot.unknown',
+      correct: 'headed',
+    },
+  },
 });

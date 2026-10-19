@@ -179,6 +179,8 @@ export function buildPageRegistry(input: RegistryInput): {
   );
   const examplesByTag = new Map<string, number>();
   for (const example of Object.values(metadata.examples ?? {})) {
+    // Explained mistakes are not usable examples.
+    if (example.incorrect) continue;
     const tag = example.component.replace(/^component:/, '');
     examplesByTag.set(tag, (examplesByTag.get(tag) ?? 0) + 1);
   }

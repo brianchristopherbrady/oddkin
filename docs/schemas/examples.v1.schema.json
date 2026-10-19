@@ -24,7 +24,18 @@
           "preset": { "type": "boolean", "description": "Offered as a preset on the component detail page" },
           "hasFixture": { "type": "boolean" },
           "guidance": { "type": "string" },
-          "recommended": { "type": "boolean" }
+          "recommended": { "type": "boolean" },
+          "incorrect": {
+            "type": "object",
+            "description": "A common mistake, explained. Never a preset or recommendation; validateUsage reports the named diagnostic for it.",
+            "required": ["explanation", "diagnostic", "correct"],
+            "additionalProperties": false,
+            "properties": {
+              "explanation": { "type": "string", "minLength": 1 },
+              "diagnostic": { "type": "string", "pattern": "^[a-z]+(\\.[a-zA-Z-]+)+$" },
+              "correct": { "type": "string", "description": "Name of the correct example in the same set" }
+            }
+          }
         }
       }
     }

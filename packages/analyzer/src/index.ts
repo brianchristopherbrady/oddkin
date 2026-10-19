@@ -186,6 +186,14 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
           file: e.file,
           ...(e.hasFixture ? { hasFixture: true } : {}),
           ...(e.previewRoles ? { previewRoles: e.previewRoles.map((role) => `role:${role}`) } : {}),
+          ...(e.incorrect
+            ? {
+                incorrect: {
+                  diagnostic: e.incorrect.diagnostic,
+                  correct: `example:${e.component}/${e.incorrect.correct}`,
+                },
+              }
+            : {}),
         },
       ]),
   );

@@ -823,6 +823,24 @@
           "items": {
             "type": "string"
           }
+        },
+        "incorrect": {
+          "type": "object",
+          "description": "A common mistake, never a recommendation: the diagnostic it demonstrates and the correct example to use instead.",
+          "required": [
+            "diagnostic",
+            "correct"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "diagnostic": {
+              "type": "string"
+            },
+            "correct": {
+              "type": "string",
+              "pattern": "^example:"
+            }
+          }
         }
       }
     },

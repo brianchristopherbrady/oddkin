@@ -212,6 +212,26 @@ describe('page registry from fixture metadata', () => {
     expect(registry.pages.some((p) => p.kind === 'foundation')).toBe(false);
   });
 
+  it('explained mistakes alone do not give a component an examples section', () => {
+    const visible = (incorrect: boolean) => {
+      const metadata: OddkinMetadataLike = {
+        ...acmeMeta,
+        examples: {
+          'example:acme-button/wrong': {
+            component: 'component:acme-button',
+            name: 'wrong',
+            ...(incorrect ? { incorrect: { diagnostic: 'usage.boolean.false' } } : {}),
+          },
+        },
+      };
+      const { registry } = build({ config: acmeConfig, cem: acmeCem, metadata });
+      return page(registry, 'components/acme-button').sections.find((s) => s.id === 'examples')
+        ?.visible;
+    };
+    expect(visible(false)).toBe(true);
+    expect(visible(true)).toBe(false);
+  });
+
   it('different library configurations produce different content from the same code', () => {
     const counter = build({
       config: { library: { packages: ['core-counter'] } },

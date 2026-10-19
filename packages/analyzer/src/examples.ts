@@ -15,6 +15,8 @@ export interface ExampleInfo {
   readonly file: string;
   readonly hasFixture: boolean;
   readonly previewRoles?: readonly string[];
+  /** A common mistake: the diagnostic it demonstrates and the correct example to use instead. */
+  readonly incorrect?: { readonly diagnostic: string; readonly correct: string };
   readonly location: SourceLocation;
 }
 
@@ -116,9 +118,30 @@ export function extractExamples(
           }
           let hasFixture = false;
           let previewRoles: string[] | undefined;
+          let incorrect: ExampleInfo['incorrect'] | null | undefined;
           for (const field of property.initializer.properties) {
             const key = field.name && keyOf(field.name);
             if (key === 'fixture') hasFixture = true;
+            if (key === 'incorrect') {
+              // Read literally: an example that cannot be shown to be a mistake is left out
+              // rather than listed as a usable one.
+              const value = ts.isPropertyAssignment(field) ? field.initializer : undefined;
+              const read = (name: string) =>
+                value && ts.isObjectLiteralExpression(value)
+                  ? value.properties
+                      .filter(ts.isPropertyAssignment)
+                      .map((p) => (keyOf(p.name) === name ? text(p.initializer) : undefined))
+                      .find((v) => v !== undefined)
+                  : undefined;
+              const diagnostic = read('diagnostic');
+              const correct = read('correct');
+              incorrect = diagnostic && correct ? { diagnostic, correct } : null;
+              if (!incorrect)
+                dynamic(
+                  field,
+                  `Incorrect example "${name}" of <${component}> needs literal diagnostic and correct names; it is left out.`,
+                );
+            }
             if (key !== 'previewRoles') continue;
             const value = ts.isPropertyAssignment(field) ? field.initializer : undefined;
             const roles =
@@ -130,12 +153,14 @@ export function extractExamples(
               );
             else previewRoles = roles as string[];
           }
+          if (incorrect === null) continue;
           examples.push({
             component,
             name,
             file,
             hasFixture,
             ...(previewRoles ? { previewRoles } : {}),
+            ...(incorrect ? { incorrect } : {}),
             location: at(property),
           });
         }

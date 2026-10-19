@@ -29,6 +29,19 @@ export interface ExampleFixtureContext<E extends Element = Element> {
   mount(content: unknown): Element;
 }
 
+/**
+ * Marks an example as a common mistake. It is never offered as a preset or recommendation; it
+ * explains what goes wrong, names the diagnostic `validateUsage` reports for it, and points at
+ * the correct example in the same set.
+ */
+export interface IncorrectUsage {
+  readonly explanation: string;
+  /** Diagnostic code `validateUsage` reports, e.g. `usage.attribute.propertyOnly`. */
+  readonly diagnostic: string;
+  /** Name of the correct example in the same set. */
+  readonly correct: string;
+}
+
 export interface ExampleDefinition<E extends Element = HTMLElement> {
   readonly label?: string;
   /** Property values, checked against the element type (TypeScript) or metadata (checkExamples). */
@@ -41,6 +54,8 @@ export interface ExampleDefinition<E extends Element = HTMLElement> {
   readonly preset?: boolean;
   readonly recommended?: boolean;
   readonly guidance?: string;
+  /** A common mistake, explained (see `IncorrectUsage`). */
+  readonly incorrect?: IncorrectUsage;
   /** Owned setup code; runs only in preview frames and tests. */
   readonly fixture?: (context: ExampleFixtureContext<E>) => void | Promise<void>;
 }
@@ -121,7 +136,9 @@ export function checkExamples<E extends Element>(
         path,
       );
     }
-    for (const key of Object.keys(example.props ?? {})) {
+    // An incorrect example breaks the contract on purpose; validateUsage reports how.
+    const checked = example.incorrect ? {} : example;
+    for (const key of Object.keys(checked.props ?? {})) {
       if (properties && !properties.has(key)) {
         out.error(
           'examples.prop.unknown',
@@ -130,7 +147,7 @@ export function checkExamples<E extends Element>(
         );
       }
     }
-    for (const slot of Object.keys(example.slots ?? {})) {
+    for (const slot of Object.keys(checked.slots ?? {})) {
       if (slots && !slots.has(slot)) {
         out.error(
           'examples.slot.unknown',
@@ -139,6 +156,108 @@ export function checkExamples<E extends Element>(
         );
       }
     }
+    const incorrect = example.incorrect;
+    if (incorrect) {
+      const correct = set.examples[incorrect.correct];
+      if (!correct || correct.incorrect)
+        out.error(
+          'examples.incorrect.correct',
+          `Incorrect example "${name}" must name a correct example of <${set.component}>, not "${incorrect.correct}".`,
+          `${path}/incorrect/correct`,
+        );
+      if (!incorrect.explanation.trim() || !/^[a-z]+(\.[a-zA-Z-]+)+$/.test(incorrect.diagnostic))
+        out.error(
+          'examples.incorrect.explanation',
+          `Incorrect example "${name}" needs an explanation and a diagnostic code.`,
+          `${path}/incorrect`,
+        );
+      if (example.preset || example.recommended || example.previewRoles?.length)
+        out.error(
+          'examples.incorrect.recommended',
+          `Incorrect example "${name}" cannot be a preset, a recommendation, or a preview role.`,
+          path,
+        );
+    }
+  }
+  return out.items;
+}
+
+/** What `validateUsage` checks examples against: the published contract of the element. */
+export interface UsageContract {
+  /** Public writable properties; `attribute` is absent for property-only ones (`.items`). */
+  readonly properties: readonly {
+    name: string;
+    type?: string | undefined;
+    attribute?: string | undefined;
+  }[];
+  readonly slots: readonly string[];
+}
+
+// Attributes every element accepts.
+const GLOBAL_ATTRIBUTE =
+  /^(?:id|class|style|slot|part|lang|dir|title|hidden|inert|tabindex|role|autofocus|exportparts|data-.+|aria-.+)$/;
+const unionOf = (type: string | undefined) =>
+  type && /^"[^"]*"( \| "[^"]*")*$/.test(type)
+    ? [...type.matchAll(/"([^"]*)"/g)].map((m) => m[1] as string)
+    : undefined;
+
+/**
+ * Diagnostics for how each example uses the element, from its published contract: rich data
+ * written as an attribute, `"false"` on a boolean attribute, values outside an enum, unknown
+ * attributes, and unknown slots. Correct examples produce none; an incorrect example produces
+ * the diagnostic it declares.
+ */
+export function validateUsage<E extends Element>(
+  set: ExampleSet<E>,
+  contract: UsageContract,
+): WorkbenchDiagnostic[] {
+  const out = new DiagnosticList();
+  const byAttribute = new Map(
+    contract.properties.filter((p) => p.attribute).map((p) => [p.attribute as string, p]),
+  );
+  const slots = new Set(contract.slots.map((s) => s || 'default'));
+  const tag = set.component;
+  for (const [name, example] of Object.entries(set.examples)) {
+    const path = `/examples/${name}`;
+    for (const [attribute, value] of Object.entries(example.attributes ?? {})) {
+      const at = `${path}/attributes/${attribute}`;
+      const property = byAttribute.get(attribute);
+      const named = contract.properties.find((p) => p.name === attribute);
+      if (!property && named && !named.attribute)
+        out.error(
+          'usage.attribute.propertyOnly',
+          `<${tag}> reads "${attribute}" only as a property; set .${attribute} with a value, not an attribute string.`,
+          at,
+        );
+      else if (!property && !GLOBAL_ATTRIBUTE.test(attribute))
+        out.error(
+          'usage.attribute.unknown',
+          `<${tag}> has no attribute "${attribute}"${named ? `; use "${named.attribute}"` : ''}.`,
+          at,
+        );
+      else if (property?.type === 'boolean' && value === 'false')
+        out.error(
+          'usage.boolean.false',
+          `[${attribute}="false"] still turns ${property.name} on: the attribute's presence means true. Remove the attribute instead.`,
+          at,
+        );
+      else {
+        const allowed = unionOf(property?.type);
+        if (value !== null && allowed && !allowed.includes(value))
+          out.error(
+            'usage.attribute.value',
+            `<${tag}> ${attribute}="${value}" is not one of ${allowed.join(', ')}; the default is used.`,
+            at,
+          );
+      }
+    }
+    for (const slot of Object.keys(example.slots ?? {}))
+      if (!slots.has(slot))
+        out.error(
+          'usage.slot.unknown',
+          `<${tag}> declares no slot "${slot}"; the content is not shown.`,
+          `${path}/slots/${slot}`,
+        );
   }
   return out.items;
 }

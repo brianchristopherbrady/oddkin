@@ -1,7 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { describe, expect, it } from 'vitest';
-import { checkExamples, toExamplesJSON, type ExampleSet } from '@oddkin/workbench/examples';
+import {
+  checkExamples,
+  toExamplesJSON,
+  validateUsage,
+  type ExampleSet,
+} from '@oddkin/workbench/examples';
 import button from '../src/button/button.examples.js';
 import card from '../src/card/card.examples.js';
 import input from '../src/input/input.examples.js';
@@ -17,19 +22,28 @@ const read = async <T>(path: string): Promise<T> =>
 
 interface Declaration {
   tagName?: string;
-  members?: { kind: string; name: string; readonly?: boolean; static?: boolean }[];
+  members?: {
+    kind: string;
+    name: string;
+    readonly?: boolean;
+    static?: boolean;
+    type?: { text: string };
+    attribute?: string;
+  }[];
   attributes?: { name: string }[];
   slots?: { name: string }[];
 }
 
+const declarations = async () =>
+  (
+    (await read('../custom-elements.json')) as { modules: { declarations?: Declaration[] }[] }
+  ).modules.flatMap((module) => module.declarations ?? []);
+
 describe('component examples', () => {
   it('use only public properties, attributes, and slots from the published CEM', async () => {
-    const cem = (await read('../custom-elements.json')) as {
-      modules: { declarations?: Declaration[] }[];
-    };
-    const declarations = cem.modules.flatMap((module) => module.declarations ?? []);
+    const all = await declarations();
     for (const set of sets) {
-      const declaration = declarations.find((d) => d.tagName === set.component)!;
+      const declaration = all.find((d) => d.tagName === set.component)!;
       const properties = (declaration.members ?? [])
         .filter((m) => m.kind === 'field' && !m.static && !m.readonly)
         .map((m) => m.name);
@@ -37,9 +51,38 @@ describe('component examples', () => {
       expect(checkExamples(set, { properties, slots }), set.component).toEqual([]);
       const attributes = new Set((declaration.attributes ?? []).map((a) => a.name));
       for (const [name, example] of Object.entries(set.examples))
-        for (const attribute of Object.keys(example.attributes ?? {}))
-          expect(attributes.has(attribute), `${set.component}/${name} [${attribute}]`).toBe(true);
+        if (!example.incorrect)
+          for (const attribute of Object.keys(example.attributes ?? {}))
+            expect(attributes.has(attribute), `${set.component}/${name} [${attribute}]`).toBe(true);
     }
+  });
+
+  it('pair each explained mistake with the diagnostic the published contract gives it', async () => {
+    const all = await declarations();
+    const covered = new Set<string>();
+    for (const set of sets) {
+      const declaration = all.find((d) => d.tagName === set.component)!;
+      const found = validateUsage(set, {
+        properties: (declaration.members ?? [])
+          .filter((m) => m.kind === 'field' && !m.static && !m.readonly)
+          .map((m) => ({ name: m.name, type: m.type?.text, attribute: m.attribute })),
+        slots: (declaration.slots ?? []).map((s) => s.name),
+      });
+      for (const [name, example] of Object.entries(set.examples)) {
+        const codes = found
+          .filter((d) => d.path?.startsWith(`/examples/${name}/`))
+          .map((d) => d.code);
+        const label = `${set.component}/${name}`;
+        expect(codes, label).toEqual(example.incorrect ? [example.incorrect.diagnostic] : []);
+        if (example.incorrect) covered.add(example.incorrect.diagnostic);
+      }
+    }
+    expect([...covered].sort()).toEqual([
+      'usage.attribute.propertyOnly',
+      'usage.attribute.value',
+      'usage.boolean.false',
+      'usage.slot.unknown',
+    ]);
   });
 
   it('serialize to examples.v1', async () => {
@@ -86,6 +129,14 @@ describe('component examples', () => {
             ...(example.fixture ? { hasFixture: true } : {}),
             ...(example.previewRoles
               ? { previewRoles: example.previewRoles.map((role) => `role:${role}`) }
+              : {}),
+            ...(example.incorrect
+              ? {
+                  incorrect: {
+                    diagnostic: example.incorrect.diagnostic,
+                    correct: `example:${set.component}/${example.incorrect.correct}`,
+                  },
+                }
               : {}),
           },
         ]),

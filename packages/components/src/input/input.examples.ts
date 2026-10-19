@@ -26,6 +26,17 @@ export default defineExamples('odd-input', {
     props: { label: 'Project name', required: true },
     guidance: 'The error appears after the field is left empty or a submission is attempted.',
   },
+  requiredFalse: {
+    label: 'Optional with required="false"',
+    props: { label: 'Nickname' },
+    attributes: { required: 'false' },
+    incorrect: {
+      explanation:
+        'Boolean attributes are on when present, whatever their value: this field is required and blocks an empty submission. Leave the attribute out for an optional field.',
+      diagnostic: 'usage.boolean.false',
+      correct: 'default',
+    },
+  },
   invalid: {
     label: 'Invalid',
     props: { label: 'Email', type: 'email', error: 'Enter an address like ada@example.com.' },

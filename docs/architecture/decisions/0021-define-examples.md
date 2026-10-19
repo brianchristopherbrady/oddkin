@@ -23,5 +23,7 @@ M3: `@oddkin/workbench/examples` implemented (DOM-free; `@oddkin/core` types onl
 
 M4: the four `@oddkin/components` elements have colocated examples (`src/<name>/<name>.examples.ts`). They are **development-only sources**: the package `tsconfig.json` excludes them, so they are never built, exported, or shipped, and `@oddkin/workbench` is only a `devDependency` of `@oddkin/components` (no cycle in runtime dependencies). They are type-checked by the tests program, which imports them; `HTMLElementTagNameMap` types their props. The boundary tool's `devSources` rule (`scripts/architecture/boundaries.config.mjs`) allows them to import `@oddkin/workbench`, reports a shipped module that imports one (`boundary.import.devSource`), and reports an example file in `dist` (`boundary.artifact.devSource`). `mountExample` (`@oddkin/workbench/testing`) runs an example, fixture included, in the project's own browser tests. Evidence: `packages/components/test/examples.test.ts`, `examples.browser.test.ts`, and `tests/architecture/boundaries.test.ts`.
 
+M4: an example may be an explained mistake (`incorrect: { explanation, diagnostic, correct }`). It is never a preset or recommendation, `validateUsage` must report its declared diagnostic from the published CEM, and its metadata entry carries the marker so consumers can leave it out. See [agent-tooling.md §7](../agent-tooling.md#7-executable-examples-as-shared-evidence).
+
 ## Revisit when
 Tests need examples without any Workbench dependency.

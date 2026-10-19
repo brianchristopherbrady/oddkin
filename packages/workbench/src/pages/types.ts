@@ -129,7 +129,10 @@ export interface OddkinMetadataLike {
   >;
   readonly tokens?: unknown;
   readonly examples?: Readonly<
-    Record<string, { readonly component: string; readonly name: string }>
+    Record<
+      string,
+      { readonly component: string; readonly name: string; readonly incorrect?: object }
+    >
   >;
   readonly foundations?: Readonly<Record<string, FoundationMetaLike>>;
   readonly categories?: Readonly<

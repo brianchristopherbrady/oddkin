@@ -286,6 +286,12 @@ describe('compose() definitions in a folder-structured library', () => {
         file: 'src/panel/panel.examples.ts',
         hasFixture: true,
       },
+      'example:acme-panel/dismissibleFalse': {
+        component: 'component:acme-panel',
+        name: 'dismissibleFalse',
+        file: 'src/panel/panel.examples.ts',
+        incorrect: { diagnostic: 'usage.boolean.false', correct: 'example:acme-panel/default' },
+      },
     });
     expect(composed.program.getSourceFiles().some((f) => f.fileName.endsWith('.examples.ts'))).toBe(
       false,
@@ -299,9 +305,10 @@ describe('compose() definitions in a folder-structured library', () => {
         .filter((d) => d.source?.file === 'src/dynamic.examples.ts')
         .map((d) => [d.code, d.severity, d.source?.line]),
     ).toEqual([
-      ['analyzer.examples.dynamic', 'warning', 7],
-      ['analyzer.examples.dynamic', 'warning', 8],
-      ['analyzer.examples.unknownComponent', 'warning', 9],
+      ['analyzer.examples.dynamic', 'warning', 9],
+      ['analyzer.examples.dynamic', 'warning', 10],
+      ['analyzer.examples.unknownComponent', 'warning', 11],
+      ['analyzer.examples.dynamic', 'warning', 13],
     ]);
     expect(Object.keys((dynamic.metadata as { examples: object }).examples)).toEqual([
       'example:acme-missing/default',

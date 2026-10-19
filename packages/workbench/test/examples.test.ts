@@ -2,7 +2,13 @@ import { readFileSync } from 'node:fs';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { describe, expect, it } from 'vitest';
-import { checkExamples, defineExamples, exampleId, toExamplesJSON } from '../src/examples/index.js';
+import {
+  checkExamples,
+  defineExamples,
+  exampleId,
+  toExamplesJSON,
+  validateUsage,
+} from '../src/examples/index.js';
 import type { CemPackage } from '../src/pages/index.js';
 
 const json = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
@@ -73,6 +79,82 @@ describe('defineExamples', () => {
     ]);
     expect(checkExamples(defineExamples('Bad', {})).map((d) => d.code)).toEqual([
       'examples.component.invalid',
+    ]);
+  });
+
+  // Everything validateUsage needs is in the published CEM: field types and attribute links.
+  const usage = {
+    properties: (greeting?.members ?? [])
+      .map(
+        (m) => m as typeof m & { readonly?: boolean; type?: { text?: string }; attribute?: string },
+      )
+      .filter((m) => m.kind === 'field' && !m.static && !m.readonly)
+      .map((m) => ({ name: m.name, type: m.type?.text, attribute: m.attribute })),
+    slots: (greeting?.slots ?? []).map((s) => s.name),
+  };
+  const mistake = (diagnostic: string) => ({
+    explanation: 'Explained.',
+    diagnostic,
+    correct: 'default',
+  });
+
+  it('pairs each incorrect example with the diagnostic validateUsage reports for it', () => {
+    const set = defineExamples('demo-greeting', {
+      default: { props: { name: 'Ada', history: ['a'] }, attributes: { tone: 'warm' } },
+      global: { attributes: { id: 'g', 'data-x': '1', 'aria-label': 'Hi', excited: '' } },
+      historyAttribute: {
+        attributes: { history: '["a"]' },
+        incorrect: mistake('usage.attribute.propertyOnly'),
+      },
+      excitedFalse: { attributes: { excited: 'false' }, incorrect: mistake('usage.boolean.false') },
+      loudTone: { attributes: { tone: 'loud' }, incorrect: mistake('usage.attribute.value') },
+      unknownAttribute: {
+        attributes: { mood: 'x' },
+        incorrect: mistake('usage.attribute.unknown'),
+      },
+      unknownSlot: { slots: { footer: 'x' }, incorrect: mistake('usage.slot.unknown') },
+    });
+    expect(checkExamples(set)).toEqual([]);
+    const found = validateUsage(set, usage);
+    for (const [name, example] of Object.entries(set.examples)) {
+      const codes = found
+        .filter((d) => d.path?.startsWith(`/examples/${name}/`))
+        .map((d) => d.code);
+      expect(codes, name).toEqual(example.incorrect ? [example.incorrect.diagnostic] : []);
+    }
+    expect(found.find((d) => d.code === 'usage.attribute.value')?.message).toContain(
+      'plain, warm, formal',
+    );
+    expect(validExamples(toExamplesJSON(set)), JSON.stringify(validExamples.errors)).toBe(true);
+  });
+
+  it('names the attribute a camelCase property is reflected to', () => {
+    const button = {
+      properties: [{ name: 'fullWidth', type: 'boolean', attribute: 'full-width' }],
+      slots: [''],
+    };
+    const set = defineExamples('acme-button' as string, {
+      camel: { attributes: { fullWidth: '' }, slots: { default: 'Save' } },
+    });
+    expect(validateUsage(set, button).map((d) => d.message)).toEqual([
+      '<acme-button> has no attribute "fullWidth"; use "full-width".',
+    ]);
+  });
+
+  it('keeps incorrect examples out of presets and recommendations', () => {
+    const set = defineExamples('demo-greeting' as string, {
+      default: {},
+      promoted: {
+        preset: true,
+        previewRoles: ['default'],
+        incorrect: mistake('usage.slot.unknown'),
+      },
+      orphan: { incorrect: { explanation: ' ', diagnostic: 'Bad', correct: 'promoted' } },
+    });
+    expect(checkExamples(set).map((d) => [d.code, d.path])).toEqual([
+      ['examples.incorrect.recommended', '/examples/promoted'],
+      ['examples.incorrect.correct', '/examples/orphan/incorrect/correct'],
+      ['examples.incorrect.explanation', '/examples/orphan/incorrect'],
     ]);
   });
 });

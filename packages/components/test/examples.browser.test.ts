@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
+import { setErrorHandler } from '@oddkin/core/diagnostics';
 import { scopeStats } from '@oddkin/core/scope';
 import { mountExample, type MountedExample } from '@oddkin/workbench/testing';
 import '../src/button/button.define.js';
@@ -43,6 +44,7 @@ describe('authored examples', () => {
   it('each example mounts with its properties, attributes, and slots, then releases everything', async () => {
     for (const set of [button, card, input, sideNav] as const) {
       for (const [name, example] of Object.entries(set.examples)) {
+        if (example.incorrect) continue;
         const before = scopeStats();
         const { element, root, dispose } = await mountExample(set as never, name);
         await settle(root);
@@ -62,6 +64,54 @@ describe('authored examples', () => {
         expect(scopeStats(), label).toEqual(before);
       }
     }
+  });
+
+  // What each explained mistake does when mounted: the observation differs from its correct
+  // example, and only the mistakes core can see at runtime are reported.
+  type Observed = Element & Record<string, unknown>;
+  const effects: Record<string, { observe: (el: Observed) => unknown; wrong: unknown }> = {
+    'odd-side-nav/itemsAttribute': {
+      observe: (el) => el.shadowRoot!.querySelectorAll('a[href]').length,
+      wrong: 0,
+    },
+    'odd-button/disabledFalse': { observe: (el) => el['disabled'], wrong: true },
+    'odd-button/dangerAppearance': { observe: (el) => el['appearance'], wrong: 'secondary' },
+    'odd-input/requiredFalse': {
+      observe: (el) => (el['validity'] as ValidityState).valueMissing,
+      wrong: true,
+    },
+    'odd-card/bodySlot': {
+      observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
+      wrong: false,
+    },
+  };
+  const reported: Record<string, string[]> = {
+    'odd-button/dangerAppearance': ['element.attribute.invalid'],
+  };
+
+  it('each explained mistake does what its explanation says, unlike its correct example', async () => {
+    const seen: string[] = [];
+    for (const set of [button, card, input, sideNav] as const) {
+      for (const [name, example] of Object.entries(set.examples)) {
+        if (!example.incorrect) continue;
+        const label = `${set.component}/${name}`;
+        const effect = effects[label];
+        expect(effect, `${label} has no observed effect`).toBeDefined();
+        const codes: string[] = [];
+        setErrorHandler((_error, context) => codes.push(context.code ?? ''));
+        try {
+          const wrong = await mount(set as never, name);
+          const right = await mount(set as never, example.incorrect.correct);
+          expect(effect!.observe(wrong.element as Observed), label).toEqual(effect!.wrong);
+          expect(effect!.observe(right.element as Observed), label).not.toEqual(effect!.wrong);
+        } finally {
+          setErrorHandler(undefined);
+        }
+        expect(codes, label).toEqual(reported[label] ?? []);
+        seen.push(label);
+      }
+    }
+    expect(seen.sort()).toEqual(Object.keys(effects).sort());
   });
 
   it('button inForm submits its own name and value with the form', async () => {
