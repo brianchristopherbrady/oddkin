@@ -6,6 +6,10 @@ import type { Scope } from '@oddkin/core/scope';
  * A button for actions. Renders a native `<button>` in its shadow root, so keyboard
  * activation, focus, and accessible naming come from the platform.
  *
+ * In a form it submits or resets through a temporary native button (see the limitations).
+ * Where native submit-button semantics matter, style a native `<button class="odd-button">`
+ * with `@oddkin/components/css/button.css`, which looks the same.
+ *
  * @slot - The label. Its text is the button's accessible name.
  * @slot start - Content before the label, such as an icon.
  * @slot end - Content after the label.
@@ -22,9 +26,11 @@ import type { Scope } from '@oddkin/core/scope';
  * @keyboard Enter and Space activate the button (native behavior).
  * @previewRole primaryAction
  * @previewRole secondaryAction
- * @useFor Triggering an action, or submitting or resetting the form that contains it.
+ * @useFor Triggering an action, or submitting or resetting the form it belongs to (its ancestor form or the one named by `form`).
  * @notFor Navigation to another page; use a link.
- * @limitation In a form, submission goes through a temporary native submit button, so `SubmitEvent.submitter` is that button (carrying `name` and `value`), not this element, and it is removed after dispatch: build `new FormData(form, event.submitter)` synchronously in the `submit` listener. Implicit submission with Enter in a text field does not use this element as the form's default button.
+ * @limitation In a form, submission and reset go through a temporary native button appended to the form during the click. `SubmitEvent.submitter` is that button (with `name`, `value`, and the `form*` overrides), not this element, and it is removed after dispatch, so build `new FormData(form, event.submitter)` synchronously in the `submit` listener. Mutation observers on the form see it added and removed. `form.requestSubmit(button)` rejects this element with a `TypeError`; call `button.click()` instead.
+ * @limitation Implicit submission: Enter in a text field never uses this element as the default button. The default button is the form's first native submit button; without one, Enter submits with no submitter, and only when the form has a single text field, so this element's `name`, `value`, and overrides are not sent. Use a native submit button where Enter must submit through it.
+ * @limitation `formAction`, `formMethod`, `formEnctype`, and `formTarget` return the attribute text: unlike a native button they neither resolve URLs nor report the form's values. The temporary button receives them unchanged, so missing and invalid values behave as on a native button.
  * @category Actions
  */
 export class OddkinButton extends OddkinElement.with({
@@ -50,6 +56,31 @@ export class OddkinButton extends OddkinElement.with({
   }),
   name: prop.string({ default: '', description: 'Name submitted with the form.' }),
   value: prop.string({ default: '', description: 'Value submitted with the form.' }),
+  formAction: prop.string({
+    attribute: 'formaction',
+    reflect: true,
+    description: "URL this button submits to instead of the form's `action`.",
+  }),
+  formMethod: prop.string({
+    attribute: 'formmethod',
+    reflect: true,
+    description: "Method (`get`, `post`, `dialog`) this button submits with instead of the form's.",
+  }),
+  formEnctype: prop.string({
+    attribute: 'formenctype',
+    reflect: true,
+    description: "Encoding this button submits with instead of the form's `enctype`.",
+  }),
+  formTarget: prop.string({
+    attribute: 'formtarget',
+    reflect: true,
+    description: "Navigable this button submits to instead of the form's `target`.",
+  }),
+  formNoValidate: prop.boolean({
+    attribute: 'formnovalidate',
+    reflect: true,
+    description: 'Submits without constraint validation.',
+  }),
   label: prop.string({
     default: '',
     description: 'Accessible name when the content has no text (icon-only buttons).',
@@ -100,12 +131,23 @@ export class OddkinButton extends OddkinElement.with({
   #activate(): void {
     const form = this.internals.form;
     if (!form) return;
-    // A temporary native button carries name/value, runs constraint validation, and is the
-    // submitter the browser reports; it is removed immediately afterwards.
+    // A temporary native button carries name, value, and the submission overrides, runs
+    // constraint validation, and is the submitter the browser reports; it is removed right after.
     const proxy = document.createElement('button');
     proxy.type = this.type;
     if (this.name) proxy.name = this.name;
     if (this.value) proxy.value = this.value;
+    if (this.type === 'submit') {
+      const overrides = {
+        formaction: this.formAction,
+        formmethod: this.formMethod,
+        formenctype: this.formEnctype,
+        formtarget: this.formTarget,
+      };
+      for (const [attribute, value] of Object.entries(overrides))
+        if (value !== undefined) proxy.setAttribute(attribute, value);
+      proxy.formNoValidate = this.formNoValidate;
+    }
     proxy.hidden = true;
     form.append(proxy);
     try {

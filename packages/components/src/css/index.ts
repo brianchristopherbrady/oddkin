@@ -1,6 +1,7 @@
 import { createLayoutHelpers, type Declarations } from '@oddkin/core/layout';
 import { css, unsafeCSS, type CSSResult } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { nativeButtonStyles } from '../button/button.native.styles.js';
 
 /**
  * Opt-in document stylesheets, written to `dist/css/<name>.css` by
@@ -8,7 +9,7 @@ import { token } from '@oddkin/tokens/refs';
  * (ADR 0039). Nothing loads them implicitly; unlayered application CSS overrides all of them.
  */
 export interface DocumentStylesheet {
-  readonly layer: 'odd.reset' | 'odd.base' | 'odd.layout' | 'odd.utilities';
+  readonly layer: 'odd.reset' | 'odd.base' | 'odd.layout' | 'odd.components' | 'odd.utilities';
   readonly styles: CSSResult;
 }
 
@@ -138,6 +139,16 @@ function layoutClasses(): CSSResult {
  */
 export const layout: DocumentStylesheet = { layer: 'odd.layout', styles: layoutClasses() };
 
+/**
+ * `<button class="odd-button">`: native buttons that look like `odd-button`, for forms that need
+ * native submit-button semantics. Indented one level, as the stylesheet writer expects of
+ * templates nested in this module.
+ */
+export const button: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: unsafeCSS(nativeButtonStyles.cssText.replace(/\n(?=.)/g, '\n  ')),
+};
+
 /** Page-level utilities with the same rules as the shadow-root primitives. */
 export const utilities: DocumentStylesheet = {
   layer: 'odd.utilities',
@@ -160,4 +171,4 @@ export const utilities: DocumentStylesheet = {
   `,
 };
 
-export const documentStylesheets = { reset, base, layout, utilities } as const;
+export const documentStylesheets = { reset, base, layout, button, utilities } as const;

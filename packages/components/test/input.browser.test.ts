@@ -207,6 +207,25 @@ describe('forms', () => {
     expect(el.hasAttribute('name')).toBe(false);
   });
 
+  it('does not submit on Enter in the field (documented limitation)', async () => {
+    const { control } = await mount(
+      '<form><odd-input label="Name" name="n" value="Ada"></odd-input><button>Go</button></form>',
+    );
+    const form = container.querySelector('form')!;
+    let submits = 0;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      submits++;
+    });
+    // The inner input has no form owner, so implicit submission never starts.
+    control.focus();
+    await userEvent.keyboard('{Enter}');
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(submits).toBe(0);
+    container.querySelector<HTMLButtonElement>('button')!.click();
+    expect(submits).toBe(1);
+  });
+
   it('typing then submitting sends the typed value through an odd-button', async () => {
     await import('../src/button/button.define.js');
     const { el, control } = await mount(

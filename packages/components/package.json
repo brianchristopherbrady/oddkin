@@ -80,6 +80,7 @@
     "./css/reset.css": "./dist/css/reset.css",
     "./css/base.css": "./dist/css/base.css",
     "./css/layout.css": "./dist/css/layout.css",
+    "./css/button.css": "./dist/css/button.css",
     "./css/utilities.css": "./dist/css/utilities.css",
     "./custom-elements.json": "./custom-elements.json",
     "./oddkin.metadata.json": "./oddkin.metadata.json",

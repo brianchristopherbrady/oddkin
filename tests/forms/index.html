@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oddkin form submission fixture</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/button.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/core/controllers/form": "../../packages/core/dist/controllers/form.js",
+          "@oddkin/core/element": "../../packages/core/dist/element/index.js",
+          "@oddkin/core/helpers/live": "../../packages/core/dist/helpers/live.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/scope": "../../packages/core/dist/scope/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/template/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js",
+          "@oddkin/components/define/button": "../../packages/components/dist/button/button.define.js",
+          "@oddkin/components/define/input": "../../packages/components/dist/input/input.define.js"
+        }
+      }
+    </script>
+    <script type="module" src="./forms.js"></script>
+  </head>
+  <body>
+    <h1>Form submission fixture</h1>
+    <p>
+      Real submissions for <code>e2e/forms.spec.ts</code>, which intercepts every request to
+      <code>/__forms/</code>. Results load in the frames below.
+    </p>
+    <iframe name="sink" title="Submission result"></iframe>
+    <iframe name="drafts" title="Draft result"></iframe>
+
+    <form id="order" action="/__forms/order" method="get" target="sink">
+      <odd-input label="Item" name="item" value="tea" required></odd-input>
+      <odd-button id="buy" type="submit" name="intent" value="buy">Buy</odd-button>
+      <odd-button
+        id="draft"
+        type="submit"
+        name="intent"
+        value="draft"
+        formaction="/__forms/drafts"
+        formmethod="post"
+        formenctype="multipart/form-data"
+        formtarget="drafts"
+        formnovalidate
+        >Save draft</odd-button
+      >
+      <odd-button
+        id="note"
+        type="submit"
+        name="intent"
+        value="note"
+        formmethod="post"
+        formenctype="text/plain"
+        >Note</odd-button
+      >
+    </form>
+
+    <form id="native" action="/__forms/native" method="post" target="sink">
+      <label>Query <input name="q" value="native" /></label>
+      <button class="odd-button" data-appearance="primary" name="intent" value="search">
+        Search
+      </button>
+    </form>
+    <odd-button id="outside" type="submit" form="native" name="intent" value="outside"
+      >Outside</odd-button
+    >
+  </body>
+</html>

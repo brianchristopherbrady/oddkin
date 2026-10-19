@@ -62,7 +62,8 @@ export const buttonStyles = css`
   :host([appearance='ghost']) button {
     background: var(--odd-button-background, transparent);
   }
-  button:disabled {
+  /* :host matches the appearance rules' specificity. */
+  :host button:disabled {
     border-color: transparent;
     background: ${token('color.surface.sunken')};
     color: ${token('color.text.disabled')};

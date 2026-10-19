@@ -9,7 +9,7 @@ Oddkin uses a reliable CSS baseline and adds modern capabilities as tested enhan
 | Area | Existing equivalent | Gap closed or planned here |
 | --- | --- | --- |
 | Token definitions, resolution, theme composition, CSS generation | `@oddkin/tokens/generate` — the only token engine; alias-closure re-declaration per scope (ADR 0007); mode toggles (theming-and-styling.md §5.1); literal query thresholds (ADR 0011) | Cascade layer for generated CSS (§5); above-floor syntax diagnostics (§4.2) |
-| Global styles, resets, docs styles | None shipped; page defaults are opt-in assets (plan §5.1) | Opt-in `reset.css`, `base.css`, `utilities.css` in their layers (§5.1); shared shadow-root primitives (theming-and-styling.md §7) |
+| Global styles, resets, docs styles | None shipped; page defaults are opt-in assets (plan §5.1) | Opt-in `reset.css`, `base.css`, `utilities.css`, and `button.css` (native buttons styled like `odd-button`) in their layers (§5.1); shared shadow-root primitives (theming-and-styling.md §7) |
 | Component styles and Shadow DOM customization | Structural and default styles per component; component variables, parts, host styles (theming-and-styling.md §7) | Custom state for consumer styling (`:state(user-invalid)`), hover gating, long-content wrapping (§10, §12) |
 | Layout and responsive primitives | `@oddkin/core/layout` helpers `stack`, `row`, `grid`, `autoGrid`, `split`; container conditions (layout-recipes.md) | Contract audit and planned primitives (§8) |
 | Overlays and native controls | None yet (M10) | Overlay and control contracts (§9, §10) |
@@ -121,7 +121,7 @@ Every Oddkin document-level stylesheet that uses layers begins with the canonica
 | `odd.tokens` | Generated custom properties, `color-scheme`, scope selectors | **Implemented** — `@oddkin/tokens` CSS |
 | `odd.base` | Optional page defaults from the theme: canvas background and `type.body` text, links, code fonts, the focus ring | **Implemented** — opt-in `@oddkin/components/css/base.css` |
 | `odd.layout` | Page-author layout classes from `@oddkin/components/layout` | **Implemented** — opt-in `@oddkin/components/css/layout.css` (layout-recipes.md §12) |
-| `odd.components` | Light-DOM component styles adopted into documents | Reserved (no light-DOM components yet) |
+| `odd.components` | Light-DOM component styles for documents | **Implemented** — opt-in `@oddkin/components/css/button.css`: `<button class="odd-button">` with `data-appearance`, `data-size`, `data-full-width`, the same `--odd-button-*` variables and focus ring as `odd-button` (§10.1) |
 | `odd.utilities` | Optional utilities: `.odd-visually-hidden`, `.odd-focus-ring` (same rules as the shadow-root primitives) | **Implemented** — opt-in `@oddkin/components/css/utilities.css` |
 | *(unlayered)* | **Application overrides** | — |
 
@@ -215,6 +215,7 @@ Verification (F09, F10): repeated instances with correct anchors and cleaned-up 
 - Component state stays in its controller. `odd-input` derives one value (`_userInvalid`) for both `aria-invalid` on the native control and the `user-invalid` custom state on the host; there is no second state store. Native `:user-invalid` is at the floor but does not cover a custom `error` or failed submissions, so Oddkin form components expose `:state(user-invalid)` instead (plain native fields in docs may use `:user-invalid`).
 - Focus uses `:focus-visible` with outlines, which remain visible in forced-colors mode (box shadows do not); verified with forced-colors emulation in three engines.
 - Above-floor selectors never share a non-forgiving selector list with baseline selectors (the CSS lint enforces it), so an unsupported selector cannot drop a baseline rule.
+- **Native buttons styled as `odd-button`:** `odd-button` submits through a temporary native button, so it is never the submitter the page sees nor the form's default button for Enter (limitations in its JSDoc). Where those semantics matter, `button.css` styles a native `<button class="odd-button">` with the same tokens, component variables, hover gating, focus ring, and forced-colors borders, in `odd.components`; `data-appearance`, `data-size`, and `data-full-width` mirror the element's attributes. It has no loading state. `styling.browser.test.ts` compares 25 computed properties of each native button with the matching `odd-button` control in every appearance, size, and disabled state, in light and dark mode, with component variables, full width, focus ring, and hover, in three engines; `e2e/forms.spec.ts` shows the native button submitting as itself and as the default button for Enter.
 
 ### 10.2 Planned (M10)
 
@@ -253,7 +254,7 @@ Fluid type scales (`clamp()` with a `rem`-dominant slope, verified under zoom), 
 - One constructed `CSSStyleSheet` per style definition per document, adopted by every instance; a `<style>` path with a CSP nonce for policy needs; per-document ownership after adoption (ADR 0008). Verified in three engines and in Chrome 125 and Firefox 126 (`shared-sheet`).
 - Theme changes are inherited custom-property updates; component sheets are never regenerated per instance or per theme.
 - Strict CSP with Trusted Types: the components-only example and the gallery run under `default-src 'none'` and `require-trusted-types-for 'script'`; inline styles are set through the CSSOM only.
-- CSS budgets (gzip, `npm run size`): generated default theme 3,072 B (measured 2,764 B with the approved palette and the complete foundation scales, ADRs 0041–0042; 1,827 B before), button styles 1,280 B (1,056 B), card 640 B (531 B), input 768 B (590 B), shared primitives 384 B (297 B), document stylesheets 768 B (612 B).
+- CSS budgets (gzip, `npm run size`): generated default theme 3,072 B (measured 2,764 B with the approved palette and the complete foundation scales, ADRs 0041–0042; 1,827 B before), button styles 1,280 B (1,056 B), card 640 B (531 B), input 768 B (590 B), shared primitives 384 B (297 B), document stylesheets 768 B (612 B), `button.css` 1,024 B (864 B).
 
 ### 13.2 Planned
 

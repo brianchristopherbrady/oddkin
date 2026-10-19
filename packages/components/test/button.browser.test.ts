@@ -180,15 +180,24 @@ describe('forms', () => {
     expect(submitter.isConnected).toBe(false);
     expect(f.querySelectorAll('button')).toHaveLength(0);
     expect([...new FormData(f)]).toEqual([['q', 'initial']]);
+    // Only native submit buttons are accepted as an explicit submitter.
+    expect(() => f.requestSubmit(el)).toThrow(TypeError);
+    expect(submits).toHaveLength(1);
   });
 
   it('runs constraint validation before submitting', async () => {
-    const { el, submits } = await form(
+    const { f, el, submits } = await form(
       '<odd-button type="submit">Save</odd-button>',
       '<input name="q" required />',
     );
+    let invalid = 0;
+    // Suppress the validation bubble, which Firefox shows late and which swallows later clicks.
+    f.querySelector('input')!.addEventListener('invalid', (event) => {
+      invalid++;
+      event.preventDefault();
+    });
     await userEvent.click(el);
-    await nextTask();
+    await expect.poll(() => invalid).toBe(1);
     expect(submits).toHaveLength(0);
   });
 
@@ -225,6 +234,115 @@ describe('forms', () => {
     f.querySelector('fieldset')!.disabled = false;
     await settle(el);
     expect(control.disabled).toBe(false);
+  });
+
+  it('passes the submission overrides to the submitter; formnovalidate skips validation', async () => {
+    const { f, el, submits, data } = await form(
+      `<odd-button type="submit" name="intent" value="draft" formaction="/drafts"
+        formmethod="post" formenctype="multipart/form-data" formtarget="drafts" formnovalidate
+        >Save draft</odd-button>`,
+      '<input name="q" required />',
+    );
+    expect([el.formAction, el.formMethod, el.formEnctype, el.formTarget]).toEqual([
+      '/drafts',
+      'post',
+      'multipart/form-data',
+      'drafts',
+    ]);
+    expect(el.formNoValidate).toBe(true);
+    // Submitting would navigate a frame named "drafts"; the listener cancels it.
+    await userEvent.click(el);
+    await expect.poll(() => submits.length).toBe(1);
+    const submitter = submits[0]!.submitter as HTMLButtonElement;
+    expect(submitter.formAction).toBe(new URL('/drafts', document.baseURI).href);
+    expect([submitter.formMethod, submitter.formEnctype, submitter.formTarget]).toEqual([
+      'post',
+      'multipart/form-data',
+      'drafts',
+    ]);
+    expect(submitter.formNoValidate).toBe(true);
+    expect(data[0]).toEqual([
+      ['q', ''],
+      ['intent', 'draft'],
+    ]);
+    // Properties reflect, and a button without overrides leaves the form's values in charge.
+    el.formAction = '/other';
+    el.formNoValidate = false;
+    await settle(el);
+    expect(el.getAttribute('formaction')).toBe('/other');
+    expect(el.hasAttribute('formnovalidate')).toBe(false);
+    for (const name of ['formaction', 'formmethod', 'formenctype', 'formtarget'])
+      el.removeAttribute(name);
+    f.querySelector('input')!.value = 'filled';
+    await settle(el);
+    await userEvent.click(el);
+    await expect.poll(() => submits.length).toBe(2);
+    const plain = submits[1]!.submitter as HTMLButtonElement;
+    expect(
+      ['formaction', 'formmethod', 'formenctype', 'formtarget'].map((n) => plain.hasAttribute(n)),
+    ).toEqual([false, false, false, false]);
+    expect(plain.formNoValidate).toBe(false);
+  });
+
+  it('submits the form it is associated with as its form attribute or position changes', async () => {
+    await import('../src/button/button.define.js');
+    container.innerHTML = `
+      <form id="a"><input name="q" value="a" /></form>
+      <form id="b"><input name="q" value="b" /></form>
+      <odd-button type="submit" form="a" name="intent" value="go">Go</odd-button>`;
+    const el = container.querySelector('odd-button')!;
+    await settle(el);
+    const submitted: string[] = [];
+    for (const f of container.querySelectorAll('form'))
+      f.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const entries = [...new FormData(f, event.submitter)].map(([k, v]) => `${k}=${v}`);
+        submitted.push(`${f.id}:${entries.join('&')}`);
+      });
+    const forms = [...container.querySelectorAll('form')];
+    expect(el.form).toBe(forms[0]);
+    await userEvent.click(el);
+    await expect.poll(() => submitted.length).toBe(1);
+    el.setAttribute('form', 'b');
+    expect(el.form).toBe(forms[1]);
+    await userEvent.click(el);
+    await expect.poll(() => submitted.length).toBe(2);
+    // Outside any form, activation submits nothing.
+    el.removeAttribute('form');
+    expect(el.form).toBe(null);
+    el.click();
+    await nextTask();
+    forms[0]!.append(el);
+    await settle(el);
+    await userEvent.click(el);
+    await expect.poll(() => submitted.length).toBe(3);
+    expect(submitted).toEqual(['a:q=a&intent=go', 'b:q=b&intent=go', 'a:q=a&intent=go']);
+  });
+
+  it('is never the default button for Enter in a text field (documented limitation)', async () => {
+    const { f, submits, data } = await form(
+      '<odd-button type="submit" name="intent" value="save">Save</odd-button>',
+    );
+    const field = f.querySelector('input')!;
+    // Without a native submit button, a form with one text field submits with no submitter.
+    field.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect.poll(() => submits.length).toBe(1);
+    expect(submits[0]!.submitter).toBe(null);
+    expect(data[0]).toEqual([['q', 'initial']]);
+    // A native submit button later in the form is the default button instead.
+    f.insertAdjacentHTML('beforeend', '<button name="native" value="1">Native</button>');
+    field.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect.poll(() => submits.length).toBe(2);
+    expect((submits[1]!.submitter as HTMLButtonElement).name).toBe('native');
+    // With two text fields and no native submit button, Enter does not submit.
+    f.querySelector('button')!.remove();
+    f.insertAdjacentHTML('afterbegin', '<input name="other" />');
+    field.focus();
+    await userEvent.keyboard('{Enter}');
+    await nextTask();
+    expect(submits).toHaveLength(2);
   });
 });
 

@@ -32,6 +32,7 @@ export const changeEvent = event('change', { bubbles: true, composed: false, can
  * @useFor Short free-text values in forms: names, email addresses, search terms.
  * @notFor Multi-line text, choices from a fixed list, dates.
  * @limitation Validation bubbles anchor to the inner input. `formStateRestoreCallback` restores the value; autofill depends on the inner input's `autocomplete`.
+ * @limitation Enter in the field does not submit the form (no implicit submission): the native input inside the shadow root has no form owner. Give the form a submit button.
  * @category Forms
  */
 export class OddkinInput extends OddkinElement.with({

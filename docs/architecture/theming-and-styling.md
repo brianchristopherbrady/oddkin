@@ -269,7 +269,7 @@ Rules every component needs are written once and adopted as one constructed shee
 | `focusRingStyles` | `:focus-visible` outline from `focus.width`, `focus.offset`, `color.focus.ring` | yes |
 | `visuallyHiddenStyles` | `.visually-hidden` for text read by assistive technology without visual space | none (structural) |
 
-Definition order: `hostStyles`, the component's structural styles, `focusRingStyles`, then visual styles (`[hostStyles, buttonStructuralStyles, focusRingStyles, buttonStyles]`). Foundation entries re-export `hostStyles`, so a recomposed definition can start `[hostStyles, cardStructuralStyles, …]` from one import. Consumers' own components use the same exports. Opt-in document stylesheets for pages (`reset.css`, `base.css`, `utilities.css`) are described in [css-architecture.md](./css-architecture.md) §5.1.
+Definition order: `hostStyles`, the component's structural styles, `focusRingStyles`, then visual styles (`[hostStyles, buttonStructuralStyles, focusRingStyles, buttonStyles]`). Foundation entries re-export `hostStyles`, so a recomposed definition can start `[hostStyles, cardStructuralStyles, …]` from one import. Consumers' own components use the same exports. Opt-in document stylesheets for pages (`reset.css`, `base.css`, `utilities.css`, and `button.css`, which styles native `<button class="odd-button">` elements like `odd-button` for forms that need native submit-button semantics) are described in [css-architecture.md](./css-architecture.md) §5.1 and §10.1.
 
 ## 8. Theme Studio
 
