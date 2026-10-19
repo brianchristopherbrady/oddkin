@@ -8,6 +8,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import ts from 'typescript';
 import type { AnalyzerDiagnostic, SourceLocation } from './extract.js';
+import type { AuthoredText } from './references.js';
 
 export interface ExampleInfo {
   readonly component: string;
@@ -19,6 +20,8 @@ export interface ExampleInfo {
   readonly incorrect?: { readonly diagnostic: string; readonly correct: string };
   /** Other custom elements its fixture renders, read from literal markup and `createElement()`. */
   readonly uses?: readonly string[];
+  /** Literal label, guidance, and mistake explanation, for the authored-reference check. */
+  readonly texts?: readonly AuthoredText[];
   readonly location: SourceLocation;
 }
 
@@ -149,9 +152,22 @@ export function extractExamples(
           let hasFixture = false;
           let previewRoles: string[] | undefined;
           let incorrect: ExampleInfo['incorrect'] | null | undefined;
+          const texts: AuthoredText[] = [];
+          const authored = (node: ts.Expression | undefined, field: string) => {
+            const value = node && text(node);
+            if (node && value)
+              texts.push({
+                text: value,
+                subject: component,
+                at: `example:${component}/${name} ${field}`,
+                source: at(node),
+              });
+          };
           for (const field of property.initializer.properties) {
             const key = field.name && keyOf(field.name);
             if (key === 'fixture') hasFixture = true;
+            if ((key === 'label' || key === 'guidance') && ts.isPropertyAssignment(field))
+              authored(field.initializer, key);
             if (key === 'incorrect') {
               // Read literally: an example that cannot be shown to be a mistake is left out
               // rather than listed as a usable one.
@@ -165,6 +181,10 @@ export function extractExamples(
                   : undefined;
               const diagnostic = read('diagnostic');
               const correct = read('correct');
+              if (value && ts.isObjectLiteralExpression(value))
+                for (const p of value.properties)
+                  if (ts.isPropertyAssignment(p) && keyOf(p.name) === 'explanation')
+                    authored(p.initializer, 'explanation');
               incorrect = diagnostic && correct ? { diagnostic, correct } : null;
               if (!incorrect)
                 dynamic(
@@ -195,6 +215,7 @@ export function extractExamples(
             ...(previewRoles ? { previewRoles } : {}),
             ...(incorrect ? { incorrect } : {}),
             ...(uses.length ? { uses } : {}),
+            ...(texts.length ? { texts } : {}),
             location: at(property),
           });
         }

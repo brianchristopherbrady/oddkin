@@ -19,6 +19,15 @@ import { extract, type AnalyzerDiagnostic, type Extraction } from './extract.js'
 import { extractExamples, findExampleFiles, type ExampleInfo } from './examples.js';
 
 export type { ExampleInfo } from './examples.js';
+export {
+  UNKNOWN_REFERENCE,
+  authoredTexts,
+  checkReferences,
+  referenceIndex,
+  type AuthoredText,
+  type ReferenceIndex,
+  type ReferenceSources,
+} from './references.js';
 
 export type {
   AnalyzerDiagnostic,
