@@ -188,6 +188,13 @@ Constraints for the selected mechanism:
 
 Never tag-name guessing, implicit global substitution, or string replacement of internal tags. Validate with one real composite with product-specific interactive children — the editable list with input rows from the M4 data slice — before expanding.
 
+**Prototype results (M4; decision at M8):** [research/experiments/composite](../../research/experiments/composite/README.md) renders keyed member rows with Oddkin's and a product's (`studio-*`) input and button through all three candidates, on public APIs only. All three render the right children, run two families on one page, keep identity, typed text, and focus through reorders and re-renders, and release their rows, in Chromium, Firefox, and WebKit.
+- **Element-reference parts:** prototyped as a template tag that inlines validated names and caches the rewritten strings per call site and names. It keeps the full binding syntax. The validated names pass through the template Trusted Types policy (594 B gzip).
+- **Child directive:** gives typed child properties, but loses slotted markup and readables. Without core per-part state it needs a composite-owned identity cache (438 B).
+- **Family factories:** need no helper and are the only fully analyzable option, but copy the row template per family.
+
+Recommendation: element-reference parts in core, with templates receiving their definition's roles; today each product passes its family both to the template and to `dependencies`.
+
 ## 9. Product configuration, distribution, and scope isolation
 
 - **Distributable units:** shared behavior foundations, shared token contracts or presets, product-specific skins and definitions, product theme configurations, and independently versioned applications — in a monorepo or separate repositories.

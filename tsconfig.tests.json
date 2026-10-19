@@ -15,6 +15,7 @@
     "tests/**/*.ts",
     "e2e/**/*.ts",
     "research/benchmarks/**/*.ts",
+    "research/experiments/**/*.ts",
     "scripts/**/*.d.mts",
     "vitest.config.ts",
     "playwright.config.ts"
