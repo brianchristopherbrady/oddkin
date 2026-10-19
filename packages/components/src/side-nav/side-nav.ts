@@ -230,4 +230,9 @@ declare global {
   interface HTMLElementTagNameMap {
     'odd-side-nav': OddkinSideNav;
   }
+  // Typed listeners on the element, its ancestors, document, and window (events bubble, composed).
+  interface GlobalEventHandlersEventMap {
+    'odd-action': CustomEvent<NavigationActionDetail>;
+    'odd-toggle': CustomEvent<NavigationToggleDetail>;
+  }
 }

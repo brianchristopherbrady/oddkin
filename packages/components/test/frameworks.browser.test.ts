@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createElement, useState } from 'react';
+import { StrictMode, createElement, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { createApp, h, nextTick, shallowRef } from 'vue';
+import { createApp, h, nextTick, ref, shallowRef } from 'vue';
 import { flush } from '@oddkin/core/reactive';
+import { scopeStats } from '@oddkin/core/scope';
 import type { NavigationItem } from '../src/models/navigation.js';
 import type { NavigationActionDetail, NavigationToggleDetail } from '../src/side-nav/side-nav.js';
 import '../src/side-nav/side-nav.define.js';
@@ -142,5 +143,64 @@ describe('odd-side-nav in frameworks without Oddkin state', () => {
     expect(el.shadowRoot!.querySelector('a[href="#overview"]')).toBe(link);
     expect(toggles).toHaveLength(1);
     app.unmount();
+  });
+});
+
+describe('remounting', () => {
+  it('React StrictMode mounts, unmounts, and mounts again without doubled listeners or leaks', async () => {
+    const baseline = scopeStats();
+    const actions: NavigationActionDetail[] = [];
+    const App = () =>
+      createElement('odd-side-nav', {
+        items: ITEMS,
+        'onodd-action': (e: CustomEvent<NavigationActionDetail>) => actions.push(e.detail),
+      });
+    const root = createRoot(container);
+    flushSync(() => root.render(createElement(StrictMode, null, createElement(App))));
+    const el = await sideNav();
+    el.shadowRoot!.querySelector<HTMLButtonElement>('[part="action"]')!.click();
+    expect(actions).toEqual([{ id: 'create', action: 'project.create' }]);
+    root.unmount();
+    flush();
+    expect(scopeStats().scopes).toBe(baseline.scopes);
+    expect(scopeStats().listeners).toBe(baseline.listeners);
+  });
+
+  it('Vue re-creates the element under v-if with fresh state and no leaks', async () => {
+    const baseline = scopeStats();
+    const shown = ref(true);
+    const toggles: NavigationToggleDetail[] = [];
+    const app = createApp({
+      setup: () => () =>
+        shown.value
+          ? h('odd-side-nav', {
+              items: ITEMS,
+              'onOdd-toggle': (e: CustomEvent<NavigationToggleDetail>) => toggles.push(e.detail),
+            })
+          : null,
+    });
+    app.config.compilerOptions.isCustomElement = (tag) => tag.startsWith('odd-');
+    app.mount(container);
+    let el = await sideNav();
+    toggle(el).click();
+    el = await sideNav();
+    expect(toggle(el).getAttribute('aria-expanded')).toBe('true');
+    shown.value = false;
+    await nextTick();
+    shown.value = true;
+    await nextTick();
+    const again = await sideNav();
+    expect(again).not.toBe(el);
+    // Uncontrolled expansion belonged to the old instance.
+    expect(toggle(again).getAttribute('aria-expanded')).toBe('false');
+    toggle(again).click();
+    expect(toggles).toEqual([
+      { id: 'guides', expanded: true },
+      { id: 'guides', expanded: true },
+    ]);
+    app.unmount();
+    flush();
+    expect(scopeStats().scopes).toBe(baseline.scopes);
+    expect(scopeStats().listeners).toBe(baseline.listeners);
   });
 });

@@ -69,6 +69,13 @@ export const unionOf = (type: string | undefined) =>
     : undefined;
 export const fields = (d: Declaration) =>
   (d.members ?? []).filter((m) => m.kind === 'field' && !m.static && !m.readonly);
+/** A value other than the default, valid for the field's published type. */
+export function sample(field: Field): unknown {
+  const type = field.type?.text;
+  if (type === 'boolean') return true;
+  if (type === 'number') return 3;
+  return unionOf(type)?.find((v) => v !== literal(field.default)?.value) ?? 'Sample text';
+}
 
 const created: Element[] = [];
 afterEach(() => {
@@ -149,6 +156,8 @@ export async function describeCemContract(
   /** Every case recorded for a published element, in a stable order. */
   const cases = (d: ElementDeclaration): string[] => [
     ...fields(d).flatMap((f) => [
+      `property:${d.tagName}#${f.name}/accessor`,
+      ...(f.attribute ? [`property:${d.tagName}#${f.name}/pre-upgrade`] : []),
       ...(literal(f.default) ? [`property:${d.tagName}#${f.name}/default`] : []),
       ...(f.attribute
         ? [`property:${d.tagName}#${f.name}/attribute`, `property:${d.tagName}#${f.name}/reflects`]
@@ -206,6 +215,32 @@ export async function describeCemContract(
   describe.each(implementations)('<$tag> matches the published CEM', ({ tag, declaration }) => {
     const id = (kind: string, name: string, aspect: string) =>
       `${kind}:${declaration.tagName}#${name}/${aspect}`;
+
+    it('properties are accessors that keep values assigned before the element upgraded', async () => {
+      // Frameworks (React 19, Vue, Preact) set a property when `name in element` is true.
+      const fresh = document.createElement(tag) as Host;
+      for (const field of fields(declaration))
+        await verify(tag, id('property', field.name, 'accessor'), () =>
+          expect(field.name in fresh, `${tag}.${field.name} in element`).toBe(true),
+        );
+      // An element parsed in a template is not upgraded until adopted into this document.
+      for (const field of fields(declaration).filter((f) => f.attribute)) {
+        await verify(tag, id('property', field.name, 'pre-upgrade'), async () => {
+          const template = document.createElement('template');
+          template.innerHTML = `<${tag}></${tag}>`;
+          const early = template.content.firstElementChild as Host;
+          const value = sample(field);
+          early[field.name] = value;
+          const el = track(early);
+          document.body.append(el);
+          await settle(el);
+          expect(customElements.get(tag) && el instanceof customElements.get(tag)!).toBe(true);
+          expect(el[field.name], `${tag}.${field.name} after upgrade`).toEqual(value);
+          // Replayed through the accessor: no own data property left shadowing it.
+          expect(Object.hasOwn(el, field.name), `${tag}.${field.name} shadowed`).toBe(false);
+        });
+      }
+    });
 
     it('property defaults', async () => {
       const el = await create(tag);
