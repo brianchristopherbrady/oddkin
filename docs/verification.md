@@ -735,3 +735,16 @@ Environment as the previous entry. Contract: [data-composition.md §12](./archit
 | Remounts | `npx vitest run --project browser packages/components/test/frameworks.browser.test.ts` | Pass (4 × 3 engines). React 19 StrictMode (mount, unmount, mount) delivers one `odd-action` per click. Vue `v-if` re-creation gives a new instance with fresh uncontrolled expansion and one `odd-toggle` per click. Both return to the `scopeStats()` baseline after unmount. |
 
 **Findings:** (1) Neither package declared its events for TypeScript listeners. The side-nav now does. The AI package's event names (`prompt-submit`, `attempt-retry`, …) are unprefixed, so adding them to the global map would risk collisions; recorded as remaining. (2) The installed TypeScript 7 no longer ships `lib.dom.d.ts` on disk, so the native-event rule lists the re-dispatched native events explicitly.
+
+## 2026-10-18 — Examples use public entry points (M4 agent-kit contracts)
+
+Environment as the previous entry. Contract: [agent-tooling.md §7](./architecture/agent-tooling.md#7-executable-examples-as-shared-evidence).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Static: public entry points | `npx vitest run --project node tests/examples/public-imports.test.ts` | Pass (44 checks). Every `@oddkin/*` specifier in the 11 example apps (HTML, JS, TS) and the 4 authored `*.examples.ts` files is an `exports` entry of its workspace package. Authored examples import package internals for types only. Probes: a deep import (`@oddkin/components/side-nav/side-nav.js`) and a runtime relative import in an authored example each failed it. |
+| Static: example contents and pages | `npx vitest run --project node packages/components/test/examples.test.ts tests/examples/import-maps.test.ts` | Existing: properties, attributes, and slots against the published CEM; page import maps resolve every import. |
+| Compile | `npm run typecheck` | Examples and tests compile, apart from another agent's uncommitted styling test. |
+| Browser | `npx vitest run --project browser packages/components/test/examples.browser.test.ts packages/components/test/contract.browser.test.ts` | Existing: every authored example mounts and releases its resources in three engines; slots and parts are rendered from the examples. |
+
+Packed-package checks of the same examples are M12.

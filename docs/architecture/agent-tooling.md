@@ -190,7 +190,7 @@ Results are structured JSON with source references (file, metadata path, version
 ## 7. Executable examples as shared evidence
 
 - The same `defineExamples` files drive documentation, Workbench, scaffolding templates, kit references, and browser tests where practical.
-- Published examples are checked against real public exports in the workspace (M4) and against packed packages (M12).
+- Published examples are checked against real public exports in the workspace (M4) and against packed packages (M12). *(Workspace check implemented: `tests/examples/public-imports.test.ts`; authored examples import package internals for types only.)*
 - Common mistakes get focused coverage, each with a correct example and a clearly explained incorrect one:
   - attributes vs properties, including rich objects;
   - boolean presence and removal semantics;
