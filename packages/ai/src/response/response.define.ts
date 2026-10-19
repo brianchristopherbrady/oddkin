@@ -1,3 +1,4 @@
+/// <reference path="./response.ts" preserve="true" />
 import { define } from '@oddkin/core/element';
 import { responseDefinition } from './response.definition.js';
 

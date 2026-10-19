@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { can, unavailableReason } from '../contracts/normalize.js';
 import type { BranchPosition, Capabilities } from '../contracts/types.js';
 import { branchSwitchEvent } from '../events.js';
@@ -35,6 +35,7 @@ export class OddkinMessageBranch extends OddkinElement.with({
   }),
 }) {
   static override events = { 'branch-switch': branchSwitchEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinMessageBranch>;
 
   /** @internal */
   get _strings(): typeof MESSAGE_BRANCH_STRINGS {

@@ -33,9 +33,37 @@ export type WithProps<B extends OddkinElementClass, D extends PropDefinitions> =
   B,
   'prototype'
 > & {
-  new (): InstanceType<B> & PropValues<D>;
-  prototype: InstanceType<B> & PropValues<D>;
+  new (): InstanceType<B> & PropValues<D> & DeclaredProps<D>;
+  prototype: InstanceType<B> & PropValues<D> & DeclaredProps<D>;
 };
+
+/** Type-only record of the `prop.*` properties, including function values such as renderers. */
+interface DeclaredProps<D extends PropDefinitions> {
+  readonly _props?: PropValues<D>;
+}
+
+type IfWritable<T, K extends keyof T> =
+  (<F>() => F extends { [Q in K]: T[K] } ? 1 : 2) extends <F>() => F extends {
+    -readonly [Q in K]: T[K];
+  }
+    ? 1
+    : 2
+    ? K
+    : never;
+
+/**
+ * Properties a framework can set on an element: its `prop.*` properties and other writable,
+ * non-method public fields and accessors (such as `odd-input`'s `value`), without `HTMLElement`'s.
+ */
+export type ElementProperties<E> = {
+  [
+    K in keyof E as K extends `_${string}` | keyof HTMLElement
+      ? never
+      : E[K] extends (...args: never[]) => unknown
+        ? never
+        : IfWritable<E, K>
+  ]?: E[K];
+} & Partial<E extends { readonly _props?: infer P } ? NonNullable<P> : {}>;
 
 const PROPS: unique symbol = Symbol('oddkin.properties') as never;
 
@@ -95,6 +123,43 @@ const checkedLightDomStyles = new WeakSet<object>();
 // Constructing or defining elements there is still unsupported.
 const ElementBase: typeof HTMLElement =
   globalThis.HTMLElement ?? (class {} as unknown as typeof HTMLElement);
+
+/** The listener map an element declares as `_events` (type-only), or none. */
+type OwnEvents<T> = T extends { readonly _events?: infer M } ? NonNullable<M> : {};
+
+// Type-only: listeners for the element's own events get their published event types.
+export interface OddkinElement {
+  addEventListener<K extends keyof OwnEvents<this> & string>(
+    type: K,
+    listener: (this: this, event: OwnEvents<this>[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener<K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (this: this, event: HTMLElementEventMap[K]) => unknown,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof OwnEvents<this> & string>(
+    type: K,
+    listener: (this: this, event: OwnEvents<this>[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener<K extends keyof HTMLElementEventMap>(
+    type: K,
+    listener: (this: this, event: HTMLElementEventMap[K]) => unknown,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void;
+}
 
 export class OddkinElement extends ElementBase {
   /** Styles adopted into the shadow root, shared per document. */
@@ -284,6 +349,19 @@ export class OddkinElement extends ElementBase {
     if (!this.#checkedFields) {
       this.#checkedFields = true;
       this.#rejectShadowingFields();
+      // React 19 and Vue set attributes on not-yet-defined elements; property-only props ignore them.
+      if (DEV) {
+        for (const property of propsOf(this.constructor).values()) {
+          if (property.attribute || !this.hasAttribute(property.name)) continue;
+          reportOddkinError(
+            new OddkinError(
+              'element.attribute.propertyOnly',
+              `<${this.localName}> has an attribute "${property.name}", but "${property.name}" is a property only, so the attribute is ignored. A framework that renders the element before it is defined sets an attribute instead of the property: define the element first, or bind it as a property.`,
+            ),
+            { code: 'element.attribute.propertyOnly', origin: this.localName },
+          );
+        }
+      }
     }
     this.#retainLightDomStyles(scope);
     this.#guard('connected', () => this.connected(scope));

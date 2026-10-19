@@ -1,3 +1,4 @@
+/// <reference path="./input.ts" preserve="true" />
 import { define } from '@oddkin/core/element';
 import { inputDefinition } from './input.definition.js';
 

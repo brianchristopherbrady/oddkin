@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import type { ModelOption } from '../contracts/types.js';
 import { modelChangeEvent } from '../events.js';
 import { strings } from '../internal/strings.js';
@@ -37,6 +37,7 @@ export class OddkinModelSelect extends OddkinElement.with({
 }) {
   static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
   static override events = { 'model-change': modelChangeEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinModelSelect>;
 
   /** @internal */
   get _strings(): typeof MODEL_SELECT_STRINGS {

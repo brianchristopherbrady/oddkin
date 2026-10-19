@@ -87,6 +87,7 @@ describe('authored examples', () => {
   };
   const reported: Record<string, string[]> = {
     'odd-button/dangerAppearance': ['element.attribute.invalid'],
+    'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
   };
 
   it('each explained mistake does what its explanation says, unlike its correct example', async () => {

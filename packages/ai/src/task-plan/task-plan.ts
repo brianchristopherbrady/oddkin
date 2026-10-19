@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import type { PlanRecord, StepStatus } from '../contracts/types.js';
 import { planInputEvent } from '../events.js';
 import { format, strings } from '../internal/strings.js';
@@ -47,6 +47,7 @@ export class OddkinTaskPlan extends OddkinElement.with({
   }),
 }) {
   static override events = { 'plan-input': planInputEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinTaskPlan>;
 
   /** @internal */
   get _strings(): typeof TASK_PLAN_STRINGS {

@@ -27,6 +27,17 @@ export interface EventDefinition<D = void> extends EventDefinitionInit {
 
 export type EventDetail<E> = E extends EventDefinition<infer D> ? D : never;
 
+/**
+ * Listener map for an element class's `static events`, keyed by event name: `CustomEvent` with
+ * the published detail type, or the native event type for re-dispatched DOM events (`input`).
+ * An element types its listeners with `declare readonly _events?: ElementEvents<typeof Self>`.
+ */
+export type ElementEvents<C extends { readonly events?: unknown }> = {
+  [K in keyof NonNullable<C['events']> & string]: K extends keyof HTMLElementEventMap
+    ? HTMLElementEventMap[K]
+    : CustomEvent<EventDetail<NonNullable<C['events']>[K]>>;
+};
+
 /** Define an event once; dispatch it with `this.emit(definition, detail)`. */
 export function event<D = void>(type: string, init: EventDefinitionInit): EventDefinition<D> {
   return Object.freeze({ type, ...init });

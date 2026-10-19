@@ -3,11 +3,16 @@
  * Requires a DOM (`HTMLElement`).
  */
 export { OddkinElement, elementProperties } from './element.js';
-export type { ElementProperty, OddkinElementClass, WithProps } from './element.js';
+export type {
+  ElementProperties,
+  ElementProperty,
+  OddkinElementClass,
+  WithProps,
+} from './element.js';
 export { prop, attributeNameFor } from './props.js';
 export type { Conversion, PropDefinition, PropDefinitions, PropKind, PropValues } from './props.js';
 export { event, emit } from './events.js';
-export type { EventDefinition, EventDefinitionInit, EventDetail } from './events.js';
+export type { ElementEvents, EventDefinition, EventDefinitionInit, EventDetail } from './events.js';
 export { define } from './define.js';
 export { compose, isElementDefinition } from './definition.js';
 export type { ElementDefinition, ElementDefinitionInit, ElementTemplate } from './definition.js';

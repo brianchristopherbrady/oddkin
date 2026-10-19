@@ -168,7 +168,7 @@
       "file": "CONTRACTS.md",
       "title": "Events",
       "anchor": "events",
-      "sha256": "58023e678c81cdcb4c19a0ad11361e6756b443e3ae3abad0c75e20720996ecae"
+      "sha256": "fe19dc1b7b1930a64e037db6e0ddde6ea41207208cc145003b8616d4da02168b"
     },
     "contract:core/lifecycle": {
       "package": "@oddkin/core",

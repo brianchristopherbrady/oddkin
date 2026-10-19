@@ -292,4 +292,58 @@ describe('checkBoundaries', () => {
       'boundary.artifact.missing',
     ]);
   });
+
+  it('lets framework typings import their framework for types only, from types-only entries', async () => {
+    const config = {
+      packages: {
+        '@oddkin/core': {
+          kind: 'browser' as const,
+          allow: [],
+          typeOnly: { sources: 'src/jsx/', entries: ['./jsx/react'], allow: ['react'] },
+        },
+      },
+    };
+    const files = (exports: Record<string, unknown>, typings: string) => ({
+      'packages/core/package.json': manifest('@oddkin/core', {
+        exports: { '.': { types: './dist/index.d.ts' }, ...exports },
+      }),
+      'packages/core/src/jsx/react.ts': typings,
+      'packages/core/dist/index.d.ts': 'export {};\n',
+      'packages/core/dist/jsx/react.d.ts':
+        "import type { FC } from 'react';\nexport type X = FC;\n",
+    });
+    const typesOnly = { './jsx/react': { types: './dist/jsx/react.d.ts' } };
+    const check = async (root: string) =>
+      (await checkBoundaries(root, { artifacts: true, config })).diagnostics.map((d) => d.code);
+
+    const ok = await workspace(
+      files(typesOnly, "import type { FC } from 'react';\nexport type X = FC;\n"),
+    );
+    expect(await check(ok)).toEqual([]);
+
+    // A value import is not types-only; the same import outside src/jsx/ is not typings at all.
+    const value = await workspace(
+      files(typesOnly, "import { useState } from 'react';\nuseState;\n"),
+    );
+    expect(await check(value)).toEqual(['boundary.import.thirdParty']);
+    const elsewhere = await workspace({
+      ...files(typesOnly, 'export {};\n'),
+      'packages/core/src/index.ts': "import type { FC } from 'react';\nexport type X = FC;\n",
+    });
+    expect(await check(elsewhere)).toEqual(['boundary.import.thirdParty']);
+
+    // A types-only entry with JavaScript, and another package's types in typings, are rejected.
+    const runtime = await workspace({
+      ...files(
+        { './jsx/react': { types: './dist/jsx/react.d.ts', default: './dist/jsx/react.js' } },
+        "import type { FC } from 'react';\nexport type X = FC;\n",
+      ),
+      'packages/core/dist/jsx/react.js': 'export {};\n',
+    });
+    expect(await check(runtime)).toEqual(['boundary.typeOnly.runtime']);
+    const other = await workspace(
+      files(typesOnly, "import type { App } from 'vue';\nexport type X = App;\n"),
+    );
+    expect(await check(other)).toEqual(['boundary.import.thirdParty']);
+  });
 });

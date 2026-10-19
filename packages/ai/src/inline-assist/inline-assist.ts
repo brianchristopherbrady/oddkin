@@ -1,5 +1,5 @@
 import { RovingFocus } from '@oddkin/core/controllers/focus';
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { PublicError } from '../contracts/types.js';
@@ -79,6 +79,7 @@ export class OddkinInlineAssist extends OddkinElement.with({
   }),
 }) {
   static override events = { 'assist-request': assistRequestEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinInlineAssist>;
 
   /** @internal Roving tab stop (presentation state). */
   readonly _active = signal(0);

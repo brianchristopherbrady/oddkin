@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import { can, unavailableReason } from '../contracts/normalize.js';
@@ -71,6 +71,7 @@ export class OddkinActionApproval extends OddkinElement.with({
     'approval-edit': approvalEditEvent,
     'ai-announce': announceEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinActionApproval>;
 
   /** @internal `approvalId:revision:decision` requested from this view, until the record changes. */
   readonly _requested = signal<string | undefined>(undefined);

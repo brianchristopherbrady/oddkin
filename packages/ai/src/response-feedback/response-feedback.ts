@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { FeedbackRecord } from '../contracts/types.js';
@@ -49,6 +49,7 @@ export class OddkinResponseFeedback extends OddkinElement.with({
   }),
 }) {
   static override events = { 'feedback-submit': feedbackSubmitEvent, 'ai-announce': announceEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinResponseFeedback>;
 
   /** @internal Local draft (presentation state). */
   readonly _rating = signal<'positive' | 'negative' | undefined>(undefined);

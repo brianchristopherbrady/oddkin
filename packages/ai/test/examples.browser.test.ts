@@ -61,6 +61,7 @@ describe('@oddkin/ai authored examples', () => {
   };
   const runtime: Record<string, string[]> = {
     'odd-artifact/codeMode': ['element.attribute.invalid'],
+    'odd-sources/sourcesAttribute': ['element.attribute.propertyOnly'],
   };
 
   it('each explained mistake does what its explanation says, unlike its correct example', async () => {

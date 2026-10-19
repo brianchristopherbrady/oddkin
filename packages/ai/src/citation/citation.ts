@@ -1,4 +1,4 @@
-import { OddkinElement, event, prop } from '@oddkin/core/element';
+import { OddkinElement, event, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { PartOf } from '../contracts/types.js';
@@ -57,6 +57,7 @@ export class OddkinCitation extends OddkinElement.with({
     'citation-open': citationOpenEvent,
     'ai-reveal-source': revealSourceEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinCitation>;
 
   /** @internal Local presentation state. */
   readonly _open = signal(false);

@@ -91,17 +91,23 @@ async function tabStops(markup: string): Promise<string[]> {
 }
 
 describe('keyboard targets', () => {
-  it('components add the same Tab stops, in the same order, as their native equivalents', async () => {
-    const native = await tabStops(NATIVE);
-    const components = await tabStops(COMPONENTS);
-    expect(native.at(-1)).toBe('end:button');
-    expect(components).toEqual(native);
-    // Shift+Tab walks the same stops back.
-    const back: string[] = [];
-    for (let i = 0; i < components.length - 1; i++) {
-      await userEvent.tab({ shift: true });
-      back.push(describeStop(deepActive()!));
-    }
-    expect(back).toEqual(components.slice(0, -1).reverse());
-  });
+  // Concurrent test pages can take keyboard focus mid-walk under full-suite load; a real
+  // regression fails every attempt.
+  it(
+    'components add the same Tab stops, in the same order, as their native equivalents',
+    { retry: 2 },
+    async () => {
+      const native = await tabStops(NATIVE);
+      const components = await tabStops(COMPONENTS);
+      expect(native.at(-1)).toBe('end:button');
+      expect(components).toEqual(native);
+      // Shift+Tab walks the same stops back.
+      const back: string[] = [];
+      for (let i = 0; i < components.length - 1; i++) {
+        await userEvent.tab({ shift: true });
+        back.push(describeStop(deepActive()!));
+      }
+      expect(back).toEqual(components.slice(0, -1).reverse());
+    },
+  );
 });

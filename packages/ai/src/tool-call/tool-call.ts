@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import type { ApprovalRecord, Capabilities, ToolCallRecord } from '../contracts/types.js';
 import { toolRetryEvent } from '../events.js';
 import { strings } from '../internal/strings.js';
@@ -52,6 +52,7 @@ export class OddkinToolCall extends OddkinElement.with({
   }),
 }) {
   static override events = { 'tool-retry': toolRetryEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinToolCall>;
 
   /** @internal */
   get _strings(): typeof TOOL_CALL_STRINGS {

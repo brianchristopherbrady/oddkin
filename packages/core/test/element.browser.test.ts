@@ -273,6 +273,25 @@ describe('public properties', () => {
     expect(shadowText(el)).toBe('field');
   });
 
+  it('reports an attribute named after a property-only prop, as set before definition', () => {
+    class Listing extends OddkinElement.with({
+      items: prop.object<readonly string[]>({ default: () => [] }),
+      renderLabel: prop.custom<(() => string) | undefined>({ default: () => undefined }),
+      label: prop.string(),
+    }) {}
+    const name = tag('demo-listing');
+    // What React 19 and Vue write to an element that is not defined yet.
+    container.innerHTML = `<${name} items="a,b" renderlabel="() => x" label="Fine"></${name}>
+      <${name} label="Clean"></${name}>`;
+    define(name, Listing);
+    expect(reported.map((r) => r.code)).toEqual([
+      'element.attribute.propertyOnly',
+      'element.attribute.propertyOnly',
+    ]);
+    const [first] = container.querySelectorAll<Listing>(name);
+    expect([first!.items, first!.label]).toEqual([[], 'Fine']);
+  });
+
   it('supports subclassing with additional properties', () => {
     class Loud extends DemoGreeting.with({ volume: prop.number({ default: 11 }) }) {
       protected override render() {

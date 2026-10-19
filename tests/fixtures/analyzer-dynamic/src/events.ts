@@ -1,4 +1,4 @@
-import { OddkinElement, event } from '@oddkin/core';
+import { OddkinElement, event, type ElementEvents } from '@oddkin/core';
 
 const intent = (globalThis as { intent?: 'user' }).intent ?? 'user';
 
@@ -27,3 +27,11 @@ export class EventsElement extends OddkinElement {
 }
 
 customElements.define('dyn-events', EventsElement);
+
+/** Typed listeners are keyed by `static events` keys, so a key other than the name is reported. */
+export class KeyedElement extends OddkinElement {
+  static override events = { pinged: undeclared };
+  declare readonly _events?: ElementEvents<typeof KeyedElement>;
+}
+
+customElements.define('dyn-keyed', KeyedElement);

@@ -1,6 +1,6 @@
 import { LiveAnnouncer } from '@oddkin/core/controllers/announce';
 import { ResizeController } from '@oddkin/core/controllers/observe';
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { ArtifactRenderer } from '../artifact/artifact.js';
@@ -93,6 +93,7 @@ export class OddkinConversation extends OddkinElement.with({
   }),
 }) {
   static override events = { 'history-request': historyRequestEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinConversation>;
 
   /** @internal Snapshot read from `source` (mirrors it; never edited). */
   readonly _snapshot = signal<ConversationState | undefined>(undefined);

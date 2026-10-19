@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import type { Scope } from '@oddkin/core/scope';
 import { diffLines, diffWords, type DiffSegment } from '../controllers/diff.js';
 import type { EditProposal, ProposalStatus } from '../controllers/document.js';
@@ -67,6 +67,7 @@ export class OddkinChangeReview extends OddkinElement.with({
     'change-undo': changeUndoEvent,
     'ai-announce': announceEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinChangeReview>;
 
   readonly #diffs = new WeakMap<
     EditProposal,

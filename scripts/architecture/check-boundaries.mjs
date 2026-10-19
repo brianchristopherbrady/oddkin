@@ -204,6 +204,11 @@ export async function checkBoundaries(root, options = {}) {
       const specifiers = await lexImports(code, file);
       importsScanned += specifiers.length;
       const dev = isDevSource(rule, file);
+      // Framework typings may import their framework for types only; a value import still fails.
+      const typings =
+        rule.typeOnly && rel(file).startsWith(rel(join(pkg.dir, rule.typeOnly.sources)))
+          ? new Set(await lexImports(stripTypeScriptTypes(code, { mode: 'strip' }), `${file}.js`))
+          : undefined;
       for (const spec of specifiers) {
         const where = { file: rel(file) };
         if (isRelative(spec)) {
@@ -282,6 +287,12 @@ export async function checkBoundaries(root, options = {}) {
               },
             );
           }
+        } else if (
+          typings &&
+          rule.typeOnly.allow.includes(packageNameOf(spec)) &&
+          !typings.has(spec)
+        ) {
+          continue;
         } else if (!isNodeSource(file)) {
           report(
             'boundary.import.thirdParty',
@@ -341,6 +352,14 @@ async function checkArtifacts(packages, byName, config, report, rel) {
     const nodeEntries = rule.nodeEntries ?? [];
     for (const key of exportKeys(pkg.manifest)) {
       if (key === './package.json' || key.includes('*') || nodeEntries.includes(key)) continue;
+      const typesOnly = (rule.typeOnly?.entries ?? []).includes(key);
+      if (typesOnly && exportTarget(pkg.manifest, key, 'default')) {
+        report(
+          'boundary.typeOnly.runtime',
+          `${pkg.name} export "${key}" is declared types-only but has a JavaScript target.`,
+          { fix: 'Give framework typings only a "types" condition.' },
+        );
+      }
       for (const condition of ['default', 'types']) {
         const target = exportTarget(pkg.manifest, key, condition);
         if (!target) continue;
@@ -365,6 +384,7 @@ async function checkArtifacts(packages, byName, config, report, rel) {
           config,
           report,
           rel,
+          typesOnly ? rule.typeOnly.allow : [],
         );
       }
     }
@@ -372,7 +392,7 @@ async function checkArtifacts(packages, byName, config, report, rel) {
   }
 }
 
-async function walkArtifact(file, chain, seen, byName, config, report, rel) {
+async function walkArtifact(file, chain, seen, byName, config, report, rel, typeImports = []) {
   if (seen.has(file)) return;
   seen.add(file);
   const code = await readFile(file, 'utf8');
@@ -417,6 +437,8 @@ async function walkArtifact(file, chain, seen, byName, config, report, rel) {
           rel,
         );
       }
+    } else if (file.endsWith('.d.ts') && typeImports.includes(packageNameOf(spec))) {
+      continue;
     } else {
       report('boundary.artifact.thirdParty', `Browser entry reaches third-party module: ${path}.`, {
         file: rel(file),

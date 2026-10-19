@@ -220,6 +220,47 @@ try {
     }),
   );
   node([join(root, 'node_modules', 'typescript', 'bin', 'tsc'), '-p', 'tsconfig.json'], consumer);
+
+  // Opt-in React typings from the installed tarballs: registering imports bring the tag names,
+  // and a mistyped prop fails. React's types come from the workspace (no network install).
+  await writeFile(
+    join(consumer, 'jsx.tsx'),
+    [
+      "import type {} from '@oddkin/components/jsx/react';",
+      "import type {} from '@oddkin/components/define/side-nav';",
+      "import type {} from '@oddkin/ai/define/prompt-input';",
+      'export const nav = <odd-side-nav label="Primary" onodd-action={(e) => e.detail.action.trim()} />;',
+      'export const prompt = <odd-prompt-input onprompt-submit={(e) => e.detail.text.trim()} />;',
+      '// @ts-expect-error -- unknown property',
+      'export const wrong = <odd-side-nav itemz={1} />;',
+    ].join('\n'),
+  );
+  const types = join(root, 'node_modules', '@types', 'react');
+  await writeFile(
+    join(consumer, 'tsconfig.jsx.json'),
+    JSON.stringify({
+      compilerOptions: {
+        module: 'NodeNext',
+        moduleResolution: 'NodeNext',
+        target: 'ES2022',
+        strict: true,
+        noEmit: true,
+        skipLibCheck: false,
+        jsx: 'react-jsx',
+        lib: ['ES2023', 'DOM'],
+        types: [],
+        paths: {
+          react: [join(types, 'index.d.ts')],
+          'react/jsx-runtime': [join(types, 'jsx-runtime.d.ts')],
+        },
+      },
+      files: ['jsx.tsx'],
+    }),
+  );
+  node(
+    [join(root, 'node_modules', 'typescript', 'bin', 'tsc'), '-p', 'tsconfig.jsx.json'],
+    consumer,
+  );
 } catch (error) {
   failures.push(String(error.stderr || error.stdout || error.message).trim());
 } finally {
@@ -231,5 +272,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; React JSX typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}.`,
 );

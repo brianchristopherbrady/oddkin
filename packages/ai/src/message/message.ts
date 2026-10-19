@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import { can } from '../contracts/normalize.js';
 import type {
@@ -104,6 +104,7 @@ export class OddkinMessage extends OddkinElement.with({
     'message-regenerate': messageRegenerateEvent,
     'ai-announce': announceEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinMessage>;
 
   /** @internal Inline edit draft (presentation state); undefined when not editing. */
   readonly _editing = signal<string | undefined>(undefined);

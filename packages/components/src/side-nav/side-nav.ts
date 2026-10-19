@@ -1,5 +1,5 @@
 import { FocusRecovery } from '@oddkin/core/controllers/focus';
-import { OddkinElement, event, prop } from '@oddkin/core/element';
+import { OddkinElement, event, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { NavigationItem } from '../models/navigation.js';
@@ -117,7 +117,8 @@ export class OddkinSideNav extends OddkinElement.with({
       'Project entry kinds for this element, from `navigationKinds.extend()`; built-in kinds need none.',
   }),
 }) {
-  static override events = { action: actionEvent, toggle: toggleEvent };
+  static override events = { 'odd-action': actionEvent, 'odd-toggle': toggleEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinSideNav>;
 
   /** @internal True while the header slot has content; read by the template. */
   readonly _hasHeader = signal(false);

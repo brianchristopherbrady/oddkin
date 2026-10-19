@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { ContextItem } from '../contracts/types.js';
 import { contextAddEvent, contextRemoveEvent } from '../events.js';
@@ -56,6 +56,7 @@ export class OddkinContextPicker extends OddkinElement.with({
   }),
 }) {
   static override events = { 'context-add': contextAddEvent, 'context-remove': contextRemoveEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinContextPicker>;
 
   /** @internal Expanded item ids (presentation state). */
   readonly _expanded = signal<ReadonlySet<string>>(new Set());

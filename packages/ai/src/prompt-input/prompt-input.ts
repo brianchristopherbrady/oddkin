@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal, type Readable } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import { can, unavailableReason } from '../contracts/normalize.js';
@@ -123,6 +123,7 @@ export class OddkinPromptInput extends OddkinElement.with({
     'attachment-remove': attachmentRemoveEvent,
     'ai-announce': announceEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinPromptInput>;
 
   #owned: ComposerController | undefined;
   #composing = false;

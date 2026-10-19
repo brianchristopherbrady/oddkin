@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import { VoiceController, type VoiceAdapter, type VoiceState } from '../controllers/voice.js';
@@ -55,6 +55,7 @@ export class OddkinVoiceInput extends OddkinElement.with({
     'voice-transcript': voiceTranscriptEvent,
     'ai-announce': announceEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinVoiceInput>;
 
   #owned: VoiceController | undefined;
   /** @internal Mirror of the active controller state. */

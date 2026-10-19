@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import { can, unavailableReason } from '../contracts/normalize.js';
@@ -51,6 +51,7 @@ export class OddkinCheckpoint extends OddkinElement.with({
     'checkpoint-restore': checkpointRestoreEvent,
     'ai-announce': announceEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinCheckpoint>;
 
   /** @internal Confirmation step (presentation state). */
   readonly _confirming = signal(false);

@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { can } from '../contracts/normalize.js';
 import type { AttemptRecord, Capabilities, ToolCallRecord } from '../contracts/types.js';
 import { attemptResumeEvent, attemptRetryEvent, promptStopEvent } from '../events.js';
@@ -53,6 +53,7 @@ export class OddkinActivity extends OddkinElement.with({
     'attempt-resume': attemptResumeEvent,
     'attempt-retry': attemptRetryEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinActivity>;
 
   /** @internal */
   get _strings(): typeof ACTIVITY_STRINGS {

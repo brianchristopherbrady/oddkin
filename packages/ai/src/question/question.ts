@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { JsonValue, QuestionRecord } from '../contracts/types.js';
@@ -49,6 +49,7 @@ export class OddkinQuestion extends OddkinElement.with({
     'question-skip': questionSkipEvent,
     'ai-announce': announceEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinQuestion>;
 
   /** @internal `questionId:revision` requested from this view. */
   readonly _requested = signal<string | undefined>(undefined);

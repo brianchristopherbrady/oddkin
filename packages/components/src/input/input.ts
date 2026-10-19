@@ -1,5 +1,5 @@
 import { FormValue } from '@oddkin/core/controllers/form';
-import { OddkinElement, event, prop } from '@oddkin/core/element';
+import { OddkinElement, event, prop, type ElementEvents } from '@oddkin/core/element';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 
@@ -75,6 +75,7 @@ export class OddkinInput extends OddkinElement.with({
   static formAssociated = true;
   static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
   static override events = { input: inputEvent, change: changeEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinInput>;
 
   // undefined until the value is set or typed ("dirty"), then independent of `defaultValue`.
   readonly #value = signal<string | undefined>(undefined);

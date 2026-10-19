@@ -711,6 +711,7 @@ export function extract(program: ts.Program, root: string): Extraction {
     const parent = base as ComponentInfo | null;
 
     const events: EventInfo[] = [];
+    const eventKeys: { key: string; name: string; node: ts.Node }[] = [];
     const members: MemberInfo[] = [];
     const cssStates = new Map<string, NamedDoc>();
     const slots = new Map<string, NamedDoc>();
@@ -743,9 +744,12 @@ export function extract(program: ts.Program, root: string): Extraction {
         member.initializer
       ) {
         if (ts.isObjectLiteralExpression(member.initializer)) {
-          for (const [, value] of objectEntries(member.initializer, `${className}.events`)) {
+          for (const [key, value] of objectEntries(member.initializer, `${className}.events`)) {
             const info = eventFrom(value, className);
-            if (info) events.push(info);
+            if (info) {
+              events.push(info);
+              eventKeys.push({ key, name: info.name, node: value });
+            }
           }
         } else
           report(
@@ -873,6 +877,16 @@ export function extract(program: ts.Program, root: string): Extraction {
     };
     walk(node);
     const declaredEvents = new Set([...(parent?.events ?? []), ...events].map((e) => e.name));
+    // `_events` (ElementEvents<typeof Class>) types listeners by key, so keys must be the names.
+    if (node.members.some((m) => m.name && ts.isIdentifier(m.name) && m.name.text === '_events'))
+      for (const { key, name, node: value } of eventKeys)
+        if (key !== name)
+          report(
+            'analyzer.event.key',
+            value,
+            `${className}.events key "${key}" differs from the event name "${name}", so typed listeners would expect "${key}".`,
+            `Key the entry by the event name: '${name}': …`,
+          );
     for (const { name, node: call } of emitted)
       if (!declaredEvents.has(name))
         report(

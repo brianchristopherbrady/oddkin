@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { ArtifactRecord, ArtifactRevision } from '../contracts/types.js';
@@ -81,6 +81,7 @@ export class OddkinArtifact extends OddkinElement.with({
     'artifact-revision-change': artifactRevisionEvent,
     'ai-announce': announceEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinArtifact>;
 
   /** @internal Bumps whenever the preview is re-rendered. */
   readonly _previews = signal(0);

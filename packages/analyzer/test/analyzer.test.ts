@@ -398,7 +398,11 @@ describe('compose() definitions in a folder-structured library', () => {
     const registered = Object.keys(
       (dynamic.metadata as { components: Record<string, unknown> }).components,
     );
-    expect(registered).toEqual(['component:dyn-events', 'component:dynamic-element']);
+    expect(registered).toEqual([
+      'component:dyn-events',
+      'component:dyn-keyed',
+      'component:dynamic-element',
+    ]);
   });
 
   it('records an event intent it cannot read literally as unknown, with a diagnostic', () => {
@@ -410,6 +414,7 @@ describe('compose() definitions in a folder-structured library', () => {
     ).toEqual([
       ['analyzer.dynamic.value', 10],
       ['analyzer.event.undeclared', 25],
+      ['analyzer.event.key', 33],
     ]);
     const metadata = dynamic.metadata as {
       components: Record<string, { events?: unknown }>;
@@ -432,6 +437,15 @@ describe('compose() definitions in a folder-structured library', () => {
         (e) => e.name,
       ),
     ).toEqual(['dyn-computed']);
+  });
+
+  it('reports a static events key that differs from the event name once listeners are typed', () => {
+    const dynamic = analyze({ project: path('tests/fixtures/analyzer-dynamic/tsconfig.json') });
+    const keys = dynamic.diagnostics.filter((d) => d.code === 'analyzer.event.key');
+    expect(keys.map((d) => [d.severity, d.source?.line])).toEqual([['warning', 33]]);
+    expect(keys[0]?.message).toContain('"pinged" differs from the event name "dyn-undeclared"');
+    // EventsElement keys by variable name ({ computedIntent }) but declares no typed listeners.
+    expect(keys.some((d) => d.message.startsWith('EventsElement'))).toBe(false);
   });
 });
 

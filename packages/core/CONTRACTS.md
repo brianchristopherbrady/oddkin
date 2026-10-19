@@ -113,6 +113,7 @@ Id: `contract:core/events`
 
 - Events have typed `detail` and explicit `bubbles` / `composed` / `cancelable` in their definitions. Preserve native `input`/`change` semantics; never re-emit across a shadow boundary twice or treat a programmatic assignment as a user edit. Event contracts appear in generated metadata.
 - An event definition may declare `intent`, for tooling only (no runtime cost): `'user'` events report user interaction and are never emitted by property writes; `'notification'` events report a state change from any source. Without it, metadata records the intent as unknown. The contract suite checks every `'user'` event: setting each scalar property, and every property of the correct authored examples while connected, emits none (`event:<tag>#<name>/not-programmatic`).
+- **Typed listeners:** `static events` is keyed by event name, and the element declares `declare readonly _events?: ElementEvents<typeof Self>` (type-only, no runtime cost). Its `addEventListener` and `removeEventListener` then receive `CustomEvent<Detail>`, or the native event type for a re-dispatched DOM event, with no entry in the global event map, so unprefixed names cannot collide. Once `_events` is declared, the analyzer reports a key that differs from its event name (`analyzer.event.key`).
 
 <a id="lifecycle"></a>
 
@@ -320,9 +321,10 @@ Id: `contract:core/rendering`
 
 - **Declarative shadow DOM** content is replaced on first render; hydration is not supported.
 - **Invalid values** (`element.attribute.invalid`, `element.prop.invalid`) fall back to the property default.
+- **Attributes for property-only properties** (development builds): at first connection, an attribute named after a property that takes no attribute reports `element.attribute.propertyOnly` and is ignored. React 19 and Vue (without `.prop`) choose property or attribute when they render, so an element rendered before its definition loads gets `items="[object Object],…"` and no data until the framework sets it again; Angular property bindings, Vue `.prop`, and Svelte object values set the property, which survives the upgrade.
 - **Shadowing class fields** report `element.prop.shadowed`; the field value is applied through the reactive accessor so the element still works.
 - **TypeScript:** subclasses use `override` on hooks (`noImplicitOverride`), and hooks are `protected`.
-- **Development and production builds** (ADR 0031): the `development` export condition selects `dist/` (full explanations, development-only checks); the default selects `dist/prod/`, where errors keep their stable `[code]` and every behavior and security check is unchanged. Development-only checks: the light-DOM `:host` scan and the recipe-defined-during-render warning. Size budgets are enforced by `npm run size`.
+- **Development and production builds** (ADR 0031): the `development` export condition selects `dist/` (full explanations, development-only checks); the default selects `dist/prod/`, where errors keep their stable `[code]` and every behavior and security check is unchanged. Development-only checks: the light-DOM `:host` scan, the recipe-defined-during-render warning, and attributes for property-only properties. Size budgets are enforced by `npm run size`.
 
 <a id="update-complete"></a>
 

@@ -1,3 +1,4 @@
+/// <reference path="./question.ts" preserve="true" />
 import { define } from '@oddkin/core/element';
 import { questionDefinition } from './question.definition.js';
 

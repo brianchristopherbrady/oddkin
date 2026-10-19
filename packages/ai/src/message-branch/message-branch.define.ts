@@ -1,3 +1,4 @@
+/// <reference path="./message-branch.ts" preserve="true" />
 import { define } from '@oddkin/core/element';
 import { messageBranchDefinition } from './message-branch.definition.js';
 

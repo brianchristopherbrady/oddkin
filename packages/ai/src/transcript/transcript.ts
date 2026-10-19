@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import type { TranscriptSegment } from '../contracts/types.js';
 import { transcriptChangeEvent } from '../events.js';
 import { strings } from '../internal/strings.js';
@@ -30,6 +30,7 @@ export class OddkinTranscript extends OddkinElement.with({
   }),
 }) {
   static override events = { 'transcript-change': transcriptChangeEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinTranscript>;
 
   /** @internal */
   get _strings(): typeof TRANSCRIPT_STRINGS {

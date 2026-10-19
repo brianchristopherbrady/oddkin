@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import type { Suggestion } from '../contracts/types.js';
 import { suggestionSelectEvent, suggestionSubmitEvent } from '../events.js';
 import { strings } from '../internal/strings.js';
@@ -39,6 +39,7 @@ export class OddkinSuggestions extends OddkinElement.with({
     'suggestion-select': suggestionSelectEvent,
     'suggestion-submit': suggestionSubmitEvent,
   };
+  declare readonly _events?: ElementEvents<typeof OddkinSuggestions>;
 
   /** @internal */
   get _strings(): typeof SUGGESTIONS_STRINGS {

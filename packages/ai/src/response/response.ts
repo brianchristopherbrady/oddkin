@@ -1,4 +1,4 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { SourceRecord } from '../citation/citation.js';
@@ -63,6 +63,7 @@ export class OddkinResponse extends OddkinElement.with({
   }),
 }) {
   static override events = { 'ai-announce': announceEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinResponse>;
 
   /** @internal Bumps when rendered output changes (for tests and hosts measuring work). */
   readonly _renders = signal(0);
