@@ -109,4 +109,33 @@ describe('@oddkin/components published metadata', () => {
     expect(facts('odd-button')).toEqual({ propertyOnly: [], intents: {} });
     expect(facts('odd-card')).toEqual({ propertyOnly: [], intents: {} });
   });
+
+  it('lists customization paths; ladder levels only where the source declares them', () => {
+    const customization = (tag: string) =>
+      metadata['components'][`component:${tag}`].customization as {
+        levels: Record<string, unknown>;
+        variables: string[];
+        parts: string[];
+        slots: string[];
+      };
+    // Level 3 is exercised by derived-side-nav (packages/components/test/derived.ts).
+    expect(customization('odd-side-nav').levels).toMatchObject({
+      value: [1, 2, 3],
+      provenance: 'authored',
+    });
+    expect(customization('odd-side-nav').slots).toEqual([
+      'slot:odd-side-nav#default',
+      'slot:odd-side-nav#footer',
+      'slot:odd-side-nav#header',
+    ]);
+    expect(customization('odd-side-nav').parts).toContain('part:odd-side-nav#group-toggle');
+    for (const tag of ['odd-button', 'odd-card', 'odd-input'])
+      expect(customization(tag).levels, tag).toEqual({ known: false, provenance: 'extracted' });
+    expect(customization('odd-button').variables).toContain(
+      'cssprop:odd-button#--odd-button-radius',
+    );
+    // Nothing in the slice is deprecated yet.
+    for (const tag of ['odd-button', 'odd-card', 'odd-input', 'odd-side-nav'])
+      expect(metadata['components'][`component:${tag}`].deprecations, tag).toBeUndefined();
+  });
 });

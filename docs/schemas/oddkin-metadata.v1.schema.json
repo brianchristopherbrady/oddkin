@@ -477,6 +477,96 @@
             }
           }
         },
+        "since": {
+          "$ref": "#/$defs/stringFact",
+          "description": "Version the component was introduced in (authored @since)."
+        },
+        "deprecations": {
+          "type": "array",
+          "description": "Authored @deprecated facts for the component, its properties, and its events, with the @replacement (normalized to a stable id) and @migration record named in source. Replacements are never inferred from prose.",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "provenance"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^(component|property|event):"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "replacement": {
+                "type": "string",
+                "pattern": "^[a-z]+:"
+              },
+              "migration": {
+                "type": "string"
+              },
+              "provenance": {
+                "$ref": "#/$defs/provenance"
+              },
+              "source": {
+                "$ref": "#/$defs/source"
+              }
+            }
+          }
+        },
+        "customization": {
+          "type": "object",
+          "description": "Customization paths (multi-product.md §6): the supported ladder levels (authored @customization, unknown otherwise) and the documented component variables, parts, and slots that level 2 works through.",
+          "required": [
+            "levels",
+            "variables",
+            "parts",
+            "slots"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "levels": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/$defs/fact"
+                }
+              ],
+              "properties": {
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                }
+              }
+            },
+            "variables": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^cssprop:"
+              }
+            },
+            "parts": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^part:"
+              }
+            },
+            "slots": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^slot:"
+              }
+            }
+          }
+        },
         "propertyOnly": {
           "type": "array",
           "description": "Public writable properties without an attribute (rich objects, arrays, functions, accessors): assign them as properties. Attribute strings are not parsed and values are not reflected.",

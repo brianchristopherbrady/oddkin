@@ -7,8 +7,10 @@ import type {
   AnalyzerDiagnostic,
   ComponentInfo,
   DefinitionInfo,
+  Deprecation,
   Extraction,
   Known,
+  SourceLocation,
   SourceRef,
 } from './extract.js';
 
@@ -73,6 +75,7 @@ export function buildManifest(extraction: Extraction, paths: ModulePaths): Recor
       type: { text: p.type },
       ...optional('default', knownDefault(p.default)),
       ...optional('description', p.description),
+      ...optional('deprecated', p.deprecated && (p.deprecated.reason ?? true)),
       ...optional('attribute', p.attribute ?? undefined),
       ...optional('reflects', p.reflects || undefined),
       ...optional('inheritedFrom', reference(p.inheritedFrom)),
@@ -92,6 +95,10 @@ export function buildManifest(extraction: Extraction, paths: ModulePaths): Recor
       kind: 'class',
       name: component.name,
       ...optional('description', component.description),
+      ...optional(
+        'deprecated',
+        component.tags['deprecated'] && (component.tags['deprecated'][0]?.value || true),
+      ),
       customElement: true,
       ...optional('tagName', tagName),
       superclass,
@@ -104,12 +111,14 @@ export function buildManifest(extraction: Extraction, paths: ModulePaths): Recor
           fieldName: p.name,
           ...optional('default', knownDefault(p.default)),
           ...optional('description', p.description),
+          ...optional('deprecated', p.deprecated && (p.deprecated.reason ?? true)),
           ...optional('inheritedFrom', reference(p.inheritedFrom)),
         })),
       events: component.events.map((e) => ({
         name: e.name,
         type: { text: e.detailType === 'void' ? 'CustomEvent' : `CustomEvent<${e.detailType}>` },
         ...optional('description', e.description),
+        ...optional('deprecated', e.deprecated && (e.deprecated.reason ?? true)),
         ...optional('inheritedFrom', reference(e.inheritedFrom)),
       })),
       slots: [...component.slots]
@@ -201,6 +210,75 @@ const FACT_TAGS: Record<string, string> = {
   limitation: 'limitations',
 };
 
+/**
+ * Deprecations (component, properties, events) with their authored replacement and migration,
+ * `@since`, and the customization paths: authored ladder levels (unknown when not declared) and
+ * the documented variables, parts, and slots that level 2 works through.
+ */
+function lifecycle(component: ComponentInfo, tag: string): Record<string, unknown> {
+  const authored = (location: SourceLocation | undefined) =>
+    location
+      ? {
+          provenance: 'authored',
+          source: { file: location.file, line: location.line, column: location.column },
+        }
+      : { provenance: 'authored' };
+  const first = (name: string) => component.tags[name]?.[0];
+  // A replacement is written as a tag, a member name, or a stable id; ids are kept as written.
+  const id = (value: string | undefined, kind: 'component' | 'property' | 'event') =>
+    !value
+      ? undefined
+      : value.includes(':')
+        ? value
+        : kind === 'component'
+          ? `component:${value.replace(/^<|>$/g, '')}`
+          : `${kind}:${tag}#${value}`;
+  const entry = (subject: string, kind: 'component' | 'property' | 'event', d: Deprecation) => ({
+    id: subject,
+    ...optional('reason', d.reason),
+    ...optional('replacement', id(d.replacement, kind)),
+    ...optional('migration', d.migration),
+    ...authored(d.location),
+  });
+  const deprecated = first('deprecated');
+  const deprecations = [
+    ...(deprecated
+      ? [
+          entry(`component:${tag}`, 'component', {
+            ...(deprecated.value ? { reason: deprecated.value } : {}),
+            ...(first('replacement') ? { replacement: first('replacement')!.value } : {}),
+            ...(first('migration') ? { migration: first('migration')!.value } : {}),
+            location: deprecated.location,
+          }),
+        ]
+      : []),
+    ...component.properties
+      .filter((p) => p.deprecated)
+      .map((p) => entry(`property:${tag}#${p.name}`, 'property', p.deprecated as Deprecation)),
+    ...component.events
+      .filter((e) => e.deprecated)
+      .map((e) => entry(`event:${tag}#${e.name}`, 'event', e.deprecated as Deprecation)),
+  ];
+  const since = first('since');
+  const levels = first('customization');
+  const valid = levels && /^[1-5]( [1-5])*$/.test(levels.value.replace(/\s+/g, ' '));
+  return {
+    ...optional('since', since && { value: since.value, ...authored(since.location) }),
+    ...optional('deprecations', deprecations),
+    customization: {
+      levels: valid
+        ? {
+            value: [...new Set(levels.value.split(/\s+/).map(Number))].sort(),
+            ...authored(levels.location),
+          }
+        : { known: false, provenance: 'extracted' },
+      variables: [...component.cssProperties].sort(byName).map((c) => `cssprop:${tag}#${c.name}`),
+      parts: [...component.parts].sort(byName).map((p) => `part:${tag}#${p.name}`),
+      slots: [...component.slots].sort(byName).map((s) => `slot:${tag}#${s.name || 'default'}`),
+    },
+  };
+}
+
 export function buildMetadata(
   extraction: Extraction,
   paths: ModulePaths,
@@ -289,6 +367,7 @@ export function buildMetadata(
           .map((role) => `role:${role}`),
       ),
       ...facts,
+      ...lifecycle(component, registration.tag),
       ...optional('related', related),
       ...optional(
         'authored',

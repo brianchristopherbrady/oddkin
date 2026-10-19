@@ -79,6 +79,7 @@ const UNSAFE_SCHEME = /^(?:javascript|vbscript|data):/;
  * @notFor Menus of commands (use a menu), tabs, or trees with selection; page layout.
  * @limitation Entries are replaced, not mutated: assign a new `items` array to change them.
  * @category Navigation
+ * @customization 1 2 3
  */
 export class OddkinSideNav extends OddkinElement.with({
   label: prop.string({

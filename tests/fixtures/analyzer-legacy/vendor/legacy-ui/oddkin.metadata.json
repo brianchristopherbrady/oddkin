@@ -13,6 +13,15 @@
       },
       "tokenReads": [
         { "token": "color.text.primary", "kind": "declared", "readThrough": "stylesheet" }
+      ],
+      "deprecations": [
+        {
+          "id": "property:legacy-button#look",
+          "reason": "Use tone.",
+          "replacement": "property:legacy-button#tone",
+          "migration": "https://legacy.example/migrations/0.2",
+          "provenance": "authored"
+        }
       ]
     }
   },

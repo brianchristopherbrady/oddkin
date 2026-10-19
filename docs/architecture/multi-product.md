@@ -150,7 +150,7 @@ A component that supports alternative templates publishes an **anatomy contract*
 - ownership and teardown expectations;
 - form behavior where applicable.
 
-Sharing a behavior class preserves its implementation, but every alternative template and style set must be verified against the contract with the shared interaction fixtures; foundation verification does not certify downstream skins or templates. Not every component supports arbitrary template replacement: each component documents its supported customization levels. For substantially different templates, extract reusable behavior controllers with explicit host requirements on top of the existing controller and `Scope` mechanisms, only from demonstrated needs. Broader extension contracts are justified by prototypes and interaction evidence.
+Sharing a behavior class preserves its implementation, but every alternative template and style set must be verified against the contract with the shared interaction fixtures; foundation verification does not certify downstream skins or templates. Not every component supports arbitrary template replacement: each component documents its supported customization levels (`@customization` on the class; the analyzer records them as `customization.levels`, unknown when absent). For substantially different templates, extract reusable behavior controllers with explicit host requirements on top of the existing controller and `Scope` mechanisms, only from demonstrated needs. Broader extension contracts are justified by prototypes and interaction evidence.
 
 ## 8. Component families and product-aware composites
 

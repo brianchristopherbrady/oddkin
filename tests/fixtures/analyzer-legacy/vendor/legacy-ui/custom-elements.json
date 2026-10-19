@@ -19,6 +19,14 @@
               "default": "'plain'",
               "attribute": "tone",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "look",
+              "type": { "text": "string" },
+              "default": "'plain'",
+              "attribute": "look",
+              "deprecated": "Use tone."
             }
           ],
           "attributes": [

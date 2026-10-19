@@ -213,4 +213,22 @@ describe('a package that publishes no facts', () => {
     // What the legacy styles read cannot be told apart, so it is kept.
     expect(tokens(entry(legacy.metadata, 'acme-legacy-button'))).toEqual(['color.text.primary']);
   });
+
+  it("keeps the publisher's deprecations under the derived ids", () => {
+    const facts = (legacy.metadata as { components: Record<string, { deprecations?: unknown }> })
+      .components['component:acme-legacy-button'];
+    expect(facts?.deprecations).toEqual([
+      {
+        id: 'property:acme-legacy-button#look',
+        reason: 'Use tone.',
+        replacement: 'property:acme-legacy-button#tone',
+        migration: 'https://legacy.example/migrations/0.2',
+        provenance: 'authored',
+      },
+    ]);
+    const look = declaration(legacy.manifest, 'AcmeLegacyButton').members.find(
+      (m) => m['name'] === 'look',
+    );
+    expect(look?.['deprecated']).toBe('Use tone.');
+  });
 });

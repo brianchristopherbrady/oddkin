@@ -50,7 +50,20 @@
             "provenance": "extracted"
           }
         }
-      ]
+      ],
+      "customization": {
+        "levels": {
+          "known": false,
+          "provenance": "extracted"
+        },
+        "variables": [
+          "cssprop:demo-counter#--demo-focus",
+          "cssprop:demo-counter#--demo-ink",
+          "cssprop:demo-counter#--demo-paper"
+        ],
+        "parts": [],
+        "slots": []
+      }
     },
     "component:demo-greeting": {
       "tag": "demo-greeting",
@@ -80,7 +93,16 @@
           "property": "property:demo-greeting#history",
           "provenance": "extracted"
         }
-      ]
+      ],
+      "customization": {
+        "levels": {
+          "known": false,
+          "provenance": "extracted"
+        },
+        "variables": [],
+        "parts": [],
+        "slots": []
+      }
     }
   },
   "templates": {

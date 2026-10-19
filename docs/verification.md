@@ -815,3 +815,16 @@ Environment as the previous entry. Contract: [change-impact-and-verification.md 
 | Packaging | `node scripts/verify-packs.mjs`; `node scripts/architecture/check-boundaries.mjs --artifacts` | OK. The packed `@oddkin/analyzer` includes `./impact` and the `oddkin-impact` bin. |
 
 **Not covered:** base snapshots of a git revision (the base is taken before the change), visual baselines, and product contexts in this repository (it configures none; the known-answer fixtures cover them).
+
+## 2026-10-19 — Agent-facing metadata: deprecations, since, customization paths (M4)
+
+Environment as the previous entry. Contract: [metadata-and-analyzer.md §3.1](./architecture/metadata-and-analyzer.md#31-agent-facing-extensions-planned-m4-reviewed-at-m8).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Static: analyzer | `npx vitest run --project node packages/analyzer/test/analyzer.test.ts packages/analyzer/test/products.test.ts` | Pass. `tests/fixtures/analyzer-lifecycle` covers three deprecations. A property's (`kind`) replacement `tone` becomes `property:acme-banner#tone`, with a migration record. An event constant's (`acme-close`) replacement becomes `event:acme-banner#acme-dismiss`. A component's (`acme-notice`) replacement `acme-banner` becomes `component:acme-banner`. Standard CEM carries the reasons on the member, its attribute, the event, and the declaration; both outputs validate. `@since` is a separate component fact, not a deprecation date. `@customization 1 2` gives authored levels; `@customization 1 9` gives `analyzer.tag.invalid` and unknown levels. In the legacy fixture, the derived `acme-legacy-button` keeps the vendored package's deprecated `look`: reason from its CEM, replacement and migration from its metadata, under the derived ids. |
+| Static: published | `npx vitest run --project node packages/components/test/metadata.test.ts` | Pass. `odd-side-nav` customization levels 1–3 (authored; level 3 is exercised by `derived-side-nav`), with its slots and parts. Button, card, and input levels are unknown (their sources are in the forms lane). Button variables include `--odd-button-radius`. No slice component is deprecated. |
+| Contract evidence | `npx vitest run --project browser packages/components/test/contract.browser.test.ts packages/ai/test/contract.browser.test.ts`; `node scripts/verify-metadata.mjs` | Pass after the side-nav JSDoc change; 189 + 370 verified facts current. |
+| Mutation probe | `node .tmp/mutate-lifecycle.mjs` (not committed) | 4 of 4 killed: deprecations never read, replacements kept as written, any `@customization` accepted, publisher metadata ignored by derived definitions. |
+
+**Not covered:** contract references (`contract:core/*`) need published contract pages with stable anchors to point at.

@@ -33,7 +33,17 @@ export interface PropertyInfo {
   readonly default: Known<string>;
   readonly values?: readonly string[];
   readonly description?: string;
+  readonly deprecated?: Deprecation;
   readonly inheritedFrom?: ClassRef;
+}
+
+/** `@deprecated` with its authored `@replacement` and `@migration` tags. */
+export interface Deprecation {
+  readonly reason?: string;
+  /** As written: a tag, a member name, or a stable id. */
+  readonly replacement?: string;
+  readonly migration?: string;
+  readonly location?: SourceLocation;
 }
 
 export interface EventInfo {
@@ -46,6 +56,7 @@ export interface EventInfo {
   /** Declared `intent`; absent when the definition does not state it (unknown). */
   readonly intent?: { readonly value: 'user' | 'notification'; readonly source?: SourceLocation };
   readonly description?: string;
+  readonly deprecated?: Deprecation;
   readonly inheritedFrom?: ClassRef;
 }
 
@@ -203,6 +214,9 @@ const DOC_TAGS = [
   'related',
   'deprecated',
   'since',
+  'replacement',
+  'migration',
+  'customization',
   'previewRole',
 ];
 
@@ -331,6 +345,29 @@ export function extract(program: ts.Program, root: string): Extraction {
       : '';
     return text || undefined;
   };
+  /** `@deprecated` and its companion tags in the JSDoc of a member or variable. */
+  const deprecationOf = (node: ts.Node | undefined): Deprecation | undefined => {
+    const tags = node ? ts.getJSDocTags(node) : [];
+    const deprecated = tags.find((t) => t.tagName.text === 'deprecated');
+    if (!deprecated) return undefined;
+    const text = (tag: ts.JSDocTag | undefined) =>
+      tag
+        ? (typeof tag.comment === 'string'
+            ? tag.comment
+            : (ts.getTextOfJSDocComment(tag.comment) ?? '')
+          ).trim() || undefined
+        : undefined;
+    const named = (name: string) => text(tags.find((t) => t.tagName.text === name));
+    const reason = text(deprecated);
+    const replacement = named('replacement');
+    const migration = named('migration');
+    return {
+      ...(reason ? { reason } : {}),
+      ...(replacement ? { replacement } : {}),
+      ...(migration ? { migration } : {}),
+      location: where(deprecated),
+    };
+  };
 
   // ---- prop.* definitions ----
   function properties(definitions: ts.ObjectLiteralExpression, className: string): PropertyInfo[] {
@@ -408,6 +445,7 @@ export function extract(program: ts.Program, root: string): Extraction {
         );
       }
       const description = stringOf(options.get('description'));
+      const deprecated = deprecationOf(initializer.parent);
       out.push({
         name,
         kind,
@@ -417,6 +455,7 @@ export function extract(program: ts.Program, root: string): Extraction {
         default: fallback,
         ...(values ? { values } : {}),
         ...(description ? { description } : {}),
+        ...(deprecated ? { deprecated } : {}),
       });
     }
     return out;
@@ -478,6 +517,7 @@ export function extract(program: ts.Program, root: string): Extraction {
       );
     const description =
       stringOf(options.get('description')) ?? (variable ? docOf(variable) : undefined);
+    const deprecated = deprecationOf(variable);
     return {
       name,
       detailType,
@@ -487,6 +527,7 @@ export function extract(program: ts.Program, root: string): Extraction {
       ...(syncs ? { syncs } : {}),
       ...(intent ? { intent } : {}),
       ...(description ? { description } : {}),
+      ...(deprecated ? { deprecated } : {}),
     };
   }
 
@@ -829,8 +870,16 @@ export function extract(program: ts.Program, root: string): Extraction {
         cssProperties.set(first, named);
         styleNames.delete(first);
       } else if (tagName === 'cssstate') cssStates.set(first, named);
-      else if (DOC_TAGS.includes(tagName))
+      else if (DOC_TAGS.includes(tagName)) {
+        if (tagName === 'customization' && !/^[1-5]( [1-5])*$/.test(comment.replace(/\s+/g, ' ')))
+          report(
+            'analyzer.tag.invalid',
+            tag,
+            `${className}: @customization lists supported ladder levels 1 to 5 ("${comment}"); the levels are recorded as unknown.`,
+            'Write the supported levels as numbers, e.g. @customization 1 2 3.',
+          );
         (tags[tagName] ??= []).push({ value: comment, location: where(tag) });
+      }
     }
 
     const description = docOf(node);
@@ -941,6 +990,27 @@ export function extract(program: ts.Program, root: string): Extraction {
         intent?: { value?: string };
       }[];
       const tag = cem.tagName;
+      const publishedDeprecations = (metadata?.['deprecations'] ?? []) as {
+        id: string;
+        replacement?: string;
+        migration?: string;
+      }[];
+      /** The publisher's deprecation: reason from CEM, replacement and migration from metadata. */
+      const deprecatedOf = (kind: 'property' | 'event', name: string, value: unknown) => {
+        if (value === undefined || value === false) return {};
+        const entry = publishedDeprecations.find((d) => d.id === `${kind}:${tag}#${name}`);
+        // A member replacement is renamed with the derived tag, so keep only its name.
+        const replacement = entry?.replacement?.startsWith(`${kind}:${tag}#`)
+          ? entry.replacement.slice(`${kind}:${tag}#`.length)
+          : entry?.replacement;
+        return {
+          deprecated: {
+            ...(typeof value === 'string' && value ? { reason: value } : {}),
+            ...(replacement ? { replacement } : {}),
+            ...(entry?.migration ? { migration: entry.migration } : {}),
+          },
+        };
+      };
       const typeText = (member: Record<string, unknown>) =>
         (member['type'] as { text?: string } | undefined)?.text;
 
@@ -978,6 +1048,7 @@ export function extract(program: ts.Program, root: string): Extraction {
                   typeof member['default'] === 'string'
                     ? { known: true, value: member['default'] }
                     : { known: false },
+                ...deprecatedOf('property', memberName, member['deprecated']),
                 inheritedFrom: inherited(member['inheritedFrom']),
               },
               member['description'],
@@ -1015,6 +1086,7 @@ export function extract(program: ts.Program, root: string): Extraction {
             ...(intent === 'user' || intent === 'notification'
               ? { intent: { value: intent } }
               : {}),
+            ...deprecatedOf('event', event['name'] as string, event['deprecated']),
             inheritedFrom: inherited(event['inheritedFrom']),
           },
           event['description'],

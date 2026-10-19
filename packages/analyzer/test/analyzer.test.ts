@@ -416,3 +416,81 @@ describe('compose() definitions in a folder-structured library', () => {
     ]);
   });
 });
+
+describe('lifecycle and customization facts', () => {
+  const result = analyze({ project: path('tests/fixtures/analyzer-lifecycle/tsconfig.json') });
+  const metadata = result.metadata as {
+    components: Record<string, Record<string, unknown>>;
+  };
+
+  it('records authored deprecations with stable replacement ids, in CEM and metadata', () => {
+    expect(validateCem(result.manifest), JSON.stringify(validateCem.errors)).toBe(true);
+    expect(validateOddkin(result.metadata), JSON.stringify(validateOddkin.errors)).toBe(true);
+    const at = (line: number, column: number) => ({ file: 'src/banner.ts', line, column });
+    expect(metadata.components['component:acme-banner']?.['deprecations']).toEqual([
+      {
+        id: 'property:acme-banner#kind',
+        reason: 'Use `tone`; `kind` maps to the same values.',
+        replacement: 'property:acme-banner#tone',
+        migration: 'migrations/2.0.md#banner-kind',
+        provenance: 'authored',
+        source: at(29, 6),
+      },
+      {
+        id: 'event:acme-banner#acme-close',
+        reason: 'Listen for `acme-dismiss` instead; it carries the reason.',
+        replacement: 'event:acme-banner#acme-dismiss',
+        provenance: 'authored',
+        source: at(5, 4),
+      },
+    ]);
+    expect(metadata.components['component:acme-notice']?.['deprecations']).toEqual([
+      {
+        id: 'component:acme-notice',
+        reason: 'Use `<acme-banner>`.',
+        replacement: 'component:acme-banner',
+        migration: 'migrations/2.0.md#notice',
+        provenance: 'authored',
+        source: at(43, 4),
+      },
+    ]);
+    // Standard CEM carries the reasons, so any CEM consumer can warn.
+    const banner = declaration(result.manifest, 'AcmeBanner') as unknown as {
+      members: { name: string; deprecated?: unknown }[];
+      attributes: { name: string; deprecated?: unknown }[];
+      events: { name: string; deprecated?: unknown }[];
+    };
+    expect(banner.members.filter((m) => m.deprecated).map((m) => m.name)).toEqual(['kind']);
+    expect(banner.attributes.filter((a) => a.deprecated).map((a) => a.name)).toEqual(['kind']);
+    expect(banner.events.filter((e) => e.deprecated).map((e) => e.name)).toEqual(['acme-close']);
+    expect(declaration(result.manifest, 'AcmeNotice')['deprecated']).toBe('Use `<acme-banner>`.');
+    // @since says when something was introduced, not when it was deprecated.
+    expect(metadata.components['component:acme-banner']?.['since']).toEqual({
+      value: '1.0.0',
+      provenance: 'authored',
+      source: at(24, 4),
+    });
+  });
+
+  it('records customization paths, with ladder levels only when authored and valid', () => {
+    expect(metadata.components['component:acme-banner']?.['customization']).toEqual({
+      levels: {
+        value: [1, 2],
+        provenance: 'authored',
+        source: { file: 'src/banner.ts', line: 25, column: 4 },
+      },
+      variables: ['cssprop:acme-banner#--acme-banner-gap'],
+      parts: ['part:acme-banner#body'],
+      slots: ['slot:acme-banner#default'],
+    });
+    expect(metadata.components['component:acme-notice']?.['customization']).toEqual({
+      levels: { known: false, provenance: 'extracted' },
+      variables: [],
+      parts: [],
+      slots: [],
+    });
+    expect(result.diagnostics.map((d) => [d.code, d.severity, d.source?.line])).toEqual([
+      ['analyzer.tag.invalid', 'warning', 47],
+    ]);
+  });
+});
