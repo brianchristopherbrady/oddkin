@@ -64,6 +64,8 @@ export default {
     '@oddkin/ai': {
       kind: 'browser',
       allow: ['@oddkin/core', '@oddkin/tokens', '@oddkin/components'],
+      // Colocated examples (ADR 0021) are type-checked and tested but excluded from the build.
+      devSources: { suffix: '.examples', allow: ['@oddkin/workbench'] },
       domFree: [
         '.',
         './contracts',

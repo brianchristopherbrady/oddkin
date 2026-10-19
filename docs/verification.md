@@ -865,3 +865,18 @@ Environment as the previous entry. Contract: [change-impact-and-verification.md 
 | Determinism | `snapshot` twice on the same build, then `oddkin-impact compare` | 0 changes. Tool versions (content hashes of the core, tokens, and analyzer builds) match between the HEAD worktree and this working tree, which share those sources. |
 
 Also closed: item 612's link from the side-nav preview to the invalidation contract (`previewStyles`, 2026-10-19 live condition editing entry).
+
+## 2026-10-19 — Machine-readable `@oddkin/ai` examples (AI track)
+
+Environment as the previous entry. Contract: [ADR 0021](./architecture/decisions/0021-define-examples.md), [metadata-and-analyzer.md](./architecture/metadata-and-analyzer.md).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Static | `npx vitest run --project node packages/ai/test/examples.test.ts` | Pass (5). The 24 elements each have a `default` example (43 in total, `packages/ai/src/**/*.examples.ts`). Correct examples use only public properties, attributes, and slots from the published CEM. Each of four explained mistakes gets exactly its declared diagnostic from `validateUsage`, and correct examples get none: `odd-sources` `sources` attribute (`usage.attribute.propertyOnly`), `odd-prompt-input` `disabled="false"` (`usage.boolean.false`) and a `toolbar` slot (`usage.slot.unknown`), `odd-artifact` `mode="code"` (`usage.attribute.value`). All sets validate against `examples.v1`; the metadata listing equals the analyzer's static read, including `incorrect` diagnostics and correct-example ids. |
+| Static | `npx vitest run --project node tests/examples/public-imports.test.ts` | Pass. Examples import package internals for types only; the voice example takes its scripted adapter from `@oddkin/ai/controllers`. |
+| Browser | `npx vitest run --project browser packages/ai/test/examples.browser.test.ts` | Pass in Chromium, Firefox, and WebKit. Every correct example mounts, renders its shadow tree, reports nothing, and releases every scope it owned. Each mistake shows its stated consequence and its correct example does not: no listed source, a disabled composer, unassigned toolbar content, the preview mode. Only `mode="code"` is reported at runtime (`element.attribute.invalid`). |
+| Contract evidence | `npx vitest run --project browser packages/ai/test/contract.browser.test.ts`; `node scripts/build-metadata.mjs`; `node scripts/verify-metadata.mjs` | The harness renders AI slots and parts from the authored examples. The 76 slot and part facts recorded as not executed now pass in three engines: 446 AI facts verified (was 370), 189 for `@oddkin/components`. The user-intent check is skipped for all 24 AI elements: none of their 43 events declares an intent. |
+| Boundaries | `node scripts/architecture/check-boundaries.mjs --artifacts` | OK. Only `*.examples.ts` in `@oddkin/ai` may import `@oddkin/workbench` (dev dependency); the package build excludes them. |
+| Mutation probe | slot mistake made correct (`toolbar` → `toolbar-start`), restored | Killed by both suites: `validateUsage` reports nothing for it, and its content is assigned. |
+
+**Not covered:** fixtures that compose AI elements with each other (no example uses another element), and AI event intent.

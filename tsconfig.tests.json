@@ -11,6 +11,7 @@
   "include": [
     "packages/components/test/**/*.ts",
     "packages/*/test/**/*.ts",
+    "packages/*/src/**/*.examples.ts",
     "tests/**/*.ts",
     "e2e/**/*.ts",
     "research/benchmarks/**/*.ts",
