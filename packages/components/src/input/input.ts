@@ -9,9 +9,15 @@ export const inputEvent = event('input', {
   composed: true,
   cancelable: false,
   syncs: 'value',
+  intent: 'user',
 });
 /** Re-dispatched at the host when the user commits a change (native `change` is not composed). */
-export const changeEvent = event('change', { bubbles: true, composed: false, cancelable: false });
+export const changeEvent = event('change', {
+  bubbles: true,
+  composed: false,
+  cancelable: false,
+  intent: 'user',
+});
 
 /**
  * A labelled single-line text field that participates in forms like a native input.
@@ -79,7 +85,7 @@ export class OddkinInput extends OddkinElement.with({
     value: () => this.value,
     control: () => this.shadowRoot?.querySelector('input'),
     error: () => this.error,
-    watch: () => [this.required, this.type, this.disabled],
+    watch: () => [this.required, this.type, this.disabled, this.readonly],
     onReset: () => {
       this.#value.value = undefined;
       this._touched.value = false;

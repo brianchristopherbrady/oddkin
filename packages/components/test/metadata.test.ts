@@ -100,11 +100,10 @@ describe('@oddkin/components published metadata', () => {
       ],
       intents: { 'event:odd-side-nav#odd-action': 'user', 'event:odd-side-nav#odd-toggle': 'user' },
     });
-    // `value` is an accessor; the `value` attribute sets `defaultValue`. Event intent is not
-    // declared yet, so it stays unknown rather than inferred from the event names.
+    // `value` is an accessor; the `value` attribute sets `defaultValue`.
     expect(facts('odd-input')).toEqual({
       propertyOnly: ['property:odd-input#value'],
-      intents: { 'event:odd-input#change': 'unknown', 'event:odd-input#input': 'unknown' },
+      intents: { 'event:odd-input#change': 'user', 'event:odd-input#input': 'user' },
     });
     expect(facts('odd-button')).toEqual({ propertyOnly: [], intents: {} });
     expect(facts('odd-card')).toEqual({ propertyOnly: [], intents: {} });

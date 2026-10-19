@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { NavigationItem } from '../src/models/navigation.js';
-  import type { NavigationActionDetail, NavigationToggleDetail } from '../src/side-nav/side-nav.js';
+  import type { NavigationItem } from '../../src/models/navigation.js';
+  import type { NavigationActionDetail, NavigationToggleDetail } from '../../src/side-nav/side-nav.js';
 
   interface Props {
     initial: readonly NavigationItem[];

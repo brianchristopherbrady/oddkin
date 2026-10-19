@@ -3,6 +3,7 @@ import { LiveAnnouncer, createLiveRegion, createLiveRegions } from '../src/contr
 import { FocusRecovery, RovingFocus } from '../src/controllers/focus.js';
 import { FormValue } from '../src/controllers/form.js';
 import { IntersectionController, ResizeController } from '../src/controllers/observe.js';
+import { setErrorHandler } from '../src/diagnostics/index.js';
 import { flush, signal } from '../src/reactive/index.js';
 import { createScope, scopeStats, type Scope } from '../src/scope/index.js';
 
@@ -329,6 +330,7 @@ describe('FormValue', () => {
     readonly value = signal('');
     readonly error = signal('');
     readonly required = signal(false);
+    readonly revision = signal(0);
     readonly input = document.createElement('input');
     resets = 0;
     restored: unknown = undefined;
@@ -337,7 +339,7 @@ describe('FormValue', () => {
       value: () => this.value.value,
       control: () => this.input,
       error: () => this.error.value,
-      watch: () => this.required.value,
+      watch: () => [this.required.value, this.revision.value],
       onReset: () => {
         this.resets++;
         this.value.value = '';
@@ -416,5 +418,37 @@ describe('FormValue', () => {
     expect(field.form.disabled.value).toBe(false);
     field.formStateRestoreCallback('saved', 'restore');
     expect(field.restored).toBe('saved');
+  });
+
+  it('treats a control barred from validation (disabled, read-only) as valid', () => {
+    const errors: unknown[] = [];
+    const previous = setErrorHandler((error) => errors.push(error));
+    try {
+      const { form, field } = mount();
+      field.input.type = 'email';
+      field.input.value = 'x';
+      field.value.value = 'x';
+      flush();
+      expect(field.internals.validity.typeMismatch).toBe(true);
+      for (const bar of ['disabled', 'readOnly'] as const) {
+        field.input[bar] = true;
+        field.revision.value++;
+        flush();
+        expect([bar, field.form.invalid.value, field.internals.validity.valid]).toEqual([
+          bar,
+          false,
+          true,
+        ]);
+        expect(form.checkValidity()).toBe(true);
+        field.input[bar] = false;
+        field.revision.value++;
+        flush();
+        expect(field.internals.validity.typeMismatch).toBe(true);
+        expect(field.internals.validationMessage).toBe(field.input.validationMessage);
+      }
+      expect(errors).toEqual([]);
+    } finally {
+      setErrorHandler(previous);
+    }
   });
 });

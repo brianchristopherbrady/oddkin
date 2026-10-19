@@ -20,7 +20,10 @@ export interface FormValueOptions {
   readonly value: () => FormState;
   /** State to restore after navigation, when it differs from the value. */
   readonly state?: () => FormState;
-  /** Inner native control whose validity flags, message, and anchor are mirrored. */
+  /**
+   * Inner native control whose validity flags, message, and anchor are mirrored while it is
+   * subject to constraint validation; a disabled or read-only control counts as valid.
+   */
   readonly control?: () => NativeControl | null | undefined;
   /** Custom error; while non-empty the element is invalid with this message. */
   readonly error?: () => string;
@@ -124,7 +127,8 @@ export class FormValue implements Controller {
     const control = this.#options.control?.() ?? undefined;
     if (error) {
       internals.setValidity({ customError: true }, error, control);
-    } else if (control && !control.validity.valid) {
+    } else if (control?.willValidate && !control.validity.valid) {
+      // A barred control (disabled, read-only) keeps failing flags but has no message.
       const flags: ValidityStateFlags = {};
       for (const flag of VALIDITY_FLAGS) if (control.validity[flag]) flags[flag] = true;
       internals.setValidity(flags, control.validationMessage, control);

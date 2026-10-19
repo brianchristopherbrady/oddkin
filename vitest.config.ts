@@ -28,6 +28,7 @@ export default defineConfig({
             'vue',
             '@angular/compiler',
             '@angular/core',
+            '@angular/forms',
             '@angular/platform-browser',
             'svelte',
           ],

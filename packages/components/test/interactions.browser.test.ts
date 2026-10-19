@@ -86,6 +86,13 @@ describe.each(tags('odd-input'))('<%s>', (tag) => {
     const control = el.shadowRoot!.querySelector('input')!;
     expect(el.form).toBe(form);
     expect(el.validity.typeMismatch).toBe(true);
+    const fieldset = container.querySelector('fieldset')!;
+    fieldset.disabled = true;
+    await settle(el);
+    expect([el.validity.valid, form.checkValidity()]).toEqual([true, true]);
+    fieldset.disabled = false;
+    await settle(el);
+    expect(el.validity.typeMismatch).toBe(true);
     el.value = '';
     await settle(el);
     expect([el.validity.valueMissing, form.checkValidity()]).toEqual([true, false]);
@@ -93,7 +100,6 @@ describe.each(tags('odd-input'))('<%s>', (tag) => {
     await settle(el);
     expect(el.checkValidity()).toBe(true);
     expect([...new FormData(form)]).toEqual([['email', 'ada@example.com']]);
-    const fieldset = container.querySelector('fieldset')!;
     fieldset.disabled = true;
     await settle(el);
     expect(control.disabled).toBe(true);

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
+import { setErrorHandler } from '@oddkin/core/diagnostics';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import type { OddkinInput } from '../src/input/input.js';
@@ -189,6 +190,38 @@ describe('forms', () => {
     await settle(el);
     expect(control.disabled).toBe(true);
     expect([...new FormData(form)]).toEqual([]);
+  });
+
+  it('an invalid value is not a failure while disabled, read-only, or in a disabled fieldset', async () => {
+    const errors: unknown[] = [];
+    const previous = setErrorHandler((error) => errors.push(error));
+    try {
+      const { el, control } = await mount(
+        '<form><fieldset><odd-input label="Email" name="email" type="email" value="x"></odd-input></fieldset></form>',
+      );
+      const form = container.querySelector('form')!;
+      const fieldset = container.querySelector('fieldset')!;
+      expect(el.validity.typeMismatch).toBe(true);
+      // Like native inputs: read-only values are still submitted, disabled ones are not.
+      const bars = [
+        ['disabled', (on: boolean) => (el.disabled = on), []],
+        ['readonly', (on: boolean) => (el.readonly = on), [['email', 'x']]],
+        ['fieldset', (on: boolean) => (fieldset.disabled = on), []],
+      ] as const;
+      for (const [name, bar, submitted] of bars) {
+        bar(true);
+        await settle(el);
+        expect([name, el.validity.valid, form.checkValidity()]).toEqual([name, true, true]);
+        expect([...new FormData(form)]).toEqual(submitted);
+        bar(false);
+        await settle(el);
+        expect([name, el.validity.typeMismatch]).toEqual([name, true]);
+        expect(el.validationMessage).toBe(control.validationMessage);
+      }
+      expect(errors).toEqual([]);
+    } finally {
+      setErrorHandler(previous);
+    }
   });
 
   it('reflects a name set as a property, so frameworks that set properties submit it', async () => {
