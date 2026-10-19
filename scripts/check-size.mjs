@@ -33,6 +33,12 @@ const TOOLING = [
   'packages/analyzer',
   'packages/workbench',
   'node_modules/typescript',
+  // Framework fixtures are test-only dev dependencies.
+  'node_modules/react',
+  'node_modules/vue',
+  'node_modules/@vue',
+  'node_modules/@angular',
+  'node_modules/svelte',
 ];
 // Feature entries a minimal counter, a typical component, or a registered side navigation do not
 // import, so their bytes never reach those graphs.

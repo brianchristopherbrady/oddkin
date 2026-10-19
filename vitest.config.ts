@@ -1,4 +1,5 @@
 import { playwright } from '@vitest/browser-playwright';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -16,9 +17,21 @@ export default defineConfig({
         },
       },
       {
-        // Framework fixtures (packages/ai/test/frameworks.browser.test.ts) are pre-bundled so a
-        // first run does not reload the page mid-test.
-        optimizeDeps: { include: ['react', 'react-dom', 'react-dom/client', 'vue'] },
+        // Framework fixtures (packages/*/test/frameworks*.browser.test.ts) are pre-bundled so a
+        // first run does not reload the page mid-test. Svelte components compile for tests only.
+        plugins: [svelte()],
+        optimizeDeps: {
+          include: [
+            'react',
+            'react-dom',
+            'react-dom/client',
+            'vue',
+            '@angular/compiler',
+            '@angular/core',
+            '@angular/platform-browser',
+            'svelte',
+          ],
+        },
         test: {
           name: 'browser',
           include: [

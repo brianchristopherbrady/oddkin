@@ -1047,3 +1047,15 @@ Environment as the previous entry. Another agent was editing other files in the 
 
 **Findings:** (1) The artifact boundary check lexed every export target as JavaScript and threw on `CONTRACTS.md`; document and data exports are now checked for existence only. (2) A marker quoted in prose is a malformed marker, so the status line in core-contracts.md describes the markers instead of quoting one. (3) Editing contract text changes the section hashes in the analyzer golden fixture; CONTRIBUTING.md says to regenerate it with `UPDATE_FIXTURES=1`.
 
+## 2026-10-19 — odd-side-nav in Angular and Svelte (M4 framework fixtures)
+
+Environment as the previous entry; Angular 22.2.3 (`@angular/common`, `compiler`, `core`, `platform-browser`), Svelte 5.57.2, and `@sveltejs/vite-plugin-svelte` 7.3.1, exact-pinned dev dependencies (rxjs installed as Angular's peer; no zone.js). Contract: [data-composition.md §10](./architecture/data-composition.md#10-acceptance-fixtures).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Fixtures | `npx vitest run --project browser packages/components/test/frameworks` | Pass in Chromium, Firefox, WebKit: 9 files, 24 tests (React and Vue unchanged; 2 Angular and 2 Svelte tests per engine). Angular (JIT, zoneless, `CUSTOM_ELEMENTS_SCHEMA`) and Svelte (runes, `$state.raw`): `items` arrives as the same array and no `items` attribute is written; controlled `expanded` keeps the group holding `current` closed until `odd-toggle` updates framework state; `odd-action` reaches the framework handler; a reordered `items` keeps the existing link node; the framework re-render echoes no intent event. The second test removes and re-creates the element through `@if`/`{#if}`: a new element, one handler call per click, and scope and listener counts back to baseline after teardown |
+| Mutants | bind `items` as an attribute (`[attr.items]`, `items={JSON.stringify(items)}`); import Svelte, then a used Angular `signal`, into the `side-nav` size entry | 4 of 4 killed: the attribute bindings fail all 4 tests in Chromium; `check-size` reports `side-nav pulls in node_modules/svelte` (30,372 B gzip) and `node_modules/@angular` (135,668 B gzip) |
+| Production graphs | `node scripts/check-size.mjs` | Pass: no measured entry includes React, Vue, Angular, or Svelte; the framework list now applies to every entry |
+| Typecheck | `npm run typecheck` | Pass; `.svelte` modules typed by `packages/components/test/svelte.d.ts` |
+
+**Findings:** (1) Vitest does not run the Angular compiler, so the fixture uses JIT (`@angular/compiler`) and calls `Component({...})` on a class instead of using decorators. (2) Angular declares `sideEffects: false`, so a bare `import '@angular/core'` is removed by tree shaking and the size guard cannot see it; the probe used a value. (3) The first Svelte re-creation test failed because it passed `current` while uncontrolled, which opens the group holding the current page; the uncontrolled case now passes an empty `current`. Not covered: framework forms, typed JSX or template declarations, and elements defined after the framework renders them.
