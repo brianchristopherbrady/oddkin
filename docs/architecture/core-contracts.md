@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -25,6 +25,8 @@ define('demo-counter', DemoCounter);
 
 - `count` is local state. Interpolating the readable binds that part directly; incrementing it does **not** re-run `render()`.
 
+<!-- contract:core/binding-rule "Binding rule" -->
+
 **Binding rule (settled):**
 
 ```ts
@@ -41,6 +43,10 @@ render() { return html`<span>${this.count}</span>`; }
 - Internal reads used to initialize direct bindings must not register render-level dependencies.
 - When a dependency participates in both paths, scheduling coalesces the work and avoids duplicate DOM writes. Both paths use the same reactive engine.
 - Arbitrary interpolated functions are never invoked automatically. Readables are identified by a defined protocol. Use `computed()` for derived readables and named helpers for dynamic structure.
+
+<!-- /contract:core/binding-rule -->
+
+<!-- contract:core/composition "Composed definitions" -->
 
 ### 1.1 Composed definitions (implemented, M4; [ADR 0036](./decisions/0036-component-composition-api.md))
 
@@ -76,6 +82,8 @@ Settled behavior:
 
 **Recomposition (implemented in the runtime; [multi-product.md](./multi-product.md) §5, ADR 0033, ADR 0036).** Every definition carries `source` (itself); a spread copies it and `compose()` records it as `extends`. `compose({ ...cardDefinition, name, element, styles })` creates a new frozen definition with its own identity and a traceable link to its foundation; it never mutates the source definition or class and never copies registration state or caches. An element resolves its definition by exact constructor, not through inheritance, so behavior classes stay safely subclassable. Definition `styles` are a complete ordered list (structural first by convention) and a definition `template` takes precedence over `render()`; sheets remain shared per document. Registration rules: `registry.collision`, `registry.constructorReused`, and `registry.definitionConflict`.
 
+<!-- /contract:core/composition -->
+
 ### 1.2 Interpretable public APIs (design rule)
 
 Public APIs are designed to be understood from their declarations by people and coding assistants alike ([agent-tooling.md](./agent-tooling.md)):
@@ -92,6 +100,8 @@ Class-based colocated authoring and the proposed `compose()` model (§1.1) both 
 
 Preferred declaration (to prototype):
 
+<!-- contract:core/properties "Public properties" -->
+
 ```ts
 import { OddkinElement, html, prop } from '@oddkin/core';
 
@@ -106,11 +116,25 @@ class DemoGreeting extends OddkinElement.with({
 ```
 
 - One definition infers instance types, installs normal DOM accessors, validates attribute conversion, and supplies runtime metadata. Consumers write `element.name = 'Ada'`; no signal wrapper leaks into the public DOM API.
+
+<!-- /contract:core/properties -->
+
 - The prototype must prove: declaration emission, subclassing, factory defaults for objects (no shared mutable defaults), pre-upgrade property replay, reserved-name diagnostics, native class-field compatibility, and rejection of fields that shadow reactive accessors.
 - If `OddkinElement.with()` fails these tests, record why and pick a static-definition alternative **before M4**. Never ship two competing primary styles or a mandatory compiler to hide the problem.
+
+<!-- contract:core/properties "Public properties" -->
+
 - Reflection is opt-in; booleans use presence semantics; arrays/objects travel through properties, not implicit JSON attributes. Invalid values get precise dev diagnostics and a documented fallback.
+
+<!-- /contract:core/properties -->
+<!-- contract:core/events "Events" -->
+
 - Events have typed `detail` and explicit `bubbles` / `composed` / `cancelable` in their definitions. Preserve native `input`/`change` semantics; never re-emit across a shadow boundary twice or treat a programmatic assignment as a user edit. Event contracts appear in generated metadata.
 - An event definition may declare `intent`, for tooling only (no runtime cost): `'user'` events report user interaction and are never emitted by property writes; `'notification'` events report a state change from any source. Without it, metadata records the intent as unknown. The contract suite checks every `'user'` event: setting each scalar property, and every property of the correct authored examples while connected, emits none (`event:<tag>#<name>/not-programmatic`).
+
+<!-- /contract:core/events -->
+
+<!-- contract:core/lifecycle "Lifecycle" -->
 
 ## 3. Lifecycle
 
@@ -132,6 +156,10 @@ The base class owns native callbacks; authors use these hooks without `super.con
 - Queued callbacks recheck the connection generation before committing. Slot-dependent setup uses `slotchange` or an explicit parser-ready strategy.
 - Browser page suspension (back/forward cache) is **not** a disconnect: elements stay connected, their scopes stay alive, and paused timers and promises resume on restore. Components never listen to page-lifecycle events themselves; application-level policy lives in §9.1.
 - *(Proposed, development builds only.)* Commit causes (render-level vs direct binding), dependencies, and scope ownership can be recorded by the opt-in `@oddkin/core/inspect` entry for explanations ([change-impact-and-verification.md](./change-impact-and-verification.md) §4.2). It is absent from production builds.
+
+<!-- /contract:core/lifecycle -->
+
+<!-- contract:core/scope "Scope: ownership and cleanup" -->
 
 ## 4. Scope — ownership and cleanup
 
@@ -180,6 +208,10 @@ Required semantics:
 | Request | Resource starts a load | Supersession, cancellation, settlement, or owner disposal |
 | Application | `start()` | `stop()`; other app roots unaffected |
 
+<!-- /contract:core/scope -->
+
+<!-- contract:core/controllers "Shared controllers" -->
+
 ### 4.1 Shared controllers (`@oddkin/core/controllers/*`, implemented, M4)
 
 Controllers implement `connect(scope)` and are activated with `scope.use(controller)`, usually in `mounted(scope)` so the elements they read exist. They read their targets through functions at connect time, touch the DOM only after `connect`, register every listener, observer, and timer on the scope, and are unbranded (no `--odd-*` properties, no Oddkin event names; callers name events). Each lives in its own subpath, so an element pays only for the controllers it imports. Verified in `packages/core/test/controllers.browser.test.ts` in three engines.
@@ -196,6 +228,10 @@ Used by: `odd-input` (`FormValue`); `@oddkin/ai` — `odd-conversation` and `cre
 
 Form association is verified separately in `packages/core/test/form-association.browser.test.ts` (three engines) and, for `odd-input`, in `packages/components/test/input.browser.test.ts`. Engines differ in callback order — Firefox reports the `null` owner before `disconnectedCallback` when an element moves, Chromium and WebKit after it — so `connect` re-reads the owner instead of relying on the order. WebKit 27.2 has no `moveBefore`, so state-preserving moves are verified in Chromium and Firefox only.
 
+<!-- /contract:core/controllers -->
+
+<!-- contract:core/i18n "Localization helpers" -->
+
 ### 4.2 Localization helpers (`@oddkin/core/i18n`, implemented, M4)
 
 DOM-free at import, unbranded, and stateless apart from a bounded formatter cache. Verified in `packages/core/test/i18n.test.ts` (Node) and `i18n.browser.test.ts` (three engines).
@@ -208,6 +244,10 @@ DOM-free at import, unbranded, and stateless apart from a bounded formatter cach
 | `langOf(node)`, `dirOf(element)` | Nearest `lang` attribute across shadow roots (`undefined` = user agent default); resolved direction from computed style, so it inherits through shadow roots and honours `dir="auto"` |
 | `numberFormat`, `dateTimeFormat`, `relativeTimeFormat`, `listFormat` | One cached `Intl` formatter per kind, locale, and options (64 kept); an invalid locale falls back to the default instead of throwing |
 | `formatNumber`, `formatDate` | Safe wrappers: invalid options fall back to `String(value)`; missing or invalid dates return `undefined` |
+
+<!-- /contract:core/i18n -->
+
+<!-- contract:core/reactivity "Reactivity" -->
 
 ## 5. Reactivity (`@oddkin/core/reactive`, DOM-free)
 
@@ -227,13 +267,23 @@ console.log(total.value); // 30, immediately
 ```
 
 - One `Readable<T>` protocol: `.value` and `subscribe(onChange)` (returns a disposer). Writable signals add assignment and `.update(fn)`. Stable snapshots and subscribe functions support external-store integrations. [R11]
+
+<!-- contract:core/external-store "External stores" -->
+
 - **External stores** share one contract, `ExternalSource<T>`: `getSnapshot()` returns the same value until the state changes, and `subscribe(listener)` returns an unsubscribe function. React's `useSyncExternalStore` takes the same shape, and Redux and Zustand stores fit it. `fromExternal(source, { equals? })` reads such a store as a `Readable` without copying it into a second graph. It subscribes only while observed (an effect, a binding, an observed computed value, or `subscribe`) and unsubscribes when the last observer leaves, so a component's subscription ends with the connection scope that owns its render. Unobserved reads take a fresh snapshot. `toExternal(readable)` exposes any Oddkin readable through the same contract. Neither needs an Oddkin store; `@oddkin/ai` sources use the same type. *(Implemented, 2026-10-19: `packages/core/test/external.test.ts`, `tests/interop/external-store.browser.test.ts`; 168 B gzip when imported, nothing otherwise.)*
+
+<!-- /contract:core/external-store -->
+
 - Reads and writes are synchronous. `computed` is pure, lazy, memoized, tracks dynamic dependencies, and is glitch-free through diamonds.
 - Default equality `Object.is`; custom equality when justified. No deep proxies or nested mutation tracking in v1.
 - External subscribers notify synchronously outside a batch and once at the outer batch boundary. UI effects and DOM commits are deduplicated into a microtask.
 - Flush order: derivation → DOM commits → owned post-commit effects. No default animation-frame delay for typing.
 - Mutations inside effects or `updated` schedule a defined next pass. Detect cycles and runaway flushes; isolate errors.
 - A manual flush helper exists for tests. Components never need `requestUpdate()` after changing a signal or declared property.
+
+<!-- /contract:core/reactivity -->
+
+<!-- contract:core/templates "Templates and rendering" -->
 
 ## 6. Templates and rendering (`@oddkin/core/template`)
 
@@ -259,6 +309,10 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 - **Collections and data models:** keyed `repeat` is fed by `@oddkin/core/collections` for components with structured content; item templates track external reactive reads, so output never goes stale when only a dependency changes. Model definitions (`@oddkin/core/model`) generate types, validators, and schemas. See [data-composition.md](./data-composition.md).
 - **Behavior tools** (built when catalog components need them): resize/intersection observers, refs/slot observation, form association, roving tabindex, focus return, `Intl` formatting. Prefer native CSS, `<dialog>`, popover/top layer, logical properties. Portals, advanced overlays, transitions, and virtualization follow concrete requirements and measurement.
 
+<!-- /contract:core/templates -->
+
+<!-- contract:core/rendering "Rendering behaviors" -->
+
 ### 6.1 Behaviors settled in the M3 implementation
 
 - **Child values:** `null`, `undefined`, and `false` render nothing; other primitives render as text; iterables render unkeyed items; a readable inside a list binds like any readable. Functions are never called (`template.value.function`).
@@ -269,14 +323,24 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 - **Light-DOM styles:** components with `shadowRootOptions = null` add their `styles` once to the nearest root (document or shadow root), reference-counted across instances and removed with the last one; selectors must scope themselves, and `:host` in such styles reports `element.styles.lightDomHost`.
 - **`css` interpolation:** `css` results, finite numbers, and `var(--name[, fallback])` strings whose fallback has balanced parentheses and no declaration, block, string, comment, `!`, `url()`/`image()`, or at-rule syntax (`isCSSVariableReference`).
 - **Keyed `repeat`:** a longest run of items already in order stays in place and only the others move. With `moveBefore()` each item moves with its state preserved. Without it (WebKit), moved ranges are detached from the end of the list and each run is inserted before its stable anchor as one fragment, because per-item `insertBefore` is quadratic for `<li>` in WebKit: reversing 1,000 items took 319 ms before batching and 9 ms after. Focus and text selection are then restored once. Duplicate keys report `template.repeat.duplicateKey` and render without DOM reuse. The reconciler ships only with `repeat()`.
+
+<!-- contract:core/update-complete "updateComplete and commit timing" -->
+
 - **First render** is synchronous during connection, so `mounted(scope)` sees committed DOM. Later renders and direct bindings commit in the microtask flush.
 - **`updated(changes)`** runs in the post phase after each commit batch, including the first; `changes` maps changed public properties to previous values and is empty for binding-only work.
 - **`updateComplete`** resolves when the shared flush settles; a disconnected element has no pending work for it.
+
+<!-- /contract:core/update-complete -->
+
 - **Declarative shadow DOM** content is replaced on first render; hydration is not supported.
 - **Invalid values** (`element.attribute.invalid`, `element.prop.invalid`) fall back to the property default.
 - **Shadowing class fields** report `element.prop.shadowed`; the field value is applied through the reactive accessor so the element still works.
 - **TypeScript:** subclasses use `override` on hooks (`noImplicitOverride`), and hooks are `protected`.
 - **Development and production builds** (ADR 0031): the `development` export condition selects `dist/` (full explanations, development-only checks); the default selects `dist/prod/`, where errors keep their stable `[code]` and every behavior and security check is unchanged. Development-only checks: the light-DOM `:host` scan and the recipe-defined-during-render warning. Size budgets are enforced by `npm run size`.
+
+<!-- /contract:core/rendering -->
+
+<!-- contract:core/failure-ownership "Failure ownership" -->
 
 ### 6.2 Failure ownership (verified in `packages/core/test/failure-paths.browser.test.ts`)
 
@@ -293,6 +357,8 @@ Errors that cannot be thrown to a caller go to the handler set with `setErrorHan
 | Lifecycle hook throws | `element.<hook>.error` | element | Rendering and bindings | Next connection calls the hook again |
 
 Disposal during callbacks is safe: a handler that removes its own host leaves no subscriptions or owned resources, and an effect that disconnects another element prevents that element's queued effect from running. Each connection gets a fresh scope. The previous scope is aborted, and listeners do not accumulate. Direct binding updates do not re-render the host or read layout (layout getters, `getBoundingClientRect`, and `getComputedStyle` were spied during updates). Production builds report the same codes and owners with short messages (ADR 0031).
+
+<!-- /contract:core/failure-ownership -->
 
 ## 7. Optional shared stores (`@oddkin/state`)
 

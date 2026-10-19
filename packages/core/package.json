@@ -111,10 +111,14 @@
       "development": "./dist/i18n/index.js",
       "default": "./dist/prod/i18n/index.js"
     },
+    "./CONTRACTS.md": "./CONTRACTS.md",
+    "./contracts.json": "./contracts.json",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "CONTRACTS.md",
+    "contracts.json"
   ]
 }

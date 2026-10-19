@@ -41,6 +41,7 @@ for (const entry of await readdir(packagesDir, { withFileTypes: true })) {
 const work = await mkdtemp(join(tmpdir(), 'oddkin-packs-'));
 const failures = [];
 const cemConsumers = [];
+let contractCount = 0;
 try {
   const tarballs = [];
   for (const { name, dir } of names) {
@@ -50,6 +51,9 @@ try {
     if (leaked.length) failures.push(`${name}: tarball includes ${leaked.join(', ')}`);
     if (!files.some((file) => file.startsWith('dist/')))
       failures.push(`${name}: tarball has no dist/ (run npm run build)`);
+    if (name === '@oddkin/core')
+      for (const file of ['CONTRACTS.md', 'contracts.json'])
+        if (!files.includes(file)) failures.push(`${name}: tarball has no ${file}`);
     tarballs.push(join(work, info.filename));
   }
 
@@ -111,6 +115,27 @@ try {
     ].join('\n'),
   );
   node(['assets.mjs'], consumer);
+
+  // Contract ids resolve offline to the installed @oddkin/core's own CONTRACTS.md and version.
+  await writeFile(
+    join(consumer, 'contracts.mjs'),
+    [
+      "import { readFileSync } from 'node:fs';",
+      "import { contractIndex, resolveContract } from '@oddkin/analyzer';",
+      "const index = contractIndex('@oddkin/core', process.cwd());",
+      "if (!index) throw new Error('@oddkin/core/contracts.json does not resolve');",
+      "const installed = JSON.parse(readFileSync(new URL(import.meta.resolve('@oddkin/core/package.json')), 'utf8'));",
+      'const ids = Object.keys(index.contracts);',
+      "if (ids.length === 0) throw new Error('no contracts in contracts.json');",
+      'for (const id of ids) {',
+      '  const contract = resolveContract(id, process.cwd());',
+      "  if (!contract || !contract.text.includes('Id: `' + id + '`')) throw new Error(id + ' has no section');",
+      "  if (contract.version !== installed.version || !contract.path.includes('node_modules')) throw new Error(id + ' did not resolve to the installed package');",
+      '}',
+      'console.log(ids.length);',
+    ].join('\n'),
+  );
+  contractCount = Number(node(['contracts.mjs'], consumer).trim());
 
   // An independent CEM consumer (the VS Code custom-data generator, not Oddkin code) reads the
   // manifest each installed package names in `customElements`; editors would get every
@@ -206,5 +231,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; no third-party runtime dependencies outside Node-only tooling; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}.`,
 );

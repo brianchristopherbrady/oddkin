@@ -36,6 +36,10 @@ Recomposable components also have `name.structural.styles.ts` and a skin-free `f
 
 The composition API (`compose()`, `define(definition)`; ADR 0036) is implemented and `examples/core-counter` follows this layout. New repository components use it. Intentionally colocated demonstrations (e.g. `examples/binding-rule`) and focused inline test fixtures stay colocated so both authoring paths remain exercised.
 
+## Core contracts
+
+[docs/architecture/core-contracts.md](./docs/architecture/core-contracts.md) is the only place to edit the contract text `@oddkin/core` ships. Sections between `<!-- contract:core/<name> "Title" -->` and `<!-- /contract:core/<name> -->` become `packages/core/CONTRACTS.md` and `contracts.json`. After editing, run `npm run contracts` and commit both files; `npm run lint` and `tests/contracts` fail while they are stale. Contract ids are stable: renaming or removing one breaks published metadata, so the test's id list must change with it. Editing contract text also changes the section hashes in analyzer fixtures (`UPDATE_FIXTURES=1 npx vitest run packages/analyzer/test/analyzer.test.ts`).
+
 ## Agent kit and guidance (planned)
 
 When the agent kit exists ([agent-tooling.md](./docs/architecture/agent-tooling.md), ADR 0032), changes to public APIs, tokens, recipes, examples, or authored guidance regenerate it with `oddkin-agent kit`, and `oddkin-agent kit --check` must report no stale artifacts. Authored guidance may only cite tags, properties, events, slots, parts, tokens, recipes, and imports that exist; the build rejects unknown references. Do not hand-edit generated references or the managed `AGENTS.md` section.

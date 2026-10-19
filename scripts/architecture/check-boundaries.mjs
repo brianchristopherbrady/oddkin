@@ -355,6 +355,8 @@ async function checkArtifacts(packages, byName, config, report, rel) {
           );
           continue;
         }
+        // Data and document exports (for example CONTRACTS.md, contracts.json) have no imports.
+        if (!/\.(?:m?js|d\.m?ts)$/.test(file)) continue;
         await walkArtifact(
           file,
           [`${pkg.name}${key === '.' ? '' : key.slice(1)}`],

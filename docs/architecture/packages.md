@@ -75,6 +75,7 @@ apps/docs         → core, state, app, tokens, components, workbench (browser p
 | `./helpers/*` | Optional template helpers (refs, `classMap`, `styleMap`, live input) | yes | none |
 | `./i18n` | `strings`, `format`, `plural`, `langOf`, `dirOf`, cached `Intl` formatters, `formatNumber`, `formatDate` (core-contracts.md §4.2). **Implemented** | **no** at import | none |
 | `./diagnostics` | Dev warnings configuration | no | none |
+| `./CONTRACTS.md`, `./contracts.json` | Contract text and its id index (`contract:core/<name>` → anchor), generated from core-contracts.md. **Implemented** | data | none |
 
 Subpaths are created only when implemented; an empty export is not a delivered feature.
 

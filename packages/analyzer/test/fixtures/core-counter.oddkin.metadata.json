@@ -63,7 +63,16 @@
         ],
         "parts": [],
         "slots": []
-      }
+      },
+      "contracts": [
+        "contract:core/binding-rule",
+        "contract:core/properties",
+        "contract:core/events",
+        "contract:core/lifecycle",
+        "contract:core/update-complete",
+        "contract:core/scope",
+        "contract:core/composition"
+      ]
     },
     "component:demo-greeting": {
       "tag": "demo-greeting",
@@ -102,7 +111,16 @@
         "variables": [],
         "parts": [],
         "slots": []
-      }
+      },
+      "contracts": [
+        "contract:core/binding-rule",
+        "contract:core/properties",
+        "contract:core/events",
+        "contract:core/lifecycle",
+        "contract:core/update-complete",
+        "contract:core/scope",
+        "contract:core/composition"
+      ]
     }
   },
   "templates": {
@@ -128,6 +146,57 @@
     "dist/demo-greeting/demo-greeting.styles.js#demoGreetingStyles": {
       "module": "dist/demo-greeting/demo-greeting.styles.js",
       "name": "demoGreetingStyles"
+    }
+  },
+  "contracts": {
+    "contract:core/binding-rule": {
+      "package": "@oddkin/core",
+      "file": "CONTRACTS.md",
+      "title": "Binding rule",
+      "anchor": "binding-rule",
+      "sha256": "8466188d2faaee8d9f391a43ac3fa808ac96a33f2b3966c9caacaaebddeeea93"
+    },
+    "contract:core/properties": {
+      "package": "@oddkin/core",
+      "file": "CONTRACTS.md",
+      "title": "Public properties",
+      "anchor": "properties",
+      "sha256": "48c71e06443a912f3a909264f63a66e3ec8df48a427edd0e1393f196ef17fbf1"
+    },
+    "contract:core/events": {
+      "package": "@oddkin/core",
+      "file": "CONTRACTS.md",
+      "title": "Events",
+      "anchor": "events",
+      "sha256": "58023e678c81cdcb4c19a0ad11361e6756b443e3ae3abad0c75e20720996ecae"
+    },
+    "contract:core/lifecycle": {
+      "package": "@oddkin/core",
+      "file": "CONTRACTS.md",
+      "title": "Lifecycle",
+      "anchor": "lifecycle",
+      "sha256": "a5ba0d94a3c5874b0323fd1e62a53f7a82a8af7460f7b9cd610c0b5f97034c88"
+    },
+    "contract:core/update-complete": {
+      "package": "@oddkin/core",
+      "file": "CONTRACTS.md",
+      "title": "updateComplete and commit timing",
+      "anchor": "update-complete",
+      "sha256": "6d607bd770a174c595bcdc8dbbb485b57df52e80db2192a2e773ac67588b494f"
+    },
+    "contract:core/scope": {
+      "package": "@oddkin/core",
+      "file": "CONTRACTS.md",
+      "title": "Scope: ownership and cleanup",
+      "anchor": "scope",
+      "sha256": "aa427050f9cf4ae0a8cbbd1c4328f4b21e383d37da9ac1515318bdbd18240908"
+    },
+    "contract:core/composition": {
+      "package": "@oddkin/core",
+      "file": "CONTRACTS.md",
+      "title": "Composed definitions",
+      "anchor": "composition",
+      "sha256": "0ddd48be7b20f2001500dcf60259ff3d0a40900ff763cede1a4bca5c0ed66a05"
     }
   },
   "diagnostics": []

@@ -230,9 +230,50 @@
       "items": {
         "$ref": "#/$defs/diagnostic"
       }
+    },
+    "contracts": {
+      "type": "object",
+      "description": "Contracts the components reference, keyed by stable id. Each section is read offline from the installed package's file at its anchor (`@oddkin/core/CONTRACTS.md#scope`).",
+      "propertyNames": {
+        "$ref": "#/$defs/contractId"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "package",
+          "file",
+          "title",
+          "anchor",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "anchor": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
     }
   },
   "$defs": {
+    "contractId": {
+      "type": "string",
+      "pattern": "^contract:[a-z][a-z0-9-]*/[a-z0-9-]+$"
+    },
     "source": {
       "oneOf": [
         {
@@ -565,6 +606,13 @@
                 "pattern": "^slot:"
               }
             }
+          }
+        },
+        "contracts": {
+          "type": "array",
+          "description": "Contracts this component relies on, by stable id; see the top-level `contracts`.",
+          "items": {
+            "$ref": "#/$defs/contractId"
           }
         },
         "propertyOnly": {

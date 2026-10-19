@@ -61,6 +61,7 @@ const index = referenceIndex({
   packages: readdirSync(join(root, 'packages')).map((d) => read(`packages/${d}/package.json`)),
   tokens: [...tokens.matchAll(/'([^']+)'/g)].map((m) => m[1]),
   variables: [...css.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]),
+  contracts: Object.keys(read('packages/core/contracts.json').contracts),
 });
 for (const { dir, result } of results) {
   const texts = authoredTexts(result.manifest, result.metadata, result.examples);

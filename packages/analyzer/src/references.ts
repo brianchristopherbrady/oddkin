@@ -39,6 +39,8 @@ export interface ReferenceIndex {
   readonly tokens: ReadonlySet<string>;
   readonly variables: ReadonlySet<string>;
   readonly recipes: ReadonlySet<string>;
+  /** Published contract ids (`contract:core/scope`). */
+  readonly contracts: ReadonlySet<string>;
 }
 
 export interface ReferenceSources {
@@ -51,6 +53,8 @@ export interface ReferenceSources {
   /** Token ids (`color.focus.ring`) and the CSS custom properties a theme declares. */
   readonly tokens?: readonly string[];
   readonly variables?: readonly string[];
+  /** Contract ids from the installed packages' `contracts.json`. */
+  readonly contracts?: readonly string[];
 }
 
 type Json = Record<string, unknown>;
@@ -117,6 +121,7 @@ export function referenceIndex(sources: ReferenceSources): ReferenceIndex {
     },
     tokens: new Set(sources.tokens ?? []),
     variables: new Set(sources.variables ?? []),
+    contracts: new Set(sources.contracts ?? []),
     recipes: new Set(
       (sources.metadata ?? []).flatMap((m) =>
         Object.values(
@@ -256,6 +261,10 @@ export function checkReferences(
       }
 
       const scope = /^(@[a-z0-9-]+)\/[a-z0-9-]+/.exec(span)?.[1];
+      if (/^contract:[a-z][a-z0-9-]*\/[a-z0-9-]+$/.test(span)) {
+        if (!index.contracts.has(span)) report(span, 'is not a published contract');
+        continue;
+      }
       if (scope && index.scopes.has(scope)) {
         if (!/\s/.test(span) && !index.imports(span)) report(span, 'is not a public entry point');
         continue;

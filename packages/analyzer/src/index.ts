@@ -16,9 +16,18 @@ import {
   type ModulePaths,
 } from './emit.js';
 import { extract, type AnalyzerDiagnostic, type Extraction } from './extract.js';
+import { contractIndex } from './contracts.js';
 import { extractExamples, findExampleFiles, type ExampleInfo } from './examples.js';
 
 export type { ExampleInfo } from './examples.js';
+export {
+  contractIndex,
+  contractPackage,
+  resolveContract,
+  type ContractEntry,
+  type ContractIndex,
+  type ResolvedContract,
+} from './contracts.js';
 export {
   UNKNOWN_REFERENCE,
   authoredTexts,
@@ -41,6 +50,17 @@ export type {
 export type { LibraryInfo } from './emit.js';
 
 export const ANALYZER_VERSION = '0.0.0';
+
+/** Core contracts every element relies on (`@oddkin/core/CONTRACTS.md`). */
+export const ELEMENT_CONTRACTS = [
+  'contract:core/binding-rule',
+  'contract:core/properties',
+  'contract:core/events',
+  'contract:core/lifecycle',
+  'contract:core/update-complete',
+  'contract:core/scope',
+] as const;
+const COMPOSITION_CONTRACT = 'contract:core/composition';
 
 export interface AnalyzeOptions {
   /** tsconfig.json of the library to analyze. */
@@ -179,10 +199,26 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
       { name, version, customElements: './custom-elements.json' },
     ],
   };
+  // Every element relies on the core contracts its base class implements; composed definitions
+  // also on the composition contract. Sections come from the installed @oddkin/core.
+  const referenced = extraction.components.length
+    ? [...ELEMENT_CONTRACTS, ...(extraction.definitions.length ? [COMPOSITION_CONTRACT] : [])]
+    : [];
+  const coreContracts = referenced.length ? contractIndex('@oddkin/core', root) : undefined;
+  const contractDiagnostics: AnalyzerDiagnostic[] = referenced
+    .filter((id) => !coreContracts?.contracts[id])
+    .map((id) => ({
+      code: 'analyzer.contract.unresolved',
+      severity: 'warning',
+      message: coreContracts
+        ? `${id} is not in @oddkin/core ${coreContracts.version}'s contracts.json.`
+        : `${id} cannot be resolved: @oddkin/core/contracts.json is not installed for ${root}.`,
+    }));
   const diagnostics = sortDiagnostics([
     ...configDiagnostics,
     ...extraction.diagnostics,
     ...exampleDiagnostics,
+    ...contractDiagnostics,
   ]);
   const examples = Object.fromEntries(
     [...found.examples]
@@ -213,10 +249,31 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
     library,
     ANALYZER_VERSION,
   );
+  const components = Object.fromEntries(
+    Object.entries((metadata['components'] ?? {}) as Record<string, Record<string, unknown>>).map(
+      ([id, component]) => [
+        id,
+        {
+          ...component,
+          contracts: [
+            ...ELEMENT_CONTRACTS,
+            ...(component['definition'] ? [COMPOSITION_CONTRACT] : []),
+          ],
+        },
+      ],
+    ),
+  );
+  const contracts = Object.fromEntries(
+    referenced.flatMap((id) => {
+      const entry = coreContracts?.contracts[id];
+      return entry ? [[id, { package: '@oddkin/core', file: 'CONTRACTS.md', ...entry }]] : [];
+    }),
+  );
   return {
     manifest: buildManifest(extraction, paths),
     metadata: {
       ...metadata,
+      ...(referenced.length ? { components, contracts } : {}),
       ...(found.examples.length ? { examples } : {}),
       diagnostics: metadataDiagnostics,
     },

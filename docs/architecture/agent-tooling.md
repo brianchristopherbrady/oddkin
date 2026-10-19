@@ -68,7 +68,7 @@ Agent-facing contracts are **views of the normalized metadata model** ([metadata
 | Event intent (user intent vs state notification; programmatic writes do not emit) | Event definitions ([core-contracts.md](./core-contracts.md) §2) + authored text | Planned (M4) |
 | Slots, parts, methods, custom states | Templates, JSDoc, `setState` | Extracted today |
 | Dependencies (components a definition registers) | `compose({ dependencies })` | Planned with the composition API (M4) |
-| Rendering, lifecycle, readiness, ownership contracts | Library-level contract entries with stable ids (e.g. `contract:core/binding-rule`, `contract:core/scope`) that point at the published contract text | Planned (M4) |
+| Rendering, lifecycle, readiness, ownership contracts | Library-level contract entries with stable ids (e.g. `contract:core/binding-rule`, `contract:core/scope`) that point at the published contract text | Implemented (M4): `@oddkin/core/CONTRACTS.md` and `contracts.json`, referenced per component in metadata and resolved offline with `resolveContract` |
 | Token references, component variables, recipes, customization paths | `token()` / `var(--…)` reads, recipes, documented customization ladder | Token and variable reads extracted today; customization paths planned |
 | Examples, source locations, deprecations, migration references | `defineExamples`, source positions, `@deprecated`, migration records | Examples and source positions today; deprecation and migration references planned |
 | Usage constraints and accessibility responsibilities | `@useFor`, `@notFor`, `@limitation`, `@a11y`, `@keyboard`, authored content | Extracted as `authored` facts today |
