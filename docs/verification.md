@@ -802,3 +802,16 @@ Environment as the previous entry. Contract: [change-impact-and-verification.md 
 | Mutation probe | `node .tmp/mutate-impact.mjs` (not committed) | 9 of 9 killed: product scopes not blocking, product theme changes without roots, migration records ignored, unresolved dependencies not widening, failed baselines reused, derived definitions tied to the foundation component instead of its class, dependency edges dropped, unit changes not incompatible, version changes ignored. |
 
 **Not covered:** the `oddkin impact` CLI, snapshots written by a build, executing selected checks and merging their results (item 851), and visual baselines. Product contexts come from `product.v1` and theme scopes; component-family mappings wait for M8.
+
+## 2026-10-19 — Change impact executed (M5)
+
+Environment as the previous entry. Contract: [change-impact-and-verification.md §2.7](./architecture/change-impact-and-verification.md#27-prototype-m5).
+
+| Evidence level | Command | Result |
+| --- | --- | --- |
+| Merge and CLI | `npx vitest run --project node packages/analyzer/test/impact-cli.test.ts` | Pass (4). `mergeResults` passes a check only when all three runs passed, fails it on one failed run (message kept), and makes it `not-executed` when no run happened, including a selected suite check. A reused check keeps its baseline. `oddkin-impact snapshot` on built `@oddkin/components` has no unresolved items; two snapshots of the same build compare with 0 changes. `compare --results` with a failed run exits 1 and writes the same Markdown it prints. Usage errors exit 2. |
+| Real run | `node scripts/impact.mjs snapshot --out .oddkin/impact/base.json`, then `compare .oddkin/impact/base.json .oddkin/impact/edited.json --run` (head: base with the side-nav and button structural-style hashes changed) | The snapshot of `@oddkin/components` and `@oddkin/ai` has 945 items, 1,202 edges, and 0 unresolved. 2 changes; 19 checks selected and run through Vitest in Chromium, Firefox, and WebKit: 10 button examples, `suite:oddkin.button#odd-button`, `odd-card/headed` and `odd-input/inForm` (their fixtures render a button), and 6 side-nav examples. All 19 passed. The selection file was removed afterwards. |
+| Ordinary runs | `npx vitest run --project browser tests/impact/selected.browser.test.ts` | Skipped in three engines without a selection file. |
+| Packaging | `node scripts/verify-packs.mjs`; `node scripts/architecture/check-boundaries.mjs --artifacts` | OK. The packed `@oddkin/analyzer` includes `./impact` and the `oddkin-impact` bin. |
+
+**Not covered:** base snapshots of a git revision (the base is taken before the change), visual baselines, and product contexts in this repository (it configures none; the known-answer fixtures cover them).

@@ -1,46 +1,27 @@
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { generate } from '@oddkin/tokens/generate';
-import { emitInspectJson } from '@oddkin/tokens/generate';
-import { compareSnapshots, createSnapshot, type SnapshotInputs } from '../src/impact.js';
+import { emitInspectJson, generate } from '@oddkin/tokens/generate';
+import {
+  compareSnapshots,
+  createSnapshot,
+  readPackage,
+  type SnapshotInputs,
+} from '../src/impact.js';
 
 // The impact prototype on the real @oddkin/components outputs and default theme: every module a
 // definition, class, or example names is hashed, so nothing is a coverage gap.
 
-const pkgDir = new URL('../../components/', import.meta.url);
-const read = (path: string) => readFileSync(new URL(path, pkgDir), 'utf8');
-const json = <T>(path: string) => JSON.parse(read(path)) as T;
-
 type Package = SnapshotInputs['packages'][number] & { modules: Record<string, string> };
 
 function inputs(): SnapshotInputs & { packages: Package[] } {
-  const manifest = json<SnapshotInputs['packages'][number]['manifest']>('custom-elements.json');
-  const metadata = json<SnapshotInputs['packages'][number]['metadata']>('oddkin.metadata.json');
-  const pkg = json<{ name: string; version: string; exports: Record<string, unknown> }>(
-    'package.json',
-  );
-  const paths = new Set<string>([
-    ...manifest.modules.filter((m) => m.declarations?.some((d) => d.tagName)).map((m) => m.path!),
-    ...Object.values(metadata.components ?? {}).flatMap((c) => [
-      ...(c.definition?.template ? [c.definition.template.module] : []),
-      ...(c.definition?.styles ?? []).map((s) => s.module),
-    ]),
-    ...Object.values(metadata.examples ?? {}).flatMap((e) => (e.file ? [e.file] : [])),
-  ]);
   const config = JSON.parse(
     readFileSync(new URL('../../tokens/themes/default.theme.json', import.meta.url), 'utf8'),
   ) as Record<string, unknown>;
   const theme = generate(config).theme!;
   return {
     packages: [
-      {
-        name: pkg.name,
-        version: pkg.version,
-        exports: pkg.exports,
-        manifest,
-        metadata,
-        modules: Object.fromEntries([...paths].map((path) => [path, read(path)])),
-      },
+      readPackage(fileURLToPath(new URL('../../components/', import.meta.url))) as Package,
     ],
     theme: { config, inspection: JSON.parse(emitInspectJson(theme)) },
   };

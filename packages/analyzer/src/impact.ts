@@ -10,6 +10,8 @@
  * it never loads TypeScript and never executes the analyzed code.
  */
 import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 export const SNAPSHOT_SCHEMA = 'https://oddkin.dev/schemas/comparison-snapshot/v1.json';
 export const IMPACT_SCHEMA = 'https://oddkin.dev/schemas/impact-report/v1.json';
@@ -1005,6 +1007,95 @@ export function compareSnapshots(
   };
 }
 
+// ---- execution results ----
+
+/** One run's outcome for a selected check, e.g. per browser. */
+export interface CheckResult {
+  readonly check: string;
+  readonly product?: string;
+  readonly state: 'passed' | 'failed' | 'not-executed';
+  readonly message?: string;
+  /** What ran: browser and version, configuration, input hashes. */
+  readonly conditions: Readonly<Record<string, unknown>>;
+}
+
+/**
+ * Merge executed results into the report. A selected check passes only when every run of it
+ * passed; any failure fails it; with no run it is `not-executed`. Conditions of every run are
+ * listed. Reused checks keep their baseline state and conditions.
+ */
+export function mergeResults(report: ImpactReport, results: readonly CheckResult[]): ImpactReport {
+  const runs = new Map<string, CheckResult[]>();
+  for (const result of results) {
+    const key = `${result.check}@${result.product ?? ''}`;
+    runs.set(key, [...(runs.get(key) ?? []), result]);
+  }
+  return {
+    ...report,
+    checks: report.checks.map((check): Check => {
+      if (check.state !== 'selected') return check;
+      const ran = (runs.get(`${check.id}@${check.product ?? ''}`) ?? []).filter(
+        (r) => r.state !== 'not-executed',
+      );
+      if (!ran.length)
+        return { ...check, state: 'not-executed', reason: `${check.reason}; no run recorded` };
+      const failed = ran.filter((r) => r.state === 'failed');
+      return {
+        ...check,
+        state: failed.length ? 'failed' : 'passed',
+        reason: failed.length
+          ? `${check.reason}; failed: ${failed.map((r) => r.message ?? 'no message').join('; ')}`
+          : check.reason,
+        conditions: { runs: ran.map((r) => r.conditions) },
+      };
+    }),
+  };
+}
+
+// ---- reading a package from disk ----
+
+/**
+ * The snapshot inputs of a built package directory: `package.json` (name, version, exports),
+ * its `customElements` manifest, `oddkin.metadata.json`, and the sources of every module its
+ * elements, definitions, and examples name. Missing sources stay missing (coverage gaps).
+ */
+export function readPackage(dir: string): SnapshotInputs['packages'][number] {
+  const json = <T>(path: string) => JSON.parse(readFileSync(join(dir, path), 'utf8')) as T;
+  const pkg = json<{
+    name: string;
+    version: string;
+    exports?: Record<string, unknown>;
+    customElements?: string;
+  }>('package.json');
+  const manifest = json<CemManifest>(pkg.customElements ?? 'custom-elements.json');
+  const metadata = existsSync(join(dir, 'oddkin.metadata.json'))
+    ? json<MetadataInput>('oddkin.metadata.json')
+    : {};
+  const paths = new Set<string>([
+    ...manifest.modules
+      .filter((m) => m.declarations?.some((d) => d.tagName))
+      .flatMap((m) => (m.path ? [m.path] : [])),
+    ...Object.values(metadata.components ?? {}).flatMap((c) => [
+      ...(c.definition?.template && !c.definition.template.package
+        ? [c.definition.template.module]
+        : []),
+      ...(c.definition?.styles ?? []).filter((s) => !s.package).map((s) => s.module),
+    ]),
+    ...Object.values(metadata.examples ?? {}).flatMap((e) => (e.file ? [e.file] : [])),
+  ]);
+  const modules: Record<string, string> = {};
+  for (const path of [...paths].sort())
+    if (existsSync(join(dir, path))) modules[path] = readFileSync(join(dir, path), 'utf8');
+  return {
+    name: pkg.name,
+    version: pkg.version,
+    manifest,
+    metadata,
+    ...(pkg.exports ? { exports: pkg.exports } : {}),
+    modules,
+  };
+}
+
 // ---- Markdown ----
 
 const cell = (text: string) => text.replaceAll('|', '\\|').replaceAll('\n', ' ');
@@ -1013,8 +1104,11 @@ export function renderImpactMarkdown(report: ImpactReport): string {
   const lines = ['# Change impact', ''];
   const count = (state: CheckState) => report.checks.filter((c) => c.state === state).length;
   const incompatible = report.changes.filter((c) => c.classification === 'incompatible').length;
+  const states = (['selected', 'passed', 'failed', 'reused', 'not-executed', 'unresolved'] as const)
+    .filter((state) => count(state))
+    .map((state) => `${count(state)} ${state}`);
   lines.push(
-    `${report.changes.length} changes (${incompatible} incompatible) · ${report.affected.products.length} products affected · ${count('selected')} checks selected · ${count('reused')} reused`,
+    `${report.changes.length} changes (${incompatible} incompatible) · ${report.affected.products.length} products affected · ${report.checks.length} checks${states.length ? ` (${states.join(', ')})` : ''}`,
     '',
   );
   if (report.fallback)
