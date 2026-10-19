@@ -854,3 +854,14 @@ Environment as the previous entry. Contract: [layout-recipes.md §5](./architect
 | Existing | `packages/core/test/layout.browser.test.ts`, `packages/components/test/styling.browser.test.ts`, `side-nav.browser.test.ts`, `tests/floor/probe.js` | Unchanged: a host container responds per instance, roles reach slotted content, parts and component variables override, page selectors never reach button internals, and container queries work in the floor browsers. |
 
 **Not covered:** floor-browser runs of the new checks (the floor probe covers basic container queries only).
+
+## 2026-10-19 — Change impact against git revisions (M5)
+
+Environment as the previous entry. Contract: [change-impact-and-verification.md §2.7](./architecture/change-impact-and-verification.md#27-prototype-m5).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Base revision | `node scripts/impact.mjs compare --base-ref HEAD` | HEAD (`4dff571`) was checked out in a temporary worktree with its own `node_modules` (`@oddkin/*` linked to the worktree's packages), built (`tsc -b`, metadata), and snapshotted: 934 items, 0 unresolved. The head is this working tree with another agent's uncommitted forms work: 945 items. 14 changes, none incompatible, and they are exactly that work: five `form*` properties and attributes on `odd-button`, changed button and input classes, the new `./css/button.css` export, and changed button styles. 20 checks selected. The worktree and its links were removed; the main `node_modules` (79 entries, `@oddkin/*` junctions) and the working tree were unchanged. |
+| Determinism | `snapshot` twice on the same build, then `oddkin-impact compare` | 0 changes. Tool versions (content hashes of the core, tokens, and analyzer builds) match between the HEAD worktree and this working tree, which share those sources. |
+
+Also closed: item 612's link from the side-nav preview to the invalidation contract (`previewStyles`, 2026-10-19 live condition editing entry).
