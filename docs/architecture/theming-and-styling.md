@@ -259,6 +259,15 @@ A build step (part of Oddkin's own tooling, a dev dependency) transforms compone
 
 Global page selectors do not reach shadow internals. Styling explanations (planned, [change-impact-and-verification.md](./change-impact-and-verification.md) §4.1) trace observed computed values back through component variables, semantic roles, and alias chains using inspection provenance. They label declared, potential, and observed relationships and never claim full cascade reconstruction. Component styles read inherited roles with fallbacks and never re-declare the full theme on `:host`, which would mask ancestor scopes.
 
+#### Verified behavior (`odd-button`, `odd-input`, `odd-card`)
+
+- **Variables:** each documented variable works on the host or any ancestor (custom properties inherit) and otherwise falls back to the role of the element's nearest scope (tested with `data-odd-mode` scopes, also inside another element's shadow root, and the `layout.compact` profile). `--odd-button-background: initial` on one element restores its fallback inside a customized subtree. A value the property rejects (`--odd-button-radius: banana`) does not fall back: the property becomes invalid at computed-value time and takes its initial or inherited value.
+- **Theme roles named like variables:** `--odd-card-padding` and `--odd-card-radius` are also the theme's `card.padding` and `card.radius` component roles, so the theme always sets them (density and the `layout.compact` profile adjust the padding). They are read without a fallback; setting them works like any variable, but `initial` removes the value (zero padding, square corners). `padding="none"`, `"sm"`, and `"lg"` replace the padding role, which applies to `padding="md"` (the default). No other component variable shares a name with a generated token.
+- **States win:** a disabled `odd-button` keeps the disabled surface, text, and transparent border whatever its colour variables; an `odd-input` showing an error keeps the danger border. Variables apply in every interactive state, so a custom `--odd-button-background` also replaces the hover colour; style other states with `odd-button::part(control):hover`.
+- **Parts:** each component exposes exactly its documented parts (`odd-button`: `control`, `spinner`; `odd-input`: `field`, `label`, `description`, `control`, `error`; `odd-card`: `base`, `header`, `body`, `footer`), each styled by an outer `::part()` rule, and `odd-input:state(user-invalid)::part(control)` follows the state.
+
+Evidence: `packages/components/test/styling-contract.test.ts` (Node: no custom-property declarations, only roles the generated theme declares, a fallback for every variable the theme does not declare, documented variables equal to those read, no theme roles in structural styles) and `styling-contract.browser.test.ts` (Chromium, Firefox, WebKit, with the shipped theme loaded). Not covered: `odd-side-nav`.
+
 ### Shared style primitives (`@oddkin/components/styles`, implemented)
 
 Rules every component needs are written once and adopted as one constructed sheet per document, whatever the number of components:

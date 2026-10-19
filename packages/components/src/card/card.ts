@@ -17,9 +17,9 @@ const HEADING = 'h1, h2, h3, h4, h5, h6, [role="heading"]';
  * @csspart header - The header region (hidden when empty).
  * @csspart body - The body region.
  * @csspart footer - The footer region (hidden when empty).
- * @cssprop --odd-card-padding - Inner padding.
+ * @cssprop --odd-card-padding - Inner padding with `padding="md"` (the default). Also the theme's `card.padding` role, so the theme sets it (density and profiles adjust it); `padding="none"`, `"sm"`, and `"lg"` replace it.
  * @cssprop --odd-card-gap - Space between header, body, and footer.
- * @cssprop --odd-card-radius - Corner radius.
+ * @cssprop --odd-card-radius - Corner radius. Also the theme's `card.radius` role, so the theme sets it.
  * @cssprop --odd-card-background - Background colour.
  * @cssprop --odd-card-border-color - Border colour.
  * @cssprop --odd-card-shadow - Shadow for `variant="elevated"` (default `elevation.md`).

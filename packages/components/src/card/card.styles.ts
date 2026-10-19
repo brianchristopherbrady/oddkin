@@ -5,10 +5,10 @@ import { token } from '@oddkin/tokens/refs';
 export const cardStyles = css`
   .card {
     gap: var(--odd-card-gap, ${token('space.sm')});
-    padding: var(--odd-card-padding, ${token('card.padding')});
+    padding: ${token('card.padding')};
     border: ${token('border.width.default')} solid
       var(--odd-card-border-color, ${token('color.border.default')});
-    border-radius: var(--odd-card-radius, ${token('card.radius')});
+    border-radius: ${token('card.radius')};
     background: var(--odd-card-background, ${token('color.surface.default')});
     color: ${token('color.text.primary')};
     font-family: ${token('type.body.family')};
@@ -25,13 +25,13 @@ export const cardStyles = css`
     letter-spacing: ${token('type.title.letter-spacing')};
   }
   :host([padding='none']) .card {
-    padding: var(--odd-card-padding, 0);
+    padding: 0;
   }
   :host([padding='sm']) .card {
-    padding: var(--odd-card-padding, ${token('space.sm')});
+    padding: ${token('space.sm')};
   }
   :host([padding='lg']) .card {
-    padding: var(--odd-card-padding, ${token('space.lg')});
+    padding: ${token('space.lg')};
   }
   :host([variant='filled']) .card {
     border-color: var(--odd-card-border-color, transparent);
