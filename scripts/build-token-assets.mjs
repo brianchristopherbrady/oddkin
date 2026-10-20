@@ -16,6 +16,14 @@ const { result, files } = await buildTheme(config, {
   formats: ['css'],
 });
 if (!result.ok || result.diagnostics.length) fail(formatDiagnostics(result.diagnostics));
+// Token inspection for tooling (@oddkin/tokens/inspect/default.json): component metadata
+// references these facts instead of recomputing them.
+const inspection = await buildTheme(config, {
+  outDir: 'packages/tokens/dist/inspect',
+  formats: ['json'],
+});
+if (!inspection.result.ok) fail(formatDiagnostics(inspection.result.diagnostics));
+const written = [...files, ...inspection.files];
 
 const cli = spawnSync(
   process.execPath,
@@ -35,7 +43,7 @@ if (cli.status !== 0) fail(`oddkin-tokens failed (${cli.status}):\n${cli.stderr}
 
 console.log(
   `Token assets: ${[
-    ...files,
+    ...written,
     ...cli.stdout
       .trim()
       .split('\n')

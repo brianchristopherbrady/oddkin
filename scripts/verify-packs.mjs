@@ -105,6 +105,7 @@ try {
       'const expected = {',
       "  '@oddkin/tokens/css/default.css': '--odd-color-action-default',",
       "  '@oddkin/tokens/schema.json': 'Oddkin theme configuration',",
+      '  \'@oddkin/tokens/inspect/default.json\': \'"cssVariable": "--odd-space-md"\',',
       '  \'@oddkin/components/custom-elements.json\': \'"tagName": "odd-button"\',',
       '  \'@oddkin/components/oddkin.metadata.json\': \'"registration": "@oddkin/components/define/button"\',',
       '};',

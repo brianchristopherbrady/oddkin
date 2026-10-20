@@ -1106,3 +1106,17 @@ Environment as the previous entry; vue-tsc 3.3.13, svelte-check 4.7.7, and TypeS
 | Mutants | event handler types replaced with `any` in the Vue and Svelte typings | Killed: vue-tsc reports two unused `@vue-expect-error` directives, and `Mistakes.svelte` produces two of its four expected errors |
 
 **Findings:** (1) Vue's template type checker reads listeners on custom elements in camel case and `v-model` as `modelValue`, while the runtime binds `value` and `input` (verified earlier in `frameworks-forms.browser.test.ts`). (2) The types-only entries still compile to empty `export {}` modules in `dist/frameworks`; no export points at them.
+
+## 2026-10-19 — Foundations in component metadata from the published token inspection (M4 item 791, part 1)
+
+Environment as the previous entry. Another agent was editing `packages/state`, core-contracts.md, packages.md, and the plan in the same working tree; this work's shared-file edits were committed against HEAD only. Contract: [metadata-and-analyzer.md §3](./architecture/metadata-and-analyzer.md), [workbench-pages.md §5.2–§5.3](./architecture/workbench-pages.md).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Inspection published | `node scripts/build-token-assets.mjs` | Writes `packages/tokens/dist/inspect/default.inspect.json` (theme `default`, modes light and dark, 210 tokens, no diagnostics), exported as `@oddkin/tokens/inspect/default.json` |
+| Foundations | `node scripts/build-metadata.mjs` | `@oddkin/components` metadata gains `foundation:spacing` (11 scale tokens; semantic vocabulary of 6, such as `control.gap` → `space.xs`; 4 component mappings, `navigation.*`), `foundation:color` (26 semantic roles, mode variation, origins `overridden` and `preset`), and `foundation:borders-and-radii` (2 widths, 8 radii; `control.radius` → `radius.md`, `card.radius` → `radius.lg`). Validated against `oddkin-metadata.v1` by `metadata.test.ts`. The default theme configures no spacing strategy (its scale is preset), so none is claimed |
+| Tests | `npx vitest run --project node packages/analyzer packages/components/test/metadata.test.ts packages/tokens tests/schemas` | Pass, 211 tests; `foundations.test.ts` (4): known answers (aliases are vocabulary, not steps; semantic and component vocabularies; absent sections with reasons), omitted foundations, mode variation only for per-mode values, and the published metadata equals what the published inspection yields |
+| Packed | `npm run verify:packs` | Pass: `@oddkin/tokens/inspect/default.json` resolves from the installed tarball |
+| Mutants | aliases counted as scale steps; mode variation claimed for any object value; for single-mode themes | 2 of 3 killed at first: the single-mode probe survived, because the mode check never decided anything the per-mode test did not. The check was removed (a value keyed by the theme's modes is the rule) and a test added for object values not keyed by modes; that probe is killed. 3 of 3 |
+
+**Findings:** (1) Token inspection was produced only for consumers running `oddkin-tokens build --format json`; Oddkin's own build wrote CSS only, so foundations had nothing published to reference. (2) Vocabulary entries mix semantic, layout, and component tokens in the theme; the metadata keeps semantic and layout roles apart from component mappings, as the Spacing and Borders pages present them. Not yet: `styleMappings` and `updated` dates (item 791 parts 2 and 3).

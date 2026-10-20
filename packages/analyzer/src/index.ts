@@ -17,6 +17,7 @@ import {
 } from './emit.js';
 import { extract, type AnalyzerDiagnostic, type Extraction } from './extract.js';
 import { contractIndex } from './contracts.js';
+import { foundationsFrom, type InspectionSource, type TokenInspection } from './foundations.js';
 import { extractExamples, findExampleFiles, type ExampleInfo } from './examples.js';
 
 export type { ExampleInfo } from './examples.js';
@@ -48,6 +49,8 @@ export type {
   PropertyInfo,
 } from './extract.js';
 export type { LibraryInfo } from './emit.js';
+export { foundationsFrom } from './foundations.js';
+export type { InspectedToken, InspectionSource, TokenInspection } from './foundations.js';
 
 export const ANALYZER_VERSION = '0.0.0';
 
@@ -76,6 +79,8 @@ export interface AnalyzeOptions {
    * development-only sources, so they need not be in the program.
    */
   readonly examples?: readonly string[];
+  /** A theme's token inspection; `foundations` metadata references it without recomputing. */
+  readonly tokens?: { readonly inspection: TokenInspection; readonly source: InspectionSource };
 }
 
 export interface AnalyzeResult {
@@ -274,6 +279,9 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
     metadata: {
       ...metadata,
       ...(referenced.length ? { components, contracts } : {}),
+      ...(options.tokens
+        ? { foundations: foundationsFrom(options.tokens.inspection, options.tokens.source) }
+        : {}),
       ...(found.examples.length ? { examples } : {}),
       diagnostics: metadataDiagnostics,
     },

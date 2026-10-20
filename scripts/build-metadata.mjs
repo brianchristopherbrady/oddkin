@@ -28,12 +28,20 @@ const print = (d, dir) => {
   failed = true;
 };
 const results = [];
+// Foundations reference the default theme's published token inspection (no recomputation).
+const tokenInspection = {
+  inspection: JSON.parse(
+    readFileSync(join(root, 'packages/tokens/dist/inspect/default.inspect.json'), 'utf8'),
+  ),
+  source: { package: '@oddkin/tokens', export: './inspect/default.json' },
+};
 for (const dir of PACKAGES) {
   const pkgDir = join(root, dir);
   const manifest = JSON.parse(await readFile(join(pkgDir, 'package.json'), 'utf8'));
   const result = analyze({
     project: join(pkgDir, 'tsconfig.json'),
     library: { name: manifest.name, version: manifest.version, prefix: 'odd-' },
+    ...(dir === 'packages/components' ? { tokens: tokenInspection } : {}),
   });
   for (const d of result.diagnostics) print(d, dir);
   results.push({ dir, result });
