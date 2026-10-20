@@ -108,7 +108,7 @@ Development and production builds per entry, as in `@oddkin/state`.
 | Export | Contents | Environment |
 | --- | --- | --- |
 | `./theme` | `defineTheme`, `ThemeConfig` types | any |
-| `./generate` | Pure pipeline: `resolveTheme(config) → { tokens, diagnostics }`, `emitCSS`, `emitDTCG`, `emitSCSS`, `emitTypes` | any (browser + Node) |
+| `./generate` | Pure pipeline: `generate(config, { css }) → { ok, diagnostics, theme, css }`, `resolveTheme`, `resolveToken`, `emitCss`, `emitInspectJson`, the refs/values/conditions emitters; diagnostics with JSON-pointer paths into the configuration. **Implemented**; the published entry runs in a module Worker with output byte-identical to the CLI's, the shipped CSS, and the inspection JSON. Planned: `emitDTCG`, `emitSCSS` | any (browser, Worker, Node) |
 | `./refs` | `token(name, fallback?) → 'var(--odd-…)'`, generated `TokenName` type | any, no DOM |
 | `./values` | Static literal values for the default theme(s) | any |
 | `./conditions` | Named responsive conditions → literal query strings | any, no DOM |
@@ -118,7 +118,7 @@ Development and production builds per entry, as in `@oddkin/state`.
 | `./inspect/default.json` | The default theme's token inspection (definitions, values per mode, origins, provenance, scopes) for tooling; component metadata `foundations` reference it. **Implemented** | JSON, no script |
 | `./scss/refs`, `./scss/values` | Sass map/function wrappers | Sass (dev tooling) |
 | `./json/*` | DTCG-format JSON, inspection metadata | data |
-| `./node` + bin `oddkin-tokens` | File loading, CLI `init`/`build`/`check` | Node only |
+| `./node` + bin `oddkin-tokens` | `loadConfig` (JSON, JS, or TS → the JSON-compatible model, with `config.notJson` paths), `buildTheme`, `formatDiagnostics`; CLI `init`/`build`/`check`. **Implemented** | Node only |
 
 ### `@oddkin/components`
 | Export | Contents | Side effects |

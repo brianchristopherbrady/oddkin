@@ -172,41 +172,43 @@ describe('unit policy', () => {
   const result = (overrides: Record<string, string>) =>
     codes(generate({ ...base, overrides }).diagnostics);
 
+  // Each value here is an override, so its diagnostics point at /overrides/<name>; roles that fail
+  // because of it keep their own /tokens/<name> paths.
   it('requires unitless line heights, valid font weights, and lengths with units', () => {
     expect(result({ 'line-height.normal': '24px' })).toEqual([
-      ['unit.invalid', '/tokens/line-height.normal'],
+      ['unit.invalid', '/overrides/line-height.normal'],
     ]);
     expect(result({ 'font.weight.bold': '1200' })).toEqual([
-      ['unit.invalid', '/tokens/font.weight.bold'],
+      ['unit.invalid', '/overrides/font.weight.bold'],
     ]);
-    expect(result({ 'radius.md': '8' })).toEqual([['unit.invalid', '/tokens/radius.md']]);
+    expect(result({ 'radius.md': '8' })).toEqual([['unit.invalid', '/overrides/radius.md']]);
     expect(result({ 'radius.md': 'calc({space.xs} / 2)' })).toEqual([]);
   });
 
   it('requires times for durations, cubic-bezier easings, and integer stacking levels', () => {
     expect(result({ 'motion.duration.fast': '100' })).toEqual([
-      ['unit.invalid', '/tokens/motion.duration.fast'],
+      ['unit.invalid', '/overrides/motion.duration.fast'],
     ]);
     expect(result({ 'motion.duration.fast': '0.15s' })).toEqual([]);
     expect(result({ 'motion.easing.standard': 'ease-in' })).toEqual([
-      ['unit.invalid', '/tokens/motion.easing.standard'],
+      ['unit.invalid', '/overrides/motion.easing.standard'],
     ]);
     expect(result({ 'motion.easing.standard': 'cubic-bezier(1.2, 0, 0.2, 1)' })).toEqual([
-      ['unit.invalid', '/tokens/motion.easing.standard'],
+      ['unit.invalid', '/overrides/motion.easing.standard'],
     ]);
     expect(result({ 'motion.easing.standard': 'cubic-bezier(0.3, -0.5, 0.7, 1.5)' })).toEqual([]);
     expect(result({ 'z-index.sticky': '10.5' })).toEqual([
-      ['unit.invalid', '/tokens/z-index.sticky'],
+      ['unit.invalid', '/overrides/z-index.sticky'],
     ]);
   });
 
   it('warns about px where sizes should follow the reader’s font size, and allows px borders', () => {
     expect(result({ 'font.size.md': '16px' })).toEqual([
-      ['unit.discouraged', '/tokens/font.size.md'],
+      ['unit.discouraged', '/overrides/font.size.md'],
     ]);
     expect(result({ 'control.height.md': '40px' })).toEqual([
-      ['unit.discouraged', '/tokens/control.height.md'],
-      ['target.unitMismatch', '/tokens/control.height.md'],
+      ['unit.discouraged', '/overrides/control.height.md'],
+      ['target.unitMismatch', '/overrides/control.height.md'],
       ['target.unitMismatch', '/tokens/navigation.item.min-height'],
     ]);
     expect(result({ 'border.width.default': '1px', 'focus.width': '3px' })).toEqual([]);

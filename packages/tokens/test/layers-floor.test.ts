@@ -70,7 +70,7 @@ describe('token values above the browser floor (css-architecture.md §4.2)', () 
     expect(result.ok).toBe(true);
     const found = result.diagnostics.filter((d) => d.code === 'value.syntax.aboveFloor');
     expect(found).toHaveLength(1);
-    expect(found[0]).toMatchObject({ severity: 'warning', path: '/tokens/layout.inset' });
+    expect(found[0]).toMatchObject({ severity: 'warning', path: '/overrides/layout.inset' });
     expect(found[0]?.message).toContain('Chrome 125, Edge 125, Firefox 126, Safari 17.4');
     expect(found[0]?.message).toContain('invalid at computed-value time');
   });
@@ -98,7 +98,7 @@ describe('token values above the browser floor (css-architecture.md §4.2)', () 
           },
         },
       }).filter(([code]) => code === 'value.syntax.aboveFloor'),
-    ).toEqual([['value.syntax.aboveFloor', 'warning', '/tokens/color.surface.hover']]);
+    ).toEqual([['value.syntax.aboveFloor', 'warning', '/overrides/color.surface.hover']]);
     expect(
       codes({
         ...config,

@@ -93,6 +93,18 @@ const MODES: readonly Mode[] = ['light', 'dark'];
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
 
+/** An absent key takes its default; an explicit `null` is validated (and rejected) like the schema does. */
+const given = <T>(value: T | undefined, fallback: T): T => (value === undefined ? fallback : value);
+
+/** `/tokens/<name>` → the configuration path the token's value came from (an override), if any. */
+function configPath(tokens: TokenMap, path: string): string {
+  const match = /^\/tokens\/([^/]+)$/.exec(path);
+  if (!match) return path;
+  const token = tokens.get((match[1] as string).replace(/~1/g, '/').replace(/~0/g, '~'));
+  // Generated tokens record a formula as provenance; only configuration paths are pointers.
+  return token?.provenance?.startsWith('/') ? token.provenance : path;
+}
+
 function unknownKeys(
   value: Record<string, unknown>,
   allowed: readonly string[],
@@ -326,9 +338,11 @@ export function resolveTheme(input: unknown): ResolveResult {
     return { theme: undefined, diagnostics: d.items };
   }
   unknownKeys(input, TOP_LEVEL, '', d);
+  if (input['$schema'] !== undefined && typeof input['$schema'] !== 'string')
+    d.error('config.type', '/$schema', '$schema must be a string: the JSON Schema URL or path.');
   const config = input as unknown as ThemeConfig;
 
-  const name = config.name ?? 'default';
+  const name = given(config.name, 'default');
   if (typeof name !== 'string' || !/^[a-z][a-z0-9-]*$/.test(name)) {
     d.error(
       'config.name.invalid',
@@ -364,14 +378,23 @@ export function resolveTheme(input: unknown): ResolveResult {
       neutral = color(config.brand.neutral, '/brand/neutral', d);
   }
 
-  const status = config.status ?? {};
+  const status: unknown = given<unknown>(config.status, {});
+  const statusInput: Record<string, unknown> = isRecord(status) ? status : {};
   if (!isRecord(status)) d.error('config.type', '/status', 'status must be an object.');
   else unknownKeys(status, ['danger', 'success', 'warning'], '/status', d);
-  const danger = color(status.danger ?? DEFAULT_STATUS.danger, '/status/danger', d);
-  const success = color(status.success ?? DEFAULT_STATUS.success, '/status/success', d);
-  const warning = color(status.warning ?? DEFAULT_STATUS.warning, '/status/warning', d);
+  const danger = color(given(statusInput['danger'], DEFAULT_STATUS.danger), '/status/danger', d);
+  const success = color(
+    given(statusInput['success'], DEFAULT_STATUS.success),
+    '/status/success',
+    d,
+  );
+  const warning = color(
+    given(statusInput['warning'], DEFAULT_STATUS.warning),
+    '/status/warning',
+    d,
+  );
 
-  const modes = config.modes ?? MODES;
+  const modes = given(config.modes, MODES);
   if (
     !Array.isArray(modes) ||
     modes.length === 0 ||
@@ -385,9 +408,9 @@ export function resolveTheme(input: unknown): ResolveResult {
     );
   }
 
-  const spacing = generateSpacing(config.spacing ?? DEFAULT_SPACING, d, '/spacing');
+  const spacing = generateSpacing(given(config.spacing, DEFAULT_SPACING), d, '/spacing');
 
-  const products = config.products ?? {};
+  const products = given(config.products, {});
   const productInputs: Array<{ name: string; primary: Oklch; neutral: Oklch | undefined }> = [];
   if (!isRecord(products)) d.error('config.type', '/products', 'products must be an object.');
   else {
@@ -413,7 +436,7 @@ export function resolveTheme(input: unknown): ResolveResult {
     }
   }
 
-  const density = config.density ?? DEFAULT_DENSITY;
+  const density = given(config.density, DEFAULT_DENSITY);
   const densityInputs: Array<{ name: string; scale: number }> = [];
   if (!isRecord(density)) d.error('config.type', '/density', 'density must be an object.');
   else {
@@ -438,7 +461,7 @@ export function resolveTheme(input: unknown): ResolveResult {
     d.error('config.type', '/profiles', 'profiles must be an object of named role-override sets.');
   }
 
-  const overrides = config.overrides ?? {};
+  const overrides = given(config.overrides, {});
   if (!isRecord(overrides))
     d.error('config.type', '/overrides', 'overrides must be an object of token names to values.');
 
@@ -506,11 +529,14 @@ export function resolveTheme(input: unknown): ResolveResult {
     }
   }
 
-  validateGraph(tokens, d);
+  // Errors in a value the user wrote point at that override, as profile values point at the profile.
+  const graph = new DiagnosticList();
+  validateGraph(tokens, graph);
+  for (const item of graph.items) d.items.push({ ...item, path: configPath(tokens, item.path) });
   if (d.hasErrors) return { theme: undefined, diagnostics: d.items };
 
   const sorted: TokenMap = new Map([...tokens.entries()].sort(([a], [b]) => compareNames(a, b)));
-  checkTargets(sorted, (n) => pointer('tokens', n), d);
+  checkTargets(sorted, (n) => configPath(sorted, pointer('tokens', n)), d);
   checkContrast(sorted, modes, '', d);
 
   const scopes: ScopeTokens[] = [];

@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { generate } from '../src/index.js';
 import { run } from '../src/node/cli.js';
+import { loadConfig } from '../src/node/index.js';
 
 // Inside the repository so `@oddkin/tokens` resolves for JS and TS configs.
 const dir = join(process.cwd(), '.tmp', `cli-${process.pid}`);
@@ -91,6 +92,78 @@ describe('oddkin-tokens CLI', { timeout: 30_000 }, () => {
     const expected = generate({ name: 'typed', brand: { primary: '#0f766e' } }).css;
     expect(await readFile(at('js/typed.css'), 'utf8')).toBe(expected);
     expect(await readFile(at('ts/typed.css'), 'utf8')).toBe(expected);
+  });
+
+  it('loads JS and TS configs as their JSON model, naming each value JSON cannot hold', async () => {
+    await writeFile(
+      at('model.mjs'),
+      "export default { brand: { primary: '#0f766e', neutral: undefined }, modes: ['light', 'dark'], zero: -0 };\n",
+    );
+    const loaded = await loadConfig(at('model.mjs'));
+    expect(loaded.diagnostics).toEqual([]);
+    // What JSON.parse(JSON.stringify(config)) gives: undefined properties dropped, -0 written as 0.
+    expect(loaded.config).toStrictEqual({
+      brand: { primary: '#0f766e' },
+      modes: ['light', 'dark'],
+      zero: 0,
+    });
+    expect(Object.is((loaded.config as { zero: number }).zero, 0)).toBe(true);
+
+    await writeFile(
+      at('not-json.mjs'),
+      [
+        "const config = { brand: { primary: '#0f766e' }, products: new Map(), modes: ['light', , 'dark'],",
+        '  density: { compact: { scale: Number.NaN }, tight: { scale: () => 0.5 } },',
+        "  overrides: { 'radius.md': 1n }, status: [undefined] };",
+        'config.self = { config };',
+        'export default config;',
+      ].join('\n'),
+    );
+    const bad = await loadConfig(at('not-json.mjs'));
+    expect(bad.config).toBeUndefined();
+    expect(bad.diagnostics.map((d) => [d.code, d.severity, d.path])).toEqual([
+      ['config.notJson', 'error', '/products'],
+      ['config.notJson', 'error', '/modes/1'],
+      ['config.notJson', 'error', '/density/compact/scale'],
+      ['config.notJson', 'error', '/density/tight/scale'],
+      ['config.notJson', 'error', '/overrides/radius.md'],
+      ['config.notJson', 'error', '/status/0'],
+      ['config.notJson', 'error', '/self/config'],
+    ]);
+    expect(bad.diagnostics.map((d) => d.message.replace(/^.*?: /, ''))).toEqual([
+      'A Map object is not JSON data.',
+      'An empty array slot is not JSON data.',
+      'The number NaN is not JSON data.',
+      'A value of type function is not JSON data.',
+      'A value of type bigint is not JSON data.',
+      'A value of type undefined is not JSON data.',
+      'A reference back to an enclosing value (a cycle) is not JSON data.',
+    ]);
+    const check = await cli('check', at('not-json.mjs'));
+    expect([check.code, check.err.includes('error config.notJson /density/tight/scale')]).toEqual([
+      1,
+      true,
+    ]);
+
+    // A shared (acyclic) value is copied wherever it appears, as JSON does.
+    await writeFile(
+      at('shared.mjs'),
+      "const brand = { primary: '#0f766e' };\nexport default { brand, products: { clinic: { brand } } };\n",
+    );
+    expect((await loadConfig(at('shared.mjs'))).config).toStrictEqual({
+      brand: { primary: '#0f766e' },
+      products: { clinic: { brand: { primary: '#0f766e' } } },
+    });
+
+    // JSON.parse keeps "__proto__" as an own key; so does the model, and the generator rejects it.
+    await writeFile(
+      at('proto.json'),
+      '{ "brand": { "primary": "#000" }, "__proto__": { "polluted": true } }',
+    );
+    const proto = await loadConfig(at('proto.json'));
+    expect(Object.hasOwn(proto.config as object, '__proto__')).toBe(true);
+    expect(Object.getPrototypeOf(proto.config)).toBe(Object.prototype);
+    expect((await cli('check', at('proto.json'))).err).toContain('config.unknownKey /__proto__');
   });
 
   it('reports load failures and usage errors with distinct exit codes', async () => {

@@ -38,8 +38,65 @@ const loadError = (path: string, message: string, suggestion?: string): LoadResu
   ],
 });
 
+const NOT_JSON_SUGGESTION =
+  'The CLI and Theme Studio generate from the same JSON model: compute values in the module, but export plain objects, arrays, strings, finite numbers, booleans, and null.';
+
 /**
- * Load a configuration from `.json`, `.js`/`.mjs` (default export), or `.ts`/`.mts`.
+ * Copy a configuration into its JSON-compatible model (what `JSON.parse(JSON.stringify(value))`
+ * gives), reporting each value JSON would drop or change instead of changing it silently.
+ */
+function jsonModel(
+  value: unknown,
+  path: string,
+  file: string,
+  ancestors: object[],
+  diagnostics: Diagnostic[],
+): unknown {
+  const reject = (what: string, where = path): undefined => {
+    diagnostics.push({
+      code: 'config.notJson',
+      severity: 'error',
+      path: where,
+      message: `${file}: ${what} is not JSON data.`,
+      suggestion: NOT_JSON_SUGGESTION,
+    });
+    return undefined;
+  };
+  if (value === null || typeof value === 'string' || typeof value === 'boolean') return value;
+  // `+ 0` turns -0 into 0, as JSON does.
+  if (typeof value === 'number')
+    return Number.isFinite(value) ? value + 0 : reject(`The number ${value}`);
+  if (typeof value !== 'object') return reject(`A value of type ${typeof value}`);
+  if (ancestors.includes(value)) return reject('A reference back to an enclosing value (a cycle)');
+  const inner = [...ancestors, value];
+  const at = (key: string | number) =>
+    `${path}/${String(key).replace(/~/g, '~0').replace(/\//g, '~1')}`;
+  if (Array.isArray(value)) {
+    return Array.from({ length: value.length }, (_, i) =>
+      i in value
+        ? jsonModel(value[i], at(i), file, inner, diagnostics)
+        : reject('An empty array slot', at(i)),
+    );
+  }
+  const prototype = Object.getPrototypeOf(value) as object | null;
+  if (prototype !== Object.prototype && prototype !== null) {
+    const name = (prototype as { constructor?: { name?: unknown } }).constructor?.name;
+    return reject(`A ${typeof name === 'string' && name ? name : 'non-plain'} object`);
+  }
+  const entries: Array<[string, unknown]> = [];
+  for (const key of Object.keys(value)) {
+    const child = (value as Record<string, unknown>)[key];
+    if (child !== undefined)
+      entries.push([key, jsonModel(child, at(key), file, inner, diagnostics)]);
+  }
+  // `fromEntries` defines own properties, so a `__proto__` key stays data, as in JSON.parse.
+  return Object.fromEntries(entries);
+}
+
+/**
+ * Load a configuration from `.json`, `.js`/`.mjs` (default export), or `.ts`/`.mts`, as its
+ * JSON-compatible model: a plain-data copy, or `config.notJson` errors with the path of each value
+ * JSON cannot represent (functions, class instances, non-finite numbers, cycles, …).
  * TypeScript configs rely on Node's type stripping (erasable syntax only; no type
  * checking or path aliases) — type-check them separately or precompile to JS.
  * JS and TS configs are trusted code: loading them executes them.
@@ -48,9 +105,9 @@ export async function loadConfig(file: string): Promise<LoadResult> {
   const path = resolve(file);
   const extension = extname(path);
   try {
-    if (extension === '.json')
-      return { config: JSON.parse(await readFile(path, 'utf8')) as unknown, diagnostics: [] };
-    if (['.js', '.mjs', '.ts', '.mts'].includes(extension)) {
+    let config: unknown;
+    if (extension === '.json') config = JSON.parse(await readFile(path, 'utf8')) as unknown;
+    else if (['.js', '.mjs', '.ts', '.mts'].includes(extension)) {
       const module = (await import(pathToFileURL(path).href)) as { default?: unknown };
       if (module.default === undefined)
         return loadError(
@@ -58,13 +115,16 @@ export async function loadConfig(file: string): Promise<LoadResult> {
           'has no default export.',
           'Export the configuration: export default defineTheme({ … }).',
         );
-      return { config: module.default, diagnostics: [] };
-    }
-    return loadError(
-      file,
-      `unsupported extension "${extension}".`,
-      'Use .json, .js, .mjs, .ts, or .mts.',
-    );
+      config = module.default;
+    } else
+      return loadError(
+        file,
+        `unsupported extension "${extension}".`,
+        'Use .json, .js, .mjs, .ts, or .mts.',
+      );
+    const diagnostics: Diagnostic[] = [];
+    const model = jsonModel(config, '', file, [], diagnostics);
+    return diagnostics.length ? { config: undefined, diagnostics } : { config: model, diagnostics };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const hint = ['.ts', '.mts'].includes(extension)

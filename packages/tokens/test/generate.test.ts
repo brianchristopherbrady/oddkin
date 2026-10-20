@@ -198,7 +198,7 @@ describe('theme configuration diagnostics', () => {
     [
       'missing alias',
       { brand: { primary: '#000' }, overrides: { 'color.text.primary': '{ref.brand.650}' } },
-      [['alias.missing', '/tokens/color.text.primary']],
+      [['alias.missing', '/overrides/color.text.primary']],
     ],
     [
       'cycle',
@@ -206,17 +206,33 @@ describe('theme configuration diagnostics', () => {
         brand: { primary: '#000' },
         overrides: { 'layout.gap': '{layout.inset}', 'layout.inset': '{layout.gap}' },
       },
-      [['alias.cycle', '/tokens/layout.inset']],
+      [['alias.cycle', '/overrides/layout.inset']],
     ],
     [
       'tier violation',
       { brand: { primary: '#000' }, overrides: { 'radius.md': '{layout.gap}' } },
-      [['tier.violation', '/tokens/radius.md']],
+      [['tier.violation', '/overrides/radius.md']],
     ],
     [
       'invalid CSS',
       { brand: { primary: '#000' }, overrides: { 'font.family.sans': 'x; color: red' } },
-      [['value.invalidCss', '/tokens/font.family.sans']],
+      [['value.invalidCss', '/overrides/font.family.sans']],
+    ],
+    [
+      'override without a unit',
+      { brand: { primary: '#000' }, overrides: { 'radius.md': '4' } },
+      [['unit.invalid', '/overrides/radius.md']],
+    ],
+    [
+      // The role the user wrote points at the override; roles that fail because of it keep their own paths.
+      'override below target minimum',
+      { brand: { primary: '#000' }, overrides: { 'control.height.md': '1rem' } },
+      [
+        ['target.belowMinimum', '/overrides/control.height.md'],
+        ['target.belowMinimum', '/tokens/navigation.item.min-height'],
+        ['target.belowMinimum', '/density/compact/tokens/control.height.md'],
+        ['target.belowMinimum', '/density/compact/tokens/navigation.item.min-height'],
+      ],
     ],
     [
       'bad override colour',
@@ -248,6 +264,91 @@ describe('theme configuration diagnostics', () => {
       overrides: { 'color.text.primry': '#000' },
     }).diagnostics;
     expect(diagnostic?.suggestion).toBe('Did you mean "color.text.primary"?');
+  });
+
+  // JSON has no `undefined`: an absent key takes its default, but `null` is a value the schema rejects.
+  it('rejects an explicit null wherever the schema does', () => {
+    const brand = { primary: '#000' };
+    const expected: Array<[string, string]> = [
+      ['name', 'config.name.invalid'],
+      ['status', 'config.type'],
+      ['spacing', 'config.type'],
+      ['modes', 'modes.invalid'],
+      ['products', 'config.type'],
+      ['density', 'config.type'],
+      ['conditions', 'config.type'],
+      ['profiles', 'config.type'],
+      ['overrides', 'config.type'],
+    ];
+    for (const [key, code] of expected) {
+      const result = generate({ brand, [key]: null });
+      expect([key, result.ok, codes(result.diagnostics)]).toEqual([
+        key,
+        false,
+        [[code, `/${key}`]],
+      ]);
+    }
+    for (const role of ['danger', 'success', 'warning']) {
+      expect(codes(generate({ brand, status: { [role]: null } }).diagnostics)).toEqual([
+        ['color.invalid', `/status/${role}`],
+      ]);
+    }
+    expect(codes(generate({ brand, $schema: 3 }).diagnostics)).toEqual([
+      ['config.type', '/$schema'],
+    ]);
+    expect(generate({ brand, $schema: './schema.json' }).ok).toBe(true);
+  });
+
+  it('never throws for a JSON draft; every error path points into it', () => {
+    const brand = { primary: '#5b46e8' };
+    const drafts: unknown[] = [
+      null,
+      42,
+      'theme',
+      [],
+      true,
+      { brand: null },
+      { brand: ['#000'] },
+      { brand: { primary: {} } },
+      { brand, name: 5 },
+      { brand, modes: [['light']] },
+      { brand, spacing: [] },
+      { brand, spacing: { strategy: 3 } },
+      { brand, spacing: { strategy: 'multiples', unit: '4px', steps: null } },
+      { brand, spacing: { strategy: 'explicit', steps: ['1rem'] } },
+      { brand, spacing: { strategy: 'ratio', base: '1rem', ratio: 2, names: 'a' } },
+      { brand, products: [{}] },
+      { brand, products: { clinic: null } },
+      { brand, products: { clinic: { brand: null } } },
+      { brand, density: { compact: null } },
+      { brand, overrides: ['x'] },
+      { brand, overrides: { 'space.md': { $value: '1rem' } } },
+      { brand, conditions: { wide: 3 } },
+      { brand, profiles: { 'layout.compact': null } },
+      JSON.parse('{"brand":{"primary":"#000"},"__proto__":{"x":1}}'),
+      JSON.parse('{"brand":{"primary":"#000"},"overrides":{"__proto__":"1rem"}}'),
+      { brand, overrides: { toString: '1rem' } },
+    ];
+    const has = (draft: unknown, pointer: string): boolean => {
+      let node = draft;
+      for (const raw of pointer.split('/').slice(1)) {
+        const key = raw.replace(/~1/g, '/').replace(/~0/g, '~');
+        if (typeof node !== 'object' || node === null || !Object.hasOwn(node, key)) return false;
+        node = (node as Record<string, unknown>)[key];
+      }
+      return true;
+    };
+    for (const draft of drafts) {
+      const result = generate(draft);
+      expect(result.ok, JSON.stringify(draft)).toBe(false);
+      for (const { path } of result.diagnostics.filter((d) => d.severity === 'error')) {
+        // A missing value is reported at its own path, so its parent must exist in the draft.
+        const parent = path.slice(0, Math.max(0, path.lastIndexOf('/')));
+        expect(has(draft, path) || has(draft, parent), `${path} in ${JSON.stringify(draft)}`).toBe(
+          true,
+        );
+      }
+    }
   });
 });
 

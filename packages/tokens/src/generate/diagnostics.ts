@@ -8,7 +8,10 @@ export type DiagnosticSeverity = 'error' | 'warning';
 export interface Diagnostic {
   readonly code: string;
   readonly severity: DiagnosticSeverity;
-  /** JSON pointer into the configuration (or `/tokens/<name>` for generated tokens). */
+  /**
+   * JSON pointer into the configuration, where the value was written (an override's problems at
+   * `/overrides/<name>`), or `/tokens/<name>` for a preset or generated role.
+   */
   readonly path: string;
   readonly message: string;
   readonly suggestion?: string;

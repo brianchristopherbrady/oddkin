@@ -12,7 +12,7 @@ Theme configuration, the pure token generator, and its outputs. Browser entry po
 | `@oddkin/tokens/conditions` | Named conditions as `{ kind, query, atRule }` literal container/media queries |
 | `@oddkin/tokens/values` | Literal values of the default theme (`{ light, dark }` for mode-dependent tokens) |
 | `@oddkin/tokens/css/default.css` | The default theme as CSS custom properties |
-| `@oddkin/tokens/node` | `loadConfig`, `buildTheme`, `formatDiagnostics` (Node only) |
+| `@oddkin/tokens/node` | `loadConfig` (JSON, JS, or TS → the JSON-compatible model), `buildTheme`, `formatDiagnostics` (Node only) |
 | `@oddkin/tokens/schema.json` | JSON Schema (draft 2020-12) for JSON configs |
 | `@oddkin/tokens` | Re-exports `theme` and `generate` |
 
@@ -22,7 +22,7 @@ import { generate } from '@oddkin/tokens/generate';
 const { ok, css, diagnostics } = generate({ brand: { primary: '#5b46e8' } });
 ```
 
-One brand colour produces a complete theme: OKLCH reference ramps (brand, neutral, danger, success, warning), a provisional explicit `rem` spacing scale, typography scales with eight text-style roles (`type.display` … `type.code`), radius and border scales, elevation, motion durations and easings (durations drop to `0ms` under `prefers-reduced-motion: reduce`), stacking levels, icon sizes, control sizes, layout roles, navigation roles, and semantic colour roles chosen by measured WCAG contrast. Light, dark, and system modes; `data-odd-theme`, `data-odd-mode`, `data-odd-product`, and `data-odd-density` scopes re-declare their alias closures and nest in any order. Invalid input returns structured diagnostics (code, JSON-pointer path, message, suggestion) instead of throwing.
+One brand colour produces a complete theme: OKLCH reference ramps (brand, neutral, danger, success, warning), a provisional explicit `rem` spacing scale, typography scales with eight text-style roles (`type.display` … `type.code`), radius and border scales, elevation, motion durations and easings (durations drop to `0ms` under `prefers-reduced-motion: reduce`), stacking levels, icon sizes, control sizes, layout roles, navigation roles, and semantic colour roles chosen by measured WCAG contrast. Light, dark, and system modes; `data-odd-theme`, `data-odd-mode`, `data-odd-product`, and `data-odd-density` scopes re-declare their alias closures and nest in any order. Invalid input returns structured diagnostics (code, JSON-pointer path, message, suggestion) instead of throwing. A path points where the configuration wrote the value (`/overrides/radius.md`), or names a preset role (`/tokens/<name>`), and an explicit `null` is rejected wherever the schema rejects it.
 
 `@oddkin/tokens/css/default.css` is built from `themes/default.theme.json`: Electric iris (`#6250e8`) with the approved light and dark palette pinned as overrides (role table: docs/architecture/theming-and-styling.md §10.1, ADR 0041). All non-colour values are Oddkin's own scales (§10.2–§10.3, ADR 0042); font families are system stacks, and the package does not ship font files.
 
@@ -34,7 +34,28 @@ oddkin-tokens check oddkin.theme.json [--strict] [--json]
 oddkin-tokens build oddkin.theme.json --out tokens [--format css,ts,json] [--css-layer <name|none>]
 ```
 
-`build` writes `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.conditions.ts` (typed for that theme's token names), and `<name>.inspect.json`. Exit codes: 0 success, 1 diagnostics, 2 usage. Configs may be JSON, ESM JS, or `.ts` via Node's type stripping (erasable syntax only; type-check separately). JS and TS configs are executed: treat them as trusted code.
+`build` writes `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.conditions.ts` (typed for that theme's token names), and `<name>.inspect.json`. Exit codes: 0 success, 1 diagnostics, 2 usage. Configs may be JSON, ESM JS, or `.ts` via Node's type stripping (erasable syntax only; type-check separately). JS and TS configs are executed: treat them as trusted code. A loaded config must be JSON data: functions, class instances, non-finite numbers, and cycles are `config.notJson` errors with their paths, so the CLI generates from the same model Theme Studio edits.
+
+## In a browser or Worker
+
+`@oddkin/tokens/generate` uses no Node APIs and no DOM. In a module Worker, as Theme Studio uses it:
+
+```ts
+import { emitInspectJson, generate } from '@oddkin/tokens/generate';
+
+self.onmessage = ({ data: { id, draft } }) => {
+  const result = generate(draft); // never throws; `ok: false` means no CSS
+  self.postMessage({
+    id,
+    ok: result.ok,
+    diagnostics: result.diagnostics,
+    css: result.css,
+    inspection: result.theme && emitInspectJson(result.theme, result.diagnostics),
+  });
+};
+```
+
+For the same configuration, `css` is byte-identical to what `oddkin-tokens build` writes (`--css-layer x` is `generate(config, { css: { layer: 'x' } })`). In a page or preview frame, construct the sheet with that document's `CSSStyleSheet`, adopt it once, and update it with `replaceSync(css)`.
 
 Generated CSS starts with Oddkin's layer order (`@layer odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities;`) and places every declaration in `odd.tokens`, so unlayered page CSS overrides any generated value regardless of stylesheet order. `--css-layer vendor.theme` emits a different layer; `--css-layer none` emits unlayered CSS (ADR 0039).
 
