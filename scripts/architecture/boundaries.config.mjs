@@ -45,7 +45,11 @@ export default {
       nodeEntries: ['./node'],
       nodeSources: ['src/node/'],
     },
-    '@oddkin/state': { kind: 'browser', allow: ['@oddkin/core'], domFree: ['./store'] },
+    '@oddkin/state': {
+      kind: 'browser',
+      allow: ['@oddkin/core'],
+      domFree: ['.', './store', './inspect'],
+    },
     '@oddkin/app': {
       kind: 'mixed',
       allow: ['@oddkin/core', '@oddkin/state'],

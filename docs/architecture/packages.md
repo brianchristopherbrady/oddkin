@@ -80,7 +80,16 @@ apps/docs         → core, state, app, tokens, components, workbench (browser p
 Subpaths are created only when implemented; an empty export is not a delivered feature.
 
 ### `@oddkin/state`
-`./store`, `./context`, `./element`, `./persist`, `./inspect`; root re-exports. `./store` is DOM-free.
+| Export | Contents | DOM? | Status |
+| --- | --- | --- | --- |
+| `./store` | `createStore`, `action`, `shallowEqual` ([core-contracts.md](./core-contracts.md) §7.1) | **no** | **Implemented** (M6) |
+| `./inspect` | `inspect` (bounded update log with action causes, live subscribers), `storeStats` | **no** | **Implemented** (M6) |
+| `./context` | Typed event-based context: providers and consumers | yes (events) | Planned (M6) |
+| `./persist` | Versioned persistence adapter | no (storage reached only when called) | Planned (M6) |
+| `./element` | Element-specific helpers, only if context needs them | yes | Planned (M6), may be dropped |
+| `.` | Re-exports `./store` (and `./context` when it lands); inspection and persistence stay separate imports | no | **Implemented** (M6) |
+
+Each entry has a development build (`dist/`, the `development` condition) and a production build (`dist/prod/`, the default), as in `@oddkin/core` (ADR 0031).
 
 ### `@oddkin/app`
 `./app`, `./router`, `./resource`; optional `./node` scaffolding entry (after APIs stabilize); root re-exports.

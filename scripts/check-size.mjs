@@ -57,6 +57,13 @@ for (const [entry, size] of Object.entries(sizes)) {
       ['layout/', 'model/', 'controllers/'].map((f) => `packages/core/dist/prod/${f}`),
     );
   if (entry === 'side-nav') forbid(entry, size, FEATURES);
+  // The DOM-free store loads only the reactive graph and diagnostics: no element, template, or
+  // style modules, no Scope, and nothing from @oddkin/app.
+  if (entry === 'store')
+    forbid(entry, size, [
+      ...['element/', 'template/', 'styles/', 'scope/'].map((f) => `packages/core/dist/prod/${f}`),
+      'packages/app',
+    ]);
   if (entry === 'counter' || entry === 'component' || entry === 'list') {
     for (const forbidden of ['packages/state', 'packages/app', 'packages/tokens']) {
       if (size.modules.some((m) => m.startsWith(forbidden))) {

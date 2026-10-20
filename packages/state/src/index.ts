@@ -1,17 +1,14 @@
-import { isReadable } from '@oddkin/core/reactive';
+/**
+ * `@oddkin/state` root entry: re-exports the store (`./store`). Inspection (`./inspect`) and,
+ * when they land, persistence stay separate imports. DOM-free.
+ */
+export * from './store/index.js';
 
 /**
- * Workspace skeleton marker (M1). Replaced by real entry points when the
- * package's milestone implements them; it is not a public API.
+ * Package marker read by the plain-HTML example and the docs app skeleton.
  * @internal
  */
 export const packageName = '@oddkin/state';
 
 /** @internal Internal packages this package is allowed to depend on. */
 export const internalDependencies: readonly string[] = ['@oddkin/core'];
-
-/**
- * @internal Skeleton link to the DOM-free reactive entry the store builds on (M6),
- * so the state package never evaluates core's element base class.
- */
-export const readableCheck: typeof isReadable = isReadable;

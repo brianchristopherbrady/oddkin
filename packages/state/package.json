@@ -8,7 +8,18 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "development": "./dist/index.js",
+      "default": "./dist/prod/index.js"
+    },
+    "./store": {
+      "types": "./dist/store/index.d.ts",
+      "development": "./dist/store/index.js",
+      "default": "./dist/prod/store/index.js"
+    },
+    "./inspect": {
+      "types": "./dist/inspect/index.d.ts",
+      "development": "./dist/inspect/index.js",
+      "default": "./dist/prod/inspect/index.js"
     },
     "./package.json": "./package.json"
   },

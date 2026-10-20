@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores and inspection (§7.1, `@oddkin/state`) are **implemented** (M6); the rest of §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -365,21 +365,51 @@ Disposal during callbacks is safe: a handler that removes its own host leaves no
 ## 7. Optional shared stores (`@oddkin/state`)
 
 ```ts
-import { createStore } from '@oddkin/state/store';
+import { action, createStore } from '@oddkin/state/store';
 
-const cart = createStore({ items: [] as CartItem[] });
+const cart = createStore({ items: [] as readonly CartItem[] });
 const count = cart.select(state => state.items.length);
 
-function addItem(item: CartItem) {
+const addItem = action('cart/add', (item: CartItem) => {
   cart.update(state => ({ ...state, items: [...state.items, item] }));
-}
+});
 ```
 
 - `cart.state` is a read-only readable snapshot; selectors are memoized readables with equality control; components can interpolate `count` directly. No action registry, reducer, provider, or DI container required.
-- Optional named-action instrumentation improves inspection without changing the update model. Defined batching, nested actions, reset, disposal, exceptions. Batching is not a rollback transaction. Dev-only freezing catches snapshot mutation.
-- **Context:** typed, event-based nearest-provider protocol across composed trees; explicit subscription ownership; nested overrides; independent roots; reparenting; provider replacement cleanup.
-- **Persistence** (separate import): schema versions, migrations, storage adapters, restore ordering, quota/parse errors. **Inspection** (separate import): live subscriptions, action causes, disposal counts.
+- **Context:** typed, event-based nearest-provider protocol across composed trees; explicit subscription ownership; nested overrides; independent roots; reparenting; provider replacement cleanup. *(Planned, M6.)*
+- **Persistence** (separate import): schema versions, migrations, storage adapters, restore ordering, quota/parse errors. *(Planned, M6.)*
 - Reusable components never create or require an application store. Framework adapters, if ever needed, are optional integrations with peer dependencies.
+
+### 7.1 Stores (`@oddkin/state/store`, implemented, M6)
+
+DOM-free and built on core's `signal` and `computed`, so there is no second graph. Verified in `packages/state/test/store.test.ts` (Node), `store.browser.test.ts` (Chromium, Firefox, WebKit), and `production.test.ts`.
+
+| API | Contract |
+| --- | --- |
+| `createStore(initial, { name?, freeze? })` | One snapshot held in a core signal. No provider, registry, or reducer |
+| `store.state` | Read-only readable of the snapshot (a computed view; assigning `.value` throws) |
+| `store.getSnapshot()`, `store.subscribe(listener)` | The external-store contract (§5): bound, stable functions; the snapshot stays identical until it changes; `listener(state)` runs synchronously after a change outside a batch and once at the outermost `batch()` or `action()` boundary inside one, with the latest snapshot; returns an unsubscribe function. `useSyncExternalStore(store.subscribe, store.getSnapshot)` and `fromExternal(store)` take the store as is |
+| `store.update(updater)` | `updater(current)` returns the next snapshot; returning `current` is no change. The updater runs untracked. If it throws, nothing changes and the error reaches the caller |
+| `store.select(selector, { equals?, name? })` | A core computed value over the snapshot: lazy, memoized, registered with the store only while observed, and notifying only when the selected value changes (`Object.is` or `equals`). Selectors may also read other signals; derived values stay glitch-free |
+| `action(name, fn)` | Runs `fn` inside `batch()` and records `name`, with any enclosing actions, on every store update it makes. Not a transaction: if `fn` throws, updates already made stay and subscribers are notified once. Synchronous work only; updates after an `await` are not part of it |
+| `shallowEqual(a, b)` | Equality for selections built from several fields: identical, or arrays and plain objects whose entries are `Object.is`-equal |
+| `store.reset()` | Back to the initial snapshot: one notification, none if already initial |
+| `store.dispose()` | Idempotent. Releases every `subscribe` listener; reads keep the last snapshot; `update` and `reset` throw `state.store.disposed`; `subscribe` returns a no-op |
+
+**Snapshot semantics.** The recommended update builds a new snapshot and keeps unchanged parts by reference: `cart.update(s => ({ ...s, items: [...s.items, item] }))`. Plain objects (including `Object.create(null)` dictionaries) and arrays in every snapshot are frozen at any depth, in development and production alike, so a mutation throws a `TypeError` in strict-mode code (modules and classes) instead of going unnoticed; a sloppy-mode property assignment fails silently, as for any frozen object. Freezing visits only new objects (unchanged parts were frozen with an earlier snapshot: replacing one of 1,000 items freezes three objects), runs no getters, follows no symbol keys, and handles cycles and deep nesting. Maps, sets, dates, class instances, functions, promises, and DOM nodes are held by reference and never frozen: replace them to make a change (`new Map(map).set(key, value)`), because a change made inside them in place is not a new snapshot and notifies no one. There is no deep mutation tracking or proxy; equality is identity (`Object.is`) for snapshots and the selector's `equals` for selected values. `freeze: false` turns freezing off for one store and changes nothing else. The policy is the same in both builds (ADR 0031: development builds never change behavior).
+
+**Subscriptions and reentrancy.** A listener may update the store: the update applies at once and listeners run again after the current pass, so every listener ends with the latest snapshot and none sees an older snapshot after a newer one (intermediate snapshots may be skipped). A listener that keeps updating is stopped after 1,000 passes with `reactive.flush.runaway`. An updater must not update its own store (`state.update.reentrant`: the outer updater would overwrite the result); it may update other stores. Updating inside a computed value throws `reactive.write.inComputed`. A throwing listener or selector is reported (`reactive.subscribe.error`, `reactive.subscribe.sourceError`) and the other listeners still run. Effects and bindings that read `state` or a selector are owned by their `Scope` like any readable; `scope.add(store.subscribe(listener))` ties a raw subscription to a scope.
+
+**Inspection** (`@oddkin/state/inspect`, a separate import). `inspect(store, { limit = 50 })` records each update (previous snapshot, next snapshot, running actions) in a bounded log, oldest first, with `recorded`, the live `subscribers` count, `stopped`, and `dispose()`. An update is recorded before subscribers react, so updates they cause follow it. `storeStats()` returns the live stores and subscriptions across all stores, for leak tests. A store carries only counters and one observer hook; nothing is logged unless it is inspected.
+
+| Failure | Code | Outcome |
+| --- | --- | --- |
+| Update or reset after `dispose()` | `state.store.disposed` | Thrown to the caller |
+| Update or reset inside the store's own updater | `state.update.reentrant` | Thrown; the snapshot is unchanged |
+| `inspect()` on a store from another copy of `@oddkin/state` | `state.inspect.unsupported` | Thrown |
+| `inspect()` limit that is not a whole number ≥ 0 | `state.inspect.limit` | Thrown |
+
+Production builds keep these codes with short messages (ADR 0031). Size: a store with a selector and an action is 2,214 B gzip including the reactive graph (budget 2,560 B, `npm run size`); it loads no DOM module and no `Scope`.
 
 ## 8. Resources (`@oddkin/app/resource`)
 
