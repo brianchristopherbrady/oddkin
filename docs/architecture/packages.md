@@ -187,6 +187,7 @@ Files inside a folder import siblings directly, never through their own `index.t
 | `./panels/*` | Embeddable elements: foundations overview and foundation detail, components catalog, component detail (documentation + interactive example + editable API table), preview, event log, token inspector, Theme Studio, products (optional) | browser |
 | `./app` | Full Workbench shell (page registry–driven navigation and routes) | browser |
 | `./pages` | Page registry types, route/page contracts, legacy-redirect contracts (DOM-free) | any |
+| `./data` | `buildWorkbenchData` (implemented, M5): analyzer outputs, configuration, authored content, and token inspection → the Workbench index and per-page data files; `createImportMap` from package `exports` (DOM-free) | any |
 | `./content` | Built-in localizable explanatory copy (message catalog keyed by page/section id) | any |
 | `./examples` | `defineExamples` (DOM-free definitions) and types | any |
 | `./testing` | `runConformance` (implemented), `runExample` (planned); the project's `expect` and user-input API are passed in | browser test runner |

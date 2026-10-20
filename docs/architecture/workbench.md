@@ -47,6 +47,18 @@ authored examples (*.examples.ts) ─────────┤
 | **Standard CEM** | Any library with a valid `custom-elements.json` and loadable modules | API docs, controls for CEM-typed properties/attributes, slots, events log, CSS custom property editing, parts listing, snippets. Theme Studio limited to editing CSS custom properties the library declares (no generator) unless an Oddkin theme config is supplied |
 | **Missing enrichment** | Any field not provided | Shown as "Not documented" / "Unknown default" / "No adapter" — never invented |
 
+### 2.1 Shell, data, and serving (proposal, M5)
+
+- **Entries.** DOM-free: `./config`, `./pages`, `./examples` (implemented), `./content` (built-in copy), `./data` (analyzer outputs, configuration, authored content, and token inspection → the Workbench index and per-page data), `./protocol` (frame protocol types and validators, §5.1). Browser: `./app` (the shell), `./panels/*`, `./frame` (the runtime inside preview frames), `./preview` (implemented). Node: `./node` and the `oddkin` bin.
+- **Generated data.** `index.json` stays small: the page registry, branding, search entries (pages, components, tokens, recipes, models), catalog summaries, and diagnostics. Each page's detail (a component's API from CEM plus enrichment, with provenance; a foundation's facts from metadata plus token inspection; examples) is a separate `pages/<page id>.json`, loaded with its panel module when the route is entered. No build time enters any file.
+- **Serving.** `workbench dev` and `workbench build` share one URL layout: the shell at the base path; data, the frame document, and package files under `<base>_oddkin/`. Package files are served or copied exactly as published (no bundler, no third-party runtime code). The shell and each frame resolve bare specifiers through import maps generated from the packages' `exports`, `development` condition first so diagnostics stay on. A frame's import map covers the documented library's dependency closure; the shell's covers Workbench's own.
+- **Shell.** `<oddkin-workbench>` renders into the light DOM, because it owns the document's landmarks, the skip-link target `#main`, and fragments. It runs on `@oddkin/app`: `createApp` and `createRouter`, with the base path and history or hash mode from `hosting`, routes generated from the registry, and legacy routes as router redirects. Panels are shadow-DOM elements whose inputs are properties (their data and an `href` function), so `apps/docs` can embed them without an application or router.
+- **Element names.** Workbench's own elements use the `oddkin-` prefix (`oddkin-workbench`, `oddkin-catalog`, …). Documented libraries load only in frames, so any library prefix, `odd-` included, is safe.
+- **Live updates (dev).** The dev server watches the configuration, authored content, published metadata, theme configuration, and the library's built modules. It rebuilds the data and sends `index`, `page`, and `modules` events over Server-Sent Events. The shell refetches what changed; frames follow the remount policy (§5): metadata, documentation, CSS, and theme changes update in place, and changed modules get a fresh frame.
+- **Generated directory.** `.oddkin/` carries a marker file (`oddkin-generated.json`). Workbench writes and deletes only inside directories that carry the marker, refuses an existing unmarked directory, and writes nowhere else: authored configuration, content, examples, sources, and published metadata are never touched.
+- **Inputs.** Published metadata by default: each package's `customElements` manifest and `oddkin.metadata.json`. `--analyze` reruns `@oddkin/analyzer` on workspace sources for live documentation and writes its outputs into `.oddkin/` only.
+- **Bounded work.** A page mounts a few frames at most and none for catalog cards; event logs and histories are capped; panels load lazily. Shell startup and selected-preview latency are measured.
+
 ## 3. Component documentation
 
 Rendered on the component detail page (section order, editable API table, slots, tokens, layout: [workbench-pages.md §7](./workbench-pages.md)). Generated per component from available facts (with provenance labels):
@@ -112,6 +124,17 @@ Rules:
 - Instance preservation does not freeze internal DOM: components may perform their normal updates. State, focus, and selection are preserved where the relevant elements remain present.
 - Shell ↔ frame communication uses a typed, versioned `postMessage` protocol (same-origin by default); no shared object references.
 - An arbitrary executable code editor is **out of scope** for the initial Workbench; if added later it needs its own design (sandbox origin, CSP).
+
+### 5.1 Frame protocol (proposal, M5)
+
+- **Identity.** The host gives each frame an id and a generation. A fresh document in the same slot (reset frame, registration replacement) increments the generation. The frame URL carries both.
+- **Handshake.** The frame posts `hello` to its parent with its own origin as the target. The host accepts it only when `event.source` is that frame's window, `event.origin` is the preview origin (same origin by default), and protocol, version, frame id, and generation match the live frame. The host then transfers a dedicated `MessagePort` (`connect`), and everything else travels on that port. A version mismatch shows an "incompatible frame" error instead of a preview.
+- **Envelope.** `{ protocol: 'oddkin.frame', version: 1, frame, generation, kind, id?, replyTo?, payload?, error? }`. Requests carry increasing `id`s; replies carry `replyTo` and either a `payload` or `error: { code, message }`. Payloads are plain JSON (objects, arrays, strings, finite numbers, booleans, `null`), checked before sending and on receipt. Malformed messages, stale generations, and messages after disposal are dropped and counted, never applied.
+- **Requests (host → frame).** `mount` (component, registration entry, example, properties, attributes, slots, settings); `set` (one property or attribute write, or unset); `slot` (text content); `reset` (a clean instance); `theme` (replace the preview-owned theme sheet); `settings` (mode, density, direction, width); `dispose`. Reserved: `inspect`, for `inspectPreview` ([agent-tooling.md](./agent-tooling.md) §9.2; types in M5, implementation in M11).
+- **Notifications (frame → host).** `event` (name, time, `bubbles`/`composed`/`cancelable`, a target summary, and the detail serialized safely and capped); `error` (phase and message); `state` (values reported through declared sync contracts only); `size` (content block size).
+- **Ownership.** A host `Scope` per preview owns the iframe, port, listeners, and timers; a frame `Scope` per mount owns listeners, fixtures, and observers. Disposal closes the port before removing the iframe.
+- **Registrations.** A frame registers the library once. A `mount` whose registration differs from the one already defined for that tag fails with `frame.registration.incompatible`, and the host replaces the frame with a new generation; nothing is redefined in place.
+- **Trust.** Frames isolate registries, styles, and errors; they are not a sandbox for untrusted code. Local modules and examples are trusted project code.
 
 ## 6. Theme Studio
 

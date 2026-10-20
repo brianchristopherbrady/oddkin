@@ -1,15 +1,16 @@
 # @oddkin/workbench
 
-Metadata-driven documentation tooling for any custom-element library. **M3 status:** only the DOM-free contract entries exist. The shell, panels, previews, Theme Studio, and the `oddkin` CLI arrive from M5 ([workbench.md](../../docs/architecture/workbench.md)).
+Metadata-driven documentation tooling for any custom-element library. **Status:** the DOM-free contract entries exist; the M5 shell is being built on them (design: [workbench.md](../../docs/architecture/workbench.md) §2.1 and §5.1). Panels, previews, Theme Studio, and the `oddkin` CLI follow.
 
 | Entry | Contents |
 | --- | --- |
 | `@oddkin/workbench/examples` | `defineExamples(tag, examples)`, typed from `HTMLElementTagNameMap` (unknown property keys and wrong value types are compile errors); `toExamplesJSON` (the `examples.v1` serializable layer, with fixtures reduced to `hasFixture`); `checkExamples(set, contract)` for plain-JavaScript authors; `exampleId` |
 | `@oddkin/workbench/config` | `defineWorkbenchConfig`, `resolveWorkbenchConfig` (defaults and diagnostics matching `workbench-config.v1`), `defineDocs` (`docs-content.v1`) |
 | `@oddkin/workbench/pages` | `buildPageRegistry({ config, cem, metadata?, docs? })` producing `page-registry.v1`, plus the projections every navigation surface uses: `primaryNavigation`, `sidebar`, `cards`, `searchEntries`, `onThisPage`, `href`, `resolveLegacyRoute`, `staticRedirects` |
+| `@oddkin/workbench/data` | `buildWorkbenchData({ config, libraries, docs?, tokens? })`: one or more packages' CEM and enrichment, authored content, and a token inspection → a small index (registry, branding, libraries, diagnostics) and one data file per visible page (`pageFile(id)`), serialized byte-stably with `serializeData`; `createImportMap(packages, { base, conditions? })` builds import maps from package `exports` |
 | `@oddkin/workbench/testing` | `mountExample(set, name, container?)` runs an authored example and its fixture in a browser test; `runConformance` runs a conformance suite with the project's own `expect` |
 
-The examples, config, and pages entries import without a DOM and have no runtime dependencies (`@oddkin/core` is used for types only). Shipped component code never imports them; colocated `*.examples.ts` files may, because they are development-only sources excluded from the package build (ADR 0021).
+The examples, config, pages, and data entries import without a DOM and have no runtime dependencies (`@oddkin/core` is used for types only). Shipped component code never imports them; colocated `*.examples.ts` files may, because they are development-only sources excluded from the package build (ADR 0021).
 
 ## Registry rules
 
@@ -20,4 +21,4 @@ The examples, config, and pages entries import without a DOM and have no runtime
 - **Dates** come only from authored content or enrichment facts (authored or source history); unknown dates are omitted and build time is never used.
 - **Legacy routes:** `/playground` → `/components` (or `/components/<tag>` from `?component=`, keeping other parameters); `/foundations/theme-studio` → Theme Studio; `/foundations/products` → Products, or a `products.disabled` notice.
 
-Tests: `test/pages.test.ts` (real analyzer output for `examples/core-counter` plus an independent fixture library, validated against `page-registry.v1` and `oddkin-metadata.v1`), `test/config.test.ts`, `test/examples.test.ts`, and the type-level `test/examples.types.ts`.
+Tests: `test/pages.test.ts` (real analyzer output for `examples/core-counter` plus an independent fixture library, validated against `page-registry.v1` and `oddkin-metadata.v1`), `test/data.test.ts` (the published outputs of `@oddkin/components` and `@oddkin/ai`, the default theme's token inspection, the Acme fixture, and import maps from real package `exports`), `test/config.test.ts`, `test/examples.test.ts`, and the type-level `test/examples.types.ts`.

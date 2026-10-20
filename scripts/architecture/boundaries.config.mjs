@@ -101,6 +101,7 @@ export default {
         './examples',
         './config',
         './pages',
+        './data',
         './content',
         './conformance',
         './conformance/button',
