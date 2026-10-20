@@ -4,6 +4,7 @@
  */
 export { OddkinElement, elementProperties } from './element.js';
 export type {
+  ElementEventMap,
   ElementProperties,
   ElementProperty,
   OddkinElementClass,

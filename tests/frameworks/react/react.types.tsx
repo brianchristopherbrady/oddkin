@@ -1,6 +1,6 @@
 // Compile-time test of the opt-in React 19 typings (tsconfig.jsx.json, part of `npm run typecheck`).
 // Every @ts-expect-error must fail to compile; an unused one fails the typecheck.
-import type {} from '@oddkin/components/jsx/react';
+import type {} from '@oddkin/components/frameworks/react';
 import type {} from '@oddkin/ai/define/conversation';
 import type {} from '@oddkin/ai/define/prompt-input';
 import type {} from '@oddkin/components/define/input';

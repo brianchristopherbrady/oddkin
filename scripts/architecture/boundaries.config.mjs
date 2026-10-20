@@ -59,8 +59,12 @@ export default {
       domFree: ['./layout'],
       // Colocated examples (ADR 0021) are type-checked and tested but excluded from the build.
       devSources: { suffix: '.examples', allow: ['@oddkin/workbench'] },
-      // Opt-in framework typings: React's types only, from a types-only entry.
-      typeOnly: { sources: 'src/jsx/', entries: ['./jsx/react'], allow: ['react'] },
+      // Opt-in framework typings: React, Vue, and Svelte types only, from types-only entries.
+      typeOnly: {
+        sources: 'src/frameworks/',
+        entries: ['./frameworks/react', './frameworks/vue', './frameworks/svelte'],
+        allow: ['react', 'vue', 'svelte'],
+      },
     },
     // Optional AI interaction package (ADR 0040). Nothing general-purpose may depend on it.
     '@oddkin/ai': {

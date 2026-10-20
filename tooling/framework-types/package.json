@@ -1,0 +1,11 @@
+{
+  "name": "oddkin-framework-types",
+  "private": true,
+  "description": "Template type checkers that need TypeScript's JavaScript API (TypeScript 7 has none; ADR 0018). Vue and Svelte resolve from the repository root.",
+  "type": "module",
+  "devDependencies": {
+    "svelte-check": "4.7.7",
+    "typescript": "5.9.3",
+    "vue-tsc": "3.3.13"
+  }
+}

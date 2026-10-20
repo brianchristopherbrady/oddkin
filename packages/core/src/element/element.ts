@@ -124,8 +124,9 @@ const checkedLightDomStyles = new WeakSet<object>();
 const ElementBase: typeof HTMLElement =
   globalThis.HTMLElement ?? (class {} as unknown as typeof HTMLElement);
 
-/** The listener map an element declares as `_events` (type-only), or none. */
-type OwnEvents<T> = T extends { readonly _events?: infer M } ? NonNullable<M> : {};
+/** An element's own listener map, declared from its `static events` as `_events` (type-only). */
+export type ElementEventMap<E> = E extends { readonly _events?: infer M } ? NonNullable<M> : {};
+type OwnEvents<T> = ElementEventMap<T>;
 
 // Type-only: listeners for the element's own events get their published event types.
 export interface OddkinElement {

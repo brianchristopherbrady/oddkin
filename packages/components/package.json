@@ -77,8 +77,14 @@
       "types": "./dist/layout/index.d.ts",
       "default": "./dist/layout/index.js"
     },
-    "./jsx/react": {
-      "types": "./dist/jsx/react.d.ts"
+    "./frameworks/react": {
+      "types": "./dist/frameworks/react.d.ts"
+    },
+    "./frameworks/vue": {
+      "types": "./dist/frameworks/vue.d.ts"
+    },
+    "./frameworks/svelte": {
+      "types": "./dist/frameworks/svelte.d.ts"
     },
     "./css/reset.css": "./dist/css/reset.css",
     "./css/base.css": "./dist/css/base.css",

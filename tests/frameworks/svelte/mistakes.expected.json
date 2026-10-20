@@ -1,0 +1,6 @@
+[
+  "Type 'number' is not assignable to type 'readonly NavigationEntry[]'.",
+  "Property 'expanded' does not exist on type 'NavigationActionDetail'.",
+  "Type '\"number\"' is not assignable to type '\"text\" | \"search\" | \"tel\" | \"url\" | \"email\" | \"password\"'.",
+  "Property 'id' does not exist on type 'PromptSubmitDetail'."
+]

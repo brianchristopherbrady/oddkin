@@ -222,17 +222,36 @@ try {
   node([join(root, 'node_modules', 'typescript', 'bin', 'tsc'), '-p', 'tsconfig.json'], consumer);
 
   // Opt-in React typings from the installed tarballs: registering imports bring the tag names,
-  // and a mistyped prop fails. React's types come from the workspace (no network install).
+  // and a mistyped prop fails. Framework types come from the workspace (no network install).
   await writeFile(
     join(consumer, 'jsx.tsx'),
     [
-      "import type {} from '@oddkin/components/jsx/react';",
+      "import type {} from '@oddkin/components/frameworks/react';",
       "import type {} from '@oddkin/components/define/side-nav';",
       "import type {} from '@oddkin/ai/define/prompt-input';",
       'export const nav = <odd-side-nav label="Primary" onodd-action={(e) => e.detail.action.trim()} />;',
       'export const prompt = <odd-prompt-input onprompt-submit={(e) => e.detail.text.trim()} />;',
       '// @ts-expect-error -- unknown property',
       'export const wrong = <odd-side-nav itemz={1} />;',
+    ].join('\n'),
+  );
+  // Vue and Svelte typings from the installed tarballs, through the types their checkers read.
+  await writeFile(
+    join(consumer, 'frameworks.ts'),
+    [
+      "import type {} from '@oddkin/components/frameworks/vue';",
+      "import type {} from '@oddkin/components/frameworks/svelte';",
+      "import type {} from '@oddkin/components/define/side-nav';",
+      "import type { GlobalComponents } from 'vue';",
+      "import type { SvelteHTMLElements } from 'svelte/elements';",
+      "type VueNav = InstanceType<GlobalComponents['odd-side-nav']>['$props'];",
+      "type SvelteNav = SvelteHTMLElements['odd-side-nav'];",
+      "export const vue: VueNav = { label: 'Primary', onOddAction: (e) => void e.detail.action.trim() };",
+      "export const svelte: SvelteNav = { label: 'Primary', 'onodd-action': (e) => void e.detail.action.trim() };",
+      '// @ts-expect-error -- items is an array of entries',
+      'export const wrongVue: VueNav = { items: 1 };',
+      '// @ts-expect-error -- items is an array of entries',
+      'export const wrongSvelte: SvelteNav = { items: 1 };',
     ].join('\n'),
   );
   const types = join(root, 'node_modules', '@types', 'react');
@@ -252,9 +271,11 @@ try {
         paths: {
           react: [join(types, 'index.d.ts')],
           'react/jsx-runtime': [join(types, 'jsx-runtime.d.ts')],
+          vue: [join(root, 'node_modules', 'vue', 'dist', 'vue.d.mts')],
+          'svelte/elements': [join(root, 'node_modules', 'svelte', 'elements.d.ts')],
         },
       },
-      files: ['jsx.tsx'],
+      files: ['jsx.tsx', 'frameworks.ts'],
     }),
   );
   node(
@@ -272,5 +293,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; React JSX typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}.`,
 );
