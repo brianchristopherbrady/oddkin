@@ -1,8 +1,11 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { Ajv } from 'ajv';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { describe, expect, it } from 'vitest';
+import { buildPageRegistry, type CemPackage } from '@oddkin/workbench/pages';
 
 // Published metadata produced by `npm run build` (scripts/build-metadata.mjs).
 const pkg = new URL('../', import.meta.url);
@@ -163,5 +166,37 @@ describe('@oddkin/components published metadata', () => {
     expect(metadata['styles']['dist/styles/focus-ring.styles.js#focusRingStyles'].css).toMatch(
       /:focus-visible \{\s*outline: token\(focus\.width\) solid token\(color\.focus\.ring\);/,
     );
+  });
+
+  it('dates component and foundation pages from source history, as Workbench shows them', () => {
+    const shallow =
+      execFileSync('git', ['rev-parse', '--is-shallow-repository'], {
+        cwd: fileURLToPath(repo),
+        encoding: 'utf8',
+      }).trim() !== 'false';
+    const docs = metadata['docs'] as Record<string, { updated: Record<string, string> }>;
+    // Without full history there is no date to give; build time is never one.
+    if (shallow) return expect(docs).toBeUndefined();
+    const pages = [
+      ...Object.keys(metadata['components']).map((id) => `components/${id.slice(10)}`),
+      ...Object.values(metadata['foundations'] as Record<string, { id: string }>).map(
+        (f) => `foundations/${f.id}`,
+      ),
+    ].sort();
+    expect(Object.keys(docs)).toEqual(pages);
+    const tomorrow = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+    for (const { updated } of Object.values(docs)) {
+      expect(updated['provenance']).toBe('extracted');
+      expect(updated['value']! <= tomorrow).toBe(true);
+    }
+    const { registry, diagnostics } = buildPageRegistry({
+      config: { library: { packages: ['@oddkin/components'] } },
+      cem: cem as CemPackage,
+      metadata,
+    });
+    expect(registry, JSON.stringify(diagnostics)).toBeDefined();
+    expect(diagnostics.filter((d) => d.code === 'content.page.unknown')).toEqual([]);
+    for (const [id, { updated }] of Object.entries(docs))
+      expect(registry?.pages.find((p) => p.id === id)?.updated, id).toBe(updated['value']);
   });
 });

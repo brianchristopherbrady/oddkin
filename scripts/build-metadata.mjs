@@ -4,7 +4,7 @@
  * error or warning so published metadata never contains unresolved dynamic definitions, and on
  * authored text that cites a name no published contract declares.
  */
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -12,6 +12,7 @@ import {
   analyze,
   authoredTexts,
   checkReferences,
+  gitHistory,
   referenceIndex,
   writeOutputs,
 } from '../packages/analyzer/dist/index.js';
@@ -29,12 +30,26 @@ const print = (d, dir) => {
 };
 const results = [];
 // Foundations reference the default theme's published token inspection (no recomputation).
+// Their pages' dates come from the files the theme is generated from (@oddkin/tokens).
+const THEME_SOURCES = [
+  'packages/tokens/themes/default.theme.json',
+  'packages/tokens/src/generate/preset.ts',
+];
+for (const file of THEME_SOURCES)
+  if (!existsSync(join(root, file))) {
+    console.error(`error: declared theme source ${file} does not exist; update THEME_SOURCES.`);
+    failed = true;
+  }
 const tokenInspection = {
   inspection: JSON.parse(
     readFileSync(join(root, 'packages/tokens/dist/inspect/default.inspect.json'), 'utf8'),
   ),
   source: { package: '@oddkin/tokens', export: './inspect/default.json' },
+  sources: THEME_SOURCES.map((file) => join(root, file)),
 };
+// Updated dates come from source history only when the clone has it (never build time).
+const history = gitHistory(root);
+if (!history) console.log('No full git history: pages carry only authored updated dates.');
 for (const dir of PACKAGES) {
   const pkgDir = join(root, dir);
   const manifest = JSON.parse(await readFile(join(pkgDir, 'package.json'), 'utf8'));
@@ -42,6 +57,7 @@ for (const dir of PACKAGES) {
     project: join(pkgDir, 'tsconfig.json'),
     library: { name: manifest.name, version: manifest.version, prefix: 'odd-' },
     ...(dir === 'packages/components' ? { tokens: tokenInspection } : {}),
+    ...(history ? { history: gitHistory(pkgDir) } : {}),
   });
   for (const d of result.diagnostics) print(d, dir);
   results.push({ dir, result });

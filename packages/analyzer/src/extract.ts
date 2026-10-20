@@ -228,7 +228,14 @@ const DOC_TAGS = [
   'migration',
   'customization',
   'previewRole',
+  'updated',
 ];
+
+/** A real calendar date written `YYYY-MM-DD`. */
+const isDate = (value: string) =>
+  /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+  !Number.isNaN(Date.parse(value)) &&
+  new Date(`${value}T00:00:00Z`).toISOString().startsWith(value);
 
 export function extract(program: ts.Program, root: string): Extraction {
   const checker = program.getTypeChecker();
@@ -1012,6 +1019,15 @@ export function extract(program: ts.Program, root: string): Extraction {
             `${className}: @customization lists supported ladder levels 1 to 5 ("${comment}"); the levels are recorded as unknown.`,
             'Write the supported levels as numbers, e.g. @customization 1 2 3.',
           );
+        if (tagName === 'updated' && !isDate(comment)) {
+          report(
+            'analyzer.tag.invalid',
+            tag,
+            `${className}: @updated needs a calendar date written YYYY-MM-DD ("${comment}"); the page date comes from source history or is omitted.`,
+            'Write the date of the last meaningful change, e.g. @updated 2026-03-14.',
+          );
+          continue;
+        }
         (tags[tagName] ??= []).push({ value: comment, location: where(tag) });
       }
     }

@@ -19,6 +19,8 @@ import { extract, type AnalyzerDiagnostic, type Extraction } from './extract.js'
 import { contractIndex } from './contracts.js';
 import { foundationsFrom, type InspectionSource, type TokenInspection } from './foundations.js';
 import { extractExamples, findExampleFiles, type ExampleInfo } from './examples.js';
+import { componentPages, updatedDocs, type DatedPage } from './docs.js';
+import type { SourceHistory } from './history.js';
 
 export type { ExampleInfo } from './examples.js';
 export {
@@ -51,6 +53,7 @@ export type {
 export type { LibraryInfo } from './emit.js';
 export { foundationsFrom } from './foundations.js';
 export type { InspectedToken, InspectionSource, TokenInspection } from './foundations.js';
+export { gitHistory, type SourceHistory } from './history.js';
 
 export const ANALYZER_VERSION = '0.0.0';
 
@@ -80,7 +83,17 @@ export interface AnalyzeOptions {
    */
   readonly examples?: readonly string[];
   /** A theme's token inspection; `foundations` metadata references it without recomputing. */
-  readonly tokens?: { readonly inspection: TokenInspection; readonly source: InspectionSource };
+  readonly tokens?: {
+    readonly inspection: TokenInspection;
+    readonly source: InspectionSource;
+    /** Files the theme is generated from (config, presets), for the foundation pages' dates. */
+    readonly sources?: readonly string[];
+  };
+  /**
+   * Source history for `docs[*].updated` (`gitHistory(root)`). Without it, pages carry only
+   * authored `@updated` dates; build time is never used.
+   */
+  readonly history?: SourceHistory;
 }
 
 export interface AnalyzeResult {
@@ -274,15 +287,25 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
       return entry ? [[id, { package: '@oddkin/core', file: 'CONTRACTS.md', ...entry }]] : [];
     }),
   );
+  const foundations = options.tokens
+    ? foundationsFrom(options.tokens.inspection, options.tokens.source)
+    : undefined;
+  const foundationPages: DatedPage[] = Object.values(foundations ?? {}).map((f) => ({
+    page: `foundations/${f.id}`,
+    files: options.tokens?.sources ?? [],
+  }));
+  const docs = updatedDocs(
+    [...componentPages(extraction, found.examples), ...foundationPages],
+    options.history,
+  );
   return {
     manifest: buildManifest(extraction, paths),
     metadata: {
       ...metadata,
       ...(referenced.length ? { components, contracts } : {}),
-      ...(options.tokens
-        ? { foundations: foundationsFrom(options.tokens.inspection, options.tokens.source) }
-        : {}),
+      ...(foundations ? { foundations } : {}),
       ...(found.examples.length ? { examples } : {}),
+      ...(Object.keys(docs).length ? { docs } : {}),
       diagnostics: metadataDiagnostics,
     },
     diagnostics,
