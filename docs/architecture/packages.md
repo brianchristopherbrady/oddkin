@@ -95,10 +95,10 @@ Each entry has a development build (`dist/`, the `development` condition) and a 
 | Export | Contents | DOM? | Status |
 | --- | --- | --- | --- |
 | `./app` | `createApp` — one root scope per run, services, context at the root ([core-contracts.md](./core-contracts.md) §9) | imports without DOM globals | **Implemented** (M6) |
-| `./resource` | `resource` — source-driven async reads ([core-contracts.md](./core-contracts.md) §8) | — | Planned (M7) |
+| `./resource` | `resource` — source-driven async reads with generations, abort and stale-result guards, timeouts, freshness ([core-contracts.md](./core-contracts.md) §8) | **no** | **Implemented** (M7) |
 | `./router` | URL-driven navigation ([core-contracts.md](./core-contracts.md) §9) | yes | Planned (M7) |
 | `./node` | Optional scaffolding, after the APIs stabilize | Node | Planned |
-| `.` | Re-exports `./app` (and later `./resource` and `./router`) | no | **Implemented** (M6) |
+| `.` | Re-exports `./app` and `./resource` (and later `./router`) | no | **Implemented** (M6–M7) |
 
 Development and production builds per entry, as in `@oddkin/state`.
 

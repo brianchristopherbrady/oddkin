@@ -16,6 +16,11 @@
       "development": "./dist/app/index.js",
       "default": "./dist/prod/app/index.js"
     },
+    "./resource": {
+      "types": "./dist/resource/index.d.ts",
+      "development": "./dist/resource/index.js",
+      "default": "./dist/prod/resource/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); the rest of §8–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); §8 resources are **implemented** (M7) except the restore policy; the rest of §9 is a **proposal**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -525,6 +525,27 @@ class DemoSearch extends OddkinElement {
 - Explicit `refresh`, `cancel`, `retry`, `dispose`. Retries, debounce, caching, dedupe, stale-while-revalidate, and optimistic state are opt-in policies.
 - Resources are for reads. Mutations are explicit commands; cancelling a fetch does not roll back a server operation.
 - *(Proposed, §9.1.)* Restore policy: by default a resource keeps its state across page suspension. An opt-in `revalidateOnRestore` policy starts a new generation after a persisted `pageshow`, with the usual abort and generation guards. Failed revalidation surfaces as the resource's `error` state. Mutations are never retried automatically.
+
+**Implemented (M7)** in `@oddkin/app/resource`, also re-exported from `@oddkin/app`; DOM-free. Verified in `packages/app/test/resource.test.ts` (Node) and `resource.browser.test.ts` (the search element above in Chromium, Firefox, and WebKit). The restore policy is planned with §9.1; automatic retries, debounce, caching, deduplication, stale-while-revalidate, and optimistic state are not implemented.
+
+| API | Contract |
+| --- | --- |
+| `resource({ source, load, equals?, timeout?, freshFor?, name? })` | Inert until `scope.use(resource)`. `source()` is read in a tracked effect owned by that scope; `load(key, { signal, scope, generation })` runs untracked and may return a value or a promise |
+| `resource.state` | Read-only `Readable<ResourceState<K, T>>`: `{ status: 'idle' }`, `{ status: 'pending', key, previous }`, `{ status: 'success', key, value }`, `{ status: 'error', key, error, previous }`, where `previous` is the latest success of any key as `{ key, value }` (or `undefined`) |
+| `refresh()`, `retry()` | Load the current key again as a new generation, superseding a pending one, with `previous` set. No-op while disconnected or idle |
+| `cancel(reason?)` | Abort the pending load (signal reason `reason`, default an `AbortError`) and return to the state before it, without an error |
+| `dispose()` | Abort the pending load, stop following the source, and ignore later connections. Idempotent |
+
+- **Generations.** Each load gets a fresh request scope (`context.scope`; everything registered on it ends with the generation) and its signal. A new key (by `equals`, default `Object.is`), `refresh()`, `cancel()`, a timeout, or disconnection revokes the generation's right to commit before its continuation runs and aborts its signal with the real reason: an `AbortError` naming the supersession, the `cancel()` reason, a `TimeoutError`, or the disconnecting scope's reason (for an element, "`<tag>` disconnected"). A superseded load that ignores its signal and resolves or fails later, even after the current one succeeded, never commits; a result arriving after its owner disconnected (for example while the body was being parsed) is discarded.
+- **Outcomes.** A success sets `success` and becomes the latest success; a rejection or a synchronous throw from the current generation sets `error` with `previous`. An abort of a superseded or cancelled generation is no error: both promise handlers are attached at once, so no unhandled rejection occurs and nothing is reported. `timeout` fails the generation at once with a `TimeoutError`, whether or not the load cooperates; user cancellation is not an error.
+- **Detachment.** Disconnection aborts a pending load and returns to the last settled state, so the latest success stays visible. Reconnecting reads the source again and reloads the current key, unless `freshFor` milliseconds have not passed since a success for that key (the freshness policy). An equal key keeps the current generation.
+
+| Failure | Code | Outcome |
+| --- | --- | --- |
+| `timeout` that is not a number of milliseconds ≥ 0 | `app.resource.options` | Thrown by `resource()` |
+| A load is slower than `timeout` | — | State `error` with a `TimeoutError`; the load's signal is aborted with it |
+
+Size: a search resource with a timeout is 3,416 B gzip with `Scope`, the reactive graph, and diagnostics (budget 3,840 B); it loads no rendering code and nothing from `@oddkin/state`.
 
 ## 9. Application root and router (`@oddkin/app`)
 

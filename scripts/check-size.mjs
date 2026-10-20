@@ -85,6 +85,13 @@ for (const [entry, size] of Object.entries(sizes)) {
       'packages/state/dist/prod/persist/',
       'packages/state/dist/prod/inspect/',
     ]);
+  // A resource is DOM-free: no rendering code, no state package, no application or router code.
+  if (entry === 'resource')
+    forbid(entry, size, [
+      ...['element/', 'template/', 'styles/'].map((f) => `packages/core/dist/prod/${f}`),
+      'packages/state',
+      'packages/app/dist/prod/app/',
+    ]);
   if (entry === 'counter' || entry === 'component' || entry === 'list') {
     for (const forbidden of ['packages/state', 'packages/app', 'packages/tokens']) {
       if (size.modules.some((m) => m.startsWith(forbidden))) {

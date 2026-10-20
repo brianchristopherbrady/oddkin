@@ -19,6 +19,7 @@ export const ENTRIES = [
   'context',
   'persist',
   'app',
+  'resource',
 ];
 
 /** Budgets in gzip bytes (ADR 0019). Measured 2026-10-17 in the comments. */
@@ -49,6 +50,9 @@ export const BUDGETS = {
   // 5 KiB; measured 4,767 on 2026-10-19 (@oddkin/app/app: an application root with a store
   // provided as context, over Scope, the reactive graph, and diagnostics).
   app: 5120,
+  // 3.75 KiB; measured 3,416 on 2026-10-19 (@oddkin/app/resource: a search resource with a
+  // timeout, generations, and stale-result guards over Scope, the reactive graph, and diagnostics).
+  resource: 3840,
 };
 
 /**
