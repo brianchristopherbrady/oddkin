@@ -53,7 +53,7 @@ export default {
     '@oddkin/app': {
       kind: 'mixed',
       allow: ['@oddkin/core', '@oddkin/state'],
-      domFree: [],
+      domFree: ['.', './app'],
       nodeEntries: ['./node'],
       nodeSources: ['src/node/'],
     },

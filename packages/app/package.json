@@ -8,7 +8,13 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "development": "./dist/index.js",
+      "default": "./dist/prod/index.js"
+    },
+    "./app": {
+      "types": "./dist/app/index.d.ts",
+      "development": "./dist/app/index.js",
+      "default": "./dist/prod/app/index.js"
     },
     "./package.json": "./package.json"
   },

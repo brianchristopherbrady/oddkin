@@ -92,7 +92,15 @@ Subpaths are created only when implemented; an empty export is not a delivered f
 Each entry has a development build (`dist/`, the `development` condition) and a production build (`dist/prod/`, the default), as in `@oddkin/core` (ADR 0031).
 
 ### `@oddkin/app`
-`./app`, `./router`, `./resource`; optional `./node` scaffolding entry (after APIs stabilize); root re-exports.
+| Export | Contents | DOM? | Status |
+| --- | --- | --- | --- |
+| `./app` | `createApp` — one root scope per run, services, context at the root ([core-contracts.md](./core-contracts.md) §9) | imports without DOM globals | **Implemented** (M6) |
+| `./resource` | `resource` — source-driven async reads ([core-contracts.md](./core-contracts.md) §8) | — | Planned (M7) |
+| `./router` | URL-driven navigation ([core-contracts.md](./core-contracts.md) §9) | yes | Planned (M7) |
+| `./node` | Optional scaffolding, after the APIs stabilize | Node | Planned |
+| `.` | Re-exports `./app` (and later `./resource` and `./router`) | no | **Implemented** (M6) |
+
+Development and production builds per entry, as in `@oddkin/state`.
 
 ### `@oddkin/tokens`
 | Export | Contents | Environment |

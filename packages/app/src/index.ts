@@ -1,11 +1,14 @@
-import { packageName as corePackage } from '@oddkin/core';
-import { packageName as statePackage } from '@oddkin/state';
 /**
- * Workspace skeleton marker (M1). Replaced by real entry points when the
- * package's milestone implements them; it is not a public API.
+ * `@oddkin/app` root entry: re-exports application ownership (`./app`). Imports without DOM
+ * globals.
+ */
+export * from './app/index.js';
+
+/**
+ * Package marker read by the plain-HTML example and the docs app skeleton.
  * @internal
  */
 export const packageName = '@oddkin/app';
 
 /** @internal Internal packages this package is allowed to depend on. */
-export const internalDependencies: readonly string[] = [corePackage, statePackage];
+export const internalDependencies: readonly string[] = ['@oddkin/core', '@oddkin/state'];

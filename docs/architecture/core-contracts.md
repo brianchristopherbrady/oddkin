@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) are **implemented** (M6); the rest of §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); the rest of §8–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -528,10 +528,51 @@ class DemoSearch extends OddkinElement {
 
 ## 9. Application root and router (`@oddkin/app`)
 
-- `createApp({ root, setup })` owns a root scope and explicit services; `start()` / `stop()` idempotent with defined restart. No global singleton; multiple apps can coexist.
+- `createApp({ root, setup })` owns a root scope and explicit services; `start()` / `stop()` idempotent with defined restart. No global singleton; multiple apps can coexist. *(Implemented, M6; below.)*
 - Router on `URL`, `URLSearchParams`, History API, native anchors, dynamic `import()`. Nested routes, typed params/search parsing, not-found, route errors, lazy modules, navigation cancellation. The active route owns its resources and subscriptions.
 - Preserve modified clicks, external links, downloads, `target`, fragments, history. Explicit title, focus, announcements, scroll restoration. URL is authoritative for navigable state (precedence over persistence documented). Base-path support. Hash-router option for static hosts without rewrites.
 - SSR, streaming, hydration, a compiler, and preemptive scheduling are later, separate projects — not implied v1 capabilities.
+
+**Application ownership (`@oddkin/app/app`, implemented, M6).** Verified in `packages/app/test/app.test.ts` (Node), `app.browser.test.ts` (Chromium, Firefox, WebKit), and `production.test.ts`.
+
+```ts
+import { createApp } from '@oddkin/app';
+
+const shop = createApp({
+  name: 'shop',
+  root: document.querySelector('#shop')!,
+  setup({ scope, provide, use }) {
+    const cart = createStore({ items: [] as readonly CartItem[] });
+    scope.add(() => cart.dispose());
+    provide(cartContext, cart); // a context provider at the root, for this run
+    use(new InventoryPoller()); // a service: connect(scope), optional suspend()/resume()
+    return { cart }; // the run's services
+  },
+});
+shop.start(); // returns the services
+shop.stop(); // disposes everything the run registered
+```
+
+| API | Contract |
+| --- | --- |
+| `createApp({ name?, root?, setup })` | Creates an application; nothing runs and nothing is registered until `start()`. Importing the module registers nothing |
+| `app.start()` | Creates a fresh root `Scope` and calls `setup(context)` with it; returns and keeps the services `setup` returns. Idempotent while running. If `setup` throws, the partial run is disposed, the root is released, the application stays stopped, and the error reaches the caller |
+| `app.stop(reason?)` | Disposes the run's scope (cleanups in reverse order, `signal` aborted with `reason`, by default an `AbortError` `DOMException`); `services` becomes `undefined`. Idempotent; a throwing cleanup is reported (`scope.cleanup.error`) and the stop completes. A later `start()` runs `setup` again with fresh ownership |
+| `app.running`, `app.services` | `running` is tracked (effects and templates follow it); `services` belong to the current run |
+| `context.scope`, `context.signal` | The run's root scope and its abort signal |
+| `context.provide(key, value)` | A context provider (§7.2) at the root for this run: consumers below the root resolve to it, fall back when the run stops, and resolve again to the next run's provider when it announces itself. Needs a root (`app.root.missing`) |
+| `context.use(service)` | Activates a service (`connect(scope)`) for the run. A service may declare `suspend()`/`resume()`; nothing calls them yet (page suspension, §9.1, is planned) |
+
+- **Roots.** A root is an element, shadow root, or document. One running application per root (`app.root.claimed`); stopping releases it. Applications with different roots are independent: their scopes, services, timers, listeners, and contexts never affect each other, and an application inside another's root overrides context below its own root.
+- **Reentrancy.** `start()` and `stop()` cannot run inside `setup()` or inside a cleanup of the run being stopped (`app.lifecycle.reentrant`); `stop()` during a stop is a no-op. To abandon a start, throw from `setup()`.
+
+| Failure | Code | Outcome |
+| --- | --- | --- |
+| `start()` while the root belongs to another running application | `app.root.claimed` | Thrown; nothing starts |
+| `context.provide()` without a root | `app.root.missing` | Thrown from `setup()`, so the start is abandoned |
+| `start()`/`stop()` inside `setup()`, or `start()` inside a stopping cleanup | `app.lifecycle.reentrant` | Thrown |
+
+Size: an application root with a store provided as context is 4,767 B gzip with `Scope`, the reactive graph, and diagnostics (budget 5,120 B); it loads no rendering code, persistence, or inspection. Component-only graphs still load nothing from `@oddkin/state` or `@oddkin/app` (`npm run size`).
 
 ### 9.1 Page suspension and restoration (proposal, M7; [ADR 0035](./decisions/0035-page-suspension-and-restoration.md))
 

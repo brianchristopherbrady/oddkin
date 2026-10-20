@@ -78,6 +78,13 @@ for (const [entry, size] of Object.entries(sizes)) {
       'packages/state/dist/prod/context/',
       'packages/app',
     ]);
+  // An application root needs no rendering code, persistence, or inspection unless it imports them.
+  if (entry === 'app')
+    forbid(entry, size, [
+      ...['element/', 'template/', 'styles/'].map((f) => `packages/core/dist/prod/${f}`),
+      'packages/state/dist/prod/persist/',
+      'packages/state/dist/prod/inspect/',
+    ]);
   if (entry === 'counter' || entry === 'component' || entry === 'list') {
     for (const forbidden of ['packages/state', 'packages/app', 'packages/tokens']) {
       if (size.modules.some((m) => m.startsWith(forbidden))) {
