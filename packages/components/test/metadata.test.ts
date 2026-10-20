@@ -137,4 +137,31 @@ describe('@oddkin/components published metadata', () => {
     for (const tag of ['odd-button', 'odd-card', 'odd-input', 'odd-side-nav'])
       expect(metadata['components'][`component:${tag}`].deprecations, tag).toBeUndefined();
   });
+
+  it('traces options and states to tokens, and publishes each style source for reuse', () => {
+    const traces = (tag: string) =>
+      (metadata['components'][`component:${tag}`].styleMappings as Record<string, string>[]).map(
+        (m) => `${m['part'] ?? 'host'} | ${m['when']} | ${m['cssProperty']} -> ${m['token']}`,
+      );
+    expect(traces('odd-button')).toEqual(
+      expect.arrayContaining([
+        'control | default | background -> color.surface.raised',
+        'control | appearance="primary" | background -> color.action.default',
+        'control | appearance="primary" (enabled, hover) @media (hover: hover) | background -> color.action.hover',
+        'control | appearance="primary" (active, enabled) | background -> color.action.pressed',
+        'control | (disabled) | color -> color.text.disabled',
+        'control | size="lg" | font-size -> type.body.size',
+      ]),
+    );
+    // The structural sheet's `color: inherit` loads first, so the visual sheet's token wins.
+    expect(traces('odd-button')).toContain('control | default | color -> color.text.primary');
+    // `.root .entry:disabled` (forced colours) is outside the grammar: the entries' colour is unread.
+    expect(traces('odd-side-nav').filter((t) => / color -> /.test(t))).toEqual([
+      'base | default | color -> color.text.primary',
+      'badge | default | color -> color.text.secondary',
+    ]);
+    expect(metadata['styles']['dist/styles/focus-ring.styles.js#focusRingStyles'].css).toMatch(
+      /:focus-visible \{\s*outline: token\(focus\.width\) solid token\(color\.focus\.ring\);/,
+    );
+  });
 });

@@ -359,6 +359,7 @@ export function buildMetadata(
           readThrough: t.readThrough,
         })),
       ),
+      ...optional('styleMappings', [...(component.styleMappings ?? [])]),
       ...optional(
         'previewRoles',
         (component.tags['previewRole'] ?? [])
@@ -439,6 +440,7 @@ export function buildMetadata(
   const styles = sourceEntries(extraction.sources.styles, (s) => ({
     ...optional('cssProperties', unique(s.cssProperties)),
     ...optional('tokens', unique(s.tokens)),
+    ...optional('css', s.css),
   }));
   return {
     schema: 'https://oddkin.dev/schemas/oddkin-metadata/v1.json',

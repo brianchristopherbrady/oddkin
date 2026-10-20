@@ -141,11 +141,13 @@
         "--demo-focus",
         "--demo-ink",
         "--demo-paper"
-      ]
+      ],
+      "css": "\n  :host {\n    display: inline-flex;\n    font: inherit;\n  }\n  button {\n    font: inherit;\n    padding: 0.5rem 1rem;\n    border: 2px solid currentColor;\n    border-radius: 999px;\n    background: transparent;\n    color: inherit;\n    cursor: pointer;\n  }\n  button:focus-visible {\n    outline: 3px solid var(--demo-focus, #c2410c);\n    outline-offset: 2px;\n  }\n  :host(:state(positive)) button {\n    background: var(--demo-ink, #1e3a5f);\n    color: var(--demo-paper, #fbf7ef);\n  }\n"
     },
     "dist/demo-greeting/demo-greeting.styles.js#demoGreetingStyles": {
       "module": "dist/demo-greeting/demo-greeting.styles.js",
-      "name": "demoGreetingStyles"
+      "name": "demoGreetingStyles",
+      "css": "\n  :host {\n    display: block;\n  }\n  p {\n    margin: 0;\n    font-size: 1.5rem;\n  }\n  :host([excited]) p {\n    font-style: italic;\n  }\n  small {\n    display: block;\n    opacity: 0.75;\n  }\n"
     }
   },
   "contracts": {

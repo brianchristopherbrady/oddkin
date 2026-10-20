@@ -178,6 +178,10 @@
             "items": {
               "type": "string"
             }
+          },
+          "css": {
+            "type": "string",
+            "description": "The source's CSS with each token reference written as token(<name>) and any other substitution as unknown(), so packages that reuse it can read style mappings"
           }
         }
       }
@@ -693,10 +697,16 @@
               "when": {
                 "type": "string",
                 "examples": [
+                  "default",
                   "appearance=\"primary\"",
-                  "appearance=\"primary\" (hover)",
-                  "disabled"
+                  "appearance=\"primary\" (active, enabled)",
+                  "appearance=\"primary\" (enabled, hover) @media (hover: hover)",
+                  "(disabled)"
                 ]
+              },
+              "part": {
+                "type": "string",
+                "description": "The part the declaration styles; absent for the host"
               },
               "cssProperty": {
                 "type": "string"

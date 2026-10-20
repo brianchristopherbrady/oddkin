@@ -6,6 +6,12 @@ import { readFileSync } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
 import ts from 'typescript';
 import { createPublishedReader, type PublishedPackage } from './published.js';
+import {
+  styleMappingsOf,
+  type PartSelectors,
+  type StyleMapping,
+  type TokenCss,
+} from './style-mappings.js';
 
 export interface SourceLocation {
   readonly file: string;
@@ -97,6 +103,8 @@ export interface ComponentInfo {
   readonly cssProperties: readonly NamedDoc[];
   readonly cssStates: readonly NamedDoc[];
   readonly tokenReads: readonly { readonly token: string; readonly readThrough: 'stylesheet' }[];
+  /** Option or state → part → CSS property → token, where the definition's styles state it. */
+  readonly styleMappings?: readonly StyleMapping[];
   readonly tags: Readonly<Record<string, readonly { value: string; location: SourceLocation }[]>>;
   readonly exported: boolean;
   /** Facts supplied by explicit metadata (`@oddkin-metadata file.json`), as stable member ids. */
@@ -128,6 +136,8 @@ export interface SourceRef {
 export interface StyleReads {
   readonly cssProperties: readonly string[];
   readonly tokens: readonly string[];
+  /** The CSS text, so packages that reuse the source can read its style mappings. */
+  readonly css?: TokenCss;
 }
 
 /** An exported template's anatomy, published so recomposing packages know what it provides. */
@@ -598,11 +608,83 @@ export function extract(program: ts.Program, root: string): Extraction {
     return found;
   }
 
+  /**
+   * Which of a component's parts each tag and class selects, read from every template in the
+   * template's file (helpers beside it render into the same shadow root).
+   */
+  function partSelectors(node: ts.Node, componentParts: ReadonlySet<string>): PartSelectors {
+    const tags = new Map<string, string[]>();
+    const classes = new Map<string, string[]>();
+    const all = new Set<string>();
+    const computedClass = new Set<string>();
+    const add = (map: Map<string, string[]>, key: string, names: readonly string[]) =>
+      map.set(key, [...new Set([...(map.get(key) ?? []), ...names])]);
+    const valueOf = (attributes: string, name: string) => {
+      const value = attributeValue(attributes, name);
+      return value ? (value[1] ?? value[2] ?? value[3] ?? '') : '';
+    };
+    scanTemplates(node.getSourceFile(), 'html', (text) => {
+      for (const match of text.matchAll(/<([a-zA-Z][\w-]*)\b([^>]*)>/g)) {
+        const attributes = match[2] ?? '';
+        const names = valueOf(attributes, 'part')
+          .split(/\s+/)
+          .filter((name) => componentParts.has(name));
+        if (!names.length) continue;
+        for (const name of names) all.add(name);
+        add(tags, match[1]!.toLowerCase(), names);
+        const classList = valueOf(attributes, 'class');
+        if (classList.includes('\u0000')) for (const name of names) computedClass.add(name);
+        for (const name of classList.split(/\s+/))
+          if (name && !name.includes('\u0000')) add(classes, name, names);
+      }
+    });
+    return { tags, classes, all: [...all], computedClass: [...computedClass] };
+  }
+
+  /**
+   * A style source's CSS with each `token('name')` written as `token(name)` and any other
+   * substitution as `unknown()`: a css`` template or `unsafeCSS('…')`. `undefined` otherwise.
+   */
+  function tokenCss(node: ts.Node): TokenCss | undefined {
+    if (
+      ts.isCallExpression(node) &&
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === 'unsafeCSS'
+    )
+      return stringOf(node.arguments[0]);
+    if (
+      !ts.isTaggedTemplateExpression(node) ||
+      !ts.isIdentifier(node.tag) ||
+      node.tag.text !== 'css'
+    )
+      return undefined;
+    const template = node.template;
+    if (ts.isNoSubstitutionTemplateLiteral(template)) return template.text;
+    let text = template.head.text;
+    for (const span of template.templateSpans) {
+      const expression = span.expression;
+      const name =
+        ts.isCallExpression(expression) &&
+        ts.isIdentifier(expression.expression) &&
+        expression.expression.text === 'token'
+          ? stringOf(expression.arguments[0])
+          : undefined;
+      text += (name ? `token(${name})` : 'unknown()') + span.literal.text;
+    }
+    return text;
+  }
+
   const sourceKey = (ref: SourceRef) => `${ref.file}#${ref.name}`;
   /** Record an exported style source of the analyzed library. */
   function recordStyles(ref: SourceRef, node: ts.Node) {
-    if (!styleSources.has(sourceKey(ref)))
-      styleSources.set(sourceKey(ref), { ref, ...styleReads(node) });
+    if (!styleSources.has(sourceKey(ref))) {
+      const css = tokenCss(node);
+      styleSources.set(sourceKey(ref), {
+        ref,
+        ...styleReads(node),
+        ...(css === undefined ? {} : { css }),
+      });
+    }
   }
 
   /** A section of another package's `oddkin.metadata.json` entry, by module path and name. */
@@ -618,7 +700,11 @@ export function extract(program: ts.Program, root: string): Extraction {
   const publishedReads = (pkg: PublishedPackage, module: string, name: string) => {
     const entry = publishedSource<Partial<StyleReads>>(pkg, 'styles', module, name);
     return entry
-      ? { cssProperties: entry.cssProperties ?? [], tokens: entry.tokens ?? [] }
+      ? {
+          cssProperties: entry.cssProperties ?? [],
+          tokens: entry.tokens ?? [],
+          ...(typeof entry.css === 'string' ? { css: entry.css } : {}),
+        }
       : undefined;
   };
 
@@ -1342,6 +1428,8 @@ export function extract(program: ts.Program, root: string): Extraction {
     readonly styleNodes?: readonly ts.Node[];
     /** Reads of style sources other packages publish (with `styleNodes`, the complete styles). */
     readonly styleReads?: readonly StyleReads[];
+    /** Every style source's CSS in cascade order; `undefined` where a source's text is unknown. */
+    readonly styleTexts?: readonly (TokenCss | undefined)[];
     /** Published by another package; its class cannot be registered again. */
     readonly external?: true;
   }
@@ -1369,6 +1457,7 @@ export function extract(program: ts.Program, root: string): Extraction {
     refs: SourceRef[],
     nodes: ts.Node[],
     reads: StyleReads[],
+    texts: (TokenCss | undefined)[],
     owner: string,
   ): void {
     const found = initializerOf(expression);
@@ -1379,6 +1468,7 @@ export function extract(program: ts.Program, root: string): Extraction {
         return;
       }
       refs.push(published.ref);
+      texts.push(published.reads?.css);
       if (published.reads) reads.push(published.reads);
       else
         report(
@@ -1399,7 +1489,7 @@ export function extract(program: ts.Program, root: string): Extraction {
             element,
             `${owner}: spread styles are not analyzed.`,
           );
-        else stylesFrom(element, refs, nodes, reads, owner);
+        else stylesFrom(element, refs, nodes, reads, texts, owner);
       }
       return;
     }
@@ -1408,6 +1498,7 @@ export function extract(program: ts.Program, root: string): Extraction {
       recordStyles(found.ref, node);
     }
     nodes.push(node);
+    texts.push(tokenCss(node));
   }
 
   /**
@@ -1558,7 +1649,11 @@ export function extract(program: ts.Program, root: string): Extraction {
         location: where(expression),
       },
       ...(entry?.styles
-        ? { styleNodes: [], styleReads: reads.filter((r): r is StyleReads => !!r) }
+        ? {
+            styleNodes: [],
+            styleReads: reads.filter((r): r is StyleReads => !!r),
+            styleTexts: reads.map((r) => r?.css),
+          }
         : {}),
     };
   }
@@ -1585,7 +1680,14 @@ export function extract(program: ts.Program, root: string): Extraction {
     let tag: string | undefined;
     let classNode: ts.ClassDeclaration | undefined;
     let template: { ref?: SourceRef; node?: ts.Node } | undefined;
-    let styles: { refs: SourceRef[]; nodes: ts.Node[]; reads: StyleReads[] } | undefined;
+    let styles:
+      | {
+          refs: SourceRef[];
+          nodes: ts.Node[];
+          reads: StyleReads[];
+          texts: (TokenCss | undefined)[];
+        }
+      | undefined;
     let dependencies: Record<string, string> | undefined;
     for (const property of init.properties) {
       if (ts.isSpreadAssignment(property)) {
@@ -1613,6 +1715,7 @@ export function extract(program: ts.Program, root: string): Extraction {
               refs: [...base.info.styles],
               nodes: [...base.styleNodes],
               reads: [...(base.styleReads ?? [])],
+              texts: [...(base.styleTexts ?? [])],
             }
           : undefined;
         dependencies = { ...base.info.dependencies };
@@ -1672,8 +1775,15 @@ export function extract(program: ts.Program, root: string): Extraction {
             'compose(): the template cannot be resolved.',
           );
       } else if (key === 'styles') {
-        styles = { refs: [], nodes: [], reads: [] };
-        stylesFrom(value, styles.refs, styles.nodes, styles.reads, `compose(${tag ?? ''})`);
+        styles = { refs: [], nodes: [], reads: [], texts: [] };
+        stylesFrom(
+          value,
+          styles.refs,
+          styles.nodes,
+          styles.reads,
+          styles.texts,
+          `compose(${tag ?? ''})`,
+        );
       } else if (key === 'dependencies') {
         dependencies = {};
         if (ts.isObjectLiteralExpression(value)) {
@@ -1720,7 +1830,9 @@ export function extract(program: ts.Program, root: string): Extraction {
     const resolved: Resolved = {
       classNode,
       ...(template?.node ? { templateNode: template.node } : {}),
-      ...(styles ? { styleNodes: styles.nodes, styleReads: styles.reads } : {}),
+      ...(styles
+        ? { styleNodes: styles.nodes, styleReads: styles.reads, styleTexts: styles.texts }
+        : {}),
       info: {
         tag,
         className: classNode.name.text,
@@ -1766,7 +1878,23 @@ export function extract(program: ts.Program, root: string): Extraction {
       }
     }
     tokenReads = tokenReads.filter((t) => !cssProperties.some((c) => c.name === t.token));
-    return { ...info, slots, parts, cssProperties, tokenReads };
+    // Mappings need this library's template and every style source's text, in cascade order.
+    const texts = resolved.styleTexts ?? [];
+    const styleMappings =
+      resolved.templateNode && texts.length && texts.every((t) => t !== undefined)
+        ? styleMappingsOf(
+            texts.join('\n'),
+            partSelectors(resolved.templateNode, new Set(parts.map((p) => p.name))),
+          )
+        : [];
+    return {
+      ...info,
+      slots,
+      parts,
+      cssProperties,
+      tokenReads,
+      ...(styleMappings.length ? { styleMappings } : {}),
+    };
   }
 
   // ---- module walk ----

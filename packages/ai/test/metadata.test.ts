@@ -76,6 +76,21 @@ describe('@oddkin/ai published metadata', { timeout: 30_000 }, () => {
     }
   });
 
+  it('traces style mappings through the shared sheets @oddkin/components publishes', () => {
+    const host = (
+      metadata['components']['component:odd-ai-label'].styleMappings as Record<string, string>[]
+    ).filter((m) => !m['part'] && m['cssProperty'] === 'font-size');
+    // aiElementStyles sets font.size.md; the label's own sheet, loaded later, wins.
+    expect(host.map((m) => m['token'])).toEqual(['font.size.xs']);
+    const padding = (
+      metadata['components']['component:odd-suggestions'].styleMappings as Record<string, string>[]
+    )
+      .filter((m) => m['cssProperty'] === 'padding-inline')
+      .map((m) => `${m['part']} -> ${m['token']}`);
+    // `button` styles both buttons; `.send` outranks it on the send button.
+    expect(padding).toEqual(['suggestion -> space.sm', 'send -> space.xs']);
+  });
+
   it('publishes typed intent events with their request semantics', () => {
     const events = (tag: string) =>
       (declaration(tag)['events'] as {
