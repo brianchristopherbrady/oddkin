@@ -18,10 +18,25 @@ export interface ImportMapOptions {
   /** URL prefix under which every package root is served, as `${base}${name}/`. Ends with `/`. */
   readonly base: string;
   /**
+   * Serve each package root as `${base}${name}@${version}/`, so documents that load different
+   * copies of one package never share a URL. Default false.
+   */
+  readonly versioned?: boolean;
+  /**
    * Active export conditions. Within each conditions object, keys keep their declared priority
    * (as in Node); `default` always applies. Default: development, browser, import.
    */
   readonly conditions?: readonly string[];
+}
+
+/** The URL prefix of a package root under `base`. */
+export function packageRoot(
+  pkg: PackageManifest,
+  options: Pick<ImportMapOptions, 'base' | 'versioned'>,
+): string {
+  return options.versioned
+    ? `${options.base}${pkg.name}@${pkg.version ?? '0.0.0'}/`
+    : `${options.base}${pkg.name}/`;
 }
 
 export interface ImportMap {
@@ -87,6 +102,44 @@ function subpaths(
 }
 
 /**
+ * The package-relative file (`./dist/x.js`) that an export subpath (`.` or `./x`) resolves to,
+ * as Node resolves it: exact keys first, then the pattern with the longest prefix. Without
+ * `exports`, every file is reachable and `.` is `module`, `main`, or `./index.js`.
+ */
+export function resolveExport(
+  pkg: PackageManifest,
+  subpath: string,
+  conditions: readonly string[] = DEFAULT_CONDITIONS,
+): string | undefined {
+  const map = subpaths(pkg, new DiagnosticList());
+  if (map === undefined) {
+    if (subpath !== '.') return subpath;
+    const main = pkg.module ?? pkg.main ?? './index.js';
+    return main.startsWith('./') ? main : `./${main}`;
+  }
+  const active = new Set(conditions);
+  const relative = (target: unknown) =>
+    typeof target === 'string' && target.startsWith('./') ? target : undefined;
+  if (Object.hasOwn(map, subpath)) return relative(resolveTarget(map[subpath], active));
+  let best: { key: string; prefix: string; suffix: string } | undefined;
+  for (const key of Object.keys(map)) {
+    const star = key.indexOf('*');
+    if (star === -1) continue;
+    const prefix = key.slice(0, star);
+    const suffix = key.slice(star + 1);
+    const matches =
+      subpath.length >= prefix.length + suffix.length &&
+      subpath.startsWith(prefix) &&
+      subpath.endsWith(suffix);
+    if (matches && (!best || prefix.length > best.prefix.length)) best = { key, prefix, suffix };
+  }
+  if (!best) return undefined;
+  const target = relative(resolveTarget(map[best.key], active));
+  const match = subpath.slice(best.prefix.length, subpath.length - best.suffix.length);
+  return target?.replaceAll('*', match);
+}
+
+/**
  * The import map for `packages`, in the order given: a package name seen again (another copy of
  * the same package) is skipped with a diagnostic, since one document can load one copy per
  * specifier. Subpath patterns become prefix mappings when the prefix mapping is exact.
@@ -114,7 +167,7 @@ export function createImportMap(
       continue;
     }
     seen.set(pkg.name, pkg.version);
-    const root = `${options.base}${pkg.name}/`;
+    const root = packageRoot(pkg, options);
     const map = subpaths(pkg, out);
     if (map === undefined) {
       const main = pkg.module ?? pkg.main;

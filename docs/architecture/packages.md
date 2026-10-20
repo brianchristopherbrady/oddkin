@@ -195,7 +195,7 @@ Files inside a folder import siblings directly, never through their own `index.t
 | `./conformance` | `defineConformance`, `checkConformance`, `toConformanceJSON`, adapter and result types (DOM-free, implemented) | any |
 | `./conformance/button`, … | Oddkin's conformance suites for its own components; implementation-agnostic. Implemented: `./conformance/button` | any (DOM touched only when run) |
 | `./config` | `defineWorkbenchConfig` (incl. navigation, categories, products, content overrides), `defineDocs` and types | any |
-| `./node` + bin `oddkin` | `analyze`, `impact`, `workbench dev`, `workbench build`, `workbench products --discover`, `workbench repro export` (proposed) | Node only |
+| `./node` + bin `oddkin` | `analyze`, `impact`, `workbench dev`, `workbench build`, `workbench products --discover`, `workbench repro export` (proposed). Implemented (M5): `analyze` (runs `@oddkin/analyzer`'s command), `workbench dev` (data, import maps, and the shell page from `oddkin.config.*`; the marked `.oddkin/workbench/`; live updates over Server-Sent Events), and the Node API behind them (`buildWorkbench`, `startDevServer`) | Node only |
 
 ### `@oddkin/agent` (dev-only)
 `./operations`, `./context` (project context, capability paths, freshness), `./kit` (agent-kit generator: entry guide, references, JSON, Agent Skills packaging, managed `AGENTS.md` section, `llms.txt`), `./cli` (bin `oddkin-agent`), `./instructions` (thin IDE adapters generated from `./kit`), optional `./mcp`. Node only. Kit generation never requires the Workbench application ([agent-tooling.md](./agent-tooling.md) §5, ADR 0032).

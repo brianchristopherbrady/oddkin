@@ -6,5 +6,6 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable"]
   },
   "include": ["src"],
+  "exclude": ["src/node"],
   "references": [{ "path": "../core" }]
 }

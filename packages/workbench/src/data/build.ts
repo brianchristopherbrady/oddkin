@@ -36,6 +36,8 @@ export interface WorkbenchDataInput {
   readonly docs?: DocsContent;
   /** The token inspection the foundations reference (their `generation` source). */
   readonly tokens?: TokenInspectionLike;
+  /** Diagnostics from reading these inputs; reported first, with the data's own. */
+  readonly diagnostics?: readonly WorkbenchDiagnostic[];
 }
 
 /** Top-level metadata fields that describe one package rather than a record of facts. */
@@ -175,8 +177,9 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
   diagnostics: WorkbenchDiagnostic[];
 } {
   const out = new DiagnosticList();
+  const loading = input.diagnostics ?? [];
   const { config, diagnostics: configDiagnostics } = resolveWorkbenchConfig(input.config);
-  if (!config) return { data: undefined, diagnostics: configDiagnostics };
+  if (!config) return { data: undefined, diagnostics: [...loading, ...configDiagnostics] };
   const metadata = mergeMetadata(input.libraries, out);
   const { registry, diagnostics: registryDiagnostics } = buildPageRegistry({
     config,
@@ -185,7 +188,7 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
     ...(input.docs ? { docs: input.docs } : {}),
   });
   // The registry resolves the same configuration again; its diagnostics include the config's.
-  out.items.unshift(...registryDiagnostics);
+  out.items.unshift(...loading, ...registryDiagnostics);
   if (!registry) return { data: undefined, diagnostics: out.items };
 
   const declared = declarations(input.libraries);

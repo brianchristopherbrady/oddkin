@@ -10,6 +10,7 @@
     { "path": "packages/ai" },
     { "path": "packages/analyzer" },
     { "path": "packages/workbench" },
+    { "path": "packages/workbench/tsconfig.node.json" },
     { "path": "apps/docs" },
     { "path": "examples/core-counter" },
     { "path": "examples/binding-rule" },

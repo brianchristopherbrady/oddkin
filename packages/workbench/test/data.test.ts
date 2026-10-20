@@ -4,7 +4,9 @@ import { defineDocs, type WorkbenchConfig } from '../src/config/index.js';
 import {
   buildWorkbenchData,
   createImportMap,
+  packageRoot,
   pageFile,
+  resolveExport,
   resolveTarget,
   serializeData,
   type ComponentPageData,
@@ -291,6 +293,23 @@ describe('Workbench data from published outputs', () => {
     expect(diagnostics.map((d) => d.code)).toContain('config.library.missing');
   });
 
+  it('reports diagnostics from reading the inputs first, with or without data', () => {
+    const loading = [
+      { code: 'node.package.missing', severity: 'error' as const, message: 'not installed' },
+    ];
+    const { data } = build({ config, libraries: [components], diagnostics: loading });
+    expect(data.index.diagnostics[0]).toEqual(loading[0]);
+    const invalid = buildWorkbenchData({
+      config: { library: { packages: [] } },
+      libraries: [],
+      diagnostics: loading,
+    });
+    expect(invalid.diagnostics.map((d) => d.code)).toEqual([
+      'node.package.missing',
+      'config.library.missing',
+    ]);
+  });
+
   it('is deterministic: the same inputs give the same bytes', () => {
     const a = build({ config, libraries: [components, ai], tokens: inspection });
     const b = build({ config, libraries: [components, ai], tokens: inspection });
@@ -382,6 +401,41 @@ describe('import maps from package exports', () => {
     expect(resolveTarget([{ node: './n.js' }, './b.js'], active)).toBe('./b.js');
     expect(resolveTarget({ browser: null, default: './d.js' }, active)).toBeNull();
     expect(resolveTarget({ types: './t.d.ts', default: './d.js' }, active)).toBe('./d.js');
+  });
+
+  it('resolves one export subpath to its file, patterns included', () => {
+    expect(resolveExport(componentsPkg, './define/button')).toBe('./dist/button/button.define.js');
+    expect(resolveExport(componentsPkg, './schemas/button.json')).toBe('./schemas/button.json');
+    expect(resolveExport(componentsPkg, './nope')).toBeUndefined();
+    expect(resolveExport(core, '.')).toBe('./dist/index.js');
+    expect(resolveExport(core, '.', ['browser'])).toBe('./dist/prod/index.js');
+    // The longest pattern prefix wins; every "*" in the target is replaced; null excludes.
+    const patterns: PackageManifest = {
+      name: 'p',
+      exports: { './*': './all/*.js', './a/*': './a/*/*.js', './x': null, './y': 'y.js' },
+    };
+    expect(resolveExport(patterns, './a/b')).toBe('./a/b/b.js');
+    expect(resolveExport(patterns, './c')).toBe('./all/c.js');
+    expect(resolveExport(patterns, './x')).toBeUndefined();
+    expect(resolveExport(patterns, './y')).toBeUndefined();
+    // Without exports, every file is reachable.
+    expect(resolveExport({ name: 'legacy', main: 'lib/main.js' }, '.')).toBe('./lib/main.js');
+    expect(resolveExport({ name: 'bare' }, '.')).toBe('./index.js');
+    expect(resolveExport({ name: 'bare' }, './data/x.json')).toBe('./data/x.json');
+  });
+
+  it('can version package URLs, so two copies of a package never share one', () => {
+    const { importMap } = createImportMap(
+      [
+        { name: 'a', version: '2.0.0', exports: './i.js' },
+        { name: 'b', exports: './i.js' },
+      ],
+      { base: '/m/', versioned: true },
+    );
+    expect(importMap.imports).toEqual({ a: '/m/a@2.0.0/i.js', b: '/m/b@0.0.0/i.js' });
+    const scoped = { name: '@s/p', version: '1.0.0' };
+    expect(packageRoot(scoped, { base: '/m/', versioned: true })).toBe('/m/@s/p@1.0.0/');
+    expect(packageRoot(scoped, { base: '/m/' })).toBe('/m/@s/p/');
   });
 
   it('diagnoses what an import map cannot express, and copies it does not load', () => {

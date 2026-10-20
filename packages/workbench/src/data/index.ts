@@ -6,7 +6,13 @@
  */
 export { buildWorkbenchData, pageFile, serializeData } from './build.js';
 export type { WorkbenchDataInput } from './build.js';
-export { createImportMap, DEFAULT_CONDITIONS, resolveTarget } from './import-map.js';
+export {
+  createImportMap,
+  DEFAULT_CONDITIONS,
+  packageRoot,
+  resolveExport,
+  resolveTarget,
+} from './import-map.js';
 export type { ImportMap, ImportMapOptions, PackageManifest } from './import-map.js';
 export { DATA_VERSION, INDEX_FORMAT, PAGE_FORMAT } from './types.js';
 export type {
