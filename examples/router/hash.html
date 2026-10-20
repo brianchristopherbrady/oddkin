@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Router example (hash mode)</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/app": "../../packages/app/dist/index.js",
+          "@oddkin/state/context": "../../packages/state/dist/context/index.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/scope": "../../packages/core/dist/scope/index.js",
+          "@oddkin/core/diagnostics": "../../packages/core/dist/diagnostics/index.js",
+          "@oddkin/core/controllers/announce": "../../packages/core/dist/controllers/announce.js"
+        }
+      }
+    </script>
+    <style>
+      body {
+        margin: 0;
+        font:
+          1rem/1.5 system-ui,
+          sans-serif;
+      }
+      nav {
+        position: fixed;
+        inset: 0 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 1rem;
+        padding: 0.5rem 1rem;
+        background: Canvas;
+        border-block-end: 1px solid GrayText;
+      }
+      main {
+        padding: 6rem 1rem 1rem;
+      }
+      .tall {
+        block-size: 2000px;
+      }
+      #section-2 {
+        scroll-margin-block-start: 6rem;
+      }
+    </style>
+  </head>
+  <body data-mode="hash">
+    <nav aria-label="Example pages"></nav>
+    <main></main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

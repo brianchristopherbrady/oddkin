@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); §8 resources and §8.1 commands are **implemented** (M7) except the resource restore policy; in §9 the router is **implemented** (M7) except focus, announcements, and scroll restoration, and page suspension (§9.1) is a **proposal**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); §8 resources and §8.1 commands are **implemented** (M7) except the resource restore policy; in §9 the router is **implemented** (M7), and page suspension (§9.1) is a **proposal**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -629,7 +629,7 @@ Size: a command with a retry policy and a timeout is 3,723 B gzip with `Scope`, 
 
 - `createApp({ root, setup })` owns a root scope and explicit services; `start()` / `stop()` idempotent with defined restart. No global singleton; multiple apps can coexist. *(Implemented, M6; below.)*
 - Router on `URL`, `URLSearchParams`, History API, native anchors, dynamic `import()`. Nested routes, typed params/search parsing, not-found, route errors, lazy modules, navigation cancellation. The active route owns its resources and subscriptions. *(Implemented, M7; below.)*
-- Preserve modified clicks, external links, downloads, `target`, fragments, history. Explicit title, focus, announcements, scroll restoration. URL is authoritative for navigable state (precedence over persistence documented). Base-path support. Hash-router option for static hosts without rewrites. *(Implemented, M7, except focus, announcements, and scroll restoration; below.)*
+- Preserve modified clicks, external links, downloads, `target`, fragments, history. Explicit title, focus, announcements, scroll restoration. URL is authoritative for navigable state (precedence over persistence documented). Base-path support. Hash-router option for static hosts without rewrites. *(Implemented, M7; below.)*
 - SSR, streaming, hydration, a compiler, and preemptive scheduling are later, separate projects — not implied v1 capabilities.
 
 **Application ownership (`@oddkin/app/app`, implemented, M6).** Verified in `packages/app/test/app.test.ts` (Node), `app.browser.test.ts` (Chromium, Firefox, WebKit), and `production.test.ts`.
@@ -673,7 +673,7 @@ shop.stop(); // disposes everything the run registered
 
 Size: an application root with a store provided as context is 4,767 B gzip with `Scope`, the reactive graph, and diagnostics (budget 5,120 B); it loads no rendering code, persistence, or inspection. Component-only graphs still load nothing from `@oddkin/state` or `@oddkin/app` (`npm run size`).
 
-**Router (`@oddkin/app/router`, implemented, M7).** Also re-exported from `@oddkin/app`; imports without DOM globals, and `matchRoutes` is DOM-free. Verified in `packages/app/test/router.test.ts` (Node: matching, definitions, options) and `router.browser.test.ts` (Chromium, Firefox, WebKit: the real History API, links, back and forward). Focus after navigation, route announcements, and scroll restoration are planned next.
+**Router (`@oddkin/app/router`, implemented, M7).** Also re-exported from `@oddkin/app`; imports without DOM globals, and `matchRoutes` is DOM-free. Verified in `packages/app/test/router.test.ts` (Node: matching, definitions, options, a refused history change), `router.browser.test.ts` and `router-after.browser.test.ts` (Chromium, Firefox, WebKit: the real History API, links, back and forward, focus, announcements, scroll), and `e2e/router.spec.ts` with `examples/router` (real new tabs, downloads, other documents, browser back and forward, and reloads).
 
 ```ts
 import { createApp, createRouter, route } from '@oddkin/app';
@@ -698,6 +698,7 @@ const router = createRouter({
     route({ path: 'playground', redirect: '/components' }), // a legacy route (ADR 0028)
   ],
   formatTitle: (title) => (title ? `${title} · Oddkin` : 'Oddkin'),
+  focus: () => document.querySelector('#docs main h1'), // after a navigation to another path
 });
 
 createApp({ root: document.querySelector('#docs')!, setup: ({ use }) => void use(router) }).start();
@@ -710,7 +711,7 @@ html`<a href=${router.href('/components/odd-button?tab=api')}>Button</a>`;
 | --- | --- |
 | `route({ path, name?, params?, search?, load?, title?, redirect?, children? })` | A typed route (the same object). `path` is relative to the parent: static segments, `:name` parameters (one whole segment, decoded), a final `*` for the rest, `''` for an index. `params(raw)` types the parameters of all levels so far, or returns `undefined` to decline the match. Patterns are checked here and by `createRouter()` |
 | `matchRoutes(routes, path)` | DOM-free matching of an application path: the matched levels, outermost first, or `undefined`. Siblings are tried in definition order and the first full match wins; a parent ends the match when no child matches the empty rest; trailing slashes are ignored; a path that cannot be decoded matches nothing |
-| `createRouter({ routes, base?, mode?, formatTitle?, window?, name? })` | Inert until `use(router)` (or `scope.use(router)`); it then reads the URL, intercepts links, and follows `popstate` until that scope ends |
+| `createRouter({ routes, base?, mode?, formatTitle?, focus?, announce?, scroll?, fragment?, window?, name? })` | Inert until `use(router)` (or `scope.use(router)`); it then reads the URL, intercepts links, and follows `popstate` until that scope ends. `focus(state)` names the element to focus after a navigation to another path; `announce` is `false` or `(state) => message`; `scroll: false` turns scroll restoration off; `fragment(id)` finds a fragment's target (default `getElementById`) |
 | `router.state` | Read-only `Readable<RouterState>`: `{ status: 'idle' \| 'ready' \| 'error' \| 'not-found', location, matches, error, navigating }`. A match is `{ route, params, search, status: 'ready', data }` or `{ route, params, search, status: 'error', error }`, and keeps its identity while its level is kept; `navigating` is the location being loaded while the committed one stays shown |
 | `router.match(route)` | The committed match for `route`, typed by the route (tracked) |
 | `router.navigate(to, { replace? })` | Navigate to an application path, resolved like a URL against the committed location. Resolves `true` when it commits and `false` when superseded or stopped |
@@ -724,6 +725,9 @@ html`<a href=${router.href('/components/odd-button?tab=api')}>Button</a>`;
 - **Base path and hash mode.** `base` (default `/`) is an explicit input: application paths are below it (`/docs` and `/docs/` are both the root) and `href()` writes it. `mode: 'hash'` keeps the application path in the fragment (`#/components?tab=api#usage`) for static hosts without rewrites; an in-page fragment link (`#usage`) keeps the route and is written in full (`#/components#usage`), also when the fragment is set directly. The router reads no locale: a locale prefix is an ordinary parameter.
 - **Titles.** On every commit the deepest level with a `title` (a string, or a function of its match) gives the title; `formatTitle(title, state)` composes it, including for not-found (`title` `undefined`); `undefined` leaves `document.title` alone. A throwing title is reported (`app.router.title`).
 - **Precedence.** The URL is authoritative for navigable state: when a persisted store and the URL disagree (a selected tab, a filter), the URL wins; persistence restores only what the URL does not say.
+- **After a navigation** the router acts once the view has rendered the new state (`settled()`), and only for navigations to another path: a new query or fragment keeps focus, and nothing happens on the first load or `refresh()`. Focus moves to `focus(state)` (made focusable with `tabindex="-1"` only if it is not, focused without scrolling); a polite live region the router adds to the document body (core's `LiveAnnouncer`, removed on stop) announces the document title or `announce(state)`, each navigation separately, in the application's own words, since the router reads no locale.
+- **Scroll restoration** (unless `scroll: false`): while the router runs, `history.scrollRestoration` is `manual` (given back on stop). A new path starts at the top, a fragment (`#id`) is scrolled into view, a new query keeps the position, and back, forward, and the first load after a reload return to where the entry was left. Positions are kept per history entry, in memory and in the entry's own `history.state` (under `oddkinRouter`, keeping what others stored there), written when a pushed navigation leaves the entry and once scrolling pauses (200 ms): Chromium and Firefox drop history changes made during `pagehide` on reload. A pop records the position from before the browser's own fragment scrolling, which Firefox and WebKit do before `popstate`. A view that renders its content later than the commit (for example from its own resource) may be too short to restore into.
+- **History writes are kept few**: a navigation from the top of the page writes one entry (`pushState`), and a pause in scrolling one `replaceState`, because WebKit refuses more than 100 history changes in 10 seconds (`SecurityError`). When the History API refuses a new URL, the navigation is abandoned (its new levels aborted with that error, `app.router.history` reported), so the view never disagrees with the URL.
 
 | Failure | Code | Outcome |
 | --- | --- | --- |
@@ -734,8 +738,10 @@ html`<a href=${router.href('/components/odd-button?tab=api')}>Button</a>`;
 | Connecting without a window (History API and document) | `app.router.environment` | Thrown by `connect`, so the application's start fails |
 | More than 10 redirects in a row | `app.router.redirect` | State `error` |
 | A route title or `formatTitle` throws | `app.router.title` | Reported; the title is left alone |
+| `focus` or `announce` throws | `app.router.focus`, `app.router.announce` | Reported; the navigation stays committed |
+| The History API refuses a new URL (WebKit's rate limit) | `app.router.history` | Reported; the navigation is abandoned and resolves `false` |
 
-Size: a router with nested, lazy, and redirecting routes is 5,461 B gzip with `Scope`, the reactive graph, and diagnostics (budget 6,144 B); it loads no rendering code, nothing from `@oddkin/state`, and no resource or command code.
+Size: a router with nested, lazy, and redirecting routes, focus, announcements, and scroll restoration is 6,974 B gzip with `Scope`, the reactive graph, and diagnostics (budget 7,680 B); core's `LiveAnnouncer` is about 0.7 KiB of it and is loaded even with `announce: false`. It loads no rendering code, nothing from `@oddkin/state`, and no resource or command code.
 
 ### 9.1 Page suspension and restoration (proposal, M7; [ADR 0035](./decisions/0035-page-suspension-and-restoration.md))
 

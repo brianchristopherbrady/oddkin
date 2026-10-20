@@ -9,8 +9,9 @@
  * application's stop removes its listeners and ends every level. Imports without DOM globals.
  */
 import { DEV } from '../internal/dev.js';
+import { createLiveRegions, LiveAnnouncer } from '@oddkin/core/controllers/announce';
 import { OddkinError, reportOddkinError } from '@oddkin/core/diagnostics';
-import { computed, signal, untracked, type Readable } from '@oddkin/core/reactive';
+import { computed, settled, signal, untracked, type Readable } from '@oddkin/core/reactive';
 import { createScope, type Controller, type Scope } from '@oddkin/core/scope';
 import {
   matchRoutes,
@@ -49,6 +50,26 @@ export interface RouterOptions {
    * for not-found). Return `undefined` to leave the title alone. Default: the level's title.
    */
   readonly formatTitle?: (title: string | undefined, state: RouterState) => string | undefined;
+  /**
+   * The element to focus once the view has updated after a navigation to another path (not on
+   * the first load, and not when only the query or fragment changes): typically the main
+   * heading or `main`. It gets `tabindex="-1"` if it is not focusable and is focused without
+   * scrolling. Default: focus is left alone.
+   */
+  readonly focus?: (state: RouterState) => Element | null | undefined;
+  /**
+   * The message announced, in a polite live region the router adds to the document body, after
+   * a navigation to another path. Default: the document title. `false` announces nothing.
+   */
+  readonly announce?: false | ((state: RouterState) => string | undefined);
+  /**
+   * Scroll restoration, on by default: a new path starts at the top, a fragment is scrolled
+   * into view, and back, forward, and reload return to where the entry was left. `false`
+   * leaves scrolling to the browser and the application.
+   */
+  readonly scroll?: boolean;
+  /** Find a fragment's target, for example inside shadow roots. Default `getElementById`. */
+  readonly fragment?: (id: string) => Element | null | undefined;
   /** The window whose history and document the router uses. Default `globalThis`. */
   readonly window?: Window;
   /** Name used in abort reasons and diagnostics. */
@@ -111,6 +132,36 @@ const IDLE: RouterState = Object.freeze({
 const MAX_REDIRECTS = 10;
 /** A placeholder origin for parsing application paths with `URL`. */
 const ORIGIN = 'http://oddkin.invalid';
+/** The router's part of `history.state`: the entry's key and the position it was left at. */
+const STATE = 'oddkinRouter';
+/** Milliseconds without scrolling before the position is stored in the history entry. */
+const SAVE_DELAY = 200;
+
+interface Position {
+  readonly x: number;
+  readonly y: number;
+}
+interface EntryState {
+  readonly key: string;
+  readonly x?: number;
+  readonly y?: number;
+}
+
+const entryOf = (state: unknown): EntryState | undefined => {
+  const entry = (state as Record<string, unknown> | null)?.[STATE] as EntryState | undefined;
+  return typeof entry?.key === 'string' ? entry : undefined;
+};
+const positionOf = (entry: EntryState | undefined): Position | undefined =>
+  typeof entry?.x === 'number' && typeof entry.y === 'number'
+    ? { x: entry.x, y: entry.y }
+    : undefined;
+let keys = 0;
+const newKey = () => `${Date.now().toString(36)}.${(keys++).toString(36)}`;
+/** The entry's own state with the router's part set, keeping what others stored there. */
+const withEntry = (state: unknown, entry: EntryState): Record<string, unknown> => ({
+  ...(typeof state === 'object' && state !== null ? state : {}),
+  [STATE]: entry,
+});
 
 const isPromiseLike = (value: unknown): value is PromiseLike<unknown> =>
   (typeof value === 'object' || typeof value === 'function') &&
@@ -146,6 +197,13 @@ class RouterImpl implements Router {
   #levels: Level[] = [];
   #committed: RouteLocation | undefined;
   #pending: Navigation | undefined;
+  /** The committed history entry's key, and the positions entries were left at. */
+  #entry: string | undefined;
+  readonly #positions = new Map<string, Position>();
+  /** The last scroll position seen, before a fragment link's own scrolling. */
+  #lastScroll: Position | undefined;
+  #announcer: LiveAnnouncer | undefined;
+  #commits = 0;
 
   constructor(options: RouterOptions, base: string, mode: RouterMode) {
     this.#options = options;
@@ -173,6 +231,48 @@ class RouterImpl implements Router {
     // Fragment changes, including one set directly, also fire `popstate` (all three engines).
     scope.listen(win, 'popstate', () => void this.#go(this.#read(), 'pop'));
     scope.listen(win.document, 'click', (event: MouseEvent) => this.#onClick(event));
+    if (this.#options.scroll !== false) {
+      const history = win.history;
+      const restoration = history.scrollRestoration;
+      history.scrollRestoration = 'manual';
+      scope.add(() => {
+        history.scrollRestoration = restoration;
+      }, 'scroll restoration');
+      this.#lastScroll = { x: win.scrollX, y: win.scrollY };
+      // Store the position in the entry once scrolling pauses, so a reload or a return from
+      // another document restores it: Chromium and Firefox drop history changes made during
+      // `pagehide` on reload. One write per pause keeps within the browsers' history rate limits.
+      let scrolledAt = 0;
+      let saving = false;
+      const save = () => {
+        const wait = scrolledAt + SAVE_DELAY - Date.now();
+        if (wait > 0) {
+          scope.timeout(save, wait);
+          return;
+        }
+        saving = false;
+        if (!this.#pending) this.#remember(this.#lastScroll, true);
+      };
+      scope.listen(
+        win,
+        'scroll',
+        () => {
+          this.#lastScroll = { x: win.scrollX, y: win.scrollY };
+          scrolledAt = Date.now();
+          if (saving) return;
+          saving = true;
+          scope.timeout(save, SAVE_DELAY);
+        },
+        { passive: true },
+      );
+      // Leaving the page (reload, another document, or the back/forward cache): remember where.
+      scope.listen(win, 'pagehide', () => this.#remember({ x: win.scrollX, y: win.scrollY }, true));
+    }
+    if (this.#options.announce !== false) {
+      const regions = createLiveRegions(win.document.body);
+      scope.add(() => regions.remove(), 'route announcements');
+      this.#announcer = scope.use(new LiveAnnouncer({ regions: () => regions }));
+    }
     scope.add(() => {
       if (this.#owner === scope) this.#release(ownerSignal.reason);
     }, 'router');
@@ -445,14 +545,18 @@ class RouterImpl implements Router {
   #commit(navigation: Navigation, outcome: 'ready' | 'error' | 'not-found', error?: unknown): void {
     this.#pending = undefined;
     const { location, kind, levels } = navigation;
-    const win = this.#window!;
-    if (location) {
-      const href = this.#href(location);
-      if (kind === 'push') win.history.pushState(null, '', href);
-      else if (kind === 'replace') win.history.replaceState(null, '', href);
-      else if (kind === 'pop' && this.#mode === 'hash' && win.location.hash !== href) {
-        win.history.replaceState(win.history.state, '', href); // `#section` → `#/path#section`
-      }
+    const previous = this.#committed;
+    let restore: Position | undefined;
+    try {
+      restore = this.#record(kind, location);
+    } catch (failure) {
+      // The URL could not be written (WebKit refuses more than 100 history changes in 10
+      // seconds): the committed location stays, so the view never disagrees with the URL.
+      reportOddkinError(failure, { code: 'app.router.history', origin: this.#label() });
+      for (const level of levels) if (!this.#levels.includes(level)) level.scope.dispose(failure);
+      this.#state.value = { ...this.#state.peek(), navigating: undefined };
+      navigation.resolve(false);
+      return;
     }
     for (const level of this.#levels) {
       if (!levels.includes(level)) {
@@ -474,6 +578,130 @@ class RouterImpl implements Router {
     this.#state.value = state;
     this.#title(state);
     navigation.resolve(true);
+    const commit = ++this.#commits;
+    // Scroll, focus, and announce once the view has rendered the new state.
+    void settled().then(() => {
+      if (commit === this.#commits && this.#owner) {
+        this.#afterCommit(commit, kind, state, previous, restore);
+      }
+    });
+  }
+
+  /**
+   * Write the history entry of a commit; throws if the History API refuses a new URL. Returns
+   * the position to restore, if any. Other writes are best effort and kept to a minimum.
+   */
+  #record(kind: Kind, location: RouteLocation | undefined): Position | undefined {
+    const win = this.#window!;
+    const history = win.history;
+    if (!location || kind === 'refresh') return undefined;
+    const href = this.#href(location);
+    if (kind === 'push' || kind === 'replace') {
+      if (kind === 'push') this.#remember({ x: win.scrollX, y: win.scrollY }, true);
+      const key = newKey();
+      const state = withEntry(null, { key });
+      if (kind === 'push') history.pushState(state, '', href);
+      else history.replaceState(state, '', href);
+      this.#entry = key;
+      return undefined;
+    }
+    // `pop` and `initial`: the browser already shows this entry. The entry left by a pop can no
+    // longer be written, and a fragment link may already have scrolled: keep the last position.
+    if (kind === 'pop') this.#remember(this.#lastScroll, false);
+    const entry = entryOf(history.state);
+    this.#entry = entry?.key;
+    // In hash mode, an in-page fragment (`#section`) is written in full (`#/path#section`).
+    if (kind === 'pop' && this.#mode === 'hash' && win.location.hash !== href) {
+      try {
+        history.replaceState(history.state, '', href);
+      } catch {
+        // Best effort: the location is already right; only its spelling differs.
+      }
+    }
+    return entry && (this.#positions.get(entry.key) ?? positionOf(entry));
+  }
+
+  /**
+   * Remember where the committed entry was left. `persist` also stores the position in the
+   * entry (for reloads and other documents), only when it differs from what the entry holds.
+   */
+  #remember(position: Position | undefined, persist: boolean): void {
+    const win = this.#window;
+    if (!win || !position || this.#options.scroll === false) return;
+    if (this.#entry) this.#positions.set(this.#entry, position);
+    if (!persist) return;
+    const stored = positionOf(entryOf(win.history.state));
+    if ((stored?.x ?? 0) === position.x && (stored?.y ?? 0) === position.y) return;
+    const key = (this.#entry ??= newKey());
+    this.#positions.set(key, position);
+    try {
+      win.history.replaceState(
+        withEntry(win.history.state, { key, ...position }),
+        '',
+        win.location.href,
+      );
+    } catch {
+      // Best effort: the position is still remembered for this session.
+    }
+  }
+
+  #afterCommit(
+    commit: number,
+    kind: Kind,
+    state: RouterState,
+    previous: RouteLocation | undefined,
+    restore: Position | undefined,
+  ): void {
+    const win = this.#window!;
+    const location = state.location;
+    const moved = kind !== 'initial' && kind !== 'refresh' && previous?.path !== location?.path;
+    if (this.#options.scroll !== false && location && kind !== 'refresh') {
+      if (restore) win.scrollTo(restore.x, restore.y);
+      else if (!(location.hash && this.#scrollToFragment(location.hash)) && moved) {
+        win.scrollTo(0, 0);
+      }
+    }
+    if (!moved) return;
+    untracked(() => {
+      try {
+        const target = this.#options.focus?.(state) as HTMLElement | null | undefined;
+        if (target) {
+          if (target.tabIndex < 0 && !target.hasAttribute('tabindex')) {
+            target.setAttribute('tabindex', '-1');
+          }
+          target.focus({ preventScroll: true });
+        }
+      } catch (error) {
+        reportOddkinError(error, { code: 'app.router.focus', origin: this.#label() });
+      }
+      const announcer = this.#announcer;
+      if (!announcer) return;
+      let message: string | undefined;
+      try {
+        const announce = this.#options.announce;
+        message = typeof announce === 'function' ? announce(state) : win.document.title;
+      } catch (error) {
+        reportOddkinError(error, { code: 'app.router.announce', origin: this.#label() });
+        return;
+      }
+      if (message) announcer.announce({ text: message, key: `navigation ${commit}` });
+    });
+  }
+
+  /** Scroll a fragment's target into view; `false` if the fragment names no element. */
+  #scrollToFragment(hash: string): boolean {
+    let id: string;
+    try {
+      id = decodeURIComponent(hash.slice(1));
+    } catch {
+      id = hash.slice(1);
+    }
+    const find =
+      this.#options.fragment ?? ((name: string) => this.#window!.document.getElementById(name));
+    const target = untracked(() => find(id));
+    if (!target) return false;
+    target.scrollIntoView();
+    return true;
   }
 
   #title(state: RouterState): void {
@@ -513,6 +741,8 @@ class RouterImpl implements Router {
     this.#levels = [];
     this.#committed = undefined;
     this.#window = undefined;
+    this.#entry = undefined;
+    this.#announcer = undefined;
     this.#state.value = IDLE;
   }
 }

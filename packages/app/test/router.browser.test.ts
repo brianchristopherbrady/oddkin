@@ -1,14 +1,23 @@
 // The router in a real document (core-contracts.md §9): the URL and the History API, native
 // anchors intercepted at the document, nested and lazy levels with their own scopes, cancellation,
 // errors, redirects, a base path, hash mode, titles, and stop/restart as an application service.
-// A window listener records each click's outcome and then prevents any real navigation, so
-// escaped links never leave the test page.
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { setErrorHandler, type ErrorContext } from '@oddkin/core/diagnostics';
-import { flush } from '@oddkin/core/reactive';
-import { createScope, scopeStats, type Scope } from '@oddkin/core/scope';
+import { describe, expect, it } from 'vitest';
+import { scopeStats } from '@oddkin/core/scope';
 import { createApp } from '../src/app/index.js';
-import { createRouter, route, type Router, type RouterOptions } from '../src/router/index.js';
+import { createRouter, route } from '../src/router/index.js';
+import {
+  back,
+  click,
+  fixture,
+  forward,
+  here,
+  link,
+  settle,
+  start,
+  stop,
+  until,
+  useRouterFixture,
+} from './router-fixture.js';
 
 interface Deferred<T> {
   promise: Promise<T>;
@@ -20,83 +29,7 @@ function deferred<T>(): Deferred<T> {
   return { promise, resolve };
 }
 
-const original = { href: location.href, title: document.title };
-let lastClick: { prevented: boolean } | undefined;
-const guard = (event: MouseEvent) => {
-  lastClick = { prevented: event.defaultPrevented };
-  event.preventDefault();
-};
-
-let owner: Scope | undefined;
-let container: HTMLElement;
-let reported: ErrorContext[];
-beforeEach(() => {
-  lastClick = undefined;
-  reported = [];
-  setErrorHandler((_error, context) => reported.push(context));
-  window.addEventListener('click', guard);
-  container = document.createElement('div');
-  document.body.append(container);
-});
-afterEach(() => {
-  owner?.dispose();
-  owner = undefined;
-  container.remove();
-  window.removeEventListener('click', guard);
-  setErrorHandler(undefined);
-  history.replaceState(null, '', original.href);
-  document.title = original.title;
-  flush();
-});
-
-/** Start a router at `url` on a new history entry, so back() only reaches this test's entries. */
-function start(url: string, options: Omit<RouterOptions, 'base'> & { base?: string }): Router {
-  history.pushState(null, '', url);
-  const router = createRouter({ base: '/app/', ...options });
-  owner = createScope();
-  owner.use(router);
-  return router;
-}
-
-const settle = async () => {
-  for (let i = 0; i < 5; i++) await Promise.resolve();
-  flush();
-};
-const until = async (condition: () => boolean) => {
-  for (let i = 0; i < 200 && !condition(); i++) await new Promise((r) => setTimeout(r, 5));
-  expect(condition()).toBe(true);
-};
-const traverse = async (step: () => void) => {
-  const popped = new Promise<void>((resolve) =>
-    window.addEventListener('popstate', () => resolve(), { once: true }),
-  );
-  step();
-  await popped;
-  await settle();
-};
-const back = () => traverse(() => history.back());
-const forward = () => traverse(() => history.forward());
-
-const here = () => location.pathname + location.search + location.hash;
-const link = (href: string, attributes: Record<string, string> = {}) => {
-  const anchor = document.createElement('a');
-  anchor.setAttribute('href', href);
-  for (const [name, value] of Object.entries(attributes)) anchor.setAttribute(name, value);
-  anchor.textContent = href;
-  container.append(anchor);
-  return anchor;
-};
-const click = async (anchor: HTMLAnchorElement, init?: MouseEventInit) => {
-  if (init) {
-    anchor.dispatchEvent(
-      new MouseEvent('click', { bubbles: true, cancelable: true, composed: true, ...init }),
-    );
-  } else {
-    anchor.click();
-  }
-  await settle();
-  return lastClick?.prevented;
-};
+useRouterFixture();
 
 describe('the router', () => {
   it('commits nested levels from the URL; navigation pushes or replaces and keeps unchanged levels', async () => {
@@ -198,8 +131,7 @@ describe('the router', () => {
     expect(here()).toBe('/app/b');
     expect(history.length).toBe(length + 1);
 
-    owner!.dispose();
-    owner = undefined;
+    stop();
     expect(scopeStats()).toEqual(baseline);
   });
 
@@ -324,7 +256,7 @@ describe('the router', () => {
     expect(await click(link('/app/products/1'))).toBe(true);
     expect(here()).toBe('/app/products/1');
     const host = document.createElement('div');
-    container.append(host);
+    fixture.container.append(host);
     const inShadow = document.createElement('a');
     inShadow.setAttribute('href', '/app/products/2');
     host.attachShadow({ mode: 'open' }).append(inShadow);
@@ -455,7 +387,7 @@ describe('the router', () => {
     expect(document.title).toBe('Not found · Oddkin');
     await router.navigate('/guides/broken/1');
     expect(document.title).toBe('Not found · Oddkin'); // left alone
-    expect(reported).toEqual([{ code: 'app.router.title', origin: 'router' }]);
+    expect(fixture.reported).toEqual([{ code: 'app.router.title', origin: 'router' }]);
   });
 
   it('runs as an application service: stop ends every level with its reason; restart reads the URL again', async () => {

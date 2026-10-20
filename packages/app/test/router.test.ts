@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { OddkinError } from '@oddkin/core/diagnostics';
+import { OddkinError, setErrorHandler, type ErrorContext } from '@oddkin/core/diagnostics';
 import { createScope } from '@oddkin/core/scope';
 import { createRouter, matchRoutes, route, type AnyRoute } from '../src/router/index.js';
 
@@ -140,5 +140,70 @@ describe('route definitions and router options', () => {
     const scope = createScope();
     expect(codeOf(() => scope.use(router))).toBe('app.router.environment'); // Node has no window
     scope.dispose();
+  });
+
+  it('keeps the committed location when the History API refuses a new URL', async () => {
+    const refusal = new DOMException(
+      'Attempt to use history.pushState() more than 100 times per 10 seconds',
+      'SecurityError',
+    );
+    const fakeWindow = {
+      history: {
+        state: null as unknown,
+        scrollRestoration: 'auto',
+        pushState() {
+          throw refusal;
+        },
+        replaceState(state: unknown) {
+          this.state = state;
+        },
+      },
+      location: {
+        pathname: '/',
+        search: '',
+        hash: '',
+        href: 'http://localhost/',
+        origin: 'http://localhost',
+      },
+      document: { title: '', addEventListener() {}, removeEventListener() {} },
+      scrollX: 0,
+      scrollY: 0,
+      scrollTo() {},
+      addEventListener() {},
+      removeEventListener() {},
+    };
+    const aborted: unknown[] = [];
+    const next = route({
+      path: 'next',
+      load: ({ signal }) => {
+        signal.addEventListener('abort', () => aborted.push(signal.reason));
+        return 'next';
+      },
+    });
+    const reported: ErrorContext[] = [];
+    setErrorHandler((_error, context) => reported.push(context));
+    try {
+      const router = createRouter({
+        routes: [route({ path: '' }), next],
+        window: fakeWindow as unknown as Window,
+        announce: false,
+      });
+      const scope = createScope();
+      scope.use(router);
+      expect(router.state.value).toMatchObject({ status: 'ready', location: { path: '/' } });
+      expect(await router.navigate('/next')).toBe(false);
+      expect(router.state.value).toMatchObject({
+        status: 'ready',
+        location: { path: '/' },
+        navigating: undefined,
+      });
+      expect(aborted).toEqual([refusal]);
+      expect(reported).toEqual([{ code: 'app.router.history', origin: 'router' }]);
+      expect(fakeWindow.history.scrollRestoration).toBe('manual');
+      scope.dispose();
+      expect(fakeWindow.history.scrollRestoration).toBe('auto');
+    } finally {
+      setErrorHandler(undefined);
+    }
   });
 });

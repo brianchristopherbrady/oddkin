@@ -2,7 +2,7 @@
 
 Optional application lifetime, router, and async resources. Components never need it.
 
-**Status:** Implemented: `./app` (`createApp`, M6), `./resource` (`resource`, M7), `./command` (`command`, M7), and `./router` (`createRouter`, `route`, `matchRoutes`, M7), all re-exported from the root entry. Planned (M7): focus, announcements, and scroll restoration for the router; page suspension. Contract: [core-contracts.md §8–§9](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
+**Status:** Implemented: `./app` (`createApp`, M6), `./resource` (`resource`, M7), `./command` (`command`, M7), and `./router` (`createRouter`, `route`, `matchRoutes`, M7), all re-exported from the root entry. Planned (M7): page suspension. Example: [examples/router](../../examples/router/). Contract: [core-contracts.md §8–§9](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
 
 ## Applications (`@oddkin/app/app`)
 
@@ -126,6 +126,7 @@ const router = createRouter({
     route({ path: 'playground', redirect: '/components' }),
   ],
   formatTitle: (title) => (title ? `${title} · Docs` : 'Docs'),
+  focus: () => document.querySelector('main h1'), // after a navigation to another path
 });
 
 createApp({ root: document.querySelector('#docs'), setup: ({ use }) => void use(router) }).start();
@@ -135,4 +136,5 @@ createApp({ root: document.querySelector('#docs'), setup: ({ use }) => void use(
 - The URL is the source of truth. A navigation loads its new levels in parallel and commits once they settle; unchanged outer levels, with their scopes and data, are kept. A newer navigation aborts a pending one, which never commits and leaves no history entry.
 - `router.state` is `{ status, location, matches, error, navigating }`: `ready`, `error` (a failed level, outer levels kept), `not-found`, or `idle` while stopped; `router.match(route)` returns a typed match.
 - Links are intercepted at the document only for primary, unmodified clicks inside the base path. Modified clicks, `target`, `download`, `rel="external"`, other origins, and fragment links of the page behave natively.
-- Back and forward, query and fragment changes, redirects (legacy routes), titles, `refresh()`, and stop/restart with the application are handled. Focus, announcements, and scroll restoration are planned.
+- Back and forward, query and fragment changes, redirects (legacy routes), titles, `refresh()`, and stop/restart with the application are handled.
+- After a navigation to another path, focus moves to `focus(state)` and the title is announced in a polite live region (`announce: false` or `announce: (state) => message` to change it). Scroll restoration: new paths start at the top, fragments scroll into view, and back, forward, and reloads return to where each entry was left (`scroll: false` to opt out).

@@ -59,10 +59,12 @@ export const BUDGETS = {
   // timeout, per-attempt scopes, and concurrency handling over Scope, the reactive graph, and
   // diagnostics).
   command: 4096,
-  // 6 KiB; measured 5,461 on 2026-10-19 (@oddkin/app/router: nested, lazy, and redirecting routes
-  // with typed params, History API and link interception, per-level scopes, and titles over Scope,
-  // the reactive graph, and diagnostics).
-  router: 6144,
+  // 7.5 KiB; measured 6,974 on 2026-10-19 (@oddkin/app/router: nested, lazy, and redirecting
+  // routes with typed params, History API and link interception, per-level scopes, titles, focus,
+  // route announcements through core's LiveAnnouncer (about 0.7 KiB, imported even with
+  // `announce: false`), and scroll restoration, over Scope, the reactive graph, and diagnostics).
+  // Was 6 KiB (5,461 measured) before focus, announcements, and scroll restoration.
+  router: 7680,
 };
 
 /**
