@@ -100,6 +100,14 @@ for (const [entry, size] of Object.entries(sizes)) {
       'packages/app/dist/prod/app/',
       'packages/app/dist/prod/resource/',
     ]);
+  // A router needs no rendering code, no state package, and no resource or command code.
+  if (entry === 'router')
+    forbid(entry, size, [
+      ...['element/', 'template/', 'styles/'].map((f) => `packages/core/dist/prod/${f}`),
+      'packages/state',
+      'packages/app/dist/prod/resource/',
+      'packages/app/dist/prod/command/',
+    ]);
   if (entry === 'counter' || entry === 'component' || entry === 'list') {
     for (const forbidden of ['packages/state', 'packages/app', 'packages/tokens']) {
       if (size.modules.some((m) => m.startsWith(forbidden))) {

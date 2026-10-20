@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); §8 resources and §8.1 commands are **implemented** (M7) except the resource restore policy; the rest of §9 is a **proposal**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); §8 resources and §8.1 commands are **implemented** (M7) except the resource restore policy; in §9 the router is **implemented** (M7) except focus, announcements, and scroll restoration, and page suspension (§9.1) is a **proposal**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -628,8 +628,8 @@ Size: a command with a retry policy and a timeout is 3,723 B gzip with `Scope`, 
 ## 9. Application root and router (`@oddkin/app`)
 
 - `createApp({ root, setup })` owns a root scope and explicit services; `start()` / `stop()` idempotent with defined restart. No global singleton; multiple apps can coexist. *(Implemented, M6; below.)*
-- Router on `URL`, `URLSearchParams`, History API, native anchors, dynamic `import()`. Nested routes, typed params/search parsing, not-found, route errors, lazy modules, navigation cancellation. The active route owns its resources and subscriptions.
-- Preserve modified clicks, external links, downloads, `target`, fragments, history. Explicit title, focus, announcements, scroll restoration. URL is authoritative for navigable state (precedence over persistence documented). Base-path support. Hash-router option for static hosts without rewrites.
+- Router on `URL`, `URLSearchParams`, History API, native anchors, dynamic `import()`. Nested routes, typed params/search parsing, not-found, route errors, lazy modules, navigation cancellation. The active route owns its resources and subscriptions. *(Implemented, M7; below.)*
+- Preserve modified clicks, external links, downloads, `target`, fragments, history. Explicit title, focus, announcements, scroll restoration. URL is authoritative for navigable state (precedence over persistence documented). Base-path support. Hash-router option for static hosts without rewrites. *(Implemented, M7, except focus, announcements, and scroll restoration; below.)*
 - SSR, streaming, hydration, a compiler, and preemptive scheduling are later, separate projects — not implied v1 capabilities.
 
 **Application ownership (`@oddkin/app/app`, implemented, M6).** Verified in `packages/app/test/app.test.ts` (Node), `app.browser.test.ts` (Chromium, Firefox, WebKit), and `production.test.ts`.
@@ -672,6 +672,70 @@ shop.stop(); // disposes everything the run registered
 | `start()`/`stop()` inside `setup()`, or `start()` inside a stopping cleanup | `app.lifecycle.reentrant` | Thrown |
 
 Size: an application root with a store provided as context is 4,767 B gzip with `Scope`, the reactive graph, and diagnostics (budget 5,120 B); it loads no rendering code, persistence, or inspection. Component-only graphs still load nothing from `@oddkin/state` or `@oddkin/app` (`npm run size`).
+
+**Router (`@oddkin/app/router`, implemented, M7).** Also re-exported from `@oddkin/app`; imports without DOM globals, and `matchRoutes` is DOM-free. Verified in `packages/app/test/router.test.ts` (Node: matching, definitions, options) and `router.browser.test.ts` (Chromium, Firefox, WebKit: the real History API, links, back and forward). Focus after navigation, route announcements, and scroll restoration are planned next.
+
+```ts
+import { createApp, createRouter, route } from '@oddkin/app';
+
+const component = route({
+  path: ':tag',
+  params: ({ tag }) => (tag?.startsWith('odd-') ? { tag } : undefined), // otherwise not found
+  search: (query) => ({ tab: query.get('tab') ?? 'overview' }), // the level reloads for a new query
+  title: ({ params }) => params.tag,
+  load: ({ params, signal }) => fetchMetadata(params.tag, signal),
+});
+const router = createRouter({
+  base: '/docs/', // the deployment base path, an explicit input; mode: 'hash' for hosts without rewrites
+  routes: [
+    route({ path: '', title: 'Oddkin', load: () => import('./pages/home.js') }),
+    route({
+      path: 'components',
+      title: 'Components',
+      load: () => import('./pages/components.js'),
+      children: [component],
+    }),
+    route({ path: 'playground', redirect: '/components' }), // a legacy route (ADR 0028)
+  ],
+  formatTitle: (title) => (title ? `${title} · Oddkin` : 'Oddkin'),
+});
+
+createApp({ root: document.querySelector('#docs')!, setup: ({ use }) => void use(router) }).start();
+
+// The shell renders router.state; links stay native anchors:
+html`<a href=${router.href('/components/odd-button?tab=api')}>Button</a>`;
+```
+
+| API | Contract |
+| --- | --- |
+| `route({ path, name?, params?, search?, load?, title?, redirect?, children? })` | A typed route (the same object). `path` is relative to the parent: static segments, `:name` parameters (one whole segment, decoded), a final `*` for the rest, `''` for an index. `params(raw)` types the parameters of all levels so far, or returns `undefined` to decline the match. Patterns are checked here and by `createRouter()` |
+| `matchRoutes(routes, path)` | DOM-free matching of an application path: the matched levels, outermost first, or `undefined`. Siblings are tried in definition order and the first full match wins; a parent ends the match when no child matches the empty rest; trailing slashes are ignored; a path that cannot be decoded matches nothing |
+| `createRouter({ routes, base?, mode?, formatTitle?, window?, name? })` | Inert until `use(router)` (or `scope.use(router)`); it then reads the URL, intercepts links, and follows `popstate` until that scope ends |
+| `router.state` | Read-only `Readable<RouterState>`: `{ status: 'idle' \| 'ready' \| 'error' \| 'not-found', location, matches, error, navigating }`. A match is `{ route, params, search, status: 'ready', data }` or `{ route, params, search, status: 'error', error }`, and keeps its identity while its level is kept; `navigating` is the location being loaded while the committed one stays shown |
+| `router.match(route)` | The committed match for `route`, typed by the route (tracked) |
+| `router.navigate(to, { replace? })` | Navigate to an application path, resolved like a URL against the committed location. Resolves `true` when it commits and `false` when superseded or stopped |
+| `router.href(to)` | The `href` for an application path: below `base` in history mode, `#/…` in hash mode |
+| `router.refresh()` | Load every level of the current location again, without a history entry |
+
+- **The URL first; commit after loading.** A navigation matches the path, keeps each leading level whose route and parameters are unchanged (and, for a level that declares `search`, whose query is unchanged), and starts the loads of the new levels in parallel. Each new level gets its own scope and signal, which live as long as the level stays matched. When every load has settled, the navigation commits: the history entry is written (`pushState`; `replaceState` for `replace`, for redirects of replaced navigations, and for links to the current URL), left levels are disposed with an `AbortError` naming them, and `state` changes once. Back and forward (`popstate`) commit the location the browser already shows. A change of fragment only reloads nothing.
+- **Cancellation.** A new navigation supersedes a pending one: its new levels are aborted (`AbortError`, "navigation superseded"), their results never commit, and no history entry is written, so rapid navigation leaves one entry. Stopping the application aborts a pending navigation and disposes every level with the application's reason, and the state returns to `idle`; restarting reads the URL again.
+- **Errors and not found.** A failing or throwing load (including a failed `import()`) or `search` parser fails its level; outer levels stay `ready`, and the state is `error` with the first failure. A throwing `params` parser fails the match (`matches` empty). No match, or a URL outside the base path, is `not-found`. Errors and not-found commit their URL, so reloading tries again; `refresh()` retries in place. A route with `redirect` (a path, or a function of the params and location) replaces a navigation that ends there: a pushed navigation pushes the target, others replace; more than 10 redirects in a row fail with `app.router.redirect`.
+- **Links.** One `click` listener on the document intercepts a link only when nothing handled the click (`defaultPrevented`), with the primary button and no Ctrl, Meta, Shift, or Alt, on an anchor (found through `composedPath()`, so links in open shadow roots work) that has an `href`, no `download`, no `target` other than `_self`, no `rel="external"`, the page's origin, and a path inside the base path. In history mode a link to a fragment of the current page is left to the browser. Everything else (new tabs, downloads, other sites, other documents on the same origin) behaves natively; `rel="external"` marks a same-origin document the router must not handle.
+- **Base path and hash mode.** `base` (default `/`) is an explicit input: application paths are below it (`/docs` and `/docs/` are both the root) and `href()` writes it. `mode: 'hash'` keeps the application path in the fragment (`#/components?tab=api#usage`) for static hosts without rewrites; an in-page fragment link (`#usage`) keeps the route and is written in full (`#/components#usage`), also when the fragment is set directly. The router reads no locale: a locale prefix is an ordinary parameter.
+- **Titles.** On every commit the deepest level with a `title` (a string, or a function of its match) gives the title; `formatTitle(title, state)` composes it, including for not-found (`title` `undefined`); `undefined` leaves `document.title` alone. A throwing title is reported (`app.router.title`).
+- **Precedence.** The URL is authoritative for navigable state: when a persisted store and the URL disagree (a selected tab, a filter), the URL wins; persistence restores only what the URL does not say.
+
+| Failure | Code | Outcome |
+| --- | --- | --- |
+| An invalid pattern (`*` not last, `:` without a name), a redirecting route with children, `children` not an array | `app.router.route` | Thrown by `route()` or `createRouter()` |
+| `base` not a path starting with `/` (or containing `?` or `#`), an unknown `mode`, no `routes` array | `app.router.options` | Thrown by `createRouter()` |
+| `navigate()` or `refresh()` while the router is not running | `app.router.disconnected` | Thrown |
+| `href()` or `navigate()` with a URL of another origin | `app.router.path` | Thrown |
+| Connecting without a window (History API and document) | `app.router.environment` | Thrown by `connect`, so the application's start fails |
+| More than 10 redirects in a row | `app.router.redirect` | State `error` |
+| A route title or `formatTitle` throws | `app.router.title` | Reported; the title is left alone |
+
+Size: a router with nested, lazy, and redirecting routes is 5,461 B gzip with `Scope`, the reactive graph, and diagnostics (budget 6,144 B); it loads no rendering code, nothing from `@oddkin/state`, and no resource or command code.
 
 ### 9.1 Page suspension and restoration (proposal, M7; [ADR 0035](./decisions/0035-page-suspension-and-restoration.md))
 

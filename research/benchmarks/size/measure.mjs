@@ -21,6 +21,7 @@ export const ENTRIES = [
   'app',
   'resource',
   'command',
+  'router',
 ];
 
 /** Budgets in gzip bytes (ADR 0019). Measured 2026-10-17 in the comments. */
@@ -58,6 +59,10 @@ export const BUDGETS = {
   // timeout, per-attempt scopes, and concurrency handling over Scope, the reactive graph, and
   // diagnostics).
   command: 4096,
+  // 6 KiB; measured 5,461 on 2026-10-19 (@oddkin/app/router: nested, lazy, and redirecting routes
+  // with typed params, History API and link interception, per-level scopes, and titles over Scope,
+  // the reactive graph, and diagnostics).
+  router: 6144,
 };
 
 /**

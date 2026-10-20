@@ -3,6 +3,7 @@ import * as root from '../src/index.js';
 import * as app from '../src/app/index.js';
 import * as command from '../src/command/index.js';
 import * as resource from '../src/resource/index.js';
+import * as router from '../src/router/index.js';
 
 describe('@oddkin/app root entry', () => {
   it('identifies itself and its allowed internal dependencies', () => {
@@ -10,14 +11,15 @@ describe('@oddkin/app root entry', () => {
     expect(root.internalDependencies).toEqual(['@oddkin/core', '@oddkin/state']);
   });
 
-  it('re-exports application ownership, resources, and commands', () => {
-    for (const [name, value] of Object.entries({ ...app, ...resource, ...command }))
+  it('re-exports application ownership, resources, commands, and the router', () => {
+    for (const [name, value] of Object.entries({ ...app, ...resource, ...command, ...router }))
       expect((root as Record<string, unknown>)[name], name).toBe(value);
     expect(Object.keys(root).sort()).toEqual(
       [
         ...Object.keys(app),
         ...Object.keys(resource),
         ...Object.keys(command),
+        ...Object.keys(router),
         'internalDependencies',
         'packageName',
       ].sort(),

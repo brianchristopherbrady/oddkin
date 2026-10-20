@@ -2,7 +2,7 @@
 
 Optional application lifetime, router, and async resources. Components never need it.
 
-**Status:** Implemented: `./app` (`createApp`, M6), `./resource` (`resource`, M7), and `./command` (`command`, M7), all re-exported from the root entry. Planned (M7): `./router`, page suspension. Contract: [core-contracts.md §8–§9](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
+**Status:** Implemented: `./app` (`createApp`, M6), `./resource` (`resource`, M7), `./command` (`command`, M7), and `./router` (`createRouter`, `route`, `matchRoutes`, M7), all re-exported from the root entry. Planned (M7): focus, announcements, and scroll restoration for the router; page suspension. Contract: [core-contracts.md §8–§9](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
 
 ## Applications (`@oddkin/app/app`)
 
@@ -102,3 +102,37 @@ class SaveNote extends OddkinElement {
 - `run(input)` starts at once, keeping the caller's user activation, and resolves `success`, `error`, `cancelled`, or `dropped` (never started). It throws `app.command.disconnected` unless the command is connected.
 - One run at a time by default (`concurrency: 'exclusive'` drops a second run while one is pending); `queue` runs them in order and `latest` keeps only the latest waiting input. A running mutation is never aborted to start another.
 - `cancel()` aborts the pending run's signal and drops waiting runs; the owner's end (for example the element disconnecting) does the same with its reason. `timeout` fails an attempt with a `TimeoutError`.
+
+## Router (`@oddkin/app/router`)
+
+```js
+import { createApp, createRouter, route } from '@oddkin/app';
+
+const router = createRouter({
+  base: '/docs/', // explicit; or mode: 'hash' for static hosts without rewrites
+  routes: [
+    route({ path: '', title: 'Home', load: () => import('./pages/home.js') }),
+    route({
+      path: 'components',
+      title: 'Components',
+      children: [
+        route({
+          path: ':tag',
+          title: ({ params }) => params.tag,
+          load: ({ params, signal }) => fetchMetadata(params.tag, signal),
+        }),
+      ],
+    }),
+    route({ path: 'playground', redirect: '/components' }),
+  ],
+  formatTitle: (title) => (title ? `${title} · Docs` : 'Docs'),
+});
+
+createApp({ root: document.querySelector('#docs'), setup: ({ use }) => void use(router) }).start();
+// A shell element renders router.state; links stay <a href=${router.href('/components')}>.
+```
+
+- The URL is the source of truth. A navigation loads its new levels in parallel and commits once they settle; unchanged outer levels, with their scopes and data, are kept. A newer navigation aborts a pending one, which never commits and leaves no history entry.
+- `router.state` is `{ status, location, matches, error, navigating }`: `ready`, `error` (a failed level, outer levels kept), `not-found`, or `idle` while stopped; `router.match(route)` returns a typed match.
+- Links are intercepted at the document only for primary, unmodified clicks inside the base path. Modified clicks, `target`, `download`, `rel="external"`, other origins, and fragment links of the page behave natively.
+- Back and forward, query and fragment changes, redirects (legacy routes), titles, `refresh()`, and stop/restart with the application are handled. Focus, announcements, and scroll restoration are planned.

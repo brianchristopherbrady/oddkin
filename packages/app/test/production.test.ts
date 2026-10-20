@@ -100,6 +100,35 @@ describe('@oddkin/app production build', { timeout: 60_000 }, () => {
     for (const error of production) expect(error.message).toContain('Use the development build');
   });
 
+  it('keeps router codes but not their explanations', async () => {
+    type RouterModule = typeof import('../src/router/index.js');
+    const failures = (api: RouterModule) => {
+      const caught: { code: string; message: string }[] = [];
+      for (const attempt of [
+        () => api.route({ path: '*/x' }),
+        () => api.createRouter({ routes: [], base: 'docs' }),
+        () => api.createRouter({ routes: [] }).navigate('/'),
+      ]) {
+        try {
+          attempt();
+        } catch (error) {
+          caught.push(error as { code: string; message: string });
+        }
+      }
+      return caught;
+    };
+    const dev = failures(await import(pathToFileURL(join(dist, 'router/index.js')).href));
+    const production = failures(await import(pathToFileURL(join(prod, 'router/index.js')).href));
+    expect(dev.map((e) => e.code)).toEqual([
+      'app.router.route',
+      'app.router.options',
+      'app.router.disconnected',
+    ]);
+    expect(production.map((e) => e.code)).toEqual(dev.map((e) => e.code));
+    expect(dev[0]!.message).toContain('must come last');
+    for (const error of production) expect(error.message).toContain('Use the development build');
+  });
+
   it('contains no development messages or DEV references', async () => {
     const source = files(prod)
       .filter((f) => !f.endsWith(join('internal', 'dev.js')))
@@ -114,6 +143,10 @@ describe('@oddkin/app production build', { timeout: 60_000 }, () => {
       'which failures are safe to repeat',
       'retry delay must be a number',
       'concurrency must be',
+      'is not running: start it as a service',
+      'is not a path in this application',
+      'redirects in a row',
+      'must come last',
     ]) {
       expect(source).not.toContain(fragment);
     }

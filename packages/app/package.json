@@ -26,6 +26,11 @@
       "development": "./dist/command/index.js",
       "default": "./dist/prod/command/index.js"
     },
+    "./router": {
+      "types": "./dist/router/index.d.ts",
+      "development": "./dist/router/index.js",
+      "default": "./dist/prod/router/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
