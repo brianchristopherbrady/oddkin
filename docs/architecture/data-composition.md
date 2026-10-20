@@ -51,22 +51,22 @@ A link without `href`, an action without `action`, or a group without `items` is
 
 ### Rules
 
-| Rule | Contract |
-| --- | --- |
-| Transport | Complex objects via JS properties (`.items`). Never JSON in attributes. |
-| Ownership | Components never mutate caller objects. Internal derived state (e.g. flattened index) is private. |
-| Updates | Immutable replacement, same as other properties. Replacing `items` re-reconciles by key; mutating in place is unsupported (dev diagnostic when detectable via dev-only freezing). |
-| Events | Typed user-intent events (`odd-action`, `odd-toggle`, `odd-select`) with `detail: { id, … }`; `bubbles: true, composed: true`; documented `cancelable`. No store or router required. |
-| Links | Rendered as native `<a href>`; modified clicks, middle click, `target`, downloads, and context menus behave natively. Routers intercept at the document level as usual. |
-| Defaults | Small and visible: e.g. groups default to collapsed unless they contain `current`; `aria-current="page"` on the current link. Nothing consequential (navigation, actions) happens implicitly. |
+| Rule      | Contract                                                                                                                                                                                      |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Transport | Complex objects via JS properties (`.items`). Never JSON in attributes.                                                                                                                       |
+| Ownership | Components never mutate caller objects. Internal derived state (e.g. flattened index) is private.                                                                                             |
+| Updates   | Immutable replacement, same as other properties. Replacing `items` re-reconciles by key; mutating in place is unsupported (dev diagnostic when detectable via dev-only freezing).             |
+| Events    | Typed user-intent events (`odd-action`, `odd-toggle`, `odd-select`) with `detail: { id, … }`; `bubbles: true, composed: true`; documented `cancelable`. No store or router required.          |
+| Links     | Rendered as native `<a href>`; modified clicks, middle click, `target`, downloads, and context menus behave natively. Routers intercept at the document level as usual.                       |
+| Defaults  | Small and visible: e.g. groups default to collapsed unless they contain `current`; `aria-current="page"` on the current link. Nothing consequential (navigation, actions) happens implicitly. |
 
 ### Content vs options vs interaction state
 
-| Kind | Example | Owner |
-| --- | --- | --- |
-| Structured content | `items` | Caller |
-| Visual options | `variant`, `profile` (attributes/properties) | Caller |
-| Interaction state | `current` (active id), `expanded` ids | **Either** controlled by the caller **or** uncontrolled inside the component — never both |
+| Kind               | Example                                      | Owner                                                                                     |
+| ------------------ | -------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Structured content | `items`                                      | Caller                                                                                    |
+| Visual options     | `variant`, `profile` (attributes/properties) | Caller                                                                                    |
+| Interaction state  | `current` (active id), `expanded` ids        | **Either** controlled by the caller **or** uncontrolled inside the component — never both |
 
 Controlled mode: set `.current` (and optionally `.expanded`); the component emits intent events and does not change them itself. Uncontrolled mode: omit them; the component tracks expansion locally (initialised from item `expanded`) and still emits events. Setting `expanded` on an item **and** the `.expanded` property is a `model.state.conflict` diagnostic; the property wins.
 
@@ -78,13 +78,13 @@ Ordinary bindings stay sufficient. A helper is prototyped only to test whether i
 html`<odd-side-nav ${props({ label: 'Primary', items: navigation, current })}></odd-side-nav>`;
 ```
 
-| Aspect | Proposed contract |
-| --- | --- |
+| Aspect         | Proposed contract                                                                                                                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Supported keys | Declared public properties of the target element (from its `OddkinElement.with()` definition); unknown keys → dev diagnostic. Events are **not** accepted (use `@event`). |
-| Precedence | Explicit `.prop` / attribute bindings on the same element win over `props()`; within `props()` last write wins. |
-| Removal/reset | A key removed between renders resets that property to its declared default. |
-| Cleanup | No listeners are created; nothing to dispose. Owned by the template part. |
-| Upgrade | Values set before definition are replayed through the normal pre-upgrade path. |
+| Precedence     | Explicit `.prop` / attribute bindings on the same element win over `props()`; within `props()` last write wins.                                                           |
+| Removal/reset  | A key removed between renders resets that property to its declared default.                                                                                               |
+| Cleanup        | No listeners are created; nothing to dispose. Owned by the template part.                                                                                                 |
+| Upgrade        | Values set before definition are replayed through the normal pre-upgrade path.                                                                                            |
 
 Decision at M8: keep, rename, or drop based on the ergonomics study.
 
@@ -108,14 +108,14 @@ nav.flat;                 // Readable<readonly Entry<T>[]> in document order (de
 nav.byKey('theming');     // Entry | undefined
 ```
 
-| Capability | Contract |
-| --- | --- |
-| Identity | Key extraction; `collection.key.duplicate` and `collection.key.missing` diagnostics with paths |
-| Reconciliation | Keyed insert/remove/reorder/update; entries reused by key; feeds `repeat` so DOM and local item state survive |
-| Nesting | Optional `children` accessor; parent/depth metadata |
-| Ownership | Each rendered entry gets a child `Scope`; removed entries dispose subscriptions and owned resources |
-| State models | Optional, separately importable: `selectionModel` (none/single/multiple), `expansionModel`, `disabledModel`, `activeModel` (roving focus target) — controlled or uncontrolled |
-| Keyboard | **Not** in the collection. Separate controllers per pattern in `@oddkin/core/controllers/*` (`RovingFocus` and `FocusRecovery` implemented, core-contracts.md §4.1; typeahead planned), composed by each component according to WAI-ARIA APG: navigation links use Tab order; menus, tabs, listboxes, and trees each use their own model |
+| Capability     | Contract                                                                                                                                                                                                                                                                                                                                 |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identity       | Key extraction; `collection.key.duplicate` and `collection.key.missing` diagnostics with paths                                                                                                                                                                                                                                           |
+| Reconciliation | Keyed insert/remove/reorder/update; entries reused by key; feeds `repeat` so DOM and local item state survive                                                                                                                                                                                                                            |
+| Nesting        | Optional `children` accessor; parent/depth metadata                                                                                                                                                                                                                                                                                      |
+| Ownership      | Each rendered entry gets a child `Scope`; removed entries dispose subscriptions and owned resources                                                                                                                                                                                                                                      |
+| State models   | Optional, separately importable: `selectionModel` (none/single/multiple), `expansionModel`, `disabledModel`, `activeModel` (roving focus target) — controlled or uncontrolled                                                                                                                                                            |
+| Keyboard       | **Not** in the collection. Separate controllers per pattern in `@oddkin/core/controllers/*` (`RovingFocus` and `FocusRecovery` implemented, core-contracts.md §4.1; typeahead planned), composed by each component according to WAI-ARIA APG: navigation links use Tab order; menus, tabs, listboxes, and trees each use their own model |
 
 ### Cache invalidation
 - An item's rendered output depends on **(key, item object, renderer, and any reactive values read while rendering)**. Item templates are ordinary template parts, so reads of external signals (locale, `current`, a store selector) are tracked and re-run that item's parts when they change, even if the item object is unchanged.
@@ -128,15 +128,15 @@ Update work, allocations, and retained memory for insert/remove/reorder/replace 
 ## 4. Hybrid composition and customization
 
 This ladder applies within levels 2 and 4 of the multi-product customization ladder ([multi-product.md](./multi-product.md) §6). A data-driven composite that renders child components (e.g. editable-list rows) selects product-specific children through the component-family mechanism in multi-product.md §8, not through tag-name substitution.
-
+i
 
 ### Region sources
 Each content region declares exactly one authoritative source:
 
-| `odd-side-nav` region | Source | If both supplied |
-| --- | --- | --- |
-| `header`, `footer` | Named slots | n/a (slot only) |
-| main list | `items` property **or** declarative children (`<odd-nav-item>` / native `<a>` in the default slot) | `items` wins when it is set (including `[]`); slotted list children are not rendered and a `collection.source.conflict` dev diagnostic is emitted. No merging. |
+| `odd-side-nav` region | Source                                                                                             | If both supplied                                                                                                                                               |
+| --------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `header`, `footer`    | Named slots                                                                                        | n/a (slot only)                                                                                                                                                |
+| main list             | `items` property **or** declarative children (`<odd-nav-item>` / native `<a>` in the default slot) | `items` wins when it is set (including `[]`); slotted list children are not rendered and a `collection.source.conflict` dev diagnostic is emitted. No merging. |
 
 Every collection component documents its regions the same way in metadata.
 
@@ -190,13 +190,13 @@ export const NavigationItemModel = defineModel('oddkin.navigation-item', {
 export type NavigationItem = Infer<typeof NavigationItemModel>;
 ```
 
-| Output | Use |
-| --- | --- |
-| `Infer<T>` TypeScript types | Editor completion; `satisfies readonly NavigationItem[]` |
-| `model.validate(data)` → `{ ok, value, diagnostics }` | Runtime validation of **external** data (TS types do not validate JSON) |
-| `model.toJSONSchema()` | JSON Schema (2020-12) for the portable subset; non-portable fields (functions) are excluded and documented |
-| `model.migrate(data, fromVersion)` | Versioned migrations with diagnostics for unmigratable data |
-| Model metadata | Docs tables, Workbench data editors, `oddkin.metadata.json` (extracted by `@oddkin/analyzer`), agent input contracts, deprecations |
+| Output                                                | Use                                                                                                                                |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `Infer<T>` TypeScript types                           | Editor completion; `satisfies readonly NavigationItem[]`                                                                           |
+| `model.validate(data)` → `{ ok, value, diagnostics }` | Runtime validation of **external** data (TS types do not validate JSON)                                                            |
+| `model.toJSONSchema()`                                | JSON Schema (2020-12) for the portable subset; non-portable fields (functions) are excluded and documented                         |
+| `model.migrate(data, fromVersion)`                    | Versioned migrations with diagnostics for unmigratable data                                                                        |
+| Model metadata                                        | Docs tables, Workbench data editors, `oddkin.metadata.json` (extracted by `@oddkin/analyzer`), agent input contracts, deprecations |
 
 - **Diagnostics:** JSON-pointer path, code (`model.type.mismatch`, `model.required.missing`, `model.kind.unknown`, `model.variant.unsupported`, `model.ref.invalid`, `model.id.duplicate`, `model.label.empty`, `model.option.incompatible`, `model.version.unsupported`, `model.state.conflict`, `model.depth.exceeded`), message, suggestion.
 - **Component rules** (labels required, incompatible options) live in the model. Schema validity is not proof of accessibility or behavior; browser and accessibility verification still apply.
@@ -211,15 +211,15 @@ export type NavigationItem = Infer<typeof NavigationItemModel>;
 
 ## 7. Packaging
 
-| Entry | Contents | In minimal consumers? |
-| --- | --- | --- |
-| `@oddkin/core/collections` | `collection`, state models | Only if a component uses it |
-| `@oddkin/core/model` | `m`, `defineModel`, `Infer` | Types only, unless the app validates at runtime |
-| `@oddkin/core/model/schema` | JSON Schema emitter | No (tooling) |
-| `@oddkin/components/side-nav` | Element class, `NavigationItem` type, `navigationKinds` | Yes for side-nav users |
-| `@oddkin/components/models` | Runtime validators and migrations for all component models (`navigationModel(kinds)` for project kinds) | No, unless imported |
-| `@oddkin/components/schemas/*.json` | Generated JSON Schemas | Data |
-| `@oddkin/components/composition` | Data-composition schema renderer `renderComposition()` (§8, experimental); unrelated to the component-definition composer `compose()` | **Never** unless imported |
+| Entry                               | Contents                                                                                                                              | In minimal consumers?                           |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `@oddkin/core/collections`          | `collection`, state models                                                                                                            | Only if a component uses it                     |
+| `@oddkin/core/model`                | `m`, `defineModel`, `Infer`                                                                                                           | Types only, unless the app validates at runtime |
+| `@oddkin/core/model/schema`         | JSON Schema emitter                                                                                                                   | No (tooling)                                    |
+| `@oddkin/components/side-nav`       | Element class, `NavigationItem` type, `navigationKinds`                                                                               | Yes for side-nav users                          |
+| `@oddkin/components/models`         | Runtime validators and migrations for all component models (`navigationModel(kinds)` for project kinds)                              | No, unless imported                             |
+| `@oddkin/components/schemas/*.json` | Generated JSON Schemas                                                                                                                | Data                                            |
+| `@oddkin/components/composition`    | Data-composition schema renderer `renderComposition()` (§8, experimental); unrelated to the component-definition composer `compose()` | **Never** unless imported                       |
 
 Boundary checks assert that a button-only or side-nav-only consumer contains no `models` validators, JSON Schema emitter, `components/composition` renderer, or `@oddkin/agent`.
 
@@ -258,14 +258,14 @@ AI support never makes this schema mandatory: agent tooling recommends templates
 
 ## 9. When to use which
 
-| Situation | Prefer |
-| --- | --- |
-| Repeated structured items with shared semantics (nav, menu, tabs, tree, table rows) | Data model |
-| Content arriving from a CMS/API/config | Data model + `validate` |
-| One-off or highly custom structure | Template / HTML |
-| Standard list plus custom header/footer | Hybrid (data + slots) |
-| Item needs extra visuals but same semantics | Local `render*` function or registered kind |
-| Whole page assembled from configuration | Composition schema (later), only for justified use cases |
+| Situation                                                                           | Prefer                                                   |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Repeated structured items with shared semantics (nav, menu, tabs, tree, table rows) | Data model                                               |
+| Content arriving from a CMS/API/config                                              | Data model + `validate`                                  |
+| One-off or highly custom structure                                                  | Template / HTML                                          |
+| Standard list plus custom header/footer                                             | Hybrid (data + slots)                                    |
+| Item needs extra visuals but same semantics                                         | Local `render*` function or registered kind              |
+| Whole page assembled from configuration                                             | Composition schema (later), only for justified use cases |
 
 ## 10. Acceptance fixtures
 
