@@ -16,6 +16,11 @@
       "development": "./dist/store/index.js",
       "default": "./dist/prod/store/index.js"
     },
+    "./context": {
+      "types": "./dist/context/index.d.ts",
+      "development": "./dist/context/index.js",
+      "default": "./dist/prod/context/index.js"
+    },
     "./inspect": {
       "types": "./dist/inspect/index.d.ts",
       "development": "./dist/inspect/index.js",

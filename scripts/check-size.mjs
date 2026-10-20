@@ -64,6 +64,13 @@ for (const [entry, size] of Object.entries(sizes)) {
       ...['element/', 'template/', 'styles/', 'scope/'].map((f) => `packages/core/dist/prod/${f}`),
       'packages/app',
     ]);
+  // Context needs no rendering code and no store.
+  if (entry === 'context')
+    forbid(entry, size, [
+      ...['element/', 'template/', 'styles/'].map((f) => `packages/core/dist/prod/${f}`),
+      'packages/state/dist/prod/store/',
+      'packages/app',
+    ]);
   if (entry === 'counter' || entry === 'component' || entry === 'list') {
     for (const forbidden of ['packages/state', 'packages/app', 'packages/tokens']) {
       if (size.modules.some((m) => m.startsWith(forbidden))) {

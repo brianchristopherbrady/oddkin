@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores and inspection (§7.1, `@oddkin/state`) are **implemented** (M6); the rest of §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, and context (§7.1–§7.2, `@oddkin/state`) are **implemented** (M6); the rest of §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -376,7 +376,7 @@ const addItem = action('cart/add', (item: CartItem) => {
 ```
 
 - `cart.state` is a read-only readable snapshot; selectors are memoized readables with equality control; components can interpolate `count` directly. No action registry, reducer, provider, or DI container required.
-- **Context:** typed, event-based nearest-provider protocol across composed trees; explicit subscription ownership; nested overrides; independent roots; reparenting; provider replacement cleanup. *(Planned, M6.)*
+- **Context:** typed, event-based nearest-provider protocol across composed trees; explicit subscription ownership; nested overrides; independent roots; reparenting; provider replacement cleanup. *(Implemented, §7.2.)*
 - **Persistence** (separate import): schema versions, migrations, storage adapters, restore ordering, quota/parse errors. *(Planned, M6.)*
 - Reusable components never create or require an application store. Framework adapters, if ever needed, are optional integrations with peer dependencies.
 
@@ -410,6 +410,51 @@ DOM-free and built on core's `signal` and `computed`, so there is no second grap
 | `inspect()` limit that is not a whole number ≥ 0 | `state.inspect.limit` | Thrown |
 
 Production builds keep these codes with short messages (ADR 0031). Size: a store with a selector and an action is 2,214 B gzip including the reactive graph (budget 2,560 B, `npm run size`); it loads no DOM module and no `Scope`.
+
+### 7.2 Context (`@oddkin/state/context`, implemented, M6)
+
+```ts
+import { consume, createContext, provide } from '@oddkin/state/context';
+
+export const themeContext = createContext<Theme>('theme');
+
+class AppShell extends OddkinElement {
+  readonly theme = signal(light);
+  readonly #provider = provide(this, themeContext, this.theme); // a value, or a readable to follow
+  protected override connected(scope: Scope) {
+    scope.use(this.#provider);
+  }
+}
+
+class ThemedButton extends OddkinElement {
+  readonly theme = consume(this, themeContext, { fallback: light }); // a readable
+  protected override connected(scope: Scope) {
+    scope.use(this.theme);
+  }
+  protected override moved() {
+    this.theme.resolve(); // after a state-preserving move
+  }
+}
+```
+
+Verified in `packages/state/test/context.browser.test.ts` (13 tests in Chromium, Firefox, and WebKit; the `moveBefore()` case in Chromium and Firefox, because WebKit 27.2 has none).
+
+- **Protocol.** The Web Components Community Group context protocol (candidate status): a consumer dispatches `context-request` (bubbling, composed) with `context`, `contextTarget`, `callback`, and `subscribe: true`; the nearest provider holding the same key calls `stopImmediatePropagation()` and answers. A provider announces itself with a `context-provider` event, as Lit does, so an enclosing provider re-dispatches the requests of the consumers it serves and consumers that found no provider ask again. `ContextRequestEvent` and `ContextProviderEvent` are exported. Between Oddkin peers the provider hands over its readable itself, so consumers read through one graph and stay glitch-free; consumers of other implementations get values and one `unsubscribe` function through their callback, and other implementations' providers reach Oddkin consumers the same way.
+- **Keys and types.** `createContext<T>(name)` returns a frozen key matched by identity; its type carries the protocol's phantom `__context__`. `consume()` with a `fallback` reads `T`, without one `T | undefined`.
+- **Ownership.** Providers and consumers are controllers activated with `scope.use()`, usually in `connected(scope)`; a subscription ends with that scope; each follows one connection at a time.
+- **Precedence.** The nearest provider in the composed tree answers: requests cross shadow roots, a provider whose host is a shadow root serves the host's slotted children, and nested providers override for their subtree. A provider ignores requests from its own host, so an element can consume a context and provide a derived value of it. Independent subtrees never reach each other's providers.
+- **Consumer value.** `consumer.value` is a tracked readable: bind it directly or read it in `render()` and computed values. `provided` (also tracked) is false while no provider answers; the value is then the `fallback`.
+- **Missing provider.** `required: true` reports `state.context.missing` (origin: the host's tag) when no provider answers at connection. The consumer keeps waiting: a provider that connects later, for example an element defined after its consumers, announces itself and the consumer resolves.
+- **Reparenting.** Removal and insertion end and restart the connection, so the consumer resolves again where it lands and its previous provider loses it. A state-preserving move (`moveBefore()`) keeps the connection; call `resolve()` from `moved()`, which also leaves a provider that no longer encloses the consumer.
+- **Provider replacement.** When a provider's scope ends while its consumers stay connected, each asks again and gets the next provider up, or the fallback while it waits for a new one. A provider that appears later between an existing provider and its consumers takes over those below it. Assigning `provider.value` (a value, or a readable to follow) updates consumers without new requests.
+- **Limits.** Other implementations' subscribed callbacks are held until they unsubscribe or the provider stops (the protocol's optional `WeakRef` safeguard is not used); when an Oddkin provider stops, they are asked to re-request only while connected, and one that gets no answer keeps its last value, because the protocol has no "unprovided" signal. One-shot requests (`subscribe` false) get one value and are never retained. Two copies of `@oddkin/state` create different keys.
+
+| Failure | Code | Outcome |
+| --- | --- | --- |
+| `required` consumer with no provider at connection | `state.context.missing` | Reported with the host's tag; the value stays the fallback until a provider appears |
+| Another implementation's callback throws during an update | `state.context.callback` | Reported; the other consumers are still updated |
+
+Size: a provider and a consumer are 3,699 B gzip with the reactive graph, `Scope`, and diagnostics (budget 4,096 B); context loads no rendering code and no store.
 
 ## 8. Resources (`@oddkin/app/resource`)
 

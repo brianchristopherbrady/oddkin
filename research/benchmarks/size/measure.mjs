@@ -16,6 +16,7 @@ export const ENTRIES = [
   'ai-chat',
   'side-nav',
   'store',
+  'context',
 ];
 
 /** Budgets in gzip bytes (ADR 0019). Measured 2026-10-17 in the comments. */
@@ -37,6 +38,9 @@ export const BUDGETS = {
   // 2.5 KiB; measured 2,214 on 2026-10-19 (@oddkin/state/store: createStore, select, action, and
   // frozen snapshots over the reactive graph and diagnostics; no DOM module).
   store: 2560,
+  // 4 KiB; measured 3,699 on 2026-10-19 (@oddkin/state/context: a provider and a consumer with
+  // the community context protocol events, over the reactive graph, Scope, and diagnostics).
+  context: 4096,
 };
 
 /**

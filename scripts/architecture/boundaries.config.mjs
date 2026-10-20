@@ -48,7 +48,7 @@ export default {
     '@oddkin/state': {
       kind: 'browser',
       allow: ['@oddkin/core'],
-      domFree: ['.', './store', './inspect'],
+      domFree: ['.', './store', './context', './inspect'],
     },
     '@oddkin/app': {
       kind: 'mixed',
