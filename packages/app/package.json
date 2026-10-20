@@ -21,6 +21,11 @@
       "development": "./dist/resource/index.js",
       "default": "./dist/prod/resource/index.js"
     },
+    "./command": {
+      "types": "./dist/command/index.d.ts",
+      "development": "./dist/command/index.js",
+      "default": "./dist/prod/command/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

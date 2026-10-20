@@ -92,6 +92,14 @@ for (const [entry, size] of Object.entries(sizes)) {
       'packages/state',
       'packages/app/dist/prod/app/',
     ]);
+  // A command is DOM-free like a resource, and loads neither resources nor application code.
+  if (entry === 'command')
+    forbid(entry, size, [
+      ...['element/', 'template/', 'styles/'].map((f) => `packages/core/dist/prod/${f}`),
+      'packages/state',
+      'packages/app/dist/prod/app/',
+      'packages/app/dist/prod/resource/',
+    ]);
   if (entry === 'counter' || entry === 'component' || entry === 'list') {
     for (const forbidden of ['packages/state', 'packages/app', 'packages/tokens']) {
       if (size.modules.some((m) => m.startsWith(forbidden))) {

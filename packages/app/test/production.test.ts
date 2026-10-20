@@ -75,6 +75,31 @@ describe('@oddkin/app production build', { timeout: 60_000 }, () => {
     );
   });
 
+  it('keeps command codes but not their explanations', async () => {
+    type CommandModule = typeof import('../src/command/index.js');
+    const failures = (api: CommandModule) => {
+      const caught: { code: string; message: string }[] = [];
+      for (const attempt of [
+        () => api.command({ run: () => 1 }).run(),
+        () => api.command({ run: () => 1, retry: { retries: 1 } as never }),
+      ]) {
+        try {
+          attempt();
+        } catch (error) {
+          caught.push(error as { code: string; message: string });
+        }
+      }
+      return caught;
+    };
+    const dev = failures(await import(pathToFileURL(join(dist, 'command/index.js')).href));
+    const production = failures(await import(pathToFileURL(join(prod, 'command/index.js')).href));
+    expect(dev.map((e) => e.code)).toEqual(['app.command.disconnected', 'app.command.options']);
+    expect(production.map((e) => e.code)).toEqual(dev.map((e) => e.code));
+    expect(dev[0]!.message).toContain('Connect it with scope.use(command) first');
+    expect(dev[1]!.message).toContain('which failures are safe to repeat');
+    for (const error of production) expect(error.message).toContain('Use the development build');
+  });
+
   it('contains no development messages or DEV references', async () => {
     const source = files(prod)
       .filter((f) => !f.endsWith(join('internal', 'dev.js')))
@@ -84,6 +109,11 @@ describe('@oddkin/app production build', { timeout: 60_000 }, () => {
       'do not run inside setup()',
       'already belongs to the running application',
       'has no root to provide context',
+      'resource() timeout must be',
+      'Connect it with scope.use(command) first',
+      'which failures are safe to repeat',
+      'retry delay must be a number',
+      'concurrency must be',
     ]) {
       expect(source).not.toContain(fragment);
     }

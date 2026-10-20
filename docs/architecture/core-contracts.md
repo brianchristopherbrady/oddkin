@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); §8 resources are **implemented** (M7) except the restore policy; the rest of §9 is a **proposal**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); §8 resources and §8.1 commands are **implemented** (M7) except the resource restore policy; the rest of §9 is a **proposal**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -523,7 +523,7 @@ class DemoSearch extends OddkinElement {
 - State is one discriminated `Readable<ResourceState<T>>`: `idle | pending | success | error`. Pending/error may carry explicitly named previous data. Latest success survives detachment; reconnect reloads the current key by default.
 - Invalidation revokes the previous generation's right to commit before its continuation can run (abort **and** generation guard). Stale completions from non-cooperative work are ignored. Expected aborts never surface as unhandled rejections; real failures stay visible; timeout and user cancellation have distinct reasons.
 - Explicit `refresh`, `cancel`, `retry`, `dispose`. Retries, debounce, caching, dedupe, stale-while-revalidate, and optimistic state are opt-in policies.
-- Resources are for reads. Mutations are explicit commands; cancelling a fetch does not roll back a server operation.
+- Resources are for reads. Mutations are explicit commands (§8.1); cancelling a fetch does not roll back a server operation.
 - *(Proposed, §9.1.)* Restore policy: by default a resource keeps its state across page suspension. An opt-in `revalidateOnRestore` policy starts a new generation after a persisted `pageshow`, with the usual abort and generation guards. Failed revalidation surfaces as the resource's `error` state. Mutations are never retried automatically.
 
 **Implemented (M7)** in `@oddkin/app/resource`, also re-exported from `@oddkin/app`; DOM-free. Verified in `packages/app/test/resource.test.ts` (Node) and `resource.browser.test.ts` (the search element above in Chromium, Firefox, and WebKit). The restore policy is planned with §9.1; automatic retries, debounce, caching, deduplication, stale-while-revalidate, and optimistic state are not implemented.
@@ -546,6 +546,84 @@ class DemoSearch extends OddkinElement {
 | A load is slower than `timeout` | — | State `error` with a `TimeoutError`; the load's signal is aborted with it |
 
 Size: a search resource with a timeout is 3,416 B gzip with `Scope`, the reactive graph, and diagnostics (budget 3,840 B); it loads no rendering code and nothing from `@oddkin/state`.
+
+### 8.1 Commands (`@oddkin/app/command`, implemented, M7)
+
+Resources read; commands change things. `@oddkin/app/command`, also re-exported from `@oddkin/app`; DOM-free. Verified in `packages/app/test/command.test.ts` (Node) and `command.browser.test.ts` (the cart element below in Chromium, Firefox, and WebKit).
+
+```ts
+import { OddkinElement, type Scope } from '@oddkin/core';
+import { createStore } from '@oddkin/state';
+import { command, resource } from '@oddkin/app';
+
+class DemoCart extends OddkinElement {
+  items = createStore<readonly Item[]>([]); // what the user sees: the server's cart, plus an optimistic item
+  cart = resource({ source: () => 'cart', load: (_key, { signal }) => getCart(signal) });
+  add = command({
+    name: 'add to cart',
+    run: (item: Item, { signal }) => postToCart(item, signal), // the server deduplicates on item.id
+    // Only a 503 is retried: the server did not process the request.
+    retry: {
+      retries: 2,
+      when: (error) => error instanceof HttpError && error.status === 503,
+      delay: (attempt) => 500 * attempt,
+    },
+  });
+
+  connected(scope: Scope) {
+    scope.use(this.cart);
+    scope.use(this.add); // the connection owns the runs
+    scope.effect(() => {
+      const cart = this.cart.state.value;
+      if (cart.status === 'success') this.items.update(() => cart.value);
+    });
+  }
+
+  async addItem(item: Item) {
+    this.items.update((items) => [...items, item]); // optimistic
+    const rollBack = () => this.items.update((items) => items.filter((i) => i.id !== item.id));
+    const outcome = await this.add.run(item); // never rejects
+    switch (outcome.status) {
+      case 'success': // the server's cart, with the item
+        this.items.update(() => outcome.value);
+        break;
+      case 'error': // an answer from the server is a refusal: roll back; no answer is unknown
+        if (outcome.error instanceof HttpError) rollBack();
+        else this.cart.refresh();
+        break;
+      case 'cancelled': // the server may have added it anyway: roll nothing back, read the cart again
+        this.cart.refresh();
+        break;
+      case 'dropped': // never sent
+        rollBack();
+    }
+  }
+}
+```
+
+| API | Contract |
+| --- | --- |
+| `command({ run, retry?, timeout?, concurrency?, name? })` | Inert; runs only through `run()` while connected (`scope.use(command)`). `run(input, { signal, scope, attempt })` runs untracked and may return a value or a promise; everything registered on `scope` ends with the attempt |
+| `command.state` | Read-only `Readable<CommandState<I, R>>`: `{ status: 'idle' }`, `{ status: 'pending', input, attempt, error }` (`error` is the failure being retried, `undefined` on the first attempt), `{ status: 'success', input, value }`, `{ status: 'error', input, error, attempts }`, `{ status: 'cancelled', input, reason }`. Owned by the command: it survives disconnection until `reset()` or the next run |
+| `run(input)` | Starts synchronously when nothing is pending, so it keeps the caller's user activation. Resolves the run's outcome, `{ status: 'success', value }`, `{ status: 'error', error }`, `{ status: 'cancelled', reason }`, or `{ status: 'dropped' }` (never started), and never rejects |
+| `cancel(reason?)` | Aborts the pending attempt's signal with `reason` (default an `AbortError`), sets `cancelled`, and drops waiting runs. No-op when nothing is pending |
+| `reset()` | Returns a settled state to `idle`; no-op while a run is pending |
+| `dispose()` | Cancels, disconnects, and ignores later connections. Idempotent |
+
+- **Cancellation is not a rollback.** `cancel()`, or the end of the owner (an element disconnecting, an application stopping, another `scope.use()`), aborts the pending attempt's signal with the real reason and stops waiting; a later result or failure of that attempt is ignored. The server may still have applied the change, so the state says `cancelled` with the input, never `idle`. Undoing anything is the consumer's explicit decision; reading the server's state again is the usual answer (above).
+- **Retries are an explicit policy.** Nothing is retried by default. `retry: { retries, when, delay? }` retries a failure only while `when(error, attempt)` says it is safe to repeat (for example a 503 from a server that deduplicates on an idempotency key), at most `retries` times, after `delay` milliseconds (a number, or a function of the failed attempt and its error; default 0). Each attempt gets a fresh scope and signal, and a failed attempt's signal is aborted with its failure. During the delay the state is `pending` with the next attempt's number and the failure; cancelling then starts nothing.
+- **Concurrency.** `exclusive` (default): `run()` while a run is pending starts nothing and resolves `dropped`, so a double submission cannot apply a mutation twice. `queue`: runs wait their turn in call order, and a failure does not stop the queue. `latest`: like `queue`, but a new input replaces the waiting one, which resolves `dropped`. No policy aborts a running mutation to start another, because aborting does not stop the server.
+- **Timeouts.** `timeout` fails an attempt with a `TimeoutError` and aborts its signal with it, whether or not `run` cooperates; a policy may retry it.
+- No query cache, middleware, or action ceremony: a command is independent of stores, and updating a store stays the plain `update()` of §7.1.
+
+| Failure | Code | Outcome |
+| --- | --- | --- |
+| `run()` while not connected, or after `dispose()` | `app.command.disconnected` | Thrown by `run()`; nothing starts |
+| No `run` function; a `timeout` or `retry.delay` that is not a number of milliseconds ≥ 0; `retry.retries` that is not a whole number ≥ 0; a `retry` without `when`; an unknown `concurrency` | `app.command.options` | Thrown by `command()` |
+| `retry.when` or `retry.delay` throws, or `delay` returns anything but a number of milliseconds ≥ 0 | `app.command.retry` | Reported; the run fails with its own error instead of retrying |
+| An attempt is slower than `timeout` | — | The attempt fails with a `TimeoutError`, retried only if the policy says so |
+
+Size: a command with a retry policy and a timeout is 3,723 B gzip with `Scope`, the reactive graph, and diagnostics (budget 4,096 B); it loads no rendering code, nothing from `@oddkin/state`, and no resource or application code.
 
 ## 9. Application root and router (`@oddkin/app`)
 
