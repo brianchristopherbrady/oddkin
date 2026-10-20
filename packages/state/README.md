@@ -2,7 +2,7 @@
 
 Optional stores, selectors, context, persistence, and inspection. Reusable components never need it: an application feature owns a store and hands values to components as properties.
 
-**Status:** M6 in progress. Implemented: `./store` and `./context` (both re-exported from the root entry) and `./inspect`. Planned: `./persist`. Contract: [core-contracts.md §7](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
+**Status:** M6 in progress. Implemented: `./store` and `./context` (both re-exported from the root entry), `./inspect`, and `./persist`. Contract: [core-contracts.md §7](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
 
 ## Stores (`@oddkin/state/store`, DOM-free)
 
@@ -50,6 +50,24 @@ class CartBadge extends OddkinElement {
 ```
 
 Requests use the community context protocol (`context-request` events), so they cross shadow roots and interoperate with other implementations such as Lit's. The nearest provider wins; a consumer moved elsewhere, or whose provider stops, finds the next provider; a provider that connects later is found too. `required: true` reports `state.context.missing` when nothing answers.
+
+## Persistence (`@oddkin/state/persist`, DOM-free)
+
+```js
+import { persist } from '@oddkin/state/persist';
+
+const persistence = persist(settings, {
+  key: 'settings',
+  version: 2,
+  select: (state) => state.preferences, // nothing is stored unless selected (or the whole state)
+  restore: (state, preferences) => ({ ...state, preferences }),
+  migrate: { 2: (v1) => ({ ...v1, density: 'comfortable' }) },
+  validate: (data) => preferencesModel.validate(data).ok,
+});
+persistence.status.value; // 'empty' | 'restored' | 'rejected' | 'blocked' | 'unavailable'
+```
+
+Stored data is restored, migrated, and validated before `persist()` returns; changes are written once per microtask when the selection changed. Quota errors, unreachable storage, and bad stored data are reported (once per failing streak) and never reach the store or its subscribers. Data from a newer version is left alone until `clear()`.
 
 ## Inspection (`@oddkin/state/inspect`)
 

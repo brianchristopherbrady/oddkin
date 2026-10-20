@@ -26,6 +26,11 @@
       "development": "./dist/inspect/index.js",
       "default": "./dist/prod/inspect/index.js"
     },
+    "./persist": {
+      "types": "./dist/persist/index.d.ts",
+      "development": "./dist/persist/index.js",
+      "default": "./dist/prod/persist/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

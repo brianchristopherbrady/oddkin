@@ -85,7 +85,7 @@ Subpaths are created only when implemented; an empty export is not a delivered f
 | `./store` | `createStore`, `action`, `shallowEqual` ([core-contracts.md](./core-contracts.md) §7.1) | **no** | **Implemented** (M6) |
 | `./inspect` | `inspect` (bounded update log with action causes, live subscribers), `storeStats` | **no** | **Implemented** (M6) |
 | `./context` | `createContext`, `provide`, `consume`, `ContextRequestEvent`, `ContextProviderEvent` (community context protocol; [core-contracts.md](./core-contracts.md) §7.2) | imports without DOM globals; providers and consumers need a DOM | **Implemented** (M6) |
-| `./persist` | Versioned persistence adapter | no (storage reached only when called) | Planned (M6) |
+| `./persist` | `persist` — versioned persistence adapter: explicit selection, migrations, validation, isolated storage failures ([core-contracts.md](./core-contracts.md) §7.3) | **no** (storage reached only when called) | **Implemented** (M6) |
 | `./element` | Element-specific helpers | yes | Not needed so far: providers and consumers are controllers for any element's `scope.use()` |
 | `.` | Re-exports `./store` and `./context`; inspection and persistence stay separate imports | no | **Implemented** (M6) |
 

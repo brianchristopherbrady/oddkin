@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, and context (§7.1–§7.2, `@oddkin/state`) are **implemented** (M6); the rest of §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) are **implemented** (M6); the rest of §7–§9 are **proposals**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -377,7 +377,7 @@ const addItem = action('cart/add', (item: CartItem) => {
 
 - `cart.state` is a read-only readable snapshot; selectors are memoized readables with equality control; components can interpolate `count` directly. No action registry, reducer, provider, or DI container required.
 - **Context:** typed, event-based nearest-provider protocol across composed trees; explicit subscription ownership; nested overrides; independent roots; reparenting; provider replacement cleanup. *(Implemented, §7.2.)*
-- **Persistence** (separate import): schema versions, migrations, storage adapters, restore ordering, quota/parse errors. *(Planned, M6.)*
+- **Persistence** (separate import): schema versions, migrations, storage adapters, restore ordering, quota/parse errors. *(Implemented, §7.3.)*
 - Reusable components never create or require an application store. Framework adapters, if ever needed, are optional integrations with peer dependencies.
 
 ### 7.1 Stores (`@oddkin/state/store`, implemented, M6)
@@ -455,6 +455,45 @@ Verified in `packages/state/test/context.browser.test.ts` (13 tests in Chromium,
 | Another implementation's callback throws during an update | `state.context.callback` | Reported; the other consumers are still updated |
 
 Size: a provider and a consumer are 3,699 B gzip with the reactive graph, `Scope`, and diagnostics (budget 4,096 B); context loads no rendering code and no store.
+
+### 7.3 Persistence (`@oddkin/state/persist`, implemented, M6)
+
+```ts
+import { persist } from '@oddkin/state/persist';
+
+const persistence = persist(settings, {
+  key: 'settings',
+  version: 2,
+  select: (state) => state.preferences, // only what is selected is stored
+  restore: (state, preferences) => ({ ...state, preferences }),
+  migrate: { 2: (v1) => ({ ...(v1 as object), density: 'comfortable' }) },
+  validate: (data) => preferencesModel.validate(data).ok, // stored JSON is untrusted input
+});
+```
+
+A separate, DOM-free import; storage is reached only when `persist()` runs. Verified in `packages/state/test/persist.test.ts` (Node, in-memory storage that can fail) and `persist.browser.test.ts` (real Web Storage in Chromium, Firefox, and WebKit).
+
+- **Explicit selection.** Nothing is stored unless chosen: either the whole state (`restore` defaults to replacing it) or a `select`ion with a `restore` function that puts it back into the current state. Component properties are never persisted automatically.
+- **Envelope and versions.** The key holds `{ version, data }` (`serialize`/`deserialize` default to JSON; supply them for dates or other values JSON cannot keep). `version` is a whole number of 1 or more. Older stored data runs through `migrate` one step at a time, keyed by the version each step produces; newer stored data is neither applied nor overwritten (`blocked`) until `clear()`.
+- **Restore ordering.** `persist()` reads, migrates, validates, and applies stored data synchronously before it returns and before it subscribes, as one store update named `persist/restore` (visible to inspection). The restored data is not written back; the next change writes in the current version.
+- **Writes.** After changes, the selection is written once per microtask, and only when it differs from what was last written or restored (`equals`, default `Object.is`). `flush()` writes now; `dispose()` writes a pending change and stops; `clear()` removes the entry and allows writing again.
+- **Status.** `persistence.status` is a readable: `empty`, `restored`, `rejected` (unreadable, unmigratable, or invalid data: the store keeps its state and the next change overwrites the entry), `blocked`, or `unavailable` (no usable storage: the store works in memory).
+- **Failures are isolated.** Storage that cannot be reached (for example a `SecurityError` in a sandboxed page), missing storage, read failures, parse and migration failures, rejected data, serialization failures (a `BigInt` with JSON), and write failures (`QuotaExceededError`, verified with real Web Storage in all three engines) never throw into `update()`, the store's subscribers, or `persist()`'s caller. They are reported once per failing streak through `onError`, or the Oddkin error handler with the key as origin; a later change writes again.
+- **Not included.** Synchronization between tabs (`storage` events), asynchronous storage such as IndexedDB, and encryption.
+
+| Failure | Code | Outcome |
+| --- | --- | --- |
+| Empty key, or a version that is not a whole number ≥ 1 | `state.persist.options` | Thrown by `persist()` |
+| Storage cannot be reached or does not exist | `state.persist.unavailable` | Reported; status `unavailable` |
+| `getItem` throws | `state.persist.read` | Reported; status `unavailable` |
+| Stored text cannot be parsed, or is not an envelope | `state.persist.parse` | Reported; status `rejected` |
+| Stored version is newer than `version` | `state.persist.version` | Reported; status `blocked`, nothing written until `clear()` |
+| A migration step is missing or throws | `state.persist.migrate` | Reported; status `rejected` |
+| `validate` returns false or throws, or `restore` throws | `state.persist.invalid` | Reported; status `rejected` |
+| The selection cannot be serialized | `state.persist.serialize` | Reported; nothing written |
+| `setItem` or `removeItem` throws | `state.persist.write` | Reported; a later change or `flush()` writes again |
+
+Size: a persisted store is 3,028 B gzip with the store, reactive graph, and diagnostics (budget 3,328 B).
 
 ## 8. Resources (`@oddkin/app/resource`)
 

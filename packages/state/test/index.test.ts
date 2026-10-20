@@ -21,6 +21,7 @@ describe('@oddkin/state root entry', () => {
       ].sort(),
     );
     expect('inspect' in root).toBe(false);
+    expect('persist' in root).toBe(false);
   });
 
   it('imports without DOM globals: context events extend the platform Event only', () => {

@@ -17,6 +17,7 @@ export const ENTRIES = [
   'side-nav',
   'store',
   'context',
+  'persist',
 ];
 
 /** Budgets in gzip bytes (ADR 0019). Measured 2026-10-17 in the comments. */
@@ -41,6 +42,9 @@ export const BUDGETS = {
   // 4 KiB; measured 3,699 on 2026-10-19 (@oddkin/state/context: a provider and a consumer with
   // the community context protocol events, over the reactive graph, Scope, and diagnostics).
   context: 4096,
+  // 3.25 KiB; measured 3,028 on 2026-10-19 (@oddkin/state/persist with the store it follows:
+  // versioned envelope, migrations, validation, and storage-failure handling).
+  persist: 3328,
 };
 
 /**

@@ -71,6 +71,13 @@ for (const [entry, size] of Object.entries(sizes)) {
       'packages/state/dist/prod/store/',
       'packages/app',
     ]);
+  // Persistence is DOM-free like the store it follows: no DOM module, no Scope, no context.
+  if (entry === 'persist')
+    forbid(entry, size, [
+      ...['element/', 'template/', 'styles/', 'scope/'].map((f) => `packages/core/dist/prod/${f}`),
+      'packages/state/dist/prod/context/',
+      'packages/app',
+    ]);
   if (entry === 'counter' || entry === 'component' || entry === 'list') {
     for (const forbidden of ['packages/state', 'packages/app', 'packages/tokens']) {
       if (size.modules.some((m) => m.startsWith(forbidden))) {
