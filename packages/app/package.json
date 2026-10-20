@@ -31,6 +31,11 @@
       "development": "./dist/router/index.js",
       "default": "./dist/prod/router/index.js"
     },
+    "./lifecycle": {
+      "types": "./dist/lifecycle/index.d.ts",
+      "development": "./dist/lifecycle/index.js",
+      "default": "./dist/prod/lifecycle/index.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

@@ -47,7 +47,7 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0032](./0032-generated-agent-kits.md) | Generated agent kits and project context | Proposed | Agent |
 | [0033](./0033-multi-product-foundations.md) | Multi-product foundations, recomposition, and product scale | Proposed | Components / Theming / Tooling |
 | [0034](./0034-change-impact-and-conformance.md) | Change impact, portable conformance, explanations, and reproductions | Proposed | Tooling / Verification |
-| [0035](./0035-page-suspension-and-restoration.md) | Page suspension and back/forward cache restoration | Proposed | Core / App |
+| [0035](./0035-page-suspension-and-restoration.md) | Page suspension and back/forward cache restoration | Accepted | Core / App |
 | [0036](./0036-component-composition-api.md) | Component composition API: `compose()` and `define(definition)` | Accepted | Core |
 | [0037](./0037-naming-contract.md) | Naming contract: Oddkin, `odd-`, and `oddkin` | Accepted | Process / Distribution |
 | [0038](./0038-css-compatibility-and-progressive-enhancement.md) | CSS compatibility policy and progressive enhancement | Accepted | Platform |

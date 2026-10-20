@@ -129,6 +129,54 @@ describe('@oddkin/app production build', { timeout: 60_000 }, () => {
     for (const error of production) expect(error.message).toContain('Use the development build');
   });
 
+  it('keeps page-lifecycle codes but not their explanations', async () => {
+    type Modules = [
+      typeof import('../src/app/index.js'),
+      typeof import('../src/lifecycle/index.js'),
+    ];
+    const failures = ([api, lifecycle]: Modules) => {
+      const caught: { code: string; message: string }[] = [];
+      const reentrant = api.createApp({
+        setup({ app: self, use }) {
+          use({ connect() {}, suspend: () => self.resume() });
+        },
+      });
+      reentrant.start();
+      const reported: unknown[] = [];
+      const original = globalThis.reportError;
+      globalThis.reportError = (error: unknown) => reported.push(error);
+      try {
+        reentrant.suspend();
+      } finally {
+        globalThis.reportError = original;
+        reentrant.stop();
+      }
+      caught.push(reported[0] as { code: string; message: string });
+      try {
+        api
+          .createApp({ setup: ({ app: self, use }) => void use(lifecycle.pageLifecycle(self)) })
+          .start();
+      } catch (error) {
+        caught.push(error as { code: string; message: string });
+      }
+      return caught;
+    };
+    const load = async (base: string): Promise<Modules> => [
+      await import(pathToFileURL(join(base, 'app/index.js')).href),
+      await import(pathToFileURL(join(base, 'lifecycle/index.js')).href),
+    ];
+    const dev = failures(await load(dist));
+    const production = failures(await load(prod));
+    expect(dev.map((e) => e.code)).toEqual([
+      'app.lifecycle.reentrant',
+      'app.lifecycle.environment',
+    ]);
+    expect(production.map((e) => e.code)).toEqual(dev.map((e) => e.code));
+    expect(dev[0]!.message).toContain('do not run inside a suspend or resume pass');
+    expect(dev[1]!.message).toContain('needs a window with a document');
+    for (const error of production) expect(error.message).toContain('Use the development build');
+  });
+
   it('contains no development messages or DEV references', async () => {
     const source = files(prod)
       .filter((f) => !f.endsWith(join('internal', 'dev.js')))
@@ -147,6 +195,8 @@ describe('@oddkin/app production build', { timeout: 60_000 }, () => {
       'is not a path in this application',
       'redirects in a row',
       'must come last',
+      'do not run inside a suspend or resume pass',
+      'needs a window with a document',
     ]) {
       expect(source).not.toContain(fragment);
     }

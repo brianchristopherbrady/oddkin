@@ -1,6 +1,6 @@
 # 0035. Page suspension and back/forward cache restoration
 
-- **Status:** Proposed
+- **Status:** Accepted (2026-10-20; implemented in M7 — a real restoration verified in Chromium, not verified in Firefox or WebKit under Playwright)
 - **Date:** 2026-10-17
 - **Area:** Core / App
 - **Detailed contract:** [core-contracts.md](../core-contracts.md) §9.1
@@ -25,7 +25,7 @@ Browsers may freeze a page and restore it from the back/forward cache without di
 Resource and service contracts gain restore policies. Browser fixtures must prove an actual persisted restoration (`pageshow.persisted === true`); when the test environment prevents a real cache restoration, the scenario is recorded as not verified.
 
 ## Evidence
-Pending: M7 fixtures (repeated restoration, state preservation, listener counts, resource freshness, explicit shutdown, distinguished from reloads and ordinary history navigation). Source: R54 ([web.dev bfcache](https://web.dev/articles/bfcache)).
+Implemented (M7, [core-contracts.md](../core-contracts.md) §9.1): `pageLifecycle(app)` in `@oddkin/app/lifecycle`, `app.suspend()`/`app.resume()`, and the resource option `revalidateOnRestore`. Verified 2026-10-20 ([verification.md](../../verification.md)): in Chromium, `e2e/lifecycle.spec.ts` proves real restorations (`pageshow.persisted` true, the same JavaScript heap) twice in a row, with the state kept, one suspension and resumption per stay, no listener, scope, or timer registered twice, only the resource with a restore policy loading again, and nothing resumed after an explicit stop; reloads, history navigation inside the page, and stop/restart are separated in all three engines; real `PageTransitionEvent`s in all three engines show the same service behavior and that importing every package entry and connecting components registers no lifecycle listener. Not verified: a real restoration in Playwright's Firefox (its driver disables the cache) and WebKit (never restored in our probes), and freezing outside the cache (not triggerable headless). Source: R54 ([web.dev bfcache](https://web.dev/articles/bfcache)).
 
 ## Revisit when
 The browser baseline changes, or Page Lifecycle APIs become baseline-supported.

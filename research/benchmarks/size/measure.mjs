@@ -22,6 +22,7 @@ export const ENTRIES = [
   'resource',
   'command',
   'router',
+  'lifecycle',
 ];
 
 /** Budgets in gzip bytes (ADR 0019). Measured 2026-10-17 in the comments. */
@@ -49,11 +50,13 @@ export const BUDGETS = {
   // 3.25 KiB; measured 3,028 on 2026-10-19 (@oddkin/state/persist with the store it follows:
   // versioned envelope, migrations, validation, and storage-failure handling).
   persist: 3328,
-  // 5 KiB; measured 4,767 on 2026-10-19 (@oddkin/app/app: an application root with a store
-  // provided as context, over Scope, the reactive graph, and diagnostics).
-  app: 5120,
-  // 3.75 KiB; measured 3,416 on 2026-10-19 (@oddkin/app/resource: a search resource with a
-  // timeout, generations, and stale-result guards over Scope, the reactive graph, and diagnostics).
+  // 5.25 KiB; measured 4,975 on 2026-10-20 (@oddkin/app/app: an application root with a store
+  // provided as context, over Scope, the reactive graph, and diagnostics; +208 B since 4,767 on
+  // 2026-10-19 for suspend()/resume() of page suspension). Was 5 KiB.
+  app: 5376,
+  // 3.75 KiB; measured 3,527 on 2026-10-20 (@oddkin/app/resource: a search resource with a
+  // timeout, generations, and stale-result guards over Scope, the reactive graph, and diagnostics;
+  // +111 B since 3,416 for the restore policy).
   resource: 3840,
   // 4 KiB; measured 3,723 on 2026-10-19 (@oddkin/app/command: a mutation with a retry policy and a
   // timeout, per-attempt scopes, and concurrency handling over Scope, the reactive graph, and
@@ -65,6 +68,10 @@ export const BUDGETS = {
   // `announce: false`), and scroll restoration, over Scope, the reactive graph, and diagnostics).
   // Was 6 KiB (5,461 measured) before focus, announcements, and scroll restoration.
   router: 7680,
+  // 5 KiB; measured 4,676 on 2026-10-20 (@oddkin/app/lifecycle with @oddkin/app/app: an
+  // application that follows the page lifecycle with one suspendable service, over Scope, the
+  // reactive graph, diagnostics, and the context provider the application module imports).
+  lifecycle: 5120,
 };
 
 /**

@@ -1,6 +1,6 @@
 # Core, state, and application contracts
 
-Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); §8 resources and §8.1 commands are **implemented** (M7) except the resource restore policy; in §9 the router is **implemented** (M7), and page suspension (§9.1) is a **proposal**. Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
+Status: §1–§6 are **implemented** in `@oddkin/core` (M3) and verified in Chromium, Firefox, and WebKit ([verification.md](../verification.md)); in §7, stores, inspection, context, and persistence (§7.1–§7.3, `@oddkin/state`) and in §9 application ownership (`createApp`, `@oddkin/app`) are **implemented** (M6); §8 resources, with the restore policy, and §8.1 commands are **implemented** (M7); in §9 the router and page suspension and restoration (§9.1) are **implemented** (M7). Behaviors settled during implementation are listed in §6.1. Sections between contract markers (HTML comments naming `contract:core/<name>`) are published in `@oddkin/core` as `CONTRACTS.md` under stable ids; regenerate with `npm run contracts` after editing them. Reference IDs (`[Rnn]`) resolve to the register in [../research/synthesis.md](../research/synthesis.md).
 
 ## 1. Smallest useful component
 
@@ -524,13 +524,13 @@ class DemoSearch extends OddkinElement {
 - Invalidation revokes the previous generation's right to commit before its continuation can run (abort **and** generation guard). Stale completions from non-cooperative work are ignored. Expected aborts never surface as unhandled rejections; real failures stay visible; timeout and user cancellation have distinct reasons.
 - Explicit `refresh`, `cancel`, `retry`, `dispose`. Retries, debounce, caching, dedupe, stale-while-revalidate, and optimistic state are opt-in policies.
 - Resources are for reads. Mutations are explicit commands (§8.1); cancelling a fetch does not roll back a server operation.
-- *(Proposed, §9.1.)* Restore policy: by default a resource keeps its state across page suspension. An opt-in `revalidateOnRestore` policy starts a new generation after a persisted `pageshow`, with the usual abort and generation guards. Failed revalidation surfaces as the resource's `error` state. Mutations are never retried automatically.
+- Restore policy *(implemented, M7; §9.1)*: by default a resource keeps its state across page suspension. An opt-in `revalidateOnRestore` policy starts a new generation after a persisted `pageshow`, with the usual abort and generation guards. Failed revalidation surfaces as the resource's `error` state. Mutations are never retried automatically.
 
-**Implemented (M7)** in `@oddkin/app/resource`, also re-exported from `@oddkin/app`; DOM-free. Verified in `packages/app/test/resource.test.ts` (Node) and `resource.browser.test.ts` (the search element above in Chromium, Firefox, and WebKit). The restore policy is planned with §9.1; automatic retries, debounce, caching, deduplication, stale-while-revalidate, and optimistic state are not implemented.
+**Implemented (M7)** in `@oddkin/app/resource`, also re-exported from `@oddkin/app`; DOM-free. Verified in `packages/app/test/resource.test.ts` (Node) and `resource.browser.test.ts` (the search element above in Chromium, Firefox, and WebKit); the restore policy in `lifecycle.test.ts`, `lifecycle.browser.test.ts`, and `e2e/lifecycle.spec.ts` (§9.1). Automatic retries, debounce, caching, deduplication, stale-while-revalidate, and optimistic state are not implemented.
 
 | API | Contract |
 | --- | --- |
-| `resource({ source, load, equals?, timeout?, freshFor?, name? })` | Inert until `scope.use(resource)`. `source()` is read in a tracked effect owned by that scope; `load(key, { signal, scope, generation })` runs untracked and may return a value or a promise |
+| `resource({ source, load, equals?, timeout?, freshFor?, revalidateOnRestore?, name? })` | Inert until `scope.use(resource)`. `source()` is read in a tracked effect owned by that scope; `load(key, { signal, scope, generation })` runs untracked and may return a value or a promise |
 | `resource.state` | Read-only `Readable<ResourceState<K, T>>`: `{ status: 'idle' }`, `{ status: 'pending', key, previous }`, `{ status: 'success', key, value }`, `{ status: 'error', key, error, previous }`, where `previous` is the latest success of any key as `{ key, value }` (or `undefined`) |
 | `refresh()`, `retry()` | Load the current key again as a new generation, superseding a pending one, with `previous` set. No-op while disconnected or idle |
 | `cancel(reason?)` | Abort the pending load (signal reason `reason`, default an `AbortError`) and return to the state before it, without an error |
@@ -539,6 +539,7 @@ class DemoSearch extends OddkinElement {
 - **Generations.** Each load gets a fresh request scope (`context.scope`; everything registered on it ends with the generation) and its signal. A new key (by `equals`, default `Object.is`), `refresh()`, `cancel()`, a timeout, or disconnection revokes the generation's right to commit before its continuation runs and aborts its signal with the real reason: an `AbortError` naming the supersession, the `cancel()` reason, a `TimeoutError`, or the disconnecting scope's reason (for an element, "`<tag>` disconnected"). A superseded load that ignores its signal and resolves or fails later, even after the current one succeeded, never commits; a result arriving after its owner disconnected (for example while the body was being parsed) is discarded.
 - **Outcomes.** A success sets `success` and becomes the latest success; a rejection or a synchronous throw from the current generation sets `error` with `previous`. An abort of a superseded or cancelled generation is no error: both promise handlers are attached at once, so no unhandled rejection occurs and nothing is reported. `timeout` fails the generation at once with a `TimeoutError`, whether or not the load cooperates; user cancellation is not an error.
 - **Detachment.** Disconnection aborts a pending load and returns to the last settled state, so the latest success stays visible. Reconnecting reads the source again and reloads the current key, unless `freshFor` milliseconds have not passed since a success for that key (the freshness policy). An equal key keeps the current generation.
+- **Restoration.** With `revalidateOnRestore`, a connected resource with a key loads it again after each back/forward cache restoration that a running `pageLifecycle()` service observes (§9.1), unless its success for that key is younger than `freshFor`; an error is always loaded again. The new generation supersedes a load still pending from before the suspension, whose late result never commits. A disconnected or idle resource, or one without the policy, keeps its state.
 
 | Failure | Code | Outcome |
 | --- | --- | --- |
@@ -658,9 +659,10 @@ shop.stop(); // disposes everything the run registered
 | `app.start()` | Creates a fresh root `Scope` and calls `setup(context)` with it; returns and keeps the services `setup` returns. Idempotent while running. If `setup` throws, the partial run is disposed, the root is released, the application stays stopped, and the error reaches the caller |
 | `app.stop(reason?)` | Disposes the run's scope (cleanups in reverse order, `signal` aborted with `reason`, by default an `AbortError` `DOMException`); `services` becomes `undefined`. Idempotent; a throwing cleanup is reported (`scope.cleanup.error`) and the stop completes. A later `start()` runs `setup` again with fresh ownership |
 | `app.running`, `app.services` | `running` is tracked (effects and templates follow it); `services` belong to the current run |
+| `app.suspend()`, `app.resume()`, `app.suspended` | Page suspension (§9.1): suspend the run's services in reverse order of `use()`, resume them in order; nothing is disposed. `suspended` is tracked |
 | `context.scope`, `context.signal` | The run's root scope and its abort signal |
 | `context.provide(key, value)` | A context provider (§7.2) at the root for this run: consumers below the root resolve to it, fall back when the run stops, and resolve again to the next run's provider when it announces itself. Needs a root (`app.root.missing`) |
-| `context.use(service)` | Activates a service (`connect(scope)`) for the run. A service may declare `suspend()`/`resume()`; nothing calls them yet (page suspension, §9.1, is planned) |
+| `context.use(service)` | Activates a service (`connect(scope)`) for the run. A service may declare `suspend()`/`resume()`, which `app.suspend()` and `app.resume()` call (§9.1); a service used while the application is suspended is suspended at once |
 
 - **Roots.** A root is an element, shadow root, or document. One running application per root (`app.root.claimed`); stopping releases it. Applications with different roots are independent: their scopes, services, timers, listeners, and contexts never affect each other, and an application inside another's root overrides context below its own root.
 - **Reentrancy.** `start()` and `stop()` cannot run inside `setup()` or inside a cleanup of the run being stopped (`app.lifecycle.reentrant`); `stop()` during a stop is a no-op. To abandon a start, throw from `setup()`.
@@ -743,7 +745,7 @@ html`<a href=${router.href('/components/odd-button?tab=api')}>Button</a>`;
 
 Size: a router with nested, lazy, and redirecting routes, focus, announcements, and scroll restoration is 6,974 B gzip with `Scope`, the reactive graph, and diagnostics (budget 7,680 B); core's `LiveAnnouncer` is about 0.7 KiB of it and is loaded even with `announce: false`. It loads no rendering code, nothing from `@oddkin/state`, and no resource or command code.
 
-### 9.1 Page suspension and restoration (proposal, M7; [ADR 0035](./decisions/0035-page-suspension-and-restoration.md))
+### 9.1 Page suspension and restoration (implemented, M7; [ADR 0035](./decisions/0035-page-suspension-and-restoration.md))
 
 | Lifecycle | Trigger | What happens |
 | --- | --- | --- |
@@ -754,7 +756,60 @@ Size: a router with nested, lazy, and redirecting routes, focus, announcements, 
 | Permanent disposal | Page discarded, or explicit `stop()` | Disposal only through explicit stop; the browser discarding a page runs no Oddkin code |
 
 - Navigation is never assumed to disconnect elements or rebuild the application. `pagehide` never disposes the application. A genuinely disposed `Scope` is still replaced by a fresh one and never reuses an aborted signal.
-- Lifecycle listeners are activated only by an explicit, owned application service (e.g. `app.use(pageLifecycle())`, name proposed). It registers `pagehide`, `pageshow`, and `visibilitychange` once in the app root scope; importing a module never adds listeners. No `unload` or `beforeunload` listeners. `freeze`/`resume` are verified enhancements where supported, never required.
+- Lifecycle listeners are activated only by an explicit, owned application service, `use(pageLifecycle(app))` (below). It registers `pagehide`, `pageshow`, and `visibilitychange` once in the app root scope; importing a module never adds listeners. No `unload` or `beforeunload` listeners. `freeze`/`resume` are verified enhancements where supported, never required.
 - Services declare `suspend()`/`resume()` behavior: which observations or external connections (sockets, event sources, polling) pause, how they resume without duplicate listeners (listeners registered once and never re-added), and how failed reconnections surface. Revalidation is limited to declared resource policies and respects stale-result guards. Mutations are not retried, and cancellation implies no rollback. Anything else requires an explicit consumer policy.
 - Core components inside other frameworks never take ownership of the host page lifecycle.
 - Tests prove an actual persisted restoration (`pageshow.persisted === true`) and separate it from reloads and ordinary history navigation. They cover repeated restoration, state preservation, listener counts, resource freshness, and explicit shutdown. When a browser or test environment prevents a real cache restoration, the scenario is recorded as not verified; a test that only calls "go back" proves nothing about the cache.
+
+**Implemented (M7)** in `@oddkin/app/lifecycle` (`pageLifecycle`), `@oddkin/app/app` (`suspend`, `resume`), and `@oddkin/app/resource` (`revalidateOnRestore`), all re-exported from `@oddkin/app`; importing them adds no listener, and they import without DOM globals.
+
+```ts
+import { createApp, pageLifecycle, resource } from '@oddkin/app';
+
+class LiveFeed implements AppService {
+  #socket: WebSocket | undefined;
+  connect(scope: Scope) {
+    this.#open();
+    scope.add(() => this.#socket?.close()); // stop() ends it for good
+  }
+  suspend() {
+    this.#socket?.close(); // an open socket can keep a page out of the back/forward cache
+  }
+  resume() {
+    this.#open(); // a new connection; no listener is registered twice
+  }
+  #open() {
+    this.#socket = new WebSocket('/feed');
+  }
+}
+
+const news = resource({ source: () => 'today', load, revalidateOnRestore: true }); // loads again on restore
+
+createApp({
+  root: document.querySelector('#news')!,
+  setup({ app, scope, use }) {
+    use(pageLifecycle(app)); // the only page-lifecycle listeners, for this run
+    use(new LiveFeed());
+    scope.use(news);
+  },
+}).start();
+```
+
+| API | Contract |
+| --- | --- |
+| `pageLifecycle(app, { freeze?, window? })` | An application service. On `connect` it listens to `pagehide` and `pageshow` on the window and `visibilitychange` on the document, once, on the run's scope, and to `freeze`/`resume` on the document where the browser has them (`'onfreeze' in document`: Chromium), unless `freeze: false`. Stopping the application removes them |
+| `lifecycle.state` | Read-only `Readable<{ visible, suspended, restorations }>`: `visible` follows `document.visibilityState`; `suspended` is true while the page is in the back/forward cache or frozen; `restorations` counts the restorations this service saw |
+| `app.suspend()`, `app.resume()` | §9 above. The service calls them; an application or host that knows better may call them too |
+| `revalidateOnRestore` | Resource option (§8): load again after a restoration, unless fresh by `freshFor` |
+
+- **Transitions.** `pagehide` with `persisted` suspends the application (`app.suspend()`); without `persisted` the page is being unloaded for good, and nothing is suspended or disposed. `pageshow` with `persisted` resumes it and counts a restoration; without it the document is new, and nothing happens. `freeze` suspends and `resume` resumes. In Chromium's cache the events overlap (`pagehide`, `freeze`, then `resume`, `pageshow`): the application is suspended once and resumed once, at `pageshow`, since `resume` alone does not end a stay in the cache, while a `pageshow` always ends a freeze. Only these transitions call the application, so a visibility change never resumes an application that suspended itself.
+- **Services.** `suspend()` calls the run's services in reverse order of `use()` and `resume()` in order, as cleanups run; each call is isolated: a throwing service is reported (`app.service.suspend`, `app.service.resume`) and the others are still called. Both are idempotent and no-ops while stopped. `stop()` during a pass ends it; `suspend()` or `resume()` from inside a pass is rejected (`app.lifecycle.reentrant`). Suspension disposes nothing: the run's scopes, listeners, timers, and effects stay registered (`scopeStats()` is unchanged), and the poller in `examples/lifecycle` ends its interval on suspension and starts one on resumption, so resuming never duplicates it. `stop()` clears the suspension; the next run starts resumed.
+- **Restorations are page-wide.** A restoration is counted once per `pageshow` event however many applications use the service, and resources with `revalidateOnRestore` follow that count while connected. Without a running service nothing observes restorations, and no resource revalidates. Commands are never retried on restoration (§8.1): a pending run stays pending.
+
+| Failure | Code | Outcome |
+| --- | --- | --- |
+| `pageLifecycle` connected without a window and document | `app.lifecycle.environment` | Thrown from `use()` in `setup`, so the start is abandoned |
+| A service's `suspend()` or `resume()` throws | `app.service.suspend`, `app.service.resume` | Reported; the other services are still called |
+| `suspend()` or `resume()` from a service's `suspend()` or `resume()` | `app.lifecycle.reentrant` | Thrown into that hook, so reported as above |
+
+**Verification.** Real restorations from the back/forward cache are verified in Chromium only, by `e2e/lifecycle.spec.ts` on `examples/lifecycle`: Playwright launches Chromium with the cache disabled, so the test starts the full Chromium build (new headless) without that switch, where `pageshow.persisted` is `true` and the JavaScript heap is the same. It proves the same document after two restorations, the kept state, one suspension and one resumption per stay, no listener, scope, or timer registered twice, only the resource with the policy loading again, `freeze` and `resume` around the cache, and nothing resumed or reloaded after an explicit stop. Reloads, history navigation inside the page, and stop and restart are checked in Chromium, Firefox, and WebKit. **Not verified:** a real restoration in Firefox (Playwright's Firefox disables the cache in its driver; overriding its preference made the driver lose the restored page) and in WebKit (Playwright's WebKit never restored a page, headless or headed); freezing outside the cache (CDP's `Page.setWebLifecycleState` fired no `freeze` or `resume` in headless Chromium). In all three engines, `lifecycle.browser.test.ts` dispatches real `PageTransitionEvent` objects and shows that importing every core, components, state, and app entry and connecting components registers no lifecycle listener.

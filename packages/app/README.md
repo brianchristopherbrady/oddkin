@@ -2,7 +2,7 @@
 
 Optional application lifetime, router, and async resources. Components never need it.
 
-**Status:** Implemented: `./app` (`createApp`, M6), `./resource` (`resource`, M7), `./command` (`command`, M7), and `./router` (`createRouter`, `route`, `matchRoutes`, M7), all re-exported from the root entry. Planned (M7): page suspension. Example: [examples/router](../../examples/router/). Contract: [core-contracts.md §8–§9](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
+**Status:** Implemented: `./app` (`createApp`, M6), `./resource` (`resource`, M7), `./command` (`command`, M7), `./router` (`createRouter`, `route`, `matchRoutes`, M7), and `./lifecycle` (`pageLifecycle`, M7), all re-exported from the root entry. Examples: [examples/router](../../examples/router/), [examples/lifecycle](../../examples/lifecycle/). Contract: [core-contracts.md §8–§9](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
 
 ## Applications (`@oddkin/app/app`)
 
@@ -138,3 +138,26 @@ createApp({ root: document.querySelector('#docs'), setup: ({ use }) => void use(
 - Links are intercepted at the document only for primary, unmodified clicks inside the base path. Modified clicks, `target`, `download`, `rel="external"`, other origins, and fragment links of the page behave natively.
 - Back and forward, query and fragment changes, redirects (legacy routes), titles, `refresh()`, and stop/restart with the application are handled.
 - After a navigation to another path, focus moves to `focus(state)` and the title is announced in a polite live region (`announce: false` or `announce: (state) => message` to change it). Scroll restoration: new paths start at the top, fragments scroll into view, and back, forward, and reloads return to where each entry was left (`scroll: false` to opt out).
+
+## Page suspension (`@oddkin/app/lifecycle`)
+
+Browsers keep pages in a back/forward cache and restore them with the same JavaScript heap. Suspension is not disposal: nothing is stopped or rebuilt when the user leaves, and nothing starts again when they return. Opt in with one service:
+
+```js
+import { createApp, pageLifecycle, resource } from '@oddkin/app';
+
+const news = resource({ source: () => 'today', load, revalidateOnRestore: true });
+
+createApp({
+  setup({ app, scope, use }) {
+    use(pageLifecycle(app)); // pagehide/pageshow/visibilitychange, once, for this run
+    use(new LiveFeed()); // suspend() closes its socket, resume() opens a new one
+    scope.use(news); // loads again after a restoration
+  },
+}).start();
+```
+
+- While the page is in the cache (or frozen, where the browser has `freeze`), the application is suspended: `app.suspend()` calls the services' `suspend()` in reverse order, and restoration calls their `resume()` in order. Nothing is disposed, no listener is registered again, and `unload` is never used.
+- Resources keep their state unless they opt in with `revalidateOnRestore` (fresh data by `freshFor` is kept). Commands are never retried.
+- `lifecycle.state` follows `{ visible, suspended, restorations }`. Importing the package adds no listener; components never watch the page lifecycle themselves.
+- A real restoration is verified in Chromium; Playwright's Firefox and WebKit do not restore pages from the cache, so it is not verified there ([examples/lifecycle](../../examples/lifecycle/), `e2e/lifecycle.spec.ts`).

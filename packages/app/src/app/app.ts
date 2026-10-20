@@ -1,16 +1,22 @@
 /**
  * Application ownership (core-contracts.md §9): one root `Scope` per run, explicit services,
  * idempotent `start()` and `stop()`, restart with fresh scopes and services, and any number of
- * applications per page. No global singleton; importing this module registers nothing.
- * Imports without DOM globals; a root is used only when the application provides context at it.
+ * applications per page. `suspend()`/`resume()` pause and resume the run's services without
+ * disposing anything (page suspension, §9.1). No global singleton; importing this module
+ * registers nothing. Imports without DOM globals; a root is used only when the application
+ * provides context at it.
  */
 import { DEV } from '../internal/dev.js';
-import { OddkinError } from '@oddkin/core/diagnostics';
+import { OddkinError, reportOddkinError } from '@oddkin/core/diagnostics';
 import { signal, type Readable } from '@oddkin/core/reactive';
 import { createScope, type Controller, type Scope } from '@oddkin/core/scope';
 import { provide, type Context, type ContextProvider } from '@oddkin/state/context';
 
-/** A service activated for one run with `use()`. `suspend`/`resume` are called by `app.suspend()`. */
+/**
+ * A service activated for one run with `use()`. `suspend`/`resume` are called by `app.suspend()` and
+ * `app.resume()`, for example by `pageLifecycle()` when the page enters and leaves the back/forward
+ * cache. Suspension is not disposal: the service keeps its listeners and state.
+ */
 export interface AppService extends Controller {
   /** Pause external work (connections, polling) while the page is suspended. */
   suspend?(): void;
@@ -47,12 +53,25 @@ export interface App<S> {
   readonly root: Node | undefined;
   /** True between a successful `start()` and `stop()`. Tracked. */
   readonly running: boolean;
+  /** True between `suspend()` and `resume()` (or `stop()`). Tracked. */
+  readonly suspended: boolean;
   /** The current run's services; `undefined` while stopped. */
   readonly services: S | undefined;
   /** Start a run (idempotent while running). If `setup` throws, the run is disposed and the error rethrown. */
   start(): S;
   /** Dispose the run's scope (idempotent). `reason` becomes the abort reason. */
   stop(reason?: unknown): void;
+  /**
+   * Suspend the run's services (`suspend()` in reverse order of `use()`) without disposing
+   * anything. No-op unless running and not suspended. A throwing service is reported
+   * (`app.service.suspend`) and the others are still suspended.
+   */
+  suspend(): void;
+  /**
+   * Resume the run's services (`resume()` in order of `use()`). No-op unless suspended. A throwing
+   * service is reported (`app.service.resume`) and the others are still resumed.
+   */
+  resume(): void;
 }
 
 type Phase = 'stopped' | 'starting' | 'running' | 'stopping';
@@ -65,9 +84,14 @@ class AppImpl<S> implements App<S> {
   readonly root: Node | undefined;
   readonly #setup: (context: AppContext) => S;
   readonly #running = signal(false);
+  readonly #suspended = signal(false);
   #phase: Phase = 'stopped';
   #scope: Scope | undefined;
   #services: S | undefined;
+  /** The run's `use()`d services, in order. */
+  #used: Set<AppService> | undefined;
+  /** The suspend or resume pass in progress. */
+  #pass: 'suspend' | 'resume' | undefined;
 
   constructor(options: AppOptions<S>) {
     this.name = options.name;
@@ -77,6 +101,10 @@ class AppImpl<S> implements App<S> {
 
   get running(): boolean {
     return this.#running.value;
+  }
+
+  get suspended(): boolean {
+    return this.#suspended.value;
   }
 
   get services(): S | undefined {
@@ -124,7 +152,12 @@ class AppImpl<S> implements App<S> {
         if (scope.disposed) return service;
         services.add(service);
         scope.add(() => services.delete(service), 'app service');
-        return scope.use(service);
+        scope.use(service);
+        // While suspended, every running service has been suspended, including one added now.
+        if (this.#used === services && this.#suspended.peek() && !scope.disposed) {
+          this.#call(service, 'suspend');
+        }
+        return service;
       },
     };
     let result: S;
@@ -138,6 +171,7 @@ class AppImpl<S> implements App<S> {
     }
     this.#scope = scope;
     this.#services = result;
+    this.#used = services;
     this.#phase = 'running';
     this.#running.value = true;
     return result;
@@ -150,12 +184,54 @@ class AppImpl<S> implements App<S> {
     this.#phase = 'stopping';
     this.#scope = undefined;
     this.#services = undefined;
+    this.#used = undefined;
     this.#running.value = false;
+    this.#suspended.value = false;
     try {
       scope.dispose(reason ?? new DOMException(`${this.#label()} stopped`, 'AbortError'));
     } finally {
       this.#phase = 'stopped';
       if (this.root && owners.get(this.root) === this) owners.delete(this.root);
+    }
+  }
+
+  suspend(): void {
+    if (this.#pass) throw this.#reentrantPass('suspend');
+    if (this.#phase !== 'running' || this.#suspended.peek()) return;
+    this.#suspended.value = true;
+    this.#each('suspend');
+  }
+
+  resume(): void {
+    if (this.#pass) throw this.#reentrantPass('resume');
+    if (this.#phase !== 'running' || !this.#suspended.peek()) return;
+    this.#suspended.value = false;
+    this.#each('resume');
+  }
+
+  /** Call `kind` on the run's services: suspension in reverse order of `use()`, resumption in order. */
+  #each(kind: 'suspend' | 'resume'): void {
+    const scope = this.#scope;
+    const services = [...(this.#used ?? [])];
+    if (kind === 'suspend') services.reverse();
+    this.#pass = kind;
+    try {
+      for (const service of services) {
+        if (this.#scope !== scope) break; // the run stopped during the pass
+        this.#call(service, kind);
+      }
+    } finally {
+      this.#pass = undefined;
+    }
+  }
+
+  #call(service: AppService, kind: 'suspend' | 'resume'): void {
+    const hook = service[kind];
+    if (typeof hook !== 'function') return;
+    try {
+      hook.call(service);
+    } catch (error) {
+      reportOddkinError(error, { code: `app.service.${kind}`, origin: this.name });
     }
   }
 
@@ -168,6 +244,15 @@ class AppImpl<S> implements App<S> {
       'app.lifecycle.reentrant',
       DEV
         ? `Cannot ${operation} ${this.#label()} while it is ${this.#phase}: start() and stop() do not run inside setup() or inside a cleanup of the run being stopped. Return from setup() first, or throw from it to abandon the start.`
+        : '',
+    );
+  }
+
+  #reentrantPass(operation: string): OddkinError {
+    return new OddkinError(
+      'app.lifecycle.reentrant',
+      DEV
+        ? `Cannot ${operation} ${this.#label()} from a service's ${this.#pass}(): suspend() and resume() do not run inside a suspend or resume pass. stop() may.`
         : '',
     );
   }

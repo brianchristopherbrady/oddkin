@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page lifecycle example</title>
+    <script>
+      // Listener audit, before any module runs: every page-lifecycle listener added or removed on
+      // the window or the document, and every page transition. Recorded here (not by Oddkin) so
+      // the example can show that the service registers its listeners once and never `unload`.
+      (() => {
+        const types = [
+          'pagehide',
+          'pageshow',
+          'visibilitychange',
+          'freeze',
+          'resume',
+          'unload',
+          'beforeunload',
+        ];
+        const audit = { active: {}, added: [], transitions: [] };
+        addEventListener('pagehide', (event) =>
+          audit.transitions.push(`pagehide:${event.persisted}`),
+        );
+        addEventListener('pageshow', (event) =>
+          audit.transitions.push(`pageshow:${event.persisted}`),
+        );
+        document.addEventListener('freeze', () => audit.transitions.push('freeze'));
+        document.addEventListener('resume', () => audit.transitions.push('resume'));
+        const name = (target) =>
+          target === window ? 'window' : target === document ? 'document' : '';
+        const add = EventTarget.prototype.addEventListener;
+        const remove = EventTarget.prototype.removeEventListener;
+        EventTarget.prototype.addEventListener = function (type, ...rest) {
+          const target = name(this);
+          if (target && types.includes(type)) {
+            audit.added.push(`${target}:${type}`);
+            audit.active[`${target}:${type}`] = (audit.active[`${target}:${type}`] ?? 0) + 1;
+          }
+          return add.call(this, type, ...rest);
+        };
+        EventTarget.prototype.removeEventListener = function (type, ...rest) {
+          const target = name(this);
+          if (target && types.includes(type)) audit.active[`${target}:${type}`] -= 1;
+          return remove.call(this, type, ...rest);
+        };
+        window.lifecycleAudit = audit;
+      })();
+    </script>
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/app": "../../packages/app/dist/index.js",
+          "@oddkin/state": "../../packages/state/dist/index.js",
+          "@oddkin/state/context": "../../packages/state/dist/context/index.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/scope": "../../packages/core/dist/scope/index.js",
+          "@oddkin/core/diagnostics": "../../packages/core/dist/diagnostics/index.js",
+          "@oddkin/core/controllers/announce": "../../packages/core/dist/controllers/announce.js"
+        }
+      }
+    </script>
+    <style>
+      body {
+        margin: 0;
+        padding: 1rem;
+        font:
+          1rem/1.5 system-ui,
+          sans-serif;
+      }
+      dl {
+        display: grid;
+        grid-template-columns: max-content auto;
+        gap: 0.25rem 1rem;
+      }
+      dd {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Page lifecycle</h1>
+      <p>
+        Go to <a href="elsewhere.html">another page</a> and come back with the browser's back
+        button. When the browser restores this page from its back/forward cache, the application
+        resumes instead of starting again: the count below is kept, the polling service resumes, and
+        only the resource with a restore policy loads again.
+      </p>
+      <p>
+        <button type="button" id="count">Count</button>
+        <button type="button" id="stop">Stop the application</button>
+        <button type="button" id="start">Start it again</button>
+      </p>
+      <dl id="status"></dl>
+    </main>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

@@ -108,6 +108,16 @@ for (const [entry, size] of Object.entries(sizes)) {
       'packages/app/dist/prod/resource/',
       'packages/app/dist/prod/command/',
     ]);
+  // Following the page lifecycle loads no rendering code, router, resource, or command code.
+  if (entry === 'lifecycle')
+    forbid(entry, size, [
+      ...['element/', 'template/', 'styles/'].map((f) => `packages/core/dist/prod/${f}`),
+      'packages/state/dist/prod/store/',
+      'packages/state/dist/prod/persist/',
+      'packages/app/dist/prod/router/',
+      'packages/app/dist/prod/resource/',
+      'packages/app/dist/prod/command/',
+    ]);
   if (entry === 'counter' || entry === 'component' || entry === 'list') {
     for (const forbidden of ['packages/state', 'packages/app', 'packages/tokens']) {
       if (size.modules.some((m) => m.startsWith(forbidden))) {

@@ -4,10 +4,12 @@
  * scope and abort signal; a newer generation, `cancel()`, a timeout, or disconnection revokes the
  * older one's right to commit before its continuation runs (abort and a generation guard), so a
  * stale result never wins even when the load ignores its signal. Expected aborts never surface as
- * errors or unhandled rejections; timeouts are failures with a `TimeoutError`. Reads only:
+ * errors or unhandled rejections; timeouts are failures with a `TimeoutError`. An opt-in restore
+ * policy (`revalidateOnRestore`) loads again after a back/forward cache restoration. Reads only:
  * mutations are commands (`./command`). DOM-free.
  */
 import { DEV } from '../internal/dev.js';
+import { restorations } from '../lifecycle/restorations.js';
 import { OddkinError } from '@oddkin/core/diagnostics';
 import { computed, signal, untracked, type Readable } from '@oddkin/core/reactive';
 import { createScope, type Controller, type Scope } from '@oddkin/core/scope';
@@ -57,6 +59,13 @@ export interface ResourceOptions<K, T> {
    * milliseconds instead of loading again. Default `0`: reconnecting reloads.
    */
   freshFor?: number;
+  /**
+   * Restore policy (core-contracts.md §9.1): after the page is restored from the back/forward
+   * cache, load the current key again as a new generation, unless the success is younger than
+   * `freshFor`. Needs a running `pageLifecycle()` service, which observes restorations. Default
+   * `false`: the resource keeps its state across suspension.
+   */
+  revalidateOnRestore?: boolean;
   /** Name used in abort reasons and diagnostics. */
   name?: string;
 }
@@ -128,6 +137,20 @@ class ResourceImpl<K, T> implements Resource<K, T> {
       },
       { name: this.#label() },
     );
+    if (this.#options.revalidateOnRestore) {
+      let first = true;
+      scope.effect(
+        () => {
+          void restorations.value;
+          if (first) {
+            first = false;
+            return;
+          }
+          untracked(() => this.#onRestore(connection));
+        },
+        { name: `${this.#label()} restore policy` },
+      );
+    }
   }
 
   refresh(): void {
@@ -185,6 +208,22 @@ class ResourceImpl<K, T> implements Resource<K, T> {
       )
         return;
     }
+    this.#start(connection, key);
+  }
+
+  /** The page was restored from the back/forward cache: load the current key again unless fresh. */
+  #onRestore(connection: Connection<K>): void {
+    if (this.#disposed || this.#connection !== connection) return;
+    const key = connection.key;
+    if (key === undefined) return;
+    const latest = this.#latest;
+    if (
+      this.#state.peek().status === 'success' &&
+      latest &&
+      this.#equals(latest.key, key) &&
+      Date.now() - latest.at < (this.#options.freshFor ?? 0)
+    )
+      return;
     this.#start(connection, key);
   }
 
