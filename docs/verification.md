@@ -1372,3 +1372,19 @@ Environment as the previous entries. Written on 2026-10-20 in Agent 3's lane (`p
 **Fix (test infrastructure):** `localhost` resolves to `::1` first on this machine, and a server told to listen on `localhost` binds that one address. Firefox sometimes connected over IPv4 and was refused. The Workbench e2e server now listens on `127.0.0.1` (`--host 127.0.0.1` in `playwright.config.ts`; the spec and its second dev server use the same address), and the Vitest browser server too (`test.api.host` in `vitest.config.ts`). This explains the Firefox symptom recorded in the previous two entries and in earlier ones ("Firefox failed to connect to its browser session").
 
 **Findings:** (1) `oddkin workbench dev` defaults to `localhost`, so on machines like this one it is reachable only over IPv6, and Firefox can intermittently fail to open the printed URL or its event stream. A product fix (for example listening on both loopback addresses) belongs to Agent 3's lane; not changed here. (2) The 2026-10-20 live-update failure ("Edited without a reload" never appeared in Firefox) did not reproduce in five Firefox runs. A refused event-stream connection would produce it, but that is not proven. (3) Implemented but untested: refreshing the current page when only its data file changed, reloading when the shell page changed, and the column counts of the overview cards.
+
+## 2026-10-21 — Full pipeline on the replacement machine
+
+Environment as the previous entries. Code as of the Workbench shell entry plus one test timeout below. Two `npm run verify` runs, then the stages the second did not reach.
+
+| Stage | Command | Result |
+| --- | --- | --- |
+| Lint | `npm run lint` | Pass (both runs): contracts current; boundaries (9 packages, 392 source files, 1,321 imports, built artifacts); CSS compatibility (69 features, 58 stylesheets, 0 problems); formatting. |
+| Typecheck | `npm run typecheck` | Pass (both runs), including vue-tsc and svelte-check. |
+| Unit and browser | `npm test` | Run 1: pass, 2,876 tests and 29 skipped in 258 files, Node plus three engines, no errors. Run 2: 3 analyzer tests timed out at 30 s (`docs.test.ts` took 172 s in the full run); the two files alone pass (35 tests in 29 s). Load-dependent, as recorded for these files on 2026-10-20. |
+| Metadata | `npm run verify:metadata` | Pass (run 1): 191 verified facts for `@oddkin/components`, 481 for `@oddkin/ai`. |
+| Size | `npm run size` | Pass (run 1): all 26 budgets. |
+| End to end | `npm run test:e2e` | Run 1: 248 passed, 11 skipped, 2 failed: the two real back/forward cache tests in `e2e/lifecycle.spec.ts`, whose `beforeAll` launching the full Chromium build (its first launch on this machine) exceeded 30 s under the parallel suite; alone they passed twice (6 of 6). The hook now has 60 s, like its `afterAll`. Then: 250 passed, 11 skipped (the recorded engine skips). |
+| Packed consumers | `npm run verify:packs` | Pass: all 8 packages from tarballs outside the workspace, framework typings from the installed packages, 14 core contracts offline, the independent CEM consumer over 28 elements. |
+
+**Finding:** heavy Node tests (analyzer, TypeScript compiler) share the machine with three browsers during `npm test` and can exceed their timeouts; a run that fails only there should be repeated before it is treated as a failure.

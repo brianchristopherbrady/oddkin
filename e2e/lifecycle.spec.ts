@@ -122,8 +122,9 @@ test.describe('a real back/forward cache restoration', () => {
 
   let browser: Browser | undefined;
   let page: Page;
-  test.beforeAll(async ({ browserName }) => {
+  test.beforeAll(async ({ browserName }, testInfo) => {
     if (browserName !== 'chromium') return;
+    testInfo.setTimeout(60_000); // a cold first launch of the full build took over 30 s under load
     browser = await chromium.launch({
       channel: 'chromium', // the full build: the headless shell refuses the cache
       ignoreDefaultArgs: ['--disable-back-forward-cache'],
