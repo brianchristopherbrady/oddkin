@@ -28,6 +28,12 @@ export default defineConfig({
       url: 'http://127.0.0.1:4175/_oddkin/index.json',
       reuseExistingServer: !process.env['CI'],
     },
+    {
+      // Oddkin docs app, shell and exported package assets (e2e/docs.spec.ts).
+      command: 'npm run dev',
+      url: 'http://127.0.0.1:4177/',
+      reuseExistingServer: !process.env['CI'],
+    },
   ],
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
