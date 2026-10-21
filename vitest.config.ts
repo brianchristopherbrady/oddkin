@@ -35,6 +35,8 @@ export default defineConfig({
         },
         test: {
           name: 'browser',
+          // An IP literal: `localhost` can bind ::1 only, and Firefox then sometimes refuses to connect.
+          api: { host: '127.0.0.1' },
           include: [
             'packages/*/test/**/*.browser.test.ts',
             'tests/**/*.browser.test.ts',

@@ -162,6 +162,9 @@ describe('search', () => {
     // A word only in a summary still matches, ranked below title matches.
     const actions = search(items, 'action');
     expect(actions.results[0]?.title).toBe('Button');
+    // Titles containing the word rank above pages matched only through their id (tag name).
+    const titled = search(items, 'o').results.map((i) => i.title.toLowerCase().includes('o'));
+    expect(titled.indexOf(false)).toBeGreaterThan(titled.lastIndexOf(true));
     expect(search(items, 'side navigation').results.map((i) => i.title)).toEqual(['Side nav']);
     expect(search(items, 'side zebra').total).toBe(0);
     expect(search(items, '   ')).toEqual({ results: [], total: 0 });

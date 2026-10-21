@@ -7,7 +7,7 @@ import { acmeProject, removeProject } from '../packages/workbench/test/node-proj
 
 // The Workbench shell over the real @oddkin/components, served by `oddkin workbench dev`
 // (port 4175, started by the Playwright configuration from tests/fixtures/workbench-oddkin).
-const base = 'http://localhost:4175/';
+const base = 'http://127.0.0.1:4175/';
 const at = (path: string) => new URL(path, base).href;
 const axeSource = readFileSync(
   createRequire(import.meta.url).resolve('axe-core/axe.min.js'),
@@ -256,7 +256,7 @@ test.describe('Workbench live updates', () => {
     // A second dev server, three rebuilds.
     test.setTimeout(90_000);
     const dir = acmeProject();
-    const server = await startDevServer({ config: dir, port: 0 });
+    const server = await startDevServer({ config: dir, port: 0, host: '127.0.0.1' });
     try {
       await page.goto(new URL('components', server.url).href);
       await expect(page.locator('main h1')).toHaveText('Components');

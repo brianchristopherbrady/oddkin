@@ -22,9 +22,10 @@ export default defineConfig({
     },
     {
       // The Workbench dev server over the real components (e2e/workbench*.spec.ts).
+      // An IP literal: `localhost` can bind ::1 only, and Firefox then sometimes refuses to connect.
       command:
-        'node packages/workbench/dist/node/bin.js workbench dev --config tests/fixtures/workbench-oddkin --port 4175 --no-watch',
-      url: 'http://localhost:4175/_oddkin/index.json',
+        'node packages/workbench/dist/node/bin.js workbench dev --config tests/fixtures/workbench-oddkin --port 4175 --host 127.0.0.1 --no-watch',
+      url: 'http://127.0.0.1:4175/_oddkin/index.json',
       reuseExistingServer: !process.env['CI'],
     },
   ],
