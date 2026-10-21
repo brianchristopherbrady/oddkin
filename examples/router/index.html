@@ -4,15 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Router example</title>
+    <!-- Base-rooted URLs: on a static host this same document is also served at deep paths
+         (/examples/router/guides/one), where relative URLs would resolve below that path. -->
     <script type="importmap">
       {
         "imports": {
-          "@oddkin/app": "../../packages/app/dist/index.js",
-          "@oddkin/state/context": "../../packages/state/dist/context/index.js",
-          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
-          "@oddkin/core/scope": "../../packages/core/dist/scope/index.js",
-          "@oddkin/core/diagnostics": "../../packages/core/dist/diagnostics/index.js",
-          "@oddkin/core/controllers/announce": "../../packages/core/dist/controllers/announce.js"
+          "@oddkin/app": "/packages/app/dist/index.js",
+          "@oddkin/state/context": "/packages/state/dist/context/index.js",
+          "@oddkin/core/reactive": "/packages/core/dist/reactive/index.js",
+          "@oddkin/core/scope": "/packages/core/dist/scope/index.js",
+          "@oddkin/core/diagnostics": "/packages/core/dist/diagnostics/index.js",
+          "@oddkin/core/controllers/announce": "/packages/core/dist/controllers/announce.js"
         }
       }
     </script>
@@ -47,6 +49,6 @@
   <body data-mode="history">
     <nav aria-label="Example pages"></nav>
     <main></main>
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="/examples/router/app.js"></script>
   </body>
 </html>

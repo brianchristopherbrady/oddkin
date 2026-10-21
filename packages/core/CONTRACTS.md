@@ -165,14 +165,14 @@ No controller field, teardown array, or matching `removeEventListener()` in the 
 
 | API | Purpose |
 | --- | --- |
-| `scope.signal` | Native `AbortSignal` (controller allocated lazily) |
+| `scope.signal` | Native `AbortSignal` (controller allocated lazily), aborted with the disposal reason even when first read after disposal |
 | `scope.listen(target, type, handler, options?)` | Typed listener; removed on dispose or early release; preserves capture/passive/once |
 | `scope.timeout(fn, ms)` / `scope.interval(fn, ms)` | Owned timers with early cancellation |
 | `scope.add(cleanup)` | Idempotent cleanup; returns a release function that runs it at most once |
 | `scope.child()` | Child lifetime, disposed with the parent or earlier |
 | `scope.effect(run)` | Owned synchronous tracked effect; each run gets a fresh child scope; previous run disposed before rerun |
 | `scope.use(controller)` | Activate a controller (`connect(scope): void`) that registers its own cleanup |
-| `scope.dispose(reason?)` | Idempotent; aborts signal, disposes children, runs cleanups deterministically |
+| `scope.dispose(reason?)` | Idempotent (the first reason stays); aborts signal with `reason` (an `AbortError` when none is given), disposes children and effect runs with the same reason, runs cleanups deterministically |
 
 Required semantics:
 - Run all cleanups even if one throws; report errors with origin; reverse-registration order.

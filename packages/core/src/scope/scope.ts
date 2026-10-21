@@ -43,6 +43,7 @@ export class Scope {
   #entries = new Set<Entry>();
   #controller: AbortController | undefined;
   #disposed = false;
+  #reason: unknown;
 
   constructor(options?: ScopeOptions) {
     this.name = options?.name;
@@ -54,10 +55,10 @@ export class Scope {
     return this.#disposed;
   }
 
-  /** An `AbortSignal` aborted when the scope is disposed. Allocated on first access. */
+  /** An `AbortSignal` aborted with the disposal reason. Allocated on first access. */
   get signal(): AbortSignal {
     this.#controller ??= new AbortController();
-    if (this.#disposed && !this.#controller.signal.aborted) this.#controller.abort();
+    if (this.#disposed && !this.#controller.signal.aborted) this.#controller.abort(this.#reason);
     return this.#controller.signal;
   }
 
@@ -122,14 +123,14 @@ export class Scope {
     }, 'interval');
   }
 
-  /** Create a child scope disposed with this one, or earlier on its own. */
+  /** Create a child scope disposed with this one (and its reason), or earlier on its own. */
   child(options?: ScopeOptions): Scope {
     const child = new Scope({ name: options?.name ?? this.name });
     if (this.#disposed) {
-      child.dispose();
+      child.dispose(this.#reason);
       return child;
     }
-    const release = this.add(() => child.dispose(), 'child scope');
+    const release = this.add(() => child.dispose(this.#reason), 'child scope');
     child.add(() => release(), 'detach from parent');
     return child;
   }
@@ -154,7 +155,8 @@ export class Scope {
         try {
           if (typeof cleanup === 'function') cleanup();
         } finally {
-          runScope.dispose();
+          // A rerun ends the run without a reason; the owner's disposal passes its own.
+          runScope.dispose(this.#disposed ? this.#reason : undefined);
         }
       };
     }, options);
@@ -171,13 +173,15 @@ export class Scope {
   }
 
   /**
-   * End the lifetime: abort `signal`, then run every cleanup (including child scopes)
-   * in reverse registration order. All cleanups run even if some throw; failures are
-   * reported with code `scope.cleanup.error`. Idempotent.
+   * End the lifetime: abort `signal` with `reason`, then run every cleanup (including child
+   * scopes, disposed with the same reason) in reverse registration order. All cleanups run even
+   * if some throw; failures are reported with code `scope.cleanup.error`. Idempotent: a later
+   * call keeps the first reason.
    */
   dispose(reason?: unknown): void {
     if (this.#disposed) return;
     this.#disposed = true;
+    this.#reason = reason;
     stats.scopes--;
     try {
       this.#controller?.abort(reason);

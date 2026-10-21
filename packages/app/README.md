@@ -139,6 +139,21 @@ createApp({ root: document.querySelector('#docs'), setup: ({ use }) => void use(
 - Back and forward, query and fragment changes, redirects (legacy routes), titles, `refresh()`, and stop/restart with the application are handled.
 - After a navigation to another path, focus moves to `focus(state)` and the title is announced in a polite live region (`announce: false` or `announce: (state) => message` to change it). Scroll restoration: new paths start at the top, fragments scroll into view, and back, forward, and reloads return to where each entry was left (`scroll: false` to opt out).
 
+### Static hosts
+
+History mode needs the host to answer every application path with the application's document; hash mode needs nothing (`e2e/router-hosting.spec.ts`, Chromium, Firefox, and WebKit, against emulated hosts):
+
+| Host | History mode | Status of a deep link |
+| --- | --- | --- |
+| Rewrites (`/* /index.html 200`) | Works | 200, also for unknown paths (the router's not-found) |
+| `404.html` holding the application document (GitHub Pages) | Works | 404 for every deep link |
+| One document per known route, plus `404.html` | Works (`/x` is redirected to `/x/`; matching ignores the slash) | 200; unknown paths 404 |
+| No fallback | Fails: a deep link, and Back to an in-app entry after another document was visited, get the server's 404. Use `mode: 'hash'` | — |
+
+- A history-mode document must use base-rooted URLs (`<script type="module" src="/docs/app.js">`, import-map targets like `/docs/assets/…`): the same document is served at deep paths, where relative URLs resolve below them.
+- A lazy route whose module fails to load is the route's `error`, its URL committed. `refresh()` retries in place: after a network error, a 404, or a 503, all three engines fetch the module again. A module that a later deploy removed keeps failing, even where the host answers with its HTML document (a MIME error); only a new document helps.
+- A deep link to a fragment (`/docs/guide#install`) is scrolled into view once the route renders, in both modes.
+
 ## Page suspension (`@oddkin/app/lifecycle`)
 
 Browsers keep pages in a back/forward cache and restore them with the same JavaScript heap. Suspension is not disposal: nothing is stopped or rebuilt when the user leaves, and nothing starts again when they return. Opt in with one service:

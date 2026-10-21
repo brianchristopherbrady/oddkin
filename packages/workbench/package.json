@@ -4,7 +4,9 @@
   "private": true,
   "description": "Metadata-driven documentation tooling. DOM-free example, configuration, page-registry, data-file, and conformance contracts; a test-runner integration.",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/app/define.js"
+  ],
   "engines": {
     "node": ">=24.12"
   },
@@ -31,6 +33,14 @@
     "./node": {
       "types": "./dist/node/index.d.ts",
       "default": "./dist/node/index.js"
+    },
+    "./app": {
+      "types": "./dist/app/index.d.ts",
+      "default": "./dist/app/index.js"
+    },
+    "./app/define": {
+      "types": "./dist/app/define.d.ts",
+      "default": "./dist/app/define.js"
     },
     "./conformance": {
       "types": "./dist/conformance/index.d.ts",

@@ -126,7 +126,7 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
           : [],
       index: `${assets}index.json`,
       ...(options.events ? { events: `${assets}events` } : {}),
-      module: '@oddkin/workbench/app',
+      module: '@oddkin/workbench/app/define',
     }),
     diagnostics: result.items,
   };

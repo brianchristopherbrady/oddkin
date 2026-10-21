@@ -20,6 +20,13 @@ export default defineConfig({
       url: 'http://localhost:4174/__health',
       reuseExistingServer: !process.env['CI'],
     },
+    {
+      // The Workbench dev server over the real components (e2e/workbench*.spec.ts).
+      command:
+        'node packages/workbench/dist/node/bin.js workbench dev --config tests/fixtures/workbench-oddkin --port 4175 --no-watch',
+      url: 'http://localhost:4175/_oddkin/index.json',
+      reuseExistingServer: !process.env['CI'],
+    },
   ],
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

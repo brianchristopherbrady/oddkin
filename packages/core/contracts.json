@@ -31,7 +31,7 @@
     "contract:core/scope": {
       "title": "Scope: ownership and cleanup",
       "anchor": "scope",
-      "sha256": "aa427050f9cf4ae0a8cbbd1c4328f4b21e383d37da9ac1515318bdbd18240908"
+      "sha256": "4fc4879ea79aa80501b148e7af25776da94059679ddbda20dea7c6d261a0e917"
     },
     "contract:core/controllers": {
       "title": "Shared controllers",

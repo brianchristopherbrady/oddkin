@@ -1,7 +1,8 @@
 // A small application on the @oddkin/app router, loaded through an import map with no bundler:
 // nested, lazy, and redirecting routes; native links; titles, focus, announcements, and scroll
 // restoration. index.html runs it in history mode below /examples/router/, and hash.html in hash
-// mode, as on a static host without rewrites.
+// mode, as on a static host without rewrites. index.html uses base-rooted URLs because a host's
+// fallback serves it at deep paths too (e2e/router-hosting.spec.ts).
 import { createApp, createRouter, route } from '@oddkin/app';
 
 const mode = document.body.dataset.mode === 'hash' ? 'hash' : 'history';
@@ -31,6 +32,9 @@ const router = createRouter({
     route({ path: 'guides', title: 'Guides', children: [route({ path: '' }), guide] }),
     route({ path: 'long', title: 'Long page' }),
     route({ path: 'old-guides', redirect: '/guides' }),
+    // Lazy levels: a module loaded on first visit, and one a later deploy removed.
+    route({ path: 'lazy', title: 'Lazy page', load: () => import('./lazy.js') }),
+    route({ path: 'removed', title: 'Removed page', load: () => import('./removed-chunk.js') }),
   ],
   formatTitle: (title, state) =>
     `${state.status === 'not-found' ? 'Not found' : title} · Router example`,
@@ -57,6 +61,8 @@ nav.replaceChildren(
     ['Long page', router.href('/long')],
     ['Long page, section 2', router.href('/long#section-2')],
     ['Old guides', router.href('/old-guides')],
+    ['Lazy page', router.href('/lazy')],
+    ['Removed page', router.href('/removed')],
     ['Guide one in a new tab', router.href('/guides/one'), { target: '_blank' }],
     // Inside the base path, so only rel="external" keeps the router from handling it.
     [...otherPage, { rel: 'external' }],
@@ -68,9 +74,15 @@ function render(state) {
   if (state.status === 'idle') return;
   const children = [element('h1', document.title.split(' · ')[0])];
   const leaf = state.matches.at(-1);
-  if (state.status === 'error') children.push(element('p', `This page failed: ${state.error}`));
-  else if (leaf?.status === 'ready' && typeof leaf.data === 'string')
+  if (state.status === 'error') {
+    // The failed URL is committed, so a reload tries again; refresh() retries in place.
+    const retry = element('button', 'Try again', { type: 'button' });
+    retry.addEventListener('click', () => void router.refresh());
+    children.push(element('p', `This page failed: ${state.error}`), retry);
+  } else if (leaf?.status === 'ready' && typeof leaf.data === 'string')
     children.push(element('p', leaf.data));
+  else if (leaf?.status === 'ready' && typeof leaf.data?.text === 'string')
+    children.push(element('p', leaf.data.text));
   if (state.location?.path === '/' || state.location?.path === '/long') {
     // Long pages, to show scroll restoration and fragments.
     children.push(

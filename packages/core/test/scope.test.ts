@@ -3,6 +3,7 @@ import { setErrorHandler, type ErrorContext } from '../src/diagnostics/index.js'
 import { flush, signal } from '../src/reactive/index.js';
 import { scopeStats } from '../src/scope/scope.js';
 import { createScope, type Scope } from '../src/scope/index.js';
+import { scopeReasonCases } from './scope-reasons.js';
 
 let reported: Array<{ error: unknown; context: ErrorContext }>;
 
@@ -16,6 +17,8 @@ afterEach(() => {
   flush();
   setErrorHandler(undefined);
 });
+
+scopeReasonCases();
 
 describe('Scope cleanup', () => {
   it('runs cleanups once, in reverse registration order', () => {
