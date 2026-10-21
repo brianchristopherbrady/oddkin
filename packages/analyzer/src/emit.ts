@@ -39,6 +39,51 @@ const optional = <K extends string, V>(key: K, value: V | undefined | false) =>
     ? {}
     : { [key]: value };
 const knownDefault = (value: Known<string>) => (value.known ? value.value : undefined);
+const categoryId = (label: string) => `category:${label.toLowerCase().replace(/\s+/g, '-')}`;
+const authoredCategory = (component: ComponentInfo | undefined) => {
+  const tag = component?.tags['category']?.[0];
+  const label = tag?.value.trim();
+  return tag && label ? { label, location: tag.location } : undefined;
+};
+
+/**
+ * Category records from the `@category` tags of registered components: the label is the first
+ * spelling in tag order, and a different spelling of the same id is reported, not merged.
+ */
+export function categoryRecords(extraction: Extraction): {
+  readonly categories: Record<string, { label: string }>;
+  readonly diagnostics: AnalyzerDiagnostic[];
+} {
+  const byClass = new Map(extraction.components.map((c) => [`${c.file}#${c.name}`, c]));
+  const first = new Map<string, { label: string; tag: string }>();
+  const diagnostics: AnalyzerDiagnostic[] = [];
+  for (const registration of [...extraction.registrations].sort((a, b) =>
+    a.tag < b.tag ? -1 : 1,
+  )) {
+    const authored = authoredCategory(
+      byClass.get(`${registration.classFile}#${registration.className}`),
+    );
+    if (!authored) continue;
+    const { label } = authored;
+    const id = categoryId(label);
+    const known = first.get(id);
+    if (!known) first.set(id, { label, tag: registration.tag });
+    else if (known.label !== label)
+      diagnostics.push({
+        code: 'analyzer.category.conflict',
+        severity: 'warning',
+        message: `<${registration.tag}> writes @category "${label}", but <${known.tag}> writes the same category as "${known.label}"; the label "${known.label}" is used.`,
+        source: authored.location,
+        suggestion: `Write @category ${known.label}.`,
+      });
+  }
+  const categories = Object.fromEntries(
+    [...first]
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([id, { label }]) => [id, { label }]),
+  );
+  return { categories, diagnostics };
+}
 
 export function buildManifest(extraction: Extraction, paths: ModulePaths): Record<string, unknown> {
   const tags = new Map(
@@ -304,7 +349,7 @@ export function buildMetadata(
         source: { file: e.location.file, line: e.location.line, column: e.location.column },
       }));
     }
-    const category = component.tags['category']?.[0]?.value;
+    const category = authoredCategory(component)?.label;
     const related = (component.tags['related'] ?? [])
       .flatMap((e) => e.value.split(/[\s,]+/))
       .filter(Boolean)
@@ -315,10 +360,7 @@ export function buildMetadata(
       cem: { module: paths.moduleOf(component.file), name: component.name },
       registration: paths.specifierOf(module) ?? module,
       ...optional('definition', definitionOf(registration.definition, paths)),
-      ...optional(
-        'category',
-        category ? `category:${category.trim().toLowerCase().replace(/\s+/g, '-')}` : undefined,
-      ),
+      ...optional('category', category ? categoryId(category) : undefined),
       ...optional(
         'syncPairs',
         component.events
@@ -442,11 +484,13 @@ export function buildMetadata(
     ...optional('tokens', unique(s.tokens)),
     ...optional('css', s.css),
   }));
+  const { categories } = categoryRecords(extraction);
   return {
     schema: 'https://oddkin.dev/schemas/oddkin-metadata/v1.json',
     oddkinVersion,
     library,
     components,
+    ...optional('categories', Object.keys(categories).length ? categories : undefined),
     ...optional('recipes', Object.keys(recipes).length ? recipes : undefined),
     ...optional('models', Object.keys(models).length ? models : undefined),
     ...optional('templates', Object.keys(templates).length ? templates : undefined),

@@ -74,6 +74,7 @@ describe('@oddkin/ai published metadata', { timeout: 30_000 }, () => {
       expect(component.a11y?.length, `${tag} @a11y`).toBeGreaterThan(0);
       expect(component.category).toBe('category:ai');
     }
+    expect(metadata['categories']).toEqual({ 'category:ai': { label: 'AI' } });
   });
 
   it('traces style mappings through the shared sheets @oddkin/components publishes', () => {

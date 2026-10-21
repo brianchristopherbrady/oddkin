@@ -168,6 +168,30 @@ describe('@oddkin/components published metadata', () => {
     );
   });
 
+  it('publishes category labels, so the Workbench catalog groups components by them', () => {
+    expect(metadata['categories']).toEqual({
+      'category:actions': { label: 'Actions' },
+      'category:containers': { label: 'Containers' },
+      'category:forms': { label: 'Forms' },
+      'category:navigation': { label: 'Navigation' },
+    });
+    const { registry, diagnostics } = buildPageRegistry({
+      config: { library: { packages: ['@oddkin/components'] } },
+      cem: cem as CemPackage,
+      metadata,
+    });
+    expect(diagnostics.filter((d) => d.code === 'pages.category.unknown')).toEqual([]);
+    const groups = Object.fromEntries(
+      (registry?.pages ?? []).filter((p) => p.kind === 'component').map((p) => [p.id, p.group]),
+    );
+    expect(groups).toEqual({
+      'components/odd-button': 'Actions',
+      'components/odd-card': 'Containers',
+      'components/odd-input': 'Forms',
+      'components/odd-side-nav': 'Navigation',
+    });
+  });
+
   it('dates component and foundation pages from source history, as Workbench shows them', () => {
     const shallow =
       execFileSync('git', ['rev-parse', '--is-shallow-repository'], {

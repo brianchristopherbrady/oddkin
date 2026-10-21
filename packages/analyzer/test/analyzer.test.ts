@@ -152,6 +152,7 @@ describe('analyzer on a fixture library', () => {
     expect(metadata['components']?.['component:acme-alert']?.['related']).toEqual([
       'component:acme-panel',
     ]);
+    expect(metadata['categories']).toEqual({ 'category:containers': { label: 'Containers' } });
     expect(metadata['recipes']?.['recipe:panel']).toMatchObject({
       regions: { root: { helper: 'stack' }, actions: { helper: 'row' } },
       variants: { tone: ['info'] },

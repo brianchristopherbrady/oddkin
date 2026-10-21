@@ -10,6 +10,7 @@ import ts from 'typescript';
 import {
   buildManifest,
   buildMetadata,
+  categoryRecords,
   sortDiagnostics,
   stableJson,
   type LibraryInfo,
@@ -235,6 +236,7 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
   const diagnostics = sortDiagnostics([
     ...configDiagnostics,
     ...extraction.diagnostics,
+    ...categoryRecords(extraction).diagnostics,
     ...exampleDiagnostics,
     ...contractDiagnostics,
   ]);
