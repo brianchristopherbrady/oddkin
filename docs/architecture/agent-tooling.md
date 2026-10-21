@@ -1,6 +1,6 @@
 # Agent tooling, generated agent kits, and shared metadata contracts
 
-Status: **proposal**. `@oddkin/agent` is optional, development-only, and not implemented. Nothing here is a browser runtime feature. §3.2 separates what exists today from what needs extension and what remains proposed. Decision record: [ADR 0032](./decisions/0032-generated-agent-kits.md) (extends [ADR 0022](./decisions/0022-agent-boundaries.md)).
+Status: **proposal**. `@oddkin/agent` is optional, development-only, and not implemented. A Node-script pilot of project context, kit generation, freshness, and the managed `AGENTS.md` section exists in `scripts/agent-kit/` (M5 items 859–862); it moves into `@oddkin/agent` in M11. Nothing here is a browser runtime feature. §3.2 separates what exists today from what needs extension and what remains proposed. Decision record: [ADR 0032](./decisions/0032-generated-agent-kits.md) (extends [ADR 0022](./decisions/0022-agent-boundaries.md)).
 
 ## 1. Purpose and central outcome
 
@@ -88,7 +88,7 @@ Rules:
 | Examples | `@oddkin/workbench/examples`: `defineExamples` typed from `HTMLElementTagNameMap`, `examples.v1`, `checkExamples`, `validateUsage`; explained incorrect examples with expected diagnostics (M4); checks against workspace public exports | Incorrect examples for code-level mistakes (registration, events, bindings, reconnect, theme scopes); checks against packed packages | Kit references generated from examples |
 | Pages and content | `@oddkin/workbench/pages`, `./config`, `defineDocs` | Validation of API references inside authored guidance | Clean Markdown pages and `llms.txt` in static docs builds |
 | Diagnostics | Five shapes sharing `code`, `severity`, `message`, a location (`path` or `source`), and an optional `suggestion`: tokens `Diagnostic`, `AnalyzerDiagnostic`, `ModelDiagnostic`, `WorkbenchDiagnostic`, `CollectionDiagnostic`; core `OddkinError` codes | Optional envelope fields (§9.1) | `diagnostic.v1` schema |
-| Agent tooling | Nothing | — | Project context, agent kit, operations, CLI, MCP adapter, preview feedback, evaluation |
+| Agent tooling | Pilot scripts (M5, `scripts/agent-kit/`): `resolveProjectContext`, kit generation with entry guide, component/token/recipe/model references and `json/` bundles, fingerprints and `--check`, the managed `AGENTS.md` section | Task references, packaging adapters | `@oddkin/agent` package, operations, CLI, MCP adapter, preview feedback, evaluation |
 
 ## 4. Project context and freshness
 
@@ -105,6 +105,8 @@ Rules:
 It also reports which **capability paths** are in use (core-only authoring, token-only consumption, components without Oddkin state, applications using optional services). Guidance and suggestions stay inside those paths; for example, a components-only consumer is never told to adopt `@oddkin/state`.
 
 **Freshness.** Every generated artifact carries a fingerprint: generator name and version, schema version, installed package versions, and a content hash of its inputs (metadata files, theme config, authored content, example files). `oddkin-agent kit --check` recomputes it; a mismatch reports `agent.kit.stale` with the changed inputs and the refresh command, and exits non-zero in CI. Every operation result states its `source` (package, version, metadata path, fingerprint) and `freshness` (`current`, `stale`, or `unknown`). Current website documentation is never silently substituted for an older installed API.
+
+*(Pilot, M5: `scripts/agent-kit/context.mjs` resolves the context from manifests, published metadata, the token inspection the foundations reference, source maps (component sources), example files, and `oddkin.docs.*`; nothing is executed. Theme axes come from the inspection's scopes; the component layout is `folders` when a definition's template is its own module beside the class. Capability paths follow the installed packages: `application-services` with `@oddkin/state` or `@oddkin/app`, otherwise `components-without-state` when a component library is present; `core-authoring` with project-owned components; `tokens-only` with `@oddkin/tokens` and neither. The generator version is a hash of the pilot's sources, and `inputs.json` beside `kit.json` records each input's hash so `--check` names what changed.)*
 
 ## 5. Generated agent kit
 
@@ -133,7 +135,7 @@ agent-kit/
   - a concise [AGENTS.md](https://agents.md/) section (setup commands, conventions, verification) written between managed markers. Text outside the markers is never changed, and every update is shown as a diff first;
   - thin IDE-specific instruction adapters generated from the same kit.
 - **Discovery.** Docs static builds may publish clean Markdown pages and an [`llms.txt`](https://llmstxt.org/) index built from the kit. Loading behavior depends on the client: publishing a file does not mean every assistant reads it. The docs list which clients were tested and how each loads the kit.
-- **Small entry guide.** The entry guide has a recorded size budget. Operations return targeted references instead of requiring the whole library documentation in every context window.
+- **Small entry guide.** The entry guide has a recorded size budget. Operations return targeted references instead of requiring the whole library documentation in every context window. *(Pilot: 8,192 bytes of UTF-8 `GUIDE.md`; `@oddkin/components` 2,533 B, `@oddkin/ai` 7,353 B, a fixture library 1,811 B on 2026-10-21. The pilot writes component, choosing, token, recipe, and model references and `json/` bundles; task references and packaging adapters remain.)*
 - **Oddkin uses its own kit.** `@oddkin/components` publishes a kit, and the Oddkin repository's own agent guidance comes from the same generator.
 - **Products (planned, [multi-product.md](./multi-product.md) §10).** Lookups and references take an optional `product`. Results cover only that product's family, tokens, styles, templates, and dependencies, and state which foundation each component uses, which customization level fits a request, and which contracts and checks must be preserved. Per-product references are produced on demand, never for every product × mode × density combination.
 
@@ -330,7 +332,7 @@ Tasks and fixture configurations are held out from kit authoring. Example validi
 
 - MCP adapter implementation: original protocol code vs dev-only SDK dependency; pinned protocol revision (candidate: the 2026-07-28 tools specification).
 - Packaging targets generated by default (Agent Skills directory, managed AGENTS.md section, which IDE adapters).
-- Entry-guide size budget and how it is measured.
+- Entry-guide size budget and how it is measured. *(Pilot: 8,192 bytes of UTF-8; revisit with the §11 evaluation.)*
 - Preview driver for `inspectPreview` (Workbench dev server frames vs a project browser-automation tool).
 - Deterministic ranking for `findComponents` without embeddings.
 - ~~Where the metadata generator lives~~ — **resolved:** `@oddkin/analyzer` is the single generator; `@oddkin/agent` only reads or calls its API.
