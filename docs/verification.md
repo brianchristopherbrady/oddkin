@@ -1543,3 +1543,17 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Finding:** with the generated CSS adopted inside a shadow root (not the documented setup, which adopts it in the document), a profile on a light-DOM ancestor is lost inside a nested scope in that shadow tree: the scope re-declares base expressions and the profile's re-application selector cannot cross the boundary (`layout.gap` 15 px instead of 10 px in Chromium and WebKit). Pinned by the `profile-lost` / `profile-repeated` cases and documented in theming-and-styling.md §5.3 with the workaround (repeat `data-odd-profile` on the inner scope). A fix would need profile toggles like the mode toggles; not attempted.
 
 **Direction:** no token name contains a physical direction; apps/docs, examples/router, and examples/tokens-css-only use no physical margin, padding, border, or offset properties (searched). Component `dir="rtl"` evidence belongs to the component lane.
+
+
+## 2026-10-21 — CSS-only page: first frame and forced colours (plan item 242)
+
+**Environment:** Windows, Node 24.22.1, Playwright 1.64.1 (Chromium, Firefox, WebKit, headless), static server on 4173. Other agents were running tests on the same machine. No full-pipeline run.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| CSS-only e2e | `npx playwright test e2e/tokens-css-only.spec.ts --repeat-each=2` | 28 passed, 2 skipped (forced colours in WebKit). An earlier run had one Firefox failure without an assertion message while frames were counted to a fixed 20 under load; recording now ends when the page has loaded and two frames showed the body, and Firefox then passed 6 of 6 alone and every run since. |
+| First frame | same spec, `paints its first frame in the {light,dark} scheme` | Every recorded frame, from the first, has `color-scheme` of the emulated preference and, once the body exists, the generator's `color.surface.sunken` background. First-contentful-paint (indicative only, loaded machine): Chromium 232 / 300 ms, Firefox 1,441 / 1,222 ms, WebKit 445 / 203 ms (light / dark). |
+| Forced colours | same spec, `CSS-only page under forced colours` (`emulateMedia({ forcedColors: 'active' })`) | Chromium and Firefox: panel text and background take `CanvasText`/`Canvas`, the action keeps `control.height.md`, a solid non-transparent border, and a solid `focus.width` outline when focused by keyboard. WebKit reports `(forced-colors: active)` but keeps author colours, so the test skips there with that reason. |
+| Probes | `.action { border: 0 }` restored; token stylesheet moved from `<head>` to the end of `<body>` | Border: killed (Chromium and Firefox, `border-top-style` none). Late stylesheet: killed in 1 of 6 runs (dark scheme, first frame `normal`); the other engines also delayed the first paint for a body-level stylesheet, so this probe is weak evidence of the first-frame check. |
+
+**Finding (fixed):** the example's `.action` had `border: 0`, so under forced colours the button had no boundary; it now has `var(--odd-border-width-default) solid transparent`.

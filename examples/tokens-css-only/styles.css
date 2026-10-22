@@ -45,7 +45,8 @@ a {
   justify-self: start;
   min-block-size: var(--odd-control-height-md);
   padding-inline: var(--odd-control-padding-inline-md);
-  border: 0;
+  /* Transparent, so it shows only where forced colours paint it: the button's boundary there. */
+  border: var(--odd-border-width-default) solid transparent;
   border-radius: var(--odd-control-radius);
   font: inherit;
   font-weight: var(--odd-font-weight-semibold);

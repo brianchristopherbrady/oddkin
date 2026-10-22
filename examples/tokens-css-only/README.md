@@ -8,5 +8,5 @@ A page styled only by a generated token stylesheet and ordinary CSS — **no scr
 oddkin-tokens build examples/tokens-css-only/theme.json --out examples/tokens-css-only/generated --format css --strict
 ```
 
-`e2e/tokens-css-only.spec.ts` checks, in Chromium, Firefox, and WebKit, that the page has no scripts, that computed colours and sizes in every scope equal the generator's resolved values, and that the first render follows an emulated light or dark system preference.
+`e2e/tokens-css-only.spec.ts` checks, in Chromium, Firefox, and WebKit, that the page has no scripts, that computed colours and sizes in every scope equal the generator's resolved values, that every animation frame from the first follows an emulated light or dark system preference (recorded by a Playwright init script, not a page script), and that under forced colours the action keeps a visible boundary (a transparent border the UA paints) and its focus outline. WebKit reports the forced-colors media feature without forcing colours, so that case is skipped there.
 
