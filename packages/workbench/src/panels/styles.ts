@@ -79,6 +79,10 @@ export const contentStyles = css`
     color: var(--odd-color-text-secondary);
     font-style: italic;
   }
+  /* Coverage markers (data-coverage) wrap an item without adding layout. */
+  .wb-content [data-coverage] {
+    display: contents;
+  }
   .wb-content .wb-visually-hidden {
     position: absolute;
     inline-size: 1px;

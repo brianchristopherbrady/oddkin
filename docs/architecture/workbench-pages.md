@@ -7,7 +7,7 @@ Status: **proposal**, except the page registry (§2), which is implemented as th
 - **Reference structure, project facts.** Workbench reproduces Design System Lab's presentation patterns (§3) with the consuming library's own data and branding. It never hardcodes Design System Lab's name, author, component inventory, taxonomy, token names, values, verification statements, or design decisions.
 - **One reusable application.** Pages are reusable Workbench routes and panels configured by metadata and `oddkin.config.*` — not a generated application fork per project.
 - **Generated facts are authoritative.** Values and contracts come from the canonical token pipeline (`@oddkin/tokens/generate` + inspection output) and normalized metadata. Workbench has no second token engine and no separate foundation parser.
-- **Honest absence.** A section, card, or page appears only when the library supplies its contracts. Unknown data stays unknown ("Not documented", "No foundation data supplied"); palettes, scales, dates, and claims are never invented.
+- **Honest absence.** A foundation section, card, or page appears only when the library supplies its contracts. Component detail pages instead show every section and label each missing item (§7.1). Unknown data stays unknown ("Not documented", "No foundation data supplied"); palettes, scales, dates, and claims are never invented.
 
 ## 2. Page registry
 
@@ -110,17 +110,19 @@ Each component's documentation and interactive controls live on its detail page.
 
 *(Implemented, M5: the shell renders every section below from the page data, and `@oddkin/workbench/panels/component` (`<oddkin-component-panel>`) renders the same content in an open shadow root for other hosts such as apps/docs. The interactive example mounts the component's default authored example (or nothing set) in an isolated frame; presets come from the `defineExamples` values the Node tooling loads; Reset loads a fresh frame document; Copy example link encodes a versioned payload validated against the component's contract; preview settings cover mode (with "Same as site"), light and dark side by side, direction, and width presets plus a numeric width. The API table writes one property or attribute per change exactly as declared; types it cannot edit generically say "Requires fixture"; read-only fields are inspect-only. Slots have text editors; declared events are logged with safely serialized details; declared sync pairs mirror values without writing back; snippets are plain HTML and JavaScript. Tokens list the declared style mappings and every token read with baseline values. Remaining: fixture/adapter pickers and the `items` model editor, CSS custom property editing with a token picker, product/density/profile settings, per-example frames in the Examples section, and the adjacent/sticky layout experiment.)*
 
-### 7.1 Section order (default; each only when supplied)
+### 7.1 Section order (every section shown; missing items labelled)
 
-1. **Overview** — description, intended use ("Use it for" / "Not for" when authored), imports, registration entry, related components.
+1. **Overview** — description, imports, registration entry, related components.
 2. **Interactive example** — preview, preset selector (from `defineExamples`), Reset, Copy example link, preview settings, generated code.
 3. **API** — the editable API table (§7.2), followed by slots, events, methods, parts, CSS custom properties, and custom states.
 4. **Examples** — authored examples rendered in isolated previews (lazy).
 5. **Tokens** — "From property to token" trace and "Every token read" table (§7.5).
 6. **Behavior and accessibility** — states, keyboard, accessibility contract, responsive behavior, form participation.
-7. **Guidance** — composition, common mistakes, tradeoffs (authored).
+7. **Guidance** — intended use ("Use it for" / "Not for": `@useFor`/`@notFor`, or authored `useFor`/`notFor`), correct and incorrect usage (each explained mistake from `defineExamples` with the correct example it names), and authored section guidance.
 8. **Source** — source references and package exports.
-9. **Known limitations** — always shown when any are declared; otherwise "None documented".
+9. **Known limitations** — the declared limitations, or "None documented".
+
+**Coverage (owner decision, 2026-10-22).** A component page has no unlabelled gap. `pageCoverage(page)` (the panels' DOM-free model, `packages/workbench/src/panels/model.ts`) lists every item of the page in order with one of three states: *documented* (shown with content), *none* (the component declares none of these, e.g. "None declared."), or *missing* ("Not documented. Supplied by `<input>`.", naming the tag, file, or metadata field that would supply it). The panel renders each item from that list and marks it with `data-coverage` and `data-state`. Sections are never hidden for lack of data; authored content may still hide one (`visible: false`). One browser check (`packages/workbench/test/coverage.browser.test.ts`) walks every component in the `@oddkin/components` and `@oddkin/ai` metadata and fails on any item that is unlisted, unmarked, out of order, empty, or labelled differently from its state, on any empty section or table cell, and on any hidden section; new components are covered without new tests. Missing items are component-side gaps, reported to the components' owner.
 
 ### 7.2 Editable API table
 

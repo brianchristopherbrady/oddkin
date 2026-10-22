@@ -6,6 +6,7 @@
 import {
   resolveWorkbenchConfig,
   type DocsContent,
+  type PageContent,
   type ResolvedWorkbenchConfig,
   type WorkbenchConfig,
 } from '../config/index.js';
@@ -111,12 +112,21 @@ function declarations(libraries: readonly LibraryInput[]): Map<string, Declared>
 
 const tokenName = (id: string) => id.replace(/^token:/, '');
 
+/** Authored content by page id, with renamed ids resolved through `aliases`. */
+function authoredPages(docs: DocsContent | undefined): Map<string, PageContent> {
+  const byId = new Map<string, PageContent>();
+  for (const [key, content] of Object.entries(docs?.pages ?? {}))
+    byId.set(docs?.aliases?.[key] ?? key, content);
+  return byId;
+}
+
 function componentPage(
   page: PageEntry,
   declared: Declared,
   metadata: OddkinMetadataLike,
   definitions: ReadonlyMap<string, Readonly<Record<string, JsonObject>>>,
   inspection: ReadonlyMap<string, InspectedTokenLike> | undefined,
+  content: PageContent | undefined,
 ): ComponentPageData {
   const tag = declared.declaration.tagName as string;
   const enrichment = Object.values(metadata.components ?? {}).find((c) => c.tag === tag);
@@ -148,6 +158,12 @@ function componentPage(
     seen.add(name);
     return [inspection?.get(name) ?? { name, missing: true as const }];
   });
+  const guidance = content?.sections?.['guidance']?.guidance?.trim();
+  const prose = {
+    ...(content?.useFor?.length ? { useFor: content.useFor } : {}),
+    ...(content?.notFor?.length ? { notFor: content.notFor } : {}),
+    ...(guidance ? { guidance } : {}),
+  };
   return {
     format: PAGE_FORMAT,
     version: DATA_VERSION,
@@ -160,6 +176,7 @@ function componentPage(
     ...(enrichment ? { enrichment: enrichment as unknown as JsonObject } : {}),
     examples,
     ...(tokens.length ? { tokens } : {}),
+    ...(Object.keys(prose).length ? { authored: prose } : {}),
   };
 }
 
@@ -232,6 +249,7 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
   }
   const pages: Record<string, PageData> = {};
   const files: Record<string, string> = {};
+  const authored = authoredPages(input.docs);
   const definitions = new Map<string, Readonly<Record<string, JsonObject>>>();
   for (const library of input.libraries)
     for (const set of library.examples ?? []) {
@@ -244,7 +262,7 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
     if (page.kind === 'component') {
       const entry = declared.get(page.id.slice('components/'.length));
       if (!entry) continue;
-      data = componentPage(page, entry, metadata, definitions, inspection);
+      data = componentPage(page, entry, metadata, definitions, inspection, authored.get(page.id));
     } else if (page.kind === 'foundation') {
       const id = FOUNDATIONS.find((f) => `foundations/${f.slug}` === page.id)?.id;
       const foundation = id ? metadata.foundations?.[`foundation:${id}`] : undefined;

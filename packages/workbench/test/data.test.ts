@@ -100,6 +100,30 @@ describe('Workbench data from published outputs', () => {
       component: 'component:odd-button',
       name: 'default',
     });
+    // Nothing authored: no authored content on the page.
+    expect(page.authored).toBeUndefined();
+  });
+
+  it('carries authored intended use and guidance to the component page, through renamed ids', () => {
+    const docs = defineDocs({
+      aliases: { 'components/old-button': 'components/odd-button' },
+      pages: {
+        'components/old-button': {
+          useFor: ['Authored use.'],
+          sections: { guidance: { guidance: '  Prefer one primary button per view.  ' } },
+        },
+        'components/odd-card': { notFor: ['Navigation.'], sections: { guidance: {} } },
+      },
+    });
+    const { data } = build({ config, libraries: [components], tokens: inspection, docs });
+    expect((data.pages['components/odd-button'] as ComponentPageData).authored).toEqual({
+      useFor: ['Authored use.'],
+      guidance: 'Prefer one primary button per view.',
+    });
+    expect((data.pages['components/odd-card'] as ComponentPageData).authored).toEqual({
+      notFor: ['Navigation.'],
+    });
+    expect((data.pages['components/odd-input'] as ComponentPageData).authored).toBeUndefined();
   });
 
   it('adds published example values and the values of the tokens a component reads', () => {

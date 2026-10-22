@@ -177,17 +177,10 @@ export function buildPageRegistry(input: RegistryInput): {
   const enrichedByTag = new Map(
     Object.values(metadata.components ?? {}).map((c) => [c.tag, c] as const),
   );
-  const examplesByTag = new Map<string, number>();
-  for (const example of Object.values(metadata.examples ?? {})) {
-    // Explained mistakes are not usable examples.
-    if (example.incorrect) continue;
-    const tag = example.component.replace(/^component:/, '');
-    examplesByTag.set(tag, (examplesByTag.get(tag) ?? 0) + 1);
-  }
   const rawPrefix = metadata.library?.prefix;
   const prefix = rawPrefix ? (rawPrefix.endsWith('-') ? rawPrefix : `${rawPrefix}-`) : undefined;
   const elements = customElements(input.cem);
-  const componentDrafts = elements.map(({ declaration, module }): Draft => {
+  const componentDrafts = elements.map(({ declaration }): Draft => {
     const tag = declaration.tagName as string;
     const enriched = enrichedByTag.get(tag);
     const categoryId =
@@ -201,25 +194,6 @@ export function buildPageRegistry(input: RegistryInput): {
       );
     }
     const group = category?.label ?? config.categories.fallback;
-    const hasApi = Boolean(
-      declaration.members?.some(
-        (m) => m.privacy !== 'private' && m.privacy !== 'protected' && !m.static,
-      ) ||
-      declaration.attributes?.length ||
-      declaration.events?.length ||
-      declaration.slots?.length ||
-      declaration.cssParts?.length ||
-      declaration.cssProperties?.length ||
-      declaration.cssStates?.length,
-    );
-    const hasTokens = Boolean(
-      enriched?.tokenReads?.length ||
-      enriched?.styleMappings?.length ||
-      declaration.cssProperties?.length,
-    );
-    const hasBehavior = Boolean(
-      enriched?.a11y || enriched?.keyboard || declaration.cssStates?.length,
-    );
     const section = (
       id: string,
       visible: boolean,
@@ -249,14 +223,14 @@ export function buildPageRegistry(input: RegistryInput): {
       nav: { sidebar: true, card: true, search: true },
       sections: [
         section('overview', true, 'built-in'),
+        // Every section is shown; the panel labels what the library does not supply (§7.1).
         section('interactive-example', true),
-        section('api', hasApi),
-        section('examples', (examplesByTag.get(tag) ?? 0) > 0),
-        section('tokens', hasTokens),
-        section('behavior-and-accessibility', hasBehavior),
-        section('guidance', false, 'authored'),
-        section('source', Boolean(module)),
-        // Always shown: "None documented" when nothing is declared.
+        section('api', true),
+        section('examples', true),
+        section('tokens', true),
+        section('behavior-and-accessibility', true),
+        section('guidance', true),
+        section('source', true),
         section('known-limitations', true),
       ],
     };

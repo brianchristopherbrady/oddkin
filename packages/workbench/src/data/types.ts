@@ -99,6 +99,15 @@ export interface ComponentPageData extends PageDataBase {
    * order. A token missing from the inspection keeps only its name (`missing: true`).
    */
   readonly tokens?: readonly (InspectedTokenLike & { readonly missing?: true })[];
+  /**
+   * Authored content for the page (`oddkin.docs.ts`): intended use and section guidance. Absent
+   * when nothing is authored.
+   */
+  readonly authored?: {
+    readonly useFor?: readonly string[];
+    readonly notFor?: readonly string[];
+    readonly guidance?: string;
+  };
 }
 
 /** A foundation page: its metadata and the referenced tokens from the token inspection. */

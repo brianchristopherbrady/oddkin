@@ -12,12 +12,16 @@ import type { ComponentPageData, JsonObject, WorkbenchIndex } from '../data/type
 import { createIsolatedPreview, type IsolatedPreview } from '../preview/frame.js';
 import type { FrameNotification, FrameSettings, JsonValue } from '../protocol/index.js';
 import {
+  authoredValues,
   componentFacts,
   decodeShare,
   defaultWriteMode,
   encodeShare,
   initialState,
+  intendedUse,
+  pageCoverage,
   presets,
+  usagePairs,
   MAX_SHARE_WIDTH,
   MIN_SHARE_WIDTH,
   SHARE_PARAM,
@@ -25,6 +29,7 @@ import {
   snippet,
   type ApiRow,
   type ComponentFacts,
+  type CoverageItem,
   type PresetEntry,
   type SharePreview,
   type PreviewState,
@@ -71,16 +76,6 @@ const DEFAULT_SETTINGS: Settings = {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error));
-const authoredValues = (value: unknown): string[] =>
-  Array.isArray(value)
-    ? value.flatMap((entry) =>
-        typeof entry === 'string'
-          ? [entry]
-          : isRecord(entry) && typeof entry['value'] === 'string'
-            ? [entry['value']]
-            : [],
-      )
-    : [];
 
 /** Text with Markdown code spans shown as code; everything stays text, never markup. */
 function inline(text: string) {
@@ -89,8 +84,35 @@ function inline(text: string) {
   return parts.map((part, i) => (i % 2 ? html`<code>${part}</code>` : part));
 }
 
-const notDocumented = (key: string) =>
-  html`<p class="wb-not-documented">Not documented. Supplied by <code>${key}</code>.</p>`;
+const notDocumented = (key: string, subject?: string) => {
+  const lead = `${subject ? `${subject}: not documented` : 'Not documented'}. Supplied by `;
+  return html`<p class="wb-not-documented">${lead}<code>${key}</code>.</p>`;
+};
+
+const bullets = (items: readonly string[]) =>
+  html`<ul class="wb-list">
+    ${items.map((item) => html`<li>${inline(item)}</li>`)}
+  </ul>`;
+
+/** Renders one page item: its content, or the label its coverage gives it. */
+type Covered = (id: string, content: () => unknown) => unknown;
+
+function covered(coverage: readonly CoverageItem[]): Covered {
+  const byId = new Map(coverage.map((item) => [item.id, item] as const));
+  return (id, content) => {
+    const item = byId.get(id);
+    if (!item) return nothing;
+    return html`<div data-coverage=${id} data-state=${item.state}>
+      ${
+        item.state === 'documented'
+          ? content()
+          : item.state === 'none'
+            ? html`<p class="wb-muted">${item.empty}</p>`
+            : notDocumented(item.source ?? '', item.subject)
+      }
+    </div>`;
+  };
+}
 
 export class ComponentDetailElement extends OddkinElement.with({
   page: prop.object<ComponentPageData>({ description: 'The component page data.' }),
@@ -263,11 +285,9 @@ export class ComponentDetailElement extends OddkinElement.with({
     const page = this.page;
     if (!page || !this.isConnected) return;
     const registration = page.enrichment?.['registration'];
+    // Without a registration entry the preview item itself says what is missing.
     if (typeof registration !== 'string') {
-      this.#status.value = {
-        text: 'Preview unavailable: no registration entry is published for this component.',
-        alert: false,
-      };
+      if (!this.#status.peek().keep) this.#status.value = { text: '', alert: false };
       return;
     }
     if (!this.frameUrl) {
@@ -525,88 +545,65 @@ export class ComponentDetailElement extends OddkinElement.with({
     const entry = index.registry.pages.find((p) => p.id === page.id);
     const sections = (entry?.sections ?? []).filter((s) => s.visible);
     const facts = componentFacts(page);
+    const at = covered(pageCoverage(page));
     // Sections are built eagerly (not with repeat()), so the signals they read are tracked.
     return html`<div class="wb-content">
       ${sections.map(
         (section) =>
           html`<section id=${section.id} aria-labelledby=${`${section.id}-title`}>
             <h2 id=${`${section.id}-title`}>${section.title}</h2>
-            ${this.#section(section.id, page, facts)}
+            ${this.#section(section.id, page, facts, at)}
           </section>`,
       )}
     </div>`;
   }
 
-  #section(id: string, page: ComponentPageData, facts: ComponentFacts) {
+  #section(id: string, page: ComponentPageData, facts: ComponentFacts, at: Covered) {
     switch (id) {
       case 'overview':
-        return this.#overview(page);
+        return this.#overview(page, at);
       case 'interactive-example':
-        return this.#interactive(page, facts);
+        return this.#interactive(page, facts, at);
       case 'api':
-        return this.#api(page, facts);
+        return this.#api(facts, at);
       case 'examples':
-        return this.#examples(page);
+        return at('examples/examples', () => this.#examples(page));
       case 'tokens':
-        return this.#tokens(page);
+        return this.#tokens(page, at);
       case 'behavior-and-accessibility':
-        return this.#behavior(page, facts);
-      case 'source':
-        return this.#source(page);
-      case 'known-limitations': {
-        const limitations = authoredValues(page.enrichment?.['limitations']);
-        return limitations.length
-          ? html`<ul class="wb-list">
-              ${limitations.map((item) => html`<li>${inline(item)}</li>`)}
-            </ul>`
-          : html`<p class="wb-muted">None documented.</p>`;
-      }
+        return this.#behavior(page, facts, at);
       case 'guidance':
-        return notDocumented('pages["components/<tag>"].sections.guidance in oddkin.docs.ts');
+        return this.#guidance(page, at);
+      case 'source':
+        return at('source/module', () => this.#source(page));
+      case 'known-limitations':
+        return at('known-limitations/limitations', () =>
+          bullets(authoredValues(page.enrichment?.['limitations'])),
+        );
       default:
         return notDocumented(`pages["${page.id}"].sections["${id}"] in oddkin.docs.ts`);
     }
   }
 
-  #overview(page: ComponentPageData) {
+  #overview(page: ComponentPageData, at: Covered) {
     const description =
       typeof page.declaration['description'] === 'string' ? page.declaration['description'] : '';
-    const useFor = authoredValues(page.enrichment?.['useFor']);
-    const notFor = authoredValues(page.enrichment?.['notFor']);
     const registration = page.enrichment?.['registration'];
     const related = Array.isArray(page.enrichment?.['related'])
       ? (page.enrichment['related'] as unknown[]).filter((r): r is string => typeof r === 'string')
       : [];
-    return html`${
+    return html`${at('overview/description', () =>
         description
-          ? description
-              .split(/\n\s*\n/)
-              .map((paragraph) => html`<p>${inline(paragraph.replace(/\s*\n\s*/g, ' '))}</p>`)
-          : notDocumented('a JSDoc description on the class')
-      }
-      <h3>Use it for</h3>
-      ${
-        useFor.length
-          ? html`<ul class="wb-list">
-              ${useFor.map((item) => html`<li>${inline(item)}</li>`)}
-            </ul>`
-          : notDocumented('@useFor')
-      }
-      <h3>Not for</h3>
-      ${
-        notFor.length
-          ? html`<ul class="wb-list">
-              ${notFor.map((item) => html`<li>${inline(item)}</li>`)}
-            </ul>`
-          : notDocumented('@notFor')
-      }
+          .split(/\n\s*\n/)
+          .map((paragraph) => html`<p>${inline(paragraph.replace(/\s*\n\s*/g, ' '))}</p>`),
+      )}
       <h3>Imports</h3>
-      ${
-        typeof registration === 'string'
-          ? html`<p>Register the element with its define entry:</p>
-              <pre class="wb-code" tabindex="0"><code>import '${registration}';</code></pre>`
-          : notDocumented('the registration entry in oddkin.metadata.json')
-      }
+      ${at(
+        'overview/imports',
+        () =>
+          html`<p>Register the element with its define entry:</p>
+            <pre class="wb-code" tabindex="0"><code>import '${String(registration)}';</code></pre>`,
+      )}
       ${
         related.length
           ? html`<h3>Related components</h3>
@@ -620,7 +617,52 @@ export class ComponentDetailElement extends OddkinElement.with({
       }`;
   }
 
-  #interactive(page: ComponentPageData, facts: ComponentFacts) {
+  /** Intended use and explained mistakes, each paired with the example to use instead. */
+  #guidance(page: ComponentPageData, at: Covered) {
+    const { useFor, notFor } = intendedUse(page);
+    const authored = page.authored?.guidance ?? '';
+    const show = (entry: PresetEntry, label: string) =>
+      entry.state
+        ? html`<button type="button" @click=${() => this.#applyPreset(entry)}>${label}</button>`
+        : nothing;
+    return html`${at('guidance/authored', () =>
+        authored.split(/\n\s*\n/).map((paragraph) => html`<p>${inline(paragraph)}</p>`),
+      )}
+      <h3>Use it for</h3>
+      ${at('guidance/use-for', () => bullets(useFor))}
+      <h3>Not for</h3>
+      ${at('guidance/not-for', () => bullets(notFor))}
+      <h3>Correct and incorrect usage</h3>
+      ${at(
+        'guidance/usage-pairs',
+        () =>
+          html`<ul class="wb-list wb-pairs">
+            ${usagePairs(page).map(
+              ({ incorrect, correct }) =>
+                html`<li data-pair=${incorrect.id}>
+                  <p><strong>Incorrect:</strong> ${incorrect.label} <code>${incorrect.id}</code></p>
+                  ${
+                    incorrect.incorrect?.explanation
+                      ? html`<p>${inline(incorrect.incorrect.explanation)}</p>`
+                      : notDocumented('incorrect.explanation in defineExamples', 'Explanation')
+                  }
+                  <p>
+                    <strong>Correct:</strong>
+                    ${
+                      correct
+                        ? html`${correct.label} <code>${correct.id}</code>`
+                        : html`<span class="wb-not-documented">Not documented</span>`
+                    }
+                  </p>
+                  ${show(incorrect, 'Show the incorrect usage in the preview')}
+                  ${correct ? show(correct, 'Show the correct usage in the preview') : nothing}
+                </li>`,
+            )}
+          </ul>`,
+      )}`;
+  }
+
+  #interactive(page: ComponentPageData, facts: ComponentFacts, at: Covered) {
     const state = this.#state.value;
     const settings = this.#settings.value;
     const status = this.#status.value;
@@ -629,28 +671,28 @@ export class ComponentDetailElement extends OddkinElement.with({
     const frameSettings = settings.pair ? {} : this.#frameSettings(0);
     const update = (patch: Partial<Settings>) => this.#applySettings({ ...settings, ...patch });
     return html`<div class="wb-toolbar">
-        ${
-          entries.length
-            ? html`<label
-                >Preset
-                <select
-                  .value=${state.preset}
-                  @change=${(event: Event) => {
-                    const name = (event.target as HTMLSelectElement).value;
-                    const entry = entries.find((p) => p.name === name);
-                    if (entry) this.#applyPreset(entry);
-                  }}
-                >
-                  ${entries.map(
-                    (p) =>
-                      html`<option value=${p.name} ?selected=${p.name === state.preset}>
-                        ${p.label}${p.incorrect ? ' (incorrect usage)' : ''}
-                      </option>`,
-                  )}
-                </select></label
-              >`
-            : nothing
-        }
+        ${at(
+          'interactive-example/presets',
+          () =>
+            html`<label
+              >Preset
+              <select
+                .value=${state.preset}
+                @change=${(event: Event) => {
+                  const name = (event.target as HTMLSelectElement).value;
+                  const entry = entries.find((p) => p.name === name);
+                  if (entry) this.#applyPreset(entry);
+                }}
+              >
+                ${entries.map(
+                  (p) =>
+                    html`<option value=${p.name} ?selected=${p.name === state.preset}>
+                      ${p.label}${p.incorrect ? ' (incorrect usage)' : ''}
+                    </option>`,
+                )}
+              </select></label
+            >`,
+        )}
         <label
           >Mode
           <select
@@ -741,19 +783,23 @@ export class ComponentDetailElement extends OddkinElement.with({
             /></label>`
           : nothing
       }
-      <div class=${settings.pair ? 'wb-previews wb-pair' : 'wb-previews'}>
-        <div class="wb-preview">
-          ${settings.pair ? html`<p>Light</p>` : nothing}${this.#hosts[0]}
-        </div>
-        ${
-          settings.pair
-            ? html`<div class="wb-preview">
-                <p>Dark</p>
-                ${this.#hosts[1]}
-              </div>`
-            : nothing
-        }
-      </div>
+      ${at(
+        'interactive-example/preview',
+        () =>
+          html`<div class=${settings.pair ? 'wb-previews wb-pair' : 'wb-previews'}>
+            <div class="wb-preview">
+              ${settings.pair ? html`<p>Light</p>` : nothing}${this.#hosts[0]}
+            </div>
+            ${
+              settings.pair
+                ? html`<div class="wb-preview">
+                    <p>Dark</p>
+                    ${this.#hosts[1]}
+                  </div>`
+                : nothing
+            }
+          </div>`,
+      )}
       <p class="wb-status" role=${status.alert ? 'alert' : 'status'}>${status.text}</p>
       <h3>Event log</h3>
       ${this.#eventLog(facts)}
@@ -797,37 +843,32 @@ export class ComponentDetailElement extends OddkinElement.with({
     </div>`;
   }
 
-  #api(page: ComponentPageData, facts: ComponentFacts) {
-    return html`${facts.rows.length ? this.#apiTable(facts) : html`<p class="wb-muted">No properties or attributes are declared.</p>`}
+  #api(facts: ComponentFacts, at: Covered) {
+    return html`${at('api/properties', () => this.#apiTable(facts))}
       <h3>Slots</h3>
-      ${this.#slots(facts)}
+      ${at('api/slots', () => this.#slots(facts))}
       <h3>Events</h3>
-      ${this.#namedTable(facts.events, 'events', 'Event', true, page)}
+      ${at('api/events', () => this.#namedTable(facts.events, 'events', 'Event', true))}
       <h3>Methods</h3>
-      ${
-        facts.methods.length
-          ? html`<p class="wb-muted">
-                Methods are documented here and never invoked by the Workbench.
-              </p>
-              ${this.#namedTable(facts.methods, 'methods', 'Method', false, page)}`
-          : html`<p class="wb-muted">None declared.</p>`
-      }
+      ${at(
+        'api/methods',
+        () =>
+          html`<p class="wb-muted">
+              Methods are documented here and never invoked by the Workbench.
+            </p>
+            ${this.#namedTable(facts.methods, 'methods', 'Method', false)}`,
+      )}
       <h3>CSS parts</h3>
-      ${this.#namedTable(facts.parts, 'parts', 'Part', false, page)}
+      ${at('api/parts', () => this.#namedTable(facts.parts, 'parts', 'Part', false))}
       <h3>CSS custom properties</h3>
-      ${this.#namedTable(facts.cssProperties, 'css-properties', 'Property', false, page)}
+      ${at('api/css-properties', () =>
+        this.#namedTable(facts.cssProperties, 'css-properties', 'Property', false),
+      )}
       <h3>Custom states</h3>
-      ${this.#namedTable(facts.cssStates, 'states', 'State', false, page)}`;
+      ${at('api/css-states', () => this.#namedTable(facts.cssStates, 'states', 'State', false))}`;
   }
 
-  #namedTable(
-    entries: ComponentFacts['events'],
-    id: string,
-    label: string,
-    withType: boolean,
-    _page: ComponentPageData,
-  ) {
-    if (!entries.length) return html`<p class="wb-muted">None declared.</p>`;
+  #namedTable(entries: ComponentFacts['events'], id: string, label: string, withType: boolean) {
     return html`<div class="wb-table-wrap">
       <table class="wb-stack" data-table=${id}>
         <thead>
@@ -1079,7 +1120,6 @@ export class ComponentDetailElement extends OddkinElement.with({
   }
 
   #slots(facts: ComponentFacts) {
-    if (!facts.slots.length) return html`<p class="wb-muted">None declared.</p>`;
     const state = this.#state.value;
     return html`<div class="wb-table-wrap">
       <table class="wb-stack" data-table="slots">
@@ -1117,7 +1157,6 @@ export class ComponentDetailElement extends OddkinElement.with({
 
   #examples(page: ComponentPageData) {
     const entries = presets(page);
-    if (!entries.length) return html`<p class="wb-muted">No authored examples.</p>`;
     return html`<ul class="wb-list wb-examples">
       ${entries.map(
         (entry) =>
@@ -1144,7 +1183,7 @@ export class ComponentDetailElement extends OddkinElement.with({
     </ul>`;
   }
 
-  #tokens(page: ComponentPageData) {
+  #tokens(page: ComponentPageData, at: Covered) {
     const mappings = Array.isArray(page.enrichment?.['styleMappings'])
       ? (page.enrichment['styleMappings'] as unknown[]).filter(isRecord)
       : [];
@@ -1154,113 +1193,99 @@ export class ComponentDetailElement extends OddkinElement.with({
     const resolved = new Map((page.tokens ?? []).map((t) => [t.name, t] as const));
     const theme = this.index?.libraries.length ? 'the generated baseline theme' : 'the baseline';
     return html`<h3>From property to token</h3>
-      ${
-        mappings.length
-          ? html`<div class="wb-table-wrap">
-              <table class="wb-stack" data-table="style-mappings">
-                <caption>
-                  Declared style mappings extracted from the component's stylesheets.
-                </caption>
-                <thead>
-                  <tr>
-                    <th scope="col">When</th>
-                    <th scope="col">Part</th>
-                    <th scope="col">CSS property</th>
-                    <th scope="col">Token</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${mappings.map(
-                    (m) =>
-                      html`<tr>
-                        <td data-label="When"><code>${String(m['when'] ?? 'default')}</code></td>
-                        <td data-label="Part">
-                          ${m['part'] ? html`<code>${String(m['part'])}</code>` : 'host'}
-                        </td>
-                        <td data-label="CSS property">
-                          <code>${String(m['cssProperty'] ?? '')}</code>
-                        </td>
-                        <td data-label="Token"><code>${String(m['token'] ?? '')}</code></td>
-                      </tr>`,
-                  )}
-                </tbody>
-              </table>
-            </div>`
-          : html`<p class="wb-muted">No style mappings are declared.</p>`
-      }
+      ${at(
+        'tokens/style-mappings',
+        () =>
+          html`<div class="wb-table-wrap">
+            <table class="wb-stack" data-table="style-mappings">
+              <caption>
+                Declared style mappings extracted from the component's stylesheets.
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">When</th>
+                  <th scope="col">Part</th>
+                  <th scope="col">CSS property</th>
+                  <th scope="col">Token</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${mappings.map(
+                  (m) =>
+                    html`<tr>
+                      <td data-label="When"><code>${String(m['when'] ?? 'default')}</code></td>
+                      <td data-label="Part">
+                        ${m['part'] ? html`<code>${String(m['part'])}</code>` : 'host'}
+                      </td>
+                      <td data-label="CSS property">
+                        <code>${String(m['cssProperty'] ?? '')}</code>
+                      </td>
+                      <td data-label="Token"><code>${String(m['token'] ?? '')}</code></td>
+                    </tr>`,
+                )}
+              </tbody>
+            </table>
+          </div>`,
+      )}
       <h3>Every token read</h3>
-      ${
-        reads.length
-          ? html`<div class="wb-table-wrap">
-              <table class="wb-stack" data-table="token-reads">
-                <caption>
-                  ${resolved.size} tokens read · values for ${theme} (not a live preview reading)
-                </caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Token</th>
-                    <th scope="col">Reference</th>
-                    <th scope="col">Read through</th>
-                    <th scope="col">Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${[...new Map(reads.map((r) => [String(r['token']), r] as const)).values()].map(
-                    (read) => {
-                      const name = String(read['token']);
-                      const token = resolved.get(name);
-                      const definition =
-                        token &&
-                        typeof token.definition === 'string' &&
-                        token.definition.startsWith('{')
-                          ? token.definition
-                          : undefined;
-                      return html`<tr>
-                        <td data-label="Token">
-                          <code>${name}</code>
-                          ${token?.cssVariable ? html`<small><code>${token.cssVariable}</code></small>` : nothing}
-                        </td>
-                        <td data-label="Reference">${String(read['kind'] ?? 'declared')}</td>
-                        <td data-label="Read through">
-                          ${String(read['readThrough'] ?? 'Unknown')}
-                        </td>
-                        <td data-label="Value">
-                          ${
-                            token && !('missing' in token) && token.value !== undefined
-                              ? html`<code>${String(token.value)}</code
-                                  >${definition ? html` <small><code>${definition}</code></small>` : nothing}`
-                              : 'Unknown'
-                          }
-                        </td>
-                      </tr>`;
-                    },
-                  )}
-                </tbody>
-              </table>
-            </div>`
-          : html`<p class="wb-muted">No token reads are declared.</p>`
-      }`;
+      ${at(
+        'tokens/token-reads',
+        () =>
+          html`<div class="wb-table-wrap">
+            <table class="wb-stack" data-table="token-reads">
+              <caption>
+                ${resolved.size} tokens read · values for ${theme} (not a live preview reading)
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Token</th>
+                  <th scope="col">Reference</th>
+                  <th scope="col">Read through</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${[...new Map(reads.map((r) => [String(r['token']), r] as const)).values()].map(
+                  (read) => {
+                    const name = String(read['token']);
+                    const token = resolved.get(name);
+                    const definition =
+                      token &&
+                      typeof token.definition === 'string' &&
+                      token.definition.startsWith('{')
+                        ? token.definition
+                        : undefined;
+                    return html`<tr>
+                      <td data-label="Token">
+                        <code>${name}</code>
+                        ${token?.cssVariable ? html`<small><code>${token.cssVariable}</code></small>` : nothing}
+                      </td>
+                      <td data-label="Reference">${String(read['kind'] ?? 'declared')}</td>
+                      <td data-label="Read through">${String(read['readThrough'] ?? 'Unknown')}</td>
+                      <td data-label="Value">
+                        ${
+                          token && !('missing' in token) && token.value !== undefined
+                            ? html`<code>${String(token.value)}</code
+                                >${definition ? html` <small><code>${definition}</code></small>` : nothing}`
+                            : 'Unknown'
+                        }
+                      </td>
+                    </tr>`;
+                  },
+                )}
+              </tbody>
+            </table>
+          </div>`,
+      )}`;
   }
 
-  #behavior(page: ComponentPageData, facts: ComponentFacts) {
-    const a11y = authoredValues(page.enrichment?.['a11y']);
-    const keyboard = authoredValues(page.enrichment?.['keyboard']);
+  #behavior(page: ComponentPageData, facts: ComponentFacts, at: Covered) {
     return html`<h3>Accessibility</h3>
-      ${
-        a11y.length
-          ? html`<ul class="wb-list">
-              ${a11y.map((item) => html`<li>${inline(item)}</li>`)}
-            </ul>`
-          : notDocumented('@a11y')
-      }
+      ${at('behavior-and-accessibility/a11y', () => bullets(authoredValues(page.enrichment?.['a11y'])))}
       <h3>Keyboard</h3>
-      ${
-        keyboard.length
-          ? html`<ul class="wb-list">
-              ${keyboard.map((item) => html`<li>${inline(item)}</li>`)}
-            </ul>`
-          : notDocumented('@keyboard')
-      }
+      ${at('behavior-and-accessibility/keyboard', () =>
+        bullets(authoredValues(page.enrichment?.['keyboard'])),
+      )}
       ${
         facts.cssStates.length
           ? html`<h3>States</h3>

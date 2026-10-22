@@ -4,7 +4,11 @@ import { scopeStats } from '@oddkin/core/scope';
 import '../src/panels/component-define.js';
 import '../src/panels/foundation-define.js';
 import '../src/panels/catalog-define.js';
-import { buildWorkbenchData, type WorkbenchData } from '../src/data/index.js';
+import {
+  buildWorkbenchData,
+  type ComponentPageData,
+  type WorkbenchData,
+} from '../src/data/index.js';
 import type { CemPackage, OddkinMetadataLike } from '../src/pages/index.js';
 import type { OddkinComponentPanel } from '../src/panels/component.js';
 import { previewProtocolStats } from '../src/preview/frame.js';
@@ -221,6 +225,7 @@ describe('<oddkin-component-panel>', () => {
       'examples',
       'tokens',
       'behavior-and-accessibility',
+      'guidance',
       'source',
       'known-limitations',
     ]);
@@ -273,6 +278,48 @@ describe('<oddkin-component-panel>', () => {
     );
     expect(row('label').textContent).toContain('Not documented');
     expect(root.querySelector('[data-table="methods"]')?.textContent).toContain('focusInput');
+  });
+
+  it('teaches usage: intended use, each mistake with its correct example, authored guidance', async () => {
+    const data = probeData();
+    const page = data.pages['components/wb-probe'] as ComponentPageData;
+    const taught: ComponentPageData = {
+      ...page,
+      examples: [
+        ...page.examples,
+        {
+          id: 'example:wb-probe/quiet',
+          name: 'quiet',
+          definition: {
+            label: 'Too quiet',
+            props: { tone: 'calm' },
+            incorrect: { explanation: 'A `calm` tone is never heard.', correct: 'loud' },
+          },
+        },
+      ],
+      authored: { notFor: ['Silent pages.'], guidance: 'Prefer one probe per view.' },
+    };
+    const { panel, root, probe } = componentPanel({
+      ...data,
+      pages: { ...data.pages, 'components/wb-probe': taught },
+    });
+    await until(() => !!probe()?.isConnected, 'the probe preview');
+    const guidance = root.querySelector('#guidance')!;
+    const text = (selector: string) =>
+      guidance.querySelector(selector)?.textContent?.replace(/\s+/g, ' ').trim();
+    expect(text('[data-coverage="guidance/authored"]')).toBe('Prefer one probe per view.');
+    expect(text('[data-coverage="guidance/use-for"]')).toBe('Not documented. Supplied by @useFor.');
+    expect(text('[data-coverage="guidance/not-for"]')).toBe('Silent pages.');
+    expect(text('[data-pair="example:wb-probe/quiet"]')).toContain(
+      'Incorrect: Too quiet example:wb-probe/quiet A calm tone is never heard. Correct: Loud example:wb-probe/loud',
+    );
+    // Overview no longer repeats intended use.
+    expect(root.querySelector('#overview')?.textContent).not.toContain('Use it for');
+    [...guidance.querySelectorAll('button')]
+      .find((b) => b.textContent === 'Show the correct usage in the preview')!
+      .click();
+    await until(() => probe()?.textContent === 'Loud!', 'the correct example');
+    expect(panel.previewState.preset).toBe('loud');
   });
 
   it('writes each change once, as an attribute or a property, exactly per contract', async () => {

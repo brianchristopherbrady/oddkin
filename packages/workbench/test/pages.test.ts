@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { describe, expect, it } from 'vitest';
-import { defineDocs, type WorkbenchConfig } from '../src/config/index.js';
+import { defineDocs, type DocsContent, type WorkbenchConfig } from '../src/config/index.js';
 import {
   buildPageRegistry,
   cards,
@@ -207,29 +207,40 @@ describe('page registry from fixture metadata', () => {
       components.every((p) => p.availability === 'partial' && p.group === 'Other components'),
     ).toBe(true);
     expect(
-      page(registry, 'components/acme-button').sections.find((s) => s.id === 'examples')?.visible,
-    ).toBe(false);
+      page(registry, 'components/acme-button').sections.every((s) => s.visible),
+      'missing data is labelled on the page, never a hidden section',
+    ).toBe(true);
     expect(registry.pages.some((p) => p.kind === 'foundation')).toBe(false);
   });
 
-  it('explained mistakes alone do not give a component an examples section', () => {
-    const visible = (incorrect: boolean) => {
-      const metadata: OddkinMetadataLike = {
-        ...acmeMeta,
-        examples: {
-          'example:acme-button/wrong': {
-            component: 'component:acme-button',
-            name: 'wrong',
-            ...(incorrect ? { incorrect: { diagnostic: 'usage.boolean.false' } } : {}),
-          },
-        },
-      };
-      const { registry } = build({ config: acmeConfig, cem: acmeCem, metadata });
-      return page(registry, 'components/acme-button').sections.find((s) => s.id === 'examples')
-        ?.visible;
-    };
-    expect(visible(false)).toBe(true);
-    expect(visible(true)).toBe(false);
+  it('shows every component section whatever the data; authored content can still hide one', () => {
+    const sections = (docs?: DocsContent) =>
+      page(
+        build({
+          config: acmeConfig,
+          cem: acmeCem,
+          metadata: { ...acmeMeta, examples: {} },
+          ...(docs ? { docs } : {}),
+        }).registry,
+        'components/acme-button',
+      ).sections.map((s) => [s.id, s.visible]);
+    expect(sections()).toEqual([
+      ['overview', true],
+      ['interactive-example', true],
+      ['api', true],
+      ['examples', true],
+      ['tokens', true],
+      ['behavior-and-accessibility', true],
+      ['guidance', true],
+      ['source', true],
+      ['known-limitations', true],
+    ]);
+    const hidden = sections(
+      defineDocs({
+        pages: { 'components/acme-button': { sections: { tokens: { visible: false } } } },
+      }),
+    );
+    expect(hidden.find(([id]) => id === 'tokens')).toEqual(['tokens', false]);
   });
 
   it('different library configurations produce different content from the same code', () => {

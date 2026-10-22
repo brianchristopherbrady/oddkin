@@ -9,10 +9,13 @@ import {
   defaultWriteMode,
   encodeShare,
   initialState,
+  intendedUse,
+  pageCoverage,
   presets,
   sharePayload,
   snippet,
   unionMembers,
+  usagePairs,
 } from '../src/panels/model.js';
 
 const page = (overrides: Partial<ComponentPageData> = {}): ComponentPageData => ({
@@ -254,5 +257,95 @@ describe('detail model', () => {
         decodeShare(page(), Buffer.from(JSON.stringify(unsupported)).toString('base64url'))
           .problems,
       ).toEqual(['The preview link uses an unsupported version.']);
+  });
+
+  it('gives every page item a state: documented, declared none, or missing with its source', () => {
+    const states = (data: ComponentPageData) =>
+      Object.fromEntries(pageCoverage(data).map((item) => [item.id, item.state]));
+    expect(states(page())).toEqual({
+      'overview/description': 'missing',
+      'overview/imports': 'documented',
+      'interactive-example/presets': 'documented',
+      'interactive-example/preview': 'documented',
+      'api/properties': 'documented',
+      'api/slots': 'documented',
+      'api/events': 'documented',
+      'api/methods': 'documented',
+      'api/parts': 'none',
+      'api/css-properties': 'none',
+      'api/css-states': 'none',
+      'examples/examples': 'documented',
+      'tokens/style-mappings': 'none',
+      'tokens/token-reads': 'none',
+      'behavior-and-accessibility/a11y': 'missing',
+      'behavior-and-accessibility/keyboard': 'missing',
+      'guidance/use-for': 'missing',
+      'guidance/not-for': 'missing',
+      'guidance/usage-pairs': 'documented',
+      'source/module': 'documented',
+      'known-limitations/limitations': 'none',
+    });
+    const coverage = pageCoverage(page());
+    const at = (id: string) => coverage.find((item) => item.id === id);
+    expect(at('guidance/use-for')).toEqual({
+      id: 'guidance/use-for',
+      section: 'guidance',
+      state: 'missing',
+      source: '@useFor',
+    });
+    expect(at('api/parts')).toMatchObject({ state: 'none', empty: 'None declared.' });
+    // Entries listed without a description are named, so their rows can say so.
+    expect(at('api/slots')?.undocumented).toEqual(['(default)', 'end']);
+    expect(at('api/properties')?.undocumented).toContain('legacy-mode');
+
+    // Nothing registered and no examples: the preview, imports, presets, and examples are missing.
+    const bare = states(page({ enrichment: {}, examples: [] }));
+    expect(bare).toMatchObject({
+      'overview/imports': 'missing',
+      'interactive-example/preview': 'missing',
+      'interactive-example/presets': 'missing',
+      'examples/examples': 'missing',
+      'guidance/usage-pairs': 'missing',
+    });
+    // An example set without published values lists examples but has no presets.
+    expect(
+      states(page({ examples: [{ id: 'example:x-box/default', name: 'default' }] })),
+    ).toMatchObject({
+      'interactive-example/presets': 'missing',
+      'examples/examples': 'documented',
+    });
+  });
+
+  it('pairs each explained mistake with the correct example it names, by name or id', () => {
+    expect(usagePairs(page()).map((p) => [p.incorrect.name, p.correct?.name])).toEqual([
+      ['bare', 'default'],
+    ]);
+    const byId = page({
+      examples: [
+        { id: 'example:x-box/good', name: 'good', definition: { label: 'Good' } },
+        { id: 'example:x-box/bad', name: 'bad', incorrect: { correct: 'example:x-box/good' } },
+        { id: 'example:x-box/lost', name: 'lost', incorrect: { correct: 'example:x-box/gone' } },
+      ],
+    });
+    expect(usagePairs(byId).map((p) => [p.incorrect.name, p.correct?.name])).toEqual([
+      ['bad', 'good'],
+      ['lost', undefined],
+    ]);
+  });
+
+  it('takes intended use from authored content over the enrichment, and lists authored guidance', () => {
+    const enriched = page({
+      enrichment: { useFor: [{ value: 'Grouping.' }], notFor: ['Navigation.'] },
+    });
+    expect(intendedUse(enriched)).toEqual({ useFor: ['Grouping.'], notFor: ['Navigation.'] });
+    const authored = page({
+      enrichment: { useFor: [{ value: 'Grouping.' }] },
+      authored: { useFor: ['Authored.'], guidance: 'Prefer one per view.' },
+    });
+    expect(intendedUse(authored)).toEqual({ useFor: ['Authored.'], notFor: [] });
+    expect(pageCoverage(authored).find((item) => item.id === 'guidance/authored')?.state).toBe(
+      'documented',
+    );
+    expect(pageCoverage(enriched).some((item) => item.id === 'guidance/authored')).toBe(false);
   });
 });

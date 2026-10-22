@@ -306,6 +306,157 @@ export function initialState(page: ComponentPageData): PreviewState {
   return first?.state ?? EMPTY_STATE;
 }
 
+/** Authored metadata values (`{ value, provenance }` records or plain strings) as text. */
+export const authoredValues = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? value.flatMap((entry) =>
+        typeof entry === 'string'
+          ? [entry]
+          : isRecord(entry) && typeof entry['value'] === 'string'
+            ? [entry['value']]
+            : [],
+      )
+    : [];
+
+/** Intended use: authored content (`oddkin.docs.ts`) over the enrichment's `@useFor`/`@notFor`. */
+export function intendedUse(page: ComponentPageData): {
+  useFor: readonly string[];
+  notFor: readonly string[];
+} {
+  return {
+    useFor: page.authored?.useFor ?? authoredValues(page.enrichment?.['useFor']),
+    notFor: page.authored?.notFor ?? authoredValues(page.enrichment?.['notFor']),
+  };
+}
+
+/** An explained mistake and the correct example it names (by name or example id). */
+export interface UsagePair {
+  readonly incorrect: PresetEntry;
+  readonly correct?: PresetEntry;
+}
+
+export function usagePairs(page: ComponentPageData): UsagePair[] {
+  const entries = presets(page);
+  return entries.flatMap((incorrect) => {
+    if (!incorrect.incorrect) return [];
+    const ref = incorrect.incorrect.correct;
+    const correct = ref
+      ? entries.find((e) => !e.incorrect && (e.name === ref || e.id === ref))
+      : undefined;
+    return [{ incorrect, ...(correct ? { correct } : {}) }];
+  });
+}
+
+/**
+ * How a detail-page item is shown: with content (`documented`), as declared empty (`none`: the
+ * component has none of these), or labelled as missing (`missing`: "Not documented", naming the
+ * input that would supply it). A page has no unlabelled gap when every item is one of these.
+ */
+export type CoverageState = 'documented' | 'none' | 'missing';
+
+export interface CoverageItem {
+  /** Stable `<section>/<item>` id; the panel marks the item's element with `data-coverage`. */
+  readonly id: string;
+  readonly section: string;
+  readonly state: CoverageState;
+  /** What the item is, for labels shown without a heading (`Preview: not documented…`). */
+  readonly subject?: string;
+  /** The `none` label. */
+  readonly empty?: string;
+  /** The `missing` label's source: the input that would supply the item. */
+  readonly source?: string;
+  /** Entries listed without a description; their rows say "Not documented". */
+  readonly undocumented?: readonly string[];
+}
+
+const EXAMPLES_SOURCE = 'an example set (defineExamples)';
+const REGISTRATION_SOURCE = 'the registration entry in oddkin.metadata.json';
+
+/**
+ * Every item a component's detail page shows, in page order, and how it is shown. The panel
+ * renders from this, and the coverage check walks it for every component (workbench-pages.md §7).
+ */
+export function pageCoverage(page: ComponentPageData): CoverageItem[] {
+  const facts = componentFacts(page);
+  const entries = presets(page);
+  const { useFor, notFor } = intendedUse(page);
+  const enrichment = page.enrichment ?? {};
+  const registered = typeof enrichment['registration'] === 'string';
+  const description = text(page.declaration['description']);
+  const items: CoverageItem[] = [];
+  const item = (
+    id: string,
+    state: CoverageState,
+    extra: Omit<CoverageItem, 'id' | 'section' | 'state'> = {},
+  ) => items.push({ id, section: id.slice(0, id.indexOf('/')), state, ...extra });
+  const documented = (id: string, present: boolean, source: string, subject?: string) =>
+    item(id, present ? 'documented' : 'missing', {
+      ...(present ? {} : { source }),
+      ...(subject ? { subject } : {}),
+    });
+  const declared = (id: string, list: readonly (NamedEntry | ApiRow)[], empty: string) => {
+    const undocumented = list
+      .filter((entry) => !entry.description)
+      .map((entry) =>
+        'name' in entry ? entry.name || '(default)' : (entry.property ?? entry.attribute ?? ''),
+      );
+    item(id, list.length ? 'documented' : 'none', {
+      ...(list.length ? {} : { empty }),
+      ...(undocumented.length ? { undocumented } : {}),
+    });
+  };
+
+  documented('overview/description', Boolean(description), 'a JSDoc description on the class');
+  documented('overview/imports', registered, REGISTRATION_SOURCE);
+  documented(
+    'interactive-example/presets',
+    entries.some((p) => p.state && !p.incorrect),
+    EXAMPLES_SOURCE,
+    'Presets',
+  );
+  documented('interactive-example/preview', registered, REGISTRATION_SOURCE, 'Preview');
+  declared('api/properties', facts.rows, 'No properties or attributes are declared.');
+  declared('api/slots', facts.slots, 'None declared.');
+  declared('api/events', facts.events, 'None declared.');
+  declared('api/methods', facts.methods, 'None declared.');
+  declared('api/parts', facts.parts, 'None declared.');
+  declared('api/css-properties', facts.cssProperties, 'None declared.');
+  declared('api/css-states', facts.cssStates, 'None declared.');
+  documented('examples/examples', entries.length > 0, EXAMPLES_SOURCE);
+  const mappings = list(enrichment['styleMappings']);
+  item('tokens/style-mappings', mappings.length ? 'documented' : 'none', {
+    ...(mappings.length ? {} : { empty: 'No style mappings are declared.' }),
+  });
+  const reads = list(enrichment['tokenReads']);
+  item('tokens/token-reads', reads.length ? 'documented' : 'none', {
+    ...(reads.length ? {} : { empty: 'No token reads are declared.' }),
+  });
+  documented(
+    'behavior-and-accessibility/a11y',
+    authoredValues(enrichment['a11y']).length > 0,
+    '@a11y',
+  );
+  documented(
+    'behavior-and-accessibility/keyboard',
+    authoredValues(enrichment['keyboard']).length > 0,
+    '@keyboard',
+  );
+  if (page.authored?.guidance) item('guidance/authored', 'documented');
+  documented('guidance/use-for', useFor.length > 0, '@useFor');
+  documented('guidance/not-for', notFor.length > 0, '@notFor');
+  documented(
+    'guidance/usage-pairs',
+    entries.some((p) => p.incorrect),
+    'an incorrect example that names its correct one (`incorrect` in defineExamples)',
+  );
+  item('source/module', 'documented');
+  const limitations = authoredValues(enrichment['limitations']);
+  item('known-limitations/limitations', limitations.length ? 'documented' : 'none', {
+    ...(limitations.length ? {} : { empty: 'None documented.' }),
+  });
+  return items;
+}
+
 const escapeHtml = (value: string) =>
   value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 

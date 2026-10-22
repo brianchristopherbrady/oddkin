@@ -111,6 +111,7 @@ test.describe('Workbench shell', () => {
       'Examples',
       'Tokens',
       'Behavior and accessibility',
+      'Guidance',
       'Source',
       'Known limitations',
     ]);
