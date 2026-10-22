@@ -1920,3 +1920,19 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Change:** `createIsolatedPreview` gives `mount` its own timeout (`mountTimeoutMs`, default 60 s); the handshake and other requests keep 10 s. The shell and frame documents list their entry's static module graph as `modulepreload` links after the import map (`packages/workbench/src/node/preload.ts`); a frame preloads only its runtime. workbench.md §2 and §5 record both. The catalog e2e above replaces per-component checks.
 
 **Remaining:** the preview-switching and Theme Studio lifetime scenarios (plan 917; Theme Studio's waits for 842–847). The component's own module graph inside a frame is still discovered one level at a time; not measured yet.
+
+## 2026-10-22 — Docs app: every published component in its catalog group, and a stable Firefox journey
+
+**Environment:** as in the previous entry. Docs server `apps/docs/dev.mjs` (the `npm run dev` web server on 4177 for the specs; a private copy on 4179 for timings).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Route timings | `.tmp/agent2-docs-timing.mjs` (one page per engine, fresh browser, five route changes) | Chromium 156: first load 388 ms, side-nav guide 463, Components 286, a reference page 201, Foundations 99. Firefox 157: 2,164, 1,163, 1,051, 323, 138. WebKit 27.2: 501, 901, 644, 407, 170. The first load requests 30 resources (24 modules), the side-nav guide 23 modules, Components 13. |
+| Where Firefox waits | `.tmp/agent2-docs-profile.mjs` (resource timing) | Firefox requested `/favicon.ico` and the server answered with the app shell (200, HTML) after 636–833 ms; the JSON documents start only after the module graph has loaded (Firefox: DOMContentLoaded 347–910 ms, heading 822–1,362 ms). |
+| Before | `npx playwright test e2e/docs.spec.ts` | The journey test (`:5`) failed in Firefox in 5 of 7 runs: 4 at the 30 s timeout, 1 because the Components route still showed "Loading the requested page…" after 5 s. It passed alone in 17.8 s and once beside the other engines in 25.1 s. |
+| After | same, twice | 15 of 15 both times (5 tests × 3 engines). Firefox: journey 15.2 s, new catalog test 7.2 s; Chromium 3.7 s and 2.4 s; WebKit 6.1 s and 4.8 s. A run before these two reused a 4177 server that another run had started (with the old `dev.mjs`) and that stopped mid-run (connection refused, 7 failures); not counted. |
+| Mutation | `.tmp/mutate-e2e.mjs` (rebuild, Chromium, restore, rebuild) | 3 of 3 killed: missing assets served as the shell again; one component's reference page missing (only the new test fails); the catalog filtered to one category. 1 equivalent: an unknown category id shows every category, so nothing changes. |
+
+**Changes:** the journey test is marked `test.slow()`, because it walks ten routes in one test and Firefox needed 17.8–25.1 s of the 30 s. The new test reads the published `oddkin.metadata.json` and checks that every component appears under its category's group ("Actions (1)", …), with the count of that group, and that its reference page renders the Overview and the exact registration import from metadata. Components added later are covered without a new test. The docs server returns the app shell only for extensionless route paths; a missing asset such as `/favicon.ico` is now a 404.
+
+**Not done:** the docs app still discovers its modules one level at a time (no `modulepreload`) and fetches the three JSON documents only after its modules run; a preload would start them with the stylesheets. Measured above, not changed.

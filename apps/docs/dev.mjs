@@ -82,10 +82,12 @@ const server = createServer(async (request, response) => {
     try {
       if ((await stat(path)).isDirectory()) path = join(path, 'index.html');
     } catch (error) {
+      // Routes have no file extension; a missing asset (such as /favicon.ico) is a 404, not the shell.
       if (
         error?.code === 'ENOENT' &&
         !pathname.startsWith('/packages/') &&
-        !pathname.startsWith('/apps/')
+        !pathname.startsWith('/apps/') &&
+        !extname(pathname)
       ) {
         path = join(root, 'apps/docs/index.html');
       } else if (error?.code === 'ENOENT') {

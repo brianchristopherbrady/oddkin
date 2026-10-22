@@ -6,6 +6,9 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   page,
   browserName,
 }) => {
+  // One journey through ten routes: Firefox took 17.8 s alone and 25.1 s beside the other engines
+  // (2026-10-22), too close to the default 30 s.
+  test.slow();
   const requests: string[] = [];
   page.on('request', (request) => requests.push(request.url()));
   await page.addInitScript(() => {
@@ -156,4 +159,45 @@ test('unknown local references render a not-found state', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Component not found' })).toBeVisible();
   await page.goto(`${docs}/not-a-guide`);
   await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  // Only routes fall back to the app shell; a missing asset is a 404.
+  expect((await page.request.get(`${docs}/favicon.ico`)).status()).toBe(404);
+});
+
+test('every published component is listed under its category and has a reference page', async ({
+  page,
+}) => {
+  test.slow();
+  const metadata = (await (
+    await page.request.get(`${docs}/public/@oddkin/components/oddkin.metadata.json`)
+  ).json()) as {
+    components: Record<string, { tag: string; category?: string; registration?: string }>;
+    categories: Record<string, { label: string }>;
+  };
+  const components = Object.values(metadata.components);
+  expect(components.length).toBeGreaterThan(0);
+  const count = (category: string) => components.filter((c) => c.category === category).length;
+
+  await page.goto(`${docs}/components`);
+  await expect(
+    page.getByText(`Showing ${components.length} of ${components.length} components`),
+  ).toBeVisible();
+  for (const { tag, category } of components) {
+    const label = category ? metadata.categories[category]?.label : undefined;
+    expect(label, `${tag} has a category with a label`).toBeTruthy();
+    const group = page.getByRole('region', {
+      name: `${label} (${count(category as string)})`,
+      exact: true,
+    });
+    await expect(group.locator(`a[href="/components/${tag}"]`)).toBeVisible();
+  }
+  // Each reference page renders from the published metadata, reached through the catalog's links.
+  for (const { tag, registration } of components) {
+    await page.locator(`oddkin-catalog-panel a[href="/components/${tag}"]`).click();
+    await expect(page.locator('#main h1')).toHaveText(`<${tag}>`);
+    const panel = page.locator('oddkin-component-panel');
+    await expect(panel.getByRole('heading', { name: 'Overview', level: 2 })).toBeVisible();
+    await expect(panel.getByText(`import '${registration}';`, { exact: true })).toBeVisible();
+    await page.goBack();
+    await expect(page.getByRole('heading', { name: 'Component references' })).toBeVisible();
+  }
 });
