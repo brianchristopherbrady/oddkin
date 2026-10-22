@@ -112,6 +112,11 @@
       "development": "./dist/controllers/form.js",
       "default": "./dist/prod/controllers/form.js"
     },
+    "./controllers/position": {
+      "types": "./dist/controllers/position.d.ts",
+      "development": "./dist/controllers/position.js",
+      "default": "./dist/prod/controllers/position.js"
+    },
     "./i18n": {
       "types": "./dist/i18n/index.d.ts",
       "development": "./dist/i18n/index.js",

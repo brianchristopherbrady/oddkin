@@ -36,6 +36,7 @@ export default {
         './controllers/announce',
         './controllers/observe',
         './controllers/form',
+        './controllers/position',
         './i18n',
       ],
     },

@@ -11,6 +11,7 @@ export const ENTRIES = [
   'component',
   'list',
   'composite',
+  'position',
   'reactive',
   'ai-headless',
   'ai-response',
@@ -34,6 +35,10 @@ export const BUDGETS = {
   // 12 KiB; measured 11,876 on 2026-10-21 (keyed rows rendering their definition's field and button
   // through @oddkin/core/template/roles, ADR 0043; 370 B more than the same rows with literal tags).
   composite: 12288,
+  // 3.75 KiB; measured 3,549 on 2026-10-22 (@oddkin/core/controllers/position with a Scope: the
+  // measured-rectangle backend of ADR 0044; Scope with the reactive graph and diagnostics alone
+  // is 2,303, so the controller adds about 1.25 KiB).
+  position: 3840,
   reactive: 2048, // 2 KiB; measured 1,892
   'ai-headless': 14336, // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation)
   'ai-response': 21504, // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations)
