@@ -19,7 +19,7 @@
     "color.link": { "light": "#6250e8", "dark": "#b4a8ff" },
     "color.focus.ring": { "light": "#6250e8", "dark": "#b4a8ff" },
     "color.border.default": { "light": "#d9d8e1", "dark": "#555368" },
-    "color.border.strong": { "light": "#8c8f9d", "dark": "#858395" },
+    "color.border.strong": { "light": "#868997", "dark": "#858395" },
     "color.danger.foreground": { "light": "#b4233a", "dark": "#ff9bab" },
     "color.danger.surface": { "light": "#fff0f2", "dark": "#3d202a" },
     "color.success.foreground": { "light": "#267653", "dark": "#8fd6b3" },

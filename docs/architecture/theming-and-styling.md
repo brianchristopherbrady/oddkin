@@ -420,7 +420,7 @@ Design source: Figma file `E7LfRysny8V3qU24tv082i`, frames 8:29 ("Oddkin · UI k
 | `color.action.default` / `hover` / `pressed` | `#6250e8` / `#5140cc` / `#4333ad` | `#b4a8ff` / `#c5bcff` / `#9b8cf0` | Primary actions |
 | `color.text.on-action` | `#ffffff` | `#23252b` | Text on actions and selections |
 | `color.link`, `color.focus.ring` | `#6250e8` | `#b4a8ff` | Links; 2 px focus ring at 2 px offset |
-| `color.border.default` / `strong` | `#d9d8e1` / `#8c8f9d` | `#555368` / `#858395` | Dividers / control borders (3:1) |
+| `color.border.default` / `strong` | `#d9d8e1` / `#868997` | `#555368` / `#858395` | Dividers / control borders (3:1) |
 | `color.selection.background` / `foreground` | action default / on-action | same | Selected controls, with a state marker |
 | `color.danger.foreground` / `surface` | `#b4233a` / `#fff0f2` | `#ff9bab` / `#3d202a` | Errors; also danger borders |
 | `color.success.foreground` / `surface` | `#267653` / `#eaf6ef` | `#8fd6b3` / `#1c352b` | Success |
@@ -484,7 +484,7 @@ Unit policy for the new types: durations are non-negative `ms`/`s` times, easing
 | interaction | `color.text.on-action` | `color.action.{default,hover,pressed}` | 4.5:1 (1.4.3) |
 | interaction | `color.selection.foreground` | `color.selection.background` (selection also has a non-colour marker) | 4.5:1 (1.4.3) |
 | interaction | `color.link` | canvas, surface default/raised/sunken/hover | 4.5:1 (1.4.3) |
-| interaction | `color.border.strong` (control boundaries) | surface default; canvas, sunken, and hover pending (below) | 3:1 (1.4.11) |
+| interaction | `color.border.strong` (control boundaries) | canvas, surface default/raised/sunken/hover | 3:1 (1.4.11) |
 | focus | `color.focus.ring` (drawn at an offset over the surrounding surface) | canvas, surface default/raised/sunken/hover/specimen | 3:1 (1.4.11) |
 | invalid | `color.danger.foreground` (error text and invalid borders) | canvas, surface default/raised/sunken/hover, danger surface | 4.5:1 (1.4.3; so borders exceed 3:1) |
 | status | `color.{success,warning}.foreground` | canvas, surface default/raised, own status surface | 4.5:1 (1.4.3) |
@@ -496,9 +496,21 @@ Unit policy for the new types: durations are non-negative `ms`/`s` times, easing
 
 **Reports and corrections.** `contrast.fail` is one warning per foreground role and mode, naming every background it fails on with the measured ratio. When a reference step of the role's ramp meets the role's minimum on all its backgrounds, the warning carries that step as `correction` (`{ token, mode, value: '{ref.neutral.500}', hex, ratio }`), the step closest in OKLCH lightness to the current colour, and the suggestion names the override to write. Nothing is applied automatically; brand inputs and overrides are never changed. `contrastReport(theme)` returns every contracted pair for the base theme and each product (`concern`, roles, hex values, ratio rounded down to two decimals, minimum, criterion, `pass` / `fail` / `exempt`) for Theme Studio's contrast table and audits.
 
-**Pending (user decision 2026-10-21):** the approved light `color.border.strong` `#8c8f9d` reaches 3.22:1 on the default surface but 2.94:1 on `canvas` and 2.80–2.81:1 on `surface.sunken`/`surface.hover`. The design source is being changed; the default theme follows its Figma value, and then those three backgrounds join the contract. Profiles that override colour roles are not yet checked against the contracts.
+**Control boundaries (2026-10-22):** the owner changed the light `color.border.strong` in Figma from `#8c8f9d` (2.80:1 on `surface.sunken`) to `#868997`, and the default theme took the value from the variables snapshot (§10.5). It reaches 3.03:1 on `surface.sunken`, 3.04:1 on `surface.hover`, 3.18:1 on `canvas`, and 3.47:1 on `surface.default`/`raised`; dark is at least 3.43:1. The contract covers every surface. Profiles that override colour roles are not yet checked against the contracts.
 
 *(Verified in `packages/tokens/test/generate.test.ts` and `products.test.ts`; see [verification.md](../verification.md).)*
+
+### 10.5 Figma parity (implemented)
+
+`design/figma/variables.json` is a read-only export of the Figma file's local variables, text styles, and effect styles (`design/figma/variables.export.js` run through the Figma MCP; schema `variables.schema.json`). Tests read the snapshot and never call Figma; refreshing it is a deliberate, dated export recorded in its `source`.
+
+`packages/tokens/test/figma-parity.test.ts` holds the mapping table and checks that every Figma value equals a token of the default theme, in light and dark (colours as lower-case hex, Figma px as rem at 16 px):
+
+- **Variables.** `Oddkin · Component roles` (Light/Dark modes) names token paths directly, and its Web code syntax must be the mapped `var(--odd-*)`. `Oddkin · Repository tokens` (one mode) uses `repo/<path>[/light|/dark]`; no suffix means the value holds in both modes. `Oddkin · Shared theme` uses `theme/<mode>/<path>` plus legacy names listed in the test.
+- **Text styles** compare size, weight, line height, and letter spacing with `type.<style>.*`, or with the foundation steps a component style uses. Families are not compared: Figma substitutes Roboto and Roboto Mono for the system stacks, so text widths are not a contract.
+- **Effect styles** `Oddkin/Elevation/<step>/<mode>` compare layer by layer with `elevation.<step>`.
+
+The test also reports, as exact lists, Figma variables with no token, tokens Figma lacks, mismatches it attributes to Figma, and **alias gaps**: Figma literals where the theme aliases another token. Fixing one in Figma and refreshing the snapshot fails the test until its entry is removed, so the lists stay current. Results for the 2026-10-22 snapshot are in [verification.md](../verification.md).
 
 ## 11. Layout roles, responsive conditions, and profiles
 

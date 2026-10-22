@@ -341,9 +341,7 @@ export const ROLE_CONTRACTS: readonly RoleContract[] = [
   {
     concern: 'interaction',
     foreground: 'color.border.strong',
-    // Pending (user decision 2026-10-21): canvas, sunken, and hover join once the approved light
-    // value reaches 3:1 on them in Figma and the default theme follows.
-    backgrounds: ['color.surface.default'],
+    backgrounds: SURFACES,
     minimum: 3,
     criterion: '1.4.11',
     use: 'Boundaries that identify controls (inputs, secondary buttons), at rest and on hover.',

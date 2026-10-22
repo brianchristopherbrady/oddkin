@@ -492,6 +492,28 @@ describe('colour', () => {
     for (const role of CONTRAST_ROLES.filter((r) => !r.name.startsWith('color.action.')))
       expect(role.against, role.name).toEqual(contractBackgrounds(role.name));
   });
+
+  it('holds control boundaries at 3:1 on every surface of the default theme (plan 247)', async () => {
+    const config: unknown = JSON.parse(
+      await readFile(new URL('../themes/default.theme.json', import.meta.url), 'utf8'),
+    );
+    const { theme, diagnostics } = generate(config);
+    expect(diagnostics).toEqual([]);
+    const border = contrastReport(theme as never).filter(
+      (e) => e.foreground === 'color.border.strong',
+    );
+    expect(border.map((e) => `${e.mode} ${e.background} ${e.status}`).sort()).toEqual(
+      ['light', 'dark']
+        .flatMap((mode) =>
+          ['canvas', 'surface.default', 'surface.hover', 'surface.raised', 'surface.sunken'].map(
+            (surface) => `${mode} color.${surface} pass`,
+          ),
+        )
+        .sort(),
+    );
+    // Figma's light value (design/figma/variables.json); the old #8c8f9d was 2.80:1 on sunken.
+    expect(Math.min(...border.map((e) => e.ratio))).toBeGreaterThanOrEqual(3);
+  });
 });
 
 describe('brand-only theme', () => {

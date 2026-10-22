@@ -1758,3 +1758,28 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Change:** the spec waits for the main frame's `load` event (registered before the configuration is rewritten) and then reads `window.marker` once, instead of polling it through `page.evaluate` across the reload. The shell is unchanged: it reloads on a shell update, as documented in workbench.md §2.1.
 
 **Remaining:** confirmation on CI after the owner pushes.
+
+## 2026-10-22 — Figma variables snapshot, token parity, and the control-boundary contract (plan 247)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium, Firefox, WebKit as in the 2026-10-21 lifetime entry). Figma file `E7LfRysny8V3qU24tv082i`, read through the Figma MCP `use_figma` tool (session `6725eb45-43d9-4bd4-b2ac-e354d997980b`, 2026-10-22) with read-only Plugin API calls only: `figma.variables.getLocalVariableCollectionsAsync`, `getLocalVariablesAsync`, `getVariableByIdAsync`, `getVariableCollectionByIdAsync`, `figma.getLocalTextStylesAsync`, `getLocalEffectStylesAsync`. Nothing was written to the file.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Snapshot | `design/figma/variables.export.js` run through `use_figma` in three slices (the tool returns at most 48,000 bytes), joined unchanged | `design/figma/variables.json`: `Oddkin · Component roles` 63 variables (Light, Dark), `Oddkin · Repository tokens` 180 (one mode), `Oddkin · Shared theme` 89 (one mode, named Light); 17 text styles; 10 effect styles. Valid against `variables.schema.json` (Ajv 2020, strict); collections, variables, and styles sorted by name. The Plugin API reports no file version or last-modified time. |
+| Parity | `npx vitest run --project node packages/tokens/test/figma-parity.test.ts` | 5 of 5 pass. 613 of 615 compared values equal: 535 variable/mode pairs, 17 text styles × size, weight, line height, letter spacing, and 10 elevation styles layer by layer. 2 mismatches, both Figma-side (below). 1 Figma-only variable (`space/40`). Web code syntax of all 63 component-role variables names the mapped `--odd-*` token. Repo-only (26): the font stacks (`font.family.*`, `type.*.family`; Figma substitutes Roboto), `motion.*` (8), `z-index.*` (4), `font.weight.bold`, `line-height.none`, `line-height.relaxed`. |
+| Repository fixed | `packages/tokens/themes/default.theme.json` | Light `color.border.strong` `#8c8f9d` → `#868997`, the owner's Figma value (its Figma description still says `#8c8f9d`). The contract covers every surface: light 3.03:1 on `surface.sunken`, 3.04 on `surface.hover`, 3.18 on `canvas`, 3.47 on `surface.default`/`raised`; dark at least 3.43:1 (`contrastReport`, rounded down). `generate.test.ts` asserts all ten pairs pass for the default theme. |
+| Token tests | `npx vitest run --project node packages/tokens`; `npx vitest run --project browser packages/tokens` | 112 of 112 (12 files); browser 123 of 123 in Chromium, Firefox, and WebKit (cascade, generated CSS, scopes across shadow roots, Worker). Typecheck of the test project clean. |
+| Size | gzip level 9 of `packages/tokens/dist/css/default.css` | 2,765 B (2,764 B with the old value); budget 3,072 B. |
+| Mutation | 12 probes, each restored and byte-checked | 12 of 12 killed: a theme value, a snapshot value, the rem factor, a deleted mapping entry, alias closure, alias-gap detection, the line-height unit, the shadow spread default, the code-syntax format, ignoring mode suffixes, narrowing the `border.strong` contract, and the old border value. |
+
+**Figma-side issues, for the owner (nothing changed in Figma):**
+
+1. `repo/color/selection/background` and `repo/color/selection/foreground` (no mode suffix) duplicate the light values (`#6250e8`, `#ffffff`) and are wrong in dark (`#b4a8ff`, `#23252b`); the `/light` and `/dark` variables are correct. Delete the unsuffixed pair.
+2. 34 literals where the theme aliases another token, so a scale change in Figma does not propagate: `repo/card/{padding,radius}`, `repo/control/{gap,radius,padding/inline/*}`, `repo/layout/{gap,inset}`, five `repo/navigation/*`, six `repo/color/selection/*`, eight `repo/type/*/size`, six `repo/type/*/letter-spacing`. Bind each to its target (for example `repo/control/radius` → `repo/radius/md`); the full list is `ALIAS_GAPS` in the test.
+3. Two homes for the same roles: `Oddkin · Shared theme` repeats every role per mode as one-mode variables (`theme/light/*`, `theme/dark/*`) beside the Light/Dark modes of `Oddkin · Component roles`, plus 37 legacy names (`color/muted`, `color/dark-*`, `preview/draft/*`, `radius/workspace`, `radius/brand`, `space/4`–`space/64`, …). `space/40` aliases the 32 px step. That collection's only mode is named Light although it holds dark values.
+4. Text styles bind no variables (size, line height, and letter spacing are literals), and the file has no variables for font weights or line heights. Duplicate styles: `Wordmark` = `Section`, `Home display` = `Display`, `Component/Button/sm` = `Component/Button/md` = `UI`. `Card title` is the `title` role.
+5. Elevation is two literal effect styles per step (light and dark; effect styles cannot switch modes). All ten match the tokens.
+
+**Repository-side DRY findings (next slice):** `default.theme.json` writes `#6250e8` four times (`brand.primary`, `action.default`, `link`, `focus.ring`), `#b4a8ff` three times, and light `#ffffff` three times where the preset itself aliases `{ref.neutral.0}`.
+
+**Not done:** the shared role scales (control sizes, surfaces, tones including `info`, indicators, overlay); bound variables per component layer come from Agent 4's components snapshot.

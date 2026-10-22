@@ -34,7 +34,7 @@ export const values = {
         dark: '#555368',
       },
       strong: {
-        light: '#8c8f9d',
+        light: '#868997',
         dark: '#858395',
       },
     },
