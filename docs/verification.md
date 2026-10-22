@@ -1827,3 +1827,15 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Labelled component-side gaps (reported to Agent 4):** 21 of 24 `@oddkin/ai` components have no incorrect-usage example; no `@keyboard` on odd-card, odd-sources, odd-usage-meter; no description for odd-input `validity`, `validationMessage`, `willValidate`, `checkValidity()`, `reportValidity()`, for the `base` part of 7 AI components, and for odd-model-select's `label` part.
 
 **Remaining:** provenance markers on every value; the e2e fixture documents `@oddkin/components` only (the catalog-wide preview, snippet, and import-graph walk is the next slice).
+
+## 2026-10-22 — Composite widgets: ARIA references across shadow boundaries (css-architecture.md §12.1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Browser tests | `npx vitest run --project browser tests/interop/aria-references.browser.test.ts` | 7 tests pass in Chromium 156, Firefox 157, and WebKit 27.2 (21). Element and `ElementInternals` reflection properties exist; ID references resolve inside one shadow root and never from a shadow root to the light DOM or into a shadow root; element references resolve outward (shadow root to light DOM, nested shadow root to its host tree) and are dropped inward; a host's `ElementInternals` resolves references to its light-DOM children. |
+| Floor data | `@mdn/browser-compat-data` 8.1.6 | ARIA element reflection on `Element` and `ElementInternals`: Chrome 135, Firefox 136, Safari 16.4, above the Chrome 125 and Firefox 126 floor. |
+| Typecheck, format, CSS lint | `npx tsc -p tsconfig.tests.json --noEmit`; `npx prettier --check`; `npm run lint:css` | Pass; 69 registered features, 0 problems. |
+
+**Change:** css-architecture.md §12.1 gains the composite-widget rule for M10: related roles stay in one tree; one shadow root with ID references is the baseline; host roles over light-DOM children and outward element references are enhancements with a baseline; a composite never uses a nested element as a part it must reference (a menu renders its own trigger with the shared button styles).
+
+**Not verified:** engines' accessibility trees and screen readers (the tests read the reflection getters, which return only references the engine considers valid); floor browsers at runtime (deferred by the owner). No mutation probes: the tests observe platform behavior, not Oddkin code.
