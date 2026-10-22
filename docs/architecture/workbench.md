@@ -58,7 +58,7 @@ authored examples (*.examples.ts) ─────────┤
 - **Generated directory.** Workbench writes into `.oddkin/workbench/`, which carries a marker file (`oddkin-generated.json`). Workbench writes and deletes only inside a directory that carries the marker, refuses an existing unmarked directory, and writes nowhere else: authored configuration, content, examples, sources, and published metadata are never touched. Other tools may use their own directories below `.oddkin/`.
 - **Inputs.** Published metadata by default: each package's `customElements` manifest and `oddkin.metadata.json`. `--analyze` reruns `@oddkin/analyzer` on workspace sources for live documentation and writes its outputs into `.oddkin/` only.
 - **Bounded work.** A page mounts a few frames at most and none for catalog cards; event logs and histories are capped; panels load lazily. Shell startup and selected-preview latency are measured.
-- *(Implemented, M5: the data files and import maps (`@oddkin/workbench/data`); in `@oddkin/workbench/node`, configuration and content loading, package graphs, the marked generated directory, one-shot builds, the dev server with live updates, and the `oddkin` bin. Package URLs carry the version (`_oddkin/m/<name>@<version>/…`), so the shell and frames never share a URL for different copies of a package. An `update` event with `ok: false` and diagnostics reports an invalid edit while the last valid data stays served; hosting changes need a restart. Planned: the shell, panels, frames, `--analyze`, and `workbench build`.)*
+- *(Implemented, M5: the data files and import maps (`@oddkin/workbench/data`); in `@oddkin/workbench/node`, configuration and content loading, package graphs, the marked generated directory, one-shot builds, the dev server with live updates, and the `oddkin` bin. Package URLs carry the version (`_oddkin/m/<name>@<version>/…`), so the shell and frames never share a URL for different copies of a package. The shell and the versioned frame protocol/runtime are implemented; `createIsolatedPreview()` owns a same-origin frame and `reload()` advances its generation for reset or registration replacement. The component catalog has URL-backed search/category filters and detail pages mount a basic registered preview. An `update` event with `ok: false` and diagnostics reports an invalid edit while the last valid data stays served; hosting changes need a restart. Remaining: public panels, editable detail/API sections and authored examples, frame assets/fonts/theme configuration, `--analyze`, and `workbench build`.)*
 
 ## 3. Component documentation
 
@@ -126,7 +126,7 @@ Rules:
 - Shell ↔ frame communication uses a typed, versioned `postMessage` protocol (same-origin by default); no shared object references.
 - An arbitrary executable code editor is **out of scope** for the initial Workbench; if added later it needs its own design (sandbox origin, CSP).
 
-### 5.1 Frame protocol (proposal, M5)
+### 5.1 Frame protocol (M5 implementation slice)
 
 - **Identity.** The host gives each frame an id and a generation. A fresh document in the same slot (reset frame, registration replacement) increments the generation. The frame URL carries both.
 - **Handshake.** The frame posts `hello` to its parent with its own origin as the target. The host accepts it only when `event.source` is that frame's window, `event.origin` is the preview origin (same origin by default), and protocol, version, frame id, and generation match the live frame. The host then transfers a dedicated `MessagePort` (`connect`), and everything else travels on that port. A version mismatch shows an "incompatible frame" error instead of a preview.
@@ -134,8 +134,10 @@ Rules:
 - **Requests (host → frame).** `mount` (component, registration entry, example, properties, attributes, slots, settings); `set` (one property or attribute write, or unset); `slot` (text content); `reset` (a clean instance); `theme` (replace the preview-owned theme sheet); `settings` (mode, density, direction, width); `dispose`. Reserved: `inspect`, for `inspectPreview` ([agent-tooling.md](./agent-tooling.md) §9.2; types in M5, implementation in M11).
 - **Notifications (frame → host).** `event` (name, time, `bubbles`/`composed`/`cancelable`, a target summary, and the detail serialized safely and capped); `error` (phase and message); `state` (values reported through declared sync contracts only); `size` (content block size).
 - **Ownership.** A host `Scope` per preview owns the iframe, port, listeners, and timers; a frame `Scope` per mount owns listeners, fixtures, and observers. Disposal closes the port before removing the iframe.
-- **Registrations.** A frame registers the library once. A `mount` whose registration differs from the one already defined for that tag fails with `frame.registration.incompatible`, and the host replaces the frame with a new generation; nothing is redefined in place.
+- **Registrations.** A frame registers the library once. A `mount` whose registration differs from the one already defined for that tag fails with `frame.registration.incompatible`; the host replaces the frame with `createIsolatedPreview().reload()` before mounting the replacement, advancing the generation. Nothing is redefined in place.
 - **Trust.** Frames isolate registries, styles, and errors; they are not a sandbox for untrusted code. Local modules and examples are trusted project code.
+
+The current implementation provides the DOM-free contracts in `@oddkin/workbench/protocol`, the frame runtime in `@oddkin/workbench/frame`, and the host API in `@oddkin/workbench/preview`. Its cross-browser tests cover independent registries, container queries, theme sheets, events, request errors, registration replacement, and host-scope release. The shell mounts a basic registration-backed preview on component detail pages. Fixture adapters, bounded event-detail serialization, HMR wiring, and inspection execution remain separate work.
 
 ## 6. Theme Studio
 

@@ -110,6 +110,99 @@ describe('<oddkin-workbench>', () => {
       expect(shell.querySelector(`section#${link.hash.split('#').pop()}`)).not.toBeNull();
   });
 
+  it('filters the component catalog from URL state without mounting previews in cards', async () => {
+    location.hash = '#/components?q=button';
+    const shell = await mount(sourceFor(await acmeData()));
+    await until(() => heading(shell) === 'Components', 'Components');
+    await until(
+      () =>
+        [...shell.querySelectorAll('odd-card.wb-card a')].some(
+          (link) => link.textContent === 'Button',
+        ),
+      'the filtered component',
+    );
+    expect(
+      [...shell.querySelectorAll('odd-card.wb-card a')].map((link) => link.textContent),
+    ).toEqual(['Button']);
+    expect(shell.querySelector('.wb-catalog-filters [aria-live="polite"]')?.textContent).toContain(
+      'Showing 1 of 3 components',
+    );
+    expect(shell.querySelector('iframe')).toBeNull();
+
+    const category = shell.querySelector<HTMLSelectElement>('.wb-catalog-filters select')!;
+    category.value = 'Layout';
+    category.dispatchEvent(new Event('change', { bubbles: true }));
+    await until(() => location.hash.includes('category=Layout'), 'the category URL filter');
+    expect(shell.querySelector('.wb-catalog-filters [aria-live="polite"]')?.textContent).toContain(
+      'Showing 0 of 3 components',
+    );
+
+    const search = shell.querySelector<HTMLInputElement>('.wb-catalog-filters input')!;
+    search.value = '';
+    search.dispatchEvent(new Event('input', { bubbles: true }));
+    await until(
+      () =>
+        [...shell.querySelectorAll('odd-card.wb-card a')].some(
+          (link) => link.textContent === 'Card',
+        ),
+      'the category results',
+    );
+    expect(
+      [...shell.querySelectorAll('odd-card.wb-card a')].map((link) => link.textContent),
+    ).toEqual(['Card']);
+    expect(location.hash).toContain('category=Layout');
+    expect(location.hash).not.toContain('q=');
+  });
+
+  it('mounts a basic registered component preview on its detail page', async () => {
+    const before = scopeStats();
+    const data = await acmeData();
+    const base = sourceFor(data);
+    const buttonPage = data.pages['components/acme-button'];
+    if (!buttonPage || buttonPage.kind !== 'component')
+      throw new Error('The Acme button page is missing from the fixture.');
+    const buttonFile = data.index.pages['components/acme-button'];
+    const source: WorkbenchSource = {
+      ...base,
+      previewFrameUrl: new URL('./fixtures/frame-test.html', import.meta.url).href,
+      page: async (file, signal) =>
+        file === buttonFile
+          ? {
+              ...buttonPage,
+              enrichment: {
+                ...(buttonPage.enrichment ?? {}),
+                registration: new URL('./fixtures/acme-preview-element.ts', import.meta.url).href,
+              },
+            }
+          : base.page(file, signal),
+    };
+    const shell = await mount(source);
+    await until(() => heading(shell) === 'Foundations', 'the first destination');
+    shell.querySelector<HTMLAnchorElement>('.wb-primary a[href="#/components"]')!.click();
+    await until(() => heading(shell) === 'Components', 'Components');
+    [...shell.querySelectorAll<HTMLAnchorElement>('odd-card.wb-card a')]
+      .find((link) => link.textContent === 'Button')!
+      .click();
+    await until(() => heading(shell) === 'Button', 'the component detail');
+    const preview = shell.querySelector('oddkin-component-preview')!;
+    await until(
+      () =>
+        preview.shadowRoot
+          ?.querySelector<HTMLIFrameElement>('iframe')
+          ?.contentDocument?.querySelector('acme-button') !== null,
+      'the registered preview element',
+    );
+    const iframe = preview.shadowRoot!.querySelector<HTMLIFrameElement>('iframe')!;
+    expect(iframe.title).toBe('acme-button preview');
+    expect(iframe.contentDocument?.querySelector('acme-button')?.shadowRoot?.textContent).toContain(
+      'Preview ready',
+    );
+    shell.remove();
+    shells.length = 0;
+    await settled();
+    expect(scopeStats()).toEqual(before);
+  });
+
   it('releases everything it owned when removed', async () => {
     const before = scopeStats();
     const shell = await mount(sourceFor(await acmeData()));

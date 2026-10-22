@@ -10,7 +10,13 @@ import { OddkinElement, prop } from '@oddkin/core/element';
 import { settled, signal, untracked } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import { html, nothing } from '@oddkin/core/template';
-import { DATA_VERSION, INDEX_FORMAT, type WorkbenchIndex } from '../data/types.js';
+import {
+  DATA_VERSION,
+  INDEX_FORMAT,
+  PAGE_FORMAT,
+  type ComponentPageData,
+  type WorkbenchIndex,
+} from '../data/types.js';
 import { href as registryHref } from '../pages/navigation.js';
 import type { PageEntry } from '../pages/types.js';
 import { COPY } from './copy.js';
@@ -35,6 +41,8 @@ import {
 export interface WorkbenchSource {
   index(signal: AbortSignal): Promise<unknown>;
   page(file: string, signal: AbortSignal): Promise<unknown>;
+  /** Optional frame document URL for injected sources; HTTP sources derive this from `index`. */
+  readonly previewFrameUrl?: string;
 }
 
 /** What the dev server sends after each rebuild (`event: update`). */
@@ -70,6 +78,22 @@ const isIndex = (value: unknown): value is WorkbenchIndex =>
   (value as WorkbenchIndex).format === INDEX_FORMAT &&
   (value as WorkbenchIndex).version === DATA_VERSION;
 
+const isComponentPageData = (value: unknown): value is ComponentPageData => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  const page = value as Partial<ComponentPageData>;
+  return (
+    page.format === PAGE_FORMAT &&
+    page.version === DATA_VERSION &&
+    page.kind === 'component' &&
+    typeof page.tag === 'string' &&
+    typeof page.package === 'string' &&
+    typeof page.module === 'string' &&
+    typeof page.declaration === 'object' &&
+    page.declaration !== null &&
+    Array.isArray(page.examples)
+  );
+};
+
 export class OddkinWorkbench extends OddkinElement.with({
   index: prop.string({ default: '', description: 'URL of the Workbench index (`index.json`).' }),
   events: prop.string({
@@ -91,6 +115,7 @@ export class OddkinWorkbench extends OddkinElement.with({
   readonly #query = signal('');
   readonly #appearance = signal<Appearance>('system');
   #items: SearchItem[] = [];
+  #previewFrameUrl = '';
 
   protected override connected(scope: Scope): void {
     const doc = this.ownerDocument;
@@ -109,6 +134,7 @@ export class OddkinWorkbench extends OddkinElement.with({
       input.focus();
     });
     const indexUrl = new URL(this.index || '_oddkin/index.json', doc.baseURI);
+    this.#previewFrameUrl = this.source?.previewFrameUrl ?? new URL('frame.html', indexUrl).href;
     const source: WorkbenchSource = this.source ?? {
       index: (signal) => fetchJson(indexUrl, signal),
       page: (file, signal) => fetchJson(new URL(file, indexUrl), signal),
@@ -308,12 +334,16 @@ export class OddkinWorkbench extends OddkinElement.with({
       return messagePage(ctx, 'Products and modes', COPY.productsDisabled, first);
     if (!current) return nothing;
     const kind = current.kind;
+    const componentData =
+      kind === 'component' && view?.kind === 'page' && isComponentPageData(view.data)
+        ? { page: view.data, frameUrl: this.#previewFrameUrl }
+        : undefined;
     const body =
       kind === 'overview'
         ? overviewBody(ctx, current)
         : kind === 'tool'
           ? html`<div class="wb-body"><p class="wb-muted">${COPY.toolPending}</p></div>`
-          : sectionsBody(current);
+          : sectionsBody(current, componentData);
     const contents = toc(ctx, current);
     return html`<div class=${contents === nothing ? 'wb-page' : 'wb-page wb-has-toc'}>
       ${pageHeader(ctx, current)} ${contents} ${body}
@@ -336,6 +366,27 @@ export class OddkinWorkbench extends OddkinElement.with({
       registry: index.registry,
       href: (to) => router?.href(to) ?? registryHref(index.registry, to),
       lang: this.ownerDocument.documentElement.lang || 'en',
+      ...(current?.section === 'components' && current.kind === 'overview'
+        ? {
+            catalog: {
+              query: new URLSearchParams(state?.location?.search).get('q') ?? '',
+              category: new URLSearchParams(state?.location?.search).get('category') ?? '',
+              update: (query: string, category: string) => {
+                const params = new URLSearchParams(
+                  this.#router.value?.state.value.location?.search,
+                );
+                if (query.trim()) params.set('q', query.trim());
+                else params.delete('q');
+                if (category) params.set('category', category);
+                else params.delete('category');
+                const suffix = params.toString();
+                void this.#router.value?.navigate(`${current.route}${suffix ? `?${suffix}` : ''}`, {
+                  replace: true,
+                });
+              },
+            },
+          }
+        : {}),
     };
     const stale = this.#stale.value;
     const side = current

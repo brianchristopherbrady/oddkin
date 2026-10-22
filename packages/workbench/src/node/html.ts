@@ -22,6 +22,12 @@ export interface ShellDocument {
   readonly module: string;
 }
 
+export interface FrameDocument {
+  readonly title: string;
+  readonly importMap: ImportMap;
+  readonly module: string;
+}
+
 /** The shell page: an import map, stylesheets, and `<oddkin-workbench>` pointed at the index. */
 export function shellHtml(doc: ShellDocument): string {
   const links = doc.stylesheets
@@ -39,6 +45,25 @@ ${links}    <script type="module">import ${inlineJson(doc.module)};</script>
   </head>
   <body>
     <oddkin-workbench index="${escapeHtml(doc.index)}"${events}></oddkin-workbench>
+  </body>
+</html>
+`;
+}
+
+/** One frame document owns its module map, registry, document styles, and preview container. */
+export function frameHtml(doc: FrameDocument): string {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${escapeHtml(doc.title)}</title>
+    <style>html,body{margin:0;min-block-size:100%;}body{container:preview-frame / inline-size;}[data-oddkin-preview]{display:block;min-block-size:100vh;container:preview / inline-size;}</style>
+    <script type="importmap">${inlineJson(doc.importMap)}</script>
+    <script type="module">import ${inlineJson(doc.module)};</script>
+  </head>
+  <body>
+    <main data-oddkin-preview></main>
   </body>
 </html>
 `;

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      [data-oddkin-preview] {
+        container: preview / inline-size;
+      }
+      fixture-button {
+        margin-inline-start: 0;
+      }
+      @container preview (min-width: 300px) {
+        fixture-button {
+          margin-inline-start: 10px;
+        }
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/core/scope": "../../../core/dist/scope/index.js",
+          "@oddkin/workbench/frame": "../../dist/frame/index.js"
+        }
+      }
+    </script>
+    <script type="module">
+      import '@oddkin/workbench/frame';
+    </script>
+  </head>
+  <body>
+    <main data-oddkin-preview></main>
+  </body>
+</html>

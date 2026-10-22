@@ -1,8 +1,9 @@
 /**
- * `@oddkin/workbench/preview` — preview-owned stylesheets for live editing. A shared component
- * stylesheet (a recipe, a theme-dependent style module) is never mutated: inside one preview
- * scope it is swapped for a copy, and edits replace the copy's rules. Elements are not
- * remounted, so focus, scroll, and component state survive (theming-and-styling.md §11).
+ * `@oddkin/workbench/preview` — isolated preview frames and preview-owned stylesheets. Each
+ * frame has its own registry and module realm. `reload()` advances its generation for reset or
+ * registration replacement; frames execute trusted project code and are not a security sandbox.
+ * A shared component stylesheet is never mutated: inside one preview scope it is swapped for a
+ * copy, and edits replace the copy's rules without remounting elements (theming-and-styling.md §11).
  */
 import type { CSSResult } from '@oddkin/core/styles';
 
@@ -73,3 +74,6 @@ export function previewStyles(shared: CSSResult, scope: Element): PreviewStyles 
     },
   };
 }
+
+export { createIsolatedPreview, PreviewFrameError, previewProtocolStats } from './frame.js';
+export type { IsolatedPreview, IsolatedPreviewOptions } from './frame.js';

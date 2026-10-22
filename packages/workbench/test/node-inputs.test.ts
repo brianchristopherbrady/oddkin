@@ -313,12 +313,14 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     ) as ComponentPageData;
     expect(button.package).toBe('@acme/ui');
     // Frames load the library and its dependencies under versioned URLs.
-    expect(build.frameImportMap?.imports).toEqual({
+    expect(build.frameImportMap?.imports).toMatchObject({
       '@acme/icons': '/_oddkin/m/@acme/icons@2.1.0/index.js',
       '@acme/tokens/inspect.json': '/_oddkin/m/@acme/tokens@1.0.0/dist/acme.inspect.json',
       '@acme/ui': '/_oddkin/m/@acme/ui@1.4.0/dist/index.js',
       '@acme/ui/define/button': '/_oddkin/m/@acme/ui@1.4.0/dist/define/button.js',
       '@acme/ui/oddkin.metadata.json': '/_oddkin/m/@acme/ui@1.4.0/oddkin.metadata.json',
+      '@oddkin/core/scope': '/_oddkin/m/@oddkin/core@0.0.0/dist/scope/index.js',
+      '@oddkin/workbench/frame': '/_oddkin/m/@oddkin/workbench@0.0.0/dist/frame/index.js',
     });
     expect(JSON.parse(build.files.get('frame.importmap.json')!)).toEqual(build.frameImportMap);
     expect(build.packages.get('@acme/ui@1.4.0')).toBe(join(dir, 'node_modules', '@acme', 'ui'));

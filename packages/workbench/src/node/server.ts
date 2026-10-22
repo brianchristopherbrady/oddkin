@@ -5,7 +5,7 @@
  */
 import { watch, type FSWatcher } from 'node:fs';
 import { readFile, realpath, stat } from 'node:fs/promises';
-import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { basename, dirname, extname, isAbsolute, join, relative } from 'node:path';
 import type { WorkbenchDiagnostic } from '../internal/diagnostics.js';
@@ -21,7 +21,7 @@ export interface DevServerOptions {
   readonly config?: string;
   /** Default 4175; 0 picks a free port. */
   readonly port?: number;
-  /** Default `localhost`, so the server is not reachable from other machines. */
+  /** Default `localhost`, bound to both loopback addresses and not reachable from other machines. */
   readonly host?: string;
   /** Watch the inputs and push updates. Default true. */
   readonly watch?: boolean;
@@ -176,7 +176,9 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
       if (asset === 'events') return events(req, res);
       if (asset.startsWith('m/')) return packageFile(req, res, asset.slice(2));
       const file = current.files.get(asset);
-      return file === undefined ? notFound(res) : send(res, 200, TYPES['.json'] as string, file);
+      return file === undefined
+        ? notFound(res)
+        : send(res, 200, TYPES[extname(asset).toLowerCase()] ?? 'application/octet-stream', file);
     }
     // History mode serves the shell for every page path, as a host with rewrites does; hash
     // mode serves it only at the entry, as a static host without rewrites does.
@@ -186,22 +188,47 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
     send(res, 200, TYPES['.html'] as string, current.shell as string);
   }
 
-  const server = createServer((req, res) => {
+  const handleRequest = (req: IncomingMessage, res: ServerResponse) => {
     handle(req, res).catch((error: unknown) => {
       log(`error ${req.url}: ${error instanceof Error ? error.message : String(error)}`);
       if (!res.headersSent) res.writeHead(500);
       res.end();
     });
-  });
-  await new Promise<void>((resolve, reject) => {
-    server.once('error', reject);
-    server.listen(options.port ?? DEFAULT_PORT, options.host ?? 'localhost', () => {
-      server.off('error', reject);
-      resolve();
-    });
-  });
-  const { port } = server.address() as AddressInfo;
+  };
   const host = options.host ?? 'localhost';
+  const servers: Server[] = [];
+  const listen = (server: Server, port: number, address: string) =>
+    new Promise<void>((resolve, reject) => {
+      server.once('error', reject);
+      server.listen(port, address, () => {
+        server.off('error', reject);
+        resolve();
+      });
+    });
+  let port = options.port ?? DEFAULT_PORT;
+  try {
+    const addresses = host === 'localhost' ? ['127.0.0.1', '::1'] : [host];
+    for (const address of addresses) {
+      const server = createServer(handleRequest);
+      servers.push(server);
+      await listen(server, port, address);
+      if (options.port === undefined || options.port === 0)
+        port = (server.address() as AddressInfo).port;
+    }
+  } catch (error) {
+    await Promise.all(
+      servers.map(
+        (server) =>
+          new Promise<void>((resolve) => {
+            if (server.listening) {
+              server.close(() => resolve());
+              server.closeAllConnections();
+            } else resolve();
+          }),
+      ),
+    );
+    throw error;
+  }
   const url = `http://${host.includes(':') ? `[${host}]` : host}:${port}${base}`;
 
   // Watching: package directories recursively; the configuration's directory and the
@@ -377,10 +404,15 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
       await running.catch(() => {});
       for (const client of clients) client.end();
       clients.clear();
-      await new Promise<void>((resolve) => {
-        server.close(() => resolve());
-        server.closeAllConnections();
-      });
+      await Promise.all(
+        servers.map(
+          (server) =>
+            new Promise<void>((resolve) => {
+              server.close(() => resolve());
+              server.closeAllConnections();
+            }),
+        ),
+      );
     },
   };
 }

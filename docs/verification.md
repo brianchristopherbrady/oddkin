@@ -1440,3 +1440,22 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Test iteration:** An initial Playwright selector using Windows backslashes matched no tests. A new guide-sample assertion first matched two code blocks and failed strict mode in all three engines; narrowing the locator to the `#sections` example fixed it, and the final 12-test run passed in all engines.
 
 **Not run:** `npm run verify` and the full test suite, because of concurrent in-progress Workbench changes in the shared tree. The separate Workbench panel integration and full M5 acceptance remain open.
+
+
+## 2026-10-21 — M5 Workbench loopback server, isolated frames, catalog, and basic detail preview
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2). Agents 1 and 2 had unrelated edits in the shared worktree; they were not included. No full-pipeline run or mutation probe was performed.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Workbench typecheck | `npx tsc -b packages/workbench` | Pass. |
+| Focused Node tests | `npx vitest run --project node packages/workbench/test/protocol.test.ts packages/workbench/test/node-server.test.ts packages/workbench/test/node-inputs.test.ts packages/workbench/test/node-generated.test.ts` | Pass — 31 tests in 4 files. The dev server is reachable over both `127.0.0.1` and `[::1]`; the frame document has the expected response type; frame envelopes, JSON-only payloads, inspect request ids/limits, generated import map, and generated files are checked. |
+| Isolated frame browser tests | `npx vitest run --project browser packages/workbench/test/frame.browser.test.ts` | Pass — 6 tests in Chromium, Firefox, and WebKit. Covers separate registries and settings, light/dark, actual container-query changes, frame-realm constructed stylesheets, events, error isolation, incompatible registration rejection, generation reload, wrong source/origin, stale messages, and host-scope cleanup. |
+| Shell catalog/detail tests | `npx vitest run --project browser packages/workbench/test/shell.browser.test.ts` | Pass — 15 tests in Chromium, Firefox, and WebKit. Covers URL-backed catalog search/category filters, grouped counts, no catalog iframe, and a basic detail preview mounted through the published registration entry. |
+
+**Implementation:** The default `localhost` dev server starts IPv4 and IPv6 loopback listeners without exposing the service to other machines. `@oddkin/workbench/protocol` exports DOM-free envelopes, validators, stable example/event/property IDs, and `inspectPreview` request/response types only. `@oddkin/workbench/frame` installs the runtime inside the frame; `createIsolatedPreview()` owns the host frame, message channel, handshake, pending requests, and generation reload. Registration conflicts return `frame.registration.incompatible`; the detail shell mounts a basic preview when a page publishes a registration entry. Catalog search/category state is stored in the URL, and cards do not mount previews. Frames execute trusted project code and are not security sandboxes.
+
+**Remaining:** Full detail/API controls and authored examples (822–831), shell reset/HMR wiring, frame assets/fonts/theme config, fixture/adapter ownership, incompatible-version browser coverage, inspection execution (deferred), and mutation probes. The slice is partial; plan items 822, 831, and 835–838 remain `[~]` with remainders recorded in `IMPLEMENTATION_PLAN.md`.
+
+
+**Additional type check:** `npx tsc -p tsconfig.tests.json --noEmit` passed, including the frame browser test after replacing its unsupported `Window.eval` use with a frame-owned script.

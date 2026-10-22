@@ -108,6 +108,8 @@ Built first, from the library's actual spacing contracts:
 
 Each component's documentation and interactive controls live on its detail page. There is no "Open in playground" hand-off and no separate Playground destination.
 
+The current shell mounts a basic registration-backed frame in the "Interactive example" section when the page publishes a registration entry. It starts the component's default state; editable properties, authored example controls, fixture/provider setup, and event logs are not part of this initial preview.
+
 ### 7.1 Section order (default; each only when supplied)
 
 1. **Overview** — description, intended use ("Use it for" / "Not for" when authored), imports, registration entry, related components.

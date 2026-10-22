@@ -84,6 +84,9 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
   it('serves the shell for page paths, the data files, and package files', async () => {
     const { server, get } = await serve({}, false);
     expect(server.url).toMatch(/^http:\/\/localhost:\d+\/$/);
+    const port = new URL(server.url).port;
+    expect((await fetch(`http://127.0.0.1:${port}/`, html)).status).toBe(200);
+    expect((await fetch(`http://[::1]:${port}/`, html)).status).toBe(200);
     const shell = await get('', html);
     expect(shell.status).toBe(200);
     expect(shell.headers.get('content-type')).toBe('text/html; charset=utf-8');
@@ -111,6 +114,9 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
     expect(await (await get('_oddkin/frame.importmap.json')).json()).toEqual(
       server.build.frameImportMap,
     );
+    const frame = await get('_oddkin/frame.html');
+    expect(frame.headers.get('content-type')).toBe('text/html; charset=utf-8');
+    expect(await frame.text()).toContain('data-oddkin-preview');
     expect((await get('_oddkin/missing.json')).status).toBe(404);
 
     const module = await get('_oddkin/m/@acme/ui@1.4.0/dist/define/button.js');

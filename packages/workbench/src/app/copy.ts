@@ -10,6 +10,12 @@ export const COPY = {
   primaryNavigation: 'Primary',
   search: 'Search',
   searchPlaceholder: 'Search pages',
+  componentSearch: 'Search components',
+  categoryFilter: 'Category',
+  allCategories: 'All categories',
+  componentResults: (shown: number, total: number) =>
+    `Showing ${shown} of ${total} ${total === 1 ? 'component' : 'components'}`,
+  noComponentResults: 'No components match these filters.',
   searchResults: (shown: number, total: number) =>
     total === 0
       ? 'No results'

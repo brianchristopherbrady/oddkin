@@ -16,7 +16,7 @@ import {
 import type { WorkbenchData } from '../data/types.js';
 import { DiagnosticList, type WorkbenchDiagnostic } from '../internal/diagnostics.js';
 import { loadWorkbenchConfig } from './config.js';
-import { shellHtml } from './html.js';
+import { frameHtml, shellHtml } from './html.js';
 import { loadInputs, type WorkbenchInputs } from './inputs.js';
 import { packageGraph, readPackage, type InstalledPackage } from './packages.js';
 
@@ -88,12 +88,15 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
   if (!data) return { ...empty, config, inputs, diagnostics: result.items };
 
   const base = `${config.hosting.basePath}${ASSET_DIR}m/`;
-  const frame = createImportMap(manifests(inputs.graph), { base, versioned: true });
-  result.items.push(...frame.diagnostics);
   const self = readPackage(WORKBENCH_DIR, '@oddkin/workbench');
   const shellGraph = packageGraph([self], WORKBENCH_DIR, result, { skip: NODE_ONLY });
   const shell = createImportMap(manifests(shellGraph), { base, versioned: true });
   result.items.push(...shell.diagnostics);
+  const frame = createImportMap(manifests([...inputs.graph, ...shellGraph]), {
+    base,
+    versioned: true,
+  });
+  result.items.push(...frame.diagnostics);
 
   const packages = new Map<string, string>();
   for (const pkg of [...shellGraph, ...inputs.graph])
@@ -103,6 +106,14 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
   for (const [id, page] of Object.entries(data.pages)) files.set(pageFile(id), serializeData(page));
   files.set('frame.importmap.json', `${JSON.stringify(frame.importMap, null, 2)}\n`);
   files.set('shell.importmap.json', `${JSON.stringify(shell.importMap, null, 2)}\n`);
+  files.set(
+    'frame.html',
+    frameHtml({
+      title: `${data.index.branding.name} preview`,
+      importMap: frame.importMap,
+      module: '@oddkin/workbench/frame',
+    }),
+  );
 
   const tokens = shellGraph.find((pkg) => pkg.name === SHELL_STYLES.package);
   const stylesheet = tokens && resolveExport(tokens.manifest, SHELL_STYLES.export);

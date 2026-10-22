@@ -292,6 +292,30 @@ export const shellStyles = css`
   oddkin-workbench .wb-card {
     block-size: 100%;
   }
+  oddkin-workbench .wb-catalog-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--odd-space-md);
+    margin-block-end: var(--odd-space-lg);
+  }
+  oddkin-workbench .wb-catalog-filters label {
+    display: grid;
+    gap: var(--odd-space-2xs);
+    color: var(--odd-color-text-secondary);
+    font-size: var(--odd-font-size-sm);
+  }
+  oddkin-workbench .wb-catalog-filters input,
+  oddkin-workbench .wb-catalog-filters select {
+    min-inline-size: 12rem;
+    padding: var(--odd-space-2xs) var(--odd-space-xs);
+    background: var(--odd-color-surface-default);
+    border: var(--odd-border-width-default) solid var(--odd-color-border-strong);
+    border-radius: var(--odd-radius-sm);
+  }
+  oddkin-workbench .wb-catalog-filters p {
+    margin: 0;
+  }
   oddkin-workbench .wb-card h2,
   oddkin-workbench .wb-card h3 {
     margin: 0;

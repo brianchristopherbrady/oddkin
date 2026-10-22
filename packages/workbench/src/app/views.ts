@@ -4,6 +4,7 @@
  * from the page registry, so navigation, cards, routes, and search cannot drift apart.
  */
 import { html, nothing, repeat } from '@oddkin/core/template';
+import type { ComponentPageData } from '../data/types.js';
 import { cards, onThisPage, primaryNavigation, sidebar } from '../pages/navigation.js';
 import type { PageEntry, PageRegistry } from '../pages/types.js';
 import { COPY } from './copy.js';
@@ -13,6 +14,11 @@ export interface ViewContext {
   /** URL of an application path (`/components/odd-button#api`) in the configured routing mode. */
   readonly href: (to: string) => string;
   readonly lang: string;
+  readonly catalog?: {
+    readonly query: string;
+    readonly category: string;
+    readonly update: (query: string, category: string) => void;
+  };
 }
 
 export type Appearance = 'system' | 'light' | 'dark';
@@ -176,12 +182,65 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
       <p><strong>${page.id === 'foundations' ? COPY.noFoundations : COPY.noComponents}</strong></p>
       ${page.id === 'foundations' ? html`<p class="wb-muted">${COPY.noFoundationsHelp}</p>` : nothing}
     </div>`;
-  const entries = cards(ctx.registry, page.section);
+  const allEntries = cards(ctx.registry, page.section);
+  const filters = page.section === 'components' ? ctx.catalog : undefined;
+  const categories = [...new Set(allEntries.map((entry) => entry.group ?? ''))];
+  const selectedCategory = filters && categories.includes(filters.category) ? filters.category : '';
+  const entries = filters
+    ? allEntries.filter((entry) => {
+        const text =
+          `${entry.title} ${entry.id} ${entry.summary ?? ''} ${(entry.tags ?? []).join(' ')}`.toLowerCase();
+        return (
+          (!filters.query.trim() || text.includes(filters.query.trim().toLowerCase())) &&
+          (!selectedCategory || (entry.group ?? '') === selectedCategory)
+        );
+      })
+    : allEntries;
   const groups = new Map<string, PageEntry[]>();
   for (const entry of entries)
     groups.set(entry.group ?? '', [...(groups.get(entry.group ?? '') ?? []), entry]);
+  const controls =
+    filters === undefined
+      ? nothing
+      : html`<form
+          class="wb-catalog-filters"
+          role="search"
+          @submit=${(event: Event) => event.preventDefault()}
+        >
+          <label
+            >${COPY.componentSearch}
+            <input
+              type="search"
+              name="q"
+              .value=${filters.query}
+              @input=${(event: Event) =>
+                filters.update((event.target as HTMLInputElement).value, filters.category)}
+            />
+          </label>
+          <label
+            >${COPY.categoryFilter}
+            <select
+              name="category"
+              .value=${selectedCategory}
+              @change=${(event: Event) =>
+                filters.update(filters.query, (event.target as HTMLSelectElement).value)}
+            >
+              <option value="">${COPY.allCategories}</option>
+              ${categories.map((category) => html`<option value=${category}>${category}</option>`)}
+            </select>
+          </label>
+          <p class="wb-muted" aria-live="polite">
+            ${COPY.componentResults(entries.length, allEntries.length)}
+          </p>
+        </form>`;
+  if (!entries.length)
+    return html`<div class="wb-body">
+      ${controls}
+      <p role="status">${COPY.noComponentResults}</p>
+    </div>`;
   if (groups.size === 1 && groups.has(''))
     return html`<div class="wb-body">
+      ${controls}
       <ul class="wb-cards">
         ${repeat(
           entries,
@@ -191,6 +250,7 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
       </ul>
     </div>`;
   return html`<div class="wb-body">
+    ${controls}
     ${[...groups].map(
       ([group, pages], i) =>
         html`<section class="wb-group" aria-labelledby=${`wb-group-${i}`}>
@@ -208,7 +268,10 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
 }
 
 /** Detail pages: a section per visible registry section, the targets of "On this page". */
-export function sectionsBody(page: PageEntry) {
+export function sectionsBody(
+  page: PageEntry,
+  componentPreview?: { readonly page: ComponentPageData; readonly frameUrl: string },
+) {
   return html`<div class="wb-body">
     ${repeat(
       page.sections.filter((s) => s.visible),
@@ -216,7 +279,14 @@ export function sectionsBody(page: PageEntry) {
       (section) =>
         html`<section id=${section.id} aria-labelledby=${`${section.id}-title`}>
           <h2 id=${`${section.id}-title`}>${section.title}</h2>
-          <p class="wb-muted">${COPY.sectionPending}</p>
+          ${
+            section.id === 'interactive-example' && componentPreview
+              ? html`<oddkin-component-preview
+                  .page=${componentPreview.page}
+                  .frameUrl=${componentPreview.frameUrl}
+                ></oddkin-component-preview>`
+              : html`<p class="wb-muted">${COPY.sectionPending}</p>`
+          }
         </section>`,
     )}
   </div>`;
