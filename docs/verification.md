@@ -1867,3 +1867,16 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Change:** `design/figma/components.json` with `components.schema.json` and the export function; `design/figma/reuse.json` with `reuse.schema.json` and `reuse.render.mjs`, which renders component-catalog.md §6 (references, element dependencies, shared homes); catalog §4 maps the 84 AI definitions to the 24 elements and their states; §7 lists the Figma issues, the icon source and licence question, and the families proposed not to build as their own elements.
 
 **Not verified:** the snapshot is dated 2026-10-22; later Figma edits need a new export. The reuse map is a proposal until the owner approves it; no component code changed.
+
+## 2026-10-22 — API vocabulary check (ADR 0045 §8, ready before acceptance)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Unit tests | `npx vitest run --project node tests/metadata/vocabulary.test.ts` | 7 tests pass: controlled names with their types and values accepted; replaced names reported with the canonical one; values outside the set, mixed `appearance` families, and wrong types reported; booleans defaulting to true; property-only members (single renderers, a state-owner `source`, a snapshot `current`) with native member names exempt; replaced slot names; unprefixed custom events with native events exempt; only custom-element declarations checked. |
+| Mutation probes | 14 mutants (`.tmp/mutate.mjs`, Node) | 14 of 14 killed. |
+| Today's manifests | `node scripts/check-vocabulary.mjs` | 58 findings, exactly the renames in ADR 0045 §9: `odd-card` `variant`; 5 boolean `announce`; `odd-conversation` `announcements`, `source`, `current`, `toolRenderer`; `odd-message` `toolRenderer`; `odd-inline-assist` `status` value `ready`; `odd-prompt-input` `busy`; `odd-sources` `heading`; and 34 unprefixed event names across `@oddkin/ai` (43 element-event pairs). A first run also flagged `odd-input`'s native `validationMessage`; native member names are now exempt. |
+| Types, format | `npx tsc -p tsconfig.tests.json --noEmit`; `npx prettier --check` | Pass for these files; the only error is another agent's in-progress e2e/workbench-catalog.spec.ts. |
+
+**Change:** `scripts/vocabulary.mjs` holds the vocabulary (controlled attributes, synonyms, slot synonyms, native events and members) and `checkManifest()`; `scripts/check-vocabulary.mjs` runs it over both packages' manifests. It is not yet part of `npm run verify:metadata`: it joins once ADR 0045 is accepted and Agent 4's renames land, so Agent 4 can use it as the rename list meanwhile.
+
+**Remaining:** `vocabulary.event.shape` (bubbles and composed) needs event facts the analyzer does not publish yet; the check reads names and types only.
