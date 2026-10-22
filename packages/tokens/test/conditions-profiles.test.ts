@@ -211,6 +211,6 @@ describe('unit policy', () => {
       ['target.unitMismatch', '/overrides/control.height.md'],
       ['target.unitMismatch', '/tokens/navigation.item.min-height'],
     ]);
-    expect(result({ 'border.width.default': '1px', 'focus.width': '3px' })).toEqual([]);
+    expect(result({ 'border.width.default': '1.5px', 'focus.width': '3px' })).toEqual([]);
   });
 });

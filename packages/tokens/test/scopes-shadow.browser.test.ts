@@ -43,6 +43,8 @@ describe('token scopes across shadow roots', () => {
         <div data-odd-product="clinic"><div id="unadopted-host"></div><div id="adopted-host"></div></div>
         <div id="slot-host"><i id="slotted"></i><i id="slotted-plain" slot="plain"></i></div>
         <div data-odd-product="clinic"><div data-odd-theme="acme"><div id="theme-host"></div></div></div>
+        <div data-odd-product="studio" data-odd-density="spacious" data-odd-profile="layout.compact" data-odd-mode="light"><i id="same-element"></i></div>
+        <div data-odd-density="compact"><div data-odd-profile="navigation.compact" data-odd-density="spacious"><i id="same-element-nested"></i></div></div>
       </div>`;
     document.body.append(root);
     const q = (id: string) => root.querySelector(`#${id}`) as HTMLElement;
@@ -87,6 +89,8 @@ describe('token scopes across shadow roots', () => {
     // A nested theme scope re-declares every token, so an outer product no longer applies;
     // the mode toggles still come from outside.
     collect(shadow(q('theme-host'), '<i id="in-theme"></i>'));
+    // Several axes on one element (plan 244): emission order decides overlapping roles.
+    collect(root);
   });
 
   afterAll(() => {
@@ -148,6 +152,14 @@ describe('token scopes across shadow roots', () => {
     ['slotted', { mode: 'light', product: 'studio' }],
     ['slotted-plain', { mode: 'dark' }],
     ['in-theme', { mode: 'dark' }],
+    [
+      'same-element',
+      { mode: 'light', product: 'studio', density: 'spacious', profiles: ['layout.compact'] },
+    ],
+    [
+      'same-element-nested',
+      { mode: 'dark', density: 'spacious', profiles: ['navigation.compact'] },
+    ],
   ];
 
   for (const [id, context] of cases_) {

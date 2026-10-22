@@ -397,8 +397,9 @@ describe('colour', () => {
       const result = generate({ brand: { primary } });
       expect(result.diagnostics, primary).toEqual([]);
     }
+    // Every brand but the base one, which as a product would change nothing (product.redundant).
     const products = Object.fromEntries(
-      brands.map((primary, i) => [`p${i}`, { brand: { primary } }]),
+      brands.slice(1).map((primary, i) => [`p${i}`, { brand: { primary } }]),
     );
     const all = generate({ brand: { primary: '#5b46e8' }, products });
     expect(all.diagnostics).toEqual([]);
@@ -438,7 +439,10 @@ describe('colour', () => {
         },
       },
     });
-    expect(corrected.diagnostics).toEqual([]);
+    // The correction is exactly the generated role, so the override is now redundant too.
+    expect(corrected.diagnostics.map((d) => [d.code, d.path])).toEqual([
+      ['override.redundant', '/overrides/color.text.secondary'],
+    ]);
   });
 
   it('offers no correction when no step passes every background, and checks each product', () => {

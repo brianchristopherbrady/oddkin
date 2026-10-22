@@ -1665,3 +1665,17 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Fixed while integrating:** importing every panel eagerly loaded `odd-card` on every page (the catalog's define entry registers it); panels now load per route. The static `@oddkin/workbench/data` import delayed the app's start enough that a Firefox click on a static side-nav link sometimes happened before the router ran; the builder now loads in parallel with the published files, and the test waits for client-rendered content before its first click.
 
 **Finding (engine):** WebKit reports a `style-src-attr` CSP violation for every `<select>` inserted under `style-src 'self'`, including one created with `createElement` on a page without any Oddkin code (Chromium and Firefox report none; repro run 2026-10-21). In the docs they arise from the panels' selects; when the element is already detached the event targets the document. The spec records violations by event and exempts only WebKit `style-src-attr` with a `select` or `#document` target.
+
+
+## 2026-10-21 — Scope composition, precedence, and redundant settings (plan item 244)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium, Firefox, WebKit). Other agents had unrelated edits in the worktree. No full-pipeline run.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Composition (Node) | `npx vitest run --project node packages/tokens/test/composition.test.ts` | Pass — 7 tests. One configuration with a redundant override (string and per-mode), product (base brand), density (scale 1), and profile value reports exactly `override.redundant` ×2, `product.redundant`, `density.redundant`, `profile.redundant` at their paths, and its CSS equals the configuration without them (apart from the redundant profile's own rule). With 1, 2, 3, and 10 products, densities, and profiles together: one rule per scope (plus the two preset profiles), only `profile.overlap` reported (the generated profiles share a role), and the CSS increment equals the sum of each axis alone. |
+| Same-element precedence (browser) | `npx vitest run --project browser packages/tokens/test/scopes-shadow.browser.test.ts` | Pass — 14 tests × 3 engines (42): mode, product, density, and profile on one element, and a profile with a density on one element inside another density, equal `resolveToken`. |
+| Tokens, all projects; default assets | `npx vitest run packages/tokens`; `node scripts/build-token-assets.mjs` | 223 passed; default theme and the CSS-only example still generate with no diagnostics. |
+| Mutants | 5 (redundancy checks off ×4 in `resolve.ts`; scope rules emitted in reverse order in `css.ts`) | 5 of 5 killed. |
+
+**Measured** (default theme, raw / gzip -9 bytes, base 26,326 / 2,720): per product ≈ 3,130 / 160–200; per density ≈ 1,100 / 50; per profile ≈ 170 / 10–14; 10 of every axis together +42,445 / +2,204. Three existing tests used settings that are now reported as redundant (a `1px` border override equal to the preset, the base brand as one of 14 products, and an applied contrast correction that equals the generated role); they were adjusted, the last one now asserting `override.redundant`.

@@ -11,6 +11,7 @@ import { closest, DiagnosticList, pointer, type Diagnostic } from './diagnostics
 import { aboveFloorSyntax, floorLabel } from './floor.js';
 import {
   compareNames,
+  compileValue,
   dependents,
   isModeValues,
   resolveLiteral,
@@ -475,6 +476,13 @@ export function resolveTheme(input: unknown): ResolveResult {
         continue;
       }
       const effective = checkValue(existing, value, modes, path, d);
+      if (compileValue(effective, modes) === compileValue(existing.value, modes))
+        d.warn(
+          'override.redundant',
+          path,
+          `"${tokenName}" already has this value (${existing.origin}${existing.provenance ? `: ${existing.provenance}` : ''}).`,
+          'Remove the override; it changes no output.',
+        );
       tokens.set(tokenName, {
         ...existing,
         value: effective,
@@ -498,6 +506,13 @@ export function resolveTheme(input: unknown): ResolveResult {
   productInputs.forEach((product, i) => {
     const refs = refTokens(productRamps[i] as Ramps);
     const changed = refs.filter((r) => (sorted.get(r.name) as TokenDefinition).value !== r.value);
+    if (changed.length === 0)
+      d.warn(
+        'product.redundant',
+        pointer('products', product.name),
+        `Product "${product.name}" has the base brand colours, so its scope changes nothing.`,
+        'Give it its own brand colours, or remove it.',
+      );
     const variant = withRefs(sorted, changed);
     checkContrast(variant, modes, ` for product "${product.name}"`, d);
     scopes.push(scope('product', product.name, sorted, changed, modes));
@@ -517,6 +532,13 @@ export function resolveTheme(input: unknown): ResolveResult {
         });
       }
     }
+    if (changed.length === 0)
+      d.warn(
+        'density.redundant',
+        pointer('density', entry.name),
+        `Density "${entry.name}" (scale ${entry.scale}) changes no token.`,
+        'Use a scale other than 1, or remove it.',
+      );
     checkTargets(
       withRefs(sorted, changed),
       (n) => `${pointer('density', entry.name)}${pointer('tokens', n)}`,
@@ -590,9 +612,17 @@ export function resolveTheme(input: unknown): ResolveResult {
           `Where both apply to one element, "${profileName}" wins because it comes later in the configuration; data-odd-profile list order does not change this.`,
         );
       } else roleOwners.set(tokenName, profileName);
+      const profileValue = checkValue(target, value, modes, at, d);
+      if (compileValue(profileValue, modes) === compileValue(target.value, modes))
+        d.warn(
+          'profile.redundant',
+          at,
+          `"${tokenName}" already has this value outside the profile.`,
+          'Remove it from the profile; it changes no output.',
+        );
       changed.push({
         ...target,
-        value: checkValue(target, value, modes, at, d),
+        value: profileValue,
         origin,
         provenance: at,
       });

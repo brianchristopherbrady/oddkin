@@ -184,6 +184,23 @@ Direction: token names carry no physical direction (`control.padding.inline.*`, 
 
 *(Verified in `packages/tokens/test/scopes-shadow.browser.test.ts`: 12 cases in Chromium, Firefox, and WebKit, each compared with `resolveToken` for colour, spacing, layout, and navigation roles, plus a check that each pair of probes differs in the axis it tests; 6 of 6 emitter mutants killed. `generate.test.ts` checks that no token name is physical.)*
 
+### 5.4 Composition and precedence of scope axes (implemented, plan item 244)
+
+The CSS never contains a cross-product rule: each product, density, and profile is one rule (a profile also re-applies itself inside nested scopes, §5), and mode is two toggles. Legal compositions and what wins:
+
+| Situation | Result |
+| --- | --- |
+| Axes on nested elements (any order, any depth, across shadow roots) | The nearest scope of each axis applies; each scope re-declares its alias closure, so outer scopes of other axes keep working (§5, §5.3) |
+| Several axes on **one** element | Rules have equal specificity; emission order decides overlapping roles: products, then densities, then profiles, all after the mode rules. In practice only densities and profiles overlap (both touch layout and component roles), and the profile wins |
+| Two profiles on one element (`data-odd-profile="a b"`) setting the same role | The profile that comes later in the configuration wins; the attribute's list order does not matter. Reported as `profile.overlap` with both paths |
+| A profile on an ancestor and a density nested inside it | The profile still applies (its re-application selector) |
+| A nested `data-odd-theme` | Re-declares every token: outer products, densities, and profiles stop applying inside it; mode toggles still come from outside |
+| `overrides` vs. scopes | Overrides change the base values every scope starts from; a scope that re-declares a role still wins inside it |
+
+**Reports with provenance.** Conflicts: `profile.overlap` (warning) at the later profile's value, naming the earlier one. Redundant settings, each a warning at the path where it was written: `override.redundant` (the override compiles to the CSS the token already has; the message names the token's origin and provenance), `profile.redundant` (a profile value equal to the value outside the profile), `product.redundant` (a product with the base brand colours, whose scope declares nothing), and `density.redundant` (a scale that changes no token, e.g. `1`). Redundant settings change no output; the generated CSS equals the configuration without them. A value that differs only in whitespace is not reported (it changes the emitted text). Duplicate keys inside one JSON object are not detected (JSON parsing keeps the last one).
+
+**Measured growth** (default theme `#6250e8`, raw / gzip -9 bytes; 26,326 / 2,720 with no scopes): per product about 3,130 / 160–200, per density about 1,100 / 50 (a density re-declares 25 dimension tokens and their closure), per profile about 170 / 10–14. With 1, 2, 3, and 10 of every axis together: +3,297 / +209, +7,686 / +446, +12,083 / +655, +42,445 / +2,204 (68,771 / 4,924 total), exactly the sum of each axis alone. Configured densities replace the default `compact`. *(Verified in `packages/tokens/test/composition.test.ts` (redundancy reports, output unchanged, additive growth, one rule per scope) and in `scopes-shadow.browser.test.ts` (all axes on one element, and a profile with a density on one element inside another density, in three engines); 5 of 5 mutants killed.)*
+
 ### 5.2 Cascade layer of the generated CSS (implemented, ADR 0039)
 
 Generated CSS begins with the canonical Oddkin layer order and places every declaration in `odd.tokens`:
