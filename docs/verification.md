@@ -1730,3 +1730,15 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Change:** `@oddkin/core/template/roles` exports `rolesOf(host)` (frozen tag references for the host's registered definition's `dependencies`, cached per definition), `composite` (`html` that accepts a tag reference in tag position, validates the name, and writes it into strings cached per call site and names), and `tag(definition)`. Core's template parser and element base class are unchanged; plain `html`'s tag-position error now points to this module. The analyzer reads `composite` templates like `html` ones, including parts on role elements. ADR 0043 is Accepted with the implemented design; core-contracts §6.3 (contract `core/roles`) and multi-product.md §8 record it.
 
 **Remaining:** the role compatibility check (ADR 0043 point 5), with the first M10 composite.
+
+## 2026-10-21 — Foreign-readable check: adapters of the same copy (CI run 6)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reproduction | `npx vitest run --project browser --browser.name=chromium` before the fix | 728 passed, 6 unhandled `reactive.readable.foreign` errors, all from `packages/app/test/app.browser.test.ts` (the same 6 failed CI run 6). The readable was `@oddkin/state/context`'s consumer: same copy of core, carries the `READABLE` brand, but is not a `ReadableNode`. |
+| Browser suite, Chromium | `npx tsc -b; node scripts/build-production.mjs; npx vitest run --project browser --browser.name=chromium` | 64 files passed, 1 skipped; 729 tests passed, 9 skipped; 0 errors. |
+| Mutants | 2 mutants (`.tmp/mutate.mjs`, Chromium) | 2 of 2 killed: probe result ignored (every adapter reported), probe accepting everything (no foreign readable reported). |
+
+**Change:** the development check in `checkForeignReadable` no longer treats every readable that is not a `ReadableNode` as foreign. It reads the value once in a throwaway tracking context; a readable that tracks any node of this copy's graph (an adapter such as a context consumer) is not reported. A readable that tracks nothing here is still reported once. New test: a same-copy adapter bound in child and attribute positions stays live and unreported.
+
+**Remaining:** a same-copy adapter whose value reads no reactive node is still reported (none exist in the workspace).

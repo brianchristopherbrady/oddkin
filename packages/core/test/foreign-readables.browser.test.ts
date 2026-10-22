@@ -118,4 +118,21 @@ describe('readables from another copy of core (core-contracts §5.1)', () => {
     );
     expect(foreignReports()).toBe(0);
   });
+
+  it('leave adapters of this copy unreported and live', () => {
+    const inner = signal('a');
+    const adapter = {
+      [READABLE]: true as const,
+      get value() {
+        return inner.value;
+      },
+      peek: () => inner.peek(),
+      subscribe: (onChange: (value: string) => void) => inner.subscribe(onChange),
+    } satisfies Readable<string>;
+    render(html`<p title="t${adapter}">${adapter}</p>`, container);
+    inner.value = 'b';
+    flush();
+    const p = container.querySelector('p') as HTMLElement;
+    expect([p.textContent, p.title, foreignReports()]).toEqual(['b', 'tb', 0]);
+  });
 });

@@ -667,6 +667,14 @@ const reportedForeign = new WeakSet<Readable<unknown>>();
  */
 export function checkForeignReadable(readable: Readable<unknown>): void {
   if (readable instanceof ReadableNode || reportedForeign.has(readable)) return;
+  // An adapter of this copy (e.g. a context consumer) reads this graph's nodes; another copy's readable reads none here.
+  const sources = new Map<Source, number>();
+  try {
+    runTracked({ notify() {} }, sources, () => readable.value);
+  } catch {
+    return;
+  }
+  if (sources.size > 0) return;
   reportedForeign.add(readable);
   reportOddkinError(
     new OddkinError(
