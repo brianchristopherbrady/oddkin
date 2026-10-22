@@ -1988,3 +1988,15 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Change:** Theme Studio page data (`studio`: baseline configuration, source, worker URL, roles, missing inputs); `loadThemeConfig()` in the Node inputs; the worker file; the frame protocol's additive `specimen` request (mount and specimen share one element-creation path); `<oddkin-workbench-theme-studio>` (form, JSON editor, Worker generation, specimen frames, method and limits), imported lazily by the shell. The test fixture sets `themeStudio.themeConfig` to the default theme. workbench.md ?6 records the slice.
 
 **Remaining:** public Theme Studio panel export; foundation-page links and "View draft" (847); presets, undo/redo, contrast, comparison, inspection, exports, sharing; fallback specimens; focus/state preservation checked explicitly; the Theme Studio UI lifetime scenario (917).
+
+## 2026-10-22 — ADR 0045 accepted with Agent 4's amendments; bare enumerated attributes
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Element tests | `npx vitest run --project browser packages/core/test/element.browser.test.ts` | 30 tests pass in Chromium, Firefox, and WebKit (90). New: a bare enumerated attribute reads as its declared `empty` value (`announce` → `important`), an enum without `empty` still reports `element.attribute.invalid` for a bare attribute, and removing the attribute restores the default. |
+| Mutation probes | 2 mutants (`.tmp/mutate.mjs`, Chromium) | 2 of 2 killed: empty value ignored; empty value applied without a declared one. |
+| Vocabulary check | `npx vitest run --project node tests/metadata/vocabulary.test.ts`; `node scripts/check-vocabulary.mjs` | 7 tests pass (new cases: `mode`, `pressed`, slot `above`). 60 findings in today's manifests: the §9 renames, now including `odd-artifact` `mode` and `odd-prompt-input` slot `above`. |
+| Size | `node scripts/check-size.mjs` | counter 9,531 B (unchanged), component 10,821 B (+13 B), list 11,397 B; all within budget. |
+| Contracts, format | `node scripts/build-contracts.mjs`; `npx prettier --check` | Pass; core/properties mentions `empty`. |
+
+**Change:** ADR 0045 is Accepted. Folded in from Agent 4's review, all accepted by the owner: `view` for content presentation, slots `above`/`below` → `header`/`footer`, no shared `odd-select` event, `odd-plan-input-request`, the bare `announce` means `important`, `current` for navigation only, `value` plus `values` for multiple selection, `pressed` for toggle buttons, no button `tone` until designed. Core: `prop.enum(values, { default, empty })`. The runtime diagnostic for an attribute that names a property-only property (`element.attribute.propertyOnly`) already existed and covers the `error` record case.

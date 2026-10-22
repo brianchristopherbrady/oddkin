@@ -30,6 +30,7 @@ describe('API vocabulary check (ADR 0045)', () => {
     ]);
     expect(codes(attribute('variant', '"outlined"'))).toEqual(['vocabulary.synonym variant']);
     expect(codes(attribute('heading', 'string'))).toEqual(['vocabulary.synonym heading']);
+    expect(codes(attribute('mode', '"source" | "preview"'))).toEqual(['vocabulary.synonym mode']);
   });
 
   it('reports values outside the set, mixed families, and wrong types', () => {
@@ -40,6 +41,7 @@ describe('API vocabulary check (ADR 0045)', () => {
     expect(codes(attribute('status', '"idle" | "ready"'))).toEqual(['vocabulary.values status']);
     expect(codes(attribute('announce', 'boolean'))).toEqual(['vocabulary.type announce']);
     expect(codes(attribute('loading', 'string'))).toEqual(['vocabulary.type loading']);
+    expect(codes(attribute('pressed', 'string'))).toEqual(['vocabulary.type pressed']);
     expect(codes(attribute('label', '"a" | "b"'))).toEqual(['vocabulary.type label']);
   });
 
@@ -84,6 +86,9 @@ describe('API vocabulary check (ADR 0045)', () => {
   it('reports replaced slot names and unprefixed custom events', () => {
     expect(codes({ slots: [{ name: 'prefix' }, { name: 'start' }, { name: '' }] })).toEqual([
       'vocabulary.synonym slot:prefix',
+    ]);
+    expect(codes({ slots: [{ name: 'above' }, { name: 'header' }] })).toEqual([
+      'vocabulary.synonym slot:above',
     ]);
     expect(
       codes({

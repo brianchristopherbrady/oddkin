@@ -34,6 +34,7 @@ export const ATTRIBUTES = {
   readonly: { type: 'boolean' },
   required: { type: 'boolean' },
   multiple: { type: 'boolean' },
+  pressed: { type: 'boolean' },
 };
 
 /** Replaced attribute and property names → the canonical name (ADR 0045 §3). */
@@ -63,7 +64,9 @@ export const SYNONYMS = {
   'active-id': 'current',
   'selected-id': 'value',
   'selected-value': 'value',
-  on: 'checked',
+  on: 'checked or pressed',
+  toggled: 'pressed',
+  mode: 'view (content presentation; colour mode is data-odd-mode)',
   mixed: 'indeterminate',
   direction: 'orientation',
   vertical: 'orientation',
@@ -81,6 +84,8 @@ export const SLOT_SYNONYMS = {
   trailing: 'end',
   before: 'start',
   after: 'end',
+  above: 'header',
+  below: 'footer',
 };
 
 /** Native event names an element may re-dispatch with native meaning (ADR 0045 §5.1). */

@@ -194,6 +194,24 @@ describe('public properties', () => {
     ]);
   });
 
+  it('reads a bare enumerated attribute as its declared empty value, as HTML does', () => {
+    class Announcing extends OddkinElement.with({
+      announce: prop.enum(['none', 'important', 'all'], { default: 'none', empty: 'important' }),
+      tone: prop.enum(['calm', 'loud'], { default: 'calm' }),
+    }) {}
+    const name = tag('demo-announcing');
+    define(name, Announcing);
+    const el = mount<Announcing>(name);
+    el.setAttribute('announce', '');
+    el.setAttribute('tone', '');
+    expect([el.announce, el.tone]).toEqual(['important', 'calm']);
+    el.setAttribute('announce', 'all');
+    expect(el.announce).toBe('all');
+    el.removeAttribute('announce');
+    expect(el.announce).toBe('none');
+    expect(reported.map((r) => r.code)).toEqual(['element.attribute.invalid']);
+  });
+
   it('reflects only opted-in properties, on commit', () => {
     const el = mount<DemoGreeting>(greetingTag);
     expect(el.getAttribute('tone')).toBe('calm');

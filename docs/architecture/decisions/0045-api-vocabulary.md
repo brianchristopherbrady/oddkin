@@ -1,9 +1,9 @@
 # 0045. API vocabulary for elements
 
-- **Status:** Proposed (2026-10-22). The owner chose the recommended option for each §10 choice on 2026-10-22 and accepts the ADR once Agent 4 has reviewed it. No new component is built before acceptance (plan §6).
+- **Status:** Accepted (2026-10-22, by the owner, after Agent 4's review; the review's amendments are folded in, §10).
 - **Date:** 2026-10-22
 - **Area:** Components / AI / Metadata
-- **Detailed contract:** this ADR (§3 vocabulary, §5 events); enforced by `npm run verify:metadata` once accepted
+- **Detailed contract:** this ADR (§3 vocabulary, §5 events); enforced by `node scripts/check-vocabulary.mjs`, part of `npm run verify:metadata` once the renames land
 - **Related:** 0003 (property definitions), 0036 (composition API), 0037 (naming contract: element events use `odd-`), 0040 (AI package), 0043 (composites), 0044 (overlays)
 - **Owners:** Agent 1 (this ADR and the check); Agent 4 (component APIs and the renames)
 
@@ -41,7 +41,7 @@ One documented exception: `odd-button`'s `type` defaults to `button`, not `submi
 | Concept | Name | Type and values | Replaces (reported by the check) |
 | --- | --- | --- | --- |
 | Visual treatment | `appearance` | Per family. Actions: `primary \| secondary \| ghost` (Figma `Appearance`). Surfaces: `outlined \| filled \| elevated`. Fields: `outlined \| filled` (reserved; none today) | `variant`, `kind`, `treatment`, `outline` |
-| Meaning colour | `tone` | `neutral \| info \| success \| warning \| danger`, default `neutral`. Buttons accept `danger` only (destructive actions) | `variant` (colour sense), `color`, `intent`, `severity` |
+| Meaning colour | `tone` | `neutral \| info \| success \| warning \| danger`, default `neutral`. Buttons take no tone until a destructive button is designed (Figma has none) | `variant` (colour sense), `color`, `intent`, `severity` |
 | Size | `size` | `sm \| md \| lg` (subset per element), default `md` | `small`/`medium`/`large`, `s`/`m`/`l` |
 | Inner spacing | `padding` | `none \| sm \| md \| lg` | — |
 | Name | `label` | string; the accessible name, shown where the design shows one (field label, card or region heading, dialog title) | `heading`, `title` (as a component attribute), `caption` |
@@ -51,11 +51,13 @@ One documented exception: `odd-button`'s `type` defaults to `button`, not `submi
 | Lifecycle of a record or operation | `status` | `idle \| pending \| streaming \| complete \| failed \| cancelled \| interrupted` (subset per element) | the value `ready` (→ `complete`) |
 | The element's own open state | `open` | boolean, reflected | `opened`, `visible`, `show`, `expanded` (for the element itself) |
 | Items' open state | `expanded` | property: ids of open items | — |
-| Current item | `current` | string id; the item gets `aria-current` | `active`, `activeId` |
-| Value | `value` | string; a `string[]` property when `multiple` is set | `selectedId`, `selectedValue` |
+| Current item | `current` | string id, for navigation only (side navigation, breadcrumbs, pagination); the item gets `aria-current`. Selection is `value` | `active`, `activeId` |
+| Value | `value` | string. With `multiple`, `value` is the first selected value (as on `<select multiple>`) and the property `values: readonly string[]` holds the selection; form data has one entry per value | `selectedId`, `selectedValue` |
 | Checked | `checked`, `indeterminate` | boolean | `on`, `state`, `mixed` |
+| Pressed (toggle buttons) | `pressed` | boolean; `aria-pressed` | `on`, `toggled`, `selected` (for a toggle button) |
+| Presentation of the content | `view` | per element (`split \| inline`, `source \| preview`) | `mode` (colour mode is `data-odd-mode`) |
 | Orientation | `orientation` | `horizontal \| vertical` | `direction`, `vertical` (boolean) |
-| Announcements | `announce` | `none \| important \| all` | `announcements`, the boolean form |
+| Announcements | `announce` | `none \| important \| all` (subset per element). The bare attribute means `important`, as HTML's enumerated attributes give the empty value a meaning (`prop.enum(…, { empty })`) | `announcements`, the boolean form |
 | Built-in text | `strings` | partial record of localized strings | `labels`, `messages`, `i18n` |
 | Feature switches (AI) | `capabilities` | record | — |
 | State owner | `controller` (an Oddkin controller) or `store` (a controller or an `ExternalSource`) | property | `source` for a state owner |
@@ -64,12 +66,12 @@ One documented exception: `odd-button`'s `type` defaults to `button`, not `submi
 
 ### 4. Slots
 
-`start` and `end` hold inline adornments (logical, so they follow `dir`). `header` and `footer` hold block regions. The default slot holds the main content or label. Other slots are named by role (`composer`, `empty`, `status`); a slot inside a region is `<region>-start` or `<region>-end` (`toolbar-start`). Replaced: `prefix`, `suffix`, `leading`, `trailing`, `before`, `after`.
+`start` and `end` hold inline adornments (logical, so they follow `dir`). `header` and `footer` hold block regions. The default slot holds the main content or label. Other slots are named by role (`composer`, `empty`, `status`); a slot inside a region is `<region>-start` or `<region>-end` (`toolbar-start`). Replaced: `prefix`, `suffix`, `leading`, `trailing`, `before`, `after`, `above` (→ `header`), `below` (→ `footer`).
 
 ### 5. Events
 
 1. **Native names where the meaning matches:** `input` and `change` (user edits of a value), `toggle` and `beforetoggle` (an element's own open state), `close` and `cancel` (dialogs), `invalid`. The host re-dispatches one only when the native event does not leave the shadow root (`change`, `toggle`, `close`, `cancel` are not composed), exactly once, and never for a programmatic change.
-2. **Every other event is `odd-` + kebab-case** (ADR 0037). Use a shared intent name when it fits: `odd-action` (run an item's action), `odd-toggle` (an item's open state, cancelable), `odd-select` (choose an item). Otherwise `odd-<subject>-<verb>`, present tense, with the record or concept as the subject: `odd-prompt-submit`, `odd-approval-decide`, `odd-artifact-revision-change`.
+2. **Every other event is `odd-` + kebab-case** (ADR 0037). Use a shared intent name when it fits: `odd-action` (run an item's action: menu, command palette, split action) and `odd-toggle` (an item's open state, cancelable). Widgets that hold a value (select, listbox, combobox, tabs, radio group, segmented control, tree) report it with `input` and `change`. Otherwise `odd-<subject>-<verb>`, present tense, with the record or concept as the subject: `odd-prompt-submit`, `odd-approval-decide`, `odd-artifact-revision-change`; a request to the host ends in `-request` (`odd-history-request`).
 3. Custom events have `bubbles: true` and `composed: true`.
 4. `detail` is a plain object of ids (`<record>Id`), revisions, and values: never DOM nodes, live records, or functions.
 5. `cancelable: true` only when `preventDefault()` vetoes a local default (keep the draft, keep the previous model, skip the download, keep a group closed). Requests to the host are not cancelable.
@@ -89,7 +91,7 @@ One documented exception: `odd-button`'s `type` defaults to `button`, not `submi
 
 ### 8. Enforcement
 
-On acceptance, a vocabulary file and a check in `scripts/verify-metadata.mjs` (run by `npm run verify:metadata` and CI) report, as errors, for every published element:
+`scripts/vocabulary.mjs` holds the vocabulary and `node scripts/check-vocabulary.mjs` checks both packages' manifests; it joins `npm run verify:metadata` (and CI) once the renames land. It reports, for every published element:
 
 | Code | Finding |
 | --- | --- |
@@ -100,7 +102,7 @@ On acceptance, a vocabulary file and a check in `scripts/verify-metadata.mjs` (r
 | `vocabulary.event.shape` | A custom event that does not bubble or is not composed |
 | `vocabulary.boolean.default` | A boolean that defaults to `true` |
 
-Element-specific names that are not synonyms pass (`items`, `enter-behavior`, `insert-only`).
+Element-specific names that are not synonyms pass (`items`, `enter-behavior`, `insert-only`). `vocabulary.event.shape` needs event facts the analyzer does not publish yet. At runtime, an attribute that names a property-only property (`<odd-response error="…">`) already reports `element.attribute.propertyOnly` in development builds.
 
 ### 9. Renames in the existing elements
 
@@ -112,11 +114,14 @@ No compatibility aliases: the packages are unpublished.
 | `odd-sources` | `heading` | `label` |
 | `odd-prompt-input` | `busy` | `loading` |
 | `odd-conversation` | `announcements` | `announce` (same values, default `important`) |
-| `odd-action-approval`, `odd-change-review`, `odd-checkpoint`, `odd-question`, `odd-response-feedback` | `announce` (boolean, default off) | `announce` (`none` default; `important` replaces the bare attribute) |
+| `odd-action-approval`, `odd-change-review`, `odd-checkpoint`, `odd-question`, `odd-response-feedback` | `announce` (boolean, default off) | `announce` (`none \| important`, default `none`; the bare attribute still means `important`, so existing markup keeps working) |
 | `odd-inline-assist` | `status` value `ready` | `complete` |
 | `odd-conversation` | `source`, `current` | `store`, `snapshot` |
 | `odd-conversation`, `odd-message` | `toolRenderer` | `renderTool` |
-| All of `@oddkin/ai` | 32 unprefixed events | `odd-` + the same name (`odd-prompt-submit`, …) |
+| `odd-artifact` | `mode` (`source \| preview`) | `view` |
+| `odd-prompt-input` | slot `above` | slot `header` |
+| `odd-task-plan` | `plan-input` | `odd-plan-input-request` |
+| All of `@oddkin/ai` | the other 31 unprefixed events | `odd-` + the same name (`odd-prompt-submit`, …) |
 | All of `@oddkin/ai` | `ai-announce`, `ai-reveal-source` | `odd-announce`, `odd-source-reveal` |
 | `odd-input` | — | add `setCustomValidity()` (§7) |
 | data-composition.md | `variant` as the named visual option | `appearance` |
@@ -132,6 +137,8 @@ The owner chose the first option of each (2026-10-22):
 3. All custom events take the `odd-` prefix (§5) rather than keeping `@oddkin/ai`'s unprefixed names.
 4. One `announce` enum everywhere rather than a boolean on leaf elements and an enum on the conversation.
 
+Agent 4's review (2026-10-22, `.tmp/lanes.md`) agreed and proposed amendments; the owner accepted them all and they are folded in above: `view` for content presentation (`mode` means colour mode); slots `above`/`below` replaced by `header`/`footer`; no shared `odd-select` event (value widgets use `input`/`change`); `odd-plan-input-request`; the bare `announce` means `important`; `current` for navigation only; `value` plus `values` for multiple selection (so `value` keeps one type); `pressed` for toggle buttons; buttons take no `tone` until a destructive button is designed.
+
 ## Alternatives considered
 
 - **`variant` for the visual treatment** (today's `odd-card`, data-composition.md). Web Awesome, Shoelace, and Spectrum use `variant` for meaning or colour (`danger`, `negative`), so people and agents who know them would write `variant="danger"` and get nothing.
@@ -142,8 +149,10 @@ The owner chose the first option of each (2026-10-22):
 
 ## Consequences
 
-- Agent 4 renames §9 with examples, demos, tests, docs, and metadata; Agent 1 adds the vocabulary file and the check, then updates data-composition.md, ai-interaction.md §6.1, and the core/events contract text. Agent kits, Workbench, and the docs app pick the names up from metadata.
-- Agent 2 adds an `info` tone role (today's roles have success, warning, and danger, no info).
+- Agent 4 renames §9 with examples, demos, tests, docs, and metadata; Agent 1 adds the check to `verify:metadata` then and updates data-composition.md, ai-interaction.md §6.1, and the core/events contract text. Agent kits, Workbench, and the docs app pick the names up from metadata.
+- Core gains `prop.enum(values, { default, empty })`, the value of the bare attribute (Agent 1, 2026-10-22).
+- Agent 2 added the `info` and `neutral` tone roles (3099bab).
+- When `odd-dialog` lands, its `open` and `show()` mean modal (`showModal()`), unlike a native `<dialog open>`; non-modal surfaces are popovers. Its metadata says so.
 - React 19 handlers become `onodd-prompt-submit`, Vue `@odd-prompt-submit`; the framework fixtures are updated with the renames.
 - A component that needs a concept outside §3 adds it to the vocabulary in the same commit; the check then covers it everywhere.
 

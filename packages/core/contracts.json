@@ -16,7 +16,7 @@
     "contract:core/properties": {
       "title": "Public properties",
       "anchor": "properties",
-      "sha256": "48c71e06443a912f3a909264f63a66e3ec8df48a427edd0e1393f196ef17fbf1"
+      "sha256": "3b6be35a2451618c2047836257a4b9356694d82eddca6e2b5155711830f07d38"
     },
     "contract:core/events": {
       "title": "Events",

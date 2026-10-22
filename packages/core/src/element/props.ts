@@ -110,10 +110,15 @@ function booleanProp(options?: Common): PropDefinition<boolean> {
 
 function enumProp<const V extends readonly [string, ...string[]]>(
   values: V,
-  options: Common & { readonly default: V[number] },
+  options: Common & {
+    readonly default: V[number];
+    /** The value of the bare attribute (`<x announce>`), as HTML's enumerated attributes have. */
+    readonly empty?: V[number];
+  },
 ): PropDefinition<V[number]> {
   const allowed = new Set<string>(values);
   const fallback = options.default;
+  const empty = options.empty;
   const check = (v: unknown): Conversion<V[number]> =>
     typeof v === 'string' && allowed.has(v)
       ? ok(v as V[number])
@@ -123,7 +128,8 @@ function enumProp<const V extends readonly [string, ...string[]]>(
     defaultValue: fallback,
     initial: () => fallback,
     coerce: check,
-    fromAttribute: (v) => (v === null ? ok(fallback) : check(v)),
+    fromAttribute: (v) =>
+      v === null ? ok(fallback) : v === '' && empty !== undefined ? ok(empty) : check(v),
     toAttribute: (v) => v,
   });
 }

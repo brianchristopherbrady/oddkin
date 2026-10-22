@@ -105,7 +105,7 @@ class DemoGreeting extends OddkinElement.with({
 
 - One definition infers instance types, installs normal DOM accessors, validates attribute conversion, and supplies runtime metadata. Consumers write `element.name = 'Ada'`; no signal wrapper leaks into the public DOM API.
 
-- Reflection is opt-in; booleans use presence semantics; arrays/objects travel through properties, not implicit JSON attributes. Invalid values get precise dev diagnostics and a documented fallback.
+- Reflection is opt-in; booleans use presence semantics; arrays/objects travel through properties, not implicit JSON attributes. Invalid values get precise dev diagnostics and a documented fallback. An enumerated property may declare `empty`, the value of the bare attribute (`<odd-question announce>` means `important`), as HTML's enumerated attributes do (ADR 0045).
 
 <a id="events"></a>
 

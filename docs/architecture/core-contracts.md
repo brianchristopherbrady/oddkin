@@ -124,7 +124,7 @@ class DemoGreeting extends OddkinElement.with({
 
 <!-- contract:core/properties "Public properties" -->
 
-- Reflection is opt-in; booleans use presence semantics; arrays/objects travel through properties, not implicit JSON attributes. Invalid values get precise dev diagnostics and a documented fallback.
+- Reflection is opt-in; booleans use presence semantics; arrays/objects travel through properties, not implicit JSON attributes. Invalid values get precise dev diagnostics and a documented fallback. An enumerated property may declare `empty`, the value of the bare attribute (`<odd-question announce>` means `important`), as HTML's enumerated attributes do (ADR 0045).
 
 <!-- /contract:core/properties -->
 <!-- contract:core/events "Events" -->
