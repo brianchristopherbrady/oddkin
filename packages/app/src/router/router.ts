@@ -226,8 +226,6 @@ class RouterImpl implements Router {
     this.#release(new DOMException(`${this.#label()} connected elsewhere`, 'AbortError'));
     this.#owner = scope;
     this.#window = win;
-    // Read now: a signal first created after dispose() would not carry the disposal reason.
-    const ownerSignal = scope.signal;
     // Fragment changes, including one set directly, also fire `popstate` (all three engines).
     scope.listen(win, 'popstate', () => void this.#go(this.#read(), 'pop'));
     scope.listen(win.document, 'click', (event: MouseEvent) => this.#onClick(event));
@@ -274,7 +272,7 @@ class RouterImpl implements Router {
       this.#announcer = scope.use(new LiveAnnouncer({ regions: () => regions }));
     }
     scope.add(() => {
-      if (this.#owner === scope) this.#release(ownerSignal.reason);
+      if (this.#owner === scope) this.#release(scope.signal.reason);
     }, 'router');
     void this.#go(this.#read(), 'initial');
   }

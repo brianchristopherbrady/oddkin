@@ -147,10 +147,8 @@ class CommandImpl<I, R> implements Command<I, R> {
     if (this.#disposed || scope.disposed) return;
     this.#release(new DOMException(`${this.#label()} connected elsewhere`, 'AbortError'));
     this.#owner = scope;
-    // Read now: a signal first created after dispose() would not carry the disposal reason.
-    const ownerSignal = scope.signal;
     scope.add(() => {
-      if (this.#owner === scope) this.#release(ownerSignal.reason);
+      if (this.#owner === scope) this.#release(scope.signal.reason);
     }, 'command');
   }
 

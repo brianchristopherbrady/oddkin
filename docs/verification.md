@@ -1459,3 +1459,19 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 
 
 **Additional type check:** `npx tsc -p tsconfig.tests.json --noEmit` passed, including the frame browser test after replacing its unsupported `Window.eval` use with a frame-owned script.
+
+
+## 2026-10-21 — Owner-reason reads in resource, command, router after the core Scope fix
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium, Firefox, WebKit). Other agents had unrelated edits in the shared worktree (`.github/workflows/ci.yml`, `playwright.config.ts`); they were not included. No full-pipeline run.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| App typecheck | `npx tsc -b packages/app` | Pass. |
+| Resource, command, router tests | `npx vitest run packages/app/test/resource packages/app/test/command packages/app/test/router` | Pass — 15 files, 95 tests (Node and Chromium, Firefox, WebKit). |
+| Size budgets | `node scripts/check-size.mjs` | Pass — app 4,975 B, resource 3,527 B, command 3,735 B, router 6,988 B gzip (budgets 5,376 / 3,840 / 4,096 / 7,680). |
+| Mutants | each owner cleanup's `scope.signal.reason` replaced by `undefined`, then the file's tests | 3 of 3 killed: resource (`resource.browser.test.ts` disconnect reason, 3 engines), command (`command.test.ts` "the owner's end cancels the pending run with its reason" and `command.browser.test.ts` disconnect, 3 engines), router (`router.browser.test.ts` "runs as an application service", 3 engines). |
+
+**Change:** core's `Scope` stores the disposal reason and aborts a lazily created controller with it (Agent 1's scope-reasons fix), so the owner cleanups in `@oddkin/app/resource`, `command`, and `router` read `scope.signal.reason` when they run instead of capturing the signal eagerly; the stale comments went with the eager reads. ADR 0006 cites the reference Theme Studio's "Method and limits" section instead of the deleted `docs/reference/design-system-lab-audit.md`.
+
+**Not done:** the other links to the deleted audit note (IMPLEMENTATION_PLAN.md §Documents, §Current state, 5d.2, M0, §12.4; workbench.md; workbench-pages.md) belong to shared or other agents' files and are reported in `.tmp/lanes.md`.

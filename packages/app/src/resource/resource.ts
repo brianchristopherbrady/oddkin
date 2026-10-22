@@ -123,12 +123,10 @@ class ResourceImpl<K, T> implements Resource<K, T> {
     this.#disconnect(new DOMException(`${this.#label()} connected elsewhere`, 'AbortError'));
     const connection: Connection<K> = { scope, hasKey: false, key: undefined };
     this.#connection = connection;
-    // Read the signal now: a scope's controller is created lazily, and one created only after
-    // dispose() would not carry the disposal reason that the pending load must receive.
-    const ownerSignal = scope.signal;
     // Registered before the effect, so it runs after the effect stops following the source.
+    // `scope.signal` carries the disposal reason even when first read during disposal.
     scope.add(() => {
-      if (this.#connection === connection) this.#disconnect(ownerSignal.reason);
+      if (this.#connection === connection) this.#disconnect(scope.signal.reason);
     }, 'resource');
     scope.effect(
       () => {
