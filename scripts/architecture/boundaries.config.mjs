@@ -19,6 +19,7 @@ export default {
         './reactive',
         './scope',
         './template',
+        './template/roles',
         './styles',
         './element',
         './helpers/class-map',

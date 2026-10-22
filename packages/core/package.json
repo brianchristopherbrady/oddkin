@@ -27,6 +27,11 @@
       "development": "./dist/template/index.js",
       "default": "./dist/prod/template/index.js"
     },
+    "./template/roles": {
+      "types": "./dist/template/roles.d.ts",
+      "development": "./dist/template/roles.js",
+      "default": "./dist/prod/template/roles.js"
+    },
     "./styles": {
       "types": "./dist/styles/index.d.ts",
       "development": "./dist/styles/index.js",

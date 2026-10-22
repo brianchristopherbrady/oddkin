@@ -28,6 +28,7 @@ const IDS = [
   'rendering',
   'update-complete',
   'failure-ownership',
+  'roles',
 ].map((name) => `contract:core/${name}`);
 
 describe('core contracts', () => {

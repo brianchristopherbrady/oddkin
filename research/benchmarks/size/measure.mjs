@@ -10,6 +10,7 @@ export const ENTRIES = [
   'counter',
   'component',
   'list',
+  'composite',
   'reactive',
   'ai-headless',
   'ai-response',
@@ -30,6 +31,9 @@ export const BUDGETS = {
   counter: 9728, // 9.5 KiB; measured 9,280
   component: 11264, // 11 KiB; measured 10,553
   list: 11776, // 11.5 KiB; measured 11,064
+  // 12 KiB; measured 11,876 on 2026-10-21 (keyed rows rendering their definition's field and button
+  // through @oddkin/core/template/roles, ADR 0043; 370 B more than the same rows with literal tags).
+  composite: 12288,
   reactive: 2048, // 2 KiB; measured 1,892
   'ai-headless': 14336, // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation)
   'ai-response': 21504, // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations)

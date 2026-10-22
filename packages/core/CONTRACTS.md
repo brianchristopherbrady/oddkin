@@ -21,6 +21,7 @@ What `@oddkin/core` guarantees, for people and tools reading the installed packa
 | `contract:core/rendering` | [Rendering behaviors](#rendering) |
 | `contract:core/update-complete` | [updateComplete and commit timing](#update-complete) |
 | `contract:core/failure-ownership` | [Failure ownership](#failure-ownership) |
+| `contract:core/roles` | [Composite roles](#roles) |
 
 <a id="binding-rule"></a>
 
@@ -385,3 +386,32 @@ Errors that cannot be thrown to a caller go to the handler set with `setErrorHan
 | Lifecycle hook throws | `element.<hook>.error` | element | Rendering and bindings | Next connection calls the hook again |
 
 Disposal during callbacks is safe: a handler that removes its own host leaves no subscriptions or owned resources, and an effect that disconnects another element prevents that element's queued effect from running. Each connection gets a fresh scope. The previous scope is aborted, and listeners do not accumulate. Direct binding updates do not re-render the host or read layout (layout getters, `getBoundingClientRect`, and `getComputedStyle` were spied during updates). Production builds report the same codes and owners with short messages (ADR 0031).
+
+<a id="roles"></a>
+
+## Composite roles
+
+Id: `contract:core/roles`
+
+A composite (a component that renders other components) lists its children as `dependencies` and renders them through its roles, so recomposing it with another family of children changes only `dependencies`:
+
+```ts
+import { composite, rolesOf } from '@oddkin/core/template/roles';
+
+export const rowsTemplate = (host: MemberRows) => {
+  const roles = rolesOf<'field' | 'button'>(host);
+  return html`<ol>
+    ${repeat(host.members, (m) => m.id, (m, i) =>
+      composite`<li><${roles.field} .value=${m.name}></${roles.field}>
+        <${roles.button} ?disabled=${i === 0}>Up</${roles.button}></li>`)}
+  </ol>`;
+};
+// compose({ name: 'acme-rows', element: MemberRows, template: rowsTemplate,
+//           dependencies: { field: fieldDefinition, button: buttonDefinition } })
+```
+
+- `rolesOf(host)` reads the host's registered definition and returns one frozen tag reference per `dependencies` entry, the same object for every render. A host without a registered definition is `definition.role.unbound`; in development builds, reading a role the definition does not declare is `definition.role.missing`.
+- `composite` is `html` that also accepts a tag reference in tag position (`<${ref}` and `</${ref}`), and only there (`template.tagRef.position`). Names are validated against the custom element name grammar without its non-ASCII ranges (`template.tagRef.invalid`), so no markup character reaches a template. The names are written into the template strings, cached per call site and names: re-renders reuse the prepared template, and children keep identity, typed text, and focus as with literal tags. Every other interpolation is an ordinary binding, with the full binding syntax.
+- Trusted Types: the `oddkin-template` policy receives author-written template strings plus these validated names; no other runtime value reaches it.
+- Pay for use: core's parser and the bundles of components without children are unchanged; the module adds 370 B gzip to a composite (`composite` size entry). The analyzer reads composite templates like `html` ones and knows each role's element from `dependencies`, without executing templates.
+- Plain `html` still rejects a binding in tag position (`template.binding.position`); family-specific templates with literal tags remain a supported alternative for a product with one or two composites.

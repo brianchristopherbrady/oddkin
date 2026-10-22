@@ -55,5 +55,5 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0040](./0040-ai-interaction-package.md) | AI interaction package: records, controllers, adapters, and elements | Accepted | Components / AI |
 | [0041](./0041-approved-default-palette-and-roles.md) | Approved default palette, role vocabulary, and text-style roles | Accepted | Tokens |
 | [0042](./0042-complete-foundation-scales.md) | Complete foundation scales: radius, elevation, motion, stacking, and type | Accepted | Tokens |
-| [0043](./0043-composite-dependency-mechanism.md) | Composite dependency mechanism: element-reference parts and definition roles | Proposed | Core / Components |
+| [0043](./0043-composite-dependency-mechanism.md) | Composite dependency mechanism: element-reference parts and definition roles | Accepted | Core / Components |
 | [0044](./0044-overlay-positioning-and-top-layer.md) | Overlay positioning and the top layer | Accepted | Components / Core / Platform |

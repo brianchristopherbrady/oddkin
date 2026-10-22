@@ -77,6 +77,11 @@
       "title": "Failure ownership",
       "anchor": "failure-ownership",
       "sha256": "f0119abdfc294b83b9fdf6d400cd00d64ed4f3593db9d4e79d88a1afc4398410"
+    },
+    "contract:core/roles": {
+      "title": "Composite roles",
+      "anchor": "roles",
+      "sha256": "e52152622aabdb7077338872ca88c906bacd148ab8b34c06e2eaa5cc9f8764f5"
     }
   }
 }

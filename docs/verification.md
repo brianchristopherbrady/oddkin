@@ -1709,3 +1709,24 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Fixed in the harness while measuring:** the first navigation scenario compared a batch ending on a two-level route with a sample on a one-level route (a +1 scope that was route structure, not a leak); cycles are now round trips. An upgrade check read the shadow root before connection (Oddkin elements attach it on connect). The component scenario left its container on the page.
 
 **Not covered:** Workbench preview switching and Theme Studio UI edits (Agent 3's surfaces); retained heap in Firefox and WebKit (no comparable API).
+
+
+## 2026-10-21 — ADR 0043 spike: composite roles (`@oddkin/core/template/roles`)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2). Other agents were running tests on the same machine.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Core typecheck | `npx tsc -b packages/core`; `npx tsc -p tsconfig.tests.json --noEmit` | Pass. |
+| Browser tests | `npx vitest run --project browser packages/core/test/roles.browser.test.ts` | Pass — 8 tests in Chromium, Firefox, and WebKit (24): each family's children rendered, upgraded, and wired; two families side by side; identity, typed text, and focus kept through a reorder, a re-render with new objects, and an insert above; rows released to the `scopeStats()` baseline; one rewritten template per call site and family (plain `composite` keeps the caller's strings); `template.tagRef.invalid` for names with markup characters, `template.tagRef.position` both ways, plain `html` still `template.binding.position`; `definition.role.missing` and `definition.role.unbound`. |
+| Strict CSP and Trusted Types | `npx playwright test e2e/composite-roles.spec.ts` | Pass in Chromium, Firefox, and WebKit: `examples/composite-roles` under `default-src 'none'`, the import map allowed by hash, `require-trusted-types-for 'script'`, and `trusted-types oddkin-template` renders both families from one template, a child's click reorders the rows and the moved child is the same element, and no `securitypolicyviolation` fires; Trusted Types enforced or unsupported per engine. `tests/examples/csp.test.ts` covers the page's hash. |
+| Analyzer | `npx vitest run packages/analyzer/test` | Pass — 13 files, 127 tests, including `composite.test.ts` over `tests/fixtures/analyzer-composite`: `acme-rows` depends on `acme-field` and `acme-button`; the recomposed `studio-rows` has `extends: component:acme-rows` and depends on `studio-field` and `studio-button`; the shared template's slots (`empty`) and parts (`list`, `row`, `field`, `action`, the last two on role elements) are read from the `composite` template; no diagnostics; a module that throws when executed is never run. |
+| Contracts and production | `npm run contracts`; `npx vitest run tests/contracts packages/core/test/production.test.ts` | Pass — 16 sections, new id `contract:core/roles`; production builds keep no development messages. |
+| Metadata | `npx vitest run packages/components/test/metadata.test.ts packages/ai/test/metadata.test.ts` | Pass — 14 tests (the analyzer's template reading is unchanged for existing components). |
+| Size | `node scripts/build-production.mjs`; `node scripts/check-size.mjs`; `.tmp/size-roles-delta.mjs` (the size entry with literal tags instead of roles) | Pass — counter 9,531, component 10,808, list 11,397 B gzip, unchanged; new `composite` entry 11,876 B gzip (budget 12,288), 370 B more than the same rows with literal tags. |
+| Boundaries | `node scripts/architecture/check-boundaries.mjs` | Pass — `./template/roles` added to core's DOM-free entries. |
+| Mutants | 9 mutants (`.tmp/mutate.mjs`; core in Chromium, analyzer in Node) | 9 of 9 killed: name grammar disabled, position check removed, rewritten strings not cached, names spliced as separate strings, roles not cached per definition, missing role not reported, unbound host not reported, analyzer ignoring `composite` templates, analyzer skipping role elements. |
+
+**Change:** `@oddkin/core/template/roles` exports `rolesOf(host)` (frozen tag references for the host's registered definition's `dependencies`, cached per definition), `composite` (`html` that accepts a tag reference in tag position, validates the name, and writes it into strings cached per call site and names), and `tag(definition)`. Core's template parser and element base class are unchanged; plain `html`'s tag-position error now points to this module. The analyzer reads `composite` templates like `html` ones, including parts on role elements. ADR 0043 is Accepted with the implemented design; core-contracts §6.3 (contract `core/roles`) and multi-product.md §8 record it.
+
+**Remaining:** the role compatibility check (ADR 0043 point 5), with the first M10 composite.

@@ -378,6 +378,35 @@ Disposal during callbacks is safe: a handler that removes its own host leaves no
 
 <!-- /contract:core/failure-ownership -->
 
+<!-- contract:core/roles "Composite roles" -->
+
+### 6.3 Composite roles (`@oddkin/core/template/roles`, [ADR 0043](./decisions/0043-composite-dependency-mechanism.md))
+
+A composite (a component that renders other components) lists its children as `dependencies` and renders them through its roles, so recomposing it with another family of children changes only `dependencies`:
+
+```ts
+import { composite, rolesOf } from '@oddkin/core/template/roles';
+
+export const rowsTemplate = (host: MemberRows) => {
+  const roles = rolesOf<'field' | 'button'>(host);
+  return html`<ol>
+    ${repeat(host.members, (m) => m.id, (m, i) =>
+      composite`<li><${roles.field} .value=${m.name}></${roles.field}>
+        <${roles.button} ?disabled=${i === 0}>Up</${roles.button}></li>`)}
+  </ol>`;
+};
+// compose({ name: 'acme-rows', element: MemberRows, template: rowsTemplate,
+//           dependencies: { field: fieldDefinition, button: buttonDefinition } })
+```
+
+- `rolesOf(host)` reads the host's registered definition and returns one frozen tag reference per `dependencies` entry, the same object for every render. A host without a registered definition is `definition.role.unbound`; in development builds, reading a role the definition does not declare is `definition.role.missing`.
+- `composite` is `html` that also accepts a tag reference in tag position (`<${ref}` and `</${ref}`), and only there (`template.tagRef.position`). Names are validated against the custom element name grammar without its non-ASCII ranges (`template.tagRef.invalid`), so no markup character reaches a template. The names are written into the template strings, cached per call site and names: re-renders reuse the prepared template, and children keep identity, typed text, and focus as with literal tags. Every other interpolation is an ordinary binding, with the full binding syntax.
+- Trusted Types: the `oddkin-template` policy receives author-written template strings plus these validated names; no other runtime value reaches it.
+- Pay for use: core's parser and the bundles of components without children are unchanged; the module adds 370 B gzip to a composite (`composite` size entry). The analyzer reads composite templates like `html` ones and knows each role's element from `dependencies`, without executing templates.
+- Plain `html` still rejects a binding in tag position (`template.binding.position`); family-specific templates with literal tags remain a supported alternative for a product with one or two composites.
+
+<!-- /contract:core/roles -->
+
 ## 7. Optional shared stores (`@oddkin/state`)
 
 ```ts

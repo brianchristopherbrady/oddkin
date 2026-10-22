@@ -293,7 +293,7 @@ export function buildTemplateHtml(strings: readonly string[]): {
           throw new OddkinError(
             'template.binding.position',
             DEV
-              ? `${location(strings, i)} is in a tag-name position. Dynamic tag names are not supported; branch with when() or match() between static tags.`
+              ? `${location(strings, i)} is in a tag-name position. Dynamic tag names are not supported; branch with when() or match() between static tags, or, for a composite's children, use composite and rolesOf from @oddkin/core/template/roles.`
               : '',
           );
         }

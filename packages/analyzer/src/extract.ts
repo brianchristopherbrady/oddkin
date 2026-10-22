@@ -562,7 +562,8 @@ export function extract(program: ts.Program, root: string): Extraction {
       if (
         ts.isTaggedTemplateExpression(node) &&
         ts.isIdentifier(node.tag) &&
-        (node.tag.text === tag || (tag === 'html' && node.tag.text === 'svg'))
+        (node.tag.text === tag ||
+          (tag === 'html' && (node.tag.text === 'svg' || node.tag.text === 'composite')))
       ) {
         visit(templateText(node.template), node);
       }
@@ -606,7 +607,8 @@ export function extract(program: ts.Program, root: string): Extraction {
         const name = attributeValue(match[1] ?? '', 'name');
         found.slots.add(name ? (name[1] ?? name[2] ?? name[3] ?? '') : '');
       }
-      for (const match of text.matchAll(/<[a-zA-Z][\w-]*\b([^>]*)>/g)) {
+      // A composite's role element (`<${roles.x}`) is a tag written as a substitution.
+      for (const match of text.matchAll(/<(?:[a-zA-Z][\w-]*\b|\u0000)([^>]*)>/g)) {
         const part = attributeValue(match[1] ?? '', 'part');
         for (const name of (part ? (part[1] ?? part[2] ?? part[3] ?? '') : '').split(/\s+/))
           if (name) found.parts.add(name);

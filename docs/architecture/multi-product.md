@@ -195,6 +195,8 @@ Never tag-name guessing, implicit global substitution, or string replacement of 
 
 Recommendation: element-reference parts in core, with templates receiving their definition's roles; today each product passes its family both to the template and to `dependencies`.
 
+**Decision (M8, [ADR 0043](./decisions/0043-composite-dependency-mechanism.md), accepted 2026-10-21):** element-reference parts as an opt-in core subpath, `@oddkin/core/template/roles` ([core-contracts.md §6.3](./core-contracts.md)). A template reads its definition's `dependencies` with `rolesOf(host)` and writes them in tag position with `composite`; `dependencies` is the single source, so recomposing a composite changes only `dependencies`. Core's parser and every non-composite bundle are unchanged; a composite pays 370 B gzip. Family factories remain the zero-mechanism alternative.
+
 ## 9. Product configuration, distribution, and scope isolation
 
 - **Distributable units:** shared behavior foundations, shared token contracts or presets, product-specific skins and definitions, product theme configurations, and independently versioned applications — in a monorepo or separate repositories.

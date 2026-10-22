@@ -1,0 +1,15 @@
+{
+  "name": "@acme/ui-composite",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./field": "./dist/field/index.js",
+    "./define/field": "./dist/field/field.define.js",
+    "./rows": "./dist/rows/index.js",
+    "./define/rows": "./dist/rows/rows.define.js",
+    "./studio": "./dist/studio/index.js",
+    "./define/studio": "./dist/studio/studio.define.js"
+  }
+}
