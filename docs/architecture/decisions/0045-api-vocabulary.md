@@ -1,6 +1,6 @@
 # 0045. API vocabulary for elements
 
-- **Status:** Proposed (2026-10-22). Owner approval required before any new component is built (plan §6, owner decision of 2026-10-22).
+- **Status:** Proposed (2026-10-22). The owner chose the recommended option for each §10 choice on 2026-10-22 and accepts the ADR once Agent 4 has reviewed it. No new component is built before acceptance (plan §6).
 - **Date:** 2026-10-22
 - **Area:** Components / AI / Metadata
 - **Detailed contract:** this ADR (§3 vocabulary, §5 events); enforced by `npm run verify:metadata` once accepted
@@ -125,10 +125,12 @@ Unchanged: `odd-button` (`appearance`, `size`, `loading`, `type`), `odd-input` (
 
 ### 10. Owner decisions in this ADR
 
-1. Button treatment keeps Figma's `appearance="primary | secondary | ghost"` (recommended) rather than splitting it into `appearance` (`filled | outlined | plain`) plus `tone`; the split makes the most common case two attributes.
-2. `odd-button` defaults to `type="button"` (recommended, §2) rather than the native `submit`.
-3. All custom events take the `odd-` prefix (recommended, §5) rather than keeping `@oddkin/ai`'s unprefixed names.
-4. One `announce` enum everywhere (recommended) rather than a boolean on leaf elements and an enum on the conversation.
+The owner chose the first option of each (2026-10-22):
+
+1. Button treatment keeps Figma's `appearance="primary | secondary | ghost"` rather than splitting it into `appearance` (`filled | outlined | plain`) plus `tone`; the split makes the most common case two attributes.
+2. `odd-button` defaults to `type="button"` (§2) rather than the native `submit`.
+3. All custom events take the `odd-` prefix (§5) rather than keeping `@oddkin/ai`'s unprefixed names.
+4. One `announce` enum everywhere rather than a boolean on leaf elements and an enum on the conversation.
 
 ## Alternatives considered
 
