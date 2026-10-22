@@ -132,6 +132,31 @@ describe('generated CSS in a real cascade', () => {
     });
   }
 
+  // Every colour role, including aliases of mode-dependent roles (tones) and the translucent scrim.
+  const computed = (literal: string | undefined) => {
+    const alpha = /^rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)$/.exec(literal ?? '');
+    return alpha ? `rgba(${alpha.slice(1, 4).join(', ')}, ${alpha[4]})` : rgb(literal);
+  };
+  const colors = [...theme.tokens.values()].filter((t) => t.type === 'color').map((t) => t.name);
+  for (const [id, context] of expectations.filter(([id]) =>
+    ['light', 'dark', 'dark-clinic-light', 'studio-dark'].includes(id),
+  )) {
+    it(`resolves all ${colors.length} colour roles in ${id} like the generator`, () => {
+      const el = (root.querySelector(`#${id}`) as HTMLElement).appendChild(
+        document.createElement('b'),
+      );
+      const wrong: string[] = [];
+      for (const name of colors) {
+        el.style.color = `var(--odd-${name.replaceAll('.', '-')})`;
+        const expected = computed(resolveToken(theme, name, context));
+        const actual = getComputedStyle(el).color;
+        if (actual !== expected) wrong.push(`${name}: ${actual} ≠ ${expected}`);
+      }
+      el.remove();
+      expect(wrong).toEqual([]);
+    });
+  }
+
   it('follows the system preference in data-odd-mode="system"', () => {
     const dark = matchMedia('(prefers-color-scheme: dark)').matches;
     const style = probe('system');

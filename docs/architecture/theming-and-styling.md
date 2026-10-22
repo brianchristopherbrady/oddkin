@@ -425,11 +425,16 @@ Design source: Figma file `E7LfRysny8V3qU24tv082i`, frames 8:29 ("Oddkin · UI k
 | `color.danger.foreground` / `surface` | `#b4233a` / `#fff0f2` | `#ff9bab` / `#3d202a` | Errors; also danger borders |
 | `color.success.foreground` / `surface` | `#267653` / `#eaf6ef` | `#8fd6b3` / `#1c352b` | Success |
 | `color.warning.foreground` / `surface` | `#8a5900` / `#fff5de` | `#e9c478` / `#3a2e18` | Warnings (`status.warning` seeds the `ref.warning.*` ramp) |
+| `color.info.foreground` / `surface` | `ref.info.600` `#0076af` / `ref.info.50` `#ecf7ff` | `ref.info.400` `#53abe4` / `ref.info.950` `#001d2f` | Information. `status.info` (default `oklch(0.6 0.14 240)`) seeds the `ref.info.*` ramp; the foreground is chosen by contrast. Owner decision 2026-10-22; no Figma variable yet |
+| `color.neutral.foreground` / `surface` / `border` | `text.secondary` / `surface.sunken` / `border.default` | same | The neutral tone (aliases) |
+| `color.{info,success,warning,danger}.border` | `ref.<tone>.200` | `ref.<tone>.800` | Decorative tone edges (alerts, badges); not control boundaries, so no contrast minimum |
+| `color.selection.surface` | `ref.brand.100` `#e7e9ff` | `ref.brand.900` `#281c6c` | Selected rows (listbox options, menu items) under `text.primary`, with a check mark; hover stays `surface.hover` |
+| `color.scrim` | `rgb(0 0 0 / 0.4)` | `rgb(0 0 0 / 0.6)` | Modal backdrops (`::backdrop` of dialogs and drawers) |
 | `color.accent.decorative` | `#dfedaa` | `#dfedaa` | Citron decoration; never status, text, or interaction |
 
 Brand foundations: Chalk `#f6f5f1`, White `#ffffff`, Ink `#23252b`, Electric iris `#6250e8`, Pale iris `#efedfc`, Citron `#dfedaa`. Every contracted pair (§10.4) passes for the default theme in both modes.
 
-**One home per value.** `default.theme.json` writes each colour literal once per mode: `color.link` and `color.focus.ring` alias `color.action.default`, and the white of `surface.default`, `surface.raised`, and light `text.on-action` aliases `{ref.neutral.0}`, as the preset does. `generate.test.ts` fails on a repeated literal or on a literal that equals a reference step. (`brand.primary` is a generator input, not a token, so it may equal `color.action.default`.)
+**One home per value.** `default.theme.json` writes each colour literal once per mode: `color.link` and `color.focus.ring` alias `color.action.default`, and the white of `surface.default`, `surface.raised`, and light `text.on-action` aliases `{ref.neutral.0}`, as the preset does. `generate.test.ts` fails on a repeated literal or on a literal that equals a reference step. (`brand.primary` is a generator input, not a token, so it may equal `color.action.default`.) The tone, selection, and scrim roles add no literal to `default.theme.json`: they read ramp steps or alias existing roles, and the scrim's two values live in the preset.
 
 ### 10.2 Text styles (implemented, ADR 0042)
 
@@ -481,18 +486,20 @@ Unit policy for the new types: durations are non-negative `ms`/`s` times, easing
 
 | Concern | Foreground | Backgrounds | Minimum |
 | --- | --- | --- | --- |
-| text | `color.text.primary` | canvas, surface default/raised/sunken/hover/specimen, danger/success/warning surfaces | 4.5:1 (1.4.3) |
-| text | `color.text.secondary` | canvas, surface default/raised/sunken/hover/specimen | 4.5:1 (1.4.3) |
+| text | `color.text.primary` | canvas, surface default/raised/sunken/hover/specimen, every tone surface, selection surface | 4.5:1 (1.4.3) |
+| text | `color.text.secondary` | canvas, surface default/raised/sunken/hover/specimen, selection surface | 4.5:1 (1.4.3) |
 | interaction | `color.text.on-action` | `color.action.{default,hover,pressed}` | 4.5:1 (1.4.3) |
 | interaction | `color.selection.foreground` | `color.selection.background` (selection also has a non-colour marker) | 4.5:1 (1.4.3) |
 | interaction | `color.link` | canvas, surface default/raised/sunken/hover | 4.5:1 (1.4.3) |
 | interaction | `color.border.strong` (control boundaries) | canvas, surface default/raised/sunken/hover | 3:1 (1.4.11) |
-| focus | `color.focus.ring` (drawn at an offset over the surrounding surface) | canvas, surface default/raised/sunken/hover/specimen | 3:1 (1.4.11) |
+| focus | `color.focus.ring` (drawn at an offset over the surrounding surface) | canvas, surface default/raised/sunken/hover/specimen, selection surface (rows draw it inset) | 3:1 (1.4.11) |
 | invalid | `color.danger.foreground` (error text and invalid borders) | canvas, surface default/raised/sunken/hover, danger surface | 4.5:1 (1.4.3; so borders exceed 3:1) |
-| status | `color.{success,warning}.foreground` | canvas, surface default/raised, own status surface | 4.5:1 (1.4.3) |
+| status | `color.{neutral,info,success,warning}.foreground` | canvas, surface default/raised, own tone surface | 4.5:1 (1.4.3) |
 | disabled | `color.text.disabled` | surface sunken/default, canvas | exempt (1.4.3 exception): measured and reported, never warned |
 
-**Loading** has no colour role: a busy control keeps its enabled colours and draws its indicator in `currentColor`, so the text and interaction contracts cover it. Hover and pressed states are covered by the interaction rows (`surface.hover` is a background of every text, link, and focus row).
+**Loading** has no colour role: a busy control keeps its enabled colours and draws its indicator in `currentColor`, so the text and interaction contracts cover it. Hover and pressed states are covered by the interaction rows (`surface.hover` is a background of every text, link, and focus row). Tone borders and the scrim are decorative and have no contract.
+
+**Opaque contracted roles.** Overrides may write a translucent `rgb(R G B / A)` only for roles without a contract (such as `color.scrim`); a contracted role gets `color.translucent`, because the contrast of a translucent colour depends on what is behind it. A role that aliases another contracted role and fails on the same backgrounds (`color.neutral.foreground` → `color.text.secondary`) adds no second warning; the warning names the role to fix.
 
 **Generation.** Contrast-selected roles (`link`, `focus.ring`, and the status foregrounds) are chosen against every background their contracts name (`contractBackgrounds(name)`), so generated themes pass by construction: 14 brand vectors, alone and as products of one theme, generate with no diagnostics. Widening the backgrounds moved generated dark-mode roles one step lighter, because a generated dark `surface.hover` is lighter than the surfaces checked before (the old dark focus ring reached only 1.79:1 on it). A role step is shared by every product, so adding a product can move a contrast-selected role in the base theme (ADR 0006); nothing else in the base changes.
 
@@ -516,18 +523,18 @@ The test also reports, as exact lists, Figma variables with no token, tokens Fig
 
 ### 10.6 Role scales for component style modules (from the Figma components)
 
-Every concern below already has roles; component styles and the shared style modules in `@oddkin/components/styles` read these tokens and add none of their own. The Figma components bind the same variables (page 158:22, read 2026-10-22; Figma binds no component-level variables for these, so there are no component tokens). Rows marked *pending* need an owner decision before a role is added.
+Every concern below has roles; component styles and the shared style modules in `@oddkin/components/styles` read these tokens and add none of their own. The Figma components bind the same variables where Figma has them (page 158:22, read 2026-10-22; Figma binds no component-level variables for these, so there are no component tokens). Where Figma was inconsistent or silent, the owner decided on 2026-10-22 (marked *owner*); those roles have no Figma variable yet.
 
 | Concern | Roles | Figma evidence |
 | --- | --- | --- |
 | Control size `sm \| md \| lg` | `control.height.{sm,md,lg}`, `control.padding.inline.{sm,md,lg}`, one `control.gap` for every size, `control.radius`; block padding 0 (the height sets it); text `type.ui`, and `font.size.md` with the `ui` weight and line height at `lg` | Buttons at three sizes, icon button (`md` square), input, select, segmented, listbox option and menu item rows (`md`) |
 | Card | `color.surface.default`, `color.border.default`, `card.radius`, `card.padding`; filled: `color.surface.sunken`, no border; elevated: `elevation.md` | `card` Default and Filled |
-| Floating surface (popover, menu, listbox popup, toast, tooltip) | `color.surface.raised`, `color.border.default`, `elevation.lg`, `card.radius` (tooltip: `control.radius`) | Not consistent in Figma: popover and toast use `surface.default`; the menu has no shadow; the select popup uses `border.strong`, `elevation.md`, `control.radius` (reported to the owner) |
+| Floating surface (popover, menu, listbox popup, toast, tooltip) | `color.surface.raised`, `color.border.default`, `elevation.lg`, `card.radius` (tooltip: `control.radius`). In dark mode `surface.raised` is lighter than cards, so floating content reads as above them | *Owner.* Figma was not consistent: popover and toast use `surface.default`; the menu has no shadow; the select popup uses `border.strong`, `elevation.md`, `control.radius` |
 | Modal surface (dialog, alert dialog, drawer) | `color.surface.default`, `color.border.default`, `elevation.xl`, `card.radius` | All three agree |
-| Tone `neutral \| success \| warning \| danger` | `color.<tone>.surface` and `color.<tone>.foreground` (icon, title, emphasis); body text stays `color.text.primary`; neutral uses `color.surface.sunken` | `alert`, `badge`, `toast`; no tone borders (invalid controls draw `color.danger.foreground` as the border). *Pending:* `info` (no Figma tone), and the neutral foreground (`text.secondary` in badges, `text.primary` in alerts) |
-| Selection | `color.selection.{background,foreground}` for checked and selected controls; selected rows mark selection with a non-colour indicator | Chip, checkbox, radio, switch on. *Pending:* a selected listbox option uses `surface.hover`, the hover colour |
+| Tone `neutral \| info \| success \| warning \| danger` (ADR 0045 `tone`) | `color.<tone>.surface`, `color.<tone>.foreground` (icon, title, emphasis), `color.<tone>.border` (decorative edge); body text stays `color.text.primary`. Neutral aliases `text.secondary`, `surface.sunken`, `border.default` | `alert`, `badge`, `toast` (Neutral, Success, Warning, Danger). *Owner:* `info` from its own ramp, neutral foreground `text.secondary` (Figma: badges `text.secondary`, alerts `text.primary`), tone borders from the ramps (Figma draws none). Invalid controls still draw `color.danger.foreground` as the border |
+| Selection | `color.selection.{background,foreground}` for checked and selected controls (chips, checkbox, radio, switch); `color.selection.surface` under `color.text.primary` with a check mark for selected rows (listbox options, menu items); hover stays `color.surface.hover` | Chip, checkbox, radio, switch on. *Owner:* Figma's selected listbox option used `surface.hover`, so selected and hover looked the same |
 | Indicators (checkbox, radio, switch) | Box or track: `color.surface.default` (switch track `color.surface.sunken`) with a `border.width.default` `color.border.strong` edge; hover `color.surface.hover`; checked `color.selection.background` with the mark or thumb in `color.selection.foreground`; switch thumb off `color.text.secondary`; invalid edge `color.danger.foreground`; radius `radius.sm` (checkbox), `radius.full` (radio, switch) | `checkbox`, `radio`, `switch`; disabled checked states use 50 % opacity in Figma, the other disabled states use `surface.sunken` and `text.disabled` |
-| Overlay | `elevation.lg` floating, `elevation.xl` modal. *Pending:* a scrim colour for modal backdrops (no Figma source) | Dialog, drawer, popover |
+| Overlay | `elevation.lg` floating, `elevation.xl` modal; `color.scrim` on the `::backdrop` of modal dialogs and drawers | Dialog, drawer, popover. *Owner:* scrim black at 40 % (light) / 60 % (dark); Figma has no scrim |
 | Focus ring | `color.focus.ring` (the action colour), `focus.width`, `focus.offset`; rows draw it inset with `radius.sm` | Every focus variant |
 | Progress | Track `color.surface.sunken`, fill `color.action.default`, radius `radius.sm` | `progress` |
 

@@ -4,7 +4,15 @@
  * Pure and deterministic; no I/O. Contract: theming-and-styling.md §1–§5, §10, §11.4.
  */
 import type { Mode, ModeValues, ThemeConfig } from '../theme/types.js';
-import { contrastRatio, formatOklch, generateRamp, parseColor, RAMP, type Oklch } from './color.js';
+import {
+  contrastRatio,
+  formatOklch,
+  generateRamp,
+  isTranslucentColor,
+  parseColor,
+  RAMP,
+  type Oklch,
+} from './color.js';
 import { resolveConditions, type Condition } from './conditions.js';
 import { checkContrast, hexOf } from './contrast.js';
 import { closest, DiagnosticList, pointer, type Diagnostic } from './diagnostics.js';
@@ -30,6 +38,7 @@ import {
   PRESET_CONDITIONS,
   PRESET_PROFILES,
   PRESET_TOKENS,
+  ROLE_CONTRACTS,
   type ContrastRole,
 } from './preset.js';
 import { generateSpacing, SEGMENT } from './spacing.js';
@@ -58,15 +67,10 @@ export interface ResolveResult {
   readonly diagnostics: readonly Diagnostic[];
 }
 
-type Ramps = Record<
-  'brand' | 'neutral' | 'danger' | 'success' | 'warning',
-  ReturnType<typeof generateRamp>
->;
-interface StatusSeeds {
-  readonly danger: Oklch;
-  readonly success: Oklch;
-  readonly warning: Oklch;
-}
+type StatusName = keyof typeof DEFAULT_STATUS;
+const STATUS_NAMES = Object.keys(DEFAULT_STATUS) as StatusName[];
+type Ramps = Record<'brand' | 'neutral' | StatusName, ReturnType<typeof generateRamp>>;
+type StatusSeeds = Readonly<Record<StatusName, Oklch>>;
 
 const TOP_LEVEL = [
   '$schema',
@@ -141,6 +145,7 @@ function buildRamps(primary: Oklch, neutral: Oklch | undefined, status: StatusSe
     danger: generateRamp(status.danger),
     success: generateRamp(status.success),
     warning: generateRamp(status.warning),
+    info: generateRamp(status.info),
   };
 }
 
@@ -338,18 +343,12 @@ export function resolveTheme(input: unknown): ResolveResult {
   const status: unknown = given<unknown>(config.status, {});
   const statusInput: Record<string, unknown> = isRecord(status) ? status : {};
   if (!isRecord(status)) d.error('config.type', '/status', 'status must be an object.');
-  else unknownKeys(status, ['danger', 'success', 'warning'], '/status', d);
-  const danger = color(given(statusInput['danger'], DEFAULT_STATUS.danger), '/status/danger', d);
-  const success = color(
-    given(statusInput['success'], DEFAULT_STATUS.success),
-    '/status/success',
-    d,
-  );
-  const warning = color(
-    given(statusInput['warning'], DEFAULT_STATUS.warning),
-    '/status/warning',
-    d,
-  );
+  else unknownKeys(status, STATUS_NAMES, '/status', d);
+  const statusSeeds: Partial<Record<StatusName, Oklch>> = {};
+  for (const tone of STATUS_NAMES) {
+    const seed = color(given(statusInput[tone], DEFAULT_STATUS[tone]), `/status/${tone}`, d);
+    if (seed) statusSeeds[tone] = seed;
+  }
 
   const modes = given(config.modes, MODES);
   if (
@@ -422,11 +421,11 @@ export function resolveTheme(input: unknown): ResolveResult {
   if (!isRecord(overrides))
     d.error('config.type', '/overrides', 'overrides must be an object of token names to values.');
 
-  if (d.hasErrors || !primary || !danger || !success || !warning || !spacing)
+  if (d.hasErrors || !primary || STATUS_NAMES.some((s) => !statusSeeds[s]) || !spacing)
     return { theme: undefined, diagnostics: d.items };
 
   // Base graph: generated references, spacing, preset tokens.
-  const seeds: StatusSeeds = { danger, success, warning };
+  const seeds = statusSeeds as StatusSeeds;
   const ramps = buildRamps(primary, neutral, seeds);
   const tokens = new Map<string, TokenDefinition>();
   for (const ref of refTokens(ramps)) tokens.set(ref.name, ref);
@@ -748,6 +747,8 @@ export function resolveToken(
 }
 
 const LITERAL_OR_EXPRESSION = /\{[^{}]+\}|calc\(|min\(|max\(|clamp\(/;
+/** Roles in a contrast contract: their colours must be opaque to be measured. */
+const CONTRACTED = new Set(ROLE_CONTRACTS.flatMap((c) => [c.foreground, ...c.backgrounds]));
 
 /**
  * Validate an override or profile colour for the target token; returns the effective value.
@@ -764,6 +765,16 @@ function checkValue(
   for (const text of isModeValues(effective) ? [effective.light, effective.dark] : [effective]) {
     if (LITERAL_OR_EXPRESSION.test(text)) continue;
     if (target.type === 'color' && !parseColor(text)) {
+      if (isTranslucentColor(text)) {
+        if (CONTRACTED.has(target.name))
+          d.error(
+            'color.translucent',
+            path,
+            `${target.name} has a contrast contract, so it must be opaque; ${JSON.stringify(text)} is translucent.`,
+            'Use #rrggbb, #rgb, or oklch(L C H): the contrast of a translucent colour depends on what is behind it.',
+          );
+        continue;
+      }
       const outside = aboveFloorSyntax(text)
         .map((e) => ` ${e.syntax} is not parsed by ${floorLabel(e.unsupported)}.`)
         .join('');
@@ -771,7 +782,7 @@ function checkValue(
         'color.invalid',
         path,
         `${JSON.stringify(text)} is not a supported colour.`,
-        `Use #rrggbb, #rgb, oklch(L C H), or a {token} reference; mode-dependent colours use { "light": …, "dark": … }.${outside}`,
+        `Use #rrggbb, #rgb, oklch(L C H), or a {token} reference (rgb(R G B / A) for roles without a contrast contract, such as color.scrim); mode-dependent colours use { "light": …, "dark": … }.${outside}`,
       );
     }
   }

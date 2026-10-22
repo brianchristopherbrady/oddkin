@@ -20,6 +20,8 @@ export interface StatusConfig {
   readonly danger?: ColorInput;
   readonly success?: ColorInput;
   readonly warning?: ColorInput;
+  /** Seeds the `ref.info.*` ramp of the `info` tone. */
+  readonly info?: ColorInput;
 }
 
 interface SpacingBase {

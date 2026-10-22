@@ -156,10 +156,24 @@ export function checkContrast(
     const key = `${entry.mode}\u0000${entry.foreground}`;
     measured.set(key, [...(measured.get(key) ?? []), entry]);
   }
+  const failingHexes = new Map<string, Set<string>>();
+  for (const [key, entries] of measured)
+    failingHexes.set(
+      key,
+      new Set(entries.filter((e) => e.status === 'fail').map((e) => e.backgroundHex)),
+    );
   for (const entries of measured.values()) {
     const failing = entries.filter((e) => e.status === 'fail');
     if (!failing.length) continue;
     const { foreground, foregroundHex, mode } = failing[0] as ContrastEntry;
+    // A role that aliases another contracted role (neutral.foreground → text.secondary) fails
+    // with it; one warning, on the role to fix, is enough.
+    const value = tokens.get(foreground)?.value;
+    const alias = /^\{([^{}]+)\}$/.exec(
+      (typeof value === 'string' ? value : value?.[mode]) ?? '',
+    )?.[1];
+    const aliased = alias ? failingHexes.get(`${mode}\u0000${alias}`) : undefined;
+    if (aliased && failing.every((e) => aliased.has(e.backgroundHex))) continue;
     const overridden = failing.some(
       (e) =>
         tokens.get(e.foreground)?.origin === 'overridden' ||

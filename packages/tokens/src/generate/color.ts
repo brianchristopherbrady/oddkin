@@ -19,6 +19,7 @@ type Rgb = readonly [number, number, number];
 
 const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
 const OKLCH = /^oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)(?:deg)?\s*\)$/i;
+const RGB_ALPHA = /^rgb\(\s*(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})\s*\/\s*(\d*\.?\d+)\s*\)$/;
 
 const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
 const toGamma = (c: number) => (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055);
@@ -75,6 +76,16 @@ export function parseColor(input: unknown): Oklch | undefined {
     if ([l, c, h].every(Number.isFinite) && l >= 0 && l <= 1 && c >= 0) return { l, c, h };
   }
   return undefined;
+}
+
+/** `rgb(R G B / A)`, channels 0–255 and alpha 0–1: a translucent colour such as a scrim. */
+export function isTranslucentColor(input: string): boolean {
+  const match = RGB_ALPHA.exec(input.trim());
+  return (
+    !!match &&
+    [match[1], match[2], match[3]].every((c) => Number(c) <= 255) &&
+    Number(match[4]) <= 1
+  );
 }
 
 /** Reduce chroma (keeping lightness and hue) until the colour fits sRGB. */

@@ -38,7 +38,12 @@ export const DEFAULT_STATUS = {
   danger: 'oklch(0.58 0.2 27)',
   success: 'oklch(0.6 0.15 150)',
   warning: 'oklch(0.72 0.15 75)',
+  info: 'oklch(0.6 0.14 240)',
 } as const;
+
+/** Meaning colours (ADR 0045 `tone`); each has `color.<tone>.{foreground,surface,border}`. */
+export const TONES = ['neutral', 'info', 'success', 'warning', 'danger'] as const;
+const RAMP_TONES = ['info', 'success', 'warning', 'danger'] as const;
 export const DEFAULT_DENSITY = { compact: { scale: 0.75 } } as const;
 
 const t = (
@@ -220,9 +225,22 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
     description: 'Selected controls; selection is also shown by a check or marker.',
   }),
   t('color.selection.foreground', 'semantic', 'color', '{color.text.on-action}'),
-  t('color.danger.surface', 'semantic', 'color', mode('{ref.danger.50}', '{ref.danger.950}')),
-  t('color.success.surface', 'semantic', 'color', mode('{ref.success.50}', '{ref.success.950}')),
-  t('color.warning.surface', 'semantic', 'color', mode('{ref.warning.50}', '{ref.warning.950}')),
+  t('color.selection.surface', 'semantic', 'color', mode('{ref.brand.100}', '{ref.brand.900}'), {
+    description:
+      'Selected rows (listbox options, menu items) under color.text.primary, with a check mark; hover stays color.surface.hover.',
+  }),
+  ...RAMP_TONES.flatMap((tone) => [
+    t(`color.${tone}.surface`, 'semantic', 'color', mode(`{ref.${tone}.50}`, `{ref.${tone}.950}`)),
+    t(`color.${tone}.border`, 'semantic', 'color', mode(`{ref.${tone}.200}`, `{ref.${tone}.800}`), {
+      description: 'Decorative tone edge; not a control boundary, so no contrast minimum.',
+    }),
+  ]),
+  t('color.neutral.foreground', 'semantic', 'color', '{color.text.secondary}'),
+  t('color.neutral.surface', 'semantic', 'color', '{color.surface.sunken}'),
+  t('color.neutral.border', 'semantic', 'color', '{color.border.default}'),
+  t('color.scrim', 'semantic', 'color', mode('rgb(0 0 0 / 0.4)', 'rgb(0 0 0 / 0.6)'), {
+    description: 'Modal backdrops (::backdrop of dialogs and drawers).',
+  }),
   t('color.accent.decorative', 'semantic', 'color', '#dfedaa', {
     description: 'Decoration only; never a status, text, or interactive colour.',
   }),
@@ -298,18 +316,17 @@ export const ROLE_CONTRACTS: readonly RoleContract[] = [
     backgrounds: [
       ...SURFACES,
       'color.surface.specimen',
-      'color.danger.surface',
-      'color.success.surface',
-      'color.warning.surface',
+      ...TONES.map((tone) => `color.${tone}.surface`),
+      'color.selection.surface',
     ],
     minimum: 4.5,
     criterion: '1.4.3',
-    use: 'Body text and headings on every surface, including status surfaces.',
+    use: 'Body text and headings on every surface, including tone surfaces and selected rows.',
   },
   {
     concern: 'text',
     foreground: 'color.text.secondary',
-    backgrounds: [...SURFACES, 'color.surface.specimen'],
+    backgrounds: [...SURFACES, 'color.surface.specimen', 'color.selection.surface'],
     minimum: 4.5,
     criterion: '1.4.3',
     use: 'Supporting text, hints, and metadata.',
@@ -349,7 +366,7 @@ export const ROLE_CONTRACTS: readonly RoleContract[] = [
   {
     concern: 'focus',
     foreground: 'color.focus.ring',
-    backgrounds: [...SURFACES, 'color.surface.specimen'],
+    backgrounds: [...SURFACES, 'color.surface.specimen', 'color.selection.surface'],
     minimum: 3,
     criterion: '1.4.11',
     use: 'The focus outline, drawn at an offset over whatever surface surrounds the control.',
@@ -362,32 +379,19 @@ export const ROLE_CONTRACTS: readonly RoleContract[] = [
     criterion: '1.4.3',
     use: 'Error text and the border of invalid controls (text minimum, so borders exceed 3:1).',
   },
-  {
+  ...TONES.filter((tone) => tone !== 'danger').map((tone): RoleContract => ({
     concern: 'status',
-    foreground: 'color.success.foreground',
+    foreground: `color.${tone}.foreground`,
     backgrounds: [
       'color.canvas',
       'color.surface.default',
       'color.surface.raised',
-      'color.success.surface',
+      `color.${tone}.surface`,
     ],
     minimum: 4.5,
     criterion: '1.4.3',
-    use: 'Success text and icons.',
-  },
-  {
-    concern: 'status',
-    foreground: 'color.warning.foreground',
-    backgrounds: [
-      'color.canvas',
-      'color.surface.default',
-      'color.surface.raised',
-      'color.warning.surface',
-    ],
-    minimum: 4.5,
-    criterion: '1.4.3',
-    use: 'Warning text and icons.',
-  },
+    use: `Text and icons in the ${tone} tone.`,
+  })),
   {
     concern: 'disabled',
     foreground: 'color.text.disabled',
@@ -410,7 +414,7 @@ export function contractBackgrounds(foreground: string): readonly string[] {
 /** A role chosen from a ramp by measured WCAG contrast against another role. */
 export interface ContrastRole {
   readonly name: string;
-  readonly ramp: 'brand' | 'danger' | 'success' | 'warning';
+  readonly ramp: 'brand' | (typeof RAMP_TONES)[number];
   /** Roles the chosen colour must contrast with, all of them (resolved per mode). */
   readonly against: readonly string[];
   readonly minimum: number;
@@ -451,6 +455,7 @@ export const CONTRAST_ROLES: readonly ContrastRole[] = [
   contracted('color.danger.foreground', 'danger', 4.5),
   contracted('color.success.foreground', 'success', 4.5),
   contracted('color.warning.foreground', 'warning', 4.5),
+  contracted('color.info.foreground', 'info', 4.5),
 ];
 
 /** Provisional named conditions. `shell` is the container the application shell declares. */

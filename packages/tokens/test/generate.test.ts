@@ -15,7 +15,7 @@ import {
   type Diagnostic,
 } from '../src/index.js';
 import { DiagnosticList } from '../src/generate/diagnostics.js';
-import { CONTRAST_ROLES, contractBackgrounds } from '../src/generate/preset.js';
+import { CONTRAST_ROLES, contractBackgrounds, TONES } from '../src/generate/preset.js';
 import { cases } from './fixtures/cases.js';
 
 const spacing = (config: unknown) => {
@@ -292,7 +292,7 @@ describe('theme configuration diagnostics', () => {
         [[code, `/${key}`]],
       ]);
     }
-    for (const role of ['danger', 'success', 'warning']) {
+    for (const role of ['danger', 'success', 'warning', 'info']) {
       expect(codes(generate({ brand, status: { [role]: null } }).diagnostics)).toEqual([
         ['color.invalid', `/status/${role}`],
       ]);
@@ -411,7 +411,8 @@ describe('colour', () => {
       overrides: { 'color.text.secondary': { light: '#bbbbbb', dark: '{ref.neutral.300}' } },
     });
     expect(result.ok).toBe(true);
-    // One warning per failing role and mode, naming every background it fails on.
+    // One warning per failing role and mode, naming every background it fails on; neutral.foreground
+    // aliases the role and fails with it, so it adds no second warning.
     expect(result.diagnostics.map((d) => [d.code, d.severity, d.path])).toEqual([
       ['contrast.fail', 'warning', '/tokens/color.text.secondary'],
     ]);
@@ -542,6 +543,91 @@ describe('colour', () => {
     }
     expect(repeats).toEqual([]);
   });
+
+  it('gives every tone (ADR 0045) a foreground, surface, and border, each with one home', () => {
+    const seed = '#0f766e';
+    const { theme, diagnostics } = generate({
+      brand: { primary: '#5b46e8' },
+      status: { info: seed },
+    });
+    expect(diagnostics).toEqual([]);
+    const value = (name: string) => theme?.tokens.get(name)?.value;
+    expect(TONES).toEqual(['neutral', 'info', 'success', 'warning', 'danger']);
+    for (const tone of TONES)
+      for (const part of ['foreground', 'surface', 'border'])
+        expect(theme?.tokens.has(`color.${tone}.${part}`), `${tone}.${part}`).toBe(true);
+    // Neutral reuses the neutral roles; the other tones read their own ramp.
+    expect(
+      ['foreground', 'surface', 'border'].map((part) => value(`color.neutral.${part}`)),
+    ).toEqual(['{color.text.secondary}', '{color.surface.sunken}', '{color.border.default}']);
+    for (const tone of ['info', 'success', 'warning', 'danger']) {
+      expect(value(`color.${tone}.surface`)).toEqual({
+        light: `{ref.${tone}.50}`,
+        dark: `{ref.${tone}.950}`,
+      });
+      expect(value(`color.${tone}.border`)).toEqual({
+        light: `{ref.${tone}.200}`,
+        dark: `{ref.${tone}.800}`,
+      });
+    }
+    // status.info seeds the info ramp; its foreground is chosen by contrast like the other tones.
+    const hue = (hex: string | undefined) => parseColor(hex)?.h ?? NaN;
+    expect(Math.abs(hue(resolveToken(theme as never, 'ref.info.600')) - hue(seed))).toBeLessThan(3);
+    expect(theme?.tokens.get('color.info.foreground')?.origin).toBe('generated');
+    const report = contrastReport(theme as never);
+    for (const [foreground, background] of [
+      ['color.info.foreground', 'color.info.surface'],
+      ['color.neutral.foreground', 'color.neutral.surface'],
+      ['color.text.primary', 'color.info.surface'],
+      ['color.text.primary', 'color.selection.surface'],
+      ['color.text.secondary', 'color.selection.surface'],
+      ['color.focus.ring', 'color.selection.surface'],
+    ])
+      expect(
+        report
+          .filter((e) => e.foreground === foreground && e.background === background)
+          .map((e) => `${e.mode} ${e.status}`),
+        `${foreground} on ${background}`,
+      ).toEqual(['light pass', 'dark pass']);
+    // An alias role is still warned where only it fails: here on its own (overridden) surface,
+    // where body text fails too.
+    const darkWell = generate({
+      brand: { primary: '#5b46e8' },
+      overrides: { 'color.neutral.surface': { light: '#6b6b6b', dark: '{color.surface.sunken}' } },
+    });
+    expect(codes(darkWell.diagnostics)).toEqual([
+      ['contrast.fail', '/tokens/color.text.primary'],
+      ['contrast.fail', '/tokens/color.neutral.foreground'],
+    ]);
+  });
+
+  it('keeps the scrim translucent and overridable, and contracted roles opaque', () => {
+    const brand = { primary: '#5b46e8' };
+    const { theme, css } = generate({ brand });
+    expect(
+      (['light', 'dark'] as const).map((mode) =>
+        resolveToken(theme as never, 'color.scrim', { mode }),
+      ),
+    ).toEqual(['rgb(0 0 0 / 0.4)', 'rgb(0 0 0 / 0.6)']);
+    expect(css).toContain(
+      '--odd-color-scrim: var(--odd-mode-light, rgb(0 0 0 / 0.4)) var(--odd-mode-dark, rgb(0 0 0 / 0.6));',
+    );
+    const custom = generate({ brand, overrides: { 'color.scrim': 'rgb(23 24 33 / 0.5)' } });
+    expect(custom.diagnostics).toEqual([]);
+    expect(custom.css).toContain('--odd-color-scrim: rgb(23 24 33 / 0.5);');
+    const opaque = generate({
+      brand,
+      overrides: { 'color.text.primary': { light: 'rgb(0 0 0 / 0.87)', dark: '#ffffff' } },
+    });
+    expect(codes(opaque.diagnostics)).toEqual([
+      ['color.translucent', '/overrides/color.text.primary'],
+    ]);
+    expect(opaque.diagnostics[0]?.suggestion).toContain('Use #rrggbb');
+    for (const text of ['rgb(0 0 0 / 2)', 'rgb(256 0 0 / 0.5)', 'rgba(0, 0, 0, 0.5)'])
+      expect(codes(generate({ brand, overrides: { 'color.scrim': text } }).diagnostics)).toEqual([
+        ['color.invalid', '/overrides/color.scrim'],
+      ]);
+  });
 });
 
 describe('brand-only theme', () => {
@@ -638,7 +724,8 @@ describe('scopes and alias closure', () => {
 
   it('keeps emitted rule growth linear in scope axes', () => {
     const stats = cssStats(theme as never);
-    expect(stats.mode).toBeLessThan(40);
+    // One declaration per mode-dependent role: 29, then 40 with the tone, selection, and scrim roles.
+    expect(stats.mode).toBeLessThan(48);
     for (const count of Object.values(stats.scopes)) expect(count).toBeLessThan(60);
   });
 });

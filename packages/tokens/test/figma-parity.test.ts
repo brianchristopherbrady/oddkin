@@ -477,7 +477,9 @@ const ALIAS_GAPS = (
 ).map(([name, alias]) => `${REPOSITORY}${name} → ${alias}`);
 /**
  * Tokens with no Figma variable or style: font stacks (Figma substitutes Roboto and Roboto Mono, so
- * text widths are not a contract), motion, stacking, and three unused foundation steps.
+ * text widths are not a contract), motion, stacking, and three unused foundation steps. The owner's
+ * 2026-10-22 roles (info and neutral tones, tone borders, selected rows, scrim) have no Figma
+ * variables yet.
  */
 const REPO_ONLY = [
   ...['display', 'mono', 'sans'].map((name) => `font.family.${name}`),
@@ -490,6 +492,11 @@ const REPO_ONLY = [
     (role) => `type.${role}.family`,
   ),
   ...['base', 'overlay', 'raised', 'sticky'].map((name) => `z-index.${name}`),
+  ...['neutral', 'info', 'success', 'warning', 'danger'].map((tone) => `color.${tone}.border`),
+  ...['foreground', 'surface'].flatMap((part) => [`color.info.${part}`, `color.neutral.${part}`]),
+  ...[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((step) => `ref.info.${step}`),
+  'color.scrim',
+  'color.selection.surface',
 ];
 
 describe('Figma parity (design/figma/variables.json)', () => {

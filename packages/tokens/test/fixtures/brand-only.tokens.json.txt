@@ -142,6 +142,17 @@
       }
     },
     "danger": {
+      "border": {
+        "$type": "color",
+        "$value": "{ref.danger.200}",
+        "$description": "Decorative tone edge; not a control boundary, so no contrast minimum.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
       "foreground": {
         "$type": "color",
         "$value": "{ref.danger.600}",
@@ -172,7 +183,41 @@
           "dev.oddkin": {
             "category": "semantic",
             "origin": "generated",
-            "provenance": "brand step nearest the page tone with at least 3:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover and color.surface.specimen in every product (light: lightest passing; dark: darkest passing)"
+            "provenance": "brand step nearest the page tone with at least 3:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover and color.surface.specimen and color.selection.surface in every product (light: lightest passing; dark: darkest passing)"
+          }
+        }
+      }
+    },
+    "info": {
+      "border": {
+        "$type": "color",
+        "$value": "{ref.info.200}",
+        "$description": "Decorative tone edge; not a control boundary, so no contrast minimum.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{ref.info.600}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "generated",
+            "provenance": "info step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.info.surface in every product (light: lightest passing; dark: darkest passing)"
+          }
+        }
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{ref.info.50}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
           }
         }
       }
@@ -185,6 +230,57 @@
           "category": "semantic",
           "origin": "generated",
           "provenance": "brand step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover in every product (light: lightest passing; dark: darkest passing)"
+        }
+      }
+    },
+    "neutral": {
+      "border": {
+        "$type": "color",
+        "$value": "{color.border.default}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.text.secondary}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{color.surface.sunken}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "scrim": {
+      "$type": "color",
+      "$value": {
+        "colorSpace": "srgb",
+        "components": [
+          0,
+          0,
+          0
+        ],
+        "alpha": 0.4
+      },
+      "$description": "Modal backdrops (::backdrop of dialogs and drawers).",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "semantic",
+          "origin": "preset"
         }
       }
     },
@@ -209,9 +305,31 @@
             "origin": "preset"
           }
         }
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{ref.brand.100}",
+        "$description": "Selected rows (listbox options, menu items) under color.text.primary, with a check mark; hover stays color.surface.hover.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
       }
     },
     "success": {
+      "border": {
+        "$type": "color",
+        "$value": "{ref.success.200}",
+        "$description": "Decorative tone edge; not a control boundary, so no contrast minimum.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
       "foreground": {
         "$type": "color",
         "$value": "{ref.success.700}",
@@ -331,6 +449,17 @@
       }
     },
     "warning": {
+      "border": {
+        "$type": "color",
+        "$value": "{ref.warning.200}",
+        "$description": "Decorative tone edge; not a control boundary, so no contrast minimum.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
       "foreground": {
         "$type": "color",
         "$value": "{ref.warning.600}",
@@ -1820,6 +1949,217 @@
             "category": "reference",
             "origin": "generated",
             "provenance": "oklch(0.22 0.09 27), chroma reduced to oklch(0.22 0.0897 27) to fit sRGB"
+          }
+        }
+      }
+    },
+    "info": {
+      "50": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.92549,
+            0.968627,
+            1
+          ],
+          "hex": "#ecf7ff"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.97 0.0168 240), chroma reduced to oklch(0.97 0.0159 240) to fit sRGB"
+          }
+        }
+      },
+      "100": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.854902,
+            0.937255,
+            0.996078
+          ],
+          "hex": "#daeffe"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.94 0.0308 240)"
+          }
+        }
+      },
+      "200": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.717647,
+            0.866667,
+            0.976471
+          ],
+          "hex": "#b7ddf9"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.88 0.056 240)"
+          }
+        }
+      },
+      "300": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.52549,
+            0.776471,
+            0.952941
+          ],
+          "hex": "#86c6f3"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.8 0.091 240)"
+          }
+        }
+      },
+      "400": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.32549,
+            0.670588,
+            0.894118
+          ],
+          "hex": "#53abe4"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.71 0.119 240)"
+          }
+        }
+      },
+      "500": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.039216,
+            0.560784,
+            0.819608
+          ],
+          "hex": "#0a8fd1"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.62 0.14 240)"
+          }
+        }
+      },
+      "600": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.462745,
+            0.686275
+          ],
+          "hex": "#0076af"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.54 0.14 240), chroma reduced to oklch(0.54 0.1237 240) to fit sRGB"
+          }
+        }
+      },
+      "700": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.368627,
+            0.54902
+          ],
+          "hex": "#005e8c"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.46 0.126 240), chroma reduced to oklch(0.46 0.1054 240) to fit sRGB"
+          }
+        }
+      },
+      "800": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.278431,
+            0.423529
+          ],
+          "hex": "#00476c"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.38 0.105 240), chroma reduced to oklch(0.38 0.087 240) to fit sRGB"
+          }
+        }
+      },
+      "900": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.192157,
+            0.298039
+          ],
+          "hex": "#00314c"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.3 0.084 240), chroma reduced to oklch(0.3 0.0687 240) to fit sRGB"
+          }
+        }
+      },
+      "950": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.113725,
+            0.184314
+          ],
+          "hex": "#001d2f"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.22 0.063 240), chroma reduced to oklch(0.22 0.0504 240) to fit sRGB"
           }
         }
       }

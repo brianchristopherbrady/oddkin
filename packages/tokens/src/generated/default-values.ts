@@ -43,6 +43,10 @@ export const values = {
       dark: '#171821',
     },
     danger: {
+      border: {
+        light: '#ffc8c1',
+        dark: '#80070d',
+      },
       foreground: {
         light: '#b4233a',
         dark: '#ff9bab',
@@ -58,9 +62,41 @@ export const values = {
         dark: '#b4a8ff',
       },
     },
+    info: {
+      border: {
+        light: '#b7ddf9',
+        dark: '#00476c',
+      },
+      foreground: {
+        light: '#0076af',
+        dark: '#53abe4',
+      },
+      surface: {
+        light: '#ecf7ff',
+        dark: '#001d2f',
+      },
+    },
     link: {
       light: '#6250e8',
       dark: '#b4a8ff',
+    },
+    neutral: {
+      border: {
+        light: '#d9d8e1',
+        dark: '#555368',
+      },
+      foreground: {
+        light: '#5f626f',
+        dark: '#bdbbcd',
+      },
+      surface: {
+        light: '#f0eff3',
+        dark: '#111219',
+      },
+    },
+    scrim: {
+      light: 'rgb(0 0 0 / 0.4)',
+      dark: 'rgb(0 0 0 / 0.6)',
     },
     selection: {
       background: {
@@ -71,8 +107,16 @@ export const values = {
         light: '#ffffff',
         dark: '#23252b',
       },
+      surface: {
+        light: '#e7e9ff',
+        dark: '#281c6c',
+      },
     },
     success: {
+      border: {
+        light: '#bce3c3',
+        dark: '#005121',
+      },
       foreground: {
         light: '#267653',
         dark: '#8fd6b3',
@@ -123,6 +167,10 @@ export const values = {
       },
     },
     warning: {
+      border: {
+        light: '#efd3ac',
+        dark: '#5b3b00',
+      },
       foreground: {
         light: '#8a5900',
         dark: '#e9c478',
@@ -282,6 +330,19 @@ export const values = {
       '800': '#80070d',
       '900': '#5c0206',
       '950': '#3a0002',
+    },
+    info: {
+      '50': '#ecf7ff',
+      '100': '#daeffe',
+      '200': '#b7ddf9',
+      '300': '#86c6f3',
+      '400': '#53abe4',
+      '500': '#0a8fd1',
+      '600': '#0076af',
+      '700': '#005e8c',
+      '800': '#00476c',
+      '900': '#00314c',
+      '950': '#001d2f',
     },
     neutral: {
       '0': '#ffffff',

@@ -43,6 +43,9 @@
         },
         "warning": {
           "$ref": "#/$defs/color"
+        },
+        "info": {
+          "$ref": "#/$defs/color"
         }
       }
     },
