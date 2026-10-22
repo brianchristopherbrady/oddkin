@@ -18,7 +18,10 @@
   "properties": {
     "$schema": { "const": "./variables.schema.json" },
     "fileKey": { "type": "string", "pattern": "^[0-9A-Za-z]{22,128}$" },
-    "fileName": { "type": "string" },
+    "fileName": {
+      "type": "string",
+      "description": "figma.root.name as the Plugin API reports it: \"Document\" for this file, whose title in Figma is \"Oddkin - Design Framework\"."
+    },
     "version": {
       "type": "string",
       "description": "File version, when the export tool reports one."

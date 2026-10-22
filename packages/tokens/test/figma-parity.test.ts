@@ -436,6 +436,13 @@ const ALIAS_GAPS = (
   [
     ['card/padding', 'layout.inset'],
     ['card/radius', 'radius.lg'],
+    ...['link', 'focus/ring'].flatMap((role) =>
+      ['light', 'dark'].map((mode) => [`color/${role}/${mode}`, 'color.action.default']),
+    ),
+    ...['surface/default', 'surface/raised', 'text/on-action'].map((role) => [
+      `color/${role}/light`,
+      'ref.neutral.0',
+    ]),
     ['color/selection/background', 'color.action.default'],
     ['color/selection/background/dark', 'color.action.default'],
     ['color/selection/background/light', 'color.action.default'],

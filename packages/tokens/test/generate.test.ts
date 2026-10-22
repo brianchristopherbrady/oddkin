@@ -514,6 +514,34 @@ describe('colour', () => {
     // Figma's light value (design/figma/variables.json); the old #8c8f9d was 2.80:1 on sunken.
     expect(Math.min(...border.map((e) => e.ratio))).toBeGreaterThanOrEqual(3);
   });
+
+  it('writes each colour literal of the default theme once per mode (DRY)', async () => {
+    type Override = string | { light: string; dark: string };
+    const config = JSON.parse(
+      await readFile(new URL('../themes/default.theme.json', import.meta.url), 'utf8'),
+    ) as { overrides: Record<string, Override> };
+    const theme = generate(config).theme as never;
+    const steps = new Map<string, string>();
+    for (const name of (theme as { tokens: Map<string, unknown> }).tokens.keys()) {
+      if (!name.startsWith('ref.')) continue;
+      for (const mode of ['light', 'dark'] as const)
+        steps.set(`${mode} ${resolveToken(theme, name, { mode })}`, name);
+    }
+    // `brand.primary` is a generator input, not a token, so it may equal a role.
+    const seen = new Map<string, string>();
+    const repeats: string[] = [];
+    for (const [name, value] of Object.entries(config.overrides)) {
+      for (const mode of ['light', 'dark'] as const) {
+        const text = typeof value === 'string' ? value : value[mode];
+        if (text.startsWith('{')) continue;
+        const key = `${mode} ${text.toLowerCase()}`;
+        if (seen.has(key)) repeats.push(`${name} repeats ${seen.get(key)} (${key})`);
+        else seen.set(key, name);
+        if (steps.has(key)) repeats.push(`${name} equals {${steps.get(key)}} (${key})`);
+      }
+    }
+    expect(repeats).toEqual([]);
+  });
 });
 
 describe('brand-only theme', () => {

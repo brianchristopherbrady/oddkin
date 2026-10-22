@@ -1783,3 +1783,27 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Repository-side DRY findings (next slice):** `default.theme.json` writes `#6250e8` four times (`brand.primary`, `action.default`, `link`, `focus.ring`), `#b4a8ff` three times, and light `#ffffff` three times where the preset itself aliases `{ref.neutral.0}`.
 
 **Not done:** the shared role scales (control sizes, surfaces, tones including `info`, indicators, overlay); bound variables per component layer come from Agent 4's components snapshot.
+
+## 2026-10-22 — Default theme: one literal per value, and role scales from the Figma components
+
+**Environment:** as in the previous entry (Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1). Figma evidence read through the Figma MCP `use_figma` (same session, read-only `$fig.query(...).values(...)` projections of fills, strokes, radii, sizes, padding, gap, and text and effect style ids) for 27 component sets on page 158:22: alert, badge, toast, chip, checkbox, radio, switch, button (sm, md, lg), iconButton, input, select, segmented, card, popover, tooltip, dialog, drawer, alertDialog, Menu, ListboxSurface, ListboxOption, MenuItem, NavigationItem, Tabs, progress. Ids resolved to names offline with `design/figma/variables.json`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Values unchanged | `generate()` of the default theme before and after, `resolveToken` for all 210 tokens in light and dark | 0 differences, no diagnostics. `color.link` and `color.focus.ring` now alias `color.action.default`; the light white of `surface.default`, `surface.raised`, and `text.on-action` aliases `{ref.neutral.0}`. |
+| DRY guard | `npx vitest run --project node packages/tokens` | 113 of 113. New in `generate.test.ts`: each colour literal of the default theme appears once per mode and never equals a reference step. Before this change it would have reported 7 repeats (`#6250e8` and `#b4a8ff` in link and focus ring, light `#ffffff` three times). The parity test's alias-gap list grows from 34 to 41, since Figma keeps those seven as literals. |
+| Browser | `npx vitest run --project browser packages/tokens` | 123 of 123 in Chromium, Firefox, and WebKit. |
+| Size | gzip level 9 of `packages/tokens/dist/css/default.css` | 22,960 B raw (−28), 2,770 B gzip (+5); budget 3,072 B. |
+| Mutation | 3 theme mutants plus 1 necessity probe, each restored and byte-checked | 3 of 3 killed (link, focus ring, and a white surface back to literals). Disabling the reference-step comparison lets a light `#ffffff` in `text.on-action` pass, so that comparison is what catches it. |
+
+**Role scales (theming-and-styling.md §10.6):** the Figma components compose every concern from existing semantic roles and bind no component-level variables, so no tokens were added. Control sizes use `control.height`/`control.padding.inline` per size and one `control.gap`. Indicators use the surface, `border.strong`, `selection`, and `danger.foreground` roles. Tones use `color.<tone>.{surface,foreground}`, with no tone borders.
+
+**Figma-side issues, for the owner (in addition to the previous entry):**
+
+1. Floating surfaces disagree. Popover and toast use `surface.default` with `Elevation/lg`. The menu uses `surface.raised` with no shadow. The tooltip uses `surface.raised` with `control/radius`. The select popup uses `border.strong`, `Elevation/md`, and `control/radius`. One decision is needed; the proposal is `surface.raised`, `border.default`, `elevation.lg`, `card.radius`.
+2. A selected listbox option uses `surface.hover`, the hover colour, so selection relies on the check mark alone.
+3. The neutral tone's foreground is `text.secondary` in badges and `text.primary` in alerts.
+4. There is no `info` tone in Figma (alert and badge have Neutral, Success, Warning, Danger), and there is no scrim for modal backdrops.
+5. The radio and switch focus rings use an unbound literal radius (10003) instead of `radius/full`.
+
+**Not done (waiting for the owner):** `color.info.*`, a uniform `color.neutral.*` alias, and an overlay scrim role. Each needs a value or a decision from the design source; ADR 0045 (Proposed) names `info` as a tone.

@@ -429,6 +429,8 @@ Design source: Figma file `E7LfRysny8V3qU24tv082i`, frames 8:29 ("Oddkin · UI k
 
 Brand foundations: Chalk `#f6f5f1`, White `#ffffff`, Ink `#23252b`, Electric iris `#6250e8`, Pale iris `#efedfc`, Citron `#dfedaa`. Every contracted pair (§10.4) passes for the default theme in both modes.
 
+**One home per value.** `default.theme.json` writes each colour literal once per mode: `color.link` and `color.focus.ring` alias `color.action.default`, and the white of `surface.default`, `surface.raised`, and light `text.on-action` aliases `{ref.neutral.0}`, as the preset does. `generate.test.ts` fails on a repeated literal or on a literal that equals a reference step. (`brand.primary` is a generator input, not a token, so it may equal `color.action.default`.)
+
 ### 10.2 Text styles (implemented, ADR 0042)
 
 `type.<style>.{family,size,weight,line-height,letter-spacing}`, each an alias into the foundation scales (§10.3), so a theme changes a scale step once and every style that uses it follows. `font.family.display` aliases `font.family.sans` by default; themes that want a separate display face override it. Oddkin does not ship or load font files.
@@ -511,6 +513,23 @@ Unit policy for the new types: durations are non-negative `ms`/`s` times, easing
 - **Effect styles** `Oddkin/Elevation/<step>/<mode>` compare layer by layer with `elevation.<step>`.
 
 The test also reports, as exact lists, Figma variables with no token, tokens Figma lacks, mismatches it attributes to Figma, and **alias gaps**: Figma literals where the theme aliases another token. Fixing one in Figma and refreshing the snapshot fails the test until its entry is removed, so the lists stay current. Results for the 2026-10-22 snapshot are in [verification.md](../verification.md).
+
+### 10.6 Role scales for component style modules (from the Figma components)
+
+Every concern below already has roles; component styles and the shared style modules in `@oddkin/components/styles` read these tokens and add none of their own. The Figma components bind the same variables (page 158:22, read 2026-10-22; Figma binds no component-level variables for these, so there are no component tokens). Rows marked *pending* need an owner decision before a role is added.
+
+| Concern | Roles | Figma evidence |
+| --- | --- | --- |
+| Control size `sm \| md \| lg` | `control.height.{sm,md,lg}`, `control.padding.inline.{sm,md,lg}`, one `control.gap` for every size, `control.radius`; block padding 0 (the height sets it); text `type.ui`, and `font.size.md` with the `ui` weight and line height at `lg` | Buttons at three sizes, icon button (`md` square), input, select, segmented, listbox option and menu item rows (`md`) |
+| Card | `color.surface.default`, `color.border.default`, `card.radius`, `card.padding`; filled: `color.surface.sunken`, no border; elevated: `elevation.md` | `card` Default and Filled |
+| Floating surface (popover, menu, listbox popup, toast, tooltip) | `color.surface.raised`, `color.border.default`, `elevation.lg`, `card.radius` (tooltip: `control.radius`) | Not consistent in Figma: popover and toast use `surface.default`; the menu has no shadow; the select popup uses `border.strong`, `elevation.md`, `control.radius` (reported to the owner) |
+| Modal surface (dialog, alert dialog, drawer) | `color.surface.default`, `color.border.default`, `elevation.xl`, `card.radius` | All three agree |
+| Tone `neutral \| success \| warning \| danger` | `color.<tone>.surface` and `color.<tone>.foreground` (icon, title, emphasis); body text stays `color.text.primary`; neutral uses `color.surface.sunken` | `alert`, `badge`, `toast`; no tone borders (invalid controls draw `color.danger.foreground` as the border). *Pending:* `info` (no Figma tone), and the neutral foreground (`text.secondary` in badges, `text.primary` in alerts) |
+| Selection | `color.selection.{background,foreground}` for checked and selected controls; selected rows mark selection with a non-colour indicator | Chip, checkbox, radio, switch on. *Pending:* a selected listbox option uses `surface.hover`, the hover colour |
+| Indicators (checkbox, radio, switch) | Box or track: `color.surface.default` (switch track `color.surface.sunken`) with a `border.width.default` `color.border.strong` edge; hover `color.surface.hover`; checked `color.selection.background` with the mark or thumb in `color.selection.foreground`; switch thumb off `color.text.secondary`; invalid edge `color.danger.foreground`; radius `radius.sm` (checkbox), `radius.full` (radio, switch) | `checkbox`, `radio`, `switch`; disabled checked states use 50 % opacity in Figma, the other disabled states use `surface.sunken` and `text.disabled` |
+| Overlay | `elevation.lg` floating, `elevation.xl` modal. *Pending:* a scrim colour for modal backdrops (no Figma source) | Dialog, drawer, popover |
+| Focus ring | `color.focus.ring` (the action colour), `focus.width`, `focus.offset`; rows draw it inset with `radius.sm` | Every focus variant |
+| Progress | Track `color.surface.sunken`, fill `color.action.default`, radius `radius.sm` | `progress` |
 
 ## 11. Layout roles, responsive conditions, and profiles
 
