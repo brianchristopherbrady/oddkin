@@ -14,6 +14,7 @@ import {
   compileValue,
   dependents,
   isModeValues,
+  references,
   resolveLiteral,
   validateGraph,
   type TokenDefinition,
@@ -495,7 +496,37 @@ export function resolveTheme(input: unknown): ResolveResult {
   // Errors in a value the user wrote point at that override, as profile values point at the profile.
   const graph = new DiagnosticList();
   validateGraph(tokens, graph);
-  for (const item of graph.items) d.items.push({ ...item, path: configPath(tokens, item.path) });
+  // Steps of a custom scale that preset roles alias: one error at /spacing instead of one per role.
+  const missingSteps = new Map<string, string[]>();
+  for (const token of tokens.values()) {
+    if (token.origin === 'overridden') continue;
+    for (const ref of references(token.value))
+      if (ref.startsWith('space.') && !tokens.has(ref))
+        missingSteps.set(ref, [...(missingSteps.get(ref) ?? []), token.name]);
+  }
+  const collapsed = new Set([...missingSteps.values()].flat().map((n) => pointer('tokens', n)));
+  for (const item of graph.items) {
+    if (
+      item.code === 'alias.missing' &&
+      collapsed.has(item.path) &&
+      item.message.includes('"space.')
+    )
+      continue;
+    d.items.push({ ...item, path: configPath(tokens, item.path) });
+  }
+  if (missingSteps.size) {
+    const steps = [...missingSteps.keys()].map((n) => n.slice('space.'.length));
+    const roles = [...new Set([...missingSteps.values()].flat())];
+    const strategy = isRecord(config.spacing) ? config.spacing['strategy'] : undefined;
+    d.error(
+      'spacing.missingStep',
+      '/spacing',
+      `The spacing scale has no step${steps.length > 1 ? 's' : ''} ${steps.map((s) => `"${s}"`).join(', ')}, which ${roles.join(', ')} reference${roles.length > 1 ? '' : 's'}.`,
+      strategy === 'ratio'
+        ? `Positional names cover xs, sm, md, lg when stepsBelow ≥ 2 and stepsAbove ≥ 1; or list them in /spacing/names; or override those roles.`
+        : `Add steps named ${steps.join(', ')} to /spacing/steps, or override those roles.`,
+    );
+  }
   if (d.hasErrors) return { theme: undefined, diagnostics: d.items };
 
   const sorted: TokenMap = new Map([...tokens.entries()].sort(([a], [b]) => compareNames(a, b)));

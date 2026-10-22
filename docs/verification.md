@@ -1679,3 +1679,17 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 | Mutants | 5 (redundancy checks off ×4 in `resolve.ts`; scope rules emitted in reverse order in `css.ts`) | 5 of 5 killed. |
 
 **Measured** (default theme, raw / gzip -9 bytes, base 26,326 / 2,720): per product ≈ 3,130 / 160–200; per density ≈ 1,100 / 50; per profile ≈ 170 / 10–14; 10 of every axis together +42,445 / +2,204. Three existing tests used settings that are now reported as redundant (a `1px` border override equal to the preset, the base brand as one of 14 products, and an applied contrast correction that equals the generated role); they were adjusted, the last one now asserting `override.redundant`.
+
+
+## 2026-10-21 — Spacing strategy contract and rem guarantees (plan items 240, 241)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1. Other agents had unrelated edits in the worktree. No full-pipeline run.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Spacing and units | `npx vitest run --project node packages/tokens/test/spacing-units.test.ts` | Pass — 6 tests: an explicit scale without `xs`/`sm`/`md`/`lg` and a ratio scale without `xs` each give exactly one `spacing.missingStep` at `/spacing` (previously up to ten `alias.missing` errors on preset roles); a typo in an override (`{space.mdd}`) stays `alias.missing` at `/overrides/layout.gap` with "Did you mean {space.md}?"; 13 steps below, ratio 1, and a negative factor are rejected at their paths; factor 0, explicit `0`, and an explicit `-0.5rem` step are accepted as written; `em` and `px` scales keep their unit with 4-decimal rounding (`px` warns); adding ratio, multiples, and explicit steps keeps every existing name and value; generated CSS declares only `--odd-*` properties and `color-scheme`; `space.md` is `1rem` in the CSS, `values`, inspection, and DTCG. |
+| Tokens, all projects; default assets | `npx vitest run packages/tokens`; `node scripts/build-token-assets.mjs` | 229 passed; default assets build with no diagnostics. |
+| Root size in a browser | `e2e/tokens-css-only.spec.ts` (existing, rerun earlier today) | A 20 px root font size scales `control.height.md` from its `rem` value in three engines. |
+| Mutants | 5 (collapse removed; error dropped; space suggestion before the near match; negative factors allowed; 13 steps per side) | 5 of 5 killed. |
+
+**Fixed drift:** the documented default preset listed 9 values; the preset has 11 steps (`none` … `4xl`). The "contract test compares before/after manifests" claim had no test; `spacing-units.test.ts` now checks extension stability for all three strategies.

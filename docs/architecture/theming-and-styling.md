@@ -77,6 +77,7 @@ The shared diagnostic envelope planned in [agent-tooling.md](./agent-tooling.md)
 - Numbers are rounded to 4 decimal places in their source unit, trailing zeros trimmed. Optional `snap` (e.g. to `0.125rem`) is explicit and documented.
 - Pixel equivalents shown in docs state their reference root size (16 px). Live values in previews come from `getComputedStyle` in the preview itself, so host root font settings are respected.
 - Each output validates its supported units. DTCG `dimension` output accepts `px` and `rem` in format 2025.10; other values are emitted as a documented extension or reported.
+- **The consumer's root size (implemented, plan item 241).** Generated CSS declares only `--odd-*` custom properties and `color-scheme`: never a root or element `font-size`, so `rem` values follow whatever the page and the reader's preferences set. Nothing assumes a pixel size: `rem` stays `rem` in the CSS, the `values` literals, the inspection JSON, and DTCG output; target-size checks that would need a root size to compare `px` with `rem` report `target.unitMismatch` instead of converting. Three kinds of value are kept apart: **CSS references** (`refs`, `var(--odd-…)`, which follow scopes at runtime), **generated literals in source units** (`values`, inspection, DTCG — pure results of the configuration, per mode and, through `resolveToken(theme, name, context)`, per product/density/profile context), and **observed pixels** (only from `getComputedStyle` in a real document, e.g. Workbench previews). *(Verified in `packages/tokens/test/spacing-units.test.ts`, and in `e2e/tokens-css-only.spec.ts`, where a 20 px root font size scales every `rem` token in three engines.)*
 
 ## 4. Spacing strategies
 
@@ -114,10 +115,22 @@ Default names are positional around `md`: offsets −2…+2 → `xs, sm, md, lg,
 All strategies name their output map `steps` (resolves the `scale` / `steps` naming difference between the two source plans; `scale` is reserved for density multipliers).
 
 ### Stability
-Adding steps never renames or revalues existing steps; a contract test compares before/after manifests. Ratio steps use stable signed indices with an optional explicit naming map.
+Adding steps never renames or revalues existing steps: `multiples` and `explicit` steps are independent, and `ratio` steps are named by their signed offset (`md` = 0), so raising `stepsBelow`/`stepsAbove` only adds names at the ends. An explicit `names` list maps offsets to names instead.
+
+### Parameters, bounds, zero and negative values (implemented, plan item 240)
+
+| Strategy | Fields | Rules |
+| --- | --- | --- |
+| `multiples` | `unit` (a non-zero length), `steps` (name → factor), `snap?` | Factors are finite and ≥ 0; `0` gives a `0` step; negative factors are `scale.invalidParameter` (write negative spacing explicitly where it is used) |
+| `ratio` | `base` (a non-zero length at offset 0), `ratio`, `stepsBelow`, `stepsAbove`, `names?`, `snap?` | `ratio` > 0 and ≠ 1; counts are integers 0–12 per side; `names` must list exactly `stepsBelow + stepsAbove + 1` names |
+| `explicit` | `steps` (name → length), `snap?` | Values are taken as written, including `0` and negative lengths (for example a `pull` step) |
+
+Every strategy keeps the unit it was given (`rem`, `em`, or `px`, which warns `unit.discouraged`) and rounds to 4 decimals in that unit. Fields from another strategy are `strategy.conflict`; there are no `default`, `multiplier`, or `range` fields.
+
+**Required step names.** Preset roles alias `space.xs`, `space.sm`, `space.md`, and `space.lg` (and the preset profiles alias `xs`, `sm`, `md`). A custom scale without one of them is a single `spacing.missingStep` error at `/spacing`, naming the missing steps, the roles that reference them, and how the strategy can provide them (for `ratio`: positional names cover them with `stepsBelow` ≥ 2 and `stepsAbove` ≥ 1). Overriding those roles removes the requirement. A reference the user wrote to a missing step stays an `alias.missing` error at that override, with a "did you mean" suggestion. *(Verified in `packages/tokens/test/spacing-units.test.ts`; 5 of 5 mutants killed.)*
 
 ### Default preset (provisional)
-Oddkin's starting default is an explicit `rem` scale: `0, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4rem`, mapped to documented stable names. It is validated in real components (M2, M8) before being frozen. The examples above are supported configurations, not the default. Generation is a convenience; not every token family has to be geometric.
+Oddkin's starting default is an explicit `rem` scale with 11 steps: `none` 0, `3xs` 0.125, `2xs` 0.25, `xs` 0.5, `sm` 0.75, `md` 1, `lg` 1.5, `xl` 2, `2xl` 3, `3xl` 4, `4xl` 6 rem (§10.3). It is validated in real components (M2, M8) before being frozen. The examples above are supported configurations, not the default. Generation is a convenience; not every token family has to be geometric.
 
 ### Scale vs semantics
 The scale produces reference tokens (`space.md`). Semantic tokens choose from it deliberately:

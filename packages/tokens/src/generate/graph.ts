@@ -141,10 +141,10 @@ export function validateGraph(tokens: TokenMap, diagnostics: DiagnosticList): vo
       const target = tokens.get(ref);
       if (!target) {
         const near = closest(ref, tokens.keys());
-        const suggestion = ref.startsWith('space.')
-          ? `Custom spacing must define every step the preset's roles use (xs, sm, md, lg), or override the roles that reference "${ref}".`
-          : near
-            ? `Did you mean "{${near}}"?`
+        const suggestion = near
+          ? `Did you mean "{${near}}"?`
+          : ref.startsWith('space.')
+            ? `Custom spacing must define every step the preset's roles use (xs, sm, md, lg), or override the roles that reference "${ref}".`
             : undefined;
         diagnostics.error(
           'alias.missing',
