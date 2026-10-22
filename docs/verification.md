@@ -1419,3 +1419,24 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 | Pipeline | `npx tsc -p tsconfig.tests.json`; `npx prettier --check` on the new files | Prettier passes. The test typecheck reports one error, in another agent's in-progress `packages/workbench/test/frame.browser.test.ts` (`Window.eval`); none in this slice's files. |
 
 **Not covered:** the CLI's guide-budget failure path (no library exceeds the budget); task references, Agent Skills packaging, and `llms.txt` (M11). The pilot reads published metadata, so a kit is only as current as the last `npm run build`; `--check` reports the metadata change once the build has run.
+
+
+## 2026-10-21 — Docs app slice (M5 items 867–869; M7 item 894 docs half; M1 `dev`)
+
+**Environment:** Windows, Node 24.22.1, npm 11.19.1, Playwright 1.64.1 (Chrome for Testing 156.0.8078.4, Firefox 157.0, WebKit 27.2). Agent 3 had in-progress Workbench changes in the shared working tree; the full pipeline was not run. Contracts: [workbench.md §2.1](./architecture/workbench.md), [core-contracts.md §9](./architecture/core-contracts.md), [apps/docs/README.md](../apps/docs/README.md).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Typecheck | `npx tsc -b apps/docs` | Pass. |
+| Packed snippets | `node apps/docs/snippets/verify.mjs` | Pass — packed `@oddkin/core`, `@oddkin/tokens`, and `@oddkin/components` into an isolated consumer; component registration snippets resolve through published exports and CEM, copied JS syntax-checks, TypeScript checks, and token CSS variables match packed CSS and inspection. |
+| Docs e2e | `npx playwright test e2e/docs.spec.ts --workers=1` | Pass — 12 tests across Chromium, Firefox, and WebKit: guide/reference routing and code samples, local search, shadow-root links, readable shell before client boot, metadata pending/error/retry/not-found, and no component-module loads during discovery. |
+| Dev/CSP smoke | `npm run dev`; `Invoke-WebRequest http://127.0.0.1:4177/` | Pass — 200; initial Getting started content is present and a CSP header is returned; the server binds to `127.0.0.1:4177`. |
+| Formatting | `npx prettier --check` on the docs app, snippet verifier, styles, and e2e spec files | Pass. |
+| Boundaries | Targeted boundary checker | Pass — 9 packages, 396 source files, 1,326 imports; no docs runtime import of component modules or private package paths. |
+| Mutation probes | Targeted Chromium e2e probes | 2 of 2 behavioral mutants killed: removing HTTP-status handling is caught by the metadata error assertion; removing the unknown-component early return is caught by the not-found assertion. A literal-false mutation was rejected by typecheck and is not counted as behavioral evidence. |
+
+**Findings:** Getting started is the initial static-readable guide; client-side routes, search, and metadata-backed references require JavaScript and metadata/token assets. The app has no SSR or hydration engine and documents the history-route fallback requirement. The docs detail-panel seam remains an open-shadow-root placeholder pending Agent 3's public panel entry names and property types.
+
+**Test iteration:** An initial Playwright selector using Windows backslashes matched no tests. A new guide-sample assertion first matched two code blocks and failed strict mode in all three engines; narrowing the locator to the `#sections` example fixed it, and the final 12-test run passed in all engines.
+
+**Not run:** `npm run verify` and the full test suite, because of concurrent in-progress Workbench changes in the shared tree. The separate Workbench panel integration and full M5 acceptance remain open.
