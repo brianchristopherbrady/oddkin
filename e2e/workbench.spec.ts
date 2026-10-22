@@ -392,17 +392,18 @@ test.describe('Workbench live updates', () => {
       await expect(page.locator('#known-limitations')).toContainText('Edited limitation.');
       expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
 
-      // The shell page changes (its title comes from branding): the document reloads.
+      // The shell page changes (its title comes from branding): the document reloads. Wait for
+      // that load: an evaluate racing the reload throws instead of being retried (WebKit, CI #6).
+      const reloaded = page.waitForEvent('load', { timeout: 20_000 });
       const config = join(dir, 'oddkin.config.ts');
       writeFileSync(
         config,
         readFileSync(config, 'utf8').replace("name: 'Acme UI'", "name: 'Acme Renamed'"),
       );
-      await expect
-        .poll(() => page.evaluate(() => (window as unknown as { marker?: number }).marker), {
-          timeout: 20_000,
-        })
-        .toBeUndefined();
+      await reloaded;
+      expect(
+        await page.evaluate(() => (window as unknown as { marker?: number }).marker),
+      ).toBeUndefined();
       await expect(page.locator('main h1')).toHaveText('Button');
       await expect(page).toHaveTitle('Button · Acme Renamed');
     } finally {

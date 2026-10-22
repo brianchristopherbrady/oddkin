@@ -1742,3 +1742,19 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Change:** the development check in `checkForeignReadable` no longer treats every readable that is not a `ReadableNode` as foreign. It reads the value once in a throwaway tracking context; a readable that tracks any node of this copy's graph (an adapter such as a context consumer) is not reported. A readable that tracks nothing here is still reported once. New test: a same-copy adapter bound in child and attribute positions stays live and unreported.
 
 **Remaining:** a same-copy adapter whose value reads no reactive node is still reported (none exist in the workspace).
+
+## 2026-10-22 — Workbench live-update spec: shell reload in WebKit (CI run 6)
+
+**Environment:** Windows, Node 24.22.1, Playwright 1.64.1 (Chromium, Firefox, WebKit). Other agents were working on the same machine.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reproduction | `npx tsc -b packages/workbench; npx playwright test e2e/workbench.spec.ts:375 --project=webkit --repeat-each=8 --workers=4` before the fix | 2 of 8 failed with CI run 6's error: `page.evaluate: Execution context was destroyed, most likely because of a navigation`, thrown from the `expect.poll` callback that read `window.marker` while the shell's intended `location.reload()` was in progress. `expect.poll` does not retry a callback that throws. |
+| Fix, WebKit | `npx playwright test e2e/workbench.spec.ts:375 --project=webkit --repeat-each=24 --workers=4` | 24 of 24 passed. |
+| Spec, three engines | `npx playwright test e2e/workbench.spec.ts --workers=3` | 54 of 54 passed in Chromium, Firefox, and WebKit. A first run with the default worker count had 3 timeouts in other tests (Firefox `:124`, `:205`; WebKit `:86`, `main h1` not found within 5 s); each passed when rerun alone, and the run with 3 workers passed in full. |
+| Formatting | `npx prettier --check e2e/workbench.spec.ts` | Pass. |
+| Mutants | 2 mutants of `packages/workbench/src/app/shell.ts` (`.tmp/mutate-e2e.mjs`, WebKit, the fixed spec) | 2 of 2 killed: a shell update no longer reloads; every valid update reloads. |
+
+**Change:** the spec waits for the main frame's `load` event (registered before the configuration is rewritten) and then reads `window.marker` once, instead of polling it through `page.evaluate` across the reload. The shell is unchanged: it reloads on a shell update, as documented in workbench.md §2.1.
+
+**Remaining:** confirmation on CI after the owner pushes.
