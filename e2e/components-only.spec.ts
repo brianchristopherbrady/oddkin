@@ -3,10 +3,9 @@ import { createRequire } from 'node:module';
 import { expect, request, test, type Page } from '@playwright/test';
 
 // The page runs from the workspace build through its import map, and from packed tarballs of
-// core, tokens, and components installed outside the workspace (examples/components-only/
-// packed.mjs, served on port 4174 by the Playwright configuration; packing starts on the first
-// request).
-const packed = 'http://localhost:4174';
+// core, tokens, and components installed outside the workspace (scripts/packed-consumers.mjs,
+// served on port 4174 by the Playwright configuration; packing starts on the first request).
+const packed = 'http://127.0.0.1:4174/components-only';
 const sources = [
   { name: 'workspace build', url: '/examples/components-only/' },
   { name: 'packed tarballs', url: `${packed}/` },
@@ -250,11 +249,13 @@ test('the packed page installs only core, tokens, and components and loads only 
   const requests: string[] = [];
   page.on('request', (request) => requests.push(new URL(request.url()).pathname));
   const errors = await open(page, `${packed}/`);
-  const own = /^\/(main\.js|styles\.css)?$/;
-  const published = /^\/node_modules\/@oddkin\/(core|tokens|components)\/dist\//;
+  const own = /^\/components-only\/(main\.js|styles\.css)?$/;
+  const published = /^\/components-only\/node_modules\/@oddkin\/(core|tokens|components)\/dist\//;
   expect(requests.filter((path) => !own.test(path) && !published.test(path))).toEqual([]);
-  expect(requests).toContain('/node_modules/@oddkin/tokens/dist/css/default.css');
-  expect(requests).toContain('/node_modules/@oddkin/core/dist/prod/element/index.js');
+  expect(requests).toContain('/components-only/node_modules/@oddkin/tokens/dist/css/default.css');
+  expect(requests).toContain(
+    '/components-only/node_modules/@oddkin/core/dist/prod/element/index.js',
+  );
   expect(await violations(page)).toEqual([]);
   expect(errors).toEqual([]);
 });

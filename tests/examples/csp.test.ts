@@ -11,6 +11,7 @@ const pages = [
   'side-nav',
   'editable-list',
   'composite-roles',
+  'full-app',
 ];
 
 describe.each(pages)('%s CSP', (name) => {

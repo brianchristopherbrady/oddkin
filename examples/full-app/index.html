@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-ne7AH3Q8R7Kr7XJWKBaqdrWJLt2TyFIX22WlWKXD08Q='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>Full application · Oddkin</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/app/app": "../../packages/app/dist/app/index.js",
+          "@oddkin/app/router": "../../packages/app/dist/router/index.js",
+          "@oddkin/components/define/button": "../../packages/components/dist/button/button.define.js",
+          "@oddkin/components/define/card": "../../packages/components/dist/card/card.define.js",
+          "@oddkin/components/define/input": "../../packages/components/dist/input/input.define.js",
+          "@oddkin/core/controllers/announce": "../../packages/core/dist/controllers/announce.js",
+          "@oddkin/core/controllers/form": "../../packages/core/dist/controllers/form.js",
+          "@oddkin/core/diagnostics": "../../packages/core/dist/diagnostics/index.js",
+          "@oddkin/core/element": "../../packages/core/dist/element/index.js",
+          "@oddkin/core/helpers/live": "../../packages/core/dist/helpers/live.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/scope": "../../packages/core/dist/scope/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/template/index.js",
+          "@oddkin/state/context": "../../packages/state/dist/context/index.js",
+          "@oddkin/state/store": "../../packages/state/dist/store/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js"
+        }
+      }
+    </script>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <nav aria-label="Example pages"></nav>
+    <main></main>
+  </body>
+</html>

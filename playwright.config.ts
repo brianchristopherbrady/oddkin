@@ -19,9 +19,10 @@ export default defineConfig({
       reuseExistingServer: !process.env['CI'],
     },
     {
-      // Packs core, tokens, and components only when a test first requests the packed page.
-      command: 'node examples/components-only/packed.mjs --port 4174',
-      url: 'http://localhost:4174/__health',
+      // Packed consumers (core-only, CSS-only, components-only, full application), each packed
+      // only when a test first requests it.
+      command: 'node scripts/packed-consumers.mjs --port 4174',
+      url: 'http://127.0.0.1:4174/__health',
       reuseExistingServer: !process.env['CI'],
     },
     {

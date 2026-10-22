@@ -1952,3 +1952,19 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Change:** styling only, no API change. `odd-button` and `@oddkin/components/css/button.css`: block padding `space.none`; `secondary` and `ghost` pressed fill `color.surface.sunken`. `odd-input`: block padding `space.none`; placeholder `color.text.secondary`; hover fill `color.surface.hover` on editable fields; label `color.text.disabled` when the control is disabled. component-catalog.md §8 maps each Figma variant to attributes and each layer to a part, and lists the deliberate differences (loading padding, field inset for the focus ring, focus-ring radius, placeholder line height, Firefox pressed) and open owner questions (button default appearance, card body colour and footer divider, elevated card).
 
 **Not verified:** AI definitions on page 0:1 (not compared yet); dark mode (the snapshot's Component roles collection has light and dark values; the test runs light only); forced colours and reduced motion are unchanged and not re-run for these rules.
+
+## 2026-10-22 — Packed consumers: CSS-only, core-only, components-only, full application (M8 item 918)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| e2e | `npx playwright test e2e/packed-consumers.spec.ts e2e/components-only.spec.ts` | 41 passed, 4 skipped (Chromium-only accessibility-tree cases in the other engines), Chromium 156, Firefox 157, WebKit 27.2. |
+| Core only | same | Installs only `@oddkin/core`; every module the page loads is under `@oddkin/core/dist/prod/`; the counter works under the strict CSP with no violation or page error. |
+| CSS only | same | Installs only `@oddkin/tokens`; the installed `oddkin-tokens` CLI generates `generated/harbor.css`, byte-identical to the workspace's; the page loads no script; the token custom properties apply. |
+| Components only | same | Unchanged assertions, now served under `/components-only/` by the shared server. |
+| Full application | same | New `examples/full-app` (app root, router in hash mode, store, `odd-input`/`odd-button`/`odd-card`, default theme, strict CSP with Trusted Types), from the workspace build and from tarballs: edit, save through the card footer's submit button, route to the summary with focus on its heading, route back with the stored value; no violation or page error. The packed page installs exactly app, components, core, state, and tokens; every module is a production build (`dist/prod/` for core, state, app); no Node, inspect, test, framework-typing, example, analyzer, Workbench, or AI module; no optional entry it does not use (persist, inspect, resource, command, lifecycle, collections, model, layout). |
+| Mutation probes | `node .tmp/mutate-packed.mjs` (Chromium) | 5 of 5 killed: development builds resolved, every package installed for every consumer, CSP hash not recomputed, CLI not run, stylesheet links not rewritten. |
+| Other checks | `npm run lint:css`; `npx vitest run --project node tests/compat tests/examples`; `npx tsc -p tsconfig.tests.json --noEmit`; `npx prettier --check` | Pass; compatibility matrix regenerated (59 stylesheets, 240 keys); the CSP test covers `full-app`. |
+
+**Change:** `scripts/packed-consumers.mjs` replaces `examples/components-only/packed.mjs`: one server on 127.0.0.1:4174 serves `/<consumer>/`, packing each workspace package once per process and each consumer on first request; `/<consumer>/__ready` reports the installed packages, the import map, and every module file the page loads. `--import-map <page>` prints a page's workspace import map from its module graph (used for `examples/full-app/index.html`).
+
+**Remaining:** the packed pages are not yet exercised on the floor browsers (deferred by the owner).
