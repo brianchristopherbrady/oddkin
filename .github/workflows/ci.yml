@@ -5,19 +5,38 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moves to Ubuntu 26 from 2026-10-19; change deliberately after Playwright supports it.
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+        with:
+          # Full history: the analyzer reads page dates from git and skips them in a shallow clone.
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium firefox webkit
+      # The same checks, in the same order, as `npm run verify`.
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - run: npm run verify:metadata
+      - run: npm run size
       - run: npm run test:e2e
       - run: npm run verify:packs
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
