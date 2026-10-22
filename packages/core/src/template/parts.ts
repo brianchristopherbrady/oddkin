@@ -6,6 +6,7 @@
 import { DEV } from '../internal/dev.js';
 import { OddkinError, reportOddkinError } from '../diagnostics/index.js';
 import { effect, isReadable, untracked, type Readable } from '../reactive/index.js';
+import { checkForeignReadable } from '../reactive/graph.js';
 import {
   ATTRIBUTE_DIRECTIVE,
   isAttributeDirective,
@@ -81,6 +82,7 @@ export class ChildPart implements Part {
   setValue(value: unknown): void {
     if (isReadable(value)) {
       if (value === this.#readable && this.#unbind) return;
+      if (DEV) checkForeignReadable(value);
       this.#release();
       this.#readable = value;
       this.#unbind = effect(
@@ -343,6 +345,7 @@ abstract class ValuePart implements Part {
       untracked(() => this.#apply(this.#compute()));
       return;
     }
+    if (DEV) readables.forEach(checkForeignReadable);
     this.#release();
     this.#bound = values;
     this.#unbind = effect(

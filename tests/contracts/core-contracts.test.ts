@@ -23,6 +23,7 @@ const IDS = [
   'i18n',
   'reactivity',
   'external-store',
+  'copies',
   'templates',
   'rendering',
   'update-complete',

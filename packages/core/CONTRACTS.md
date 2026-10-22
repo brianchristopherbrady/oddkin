@@ -16,6 +16,7 @@ What `@oddkin/core` guarantees, for people and tools reading the installed packa
 | `contract:core/i18n` | [Localization helpers](#i18n) |
 | `contract:core/reactivity` | [Reactivity](#reactivity) |
 | `contract:core/external-store` | [External stores](#external-store) |
+| `contract:core/copies` | [Several copies of core on one page](#copies) |
 | `contract:core/templates` | [Templates and rendering](#templates) |
 | `contract:core/rendering` | [Rendering behaviors](#rendering) |
 | `contract:core/update-complete` | [updateComplete and commit timing](#update-complete) |
@@ -262,6 +263,19 @@ console.log(total.value); // 30, immediately
 - Mutations inside effects or `updated` schedule a defined next pass. Detect cycles and runaway flushes; isolate errors.
 - A manual flush helper exists for tests. Components never need `requestUpdate()` after changing a signal or declared property.
 
+
+### 5.1 Several copies of `@oddkin/core` on one page
+
+Two independently built applications can each bundle their own `@oddkin/core`. Each copy keeps its own reactive graph, scopes, error handler, and definition bindings; no copy shares state through globals. What crosses copies:
+
+- **DOM protocols:** elements, attributes, properties, events, slots, parts, and CSS custom properties work whichever copy defined the element.
+- **Readables do not cross copies.** Reading `.value` registers a dependency only in the graph that owns the readable, so another copy's effects, computed values, and template bindings see its first value and no change after. Readables carry a registered brand (`Symbol.for('oddkin.readable')`), so where a template binding or helper (`classMap`, `styleMap`, `live`, `when`, `match`, `repeat`) receives one from another copy, development builds report `reactive.readable.foreign` once per readable. Bridge with `fromExternal(toExternal(readable))` (either copy's functions): the external-store contract crosses copies, and the bridge subscribes only while observed. Following foreign readables automatically was measured at 205 B gzip more for the minimal counter bundle, paid by every application for a case a deduplicated install avoids.
+- **Registration:** custom element names are global per registry. A name already defined by another copy's class throws `registry.collision`, and the first registration stays. Load one copy of a component package, or isolate the other in a frame or a scoped registry; renaming tags is no way around it, because a component's internal dependencies keep their names.
+- **Errors** cross copies by `code`: `instanceof OddkinError` holds only for the copy that threw.
+- **Context keys** from two copies of `@oddkin/state` differ (§7.2).
+
+Different versions of core follow the same rules; nothing compares versions at runtime. *(Verified 2026-10-21 with two esbuild bundles on one page, `examples/duplicate-core` and `e2e/duplicate-core.spec.ts`, and `packages/core/test/foreign-readables.browser.test.ts`. Released artifacts installed at different versions: plan §2.5.)*
+
 <a id="external-store"></a>
 
 ## External stores
@@ -269,6 +283,22 @@ console.log(total.value); // 30, immediately
 Id: `contract:core/external-store`
 
 - **External stores** share one contract, `ExternalSource<T>`: `getSnapshot()` returns the same value until the state changes, and `subscribe(listener)` returns an unsubscribe function. React's `useSyncExternalStore` takes the same shape, and Redux and Zustand stores fit it. `fromExternal(source, { equals? })` reads such a store as a `Readable` without copying it into a second graph. It subscribes only while observed (an effect, a binding, an observed computed value, or `subscribe`) and unsubscribes when the last observer leaves, so a component's subscription ends with the connection scope that owns its render. Unobserved reads take a fresh snapshot. `toExternal(readable)` exposes any Oddkin readable through the same contract. Neither needs an Oddkin store; `@oddkin/ai` sources use the same type. *(Implemented, 2026-10-19: `packages/core/test/external.test.ts`, `tests/interop/external-store.browser.test.ts`; 168 B gzip when imported, nothing otherwise.)*
+
+<a id="copies"></a>
+
+## Several copies of core on one page
+
+Id: `contract:core/copies`
+
+Two independently built applications can each bundle their own `@oddkin/core`. Each copy keeps its own reactive graph, scopes, error handler, and definition bindings; no copy shares state through globals. What crosses copies:
+
+- **DOM protocols:** elements, attributes, properties, events, slots, parts, and CSS custom properties work whichever copy defined the element.
+- **Readables do not cross copies.** Reading `.value` registers a dependency only in the graph that owns the readable, so another copy's effects, computed values, and template bindings see its first value and no change after. Readables carry a registered brand (`Symbol.for('oddkin.readable')`), so where a template binding or helper (`classMap`, `styleMap`, `live`, `when`, `match`, `repeat`) receives one from another copy, development builds report `reactive.readable.foreign` once per readable. Bridge with `fromExternal(toExternal(readable))` (either copy's functions): the external-store contract crosses copies, and the bridge subscribes only while observed. Following foreign readables automatically was measured at 205 B gzip more for the minimal counter bundle, paid by every application for a case a deduplicated install avoids.
+- **Registration:** custom element names are global per registry. A name already defined by another copy's class throws `registry.collision`, and the first registration stays. Load one copy of a component package, or isolate the other in a frame or a scoped registry; renaming tags is no way around it, because a component's internal dependencies keep their names.
+- **Errors** cross copies by `code`: `instanceof OddkinError` holds only for the copy that threw.
+- **Context keys** from two copies of `@oddkin/state` differ (§7.2).
+
+Different versions of core follow the same rules; nothing compares versions at runtime. *(Verified 2026-10-21 with two esbuild bundles on one page, `examples/duplicate-core` and `e2e/duplicate-core.spec.ts`, and `packages/core/test/foreign-readables.browser.test.ts`. Released artifacts installed at different versions: plan §2.5.)*
 
 <a id="templates"></a>
 

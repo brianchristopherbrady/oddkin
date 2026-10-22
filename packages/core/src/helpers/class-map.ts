@@ -3,7 +3,9 @@
  * Classes the directive did not add (static template classes, classes added by other
  * code) are left alone.
  */
+import { DEV } from '../internal/dev.js';
 import { computed, isReadable, type Readable } from '../reactive/index.js';
+import { checkForeignReadable } from '../reactive/graph.js';
 import {
   ATTRIBUTE_DIRECTIVE,
   type AttributeDirective,
@@ -58,6 +60,7 @@ function resolve(classes: ClassInput): ClassMapDirective {
  * readables; then the binding updates without re-running render.
  */
 export function classMap(classes: ClassInput): AttributeDirective | Readable<AttributeDirective> {
+  if (DEV) Object.values(classes).filter(isReadable).forEach(checkForeignReadable);
   return Object.values(classes).some(isReadable)
     ? computed(() => resolve(classes))
     : resolve(classes);

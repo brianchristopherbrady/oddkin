@@ -3,7 +3,9 @@
  * inside the caller's tracking (render); with a readable they return a computed value
  * so the binding updates without rerunning render.
  */
+import { DEV } from '../internal/dev.js';
 import { computed, isReadable, type Readable } from '../reactive/index.js';
+import { checkForeignReadable } from '../reactive/graph.js';
 import { createRepeat, type RepeatDirective } from './repeat.js';
 
 type MaybeReadable<T> = T | Readable<T>;
@@ -17,7 +19,10 @@ export function when<Y, N = null>(
   yes: () => Y,
   no?: () => N,
 ): Y | N | null | Readable<Y | N | null> {
-  if (isReadable(condition)) return computed(() => (condition.value ? yes() : no ? no() : null));
+  if (isReadable(condition)) {
+    if (DEV) checkForeignReadable(condition);
+    return computed(() => (condition.value ? yes() : no ? no() : null));
+  }
   return condition ? yes() : no ? no() : null;
 }
 
@@ -26,7 +31,10 @@ export function match<V extends string | number, C extends { readonly [K in V]: 
   value: MaybeReadable<V>,
   cases: C,
 ): ReturnType<C[V]> | Readable<ReturnType<C[V]>> {
-  if (isReadable(value)) return computed(() => cases[value.value]() as ReturnType<C[V]>);
+  if (isReadable(value)) {
+    if (DEV) checkForeignReadable(value);
+    return computed(() => cases[value.value]() as ReturnType<C[V]>);
+  }
   return cases[value]() as ReturnType<C[V]>;
 }
 /**
@@ -38,6 +46,9 @@ export function repeat<T>(
   key: (item: T, index: number) => unknown,
   template: (item: T, index: number) => unknown,
 ): RepeatDirective<T> | Readable<RepeatDirective<T>> {
-  if (isReadable(items)) return computed(() => createRepeat(items.value, key, template));
+  if (isReadable(items)) {
+    if (DEV) checkForeignReadable(items);
+    return computed(() => createRepeat(items.value, key, template));
+  }
   return createRepeat(items, key, template);
 }

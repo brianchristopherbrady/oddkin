@@ -3,7 +3,9 @@
  * differs (the user may have typed or autofill may have run since the last render),
  * without clobbering IME composition or the caret.
  */
+import { DEV } from '../internal/dev.js';
 import { computed, isReadable, type Readable } from '../reactive/index.js';
+import { checkForeignReadable } from '../reactive/graph.js';
 import {
   ATTRIBUTE_DIRECTIVE,
   type AttributeDirective,
@@ -99,6 +101,7 @@ const handler: DirectiveHandler<LiveDirective, LiveState> = {
  */
 export function live<T>(value: T | Readable<T>): AttributeDirective | Readable<AttributeDirective> {
   if (isReadable(value)) {
+    if (DEV) checkForeignReadable(value);
     const source: Readable<T> = value;
     return computed((): AttributeDirective => {
       const directive: LiveDirective = { [ATTRIBUTE_DIRECTIVE]: handler, value: source.value };

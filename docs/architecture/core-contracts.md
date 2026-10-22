@@ -282,6 +282,22 @@ console.log(total.value); // 30, immediately
 - Mutations inside effects or `updated` schedule a defined next pass. Detect cycles and runaway flushes; isolate errors.
 - A manual flush helper exists for tests. Components never need `requestUpdate()` after changing a signal or declared property.
 
+<!-- contract:core/copies "Several copies of core on one page" -->
+
+### 5.1 Several copies of `@oddkin/core` on one page
+
+Two independently built applications can each bundle their own `@oddkin/core`. Each copy keeps its own reactive graph, scopes, error handler, and definition bindings; no copy shares state through globals. What crosses copies:
+
+- **DOM protocols:** elements, attributes, properties, events, slots, parts, and CSS custom properties work whichever copy defined the element.
+- **Readables do not cross copies.** Reading `.value` registers a dependency only in the graph that owns the readable, so another copy's effects, computed values, and template bindings see its first value and no change after. Readables carry a registered brand (`Symbol.for('oddkin.readable')`), so where a template binding or helper (`classMap`, `styleMap`, `live`, `when`, `match`, `repeat`) receives one from another copy, development builds report `reactive.readable.foreign` once per readable. Bridge with `fromExternal(toExternal(readable))` (either copy's functions): the external-store contract crosses copies, and the bridge subscribes only while observed. Following foreign readables automatically was measured at 205 B gzip more for the minimal counter bundle, paid by every application for a case a deduplicated install avoids.
+- **Registration:** custom element names are global per registry. A name already defined by another copy's class throws `registry.collision`, and the first registration stays. Load one copy of a component package, or isolate the other in a frame or a scoped registry; renaming tags is no way around it, because a component's internal dependencies keep their names.
+- **Errors** cross copies by `code`: `instanceof OddkinError` holds only for the copy that threw.
+- **Context keys** from two copies of `@oddkin/state` differ (§7.2).
+
+Different versions of core follow the same rules; nothing compares versions at runtime. *(Verified 2026-10-21 with two esbuild bundles on one page, `examples/duplicate-core` and `e2e/duplicate-core.spec.ts`, and `packages/core/test/foreign-readables.browser.test.ts`. Released artifacts installed at different versions: plan §2.5.)*
+
+<!-- /contract:core/copies -->
+
 <!-- /contract:core/reactivity -->
 
 <!-- contract:core/templates "Templates and rendering" -->

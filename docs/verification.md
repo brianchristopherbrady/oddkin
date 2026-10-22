@@ -1557,3 +1557,25 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 | Probes | `.action { border: 0 }` restored; token stylesheet moved from `<head>` to the end of `<body>` | Border: killed (Chromium and Firefox, `border-top-style` none). Late stylesheet: killed in 1 of 6 runs (dark scheme, first frame `normal`); the other engines also delayed the first paint for a body-level stylesheet, so this probe is weak evidence of the first-frame check. |
 
 **Finding (fixed):** the example's `.action` had `border: 0`, so under forced colours the button had no boundary; it now has `var(--odd-border-width-default) solid transparent`.
+
+
+## 2026-10-21 — Two copies of `@oddkin/core` on one page (§2.5; M8 duplicate-core behaviour)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2), esbuild from the root development dependencies. Other agents were running tests and committing on the same machine; their files were not included.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| First observation | `npx playwright test e2e/duplicate-core.spec.ts --project=chromium`, before any core change | 3 of 4 passed. Consumer B's template, bound to consumer A's signal, rendered `1` and still showed `1` after the signal changed to `0`. Readables carry a registered brand (`Symbol.for('oddkin.readable')`), so B's template accepted A's signal, but A's graph tracks reads only for A's own consumers. Nothing was reported. |
+| Rejected design | template parts and the six helpers following another copy's readables through `peek()`/`subscribe()` (10 of 10 mutants killed), then `node scripts/check-size.mjs` | `counter` 9,748 B gzip, over its 9,728 B budget; 9,543 B with the adapter taken out of the template parts again: 205 B paid by every application for a case one deduplicated install avoids. Replaced by the development report below and the documented bridge. |
+| Core typecheck | `npx tsc -b packages/core` | Pass. |
+| New browser tests | `npx vitest run --project browser packages/core/test/foreign-readables.browser.test.ts` | Pass — 11 tests in Chromium, Firefox, and WebKit (33). A foreign readable is reported once per readable at a child binding, an attribute binding, and by `classMap`, `styleMap`, `live`, `when`, `match`, and `repeat`; it keeps its first value; local readables are never reported; `fromExternal(toExternal(readable))` stays live without a report and releases its subscription with the binding. |
+| Core, contract, and import suites | `npx vitest run packages/core/test tests/contracts tests/examples/public-imports.test.ts` | Pass — 52 files, 682 passed, 1 skipped (before the child-binding test was added; that file alone then passed 33 of 33). `packages/core/test/production.test.ts` keeps development messages out of production builds. |
+| Contracts | `npm run contracts`; `node scripts/build-contracts.mjs --check` | Pass — 15 sections; new id `contract:core/copies`. |
+| End to end | `npx playwright test e2e/duplicate-core.spec.ts` | Pass — 4 tests in Chromium, Firefox, and WebKit (12): each consumer has its own core; `registry.collision` from B's copy is an `OddkinError` of B's copy only and the first `<odd-button>` stays; the bound signal keeps `1` while the bridged one shows `5`, and B's error handler received exactly one `reactive.readable.foreign`; an effect in B does not rerun for A's signal while one over the bridge does. |
+| Size | `node scripts/build-production.mjs`; `node scripts/check-size.mjs` | Pass — `counter` 9,531 B gzip (budget 9,728), `component` 10,808 B (11,264), `list` 11,397 B (11,776); the checks exist only in development builds. |
+| Mutants | 11 mutants in `checkForeignReadable` and its callers, Chromium (`.tmp/mutate.mjs`) | 11 of 11 killed: never reporting, reporting local readables, reporting every binding instead of once, and removing the check from each of the eight call sites. |
+| Test typecheck | `npx tsc -p tsconfig.tests.json --noEmit` | One error, in another agent's in-progress `packages/workbench/test/panels.browser.test.ts` (line 506, `detail` on `Event`); none in these files. |
+
+**Change:** `checkForeignReadable()` (internal, `@oddkin/core` reactive graph) reports `reactive.readable.foreign` once per readable that carries the brand but belongs to another copy; template child and attribute bindings, `classMap`, `styleMap`, `live`, `when`, `match`, and `repeat` call it in development builds only. Production behaviour is unchanged. [core-contracts.md §5.1](./architecture/core-contracts.md) (contract `core/copies`) states what crosses copies: DOM protocols and the external-store contract; not readables, which are bridged with `fromExternal(toExternal(readable))`; errors by `code`; registration conflicts as `registry.collision`. `examples/duplicate-core` builds the two consumers with esbuild; the spec bundles them in memory and serves them by request interception.
+
+**Remaining:** released packages installed twice at different versions (plan §2.5, item 4), and realms other than Workbench frames.

@@ -659,6 +659,26 @@ export function toExternal<T>(readable: Readable<T>): ExternalSource<T> {
   };
 }
 
+const reportedForeign = new WeakSet<Readable<unknown>>();
+
+/**
+ * @internal Development check where a template binds a readable: one from another copy of
+ * `@oddkin/core` (same brand, separate graph) cannot be tracked here, so it is reported once.
+ */
+export function checkForeignReadable(readable: Readable<unknown>): void {
+  if (readable instanceof ReadableNode || reportedForeign.has(readable)) return;
+  reportedForeign.add(readable);
+  reportOddkinError(
+    new OddkinError(
+      'reactive.readable.foreign',
+      DEV
+        ? 'A readable from another copy of @oddkin/core was bound here. This copy cannot track it, so the binding keeps its first value. Load one copy of @oddkin/core, or bridge it with fromExternal(toExternal(readable)).'
+        : '',
+    ),
+    { code: 'reactive.readable.foreign' },
+  );
+}
+
 /**
  * Run `fn` now and again (in a deduplicated microtask flush) whenever a value it read
  * changes. `fn` may return a cleanup that runs before the next run and on dispose.

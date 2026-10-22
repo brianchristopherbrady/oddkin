@@ -3,7 +3,9 @@
  * (`style.setProperty`), which strict `style-src` policies allow, unlike parsed
  * `style="…"` attributes.
  */
+import { DEV } from '../internal/dev.js';
 import { computed, isReadable, type Readable } from '../reactive/index.js';
+import { checkForeignReadable } from '../reactive/graph.js';
 import {
   ATTRIBUTE_DIRECTIVE,
   type AttributeDirective,
@@ -75,5 +77,7 @@ function resolve(styles: StyleInput): StyleMapDirective {
  * readables. Prefer classes and custom properties over many inline declarations.
  */
 export function styleMap(styles: StyleInput): AttributeDirective | Readable<AttributeDirective> {
+  if (DEV)
+    for (const value of Object.values(styles)) if (isReadable(value)) checkForeignReadable(value);
   return Object.values(styles).some(isReadable) ? computed(() => resolve(styles)) : resolve(styles);
 }
