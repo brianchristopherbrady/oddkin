@@ -371,11 +371,18 @@ describe('Workbench data from published outputs', () => {
       libraries: [components],
     });
     expect(noStudio.data.index.pages['theme-studio']).toBeUndefined();
-    expect(build({ config, libraries: [components] }).data.pages['theme-studio']).toEqual({
+    expect(build({ config, libraries: [components] }).data.pages['theme-studio']).toMatchObject({
       format: 'oddkin.workbench-page',
       version: 1,
       id: 'theme-studio',
       kind: 'tool',
+      // No theme file or generator was supplied: both are listed as missing, never guessed.
+      studio: {
+        missing: expect.arrayContaining([
+          expect.objectContaining({ item: 'generator' }),
+          expect.objectContaining({ item: 'config' }),
+        ]),
+      },
     });
   });
 

@@ -16,6 +16,7 @@ import {
   PAGE_FORMAT,
   type ComponentPageData,
   type FoundationPageData,
+  type ThemeStudioPageData,
   type WorkbenchIndex,
 } from '../data/types.js';
 import { href as registryHref } from '../pages/navigation.js';
@@ -97,6 +98,19 @@ const isComponentPageData = (value: unknown): value is ComponentPageData => {
   );
 };
 
+const isThemeStudioPageData = (value: unknown): value is ThemeStudioPageData => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  const page = value as Partial<ThemeStudioPageData>;
+  return (
+    page.format === PAGE_FORMAT &&
+    page.version === DATA_VERSION &&
+    page.kind === 'tool' &&
+    typeof page.studio === 'object' &&
+    page.studio !== null &&
+    Array.isArray(page.studio.roles)
+  );
+};
+
 const isFoundationPageData = (value: unknown): value is FoundationPageData => {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
   const page = value as Partial<FoundationPageData>;
@@ -132,6 +146,16 @@ export class OddkinWorkbench extends OddkinElement.with({
   readonly #appearance = signal<Appearance>('system');
   #items: SearchItem[] = [];
   #previewFrameUrl = '';
+  /** Theme Studio's module, imported on the first visit to its route. */
+  #studio: Promise<unknown> | undefined;
+  readonly #studioError = signal('');
+
+  #loadStudio(): void {
+    this.#studio ??= import('./theme-studio.js').catch((error: unknown) => {
+      this.#studio = undefined;
+      this.#studioError.value = error instanceof Error ? error.message : String(error);
+    });
+  }
 
   protected override connected(scope: Scope): void {
     const doc = this.ownerDocument;
@@ -355,11 +379,27 @@ export class OddkinWorkbench extends OddkinElement.with({
     const kind = current.kind;
     const data = view?.kind === 'page' ? view.data : undefined;
     const index = this.#index.value;
+    const studio = kind === 'tool' && isThemeStudioPageData(data) ? data : undefined;
+    if (studio) this.#loadStudio();
     const body =
       kind === 'overview'
         ? overviewBody(ctx, current)
         : kind === 'tool'
-          ? html`<div class="wb-body"><p class="wb-muted">${COPY.toolPending}</p></div>`
+          ? studio
+            ? html`<div class="wb-body">
+                ${
+                  this.#studioError.value
+                    ? html`<p role="alert">
+                        Theme Studio could not load: ${this.#studioError.value}
+                      </p>`
+                    : nothing
+                }
+                <oddkin-workbench-theme-studio
+                  .page=${studio}
+                  .frameUrl=${this.#previewFrameUrl}
+                ></oddkin-workbench-theme-studio>
+              </div>`
+            : html`<div class="wb-body"><p class="wb-muted">${COPY.toolPending}</p></div>`
           : kind === 'component' && isComponentPageData(data) && index
             ? html`<div class="wb-body">
                 <oddkin-workbench-component

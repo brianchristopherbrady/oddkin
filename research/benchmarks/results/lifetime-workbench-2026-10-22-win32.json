@@ -1,0 +1,127 @@
+{
+  "date": "2026-10-22",
+  "cycles": 1000,
+  "warmup": 100,
+  "method": "One <oddkin-component-panel> in the Workbench dev server page switches `page` through the catalog; each cycle waits for the next component to render in a fresh preview frame. Warm-up, then two batches, each starting and ending on the first page; ownership = core scopeStats() plus live preview frames equal before and after each batch; Chromium heap = CDP HeapProfiler.collectGarbage then Runtime.getHeapUsage().usedSize before and after each batch; retained per cycle = heap growth / cycles.",
+  "machine": {
+    "platform": "win32",
+    "release": "10.0.26200",
+    "arch": "x64",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+    "memory": 17014120448
+  },
+  "node": "v24.22.1",
+  "results": {
+    "firefox": {
+      "version": "157.0",
+      "scenarios": {
+        "previewSwitchCycles": {
+          "cycles": 1000,
+          "ms": [
+            291148,
+            692722
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 18,
+              "listeners": 10,
+              "timers": 0,
+              "effects": 6,
+              "liveFrames": 1
+            },
+            "after": {
+              "scopes": 18,
+              "listeners": 10,
+              "timers": 0,
+              "effects": 6,
+              "liveFrames": 1
+            }
+          },
+          "check": [
+            "28 components; mounted 1104",
+            "28 components; mounted 2106"
+          ]
+        }
+      },
+      "errors": []
+    },
+    "chromium": {
+      "version": "156.0.8078.4",
+      "scenarios": {
+        "previewSwitchCycles": {
+          "cycles": 1000,
+          "ms": [
+            131829,
+            122240
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 18,
+              "listeners": 12,
+              "timers": 0,
+              "effects": 6,
+              "liveFrames": 1
+            },
+            "after": {
+              "scopes": 18,
+              "listeners": 12,
+              "timers": 0,
+              "effects": 6,
+              "liveFrames": 1
+            }
+          },
+          "check": [
+            "28 components; mounted 1104",
+            "28 components; mounted 2106"
+          ],
+          "heapBytes": [
+            4228044,
+            4855896,
+            4791780
+          ],
+          "retainedPerCycleBytes": [
+            628,
+            -64
+          ]
+        }
+      },
+      "errors": []
+    },
+    "webkit": {
+      "version": "27.2",
+      "scenarios": {
+        "previewSwitchCycles": {
+          "cycles": 1000,
+          "ms": [
+            414924,
+            422876
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 18,
+              "listeners": 10,
+              "timers": 0,
+              "effects": 6,
+              "liveFrames": 1
+            },
+            "after": {
+              "scopes": 18,
+              "listeners": 10,
+              "timers": 0,
+              "effects": 6,
+              "liveFrames": 1
+            }
+          },
+          "check": [
+            "28 components; mounted 1104",
+            "28 components; mounted 2106"
+          ]
+        }
+      },
+      "errors": []
+    }
+  }
+}

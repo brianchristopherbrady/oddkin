@@ -4,6 +4,7 @@
  * browser shell of the same Workbench version; `version` changes when a shape changes.
  */
 import type { WorkbenchDiagnostic } from '../internal/diagnostics.js';
+import type { JsonValue } from '../protocol/index.js';
 import type { CemPackage, OddkinMetadataLike, PageKind, PageRegistry } from '../pages/types.js';
 
 export const INDEX_FORMAT = 'oddkin.workbench-index';
@@ -127,7 +128,40 @@ export interface BasicPageData extends PageDataBase {
   readonly kind: Exclude<PageKind, 'component' | 'foundation'>;
 }
 
-export type PageData = ComponentPageData | FoundationPageData | BasicPageData;
+/** A specimen role played by a documented component in one of its examples. */
+export interface SpecimenRole {
+  readonly role: string;
+  /** Visible caption. */
+  readonly label: string;
+  readonly tag: string;
+  /** The component's published registration entry. */
+  readonly registration: string;
+  /** The example whose values the specimen uses. */
+  readonly example: `example:${string}/${string}`;
+  readonly properties: Readonly<Record<string, JsonValue>>;
+  readonly attributes: Readonly<Record<string, string>>;
+  readonly slots: Readonly<Record<string, string>>;
+  /** Mapped by `themeStudio.preview.roles` or claimed by the example (`previewRoles`). */
+  readonly source: 'config' | 'example';
+}
+
+/** Theme Studio (workbench.md ?6): the baseline configuration, its generator, and specimens. */
+export interface ThemeStudioPageData extends PageDataBase {
+  readonly kind: 'tool';
+  readonly studio: {
+    /** The baseline theme configuration's JSON model. */
+    readonly config?: JsonObject;
+    /** The configuration file, as `themeStudio.themeConfig` names it. */
+    readonly source?: string;
+    /** URL of the generation worker (the library's own `@oddkin/tokens/generate`). */
+    readonly worker?: string;
+    readonly roles: readonly SpecimenRole[];
+    /** Absent inputs, each with what supplies it; shown on the page, never guessed. */
+    readonly missing: readonly { readonly item: string; readonly supply: string }[];
+  };
+}
+
+export type PageData = ComponentPageData | FoundationPageData | ThemeStudioPageData | BasicPageData;
 
 export interface WorkbenchData {
   readonly index: WorkbenchIndex;

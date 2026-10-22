@@ -13,6 +13,7 @@ import {
 import { DiagnosticList, isObject, type WorkbenchDiagnostic } from '../internal/diagnostics.js';
 import { buildPageRegistry } from '../pages/build.js';
 import { FOUNDATIONS } from '../pages/defaults.js';
+import { themeStudioPage, type ThemeStudioInput } from './theme-studio.js';
 import type { CemDeclaration, OddkinMetadataLike, PageEntry } from '../pages/types.js';
 import {
   DATA_VERSION,
@@ -29,6 +30,8 @@ import {
   type WorkbenchIndex,
 } from './types.js';
 
+export type { ThemeStudioInput } from './theme-studio.js';
+
 export interface WorkbenchDataInput {
   readonly config: WorkbenchConfig | ResolvedWorkbenchConfig;
   /** The documented packages, in configuration order. */
@@ -37,6 +40,8 @@ export interface WorkbenchDataInput {
   readonly docs?: DocsContent;
   /** The token inspection the foundations reference (their `generation` source). */
   readonly tokens?: TokenInspectionLike;
+  /** Theme Studio's baseline configuration and generator, loaded by dev tooling. */
+  readonly theme?: ThemeStudioInput;
   /** Diagnostics from reading these inputs; reported first, with the data's own. */
   readonly diagnostics?: readonly WorkbenchDiagnostic[];
 }
@@ -268,11 +273,22 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
       const foundation = id ? metadata.foundations?.[`foundation:${id}`] : undefined;
       if (!foundation) continue;
       data = foundationPage(page, foundation as unknown as JsonObject, inspection, out);
+    } else if (page.id === 'theme-studio') {
+      continue;
     } else {
       data = { format: PAGE_FORMAT, version: DATA_VERSION, id: page.id, kind: page.kind };
     }
     pages[page.id] = data;
     files[page.id] = pageFile(page.id);
+  }
+
+  const studio = registry.pages.find((page) => page.visible && page.id === 'theme-studio');
+  if (studio) {
+    const components = Object.values(pages).filter(
+      (page): page is ComponentPageData => page.kind === 'component',
+    );
+    pages[studio.id] = themeStudioPage(studio.id, components, config, input.theme ?? {}, out);
+    files[studio.id] = pageFile(studio.id);
   }
 
   const first = input.libraries[0];

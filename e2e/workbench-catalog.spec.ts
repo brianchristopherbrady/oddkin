@@ -184,21 +184,25 @@ test.describe('Workbench over the whole catalog', () => {
         await page.goto(url);
         await page.waitForFunction((name) => customElements.get(name) !== undefined, tag);
         const result = await page.evaluate(
-          ({ name, state }) => {
+          ({ name, attributeNames, propertyNames }) => {
             const element = document.querySelector(name) as HTMLElement & Record<string, unknown>;
             return {
               upgraded: element instanceof customElements.get(name)!,
               scheme: getComputedStyle(element).colorScheme,
               direction: getComputedStyle(element).direction,
               attributes: Object.fromEntries(
-                Object.keys(state.attributes).map((a) => [a, element.getAttribute(a)]),
+                attributeNames.map((a) => [a, element.getAttribute(a)]),
               ),
               properties: Object.fromEntries(
-                Object.keys(state.properties).map((p) => [p, JSON.stringify(element[p])]),
+                propertyNames.map((p) => [p, JSON.stringify(element[p])]),
               ),
             };
           },
-          { name: tag, state },
+          {
+            name: tag,
+            attributeNames: Object.keys(state.attributes),
+            propertyNames: Object.keys(state.properties),
+          },
         );
         expect(result.upgraded, code).toBe(true);
         // A copied preview scope applies as written: the page's own mode is light.

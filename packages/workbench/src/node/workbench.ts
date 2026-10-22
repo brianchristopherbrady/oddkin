@@ -55,6 +55,27 @@ export interface BuildOptions {
 }
 
 const versioned = (pkg: InstalledPackage) => `${pkg.name}@${pkg.version}`;
+
+/** Theme Studio's generation worker, next to the data files. */
+export const THEME_WORKER = 'theme-studio.worker.js';
+
+/**
+ * Workers have no import map, so the generator is imported by URL (its graph has no bare
+ * specifiers). Requests are `{ id, draft }`; replies carry plain data only (theming ?8).
+ */
+const themeWorker = (generator: string) => `import { generate } from ${JSON.stringify(generator)};
+
+self.addEventListener('message', (event) => {
+  const { id, draft } = event.data;
+  const start = performance.now();
+  try {
+    const result = generate(draft);
+    self.postMessage({ id, ok: result.ok, css: result.css, diagnostics: result.diagnostics, ms: performance.now() - start });
+  } catch (error) {
+    self.postMessage({ id, ok: false, diagnostics: [{ severity: 'error', code: 'generate.failed', path: '', message: String(error) }], ms: performance.now() - start });
+  }
+});
+`;
 /** The manifest fields import maps read, under the name importers use. */
 const manifests = (graph: readonly InstalledPackage[]): PackageManifest[] =>
   graph.map((pkg) => ({ ...pkg.manifest, name: pkg.name, version: pkg.version }));
@@ -136,27 +157,29 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
 
   const out = new DiagnosticList();
   const inputs = await loadInputs(loaded.root, config, out);
+  const base = `${config.hosting.basePath}${ASSET_DIR}m/`;
+  const self = readPackage(WORKBENCH_DIR, '@oddkin/workbench');
+  const graphs = new DiagnosticList();
+  const shellGraph = packageGraph([self], WORKBENCH_DIR, graphs, { skip: NODE_ONLY });
+  const shell = createImportMap(manifests(shellGraph), { base, versioned: true });
+  const frame = createImportMap(manifests([...inputs.graph, ...shellGraph]), {
+    base,
+    versioned: true,
+  });
+  // Theme Studio generates with the documented library's own generator, in a Worker.
+  const generator = frame.importMap.imports['@oddkin/tokens/generate'];
+  const worker = generator ? `${config.hosting.basePath}${ASSET_DIR}${THEME_WORKER}` : undefined;
   const { data, diagnostics } = buildWorkbenchData({
     config,
     libraries: inputs.libraries,
     ...(inputs.docs ? { docs: inputs.docs } : {}),
     ...(inputs.tokens ? { tokens: inputs.tokens } : {}),
+    theme: { ...inputs.theme, ...(worker ? { worker } : {}) },
     diagnostics: out.items,
   });
   const result = new DiagnosticList();
-  result.items.push(...diagnostics);
+  result.items.push(...diagnostics, ...graphs.items, ...shell.diagnostics, ...frame.diagnostics);
   if (!data) return { ...empty, config, inputs, diagnostics: result.items };
-
-  const base = `${config.hosting.basePath}${ASSET_DIR}m/`;
-  const self = readPackage(WORKBENCH_DIR, '@oddkin/workbench');
-  const shellGraph = packageGraph([self], WORKBENCH_DIR, result, { skip: NODE_ONLY });
-  const shell = createImportMap(manifests(shellGraph), { base, versioned: true });
-  result.items.push(...shell.diagnostics);
-  const frame = createImportMap(manifests([...inputs.graph, ...shellGraph]), {
-    base,
-    versioned: true,
-  });
-  result.items.push(...frame.diagnostics);
 
   const packages = new Map<string, string>();
   for (const pkg of [...shellGraph, ...inputs.graph])
@@ -165,6 +188,7 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
   const roots = new Map([...packages].map(([name, dir]) => [`${base}${name}/`, dir]));
   const files = new Map<string, string>([['index.json', serializeData(data.index)]]);
   for (const [id, page] of Object.entries(data.pages)) files.set(pageFile(id), serializeData(page));
+  if (generator) files.set(THEME_WORKER, themeWorker(generator));
   files.set('frame.importmap.json', `${JSON.stringify(frame.importMap, null, 2)}\n`);
   files.set('shell.importmap.json', `${JSON.stringify(shell.importMap, null, 2)}\n`);
   const assetsForFrames = frameAssets(

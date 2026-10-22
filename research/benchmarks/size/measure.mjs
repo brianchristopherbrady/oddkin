@@ -25,6 +25,11 @@ export const ENTRIES = [
   'command',
   'router',
   'lifecycle',
+  'workbench-panel-component',
+  'workbench-panel-foundation',
+  'workbench-panel-catalog',
+  'workbench-shell',
+  'workbench-frame',
 ];
 
 /** Budgets in gzip bytes (ADR 0019). Measured 2026-10-17 in the comments. */
@@ -81,6 +86,18 @@ export const BUDGETS = {
   // application that follows the page lifecycle with one suspendable service, over Scope, the
   // reactive graph, diagnostics, and the context provider the application module imports).
   lifecycle: 5120,
+  // Workbench entries, measured 2026-10-22 (Agent 3). Public panels, each registering one element
+  // with its renderer and the preview host: component 27,112 (28 KiB), foundation 15,199
+  // (16 KiB), catalog 16,654 (17 KiB).
+  'workbench-panel-component': 28672,
+  'workbench-panel-foundation': 16384,
+  'workbench-panel-catalog': 17408,
+  // 49 KiB; measured 48,775: the shell with router, search, and every page renderer. This harness
+  // does not split, so it includes Theme Studio (about 3.2 KiB), which the shell imports only on
+  // its route; with splitting, the initial load is 45,876 and Theme Studio a 4,150 B chunk.
+  'workbench-shell': 50176,
+  // 7.5 KiB; measured 7,055: the preview frame runtime (protocol, Scope, mount, specimen, theme).
+  'workbench-frame': 7680,
 };
 
 /**

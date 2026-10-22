@@ -223,6 +223,29 @@ export const contentStyles = css`
   .wb-content .wb-error {
     color: var(--odd-color-danger-foreground, var(--odd-color-text-primary));
   }
+
+  /* Theme Studio */
+  .wb-content fieldset.wb-group {
+    border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+    border-radius: var(--odd-radius-sm);
+    padding: var(--odd-space-md);
+  }
+  .wb-content .wb-field {
+    display: grid;
+    gap: var(--odd-space-2xs);
+    margin-block: var(--odd-space-sm);
+  }
+  .wb-content .wb-json textarea {
+    inline-size: 100%;
+    box-sizing: border-box;
+  }
+  .wb-content .wb-swatch {
+    display: inline-block;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border: var(--odd-border-width-default) solid var(--odd-color-border-strong);
+    border-radius: var(--odd-radius-sm);
+  }
   .wb-content .wb-list {
     margin: 0;
     padding-inline-start: var(--odd-space-lg);

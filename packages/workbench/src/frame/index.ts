@@ -5,11 +5,13 @@ import {
   isCompatibleFrameMessage,
   isFrameMountPayload,
   isFrameRequest,
+  isFrameSpecimenPayload,
   isJsonValue,
   type FrameIdentity,
   type FrameMountPayload,
   type FrameRequest,
   type FrameSettings,
+  type FrameSpecimenPayload,
   type JsonValue,
 } from '../protocol/index.js';
 
@@ -149,21 +151,21 @@ function loadRegistration(runtime: Runtime, registration: string): Promise<void>
   });
 }
 
-async function mount(runtime: Runtime, config: FrameMountPayload): Promise<void> {
+/** Load a component's registration once per frame and create it with its initial state. */
+async function createPreviewElement(
+  runtime: Runtime,
+  config: FrameMountPayload,
+): Promise<HTMLElement> {
   const existing = runtime.registrations.get(config.tag);
   if (existing && existing !== config.registration)
     throw new RegistrationIncompatibleError(
       `The <${config.tag}> registration changed; replace this frame before mounting it again.`,
     );
-  clearElement(runtime);
-  runtime.wrapper.replaceChildren();
-  applySettings(runtime, config.settings);
   await loadRegistration(runtime, config.registration);
   const constructor = runtime.window.customElements.get(config.tag);
   if (!constructor) throw new Error(`Registration did not define <${config.tag}>.`);
   runtime.registrations.set(config.tag, config.registration);
   const element = runtime.document.createElement(config.tag);
-  runtime.element = element;
   for (const [name, value] of Object.entries(config.properties ?? {}))
     Reflect.set(element, name, value);
   for (const [name, value] of Object.entries(config.attributes ?? {})) {
@@ -176,9 +178,37 @@ async function mount(runtime: Runtime, config: FrameMountPayload): Promise<void>
     slot.textContent = text;
     element.append(slot);
   }
+  return element;
+}
+
+async function mount(runtime: Runtime, config: FrameMountPayload): Promise<void> {
+  clearElement(runtime);
+  runtime.wrapper.replaceChildren();
+  applySettings(runtime, config.settings);
+  const element = await createPreviewElement(runtime, config);
+  runtime.element = element;
   runtime.wrapper.append(element);
   runtime.mount = config;
   runtime.mountScope = runtime.scope?.child({ name: `preview-example:${config.example}` });
+}
+
+/** Every role's element in one frame, each captioned with its role. */
+async function specimen(runtime: Runtime, config: FrameSpecimenPayload): Promise<void> {
+  clearElement(runtime);
+  runtime.mount = undefined;
+  runtime.wrapper.replaceChildren();
+  applySettings(runtime, config.settings);
+  const list = runtime.document.createElement('div');
+  list.dataset['oddkinSpecimen'] = '';
+  for (const item of config.items) {
+    const figure = runtime.document.createElement('figure');
+    figure.dataset['role'] = item.role;
+    const caption = runtime.document.createElement('figcaption');
+    caption.textContent = item.label;
+    figure.append(caption, await createPreviewElement(runtime, item));
+    list.append(figure);
+  }
+  runtime.wrapper.append(list);
 }
 
 function replaceTheme(runtime: Runtime, cssText: string) {
@@ -303,6 +333,11 @@ async function handle(runtime: Runtime, scope: Scope, request: FrameRequest) {
         if (runtime.mountScope) listenToElement(runtime, runtime.mountScope);
         post(runtime, 'state', { scopeStats: scopeStats() });
         return { mounted: true };
+      case 'specimen':
+        if (!isFrameSpecimenPayload(request.payload))
+          throw new TypeError('specimen requires valid role items.');
+        await specimen(runtime, request.payload);
+        return { mounted: request.payload.items.length };
       case 'set': {
         if (!runtime.element) throw new Error('There is no mounted component to update.');
         if (request.payload.property !== undefined) {

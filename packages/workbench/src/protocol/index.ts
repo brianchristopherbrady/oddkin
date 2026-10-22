@@ -54,6 +54,19 @@ export interface FrameSlotPayload {
   readonly text: string;
 }
 
+/** One element per preview role, mounted together (Theme Studio specimens). */
+export interface FrameSpecimenItem extends FrameMountPayload {
+  /** The preview role this element plays, e.g. `primaryAction`. */
+  readonly role: string;
+  /** Visible caption naming the role. */
+  readonly label: string;
+}
+
+export interface FrameSpecimenPayload {
+  readonly items: readonly FrameSpecimenItem[];
+  readonly settings?: FrameSettings;
+}
+
 export interface FrameThemePayload {
   readonly cssText: string;
 }
@@ -131,6 +144,11 @@ export type FrameRequest =
       readonly kind: 'mount';
       readonly id: number;
       readonly payload: FrameMountPayload;
+    })
+  | (Envelope & {
+      readonly kind: 'specimen';
+      readonly id: number;
+      readonly payload: FrameSpecimenPayload;
     })
   | (Envelope & { readonly kind: 'set'; readonly id: number; readonly payload: FrameSetPayload })
   | (Envelope & { readonly kind: 'slot'; readonly id: number; readonly payload: FrameSlotPayload })
@@ -300,6 +318,20 @@ export function isFrameMountPayload(value: unknown): value is FrameMountPayload 
   return value['settings'] === undefined || isFrameSettings(value['settings']);
 }
 
+export function isFrameSpecimenPayload(value: unknown): value is FrameSpecimenPayload {
+  return (
+    isRecord(value) &&
+    Array.isArray(value['items']) &&
+    value['items'].every(
+      (item) =>
+        isFrameMountPayload(item) &&
+        typeof (item as unknown as Record<string, unknown>)['role'] === 'string' &&
+        typeof (item as unknown as Record<string, unknown>)['label'] === 'string',
+    ) &&
+    (value['settings'] === undefined || isFrameSettings(value['settings']))
+  );
+}
+
 /** Validates the common envelope and its JSON payload, without accepting a specific version. */
 export function isFrameMessage(value: unknown): value is FrameMessage {
   if (!isRecord(value)) return false;
@@ -319,6 +351,7 @@ export function isFrameMessage(value: unknown): value is FrameMessage {
     case 'connect':
       return !Object.hasOwn(value, 'id') && !Object.hasOwn(value, 'replyTo');
     case 'mount':
+    case 'specimen':
     case 'set':
     case 'slot':
     case 'reset':
@@ -391,15 +424,25 @@ export function isInspectPreviewRequest(value: unknown): value is InspectPreview
 export function isFrameRequest(value: unknown): value is FrameRequest {
   if (!isCompatibleFrameMessage(value)) return false;
   if (
-    !['mount', 'set', 'slot', 'reset', 'theme', 'settings', 'dispose', 'inspect'].includes(
-      value.kind,
-    )
+    ![
+      'mount',
+      'specimen',
+      'set',
+      'slot',
+      'reset',
+      'theme',
+      'settings',
+      'dispose',
+      'inspect',
+    ].includes(value.kind)
   )
     return false;
   const request = value as FrameRequest;
   switch (request.kind) {
     case 'mount':
       return isFrameMountPayload(request.payload);
+    case 'specimen':
+      return isFrameSpecimenPayload(request.payload);
     case 'set': {
       if (!isRecord(request.payload)) return false;
       const hasProperty = typeof request.payload['property'] === 'string';

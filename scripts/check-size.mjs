@@ -47,7 +47,12 @@ const FEATURES = ['layout', 'collections', 'model', 'helpers', 'i18n'].map(
 );
 for (const [entry, size] of Object.entries(sizes)) {
   failed = !report(entry, size.gzip, BUDGETS[entry]) || failed;
-  forbid(entry, size, TOOLING);
+  // Workbench's own entries contain Workbench, and nothing else from this list.
+  forbid(
+    entry,
+    size,
+    entry.startsWith('workbench-') ? TOOLING.filter((t) => t !== 'packages/workbench') : TOOLING,
+  );
   if (entry === 'counter' || entry === 'component')
     forbid(entry, size, [...FEATURES, 'packages/core/dist/prod/controllers/']);
   if (entry === 'list')

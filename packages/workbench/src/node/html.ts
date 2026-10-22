@@ -79,7 +79,7 @@ export function frameHtml(doc: FrameDocument): string {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(doc.title)}</title>
-${fonts}${links}    <style>html,body{margin:0;min-block-size:100%;}body{container:preview-frame / inline-size;background:var(--odd-color-canvas,Canvas);color:var(--odd-color-text-primary,CanvasText);}[data-oddkin-preview]{display:block;min-block-size:100vh;container:preview / inline-size;}</style>
+${fonts}${links}    <style>html,body{margin:0;min-block-size:100%;}body{container:preview-frame / inline-size;background:var(--odd-color-canvas,Canvas);color:var(--odd-color-text-primary,CanvasText);}[data-oddkin-preview]{display:block;min-block-size:100vh;container:preview / inline-size;}[data-oddkin-specimen]{display:grid;gap:var(--odd-space-md,1rem);padding:var(--odd-space-md,1rem);}[data-oddkin-specimen] figure{margin:0;}[data-oddkin-specimen] figcaption{margin-block-end:var(--odd-space-xs,0.25rem);font:var(--odd-font-size-sm,0.875rem) var(--odd-font-family-sans,system-ui);color:var(--odd-color-text-secondary,GrayText);}</style>
     <script type="importmap">${inlineJson(doc.importMap)}</script>
 ${modulePreloads(doc.preload)}    <script type="module">import ${inlineJson(doc.module)};</script>
   </head>

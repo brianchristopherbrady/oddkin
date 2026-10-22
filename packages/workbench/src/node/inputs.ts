@@ -4,9 +4,15 @@
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, isAbsolute, join, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { DOCS_SCHEMA, type DocsContent, type ResolvedWorkbenchConfig } from '../config/index.js';
 import { resolveExport } from '../data/import-map.js';
-import type { ExampleSetLike, LibraryInput, TokenInspectionLike } from '../data/types.js';
+import type {
+  ExampleSetLike,
+  JsonObject,
+  LibraryInput,
+  TokenInspectionLike,
+} from '../data/types.js';
 import { toExamplesJSON, type ExampleSet } from '../examples/index.js';
 import { DiagnosticList, isObject } from '../internal/diagnostics.js';
 import type { CemPackage, OddkinMetadataLike } from '../pages/types.js';
@@ -27,6 +33,8 @@ export interface WorkbenchInputs {
   readonly graph: readonly InstalledPackage[];
   readonly docs?: DocsContent;
   readonly tokens?: TokenInspectionLike;
+  /** Theme Studio's baseline: `themeStudio.themeConfig` as its JSON model. */
+  readonly theme?: { readonly config: JsonObject; readonly source: string };
   /** Files read as data; a change to one rebuilds the data. */
   readonly dataFiles: readonly string[];
   /** Authored content files that were read or attempted (watched with the configuration). */
@@ -267,8 +275,10 @@ export async function loadInputs(
     }
   }
 
+  const theme = await loadThemeConfig(root, config, graph, out, dataFiles);
   const content = await loadContent(root, config, out);
   return {
+    ...(theme ? { theme } : {}),
     libraries,
     graph,
     ...(content.docs ? { docs: content.docs } : {}),
@@ -276,4 +286,59 @@ export async function loadInputs(
     dataFiles,
     contentFiles: content.files,
   };
+}
+
+/**
+ * `themeStudio.themeConfig` as the JSON-compatible model, loaded with the project's own
+ * `@oddkin/tokens/node` `loadConfig()` (theming-and-styling.md ?9): the CLI and Theme Studio
+ * start from the same model. JS and TS configurations are trusted project code.
+ */
+async function loadThemeConfig(
+  root: string,
+  config: ResolvedWorkbenchConfig,
+  graph: readonly InstalledPackage[],
+  out: DiagnosticList,
+  dataFiles: string[],
+): Promise<{ config: JsonObject; source: string } | undefined> {
+  const source = config.themeStudio.themeConfig;
+  if (!source) return undefined;
+  const file = resolve(root, source);
+  const path = '/themeStudio/themeConfig';
+  if (!existsSync(file)) {
+    out.warn('node.themeStudio.config', `themeStudio.themeConfig: ${file} does not exist.`, path);
+    return undefined;
+  }
+  dataFiles.push(file);
+  const dir =
+    graph.find((pkg) => pkg.name === '@oddkin/tokens')?.dir ??
+    findPackageDir('@oddkin/tokens', root);
+  const entry = dir ? resolveExport(readPackage(dir).manifest, './node') : undefined;
+  if (!dir || !entry) {
+    out.warn(
+      'node.themeStudio.loader',
+      'themeStudio.themeConfig needs @oddkin/tokens (its ./node export) installed to load the configuration.',
+      path,
+    );
+    return undefined;
+  }
+  try {
+    const tokens = (await import(pathToFileURL(join(dir, entry)).href)) as {
+      loadConfig(file: string): Promise<{
+        config: unknown;
+        diagnostics: readonly { severity?: string; path?: string; message?: string }[];
+      }>;
+    };
+    const result = await tokens.loadConfig(file);
+    for (const d of result.diagnostics)
+      out.warn('node.themeStudio.config', `${source}${d.path ?? ''}: ${d.message ?? ''}`, path);
+    if (!isObject(result.config)) return undefined;
+    return { config: result.config as JsonObject, source };
+  } catch (error) {
+    out.warn(
+      'node.themeStudio.config',
+      `themeStudio.themeConfig: ${error instanceof Error ? error.message : String(error)}`,
+      path,
+    );
+    return undefined;
+  }
 }

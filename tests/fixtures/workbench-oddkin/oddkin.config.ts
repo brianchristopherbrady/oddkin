@@ -5,4 +5,5 @@ import { defineWorkbenchConfig } from '@oddkin/workbench/config';
 export default defineWorkbenchConfig({
   library: { packages: ['@oddkin/components', '@oddkin/ai'] },
   branding: { name: 'Oddkin components' },
+  themeStudio: { themeConfig: '../../../packages/tokens/themes/default.theme.json' },
 });
