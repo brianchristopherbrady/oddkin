@@ -32,7 +32,14 @@ export interface IsolatedPreviewOptions {
   readonly frameUrl: string;
   readonly title: string;
   readonly generation?: number;
+  /** How long the handshake and each request may wait for the frame (default 10 000 ms). */
   readonly timeoutMs?: number;
+  /**
+   * How long a `mount` request may wait (default 60 000 ms). Mounting imports the component's
+   * module graph, which a cold, unbundled load can take seconds to fetch; a failed import is
+   * reported by the frame, so this only bounds a fetch that never settles.
+   */
+  readonly mountTimeoutMs?: number;
   readonly onMessage?: (message: FrameNotification) => void;
 }
 
@@ -242,6 +249,7 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
   });
 
   const timeoutMs = options.timeoutMs ?? 10_000;
+  const mountTimeoutMs = options.mountTimeoutMs ?? 60_000;
   startGeneration();
 
   return {
@@ -264,11 +272,12 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
       if (scope.disposed || !port)
         throw new PreviewFrameError('frame.disposed', 'The preview frame is not connected.');
       const id = ++nextRequestId;
+      const limit = kind === 'mount' ? mountTimeoutMs : timeoutMs;
       return new Promise<JsonValue | undefined>((resolve, reject) => {
         const releaseTimer = scope.timeout(() => {
           pending.delete(id);
           reject(new PreviewFrameError('frame.request.timeout', `Frame request ${id} timed out.`));
-        }, timeoutMs);
+        }, limit);
         pending.set(id, {
           resolve: (value) => {
             releaseTimer();

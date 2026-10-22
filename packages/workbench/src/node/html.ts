@@ -8,6 +8,10 @@ const escapeHtml = (text: string) =>
 export const inlineJson = (value: unknown): string =>
   JSON.stringify(value).replace(/</g, '\\u003c');
 
+/** After the import map: a module fetch before it would stop the map from applying. */
+const modulePreloads = (urls: readonly string[] = []) =>
+  urls.map((href) => `    <link rel="modulepreload" href="${escapeHtml(href)}" />\n`).join('');
+
 export interface ShellDocument {
   readonly title: string;
   readonly lang?: string;
@@ -20,6 +24,8 @@ export interface ShellDocument {
   readonly events?: string;
   /** The shell's module (a bare specifier resolved by the import map). */
   readonly module: string;
+  /** URLs of the module's static graph, fetched in parallel (`modulepreload`). */
+  readonly preload?: readonly string[];
 }
 
 export interface FrameDocument {
@@ -30,6 +36,8 @@ export interface FrameDocument {
   readonly stylesheets?: readonly string[];
   /** Font URLs preloaded in every preview frame. */
   readonly fonts?: readonly string[];
+  /** URLs of the frame runtime's static module graph, fetched in parallel (`modulepreload`). */
+  readonly preload?: readonly string[];
 }
 
 /** The shell page: an import map, stylesheets, and `<oddkin-workbench>` pointed at the index. */
@@ -45,7 +53,7 @@ export function shellHtml(doc: ShellDocument): string {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(doc.title)}</title>
     <script type="importmap">${inlineJson(doc.importMap)}</script>
-${links}    <script type="module">import ${inlineJson(doc.module)};</script>
+${modulePreloads(doc.preload)}${links}    <script type="module">import ${inlineJson(doc.module)};</script>
   </head>
   <body>
     <oddkin-workbench index="${escapeHtml(doc.index)}"${events}></oddkin-workbench>
@@ -73,7 +81,7 @@ export function frameHtml(doc: FrameDocument): string {
     <title>${escapeHtml(doc.title)}</title>
 ${fonts}${links}    <style>html,body{margin:0;min-block-size:100%;}body{container:preview-frame / inline-size;background:var(--odd-color-canvas,Canvas);color:var(--odd-color-text-primary,CanvasText);}[data-oddkin-preview]{display:block;min-block-size:100vh;container:preview / inline-size;}</style>
     <script type="importmap">${inlineJson(doc.importMap)}</script>
-    <script type="module">import ${inlineJson(doc.module)};</script>
+${modulePreloads(doc.preload)}    <script type="module">import ${inlineJson(doc.module)};</script>
   </head>
   <body>
     <main data-oddkin-preview></main>

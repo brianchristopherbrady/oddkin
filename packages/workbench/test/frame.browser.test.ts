@@ -191,6 +191,34 @@ describe('isolated preview frames', () => {
     expect(previewProtocolStats().liveFrames).toBe(protocolBefore.liveFrames);
   });
 
+  it('lets a mount wait for a slow module graph, bounded by its own timeout', async () => {
+    const slow = new URL('./fixtures/frame-element-slow.ts', import.meta.url).href;
+    const create = (limits: { timeoutMs?: number; mountTimeoutMs?: number }) => {
+      const preview = createIsolatedPreview({
+        document,
+        container: document.body,
+        frameUrl,
+        title: 'Slow preview',
+        ...limits,
+      });
+      previews.push(preview);
+      return preview;
+    };
+    // The 2.5 s import outlasts the 2 s request timeout, but not the mount timeout.
+    const patient = create({ timeoutMs: 2_000 });
+    await patient.ready;
+    await patient.request('mount', payload({ registration: slow }));
+    expect(patient.iframe.contentDocument?.querySelector('fixture-button')?.shadowRoot).not.toBe(
+      null,
+    );
+    // A fetch that never settles within the mount timeout is still reported.
+    const bounded = create({ mountTimeoutMs: 500 });
+    await bounded.ready;
+    await expect(bounded.request('mount', payload({ registration: slow }))).rejects.toMatchObject({
+      code: 'frame.request.timeout',
+    });
+  });
+
   it('refuses superseded generations, disposed frames, and incompatible protocol versions', async () => {
     const preview = createPreview();
     await preview.ready;

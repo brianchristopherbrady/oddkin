@@ -19,6 +19,7 @@ import { loadWorkbenchConfig } from './config.js';
 import { frameHtml, shellHtml } from './html.js';
 import { loadInputs, type WorkbenchInputs } from './inputs.js';
 import { packageGraph, readPackage, type InstalledPackage } from './packages.js';
+import { preloadGraph } from './preload.js';
 
 /** This package's root (two levels above `dist/node/` and `src/node/`). */
 export const WORKBENCH_DIR = fileURLToPath(new URL('../../', import.meta.url));
@@ -161,6 +162,7 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
   for (const pkg of [...shellGraph, ...inputs.graph])
     if (!packages.has(versioned(pkg))) packages.set(versioned(pkg), pkg.dir);
 
+  const roots = new Map([...packages].map(([name, dir]) => [`${base}${name}/`, dir]));
   const files = new Map<string, string>([['index.json', serializeData(data.index)]]);
   for (const [id, page] of Object.entries(data.pages)) files.set(pageFile(id), serializeData(page));
   files.set('frame.importmap.json', `${JSON.stringify(frame.importMap, null, 2)}\n`);
@@ -178,6 +180,7 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
       title: `${data.index.branding.name} preview`,
       importMap: frame.importMap,
       module: '@oddkin/workbench/frame',
+      preload: preloadGraph(frame.importMap, '@oddkin/workbench/frame', roots),
       ...assetsForFrames,
     }),
   );
@@ -205,6 +208,7 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
       index: `${assets}index.json`,
       ...(options.events ? { events: `${assets}events` } : {}),
       module: '@oddkin/workbench/app/define',
+      preload: preloadGraph(shell.importMap, '@oddkin/workbench/app/define', roots),
     }),
     diagnostics: result.items,
   };

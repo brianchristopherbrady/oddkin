@@ -341,6 +341,20 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     expect(Object.keys(shellMap.imports).some((k) => k.startsWith('typescript'))).toBe(false);
     expect([...build.packages.keys()].some((k) => k.startsWith('@oddkin/analyzer'))).toBe(false);
     expect(JSON.parse(build.files.get('shell.importmap.json')!)).toEqual(shellMap);
+    // Both documents preload their entry's static module graph, after the import map.
+    const preloads = (html: string) =>
+      [...html.matchAll(/<link rel="modulepreload" href="([^"]+)" \/>/g)].map((m) => m[1]);
+    const shellPreloads = preloads(shell);
+    expect(shellPreloads[0]).toBe(shellMap.imports['@oddkin/workbench/app/define']);
+    expect(shellPreloads).toContain(shellMap.imports['@oddkin/app/router']);
+    expect(shell.indexOf('modulepreload')).toBeGreaterThan(shell.indexOf('type="importmap"'));
+    const frame = build.files.get('frame.html')!;
+    expect(preloads(frame)[0]).toBe(build.frameImportMap?.imports['@oddkin/workbench/frame']);
+    expect(frame.indexOf('modulepreload')).toBeGreaterThan(frame.indexOf('type="importmap"'));
+    // The library is not part of either runtime; a preview imports it when it mounts.
+    expect([...shellPreloads, ...preloads(frame)].some((url) => url?.includes('@acme/'))).toBe(
+      false,
+    );
     // Without the dev server, the shell has no event stream.
     const quiet = await buildWorkbench({ config: dir });
     expect(quiet.shell).not.toContain('events=');
