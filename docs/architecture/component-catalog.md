@@ -439,3 +439,39 @@ Observed in the snapshot (`design/figma/components.json`) and a read-only text-c
      `odd-heading` elements, since native `h1`–`h6` and `p` already carry the semantics; a visually-hidden utility in
      the same recipe);
    - not built: the multiselect exploration (item 4), the data grid (deferred), icon assets (item 5).
+
+## 8. Figma parity of the existing Common elements (2026-10-22)
+
+`packages/components/test/figma-parity.browser.test.ts` renders each Figma variant below and compares the computed
+style of the mapped part with the token Figma binds on that layer (fill, stroke, stroke weight, corner radius,
+inline and block padding, gap, height; text colour, size, weight, line height), in Chromium, Firefox, and WebKit.
+
+| Figma family | Variant → code | Layer → part |
+| --- | --- | --- |
+| `button`, `button/sm`, `button/lg` | `Appearance` → `appearance`; `Size` → `size`; `State` Default, `Disabled` → `disabled`, `Loading` → `loading`, Hover (pointer), Pressed (Space held), Focus (Tab) | button frame → `control`; `Label` → the control's text; focus `Surface` → the outline |
+| `input` | `State` Empty (`placeholder`), Filled (`value`), Focus, Hover, Invalid (`error`), Disabled (`disabled`), Read only (`readonly`), Password (`type="password"`) | frame → `field`; label → `label`; `Surface` → `control`; value or placeholder → the control's text; help → `description`; error → `error` |
+| `card` | Default → `variant="outlined"`, Filled → `variant="filled"` | `Surface` → `base`; title → the slotted heading |
+| `NavigationItem` | Default, Current (`current`), Disabled (`disabled` item), Focus | `Surface` → the entry; label → the entry's text; current bar → the entry's start border |
+
+Fixed (styling only, no API change): `odd-button` and the `button.css` path had the user agent's block padding
+(1–2 px; Figma binds `space/none`) and no pressed fill for `secondary` and `ghost` (Figma `color/surface/sunken`);
+`odd-input` had the user agent's block padding, the user agent's placeholder colour (Figma `color/text/secondary`),
+no hover fill (Figma `color/surface/hover`; read-only and disabled fields keep theirs), and a primary label colour
+when disabled (Figma `color/text/disabled`).
+
+Deliberate differences:
+
+- Figma's `Loading` state pads with `space/md` at every size; the code keeps each size's inline padding, so a button
+  keeps its width when it starts loading (a Figma inconsistency).
+- Figma insets the input's field frame by `space/2xs` to fit its focus ring; the shared focus ring is an outline,
+  which takes no layout space.
+- Figma draws focus rings as strokes with the card radius; the outline follows the control's radius plus the
+  offset. The ring's colour and width are compared and equal.
+- Placeholder line height is not compared: the placeholder renders in the control's line box, and engines report a
+  user-agent value for the pseudo-element.
+- Firefox applies no `:active` while Space is held, so pressed states are compared in Chromium and WebKit only.
+
+Open, for the owner: Figma's `button` defaults to `Appearance=primary`, the element to `secondary` (an API
+default, unchanged here); Figma's card draws body text in `color/text/secondary` and a divider above the footer,
+while the element lets slotted text inherit `color/text/primary` and has no divider; the element's `elevated` card
+has no Figma variant. AI definitions on page 0:1 are not compared yet.

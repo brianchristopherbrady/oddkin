@@ -23,6 +23,7 @@ export const nativeButtonStyles = css`
       ${token('target.min')}
     );
     margin: 0;
+    padding-block: ${token('space.none')};
     padding-inline: var(--odd-button-padding-inline, ${token('control.padding.inline.md')});
     gap: ${token('control.gap')};
     border: ${token('border.width.default')} solid
@@ -80,6 +81,9 @@ export const nativeButtonStyles = css`
   }
   .odd-button[data-appearance='primary']:active:enabled:not([aria-disabled='true']) {
     background: var(--odd-button-background, ${token('color.action.pressed')});
+  }
+  .odd-button:not([data-appearance='primary']):active:enabled:not([aria-disabled='true']) {
+    background: var(--odd-button-background, ${token('color.surface.sunken')});
   }
   .odd-button:disabled {
     border-color: transparent;

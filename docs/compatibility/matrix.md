@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 58 stylesheets, 237 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 58 stylesheets, 240 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 121 (`css.selectors.has`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -124,13 +124,13 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/css/base.css` | yes | 12 |
 | `packages/components/dist/css/layout.css` | yes | 22 |
 | `packages/components/dist/css/utilities.css` | yes | 18 |
-| `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 51 |
+| `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 52 |
 | `packages/components/dist/button/button.structural.styles.js (buttonStructuralStyles)` | yes | 48 |
-| `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 27 |
+| `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 28 |
 | `packages/components/dist/card/card.structural.styles.js (cardStructuralStyles)` | yes | 20 |
 | `packages/components/dist/card/card.styles.js (cardStyles)` | yes | 18 |
 | `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 20 |
-| `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 19 |
+| `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 27 |
 | `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
 | `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 36 |
 | `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 40 |

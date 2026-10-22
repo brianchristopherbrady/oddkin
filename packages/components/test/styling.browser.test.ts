@@ -66,8 +66,9 @@ describe('narrow containers and long content (F07)', () => {
     const control = inner($('#b'), 'button');
     expect(control.scrollWidth).toBeLessThanOrEqual(control.clientWidth + 1);
     // The label wraps onto several lines instead of widening the button.
-    expect(control.getBoundingClientRect().height).toBeGreaterThan(
-      parseFloat(getComputedStyle(control).minHeight) + 1,
+    const labelBox = inner($('#b'), '.label');
+    expect(labelBox.getBoundingClientRect().height).toBeGreaterThan(
+      1.5 * parseFloat(getComputedStyle(labelBox).lineHeight),
     );
     const url = $('#url');
     expect(url.scrollWidth).toBeLessThanOrEqual(url.clientWidth + 1);

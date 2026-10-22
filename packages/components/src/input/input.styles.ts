@@ -14,6 +14,9 @@ export const inputStyles = css`
     line-height: ${token('type.ui.line-height')};
     letter-spacing: ${token('type.ui.letter-spacing')};
   }
+  .field:has(.control:disabled) .label {
+    color: ${token('color.text.disabled')};
+  }
   .description,
   .error {
     font-size: ${token('type.small.size')};
@@ -27,6 +30,7 @@ export const inputStyles = css`
       var(--odd-input-height, ${token('control.height.md')}),
       ${token('target.min')}
     );
+    padding-block: ${token('space.none')};
     padding-inline: ${token('control.padding.inline.md')};
     border: ${token('border.width.default')} solid
       var(--odd-input-border-color, ${token('color.border.strong')});
@@ -39,6 +43,15 @@ export const inputStyles = css`
     transition-property: border-color, background-color;
     transition-duration: ${token('motion.duration.fast')};
     transition-timing-function: ${token('motion.easing.standard')};
+  }
+  .control::placeholder {
+    color: ${token('color.text.secondary')};
+    opacity: 1;
+  }
+  @media (hover: hover) {
+    .control:read-write:hover {
+      background: var(--odd-input-background, ${token('color.surface.hover')});
+    }
   }
   .control[aria-invalid='true'] {
     border-color: ${token('color.danger.foreground')};

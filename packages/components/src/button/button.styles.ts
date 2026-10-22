@@ -8,6 +8,7 @@ export const buttonStyles = css`
       var(--odd-button-height, ${token('control.height.md')}),
       ${token('target.min')}
     );
+    padding-block: ${token('space.none')};
     padding-inline: var(--odd-button-padding-inline, ${token('control.padding.inline.md')});
     gap: ${token('control.gap')};
     border: ${token('border.width.default')} solid var(--odd-button-border-color, transparent);
@@ -54,6 +55,10 @@ export const buttonStyles = css`
   }
   :host([appearance='primary']) button:active:enabled:not([aria-disabled='true']) {
     background: var(--odd-button-background, ${token('color.action.pressed')});
+  }
+  :host([appearance='secondary']) button:active:enabled:not([aria-disabled='true']),
+  :host([appearance='ghost']) button:active:enabled:not([aria-disabled='true']) {
+    background: var(--odd-button-background, ${token('color.surface.sunken')});
   }
   :host([appearance='secondary']) button {
     border-color: var(--odd-button-border-color, ${token('color.border.strong')});
