@@ -1491,3 +1491,22 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Change:** `.github/workflows/ci.yml` checks out full history (`fetch-depth: 0`), runs `lint`, `typecheck`, `test`, `verify:metadata`, `size`, `test:e2e`, and `verify:packs` in the order of `npm run verify` (it previously skipped `verify:metadata` and `size`), uploads `playwright-report/` and `test-results/` when a step fails, moves `actions/checkout`, `actions/setup-node`, and `actions/upload-artifact` to v7 (Node 24 runtime; GitHub warned about Node 20), pins `ubuntu-24.04` while `ubuntu-latest` moves to Ubuntu 26, and limits `GITHUB_TOKEN` to `contents: read`. `playwright.config.ts` adds an HTML report and keeps traces of failed tests only when `CI` is set; local runs are unchanged.
 
 **Remaining:** a green run. The two e2e failures belong to other lanes (Workbench shell announcements: Agents 3 and 2; `ai-research` reflow: Agent 4) and are recorded in `.tmp/lanes.md`. Licence and npm scope ownership are the owner's decisions.
+
+
+## 2026-10-21 — CI: `ai-research` 320 px reflow in WebKit on Linux (`odd-model-select`)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium, Firefox, WebKit). Other agents had unrelated edits in the shared worktree (core, tokens, workbench); they were not included. No full-pipeline run. The CI traces (run #5 `playwright-1`) were not read: the GitHub MCP server failed with a header error and the artifact download needs authentication.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reproduction | `.tmp` probe: `examples/ai-research` at 320×720 with reduced motion after one streamed answer, `--odd-font-family-sans` and `body` set to Verdana (Bitstream Vera metrics, like DejaVu Sans, which fontconfig gives WebKit for `system-ui` on Ubuntu) | Before: WebKit overflows by 5 px (CI: 4 px). The elements past the viewport are the composer: `odd-prompt-input`'s `form` and `toolbar` at 288 px, sized by the slotted `odd-model-select`, whose `<select>` takes the width of its longest option. The code block (`pre > code`) also extends past the viewport but is a contained scroller and adds no page overflow. Without the font substitution: no overflow. |
+| After the fix | the same probe, all three demos × Chromium, Firefox, WebKit × system font and Verdana | 18 of 18 with no page overflow and no element outside the viewport except the code-block scroller. |
+| Regression test | `npx vitest run --project browser packages/ai/test/prompt-input.browser.test.ts` | Pass — 30 tests (10 × 3 engines), including the new "a slotted model select with a long option never widens a narrow composer" (a 60-character option in a 15 rem container; host, form, model select, and native select stay inside it with any font). |
+| Mutants | five candidate rules removed one at a time, then the new test | The one shipped rule, `grid-template-columns: minmax(0, auto)` on the `odd-model-select` host, killed (3 of 3 engines fail). Four other candidates (`max-inline-size: 100%` on the select, `min/max-inline-size` on the host, `minmax(0, 1fr)` on the composer form, shrinkable slotted toolbar items) survived and were not shipped. |
+| Demo e2e | `npx playwright test e2e/ai-demos.spec.ts -g "reflow" --workers=1` | Pass — 9 of 9. A first run in parallel with three browser Vitest suites timed out twice at the streaming wait (line 310, before the overflow assertion), Firefox `ai-agent` and WebKit `ai-research`; both pass alone. `-g "axe"`: 9 of 9 in that first run. |
+| Other AI browser suites | `npx vitest run --project browser packages/ai/test/{elements,examples,contract}.browser.test.ts` | Pass — 552 passed, 12 skipped. |
+| Size, CSS lint, format | `node scripts/check-size.mjs`; `node scripts/compat/check-css.mjs`; `npx prettier --check` | Pass — `ai:styles` 4,450 B of 4,608 B gzip. The CSS check reported the generated matrix stale (the rule adds compatibility keys: 237 → 238, model-select 17 → 20); regenerated with `--write`, then OK. |
+
+**Change:** `odd-model-select`'s host grid column is `minmax(0, auto)`. With a fixed zero minimum the select's automatic minimum size no longer applies, so it shrinks with its container instead of widening the composer toolbar and form. The layout was fixed, not the test.
+
+**Remaining:** confirmation on GitHub (WebKit on `ubuntu-24.04`) on the next CI run after the user pushes.

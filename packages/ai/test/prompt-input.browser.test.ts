@@ -219,4 +219,35 @@ describe('odd-prompt-input', () => {
       'Sending is paused.',
     );
   });
+
+  it('a slotted model select with a long option never widens a narrow composer', async () => {
+    // CI 2026-10-21: WebKit on Linux (wider system font) overflowed the 320 px research demo.
+    // An option far wider than the container reproduces it with any font.
+    await import('../src/model-select/model-select.define.js');
+    container.style.inlineSize = '15rem';
+    const { el } = await mount((e) => {
+      const select = document.createElement('odd-model-select');
+      select.slot = 'toolbar-start';
+      select.models = [
+        {
+          id: 'long',
+          label: 'A simulated model with an exceptionally long descriptive name',
+          capabilities: ['text'],
+          available: true,
+        },
+      ];
+      select.value = 'long';
+      e.append(select);
+    });
+    await settle(el.querySelector('odd-model-select')!);
+    const form = el.shadowRoot!.querySelector<HTMLElement>('[part="form"]')!;
+    const limit = container.getBoundingClientRect().right + 0.5;
+    expect(el.getBoundingClientRect().width).toBeLessThanOrEqual(container.clientWidth + 0.5);
+    expect(form.getBoundingClientRect().right).toBeLessThanOrEqual(limit);
+    const select = el.querySelector('odd-model-select')!;
+    expect(select.getBoundingClientRect().right).toBeLessThanOrEqual(limit);
+    expect(
+      select.shadowRoot!.querySelector('select')!.getBoundingClientRect().right,
+    ).toBeLessThanOrEqual(limit);
+  });
 });
