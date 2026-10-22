@@ -21,11 +21,14 @@ hydration; it does not claim route content is server-rendered. A deployment must
 history-route fallback to the app shell (or use a separate static router strategy) for direct
 navigation and refresh on nested routes.
 
-Foundations and component references render basic content from the published metadata. The local
-`<oddkin-doc-panel>` placeholder has an open shadow root and `pageData`, `index`, and `href(route)`
-properties, so public Workbench panels can replace it when those exports are available. Until then,
-detail pages link to the Workbench package. No component modules are imported for catalog or detail
-discovery.
+Component, foundation, and catalog references are the public Workbench panels
+(`@oddkin/workbench/panels/{component,foundation,catalog}`), in open shadow roots. The docs app
+builds their data in the browser with `buildWorkbenchData` from `@oddkin/workbench/data`, from the
+same three published files, and passes `index`, `page`, and `href` (the router's `href`, so panel
+links navigate in the docs router). Each route loads only the panel it renders. `frameUrl` is left
+empty, so detail pages show "Preview unavailable" and load no component module. The catalog's search
+and category are mirrored in the URL (`/components?q=…&category=…`) without new history entries; it
+renders its cards with `odd-card`, the only component module the docs load.
 
 ## Snippets
 

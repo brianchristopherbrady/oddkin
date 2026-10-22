@@ -2,13 +2,24 @@ import { expect, test } from '@playwright/test';
 
 const docs = 'http://127.0.0.1:4177';
 
-test('docs guides, metadata references, local search, and shadow-root links', async ({ page }) => {
+test('docs guides, metadata references, local search, and shadow-root links', async ({
+  page,
+  browserName,
+}) => {
   const requests: string[] = [];
-  const cspErrors: string[] = [];
   page.on('request', (request) => requests.push(request.url()));
-  page.on('console', (message) => {
-    if (message.type() === 'error' && /content security policy/i.test(message.text()))
-      cspErrors.push(message.text());
+  await page.addInitScript(() => {
+    const seen: string[] = [];
+    (window as unknown as { __csp: string[] }).__csp = seen;
+    document.addEventListener(
+      'securitypolicyviolation',
+      (event) => {
+        const target = event.composedPath()[0];
+        const name = target instanceof Element ? target.localName : (target as Node)?.nodeName;
+        seen.push(`${event.violatedDirective} ${name}`);
+      },
+      true,
+    );
   });
 
   const response = await page.goto(`${docs}/`);
@@ -16,6 +27,8 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   expect(response?.headers()['content-security-policy']).toContain("default-src 'none'");
   await expect(page.getByRole('heading', { name: 'Getting started' })).toBeVisible();
   await expect(page.getByText('Start with Oddkin tokens')).toBeVisible();
+  // Client-rendered: the router now handles link clicks (the static guide is readable before boot).
+  await expect(page.getByRole('heading', { name: 'Use design tokens' })).toBeVisible();
   expect(requests.some((url) => /\/packages\/components\/.*\.js$/.test(url))).toBe(false);
 
   await page.locator('.side-nav a[href="/layout/side-nav"]').click();
@@ -30,26 +43,52 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(
     page.locator('pre').filter({ hasText: "document.querySelector('#sections')" }),
   ).toContainText('nav.items =');
-  expect(
-    await page.locator('oddkin-doc-panel').evaluate((element) => element.shadowRoot?.mode),
-  ).toBe('open');
+  // The public Workbench panel (plan 867), in an open shadow root, with no preview frame.
+  const sideNavPanel = page.locator('oddkin-component-panel');
+  expect(await sideNavPanel.evaluate((element) => element.shadowRoot?.mode)).toBe('open');
+  await expect(sideNavPanel.getByRole('heading', { name: 'Overview', level: 2 })).toBeVisible();
+  expect(requests.some((url) => /\/packages\/components\/.*\.js$/.test(url))).toBe(false);
 
-  await page.getByRole('link', { name: 'Browse all components' }).click();
+  await page.locator('.side-nav a[href="/components"]').click();
   await expect(page).toHaveURL(`${docs}/components`);
   await expect(page.getByRole('heading', { name: 'Component references' })).toBeVisible();
-  await page.getByRole('link', { name: 'Read odd-button' }).click();
+  // The catalog's filter is mirrored in the URL without a new entry, and typing keeps focus.
+  const search = page.getByRole('searchbox', { name: 'Search components' });
+  await search.fill('card');
+  await expect(page).toHaveURL(`${docs}/components?q=card`);
+  await expect(search).toBeFocused();
+  await expect(page.getByText('Showing 1 of 4 components')).toBeVisible();
+  await search.fill('');
+  await expect(page).toHaveURL(`${docs}/components`);
+  // Filtering added no history entries: Back returns to the guide.
+  await page.goBack();
+  await expect(page).toHaveURL(`${docs}/layout/side-nav`);
+  await page.goForward();
+  await expect(page.getByRole('searchbox', { name: 'Search components' })).toBeVisible();
+  // Catalog cards render with odd-card: the only component module the docs load.
+  const componentModules = () =>
+    requests
+      .filter((url) => /\/packages\/components\/.*\.js$/.test(url))
+      .map((url) => new URL(url).pathname);
+  expect(componentModules().every((path) => /\/(card|styles)\//.test(path))).toBe(true);
+  const before = componentModules().length;
+
+  // A shadow-root link inside the panel navigates through the docs router.
+  await page.getByRole('link', { name: 'Button', exact: true }).click();
   await expect(page).toHaveURL(`${docs}/components/odd-button`);
   await expect(page.locator('#main h1')).toHaveText('<odd-button>');
-  await expect(page.getByRole('cell', { name: '"primary" | "secondary" | "ghost"' })).toBeVisible();
+  const buttonPanel = page.locator('oddkin-component-panel');
   await expect(
-    page.getByText("import '@oddkin/components/define/button';", { exact: false }),
+    buttonPanel.getByText("import '@oddkin/components/define/button';", { exact: true }),
   ).toBeVisible();
+  await expect(buttonPanel.getByText('Preview unavailable')).toBeVisible();
+  expect(componentModules()).toHaveLength(before);
 
   await page.locator('.side-nav a[href="/foundations"]').click();
   await expect(page.getByRole('heading', { name: 'Design foundations' })).toBeVisible();
   await page.getByRole('link', { name: 'Read spacing' }).click();
   await expect(page).toHaveURL(`${docs}/foundations/spacing`);
-  await expect(page.getByRole('cell', { name: '--odd-space-md' })).toBeVisible();
+  await expect(page.getByRole('rowheader', { name: 'space.md --odd-space-md' })).toBeVisible();
 
   await page.locator('#site-search').fill('navigation');
   await page.locator('#site-search').press('Enter');
@@ -59,7 +98,16 @@ test('docs guides, metadata references, local search, and shadow-root links', as
 
   await page.locator('.side-nav a[href="/architecture/scope-ownership"]').click();
   await expect(page.getByRole('heading', { name: 'Scope ownership for navigation' })).toBeVisible();
-  expect(cspErrors).toEqual([]);
+  // WebKit reports style-src-attr for every <select> inserted under a strict style-src, even one
+  // made with createElement on a page without Oddkin code (verification.md, 2026-10-21); once the
+  // select is detached the event targets the document.
+  // Nothing else may violate the policy.
+  const violations = await page.evaluate(() => (window as unknown as { __csp: string[] }).__csp);
+  expect(
+    violations.filter(
+      (v) => !(browserName === 'webkit' && /^style-src-attr (select|#document)$/.test(v)),
+    ),
+  ).toEqual([]);
 });
 
 test('initial guide is readable before client boot and async metadata shows pending then ready', async ({

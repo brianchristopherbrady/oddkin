@@ -1649,3 +1649,19 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Mappings (default theme):** 201 lossless, 4 lossy (`motion.duration.*`: the reduced-motion value is only in `$extensions`), 5 unsupported (`elevation.none`; `letter-spacing.tight/wide` in `em`; `type.display.letter-spacing` and `type.eyebrow.letter-spacing`, which alias them), each listed with its original value under the root `dev.oddkin.unsupported`.
 
 **Not claimed:** DTCG Resolver documents or support (item 246, M9), DTCG import or round-trip.
+
+
+## 2026-10-21 — Docs app embeds the public Workbench panels (plan item 867)
+
+**Environment:** Windows, Node 24.22.1, Playwright 1.64.1 (Chromium, Firefox, WebKit), docs dev server on 127.0.0.1:4177 with its strict CSP (Trusted Types `oddkin-template`, `style-src 'self'`). Panels from Agent 3's 77aaa62. `apps/docs/package.json` declares `@oddkin/workbench` (bf00c05). Other agents had unrelated edits in the worktree. No full-pipeline run.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Typecheck | `npx tsc -b apps/docs`; `npx tsc -p tsconfig.tests.json --noEmit` | Pass. |
+| Boundaries | `node scripts/architecture/check-boundaries.mjs` | `Boundaries OK` (docs → workbench allowed and declared). |
+| Docs e2e | `npx playwright test e2e/docs.spec.ts --repeat-each=3` | 36 passed. The side-nav guide embeds `<oddkin-component-panel>` (open shadow root) with no component module loaded; the components page is `<oddkin-catalog-panel>`: typing `card` gives `/components?q=card`, "Showing 1 of 4 components", focus stays in the search field, clearing restores `/components`, and Back returns to the guide (no entries added); a link inside the panel's shadow root navigates through the docs router to `/components/odd-button`, whose panel shows the define-entry import and "Preview unavailable" and loads no further component module; the spacing foundation panel shows `space.md --odd-space-md`. Component modules loaded by the whole flow: only `odd-card` (catalog cards) and its styles. |
+| Mutants | 5 edits to `apps/docs/src/main.ts`, docs rebuilt each time, Chromium | 4 killed: URL mirroring removed, mirroring with a history entry, the catalog re-rendered on filter changes (focus lost), wrong page key. Survived: loading the catalog define entry without awaiting it; equivalent here, because the panels accept properties set before their element is defined. (Removing the load entirely is rejected by the typechecker and is not counted.) |
+
+**Fixed while integrating:** importing every panel eagerly loaded `odd-card` on every page (the catalog's define entry registers it); panels now load per route. The static `@oddkin/workbench/data` import delayed the app's start enough that a Firefox click on a static side-nav link sometimes happened before the router ran; the builder now loads in parallel with the published files, and the test waits for client-rendered content before its first click.
+
+**Finding (engine):** WebKit reports a `style-src-attr` CSP violation for every `<select>` inserted under `style-src 'self'`, including one created with `createElement` on a page without any Oddkin code (Chromium and Firefox report none; repro run 2026-10-21). In the docs they arise from the panels' selects; when the element is already detached the event targets the document. The spec records violations by event and exempts only WebKit `style-src-attr` with a `select` or `#document` target.
