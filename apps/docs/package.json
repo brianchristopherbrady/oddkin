@@ -9,6 +9,7 @@
     "@oddkin/components": "0.0.0",
     "@oddkin/core": "0.0.0",
     "@oddkin/state": "0.0.0",
-    "@oddkin/tokens": "0.0.0"
+    "@oddkin/tokens": "0.0.0",
+    "@oddkin/workbench": "0.0.0"
   }
 }
