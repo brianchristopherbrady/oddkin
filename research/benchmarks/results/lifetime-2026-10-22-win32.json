@@ -1,0 +1,359 @@
+{
+  "date": "2026-10-22",
+  "cycles": 1000,
+  "warmup": 100,
+  "method": "Each scenario: warm-up, then two batches; ownership = core scopeStats() equal before and after each batch; Chromium heap = CDP HeapProfiler.collectGarbage then Runtime.getHeapUsage().usedSize before and after each batch; retained per cycle = heap growth / cycles.",
+  "machine": {
+    "platform": "win32",
+    "release": "10.0.22631",
+    "arch": "x64",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+    "memory": 17014120448
+  },
+  "node": "v24.22.1",
+  "results": {
+    "chromium": {
+      "version": "156.0.8078.4",
+      "scenarios": {
+        "appCycles": {
+          "cycles": 1000,
+          "ms": [
+            5647,
+            5437
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "resource loads: 1000",
+            "resource loads: 1000"
+          ],
+          "heapBytes": [
+            1720784,
+            1851904,
+            1854924
+          ],
+          "retainedPerCycleBytes": [
+            131,
+            3
+          ]
+        },
+        "navigationCycles": {
+          "cycles": 1000,
+          "ms": [
+            1077,
+            1101
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 2,
+              "listeners": 4,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 2,
+              "listeners": 4,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "committed 2000; after stop: {\"scopes\":0,\"listeners\":0,\"timers\":0,\"effects\":0}",
+            "committed 2000; after stop: {\"scopes\":0,\"listeners\":0,\"timers\":0,\"effects\":0}"
+          ],
+          "heapBytes": [
+            1866624,
+            1877844,
+            1877984
+          ],
+          "retainedPerCycleBytes": [
+            11,
+            0
+          ]
+        },
+        "themeEditCycles": {
+          "cycles": 1000,
+          "ms": [
+            9649,
+            7947
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "distinct brand-600 values: 357",
+            "distinct brand-600 values: 357"
+          ],
+          "heapBytes": [
+            2579272,
+            2643844,
+            2635048
+          ],
+          "retainedPerCycleBytes": [
+            65,
+            -9
+          ]
+        },
+        "componentCycles": {
+          "cycles": 1000,
+          "ms": [
+            6078,
+            6265
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "container children: 0; rendered: 1000",
+            "container children: 0; rendered: 1000"
+          ],
+          "heapBytes": [
+            3025592,
+            3342504,
+            3380744
+          ],
+          "retainedPerCycleBytes": [
+            317,
+            38
+          ]
+        }
+      },
+      "errors": []
+    },
+    "firefox": {
+      "version": "157.0",
+      "scenarios": {
+        "appCycles": {
+          "cycles": 1000,
+          "ms": [
+            5619,
+            5598
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "resource loads: 1000",
+            "resource loads: 1000"
+          ]
+        },
+        "navigationCycles": {
+          "cycles": 1000,
+          "ms": [
+            323,
+            361
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 2,
+              "listeners": 4,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 2,
+              "listeners": 4,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "committed 2000; after stop: {\"scopes\":0,\"listeners\":0,\"timers\":0,\"effects\":0}",
+            "committed 2000; after stop: {\"scopes\":0,\"listeners\":0,\"timers\":0,\"effects\":0}"
+          ]
+        },
+        "themeEditCycles": {
+          "cycles": 1000,
+          "ms": [
+            9389,
+            9306
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "distinct brand-600 values: 357",
+            "distinct brand-600 values: 357"
+          ]
+        },
+        "componentCycles": {
+          "cycles": 1000,
+          "ms": [
+            8112,
+            8477
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "container children: 0; rendered: 1000",
+            "container children: 0; rendered: 1000"
+          ]
+        }
+      },
+      "errors": []
+    },
+    "webkit": {
+      "version": "27.2",
+      "scenarios": {
+        "appCycles": {
+          "cycles": 1000,
+          "ms": [
+            28064,
+            16141
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "resource loads: 1000",
+            "resource loads: 1000"
+          ]
+        },
+        "navigationCycles": {
+          "skipped": "WebKit limits history writes to 100 per 10 seconds"
+        },
+        "themeEditCycles": {
+          "cycles": 1000,
+          "ms": [
+            9260,
+            9087
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "distinct brand-600 values: 357",
+            "distinct brand-600 values: 357"
+          ]
+        },
+        "componentCycles": {
+          "cycles": 1000,
+          "ms": [
+            15747,
+            15744
+          ],
+          "ownershipReturned": true,
+          "scopeStats": {
+            "before": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            },
+            "after": {
+              "scopes": 0,
+              "listeners": 0,
+              "timers": 0,
+              "effects": 0
+            }
+          },
+          "check": [
+            "container children: 0; rendered: 1000",
+            "container children: 0; rendered: 1000"
+          ]
+        }
+      },
+      "errors": []
+    }
+  }
+}

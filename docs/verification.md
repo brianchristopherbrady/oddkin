@@ -1693,3 +1693,19 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 | Mutants | 5 (collapse removed; error dropped; space suggestion before the near match; negative factors allowed; 13 steps per side) | 5 of 5 killed. |
 
 **Fixed drift:** the documented default preset listed 9 values; the preset has 11 steps (`none` … `4xl`). The "contract test compares before/after manifests" claim had no test; `spacing-units.test.ts` now checks extension stability for all three strategies.
+
+
+## 2026-10-21 — 1,000-cycle lifetime and retained memory (M8 item 917, app/router/tokens/components)
+
+**Environment:** Windows, Node 24.22.1, Playwright 1.64.1 (Chromium 156.0.8078.4, Firefox 157.0, WebKit 27.2), local 127.0.0.1 server started by the runner; machine shared with other agents' test runs (timings are indicative). Bundled with esbuild from the packages' built `dist`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Lifetime cycles | `node research/benchmarks/lifetime/run.mjs` (warm-up 100, then two batches of 1,000) | Every scenario in every engine: core `scopeStats()` (scopes, listeners, timers, effects) equal before and after each batch; no page errors. App start/stop with router, resource, command, a `resize` listener, and a timer: 1,000 resource loads per batch; navigation round trips: 2,000 commits per batch, all counters 0 after the app stops (skipped in WebKit: it refuses more than 100 history writes per 10 s); theme edits: 357 distinct `--odd-ref-brand-600` values read back from the frame per batch; components: all four rendered in each of 1,000 cycles, none left in the container. |
+| Retained heap (Chromium) | same run; CDP `HeapProfiler.collectGarbage` + `Runtime.getHeapUsage` before and after each batch | Bytes per cycle, first / second batch: app 131 / 3; navigation 11 / 0; theme edits 65 / −9; components 317 / 38. Five further batches of 1,000 component cycles: heap 2.03–2.36 MB, oscillating without growth; DOM listener count back to 13 each time. |
+| Batch timings | WebKit and Firefox, four batches of 300 component cycles | Flat (WebKit 14.9–16.5 s, Firefox 2.1–3.1 s); an earlier slower second batch did not recur and was run-to-run noise. |
+| Harness sensitivity | 100 cycles with an injected leak, then reverted | `createScope()` without dispose per cycle: "ownership LEAKED" in Chromium and Firefox; 10 KB array kept per cycle: 10,042 / 10,064 B/cycle in Chromium (heap is only measured in Chromium). |
+
+**Fixed in the harness while measuring:** the first navigation scenario compared a batch ending on a two-level route with a sample on a one-level route (a +1 scope that was route structure, not a leak); cycles are now round trips. An upgrade check read the shadow root before connection (Oddkin elements attach it on connect). The component scenario left its container on the page.
+
+**Not covered:** Workbench preview switching and Theme Studio UI edits (Agent 3's surfaces); retained heap in Firefox and WebKit (no comparable API).
