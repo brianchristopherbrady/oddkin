@@ -4,16 +4,9 @@
  * Pure and deterministic; no I/O. Contract: theming-and-styling.md §1–§5, §10, §11.4.
  */
 import type { Mode, ModeValues, ThemeConfig } from '../theme/types.js';
-import {
-  contrastRatio,
-  formatOklch,
-  generateRamp,
-  parseColor,
-  RAMP,
-  toHex,
-  type Oklch,
-} from './color.js';
+import { contrastRatio, formatOklch, generateRamp, parseColor, RAMP, type Oklch } from './color.js';
 import { resolveConditions, type Condition } from './conditions.js';
+import { checkContrast, hexOf } from './contrast.js';
 import { closest, DiagnosticList, pointer, type Diagnostic } from './diagnostics.js';
 import { aboveFloorSyntax, floorLabel } from './floor.js';
 import {
@@ -28,7 +21,6 @@ import {
   TOKEN_NAME,
 } from './graph.js';
 import {
-  CONTRAST_PAIRS,
   CONTRAST_ROLES,
   DEFAULT_DENSITY,
   DEFAULT_SPACING,
@@ -190,14 +182,6 @@ function withRefs(base: TokenMap, refs: readonly TokenDefinition[]): Map<string,
   return map;
 }
 
-function hexOf(tokens: TokenMap, name: string, mode: Mode): string | undefined {
-  const literal = resolveLiteral(tokens, name, mode);
-  if (literal === undefined) return undefined;
-  if (/^#[0-9a-f]{6}$/i.test(literal.trim())) return literal.trim().toLowerCase();
-  const parsed = parseColor(literal);
-  return parsed ? toHex(parsed) : undefined;
-}
-
 /** Choose role steps that pass for every brand variant (base and products). */
 function contrastRoles(
   variants: readonly Map<string, TokenDefinition>[],
@@ -297,35 +281,6 @@ function checkTargets(
         `${token.name} resolves to ${formatDimension(value)}, below ${token.minimum} (${formatDimension(minimum)}).`,
         'Interactive targets must not shrink below the minimum in any density or profile.',
       );
-    }
-  }
-}
-
-function checkContrast(
-  tokens: TokenMap,
-  modes: readonly Mode[],
-  label: string,
-  d: DiagnosticList,
-): void {
-  for (const mode of modes) {
-    for (const [fg, bg, minimum] of CONTRAST_PAIRS) {
-      if (!tokens.has(fg) || !tokens.has(bg)) continue;
-      const a = hexOf(tokens, fg, mode);
-      const b = hexOf(tokens, bg, mode);
-      if (!a || !b) continue;
-      const ratio = contrastRatio(a, b);
-      if (ratio < minimum) {
-        const origin =
-          tokens.get(fg)?.origin === 'overridden' || tokens.get(bg)?.origin === 'overridden'
-            ? ' (an override is involved)'
-            : '';
-        d.warn(
-          'contrast.fail',
-          pointer('tokens', fg),
-          `${fg} (${a}) on ${bg} (${b}) is ${ratio.toFixed(2)}:1 in ${mode} mode${label}, below ${minimum}:1${origin}.`,
-          'Choose a reference step with enough contrast, or remove the override. Brand inputs are never changed automatically.',
-        );
-      }
     }
   }
 }

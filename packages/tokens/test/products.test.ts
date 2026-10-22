@@ -1,6 +1,7 @@
 import { gzipSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
-import { generate } from '../src/generate/index.js';
+import { cssVariable, generate } from '../src/generate/index.js';
+import { CONTRAST_ROLES } from '../src/generate/preset.js';
 import type { ThemeConfig } from '../src/theme/index.js';
 
 // Multi-product token fixtures (multi-product.md, ADR 0033): 1, 2, 3, and 10 products.
@@ -56,8 +57,15 @@ describe('multi-product token fixtures', () => {
       // colour roles that read them, and only those whose value differs from the base theme.
       for (const rule of rules)
         for (const name of declared(rule)) expect(name).toMatch(/^--odd-(ref|color)-/);
-      // Without the product rules, the output is the single-product theme.
-      expect(withoutProducts(first.css)).toBe(generate(BASE).css);
+      // Without the product rules, the output is the single-product theme, except contrast-
+      // selected roles: they share one reference step that passes in every product (ADR 0006).
+      const single = (generate(BASE).css ?? '').split('\n');
+      const changed = withoutProducts(first.css)
+        .split('\n')
+        .filter((line, i) => line !== single[i]);
+      expect(withoutProducts(first.css).split('\n')).toHaveLength(single.length);
+      const selected = new Set(CONTRAST_ROLES.map((role) => cssVariable(role.name)));
+      for (const line of changed) expect(selected).toContain(/^\s*(--odd-[\w-]+):/.exec(line)?.[1]);
     },
   );
 

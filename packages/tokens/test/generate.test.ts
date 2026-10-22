@@ -2,16 +2,19 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 import {
   contrastRatio,
+  contrastReport,
   cssStats,
   gamutMap,
   generate,
   generateSpacing,
   parseColor,
   resolveToken,
+  ROLE_CONTRACTS,
   toHex,
   type Diagnostic,
 } from '../src/index.js';
 import { DiagnosticList } from '../src/generate/diagnostics.js';
+import { CONTRAST_ROLES, contractBackgrounds } from '../src/generate/preset.js';
 import { cases } from './fixtures/cases.js';
 
 const spacing = (config: unknown) => {
@@ -406,15 +409,83 @@ describe('colour', () => {
       overrides: { 'color.text.secondary': { light: '#bbbbbb', dark: '{ref.neutral.300}' } },
     });
     expect(result.ok).toBe(true);
-    // One warning per failing pair: secondary text on the default surface and on the canvas.
+    // One warning per failing role and mode, naming every background it fails on.
     expect(result.diagnostics.map((d) => [d.code, d.severity, d.path])).toEqual([
       ['contrast.fail', 'warning', '/tokens/color.text.secondary'],
-      ['contrast.fail', 'warning', '/tokens/color.text.secondary'],
     ]);
-    expect(result.diagnostics[0]?.message).toContain('an override is involved');
+    const [warning] = result.diagnostics;
+    expect(warning?.message).toContain('in light mode');
+    expect(warning?.message).toContain('an override is involved');
+    for (const background of contractBackgrounds('color.text.secondary'))
+      expect(warning?.message).toContain(`on ${background} (`);
     expect(resolveToken(result.theme as never, 'color.text.secondary', { mode: 'light' })).toBe(
       '#bbbbbb',
     );
+    // The explicit correction is the closest neutral step that passes; applying it clears the warning.
+    expect(warning?.correction).toMatchObject({
+      token: 'color.text.secondary',
+      mode: 'light',
+      value: '{ref.neutral.700}',
+    });
+    expect(warning?.suggestion).toContain('overrides["color.text.secondary"].light');
+    const corrected = generate({
+      brand: { primary: '#5b46e8' },
+      overrides: {
+        'color.text.secondary': {
+          light: warning?.correction?.value ?? '',
+          dark: '{ref.neutral.300}',
+        },
+      },
+    });
+    expect(corrected.diagnostics).toEqual([]);
+  });
+
+  it('offers no correction when no step passes every background, and checks each product', () => {
+    // Secondary text fails only on a dark hover surface: a lighter step would break the light surfaces.
+    const mixed = generate({
+      brand: { primary: '#5b46e8' },
+      overrides: { 'color.surface.hover': { light: '#3a3a3a', dark: '{ref.neutral.800}' } },
+    });
+    const secondary = mixed.diagnostics.find((d) => d.path === '/tokens/color.text.secondary');
+    expect(secondary?.message).toContain('on color.surface.hover (#3a3a3a)');
+    expect(secondary?.correction).toBeUndefined();
+    expect(secondary?.suggestion).toContain('No reference step of this role passes');
+    // Passes for the base brand, fails on the yellow product's hover surface.
+    const product = generate({
+      brand: { primary: '#5b46e8' },
+      products: { y: { brand: { primary: '#facc15' } } },
+      overrides: { 'color.link': { light: '{ref.brand.600}', dark: '{ref.brand.300}' } },
+    });
+    expect(product.diagnostics.map((d) => [d.path, d.message.includes('for product "y"')])).toEqual(
+      [['/tokens/color.link', true]],
+    );
+  });
+
+  it('measures every semantic contract and exempts disabled text', () => {
+    const { theme } = generate({
+      brand: { primary: '#5b46e8' },
+      products: { p: { brand: { primary: '#0f766e' } } },
+    });
+    const report = contrastReport(theme as never);
+    const expected = ROLE_CONTRACTS.reduce((n, c) => n + c.backgrounds.length, 0) * 2 * 2;
+    expect(report).toHaveLength(expected);
+    expect(new Set(report.map((e) => e.concern))).toEqual(
+      new Set(['text', 'interaction', 'focus', 'invalid', 'status', 'disabled']),
+    );
+    expect(report.filter((e) => e.status === 'fail')).toEqual([]);
+    for (const entry of report) {
+      expect(entry.ratio).toBeCloseTo(
+        Math.floor(contrastRatio(entry.foregroundHex, entry.backgroundHex) * 100) / 100,
+        5,
+      );
+      expect(entry.status).toBe(entry.foreground === 'color.text.disabled' ? 'exempt' : 'pass');
+    }
+    expect(report.filter((e) => e.product === 'p')).toHaveLength(expected / 2);
+  });
+
+  it('chooses generated roles against every background their contracts name', () => {
+    for (const role of CONTRAST_ROLES.filter((r) => !r.name.startsWith('color.action.')))
+      expect(role.against, role.name).toEqual(contractBackgrounds(role.name));
   });
 });
 

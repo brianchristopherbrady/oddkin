@@ -15,6 +15,19 @@ export interface Diagnostic {
   readonly path: string;
   readonly message: string;
   readonly suggestion?: string;
+  /** For `contrast.fail`: a value that meets every contract of the role, applied only by the user. */
+  readonly correction?: ContrastCorrection;
+}
+
+export interface ContrastCorrection {
+  /** The foreground role to override. */
+  readonly token: string;
+  readonly mode: 'light' | 'dark';
+  /** A reference alias, e.g. `{ref.neutral.600}`. */
+  readonly value: string;
+  readonly hex: string;
+  /** The lowest ratio the value reaches across the role's contracted backgrounds. */
+  readonly ratio: number;
 }
 
 export class DiagnosticList {

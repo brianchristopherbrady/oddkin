@@ -260,6 +260,155 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
   t('navigation.indent', 'component', 'dimension', '{space.md}'),
 ];
 
+/** What a contract protects; see theming-and-styling.md §10.4. */
+export type ContrastConcern = 'text' | 'interaction' | 'focus' | 'invalid' | 'status' | 'disabled';
+
+/**
+ * A semantic colour contract: the foreground role must reach `minimum` (WCAG 2.x) against
+ * every background role it is drawn on, in every mode and product. `minimum: 0` marks an
+ * exemption: the pair is measured and reported but never warned about.
+ */
+export interface RoleContract {
+  readonly concern: ContrastConcern;
+  readonly foreground: string;
+  readonly backgrounds: readonly string[];
+  readonly minimum: number;
+  /** WCAG 2.2 success criterion the minimum comes from. */
+  readonly criterion: string;
+  readonly use: string;
+}
+
+/** Page and component backgrounds a foreground role can be drawn on. */
+const SURFACES = [
+  'color.canvas',
+  'color.surface.default',
+  'color.surface.raised',
+  'color.surface.sunken',
+  'color.surface.hover',
+] as const;
+
+/**
+ * Loading has no colour role: a busy control keeps its enabled colours and draws its indicator
+ * in `currentColor`, so the text and interaction contracts cover it.
+ */
+export const ROLE_CONTRACTS: readonly RoleContract[] = [
+  {
+    concern: 'text',
+    foreground: 'color.text.primary',
+    backgrounds: [
+      ...SURFACES,
+      'color.surface.specimen',
+      'color.danger.surface',
+      'color.success.surface',
+      'color.warning.surface',
+    ],
+    minimum: 4.5,
+    criterion: '1.4.3',
+    use: 'Body text and headings on every surface, including status surfaces.',
+  },
+  {
+    concern: 'text',
+    foreground: 'color.text.secondary',
+    backgrounds: [...SURFACES, 'color.surface.specimen'],
+    minimum: 4.5,
+    criterion: '1.4.3',
+    use: 'Supporting text, hints, and metadata.',
+  },
+  {
+    concern: 'interaction',
+    foreground: 'color.text.on-action',
+    backgrounds: ['color.action.default', 'color.action.hover', 'color.action.pressed'],
+    minimum: 4.5,
+    criterion: '1.4.3',
+    use: 'Labels of primary actions at rest, on hover, and pressed.',
+  },
+  {
+    concern: 'interaction',
+    foreground: 'color.selection.foreground',
+    backgrounds: ['color.selection.background'],
+    minimum: 4.5,
+    criterion: '1.4.3',
+    use: 'Labels of selected items (selection also has a non-colour marker).',
+  },
+  {
+    concern: 'interaction',
+    foreground: 'color.link',
+    backgrounds: SURFACES,
+    minimum: 4.5,
+    criterion: '1.4.3',
+    use: 'Link text on every surface.',
+  },
+  {
+    concern: 'interaction',
+    foreground: 'color.border.strong',
+    // Pending (user decision 2026-10-21): canvas, sunken, and hover join once the approved light
+    // value reaches 3:1 on them in Figma and the default theme follows.
+    backgrounds: ['color.surface.default'],
+    minimum: 3,
+    criterion: '1.4.11',
+    use: 'Boundaries that identify controls (inputs, secondary buttons), at rest and on hover.',
+  },
+  {
+    concern: 'focus',
+    foreground: 'color.focus.ring',
+    backgrounds: [...SURFACES, 'color.surface.specimen'],
+    minimum: 3,
+    criterion: '1.4.11',
+    use: 'The focus outline, drawn at an offset over whatever surface surrounds the control.',
+  },
+  {
+    concern: 'invalid',
+    foreground: 'color.danger.foreground',
+    backgrounds: [...SURFACES, 'color.danger.surface'],
+    minimum: 4.5,
+    criterion: '1.4.3',
+    use: 'Error text and the border of invalid controls (text minimum, so borders exceed 3:1).',
+  },
+  {
+    concern: 'status',
+    foreground: 'color.success.foreground',
+    backgrounds: [
+      'color.canvas',
+      'color.surface.default',
+      'color.surface.raised',
+      'color.success.surface',
+    ],
+    minimum: 4.5,
+    criterion: '1.4.3',
+    use: 'Success text and icons.',
+  },
+  {
+    concern: 'status',
+    foreground: 'color.warning.foreground',
+    backgrounds: [
+      'color.canvas',
+      'color.surface.default',
+      'color.surface.raised',
+      'color.warning.surface',
+    ],
+    minimum: 4.5,
+    criterion: '1.4.3',
+    use: 'Warning text and icons.',
+  },
+  {
+    concern: 'disabled',
+    foreground: 'color.text.disabled',
+    backgrounds: ['color.surface.sunken', 'color.surface.default', 'color.canvas'],
+    minimum: 0,
+    criterion: '1.4.3 (exception for inactive components)',
+    use: 'Disabled labels; exempt from minimums, reported so they stay distinguishable.',
+  },
+];
+
+/** Every background a role is contracted against (the union of its contracts). */
+export function contractBackgrounds(foreground: string): readonly string[] {
+  return [
+    ...new Set(
+      ROLE_CONTRACTS.filter((c) => c.foreground === foreground).flatMap((c) => c.backgrounds),
+    ),
+  ];
+}
+
 /** A role chosen from a ramp by measured WCAG contrast against another role. */
 export interface ContrastRole {
   readonly name: string;
@@ -272,6 +421,14 @@ export interface ContrastRole {
   /** Role whose chosen step this one shifts from (defaults to its own choice). */
   readonly from?: string;
 }
+
+/** A role chosen against every background its contracts name. */
+const contracted = (name: string, ramp: ContrastRole['ramp'], minimum: number): ContrastRole => ({
+  name,
+  ramp,
+  against: contractBackgrounds(name),
+  minimum,
+});
 
 export const CONTRAST_ROLES: readonly ContrastRole[] = [
   { name: 'color.action.default', ramp: 'brand', against: ['color.text.on-action'], minimum: 4.5 },
@@ -291,51 +448,11 @@ export const CONTRAST_ROLES: readonly ContrastRole[] = [
     from: 'color.action.default',
     shift: 2,
   },
-  { name: 'color.link', ramp: 'brand', against: ['color.surface.default'], minimum: 4.5 },
-  { name: 'color.focus.ring', ramp: 'brand', against: ['color.surface.default'], minimum: 3 },
-  {
-    name: 'color.danger.foreground',
-    ramp: 'danger',
-    against: ['color.surface.default', 'color.danger.surface'],
-    minimum: 4.5,
-  },
-  {
-    name: 'color.success.foreground',
-    ramp: 'success',
-    against: ['color.surface.default', 'color.success.surface'],
-    minimum: 4.5,
-  },
-  {
-    name: 'color.warning.foreground',
-    ramp: 'warning',
-    against: ['color.surface.default', 'color.warning.surface'],
-    minimum: 4.5,
-  },
-];
-
-/** Role pairs checked against WCAG 2.x after resolution (foreground, background, minimum). */
-export const CONTRAST_PAIRS: ReadonlyArray<readonly [string, string, number]> = [
-  ['color.text.primary', 'color.canvas', 4.5],
-  ['color.text.primary', 'color.surface.default', 4.5],
-  ['color.text.primary', 'color.surface.raised', 4.5],
-  ['color.text.primary', 'color.surface.sunken', 4.5],
-  ['color.text.primary', 'color.surface.hover', 4.5],
-  ['color.text.primary', 'color.surface.specimen', 4.5],
-  ['color.text.secondary', 'color.surface.default', 4.5],
-  ['color.text.secondary', 'color.canvas', 4.5],
-  ['color.text.on-action', 'color.action.default', 4.5],
-  ['color.text.on-action', 'color.action.hover', 4.5],
-  ['color.text.on-action', 'color.action.pressed', 4.5],
-  ['color.selection.foreground', 'color.selection.background', 4.5],
-  ['color.link', 'color.surface.default', 4.5],
-  ['color.focus.ring', 'color.surface.default', 3],
-  ['color.border.strong', 'color.surface.default', 3],
-  ['color.danger.foreground', 'color.surface.default', 4.5],
-  ['color.danger.foreground', 'color.danger.surface', 4.5],
-  ['color.success.foreground', 'color.surface.default', 4.5],
-  ['color.success.foreground', 'color.success.surface', 4.5],
-  ['color.warning.foreground', 'color.surface.default', 4.5],
-  ['color.warning.foreground', 'color.warning.surface', 4.5],
+  contracted('color.link', 'brand', 4.5),
+  contracted('color.focus.ring', 'brand', 3),
+  contracted('color.danger.foreground', 'danger', 4.5),
+  contracted('color.success.foreground', 'success', 4.5),
+  contracted('color.warning.foreground', 'warning', 4.5),
 ];
 
 /** Provisional named conditions. `shell` is the container the application shell declares. */

@@ -39,7 +39,11 @@ export {
 } from './ts.js';
 export { resolveTheme, resolveToken } from './resolve.js';
 export type { ResolveContext, ResolvedTheme, ResolveResult, ScopeTokens } from './resolve.js';
-export type { Diagnostic, DiagnosticSeverity } from './diagnostics.js';
+export type { ContrastCorrection, Diagnostic, DiagnosticSeverity } from './diagnostics.js';
+export { contrastReport } from './contrast.js';
+export type { ContrastEntry } from './contrast.js';
+export { ROLE_CONTRACTS } from './preset.js';
+export type { ContrastConcern, RoleContract } from './preset.js';
 export { generateSpacing, ratioName } from './spacing.js';
 export type { SpacingStep } from './spacing.js';
 export { contrastRatio, gamutMap, generateRamp, parseColor, toHex, RAMP } from './color.js';

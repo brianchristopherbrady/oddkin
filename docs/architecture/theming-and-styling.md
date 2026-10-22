@@ -60,6 +60,7 @@ interface Diagnostic {
   path: string;        // e.g. '/spacing/scale/lg'
   message: string;
   suggestion?: string;
+  correction?: { token: string; mode: 'light' | 'dark'; value: string; hex: string; ratio: number }; // contrast.fail only (§10.4)
 }
 ```
 
@@ -353,7 +354,7 @@ Design source: Figma file `E7LfRysny8V3qU24tv082i`, frames 8:29 ("Oddkin · UI k
 | `color.warning.foreground` / `surface` | `#8a5900` / `#fff5de` | `#e9c478` / `#3a2e18` | Warnings (`status.warning` seeds the `ref.warning.*` ramp) |
 | `color.accent.decorative` | `#dfedaa` | `#dfedaa` | Citron decoration; never status, text, or interaction |
 
-Brand foundations: Chalk `#f6f5f1`, White `#ffffff`, Ink `#23252b`, Electric iris `#6250e8`, Pale iris `#efedfc`, Citron `#dfedaa`. Every pair in `CONTRAST_PAIRS` (text on canvas, surfaces, specimen, actions, selection; links, focus ring, strong border; each status foreground on the default surface and its status surface) passes for the default theme in both modes.
+Brand foundations: Chalk `#f6f5f1`, White `#ffffff`, Ink `#23252b`, Electric iris `#6250e8`, Pale iris `#efedfc`, Citron `#dfedaa`. Every contracted pair (§10.4) passes for the default theme in both modes.
 
 ### 10.2 Text styles (implemented, ADR 0042)
 
@@ -398,6 +399,33 @@ Only the colour palette comes from the design source (§10.1); every other value
 Reduced motion is emitted by the generator: tokens with a `reducedMotion` value are re-declared inside `@media (prefers-reduced-motion: reduce)` on the same selectors as the base declarations, so nested theme scopes cannot restore full motion and every alias of a duration follows. Components therefore get reduced motion by reading the duration tokens; essential motion (a progress spinner) keeps its own reduced-motion rule. Durations must not be relied on for cleanup (no `transitionend`-dependent logic, css-architecture.md §11).
 
 Unit policy for the new types: durations are non-negative `ms`/`s` times, easings are `cubic-bezier()` with x values in [0, 1] (the DTCG `cubicBezier` type, so `linear` is written `cubic-bezier(0, 0, 1, 1)`), `z-index.*` values are integers; violations report `unit.invalid`. `values` literals of aliases are given per mode when the alias target is mode-dependent.
+
+### 10.4 Semantic colour contracts (implemented, plan item 247)
+
+`ROLE_CONTRACTS` (exported from `@oddkin/tokens/generate`) states, for each colour concern, which foreground role must reach which WCAG 2.2 minimum against which background roles, in every mode and every product. The backgrounds are the surfaces the components actually draw the role on.
+
+| Concern | Foreground | Backgrounds | Minimum |
+| --- | --- | --- | --- |
+| text | `color.text.primary` | canvas, surface default/raised/sunken/hover/specimen, danger/success/warning surfaces | 4.5:1 (1.4.3) |
+| text | `color.text.secondary` | canvas, surface default/raised/sunken/hover/specimen | 4.5:1 (1.4.3) |
+| interaction | `color.text.on-action` | `color.action.{default,hover,pressed}` | 4.5:1 (1.4.3) |
+| interaction | `color.selection.foreground` | `color.selection.background` (selection also has a non-colour marker) | 4.5:1 (1.4.3) |
+| interaction | `color.link` | canvas, surface default/raised/sunken/hover | 4.5:1 (1.4.3) |
+| interaction | `color.border.strong` (control boundaries) | surface default; canvas, sunken, and hover pending (below) | 3:1 (1.4.11) |
+| focus | `color.focus.ring` (drawn at an offset over the surrounding surface) | canvas, surface default/raised/sunken/hover/specimen | 3:1 (1.4.11) |
+| invalid | `color.danger.foreground` (error text and invalid borders) | canvas, surface default/raised/sunken/hover, danger surface | 4.5:1 (1.4.3; so borders exceed 3:1) |
+| status | `color.{success,warning}.foreground` | canvas, surface default/raised, own status surface | 4.5:1 (1.4.3) |
+| disabled | `color.text.disabled` | surface sunken/default, canvas | exempt (1.4.3 exception): measured and reported, never warned |
+
+**Loading** has no colour role: a busy control keeps its enabled colours and draws its indicator in `currentColor`, so the text and interaction contracts cover it. Hover and pressed states are covered by the interaction rows (`surface.hover` is a background of every text, link, and focus row).
+
+**Generation.** Contrast-selected roles (`link`, `focus.ring`, and the status foregrounds) are chosen against every background their contracts name (`contractBackgrounds(name)`), so generated themes pass by construction: 14 brand vectors, alone and as products of one theme, generate with no diagnostics. Widening the backgrounds moved generated dark-mode roles one step lighter, because a generated dark `surface.hover` is lighter than the surfaces checked before (the old dark focus ring reached only 1.79:1 on it). A role step is shared by every product, so adding a product can move a contrast-selected role in the base theme (ADR 0006); nothing else in the base changes.
+
+**Reports and corrections.** `contrast.fail` is one warning per foreground role and mode, naming every background it fails on with the measured ratio. When a reference step of the role's ramp meets the role's minimum on all its backgrounds, the warning carries that step as `correction` (`{ token, mode, value: '{ref.neutral.500}', hex, ratio }`), the step closest in OKLCH lightness to the current colour, and the suggestion names the override to write. Nothing is applied automatically; brand inputs and overrides are never changed. `contrastReport(theme)` returns every contracted pair for the base theme and each product (`concern`, roles, hex values, ratio rounded down to two decimals, minimum, criterion, `pass` / `fail` / `exempt`) for Theme Studio's contrast table and audits.
+
+**Pending (user decision 2026-10-21):** the approved light `color.border.strong` `#8c8f9d` reaches 3.22:1 on the default surface but 2.94:1 on `canvas` and 2.80–2.81:1 on `surface.sunken`/`surface.hover`. The design source is being changed; the default theme follows its Figma value, and then those three backgrounds join the contract. Profiles that override colour roles are not yet checked against the contracts.
+
+*(Verified in `packages/tokens/test/generate.test.ts` and `products.test.ts`; see [verification.md](../verification.md).)*
 
 ## 11. Layout roles, responsive conditions, and profiles
 

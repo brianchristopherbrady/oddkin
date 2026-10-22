@@ -1510,3 +1510,21 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Change:** `odd-model-select`'s host grid column is `minmax(0, auto)`. With a fixed zero minimum the select's automatic minimum size no longer applies, so it shrinks with its container instead of widening the composer toolbar and form. The layout was fixed, not the test.
 
 **Remaining:** confirmation on GitHub (WebKit on `ubuntu-24.04`) on the next CI run after the user pushes.
+
+
+## 2026-10-21 — Semantic colour contracts (plan item 247)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium, Firefox, WebKit). Other agents had unrelated edits in the shared worktree (packages/ai, packages/workbench); they were not included. No full-pipeline run.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Tokens typecheck | `npx tsc -b packages/tokens` | Pass. |
+| Tokens Node tests | `npx vitest run --project node packages/tokens` | Pass — 8 files, 84 tests. New: one grouped warning with an explicit correction that clears the warning when applied (input unchanged); no correction when no step passes every background; a product-only failure; every contract measured for base and product with disabled text exempt; generated roles chosen against their contract backgrounds. 14 brand vectors, alone and as products, still generate with no diagnostics. |
+| Fixtures | `UPDATE_FIXTURES=1 npx vitest run --project node packages/tokens/test/generate.test.ts -t determinism` | `brand-only` and `products-density` regenerated; only contract-selected roles changed (dark link 400→300, dark focus ring 600→400, dark status foregrounds one step lighter; with products, light link 700 and focus ring 600). Feeding the old values back as overrides reports each one (for example dark focus ring 1.79:1 on `color.surface.hover`), and each correction is the step now generated. |
+| Tokens browser tests | `npx vitest run --project browser packages/tokens` | Pass — 9 files, 81 tests across Chromium, Firefox, WebKit (fixtures byte-identical in every engine; Theme Studio Worker). |
+| Default assets and size | `node scripts/build-token-assets.mjs`; `node scripts/check-size.mjs` | Default theme: no diagnostics (the asset build fails on any). `tokens:default.css` 2,764 B gzip, unchanged. |
+| Mutants | 10 source mutants in `contrast.ts`, `preset.ts`, `resolve.ts` | 10 of 10 killed (two survived the first run — correction checked only against failing backgrounds, product variants unchecked — and are killed by the added test). A Node suite rebuilt `dist` while a mutant was applied, so `dist` was rebuilt from restored sources afterwards. |
+
+**Finding (reported to the user, nothing changed):** the approved light `color.border.strong` `#8c8f9d` is 3.22:1 on `color.surface.default` but 2.94:1 on `color.canvas`, 2.80:1 on `color.surface.sunken`, and 2.81:1 on `color.surface.hover` (WCAG 1.4.11 needs 3:1 for control boundaries). The generator's correction is `{ref.neutral.500}` (`#84858f`, at least 3.20:1). The user is changing the value in Figma; until the default theme follows, the contract checks `border.strong` against the default surface only, so the default build stays clean.
+
+**Not done:** profile colour overrides are not checked against the contracts; the `border.strong` widening above.
