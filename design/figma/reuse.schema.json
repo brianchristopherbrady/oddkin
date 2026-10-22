@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/figma-reuse/v1.json",
+  "title": "Oddkin reuse map v1",
+  "description": "design/figma/reuse.json: how each nested-instance reference in design/figma/components.json maps to code (one class and a one-line reason per reference), the element dependency graph that the definitions' `dependencies` must equal, and the shared homes of decisions with two or more consumers. Rendered into docs/architecture/component-catalog.md by design/figma/reuse.render.mjs.",
+  "type": "object",
+  "required": [
+    "$schema",
+    "snapshot",
+    "status",
+    "date",
+    "classes",
+    "counts",
+    "references",
+    "elements",
+    "modules"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "const": "./reuse.schema.json" },
+    "snapshot": { "const": "./components.json" },
+    "status": { "enum": ["proposed", "approved"] },
+    "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "classes": {
+      "type": "object",
+      "required": ["element", "controller", "style", "slot", "native", "independent", "deferred"],
+      "additionalProperties": false,
+      "properties": {
+        "element": { "type": "string" },
+        "controller": { "type": "string" },
+        "style": { "type": "string" },
+        "slot": { "type": "string" },
+        "native": { "type": "string" },
+        "independent": { "type": "string" },
+        "deferred": { "type": "string" }
+      }
+    },
+    "counts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 1 } },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["consumer", "consumerId", "source", "sourceId", "count", "class", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "consumer": { "type": "string" },
+          "consumerId": { "type": "string" },
+          "source": { "type": "string" },
+          "sourceId": { "type": "string" },
+          "count": { "type": "integer", "minimum": 1 },
+          "class": {
+            "enum": ["element", "controller", "style", "slot", "native", "independent", "deferred"]
+          },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "elements": {
+      "type": "object",
+      "propertyNames": { "pattern": "^odd-[a-z0-9-]+$" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["dependencies"],
+        "additionalProperties": false,
+        "properties": {
+          "dependencies": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^odd-[a-z0-9-]+$" }
+          },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "home", "decision", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "enum": ["tokens", "style", "controller"] },
+          "home": { "type": "string" },
+          "decision": { "type": "string" },
+          "status": { "type": "string" },
+          "code": { "type": "array", "items": { "type": "string" } },
+          "figma": { "type": "array", "items": { "type": "string" } },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}
