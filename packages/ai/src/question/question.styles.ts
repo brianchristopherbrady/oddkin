@@ -11,7 +11,9 @@ export const questionStyles = css`
     background: ${token('color.surface.raised')};
   }
   fieldset {
-    display: grid;
+    /* Not a grid: WebKit keeps a grid fieldset's legend at its old width after the container shrinks. */
+    display: flex;
+    flex-direction: column;
     gap: ${token('space.xs')};
     margin: 0;
     padding: 0;

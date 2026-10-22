@@ -12,7 +12,9 @@ export const responseFeedbackStyles = css`
     max-inline-size: 36rem;
   }
   fieldset {
-    display: grid;
+    /* Not a grid: WebKit keeps a grid fieldset's legend at its old width after the container shrinks. */
+    display: flex;
+    flex-direction: column;
     gap: ${token('space.2xs')};
     margin: 0;
     padding: ${token('space.xs')};

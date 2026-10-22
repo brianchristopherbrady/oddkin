@@ -30,9 +30,6 @@ export const promptInputStyles = css`
     resize: none;
     overflow-y: auto;
   }
-  .input:focus-visible {
-    outline: none;
-  }
   .toolbar {
     display: flex;
     flex-wrap: wrap;

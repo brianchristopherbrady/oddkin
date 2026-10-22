@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 58 stylesheets, 238 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 58 stylesheets, 237 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 110 (`css.at-rules.container`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -151,10 +151,10 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 31 |
 | `packages/ai/dist/message-branch/message-branch.styles.js (messageBranchStyles)` | yes | 6 |
 | `packages/ai/dist/model-select/model-select.styles.js (modelSelectStyles)` | yes | 20 |
-| `packages/ai/dist/prompt-input/prompt-input.styles.js (promptInputStyles)` | yes | 62 |
-| `packages/ai/dist/question/question.styles.js (questionStyles)` | yes | 19 |
+| `packages/ai/dist/prompt-input/prompt-input.styles.js (promptInputStyles)` | yes | 59 |
+| `packages/ai/dist/question/question.styles.js (questionStyles)` | yes | 21 |
 | `packages/ai/dist/response/response.styles.js (responseStyles)` | yes | 61 |
-| `packages/ai/dist/response-feedback/response-feedback.styles.js (responseFeedbackStyles)` | yes | 18 |
+| `packages/ai/dist/response-feedback/response-feedback.styles.js (responseFeedbackStyles)` | yes | 20 |
 | `packages/ai/dist/sources/sources.styles.js (sourcesStyles)` | yes | 15 |
 | `packages/ai/dist/suggestions/suggestions.styles.js (suggestionsStyles)` | yes | 36 |
 | `packages/ai/dist/task-plan/task-plan.styles.js (taskPlanStyles)` | yes | 30 |
@@ -175,5 +175,5 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `examples/editable-list/styles.css` | example | 22 |
 | `examples/side-nav/hand.css` | example | 48 |
 | `examples/side-nav/styles.css` | example | 20 |
-| `examples/tokens-css-only/styles.css` | example | 29 |
+| `examples/tokens-css-only/styles.css` | example | 30 |
 | `examples/tokens-css-only/generated/harbor.css` | example | 15 |
