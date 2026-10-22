@@ -1,11 +1,11 @@
 # 0044. Overlay positioning and the top layer
 
-- **Status:** Proposed (draft for the M8 checkpoint; implementation in M10 with the first overlay components)
+- **Status:** Accepted (2026-10-21, by the owner; implementation in M10 with the first overlay components)
 - **Date:** 2026-10-21
 - **Area:** Components / Core / Platform
 - **Detailed design:** [css-architecture.md](../css-architecture.md) §9 (CSS-08), §11 (motion); registry entries `popover-api`, `dialog-element`, `inert`, `anchor-positioning` (all `planned`) in [features.json](../../compatibility/features.json)
 - **Related:** 0038 (compatibility policy and floor), 0039 (cascade layers), 0033 (multi-product: scope isolation for overlays), 0042 (stacking tokens), 0043 (composites that own overlays)
-- **Owners if accepted:** the controller's home is decided with Agent 1 (see Open questions); overlay elements are Agent 4's lane in M10
+- **Owners:** the positioning controller is Agent 1's (`@oddkin/core/controllers/position`); overlay elements are Agent 4's lane in M10
 
 ## Context
 
@@ -46,7 +46,10 @@ Platform facts at the floor (Chrome/Edge 125, Firefox 126, Safari 17.4; `@mdn/br
 - Every overlay component carries a close affordance on touch platforms below iOS 18.3.
 - Composites that own overlays (select, combobox, menu) depend on ADR 0043 for their option and item children.
 
+## Resolved at acceptance
+
+- **Home of the controller:** `@oddkin/core/controllers/position`, its own subpath next to the other unbranded controllers (`focus`, `form`, announce), so non-overlay consumers pay nothing; css-architecture.md §9 says so.
+
 ## Open questions
 
-- **Home of the controller.** css-architecture.md §9 says "in `@oddkin/components`"; the existing unbranded controllers (`focus`, `form`, announce) live in `@oddkin/core/controllers/*`. A DOM-measuring, unbranded controller fits `@oddkin/core/controllers/position` better, but core's size budget and ownership (Agent 1) decide. Agent 4 proposes core, behind its own subpath so non-overlay consumers pay nothing.
 - Whether toasts use `popover="manual"` in a component-owned region or a live region outside the top layer is decided with the announcement design (`LiveAnnouncer`).

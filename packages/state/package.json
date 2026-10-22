@@ -2,6 +2,7 @@
   "name": "@oddkin/state",
   "version": "0.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Optional stores, selectors, context, persistence, and inspection.",
   "type": "module",
   "sideEffects": false,

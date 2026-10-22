@@ -2,6 +2,7 @@
   "name": "@oddkin/core",
   "version": "0.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Authoring foundation: reactive primitives, Scope, OddkinElement, templates, styles, layout recipes, collections, models, registration.",
   "type": "module",
   "sideEffects": false,

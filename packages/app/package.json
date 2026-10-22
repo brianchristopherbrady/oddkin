@@ -2,6 +2,7 @@
   "name": "@oddkin/app",
   "version": "0.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Optional application lifetime, router, and async resources.",
   "type": "module",
   "sideEffects": false,

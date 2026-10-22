@@ -2,6 +2,7 @@
   "name": "@oddkin/analyzer",
   "version": "0.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Node-only static analysis of Oddkin component libraries: Custom Elements Manifest and oddkin.metadata.json, without executing component code.",
   "type": "module",
   "sideEffects": false,

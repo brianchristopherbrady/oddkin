@@ -1,6 +1,6 @@
 # 0043. Composite dependency mechanism: element-reference parts and definition roles
 
-- **Status:** Proposed (draft for the M8 multi-product review; nothing implemented)
+- **Status:** Proposed (draft for the M8 multi-product review; nothing implemented). Owner review, 2026-10-21: the API shape is accepted on condition of a pay-for-use implementation, an opt-in core subpath that leaves core's template parser and every non-composite bundle unchanged; acceptance follows the spike below.
 - **Date:** 2026-10-21
 - **Area:** Core / Components
 - **Detailed design:** [multi-product.md](../multi-product.md) §8; prototype: [research/experiments/composite](../../../research/experiments/composite/README.md)

@@ -2,6 +2,7 @@
   "name": "@oddkin/ai",
   "version": "0.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Optional AI interaction elements, headless controllers, and stream adapters for conversation, inline assistance, research, and agent workflows.",
   "type": "module",
   "sideEffects": [

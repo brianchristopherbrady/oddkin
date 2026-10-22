@@ -2,6 +2,7 @@
   "name": "@oddkin/components",
   "version": "0.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Accessible, themed custom elements, Oddkin layout presets, and component metadata.",
   "type": "module",
   "sideEffects": [

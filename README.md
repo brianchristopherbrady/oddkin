@@ -52,4 +52,4 @@ npm run compat:floor   # install Chrome 125 and Firefox 126 outside the repo and
 
 ## Licence
 
-Not yet chosen. All packages are marked `private` until the licence and npm scope ownership are confirmed (see the plan's release checklist).
+MIT; see [LICENSE](./LICENSE). All packages stay marked `private` until npm scope ownership is confirmed (see the plan's release checklist).

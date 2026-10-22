@@ -2,6 +2,7 @@
   "name": "@oddkin/workbench",
   "version": "0.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Metadata-driven documentation tooling. DOM-free example, configuration, page-registry, data-file, and conformance contracts; a test-runner integration.",
   "type": "module",
   "sideEffects": [
