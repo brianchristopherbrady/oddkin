@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script type="module">
+      // A frame runtime from another Workbench version: it announces protocol version 2.
+      const params = new URLSearchParams(location.search);
+      parent.postMessage(
+        {
+          protocol: 'oddkin.frame',
+          version: 2,
+          frame: params.get('frame'),
+          generation: Number(params.get('generation')),
+          kind: 'hello',
+        },
+        location.origin,
+      );
+    </script>
+  </head>
+  <body>
+    <main data-oddkin-preview></main>
+  </body>
+</html>

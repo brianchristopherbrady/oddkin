@@ -26,6 +26,10 @@ export interface FrameDocument {
   readonly title: string;
   readonly importMap: ImportMap;
   readonly module: string;
+  /** Stylesheet URLs loaded into every preview frame, in order. */
+  readonly stylesheets?: readonly string[];
+  /** Font URLs preloaded in every preview frame. */
+  readonly fonts?: readonly string[];
 }
 
 /** The shell page: an import map, stylesheets, and `<oddkin-workbench>` pointed at the index. */
@@ -52,13 +56,22 @@ ${links}    <script type="module">import ${inlineJson(doc.module)};</script>
 
 /** One frame document owns its module map, registry, document styles, and preview container. */
 export function frameHtml(doc: FrameDocument): string {
+  const fonts = (doc.fonts ?? [])
+    .map(
+      (href) =>
+        `    <link rel="preload" as="font" href="${escapeHtml(href)}" crossorigin="anonymous" />\n`,
+    )
+    .join('');
+  const links = (doc.stylesheets ?? [])
+    .map((href) => `    <link rel="stylesheet" href="${escapeHtml(href)}" />\n`)
+    .join('');
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(doc.title)}</title>
-    <style>html,body{margin:0;min-block-size:100%;}body{container:preview-frame / inline-size;}[data-oddkin-preview]{display:block;min-block-size:100vh;container:preview / inline-size;}</style>
+${fonts}${links}    <style>html,body{margin:0;min-block-size:100%;}body{container:preview-frame / inline-size;background:var(--odd-color-canvas,Canvas);color:var(--odd-color-text-primary,CanvasText);}[data-oddkin-preview]{display:block;min-block-size:100vh;container:preview / inline-size;}</style>
     <script type="importmap">${inlineJson(doc.importMap)}</script>
     <script type="module">import ${inlineJson(doc.module)};</script>
   </head>

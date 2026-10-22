@@ -3,7 +3,11 @@ import { settled } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import '../src/app/define.js';
 import type { OddkinWorkbench, WorkbenchSource } from '../src/app/index.js';
-import { buildWorkbenchData, type WorkbenchData } from '../src/data/index.js';
+import {
+  buildWorkbenchData,
+  type ComponentPageData,
+  type WorkbenchData,
+} from '../src/data/index.js';
 import type { CemPackage, OddkinMetadataLike } from '../src/pages/index.js';
 
 // The shell over the Acme fixture library, in hash mode so the test page's own path is left
@@ -184,15 +188,12 @@ describe('<oddkin-workbench>', () => {
       .find((link) => link.textContent === 'Button')!
       .click();
     await until(() => heading(shell) === 'Button', 'the component detail');
-    const preview = shell.querySelector('oddkin-component-preview')!;
+    const frame = () => shell.querySelector<HTMLIFrameElement>('oddkin-workbench-component iframe');
     await until(
-      () =>
-        preview.shadowRoot
-          ?.querySelector<HTMLIFrameElement>('iframe')
-          ?.contentDocument?.querySelector('acme-button') !== null,
+      () => !!frame()?.contentDocument?.querySelector('acme-button'),
       'the registered preview element',
     );
-    const iframe = preview.shadowRoot!.querySelector<HTMLIFrameElement>('iframe')!;
+    const iframe = frame()!;
     expect(iframe.title).toBe('acme-button preview');
     expect(iframe.contentDocument?.querySelector('acme-button')?.shadowRoot?.textContent).toContain(
       'Preview ready',
@@ -201,6 +202,136 @@ describe('<oddkin-workbench>', () => {
     shells.length = 0;
     await settled();
     expect(scopeStats()).toEqual(before);
+  });
+
+  it('lays out overview cards in 1, 2, or 3 columns by the content width', async () => {
+    const shell = await mount(sourceFor(await acmeData()));
+    await until(() => heading(shell) === 'Foundations', 'the first destination');
+    shell.querySelector<HTMLAnchorElement>('.wb-primary a[href="#/components"]')!.click();
+    await until(() => !!shell.querySelector('.wb-cards'), 'the cards');
+    const columns = async (width: number) => {
+      shell.style.inlineSize = `${width}px`;
+      await new Promise((r) => requestAnimationFrame(() => r(undefined)));
+      return getComputedStyle(shell.querySelector('.wb-cards')!)
+        .gridTemplateColumns.split(' ')
+        .filter(Boolean).length;
+    };
+    // Narrow: no sidebar column; the main column decides.
+    expect(await columns(420)).toBe(1);
+    expect(await columns(700)).toBe(2);
+    expect(await columns(1400)).toBe(3);
+  });
+
+  describe('live updates', () => {
+    class StandInEventSource extends EventTarget {
+      static last: StandInEventSource | undefined;
+      closed = false;
+      constructor(readonly url: string) {
+        super();
+        StandInEventSource.last = this;
+      }
+      close() {
+        this.closed = true;
+      }
+      send(update: object) {
+        this.dispatchEvent(
+          new MessageEvent('update', {
+            data: JSON.stringify({
+              ok: true,
+              index: false,
+              pages: [],
+              modules: [],
+              shell: false,
+              diagnostics: [],
+              ...update,
+            }),
+          }),
+        );
+      }
+    }
+    const original = window.EventSource;
+    afterEach(() => {
+      window.EventSource = original;
+    });
+
+    it('refreshes the current page when its data changes, and only then', async () => {
+      window.EventSource = StandInEventSource as unknown as typeof EventSource;
+      const data = await acmeData();
+      const base = sourceFor(data);
+      const buttonFile = data.index.pages['components/acme-button']!;
+      let reads = 0;
+      let description = 'First description.';
+      const source: WorkbenchSource = {
+        ...base,
+        page: async (file, signal) => {
+          if (file !== buttonFile) return base.page(file, signal);
+          reads++;
+          const page = data.pages['components/acme-button'] as ComponentPageData;
+          return { ...page, declaration: { ...page.declaration, description } };
+        },
+      };
+      location.hash = '#/components/acme-button';
+      const shell = document.createElement('oddkin-workbench');
+      shell.source = source;
+      shell.events = '/stand-in-events';
+      shells.push(shell);
+      document.body.append(shell);
+      await until(() => shell.textContent?.includes('First description.') ?? false, 'the page');
+      expect(reads).toBe(1);
+      const events = StandInEventSource.last!;
+
+      // Another page's data changed: nothing is read again.
+      events.send({ pages: ['components/acme-card'] });
+      await new Promise((r) => setTimeout(r, 50));
+      expect(reads).toBe(1);
+
+      description = 'Edited description.';
+      events.send({ pages: ['components/acme-button'] });
+      await until(() => shell.textContent?.includes('Edited description.') ?? false, 'the refresh');
+      expect(reads).toBe(2);
+      expect(heading(shell)).toBe('Button');
+    });
+
+    it('replaces the preview realm when component modules change', async () => {
+      window.EventSource = StandInEventSource as unknown as typeof EventSource;
+      const data = await acmeData();
+      const base = sourceFor(data);
+      const page = data.pages['components/acme-button'] as ComponentPageData;
+      const source: WorkbenchSource = {
+        ...base,
+        previewFrameUrl: new URL('./fixtures/frame-test.html', import.meta.url).href,
+        page: async (file, signal) =>
+          file === data.index.pages['components/acme-button']
+            ? {
+                ...page,
+                enrichment: {
+                  ...(page.enrichment ?? {}),
+                  registration: new URL('./fixtures/acme-preview-element.ts', import.meta.url).href,
+                },
+              }
+            : base.page(file, signal),
+      };
+      location.hash = '#/components/acme-button';
+      const shell = document.createElement('oddkin-workbench');
+      shell.source = source;
+      shell.events = '/stand-in-events';
+      shells.push(shell);
+      document.body.append(shell);
+      const detail = () => shell.querySelector('oddkin-workbench-component');
+      await until(
+        () =>
+          !!detail()?.previews[0]?.iframe.contentDocument?.querySelector('acme-button')?.shadowRoot,
+        'the preview',
+      );
+      expect(detail()!.previews[0]!.identity.generation).toBe(1);
+      StandInEventSource.last!.send({ modules: ['@acme/ui@1.4.0'] });
+      await until(() => detail()!.previews[0]!.identity.generation === 2, 'a fresh frame');
+      await until(
+        () =>
+          !!detail()!.previews[0]!.iframe.contentDocument?.querySelector('acme-button')?.shadowRoot,
+        'the remounted preview',
+      );
+    });
   });
 
   it('releases everything it owned when removed', async () => {

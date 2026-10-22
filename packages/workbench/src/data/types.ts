@@ -21,6 +21,14 @@ export interface LibraryInput {
   readonly cem?: CemPackage;
   /** Its `oddkin.metadata.json`, when the package publishes Oddkin enrichment. */
   readonly metadata?: OddkinMetadataLike;
+  /** Authored example sets as data (`toExamplesJSON()` of each `defineExamples` module). */
+  readonly examples?: readonly ExampleSetLike[];
+}
+
+/** One component's examples as plain data (`@oddkin/workbench/examples` `ExamplesJSON`). */
+export interface ExampleSetLike {
+  readonly component: string;
+  readonly examples: Readonly<Record<string, JsonObject>>;
 }
 
 /** A token as published by a token inspection (`@oddkin/tokens/inspect/*.json`). */
@@ -80,8 +88,17 @@ export interface ComponentPageData extends PageDataBase {
   readonly declaration: JsonObject;
   /** The Oddkin enrichment entry, verbatim, when published. */
   readonly enrichment?: JsonObject;
-  /** Authored examples for the element (metadata `examples`), verbatim, with their ids. */
+  /**
+   * Authored examples for the element (metadata `examples`), verbatim, with their ids. When the
+   * example set was loaded, `definition` holds its values (label, props, attributes, slots,
+   * preset, guidance, incorrect, `hasFixture`).
+   */
   readonly examples: readonly JsonObject[];
+  /**
+   * The tokens the component reads (`tokenReads`), resolved from the token inspection in their
+   * order. A token missing from the inspection keeps only its name (`missing: true`).
+   */
+  readonly tokens?: readonly (InspectedTokenLike & { readonly missing?: true })[];
 }
 
 /** A foundation page: its metadata and the referenced tokens from the token inspection. */

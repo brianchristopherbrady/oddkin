@@ -4,7 +4,6 @@
  * from the page registry, so navigation, cards, routes, and search cannot drift apart.
  */
 import { html, nothing, repeat } from '@oddkin/core/template';
-import type { ComponentPageData } from '../data/types.js';
 import { cards, onThisPage, primaryNavigation, sidebar } from '../pages/navigation.js';
 import type { PageEntry, PageRegistry } from '../pages/types.js';
 import { COPY } from './copy.js';
@@ -267,11 +266,8 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
   </div>`;
 }
 
-/** Detail pages: a section per visible registry section, the targets of "On this page". */
-export function sectionsBody(
-  page: PageEntry,
-  componentPreview?: { readonly page: ComponentPageData; readonly frameUrl: string },
-) {
+/** Detail pages without generated content: a section per visible registry section. */
+export function sectionsBody(page: PageEntry) {
   return html`<div class="wb-body">
     ${repeat(
       page.sections.filter((s) => s.visible),
@@ -279,14 +275,7 @@ export function sectionsBody(
       (section) =>
         html`<section id=${section.id} aria-labelledby=${`${section.id}-title`}>
           <h2 id=${`${section.id}-title`}>${section.title}</h2>
-          ${
-            section.id === 'interactive-example' && componentPreview
-              ? html`<oddkin-component-preview
-                  .page=${componentPreview.page}
-                  .frameUrl=${componentPreview.frameUrl}
-                ></oddkin-component-preview>`
-              : html`<p class="wb-muted">${COPY.sectionPending}</p>`
-          }
+          <p class="wb-muted">${COPY.sectionPending}</p>
         </section>`,
     )}
   </div>`;

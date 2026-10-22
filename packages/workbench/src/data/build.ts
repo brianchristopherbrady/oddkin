@@ -115,12 +115,39 @@ function componentPage(
   page: PageEntry,
   declared: Declared,
   metadata: OddkinMetadataLike,
+  definitions: ReadonlyMap<string, Readonly<Record<string, JsonObject>>>,
+  inspection: ReadonlyMap<string, InspectedTokenLike> | undefined,
 ): ComponentPageData {
   const tag = declared.declaration.tagName as string;
   const enrichment = Object.values(metadata.components ?? {}).find((c) => c.tag === tag);
-  const examples = Object.entries(metadata.examples ?? {})
-    .filter(([, example]) => example.component === `component:${tag}`)
-    .map(([id, example]): JsonObject => ({ id, ...example }));
+  const authored = definitions.get(tag) ?? {};
+  const listed = Object.entries(metadata.examples ?? {}).filter(
+    ([, example]) => example.component === `component:${tag}`,
+  );
+  const named = new Set(listed.map(([, example]) => example.name));
+  const examples = [
+    ...listed.map(([id, example]): JsonObject => {
+      const definition = authored[example.name];
+      return { id, ...example, ...(definition ? { definition } : {}) };
+    }),
+    // Examples the metadata does not list yet (no analyzer run since they were authored).
+    ...Object.entries(authored)
+      .filter(([name]) => !named.has(name))
+      .map(([name, definition]): JsonObject => ({
+        id: `example:${tag}/${name}`,
+        component: `component:${tag}`,
+        name,
+        definition,
+      })),
+  ];
+  const reads = enrichment?.tokenReads ?? [];
+  const seen = new Set<string>();
+  const tokens = reads.flatMap((read) => {
+    const name = isObject(read) && typeof read['token'] === 'string' ? read['token'] : undefined;
+    if (!name || seen.has(name)) return [];
+    seen.add(name);
+    return [inspection?.get(name) ?? { name, missing: true as const }];
+  });
   return {
     format: PAGE_FORMAT,
     version: DATA_VERSION,
@@ -132,6 +159,7 @@ function componentPage(
     declaration: declared.declaration as unknown as JsonObject,
     ...(enrichment ? { enrichment: enrichment as unknown as JsonObject } : {}),
     examples,
+    ...(tokens.length ? { tokens } : {}),
   };
 }
 
@@ -204,13 +232,19 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
   }
   const pages: Record<string, PageData> = {};
   const files: Record<string, string> = {};
+  const definitions = new Map<string, Readonly<Record<string, JsonObject>>>();
+  for (const library of input.libraries)
+    for (const set of library.examples ?? []) {
+      const tag = set.component.replace(/^component:/, '');
+      if (!definitions.has(tag)) definitions.set(tag, set.examples);
+    }
   for (const page of registry.pages) {
     if (!page.visible) continue;
     let data: PageData;
     if (page.kind === 'component') {
       const entry = declared.get(page.id.slice('components/'.length));
       if (!entry) continue;
-      data = componentPage(page, entry, metadata);
+      data = componentPage(page, entry, metadata, definitions, inspection);
     } else if (page.kind === 'foundation') {
       const id = FOUNDATIONS.find((f) => `foundations/${f.slug}` === page.id)?.id;
       const foundation = id ? metadata.foundations?.[`foundation:${id}`] : undefined;

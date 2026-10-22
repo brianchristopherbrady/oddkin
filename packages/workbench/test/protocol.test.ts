@@ -58,6 +58,16 @@ describe('frame protocol', () => {
     expect(isFrameRequest(request)).toBe(true);
     expect(isFrameRequest({ ...request, id: 0 })).toBe(false);
     expect(isFrameRequest({ ...request, payload: { element: new Date() } })).toBe(false);
+    // Declared sync pairs: property and event names only.
+    const sync = (value: unknown) =>
+      isFrameRequest({ ...request, payload: { ...request.payload, sync: value } });
+    expect(sync([{ property: 'value', event: 'input' }])).toBe(true);
+    expect(sync([{ property: 'value' }])).toBe(false);
+    expect(sync([{ property: 'value', event: 1 }])).toBe(false);
+    expect(sync({ property: 'value', event: 'input' })).toBe(false);
+    expect(isFrameRequest({ ...request, payload: { ...request.payload, events: [1] } })).toBe(
+      false,
+    );
 
     const reply = { ...identity, kind: 'reply', replyTo: 1, payload: { mounted: true } };
     expect(isFrameReply(reply)).toBe(true);

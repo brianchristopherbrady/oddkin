@@ -6,7 +6,10 @@
   "type": "module",
   "sideEffects": [
     "./dist/app/define.js",
-    "./dist/frame/index.js"
+    "./dist/frame/index.js",
+    "./dist/panels/component-define.js",
+    "./dist/panels/foundation-define.js",
+    "./dist/panels/catalog-define.js"
   ],
   "engines": {
     "node": ">=24.12"
@@ -66,6 +69,30 @@
     "./frame": {
       "types": "./dist/frame/index.d.ts",
       "default": "./dist/frame/index.js"
+    },
+    "./panels/component": {
+      "types": "./dist/panels/component.d.ts",
+      "default": "./dist/panels/component.js"
+    },
+    "./panels/component/define": {
+      "types": "./dist/panels/component-define.d.ts",
+      "default": "./dist/panels/component-define.js"
+    },
+    "./panels/foundation": {
+      "types": "./dist/panels/foundation.d.ts",
+      "default": "./dist/panels/foundation.js"
+    },
+    "./panels/foundation/define": {
+      "types": "./dist/panels/foundation-define.d.ts",
+      "default": "./dist/panels/foundation-define.js"
+    },
+    "./panels/catalog": {
+      "types": "./dist/panels/catalog.d.ts",
+      "default": "./dist/panels/catalog.js"
+    },
+    "./panels/catalog/define": {
+      "types": "./dist/panels/catalog-define.d.ts",
+      "default": "./dist/panels/catalog-define.js"
     },
     "./package.json": "./package.json"
   },

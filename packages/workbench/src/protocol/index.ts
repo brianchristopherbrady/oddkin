@@ -32,6 +32,12 @@ export interface FrameMountPayload {
   readonly attributes?: Readonly<Record<string, string | null>>;
   readonly slots?: Readonly<Record<string, string>>;
   readonly events?: readonly string[];
+  /**
+   * Declared property ↔ event sync pairs (metadata `syncPairs`). After such an event the frame
+   * reports the property's value in a `state` notification (`{ property, value }`); nothing is
+   * inferred from event names.
+   */
+  readonly sync?: readonly { readonly property: string; readonly event: string }[];
   readonly settings?: FrameSettings;
 }
 
@@ -278,6 +284,17 @@ export function isFrameMountPayload(value: unknown): value is FrameMountPayload 
   if (
     value['events'] !== undefined &&
     (!Array.isArray(value['events']) || !value['events'].every((item) => typeof item === 'string'))
+  )
+    return false;
+  if (
+    value['sync'] !== undefined &&
+    (!Array.isArray(value['sync']) ||
+      !value['sync'].every(
+        (pair) =>
+          isRecord(pair) &&
+          typeof pair['property'] === 'string' &&
+          typeof pair['event'] === 'string',
+      ))
   )
     return false;
   return value['settings'] === undefined || isFrameSettings(value['settings']);

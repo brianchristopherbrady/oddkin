@@ -190,4 +190,42 @@ describe('isolated preview frames', () => {
     await until(() => scopeStats().scopes === before.scopes, 'host Scope cleanup');
     expect(previewProtocolStats().liveFrames).toBe(protocolBefore.liveFrames);
   });
+
+  it('refuses superseded generations, disposed frames, and incompatible protocol versions', async () => {
+    const preview = createPreview();
+    await preview.ready;
+    await preview.request('mount', payload());
+
+    // A request made for generation 1 just before generation 2 replaces it is refused, never sent
+    // to the new frame.
+    const superseded = preview.request('reset');
+    const reloading = preview.reload();
+    await expect(superseded).rejects.toMatchObject({ code: 'frame.generation.superseded' });
+    await reloading;
+    expect(preview.identity.generation).toBe(2);
+    await preview.request('mount', payload());
+
+    // Pending and later requests on a disposed frame fail, and the frame is gone.
+    const pending = preview.request('mount', payload({ properties: { label: 'Late' } }));
+    const stats = previewProtocolStats();
+    preview.dispose();
+    await expect(pending).rejects.toMatchObject({ code: 'frame.disposed' });
+    await expect(preview.request('reset')).rejects.toMatchObject({ code: 'frame.disposed' });
+    await expect(preview.reload()).rejects.toMatchObject({ code: 'frame.disposed' });
+    expect(preview.iframe.isConnected).toBe(false);
+    expect(previewProtocolStats().liveFrames).toBe(stats.liveFrames - 1);
+
+    // A frame runtime that speaks another protocol version never connects.
+    const incompatible = createIsolatedPreview({
+      document,
+      container: document.body,
+      frameUrl: new URL('./fixtures/frame-v2.html', import.meta.url).href,
+      title: 'Incompatible preview',
+    });
+    previews.push(incompatible);
+    await expect(incompatible.ready).rejects.toMatchObject({
+      code: 'frame.version.incompatible',
+    });
+    expect(incompatible.iframe.isConnected).toBe(false);
+  });
 });

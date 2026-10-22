@@ -1,6 +1,6 @@
 # Workbench pages, navigation, and content
 
-Status: **proposal**, except the page registry (§2), which is implemented as the DOM-free `@oddkin/workbench/pages` entry in M3 ([packages/workbench](../../packages/workbench/README.md)); the shell and pages are later work. Defines the information architecture and page contracts of a generated Oddkin Workbench. Detailed control, preview, and Theme Studio behavior: [workbench.md](./workbench.md). Metadata inputs: [metadata-and-analyzer.md](./metadata-and-analyzer.md). Reference observations: [design-system-lab-audit.md](../reference/design-system-lab-audit.md).
+Status: **proposal**, except the page registry (§2), which is implemented as the DOM-free `@oddkin/workbench/pages` entry in M3 ([packages/workbench](../../packages/workbench/README.md)); the shell and pages are later work. Defines the information architecture and page contracts of a generated Oddkin Workbench. Detailed control, preview, and Theme Studio behavior: [workbench.md](./workbench.md). Metadata inputs: [metadata-and-analyzer.md](./metadata-and-analyzer.md). Reference observations from the 2026-10-17 rendered audit of Design System Lab are folded into §3–§8 (the audit document itself was removed in dbb6f2d).
 
 ## 1. Principles
 
@@ -108,7 +108,7 @@ Built first, from the library's actual spacing contracts:
 
 Each component's documentation and interactive controls live on its detail page. There is no "Open in playground" hand-off and no separate Playground destination.
 
-The current shell mounts a basic registration-backed frame in the "Interactive example" section when the page publishes a registration entry. It starts the component's default state; editable properties, authored example controls, fixture/provider setup, and event logs are not part of this initial preview.
+*(Implemented, M5: the shell renders every section below from the page data, and `@oddkin/workbench/panels/component` (`<oddkin-component-panel>`) renders the same content in an open shadow root for other hosts such as apps/docs. The interactive example mounts the component's default authored example (or nothing set) in an isolated frame; presets come from the `defineExamples` values the Node tooling loads; Reset loads a fresh frame document; Copy example link encodes a versioned payload validated against the component's contract; preview settings cover mode (with "Same as site"), light and dark side by side, direction, and width presets plus a numeric width. The API table writes one property or attribute per change exactly as declared; types it cannot edit generically say "Requires fixture"; read-only fields are inspect-only. Slots have text editors; declared events are logged with safely serialized details; declared sync pairs mirror values without writing back; snippets are plain HTML and JavaScript. Tokens list the declared style mappings and every token read with baseline values. Remaining: fixture/adapter pickers and the `items` model editor, CSS custom property editing with a token picker, product/density/profile settings, per-example frames in the Examples section, and the adjacent/sticky layout experiment.)*
 
 ### 7.1 Section order (default; each only when supplied)
 

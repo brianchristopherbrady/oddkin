@@ -195,29 +195,102 @@ function replaceTheme(runtime: Runtime, cssText: string) {
   runtime.theme = sheet;
 }
 
+const DETAIL_LIMIT = 2000;
+
+/**
+ * A plain-JSON summary of an event detail: cycles, DOM nodes, functions, `Map`/`Set`, errors,
+ * and class instances are described rather than transferred, and the result is size-capped.
+ */
+export function summarizeDetail(value: unknown): JsonValue {
+  const seen = new WeakSet<object>();
+  const walk = (current: unknown, depth: number): JsonValue => {
+    if (current === null || typeof current === 'boolean' || typeof current === 'string')
+      return current;
+    if (typeof current === 'number') return Number.isFinite(current) ? current : String(current);
+    if (current === undefined) return '[undefined]';
+    if (typeof current === 'bigint') return `${current}n`;
+    if (typeof current === 'symbol') return String(current);
+    if (typeof current === 'function') return `[Function ${current.name || 'anonymous'}]`;
+    const object = current as object;
+    if (seen.has(object)) return '[Circular]';
+    if (depth > 4) return '[…]';
+    if (typeof (object as Node).nodeType === 'number' && 'nodeName' in object) {
+      const node = object as Element;
+      return node.nodeType === 1
+        ? `<${node.localName}${node.id ? `#${node.id}` : ''}>`
+        : `[${node.nodeName}]`;
+    }
+    if (object instanceof Error) return `[${object.name}: ${object.message}]`;
+    seen.add(object);
+    try {
+      if (object instanceof Map)
+        return {
+          '[Map]': object.size,
+          entries: [...object]
+            .slice(0, 20)
+            .map(([k, v]) => [walk(k, depth + 1), walk(v, depth + 1)]),
+        };
+      if (object instanceof Set)
+        return {
+          '[Set]': object.size,
+          values: [...object].slice(0, 20).map((v) => walk(v, depth + 1)),
+        };
+      if (Array.isArray(object)) {
+        const items = object.slice(0, 20).map((v) => walk(v, depth + 1));
+        if (object.length > 20) items.push(`[${object.length - 20} more]`);
+        return items;
+      }
+      const prototype = Object.getPrototypeOf(object);
+      if (prototype !== Object.prototype && prototype !== null)
+        return `[${(prototype as { constructor?: { name?: string } }).constructor?.name || 'Object'}]`;
+      const out: Record<string, JsonValue> = {};
+      const keys = Object.keys(object);
+      for (const key of keys.slice(0, 20))
+        out[key] = walk((object as Record<string, unknown>)[key], depth + 1);
+      if (keys.length > 20) out['[more]'] = keys.length - 20;
+      return out;
+    } finally {
+      seen.delete(object);
+    }
+  };
+  const summary = walk(value, 0);
+  const text = JSON.stringify(summary);
+  return text.length > DETAIL_LIMIT ? `[Truncated: ${text.slice(0, DETAIL_LIMIT)}…]` : summary;
+}
+
 function listenToElement(runtime: Runtime, scope: Scope) {
   const element = runtime.element;
   if (!element) return;
+  const tag = runtime.mount?.tag ?? element.localName;
   for (const name of runtime.mount?.events ?? [])
     scope.listen(
       runtime.wrapper,
       name,
       (event) => {
         const payload: Record<string, JsonValue> = {
-          id: `event:${runtime.mount?.tag ?? element.localName}#${name}`,
+          id: `event:${tag}#${name}`,
           name,
           time: runtime.window.performance.now(),
           bubbles: event.bubbles,
           composed: event.composed,
           cancelable: event.cancelable,
-          target: element.localName,
+          target: (event.target as Element | null)?.localName ?? element.localName,
         };
         const detail = (event as CustomEvent).detail;
-        if (detail !== undefined && isJsonValue(detail)) payload['detail'] = detail;
+        if (detail !== undefined && detail !== null) payload['detail'] = summarizeDetail(detail);
         post(runtime, 'event', payload);
       },
       true,
     );
+  // On the element itself, after the component's own handlers have updated the property.
+  for (const pair of runtime.mount?.sync ?? [])
+    scope.listen(element, pair.event, () => {
+      const value: unknown = Reflect.get(element, pair.property);
+      post(runtime, 'state', {
+        property: pair.property,
+        value: isJsonValue(value) ? value : summarizeDetail(value),
+      });
+    });
 }
 
 async function handle(runtime: Runtime, scope: Scope, request: FrameRequest) {

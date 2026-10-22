@@ -58,6 +58,65 @@ const versioned = (pkg: InstalledPackage) => `${pkg.name}@${pkg.version}`;
 const manifests = (graph: readonly InstalledPackage[]): PackageManifest[] =>
   graph.map((pkg) => ({ ...pkg.manifest, name: pkg.name, version: pkg.version }));
 
+const FONT = /\.(woff2?|ttf|otf)$/i;
+
+/**
+ * Preview-frame assets (`assets` in the configuration): package export specifiers such as
+ * `@oddkin/tokens/css/default.css`, resolved through the package's `exports` to its versioned
+ * URL. Stylesheets are linked and fonts preloaded. Without configured assets, frames load the
+ * default token stylesheet when the frame graph has it.
+ */
+function frameAssets(
+  config: ResolvedWorkbenchConfig,
+  graph: readonly InstalledPackage[],
+  documented: readonly InstalledPackage[],
+  base: string,
+  out: DiagnosticList,
+): { stylesheets: string[]; fonts: string[] } {
+  const stylesheets: string[] = [];
+  const fonts: string[] = [];
+  const specifiers = config.assets.length
+    ? config.assets
+    : documented.some((pkg) => pkg.name === SHELL_STYLES.package)
+      ? [`${SHELL_STYLES.package}${SHELL_STYLES.export.slice(1)}`]
+      : [];
+  config.assets.forEach((specifier, i) => {
+    if (/^(\.{0,2}\/|[a-z]+:)/i.test(specifier))
+      out.warn(
+        'node.assets.unsupported',
+        `Asset "${specifier}" is a path or URL; frames load package export specifiers (for example "@scope/pkg/theme.css") for now.`,
+        `/assets/${i}`,
+      );
+  });
+  for (const specifier of specifiers) {
+    if (/^(\.{0,2}\/|[a-z]+:)/i.test(specifier)) continue;
+    const parts = specifier.split('/');
+    const name = specifier.startsWith('@') ? parts.slice(0, 2).join('/') : (parts[0] as string);
+    const subpath = `.${specifier.slice(name.length)}`;
+    const pkg = graph.find((p) => p.name === name);
+    const path = pkg ? resolveExport(pkg.manifest, subpath) : undefined;
+    const index = config.assets.indexOf(specifier);
+    if (!pkg || !path) {
+      out.warn(
+        'node.assets.unresolved',
+        `Asset "${specifier}" does not resolve: ${pkg ? `${name} does not export "${subpath}"` : `${name} is not a documented package or one of their dependencies`}.`,
+        index >= 0 ? `/assets/${index}` : '/assets',
+      );
+      continue;
+    }
+    const url = `${packageRoot({ ...pkg.manifest, name: pkg.name, version: pkg.version }, { base, versioned: true })}${path.slice(2)}`;
+    if (FONT.test(path)) fonts.push(url);
+    else if (/\.css$/i.test(path)) stylesheets.push(url);
+    else
+      out.warn(
+        'node.assets.kind',
+        `Asset "${specifier}" is neither a stylesheet nor a font; frames load only those.`,
+        index >= 0 ? `/assets/${index}` : '/assets',
+      );
+  }
+  return { stylesheets, fonts };
+}
+
 /** Build everything the Workbench serves or writes for one configuration. Never throws for bad input. */
 export async function buildWorkbench(options: BuildOptions = {}): Promise<WorkbenchBuild> {
   const loaded = await loadWorkbenchConfig(options.config);
@@ -106,12 +165,20 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
   for (const [id, page] of Object.entries(data.pages)) files.set(pageFile(id), serializeData(page));
   files.set('frame.importmap.json', `${JSON.stringify(frame.importMap, null, 2)}\n`);
   files.set('shell.importmap.json', `${JSON.stringify(shell.importMap, null, 2)}\n`);
+  const assetsForFrames = frameAssets(
+    config,
+    [...inputs.graph, ...shellGraph],
+    inputs.graph,
+    base,
+    result,
+  );
   files.set(
     'frame.html',
     frameHtml({
       title: `${data.index.branding.name} preview`,
       importMap: frame.importMap,
       module: '@oddkin/workbench/frame',
+      ...assetsForFrames,
     }),
   );
 

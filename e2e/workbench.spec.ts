@@ -60,14 +60,16 @@ test.describe('Workbench shell', () => {
       page.getByRole('navigation', { name: 'Foundations' }).getByRole('link'),
     ).toHaveText(['Color', 'Spacing', 'Borders and radii']);
 
+    // The first page's announcement goes out first; the announcer joins messages queued within
+    // 120 ms, so a navigation right after load would be announced together with it.
+    const live = page.locator('body > [aria-live="polite"]');
+    await expect(live).toHaveText('Foundations · Oddkin components');
     await cards.getByRole('link', { name: 'Spacing' }).click();
     await expect(page.locator('main h1')).toHaveText('Spacing');
     expect(new URL(page.url()).pathname).toBe('/foundations/spacing');
     await expect(page).toHaveTitle('Spacing · Oddkin components');
     await expect(page.locator('main h1')).toBeFocused();
-    await expect(page.locator('body > [aria-live="polite"]')).toHaveText(
-      'Spacing · Oddkin components',
-    );
+    await expect(live).toHaveText('Spacing · Oddkin components');
     await expect(primary.first()).toHaveAttribute('aria-current', 'true');
     await expect(page.locator('.wb-sidebar a[aria-current="page"]')).toHaveText('Spacing');
     await expect(page.locator('.wb-eyebrow')).toHaveText('Foundations');
@@ -234,6 +236,79 @@ test.describe('Workbench shell', () => {
     });
   }
 
+  test.describe('Workbench component detail', () => {
+    test('previews the real component in a frame and edits it through the API table', async ({
+      page,
+    }) => {
+      const errors: string[] = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      await open(page, 'components/odd-button', 'Button');
+      const frame = page.frameLocator('oddkin-workbench-component iframe').first();
+      // The default authored example: its slot text, from button.examples.ts. The first frame
+      // loads the library's module graph unbundled, which takes a few seconds in Firefox.
+      await expect(frame.locator('odd-button')).toHaveText('Save', { timeout: 20_000 });
+      // Frames load the theme: the button's control is styled by tokens, not the UA default.
+      await expect
+        .poll(() =>
+          frame
+            .locator('odd-button')
+            .evaluate((el) => getComputedStyle(el.ownerDocument.body).backgroundColor),
+        )
+        .not.toBe('rgba(0, 0, 0, 0)');
+
+      const appearance = page.locator(
+        'tr[data-row="property:odd-button#appearance"] select[aria-label^="appearance"]',
+      );
+      await appearance.selectOption('primary');
+      await expect(frame.locator('odd-button')).toHaveAttribute('appearance', 'primary');
+      // The shell is not restyled by the preview: no odd-button is registered in the shell.
+      expect(await page.evaluate(() => customElements.get('odd-button') === undefined)).toBe(true);
+
+      await page.getByLabel('Preset').selectOption('primary');
+      await expect(frame.locator('odd-button')).toHaveText('Continue');
+      await expect(page.locator('.wb-snippet')).toContainText(
+        "import '@oddkin/components/define/button';",
+      );
+      await expect(page.locator('.wb-snippet')).toContainText('element.appearance = "primary";');
+
+      await page.getByLabel('Light and dark side by side').check();
+      const frames = page.locator('oddkin-workbench-component iframe');
+      await expect(frames).toHaveCount(2);
+      await expect
+        .poll(() =>
+          frames.evaluateAll((list) =>
+            list.map(
+              (f) => (f as HTMLIFrameElement).contentDocument?.documentElement.dataset['oddMode'],
+            ),
+          ),
+        )
+        .toEqual(['light', 'dark']);
+      await expect(
+        page.frameLocator('oddkin-workbench-component iframe').nth(1).locator('odd-button'),
+      ).toHaveText('Continue');
+      const backgrounds = await frames.evaluateAll((list) =>
+        list.map(
+          (f) => getComputedStyle((f as HTMLIFrameElement).contentDocument!.body).backgroundColor,
+        ),
+      );
+      expect(backgrounds[0]).not.toBe(backgrounds[1]);
+      // The shell's own mode is unchanged by preview settings.
+      expect(await page.evaluate(() => document.documentElement.dataset['oddMode'])).toBe('system');
+      expect(errors).toEqual([]);
+    });
+
+    test('logs declared events and mirrors a declared sync pair', async ({ page }) => {
+      await open(page, 'components/odd-input', 'Input');
+      const frame = page.frameLocator('oddkin-workbench-component iframe').first();
+      const field = frame.locator('odd-input input');
+      await field.fill('hello', { timeout: 20_000 });
+      await expect(page.locator('.wb-log li').first()).toContainText('input');
+      await expect(
+        page.locator('tr[data-row="property:odd-input#value"] input[type="text"]'),
+      ).toHaveValue('hello');
+    });
+  });
+
   test('records startup timing', async ({ page }, testInfo) => {
     await open(page, 'components', 'Components');
     const marks = await page.evaluate(() =>
@@ -278,6 +353,86 @@ test.describe('Workbench live updates', () => {
       await expect(page.locator('main h1')).toHaveText('Components');
       writeFileSync(config, original);
       await expect(page.locator('.wb-banner')).toHaveCount(0);
+      expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
+    } finally {
+      await server.close();
+      removeProject(dir);
+    }
+  });
+
+  /** The Acme project with a published registration entry for its button. */
+  function acmeWithRegistration() {
+    const dir = acmeProject();
+    const file = join(dir, 'node_modules', '@acme', 'ui', 'oddkin.metadata.json');
+    const metadata = JSON.parse(readFileSync(file, 'utf8')) as {
+      components: Record<string, Record<string, unknown>>;
+    };
+    metadata.components['component:acme-button']!['registration'] = '@acme/ui/define/button';
+    writeFileSync(file, JSON.stringify(metadata));
+    return { dir, metadata, file };
+  }
+
+  test('refreshes a page whose data changed in place, and reloads for a changed shell', async ({
+    page,
+  }) => {
+    test.setTimeout(90_000);
+    const { dir, metadata, file } = acmeWithRegistration();
+    const server = await startDevServer({ config: dir, port: 0, host: '127.0.0.1' });
+    try {
+      await page.goto(new URL('components/acme-button', server.url).href);
+      await expect(page.locator('main h1')).toHaveText('Button');
+      await expect(page.locator('#known-limitations')).toContainText('None documented.');
+      await page.evaluate(() => ((window as unknown as { marker: number }).marker = 1));
+
+      // Only this page's data changes: the page refreshes without a document reload.
+      metadata.components['component:acme-button']!['limitations'] = [
+        { value: 'Edited limitation.', provenance: 'authored' },
+      ];
+      writeFileSync(file, JSON.stringify(metadata));
+      await expect(page.locator('#known-limitations')).toContainText('Edited limitation.');
+      expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
+
+      // The shell page changes (its title comes from branding): the document reloads.
+      const config = join(dir, 'oddkin.config.ts');
+      writeFileSync(
+        config,
+        readFileSync(config, 'utf8').replace("name: 'Acme UI'", "name: 'Acme Renamed'"),
+      );
+      await expect
+        .poll(() => page.evaluate(() => (window as unknown as { marker?: number }).marker), {
+          timeout: 20_000,
+        })
+        .toBeUndefined();
+      await expect(page.locator('main h1')).toHaveText('Button');
+      await expect(page).toHaveTitle('Button · Acme Renamed');
+    } finally {
+      await server.close();
+      removeProject(dir);
+    }
+  });
+
+  test('replaces the preview frame when component code changes', async ({ page }) => {
+    test.setTimeout(90_000);
+    const { dir } = acmeWithRegistration();
+    const server = await startDevServer({ config: dir, port: 0, host: '127.0.0.1' });
+    try {
+      await page.goto(new URL('components/acme-button', server.url).href);
+      const frame = page.frameLocator('oddkin-workbench-component iframe').first();
+      await expect(frame.locator('acme-button')).toHaveText('★', { timeout: 20_000 });
+      const src = await page.locator('oddkin-workbench-component iframe').getAttribute('src');
+      expect(src).toContain('generation=1');
+      await page.evaluate(() => ((window as unknown as { marker: number }).marker = 1));
+
+      // A dependency's module changed: a fresh frame document loads the new code.
+      writeFileSync(
+        join(dir, 'node_modules', '@acme', 'icons', 'index.js'),
+        "export const icon = '◆';\n",
+      );
+      await expect(page.locator('oddkin-workbench-component iframe')).toHaveAttribute(
+        'src',
+        /generation=2/,
+      );
+      await expect(frame.locator('acme-button')).toHaveText('◆', { timeout: 20_000 });
       expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
     } finally {
       await server.close();

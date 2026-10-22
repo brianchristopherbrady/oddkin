@@ -18,6 +18,7 @@ export { DATA_VERSION, INDEX_FORMAT, PAGE_FORMAT } from './types.js';
 export type {
   BasicPageData,
   ComponentPageData,
+  ExampleSetLike,
   FoundationPageData,
   InspectedTokenLike,
   JsonObject,

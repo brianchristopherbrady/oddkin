@@ -6,7 +6,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { DOCS_SCHEMA, type DocsContent, type ResolvedWorkbenchConfig } from '../config/index.js';
 import { resolveExport } from '../data/import-map.js';
-import type { LibraryInput, TokenInspectionLike } from '../data/types.js';
+import type { ExampleSetLike, LibraryInput, TokenInspectionLike } from '../data/types.js';
+import { toExamplesJSON, type ExampleSet } from '../examples/index.js';
 import { DiagnosticList, isObject } from '../internal/diagnostics.js';
 import type { CemPackage, OddkinMetadataLike } from '../pages/types.js';
 import { loadDefault, loadFailure } from './config.js';
@@ -136,6 +137,51 @@ async function loadContent(
   };
 }
 
+/**
+ * The example sets (`defineExamples` modules) the metadata names, as data. Example modules are
+ * trusted project code; a package that does not ship them (a published build without sources)
+ * keeps its examples listed without values.
+ */
+async function loadExampleSets(
+  dir: string,
+  metadata: OddkinMetadataLike | undefined,
+  out: DiagnosticList,
+  dataFiles: string[],
+): Promise<ExampleSetLike[]> {
+  const files = new Set<string>();
+  for (const example of Object.values(metadata?.examples ?? {})) {
+    const file = (example as { file?: unknown }).file;
+    if (typeof file === 'string' && file) files.add(file);
+  }
+  const sets: ExampleSetLike[] = [];
+  for (const file of files) {
+    const path = resolve(dir, file);
+    if (!inside(path, dir) || !existsSync(path)) continue;
+    dataFiles.push(path);
+    let value: unknown;
+    try {
+      value = await loadDefault(path);
+    } catch (error) {
+      out.warn('node.examples.load', loadFailure(path, error), '/examples');
+      continue;
+    }
+    if (
+      !isObject(value) ||
+      typeof value['component'] !== 'string' ||
+      !isObject(value['examples'])
+    ) {
+      out.warn(
+        'node.examples.invalid',
+        `${path}: the default export is not an example set (use defineExamples).`,
+        '/examples',
+      );
+      continue;
+    }
+    sets.push(toExamplesJSON(value as unknown as ExampleSet) as unknown as ExampleSetLike);
+  }
+  return sets;
+}
+
 /** Read every input of the Workbench data for the configuration at `root`. */
 export async function loadInputs(
   root: string,
@@ -175,11 +221,13 @@ export async function loadInputs(
       metadata = readJson(metadataFile, out, 'node.metadata.invalid') as OddkinMetadataLike;
       dataFiles.push(metadataFile);
     }
+    const examples = await loadExampleSets(pkg.dir, metadata, out, dataFiles);
     libraries.push({
       name,
       version: pkg.version,
       ...(cem ? { cem } : {}),
       ...(metadata ? { metadata } : {}),
+      ...(examples.length ? { examples } : {}),
     });
   }
   for (const file of explicitCem) {

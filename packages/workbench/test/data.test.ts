@@ -102,6 +102,76 @@ describe('Workbench data from published outputs', () => {
     });
   });
 
+  it('adds published example values and the values of the tokens a component reads', () => {
+    const withExamples: LibraryInput = {
+      ...components,
+      examples: [
+        {
+          component: 'odd-button',
+          examples: {
+            default: { label: 'Default', slots: { default: 'Save' }, preset: true },
+            unlisted: { label: 'Not in metadata yet' },
+          },
+        },
+        // A later set for the same component is ignored: the first package's set wins.
+        { component: 'component:odd-button', examples: { default: { label: 'Other' } } },
+      ],
+    };
+    const { data } = build({ config, libraries: [withExamples], tokens: inspection });
+    const page = data.pages['components/odd-button'] as ComponentPageData;
+    const byName = Object.fromEntries(page.examples.map((e) => [e['name'], e]));
+    expect(byName['default']?.['definition']).toEqual({
+      label: 'Default',
+      slots: { default: 'Save' },
+      preset: true,
+    });
+    // Listed in metadata without published values: kept verbatim, no definition invented.
+    expect(byName['primary']).toBeDefined();
+    expect(byName['primary']?.['definition']).toBeUndefined();
+    expect(page.examples.at(-1)).toEqual({
+      id: 'example:odd-button/unlisted',
+      component: 'component:odd-button',
+      name: 'unlisted',
+      definition: { label: 'Not in metadata yet' },
+    });
+
+    const reads = (
+      (components.metadata as OddkinMetadataLike).components?.['component:odd-button']
+        ?.tokenReads as { token: string }[]
+    ).map((r) => r.token);
+    expect(page.tokens?.map((t) => t.name)).toEqual([...new Set(reads)]);
+    const gap = inspection.tokens.find((t) => t.name === 'control.gap');
+    expect(page.tokens?.find((t) => t.name === 'control.gap')).toEqual(gap);
+
+    // Without an inspection every read stays unknown, never guessed.
+    const bare = build({ config, libraries: [components] }).data.pages[
+      'components/odd-button'
+    ] as ComponentPageData;
+    expect(bare.tokens?.every((t) => t.missing === true && t.value === undefined)).toBe(true);
+    expect(byName['default']).not.toHaveProperty('missing');
+
+    // A token read through several stylesheets is listed once.
+    const metadata = components.metadata as OddkinMetadataLike;
+    const button = metadata.components!['component:odd-button']!;
+    const twice: LibraryInput = {
+      ...components,
+      metadata: {
+        ...metadata,
+        components: {
+          ...metadata.components,
+          'component:odd-button': {
+            ...button,
+            tokenReads: [...button.tokenReads!, ...button.tokenReads!],
+          },
+        },
+      },
+    };
+    const deduped = build({ config, libraries: [twice], tokens: inspection }).data.pages[
+      'components/odd-button'
+    ] as ComponentPageData;
+    expect(deduped.tokens?.map((t) => t.name)).toEqual(page.tokens?.map((t) => t.name));
+  });
+
   it('resolves a foundation’s tokens from the inspection, in the foundation’s order', () => {
     const { data, diagnostics } = build({ config, libraries: [components], tokens: inspection });
     const page = data.pages['foundations/spacing'] as FoundationPageData;
@@ -255,6 +325,7 @@ describe('Workbench data from published outputs', () => {
     const page = data.pages['components/acme-button'] as ComponentPageData;
     expect(page.enrichment).toBeUndefined();
     expect(page.examples).toEqual([]);
+    expect(page).not.toHaveProperty('tokens');
     expect(page.package).toBe('@acme/ui');
     expect(data.index.branding.name).toBe('@acme/ui');
     expect(data.index.libraries).toEqual([{ name: '@acme/ui', version: '1.4.0' }]);

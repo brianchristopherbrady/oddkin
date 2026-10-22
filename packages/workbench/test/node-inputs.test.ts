@@ -406,5 +406,128 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     expect(seen.size).toBeGreaterThan(20);
     // Each served module is a file inside its package.
     for (const url of seen) expect(statSync(toFile(url)).isFile(), url).toBe(true);
+    // The real components' frames load the default token stylesheet; examples come from sources.
+    const frame = build.files.get('frame.html')!;
+    expect(frame).toContain(
+      '<link rel="stylesheet" href="/_oddkin/m/@oddkin/tokens@0.0.0/dist/css/default.css" />',
+    );
+    const button = JSON.parse(
+      build.files.get('pages/components/odd-button.json')!,
+    ) as ComponentPageData;
+    expect(button.examples.find((e) => e['name'] === 'primary')?.['definition']).toMatchObject({
+      label: 'Primary',
+      props: { appearance: 'primary' },
+      slots: { default: 'Continue' },
+      preset: true,
+    });
+  });
+
+  it('loads example sets named in metadata as data, and diagnoses ones that fail', async () => {
+    const metadata = JSON.parse(
+      readFileSync(new URL('./fixtures/acme.oddkin.metadata.json', import.meta.url), 'utf8'),
+    ) as { examples: Record<string, Record<string, unknown>> };
+    metadata.examples['example:acme-card/default'] = {
+      component: 'component:acme-card',
+      name: 'default',
+      file: 'src/card.examples.mjs',
+    };
+    metadata.examples['example:acme-side-nav/default'] = {
+      component: 'component:acme-side-nav',
+      name: 'default',
+      file: 'src/broken.examples.mjs',
+    };
+    metadata.examples['example:acme-x/escape'] = {
+      component: 'component:acme-x',
+      name: 'escape',
+      file: '../../outside.examples.mjs',
+    };
+    const dir = track(
+      acmeProject({
+        'node_modules/@acme/ui/oddkin.metadata.json': JSON.stringify(metadata),
+        'node_modules/@acme/ui/src/button.examples.ts': `const set: { component: string; examples: Record<string, object> } = {
+  component: 'acme-button',
+  examples: { default: { label: 'Default', slots: { default: 'Go' }, preset: true, fixture: () => null } },
+};
+export default set;
+`,
+        'node_modules/@acme/ui/src/card.examples.mjs': 'export default { nope: true };\n',
+        'node_modules/@acme/ui/src/broken.examples.mjs': "throw new Error('broken example');\n",
+        // Where '../../outside.examples.mjs' points from the package: outside it, never loaded.
+        'node_modules/outside.examples.mjs': "throw new Error('outside loaded');\n",
+      }),
+    );
+    const build = await buildWorkbench({ config: dir });
+    const button = JSON.parse(
+      build.files.get('pages/components/acme-button.json')!,
+    ) as ComponentPageData;
+    expect(button.examples).toEqual([
+      {
+        id: 'example:acme-button/default',
+        component: 'component:acme-button',
+        name: 'default',
+        file: 'src/button.examples.ts',
+        // Functions (fixtures) are never data: the definition says one exists.
+        definition: { label: 'Default', slots: { default: 'Go' }, preset: true, hasFixture: true },
+      },
+    ]);
+    const codes = build.diagnostics.map((d) => d.code);
+    expect(codes).toContain('node.examples.invalid');
+    expect(codes).toContain('node.examples.load');
+    expect(build.diagnostics.find((d) => d.code === 'node.examples.load')?.message).toContain(
+      'broken example',
+    );
+    // A file outside the package is never loaded.
+    expect(build.diagnostics.some((d) => d.message.includes('outside loaded'))).toBe(false);
+  });
+
+  it('links configured assets into the frame document and diagnoses unusable ones', async () => {
+    const dir = track(
+      acmeProject({
+        'oddkin.config.json': JSON.stringify({
+          library: { packages: ['@acme/ui'] },
+          assets: [
+            '@acme/tokens/theme.css',
+            '@acme/tokens/fonts/inter.woff2',
+            '@acme/tokens/inspect.json',
+            '@acme/tokens/missing.css',
+            '@nobody/pkg/x.css',
+            './local.css',
+          ],
+        }),
+        'node_modules/@acme/tokens/package.json': JSON.stringify({
+          name: '@acme/tokens',
+          version: '1.0.0',
+          exports: {
+            './inspect.json': './dist/acme.inspect.json',
+            './theme.css': './dist/theme.css',
+            './fonts/*': './dist/fonts/*',
+          },
+        }),
+      }),
+    );
+    const build = await buildWorkbench({ config: join(dir, 'oddkin.config.json') });
+    const frame = build.files.get('frame.html')!;
+    expect(frame).toContain(
+      '<link rel="stylesheet" href="/_oddkin/m/@acme/tokens@1.0.0/dist/theme.css" />',
+    );
+    expect(frame).toContain(
+      '<link rel="preload" as="font" href="/_oddkin/m/@acme/tokens@1.0.0/dist/fonts/inter.woff2" crossorigin="anonymous" />',
+    );
+    // Stylesheets come before the frame's own rules, after font preloads.
+    expect(frame.indexOf('rel="preload"')).toBeLessThan(frame.indexOf('rel="stylesheet"'));
+    expect(frame.indexOf('rel="stylesheet"')).toBeLessThan(frame.indexOf('<style>'));
+    expect(frame).not.toMatch(/rel="stylesheet" href="[^"]*@oddkin\/tokens/);
+    const assets = build.diagnostics
+      .filter((d) => d.code.startsWith('node.assets.'))
+      .map((d) => [d.code, d.path]);
+    expect(assets).toEqual([
+      ['node.assets.unsupported', '/assets/5'],
+      ['node.assets.kind', '/assets/2'],
+      ['node.assets.unresolved', '/assets/3'],
+      ['node.assets.unresolved', '/assets/4'],
+    ]);
+    // Without configured assets, a library that does not depend on @oddkin/tokens gets none.
+    const plain = await buildWorkbench({ config: track(acmeProject()) });
+    expect(plain.files.get('frame.html')).not.toContain('rel="stylesheet"');
   });
 });

@@ -15,6 +15,7 @@ import {
   INDEX_FORMAT,
   PAGE_FORMAT,
   type ComponentPageData,
+  type FoundationPageData,
   type WorkbenchIndex,
 } from '../data/types.js';
 import { href as registryHref } from '../pages/navigation.js';
@@ -50,6 +51,8 @@ interface Update {
   readonly ok: boolean;
   readonly index: boolean;
   readonly pages: readonly string[];
+  /** `name@version` of packages whose files changed. */
+  readonly modules?: readonly string[];
   readonly shell: boolean;
   readonly diagnostics: readonly { readonly severity: string }[];
 }
@@ -91,6 +94,19 @@ const isComponentPageData = (value: unknown): value is ComponentPageData => {
     typeof page.declaration === 'object' &&
     page.declaration !== null &&
     Array.isArray(page.examples)
+  );
+};
+
+const isFoundationPageData = (value: unknown): value is FoundationPageData => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+  const page = value as Partial<FoundationPageData>;
+  return (
+    page.format === PAGE_FORMAT &&
+    page.version === DATA_VERSION &&
+    page.kind === 'foundation' &&
+    typeof page.foundation === 'object' &&
+    page.foundation !== null &&
+    Array.isArray(page.tokens)
   );
 };
 
@@ -266,6 +282,9 @@ export class OddkinWorkbench extends OddkinElement.with({
       return;
     }
     this.#stale.value = undefined;
+    // Changed component code needs a fresh realm: a registration cannot be redefined in place.
+    if (update.modules?.length)
+      void this.querySelector('oddkin-workbench-component')?.replacePreview();
     if (update.index) {
       void this.#load(source, root);
       return;
@@ -334,16 +353,31 @@ export class OddkinWorkbench extends OddkinElement.with({
       return messagePage(ctx, 'Products and modes', COPY.productsDisabled, first);
     if (!current) return nothing;
     const kind = current.kind;
-    const componentData =
-      kind === 'component' && view?.kind === 'page' && isComponentPageData(view.data)
-        ? { page: view.data, frameUrl: this.#previewFrameUrl }
-        : undefined;
+    const data = view?.kind === 'page' ? view.data : undefined;
+    const index = this.#index.value;
     const body =
       kind === 'overview'
         ? overviewBody(ctx, current)
         : kind === 'tool'
           ? html`<div class="wb-body"><p class="wb-muted">${COPY.toolPending}</p></div>`
-          : sectionsBody(current, componentData);
+          : kind === 'component' && isComponentPageData(data) && index
+            ? html`<div class="wb-body">
+                <oddkin-workbench-component
+                  .page=${data}
+                  .index=${index}
+                  .href=${ctx.href}
+                  .frameUrl=${this.#previewFrameUrl}
+                ></oddkin-workbench-component>
+              </div>`
+            : kind === 'foundation' && isFoundationPageData(data) && index
+              ? html`<div class="wb-body">
+                  <oddkin-workbench-foundation
+                    .page=${data}
+                    .index=${index}
+                    .href=${ctx.href}
+                  ></oddkin-workbench-foundation>
+                </div>`
+              : sectionsBody(current);
     const contents = toc(ctx, current);
     return html`<div class=${contents === nothing ? 'wb-page' : 'wb-page wb-has-toc'}>
       ${pageHeader(ctx, current)} ${contents} ${body}
