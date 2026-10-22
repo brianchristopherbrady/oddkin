@@ -1528,3 +1528,18 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 **Finding (reported to the user, nothing changed):** the approved light `color.border.strong` `#8c8f9d` is 3.22:1 on `color.surface.default` but 2.94:1 on `color.canvas`, 2.80:1 on `color.surface.sunken`, and 2.81:1 on `color.surface.hover` (WCAG 1.4.11 needs 3:1 for control boundaries). The generator's correction is `{ref.neutral.500}` (`#84858f`, at least 3.20:1). The user is changing the value in Figma; until the default theme follows, the contract checks `border.strong` against the default surface only, so the default build stays clean.
 
 **Not done:** profile colour overrides are not checked against the contracts; the `border.strong` widening above.
+
+
+## 2026-10-21 — Token scopes across shadow roots and direction (M8 item 909, token side)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium, Firefox, WebKit). Other agents had unrelated edits in the shared worktree (packages/core, packages/workbench, e2e/duplicate-core); they were not included. No full-pipeline run.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Shadow-root scopes | `npx vitest run --project browser packages/tokens/test/scopes-shadow.browser.test.ts` | Pass — 12 tests × 3 engines (36). The `products-density` theme adopted in the document; each probe's colour, surface, link, `space.md`, `layout.gap`, `navigation.item.min-height`, and `navigation.item.padding.inline` equal `resolveToken` for the expected context: a product on the shadow host; mode, product, density, and two profiles on light-DOM ancestors through two nested shadow roots; a density attribute inside a shadow tree ignored without the CSS adopted there and applied with it (also a nested light mode); slotted content taking the mode and product around its slot instead of its light-DOM parent's; a nested `data-odd-theme` resetting an outer product while keeping dark mode. A final test asserts that each pair of probes differs in the axis it tests. |
+| Tokens Node tests | `npx vitest run --project node packages/tokens` | Pass — 85 tests, including a guard that no token name names a physical direction. |
+| Mutants | 6 mutants in `css.ts`, run against the new test alone | 6 of 6 killed: inverted dark toggle, light scope without its mode closure, scopes declaring only changed tokens, exact instead of `~=` profile matching, and (after moving the theme case under a product, because the first version did not kill it) the theme selector dropped from the base block. |
+
+**Finding:** with the generated CSS adopted inside a shadow root (not the documented setup, which adopts it in the document), a profile on a light-DOM ancestor is lost inside a nested scope in that shadow tree: the scope re-declares base expressions and the profile's re-application selector cannot cross the boundary (`layout.gap` 15 px instead of 10 px in Chromium and WebKit). Pinned by the `profile-lost` / `profile-repeated` cases and documented in theming-and-styling.md §5.3 with the workaround (repeat `data-odd-profile` on the inner scope). A fix would need profile toggles like the mode toggles; not attempted.
+
+**Direction:** no token name contains a physical direction; apps/docs, examples/router, and examples/tokens-css-only use no physical margin, padding, border, or offset properties (searched). Component `dir="rtl"` evidence belongs to the component lane.

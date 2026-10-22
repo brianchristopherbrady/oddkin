@@ -171,6 +171,19 @@ Consequences: product scopes may change only brand inputs (reference tokens), an
 
 Mode toggles must never be registered with `@property`: registration would give them an initial value and break the guaranteed-invalid selection ([css-architecture.md](./css-architecture.md) §7).
 
+### 5.3 Scopes across shadow roots, and direction (verified, plan item 909)
+
+Custom properties inherit through the flat tree, so the generated CSS is adopted once, in the document (§8), and scopes are declared in the document tree:
+
+- A scope attribute (`data-odd-theme|mode|product|density|profile`) on any light-DOM ancestor, including the shadow host itself, reaches everything inside the host's shadow root and inside nested shadow roots at any depth.
+- Slotted content inherits through its slot, not its light-DOM parent: a scope a component places around a `<slot>` applies to the slotted content.
+- A scope attribute **inside** a shadow tree matches no document stylesheet and has no effect; the values inherited from outside continue. It applies only if the generated CSS is also adopted in that shadow root (mode, product, density, and theme scopes then work there, but `:root` still matches nothing). In that configuration, a profile on a light-DOM ancestor is lost inside a nested scope in the shadow tree, because the profile's re-application selector (`[data-odd-profile~=…] :is([data-odd-density], …)`) cannot cross the boundary; repeat `data-odd-profile` on the inner scope. Oddkin components never place scope attributes in their shadow trees.
+- A nested `data-odd-theme` scope re-declares every token, so an outer product or density no longer applies inside it, while the mode toggles still come from outside.
+
+Direction: token names carry no physical direction (`control.padding.inline.*`, `navigation.item.padding.{inline,block}`), so the same roles serve `dir="ltr"` and `dir="rtl"`; components apply them through logical properties (component-side evidence: [css-architecture.md](./css-architecture.md)).
+
+*(Verified in `packages/tokens/test/scopes-shadow.browser.test.ts`: 12 cases in Chromium, Firefox, and WebKit, each compared with `resolveToken` for colour, spacing, layout, and navigation roles, plus a check that each pair of probes differs in the axis it tests; 6 of 6 emitter mutants killed. `generate.test.ts` checks that no token name is physical.)*
+
 ### 5.2 Cascade layer of the generated CSS (implemented, ADR 0039)
 
 Generated CSS begins with the canonical Oddkin layer order and places every declaration in `odd.tokens`:

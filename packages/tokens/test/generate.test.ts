@@ -509,6 +509,14 @@ describe('brand-only theme', () => {
     }
   });
 
+  it('names no physical direction, so roles work unchanged under dir="rtl" (plan 909)', () => {
+    const physical = [...(result.theme?.tokens.keys() ?? [])].filter((name) =>
+      /(^|[.-])(left|right|top|bottom|horizontal|vertical)([.-]|$)/.test(name),
+    );
+    expect(physical).toEqual([]);
+    expect(result.theme?.tokens.has('control.padding.inline.md')).toBe(true);
+  });
+
   it('records provenance for every token', () => {
     for (const token of result.theme?.tokens.values() ?? [])
       expect(['preset', 'generated', 'configured', 'overridden']).toContain(token.origin);
