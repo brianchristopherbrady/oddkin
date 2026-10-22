@@ -41,6 +41,8 @@ export { resolveTheme, resolveToken } from './resolve.js';
 export type { ResolveContext, ResolvedTheme, ResolveResult, ScopeTokens } from './resolve.js';
 export type { ContrastCorrection, Diagnostic, DiagnosticSeverity } from './diagnostics.js';
 export { contrastReport } from './contrast.js';
+export { DTCG_EXTENSION, DTCG_FORMAT_VERSION, emitDtcg } from './dtcg.js';
+export type { DtcgMapping, DtcgMappingKind, DtcgResult } from './dtcg.js';
 export type { ContrastEntry } from './contrast.js';
 export { ROLE_CONTRACTS } from './preset.js';
 export type { ContrastConcern, RoleContract } from './preset.js';

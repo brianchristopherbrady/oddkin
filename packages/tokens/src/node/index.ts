@@ -7,6 +7,7 @@ import { extname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
   emitConditionsModule,
+  emitDtcg,
   emitInspectJson,
   emitRefsModule,
   emitValuesModule,
@@ -15,8 +16,8 @@ import {
   type GenerateResult,
 } from '../generate/index.js';
 
-export type OutputFormat = 'css' | 'ts' | 'json';
-export const OUTPUT_FORMATS: readonly OutputFormat[] = ['css', 'ts', 'json'];
+export type OutputFormat = 'css' | 'ts' | 'json' | 'dtcg';
+export const OUTPUT_FORMATS: readonly OutputFormat[] = ['css', 'ts', 'json', 'dtcg'];
 
 export interface LoadResult {
   readonly config: unknown;
@@ -147,7 +148,10 @@ export interface BuildResult {
   readonly files: readonly string[];
 }
 
-/** Generate and write outputs: `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.inspect.json`. */
+/**
+ * Generate and write outputs: `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`,
+ * `<name>.conditions.ts`, `<name>.inspect.json`, and one DTCG 2025.10 `<name>.<mode>.tokens.json` per mode.
+ */
 export async function buildTheme(config: unknown, options: BuildOptions): Promise<BuildResult> {
   const result = generate(
     config,
@@ -166,6 +170,9 @@ export async function buildTheme(config: unknown, options: BuildOptions): Promis
     );
   if (formats.includes('json'))
     outputs.push([`${name}.inspect.json`, emitInspectJson(result.theme, result.diagnostics)]);
+  if (formats.includes('dtcg'))
+    for (const mode of result.theme.modes)
+      outputs.push([`${name}.${mode}.tokens.json`, emitDtcg(result.theme, { mode }).text]);
   await mkdir(options.outDir, { recursive: true });
   const files: string[] = [];
   for (const [file, text] of outputs) {

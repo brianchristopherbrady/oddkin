@@ -4,6 +4,7 @@ import {
   contrastRatio,
   contrastReport,
   cssStats,
+  emitDtcg,
   gamutMap,
   generate,
   generateSpacing,
@@ -598,6 +599,12 @@ describe('determinism', () => {
       const fixture = new URL(`./fixtures/${name}.css.txt`, import.meta.url);
       if (process.env['UPDATE_FIXTURES']) await writeFile(fixture, first.css ?? '');
       expect(first.css).toBe(await readFile(fixture, 'utf8'));
+      // DTCG 2025.10 document of the first mode, also compared in three browser engines.
+      const dtcg = emitDtcg(first.theme as never).text;
+      expect(emitDtcg(second.theme as never).text).toBe(dtcg);
+      const dtcgFixture = new URL(`./fixtures/${name}.tokens.json.txt`, import.meta.url);
+      if (process.env['UPDATE_FIXTURES']) await writeFile(dtcgFixture, dtcg);
+      expect(dtcg).toBe(await readFile(dtcgFixture, 'utf8'));
     });
   }
 });

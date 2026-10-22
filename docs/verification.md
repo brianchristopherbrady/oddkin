@@ -1633,3 +1633,19 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 | WebKit (Playwright build for Windows) and Chromium | same script | WebKit exposes no document to UIA on Windows. Chromium builds its tree only when it detects an assistive technology (not forced here; its tree is already covered through the DevTools protocol in `e2e/components-only.spec.ts`). |
 
 **Not done:** WebKit's native tree (needs macOS: Accessibility Inspector or VoiceOver); required/invalid/description in Firefox through IAccessible2 (needs an IA2 client such as NVDA's or Accessibility Insights); screen readers.
+
+
+## 2026-10-21 — DTCG Format Module 2025.10 output (plan item 245)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium, Firefox, WebKit), `@terrazzo/parser` 2.10.0. Format text read from https://www.designtokens.org/tr/2025.10/format/ and /color/ on 2026-10-21. Other agents had unrelated edits in the shared worktree; they were not included. No full-pipeline run.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Independent reader | `npx vitest run --project node packages/tokens/test/dtcg.test.ts` | Pass — 8 tests. `@terrazzo/parser` (lint `core/valid-dimension` restricted to `px`/`rem`, as 2025.10 §8.2 requires; Terrazzo allows `em` by default) parses the default theme light and dark, `products-density` dark with product `clinic`, and light with density `compact` and two profiles. The tokens it returns are exactly the emitted ones, each with Oddkin's `$type`, and every resolved value (aliases followed by Terrazzo) equals `resolveToken` in that context after a test-local CSS normal form. Also: aliases kept as references, a profile `calc()` flattened and marked lossy with the expression in `$extensions`, the root context record, the exact unsupported and lossy lists of the default theme, determinism, name rules (no `.`, `{`, `}`; `$` only for spec properties), and `$root` with a `{gap.$root}` alias that Terrazzo resolves. |
+| Tokens, all projects | `npx vitest run packages/tokens` | Pass — 21 files, 210 tests (Node and Chromium, Firefox, WebKit). New `*.tokens.json.txt` fixtures equal the output in Node, each engine, and a module Worker; the CLI's `<theme>.<mode>.tokens.json` files equal `emitDtcg`. |
+| Boundaries | `node scripts/architecture/check-boundaries.mjs --artifacts` | `Boundaries OK: 9 package(s)` (the generate entry stays free of DOM and Node built-ins). |
+| Mutants | 10 mutants in `dtcg.ts` against `dtcg.test.ts` | 10 of 10 killed: aliases inlined, `em` accepted, alpha dropped, reduced motion marked lossless, aliases to unsupported tokens kept, `$root` references ignored, `calc()` multiplied, product context ignored, colour components at 2 decimals, missing spread defaulted to blur. |
+
+**Mappings (default theme):** 201 lossless, 4 lossy (`motion.duration.*`: the reduced-motion value is only in `$extensions`), 5 unsupported (`elevation.none`; `letter-spacing.tight/wide` in `em`; `type.display.letter-spacing` and `type.eyebrow.letter-spacing`, which alias them), each listed with its original value under the root `dev.oddkin.unsupported`.
+
+**Not claimed:** DTCG Resolver documents or support (item 246, M9), DTCG import or round-trip.

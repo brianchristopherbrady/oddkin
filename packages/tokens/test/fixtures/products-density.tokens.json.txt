@@ -1,0 +1,3087 @@
+{
+  "border": {
+    "width": {
+      "default": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "strong": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      }
+    }
+  },
+  "card": {
+    "padding": {
+      "$type": "dimension",
+      "$value": "{layout.inset}",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "component",
+          "origin": "preset"
+        }
+      }
+    },
+    "radius": {
+      "$type": "dimension",
+      "$value": "{radius.lg}",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "component",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "color": {
+    "accent": {
+      "decorative": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.87451,
+            0.929412,
+            0.666667
+          ],
+          "hex": "#dfedaa"
+        },
+        "$description": "Decoration only; never a status, text, or interactive colour.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "action": {
+      "default": {
+        "$type": "color",
+        "$value": "{ref.brand.600}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "generated",
+            "provenance": "brand step nearest the page tone with at least 4.5:1 against color.text.on-action in every product (light: lightest passing; dark: darkest passing)"
+          }
+        }
+      },
+      "hover": {
+        "$type": "color",
+        "$value": "{ref.brand.700}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "generated",
+            "provenance": "1 step(s) further from the page than color.action.default"
+          }
+        }
+      },
+      "pressed": {
+        "$type": "color",
+        "$value": "{ref.brand.800}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "generated",
+            "provenance": "2 step(s) further from the page than color.action.default"
+          }
+        }
+      }
+    },
+    "border": {
+      "default": {
+        "$type": "color",
+        "$value": "{ref.neutral.200}",
+        "$description": "Decorative separators. Use color.border.strong for boundaries that identify controls.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{ref.neutral.500}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "canvas": {
+      "$type": "color",
+      "$value": "{ref.neutral.50}",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "semantic",
+          "origin": "preset"
+        }
+      }
+    },
+    "danger": {
+      "foreground": {
+        "$type": "color",
+        "$value": "{ref.danger.600}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "generated",
+            "provenance": "danger step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover and color.danger.surface in every product (light: lightest passing; dark: darkest passing)"
+          }
+        }
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{ref.danger.50}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "focus": {
+      "ring": {
+        "$type": "color",
+        "$value": "{ref.brand.600}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "generated",
+            "provenance": "brand step nearest the page tone with at least 3:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover and color.surface.specimen in every product (light: lightest passing; dark: darkest passing)"
+          }
+        }
+      }
+    },
+    "link": {
+      "$type": "color",
+      "$value": "{ref.brand.700}",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "semantic",
+          "origin": "generated",
+          "provenance": "brand step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover in every product (light: lightest passing; dark: darkest passing)"
+        }
+      }
+    },
+    "selection": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.action.default}",
+        "$description": "Selected controls; selection is also shown by a check or marker.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.text.on-action}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "success": {
+      "foreground": {
+        "$type": "color",
+        "$value": "{ref.success.700}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "generated",
+            "provenance": "success step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.success.surface in every product (light: lightest passing; dark: darkest passing)"
+          }
+        }
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{ref.success.50}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "surface": {
+      "default": {
+        "$type": "color",
+        "$value": "{ref.neutral.0}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "hover": {
+        "$type": "color",
+        "$value": "{ref.neutral.100}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "{ref.neutral.0}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "specimen": {
+        "$type": "color",
+        "$value": "{ref.brand.50}",
+        "$description": "Specimen stages only (documentation previews); never a selected state.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "sunken": {
+        "$type": "color",
+        "$value": "{ref.neutral.50}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "text": {
+      "disabled": {
+        "$type": "color",
+        "$value": "{ref.neutral.400}",
+        "$description": "Disabled text is exempt from contrast minimums (WCAG 1.4.3) but must still be distinguishable.",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "on-action": {
+        "$type": "color",
+        "$value": "{ref.neutral.0}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "primary": {
+        "$type": "color",
+        "$value": "{ref.neutral.900}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{ref.neutral.700}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "warning": {
+      "foreground": {
+        "$type": "color",
+        "$value": "{ref.warning.600}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "generated",
+            "provenance": "warning step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.warning.surface in every product (light: lightest passing; dark: darkest passing)"
+          }
+        }
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "{ref.warning.50}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    }
+  },
+  "control": {
+    "gap": {
+      "$type": "dimension",
+      "$value": "{space.xs}",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "semantic",
+          "origin": "preset"
+        }
+      }
+    },
+    "height": {
+      "lg": {
+        "$type": "dimension",
+        "$value": {
+          "value": 3,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset",
+            "density": true,
+            "minimum": "target.min"
+          }
+        }
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2.5,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset",
+            "density": true,
+            "minimum": "target.min"
+          }
+        }
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset",
+            "density": true,
+            "minimum": "target.min"
+          }
+        }
+      }
+    },
+    "padding": {
+      "inline": {
+        "lg": {
+          "$type": "dimension",
+          "$value": "{space.md}",
+          "$extensions": {
+            "dev.oddkin": {
+              "category": "semantic",
+              "origin": "preset"
+            }
+          }
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "{space.sm}",
+          "$extensions": {
+            "dev.oddkin": {
+              "category": "semantic",
+              "origin": "preset"
+            }
+          }
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "{space.xs}",
+          "$extensions": {
+            "dev.oddkin": {
+              "category": "semantic",
+              "origin": "preset"
+            }
+          }
+        }
+      }
+    },
+    "radius": {
+      "$type": "dimension",
+      "$value": "{radius.md}",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "semantic",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "elevation": {
+    "lg": {
+      "$type": "shadow",
+      "$value": [
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0.08
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 4,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 8,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0.14
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 12,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 32,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        }
+      ],
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "md": {
+      "$type": "shadow",
+      "$value": [
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0.12
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 1,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 2,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0.08
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 4,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 12,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        }
+      ],
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "sm": {
+      "$type": "shadow",
+      "$value": [
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0.08
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 1,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 2,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0.08
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 1,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 3,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        }
+      ],
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "xl": {
+      "$type": "shadow",
+      "$value": [
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0.1
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 8,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 16,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        {
+          "color": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0.2
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 24,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 64,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        }
+      ],
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "focus": {
+    "offset": {
+      "$type": "dimension",
+      "$value": {
+        "value": 2,
+        "unit": "px"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "width": {
+      "$type": "dimension",
+      "$value": {
+        "value": 2,
+        "unit": "px"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "font": {
+    "family": {
+      "display": {
+        "$type": "fontFamily",
+        "$value": "{font.family.sans}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": [
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Consolas",
+          "monospace"
+        ],
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "sans": {
+        "$type": "fontFamily",
+        "$value": [
+          "system-ui",
+          "-apple-system",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif"
+        ],
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "size": {
+      "2xl": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.5,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "3xl": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.875,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "4xl": {
+        "$type": "dimension",
+        "$value": {
+          "value": 2.25,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.125,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": {
+          "value": 0.875,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.25,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "xs": {
+        "$type": "dimension",
+        "$value": {
+          "value": 0.75,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "weight": {
+      "bold": {
+        "$type": "fontWeight",
+        "$value": 700,
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": 500,
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "regular": {
+        "$type": "fontWeight",
+        "$value": 400,
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "semibold": {
+        "$type": "fontWeight",
+        "$value": 600,
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      }
+    }
+  },
+  "icon": {
+    "size": {
+      "lg": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.5,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1.25,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": {
+          "value": 1,
+          "unit": "rem"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      }
+    }
+  },
+  "layout": {
+    "gap": {
+      "$type": "dimension",
+      "$value": "{space.md}",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "layout",
+          "origin": "preset"
+        }
+      }
+    },
+    "inset": {
+      "$type": "dimension",
+      "$value": "{space.lg}",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "layout",
+          "origin": "preset"
+        }
+      }
+    },
+    "item-min": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "layout",
+          "origin": "preset"
+        }
+      }
+    },
+    "main-min": {
+      "$type": "dimension",
+      "$value": {
+        "value": 20,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "layout",
+          "origin": "preset"
+        }
+      }
+    },
+    "sidebar-width": {
+      "$type": "dimension",
+      "$value": {
+        "value": 16,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "layout",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "letter-spacing": {
+    "normal": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0,
+        "unit": "px"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "line-height": {
+    "none": {
+      "$type": "number",
+      "$value": 1,
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "normal": {
+      "$type": "number",
+      "$value": 1.5,
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "relaxed": {
+      "$type": "number",
+      "$value": 1.625,
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "snug": {
+      "$type": "number",
+      "$value": 1.375,
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "tight": {
+      "$type": "number",
+      "$value": 1.25,
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "motion": {
+    "duration": {
+      "fast": {
+        "$type": "duration",
+        "$value": {
+          "value": 100,
+          "unit": "ms"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset",
+            "reducedMotion": "0ms",
+            "css": "100ms"
+          }
+        }
+      },
+      "normal": {
+        "$type": "duration",
+        "$value": {
+          "value": 200,
+          "unit": "ms"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset",
+            "reducedMotion": "0ms",
+            "css": "200ms"
+          }
+        }
+      },
+      "slow": {
+        "$type": "duration",
+        "$value": {
+          "value": 300,
+          "unit": "ms"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset",
+            "reducedMotion": "0ms",
+            "css": "300ms"
+          }
+        }
+      },
+      "slower": {
+        "$type": "duration",
+        "$value": {
+          "value": 500,
+          "unit": "ms"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset",
+            "reducedMotion": "0ms",
+            "css": "500ms"
+          }
+        }
+      }
+    },
+    "easing": {
+      "enter": {
+        "$type": "cubicBezier",
+        "$value": [
+          0,
+          0,
+          0.2,
+          1
+        ],
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "exit": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.4,
+          0,
+          1,
+          1
+        ],
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "linear": {
+        "$type": "cubicBezier",
+        "$value": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      },
+      "standard": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.4,
+          0,
+          0.2,
+          1
+        ],
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "foundation",
+            "origin": "preset"
+          }
+        }
+      }
+    }
+  },
+  "navigation": {
+    "indent": {
+      "$type": "dimension",
+      "$value": "{space.md}",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "component",
+          "origin": "preset"
+        }
+      }
+    },
+    "item": {
+      "gap": {
+        "$type": "dimension",
+        "$value": "{space.xs}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "component",
+            "origin": "preset"
+          }
+        }
+      },
+      "min-height": {
+        "$type": "dimension",
+        "$value": "{control.height.md}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "component",
+            "origin": "preset",
+            "minimum": "target.min"
+          }
+        }
+      },
+      "padding": {
+        "block": {
+          "$type": "dimension",
+          "$value": "{space.xs}",
+          "$extensions": {
+            "dev.oddkin": {
+              "category": "component",
+              "origin": "preset"
+            }
+          }
+        },
+        "inline": {
+          "$type": "dimension",
+          "$value": "{space.sm}",
+          "$extensions": {
+            "dev.oddkin": {
+              "category": "component",
+              "origin": "preset"
+            }
+          }
+        }
+      }
+    }
+  },
+  "radius": {
+    "2xl": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1.5,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "full": {
+      "$type": "dimension",
+      "$value": {
+        "value": 9999,
+        "unit": "px"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.75,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.5,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "none": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0,
+        "unit": "px"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.25,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "xs": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.125,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "ref": {
+    "brand": {
+      "50": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.952941,
+            0.956863,
+            1
+          ],
+          "hex": "#f3f4ff"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.97 0.0278 280.6269), chroma reduced to oklch(0.97 0.0144 280.6269) to fit sRGB"
+          }
+        }
+      },
+      "100": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.905882,
+            0.913725,
+            1
+          ],
+          "hex": "#e7e9ff"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.94 0.0509 280.6269), chroma reduced to oklch(0.94 0.0291 280.6269) to fit sRGB"
+          }
+        }
+      },
+      "200": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.811765,
+            0.831373,
+            1
+          ],
+          "hex": "#cfd4ff"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.88 0.0925 280.6269), chroma reduced to oklch(0.88 0.0597 280.6269) to fit sRGB"
+          }
+        }
+      },
+      "300": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.694118,
+            0.713725,
+            1
+          ],
+          "hex": "#b1b6ff"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.8 0.1504 280.6269), chroma reduced to oklch(0.8 0.1028 280.6269) to fit sRGB"
+          }
+        }
+      },
+      "400": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.568627,
+            0.580392,
+            1
+          ],
+          "hex": "#9194ff"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.71 0.1966 280.6269), chroma reduced to oklch(0.71 0.1546 280.6269) to fit sRGB"
+          }
+        }
+      },
+      "500": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.458824,
+            0.427451,
+            1
+          ],
+          "hex": "#756dff"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.62 0.2313 280.6269), chroma reduced to oklch(0.62 0.21 280.6269) to fit sRGB"
+          }
+        }
+      },
+      "600": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.372549,
+            0.298039,
+            0.933333
+          ],
+          "hex": "#5f4cee"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.54 0.2313 280.6269)"
+          }
+        }
+      },
+      "700": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.298039,
+            0.219608,
+            0.776471
+          ],
+          "hex": "#4c38c6"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.46 0.2082 280.6269)"
+          }
+        }
+      },
+      "800": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.223529,
+            0.160784,
+            0.603922
+          ],
+          "hex": "#39299a"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.38 0.1735 280.6269)"
+          }
+        }
+      },
+      "900": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.152941,
+            0.101961,
+            0.439216
+          ],
+          "hex": "#271a70"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.3 0.1388 280.6269)"
+          }
+        }
+      },
+      "950": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.086275,
+            0.047059,
+            0.282353
+          ],
+          "hex": "#160c48"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.22 0.1041 280.6269)"
+          }
+        }
+      }
+    },
+    "danger": {
+      "50": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            1,
+            0.94902,
+            0.941176
+          ],
+          "hex": "#fff2f0"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.97 0.024 27), chroma reduced to oklch(0.97 0.0147 27) to fit sRGB"
+          }
+        }
+      },
+      "100": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            1,
+            0.894118,
+            0.878431
+          ],
+          "hex": "#ffe4e0"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.94 0.044 27), chroma reduced to oklch(0.94 0.0301 27) to fit sRGB"
+          }
+        }
+      },
+      "200": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            1,
+            0.784314,
+            0.756863
+          ],
+          "hex": "#ffc8c1"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.88 0.08 27), chroma reduced to oklch(0.88 0.0636 27) to fit sRGB"
+          }
+        }
+      },
+      "300": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            1,
+            0.631373,
+            0.588235
+          ],
+          "hex": "#ffa196"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.8 0.13 27), chroma reduced to oklch(0.8 0.1145 27) to fit sRGB"
+          }
+        }
+      },
+      "400": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.976471,
+            0.443137,
+            0.396078
+          ],
+          "hex": "#f97165"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.71 0.17 27)"
+          }
+        }
+      },
+      "500": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.901961,
+            0.266667,
+            0.239216
+          ],
+          "hex": "#e6443d"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.62 0.2 27)"
+          }
+        }
+      },
+      "600": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.788235,
+            0.137255,
+            0.141176
+          ],
+          "hex": "#c92324"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.54 0.2 27)"
+          }
+        }
+      },
+      "700": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.647059,
+            0.054902,
+            0.082353
+          ],
+          "hex": "#a50e15"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.46 0.18 27)"
+          }
+        }
+      },
+      "800": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.501961,
+            0.027451,
+            0.05098
+          ],
+          "hex": "#80070d"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.38 0.15 27)"
+          }
+        }
+      },
+      "900": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.360784,
+            0.007843,
+            0.023529
+          ],
+          "hex": "#5c0206"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.3 0.12 27)"
+          }
+        }
+      },
+      "950": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.227451,
+            0,
+            0.007843
+          ],
+          "hex": "#3a0002"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.22 0.09 27), chroma reduced to oklch(0.22 0.0897 27) to fit sRGB"
+          }
+        }
+      }
+    },
+    "neutral": {
+      "0": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            1,
+            1,
+            1
+          ],
+          "hex": "#ffffff"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "preset"
+          }
+        }
+      },
+      "50": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.960784,
+            0.960784,
+            0.964706
+          ],
+          "hex": "#f5f5f6"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.97 0.0018 280.6269)"
+          }
+        }
+      },
+      "100": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.921569,
+            0.921569,
+            0.929412
+          ],
+          "hex": "#ebebed"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.94 0.0033 280.6269)"
+          }
+        }
+      },
+      "200": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.839216,
+            0.843137,
+            0.858824
+          ],
+          "hex": "#d6d7db"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.88 0.006 280.6269)"
+          }
+        }
+      },
+      "300": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.737255,
+            0.741176,
+            0.768627
+          ],
+          "hex": "#bcbdc4"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.8 0.0098 280.6269)"
+          }
+        }
+      },
+      "400": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.627451,
+            0.631373,
+            0.666667
+          ],
+          "hex": "#a0a1aa"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.71 0.0127 280.6269)"
+          }
+        }
+      },
+      "500": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.517647,
+            0.521569,
+            0.560784
+          ],
+          "hex": "#84858f"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.62 0.015 280.6269)"
+          }
+        }
+      },
+      "600": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.427451,
+            0.431373,
+            0.466667
+          ],
+          "hex": "#6d6e77"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.54 0.015 280.6269)"
+          }
+        }
+      },
+      "700": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.337255,
+            0.341176,
+            0.376471
+          ],
+          "hex": "#565760"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.46 0.0135 280.6269)"
+          }
+        }
+      },
+      "800": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.254902,
+            0.258824,
+            0.282353
+          ],
+          "hex": "#414248"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.38 0.0113 280.6269)"
+          }
+        }
+      },
+      "900": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.176471,
+            0.176471,
+            0.196078
+          ],
+          "hex": "#2d2d32"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.3 0.009 280.6269)"
+          }
+        }
+      },
+      "950": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.101961,
+            0.101961,
+            0.117647
+          ],
+          "hex": "#1a1a1e"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.22 0.0068 280.6269)"
+          }
+        }
+      },
+      "1000": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "success": {
+      "50": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.929412,
+            0.976471,
+            0.937255
+          ],
+          "hex": "#edf9ef"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.97 0.018 150)"
+          }
+        }
+      },
+      "100": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.862745,
+            0.94902,
+            0.878431
+          ],
+          "hex": "#dcf2e0"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.94 0.033 150)"
+          }
+        }
+      },
+      "200": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.737255,
+            0.890196,
+            0.764706
+          ],
+          "hex": "#bce3c3"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.88 0.06 150)"
+          }
+        }
+      },
+      "300": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.564706,
+            0.815686,
+            0.615686
+          ],
+          "hex": "#90d09d"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.8 0.0975 150)"
+          }
+        }
+      },
+      "400": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.380392,
+            0.721569,
+            0.462745
+          ],
+          "hex": "#61b876"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.71 0.1275 150)"
+          }
+        }
+      },
+      "500": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.180392,
+            0.619608,
+            0.321569
+          ],
+          "hex": "#2e9e52"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.62 0.15 150)"
+          }
+        }
+      },
+      "600": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.521569,
+            0.235294
+          ],
+          "hex": "#00853c"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.54 0.15 150), chroma reduced to oklch(0.54 0.1487 150) to fit sRGB"
+          }
+        }
+      },
+      "700": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.419608,
+            0.180392
+          ],
+          "hex": "#006b2e"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.46 0.135 150), chroma reduced to oklch(0.46 0.1267 150) to fit sRGB"
+          }
+        }
+      },
+      "800": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.317647,
+            0.129412
+          ],
+          "hex": "#005121"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.38 0.1125 150), chroma reduced to oklch(0.38 0.1047 150) to fit sRGB"
+          }
+        }
+      },
+      "900": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.223529,
+            0.082353
+          ],
+          "hex": "#003915"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.3 0.09 150), chroma reduced to oklch(0.3 0.0826 150) to fit sRGB"
+          }
+        }
+      },
+      "950": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0,
+            0.133333,
+            0.039216
+          ],
+          "hex": "#00220a"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.22 0.0675 150), chroma reduced to oklch(0.22 0.0606 150) to fit sRGB"
+          }
+        }
+      }
+    },
+    "warning": {
+      "50": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.988235,
+            0.956863,
+            0.909804
+          ],
+          "hex": "#fcf4e8"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.97 0.018 75)"
+          }
+        }
+      },
+      "100": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.976471,
+            0.913725,
+            0.827451
+          ],
+          "hex": "#f9e9d3"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.94 0.033 75)"
+          }
+        }
+      },
+      "200": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.937255,
+            0.827451,
+            0.67451
+          ],
+          "hex": "#efd3ac"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.88 0.06 75)"
+          }
+        }
+      },
+      "300": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.890196,
+            0.709804,
+            0.458824
+          ],
+          "hex": "#e3b575"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.8 0.0975 75)"
+          }
+        }
+      },
+      "400": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.815686,
+            0.584314,
+            0.219608
+          ],
+          "hex": "#d09538"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.71 0.1275 75)"
+          }
+        }
+      },
+      "500": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.701961,
+            0.47451,
+            0
+          ],
+          "hex": "#b37900"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.62 0.15 75), chroma reduced to oklch(0.62 0.1308 75) to fit sRGB"
+          }
+        }
+      },
+      "600": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.584314,
+            0.388235,
+            0
+          ],
+          "hex": "#956300"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.54 0.15 75), chroma reduced to oklch(0.54 0.1139 75) to fit sRGB"
+          }
+        }
+      },
+      "700": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.466667,
+            0.309804,
+            0
+          ],
+          "hex": "#774f00"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.46 0.135 75), chroma reduced to oklch(0.46 0.097 75) to fit sRGB"
+          }
+        }
+      },
+      "800": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.356863,
+            0.231373,
+            0
+          ],
+          "hex": "#5b3b00"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.38 0.1125 75), chroma reduced to oklch(0.38 0.0802 75) to fit sRGB"
+          }
+        }
+      },
+      "900": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.25098,
+            0.156863,
+            0
+          ],
+          "hex": "#402800"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.3 0.09 75), chroma reduced to oklch(0.3 0.0633 75) to fit sRGB"
+          }
+        }
+      },
+      "950": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.152941,
+            0.090196,
+            0
+          ],
+          "hex": "#271700"
+        },
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "reference",
+            "origin": "generated",
+            "provenance": "oklch(0.22 0.0675 75), chroma reduced to oklch(0.22 0.0464 75) to fit sRGB"
+          }
+        }
+      }
+    }
+  },
+  "space": {
+    "2xl": {
+      "$type": "dimension",
+      "$value": {
+        "value": 2.5313,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "generated",
+          "provenance": "0.75rem × 1.5^3",
+          "density": true
+        }
+      }
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1.125,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "generated",
+          "provenance": "0.75rem × 1.5^1",
+          "density": true
+        }
+      }
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.75,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "generated",
+          "provenance": "0.75rem × 1.5^0",
+          "density": true
+        }
+      }
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.5,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "generated",
+          "provenance": "0.75rem × 1.5^-1",
+          "density": true
+        }
+      }
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1.6875,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "generated",
+          "provenance": "0.75rem × 1.5^2",
+          "density": true
+        }
+      }
+    },
+    "xs": {
+      "$type": "dimension",
+      "$value": {
+        "value": 0.3333,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "generated",
+          "provenance": "0.75rem × 1.5^-2",
+          "density": true
+        }
+      }
+    }
+  },
+  "target": {
+    "min": {
+      "$type": "dimension",
+      "$value": {
+        "value": 1.5,
+        "unit": "rem"
+      },
+      "$description": "Minimum interactive target size (WCAG 2.2 SC 2.5.8, 24 CSS px at the default root size).",
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "type": {
+    "body": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "{font.family.sans}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{letter-spacing.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "line-height": {
+        "$type": "number",
+        "$value": "{line-height.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "size": {
+        "$type": "dimension",
+        "$value": "{font.size.md}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.regular}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "code": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "{font.family.mono}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{letter-spacing.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "line-height": {
+        "$type": "number",
+        "$value": "{line-height.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "size": {
+        "$type": "dimension",
+        "$value": "{font.size.sm}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.regular}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "display": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "{font.family.display}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "line-height": {
+        "$type": "number",
+        "$value": "{line-height.tight}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "size": {
+        "$type": "dimension",
+        "$value": "{font.size.4xl}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.semibold}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "eyebrow": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "{font.family.sans}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "line-height": {
+        "$type": "number",
+        "$value": "{line-height.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "size": {
+        "$type": "dimension",
+        "$value": "{font.size.xs}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.semibold}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "section": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "{font.family.display}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{letter-spacing.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "line-height": {
+        "$type": "number",
+        "$value": "{line-height.tight}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "size": {
+        "$type": "dimension",
+        "$value": "{font.size.2xl}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.semibold}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "small": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "{font.family.sans}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{letter-spacing.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "line-height": {
+        "$type": "number",
+        "$value": "{line-height.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "size": {
+        "$type": "dimension",
+        "$value": "{font.size.xs}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.regular}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "title": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "{font.family.display}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{letter-spacing.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "line-height": {
+        "$type": "number",
+        "$value": "{line-height.snug}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "size": {
+        "$type": "dimension",
+        "$value": "{font.size.xl}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.semibold}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    },
+    "ui": {
+      "family": {
+        "$type": "fontFamily",
+        "$value": "{font.family.sans}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "letter-spacing": {
+        "$type": "dimension",
+        "$value": "{letter-spacing.normal}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "line-height": {
+        "$type": "number",
+        "$value": "{line-height.snug}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "size": {
+        "$type": "dimension",
+        "$value": "{font.size.sm}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": "{font.weight.medium}",
+        "$extensions": {
+          "dev.oddkin": {
+            "category": "semantic",
+            "origin": "preset"
+          }
+        }
+      }
+    }
+  },
+  "z-index": {
+    "base": {
+      "$type": "number",
+      "$value": 0,
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "overlay": {
+      "$type": "number",
+      "$value": 200,
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "raised": {
+      "$type": "number",
+      "$value": 1,
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    },
+    "sticky": {
+      "$type": "number",
+      "$value": 100,
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "foundation",
+          "origin": "preset"
+        }
+      }
+    }
+  },
+  "$extensions": {
+    "dev.oddkin": {
+      "format": "2025.10",
+      "theme": "acme",
+      "context": {
+        "mode": "light"
+      },
+      "conditions": {
+        "motion.reduced": "@media (prefers-reduced-motion: reduce)",
+        "navigation.expanded": "@container shell (min-inline-size: 48rem)",
+        "page.medium": "@media (min-width: 40rem)",
+        "page.wide": "@media (min-width: 64rem)"
+      },
+      "unsupported": {
+        "elevation.none": {
+          "type": "shadow",
+          "value": "none",
+          "reason": "\"none\" has no 2025.10 shadow value"
+        },
+        "letter-spacing.tight": {
+          "type": "dimension",
+          "value": "-0.025em",
+          "reason": "2025.10 dimensions allow only px and rem; em depends on the font size"
+        },
+        "letter-spacing.wide": {
+          "type": "dimension",
+          "value": "0.05em",
+          "reason": "2025.10 dimensions allow only px and rem; em depends on the font size"
+        },
+        "type.display.letter-spacing": {
+          "type": "dimension",
+          "value": "{letter-spacing.tight}",
+          "reason": "aliases letter-spacing.tight, which is unsupported"
+        },
+        "type.eyebrow.letter-spacing": {
+          "type": "dimension",
+          "value": "{letter-spacing.wide}",
+          "reason": "aliases letter-spacing.wide, which is unsupported"
+        }
+      }
+    }
+  }
+}

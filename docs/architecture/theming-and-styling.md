@@ -217,11 +217,41 @@ Unlayered application CSS therefore overrides generated values whatever the styl
 | Sass literals | `scss/values` | `oddkin.value('space.md')` → `0.75rem`; compiled in, does not follow runtime themes. Use for arithmetic, colour functions, query thresholds |
 | Conditions | `conditions`, `scss/refs` (`$oddkin-conditions`, `oddkin.when()`) | Literal query strings; DOM-free |
 | Profiles | Included in theme CSS as `[data-odd-profile~="…"]` rules; profile data in `inspect` | Role overrides + alias closure |
-| DTCG JSON | `json/<theme>.tokens.json` | Format Module 2025.10; conditions/profiles as documented `$extensions` |
+| DTCG JSON | `emitDtcg(theme, context)` in `generate`; `oddkin-tokens build --format dtcg` writes `<theme>.<mode>.tokens.json` | Format Module 2025.10, one complete document per context (§6.1); not a Resolver document |
 | Inspection metadata | `json/<theme>.inspect.json`, `inspect` | Config, formulas, origins, aliases, re-declaration sets, resolved values |
 | Validation report | CLI / `generate` | JSON + readable text |
 
 Breakpoints: media and container query conditions cannot use `var()`. Thresholds are defined as named conditions (§11.2) and emitted as literal query strings (`conditions`, Sass `$oddkin-conditions` / `oddkin.when()`), and optionally as `@custom-media` definitions for tooling that supports them.
+
+### 6.1 DTCG 2025.10 output (implemented, plan item 245)
+
+`emitDtcg(theme, { mode?, product?, density?, profiles? })` returns `{ document, text, mappings }`: one complete [Format Module 2025.10](https://www.designtokens.org/tr/2025.10/format/) document for one resolution context (default: the theme's first mode), its canonical bytes (`JSON.stringify(…, null, 2)` + newline, deterministic), and one mapping entry per token (`lossless`, `lossy` with a reason, or `unsupported` with a reason). It is pure and Worker-safe, and produces the same bytes in Node, Chromium, Firefox, WebKit, and a module Worker. `oddkin-tokens build --format dtcg` (included in the default formats) writes one `<theme>.<mode>.tokens.json` per mode.
+
+**Structure.** Token names split on `.` into groups (`color.text.primary` → `color` › `text` › `primary`); every token carries an explicit `$type`; descriptions become `$description`. A token whose name is also a group prefix is placed at `$root` and referenced as `{name.$root}` (§6.2 of the format). Aliases stay curly-brace references (`{color.action.default}`), so the document keeps Oddkin's reference structure; nothing uses `$ref` or `$extends`.
+
+**Typed values.**
+
+| Oddkin type | 2025.10 value | Mapping |
+| --- | --- | --- |
+| `color` `#rrggbb` | `{ colorSpace: 'srgb', components: [r, g, b] (6 decimals), hex }` | lossless (`hex` exact) |
+| `color` `oklch(L C H)` (overrides) | `{ colorSpace: 'oklch', components: [L, C, H] }` | lossless |
+| `dimension` `rem` / `px` / `0` | `{ value, unit }`; `0` → `{ value: 0, unit: 'px' }` | lossless |
+| `dimension` in `em` (`letter-spacing.tight/wide`) | — | **unsupported**: 2025.10 dimensions allow only `px` and `rem`, and `em` depends on the font size |
+| `number`, `fontWeight` | JSON number | lossless |
+| `fontFamily` stack | array of names, quotes removed | lossless |
+| `duration` | `{ value, unit: 'ms' \| 's' }` | lossless; **lossy** where a reduced-motion value exists (it is only in `$extensions`) |
+| `cubicBezier` | `[x1, y1, x2, y2]` | lossless |
+| `shadow` layers | shadow object, or an array for several layers; missing blur/spread are `0px`; `rgb(… / a)` → srgb + `alpha` | lossless; `none` is **unsupported** |
+| expression over references (profile `calc({space.xs} / 2)`) | the flattened dimension in this context | **lossy**: the expression is kept in `$extensions` |
+| alias to an unsupported token | — | **unsupported** (never a dangling reference) |
+
+Unsupported tokens are omitted and listed with their type, original value, and reason under the root `$extensions["dev.oddkin"].unsupported`, so nothing is dropped silently. The default theme maps 201 tokens losslessly, 4 lossy (`motion.duration.*`), and 5 unsupported (`elevation.none`, `letter-spacing.tight/wide`, and the two `type.*.letter-spacing` aliases).
+
+**Oddkin extension (`$extensions["dev.oddkin"]`).** Per token: `category`, `origin`, and when present `provenance`, `density`, `minimum` (target-size floor), `reducedMotion`, and `css` (the original expression of a lossy value). On the root group: `format` (`"2025.10"`), `theme`, `context` (`mode` and any `product`, `density`, `profiles`), `conditions` (name → literal at-rule prelude), and `unsupported`. Readers that do not understand the extension still get valid tokens; the format requires them to preserve it.
+
+**Contexts, not modes.** 2025.10 has no modes or theming axes, so each mode, product, density, and profile combination is a separate complete document with that context's values. Composition across contexts (sets, modifiers, `resolutionOrder`) is the DTCG **Resolver**'s concern: no Resolver document is emitted and **no Resolver support is claimed** (plan item 246, M9). Import of DTCG documents is out of scope.
+
+*(Verified in `packages/tokens/test/dtcg.test.ts`: `@terrazzo/parser` 2.10.0, an independent implementation, reads the default theme in both modes and the `products-density` theme with a product, a density, and two profiles, with dimensions restricted to `px`/`rem` as 2025.10 requires; every token it resolves, aliases included, equals Oddkin's `resolveToken` in that context; plus name rules, determinism, `$root`, and the exact unsupported and lossy lists. Committed fixtures `*.tokens.json.txt` are compared in Node, three browser engines, and a Worker; 10 of 10 emitter mutants killed.)*
 
 ## 7. Styling contract
 

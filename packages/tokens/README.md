@@ -31,10 +31,10 @@ One brand colour produces a complete theme: OKLCH reference ramps (brand, neutra
 ```sh
 oddkin-tokens init                                   # writes oddkin.theme.json
 oddkin-tokens check oddkin.theme.json [--strict] [--json]
-oddkin-tokens build oddkin.theme.json --out tokens [--format css,ts,json] [--css-layer <name|none>]
+oddkin-tokens build oddkin.theme.json --out tokens [--format css,ts,json,dtcg] [--css-layer <name|none>]
 ```
 
-`build` writes `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.conditions.ts` (typed for that theme's token names), and `<name>.inspect.json`. Exit codes: 0 success, 1 diagnostics, 2 usage. Configs may be JSON, ESM JS, or `.ts` via Node's type stripping (erasable syntax only; type-check separately). JS and TS configs are executed: treat them as trusted code. A loaded config must be JSON data: functions, class instances, non-finite numbers, and cycles are `config.notJson` errors with their paths, so the CLI generates from the same model Theme Studio edits.
+`build` writes `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.conditions.ts` (typed for that theme's token names), `<name>.inspect.json`, and one DTCG Format Module 2025.10 document per mode, `<name>.<mode>.tokens.json` (`emitDtcg` in `./generate`; lossless, lossy, and unsupported mappings are listed in theming-and-styling.md §6.1; no DTCG Resolver support is claimed). Exit codes: 0 success, 1 diagnostics, 2 usage. Configs may be JSON, ESM JS, or `.ts` via Node's type stripping (erasable syntax only; type-check separately). JS and TS configs are executed: treat them as trusted code. A loaded config must be JSON data: functions, class instances, non-finite numbers, and cycles are `config.notJson` errors with their paths, so the CLI generates from the same model Theme Studio edits.
 
 ## In a browser or Worker
 
@@ -65,4 +65,4 @@ The generated ramp step nearest a brand colour is used for its roles; the brand 
 
 Profiles (`data-odd-profile="navigation.compact"`) override layout and component roles with their alias closure and keep applying inside nested scopes; where two profiles set the same role on one element, the later one in the configuration wins. Conditions compile to literal queries; changing a threshold means regenerating.
 
-Design and limits: [theming-and-styling.md](../../docs/architecture/theming-and-styling.md). Not yet: Sass and DTCG outputs.
+Design and limits: [theming-and-styling.md](../../docs/architecture/theming-and-styling.md). Not yet: Sass outputs, DTCG Resolver documents, and DTCG import.

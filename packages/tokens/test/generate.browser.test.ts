@@ -1,5 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { generate, resolveToken, type ResolveContext, type ResolvedTheme } from '../src/index.js';
+import {
+  emitDtcg,
+  generate,
+  resolveToken,
+  type ResolveContext,
+  type ResolvedTheme,
+} from '../src/index.js';
 import { cases } from './fixtures/cases.js';
 
 describe('browser generation', () => {
@@ -17,6 +23,10 @@ describe('browser generation', () => {
         await fetch(new URL(`./fixtures/${name}.css.txt`, import.meta.url))
       ).text();
       expect(outputs[name], name).toBe(expected);
+      // DTCG output in the Worker equals the Node-generated fixture.
+      expect(outputs[`${name}.dtcg`], `${name}.dtcg`).toBe(
+        await (await fetch(new URL(`./fixtures/${name}.tokens.json.txt`, import.meta.url))).text(),
+      );
     }
   });
   for (const [name, config] of Object.entries(cases)) {
@@ -25,6 +35,10 @@ describe('browser generation', () => {
         await fetch(new URL(`./fixtures/${name}.css.txt`, import.meta.url))
       ).text();
       expect(generate(config).css).toBe(expected);
+      const dtcg = await (
+        await fetch(new URL(`./fixtures/${name}.tokens.json.txt`, import.meta.url))
+      ).text();
+      expect(emitDtcg(generate(config).theme as ResolvedTheme).text).toBe(dtcg);
     });
   }
 });
