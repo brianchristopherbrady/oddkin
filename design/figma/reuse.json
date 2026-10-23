@@ -1731,20 +1731,20 @@
     {
       "id": "tone",
       "kind": "style",
-      "home": "@oddkin/components/styles (toneStyles, proposed)",
+      "home": "@oddkin/components/styles (TONES, toneStyles, toneGlyph)",
       "decision": "Tone colours (neutral, info, success, warning, danger) with one glyph per tone.",
-      "status": "proposed",
-      "code": ["AI .status (aiElementStyles)"],
+      "status": "existing",
+      "code": ["odd-badge", "odd-alert"],
       "figma": ["badge", "alert", "toast", "alertDialog", "fileUpload", "combobox"],
-      "note": "Extracted when odd-badge lands (second consumer); info needs a token role (Agent 2)."
+      "note": "AI .status (aiElementStyles) still draws its own tone colours; it moves onto toneStyles later."
     },
     {
       "id": "spinner",
       "kind": "style",
-      "home": "@oddkin/components/styles (spinnerStyles, proposed)",
+      "home": "@oddkin/components/styles (spinnerStyles)",
       "decision": "Indeterminate busy indicator, reduced-motion behaviour.",
-      "status": "proposed",
-      "code": ["odd-button spinner part"],
+      "status": "existing",
+      "code": ["odd-button", "odd-spinner"],
       "figma": ["button", "spinner", "listbox", "multiselect", "Tree", "CommandPalette", "combobox"]
     },
     {
@@ -1759,9 +1759,10 @@
     {
       "id": "glyphs",
       "kind": "style",
-      "home": "@oddkin/components/styles (glyphs, proposed)",
+      "home": "@oddkin/components/styles (glyphStyles and glyph templates)",
       "decision": "Built-in affordance glyphs: chevrons, check, minus, close, search, more, arrows, external, eye, lock, upload, file, user.",
-      "status": "proposed (assets wait for the owner)",
+      "status": "existing (drawn by Oddkin; Figma's icon assets do not ship, component-contracts.md §2.7)",
+      "code": ["odd-badge", "odd-alert", "odd-chip"],
       "figma": ["34 icons on page 158:22"]
     },
     {
@@ -1794,7 +1795,8 @@
       "kind": "style",
       "home": "@oddkin/components/chip styles",
       "decision": "Chip look and remove affordance.",
-      "status": "proposed",
+      "status": "existing",
+      "code": ["odd-chip"],
       "figma": ["chip", "multiselect and its Value families"]
     },
     {
@@ -1802,7 +1804,8 @@
       "kind": "style",
       "home": "@oddkin/components/avatar styles",
       "decision": "Avatar look and stacking.",
-      "status": "proposed",
+      "status": "existing",
+      "code": ["odd-avatar", ".odd-avatar-group recipe"],
       "figma": ["avatar", "AvatarItem", "multiselect/Value/avatars"]
     },
     {
