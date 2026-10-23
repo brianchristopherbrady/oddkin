@@ -1,0 +1,340 @@
+# Component contracts (M10 catalog)
+
+Status: **decided (2026-10-22)**. The owner asked for every component in the Figma file to be built, with Figma as a
+reference (not a source of code or assets) and naming chosen by a standard. This document is the API contract for
+each family on page 158:22 except the data grid (deferred by the owner). Names follow
+[ADR 0045](./decisions/0045-api-vocabulary.md); where a concept is new, the name is the HTML one, then the WAI-ARIA
+Authoring Practices one, then the most common one across established libraries, and it joins the vocabulary
+(`scripts/vocabulary.mjs`) in the commit that ships it. A contract changes only by editing this document in the same
+commit as the element.
+
+The Figma mapping, the reuse classes, and the shared style homes stay in [component-catalog.md](./component-catalog.md)
+(§3, §6); the composite-widget rule is [css-architecture.md](./css-architecture.md) §12.1; overlays follow
+[ADR 0044](./decisions/0044-overlay-positioning-and-top-layer.md); composites follow
+[ADR 0043](./decisions/0043-composite-dependency-mechanism.md).
+
+## 1. Where each Figma family lands
+
+| Kind | Figma families → Oddkin |
+| --- | --- |
+| Existing element | `button`, `button/sm`, `button/lg`, `iconButton` → `odd-button` (`size`, `label`); `toggleButton` → `odd-button toggle`; `input`, `search`, `number`, `dateTime` → `odd-input` (`type`); `card` → `odd-card`; `SideNavigation`, `NavigationItem` → `odd-side-nav` |
+| New element (`@oddkin/components`) | `badge` → `odd-badge`; `icon` → `odd-icon`; `spinner` → `odd-spinner`; `progress` → `odd-progress`; `skeleton` → `odd-skeleton`; `avatar` → `odd-avatar`; `chip` → `odd-chip`; `alert` → `odd-alert`; `emptyState` → `odd-empty-state`; `textarea` → `odd-textarea`; `checkbox` → `odd-checkbox`; `switch` → `odd-switch`; `CheckboxGroup` → `odd-checkbox-group`; `radioGroup`, `radio` → `odd-radio-group`; `segmented` → `odd-segmented-control`; `slider` → `odd-slider`; `select` → `odd-select`; `fileUpload` → `odd-file-input`; `ValidationSummary` → `odd-validation-summary`; `Disclosure`, `Accordion` → `odd-disclosure` (`name`); `Tabs` → `odd-tabs`, `odd-tab-panel`; `Breadcrumbs` → `odd-breadcrumbs`; `Pagination` → `odd-pagination`; `Toolbar` → `odd-toolbar`; `popover` → `odd-popover`; `tooltip` → `odd-tooltip`; `dialog`, `alertDialog` → `odd-dialog` (`alert`); `drawer` → `odd-drawer`; `toast` → `odd-toast`; `listbox` → `odd-listbox`; `Menu`, `MenuItem` → `odd-menu`; `splitAction` → `odd-split-button`; `combobox`, `multiselect` → `odd-combobox` (`multiple`); `CommandPalette`, `CommandItem` → `odd-command-palette`; `Tree` → `odd-tree`; `SplitPanels`, `Splitter/*` → `odd-split-panel` |
+| Part of an element | `ListboxSurface`, `ListboxOption` (listbox, select's enhanced picker, combobox); `MenuItem` (menu, split button); `CommandItem` (command palette); `radio` (radio group); `CheckboxOption` (combobox `multiple`, drawn with the shared control-indicator module, never a nested interactive checkbox); `AvatarItem` (avatar); `Splitter/*` (split panel) |
+| Recipe (document CSS, no element) | `typography` → `.odd-type-<role>`; `link` → `a` in `base.css` and `.odd-link`; `divider` → `hr` and `.odd-divider`; `keyboardKey` → `kbd` and `.odd-kbd`; `List` → `.odd-list`; `Table` → `.odd-table`; `field` → `.odd-field` (for native and third-party controls; Oddkin controls carry the field anatomy themselves); avatar `Group` → `.odd-avatar-group` |
+| Example (composition) | `Form` → `examples/forms`: `odd-input`, `odd-checkbox-group`, `odd-validation-summary`, `odd-button`, layout classes |
+| Not built | `multiselect/*` display strategies other than the recommended one, `multiselect/SelectionPanel`, `multiselect/InteractionExamples` (design exploration; `odd-combobox multiple` builds the recommended default: chips that collapse to "+N"); the data grid (deferred); Figma's icon assets (§2.7) |
+
+## 2. Rules every element follows
+
+### 2.1 Element or recipe
+
+An element when there is something the platform cannot express from markup alone: behaviour, keyboard handling,
+form association, ARIA wiring, a built-in glyph, or observed children. A recipe when native elements already carry
+the semantics (`a`, `kbd`, `hr`, `table`, `ul`/`ol`, `h1`–`h6`, `p`, `form`): no registration, shadow root, or
+upgrade per instance. Recipes live in `@oddkin/components/css/<name>.css` in their cascade layer (ADR 0039) and are
+listed in the published metadata like layout recipes.
+
+### 2.2 Authoring collections
+
+Every related role stays in one shadow root (css-architecture.md §12.1, pattern 1). Authors write items in one of two
+forms, normalized to one model inside the element:
+
+| Collection | Declarative children (read as data, never rendered) | Property |
+| --- | --- | --- |
+| Values (`odd-select`, `odd-listbox`, `odd-combobox`, `odd-radio-group`, `odd-segmented-control`) | `<option value disabled selected title>`, `<optgroup label>`; `title` is the option's description, as in accessible-description computation | `options: readonly OptionRecord[]` with `{ value, label, description?, disabled?, group? }` |
+| Actions (`odd-menu`, `odd-split-button`) | `<option value disabled>` (value = item id), `<optgroup label>`, `<hr>` (separator) | `items: readonly MenuItemRecord[]` with `{ id, label, description?, icon?, shortcut?, disabled?, tone?: 'danger', items?, kind?: 'item' \| 'separator' \| 'group' }` |
+| Commands (`odd-command-palette`), hierarchies (`odd-tree`) | — (data-driven) | `items` (`{ id, label, … }`, tree items nest `children`) |
+| Links (`odd-breadcrumbs`) | `<a href>` (text = label) | `items: readonly { label, href }[]` |
+
+When both are present the property wins and development builds report `collection.source.conflict`. Children are
+observed (`MutationObserver` owned by the element's scope), so server-rendered or framework-rendered children work
+without a property. The `items` and `options` names already mean these records in `odd-side-nav` and the AI package.
+
+### 2.3 Content children
+
+Panels the author writes with rich content (`odd-tab-panel`) are assigned to slots inside the element's own
+role wrappers (`slotAssignment: 'manual'`, at the floor in every engine), so a tab and its panel reference each other
+inside one shadow root while the content stays in the light DOM.
+
+### 2.4 Fields and forms
+
+Every form control is form-associated as ADR 0045 §7 specifies (`name`, `value` attribute = default value, `disabled`
+including a disabled fieldset, `required`, `readonly` where native has it, `form`, `validity`, `validationMessage`,
+`willValidate`, `checkValidity()`, `reportValidity()`, `setCustomValidity()`, reset, state restore, `input`/`change`
+for user edits only, `:state(user-invalid)`), and carries the field anatomy: `label`, `description`, `error` (string;
+non-empty sets custom validity and shows the message), parts `field`, `label`, `description`, `control`, `error`. The
+look comes from one control style module (§2.9). Load failures in a form control are not `error`: the element shows a
+`loading` row and the author's `status` slot (retry actions are author content).
+
+### 2.5 Collection states
+
+`loading` (boolean: a busy row drawn by the shared spinner module, `aria-busy` on the collection), slot `empty`
+(shown when there are no items; default text from `strings`), slot `status` (author content such as an error and a
+retry button). Keyboard focus and selection are separate states, as Figma draws them.
+
+### 2.6 Overlays
+
+Top layer through `popover` or `<dialog>`, placement through `@oddkin/core/controllers/position` (ADR 0044). `open`
+reflects; `show()` and `close()` (`close(returnValue?)` on dialogs) open and close it; the element's own open state
+reports `beforetoggle` and `toggle` (dialogs: `close` and `cancel`), re-dispatched at the host only when the native
+event does not reach it. An overlay attached to another element names it with `anchor` (an ID in the same tree, or the
+`anchorElement` property). Placement uses the controller's logical vocabulary: `side`
+(`block-start | block-end | inline-start | inline-end`) and `align` (`start | center | end`). Explicit close buttons
+exist on every dismissible surface (iOS floor exception, css-architecture.md §9).
+
+### 2.7 Glyphs
+
+Built-in affordance and tone glyphs (chevrons, check, minus, close, search, more, arrows, external, upload, file, info,
+warning, check-circle) are drawn by Oddkin from simple geometry in one module (`@oddkin/components/styles` glyphs),
+inline SVG in shadow roots (no image requests, so strict CSP needs no `img-src`). Figma's 34 icon assets are a visual
+reference only and do not ship (their source and licence are unknown, component-catalog.md §7 item 5). Author icons
+are slot content or `odd-icon`.
+
+### 2.8 Tone
+
+`tone` (`neutral | info | success | warning | danger`, default `neutral`) sets the tone colours
+(`color.<tone>.{foreground,surface,border}`) and a glyph, so meaning never depends on colour alone. One tone style
+module serves `odd-badge`, `odd-alert`, `odd-toast`, and the AI status labels.
+
+### 2.9 Shared style modules
+
+As listed in component-catalog.md §6 (shared homes): tokens, focus ring, control, button, tone, spinner, glyphs,
+control indicator, option row, navigation row, chip, avatar, overlay surface. The control module follows the Common
+page (158:22), which is the contract page for primitives: `border.strong`, `control.radius`, `control.height.md`.
+`odd-model-select` moves to it (the page 0:1 drawing with `border.default` and `control.height.sm` is the outlier).
+
+### 2.10 Definition of done
+
+Each element meets the M10 per-component definition of done (IMPLEMENTATION_PLAN.md): typed definition and
+generated metadata, examples (default, key variants, incorrect usages), Workbench and docs pages, browser tests in
+Chromium, Firefox, and WebKit driven by the examples, axe in light and dark mode, keyboard and Tab-order comparison
+with native markup where one exists, Figma parity of bound tokens, mutants, a lifetime scenario, framework typings,
+the vocabulary check, and a size budget.
+
+## 3. Element contracts
+
+Notation: `name: type = default`. Attributes are kebab-case; records, arrays, functions are properties. Every
+element also takes `strings` (partial record of its built-in text) when it shows built-in text.
+
+### 3.1 Existing elements (additions)
+
+**`odd-button`** — adds `toggle: boolean` (the button keeps a pressed state) and `pressed: boolean` (`aria-pressed`
+when `toggle` is set). Activating a toggle button flips `pressed` and dispatches `input` and `change`. Figma
+`toggleButton` Value On → `pressed`; its inset marker is drawn by the button module. Unchanged otherwise.
+
+**`odd-input`** — `type` adds `number`, `date`, `time`, `datetime-local`, `month`, `week`; adds `min`, `max`, `step`
+(number and date types), `minlength`, `maxlength`, `pattern` (text types), `inputmode`. `type="number"`: parts
+`decrement` and `increment` (native buttons, `tabindex="-1"`, named from `strings`; arrow keys already step) call
+`stepDown()`/`stepUp()` and dispatch `input` and `change`. `type="search"`: part `icon` (search glyph) and part `clear`
+(a button shown when there is a value and the field is enabled and editable; clears, dispatches `input` and `change`,
+keeps focus); the native cancel button is hidden. Date and time types keep the native picker indicator.
+
+### 3.2 Display
+
+**`odd-badge`** (Figma `badge`) — passive status or count. `tone`. Default slot: the text. Part `marker` (tone glyph;
+none for `neutral`, so a neutral badge with a number is the Count variant). No role; the text is read in place.
+
+**`odd-icon`** (`icon`) — `src: string` (an SVG URL drawn as a mask in `currentColor`; governed by the page's
+`img-src`), `label: string` (non-empty: `role="img"` named by it; empty: hidden from assistive technology),
+`size: sm | md | lg = md` (16, 20, 24 px from the icon size tokens). Default slot: inline `<svg>` used when `src` is
+empty.
+
+**`odd-spinner`** (`spinner`) — indeterminate busy indicator. `label: string` (accessible name; default
+`strings.loading`), `size: sm | md | lg = md`. Default slot: visible status text (Figma Inline), which then names it.
+`role="progressbar"` without a value. Reduced motion: a slow opacity pulse instead of rotation.
+
+**`odd-progress`** (`progress`) — native `<progress>`. `value: number | undefined` (absent: indeterminate, never a
+percentage, as Figma requires), `max: number = 1` (native default), `label: string` (visible and naming). Part
+`value-text` shows the formatted percentage when determinate (`renderValue?: (value, max) => string`). `value` is a
+number here because `<progress>` defines it so (ADR 0045 §2 over §3; recorded as the vocabulary's per-element type).
+
+**`odd-skeleton`** (`skeleton`) — `shape: text | rect | circle = text`, `lines: number = 1` (text lines; the last
+is shorter). Hidden from assistive technology; the region that loads sets `aria-busy`. No animation under reduced
+motion.
+
+**`odd-avatar`** (`avatar`, `AvatarItem`) — `label: string` (the person's name; `role="img"` named by it),
+`src: string` (image; on error or when empty, initials from `label`), `size: sm | md | lg = md`. Groups:
+`.odd-avatar-group` recipe.
+
+**`odd-chip`** (`chip`) — compact token. Default slot: label. `removable: boolean` (part `remove`, a button named
+"Remove {label}"; dispatches `odd-chip-remove`, detail `{}`, not cancelable), `selected: boolean` (selection look,
+reflected), `disabled: boolean`. Backspace or Delete on the remove button removes too.
+
+**`odd-alert`** (`alert`) — persistent inline status. `tone`, `label: string` (title, shown), default slot: message,
+slot `end`: actions. Part `marker` (tone glyph). `announce: none | important = none` (bare: `important`): important
+gives the host `role="alert"` so a dynamically inserted alert is announced; otherwise no live role.
+
+**`odd-empty-state`** (`emptyState`) — `label: string` (title), default slot: explanation, slot `media`
+(illustration), slot `footer` (next steps). Host `role="status"`, named by `label`, so "No results" after a search
+is announced politely.
+
+### 3.3 Form controls
+
+**`odd-textarea`** (`textarea`) — field anatomy (§2.4) over a native `<textarea>`. `rows: number = 3`, `minlength`,
+`maxlength` (shows part `count`, "12 / 200", not live), `placeholder`, `autocomplete`,
+`resize: vertical | none | auto = vertical` (`auto` grows with content: `field-sizing: content` where supported, a
+measured height otherwise, F12).
+
+**`odd-checkbox`** (`checkbox`) — native `<input type="checkbox">` in the shadow root. Default slot: label (names
+it). `checked` (attribute = default checkedness, as native), `indeterminate`, `value = "on"`, `name`, `required`,
+`disabled`, `description`, `error`. Submits `value` when checked. Marks from the control-indicator module.
+
+**`odd-switch`** (`switch`) — as `odd-checkbox` without `indeterminate`; `role="switch"`. Part `state` shows
+`strings.on`/`strings.off` beside the track (hidden from assistive technology; the role states it).
+
+**`odd-checkbox-group`** (`CheckboxGroup`) — named group of slotted `odd-checkbox` children. `label` (legend),
+`description`, `error`, `required` (at least one checked; the group is form-associated with no value so the
+constraint blocks submission), `disabled` (disables the children), `orientation: vertical | horizontal = vertical`.
+Host `role="group"`.
+
+**`odd-radio-group`** (`radioGroup`, `radio`) — one value from a set (§2.2 values). Native radios in one shadow tree:
+one Tab stop and arrow-key selection come from the platform. Field anatomy, `name`, `value`, `required`, `disabled`,
+`orientation: vertical | horizontal = vertical`. Each option shows its description (`title` or `description`).
+
+**`odd-segmented-control`** (`segmented`) — the radio-group behaviour with a segmented look (same foundation class,
+another template and style set). `size: sm | md | lg = md`; options may be icon-only when `label` is given in the
+record. Use `odd-tabs` to switch content panels.
+
+**`odd-slider`** (`slider`) — native `<input type="range">`. Field anatomy, `value: string`, `min = 0`, `max = 100`,
+`step = 1`, `name`, `disabled`. Parts `output` (current value) and `min-label`/`max-label` (endpoints);
+`renderValue?: (value: number) => string` formats all three.
+
+**`odd-select`** (`select`) — native `<select>` built from the options (§2.2). Field anatomy, `name`, `value`,
+`required`, `disabled`, `placeholder` (a disabled empty first option). The browser draws the picker;
+`appearance: base-select` is a gated enhancement drawn with the option-row module (F13). No `multiple`: use
+`odd-listbox` or `odd-combobox multiple`.
+
+**`odd-listbox`** (`listbox`) — persistent choices. Field anatomy, `name`, `value`, `values` (with `multiple`),
+`multiple`, `required`, `disabled`, `loading`, slots `empty`, `status`. The listbox element is the focus target and
+uses `aria-activedescendant` over option parts; typeahead; with `multiple`, Space toggles and Shift+arrows extend
+(APG listbox).
+
+**`odd-combobox`** (`combobox`, `multiselect`) — an editable input with a popup listbox (APG combobox, list
+autocomplete). Field anatomy, `name`, `value`, `values` and chips (parts drawn with the chip module, collapsing to
+"+N") with `multiple`, `required`, `disabled`, `readonly`, `placeholder`, `loading`, `no-filter` (the host filters:
+it listens to `odd-query-change`, detail `{ query }`, and replaces `options`), read-only `query`. Part `clear` clears
+the value. Slots `empty`, `status`. Value changes dispatch `input` and `change`; typing does not.
+
+**`odd-file-input`** (`fileUpload`) — native `<input type="file">` whose `::file-selector-button` takes the button
+look. Field anatomy, `name`, `accept`, `multiple`, `required`, `disabled`; read-only `files: readonly File[]`.
+Chosen files are rows (part `file`, glyph, name, size) with remove buttons; the form value is the files under
+`name`. `input` and `change` on user changes.
+
+**`odd-validation-summary`** (`ValidationSummary`) — `label: string` (heading; default `strings.title`, "Please fix
+{count} fields"), `form: string` (ID; default: the ancestor form). After a submission blocked by validation it lists
+each invalid control's label and message as a link to the control and receives focus (`tabindex="-1"`); it hides
+when the form becomes valid. Entered values are never cleared.
+
+### 3.4 Disclosure and navigation
+
+**`odd-disclosure`** (`Disclosure`, `Accordion`) — native `<details>` and `<summary>`. `label` (summary text),
+`open` (reflected), `name` (exclusive group: opening one closes the others with the same `name` in the same tree, as
+native `<details name>` does inside one tree), `disabled`. Dispatches `toggle` at the host once per change.
+
+**`odd-tabs`** (`Tabs`) — `label` (names the tab list), `value` (the selected panel's `value`), `orientation:
+horizontal | vertical = horizontal`, `activation: automatic | manual = automatic` (APG). Children: `odd-tab-panel`
+(`label`, `value`, `disabled`; content in its default slot), assigned to tab-panel wrappers in the tabs' shadow root
+(§2.3). Arrow keys move between tabs, Home/End, focus and selection may differ (Figma). `input` and `change` on user
+selection.
+
+**`odd-breadcrumbs`** (`Breadcrumbs`) — `<nav>` named `label` (default `strings.label`), an ordered list of links
+(§2.2 links); the last item is the current page, shown as text with `aria-current="page"`. `max-items: number = 0`
+(0: never collapse); collapsed middle items sit behind a "more" button (glyph) that reveals them.
+
+**`odd-pagination`** (`Pagination`) — `<nav>` named `label`. `current: string` (page number, ADR 0045 navigation
+`current`), `page-count: number`, `href: string` (a template with `{page}`; when set, pages are links). Without
+`href`, pages are buttons that dispatch `odd-action`, detail `{ itemId: '<page>' }` (the side-nav action intent); the
+application sets `current`. Previous and next are always present and disabled at the ends; first, last, current ±1,
+and ellipses otherwise.
+
+**`odd-toolbar`** (`Toolbar`) — `label`, `orientation: horizontal | vertical = horizontal`. Host `role="toolbar"`;
+one Tab stop with roving focus over its slotted controls (`@oddkin/core/controllers/focus`), arrow keys, Home/End.
+Items are author content.
+
+**`odd-tree`** (`Tree`) — `label`, `items` (`{ id, label, icon?, disabled?, children?, lazy? }`), `expanded`
+(property: ids), `value`, `values`, `multiple`, `loading`, slots `empty`, `status`. Rows from the navigation-row
+module shared with `odd-side-nav`. Selection dispatches `input` and `change`; expanding dispatches `odd-toggle`,
+detail `{ itemId, open }`, cancelable (lazy children: the host loads them and sets `children`). APG tree keyboard
+(arrows, Home/End, `*`, typeahead).
+
+### 3.5 Overlays
+
+**`odd-popover`** (`popover`) — the host is the popover (`popover="auto"`), so `<button popovertarget>` opens it
+natively. `anchor`, `side = block-end`, `align = start`, `label` (names it; host `role="dialog"` when it holds
+controls), part `close` (button) unless `no-close`. `show()`, `close()`, `open`; native `beforetoggle`/`toggle`.
+
+**`odd-tooltip`** (`tooltip`) — `anchor`, `side = block-start`, `align = center`; default slot: short text. Shows on
+anchor hover (after a delay) and focus, hides on Escape, blur, and pointer leave (WCAG 1.4.13: hoverable,
+dismissible, persistent). Describes its anchor with `aria-describedby` (same tree); never the only name. An Oddkin
+control anchor forwards the description to its inner focus target.
+
+**`odd-dialog`** (`dialog`, `alertDialog`) — native `<dialog>`, always modal (`showModal()`; non-modal surfaces are
+`odd-popover`). `open`, `label` (title, names it), `alert: boolean` (`role="alertdialog"`), `closedby: any |
+closerequest | none = closerequest` (native attribute; `any` adds backdrop dismissal, emulated where unsupported).
+Default slot: body; slots `header` (after the title), `footer` (actions); part `close` (button) unless `no-close`.
+`show()`, `close(returnValue?)`, `returnValue`; `close` and `cancel` events. A slotted `<form method="dialog">` closes
+it with the submitter's value (the native lookup does not cross the shadow boundary, so the element does it).
+
+**`odd-drawer`** (`drawer`) — the dialog foundation with a side sheet layout. `placement: start | end = end`;
+everything else as `odd-dialog`.
+
+**`odd-toast`** (`toast`) — `tone`, `open`, `duration: number = 5000` (ms; 0 stays; any toast with an action stays,
+WCAG 2.2.1), default slot: message, slot `end`: action. Top layer (`popover="manual"`), stacked at the block-end and
+inline-end corner; `role="status"` (`role="alert"` for `danger`); pauses while hovered or focused; part `close`.
+`show()`, `close()`; native `toggle`.
+
+### 3.6 Action collections
+
+**`odd-menu`** (`Menu`, `MenuItem`) — menu button (APG): it renders its own trigger (part `trigger`, button look,
+`appearance`, `size`; default slot: trigger content; `label` names an icon-only trigger) and the menu (popover,
+positioned under the trigger). Items per §2.2 actions, with submenus. `odd-action`, detail `{ itemId }`, cancelable
+(keeps the menu open). Keyboard: Enter, Space, Down open on the first item, Up on the last; arrows, Home/End,
+typeahead; Right opens a submenu, Left and Escape close one level and return focus.
+
+**`odd-split-button`** (`splitAction`) — two independent targets in one element: a primary `<button>` (default slot,
+`value`) and a menu trigger (`label`, default `strings.more`) with the menu of `odd-menu`. `appearance`, `size`,
+`disabled`, `loading`. Both report `odd-action`: the primary half with `{ itemId: value }`, the menu with the item.
+
+**`odd-command-palette`** (`CommandPalette`, `CommandItem`) — a modal dialog with a search input and results
+(`aria-activedescendant` from the input). `open`, `label`, `placeholder`, `items` (`{ id, label, description?, icon?,
+shortcut?, group?, disabled? }`), `loading`, `no-filter` with `odd-query-change`, slots `empty`, `status`. Enter
+dispatches `odd-action` `{ itemId }` and closes (cancelable); Escape closes and focus returns to the opener (native
+dialog behaviour).
+
+### 3.7 Layout
+
+**`odd-split-panel`** (`SplitPanels`, `Splitter/*`) — two panes in slots `start` and `end`, a focusable separator
+between them (APG window splitter, `aria-valuenow` in percent, `aria-controls` the start pane). `orientation:
+horizontal | vertical = horizontal` (side by side or stacked), `position: number = 50` (percent of the start pane),
+`min = 0`, `max = 100`, `collapsed: boolean` (Enter toggles and restores the previous position), `label` (names the
+separator). Arrow keys step, Home/End go to the limits. Dragging and keys dispatch `input`; release and key commits
+dispatch `change`. More panes: nest split panels.
+
+## 4. Recipes
+
+| Recipe | Selectors | Notes |
+| --- | --- | --- |
+| Typography | `.odd-type-display`, `-title`, `-section`, `-body`, `-ui`, `-small`, `-eyebrow`, `-code` | The eight type roles (`--odd-type-*`); native `h1`–`h6`, `p` keep their semantics. `text-wrap: balance` on headings as a literal enhancement |
+| Link | `a` in `base.css`; `.odd-link` | Underline on hover and focus, visible focus ring; `.odd-link[target="_blank"]` adds the external glyph from the stylesheet's own `glyphs/` files (`img-src 'self'`) |
+| Divider | `hr`, `.odd-divider` | `.odd-divider` with text is a labelled `role="separator"` written by the author |
+| Keyboard key | `kbd`, `.odd-kbd` | Sequence: adjacent `kbd` elements |
+| List | `.odd-list` on `ul`/`ol` | Rows with an optional trailing action (author content) |
+| Table | `.odd-table` on `table` | Native table semantics; sorted header look via `aria-sort`; loading, empty, and error rows are author content |
+| Field | `.odd-field`, `.odd-field-label`, `.odd-field-description`, `.odd-field-error` | For native and third-party controls (`<label for>`, `aria-describedby` written by the author) |
+| Avatar group | `.odd-avatar-group` | Overlapping `odd-avatar` children; the author names the group |
+
+## 5. Build order
+
+Dependencies first, each step complete to §2.10 before the next:
+
+1. Shared modules: glyphs, tone, spinner, control (extracted from `odd-input`), control indicator, option row,
+   overlay surface; core: typeahead, active descendant, and resize controllers (`@oddkin/core/controllers/*`).
+2. Display: `odd-badge`, `odd-icon`, `odd-spinner`, `odd-progress`, `odd-skeleton`, `odd-avatar`, `odd-chip`,
+   `odd-alert`, `odd-empty-state`; recipes.
+3. Form controls: `odd-button` toggle, `odd-input` types, `odd-textarea`, `odd-checkbox`, `odd-switch`,
+   `odd-checkbox-group`, `odd-radio-group`, `odd-segmented-control`, `odd-slider`, `odd-select`, `odd-file-input`,
+   `odd-validation-summary`; the `Form` example.
+4. Disclosure and navigation: `odd-disclosure`, `odd-tabs`, `odd-breadcrumbs`, `odd-pagination`, `odd-toolbar`.
+5. Overlays: `odd-popover`, `odd-tooltip`, `odd-dialog`, `odd-drawer`, `odd-toast`.
+6. Collections: `odd-listbox`, `odd-menu`, `odd-split-button`, `odd-combobox`, `odd-command-palette`, `odd-tree`.
+7. Layout: `odd-split-panel`.

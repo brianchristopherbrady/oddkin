@@ -2,9 +2,9 @@
 
 Status: **draft (2026-10-22)**. Common primitives mapped at family level; the AI page mapped per definition (§4). The
 read-only snapshot is `design/figma/components.json` (schema `components.schema.json`, export function
-`components.export.js`); the reuse map (§6) is a proposal awaiting the owner's approval. No new component is built
-before the owner approves the reuse map and ADR 0045, so every "planned" row below is a mapping only: nothing in it
-exists in code.
+`components.export.js`). ADR 0045 is accepted and the owner asked for every family to be built (2026-10-22): the API
+of each element and recipe is in [component-contracts.md](./component-contracts.md), which also decides the open
+proposal of §7 item 6. A "planned" row below exists in code only once its contract's element ships.
 
 ## 1. Sources
 
