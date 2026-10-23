@@ -54,6 +54,9 @@ source also reports the values of `<option selected>` children, which a value el
 the host has no `value` attribute. One internal module (`packages/components/src/collection/collection.ts`: the
 record types, `readOptions`, `readMenuItems`, `readLinks`, `CollectionSource`) serves every element in the table.
 The `items` and `options` names already mean these records in `odd-side-nav` and the AI package.
+A chosen item is reported as `odd-action`, detail `{ id, action }`, and an expanded or collapsed item as
+`odd-toggle`, detail `{ id, expanded }` (odd-side-nav's types), because one event name has one detail type in
+`GlobalEventHandlersEventMap` (owner decision, 2026-10-23).
 
 ### 2.3 Content children
 
@@ -286,7 +289,7 @@ separators (drawn as lines) are skipped; text fields and sliders keep their own 
 **`odd-tree`** (`Tree`) — `label`, `items` (`{ id, label, icon?, disabled?, children?, lazy? }`), `expanded`
 (property: ids), `value`, `values`, `multiple`, `loading`, slots `empty`, `status`. Rows from the navigation-row
 module shared with `odd-side-nav`. Selection dispatches `input` and `change`; expanding dispatches `odd-toggle`,
-detail `{ itemId, open }`, cancelable (lazy children: the host loads them and sets `children`). APG tree keyboard
+detail `{ id, expanded }`, cancelable (lazy children: the host loads them and sets `children`). APG tree keyboard
 (arrows, Home/End, `*`, typeahead).
 
 ### 3.5 Overlays
@@ -319,18 +322,19 @@ inline-end corner; `role="status"` (`role="alert"` for `danger`); pauses while h
 
 **`odd-menu`** (`Menu`, `MenuItem`) — menu button (APG): it renders its own trigger (part `trigger`, button look,
 `appearance`, `size`; default slot: trigger content; `label` names an icon-only trigger) and the menu (popover,
-positioned under the trigger). Items per §2.2 actions, with submenus. `odd-action`, detail `{ itemId }`, cancelable
-(keeps the menu open). Keyboard: Enter, Space, Down open on the first item, Up on the last; arrows, Home/End,
+positioned under the trigger). Items per §2.2 actions, with submenus. `odd-action`, detail `{ id, action: 'select' }`
+(`id` is the item's `id`), cancelable (keeps the menu open). Keyboard: Enter, Space, Down open on the first item, Up on the last; arrows, Home/End,
 typeahead; Right opens a submenu, Left and Escape close one level and return focus.
 
 **`odd-split-button`** (`splitAction`) — two independent targets in one element: a primary `<button>` (default slot,
 `value`) and a menu trigger (`label`, default `strings.more`) with the menu of `odd-menu`. `appearance`, `size`,
-`disabled`, `loading`. Both report `odd-action`: the primary half with `{ itemId: value }`, the menu with the item.
+`disabled`, `loading`. Both report `odd-action`: the primary half with `{ id: value, action: 'primary' }`, the menu with
+`{ id, action: 'select' }` for the item.
 
 **`odd-command-palette`** (`CommandPalette`, `CommandItem`) — a modal dialog with a search input and results
 (`aria-activedescendant` from the input). `open`, `label`, `placeholder`, `items` (`{ id, label, description?, icon?,
 shortcut?, group?, disabled? }`), `loading`, `no-filter` with `odd-query-change`, slots `empty`, `status`. Enter
-dispatches `odd-action` `{ itemId }` and closes (cancelable); Escape closes and focus returns to the opener (native
+dispatches `odd-action` `{ id, action: 'select' }` and closes (cancelable); Escape closes and focus returns to the opener (native
 dialog behaviour).
 
 ### 3.7 Layout
