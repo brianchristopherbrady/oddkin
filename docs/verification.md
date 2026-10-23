@@ -2016,6 +2016,55 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 
 **Change:** every rename in ADR 0045 §9: `odd-card` `appearance`; `odd-sources` `label`; `odd-prompt-input` `loading` and slot `header`; one `announce` enum (`none | important | all`; the bare attribute means `important`) on the conversation and the five leaf elements; `odd-inline-assist` status `complete`; `odd-conversation` `store`, `snapshot`, `renderTool` (also on `odd-message`); `odd-artifact` `view`; every `@oddkin/ai` event prefixed `odd-` (`odd-plan-input-request`, `odd-announce`, `odd-source-reveal`) and added to `GlobalEventHandlersEventMap`; `odd-input` gains `setCustomValidity()`, which sets `error`. The components contract test now compares only methods without parameters (a method that takes arguments changes state; `setCustomValidity` has its own test). The ADR records that attachment statuses keep their file-pipeline phases (`ready` means usable by the model). `research/benchmarks/results` is excluded from the format check, since the harnesses write it with `JSON.stringify`.
 
+## 2026-10-22 — Figma snapshot refreshed after variable and style cleanup
+
+**Source:** Read-only Figma MCP export from file `E7LfRysny8V3qU24tv082i`, session `79585d33-4ff5-4a72-86aa-a79d45050a6a`, using `design/figma/variables.export.js`. The refreshed snapshot contains two collections, 268 variables, 13 text styles, and 11 effect styles. No Figma designs were edited during this refresh.
+
+| Check | Command | Observed result |
+| --- | --- | --- |
+| Parity | `node node_modules/vitest/vitest.mjs run --project node packages/tokens/test/figma-parity.test.ts` | 7 tests passed; 542 comparisons matched, with zero mismatches, unmapped Figma definitions, code-syntax issues, or alias gaps. |
+| Token suite | `node node_modules/vitest/vitest.mjs run --project node packages/tokens/test` | All 12 files and 117 tests passed, including the parity tests. |
+| Test types | `node node_modules/typescript/bin/tsc -p tsconfig.tests.json --pretty false` | Passed. |
+| Formatting | `node node_modules/prettier/bin/prettier.cjs --check design/figma/variables.json design/figma/variables.schema.json design/figma/variables.export.js packages/tokens/test/figma-parity.test.ts` | Passed. |
+| Whitespace | `git diff --check -- design/figma/variables.json design/figma/variables.schema.json design/figma/variables.export.js packages/tokens/test/figma-parity.test.ts` | Passed. |
+
+**Change:** Removed the retired issue allowances and Shared theme mapping. The parity test now verifies exact alias destinations, canonical text-style bindings, proportional text metrics, absence of retired definitions, explicit Roboto/Roboto Mono font adapters, and the shared overlay effect in both Light and Dark. The exporter and schema preserve non-opaque variable alpha separately from 8-bit hex so shadow alpha remains precise. The remaining repo-only list covers unused foundation steps, motion, stacking, info tones and their ramp, non-neutral tone borders, and scrim; those gaps were not added to Figma by this refresh.
+
+**Scope:** These results cover the token Node suite and the test TypeScript project; the full workspace/browser suite was not run for this snapshot-only update.
+
+## 2026-10-22 — Figma page organization and domain icon sets
+
+**Change:** Reorganized the existing Figma file into Foundations, Primitives, Composed components, AI components and Icons. Definitions and linked review examples are separated. Multiselect compositions remain together, while their value renderers and shared collection parts live on Primitives. Created 64 original GIS and 64 original healthcare SVG icons, with editable 20 px Figma components, semantic stroke bindings and labeled preview instances on the dedicated Icons page. The 34 legacy Core UI icons retain their IDs; their original provenance remains unrecorded.
+
+**Source:** Figma file `E7LfRysny8V3qU24tv082i`, session `51307544-dbff-40ce-b63f-0aded50b66e8`. Refreshed `design/figma/components.json` from actual read-only per-page exports, decoded with verified lengths and FNV-1a checksums. The snapshot now records 331 families and 661 component definitions. No token values were changed by this organization task.
+
+| Check | Observed result |
+| --- | --- |
+| Existing definitions and composition | All 203 prior family IDs, 533 prior component IDs and 169 nested-instance reference edges were preserved. |
+| Page layout | Five page inventories checked; no overlapping top-level panels. New GIS, Healthcare and Core UI catalogs, representative primitive/composed previews, page headers and the moved dark-mode composition board visually inspected. |
+| Icon geometry and bindings | 128 new 20 × 20 masters, each with one editable vector, 1.5 px strokes and `color/text/primary` binding; no errors. The Icons page has 162 linked preview instances and no broken master links. |
+| SVG validation | All 128 paths are unique and nonempty, have accessible names, and fit within the 20 px viewport with stroke clearance. GIS and Healthcare each contain eight categories of eight icons. Evidence: `artifacts/oddkin-domain-icons/validation.json`. |
+| Token parity and reuse | `node node_modules/vitest/vitest.mjs run --project node packages/tokens/test/figma-parity.test.ts packages/components/test/figma-reuse.test.ts`: two files, 11 tests passed. |
+| Formatting and whitespace | Prettier check passed for `design/icons`, the refreshed component snapshot and component catalog; targeted `git diff --check` passed. |
+
+**Scope:** Figma organization, original icon assets, snapshot and catalog updates. The full workspace/browser test suite was not run for this task.
+
+## 2026-10-22 — Nested review layouts, avatar appearance and cell alignment
+
+**Source:** Figma file `E7LfRysny8V3qU24tv082i`, session `dea6c8f6-08d3-4ba0-82b4-7e208345aae8`. The user reported overlapping review frames in desktop screenshots. Although the initial export computed separated positions, the six primitive/composed review panels were rebuilt with explicit auto-layout rows and persisted child transforms. Existing component and instance IDs were retained.
+
+**Change:** Corrected three spinner specimen widths and two truncated-chip examples found by the deeper audit. Centered `GridCell` Default, Selected, Focus and Editing content (19 px line box centered at y=14.5 in a 48 px cell); Invalid remains content-sized with its value and error stacked. Added `avatar/Appearance`: 24 combinations of six backgrounds and four shapes, each reusing `AvatarItem`. Presets bind existing color/radius variables; custom HEX examples use native nested Fill overrides. Initials are exposed from the shared primitive. Review examples cover 32/40/48 px sizes and 0/4/8/12/full radii. No runtime component API was changed.
+
+| Check | Observed result |
+| --- | --- |
+| Layout audit | All five pages audited; final checks found no unintended nested overlaps or uncontained content. The changed pages also have no top-level panel overlaps. Repaired surfaces, picker/collection rows, spinner, grid-cell states and final avatar examples were visually inspected. |
+| Avatar contrast | 48 checks across 24 variants in Light and Dark; no failures below 4.5:1. Minimum 4.98:1. |
+| Snapshot and reuse | Targeted read-only exports refreshed the two affected pages. All 661 preceding component IDs were preserved; the snapshot now has 332 families and 685 definitions. One new appearance → AvatarItem reference brings the reuse map to 170 edges. |
+| Token parity and reuse tests | `node node_modules/vitest/vitest.mjs run --project node packages/tokens/test/figma-parity.test.ts packages/components/test/figma-reuse.test.ts`: two files and 11 tests passed. |
+| Formatting and whitespace | Prettier and targeted `git diff --check` passed for the snapshot, reuse map and component catalog. |
+
+Evidence: `artifacts/figma-layout-avatar-2026-10-22/audit.json`. The full workspace/browser suite was not run for these Figma changes.
+
 ## 2026-10-22 — First catalog element: `odd-badge`, shared glyph, tone, and spinner modules
 
 **Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2). Another session was editing the Figma snapshot, `design/icons/`, and docs in the same working tree.
@@ -2060,6 +2109,21 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 | Size, CSS, types, node | `node scripts/check-size.mjs`; `npm run compat`; `npm run typecheck`; `npx vitest run --project node` | Recipes together 1,314 B gzip (budget 1,536); compatibility OK; types pass; 1,007 node tests pass. |
 
 **Change:** seven document stylesheets in `@oddkin/components/css` (`typography`, `link`, `divider`, `kbd`, `list`, `table`, `avatar-group`), each in the `odd.components` layer and exported as `./css/<name>.css`. Contract §4 updated: no external-link glyph in the link recipe (a stylesheet glyph would need an image request under strict CSP; the author adds an icon and says so in the text); the field recipe lands with the shared control module (§5 step 3); listing recipes in the metadata is a follow-up.
+
+## 2026-10-22 — Consolidated icon library, inventory expansion and transparent SVG containers
+
+**Scope:** the complete `gis-icons.json` inventory supplies 3,170 reference IDs. Original Oddkin outline artwork now comprises 1,153 SVG assets (913 General, 175 GIS, 65 Healthcare), with every reference ID indexed exactly once. Figma page 359:2 has one library frame and one main-component catalog per domain. The earlier 162 icon IDs remain; the snapshot has 1,323 families and 1,676 definitions, preserving all 685 preceding definition IDs and all 170 reuse edges.
+
+**Observed issue and repair:** the first import bound the foreground color to the SVG wrapper frame's default fill, covering each glyph with a dark square. Cleared the opaque fills from all 1,153 wrappers. Vector artwork and component IDs remained intact. Figma screenshots of the hospital tile and Healthcare catalog showed the outlined artwork after repair. `figma-import.js` now clears wrapper fills before binding vector strokes; the snapshot regression test rejects opaque component, frame and vector fills.
+
+| Check | Command or evidence | Observed result |
+| --- | --- | --- |
+| SVG assets and reference coverage | `node design/icons/validate.mjs`, Playwright Chromium | 1,153 assets and all 3,170 IDs pass: unique names/paths, valid editable SVG, native 20 px canvas, uniform 1.5 px physical strokes, currentColor, no clipping, no external font/image dependencies, no stale SVG assets. |
+| Figma structure and paint | Plugin API audit on Icons page, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832 | One root frame, 1,153 unique component names, no sibling overlaps, overflowing labels, clipped artwork, unbound icon strokes, or remaining opaque SVG container fills. |
+| Snapshot transport | 12 disjoint sorted export batches after the fill repair | Decoded UTF-16 lengths and FNV-1a hashes verified for every batch. Existing IDs and reuse edges preserved. |
+| Token parity, reuse and icon regression | `node node_modules/vitest/vitest.mjs run --project node packages/tokens/test/figma-parity.test.ts packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts` | 3 files, 14 tests passed. |
+
+Reference names and categories guide concept interpretations. Filled and outlined references share the Oddkin outline treatment; functional application marks are not official logos. The consuming icon package remains the user's planned IDE work. Evidence: `artifacts/oddkin-domain-icons/expansion-validation.json`.
 
 ## 2026-10-22 — Core controllers: typeahead, active descendant, resize (M10, component-contracts.md §5 step 1)
 
@@ -2107,6 +2171,21 @@ Environment: as the previous entry (Windows, Node 24.22.1, Vitest 5.0.5, Playwri
 **Change:** `packages/components/src/collection/collection.ts` (internal): record types, `readOptions`, `readMenuItems`, `readLinks`, and `CollectionSource`, connected in `connected(scope)` so existing children are in the first render. `@oddkin/core/controllers/observe` was not reused: it owns resize and intersection observers keyed by target, not mutation records. component-contracts.md §2.2 refined (announced in the lanes file): actions are a union by `kind`; declarative actions take `title`; links are `a[href]` descendants; the conflict is a console warning once per element, in both builds, because `@oddkin/components` ships one build (as `odd-side-nav`'s report); `<option selected>` values are reported for the default value.
 
 **Not verified:** no element uses the source yet (Agent 1's radio group, segmented control, and select; Agent 2's breadcrumbs; my listbox, combobox, and menu); framework-rendered children (React, Vue, Svelte, Angular) are covered only as DOM mutations, not through each framework; very large collections (each mutation re-reads all children and compares them as JSON).
+
+
+## 2026-10-22 — Healthcare icon expansion from the complete reference inventory
+
+**Scope:** all 746 entries from the supplied healthcare-only-icons.json are indexed exactly once. Added 570 original Oddkin outline SVGs and reused 37 existing canonical assets. The library now has 1,723 assets: 913 General, 175 GIS and 635 Healthcare. Healthcare remains one catalog on Icons page 359:2, organized into 18 labeled categories. All 1,153 preceding artwork bodies and icon component IDs are preserved. No consuming package was built.
+
+| Check | Command or evidence | Observed result |
+| --- | --- | --- |
+| SVG assets and complete coverage | node design/icons/validate.mjs, Playwright Chromium | 1,723 assets and 3,916 combined reference IDs pass: unique names/paths, valid editable SVG, 20 px canvas, uniform 1.5 px physical strokes, currentColor, no clipping, no external fonts/images and no stale SVGs. |
+| Figma structure and paint | Plugin API audit, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e; final catalog and artwork screenshots | One root frame and one Healthcare catalog; 1,723 unique component names; no overlapping siblings, overflowing labels, clipped artwork, unbound strokes, opaque icon containers or incorrect canvas sizes. |
+| Snapshot refresh | Eight disjoint Healthcare export batches with decoded lengths and FNV-1a hashes verified | 1,893 families and 2,246 definitions; all 1,676 preceding definition IDs, all 65 preceding Healthcare IDs and all 170 reuse edges preserved. |
+| Token parity, reuse and icon regression | node node_modules/vitest/vitest.mjs run --project node packages/tokens/test/figma-parity.test.ts packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts | 3 files, 14 tests pass. |
+| Repeatable generation | Regenerated from design/icons/inventories/gis.json and healthcare.json; compared complete catalog icon entries before and after | All 1,723 entries unchanged, including vector bodies, reference aliases and Figma IDs. The original root uploads were unavailable at final validation; retained inventories preserve every verified source identity and renderer field without upstream SVG paths. |
+
+Reference concepts guide original interpretations; equivalent filled/outline references share artwork. Rapid-test symbols show semantic results rather than manufacturer-specific band layouts. Functional standard/application badges are original and are not official logos. Two reversed source death-rate display names retain their raw names in the index; source IDs determine the drawn direction. Evidence: artifacts/oddkin-domain-icons/healthcare-expansion-validation.json.
 
 ## 2026-10-22 — Shared control module, field recipe, and odd-model-select on the Common look (M10, component-contracts.md §2.4, §2.9, §4)
 
@@ -2161,6 +2240,24 @@ Environment: as the previous entries. Other lanes in progress in the same tree: 
 | Size, types, CSS, vocabulary | `node scripts/check-size.mjs`; `npm run typecheck`; `npm run compat`; `node scripts/check-vocabulary.mjs` | Tabs 731 B gzip (budget 768), tab panel 96 B (budget 128). Other lanes' uncommitted work fails three of these, none in my files: `components:shared` 2,241 B over 1,792; the typecheck on the untracked `icon-catalog.test.ts`; compat on the option-row module (`cursor: default` at Safari iOS 17.4, `user-select` at Safari 17.4). My four stylesheets add no compatibility key. Vocabulary: `activation` is a controlled enumeration (`automatic`, `manual`); 0 findings. |
 
 **Findings:** manual slot assignment lets each panel sit inside its own `tabpanel` wrapper in the tabs' shadow root, so `aria-controls`/`aria-labelledby` resolve in one tree (css-architecture.md §12.1, pattern 1) while the panel content stays in the light DOM. A panel that upgrades after its tabs connected reports itself to its parent, since the mutation observer has already seen it as an unknown element. Not verified: screen-reader output, real devices, and Safari on macOS.
+
+
+## 2026-10-22 — Full icon consistency, semantic gallery audit and shared catalog contract
+
+**Scope:** audited all 1,723 original Oddkin SVGs and Figma main components. Reassigned 68 icons by artwork meaning: 52 reusable symbols moved to General and 16 qualified spatial/utility symbols moved to GIS. Final catalogs contain 949 General, 156 GIS and 618 Healthcare icons, in 43 labeled categories on the existing Icons page. All artwork bodies and component IDs are preserved. Generic layer controls, maps, accessibility and general science symbols share General; qualified spatial data and utility leak/inspection markers live in GIS.
+
+| Check | Command or evidence | Observed result |
+| --- | --- | --- |
+| Live Figma geometry and layout | Plugin API final audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a | All 1,723 canvases are 20 px; all 5,809 vector strokes have 1.5 px physical weight, rounded caps/joins and foreground bindings. No off-center/clipped artwork, opaque SVG containers, category drift, sibling overlaps or label overflow. One top-level library frame remains. |
+| Visual review | Nine complete contact sheets at 20/40 px and final screenshots of all three domain catalogs | Artwork, scaling proportions and labeled catalog layout reviewed. Small/inset symbols and secondary badges retain intentional proportions. |
+| Geometry, metadata and freshness | node design/icons/validate.mjs | All 1,723 SVGs, 3,916 reference IDs, three generated catalogs and two retained reference catalogs pass; valid geometry, native canvas, 17 px safe area, centering, physical stroke compensation, caps/joins, no stale SVGs/dependencies, schema validity, source/category joins, counts and all facets. Generated catalogs reproduce exactly from canonical data. |
+| Regression | node node_modules/vitest/vitest.mjs run --project node packages/tokens/test/figma-parity.test.ts packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts packages/components/test/icon-catalog.test.ts | 4 files, 18 tests pass, including exact SVG/Figma mapping, source identity coverage and source naming flag preservation. |
+| Types | node node_modules/typescript/bin/tsc -p tsconfig.tests.json --noEmit | Pass. |
+| Regeneration and snapshot preservation | Final generate.mjs run; before/after artwork, definition and reuse comparisons; live sorted ID/name hash | All 1,723 artwork bodies and icon component IDs unchanged; all 2,246 definition IDs and 170 reuse edges preserved. Live Figma and repo ID/name hash match (955147697, 76,331 UTF-16 units). |
+
+**Catalog organization:** general-only-icons.json, gis-only-icons.json and healthcare-only-icons.json now describe the actual Oddkin drawings with inline SVGs, source asset paths and stable Figma IDs/names/links. The common schema explicitly supports all three galleries and validates Oddkin geometry/Figma fields. The supplied normalized GIS (342) and Healthcare (746) reference catalogs are retained under design/icons/inventories/reference-catalogs/, with source IDs, metadata and review flags preserved; only their schema paths are adjusted for the new directory. Stable oddkin/name IDs survive gallery moves. Upstream filled/color variants are not advertised as Oddkin artwork. The consuming package remains separate work.
+
+Evidence: artifacts/oddkin-domain-icons/consistency-audit.json.
 
 ## 2026-10-22 — `odd-toolbar` (M10, component-contracts.md §3.4)
 

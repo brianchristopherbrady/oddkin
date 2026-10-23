@@ -1,0 +1,484 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:oddkin:icon-catalog:1.0.0",
+  "title": "Oddkin General, GIS and Healthcare icon catalogs",
+  "description": "Shared metadata contract for original Oddkin General, GIS and Healthcare SVG/Figma catalogs and their retained reference inventories. Each icon uses the same field set; Oddkin artwork adds a validated asset path, Figma identity and geometry contract under source_metadata.",
+  "$comment": "For lookups use icons[].id. Join icons[].source to sources[].id and icons[].category_id to categories[].id. Use facets for filter controls. Prefer preview.inline_svg when status is inline, otherwise preview.url when status is url. Display display_name and keep source_metadata out of routine gallery rendering. Validate the structural schema plus application-level uniqueness, foreign keys, count consistency, gallery/package agreement, and input identity preservation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schema_version",
+    "catalog_id",
+    "title",
+    "description",
+    "gallery",
+    "suggested_package",
+    "source_inventory_as_of_date",
+    "icon_count",
+    "search_fields",
+    "categories",
+    "sources",
+    "facets",
+    "provenance",
+    "icons"
+  ],
+  "properties": {
+    "$schema": { "enum": ["icon-catalog.schema.json", "../../icon-catalog.schema.json"] },
+    "schema_version": { "const": "1.0.0" },
+    "catalog_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "gallery": { "$ref": "#/$defs/gallery" },
+    "suggested_package": { "type": "string", "minLength": 1 },
+    "source_inventory_as_of_date": { "type": "string", "format": "date" },
+    "icon_count": { "type": "integer", "minimum": 0 },
+    "search_fields": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true,
+      "minItems": 1,
+      "description": ""
+    },
+    "categories": { "type": "array", "items": { "$ref": "#/$defs/category" } },
+    "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+    "facets": { "$ref": "#/$defs/facets" },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "icons": { "type": "array", "items": { "$ref": "#/$defs/icon" } }
+  },
+  "$defs": {
+    "icon": {
+      "type": "object",
+      "description": "Every icon in every industry catalog has these exact properties. Null means not recorded; an empty array means no values recorded. slug is a search/display helper and is not a unique key.",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "slug",
+        "display_name",
+        "description",
+        "gallery",
+        "suggested_package",
+        "category_id",
+        "source",
+        "source_category",
+        "tags",
+        "aliases",
+        "search_terms",
+        "search_text",
+        "available_styles",
+        "available_color_variants",
+        "is_brand_or_standard_identity",
+        "reference_url",
+        "preview",
+        "source_names",
+        "source_svg_file_count",
+        "source_notes",
+        "classification",
+        "review",
+        "source_metadata"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable, globally source-qualified lookup key. Preserved exactly; use this for routes, bookmarks, copy actions, and registry lookup.",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "description": "Original source name; may contain a source-relative folder path.",
+          "minLength": 1
+        },
+        "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "display_name": {
+          "type": "string",
+          "description": "Human-readable source label. Original casing and meaning are retained.",
+          "minLength": 1
+        },
+        "description": {
+          "type": ["string", "null"],
+          "description": "Source description when supplied; null when not recorded. Use display_name as the label."
+        },
+        "gallery": { "$ref": "#/$defs/gallery" },
+        "suggested_package": {
+          "type": "string",
+          "description": "Dataset package consumed by the shared @oddkin/icons framework.",
+          "minLength": 1
+        },
+        "category_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "source": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "source_category": {
+          "type": "string",
+          "description": "Original source category, retained independently of the cross-source editorial category.",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "minItems": 0,
+          "description": "Cleaned source search keywords; lowercased, de-duplicated, with non-string values and version-only tags removed."
+        },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "minItems": 0,
+          "description": "Alternative source spellings/short names, without merging distinct source icon identities."
+        },
+        "search_terms": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "minItems": 1,
+          "description": "Derived lowercase phrases and tokens from identity, label, source, category, tags, and aliases."
+        },
+        "search_text": {
+          "type": "string",
+          "description": "Precomputed lowercase text for basic matching; search_terms supports token matching and indexing.",
+          "minLength": 1
+        },
+        "available_styles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["default", "outline", "filled"],
+            "description": "Canonical visual style. Default means the input does not identify an outline/filled style; it is not a third drawing style."
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "available_color_variants": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["default", "inverse", "dark", "white"],
+            "description": "Source color variant, separate from visual style. Dark/white describe source variants, not an assumed UI theme."
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "is_brand_or_standard_identity": { "type": "boolean" },
+        "reference_url": { "type": ["string", "null"], "format": "uri" },
+        "preview": { "$ref": "#/$defs/preview" },
+        "source_names": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "minItems": 0,
+          "description": "Original variant/name identities after the earlier inventory consolidation."
+        },
+        "source_svg_file_count": { "type": ["integer", "null"], "minimum": 1 },
+        "source_notes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "minItems": 0,
+          "description": "Original source notes, consistently represented as an array."
+        },
+        "classification": { "$ref": "#/$defs/classification" },
+        "review": { "$ref": "#/$defs/review" },
+        "source_metadata": {
+          "type": "object",
+          "description": "Unmodified input/source metadata. Extension fields are confined to this object; gallery consumers use the normalized fields."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "gallery": { "const": "general" } } },
+          "then": { "properties": { "suggested_package": { "const": "@oddkin/icons-general" } } }
+        },
+        {
+          "if": { "properties": { "gallery": { "const": "gis" } } },
+          "then": { "properties": { "suggested_package": { "const": "@oddkin/icons-gis" } } }
+        },
+        {
+          "if": { "properties": { "gallery": { "const": "healthcare" } } },
+          "then": { "properties": { "suggested_package": { "const": "@oddkin/icons-healthcare" } } }
+        },
+        {
+          "if": { "properties": { "source": { "const": "oddkin" } } },
+          "then": {
+            "properties": {
+              "id": { "type": "string", "pattern": "^oddkin/" },
+              "source_metadata": { "$ref": "#/$defs/oddkinArtwork" }
+            }
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "description": "Source identity and provenance. catalog_icon_count counts this filtered catalog; inventory counts describe the larger research source.",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "repository_url",
+        "reference_url",
+        "version",
+        "commit",
+        "inventory_url",
+        "selection",
+        "inventory_icon_count",
+        "inventory_svg_file_count",
+        "catalog_icon_count",
+        "license",
+        "source_metadata"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "repository_url": { "type": ["string", "null"], "format": "uri" },
+        "reference_url": { "type": ["string", "null"], "format": "uri" },
+        "version": { "type": ["string", "null"] },
+        "commit": { "type": ["string", "null"] },
+        "inventory_url": { "type": ["string", "null"], "format": "uri" },
+        "selection": { "type": ["string", "null"] },
+        "inventory_icon_count": { "type": ["integer", "null"], "minimum": 0 },
+        "inventory_svg_file_count": { "type": ["integer", "null"], "minimum": 0 },
+        "catalog_icon_count": { "type": "integer", "minimum": 0 },
+        "license": {
+          "type": "object",
+          "description": "Null values mean licensing was not recorded in the supplied inventory; no license is inferred.",
+          "additionalProperties": false,
+          "required": ["id", "url"],
+          "properties": {
+            "id": { "type": ["string", "null"] },
+            "url": { "type": ["string", "null"], "format": "uri" }
+          }
+        },
+        "source_metadata": {
+          "type": "object",
+          "description": "Unmodified input/source metadata. Extension fields are confined to this object; gallery consumers use the normalized fields."
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "description": "Editorial category shared across sources within a gallery. IDs are stable slugs and are scoped to the gallery.",
+      "additionalProperties": false,
+      "required": ["id", "label", "description", "icon_count"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "label": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "icon_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "description": "Representative SVG preview. Generated Oddkin records embed their actual local SVG; retained reference catalogs describe upstream examples.",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "format",
+        "url",
+        "inline_svg",
+        "source_path",
+        "bundle_url",
+        "import_path",
+        "component_name",
+        "style",
+        "color_variant",
+        "view_box"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["url", "inline", "source-reference"],
+          "description": "Prefer inline_svg for inline; use url for url; source-reference is metadata-only."
+        },
+        "format": { "const": "svg" },
+        "url": { "type": ["string", "null"], "format": "uri" },
+        "inline_svg": {
+          "type": ["string", "null"],
+          "description": "SVG source for an inline preview; otherwise null."
+        },
+        "source_path": {
+          "type": ["string", "null"],
+          "description": "Original source repository/package path, not an application asset URL."
+        },
+        "bundle_url": { "type": ["string", "null"], "format": "uri" },
+        "import_path": { "type": ["string", "null"] },
+        "component_name": { "type": ["string", "null"] },
+        "style": {
+          "type": "string",
+          "enum": ["default", "outline", "filled"],
+          "description": "Canonical visual style. Default means the input does not identify an outline/filled style; it is not a third drawing style."
+        },
+        "color_variant": {
+          "type": "string",
+          "enum": ["default", "inverse", "dark", "white"],
+          "description": "Source color variant, separate from visual style. Dark/white describe source variants, not an assumed UI theme."
+        },
+        "view_box": {
+          "type": ["string", "null"],
+          "description": "Recorded SVG viewBox when known; otherwise null."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "url" } } },
+          "then": { "properties": { "url": { "type": "string", "format": "uri" } } }
+        },
+        {
+          "if": { "properties": { "status": { "const": "inline" } } },
+          "then": { "properties": { "inline_svg": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    },
+    "facet": {
+      "type": "object",
+      "description": "Precomputed filter option. Style/color facets are multi-valued, so their counts need not sum to icon_count.",
+      "additionalProperties": false,
+      "required": ["value", "label", "count"],
+      "properties": {
+        "value": { "type": ["string", "boolean"] },
+        "label": { "type": "string", "minLength": 1 },
+        "count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "facets": {
+      "type": "object",
+      "description": "",
+      "additionalProperties": false,
+      "required": [
+        "categories",
+        "sources",
+        "styles",
+        "color_variants",
+        "brand_status",
+        "review_status",
+        "preview_status"
+      ],
+      "properties": {
+        "categories": { "type": "array", "items": { "$ref": "#/$defs/facet" } },
+        "sources": { "type": "array", "items": { "$ref": "#/$defs/facet" } },
+        "styles": { "type": "array", "items": { "$ref": "#/$defs/facet" } },
+        "color_variants": { "type": "array", "items": { "$ref": "#/$defs/facet" } },
+        "brand_status": { "type": "array", "items": { "$ref": "#/$defs/facet" } },
+        "review_status": { "type": "array", "items": { "$ref": "#/$defs/facet" } },
+        "preview_status": { "type": "array", "items": { "$ref": "#/$defs/facet" } }
+      }
+    },
+    "classification": {
+      "type": "object",
+      "description": "Assignment follows the meaning of the original artwork, independently of its reference source. General-purpose symbols are shared through General; specialized spatial and clinical meanings retain their domain.",
+      "additionalProperties": false,
+      "required": ["status", "reason"],
+      "properties": {
+        "status": { "const": "assigned" },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "review": {
+      "type": "object",
+      "description": "Not-flagged means no source issue was recorded. It is not a clinical, legal, or artwork approval.",
+      "additionalProperties": false,
+      "required": ["status", "notes"],
+      "properties": {
+        "status": { "type": "string", "enum": ["not-flagged", "needs-review"], "description": "" },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "minItems": 0,
+          "description": "Recorded source naming/catalogue ambiguities, if any."
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "",
+      "additionalProperties": false,
+      "required": [
+        "input_filename",
+        "input_sha256",
+        "normalization_method",
+        "original_catalog_metadata"
+      ],
+      "properties": {
+        "input_filename": { "type": "string", "minLength": 1 },
+        "input_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "normalization_method": { "type": "string", "minLength": 1 },
+        "original_catalog_metadata": {
+          "type": "object",
+          "description": "Unmodified input/source metadata. Extension fields are confined to this object; gallery consumers use the normalized fields."
+        }
+      }
+    },
+    "gallery": {
+      "type": "string",
+      "enum": ["general", "gis", "healthcare"],
+      "description": "General contains reusable interface symbols, navigation, objects and science tools. GIS and Healthcare contain domain-specific concepts."
+    },
+    "oddkinArtwork": {
+      "type": "object",
+      "required": ["asset_path", "figma", "geometry", "reference_ids", "reference_catalogs"],
+      "properties": {
+        "asset_path": {
+          "type": "string",
+          "pattern": "^design/icons/(general|gis|healthcare)/[A-Za-z0-9-]+\\.svg$"
+        },
+        "figma": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["file_key", "node_id", "component_name", "url"],
+          "properties": {
+            "file_key": { "type": "string", "minLength": 1 },
+            "node_id": { "type": "string", "pattern": "^[0-9]+:[0-9]+$" },
+            "component_name": { "type": "string", "pattern": "^Oddkin/Icon/" },
+            "url": { "type": "string", "format": "uri" }
+          }
+        },
+        "geometry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "width",
+            "height",
+            "view_box",
+            "stroke_width",
+            "stroke_linecap",
+            "stroke_linejoin",
+            "fill"
+          ],
+          "properties": {
+            "width": { "const": 20 },
+            "height": { "const": 20 },
+            "view_box": { "const": "0 0 20 20" },
+            "stroke_width": { "const": 1.5 },
+            "stroke_linecap": { "const": "round" },
+            "stroke_linejoin": { "const": "round" },
+            "fill": { "const": "none" }
+          }
+        },
+        "reference_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "reference_catalogs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "gallery": { "const": "general" } } },
+      "then": { "properties": { "suggested_package": { "const": "@oddkin/icons-general" } } }
+    },
+    {
+      "if": { "properties": { "gallery": { "const": "gis" } } },
+      "then": { "properties": { "suggested_package": { "const": "@oddkin/icons-gis" } } }
+    },
+    {
+      "if": { "properties": { "gallery": { "const": "healthcare" } } },
+      "then": { "properties": { "suggested_package": { "const": "@oddkin/icons-healthcare" } } }
+    }
+  ]
+}
