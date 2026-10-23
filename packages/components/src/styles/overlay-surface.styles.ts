@@ -74,3 +74,26 @@ export const overlaySurfaceStyles = css`
     }
   }
 `;
+
+/**
+ * The anchored overlay look on the open picker of a native `<select>`, in its gated enhancement
+ * (`appearance: base-select`; registry entry `customizable-select`). The declarations repeat the
+ * anchored rule above rather than share a fragment: the analyzer reads each css template
+ * statically, and an interpolated fragment would hide its tokens. Only odd-select uses it, so it is
+ * imported relatively and not re-exported from `@oddkin/components/styles`.
+ */
+export const overlayPickerStyles = css`
+  @supports (appearance: base-select) and selector(::picker(select)) {
+    ::picker(select) {
+      border-width: ${token('border.width.default')};
+      border-color: ${token('color.border.default')};
+      border-radius: ${token('control.radius')};
+      background: ${token('color.surface.raised')};
+      color: ${token('color.text.primary')};
+      box-shadow: ${token('elevation.md')};
+      font-family: ${token('type.body.family')};
+      font-size: ${token('type.body.size')};
+      line-height: ${token('type.body.line-height')};
+    }
+  }
+`;

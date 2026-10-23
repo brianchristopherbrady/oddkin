@@ -1872,7 +1872,7 @@
     {
       "id": "overlay-surface",
       "kind": "style",
-      "home": "@oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles)",
+      "home": "@oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles); overlayPickerStyles (the gated select picker, imported relatively from styles/overlay-surface.styles.ts)",
       "decision": "Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers.",
       "status": "existing",
       "figma": [

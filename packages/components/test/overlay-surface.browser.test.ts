@@ -5,7 +5,8 @@ import { flush } from '@oddkin/core/reactive';
 import { html } from '@oddkin/core/template';
 import { hostStyles } from '../src/styles/host.styles.js';
 import { overlaySurfaceStructuralStyles } from '../src/styles/overlay-surface.structural.styles.js';
-import { overlaySurfaceStyles } from '../src/styles/overlay-surface.styles.js';
+import { overlayPickerStyles, overlaySurfaceStyles } from '../src/styles/overlay-surface.styles.js';
+import { css } from '@oddkin/core/styles';
 import { loadTheme, settle } from './probe.js';
 
 // The overlay-surface module (component-catalog.md ??6), drawn by test elements until the overlays
@@ -31,6 +32,28 @@ class TestOverlayHost extends OddkinElement {
   }
 }
 define('test-overlay-host', TestOverlayHost);
+// A customizable select, as odd-select opts in, with the module's picker look.
+class TestOverlayPicker extends OddkinElement {
+  static override styles = [
+    hostStyles,
+    css`
+      @supports (appearance: base-select) and selector(::picker(select)) {
+        select,
+        ::picker(select) {
+          appearance: base-select;
+        }
+      }
+    `,
+    overlayPickerStyles,
+  ];
+  override render() {
+    return html`<select id="select">
+      <option>One</option>
+      <option>Two</option>
+    </select>`;
+  }
+}
+define('test-overlay-picker', TestOverlayPicker);
 
 let container: HTMLElement;
 afterEach(() => {
@@ -138,4 +161,28 @@ describe('overlay-surface module', () => {
       }
     },
   );
+
+  it('gives a select picker the anchored look only where the picker can be styled', async () => {
+    container = document.createElement('div');
+    // Dark mode: the raised and default surfaces differ there.
+    container.dataset['oddMode'] = 'dark';
+    container.innerHTML = '<test-overlay-picker></test-overlay-picker>';
+    document.body.append(container);
+    const el = container.querySelector('test-overlay-picker')!;
+    await settle(el);
+    const rules = overlayPickerStyles.sheetFor(document)!.cssRules;
+    expect(rules.length).toBe(1);
+    const gate = rules[0] as CSSSupportsRule;
+    expect(gate.conditionText).toContain('selector(::picker(select))');
+    const supported = CSS.supports(gate.conditionText);
+    // Where the engine cannot style the picker, the rule inside the gate never applies.
+    if (!supported) return;
+    const picker = getComputedStyle(el.shadowRoot!.getElementById('select')!, '::picker(select)');
+    expect(picker.backgroundColor).toBe(token('background-color', '--odd-color-surface-raised'));
+    expect(picker.borderTopColor).toBe(token('color', '--odd-color-border-default'));
+    expect(picker.borderTopLeftRadius).toBe(
+      token('border-top-left-radius', '--odd-control-radius'),
+    );
+    expect(picker.boxShadow).toBe(token('box-shadow', '--odd-elevation-md'));
+  });
 });
