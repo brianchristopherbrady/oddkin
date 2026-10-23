@@ -2460,3 +2460,16 @@ Not rerun: the 1,000-cycle lifetime run. The scenario's markup does not use the 
 | Size, CSS | `node scripts/check-size.mjs`; `npm run compat` | `components:tree` is 428 B gzip (budget 512): the rows, chevrons, spinner, and focus ring are shared modules. The compatibility check passes; the tree's sheets add no compatibility key. |
 
 **Findings:** The tree reuses `odd-side-nav`'s navigation rows: `aria-selected='true'` joins `aria-current='page'` in both navigation-row modules, so a selected tree row and a current navigation entry look the same, as Figma's `Tree` draws its selected row with the `NavigationItem` Current instance. Rows are flat `treeitem` elements with explicit level, set size, and position (one keyed list, so expanding renders only the new rows). Typeahead is fed from the tree's own key handler rather than its capture listener, because `*` is a printable character that the tree uses. Not verified: screen-reader output, touch devices, and Safari on macOS.
+
+## 2026-10-23 — `PositionController` and native invokers (core-contracts.md §4.1)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2). Other agents' uncommitted work in the same tree (Agent 2's `odd-dialog`).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reproduction | `npx vitest run --project browser packages/core/test/position.browser.test.ts --browser.name=chromium` before the fix | The new test "places a surface its invoker opens" fails: after a user's click on a `popovertarget` button the popover is open but at the browser's default place (top 423 px instead of 120 px). The `beforetoggle` listener's microtask ran before the surface was showing, so the start saw `:popover-open` false. |
+| Fix | same, plus `packages/components/test/popover.browser.test.ts`, three engines | Open now also starts on the next animation frame, which runs before that frame is painted; a start queued before the scope is disposed does nothing (new test: dispose in the same turn as `showPopover()`, no placement after two frames). 107 runs pass in Chromium, Firefox, and WebKit, 4 skipped. |
+| Mutation probes | `node .tmp/mutate.mjs .tmp/c-mutants-position.json` (Chromium) | 3 of 3 killed: no frame start, no disposal flag, no flag check. |
+| Node, contracts | `npm run contracts`; `npx vitest run --project node` | The contracts are regenerated (one section hash). The core and repository node tests pass; the node project's other failures are in uncommitted work (`odd-dialog` metadata not yet built; the import maps lack `@oddkin/core/i18n` for odd-input's dist). |
+
+**Findings:** A popover opened by the browser itself (a declarative invoker) and one opened by script differ in when `beforetoggle`'s microtasks run, so a controller that waits for "shown" in a microtask must also wait for the next frame. Agent 2's overlay wiring works around it on its own; this makes the controller right for every caller. Not verified: Safari on macOS, touch input.

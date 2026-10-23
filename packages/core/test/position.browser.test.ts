@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { userEvent } from 'vitest/browser';
 import {
   PositionController,
   type Placement,
@@ -242,6 +243,29 @@ describe('PositionController', () => {
     surface.style.removeProperty('top');
     surface.showPopover();
     await settle();
+    expect(surface.style.getPropertyValue('top')).toBe('');
+  });
+
+  it('places a surface its invoker opens, before the frame that paints it', async () => {
+    const { anchor, surface } = fixture(100, 100);
+    surface.id = 'invoked';
+    surface.popover = 'auto';
+    anchor.setAttribute('popovertarget', 'invoked');
+    position(anchor, surface);
+    // A user's click: the browser opens the popover with no script on the stack.
+    await userEvent.click(anchor);
+    expect(surface.matches(':popover-open')).toBe(true);
+    await frame();
+    expect(rect(surface).top).toBe(120);
+    expect(rect(surface).left).toBe(100);
+  });
+
+  it('does not start when its scope is disposed in the turn the surface opens', async () => {
+    const { anchor, surface } = fixture(100, 100);
+    position(anchor, surface);
+    surface.showPopover();
+    scope.dispose();
+    await frames();
     expect(surface.style.getPropertyValue('top')).toBe('');
   });
 

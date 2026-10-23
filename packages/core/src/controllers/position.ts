@@ -68,17 +68,25 @@ export class PositionController implements Controller {
   connect(scope: Scope): void {
     const surface = this.#options.surface();
     if (!surface) return;
+    // A start queued before the scope was disposed does nothing.
+    let live = true;
     const start = () => {
-      if (!this.#stop && surface.isConnected && surface.matches(':popover-open')) this.#start();
+      if (live && !this.#stop && surface.isConnected && surface.matches(':popover-open'))
+        this.#start();
     };
-    // `beforetoggle` is synchronous (`toggle` is a later task): open places in a microtask, when
-    // the surface is shown and measurable but not yet painted; close stops at once.
+    // `beforetoggle` is synchronous (`toggle` is a later task). Opened from script, the surface is
+    // shown and measurable in a microtask; opened by a native invoker (`popovertarget`, with an
+    // empty script stack) it is not yet showing then, so open also places on the next frame, still
+    // before it is painted. Close stops at once.
     const before = (event: Event) => {
-      if ((event as ToggleEvent).newState === 'open') queueMicrotask(start);
-      else this.#halt();
+      if ((event as ToggleEvent).newState === 'open') {
+        queueMicrotask(start);
+        requestAnimationFrame(start);
+      } else this.#halt();
     };
     surface.addEventListener('beforetoggle', before);
     scope.add(() => {
+      live = false;
       surface.removeEventListener('beforetoggle', before);
       this.#halt();
     }, 'position');
