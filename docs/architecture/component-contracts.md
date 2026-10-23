@@ -41,14 +41,19 @@ forms, normalized to one model inside the element:
 
 | Collection | Declarative children (read as data, never rendered) | Property |
 | --- | --- | --- |
-| Values (`odd-select`, `odd-listbox`, `odd-combobox`, `odd-radio-group`, `odd-segmented-control`) | `<option value disabled selected title>`, `<optgroup label>`; `title` is the option's description, as in accessible-description computation | `options: readonly OptionRecord[]` with `{ value, label, description?, disabled?, group? }` |
-| Actions (`odd-menu`, `odd-split-button`) | `<option value disabled>` (value = item id), `<optgroup label>`, `<hr>` (separator) | `items: readonly MenuItemRecord[]` with `{ id, label, description?, icon?, shortcut?, disabled?, tone?: 'danger', items?, kind?: 'item' \| 'separator' \| 'group' }` |
+| Values (`odd-select`, `odd-listbox`, `odd-combobox`, `odd-radio-group`, `odd-segmented-control`) | `<option value disabled selected title>`, `<optgroup label disabled>`; `title` is the option's description, as in accessible-description computation; a disabled group disables its options | `options: readonly OptionRecord[]` with `{ value, label, description?, disabled?, group? }` |
+| Actions (`odd-menu`, `odd-split-button`) | `<option value disabled title>` (value = item id), `<optgroup label>`, `<hr>` (separator) | `items: readonly MenuItemRecord[]`, by `kind`: an action `{ kind?: 'item', id, label, description?, icon?, shortcut?, disabled?, tone?: 'danger', items? }` (`items`: a submenu), a group `{ kind: 'group', label, items }`, a separator `{ kind: 'separator' }` |
 | Commands (`odd-command-palette`), hierarchies (`odd-tree`) | — (data-driven) | `items` (`{ id, label, … }`, tree items nest `children`) |
-| Links (`odd-breadcrumbs`) | `<a href>` (text = label) | `items: readonly { label, href }[]` |
+| Links (`odd-breadcrumbs`) | `<a href>` descendants (text = label), so a server-rendered `<ol><li><a href>` list works as written | `items: readonly LinkRecord[]` with `{ label, href }` |
 
-When both are present the property wins and development builds report `collection.source.conflict`. Children are
-observed (`MutationObserver` owned by the element's scope), so server-rendered or framework-rendered children work
-without a property. The `items` and `options` names already mean these records in `odd-side-nav` and the AI package.
+When both are present the property wins (even an empty array) and `collection.source.conflict` is reported once per
+element (a console warning; `@oddkin/components` has one build, as for `odd-side-nav`). Children are observed
+(`MutationObserver` owned by the element's scope), so server-rendered or framework-rendered children work without a
+property; the source is connected in `connected(scope)`, so children present at upgrade are in the first render. The
+source also reports the values of `<option selected>` children, which a value element uses as its default value when
+the host has no `value` attribute. One internal module (`packages/components/src/collection/collection.ts`: the
+record types, `readOptions`, `readMenuItems`, `readLinks`, `CollectionSource`) serves every element in the table.
+The `items` and `options` names already mean these records in `odd-side-nav` and the AI package.
 
 ### 2.3 Content children
 
