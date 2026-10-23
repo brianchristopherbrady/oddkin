@@ -604,9 +604,16 @@
       ],
       "webFeature": "viewport-unit-variants",
       "adoption": "foundation",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
-      "baseline": "Dialog and drawer maximum sizes use dvh/svh so mobile browser toolbars do not hide content."
+      "baseline": "Dialog and drawer maximum sizes use dvh/svh so mobile browser toolbars do not hide content.",
+      "usedBy": ["odd-dialog: its maximum block size (100dvh less a margin)"],
+      "tests": [
+        {
+          "file": "packages/components/test/dialog.browser.test.ts",
+          "name": "fits the viewport, following the writing direction"
+        }
+      ]
     },
     {
       "id": "dialog-element",
@@ -615,9 +622,61 @@
       "bcd": ["api.HTMLDialogElement.showModal", "css.selectors.backdrop"],
       "webFeature": "dialog",
       "adoption": "foundation",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
-      "baseline": "Modal dialogs use the native top layer, page inertness, focus handling, and Escape dismissal."
+      "baseline": "Modal dialogs use the native top layer, page inertness, focus handling, and Escape dismissal.",
+      "detectApi": "HTMLDialogElement.prototype.showModal",
+      "usedBy": [
+        "odd-dialog (a <dialog> in its shadow root)",
+        "the modal wiring (packages/components/src/overlay/dialog.ts) for the drawer and the command palette"
+      ],
+      "tests": [
+        {
+          "file": "packages/components/test/dialog.browser.test.ts",
+          "name": "opens modally from show(), leaving only its own content reachable"
+        },
+        {
+          "file": "packages/components/test/dialog.browser.test.ts",
+          "name": "returns focus to the control that opened it, however it closes"
+        },
+        {
+          "file": "packages/components/test/dialog.browser.test.ts",
+          "name": "closes from a <form method=\"dialog\"> in its content with the submitter value"
+        }
+      ],
+      "notes": "A <form method=\"dialog\"> slotted into the element has no <dialog> ancestor in its own tree, so the browser does nothing with it; the wiring closes the dialog with the submitter's value instead."
+    },
+    {
+      "id": "dialog-closedby",
+      "syntax": "<dialog closedby=\"any | closerequest | none\">",
+      "kind": "html",
+      "bcd": ["api.HTMLDialogElement.closedBy"],
+      "adoption": "enhancement",
+      "status": "implemented",
+      "milestone": "M10",
+      "baseline": "The dialog emulates closedby: with `any`, a press on the backdrop closes it after a cancelable cancel; with `none`, Escape is cancelled.",
+      "enhanced": "The browser applies closedby itself: light dismiss and close requests.",
+      "gate": "'closedBy' in HTMLDialogElement.prototype, checked at each opening",
+      "differences": "Emulated `none` cancels the cancel event, and Chrome closes anyway on a second Escape without a user activation in between; native `none` ignores Escape.",
+      "detectApi": "HTMLDialogElement.prototype.closedBy",
+      "usedBy": [
+        "odd-dialog `closedby`",
+        "the modal wiring (packages/components/src/overlay/dialog.ts)"
+      ],
+      "tests": [
+        {
+          "file": "packages/components/test/dialog.browser.test.ts",
+          "name": "closes on a backdrop press with closedby=\"any\""
+        },
+        {
+          "file": "packages/components/test/dialog.browser.test.ts",
+          "name": "stays open on a backdrop press by default, and on Escape with closedby=\"none\""
+        },
+        {
+          "file": "packages/components/test/dialog.browser.test.ts",
+          "name": "sets the native closedby where the browser has it, and nothing where it does not"
+        }
+      ]
     },
     {
       "id": "popover-api",
@@ -791,7 +850,7 @@
       "differences": "Animation only; final states, focus, and accessibility state are identical, and cleanup never waits on transitionend.",
       "detectCss": "(transition-behavior: allow-discrete)",
       "usedBy": [
-        "overlay-surface module: popovers stay shown while they fade out (transition-behavior: allow-discrete)"
+        "overlay-surface module: popovers, and modal dialogs with their backdrop, stay shown while they fade out (transition-behavior: allow-discrete)"
       ],
       "tests": [
         {
@@ -801,6 +860,10 @@
         {
           "file": "packages/components/test/popover.browser.test.ts",
           "name": "appears and disappears without motion when motion is reduced"
+        },
+        {
+          "file": "packages/components/test/dialog.browser.test.ts",
+          "name": "fades with its backdrop only with motion allowed, never waiting for the fade"
         }
       ],
       "notes": "Popovers fade in with a keyframes animation, which is at the floor, so @starting-style is not used yet: the compatibility check gates an at-rule only behind an @supports that names it (at-rule()), which the floor lacks."

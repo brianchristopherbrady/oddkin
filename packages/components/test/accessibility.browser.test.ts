@@ -222,6 +222,40 @@ describe('axe-core, WCAG 2.2 A and AA', () => {
     );
   });
 
+  // A modal dialog makes the rest of the page inert, so each is audited on its own.
+  it.each(['light', 'dark'] as const)('%s mode: no violations in an open dialog', async (mode) => {
+    for (const markup of [
+      `<odd-dialog label="Rename workspace" open><form id="rename" method="dialog"><p>Choose a clear name your team will recognise.</p><odd-input label="Workspace name" value="Design systems"></odd-input></form><odd-button slot="footer" type="submit" form="rename" value="cancel">Cancel</odd-button><odd-button slot="footer" type="submit" form="rename" value="save" appearance="primary">Save</odd-button></odd-dialog>`,
+      `<odd-dialog label="Delete workspace?" alert no-close open><p>This permanently deletes Field notes and its shared content.</p><form method="dialog" slot="footer"><odd-button type="submit" value="cancel" autofocus>Cancel</odd-button><odd-button type="submit" value="delete" appearance="primary">Delete</odd-button></form></odd-dialog>`,
+    ]) {
+      const container = document.createElement('div');
+      container.dataset['oddMode'] = mode;
+      container.style.setProperty('--odd-motion-duration-fast', '0s');
+      container.innerHTML = markup;
+      document.body.append(container);
+      try {
+        for (const el of [
+          ...container.querySelectorAll<HTMLElement & { updateComplete: Promise<void> }>('*'),
+        ].filter((el) => el.localName.startsWith('odd-')))
+          await el.updateComplete;
+        flush();
+        const dialog = container.querySelector('odd-dialog')!.shadowRoot!.querySelector('dialog')!;
+        expect(dialog.matches(':modal')).toBe(true);
+        const { violations, passes } = await axe().run(container, {
+          runOnly: { type: 'tag', values: TAGS },
+        });
+        expect(
+          violations.map((v) => `${v.id}: ${JSON.stringify(v.nodes.map((n) => n.target))}`),
+        ).toEqual([]);
+        expect(passes.map((r) => r.id)).toEqual(
+          expect.arrayContaining(['button-name', 'color-contrast', 'aria-allowed-attr']),
+        );
+      } finally {
+        container.remove();
+      }
+    }
+  });
+
   it('finds misuse inside shadow roots, so a clean result is not vacuous', async () => {
     const container = document.createElement('div');
     container.style.setProperty('--odd-motion-duration-fast', '0s');

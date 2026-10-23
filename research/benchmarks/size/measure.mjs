@@ -131,6 +131,9 @@ export const CSS_BUDGETS = {
   'components:pagination': 768, // 702
   'components:breadcrumbs': 640, // 561
   'components:popover': 256, // 226: the surface, motion, and close button are the shared overlay module
+  // 704: measured 638 on 2026-10-23: the header, body, and footer column, title, divider, and sizes;
+  // the sheet look, motion, and close button are the shared overlay module.
+  'components:dialog': 704,
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   // Collections, measured on 2026-10-23 (structural and default styles; rows are the shared modules).
@@ -152,7 +155,8 @@ export const CSS_BUDGETS = {
   // 1,152: measured 1,077 on 2026-10-22 once the entry rows moved to the shared navigation-row
   // module (1,234 before, with them).
   'components:side-nav': 1152,
-  // 3,072: measured 2,984 on 2026-10-23 with the overlay close control, popover motion, and
+  // 3,072: measured 3,018 on 2026-10-23 with the dialog and backdrop fades (+34); 2,984 with
+  // the overlay close control, popover motion, and
   // placement limits (+238); 2,746 with the overlay-surface look (+113); 2,633 with
   // the choice row (+59, moved out of odd-checkbox for
   // odd-switch); 2,574 with the control-indicator modules (+346: checkbox box and marks); 2,228 on

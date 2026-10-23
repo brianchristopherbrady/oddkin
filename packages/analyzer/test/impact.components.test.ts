@@ -78,6 +78,7 @@ describe('change impact on @oddkin/components', () => {
         'example:odd-alert/danger',
         'example:odd-card/headed',
         'example:odd-checkbox/inForm',
+        ...['alert', 'closedByAny', 'default'].map((name) => `example:odd-dialog/${name}`),
         'example:odd-empty-state/default',
         'example:odd-input/inForm',
         'example:odd-listbox/inForm',

@@ -1674,6 +1674,10 @@
     "odd-chip": {
       "dependencies": []
     },
+    "odd-dialog": {
+      "dependencies": [],
+      "reason": "Actions and fields are slot content."
+    },
     "odd-disclosure": {
       "dependencies": []
     },
@@ -1877,13 +1881,14 @@
         "tooltip",
         "Menu",
         "dialog",
+        "alertDialog",
         "drawer",
         "toast",
         "select (open)",
         "combobox",
         "multiselect"
       ],
-      "code": ["odd-popover"]
+      "code": ["odd-popover", "odd-dialog"]
     },
     {
       "id": "form",
@@ -1921,6 +1926,15 @@
       "status": "existing",
       "figma": ["popover", "tooltip", "Menu", "combobox", "multiselect", "splitAction"],
       "code": ["odd-popover"]
+    },
+    {
+      "id": "modal-dialog",
+      "kind": "controller",
+      "home": "packages/components/src/overlay/dialog.ts (ModalDialog; internal to @oddkin/components)",
+      "decision": "Modal overlays: a native <dialog> shown modally (the page inert), initial focus and its return, close and cancel at the host, closedby (native, emulated elsewhere), and a light-DOM <form method=\"dialog\">.",
+      "status": "existing",
+      "figma": ["dialog", "alertDialog", "drawer", "CommandPalette"],
+      "code": ["odd-dialog"]
     },
     {
       "id": "resize",

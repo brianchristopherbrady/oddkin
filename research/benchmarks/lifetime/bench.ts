@@ -13,6 +13,7 @@ import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
 import '@oddkin/components/define/checkbox';
 import '@oddkin/components/define/chip';
+import '@oddkin/components/define/dialog';
 import '@oddkin/components/define/disclosure';
 import '@oddkin/components/define/empty-state';
 import '@oddkin/components/define/icon';
@@ -203,6 +204,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-pagination label="Pages" current="3" page-count="12"></odd-pagination>
         <odd-breadcrumbs max-items="2"><ol><li><a href="#a">A</a></li><li><a href="#b">B</a></li><li><a href="#c">C</a></li></ol></odd-breadcrumbs>
         <odd-popover label="Details" open>Details.</odd-popover>
+        <odd-dialog label="Confirm" open>Sure?<button slot="footer">OK</button></odd-dialog>
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>
         <odd-switch name="alerts" checked>Alerts</odd-switch>

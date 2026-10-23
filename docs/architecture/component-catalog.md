@@ -92,10 +92,10 @@ tokens, slot content, a native element, or a look-alike.
 | `Accordion` | 3 | a group of `odd-disclosure` | Planned (M10, via disclosure) | |
 | `Toolbar` | 3 | toolbar layout recipe + roving focus (`@oddkin/core/controllers/focus`) | Planned (M10, layout recipe presets) | References `button/sm` ×7. |
 | `card` | 2 | `odd-card` | Existing | `appearance` outlined/filled/elevated, `padding`, header/body/footer slots. References `button` ×2 (footer actions). |
-| `popover` | 2 | popover overlay | Planned (M10 overlays) | ADR 0044. |
+| `popover` | 2 | `odd-popover` | Existing | ADR 0044. The host is the popover; `popovertarget` opens it. |
 | `tooltip` | 2 | tooltip overlay | Planned (M10 overlays) | ADR 0044 (`popover="manual"`). |
-| `dialog` | 2 | `odd-dialog` | Planned (M10) | `<dialog>` + `showModal()`. |
-| `alertDialog` | 1 | `odd-dialog` alert variant | Planned (M10) | |
+| `dialog` | 2 | `odd-dialog` | Existing | `<dialog>` + `showModal()`; `closedby`, a slotted `<form method="dialog">`. |
+| `alertDialog` | 1 | `odd-dialog alert` | Existing (variant) | The warning glyph and its circle are slot content. |
 | `drawer` | 2 | drawer (dialog or popover variant) | Planned (unlisted) | |
 | `alert` | 4 | `odd-alert` | Planned (M10) | |
 | `toast` | 2 | toast | Planned (unlisted) | ADR 0044 open question (announcement design). |
@@ -397,7 +397,7 @@ Status: **proposed** (2026-10-22). 170 references; controller 14, deferred 11, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (36) has no element dependency.
+Every other element (37) has no element dependency.
 
 #### Shared homes
 
@@ -416,11 +416,12 @@ Every other element (36) has no element dependency.
 | nav-row: Hierarchical navigation rows: indent step, expand glyph, current marker. | style | @oddkin/components/styles (navRowStructuralStyles, navRowStyles; moved out of odd-side-nav) | existing | odd-side-nav, odd-tree |  |
 | chip: Chip look and remove affordance. | style | @oddkin/components/chip styles | existing | odd-chip |  |
 | avatar: Avatar look and stacking. | style | @oddkin/components/avatar styles | existing | odd-avatar, .odd-avatar-group recipe |  |
-| overlay-surface: Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers. | style | @oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles) | existing | odd-popover |  |
+| overlay-surface: Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers. | style | @oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles) | existing | odd-popover, odd-dialog |  |
 | form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input, odd-checkbox, odd-switch, odd-listbox | Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller. |
 | focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | odd-tabs, odd-toolbar, odd-tree |  |
 | collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | odd-breadcrumbs, odd-listbox |  |
 | position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (PositionController, ADR 0044) | existing | odd-popover |  |
+| modal-dialog: Modal overlays: a native <dialog> shown modally (the page inert), initial focus and its return, close and cancel at the host, closedby (native, emulated elsewhere), and a light-DOM <form method="dialog">. | controller | packages/components/src/overlay/dialog.ts (ModalDialog; internal to @oddkin/components) | existing | odd-dialog |  |
 | resize: Splitter drag and keyboard resizing. | controller | @oddkin/core/controllers/resize (ResizeHandle) | existing | odd-split-panel |  |
 | navigation-model: Navigation item data model. | controller | packages/components/src/models/navigation.ts (Agent 1) | existing | odd-side-nav |  |
 

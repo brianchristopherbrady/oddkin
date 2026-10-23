@@ -42,6 +42,58 @@ describe('Figma parity: odd-popover (popover)', () => {
     });
 });
 
+describe('Figma parity: odd-dialog (dialog, alertDialog)', () => {
+  const part = (el: Element, name: string) =>
+    el.shadowRoot!.querySelector<HTMLElement>(`[part~="${name}"]`)!;
+  for (const state of ['Default', 'Validation'])
+    it(`dialog ${state}`, async () => {
+      const el = mount(
+        `<odd-dialog label="Rename workspace" open><p>Choose a clear name your team will recognise.</p><button slot="footer">Save</button></odd-dialog>`,
+      );
+      await settle(el);
+      const frame = `Dialog / ${state}`;
+      const targets: Target[] = [
+        { layer: [frame, 'Surface'], el: part(el, 'dialog'), kind: 'frame' },
+        {
+          layer: [frame, 'Surface [3]'],
+          el: part(el, 'footer'),
+          kind: 'frame',
+          pseudo: '::before',
+        },
+        { layer: [frame, 'Rename workspace'], el: part(el, 'title'), kind: 'text' },
+        {
+          layer: [frame, 'Choose a clear name your team will recognise.'],
+          el: el.querySelector('p')!,
+          kind: 'text',
+        },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/dialog', { State: state }, targets));
+      (el as HTMLElement & { close(): void }).close();
+    });
+
+  it('alertDialog Default', async () => {
+    const el = mount(
+      `<odd-dialog label="Delete workspace?" alert open><p>This permanently deletes Field notes.</p><button slot="footer">Delete</button></odd-dialog>`,
+    );
+    await settle(el);
+    const frame = 'Alert dialog / Default';
+    const targets: Target[] = [
+      { layer: [frame, 'Surface'], el: part(el, 'dialog'), kind: 'frame' },
+      { layer: [frame, 'Surface [2]'], el: part(el, 'footer'), kind: 'frame', pseudo: '::before' },
+      { layer: [frame, 'Delete workspace?'], el: part(el, 'title'), kind: 'text' },
+      {
+        layer: [frame, 'This permanently deletes Field notes and its shared\ncontent. Thi'],
+        el: el.querySelector('p')!,
+        kind: 'text',
+      },
+    ];
+    await transitions(targets);
+    expectNone(compare('Oddkin/Common/alertDialog', { State: 'Default' }, targets));
+    (el as HTMLElement & { close(): void }).close();
+  });
+});
+
 describe('Figma parity: overlay-surface module', () => {
   const cases: [string, string, Record<string, string>, string, 'anchored' | 'sheet'][] = [
     ['popover', 'Popover / Default', { State: 'Default' }, 'Surface', 'anchored'],

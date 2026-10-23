@@ -7,9 +7,9 @@ import { token } from '@oddkin/tokens/refs';
  * `elevation.md`. `.sheet` is the modal look of `dialog`, `alertDialog`, and `drawer`: the default
  * surface, `card.radius`, `elevation.xl`, and the scrim behind it. Spacing is the consumer's. The
  * close control is a secondary glyph button of the target size. Unless motion is reduced,
- * popovers fade in (a keyframes animation, at the floor) and fade out where
- * `transition-behavior: allow-discrete` keeps them shown while closing; nothing waits for either
- * (F11).
+ * popovers and dialogs (with their backdrop) fade in (a keyframes animation, at the floor) and fade
+ * out where `transition-behavior: allow-discrete` keeps them shown while closing; nothing waits
+ * for either (F11).
  */
 export const overlaySurfaceStyles = css`
   .overlay-surface,
@@ -52,17 +52,24 @@ export const overlaySurfaceStyles = css`
   }
   @media (prefers-reduced-motion: no-preference) {
     [popover].overlay-surface:popover-open,
-    :host(:popover-open) {
+    :host(:popover-open),
+    dialog.overlay-surface[open],
+    dialog.overlay-surface[open]::backdrop {
       animation: odd-overlay-in ${token('motion.duration.fast')} ${token('motion.easing.enter')};
     }
     @supports (transition-behavior: allow-discrete) {
       [popover].overlay-surface:not(:popover-open),
-      :host([popover]:not(:popover-open)) {
+      :host([popover]:not(:popover-open)),
+      dialog.overlay-surface:not([open]) {
         opacity: 0;
         transition:
           opacity ${token('motion.duration.fast')} ${token('motion.easing.exit')},
           display ${token('motion.duration.fast')} allow-discrete,
           overlay ${token('motion.duration.fast')} allow-discrete;
+      }
+      dialog.overlay-surface:not([open])::backdrop {
+        opacity: 0;
+        transition: opacity ${token('motion.duration.fast')} ${token('motion.easing.exit')};
       }
     }
   }

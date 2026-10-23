@@ -322,12 +322,19 @@ anchor hover (after a delay) and focus, hides on Escape, blur, and pointer leave
 dismissible, persistent). Describes its anchor with `aria-describedby` (same tree); never the only name. An Oddkin
 control anchor forwards the description to its inner focus target.
 
-**`odd-dialog`** (`dialog`, `alertDialog`) — native `<dialog>`, always modal (`showModal()`; non-modal surfaces are
-`odd-popover`). `open`, `label` (title, names it), `alert: boolean` (`role="alertdialog"`), `closedby: any |
-closerequest | none = closerequest` (native attribute; `any` adds backdrop dismissal, emulated where unsupported).
-Default slot: body; slots `header` (after the title), `footer` (actions); part `close` (button) unless `no-close`.
-`show()`, `close(returnValue?)`, `returnValue`; `close` and `cancel` events. A slotted `<form method="dialog">` closes
-it with the submitter's value (the native lookup does not cross the shadow boundary, so the element does it).
+**`odd-dialog`** (`dialog`, `alertDialog`) — native `<dialog>` in the shadow root, always modal (`showModal()`, so
+the page is inert; non-modal surfaces are `odd-popover`). `open` (reflected), `label` (the title, an `h2`, names it),
+`alert: boolean` (`role="alertdialog"`, described by the body), `closedby: any | closerequest | none = closerequest`
+(the native attribute where supported; elsewhere emulated: `any` closes on a press on the backdrop after a cancelable
+`cancel`, `none` cancels Escape), `no-close`, `strings.close`. Default slot: body; slots `header` (under the title),
+`footer` (actions at the inline end, under a divider; hidden while empty); parts `dialog`, `header`, `title`, `body`,
+`footer`, `close`. `show()`, `close(returnValue?)`, `returnValue`; `close` and a cancelable `cancel` at the host.
+Opening moves focus to the slotted `[autofocus]`, else the first control in the content, else the close button;
+closing returns it to the opener. A slotted `<form method="dialog">`, or a `formmethod="dialog"` submitter, closes it
+with the submitter's value (the native lookup does not cross the shadow boundary, so the element does it). Width
+`--odd-dialog-inline-size` (32rem) within the viewport; height at most `100dvh` less a margin, the body scrolling.
+The wiring is `ModalDialog` (`packages/components/src/overlay/dialog.ts`), which the drawer and the command palette
+share.
 
 **`odd-drawer`** (`drawer`) — the dialog foundation with a side sheet layout. `placement: start | end = end`;
 everything else as `odd-dialog`.
