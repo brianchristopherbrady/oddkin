@@ -35,11 +35,11 @@ export const cardStyles = css`
   :host([padding='lg']) .card {
     padding: ${token('space.lg')};
   }
-  :host([variant='filled']) .card {
+  :host([appearance='filled']) .card {
     border-color: var(--odd-card-border-color, transparent);
     background: var(--odd-card-background, ${token('color.surface.sunken')});
   }
-  :host([variant='elevated']) .card {
+  :host([appearance='elevated']) .card {
     border-color: var(--odd-card-border-color, transparent);
     background: var(--odd-card-background, ${token('color.surface.raised')});
     box-shadow: var(--odd-card-shadow, ${token('elevation.md')});

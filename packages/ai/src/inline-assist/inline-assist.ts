@@ -57,7 +57,7 @@ export class OddkinInlineAssist extends OddkinElement.with({
   languages: prop.array<AssistActionOption>({
     description: 'Target languages for translate (`id` = BCP 47 tag).',
   }),
-  status: prop.enum(['idle', 'pending', 'ready', 'failed'], {
+  status: prop.enum(['idle', 'pending', 'complete', 'failed'], {
     default: 'idle',
     reflect: true,
     description: 'Host-reported request state.',
@@ -78,7 +78,7 @@ export class OddkinInlineAssist extends OddkinElement.with({
     description: 'Localized string overrides.',
   }),
 }) {
-  static override events = { 'assist-request': assistRequestEvent };
+  static override events = { 'odd-assist-request': assistRequestEvent };
   declare readonly _events?: ElementEvents<typeof OddkinInlineAssist>;
 
   /** @internal Roving tab stop (presentation state). */

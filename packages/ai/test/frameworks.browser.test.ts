@@ -67,7 +67,7 @@ describe('framework bindings (A16)', () => {
       return createElement('odd-action-approval', {
         approval: record(revision),
         capabilities: caps,
-        'onapproval-decide': (e: CustomEvent<ApprovalDecideDetail>) => decisions.push(e.detail),
+        'onodd-approval-decide': (e: CustomEvent<ApprovalDecideDetail>) => decisions.push(e.detail),
       });
     }
     const root = createRoot(container);
@@ -102,7 +102,7 @@ describe('framework bindings (A16)', () => {
         h('odd-action-approval', {
           approval: record(revision.value),
           capabilities: caps,
-          onApprovalDecide: (e: CustomEvent<ApprovalDecideDetail>) => decisions.push(e.detail),
+          onOddApprovalDecide: (e: CustomEvent<ApprovalDecideDetail>) => decisions.push(e.detail),
         }),
     });
     app.config.compilerOptions.isCustomElement = (tag) => tag.startsWith('odd-');

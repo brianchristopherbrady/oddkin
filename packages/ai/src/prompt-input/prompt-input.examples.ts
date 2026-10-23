@@ -9,7 +9,7 @@ export default defineExamples('odd-prompt-input', {
       placeholder: 'Ask anything',
       capabilities: { send: { available: true }, attachments: { available: true } },
     },
-    slots: { above: 'Replying in #design', 'toolbar-start': 'Attach', 'toolbar-end': 'Model' },
+    slots: { header: 'Replying in #design', 'toolbar-start': 'Attach', 'toolbar-end': 'Model' },
     recommended: true,
     guidance:
       'Enter sends by default; Shift+Enter adds a line. Sending is unavailable until the host allows it.',
@@ -36,11 +36,11 @@ export default defineExamples('odd-prompt-input', {
       correct: 'default',
     },
   },
-  busy: {
+  loading: {
     label: 'Answer in progress',
     props: {
       label: 'Message',
-      busy: true,
+      loading: true,
       attemptId: 'at1',
       capabilities: { send: { available: true }, stop: { available: true } },
     },

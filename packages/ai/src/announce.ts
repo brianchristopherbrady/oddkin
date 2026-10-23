@@ -1,7 +1,7 @@
 /**
  * `@oddkin/ai/announce` — one announcer for a surface that is not inside `odd-conversation`
  * (an agent panel, an editor). It owns one polite and one assertive live region, routes the
- * `ai-announce` events of descendants to them, and announces each key once.
+ * `odd-announce` events of descendants to them, and announces each key once.
  * DOM is used only when called.
  */
 import { LiveAnnouncer, createLiveRegions } from '@oddkin/core/controllers/announce';
@@ -22,7 +22,7 @@ export function createAnnouncer(container: HTMLElement): Announcer {
   const regions = createLiveRegions(container);
   scope.add(() => regions.remove(), 'live regions');
   const announcer = scope.use(
-    new LiveAnnouncer({ regions: () => regions, event: 'ai-announce', target: () => container }),
+    new LiveAnnouncer({ regions: () => regions, event: 'odd-announce', target: () => container }),
   );
   return {
     announce: (detail) => announcer.announce(detail),

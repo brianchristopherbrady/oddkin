@@ -22,7 +22,7 @@ export default defineExamples('odd-inline-assist', {
       selection,
       documentRevision: 'v1',
       actions,
-      status: 'ready',
+      status: 'complete',
       result: 'A **build** turns sources into the files that ship.',
     },
   },

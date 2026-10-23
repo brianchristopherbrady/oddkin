@@ -41,10 +41,10 @@ export interface ExportFormat {
  * source modes, application-provided renderers, and export actions. Copy and the default
  * download use the canonical revision content.
  *
- * @csspart header - Title, revision picker, mode toggle, and actions.
+ * @csspart header - Title, revision picker, view toggle, and actions.
  * @csspart preview - Preview container (renderer output).
  * @csspart source - Source view.
- * @a11y A labelled region. The mode toggle uses `aria-pressed`; the revision picker is a native select.
+ * @a11y A labelled region. The view toggle uses `aria-pressed`; the revision picker is a native select.
  * @keyboard Tab through header controls; the source view is scrollable and focusable.
  * @useFor Documents, code, tables, and other outputs users keep, compare, and export.
  * @notFor Short inline answers; use the response.
@@ -58,7 +58,7 @@ export class OddkinArtifact extends OddkinElement.with({
     attribute: 'revision-id',
     description: 'Revision to show; empty shows the current one.',
   }),
-  mode: prop.enum(['preview', 'source'], {
+  view: prop.enum(['preview', 'source'], {
     default: 'preview',
     reflect: true,
     description: 'Preview or source view.',
@@ -67,7 +67,7 @@ export class OddkinArtifact extends OddkinElement.with({
     description: 'Host renderers by artifact kind.',
   }),
   exports: prop.array<ExportFormat>({
-    description: 'Extra export formats offered through `artifact-export`.',
+    description: 'Extra export formats offered through `odd-artifact-export`.',
   }),
   markdown: prop.object<MarkdownOptions>({
     description: 'Options for the built-in Markdown and code preview.',
@@ -77,9 +77,9 @@ export class OddkinArtifact extends OddkinElement.with({
   }),
 }) {
   static override events = {
-    'artifact-export': artifactExportEvent,
-    'artifact-revision-change': artifactRevisionEvent,
-    'ai-announce': announceEvent,
+    'odd-artifact-export': artifactExportEvent,
+    'odd-artifact-revision-change': artifactRevisionEvent,
+    'odd-announce': announceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinArtifact>;
 
@@ -120,7 +120,7 @@ export class OddkinArtifact extends OddkinElement.with({
   };
   /** @internal */
   readonly _setMode = (event: Event): void => {
-    this.mode = (event.currentTarget as HTMLElement).dataset['mode'] as 'preview' | 'source';
+    this.view = (event.currentTarget as HTMLElement).dataset['view'] as 'preview' | 'source';
   };
   /** @internal */
   readonly _copy = async (): Promise<void> => {
@@ -181,7 +181,7 @@ export class OddkinArtifact extends OddkinElement.with({
       (run) => {
         const a = this.artifact;
         const revision = this.revision;
-        const mode = this.mode;
+        const mode = this.view;
         const options = this.markdown ?? {};
         const renderer = a ? this.renderers?.[a.kind] : undefined;
         // A different artifact resets the viewed revision (presentation state).

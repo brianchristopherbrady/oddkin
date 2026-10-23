@@ -29,7 +29,7 @@ export class OddkinTranscript extends OddkinElement.with({
     description: 'Localized string overrides.',
   }),
 }) {
-  static override events = { 'transcript-change': transcriptChangeEvent };
+  static override events = { 'odd-transcript-change': transcriptChangeEvent };
   declare readonly _events?: ElementEvents<typeof OddkinTranscript>;
 
   /** @internal */

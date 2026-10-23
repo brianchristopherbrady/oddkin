@@ -49,9 +49,9 @@ export class OddkinActivity extends OddkinElement.with({
   }),
 }) {
   static override events = {
-    'prompt-stop': promptStopEvent,
-    'attempt-resume': attemptResumeEvent,
-    'attempt-retry': attemptRetryEvent,
+    'odd-prompt-stop': promptStopEvent,
+    'odd-attempt-resume': attemptResumeEvent,
+    'odd-attempt-retry': attemptRetryEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinActivity>;
 

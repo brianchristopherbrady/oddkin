@@ -55,9 +55,11 @@ describe.each(Object.entries(definitions))(
     it('public methods and read-only members give the same results in a form', async () => {
       const declaration = declarations.find((d) => d.tagName === tag)!;
       const members = declaration.members ?? [];
+      // Queries only: a method that takes arguments changes state and has its own tests.
       const methods = members
         .filter((m) => m.kind === 'method' && !m.static && !m.name.endsWith('Callback'))
-        .map((m) => m.name);
+        .map((m) => m.name)
+        .filter((name) => (customElements.get(tag)!.prototype[name] as () => unknown).length === 0);
       const getters = members.filter((m) => m.kind === 'field' && m.readonly).map((m) => m.name);
       // Boolean attributes except the two that bar an element from constraint validation.
       const constraints = (declaration.attributes ?? []).filter((attribute) => {

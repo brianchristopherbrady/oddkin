@@ -74,13 +74,13 @@ const transform = {
       .join(''),
 };
 
-assist.addEventListener('assist-request', (event) => {
+assist.addEventListener('odd-assist-request', (event) => {
   const { action, selection } = event.detail;
   assist.status = 'pending';
   assist.pendingAction = action;
   assist.result = '';
   setTimeout(() => {
-    assist.status = 'ready';
+    assist.status = 'complete';
     if (action in transform) {
       const record = doc.propose({
         proposalId: `p${++proposalCount}`,
@@ -100,15 +100,15 @@ assist.addEventListener('assist-request', (event) => {
   }, delay);
 });
 
-review.addEventListener('change-accept', (event) => {
+review.addEventListener('odd-change-accept', (event) => {
   if (doc.accept(event.detail.proposalId).ok) assisted++;
   refresh();
 });
-review.addEventListener('change-reject', (event) => {
+review.addEventListener('odd-change-reject', (event) => {
   doc.reject(event.detail.proposalId);
   refresh();
 });
-review.addEventListener('change-undo', (event) => {
+review.addEventListener('odd-change-undo', (event) => {
   if (doc.undo(event.detail.proposalId).ok) assisted = Math.max(0, assisted - 1);
   refresh();
 });
@@ -124,7 +124,7 @@ const voiceAdapter = (deny) =>
     { denyPermission: deny, permissionDelay: 200 },
   );
 voice.adapter = voiceAdapter(false);
-voice.addEventListener('voice-transcript', (event) => {
+voice.addEventListener('odd-voice-transcript', (event) => {
   doc.setText(`${doc.getSnapshot().text} ${event.detail.text}`);
   refresh();
 });

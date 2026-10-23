@@ -83,7 +83,7 @@ tokens, slot content, a native element, or a look-alike.
 | `Disclosure` | 3 | `odd-disclosure` | Planned (M10) | |
 | `Accordion` | 3 | a group of `odd-disclosure` | Planned (M10, via disclosure) | |
 | `Toolbar` | 3 | toolbar layout recipe + roving focus (`@oddkin/core/controllers/focus`) | Planned (M10, layout recipe presets) | References `button/sm` ×7. |
-| `card` | 2 | `odd-card` | Existing | `variant` outlined/filled/elevated, `padding`, header/body/footer slots. References `button` ×2 (footer actions). |
+| `card` | 2 | `odd-card` | Existing | `appearance` outlined/filled/elevated, `padding`, header/body/footer slots. References `button` ×2 (footer actions). |
 | `popover` | 2 | popover overlay | Planned (M10 overlays) | ADR 0044. |
 | `tooltip` | 2 | tooltip overlay | Planned (M10 overlays) | ADR 0044 (`popover="manual"`). |
 | `dialog` | 2 | `odd-dialog` | Planned (M10) | `<dialog>` + `showModal()`. |
@@ -144,12 +144,12 @@ on `odd-button`, §6). Node ids: `design/figma/components.json`.
 | `odd-task-plan/One done · one active` | `odd-task-plan` | one step complete, one in progress | — |
 | `odd-question/Choice · requested` | `odd-question` | choice question, requested | `button/sm` ×2 (submit, skip) |
 | `odd-checkpoint/Available` | `odd-checkpoint` | checkpoint restorable | `button/sm` (restore) |
-| `odd-inline-assist/Selection ready` | `odd-inline-assist` | `status="ready"` with a selection (`complete` after ADR 0045) | — |
+| `odd-inline-assist/Selection ready` | `odd-inline-assist` | `status="complete"` with a selection | — |
 | `odd-change-review/Proposed · split view` | `odd-change-review` | proposals pending, `view="split"` | `button/sm` ×2 (accept, reject) |
 | `odd-citation/Resolved · expanded` | `odd-citation` | source resolved, details open | — |
 | `odd-sources/One source` | `odd-sources` | one source | — |
 | `odd-ai-label/Generated · collapsed` | `odd-ai-label` | provenance generated, details closed | — |
-| `odd-artifact/Preview · first revision` | `odd-artifact` | `mode="preview"`, first revision | — |
+| `odd-artifact/Preview · first revision` | `odd-artifact` | `view="preview"`, first revision | — |
 | `odd-response-feedback/Negative rating · drafting` | `odd-response-feedback` | negative rating, reason being written | `button/sm` ×2 (submit, cancel) |
 | `odd-usage-meter/Measured / estimated / unknown` | `odd-usage-meter` | usage with measured, estimated, and unknown values | — |
 | `odd-voice-input/Recording` | `odd-voice-input` | recording | — (code renders `odd-transcript`) |

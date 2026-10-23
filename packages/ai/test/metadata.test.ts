@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { Ajv } from 'ajv';
 import { Ajv2020 } from 'ajv/dist/2020.js';
@@ -99,20 +99,37 @@ describe('@oddkin/ai published metadata', { timeout: 30_000 }, () => {
         type: { text: string };
         description: string;
       }[]) ?? [];
-    const approval = events('odd-action-approval').find((e) => e.name === 'approval-decide')!;
+    const approval = events('odd-action-approval').find((e) => e.name === 'odd-approval-decide')!;
     expect(approval.type.text).toBe('CustomEvent<ApprovalDecideDetail>');
     expect(approval.description).toMatch(/Pending until the record changes/);
     expect(events('odd-prompt-input').map((e) => e.name)).toEqual(
       expect.arrayContaining([
-        'prompt-submit',
-        'prompt-stop',
-        'attachment-add',
-        'attachment-remove',
+        'odd-prompt-submit',
+        'odd-prompt-stop',
+        'odd-attachment-add',
+        'odd-attachment-remove',
       ]),
     );
     expect(events('odd-change-review').map((e) => e.name)).toEqual(
-      expect.arrayContaining(['change-accept', 'change-reject', 'change-undo']),
+      expect.arrayContaining(['odd-change-accept', 'odd-change-reject', 'odd-change-undo']),
     );
+    // Every published event is in GlobalEventHandlersEventMap, so document listeners are typed (ADR 0045 §5).
+    const typings = readdirSync(new URL('dist/', pkg), { recursive: true, encoding: 'utf8' })
+      .filter((file) => file.endsWith('.d.ts') && !file.startsWith('prod'))
+      .map((file) => readFileSync(new URL(`dist/${file.replaceAll('\\', '/')}`, pkg), 'utf8'))
+      .join('\n');
+    const mapped = new Set(
+      [...typings.matchAll(/interface GlobalEventHandlersEventMap \{([^}]*)\}/g)].flatMap((m) =>
+        [...m[1]!.matchAll(/'([a-z-]+)':/g)].map((e) => e[1]),
+      ),
+    );
+    const published = new Set(
+      declarations
+        .flatMap((d) => (d['events'] ?? []).map((e: { name: string }) => e.name))
+        .filter((name: string) => name.startsWith('odd-')),
+    );
+    expect([...published].filter((name) => !mapped.has(name))).toEqual([]);
+    expect(published.size).toBeGreaterThan(30);
     // Records travel through properties, never reflected attributes.
     const attributes =
       (declaration('odd-conversation')['attributes'] as { name: string }[] | undefined)?.map(

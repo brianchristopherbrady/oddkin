@@ -42,14 +42,18 @@ export class OddkinCheckpoint extends OddkinElement.with({
   capabilities: prop.object<Capabilities>({
     description: '`restoreCheckpoint` enables restoring.',
   }),
-  announce: prop.boolean({ description: 'Announce outcomes (when no surrounding surface does).' }),
+  announce: prop.enum(['none', 'important'], {
+    default: 'none',
+    empty: 'important',
+    description: 'Announce outcomes (when no surrounding surface does).',
+  }),
   strings: prop.object<Partial<typeof CHECKPOINT_STRINGS>>({
     description: 'Localized string overrides.',
   }),
 }) {
   static override events = {
-    'checkpoint-restore': checkpointRestoreEvent,
-    'ai-announce': announceEvent,
+    'odd-checkpoint-restore': checkpointRestoreEvent,
+    'odd-announce': announceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinCheckpoint>;
 
@@ -117,7 +121,7 @@ export class OddkinCheckpoint extends OddkinElement.with({
         if (c.status === 'available' && previous === 'restore-pending')
           this._requested.value = undefined;
         if (
-          this.announce &&
+          this.announce !== 'none' &&
           previous &&
           previous !== c.status &&
           (c.status === 'restored' || c.status === 'restore-failed')

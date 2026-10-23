@@ -231,7 +231,7 @@ try {
       "import type {} from '@oddkin/components/define/side-nav';",
       "import type {} from '@oddkin/ai/define/prompt-input';",
       'export const nav = <odd-side-nav label="Primary" onodd-action={(e) => e.detail.action.trim()} />;',
-      'export const prompt = <odd-prompt-input onprompt-submit={(e) => e.detail.text.trim()} />;',
+      'export const prompt = <odd-prompt-input onodd-prompt-submit={(e) => e.detail.text.trim()} />;',
       '// @ts-expect-error -- unknown property',
       'export const wrong = <odd-side-nav itemz={1} />;',
     ].join('\n'),

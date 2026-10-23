@@ -8,22 +8,22 @@ import type { ComposerController } from './composer.js';
 import type { ApprovalDecideDetail, FeedbackSubmitDetail, PromptSubmitDetail } from '../events.js';
 
 export interface IntentHandlers {
-  'prompt-submit'(detail: PromptSubmitDetail, event: Event): void;
-  'prompt-stop'(detail: { attemptId: string | undefined }, event: Event): void;
-  'history-request'(
+  'odd-prompt-submit'(detail: PromptSubmitDetail, event: Event): void;
+  'odd-prompt-stop'(detail: { attemptId: string | undefined }, event: Event): void;
+  'odd-history-request'(
     detail: { conversationId: string; beforeMessageId: string | undefined },
     event: Event,
   ): void;
-  'message-edit'(detail: { messageId: string; text: string }, event: Event): void;
-  'message-regenerate'(detail: { messageId: string; attemptId: string }, event: Event): void;
-  'attempt-retry'(detail: { attemptId: string }, event: Event): void;
-  'attempt-resume'(detail: { attemptId: string }, event: Event): void;
-  'branch-switch'(detail: { messageId: string; targetMessageId: string }, event: Event): void;
-  'approval-decide'(detail: ApprovalDecideDetail, event: Event): void;
-  'feedback-submit'(detail: FeedbackSubmitDetail, event: Event): void;
-  'suggestion-submit'(detail: { suggestionId: string; prompt: string }, event: Event): void;
-  'suggestion-select'(detail: { suggestionId: string; prompt: string }, event: Event): void;
-  'tool-retry'(detail: { toolCallId: string }, event: Event): void;
+  'odd-message-edit'(detail: { messageId: string; text: string }, event: Event): void;
+  'odd-message-regenerate'(detail: { messageId: string; attemptId: string }, event: Event): void;
+  'odd-attempt-retry'(detail: { attemptId: string }, event: Event): void;
+  'odd-attempt-resume'(detail: { attemptId: string }, event: Event): void;
+  'odd-branch-switch'(detail: { messageId: string; targetMessageId: string }, event: Event): void;
+  'odd-approval-decide'(detail: ApprovalDecideDetail, event: Event): void;
+  'odd-feedback-submit'(detail: FeedbackSubmitDetail, event: Event): void;
+  'odd-suggestion-submit'(detail: { suggestionId: string; prompt: string }, event: Event): void;
+  'odd-suggestion-select'(detail: { suggestionId: string; prompt: string }, event: Event): void;
+  'odd-tool-retry'(detail: { toolCallId: string }, event: Event): void;
 }
 
 /** Listen for intent events on `target` (usually a surface's root element). Returns a release. */
@@ -58,7 +58,7 @@ export function controllerIntents(
   const report = (intent: keyof IntentHandlers) => (result: ActionResult) =>
     options.onResult?.(intent, result);
   return {
-    'prompt-submit': (detail) => {
+    'odd-prompt-submit': (detail) => {
       const files = detail.attachments.map((a) => ({
         type: 'file' as const,
         id: a.id,
@@ -80,26 +80,27 @@ export function controllerIntents(
               },
             );
         }
-        report('prompt-submit')(result);
+        report('odd-prompt-submit')(result);
       });
     },
-    'prompt-stop': (detail) => void controller.stop(detail.attemptId).then(report('prompt-stop')),
-    'history-request': () => void controller.loadHistory().then(report('history-request')),
-    'message-edit': (detail) =>
-      void controller.edit(detail.messageId, detail.text).then(report('message-edit')),
-    'message-regenerate': (detail) =>
-      void controller.regenerate(detail.messageId).then(report('message-regenerate')),
-    'attempt-retry': (detail) =>
-      void controller.retry(detail.attemptId).then(report('attempt-retry')),
-    'attempt-resume': (detail) =>
-      void controller.resume(detail.attemptId).then(report('attempt-resume')),
-    'branch-switch': (detail) =>
-      report('branch-switch')(controller.switchBranch(detail.targetMessageId)),
-    'approval-decide': (detail) =>
+    'odd-prompt-stop': (detail) =>
+      void controller.stop(detail.attemptId).then(report('odd-prompt-stop')),
+    'odd-history-request': () => void controller.loadHistory().then(report('odd-history-request')),
+    'odd-message-edit': (detail) =>
+      void controller.edit(detail.messageId, detail.text).then(report('odd-message-edit')),
+    'odd-message-regenerate': (detail) =>
+      void controller.regenerate(detail.messageId).then(report('odd-message-regenerate')),
+    'odd-attempt-retry': (detail) =>
+      void controller.retry(detail.attemptId).then(report('odd-attempt-retry')),
+    'odd-attempt-resume': (detail) =>
+      void controller.resume(detail.attemptId).then(report('odd-attempt-resume')),
+    'odd-branch-switch': (detail) =>
+      report('odd-branch-switch')(controller.switchBranch(detail.targetMessageId)),
+    'odd-approval-decide': (detail) =>
       void controller
         .decide(detail.approvalId, detail.revision, detail.decision, detail.reason)
-        .then(report('approval-decide')),
-    'feedback-submit': (detail) =>
+        .then(report('odd-approval-decide')),
+    'odd-feedback-submit': (detail) =>
       void controller
         .submitFeedback({
           messageId: detail.messageId,
@@ -107,9 +108,9 @@ export function controllerIntents(
           reasons: [...detail.reasons],
           ...(detail.comment ? { comment: detail.comment } : {}),
         })
-        .then(report('feedback-submit')),
-    'suggestion-submit': (detail) =>
-      void controller.send({ text: detail.prompt }).then(report('suggestion-submit')),
-    'suggestion-select': (detail) => composer?.setText(detail.prompt),
+        .then(report('odd-feedback-submit')),
+    'odd-suggestion-submit': (detail) =>
+      void controller.send({ text: detail.prompt }).then(report('odd-suggestion-submit')),
+    'odd-suggestion-select': (detail) => composer?.setText(detail.prompt),
   };
 }

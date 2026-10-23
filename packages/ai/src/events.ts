@@ -4,11 +4,11 @@
  * Dispatching an event *requests* an operation; the outcome arrives later as changed records
  * (or a controller method's result), never as the event's return value. A cancelable event's
  * `preventDefault()` is a synchronous veto of the element's local default action only.
- * Programmatic property changes never dispatch these events (`intent: 'user'`); `ai-announce` is
+ * Programmatic property changes never dispatch these events (`intent: 'user'`); `odd-announce` is
  * the exception, a notification from any source (`intent: 'notification'`). Options are literal
  * so the analyzer can publish them. Contract: docs/architecture/ai-interaction.md §7.
  */
-import { event } from '@oddkin/core/element';
+import { event, type EventDetail } from '@oddkin/core/element';
 import type { JsonValue } from './contracts/types.js';
 import type { AttachmentState } from './controllers/composer.js';
 import type { TextSelection } from './controllers/document.js';
@@ -21,7 +21,7 @@ export interface PromptSubmitDetail {
   readonly attachments: readonly AttachmentState[];
 }
 /** Request to send the draft. Cancel to veto: the composer stays editable and idle. */
-export const promptSubmitEvent = event<PromptSubmitDetail>('prompt-submit', {
+export const promptSubmitEvent = event<PromptSubmitDetail>('odd-prompt-submit', {
   bubbles: true,
   composed: true,
   cancelable: true,
@@ -29,16 +29,20 @@ export const promptSubmitEvent = event<PromptSubmitDetail>('prompt-submit', {
   description: 'Request to send the draft. Acknowledge or fail it with the submission id.',
 });
 
-export const promptStopEvent = event<{ readonly attemptId: string | undefined }>('prompt-stop', {
-  bubbles: true,
-  composed: true,
-  cancelable: false,
-  intent: 'user',
-  description: 'Request to stop the underlying work of the identified attempt (not a disconnect).',
-});
+export const promptStopEvent = event<{ readonly attemptId: string | undefined }>(
+  'odd-prompt-stop',
+  {
+    bubbles: true,
+    composed: true,
+    cancelable: false,
+    intent: 'user',
+    description:
+      'Request to stop the underlying work of the identified attempt (not a disconnect).',
+  },
+);
 
 export const attachmentAddEvent = event<{ readonly attachments: readonly AttachmentState[] }>(
-  'attachment-add',
+  'odd-attachment-add',
   {
     bubbles: true,
     composed: true,
@@ -49,18 +53,21 @@ export const attachmentAddEvent = event<{ readonly attachments: readonly Attachm
   },
 );
 
-export const attachmentRemoveEvent = event<{ readonly attachmentId: string }>('attachment-remove', {
-  bubbles: true,
-  composed: true,
-  cancelable: false,
-  intent: 'user',
-  description: 'An attachment was removed from the draft (local).',
-});
+export const attachmentRemoveEvent = event<{ readonly attachmentId: string }>(
+  'odd-attachment-remove',
+  {
+    bubbles: true,
+    composed: true,
+    cancelable: false,
+    intent: 'user',
+    description: 'An attachment was removed from the draft (local).',
+  },
+);
 
 export const historyRequestEvent = event<{
   readonly conversationId: string;
   readonly beforeMessageId: string | undefined;
-}>('history-request', {
+}>('odd-history-request', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -69,7 +76,7 @@ export const historyRequestEvent = event<{
 });
 
 export const messageEditEvent = event<{ readonly messageId: string; readonly text: string }>(
-  'message-edit',
+  'odd-message-edit',
   {
     bubbles: true,
     composed: true,
@@ -82,7 +89,7 @@ export const messageEditEvent = event<{ readonly messageId: string; readonly tex
 export const messageRegenerateEvent = event<{
   readonly messageId: string;
   readonly attemptId: string;
-}>('message-regenerate', {
+}>('odd-message-regenerate', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -90,7 +97,7 @@ export const messageRegenerateEvent = event<{
   description: 'Request an alternative answer as a new branch.',
 });
 
-export const attemptRetryEvent = event<{ readonly attemptId: string }>('attempt-retry', {
+export const attemptRetryEvent = event<{ readonly attemptId: string }>('odd-attempt-retry', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -98,7 +105,7 @@ export const attemptRetryEvent = event<{ readonly attemptId: string }>('attempt-
   description: 'Request a new attempt linked to a failed, interrupted, or cancelled one.',
 });
 
-export const attemptResumeEvent = event<{ readonly attemptId: string }>('attempt-resume', {
+export const attemptResumeEvent = event<{ readonly attemptId: string }>('odd-attempt-resume', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -109,7 +116,7 @@ export const attemptResumeEvent = event<{ readonly attemptId: string }>('attempt
 export const branchSwitchEvent = event<{
   readonly messageId: string;
   readonly targetMessageId: string;
-}>('branch-switch', {
+}>('odd-branch-switch', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -124,7 +131,7 @@ export interface ApprovalDecideDetail {
   readonly decision: 'approve' | 'reject';
   readonly reason: string | undefined;
 }
-export const approvalDecideEvent = event<ApprovalDecideDetail>('approval-decide', {
+export const approvalDecideEvent = event<ApprovalDecideDetail>('odd-approval-decide', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -133,7 +140,7 @@ export const approvalDecideEvent = event<ApprovalDecideDetail>('approval-decide'
 });
 
 export const approvalEditEvent = event<{ readonly approvalId: string; readonly revision: number }>(
-  'approval-edit',
+  'odd-approval-edit',
   {
     bubbles: true,
     composed: true,
@@ -143,7 +150,7 @@ export const approvalEditEvent = event<{ readonly approvalId: string; readonly r
   },
 );
 
-export const toolRetryEvent = event<{ readonly toolCallId: string }>('tool-retry', {
+export const toolRetryEvent = event<{ readonly toolCallId: string }>('odd-tool-retry', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -152,7 +159,7 @@ export const toolRetryEvent = event<{ readonly toolCallId: string }>('tool-retry
 });
 
 export const citationOpenEvent = event<{ readonly sourceId: string; readonly resolved: boolean }>(
-  'citation-open',
+  'odd-citation-open',
   {
     bubbles: true,
     composed: true,
@@ -167,7 +174,7 @@ export const artifactExportEvent = event<{
   readonly artifactId: string;
   readonly revisionId: string;
   readonly format: string;
-}>('artifact-export', {
+}>('odd-artifact-export', {
   bubbles: true,
   composed: true,
   cancelable: true,
@@ -179,7 +186,7 @@ export const artifactExportEvent = event<{
 export const artifactRevisionEvent = event<{
   readonly artifactId: string;
   readonly revisionId: string;
-}>('artifact-revision-change', {
+}>('odd-artifact-revision-change', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -190,7 +197,7 @@ export const artifactRevisionEvent = event<{
 export const suggestionSelectEvent = event<{
   readonly suggestionId: string;
   readonly prompt: string;
-}>('suggestion-select', {
+}>('odd-suggestion-select', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -201,7 +208,7 @@ export const suggestionSelectEvent = event<{
 export const suggestionSubmitEvent = event<{
   readonly suggestionId: string;
   readonly prompt: string;
-}>('suggestion-submit', {
+}>('odd-suggestion-submit', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -215,7 +222,7 @@ export interface FeedbackSubmitDetail {
   readonly reasons: readonly string[];
   readonly comment: string;
 }
-export const feedbackSubmitEvent = event<FeedbackSubmitDetail>('feedback-submit', {
+export const feedbackSubmitEvent = event<FeedbackSubmitDetail>('odd-feedback-submit', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -226,7 +233,7 @@ export const feedbackSubmitEvent = event<FeedbackSubmitDetail>('feedback-submit'
 export const modelChangeEvent = event<{
   readonly modelId: string;
   readonly previousModelId: string;
-}>('model-change', {
+}>('odd-model-change', {
   bubbles: true,
   composed: true,
   cancelable: true,
@@ -235,7 +242,7 @@ export const modelChangeEvent = event<{
 });
 
 export const checkpointRestoreEvent = event<{ readonly checkpointId: string }>(
-  'checkpoint-restore',
+  'odd-checkpoint-restore',
   {
     bubbles: true,
     composed: true,
@@ -250,7 +257,7 @@ export const questionAnswerEvent = event<{
   readonly questionId: string;
   readonly revision: number;
   readonly answer: JsonValue;
-}>('question-answer', {
+}>('odd-question-answer', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -259,7 +266,7 @@ export const questionAnswerEvent = event<{
 });
 
 export const questionSkipEvent = event<{ readonly questionId: string; readonly revision: number }>(
-  'question-skip',
+  'odd-question-skip',
   {
     bubbles: true,
     composed: true,
@@ -269,7 +276,7 @@ export const questionSkipEvent = event<{ readonly questionId: string; readonly r
   },
 );
 
-export const changeAcceptEvent = event<{ readonly proposalId: string }>('change-accept', {
+export const changeAcceptEvent = event<{ readonly proposalId: string }>('odd-change-accept', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -277,7 +284,7 @@ export const changeAcceptEvent = event<{ readonly proposalId: string }>('change-
   description: 'Request to apply a proposed change to its base revision.',
 });
 
-export const changeRejectEvent = event<{ readonly proposalId: string }>('change-reject', {
+export const changeRejectEvent = event<{ readonly proposalId: string }>('odd-change-reject', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -285,7 +292,7 @@ export const changeRejectEvent = event<{ readonly proposalId: string }>('change-
   description: 'Request to discard a proposed change.',
 });
 
-export const changeUndoEvent = event<{ readonly proposalId: string }>('change-undo', {
+export const changeUndoEvent = event<{ readonly proposalId: string }>('odd-change-undo', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -299,7 +306,7 @@ export interface AssistRequestDetail {
   readonly selection: TextSelection;
   readonly options: { readonly language?: string };
 }
-export const assistRequestEvent = event<AssistRequestDetail>('assist-request', {
+export const assistRequestEvent = event<AssistRequestDetail>('odd-assist-request', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -310,7 +317,7 @@ export const assistRequestEvent = event<AssistRequestDetail>('assist-request', {
 export type ContextAddDetail =
   | { readonly kind: 'file'; readonly files: readonly File[] }
   | { readonly kind: 'url'; readonly url: string };
-export const contextAddEvent = event<ContextAddDetail>('context-add', {
+export const contextAddEvent = event<ContextAddDetail>('odd-context-add', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -318,7 +325,7 @@ export const contextAddEvent = event<ContextAddDetail>('context-add', {
   description: 'Request to add context; the item appears once the host adds its record.',
 });
 
-export const contextRemoveEvent = event<{ readonly itemId: string }>('context-remove', {
+export const contextRemoveEvent = event<{ readonly itemId: string }>('odd-context-remove', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -327,7 +334,7 @@ export const contextRemoveEvent = event<{ readonly itemId: string }>('context-re
 });
 
 export const planInputEvent = event<{ readonly planId: string; readonly stepId: string }>(
-  'plan-input',
+  'odd-plan-input-request',
   {
     bubbles: true,
     composed: true,
@@ -337,7 +344,7 @@ export const planInputEvent = event<{ readonly planId: string; readonly stepId: 
   },
 );
 
-export const voiceTranscriptEvent = event<{ readonly text: string }>('voice-transcript', {
+export const voiceTranscriptEvent = event<{ readonly text: string }>('odd-voice-transcript', {
   bubbles: true,
   composed: true,
   cancelable: false,
@@ -346,7 +353,7 @@ export const voiceTranscriptEvent = event<{ readonly text: string }>('voice-tran
 });
 
 export const transcriptChangeEvent = event<{ readonly segmentId: string; readonly text: string }>(
-  'transcript-change',
+  'odd-transcript-change',
   {
     bubbles: true,
     composed: true,
@@ -362,7 +369,7 @@ export interface AnnounceDetail {
   /** Identical keys are announced once per surface. */
   readonly key: string;
 }
-export const announceEvent = event<AnnounceDetail>('ai-announce', {
+export const announceEvent = event<AnnounceDetail>('odd-announce', {
   bubbles: true,
   composed: true,
   cancelable: true,
@@ -370,3 +377,42 @@ export const announceEvent = event<AnnounceDetail>('ai-announce', {
   description:
     'A status message for the nearest announcer, which cancels it so outer announcers stay silent.',
 });
+
+// Prefixed names (ADR 0045) cannot collide, so document-level listeners are typed too.
+declare global {
+  interface GlobalEventHandlersEventMap {
+    'odd-announce': CustomEvent<EventDetail<typeof announceEvent>>;
+    'odd-approval-decide': CustomEvent<EventDetail<typeof approvalDecideEvent>>;
+    'odd-approval-edit': CustomEvent<EventDetail<typeof approvalEditEvent>>;
+    'odd-artifact-export': CustomEvent<EventDetail<typeof artifactExportEvent>>;
+    'odd-artifact-revision-change': CustomEvent<EventDetail<typeof artifactRevisionEvent>>;
+    'odd-assist-request': CustomEvent<EventDetail<typeof assistRequestEvent>>;
+    'odd-attachment-add': CustomEvent<EventDetail<typeof attachmentAddEvent>>;
+    'odd-attachment-remove': CustomEvent<EventDetail<typeof attachmentRemoveEvent>>;
+    'odd-attempt-resume': CustomEvent<EventDetail<typeof attemptResumeEvent>>;
+    'odd-attempt-retry': CustomEvent<EventDetail<typeof attemptRetryEvent>>;
+    'odd-branch-switch': CustomEvent<EventDetail<typeof branchSwitchEvent>>;
+    'odd-change-accept': CustomEvent<EventDetail<typeof changeAcceptEvent>>;
+    'odd-change-reject': CustomEvent<EventDetail<typeof changeRejectEvent>>;
+    'odd-change-undo': CustomEvent<EventDetail<typeof changeUndoEvent>>;
+    'odd-checkpoint-restore': CustomEvent<EventDetail<typeof checkpointRestoreEvent>>;
+    'odd-citation-open': CustomEvent<EventDetail<typeof citationOpenEvent>>;
+    'odd-context-add': CustomEvent<EventDetail<typeof contextAddEvent>>;
+    'odd-context-remove': CustomEvent<EventDetail<typeof contextRemoveEvent>>;
+    'odd-feedback-submit': CustomEvent<EventDetail<typeof feedbackSubmitEvent>>;
+    'odd-history-request': CustomEvent<EventDetail<typeof historyRequestEvent>>;
+    'odd-message-edit': CustomEvent<EventDetail<typeof messageEditEvent>>;
+    'odd-message-regenerate': CustomEvent<EventDetail<typeof messageRegenerateEvent>>;
+    'odd-model-change': CustomEvent<EventDetail<typeof modelChangeEvent>>;
+    'odd-plan-input-request': CustomEvent<EventDetail<typeof planInputEvent>>;
+    'odd-prompt-stop': CustomEvent<EventDetail<typeof promptStopEvent>>;
+    'odd-prompt-submit': CustomEvent<EventDetail<typeof promptSubmitEvent>>;
+    'odd-question-answer': CustomEvent<EventDetail<typeof questionAnswerEvent>>;
+    'odd-question-skip': CustomEvent<EventDetail<typeof questionSkipEvent>>;
+    'odd-suggestion-select': CustomEvent<EventDetail<typeof suggestionSelectEvent>>;
+    'odd-suggestion-submit': CustomEvent<EventDetail<typeof suggestionSubmitEvent>>;
+    'odd-tool-retry': CustomEvent<EventDetail<typeof toolRetryEvent>>;
+    'odd-transcript-change': CustomEvent<EventDetail<typeof transcriptChangeEvent>>;
+    'odd-voice-transcript': CustomEvent<EventDetail<typeof voiceTranscriptEvent>>;
+  }
+}

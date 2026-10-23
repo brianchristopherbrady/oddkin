@@ -51,7 +51,7 @@ export class OddkinToolCall extends OddkinElement.with({
     description: 'Localized string overrides.',
   }),
 }) {
-  static override events = { 'tool-retry': toolRetryEvent };
+  static override events = { 'odd-tool-retry': toolRetryEvent };
   declare readonly _events?: ElementEvents<typeof OddkinToolCall>;
 
   /** @internal */

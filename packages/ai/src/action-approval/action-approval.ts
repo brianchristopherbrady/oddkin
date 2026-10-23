@@ -59,7 +59,9 @@ export class OddkinActionApproval extends OddkinElement.with({
   capabilities: prop.object<Capabilities>({
     description: '`respondToApproval` and `editApproval` decide which controls are enabled.',
   }),
-  announce: prop.boolean({
+  announce: prop.enum(['none', 'important'], {
+    default: 'none',
+    empty: 'important',
     description: 'Announce status changes (only when no surrounding surface announces them).',
   }),
   strings: prop.object<Partial<typeof APPROVAL_STRINGS>>({
@@ -67,9 +69,9 @@ export class OddkinActionApproval extends OddkinElement.with({
   }),
 }) {
   static override events = {
-    'approval-decide': approvalDecideEvent,
-    'approval-edit': approvalEditEvent,
-    'ai-announce': announceEvent,
+    'odd-approval-decide': approvalDecideEvent,
+    'odd-approval-edit': approvalEditEvent,
+    'odd-announce': announceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinActionApproval>;
 
@@ -155,7 +157,7 @@ export class OddkinActionApproval extends OddkinElement.with({
         const changed = !seen || seen.key !== key || seen.status !== approval.status;
         const announceNew = !seen ? approval.status === 'requested' : changed;
         seen = { key, status: approval.status };
-        if (!this.announce || !announceNew) return;
+        if (this.announce === 'none' || !announceNew) return;
         const t = this._strings;
         const text =
           approval.status === 'requested'

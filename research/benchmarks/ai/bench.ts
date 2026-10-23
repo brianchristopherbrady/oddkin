@@ -150,7 +150,7 @@ const bench = {
     host = document.createElement('odd-conversation');
     host.label = 'Benchmark conversation';
     host.style.blockSize = '600px';
-    host.source = controller;
+    host.store = controller;
     const start = performance.now();
     document.getElementById('host')!.append(host);
     await host.updateComplete;

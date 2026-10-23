@@ -3,7 +3,7 @@
 - **Status:** Accepted (2026-10-22, by the owner, after Agent 4's review; the review's amendments are folded in, §10).
 - **Date:** 2026-10-22
 - **Area:** Components / AI / Metadata
-- **Detailed contract:** this ADR (§3 vocabulary, §5 events); enforced by `node scripts/check-vocabulary.mjs`, part of `npm run verify:metadata` once the renames land
+- **Detailed contract:** this ADR (§3 vocabulary, §5 events); enforced by `node scripts/check-vocabulary.mjs`, part of `npm run verify:metadata`
 - **Related:** 0003 (property definitions), 0036 (composition API), 0037 (naming contract: element events use `odd-`), 0040 (AI package), 0043 (composites), 0044 (overlays)
 - **Owners:** Agent 1 (this ADR and the check); Agent 4 (component APIs and the renames)
 
@@ -48,7 +48,7 @@ One documented exception: `odd-button`'s `type` defaults to `button`, not `submi
 | Help text | `description` | string; the accessible description | `hint`, `help-text`, `supporting-text` |
 | Error | `error` | Form controls: string; non-empty sets a custom validity error and shows the message. Data-driven elements: an error record property `{ code, message, retryable? }` | `error-text`, `error-message`, `validation-message`, an `invalid` attribute |
 | Action in progress | `loading` | boolean | `busy`, `pending` |
-| Lifecycle of a record or operation | `status` | `idle \| pending \| streaming \| complete \| failed \| cancelled \| interrupted` (subset per element) | the value `ready` (→ `complete`) |
+| Lifecycle of a record or operation | `status` | `idle \| pending \| streaming \| complete \| failed \| cancelled \| interrupted` (subset per element). A file pipeline keeps its own phases, because each one is shown to the user: attachments are `selected \| uploading \| uploaded \| processing \| ready \| failed \| removed`, where `ready` means usable by the model, not finished | the value `ready` for a finished operation (→ `complete`) |
 | The element's own open state | `open` | boolean, reflected | `opened`, `visible`, `show`, `expanded` (for the element itself) |
 | Items' open state | `expanded` | property: ids of open items | — |
 | Current item | `current` | string id, for navigation only (side navigation, breadcrumbs, pagination); the item gets `aria-current`. Selection is `value` | `active`, `activeId` |
@@ -91,7 +91,7 @@ One documented exception: `odd-button`'s `type` defaults to `button`, not `submi
 
 ### 8. Enforcement
 
-`scripts/vocabulary.mjs` holds the vocabulary and `node scripts/check-vocabulary.mjs` checks both packages' manifests; it joins `npm run verify:metadata` (and CI) once the renames land. It reports, for every published element:
+`scripts/vocabulary.mjs` holds the vocabulary and `node scripts/check-vocabulary.mjs` checks both packages' manifests; it runs in `npm run verify:metadata` and CI. It reports, for every published element:
 
 | Code | Finding |
 | --- | --- |
@@ -106,7 +106,7 @@ Element-specific names that are not synonyms pass (`items`, `enter-behavior`, `i
 
 ### 9. Renames in the existing elements
 
-No compatibility aliases: the packages are unpublished.
+No compatibility aliases: the packages are unpublished. All of these landed on 2026-10-22; the check reports 0 findings, and the prefixed `@oddkin/ai` events are in `GlobalEventHandlersEventMap`.
 
 | Element | Now | After |
 | --- | --- | --- |

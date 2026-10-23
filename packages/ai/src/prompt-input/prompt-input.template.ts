@@ -5,7 +5,7 @@ import { format } from '../internal/strings.js';
 import type { OddkinPromptInput } from './prompt-input.js';
 
 /**
- * Anatomy: a native `form` with the `above` slot, `attachments`, the labelled `input`, the
+ * Anatomy: a native `form` with the `header` slot, `attachments`, the labelled `input`, the
  * `toolbar` (slots, attach, send or stop), and `status`.
  */
 export const promptInputTemplate = (host: OddkinPromptInput) => {
@@ -14,7 +14,7 @@ export const promptInputTemplate = (host: OddkinPromptInput) => {
   const submitting = state.submission?.status === 'submitting';
   const failure = state.submission?.status === 'failed' ? state.submission.error : undefined;
   const blocker = host._sendBlocker(state);
-  const showStop = host.busy && can(host.capabilities, 'stop');
+  const showStop = host.loading && can(host.capabilities, 'stop');
   const attachments = host._attachmentsAvailable();
   const blocked = host._blocked.value;
   const status = submitting
@@ -34,7 +34,7 @@ export const promptInputTemplate = (host: OddkinPromptInput) => {
     @dragleave=${host._onDragLeave}
     @drop=${host._onDrop}
   >
-    <slot name="above"></slot>
+    <slot name="header"></slot>
     <ul part="attachments" class="attachments" ?hidden=${!state.attachments.length}>
       ${repeat(
         state.attachments,

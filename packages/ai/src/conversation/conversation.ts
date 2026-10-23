@@ -48,7 +48,7 @@ const FOLLOW_THRESHOLD = 48;
  * policy that respects reading earlier content, a visible-anchor guarantee when history is
  * prepended or content above changes size, an explicit "Jump to latest", the run status bar,
  * one announcer for the whole surface, and a slot for the composer. Reads state from one
- * authoritative source (`source` or `state`); keeps only presentation state.
+ * authoritative source (`store` or `state`); keeps only presentation state.
  *
  * @slot composer - The prompt input.
  * @slot empty - Content shown when there are no messages.
@@ -66,15 +66,16 @@ const FOLLOW_THRESHOLD = 48;
  * @category AI
  */
 export class OddkinConversation extends OddkinElement.with({
-  source: prop.object<ExternalSource<ConversationState>>({
-    description: 'Authoritative source (a controller or an external store).',
+  store: prop.object<ExternalSource<ConversationState>>({
+    description: 'Authoritative state (a controller or an external store).',
   }),
   state: prop.object<ConversationState>({
-    description: 'Controlled snapshot, used when no `source` is set.',
+    description: 'Controlled snapshot, used when no `store` is set.',
   }),
   label: prop.string({ default: '', description: 'Accessible name of the feed.' }),
-  announcements: prop.enum(['important', 'all', 'none'], {
+  announce: prop.enum(['none', 'important', 'all'], {
     default: 'important',
+    empty: 'important',
     description: 'How much the surface announces.',
   }),
   markdown: prop.object<MarkdownOptions>({ description: 'Markdown options for every message.' }),
@@ -84,7 +85,7 @@ export class OddkinConversation extends OddkinElement.with({
   artifactRenderers: prop.object<Readonly<Record<string, ArtifactRenderer>>>({
     description: 'Artifact renderers by kind.',
   }),
-  toolRenderer: prop.object<{ render: ToolOutputRenderer }>({
+  renderTool: prop.object<{ render: ToolOutputRenderer }>({
     description: 'Renderer for tool results.',
   }),
   feedbackReasons: prop.array<string>({ description: 'Reasons offered for negative feedback.' }),
@@ -92,10 +93,10 @@ export class OddkinConversation extends OddkinElement.with({
     description: 'Localized string overrides (including announcements).',
   }),
 }) {
-  static override events = { 'history-request': historyRequestEvent };
+  static override events = { 'odd-history-request': historyRequestEvent };
   declare readonly _events?: ElementEvents<typeof OddkinConversation>;
 
-  /** @internal Snapshot read from `source` (mirrors it; never edited). */
+  /** @internal Snapshot read from `store` (mirrors it; never edited). */
   readonly _snapshot = signal<ConversationState | undefined>(undefined);
   /** @internal Follow-latest policy (presentation state). */
   readonly _following = signal(true);
@@ -114,8 +115,8 @@ export class OddkinConversation extends OddkinElement.with({
   }
 
   /** The snapshot being rendered. */
-  get current(): ConversationState | undefined {
-    return this.source ? this._snapshot.value : this.state;
+  get snapshot(): ConversationState | undefined {
+    return this.store ? this._snapshot.value : this.state;
   }
 
   /** @internal Tools of the active attempt (for the status bar). */
@@ -139,7 +140,7 @@ export class OddkinConversation extends OddkinElement.with({
 
   /** @internal */
   readonly _requestHistory = (): void => {
-    const state = this.current;
+    const state = this.snapshot;
     if (!state || state.history === 'loading' || !can(state.capabilities, 'history')) return;
     this.emit(historyRequestEvent, {
       conversationId: state.conversationId,
@@ -190,7 +191,7 @@ export class OddkinConversation extends OddkinElement.with({
   protected override connected(scope: Scope): void {
     scope.effect(
       (run) => {
-        const source = this.source;
+        const source = this.store;
         if (!source) {
           this._snapshot.value = undefined;
           return;
@@ -199,9 +200,9 @@ export class OddkinConversation extends OddkinElement.with({
         const unsubscribe = source.subscribe(() => {
           this._snapshot.value = source.getSnapshot();
         });
-        run.add(unsubscribe, 'conversation source');
+        run.add(unsubscribe, 'conversation store');
       },
-      { name: '<odd-conversation> source' },
+      { name: '<odd-conversation> store' },
     );
   }
 
@@ -213,11 +214,11 @@ export class OddkinConversation extends OddkinElement.with({
     const assertive = root?.querySelector<HTMLElement>('#assertive');
     if (!root || !scroller || !feed || !polite || !assertive) return;
 
-    // One announcer per surface; descendants' `ai-announce` events are routed to it.
+    // One announcer per surface; descendants' `odd-announce` events are routed to it.
     const announcer = scope.use(
       new LiveAnnouncer({
         regions: () => ({ polite, assertive }),
-        event: 'ai-announce',
+        event: 'odd-announce',
         target: () => this,
       }),
     );
@@ -226,8 +227,8 @@ export class OddkinConversation extends OddkinElement.with({
     let previousIds: readonly string[] = [];
     scope.effect(
       () => {
-        const state = this.current;
-        const level = this.announcements;
+        const state = this.snapshot;
+        const level = this.announce;
         const t = {
           ...DEFAULT_ANNOUNCEMENTS,
           ...(this.strings as Partial<AnnouncementStrings> | undefined),
@@ -253,7 +254,7 @@ export class OddkinConversation extends OddkinElement.with({
         previous = state;
         previousIds = ids;
       },
-      { phase: 'post', name: '<odd-conversation> announcements' },
+      { phase: 'post', name: '<odd-conversation> announce' },
     );
 
     // Follow policy: the user scrolling away stops following; returning near the end resumes.

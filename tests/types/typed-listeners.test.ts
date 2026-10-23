@@ -44,17 +44,19 @@ export function typedListeners(
   conversation: HTMLElementTagNameMap['odd-conversation'],
   input: HTMLElementTagNameMap['odd-input'],
 ): void {
-  prompt.addEventListener('prompt-submit', (event) => {
+  prompt.addEventListener('odd-prompt-submit', (event) => {
     const text: string = event.detail.text;
     void text;
-    // @ts-expect-error -- the prompt-submit detail has no id
+    // @ts-expect-error -- the odd-prompt-submit detail has no id
     void event.detail.id;
   });
-  prompt.removeEventListener('prompt-stop', (event) => void event.detail);
-  conversation.addEventListener('history-request', (event) => void event.detail);
+  prompt.removeEventListener('odd-prompt-stop', (event) => void event.detail);
+  conversation.addEventListener('odd-history-request', (event) => void event.detail);
   input.addEventListener('input', (event) => void event.composed);
   // @ts-expect-error -- a listener for another detail type is rejected
-  conversation.addEventListener('history-request', (event: CustomEvent<string>) => void event);
-  // @ts-expect-error -- AI events are not in the global map: a document listener gets a plain Event
-  document.addEventListener('prompt-submit', (event) => void event.detail);
+  conversation.addEventListener('odd-history-request', (event: CustomEvent<string>) => void event);
+  // Prefixed AI events are in the global map (ADR 0045): a document listener gets the detail type.
+  document.addEventListener('odd-prompt-submit', (event) => void event.detail.text);
+  // @ts-expect-error -- the odd-prompt-submit detail has no id
+  document.addEventListener('odd-prompt-submit', (event) => void event.detail.id);
 }

@@ -51,7 +51,7 @@ export const PROMPT_INPUT_STRINGS = {
  * request; the host acknowledges or fails it by id, and acknowledging an older submission never
  * clears newer edits. IME composition never submits.
  *
- * @slot above - Content above the input (suggestions, context).
+ * @slot header - Content above the input (suggestions, context).
  * @slot toolbar-start - Controls before the attach button (model picker, commands).
  * @slot toolbar-end - Controls before the send button (voice input).
  * @csspart form - The native form.
@@ -80,7 +80,7 @@ export class OddkinPromptInput extends OddkinElement.with({
     description: 'Placeholder; never a substitute for the label.',
   }),
   disabled: prop.boolean({ reflect: true, description: 'Prevents editing and sending.' }),
-  busy: prop.boolean({
+  loading: prop.boolean({
     reflect: true,
     description: 'Work is running; shows Stop instead of Send when stopping is available.',
   }),
@@ -117,11 +117,11 @@ export class OddkinPromptInput extends OddkinElement.with({
 }) {
   static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
   static override events = {
-    'prompt-submit': promptSubmitEvent,
-    'prompt-stop': promptStopEvent,
-    'attachment-add': attachmentAddEvent,
-    'attachment-remove': attachmentRemoveEvent,
-    'ai-announce': announceEvent,
+    'odd-prompt-submit': promptSubmitEvent,
+    'odd-prompt-stop': promptStopEvent,
+    'odd-attachment-add': attachmentAddEvent,
+    'odd-attachment-remove': attachmentRemoveEvent,
+    'odd-announce': announceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinPromptInput>;
 
@@ -179,7 +179,7 @@ export class OddkinPromptInput extends OddkinElement.with({
     if (blocker === 'attachments-busy') return t.busyAttachments;
     if (blocker === 'attachments-failed') return t.failedAttachments;
     if (blocker || (!state.text.trim() && !state.attachments.length)) return '';
-    if (this.busy) return '';
+    if (this.loading) return '';
     return undefined;
   }
 

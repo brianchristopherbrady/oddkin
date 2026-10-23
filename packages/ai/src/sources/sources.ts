@@ -24,9 +24,10 @@ export class OddkinSources extends OddkinElement.with({
   sources: prop.array<SourceRecord>({
     description: 'Source records in citation order (replaced, never mutated).',
   }),
-  heading: prop.string({
+  label: prop.string({
     default: '',
-    description: 'Visible heading; defaults to the localized "Sources".',
+    description:
+      'Visible heading and accessible name of the list; defaults to the localized "Sources".',
   }),
   strings: prop.object<Partial<typeof SOURCES_STRINGS>>({
     description: 'Localized string overrides.',

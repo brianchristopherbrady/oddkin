@@ -50,7 +50,10 @@ export async function exportVariables(figma, exportedAt) {
           value && typeof value === 'object' && value.type === 'VARIABLE_ALIAS'
             ? { alias: await path(value.id) }
             : value && typeof value === 'object' && 'r' in value
-              ? { value: hex(value) }
+              ? {
+                  value: hex(value),
+                  ...(value.a !== undefined && value.a !== 1 ? { alpha: round(value.a) } : {}),
+                }
               : { value: typeof value === 'number' ? round(value) : value };
         values.push([modeName.get(modeId) ?? modeId, entry]);
       }

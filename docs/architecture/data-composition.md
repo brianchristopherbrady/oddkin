@@ -65,7 +65,7 @@ A link without `href`, an action without `action`, or a group without `items` is
 | Kind               | Example                                      | Owner                                                                                     |
 | ------------------ | -------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | Structured content | `items`                                      | Caller                                                                                    |
-| Visual options     | `variant`, `profile` (attributes/properties) | Caller                                                                                    |
+| Visual options     | `appearance`, `profile` (attributes/properties) | Caller                                                                                    |
 | Interaction state  | `current` (active id), `expanded` ids        | **Either** controlled by the caller **or** uncontrolled inside the component — never both |
 
 Controlled mode: set `.current` (and optionally `.expanded`); the component emits intent events and does not change them itself. Uncontrolled mode: omit them; the component tracks expansion locally (initialised from item `expanded`) and still emits events. Setting `expanded` on an item **and** the `.expanded` property is a `model.state.conflict` diagnostic; the property wins.
@@ -205,7 +205,7 @@ export type NavigationItem = Infer<typeof NavigationItemModel>;
 
 ## 6. Connection to recipes and tokens
 
-- Collection components use recipes for arrangement; data can select **named** options only: `variant`, `profile`, recipe names for registered patterns, and token references (`{ "gap": "layout.gap" }` where a model explicitly allows a role reference).
+- Collection components use recipes for arrangement; data can select **named** options only: `appearance`, `profile`, recipe names for registered patterns, and token references (`{ "gap": "layout.gap" }` where a model explicitly allows a role reference).
 - Authors do not configure every internal region. CSS, SCSS, and CSS-in-TS customization (roles, component variables, parts) remain available.
 - Validation rejects raw CSS strings in models (`model.style.raw`), unknown recipe/profile/token names (`model.ref.invalid`).
 

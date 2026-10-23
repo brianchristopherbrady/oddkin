@@ -89,7 +89,7 @@ const part = (host: Element, name: string) =>
 describe('customization levels 1-3 on odd-button and odd-card', () => {
   it('level 1: two products share definitions and differ only by scoped tokens', async () => {
     const markup =
-      '<odd-button appearance="primary">Save</odd-button><odd-card variant="filled">x</odd-card>';
+      '<odd-button appearance="primary">Save</odd-button><odd-card appearance="filled">x</odd-card>';
     const alpha = await render('alpha', markup);
     const beta = await render('beta', markup);
     const [aButton, aCard] = [alpha.querySelector('odd-button')!, alpha.querySelector('odd-card')!];

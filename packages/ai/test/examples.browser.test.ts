@@ -57,10 +57,10 @@ describe('@oddkin/ai authored examples', () => {
       observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
       wrong: false,
     },
-    'odd-artifact/codeMode': { observe: (el) => el['mode'], wrong: 'preview' },
+    'odd-artifact/codeView': { observe: (el) => el['view'], wrong: 'preview' },
   };
   const runtime: Record<string, string[]> = {
-    'odd-artifact/codeMode': ['element.attribute.invalid'],
+    'odd-artifact/codeView': ['element.attribute.invalid'],
     'odd-sources/sourcesAttribute': ['element.attribute.propertyOnly'],
   };
 

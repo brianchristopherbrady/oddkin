@@ -55,7 +55,10 @@ export class OddkinContextPicker extends OddkinElement.with({
     description: 'Localized string overrides.',
   }),
 }) {
-  static override events = { 'context-add': contextAddEvent, 'context-remove': contextRemoveEvent };
+  static override events = {
+    'odd-context-add': contextAddEvent,
+    'odd-context-remove': contextRemoveEvent,
+  };
   declare readonly _events?: ElementEvents<typeof OddkinContextPicker>;
 
   /** @internal Expanded item ids (presentation state). */

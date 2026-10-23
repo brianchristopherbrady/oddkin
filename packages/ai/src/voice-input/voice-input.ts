@@ -52,8 +52,8 @@ export class OddkinVoiceInput extends OddkinElement.with({
   }),
 }) {
   static override events = {
-    'voice-transcript': voiceTranscriptEvent,
-    'ai-announce': announceEvent,
+    'odd-voice-transcript': voiceTranscriptEvent,
+    'odd-announce': announceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinVoiceInput>;
 

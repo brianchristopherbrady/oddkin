@@ -58,8 +58,8 @@ const states = `
   <h2>Cards</h2>
   <odd-card label="Billing"><p>Named by its label.</p></odd-card>
   <odd-card><h3 slot="header">Plan</h3><p>Named by its heading.</p><odd-button slot="footer">Upgrade</odd-button></odd-card>
-  <odd-card variant="filled"><p>No name, no landmark.</p></odd-card>
-  <odd-card variant="elevated" padding="sm"><p>Elevated.</p></odd-card>
+  <odd-card appearance="filled"><p>No name, no landmark.</p></odd-card>
+  <odd-card appearance="elevated" padding="sm"><p>Elevated.</p></odd-card>
 `;
 
 let tokens: HTMLLinkElement;

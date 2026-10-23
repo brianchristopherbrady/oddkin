@@ -37,13 +37,13 @@ const draft = new ComposerController({ accept: ['image/*', '.pdf'], maxFileSize:
 
 const conversation = document.querySelector('odd-conversation');
 const composer = document.querySelector('odd-prompt-input');
-conversation.source = controller;
+conversation.store = controller;
 composer.controller = draft;
 bindIntents(conversation, controllerIntents(controller, draft));
 controller.subscribe(() => {
   const state = controller.getSnapshot();
   const attempt = state.activeAttemptId ? state.attempts[state.activeAttemptId] : undefined;
-  composer.busy = !!attempt && isActive(attempt.status);
+  composer.loading = !!attempt && isActive(attempt.status);
   composer.attemptId = attempt?.attemptId ?? '';
   composer.capabilities = state.capabilities;
 });
@@ -56,12 +56,12 @@ controller.subscribe(() => {
 ```js
 import { createConversationView, selectSource, bindIntents } from '@oddkin/ai/controllers';
 
-conversation.source = selectSource(store, (s) =>
+conversation.store = selectSource(store, (s) =>
   createConversationView({ conversationId: s.id, messages: s.messages, tools: s.tools, approvals: s.approvals, capabilities: s.capabilities }),
 );
 bindIntents(conversation, {
-  'approval-decide': (d) => api.decide(d.approvalId, d.revision, d.decision), // your store updates the record
-  'prompt-stop': (d) => api.stop(d.attemptId),
+  'odd-approval-decide': (d) => api.decide(d.approvalId, d.revision, d.decision), // your store updates the record
+  'odd-prompt-stop': (d) => api.stop(d.attemptId),
 });
 ```
 
@@ -71,8 +71,8 @@ Or assign a validated snapshot directly: `conversation.state = createConversatio
 
 Elements use properties for records and typed, bubbling, composed events for intents.
 
-- React 19: `<odd-action-approval approval={record} capabilities={caps} onapproval-decide={(e) => decide(e.detail)} />`
-- Vue 3: `<odd-action-approval :approval="record" :capabilities="caps" @approval-decide="decide($event.detail)" />` (configure `compilerOptions.isCustomElement` for `odd-` tags)
+- React 19: `<odd-action-approval approval={record} capabilities={caps} onodd-approval-decide={(e) => decide(e.detail)} />`
+- Vue 3: `<odd-action-approval :approval="record" :capabilities="caps" @odd-approval-decide="decide($event.detail)" />` (configure `compilerOptions.isCustomElement` for `odd-` tags)
 
 ## Elements
 

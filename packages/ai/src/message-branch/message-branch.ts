@@ -34,7 +34,7 @@ export class OddkinMessageBranch extends OddkinElement.with({
     description: 'Localized string overrides.',
   }),
 }) {
-  static override events = { 'branch-switch': branchSwitchEvent };
+  static override events = { 'odd-branch-switch': branchSwitchEvent };
   declare readonly _events?: ElementEvents<typeof OddkinMessageBranch>;
 
   /** @internal */

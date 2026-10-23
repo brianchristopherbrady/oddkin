@@ -22,7 +22,7 @@ const HEADING = 'h1, h2, h3, h4, h5, h6, [role="heading"]';
  * @cssprop --odd-card-radius - Corner radius. Also the theme's `card.radius` role, so the theme sets it.
  * @cssprop --odd-card-background - Background colour.
  * @cssprop --odd-card-border-color - Border colour.
- * @cssprop --odd-card-shadow - Shadow for `variant="elevated"` (default `elevation.md`).
+ * @cssprop --odd-card-shadow - Shadow for `appearance="elevated"` (default `elevation.md`).
  * @a11y Becomes a named region only with `label` or a slotted heading; otherwise it adds no landmark.
  * @previewRole surface
  * @useFor Grouping related content and actions into one visual unit.
@@ -31,7 +31,7 @@ const HEADING = 'h1, h2, h3, h4, h5, h6, [role="heading"]';
  * @category Containers
  */
 export class OddkinCard extends OddkinElement.with({
-  variant: prop.enum(['outlined', 'filled', 'elevated'], {
+  appearance: prop.enum(['outlined', 'filled', 'elevated'], {
     default: 'outlined',
     reflect: true,
     description: 'Surface treatment.',

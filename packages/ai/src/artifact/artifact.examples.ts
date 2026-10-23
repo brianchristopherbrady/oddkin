@@ -26,15 +26,15 @@ export default defineExamples('odd-artifact', {
   },
   source: {
     label: 'Source',
-    props: { artifact, mode: 'source' },
+    props: { artifact, view: 'source' },
   },
-  codeMode: {
-    label: 'Unsupported mode',
+  codeView: {
+    label: 'Unsupported view',
     props: { artifact },
-    attributes: { mode: 'code' },
+    attributes: { view: 'code' },
     incorrect: {
       explanation:
-        '`mode` accepts preview or source. Other values are reported and the preview is shown; use `source` for the raw content.',
+        '`view` accepts preview or source. Other values are reported and the preview is shown; use `source` for the raw content.',
       diagnostic: 'usage.attribute.value',
       correct: 'source',
     },

@@ -147,6 +147,16 @@ describe('forms', () => {
     el.error = '';
     await settle(el);
     expect(el.checkValidity()).toBe(true);
+    el.setCustomValidity('Not allowed');
+    await settle(el);
+    expect([el.error, el.validity.customError, el.validationMessage]).toEqual([
+      'Not allowed',
+      true,
+      'Not allowed',
+    ]);
+    el.setCustomValidity('');
+    await settle(el);
+    expect(el.checkValidity()).toBe(true);
   });
 
   it('shows aria-invalid only after a failed validity check or leaving the field', async () => {

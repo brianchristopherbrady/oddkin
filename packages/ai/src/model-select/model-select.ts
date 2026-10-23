@@ -20,7 +20,7 @@ export const MODEL_SELECT_STRINGS = {
  * @keyboard Native select behavior.
  * @useFor Letting users choose the model used for the next request.
  * @notFor Settings unrelated to models.
- * @limitation Programmatic `value` changes never dispatch `model-change`.
+ * @limitation Programmatic `value` changes never dispatch `odd-model-change`.
  * @category AI
  */
 export class OddkinModelSelect extends OddkinElement.with({
@@ -36,7 +36,7 @@ export class OddkinModelSelect extends OddkinElement.with({
   }),
 }) {
   static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
-  static override events = { 'model-change': modelChangeEvent };
+  static override events = { 'odd-model-change': modelChangeEvent };
   declare readonly _events?: ElementEvents<typeof OddkinModelSelect>;
 
   /** @internal */

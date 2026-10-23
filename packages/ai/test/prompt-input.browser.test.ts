@@ -28,7 +28,7 @@ async function mount(setup?: (el: OddkinPromptInput) => void) {
   await settle(el);
   const area = el.shadowRoot!.querySelector('textarea')!;
   const submits: PromptSubmitDetail[] = [];
-  el.addEventListener('prompt-submit', (e) =>
+  el.addEventListener('odd-prompt-submit', (e) =>
     submits.push((e as CustomEvent<PromptSubmitDetail>).detail),
   );
   return { el, area, submits };
@@ -129,13 +129,13 @@ describe('odd-prompt-input', () => {
   it('a cancelled submit event vetoes locally; programmatic value never dispatches events', async () => {
     const { el, area, submits } = await mount();
     const seen: string[] = [];
-    for (const type of ['prompt-submit', 'input', 'change', 'attachment-add'])
+    for (const type of ['odd-prompt-submit', 'input', 'change', 'odd-attachment-add'])
       el.addEventListener(type, () => seen.push(type));
     el.value = 'set by host';
     await settle(el);
     expect(area.value).toBe('set by host');
     expect(seen).toEqual([]);
-    el.addEventListener('prompt-submit', (e) => e.preventDefault(), { once: true });
+    el.addEventListener('odd-prompt-submit', (e) => e.preventDefault(), { once: true });
     key(area, {});
     await settle(el);
     expect(submits).toHaveLength(1);
@@ -202,16 +202,16 @@ describe('odd-prompt-input', () => {
     const { el } = await mount((e) => {
       e.controller = controller;
       e.capabilities = { send: { available: true }, stop: { available: true } };
-      e.busy = true;
+      e.loading = true;
       e.attemptId = 'attempt-1';
     });
     expect(el.shadowRoot!.querySelector('textarea')!.value).toBe('shared draft');
     const stops: unknown[] = [];
-    el.addEventListener('prompt-stop', (e) => stops.push((e as CustomEvent).detail));
+    el.addEventListener('odd-prompt-stop', (e) => stops.push((e as CustomEvent).detail));
     (el.shadowRoot!.querySelector('odd-button.stop') as HTMLElement).click();
     expect(stops).toEqual([{ attemptId: 'attempt-1' }]);
     el.capabilities = { send: { available: false, reason: 'Sending is paused.' } };
-    el.busy = false;
+    el.loading = false;
     await settle(el);
     el.submit();
     await settle(el);

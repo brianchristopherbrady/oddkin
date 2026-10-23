@@ -8,7 +8,8 @@ import { generate, parseColor, resolveToken, toHex, type ResolvedTheme } from '.
 // dark. Reads only the snapshot, never Figma. px compare with rem at 16 px; colours as lower-case hex.
 
 type Mode = 'light' | 'dark';
-type Value = { value: string | number | boolean } | { alias: string };
+type Literal = { value: string | number | boolean; alpha?: number };
+type Value = Literal | { alias: string };
 interface Variable {
   name: string;
   type: 'COLOR' | 'FLOAT' | 'STRING' | 'BOOLEAN';
@@ -27,10 +28,12 @@ interface UnitValue {
 }
 interface TextStyle {
   name: string;
+  fontFamily: string;
   fontStyle: string;
   fontSize: number;
   lineHeight: UnitValue;
   letterSpacing: UnitValue;
+  boundVariables?: Record<string, string>;
 }
 interface Effect {
   type: string;
@@ -40,6 +43,7 @@ interface Effect {
   offset?: { x: number; y: number };
   radius?: number;
   spread?: number;
+  boundVariables?: Record<string, string>;
 }
 interface Snapshot {
   collections: Collection[];
@@ -64,53 +68,30 @@ const BOTH: readonly Mode[] = ['light', 'dark'];
 const MODE_NAMES: Record<string, Mode> = { Light: 'light', Dark: 'dark' };
 const dots = (path: string) => path.replaceAll('/', '.');
 
-/**
- * Shared theme names that are not `theme/<mode>/<token path>`: legacy aliases kept in Figma.
- * `null`: no token by design (reported as Figma-only).
- */
-const SHARED_THEME_NAMES: Record<string, readonly [token: string, ...modes: Mode[]] | null> = {
-  'color/accent': ['color.action.default', 'light'],
-  'color/action-hover': ['color.action.hover', 'light'],
-  'color/action-pressed': ['color.action.pressed', 'light'],
-  'color/border': ['color.border.default', 'light'],
-  'color/border-strong': ['color.border.strong', 'light'],
-  'color/canvas': ['color.canvas', 'light'],
-  'color/citron': ['color.accent.decorative', 'light', 'dark'],
-  'color/dark': ['color.canvas', 'dark'],
-  'color/dark-accent': ['color.action.default', 'dark'],
-  'color/dark-border': ['color.border.default', 'dark'],
-  'color/dark-muted': ['color.text.secondary', 'dark'],
-  'color/dark-surface': ['color.surface.default', 'dark'],
-  'color/dark-text': ['color.text.primary', 'dark'],
-  'color/error': ['color.danger.foreground', 'light'],
-  'color/error-surface': ['color.danger.surface', 'light'],
-  'color/focus': ['color.focus.ring', 'light'],
-  'color/muted': ['color.text.secondary', 'light'],
-  'color/specimen': ['color.surface.specimen', 'light'],
-  'color/success': ['color.success.foreground', 'light'],
-  'color/surface': ['color.surface.default', 'light'],
-  'color/text': ['color.text.primary', 'light'],
-  'color/warning': ['color.warning.foreground', 'light'],
-  'preview/draft/action': ['color.action.default', 'light'],
-  'preview/draft/dark': ['color.surface.default', 'dark'],
-  'radius/brand': ['radius.md', 'light', 'dark'],
-  'radius/card': ['card.radius', 'light', 'dark'],
-  'radius/control': ['control.radius', 'light', 'dark'],
-  'radius/workspace': ['radius.lg', 'light', 'dark'],
-  'space/4': ['space.2xs', 'light', 'dark'],
-  'space/8': ['space.xs', 'light', 'dark'],
-  'space/12': ['space.sm', 'light', 'dark'],
-  'space/16': ['space.md', 'light', 'dark'],
-  'space/24': ['space.lg', 'light', 'dark'],
-  'space/32': ['space.xl', 'light', 'dark'],
-  // Named 40 but aliases repo/space/xl (32 px); the spacing scale has no 40 px step.
-  'space/40': null,
-  'space/48': ['space.2xl', 'light', 'dark'],
-  'space/64': ['space.3xl', 'light', 'dark'],
+const REPOSITORY_COLLECTION = 'Oddkin · Repository tokens';
+const COMPONENT_ROLES = 'Oddkin · Component roles';
+const REPOSITORY = `${REPOSITORY_COLLECTION}/repo/`;
+
+/** Figma cannot use CSS font stacks; these two explicit adapters retain the chosen fallbacks. */
+const FONT_ADAPTERS: Record<string, { family: string; sources: string[] }> = {
+  [`${REPOSITORY_COLLECTION}/figma/font/family/sans`]: {
+    family: 'Roboto',
+    sources: ['font.family.sans', 'font.family.display'],
+  },
+  [`${REPOSITORY_COLLECTION}/figma/font/family/mono`]: {
+    family: 'Roboto Mono',
+    sources: ['font.family.mono'],
+  },
+};
+
+/** A CSS shadow is an effect style; its two color adapters supply the per-mode alpha. */
+const SHADOW_ADAPTERS: Record<string, { token: string; layer: number }> = {
+  [`${COMPONENT_ROLES}/figma/elevation/md/key`]: { token: 'elevation.md', layer: 0 },
+  [`${COMPONENT_ROLES}/figma/elevation/md/ambient`]: { token: 'elevation.md', layer: 1 },
 };
 
 /** The mapping table: Figma variable → token pairs, per collection. */
-function pairs(collection: Collection, variable: Variable): Pair[] | null | undefined {
+function pairs(collection: Collection, variable: Variable): Pair[] | undefined {
   const figmaModes = Object.keys(variable.valuesByMode);
   switch (collection.name) {
     case 'Oddkin · Component roles':
@@ -130,24 +111,6 @@ function pairs(collection: Collection, variable: Variable): Pair[] | null | unde
         token: dots(match[1] as string),
         mode,
       }));
-    }
-    case 'Oddkin · Shared theme': {
-      // One mode named Light; `theme/<light|dark>/<token path>`, plus legacy names.
-      const match = /^theme\/(light|dark)\/(.+)$/.exec(variable.name);
-      if (match) {
-        return [
-          {
-            figmaMode: figmaModes[0] as string,
-            token: dots(match[2] as string),
-            mode: match[1] as Mode,
-          },
-        ];
-      }
-      const entry = SHARED_THEME_NAMES[variable.name];
-      if (entry === undefined) return undefined;
-      if (entry === null) return null;
-      const [token, ...modes] = entry;
-      return modes.map((mode) => ({ figmaMode: figmaModes[0] as string, token, mode }));
     }
     default:
       return undefined;
@@ -169,18 +132,14 @@ const TEXT_STYLES: Record<string, TextTarget> = {
   'Oddkin/Code': 'code',
   'Oddkin/Component/AI/title': foundation('md', 'semibold', 'normal'),
   'Oddkin/Component/Button/lg': foundation('md', 'medium', 'snug'),
-  'Oddkin/Component/Button/md': 'ui',
-  'Oddkin/Component/Button/sm': 'ui',
   'Oddkin/Component/Field/small': foundation('sm', 'regular', 'normal'),
   'Oddkin/Component/Navigation/current': foundation('sm', 'semibold', 'snug'),
   'Oddkin/Component/Status': foundation('xs', 'medium', 'normal'),
   'Oddkin/Display': 'display',
   'Oddkin/Eyebrow': 'eyebrow',
-  'Oddkin/Home display': 'display',
   'Oddkin/Section': 'section',
   'Oddkin/Small': 'small',
   'Oddkin/UI': 'ui',
-  'Oddkin/Wordmark': 'section',
 };
 const FONT_STYLES: Record<string, number> = { Regular: 400, Medium: 500, SemiBold: 600, Bold: 700 };
 
@@ -192,13 +151,9 @@ for (const collection of snapshot.collections) {
 }
 
 /** Follow aliases; an alias into another collection reads the same mode name, else its default. */
-function figmaValue(
-  variable: Variable,
-  figmaMode: string,
-  seen = new Set<string>(),
-): string | number | boolean {
+function figmaLiteral(variable: Variable, figmaMode: string, seen = new Set<string>()): Literal {
   const value = variable.valuesByMode[figmaMode] as Value;
-  if ('value' in value) return value.value;
+  if ('value' in value) return value;
   if (seen.has(value.alias)) throw new Error(`alias cycle at ${value.alias}`);
   seen.add(value.alias);
   const target = byPath.get(value.alias);
@@ -208,7 +163,34 @@ function figmaValue(
     figmaMode in next.valuesByMode
       ? figmaMode
       : (collection.modes.find((m) => m.id === collection.defaultModeId)?.name as string);
-  return figmaValue(next, mode, seen);
+  return figmaLiteral(next, mode, seen);
+}
+
+function figmaValue(variable: Variable, mode: string): Literal['value'] {
+  return figmaLiteral(variable, mode).value;
+}
+
+function boundLiteral(path: string, mode: string): Literal {
+  const target = byPath.get(path);
+  if (!target) throw new Error(`unresolved binding ${path}`);
+  const { collection, variable } = target;
+  const figmaMode =
+    mode in variable.valuesByMode
+      ? mode
+      : (collection.modes.find((m) => m.id === collection.defaultModeId)?.name as string);
+  return figmaLiteral(variable, figmaMode);
+}
+
+/** The separate alpha keeps shadow precision that 8-bit hex cannot represent. */
+function colorSignature(entry: Literal): string {
+  const value = String(entry.value);
+  const alpha = entry.alpha ?? (value.length === 9 ? Number.parseInt(value.slice(7), 16) / 255 : 1);
+  return `${value.slice(0, 7)}/${round(alpha)}`;
+}
+
+function repositoryPath(token: string, mode: Mode): string {
+  const path = `${REPOSITORY}${token.replaceAll('.', '/')}`;
+  return byPath.has(`${path}/${mode}`) ? `${path}/${mode}` : path;
 }
 
 /** A repository length in px at a 16 px root; plain numbers stay as they are. */
@@ -256,13 +238,32 @@ function compareVariables(report: Report, covered: Set<string>) {
   for (const collection of snapshot.collections) {
     for (const variable of collection.variables) {
       const id = `${collection.name}/${variable.name}`;
+      const font = FONT_ADAPTERS[id];
+      if (font) {
+        for (const source of font.sources) cover(covered, source);
+        for (const mode of BOTH) {
+          const raw = figmaValue(variable, Object.keys(variable.valuesByMode)[0] as string);
+          if (variable.type === 'STRING' && raw === font.family) report.matches += 1;
+          else report.mismatches.push(`${id} (${mode}): figma ${raw}, fallback ${font.family}`);
+        }
+        continue;
+      }
+      const shadow = SHADOW_ADAPTERS[id];
+      if (shadow) {
+        cover(covered, shadow.token);
+        for (const [figmaMode, mode] of Object.entries(MODE_NAMES)) {
+          const actual = colorSignature(figmaLiteral(variable, figmaMode));
+          const expected = shadowLayers(repo(shadow.token, mode) ?? '')
+            [shadow.layer]?.split(' ')
+            .at(-1);
+          if (variable.type === 'COLOR' && actual === expected) report.matches += 1;
+          else report.mismatches.push(`${id} (${mode}): figma ${actual}, repo ${expected}`);
+        }
+        continue;
+      }
       const list = pairs(collection, variable);
       if (list === undefined) {
         report.figmaOnly.push(`${id}: not in the mapping table`);
-        continue;
-      }
-      if (list === null) {
-        report.figmaOnly.push(`${id}: no token by design`);
         continue;
       }
       const gaps = new Set<string>();
@@ -274,8 +275,15 @@ function compareVariables(report: Report, covered: Set<string>) {
         }
         cover(covered, token);
         const alias = aliasOf(token, mode);
-        if ('value' in (variable.valuesByMode[figmaMode] as Value) && alias !== undefined) {
-          gaps.add(`${id} → ${alias}`);
+        const expectedAlias =
+          collection.name === COMPONENT_ROLES
+            ? repositoryPath(token, mode)
+            : alias === undefined
+              ? undefined
+              : repositoryPath(alias, mode);
+        const stored = variable.valuesByMode[figmaMode] as Value;
+        if (expectedAlias && ('value' in stored || stored.alias !== expectedAlias)) {
+          gaps.add(`${id} [${figmaMode}] → ${expectedAlias}`);
         }
         const raw = figmaValue(variable, figmaMode);
         const [figma, ours] =
@@ -317,6 +325,7 @@ function compareTextStyles(report: Report, covered: Set<string>) {
             letterSpacing: `type.${target}.letter-spacing`,
           }
         : target;
+    if (typeof target === 'string') cover(covered, `type.${target}.family`);
     const size = style.fontSize;
     const lineHeight =
       style.lineHeight.unit === 'PIXELS'
@@ -380,26 +389,44 @@ function shadowLayers(literal: string): string[] {
 function compareEffects(report: Report, covered: Set<string>) {
   for (const style of snapshot.effectStyles) {
     const match = /^Oddkin\/Elevation\/([^/]+)\/(light|dark)$/.exec(style.name);
-    if (!match) {
+    const mappings: { token: string; mode: Mode }[] =
+      style.name === 'Oddkin/Overlay'
+        ? BOTH.map((mode) => ({ token: 'elevation.md', mode }))
+        : match
+          ? [{ token: `elevation.${match[1]}`, mode: match[2] as Mode }]
+          : [];
+    if (!mappings.length) {
       report.figmaOnly.push(`effect style ${style.name}: not in the mapping table`);
       continue;
     }
-    const token = `elevation.${match[1]}`;
-    const literal = repo(token, match[2] as Mode);
-    if (literal === undefined) {
-      report.figmaOnly.push(`effect style ${style.name}: no token ${token}`);
-      continue;
+    for (const { token, mode } of mappings) {
+      const literal = repo(token, mode);
+      if (literal === undefined) {
+        report.figmaOnly.push(`effect style ${style.name}: no token ${token}`);
+        continue;
+      }
+      cover(covered, token);
+      const figmaMode = mode === 'light' ? 'Light' : 'Dark';
+      const figma = style.effects
+        .filter((e) => e.visible && e.type === 'DROP_SHADOW')
+        .map((e) => {
+          const binding = e.boundVariables?.color;
+          const color = binding
+            ? colorSignature(boundLiteral(binding, figmaMode))
+            : `${e.color}/${e.alpha}`;
+          const number = (field: string, fallback: number | undefined) => {
+            const path = e.boundVariables?.[field];
+            return path ? Number(boundLiteral(path, figmaMode).value) : fallback;
+          };
+          return `${number('offsetX', e.offset?.x)} ${number('offsetY', e.offset?.y)} ${number('radius', e.radius)} ${number('spread', e.spread)} ${color}`;
+        });
+      const ours = shadowLayers(literal);
+      if (JSON.stringify(figma) === JSON.stringify(ours)) report.matches += 1;
+      else
+        report.mismatches.push(
+          `effect style ${style.name} vs ${token} (${mode}): figma ${figma.join(', ')}; repo ${ours.join(', ')}`,
+        );
     }
-    cover(covered, token);
-    const figma = style.effects
-      .filter((e) => e.visible && e.type === 'DROP_SHADOW')
-      .map((e) => `${e.offset?.x} ${e.offset?.y} ${e.radius} ${e.spread} ${e.color}/${e.alpha}`);
-    const ours = shadowLayers(literal);
-    if (JSON.stringify(figma) === JSON.stringify(ours)) report.matches += 1;
-    else
-      report.mismatches.push(
-        `effect style ${style.name} vs ${token} (${match[2]}): figma ${figma.join(', ')}; repo ${ours.join(', ')}`,
-      );
   }
 }
 
@@ -422,81 +449,21 @@ function parity(): Report {
 
 const report = parity();
 
-// Figma-side issues for the owner. Fixing one in Figma and refreshing the snapshot fails the test
-// until the entry is removed here, so the lists stay current.
-const REPOSITORY = 'Oddkin · Repository tokens/repo/';
-/** Unsuffixed duplicates of the light values, read as both modes: wrong in dark. */
-const MISMATCHES = [
-  `${REPOSITORY}color/selection/background [Mode 1] vs color.selection.background (dark): figma #6250e8, repo #b4a8ff`,
-  `${REPOSITORY}color/selection/foreground [Mode 1] vs color.selection.foreground (dark): figma #ffffff, repo #23252b`,
-];
-const FIGMA_ONLY = ['Oddkin · Shared theme/space/40: no token by design'];
-/** Figma literals where the theme aliases another token (the alias chain is flattened). */
-const ALIAS_GAPS = (
-  [
-    ['card/padding', 'layout.inset'],
-    ['card/radius', 'radius.lg'],
-    ...['link', 'focus/ring'].flatMap((role) =>
-      ['light', 'dark'].map((mode) => [`color/${role}/${mode}`, 'color.action.default']),
-    ),
-    ...['surface/default', 'surface/raised', 'text/on-action'].map((role) => [
-      `color/${role}/light`,
-      'ref.neutral.0',
-    ]),
-    ['color/selection/background', 'color.action.default'],
-    ['color/selection/background/dark', 'color.action.default'],
-    ['color/selection/background/light', 'color.action.default'],
-    ['color/selection/foreground', 'color.text.on-action'],
-    ['color/selection/foreground/dark', 'color.text.on-action'],
-    ['color/selection/foreground/light', 'color.text.on-action'],
-    ['control/gap', 'space.xs'],
-    ['control/padding/inline/lg', 'space.md'],
-    ['control/padding/inline/md', 'space.sm'],
-    ['control/padding/inline/sm', 'space.xs'],
-    ['control/radius', 'radius.md'],
-    ['layout/gap', 'space.md'],
-    ['layout/inset', 'space.lg'],
-    ['navigation/indent', 'space.md'],
-    ['navigation/item/gap', 'space.xs'],
-    ['navigation/item/min-height', 'control.height.md'],
-    ['navigation/item/padding/block', 'space.xs'],
-    ['navigation/item/padding/inline', 'space.sm'],
-    ...['body', 'code', 'section', 'small', 'title', 'ui'].map((role) => [
-      `type/${role}/letter-spacing`,
-      'letter-spacing.normal',
-    ]),
-    ['type/body/size', 'font.size.md'],
-    ['type/code/size', 'font.size.sm'],
-    ['type/display/size', 'font.size.4xl'],
-    ['type/eyebrow/size', 'font.size.xs'],
-    ['type/section/size', 'font.size.2xl'],
-    ['type/small/size', 'font.size.xs'],
-    ['type/title/size', 'font.size.xl'],
-    ['type/ui/size', 'font.size.sm'],
-  ] as const
-).map(([name, alias]) => `${REPOSITORY}${name} → ${alias}`);
 /**
- * Tokens with no Figma variable or style: font stacks (Figma substitutes Roboto and Roboto Mono, so
- * text widths are not a contract), motion, stacking, and three unused foundation steps. The owner's
- * 2026-10-22 roles (info and neutral tones, tone borders, selected rows, scrim) have no Figma
- * variables yet.
+ * Remaining coverage gaps: unused foundation steps, motion, stacking, info tones, the non-neutral
+ * tone borders, and scrim. Font stacks are represented by the explicit Figma fallback adapters.
  */
 const REPO_ONLY = [
-  ...['display', 'mono', 'sans'].map((name) => `font.family.${name}`),
   'font.weight.bold',
   'line-height.none',
   'line-height.relaxed',
   ...['fast', 'normal', 'slow', 'slower'].map((name) => `motion.duration.${name}`),
   ...['enter', 'exit', 'linear', 'standard'].map((name) => `motion.easing.${name}`),
-  ...['body', 'code', 'display', 'eyebrow', 'section', 'small', 'title', 'ui'].map(
-    (role) => `type.${role}.family`,
-  ),
   ...['base', 'overlay', 'raised', 'sticky'].map((name) => `z-index.${name}`),
-  ...['neutral', 'info', 'success', 'warning', 'danger'].map((tone) => `color.${tone}.border`),
-  ...['foreground', 'surface'].flatMap((part) => [`color.info.${part}`, `color.neutral.${part}`]),
+  ...['info', 'success', 'warning', 'danger'].map((tone) => `color.${tone}.border`),
+  ...['foreground', 'surface'].map((part) => `color.info.${part}`),
   ...[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((step) => `ref.info.${step}`),
   'color.scrim',
-  'color.selection.surface',
 ];
 
 describe('Figma parity (design/figma/variables.json)', () => {
@@ -515,19 +482,55 @@ describe('Figma parity (design/figma/variables.json)', () => {
   });
 
   it('maps every variable, text style, and effect style to a token of the default theme', () => {
-    expect(report.figmaOnly).toEqual(FIGMA_ONLY);
+    expect(report.figmaOnly).toEqual([]);
     // Web code syntax in Figma names the token the variable maps to.
     expect(report.codeSyntax).toEqual([]);
   });
 
-  it('has equal values in light and dark, except the listed Figma-side issues', () => {
-    expect(report.mismatches).toEqual(MISMATCHES);
-    // 535 variable pairs (one per mode a variable stands for), 4 per text style, 1 per effect style.
-    expect(report.matches).toBe(613);
+  it('has equal values in light and dark with no known mismatches', () => {
+    expect(report.mismatches).toEqual([]);
+    // 470 token pairs, 8 adapter checks, 52 type metrics, 10 static and 2 themed effect checks.
+    expect(report.matches).toBe(542);
   });
 
-  it('reports Figma literals where the theme aliases another token', () => {
-    expect([...report.aliasGaps].sort()).toEqual([...ALIAS_GAPS].sort());
+  it('preserves repository alias chains, including their exact targets', () => {
+    expect(report.aliasGaps).toEqual([]);
+  });
+
+  it('keeps retired collections, selection variables, and duplicate text styles out of the snapshot', () => {
+    expect(snapshot.collections.map((c) => c.name)).toEqual([
+      COMPONENT_ROLES,
+      REPOSITORY_COLLECTION,
+    ]);
+    const repository = snapshot.collections.find(
+      (c) => c.name === REPOSITORY_COLLECTION,
+    ) as Collection;
+    for (const name of ['repo/color/selection/background', 'repo/color/selection/foreground']) {
+      expect(repository.variables.map((v) => v.name)).not.toContain(name);
+    }
+    expect(snapshot.textStyles.map((s) => s.name).sort()).toEqual(Object.keys(TEXT_STYLES).sort());
+  });
+
+  it('binds text styles to canonical variables while preserving proportional metrics', () => {
+    for (const style of snapshot.textStyles) {
+      const target = TEXT_STYLES[style.name] as TextTarget;
+      const size = typeof target === 'string' ? `type.${target}.size` : target.size;
+      const weight = typeof target === 'string' ? `type.${target}.weight` : target.weight;
+      const letter =
+        typeof target === 'string' ? `type.${target}.letter-spacing` : target.letterSpacing;
+      const family = `${REPOSITORY_COLLECTION}/figma/font/family/${target === 'code' ? 'mono' : 'sans'}`;
+      expect(style.boundVariables?.fontSize, style.name).toBe(repositoryPath(size, 'light'));
+      expect(style.boundVariables?.fontWeight, style.name).toBe(repositoryPath(weight, 'light'));
+      expect(style.boundVariables?.fontFamily, style.name).toBe(family);
+      expect(style.fontFamily, style.name).toBe(FONT_ADAPTERS[family]?.family);
+      // Binding these relative CSS metrics would convert them to fixed pixels in Figma.
+      expect(style.lineHeight.unit, style.name).toBe('PERCENT');
+      if (style.letterSpacing.value === 0) {
+        expect(style.boundVariables?.letterSpacing, style.name).toBe(
+          repositoryPath(letter, 'light'),
+        );
+      } else expect(style.letterSpacing.unit, style.name).toBe('PERCENT');
+    }
   });
 
   it('reports the tokens Figma does not define', () => {

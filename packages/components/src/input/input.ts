@@ -150,6 +150,10 @@ export class OddkinInput extends OddkinElement.with({
   reportValidity(): boolean {
     return this.internals.reportValidity();
   }
+  /** As on a native input; the message is also shown, since it sets `error`. An empty string clears it. */
+  setCustomValidity(message: string): void {
+    this.error = message;
+  }
 
   /** @internal Template handler: the user typed. */
   readonly _onInput = (event: Event): void => {

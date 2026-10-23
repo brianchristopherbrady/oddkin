@@ -56,16 +56,20 @@ export class OddkinChangeReview extends OddkinElement.with({
     default: 'words',
     description: 'Diff by words (prose) or lines (code).',
   }),
-  announce: prop.boolean({ description: 'Announce outcomes (when no surrounding surface does).' }),
+  announce: prop.enum(['none', 'important'], {
+    default: 'none',
+    empty: 'important',
+    description: 'Announce outcomes (when no surrounding surface does).',
+  }),
   strings: prop.object<Partial<typeof CHANGE_REVIEW_STRINGS>>({
     description: 'Localized string overrides.',
   }),
 }) {
   static override events = {
-    'change-accept': changeAcceptEvent,
-    'change-reject': changeRejectEvent,
-    'change-undo': changeUndoEvent,
-    'ai-announce': announceEvent,
+    'odd-change-accept': changeAcceptEvent,
+    'odd-change-reject': changeRejectEvent,
+    'odd-change-undo': changeUndoEvent,
+    'odd-announce': announceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinChangeReview>;
 
@@ -131,7 +135,7 @@ export class OddkinChangeReview extends OddkinElement.with({
     scope.effect(
       () => {
         const next = new Map(this.proposals.map((p) => [p.proposalId, p.status]));
-        if (this.announce) {
+        if (this.announce !== 'none') {
           const t = this._strings;
           for (const [id, status] of next) {
             const before = previous.get(id);

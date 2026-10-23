@@ -248,7 +248,7 @@ export function checkReferences(
       const span = (match[1] ?? '').trim();
       const after = text.slice((match.index ?? 0) + (match[0] ?? '').length);
 
-      // Contextual: "`side-nav` layout recipe", "`model-change` event". Native events have no
+      // Contextual: "`side-nav` layout recipe", "`odd-model-change` event". Native events have no
       // hyphen (`submit`, `input`), Oddkin events always do.
       if (/^\s+(layout\s+)?recipe\b/.test(after) && /^[a-z]+(-[a-z0-9]+)*$/.test(span)) {
         if (!index.recipes.has(span)) report(span, 'is not a known layout recipe');

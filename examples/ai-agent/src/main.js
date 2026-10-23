@@ -112,14 +112,14 @@ function render() {
   sync(checkpointsHost, s.checkpoints, 'checkpointId', 'odd-checkpoint', (el, checkpoint) => {
     el.checkpoint = checkpoint;
     el.capabilities = CAPS;
-    el.announce = true;
+    el.announce = 'important';
   });
   $('#empty-checkpoints').hidden = s.checkpoints.length > 0;
 }
 store.subscribe(render);
 
 // The run log is an odd-conversation whose source is derived from the application store.
-$('#run-log').source = selectSource(store, (s) =>
+$('#run-log').store = selectSource(store, (s) =>
   createConversationView({
     conversationId: `run-${s.run}`,
     messages: s.log,
@@ -303,7 +303,7 @@ function requestApproval(revision) {
 }
 
 // ---- Intents from the elements ----
-$('#app').addEventListener('question-answer', (event) => {
+$('#app').addEventListener('odd-question-answer', (event) => {
   const q = store.getSnapshot().question;
   if (!q || event.detail.revision !== q.revision) return;
   store.update(() => ({ question: { ...q, status: 'submitting' } }));
@@ -327,11 +327,11 @@ $('#app').addEventListener('question-answer', (event) => {
     });
   });
 });
-$('#app').addEventListener('question-skip', () =>
+$('#app').addEventListener('odd-question-skip', () =>
   store.update((s) => ({ question: { ...s.question, status: 'skipped' } })),
 );
 
-$('#app').addEventListener('approval-decide', (event) => {
+$('#app').addEventListener('odd-approval-decide', (event) => {
   const a = store.getSnapshot().approval;
   // The backend checks the revision: a decision for an older proposal is stale.
   if (!a || a.revision !== event.detail.revision || a.status !== 'requested') return;
@@ -372,12 +372,12 @@ $('#app').addEventListener('approval-decide', (event) => {
   });
 });
 
-$('#app').addEventListener('tool-retry', (event) => {
+$('#app').addEventListener('odd-tool-retry', (event) => {
   setTool(event.detail.toolCallId, { error: undefined, retryable: undefined });
   runTool(event.detail.toolCallId, 'retry', true);
 });
 
-$('#app').addEventListener('prompt-stop', () => {
+$('#app').addEventListener('odd-prompt-stop', () => {
   setAttempt({ stop: 'requested' });
   later(800, () => {
     for (const id of timers) clearTimeout(id);
@@ -395,7 +395,7 @@ $('#app').addEventListener('prompt-stop', () => {
   });
 });
 
-$('#app').addEventListener('checkpoint-restore', (event) => {
+$('#app').addEventListener('odd-checkpoint-restore', (event) => {
   const id = event.detail.checkpointId;
   const patch = (status, extra = {}) =>
     store.update((s) => ({

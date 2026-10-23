@@ -91,7 +91,7 @@ export class OddkinMessage extends OddkinElement.with({
   artifactRenderers: prop.object<Readonly<Record<string, ArtifactRenderer>>>({
     description: 'Artifact renderers by kind.',
   }),
-  toolRenderer: prop.object<{ render: ToolOutputRenderer }>({
+  renderTool: prop.object<{ render: ToolOutputRenderer }>({
     description: 'Renderer for tool results.',
   }),
   feedbackReasons: prop.array<string>({ description: 'Reasons offered for negative feedback.' }),
@@ -100,9 +100,9 @@ export class OddkinMessage extends OddkinElement.with({
   }),
 }) {
   static override events = {
-    'message-edit': messageEditEvent,
-    'message-regenerate': messageRegenerateEvent,
-    'ai-announce': announceEvent,
+    'odd-message-edit': messageEditEvent,
+    'odd-message-regenerate': messageRegenerateEvent,
+    'odd-announce': announceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinMessage>;
 
@@ -211,7 +211,7 @@ export class OddkinMessage extends OddkinElement.with({
   };
 
   protected override connected(scope: Scope): void {
-    // Default action of an uncancelled citation-open: reveal the source in this message.
+    // Default action of an uncancelled odd-citation-open: reveal the source in this message.
     scope.listen(this, revealSourceEvent.type, (event: CustomEvent<{ sourceId: string }>) => {
       const sources = this.shadowRoot?.querySelector('odd-sources');
       if (sources && sources.reveal(event.detail.sourceId)) {

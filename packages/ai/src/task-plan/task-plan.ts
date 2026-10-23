@@ -46,7 +46,7 @@ export class OddkinTaskPlan extends OddkinElement.with({
     description: 'Localized string overrides.',
   }),
 }) {
-  static override events = { 'plan-input': planInputEvent };
+  static override events = { 'odd-plan-input-request': planInputEvent };
   declare readonly _events?: ElementEvents<typeof OddkinTaskPlan>;
 
   /** @internal */

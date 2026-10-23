@@ -37,12 +37,12 @@ export function Shell() {
         onChange={(event) => void event.target}
       />
       <odd-prompt-input
-        onprompt-submit={(event) => {
+        onodd-prompt-submit={(event) => {
           const detail: PromptSubmitDetail = event.detail;
           void detail.text;
         }}
       />
-      <odd-conversation onhistory-request={(event) => void event.detail} />
+      <odd-conversation onodd-history-request={(event) => void event.detail} />
 
       {/* @ts-expect-error -- items is an array of entries, not a string */}
       <odd-side-nav items="[]" />
@@ -54,8 +54,8 @@ export function Shell() {
       <odd-input type="number" />
       {/* @ts-expect-error -- read-only getters are not props */}
       <odd-input form={null} />
-      {/* @ts-expect-error -- the prompt-submit detail has no id */}
-      <odd-prompt-input onprompt-submit={(event) => event.detail.id} />
+      {/* @ts-expect-error -- the odd-prompt-submit detail has no id */}
+      <odd-prompt-input onodd-prompt-submit={(event) => event.detail.id} />
     </>
   );
 }

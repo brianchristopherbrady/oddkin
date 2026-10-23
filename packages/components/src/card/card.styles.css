@@ -29,11 +29,11 @@
 :host([padding='lg']) .card {
   padding: var(--odd-space-lg);
 }
-:host([variant='filled']) .card {
+:host([appearance='filled']) .card {
   border-color: var(--odd-card-border-color, transparent);
   background: var(--odd-card-background, var(--odd-color-surface-sunken));
 }
-:host([variant='elevated']) .card {
+:host([appearance='elevated']) .card {
   border-color: var(--odd-card-border-color, transparent);
   background: var(--odd-card-background, var(--odd-color-surface-raised));
   box-shadow: var(--odd-card-shadow, var(--odd-elevation-md));

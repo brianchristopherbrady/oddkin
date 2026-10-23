@@ -223,7 +223,7 @@ describe('odd-tool-call and odd-action-approval', () => {
     el.tool = tool('output-error', { error: { code: 'e', message: 'Timeout' }, retryable: true });
     await settle(el);
     const retries: unknown[] = [];
-    el.addEventListener('tool-retry', (e) => retries.push((e as CustomEvent).detail));
+    el.addEventListener('odd-tool-retry', (e) => retries.push((e as CustomEvent).detail));
     $(el, '.failure button')!.click();
     expect(retries).toEqual([{ toolCallId: 't1' }]);
   });
@@ -246,7 +246,7 @@ describe('odd-tool-call and odd-action-approval', () => {
       },
     );
     const decisions: unknown[] = [];
-    el.addEventListener('approval-decide', (e) => decisions.push((e as CustomEvent).detail));
+    el.addEventListener('odd-approval-decide', (e) => decisions.push((e as CustomEvent).detail));
     const approve = () => $(el, 'odd-button[appearance="primary"]')!;
     approve().click();
     approve().click();
@@ -299,7 +299,7 @@ describe('odd-checkpoint', () => {
       },
     );
     const requests: unknown[] = [];
-    el.addEventListener('checkpoint-restore', (e) => requests.push((e as CustomEvent).detail));
+    el.addEventListener('odd-checkpoint-restore', (e) => requests.push((e as CustomEvent).detail));
     $(el, '[part="actions"] odd-button')!.click();
     await settle(el);
     expect(text($(el, '.confirm'))).toContain('Restore to “Before refactor”?');
@@ -333,7 +333,7 @@ describe('selection, review, and controls', () => {
       },
     );
     const changes: unknown[] = [];
-    el.addEventListener('model-change', (e) => changes.push((e as CustomEvent).detail));
+    el.addEventListener('odd-model-change', (e) => changes.push((e as CustomEvent).detail));
     el.value = 'deep';
     await settle(el);
     expect(changes).toEqual([]);
@@ -344,7 +344,7 @@ describe('selection, review, and controls', () => {
       ['Deep', false],
       ['Vision (unavailable)', true],
     ]);
-    el.addEventListener('model-change', (e) => e.preventDefault(), { once: true });
+    el.addEventListener('odd-model-change', (e) => e.preventDefault(), { once: true });
     select.value = 'fast';
     select.dispatchEvent(new Event('change', { bubbles: true }));
     expect(select.value).toBe('deep');
@@ -367,8 +367,8 @@ describe('selection, review, and controls', () => {
       },
     );
     const events: string[] = [];
-    el.addEventListener('suggestion-select', () => events.push('select'));
-    el.addEventListener('suggestion-submit', () => events.push('submit'));
+    el.addEventListener('odd-suggestion-select', () => events.push('select'));
+    el.addEventListener('odd-suggestion-submit', () => events.push('submit'));
     $(el, '[part="suggestion"]')!.click();
     $(el, '[part="send"]')!.click();
     expect(events).toEqual(['select', 'submit']);
@@ -418,8 +418,10 @@ describe('selection, review, and controls', () => {
       el.proposals = [...doc.getSnapshot().proposals];
       await settle(el);
     };
-    el.addEventListener('change-accept', (e) => doc.accept((e as CustomEvent).detail.proposalId));
-    el.addEventListener('change-undo', (e) => doc.undo((e as CustomEvent).detail.proposalId));
+    el.addEventListener('odd-change-accept', (e) =>
+      doc.accept((e as CustomEvent).detail.proposalId),
+    );
+    el.addEventListener('odd-change-undo', (e) => doc.undo((e as CustomEvent).detail.proposalId));
     const base = doc.getSnapshot().revision;
     doc.propose({
       proposalId: 'a',
@@ -468,7 +470,7 @@ describe('selection, review, and controls', () => {
     await settle(el);
     expect(el.shadowRoot!.activeElement?.textContent?.trim()).toBe('Expand');
     const requests: unknown[] = [];
-    el.addEventListener('assist-request', (e) => requests.push((e as CustomEvent).detail));
+    el.addEventListener('odd-assist-request', (e) => requests.push((e as CustomEvent).detail));
     ($(el, '[data-action="translate"]') as HTMLElement).click();
     expect(requests).toEqual([
       {
@@ -498,7 +500,7 @@ describe('selection, review, and controls', () => {
       },
     );
     const added: unknown[] = [];
-    el.addEventListener('context-add', (e) => added.push((e as CustomEvent).detail));
+    el.addEventListener('odd-context-add', (e) => added.push((e as CustomEvent).detail));
     const input = $(el, 'input[type="url"]') as HTMLInputElement;
     input.value = 'javascript:alert(1)';
     $(el, 'form.url')!.dispatchEvent(new Event('submit', { cancelable: true }));
@@ -547,7 +549,7 @@ describe('selection, review, and controls', () => {
     await settle(el);
     expect(text($(el, '[part="preview"]'))).toBe('chart:v1');
     expect(live).toBe(1);
-    el.mode = 'source';
+    el.view = 'source';
     await settle(el);
     expect($(el, '[part="source"]')!.textContent).toBe('v1');
     expect(live).toBe(0);
@@ -668,7 +670,7 @@ describe('odd-message fallbacks and provenance', () => {
     expect(text($(el, '[part="steps"]'))).toContain('Blocked: Needs credentials');
     expect(text($(el, '[part="steps"]'))).toContain('Running in parallel');
     const requests: unknown[] = [];
-    el.addEventListener('plan-input', (e) => requests.push((e as CustomEvent).detail));
+    el.addEventListener('odd-plan-input-request', (e) => requests.push((e as CustomEvent).detail));
     ($(el, '[data-step="4"]') as HTMLElement).click();
     expect(requests).toEqual([{ planId: 'p', stepId: '4' }]);
   });

@@ -1,4 +1,10 @@
-import { OddkinElement, event, prop, type ElementEvents } from '@oddkin/core/element';
+import {
+  OddkinElement,
+  event,
+  prop,
+  type ElementEvents,
+  type EventDetail,
+} from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { PartOf } from '../contracts/types.js';
@@ -17,13 +23,13 @@ export const CITATION_STRINGS = {
   untitled: 'Untitled source',
 };
 
-/** Internal: asks the nearest message to reveal a source after an uncancelled `citation-open`. */
-export const revealSourceEvent = event<{ readonly sourceId: string }>('ai-reveal-source', {
+/** Internal: asks the nearest message to reveal a source after an uncancelled `odd-citation-open`. */
+export const revealSourceEvent = event<{ readonly sourceId: string }>('odd-source-reveal', {
   bubbles: true,
   composed: true,
   cancelable: true,
   intent: 'user',
-  description: 'Default action of citation-open: the nearest message reveals the source.',
+  description: 'Default action of odd-citation-open: the nearest message reveals the source.',
 });
 
 /**
@@ -54,8 +60,8 @@ export class OddkinCitation extends OddkinElement.with({
 }) {
   static override shadowRootOptions: ShadowRootInit = { mode: 'open' };
   static override events = {
-    'citation-open': citationOpenEvent,
-    'ai-reveal-source': revealSourceEvent,
+    'odd-citation-open': citationOpenEvent,
+    'odd-source-reveal': revealSourceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinCitation>;
 
@@ -99,5 +105,8 @@ export class OddkinCitation extends OddkinElement.with({
 declare global {
   interface HTMLElementTagNameMap {
     'odd-citation': OddkinCitation;
+  }
+  interface GlobalEventHandlersEventMap {
+    'odd-source-reveal': CustomEvent<EventDetail<typeof revealSourceEvent>>;
   }
 }

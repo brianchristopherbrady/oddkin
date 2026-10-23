@@ -21,7 +21,7 @@
     "contract:core/events": {
       "title": "Events",
       "anchor": "events",
-      "sha256": "fe19dc1b7b1930a64e037db6e0ddde6ea41207208cc145003b8616d4da02168b"
+      "sha256": "47392da91b9601d1b4b7846c08050587cab65be1a26b95eea1b36b880ed25911"
     },
     "contract:core/lifecycle": {
       "title": "Lifecycle",

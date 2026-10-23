@@ -97,7 +97,15 @@
                 "type": "object",
                 "required": ["value"],
                 "additionalProperties": false,
-                "properties": { "value": { "type": ["string", "number", "boolean"] } }
+                "properties": {
+                  "value": { "type": ["string", "number", "boolean"] },
+                  "alpha": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Unquantized color alpha; the hex value alone rounds alpha to 8 bits."
+                  }
+                }
               },
               {
                 "type": "object",

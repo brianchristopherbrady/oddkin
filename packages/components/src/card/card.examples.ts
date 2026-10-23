@@ -13,13 +13,13 @@ export default defineExamples('odd-card', {
   },
   filled: {
     label: 'Filled',
-    props: { variant: 'filled' },
+    props: { appearance: 'filled' },
     slots: { default: 'A filled surface sits quietly on the page background.' },
     preset: true,
   },
   elevated: {
     label: 'Elevated',
-    props: { variant: 'elevated' },
+    props: { appearance: 'elevated' },
     slots: { default: 'An elevated surface stands out with a shadow.' },
     preset: true,
   },

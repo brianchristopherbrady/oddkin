@@ -13,7 +13,7 @@ interface PartContext {
   readonly capabilities: OddkinMessage['capabilities'];
   readonly markdown: OddkinMessage['markdown'];
   readonly artifactRenderers: OddkinMessage['artifactRenderers'];
-  readonly toolRenderer: OddkinMessage['toolRenderer'];
+  readonly renderTool: OddkinMessage['renderTool'];
   readonly sources: OddkinMessage['_sources'];
   readonly error: NonNullable<OddkinMessage['attempt']>['error'];
 }
@@ -57,7 +57,7 @@ const part = (host: OddkinMessage, p: MessagePart, lastText: boolean, c: PartCon
         .tool=${tool}
         .approval=${tool.approvalId ? c.approvals?.[tool.approvalId] : undefined}
         .capabilities=${c.capabilities}
-        .renderOutput=${c.toolRenderer}
+        .renderOutput=${c.renderTool}
       ></odd-tool-call>`;
     }
     case 'approval': {
@@ -111,7 +111,7 @@ export const messageTemplate = (host: OddkinMessage) => {
     capabilities: host.capabilities,
     markdown: host.markdown,
     artifactRenderers: host.artifactRenderers,
-    toolRenderer: host.toolRenderer,
+    renderTool: host.renderTool,
     sources,
     error: host.attempt?.error,
   };

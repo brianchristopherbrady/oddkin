@@ -3,7 +3,7 @@
   "fileKey": "E7LfRysny8V3qU24tv082i",
   "fileName": "Document",
   "exportedAt": "2026-10-22",
-  "source": "Figma MCP use_figma, session 6725eb45-43d9-4bd4-b2ac-e354d997980b, 2026-10-22: exportVariables() from design/figma/variables.export.js, read-only Plugin API calls figma.variables.getLocalVariableCollectionsAsync, figma.variables.getLocalVariablesAsync, figma.variables.getVariableByIdAsync, figma.variables.getVariableCollectionByIdAsync, figma.getLocalTextStylesAsync, figma.getLocalEffectStylesAsync. The Plugin API exposes no file version or lastModified.",
+  "source": "Figma MCP use_figma, session 79585d33-4ff5-4a72-86aa-a79d45050a6a, 2026-10-22: exportVariables() from design/figma/variables.export.js, read-only Plugin API calls figma.variables.getLocalVariableCollectionsAsync, figma.variables.getLocalVariablesAsync, figma.variables.getVariableByIdAsync, figma.variables.getVariableCollectionByIdAsync, figma.getLocalTextStylesAsync, figma.getLocalEffectStylesAsync. The Plugin API exposes no file version or lastModified.",
   "collections": [
     {
       "id": "VariableCollectionId:158:23",
@@ -276,6 +276,51 @@
           }
         },
         {
+          "id": "VariableID:332:72",
+          "name": "color/neutral/border",
+          "type": "COLOR",
+          "description": "Mode-aware repository role color.neutral.border",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Dark": {
+              "alias": "Oddkin · Repository tokens/repo/color/neutral/border/dark"
+            },
+            "Light": {
+              "alias": "Oddkin · Repository tokens/repo/color/neutral/border/light"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:70",
+          "name": "color/neutral/foreground",
+          "type": "COLOR",
+          "description": "Mode-aware repository role color.neutral.foreground",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Dark": {
+              "alias": "Oddkin · Repository tokens/repo/color/neutral/foreground/dark"
+            },
+            "Light": {
+              "alias": "Oddkin · Repository tokens/repo/color/neutral/foreground/light"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:71",
+          "name": "color/neutral/surface",
+          "type": "COLOR",
+          "description": "Mode-aware repository role color.neutral.surface",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Dark": {
+              "alias": "Oddkin · Repository tokens/repo/color/neutral/surface/dark"
+            },
+            "Light": {
+              "alias": "Oddkin · Repository tokens/repo/color/neutral/surface/light"
+            }
+          }
+        },
+        {
           "id": "VariableID:158:41",
           "name": "color/selection/background",
           "type": "COLOR",
@@ -306,6 +351,21 @@
             },
             "Light": {
               "alias": "Oddkin · Repository tokens/repo/color/selection/foreground/light"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:73",
+          "name": "color/selection/surface",
+          "type": "COLOR",
+          "description": "Mode-aware repository role color.selection.surface",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Dark": {
+              "alias": "Oddkin · Repository tokens/repo/color/selection/surface/dark"
+            },
+            "Light": {
+              "alias": "Oddkin · Repository tokens/repo/color/selection/surface/light"
             }
           }
         },
@@ -663,6 +723,40 @@
             },
             "Light": {
               "alias": "Oddkin · Repository tokens/repo/control/radius"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:75",
+          "name": "figma/elevation/md/ambient",
+          "type": "COLOR",
+          "description": "Figma effect-color adapter for repository elevation.md shadow layer 2. Source CSS: 0 4px 12px black; light alpha .08, dark alpha .32.",
+          "scopes": ["EFFECT_COLOR"],
+          "valuesByMode": {
+            "Dark": {
+              "value": "#00000052",
+              "alpha": 0.32
+            },
+            "Light": {
+              "value": "#00000014",
+              "alpha": 0.08
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:74",
+          "name": "figma/elevation/md/key",
+          "type": "COLOR",
+          "description": "Figma effect-color adapter for repository elevation.md shadow layer 1. Source CSS: 0 1px 2px black; light alpha .12, dark alpha .4.",
+          "scopes": ["EFFECT_COLOR"],
+          "valuesByMode": {
+            "Dark": {
+              "value": "#00000066",
+              "alpha": 0.4
+            },
+            "Light": {
+              "value": "#0000001f",
+              "alpha": 0.12
             }
           }
         },
@@ -1105,6 +1199,30 @@
       "defaultModeId": "76:0",
       "variables": [
         {
+          "id": "VariableID:326:11581",
+          "name": "figma/font/family/mono",
+          "type": "STRING",
+          "description": "Figma font adapter for repository font.family.mono stack; Roboto Mono is the available fallback.",
+          "scopes": ["FONT_FAMILY"],
+          "valuesByMode": {
+            "Mode 1": {
+              "value": "Roboto Mono"
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11580",
+          "name": "figma/font/family/sans",
+          "type": "STRING",
+          "description": "Figma font adapter for repository font.family.sans/display system font stack; Roboto is the available fallback.",
+          "scopes": ["FONT_FAMILY"],
+          "valuesByMode": {
+            "Mode 1": {
+              "value": "Roboto"
+            }
+          }
+        },
+        {
           "id": "VariableID:76:825",
           "name": "repo/border/width/default",
           "type": "FLOAT",
@@ -1136,7 +1254,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 24
+              "alias": "Oddkin · Repository tokens/repo/layout/inset"
             }
           }
         },
@@ -1148,7 +1266,7 @@
           "scopes": ["CORNER_RADIUS"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 12
+              "alias": "Oddkin · Repository tokens/repo/radius/lg"
             }
           }
         },
@@ -1276,7 +1394,7 @@
           "id": "VariableID:83:1019",
           "name": "repo/color/border/strong/light",
           "type": "COLOR",
-          "description": "color.border.strong · repository source value #8c8f9d",
+          "description": "color.border.strong · repository source value #868997 · light mode",
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
@@ -1364,7 +1482,7 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#b4a8ff"
+              "alias": "Oddkin · Repository tokens/repo/color/action/default/dark"
             }
           }
         },
@@ -1376,7 +1494,7 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#6250e8"
+              "alias": "Oddkin · Repository tokens/repo/color/action/default/light"
             }
           }
         },
@@ -1388,7 +1506,7 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#b4a8ff"
+              "alias": "Oddkin · Repository tokens/repo/color/action/default/dark"
             }
           }
         },
@@ -1400,19 +1518,79 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#6250e8"
+              "alias": "Oddkin · Repository tokens/repo/color/action/default/light"
             }
           }
         },
         {
-          "id": "VariableID:76:830",
-          "name": "repo/color/selection/background",
+          "id": "VariableID:332:68",
+          "name": "repo/color/neutral/border/dark",
           "type": "COLOR",
-          "description": "color.selection.background = #6250e8 · source: @oddkin/tokens · preset",
+          "description": "color.neutral.border → color.border.default · dark",
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#6250e8"
+              "alias": "Oddkin · Repository tokens/repo/color/border/default/dark"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:64",
+          "name": "repo/color/neutral/border/light",
+          "type": "COLOR",
+          "description": "color.neutral.border → color.border.default · light",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/color/border/default/light"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:66",
+          "name": "repo/color/neutral/foreground/dark",
+          "type": "COLOR",
+          "description": "color.neutral.foreground → color.text.secondary · dark",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/color/text/secondary/dark"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:62",
+          "name": "repo/color/neutral/foreground/light",
+          "type": "COLOR",
+          "description": "color.neutral.foreground → color.text.secondary · light",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/color/text/secondary/light"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:67",
+          "name": "repo/color/neutral/surface/dark",
+          "type": "COLOR",
+          "description": "color.neutral.surface → color.surface.sunken · dark",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/color/surface/sunken/dark"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:63",
+          "name": "repo/color/neutral/surface/light",
+          "type": "COLOR",
+          "description": "color.neutral.surface → color.surface.sunken · light",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/color/surface/sunken/light"
             }
           }
         },
@@ -1424,7 +1602,7 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#b4a8ff"
+              "alias": "Oddkin · Repository tokens/repo/color/action/default/dark"
             }
           }
         },
@@ -1436,19 +1614,7 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#6250e8"
-            }
-          }
-        },
-        {
-          "id": "VariableID:76:831",
-          "name": "repo/color/selection/foreground",
-          "type": "COLOR",
-          "description": "color.selection.foreground = #ffffff · source: @oddkin/tokens · preset",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Mode 1": {
-              "value": "#ffffff"
+              "alias": "Oddkin · Repository tokens/repo/color/action/default/light"
             }
           }
         },
@@ -1460,7 +1626,7 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#23252b"
+              "alias": "Oddkin · Repository tokens/repo/color/text/on-action/dark"
             }
           }
         },
@@ -1472,7 +1638,31 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#ffffff"
+              "alias": "Oddkin · Repository tokens/repo/color/text/on-action/light"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:69",
+          "name": "repo/color/selection/surface/dark",
+          "type": "COLOR",
+          "description": "color.selection.surface → ref.brand.900 · dark",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/ref/brand/900"
+            }
+          }
+        },
+        {
+          "id": "VariableID:332:65",
+          "name": "repo/color/selection/surface/light",
+          "type": "COLOR",
+          "description": "color.selection.surface → ref.brand.100 · light",
+          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/ref/brand/100"
             }
           }
         },
@@ -1544,7 +1734,7 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#ffffff"
+              "alias": "Oddkin · Repository tokens/repo/ref/neutral/0"
             }
           }
         },
@@ -1592,7 +1782,7 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#ffffff"
+              "alias": "Oddkin · Repository tokens/repo/ref/neutral/0"
             }
           }
         },
@@ -1688,7 +1878,7 @@
           "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
           "valuesByMode": {
             "Mode 1": {
-              "value": "#ffffff"
+              "alias": "Oddkin · Repository tokens/repo/ref/neutral/0"
             }
           }
         },
@@ -1796,7 +1986,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 8
+              "alias": "Oddkin · Repository tokens/repo/space/xs"
             }
           }
         },
@@ -1844,7 +2034,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 16
+              "alias": "Oddkin · Repository tokens/repo/space/md"
             }
           }
         },
@@ -1856,7 +2046,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 12
+              "alias": "Oddkin · Repository tokens/repo/space/sm"
             }
           }
         },
@@ -1868,7 +2058,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 8
+              "alias": "Oddkin · Repository tokens/repo/space/xs"
             }
           }
         },
@@ -1880,7 +2070,7 @@
           "scopes": ["CORNER_RADIUS"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 8
+              "alias": "Oddkin · Repository tokens/repo/radius/md"
             }
           }
         },
@@ -2005,6 +2195,42 @@
           }
         },
         {
+          "id": "VariableID:326:11570",
+          "name": "repo/font/weight/medium",
+          "type": "FLOAT",
+          "description": "font.weight.medium · repository weight",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "value": 500
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11569",
+          "name": "repo/font/weight/regular",
+          "type": "FLOAT",
+          "description": "font.weight.regular · repository weight",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "value": 400
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11571",
+          "name": "repo/font/weight/semibold",
+          "type": "FLOAT",
+          "description": "font.weight.semibold · repository weight",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "value": 600
+            }
+          }
+        },
+        {
           "id": "VariableID:83:1062",
           "name": "repo/icon/size/lg",
           "type": "FLOAT",
@@ -2048,7 +2274,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 16
+              "alias": "Oddkin · Repository tokens/repo/space/md"
             }
           }
         },
@@ -2060,7 +2286,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 24
+              "alias": "Oddkin · Repository tokens/repo/space/lg"
             }
           }
         },
@@ -2120,7 +2346,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 16
+              "alias": "Oddkin · Repository tokens/repo/space/md"
             }
           }
         },
@@ -2132,7 +2358,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 8
+              "alias": "Oddkin · Repository tokens/repo/space/xs"
             }
           }
         },
@@ -2144,7 +2370,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 40
+              "alias": "Oddkin · Repository tokens/repo/control/height/md"
             }
           }
         },
@@ -2156,7 +2382,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 8
+              "alias": "Oddkin · Repository tokens/repo/space/xs"
             }
           }
         },
@@ -2168,7 +2394,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 12
+              "alias": "Oddkin · Repository tokens/repo/space/sm"
             }
           }
         },
@@ -3104,7 +3330,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 0
+              "alias": "Oddkin · Repository tokens/repo/letter-spacing/normal"
             }
           }
         },
@@ -3116,7 +3342,19 @@
           "scopes": ["FONT_SIZE"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 16
+              "alias": "Oddkin · Repository tokens/repo/font/size/md"
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11572",
+          "name": "repo/type/body/weight",
+          "type": "FLOAT",
+          "description": "type.body.weight → font.weight.regular",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/font/weight/regular"
             }
           }
         },
@@ -3128,7 +3366,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 0
+              "alias": "Oddkin · Repository tokens/repo/letter-spacing/normal"
             }
           }
         },
@@ -3140,7 +3378,19 @@
           "scopes": ["FONT_SIZE"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 14
+              "alias": "Oddkin · Repository tokens/repo/font/size/sm"
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11573",
+          "name": "repo/type/code/weight",
+          "type": "FLOAT",
+          "description": "type.code.weight → font.weight.regular",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/font/weight/regular"
             }
           }
         },
@@ -3152,7 +3402,19 @@
           "scopes": ["FONT_SIZE"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 36
+              "alias": "Oddkin · Repository tokens/repo/font/size/4xl"
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11574",
+          "name": "repo/type/display/weight",
+          "type": "FLOAT",
+          "description": "type.display.weight → font.weight.semibold",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/font/weight/semibold"
             }
           }
         },
@@ -3164,7 +3426,19 @@
           "scopes": ["FONT_SIZE"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 12
+              "alias": "Oddkin · Repository tokens/repo/font/size/xs"
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11575",
+          "name": "repo/type/eyebrow/weight",
+          "type": "FLOAT",
+          "description": "type.eyebrow.weight → font.weight.semibold",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/font/weight/semibold"
             }
           }
         },
@@ -3176,7 +3450,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 0
+              "alias": "Oddkin · Repository tokens/repo/letter-spacing/normal"
             }
           }
         },
@@ -3188,7 +3462,19 @@
           "scopes": ["FONT_SIZE"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 24
+              "alias": "Oddkin · Repository tokens/repo/font/size/2xl"
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11576",
+          "name": "repo/type/section/weight",
+          "type": "FLOAT",
+          "description": "type.section.weight → font.weight.semibold",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/font/weight/semibold"
             }
           }
         },
@@ -3200,7 +3486,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 0
+              "alias": "Oddkin · Repository tokens/repo/letter-spacing/normal"
             }
           }
         },
@@ -3212,7 +3498,19 @@
           "scopes": ["FONT_SIZE"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 12
+              "alias": "Oddkin · Repository tokens/repo/font/size/xs"
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11577",
+          "name": "repo/type/small/weight",
+          "type": "FLOAT",
+          "description": "type.small.weight → font.weight.regular",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/font/weight/regular"
             }
           }
         },
@@ -3224,7 +3522,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 0
+              "alias": "Oddkin · Repository tokens/repo/letter-spacing/normal"
             }
           }
         },
@@ -3236,7 +3534,19 @@
           "scopes": ["FONT_SIZE"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 20
+              "alias": "Oddkin · Repository tokens/repo/font/size/xl"
+            }
+          }
+        },
+        {
+          "id": "VariableID:326:11578",
+          "name": "repo/type/title/weight",
+          "type": "FLOAT",
+          "description": "type.title.weight → font.weight.semibold",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/font/weight/semibold"
             }
           }
         },
@@ -3248,7 +3558,7 @@
           "scopes": ["WIDTH_HEIGHT", "GAP"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 0
+              "alias": "Oddkin · Repository tokens/repo/letter-spacing/normal"
             }
           }
         },
@@ -3260,1088 +3570,19 @@
           "scopes": ["FONT_SIZE"],
           "valuesByMode": {
             "Mode 1": {
-              "value": 14
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "VariableCollectionId:8:2",
-      "name": "Oddkin · Shared theme",
-      "modes": [
-        {
-          "id": "8:0",
-          "name": "Light"
-        }
-      ],
-      "defaultModeId": "8:0",
-      "variables": [
-        {
-          "id": "VariableID:8:8",
-          "name": "color/accent",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/action/default",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/action/default"
+              "alias": "Oddkin · Repository tokens/repo/font/size/sm"
             }
           }
         },
         {
-          "id": "VariableID:20:344",
-          "name": "color/action-hover",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/action/hover",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/action/hover"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:345",
-          "name": "color/action-pressed",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/action/pressed",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/action/pressed"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:7",
-          "name": "color/border",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/border/default",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/border/default"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:347",
-          "name": "color/border-strong",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/border/strong",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/border/strong"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:3",
-          "name": "color/canvas",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/canvas",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/canvas"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:343",
-          "name": "color/citron",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/accent/decorative",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/accent/decorative"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:10",
-          "name": "color/dark",
-          "type": "COLOR",
-          "description": "Repository alias: dark/color/canvas",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/dark/color/canvas"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:352",
-          "name": "color/dark-accent",
-          "type": "COLOR",
-          "description": "Repository alias: dark/color/action/default",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/dark/color/action/default"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:351",
-          "name": "color/dark-border",
-          "type": "COLOR",
-          "description": "Repository alias: dark/color/border/default",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/dark/color/border/default"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:350",
-          "name": "color/dark-muted",
-          "type": "COLOR",
-          "description": "Repository alias: dark/color/text/secondary",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/dark/color/text/secondary"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:348",
-          "name": "color/dark-surface",
-          "type": "COLOR",
-          "description": "Repository alias: dark/color/surface/default",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/dark/color/surface/default"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:349",
-          "name": "color/dark-text",
-          "type": "COLOR",
-          "description": "Repository alias: dark/color/text/primary",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/dark/color/text/primary"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:339",
-          "name": "color/error",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/danger/foreground",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/danger/foreground"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:340",
-          "name": "color/error-surface",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/danger/surface",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/danger/surface"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:346",
-          "name": "color/focus",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/focus/ring",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/focus/ring"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:6",
-          "name": "color/muted",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/text/secondary",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/text/secondary"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:9",
-          "name": "color/specimen",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/surface/specimen",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/surface/specimen"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:341",
-          "name": "color/success",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/success/foreground",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/success/foreground"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:4",
-          "name": "color/surface",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/surface/default",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/surface/default"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:5",
-          "name": "color/text",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/text/primary",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/text/primary"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:342",
-          "name": "color/warning",
-          "type": "COLOR",
-          "description": "Repository alias: light/color/warning/foreground",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/warning/foreground"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:353",
-          "name": "preview/draft/action",
-          "type": "COLOR",
-          "description": "Repository token alias → theme/light/color/action/default",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/light/color/action/default"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:354",
-          "name": "preview/draft/dark",
-          "type": "COLOR",
-          "description": "Repository token alias → theme/dark/color/surface/default",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Shared theme/theme/dark/color/surface/default"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:357",
-          "name": "radius/brand",
+          "id": "VariableID:326:11579",
+          "name": "repo/type/ui/weight",
           "type": "FLOAT",
-          "description": "Repository token alias → repo/radius/md",
-          "scopes": ["CORNER_RADIUS"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/radius/md"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:355",
-          "name": "radius/card",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/card/radius",
-          "scopes": ["CORNER_RADIUS"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/card/radius"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:20",
-          "name": "radius/control",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/control/radius",
-          "scopes": ["CORNER_RADIUS"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/control/radius"
-            }
-          }
-        },
-        {
-          "id": "VariableID:20:356",
-          "name": "radius/workspace",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/radius/lg",
-          "scopes": ["CORNER_RADIUS"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/radius/lg"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:13",
-          "name": "space/12",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/space/sm",
-          "scopes": ["GAP"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/space/sm"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:14",
-          "name": "space/16",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/space/md",
-          "scopes": ["GAP"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/space/md"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:15",
-          "name": "space/24",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/space/lg",
-          "scopes": ["GAP"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/space/lg"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:16",
-          "name": "space/32",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/space/xl",
-          "scopes": ["GAP"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/space/xl"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:11",
-          "name": "space/4",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/space/2xs",
-          "scopes": ["GAP"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/space/2xs"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:17",
-          "name": "space/40",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/space/xl",
-          "scopes": ["GAP"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/space/xl"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:18",
-          "name": "space/48",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/space/2xl",
-          "scopes": ["GAP"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/space/2xl"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:19",
-          "name": "space/64",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/space/3xl",
-          "scopes": ["GAP"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/space/3xl"
-            }
-          }
-        },
-        {
-          "id": "VariableID:8:12",
-          "name": "space/8",
-          "type": "FLOAT",
-          "description": "Repository token alias → repo/space/xs",
-          "scopes": ["GAP"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/space/xs"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:440",
-          "name": "theme/dark/color/accent/decorative",
-          "type": "COLOR",
-          "description": "color.accent.decorative · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/accent/decorative"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:408",
-          "name": "theme/dark/color/action/default",
-          "type": "COLOR",
-          "description": "color.action.default · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/action/default/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:410",
-          "name": "theme/dark/color/action/hover",
-          "type": "COLOR",
-          "description": "color.action.hover · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/action/hover/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:412",
-          "name": "theme/dark/color/action/pressed",
-          "type": "COLOR",
-          "description": "color.action.pressed · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/action/pressed/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:420",
-          "name": "theme/dark/color/border/default",
-          "type": "COLOR",
-          "description": "color.border.default · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/border/default/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:422",
-          "name": "theme/dark/color/border/strong",
-          "type": "COLOR",
-          "description": "color.border.strong · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/border/strong/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:390",
-          "name": "theme/dark/color/canvas",
-          "type": "COLOR",
-          "description": "color.canvas · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/canvas/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:428",
-          "name": "theme/dark/color/danger/foreground",
-          "type": "COLOR",
-          "description": "color.danger.foreground · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/danger/foreground/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:430",
-          "name": "theme/dark/color/danger/surface",
-          "type": "COLOR",
-          "description": "color.danger.surface · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/danger/surface/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:418",
-          "name": "theme/dark/color/focus/ring",
-          "type": "COLOR",
-          "description": "color.focus.ring · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/focus/ring/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:416",
-          "name": "theme/dark/color/link",
-          "type": "COLOR",
-          "description": "color.link · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/link/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:424",
-          "name": "theme/dark/color/selection/background",
-          "type": "COLOR",
-          "description": "color.selection.background · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/selection/background/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:426",
-          "name": "theme/dark/color/selection/foreground",
-          "type": "COLOR",
-          "description": "color.selection.foreground · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/selection/foreground/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:432",
-          "name": "theme/dark/color/success/foreground",
-          "type": "COLOR",
-          "description": "color.success.foreground · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/success/foreground/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:434",
-          "name": "theme/dark/color/success/surface",
-          "type": "COLOR",
-          "description": "color.success.surface · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/success/surface/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:392",
-          "name": "theme/dark/color/surface/default",
-          "type": "COLOR",
-          "description": "color.surface.default · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/default/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:398",
-          "name": "theme/dark/color/surface/hover",
-          "type": "COLOR",
-          "description": "color.surface.hover · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/hover/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:394",
-          "name": "theme/dark/color/surface/raised",
-          "type": "COLOR",
-          "description": "color.surface.raised · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/raised/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:400",
-          "name": "theme/dark/color/surface/specimen",
-          "type": "COLOR",
-          "description": "color.surface.specimen · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/specimen/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:396",
-          "name": "theme/dark/color/surface/sunken",
-          "type": "COLOR",
-          "description": "color.surface.sunken · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/sunken/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:406",
-          "name": "theme/dark/color/text/disabled",
-          "type": "COLOR",
-          "description": "color.text.disabled · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/text/disabled/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:414",
-          "name": "theme/dark/color/text/on-action",
-          "type": "COLOR",
-          "description": "color.text.on-action · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/text/on-action/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:402",
-          "name": "theme/dark/color/text/primary",
-          "type": "COLOR",
-          "description": "color.text.primary · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/text/primary/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:404",
-          "name": "theme/dark/color/text/secondary",
-          "type": "COLOR",
-          "description": "color.text.secondary · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/text/secondary/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:436",
-          "name": "theme/dark/color/warning/foreground",
-          "type": "COLOR",
-          "description": "color.warning.foreground · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/warning/foreground/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:438",
-          "name": "theme/dark/color/warning/surface",
-          "type": "COLOR",
-          "description": "color.warning.surface · dark · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/warning/surface/dark"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:439",
-          "name": "theme/light/color/accent/decorative",
-          "type": "COLOR",
-          "description": "color.accent.decorative · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/accent/decorative"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:407",
-          "name": "theme/light/color/action/default",
-          "type": "COLOR",
-          "description": "color.action.default · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/action/default/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:409",
-          "name": "theme/light/color/action/hover",
-          "type": "COLOR",
-          "description": "color.action.hover · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/action/hover/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:411",
-          "name": "theme/light/color/action/pressed",
-          "type": "COLOR",
-          "description": "color.action.pressed · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/action/pressed/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:419",
-          "name": "theme/light/color/border/default",
-          "type": "COLOR",
-          "description": "color.border.default · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/border/default/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:421",
-          "name": "theme/light/color/border/strong",
-          "type": "COLOR",
-          "description": "color.border.strong · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/border/strong/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:389",
-          "name": "theme/light/color/canvas",
-          "type": "COLOR",
-          "description": "color.canvas · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/canvas/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:427",
-          "name": "theme/light/color/danger/foreground",
-          "type": "COLOR",
-          "description": "color.danger.foreground · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/danger/foreground/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:429",
-          "name": "theme/light/color/danger/surface",
-          "type": "COLOR",
-          "description": "color.danger.surface · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/danger/surface/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:417",
-          "name": "theme/light/color/focus/ring",
-          "type": "COLOR",
-          "description": "color.focus.ring · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/focus/ring/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:415",
-          "name": "theme/light/color/link",
-          "type": "COLOR",
-          "description": "color.link · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/link/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:423",
-          "name": "theme/light/color/selection/background",
-          "type": "COLOR",
-          "description": "color.selection.background · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/selection/background/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:425",
-          "name": "theme/light/color/selection/foreground",
-          "type": "COLOR",
-          "description": "color.selection.foreground · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/selection/foreground/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:431",
-          "name": "theme/light/color/success/foreground",
-          "type": "COLOR",
-          "description": "color.success.foreground · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/success/foreground/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:433",
-          "name": "theme/light/color/success/surface",
-          "type": "COLOR",
-          "description": "color.success.surface · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/success/surface/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:391",
-          "name": "theme/light/color/surface/default",
-          "type": "COLOR",
-          "description": "color.surface.default · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/default/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:397",
-          "name": "theme/light/color/surface/hover",
-          "type": "COLOR",
-          "description": "color.surface.hover · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/hover/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:393",
-          "name": "theme/light/color/surface/raised",
-          "type": "COLOR",
-          "description": "color.surface.raised · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/raised/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:399",
-          "name": "theme/light/color/surface/specimen",
-          "type": "COLOR",
-          "description": "color.surface.specimen · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/specimen/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:395",
-          "name": "theme/light/color/surface/sunken",
-          "type": "COLOR",
-          "description": "color.surface.sunken · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/surface/sunken/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:405",
-          "name": "theme/light/color/text/disabled",
-          "type": "COLOR",
-          "description": "color.text.disabled · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/text/disabled/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:413",
-          "name": "theme/light/color/text/on-action",
-          "type": "COLOR",
-          "description": "color.text.on-action · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/text/on-action/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:401",
-          "name": "theme/light/color/text/primary",
-          "type": "COLOR",
-          "description": "color.text.primary · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/text/primary/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:403",
-          "name": "theme/light/color/text/secondary",
-          "type": "COLOR",
-          "description": "color.text.secondary · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/text/secondary/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:435",
-          "name": "theme/light/color/warning/foreground",
-          "type": "COLOR",
-          "description": "color.warning.foreground · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/warning/foreground/light"
-            }
-          }
-        },
-        {
-          "id": "VariableID:31:437",
-          "name": "theme/light/color/warning/surface",
-          "type": "COLOR",
-          "description": "color.warning.surface · light · packages/tokens/themes/default.theme.json",
-          "scopes": ["FRAME_FILL", "SHAPE_FILL", "TEXT_FILL", "STROKE_COLOR"],
-          "valuesByMode": {
-            "Light": {
-              "alias": "Oddkin · Repository tokens/repo/color/warning/surface/light"
+          "description": "type.ui.weight → font.weight.medium",
+          "scopes": ["FONT_WEIGHT"],
+          "valuesByMode": {
+            "Mode 1": {
+              "alias": "Oddkin · Repository tokens/repo/font/weight/medium"
             }
           }
         }
@@ -4352,64 +3593,82 @@
     {
       "id": "S:fb58b3ab2777d4bf16d34a0c5ee2b19e526ea7a2,",
       "name": "Oddkin/Body",
-      "description": "Repository type role; Roboto is the explicit sans fallback available in Figma. Source system-ui stack remains authoritative.",
+      "description": "Repository typography: type.body. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "Regular",
       "fontSize": 16,
       "lineHeight": {
-        "unit": "PIXELS",
-        "value": 24
+        "unit": "PERCENT",
+        "value": 150
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/type/body/size",
+        "fontWeight": "Oddkin · Repository tokens/repo/type/body/weight",
+        "letterSpacing": "Oddkin · Repository tokens/repo/type/body/letter-spacing"
+      }
     },
     {
       "id": "S:fe9adc444b5aa133a46a0613015230669a96a249,",
       "name": "Oddkin/Card title",
-      "description": "Repository type role; Roboto is the explicit sans fallback available in Figma. Source system-ui stack remains authoritative.",
+      "description": "Repository typography: type.title. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "SemiBold",
       "fontSize": 20,
       "lineHeight": {
-        "unit": "PIXELS",
-        "value": 27.5
+        "unit": "PERCENT",
+        "value": 137.5
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/type/title/size",
+        "fontWeight": "Oddkin · Repository tokens/repo/type/title/weight",
+        "letterSpacing": "Oddkin · Repository tokens/repo/type/title/letter-spacing"
+      }
     },
     {
       "id": "S:9d79415aca6a202e00db98c0d505296fe53e5c53,",
       "name": "Oddkin/Code",
-      "description": "Approved Figma preview fallback: Roboto Mono represents generic monospace. Repository source remains ui-monospace, SFMono-Regular, Menlo, Consolas, monospace. Metrics: 14 px, regular, line-height 1.5.",
+      "description": "Repository typography: type.code. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto Mono",
       "fontStyle": "Regular",
       "fontSize": 14,
       "lineHeight": {
-        "unit": "PIXELS",
-        "value": 21
+        "unit": "PERCENT",
+        "value": 150
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/mono",
+        "fontSize": "Oddkin · Repository tokens/repo/type/code/size",
+        "fontWeight": "Oddkin · Repository tokens/repo/type/code/weight",
+        "letterSpacing": "Oddkin · Repository tokens/repo/type/code/letter-spacing"
+      }
     },
     {
       "id": "S:3c6d3f84607962df8861a5918942cfda6b2be5bd,",
       "name": "Oddkin/Component/AI/title",
-      "description": "AI title: font.family.sans fallback Roboto; font.size.md (16px), font.weight.semibold (600), line-height.normal (1.5), letter-spacing.normal (0).",
+      "description": "Repository typography: [&quot;md&quot;,&quot;semibold&quot;,150]. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "SemiBold",
       "fontSize": 16,
@@ -4418,17 +3677,23 @@
         "value": 150
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/font/size/md",
+        "fontWeight": "Oddkin · Repository tokens/repo/font/weight/semibold",
+        "letterSpacing": "Oddkin · Repository tokens/repo/letter-spacing/normal"
+      }
     },
     {
       "id": "S:399b8a48ac60c19d4d1a3cc23d7194049fc96230,",
       "name": "Oddkin/Component/Button/lg",
-      "description": "button.styles.ts: type.ui metrics; lg uses type.body.size. Approved Roboto fallback.",
+      "description": "Repository typography: [&quot;md&quot;,&quot;medium&quot;,137.5]. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "Medium",
       "fontSize": 16,
@@ -4437,55 +3702,23 @@
         "value": 137.5
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
-    },
-    {
-      "id": "S:c0adb7a8c0d1c2d91f1673e4857c6cb6c1aa7ac2,",
-      "name": "Oddkin/Component/Button/md",
-      "description": "button.styles.ts: type.ui metrics; lg uses type.body.size. Approved Roboto fallback.",
-      "fontFamily": "Roboto",
-      "fontStyle": "Medium",
-      "fontSize": 14,
-      "lineHeight": {
-        "unit": "PERCENT",
-        "value": 137.5
-      },
-      "letterSpacing": {
-        "unit": "PERCENT",
-        "value": 0
-      },
-      "textCase": "ORIGINAL",
-      "textDecoration": "NONE",
-      "paragraphSpacing": 0
-    },
-    {
-      "id": "S:747805ec72a8b06298349c2103ec7a9322f641ff,",
-      "name": "Oddkin/Component/Button/sm",
-      "description": "button.styles.ts: type.ui metrics; lg uses type.body.size. Approved Roboto fallback.",
-      "fontFamily": "Roboto",
-      "fontStyle": "Medium",
-      "fontSize": 14,
-      "lineHeight": {
-        "unit": "PERCENT",
-        "value": 137.5
-      },
-      "letterSpacing": {
-        "unit": "PERCENT",
-        "value": 0
-      },
-      "textCase": "ORIGINAL",
-      "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/font/size/md",
+        "fontWeight": "Oddkin · Repository tokens/repo/font/weight/medium",
+        "letterSpacing": "Oddkin · Repository tokens/repo/letter-spacing/normal"
+      }
     },
     {
       "id": "S:9b16b3b7e626e1e1f925df2978d548926838e4fc,",
       "name": "Oddkin/Component/Field/small",
-      "description": "AI artifact / inline-assist select: font.size.sm, inherited regular weight and line-height.normal.",
+      "description": "Repository typography: [&quot;sm&quot;,&quot;regular&quot;,150]. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "Regular",
       "fontSize": 14,
@@ -4494,16 +3727,23 @@
         "value": 150
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/font/size/sm",
+        "fontWeight": "Oddkin · Repository tokens/repo/font/weight/regular",
+        "letterSpacing": "Oddkin · Repository tokens/repo/letter-spacing/normal"
+      }
     },
     {
       "id": "S:015544ff2d967bb208099e28708be22537817a85,",
       "name": "Oddkin/Component/Navigation/current",
+      "description": "Repository typography: [&quot;sm&quot;,&quot;semibold&quot;,137.5]. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "SemiBold",
       "fontSize": 14,
@@ -4512,17 +3752,23 @@
         "value": 137.5
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/font/size/sm",
+        "fontWeight": "Oddkin · Repository tokens/repo/font/weight/semibold",
+        "letterSpacing": "Oddkin · Repository tokens/repo/letter-spacing/normal"
+      }
     },
     {
       "id": "S:083ff3d063e2c283e8938e585f07098dbc059f53,",
       "name": "Oddkin/Component/Status",
-      "description": "AI base .status: font.size.xs / medium / inherited normal leading.",
+      "description": "Repository typography: [&quot;xs&quot;,&quot;medium&quot;,150]. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "Medium",
       "fontSize": 12,
@@ -4531,23 +3777,29 @@
         "value": 150
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/font/size/xs",
+        "fontWeight": "Oddkin · Repository tokens/repo/font/weight/medium",
+        "letterSpacing": "Oddkin · Repository tokens/repo/letter-spacing/normal"
+      }
     },
     {
       "id": "S:ed6f27d1c0b299bd0ede565ff2708910d40ad302,",
       "name": "Oddkin/Display",
-      "description": "Repository type role; Roboto is the explicit sans fallback available in Figma. Source system-ui stack remains authoritative.",
+      "description": "Repository typography: type.display. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "SemiBold",
       "fontSize": 36,
       "lineHeight": {
-        "unit": "PIXELS",
-        "value": 45
+        "unit": "PERCENT",
+        "value": 125
       },
       "letterSpacing": {
         "unit": "PERCENT",
@@ -4555,18 +3807,23 @@
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/type/display/size",
+        "fontWeight": "Oddkin · Repository tokens/repo/type/display/weight"
+      }
     },
     {
       "id": "S:9feac0aaef4309ca222bda7f0e85be960ab350b4,",
       "name": "Oddkin/Eyebrow",
-      "description": "Repository type role; Roboto is the explicit sans fallback available in Figma. Source system-ui stack remains authoritative.",
+      "description": "Repository typography: type.eyebrow. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "SemiBold",
       "fontSize": 12,
       "lineHeight": {
-        "unit": "PIXELS",
-        "value": 18
+        "unit": "PERCENT",
+        "value": 150
       },
       "letterSpacing": {
         "unit": "PERCENT",
@@ -4574,102 +3831,87 @@
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
-    },
-    {
-      "id": "S:8c4e6728dc08a5588c50a5daf301c2176f965ffb,",
-      "name": "Oddkin/Home display",
-      "description": "type.display · current default preset · Roboto is the declared sans-stack fallback",
-      "fontFamily": "Roboto",
-      "fontStyle": "SemiBold",
-      "fontSize": 36,
-      "lineHeight": {
-        "unit": "PIXELS",
-        "value": 45
-      },
-      "letterSpacing": {
-        "unit": "PERCENT",
-        "value": -2.5
-      },
-      "textCase": "ORIGINAL",
-      "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/type/eyebrow/size",
+        "fontWeight": "Oddkin · Repository tokens/repo/type/eyebrow/weight"
+      }
     },
     {
       "id": "S:defcba86068dd7e966ed5b6393891fccfd4ffce6,",
       "name": "Oddkin/Section",
-      "description": "Repository type role; Roboto is the explicit sans fallback available in Figma. Source system-ui stack remains authoritative.",
+      "description": "Repository typography: type.section. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "SemiBold",
       "fontSize": 24,
       "lineHeight": {
-        "unit": "PIXELS",
-        "value": 30
+        "unit": "PERCENT",
+        "value": 125
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/type/section/size",
+        "fontWeight": "Oddkin · Repository tokens/repo/type/section/weight",
+        "letterSpacing": "Oddkin · Repository tokens/repo/type/section/letter-spacing"
+      }
     },
     {
       "id": "S:895e658104684f92b9e3fdd4af5dcdaff76e9219,",
       "name": "Oddkin/Small",
-      "description": "Repository type role; Roboto is the explicit sans fallback available in Figma. Source system-ui stack remains authoritative.",
+      "description": "Repository typography: type.small. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "Regular",
       "fontSize": 12,
       "lineHeight": {
-        "unit": "PIXELS",
-        "value": 18
+        "unit": "PERCENT",
+        "value": 150
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/type/small/size",
+        "fontWeight": "Oddkin · Repository tokens/repo/type/small/weight",
+        "letterSpacing": "Oddkin · Repository tokens/repo/type/small/letter-spacing"
+      }
     },
     {
       "id": "S:b18b7944722fd0753c33d6246c210316788362f9,",
       "name": "Oddkin/UI",
-      "description": "Repository type role; Roboto is the explicit sans fallback available in Figma. Source system-ui stack remains authoritative.",
+      "description": "Repository typography: type.ui. Size and weight follow variable aliases. Line height stays proportional in percent; Figma numeric variable bindings force pixels and cannot represent CSS unitless ratios. Tracking uses percent for em-based nonzero values.",
       "fontFamily": "Roboto",
       "fontStyle": "Medium",
       "fontSize": 14,
       "lineHeight": {
-        "unit": "PIXELS",
-        "value": 19.25
+        "unit": "PERCENT",
+        "value": 137.5
       },
       "letterSpacing": {
-        "unit": "PERCENT",
+        "unit": "PIXELS",
         "value": 0
       },
       "textCase": "ORIGINAL",
       "textDecoration": "NONE",
-      "paragraphSpacing": 0
-    },
-    {
-      "id": "S:50c796ecc6ce267781dea655b7a084d46f1c9c97,",
-      "name": "Oddkin/Wordmark",
-      "description": "type.section · current default preset · Roboto is the declared sans-stack fallback",
-      "fontFamily": "Roboto",
-      "fontStyle": "SemiBold",
-      "fontSize": 24,
-      "lineHeight": {
-        "unit": "PIXELS",
-        "value": 30
-      },
-      "letterSpacing": {
-        "unit": "PERCENT",
-        "value": 0
-      },
-      "textCase": "ORIGINAL",
-      "textDecoration": "NONE",
-      "paragraphSpacing": 0
+      "paragraphSpacing": 0,
+      "boundVariables": {
+        "fontFamily": "Oddkin · Repository tokens/figma/font/family/sans",
+        "fontSize": "Oddkin · Repository tokens/repo/type/ui/size",
+        "fontWeight": "Oddkin · Repository tokens/repo/type/ui/weight",
+        "letterSpacing": "Oddkin · Repository tokens/repo/type/ui/letter-spacing"
+      }
     }
   ],
   "effectStyles": [
@@ -4954,6 +4196,53 @@
           "showShadowBehindNode": true
         }
       ]
+    },
+    {
+      "id": "S:2c92035d835d14c496dee26aaca85f87ae58ca3a,",
+      "name": "Oddkin/Overlay",
+      "description": "Shared anchored overlay surface elevation.md. Color adapters inherit Light/Dark from Component roles; geometry matches the repository shadow layers.",
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "color": "#000000",
+          "alpha": 0.12,
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "radius": 2,
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true,
+          "boundVariables": {
+            "color": "Oddkin · Component roles/figma/elevation/md/key"
+          }
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "color": "#000000",
+          "alpha": 0.08,
+          "offset": {
+            "x": 0,
+            "y": 4
+          },
+          "radius": 12,
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true,
+          "boundVariables": {
+            "color": "Oddkin · Component roles/figma/elevation/md/ambient"
+          }
+        }
+      ],
+      "boundVariables": {
+        "effects": [
+          "Oddkin · Component roles/figma/elevation/md/key",
+          "Oddkin · Component roles/figma/elevation/md/ambient"
+        ]
+      }
     }
   ]
 }

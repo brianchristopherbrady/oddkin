@@ -37,7 +37,9 @@ export const QUESTION_STRINGS = {
  */
 export class OddkinQuestion extends OddkinElement.with({
   question: prop.object<QuestionRecord>({ description: 'The question record.' }),
-  announce: prop.boolean({
+  announce: prop.enum(['none', 'important'], {
+    default: 'none',
+    empty: 'important',
     description: 'Announce new questions (when no surrounding surface does).',
   }),
   strings: prop.object<Partial<typeof QUESTION_STRINGS>>({
@@ -45,9 +47,9 @@ export class OddkinQuestion extends OddkinElement.with({
   }),
 }) {
   static override events = {
-    'question-answer': questionAnswerEvent,
-    'question-skip': questionSkipEvent,
-    'ai-announce': announceEvent,
+    'odd-question-answer': questionAnswerEvent,
+    'odd-question-skip': questionSkipEvent,
+    'odd-announce': announceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinQuestion>;
 
@@ -150,7 +152,7 @@ export class OddkinQuestion extends OddkinElement.with({
         const requested = this._requested.peek();
         if (requested && (requested !== key || q.status === 'failed'))
           this._requested.value = undefined;
-        if (this.announce && seen !== key && q.status === 'requested')
+        if (this.announce !== 'none' && seen !== key && q.status === 'requested')
           this.emit(announceEvent, {
             text: format(this._strings.announceAsked, { prompt: q.prompt }),
             priority: 'polite',

@@ -8,7 +8,7 @@ export const artifactTemplate = (host: OddkinArtifact) => {
   const revision = host.revision;
   if (!a || !revision) return html`<div part="preview" hidden></div>`;
   const previewable = host._previewable;
-  const mode = previewable ? host.mode : 'source';
+  const mode = previewable ? host.view : 'source';
   return html`<section class="base" aria-labelledby="title">
     <div part="header" class="header">
       <p id="title" class="title">${a.title}</p>
@@ -30,7 +30,7 @@ export const artifactTemplate = (host: OddkinArtifact) => {
         <button
           class="text-button"
           type="button"
-          data-mode="preview"
+          data-view="preview"
           aria-pressed=${mode === 'preview' ? 'true' : 'false'}
           @click=${host._setMode}
         >
@@ -39,7 +39,7 @@ export const artifactTemplate = (host: OddkinArtifact) => {
         <button
           class="text-button"
           type="button"
-          data-mode="source"
+          data-view="source"
           aria-pressed=${mode === 'source' ? 'true' : 'false'}
           @click=${host._setMode}
         >

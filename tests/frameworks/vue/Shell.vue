@@ -23,7 +23,7 @@ const onAction = (event: CustomEvent<{ id: string; action: string }>) => void ev
     @odd-toggle="(event) => event.detail.expanded && event.preventDefault()"
   />
   <odd-input v-model="name" label="Name" name="name" required />
-  <odd-prompt-input @prompt-submit="(event) => void event.detail.text.trim()" />
+  <odd-prompt-input @odd-prompt-submit="(event) => void event.detail.text.trim()" />
 
   <!-- @vue-expect-error items is an array of entries, not a number -->
   <odd-side-nav :items="1" />
@@ -31,6 +31,6 @@ const onAction = (event: CustomEvent<{ id: string; action: string }>) => void ev
   <odd-side-nav @odd-action="(event) => event.detail.expanded" />
   <!-- @vue-expect-error type is one of the declared input types -->
   <odd-input type="number" />
-  <!-- @vue-expect-error the prompt-submit detail has no id -->
-  <odd-prompt-input @prompt-submit="(event) => event.detail.id" />
+  <!-- @vue-expect-error the odd-prompt-submit detail has no id -->
+  <odd-prompt-input @odd-prompt-submit="(event) => event.detail.id" />
 </template>

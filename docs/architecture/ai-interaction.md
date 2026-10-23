@@ -39,7 +39,7 @@ Element-owned resources (timers, listeners, object URLs created for previews, ow
 | C12 | Alternative responses | `odd-message-branch` | `regenerate`, `edit`, `switchBranch` | — |
 | C13 | Clarifying questions | `odd-question` | `QuestionModel` | native form controls |
 | C14 | AI provenance | `odd-ai-label` | `provenanceSchema` | native `details` |
-| C15 | Suggested follow-ups | `odd-suggestions` | `controllerIntents` (`suggestion-select`/`-submit`) | — |
+| C15 | Suggested follow-ups | `odd-suggestions` | `controllerIntents` (`odd-suggestion-select`/`-submit`) | — |
 | C16 | Response feedback | `odd-response-feedback` | `submitFeedback` | `aria-pressed` buttons |
 | C17 | Model selection | `odd-model-select` | `ModelOptionModel` | native `select` |
 | C18 | Usage display | `odd-usage-meter` | `UsageModel` | native `meter` (only when `used` and `limit` are known) |
@@ -181,34 +181,34 @@ All events bubble and are composed (they cross nested shadow roots). Dispatch *r
 
 | Event | Detail (ids) | Cancelable | Meaning |
 | --- | --- | --- | --- |
-| `prompt-submit` | `submissionId`, `revision`, `text`, `attachments` | yes (veto keeps the draft editable) | Request; host calls `acknowledge(submissionId)` or `fail(submissionId, error)` |
-| `prompt-stop` | `attemptId` | no | Request to stop that attempt's work |
-| `attachment-add` / `-remove` | attachments / `attachmentId` | no | Completed locally (validation); uploading is host-owned |
-| `history-request` | `conversationId`, `beforeMessageId` | no | Request |
-| `message-edit` | `messageId`, `text` | no | Request a new branch |
-| `message-regenerate` | `messageId`, `attemptId` | no | Request an alternative |
-| `attempt-retry` / `attempt-resume` | `attemptId` | no | Request (resume never starts new work) |
-| `branch-switch` | `messageId`, `targetMessageId` | no | Request |
-| `approval-decide` | `approvalId`, `revision`, `toolCallId`, `decision`, `reason` | no | Request; pending until the record changes |
-| `approval-edit` | `approvalId`, `revision` | no | Request |
-| `tool-retry` | `toolCallId` | no | Request |
-| `citation-open` | `sourceId`, `resolved` | yes (default reveals the source) | Local |
-| `artifact-export` | `artifactId`, `revisionId`, `format` | yes (default downloads canonical source) | Local default |
-| `artifact-revision-change` | `artifactId`, `revisionId` | no | Presentation state changed |
-| `suggestion-select` / `-submit` | `suggestionId`, `prompt` | no | Insert into composer / send |
-| `feedback-submit` | `messageId`, `rating`, `reasons`, `comment` | no | Request; confirmed by the feedback record |
-| `model-change` | `modelId`, `previousModelId` | yes (veto keeps the previous model) | Selection |
-| `checkpoint-restore` | `checkpointId` | no | Request |
-| `question-answer` / `-skip` | `questionId`, `revision`, `answer` | no | Request |
-| `change-accept` / `-reject` / `-undo` | `proposalId` | no | Request |
-| `assist-request` | `action`, `selection` (with `revision`), `language` | no | Request |
-| `context-add` / `-remove` | `{kind:'file', files}` or `{kind:'url', url}` / `itemId` | no | Request; items appear when the host adds records |
-| `plan-input` | `planId`, `stepId` | no | Request |
-| `voice-transcript` | `text` | no | Completed locally (final transcript chosen) |
-| `transcript-change` | `segmentId`, `text` | no | User edit |
-| `ai-announce` | `text`, `priority`, `key` | yes (the nearest announcer cancels it) | Status message routing |
+| `odd-prompt-submit` | `submissionId`, `revision`, `text`, `attachments` | yes (veto keeps the draft editable) | Request; host calls `acknowledge(submissionId)` or `fail(submissionId, error)` |
+| `odd-prompt-stop` | `attemptId` | no | Request to stop that attempt's work |
+| `odd-attachment-add` / `-remove` | attachments / `attachmentId` | no | Completed locally (validation); uploading is host-owned |
+| `odd-history-request` | `conversationId`, `beforeMessageId` | no | Request |
+| `odd-message-edit` | `messageId`, `text` | no | Request a new branch |
+| `odd-message-regenerate` | `messageId`, `attemptId` | no | Request an alternative |
+| `odd-attempt-retry` / `odd-attempt-resume` | `attemptId` | no | Request (resume never starts new work) |
+| `odd-branch-switch` | `messageId`, `targetMessageId` | no | Request |
+| `odd-approval-decide` | `approvalId`, `revision`, `toolCallId`, `decision`, `reason` | no | Request; pending until the record changes |
+| `odd-approval-edit` | `approvalId`, `revision` | no | Request |
+| `odd-tool-retry` | `toolCallId` | no | Request |
+| `odd-citation-open` | `sourceId`, `resolved` | yes (default reveals the source) | Local |
+| `odd-artifact-export` | `artifactId`, `revisionId`, `format` | yes (default downloads canonical source) | Local default |
+| `odd-artifact-revision-change` | `artifactId`, `revisionId` | no | Presentation state changed |
+| `odd-suggestion-select` / `-submit` | `suggestionId`, `prompt` | no | Insert into composer / send |
+| `odd-feedback-submit` | `messageId`, `rating`, `reasons`, `comment` | no | Request; confirmed by the feedback record |
+| `odd-model-change` | `modelId`, `previousModelId` | yes (veto keeps the previous model) | Selection |
+| `odd-checkpoint-restore` | `checkpointId` | no | Request |
+| `odd-question-answer` / `-skip` | `questionId`, `revision`, `answer` | no | Request |
+| `odd-change-accept` / `-reject` / `-undo` | `proposalId` | no | Request |
+| `odd-assist-request` | `action`, `selection` (with `revision`), `language` | no | Request |
+| `odd-context-add` / `-remove` | `{kind:'file', files}` or `{kind:'url', url}` / `itemId` | no | Request; items appear when the host adds records |
+| `odd-plan-input-request` | `planId`, `stepId` | no | Request |
+| `odd-voice-transcript` | `text` | no | Completed locally (final transcript chosen) |
+| `odd-transcript-change` | `segmentId`, `text` | no | User edit |
+| `odd-announce` | `text`, `priority`, `key` | yes (the nearest announcer cancels it) | Status message routing |
 
-Framework bindings: React 19 sets properties for custom elements and listens with lowercase `on<event-name>` props (`onapproval-decide`); Vue uses `.prop` binding or property detection and `@approval-decide` / `onApprovalDecide`. Verified in `frameworks.browser.test.ts` in three engines.
+Framework bindings: React 19 sets properties for custom elements and listens with lowercase `on<event-name>` props (`onodd-approval-decide`); Vue uses `.prop` binding or property detection and `@odd-approval-decide` / `onOddApprovalDecide`. Verified in `frameworks.browser.test.ts` in three engines.
 
 ## 7. Composer, selection, scrolling, resources
 
@@ -254,7 +254,7 @@ Conversation: `role="feed"` of `article` messages with `aria-posinset`/`aria-set
 
 ### 9.2 Announcement policy
 
-`describeConversationChange` decides which transitions are announced: sent, responding (`all` only), completed, stopped, stop too-late/unknown, failed (assertive), interrupted, disconnected, waiting for input, approval requested/approved/rejected/expired/superseded, tool failed, history loaded. **Never streamed text** and never per-token. Levels: `important` (default), `all`, `none` (`announcements` property). Each message has a key; a surface's `LiveAnnouncer` drops repeated keys. One polite and one assertive region per surface; standalone elements emit `ai-announce`, which the nearest announcer (a conversation or `createAnnouncer(container)`) handles and cancels so overlapping regions stay silent; elements with an `announce` property only announce when enabled. Arriving content never moves focus (A21).
+`describeConversationChange` decides which transitions are announced: sent, responding (`all` only), completed, stopped, stop too-late/unknown, failed (assertive), interrupted, disconnected, waiting for input, approval requested/approved/rejected/expired/superseded, tool failed, history loaded. **Never streamed text** and never per-token. Levels: `important` (default), `all`, `none` (`announcements` property). Each message has a key; a surface's `LiveAnnouncer` drops repeated keys. One polite and one assertive region per surface; standalone elements emit `odd-announce`, which the nearest announcer (a conversation or `createAnnouncer(container)`) handles and cancels so overlapping regions stay silent; elements with an `announce` property only announce when enabled. Arriving content never moves focus (A21).
 
 ### 9.3 Localization
 
@@ -266,7 +266,7 @@ Styles use Oddkin tokens only (`token()` references), visible focus rings (`colo
 
 ## 10. Documentation and metadata
 
-The analyzer publishes `packages/ai/custom-elements.json` (CEM 2.1.0) and `oddkin.metadata.json` from source: properties with types, attributes, events with detail types and flags, slots, parts, CSS properties, registrations, models, and authored guidance (`@useFor`, `@notFor`, `@limitation`, `@a11y`, `@keyboard`, `@category`). Record schemas are generated into `schemas/`. No separate registry is maintained. Minimal usage examples live in the package README and are exercised by the browser tests and demos. Machine-readable examples are colocated as `src/<element>/<element>.examples.ts` through `defineExamples` (ADR 0021): at least a default for every element, plus explained mistakes (`incorrect`) paired with the `validateUsage` diagnostic and a correct example (a `sources` attribute, `disabled="false"`, an unknown slot, an unsupported `mode`). They import only public `@oddkin/*` entries at runtime, are excluded from the package build, and are listed in `oddkin.metadata.json` (`examples`). The contract tests render slots and parts from them, so slot and part facts are `verified` in three engines. Every AI event declares its intent: requests are `user` and are verified never to fire from property writes; `ai-announce` is a `notification`.
+The analyzer publishes `packages/ai/custom-elements.json` (CEM 2.1.0) and `oddkin.metadata.json` from source: properties with types, attributes, events with detail types and flags, slots, parts, CSS properties, registrations, models, and authored guidance (`@useFor`, `@notFor`, `@limitation`, `@a11y`, `@keyboard`, `@category`). Record schemas are generated into `schemas/`. No separate registry is maintained. Minimal usage examples live in the package README and are exercised by the browser tests and demos. Machine-readable examples are colocated as `src/<element>/<element>.examples.ts` through `defineExamples` (ADR 0021): at least a default for every element, plus explained mistakes (`incorrect`) paired with the `validateUsage` diagnostic and a correct example (a `sources` attribute, `disabled="false"`, an unknown slot, an unsupported `mode`). They import only public `@oddkin/*` entries at runtime, are excluded from the package build, and are listed in `oddkin.metadata.json` (`examples`). The contract tests render slots and parts from them, so slot and part facts are `verified` in three engines. Every AI event declares its intent: requests are `user` and are verified never to fire from property writes; `odd-announce` is a `notification`.
 
 ## 11. Performance
 

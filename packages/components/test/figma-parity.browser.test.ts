@@ -370,7 +370,7 @@ describe('Figma parity: odd-card (card)', () => {
   ] as const)
     it(state, async () => {
       const el = mount(
-        `<odd-card variant="${appearance}"><h3 slot="header">Workspace</h3><p>Keep projects.</p></odd-card>`,
+        `<odd-card appearance="${appearance}"><h3 slot="header">Workspace</h3><p>Keep projects.</p></odd-card>`,
       );
       await settle(el);
       const frame = [`Card / ${state}`];

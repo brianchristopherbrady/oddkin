@@ -48,7 +48,7 @@ const draft = new ComposerController({
   maxFiles: 4,
 });
 
-conversation.source = controller;
+conversation.store = controller;
 conversation.markdown = { highlight, linkTarget: '_blank' };
 conversation.feedbackReasons = ['Inaccurate', 'Missing sources', 'Too long'];
 composer.controller = draft;
@@ -77,7 +77,7 @@ bindIntents(
 const sync = () => {
   const state = controller.getSnapshot();
   const attempt = state.activeAttemptId ? state.attempts[state.activeAttemptId] : undefined;
-  composer.busy = !!attempt && isActive(attempt.status);
+  composer.loading = !!attempt && isActive(attempt.status);
   composer.attemptId = attempt?.attemptId ?? '';
   composer.capabilities = state.capabilities;
   if (attempt?.usage) usage.usage = attempt.usage;
@@ -104,7 +104,7 @@ const progress = (id, steps) => {
   }, 400);
 };
 let contextId = 0;
-picker.addEventListener('context-add', (event) => {
+picker.addEventListener('odd-context-add', (event) => {
   const detail = event.detail;
   const added =
     detail.kind === 'url'
@@ -129,7 +129,7 @@ picker.addEventListener('context-add', (event) => {
   setItems([...items, ...added]);
   for (const item of added) progress(item.id, ['uploading', 'processing', 'ready']);
 });
-picker.addEventListener('context-remove', (event) =>
+picker.addEventListener('odd-context-remove', (event) =>
   setItems(items.filter((i) => i.id !== event.detail.itemId)),
 );
 setItems([
@@ -142,7 +142,7 @@ setItems([
   },
 ]);
 
-modelSelect.addEventListener('model-change', (event) => note(`model: ${event.detail.modelId}`));
+modelSelect.addEventListener('odd-model-change', (event) => note(`model: ${event.detail.modelId}`));
 
 // Simulation controls.
 $('#speed').addEventListener('change', (event) => (speed = Number(event.target.value)));

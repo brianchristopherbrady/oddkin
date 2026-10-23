@@ -12,7 +12,7 @@ export const sourcesTemplate = (host: OddkinSources) => {
     aria-labelledby="heading"
     ?hidden=${!host.sources.length}
   >
-    <p id="heading" class="heading">${host.heading || t.heading}</p>
+    <p id="heading" class="heading">${host.label || t.heading}</p>
     <ol part="list" class="list">
       ${repeat(
         host.sources,

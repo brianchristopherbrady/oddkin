@@ -26,4 +26,4 @@
   value={name}
   oninput={(event) => (name = event.currentTarget.value)}
 ></odd-input>
-<odd-prompt-input onprompt-submit={(event) => void event.detail.text.trim()}></odd-prompt-input>
+<odd-prompt-input onodd-prompt-submit={(event) => void event.detail.text.trim()}></odd-prompt-input>

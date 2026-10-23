@@ -41,7 +41,7 @@ export default defineExamples('odd-conversation', {
     },
     slots: { composer: 'Composer goes here', status: 'Connected' },
     recommended: true,
-    guidance: 'Give it a source (or a state snapshot); it never fetches or sends by itself.',
+    guidance: 'Give it a store (or a state snapshot); it never fetches or sends by itself.',
   },
   empty: {
     label: 'Empty',

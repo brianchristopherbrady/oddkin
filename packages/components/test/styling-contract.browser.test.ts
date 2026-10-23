@@ -129,7 +129,7 @@ const components: Record<
         property: 'box-shadow',
         value: '0 0 0 3px rgb(1, 2, 3)',
         role: 'var(--odd-elevation-md)',
-        attributes: 'variant="elevated"',
+        attributes: 'appearance="elevated"',
       },
     },
   },

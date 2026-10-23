@@ -92,7 +92,7 @@ async function mount(controller: ExternalSource<ConversationState>) {
   const el = document.createElement('odd-conversation') as OddkinConversation;
   el.style.height = '320px';
   el.style.width = '480px';
-  el.source = controller;
+  el.store = controller;
   container.append(el);
   await settle(el);
   const scroller = el.shadowRoot!.querySelector<HTMLElement>('[part="scroller"]')!;
@@ -253,7 +253,7 @@ describe('odd-conversation', () => {
     );
     await settle(el);
     const seen: unknown[] = [];
-    document.addEventListener('approval-decide', (e) => seen.push((e as CustomEvent).detail), {
+    document.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail), {
       once: true,
     });
     const approval = articles()

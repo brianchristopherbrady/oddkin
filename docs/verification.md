@@ -2000,3 +2000,18 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 | Contracts, format | `node scripts/build-contracts.mjs`; `npx prettier --check` | Pass; core/properties mentions `empty`. |
 
 **Change:** ADR 0045 is Accepted. Folded in from Agent 4's review, all accepted by the owner: `view` for content presentation, slots `above`/`below` → `header`/`footer`, no shared `odd-select` event, `odd-plan-input-request`, the bare `announce` means `important`, `current` for navigation only, `value` plus `values` for multiple selection, `pressed` for toggle buttons, no button `tone` until designed. Core: `prop.enum(values, { default, empty })`. The runtime diagnostic for an attribute that names a property-only property (`element.attribute.propertyOnly`) already existed and covers the `error` record case.
+
+## 2026-10-22 — ADR 0045 renames land; vocabulary check in `verify:metadata`
+
+**Environment:** Windows, Node 24.22.1, Vitest 5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Vocabulary | `npm run verify:metadata` (now `verify-metadata.mjs` then `check-vocabulary.mjs`) | 191 verified facts for 4 elements in `@oddkin/components` and 481 for 24 in `@oddkin/ai`, in Chromium, Firefox, WebKit; vocabulary 0 findings (60 before the renames). |
+| Unit and browser | `npx vitest run --project node`; `npx vitest run --project browser` | Node: 98 files, 968 tests pass. Browser: 204 files pass (3 skipped), 2,464 tests pass (38 skipped), no unhandled errors. |
+| Global event map | `packages/ai/test/metadata.test.ts` | Every `odd-*` event in the `@oddkin/ai` manifest is in a `GlobalEventHandlersEventMap` declaration of the published typings (34 events); renaming the citation's entry in `dist` fails the test. `tests/types/typed-listeners.test.ts`: a document listener for `odd-prompt-submit` gets the detail type, and reading a missing detail field is a type error. |
+| AI demos | `npx playwright test e2e/ai-demos.spec.ts` | 39 passed. The first run found two demo usages the type check cannot see (plain JavaScript): `el.announce = true` and `assist.status = 'ready'`, each reported as `element.prop.invalid` in the console; fixed to `'important'` and `'complete'`. |
+| Full e2e | `npx playwright test` | 603 passed, 12 skipped (8.6 min), three engines; no failure or retry. |
+| Types, lint, size | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Pass (vue-tsc and svelte-check included). Lint's format check fails only on the untracked `artifacts/` folder. Sizes: component 10,821 B, composite 11,890 B, ai-chat 49,769 B (budget 50,176), card 670 B; all within budget. |
+
+**Change:** every rename in ADR 0045 §9: `odd-card` `appearance`; `odd-sources` `label`; `odd-prompt-input` `loading` and slot `header`; one `announce` enum (`none | important | all`; the bare attribute means `important`) on the conversation and the five leaf elements; `odd-inline-assist` status `complete`; `odd-conversation` `store`, `snapshot`, `renderTool` (also on `odd-message`); `odd-artifact` `view`; every `@oddkin/ai` event prefixed `odd-` (`odd-plan-input-request`, `odd-announce`, `odd-source-reveal`) and added to `GlobalEventHandlersEventMap`; `odd-input` gains `setCustomValidity()`, which sets `error`. The components contract test now compares only methods without parameters (a method that takes arguments changes state; `setCustomValidity` has its own test). The ADR records that attachment statuses keep their file-pipeline phases (`ready` means usable by the model). `research/benchmarks/results` is excluded from the format check, since the harnesses write it with `JSON.stringify`.

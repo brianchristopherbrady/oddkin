@@ -43,12 +43,19 @@ export class OddkinResponseFeedback extends OddkinElement.with({
   }),
   reasons: prop.array<string>({ description: 'Reasons offered for negative feedback.' }),
   disabled: prop.boolean({ reflect: true, description: 'Feedback is unavailable.' }),
-  announce: prop.boolean({ description: 'Announce outcomes (when no surrounding surface does).' }),
+  announce: prop.enum(['none', 'important'], {
+    default: 'none',
+    empty: 'important',
+    description: 'Announce outcomes (when no surrounding surface does).',
+  }),
   strings: prop.object<Partial<typeof FEEDBACK_STRINGS>>({
     description: 'Localized string overrides.',
   }),
 }) {
-  static override events = { 'feedback-submit': feedbackSubmitEvent, 'ai-announce': announceEvent };
+  static override events = {
+    'odd-feedback-submit': feedbackSubmitEvent,
+    'odd-announce': announceEvent,
+  };
   declare readonly _events?: ElementEvents<typeof OddkinResponseFeedback>;
 
   /** @internal Local draft (presentation state). */
@@ -113,7 +120,7 @@ export class OddkinResponseFeedback extends OddkinElement.with({
         const status = this.feedback?.status;
         if (status === 'submitted' && previous && previous !== 'submitted') this._cancel();
         if (
-          this.announce &&
+          this.announce !== 'none' &&
           previous !== undefined &&
           status !== previous &&
           (status === 'submitted' || status === 'failed')

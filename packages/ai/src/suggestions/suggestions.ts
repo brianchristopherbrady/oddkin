@@ -36,8 +36,8 @@ export class OddkinSuggestions extends OddkinElement.with({
   }),
 }) {
   static override events = {
-    'suggestion-select': suggestionSelectEvent,
-    'suggestion-submit': suggestionSubmitEvent,
+    'odd-suggestion-select': suggestionSelectEvent,
+    'odd-suggestion-submit': suggestionSubmitEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinSuggestions>;
 
