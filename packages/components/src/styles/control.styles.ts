@@ -70,10 +70,19 @@ export const controlStyles = css`
   .control-box > select.control {
     padding-inline-end: calc(${token('control.padding.inline.md')} + 1em + ${token('control.gap')});
   }
-  .control-end {
-    margin-inline-end: ${token('control.padding.inline.md')};
+  .control-box:has(> .control-start) > .control {
+    padding-inline-start: calc(
+      ${token('control.padding.inline.md')} + 1em + ${token('control.gap')}
+    );
   }
-  .control:disabled + .control-end {
+  .control-box:has(> .control-end) > input.control {
+    padding-inline-end: calc(${token('control.padding.inline.md')} + 1em + ${token('control.gap')});
+  }
+  .control-start,
+  .control-end {
+    margin-inline: ${token('control.padding.inline.md')};
+  }
+  .control:disabled ~ * {
     color: ${token('color.text.disabled')};
   }
   .error {

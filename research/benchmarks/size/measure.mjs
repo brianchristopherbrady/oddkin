@@ -147,8 +147,9 @@ export const CSS_BUDGETS = {
   'components:spinner': 384, // 319
   'components:button': 1280, // measured 1,238 on 2026-10-23 with the toggle's pressed state (1,028 before)
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
-  // 128: measured 55 on 2026-10-22; the field look moved to the shared control module.
-  'components:input': 128,
+  // 320: measured 290 on 2026-10-23 with the search field's clear button, which only odd-input
+  // draws (55 before; the field look is the shared control module).
+  'components:input': 320,
   // 128: measured 56 on 2026-10-23; the row, box, and marks are the shared control-indicator module.
   'components:checkbox': 128,
   // 640: measured 569 on 2026-10-23: the track and thumb, which only odd-switch draws.
@@ -156,7 +157,8 @@ export const CSS_BUDGETS = {
   // 1,152: measured 1,077 on 2026-10-22 once the entry rows moved to the shared navigation-row
   // module (1,234 before, with them).
   'components:side-nav': 1152,
-  // 3,072: measured 3,018 on 2026-10-23 with the dialog and backdrop fades (+34); 2,984 with
+  // 3,072: measured 3,069 on 2026-10-23 with the control's start and end adornment slots (+51);
+  // 3,018 with the dialog and backdrop fades (+34); 2,984 with
   // the overlay close control, popover motion, and
   // placement limits (+238); 2,746 with the overlay-surface look (+113); 2,633 with
   // the choice row (+59, moved out of odd-checkbox for

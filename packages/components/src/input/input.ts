@@ -1,4 +1,6 @@
 import { event, prop, type ElementEvents } from '@oddkin/core/element';
+import { strings } from '@oddkin/core/i18n';
+import type { Scope } from '@oddkin/core/scope';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
 import { OddkinFormControl, type FormControlOptions } from '../form-control/form-control.js';
 
@@ -18,6 +20,8 @@ export const changeEvent = event('change', {
   intent: 'user',
 });
 
+export const INPUT_STRINGS = { clear: 'Clear' };
+
 /**
  * A labelled single-line text field that participates in forms like a native input.
  *
@@ -25,6 +29,8 @@ export const changeEvent = event('change', {
  * @csspart label - The visible label.
  * @csspart description - Help text, referenced by `aria-describedby`.
  * @csspart control - The native `<input>`.
+ * @csspart icon - The search glyph at the start (`type="search"`).
+ * @csspart clear - The button that clears a search value (`type="search"`), shown while there is a value to clear.
  * @csspart error - The error message, referenced by `aria-describedby`.
  * @cssprop --odd-field-height - Minimum height (never below the target-size token). Shared by every form control and the field recipe.
  * @cssprop --odd-field-radius - Corner radius. Shared by every form control and the field recipe.
@@ -32,10 +38,12 @@ export const changeEvent = event('change', {
  * @cssprop --odd-field-background - Background colour. Shared by every form control and the field recipe.
  * @cssstate user-invalid - The field shows its error: `error` is set, or the value is invalid after the user left the field or a validity check failed. Matches `aria-invalid` on the inner control; style it with `odd-input:state(user-invalid)`.
  * @a11y `label` names the native input inside the shadow root; a `<label for>` outside it cannot. Description and error are announced through `aria-describedby`; `aria-invalid` is set for `error`, or for an invalid value after the user leaves the field or a validity check fails (any `invalid` event, including `checkValidity()`, unlike native `:user-invalid`); reset clears it.
- * @keyboard Native text-input behavior.
+ * @keyboard Native text-input behavior; arrow keys step a number or date. In a search field, Escape clears the value (and then reaches outer handlers, such as a dialog, when empty).
  * @previewRole textInput
- * @useFor Short free-text values in forms: names, email addresses, search terms.
- * @notFor Multi-line text, choices from a fixed list, dates.
+ * @useFor Short values in forms: names, email addresses, search terms, numbers, dates, and times.
+ * @notFor Multi-line text (use odd-textarea); choices from a fixed list (use odd-select or odd-radio-group).
+ * @a11y The global `inputmode` attribute on the host is forwarded to the inner input (the virtual keyboard hint).
+ * @limitation A number field steps with the engine's spin buttons where the engine draws them (not on touch devices); they are not styled, because hiding them needs prefixed pseudo-elements.
  * @limitation Validation bubbles anchor to the inner input. `formStateRestoreCallback` restores the value; autofill depends on the inner input's `autocomplete`.
  * @limitation Enter in the field does not submit the form (no implicit submission): the native input inside the shadow root has no form owner. Give the form a submit button.
  * @category Forms
@@ -47,10 +55,42 @@ export class OddkinInput extends OddkinFormControl.with({
     attribute: 'value',
     description: 'Initial value; the `value` attribute, as on native inputs.',
   }),
-  type: prop.enum(['text', 'email', 'password', 'search', 'tel', 'url'], {
-    default: 'text',
-    reflect: true,
-    description: 'Native input type.',
+  type: prop.enum(
+    [
+      'text',
+      'email',
+      'password',
+      'search',
+      'tel',
+      'url',
+      'number',
+      'date',
+      'time',
+      'datetime-local',
+      'month',
+      'week',
+    ],
+    {
+      default: 'text',
+      reflect: true,
+      description: 'Native input type.',
+    },
+  ),
+  min: prop.string({ description: 'Lowest value (number and date types), as on native inputs.' }),
+  max: prop.string({ description: 'Highest value (number and date types), as on native inputs.' }),
+  step: prop.string({
+    description: 'Step between values (number and date types); `any` allows every value.',
+  }),
+  minLength: prop.number({
+    attribute: 'minlength',
+    description: 'Fewest characters (text types).',
+  }),
+  maxLength: prop.number({
+    attribute: 'maxlength',
+    description: 'Most characters (text types); typing stops there.',
+  }),
+  pattern: prop.string({
+    description: 'A regular expression the whole value must match (text types).',
   }),
   placeholder: prop.string({
     default: '',
@@ -59,6 +99,9 @@ export class OddkinInput extends OddkinFormControl.with({
   autocomplete: prop.string({ default: '', description: 'Autofill hint for the native input.' }),
   required: prop.boolean({ reflect: true, description: 'A value is required to submit.' }),
   readonly: prop.boolean({ reflect: true, description: 'Prevents editing; still submitted.' }),
+  strings: prop.object<Partial<typeof INPUT_STRINGS>>({
+    description: 'Localized string overrides.',
+  }),
 }) {
   static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
   static override events = { input: inputEvent, change: changeEvent };
@@ -66,6 +109,9 @@ export class OddkinInput extends OddkinFormControl.with({
 
   // undefined until the value is set or typed ("dirty"), then independent of `defaultValue`.
   readonly #value = signal<string | undefined>(undefined);
+
+  // The host's global `inputmode` attribute, forwarded to the inner input.
+  readonly #inputMode = signal<string | null>(null);
 
   /** @internal The value as a readable for the template's live binding. */
   readonly _currentValue: Readable<string> = computed(() => this.value);
@@ -109,6 +155,46 @@ export class OddkinInput extends OddkinFormControl.with({
   /** @internal Template handler: the user committed a change. */
   readonly _onChange = (): void => {
     this.emit(changeEvent);
+  };
+
+  /** @internal The virtual keyboard hint for the inner input. */
+  get _inputMode(): string | null {
+    return this.#inputMode.value;
+  }
+
+  protected override connected(scope: Scope): void {
+    super.connected(scope);
+    const read = () => {
+      this.#inputMode.value = this.getAttribute('inputmode');
+    };
+    read();
+    const observer = new MutationObserver(read);
+    observer.observe(this, { attributes: true, attributeFilter: ['inputmode'] });
+    scope.add(() => observer.disconnect(), 'inputmode');
+  }
+
+  /** @internal The clear button shows while a search value can be cleared. */
+  get _clearable(): boolean {
+    return (
+      this.type === 'search' && this.value !== '' && !this._formDisabled.value && !this.readonly
+    );
+  }
+  /** @internal The clear button's name. */
+  get _clearLabel(): string {
+    return strings(INPUT_STRINGS, this.strings).clear;
+  }
+  /** @internal Template handler: the clear button, or Escape in a search field. */
+  readonly _onClear = (): void => {
+    this.#value.value = '';
+    this.emit(inputEvent);
+    this.emit(changeEvent);
+    this.shadowRoot?.querySelector('input')?.focus();
+  };
+  /** @internal Template handler: Escape clears a search value, as native search fields do. */
+  readonly _onKeydown = (event: KeyboardEvent): void => {
+    if (event.key !== 'Escape' || !this._clearable) return;
+    event.preventDefault();
+    this._onClear();
   };
 }
 

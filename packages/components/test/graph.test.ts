@@ -90,6 +90,8 @@ describe('@oddkin/components/input import graphs', () => {
       'input/input.structural.styles.js',
       'input/input.template.js',
       'styles/field.structural.styles.js',
+      // The search and clear glyph templates.
+      'styles/glyphs.js',
       'styles/host.styles.js',
     ]);
     expect(packages.every((p) => p.startsWith('@oddkin/core/'))).toBe(true);

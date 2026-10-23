@@ -51,7 +51,7 @@ export function Shell() {
       {/* @ts-expect-error -- the action detail has no expanded */}
       <odd-side-nav onodd-action={(event) => event.detail.expanded} />
       {/* @ts-expect-error -- type is one of the declared input types */}
-      <odd-input type="number" />
+      <odd-input type="color" />
       {/* @ts-expect-error -- read-only getters are not props */}
       <odd-input form={null} />
       {/* @ts-expect-error -- the odd-prompt-submit detail has no id */}

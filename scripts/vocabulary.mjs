@@ -38,6 +38,15 @@ export const ATTRIBUTES = {
   required: { type: 'boolean' },
   multiple: { type: 'boolean' },
   pressed: { type: 'boolean' },
+  toggle: { type: 'boolean' },
+  // Constraints as on <input>: strings, since date and time types use them. Numbers where the
+  // element's counterpart is numeric: <progress>, and odd-split-panel's percentages.
+  min: { type: 'string', native: { 'odd-split-panel': 'number' } },
+  max: { type: 'string', native: { 'odd-progress': 'number', 'odd-split-panel': 'number' } },
+  step: { type: 'string' },
+  minlength: { type: 'number' },
+  maxlength: { type: 'number' },
+  pattern: { type: 'string' },
   collapsed: { type: 'boolean' },
   // The start pane's size in percent (odd-split-panel).
   position: { type: 'number' },

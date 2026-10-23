@@ -105,7 +105,7 @@ describe('@oddkin/components published metadata', () => {
     });
     // `value` is an accessor; the `value` attribute sets `defaultValue`.
     expect(facts('odd-input')).toEqual({
-      propertyOnly: ['property:odd-input#value'],
+      propertyOnly: ['property:odd-input#strings', 'property:odd-input#value'],
       intents: { 'event:odd-input#change': 'user', 'event:odd-input#input': 'user' },
     });
     expect(facts('odd-button')).toEqual({

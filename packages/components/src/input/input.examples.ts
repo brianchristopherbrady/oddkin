@@ -59,6 +59,51 @@ export default defineExamples('odd-input', {
     label: 'Password',
     props: { label: 'Password', type: 'password', autocomplete: 'current-password' },
   },
+  number: {
+    label: 'Number',
+    props: {
+      label: 'Seats',
+      type: 'number',
+      min: '1',
+      max: '50',
+      description: '1–50 seats available.',
+    },
+    attributes: { value: '12' },
+    guidance:
+      'Arrow keys and the browser’s spin buttons move by `step`; a value outside `min`–`max` is invalid. The spin buttons are the browser’s own and are not styled.',
+  },
+  search: {
+    label: 'Search',
+    props: { label: 'Search projects', type: 'search', placeholder: 'Search…' },
+    preset: true,
+    guidance:
+      'A searchbox with a clear button while it has a value; Escape clears it too. Change `strings.clear` to translate the button’s name.',
+  },
+  date: {
+    label: 'Date',
+    props: { label: 'Publish date', type: 'date', min: '2026-01-01' },
+    attributes: { value: '2026-10-24' },
+    guidance:
+      'Values use the ISO form (2026-10-24); the browser shows them in the reader’s locale.',
+  },
+  time: {
+    label: 'Time',
+    props: { label: 'Time', type: 'time', step: '900' },
+    attributes: { value: '09:30' },
+    guidance: '`step` is in seconds: 900 offers quarter hours.',
+  },
+  constraints: {
+    label: 'Length and pattern',
+    props: {
+      label: 'Project code',
+      minLength: 3,
+      maxLength: 8,
+      pattern: '[A-Z0-9\\-]+',
+      description: '3–8 capital letters, digits or hyphens.',
+    },
+    guidance:
+      '`maxLength` stops typing at the limit; `minLength` and `pattern` make a typed value invalid until it fits.',
+  },
   inForm: {
     label: 'In a form',
     props: { label: 'Email', type: 'email', required: true, autocomplete: 'email' },

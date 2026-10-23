@@ -1,9 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { page, userEvent } from 'vitest/browser';
 import { setErrorHandler } from '@oddkin/core/diagnostics';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import type { OddkinInput } from '../src/input/input.js';
+import { loadTheme, themeValue } from './probe.js';
 
 let container: HTMLElement;
 beforeEach(() => {
@@ -36,6 +37,7 @@ describe('imports', () => {
     const foundation = await import('../src/input/foundation.js');
     expect(Object.keys(foundation).sort()).toEqual(
       [
+        'INPUT_STRINGS',
         'OddkinInput',
         'changeEvent',
         'fieldStructuralStyles',
@@ -344,5 +346,264 @@ describe('ownership', () => {
       await settle(el);
     }
     expect(scopeStats()).toEqual(before);
+  });
+});
+
+describe('types and constraints', () => {
+  /** An odd-input and a native input with the same attributes, in one form. */
+  async function pair(attributes: string) {
+    const { el, control } = await mount(
+      `<form><odd-input label="Field" name="a" ${attributes}></odd-input><input name="b" ${attributes} /></form>`,
+    );
+    const native = container.querySelector<HTMLInputElement>('input[name="b"]')!;
+    const flags = (validity: ValidityState) =>
+      Object.keys(ValidityState.prototype).filter(
+        (k) => validity[k as keyof ValidityState] === true,
+      );
+    return { el, control, native, flags };
+  }
+
+  it('passes min, max, and step to a number field and reports the same validity as native', async () => {
+    const { el, control, native, flags } = await pair('type="number" min="1" max="50" step="2"');
+    expect([control.type, control.min, control.max, control.step]).toEqual([
+      'number',
+      '1',
+      '50',
+      '2',
+    ]);
+    for (const value of ['60', '0', '4', '5', '']) {
+      el.value = value;
+      native.value = value;
+      await settle(el);
+      expect([value, flags(el.validity)]).toEqual([value, flags(native.validity)]);
+    }
+  });
+
+  it('steps with the arrow keys, reporting input as native', async () => {
+    const { el, control } = await mount(
+      '<odd-input label="Seats" type="number" value="12"></odd-input>',
+    );
+    const events: string[] = [];
+    el.addEventListener('input', () => events.push(`input:${el.value}`));
+    control.focus();
+    await userEvent.keyboard('{ArrowUp}');
+    await settle(el);
+    expect(el.value).toBe('13');
+    expect(events).toEqual(['input:13']);
+  });
+
+  it('passes minlength, maxlength, and pattern; typing stops at maxlength', async () => {
+    const { el, control, native, flags } = await pair(
+      'minlength="3" maxlength="5" pattern="[a-z]+"',
+    );
+    expect([control.minLength, control.maxLength, control.pattern]).toEqual([3, 5, '[a-z]+']);
+    for (const value of ['ab1', 'abc']) {
+      el.value = value;
+      native.value = value;
+      await settle(el);
+      expect([value, flags(el.validity)]).toEqual([value, flags(native.validity)]);
+    }
+    el.value = '';
+    await settle(el);
+    await userEvent.click(control);
+    await userEvent.keyboard('abcdefg');
+    await settle(el);
+    expect(el.value).toBe('abcde');
+  });
+
+  it('passes date and time types with their ranges', async () => {
+    for (const [type, min, value] of [
+      ['date', '2026-01-01', '2025-12-31'],
+      ['time', '09:00', '08:30'],
+      ['datetime-local', '2026-01-01T09:00', '2025-12-31T09:00'],
+      ['month', '2026-02', '2026-01'],
+      ['week', '2026-W10', '2026-W09'],
+    ] as const) {
+      const { el, control, native, flags } = await pair(`type="${type}" min="${min}"`);
+      // An engine without the type falls back to text, as the native input does.
+      expect([type, control.type]).toEqual([type, native.type]);
+      el.value = value;
+      native.value = value;
+      await settle(el);
+      expect([type, flags(el.validity)]).toEqual([type, flags(native.validity)]);
+    }
+  });
+
+  it('forwards the host inputmode attribute to the inner input', async () => {
+    const { el, control } = await mount('<odd-input label="Code" inputmode="numeric"></odd-input>');
+    expect(control.inputMode).toBe('numeric');
+    el.setAttribute('inputmode', 'decimal');
+    await settle(el);
+    await new Promise((resolve) => setTimeout(resolve));
+    await settle(el);
+    expect(control.inputMode).toBe('decimal');
+    el.removeAttribute('inputmode');
+    await new Promise((resolve) => setTimeout(resolve));
+    await settle(el);
+    expect(control.hasAttribute('inputmode')).toBe(false);
+  });
+});
+
+describe('search', () => {
+  let unload: () => void;
+  beforeAll(async () => {
+    unload = await loadTheme();
+  });
+  afterAll(() => unload());
+
+  it('is a searchbox named by its label with a search glyph and a clear button only while there is a value', async () => {
+    const { el, control, part } = await mount(
+      '<odd-input label="Search projects" type="search"></odd-input>',
+    );
+    expect(page.getByRole('searchbox', { name: 'Search projects', exact: true }).element()).toBe(
+      control,
+    );
+    expect([control.type, control.getAttribute('enterkeyhint')]).toEqual(['text', 'search']);
+    expect(part('icon').getAttribute('aria-hidden')).toBe('true');
+    expect(part('icon').querySelector('svg.glyph')).not.toBeNull();
+    expect(part('clear').querySelector('svg.glyph')).not.toBeNull();
+    expect(part('clear').hidden).toBe(true);
+    el.value = 'design';
+    await settle(el);
+    expect(part('clear').hidden).toBe(false);
+    expect(part('clear').getAttribute('aria-label')).toBe('Clear');
+    expect(part('clear').tabIndex).toBe(-1);
+    for (const bar of ['readonly', 'disabled']) {
+      el.setAttribute(bar, '');
+      await settle(el);
+      expect([bar, part('clear').hidden]).toEqual([bar, true]);
+      el.removeAttribute(bar);
+      await settle(el);
+    }
+    el.disabled = true;
+    await settle(el);
+    expect(['property', part('clear').hidden]).toEqual(['property', true]);
+    el.disabled = false;
+    const fieldset = document.createElement('fieldset');
+    el.before(fieldset);
+    fieldset.append(el);
+    fieldset.disabled = true;
+    await settle(el);
+    expect(['fieldset', part('clear').hidden]).toEqual(['fieldset', true]);
+    fieldset.disabled = false;
+    await settle(el);
+    expect(part('clear').hidden).toBe(false);
+    el.strings = { clear: 'Effacer' };
+    await settle(el);
+    expect(part('clear').getAttribute('aria-label')).toBe('Effacer');
+    const box = part('clear').getBoundingClientRect();
+    expect([box.width, box.height]).toEqual([24, 24]);
+  });
+
+  it('the clear button clears, reports input then change, and keeps focus in the field', async () => {
+    const { el, control, part } = await mount(
+      '<odd-input label="Search" type="search" value="design"></odd-input>',
+    );
+    const events: string[] = [];
+    el.addEventListener('input', () => events.push(`input:${el.value}`));
+    el.addEventListener('change', () => events.push('change'));
+    control.focus();
+    await userEvent.click(part('clear'));
+    await settle(el);
+    expect(el.value).toBe('');
+    expect(control.value).toBe('');
+    expect(events).toEqual(['input:', 'change']);
+    expect(el.shadowRoot!.activeElement).toBe(control);
+  });
+
+  it('Escape clears a value and is cancelled; with no value it passes through', async () => {
+    const { el, control } = await mount(
+      '<odd-input label="Search" type="search" value="design"></odd-input>',
+    );
+    const seen: boolean[] = [];
+    document.addEventListener('keydown', (event) => seen.push(event.defaultPrevented));
+    control.focus();
+    await userEvent.keyboard('{Escape}');
+    await settle(el);
+    expect(el.value).toBe('');
+    await userEvent.keyboard('{Escape}');
+    expect(seen).toEqual([true, false]);
+  });
+
+  it('clears on Escape only, and only in a search field', async () => {
+    const { el, control } = await mount(
+      '<odd-input label="Search" type="search" value="design"></odd-input><odd-input label="Name" value="Ada"></odd-input>',
+    );
+    control.focus();
+    await userEvent.keyboard('{Enter}');
+    await settle(el);
+    expect(el.value).toBe('design');
+    const text = container.querySelectorAll('odd-input')[1] as OddkinInput;
+    await settle(text);
+    const seen: boolean[] = [];
+    text.addEventListener('keydown', (event) => seen.push(event.defaultPrevented));
+    text.shadowRoot!.querySelector('input')!.focus();
+    await userEvent.keyboard('{Escape}');
+    await settle(text);
+    expect([text.value, seen]).toEqual(['Ada', [false]]);
+  });
+
+  it('sets the glyph in from the start edge, lets the pointer through to the field, and dims it when disabled', async () => {
+    const { el, control, part } = await mount(
+      '<odd-input label="Search" type="search"></odd-input>',
+    );
+    const icon = part('icon').getBoundingClientRect();
+    const box = control.getBoundingClientRect();
+    expect(icon.left - box.left).toBeCloseTo(
+      parseFloat(themeValue('padding-left', '--odd-control-padding-inline-md')),
+    );
+    expect(
+      el.shadowRoot!.elementFromPoint(icon.left + icon.width / 2, icon.top + icon.height / 2),
+    ).toBe(control);
+    el.disabled = true;
+    await settle(el);
+    expect(getComputedStyle(part('icon')).color).toBe(
+      themeValue('color', '--odd-color-text-disabled'),
+    );
+  });
+
+  it('draws the clear button as a quiet round target around its centred glyph', async () => {
+    const { part } = await mount(
+      '<odd-input label="Search" type="search" value="design"></odd-input>',
+    );
+    const clear = part('clear');
+    const style = getComputedStyle(clear);
+    expect(style.borderTopWidth).toBe('0px');
+    expect(style.borderTopLeftRadius).toBe(
+      themeValue('border-top-left-radius', '--odd-radius-full'),
+    );
+    expect(style.color).toBe(themeValue('color', '--odd-color-text-secondary'));
+    expect(parseFloat(style.marginTop)).toBeCloseTo((parseFloat(style.fontSize) - 24) / 2);
+    const glyph = clear.querySelector('svg')!.getBoundingClientRect();
+    const box = clear.getBoundingClientRect();
+    expect(glyph.left + glyph.width / 2).toBeCloseTo(box.left + box.width / 2, 0);
+    expect(glyph.top + glyph.height / 2).toBeCloseTo(box.top + box.height / 2, 0);
+    await userEvent.hover(clear);
+    expect(getComputedStyle(clear).backgroundColor).toBe(
+      themeValue('background-color', '--odd-color-surface-hover'),
+    );
+    expect(getComputedStyle(clear).color).toBe(themeValue('color', '--odd-color-text-primary'));
+    await userEvent.unhover(document.body);
+  });
+
+  it('pads the text clear of the glyph and the button, mirrored right to left', async () => {
+    const { control, part } = await mount(
+      '<odd-input label="Search" type="search" value="design" style="inline-size: 20rem"></odd-input><odd-input label="Search" type="search" value="design" dir="rtl" style="inline-size: 20rem"></odd-input>',
+    );
+    const rtl = container.querySelectorAll('odd-input')[1]!;
+    await settle(rtl as OddkinInput);
+    const rtlPart = (name: string) =>
+      rtl.shadowRoot!.querySelector<HTMLElement>(`[part="${name}"]`)!;
+    const box = control.getBoundingClientRect();
+    const style = getComputedStyle(control);
+    expect(part('icon').getBoundingClientRect().right).toBeLessThanOrEqual(
+      box.left + parseFloat(style.paddingLeft),
+    );
+    expect(part('clear').getBoundingClientRect().left).toBeGreaterThanOrEqual(
+      box.right - parseFloat(style.paddingRight) - 6,
+    );
+    expect(rtlPart('icon').getBoundingClientRect().left).toBeGreaterThan(
+      rtlPart('clear').getBoundingClientRect().right,
+    );
   });
 });

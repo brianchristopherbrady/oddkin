@@ -151,7 +151,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/empty-state/empty-state.styles.js (emptyStateStyles)` | yes | 12 |
 | `packages/components/dist/icon/icon.structural.styles.js (iconStructuralStyles)` | yes | 19 |
 | `packages/components/dist/icon/icon.styles.js (iconStyles)` | yes | 2 |
-| `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 3 |
+| `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 16 |
+| `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 11 |
 | `packages/components/dist/listbox/listbox.structural.styles.js (listboxStructuralStyles)` | yes | 11 |
 | `packages/components/dist/listbox/listbox.styles.js (listboxStyles)` | yes | 20 |
 | `packages/components/dist/pagination/pagination.structural.styles.js (paginationStructuralStyles)` | yes | 32 |
@@ -173,7 +174,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/split-panel/split-panel.styles.js (splitPanelStyles)` | yes | 25 |
 | `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 42 |
 | `packages/components/dist/styles/control-indicator.styles.js (controlIndicatorStyles)` | yes | 24 |
-| `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 31 |
+| `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 32 |
 | `packages/components/dist/styles/field.structural.styles.js (fieldStructuralStyles)` | yes | 27 |
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |
 | `packages/components/dist/styles/host.styles.js (hostStyles)` | yes | 7 |

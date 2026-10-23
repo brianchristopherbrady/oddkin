@@ -123,3 +123,110 @@ describe('Figma parity: toggleButton', () => {
         expectNone(compare('Oddkin/Common/toggleButton', { Value: value, State: state }, targets));
       });
 });
+
+describe('Figma parity: odd-input types (number, search, dateTime)', () => {
+  for (const state of ['Default', 'Disabled', 'Focus'])
+    it(`number ${state}`, async () => {
+      const disabled = state === 'Disabled' ? ' disabled' : '';
+      const el = mount(
+        `<odd-input type="number" label="Seats" description="1–50 seats available." value="12" min="1" max="50"${disabled}></odd-input>`,
+      );
+      await settle(el);
+      const control = shadowPart(el, 'control');
+      await interact(state, control);
+      await settle(el);
+      const root = `Number input / ${state}`;
+      const targets: Target[] = [
+        { layer: [root, 'Seats'], el: shadowPart(el, 'label'), kind: 'text' },
+        { layer: [root, '1–50 seats available.'], el: shadowPart(el, 'description'), kind: 'text' },
+        { layer: [root, 'Surface'], el: control, kind: 'frame' },
+        { layer: [root, 'Surface', '12'], el: control, kind: 'text' },
+      ];
+      if (state === 'Focus')
+        targets.push({ layer: [root, 'Surface [2]'], el: control, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/number', { State: state }, targets));
+    });
+
+  for (const state of ['Empty', 'Filled', 'Focus', 'Disabled'])
+    it(`search ${state}`, async () => {
+      const value = state === 'Empty' ? 'placeholder="Search…"' : 'value="Design system"';
+      const disabled = state === 'Disabled' ? ' disabled' : '';
+      const el = mount(
+        `<odd-input type="search" label="Search projects" description="Search by name or description." ${value}${disabled}></odd-input>`,
+      );
+      await settle(el);
+      const control = shadowPart(el, 'control');
+      await interact(state, control);
+      await settle(el);
+      const root = `Search input / ${state}`;
+      const targets: Target[] = [
+        { layer: [root, 'Search projects'], el: shadowPart(el, 'label'), kind: 'text' },
+        {
+          layer: [root, 'Search by name or description.'],
+          el: shadowPart(el, 'description'),
+          kind: 'text',
+        },
+        { layer: [root, 'Surface'], el: control, kind: 'frame' },
+        state === 'Empty'
+          ? {
+              layer: [root, 'Surface', 'Search…'],
+              el: control,
+              kind: 'text',
+              pseudo: '::placeholder',
+            }
+          : { layer: [root, 'Surface', 'Design system'], el: control, kind: 'text' },
+      ];
+      if (state === 'Focus')
+        targets.push({ layer: [root, 'Surface [2]'], el: control, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/search', { State: state }, targets));
+    });
+
+  for (const state of ['Default', 'Focus', 'Invalid'])
+    it(`dateTime ${state}`, async () => {
+      const invalid = state === 'Invalid';
+      const box = mount(
+        `<div><odd-input type="date" label="Publish date" ${invalid ? 'error="Enter a valid date."' : 'description="Uses your local date and time format." value="2026-10-24"'}></odd-input><odd-input type="time" label="Time" value="09:30"></odd-input></div>`,
+      );
+      const [date, time] = [...box.querySelectorAll('odd-input')] as HTMLElement[];
+      await settle(date!);
+      await settle(time!);
+      const dateControl = shadowPart(date!, 'control');
+      await interact(state, dateControl);
+      await settle(date!);
+      const root = `Date / time input / ${state}`;
+      const targets: Target[] = [
+        { layer: [root, 'Publish date'], el: shadowPart(date!, 'label'), kind: 'text' },
+        { layer: [root, 'Time'], el: shadowPart(time!, 'label'), kind: 'text' },
+        { layer: [root, 'Surface'], el: dateControl, kind: 'frame' },
+        {
+          layer: [root, 'Surface', invalid ? 'mm / dd / yyyy' : '10 / 24 / 2026'],
+          el: dateControl,
+          kind: 'text',
+        },
+        { layer: [root, 'Surface [2]'], el: shadowPart(time!, 'control'), kind: 'frame' },
+        {
+          layer: [root, 'Surface [2]', '09 : 30 AM'],
+          el: shadowPart(time!, 'control'),
+          kind: 'text',
+        },
+      ];
+      if (invalid)
+        targets.push({
+          layer: [root, 'Enter a valid date.'],
+          el: shadowPart(date!, 'error'),
+          kind: 'text',
+        });
+      else
+        targets.push({
+          layer: [root, 'Uses your local date and time format.'],
+          el: shadowPart(date!, 'description'),
+          kind: 'text',
+        });
+      if (state === 'Focus')
+        targets.push({ layer: [root, 'Surface [3]'], el: dateControl, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/dateTime', { State: state }, targets));
+    });
+});

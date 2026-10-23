@@ -30,7 +30,7 @@ const onAction = (event: CustomEvent<{ id: string; action: string }>) => void ev
   <!-- @vue-expect-error the action detail has no expanded -->
   <odd-side-nav @odd-action="(event) => event.detail.expanded" />
   <!-- @vue-expect-error type is one of the declared input types -->
-  <odd-input type="number" />
+  <odd-input type="color" />
   <!-- @vue-expect-error the odd-prompt-submit detail has no id -->
   <odd-prompt-input @odd-prompt-submit="(event) => event.detail.id" />
 </template>

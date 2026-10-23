@@ -27,10 +27,16 @@ export const fieldStructuralStyles = css`
   .control-box > * {
     grid-area: 1 / 1;
   }
+  .control-start,
   .control-end {
-    justify-self: end;
     display: flex;
     pointer-events: none;
+  }
+  .control-start {
+    justify-self: start;
+  }
+  .control-end {
+    justify-self: end;
   }
   /* The chevron replaces the engine's arrow, so every engine draws the same select. */
   .control-box > select.control {

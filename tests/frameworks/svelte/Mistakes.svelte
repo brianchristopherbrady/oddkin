@@ -10,5 +10,5 @@
 
 <odd-side-nav items={1}></odd-side-nav>
 <odd-side-nav onodd-action={(event) => event.detail.expanded}></odd-side-nav>
-<odd-input type="number"></odd-input>
+<odd-input type="color"></odd-input>
 <odd-prompt-input onodd-prompt-submit={(event) => event.detail.id}></odd-prompt-input>

@@ -1825,7 +1825,8 @@
         "odd-split-panel",
         "odd-tree",
         "odd-listbox",
-        "odd-select"
+        "odd-select",
+        "odd-input"
       ],
       "figma": ["34 icons on page 158:22"]
     },

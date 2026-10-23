@@ -32,7 +32,13 @@ interface Variable {
 const atLeastTarget = (value: string) => `max(${value}, var(--odd-target-min))`;
 const components: Record<
   string,
-  { part: string; content: string; variables: Record<string, Variable> }
+  {
+    part: string;
+    content: string;
+    variables: Record<string, Variable>;
+    /** Attributes under which every documented part renders. */
+    allParts?: string;
+  }
 > = {
   'odd-button': {
     part: 'control',
@@ -74,6 +80,7 @@ const components: Record<
   'odd-input': {
     part: 'control',
     content: '',
+    allParts: 'type="search"',
     variables: {
       '--odd-field-background': {
         property: 'background-color',
@@ -178,8 +185,8 @@ async function render(markup: string, root: ParentNode = container): Promise<Hos
   flush();
   return hosts;
 }
-const instance = (tag: string, variable?: Variable) =>
-  `<${tag} label="Name" ${variable?.attributes ?? ''}>${components[tag]!.content}</${tag}>`;
+const instance = (tag: string, variable?: Variable, attributes = variable?.attributes ?? '') =>
+  `<${tag} label="Name" ${attributes}>${components[tag]!.content}</${tag}>`;
 const partOf = (host: Element, name: string) =>
   host.shadowRoot!.querySelector<HTMLElement>(`[part~="${name}"]`)!;
 /** The computed value of `property: value` for an element beside `host`, in the same scope. */
@@ -384,7 +391,7 @@ describe('parts', () => {
     page.replaceSync(
       parts.map((name) => `${tag}::part(${name}) { outline: 3px dotted rgb(9, 8, 7); }`).join('\n'),
     );
-    const [host] = await render(instance(tag));
+    const [host] = await render(instance(tag, undefined, components[tag]!.allParts));
     const rendered = [...host!.shadowRoot!.querySelectorAll('[part]')].flatMap((el) =>
       el.getAttribute('part')!.split(/\s+/),
     );

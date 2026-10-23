@@ -140,12 +140,17 @@ element also takes `strings` (partial record of its built-in text) when it shows
 run, as a checkbox's checkedness, then dispatches `input` and `change`; a cancelled `click` restores it and dispatches
 nothing. Figma `toggleButton` Value On → `pressed`: the selection colours in every appearance. Unchanged otherwise.
 
-**`odd-input`** — `type` adds `number`, `date`, `time`, `datetime-local`, `month`, `week`; adds `min`, `max`, `step`
-(number and date types), `minlength`, `maxlength`, `pattern` (text types), `inputmode`. `type="number"`: parts
-`decrement` and `increment` (native buttons, `tabindex="-1"`, named from `strings`; arrow keys already step) call
-`stepDown()`/`stepUp()` and dispatch `input` and `change`. `type="search"`: part `icon` (search glyph) and part `clear`
-(a button shown when there is a value and the field is enabled and editable; clears, dispatches `input` and `change`,
-keeps focus); the native cancel button is hidden. Date and time types keep the native picker indicator.
+**`odd-input`** — `type` adds `number`, `date`, `time`, `datetime-local`, `month`, `week` (an engine without
+one falls back to text, as the native input does); adds `min`, `max`, `step` (strings, as on `<input>`: number and
+date types), `minlength`, `maxlength`, `pattern` (text types). The global `inputmode` attribute on the host is
+forwarded to the native input (a property of that name would shadow `HTMLElement.inputMode`). `type="number"` keeps
+the engine's spin buttons, unstyled, and arrow keys step: only engine-prefixed pseudo-elements hide them, and the CSS
+policy allows no prefixed-only feature, so there are no `decrement`/`increment` parts and Figma's stepper segment is
+a deliberate difference. `type="search"` is a text input with `role="searchbox"` and `enterkeyhint="search"`, for
+the same reason (the native cancel button cannot be hidden otherwise): part `icon` (the search glyph) and part
+`clear` (a button, `tabindex="-1"`, named by `strings.clear`, shown while there is a value and the field is enabled
+and editable; it clears, dispatches `input` and `change`, and keeps focus). Escape clears too. Date and time types
+keep the native picker indicator.
 
 ### 3.2 Display
 
