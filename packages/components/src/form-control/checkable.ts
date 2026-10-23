@@ -1,4 +1,4 @@
-import { event, prop } from '@oddkin/core/element';
+import { event, prop, type ElementEvents } from '@oddkin/core/element';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
 import { OddkinFormControl, type FormControlOptions } from './form-control.js';
 
@@ -33,6 +33,7 @@ export class OddkinCheckable extends OddkinFormControl.with({
 }) {
   static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
   static override events = { input: inputEvent, change: changeEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinCheckable>;
 
   // undefined until set or toggled ("dirty"), then independent of `defaultChecked`.
   readonly #checked = signal<boolean | undefined>(undefined);

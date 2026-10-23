@@ -190,6 +190,8 @@ describe('Theme Studio page data', () => {
       'surface:odd-card',
       'badge:odd-badge',
       'textInput:odd-input',
+      'checkbox:odd-checkbox',
+      'switch:odd-switch',
       'primaryAction:odd-button',
       'secondaryAction:odd-button',
       'navigation:odd-side-nav',
