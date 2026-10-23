@@ -86,6 +86,18 @@
       "types": "./dist/chip/chip.define.d.ts",
       "default": "./dist/chip/chip.define.js"
     },
+    "./disclosure": {
+      "types": "./dist/disclosure/index.d.ts",
+      "default": "./dist/disclosure/index.js"
+    },
+    "./disclosure/foundation": {
+      "types": "./dist/disclosure/foundation.d.ts",
+      "default": "./dist/disclosure/foundation.js"
+    },
+    "./define/disclosure": {
+      "types": "./dist/disclosure/disclosure.define.d.ts",
+      "default": "./dist/disclosure/disclosure.define.js"
+    },
     "./empty-state": {
       "types": "./dist/empty-state/index.d.ts",
       "default": "./dist/empty-state/index.js"

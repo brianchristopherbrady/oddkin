@@ -99,6 +99,11 @@ const states = `
   <odd-spinner>Loading workspace…</odd-spinner>
   <odd-spinner size="sm"></odd-spinner>
   <odd-empty-state label="No matching projects">Try a different search.<odd-button slot="footer">Clear filters</odd-button></odd-empty-state>
+  <h2>Disclosure and navigation</h2>
+  <odd-disclosure label="Advanced settings">Additional options.</odd-disclosure>
+  <odd-disclosure label="Shipping" open>Ships in two days. <a href="#returns">Returns</a></odd-disclosure>
+  <odd-disclosure label="Archived settings" disabled>Not available.</odd-disclosure>
+  <div><odd-disclosure name="faq" label="How do themes work?" open>Semantic tokens adapt each control.</odd-disclosure><odd-disclosure name="faq" label="Which browsers are supported?">Current engines.</odd-disclosure></div>
 `;
 
 let tokens: HTMLLinkElement;

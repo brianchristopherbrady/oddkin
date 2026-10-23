@@ -235,7 +235,10 @@ when the form becomes valid. Entered values are never cleared.
 
 **`odd-disclosure`** (`Disclosure`, `Accordion`) — native `<details>` and `<summary>`. `label` (summary text),
 `open` (reflected), `name` (exclusive group: opening one closes the others with the same `name` in the same tree, as
-native `<details name>` does inside one tree), `disabled`. Dispatches `toggle` at the host once per change.
+native `<details name>` does inside one tree; an open member inserted into, or renamed into, a group that has one
+open closes itself), `disabled` (the summary leaves the Tab order and reports `aria-disabled`). Dispatches `toggle`
+(a `ToggleEvent`) at the host once per change, from any source, including find-in-page. Adjacent members of one group
+draw as one surface with dividers (Figma `Accordion`; custom states `joined-start`, `joined-end`).
 
 **`odd-tabs`** (`Tabs`) — `label` (names the tab list), `value` (the selected panel's `value`), `orientation:
 horizontal | vertical = horizontal`, `activation: automatic | manual = automatic` (APG). Children: `odd-tab-panel`

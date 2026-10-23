@@ -24,8 +24,9 @@ const declarations = (dir: string): string[] =>
         : [],
   );
 const typings = declarations(join(root, 'dist')).join('\n');
-// Native events an element re-dispatches at its host keep their DOM names and types.
-const nativeEvents = new Set(['input', 'change']);
+// Native events an element re-dispatches at its host keep their DOM names and types (ADR 0045
+// §5.1, NATIVE_EVENTS in scripts/vocabulary.mjs).
+const nativeEvents = new Set(['input', 'change', 'toggle', 'beforetoggle', 'close', 'cancel']);
 const events = cem.modules
   .flatMap((m) => m.declarations ?? [])
   .filter((d) => d.tagName)

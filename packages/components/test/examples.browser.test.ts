@@ -86,6 +86,11 @@ describe('authored examples', () => {
     'odd-alert/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
     'odd-avatar/nameAttribute': { observe: (el) => el['label'], wrong: '' },
     'odd-chip/removableFalse': { observe: (el) => el['removable'], wrong: true },
+    'odd-disclosure/openFalse': { observe: (el) => el['open'], wrong: true },
+    'odd-disclosure/summarySlot': {
+      observe: (el) => el.shadowRoot!.querySelector('[part="label"]')!.textContent,
+      wrong: '',
+    },
     'odd-empty-state/actionsSlot': {
       observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
       wrong: false,

@@ -11,6 +11,7 @@ import '@oddkin/components/define/badge';
 import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
 import '@oddkin/components/define/chip';
+import '@oddkin/components/define/disclosure';
 import '@oddkin/components/define/empty-state';
 import '@oddkin/components/define/icon';
 import '@oddkin/components/define/input';
@@ -185,7 +186,9 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-progress label="Uploading" value="0.4"></odd-progress>
         <odd-progress label="Preparing"></odd-progress>
         <odd-skeleton lines="3"></odd-skeleton>
-        <odd-spinner>Loading…</odd-spinner>`;
+        <odd-spinner>Loading…</odd-spinner>
+        <odd-disclosure name="faq" label="One" open>1</odd-disclosure>
+        <odd-disclosure name="faq" label="Two">2</odd-disclosure>`;
       const elements = [button, input, card, nav, badge, ...display.children];
       container.append(button, input, card, nav, badge, display);
       await tick();

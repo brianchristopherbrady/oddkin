@@ -25,6 +25,7 @@ export const ATTRIBUTES = {
   description: { type: 'string' },
   error: { type: 'string' },
   current: { type: 'string' },
+  name: { type: 'string' },
   // A string as on <input>; a number on odd-progress, as on <progress> (ADR 0045 §2).
   value: { type: 'string', native: { 'odd-progress': 'number' } },
   loading: { type: 'boolean' },
