@@ -109,6 +109,29 @@ export function readOptions(host: Element): Declared<OptionRecord> {
   return { records, selected };
 }
 
+/** An option and its index in the collection. */
+export interface OptionRow {
+  readonly option: OptionRecord;
+  readonly index: number;
+}
+/** A run of options; `label` is the group's, or undefined for an option outside any group. */
+export interface OptionGroup {
+  readonly label: string | undefined;
+  readonly rows: OptionRow[];
+}
+
+/** Consecutive options with the same `group` form one group; options without one stand alone. */
+export function groupsOf(options: readonly OptionRecord[]): OptionGroup[] {
+  const groups: OptionGroup[] = [];
+  options.forEach((option, index) => {
+    const last = groups[groups.length - 1];
+    if (last && option.group !== undefined && last.label === option.group)
+      last.rows.push({ option, index });
+    else groups.push({ label: option.group, rows: [{ option, index }] });
+  });
+  return groups;
+}
+
 function menuItem(option: HTMLOptionElement, group: HTMLOptGroupElement | null): MenuActionRecord {
   return {
     id: option.value,

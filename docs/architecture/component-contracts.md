@@ -226,10 +226,17 @@ record. Use `odd-tabs` to switch content panels.
 `step = 1`, `name`, `disabled`. Parts `output` (current value) and `min-label`/`max-label` (endpoints);
 `renderValue?: (value: number) => string` formats all three.
 
-**`odd-select`** (`select`) — native `<select>` built from the options (§2.2). Field anatomy, `name`, `value`,
-`required`, `disabled`, `placeholder` (a disabled empty first option). The browser draws the picker;
-`appearance: base-select` is a gated enhancement drawn with the option-row module (F13). No `multiple`: use
-`odd-listbox` or `odd-combobox multiple`.
+**`odd-select`** (`select`) — native `<select>` built from the options (§2.2). Field anatomy, `name`, `value` (the
+attribute is the default, then the last `<option selected>`, then, without a placeholder, the first usable option, as
+native), `options`, `required`, `disabled`, `placeholder` (a disabled empty first option: native valueMissing with
+`required`, secondary text while shown). The closed control is the shared control module with Oddkin's chevron
+(`appearance: none`); native `input` crosses the shadow boundary and `change` is re-dispatched at the host; reset
+restores the declared choice. The browser draws the picker; where `appearance: base-select` and `::picker(select)` are
+supported (both gate it), the picker is Figma's raised listbox surface (the overlay module's `overlayPickerStyles`)
+with square rows between dividers, drawn with the option-row module (`optionRowPickerStyles`), and the placeholder
+stays out of it (F13, features.json `customizable-select`). WebKit reports a `style-src-attr` violation per native
+`<select>` under a strict `style-src` (§10.2 of css-architecture.md); the component documents it as a limitation. No
+`multiple`: use `odd-listbox` or `odd-combobox multiple`.
 
 **`odd-listbox`** (`listbox`) — persistent choices. Field anatomy, `name`, `value` (the attribute is the default),
 `values` (with `multiple`), `options`, `multiple`, `required`, `disabled`, `loading`, `strings` (`loading`, `empty`),

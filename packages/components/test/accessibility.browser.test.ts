@@ -130,6 +130,9 @@ const states = `
   <odd-listbox label="Notify me about" name="topics" multiple required error="Choose at least one topic"><optgroup label="Activity"><option value="mentions" title="When someone mentions you">Mentions</option><option value="comments">Comments</option></optgroup><option value="digest">Weekly digest</option></odd-listbox>
   <odd-listbox label="Region" loading></odd-listbox>
   <odd-listbox label="Archive" disabled><option value="a">2025</option></odd-listbox>
+  <odd-select label="Workspace role" name="role" description="Who can change things"><option value="viewer">Viewer</option><option value="editor" selected>Editor</option><option value="owner" disabled>Owner</option></odd-select>
+  <odd-select label="Region" placeholder="Choose a region…" required error="Choose a region to continue"><optgroup label="Europe"><option value="fra" title="Germany">Frankfurt</option></optgroup><option value="any">Any region</option></odd-select>
+  <odd-select label="Archive" disabled><option value="a">2025</option></odd-select>
   <h2>Layout</h2>
   <odd-split-panel label="Resize project files" position="30"><section slot="start"><h3>Project files</h3><a href="#overview">Overview</a></section><section slot="end"><h3>Design system</h3><p>Ready to review.</p></section></odd-split-panel>
 `;

@@ -82,6 +82,7 @@ describe('change impact on @oddkin/components', () => {
         'example:odd-empty-state/default',
         'example:odd-input/inForm',
         'example:odd-listbox/inForm',
+        'example:odd-select/inForm',
         ...['default', 'selection', 'vertical'].map((name) => `example:odd-toolbar/${name}`),
       ].sort(),
     );

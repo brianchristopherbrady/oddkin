@@ -1702,6 +1702,9 @@
     "odd-progress": {
       "dependencies": []
     },
+    "odd-select": {
+      "dependencies": []
+    },
     "odd-side-nav": {
       "dependencies": [],
       "reason": "Entries are parts rendered from the navigation item model."
@@ -1761,7 +1764,8 @@
         "odd-switch",
         "odd-model-select",
         ".odd-field recipe",
-        "odd-listbox"
+        "odd-listbox",
+        "odd-select"
       ],
       "note": "The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe."
     },
@@ -1820,7 +1824,8 @@
         "odd-breadcrumbs",
         "odd-split-panel",
         "odd-tree",
-        "odd-listbox"
+        "odd-listbox",
+        "odd-select"
       ],
       "figma": ["34 icons on page 158:22"]
     },
@@ -1836,11 +1841,11 @@
     {
       "id": "option-row",
       "kind": "style",
-      "home": "@oddkin/components/styles (optionRowStructuralStyles, optionRowStyles)",
+      "home": "@oddkin/components/styles (optionRowStructuralStyles, optionRowStyles); optionRowPickerStyles (the gated select picker rows, imported relatively from styles/option-row.styles.ts)",
       "decision": "Option and menu rows: height, padding, selected check, active and disabled states.",
-      "status": "existing (first element consumers: odd-listbox, odd-menu; Agent 1's odd-select enhancement)",
+      "status": "existing (element consumers: odd-listbox, odd-select's customizable picker; next odd-menu)",
       "figma": ["ListboxOption", "MenuItem", "CommandItem", "CheckboxOption"],
-      "code": ["odd-listbox"]
+      "code": ["odd-listbox", "odd-select"]
     },
     {
       "id": "nav-row",
@@ -1888,7 +1893,7 @@
         "combobox",
         "multiselect"
       ],
-      "code": ["odd-popover", "odd-dialog"]
+      "code": ["odd-popover", "odd-dialog", "odd-select"]
     },
     {
       "id": "form",
@@ -1896,7 +1901,7 @@
       "home": "@oddkin/core/controllers/form",
       "decision": "Form association, validity, reset, restore.",
       "status": "existing",
-      "code": ["odd-input", "odd-checkbox", "odd-switch", "odd-listbox"],
+      "code": ["odd-input", "odd-checkbox", "odd-switch", "odd-listbox", "odd-select"],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]
     },
@@ -1916,7 +1921,7 @@
       "decision": "Collection model, selection, typeahead, active descendant.",
       "status": "in progress (typeahead and active descendant existing)",
       "figma": ["listbox", "combobox", "multiselect", "Menu", "CommandPalette", "Tree"],
-      "code": ["odd-breadcrumbs", "odd-listbox"]
+      "code": ["odd-breadcrumbs", "odd-listbox", "odd-select"]
     },
     {
       "id": "position",

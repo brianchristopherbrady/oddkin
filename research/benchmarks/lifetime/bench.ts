@@ -22,6 +22,7 @@ import '@oddkin/components/define/listbox';
 import '@oddkin/components/define/pagination';
 import '@oddkin/components/define/popover';
 import '@oddkin/components/define/progress';
+import '@oddkin/components/define/select';
 import '@oddkin/components/define/side-nav';
 import '@oddkin/components/define/skeleton';
 import '@oddkin/components/define/spinner';
@@ -210,7 +211,8 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-switch name="alerts" checked>Alerts</odd-switch>
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
         <odd-tree label="Files" value="b"></odd-tree>
-        <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>`;
+        <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
+        <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>`;
       (display.querySelector('odd-tree') as HTMLElement & { items: unknown }).items = [
         { id: 'a', label: 'A', children: [{ id: 'b', label: 'B' }] },
       ];

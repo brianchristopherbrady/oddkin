@@ -973,18 +973,41 @@
     },
     {
       "id": "customizable-select",
-      "syntax": "appearance: base-select, ::picker(select)",
+      "syntax": "appearance: base-select, ::picker(select), ::picker-icon, ::checkmark",
       "kind": "css",
-      "bcd": ["css.properties.appearance.base-select", "css.selectors.picker"],
+      "bcd": [
+        "css.properties.appearance.base-select",
+        "css.selectors.picker",
+        "css.selectors.picker-icon",
+        "css.selectors.checkmark"
+      ],
       "webFeature": "customizable-select",
       "adoption": "enhancement",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
-      "baseline": "A styled native <select> (closed state only) keeps native semantics, keyboard behaviour, validation, and form participation.",
-      "enhanced": "The open picker and options take Oddkin styling.",
-      "gate": "@supports (appearance: base-select) gating the complete enhanced rule set",
-      "differences": "Picker appearance only; the control is never replaced to obtain styling.",
-      "detectCss": "(appearance: base-select)"
+      "baseline": "A styled native <select>: the closed control takes the field look with Oddkin's chevron (appearance: none); the engine draws the open picker and its options, with native semantics, keyboard behaviour, validation, and form participation.",
+      "enhanced": "The open picker is the raised listbox surface (the overlay look) with square option rows of the option-row module between dividers, the chosen row's selection surface and check at the row's end; a placeholder stays out of the list.",
+      "gate": "@supports (appearance: base-select) and selector(::picker(select)) gating the complete enhanced rule set, with ::picker-icon and ::checkmark each behind their own selector() gate",
+      "differences": "Picker appearance only; the control, its options, and its events are the same native <select> in both paths, never replaced to obtain styling.",
+      "detectCss": "(appearance: base-select) and selector(::picker(select))",
+      "usedBy": [
+        "odd-select: the select and its picker opt in (select.structural.styles); the picker surface (overlay-surface module, overlayPickerStyles); the option rows (option-row module, optionRowPickerStyles), squared between dividers (select.styles)"
+      ],
+      "tests": [
+        {
+          "file": "packages/components/test/select.browser.test.ts",
+          "name": "draws the open picker as the raised listbox surface with square option rows (appearance: base-select)"
+        },
+        {
+          "file": "packages/components/test/select.browser.test.ts",
+          "name": "leaves the open picker to the engine where appearance: base-select is not supported"
+        },
+        {
+          "file": "packages/components/test/figma-parity.collections.browser.test.ts",
+          "name": "picker rows as ListboxOption"
+        }
+      ],
+      "notes": "Both conditions gate it: Firefox 149 accepts appearance: base-select without ::picker(). In the test engines, Chromium 156 and WebKit 27.2 take the enhanced path and Firefox 157 the baseline. WebKit reports unstyled computed values for a base-select select in a shadow root while drawing it styled, so its tests measure rendered boxes."
     },
     {
       "id": "open-pseudo",

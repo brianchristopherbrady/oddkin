@@ -1,31 +1,10 @@
 import { html, repeat } from '@oddkin/core/template';
-import type { OptionRecord } from '../collection/collection.js';
+import { groupsOf, type OptionRow } from '../collection/collection.js';
 import { externalDescriptionTemplate } from '../form-control/description.js';
 import { checkGlyph } from '../styles/glyphs.js';
 import type { OddkinListbox } from './listbox.js';
 
 const spinner = html`<span class="spinner"></span>`;
-
-interface Row {
-  readonly option: OptionRecord;
-  readonly index: number;
-}
-interface Group {
-  readonly label: string | undefined;
-  readonly rows: Row[];
-}
-
-/** Consecutive options with the same `group` form one group; options without one stand alone. */
-const groupsOf = (options: readonly OptionRecord[]): Group[] => {
-  const groups: Group[] = [];
-  options.forEach((option, index) => {
-    const last = groups[groups.length - 1];
-    if (last && option.group !== undefined && last.label === option.group)
-      last.rows.push({ option, index });
-    else groups.push({ label: option.group, rows: [{ option, index }] });
-  });
-  return groups;
-};
 
 /**
  * Anatomy: the field (`label`, `description`, and `error` parts) around `part="base"`, the surface
@@ -40,7 +19,7 @@ export const listboxTemplate = (listbox: OddkinListbox) => {
   const active = listbox._activeIndex.value;
   const disabled = listbox.disabled || listbox._formDisabled.value;
   const strings = listbox._strings;
-  const rows = (each: readonly Row[]) =>
+  const rows = (each: readonly OptionRow[]) =>
     repeat(
       each,
       ({ option }) => option.value,

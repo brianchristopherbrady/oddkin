@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 115 stylesheets, 290 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 119 stylesheets, 295 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -45,14 +45,14 @@ Legend: ✓ *n* — fully supported at the floor (first full version *n*); parti
 | round-function | `round()` | planned (M9) | ✓ 125 | ✓ 125 | ✓ 118 | ✓ 15.4 | — | newly (2024-05-17) | Available at the floor (Chrome 125 is the first supporting Chrome). Candidate for snapping fluid spacing and type to a grid. | — |
 | dynamic-viewport-units | `dvh, svh, lvh (and their inline and width forms)` | implemented (M10) | ✓ 108 | ✓ 108 | ✓ 101 | ✓ 15.4 | — | widely (2025-06-05) | odd-dialog: its maximum block size (100dvh less a margin). Dialog and drawer maximum sizes use dvh/svh so mobile browser toolbars do not hide content. | `packages/components/test/dialog.browser.test.ts` |
 | dialog-element | `<dialog>, showModal(), ::backdrop` | implemented (M10) | ✓ 37 | ✓ 79 | ✓ 98 | ✓ 15.4 | — | widely (2024-09-14) | odd-dialog (a <dialog> in its shadow root). the modal wiring (packages/components/src/overlay/dialog.ts) for the drawer and the command palette. Modal dialogs use the native top layer, page inertness, focus handling, and Escape dismissal. | `packages/components/test/dialog.browser.test.ts` |
-| popover-api | `popover, showPopover(), :popover-open` | planned (M10) | ✓ 114 | ✓ 114 | ✓ 125 | ✓ 17 | Safari iOS: partial (full: 18.3) | newly (2025-01-27) | Nonmodal overlays (menus, listboxes, tooltips) render in the top layer with an explicit close path. **Floor exception:** Safari iOS: Partial in Safari iOS 17.0–18.2: tapping outside a popover does not light-dismiss it (WebKit bug 267688). Overlays must offer an explicit close control and must not depend on light dismiss. | — |
+| popover-api | `popover, showPopover(), :popover-open` | implemented (M10) | ✓ 114 | ✓ 114 | ✓ 125 | ✓ 17 | Safari iOS: partial (full: 18.3) | newly (2025-01-27) | odd-popover (the host is the popover). the overlay wiring for inner [popover] surfaces (packages/components/src/overlay). Nonmodal overlays (menus, listboxes, tooltips) render in the top layer with an explicit close path. **Floor exception:** Safari iOS: Partial in Safari iOS 17.0–18.2: tapping outside a popover does not light-dismiss it (WebKit bug 267688). Overlays must offer an explicit close control and must not depend on light dismiss. | `packages/components/test/popover.browser.test.ts` |
 | inert | `inert attribute` | planned (M10) | ✓ 102 | ✓ 102 | ✓ 112 | ✓ 15.5 | — | widely (2025-10-11) | Closing and hidden overlay content is inert so focus and assistive technology cannot reach it, independent of any animation. | — |
 | user-pseudos | `:user-invalid, :user-valid` | evaluated | ✓ 119 | ✓ 119 | ✓ 88 | ✓ 16.5 | — | widely (2026-05-02) | Available at the floor. odd-input does not use them on its inner control: its error state also covers a custom error message and failed submissions, so the controller-derived :state(user-invalid) is the single source. | — |
 | dir-pseudo | `:dir()` | planned (M10) | ✓ 120 | ✓ 120 | ✓ 49 | ✓ 16.4 | — | widely (2026-06-07) | Direction-dependent icons (chevrons, arrows) flip with the inherited direction, including inside shadow roots. | — |
 | containment | `contain, contain-intrinsic-size` | planned (M8) | ✓ 83 | ✓ 83 | ✓ 107 | ✓ 17 | — | widely (2024-09-14) | Not applied by default. Containment changes containing blocks, stacking, intrinsic size, and overflow clipping, so it is added per component only with measurements and checks that focus rings, shadows, overlays, and sticky content still render. | — |
 | resize | `resize: vertical` | planned (M10) | ✓ 1 | ✓ 79 | ✓ 4 | ✓ 3 | Firefox Android: ✗ (none); Safari iOS: ✗ (none) | limited | examples/css-gallery (native textarea). odd-prompt-input, odd-action-approval (auto-growing or vertical text areas). Textareas can be resized vertically by the user where the platform offers a resize handle; auto-growing text areas turn the handle off. **Floor exception:** Firefox Android: No resize handle on Firefox for Android; long content scrolls inside the textarea. Safari iOS: No resize handle on iOS; long content scrolls inside the textarea. | — |
 
-## Enhancements (gated) (15)
+## Enhancements (gated) (16)
 
 | Feature | Syntax | Status | Chrome | Edge | Firefox | Safari | Gate | Baseline behaviour | Enhanced behaviour | Differences | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -67,7 +67,7 @@ Legend: ✓ *n* — fully supported at the floor (first full version *n*); parti
 | overscroll-behavior | `overscroll-behavior: contain` | planned (M10) | partial (full: 144) | ✓ 79 | partial (full: 150) | partial (none) | Literal declaration (ignored where unsupported) | Scrolling past the end of an overlay may scroll the page behind it. | Overlay scrolling stays contained. | Scroll chaining only. | — |
 | accent-color | `accent-color` | planned (M10) | ✓ 93 | ✓ 93 | ✓ 92 | partial (full: 26.2) | Literal declaration (ignored where unsupported) | Native checkboxes, radios, and ranges use system accent colours. | Native controls take the brand action colour. | Colour only; semantics and keyboard behaviour stay native. | — |
 | resize-cursors | `cursor: col-resize, cursor: row-resize` | implemented | ✓ 1 | ✓ 12 | ✓ 1.5 | ✓ 3 | Literal fallback: cursor: pointer first, then the resize cursor (an unsupported value is dropped at parse time) | The separator shows the pointer cursor; touch devices show no cursor at all. | A pointer over the separator shows the column or row resize cursor. | Only the cursor image differs; dragging and keys work the same. | `packages/components/test/split-panel.browser.test.ts` |
-| customizable-select | `appearance: base-select, ::picker(select)` | planned (M10) | ✗ (full: 135) | ✗ (full: 135) | ✗ (none) | ✗ (full: 27) | @supports (appearance: base-select) gating the complete enhanced rule set | A styled native <select> (closed state only) keeps native semantics, keyboard behaviour, validation, and form participation. | The open picker and options take Oddkin styling. | Picker appearance only; the control is never replaced to obtain styling. | — |
+| customizable-select | `appearance: base-select, ::picker(select), ::picker-icon, ::checkmark` | implemented (M10) | ✗ (full: 135) | ✗ (full: 135) | ✗ (none) | ✗ (full: 27) | @supports (appearance: base-select) and selector(::picker(select)) gating the complete enhanced rule set, with ::picker-icon and ::checkmark each behind their own selector() gate | A styled native <select>: the closed control takes the field look with Oddkin's chevron (appearance: none); the engine draws the open picker and its options, with native semantics, keyboard behaviour, validation, and form participation. | The open picker is the raised listbox surface (the overlay look) with square option rows of the option-row module between dividers, the chosen row's selection surface and check at the row's end; a placeholder stays out of the list. | Picker appearance only; the control, its options, and its events are the same native <select> in both paths, never replaced to obtain styling. | `packages/components/test/select.browser.test.ts`, `packages/components/test/figma-parity.collections.browser.test.ts` |
 | open-pseudo | `:open` | planned (M10) | ✗ (full: 133) | ✗ (full: 133) | ✗ (full: 136) | ✗ (full: 26.5) | @supports selector(:open), never inside a shared selector list | Open styling uses [open] attributes and :popover-open. | :open covers details, dialog, and select pickers uniformly. | None when both selectors express the same state. | — |
 | element-reflection | `ElementInternals.ariaLabelledByElements` | implemented | ✗ (full: 135) | ✗ (full: 135) | ✗ (full: 136) | ✓ 16.4 | Feature detection: 'ariaLabelledByElements' in ElementInternals.prototype | A card is a named region only with label; without it, no landmark role is set. | A slotted heading names the region across the shadow boundary. | Without element reflection, a heading-only card is not a landmark; set label for the region. | `packages/components/test/card.browser.test.ts` |
 | move-before | `Element.moveBefore()` | implemented | ✗ (full: 133) | ✗ (full: 133) | ✗ (full: 144) | ✗ (none) | Feature detection: 'moveBefore' in Element.prototype | Moves remove and re-insert nodes, restoring focus and selection afterwards. | State-preserving moves keep focus, iframes, and animations; elements that opt in keep their connection. | Iframes reload and animations restart during reorders without moveBefore. | `packages/core/test/element.browser.test.ts` |
@@ -143,6 +143,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/checkbox/checkbox.styles.js (checkboxStyles)` | yes | 0 |
 | `packages/components/dist/chip/chip.structural.styles.js (chipStructuralStyles)` | yes | 32 |
 | `packages/components/dist/chip/chip.styles.js (chipStyles)` | yes | 26 |
+| `packages/components/dist/dialog/dialog.structural.styles.js (dialogStructuralStyles)` | yes | 38 |
+| `packages/components/dist/dialog/dialog.styles.js (dialogStyles)` | yes | 17 |
 | `packages/components/dist/disclosure/disclosure.structural.styles.js (disclosureStructuralStyles)` | yes | 33 |
 | `packages/components/dist/disclosure/disclosure.styles.js (disclosureStyles)` | yes | 26 |
 | `packages/components/dist/empty-state/empty-state.structural.styles.js (emptyStateStructuralStyles)` | yes | 21 |
@@ -156,10 +158,10 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/pagination/pagination.styles.js (paginationStyles)` | yes | 20 |
 | `packages/components/dist/popover/popover.structural.styles.js (popoverStructuralStyles)` | yes | 9 |
 | `packages/components/dist/popover/popover.styles.js (popoverStyles)` | yes | 6 |
-| `packages/components/dist/dialog/dialog.structural.styles.js (dialogStructuralStyles)` | yes | 38 |
-| `packages/components/dist/dialog/dialog.styles.js (dialogStyles)` | yes | 17 |
 | `packages/components/dist/progress/progress.structural.styles.js (progressStructuralStyles)` | yes | 35 |
 | `packages/components/dist/progress/progress.styles.js (progressStyles)` | yes | 12 |
+| `packages/components/dist/select/select.structural.styles.js (selectStructuralStyles)` | yes | 23 |
+| `packages/components/dist/select/select.styles.js (selectStyles)` | yes | 11 |
 | `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
 | `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 22 |
 | `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 38 |
@@ -178,10 +180,11 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/styles/nav-row.structural.styles.js (navRowStructuralStyles)` | yes | 30 |
 | `packages/components/dist/styles/nav-row.styles.js (navRowStyles)` | yes | 20 |
 | `packages/components/dist/styles/option-row.structural.styles.js (optionRowStructuralStyles)` | yes | 34 |
+| `packages/components/dist/styles/option-row.styles.js (optionRowPickerStyles)` | yes | 25 |
 | `packages/components/dist/styles/option-row.styles.js (optionRowStyles)` | yes | 21 |
 | `packages/components/dist/styles/overlay-surface.structural.styles.js (overlaySurfaceStructuralStyles)` | yes | 19 |
-| `packages/components/dist/styles/overlay-surface.styles.js (overlaySurfaceStyles)` | yes | 26 |
 | `packages/components/dist/styles/overlay-surface.styles.js (overlayPickerStyles)` | yes | 12 |
+| `packages/components/dist/styles/overlay-surface.styles.js (overlaySurfaceStyles)` | yes | 26 |
 | `packages/components/dist/styles/spinner.styles.js (spinnerStyles)` | yes | 22 |
 | `packages/components/dist/styles/tone.styles.js (toneStyles)` | yes | 2 |
 | `packages/components/dist/styles/visually-hidden.styles.js (visuallyHiddenStyles)` | yes | 13 |

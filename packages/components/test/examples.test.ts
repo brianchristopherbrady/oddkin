@@ -124,6 +124,7 @@ describe('component examples', () => {
       'odd-empty-state/default': ['component:odd-button'],
       'odd-input/inForm': ['component:odd-button'],
       'odd-listbox/inForm': ['component:odd-button'],
+      'odd-select/inForm': ['component:odd-button'],
       'odd-tab-panel/default': ['component:odd-tabs'],
       ...Object.fromEntries(
         ['default', 'manual', 'vertical', 'disabledTab', 'orientationColumn'].map((name) => [

@@ -218,6 +218,18 @@
       "types": "./dist/progress/progress.define.d.ts",
       "default": "./dist/progress/progress.define.js"
     },
+    "./select": {
+      "types": "./dist/select/index.d.ts",
+      "default": "./dist/select/index.js"
+    },
+    "./select/foundation": {
+      "types": "./dist/select/foundation.d.ts",
+      "default": "./dist/select/foundation.js"
+    },
+    "./define/select": {
+      "types": "./dist/select/select.define.d.ts",
+      "default": "./dist/select/select.define.js"
+    },
     "./side-nav": {
       "types": "./dist/side-nav/index.d.ts",
       "default": "./dist/side-nav/index.js"

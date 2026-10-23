@@ -21,6 +21,7 @@ import {
 } from './parity.js';
 import { themeValue } from './probe.js';
 import type { OddkinListbox } from '../src/listbox/listbox.js';
+import type { OddkinSelect } from '../src/select/select.js';
 import type { OddkinSplitPanel } from '../src/split-panel/split-panel.js';
 import type { OddkinTree, TreeItemRecord } from '../src/tree/tree.js';
 
@@ -279,7 +280,7 @@ const treeLabel = (el: Element, label: string) => treeRow(el, label).querySelect
 
 deliberate([
   /^ListboxOption \S+ Listbox option strokes \(none\): border /,
-  'odd-listbox draws the divider between its square rows as each later row’s top border (border.default), where Figma’s listbox surface shows a line between options.',
+  'odd-listbox, and odd-select’s customizable picker, draw the divider between square rows as each later row’s top border (border.default), where Figma’s listbox surface shows a line between options.',
 ]);
 deliberate([
   /^listbox (Empty|Loading) Status surface (fills|strokes|stroke\w+Weight|\w+Radius|effects|effectStyle) /,
@@ -438,4 +439,79 @@ describe('Figma parity: odd-tree (Tree)', () => {
       ];
       expectNone(compare('Oddkin/Common/Tree', { State: state }, targets));
     });
+});
+
+const SELECT_ROLES = ROLES.replace(' selected', '');
+const mountSelect = async (attributes: string) => {
+  const el = mount(
+    `<odd-select label="Workspace role" style="inline-size: 320px" ${attributes}>${SELECT_ROLES}</odd-select>`,
+  ) as OddkinSelect;
+  await settle(el);
+  return el.shadowRoot!.querySelector('select')!;
+};
+// The customizable select: its open picker is drawn with the option rows (Chromium, WebKit).
+const customizable = CSS.supports('(appearance: base-select) and selector(::picker(select))');
+
+describe('Figma parity: odd-select (select)', () => {
+  for (const [state, attributes, value] of [
+    [
+      'Closed',
+      'description="Choose the access level." placeholder="Choose a role…"',
+      'Choose a role…',
+    ],
+    ['Disabled', 'description="Choose the access level." value="editor" disabled', 'Editor'],
+    ['Invalid', 'value="editor" error="Choose a role to continue."', 'Editor'],
+  ] as const)
+    it(state, async () => {
+      const select = await mountSelect(attributes);
+      const el = (select.getRootNode() as ShadowRoot).host;
+      // WebKit draws a `base-select` select in a shadow root styled, but reports unstyled
+      // computed values for it; the closed control's rules are the same without it.
+      if (server.browser === 'webkit') select.style.appearance = 'none';
+      const frame = `Select / ${state}`;
+      const targets: Target[] = [
+        { layer: [frame, 'Workspace role'], el: shadowPart(el, 'label'), kind: 'text' },
+        { layer: [frame, 'Dropdown surface', 'Surface'], el: select, kind: 'frame' },
+        { layer: [frame, 'Dropdown surface', 'Surface', value], el: select, kind: 'text' },
+        state === 'Invalid'
+          ? {
+              layer: [frame, 'Choose a role to continue.'],
+              el: shadowPart(el, 'error'),
+              kind: 'text',
+            }
+          : {
+              layer: [frame, 'Choose the access level.'],
+              el: shadowPart(el, 'description'),
+              kind: 'text',
+            },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/select', { State: state }, targets));
+    });
+
+  // The open picker's rows are the shared option row on the listbox surface (computed values of
+  // the picker's options are not reported by WebKit).
+  for (const [selected, state, label] of [
+    ['False', 'Default', 'Viewer'],
+    ['True', 'Default', 'Editor'],
+    ['False', 'Disabled', 'Owner'],
+  ] as const)
+    it.runIf(customizable && server.browser !== 'webkit')(
+      `picker rows as ListboxOption ${selected}/${state}`,
+      async () => {
+        const select = await mountSelect('value="editor"');
+        await userEvent.click(select);
+        await expect.poll(() => select.matches(':open')).toBe(true);
+        const row = [...select.options].find((option) => option.label === label)!;
+        const targets: Target[] = [
+          { layer: ['Listbox option'], el: row, kind: 'frame', gap: 'column-gap' },
+          { layer: ['Listbox option', 'Label'], el: row, kind: 'text' },
+        ];
+        await transitions(targets);
+        expectNone(
+          compare('Oddkin/Common/ListboxOption', { Selected: selected, State: state }, targets),
+        );
+        await userEvent.keyboard('{Escape}');
+      },
+    );
 });
