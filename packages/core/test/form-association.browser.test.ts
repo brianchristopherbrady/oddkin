@@ -226,3 +226,58 @@ describe('FormValue form owner', () => {
     scope.dispose();
   });
 });
+
+// A control drawn without a native one (a listbox): a detached `<select>` supplies the browser's
+// flags and message, and `anchor` is the focusable part they point to.
+class MirroredField extends HTMLElement {
+  static formAssociated = true;
+  readonly internals = this.attachInternals();
+  readonly selected = signal('');
+  readonly mirror = document.createElement('select');
+  readonly target = document.createElement('div');
+  readonly controller = new FormValue({
+    internals: () => this.internals,
+    value: () => this.selected.value || null,
+    control: () => {
+      const value = this.selected.value;
+      this.mirror.required = true;
+      this.mirror.replaceChildren(...(value ? [new Option(value, value, true, true)] : []));
+      return this.mirror;
+    },
+    anchor: () => this.target,
+  });
+  #scope: Scope | undefined;
+  constructor() {
+    super();
+    this.target.tabIndex = 0;
+    this.attachShadow({ mode: 'open' }).append(this.target);
+  }
+  connectedCallback() {
+    this.#scope = createScope({ name: 'mirrored-field' });
+    this.#scope.use(this.controller);
+  }
+  disconnectedCallback() {
+    this.#scope?.dispose();
+  }
+}
+if (!customElements.get('test-mirrored-field'))
+  customElements.define('test-mirrored-field', MirroredField);
+
+describe('FormValue anchor', () => {
+  it('takes the flags and message of a detached control and points them at the anchor', () => {
+    const form = forms('<form id="a"></form>')('a');
+    const el = document.createElement('test-mirrored-field') as MirroredField;
+    el.setAttribute('name', 'role');
+    step(() => form.append(el));
+    expect(el.internals.validity.valueMissing).toBe(true);
+    expect(el.internals.validationMessage).toBe(el.mirror.validationMessage);
+    expect(el.internals.validationMessage).not.toBe('');
+    expect(form.checkValidity()).toBe(false);
+    // A blocked submission focuses the anchor in the shadow root.
+    form.reportValidity();
+    expect(el.shadowRoot!.activeElement).toBe(el.target);
+    step(() => (el.selected.value = 'editor'));
+    expect(el.internals.validity.valid).toBe(true);
+    expect(entries(form)).toEqual([['role', 'editor']]);
+  });
+});

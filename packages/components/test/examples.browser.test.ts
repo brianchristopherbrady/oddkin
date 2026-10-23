@@ -110,6 +110,10 @@ describe('authored examples', () => {
       observe: (el) => el.shadowRoot!.querySelectorAll('[role="treeitem"]').length,
       wrong: 0,
     },
+    'odd-listbox/optionsAttribute': {
+      observe: (el) => el.shadowRoot!.querySelectorAll('[role="option"]').length,
+      wrong: 0,
+    },
     'odd-empty-state/actionsSlot': {
       observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
       wrong: false,
@@ -131,6 +135,7 @@ describe('authored examples', () => {
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-breadcrumbs/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-tree/itemsAttribute': ['element.attribute.propertyOnly'],
+    'odd-listbox/optionsAttribute': ['element.attribute.propertyOnly'],
     'odd-popover/physicalSide': ['element.attribute.invalid'],
   };
 

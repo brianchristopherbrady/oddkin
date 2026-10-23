@@ -1686,6 +1686,9 @@
     "odd-input": {
       "dependencies": []
     },
+    "odd-listbox": {
+      "dependencies": []
+    },
     "odd-pagination": {
       "dependencies": []
     },
@@ -1748,7 +1751,14 @@
       "home": "@oddkin/components/styles (fieldStructuralStyles, controlStyles; css/field.css generated from them)",
       "decision": "Field control surface: border, radius, height, inline padding, gap, hover/invalid/disabled/read-only states, label/description/error type roles. Figma binds the same tokens on input, textarea, number, search, select, dateTime, combobox, and multiselect/Field.",
       "status": "existing",
-      "code": ["odd-input", "odd-checkbox", "odd-switch", "odd-model-select", ".odd-field recipe"],
+      "code": [
+        "odd-input",
+        "odd-checkbox",
+        "odd-switch",
+        "odd-model-select",
+        ".odd-field recipe",
+        "odd-listbox"
+      ],
       "note": "The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe."
     },
     {
@@ -1778,7 +1788,7 @@
       "home": "@oddkin/components/styles (spinnerStyles)",
       "decision": "Indeterminate busy indicator, reduced-motion behaviour.",
       "status": "existing",
-      "code": ["odd-button", "odd-spinner", "odd-tree"],
+      "code": ["odd-button", "odd-spinner", "odd-tree", "odd-listbox"],
       "figma": ["button", "spinner", "listbox", "multiselect", "Tree", "CommandPalette", "combobox"]
     },
     {
@@ -1805,7 +1815,8 @@
         "odd-pagination",
         "odd-breadcrumbs",
         "odd-split-panel",
-        "odd-tree"
+        "odd-tree",
+        "odd-listbox"
       ],
       "figma": ["34 icons on page 158:22"]
     },
@@ -1824,7 +1835,8 @@
       "home": "@oddkin/components/styles (optionRowStructuralStyles, optionRowStyles)",
       "decision": "Option and menu rows: height, padding, selected check, active and disabled states.",
       "status": "existing (first element consumers: odd-listbox, odd-menu; Agent 1's odd-select enhancement)",
-      "figma": ["ListboxOption", "MenuItem", "CommandItem", "CheckboxOption"]
+      "figma": ["ListboxOption", "MenuItem", "CommandItem", "CheckboxOption"],
+      "code": ["odd-listbox"]
     },
     {
       "id": "nav-row",
@@ -1879,7 +1891,7 @@
       "home": "@oddkin/core/controllers/form",
       "decision": "Form association, validity, reset, restore.",
       "status": "existing",
-      "code": ["odd-input", "odd-checkbox", "odd-switch"],
+      "code": ["odd-input", "odd-checkbox", "odd-switch", "odd-listbox"],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]
     },
@@ -1899,7 +1911,7 @@
       "decision": "Collection model, selection, typeahead, active descendant.",
       "status": "in progress (typeahead and active descendant existing)",
       "figma": ["listbox", "combobox", "multiselect", "Menu", "CommandPalette", "Tree"],
-      "code": ["odd-breadcrumbs"]
+      "code": ["odd-breadcrumbs", "odd-listbox"]
     },
     {
       "id": "position",

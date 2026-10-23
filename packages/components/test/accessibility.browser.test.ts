@@ -126,6 +126,10 @@ const states = `
   <odd-tree label="Shared files" multiple data-items></odd-tree>
   <odd-tree label="Recent files" loading></odd-tree>
   <odd-tree label="Archived files"></odd-tree>
+  <odd-listbox label="Workspace role" name="role" description="Who can change things"><option value="viewer">Viewer</option><option value="editor" selected>Editor</option><option value="owner" disabled>Owner</option></odd-listbox>
+  <odd-listbox label="Notify me about" name="topics" multiple required error="Choose at least one topic"><optgroup label="Activity"><option value="mentions" title="When someone mentions you">Mentions</option><option value="comments">Comments</option></optgroup><option value="digest">Weekly digest</option></odd-listbox>
+  <odd-listbox label="Region" loading></odd-listbox>
+  <odd-listbox label="Archive" disabled><option value="a">2025</option></odd-listbox>
   <h2>Layout</h2>
   <odd-split-panel label="Resize project files" position="30"><section slot="start"><h3>Project files</h3><a href="#overview">Overview</a></section><section slot="end"><h3>Design system</h3><p>Ready to review.</p></section></odd-split-panel>
 `;

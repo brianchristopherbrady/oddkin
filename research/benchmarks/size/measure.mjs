@@ -135,6 +135,7 @@ export const CSS_BUDGETS = {
   'components:split-panel': 896, // 818
   // Collections, measured on 2026-10-23 (structural and default styles; rows are the shared modules).
   'components:tree': 512, // 428
+  'components:listbox': 640, // 602: the rows, field, and spinner are shared modules
   'components:empty-state': 512, // 434
   'components:icon': 384, // 305
   'components:progress': 768, // 695

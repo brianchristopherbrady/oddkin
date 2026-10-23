@@ -20,12 +20,13 @@ import {
   type Target,
 } from './parity.js';
 import { themeValue } from './probe.js';
+import type { OddkinListbox } from '../src/listbox/listbox.js';
 import type { OddkinSplitPanel } from '../src/split-panel/split-panel.js';
 import type { OddkinTree, TreeItemRecord } from '../src/tree/tree.js';
 
 // Figma parity of the shared modules of the collections lane (component-contracts.md §2.9): the
-// option row on `ListboxOption` and `MenuItem`, drawn by a test element until odd-listbox and
-// odd-menu use it. The navigation row's parity is odd-side-nav's (figma-parity.browser.test.ts).
+// option row on `ListboxOption` and `MenuItem`, drawn by a test element (odd-listbox's own rows
+// are compared below; odd-menu's when it exists). The navigation row's parity is odd-side-nav's (figma-parity.browser.test.ts).
 useParity();
 
 deliberate(
@@ -275,6 +276,105 @@ const treeRow = (el: Element, label: string) =>
     (each) => each.querySelector('.label')!.textContent === label,
   )!;
 const treeLabel = (el: Element, label: string) => treeRow(el, label).querySelector('.label')!;
+
+deliberate([
+  /^ListboxOption \S+ Listbox option strokes \(none\): border /,
+  'odd-listbox draws the divider between its square rows as each later row’s top border (border.default), where Figma’s listbox surface shows a line between options.',
+]);
+deliberate([
+  /^listbox (Empty|Loading) Status surface (fills|strokes|stroke\w+Weight|\w+Radius|effects|effectStyle) /,
+  'The empty and loading states sit inside the listbox’s raised surface (part base), which draws the fill, border, radius, and elevation once for every state.',
+]);
+
+const ROLES =
+  '<option value="viewer">Viewer</option><option value="editor" selected>Editor</option><option value="admin">Administrator</option><option value="owner" disabled>Owner</option>';
+const mountListbox = async (attributes = '', children = ROLES) => {
+  const el = mount(
+    `<odd-listbox label="Workspace role" style="inline-size: 240px" ${attributes}>${children}</odd-listbox>`,
+  ) as OddkinListbox;
+  await settle(el);
+  return el;
+};
+const listboxRow = (el: Element, label: string) =>
+  [...el.shadowRoot!.querySelectorAll<HTMLElement>('[role="option"]')].find(
+    (row) => row.querySelector('.option-text')!.textContent === label,
+  )!;
+
+describe('Figma parity: odd-listbox (listbox)', () => {
+  for (const state of ['Selected', 'Keyboard focus', 'Disabled option'] as const)
+    it(state, async () => {
+      const el = await mountListbox();
+      if (state === 'Keyboard focus') {
+        shadowPart(el, 'listbox').focus();
+        await userEvent.keyboard('{ArrowDown}');
+        await settle(el);
+      }
+      const targets: Target[] = [
+        { layer: [`Listbox / ${state}`, 'Surface'], el: shadowPart(el, 'base'), kind: 'frame' },
+        {
+          layer: [`Listbox / ${state}`, 'Workspace role'],
+          el: shadowPart(el, 'label'),
+          kind: 'text',
+        },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/listbox', { State: state }, targets));
+    });
+
+  for (const [state, text] of [
+    ['Empty', 'No items available'],
+    ['Loading', 'Loading…'],
+  ] as const)
+    it(state, async () => {
+      const el = await mountListbox(state === 'Loading' ? 'loading' : '', '');
+      const status = shadowPart(el, state === 'Empty' ? 'empty' : 'loading');
+      const frame = [`Workspace role / ${state}`];
+      const targets: Target[] = [
+        { layer: frame, el: shadowPart(el, 'field'), kind: 'frame' },
+        { layer: [...frame, 'Workspace role'], el: shadowPart(el, 'label'), kind: 'text' },
+        { layer: [...frame, 'Status surface'], el: status, kind: 'frame' },
+        { layer: [...frame, 'Status surface', text], el: status, kind: 'text' },
+      ];
+      expectNone(compare('Oddkin/Common/listbox', { State: state }, targets));
+    });
+
+  // The rows are the shared option row, squared by the listbox.
+  for (const [selected, state, label] of [
+    ['False', 'Default', 'Viewer'],
+    ['True', 'Default', 'Editor'],
+    ['False', 'Disabled', 'Owner'],
+    ['False', 'Focus', 'Administrator'],
+    ['True', 'Focus', 'Editor'],
+  ] as const)
+    it(`rows as ListboxOption ${selected}/${state}`, async () => {
+      // Moving without selecting needs `multiple`: a single listbox selects the active option.
+      const el = await mountListbox(selected === 'False' && state === 'Focus' ? 'multiple' : '');
+      if (state === 'Focus') {
+        shadowPart(el, 'listbox').focus();
+        if (label === 'Administrator') await userEvent.keyboard('{ArrowDown}');
+        await settle(el);
+      }
+      const row = listboxRow(el, label);
+      const targets: Target[] = [
+        { layer: ['Listbox option'], el: row, kind: 'frame', gap: 'column-gap' },
+        {
+          layer: ['Listbox option', 'Label'],
+          el: row.querySelector('.option-label')!,
+          kind: 'text',
+        },
+      ];
+      if (state === 'Focus')
+        targets.push({
+          layer: ['Listbox option', 'Focus indicator · inset'],
+          el: row,
+          kind: 'ring',
+        });
+      await transitions(targets);
+      expectNone(
+        compare('Oddkin/Common/ListboxOption', { Selected: selected, State: state }, targets),
+      );
+    });
+});
 
 describe('Figma parity: odd-tree (Tree)', () => {
   for (const state of ['Selected', 'Keyboard focus', 'Collapsed'] as const)

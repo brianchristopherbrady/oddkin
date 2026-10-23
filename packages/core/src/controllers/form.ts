@@ -27,6 +27,12 @@ export interface FormValueOptions {
   readonly control?: () => NativeControl | null | undefined;
   /** Custom error; while non-empty the element is invalid with this message. */
   readonly error?: () => string;
+  /**
+   * Where the browser points the validation message and moves focus on a blocked submission: a
+   * focusable part of the element's shadow tree. Default: `control`. Give it when `control` is not
+   * rendered (a detached native control that only supplies the flags and the message).
+   */
+  readonly anchor?: () => HTMLElement | null | undefined;
   /** Other reactive inputs that change validity (`required`, `type`, …), read for tracking. */
   readonly watch?: () => unknown;
   readonly onReset?: () => void;
@@ -125,13 +131,14 @@ export class FormValue implements Controller {
     if (state === undefined) internals.setFormValue(value);
     else internals.setFormValue(value, state);
     const control = this.#options.control?.() ?? undefined;
+    const anchor = this.#options.anchor?.() ?? control;
     if (error) {
-      internals.setValidity({ customError: true }, error, control);
+      internals.setValidity({ customError: true }, error, anchor);
     } else if (control?.willValidate && !control.validity.valid) {
       // A barred control (disabled, read-only) keeps failing flags but has no message.
       const flags: ValidityStateFlags = {};
       for (const flag of VALIDITY_FLAGS) if (control.validity[flag]) flags[flag] = true;
-      internals.setValidity(flags, control.validationMessage, control);
+      internals.setValidity(flags, control.validationMessage, anchor);
     } else {
       internals.setValidity({});
     }

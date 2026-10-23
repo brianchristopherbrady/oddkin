@@ -158,6 +158,18 @@
       "types": "./dist/input/input.define.d.ts",
       "default": "./dist/input/input.define.js"
     },
+    "./listbox": {
+      "types": "./dist/listbox/index.d.ts",
+      "default": "./dist/listbox/index.js"
+    },
+    "./listbox/foundation": {
+      "types": "./dist/listbox/foundation.d.ts",
+      "default": "./dist/listbox/foundation.js"
+    },
+    "./define/listbox": {
+      "types": "./dist/listbox/listbox.define.d.ts",
+      "default": "./dist/listbox/listbox.define.js"
+    },
     "./pagination": {
       "types": "./dist/pagination/index.d.ts",
       "default": "./dist/pagination/index.js"

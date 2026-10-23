@@ -231,10 +231,14 @@ record. Use `odd-tabs` to switch content panels.
 `appearance: base-select` is a gated enhancement drawn with the option-row module (F13). No `multiple`: use
 `odd-listbox` or `odd-combobox multiple`.
 
-**`odd-listbox`** (`listbox`) — persistent choices. Field anatomy, `name`, `value`, `values` (with `multiple`),
-`multiple`, `required`, `disabled`, `loading`, slots `empty`, `status`. The listbox element is the focus target and
-uses `aria-activedescendant` over option parts; typeahead; with `multiple`, Space toggles and Shift+arrows extend
-(APG listbox).
+**`odd-listbox`** (`listbox`) — persistent choices. Field anatomy, `name`, `value` (the attribute is the default),
+`values` (with `multiple`), `options`, `multiple`, `required`, `disabled`, `loading`, `strings` (`loading`, `empty`),
+slots `empty`, `status`, `--odd-listbox-max-height`. The listbox element is the focus target and uses
+`aria-activedescendant` over option parts (the option-row module, square rows between dividers on Figma's raised
+surface; the active option's ring shows while the listbox has focus); typeahead. Single: the selection follows the
+active option. Multiple: Space and Enter toggle, Shift+arrows extend, Ctrl+A selects all (APG listbox). Submits the
+value (each value under `name` with `multiple`); `required` takes the browser's own valueMissing message from a
+detached native select and points it at the listbox (`FormValue` `anchor`); reset restores the declared selection.
 
 **`odd-combobox`** (`combobox`, `multiselect`) — an editable input with a popup listbox (APG combobox, list
 autocomplete). Field anatomy, `name`, `value`, `values` and chips (parts drawn with the chip module, collapsing to

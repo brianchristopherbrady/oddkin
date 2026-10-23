@@ -36,7 +36,7 @@
     "contract:core/controllers": {
       "title": "Shared controllers",
       "anchor": "controllers",
-      "sha256": "3f68eb35131225ad07f5fda8071bda00f16bf809248619b2c4866956812cbb1b"
+      "sha256": "230a44d4c46638ecfd103877cfeced67a2665cf1744b2da45b31b2d26ac19b68"
     },
     "contract:core/i18n": {
       "title": "Localization helpers",
