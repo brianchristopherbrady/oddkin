@@ -132,9 +132,10 @@ element also takes `strings` (partial record of its built-in text) when it shows
 
 ### 3.1 Existing elements (additions)
 
-**`odd-button`** — adds `toggle: boolean` (the button keeps a pressed state) and `pressed: boolean` (`aria-pressed`
-when `toggle` is set). Activating a toggle button flips `pressed` and dispatches `input` and `change`. Figma
-`toggleButton` Value On → `pressed`; its inset marker is drawn by the button module. Unchanged otherwise.
+**`odd-button`** — adds `toggle: boolean` (the button keeps a pressed state) and `pressed: boolean` (both reflected;
+`aria-pressed` when `toggle` is set). Activating a toggle button flips `pressed` before the page's `click` listeners
+run, as a checkbox's checkedness, then dispatches `input` and `change`; a cancelled `click` restores it and dispatches
+nothing. Figma `toggleButton` Value On → `pressed`: the selection colours in every appearance. Unchanged otherwise.
 
 **`odd-input`** — `type` adds `number`, `date`, `time`, `datetime-local`, `month`, `week`; adds `min`, `max`, `step`
 (number and date types), `minlength`, `maxlength`, `pattern` (text types), `inputmode`. `type="number"`: parts

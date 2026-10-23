@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { userEvent } from 'vitest/browser';
+import { cdp, page, server, userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 
@@ -27,7 +27,9 @@ describe('imports', () => {
       'OddkinButton',
       'buttonStructuralStyles',
       'buttonTemplate',
+      'changeEvent',
       'hostStyles',
+      'inputEvent',
       'spinnerStyles',
     ]);
     expect(customElements.get('odd-button')).toBeUndefined();
@@ -364,5 +366,83 @@ describe('ownership and theming', () => {
     expect(el.shadowRoot!.querySelector('button')).toBe(control);
     expect(getComputedStyle(control).borderTopLeftRadius).toBe('0px');
     expect(getComputedStyle(control).backgroundColor).toBe('rgb(1, 2, 3)');
+  });
+});
+
+describe('toggle', () => {
+  const tick = () => new Promise((resolve) => setTimeout(resolve, 10));
+
+  it('reports aria-pressed only with toggle, and the pressed state by role', async () => {
+    const { el, control } = await mount('Bold');
+    expect(control.hasAttribute('aria-pressed')).toBe(false);
+    el.toggle = true;
+    await settle(el);
+    expect(control.getAttribute('aria-pressed')).toBe('false');
+    el.pressed = true;
+    await settle(el);
+    expect(el.hasAttribute('pressed')).toBe(true);
+    expect(page.getByRole('button', { name: 'Bold', pressed: true }).element()).toBe(control);
+  });
+
+  it('flips pressed on click, Enter, and Space: click sees the new state, then input and change', async () => {
+    const { el } = await mount('Bold', { toggle: '' });
+    const events: string[] = [];
+    el.addEventListener('click', () => events.push(`click:${el.pressed}`));
+    el.addEventListener('input', () => events.push(`input:${el.pressed}`));
+    el.addEventListener('change', (e) => events.push(`change:${e.composed}`));
+    await userEvent.click(el);
+    await expect.poll(() => events.length).toBe(3);
+    expect(events).toEqual(['click:true', 'input:true', 'change:false']);
+    el.focus();
+    await userEvent.keyboard('{Enter}');
+    await userEvent.keyboard(' ');
+    await expect.poll(() => events.length).toBe(9);
+    expect(el.pressed).toBe(true);
+  });
+
+  it('a cancelled click, disabled, or loading leaves pressed unchanged and dispatches nothing', async () => {
+    const { el } = await mount('Bold', { toggle: '' });
+    const events: string[] = [];
+    for (const type of ['input', 'change']) el.addEventListener(type, () => events.push(type));
+    el.addEventListener('click', (event) => event.preventDefault(), { once: true });
+    await userEvent.click(el);
+    await tick();
+    expect([el.pressed, events]).toEqual([false, []]);
+    el.disabled = true;
+    await settle(el);
+    el.click();
+    el.disabled = false;
+    el.loading = true;
+    await settle(el);
+    el.click();
+    await tick();
+    expect([el.pressed, events]).toEqual([false, []]);
+  });
+
+  it('programmatic pressed changes dispatch nothing', async () => {
+    const { el } = await mount('Bold', { toggle: '' });
+    const events: string[] = [];
+    for (const type of ['click', 'input', 'change'])
+      el.addEventListener(type, () => events.push(type));
+    el.pressed = true;
+    await settle(el);
+    await tick();
+    expect(events).toEqual([]);
+  });
+
+  it.runIf(server.browser === 'chromium')('draws the pressed state in forced colours', async () => {
+    const session = cdp();
+    await session.send('Emulation.setEmulatedMedia', {
+      features: [{ name: 'forced-colors', value: 'active' }],
+    });
+    try {
+      const { control } = await mount('Bold', { toggle: '', pressed: '' });
+      const probe = document.createElement('span');
+      probe.style.color = 'Highlight';
+      container.append(probe);
+      expect(getComputedStyle(control).backgroundColor).toBe(getComputedStyle(probe).color);
+    } finally {
+      await session.send('Emulation.setEmulatedMedia', { features: [] });
+    }
   });
 });

@@ -136,7 +136,7 @@ export const CSS_BUDGETS = {
   'components:progress': 768, // 695
   'components:skeleton': 512, // 413
   'components:spinner': 384, // 319
-  'components:button': 1280, // measured 1,028 on 2026-10-22 (spinner moved to the shared module; 1,119 before)
+  'components:button': 1280, // measured 1,238 on 2026-10-23 with the toggle's pressed state (1,028 before)
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
   // 128: measured 55 on 2026-10-22; the field look moved to the shared control module.
   'components:input': 128,
@@ -157,7 +157,7 @@ export const CSS_BUDGETS = {
   'components:shared': 2816,
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   'components:layout': 512, // measured 411 on 2026-10-18: layout.css page-author classes
-  'components:button.css': 1024, // measured 864 on 2026-10-18: button.css, the native <button> styling path
+  'components:button.css': 1024, // measured 999 on 2026-10-23: button.css, the native <button> path, with aria-pressed
   'components:recipes': 2048, // measured 1,821 on 2026-10-22: the eight CSS recipes together (1,314 before field.css)
   'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
 };

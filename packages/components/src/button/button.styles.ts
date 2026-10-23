@@ -73,4 +73,14 @@ export const buttonStyles = css`
     background: ${token('color.surface.sunken')};
     color: ${token('color.text.disabled')};
   }
+  /* A pressed toggle (Figma toggleButton On) takes the selection colours in every appearance. As
+     specific as the hover and active rules, and later, so they leave it unchanged. */
+  :host([toggle]) button[aria-pressed='true']:enabled:not([aria-disabled='true']) {
+    border-color: transparent;
+    background: ${token('color.selection.background')};
+    color: ${token('color.selection.foreground')};
+  }
+  :host([toggle]) button[aria-pressed='true']:disabled {
+    background: ${token('color.selection.background')};
+  }
 `;

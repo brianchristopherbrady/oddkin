@@ -134,7 +134,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/breadcrumbs/breadcrumbs.structural.styles.js (breadcrumbsStructuralStyles)` | yes | 34 |
 | `packages/components/dist/breadcrumbs/breadcrumbs.styles.js (breadcrumbsStyles)` | yes | 14 |
 | `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 52 |
-| `packages/components/dist/button/button.structural.styles.js (buttonStructuralStyles)` | yes | 32 |
+| `packages/components/dist/button/button.structural.styles.js (buttonStructuralStyles)` | yes | 35 |
 | `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 28 |
 | `packages/components/dist/card/card.structural.styles.js (cardStructuralStyles)` | yes | 20 |
 | `packages/components/dist/card/card.styles.js (cardStyles)` | yes | 18 |

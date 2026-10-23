@@ -108,7 +108,10 @@ describe('@oddkin/components published metadata', () => {
       propertyOnly: ['property:odd-input#value'],
       intents: { 'event:odd-input#change': 'user', 'event:odd-input#input': 'user' },
     });
-    expect(facts('odd-button')).toEqual({ propertyOnly: [], intents: {} });
+    expect(facts('odd-button')).toEqual({
+      propertyOnly: [],
+      intents: { 'event:odd-button#change': 'user', 'event:odd-button#input': 'user' },
+    });
     expect(facts('odd-card')).toEqual({ propertyOnly: [], intents: {} });
   });
 

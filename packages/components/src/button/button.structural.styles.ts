@@ -48,5 +48,13 @@ export const buttonStructuralStyles = css`
       color: GrayText;
       border-color: GrayText;
     }
+    /* The pressed state twice: one attribute more than the skin's pressed rule, so the system
+       colours win. */
+    :host([toggle])
+      button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']) {
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+    }
   }
 `;

@@ -13,6 +13,7 @@ export const buttonTemplate = (button: OddkinButton) =>
     ?disabled=${button.disabled || button._formDisabled.value}
     aria-disabled=${button.loading ? 'true' : null}
     aria-label=${button.label || null}
+    aria-pressed=${button.toggle ? String(button.pressed) : null}
   >
     <span part="spinner" class="spinner" aria-hidden="true" ?hidden=${!button.loading}></span>
     <slot name="start"></slot>

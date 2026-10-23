@@ -67,6 +67,18 @@ export default defineExamples('odd-button', {
     slots: { default: 'Saving' },
     guidance: 'Stays focusable and ignores activation. Announce progress separately if it matters.',
   },
+  toggle: {
+    label: 'Toggle',
+    attributes: { toggle: '' },
+    slots: { default: 'Bold' },
+    guidance:
+      'Each activation flips `pressed` and dispatches `input` and `change`. Keep the label the same in both states: the pressed state is announced.',
+  },
+  pressed: {
+    label: 'Toggle, pressed',
+    attributes: { toggle: '', pressed: '' },
+    slots: { default: 'Bold' },
+  },
   fullWidth: {
     label: 'Full width',
     props: { fullWidth: true, appearance: 'primary' },

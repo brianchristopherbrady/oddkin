@@ -281,6 +281,31 @@ describe('native <button> styling path (button.css)', () => {
     );
   });
 
+  it('matches a pressed toggle, enabled, disabled, and hovered', async () => {
+    const cases = ['primary', 'secondary', 'ghost'].flatMap((appearance) =>
+      ['', 'disabled'].map(
+        (disabled) =>
+          `<odd-button toggle pressed appearance="${appearance}" ${disabled}>Bold</odd-button>` +
+          `<button class="odd-button" aria-pressed="true" data-appearance="${appearance}" ${disabled}>Bold</button>`,
+      ),
+    );
+    await render(cases.join(''));
+    await restPointer();
+    const all = pairs();
+    expect(all).toHaveLength(6);
+    for (const [control, native] of all)
+      expect(styles(native), native.outerHTML).toEqual(styles(control));
+    if (!matchMedia('(hover: hover)').matches) return;
+    const [[control, native]] = all as [readonly [HTMLElement, HTMLButtonElement]];
+    for (const target of [control, native]) {
+      await userEvent.hover(target);
+      await Promise.all(target.getAnimations().map((a) => a.finished.catch(() => undefined)));
+    }
+    expect(getComputedStyle(native).backgroundColor).toBe(
+      getComputedStyle(control).backgroundColor,
+    );
+  });
+
   it('defaults to secondary and md, and follows component variables and full width', async () => {
     await render(`
       <odd-button>Default</odd-button><button class="odd-button">Default</button>

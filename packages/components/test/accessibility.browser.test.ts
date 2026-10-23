@@ -40,6 +40,8 @@ const states = `
   <odd-button label="Close">${icon}</odd-button>
   <odd-button><span slot="start">${icon}</span>With icons<span slot="end">${icon}</span></odd-button>
   <odd-button full-width>Full width</odd-button>
+  <odd-button toggle>Bold</odd-button>
+  <odd-button toggle pressed>Italic</odd-button>
   <form id="form">
     <h2>Fields</h2>
     <odd-input label="Name" name="name"></odd-input>

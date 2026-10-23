@@ -1,6 +1,22 @@
-import { OddkinElement, prop } from '@oddkin/core/element';
+import { OddkinElement, event, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
+
+/** A toggle button was flipped by the user; `pressed` has its new value. */
+export const inputEvent = event('input', {
+  bubbles: true,
+  composed: true,
+  cancelable: false,
+  syncs: 'pressed',
+  intent: 'user',
+});
+/** A toggle button was flipped by the user (after `input`). */
+export const changeEvent = event('change', {
+  bubbles: true,
+  composed: false,
+  cancelable: false,
+  intent: 'user',
+});
 
 /**
  * A button for actions. Renders a native `<button>` in its shadow root, so keyboard
@@ -23,6 +39,7 @@ import type { Scope } from '@oddkin/core/scope';
  * @cssprop --odd-button-padding-inline - Inline padding.
  * @a11y The slotted text names the button. Icon-only buttons must set `label`.
  * @a11y `loading` keeps the button focusable and sets `aria-disabled`; announce progress separately if it matters.
+ * @a11y With `toggle`, the native button reports `aria-pressed`; keep the label the same in both states ("Bold", not "Bold on").
  * @keyboard Enter and Space activate the button (native behavior).
  * @previewRole primaryAction
  * @previewRole secondaryAction
@@ -53,6 +70,14 @@ export class OddkinButton extends OddkinElement.with({
     attribute: 'full-width',
     reflect: true,
     description: 'Fills the inline size of its container.',
+  }),
+  toggle: prop.boolean({
+    reflect: true,
+    description: 'Keeps a pressed state that each activation flips (`aria-pressed`).',
+  }),
+  pressed: prop.boolean({
+    reflect: true,
+    description: 'Whether a `toggle` button is pressed.',
   }),
   name: prop.string({ default: '', description: 'Name submitted with the form.' }),
   value: prop.string({ default: '', description: 'Value submitted with the form.' }),
@@ -88,6 +113,8 @@ export class OddkinButton extends OddkinElement.with({
 }) {
   static formAssociated = true;
   static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
+  static override events = { input: inputEvent, change: changeEvent };
+  declare readonly _events?: ElementEvents<typeof OddkinButton>;
 
   /** @internal Disabled by an ancestor `<fieldset disabled>`; read by the template. */
   readonly _formDisabled = signal(false);
@@ -107,6 +134,17 @@ export class OddkinButton extends OddkinElement.with({
           event.preventDefault();
           event.stopImmediatePropagation();
           return;
+        }
+        if (this.toggle) {
+          // Flipped before the page's click listeners run, as a checkbox's checkedness is.
+          this.pressed = !this.pressed;
+          scope.timeout(() => {
+            if (event.defaultPrevented) this.pressed = !this.pressed;
+            else {
+              this.emit(inputEvent);
+              this.emit(changeEvent);
+            }
+          }, 0);
         }
         if (this.type === 'button' || !this.internals.form) return;
         // Like a native button's activation behavior, act after dispatch unless prevented.

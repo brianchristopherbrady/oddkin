@@ -91,3 +91,35 @@ describe('Figma parity: switch', () => {
         expectNone(compare('Oddkin/Common/switch', { Value: value, State: state }, targets));
       });
 });
+
+describe('Figma parity: toggleButton', () => {
+  for (const value of ['Off', 'On'])
+    for (const [state, attribute] of Object.entries({
+      Default: '',
+      Hover: '',
+      Focus: '',
+      Disabled: ' disabled',
+    }))
+      it(`${value}/${state}`, async () => {
+        const pressed = value === 'On' ? ' pressed' : '';
+        const el = mount(`<odd-button toggle${pressed}${attribute}>Bold</odd-button>`);
+        await settle(el);
+        const control = shadowPart(el, 'control');
+        await interact(state, control);
+        await settle(el);
+        const named = value === 'On' || state === 'Default' || state === 'Hover';
+        const root = `Toggle button / ${named ? value : state}`;
+        const targets: Target[] = [
+          { layer: [root, 'Surface'], el: control, kind: 'frame' },
+          {
+            layer: [root, 'Surface', value === 'On' ? 'Bold \u00b7 on' : 'Bold'],
+            el: el.shadowRoot!.querySelector('.label')!,
+            kind: 'text',
+          },
+        ];
+        if (state === 'Focus')
+          targets.push({ layer: [root, 'Surface [2]'], el: control, kind: 'ring' });
+        await transitions(targets);
+        expectNone(compare('Oddkin/Common/toggleButton', { Value: value, State: state }, targets));
+      });
+});
