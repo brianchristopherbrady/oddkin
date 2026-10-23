@@ -1,22 +1,15 @@
 import { readFile } from 'node:fs/promises';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { describe, expect, it } from 'vitest';
-import {
-  checkExamples,
-  toExamplesJSON,
-  validateUsage,
-  type ExampleSet,
-} from '@oddkin/workbench/examples';
+import { checkExamples, toExamplesJSON, validateUsage } from '@oddkin/workbench/examples';
 import button from '../src/button/button.examples.js';
-import card from '../src/card/card.examples.js';
 import input from '../src/input/input.examples.js';
-import sideNav from '../src/side-nav/side-nav.examples.js';
+import { exampleSets } from './catalog.js';
 
 // Colocated examples (ADR 0021) checked against the published contract. They are excluded
 // from the package build; these tests and the browser tests are their consumers.
 
-// Each set is typed for its own element; checks here only need the common shape.
-const sets = [button, card, input, sideNav] as unknown as ExampleSet[];
+const sets = Object.values(exampleSets);
 const read = async <T>(path: string): Promise<T> =>
   JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8')) as T;
 

@@ -188,6 +188,7 @@ describe('Theme Studio page data', () => {
     expect(page.studio.worker).toBe(`/_oddkin/${THEME_WORKER}`);
     expect(page.studio.roles.map((r) => `${r.role}:${r.tag}`)).toEqual([
       'surface:odd-card',
+      'badge:odd-badge',
       'textInput:odd-input',
       'primaryAction:odd-button',
       'secondaryAction:odd-button',

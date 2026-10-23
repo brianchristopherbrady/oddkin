@@ -169,7 +169,7 @@ describe('@oddkin/components published metadata', () => {
   });
 
   it('publishes category labels, so the Workbench catalog groups components by them', () => {
-    expect(metadata['categories']).toEqual({
+    expect(metadata['categories']).toMatchObject({
       'category:actions': { label: 'Actions' },
       'category:containers': { label: 'Containers' },
       'category:forms': { label: 'Forms' },
@@ -184,12 +184,17 @@ describe('@oddkin/components published metadata', () => {
     const groups = Object.fromEntries(
       (registry?.pages ?? []).filter((p) => p.kind === 'component').map((p) => [p.id, p.group]),
     );
-    expect(groups).toEqual({
-      'components/odd-button': 'Actions',
-      'components/odd-card': 'Containers',
-      'components/odd-input': 'Forms',
-      'components/odd-side-nav': 'Navigation',
-    });
+    // Every component is grouped under its own category's label.
+    const components = metadata['components'] as Record<string, { tag: string; category: string }>;
+    expect(groups).toEqual(
+      Object.fromEntries(
+        Object.values(components).map((c) => [
+          `components/${c.tag}`,
+          (metadata['categories'] as Record<string, { label: string }>)[c.category]!.label,
+        ]),
+      ),
+    );
+    expect(groups['components/odd-side-nav']).toBe('Navigation');
   });
 
   it('dates component and foundation pages from source history, as Workbench shows them', () => {

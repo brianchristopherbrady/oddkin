@@ -28,6 +28,7 @@ describe('imports', () => {
       'buttonStructuralStyles',
       'buttonTemplate',
       'hostStyles',
+      'spinnerStyles',
     ]);
     expect(customElements.get('odd-button')).toBeUndefined();
     await import('../src/button/button.define.js');
@@ -61,8 +62,8 @@ describe('odd-button', () => {
     expect(el.size).toBe('md');
     expect(el.type).toBe('button');
     expect(el.getAttribute('appearance')).toBe('secondary');
-    // Shared host defaults, structural styles, shared focus ring, default visual styles.
-    expect(el.shadowRoot!.adoptedStyleSheets).toHaveLength(4);
+    // Shared host defaults, structural styles, shared spinner and focus ring, default visual styles.
+    expect(el.shadowRoot!.adoptedStyleSheets).toHaveLength(5);
   });
 
   it('converts attributes and reflects appearance, size, disabled, loading, and full-width', async () => {

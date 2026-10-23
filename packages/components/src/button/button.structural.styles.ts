@@ -2,9 +2,9 @@ import { css } from '@oddkin/core/styles';
 
 /**
  * Styles the button's layout and interaction depend on: host display, full width, content
- * alignment, the loading indicator, and forced-colors borders. No brand or visual tokens.
- * Keep these (after `hostStyles`) when replacing the visual styles; they do not make arbitrary
- * overrides safe.
+ * alignment, and forced-colors borders (the loading indicator is `spinnerStyles`). No brand or
+ * visual tokens. Keep these (after `hostStyles`) when replacing the visual styles; they do not make
+ * arbitrary overrides safe.
  */
 export const buttonStructuralStyles = css`
   :host {
@@ -39,26 +39,6 @@ export const buttonStructuralStyles = css`
     min-inline-size: 0;
     /* Long unbroken labels (URLs, compound words, translations) wrap instead of overflowing. */
     overflow-wrap: anywhere;
-  }
-  .spinner:not([hidden]) {
-    display: inline-block;
-    flex: none;
-    inline-size: 1em;
-    block-size: 1em;
-    border: 0.15em solid currentColor;
-    border-inline-end-color: transparent;
-    border-radius: 50%;
-    animation: odd-button-spin 0.8s linear infinite;
-  }
-  @keyframes odd-button-spin {
-    to {
-      transform: rotate(1turn);
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .spinner:not([hidden]) {
-      animation-duration: 3s;
-    }
   }
   @media (forced-colors: active) {
     button {

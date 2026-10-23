@@ -1558,6 +1558,9 @@
     "odd-artifact": {
       "dependencies": []
     },
+    "odd-badge": {
+      "dependencies": []
+    },
     "odd-change-review": {
       "dependencies": ["odd-button"],
       "reason": "Accept, reject, and undo are complete buttons (Figma: button/sm ×2)."

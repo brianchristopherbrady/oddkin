@@ -4,6 +4,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    // The persistent module cache keys a module on its own source, so a module with
+    // `import.meta.glob` keeps a stale file list after a file is added (packages/components/test/catalog.ts).
+    fsModuleCache: false,
     projects: [
       {
         test: {

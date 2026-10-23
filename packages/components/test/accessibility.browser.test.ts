@@ -4,9 +4,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { flush } from '@oddkin/core/reactive';
 
 // axe-core (WCAG 2.0, 2.1, 2.2 A and AA rules) over every state of odd-button and odd-input,
-// and odd-card's naming cases, with the shipped theme in light and dark mode, so colour
-// contrast is measured on real values. axe reads open shadow roots but not ElementInternals
-// semantics, so card regions are checked in e2e/components-only.spec.ts instead.
+// every odd-badge tone, and odd-card's naming cases, with the shipped theme in light and dark
+// mode, so colour contrast is measured on real values. axe reads open shadow roots but not
+// ElementInternals semantics, so card regions are checked in e2e/components-only.spec.ts instead.
 interface AxeResult {
   id: string;
   impact?: string | null;
@@ -60,11 +60,21 @@ const states = `
   <odd-card><h3 slot="header">Plan</h3><p>Named by its heading.</p><odd-button slot="footer">Upgrade</odd-button></odd-card>
   <odd-card appearance="filled"><p>No name, no landmark.</p></odd-card>
   <odd-card appearance="elevated" padding="sm"><p>Elevated.</p></odd-card>
+  <h2>Badges</h2>
+  <p>
+    <odd-badge>Draft</odd-badge>
+    <odd-badge tone="info">Beta</odd-badge>
+    <odd-badge tone="success">Published</odd-badge>
+    <odd-badge tone="warning">Expires soon</odd-badge>
+    <odd-badge tone="danger">Failed</odd-badge>
+    <odd-badge no-marker>12</odd-badge>
+  </p>
 `;
 
 let tokens: HTMLLinkElement;
 let script: HTMLScriptElement;
 beforeAll(async () => {
+  await import('../src/badge/badge.define.js');
   await import('../src/button/button.define.js');
   await import('../src/card/card.define.js');
   await import('../src/input/input.define.js');

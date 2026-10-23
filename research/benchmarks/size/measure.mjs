@@ -1,7 +1,7 @@
 // Shared bundle-size measurement for the benchmark runner and the size-budget check.
 // Production build (default export conditions), esbuild bundle + minify, ESM, es2022.
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
@@ -108,11 +108,14 @@ export const CSS_BUDGETS = {
   // Measured 3,059 on 2026-10-22 (2,770 before the info ramp and the tone, selection, and scrim
   // roles; 2,764 at ADRs 0041-0042, 1,827 before the approved palette and foundation scales).
   'tokens:default.css': 3072,
-  'components:button': 1280, // measured 1,119 with type.ui and motion tokens (1,100 before)
+  'components:badge': 384, // measured 375 on 2026-10-22: structural and default styles
+  'components:button': 1280, // measured 1,028 on 2026-10-22 (spinner moved to the shared module; 1,119 before)
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
   'components:input': 896, // measured 743 with type.ui/body/small and motion tokens (647 before)
   'components:side-nav': 1536, // measured 1,234 on 2026-10-18: extracted recipe, structural, and default styles
-  'components:shared': 384, // measured 297 on 2026-10-18: host, focus-ring, and visually-hidden primitives
+  // 768: measured 717 on 2026-10-22 with the spinner (moved from the button, -91 B there), tone,
+  // and glyph modules every catalog element shares (297 for host, focus ring, visually hidden).
+  'components:shared': 768,
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   'components:layout': 512, // measured 411 on 2026-10-18: layout.css page-author classes
   'components:button.css': 1024, // measured 864 on 2026-10-18: button.css, the native <button> styling path
@@ -126,7 +129,11 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
   sizes['tokens:default.css'] = gzip(
     readFileSync(join(root, 'packages/tokens/dist/css/default.css'), 'utf8'),
   );
-  for (const name of ['button', 'card', 'input', 'side-nav']) {
+  // Every component with a budget below; its entry module's style exports.
+  const components = Object.keys(CSS_BUDGETS)
+    .map((key) => /^components:([a-z-]+)$/.exec(key)?.[1])
+    .filter((name) => name && existsSync(join(root, `packages/components/dist/${name}/index.js`)));
+  for (const name of components) {
     const module = await import(
       pathToFileURL(join(root, `packages/components/dist/${name}/index.js`)).href
     );
@@ -145,6 +152,7 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
   );
   sizes['components:shared'] = gzip(
     Object.values(shared)
+      .filter((value) => typeof value?.cssText === 'string')
       .map((value) => value.cssText)
       .join('\n'),
   );

@@ -24,14 +24,16 @@ describe('the @oddkin/components kit', () => {
   const file = (path: string) => files.get(path) ?? '';
   const cem = json('packages/components/custom-elements.json');
   const metadata = json('packages/components/oddkin.metadata.json');
+  const componentIds = (cem.modules as { declarations?: { tagName?: string }[] }[])
+    .flatMap((m) => m.declarations ?? [])
+    .flatMap((d) => (d.tagName ? [`component:${d.tagName}`] : []))
+    .sort();
 
   it('has a valid kit.json listing every reference it wrote, with the guide within budget', () => {
     expect(validate(manifest), JSON.stringify(validate.errors)).toBe(true);
+    expect(componentIds).toContain('component:odd-side-nav');
     expect(manifest.entries.map((e) => e.id)).toEqual([
-      'component:odd-button',
-      'component:odd-card',
-      'component:odd-input',
-      'component:odd-side-nav',
+      ...componentIds,
       'choosing',
       'tokens:component',
       'tokens:foundation',
@@ -110,12 +112,7 @@ describe('the @oddkin/components kit', () => {
   it('bundles contracts keyed by stable id, each with the fingerprint', () => {
     const components = JSON.parse(file('json/components.json'));
     expect(components.fingerprint).toEqual(manifest.fingerprint);
-    expect(Object.keys(components.entries)).toEqual([
-      'component:odd-button',
-      'component:odd-card',
-      'component:odd-input',
-      'component:odd-side-nav',
-    ]);
+    expect(Object.keys(components.entries)).toEqual(componentIds);
     expect(components.entries['component:odd-card'].metadata).toEqual(
       metadata.components['component:odd-card'],
     );

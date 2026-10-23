@@ -14,6 +14,17 @@ const schema = JSON.parse(
 ) as object;
 const validate = new Ajv2020({ strict: true, allErrors: true }).compile(schema);
 
+/** Tag names a package publishes, from its generated manifest. */
+const tags = (dir: string): string[] =>
+  (
+    JSON.parse(readFileSync(join(repo, `packages/${dir}/custom-elements.json`), 'utf8')) as {
+      modules: { declarations?: { tagName?: string }[] }[];
+    }
+  ).modules
+    .flatMap((m) => m.declarations ?? [])
+    .flatMap((d) => (d.tagName ? [d.tagName] : []))
+    .sort();
+
 describe('project context of the Oddkin repository', () => {
   const { context, diagnostics } = resolveProjectContext(repo);
 
@@ -34,12 +45,12 @@ describe('project context of the Oddkin repository', () => {
       '@oddkin/workbench',
     ]);
     const components = context.packages.find((p) => p.name === '@oddkin/components')!;
-    expect(components.registrations).toEqual({
-      'odd-button': '@oddkin/components/define/button',
-      'odd-card': '@oddkin/components/define/card',
-      'odd-input': '@oddkin/components/define/input',
-      'odd-side-nav': '@oddkin/components/define/side-nav',
-    });
+    expect(components.registrations).toEqual(
+      Object.fromEntries(
+        tags('components').map((tag) => [tag, `@oddkin/components/define/${tag.slice(4)}`]),
+      ),
+    );
+    expect(components.registrations?.['odd-side-nav']).toBe('@oddkin/components/define/side-nav');
     expect(components.metadata).toBe('packages/components/oddkin.metadata.json');
     expect(components.exports).toContain('@oddkin/components/define/side-nav');
     expect(components.exports).not.toContain('@oddkin/components/package.json');
@@ -50,7 +61,7 @@ describe('project context of the Oddkin repository', () => {
       tag: 'odd-button',
       source: 'packages/components/src/button/button.definition.ts',
     });
-    expect(context.components).toHaveLength(28);
+    expect(context.components).toHaveLength(tags('components').length + tags('ai').length);
   });
 
   it('reads theme axes from the inspection the foundations reference', () => {

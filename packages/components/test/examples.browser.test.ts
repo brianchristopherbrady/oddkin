@@ -4,14 +4,12 @@ import { flush } from '@oddkin/core/reactive';
 import { setErrorHandler } from '@oddkin/core/diagnostics';
 import { scopeStats } from '@oddkin/core/scope';
 import { mountExample, type MountedExample } from '@oddkin/workbench/testing';
-import '../src/button/button.define.js';
-import '../src/card/card.define.js';
-import '../src/input/input.define.js';
-import '../src/side-nav/side-nav.define.js';
 import button from '../src/button/button.examples.js';
 import card from '../src/card/card.examples.js';
 import input from '../src/input/input.examples.js';
 import sideNav from '../src/side-nav/side-nav.examples.js';
+import { exampleSets } from './catalog.js';
+import './register.js';
 
 const mounted: MountedExample<Element>[] = [];
 afterEach(() => {
@@ -42,7 +40,7 @@ const output = (root: Element) => expect.poll(() => root.querySelector('output')
 
 describe('authored examples', () => {
   it('each example mounts with its properties, attributes, and slots, then releases everything', async () => {
-    for (const set of [button, card, input, sideNav] as const) {
+    for (const set of Object.values(exampleSets)) {
       for (const [name, example] of Object.entries(set.examples)) {
         if (example.incorrect) continue;
         const before = scopeStats();
@@ -84,15 +82,17 @@ describe('authored examples', () => {
       observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
       wrong: false,
     },
+    'odd-badge/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
   };
   const reported: Record<string, string[]> = {
+    'odd-badge/colorOnly': ['element.attribute.invalid'],
     'odd-button/dangerAppearance': ['element.attribute.invalid'],
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
   };
 
   it('each explained mistake does what its explanation says, unlike its correct example', async () => {
     const seen: string[] = [];
-    for (const set of [button, card, input, sideNav] as const) {
+    for (const set of Object.values(exampleSets)) {
       for (const [name, example] of Object.entries(set.examples)) {
         if (!example.incorrect) continue;
         const label = `${set.component}/${name}`;

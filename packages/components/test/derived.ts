@@ -1,20 +1,24 @@
 import { compose, define, type ElementDefinition } from '@oddkin/core/element';
 import { css, type CSSResult } from '@oddkin/core/styles';
-import { buttonDefinition } from '../src/button/index.js';
-import { cardDefinition } from '../src/card/index.js';
-import { inputDefinition } from '../src/input/index.js';
-import { sideNavDefinition } from '../src/side-nav/index.js';
+import './register.js';
 
-// A derived implementation of each element (customization level 3): a subclass with the shared
-// definition's template and structural styles and a different skin in place of the default one.
-// Importing this module registers `derived-button`, `derived-card`, `derived-input`, and
-// `derived-side-nav`; shared fixtures then run unchanged against both tags.
+// A derived implementation of every component (customization level 3): a subclass with the shared
+// definition's template and structural styles and a different skin in place of the default one,
+// registered as `derived-<name>`. Shared fixtures then run unchanged against both tags. Components
+// are found by file name, so a new one needs no edit here.
+const entries = import.meta.glob<Record<string, unknown>>('../src/*/index.ts', { eager: true });
+
+const isDefinition = (value: unknown): value is ElementDefinition =>
+  typeof value === 'object' &&
+  value !== null &&
+  typeof (value as ElementDefinition).name === 'string' &&
+  typeof (value as ElementDefinition).element === 'function';
 
 export const definitions: Record<string, ElementDefinition> = Object.fromEntries(
-  [buttonDefinition, cardDefinition, inputDefinition, sideNavDefinition].map((definition) => [
-    definition.name,
-    definition as unknown as ElementDefinition,
-  ]),
+  Object.values(entries)
+    .flatMap((module) => Object.values(module).filter(isDefinition))
+    .map((definition) => [definition.name, definition] as const)
+    .sort(([a], [b]) => a.localeCompare(b)),
 );
 export const derivedSkin = css`
   :host {

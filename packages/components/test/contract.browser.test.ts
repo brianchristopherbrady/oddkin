@@ -1,14 +1,6 @@
 /// <reference types="vite/client" />
 import { describe, expect, it } from 'vitest';
 import type { CSSResult } from '@oddkin/core/styles';
-import '../src/button/button.define.js';
-import '../src/card/card.define.js';
-import '../src/input/input.define.js';
-import '../src/side-nav/side-nav.define.js';
-import button from '../src/button/button.examples.js';
-import card from '../src/card/card.examples.js';
-import input from '../src/input/input.examples.js';
-import sideNav from '../src/side-nav/side-nav.examples.js';
 import {
   create,
   describeCemContract,
@@ -17,6 +9,7 @@ import {
   track,
   type Host,
 } from '../../../tests/contract/cem-contract.js';
+import { exampleSets } from './catalog.js';
 import { definitions, derivedSkin, derivedTag } from './derived.js';
 
 // The published custom-elements.json describes what the browser does, for each foundation
@@ -46,7 +39,7 @@ const declarations = await describeCemContract({
     }),
   },
   implementations: (declaration) => [declaration.tagName, derivedTag(declaration.tagName)],
-  examples: { 'odd-button': button, 'odd-card': card, 'odd-input': input, 'odd-side-nav': sideNav },
+  examples: exampleSets,
 });
 
 describe.each(Object.entries(definitions))(

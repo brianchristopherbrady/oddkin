@@ -39,6 +39,7 @@ describe('@oddkin/components/button import graphs', () => {
       'button/button.template.js',
       'button/foundation.js',
       'styles/host.styles.js',
+      'styles/spinner.styles.js',
     ]);
     expect(packages).toEqual([
       '@oddkin/core/element',

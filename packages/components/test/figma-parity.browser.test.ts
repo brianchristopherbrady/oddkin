@@ -57,6 +57,7 @@ let container: HTMLElement;
 const json = async (path: string) => JSON.parse(await commands.readFile(path));
 
 beforeAll(async () => {
+  await import('../src/badge/badge.define.js');
   await import('../src/button/button.define.js');
   await import('../src/card/card.define.js');
   await import('../src/input/input.define.js');
@@ -383,6 +384,29 @@ describe('Figma parity: odd-card (card)', () => {
         { layer: [...frame, 'Workspace'], el: el.querySelector('h3')!, kind: 'text' },
       ];
       expectNone(compare('Oddkin/Common/card', { State: state }, targets));
+    });
+});
+
+const BADGES: Record<string, { attributes: string; text: string }> = {
+  Neutral: { attributes: '', text: 'Draft' },
+  Success: { attributes: 'tone="success"', text: 'Success' },
+  Warning: { attributes: 'tone="warning"', text: 'Warning' },
+  Danger: { attributes: 'tone="danger"', text: 'Danger' },
+  Count: { attributes: 'no-marker', text: '12' },
+};
+
+describe('Figma parity: odd-badge (badge)', () => {
+  for (const [state, spec] of Object.entries(BADGES))
+    it(state, async () => {
+      const el = mount(`<odd-badge ${spec.attributes}>${spec.text}</odd-badge>`);
+      await settle(el);
+      const base = el.shadowRoot!.querySelector<HTMLElement>('[part="base"]')!;
+      const surface = [`Badge / ${state}`, 'Surface'];
+      const targets: Target[] = [
+        { layer: surface, el: base, kind: 'frame' },
+        { layer: [...surface, spec.text], el: base, kind: 'text' },
+      ];
+      expectNone(compare('Oddkin/Common/badge', { State: state }, targets));
     });
 });
 

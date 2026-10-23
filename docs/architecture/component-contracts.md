@@ -131,8 +131,9 @@ keeps focus); the native cancel button is hidden. Date and time types keep the n
 
 ### 3.2 Display
 
-**`odd-badge`** (Figma `badge`) — passive status or count. `tone`. Default slot: the text. Part `marker` (tone glyph;
-none for `neutral`, so a neutral badge with a number is the Count variant). No role; the text is read in place.
+**`odd-badge`** (Figma `badge`) — passive status or count. `tone`, `no-marker: boolean` (hides the glyph: the Count
+variant). Default slot: the text. Parts `base`, `marker` (tone glyph: info for `neutral` and `info`, check-circle for
+`success`, warning for `warning` and `danger`, as Figma draws them). No role; the text is read in place.
 
 **`odd-icon`** (`icon`) — `src: string` (an SVG URL drawn as a mask in `currentColor`; governed by the page's
 `img-src`), `label: string` (non-empty: `role="img"` named by it; empty: hidden from assistive technology),
@@ -141,7 +142,7 @@ empty.
 
 **`odd-spinner`** (`spinner`) — indeterminate busy indicator. `label: string` (accessible name; default
 `strings.loading`), `size: sm | md | lg = md`. Default slot: visible status text (Figma Inline), which then names it.
-`role="progressbar"` without a value. Reduced motion: a slow opacity pulse instead of rotation.
+`role="progressbar"` without a value. Reduced motion: the shared spinner turns slowly (3 s per turn), as `odd-button`'s.
 
 **`odd-progress`** (`progress`) — native `<progress>`. `value: number | undefined` (absent: indeterminate, never a
 percentage, as Figma requires), `max: number = 1` (native default), `label: string` (visible and naming). Part

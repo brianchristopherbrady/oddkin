@@ -14,6 +14,18 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./badge": {
+      "types": "./dist/badge/index.d.ts",
+      "default": "./dist/badge/index.js"
+    },
+    "./badge/foundation": {
+      "types": "./dist/badge/foundation.d.ts",
+      "default": "./dist/badge/foundation.js"
+    },
+    "./define/badge": {
+      "types": "./dist/badge/badge.define.d.ts",
+      "default": "./dist/badge/badge.define.js"
+    },
     "./button": {
       "types": "./dist/button/index.d.ts",
       "default": "./dist/button/index.js"

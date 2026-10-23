@@ -5,6 +5,7 @@ import { createApp } from '@oddkin/app/app';
 import { command } from '@oddkin/app/command';
 import { resource } from '@oddkin/app/resource';
 import { createRouter, route } from '@oddkin/app/router';
+import '@oddkin/components/define/badge';
 import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
 import '@oddkin/components/define/input';
@@ -163,13 +164,18 @@ function componentCycles(cycles: number): Promise<Cycles> {
           items: [{ kind: 'link', id: 'b', label: 'B', href: '#b' }],
         },
       ];
-      container.append(button, input, card, nav);
+      const badge = document.createElement('odd-badge');
+      badge.setAttribute('tone', 'success');
+      badge.textContent = 'Saved';
+      container.append(button, input, card, nav, badge);
       await tick();
-      if ([button, input, card, nav].every((el) => el.shadowRoot?.childElementCount)) upgraded++;
+      if ([button, input, card, nav, badge].every((el) => el.shadowRoot?.childElementCount))
+        upgraded++;
       button.remove();
       input.remove();
       card.remove();
       nav.remove();
+      badge.remove();
     },
     () => `container children: ${container.childElementCount}; rendered: ${upgraded}`,
   );

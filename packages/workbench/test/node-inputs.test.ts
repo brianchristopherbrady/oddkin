@@ -403,7 +403,16 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     const pending = Object.entries(imports)
       .filter(([key]) => key.startsWith('@oddkin/components/define/'))
       .map(([, url]) => url);
-    expect(pending).toHaveLength(4);
+    // One registration entry per published component.
+    const manifest = JSON.parse(
+      readFileSync(
+        join(build.packages.get('@oddkin/components@0.0.0')!, 'custom-elements.json'),
+        'utf8',
+      ),
+    ) as { modules: { declarations?: { tagName?: string }[] }[] };
+    const tags = manifest.modules.flatMap((m) => (m.declarations ?? []).filter((d) => d.tagName));
+    expect(pending.length).toBe(tags.length);
+    expect(pending.length).toBeGreaterThanOrEqual(4);
     const unresolved: string[] = [];
     for (let url = pending.pop(); url; url = pending.pop()) {
       if (seen.has(url)) continue;

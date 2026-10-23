@@ -36,7 +36,14 @@ describe('change impact on @oddkin/components', () => {
   it('reads every source it depends on: no coverage gaps, no unresolved token reads', () => {
     const snapshot = createSnapshot(inputs());
     expect(snapshot.unresolved).toEqual([]);
-    expect(Object.values(snapshot.items).filter((i) => i.kind === 'component')).toHaveLength(4);
+    const published = (
+      JSON.parse(
+        readFileSync(new URL('../../components/custom-elements.json', import.meta.url), 'utf8'),
+      ) as { modules: { declarations?: { tagName?: string }[] }[] }
+    ).modules.flatMap((m) => (m.declarations ?? []).filter((d) => d.tagName));
+    expect(Object.values(snapshot.items).filter((i) => i.kind === 'component')).toHaveLength(
+      published.length,
+    );
   });
 
   it('a side-nav structural style edit selects only side-nav examples, mistakes excluded', () => {
