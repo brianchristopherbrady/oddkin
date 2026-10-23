@@ -1692,6 +1692,12 @@
     },
     "odd-spinner": {
       "dependencies": []
+    },
+    "odd-tab-panel": {
+      "dependencies": []
+    },
+    "odd-tabs": {
+      "dependencies": ["odd-tab-panel"]
     }
   },
   "modules": [
@@ -1845,7 +1851,8 @@
       "home": "@oddkin/core/controllers/focus",
       "decision": "Roving focus.",
       "status": "existing",
-      "figma": ["radioGroup", "Tabs", "segmented", "Toolbar", "Menu", "Tree"]
+      "figma": ["radioGroup", "Tabs", "segmented", "Toolbar", "Menu", "Tree"],
+      "code": ["odd-tabs"]
     },
     {
       "id": "collection",

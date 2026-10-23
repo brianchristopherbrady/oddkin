@@ -119,6 +119,13 @@ describe('component examples', () => {
       'odd-card/headed': ['component:odd-button'],
       'odd-empty-state/default': ['component:odd-button'],
       'odd-input/inForm': ['component:odd-button'],
+      'odd-tab-panel/default': ['component:odd-tabs'],
+      ...Object.fromEntries(
+        ['default', 'manual', 'vertical', 'disabledTab', 'orientationColumn'].map((name) => [
+          `odd-tabs/${name}`,
+          ['component:odd-tab-panel'],
+        ]),
+      ),
     };
     const expected = Object.fromEntries(
       sets.flatMap((set) =>

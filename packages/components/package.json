@@ -186,6 +186,30 @@
       "types": "./dist/spinner/spinner.define.d.ts",
       "default": "./dist/spinner/spinner.define.js"
     },
+    "./tab-panel": {
+      "types": "./dist/tab-panel/index.d.ts",
+      "default": "./dist/tab-panel/index.js"
+    },
+    "./tab-panel/foundation": {
+      "types": "./dist/tab-panel/foundation.d.ts",
+      "default": "./dist/tab-panel/foundation.js"
+    },
+    "./define/tab-panel": {
+      "types": "./dist/tab-panel/tab-panel.define.d.ts",
+      "default": "./dist/tab-panel/tab-panel.define.js"
+    },
+    "./tabs": {
+      "types": "./dist/tabs/index.d.ts",
+      "default": "./dist/tabs/index.js"
+    },
+    "./tabs/foundation": {
+      "types": "./dist/tabs/foundation.d.ts",
+      "default": "./dist/tabs/foundation.js"
+    },
+    "./define/tabs": {
+      "types": "./dist/tabs/tabs.define.d.ts",
+      "default": "./dist/tabs/tabs.define.js"
+    },
     "./models": {
       "types": "./dist/models/index.d.ts",
       "default": "./dist/models/index.js"

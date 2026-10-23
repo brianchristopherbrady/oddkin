@@ -58,6 +58,43 @@ describe('Figma parity: odd-disclosure (Disclosure)', () => {
     });
 });
 
+describe('Figma parity: odd-tabs (Tabs)', () => {
+  for (const state of ['Selected', 'Keyboard focus'])
+    it(state, async () => {
+      const el = mount(
+        `<odd-tabs label="Project" activation="manual"
+          ><odd-tab-panel label="Overview">Project overview</odd-tab-panel
+          ><odd-tab-panel label="Activity">Activity</odd-tab-panel
+          ><odd-tab-panel label="Settings">Settings</odd-tab-panel></odd-tabs
+        >`,
+      );
+      await settleAll(el.parentElement!);
+      const tabs = [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="tab"]')];
+      const surface = [`Tabs / ${state}`, 'Surface'];
+      const focus = state === 'Keyboard focus';
+      const targets: Target[] = [
+        { layer: surface, el: shadowPart(el, 'base'), kind: 'frame' },
+        { layer: [...surface, 'Surface'], el: tabs[0]!, kind: 'frame' },
+        ...['Overview', 'Activity', 'Settings'].map((label, i): Target => ({
+          layer: [...surface, label],
+          el: tabs[i]!,
+          kind: 'text',
+        })),
+        { layer: [...surface, 'Project overview'], el: el.firstElementChild!, kind: 'text' },
+        {
+          layer: [...surface, focus ? 'Surface [3]' : 'Surface [2]'],
+          el: el.shadowRoot!.querySelector('.panels')!,
+          kind: 'frame',
+          pseudo: '::before',
+        },
+      ];
+      if (focus) targets.push({ layer: [...surface, 'Surface [2]'], el: tabs[1]!, kind: 'ring' });
+      await interact(focus ? 'Focus' : state, tabs[1]!);
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/Tabs', { State: state }, targets));
+    });
+});
+
 const QUESTIONS = [
   'How do themes work?',
   'Can I use my own components?',

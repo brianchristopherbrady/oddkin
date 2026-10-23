@@ -20,6 +20,7 @@ export const ATTRIBUTES = {
     values: ['idle', 'pending', 'streaming', 'complete', 'failed', 'cancelled', 'interrupted'],
   },
   orientation: { values: ['horizontal', 'vertical'] },
+  activation: { values: ['automatic', 'manual'] },
   announce: { values: ['none', 'important', 'all'] },
   label: { type: 'string' },
   description: { type: 'string' },

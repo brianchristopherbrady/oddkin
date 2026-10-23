@@ -252,8 +252,11 @@ draw as one surface with dividers (Figma `Accordion`; custom states `joined-star
 **`odd-tabs`** (`Tabs`) — `label` (names the tab list), `value` (the selected panel's `value`), `orientation:
 horizontal | vertical = horizontal`, `activation: automatic | manual = automatic` (APG). Children: `odd-tab-panel`
 (`label`, `value`, `disabled`; content in its default slot), assigned to tab-panel wrappers in the tabs' shadow root
-(§2.3). Arrow keys move between tabs, Home/End, focus and selection may differ (Figma). `input` and `change` on user
-selection.
+(§2.3; other children are not shown). A panel without `value` is identified by its position ("0", "1", …); when
+`value` matches no enabled panel, the first enabled one shows. Arrow keys move between tabs (mirrored right to left),
+Home/End, disabled tabs are skipped, focus and selection may differ (Figma); the selected tab is the list's one Tab
+stop, followed by the shown panel (`tabindex="0"`). `input` and `change` on user selection. `define/tabs` registers
+`odd-tab-panel` too.
 
 **`odd-breadcrumbs`** (`Breadcrumbs`) — `<nav>` named `label` (default `strings.label`), an ordered list of links
 (§2.2 links); the last item is the current page, shown as text with `aria-current="page"`. `max-items: number = 0`

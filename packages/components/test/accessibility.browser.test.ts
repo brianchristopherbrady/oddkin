@@ -104,6 +104,8 @@ const states = `
   <odd-disclosure label="Shipping" open>Ships in two days. <a href="#returns">Returns</a></odd-disclosure>
   <odd-disclosure label="Archived settings" disabled>Not available.</odd-disclosure>
   <div><odd-disclosure name="faq" label="How do themes work?" open>Semantic tokens adapt each control.</odd-disclosure><odd-disclosure name="faq" label="Which browsers are supported?">Current engines.</odd-disclosure></div>
+  <odd-tabs label="Project"><odd-tab-panel label="Overview">Overview text.</odd-tab-panel><odd-tab-panel label="Activity">Activity text.</odd-tab-panel><odd-tab-panel label="Settings" disabled>Settings.</odd-tab-panel></odd-tabs>
+  <odd-tabs label="Sections" orientation="vertical" activation="manual"><odd-tab-panel label="One">One.</odd-tab-panel><odd-tab-panel label="Two">Two.</odd-tab-panel></odd-tabs>
 `;
 
 let tokens: HTMLLinkElement;

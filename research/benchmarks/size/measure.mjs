@@ -124,6 +124,8 @@ export const CSS_BUDGETS = {
   'components:chip': 768, // 652
   // Disclosure and navigation elements, measured on 2026-10-22 (structural and default styles).
   'components:disclosure': 768, // 704
+  'components:tabs': 768, // 731
+  'components:tab-panel': 128, // 96: structural only; odd-tabs draws the panel
   'components:empty-state': 512, // 434
   'components:icon': 384, // 305
   'components:progress': 768, // 695
