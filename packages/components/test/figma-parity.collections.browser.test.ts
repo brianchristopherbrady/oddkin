@@ -11,13 +11,16 @@ import {
   compare,
   deliberate,
   expectNone,
+  interact,
   mount,
   settle,
+  shadowPart,
   transitions,
   useParity,
   type Target,
 } from './parity.js';
 import { themeValue } from './probe.js';
+import type { OddkinSplitPanel } from '../src/split-panel/split-panel.js';
 
 // Figma parity of the shared modules of the collections lane (component-contracts.md §2.9): the
 // option row on `ListboxOption` and `MenuItem`, drawn by a test element until odd-listbox and
@@ -204,4 +207,33 @@ describe('option row module', () => {
       }
     },
   );
+});
+
+deliberate([
+  /^Splitter\/\w+ Focus \w+ resize handle (strokes|strokeTopWeight) \(--odd-(color-focus-ring|border-width-default)\): border-block-start-(color|width)/,
+  'The separator shows the shared focus ring (an outline of focus.width, like every focusable part) instead of the 1px stroke Figma draws in the focus colour.',
+]);
+
+describe('Figma parity: odd-split-panel (Splitter)', () => {
+  for (const [family, orientation, layer, grip] of [
+    ['Splitter/vertical', 'horizontal', 'Vertical resize handle', '\u22ee'],
+    ['Splitter/horizontal', 'vertical', 'Horizontal resize handle', '\u2022\u2022\u2022'],
+  ] as const)
+    for (const state of ['Default', 'Hover', 'Focus', 'Dragging'])
+      it(`${family} ${state}`, async () => {
+        const el = mount(
+          `<odd-split-panel orientation="${orientation}" style="block-size: 200px"><p slot="start">Files</p><p slot="end">Design system</p></odd-split-panel>`,
+        ) as OddkinSplitPanel;
+        await settle(el);
+        const separator = shadowPart(el, 'separator');
+        if (state === 'Dragging') el._dragging.value = true;
+        await interact(state, separator);
+        await settle(el);
+        const targets: Target[] = [
+          { layer: [layer], el: separator, kind: 'frame' },
+          { layer: [layer, grip], el: separator.querySelector('.glyph')!, kind: 'text' },
+        ];
+        await transitions(targets);
+        expectNone(compare(`Oddkin/Common/${family}`, { State: state }, targets));
+      });
 });

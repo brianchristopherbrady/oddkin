@@ -8,7 +8,7 @@ export interface VocabularyFinding {
 export const ATTRIBUTES: Record<
   string,
   {
-    type?: 'string' | 'boolean';
+    type?: 'string' | 'boolean' | 'number';
     /** Per-element types that follow a native element's own type (ADR 0045 §2). */
     native?: Record<string, 'string' | 'boolean' | 'number'>;
     values?: string[];

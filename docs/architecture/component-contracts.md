@@ -344,9 +344,12 @@ dialog behaviour).
 **`odd-split-panel`** (`SplitPanels`, `Splitter/*`) — two panes in slots `start` and `end`, a focusable separator
 between them (APG window splitter, `aria-valuenow` in percent, `aria-controls` the start pane). `orientation:
 horizontal | vertical = horizontal` (side by side or stacked), `position: number = 50` (percent of the start pane),
-`min = 0`, `max = 100`, `collapsed: boolean` (Enter toggles and restores the previous position), `label` (names the
-separator). Arrow keys step, Home/End go to the limits. Dragging and keys dispatch `input`; release and key commits
-dispatch `change`. More panes: nest split panels.
+`min = 0`, `max = 100`, `collapsed: boolean` (Enter toggles and restores the previous position; the start pane is
+hidden), `label` (names the separator; default `strings.label`, "Resize"). Arrow keys step by 1%, Home/End go to the
+limits. Dragging and keys dispatch `input`; release and key commits dispatch `change` (Enter dispatches both). Built on
+`@oddkin/core/controllers/resize`: a drag follows the pointer's distance with pointer capture, and the separator's centre
+sits on the position. Parts `base`, `start`, `separator`, `end`; `--odd-split-panel-separator-size`. Stacked panes
+need a height on the element. More panes: nest split panels.
 
 ## 4. Recipes
 

@@ -861,6 +861,26 @@
       "detectCss": "(accent-color: red)"
     },
     {
+      "id": "resize-cursors",
+      "syntax": "cursor: col-resize, cursor: row-resize",
+      "kind": "css",
+      "bcd": ["css.properties.cursor.col-resize", "css.properties.cursor.row-resize"],
+      "adoption": "enhancement",
+      "status": "implemented",
+      "usedBy": ["odd-split-panel (the separator)"],
+      "baseline": "The separator shows the pointer cursor; touch devices show no cursor at all.",
+      "enhanced": "A pointer over the separator shows the column or row resize cursor.",
+      "gate": "Literal fallback: cursor: pointer first, then the resize cursor (an unsupported value is dropped at parse time)",
+      "differences": "Only the cursor image differs; dragging and keys work the same.",
+      "detectCss": "(cursor: col-resize)",
+      "tests": [
+        {
+          "file": "packages/components/test/split-panel.browser.test.ts",
+          "name": "shows a resize cursor over the separator, or the pointer where that is unsupported"
+        }
+      ]
+    },
+    {
       "id": "customizable-select",
       "syntax": "appearance: base-select, ::picker(select)",
       "kind": "css",

@@ -1702,6 +1702,9 @@
     "odd-spinner": {
       "dependencies": []
     },
+    "odd-split-panel": {
+      "dependencies": []
+    },
     "odd-switch": {
       "dependencies": []
     },
@@ -1902,6 +1905,7 @@
       "home": "@oddkin/core/controllers/resize (ResizeHandle)",
       "decision": "Splitter drag and keyboard resizing.",
       "status": "existing",
+      "code": ["odd-split-panel"],
       "figma": ["Splitter/horizontal", "Splitter/vertical", "SplitPanels"]
     },
     {

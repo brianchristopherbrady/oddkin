@@ -38,6 +38,9 @@ export const ATTRIBUTES = {
   required: { type: 'boolean' },
   multiple: { type: 'boolean' },
   pressed: { type: 'boolean' },
+  collapsed: { type: 'boolean' },
+  // The start pane's size in percent (odd-split-panel).
+  position: { type: 'number' },
 };
 
 /** Replaced attribute and property names → the canonical name (ADR 0045 §3). */

@@ -396,7 +396,7 @@ Status: **proposed** (2026-10-22). 170 references; controller 14, deferred 11, e
 | `odd-tool-call` | `odd-action-approval` | A tool call that needs approval renders the complete odd-action-approval widget. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (33) has no element dependency.
+Every other element (34) has no element dependency.
 
 #### Shared homes
 
@@ -420,7 +420,7 @@ Every other element (33) has no element dependency.
 | focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | odd-tabs, odd-toolbar |  |
 | collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | odd-breadcrumbs |  |
 | position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (PositionController, ADR 0044) | existing | — |  |
-| resize: Splitter drag and keyboard resizing. | controller | @oddkin/core/controllers/resize (ResizeHandle) | existing | — |  |
+| resize: Splitter drag and keyboard resizing. | controller | @oddkin/core/controllers/resize (ResizeHandle) | existing | odd-split-panel |  |
 | navigation-model: Navigation item data model. | controller | packages/components/src/models/navigation.ts (Agent 1) | existing | odd-side-nav |  |
 
 <!-- oddkin:reuse:end -->

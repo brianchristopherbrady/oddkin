@@ -95,6 +95,10 @@ describe('authored examples', () => {
     },
     'odd-tabs/orientationColumn': { observe: (el) => el['orientation'], wrong: 'horizontal' },
     'odd-toolbar/orientationRow': { observe: (el) => el['orientation'], wrong: 'horizontal' },
+    'odd-split-panel/orientationColumn': {
+      observe: (el) => el['orientation'],
+      wrong: 'horizontal',
+    },
     'odd-pagination/currentPageAttribute': { observe: (el) => el['current'], wrong: '1' },
     'odd-breadcrumbs/itemsAttribute': {
       observe: (el) => el.shadowRoot!.querySelectorAll('[part~="item"]').length,
@@ -116,6 +120,7 @@ describe('authored examples', () => {
     'odd-spinner/sizeWord': ['element.attribute.invalid'],
     'odd-tabs/orientationColumn': ['element.attribute.invalid'],
     'odd-toolbar/orientationRow': ['element.attribute.invalid'],
+    'odd-split-panel/orientationColumn': ['element.attribute.invalid'],
     'odd-button/dangerAppearance': ['element.attribute.invalid'],
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-breadcrumbs/itemsAttribute': ['element.attribute.propertyOnly'],

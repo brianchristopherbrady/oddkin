@@ -129,6 +129,8 @@ export const CSS_BUDGETS = {
   'components:toolbar': 512, // 473
   'components:pagination': 768, // 702
   'components:breadcrumbs': 640, // 561
+  // Layout, measured on 2026-10-23 (structural and default styles).
+  'components:split-panel': 896, // 818
   'components:empty-state': 512, // 434
   'components:icon': 384, // 305
   'components:progress': 768, // 695

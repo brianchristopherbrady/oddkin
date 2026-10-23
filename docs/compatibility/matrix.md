@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 104 stylesheets, 273 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 106 stylesheets, 284 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -52,7 +52,7 @@ Legend: ✓ *n* — fully supported at the floor (first full version *n*); parti
 | containment | `contain, contain-intrinsic-size` | planned (M8) | ✓ 83 | ✓ 83 | ✓ 107 | ✓ 17 | — | widely (2024-09-14) | Not applied by default. Containment changes containing blocks, stacking, intrinsic size, and overflow clipping, so it is added per component only with measurements and checks that focus rings, shadows, overlays, and sticky content still render. | — |
 | resize | `resize: vertical` | planned (M10) | ✓ 1 | ✓ 79 | ✓ 4 | ✓ 3 | Firefox Android: ✗ (none); Safari iOS: ✗ (none) | limited | examples/css-gallery (native textarea). odd-prompt-input, odd-action-approval (auto-growing or vertical text areas). Textareas can be resized vertically by the user where the platform offers a resize handle; auto-growing text areas turn the handle off. **Floor exception:** Firefox Android: No resize handle on Firefox for Android; long content scrolls inside the textarea. Safari iOS: No resize handle on iOS; long content scrolls inside the textarea. | — |
 
-## Enhancements (gated) (14)
+## Enhancements (gated) (15)
 
 | Feature | Syntax | Status | Chrome | Edge | Firefox | Safari | Gate | Baseline behaviour | Enhanced behaviour | Differences | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -65,6 +65,7 @@ Legend: ✓ *n* — fully supported at the floor (first full version *n*); parti
 | scrollbar-gutter | `scrollbar-gutter: stable` | planned (M10) | ✓ 94 | ✓ 94 | ✓ 97 | ✗ (full: 18.2) | Literal declaration (ignored where unsupported) | Layout may shift by the scrollbar width when content starts to scroll. | Scroll regions reserve the gutter, avoiding the shift. | A possible layout shift in floor browsers without support. | — |
 | overscroll-behavior | `overscroll-behavior: contain` | planned (M10) | partial (full: 144) | ✓ 79 | partial (full: 150) | partial (none) | Literal declaration (ignored where unsupported) | Scrolling past the end of an overlay may scroll the page behind it. | Overlay scrolling stays contained. | Scroll chaining only. | — |
 | accent-color | `accent-color` | planned (M10) | ✓ 93 | ✓ 93 | ✓ 92 | partial (full: 26.2) | Literal declaration (ignored where unsupported) | Native checkboxes, radios, and ranges use system accent colours. | Native controls take the brand action colour. | Colour only; semantics and keyboard behaviour stay native. | — |
+| resize-cursors | `cursor: col-resize, cursor: row-resize` | implemented | ✓ 1 | ✓ 12 | ✓ 1.5 | ✓ 3 | Literal fallback: cursor: pointer first, then the resize cursor (an unsupported value is dropped at parse time) | The separator shows the pointer cursor; touch devices show no cursor at all. | A pointer over the separator shows the column or row resize cursor. | Only the cursor image differs; dragging and keys work the same. | `packages/components/test/split-panel.browser.test.ts` |
 | customizable-select | `appearance: base-select, ::picker(select)` | planned (M10) | ✗ (full: 135) | ✗ (full: 135) | ✗ (none) | ✗ (full: 27) | @supports (appearance: base-select) gating the complete enhanced rule set | A styled native <select> (closed state only) keeps native semantics, keyboard behaviour, validation, and form participation. | The open picker and options take Oddkin styling. | Picker appearance only; the control is never replaced to obtain styling. | — |
 | open-pseudo | `:open` | planned (M10) | ✗ (full: 133) | ✗ (full: 133) | ✗ (full: 136) | ✗ (full: 26.5) | @supports selector(:open), never inside a shared selector list | Open styling uses [open] attributes and :popover-open. | :open covers details, dialog, and select pickers uniformly. | None when both selectors express the same state. | — |
 | element-reflection | `ElementInternals.ariaLabelledByElements` | implemented | ✗ (full: 135) | ✗ (full: 135) | ✗ (full: 136) | ✓ 16.4 | Feature detection: 'ariaLabelledByElements' in ElementInternals.prototype | A card is a named region only with label; without it, no landmark role is set. | A slotted heading names the region across the shadow boundary. | Without element reflection, a heading-only card is not a landmark; set label for the region. | `packages/components/test/card.browser.test.ts` |
@@ -159,6 +160,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
 | `packages/components/dist/spinner/spinner.structural.styles.js (spinnerStructuralStyles)` | yes | 10 |
 | `packages/components/dist/spinner/spinner.styles.js (spinnerElementStyles)` | yes | 10 |
+| `packages/components/dist/split-panel/split-panel.structural.styles.js (splitPanelStructuralStyles)` | yes | 36 |
+| `packages/components/dist/split-panel/split-panel.styles.js (splitPanelStyles)` | yes | 25 |
 | `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 42 |
 | `packages/components/dist/styles/control-indicator.styles.js (controlIndicatorStyles)` | yes | 24 |
 | `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 31 |

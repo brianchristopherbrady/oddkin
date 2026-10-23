@@ -222,6 +222,18 @@
       "types": "./dist/spinner/spinner.define.d.ts",
       "default": "./dist/spinner/spinner.define.js"
     },
+    "./split-panel": {
+      "types": "./dist/split-panel/index.d.ts",
+      "default": "./dist/split-panel/index.js"
+    },
+    "./split-panel/foundation": {
+      "types": "./dist/split-panel/foundation.d.ts",
+      "default": "./dist/split-panel/foundation.js"
+    },
+    "./define/split-panel": {
+      "types": "./dist/split-panel/split-panel.define.d.ts",
+      "default": "./dist/split-panel/split-panel.define.js"
+    },
     "./switch": {
       "types": "./dist/switch/index.d.ts",
       "default": "./dist/switch/index.js"
