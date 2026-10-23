@@ -2230,3 +2230,19 @@ Environment: as the previous entries. Other lanes in progress in the same tree: 
 | Size, types, CSS, vocabulary | `node scripts/check-size.mjs`; `npm run typecheck`; `npm run compat`; `node scripts/check-vocabulary.mjs` | Breadcrumbs is 561 B gzip (budget 640). Size, CSS, and vocabulary pass (0 findings). The typecheck fails only in Agent 1's uncommitted `switch.browser.test.ts`. The two stylesheets add no compatibility key. |
 
 **Findings:** reading `<a href>` descendants as data, with no slot, keeps a server-rendered `<ol><li><a href>` trail readable before the element is defined and lets the element own the list semantics once it is. Not verified: screen-reader output, real devices, and Safari on macOS.
+
+## 2026-10-23 — `odd-breadcrumbs` home slot (owner decision)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2). Other work in the same working tree, not in this commit: Agent 1's `odd-switch`, checkable base, and choice-row changes; the design session's icons and catalog hunks.
+
+The owner decided that the first item shows text by default. In every example and test that text is the first link's label, "Home". A slot replaces it with an SVG or other text. Figma draws a home icon there.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Behaviour | `npx vitest run --project browser packages/components/test/breadcrumbs.browser.test.ts` | 10 tests; all pass in Chromium, Firefox, and WebKit (forced colours in Chromium only). New test: an `<svg slot="home">` is assigned to the first link's only `home` slot. The label stays in the link as visually hidden text (at most 1 px wide), and the other links keep their visible text. With `<span slot="home">Start</span>`, the label is hidden, so the link's name is the slotted text alone. When the slotted content is removed, the label shows again. In a one-item trail, the current page takes the slot. The first test now checks that no slot other than `home` exists, so the `<ol>` children are still data. |
+| Catalog-wide | `examples`, `contract` (CEM), `styling-contract`, `multi-product`, `accessibility`, `figma-parity.navigation`, `breadcrumbs` (three engines) | 21 files: 1,099 passed, 86 skipped. The new `homeIcon` example renders. axe: no violations with a decorative icon in the collapsed trail's `home` slot, light and dark. |
+| Node | `npx tsc -b packages/components; node scripts/build-metadata.mjs`; `npx vitest run --project node` | 1,058 tests, 1,055 passed. The 3 failures are Agent 1's: `odd-checkbox` and `odd-switch` in the Theme Studio roles and the button-impact selection, and the uncommitted `OddkinCheckable` in `typed-listeners.test.ts`. |
+| Mutation probes | `node .tmp/mutate.mjs .tmp/n-mutants-home.json` (Chromium) | 6 mutants, all killed in the end. "Home slot on every item" survived at first: with an icon slotted, every item's label went visually hidden, and the test only read text content. The test now checks that there is one `home` slot and that the next link keeps its visible width, and the mutant is killed. |
+| Size, types, CSS, vocabulary | `node scripts/check-size.mjs`; `npm run typecheck`; `npm run compat`; `node scripts/check-vocabulary.mjs` | Breadcrumbs is 575 B gzip (budget 640). Size, CSS (no new key), and vocabulary pass. The typecheck fails only in Agent 1's uncommitted `switch.browser.test.ts`. |
+
+Not rerun: the 1,000-cycle lifetime run. The scenario's markup does not use the slot, and the disposal test covers ownership. Not verified: screen-reader output, real devices, and Safari on macOS.

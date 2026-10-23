@@ -130,7 +130,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/avatar/avatar.styles.js (avatarStyles)` | yes | 8 |
 | `packages/components/dist/badge/badge.structural.styles.js (badgeStructuralStyles)` | yes | 16 |
 | `packages/components/dist/badge/badge.styles.js (badgeStyles)` | yes | 11 |
-| `packages/components/dist/breadcrumbs/breadcrumbs.structural.styles.js (breadcrumbsStructuralStyles)` | yes | 31 |
+| `packages/components/dist/breadcrumbs/breadcrumbs.structural.styles.js (breadcrumbsStructuralStyles)` | yes | 34 |
 | `packages/components/dist/breadcrumbs/breadcrumbs.styles.js (breadcrumbsStyles)` | yes | 14 |
 | `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 52 |
 | `packages/components/dist/button/button.structural.styles.js (buttonStructuralStyles)` | yes | 32 |

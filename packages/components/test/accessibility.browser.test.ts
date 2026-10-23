@@ -114,7 +114,7 @@ const states = `
   <odd-pagination label="Search results" current="3" page-count="12"></odd-pagination>
   <odd-pagination label="Articles" current="1" page-count="4" href="#page-{page}"></odd-pagination>
   <odd-breadcrumbs><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
-  <odd-breadcrumbs label="Collapsed location" max-items="2"><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
+  <odd-breadcrumbs label="Collapsed location" max-items="2"><svg slot="home" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M3 11l9-8 9 8" /></svg><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
 `;
 
 let tokens: HTMLLinkElement;

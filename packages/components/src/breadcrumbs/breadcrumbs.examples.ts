@@ -36,6 +36,16 @@ export default defineExamples('odd-breadcrumbs', {
     guidance:
       'With `max-items`, a long trail keeps the first item and the last ones; "more" shows the rest.',
   },
+  homeIcon: {
+    label: 'Home icon',
+    props: { items },
+    guidance:
+      "Put an icon (or other text) in the `home` slot to replace the first item's text; an icon is decorative, and the label stays as hidden text.",
+    fixture({ element }) {
+      element.innerHTML =
+        '<svg slot="home" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" /></svg>';
+    },
+  },
   itemsAttribute: {
     label: 'Items written as an attribute',
     attributes: { items: JSON.stringify(items) },

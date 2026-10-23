@@ -68,8 +68,8 @@ describe('odd-breadcrumbs', () => {
     const separators = el.shadowRoot!.querySelectorAll('[part~="separator"]');
     expect(separators).toHaveLength(4);
     expect([...separators].every((s) => s.getAttribute('aria-hidden') === 'true')).toBe(true);
-    // The children are data: nothing slots them.
-    expect(el.shadowRoot!.querySelector('slot')).toBeNull();
+    // The children are data: only the home slot exists, and nothing slots the list.
+    expect(el.shadowRoot!.querySelector('slot:not([name="home"])')).toBeNull();
     expect(el.querySelector('ol')!.assignedSlot).toBeNull();
     el.setAttribute('label', 'You are here');
     await settle(el);
@@ -169,6 +169,40 @@ describe('odd-breadcrumbs', () => {
     await settle(el);
     expect(shape(el)).toBe('Home Workspace Projects Components [Forms]');
     expect(deepActive()).toBe(part(el, 'link', 'Workspace'));
+  });
+
+  it("lets the home slot replace the first item's text, keeping its name behind an icon", async () => {
+    const icon =
+      '<svg slot="home" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M3 11l9-8 9 8" /></svg>';
+    const el = await mount('', `${list(['Home', 'Docs', 'Forms'])}${icon}`);
+    const home = part(el, 'link', 'Home');
+    const text = home.querySelector('span')!;
+    expect(home.querySelector('slot')!.assignedElements()).toEqual([el.querySelector('svg')]);
+    expect(text.className).toBe('visually-hidden');
+    expect(text.hidden).toBe(false);
+    expect(text.getBoundingClientRect().width).toBeLessThanOrEqual(1);
+    expect(shape(el)).toBe('Home Docs [Forms]');
+    expect(el.shadowRoot!.querySelectorAll('slot[name="home"]')).toHaveLength(1);
+    expect(part(el, 'link', 'Docs').getBoundingClientRect().width).toBeGreaterThan(1);
+    // Other text replaces the label, which then names nothing twice.
+    el.querySelector('svg')!.remove();
+    el.insertAdjacentHTML('beforeend', '<span slot="home">Start</span>');
+    await settle(el);
+    expect(text.hidden).toBe(true);
+    expect(home.querySelector('slot')!.assignedElements()[0]!.textContent).toBe('Start');
+    el.querySelector('[slot="home"]')!.remove();
+    await settle(el);
+    expect(text.hidden).toBe(false);
+    expect(text.className).toBe('label');
+    expect(text.getBoundingClientRect().width).toBeGreaterThan(1);
+    // A one-item trail: the current page takes the slot.
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    el.items = records(['Home']);
+    el.insertAdjacentHTML('beforeend', icon);
+    await settle(el);
+    const current = part(el, 'current');
+    expect(current.querySelector('slot')!.assignedElements()).toHaveLength(1);
+    expect(current.querySelector('span')!.className).toBe('visually-hidden');
   });
 
   it('draws links in the link colour and the current page in primary text on the surface', async () => {

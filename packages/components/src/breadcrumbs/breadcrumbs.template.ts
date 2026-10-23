@@ -43,7 +43,23 @@ const control = (breadcrumbs: OddkinBreadcrumbs, entry: BreadcrumbEntry) => {
     </button>`;
   if (entry.kind === 'current')
     return html`<span part="current" class="current" aria-current="page"
-      >${entry.record.label}</span
+      >${label(breadcrumbs, entry)}</span
     >`;
-  return html`<a part="link" class="link" href=${entry.record.href}>${entry.record.label}</a>`;
+  return html`<a part="link" class="link" href=${entry.record.href}
+    >${label(breadcrumbs, entry)}</a
+  >`;
 };
+
+/** The first item's label can be replaced through the `home` slot; an icon there keeps it as hidden text. */
+const label = (
+  breadcrumbs: OddkinBreadcrumbs,
+  entry: Exclude<BreadcrumbEntry, { kind: 'more' }>,
+) =>
+  entry.first
+    ? html`<slot name="home" @slotchange=${breadcrumbs._onHomeChange}></slot
+        ><span
+          class=${computed(() => (breadcrumbs._home.value === 'icon' ? 'visually-hidden' : 'label'))}
+          ?hidden=${computed(() => breadcrumbs._home.value === 'text')}
+          >${entry.record.label}</span
+        >`
+    : entry.record.label;

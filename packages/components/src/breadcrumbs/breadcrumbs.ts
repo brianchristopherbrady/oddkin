@@ -31,6 +31,7 @@ export type BreadcrumbEntry =
  * @csspart current - The current page (text with `aria-current="page"`).
  * @csspart separator - The mark before each item after the first.
  * @csspart more - The button that shows the collapsed items.
+ * @slot home - Replaces the first item's text: other text, or an icon (`<svg>`), which is decorative; with no text in it, the first item's label stays as hidden text, so the item keeps its name.
  * @cssprop --odd-breadcrumbs-radius - Corner radius of the surface.
  * @a11y A `<nav>` landmark named by `label` (default `strings.label`, "Breadcrumb") around an ordered list. The last item is the current page, as text with `aria-current="page"`. Separators are hidden from assistive technology. The "more" button is named "Show 2 more" (`strings.more`); activating it shows the collapsed items and moves focus to the first of them.
  * @keyboard Tab moves through the links and the "more" button; Enter follows a link; Enter or Space on "more" shows the collapsed items.
@@ -64,6 +65,19 @@ export class OddkinBreadcrumbs extends OddkinElement.with({
     read: readLinks,
   });
   #focusRevealed = false;
+
+  /** @internal What the `home` slot holds: nothing, content without text (an icon), or text. */
+  readonly _home = signal<'none' | 'icon' | 'text'>('none');
+
+  /** @internal Slot change handler used by the template. */
+  readonly _onHomeChange = (event: Event): void => {
+    const nodes = (event.target as HTMLSlotElement).assignedNodes();
+    this._home.value = !nodes.length
+      ? 'none'
+      : nodes.some((node) => !!node.textContent?.trim())
+        ? 'text'
+        : 'icon';
+  };
 
   /** @internal Whether the collapsed items were shown. */
   readonly _expanded = signal(false);

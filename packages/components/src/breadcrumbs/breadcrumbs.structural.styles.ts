@@ -46,6 +46,9 @@ export const breadcrumbsStructuralStyles = css`
   .separator {
     display: inline-flex;
   }
+  ::slotted(svg) {
+    flex: none;
+  }
   @media (forced-colors: active) {
     .breadcrumbs .link {
       color: LinkText;

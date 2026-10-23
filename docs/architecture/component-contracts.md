@@ -267,8 +267,9 @@ stop, followed by the shown panel (`tabindex="0"`). `input` and `change` on user
 
 **`odd-breadcrumbs`** (`Breadcrumbs`) — `<nav>` named `label` (default `strings.label`, "Breadcrumb"), an ordered
 list of links (§2.2 links: `<a href>` descendants, read as data and not rendered, or `items`) with separators hidden
-from assistive technology; the last item is the current page, shown as text with `aria-current="page"`.
-`max-items: number = 0` (0: never collapse); above it, the first item, a "more" button (glyph, named by
+from assistive technology; the last item is the current page, shown as text with `aria-current="page"`. Slot `home`
+replaces the first item's text (Figma draws a home icon there): other text, or a decorative icon, in which case the
+label stays as hidden text so the item keeps its name. `max-items: number = 0` (0: never collapse); above it, the first item, a "more" button (glyph, named by
 `strings.more`, "Show 2 more"), and the last `max-items − 1` items (at least one) show; "more" reveals the rest and
 moves focus to the first revealed link.
 
