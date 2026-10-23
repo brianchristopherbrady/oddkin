@@ -18,8 +18,8 @@
         "appCycles": {
           "cycles": 1000,
           "ms": [
-            9377,
-            7666
+            5404,
+            5315
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -41,9 +41,9 @@
             "resource loads: 1000"
           ],
           "heapBytes": [
-            1866688,
-            1997864,
-            2000872
+            1886968,
+            2018152,
+            2021216
           ],
           "retainedPerCycleBytes": [
             131,
@@ -53,8 +53,8 @@
         "navigationCycles": {
           "cycles": 1000,
           "ms": [
-            1061,
-            1233
+            866,
+            956
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -76,9 +76,9 @@
             "committed 2000; after stop: {\"scopes\":0,\"listeners\":0,\"timers\":0,\"effects\":0}"
           ],
           "heapBytes": [
-            2012580,
-            2023764,
-            2023904
+            2033064,
+            2044248,
+            2044388
           ],
           "retainedPerCycleBytes": [
             11,
@@ -88,8 +88,8 @@
         "themeEditCycles": {
           "cycles": 1000,
           "ms": [
-            12934,
-            12289
+            6803,
+            7729
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -111,20 +111,20 @@
             "distinct brand-600 values: 357"
           ],
           "heapBytes": [
-            2740300,
-            2803252,
-            2795184
+            2761556,
+            2824644,
+            2820312
           ],
           "retainedPerCycleBytes": [
             63,
-            -8
+            -4
           ]
         },
         "componentCycles": {
           "cycles": 1000,
           "ms": [
-            14165,
-            13224
+            11192,
+            11012
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -146,13 +146,13 @@
             "container children: 0; rendered: 1000"
           ],
           "heapBytes": [
-            3594284,
-            3483796,
-            3509540
+            3397912,
+            4108604,
+            3564136
           ],
           "retainedPerCycleBytes": [
-            -110,
-            26
+            711,
+            -544
           ]
         }
       },
@@ -164,8 +164,8 @@
         "appCycles": {
           "cycles": 1000,
           "ms": [
-            6695,
-            6351
+            5639,
+            5197
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -190,8 +190,8 @@
         "navigationCycles": {
           "cycles": 1000,
           "ms": [
-            396,
-            347
+            323,
+            340
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -216,8 +216,8 @@
         "themeEditCycles": {
           "cycles": 1000,
           "ms": [
-            9229,
-            13517
+            7856,
+            8120
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -242,8 +242,8 @@
         "componentCycles": {
           "cycles": 1000,
           "ms": [
-            20663,
-            21449
+            18443,
+            18348
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -274,8 +274,8 @@
         "appCycles": {
           "cycles": 1000,
           "ms": [
-            15655,
-            15680
+            15805,
+            15744
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -303,8 +303,8 @@
         "themeEditCycles": {
           "cycles": 1000,
           "ms": [
-            13114,
-            11589
+            6926,
+            7198
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -329,8 +329,8 @@
         "componentCycles": {
           "cycles": 1000,
           "ms": [
-            43037,
-            28317
+            23837,
+            22333
           ],
           "ownershipReturned": true,
           "scopeStats": {

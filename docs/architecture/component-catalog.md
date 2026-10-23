@@ -361,7 +361,7 @@ Status: **proposed** (2026-10-22). 170 references; controller 14, deferred 11, e
 | `odd-tool-call` | `odd-action-approval` | A tool call that needs approval renders the complete odd-action-approval widget. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (28) has no element dependency.
+Every other element (29) has no element dependency.
 
 #### Shared homes
 
@@ -382,7 +382,7 @@ Every other element (28) has no element dependency.
 | avatar: Avatar look and stacking. | style | @oddkin/components/avatar styles | existing | odd-avatar, .odd-avatar-group recipe |  |
 | overlay-surface: Overlay surface: raised background, border, radius, elevation. | style | @oddkin/components/styles (proposed, with ADR 0044) | proposed | — |  |
 | form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input |  |
-| focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | odd-tabs |  |
+| focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | odd-tabs, odd-toolbar |  |
 | collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | — |  |
 | position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (PositionController, ADR 0044) | existing | — |  |
 | resize: Splitter drag and keyboard resizing. | controller | @oddkin/core/controllers/resize (ResizeHandle) | existing | — |  |

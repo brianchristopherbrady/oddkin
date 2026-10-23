@@ -126,6 +126,12 @@ describe('component examples', () => {
           ['component:odd-tab-panel'],
         ]),
       ),
+      ...Object.fromEntries(
+        ['default', 'selection', 'vertical', 'orientationRow'].map((name) => [
+          `odd-toolbar/${name}`,
+          ['component:odd-button'],
+        ]),
+      ),
     };
     const expected = Object.fromEntries(
       sets.flatMap((set) =>

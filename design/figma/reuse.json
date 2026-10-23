@@ -1698,6 +1698,9 @@
     },
     "odd-tabs": {
       "dependencies": ["odd-tab-panel"]
+    },
+    "odd-toolbar": {
+      "dependencies": []
     }
   },
   "modules": [
@@ -1852,7 +1855,7 @@
       "decision": "Roving focus.",
       "status": "existing",
       "figma": ["radioGroup", "Tabs", "segmented", "Toolbar", "Menu", "Tree"],
-      "code": ["odd-tabs"]
+      "code": ["odd-tabs", "odd-toolbar"]
     },
     {
       "id": "collection",

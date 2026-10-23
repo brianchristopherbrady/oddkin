@@ -20,6 +20,7 @@ import '@oddkin/components/define/side-nav';
 import '@oddkin/components/define/skeleton';
 import '@oddkin/components/define/spinner';
 import '@oddkin/components/define/tabs';
+import '@oddkin/components/define/toolbar';
 import { scopeStats } from '@oddkin/core/scope';
 import { generate } from '@oddkin/tokens/generate';
 
@@ -190,7 +191,8 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-spinner>Loading…</odd-spinner>
         <odd-disclosure name="faq" label="One" open>1</odd-disclosure>
         <odd-disclosure name="faq" label="Two">2</odd-disclosure>
-        <odd-tabs label="Tabs"><odd-tab-panel label="A">a</odd-tab-panel><odd-tab-panel label="B">b</odd-tab-panel></odd-tabs>`;
+        <odd-tabs label="Tabs"><odd-tab-panel label="A">a</odd-tab-panel><odd-tab-panel label="B">b</odd-tab-panel></odd-tabs>
+        <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>`;
       const elements = [button, input, card, nav, badge, ...display.children];
       container.append(button, input, card, nav, badge, display);
       await tick();

@@ -95,6 +95,35 @@ describe('Figma parity: odd-tabs (Tabs)', () => {
     });
 });
 
+describe('Figma parity: odd-toolbar (Toolbar)', () => {
+  for (const state of ['Default', 'Selection', 'Disabled'])
+    it(state, async () => {
+      const disabled = state === 'Disabled' ? 'disabled' : '';
+      const el = mount(
+        state === 'Selection'
+          ? `<odd-toolbar label="Selection"><span>3 selected</span><odd-button size="sm" appearance="ghost">Clear</odd-button><odd-button size="sm" appearance="primary">Assign</odd-button></odd-toolbar>`
+          : `<odd-toolbar label="Actions"><odd-input type="search" label="Search projects" ${disabled}></odd-input><hr aria-orientation="vertical" /><odd-button size="sm" ${disabled}>Button</odd-button><odd-button size="sm" ${disabled}>Button</odd-button></odd-toolbar>`,
+      );
+      await settleAll(el.parentElement!);
+      const surface = [`Toolbar / ${state}`, 'Surface'];
+      const targets: Target[] = [{ layer: surface, el: shadowPart(el, 'base'), kind: 'frame' }];
+      if (state === 'Selection')
+        targets.push({
+          layer: [...surface, '3 selected'],
+          el: el.querySelector('span')!,
+          kind: 'text',
+        });
+      else
+        targets.push({
+          layer: [...surface, 'Surface'],
+          el: el.querySelector('hr')!,
+          kind: 'frame',
+        });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/Toolbar', { State: state }, targets));
+    });
+});
+
 const QUESTIONS = [
   'How do themes work?',
   'Can I use my own components?',

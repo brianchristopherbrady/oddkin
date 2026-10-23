@@ -210,6 +210,18 @@
       "types": "./dist/tabs/tabs.define.d.ts",
       "default": "./dist/tabs/tabs.define.js"
     },
+    "./toolbar": {
+      "types": "./dist/toolbar/index.d.ts",
+      "default": "./dist/toolbar/index.js"
+    },
+    "./toolbar/foundation": {
+      "types": "./dist/toolbar/foundation.d.ts",
+      "default": "./dist/toolbar/foundation.js"
+    },
+    "./define/toolbar": {
+      "types": "./dist/toolbar/toolbar.define.d.ts",
+      "default": "./dist/toolbar/toolbar.define.js"
+    },
     "./models": {
       "types": "./dist/models/index.d.ts",
       "default": "./dist/models/index.js"

@@ -269,8 +269,9 @@ application sets `current`. Previous and next are always present and disabled at
 and ellipses otherwise.
 
 **`odd-toolbar`** (`Toolbar`) — `label`, `orientation: horizontal | vertical = horizontal`. Host `role="toolbar"`;
-one Tab stop with roving focus over its slotted controls (`@oddkin/core/controllers/focus`), arrow keys, Home/End.
-Items are author content.
+one Tab stop with roving focus over its slotted controls (`@oddkin/core/controllers/focus`), arrow keys (mirrored
+right to left), Home/End; the last focused control keeps the Tab stop; disabled and hidden controls, text, and `<hr>`
+separators (drawn as lines) are skipped; text fields and sliders keep their own arrow keys, Home, and End. Items are author content.
 
 **`odd-tree`** (`Tree`) — `label`, `items` (`{ id, label, icon?, disabled?, children?, lazy? }`), `expanded`
 (property: ids), `value`, `values`, `multiple`, `loading`, slots `empty`, `status`. Rows from the navigation-row

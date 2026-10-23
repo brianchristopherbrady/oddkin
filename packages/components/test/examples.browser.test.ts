@@ -92,6 +92,7 @@ describe('authored examples', () => {
       wrong: '',
     },
     'odd-tabs/orientationColumn': { observe: (el) => el['orientation'], wrong: 'horizontal' },
+    'odd-toolbar/orientationRow': { observe: (el) => el['orientation'], wrong: 'horizontal' },
     'odd-empty-state/actionsSlot': {
       observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
       wrong: false,
@@ -107,6 +108,7 @@ describe('authored examples', () => {
     'odd-skeleton/shapeSquare': ['element.attribute.invalid'],
     'odd-spinner/sizeWord': ['element.attribute.invalid'],
     'odd-tabs/orientationColumn': ['element.attribute.invalid'],
+    'odd-toolbar/orientationRow': ['element.attribute.invalid'],
     'odd-button/dangerAppearance': ['element.attribute.invalid'],
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
   };
