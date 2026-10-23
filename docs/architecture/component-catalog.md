@@ -361,7 +361,7 @@ Status: **proposed** (2026-10-22). 170 references; controller 14, deferred 11, e
 | `odd-tool-call` | `odd-action-approval` | A tool call that needs approval renders the complete odd-action-approval widget. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (31) has no element dependency.
+Every other element (32) has no element dependency.
 
 #### Shared homes
 
@@ -374,7 +374,7 @@ Every other element (31) has no element dependency.
 | tone: Tone colours (neutral, info, success, warning, danger) with one glyph per tone. | style | @oddkin/components/styles (TONES, toneStyles, toneGlyph) | existing | odd-badge, odd-alert | AI .status (aiElementStyles) still draws its own tone colours; it moves onto toneStyles later. |
 | spinner: Indeterminate busy indicator, reduced-motion behaviour. | style | @oddkin/components/styles (spinnerStyles) | existing | odd-button, odd-spinner |  |
 | progress-pulse: The "work in progress" dot pulse (1.2 s, opacity 0.3, off under reduced motion). | style | packages/ai/src/internal (pulse styles, proposed) | proposed | odd-activity, odd-response | Byte-identical keyframes in both today; odd-voice-input's recording pulse (1 s, 0.35, danger colour) means something else and stays separate. |
-| glyphs: Built-in affordance glyphs: chevrons, check, minus, close, search, more, arrows, external, eye, lock, upload, file, user. | style | @oddkin/components/styles (glyphStyles and glyph templates) | existing (drawn by Oddkin; Figma's icon assets do not ship, component-contracts.md §2.7) | odd-badge, odd-alert, odd-chip, odd-disclosure, odd-checkbox, odd-pagination |  |
+| glyphs: Built-in affordance glyphs: chevrons, check, minus, close, search, more, arrows, external, eye, lock, upload, file, user. | style | @oddkin/components/styles (glyphStyles and glyph templates) | existing (drawn by Oddkin; Figma's icon assets do not ship, component-contracts.md §2.7) | odd-badge, odd-alert, odd-chip, odd-disclosure, odd-checkbox, odd-pagination, odd-breadcrumbs |  |
 | control-indicator: Checkbox box, check and mixed marks, radio dot, switch track and thumb. | style | @oddkin/components/styles (controlIndicatorStructuralStyles, controlIndicatorStyles) | existing (box and marks; the radio dot and the switch track and thumb land with their elements) | odd-checkbox |  |
 | option-row: Option and menu rows: height, padding, selected check, active and disabled states. | style | @oddkin/components/styles (optionRowStructuralStyles, optionRowStyles) | existing (first element consumers: odd-listbox, odd-menu; Agent 1's odd-select enhancement) | — |  |
 | nav-row: Hierarchical navigation rows: indent step, expand glyph, current marker. | style | @oddkin/components/styles (navRowStructuralStyles, navRowStyles; moved out of odd-side-nav) | existing | odd-side-nav |  |
@@ -383,7 +383,7 @@ Every other element (31) has no element dependency.
 | overlay-surface: Overlay surface: raised background, border, radius, elevation. | style | @oddkin/components/styles (proposed, with ADR 0044) | proposed | — |  |
 | form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input, odd-checkbox | Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller. |
 | focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | odd-tabs, odd-toolbar |  |
-| collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | — |  |
+| collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | odd-breadcrumbs |  |
 | position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (PositionController, ADR 0044) | existing | — |  |
 | resize: Splitter drag and keyboard resizing. | controller | @oddkin/core/controllers/resize (ResizeHandle) | existing | — |  |
 | navigation-model: Navigation item data model. | controller | packages/components/src/models/navigation.ts (Agent 1) | existing | odd-side-nav |  |

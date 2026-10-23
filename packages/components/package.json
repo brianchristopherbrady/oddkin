@@ -50,6 +50,18 @@
       "types": "./dist/badge/badge.define.d.ts",
       "default": "./dist/badge/badge.define.js"
     },
+    "./breadcrumbs": {
+      "types": "./dist/breadcrumbs/index.d.ts",
+      "default": "./dist/breadcrumbs/index.js"
+    },
+    "./breadcrumbs/foundation": {
+      "types": "./dist/breadcrumbs/foundation.d.ts",
+      "default": "./dist/breadcrumbs/foundation.js"
+    },
+    "./define/breadcrumbs": {
+      "types": "./dist/breadcrumbs/breadcrumbs.define.d.ts",
+      "default": "./dist/breadcrumbs/breadcrumbs.define.js"
+    },
     "./button": {
       "types": "./dist/button/index.d.ts",
       "default": "./dist/button/index.js"

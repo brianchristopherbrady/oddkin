@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 98 stylesheets, 271 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 100 stylesheets, 271 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -130,6 +130,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/avatar/avatar.styles.js (avatarStyles)` | yes | 8 |
 | `packages/components/dist/badge/badge.structural.styles.js (badgeStructuralStyles)` | yes | 16 |
 | `packages/components/dist/badge/badge.styles.js (badgeStyles)` | yes | 11 |
+| `packages/components/dist/breadcrumbs/breadcrumbs.structural.styles.js (breadcrumbsStructuralStyles)` | yes | 31 |
+| `packages/components/dist/breadcrumbs/breadcrumbs.styles.js (breadcrumbsStyles)` | yes | 14 |
 | `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 52 |
 | `packages/components/dist/button/button.structural.styles.js (buttonStructuralStyles)` | yes | 32 |
 | `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 28 |

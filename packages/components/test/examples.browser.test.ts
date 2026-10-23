@@ -95,6 +95,10 @@ describe('authored examples', () => {
     'odd-tabs/orientationColumn': { observe: (el) => el['orientation'], wrong: 'horizontal' },
     'odd-toolbar/orientationRow': { observe: (el) => el['orientation'], wrong: 'horizontal' },
     'odd-pagination/currentPageAttribute': { observe: (el) => el['current'], wrong: '1' },
+    'odd-breadcrumbs/itemsAttribute': {
+      observe: (el) => el.shadowRoot!.querySelectorAll('[part~="item"]').length,
+      wrong: 0,
+    },
     'odd-empty-state/actionsSlot': {
       observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
       wrong: false,
@@ -113,6 +117,7 @@ describe('authored examples', () => {
     'odd-toolbar/orientationRow': ['element.attribute.invalid'],
     'odd-button/dangerAppearance': ['element.attribute.invalid'],
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
+    'odd-breadcrumbs/itemsAttribute': ['element.attribute.propertyOnly'],
   };
 
   it('each explained mistake does what its explanation says, unlike its correct example', async () => {

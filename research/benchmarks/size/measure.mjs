@@ -128,6 +128,7 @@ export const CSS_BUDGETS = {
   'components:tab-panel': 128, // 96: structural only; odd-tabs draws the panel
   'components:toolbar': 512, // 473
   'components:pagination': 768, // 702
+  'components:breadcrumbs': 640, // 561
   'components:empty-state': 512, // 434
   'components:icon': 384, // 305
   'components:progress': 768, // 695

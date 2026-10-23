@@ -262,9 +262,12 @@ Home/End, disabled tabs are skipped, focus and selection may differ (Figma); the
 stop, followed by the shown panel (`tabindex="0"`). `input` and `change` on user selection. `define/tabs` registers
 `odd-tab-panel` too.
 
-**`odd-breadcrumbs`** (`Breadcrumbs`) — `<nav>` named `label` (default `strings.label`), an ordered list of links
-(§2.2 links); the last item is the current page, shown as text with `aria-current="page"`. `max-items: number = 0`
-(0: never collapse); collapsed middle items sit behind a "more" button (glyph) that reveals them.
+**`odd-breadcrumbs`** (`Breadcrumbs`) — `<nav>` named `label` (default `strings.label`, "Breadcrumb"), an ordered
+list of links (§2.2 links: `<a href>` descendants, read as data and not rendered, or `items`) with separators hidden
+from assistive technology; the last item is the current page, shown as text with `aria-current="page"`.
+`max-items: number = 0` (0: never collapse); above it, the first item, a "more" button (glyph, named by
+`strings.more`, "Show 2 more"), and the last `max-items − 1` items (at least one) show; "more" reveals the rest and
+moves focus to the first revealed link.
 
 **`odd-pagination`** (`Pagination`) — `<nav>` named `label` (default `strings.label`) with the position as text
 (`strings.status`, "Page 3 of 12") and a list. `current: string` (page number, ADR 0045 navigation `current`; kept

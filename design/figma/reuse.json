@@ -1657,6 +1657,9 @@
     "odd-badge": {
       "dependencies": []
     },
+    "odd-breadcrumbs": {
+      "dependencies": []
+    },
     "odd-button": {
       "dependencies": [],
       "reason": "A simple component: no element, overlay, positioning, or collection dependency."
@@ -1786,7 +1789,8 @@
         "odd-chip",
         "odd-disclosure",
         "odd-checkbox",
-        "odd-pagination"
+        "odd-pagination",
+        "odd-breadcrumbs"
       ],
       "figma": ["34 icons on page 158:22"]
     },
@@ -1878,7 +1882,8 @@
       "home": "@oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned",
       "decision": "Collection model, selection, typeahead, active descendant.",
       "status": "in progress (typeahead and active descendant existing)",
-      "figma": ["listbox", "combobox", "multiselect", "Menu", "CommandPalette", "Tree"]
+      "figma": ["listbox", "combobox", "multiselect", "Menu", "CommandPalette", "Tree"],
+      "code": ["odd-breadcrumbs"]
     },
     {
       "id": "position",

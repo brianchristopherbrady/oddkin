@@ -164,6 +164,37 @@ describe('Figma parity: odd-pagination (Pagination)', () => {
     });
 });
 
+describe('Figma parity: odd-breadcrumbs (Breadcrumbs)', () => {
+  for (const state of ['Default', 'Truncated'])
+    it(state, async () => {
+      const el = mount(
+        `<odd-breadcrumbs ${state === 'Truncated' ? 'max-items="3"' : ''}
+          ><ol>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#workspace">Workspace</a></li>
+            <li><a href="#components">Components</a></li>
+            <li><a href="#forms">Forms</a></li>
+          </ol></odd-breadcrumbs
+        >`,
+      );
+      await settle(el);
+      const surface = [`Breadcrumbs / ${state}`, 'Surface'];
+      const link = (label: string) =>
+        [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="link"]')].find(
+          (a) => a.textContent!.trim() === label,
+        )!;
+      const targets: Target[] = [
+        { layer: surface, el: shadowPart(el, 'base'), kind: 'frame' },
+        { layer: [...surface, 'Components'], el: link('Components'), kind: 'text' },
+        { layer: [...surface, 'Forms'], el: shadowPart(el, 'current'), kind: 'text' },
+      ];
+      if (state === 'Default')
+        targets.push({ layer: [...surface, 'Workspace'], el: link('Workspace'), kind: 'text' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/Breadcrumbs', { State: state }, targets));
+    });
+});
+
 const QUESTIONS = [
   'How do themes work?',
   'Can I use my own components?',

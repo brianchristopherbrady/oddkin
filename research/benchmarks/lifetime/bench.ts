@@ -8,6 +8,7 @@ import { createRouter, route } from '@oddkin/app/router';
 import '@oddkin/components/define/alert';
 import '@oddkin/components/define/avatar';
 import '@oddkin/components/define/badge';
+import '@oddkin/components/define/breadcrumbs';
 import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
 import '@oddkin/components/define/checkbox';
@@ -195,6 +196,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-disclosure name="faq" label="Two">2</odd-disclosure>
         <odd-tabs label="Tabs"><odd-tab-panel label="A">a</odd-tab-panel><odd-tab-panel label="B">b</odd-tab-panel></odd-tabs>
         <odd-pagination label="Pages" current="3" page-count="12"></odd-pagination>
+        <odd-breadcrumbs max-items="2"><ol><li><a href="#a">A</a></li><li><a href="#b">B</a></li><li><a href="#c">C</a></li></ol></odd-breadcrumbs>
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>`;
       const elements = [button, input, card, nav, badge, ...display.children];

@@ -113,6 +113,8 @@ const states = `
   <odd-toolbar label="Project actions"><input aria-label="Search projects" type="search" /><hr aria-orientation="vertical" /><odd-button size="sm" appearance="ghost">Filter</odd-button><span>3 selected</span><odd-button size="sm" appearance="primary">New item</odd-button></odd-toolbar>
   <odd-pagination label="Search results" current="3" page-count="12"></odd-pagination>
   <odd-pagination label="Articles" current="1" page-count="4" href="#page-{page}"></odd-pagination>
+  <odd-breadcrumbs><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
+  <odd-breadcrumbs label="Collapsed location" max-items="2"><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
 `;
 
 let tokens: HTMLLinkElement;
