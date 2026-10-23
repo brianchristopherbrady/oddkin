@@ -1,7 +1,10 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 
-/** Oddkin's default visual styles for the side navigation, through `navigation.*` roles. */
+/**
+ * Oddkin's default visual styles for the side navigation, through `navigation.*` roles. Entry
+ * rows look as `navRowStyles` draws them; slotted native links take the same look here.
+ */
 export const sideNavStyles = css`
   .root {
     color: ${token('color.text.primary')};
@@ -16,7 +19,6 @@ export const sideNavStyles = css`
     margin-block-start: ${token('navigation.item.gap')};
     padding-inline-start: ${token('navigation.indent')};
   }
-  .entry,
   ::slotted(a) {
     gap: ${token('navigation.item.gap')};
     min-block-size: max(${token('navigation.item.min-height')}, ${token('target.min')});
@@ -28,21 +30,15 @@ export const sideNavStyles = css`
     transition-timing-function: ${token('motion.easing.standard')};
   }
   @media (hover: hover) {
-    .entry:not(:disabled, [aria-disabled='true']):hover,
     ::slotted(a:hover) {
       background: ${token('color.surface.hover')};
     }
   }
   /* The current page is marked by a bar and weight, not colour alone. */
-  .entry[aria-current='page'],
   ::slotted(a[aria-current='page']) {
     border-inline-start-color: ${token('color.action.default')};
     background: ${token('color.surface.hover')};
     font-weight: ${token('font.weight.semibold')};
-  }
-  .entry:disabled,
-  .entry[aria-disabled='true'] {
-    color: ${token('color.text.disabled')};
   }
   .badge {
     flex: none;

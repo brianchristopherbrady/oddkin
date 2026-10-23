@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { cdp, server, userEvent } from 'vitest/browser';
 import { setErrorHandler } from '@oddkin/core/diagnostics';
 import { flush, signal } from '@oddkin/core/reactive';
 import { html } from '@oddkin/core/template';
@@ -66,6 +67,7 @@ describe('imports', () => {
     expect(Object.keys(foundation).sort()).toEqual([
       'OddkinSideNav',
       'hostStyles',
+      'navRowStructuralStyles',
       'sideNavRecipeStyles',
       'sideNavStructuralStyles',
       'sideNavTemplate',
@@ -614,4 +616,60 @@ describe('robustness', () => {
     );
     expect(el.lang).toBe('de');
   });
+});
+
+describe('navigation rows (shared with odd-tree)', () => {
+  const ROWS: readonly NavigationItem[] = [
+    { id: 'a', kind: 'link', label: 'A', href: '/a' },
+    { id: 'b', kind: 'link', label: 'Supercalifragilisticexpialidociousandmore', href: '/b' },
+    { id: 'c', kind: 'link', label: 'C', href: '/c', disabled: true },
+  ];
+
+  it('lays rows out full width, wraps long labels, and marks disabled rows', async () => {
+    container.style.width = '120px';
+    const { $$ } = await mount((el) => (el.items = ROWS));
+    const [a, b, c] = $$('.entry');
+    const style = getComputedStyle(a!);
+    expect(style.display).toBe('flex');
+    expect(a!.getBoundingClientRect().width).toBe(a!.closest('ul')!.getBoundingClientRect().width);
+    expect(b!.querySelector('.label')!.getBoundingClientRect().width).toBeLessThanOrEqual(120);
+    expect(getComputedStyle(b!.querySelector('.label')!).overflowWrap).toBe('anywhere');
+    expect(getComputedStyle(c!).cursor).toBe('not-allowed');
+  });
+
+  it('highlights a hovered row', async () => {
+    container.style.setProperty('--odd-color-surface-hover', 'rgb(1, 2, 3)');
+    const { $$ } = await mount((el) => (el.items = ROWS));
+    await userEvent.hover($$('.entry')[0]!);
+    expect(getComputedStyle($$('.entry')[0]!).backgroundColor).toBe('rgb(1, 2, 3)');
+  });
+
+  it.runIf(server.browser === 'chromium')(
+    'keeps the current marker and disabled text visible in forced colours',
+    async () => {
+      const session = cdp();
+      await session.send('Emulation.setEmulatedMedia', {
+        features: [{ name: 'forced-colors', value: 'active' }],
+      });
+      try {
+        container.style.setProperty('--odd-border-width-strong', '2px');
+        const { $$ } = await mount((el) => {
+          el.items = ROWS;
+          el.current = 'a';
+        });
+        const system = (property: string, color: string) => {
+          const probe = document.createElement('span');
+          probe.style.setProperty(property, color);
+          container.append(probe);
+          return getComputedStyle(probe).getPropertyValue(property);
+        };
+        expect(getComputedStyle($$('.entry')[0]!).borderInlineStartColor).toBe(
+          system('color', 'Highlight'),
+        );
+        expect(getComputedStyle($$('.entry')[2]!).color).toBe(system('color', 'GrayText'));
+      } finally {
+        await session.send('Emulation.setEmulatedMedia', { features: [] });
+      }
+    },
+  );
 });

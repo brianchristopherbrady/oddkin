@@ -1,6 +1,8 @@
 import { compose } from '@oddkin/core/element';
 import { focusRingStyles } from '../styles/focus-ring.styles.js';
 import { hostStyles } from '../styles/host.styles.js';
+import { navRowStructuralStyles } from '../styles/nav-row.structural.styles.js';
+import { navRowStyles } from '../styles/nav-row.styles.js';
 import { OddkinSideNav } from './side-nav.js';
 // The recipe's CSS, extracted at build time: registering the element never loads the recipe
 // engine. `side-nav.recipe.ts` stays the source (recipes.test.ts keeps them identical).
@@ -16,8 +18,10 @@ export const sideNavDefinition = compose({
   styles: [
     hostStyles,
     sideNavRecipeStyles,
+    navRowStructuralStyles,
     sideNavStructuralStyles,
     focusRingStyles,
+    navRowStyles,
     sideNavStyles,
   ],
 });

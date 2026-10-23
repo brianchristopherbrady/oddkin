@@ -105,6 +105,8 @@ describe('@oddkin/components/side-nav import graphs', () => {
       'side-nav/side-nav.structural.styles.js',
       'side-nav/side-nav.template.js',
       'styles/host.styles.js',
+      // The shared navigation rows' structure (no tokens), also used by odd-tree.
+      'styles/nav-row.structural.styles.js',
     ]);
     expect(packages).toEqual([
       '@oddkin/core/controllers/focus',

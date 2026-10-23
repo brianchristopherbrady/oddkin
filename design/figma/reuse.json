@@ -1779,17 +1779,17 @@
     {
       "id": "option-row",
       "kind": "style",
-      "home": "@oddkin/components/styles (proposed)",
+      "home": "@oddkin/components/styles (optionRowStructuralStyles, optionRowStyles)",
       "decision": "Option and menu rows: height, padding, selected check, active and disabled states.",
-      "status": "proposed",
+      "status": "existing (first element consumers: odd-listbox, odd-menu; Agent 1's odd-select enhancement)",
       "figma": ["ListboxOption", "MenuItem", "CommandItem", "CheckboxOption"]
     },
     {
       "id": "nav-row",
       "kind": "style",
-      "home": "@oddkin/components/side-nav styles, moved to styles when the tree lands",
+      "home": "@oddkin/components/styles (navRowStructuralStyles, navRowStyles; moved out of odd-side-nav)",
       "decision": "Hierarchical navigation rows: indent step, expand glyph, current marker.",
-      "status": "existing in odd-side-nav",
+      "status": "existing",
       "code": ["odd-side-nav"],
       "figma": ["NavigationItem", "SideNavigation", "Tree"]
     },

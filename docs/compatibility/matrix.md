@@ -147,8 +147,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/progress/progress.structural.styles.js (progressStructuralStyles)` | yes | 35 |
 | `packages/components/dist/progress/progress.styles.js (progressStyles)` | yes | 12 |
 | `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
-| `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 36 |
-| `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 40 |
+| `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 22 |
+| `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 38 |
 | `packages/components/dist/skeleton/skeleton.structural.styles.js (skeletonStructuralStyles)` | yes | 27 |
 | `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
 | `packages/components/dist/spinner/spinner.structural.styles.js (spinnerStructuralStyles)` | yes | 10 |
@@ -157,6 +157,10 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/styles/field.structural.styles.js (fieldStructuralStyles)` | yes | 27 |
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |
 | `packages/components/dist/styles/host.styles.js (hostStyles)` | yes | 7 |
+| `packages/components/dist/styles/nav-row.structural.styles.js (navRowStructuralStyles)` | yes | 30 |
+| `packages/components/dist/styles/nav-row.styles.js (navRowStyles)` | yes | 20 |
+| `packages/components/dist/styles/option-row.structural.styles.js (optionRowStructuralStyles)` | yes | 34 |
+| `packages/components/dist/styles/option-row.styles.js (optionRowStyles)` | yes | 21 |
 | `packages/components/dist/styles/spinner.styles.js (spinnerStyles)` | yes | 22 |
 | `packages/components/dist/styles/tone.styles.js (toneStyles)` | yes | 2 |
 | `packages/components/dist/styles/visually-hidden.styles.js (visuallyHiddenStyles)` | yes | 13 |
