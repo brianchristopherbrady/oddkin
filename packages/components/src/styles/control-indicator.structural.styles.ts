@@ -4,9 +4,22 @@ import { css } from '@oddkin/core/styles';
  * Layout of the drawn checkbox box and its marks (component-contracts.md §2.9 "control
  * indicator"): `.indicator` stacks a `.indicator-box` (a native checkbox with `appearance: none`,
  * or a decorative `<span>` with `data-state="checked" | "mixed"`) and its `.indicator-check` and
- * `.indicator-mixed` glyphs in one cell; a mark shows only in its state. No brand tokens.
+ * `.indicator-mixed` glyphs in one cell; a mark shows only in its state. A `.choice` label row
+ * holds an indicator (or a switch track) beside its `.label`. No brand tokens.
  */
 export const controlIndicatorStructuralStyles = css`
+  .choice {
+    display: inline-flex;
+    align-items: center;
+    max-inline-size: 100%;
+    cursor: pointer;
+  }
+  .choice > .label {
+    min-inline-size: 0;
+  }
+  .choice:has(:disabled) {
+    cursor: not-allowed;
+  }
   .indicator {
     display: inline-grid;
     flex: none;

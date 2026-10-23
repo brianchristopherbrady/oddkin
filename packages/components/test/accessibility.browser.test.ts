@@ -57,6 +57,9 @@ const states = `
     <odd-checkbox name="all" indeterminate description="Some are on.">All notifications</odd-checkbox>
     <odd-checkbox name="terms" required error="Accept the terms to continue.">I accept the terms</odd-checkbox>
     <odd-checkbox name="managed" checked disabled>Managed by your workspace</odd-checkbox>
+    <odd-switch name="alerts" checked>Alerts</odd-switch>
+    <odd-switch name="digest" description="A summary of the week, every Monday.">Weekly digest</odd-switch>
+    <odd-switch name="sync" disabled>Managed by your workspace</odd-switch>
     <odd-button type="submit" appearance="primary">Submit</odd-button>
     <odd-button type="reset">Reset</odd-button>
   </form>

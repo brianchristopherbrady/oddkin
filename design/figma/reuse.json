@@ -1702,6 +1702,9 @@
     "odd-spinner": {
       "dependencies": []
     },
+    "odd-switch": {
+      "dependencies": []
+    },
     "odd-tab-panel": {
       "dependencies": []
     },
@@ -1735,7 +1738,7 @@
       "home": "@oddkin/components/styles (fieldStructuralStyles, controlStyles; css/field.css generated from them)",
       "decision": "Field control surface: border, radius, height, inline padding, gap, hover/invalid/disabled/read-only states, label/description/error type roles. Figma binds the same tokens on input, textarea, number, search, select, dateTime, combobox, and multiselect/Field.",
       "status": "existing",
-      "code": ["odd-input", "odd-checkbox", "odd-model-select", ".odd-field recipe"],
+      "code": ["odd-input", "odd-checkbox", "odd-switch", "odd-model-select", ".odd-field recipe"],
       "note": "The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe."
     },
     {
@@ -1798,9 +1801,9 @@
       "id": "control-indicator",
       "kind": "style",
       "home": "@oddkin/components/styles (controlIndicatorStructuralStyles, controlIndicatorStyles)",
-      "decision": "Checkbox box, check and mixed marks, radio dot, switch track and thumb.",
-      "status": "existing (box and marks; the radio dot and the switch track and thumb land with their elements)",
-      "code": ["odd-checkbox"],
+      "decision": "Choice rows (a box, dot, or track beside its label) and the checkbox box with check and mixed marks. The radio dot and the switch track and thumb are drawn by one element each and live with it.",
+      "status": "existing",
+      "code": ["odd-checkbox", "odd-switch"],
       "figma": ["checkbox", "CheckboxOption", "radio", "switch"]
     },
     {
@@ -1863,7 +1866,7 @@
       "home": "@oddkin/core/controllers/form",
       "decision": "Form association, validity, reset, restore.",
       "status": "existing",
-      "code": ["odd-input", "odd-checkbox"],
+      "code": ["odd-input", "odd-checkbox", "odd-switch"],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]
     },

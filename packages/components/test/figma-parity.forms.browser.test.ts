@@ -58,3 +58,36 @@ describe('Figma parity: checkbox', () => {
         );
       });
 });
+
+describe('Figma parity: switch', () => {
+  for (const value of ['Off', 'On'])
+    for (const [state, attribute] of Object.entries({
+      Default: '',
+      Hover: '',
+      Focus: '',
+      Disabled: ' disabled',
+    }))
+      it(`${value}/${state}`, async () => {
+        const checked = value === 'On' ? ' checked' : '';
+        const el = mount(`<odd-switch${checked}${attribute}>Notifications</odd-switch>`);
+        await settle(el);
+        const control = shadowPart(el, 'control');
+        await interact(state, control);
+        await settle(el);
+        const root = `Switch / ${value === 'On' || state === 'Default' ? value : state}`;
+        const targets: Target[] = [
+          { layer: [root], el: el.shadowRoot!.querySelector('.choice')!, kind: 'frame' },
+          {
+            layer: [root, `Notifications ${value.toLowerCase()}`],
+            el: shadowPart(el, 'label'),
+            kind: 'text',
+          },
+          { layer: [root, 'Surface'], el: control, kind: 'frame' },
+          { layer: [root, 'Surface', 'Ellipse'], el: shadowPart(el, 'thumb'), kind: 'frame' },
+        ];
+        if (state === 'Focus')
+          targets.push({ layer: [root, 'Surface [2]'], el: control, kind: 'ring' });
+        await transitions(targets);
+        expectNone(compare('Oddkin/Common/switch', { Value: value, State: state }, targets));
+      });
+});

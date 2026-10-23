@@ -201,8 +201,9 @@ default checkedness, as native; the property detaches once set or toggled), `ind
 mixed and cleared when the user toggles, as native), `value = "on"`, `name`, `required`, `disabled`, `description`,
 `error`. Submits `value` when checked. `input` and `change` at the host for user toggles only.
 
-**`odd-switch`** (`switch`) — as `odd-checkbox` without `indeterminate`; `role="switch"`. Part `state` shows
-`strings.on`/`strings.off` beside the track (hidden from assistive technology; the role states it).
+**`odd-switch`** (`switch`) — as `odd-checkbox` without `indeterminate` (both extend one internal checkable base): a
+native checkbox with `role="switch"` drawn as a track (part `control`) whose `thumb` moves to the inline end when on.
+Part `state` shows `strings.on`/`strings.off` after the label (hidden from assistive technology; the role states it).
 
 **`odd-checkbox-group`** (`CheckboxGroup`) — named group of slotted `odd-checkbox` children. `label` (legend),
 `description`, `error`, `required` (at least one checked; the group is form-associated with no value so the

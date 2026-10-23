@@ -1,14 +1,4 @@
 import { css } from '@oddkin/core/styles';
-import { token } from '@oddkin/tokens/refs';
 
-/** Oddkin's default checkbox row: Figma `checkbox` (`space.sm` between box and label, the target size). */
-export const checkboxStyles = css`
-  .choice {
-    gap: ${token('space.sm')};
-    min-block-size: ${token('target.min')};
-    padding-inline: ${token('space.2xs')};
-  }
-  .field:has(.indicator-box:disabled) .label {
-    color: ${token('color.text.disabled')};
-  }
-`;
+/** No look of its own: the row, box, and marks come from the shared control-indicator module. */
+export const checkboxStyles = css``;

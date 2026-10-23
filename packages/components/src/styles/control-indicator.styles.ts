@@ -5,9 +5,18 @@ import { token } from '@oddkin/tokens/refs';
  * The checkbox look of the Common page (158:22): a `radius.sm` box on the default surface with a
  * strong border, the selection colours with a drawn check or minus when checked or mixed, the
  * danger border when invalid (strong when checked), and the sunken surface when disabled and
- * unchecked. Hover applies inside a `.choice` row, the label the box sits in.
+ * unchecked. Hover applies inside a `.choice` row, the label the box sits in: `space.sm` between
+ * box and label, the target size, and the disabled text colour.
  */
 export const controlIndicatorStyles = css`
+  .choice {
+    gap: ${token('space.sm')};
+    min-block-size: ${token('target.min')};
+    padding-inline: ${token('space.2xs')};
+  }
+  .choice:has(:disabled) {
+    color: ${token('color.text.disabled')};
+  }
   .indicator {
     font-size: ${token('icon.size.sm')};
   }

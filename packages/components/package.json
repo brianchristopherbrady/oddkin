@@ -222,6 +222,18 @@
       "types": "./dist/spinner/spinner.define.d.ts",
       "default": "./dist/spinner/spinner.define.js"
     },
+    "./switch": {
+      "types": "./dist/switch/index.d.ts",
+      "default": "./dist/switch/index.js"
+    },
+    "./switch/foundation": {
+      "types": "./dist/switch/foundation.d.ts",
+      "default": "./dist/switch/foundation.js"
+    },
+    "./define/switch": {
+      "types": "./dist/switch/switch.define.d.ts",
+      "default": "./dist/switch/switch.define.js"
+    },
     "./tab-panel": {
       "types": "./dist/tab-panel/index.d.ts",
       "default": "./dist/tab-panel/index.js"

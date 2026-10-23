@@ -50,6 +50,13 @@ export class OddkinFormControl extends OddkinElement.with({
     () => !!this.error || (this._touched.value && this._invalid.value),
   );
 
+  /** @internal The ids for `aria-describedby`: the description and error parts that show. */
+  get _describedBy(): string | null {
+    return (
+      [this.description && 'description', this.error && 'error'].filter(Boolean).join(' ') || null
+    );
+  }
+
   #createForm(): FormValue {
     const options = this._formOptions();
     return new FormValue({

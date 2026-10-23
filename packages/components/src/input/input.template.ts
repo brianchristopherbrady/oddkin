@@ -9,10 +9,6 @@ import type { OddkinInput } from './input.js';
  */
 export const inputTemplate = (input: OddkinInput) => {
   const invalid = input._userInvalid.value;
-  const describedBy =
-    [input.description ? 'description' : '', input.error ? 'error' : '']
-      .filter(Boolean)
-      .join(' ') || null;
   return html`<div part="field" class="field">
     <label part="label" class="label" for="control" ?hidden=${!input.label}>${input.label}</label>
     <div part="description" id="description" class="description" ?hidden=${!input.description}>
@@ -30,7 +26,7 @@ export const inputTemplate = (input: OddkinInput) => {
       ?required=${input.required}
       ?disabled=${input.disabled || input._formDisabled.value}
       ?readonly=${input.readonly}
-      aria-describedby=${describedBy}
+      aria-describedby=${input._describedBy}
       aria-invalid=${invalid ? 'true' : null}
       @input=${input._onInput}
       @change=${input._onChange}

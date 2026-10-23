@@ -22,6 +22,7 @@ import '@oddkin/components/define/progress';
 import '@oddkin/components/define/side-nav';
 import '@oddkin/components/define/skeleton';
 import '@oddkin/components/define/spinner';
+import '@oddkin/components/define/switch';
 import '@oddkin/components/define/tabs';
 import '@oddkin/components/define/toolbar';
 import { scopeStats } from '@oddkin/core/scope';
@@ -198,7 +199,8 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-pagination label="Pages" current="3" page-count="12"></odd-pagination>
         <odd-breadcrumbs max-items="2"><ol><li><a href="#a">A</a></li><li><a href="#b">B</a></li><li><a href="#c">C</a></li></ol></odd-breadcrumbs>
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
-        <odd-checkbox name="updates" checked>Updates</odd-checkbox>`;
+        <odd-checkbox name="updates" checked>Updates</odd-checkbox>
+        <odd-switch name="alerts" checked>Alerts</odd-switch>`;
       const elements = [button, input, card, nav, badge, ...display.children];
       container.append(button, input, card, nav, badge, display);
       await tick();

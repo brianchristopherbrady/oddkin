@@ -8,12 +8,8 @@ import type { OddkinCheckbox } from './checkbox.js';
  * its check and minus marks) and the slotted label text (`part="label"`); `description` and
  * `error` parts below, referenced by `aria-describedby`.
  */
-export const checkboxTemplate = (checkbox: OddkinCheckbox) => {
-  const describedBy =
-    [checkbox.description ? 'description' : '', checkbox.error ? 'error' : '']
-      .filter(Boolean)
-      .join(' ') || null;
-  return html`<div part="field" class="field">
+export const checkboxTemplate = (checkbox: OddkinCheckbox) =>
+  html`<div part="field" class="field">
     <label class="choice">
       <span class="indicator">
         <input
@@ -25,7 +21,7 @@ export const checkboxTemplate = (checkbox: OddkinCheckbox) => {
           .indeterminate=${checkbox.indeterminate}
           ?required=${checkbox.required}
           ?disabled=${checkbox.disabled || checkbox._formDisabled.value}
-          aria-describedby=${describedBy}
+          aria-describedby=${checkbox._describedBy}
           aria-invalid=${checkbox._userInvalid.value ? 'true' : null}
           @input=${checkbox._onInput}
           @change=${checkbox._onChange}
@@ -41,4 +37,3 @@ export const checkboxTemplate = (checkbox: OddkinCheckbox) => {
     </div>
     <div part="error" id="error" class="error" ?hidden=${!checkbox.error}>${checkbox.error}</div>
   </div>`;
-};

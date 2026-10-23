@@ -84,6 +84,8 @@ export function useParity() {
     expect(
       getComputedStyle(document.documentElement).getPropertyValue('--odd-space-md').trim(),
     ).toBe('1rem');
+    // The pointer may rest where an earlier test file left it, over the first mounted element.
+    await userEvent.unhover(document.body);
   });
   afterAll(() => tokens.remove());
   afterEach(async () => {
