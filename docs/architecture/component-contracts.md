@@ -31,8 +31,8 @@ The Figma mapping, the reuse classes, and the shared style homes stay in [compon
 An element when there is something the platform cannot express from markup alone: behaviour, keyboard handling,
 form association, ARIA wiring, a built-in glyph, or observed children. A recipe when native elements already carry
 the semantics (`a`, `kbd`, `hr`, `table`, `ul`/`ol`, `h1`–`h6`, `p`, `form`): no registration, shadow root, or
-upgrade per instance. Recipes live in `@oddkin/components/css/<name>.css` in their cascade layer (ADR 0039) and are
-listed in the published metadata like layout recipes.
+upgrade per instance. Recipes live in `@oddkin/components/css/<name>.css` in the `odd.components` cascade layer
+(ADR 0039); listing them in the published metadata, as layout recipes are, is a follow-up for the agent kit.
 
 ### 2.2 Authoring collections
 
@@ -320,14 +320,14 @@ dispatch `change`. More panes: nest split panels.
 
 | Recipe | Selectors | Notes |
 | --- | --- | --- |
-| Typography | `.odd-type-display`, `-title`, `-section`, `-body`, `-ui`, `-small`, `-eyebrow`, `-code` | The eight type roles (`--odd-type-*`); native `h1`–`h6`, `p` keep their semantics. `text-wrap: balance` on headings as a literal enhancement |
-| Link | `a` in `base.css`; `.odd-link` | Underline on hover and focus, visible focus ring; `.odd-link[target="_blank"]` adds the external glyph from the stylesheet's own `glyphs/` files (`img-src 'self'`) |
-| Divider | `hr`, `.odd-divider` | `.odd-divider` with text is a labelled `role="separator"` written by the author |
-| Keyboard key | `kbd`, `.odd-kbd` | Sequence: adjacent `kbd` elements |
-| List | `.odd-list` on `ul`/`ol` | Rows with an optional trailing action (author content) |
-| Table | `.odd-table` on `table` | Native table semantics; sorted header look via `aria-sort`; loading, empty, and error rows are author content |
-| Field | `.odd-field`, `.odd-field-label`, `.odd-field-description`, `.odd-field-error` | For native and third-party controls (`<label for>`, `aria-describedby` written by the author) |
-| Avatar group | `.odd-avatar-group` | Overlapping `odd-avatar` children; the author names the group |
+| Typography (`typography.css`) | `.odd-type-display`, `-title`, `-section`, `-body`, `-ui`, `-small`, `-eyebrow`, `-code` | The eight type roles (`--odd-type-*`); `small`, `eyebrow`, and `code` in the secondary text colour; native `h1`–`h6`, `p` keep their semantics. Heading roles take `text-wrap: balance` where supported |
+| Link (`link.css`) | `a.odd-link` | UI text in the link colour, an underline on hover and keyboard focus (always inside `p` and `li`), the focus ring. For a link that opens a new tab, add an icon and say so in its text |
+| Divider (`divider.css`) | `hr.odd-divider`, `.odd-divider` | A labelled divider ("or") is an element the author gives `role="separator"` and `aria-label` |
+| Keyboard key (`kbd.css`) | `kbd.odd-kbd` | Sequences are adjacent keys with words between them |
+| List (`list.css`) | `ul.odd-list`, `ol.odd-list`, `.odd-list-meta` | Rows divided by rules; the item with `aria-current` takes the selection colours; actions are author content |
+| Table (`table.css`) | `table.odd-table` | Native table semantics; `aria-sort` headers in the primary colour; a row holding a checked checkbox takes the selection colours; loading, empty, and error rows are author content |
+| Field (`field.css`, with the control module in §5 step 3) | `.odd-field`, `.odd-field-label`, `.odd-field-description`, `.odd-field-error` | For native and third-party controls (`<label for>`, `aria-describedby` written by the author) |
+| Avatar group (`avatar-group.css`) | `.odd-avatar-group`, `.odd-avatar-group-more` | Overlapping `odd-avatar` children ringed in the page colour; the author names the group |
 
 ## 5. Build order
 

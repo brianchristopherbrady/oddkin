@@ -1,6 +1,6 @@
 import { createLayoutHelpers, type Declarations } from '@oddkin/core/layout';
 import { css, unsafeCSS, type CSSResult } from '@oddkin/core/styles';
-import { token } from '@oddkin/tokens/refs';
+import { token, type TokenName } from '@oddkin/tokens/refs';
 import { nativeButtonStyles } from '../button/button.native.styles.js';
 
 /**
@@ -149,6 +149,251 @@ export const button: DocumentStylesheet = {
   styles: unsafeCSS(nativeButtonStyles.cssText.replace(/\n(?=.)/g, '\n  ')),
 };
 
+const TYPE_ROLES = ['display', 'title', 'section', 'body', 'ui', 'small', 'eyebrow', 'code'];
+// Roles Figma draws in the secondary text colour; headings balance their lines where supported.
+const SECONDARY_ROLES = new Set(['small', 'eyebrow', 'code']);
+const HEADING_ROLES = new Set(['display', 'title', 'section']);
+
+/**
+ * `.odd-type-<role>`: the eight type roles (`display`, `title`, `section`, `body`, `ui`, `small`,
+ * `eyebrow`, `code`) on any element; native `h1`–`h6` and `p` keep their semantics.
+ */
+export const typography: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: unsafeCSS(
+    TYPE_ROLES.map((role) =>
+      rule(`.odd-type-${role}`, [
+        ['font-family', token(`type.${role}.family` as TokenName)],
+        ['font-size', token(`type.${role}.size` as TokenName)],
+        ['font-weight', token(`type.${role}.weight` as TokenName)],
+        ['line-height', token(`type.${role}.line-height` as TokenName)],
+        ['letter-spacing', token(`type.${role}.letter-spacing` as TokenName)],
+        ...(SECONDARY_ROLES.has(role)
+          ? ([['color', token('color.text.secondary')]] as [string, string][])
+          : []),
+        ...(HEADING_ROLES.has(role)
+          ? ([
+              ['margin-block', '0'],
+              ['text-wrap', 'balance'],
+            ] as [string, string][])
+          : []),
+      ]),
+    ).join('\n'),
+  ),
+};
+
+/** `a.odd-link`: link colour, an underline on hover, and the shared keyboard focus ring. */
+export const link: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: css`
+    .odd-link {
+      color: ${token('color.link')};
+      font-family: ${token('type.ui.family')};
+      font-size: ${token('type.ui.size')};
+      font-weight: ${token('type.ui.weight')};
+      line-height: ${token('type.ui.line-height')};
+      text-decoration-line: none;
+      text-underline-offset: 0.2em;
+      border-radius: ${token('radius.sm')};
+    }
+    .odd-link:hover,
+    .odd-link:focus-visible {
+      text-decoration-line: underline;
+    }
+    .odd-link:focus-visible {
+      outline: ${token('focus.width')} solid ${token('color.focus.ring')};
+      outline-offset: ${token('focus.offset')};
+    }
+    p .odd-link,
+    li .odd-link {
+      font: inherit;
+      text-decoration-line: underline;
+    }
+  `,
+};
+
+/** `hr.odd-divider`, or a labelled `.odd-divider` ("or") the author gives `role="separator"`. */
+export const divider: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: css`
+    hr.odd-divider {
+      block-size: 0;
+      margin-block: ${token('space.md')};
+      border: 0;
+      border-block-start: ${token('border.width.default')} solid ${token('color.border.default')};
+    }
+    .odd-divider:not(hr) {
+      display: flex;
+      align-items: center;
+      gap: ${token('space.sm')};
+      margin-block: ${token('space.md')};
+      color: ${token('color.text.secondary')};
+      font-family: ${token('type.small.family')};
+      font-size: ${token('type.small.size')};
+      font-weight: ${token('type.small.weight')};
+      line-height: ${token('type.small.line-height')};
+    }
+    .odd-divider:not(hr)::before,
+    .odd-divider:not(hr)::after {
+      content: '';
+      flex: 1;
+      border-block-start: ${token('border.width.default')} solid ${token('color.border.default')};
+    }
+  `,
+};
+
+/** `kbd.odd-kbd`: a key cap that does not look clickable; sequences are adjacent keys. */
+export const kbd: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: css`
+    .odd-kbd {
+      display: inline-block;
+      min-inline-size: 1.75em;
+      padding-inline: ${token('space.2xs')};
+      border: ${token('border.width.default')} solid ${token('color.border.default')};
+      border-radius: ${token('radius.sm')};
+      background: ${token('color.surface.default')};
+      color: ${token('color.text.secondary')};
+      font-family: ${token('type.code.family')};
+      font-size: ${token('type.code.size')};
+      font-weight: ${token('type.code.weight')};
+      line-height: ${token('type.code.line-height')};
+      text-align: center;
+      white-space: nowrap;
+    }
+    @media (forced-colors: active) {
+      .odd-kbd {
+        border-color: CanvasText;
+      }
+    }
+  `,
+};
+
+/**
+ * `ul.odd-list` / `ol.odd-list`: rows on a bordered surface, divided by rules; `.odd-list-meta`
+ * for secondary text; the item with `aria-current` takes the selection colours.
+ */
+export const list: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: css`
+    .odd-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border: ${token('border.width.default')} solid ${token('color.border.default')};
+      border-radius: ${token('card.radius')};
+      background: ${token('color.surface.default')};
+      overflow: hidden;
+      color: ${token('color.text.primary')};
+      font-family: ${token('type.ui.family')};
+      font-size: ${token('type.ui.size')};
+      font-weight: ${token('type.ui.weight')};
+      line-height: ${token('type.ui.line-height')};
+    }
+    .odd-list > li {
+      display: flex;
+      align-items: center;
+      gap: ${token('space.sm')};
+      min-block-size: ${token('target.min')};
+      padding: ${token('space.sm')} ${token('space.md')};
+      overflow-wrap: anywhere;
+    }
+    .odd-list > li + li {
+      border-block-start: ${token('border.width.default')} solid ${token('color.border.default')};
+    }
+    .odd-list-meta {
+      color: ${token('color.text.secondary')};
+    }
+    .odd-list > li[aria-current]:not([aria-current='false']) {
+      background: ${token('color.selection.background')};
+      color: ${token('color.selection.foreground')};
+    }
+    .odd-list > li[aria-current]:not([aria-current='false']) .odd-list-meta {
+      color: inherit;
+    }
+    @media (forced-colors: active) {
+      .odd-list > li[aria-current]:not([aria-current='false']) {
+        outline: ${token('border.width.strong')} solid Highlight;
+        outline-offset: -2px;
+      }
+    }
+  `,
+};
+
+/**
+ * `table.odd-table`: a native table on a bordered surface; header cells on the sunken surface,
+ * rows divided by rules, `aria-sort` headers in the primary colour, and a row holding a checked
+ * checkbox in the selection colours.
+ */
+export const table: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: css`
+    .odd-table {
+      inline-size: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: ${token('border.width.default')} solid ${token('color.border.default')};
+      border-radius: ${token('card.radius')};
+      background: ${token('color.surface.default')};
+      overflow: hidden;
+      color: ${token('color.text.primary')};
+      font-family: ${token('type.ui.family')};
+      font-size: ${token('type.ui.size')};
+      font-weight: ${token('type.ui.weight')};
+      line-height: ${token('type.ui.line-height')};
+    }
+    .odd-table :is(th, td) {
+      padding: ${token('space.sm')} ${token('space.md')};
+      text-align: start;
+      vertical-align: middle;
+      overflow-wrap: anywhere;
+    }
+    .odd-table thead th {
+      background: ${token('color.surface.sunken')};
+      color: ${token('color.text.secondary')};
+      font-weight: ${token('font.weight.medium')};
+    }
+    .odd-table th[aria-sort]:not([aria-sort='none']) {
+      color: ${token('color.text.primary')};
+    }
+    .odd-table tbody tr + tr > * {
+      border-block-start: ${token('border.width.default')} solid ${token('color.border.default')};
+    }
+    .odd-table tbody tr:has(input[type='checkbox']:checked) {
+      background: ${token('color.selection.background')};
+      color: ${token('color.selection.foreground')};
+    }
+    .odd-table caption {
+      padding-block: ${token('space.xs')};
+      text-align: start;
+    }
+  `,
+};
+
+/**
+ * `.odd-avatar-group`: overlapping `odd-avatar` children, each ringed in the page colour;
+ * `.odd-avatar-group-more` on the last one for an overflow count ("+3").
+ */
+export const avatarGroup: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: css`
+    .odd-avatar-group {
+      display: inline-flex;
+      align-items: center;
+    }
+    .odd-avatar-group > * + * {
+      margin-inline-start: calc(-1 * ${token('space.xs')});
+    }
+    .odd-avatar-group > odd-avatar::part(base) {
+      box-shadow: 0 0 0 ${token('border.width.strong')} ${token('color.canvas')};
+    }
+    .odd-avatar-group > .odd-avatar-group-more::part(base) {
+      background: ${token('color.action.default')};
+      color: ${token('color.text.on-action')};
+    }
+  `,
+};
+
 /** Page-level utilities with the same rules as the shadow-root primitives. */
 export const utilities: DocumentStylesheet = {
   layer: 'odd.utilities',
@@ -171,4 +416,17 @@ export const utilities: DocumentStylesheet = {
   `,
 };
 
-export const documentStylesheets = { reset, base, layout, button, utilities } as const;
+export const documentStylesheets = {
+  reset,
+  base,
+  layout,
+  button,
+  typography,
+  link,
+  divider,
+  kbd,
+  list,
+  table,
+  'avatar-group': avatarGroup,
+  utilities,
+} as const;

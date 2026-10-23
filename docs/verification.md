@@ -2048,3 +2048,15 @@ Environment as the previous entries. Agents 2 and 3 were editing `apps/docs`, `e
 | Node, vocabulary | `npx vitest run --project node`; `node scripts/check-vocabulary.mjs` | 1,007 tests pass; 0 findings (the vocabulary keeps `value` a string except on `odd-progress`, as on `<progress>`). |
 
 **Change:** eight elements of component-contracts.md §3.2, each with examples (including one explained mistake), foundation entry, registration, a preview role, and a CSS budget. Contracts updated where building settled a question: `odd-progress` is an ARIA progress bar (a styled native `<progress>` needs prefixed pseudo-elements); `odd-empty-state` has no live role (insertion of a live region is not reliably announced). Tests that hard-coded the catalog now read it (impact selection, Theme Studio roles, Workbench search).
+
+## 2026-10-22 — CSS recipes for native markup: typography, link, divider, keyboard key, list, table, avatar group
+
+**Environment:** as the previous entry.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Recipes | `npx vitest run --project browser packages/components/test/recipes-css.browser.test.ts` | 8 tests × 3 engines pass, loading the built `dist/css/<name>.css` files with the shipped theme: each `.odd-type-<role>` takes its type tokens (small, eyebrow, code in the secondary colour; headings without block margins); `.odd-link` in the link colour, underlined on hover and inside running text, focus ring on keyboard focus; `hr.odd-divider` and a labelled divider rule in the border colour; `.odd-kbd` in the code role, not a pointer; `.odd-list` rows divided, `aria-current` item in the selection colours; `.odd-table` header cells sunken and secondary, an `aria-sort` header primary, a row with a checked checkbox in the selection colours; `.odd-avatar-group` overlaps avatars and colours `.odd-avatar-group-more` with the action colours. |
+| Figma parity | `figma-parity.browser.test.ts` (CSS recipes) | typography (7 roles), keyboardKey (surface and text), List (surface and both text colours) equal their bound tokens in three engines, with `base.css` giving the page its primary text colour. |
+| Size, CSS, types, node | `node scripts/check-size.mjs`; `npm run compat`; `npm run typecheck`; `npx vitest run --project node` | Recipes together 1,314 B gzip (budget 1,536); compatibility OK; types pass; 1,007 node tests pass. |
+
+**Change:** seven document stylesheets in `@oddkin/components/css` (`typography`, `link`, `divider`, `kbd`, `list`, `table`, `avatar-group`), each in the `odd.components` layer and exported as `./css/<name>.css`. Contract §4 updated: no external-link glyph in the link recipe (a stylesheet glyph would need an image request under strict CSP; the author adds an icon and says so in the text); the field recipe lands with the shared control module (§5 step 3); listing recipes in the metadata is a follow-up.

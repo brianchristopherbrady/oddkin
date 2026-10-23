@@ -128,6 +128,7 @@ export const CSS_BUDGETS = {
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   'components:layout': 512, // measured 411 on 2026-10-18: layout.css page-author classes
   'components:button.css': 1024, // measured 864 on 2026-10-18: button.css, the native <button> styling path
+  'components:recipes': 1536, // measured 1,314 on 2026-10-22: the seven CSS recipes together
   'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
 };
 
@@ -175,6 +176,12 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
   );
   sizes['components:button.css'] = gzip(
     readFileSync(join(root, 'packages/components/dist/css/button.css'), 'utf8'),
+  );
+  // The opt-in CSS recipes for native markup (component-contracts.md §4), together.
+  sizes['components:recipes'] = gzip(
+    ['typography', 'link', 'divider', 'kbd', 'list', 'table', 'avatar-group']
+      .map((name) => readFileSync(join(root, `packages/components/dist/css/${name}.css`), 'utf8'))
+      .join('\n'),
   );
   // All @oddkin/ai sheets, deduplicated (shared base styles count once).
   const aiDist = join(root, 'packages/ai/dist');

@@ -560,6 +560,79 @@ describe('Figma parity: odd-avatar (avatar)', () => {
     });
 });
 
+describe('Figma parity: CSS recipes (typography, keyboardKey, List)', () => {
+  let recipes: HTMLLinkElement[] = [];
+  beforeAll(async () => {
+    recipes = await Promise.all(
+      // base.css gives the page its primary text colour, which primary type roles inherit.
+      ['base', 'typography', 'kbd', 'list'].map(
+        (name) =>
+          new Promise<HTMLLinkElement>((resolve, reject) => {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = new URL(`../dist/css/${name}.css`, import.meta.url).href;
+            link.onload = () => resolve(link);
+            link.onerror = reject;
+            document.head.append(link);
+          }),
+      ),
+    );
+  });
+  afterAll(() => {
+    for (const link of recipes) link.remove();
+  });
+
+  const TYPE: [string, string][] = [
+    ['display', 'Made for the browser.'],
+    ['title', 'A practical title'],
+    ['section', 'Clear structure, shared foundations'],
+    ['body', 'Body text keeps reading comfortable.'],
+    ['ui', 'Interface labels remain clear'],
+    ['small', 'Supporting detail and helpful hints.'],
+    ['eyebrow', 'FOUNDATIONS / TYPE'],
+  ];
+  it('typography', () => {
+    const root = mount(
+      `<div>${TYPE.map(([role, text]) => `<p class="odd-type-${role}">${text}</p>`).join('')}</div>`,
+    );
+    const targets: Target[] = TYPE.map(([role, text]) => ({
+      layer: ['Typography / Default', text],
+      el: root.querySelector(`.odd-type-${role}`)!,
+      kind: 'text',
+    }));
+    expectNone(compare('Oddkin/Common/typography', { State: 'Default' }, targets));
+  });
+
+  it('keyboardKey', () => {
+    const root = mount('<p><kbd class="odd-kbd">Ctrl</kbd> + <kbd class="odd-kbd">K</kbd></p>');
+    const [ctrl, k] = root.querySelectorAll('kbd');
+    const frame = ['Keyboard key / Default'];
+    const targets: Target[] = [
+      { layer: [...frame, 'Surface'], el: ctrl!, kind: 'frame' },
+      { layer: [...frame, 'Ctrl'], el: ctrl!, kind: 'text' },
+      { layer: [...frame, 'K'], el: k!, kind: 'text' },
+    ];
+    expectNone(compare('Oddkin/Common/keyboardKey', { State: 'Default' }, targets));
+  });
+
+  it('List', () => {
+    const list = mount(`<ul class="odd-list">
+      <li>Components <span class="odd-list-meta">Reusable controls and patterns</span></li>
+    </ul>`);
+    const surface = ['List / Default', 'Surface'];
+    const targets: Target[] = [
+      { layer: surface, el: list, kind: 'frame' },
+      { layer: [...surface, 'Components'], el: list.querySelector('li')!, kind: 'text' },
+      {
+        layer: [...surface, 'Reusable controls and patterns'],
+        el: list.querySelector('.odd-list-meta')!,
+        kind: 'text',
+      },
+    ];
+    expectNone(compare('Oddkin/Common/List', { State: 'Default' }, targets));
+  });
+});
+
 describe('Figma parity: odd-side-nav entries (NavigationItem)', () => {
   for (const state of ['Default', 'Current', 'Disabled', 'Focus'])
     it(state, async () => {
