@@ -85,6 +85,7 @@ describe('authored examples', () => {
     'odd-badge/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
     'odd-alert/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
     'odd-avatar/nameAttribute': { observe: (el) => el['label'], wrong: '' },
+    'odd-checkbox/checkedFalse': { observe: (el) => el['checked'], wrong: true },
     'odd-chip/removableFalse': { observe: (el) => el['removable'], wrong: true },
     'odd-disclosure/openFalse': { observe: (el) => el['open'], wrong: true },
     'odd-disclosure/summarySlot': {

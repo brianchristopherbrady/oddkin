@@ -117,6 +117,7 @@ describe('component examples', () => {
       'odd-alert/danger': ['component:odd-button'],
       'odd-button/inForm': ['component:odd-input'],
       'odd-card/headed': ['component:odd-button'],
+      'odd-checkbox/inForm': ['component:odd-button'],
       'odd-empty-state/default': ['component:odd-button'],
       'odd-input/inForm': ['component:odd-button'],
       'odd-tab-panel/default': ['component:odd-tabs'],

@@ -10,6 +10,7 @@ import '@oddkin/components/define/avatar';
 import '@oddkin/components/define/badge';
 import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
+import '@oddkin/components/define/checkbox';
 import '@oddkin/components/define/chip';
 import '@oddkin/components/define/disclosure';
 import '@oddkin/components/define/empty-state';
@@ -192,7 +193,8 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-disclosure name="faq" label="One" open>1</odd-disclosure>
         <odd-disclosure name="faq" label="Two">2</odd-disclosure>
         <odd-tabs label="Tabs"><odd-tab-panel label="A">a</odd-tab-panel><odd-tab-panel label="B">b</odd-tab-panel></odd-tabs>
-        <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>`;
+        <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
+        <odd-checkbox name="updates" checked>Updates</odd-checkbox>`;
       const elements = [button, input, card, nav, badge, ...display.children];
       container.append(button, input, card, nav, badge, display);
       await tick();

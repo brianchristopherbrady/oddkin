@@ -53,6 +53,10 @@ const states = `
     <odd-input label="Region" value="EU" disabled name="region"></odd-input>
     <odd-input id="blocked" label="Postcode" name="postcode" required></odd-input>
     <fieldset disabled><legend>Disabled group</legend><odd-input label="Notes" name="notes"></odd-input></fieldset>
+    <odd-checkbox name="updates" checked>Email me about project updates</odd-checkbox>
+    <odd-checkbox name="all" indeterminate description="Some are on.">All notifications</odd-checkbox>
+    <odd-checkbox name="terms" required error="Accept the terms to continue.">I accept the terms</odd-checkbox>
+    <odd-checkbox name="managed" checked disabled>Managed by your workspace</odd-checkbox>
     <odd-button type="submit" appearance="primary">Submit</odd-button>
     <odd-button type="reset">Reset</odd-button>
   </form>

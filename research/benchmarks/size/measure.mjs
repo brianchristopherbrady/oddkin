@@ -136,14 +136,17 @@ export const CSS_BUDGETS = {
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
   // 128: measured 55 on 2026-10-22; the field look moved to the shared control module.
   'components:input': 128,
+  // 256: measured 244 on 2026-10-23; the box and marks are the shared control-indicator module.
+  'components:checkbox': 256,
   // 1,152: measured 1,077 on 2026-10-22 once the entry rows moved to the shared navigation-row
   // module (1,234 before, with them).
   'components:side-nav': 1152,
-  // 2,304: measured 2,228 on 2026-10-22 with the navigation-row (+294, moved from odd-side-nav) and
+  // 2,688: measured 2,574 on 2026-10-23 with the control-indicator modules (+346: checkbox box and
+  // marks); 2,228 on 2026-10-22 with the navigation-row (+294, moved from odd-side-nav) and
   // option-row (+330) modules; 1,604 before them with the field layout, control look, and select
   // chevron every form control shares (717 before: spinner, tone, glyphs, host, focus ring, visually
   // hidden).
-  'components:shared': 2304,
+  'components:shared': 2688,
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   'components:layout': 512, // measured 411 on 2026-10-18: layout.css page-author classes
   'components:button.css': 1024, // measured 864 on 2026-10-18: button.css, the native <button> styling path

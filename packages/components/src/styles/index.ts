@@ -10,5 +10,7 @@ export { optionRowStructuralStyles } from './option-row.structural.styles.js';
 export { optionRowStyles } from './option-row.styles.js';
 export { fieldStructuralStyles } from './field.structural.styles.js';
 export { controlStyles } from './control.styles.js';
+export { controlIndicatorStructuralStyles } from './control-indicator.structural.styles.js';
+export { controlIndicatorStyles } from './control-indicator.styles.js';
 export { TONES, toneGlyph, toneStyles, type Tone } from './tone.styles.js';
 export * from './glyphs.js';

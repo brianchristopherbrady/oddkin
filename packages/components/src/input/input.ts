@@ -1,7 +1,6 @@
-import { FormValue } from '@oddkin/core/controllers/form';
-import { OddkinElement, event, prop, type ElementEvents } from '@oddkin/core/element';
+import { event, prop, type ElementEvents } from '@oddkin/core/element';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
-import type { Scope } from '@oddkin/core/scope';
+import { OddkinFormControl, type FormControlOptions } from '../form-control/form-control.js';
 
 /** Native `input` events cross the shadow boundary once; declared here for metadata and sync. */
 export const inputEvent = event('input', {
@@ -41,13 +40,8 @@ export const changeEvent = event('change', {
  * @limitation Enter in the field does not submit the form (no implicit submission): the native input inside the shadow root has no form owner. Give the form a submit button.
  * @category Forms
  */
-export class OddkinInput extends OddkinElement.with({
+export class OddkinInput extends OddkinFormControl.with({
   label: prop.string({ default: '', description: 'Visible label; names the control.' }),
-  description: prop.string({ default: '', description: 'Help text below the label.' }),
-  error: prop.string({
-    default: '',
-    description: 'Error message; marks the field invalid (custom validity) while set.',
-  }),
   defaultValue: prop.string({
     default: '',
     attribute: 'value',
@@ -58,21 +52,14 @@ export class OddkinInput extends OddkinElement.with({
     reflect: true,
     description: 'Native input type.',
   }),
-  name: prop.string({
-    reflect: true,
-    description:
-      'Name submitted with the form. Reflected: a form-associated element submits under its name attribute.',
-  }),
   placeholder: prop.string({
     default: '',
     description: 'Placeholder; never a substitute for a label.',
   }),
   autocomplete: prop.string({ default: '', description: 'Autofill hint for the native input.' }),
   required: prop.boolean({ reflect: true, description: 'A value is required to submit.' }),
-  disabled: prop.boolean({ reflect: true, description: 'Prevents interaction and submission.' }),
   readonly: prop.boolean({ reflect: true, description: 'Prevents editing; still submitted.' }),
 }) {
-  static formAssociated = true;
   static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
   static override events = { input: inputEvent, change: changeEvent };
   declare readonly _events?: ElementEvents<typeof OddkinInput>;
@@ -80,36 +67,6 @@ export class OddkinInput extends OddkinElement.with({
   // undefined until the value is set or typed ("dirty"), then independent of `defaultValue`.
   readonly #value = signal<string | undefined>(undefined);
 
-  // Form value, validity mirrored from the inner input, reset, restore, and fieldset state.
-  readonly #form = new FormValue({
-    internals: () => this.internals,
-    value: () => this.value,
-    control: () => this.shadowRoot?.querySelector('input'),
-    error: () => this.error,
-    watch: () => [this.required, this.type, this.disabled, this.readonly],
-    onReset: () => {
-      this.#value.value = undefined;
-      this._touched.value = false;
-    },
-    onRestore: (state) => {
-      if (typeof state === 'string') this.value = state;
-    },
-  });
-
-  /** @internal Disabled by an ancestor `<fieldset disabled>`. */
-  readonly _formDisabled: Readable<boolean> = this.#form.disabled;
-  /** @internal The user left the field or a submission was attempted. */
-  readonly _touched = signal(false);
-  /** @internal The current value failed validation. */
-  readonly _invalid: Readable<boolean> = this.#form.invalid;
-  /**
-   * @internal The field shows its error: `error` is set, or the value is invalid after the user
-   * left the field or a validity check failed. One source for `aria-invalid` and the
-   * `user-invalid` custom state.
-   */
-  readonly _userInvalid: Readable<boolean> = computed(
-    () => !!this.error || (this._touched.value && this._invalid.value),
-  );
   /** @internal The value as a readable for the template's live binding. */
   readonly _currentValue: Readable<string> = computed(() => this.value);
 
@@ -131,28 +88,18 @@ export class OddkinInput extends OddkinElement.with({
     this.#value.value = String(value ?? '');
   }
 
-  /** The form this field belongs to, if any. */
-  get form(): HTMLFormElement | null {
-    return this.internals.form;
-  }
-  get validity(): ValidityState {
-    return this.internals.validity;
-  }
-  get validationMessage(): string {
-    return this.internals.validationMessage;
-  }
-  get willValidate(): boolean {
-    return this.internals.willValidate;
-  }
-  checkValidity(): boolean {
-    return this.internals.checkValidity();
-  }
-  reportValidity(): boolean {
-    return this.internals.reportValidity();
-  }
-  /** As on a native input; the message is also shown, since it sets `error`. An empty string clears it. */
-  setCustomValidity(message: string): void {
-    this.error = message;
+  protected override _formOptions(): FormControlOptions {
+    return {
+      value: () => this.value,
+      control: () => this.shadowRoot?.querySelector('input'),
+      watch: () => [this.required, this.type, this.readonly],
+      onReset: () => {
+        this.#value.value = undefined;
+      },
+      onRestore: (state) => {
+        if (typeof state === 'string') this.value = state;
+      },
+    };
   }
 
   /** @internal Template handler: the user typed. */
@@ -163,46 +110,6 @@ export class OddkinInput extends OddkinElement.with({
   readonly _onChange = (): void => {
     this.emit(changeEvent);
   };
-  /** @internal Template handler: the user left the field. */
-  readonly _onBlur = (): void => {
-    this._touched.value = true;
-  };
-
-  protected override connected(scope: Scope): void {
-    // A failed form submission marks the field touched, so errors become visible.
-    scope.listen(this, 'invalid', () => (this._touched.value = true));
-  }
-
-  protected override mounted(scope: Scope): void {
-    // After the commit that wrote the inner input, so its validity is current.
-    scope.use(this.#form);
-    // Styling hook for consumers (`odd-input:state(user-invalid)`), derived from the same
-    // state as aria-invalid; never a second source of truth.
-    scope.effect(() => this.setState('user-invalid', this._userInvalid.value), {
-      phase: 'post',
-      name: '<odd-input> user-invalid state',
-    });
-  }
-
-  /** Native callback: the owning form was reset. */
-  formResetCallback(): void {
-    this.#form.formResetCallback();
-  }
-  /** Native callback: restore after navigation or autofill restore. */
-  formStateRestoreCallback(
-    state: string | File | FormData | null,
-    mode: 'restore' | 'autocomplete',
-  ): void {
-    this.#form.formStateRestoreCallback(state, mode);
-  }
-  /** Native callback: an ancestor fieldset's disabled state changed. */
-  formDisabledCallback(disabled: boolean): void {
-    this.#form.formDisabledCallback(disabled);
-  }
-  /** Native callback: the form owner changed (moved, `form` attribute, or the named form). */
-  formAssociatedCallback(form: HTMLFormElement | null): void {
-    this.#form.formAssociatedCallback(form);
-  }
 }
 
 declare global {

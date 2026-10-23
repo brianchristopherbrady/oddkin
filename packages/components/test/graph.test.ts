@@ -82,6 +82,7 @@ describe('@oddkin/components/input import graphs', () => {
   it('the foundation entry loads no default skin, tokens, or registration', async () => {
     const { files, packages } = await graph('input/foundation.js');
     expect(files).toEqual([
+      'form-control/form-control.js',
       'input/foundation.js',
       'input/input.js',
       'input/input.structural.styles.js',

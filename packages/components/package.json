@@ -74,6 +74,18 @@
       "types": "./dist/card/card.define.d.ts",
       "default": "./dist/card/card.define.js"
     },
+    "./checkbox": {
+      "types": "./dist/checkbox/index.d.ts",
+      "default": "./dist/checkbox/index.js"
+    },
+    "./checkbox/foundation": {
+      "types": "./dist/checkbox/foundation.d.ts",
+      "default": "./dist/checkbox/foundation.js"
+    },
+    "./define/checkbox": {
+      "types": "./dist/checkbox/checkbox.define.d.ts",
+      "default": "./dist/checkbox/checkbox.define.js"
+    },
     "./chip": {
       "types": "./dist/chip/index.d.ts",
       "default": "./dist/chip/index.js"

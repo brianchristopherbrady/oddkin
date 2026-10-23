@@ -73,7 +73,9 @@ look comes from one control style module (§2.9), whose variables (`--odd-field-
 failures in a form control are not `error`: the element shows a `loading` row and the author's `status` slot (retry
 actions are author content). There is no `odd-field` element: a wrapper's label in its shadow root cannot name a
 slotted control (`<label for>` and `aria-labelledby` do not cross shadow roots), so Oddkin controls render their own
-anatomy and native controls use the field recipe.
+anatomy and native controls use the field recipe. The shared members (`name`, `disabled`, `description`, `error`, the
+validity API, reset, `:state(user-invalid)`) live in one internal base class, `OddkinFormControl`, over the core form
+controller; each control describes only its value, inner control, reset, and restore.
 
 ### 2.5 Collection states
 
@@ -190,9 +192,11 @@ its insertion, so the page announces a search outcome itself.
 `resize: vertical | none | auto = vertical` (`auto` grows with content: `field-sizing: content` where supported, a
 measured height otherwise, F12).
 
-**`odd-checkbox`** (`checkbox`) — native `<input type="checkbox">` in the shadow root. Default slot: label (names
-it). `checked` (attribute = default checkedness, as native), `indeterminate`, `value = "on"`, `name`, `required`,
-`disabled`, `description`, `error`. Submits `value` when checked. Marks from the control-indicator module.
+**`odd-checkbox`** (`checkbox`) — native `<input type="checkbox">` in the shadow root, drawn by the control-indicator
+module (part `control` is the box). Default slot: label (names it through the native `<label>`). `checked` (attribute =
+default checkedness, as native; the property detaches once set or toggled), `indeterminate` (reflected; exposed as
+mixed and cleared when the user toggles, as native), `value = "on"`, `name`, `required`, `disabled`, `description`,
+`error`. Submits `value` when checked. `input` and `change` at the host for user toggles only.
 
 **`odd-switch`** (`switch`) — as `odd-checkbox` without `indeterminate`; `role="switch"`. Part `state` shows
 `strings.on`/`strings.off` beside the track (hidden from assistive technology; the role states it).

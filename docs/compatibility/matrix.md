@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 87 stylesheets, 261 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 96 stylesheets, 270 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -135,6 +135,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 28 |
 | `packages/components/dist/card/card.structural.styles.js (cardStructuralStyles)` | yes | 20 |
 | `packages/components/dist/card/card.styles.js (cardStyles)` | yes | 18 |
+| `packages/components/dist/checkbox/checkbox.structural.styles.js (checkboxStructuralStyles)` | yes | 13 |
+| `packages/components/dist/checkbox/checkbox.styles.js (checkboxStyles)` | yes | 6 |
 | `packages/components/dist/chip/chip.structural.styles.js (chipStructuralStyles)` | yes | 32 |
 | `packages/components/dist/chip/chip.styles.js (chipStyles)` | yes | 26 |
 | `packages/components/dist/disclosure/disclosure.structural.styles.js (disclosureStructuralStyles)` | yes | 33 |
@@ -153,6 +155,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
 | `packages/components/dist/spinner/spinner.structural.styles.js (spinnerStructuralStyles)` | yes | 10 |
 | `packages/components/dist/spinner/spinner.styles.js (spinnerElementStyles)` | yes | 10 |
+| `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 34 |
+| `packages/components/dist/styles/control-indicator.styles.js (controlIndicatorStyles)` | yes | 20 |
 | `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 31 |
 | `packages/components/dist/styles/field.structural.styles.js (fieldStructuralStyles)` | yes | 27 |
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |
