@@ -1,8 +1,15 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 
-/** Oddkin's default visual styles for the input. */
-export const inputStyles = css`
+/**
+ * The field look of the Common page (158:22) for every Oddkin form control: the label in the UI
+ * type role, help and error in the small role, and the control surface (`color.border.strong`,
+ * `control.radius`, `control.height.md`, never below the target size) with its hover, invalid,
+ * disabled, and read-only states. The field variables (`--odd-field-height`, `-radius`,
+ * `-border-color`, `-background`) apply to every form control and the `.odd-field` recipe, which
+ * is generated from these rules.
+ */
+export const controlStyles = css`
   .field {
     gap: ${token('space.xs')};
     font-family: ${token('type.body.family')};
@@ -27,15 +34,15 @@ export const inputStyles = css`
   }
   .control {
     min-block-size: max(
-      var(--odd-input-height, ${token('control.height.md')}),
+      var(--odd-field-height, ${token('control.height.md')}),
       ${token('target.min')}
     );
     padding-block: ${token('space.none')};
     padding-inline: ${token('control.padding.inline.md')};
     border: ${token('border.width.default')} solid
-      var(--odd-input-border-color, ${token('color.border.strong')});
-    border-radius: var(--odd-input-radius, ${token('control.radius')});
-    background: var(--odd-input-background, ${token('color.surface.default')});
+      var(--odd-field-border-color, ${token('color.border.strong')});
+    border-radius: var(--odd-field-radius, ${token('control.radius')});
+    background: var(--odd-field-background, ${token('color.surface.default')});
     color: ${token('color.text.primary')};
     /* Body size: below 16px, iOS Safari zooms the page when the field takes focus. */
     font-size: ${token('type.body.size')};
@@ -50,7 +57,7 @@ export const inputStyles = css`
   }
   @media (hover: hover) {
     .control:read-write:hover {
-      background: var(--odd-input-background, ${token('color.surface.hover')});
+      background: var(--odd-field-background, ${token('color.surface.hover')});
     }
   }
   .control[aria-invalid='true'] {
@@ -58,6 +65,15 @@ export const inputStyles = css`
   }
   .control:disabled {
     background: ${token('color.surface.sunken')};
+    color: ${token('color.text.disabled')};
+  }
+  .control-box > select.control {
+    padding-inline-end: calc(${token('control.padding.inline.md')} + 1em + ${token('control.gap')});
+  }
+  .control-end {
+    margin-inline-end: ${token('control.padding.inline.md')};
+  }
+  .control:disabled + .control-end {
     color: ${token('color.text.disabled')};
   }
   .error {

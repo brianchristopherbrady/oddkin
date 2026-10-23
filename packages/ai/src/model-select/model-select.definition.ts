@@ -1,3 +1,4 @@
+import { controlStyles, fieldStructuralStyles, glyphStyles } from '@oddkin/components/styles';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { OddkinModelSelect } from './model-select.js';
@@ -8,5 +9,5 @@ export const modelSelectDefinition = compose({
   name: 'odd-model-select',
   element: OddkinModelSelect,
   template: modelSelectTemplate,
-  styles: [aiBaseStyles, modelSelectStyles],
+  styles: [aiBaseStyles, fieldStructuralStyles, glyphStyles, controlStyles, modelSelectStyles],
 });

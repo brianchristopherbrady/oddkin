@@ -5,7 +5,7 @@ import { loadTheme, settle, themeValue } from './probe.js';
 
 // The CSS recipes for native markup (component-contracts.md §4), loaded as a page would load them
 // from the built package (`dist/css/<name>.css`), with the shipped theme.
-const RECIPES = ['typography', 'link', 'divider', 'kbd', 'list', 'table', 'avatar-group'];
+const RECIPES = ['typography', 'link', 'divider', 'kbd', 'list', 'table', 'field', 'avatar-group'];
 let links: HTMLLinkElement[] = [];
 let unload: () => void;
 beforeAll(async () => {
@@ -171,5 +171,83 @@ describe('avatar group recipe', () => {
       themeValue('background-color', '--odd-color-action-default'),
     );
     expect(style(more).color).toBe(themeValue('color', '--odd-color-text-on-action'));
+  });
+});
+
+describe('field recipe', () => {
+  // The look properties the recipe and odd-input share (control.styles.ts is the one source).
+  const LOOK = [
+    'border-top-color',
+    'border-top-width',
+    'border-top-left-radius',
+    'background-color',
+    'color',
+    'min-height',
+    'padding-left',
+    'font-size',
+    'line-height',
+  ];
+  const look = (el: Element) => LOOK.map((p) => `${p}: ${style(el).getPropertyValue(p)}`);
+  const native = (attributes = '') => `<div class="odd-field">
+      <label class="odd-field-label" for="email">Email address</label>
+      <div class="odd-field-description" id="email-help">We never share your email.</div>
+      <input class="odd-field-control" id="email" aria-describedby="email-help" value="alex@example.com" ${attributes} />
+      <div class="odd-field-error">Enter a valid email address.</div>
+    </div>`;
+
+  it('draws native markup exactly like odd-input, part by part', async () => {
+    const root = mount(
+      `${native()}<odd-input label="Email address" description="We never share your email." value="alex@example.com"></odd-input>`,
+    );
+    const input = root.querySelector('odd-input')!;
+    await settle(input);
+    const part = (name: string) => input.shadowRoot!.querySelector(`[part="${name}"]`)!;
+    expect(look(root.querySelector('.odd-field-control')!)).toEqual(look(part('control')));
+    for (const name of ['label', 'description'])
+      expect(look(root.querySelector(`.odd-field-${name}`)!), name).toEqual(look(part(name)));
+    expect(style(root.querySelector('.odd-field')!).rowGap).toBe(style(part('field')).rowGap);
+    expect(style(root.querySelector('.odd-field-error')!).color).toBe(
+      themeValue('color', '--odd-color-danger-foreground'),
+    );
+  });
+
+  it('shares the field variables with every form control: one declaration restyles both', async () => {
+    const root = mount(`${native()}<odd-input label="Email address"></odd-input>`);
+    const input = root.querySelector('odd-input')!;
+    await settle(input);
+    // Transitions are not under test: values must be final when read.
+    root.style.setProperty('--odd-motion-duration-fast', '0s');
+    root.style.setProperty('--odd-field-radius', '3px');
+    root.style.setProperty('--odd-field-border-color', 'rgb(7, 8, 9)');
+    for (const control of [
+      root.querySelector('.odd-field-control')!,
+      input.shadowRoot!.querySelector('[part="control"]')!,
+    ]) {
+      expect(style(control).borderTopLeftRadius).toBe('3px');
+      expect(style(control).borderTopColor).toBe('rgb(7, 8, 9)');
+    }
+  });
+
+  it('shows the invalid border from aria-invalid and dims the label of a disabled control', () => {
+    const root = mount(`${native('aria-invalid="true"')}${native('disabled')}`);
+    const [invalid, disabled] = root.querySelectorAll('.odd-field-control');
+    expect(style(invalid!).borderTopColor).toBe(
+      themeValue('color', '--odd-color-danger-foreground'),
+    );
+    expect(style(disabled!).backgroundColor).toBe(
+      themeValue('background-color', '--odd-color-surface-sunken'),
+    );
+    const labels = root.querySelectorAll('.odd-field-label');
+    expect(style(labels[0]!).color).toBe(themeValue('color', '--odd-color-text-primary'));
+    expect(style(labels[1]!).color).toBe(themeValue('color', '--odd-color-text-disabled'));
+  });
+
+  it('leaves checkboxes and other controls without the class alone', () => {
+    const root = mount(`<div class="odd-field">
+      <label><input type="checkbox" /> Remember me</label>
+    </div>`);
+    expect(style(root.querySelector('input')!).borderTopLeftRadius).not.toBe(
+      themeValue('border-top-left-radius', '--odd-control-radius'),
+    );
   });
 });

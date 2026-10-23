@@ -131,15 +131,16 @@ export const CSS_BUDGETS = {
   'components:spinner': 384, // 319
   'components:button': 1280, // measured 1,028 on 2026-10-22 (spinner moved to the shared module; 1,119 before)
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
-  'components:input': 896, // measured 743 with type.ui/body/small and motion tokens (647 before)
+  // 128: measured 55 on 2026-10-22; the field look moved to the shared control module.
+  'components:input': 128,
   'components:side-nav': 1536, // measured 1,234 on 2026-10-18: extracted recipe, structural, and default styles
-  // 768: measured 717 on 2026-10-22 with the spinner (moved from the button, -91 B there), tone,
-  // and glyph modules every catalog element shares (297 for host, focus ring, visually hidden).
-  'components:shared': 768,
+  // 1,792: measured 1,604 on 2026-10-22 with the field layout, control look, and select chevron
+  // every form control shares (717 before: spinner, tone, glyphs, host, focus ring, visually hidden).
+  'components:shared': 1792,
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   'components:layout': 512, // measured 411 on 2026-10-18: layout.css page-author classes
   'components:button.css': 1024, // measured 864 on 2026-10-18: button.css, the native <button> styling path
-  'components:recipes': 1536, // measured 1,314 on 2026-10-22: the seven CSS recipes together
+  'components:recipes': 2048, // measured 1,821 on 2026-10-22: the eight CSS recipes together (1,314 before field.css)
   'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
 };
 
@@ -190,7 +191,7 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
   );
   // The opt-in CSS recipes for native markup (component-contracts.md §4), together.
   sizes['components:recipes'] = gzip(
-    ['typography', 'link', 'divider', 'kbd', 'list', 'table', 'avatar-group']
+    ['typography', 'link', 'divider', 'kbd', 'list', 'table', 'field', 'avatar-group']
       .map((name) => readFileSync(join(root, `packages/components/dist/css/${name}.css`), 'utf8'))
       .join('\n'),
   );

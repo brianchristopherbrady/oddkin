@@ -38,6 +38,7 @@ describe('imports', () => {
       [
         'OddkinInput',
         'changeEvent',
+        'fieldStructuralStyles',
         'inputEvent',
         'inputStructuralStyles',
         'inputTemplate',

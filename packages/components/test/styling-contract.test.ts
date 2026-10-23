@@ -41,7 +41,8 @@ const documented = (tag: string) =>
 describe.each(components)('$definition.name styles', ({ definition, structural }) => {
   const tag = definition.name;
   const css = cssOf(definition);
-  const own = (name: string) => name.startsWith(`--${tag}-`);
+  // Form controls share one family of field variables (control.styles.ts), documented on each.
+  const own = (name: string) => name.startsWith(`--${tag}-`) || name.startsWith('--odd-field-');
 
   it('declare no custom properties, so ancestor theme scopes stay visible inside', () => {
     expect(css.match(/(?:^|[{;\s])--[\w-]+\s*:/g) ?? []).toEqual([]);

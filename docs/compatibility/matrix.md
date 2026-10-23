@@ -143,8 +143,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/empty-state/empty-state.styles.js (emptyStateStyles)` | yes | 12 |
 | `packages/components/dist/icon/icon.structural.styles.js (iconStructuralStyles)` | yes | 19 |
 | `packages/components/dist/icon/icon.styles.js (iconStyles)` | yes | 2 |
-| `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 20 |
-| `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 27 |
+| `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 3 |
 | `packages/components/dist/progress/progress.structural.styles.js (progressStructuralStyles)` | yes | 35 |
 | `packages/components/dist/progress/progress.styles.js (progressStyles)` | yes | 12 |
 | `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
@@ -154,6 +153,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
 | `packages/components/dist/spinner/spinner.structural.styles.js (spinnerStructuralStyles)` | yes | 10 |
 | `packages/components/dist/spinner/spinner.styles.js (spinnerElementStyles)` | yes | 10 |
+| `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 31 |
+| `packages/components/dist/styles/field.structural.styles.js (fieldStructuralStyles)` | yes | 27 |
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |
 | `packages/components/dist/styles/host.styles.js (hostStyles)` | yes | 7 |
 | `packages/components/dist/styles/spinner.styles.js (spinnerStyles)` | yes | 22 |
@@ -172,7 +173,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 42 |
 | `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 31 |
 | `packages/ai/dist/message-branch/message-branch.styles.js (messageBranchStyles)` | yes | 6 |
-| `packages/ai/dist/model-select/model-select.styles.js (modelSelectStyles)` | yes | 20 |
+| `packages/ai/dist/model-select/model-select.styles.js (modelSelectStyles)` | yes | 9 |
 | `packages/ai/dist/prompt-input/prompt-input.styles.js (promptInputStyles)` | yes | 59 |
 | `packages/ai/dist/question/question.styles.js (questionStyles)` | yes | 21 |
 | `packages/ai/dist/response/response.styles.js (responseStyles)` | yes | 61 |

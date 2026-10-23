@@ -217,6 +217,7 @@
     "./css/kbd.css": "./dist/css/kbd.css",
     "./css/list.css": "./dist/css/list.css",
     "./css/table.css": "./dist/css/table.css",
+    "./css/field.css": "./dist/css/field.css",
     "./css/avatar-group.css": "./dist/css/avatar-group.css",
     "./css/utilities.css": "./dist/css/utilities.css",
     "./custom-elements.json": "./custom-elements.json",

@@ -27,10 +27,10 @@ export const changeEvent = event('change', {
  * @csspart description - Help text, referenced by `aria-describedby`.
  * @csspart control - The native `<input>`.
  * @csspart error - The error message, referenced by `aria-describedby`.
- * @cssprop --odd-input-height - Minimum height (never below the target-size token).
- * @cssprop --odd-input-radius - Corner radius.
- * @cssprop --odd-input-border-color - Border colour.
- * @cssprop --odd-input-background - Background colour.
+ * @cssprop --odd-field-height - Minimum height (never below the target-size token). Shared by every form control and the field recipe.
+ * @cssprop --odd-field-radius - Corner radius. Shared by every form control and the field recipe.
+ * @cssprop --odd-field-border-color - Border colour. Shared by every form control and the field recipe.
+ * @cssprop --odd-field-background - Background colour. Shared by every form control and the field recipe.
  * @cssstate user-invalid - The field shows its error: `error` is set, or the value is invalid after the user left the field or a validity check failed. Matches `aria-invalid` on the inner control; style it with `odd-input:state(user-invalid)`.
  * @a11y `label` names the native input inside the shadow root; a `<label for>` outside it cannot. Description and error are announced through `aria-describedby`; `aria-invalid` is set for `error`, or for an invalid value after the user leaves the field or a validity check fails (any `invalid` event, including `checkValidity()`, unlike native `:user-invalid`); reset clears it.
  * @keyboard Native text-input behavior.

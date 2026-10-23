@@ -68,8 +68,12 @@ including a disabled fieldset, `required`, `readonly` where native has it, `form
 `willValidate`, `checkValidity()`, `reportValidity()`, `setCustomValidity()`, reset, state restore, `input`/`change`
 for user edits only, `:state(user-invalid)`), and carries the field anatomy: `label`, `description`, `error` (string;
 non-empty sets custom validity and shows the message), parts `field`, `label`, `description`, `control`, `error`. The
-look comes from one control style module (§2.9). Load failures in a form control are not `error`: the element shows a
-`loading` row and the author's `status` slot (retry actions are author content).
+look comes from one control style module (§2.9), whose variables (`--odd-field-height`, `-radius`, `-border-color`,
+`-background`) every form control and the field recipe share, so one declaration restyles every field in a form. Load
+failures in a form control are not `error`: the element shows a `loading` row and the author's `status` slot (retry
+actions are author content). There is no `odd-field` element: a wrapper's label in its shadow root cannot name a
+slotted control (`<label for>` and `aria-labelledby` do not cross shadow roots), so Oddkin controls render their own
+anatomy and native controls use the field recipe.
 
 ### 2.5 Collection states
 
@@ -334,7 +338,7 @@ dispatch `change`. More panes: nest split panels.
 | Keyboard key (`kbd.css`) | `kbd.odd-kbd` | Sequences are adjacent keys with words between them |
 | List (`list.css`) | `ul.odd-list`, `ol.odd-list`, `.odd-list-meta` | Rows divided by rules; the item with `aria-current` takes the selection colours; actions are author content |
 | Table (`table.css`) | `table.odd-table` | Native table semantics; `aria-sort` headers in the primary colour; a row holding a checked checkbox takes the selection colours; loading, empty, and error rows are author content |
-| Field (`field.css`, with the control module in §5 step 3) | `.odd-field`, `.odd-field-label`, `.odd-field-description`, `.odd-field-error` | For native and third-party controls (`<label for>`, `aria-describedby` written by the author) |
+| Field (`field.css`) | `.odd-field`, `.odd-field-label`, `.odd-field-description`, `.odd-field-control`, `.odd-field-error` | For native and third-party controls (`<label for>`, `aria-describedby`, and `aria-invalid` written by the author); `.odd-field-control` marks the control, so checkboxes and other controls in the field keep their own look. Generated from the control module's rules, with the same `--odd-field-height`, `-radius`, `-border-color`, and `-background` variables as every Oddkin form control |
 | Avatar group (`avatar-group.css`) | `.odd-avatar-group`, `.odd-avatar-group-more` | Overlapping `odd-avatar` children ringed in the page colour; the author names the group |
 
 ## 5. Build order

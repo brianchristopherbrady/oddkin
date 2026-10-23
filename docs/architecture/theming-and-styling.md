@@ -330,7 +330,7 @@ A build step (part of Oddkin's own tooling, a dev dependency) transforms compone
 
 ### Public styling surface of Shadow DOM components
 1. **Inherited theme variables** — semantic tokens from ancestors (theming).
-2. **Component variables** — e.g. `--odd-button-radius`, read with a fallback to a semantic token; normally unset.
+2. **Component variables** — e.g. `--odd-button-radius`, read with a fallback to a semantic token; normally unset. Form controls share one family instead of one per element: `--odd-field-height`, `--odd-field-radius`, `--odd-field-border-color`, and `--odd-field-background`, documented on each control and read by the `.odd-field` recipe too, so one declaration on a form restyles every field in it.
 3. **Host styling** — `odd-button { margin: … }`.
 4. **Parts** — selected `::part(control)` hooks for structural overrides (styling, not theming).
 5. **Custom states** — e.g. `odd-input:state(user-invalid)`, derived from the component's own state; combine with parts (`odd-input:state(user-invalid)::part(control)`), since `::part()` cannot be followed by attribute selectors.
@@ -355,6 +355,8 @@ Rules every component needs are written once and adopted as one constructed shee
 | `hostStyles` | `box-sizing` inside the shadow root; the `hidden` attribute hides the host and internal elements even where a rule sets `display` | none (structural) |
 | `focusRingStyles` | `:focus-visible` outline from `focus.width`, `focus.offset`, `color.focus.ring` | yes |
 | `visuallyHiddenStyles` | `.visually-hidden` for text read by assistive technology without visual space | none (structural) |
+| `fieldStructuralStyles` | The field anatomy every form control renders (`.field`, `.label`, `.description`, `.control`, `.error`): stacked, wrapping, the control filling the field; forced-colours borders | none (structural) |
+| `controlStyles` | The field look of the Common page: type roles of label, help, and error; the control surface and its hover, invalid, disabled, and read-only states; the `--odd-field-*` variables. `css/field.css` is generated from it and `fieldStructuralStyles` | yes |
 
 Definition order: `hostStyles`, the component's structural styles, `focusRingStyles`, then visual styles (`[hostStyles, buttonStructuralStyles, focusRingStyles, buttonStyles]`). Foundation entries re-export `hostStyles`, so a recomposed definition can start `[hostStyles, cardStructuralStyles, …]` from one import. Consumers' own components use the same exports. Opt-in document stylesheets for pages (`reset.css`, `base.css`, `utilities.css`, and `button.css`, which styles native `<button class="odd-button">` elements like `odd-button` for forms that need native submit-button semantics) are described in [css-architecture.md](./css-architecture.md) §5.1 and §10.1.
 

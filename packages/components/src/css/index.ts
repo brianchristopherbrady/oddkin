@@ -2,6 +2,8 @@ import { createLayoutHelpers, type Declarations } from '@oddkin/core/layout';
 import { css, unsafeCSS, type CSSResult } from '@oddkin/core/styles';
 import { token, type TokenName } from '@oddkin/tokens/refs';
 import { nativeButtonStyles } from '../button/button.native.styles.js';
+import { controlStyles } from '../styles/control.styles.js';
+import { fieldStructuralStyles } from '../styles/field.structural.styles.js';
 
 /**
  * Opt-in document stylesheets, written to `dist/css/<name>.css` by
@@ -371,6 +373,26 @@ export const table: DocumentStylesheet = {
 };
 
 /**
+ * `.odd-field`: the field anatomy for native and third-party controls (`.odd-field-label`,
+ * `.odd-field-description`, `.odd-field-control`, `.odd-field-error`), generated from the rules
+ * of Oddkin's form controls, with the same `--odd-field-*` variables. The author wires
+ * `<label for>`, `aria-describedby`, and `aria-invalid`.
+ */
+export const field: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: unsafeCSS(
+    [fieldStructuralStyles, controlStyles]
+      .map((sheet) =>
+        sheet.cssText.replace(/\.(field|label|description|error|control)\b/g, (_, name: string) =>
+          name === 'field' ? '.odd-field' : `.odd-field-${name}`,
+        ),
+      )
+      .join('')
+      .replace(/\n(?=.)/g, '\n  '),
+  ),
+};
+
+/**
  * `.odd-avatar-group`: overlapping `odd-avatar` children, each ringed in the page colour;
  * `.odd-avatar-group-more` on the last one for an overflow count ("+3").
  */
@@ -427,6 +449,7 @@ export const documentStylesheets = {
   kbd,
   list,
   table,
+  field,
   'avatar-group': avatarGroup,
   utilities,
 } as const;

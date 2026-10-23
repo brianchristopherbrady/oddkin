@@ -75,22 +75,22 @@ const components: Record<
     part: 'control',
     content: '',
     variables: {
-      '--odd-input-background': {
+      '--odd-field-background': {
         property: 'background-color',
         value: 'rgb(1, 2, 3)',
         role: 'var(--odd-color-surface-default)',
       },
-      '--odd-input-border-color': {
+      '--odd-field-border-color': {
         property: 'border-top-color',
         value: 'rgb(7, 8, 9)',
         role: 'var(--odd-color-border-strong)',
       },
-      '--odd-input-radius': {
+      '--odd-field-radius': {
         property: 'border-top-left-radius',
         value: '3px',
         role: 'var(--odd-control-radius)',
       },
-      '--odd-input-height': {
+      '--odd-field-height': {
         property: 'min-height',
         value: '5rem',
         role: 'var(--odd-control-height-md)',
@@ -330,7 +330,7 @@ describe('roles and attributes', () => {
       ['--odd-button-border-color', 'rgb(7, 8, 9)'],
     ])
       button!.style.setProperty(name!, value!);
-    input!.style.setProperty('--odd-input-border-color', 'rgb(7, 8, 9)');
+    input!.style.setProperty('--odd-field-border-color', 'rgb(7, 8, 9)');
     await input!.updateComplete;
     flush();
     const control = getComputedStyle(partOf(button!, 'control'));

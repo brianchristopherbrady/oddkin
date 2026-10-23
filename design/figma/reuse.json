@@ -1714,11 +1714,11 @@
     {
       "id": "control",
       "kind": "style",
-      "home": "@oddkin/components/styles (controlStyles, proposed)",
+      "home": "@oddkin/components/styles (fieldStructuralStyles, controlStyles; css/field.css generated from them)",
       "decision": "Field control surface: border, radius, height, inline padding, gap, hover/invalid/disabled/read-only states, label/description/error type roles. Figma binds the same tokens on input, textarea, number, search, select, dateTime, combobox, and multiselect/Field.",
-      "status": "proposed",
-      "code": ["odd-input", "odd-model-select"],
-      "note": "Two current consumers that disagree today (odd-model-select: border.default, target.min height, space.xs padding); Figma page 0:1 draws model-select with border/default and control/height/sm while page 158:22 select uses border/strong and control/height/md. Owner: which one?"
+      "status": "existing",
+      "code": ["odd-input", "odd-model-select", ".odd-field recipe"],
+      "note": "The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe."
     },
     {
       "id": "button",
