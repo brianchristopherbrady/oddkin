@@ -166,7 +166,7 @@ export class CollectionSource<R> implements Controller {
   constructor(options: CollectionSourceOptions<R>) {
     this.#options = options;
     this.records = computed(() => options.property() ?? this.#declared.value.records);
-    this.selected = computed(() => (this.#declared.value.selected));
+    this.selected = computed(() => (options.property() ? [] : this.#declared.value.selected));
   }
 
   connect(scope: Scope): void {
