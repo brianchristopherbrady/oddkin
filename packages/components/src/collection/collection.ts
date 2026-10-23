@@ -27,7 +27,7 @@ export type MenuItemRecord = MenuActionRecord | MenuGroupRecord | MenuSeparatorR
 /** An action; with `items`, it opens a submenu instead. */
 export interface MenuActionRecord {
   readonly kind?: 'item';
-  /** Reported as `itemId` when the action is chosen. */
+  /** Reported as the `odd-action` detail's `id` when the action is chosen. */
   readonly id: string;
   readonly label: string;
   readonly description?: string;
