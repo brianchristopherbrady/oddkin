@@ -2557,3 +2557,14 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 browser mode with Playwright 1.
 4. The clear button's reset and look moved out of the shared modules into odd-input's own sheets (`inputStyles`), so the shared cost is only the start and end slots; adornment margins and the disabled colour are written once for both slots.
 5. At 05:20 the working copy's `src/button/button.ts` and `button.template.ts` were rewritten to their content before d820c4b (the description hook removed; no lane announced it). They were restored from HEAD with the owner's approval; this commit does not touch them.
 6. Not verified: screen-reader output for the searchbox and the clear button, virtual keyboards following `inputmode` on real devices, and Safari on macOS.
+
+## 2026-10-23 — `OverlayOptions.relay` for nested surfaces (M10, component-contracts.md §2.6, §3.6)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2). Other work in the same working tree, not in this commit: Agent 1's textarea, Agent 3's menu and split button, and the owner's untracked plans, artifacts, and lifetime results file. Requested by Agent 3 for odd-menu's submenus (lanes file, 06:26) and agreed before writing.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Behaviour | `npx vitest run --project browser --browser.name=<engine> packages/components/test/popover.browser.test.ts packages/components/test/dialog.browser.test.ts packages/components/test/overlay-surface.browser.test.ts packages/components/test/figma-parity.overlays.browser.test.ts`, one engine at a time | 69 tests in Chromium, 63 passed and 6 skipped (Chromium-only CDP cases) in Firefox and in WebKit. New: with `relay: false` an inner surface's `beforetoggle` and `toggle` never reach the host, so a host listener cannot cancel the open either; the surface still opens, is placed below its trigger, reports `open` for `aria-expanded`, calls `onToggle` after placement and on close, and returns focus to the trigger. The default (the option left out) still relays and still lets the host cancel. A first run of the four files with all engines at once failed in Firefox and WebKit with timeouts while other lanes ran browsers; each engine alone passes. |
+| Probes | `node .tmp/mutate.mjs .tmp/n-mutants-relay.json` (Chromium) | Relaying `beforetoggle` or `toggle` despite `relay: false`, and treating a missing option as false: all three killed. The last survived at first, because the test element always passed the option; it now leaves it out unless `no-relay` is set. |
+
+**Findings:** Firefox and WebKit have already returned focus to the trigger when the surface's `toggle` runs; Chromium has not (the wiring does it), so the test does not read focus at that moment. Not verified: Agent 3's submenus, which switch to the option in their own commit.

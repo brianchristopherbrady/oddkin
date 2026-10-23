@@ -32,6 +32,8 @@ export interface OverlayOptions {
   readonly mode?: 'auto' | 'manual';
   /** A manual surface also closes on Escape within the host, and on a press outside the host and the surface. */
   readonly dismiss?: boolean;
+  /** Re-dispatch the surface's toggle events at the host. Default true; false for a nested surface, such as a submenu. */
+  readonly relay?: boolean;
   /** Where focus returns on close when it was inside the surface. Default: where it was at open. */
   readonly returnFocus?: () => HTMLElement | null | undefined;
   /** After each open (once shown and placed) or close (before focus returns). */
@@ -181,7 +183,7 @@ export class Overlay implements Controller {
 
   #before(event: ToggleEvent, surface: HTMLElement): void {
     const host = this.#options.host;
-    if (surface !== host) {
+    if (surface !== host && this.#options.relay !== false) {
       const relay = new ToggleEvent('beforetoggle', {
         oldState: event.oldState,
         newState: event.newState,
@@ -211,7 +213,7 @@ export class Overlay implements Controller {
     const open = surface.matches(':popover-open');
     this.#open.value = open;
     const host = this.#options.host;
-    if (surface !== host)
+    if (surface !== host && this.#options.relay !== false)
       host.dispatchEvent(
         new ToggleEvent('toggle', { oldState: event.oldState, newState: event.newState }),
       );

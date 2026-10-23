@@ -322,6 +322,7 @@ class TestMenuButton extends OddkinElement {
     anchor: () => this.shadowRoot?.querySelector('[part~="trigger"]'),
     mode: this.hasAttribute('manual') ? 'manual' : 'auto',
     dismiss: this.hasAttribute('manual'),
+    ...(this.hasAttribute('no-relay') ? { relay: false } : {}),
     onToggle: (open) =>
       this.calls.push(
         `${open} ${this.shadowRoot!.querySelector<HTMLElement>('[part~="surface"]')!.style.top ? 'placed' : 'unplaced'} focus=${deepActiveElement()?.id || deepActiveElement()?.localName}`,
@@ -375,6 +376,38 @@ describe('overlay wiring (an inner surface)', () => {
     const placement = (el as TestMenuButton).overlay.placement!;
     expect(getComputedStyle(surface).maxBlockSize).toBe(`${placement.availableHeight}px`);
     expect(getComputedStyle(surface).maxInlineSize).toBe(`${placement.availableWidth}px`);
+  });
+
+  it('keeps a nested surface’s toggle events off the host with relay: false', async () => {
+    await mount('<test-menu-button id="m" no-relay></test-menu-button>');
+    const el = byId<TestMenuButton>('m');
+    const { trigger, surface, item } = parts(el);
+    const seen: string[] = [];
+    for (const type of ['beforetoggle', 'toggle'])
+      el.addEventListener(type, (e) => {
+        seen.push(type);
+        e.preventDefault();
+      });
+    trigger.focus();
+    const opened = toggled(surface);
+    trigger.click();
+    await opened;
+    await settle(el);
+    expect(surface.matches(':popover-open')).toBe(true);
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    expect(Math.round(box(surface).top)).toBe(Math.round(box(trigger).bottom) + 4);
+    item.focus();
+    const closed = toggled(surface);
+    el.overlay.hide();
+    await closed;
+    expect(el.overlay.open.value).toBe(false);
+    expect(deepActiveElement()).toBe(trigger);
+    expect(seen).toEqual([]);
+    // Firefox and WebKit return focus before `toggle`; Chromium does not.
+    expect(el.calls.map((call) => call.replace(/ focus=.*/, ''))).toEqual([
+      'true placed',
+      'false placed',
+    ]);
   });
 
   it('returns focus to the opener when it closes with focus inside', async () => {
