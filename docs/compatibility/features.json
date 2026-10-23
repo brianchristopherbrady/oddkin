@@ -626,13 +626,27 @@
       "bcd": ["api.HTMLElement.popover", "css.selectors.popover-open"],
       "webFeature": "popover",
       "adoption": "foundation",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
       "baseline": "Nonmodal overlays (menus, listboxes, tooltips) render in the top layer with an explicit close path.",
       "detectApi": "HTMLElement.prototype.showPopover",
       "floorExceptions": {
         "safari_ios": "Partial in Safari iOS 17.0–18.2: tapping outside a popover does not light-dismiss it (WebKit bug 267688). Overlays must offer an explicit close control and must not depend on light dismiss."
-      }
+      },
+      "usedBy": [
+        "odd-popover (the host is the popover)",
+        "the overlay wiring for inner [popover] surfaces (packages/components/src/overlay)"
+      ],
+      "tests": [
+        {
+          "file": "packages/components/test/popover.browser.test.ts",
+          "name": "opens from a popovertarget button with no script, below the button, and reports open"
+        },
+        {
+          "file": "packages/components/test/popover.browser.test.ts",
+          "name": "closes on Escape and with its close button, returning focus to the trigger"
+        }
+      ]
     },
     {
       "id": "inert",
@@ -769,13 +783,27 @@
       ],
       "webFeature": "starting-style",
       "adoption": "enhancement",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
       "baseline": "Overlays and disclosures open and close immediately; visibility, inertness, and focus change at once.",
       "enhanced": "Entry and exit transitions for top-layer and display:none content.",
       "gate": "@supports (transition-behavior: allow-discrete) inside @media (prefers-reduced-motion: no-preference)",
       "differences": "Animation only; final states, focus, and accessibility state are identical, and cleanup never waits on transitionend.",
-      "detectCss": "(transition-behavior: allow-discrete)"
+      "detectCss": "(transition-behavior: allow-discrete)",
+      "usedBy": [
+        "overlay-surface module: popovers stay shown while they fade out (transition-behavior: allow-discrete)"
+      ],
+      "tests": [
+        {
+          "file": "packages/components/test/popover.browser.test.ts",
+          "name": "fades only with motion allowed, and never waits for the fade to settle its state"
+        },
+        {
+          "file": "packages/components/test/popover.browser.test.ts",
+          "name": "appears and disappears without motion when motion is reduced"
+        }
+      ],
+      "notes": "Popovers fade in with a keyframes animation, which is at the floor, so @starting-style is not used yet: the compatibility check gates an at-rule only behind an @supports that names it (at-rule()), which the floor lacks."
     },
     {
       "id": "anchor-positioning",

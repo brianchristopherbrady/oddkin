@@ -1689,6 +1689,9 @@
     "odd-pagination": {
       "dependencies": []
     },
+    "odd-popover": {
+      "dependencies": []
+    },
     "odd-progress": {
       "dependencies": []
     },
@@ -1861,7 +1864,8 @@
         "select (open)",
         "combobox",
         "multiselect"
-      ]
+      ],
+      "code": ["odd-popover"]
     },
     {
       "id": "form",
@@ -1897,7 +1901,8 @@
       "home": "@oddkin/core/controllers/position (PositionController, ADR 0044)",
       "decision": "Anchored overlay placement and dismissal.",
       "status": "existing",
-      "figma": ["popover", "tooltip", "Menu", "combobox", "multiselect", "splitAction"]
+      "figma": ["popover", "tooltip", "Menu", "combobox", "multiselect", "splitAction"],
+      "code": ["odd-popover"]
     },
     {
       "id": "resize",

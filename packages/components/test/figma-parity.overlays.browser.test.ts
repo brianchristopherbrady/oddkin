@@ -15,8 +15,9 @@ import {
 } from './parity.js';
 
 // Figma parity of the overlays lane (component-contracts.md §2.6, §3.5). The overlay-surface module
-// is drawn by a test element until the overlays use it: the anchored look on Figma's popover,
-// tooltip, and Menu surfaces, and the sheet look on dialog, alertDialog, drawer, and toast.
+// is also drawn by a test element, for the families whose elements are still to come: the anchored
+// look on Figma's popover, tooltip, and Menu surfaces, and the sheet look on dialog, alertDialog,
+// drawer, and toast.
 useParity();
 
 class TestParitySurfaces extends OddkinElement {
@@ -27,6 +28,19 @@ class TestParitySurfaces extends OddkinElement {
   }
 }
 define('test-parity-surfaces', TestParitySurfaces);
+
+describe('Figma parity: odd-popover (popover)', () => {
+  for (const state of ['Default', 'Settings'])
+    it(state, async () => {
+      const el = mount(
+        `<odd-popover label="Share workspace" open>Invite people to collaborate.</odd-popover>`,
+      );
+      await settle(el);
+      const targets: Target[] = [{ layer: [`Popover / ${state}`, 'Surface'], el, kind: 'frame' }];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/popover', { State: state }, targets));
+    });
+});
 
 describe('Figma parity: overlay-surface module', () => {
   const cases: [string, string, Record<string, string>, string, 'anchored' | 'sheet'][] = [

@@ -41,6 +41,10 @@ export const ATTRIBUTES = {
   collapsed: { type: 'boolean' },
   // The start pane's size in percent (odd-split-panel).
   position: { type: 'number' },
+  // Overlays (component-contracts.md §2.6): the position controller's logical vocabulary.
+  anchor: { type: 'string' },
+  side: { values: ['block-start', 'block-end', 'inline-start', 'inline-end'] },
+  align: { values: ['start', 'center', 'end'] },
 };
 
 /** Replaced attribute and property names → the canonical name (ADR 0045 §3). */
@@ -80,6 +84,7 @@ export const SYNONYMS = {
   labels: 'strings',
   messages: 'strings',
   i18n: 'strings',
+  placement: 'side and align',
 };
 
 /** Replaced slot names (ADR 0045 §4). */

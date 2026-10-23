@@ -170,6 +170,18 @@
       "types": "./dist/pagination/pagination.define.d.ts",
       "default": "./dist/pagination/pagination.define.js"
     },
+    "./popover": {
+      "types": "./dist/popover/index.d.ts",
+      "default": "./dist/popover/index.js"
+    },
+    "./popover/foundation": {
+      "types": "./dist/popover/foundation.d.ts",
+      "default": "./dist/popover/foundation.js"
+    },
+    "./define/popover": {
+      "types": "./dist/popover/popover.define.d.ts",
+      "default": "./dist/popover/popover.define.js"
+    },
     "./progress": {
       "types": "./dist/progress/index.d.ts",
       "default": "./dist/progress/index.js"

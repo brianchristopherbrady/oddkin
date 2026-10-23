@@ -119,6 +119,7 @@ const states = `
   <odd-pagination label="Search results" current="3" page-count="12"></odd-pagination>
   <odd-pagination label="Articles" current="1" page-count="4" href="#page-{page}"></odd-pagination>
   <odd-breadcrumbs><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
+  <odd-popover label="Share workspace" open><p>Invite people to collaborate.</p><a href="#docs">Sharing settings</a></odd-popover>
   <odd-breadcrumbs label="Collapsed location" max-items="2"><svg slot="home" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M3 11l9-8 9 8" /></svg><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
   <h2>Layout</h2>
   <odd-split-panel label="Resize project files" position="30"><section slot="start"><h3>Project files</h3><a href="#overview">Overview</a></section><section slot="end"><h3>Design system</h3><p>Ready to review.</p></section></odd-split-panel>

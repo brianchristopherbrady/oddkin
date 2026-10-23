@@ -396,7 +396,7 @@ Status: **proposed** (2026-10-22). 170 references; controller 14, deferred 11, e
 | `odd-tool-call` | `odd-action-approval` | A tool call that needs approval renders the complete odd-action-approval widget. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (34) has no element dependency.
+Every other element (35) has no element dependency.
 
 #### Shared homes
 
@@ -415,11 +415,11 @@ Every other element (34) has no element dependency.
 | nav-row: Hierarchical navigation rows: indent step, expand glyph, current marker. | style | @oddkin/components/styles (navRowStructuralStyles, navRowStyles; moved out of odd-side-nav) | existing | odd-side-nav |  |
 | chip: Chip look and remove affordance. | style | @oddkin/components/chip styles | existing | odd-chip |  |
 | avatar: Avatar look and stacking. | style | @oddkin/components/avatar styles | existing | odd-avatar, .odd-avatar-group recipe |  |
-| overlay-surface: Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers. | style | @oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles) | existing | — |  |
+| overlay-surface: Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers. | style | @oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles) | existing | odd-popover |  |
 | form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input, odd-checkbox, odd-switch | Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller. |
 | focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | odd-tabs, odd-toolbar |  |
 | collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | odd-breadcrumbs |  |
-| position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (PositionController, ADR 0044) | existing | — |  |
+| position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (PositionController, ADR 0044) | existing | odd-popover |  |
 | resize: Splitter drag and keyboard resizing. | controller | @oddkin/core/controllers/resize (ResizeHandle) | existing | odd-split-panel |  |
 | navigation-model: Navigation item data model. | controller | packages/components/src/models/navigation.ts (Agent 1) | existing | odd-side-nav |  |
 

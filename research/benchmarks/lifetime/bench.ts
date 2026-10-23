@@ -18,6 +18,7 @@ import '@oddkin/components/define/empty-state';
 import '@oddkin/components/define/icon';
 import '@oddkin/components/define/input';
 import '@oddkin/components/define/pagination';
+import '@oddkin/components/define/popover';
 import '@oddkin/components/define/progress';
 import '@oddkin/components/define/side-nav';
 import '@oddkin/components/define/skeleton';
@@ -199,6 +200,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-tabs label="Tabs"><odd-tab-panel label="A">a</odd-tab-panel><odd-tab-panel label="B">b</odd-tab-panel></odd-tabs>
         <odd-pagination label="Pages" current="3" page-count="12"></odd-pagination>
         <odd-breadcrumbs max-items="2"><ol><li><a href="#a">A</a></li><li><a href="#b">B</a></li><li><a href="#c">C</a></li></ol></odd-breadcrumbs>
+        <odd-popover label="Details" open>Details.</odd-popover>
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>
         <odd-switch name="alerts" checked>Alerts</odd-switch>

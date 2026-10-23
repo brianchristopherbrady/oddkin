@@ -129,6 +129,7 @@ export const CSS_BUDGETS = {
   'components:toolbar': 512, // 473
   'components:pagination': 768, // 702
   'components:breadcrumbs': 640, // 561
+  'components:popover': 256, // 226: the surface, motion, and close button are the shared overlay module
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   'components:empty-state': 512, // 434
@@ -147,14 +148,15 @@ export const CSS_BUDGETS = {
   // 1,152: measured 1,077 on 2026-10-22 once the entry rows moved to the shared navigation-row
   // module (1,234 before, with them).
   'components:side-nav': 1152,
-  // 2,816: measured 2,746 on 2026-10-23 with the overlay-surface module (+113); 2,633 with
+  // 3,072: measured 2,984 on 2026-10-23 with the overlay close control, popover motion, and
+  // placement limits (+238); 2,746 with the overlay-surface look (+113); 2,633 with
   // the choice row (+59, moved out of odd-checkbox for
   // odd-switch); 2,574 with the control-indicator modules (+346: checkbox box and marks); 2,228 on
   // 2026-10-22 with the navigation-row (+294, moved from odd-side-nav) and
   // option-row (+330) modules; 1,604 before them with the field layout, control look, and select
   // chevron every form control shares (717 before: spinner, tone, glyphs, host, focus ring, visually
   // hidden).
-  'components:shared': 2816,
+  'components:shared': 3072,
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   'components:layout': 512, // measured 411 on 2026-10-18: layout.css page-author classes
   'components:button.css': 1024, // measured 999 on 2026-10-23: button.css, the native <button> path, with aria-pressed

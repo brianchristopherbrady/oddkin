@@ -5,7 +5,11 @@ import { token } from '@oddkin/tokens/refs';
  * The overlay look (Figma `popover`, `tooltip`, `Menu`, `ListboxSurface`, and the open `select`,
  * `combobox`, and `multiselect`): the raised surface, the default border, `control.radius`, and
  * `elevation.md`. `.sheet` is the modal look of `dialog`, `alertDialog`, and `drawer`: the default
- * surface, `card.radius`, `elevation.xl`, and the scrim behind it. Spacing is the consumer's.
+ * surface, `card.radius`, `elevation.xl`, and the scrim behind it. Spacing is the consumer's. The
+ * close control is a secondary glyph button of the target size. Unless motion is reduced,
+ * popovers fade in (a keyframes animation, at the floor) and fade out where
+ * `transition-behavior: allow-discrete` keeps them shown while closing; nothing waits for either
+ * (F11).
  */
 export const overlaySurfaceStyles = css`
   .overlay-surface,
@@ -27,5 +31,39 @@ export const overlaySurfaceStyles = css`
   }
   .overlay-surface.sheet::backdrop {
     background: ${token('color.scrim')};
+  }
+  .overlay-close {
+    min-inline-size: max(${token('control.height.sm')}, ${token('target.min')});
+    min-block-size: max(${token('control.height.sm')}, ${token('target.min')});
+    border-radius: ${token('control.radius')};
+    color: ${token('color.text.secondary')};
+    font-size: ${token('icon.size.md')};
+  }
+  @media (hover: hover) {
+    .overlay-close:hover {
+      background: ${token('color.surface.hover')};
+      color: ${token('color.text.primary')};
+    }
+  }
+  @keyframes odd-overlay-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [popover].overlay-surface:popover-open,
+    :host(:popover-open) {
+      animation: odd-overlay-in ${token('motion.duration.fast')} ${token('motion.easing.enter')};
+    }
+    @supports (transition-behavior: allow-discrete) {
+      [popover].overlay-surface:not(:popover-open),
+      :host([popover]:not(:popover-open)) {
+        opacity: 0;
+        transition:
+          opacity ${token('motion.duration.fast')} ${token('motion.easing.exit')},
+          display ${token('motion.duration.fast')} allow-discrete,
+          overlay ${token('motion.duration.fast')} allow-discrete;
+      }
+    }
   }
 `;

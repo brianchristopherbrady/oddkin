@@ -100,6 +100,8 @@ describe('authored examples', () => {
       wrong: 'horizontal',
     },
     'odd-pagination/currentPageAttribute': { observe: (el) => el['current'], wrong: '1' },
+    'odd-popover/openFalse': { observe: (el) => el['open'], wrong: true },
+    'odd-popover/physicalSide': { observe: (el) => el['side'], wrong: 'block-end' },
     'odd-breadcrumbs/itemsAttribute': {
       observe: (el) => el.shadowRoot!.querySelectorAll('[part~="item"]').length,
       wrong: 0,
@@ -124,6 +126,7 @@ describe('authored examples', () => {
     'odd-button/dangerAppearance': ['element.attribute.invalid'],
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-breadcrumbs/itemsAttribute': ['element.attribute.propertyOnly'],
+    'odd-popover/physicalSide': ['element.attribute.invalid'],
   };
 
   it('each explained mistake does what its explanation says, unlike its correct example', async () => {

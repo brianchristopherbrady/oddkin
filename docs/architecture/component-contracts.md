@@ -297,9 +297,14 @@ detail `{ id, expanded }`, cancelable (lazy children: the host loads them and se
 
 ### 3.5 Overlays
 
-**`odd-popover`** (`popover`) — the host is the popover (`popover="auto"`), so `<button popovertarget>` opens it
-natively. `anchor`, `side = block-end`, `align = start`, `label` (names it; host `role="dialog"` when it holds
-controls), part `close` (button) unless `no-close`. `show()`, `close()`, `open`; native `beforetoggle`/`toggle`.
+**`odd-popover`** (`popover`) — the host is the popover (`popover="auto"` unless the author wrote `manual`), so
+`<button popovertarget>` opens and closes it with no script. `anchor` (an ID in the same tree; default: the
+`[popovertarget]` invoker in that tree) or the `anchorElement` property, `side = block-end`, `align = start` (flip and
+shift by the position controller); `label` names the host `role="dialog"`; parts `base` (content) and `close` (a glyph
+button named by `strings.close`) unless `no-close`. `show()`, `close()`, `open` (reflects); native
+`beforetoggle`/`toggle` on the host. Opening leaves focus where it is; closing with focus inside returns it to where it
+was. Fades in and out with the overlay-surface module unless motion is reduced. The wiring other overlays share is
+`Overlay` and `closeButton` in `packages/components/src/overlay/overlay.ts` (internal).
 
 **`odd-tooltip`** (`tooltip`) — `anchor`, `side = block-start`, `align = center`; default slot: short text. Shows on
 anchor hover (after a delay) and focus, hides on Escape, blur, and pointer leave (WCAG 1.4.13: hoverable,
