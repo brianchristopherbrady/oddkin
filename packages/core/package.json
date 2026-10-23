@@ -117,6 +117,21 @@
       "development": "./dist/controllers/position.js",
       "default": "./dist/prod/controllers/position.js"
     },
+    "./controllers/typeahead": {
+      "types": "./dist/controllers/typeahead.d.ts",
+      "development": "./dist/controllers/typeahead.js",
+      "default": "./dist/prod/controllers/typeahead.js"
+    },
+    "./controllers/active-descendant": {
+      "types": "./dist/controllers/active-descendant.d.ts",
+      "development": "./dist/controllers/active-descendant.js",
+      "default": "./dist/prod/controllers/active-descendant.js"
+    },
+    "./controllers/resize": {
+      "types": "./dist/controllers/resize.d.ts",
+      "development": "./dist/controllers/resize.js",
+      "default": "./dist/prod/controllers/resize.js"
+    },
     "./i18n": {
       "types": "./dist/i18n/index.d.ts",
       "development": "./dist/i18n/index.js",

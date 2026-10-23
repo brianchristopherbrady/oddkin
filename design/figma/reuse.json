@@ -1847,25 +1847,25 @@
     {
       "id": "collection",
       "kind": "controller",
-      "home": "@oddkin/core (Agent 1, planned)",
+      "home": "@oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned",
       "decision": "Collection model, selection, typeahead, active descendant.",
-      "status": "planned",
+      "status": "in progress (typeahead and active descendant existing)",
       "figma": ["listbox", "combobox", "multiselect", "Menu", "CommandPalette", "Tree"]
     },
     {
       "id": "position",
       "kind": "controller",
-      "home": "@oddkin/core/controllers/position (ADR 0044, Agent 1)",
+      "home": "@oddkin/core/controllers/position (PositionController, ADR 0044)",
       "decision": "Anchored overlay placement and dismissal.",
-      "status": "in progress",
+      "status": "existing",
       "figma": ["popover", "tooltip", "Menu", "combobox", "multiselect", "splitAction"]
     },
     {
       "id": "resize",
       "kind": "controller",
-      "home": "@oddkin/core (Agent 1, planned)",
+      "home": "@oddkin/core/controllers/resize (ResizeHandle)",
       "decision": "Splitter drag and keyboard resizing.",
-      "status": "planned",
+      "status": "existing",
       "figma": ["Splitter/horizontal", "Splitter/vertical", "SplitPanels"]
     },
     {

@@ -382,9 +382,9 @@ Every other element (26) has no element dependency.
 | overlay-surface: Overlay surface: raised background, border, radius, elevation. | style | @oddkin/components/styles (proposed, with ADR 0044) | proposed | — |  |
 | form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input |  |
 | focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | — |  |
-| collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core (Agent 1, planned) | planned | — |  |
-| position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (ADR 0044, Agent 1) | in progress | — |  |
-| resize: Splitter drag and keyboard resizing. | controller | @oddkin/core (Agent 1, planned) | planned | — |  |
+| collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | — |  |
+| position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (PositionController, ADR 0044) | existing | — |  |
+| resize: Splitter drag and keyboard resizing. | controller | @oddkin/core/controllers/resize (ResizeHandle) | existing | — |  |
 | navigation-model: Navigation item data model. | controller | packages/components/src/models/navigation.ts (Agent 1) | existing | odd-side-nav |  |
 
 <!-- oddkin:reuse:end -->

@@ -12,6 +12,9 @@ export const ENTRIES = [
   'list',
   'composite',
   'position',
+  'typeahead',
+  'active-descendant',
+  'resize',
   'reactive',
   'ai-headless',
   'ai-response',
@@ -44,6 +47,12 @@ export const BUDGETS = {
   // measured-rectangle backend of ADR 0044; Scope with the reactive graph and diagnostics alone
   // is 2,303, so the controller adds about 1.25 KiB).
   position: 3840,
+  // 3.25 KiB each; measured 2026-10-22 with a Scope (2,303 alone): typeahead 3,017,
+  // active-descendant 3,179, resize 3,164 (@oddkin/core/controllers/*, component-contracts.md §5
+  // step 1; each adds 0.7 to 0.9 KiB).
+  typeahead: 3328,
+  'active-descendant': 3328,
+  resize: 3328,
   reactive: 2048, // 2 KiB; measured 1,892
   'ai-headless': 14336, // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation)
   'ai-response': 21504, // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations)
