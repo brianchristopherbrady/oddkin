@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 63 stylesheets, 240 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 105 (`css.at-rules.container`) · Edge 105 (`css.at-rules.container`) · Firefox 121 (`css.selectors.has`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 79 stylesheets, 253 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 120 (`css.properties.mask`) · Edge 120 (`css.properties.mask`) · Firefox 121 (`css.selectors.has`) · Safari 16.4 (`css.properties.outline`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -124,6 +124,10 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/css/base.css` | yes | 12 |
 | `packages/components/dist/css/layout.css` | yes | 22 |
 | `packages/components/dist/css/utilities.css` | yes | 18 |
+| `packages/components/dist/alert/alert.structural.styles.js (alertStructuralStyles)` | yes | 22 |
+| `packages/components/dist/alert/alert.styles.js (alertStyles)` | yes | 10 |
+| `packages/components/dist/avatar/avatar.structural.styles.js (avatarStructuralStyles)` | yes | 23 |
+| `packages/components/dist/avatar/avatar.styles.js (avatarStyles)` | yes | 8 |
 | `packages/components/dist/badge/badge.structural.styles.js (badgeStructuralStyles)` | yes | 16 |
 | `packages/components/dist/badge/badge.styles.js (badgeStyles)` | yes | 11 |
 | `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 52 |
@@ -131,11 +135,23 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 28 |
 | `packages/components/dist/card/card.structural.styles.js (cardStructuralStyles)` | yes | 20 |
 | `packages/components/dist/card/card.styles.js (cardStyles)` | yes | 18 |
+| `packages/components/dist/chip/chip.structural.styles.js (chipStructuralStyles)` | yes | 32 |
+| `packages/components/dist/chip/chip.styles.js (chipStyles)` | yes | 26 |
+| `packages/components/dist/empty-state/empty-state.structural.styles.js (emptyStateStructuralStyles)` | yes | 21 |
+| `packages/components/dist/empty-state/empty-state.styles.js (emptyStateStyles)` | yes | 12 |
+| `packages/components/dist/icon/icon.structural.styles.js (iconStructuralStyles)` | yes | 19 |
+| `packages/components/dist/icon/icon.styles.js (iconStyles)` | yes | 2 |
 | `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 20 |
 | `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 27 |
+| `packages/components/dist/progress/progress.structural.styles.js (progressStructuralStyles)` | yes | 35 |
+| `packages/components/dist/progress/progress.styles.js (progressStyles)` | yes | 12 |
 | `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
 | `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 36 |
 | `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 40 |
+| `packages/components/dist/skeleton/skeleton.structural.styles.js (skeletonStructuralStyles)` | yes | 27 |
+| `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
+| `packages/components/dist/spinner/spinner.structural.styles.js (spinnerStructuralStyles)` | yes | 10 |
+| `packages/components/dist/spinner/spinner.styles.js (spinnerElementStyles)` | yes | 10 |
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |
 | `packages/components/dist/styles/host.styles.js (hostStyles)` | yes | 7 |
 | `packages/components/dist/styles/spinner.styles.js (spinnerStyles)` | yes | 22 |

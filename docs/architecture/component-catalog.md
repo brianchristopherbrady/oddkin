@@ -359,7 +359,7 @@ Status: **proposed** (2026-10-22). 169 references; controller 14, deferred 11, e
 | `odd-tool-call` | `odd-action-approval` | A tool call that needs approval renders the complete odd-action-approval widget. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (18) has no element dependency.
+Every other element (26) has no element dependency.
 
 #### Shared homes
 

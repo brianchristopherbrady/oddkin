@@ -128,7 +128,8 @@ test.describe('Workbench shell', () => {
     await page.keyboard.press('/');
     const input = page.getByRole('searchbox', { name: 'Search' });
     await expect(input).toBeFocused();
-    await input.fill('side');
+    // Every word must match: "side" alone also finds summaries that say "beside".
+    await input.fill('side nav');
     const results = page.locator('#wb-search-results a');
     await expect(results).toHaveCount(1);
     await expect(results.first()).toContainText('Side nav');

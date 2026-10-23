@@ -5,11 +5,19 @@ import { createApp } from '@oddkin/app/app';
 import { command } from '@oddkin/app/command';
 import { resource } from '@oddkin/app/resource';
 import { createRouter, route } from '@oddkin/app/router';
+import '@oddkin/components/define/alert';
+import '@oddkin/components/define/avatar';
 import '@oddkin/components/define/badge';
 import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
+import '@oddkin/components/define/chip';
+import '@oddkin/components/define/empty-state';
+import '@oddkin/components/define/icon';
 import '@oddkin/components/define/input';
+import '@oddkin/components/define/progress';
 import '@oddkin/components/define/side-nav';
+import '@oddkin/components/define/skeleton';
+import '@oddkin/components/define/spinner';
 import { scopeStats } from '@oddkin/core/scope';
 import { generate } from '@oddkin/tokens/generate';
 
@@ -167,15 +175,27 @@ function componentCycles(cycles: number): Promise<Cycles> {
       const badge = document.createElement('odd-badge');
       badge.setAttribute('tone', 'success');
       badge.textContent = 'Saved';
-      container.append(button, input, card, nav, badge);
+      // Display elements, each in a state that owns something: an observer, an effect, a timer.
+      const display = document.createElement('div');
+      display.innerHTML = `<odd-alert tone="danger" label="Not saved" announce>Retry.</odd-alert>
+        <odd-avatar label="Amelia Morgan"></odd-avatar>
+        <odd-chip removable>Research</odd-chip>
+        <odd-empty-state label="Nothing here">Add one.</odd-empty-state>
+        <odd-icon label="Settings"></odd-icon>
+        <odd-progress label="Uploading" value="0.4"></odd-progress>
+        <odd-progress label="Preparing"></odd-progress>
+        <odd-skeleton lines="3"></odd-skeleton>
+        <odd-spinner>Loading…</odd-spinner>`;
+      const elements = [button, input, card, nav, badge, ...display.children];
+      container.append(button, input, card, nav, badge, display);
       await tick();
-      if ([button, input, card, nav, badge].every((el) => el.shadowRoot?.childElementCount))
-        upgraded++;
+      if (elements.every((el) => el.shadowRoot?.childElementCount)) upgraded++;
       button.remove();
       input.remove();
       card.remove();
       nav.remove();
       badge.remove();
+      display.remove();
     },
     () => `container children: ${container.childElementCount}; rendered: ${upgraded}`,
   );

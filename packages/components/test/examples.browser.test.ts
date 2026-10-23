@@ -83,9 +83,23 @@ describe('authored examples', () => {
       wrong: false,
     },
     'odd-badge/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
+    'odd-alert/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
+    'odd-avatar/nameAttribute': { observe: (el) => el['label'], wrong: '' },
+    'odd-chip/removableFalse': { observe: (el) => el['removable'], wrong: true },
+    'odd-empty-state/actionsSlot': {
+      observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
+      wrong: false,
+    },
+    'odd-icon/altAttribute': { observe: (el) => el['label'], wrong: '' },
+    'odd-progress/percentAttribute': { observe: (el) => el['value'], wrong: undefined },
+    'odd-skeleton/shapeSquare': { observe: (el) => el['shape'], wrong: 'text' },
+    'odd-spinner/sizeWord': { observe: (el) => el['size'], wrong: 'md' },
   };
   const reported: Record<string, string[]> = {
+    'odd-alert/colorOnly': ['element.attribute.invalid'],
     'odd-badge/colorOnly': ['element.attribute.invalid'],
+    'odd-skeleton/shapeSquare': ['element.attribute.invalid'],
+    'odd-spinner/sizeWord': ['element.attribute.invalid'],
     'odd-button/dangerAppearance': ['element.attribute.invalid'],
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
   };

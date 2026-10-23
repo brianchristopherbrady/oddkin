@@ -25,7 +25,8 @@ export const ATTRIBUTES = {
   description: { type: 'string' },
   error: { type: 'string' },
   current: { type: 'string' },
-  value: { type: 'string' },
+  // A string as on <input>; a number on odd-progress, as on <progress> (ADR 0045 §2).
+  value: { type: 'string', native: { 'odd-progress': 'number' } },
   loading: { type: 'boolean' },
   open: { type: 'boolean' },
   checked: { type: 'boolean' },
@@ -143,8 +144,9 @@ export function checkDeclaration(declaration) {
     if (Object.hasOwn(SYNONYMS, name))
       report('vocabulary.synonym', name, `use ${SYNONYMS[name]} instead of "${name}"`);
     const rule = ATTRIBUTES[name];
-    if (rule?.type && typeOf(type) !== rule.type)
-      report('vocabulary.type', name, `"${name}" is a ${rule.type}, not ${type ?? 'untyped'}`);
+    const expected = rule?.native?.[tag] ?? rule?.type;
+    if (expected && typeOf(type) !== expected)
+      report('vocabulary.type', name, `"${name}" is a ${expected}, not ${type ?? 'untyped'}`);
     if (rule?.values || rule?.families) {
       const values = literals(type);
       const sets = rule.values ? [rule.values] : Object.values(rule.families);

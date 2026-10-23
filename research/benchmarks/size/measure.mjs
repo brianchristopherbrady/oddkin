@@ -109,6 +109,15 @@ export const CSS_BUDGETS = {
   // roles; 2,764 at ADRs 0041-0042, 1,827 before the approved palette and foundation scales).
   'tokens:default.css': 3072,
   'components:badge': 384, // measured 375 on 2026-10-22: structural and default styles
+  // Display elements, measured on 2026-10-22 (structural and default styles).
+  'components:alert': 512, // 458
+  'components:avatar': 512, // 430
+  'components:chip': 768, // 652
+  'components:empty-state': 512, // 434
+  'components:icon': 384, // 305
+  'components:progress': 768, // 695
+  'components:skeleton': 512, // 413
+  'components:spinner': 384, // 319
   'components:button': 1280, // measured 1,028 on 2026-10-22 (spinner moved to the shared module; 1,119 before)
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
   'components:input': 896, // measured 743 with type.ui/body/small and motion tokens (647 before)

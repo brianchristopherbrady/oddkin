@@ -7,7 +7,13 @@ export interface VocabularyFinding {
 }
 export const ATTRIBUTES: Record<
   string,
-  { type?: 'string' | 'boolean'; values?: string[]; families?: Record<string, string[]> }
+  {
+    type?: 'string' | 'boolean';
+    /** Per-element types that follow a native element's own type (ADR 0045 §2). */
+    native?: Record<string, 'string' | 'boolean' | 'number'>;
+    values?: string[];
+    families?: Record<string, string[]>;
+  }
 >;
 export const SYNONYMS: Record<string, string>;
 export const SLOT_SYNONYMS: Record<string, string>;

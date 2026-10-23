@@ -60,7 +60,7 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await search.fill('card');
   await expect(page).toHaveURL(`${docs}/components?q=card`);
   await expect(search).toBeFocused();
-  await expect(page.getByText('Showing 1 of 4 components')).toBeVisible();
+  await expect(page.getByText(/Showing 1 of \d+ components/)).toBeVisible();
   await search.fill('');
   await expect(page).toHaveURL(`${docs}/components`);
   // Filtering added no history entries: Back returns to the guide.

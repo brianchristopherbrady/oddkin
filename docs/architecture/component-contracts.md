@@ -144,18 +144,23 @@ empty.
 `strings.loading`), `size: sm | md | lg = md`. Default slot: visible status text (Figma Inline), which then names it.
 `role="progressbar"` without a value. Reduced motion: the shared spinner turns slowly (3 s per turn), as `odd-button`'s.
 
-**`odd-progress`** (`progress`) — native `<progress>`. `value: number | undefined` (absent: indeterminate, never a
-percentage, as Figma requires), `max: number = 1` (native default), `label: string` (visible and naming). Part
-`value-text` shows the formatted percentage when determinate (`renderValue?: (value, max) => string`). `value` is a
-number here because `<progress>` defines it so (ADR 0045 §2 over §3; recorded as the vocabulary's per-element type).
+**`odd-progress`** (`progress`) — an ARIA progress bar (`role="progressbar"` with `aria-valuenow`, `-min`, `-max`,
+`-valuetext`), not a native `<progress>`, whose bar and indicator can only be styled through engine-prefixed
+pseudo-elements (the CSS policy allows no prefixed-only feature). `value: number | undefined` (absent: indeterminate,
+never a percentage, as Figma requires), `max: number = 1` (as native; a non-positive `max` is 1), `label: string`
+(visible and naming; default `strings.label`, "Progress"), `description: string` (described by). Parts `label`,
+`value-text` (the formatted percentage when determinate; `renderValue?: (value, max) => string`), `track`,
+`indicator`, `description`. `value` is a number here because `<progress>` defines it so (ADR 0045 §2 over §3; the
+vocabulary records the per-element type).
 
 **`odd-skeleton`** (`skeleton`) — `shape: text | rect | circle = text`, `lines: number = 1` (text lines; the last
 is shorter). Hidden from assistive technology; the region that loads sets `aria-busy`. No animation under reduced
 motion.
 
-**`odd-avatar`** (`avatar`, `AvatarItem`) — `label: string` (the person's name; `role="img"` named by it),
-`src: string` (image; on error or when empty, initials from `label`), `size: sm | md | lg = md`. Groups:
-`.odd-avatar-group` recipe.
+**`odd-avatar`** (`avatar`, `AvatarItem`) — `label: string` (the person's name; `role="img"` named by it; empty:
+hidden from assistive technology), `src: string` (picture; on error or when empty, initials from `label`),
+`size: sm | md | lg = md` (32, 40, 48 px). Default slot: replaces the initials ("+3"). Groups: `.odd-avatar-group`
+recipe.
 
 **`odd-chip`** (`chip`) — compact token. Default slot: label. `removable: boolean` (part `remove`, a button named
 "Remove {label}"; dispatches `odd-chip-remove`, detail `{}`, not cancelable), `selected: boolean` (selection look,
@@ -166,8 +171,8 @@ slot `end`: actions. Part `marker` (tone glyph). `announce: none | important = n
 gives the host `role="alert"` so a dynamically inserted alert is announced; otherwise no live role.
 
 **`odd-empty-state`** (`emptyState`) — `label: string` (title), default slot: explanation, slot `media`
-(illustration), slot `footer` (next steps). Host `role="status"`, named by `label`, so "No results" after a search
-is announced politely.
+(illustration, on a sunken circle), slot `footer` (next steps). No role: a live region would not reliably announce
+its insertion, so the page announces a search outcome itself.
 
 ### 3.3 Form controls
 

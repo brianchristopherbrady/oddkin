@@ -72,6 +72,7 @@ describe('component examples', () => {
     }
     expect([...covered].sort()).toEqual([
       'usage.attribute.propertyOnly',
+      'usage.attribute.unknown',
       'usage.attribute.value',
       'usage.boolean.false',
       'usage.slot.unknown',
@@ -113,8 +114,10 @@ describe('component examples', () => {
     );
     // Elements each fixture renders besides its own, read from literal markup.
     const uses: Record<string, string[]> = {
+      'odd-alert/danger': ['component:odd-button'],
       'odd-button/inForm': ['component:odd-input'],
       'odd-card/headed': ['component:odd-button'],
+      'odd-empty-state/default': ['component:odd-button'],
       'odd-input/inForm': ['component:odd-button'],
     };
     const expected = Object.fromEntries(

@@ -63,6 +63,9 @@ export function literal(text: string | undefined): { value: unknown } | undefine
   if (/^-?\d+(\.\d+)?$/.test(text)) return { value: Number(text) };
   return undefined;
 }
+/** A number, optional or not (
+umber | undefined: absent means the element's own state). */
+const isNumber = (type: string | undefined) => /^number( \| undefined)?$/.test(type ?? '');
 export const unionOf = (type: string | undefined) =>
   type && /^"[^"]*"( \| "[^"]*")*$/.test(type)
     ? [...type.matchAll(/"([^"]*)"/g)].map((m) => m[1]!)
@@ -75,7 +78,7 @@ export const scalars = (d: Declaration) =>
     const type = f.type?.text;
     return (
       type === 'boolean' ||
-      type === 'number' ||
+      isNumber(type) ||
       /^string( \| undefined)?$/.test(type ?? '') ||
       !!unionOf(type)
     );
@@ -84,7 +87,7 @@ export const scalars = (d: Declaration) =>
 export function sample(field: Field): unknown {
   const type = field.type?.text;
   if (type === 'boolean') return true;
-  if (type === 'number') return 3;
+  if (isNumber(type)) return 3;
   return unionOf(type)?.find((v) => v !== literal(field.default)?.value) ?? 'Sample text';
 }
 
@@ -288,7 +291,7 @@ export async function describeCemContract(
           const samples: [string, unknown][] =
             type === 'boolean'
               ? [['', true]]
-              : type === 'number'
+              : isNumber(type)
                 ? [['3', 3]]
                 : (unionOf(type)?.map((v) => [v, v] as [string, unknown]) ?? [
                     ['Sample text', 'Sample text'],
@@ -316,7 +319,7 @@ export async function describeCemContract(
           const value =
             type === 'boolean'
               ? true
-              : type === 'number'
+              : isNumber(type)
                 ? 3
                 : (union?.find((v) => v !== literal(field.default)?.value) ?? 'Sample text');
           el[field.name] = value;

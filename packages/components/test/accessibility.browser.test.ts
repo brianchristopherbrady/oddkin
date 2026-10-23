@@ -4,9 +4,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { flush } from '@oddkin/core/reactive';
 
 // axe-core (WCAG 2.0, 2.1, 2.2 A and AA rules) over every state of odd-button and odd-input,
-// every odd-badge tone, and odd-card's naming cases, with the shipped theme in light and dark
-// mode, so colour contrast is measured on real values. axe reads open shadow roots but not
-// ElementInternals semantics, so card regions are checked in e2e/components-only.spec.ts instead.
+// every odd-badge tone, the display elements, and odd-card's naming cases, with the shipped theme
+// in light and dark mode, so colour contrast is measured on real values. axe reads open shadow
+// roots but not ElementInternals semantics, so card regions are checked in
+// e2e/components-only.spec.ts instead.
 interface AxeResult {
   id: string;
   impact?: string | null;
@@ -14,7 +15,7 @@ interface AxeResult {
 }
 interface Axe {
   run(
-    context: Element,
+    context: Element | { include: Element[]; exclude: string[][] },
     options: object,
   ): Promise<{ violations: AxeResult[]; incomplete: AxeResult[]; passes: AxeResult[] }>;
 }
@@ -69,15 +70,41 @@ const states = `
     <odd-badge tone="danger">Failed</odd-badge>
     <odd-badge no-marker>12</odd-badge>
   </p>
+  <h2>Display</h2>
+  <odd-alert label="A new version is available">Refresh when you are ready.</odd-alert>
+  <odd-alert tone="info" label="Maintenance tonight">Expect a short outage.</odd-alert>
+  <odd-alert tone="success" label="Changes saved">Your workspace is up to date.</odd-alert>
+  <odd-alert tone="warning" label="You are offline">Changes will sync later.</odd-alert>
+  <odd-alert tone="danger" label="Not saved" announce>Retry.<odd-button slot="end" size="sm">Try again</odd-button></odd-alert>
+  <p>
+    <odd-avatar label="Amelia Morgan"></odd-avatar>
+    <odd-avatar label="Sam King" size="sm"></odd-avatar>
+    <odd-avatar label="3 more members" size="lg">+3</odd-avatar>
+    <odd-avatar>AM</odd-avatar> Amelia Morgan
+  </p>
+  <p>
+    <odd-chip removable>Design systems</odd-chip>
+    <odd-chip removable selected>Research</odd-chip>
+    <odd-chip id="inactive-chip" removable disabled>Archived</odd-chip>
+    <odd-chip>Plain</odd-chip>
+  </p>
+  <p>
+    <odd-icon label="Settings">${icon}</odd-icon>
+    <odd-icon>${icon}</odd-icon> Settings
+  </p>
+  <odd-progress label="Uploading files" value="8" max="12" description="8 of 12 files"></odd-progress>
+  <odd-progress label="Preparing upload" description="Please wait…"></odd-progress>
+  <odd-progress value="0.5"></odd-progress>
+  <div aria-busy="true"><odd-skeleton lines="3"></odd-skeleton><odd-skeleton shape="circle"></odd-skeleton></div>
+  <odd-spinner>Loading workspace…</odd-spinner>
+  <odd-spinner size="sm"></odd-spinner>
+  <odd-empty-state label="No matching projects">Try a different search.<odd-button slot="footer">Clear filters</odd-button></odd-empty-state>
 `;
 
 let tokens: HTMLLinkElement;
 let script: HTMLScriptElement;
 beforeAll(async () => {
-  await import('../src/badge/badge.define.js');
-  await import('../src/button/button.define.js');
-  await import('../src/card/card.define.js');
-  await import('../src/input/input.define.js');
+  await import('./register.js');
   tokens = document.createElement('link');
   tokens.rel = 'stylesheet';
   tokens.href = new URL('../../tokens/dist/css/default.css', import.meta.url).href;
@@ -108,9 +135,9 @@ async function audit(mode: 'light' | 'dark') {
   container.innerHTML = states;
   document.body.append(container);
   try {
-    for (const el of container.querySelectorAll<HTMLElement & { updateComplete: Promise<void> }>(
-      'odd-button, odd-input, odd-card',
-    ))
+    for (const el of [
+      ...container.querySelectorAll<HTMLElement & { updateComplete: Promise<void> }>('*'),
+    ].filter((el) => el.localName.startsWith('odd-')))
       await el.updateComplete;
     flush();
     // A blocked submission: the required, empty field shows aria-invalid.
@@ -122,7 +149,10 @@ async function audit(mode: 'light' | 'dark') {
     await blocked.updateComplete;
     flush();
     expect(blocked.shadowRoot!.querySelector('input')!.getAttribute('aria-invalid')).toBe('true');
-    const result = await axe().run(container, { runOnly: { type: 'tag', values: TAGS } });
+    // A disabled chip's text takes the disabled colour, as Figma draws it: WCAG 1.4.3 exempts
+    // inactive components, but axe cannot tell that a chip is one. The same chip enabled is audited.
+    const context = { include: [container], exclude: [['#inactive-chip']] };
+    const result = await axe().run(context, { runOnly: { type: 'tag', values: TAGS } });
     const summary = (results: AxeResult[]) =>
       results.map((r) => `${r.id}: ${r.nodes.map((n) => JSON.stringify(n.target)).join(' ')}`);
     console.log(

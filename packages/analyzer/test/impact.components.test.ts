@@ -56,7 +56,7 @@ describe('change impact on @oddkin/components', () => {
     );
   });
 
-  it('a button template edit also selects the card and input examples whose fixtures render a button', () => {
+  it('a button template edit also selects the examples whose fixtures render a button', () => {
     const head = inputs();
     head.packages[0]!.modules['dist/button/button.template.js'] += '\n';
     expect(selected(inputs(), head)).toEqual(
@@ -73,7 +73,9 @@ describe('change impact on @oddkin/components', () => {
           'secondary',
           'small',
         ].map((name) => `example:odd-button/${name}`),
+        'example:odd-alert/danger',
         'example:odd-card/headed',
+        'example:odd-empty-state/default',
         'example:odd-input/inForm',
       ].sort(),
     );

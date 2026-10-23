@@ -193,6 +193,13 @@ describe('Theme Studio page data', () => {
       'primaryAction:odd-button',
       'secondaryAction:odd-button',
       'navigation:odd-side-nav',
+      // Roles the specimen recipe does not draw follow, in catalog order.
+      'alert:odd-alert',
+      'avatar:odd-avatar',
+      'busyIndicator:odd-spinner',
+      'chip:odd-chip',
+      'placeholder:odd-skeleton',
+      'progress:odd-progress',
     ]);
     const worker = build.files.get(THEME_WORKER)!;
     // Workers have no import map: the library's own generator, by URL.

@@ -14,6 +14,30 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./alert": {
+      "types": "./dist/alert/index.d.ts",
+      "default": "./dist/alert/index.js"
+    },
+    "./alert/foundation": {
+      "types": "./dist/alert/foundation.d.ts",
+      "default": "./dist/alert/foundation.js"
+    },
+    "./define/alert": {
+      "types": "./dist/alert/alert.define.d.ts",
+      "default": "./dist/alert/alert.define.js"
+    },
+    "./avatar": {
+      "types": "./dist/avatar/index.d.ts",
+      "default": "./dist/avatar/index.js"
+    },
+    "./avatar/foundation": {
+      "types": "./dist/avatar/foundation.d.ts",
+      "default": "./dist/avatar/foundation.js"
+    },
+    "./define/avatar": {
+      "types": "./dist/avatar/avatar.define.d.ts",
+      "default": "./dist/avatar/avatar.define.js"
+    },
     "./badge": {
       "types": "./dist/badge/index.d.ts",
       "default": "./dist/badge/index.js"
@@ -50,6 +74,42 @@
       "types": "./dist/card/card.define.d.ts",
       "default": "./dist/card/card.define.js"
     },
+    "./chip": {
+      "types": "./dist/chip/index.d.ts",
+      "default": "./dist/chip/index.js"
+    },
+    "./chip/foundation": {
+      "types": "./dist/chip/foundation.d.ts",
+      "default": "./dist/chip/foundation.js"
+    },
+    "./define/chip": {
+      "types": "./dist/chip/chip.define.d.ts",
+      "default": "./dist/chip/chip.define.js"
+    },
+    "./empty-state": {
+      "types": "./dist/empty-state/index.d.ts",
+      "default": "./dist/empty-state/index.js"
+    },
+    "./empty-state/foundation": {
+      "types": "./dist/empty-state/foundation.d.ts",
+      "default": "./dist/empty-state/foundation.js"
+    },
+    "./define/empty-state": {
+      "types": "./dist/empty-state/empty-state.define.d.ts",
+      "default": "./dist/empty-state/empty-state.define.js"
+    },
+    "./icon": {
+      "types": "./dist/icon/index.d.ts",
+      "default": "./dist/icon/index.js"
+    },
+    "./icon/foundation": {
+      "types": "./dist/icon/foundation.d.ts",
+      "default": "./dist/icon/foundation.js"
+    },
+    "./define/icon": {
+      "types": "./dist/icon/icon.define.d.ts",
+      "default": "./dist/icon/icon.define.js"
+    },
     "./input": {
       "types": "./dist/input/index.d.ts",
       "default": "./dist/input/index.js"
@@ -61,6 +121,18 @@
     "./define/input": {
       "types": "./dist/input/input.define.d.ts",
       "default": "./dist/input/input.define.js"
+    },
+    "./progress": {
+      "types": "./dist/progress/index.d.ts",
+      "default": "./dist/progress/index.js"
+    },
+    "./progress/foundation": {
+      "types": "./dist/progress/foundation.d.ts",
+      "default": "./dist/progress/foundation.js"
+    },
+    "./define/progress": {
+      "types": "./dist/progress/progress.define.d.ts",
+      "default": "./dist/progress/progress.define.js"
     },
     "./side-nav": {
       "types": "./dist/side-nav/index.d.ts",
@@ -77,6 +149,30 @@
     "./define/side-nav": {
       "types": "./dist/side-nav/side-nav.define.d.ts",
       "default": "./dist/side-nav/side-nav.define.js"
+    },
+    "./skeleton": {
+      "types": "./dist/skeleton/index.d.ts",
+      "default": "./dist/skeleton/index.js"
+    },
+    "./skeleton/foundation": {
+      "types": "./dist/skeleton/foundation.d.ts",
+      "default": "./dist/skeleton/foundation.js"
+    },
+    "./define/skeleton": {
+      "types": "./dist/skeleton/skeleton.define.d.ts",
+      "default": "./dist/skeleton/skeleton.define.js"
+    },
+    "./spinner": {
+      "types": "./dist/spinner/index.d.ts",
+      "default": "./dist/spinner/index.js"
+    },
+    "./spinner/foundation": {
+      "types": "./dist/spinner/foundation.d.ts",
+      "default": "./dist/spinner/foundation.js"
+    },
+    "./define/spinner": {
+      "types": "./dist/spinner/spinner.define.d.ts",
+      "default": "./dist/spinner/spinner.define.js"
     },
     "./models": {
       "types": "./dist/models/index.d.ts",

@@ -46,6 +46,10 @@ const DELIBERATE: [RegExp, string][] = [
     /^input .+ Text input \/ [^>]+ paddingLeft \(--odd-space-2xs\)/,
     'Figma insets the field frame by space/2xs to make room for its focus ring; the shared focus ring is an outline that takes no layout space.',
   ],
+  [
+    /^spinner Default Spinner \/ Default paddingLeft \(--odd-space-sm\)/,
+    'Figma pads the spinner specimen frame; the element adds no padding, so it lines up with the text and controls around it.',
+  ],
 ];
 
 let figma: Map<string, Family>;
@@ -57,11 +61,7 @@ let container: HTMLElement;
 const json = async (path: string) => JSON.parse(await commands.readFile(path));
 
 beforeAll(async () => {
-  await import('../src/badge/badge.define.js');
-  await import('../src/button/button.define.js');
-  await import('../src/card/card.define.js');
-  await import('../src/input/input.define.js');
-  await import('../src/side-nav/side-nav.define.js');
+  await import('./register.js');
   const [components, variables] = await Promise.all([
     json('design/figma/components.json'),
     json('design/figma/variables.json'),
@@ -407,6 +407,156 @@ describe('Figma parity: odd-badge (badge)', () => {
         { layer: [...surface, spec.text], el: base, kind: 'text' },
       ];
       expectNone(compare('Oddkin/Common/badge', { State: state }, targets));
+    });
+});
+
+const shadowPart = (el: Element, name: string) =>
+  el.shadowRoot!.querySelector<HTMLElement>(`[part~="${name}"]`)!;
+
+const ALERTS: Record<string, { tone: string; title: string; message: string }> = {
+  Neutral: {
+    tone: 'neutral',
+    title: 'A new version is available',
+    message: 'Refresh when you are ready to continue.',
+  },
+  Success: {
+    tone: 'success',
+    title: 'Changes saved',
+    message: 'Your workspace is up to date.',
+  },
+  Warning: {
+    tone: 'warning',
+    title: 'You are working offline',
+    message: 'Changes will sync when the connection returns.',
+  },
+  Danger: {
+    tone: 'danger',
+    title: 'Changes could not be saved',
+    message: 'Your draft is safe. Check your connection and retry.',
+  },
+};
+
+describe('Figma parity: odd-alert (alert)', () => {
+  for (const [state, spec] of Object.entries(ALERTS))
+    it(state, async () => {
+      const el = mount(
+        `<odd-alert tone="${spec.tone}" label="${spec.title}">${spec.message}</odd-alert>`,
+      );
+      await settle(el);
+      const frame = [`Alert / ${state}`];
+      const targets: Target[] = [
+        { layer: [...frame, 'Surface'], el: shadowPart(el, 'base'), kind: 'frame' },
+        { layer: [...frame, spec.title], el: shadowPart(el, 'label'), kind: 'text' },
+        {
+          layer: [...frame, spec.message],
+          el: el.shadowRoot!.querySelector('.message')!,
+          kind: 'text',
+        },
+      ];
+      expectNone(compare('Oddkin/Common/alert', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: odd-chip (chip)', () => {
+  const ATTRIBUTES: Record<string, string> = {
+    Default: '',
+    Disabled: 'disabled',
+    Focus: '',
+    Selected: 'selected',
+  };
+  for (const [state, attributes] of Object.entries(ATTRIBUTES))
+    it(state, async () => {
+      const el = mount(`<odd-chip removable ${attributes}>Design systems</odd-chip>`);
+      await settle(el);
+      const base = shadowPart(el, 'base');
+      const surface = [`Removable chip / ${state}`, 'Surface'];
+      const targets: Target[] = [
+        { layer: surface, el: base, kind: 'frame', gap: 'column-gap' },
+        { layer: [...surface, 'Design systems'], el: base, kind: 'text' },
+      ];
+      if (state === 'Focus') {
+        targets.push({ layer: [...surface, 'Surface'], el: base, kind: 'ring' });
+        await interact('Focus', shadowPart(el, 'remove'));
+      }
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/chip', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: odd-progress (progress)', () => {
+  it('Determinate', async () => {
+    const el = mount(
+      '<odd-progress label="Uploading files" value="0.64" description="8 of 12 files"></odd-progress>',
+    );
+    await settle(el);
+    const frame = ['Progress / Determinate'];
+    const targets: Target[] = [
+      { layer: [...frame, 'Surface'], el: shadowPart(el, 'track'), kind: 'frame' },
+      { layer: [...frame, 'Surface [2]'], el: shadowPart(el, 'indicator'), kind: 'frame' },
+      { layer: [...frame, 'Uploading files'], el: shadowPart(el, 'label'), kind: 'text' },
+      { layer: [...frame, '64%'], el: shadowPart(el, 'value-text'), kind: 'text' },
+      { layer: [...frame, '8 of 12 files'], el: shadowPart(el, 'description'), kind: 'text' },
+    ];
+    expectNone(compare('Oddkin/Common/progress', { State: 'Determinate' }, targets));
+  });
+});
+
+describe('Figma parity: odd-spinner (spinner)', () => {
+  it('Default', async () => {
+    const el = mount('<odd-spinner>Loading workspace…</odd-spinner>');
+    await settle(el);
+    const base = shadowPart(el, 'base');
+    const frame = ['Spinner / Default'];
+    const targets: Target[] = [
+      { layer: frame, el: base, kind: 'frame', gap: 'column-gap' },
+      { layer: [...frame, 'Loading workspace…'], el: base, kind: 'text' },
+    ];
+    expectNone(compare('Oddkin/Common/spinner', { State: 'Default' }, targets));
+  });
+});
+
+describe('Figma parity: odd-skeleton (skeleton)', () => {
+  it('Default', async () => {
+    const el = mount('<odd-skeleton lines="3"></odd-skeleton>');
+    await settle(el);
+    const targets: Target[] = [
+      { layer: ['Skeleton / Default', 'Surface'], el: shadowPart(el, 'line'), kind: 'frame' },
+    ];
+    expectNone(compare('Oddkin/Common/skeleton', { State: 'Default' }, targets));
+  });
+});
+
+describe('Figma parity: odd-empty-state (emptyState)', () => {
+  it('No results', async () => {
+    const el = mount(
+      '<odd-empty-state label="No matching projects">Try a different search or clear your filters.</odd-empty-state>',
+    );
+    await settle(el);
+    const frame = ['Empty state / No results'];
+    const targets: Target[] = [
+      { layer: [...frame, 'No matching projects'], el: shadowPart(el, 'label'), kind: 'text' },
+      {
+        layer: [...frame, 'Try a different search or clear your filters.'],
+        el: el.shadowRoot!.querySelector('.body')!,
+        kind: 'text',
+      },
+    ];
+    expectNone(compare('Oddkin/Common/emptyState', { State: 'No results' }, targets));
+  });
+});
+
+describe('Figma parity: odd-avatar (avatar)', () => {
+  for (const [initials, size] of [
+    ['AM', 'md'],
+    ['SK', 'sm'],
+  ] as const)
+    it(`Initials ${initials} (${size})`, async () => {
+      const el = mount(`<odd-avatar size="${size}">${initials}</odd-avatar>`);
+      await settle(el);
+      const targets: Target[] = [
+        { layer: ['Avatar / Initials', initials], el: shadowPart(el, 'base'), kind: 'text' },
+      ];
+      expectNone(compare('Oddkin/Common/avatar', { State: 'Initials' }, targets));
     });
 });
 

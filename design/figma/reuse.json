@@ -13,7 +13,7 @@
     "deferred": "Not classified (data grid, deferred by the owner)."
   },
   "counts": {
-    "style": 91,
+    "style": 92,
     "slot": 35,
     "controller": 14,
     "deferred": 11,
@@ -606,6 +606,15 @@
       "count": 1,
       "class": "style",
       "reason": "The warning glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
+    },
+    {
+      "consumer": "Oddkin/Common/avatar/Appearance",
+      "consumerId": "374:1576",
+      "source": "Oddkin/Common/AvatarItem",
+      "sourceId": "257:886",
+      "count": 24,
+      "class": "style",
+      "reason": "Avatar appearance variants reuse AvatarItem. In code these backgrounds and corner radii are styles and tokens of the same odd-avatar element; custom HEX colors are author-supplied fill overrides, with no nested element dependency."
     },
     {
       "consumer": "Oddkin/Common/badge",
@@ -1558,9 +1567,6 @@
     "odd-artifact": {
       "dependencies": []
     },
-    "odd-badge": {
-      "dependencies": []
-    },
     "odd-change-review": {
       "dependencies": ["odd-button"],
       "reason": "Accept, reject, and undo are complete buttons (Figma: button/sm ×2)."
@@ -1642,6 +1648,15 @@
       "dependencies": ["odd-transcript"],
       "reason": "Shows the live odd-transcript widget authors also place alone."
     },
+    "odd-alert": {
+      "dependencies": []
+    },
+    "odd-avatar": {
+      "dependencies": []
+    },
+    "odd-badge": {
+      "dependencies": []
+    },
     "odd-button": {
       "dependencies": [],
       "reason": "A simple component: no element, overlay, positioning, or collection dependency."
@@ -1650,12 +1665,30 @@
       "dependencies": [],
       "reason": "Actions are slot content."
     },
+    "odd-chip": {
+      "dependencies": []
+    },
+    "odd-empty-state": {
+      "dependencies": []
+    },
+    "odd-icon": {
+      "dependencies": []
+    },
     "odd-input": {
+      "dependencies": []
+    },
+    "odd-progress": {
       "dependencies": []
     },
     "odd-side-nav": {
       "dependencies": [],
       "reason": "Entries are parts rendered from the navigation item model."
+    },
+    "odd-skeleton": {
+      "dependencies": []
+    },
+    "odd-spinner": {
+      "dependencies": []
     }
   },
   "modules": [
