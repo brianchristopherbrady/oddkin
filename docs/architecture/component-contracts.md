@@ -292,11 +292,15 @@ one Tab stop with roving focus over its slotted controls (`@oddkin/core/controll
 right to left), Home/End; the last focused control keeps the Tab stop; disabled and hidden controls, text, and `<hr>`
 separators (drawn as lines) are skipped; text fields and sliders keep their own arrow keys, Home, and End. Items are author content.
 
-**`odd-tree`** (`Tree`) — `label`, `items` (`{ id, label, icon?, disabled?, children?, lazy? }`), `expanded`
-(property: ids), `value`, `values`, `multiple`, `loading`, slots `empty`, `status`. Rows from the navigation-row
-module shared with `odd-side-nav`. Selection dispatches `input` and `change`; expanding dispatches `odd-toggle`,
-detail `{ id, expanded }`, cancelable (lazy children: the host loads them and sets `children`). APG tree keyboard
-(arrows, Home/End, `*`, typeahead).
+**`odd-tree`** (`Tree`) — `label`, `items` (`TreeItemRecord`: `{ id, label, icon?, disabled?, children?, lazy? }`;
+`icon` is a URL drawn by `odd-icon`), `expanded` (property: ids; when set, the element only reports `odd-toggle`;
+unset, items holding a selected item start expanded and the user's toggles are kept), `value`, `values`, `multiple`,
+`loading`, `strings` (`loading`, `empty`), slots `empty`, `status`. Flat `treeitem` rows with `aria-level`,
+`aria-setsize`, `aria-posinset`, drawn by the navigation-row module shared with `odd-side-nav` (a selected row takes
+its current-row marker). A click on a row selects it; a click on its chevron expands or collapses it. Selection
+dispatches `input` and `change`; expanding dispatches `odd-toggle`, detail `{ id, expanded }`, cancelable (lazy
+children: the row is busy until the host assigns new `items` in which the item has `children`). APG tree keyboard
+(arrows mirrored right to left, Home/End, `*`, Enter and Space, typeahead); one Tab stop, on the selected row.
 
 ### 3.5 Overlays
 

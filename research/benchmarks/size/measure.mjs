@@ -133,6 +133,8 @@ export const CSS_BUDGETS = {
   'components:popover': 256, // 226: the surface, motion, and close button are the shared overlay module
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
+  // Collections, measured on 2026-10-23 (structural and default styles; rows are the shared modules).
+  'components:tree': 512, // 428
   'components:empty-state': 512, // 434
   'components:icon': 384, // 305
   'components:progress': 768, // 695

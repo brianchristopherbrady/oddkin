@@ -294,6 +294,18 @@
       "types": "./dist/toolbar/toolbar.define.d.ts",
       "default": "./dist/toolbar/toolbar.define.js"
     },
+    "./tree": {
+      "types": "./dist/tree/index.d.ts",
+      "default": "./dist/tree/index.js"
+    },
+    "./tree/foundation": {
+      "types": "./dist/tree/foundation.d.ts",
+      "default": "./dist/tree/foundation.js"
+    },
+    "./define/tree": {
+      "types": "./dist/tree/tree.define.d.ts",
+      "default": "./dist/tree/tree.define.js"
+    },
     "./models": {
       "types": "./dist/models/index.d.ts",
       "default": "./dist/models/index.js"

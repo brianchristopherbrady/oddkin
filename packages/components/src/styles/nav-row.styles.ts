@@ -3,7 +3,7 @@ import { token } from '@oddkin/tokens/refs';
 
 /**
  * The navigation-row look through the `navigation.*` roles: padding, minimum target size, hover,
- * and the current row marked by an inline-start bar and weight, not colour alone.
+ * and the current or selected row marked by an inline-start bar and weight, not colour alone.
  */
 export const navRowStyles = css`
   .entry {
@@ -21,7 +21,8 @@ export const navRowStyles = css`
       background: ${token('color.surface.hover')};
     }
   }
-  .entry[aria-current='page'] {
+  .entry[aria-current='page'],
+  .entry[aria-selected='true'] {
     border-inline-start-color: ${token('color.action.default')};
     background: ${token('color.surface.hover')};
     font-weight: ${token('font.weight.semibold')};

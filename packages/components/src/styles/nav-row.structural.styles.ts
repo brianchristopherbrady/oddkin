@@ -32,7 +32,8 @@ export const navRowStructuralStyles = css`
     cursor: not-allowed;
   }
   @media (forced-colors: active) {
-    .root .entry[aria-current='page'] {
+    .root .entry[aria-current='page'],
+    .root .entry[aria-selected='true'] {
       border-inline-start-color: Highlight;
     }
     .root .entry:disabled,

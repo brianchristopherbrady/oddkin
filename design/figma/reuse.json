@@ -1719,6 +1719,10 @@
     },
     "odd-toolbar": {
       "dependencies": []
+    },
+    "odd-tree": {
+      "dependencies": ["odd-icon"],
+      "reason": "Item icons are drawn by the complete odd-icon widget authors also place alone."
     }
   },
   "modules": [
@@ -1774,7 +1778,7 @@
       "home": "@oddkin/components/styles (spinnerStyles)",
       "decision": "Indeterminate busy indicator, reduced-motion behaviour.",
       "status": "existing",
-      "code": ["odd-button", "odd-spinner"],
+      "code": ["odd-button", "odd-spinner", "odd-tree"],
       "figma": ["button", "spinner", "listbox", "multiselect", "Tree", "CommandPalette", "combobox"]
     },
     {
@@ -1799,7 +1803,9 @@
         "odd-disclosure",
         "odd-checkbox",
         "odd-pagination",
-        "odd-breadcrumbs"
+        "odd-breadcrumbs",
+        "odd-split-panel",
+        "odd-tree"
       ],
       "figma": ["34 icons on page 158:22"]
     },
@@ -1826,7 +1832,7 @@
       "home": "@oddkin/components/styles (navRowStructuralStyles, navRowStyles; moved out of odd-side-nav)",
       "decision": "Hierarchical navigation rows: indent step, expand glyph, current marker.",
       "status": "existing",
-      "code": ["odd-side-nav"],
+      "code": ["odd-side-nav", "odd-tree"],
       "figma": ["NavigationItem", "SideNavigation", "Tree"]
     },
     {
@@ -1884,7 +1890,7 @@
       "decision": "Roving focus.",
       "status": "existing",
       "figma": ["radioGroup", "Tabs", "segmented", "Toolbar", "Menu", "Tree"],
-      "code": ["odd-tabs", "odd-toolbar"]
+      "code": ["odd-tabs", "odd-toolbar", "odd-tree"]
     },
     {
       "id": "collection",

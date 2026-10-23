@@ -60,6 +60,19 @@ export interface LinkRecord {
   readonly href: string;
 }
 
+/** One item of a hierarchy (`odd-tree`); from data only, there are no declarative children. */
+export interface TreeItemRecord {
+  /** Reported as the `odd-toggle` detail's `id`, and as the selected `value`. */
+  readonly id: string;
+  readonly label: string;
+  /** Icon URL, drawn as `odd-icon` draws `src`. */
+  readonly icon?: string;
+  readonly disabled?: boolean;
+  readonly children?: readonly TreeItemRecord[];
+  /** Children not loaded yet: the item can expand, and is busy until `children` is set. */
+  readonly lazy?: boolean;
+}
+
 /** What a reader found in the declarative children. */
 export interface Declared<R> {
   readonly records: readonly R[];

@@ -27,6 +27,7 @@ import '@oddkin/components/define/split-panel';
 import '@oddkin/components/define/switch';
 import '@oddkin/components/define/tabs';
 import '@oddkin/components/define/toolbar';
+import '@oddkin/components/define/tree';
 import { scopeStats } from '@oddkin/core/scope';
 import { generate } from '@oddkin/tokens/generate';
 
@@ -204,7 +205,11 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>
         <odd-switch name="alerts" checked>Alerts</odd-switch>
-        <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>`;
+        <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
+        <odd-tree label="Files" value="b"></odd-tree>`;
+      (display.querySelector('odd-tree') as HTMLElement & { items: unknown }).items = [
+        { id: 'a', label: 'A', children: [{ id: 'b', label: 'B' }] },
+      ];
       const elements = [button, input, card, nav, badge, ...display.children];
       container.append(button, input, card, nav, badge, display);
       await tick();

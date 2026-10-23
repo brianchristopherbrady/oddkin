@@ -21,6 +21,7 @@ import {
 } from './parity.js';
 import { themeValue } from './probe.js';
 import type { OddkinSplitPanel } from '../src/split-panel/split-panel.js';
+import type { OddkinTree, TreeItemRecord } from '../src/tree/tree.js';
 
 // Figma parity of the shared modules of the collections lane (component-contracts.md §2.9): the
 // option row on `ListboxOption` and `MenuItem`, drawn by a test element until odd-listbox and
@@ -236,4 +237,105 @@ describe('Figma parity: odd-split-panel (Splitter)', () => {
         await transitions(targets);
         expectNone(compare(`Oddkin/Common/${family}`, { State: state }, targets));
       });
+});
+
+deliberate([
+  /^Tree (Empty|Loading) Status surface (fills|strokes|stroke\w+Weight|\w+Radius) /,
+  'The empty and loading states sit inside the tree’s own surface (one border and card.radius for every state) instead of a second status surface.',
+]);
+
+// Figma's sample hierarchy. The error state is the author’s `status` slot content, and the
+// visible "Project files" heading in the state frames is the page’s (the tree is named by `label`).
+const TREE: readonly TreeItemRecord[] = [
+  {
+    id: 'components',
+    label: 'Components',
+    children: [
+      {
+        id: 'forms',
+        label: 'Forms',
+        children: [
+          { id: 'text-field', label: 'Text field' },
+          { id: 'combobox', label: 'Combobox' },
+        ],
+      },
+      { id: 'navigation', label: 'Navigation', children: [{ id: 'tabs', label: 'Tabs' }] },
+    ],
+  },
+  { id: 'foundations', label: 'Foundations', children: [{ id: 'color', label: 'Color' }] },
+];
+const mountTree = async (props: Partial<OddkinTree>) => {
+  const el = mount('<odd-tree label="Project files"></odd-tree>') as OddkinTree;
+  Object.assign(el, { items: TREE, ...props });
+  await settle(el);
+  return el;
+};
+const treeRow = (el: Element, label: string) =>
+  [...el.shadowRoot!.querySelectorAll<HTMLElement>('[role="treeitem"]')].find(
+    (each) => each.querySelector('.label')!.textContent === label,
+  )!;
+const treeLabel = (el: Element, label: string) => treeRow(el, label).querySelector('.label')!;
+
+describe('Figma parity: odd-tree (Tree)', () => {
+  for (const state of ['Selected', 'Keyboard focus', 'Collapsed'] as const)
+    it(state, async () => {
+      // Expanded down to Forms, as Figma draws it: by the selection, or set.
+      const el = await mountTree(
+        state === 'Selected'
+          ? { value: 'text-field' }
+          : state === 'Keyboard focus'
+            ? { expanded: ['components', 'forms'] }
+            : {},
+      );
+      if (state === 'Keyboard focus') await interact('Focus', treeRow(el, 'Combobox'));
+      const surface = [`Tree / ${state}`, 'Surface'];
+      const targets: Target[] = [
+        { layer: surface, el: shadowPart(el, 'base'), kind: 'frame' },
+        { layer: [...surface, 'Components'], el: treeLabel(el, 'Components'), kind: 'text' },
+      ];
+      if (state === 'Collapsed')
+        targets.push({
+          layer: [...surface, 'Foundations'],
+          el: treeLabel(el, 'Foundations'),
+          kind: 'text',
+        });
+      else
+        targets.push(
+          { layer: [...surface, 'Forms'], el: treeLabel(el, 'Forms'), kind: 'text' },
+          { layer: [...surface, 'Navigation'], el: treeLabel(el, 'Navigation'), kind: 'text' },
+        );
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/Tree', { State: state }, targets));
+    });
+
+  // The rows are the shared navigation item: selected as Current, focused as Focus.
+  for (const state of ['Current', 'Focus'] as const)
+    it(`rows as NavigationItem ${state}`, async () => {
+      const el = await mountTree({ value: 'text-field' });
+      const entry = treeRow(el, state === 'Current' ? 'Text field' : 'Combobox');
+      if (state === 'Focus') await interact('Focus', entry);
+      const frame = [`NavigationItem / ${state}`, 'Surface'];
+      const targets: Target[] = [
+        { layer: frame, el: entry, kind: 'frame', gap: 'column-gap' },
+        { layer: [...frame, 'Components'], el: entry, kind: 'text' },
+        { layer: [...frame, 'Surface'], el: entry, kind: state === 'Current' ? 'marker' : 'ring' },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/NavigationItem', { State: state }, targets));
+    });
+
+  for (const [state, text] of [
+    ['Empty', 'No items available'],
+    ['Loading', 'Loading…'],
+  ] as const)
+    it(state, async () => {
+      const el = await mountTree({ items: [], loading: state === 'Loading' });
+      const status = shadowPart(el, state === 'Empty' ? 'empty' : 'loading');
+      const surface = [`Project files / ${state}`, 'Status surface'];
+      const targets: Target[] = [
+        { layer: surface, el: status, kind: 'frame' },
+        { layer: [...surface, text], el: status, kind: 'text' },
+      ];
+      expectNone(compare('Oddkin/Common/Tree', { State: state }, targets));
+    });
 });
