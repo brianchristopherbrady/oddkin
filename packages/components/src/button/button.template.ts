@@ -1,4 +1,5 @@
 import { html } from '@oddkin/core/template';
+import { externalDescriptionTemplate } from '../form-control/description.js';
 import type { OddkinButton } from './button.js';
 
 /**
@@ -8,15 +9,17 @@ import type { OddkinButton } from './button.js';
  */
 export const buttonTemplate = (button: OddkinButton) =>
   html`<button
-    part="control"
-    type="button"
-    ?disabled=${button.disabled || button._formDisabled.value}
-    aria-disabled=${button.loading ? 'true' : null}
-    aria-label=${button.label || null}
-    aria-pressed=${button.toggle ? String(button.pressed) : null}
-  >
-    <span part="spinner" class="spinner" aria-hidden="true" ?hidden=${!button.loading}></span>
-    <slot name="start"></slot>
-    <span class="label"><slot></slot></span>
-    <slot name="end"></slot>
-  </button>`;
+      part="control"
+      type="button"
+      ?disabled=${button.disabled || button._formDisabled.value}
+      aria-disabled=${button.loading ? 'true' : null}
+      aria-label=${button.label || null}
+      aria-pressed=${button.toggle ? String(button.pressed) : null}
+      aria-describedby=${button._externalDescription ? 'external-description' : null}
+    >
+      <span part="spinner" class="spinner" aria-hidden="true" ?hidden=${!button.loading}></span>
+      <slot name="start"></slot>
+      <span class="label"><slot></slot></span>
+      <slot name="end"></slot>
+    </button>
+    ${externalDescriptionTemplate(button._externalDescription)}`;

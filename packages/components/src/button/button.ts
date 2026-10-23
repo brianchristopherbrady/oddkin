@@ -1,6 +1,7 @@
 import { OddkinElement, event, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
+import { ExternalDescriptions } from '../form-control/description.js';
 
 /** A toggle button was flipped by the user; `pressed` has its new value. */
 export const inputEvent = event('input', {
@@ -115,6 +116,21 @@ export class OddkinButton extends OddkinElement.with({
   static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
   static override events = { input: inputEvent, change: changeEvent };
   declare readonly _events?: ElementEvents<typeof OddkinButton>;
+
+  readonly #described = new ExternalDescriptions();
+
+  /**
+   * @internal Another element (a tooltip) describes this button; `null` removes its text. Works
+   * before the first render and keeps the texts across renders.
+   */
+  _describe(source: object, text: string | null): void {
+    this.#described.set(source, text);
+  }
+
+  /** @internal The texts other elements gave, rendered hidden by the template. */
+  get _externalDescription(): string {
+    return this.#described.text.value;
+  }
 
   /** @internal Disabled by an ancestor `<fieldset disabled>`; read by the template. */
   readonly _formDisabled = signal(false);

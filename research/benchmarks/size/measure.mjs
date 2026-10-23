@@ -56,10 +56,11 @@ export const BUDGETS = {
   reactive: 2048, // 2 KiB; measured 1,892
   'ai-headless': 14336, // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation)
   'ai-response': 21504, // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations)
-  // 49 KiB; measured 48,782 on 2026-10-18 (odd-conversation + odd-prompt-input, all nested
-  // elements; +625 B since the shared core focus, announce, and observe controllers replaced
-  // AI-internal helpers and recover focus after removal too).
-  'ai-chat': 50176,
+  // 49.5 KiB; measured 50,340 on 2026-10-23 with odd-button's toggle and the description hook
+  // tooltips use (48,782 on 2026-10-18: odd-conversation + odd-prompt-input, all nested elements;
+  // +625 B since the shared core focus, announce, and observe controllers replaced AI-internal
+  // helpers and recover focus after removal too).
+  'ai-chat': 50688,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

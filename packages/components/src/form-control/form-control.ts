@@ -2,6 +2,7 @@ import { FormValue, type FormValueOptions } from '@oddkin/core/controllers/form'
 import { OddkinElement, prop } from '@oddkin/core/element';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
+import { ExternalDescriptions } from './description.js';
 
 /** What a form control adds to the shared participation: its value, inner control, reset, restore. */
 export type FormControlOptions = Omit<FormValueOptions, 'internals' | 'error'>;
@@ -50,10 +51,31 @@ export class OddkinFormControl extends OddkinElement.with({
     () => !!this.error || (this._touched.value && this._invalid.value),
   );
 
-  /** @internal The ids for `aria-describedby`: the description and error parts that show. */
+  readonly #described = new ExternalDescriptions();
+
+  /**
+   * @internal Another element (a tooltip) describes this control; `null` removes its text. Works
+   * before the first render and keeps the texts across renders.
+   */
+  _describe(source: object, text: string | null): void {
+    this.#described.set(source, text);
+  }
+
+  /** @internal The texts other elements gave, rendered hidden by the template. */
+  get _externalDescription(): string {
+    return this.#described.text.value;
+  }
+
+  /** @internal The ids for `aria-describedby`: description, error, and external descriptions. */
   get _describedBy(): string | null {
     return (
-      [this.description && 'description', this.error && 'error'].filter(Boolean).join(' ') || null
+      [
+        this.description && 'description',
+        this.error && 'error',
+        this._externalDescription && 'external-description',
+      ]
+        .filter(Boolean)
+        .join(' ') || null
     );
   }
 

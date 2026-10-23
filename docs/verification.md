@@ -2428,3 +2428,19 @@ Not rerun: the 1,000-cycle lifetime run. The scenario's markup does not use the 
 | Size, CSS | `node scripts/check-size.mjs`; `npm run compat` | `components:popover` is 226 B gzip (budget 256). `components:shared` is 2,984 B (budget raised to 3,072): the overlay module's close control, motion, and placement limits add 238 B. The compatibility check passes with 0 problems. The popover sheets add 2 keys at the floor or gated: `css.selectors.popover-open` and `css.properties.transition.allow-discrete` (inside `@supports (transition-behavior: allow-discrete)`). |
 
 **Findings:** in every engine, `PositionController` never placed a popover opened by a native invoker. The browser runs the microtask checkpoint right after its own `beforetoggle` listeners, before the popover is showing. The wiring now starts placement in a per-open child scope, once the surface shows: in the next frame, or at `toggle` if that comes first. Agent 3 has been told about the core behaviour. Firefox and WebKit return focus themselves when a popover with focus inside hides; Chromium does not, and the wiring does. `@starting-style` is not used: the compatibility check gates an at-rule only behind an `@supports` that names it (`at-rule()`, above the floor). Popovers fade in with a keyframes animation at the floor instead, and fade out behind the `transition-behavior` gate (registry entries `popover-api` and `starting-style` are now implemented, with tests). `showPopover({ source })`, which tells the browser that the anchor is the invoker, is above the floor (ADR 0044). The wiring gets the same behaviour at the floor by remembering a press on the anchor while the surface is open. Not verified: screen-reader output, real devices, Safari on macOS, and iOS light dismiss (the close button is the floor exception's remedy).
+
+## 2026-10-23 — Description hook for `odd-tooltip` (M10, component-contracts.md §2.4)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5 (Chromium 156, Firefox 157, WebKit 27.2), Playwright 1.64.1. In the same tree: Agent 2's `odd-popover` (19da412 committed during this slice) and Agent 3's work after `odd-split-panel`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Hook | `npx vitest run --project browser packages/components/test/description.browser.test.ts` | 10 tests pass in Chromium (9 in Firefox and WebKit; the accessibility-tree check is Chromium only, through CDP): for `odd-button`, `odd-input`, `odd-checkbox`, and `odd-switch`, the inner control's `aria-describedby` lists the sources' texts joined in order, a source keeps its place when its text changes, `null` or an empty text removes it, the element is hidden, a text given before the first render is kept; a form control's own description and error come first; Chromium's accessibility tree reports the button's description |
+| Controls unchanged | `button`, `input`, `checkbox`, `switch`, `frameworks-forms`, `figma-parity.forms`, `figma-parity`, `styling`, `contract`, `accessibility` browser tests | Chromium 566 passed, Firefox 553, WebKit 562 (skips are engine-specific tests) |
+| Node and types | `npx vitest run --project node`; `npm run typecheck` | 1,071 pass (the button and input foundation graphs now load `form-control/description.js`); types and framework typings pass |
+| Mutants | `.tmp/f-mutate2.mjs` (7, Chromium) | 7 killed: the base omitting the id, `null` keeping an empty text, reversed order, the element not hidden, the button not described, the button and the switch not rendering the texts |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 50,340 B gzip over its 50,176 budget (odd-button's toggle and this hook in every AI button); budget raised to 50,688 with the reason; the other entries pass |
+
+**Findings:**
+- The test frame's accessibility tree is not the top page's: `Accessibility.getFullAXTree` needs each frame's id (`Page.getFrameTree`).
+- Not verified: screen-reader output in NVDA, JAWS, or VoiceOver; Safari on macOS.

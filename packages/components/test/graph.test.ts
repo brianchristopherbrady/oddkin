@@ -38,6 +38,7 @@ describe('@oddkin/components/button import graphs', () => {
       'button/button.structural.styles.js',
       'button/button.template.js',
       'button/foundation.js',
+      'form-control/description.js',
       'styles/host.styles.js',
       'styles/spinner.styles.js',
     ]);
@@ -82,6 +83,7 @@ describe('@oddkin/components/input import graphs', () => {
   it('the foundation entry loads no default skin, tokens, or registration', async () => {
     const { files, packages } = await graph('input/foundation.js');
     expect(files).toEqual([
+      'form-control/description.js',
       'form-control/form-control.js',
       'input/foundation.js',
       'input/input.js',

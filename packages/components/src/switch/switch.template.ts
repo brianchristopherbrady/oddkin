@@ -1,5 +1,6 @@
 import { live } from '@oddkin/core/helpers/live';
 import { html } from '@oddkin/core/template';
+import { externalDescriptionTemplate } from '../form-control/description.js';
 import type { OddkinSwitch } from './switch.js';
 
 /**
@@ -36,4 +37,5 @@ export const switchTemplate = (toggle: OddkinSwitch) =>
       ${toggle.description}
     </div>
     <div part="error" id="error" class="error" ?hidden=${!toggle.error}>${toggle.error}</div>
+    ${externalDescriptionTemplate(toggle._externalDescription)}
   </div>`;

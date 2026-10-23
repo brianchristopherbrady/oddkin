@@ -1,5 +1,6 @@
 import { live } from '@oddkin/core/helpers/live';
 import { html } from '@oddkin/core/template';
+import { externalDescriptionTemplate } from '../form-control/description.js';
 import { checkGlyph, minusGlyph } from '../styles/glyphs.js';
 import type { OddkinCheckbox } from './checkbox.js';
 
@@ -36,4 +37,5 @@ export const checkboxTemplate = (checkbox: OddkinCheckbox) =>
       ${checkbox.description}
     </div>
     <div part="error" id="error" class="error" ?hidden=${!checkbox.error}>${checkbox.error}</div>
+    ${externalDescriptionTemplate(checkbox._externalDescription)}
   </div>`;

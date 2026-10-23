@@ -1,5 +1,6 @@
 import { live } from '@oddkin/core/helpers/live';
 import { html } from '@oddkin/core/template';
+import { externalDescriptionTemplate } from '../form-control/description.js';
 import type { OddkinInput } from './input.js';
 
 /**
@@ -33,5 +34,6 @@ export const inputTemplate = (input: OddkinInput) => {
       @blur=${input._onBlur}
     />
     <div part="error" id="error" class="error" ?hidden=${!input.error}>${input.error}</div>
+    ${externalDescriptionTemplate(input._externalDescription)}
   </div>`;
 };

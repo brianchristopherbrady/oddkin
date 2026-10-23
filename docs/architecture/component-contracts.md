@@ -78,7 +78,10 @@ actions are author content). There is no `odd-field` element: a wrapper's label 
 slotted control (`<label for>` and `aria-labelledby` do not cross shadow roots), so Oddkin controls render their own
 anatomy and native controls use the field recipe. The shared members (`name`, `disabled`, `description`, `error`, the
 validity API, reset, `:state(user-invalid)`) live in one internal base class, `OddkinFormControl`, over the core form
-controller; each control describes only its value, inner control, reset, and restore.
+controller; each control describes only its value, inner control, reset, and restore. Another element describes a
+control (`odd-tooltip`) through an internal hook, `_describe(source, text | null)` on `odd-button` and every form
+control: the control renders the texts hidden in its shadow root and lists them in its inner control's
+`aria-describedby` after its own description and error, since `aria-describedby` cannot cross the shadow boundary.
 
 ### 2.5 Collection states
 
