@@ -1844,9 +1844,9 @@
     {
       "id": "overlay-surface",
       "kind": "style",
-      "home": "@oddkin/components/styles (proposed, with ADR 0044)",
-      "decision": "Overlay surface: raised background, border, radius, elevation.",
-      "status": "proposed",
+      "home": "@oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles)",
+      "decision": "Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers.",
+      "status": "existing",
       "figma": [
         "ListboxSurface",
         "popover",

@@ -145,7 +145,8 @@ export const CSS_BUDGETS = {
   // 1,152: measured 1,077 on 2026-10-22 once the entry rows moved to the shared navigation-row
   // module (1,234 before, with them).
   'components:side-nav': 1152,
-  // 2,816: measured 2,633 on 2026-10-23 with the choice row (+59, moved out of odd-checkbox for
+  // 2,816: measured 2,746 on 2026-10-23 with the overlay-surface module (+113); 2,633 with
+  // the choice row (+59, moved out of odd-checkbox for
   // odd-switch); 2,574 with the control-indicator modules (+346: checkbox box and marks); 2,228 on
   // 2026-10-22 with the navigation-row (+294, moved from odd-side-nav) and
   // option-row (+330) modules; 1,604 before them with the field layout, control look, and select
