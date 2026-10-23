@@ -18,8 +18,8 @@
         "appCycles": {
           "cycles": 1000,
           "ms": [
-            5404,
-            5315
+            8963,
+            11585
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -41,9 +41,9 @@
             "resource loads: 1000"
           ],
           "heapBytes": [
-            1886968,
-            2018152,
-            2021216
+            1902292,
+            2033468,
+            2036412
           ],
           "retainedPerCycleBytes": [
             131,
@@ -53,8 +53,8 @@
         "navigationCycles": {
           "cycles": 1000,
           "ms": [
-            866,
-            956
+            713,
+            947
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -76,9 +76,9 @@
             "committed 2000; after stop: {\"scopes\":0,\"listeners\":0,\"timers\":0,\"effects\":0}"
           ],
           "heapBytes": [
-            2033064,
-            2044248,
-            2044388
+            2048324,
+            2059508,
+            2059648
           ],
           "retainedPerCycleBytes": [
             11,
@@ -88,8 +88,8 @@
         "themeEditCycles": {
           "cycles": 1000,
           "ms": [
-            6803,
-            7729
+            10906,
+            10609
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -111,9 +111,9 @@
             "distinct brand-600 values: 357"
           ],
           "heapBytes": [
-            2761556,
-            2824644,
-            2820312
+            2777460,
+            2840108,
+            2836180
           ],
           "retainedPerCycleBytes": [
             63,
@@ -123,8 +123,8 @@
         "componentCycles": {
           "cycles": 1000,
           "ms": [
-            11192,
-            11012
+            19863,
+            19983
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -146,13 +146,13 @@
             "container children: 0; rendered: 1000"
           ],
           "heapBytes": [
-            3397912,
-            4108604,
-            3564136
+            3446836,
+            3618704,
+            3646764
           ],
           "retainedPerCycleBytes": [
-            711,
-            -544
+            172,
+            28
           ]
         }
       },
@@ -164,8 +164,8 @@
         "appCycles": {
           "cycles": 1000,
           "ms": [
-            5639,
-            5197
+            5415,
+            5789
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -190,8 +190,8 @@
         "navigationCycles": {
           "cycles": 1000,
           "ms": [
-            323,
-            340
+            311,
+            330
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -216,8 +216,8 @@
         "themeEditCycles": {
           "cycles": 1000,
           "ms": [
-            7856,
-            8120
+            5071,
+            5348
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -242,8 +242,8 @@
         "componentCycles": {
           "cycles": 1000,
           "ms": [
-            18443,
-            18348
+            20142,
+            24308
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -274,8 +274,8 @@
         "appCycles": {
           "cycles": 1000,
           "ms": [
-            15805,
-            15744
+            16135,
+            16125
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -303,8 +303,8 @@
         "themeEditCycles": {
           "cycles": 1000,
           "ms": [
-            6926,
-            7198
+            10824,
+            11515
           ],
           "ownershipReturned": true,
           "scopeStats": {
@@ -329,8 +329,8 @@
         "componentCycles": {
           "cycles": 1000,
           "ms": [
-            23837,
-            22333
+            39040,
+            37400
           ],
           "ownershipReturned": true,
           "scopeStats": {

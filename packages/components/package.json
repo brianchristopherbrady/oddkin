@@ -146,6 +146,18 @@
       "types": "./dist/input/input.define.d.ts",
       "default": "./dist/input/input.define.js"
     },
+    "./pagination": {
+      "types": "./dist/pagination/index.d.ts",
+      "default": "./dist/pagination/index.js"
+    },
+    "./pagination/foundation": {
+      "types": "./dist/pagination/foundation.d.ts",
+      "default": "./dist/pagination/foundation.js"
+    },
+    "./define/pagination": {
+      "types": "./dist/pagination/pagination.define.d.ts",
+      "default": "./dist/pagination/pagination.define.js"
+    },
     "./progress": {
       "types": "./dist/progress/index.d.ts",
       "default": "./dist/progress/index.js"

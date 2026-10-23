@@ -111,6 +111,8 @@ const states = `
   <odd-tabs label="Project"><odd-tab-panel label="Overview">Overview text.</odd-tab-panel><odd-tab-panel label="Activity">Activity text.</odd-tab-panel><odd-tab-panel label="Settings" disabled>Settings.</odd-tab-panel></odd-tabs>
   <odd-tabs label="Sections" orientation="vertical" activation="manual"><odd-tab-panel label="One">One.</odd-tab-panel><odd-tab-panel label="Two">Two.</odd-tab-panel></odd-tabs>
   <odd-toolbar label="Project actions"><input aria-label="Search projects" type="search" /><hr aria-orientation="vertical" /><odd-button size="sm" appearance="ghost">Filter</odd-button><span>3 selected</span><odd-button size="sm" appearance="primary">New item</odd-button></odd-toolbar>
+  <odd-pagination label="Search results" current="3" page-count="12"></odd-pagination>
+  <odd-pagination label="Articles" current="1" page-count="4" href="#page-{page}"></odd-pagination>
 `;
 
 let tokens: HTMLLinkElement;

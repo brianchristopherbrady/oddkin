@@ -94,6 +94,7 @@ describe('authored examples', () => {
     },
     'odd-tabs/orientationColumn': { observe: (el) => el['orientation'], wrong: 'horizontal' },
     'odd-toolbar/orientationRow': { observe: (el) => el['orientation'], wrong: 'horizontal' },
+    'odd-pagination/currentPageAttribute': { observe: (el) => el['current'], wrong: '1' },
     'odd-empty-state/actionsSlot': {
       observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
       wrong: false,

@@ -1683,6 +1683,9 @@
     "odd-input": {
       "dependencies": []
     },
+    "odd-pagination": {
+      "dependencies": []
+    },
     "odd-progress": {
       "dependencies": []
     },
@@ -1777,7 +1780,14 @@
       "home": "@oddkin/components/styles (glyphStyles and glyph templates)",
       "decision": "Built-in affordance glyphs: chevrons, check, minus, close, search, more, arrows, external, eye, lock, upload, file, user.",
       "status": "existing (drawn by Oddkin; Figma's icon assets do not ship, component-contracts.md §2.7)",
-      "code": ["odd-badge", "odd-alert", "odd-chip", "odd-disclosure", "odd-checkbox"],
+      "code": [
+        "odd-badge",
+        "odd-alert",
+        "odd-chip",
+        "odd-disclosure",
+        "odd-checkbox",
+        "odd-pagination"
+      ],
       "figma": ["34 icons on page 158:22"]
     },
     {

@@ -266,11 +266,14 @@ stop, followed by the shown panel (`tabindex="0"`). `input` and `change` on user
 (§2.2 links); the last item is the current page, shown as text with `aria-current="page"`. `max-items: number = 0`
 (0: never collapse); collapsed middle items sit behind a "more" button (glyph) that reveals them.
 
-**`odd-pagination`** (`Pagination`) — `<nav>` named `label`. `current: string` (page number, ADR 0045 navigation
-`current`), `page-count: number`, `href: string` (a template with `{page}`; when set, pages are links). Without
-`href`, pages are buttons that dispatch `odd-action`, detail `{ itemId: '<page>' }` (the side-nav action intent); the
-application sets `current`. Previous and next are always present and disabled at the ends; first, last, current ±1,
-and ellipses otherwise.
+**`odd-pagination`** (`Pagination`) — `<nav>` named `label` (default `strings.label`) with the position as text
+(`strings.status`, "Page 3 of 12") and a list. `current: string` (page number, ADR 0045 navigation `current`; kept
+within 1 to `page-count`), `page-count: number`, `href: string` (a template with `{page}`; when set, pages are links).
+The current page has `aria-current="page"`. Without `href`, pages are buttons that dispatch `odd-action`, detail
+`{ id: '<page>', action: 'page' }` (odd-side-nav's `NavigationActionDetail`); the application loads the page and sets
+`current`, and a focused page button keeps focus. Previous and next are always present and disabled at the ends (as
+links: no `href`, `role="link"`, `aria-disabled`). Pages shown: first, last, current ±1, the first or last three at
+the ends, a one-page gap as that page, longer gaps as a hidden ellipsis.
 
 **`odd-toolbar`** (`Toolbar`) — `label`, `orientation: horizontal | vertical = horizontal`. Host `role="toolbar"`;
 one Tab stop with roving focus over its slotted controls (`@oddkin/core/controllers/focus`), arrow keys (mirrored

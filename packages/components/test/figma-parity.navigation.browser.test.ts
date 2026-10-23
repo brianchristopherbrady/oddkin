@@ -124,6 +124,46 @@ describe('Figma parity: odd-toolbar (Toolbar)', () => {
     });
 });
 
+describe('Figma parity: odd-pagination (Pagination)', () => {
+  for (const state of ['First page', 'Middle page', 'Keyboard focus'])
+    it(state, async () => {
+      const current = state === 'First page' ? 1 : 3;
+      const el = mount(`<odd-pagination current="${current}" page-count="12"></odd-pagination>`);
+      await settle(el);
+      const surface = [`Pagination / ${state}`, 'Surface'];
+      const page = (n: string) =>
+        [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="page"]')].find(
+          (p) => p.textContent!.trim() === n,
+        )!;
+      const next = shadowPart(el, 'next');
+      const targets: Target[] = [
+        { layer: surface, el: shadowPart(el, 'base'), kind: 'frame' },
+        {
+          layer: [...surface, `Page ${current} of 12`],
+          el: shadowPart(el, 'status'),
+          kind: 'text',
+        },
+        ...['1', '2', '3', '12'].map((n): Target => ({
+          layer: [...surface, n],
+          el: page(n),
+          kind: 'text',
+        })),
+        { layer: [...surface, 'Surface'], el: shadowPart(el, 'previous'), kind: 'frame' },
+        ...['1', '2', '3'].map((n, i): Target => ({
+          layer: [...surface, `Surface [${i + 2}]`],
+          el: page(n),
+          kind: 'frame',
+        })),
+        { layer: [...surface, 'Surface [5]'], el: next, kind: 'frame' },
+      ];
+      if (state === 'Keyboard focus')
+        targets.push({ layer: [...surface, 'Surface [6]'], el: next, kind: 'ring' });
+      await interact(state === 'Keyboard focus' ? 'Focus' : state, next);
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/Pagination', { State: state }, targets));
+    });
+});
+
 const QUESTIONS = [
   'How do themes work?',
   'Can I use my own components?',
