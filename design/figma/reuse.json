@@ -1571,6 +1571,10 @@
       "dependencies": ["odd-button"],
       "reason": "Accept, reject, and undo are complete buttons (Figma: button/sm ×2)."
     },
+    "odd-checkbox-group": {
+      "dependencies": ["odd-checkbox"],
+      "reason": "The choices are complete odd-checkbox elements the author places; each is form-associated on its own, and the group adds the legend, description, error, and required-one rule."
+    },
     "odd-checkpoint": {
       "dependencies": ["odd-button"],
       "reason": "Restore and confirm are complete buttons (Figma: button/sm ×1)."
@@ -1785,7 +1789,8 @@
         ".odd-field recipe",
         "odd-listbox",
         "odd-select",
-        "odd-textarea"
+        "odd-textarea",
+        "odd-checkbox-group"
       ],
       "note": "The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe."
     },
@@ -1931,7 +1936,8 @@
         "odd-switch",
         "odd-listbox",
         "odd-select",
-        "odd-textarea"
+        "odd-textarea",
+        "odd-checkbox-group"
       ],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]

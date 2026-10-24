@@ -281,3 +281,33 @@ describe('Figma parity: textarea', () => {
       expectNone(compare('Oddkin/Common/textarea', { State: state }, targets));
     });
 });
+
+describe('Figma parity: CheckboxGroup', () => {
+  const description = 'Choose how you want to hear about project updates.';
+  const states: Record<string, string> = {
+    Default: '',
+    Disabled: ' disabled',
+    Invalid: ' required error="Choose at least one notification method."',
+  };
+  for (const [state, attributes] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(
+        `<odd-checkbox-group label="Notifications" description="${description}"${attributes}><odd-checkbox>Email notifications</odd-checkbox><odd-checkbox>Desktop notifications</odd-checkbox></odd-checkbox-group>`,
+      );
+      await settle(el);
+      const root = 'Checkbox group';
+      const targets: Target[] = [
+        { layer: [root], el: shadowPart(el, 'field'), kind: 'frame', gap: 'row-gap' },
+        { layer: [root, 'Legend'], el: shadowPart(el, 'label'), kind: 'text' },
+        { layer: [root, description], el: shadowPart(el, 'description'), kind: 'text' },
+      ];
+      if (state === 'Invalid')
+        targets.push({
+          layer: [root, 'Choose at least one notification method.'],
+          el: shadowPart(el, 'error'),
+          kind: 'text',
+        });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/CheckboxGroup', { State: state }, targets));
+    });
+});

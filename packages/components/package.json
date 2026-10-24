@@ -98,6 +98,18 @@
       "types": "./dist/checkbox/checkbox.define.d.ts",
       "default": "./dist/checkbox/checkbox.define.js"
     },
+    "./checkbox-group": {
+      "types": "./dist/checkbox-group/index.d.ts",
+      "default": "./dist/checkbox-group/index.js"
+    },
+    "./checkbox-group/foundation": {
+      "types": "./dist/checkbox-group/foundation.d.ts",
+      "default": "./dist/checkbox-group/foundation.js"
+    },
+    "./define/checkbox-group": {
+      "types": "./dist/checkbox-group/checkbox-group.define.d.ts",
+      "default": "./dist/checkbox-group/checkbox-group.define.js"
+    },
     "./chip": {
       "types": "./dist/chip/index.d.ts",
       "default": "./dist/chip/index.js"

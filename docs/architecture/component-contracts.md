@@ -217,10 +217,13 @@ mixed and cleared when the user toggles, as native), `value = "on"`, `name`, `re
 native checkbox with `role="switch"` drawn as a track (part `control`) whose `thumb` moves to the inline end when on.
 Part `state` shows `strings.on`/`strings.off` after the label (hidden from assistive technology; the role states it).
 
-**`odd-checkbox-group`** (`CheckboxGroup`) — named group of slotted `odd-checkbox` children. `label` (legend),
-`description`, `error`, `required` (at least one checked; the group is form-associated with no value so the
-constraint blocks submission), `disabled` (disables the children), `orientation: vertical | horizontal = vertical`.
-Host `role="group"`.
+**`odd-checkbox-group`** (`CheckboxGroup`) — named group of slotted `odd-checkbox` children, each keeping its own
+`name`, `value`, and checkedness. `label` (legend), `description`, `error`, `required` (at least one checked: the group
+is form-associated with no value, and a hidden radio in its shadow root supplies the browser's own "select one of
+these options" flag and message, pointed at the first enabled choice), `disabled` (disables the enabled choices and
+later restores only those), `orientation: vertical | horizontal = vertical`. A `role="group"` in the shadow root,
+named by the legend and described by description and error, holds the slot (the host cannot reference its shadow
+parts); choices sit one target height apart, as Figma's rows.
 
 **`odd-radio-group`** (`radioGroup`, `radio`) — one value from a set (§2.2 values). Native radios in one shadow tree:
 one Tab stop and arrow-key selection come from the platform. Field anatomy, `name`, `value`, `required`, `disabled`,

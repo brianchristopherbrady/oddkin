@@ -2641,3 +2641,25 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 browser mode with Playwright 1.
 4. `odd-input` and `odd-textarea` share `OddkinTextControl` (value and default, label, placeholder, autocomplete, length limits, required, read-only, `input` and `change`), so the text fields keep one implementation.
 5. The lifetime scenario needed odd-textarea's registration import (reported by Agent 2).
 6. Not verified: screen-reader output (the count on focus), iOS and Firefox for Android (no resize handle there), the measured path in an engine that lacks field sizing (only forced here), and Safari on macOS.
+
+## 2026-10-23 — `odd-checkbox-group` (M10, component-contracts.md §3.3)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5 browser mode with Playwright 1.64.1 (Chromium, Firefox, WebKit). Figma reference: `Oddkin/Common/CheckboxGroup` (node 183:2616; Default, Invalid, Disabled), read from the live file and the committed snapshot. Other lanes' uncommitted work in the tree during the runs: Agent 2's `odd-toast`; the owner's design-session files (`design/figma/*`, `design/icons/*`, icon tests).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Behaviour | `npx vitest run --project browser --browser.name=<engine> packages/components/test/checkbox-group.browser.test.ts` | 10 pass in Chromium, Firefox, and WebKit: a `role="group"` named by the legend, described by description and error, holding the slotted choices; the choices' own Tab stops; stacked one target height apart, and in a row when horizontal; each choice submits under its own name and the group submits nothing; a required group is `valueMissing` with the message a native required radio gives, valid once a choice is checked, and a blocked submission focuses the first enabled choice (a non-checkbox child is skipped); user-invalid only once focus leaves the group; `disabled` disables enabled choices, restores only those, and covers choices added or removed meanwhile; a disabled fieldset disables group and choices; ownership back to baseline |
+| Figma parity | `figma-parity.forms.browser.test.ts`, Chromium | Pass for Default, Disabled, Invalid: the group's spacing (`space.xs`), legend, description, and error. A screenshot of the three states in Chromium matched the design |
+| Catalog-wide browser files | checkbox-group, checkbox, textarea, input, forms parity, examples, accessibility, contract, styling, styling-contract, recipes-css, description, frameworks-forms, button, switch, model-select | Chromium 724 pass, 38 skipped; Firefox 720, WebKit 720 pass, 42 skipped |
+| Node project | `npx vitest run --project node` | 1,112 of 1,115 first: Theme Studio expected a `checkboxGroup` specimen, but an example that needs a fixture cannot be one (as with `odd-tabs`), so the entry was dropped; the Workbench search test assumed the 20-result cap would include id-only matches for "o", now it checks their order instead; `icon-catalog.test.ts` timed out under load and passes alone. All three then pass |
+| Types | `tsc -b`, `tsconfig.jsx.json`, framework typings | Pass; `tsconfig.tests.json` fails only in Agent 2's uncommitted toast and overlay parity tests |
+| Lifetime | `node research/benchmarks/lifetime/run.mjs --cycles 1000` | The component scenario (now with a required group) rendered 1,000 of 1,000 with ownership returned in three engines. The first run reported Firefox `navigationCycles` (no odd-* elements) with one scope fewer after than before; the rerun returned ownership in every scenario |
+| Size | `node scripts/check-size.mjs` | `components:checkbox-group` 187 of 256 |
+| CSS compatibility | `node scripts/compat/check-css.mjs --write` | 0 problems |
+| Mutation probes | `.tmp/f-mutate2.mjs`, Chromium | 23 probes; the one survivor (any slotted element counted as a choice) killed by a test with a non-checkbox child; all killed |
+
+**Findings:**
+1. Neither a detached radio nor an unnamed one reports `valueMissing` in Chromium; a named hidden radio in the group's shadow root does, in all three engines, and gives the browser's localized message for an unchosen set.
+2. ElementInternals' validity anchor can be a slotted choice's inner checkbox (a shadow-including descendant), so the browser points its message there and focuses it.
+3. The legend stays `text.primary` when the group is disabled, as Figma draws it; the choices show the disabled look.
+4. Not verified: screen-reader output (group name and description on entry), and Safari on macOS.

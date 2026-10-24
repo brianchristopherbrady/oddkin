@@ -78,6 +78,10 @@ describe('authored examples', () => {
       observe: (el) => (el['validity'] as ValidityState).valueMissing,
       wrong: true,
     },
+    'odd-checkbox-group/requiredFalse': {
+      observe: (el) => (el['validity'] as ValidityState).valueMissing,
+      wrong: true,
+    },
     'odd-textarea/requiredFalse': {
       observe: (el) => (el['validity'] as ValidityState).valueMissing,
       wrong: true,

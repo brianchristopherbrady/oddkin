@@ -118,6 +118,7 @@ describe('component examples', () => {
       'odd-button/inForm': ['component:odd-input'],
       'odd-card/headed': ['component:odd-button'],
       'odd-checkbox/inForm': ['component:odd-button'],
+      'odd-checkbox-group/inForm': ['component:odd-button'],
       'odd-dialog/alert': ['component:odd-button'],
       'odd-dialog/closedByAny': ['component:odd-button'],
       'odd-dialog/default': ['component:odd-button', 'component:odd-input'],

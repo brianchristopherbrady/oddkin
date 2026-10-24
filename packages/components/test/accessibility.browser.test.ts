@@ -62,6 +62,9 @@ const states = `
     <odd-switch name="alerts" checked>Alerts</odd-switch>
     <odd-switch name="digest" description="A summary of the week, every Monday.">Weekly digest</odd-switch>
     <odd-switch name="sync" disabled>Managed by your workspace</odd-switch>
+    <odd-checkbox-group label="Notifications" description="Choose how to hear from us." required><odd-checkbox name="channel" value="email" checked>Email</odd-checkbox><odd-checkbox name="channel" value="summary">Weekly summary</odd-checkbox></odd-checkbox-group>
+    <odd-checkbox-group label="Topics" orientation="horizontal" required error="Choose at least one topic."><odd-checkbox name="topic" value="a">Design</odd-checkbox><odd-checkbox name="topic" value="b">Code</odd-checkbox></odd-checkbox-group>
+    <odd-checkbox-group label="Managed" disabled><odd-checkbox name="managed" checked>Synced</odd-checkbox></odd-checkbox-group>
     <odd-textarea label="Project description" name="about" placeholder="Describe this project…" maxlength="500"></odd-textarea>
     <odd-textarea label="Feedback" description="Tell us what to improve." name="feedback" required error="Feedback is required." maxlength="200"></odd-textarea>
     <odd-textarea label="Terms" name="terms-text" value="Read only." readonly resize="none"></odd-textarea>

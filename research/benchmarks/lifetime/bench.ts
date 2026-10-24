@@ -12,6 +12,7 @@ import '@oddkin/components/define/breadcrumbs';
 import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
 import '@oddkin/components/define/checkbox';
+import '@oddkin/components/define/checkbox-group';
 import '@oddkin/components/define/chip';
 import '@oddkin/components/define/dialog';
 import '@oddkin/components/define/disclosure';
@@ -215,6 +216,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-button id="lifetime-tip">Tip</odd-button><odd-tooltip anchor="lifetime-tip" open>Hint.</odd-tooltip>
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>
+        <odd-checkbox-group label="Topics" required><odd-checkbox name="topic" checked>Design</odd-checkbox><odd-checkbox name="topic">Code</odd-checkbox></odd-checkbox-group>
         <odd-switch name="alerts" checked>Alerts</odd-switch>
         <odd-textarea label="Notes" maxlength="200" resize="auto"></odd-textarea>
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>

@@ -156,6 +156,9 @@ export const CSS_BUDGETS = {
   'components:input': 320,
   // 128: measured 56 on 2026-10-23; the row, box, and marks are the shared control-indicator module.
   'components:checkbox': 128,
+  // 256: measured 187 on 2026-10-23: the choices' stack and spacing; the legend, help, and error are
+  // the shared control module.
+  'components:checkbox-group': 256,
   // 640: measured 569 on 2026-10-23: the track and thumb, which only odd-switch draws.
   'components:switch': 640,
   // 320: measured 264 on 2026-10-23: the resize modes, the field-sizing gate, the block inset, and
