@@ -54,7 +54,7 @@ tokens, slot content, a native element, or a look-alike.
 | `button/lg` | 18 | `odd-button size="lg"` | Existing (variant) | |
 | `iconButton` | 5 | `odd-button` with an icon in the default slot and `label` | Existing (variant) | The accessible name comes from `label` (M4 cross-shadow naming). |
 | `toggleButton` | 8 | `odd-button` `toggle` and `pressed` (`aria-pressed`) | Existing (variant) | Not a new appearance: a pressed toggle takes the selection colours in every appearance. |
-| `splitAction` | 2 | composite of `odd-button` + menu | Planned (unlisted) | References `button` ×2; needs the menu and [ADR 0044](./decisions/0044-overlay-positioning-and-top-layer.md). |
+| `splitAction` | 2 | `odd-split-button` | Existing | A primary `<button>` part and a complete `odd-menu` behind a glyph-only trigger (`strings.more`), its parts forwarded with `exportparts`; `loading` on the primary half. |
 | `link` | 3 | `a.odd-link` recipe (`css/link.css`) | Existing (CSS recipe) | No element: a native `<a>` with the link colour, an underline on hover, and the shared focus ring. |
 | `badge` | 5 | `odd-badge` | Existing | `tone` neutral/info/success/warning/danger with the tone glyph (`no-marker` hides it). AI status labels (`.status` in `@oddkin/ai`) are visually close; moving them onto the tone module is open. |
 | `chip` | 4 | `odd-chip` | Existing | `removable` (a named remove button), `selected`, `disabled`. `multiselect` draws its 14 chips as parts from the chip style module (§6). |
@@ -68,19 +68,19 @@ tokens, slot content, a native element, or a look-alike.
 | `radioGroup` | 2 | `odd-radio-group` | Existing | Native radios in one shadow tree (one Tab stop, arrow keys from the platform); options from `<option>` children or `options`, each with its description; `orientation`. |
 | `switch` | 8 | `odd-switch` | Existing | |
 | `slider` | 3 | `odd-slider` on a native range input | Planned (unlisted) | |
-| `select` | 5 | `odd-select` (styled native `<select>`; `appearance: base-select` gated, F13) | Planned (M10) | Figma references `ListboxSurface` ×2; in code the browser draws the picker, no listbox dependency (§6). |
-| `listbox` | 6 | listbox collection element | Planned (M10, collections "from demonstrated needs") | References `ListboxSurface`, `spinner`, `button`. |
-| `combobox` | 6 | combobox collection element + overlay | Planned (M10) | [ADR 0043](./decisions/0043-composite-dependency-mechanism.md) for option children, ADR 0044 for the surface. |
-| `multiselect` | 10 | multiselect collection element | Planned (unlisted) | Its selection-display exploration (below) now sits on this page. |
+| `select` | 5 | `odd-select` (styled native `<select>`; `appearance: base-select` gated, F13) | Existing | Figma references `ListboxSurface` ×2; in code the browser draws the picker, no listbox dependency (§6). Where `appearance: base-select` and `::picker(select)` are supported, the picker is the overlay surface with option rows (F13). |
+| `listbox` | 6 | `odd-listbox` | Existing | Option rows on Figma's raised surface with `aria-activedescendant`, typeahead, and `multiple`; the form semantics are the internal option-control base it shares with `odd-combobox`. |
+| `combobox` | 6 | `odd-combobox` | Existing | APG combobox with list autocomplete in one shadow tree (no nested elements): the field box with Figma's search glyph, a popup listbox on the overlay wiring (ADR 0044), `no-filter` with `odd-query-change`. |
+| `multiselect` | 10 | `odd-combobox multiple` | Existing | Chips drawn with odd-chip's sheets collapse to "+N" while the field is not in use; rows start with the control indicator's decorative box (`CheckboxOption`). The other display strategies stay an exploration (below). |
 | `multiselect/Display`, `multiselect/Field`, `multiselect/SelectionPanel`, `multiselect/SelectedItems`, `multiselect/InteractionExamples`, `multiselect/Value/{chips,count,text,auto,expandable,avatars,grouped}`, `CheckboxOption`, `AvatarItem` | 89 + 2 | anatomy of the multiselect | Exploration | 12 sets and 2 components, frame "02 · Multiselect · Density, states & interaction reference" and the Fields main components. |
 | `segmented` | 3 | `odd-segmented-control` | Existing | The radio-group base with a segmented look; `size` sm/md/lg; icon-only options named by `label`. |
 | `dateTime` | 3 | `odd-input type="date"` / `"time"` | Existing (variant) | Native date and time inputs (also `datetime-local`, `month`, `week`); the engine draws the picker. |
 | `fileUpload` | 3 | file field | Planned (unlisted) | `odd-context-picker` (AI) has a file-add flow; shared behavior decided at M10. |
 | `ListboxSurface` | 1 | listbox surface part (popover in the top layer) | Anatomy primitive | Instantiated by select, listbox, combobox, multiselect. |
 | `ListboxOption` | 6 | option part / `role="option"` row | Anatomy primitive | 30 option rows reuse it. |
-| `Menu` | 3 | menu collection element | Planned (M10, collections) | References `MenuItem` ×12; overlay per ADR 0044. |
+| `Menu` | 3 | `odd-menu` | Existing | Menu button (APG) with groups, separators, icons, shortcuts, the danger tone, and submenus (nested popovers on the overlay wiring, ADR 0044); rows are the option-row module. |
 | `MenuItem` | 4 | menu item part | Anatomy primitive | |
-| `Tree` | 6 | tree collection element | Planned (M10, collections) | Reuses `NavigationItem` rows, as `odd-side-nav` groups do. |
+| `Tree` | 6 | `odd-tree` | Existing | APG tree with `aria-activedescendant`, typeahead, and `multiple`, on the navigation-row module that `odd-side-nav` groups use. |
 | `Table` | 6 | `table.odd-table` recipe (`css/table.css`) | Existing (CSS recipe) | A native `<table>`: header cells on the sunken surface, rows divided by rules, `aria-sort` headers, a row holding a checked checkbox in the selection colours. Not the data grid. |
 | `List` | 3 | `ul.odd-list` / `ol.odd-list` recipe (`css/list.css`) | Existing (CSS recipe) | Rows divided by rules; `.odd-list-meta` for secondary text; the `aria-current` row in the selection colours. |
 | `NavigationItem` | 4 | `odd-side-nav` entry (`entry` part) | Existing (anatomy) | Link, group, action, disabled, current. |
@@ -110,7 +110,7 @@ tokens, slot content, a native element, or a look-alike.
 | `typography` | 1 | `.odd-type-<role>` recipe (`css/typography.css`) + type roles (`--odd-type-*`) | Existing (CSS recipe) | The 8 core text styles match the repository's type roles (display, title, section, body, ui, small, eyebrow, code); native headings and paragraphs keep their semantics. |
 | `keyboardKey` | 2 | `kbd.odd-kbd` recipe (`css/kbd.css`) | Existing (CSS recipe) | A key cap that does not look clickable; a sequence is adjacent keys. |
 | `CommandItem` | 3 | command item part | Anatomy primitive | |
-| `CommandPalette` | 5 | command palette composite + dialog | Planned (unlisted) | References `CommandItem` ×6, `spinner`, `button`. |
+| `CommandPalette` | 5 | `odd-command-palette` | Existing | A modal dialog on the shared modal wiring with a combobox search over `CommandItem` rows (option-row module); `odd-action` runs a command and closes it. |
 | `CheckboxGroup` | 3 | `odd-checkbox-group` | Existing | Slotted `odd-checkbox` choices in a named group with one legend, description, and error; `required` means at least one. |
 | `ValidationSummary` | 1 | validation summary | Planned (unlisted) | With the M10 form descriptions model. |
 | `Form` | 6 | form composition (example/recipe), not an element | Planned (unlisted) | References `input`, `CheckboxGroup`, `button`, `ValidationSummary`; today `examples/components-only` and `examples/editable-list`. |
@@ -119,9 +119,9 @@ tokens, slot content, a native element, or a look-alike.
 | `GridSelection` | 3 | — | Deferred (data grid) | |
 | `GridRow` | 3 | — | Deferred (data grid) | |
 | `DataGrid` | 9 | — | Deferred (data grid) | |
-| `Splitter/vertical` | 4 | splitter (layout element per layout-recipes.md §7) | Planned (unlisted) | |
-| `Splitter/horizontal` | 4 | splitter | Planned (unlisted) | |
-| `SplitPanels` | 12 | split-panels layout element | Planned (unlisted) | References `Splitter/*` ×10, `button` ×12. |
+| `Splitter/vertical` | 4 | separator part of `odd-split-panel` | Existing | The APG window splitter between side-by-side panes, on `@oddkin/core/controllers/resize`. |
+| `Splitter/horizontal` | 4 | separator part of `odd-split-panel` (`orientation="vertical"`) | Existing | The splitter between stacked panes. |
+| `SplitPanels` | 12 | `odd-split-panel` | Existing | Two panes in slots `start` and `end`; more panes nest split panels; Figma's toolbar buttons are author content. |
 
 Totals: 71 families. Existing: 4 elements (`button`, `input`, `card`, `SideNavigation`) plus 5 variant or anatomy
 rows (`button/sm`, `button/lg`, `iconButton`, `search`, `NavigationItem`). Planned (M10): 28. Planned (unlisted): 25.
