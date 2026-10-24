@@ -101,6 +101,14 @@ describe('layout.css', () => {
       '.odd-grid',
       '.odd-auto-grid',
       '.odd-split',
+      '.odd-stack-tight',
+      '.odd-stack-loose',
+      '.odd-row-between',
+      '.odd-box',
+      '.odd-box-none',
+      '.odd-box-roomy',
+      '.odd-center',
+      '.odd-aspect-ratio',
     ])
       expect(body(selector).length, selector).toBeGreaterThan(0);
   });
@@ -118,5 +126,22 @@ describe('layout.css', () => {
     expect(pairs('.odd-grid')).toContain(
       'grid-template-columns: repeat(var(--odd-grid-columns, 2), minmax(0, 1fr))',
     );
+    expect(pairs('.odd-box')).toContain('padding: var(--odd-box-inset, var(--odd-layout-inset))');
+    expect(pairs('.odd-aspect-ratio')).toContain('aspect-ratio: var(--odd-aspect-ratio, 16 / 9)');
+  });
+
+  it('gives Figma’s variants as presets that read the token itself, after the class they modify', () => {
+    const pairs = (selector: string) => body(selector).map((d) => d.split(/:\s*/, 2).join(': '));
+    expect(pairs('.odd-stack-tight')).toEqual(['gap: var(--odd-space-xs)']);
+    expect(pairs('.odd-stack-loose')).toEqual(['gap: var(--odd-space-lg)']);
+    expect(pairs('.odd-box-none')).toEqual(['padding: var(--odd-space-none)']);
+    expect(pairs('.odd-box-roomy')).toEqual(['padding: var(--odd-space-xl)']);
+    expect(pairs('.odd-row-between')).toEqual(['justify-content: space-between']);
+    for (const [base, modifier] of [
+      ['.odd-stack {', '.odd-stack-tight {'],
+      ['.odd-row {', '.odd-row-between {'],
+      ['.odd-box {', '.odd-box-roomy {'],
+    ] as const)
+      expect(built.indexOf(modifier), modifier).toBeGreaterThan(built.indexOf(base));
   });
 });

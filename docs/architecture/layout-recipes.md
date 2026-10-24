@@ -263,11 +263,14 @@ Verified in `packages/components/test/layout.test.ts` (Node) and `layout.browser
 
 | Class | Arrangement | Override properties (default) |
 | --- | --- | --- |
-| `.odd-stack` | Column, `min-inline-size: 0` | `--odd-stack-gap` (`layout.gap`) |
-| `.odd-row` | Row, centred, no wrapping | `--odd-row-gap` |
+| `.odd-stack` | Column, `min-inline-size: 0`; `.odd-stack-tight` and `.odd-stack-loose` use `space.xs` and `space.lg` | `--odd-stack-gap` (`layout.gap`) |
+| `.odd-row` | Row, centred, no wrapping; `.odd-row-between` spreads the children | `--odd-row-gap` |
 | `.odd-cluster` | Row that wraps | `--odd-cluster-gap` |
 | `.odd-grid` | Equal columns, `minmax(0, 1fr)` | `--odd-grid-columns` (`2`), `--odd-grid-gap` |
 | `.odd-auto-grid` | As many columns as fit, `min(item-min, 100%)` | `--odd-auto-grid-min` (`layout.item-min`), `--odd-auto-grid-gap` |
 | `.odd-split` | Two children in DOM order: the first is the side, the last takes the rest and wraps below its minimum | `--odd-split-side-width` (`layout.sidebar-width`), `--odd-split-main-min` (`layout.main-min`), `--odd-split-gap` |
+| `.odd-box` | Inset wrapper, `min-inline-size: 0`; `.odd-box-none` and `.odd-box-roomy` use `space.none` and `space.xl` | `--odd-box-inset` (`layout.inset`) |
+| `.odd-center` | Grid that centres its content on both axes | — |
+| `.odd-aspect-ratio` | Locked ratio whatever the content; children share one cell (a caption over media); `img`, `video`, `iframe`, `canvas`, `svg` fill it | `--odd-aspect-ratio` (`16 / 9`; Figma's `4 / 3` and `1 / 1`) |
 
-All classes have one-class specificity inside `odd.layout`, so any unlayered page rule overrides them. Budget: `components:layout` 512 B gzip.
+All classes have one-class specificity inside `odd.layout`, so any unlayered page rule overrides them. The modifiers are Figma's `Oddkin/Layout/*` variants (section 457:2078): presets that set the token itself and come after the class they modify, so an ancestor's override property never changes them; a one-off value uses the override property instead. Figma's `Split` arrangements and `Grid` columns are not classes: the split wraps by itself, and `--odd-grid-columns` takes any count. Figma parity per family at 320, 640, and 960 px: `packages/components/test/figma-parity.layout.browser.test.ts`. Budget: `components:layout` 704 B gzip (626 measured).

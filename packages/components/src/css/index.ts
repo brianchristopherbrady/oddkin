@@ -109,7 +109,12 @@ function layoutClasses(): CSSResult {
   return unsafeCSS(
     [
       rule('.odd-stack', helpers.stack({ gap: gap('stack') }).declarations),
+      // Figma's variants (Oddkin/Layout/*) are presets that set the token itself, so a property
+      // an ancestor sets for its own class never overrides them.
+      rule('.odd-stack-tight', [['gap', token('space.xs')]]),
+      rule('.odd-stack-loose', [['gap', token('space.lg')]]),
       rule('.odd-row', helpers.row({ gap: gap('row') }).declarations),
+      rule('.odd-row-between', [['justify-content', 'space-between']]),
       rule('.odd-cluster', helpers.row({ gap: gap('cluster'), wrap: true }).declarations),
       rule(
         '.odd-grid',
@@ -126,6 +131,36 @@ function layoutClasses(): CSSResult {
           gap: gap('auto-grid'),
         }).declarations,
       ),
+      rule(
+        '.odd-box',
+        helpers.css({ padding: knob('box-inset', token('layout.inset')), 'min-inline-size': '0' })
+          .declarations,
+      ),
+      rule('.odd-box-none', [['padding', token('space.none')]]),
+      rule('.odd-box-roomy', [['padding', token('space.xl')]]),
+      rule(
+        '.odd-center',
+        helpers.css({ display: 'grid', 'place-items': 'center', 'min-inline-size': '0' })
+          .declarations,
+      ),
+      // The ratio holds whatever the content (its one track has no minimum); children share one cell, so a
+      // caption can sit over the media, and media fill it.
+      rule(
+        '.odd-aspect-ratio',
+        helpers.css({
+          display: 'grid',
+          'grid-template-columns': 'minmax(0, 1fr)',
+          'grid-template-rows': 'minmax(0, 1fr)',
+          'aspect-ratio': knob('aspect-ratio', '16 / 9'),
+          'min-inline-size': '0',
+        }).declarations,
+      ),
+      rule('.odd-aspect-ratio > *', [['grid-area', '1 / 1']]),
+      rule('.odd-aspect-ratio > :is(img, video, iframe, canvas, svg)', [
+        ['inline-size', '100%'],
+        ['block-size', '100%'],
+        ['object-fit', 'cover'],
+      ]),
       // Two children in DOM order: the first is the side, the last takes the remaining space.
       rule('.odd-split', split.declarations),
       rule('.odd-split > :first-child', split.regions?.['side'] ?? []),
@@ -137,7 +172,9 @@ function layoutClasses(): CSSResult {
 /**
  * Page-author layout classes generated from the same helpers as recipes, with an override
  * property per option (`--odd-stack-gap`, `--odd-split-side-width`, …) defaulting to the
- * theme's layout roles.
+ * theme's layout roles: `.odd-stack` (`-tight`, `-loose`), `.odd-row` (`-between`),
+ * `.odd-cluster`, `.odd-grid`, `.odd-auto-grid`, `.odd-split`, `.odd-box` (`-none`,
+ * `-roomy`), `.odd-center`, and `.odd-aspect-ratio`.
  */
 export const layout: DocumentStylesheet = { layer: 'odd.layout', styles: layoutClasses() };
 

@@ -134,7 +134,7 @@ Development and production builds per entry, as in `@oddkin/state`.
 | `./styles` | Shared style primitives for shadow roots: `hostStyles`, `focusRingStyles`, `visuallyHiddenStyles` (theming-and-styling.md §7). **Implemented** | none |
 | `./css/reset.css`, `./css/base.css`, `./css/utilities.css` | Opt-in document stylesheets in `odd.reset`, `odd.base`, `odd.utilities` (css-architecture.md §5.1). **Implemented** | CSS, no script |
 | `./layout` | Oddkin-bound layout helpers (roles, named conditions), `defineLayoutRecipe` (`odd.layout` prefix), `condition()` (layout-recipes.md §12). **Implemented**; the side navigation's `sideNavRecipe` is exported from `./side-nav/recipe` (kept out of `./side-nav`, so component consumers never load the recipe engine), other preset recipes planned | none |
-| `./css/layout.css` | Page-author layout classes (`odd-stack`, `odd-row`, `odd-cluster`, `odd-grid`, `odd-auto-grid`, `odd-split`) generated from the same helpers, in `odd.layout`. **Implemented** | CSS, no script |
+| `./css/layout.css` | Page-author layout classes (`odd-stack`, `odd-row`, `odd-cluster`, `odd-grid`, `odd-auto-grid`, `odd-split`, `odd-box`, `odd-center`, `odd-aspect-ratio`, and Figma's variants as modifiers) generated from the same helpers, in `odd.layout`. **Implemented** | CSS, no script |
 | `./css/button.css` | Native `<button class="odd-button">` styled like `odd-button` (same tokens, component variables, focus ring), in `odd.components`, for forms that need native submit-button semantics (css-architecture.md §10.1). **Implemented** | CSS, no script |
 | `./metadata` | Rich docs metadata (separately loadable) | none |
 | `./custom-elements.json` | Custom Elements Manifest | data |

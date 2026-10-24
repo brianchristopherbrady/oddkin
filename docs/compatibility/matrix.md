@@ -124,7 +124,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/tokens/dist/css/default.css` | yes | 15 |
 | `packages/components/dist/css/reset.css` | yes | 16 |
 | `packages/components/dist/css/base.css` | yes | 12 |
-| `packages/components/dist/css/layout.css` | yes | 22 |
+| `packages/components/dist/css/layout.css` | yes | 34 |
 | `packages/components/dist/css/utilities.css` | yes | 18 |
 | `packages/components/dist/alert/alert.structural.styles.js (alertStructuralStyles)` | yes | 22 |
 | `packages/components/dist/alert/alert.styles.js (alertStyles)` | yes | 10 |

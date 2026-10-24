@@ -34,6 +34,8 @@ export interface Target {
   kind: Kind;
   pseudo?: string;
   gap?: 'column-gap' | 'row-gap';
+  /** More bound fields to compare, as [Figma field, CSS property] (layout: `counterAxisSpacing`, …). */
+  fields?: [string, string][];
 }
 
 /** Accepted differences, each with its reason (also listed in component-catalog.md §7). */
@@ -179,7 +181,10 @@ export function compare(familyName: string, values: Record<string, string>, targ
   const out: string[] = [];
   const where = `${familyName.replace('Oddkin/Common/', '')} ${Object.values(values).join('/')}`;
   for (const t of targets) {
-    const layer = layers.find((l) => l.path.join(' > ') === t.layer.join(' > '));
+    // `layer: []` is the component's own frame (layout families bind their padding there).
+    const layer = t.layer.length
+      ? layers.find((l) => l.path.join(' > ') === t.layer.join(' > '))
+      : family.layers.find((l) => !l.path.length);
     if (!layer) throw new Error(`${where}: no layer ${t.layer.join(' > ')}`);
     const style = getComputedStyle(t.el, t.pseudo);
     const at = `${where} ${t.layer.at(-1)}`;
@@ -200,6 +205,8 @@ export function compare(familyName: string, values: Record<string, string>, targ
       if (!boundFor(layer, index, 'strokes') && visible)
         out.push(`${at} strokes (none): border ${style.borderBlockStartColor}`);
       if (t.gap) check('itemSpacing', t.gap, style.getPropertyValue(t.gap));
+      for (const [field, property] of t.fields ?? [])
+        check(field, property, style.getPropertyValue(property));
       const height = boundFor(layer, index, 'height');
       if (height) {
         const actual = `${t.el.getBoundingClientRect().height}px`;
