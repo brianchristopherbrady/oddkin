@@ -103,6 +103,7 @@ describe('authored examples', () => {
     'odd-popover/openFalse': { observe: (el) => el['open'], wrong: true },
     'odd-popover/physicalSide': { observe: (el) => el['side'], wrong: 'block-end' },
     'odd-dialog/closedByBackdrop': { observe: (el) => el['closedBy'], wrong: 'closerequest' },
+    'odd-tooltip/physicalSide': { observe: (el) => el['side'], wrong: 'block-start' },
     'odd-breadcrumbs/itemsAttribute': {
       observe: (el) => el.shadowRoot!.querySelectorAll('[part~="item"]').length,
       wrong: 0,
@@ -144,6 +145,7 @@ describe('authored examples', () => {
     'odd-select/optionsAttribute': ['element.attribute.propertyOnly'],
     'odd-popover/physicalSide': ['element.attribute.invalid'],
     'odd-dialog/closedByBackdrop': ['element.attribute.invalid'],
+    'odd-tooltip/physicalSide': ['element.attribute.invalid'],
   };
 
   it('each explained mistake does what its explanation says, unlike its correct example', async () => {

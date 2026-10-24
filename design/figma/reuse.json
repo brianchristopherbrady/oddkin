@@ -1730,6 +1730,10 @@
     "odd-toolbar": {
       "dependencies": []
     },
+    "odd-tooltip": {
+      "dependencies": [],
+      "reason": "It describes the element it is anchored to; the anchor is any element, not a dependency."
+    },
     "odd-tree": {
       "dependencies": ["odd-icon"],
       "reason": "Item icons are drawn by the complete odd-icon widget authors also place alone."
@@ -1894,7 +1898,7 @@
         "combobox",
         "multiselect"
       ],
-      "code": ["odd-popover", "odd-dialog", "odd-select"]
+      "code": ["odd-popover", "odd-dialog", "odd-select", "odd-tooltip"]
     },
     {
       "id": "form",
@@ -1931,7 +1935,7 @@
       "decision": "Anchored overlay placement and dismissal.",
       "status": "existing",
       "figma": ["popover", "tooltip", "Menu", "combobox", "multiselect", "splitAction"],
-      "code": ["odd-popover"]
+      "code": ["odd-popover", "odd-tooltip"]
     },
     {
       "id": "modal-dialog",

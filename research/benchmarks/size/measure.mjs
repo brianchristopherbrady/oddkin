@@ -134,6 +134,7 @@ export const CSS_BUDGETS = {
   // 704: measured 638 on 2026-10-23: the header, body, and footer column, title, divider, and sizes;
   // the sheet look, motion, and close button are the shared overlay module.
   'components:dialog': 704,
+  'components:tooltip': 256, // 203: the surface and motion are the shared overlay module
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   // Collections, measured on 2026-10-23 (structural and default styles; rows are the shared modules).

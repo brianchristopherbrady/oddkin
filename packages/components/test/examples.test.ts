@@ -122,6 +122,8 @@ describe('component examples', () => {
       'odd-dialog/closedByAny': ['component:odd-button'],
       'odd-dialog/default': ['component:odd-button', 'component:odd-input'],
       'odd-empty-state/default': ['component:odd-button'],
+      'odd-tooltip/default': ['component:odd-button'],
+      'odd-tooltip/inlineEnd': ['component:odd-button'],
       'odd-input/inForm': ['component:odd-button'],
       'odd-listbox/inForm': ['component:odd-button'],
       'odd-select/inForm': ['component:odd-button'],

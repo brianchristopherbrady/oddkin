@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 119 stylesheets, 295 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 121 stylesheets, 295 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -197,6 +197,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/tabs/tabs.styles.js (tabsStyles)` | yes | 22 |
 | `packages/components/dist/toolbar/toolbar.structural.styles.js (toolbarStructuralStyles)` | yes | 23 |
 | `packages/components/dist/toolbar/toolbar.styles.js (toolbarStyles)` | yes | 16 |
+| `packages/components/dist/tooltip/tooltip.structural.styles.js (tooltipStructuralStyles)` | yes | 3 |
+| `packages/components/dist/tooltip/tooltip.styles.js (tooltipStyles)` | yes | 7 |
 | `packages/components/dist/tree/tree.structural.styles.js (treeStructuralStyles)` | yes | 18 |
 | `packages/components/dist/tree/tree.styles.js (treeStyles)` | yes | 13 |
 | `packages/ai/dist/action-approval/action-approval.styles.js (actionApprovalStyles)` | yes | 27 |

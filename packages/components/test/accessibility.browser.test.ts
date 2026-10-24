@@ -120,6 +120,8 @@ const states = `
   <odd-pagination label="Articles" current="1" page-count="4" href="#page-{page}"></odd-pagination>
   <odd-breadcrumbs><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
   <odd-popover label="Share workspace" open><p>Invite people to collaborate.</p><a href="#docs">Sharing settings</a></odd-popover>
+  <odd-button id="a11y-archive">Archive</odd-button><odd-tooltip anchor="a11y-archive">You can restore it from settings.</odd-tooltip>
+  <button id="a11y-copy">Copy link</button><odd-tooltip anchor="a11y-copy" open>Copy a link to this workspace</odd-tooltip>
   <odd-breadcrumbs label="Collapsed location" max-items="2"><svg slot="home" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M3 11l9-8 9 8" /></svg><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
   <h2>Collections</h2>
   <odd-tree label="Project files" value="text-field" data-items></odd-tree>

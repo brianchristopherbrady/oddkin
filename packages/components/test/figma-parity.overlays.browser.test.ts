@@ -42,6 +42,25 @@ describe('Figma parity: odd-popover (popover)', () => {
     });
 });
 
+describe('Figma parity: odd-tooltip (tooltip)', () => {
+  // Description's second line (Small, secondary) is the author's markup; the tooltip styles its text.
+  for (const [state, text] of [
+    ['Default', 'Copy a link to this workspace'],
+    ['Description', 'Archive workspace'],
+  ])
+    it(state, async () => {
+      const el = mount(`<odd-tooltip open>${text}</odd-tooltip>`);
+      await settle(el);
+      const frame = `Tooltip / ${state}`;
+      const targets: Target[] = [
+        { layer: [frame, 'Surface'], el, kind: 'frame' },
+        { layer: [frame, text], el: el.shadowRoot!.querySelector('[part~="base"]')!, kind: 'text' },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/tooltip', { State: state }, targets));
+    });
+});
+
 describe('Figma parity: odd-dialog (dialog, alertDialog)', () => {
   const part = (el: Element, name: string) =>
     el.shadowRoot!.querySelector<HTMLElement>(`[part~="${name}"]`)!;

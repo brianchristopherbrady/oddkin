@@ -30,6 +30,7 @@ import '@oddkin/components/define/split-panel';
 import '@oddkin/components/define/switch';
 import '@oddkin/components/define/tabs';
 import '@oddkin/components/define/toolbar';
+import '@oddkin/components/define/tooltip';
 import '@oddkin/components/define/tree';
 import { scopeStats } from '@oddkin/core/scope';
 import { generate } from '@oddkin/tokens/generate';
@@ -206,6 +207,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-breadcrumbs max-items="2"><ol><li><a href="#a">A</a></li><li><a href="#b">B</a></li><li><a href="#c">C</a></li></ol></odd-breadcrumbs>
         <odd-popover label="Details" open>Details.</odd-popover>
         <odd-dialog label="Confirm" open>Sure?<button slot="footer">OK</button></odd-dialog>
+        <odd-button id="lifetime-tip">Tip</odd-button><odd-tooltip anchor="lifetime-tip" open>Hint.</odd-tooltip>
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>
         <odd-switch name="alerts" checked>Alerts</odd-switch>

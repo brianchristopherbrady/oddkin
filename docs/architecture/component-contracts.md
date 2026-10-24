@@ -329,10 +329,13 @@ button named by `strings.close`) unless `no-close`. `show()`, `close()`, `open` 
 was. Fades in and out with the overlay-surface module unless motion is reduced. The wiring other overlays share is
 `Overlay` and `closeButton` in `packages/components/src/overlay/overlay.ts` (internal).
 
-**`odd-tooltip`** (`tooltip`) — `anchor`, `side = block-start`, `align = center`; default slot: short text. Shows on
-anchor hover (after a delay) and focus, hides on Escape, blur, and pointer leave (WCAG 1.4.13: hoverable,
-dismissible, persistent). Describes its anchor with `aria-describedby` (same tree); never the only name. An Oddkin
-control anchor forwards the description to its inner focus target.
+**`odd-tooltip`** (`tooltip`) — `anchor` (an ID in the same tree), `anchorElement` (property), `side = block-start`,
+`align = center`, `open` (reflected), `show()`, `close()`; default slot: short text. The host is the surface
+(`popover="manual"`, role `tooltip`, part `base`). Shows on anchor hover after 500 ms (not for touch) and at once on
+focus; stays while the pointer is on the anchor or the tooltip (100 ms to cross between them) or focus is in the
+anchor; Escape hides it and is consumed (WCAG 1.4.13: hoverable, dismissible, persistent). Describes its anchor with
+`aria-describedby` (same tree; an `id` is generated when it has none); never the only name. An Oddkin control anchor
+renders the text as its inner focus target's description instead (`_describe`, §2.4), following text changes.
 
 **`odd-dialog`** (`dialog`, `alertDialog`) — native `<dialog>` in the shadow root, always modal (`showModal()`, so
 the page is inert; non-modal surfaces are `odd-popover`). `open` (reflected), `label` (the title, an `h2`, names it),

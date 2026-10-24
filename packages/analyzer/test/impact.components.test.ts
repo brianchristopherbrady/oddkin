@@ -84,6 +84,8 @@ describe('change impact on @oddkin/components', () => {
         'example:odd-listbox/inForm',
         'example:odd-select/inForm',
         ...['default', 'selection', 'vertical'].map((name) => `example:odd-toolbar/${name}`),
+        'example:odd-tooltip/default',
+        'example:odd-tooltip/inlineEnd',
       ].sort(),
     );
   });

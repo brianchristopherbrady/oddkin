@@ -330,6 +330,18 @@
       "types": "./dist/toolbar/toolbar.define.d.ts",
       "default": "./dist/toolbar/toolbar.define.js"
     },
+    "./tooltip": {
+      "types": "./dist/tooltip/index.d.ts",
+      "default": "./dist/tooltip/index.js"
+    },
+    "./tooltip/foundation": {
+      "types": "./dist/tooltip/foundation.d.ts",
+      "default": "./dist/tooltip/foundation.js"
+    },
+    "./define/tooltip": {
+      "types": "./dist/tooltip/tooltip.define.d.ts",
+      "default": "./dist/tooltip/tooltip.define.js"
+    },
     "./tree": {
       "types": "./dist/tree/index.d.ts",
       "default": "./dist/tree/index.js"
