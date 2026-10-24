@@ -139,7 +139,7 @@ export const CSS_BUDGETS = {
   // 704: measured 618 on 2026-10-23: the stack, the shared pause, the timer, and the grid; the surface,
   // motion, and close button are the shared overlay module.
   'components:toast': 704,
-  // 512: measured 462 on 2026-10-23: the danger surface and border, heading row, and link list; the
+  // 512: measured 451 on 2026-10-23: the danger surface and border, heading row, and link list; the
   // tone colours and glyph are the shared tone module.
   'components:validation-summary': 512,
   // Layout, measured on 2026-10-23 (structural and default styles).
