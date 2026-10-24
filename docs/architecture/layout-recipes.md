@@ -267,10 +267,23 @@ Verified in `packages/components/test/layout.test.ts` (Node) and `layout.browser
 | `.odd-row` | Row, centred, no wrapping; `.odd-row-between` spreads the children | `--odd-row-gap` |
 | `.odd-cluster` | Row that wraps | `--odd-cluster-gap` |
 | `.odd-grid` | Equal columns, `minmax(0, 1fr)` | `--odd-grid-columns` (`2`), `--odd-grid-gap` |
-| `.odd-auto-grid` | As many columns as fit, `min(item-min, 100%)` | `--odd-auto-grid-min` (`layout.item-min`), `--odd-auto-grid-gap` |
-| `.odd-split` | Two children in DOM order: the first is the side, the last takes the rest and wraps below its minimum | `--odd-split-side-width` (`layout.sidebar-width`), `--odd-split-main-min` (`layout.main-min`), `--odd-split-gap` |
+| `.odd-auto-grid` | As many columns as fit, `min(item-min, 100%)`; `.odd-auto-grid-fit` lets a few items stretch across the row (`auto-fit`) | `--odd-auto-grid-min` (`layout.item-min`), `--odd-auto-grid-gap` |
+| `.odd-split` | Two children in DOM order: the first is the side, the last takes the rest and wraps below its minimum; `.odd-split-end` puts the side after the main content (the first child is the main content) | `--odd-split-side-width` (`layout.sidebar-width`), `--odd-split-main-min` (`layout.main-min`), `--odd-split-gap` |
 | `.odd-box` | Inset wrapper, `min-inline-size: 0`; `.odd-box-none` and `.odd-box-roomy` use `space.none` and `space.xl` | `--odd-box-inset` (`layout.inset`) |
 | `.odd-center` | Grid that centres its content on both axes | — |
 | `.odd-aspect-ratio` | Locked ratio whatever the content; children share one cell (a caption over media); `img`, `video`, `iframe`, `canvas`, `svg` fill it | `--odd-aspect-ratio` (`16 / 9`; Figma's `4 / 3` and `1 / 1`) |
 
-All classes have one-class specificity inside `odd.layout`, so any unlayered page rule overrides them. The modifiers are Figma's `Oddkin/Layout/*` variants (section 457:2078): presets that set the token itself and come after the class they modify, so an ancestor's override property never changes them; a one-off value uses the override property instead. Figma's `Split` arrangements and `Grid` columns are not classes: the split wraps by itself, and `--odd-grid-columns` takes any count. Figma parity per family at 320, 640, and 960 px: `packages/components/test/figma-parity.layout.browser.test.ts`. Budget: `components:layout` 704 B gzip (626 measured).
+All classes have one-class specificity inside `odd.layout`, so any unlayered page rule overrides them. The modifiers are Figma's `Oddkin/Layout/*` variants (section 457:2078): presets that set the token itself and come after the class they modify, so an ancestor's override property never changes them; a one-off value uses the override property instead. Figma's `Split` arrangements and `Grid` columns are not classes: the split wraps by itself, and `--odd-grid-columns` takes any count. Figma parity per family at 320, 640, and 960 px: `packages/components/test/figma-parity.layout.browser.test.ts`. Budget: `components:layout` 704 B gzip (660 measured).
+
+## 13. Preset catalog (M10)
+
+Decided from demonstrated needs: a preset ships only where real consumers already make the same layout decision (component-catalog.md §6: a shared home when a second real consumer needs the same decision); a decision only one consumer makes stays its own CSS.
+
+| Need | Consumers that make the decision today | Preset |
+| --- | --- | --- |
+| Side navigation | `odd-side-nav` | `recipe:side-nav` (§10) |
+| Page shell: a side column beside the main content that stacks when narrow | `apps/docs` `.site-layout`, `examples/ai-research` `.app`, `examples/ai-writing` `.app` (side after the main content), Workbench's shell (contents after the body) | `.odd-split`, and `.odd-split-end` for a side after the main content; the page flow and header from `.odd-stack` and `.odd-row-between`. Intrinsic: no media or container query. No JavaScript recipe: no consumer renders a page shell in a shadow root except Workbench, whose container-query shell is its own, and the composition schema's `"recipe": "page-shell"` (data-composition.md §8) waits for the M8 go |
+| Card grid: as many columns as fit, a few cards across the whole row | `apps/docs` `.card-grid`, `examples/ai-agent` `.grid`, `examples/css-gallery` `.controls` (each `auto-fit` with its own minimum) | `.odd-auto-grid odd-auto-grid-fit` with `--odd-auto-grid-min` |
+| Toolbar: a row of actions that wraps, or spreads to both ends | `examples/ai-agent` `.toolbar`, `examples/ai-research` `.buttons`, `examples/css-gallery` `.actions`; `apps/docs` `.site-header` | `.odd-cluster` and `.odd-row-between`; `odd-toolbar` when the row is an ARIA toolbar (one tab stop, arrow keys) |
+
+The consumers above still write these layouts by hand; moving them to the classes is follow-up work for their owners. Checked by `packages/components/test/layout.browser.test.ts` (the side after the main content, wide and stacked; a few items across the row) and `layout.test.ts`, in three engines.

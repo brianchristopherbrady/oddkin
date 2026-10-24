@@ -207,8 +207,9 @@ export const CSS_BUDGETS = {
   // hidden).
   'components:shared': 3072,
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
-  // measured 626 on 2026-10-23 (411 on 2026-10-18): layout.css page-author classes, with
-  // Figma's Oddkin/Layout variants and .odd-box, .odd-center, .odd-aspect-ratio
+  // measured 660 on 2026-10-24 (411 on 2026-10-18): layout.css page-author classes, with
+  // Figma's Oddkin/Layout variants, .odd-box, .odd-center, .odd-aspect-ratio, and the presets
+  // .odd-split-end and .odd-auto-grid-fit
   'components:layout': 704,
   'components:button.css': 1024, // measured 999 on 2026-10-23: button.css, the native <button> path, with aria-pressed
   // 2,176: measured 2,081 on 2026-10-23 with the field recipe's start and end adornments (the shared

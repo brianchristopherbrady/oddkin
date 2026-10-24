@@ -109,6 +109,8 @@ describe('layout.css', () => {
       '.odd-box-roomy',
       '.odd-center',
       '.odd-aspect-ratio',
+      '.odd-auto-grid-fit',
+      '.odd-split-end > :first-child',
     ])
       expect(body(selector).length, selector).toBeGreaterThan(0);
   });
@@ -141,6 +143,8 @@ describe('layout.css', () => {
       ['.odd-stack {', '.odd-stack-tight {'],
       ['.odd-row {', '.odd-row-between {'],
       ['.odd-box {', '.odd-box-roomy {'],
+      ['.odd-auto-grid {', '.odd-auto-grid-fit {'],
+      ['.odd-split > :last-child {', '.odd-split-end > :last-child {'],
     ] as const)
       expect(built.indexOf(modifier), modifier).toBeGreaterThan(built.indexOf(base));
   });

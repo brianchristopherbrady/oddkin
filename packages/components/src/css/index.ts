@@ -131,6 +131,13 @@ function layoutClasses(): CSSResult {
           gap: gap('auto-grid'),
         }).declarations,
       ),
+      // Few items stretch across the row instead of keeping empty tracks (card grids).
+      rule(
+        '.odd-auto-grid-fit',
+        helpers
+          .autoGrid({ min: knob('auto-grid-min', token('layout.item-min')), fill: 'auto-fit' })
+          .declarations.filter(([property]) => property === 'grid-template-columns'),
+      ),
       rule(
         '.odd-box',
         helpers.css({ padding: knob('box-inset', token('layout.inset')), 'min-inline-size': '0' })
@@ -165,6 +172,13 @@ function layoutClasses(): CSSResult {
       rule('.odd-split', split.declarations),
       rule('.odd-split > :first-child', split.regions?.['side'] ?? []),
       rule('.odd-split > :last-child', split.regions?.['main'] ?? []),
+      // The side after the main content: the same regions, the other way round.
+      rule('.odd-split-end > :first-child', split.regions?.['main'] ?? []),
+      rule('.odd-split-end > :last-child', [
+        ...(split.regions?.['side'] ?? []),
+        // Not the main minimum: the initial value, as for the side of odd-split.
+        ['min-inline-size', 'initial'],
+      ]),
     ].join('\n'),
   );
 }
@@ -173,8 +187,8 @@ function layoutClasses(): CSSResult {
  * Page-author layout classes generated from the same helpers as recipes, with an override
  * property per option (`--odd-stack-gap`, `--odd-split-side-width`, …) defaulting to the
  * theme's layout roles: `.odd-stack` (`-tight`, `-loose`), `.odd-row` (`-between`),
- * `.odd-cluster`, `.odd-grid`, `.odd-auto-grid`, `.odd-split`, `.odd-box` (`-none`,
- * `-roomy`), `.odd-center`, and `.odd-aspect-ratio`.
+ * `.odd-cluster`, `.odd-grid`, `.odd-auto-grid` (`-fit`), `.odd-split` (`-end`), `.odd-box`
+ * (`-none`, `-roomy`), `.odd-center`, and `.odd-aspect-ratio`.
  */
 export const layout: DocumentStylesheet = { layer: 'odd.layout', styles: layoutClasses() };
 

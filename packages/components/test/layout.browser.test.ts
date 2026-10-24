@@ -42,6 +42,37 @@ describe('layout.css', () => {
     expect(top(main)).toBeGreaterThan(top(side));
   });
 
+  it('puts the side after the main content with odd-split-end, and wraps it below', () => {
+    container.innerHTML =
+      '<div class="odd-split odd-split-end"><main id="main">Main</main><aside id="side">Side</aside></div>';
+    const side = container.querySelector('#side') as HTMLElement;
+    const main = container.querySelector('#main') as HTMLElement;
+    expect(top(side)).toBe(top(main));
+    expect(side.getBoundingClientRect().left).toBeGreaterThan(main.getBoundingClientRect().left);
+    // The side takes its width and no more; the main content takes the rest.
+    // (the side grows by 1/1000 of the free space, as in odd-split).
+    expect(side.getBoundingClientRect().width).toBeCloseTo(100, 0);
+    expect(main.getBoundingClientRect().width + side.getBoundingClientRect().width).toBeCloseTo(
+      490,
+      1,
+    );
+    container.style.width = '250px';
+    expect(top(side)).toBeGreaterThan(top(main));
+    // Stacked, the side has no main minimum: it fits a container narrower than 200px.
+    container.style.width = '150px';
+    expect(side.getBoundingClientRect().width).toBe(150);
+  });
+
+  it('stretches a few items across the row with odd-auto-grid-fit', () => {
+    container.innerHTML =
+      '<div class="odd-auto-grid" id="fill"><p>a</p><p>b</p></div><div class="odd-auto-grid odd-auto-grid-fit" id="fit"><p>a</p><p>b</p></div>';
+    const width = (id: string) =>
+      (container.querySelector(`${id} > p`) as HTMLElement).getBoundingClientRect().width;
+    // 500px, 100px minimum, 10px gap: four tracks; auto-fill keeps the empty ones.
+    expect(width('#fill')).toBe(117.5);
+    expect(width('#fit')).toBe(245);
+  });
+
   it('fits as many auto-grid columns as the item minimum allows', () => {
     container.innerHTML = `<div class="odd-auto-grid">${'<p>x</p>'.repeat(6)}</div>`;
     const columns = () =>
