@@ -78,6 +78,7 @@ export type TokenName =
   | 'layout.inset'
   | 'layout.item-min'
   | 'layout.main-min'
+  | 'layout.measure'
   | 'layout.sidebar-width'
   | 'letter-spacing.normal'
   | 'letter-spacing.tight'

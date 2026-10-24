@@ -16,6 +16,7 @@ import '@oddkin/components/define/checkbox-group';
 import '@oddkin/components/define/chip';
 import '@oddkin/components/define/combobox';
 import '@oddkin/components/define/command-palette';
+import '@oddkin/components/define/container';
 import '@oddkin/components/define/dialog';
 import '@oddkin/components/define/disclosure';
 import '@oddkin/components/define/drawer';
@@ -234,6 +235,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-textarea label="Notes" maxlength="200" resize="auto"></odd-textarea>
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
         <odd-scroll-region label="Log" style="max-block-size: 3rem"><p>A</p><p>B</p><p>C</p><p>D</p></odd-scroll-region>
+        <odd-container measure="fluid"><p>A</p></odd-container>
         <odd-tree label="Files" value="b"></odd-tree>
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
         <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>

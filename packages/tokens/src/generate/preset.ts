@@ -267,6 +267,7 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
   t('layout.item-min', 'layout', 'dimension', '16rem'),
   t('layout.sidebar-width', 'layout', 'dimension', '16rem'),
   t('layout.main-min', 'layout', 'dimension', '20rem'),
+  t('layout.measure', 'layout', 'dimension', '40rem'),
 
   // Navigation component roles (side-nav)
   t('navigation.item.padding.inline', 'component', 'dimension', '{space.sm}'),

@@ -464,6 +464,8 @@ const REPO_ONLY = [
   ...['foreground', 'surface'].map((part) => `color.info.${part}`),
   ...[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((step) => `ref.info.${step}`),
   'color.scrim',
+  // odd-container's measure; Figma's Container uses a recipe-local 40rem.
+  'layout.measure',
 ];
 
 describe('Figma parity (design/figma/variables.json)', () => {

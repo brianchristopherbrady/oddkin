@@ -473,10 +473,11 @@ overflows, the scroller (part `base`) is focusable (`tabindex="0"`) and a `role=
 then follows its own size and its content's (`ResizeController`). Default slot, children `layout.gap` apart
 (`--odd-scroll-region-gap`); where supported, the scrollbar gutter is stable.
 
-**`odd-container`** (`Container`; planned) — a content measure and a container-query context: `measure: constrained |
-fluid = constrained` (constrained: centred with a maximum inline size from the layout tokens; fluid: full width, with
-the layout inset), `container-type: inline-size`, so container queries and recipe conditions inside it resolve against
-its width. Default slot; part `base`.
+**`odd-container`** (`Container`) — a content measure and an inline-size container: `measure: constrained |
+fluid = constrained` (constrained: centred, at most the theme's `layout.measure`, 40rem, wide, or
+`--odd-container-measure`; fluid: the full width). The element is the query container (`container: odd-container /
+inline-size`), so container queries and recipe conditions inside it resolve against its width. It has no inset of its
+own, as Figma draws it: insets are `.odd-box`'s (one home). No role or tab stop. Default slot; part `base`.
 
 ## 4. Recipes
 

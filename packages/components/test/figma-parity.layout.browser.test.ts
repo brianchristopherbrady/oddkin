@@ -236,4 +236,26 @@ describe('Figma parity: layout classes (Oddkin/Layout/*)', () => {
       done(region);
     }
   });
+
+  it('Container: no inset of its own; constrained to layout.measure (40rem), fluid at full width', async () => {
+    for (const measure of ['Constrained', 'Fluid'] as const) {
+      for (const width of WIDTHS) {
+        const el = at(
+          width,
+          `<odd-container measure="${measure.toLowerCase()}">${items(1)}</odd-container>`,
+        );
+        await settle(el);
+        const base = el.shadowRoot!.querySelector<HTMLElement>('[part~="base"]')!;
+        expectNone(
+          compare('Oddkin/Layout/Container', { Measure: measure }, [
+            { layer: [], el, kind: 'frame' },
+            { layer: ['Content'], el: base, kind: 'frame' },
+          ]),
+        );
+        const expected = measure === 'Fluid' ? width : Math.min(width, 640);
+        expect(el.getBoundingClientRect().width, `${measure} at ${width}px`).toBe(expected);
+        done(el);
+      }
+    }
+  });
 });

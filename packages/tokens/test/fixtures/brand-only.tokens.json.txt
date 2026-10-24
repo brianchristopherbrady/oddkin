@@ -1160,6 +1160,19 @@
         }
       }
     },
+    "measure": {
+      "$type": "dimension",
+      "$value": {
+        "value": 40,
+        "unit": "rem"
+      },
+      "$extensions": {
+        "dev.oddkin": {
+          "category": "layout",
+          "origin": "preset"
+        }
+      }
+    },
     "sidebar-width": {
       "$type": "dimension",
       "$value": {

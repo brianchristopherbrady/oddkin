@@ -255,6 +255,7 @@ export const values = {
     inset: '1.5rem',
     'item-min': '16rem',
     'main-min': '20rem',
+    measure: '40rem',
     'sidebar-width': '16rem',
   },
   'letter-spacing': {

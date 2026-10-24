@@ -549,7 +549,7 @@ Consumed by layout recipes ([layout-recipes.md](./layout-recipes.md)) and ordina
 | Category | Example | Emitted as | Allowed use |
 | --- | --- | --- | --- |
 | Foundation value | `space.md` | `--odd-space-md` | Source for roles; avoid using directly in components |
-| Semantic layout role | `layout.gap`, `layout.inset`, `layout.item-min`, `layout.sidebar-width`, `layout.main-min` | `--odd-layout-gap` | Page and recipe layout |
+| Semantic layout role | `layout.gap`, `layout.inset`, `layout.item-min`, `layout.sidebar-width`, `layout.main-min`, `layout.measure` (40rem, `odd-container`'s content measure) | `--odd-layout-gap` | Page and recipe layout |
 | Component role | `navigation.item.padding.inline` | `--odd-navigation-item-padding-inline` | Consumed by the owning component (and documented for adapters) |
 | Named condition | `navigation.expanded` | Literal query string in generated CSS, `conditions` export, Sass `$oddkin-conditions`, metadata | Recipes, `@container`/`@media` rules |
 | Profile | `navigation.compact` | Scope selector rule set re-declaring roles + affected alias closure | Coordinated overrides of explicit roles |

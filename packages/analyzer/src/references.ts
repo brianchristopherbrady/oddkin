@@ -39,6 +39,8 @@ export interface ReferenceIndex {
   readonly tokens: ReadonlySet<string>;
   readonly variables: ReadonlySet<string>;
   readonly recipes: ReadonlySet<string>;
+  /** Classes the published document stylesheets define (`odd-box`), without the dot. */
+  readonly classes: ReadonlySet<string>;
   /** Published contract ids (`contract:core/scope`). */
   readonly contracts: ReadonlySet<string>;
 }
@@ -74,6 +76,15 @@ function literalUnion(type: unknown): readonly string[] | undefined {
 
 const declarations = (manifest: unknown): Json[] =>
   list((manifest as { modules?: unknown })?.modules).flatMap((m) => list(m['declarations']));
+
+/** The document stylesheet records of the published metadata. */
+const sheets = (sources: ReferenceSources) =>
+  (sources.metadata ?? []).flatMap((m) =>
+    Object.values(
+      ((m as { stylesheets?: Record<string, { variables?: unknown; classes?: unknown }> })
+        ?.stylesheets ?? {}) as Record<string, { variables?: unknown; classes?: unknown }>,
+    ),
+  );
 
 export function referenceIndex(sources: ReferenceSources): ReferenceIndex {
   const elements = new Map<string, ElementNames>();
@@ -122,18 +133,20 @@ export function referenceIndex(sources: ReferenceSources): ReferenceIndex {
     tokens: new Set(sources.tokens ?? []),
     variables: new Set([
       ...(sources.variables ?? []),
-      ...(sources.metadata ?? []).flatMap((m) =>
-        Object.values(
-          ((m as { stylesheets?: Record<string, { variables?: unknown }> })?.stylesheets ??
-            {}) as Record<string, { variables?: unknown }>,
-        ).flatMap((sheet) =>
-          Array.isArray(sheet.variables)
-            ? sheet.variables.filter((v): v is string => typeof v === 'string')
-            : [],
-        ),
+      ...sheets(sources).flatMap((sheet) =>
+        Array.isArray(sheet.variables)
+          ? sheet.variables.filter((v): v is string => typeof v === 'string')
+          : [],
       ),
     ]),
     contracts: new Set(sources.contracts ?? []),
+    classes: new Set(
+      sheets(sources).flatMap((sheet) =>
+        Array.isArray(sheet.classes)
+          ? sheet.classes.filter((c): c is string => typeof c === 'string')
+          : [],
+      ),
+    ),
     recipes: new Set(
       (sources.metadata ?? []).flatMap((m) =>
         Object.values(
@@ -304,6 +317,8 @@ export function checkReferences(
           if (!index.tokens.has(span)) report(span, 'is not a token');
         continue;
       }
+      // A class of a published stylesheet (`.odd-box`), not a member.
+      if (/^\.[a-z][\w-]*$/.test(span) && index.classes.has(span.slice(1))) continue;
       const member = /^\.([A-Za-z_$][\w$]*)/.exec(span)?.[1];
       if (member !== undefined) {
         if (!self.members.has(member)) report(span, `is not a property or method of ${subject}`);

@@ -145,6 +145,7 @@ export const CSS_BUDGETS = {
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   'components:scroll-region': 256, // 235
+  'components:container': 192, // 161
   // Collections, measured on 2026-10-23 (structural and default styles; rows are the shared modules).
   'components:tree': 512, // 428
   'components:listbox': 640, // 602: the rows, field, and spinner are shared modules

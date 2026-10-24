@@ -83,6 +83,7 @@
     --odd-layout-inset: var(--odd-space-lg);
     --odd-layout-item-min: 16rem;
     --odd-layout-main-min: 20rem;
+    --odd-layout-measure: 40rem;
     --odd-layout-sidebar-width: 16rem;
     --odd-letter-spacing-normal: 0;
     --odd-letter-spacing-tight: -0.025em;

@@ -61,7 +61,13 @@ const metadata = {
     },
   },
   recipes: { 'recipe:stack': { name: 'stack' } },
-  stylesheets: { 'stylesheet:layout': { name: 'layout', variables: ['--acme-stack-gap'] } },
+  stylesheets: {
+    'stylesheet:layout': {
+      name: 'layout',
+      variables: ['--acme-stack-gap'],
+      classes: ['acme-stack'],
+    },
+  },
 };
 const index = referenceIndex({
   manifests: [manifest],
@@ -87,7 +93,7 @@ describe('authored references', () => {
       '`<x-card variant="a">`, `<x-card open>`, `x-card::part(body)`, `x-card:state(busy)`',
       '`.variant`, `.open = false`, `close()`, `variant="b"`, `slot="footer"`, `::part(body)`',
       '`:state(busy)`, `--x-card-gap`, `--acme-space-md`, `space.md`, `color.text.primary`',
-      '`--acme-stack-gap`',
+      '`--acme-stack-gap`, `.acme-stack`',
       '`@acme/ui`, `@acme/ui/card`, `@acme/ui/css/theme.css`, `@acme/tokens`, `x-close`',
       'the `x-close` event, the `stack` layout recipe, the `stack` recipe',
       // Prose: HTML, ARIA, DOM APIs, native events, values, and other scopes.
@@ -100,6 +106,7 @@ describe('authored references', () => {
   it('reports each reference that resolves to nothing', () => {
     const cases: [string, string][] = [
       ['`.varient`', '`.varient` is not a property or method of x-card'],
+      ['`.acme-stak`', '`.acme-stak` is not a property or method of x-card'],
       ['`opne()`', '`opne()` is not a method of x-card'],
       ['`open()`', '`open()` is not a method of x-card'],
       ['`variant="c"`', '`variant="c"` gives x-card [variant] a value outside a, b'],

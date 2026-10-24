@@ -146,6 +146,18 @@
       "types": "./dist/command-palette/command-palette.define.d.ts",
       "default": "./dist/command-palette/command-palette.define.js"
     },
+    "./container": {
+      "types": "./dist/container/index.d.ts",
+      "default": "./dist/container/index.js"
+    },
+    "./container/foundation": {
+      "types": "./dist/container/foundation.d.ts",
+      "default": "./dist/container/foundation.js"
+    },
+    "./define/container": {
+      "types": "./dist/container/container.define.d.ts",
+      "default": "./dist/container/container.define.js"
+    },
     "./dialog": {
       "types": "./dist/dialog/index.d.ts",
       "default": "./dist/dialog/index.js"

@@ -1686,6 +1686,9 @@
       "dependencies": ["odd-icon"],
       "reason": "Command icons are drawn by the complete odd-icon widget, as on odd-menu; rows are option-row parts in the dialog's one tree (the input's aria-activedescendant names them)."
     },
+    "odd-container": {
+      "dependencies": []
+    },
     "odd-dialog": {
       "dependencies": [],
       "reason": "Actions and fields are slot content."

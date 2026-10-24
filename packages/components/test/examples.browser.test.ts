@@ -100,6 +100,7 @@ describe('authored examples', () => {
     },
     'odd-badge/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
     'odd-alert/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
+    'odd-container/measureWide': { observe: (el) => el['measure'], wrong: 'constrained' },
     'odd-scroll-region/heightAttribute': {
       observe: (el) => {
         const base = el.shadowRoot!.querySelector('[part~="base"]')!;
@@ -184,6 +185,7 @@ describe('authored examples', () => {
     'odd-tabs/orientationColumn': ['element.attribute.invalid'],
     'odd-toolbar/orientationRow': ['element.attribute.invalid'],
     'odd-split-panel/orientationColumn': ['element.attribute.invalid'],
+    'odd-container/measureWide': ['element.attribute.invalid'],
     'odd-button/dangerAppearance': ['element.attribute.invalid'],
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-breadcrumbs/itemsAttribute': ['element.attribute.propertyOnly'],
