@@ -306,3 +306,18 @@ describe('odd-command-palette', () => {
     expect(scopeStats()).toEqual(before);
   });
 });
+
+describe('text-entry hints', () => {
+  it('turns spellcheck off by default; the host attribute overrides it', async () => {
+    const { el } = await mount('label="Command palette" spellcheck="true" enterkeyhint="go"');
+    const search = el.shadowRoot!.querySelector('input')!;
+    expect([search.getAttribute('spellcheck'), search.getAttribute('enterkeyhint')]).toEqual([
+      'true',
+      'go',
+    ]);
+    el.removeAttribute('spellcheck');
+    await new Promise((resolve) => setTimeout(resolve));
+    await settle(el);
+    expect(search.getAttribute('spellcheck')).toBe('false');
+  });
+});

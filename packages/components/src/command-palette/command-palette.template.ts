@@ -2,9 +2,8 @@ import { live } from '@oddkin/core/helpers/live';
 import { html, nothing, repeat } from '@oddkin/core/template';
 import { groupsOf, type CommandRecord, type OptionRow } from '../collection/collection.js';
 import { searchGlyph } from '../styles/glyphs.js';
+import { spinnerTemplate } from '../styles/spinner.styles.js';
 import type { OddkinCommandPalette } from './command-palette.js';
-
-const spinner = html`<span class="spinner"></span>`;
 
 /**
  * Anatomy: a modal `<dialog part="dialog">` (the overlay surface's sheet) named by `label`, holding
@@ -59,7 +58,11 @@ export const commandPaletteTemplate = (palette: OddkinCommandPalette) => {
         type="text"
         role="combobox"
         autocomplete="off"
-        spellcheck="false"
+        inputmode=${palette._hints.get('inputmode')}
+        enterkeyhint=${palette._hints.get('enterkeyhint')}
+        autocapitalize=${palette._hints.get('autocapitalize')}
+        autocorrect=${palette._hints.get('autocorrect')}
+        spellcheck=${palette._hints.get('spellcheck', 'false')}
         aria-label=${strings.search}
         aria-expanded="true"
         aria-controls="results"
@@ -99,7 +102,7 @@ export const commandPaletteTemplate = (palette: OddkinCommandPalette) => {
         )}
       </div>
       <div part="loading" class="state" ?hidden=${!palette.loading}>
-        ${spinner}${strings.loading}
+        ${spinnerTemplate}${strings.loading}
       </div>
       <div part="empty" class="state empty" ?hidden=${items.length > 0 || palette.loading}>
         <slot name="empty">${strings.empty}</slot>

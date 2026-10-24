@@ -14,6 +14,7 @@ import {
   optionChangeEvent,
   optionInputEvent,
 } from '../collection/option-control.js';
+import { TextHints } from '../form-control/text-hints.js';
 import { composedContains, Overlay } from '../overlay/overlay.js';
 
 export type { OptionRecord } from '../collection/collection.js';
@@ -59,6 +60,7 @@ export const comboboxQueryEvent = queryChangeEvent;
  * @cssstate user-invalid - The field shows its error: `error` is set, or nothing is chosen while `required` after the user left the field or a validity check failed.
  * @a11y The input has `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-autocomplete="list"`, and names the active option with `aria-activedescendant`; `label` names it. Options carry `aria-selected`; with `multiple` they are drawn with a check box, and the listbox has `aria-multiselectable`. Chips are a list named by `strings.selected`; each remove button is named by `strings.remove`, and the "+N" chip reads "N more" (`strings.more`).
  * @keyboard Typing filters the options and opens the popup with the first match active. Down and Up open the popup (on the selected or first option, or the last); in the popup they move the active option, and Enter chooses it (single: closes; multiple: toggles and stays open). Alt+Down opens without moving, Alt+Up closes. Escape closes the popup, or when it is closed clears the text and the value. With `multiple`, Backspace in an empty input removes the last value, and Left at the start of the input moves to the chips: Left and Right move between them, Backspace and Delete remove one, Escape returns to the input.
+ * @a11y The global `inputmode`, `enterkeyhint`, `autocapitalize`, `autocorrect`, and `spellcheck` attributes on the host are forwarded to the search input; `spellcheck` defaults to `false`, as a query is not prose.
  * @previewRole combobox
  * @useFor Choosing from a long list by typing: people, projects, countries; several values with `multiple`.
  * @notFor A short list (use odd-select or odd-radio-group); free text with suggestions only (use odd-input); commands (use odd-command-palette).
@@ -86,6 +88,8 @@ export class OddkinCombobox extends OddkinOptionControl.with({
   };
   declare readonly _events?: ElementEvents<typeof OddkinCombobox>;
 
+  /** @internal The host's text-entry hints for the input. */
+  readonly _hints = new TextHints(this);
   readonly #query = signal('');
   // Single: the user typed since the value was last chosen, so the input shows the text.
   readonly #editing = signal(false);
@@ -414,6 +418,7 @@ export class OddkinCombobox extends OddkinOptionControl.with({
 
   protected override connected(scope: Scope): void {
     super.connected(scope);
+    scope.use(this._hints);
     scope.listen(this, 'focusin', () => (this.#focusWithin.value = true));
     scope.listen(this, 'focusout', (event: FocusEvent) => {
       const to = event.relatedTarget as Node | null;

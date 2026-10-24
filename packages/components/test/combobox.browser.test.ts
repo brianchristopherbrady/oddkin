@@ -505,3 +505,21 @@ describe('odd-combobox', () => {
     expect(scopeStats()).toEqual(before);
   });
 });
+
+describe('text-entry hints', () => {
+  it('turns spellcheck off by default; the host attributes override it and reach the input', async () => {
+    const { el } = await mount();
+    expect([input(el).getAttribute('spellcheck'), input(el).getAttribute('autocomplete')]).toEqual([
+      'false',
+      'off',
+    ]);
+    el.setAttribute('spellcheck', 'true');
+    el.setAttribute('autocapitalize', 'words');
+    await new Promise((resolve) => setTimeout(resolve));
+    await settle(el);
+    expect([
+      input(el).getAttribute('spellcheck'),
+      input(el).getAttribute('autocapitalize'),
+    ]).toEqual(['true', 'words']);
+  });
+});

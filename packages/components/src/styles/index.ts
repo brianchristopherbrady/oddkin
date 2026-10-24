@@ -3,7 +3,7 @@
 export { hostStyles } from './host.styles.js';
 export { focusRingStyles } from './focus-ring.styles.js';
 export { visuallyHiddenStyles } from './visually-hidden.styles.js';
-export { spinnerStyles } from './spinner.styles.js';
+export { spinnerStyles, spinnerTemplate } from './spinner.styles.js';
 export { navRowStructuralStyles } from './nav-row.structural.styles.js';
 export { navRowStyles } from './nav-row.styles.js';
 export { optionRowStructuralStyles } from './option-row.structural.styles.js';

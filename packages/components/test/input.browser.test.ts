@@ -429,9 +429,15 @@ describe('types and constraints', () => {
     }
   });
 
-  it('forwards the host inputmode attribute to the inner input', async () => {
-    const { el, control } = await mount('<odd-input label="Code" inputmode="numeric"></odd-input>');
-    expect(control.inputMode).toBe('numeric');
+  it('forwards the host text-entry hints to the inner input', async () => {
+    const { el, control } = await mount(
+      '<odd-input label="Code" inputmode="numeric" enterkeyhint="next" autocapitalize="characters" autocorrect="off" spellcheck="false"></odd-input>',
+    );
+    expect(
+      ['inputmode', 'enterkeyhint', 'autocapitalize', 'autocorrect', 'spellcheck'].map((name) =>
+        control.getAttribute(name),
+      ),
+    ).toEqual(['numeric', 'next', 'characters', 'off', 'false']);
     el.setAttribute('inputmode', 'decimal');
     await settle(el);
     await new Promise((resolve) => setTimeout(resolve));

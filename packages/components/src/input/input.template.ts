@@ -27,7 +27,6 @@ export const inputTemplate = (input: OddkinInput) => {
         .value=${live(input._currentValue)}
         type=${search ? 'text' : input.type}
         role=${search ? 'searchbox' : null}
-        enterkeyhint=${search ? 'search' : null}
         name=${input.name || null}
         placeholder=${input.placeholder || null}
         autocomplete=${input.autocomplete || null}
@@ -37,7 +36,11 @@ export const inputTemplate = (input: OddkinInput) => {
         minlength=${input.minLength ?? null}
         maxlength=${input.maxLength ?? null}
         pattern=${input.pattern ?? null}
-        inputmode=${input._inputMode}
+        inputmode=${input._hints.get('inputmode')}
+        enterkeyhint=${input._hints.get('enterkeyhint', search ? 'search' : null)}
+        autocapitalize=${input._hints.get('autocapitalize')}
+        autocorrect=${input._hints.get('autocorrect')}
+        spellcheck=${input._hints.get('spellcheck')}
         ?required=${input.required}
         ?disabled=${input.disabled || input._formDisabled.value}
         ?readonly=${input.readonly}

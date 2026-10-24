@@ -2,9 +2,8 @@ import { html, repeat } from '@oddkin/core/template';
 import { groupsOf, type OptionRow } from '../collection/collection.js';
 import { externalDescriptionTemplate } from '../form-control/description.js';
 import { checkGlyph } from '../styles/glyphs.js';
+import { spinnerTemplate } from '../styles/spinner.styles.js';
 import type { OddkinListbox } from './listbox.js';
-
-const spinner = html`<span class="spinner"></span>`;
 
 /**
  * Anatomy: the field (`label`, `description`, and `error` parts) around `part="base"`, the surface
@@ -78,7 +77,7 @@ export const listboxTemplate = (listbox: OddkinListbox) => {
         )}
       </div>
       <div part="loading" class="state" ?hidden=${!listbox.loading}>
-        ${spinner}${strings.loading}
+        ${spinnerTemplate}${strings.loading}
       </div>
       <div part="empty" class="state" ?hidden=${options.length > 0 || listbox.loading}>
         <slot name="empty">${strings.empty}</slot>

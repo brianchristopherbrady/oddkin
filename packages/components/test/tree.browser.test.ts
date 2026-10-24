@@ -312,7 +312,7 @@ describe('odd-tree', () => {
     const { el } = await mount({ items: [], loading: true });
     expect(part(el, 'tree').getAttribute('aria-busy')).toBe('true');
     expect(part(el, 'loading').hidden).toBe(false);
-    expect(part(el, 'loading').textContent).toBe('Loading…');
+    expect(part(el, 'loading').textContent!.trim()).toBe('Loading…');
     expect(part(el, 'loading').querySelector('.spinner')).not.toBeNull();
     expect(part(el, 'empty').hidden).toBe(true);
     el.loading = false;
@@ -331,7 +331,7 @@ describe('odd-tree', () => {
     el.loading = true;
     await settle(el);
     expect(part(el, 'empty').hidden).toBe(true);
-    expect(part(el, 'loading').textContent).toBe('Fetching…');
+    expect(part(el, 'loading').textContent!.trim()).toBe('Fetching…');
     expect(rows(el)).toHaveLength(2);
   });
 

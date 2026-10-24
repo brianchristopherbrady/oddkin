@@ -202,7 +202,9 @@ export const CSS_BUDGETS = {
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   'components:layout': 512, // measured 411 on 2026-10-18: layout.css page-author classes
   'components:button.css': 1024, // measured 999 on 2026-10-23: button.css, the native <button> path, with aria-pressed
-  'components:recipes': 2048, // measured 1,821 on 2026-10-22: the eight CSS recipes together (1,314 before field.css)
+  // 2,176: measured 2,081 on 2026-10-23 with the field recipe's start and end adornments (the shared
+  // control module's, b67b90c); 1,821 on 2026-10-22 for the eight CSS recipes (1,314 before field.css).
+  'components:recipes': 2176,
   'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
 };
 

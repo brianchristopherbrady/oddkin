@@ -20,6 +20,7 @@ The Figma mapping, the reuse classes, and the shared style homes stay in [compon
 | Existing element | `button`, `button/sm`, `button/lg`, `iconButton` → `odd-button` (`size`, `label`); `toggleButton` → `odd-button toggle`; `input`, `search`, `number`, `dateTime` → `odd-input` (`type`); `card` → `odd-card`; `SideNavigation`, `NavigationItem` → `odd-side-nav` |
 | New element (`@oddkin/components`) | `badge` → `odd-badge`; `icon` → `odd-icon`; `spinner` → `odd-spinner`; `progress` → `odd-progress`; `skeleton` → `odd-skeleton`; `avatar` → `odd-avatar`; `chip` → `odd-chip`; `alert` → `odd-alert`; `emptyState` → `odd-empty-state`; `textarea` → `odd-textarea`; `checkbox` → `odd-checkbox`; `switch` → `odd-switch`; `CheckboxGroup` → `odd-checkbox-group`; `radioGroup`, `radio` → `odd-radio-group`; `segmented` → `odd-segmented-control`; `slider` → `odd-slider`; `select` → `odd-select`; `fileUpload` → `odd-file-input`; `ValidationSummary` → `odd-validation-summary`; `Disclosure`, `Accordion` → `odd-disclosure` (`name`); `Tabs` → `odd-tabs`, `odd-tab-panel`; `Breadcrumbs` → `odd-breadcrumbs`; `Pagination` → `odd-pagination`; `Toolbar` → `odd-toolbar`; `popover` → `odd-popover`; `tooltip` → `odd-tooltip`; `dialog`, `alertDialog` → `odd-dialog` (`alert`); `drawer` → `odd-drawer`; `toast` → `odd-toast`; `listbox` → `odd-listbox`; `Menu`, `MenuItem` → `odd-menu`; `splitAction` → `odd-split-button`; `combobox`, `multiselect` → `odd-combobox` (`multiple`); `CommandPalette`, `CommandItem` → `odd-command-palette`; `Tree` → `odd-tree`; `SplitPanels`, `Splitter/*` → `odd-split-panel` |
 | Part of an element | `ListboxSurface`, `ListboxOption` (listbox, select's enhanced picker, combobox); `MenuItem` (menu, split button); `CommandItem` (command palette); `radio` (radio group); `CheckboxOption` (combobox `multiple`, drawn with the shared control-indicator module, never a nested interactive checkbox); `AvatarItem` (avatar); `Splitter/*` (split panel) |
+| Layout (`layout.css` classes and elements, §3.7, §4) | `Stack`, `Row`, `Cluster`, `Grid`, `AutoGrid`, `Split` → the existing `.odd-stack`, `.odd-row`, `.odd-cluster`, `.odd-grid`, `.odd-auto-grid`, `.odd-split` with Figma's variants; `Box` → `.odd-box`; `Center` → `.odd-center`; `AspectRatio` → `.odd-aspect-ratio`; `ScrollRegion` → `odd-scroll-region`; `Container` → `odd-container`; `SpecimenItem` is a Figma specimen, not built |
 | Recipe (document CSS, no element) | `typography` → `.odd-type-<role>`; `link` → `a` in `base.css` and `.odd-link`; `divider` → `hr` and `.odd-divider`; `keyboardKey` → `kbd` and `.odd-kbd`; `List` → `.odd-list`; `Table` → `.odd-table`; `field` → `.odd-field` (for native and third-party controls; Oddkin controls carry the field anatomy themselves); avatar `Group` → `.odd-avatar-group` |
 | Example (composition) | `Form` → `examples/forms`: `odd-input`, `odd-checkbox-group`, `odd-validation-summary`, `odd-button`, layout classes |
 | Not built | `multiselect/*` display strategies other than the recommended one, `multiselect/SelectionPanel`, `multiselect/InteractionExamples` (design exploration; `odd-combobox multiple` builds the recommended default: chips that collapse to "+N"); the data grid (deferred); Figma's icon assets (§2.7) |
@@ -84,6 +85,12 @@ controller; each control describes only its value, inner control, reset, and res
 control (`odd-tooltip`) through an internal hook, `_describe(source, text | null)` on `odd-button` and every form
 control: the control renders the texts hidden in its shadow root and lists them in its inner control's
 `aria-describedby` after its own description and error, since `aria-describedby` cannot cross the shadow boundary.
+Text-entry hints are the HTML global attributes, never new props (their names are `HTMLElement` members): a control
+with an inner text field (`odd-input`, `odd-textarea`, `odd-combobox`, `odd-command-palette`) forwards the host's
+`inputmode`, `enterkeyhint`, `autocapitalize`, `autocorrect`, and `spellcheck` to it (`TextHints`,
+`src/form-control/text-hints.ts`), with the element's default where the host has none (`spellcheck="false"` for a
+query, `enterkeyhint="search"` for a search field). A value the widget depends on stays fixed (`autocomplete="off"` on
+a combobox, whose popup the browser's autofill list would cover).
 
 ### 2.5 Collection states
 
@@ -118,7 +125,10 @@ module serves `odd-badge`, `odd-alert`, `odd-toast`, and the AI status labels.
 ### 2.9 Shared style modules
 
 As listed in component-catalog.md §6 (shared homes): tokens, focus ring, control, button, tone, spinner, glyphs,
-control indicator, option row, navigation row, chip, avatar, overlay surface. The control module follows the Common
+control indicator, option row, navigation row, chip, avatar, overlay surface. A module whose markup repeats ships it
+beside its styles (glyph templates; `spinnerTemplate`, the busy ring of loading rows), and an element draws such a
+decorative piece as a part from the module rather than nesting the element (`odd-spinner` is a named `status`, so
+nesting it in a busy row would announce twice). The control module follows the Common
 page (158:22), which is the contract page for primitives: `border.strong`, `control.radius`, `control.height.md`.
 `odd-model-select` moves to it (the page 0:1 drawing with `border.default` and `control.height.sm` is the outlier).
 
@@ -444,6 +454,15 @@ limits. Dragging and keys dispatch `input`; release and key commits dispatch `ch
 sits on the position. Parts `base`, `start`, `separator`, `end`; `--odd-split-panel-separator-size`. Stacked panes
 need a height on the element. More panes: nest split panels.
 
+**`odd-scroll-region`** (`ScrollRegion`; planned) — content that scrolls on its own inside a page. Keyboard users can
+reach and scroll it (WCAG 2.1.1): while it overflows it is focusable (`tabindex="0"`) and a `role="region"` named by
+`label`; when it fits, neither. Default slot; part `base`; the scrollbar gutter is stable.
+
+**`odd-container`** (`Container`; planned) — a content measure and a container-query context: `measure: constrained |
+fluid = constrained` (constrained: centred with a maximum inline size from the layout tokens; fluid: full width, with
+the layout inset), `container-type: inline-size`, so container queries and recipe conditions inside it resolve against
+its width. Default slot; part `base`.
+
 ## 4. Recipes
 
 | Recipe | Selectors | Notes |
@@ -455,6 +474,7 @@ need a height on the element. More panes: nest split panels.
 | List (`list.css`) | `ul.odd-list`, `ol.odd-list`, `.odd-list-meta` | Rows divided by rules; the item with `aria-current` takes the selection colours; actions are author content |
 | Table (`table.css`) | `table.odd-table` | Native table semantics; `aria-sort` headers in the primary colour; a row holding a checked checkbox takes the selection colours; loading, empty, and error rows are author content |
 | Field (`field.css`) | `.odd-field`, `.odd-field-label`, `.odd-field-description`, `.odd-field-control`, `.odd-field-error` | For native and third-party controls (`<label for>`, `aria-describedby`, and `aria-invalid` written by the author); `.odd-field-control` marks the control, so checkboxes and other controls in the field keep their own look. Generated from the control module's rules, with the same `--odd-field-height`, `-radius`, `-border-color`, and `-background` variables as every Oddkin form control |
+| Layout (`layout.css`; planned additions) | `.odd-box` (`-none`, `-roomy`), `.odd-center`, `.odd-aspect-ratio` (`--odd-aspect-ratio`: 16 / 9 default, 4 / 3, 1 / 1); variants of the existing classes: `.odd-stack-tight`, `.odd-stack-loose`, `.odd-row-between`, `--odd-grid-columns` 1–4 | Figma `Oddkin/Layout/*` (section 457:2078). Box insets and stack gaps step the layout tokens (`--odd-layout-inset`, `--odd-layout-gap`); variants are modifier classes named after Figma's values, each also a custom property for one-off values |
 | Avatar group (`avatar-group.css`) | `.odd-avatar-group`, `.odd-avatar-group-more` | Overlapping `odd-avatar` children ringed in the page colour; the author names the group |
 
 ## 5. Build order
@@ -471,4 +491,4 @@ Dependencies first, each step complete to §2.10 before the next:
 4. Disclosure and navigation: `odd-disclosure`, `odd-tabs`, `odd-breadcrumbs`, `odd-pagination`, `odd-toolbar`.
 5. Overlays: `odd-popover`, `odd-tooltip`, `odd-dialog`, `odd-drawer`, `odd-toast`.
 6. Collections: `odd-listbox`, `odd-menu`, `odd-split-button`, `odd-combobox`, `odd-command-palette`, `odd-tree`.
-7. Layout: `odd-split-panel`.
+7. Layout: `odd-split-panel`; the layout primitives (`layout.css` additions, `odd-scroll-region`, `odd-container`).

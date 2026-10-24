@@ -3,9 +3,8 @@ import { html, nothing, repeat } from '@oddkin/core/template';
 import { groupsOf, type OptionRow } from '../collection/collection.js';
 import { externalDescriptionTemplate } from '../form-control/description.js';
 import { checkGlyph, chevronDownGlyph, closeGlyph, searchGlyph } from '../styles/glyphs.js';
+import { spinnerTemplate } from '../styles/spinner.styles.js';
 import type { OddkinCombobox } from './combobox.js';
-
-const spinner = html`<span class="spinner"></span>`;
 
 /**
  * Anatomy: a `label` part labelling the `role="combobox"` input (`part="input"`) in the same
@@ -63,7 +62,11 @@ export const comboboxTemplate = (combobox: OddkinCombobox) => {
     type="text"
     role="combobox"
     autocomplete="off"
-    spellcheck="false"
+    inputmode=${combobox._hints.get('inputmode')}
+    enterkeyhint=${combobox._hints.get('enterkeyhint')}
+    autocapitalize=${combobox._hints.get('autocapitalize')}
+    autocorrect=${combobox._hints.get('autocorrect')}
+    spellcheck=${combobox._hints.get('spellcheck', 'false')}
     .value=${live(combobox._text.value)}
     placeholder=${(multiple && selected.length) || !combobox.placeholder ? null : combobox.placeholder}
     ?disabled=${disabled}
@@ -181,7 +184,7 @@ export const comboboxTemplate = (combobox: OddkinCombobox) => {
         )}
       </div>
       <div part="loading" class="state" ?hidden=${!combobox.loading}>
-        ${spinner}${strings.loading}
+        ${spinnerTemplate}${strings.loading}
       </div>
       <div part="empty" class="state" ?hidden=${options.length > 0 || combobox.loading}>
         <slot name="empty">${strings.empty}</slot>

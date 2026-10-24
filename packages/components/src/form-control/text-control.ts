@@ -1,6 +1,8 @@
 import { event, prop, type ElementEvents } from '@oddkin/core/element';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
+import type { Scope } from '@oddkin/core/scope';
 import { OddkinFormControl, type FormControlOptions } from './form-control.js';
+import { TextHints } from './text-hints.js';
 
 /** Native `input` events cross the shadow boundary once; declared here for metadata and sync. */
 export const inputEvent = event('input', {
@@ -22,7 +24,7 @@ export const changeEvent = event('change', {
  * A form control over a native text field (`odd-input`, `odd-textarea`): a visible label,
  * `value` as native (the attribute is the default), placeholder, autofill hint, length limits,
  * `required`, and `readonly`. Subclasses render the native field with class `control` and bind
- * `_currentValue`, `_onInput`, `_onChange`, and `_onBlur` on it.
+ * `_currentValue`, `_onInput`, `_onChange`, `_onBlur`, and the `_hints` the host was given on it.
  */
 export class OddkinTextControl extends OddkinFormControl.with({
   label: prop.string({ default: '', description: 'Visible label; names the control.' }),
@@ -51,6 +53,9 @@ export class OddkinTextControl extends OddkinFormControl.with({
   // undefined until the value is set or typed ("dirty"), then independent of `defaultValue`.
   readonly #value = signal<string | undefined>(undefined);
 
+  /** @internal The host's text-entry hints (`inputmode`, `spellcheck`, …) for the native field. */
+  readonly _hints = new TextHints(this);
+
   /** @internal The value as a readable for the template's live binding. */
   readonly _currentValue: Readable<string> = computed(() => this.value);
 
@@ -70,6 +75,11 @@ export class OddkinTextControl extends OddkinFormControl.with({
   }
   set value(value: string) {
     this.#value.value = String(value ?? '');
+  }
+
+  protected override connected(scope: Scope): void {
+    super.connected(scope);
+    scope.use(this._hints);
   }
 
   /** @internal Properties that change validity without a change of value. */

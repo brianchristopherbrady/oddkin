@@ -4,6 +4,7 @@ import { strings } from '@oddkin/core/i18n';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import { queryChangeEvent, type CommandRecord } from '../collection/collection.js';
+import { TextHints } from '../form-control/text-hints.js';
 import { ModalDialog } from '../overlay/dialog.js';
 import type { NavigationActionDetail } from '../side-nav/side-nav.js';
 
@@ -48,6 +49,7 @@ export const commandActionEvent = event<NavigationActionDetail>('odd-action', {
  * @cssprop --odd-command-palette-inline-size - Its width, within the viewport (default 40rem).
  * @a11y A modal `dialog` named by `label`. Focus starts in the search input, a `combobox` named by `strings.search` that controls the `listbox` of commands and names the active one with `aria-activedescendant` (the active row also has `aria-selected`). Groups are named by their heading. Everything outside is inert while it is open, and closing returns focus to the element that had it.
  * @keyboard Typing filters the commands; Up and Down move the active command (wrapping); Enter runs it. Escape closes the palette.
+ * @a11y The global `inputmode`, `enterkeyhint`, `autocapitalize`, `autocorrect`, and `spellcheck` attributes on the host are forwarded to the search input; `spellcheck` defaults to `false`, as a query is not prose.
  * @previewRole commandPalette
  * @useFor Finding and running any command or destination by name, from anywhere in an app (typically opened with Ctrl+K or Cmd+K).
  * @notFor A few actions behind a button (use odd-menu); choosing a value in a form (use odd-combobox); site search results (use a page).
@@ -80,6 +82,8 @@ export class OddkinCommandPalette extends OddkinElement.with({
   };
   declare readonly _events?: ElementEvents<typeof OddkinCommandPalette>;
 
+  /** @internal The host's text-entry hints for the search input. */
+  readonly _hints = new TextHints(this);
   readonly #query = signal('');
   readonly #dialog = new ModalDialog({
     host: this,
@@ -187,6 +191,10 @@ export class OddkinCommandPalette extends OddkinElement.with({
     this.#active.setActive(index, { scroll: false });
     this._choose(index);
   };
+
+  protected override connected(scope: Scope): void {
+    scope.use(this._hints);
+  }
 
   protected override mounted(scope: Scope): void {
     scope.use(this.#dialog);

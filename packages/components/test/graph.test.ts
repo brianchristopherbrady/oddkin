@@ -86,6 +86,7 @@ describe('@oddkin/components/input import graphs', () => {
       'form-control/description.js',
       'form-control/form-control.js',
       'form-control/text-control.js',
+      'form-control/text-hints.js',
       'input/foundation.js',
       'input/input.js',
       'input/input.structural.styles.js',

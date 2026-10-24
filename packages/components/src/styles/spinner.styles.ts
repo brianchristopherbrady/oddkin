@@ -1,4 +1,5 @@
 import { css } from '@oddkin/core/styles';
+import { html } from '@oddkin/core/template';
 
 /**
  * The indeterminate busy indicator every loading state draws (`odd-button` while loading,
@@ -27,3 +28,6 @@ export const spinnerStyles = css`
     }
   }
 `;
+
+/** The busy ring beside a loading row's text; decorative, as the text says what is happening. */
+export const spinnerTemplate = html`<span class="spinner" aria-hidden="true"></span>`;

@@ -27,6 +27,11 @@ export const textareaTemplate = (textarea: OddkinTextarea) =>
       rows=${textarea.rows}
       minlength=${textarea.minLength ?? null}
       maxlength=${textarea.maxLength ?? null}
+      inputmode=${textarea._hints.get('inputmode')}
+      enterkeyhint=${textarea._hints.get('enterkeyhint')}
+      autocapitalize=${textarea._hints.get('autocapitalize')}
+      autocorrect=${textarea._hints.get('autocorrect')}
+      spellcheck=${textarea._hints.get('spellcheck')}
       ?required=${textarea.required}
       ?disabled=${textarea.disabled || textarea._formDisabled.value}
       ?readonly=${textarea.readonly}

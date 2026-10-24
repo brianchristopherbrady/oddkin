@@ -1,9 +1,8 @@
 import { styleMap } from '@oddkin/core/helpers/style-map';
 import { html, repeat } from '@oddkin/core/template';
 import { chevronDownGlyph, chevronEndGlyph } from '../styles/glyphs.js';
+import { spinnerTemplate } from '../styles/spinner.styles.js';
 import type { OddkinTree, TreeRow } from './tree.js';
-
-const spinner = html`<span class="spinner"></span>`;
 
 const row = (tree: OddkinTree, row: TreeRow) =>
   html`<div
@@ -20,7 +19,7 @@ const row = (tree: OddkinTree, row: TreeRow) =>
     style=${styleMap({ '--_level': String(row.level - 1) })}
   >
     <span class="toggle" aria-hidden="true"
-      >${row.busy ? spinner : row.expandable ? (row.expanded ? chevronDownGlyph : chevronEndGlyph) : null}</span
+      >${row.busy ? spinnerTemplate : row.expandable ? (row.expanded ? chevronDownGlyph : chevronEndGlyph) : null}</span
     >${row.item.icon ? html`<odd-icon src=${row.item.icon} size="sm"></odd-icon>` : null}<span
       class="label"
       >${row.item.label}</span
@@ -54,7 +53,9 @@ export const treeTemplate = (tree: OddkinTree) => {
         (each) => row(tree, each),
       )}
     </div>
-    <div part="loading" class="state" ?hidden=${!tree.loading}>${spinner}${strings.loading}</div>
+    <div part="loading" class="state" ?hidden=${!tree.loading}>
+      ${spinnerTemplate}${strings.loading}
+    </div>
     <div part="empty" class="state" ?hidden=${rows.length > 0 || tree.loading}>
       <slot name="empty">${strings.empty}</slot>
     </div>

@@ -1,7 +1,5 @@
 import { prop, type ElementEvents } from '@oddkin/core/element';
 import { strings } from '@oddkin/core/i18n';
-import type { Scope } from '@oddkin/core/scope';
-import { signal } from '@oddkin/core/reactive';
 import { OddkinTextControl, changeEvent, inputEvent } from '../form-control/text-control.js';
 
 export { changeEvent, inputEvent };
@@ -28,7 +26,7 @@ export const INPUT_STRINGS = { clear: 'Clear' };
  * @previewRole textInput
  * @useFor Short values in forms: names, email addresses, search terms, numbers, dates, and times.
  * @notFor Multi-line text (use odd-textarea); choices from a fixed list (use odd-select or odd-radio-group).
- * @a11y The global `inputmode` attribute on the host is forwarded to the inner input (the virtual keyboard hint).
+ * @a11y The global `inputmode`, `enterkeyhint`, `autocapitalize`, `autocorrect`, and `spellcheck` attributes on the host are forwarded to the inner input (`enterkeyhint` defaults to `search` in a search field).
  * @limitation A number field steps with the engine's spin buttons where the engine draws them (not on touch devices); they are not styled, because hiding them needs prefixed pseudo-elements.
  * @limitation Validation bubbles anchor to the inner input. `formStateRestoreCallback` restores the value; autofill depends on the inner input's `autocomplete`.
  * @limitation Enter in the field does not submit the form (no implicit submission): the native input inside the shadow root has no form owner. Give the form a submit button.
@@ -70,27 +68,8 @@ export class OddkinInput extends OddkinTextControl.with({
 }) {
   declare readonly _events?: ElementEvents<typeof OddkinInput>;
 
-  // The host's global `inputmode` attribute, forwarded to the inner input.
-  readonly #inputMode = signal<string | null>(null);
-
   protected override _constraints(): unknown[] {
     return [...super._constraints(), this.type];
-  }
-
-  /** @internal The virtual keyboard hint for the inner input. */
-  get _inputMode(): string | null {
-    return this.#inputMode.value;
-  }
-
-  protected override connected(scope: Scope): void {
-    super.connected(scope);
-    const read = () => {
-      this.#inputMode.value = this.getAttribute('inputmode');
-    };
-    read();
-    const observer = new MutationObserver(read);
-    observer.observe(this, { attributes: true, attributeFilter: ['inputmode'] });
-    scope.add(() => observer.disconnect(), 'inputmode');
   }
 
   /** @internal The clear button shows while a search value can be cleared. */

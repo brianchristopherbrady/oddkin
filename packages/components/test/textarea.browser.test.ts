@@ -363,3 +363,19 @@ describe('ownership', () => {
     expect(scopeStats()).toEqual(before);
   });
 });
+
+describe('text-entry hints', () => {
+  it('forwards the host hints to the native textarea, and nothing without them', async () => {
+    const { el, control } = await mount(
+      '<odd-textarea label="Notes" spellcheck="false" autocapitalize="sentences"></odd-textarea>',
+    );
+    expect([control.getAttribute('spellcheck'), control.getAttribute('autocapitalize')]).toEqual([
+      'false',
+      'sentences',
+    ]);
+    el.removeAttribute('spellcheck');
+    await new Promise((resolve) => setTimeout(resolve));
+    await settle(el);
+    expect(control.hasAttribute('spellcheck')).toBe(false);
+  });
+});
