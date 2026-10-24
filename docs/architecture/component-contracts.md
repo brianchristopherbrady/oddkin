@@ -365,10 +365,15 @@ non-modal it is not in the top layer and stacks at `z-index.overlay`. Fixed at t
 less `space.sm`, the body scrolling; width `--odd-drawer-inline-size` (24rem) within the viewport; dividers under the
 header and above the actions. Everything else as `odd-dialog`.
 
-**`odd-toast`** (`toast`) — `tone`, `open`, `duration: number = 5000` (ms; 0 stays; any toast with an action stays,
-WCAG 2.2.1), default slot: message, slot `end`: action. Top layer (`popover="manual"`), stacked at the block-end and
-inline-end corner; `role="status"` (`role="alert"` for `danger`); pauses while hovered or focused; part `close`.
-`show()`, `close()`; native `toggle`.
+**`odd-toast`** (`toast`) — `tone`, `label` (the title: visible text above the message, UI type in `text.primary`;
+the message is Small in `text.secondary`), `open`, `duration: number = 5000` (ms, read at each opening; 0 stays; any
+toast with an action stays, WCAG 2.2.1), default slot: message, slot `end`: action. Top layer (`popover="manual"`) at
+the block-end and inline-end corner, logical, so right-to-left text mirrors it. Open toasts stack in document order,
+the last at the corner and `space.sm` apart, so reading and Tab order follow the screen; a new toast inserted before
+the open ones stacks above them, and none moves under the pointer. Each toast is its own live region, `role="status"`
+(`role="alert"` for `danger`): its title and message join the region just after it shows, so they are announced, and
+the title is never an `aria-label`. No toast's time runs while the pointer or focus is on any open toast, or while the
+page is hidden. Part `close`. `show()`, `close()`; native `toggle`.
 
 ### 3.6 Action collections
 

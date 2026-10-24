@@ -34,6 +34,7 @@ import '@oddkin/components/define/split-panel';
 import '@oddkin/components/define/switch';
 import '@oddkin/components/define/tabs';
 import '@oddkin/components/define/textarea';
+import '@oddkin/components/define/toast';
 import '@oddkin/components/define/toolbar';
 import '@oddkin/components/define/tooltip';
 import '@oddkin/components/define/tree';
@@ -213,6 +214,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-popover label="Details" open>Details.</odd-popover>
         <odd-dialog label="Confirm" open>Sure?<button slot="footer">OK</button></odd-dialog>
         <odd-drawer label="Details" no-modal open>Details.<button slot="footer">Done</button></odd-drawer>
+        <odd-toast label="Saved" open>Your changes are saved.</odd-toast>
         <odd-button id="lifetime-tip">Tip</odd-button><odd-tooltip anchor="lifetime-tip" open>Hint.</odd-tooltip>
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>

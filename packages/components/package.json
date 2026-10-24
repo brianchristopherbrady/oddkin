@@ -378,6 +378,18 @@
       "types": "./dist/textarea/textarea.define.d.ts",
       "default": "./dist/textarea/textarea.define.js"
     },
+    "./toast": {
+      "types": "./dist/toast/index.d.ts",
+      "default": "./dist/toast/index.js"
+    },
+    "./toast/foundation": {
+      "types": "./dist/toast/foundation.d.ts",
+      "default": "./dist/toast/foundation.js"
+    },
+    "./define/toast": {
+      "types": "./dist/toast/toast.define.d.ts",
+      "default": "./dist/toast/toast.define.js"
+    },
     "./toolbar": {
       "types": "./dist/toolbar/index.d.ts",
       "default": "./dist/toolbar/index.js"

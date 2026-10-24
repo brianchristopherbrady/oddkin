@@ -1746,6 +1746,10 @@
     "odd-textarea": {
       "dependencies": []
     },
+    "odd-toast": {
+      "dependencies": [],
+      "reason": "The action is the author's button in the end slot; the close button is the shared overlay control."
+    },
     "odd-toolbar": {
       "dependencies": []
     },
@@ -1813,7 +1817,7 @@
       "home": "@oddkin/components/styles (TONES, toneStyles, toneGlyph)",
       "decision": "Tone colours (neutral, info, success, warning, danger) with one glyph per tone.",
       "status": "existing",
-      "code": ["odd-badge", "odd-alert"],
+      "code": ["odd-badge", "odd-alert", "odd-toast"],
       "figma": ["badge", "alert", "toast", "alertDialog", "fileUpload", "combobox"],
       "note": "AI .status (aiElementStyles) still draws its own tone colours; it moves onto toneStyles later."
     },
@@ -1922,7 +1926,15 @@
         "combobox",
         "multiselect"
       ],
-      "code": ["odd-popover", "odd-dialog", "odd-select", "odd-menu", "odd-tooltip", "odd-drawer"]
+      "code": [
+        "odd-popover",
+        "odd-dialog",
+        "odd-select",
+        "odd-menu",
+        "odd-tooltip",
+        "odd-drawer",
+        "odd-toast"
+      ]
     },
     {
       "id": "form",

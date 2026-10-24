@@ -7,10 +7,13 @@ import { overlaySurfaceStyles } from '../src/styles/overlay-surface.styles.js';
 import {
   compare,
   expectNone,
+  figma,
+  layersOf,
   mount,
   settle,
   transitions,
   useParity,
+  variantIndex,
   type Target,
 } from './parity.js';
 
@@ -47,7 +50,7 @@ describe('Figma parity: odd-tooltip (tooltip)', () => {
   for (const [state, text] of [
     ['Default', 'Copy a link to this workspace'],
     ['Description', 'Archive workspace'],
-  ])
+  ] as const)
     it(state, async () => {
       const el = mount(`<odd-tooltip open>${text}</odd-tooltip>`);
       await settle(el);
@@ -139,6 +142,32 @@ describe('Figma parity: odd-drawer (drawer)', () => {
         });
       await transitions(targets);
       expectNone(compare('Oddkin/Common/drawer', { State: state }, targets));
+      (el as HTMLElement & { close(): void }).close();
+    });
+});
+
+describe('Figma parity: odd-toast (toast)', () => {
+  // The action ("Undo", "Retry") is the author's button.
+  for (const [state, tone, title, message] of [
+    ['Success', 'success', 'Invitation sent', 'Alex can now join the workspace.'],
+    ['Danger', 'danger', 'Invitation was not sent', 'Your draft has been kept.'],
+  ] as const)
+    it(state, async () => {
+      const el = mount(`<odd-toast label="${title}" tone="${tone}" open>${message}</odd-toast>`);
+      await settle(el);
+      const frame = `Toast / ${state}`;
+      const root = el.shadowRoot!;
+      // The owner's next snapshot moves the title under a Header group.
+      const family = figma.get('Oddkin/Common/toast')!;
+      const layers = layersOf(family, variantIndex(family, { State: state }));
+      const titleLayer = layers.find((l) => l.path.at(-1) === title)!.path;
+      const targets: Target[] = [
+        { layer: [frame, 'Surface'], el, kind: 'frame' },
+        { layer: titleLayer, el: root.querySelector('[part~="label"]')!, kind: 'text' },
+        { layer: [frame, message], el: root.querySelector('.message')!, kind: 'text' },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/toast', { State: state }, targets));
       (el as HTMLElement & { close(): void }).close();
     });
 });

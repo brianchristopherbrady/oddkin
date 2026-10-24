@@ -129,6 +129,8 @@ const states = `
   <odd-popover label="Share workspace" open><p>Invite people to collaborate.</p><a href="#docs">Sharing settings</a></odd-popover>
   <odd-button id="a11y-archive">Archive</odd-button><odd-tooltip anchor="a11y-archive">You can restore it from settings.</odd-tooltip>
   <a id="a11y-copy" href="#copy">Copy link</a><odd-tooltip anchor="a11y-copy" open>Copy a link to this workspace</odd-tooltip>
+  <odd-toast label="Invitation was not sent" tone="danger" duration="0" open>Your draft has been kept.</odd-toast>
+  <odd-toast label="Invitation sent" tone="success" open>Alex can now join the workspace.<odd-button slot="end" appearance="ghost" size="sm">Undo</odd-button></odd-toast>
   <odd-breadcrumbs label="Collapsed location" max-items="2"><svg slot="home" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M3 11l9-8 9 8" /></svg><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
   <h2>Collections</h2>
   <odd-tree label="Project files" value="text-field" data-items></odd-tree>

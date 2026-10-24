@@ -98,7 +98,7 @@ tokens, slot content, a native element, or a look-alike.
 | `alertDialog` | 1 | `odd-dialog alert` | Existing (variant) | The warning glyph and its circle are slot content. |
 | `drawer` | 2 | `odd-drawer` | Existing | `odd-dialog` at an inline edge (`side`); modal, or `no-modal` with `show()`. |
 | `alert` | 4 | `odd-alert` | Planned (M10) | |
-| `toast` | 2 | toast | Planned (unlisted) | ADR 0044 open question (announcement design). |
+| `toast` | 2 | `odd-toast` | Existing | ADR 0044 (`popover="manual"`); its own `status` (or `alert`) region; stacks in document order. |
 | `progress` | 2 | `odd-progress` | Planned (M10) | |
 | `spinner` | 2 | `odd-progress` (indeterminate) | Planned (M10) | Today only `odd-button`'s `spinner` part while `loading`. |
 | `skeleton` | 2 | `odd-skeleton` | Planned (M10) | |
@@ -400,7 +400,7 @@ Status: **proposed** (2026-10-22). 170 references; controller 14, deferred 11, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (41) has no element dependency.
+Every other element (42) has no element dependency.
 
 #### Shared homes
 
@@ -410,7 +410,7 @@ Every other element (41) has no element dependency.
 | focus-ring: The keyboard focus indicator. | style | @oddkin/components/styles focusRingStyles | existing | all interactive elements |  |
 | control: Field control surface: border, radius, height, inline padding, gap, hover/invalid/disabled/read-only states, label/description/error type roles. Figma binds the same tokens on input, textarea, number, search, select, dateTime, combobox, and multiselect/Field. | style | @oddkin/components/styles (fieldStructuralStyles, controlStyles; css/field.css generated from them) | existing | odd-input, odd-checkbox, odd-switch, odd-model-select, .odd-field recipe, odd-listbox, odd-select, odd-textarea, odd-checkbox-group | The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe. |
 | button: Button look: appearance, size, states, busy. | style | @oddkin/components/button styles (shared by odd-button, the CSS-only path, and native button parts) | existing (odd-button + css/button.css) | odd-button, AI .text-button (looks like ghost/sm; Figma page 0:1 draws AI actions as button/sm instances), odd-menu (trigger part), odd-split-button (primary part) |  |
-| tone: Tone colours (neutral, info, success, warning, danger) with one glyph per tone. | style | @oddkin/components/styles (TONES, toneStyles, toneGlyph) | existing | odd-badge, odd-alert | AI .status (aiElementStyles) still draws its own tone colours; it moves onto toneStyles later. |
+| tone: Tone colours (neutral, info, success, warning, danger) with one glyph per tone. | style | @oddkin/components/styles (TONES, toneStyles, toneGlyph) | existing | odd-badge, odd-alert, odd-toast | AI .status (aiElementStyles) still draws its own tone colours; it moves onto toneStyles later. |
 | spinner: Indeterminate busy indicator, reduced-motion behaviour. | style | @oddkin/components/styles (spinnerStyles) | existing | odd-button, odd-spinner, odd-tree, odd-listbox, odd-split-button |  |
 | progress-pulse: The "work in progress" dot pulse (1.2 s, opacity 0.3, off under reduced motion). | style | packages/ai/src/internal (pulse styles, proposed) | proposed | odd-activity, odd-response | Byte-identical keyframes in both today; odd-voice-input's recording pulse (1 s, 0.35, danger colour) means something else and stays separate. |
 | glyphs: Built-in affordance glyphs: chevrons, check, minus, close, search, more, arrows, external, eye, lock, upload, file, user. | style | @oddkin/components/styles (glyphStyles and glyph templates) | existing (drawn by Oddkin; Figma's icon assets do not ship, component-contracts.md §2.7) | odd-badge, odd-alert, odd-chip, odd-disclosure, odd-checkbox, odd-pagination, odd-breadcrumbs, odd-split-panel, odd-tree, odd-listbox, odd-select, odd-input, odd-menu |  |
@@ -419,7 +419,7 @@ Every other element (41) has no element dependency.
 | nav-row: Hierarchical navigation rows: indent step, expand glyph, current marker. | style | @oddkin/components/styles (navRowStructuralStyles, navRowStyles; moved out of odd-side-nav) | existing | odd-side-nav, odd-tree |  |
 | chip: Chip look and remove affordance. | style | @oddkin/components/chip styles | existing | odd-chip |  |
 | avatar: Avatar look and stacking. | style | @oddkin/components/avatar styles | existing | odd-avatar, .odd-avatar-group recipe |  |
-| overlay-surface: Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers. | style | @oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles); overlayPickerStyles (the gated select picker, imported relatively from styles/overlay-surface.styles.ts) | existing | odd-popover, odd-dialog, odd-select, odd-menu, odd-tooltip, odd-drawer |  |
+| overlay-surface: Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers. | style | @oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles); overlayPickerStyles (the gated select picker, imported relatively from styles/overlay-surface.styles.ts) | existing | odd-popover, odd-dialog, odd-select, odd-menu, odd-tooltip, odd-drawer, odd-toast |  |
 | form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input, odd-checkbox, odd-switch, odd-listbox, odd-select, odd-textarea, odd-checkbox-group | Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller. |
 | focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | odd-tabs, odd-toolbar, odd-tree, odd-menu |  |
 | collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | odd-breadcrumbs, odd-listbox, odd-select, odd-menu, odd-split-button |  |

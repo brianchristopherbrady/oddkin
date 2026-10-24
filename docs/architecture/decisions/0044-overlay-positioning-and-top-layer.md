@@ -52,4 +52,4 @@ Platform facts at the floor (Chrome/Edge 125, Firefox 126, Safari 17.4; `@mdn/br
 
 ## Open questions
 
-- Whether toasts use `popover="manual"` in a component-owned region or a live region outside the top layer is decided with the announcement design (`LiveAnnouncer`).
+- Whether toasts use `popover="manual"` in a component-owned region or a live region outside the top layer is decided with the announcement design (`LiveAnnouncer`). *Decided 2026-10-23 (owner): each `odd-toast` is its own `popover="manual"` and its own `status` (or `alert`) live region, with no separate region; open toasts stack in document order (component-contracts.md §3.5).*
