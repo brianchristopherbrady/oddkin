@@ -55,9 +55,9 @@ tokens, slot content, a native element, or a look-alike.
 | `iconButton` | 5 | `odd-button` with an icon in the default slot and `label` | Existing (variant) | The accessible name comes from `label` (M4 cross-shadow naming). |
 | `toggleButton` | 8 | `odd-button` `toggle` and `pressed` (`aria-pressed`) | Existing (variant) | Not a new appearance: a pressed toggle takes the selection colours in every appearance. |
 | `splitAction` | 2 | composite of `odd-button` + menu | Planned (unlisted) | References `button` ×2; needs the menu and [ADR 0044](./decisions/0044-overlay-positioning-and-top-layer.md). |
-| `link` | 3 | `odd-link` | Planned (M10) | |
-| `badge` | 5 | `odd-badge` | Planned (M10) | AI status labels (`.status` in `@oddkin/ai`) are visually close; reuse decided at M10. |
-| `chip` | 4 | `odd-chip` | Planned (unlisted) | `multiselect` draws its 14 chips as parts from the chip style module (§6). |
+| `link` | 3 | `a.odd-link` recipe (`css/link.css`) | Existing (CSS recipe) | No element: a native `<a>` with the link colour, an underline on hover, and the shared focus ring. |
+| `badge` | 5 | `odd-badge` | Existing | `tone` neutral/info/success/warning/danger with the tone glyph (`no-marker` hides it). AI status labels (`.status` in `@oddkin/ai`) are visually close; moving them onto the tone module is open. |
+| `chip` | 4 | `odd-chip` | Existing | `removable` (a named remove button), `selected`, `disabled`. `multiselect` draws its 14 chips as parts from the chip style module (§6). |
 | `field` | 2 | `odd-field` | Planned (M10) | Today `odd-input` carries its own label, description, and error. |
 | `input` | 8 | `odd-input` | Existing | Types text, email, password, tel, url, search, number, date, time, datetime-local, month, week. |
 | `textarea` | 5 | `odd-textarea` (native `<textarea>`, `field-sizing` gated, F12) | Existing | `rows`, `resize` (`auto` follows the content), and a `count` part with `maxlength`. |
@@ -81,34 +81,34 @@ tokens, slot content, a native element, or a look-alike.
 | `Menu` | 3 | menu collection element | Planned (M10, collections) | References `MenuItem` ×12; overlay per ADR 0044. |
 | `MenuItem` | 4 | menu item part | Anatomy primitive | |
 | `Tree` | 6 | tree collection element | Planned (M10, collections) | Reuses `NavigationItem` rows, as `odd-side-nav` groups do. |
-| `Table` | 6 | table recipe or element | Planned (M10, collections) | Not the data grid; a native `<table>` styling path is the first candidate. |
-| `List` | 3 | list recipe (styled `ul`/`ol`) | Planned (unlisted) | |
+| `Table` | 6 | `table.odd-table` recipe (`css/table.css`) | Existing (CSS recipe) | A native `<table>`: header cells on the sunken surface, rows divided by rules, `aria-sort` headers, a row holding a checked checkbox in the selection colours. Not the data grid. |
+| `List` | 3 | `ul.odd-list` / `ol.odd-list` recipe (`css/list.css`) | Existing (CSS recipe) | Rows divided by rules; `.odd-list-meta` for secondary text; the `aria-current` row in the selection colours. |
 | `NavigationItem` | 4 | `odd-side-nav` entry (`entry` part) | Existing (anatomy) | Link, group, action, disabled, current. |
 | `SideNavigation` | 3 | `odd-side-nav` | Existing | References `NavigationItem` ×16; recipe + data model (`NavigationItemModel`). |
-| `Breadcrumbs` | 2 | breadcrumbs (navigation recipe or element) | Planned (unlisted) | |
-| `Pagination` | 3 | pagination | Planned (unlisted) | |
-| `Tabs` | 2 | `odd-tabs` | Planned (M10) | |
-| `Disclosure` | 3 | `odd-disclosure` | Planned (M10) | |
-| `Accordion` | 3 | a group of `odd-disclosure` | Planned (M10, via disclosure) | |
-| `Toolbar` | 3 | toolbar layout recipe + roving focus (`@oddkin/core/controllers/focus`) | Planned (M10, layout recipe presets) | References `button/sm` ×7. |
+| `Breadcrumbs` | 2 | `odd-breadcrumbs` | Existing | A named trail of links from `items`; with `max-items`, the middle items collapse behind a "more" button. |
+| `Pagination` | 3 | `odd-pagination` | Existing | `current`, `page-count`, and an `href` pattern; previous and next, with ellipses. |
+| `Tabs` | 2 | `odd-tabs` with `odd-tab-panel` children | Existing | `orientation`, `activation` automatic/manual, roving focus; panel content stays in the light DOM. |
+| `Disclosure` | 3 | `odd-disclosure` | Existing | `label`, `open`, `disabled`. |
+| `Accordion` | 3 | `odd-disclosure` elements sharing a `name` | Existing (variant) | Same-name disclosures open one at a time, as native `<details name>` do. |
+| `Toolbar` | 3 | `odd-toolbar` | Existing | A named group with roving focus (`@oddkin/core/controllers/focus`) and `orientation`; its items are author content. References `button/sm` ×7. |
 | `card` | 2 | `odd-card` | Existing | `appearance` outlined/filled/elevated, `padding`, header/body/footer slots. References `button` ×2 (footer actions). |
 | `popover` | 2 | `odd-popover` | Existing | ADR 0044. The host is the popover; `popovertarget` opens it. |
 | `tooltip` | 2 | `odd-tooltip` | Existing | ADR 0044 (`popover="manual"`); describes its anchor, never names it. |
 | `dialog` | 2 | `odd-dialog` | Existing | `<dialog>` + `showModal()`; `closedby`, a slotted `<form method="dialog">`. |
 | `alertDialog` | 1 | `odd-dialog alert` | Existing (variant) | The warning glyph and its circle are slot content. |
 | `drawer` | 2 | `odd-drawer` | Existing | `odd-dialog` at an inline edge (`side`); modal, or `no-modal` with `show()`. |
-| `alert` | 4 | `odd-alert` | Planned (M10) | |
+| `alert` | 4 | `odd-alert` | Existing | A persistent inline message: `tone` with the tone glyph, `label`, `announce`, and optional actions. |
 | `toast` | 2 | `odd-toast` | Existing | ADR 0044 (`popover="manual"`); its own `status` (or `alert`) region; stacks in document order. |
-| `progress` | 2 | `odd-progress` | Planned (M10) | |
-| `spinner` | 2 | `odd-progress` (indeterminate) | Planned (M10) | Today only `odd-button`'s `spinner` part while `loading`. |
-| `skeleton` | 2 | `odd-skeleton` | Planned (M10) | |
-| `emptyState` | 2 | `odd-empty-state` | Planned (M10) | |
-| `avatar` | 2 | avatar | Planned (unlisted) | Initials and group specimens. |
+| `progress` | 2 | `odd-progress` | Existing | `value`, `max`, `label`, `description`; indeterminate without a `value`. |
+| `spinner` | 2 | `odd-spinner` | Existing | An indeterminate busy indicator, `size` sm/md/lg; it never shows a percentage. |
+| `skeleton` | 2 | `odd-skeleton` | Existing | `shape` text/rect/circle and `lines`. |
+| `emptyState` | 2 | `odd-empty-state` | Existing | `label`, with optional media and actions. |
+| `avatar` | 2 | `odd-avatar`; `.odd-avatar-group` recipe (`css/avatar-group.css`) | Existing | A picture (`src`) or initials from `label`, `size` sm/md/lg; the group recipe overlaps avatars and ends with an overflow count. |
 | `avatar/Appearance` | 24 | styles of `odd-avatar` | Anatomy primitive | Six backgrounds × four shapes, composed from `AvatarItem`; initials exposed from the nested primitive. Presets use existing tokens. Custom HEX backgrounds use native Fill overrides. Size examples: 32, 40 and 48 px; radius examples: 0, 4, 8, 12 px and full. This Figma study adds no runtime property contract. |
-| `icon` | 2 | `odd-icon` | Planned (M10) | Icon assets: see §5. |
-| `divider` | 2 | divider recipe (`<hr>` in `base.css`) | Planned (unlisted) | |
-| `typography` | 1 | `odd-text`, `odd-heading` + type roles (`--odd-type-*`) | Planned (M10); roles Existing | The 8 core text styles match repository type roles (audit). |
-| `keyboardKey` | 2 | `<kbd>` styling recipe | Planned (unlisted) | |
+| `icon` | 2 | `odd-icon` | Existing | An SVG (`src`) drawn in the text colour, `label`, `size` sm/md/lg. Icon assets: see §5. |
+| `divider` | 2 | `hr.odd-divider` recipe (`css/divider.css`) | Existing (CSS recipe) | A labelled `.odd-divider` ("or") takes `role="separator"` from the author. |
+| `typography` | 1 | `.odd-type-<role>` recipe (`css/typography.css`) + type roles (`--odd-type-*`) | Existing (CSS recipe) | The 8 core text styles match the repository's type roles (display, title, section, body, ui, small, eyebrow, code); native headings and paragraphs keep their semantics. |
+| `keyboardKey` | 2 | `kbd.odd-kbd` recipe (`css/kbd.css`) | Existing (CSS recipe) | A key cap that does not look clickable; a sequence is adjacent keys. |
 | `CommandItem` | 3 | command item part | Anatomy primitive | |
 | `CommandPalette` | 5 | command palette composite + dialog | Planned (unlisted) | References `CommandItem` ×6, `spinner`, `button`. |
 | `CheckboxGroup` | 3 | `odd-checkbox-group` | Existing | Slotted `odd-checkbox` choices in a named group with one legend, description, and error; `required` means at least one. |
