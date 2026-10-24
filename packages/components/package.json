@@ -342,6 +342,18 @@
       "types": "./dist/skeleton/skeleton.define.d.ts",
       "default": "./dist/skeleton/skeleton.define.js"
     },
+    "./slider": {
+      "types": "./dist/slider/index.d.ts",
+      "default": "./dist/slider/index.js"
+    },
+    "./slider/foundation": {
+      "types": "./dist/slider/foundation.d.ts",
+      "default": "./dist/slider/foundation.js"
+    },
+    "./define/slider": {
+      "types": "./dist/slider/slider.define.d.ts",
+      "default": "./dist/slider/slider.define.js"
+    },
     "./spinner": {
       "types": "./dist/spinner/index.d.ts",
       "default": "./dist/spinner/index.js"

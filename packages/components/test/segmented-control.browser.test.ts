@@ -148,6 +148,7 @@ describe('odd-segmented-control', () => {
       `<odd-segmented-control label="Size" disabled>${SIZES}</odd-segmented-control>`,
     );
     expect(radios().every((r) => r.disabled)).toBe(true);
+    expect(part('field').getAttribute('aria-disabled')).toBe('true');
     expect([
       getComputedStyle(part('label')).color,
       getComputedStyle(radio('sm').nextElementSibling!).color,

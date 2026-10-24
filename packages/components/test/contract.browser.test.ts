@@ -89,7 +89,8 @@ describe.each(Object.entries(definitions))(
           getters: Object.fromEntries(getters.map((g) => [g, normalize(el[g])])),
         };
       };
-      for (const constrained of [false, true]) {
+      // A control with no boolean constraint (odd-slider, as a native range) is compared unconstrained only.
+      for (const constrained of constraints.length ? [false, true] : [false]) {
         const expected = await snapshot(tag, constrained);
         expect(await snapshot(derivedTag(tag), constrained), `constrained ${constrained}`).toEqual(
           expected,

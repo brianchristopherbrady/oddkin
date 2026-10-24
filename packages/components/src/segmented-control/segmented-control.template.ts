@@ -13,6 +13,7 @@ export const segmentedControlTemplate = (control: OddkinSegmentedControl) =>
     part="field"
     class="field"
     role="radiogroup"
+    aria-disabled=${control.disabled || control._formDisabled.value ? 'true' : null}
     aria-labelledby=${control.label ? 'label' : null}
     aria-describedby=${control._describedBy}
     @focusout=${control._onFocusOut}

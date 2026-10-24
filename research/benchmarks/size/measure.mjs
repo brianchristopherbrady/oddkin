@@ -181,6 +181,9 @@ export const CSS_BUDGETS = {
   // 896: measured 812 on 2026-10-23: the track, the segments drawn by their radios, the three sizes,
   // and the forced-colours states, which only odd-segmented-control draws.
   'components:segmented-control': 896,
+  // 768: measured 721 on 2026-10-24: the label row, track, fill, thumb, endpoints, and forced-colours
+  // states, which only odd-slider draws (an ARIA slider; owner decision 2026-10-23).
+  'components:slider': 768,
   // 640: measured 569 on 2026-10-23: the track and thumb, which only odd-switch draws.
   'components:switch': 640,
   // 320: measured 264 on 2026-10-23: the resize modes, the field-sizing gate, the block inset, and

@@ -442,3 +442,32 @@ describe('Figma parity: segmented', () => {
       expectNone(compare('Oddkin/Common/segmented', { State: state }, targets));
     });
 });
+
+describe('Figma parity: slider', () => {
+  const states: Record<string, string> = { Default: '', Focus: '', Disabled: ' disabled' };
+  for (const [state, attribute] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(
+        `<odd-slider label="Preview scale" min="25" max="100" step="5" value="60"${attribute}></odd-slider>`,
+      ) as HTMLElement & { renderValue: (value: number) => string };
+      el.renderValue = (value) => `${value}%`;
+      await settle(el);
+      const thumb = shadowPart(el, 'thumb');
+      await interact(state, thumb);
+      await settle(el);
+      const root = `Slider / ${state}`;
+      const targets: Target[] = [
+        { layer: [root, 'Preview scale'], el: shadowPart(el, 'label'), kind: 'text' },
+        { layer: [root, '60%'], el: shadowPart(el, 'output'), kind: 'text' },
+        { layer: [root, '25%'], el: shadowPart(el, 'min-label'), kind: 'text' },
+        { layer: [root, '100%'], el: shadowPart(el, 'max-label'), kind: 'text' },
+        { layer: [root, 'Surface'], el: shadowPart(el, 'track'), kind: 'frame' },
+        { layer: [root, 'Surface [2]'], el: shadowPart(el, 'fill'), kind: 'frame' },
+        { layer: [root, 'Ellipse'], el: thumb, kind: 'frame' },
+      ];
+      if (state === 'Focus')
+        targets.push({ layer: [root, 'Surface [3]'], el: thumb, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/slider', { State: state }, targets));
+    });
+});

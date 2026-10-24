@@ -71,6 +71,9 @@ const states = `
     <odd-segmented-control label="Preview size" name="size"><option value="sm" title="Fits more">Small</option><option value="md" selected>Medium</option><option value="lg">Large</option></odd-segmented-control>
     <odd-segmented-control label="Density" size="sm" required error="Choose a density."><option value="a">Compact</option><option value="b">Roomy</option></odd-segmented-control>
     <odd-segmented-control label="Theme" size="lg" disabled><option value="light" selected>Light</option><option value="dark">Dark</option></odd-segmented-control>
+    <odd-slider label="Preview scale" name="scale" min="25" max="100" step="5" value="60" description="Applies to the preview only."></odd-slider>
+    <odd-slider label="Print scale" value="90" error="Use 80 or less for print."></odd-slider>
+    <odd-slider label="Locked scale" value="40" disabled></odd-slider>
     <odd-textarea label="Project description" name="about" placeholder="Describe this project…" maxlength="500"></odd-textarea>
     <odd-textarea label="Feedback" description="Tell us what to improve." name="feedback" required error="Feedback is required." maxlength="200"></odd-textarea>
     <odd-textarea label="Terms" name="terms-text" value="Read only." readonly resize="none"></odd-textarea>

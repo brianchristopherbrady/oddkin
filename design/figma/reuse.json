@@ -1739,6 +1739,9 @@
     "odd-skeleton": {
       "dependencies": []
     },
+    "odd-slider": {
+      "dependencies": []
+    },
     "odd-spinner": {
       "dependencies": []
     },
@@ -1816,7 +1819,8 @@
         "odd-checkbox-group",
         "odd-radio-group",
         "odd-segmented-control",
-        "odd-combobox"
+        "odd-combobox",
+        "odd-slider"
       ],
       "note": "The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe."
     },
@@ -1987,7 +1991,8 @@
         "odd-checkbox-group",
         "odd-radio-group",
         "odd-segmented-control",
-        "odd-combobox"
+        "odd-combobox",
+        "odd-slider"
       ],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]

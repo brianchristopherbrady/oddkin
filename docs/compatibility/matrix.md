@@ -182,6 +182,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 38 |
 | `packages/components/dist/skeleton/skeleton.structural.styles.js (skeletonStructuralStyles)` | yes | 27 |
 | `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
+| `packages/components/dist/slider/slider.structural.styles.js (sliderStructuralStyles)` | yes | 36 |
+| `packages/components/dist/slider/slider.styles.js (sliderStyles)` | yes | 13 |
 | `packages/components/dist/spinner/spinner.structural.styles.js (spinnerStructuralStyles)` | yes | 10 |
 | `packages/components/dist/spinner/spinner.styles.js (spinnerElementStyles)` | yes | 10 |
 | `packages/components/dist/split-button/split-button.structural.styles.js (splitButtonStructuralStyles)` | yes | 5 |

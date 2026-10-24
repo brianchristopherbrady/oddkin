@@ -38,6 +38,7 @@ export const radioGroupTemplate = (group: OddkinRadioGroup) => {
     part="field"
     class="field"
     role="radiogroup"
+    aria-disabled=${group.disabled || group._formDisabled.value ? 'true' : null}
     aria-labelledby=${group.label ? 'label' : null}
     aria-describedby=${group._describedBy}
     @focusout=${group._onFocusOut}

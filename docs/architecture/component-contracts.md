@@ -251,9 +251,15 @@ another template and style set). `size: sm | md | lg = md` (segment height `targ
 descriptions are tooltips (`title`), and groups are one run of segments. Each segment is drawn by its radio
 (`appearance: none`) under its text. Use `odd-tabs` to switch content panels.
 
-**`odd-slider`** (`slider`) — native `<input type="range">`. Field anatomy, `value: string`, `min = 0`, `max = 100`,
-`step = 1`, `name`, `disabled`. Parts `output` (current value) and `min-label`/`max-label` (endpoints);
-`renderValue?: (value: number) => string` formats all three.
+**`odd-slider`** (`slider`) — an ARIA slider the element draws (owner decision 2026-10-23: a native range's track and
+thumb take styles only through prefixed pseudo-elements, and `accent-color` cannot meet Figma's tokens), as
+`odd-progress` is drawn instead of `<progress>`. Field anatomy, `value: string` (the attribute is the default; snapped
+to `step` from `min` and clamped, halfway without a default, as a native range), `valueAsNumber`, `min = 0`,
+`max = 100`, `step = 1`, `name`, `disabled`. The thumb is a `role="slider"` with the APG keys (arrows by `step`,
+Page Up and Page Down by a tenth of the range in whole steps, Home and End); a press on the track moves there and
+drags. Each key dispatches `input` and `change`; a drag dispatches `input` while moving and one `change` at the end.
+Parts `control`, `track`, `fill`, `thumb`, `output` (current value), and `min-label`/`max-label` (endpoints);
+`renderValue?: (value: number) => string` formats all three and the announced `aria-valuetext`.
 
 **`odd-select`** (`select`) — native `<select>` built from the options (§2.2). Field anatomy, `name`, `value` (the
 attribute is the default, then the last `<option selected>`, then, without a placeholder, the first usable option, as

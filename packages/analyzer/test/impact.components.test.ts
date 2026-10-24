@@ -88,6 +88,7 @@ describe('change impact on @oddkin/components', () => {
         'example:odd-listbox/inForm',
         'example:odd-radio-group/inForm',
         'example:odd-select/inForm',
+        'example:odd-slider/inForm',
         'example:odd-textarea/inForm',
         ...['danger', 'default', 'timed'].map((name) => `example:odd-toast/${name}`),
         ...['default', 'selection', 'vertical'].map((name) => `example:odd-toolbar/${name}`),

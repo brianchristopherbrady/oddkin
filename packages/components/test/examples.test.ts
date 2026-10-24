@@ -137,6 +137,7 @@ describe('component examples', () => {
     'odd-command-palette/default': ['component:odd-button'],
       'odd-radio-group/inForm': ['component:odd-button'],
       'odd-select/inForm': ['component:odd-button'],
+      'odd-slider/inForm': ['component:odd-button'],
       'odd-tab-panel/default': ['component:odd-tabs'],
       'odd-textarea/inForm': ['component:odd-button'],
       ...Object.fromEntries(
