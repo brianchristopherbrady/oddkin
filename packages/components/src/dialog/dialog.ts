@@ -78,7 +78,7 @@ export class OddkinDialog extends OddkinElement.with({
     this.#dialog.returnValue = value;
   }
 
-  /** Opens it modally. */
+  /** Opens it. */
   show(): void {
     this.#dialog.show();
   }
@@ -88,11 +88,19 @@ export class OddkinDialog extends OddkinElement.with({
     this.#dialog.close(returnValue);
   }
 
+  /** Whether it opens modally; read at each opening. odd-drawer overrides it. */
+  protected _modal(): boolean {
+    return true;
+  }
+
   #createDialog(): ModalDialog {
     const host = this;
     return new ModalDialog({
       host,
       dialog: () => host.shadowRoot?.querySelector('dialog'),
+      get modal() {
+        return host._modal();
+      },
       get closedBy() {
         return host.closedBy;
       },

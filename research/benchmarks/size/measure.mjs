@@ -135,6 +135,7 @@ export const CSS_BUDGETS = {
   // the sheet look, motion, and close button are the shared overlay module.
   'components:dialog': 704,
   'components:tooltip': 256, // 203: the surface and motion are the shared overlay module
+  'components:drawer': 512, // 429: the side sheet and header divider; the rest is odd-dialog's
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   // Collections, measured on 2026-10-23 (structural and default styles; rows are the shared modules).

@@ -4,11 +4,11 @@ import { composedContains, deepActiveElement } from './overlay.js';
 
 /**
  * The wiring every modal overlay shares (component-contracts.md §2.6, §3.5; ADR 0044): a native
- * `<dialog>` in the owner's shadow root opened with `showModal()`, so the rest of the page is inert;
- * initial focus and focus return; `close` and `cancel` re-dispatched at the owner; `closedby`,
- * native where supported and emulated elsewhere; and a `<form method="dialog">` in the owner's light
- * DOM, which the native lookup cannot connect to a dialog in a shadow root. Internal to
- * `@oddkin/components`: import it relatively.
+ * `<dialog>` in the owner's shadow root opened with `showModal()`, so the rest of the page is inert
+ * (or with `show()`, non-modal, for `modal: false`); initial focus and focus return; `close` and
+ * `cancel` re-dispatched at the owner; `closedby`, native where supported and emulated elsewhere;
+ * and a `<form method="dialog">` in the owner's light DOM, which the native lookup cannot connect
+ * to a dialog in a shadow root. Internal to `@oddkin/components`: import it relatively.
  */
 export type ClosedBy = 'any' | 'closerequest' | 'none';
 
@@ -17,6 +17,8 @@ export interface ModalDialogOptions {
   readonly host: HTMLElement;
   /** The `<dialog>`, rendered in the host's shadow root before `connect`. */
   readonly dialog: () => HTMLDialogElement | null | undefined;
+  /** Opens it with `showModal()` (true, the default) or `show()` (false: no backdrop, and the page stays usable). Read at each opening. */
+  readonly modal?: boolean;
   /** What closes it besides script: Escape (`closerequest`, the default), also a press on the backdrop (`any`), or neither (`none`). Read at each opening, so a getter follows a live property. */
   readonly closedBy?: ClosedBy;
   /** Where focus goes when it opens. Default: `[autofocus]` in the host's light DOM, then the first control there, then what the browser chose (the dialog's own first control). */
@@ -92,6 +94,17 @@ export class ModalDialog implements Controller {
         event.clientY <= box.bottom;
       if (!inside && this.#cancel(true)) this.close();
     });
+    // A non-modal dialog where the browser lacks `closedby`, which would otherwise ignore Escape:
+    // Escape, and with `any` a press outside it, close it as the browser would.
+    const emulated = () => !nativeClosedBy() && dialog.open && !dialog.matches(':modal');
+    scope.listen<KeyboardEvent>(document, 'keydown', (event) => {
+      if (event.key !== 'Escape' || event.defaultPrevented || closedBy() === 'none') return;
+      if (emulated() && this.#cancel(true)) this.close();
+    });
+    scope.listen<PointerEvent>(document, 'pointerdown', (event) => {
+      if (closedBy() !== 'any' || !emulated() || event.composedPath().includes(dialog)) return;
+      if (this.#cancel(true)) this.close();
+    });
     scope.listen<SubmitEvent>(host, 'submit', (event) => {
       const submitter = event.submitter as HTMLButtonElement | null;
       const form = event.target as HTMLFormElement;
@@ -110,13 +123,14 @@ export class ModalDialog implements Controller {
     this.#open.value = dialog.open;
   }
 
-  /** Opens it modally, unless it is open or not connected. */
+  /** Opens it, modally unless `modal` is false, unless it is open or not connected. */
   show(): void {
     const dialog = this.#options.dialog();
     if (!dialog?.isConnected || dialog.open) return;
     this.#opener = deepActiveElement() as HTMLElement | null;
     if (nativeClosedBy()) dialog.setAttribute('closedby', this.#options.closedBy ?? 'closerequest');
-    dialog.showModal();
+    if (this.#options.modal === false) dialog.show();
+    else dialog.showModal();
     this.#open.value = true;
     const host = this.#options.host;
     const target =

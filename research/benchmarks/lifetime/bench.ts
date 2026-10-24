@@ -15,6 +15,7 @@ import '@oddkin/components/define/checkbox';
 import '@oddkin/components/define/chip';
 import '@oddkin/components/define/dialog';
 import '@oddkin/components/define/disclosure';
+import '@oddkin/components/define/drawer';
 import '@oddkin/components/define/empty-state';
 import '@oddkin/components/define/icon';
 import '@oddkin/components/define/input';
@@ -209,6 +210,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-breadcrumbs max-items="2"><ol><li><a href="#a">A</a></li><li><a href="#b">B</a></li><li><a href="#c">C</a></li></ol></odd-breadcrumbs>
         <odd-popover label="Details" open>Details.</odd-popover>
         <odd-dialog label="Confirm" open>Sure?<button slot="footer">OK</button></odd-dialog>
+        <odd-drawer label="Details" no-modal open>Details.<button slot="footer">Done</button></odd-drawer>
         <odd-button id="lifetime-tip">Tip</odd-button><odd-tooltip anchor="lifetime-tip" open>Hint.</odd-tooltip>
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>

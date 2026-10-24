@@ -1681,6 +1681,10 @@
     "odd-disclosure": {
       "dependencies": []
     },
+    "odd-drawer": {
+      "dependencies": [],
+      "reason": "It extends odd-dialog's class and template; actions and fields are slot content."
+    },
     "odd-empty-state": {
       "dependencies": []
     },
@@ -1909,7 +1913,7 @@
         "combobox",
         "multiselect"
       ],
-      "code": ["odd-popover", "odd-dialog", "odd-select", "odd-menu", "odd-tooltip"]
+      "code": ["odd-popover", "odd-dialog", "odd-select", "odd-menu", "odd-tooltip", "odd-drawer"]
     },
     {
       "id": "form",
@@ -1952,10 +1956,10 @@
       "id": "modal-dialog",
       "kind": "controller",
       "home": "packages/components/src/overlay/dialog.ts (ModalDialog; internal to @oddkin/components)",
-      "decision": "Modal overlays: a native <dialog> shown modally (the page inert), initial focus and its return, close and cancel at the host, closedby (native, emulated elsewhere), and a light-DOM <form method=\"dialog\">.",
+      "decision": "Modal overlays: a native <dialog> shown modally (the page inert), or non-modal with `modal: false`, initial focus and its return, close and cancel at the host, closedby (native, emulated elsewhere), and a light-DOM <form method=\"dialog\">.",
       "status": "existing",
       "figma": ["dialog", "alertDialog", "drawer", "CommandPalette"],
-      "code": ["odd-dialog"]
+      "code": ["odd-dialog", "odd-drawer"]
     },
     {
       "id": "resize",

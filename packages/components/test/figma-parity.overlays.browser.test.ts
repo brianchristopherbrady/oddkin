@@ -113,6 +113,36 @@ describe('Figma parity: odd-dialog (dialog, alertDialog)', () => {
   });
 });
 
+describe('Figma parity: odd-drawer (drawer)', () => {
+  const part = (el: Element, name: string) =>
+    el.shadowRoot!.querySelector<HTMLElement>(`[part~="${name}"]`)!;
+  // The avatar, the Role field, and its helper text are the author's content; Read only has no actions.
+  for (const state of ['Default', 'Read only'])
+    it(state, async () => {
+      const footer = state === 'Default' ? '<button slot="footer">Save</button>' : '';
+      const el = mount(
+        `<odd-drawer label="Member details" open><p>Alex Morgan</p>${footer}</odd-drawer>`,
+      );
+      await settle(el);
+      const frame = `Drawer / ${state}`;
+      const targets: Target[] = [
+        { layer: [frame, 'Surface'], el: part(el, 'dialog'), kind: 'frame' },
+        { layer: [frame, 'Surface [2]'], el: part(el, 'header'), kind: 'frame', pseudo: '::after' },
+        { layer: [frame, 'Member details'], el: part(el, 'title'), kind: 'text' },
+      ];
+      if (footer)
+        targets.push({
+          layer: [frame, 'Surface [4]'],
+          el: part(el, 'footer'),
+          kind: 'frame',
+          pseudo: '::before',
+        });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/drawer', { State: state }, targets));
+      (el as HTMLElement & { close(): void }).close();
+    });
+});
+
 describe('Figma parity: overlay-surface module', () => {
   const cases: [string, string, Record<string, string>, string, 'anchored' | 'sheet'][] = [
     ['popover', 'Popover / Default', { State: 'Default' }, 'Surface', 'anchored'],

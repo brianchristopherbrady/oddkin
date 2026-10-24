@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 125 stylesheets, 295 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 127 stylesheets, 299 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -147,6 +147,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/dialog/dialog.styles.js (dialogStyles)` | yes | 17 |
 | `packages/components/dist/disclosure/disclosure.structural.styles.js (disclosureStructuralStyles)` | yes | 33 |
 | `packages/components/dist/disclosure/disclosure.styles.js (disclosureStyles)` | yes | 26 |
+| `packages/components/dist/drawer/drawer.structural.styles.js (drawerStructuralStyles)` | yes | 26 |
+| `packages/components/dist/drawer/drawer.styles.js (drawerStyles)` | yes | 14 |
 | `packages/components/dist/empty-state/empty-state.structural.styles.js (emptyStateStructuralStyles)` | yes | 21 |
 | `packages/components/dist/empty-state/empty-state.styles.js (emptyStateStyles)` | yes | 12 |
 | `packages/components/dist/icon/icon.structural.styles.js (iconStructuralStyles)` | yes | 19 |

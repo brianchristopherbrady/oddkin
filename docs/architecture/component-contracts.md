@@ -351,8 +351,13 @@ with the submitter's value (the native lookup does not cross the shadow boundary
 The wiring is `ModalDialog` (`packages/components/src/overlay/dialog.ts`), which the drawer and the command palette
 share.
 
-**`odd-drawer`** (`drawer`) — the dialog foundation with a side sheet layout. `placement: start | end = end`;
-everything else as `odd-dialog`.
+**`odd-drawer`** (`drawer`) — `odd-dialog` with a side-sheet layout (it extends `OddkinDialog`).
+`side: inline-start | inline-end = inline-end`, logical, so right-to-left text mirrors it. Modal by default; `no-modal`
+opens it with `show()` (`ModalDialog`'s `modal: false`): no backdrop, nothing inert, and focus may leave it, while
+Escape, and with `closedby="any"` a press outside it, still close it (emulated where the browser lacks `closedby`);
+non-modal it is not in the top layer and stacks at `z-index.overlay`. Fixed at the inline edge for the viewport's height
+less `space.sm`, the body scrolling; width `--odd-drawer-inline-size` (24rem) within the viewport; dividers under the
+header and above the actions. Everything else as `odd-dialog`.
 
 **`odd-toast`** (`toast`) — `tone`, `open`, `duration: number = 5000` (ms; 0 stays; any toast with an action stays,
 WCAG 2.2.1), default slot: message, slot `end`: action. Top layer (`popover="manual"`), stacked at the block-end and
