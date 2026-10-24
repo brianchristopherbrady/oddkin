@@ -182,6 +182,18 @@
       "types": "./dist/listbox/listbox.define.d.ts",
       "default": "./dist/listbox/listbox.define.js"
     },
+    "./menu": {
+      "types": "./dist/menu/index.d.ts",
+      "default": "./dist/menu/index.js"
+    },
+    "./menu/foundation": {
+      "types": "./dist/menu/foundation.d.ts",
+      "default": "./dist/menu/foundation.js"
+    },
+    "./define/menu": {
+      "types": "./dist/menu/menu.define.d.ts",
+      "default": "./dist/menu/menu.define.js"
+    },
     "./pagination": {
       "types": "./dist/pagination/index.d.ts",
       "default": "./dist/pagination/index.js"
@@ -269,6 +281,18 @@
     "./define/spinner": {
       "types": "./dist/spinner/spinner.define.d.ts",
       "default": "./dist/spinner/spinner.define.js"
+    },
+    "./split-button": {
+      "types": "./dist/split-button/index.d.ts",
+      "default": "./dist/split-button/index.js"
+    },
+    "./split-button/foundation": {
+      "types": "./dist/split-button/foundation.d.ts",
+      "default": "./dist/split-button/foundation.js"
+    },
+    "./define/split-button": {
+      "types": "./dist/split-button/split-button.define.d.ts",
+      "default": "./dist/split-button/split-button.define.js"
     },
     "./split-panel": {
       "types": "./dist/split-panel/index.d.ts",

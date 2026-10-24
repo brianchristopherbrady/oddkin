@@ -19,6 +19,7 @@ import '@oddkin/components/define/empty-state';
 import '@oddkin/components/define/icon';
 import '@oddkin/components/define/input';
 import '@oddkin/components/define/listbox';
+import '@oddkin/components/define/menu';
 import '@oddkin/components/define/pagination';
 import '@oddkin/components/define/popover';
 import '@oddkin/components/define/progress';
@@ -26,6 +27,7 @@ import '@oddkin/components/define/select';
 import '@oddkin/components/define/side-nav';
 import '@oddkin/components/define/skeleton';
 import '@oddkin/components/define/spinner';
+import '@oddkin/components/define/split-button';
 import '@oddkin/components/define/split-panel';
 import '@oddkin/components/define/switch';
 import '@oddkin/components/define/tabs';
@@ -214,7 +216,9 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
         <odd-tree label="Files" value="b"></odd-tree>
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
-        <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>`;
+        <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>
+        <odd-menu>Actions<option value="a">A</option><option value="b">B</option></odd-menu>
+        <odd-split-button value="save">Save<option value="copy">Save a copy</option></odd-split-button>`;
       (display.querySelector('odd-tree') as HTMLElement & { items: unknown }).items = [
         { id: 'a', label: 'A', children: [{ id: 'b', label: 'B' }] },
       ];

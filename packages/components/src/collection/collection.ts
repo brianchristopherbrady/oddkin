@@ -159,6 +159,35 @@ export function readMenuItems(host: Element): Declared<MenuItemRecord> {
   return { records, selected: [] };
 }
 
+/**
+ * Assigns the host's child nodes that are not collection entries (`<option>`, `<optgroup>`, `<hr>`)
+ * to `slot`, in a shadow root with `slotAssignment: 'manual'`, and again whenever the children
+ * change while `scope` lives: an element whose default slot holds its own content (a trigger's
+ * label) never renders its entries.
+ */
+export function assignContent(
+  scope: Scope,
+  host: HTMLElement,
+  slot: () => HTMLSlotElement | null | undefined,
+): void {
+  const assign = () =>
+    slot()?.assign(
+      ...[...host.childNodes].filter(
+        (node): node is Element | Text =>
+          (node instanceof Element || node instanceof Text) &&
+          !(
+            node instanceof HTMLOptionElement ||
+            node instanceof HTMLOptGroupElement ||
+            node instanceof HTMLHRElement
+          ),
+      ),
+    );
+  assign();
+  const observer = new MutationObserver(assign);
+  observer.observe(host, { childList: true });
+  scope.add(() => observer.disconnect(), 'slotted content');
+}
+
 /** `<a href>` descendants (text = label), so a server-rendered list of links works as it is. */
 export function readLinks(host: Element): Declared<LinkRecord> {
   const records = [...host.querySelectorAll('a[href]')].map((link) => ({

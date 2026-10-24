@@ -21,7 +21,9 @@ import {
 } from './parity.js';
 import { themeValue } from './probe.js';
 import type { OddkinListbox } from '../src/listbox/listbox.js';
+import type { MenuItemRecord, OddkinMenu } from '../src/menu/menu.js';
 import type { OddkinSelect } from '../src/select/select.js';
+import type { OddkinSplitButton } from '../src/split-button/split-button.js';
 import type { OddkinSplitPanel } from '../src/split-panel/split-panel.js';
 import type { OddkinTree, TreeItemRecord } from '../src/tree/tree.js';
 
@@ -514,4 +516,129 @@ describe('Figma parity: odd-select (select)', () => {
         await userEvent.keyboard('{Escape}');
       },
     );
+});
+
+deliberate([
+  /^Menu .+ Surface \[4\] (fills \(--odd-color-border-default\): background-color rgba\(0, 0, 0, 0\)|strokes \(none\): border )/,
+  'The separator is a top border in border.default (forced colours keep a border visible), where Figma fills a 1px frame.',
+]);
+
+// Figma's sample menu: a headed group, a submenu, a separator, and a destructive action.
+const menuItems = (disabled = ''): MenuItemRecord[] => [
+  {
+    kind: 'group',
+    label: 'Project actions',
+    items: [
+      { id: 'new', label: 'New project', shortcut: 'Ctrl N' },
+      {
+        id: 'duplicate',
+        label: 'Duplicate project',
+        shortcut: 'Ctrl D',
+        disabled: disabled === 'duplicate',
+      },
+      {
+        id: 'move',
+        label: 'Move to workspace',
+        disabled: disabled === 'move',
+        items: [{ id: 'mine', label: 'My workspace' }],
+      },
+    ],
+  },
+  { kind: 'separator' },
+  { id: 'delete', label: 'Delete project', tone: 'danger', shortcut: 'Ctrl D' },
+];
+const openMenu = async (items: MenuItemRecord[], keyboard: boolean) => {
+  const el = mount('<odd-menu label="Project actions"></odd-menu>') as OddkinMenu;
+  el.items = items;
+  await settle(el);
+  const trigger = shadowPart(el, 'trigger');
+  if (keyboard) {
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+  } else await userEvent.click(trigger);
+  const surface = el.shadowRoot!.getElementById('menu')!;
+  await expect.poll(() => surface.matches(':popover-open')).toBe(true);
+  await settle(el);
+  return { el, surface, row: (path: string) => el.shadowRoot!.getElementById(`item-${path}`)! };
+};
+
+describe('Figma parity: odd-menu (Menu)', () => {
+  for (const state of ['Open', 'Keyboard focus', 'Disabled item'] as const)
+    it(state, async () => {
+      const { surface, row } = await openMenu(
+        menuItems(state === 'Disabled item' ? 'move' : ''),
+        state === 'Keyboard focus',
+      );
+      if (state === 'Keyboard focus') {
+        await userEvent.keyboard('{ArrowDown}');
+        expect(row('0-1').matches(':focus-visible')).toBe(true);
+      }
+      const frame = [`Menu / ${state}`, 'Surface'];
+      const targets: Target[] = [
+        { layer: frame, el: surface, kind: 'frame' },
+        {
+          layer: [...frame, 'Project actions'],
+          el: surface.querySelector('.group-label')!,
+          kind: 'text',
+        },
+        {
+          layer: [...frame, 'Surface [4]'],
+          el: surface.querySelector('.separator')!,
+          kind: 'frame',
+        },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/Menu', { State: state }, targets));
+    });
+
+  // The menu's own rows: the option row with the menu's focused surface.
+  for (const [state, path, disabled] of [
+    ['Default', '0-1', ''],
+    ['Destructive', '2', ''],
+    ['Disabled', '0-1', 'duplicate'],
+    ['Focus', '0-1', ''],
+  ] as const)
+    it(`rows as MenuItem ${state}`, async () => {
+      const { row } = await openMenu(menuItems(disabled), state === 'Focus');
+      if (state === 'Focus') await userEvent.keyboard('{ArrowDown}');
+      const item = row(path);
+      const surface = [`MenuItem / ${state}`, 'Surface'];
+      const targets: Target[] = [
+        { layer: surface, el: item, kind: 'frame', gap: 'column-gap' },
+        {
+          layer: [...surface, 'Duplicate project'],
+          el: item.querySelector('.option-text')!,
+          kind: 'text',
+        },
+        { layer: [...surface, 'Ctrl D'], el: item.querySelector('.option-end')!, kind: 'text' },
+      ];
+      if (state === 'Focus')
+        targets.push({ layer: [...surface, 'Surface'], el: item, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/MenuItem', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: odd-split-button (splitAction)', () => {
+  for (const state of ['Default', 'Focus'] as const)
+    it(state, async () => {
+      const el = mount(
+        '<odd-split-button value="create" appearance="primary">Create project<option value="template">From a template</option></odd-split-button>',
+      ) as OddkinSplitButton;
+      await settle(el);
+      const menu = el.shadowRoot!.querySelector<OddkinMenu>('odd-menu')!;
+      await settle(menu);
+      const trigger = shadowPart(menu, 'trigger');
+      if (state === 'Focus') {
+        shadowPart(el, 'primary').focus();
+        await userEvent.tab();
+        expect(trigger.matches(':focus-visible')).toBe(true);
+      }
+      const frame = `Button group / split action / ${state}`;
+      const targets: Target[] = [{ layer: [frame, 'Surface'], el: trigger, kind: 'frame' }];
+      if (state === 'Focus')
+        targets.push({ layer: [frame, 'Surface [2]'], el: trigger, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/splitAction', { State: state }, targets));
+    });
 });

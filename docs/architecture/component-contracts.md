@@ -361,16 +361,26 @@ inline-end corner; `role="status"` (`role="alert"` for `danger`); pauses while h
 
 ### 3.6 Action collections
 
-**`odd-menu`** (`Menu`, `MenuItem`) — menu button (APG): it renders its own trigger (part `trigger`, button look,
-`appearance`, `size`; default slot: trigger content; `label` names an icon-only trigger) and the menu (popover,
-positioned under the trigger). Items per §2.2 actions, with submenus. `odd-action`, detail `{ id, action: 'select' }`
-(`id` is the item's `id`), cancelable (keeps the menu open). Keyboard: Enter, Space, Down open on the first item, Up on the last; arrows, Home/End,
-typeahead; Right opens a submenu, Left and Escape close one level and return focus.
+**`odd-menu`** (`Menu`, `MenuItem`) — menu button (APG): it renders its own trigger (part `trigger`, a native
+`<button>` with the button look of the native-button path, `appearance`, `size`, `disabled`; default slot: trigger
+content, manually assigned so the entry children are never rendered; `label` names a glyph-only trigger) and the menu
+(part `menu`, a popover on the overlay wiring and the overlay surface, under the trigger and at least as wide).
+Items per §2.2 actions, with groups (part `group` headings), separators (part `separator`), icons, shortcuts, the
+danger tone, and submenus (part `submenu`, each a nested popover beside its item on its own overlay wiring while
+open); rows (part `item`) are the option-row module, with the hover surface on the focused row (Figma `MenuItem`
+Focus). `odd-action`, detail `{ id, action: 'select' }` (`id` is the item's `id`), cancelable (keeps the menu open);
+choosing closes every level and focus returns to the trigger. Only the menu's own `beforetoggle` and `toggle` reach
+the host. `show()`, `close()`. Keyboard: Enter, Space, Down open on the first item, Up on the last (roving focus per
+level, disabled items focusable); Up/Down wrap, Home/End, typeahead; Enter and Space choose; Right opens a submenu,
+Left and Escape close one level and return focus to its item; focus leaving every level (Tab, Shift+Tab) closes it.
 
-**`odd-split-button`** (`splitAction`) — two independent targets in one element: a primary `<button>` (default slot,
-`value`) and a menu trigger (`label`, default `strings.more`) with the menu of `odd-menu`. `appearance`, `size`,
-`disabled`, `loading`. Both report `odd-action`: the primary half with `{ id: value, action: 'primary' }`, the menu with
-`{ id, action: 'select' }` for the item.
+**`odd-split-button`** (`splitAction`) — two independent targets in one element, two separate buttons a small gap
+apart (Figma): a primary `<button>` (part `primary`, default slot manually assigned as on `odd-menu`, `value`) and a
+complete `odd-menu` with a glyph-only trigger named by `strings.more` ("More actions"), whose parts it forwards
+(`exportparts`: `trigger`, `menu`, `submenu`, `item`, `group`, `separator`). Items per §2.2 actions, passed to the
+menu. `appearance`, `size`, `disabled` (both halves), `loading` (part `spinner`; the primary half keeps focus, sets
+`aria-disabled`, and ignores presses). Both report `odd-action`: the primary half with `{ id: value, action:
+'primary' }`, the menu with `{ id, action: 'select' }` for the item (cancelable, as on `odd-menu`).
 
 **`odd-command-palette`** (`CommandPalette`, `CommandItem`) — a modal dialog with a search input and results
 (`aria-activedescendant` from the input). `open`, `label`, `placeholder`, `items` (`{ id, label, description?, icon?,

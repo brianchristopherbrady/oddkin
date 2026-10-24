@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 121 stylesheets, 295 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 125 stylesheets, 295 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -155,6 +155,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 11 |
 | `packages/components/dist/listbox/listbox.structural.styles.js (listboxStructuralStyles)` | yes | 11 |
 | `packages/components/dist/listbox/listbox.styles.js (listboxStyles)` | yes | 20 |
+| `packages/components/dist/menu/menu.structural.styles.js (menuStructuralStyles)` | yes | 11 |
+| `packages/components/dist/menu/menu.styles.js (menuStyles)` | yes | 12 |
 | `packages/components/dist/pagination/pagination.structural.styles.js (paginationStructuralStyles)` | yes | 32 |
 | `packages/components/dist/pagination/pagination.styles.js (paginationStyles)` | yes | 20 |
 | `packages/components/dist/popover/popover.structural.styles.js (popoverStructuralStyles)` | yes | 9 |
@@ -170,6 +172,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
 | `packages/components/dist/spinner/spinner.structural.styles.js (spinnerStructuralStyles)` | yes | 10 |
 | `packages/components/dist/spinner/spinner.styles.js (spinnerElementStyles)` | yes | 10 |
+| `packages/components/dist/split-button/split-button.structural.styles.js (splitButtonStructuralStyles)` | yes | 5 |
+| `packages/components/dist/split-button/split-button.styles.js (splitButtonStyles)` | yes | 2 |
 | `packages/components/dist/split-panel/split-panel.structural.styles.js (splitPanelStructuralStyles)` | yes | 36 |
 | `packages/components/dist/split-panel/split-panel.styles.js (splitPanelStyles)` | yes | 25 |
 | `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 42 |

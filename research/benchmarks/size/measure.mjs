@@ -141,6 +141,8 @@ export const CSS_BUDGETS = {
   'components:tree': 512, // 428
   'components:listbox': 640, // 602: the rows, field, and spinner are shared modules
   'components:select': 512, // 448: the field, the option rows, and the picker surface are shared modules
+  'components:menu': 512, // 431: the trigger, surface, and rows are shared modules
+  'components:split-button': 128, // 110: two buttons in a row; the menu half is odd-menu
   'components:empty-state': 512, // 434
   'components:icon': 384, // 305
   'components:progress': 768, // 695

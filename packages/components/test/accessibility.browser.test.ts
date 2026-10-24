@@ -135,6 +135,9 @@ const states = `
   <odd-select label="Workspace role" name="role" description="Who can change things"><option value="viewer">Viewer</option><option value="editor" selected>Editor</option><option value="owner" disabled>Owner</option></odd-select>
   <odd-select label="Region" placeholder="Choose a region…" required error="Choose a region to continue"><optgroup label="Europe"><option value="fra" title="Germany">Frankfurt</option></optgroup><option value="any">Any region</option></odd-select>
   <odd-select label="Archive" disabled><option value="a">2025</option></odd-select>
+  <odd-menu>Project actions<option value="new">New project</option><option value="archive" disabled>Archive</option><hr><optgroup label="Danger zone"><option value="delete">Delete project</option></optgroup></odd-menu>
+  <odd-menu label="More actions" appearance="ghost"><option value="rename">Rename</option></odd-menu>
+  <odd-split-button value="save" appearance="primary">Save<option value="copy">Save a copy</option></odd-split-button>
   <h2>Layout</h2>
   <odd-split-panel label="Resize project files" position="30"><section slot="start"><h3>Project files</h3><a href="#overview">Overview</a></section><section slot="end"><h3>Design system</h3><p>Ready to review.</p></section></odd-split-panel>
 `;

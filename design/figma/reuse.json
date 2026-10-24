@@ -1693,6 +1693,10 @@
     "odd-listbox": {
       "dependencies": []
     },
+    "odd-menu": {
+      "dependencies": ["odd-icon"],
+      "reason": "Item icons are drawn by the complete odd-icon widget authors also place alone."
+    },
     "odd-pagination": {
       "dependencies": []
     },
@@ -1714,6 +1718,10 @@
     },
     "odd-spinner": {
       "dependencies": []
+    },
+    "odd-split-button": {
+      "dependencies": ["odd-menu"],
+      "reason": "The menu half is a complete odd-menu (Figma splitAction: a button and a Menu), with its keyboard, submenus, and odd-action events; the primary half is a native button part."
     },
     "odd-split-panel": {
       "dependencies": []
@@ -1781,7 +1789,9 @@
       "status": "existing (odd-button + css/button.css)",
       "code": [
         "odd-button",
-        "AI .text-button (looks like ghost/sm; Figma page 0:1 draws AI actions as button/sm instances)"
+        "AI .text-button (looks like ghost/sm; Figma page 0:1 draws AI actions as button/sm instances)",
+        "odd-menu (trigger part)",
+        "odd-split-button (primary part)"
       ]
     },
     {
@@ -1800,7 +1810,7 @@
       "home": "@oddkin/components/styles (spinnerStyles)",
       "decision": "Indeterminate busy indicator, reduced-motion behaviour.",
       "status": "existing",
-      "code": ["odd-button", "odd-spinner", "odd-tree", "odd-listbox"],
+      "code": ["odd-button", "odd-spinner", "odd-tree", "odd-listbox", "odd-split-button"],
       "figma": ["button", "spinner", "listbox", "multiselect", "Tree", "CommandPalette", "combobox"]
     },
     {
@@ -1830,7 +1840,8 @@
         "odd-tree",
         "odd-listbox",
         "odd-select",
-        "odd-input"
+        "odd-input",
+        "odd-menu"
       ],
       "figma": ["34 icons on page 158:22"]
     },
@@ -1848,9 +1859,9 @@
       "kind": "style",
       "home": "@oddkin/components/styles (optionRowStructuralStyles, optionRowStyles); optionRowPickerStyles (the gated select picker rows, imported relatively from styles/option-row.styles.ts)",
       "decision": "Option and menu rows: height, padding, selected check, active and disabled states.",
-      "status": "existing (element consumers: odd-listbox, odd-select's customizable picker; next odd-menu)",
+      "status": "existing (element consumers: odd-listbox, odd-select's customizable picker, odd-menu)",
       "figma": ["ListboxOption", "MenuItem", "CommandItem", "CheckboxOption"],
-      "code": ["odd-listbox", "odd-select"]
+      "code": ["odd-listbox", "odd-select", "odd-menu"]
     },
     {
       "id": "nav-row",
@@ -1898,7 +1909,7 @@
         "combobox",
         "multiselect"
       ],
-      "code": ["odd-popover", "odd-dialog", "odd-select", "odd-tooltip"]
+      "code": ["odd-popover", "odd-dialog", "odd-select", "odd-menu", "odd-tooltip"]
     },
     {
       "id": "form",
@@ -1917,7 +1928,7 @@
       "decision": "Roving focus.",
       "status": "existing",
       "figma": ["radioGroup", "Tabs", "segmented", "Toolbar", "Menu", "Tree"],
-      "code": ["odd-tabs", "odd-toolbar", "odd-tree"]
+      "code": ["odd-tabs", "odd-toolbar", "odd-tree", "odd-menu"]
     },
     {
       "id": "collection",
@@ -1926,7 +1937,7 @@
       "decision": "Collection model, selection, typeahead, active descendant.",
       "status": "in progress (typeahead and active descendant existing)",
       "figma": ["listbox", "combobox", "multiselect", "Menu", "CommandPalette", "Tree"],
-      "code": ["odd-breadcrumbs", "odd-listbox", "odd-select"]
+      "code": ["odd-breadcrumbs", "odd-listbox", "odd-select", "odd-menu", "odd-split-button"]
     },
     {
       "id": "position",
@@ -1935,7 +1946,7 @@
       "decision": "Anchored overlay placement and dismissal.",
       "status": "existing",
       "figma": ["popover", "tooltip", "Menu", "combobox", "multiselect", "splitAction"],
-      "code": ["odd-popover", "odd-tooltip"]
+      "code": ["odd-popover", "odd-menu", "odd-tooltip"]
     },
     {
       "id": "modal-dialog",

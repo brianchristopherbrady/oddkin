@@ -415,6 +415,18 @@ export async function describeCemContract(
           for (const slot of root.querySelectorAll('slot')) slots.add(slot.name);
           for (const el of root.querySelectorAll('[part]'))
             for (const part of el.getAttribute('part')!.split(/\s+/)) parts.add(part);
+          // A part forwarded from an inner element (`exportparts`) counts when that element renders it.
+          for (const el of root.querySelectorAll('[exportparts]')) {
+            const inner = new Set(
+              [...(el.shadowRoot?.querySelectorAll('[part]') ?? [])].flatMap((each) =>
+                each.getAttribute('part')!.split(/\s+/),
+              ),
+            );
+            for (const mapping of el.getAttribute('exportparts')!.split(',')) {
+              const [from, to = from] = mapping.split(':').map((name) => name.trim());
+              if (from && inner.has(from)) parts.add(to!);
+            }
+          }
           mounted.dispose();
           frame.remove();
         }
