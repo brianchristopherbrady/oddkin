@@ -158,6 +158,9 @@ export const CSS_BUDGETS = {
   'components:checkbox': 128,
   // 640: measured 569 on 2026-10-23: the track and thumb, which only odd-switch draws.
   'components:switch': 640,
+  // 320: measured 264 on 2026-10-23: the resize modes, the field-sizing gate, the block inset, and
+  // the rows floor and maximum of an auto-sized field.
+  'components:textarea': 320,
   // 1,152: measured 1,077 on 2026-10-22 once the entry rows moved to the shared navigation-row
   // module (1,234 before, with them).
   'components:side-nav': 1152,

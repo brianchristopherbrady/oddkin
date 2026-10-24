@@ -62,6 +62,10 @@ const states = `
     <odd-switch name="alerts" checked>Alerts</odd-switch>
     <odd-switch name="digest" description="A summary of the week, every Monday.">Weekly digest</odd-switch>
     <odd-switch name="sync" disabled>Managed by your workspace</odd-switch>
+    <odd-textarea label="Project description" name="about" placeholder="Describe this project…" maxlength="500"></odd-textarea>
+    <odd-textarea label="Feedback" description="Tell us what to improve." name="feedback" required error="Feedback is required." maxlength="200"></odd-textarea>
+    <odd-textarea label="Terms" name="terms-text" value="Read only." readonly resize="none"></odd-textarea>
+    <odd-textarea label="History" name="history" value="Managed." disabled resize="auto"></odd-textarea>
     <odd-button type="submit" appearance="primary">Submit</odd-button>
     <odd-button type="reset">Reset</odd-button>
   </form>

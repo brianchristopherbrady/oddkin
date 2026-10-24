@@ -804,11 +804,18 @@
       ],
       "webFeature": "resize",
       "adoption": "foundation",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
       "usedBy": [
         "examples/css-gallery (native textarea)",
-        "odd-prompt-input, odd-action-approval (auto-growing or vertical text areas)"
+        "odd-prompt-input, odd-action-approval (auto-growing or vertical text areas)",
+        "odd-textarea (resize=\"vertical\" by default; none and auto turn the handle off)"
+      ],
+      "tests": [
+        {
+          "file": "packages/components/test/textarea.browser.test.ts",
+          "name": "turns the resize handle off for none and auto"
+        }
       ],
       "baseline": "Textareas can be resized vertically by the user where the platform offers a resize handle; auto-growing text areas turn the handle off.",
       "floorExceptions": {
@@ -823,13 +830,28 @@
       "bcd": ["css.properties.field-sizing", "css.properties.field-sizing.content"],
       "webFeature": "field-sizing",
       "adoption": "enhancement",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
-      "baseline": "Textareas have a fixed initial row count with user resizing; long content scrolls. No script autosizing unless a demonstrated need justifies a controller.",
+      "usedBy": ["odd-textarea resize=\"auto\" (from rows lines up to --odd-textarea-max-height)"],
+      "baseline": "Textareas have a fixed initial row count with user resizing; long content scrolls. odd-textarea's resize=\"auto\" measures its height (scrollHeight) as its value or width changes where the engine has no field sizing: the contract's auto-growing field needs it below the floor's field-sizing support. Native and script sizing never run together.",
       "enhanced": "Textareas grow with their content between min-block-size and max-block-size.",
       "gate": "@supports (field-sizing: content)",
       "differences": "Height follows content in supporting browsers; caret, selection, scrolling, and resizing behave natively in both. Native and script sizing never run together.",
-      "detectCss": "(field-sizing: content)"
+      "detectCss": "(field-sizing: content)",
+      "tests": [
+        {
+          "file": "packages/components/test/textarea.browser.test.ts",
+          "name": "grows with native field sizing where the engine has it, between rows and the maximum"
+        },
+        {
+          "file": "packages/components/test/textarea.browser.test.ts",
+          "name": "measures its height where the engine has no field sizing, matching native sizing"
+        },
+        {
+          "file": "packages/components/test/textarea.browser.test.ts",
+          "name": "measured: follows typing and a narrower field, and stops measuring when resize changes"
+        }
+      ]
     },
     {
       "id": "starting-style",

@@ -2615,3 +2615,29 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 browser mode with Playwright 1.
 | Size, CSS | `node scripts/check-size.mjs`; `node scripts/compat/check-css.mjs` | `components:drawer` is 429 B gzip (budget 512): the side sheet and the header divider; the rest is odd-dialog's. The drawer sheets add 2 stylesheets and 4 compatibility keys (`position: fixed`, `max-block-size: none`, `margin-inline-end: auto`, `z-index`), all at the floor; 0 problems. |
 
 **Findings:** a non-modal `<dialog>` ignores Escape where the browser has no `closedby`, and is not in the top layer, so the drawer is positioned fixed and stacked at `z-index.overlay`, and `ModalDialog` emulates Escape and `closedby="any"` for it only there (never for a modal dialog, and never for a keydown already handled). Not verified: screen-reader output, real devices, Safari on macOS.
+
+## 2026-10-23 — `odd-textarea` and the shared text-control base (M10, component-contracts.md §3.3, F12)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5 browser mode with Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2). Figma reference: `Oddkin/Common/textarea` (node 159:1056; Empty, Filled, Focus, Invalid, Disabled), read from the live file and the committed snapshot. Other lanes' uncommitted work in the tree during the runs: Agent 2's `odd-toast`; the owner's design-session files (`design/figma/*`, `design/icons/*`, `figma-icon-import.test.ts`).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Behaviour | `npx vitest run --project browser --browser.name=<engine> packages/components/test/textarea.browser.test.ts` | 16 pass in Chromium, Firefox, and WebKit: label, description, error, and count in `aria-describedby` (the error replaces the count); the count as typed, in the page language (`lang="de"`), from `strings.count`; `value` attribute as the default; Enter inserts a line break with the caret kept and `input` then `change` at the host; one Tab stop; required, `minlength` (after typing) and `maxlength` (typing stops) against a native `<textarea>`; reset, read-only submitted, disabled and a disabled fieldset not; `aria-invalid` after a failed check; the inset and four rows; no handle for `none` and `auto`; ownership back to baseline after reconnects |
+| `resize="auto"`, both paths (F12) | same file | Every engine here has `field-sizing`, so the native path runs in all three, and the measured path is forced (`OddkinTextarea._fieldSizing = false`) and compared with it: from `rows` lines, growing and shrinking with the value, capped by `--odd-textarea-max-height` and then scrolling with the caret kept; the measured height equals the native one for the same content, follows typing and a narrower field, and is removed when `resize` changes |
+| Figma parity | `figma-parity.forms.browser.test.ts`, three engines | Pass for the five states: label, surface (border, radius, fill, disabled sunken, invalid danger stroke), placeholder and value text, count, error, and the focus ring. A screenshot of the five states in Chromium matched the design |
+| Shared base | input, description, frameworks-forms, styling-contract tests, three engines | Pass: `odd-input` on `OddkinTextControl` behaves as before |
+| Catalog-wide browser files | textarea, input, forms parity, examples, accessibility, contract, styling, styling-contract, recipes-css, description, frameworks-forms, button, checkbox, switch, select, listbox, model-select | Chromium 733 pass, 37 skipped; Firefox 727, WebKit 727 pass, 43 skipped |
+| Node project | `npx vitest run --project node` | 1,111 of 1,111 |
+| Types | `npm run typecheck` steps | `tsc -b`, the JSX config, and the framework typings pass; the tests config fails only in Agent 2's uncommitted `figma-parity.overlays.browser.test.ts` |
+| Lifetime | `node research/benchmarks/lifetime/run.mjs --cycles 1000` | Ownership returned after every batch in three engines; the component scenario (now with an auto-sized odd-textarea) rendered 1,000 of 1,000 in each |
+| Size | `node scripts/check-size.mjs` | Pass: `components:textarea` 264 of 320, `components:shared` 3,072 of 3,072 (+3 for keeping the disabled adornment colour inside the control box) |
+| CSS compatibility | `node scripts/compat/check-css.mjs --write` | 0 problems; `field-sizing` and `resize` are implemented features with their tests |
+| Mutation probes | `.tmp/f-mutate2.mjs`, Chromium | 30 probes: 27 killed; 2 survivors were redundant code (a validity watch on the length limits, which the native field reports only after typing; `display: block` on a flex item), removed; 1 equivalent (the inline-size guard that skips re-measuring after the field's own height change) |
+
+**Findings:**
+1. Figma's field is 128 px tall and binds no height; four rows (122 px) come closest, so `rows` defaults to 4 (the contract said 3, now updated).
+2. Figma draws one line under the field: the count, or the error that replaces it. The count is in `aria-describedby` and is not a live region.
+3. The shared rule that greys a disabled control's adornments also matched a textarea's error and count (siblings of the control in the field); it is now limited to `.control-box`.
+4. `odd-input` and `odd-textarea` share `OddkinTextControl` (value and default, label, placeholder, autocomplete, length limits, required, read-only, `input` and `change`), so the text fields keep one implementation.
+5. The lifetime scenario needed odd-textarea's registration import (reported by Agent 2).
+6. Not verified: screen-reader output (the count on focus), iOS and Firefox for Android (no resize handle there), the measured path in an engine that lacks field sizing (only forced here), and Safari on macOS.

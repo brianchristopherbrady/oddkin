@@ -199,10 +199,13 @@ its insertion, so the page announces a search outcome itself.
 
 ### 3.3 Form controls
 
-**`odd-textarea`** (`textarea`) — field anatomy (§2.4) over a native `<textarea>`. `rows: number = 3`, `minlength`,
-`maxlength` (shows part `count`, "12 / 200", not live), `placeholder`, `autocomplete`,
-`resize: vertical | none | auto = vertical` (`auto` grows with content: `field-sizing: content` where supported, a
-measured height otherwise, F12).
+**`odd-textarea`** (`textarea`) — field anatomy (§2.4) over a native `<textarea>`, on the text-control base it shares
+with `odd-input` (`value`, `label`, `placeholder`, `autocomplete`, `minlength`, `maxlength`, `required`, `readonly`).
+`rows: number = 4` (Figma's field shows about four lines), `resize: vertical | none | auto = vertical` (`auto` grows
+with content from `rows` lines up to `--odd-textarea-max-height`, 40vh, then scrolls: `field-sizing: content` behind
+`@supports`, a height the element measures otherwise, never both, F12). With `maxlength`, part `count` under the field
+("44 / 500 characters" from `strings.count`, `{count}` and `{max}` in the page language; in `aria-describedby`, not
+live); an error takes its place, as Figma draws one line there.
 
 **`odd-checkbox`** (`checkbox`) — native `<input type="checkbox">` in the shadow root, drawn by the control-indicator
 module (part `control` is the box). Default slot: label (names it through the native `<label>`). `checked` (attribute =

@@ -1,24 +1,10 @@
-import { event, prop, type ElementEvents } from '@oddkin/core/element';
+import { prop, type ElementEvents } from '@oddkin/core/element';
 import { strings } from '@oddkin/core/i18n';
 import type { Scope } from '@oddkin/core/scope';
-import { computed, signal, type Readable } from '@oddkin/core/reactive';
-import { OddkinFormControl, type FormControlOptions } from '../form-control/form-control.js';
+import { signal } from '@oddkin/core/reactive';
+import { OddkinTextControl, changeEvent, inputEvent } from '../form-control/text-control.js';
 
-/** Native `input` events cross the shadow boundary once; declared here for metadata and sync. */
-export const inputEvent = event('input', {
-  bubbles: true,
-  composed: true,
-  cancelable: false,
-  syncs: 'value',
-  intent: 'user',
-});
-/** Re-dispatched at the host when the user commits a change (native `change` is not composed). */
-export const changeEvent = event('change', {
-  bubbles: true,
-  composed: false,
-  cancelable: false,
-  intent: 'user',
-});
+export { changeEvent, inputEvent };
 
 export const INPUT_STRINGS = { clear: 'Clear' };
 
@@ -48,13 +34,7 @@ export const INPUT_STRINGS = { clear: 'Clear' };
  * @limitation Enter in the field does not submit the form (no implicit submission): the native input inside the shadow root has no form owner. Give the form a submit button.
  * @category Forms
  */
-export class OddkinInput extends OddkinFormControl.with({
-  label: prop.string({ default: '', description: 'Visible label; names the control.' }),
-  defaultValue: prop.string({
-    default: '',
-    attribute: 'value',
-    description: 'Initial value; the `value` attribute, as on native inputs.',
-  }),
+export class OddkinInput extends OddkinTextControl.with({
   type: prop.enum(
     [
       'text',
@@ -81,81 +61,21 @@ export class OddkinInput extends OddkinFormControl.with({
   step: prop.string({
     description: 'Step between values (number and date types); `any` allows every value.',
   }),
-  minLength: prop.number({
-    attribute: 'minlength',
-    description: 'Fewest characters (text types).',
-  }),
-  maxLength: prop.number({
-    attribute: 'maxlength',
-    description: 'Most characters (text types); typing stops there.',
-  }),
   pattern: prop.string({
     description: 'A regular expression the whole value must match (text types).',
   }),
-  placeholder: prop.string({
-    default: '',
-    description: 'Placeholder; never a substitute for a label.',
-  }),
-  autocomplete: prop.string({ default: '', description: 'Autofill hint for the native input.' }),
-  required: prop.boolean({ reflect: true, description: 'A value is required to submit.' }),
-  readonly: prop.boolean({ reflect: true, description: 'Prevents editing; still submitted.' }),
   strings: prop.object<Partial<typeof INPUT_STRINGS>>({
     description: 'Localized string overrides.',
   }),
 }) {
-  static override shadowRootOptions: ShadowRootInit = { mode: 'open', delegatesFocus: true };
-  static override events = { input: inputEvent, change: changeEvent };
   declare readonly _events?: ElementEvents<typeof OddkinInput>;
-
-  // undefined until the value is set or typed ("dirty"), then independent of `defaultValue`.
-  readonly #value = signal<string | undefined>(undefined);
 
   // The host's global `inputmode` attribute, forwarded to the inner input.
   readonly #inputMode = signal<string | null>(null);
 
-  /** @internal The value as a readable for the template's live binding. */
-  readonly _currentValue: Readable<string> = computed(() => this.value);
-
-  constructor() {
-    super();
-    // A value assigned before the element was defined becomes the dirty value.
-    if (Object.hasOwn(this, 'value')) {
-      const early = (this as { value?: unknown }).value;
-      delete (this as { value?: unknown }).value;
-      this.value = String(early ?? '');
-    }
+  protected override _constraints(): unknown[] {
+    return [...super._constraints(), this.type];
   }
-
-  /** The current value. Setting it (or typing) detaches it from `defaultValue`. */
-  get value(): string {
-    return this.#value.value ?? this.defaultValue;
-  }
-  set value(value: string) {
-    this.#value.value = String(value ?? '');
-  }
-
-  protected override _formOptions(): FormControlOptions {
-    return {
-      value: () => this.value,
-      control: () => this.shadowRoot?.querySelector('input'),
-      watch: () => [this.required, this.type, this.readonly],
-      onReset: () => {
-        this.#value.value = undefined;
-      },
-      onRestore: (state) => {
-        if (typeof state === 'string') this.value = state;
-      },
-    };
-  }
-
-  /** @internal Template handler: the user typed. */
-  readonly _onInput = (event: Event): void => {
-    this.#value.value = (event.target as HTMLInputElement).value;
-  };
-  /** @internal Template handler: the user committed a change. */
-  readonly _onChange = (): void => {
-    this.emit(changeEvent);
-  };
 
   /** @internal The virtual keyboard hint for the inner input. */
   get _inputMode(): string | null {
@@ -185,7 +105,7 @@ export class OddkinInput extends OddkinFormControl.with({
   }
   /** @internal Template handler: the clear button, or Escape in a search field. */
   readonly _onClear = (): void => {
-    this.#value.value = '';
+    this.value = '';
     this.emit(inputEvent);
     this.emit(changeEvent);
     this.shadowRoot?.querySelector('input')?.focus();

@@ -203,6 +203,7 @@ describe('Theme Studio page data', () => {
       'disclosure:odd-disclosure',
       'placeholder:odd-skeleton',
       'progress:odd-progress',
+      'textArea:odd-textarea',
       'tree:odd-tree',
     ]);
     const worker = build.files.get(THEME_WORKER)!;

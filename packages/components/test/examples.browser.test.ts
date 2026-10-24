@@ -78,6 +78,10 @@ describe('authored examples', () => {
       observe: (el) => (el['validity'] as ValidityState).valueMissing,
       wrong: true,
     },
+    'odd-textarea/requiredFalse': {
+      observe: (el) => (el['validity'] as ValidityState).valueMissing,
+      wrong: true,
+    },
     'odd-card/bodySlot': {
       observe: (el) => [...el.children].every((child) => child.assignedSlot !== null),
       wrong: false,

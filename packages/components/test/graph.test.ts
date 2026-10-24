@@ -85,6 +85,7 @@ describe('@oddkin/components/input import graphs', () => {
     expect(files).toEqual([
       'form-control/description.js',
       'form-control/form-control.js',
+      'form-control/text-control.js',
       'input/foundation.js',
       'input/input.js',
       'input/input.structural.styles.js',

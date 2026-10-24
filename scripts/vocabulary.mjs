@@ -47,6 +47,8 @@ export const ATTRIBUTES = {
   minlength: { type: 'number' },
   maxlength: { type: 'number' },
   pattern: { type: 'string' },
+  rows: { type: 'number' },
+  resize: { values: ['vertical', 'none', 'auto'] },
   collapsed: { type: 'boolean' },
   // The start pane's size in percent (odd-split-panel).
   position: { type: 'number' },

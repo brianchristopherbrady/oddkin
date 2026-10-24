@@ -230,3 +230,54 @@ describe('Figma parity: odd-input types (number, search, dateTime)', () => {
       expectNone(compare('Oddkin/Common/dateTime', { State: state }, targets));
     });
 });
+
+describe('Figma parity: textarea', () => {
+  const filled = 'A shared home for our component foundations.';
+  const text = 'A shared home for our\ncomponent foundations.';
+  const states: Record<string, string> = {
+    Empty: 'placeholder="Describe this project…" maxlength="500"',
+    Filled: `value="${filled}" maxlength="500"`,
+    Focus: `value="${filled}" maxlength="500"`,
+    Invalid:
+      'placeholder="Describe this project…" maxlength="500" required error="Description is required."',
+    Disabled: `value="${filled}" maxlength="500" disabled`,
+  };
+  for (const [state, attributes] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(`<odd-textarea label="Project description" ${attributes}></odd-textarea>`);
+      await settle(el);
+      const control = shadowPart(el, 'control');
+      await interact(state, control);
+      await settle(el);
+      const root = `Textarea / ${state}`;
+      const targets: Target[] = [
+        { layer: [root, 'Project description'], el: shadowPart(el, 'label'), kind: 'text' },
+        { layer: [root, 'Surface'], el: control, kind: 'frame' },
+      ];
+      if (state === 'Empty')
+        targets.push(
+          {
+            layer: [root, 'Describe this project…'],
+            el: control,
+            kind: 'text',
+            pseudo: '::placeholder',
+          },
+          { layer: [root, '0 / 500 characters'], el: shadowPart(el, 'count'), kind: 'text' },
+        );
+      else if (state === 'Invalid')
+        targets.push(
+          // The snapshot names the placeholder layer after the filled text.
+          { layer: [root, text], el: control, kind: 'text', pseudo: '::placeholder' },
+          { layer: [root, 'Description is required.'], el: shadowPart(el, 'error'), kind: 'text' },
+        );
+      else
+        targets.push(
+          { layer: [root, text], el: control, kind: 'text' },
+          { layer: [root, '44 / 500 characters'], el: shadowPart(el, 'count'), kind: 'text' },
+        );
+      if (state === 'Focus')
+        targets.push({ layer: [root, 'Surface [2]'], el: control, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/textarea', { State: state }, targets));
+    });
+});

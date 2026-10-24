@@ -131,6 +131,7 @@ describe('component examples', () => {
       'odd-listbox/inForm': ['component:odd-button'],
       'odd-select/inForm': ['component:odd-button'],
       'odd-tab-panel/default': ['component:odd-tabs'],
+      'odd-textarea/inForm': ['component:odd-button'],
       ...Object.fromEntries(
         ['default', 'manual', 'vertical', 'disabledTab', 'orientationColumn'].map((name) => [
           `odd-tabs/${name}`,

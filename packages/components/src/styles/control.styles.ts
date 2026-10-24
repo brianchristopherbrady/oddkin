@@ -82,7 +82,7 @@ export const controlStyles = css`
   .control-end {
     margin-inline: ${token('control.padding.inline.md')};
   }
-  .control:disabled ~ * {
+  .control-box > .control:disabled ~ * {
     color: ${token('color.text.disabled')};
   }
   .error {

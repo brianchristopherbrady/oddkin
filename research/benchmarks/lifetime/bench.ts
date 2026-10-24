@@ -32,6 +32,7 @@ import '@oddkin/components/define/split-button';
 import '@oddkin/components/define/split-panel';
 import '@oddkin/components/define/switch';
 import '@oddkin/components/define/tabs';
+import '@oddkin/components/define/textarea';
 import '@oddkin/components/define/toolbar';
 import '@oddkin/components/define/tooltip';
 import '@oddkin/components/define/tree';
@@ -215,6 +216,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>
         <odd-switch name="alerts" checked>Alerts</odd-switch>
+        <odd-textarea label="Notes" maxlength="200" resize="auto"></odd-textarea>
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
         <odd-tree label="Files" value="b"></odd-tree>
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>

@@ -354,6 +354,18 @@
       "types": "./dist/tabs/tabs.define.d.ts",
       "default": "./dist/tabs/tabs.define.js"
     },
+    "./textarea": {
+      "types": "./dist/textarea/index.d.ts",
+      "default": "./dist/textarea/index.js"
+    },
+    "./textarea/foundation": {
+      "types": "./dist/textarea/foundation.d.ts",
+      "default": "./dist/textarea/foundation.js"
+    },
+    "./define/textarea": {
+      "types": "./dist/textarea/textarea.define.d.ts",
+      "default": "./dist/textarea/textarea.define.js"
+    },
     "./toolbar": {
       "types": "./dist/toolbar/index.d.ts",
       "default": "./dist/toolbar/index.js"

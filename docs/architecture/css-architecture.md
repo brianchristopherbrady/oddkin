@@ -318,7 +318,7 @@ Maintenance and delivery cost for each: CSS bytes in shipped styles, a gate and 
 | F09 | Multiple overlays use the correct anchors and clean up observers | Planned | M10 overlays |
 | F10 | Native and fallback overlays keep theme, direction, interaction | Planned | M10 overlays |
 | F11 | Reduced or unsupported animation leaves correct final state | Verified (spinner) | `e2e/css-compat.spec.ts`; transitions planned (M10) |
-| F12 | Native and fallback field sizing preserve editing | Planned | M10 textarea |
+| F12 | Native and fallback field sizing preserve editing | Verified (odd-textarea) | `packages/components/test/textarea.browser.test.ts`: both paths, caret and scrolling, in three engines |
 | F13 | Enhanced native controls keep a usable baseline | Planned | M10 select |
 | F14 | Forced colours, zoom, text enlargement, RTL keep controls and focus | Verified (current components) | `e2e/css-compat.spec.ts` (forced colours in three engines, 320 px reflow); `styling.browser.test.ts` (200% text, RTL); screen zoom and 400% page zoom remain manual (M8) |
 | F15 | Shared styles work across document, Shadow DOM, registration, delivery | Verified | ADR 0008 evidence; probe `shared-sheet`; iframe adoption test |

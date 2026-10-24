@@ -53,20 +53,20 @@ tokens, slot content, a native element, or a look-alike.
 | `button/sm` | 18 | `odd-button size="sm"` | Existing (variant) | |
 | `button/lg` | 18 | `odd-button size="lg"` | Existing (variant) | |
 | `iconButton` | 5 | `odd-button` with an icon in the default slot and `label` | Existing (variant) | The accessible name comes from `label` (M4 cross-shadow naming). |
-| `toggleButton` | 8 | toggle state on `odd-button` (`aria-pressed`) or a separate element | Planned (unlisted) | Decide at M10; not a new appearance of the current button. |
+| `toggleButton` | 8 | `odd-button` `toggle` and `pressed` (`aria-pressed`) | Existing (variant) | Not a new appearance: a pressed toggle takes the selection colours in every appearance. |
 | `splitAction` | 2 | composite of `odd-button` + menu | Planned (unlisted) | References `button` ×2; needs the menu and [ADR 0044](./decisions/0044-overlay-positioning-and-top-layer.md). |
 | `link` | 3 | `odd-link` | Planned (M10) | |
 | `badge` | 5 | `odd-badge` | Planned (M10) | AI status labels (`.status` in `@oddkin/ai`) are visually close; reuse decided at M10. |
 | `chip` | 4 | `odd-chip` | Planned (unlisted) | `multiselect` draws its 14 chips as parts from the chip style module (§6). |
 | `field` | 2 | `odd-field` | Planned (M10) | Today `odd-input` carries its own label, description, and error. |
-| `input` | 8 | `odd-input` | Existing | Types text, email, password, tel, url, search. |
-| `textarea` | 5 | `odd-textarea` (native `<textarea>`, `field-sizing` gated, F12) | Planned (unlisted) | |
-| `number` | 3 | `odd-input type="number"` or a number field | Planned (unlisted) | `odd-input` does not accept `number` today. |
-| `search` | 4 | `odd-input type="search"` | Existing (variant) | Figma may add a search icon or clear action; compare in the parity check. |
-| `checkbox` | 15 | `odd-checkbox` | Planned (M10) | |
+| `input` | 8 | `odd-input` | Existing | Types text, email, password, tel, url, search, number, date, time, datetime-local, month, week. |
+| `textarea` | 5 | `odd-textarea` (native `<textarea>`, `field-sizing` gated, F12) | Existing | `rows`, `resize` (`auto` follows the content), and a `count` part with `maxlength`. |
+| `number` | 3 | `odd-input type="number"` | Existing (variant) | The engine's spin buttons stay, unstyled (only prefixed pseudo-elements hide them); Figma's stepper segment is a recorded difference. |
+| `search` | 4 | `odd-input type="search"` | Existing (variant) | A searchbox with a search glyph and a clear button (parts `icon`, `clear`); Escape clears. |
+| `checkbox` | 15 | `odd-checkbox` | Existing | |
 | `radio` | 10 | radio inside `odd-radio-group` | Planned (M10) | Anatomy primitive of `radioGroup`. |
 | `radioGroup` | 2 | `odd-radio-group` | Planned (M10) | References `radio` ×4. |
-| `switch` | 8 | `odd-switch` | Planned (M10) | |
+| `switch` | 8 | `odd-switch` | Existing | |
 | `slider` | 3 | `odd-slider` on a native range input | Planned (unlisted) | |
 | `select` | 5 | `odd-select` (styled native `<select>`; `appearance: base-select` gated, F13) | Planned (M10) | Figma references `ListboxSurface` ×2; in code the browser draws the picker, no listbox dependency (§6). |
 | `listbox` | 6 | listbox collection element | Planned (M10, collections "from demonstrated needs") | References `ListboxSurface`, `spinner`, `button`. |
@@ -399,7 +399,7 @@ Status: **proposed** (2026-10-22). 170 references; controller 14, deferred 11, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (40) has no element dependency.
+Every other element (41) has no element dependency.
 
 #### Shared homes
 
@@ -407,7 +407,7 @@ Every other element (40) has no element dependency.
 | --- | --- | --- | --- | --- | --- |
 | tokens: Every value: colour, space, size, radius, type, motion, elevation. | tokens | @oddkin/tokens (token() from @oddkin/tokens/refs) | existing | all |  |
 | focus-ring: The keyboard focus indicator. | style | @oddkin/components/styles focusRingStyles | existing | all interactive elements |  |
-| control: Field control surface: border, radius, height, inline padding, gap, hover/invalid/disabled/read-only states, label/description/error type roles. Figma binds the same tokens on input, textarea, number, search, select, dateTime, combobox, and multiselect/Field. | style | @oddkin/components/styles (fieldStructuralStyles, controlStyles; css/field.css generated from them) | existing | odd-input, odd-checkbox, odd-switch, odd-model-select, .odd-field recipe, odd-listbox, odd-select | The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe. |
+| control: Field control surface: border, radius, height, inline padding, gap, hover/invalid/disabled/read-only states, label/description/error type roles. Figma binds the same tokens on input, textarea, number, search, select, dateTime, combobox, and multiselect/Field. | style | @oddkin/components/styles (fieldStructuralStyles, controlStyles; css/field.css generated from them) | existing | odd-input, odd-checkbox, odd-switch, odd-model-select, .odd-field recipe, odd-listbox, odd-select, odd-textarea | The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe. |
 | button: Button look: appearance, size, states, busy. | style | @oddkin/components/button styles (shared by odd-button, the CSS-only path, and native button parts) | existing (odd-button + css/button.css) | odd-button, AI .text-button (looks like ghost/sm; Figma page 0:1 draws AI actions as button/sm instances), odd-menu (trigger part), odd-split-button (primary part) |  |
 | tone: Tone colours (neutral, info, success, warning, danger) with one glyph per tone. | style | @oddkin/components/styles (TONES, toneStyles, toneGlyph) | existing | odd-badge, odd-alert | AI .status (aiElementStyles) still draws its own tone colours; it moves onto toneStyles later. |
 | spinner: Indeterminate busy indicator, reduced-motion behaviour. | style | @oddkin/components/styles (spinnerStyles) | existing | odd-button, odd-spinner, odd-tree, odd-listbox, odd-split-button |  |
@@ -419,7 +419,7 @@ Every other element (40) has no element dependency.
 | chip: Chip look and remove affordance. | style | @oddkin/components/chip styles | existing | odd-chip |  |
 | avatar: Avatar look and stacking. | style | @oddkin/components/avatar styles | existing | odd-avatar, .odd-avatar-group recipe |  |
 | overlay-surface: Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers. | style | @oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles); overlayPickerStyles (the gated select picker, imported relatively from styles/overlay-surface.styles.ts) | existing | odd-popover, odd-dialog, odd-select, odd-menu, odd-tooltip, odd-drawer |  |
-| form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input, odd-checkbox, odd-switch, odd-listbox, odd-select | Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller. |
+| form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input, odd-checkbox, odd-switch, odd-listbox, odd-select, odd-textarea | Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller. |
 | focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | odd-tabs, odd-toolbar, odd-tree, odd-menu |  |
 | collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | odd-breadcrumbs, odd-listbox, odd-select, odd-menu, odd-split-button |  |
 | position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (PositionController, ADR 0044) | existing | odd-popover, odd-menu, odd-tooltip |  |
