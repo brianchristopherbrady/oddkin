@@ -1725,6 +1725,9 @@
     "odd-radio-group": {
       "dependencies": []
     },
+    "odd-scroll-region": {
+      "dependencies": []
+    },
     "odd-segmented-control": {
       "dependencies": ["odd-icon"],
       "reason": "Option icons are drawn by the complete odd-icon widget authors also place alone."

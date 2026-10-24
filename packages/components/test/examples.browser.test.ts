@@ -100,6 +100,13 @@ describe('authored examples', () => {
     },
     'odd-badge/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
     'odd-alert/colorOnly': { observe: (el) => el['tone'], wrong: 'neutral' },
+    'odd-scroll-region/heightAttribute': {
+      observe: (el) => {
+        const base = el.shadowRoot!.querySelector('[part~="base"]')!;
+        return base.scrollHeight > base.clientHeight;
+      },
+      wrong: false,
+    },
     'odd-avatar/nameAttribute': { observe: (el) => el['label'], wrong: '' },
     'odd-checkbox/checkedFalse': { observe: (el) => el['checked'], wrong: true },
     'odd-switch/onAttribute': { observe: (el) => el['checked'], wrong: false },

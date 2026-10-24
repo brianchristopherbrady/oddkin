@@ -163,6 +163,7 @@ const states = `
   <odd-split-button value="save" appearance="primary">Save<option value="copy">Save a copy</option></odd-split-button>
   <h2>Layout</h2>
   <odd-split-panel label="Resize project files" position="30"><section slot="start"><h3>Project files</h3><a href="#overview">Overview</a></section><section slot="end"><h3>Design system</h3><p>Ready to review.</p></section></odd-split-panel>
+  <odd-scroll-region label="Release notes" style="max-block-size: 6rem"><p>Release note 1</p><p>Release note 2</p><p>Release note 3</p><p>Release note 4</p><p>Release note 5</p><p>Release note 6</p><p>Release note 7</p><p>Release note 8</p></odd-scroll-region>
 `;
 
 let tokens: HTMLLinkElement;

@@ -935,13 +935,20 @@
       "bcd": ["css.properties.scrollbar-gutter", "css.properties.scrollbar-gutter.stable"],
       "webFeature": "scrollbar-gutter",
       "adoption": "enhancement",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
+      "usedBy": ["odd-scroll-region (its scroller)"],
       "baseline": "Layout may shift by the scrollbar width when content starts to scroll.",
       "enhanced": "Scroll regions reserve the gutter, avoiding the shift.",
-      "gate": "Literal declaration (ignored where unsupported)",
+      "gate": "@supports (scrollbar-gutter: stable)",
       "differences": "A possible layout shift in floor browsers without support.",
-      "detectCss": "(scrollbar-gutter: stable)"
+      "detectCss": "(scrollbar-gutter: stable)",
+      "tests": [
+        {
+          "file": "packages/components/test/scroll-region.browser.test.ts",
+          "name": "is bounded by block-size too, and keeps a stable gutter"
+        }
+      ]
     },
     {
       "id": "overscroll-behavior",

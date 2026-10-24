@@ -28,6 +28,7 @@ import '@oddkin/components/define/pagination';
 import '@oddkin/components/define/popover';
 import '@oddkin/components/define/progress';
 import '@oddkin/components/define/radio-group';
+import '@oddkin/components/define/scroll-region';
 import '@oddkin/components/define/segmented-control';
 import '@oddkin/components/define/select';
 import '@oddkin/components/define/side-nav';
@@ -232,6 +233,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-segmented-control label="Size" name="size"><option value="sm">Small</option><option value="md" selected>Medium</option></odd-segmented-control>
         <odd-textarea label="Notes" maxlength="200" resize="auto"></odd-textarea>
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
+        <odd-scroll-region label="Log" style="max-block-size: 3rem"><p>A</p><p>B</p><p>C</p><p>D</p></odd-scroll-region>
         <odd-tree label="Files" value="b"></odd-tree>
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
         <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>

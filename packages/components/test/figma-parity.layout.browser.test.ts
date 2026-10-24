@@ -4,13 +4,14 @@ import {
   expectNone,
   figma,
   mount,
+  settle,
   useParity,
   useRecipeStyles,
   variantIndex,
   type Target,
 } from './parity.js';
 
-// Figma parity for the layout classes of layout.css (component-contracts.md §1, §4; the owner's
+// Figma parity for the layout classes of layout.css and the layout elements (component-contracts.md §1, §4; the owner's
 // Oddkin/Layout/* families, section 457:2078 on page 158:22, snapshot 2026-10-23). Each family's
 // bound gaps and insets equal the tokens Figma binds, and each review panel's response at 320, 640,
 // and 960 px holds (Review · 01–10): the outcomes are read from the families' descriptions.
@@ -209,5 +210,30 @@ describe('Figma parity: layout classes (Oddkin/Layout/*)', () => {
     // The ratio holds when the content is taller.
     const tall = at(320, `<div class="odd-aspect-ratio">${items(1, 'block-size: 400px')}</div>`);
     expect(tall.getBoundingClientRect().height).toBe(180);
+  });
+
+  it('ScrollRegion: children layout.gap apart and full width; 192 px high, it scrolls at every width', async () => {
+    for (const width of WIDTHS) {
+      const region = at(
+        width,
+        `<odd-scroll-region label="Items" style="block-size: 192px">${items(6, 'block-size: 48px')}</odd-scroll-region>`,
+      );
+      await settle(region);
+      await new Promise(requestAnimationFrame);
+      await settle(region);
+      const base = region.shadowRoot!.querySelector<HTMLElement>('[part~="base"]')!;
+      const content = region.shadowRoot!.querySelector('.content')!;
+      expectNone(
+        compare('Oddkin/Layout/ScrollRegion', {}, [
+          { layer: [], el: base, kind: 'frame' },
+          { layer: ['Content'], el: content, kind: 'frame', gap: 'row-gap' },
+        ]),
+      );
+      expect(base.getBoundingClientRect().height).toBe(192);
+      expect(base.getAttribute('role'), `${width}px`).toBe('region');
+      for (const child of region.children)
+        expect(child.getBoundingClientRect().width).toBe(content.getBoundingClientRect().width);
+      done(region);
+    }
   });
 });

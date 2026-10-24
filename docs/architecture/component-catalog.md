@@ -402,7 +402,7 @@ Status: **proposed** (2026-10-22). 170 references; controller 13, deferred 11, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (46) has no element dependency.
+Every other element (47) has no element dependency.
 
 #### Shared homes
 

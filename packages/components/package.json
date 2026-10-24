@@ -290,6 +290,18 @@
       "types": "./dist/radio-group/radio-group.define.d.ts",
       "default": "./dist/radio-group/radio-group.define.js"
     },
+    "./scroll-region": {
+      "types": "./dist/scroll-region/index.d.ts",
+      "default": "./dist/scroll-region/index.js"
+    },
+    "./scroll-region/foundation": {
+      "types": "./dist/scroll-region/foundation.d.ts",
+      "default": "./dist/scroll-region/foundation.js"
+    },
+    "./define/scroll-region": {
+      "types": "./dist/scroll-region/scroll-region.define.d.ts",
+      "default": "./dist/scroll-region/scroll-region.define.js"
+    },
     "./segmented-control": {
       "types": "./dist/segmented-control/index.d.ts",
       "default": "./dist/segmented-control/index.js"

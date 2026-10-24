@@ -466,9 +466,12 @@ limits. Dragging and keys dispatch `input`; release and key commits dispatch `ch
 sits on the position. Parts `base`, `start`, `separator`, `end`; `--odd-split-panel-separator-size`. Stacked panes
 need a height on the element. More panes: nest split panels.
 
-**`odd-scroll-region`** (`ScrollRegion`; planned) — content that scrolls on its own inside a page. Keyboard users can
-reach and scroll it (WCAG 2.1.1): while it overflows it is focusable (`tabindex="0"`) and a `role="region"` named by
-`label`; when it fits, neither. Default slot; part `base`; the scrollbar gutter is stable.
+**`odd-scroll-region`** (`ScrollRegion`) — content that scrolls on its own inside a page; `block-size` or
+`max-block-size` on the element bounds it. Keyboard users can reach and scroll it (WCAG 2.1.1): while its content
+overflows, the scroller (part `base`) is focusable (`tabindex="0"`) and a `role="region"` named by `label` (default
+`strings.label`, "Scrollable content"); when it fits, neither, so it adds no tab stop. It measures once it has rendered,
+then follows its own size and its content's (`ResizeController`). Default slot, children `layout.gap` apart
+(`--odd-scroll-region-gap`); where supported, the scrollbar gutter is stable.
 
 **`odd-container`** (`Container`; planned) — a content measure and a container-query context: `measure: constrained |
 fluid = constrained` (constrained: centred with a maximum inline size from the layout tokens; fluid: full width, with
