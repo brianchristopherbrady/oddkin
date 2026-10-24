@@ -81,6 +81,16 @@
         "$ref": "#/$defs/recipe"
       }
     },
+    "stylesheets": {
+      "type": "object",
+      "description": "Opt-in document stylesheets (reset, base, layout classes, and recipes for native elements; component-contracts.md §2.1): what to import, the classes each defines, the tokens it reads, and the variables an author may set.",
+      "propertyNames": {
+        "pattern": "^stylesheet:[a-z][a-z0-9-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/stylesheet"
+      }
+    },
     "models": {
       "type": "object",
       "propertyNames": {
@@ -952,6 +962,60 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "stylesheet": {
+      "type": "object",
+      "required": [
+        "name",
+        "import",
+        "layer",
+        "classes",
+        "tokens",
+        "variables"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "File name without .css"
+        },
+        "import": {
+          "type": "string",
+          "description": "The package export that loads it, e.g. @oddkin/components/css/typography.css"
+        },
+        "layer": {
+          "type": "string",
+          "description": "The cascade layer its rules are in"
+        },
+        "description": {
+          "type": "string"
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Prefixed classes it defines, without the dot"
+        },
+        "tokens": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Theme tokens it reads, by name"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^--"
+          },
+          "description": "Prefixed custom properties it reads that are not theme tokens: hooks an author may set"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
         }
       }
     },

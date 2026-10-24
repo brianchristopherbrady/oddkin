@@ -76,6 +76,7 @@ describe('project context of the Oddkin repository', () => {
 
   it('lists recipes and usable examples, never explained mistakes', () => {
     expect(context.recipes).toContain('recipe:side-nav');
+    expect(context.stylesheets).toContain('stylesheet:layout');
     expect(context.examples).toContain('example:odd-button/default');
     expect(context.examples).not.toContain('example:odd-button/dangerAppearance');
   });

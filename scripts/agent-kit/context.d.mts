@@ -28,6 +28,7 @@ export interface ProjectContext {
     products?: string[];
   };
   recipes: string[];
+  stylesheets: string[];
   examples: string[];
   conventions: { componentLayout: 'folders' | 'colocated' | 'mixed' | 'unknown' };
   commands: Record<string, string>;

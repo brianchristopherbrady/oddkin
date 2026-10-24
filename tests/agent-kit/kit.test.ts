@@ -41,12 +41,20 @@ describe('the @oddkin/components kit', () => {
       'tokens:reference',
       'tokens:semantic',
       'recipe:side-nav',
+      ...Object.keys(metadata.stylesheets).sort(),
       'model:oddkin.navigation',
       'json:components',
       'json:tokens',
       'json:recipes',
+      'json:stylesheets',
       'json:models',
     ]);
+    expect(Object.keys(metadata.stylesheets)).toContain('stylesheet:layout');
+    for (const entry of manifest.entries.filter((e) => e.id.startsWith('stylesheet:')))
+      expect([entry.kind, entry.path], entry.id).toEqual([
+        'stylesheet',
+        `references/stylesheets/${entry.id.slice('stylesheet:'.length)}.md`,
+      ]);
     for (const entry of manifest.entries) expect(files.has(entry.path), entry.path).toBe(true);
     expect(manifest.guide.bytes).toBe(Buffer.byteLength(file('GUIDE.md')));
     expect(manifest.guide.bytes).toBeLessThanOrEqual(manifest.guide.budgetBytes);
@@ -99,6 +107,19 @@ describe('the @oddkin/components kit', () => {
         expect(examples).not.toContain(`\`${id}\``);
       } else expect(examples).toContain(`\`${id}\``);
     }
+  });
+
+  it('documents each document stylesheet: its import, layer, classes, and author variables', () => {
+    const layout = file('references/stylesheets/layout.md');
+    expect(layout).toContain(
+      'Import `@oddkin/components/css/layout.css` once per document; its rules are in the',
+    );
+    expect(layout).toContain(metadata.stylesheets['stylesheet:layout'].description);
+    expect(layout).toMatch(/## Classes\n\n.*`\.odd-stack`/);
+    expect(layout).toMatch(/## Variables an author may set\n\n.*`--odd-stack-gap`/);
+    expect(layout).toMatch(/## Tokens read\n\n.*`layout\.gap`/);
+    expect(file('references/stylesheets/reset.md')).not.toContain('## Classes');
+    expect(file('GUIDE.md')).toContain('references/stylesheets/layout.md');
   });
 
   it('keeps authored guidance authored, with its source', () => {

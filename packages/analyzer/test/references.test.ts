@@ -61,6 +61,7 @@ const metadata = {
     },
   },
   recipes: { 'recipe:stack': { name: 'stack' } },
+  stylesheets: { 'stylesheet:layout': { name: 'layout', variables: ['--acme-stack-gap'] } },
 };
 const index = referenceIndex({
   manifests: [manifest],
@@ -86,6 +87,7 @@ describe('authored references', () => {
       '`<x-card variant="a">`, `<x-card open>`, `x-card::part(body)`, `x-card:state(busy)`',
       '`.variant`, `.open = false`, `close()`, `variant="b"`, `slot="footer"`, `::part(body)`',
       '`:state(busy)`, `--x-card-gap`, `--acme-space-md`, `space.md`, `color.text.primary`',
+      '`--acme-stack-gap`',
       '`@acme/ui`, `@acme/ui/card`, `@acme/ui/css/theme.css`, `@acme/tokens`, `x-close`',
       'the `x-close` event, the `stack` layout recipe, the `stack` recipe',
       // Prose: HTML, ARIA, DOM APIs, native events, values, and other scopes.

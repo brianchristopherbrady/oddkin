@@ -30,6 +30,27 @@ describe('@oddkin/components published metadata', () => {
     expect(metadata['diagnostics']).toEqual([]);
   });
 
+  it('lists every exported document stylesheet with what an author needs to use it', () => {
+    // component-contracts.md §2.1: the reset, layout classes, and recipes are discoverable
+    // without reading CSS: the import, the classes, the tokens read, and the author variables.
+    const exported = Object.keys(manifest['exports'])
+      .flatMap((key) => /^\.\/css\/([a-z0-9-]+)\.css$/.exec(key)?.[1] ?? [])
+      .sort();
+    const sheets = metadata['stylesheets'] as Record<string, Record<string, any>>;
+    expect(Object.keys(sheets).map((id) => id.replace('stylesheet:', ''))).toEqual(exported);
+    for (const [id, sheet] of Object.entries(sheets)) {
+      expect(sheet['import'], id).toBe(`@oddkin/components/css/${sheet['name']}.css`);
+      expect(sheet['layer'], id).toMatch(/^odd\./);
+      expect(sheet['description']?.length, id).toBeGreaterThan(20);
+    }
+    expect(sheets['stylesheet:layout']).toMatchObject({
+      classes: expect.arrayContaining(['odd-stack', 'odd-cluster', 'odd-auto-grid']),
+      variables: expect.arrayContaining(['--odd-stack-gap', '--odd-auto-grid-min']),
+    });
+    expect(sheets['stylesheet:field']!['tokens']).toContain('color.border.strong');
+    expect(sheets['stylesheet:field']!['variables']).not.toContain('--odd-color-border-strong');
+  });
+
   it('is declared and published by the package', () => {
     expect(manifest['customElements']).toBe('./custom-elements.json');
     expect(manifest['exports']['./custom-elements.json']).toBe('./custom-elements.json');

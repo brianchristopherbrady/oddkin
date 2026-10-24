@@ -11,7 +11,7 @@ export interface KitManifest {
   entries: Array<{
     id: string;
     path: string;
-    kind: 'component' | 'choosing' | 'tokens' | 'recipe' | 'model' | 'task' | 'json';
+    kind: 'component' | 'choosing' | 'tokens' | 'recipe' | 'stylesheet' | 'model' | 'task' | 'json';
     provenance: 'extracted' | 'authored' | 'verified';
     notAuthored?: boolean;
   }>;

@@ -285,6 +285,9 @@ export function resolveProjectContext(rootDir, options = {}) {
         }
       : {}),
     recipes: [...new Set(libraries.flatMap((l) => Object.keys(l.metadata.recipes ?? {})))].sort(),
+    stylesheets: [
+      ...new Set(libraries.flatMap((l) => Object.keys(l.metadata.stylesheets ?? {}))),
+    ].sort(),
     examples: libraries
       .flatMap((l) =>
         Object.entries(l.metadata.examples ?? {})

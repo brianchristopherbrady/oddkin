@@ -329,6 +329,26 @@ function recipeReference(id, recipe) {
     .trimEnd()}\n`;
 }
 
+function stylesheetReference(id, sheet) {
+  const list = (title, values) =>
+    values.length ? [`## ${title}`, '', values.map(code).join(', '), ''] : [];
+  return `${[
+    `# Stylesheet ${sheet.name}`,
+    '',
+    `Id ${code(id)}. Import ${code(sheet.import)} once per document; its rules are in the ${code(sheet.layer)} layer.`,
+    '',
+    ...(sheet.description ? [sheet.description, ''] : []),
+    ...list(
+      'Classes',
+      sheet.classes.map((c) => `.${c}`),
+    ),
+    ...list('Variables an author may set', sheet.variables),
+    ...list('Tokens read', sheet.tokens),
+  ]
+    .join('\n')
+    .trimEnd()}\n`;
+}
+
 /** The public specifier of a package file, through exact or `*` pattern exports. */
 function exportedAs(library, file) {
   for (const [subpath, target] of Object.entries(library.manifest.exports ?? {})) {
@@ -433,6 +453,15 @@ function guide(project, library, components, categories, entries) {
             .join(', ')}.`,
         ]
       : []),
+    ...(refs('stylesheet').length
+      ? [
+          `- Document stylesheets (opt-in CSS: reset, layout classes, native-element recipes): ${refs(
+            'stylesheet',
+          )
+            .map((e) => e.path)
+            .join(', ')}.`,
+        ]
+      : []),
     ...(refs('model').length
       ? [
           `- Models: ${refs('model')
@@ -506,6 +535,12 @@ export function generateKit(project, name) {
       kind: 'recipe',
       provenance: 'extracted',
     });
+  for (const [id, sheet] of Object.entries(metadata.stylesheets ?? {}))
+    add(`references/stylesheets/${sheet.name}.md`, stylesheetReference(id, sheet), {
+      id,
+      kind: 'stylesheet',
+      provenance: 'extracted',
+    });
   for (const [id, model] of Object.entries(metadata.models ?? {}))
     add(`references/models/${model.name}.md`, modelReference(library, id, model), {
       id,
@@ -538,6 +573,12 @@ export function generateKit(project, name) {
   if (metadata.recipes)
     add('json/recipes.json', bundle(metadata.recipes), {
       id: 'json:recipes',
+      kind: 'json',
+      provenance: 'extracted',
+    });
+  if (metadata.stylesheets)
+    add('json/stylesheets.json', bundle(metadata.stylesheets), {
+      id: 'json:stylesheets',
       kind: 'json',
       provenance: 'extracted',
     });

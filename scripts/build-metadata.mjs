@@ -7,7 +7,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   analyze,
   authoredTexts,
@@ -15,6 +15,7 @@ import {
   gitHistory,
   referenceIndex,
   writeOutputs,
+  stylesheetDocs,
 } from '../packages/analyzer/dist/index.js';
 import { CONTRACT_TESTS, attach } from './verification.mjs';
 
@@ -47,6 +48,38 @@ const tokenInspection = {
   source: { package: '@oddkin/tokens', export: './inspect/default.json' },
   sources: THEME_SOURCES.map((file) => join(root, file)),
 };
+/**
+ * The opt-in document stylesheets of @oddkin/components (component-contracts.md §2.1: reset,
+ * base, layout classes, and the recipes for native elements), as built: each one's rules and
+ * layer from `dist/css/index.js`, its import from the package exports, and its description from
+ * the JSDoc in `src/css/index.ts`.
+ */
+async function documentStylesheets(pkgDir, manifest) {
+  const sourceFile = 'src/css/index.ts';
+  const built = join(pkgDir, 'dist/css/index.js');
+  if (!existsSync(built)) return [];
+  const { documentStylesheets: sheets } = await import(pathToFileURL(built).href);
+  const docs = stylesheetDocs(readFileSync(join(pkgDir, sourceFile), 'utf8'), sourceFile);
+  return Object.entries(sheets).map(([name, sheet]) => {
+    const exported = `./css/${name}.css`;
+    if (!manifest.exports?.[exported]) {
+      console.error(
+        `error: ${manifest.name} builds css/${name}.css but does not export ${exported}.`,
+      );
+      failed = true;
+    }
+    const doc = docs.get(name);
+    return {
+      name,
+      import: `${manifest.name}/css/${name}.css`,
+      layer: sheet.layer,
+      css: sheet.styles.cssText,
+      ...(doc?.description ? { description: doc.description } : {}),
+      ...(doc ? { source: { file: sourceFile, line: doc.line } } : {}),
+    };
+  });
+}
+
 // Updated dates come from source history only when the clone has it (never build time).
 const history = gitHistory(root);
 if (!history) console.log('No full git history: pages carry only authored updated dates.');
@@ -56,7 +89,9 @@ for (const dir of PACKAGES) {
   const result = analyze({
     project: join(pkgDir, 'tsconfig.json'),
     library: { name: manifest.name, version: manifest.version, prefix: 'odd-' },
-    ...(dir === 'packages/components' ? { tokens: tokenInspection } : {}),
+    ...(dir === 'packages/components'
+      ? { tokens: tokenInspection, stylesheets: await documentStylesheets(pkgDir, manifest) }
+      : {}),
     ...(history ? { history: gitHistory(pkgDir) } : {}),
   });
   for (const d of result.diagnostics) print(d, dir);

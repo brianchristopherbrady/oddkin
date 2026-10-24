@@ -46,7 +46,7 @@ export interface ReferenceIndex {
 export interface ReferenceSources {
   /** Published `custom-elements.json` manifests. */
   readonly manifests: readonly unknown[];
-  /** Published `oddkin.metadata.json` documents (layout recipes). */
+  /** Published `oddkin.metadata.json` documents (layout recipes, document stylesheet variables). */
   readonly metadata?: readonly unknown[];
   /** Packages whose `exports` define the public import specifiers. */
   readonly packages?: readonly { readonly name: string; readonly exports?: unknown }[];
@@ -120,7 +120,19 @@ export function referenceIndex(sources: ReferenceSources): ReferenceIndex {
       });
     },
     tokens: new Set(sources.tokens ?? []),
-    variables: new Set(sources.variables ?? []),
+    variables: new Set([
+      ...(sources.variables ?? []),
+      ...(sources.metadata ?? []).flatMap((m) =>
+        Object.values(
+          ((m as { stylesheets?: Record<string, { variables?: unknown }> })?.stylesheets ??
+            {}) as Record<string, { variables?: unknown }>,
+        ).flatMap((sheet) =>
+          Array.isArray(sheet.variables)
+            ? sheet.variables.filter((v): v is string => typeof v === 'string')
+            : [],
+        ),
+      ),
+    ]),
     contracts: new Set(sources.contracts ?? []),
     recipes: new Set(
       (sources.metadata ?? []).flatMap((m) =>

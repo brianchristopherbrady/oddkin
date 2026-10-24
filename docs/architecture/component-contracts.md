@@ -32,7 +32,9 @@ An element when there is something the platform cannot express from markup alone
 form association, ARIA wiring, a built-in glyph, or observed children. A recipe when native elements already carry
 the semantics (`a`, `kbd`, `hr`, `table`, `ul`/`ol`, `h1`–`h6`, `p`, `form`): no registration, shadow root, or
 upgrade per instance. Recipes live in `@oddkin/components/css/<name>.css` in the `odd.components` cascade layer
-(ADR 0039); listing them in the published metadata, as layout recipes are, is a follow-up for the agent kit.
+(ADR 0039). The published metadata lists every document stylesheet (`stylesheets["stylesheet:<name>"]`: its
+import, layer, description, the classes it defines, the tokens it reads, and the `--odd-*` variables an author may
+set), and the agent kit writes a reference for each, so an agent finds a recipe without reading CSS.
 
 ### 2.2 Authoring collections
 

@@ -3,6 +3,7 @@
  * TypeScript 5.9 compiler API (in-process, stable API; ADR 0018) and never imports or
  * executes the analyzed modules. Contract: docs/architecture/metadata-and-analyzer.md.
  */
+import { stylesheetRecords, type StylesheetInput } from './stylesheets.js';
 import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve, sep } from 'node:path';
@@ -95,6 +96,11 @@ export interface AnalyzeOptions {
    * authored `@updated` dates; build time is never used.
    */
   readonly history?: SourceHistory;
+  /**
+   * Document stylesheets the package publishes (opt-in CSS: reset, layout classes, recipes), as
+   * built; published as `stylesheets` records with their classes, tokens, and variables.
+   */
+  readonly stylesheets?: readonly StylesheetInput[];
 }
 
 export interface AnalyzeResult {
@@ -292,6 +298,15 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
   const foundations = options.tokens
     ? foundationsFrom(options.tokens.inspection, options.tokens.source)
     : undefined;
+  const stylesheets = options.stylesheets?.length
+    ? stylesheetRecords(
+        options.stylesheets,
+        library.prefix ?? '',
+        new Map(
+          (options.tokens?.inspection.tokens ?? []).map((t) => [t.cssVariable, t.name] as const),
+        ),
+      )
+    : undefined;
   const foundationPages: DatedPage[] = Object.values(foundations ?? {}).map((f) => ({
     page: `foundations/${f.id}`,
     files: options.tokens?.sources ?? [],
@@ -306,6 +321,7 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
       ...metadata,
       ...(referenced.length ? { components, contracts } : {}),
       ...(foundations ? { foundations } : {}),
+      ...(stylesheets ? { stylesheets } : {}),
       ...(found.examples.length ? { examples } : {}),
       ...(Object.keys(docs).length ? { docs } : {}),
       diagnostics: metadataDiagnostics,
@@ -334,5 +350,7 @@ export async function writeOutputs(result: AnalyzeResult, outDir: string): Promi
 }
 
 export { stableJson } from './emit.js';
+export { stylesheetDocs, stylesheetRecords } from './stylesheets.js';
+export type { StylesheetInput, StylesheetRecord } from './stylesheets.js';
 export { attachVerification } from './verification.js';
 export type { ResultRecord, VerificationInputs, VerificationReport } from './verification.js';

@@ -55,7 +55,7 @@
           "id": { "type": "string", "description": "Stable id, e.g. component:odd-button or task:theming" },
           "path": { "type": "string" },
           "kind": {
-            "enum": ["component", "choosing", "tokens", "recipe", "model", "task", "json"]
+            "enum": ["component", "choosing", "tokens", "recipe", "stylesheet", "model", "task", "json"]
           },
           "provenance": {
             "enum": ["extracted", "authored", "verified"],
