@@ -1775,6 +1775,10 @@
     "odd-tree": {
       "dependencies": ["odd-icon"],
       "reason": "Item icons are drawn by the complete odd-icon widget authors also place alone."
+    },
+    "odd-validation-summary": {
+      "dependencies": [],
+      "reason": "Its links point at the form's own controls; the danger look and glyph are the shared tone module."
     }
   },
   "modules": [
@@ -1835,7 +1839,7 @@
       "home": "@oddkin/components/styles (TONES, toneStyles, toneGlyph)",
       "decision": "Tone colours (neutral, info, success, warning, danger) with one glyph per tone.",
       "status": "existing",
-      "code": ["odd-badge", "odd-alert", "odd-toast"],
+      "code": ["odd-badge", "odd-alert", "odd-toast", "odd-validation-summary"],
       "figma": ["badge", "alert", "toast", "alertDialog", "fileUpload", "combobox"],
       "note": "AI .status (aiElementStyles) still draws its own tone colours; it moves onto toneStyles later."
     },
@@ -1886,6 +1890,7 @@
         "odd-input",
         "odd-menu",
         "odd-combobox",
+        "odd-validation-summary",
         "odd-command-palette"
       ],
       "figma": ["34 icons on page 158:22"]

@@ -137,6 +137,7 @@ const states = `
   <a id="a11y-copy" href="#copy">Copy link</a><odd-tooltip anchor="a11y-copy" open>Copy a link to this workspace</odd-tooltip>
   <odd-toast label="Invitation was not sent" tone="danger" duration="0" open>Your draft has been kept.</odd-toast>
   <odd-toast label="Invitation sent" tone="success" open>Alex can now join the workspace.<odd-button slot="end" appearance="ghost" size="sm">Undo</odd-button></odd-toast>
+  <form id="summary-form"><odd-validation-summary></odd-validation-summary><odd-input label="Project name" name="project" required></odd-input><p><label>Owner email <input name="owner" type="email" value="ada@" required /></label></p><odd-button type="submit">Save</odd-button></form>
   <odd-breadcrumbs label="Collapsed location" max-items="2"><svg slot="home" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M3 11l9-8 9 8" /></svg><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
   <h2>Collections</h2>
   <odd-tree label="Project files" value="text-field" data-items></odd-tree>
@@ -224,6 +225,18 @@ async function audit(mode: 'light' | 'dark') {
     await blocked.updateComplete;
     flush();
     expect(blocked.shadowRoot!.querySelector('input')!.getAttribute('aria-invalid')).toBe('true');
+    // A submission the user starts and validation blocks: the summary lists the problems.
+    const summaryForm = container.querySelector<HTMLFormElement>('#summary-form')!;
+    summaryForm.addEventListener('submit', (event) => event.preventDefault());
+    summaryForm.querySelector<HTMLElement>('odd-button')!.click();
+    // odd-button submits in a task after the click.
+    await new Promise((resolve) => setTimeout(resolve));
+    const validationSummary = summaryForm.querySelector<
+      HTMLElement & { updateComplete: Promise<void> }
+    >('odd-validation-summary')!;
+    await validationSummary.updateComplete;
+    flush();
+    expect(validationSummary.shadowRoot!.querySelectorAll('[part~="link"]')).toHaveLength(2);
     // A disabled chip's text takes the disabled colour, as Figma draws it: WCAG 1.4.3 exempts
     // inactive components, but axe cannot tell that a chip is one. The same chip enabled is audited.
     const context = { include: [container], exclude: [['#inactive-chip']] };

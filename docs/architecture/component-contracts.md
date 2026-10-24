@@ -301,9 +301,15 @@ Chosen files are rows (part `file`, glyph, name, size) with remove buttons; the 
 `name`. `input` and `change` on user changes.
 
 **`odd-validation-summary`** (`ValidationSummary`) — `label: string` (heading; default `strings.title`, "Please fix
-{count} fields"), `form: string` (ID; default: the ancestor form). After a submission blocked by validation it lists
-each invalid control's label and message as a link to the control and receives focus (`tabindex="-1"`); it hides
-when the form becomes valid. Entered values are never cleared.
+{count} fields", and `strings.titleOne` for one, chosen by the page language's plural rules), `form: string` (ID;
+default: the ancestor form). When constraint validation blocks a submission the user starts (a submit button or
+Enter in a field), it cancels the browser's own report (no bubble, no focus move), lists each invalid control in form
+order as a link that moves focus to the control (`strings.entry`, "{label} — {message}"; the label is the control's
+`label`, its `<label>`s, its ARIA name, or its text; radios once per name, named by their fieldset's legend), and
+takes focus itself (`tabindex="-1"`, a group named by the heading, with the danger tone look and glyph). A fixed
+problem drops out after the next `input` or `change`; the summary hides when none remain, on reset, and when a
+submission goes through. Entered values are never cleared. A script's `requestSubmit()` or `checkValidity()` alone
+leaves it hidden.
 
 ### 3.4 Disclosure and navigation
 

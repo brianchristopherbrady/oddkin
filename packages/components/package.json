@@ -474,6 +474,18 @@
       "types": "./dist/tree/tree.define.d.ts",
       "default": "./dist/tree/tree.define.js"
     },
+    "./validation-summary": {
+      "types": "./dist/validation-summary/index.d.ts",
+      "default": "./dist/validation-summary/index.js"
+    },
+    "./validation-summary/foundation": {
+      "types": "./dist/validation-summary/foundation.d.ts",
+      "default": "./dist/validation-summary/foundation.js"
+    },
+    "./define/validation-summary": {
+      "types": "./dist/validation-summary/validation-summary.define.d.ts",
+      "default": "./dist/validation-summary/validation-summary.define.js"
+    },
     "./models": {
       "types": "./dist/models/index.d.ts",
       "default": "./dist/models/index.js"

@@ -122,6 +122,10 @@ describe('authored examples', () => {
     'odd-tooltip/physicalSide': { observe: (el) => el['side'], wrong: 'block-start' },
     'odd-drawer/physicalSide': { observe: (el) => el['side'], wrong: 'inline-end' },
     'odd-toast/errorTone': { observe: (el) => el['tone'], wrong: 'neutral' },
+    'odd-validation-summary/forAttribute': {
+      observe: (el) => el.shadowRoot!.querySelector<HTMLElement>('[part~="base"]')!.hidden,
+      wrong: true,
+    },
     'odd-breadcrumbs/itemsAttribute': {
       observe: (el) => el.shadowRoot!.querySelectorAll('[part~="item"]').length,
       wrong: 0,

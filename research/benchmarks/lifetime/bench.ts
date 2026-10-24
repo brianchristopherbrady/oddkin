@@ -42,6 +42,7 @@ import '@oddkin/components/define/toast';
 import '@oddkin/components/define/toolbar';
 import '@oddkin/components/define/tooltip';
 import '@oddkin/components/define/tree';
+import '@oddkin/components/define/validation-summary';
 import { scopeStats } from '@oddkin/core/scope';
 import { generate } from '@oddkin/tokens/generate';
 
@@ -219,6 +220,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-dialog label="Confirm" open>Sure?<button slot="footer">OK</button></odd-dialog>
         <odd-drawer label="Details" no-modal open>Details.<button slot="footer">Done</button></odd-drawer>
         <odd-toast label="Saved" open>Your changes are saved.</odd-toast>
+        <odd-card><form><odd-validation-summary></odd-validation-summary><input name="code" aria-label="Code" required /></form></odd-card>
         <odd-button id="lifetime-tip">Tip</odd-button><odd-tooltip anchor="lifetime-tip" open>Hint.</odd-tooltip>
         <odd-toolbar label="Actions"><button>A</button><button>B</button></odd-toolbar>
         <odd-checkbox name="updates" checked>Updates</odd-checkbox>
