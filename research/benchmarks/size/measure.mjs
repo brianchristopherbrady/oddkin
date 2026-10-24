@@ -145,6 +145,15 @@ export const CSS_BUDGETS = {
   'components:tree': 512, // 428
   'components:listbox': 640, // 602: the rows, field, and spinner are shared modules
   'components:select': 512, // 448: the field, the option rows, and the picker surface are shared modules
+  // 960: measured 860 on 2026-10-23: the field box (its states, the search glyph and chevron
+  // padding), the chips' "+N" collapse, and the popup width; the field, rows, listbox rows, surface,
+  // chips, and clear button are shared sheets.
+  'components:combobox': 960,
+  // 1,184: measured 1,096 on 2026-10-23: the palette's surface, search field, group headings in the
+  // eyebrow role, Figma CommandItem rows (padding, surface, the active one in the selection
+  // colours, the shortcut in the code role), and the hints; the rows' base, surface, and spinner are
+  // shared modules.
+  'components:command-palette': 1184,
   'components:menu': 512, // 431: the trigger, surface, and rows are shared modules
   'components:split-button': 128, // 110: two buttons in a row; the menu half is odd-menu
   'components:empty-state': 512, // 434

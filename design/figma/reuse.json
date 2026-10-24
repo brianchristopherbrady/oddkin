@@ -1678,6 +1678,14 @@
     "odd-chip": {
       "dependencies": []
     },
+    "odd-combobox": {
+      "dependencies": [],
+      "reason": "Rows, chips, and the clear button are parts drawn from the option-row, listbox, chip, and input sheets (one shadow tree: the input's aria-activedescendant names the options); no nested elements."
+    },
+    "odd-command-palette": {
+      "dependencies": ["odd-icon"],
+      "reason": "Command icons are drawn by the complete odd-icon widget, as on odd-menu; rows are option-row parts in the dialog's one tree (the input's aria-activedescendant names them)."
+    },
     "odd-dialog": {
       "dependencies": [],
       "reason": "Actions and fields are slot content."
@@ -1803,7 +1811,8 @@
         "odd-textarea",
         "odd-checkbox-group",
         "odd-radio-group",
-        "odd-segmented-control"
+        "odd-segmented-control",
+        "odd-combobox"
       ],
       "note": "The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe."
     },
@@ -1836,7 +1845,15 @@
       "home": "@oddkin/components/styles (spinnerStyles)",
       "decision": "Indeterminate busy indicator, reduced-motion behaviour.",
       "status": "existing",
-      "code": ["odd-button", "odd-spinner", "odd-tree", "odd-listbox", "odd-split-button"],
+      "code": [
+        "odd-button",
+        "odd-spinner",
+        "odd-tree",
+        "odd-listbox",
+        "odd-split-button",
+        "odd-combobox",
+        "odd-command-palette"
+      ],
       "figma": ["button", "spinner", "listbox", "multiselect", "Tree", "CommandPalette", "combobox"]
     },
     {
@@ -1867,7 +1884,9 @@
         "odd-listbox",
         "odd-select",
         "odd-input",
-        "odd-menu"
+        "odd-menu",
+        "odd-combobox",
+        "odd-command-palette"
       ],
       "figma": ["34 icons on page 158:22"]
     },
@@ -1877,7 +1896,7 @@
       "home": "@oddkin/components/styles (controlIndicatorStructuralStyles, controlIndicatorStyles)",
       "decision": "Choice rows (a box, dot, or track beside its label) and the checkbox box with check and mixed marks. The radio dot and the switch track and thumb are drawn by one element each and live with it.",
       "status": "existing",
-      "code": ["odd-checkbox", "odd-switch", "odd-radio-group"],
+      "code": ["odd-checkbox", "odd-switch", "odd-radio-group", "odd-combobox (CheckboxOption)"],
       "figma": ["checkbox", "CheckboxOption", "radio", "switch"]
     },
     {
@@ -1885,9 +1904,9 @@
       "kind": "style",
       "home": "@oddkin/components/styles (optionRowStructuralStyles, optionRowStyles); optionRowPickerStyles (the gated select picker rows, imported relatively from styles/option-row.styles.ts)",
       "decision": "Option and menu rows: height, padding, selected check, active and disabled states.",
-      "status": "existing (element consumers: odd-listbox, odd-select's customizable picker, odd-menu)",
+      "status": "existing (element consumers: odd-listbox, odd-select's customizable picker, odd-menu, odd-combobox, odd-command-palette)",
       "figma": ["ListboxOption", "MenuItem", "CommandItem", "CheckboxOption"],
-      "code": ["odd-listbox", "odd-select", "odd-menu"]
+      "code": ["odd-listbox", "odd-select", "odd-menu", "odd-combobox", "odd-command-palette"]
     },
     {
       "id": "nav-row",
@@ -1904,7 +1923,7 @@
       "home": "@oddkin/components/chip styles",
       "decision": "Chip look and remove affordance.",
       "status": "existing",
-      "code": ["odd-chip"],
+      "code": ["odd-chip", "odd-combobox (chips, multiple)"],
       "figma": ["chip", "multiselect and its Value families"]
     },
     {
@@ -1942,7 +1961,9 @@
         "odd-menu",
         "odd-tooltip",
         "odd-drawer",
-        "odd-toast"
+        "odd-toast",
+        "odd-combobox",
+        "odd-command-palette"
       ]
     },
     {
@@ -1960,7 +1981,8 @@
         "odd-textarea",
         "odd-checkbox-group",
         "odd-radio-group",
-        "odd-segmented-control"
+        "odd-segmented-control",
+        "odd-combobox"
       ],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]
@@ -1988,7 +2010,9 @@
         "odd-menu",
         "odd-split-button",
         "odd-radio-group",
-        "odd-segmented-control"
+        "odd-segmented-control",
+        "odd-combobox",
+        "odd-command-palette"
       ]
     },
     {
@@ -1998,7 +2022,7 @@
       "decision": "Anchored overlay placement and dismissal.",
       "status": "existing",
       "figma": ["popover", "tooltip", "Menu", "combobox", "multiselect", "splitAction"],
-      "code": ["odd-popover", "odd-menu", "odd-tooltip"]
+      "code": ["odd-popover", "odd-menu", "odd-tooltip", "odd-combobox"]
     },
     {
       "id": "modal-dialog",
@@ -2007,7 +2031,7 @@
       "decision": "Modal overlays: a native <dialog> shown modally (the page inert), or non-modal with `modal: false`, initial focus and its return, close and cancel at the host, closedby (native, emulated elsewhere), and a light-DOM <form method=\"dialog\">.",
       "status": "existing",
       "figma": ["dialog", "alertDialog", "drawer", "CommandPalette"],
-      "code": ["odd-dialog", "odd-drawer"]
+      "code": ["odd-dialog", "odd-drawer", "odd-command-palette"]
     },
     {
       "id": "resize",

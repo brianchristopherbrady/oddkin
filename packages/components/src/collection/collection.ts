@@ -5,6 +5,7 @@
  * following the children with a `MutationObserver` owned by the element's scope. Internal to
  * `@oddkin/components`; elements re-export the record types they take.
  */
+import { event } from '@oddkin/core/element';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
 import type { Controller, Scope } from '@oddkin/core/scope';
 
@@ -111,20 +112,61 @@ export function readOptions(host: Element): Declared<OptionRecord> {
   return { records, selected };
 }
 
-/** An option and its index in the collection. */
-export interface OptionRow {
-  readonly option: OptionRecord;
-  readonly index: number;
-}
-/** A run of options; `label` is the group's, or undefined for an option outside any group. */
-export interface OptionGroup {
-  readonly label: string | undefined;
-  readonly rows: OptionRow[];
+/** One command of `odd-command-palette` (component-contracts.md §3.6). */
+export interface CommandRecord {
+  /** Reported as `detail.id` of `odd-action` when chosen. */
+  readonly id: string;
+  /** Visible text and accessible name; the search matches it. */
+  readonly label: string;
+  /** Secondary text under the label. */
+  readonly description?: string;
+  /** Icon URL, drawn as `odd-icon` draws `src`. */
+  readonly icon?: string;
+  /** Keyboard shortcut shown at the end, such as "Ctrl K" (display only). */
+  readonly shortcut?: string;
+  /** Label of the group the command belongs to; consecutive commands with one label form a group. */
+  readonly group?: string;
+  readonly disabled?: boolean;
 }
 
-/** Consecutive options with the same `group` form one group; options without one stand alone. */
-export function groupsOf(options: readonly OptionRecord[]): OptionGroup[] {
-  const groups: OptionGroup[] = [];
+/** The details of `odd-query-change`. */
+export interface QueryChangeDetail {
+  /** The text in the search input. */
+  readonly query: string;
+}
+
+/** The user typed in a filtering collection's input (`odd-combobox`, `odd-command-palette`). */
+export const queryChangeEvent = event<QueryChangeDetail>('odd-query-change', {
+  bubbles: true,
+  composed: true,
+  cancelable: false,
+  intent: 'user',
+  description:
+    'The user typed: `detail.query` is the text in the input. With `no-filter`, replace the options or items with the matches.',
+});
+
+declare global {
+  interface GlobalEventHandlersEventMap {
+    'odd-query-change': CustomEvent<QueryChangeDetail>;
+  }
+}
+
+/** A record and its index in the collection. */
+export interface OptionRow<R = OptionRecord> {
+  readonly option: R;
+  readonly index: number;
+}
+/** A run of records; `label` is the group's, or undefined for a record outside any group. */
+export interface OptionGroup<R = OptionRecord> {
+  readonly label: string | undefined;
+  readonly rows: OptionRow<R>[];
+}
+
+/** Consecutive records with the same `group` form one group; records without one stand alone. */
+export function groupsOf<R extends { readonly group?: string }>(
+  options: readonly R[],
+): OptionGroup<R>[] {
+  const groups: OptionGroup<R>[] = [];
   options.forEach((option, index) => {
     const last = groups[groups.length - 1];
     if (last && option.group !== undefined && last.label === option.group)

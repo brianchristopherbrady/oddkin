@@ -79,6 +79,8 @@ describe('change impact on @oddkin/components', () => {
         'example:odd-card/headed',
         'example:odd-checkbox/inForm',
         'example:odd-checkbox-group/inForm',
+        'example:odd-combobox/inForm',
+        'example:odd-command-palette/default',
         ...['alert', 'closedByAny', 'default'].map((name) => `example:odd-dialog/${name}`),
         ...['default', 'inlineStart', 'nonModal'].map((name) => `example:odd-drawer/${name}`),
         'example:odd-empty-state/default',

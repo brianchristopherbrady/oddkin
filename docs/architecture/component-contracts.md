@@ -268,7 +268,20 @@ detached native select and points it at the listbox (`FormValue` `anchor`); rese
 autocomplete). Field anatomy, `name`, `value`, `values` and chips (parts drawn with the chip module, collapsing to
 "+N") with `multiple`, `required`, `disabled`, `readonly`, `placeholder`, `loading`, `no-filter` (the host filters:
 it listens to `odd-query-change`, detail `{ query }`, and replaces `options`), read-only `query`. Part `clear` clears
-the value. Slots `empty`, `status`. Value changes dispatch `input` and `change`; typing does not.
+the value. Slots `empty`, `status`. Value changes dispatch `input` and `change`; typing does not. One shadow tree:
+the field box (part `control`, the control look; a search glyph at the start of a single combobox, the chevron with
+`multiple`, as Figma draws them) holds the `role="combobox"` input (part `input`), which names the active option with
+`aria-activedescendant`; the popup (part `popup`, a manual popover on the overlay wiring and surface, at least as
+wide as the field) holds the listbox (part `listbox`, the listbox's square rows between dividers; with `multiple`,
+rows start with the control indicator's decorative box). Typing filters by label (case-insensitive contains) and makes
+the first match active; Down and Up open the popup on the chosen (or first) and the last option, Alt+Down opens without
+one, Alt+Up closes; Enter chooses (single: closes; multiple: toggles and stays open); Escape closes and restores the
+chosen option's text, and on a closed combobox clears the text and the value (APG); leaving restores the text. With
+`multiple`: Backspace in the empty input removes the last value; Left at the start moves to the chips (parts `chip`,
+`chip-remove`, a list named by `strings.selected`), where Left and Right move, Backspace and Delete remove, and Escape
+returns; while focus is outside, the chips that do not fit on one line become the `more` part ("+N", read as
+`strings.more`). Form semantics are odd-listbox's (one internal base class: the declared default, each value under
+`name`, `required` through a detached native select pointed at the input, reset, restore).
 
 **`odd-file-input`** (`fileUpload`) — native `<input type="file">` whose `::file-selector-button` takes the button
 look. Field anatomy, `name`, `accept`, `multiple`, `required`, `disabled`; read-only `files: readonly File[]`.
@@ -408,7 +421,14 @@ menu. `appearance`, `size`, `disabled` (both halves), `loading` (part `spinner`;
 (`aria-activedescendant` from the input). `open`, `label`, `placeholder`, `items` (`{ id, label, description?, icon?,
 shortcut?, group?, disabled? }`), `loading`, `no-filter` with `odd-query-change`, slots `empty`, `status`. Enter
 dispatches `odd-action` `{ id, action: 'select' }` and closes (cancelable); Escape closes and focus returns to the opener (native
-dialog behaviour).
+dialog behaviour). Built on the shared modal wiring (`ModalDialog`: `closedby="any"`, initial focus in the search input,
+focus return) and the overlay surface's sheet with Figma's raised surface and `radius.lg`; read-only `query`; `show()`,
+`close()`. Parts `dialog`, `search` (the field, ringed in the focus colour while the input has focus, with an Esc hint),
+`input` (`role="combobox"`, named by `strings.search`), `listbox` (named by `label`), `item` (option-row module on
+Figma `CommandItem`: the active command in the selection colours with `aria-selected`, its shortcut in the code role),
+`group` (eyebrow headings for consecutive items with one `group`), `loading`, `empty`, `footer` (the keyboard hints,
+`strings.navigate`, `choose`, `close`). Typing filters by label and makes the first match active; Up and Down wrap; each
+opening starts from an empty search. Item icons are `odd-icon`, as on `odd-menu`.
 
 ### 3.7 Layout
 

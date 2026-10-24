@@ -11,6 +11,7 @@ import {
   compare,
   deliberate,
   expectNone,
+  figma,
   interact,
   mount,
   settle,
@@ -20,6 +21,8 @@ import {
   type Target,
 } from './parity.js';
 import { themeValue } from './probe.js';
+import type { OddkinCombobox } from '../src/combobox/combobox.js';
+import type { OddkinCommandPalette } from '../src/command-palette/command-palette.js';
 import type { OddkinListbox } from '../src/listbox/listbox.js';
 import type { MenuItemRecord, OddkinMenu } from '../src/menu/menu.js';
 import type { OddkinSelect } from '../src/select/select.js';
@@ -220,9 +223,9 @@ deliberate([
 ]);
 
 describe('Figma parity: odd-split-panel (Splitter)', () => {
-  for (const [family, orientation, layer, grip] of [
-    ['Splitter/vertical', 'horizontal', 'Vertical resize handle', '\u22ee'],
-    ['Splitter/horizontal', 'vertical', 'Horizontal resize handle', '\u2022\u2022\u2022'],
+  for (const [family, orientation, layer] of [
+    ['Splitter/vertical', 'horizontal', 'Vertical resize handle'],
+    ['Splitter/horizontal', 'vertical', 'Horizontal resize handle'],
   ] as const)
     for (const state of ['Default', 'Hover', 'Focus', 'Dragging'])
       it(`${family} ${state}`, async () => {
@@ -234,6 +237,10 @@ describe('Figma parity: odd-split-panel (Splitter)', () => {
         if (state === 'Dragging') el._dragging.value = true;
         await interact(state, separator);
         await settle(el);
+        // The grip is the handle's one text layer, whatever the snapshot names it ("•••", "Grip · more").
+        const grip = figma
+          .get(`Oddkin/Common/${family}`)!
+          .layers.find((l) => l.path.length === 2 && l.path[0] === layer)!.path[1]!;
         const targets: Target[] = [
           { layer: [layer], el: separator, kind: 'frame' },
           { layer: [layer, grip], el: separator.querySelector('.glyph')!, kind: 'text' },
@@ -640,5 +647,219 @@ describe('Figma parity: odd-split-button (splitAction)', () => {
         targets.push({ layer: [frame, 'Surface [2]'], el: trigger, kind: 'ring' });
       await transitions(targets);
       expectNone(compare('Oddkin/Common/splitAction', { State: state }, targets));
+    });
+});
+
+const PROJECT_OPTIONS =
+  '<option value="atlas">Atlas</option><option value="design">Design systems</option><option value="research">Research</option>';
+const mountCombobox = async (attributes: string) => {
+  const el = mount(
+    `<odd-combobox style="inline-size: 320px" ${attributes}>${PROJECT_OPTIONS}</odd-combobox>`,
+  ) as OddkinCombobox;
+  await settle(el);
+  return el;
+};
+
+deliberate(
+  [
+    /^combobox \w+ Surface paddingLeft \(--odd-control-padding-inline-md\): padding-inline-start/,
+    'The search glyph is an adornment over the field box, as on odd-input’s search field (the control module pads the box for it), so the text starts after the glyph inside the padding; Figma lays the glyph out as the first child after the same padding.',
+  ],
+  [
+    /^multiselect Closed Surface paddingTop \(--odd-space-none\): padding-block-start/,
+    'One field height for one chip and for several: the box keeps Figma’s Multiple selected padding (space.xs above and below), so it does not grow when the first chip arrives or a second row wraps.',
+  ],
+);
+
+describe('Figma parity: odd-combobox (combobox)', () => {
+  for (const state of ['Closed', 'Disabled'] as const)
+    it(state, async () => {
+      const el = await mountCombobox(
+        `label="Find a project" description="Search by project name." placeholder="Choose a project…"${state === 'Disabled' ? ' value="design" disabled' : ''}`,
+      );
+      const frame = `Combobox / ${state}`;
+      const input = shadowPart(el, 'input');
+      const targets: Target[] = [
+        { layer: [frame, 'Find a project'], el: shadowPart(el, 'label'), kind: 'text' },
+        {
+          layer: [frame, 'Search by project name.'],
+          el: shadowPart(el, 'description'),
+          kind: 'text',
+        },
+        {
+          layer: [frame, 'Dropdown surface', 'Surface'],
+          el: shadowPart(el, 'control'),
+          kind: 'frame',
+        },
+        state === 'Closed'
+          ? {
+              layer: [frame, 'Dropdown surface', 'Surface', 'Choose a project…'],
+              el: input,
+              kind: 'text',
+              pseudo: '::placeholder',
+            }
+          : { layer: [frame, 'Dropdown surface', 'Surface', 'Des'], el: input, kind: 'text' },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/combobox', { State: state }, targets));
+    });
+
+  // Open: the popup is the listbox surface below the field (Figma joins both in one surface).
+  for (const state of ['Open', 'Loading'] as const)
+    it(state, async () => {
+      const el = await mountCombobox(
+        `label="Find a project"${state === 'Loading' ? ' loading' : ''}`,
+      );
+      shadowPart(el, 'input').focus();
+      await userEvent.keyboard('{ArrowDown}');
+      await settle(el);
+      const frame = `Combobox / ${state}`;
+      const targets: Target[] = [
+        { layer: [frame, 'Dropdown surface'], el: shadowPart(el, 'popup'), kind: 'frame' },
+      ];
+      if (state === 'Loading')
+        targets.push({
+          layer: [frame, 'Dropdown surface', 'Surface [2]', 'Searching projects…'],
+          el: shadowPart(el, 'loading'),
+          kind: 'text',
+        });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/combobox', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: odd-combobox multiple (multiselect)', () => {
+  for (const state of ['Closed', 'Multiple selected'] as const)
+    it(state, async () => {
+      const el = await mountCombobox(
+        `label="Topics" description="Add one or more topics." multiple`,
+      );
+      el.values = state === 'Closed' ? ['design'] : ['design', 'research'];
+      await settle(el);
+      const frame = `Multiselect / ${state}`;
+      const chip = (label: string) =>
+        [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="chip"]')].find((c) =>
+          c.textContent?.includes(label),
+        )!;
+      const targets: Target[] = [
+        { layer: [frame, 'Topics'], el: shadowPart(el, 'label'), kind: 'text' },
+        {
+          layer: [frame, 'Dropdown surface', 'Surface'],
+          el: shadowPart(el, 'control'),
+          kind: 'frame',
+        },
+      ];
+      if (state === 'Closed')
+        targets.push({
+          layer: [frame, 'Add one or more topics.'],
+          el: shadowPart(el, 'description'),
+          kind: 'text',
+        });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/multiselect', { State: state }, targets));
+      // The chips are Figma chip instances: drawn with the chip module (odd-chip's look).
+      const chips = [
+        {
+          layer: ['Removable chip / Default', 'Surface'],
+          el: chip('Design systems'),
+          kind: 'frame' as const,
+        },
+      ];
+      await transitions(chips);
+      expectNone(compare('Oddkin/Common/chip', { State: 'Default' }, chips));
+    });
+});
+
+const PALETTE_COMMANDS = [
+  { id: 'new', label: 'New project', shortcut: 'Ctrl N', group: 'Commands & projects' },
+  { id: 'atlas', label: 'Atlas', group: 'Commands & projects' },
+  {
+    id: 'beacon',
+    label: 'Beacon',
+    shortcut: 'Ctrl B',
+    group: 'Commands & projects',
+    disabled: true,
+  },
+];
+const openPalette = async (attributes: string, items = PALETTE_COMMANDS) => {
+  const el = mount(
+    `<odd-command-palette label="Command palette" ${attributes}></odd-command-palette>`,
+  ) as OddkinCommandPalette;
+  el.items = items;
+  await settle(el);
+  el.show();
+  await settle(el);
+  return el;
+};
+
+describe('Figma parity: odd-command-palette (CommandPalette)', () => {
+  it('Results', async () => {
+    const el = await openPalette('');
+    const input = shadowPart(el, 'input') as HTMLInputElement;
+    input.value = 'Design';
+    const root = 'Command palette';
+    const targets: Target[] = [
+      { layer: [root], el: shadowPart(el, 'dialog'), kind: 'frame' },
+      { layer: [root, 'COMMANDS & PROJECTS'], el: shadowPart(el, 'group'), kind: 'text' },
+      { layer: [root, 'Search commands'], el: shadowPart(el, 'search'), kind: 'frame' },
+      { layer: [root, 'Search commands', 'Query'], el: input, kind: 'text' },
+      {
+        layer: [root, 'Search commands', 'Esc'],
+        el: el.shadowRoot!.querySelector('.hint')!,
+        kind: 'text',
+      },
+      { layer: [root, 'Keyboard guidance'], el: shadowPart(el, 'footer'), kind: 'frame' },
+      {
+        layer: [root, 'Keyboard guidance', '\u2191 \u2193 Navigate'],
+        el: shadowPart(el, 'footer'),
+        kind: 'text',
+      },
+    ];
+    await transitions(targets);
+    expectNone(compare('Oddkin/Common/CommandPalette', { State: 'Results' }, targets));
+  });
+
+  for (const [state, layer, part] of [
+    ['Loading', 'Searching your workspace\u2026', 'loading'],
+    ['No results', 'No matching commands', 'empty'],
+  ] as const)
+    it(state, async () => {
+      const el = await openPalette(state === 'Loading' ? 'loading' : '', []);
+      const targets: Target[] = [
+        { layer: ['Command palette', layer], el: shadowPart(el, part), kind: 'text' },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/CommandPalette', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: odd-command-palette rows (CommandItem)', () => {
+  for (const [state, label] of [
+    ['Focus', 'New project'],
+    ['Default', 'Atlas'],
+    ['Disabled', 'Beacon'],
+  ] as const)
+    it(state, async () => {
+      const el = await openPalette('');
+      const row = [...el.shadowRoot!.querySelectorAll<HTMLElement>('[role="option"]')].find(
+        (r) => r.querySelector('.option-text')!.textContent === label,
+      )!;
+      expect(row.classList.contains('active')).toBe(state === 'Focus');
+      const targets: Target[] = [
+        { layer: ['Command option'], el: row, kind: 'frame' },
+        {
+          layer: ['Command option', 'Label'],
+          el: row.querySelector('.option-text')!,
+          kind: 'text',
+        },
+      ];
+      if (row.querySelector('.shortcut'))
+        targets.push({
+          layer: ['Command option', 'Shortcut'],
+          el: row.querySelector('.shortcut')!,
+          kind: 'text',
+        });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/CommandItem', { State: state }, targets));
     });
 });

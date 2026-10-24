@@ -134,6 +134,14 @@ describe('authored examples', () => {
       observe: (el) => el.shadowRoot!.querySelectorAll('[role="option"]').length,
       wrong: 0,
     },
+    'odd-combobox/optionsAttribute': {
+      observe: (el) => el.shadowRoot!.querySelectorAll('[role="option"]').length,
+      wrong: 0,
+    },
+    'odd-command-palette/itemsAttribute': {
+      observe: (el) => el.shadowRoot!.querySelectorAll('[role="option"]').length,
+      wrong: 0,
+    },
     'odd-select/optionsAttribute': {
       observe: (el) => el.shadowRoot!.querySelectorAll('option').length,
       wrong: 0,
@@ -170,6 +178,8 @@ describe('authored examples', () => {
     'odd-breadcrumbs/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-tree/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-listbox/optionsAttribute': ['element.attribute.propertyOnly'],
+    'odd-combobox/optionsAttribute': ['element.attribute.propertyOnly'],
+    'odd-command-palette/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-select/optionsAttribute': ['element.attribute.propertyOnly'],
     'odd-menu/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-split-button/itemsAttribute': ['element.attribute.propertyOnly'],

@@ -200,6 +200,7 @@ describe('Theme Studio page data', () => {
       'avatar:odd-avatar',
       'busyIndicator:odd-spinner',
       'chip:odd-chip',
+      'combobox:odd-combobox',
       'disclosure:odd-disclosure',
       'placeholder:odd-skeleton',
       'progress:odd-progress',

@@ -37,6 +37,8 @@ export const ATTRIBUTES = {
   readonly: { type: 'boolean' },
   required: { type: 'boolean' },
   multiple: { type: 'boolean' },
+  // The page filters the options (odd-combobox, odd-command-palette): odd-query-change reports the text.
+  'no-filter': { type: 'boolean' },
   pressed: { type: 'boolean' },
   toggle: { type: 'boolean' },
   // Constraints as on <input>: strings, since date and time types use them. Numbers where the

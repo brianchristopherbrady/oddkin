@@ -1044,7 +1044,8 @@ export function extract(program: ts.Program, root: string): Extraction {
       ...(description ? { description } : {}),
       superclass: superclass as ComponentInfo['superclass'],
       properties: [...inherit(parent?.properties, parent), ...own],
-      events: [...inherit(parent?.events, parent), ...events],
+      // A class's own `static events` replaces its parent's at runtime, as any static field does.
+      events: events.length ? events : inherit(parent?.events, parent),
       members: [
         ...(parent?.members ?? []).filter((m) => !own.some((p) => p.name === m.name)),
         ...members.filter((m) => !own.some((p) => p.name === m.name)),

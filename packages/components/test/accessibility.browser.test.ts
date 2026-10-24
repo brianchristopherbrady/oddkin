@@ -147,6 +147,10 @@ const states = `
   <odd-listbox label="Notify me about" name="topics" multiple required error="Choose at least one topic"><optgroup label="Activity"><option value="mentions" title="When someone mentions you">Mentions</option><option value="comments">Comments</option></optgroup><option value="digest">Weekly digest</option></odd-listbox>
   <odd-listbox label="Region" loading></odd-listbox>
   <odd-listbox label="Archive" disabled><option value="a">2025</option></odd-listbox>
+  <odd-combobox label="Project" name="project" description="Search by project name" placeholder="Choose a project…"><option value="atlas">Atlas</option><option value="beacon" selected title="Archived">Beacon</option><option value="delta" disabled>Delta</option></odd-combobox>
+  <odd-combobox label="Topics" name="topics" multiple required error="Choose at least one topic"><option value="design" selected>Design</option><option value="research" selected>Research</option><option value="sales">Sales</option></odd-combobox>
+  <odd-combobox label="Person" no-filter loading></odd-combobox>
+  <odd-combobox label="Archive" disabled><option value="a" selected>2025</option></odd-combobox>
   <odd-select label="Workspace role" name="role" description="Who can change things"><option value="viewer">Viewer</option><option value="editor" selected>Editor</option><option value="owner" disabled>Owner</option></odd-select>
   <odd-select label="Region" placeholder="Choose a region…" required error="Choose a region to continue"><optgroup label="Europe"><option value="fra" title="Germany">Frankfurt</option></optgroup><option value="any">Any region</option></odd-select>
   <odd-select label="Archive" disabled><option value="a">2025</option></odd-select>
@@ -245,17 +249,26 @@ describe('axe-core, WCAG 2.2 A and AA', () => {
     );
   });
 
-  // A modal dialog or drawer makes the rest of the page inert, so each is audited on its own.
+  // A modal dialog, drawer, or command palette makes the rest of the page inert, so each is
+  // audited on its own.
   it.each(['light', 'dark'] as const)('%s mode: no violations in an open dialog', async (mode) => {
     for (const markup of [
       `<odd-dialog label="Rename workspace" open><form id="rename" method="dialog"><p>Choose a clear name your team will recognise.</p><odd-input label="Workspace name" value="Design systems"></odd-input></form><odd-button slot="footer" type="submit" form="rename" value="cancel">Cancel</odd-button><odd-button slot="footer" type="submit" form="rename" value="save" appearance="primary">Save</odd-button></odd-dialog>`,
       `<odd-dialog label="Delete workspace?" alert no-close open><p>This permanently deletes Field notes and its shared content.</p><form method="dialog" slot="footer"><odd-button type="submit" value="cancel" autofocus>Cancel</odd-button><odd-button type="submit" value="delete" appearance="primary">Delete</odd-button></form></odd-dialog>`,
       `<odd-drawer label="Member details" open><odd-select label="Role" description="Can create and edit projects."><option value="viewer">Viewer</option><option value="editor" selected>Workspace editor</option></odd-select><odd-button slot="footer">Cancel</odd-button><odd-button slot="footer" appearance="primary">Save</odd-button></odd-drawer>`,
+      `<odd-command-palette label="Command palette" placeholder="Search commands…" open><odd-button slot="status" appearance="ghost" size="sm">Search all projects</odd-button></odd-command-palette>`,
     ]) {
       const container = document.createElement('div');
       container.dataset['oddMode'] = mode;
       container.style.setProperty('--odd-motion-duration-fast', '0s');
       container.innerHTML = markup;
+      // Commands are data (a property).
+      for (const palette of container.querySelectorAll('odd-command-palette'))
+        palette.items = [
+          { id: 'new', label: 'New project', shortcut: 'Ctrl N', group: 'Commands' },
+          { id: 'atlas', label: 'Atlas', description: 'Project', group: 'Projects' },
+          { id: 'beacon', label: 'Beacon', group: 'Projects', disabled: true },
+        ];
       document.body.append(container);
       try {
         for (const el of [
@@ -264,7 +277,7 @@ describe('axe-core, WCAG 2.2 A and AA', () => {
           await el.updateComplete;
         flush();
         const dialog = container
-          .querySelector('odd-dialog, odd-drawer')!
+          .querySelector('odd-dialog, odd-drawer, odd-command-palette')!
           .shadowRoot!.querySelector('dialog')!;
         expect(dialog.matches(':modal')).toBe(true);
         const { violations, passes } = await axe().run(container, {

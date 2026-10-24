@@ -122,6 +122,30 @@
       "types": "./dist/chip/chip.define.d.ts",
       "default": "./dist/chip/chip.define.js"
     },
+    "./combobox": {
+      "types": "./dist/combobox/index.d.ts",
+      "default": "./dist/combobox/index.js"
+    },
+    "./combobox/foundation": {
+      "types": "./dist/combobox/foundation.d.ts",
+      "default": "./dist/combobox/foundation.js"
+    },
+    "./define/combobox": {
+      "types": "./dist/combobox/combobox.define.d.ts",
+      "default": "./dist/combobox/combobox.define.js"
+    },
+    "./command-palette": {
+      "types": "./dist/command-palette/index.d.ts",
+      "default": "./dist/command-palette/index.js"
+    },
+    "./command-palette/foundation": {
+      "types": "./dist/command-palette/foundation.d.ts",
+      "default": "./dist/command-palette/foundation.js"
+    },
+    "./define/command-palette": {
+      "types": "./dist/command-palette/command-palette.define.d.ts",
+      "default": "./dist/command-palette/command-palette.define.js"
+    },
     "./dialog": {
       "types": "./dist/dialog/index.d.ts",
       "default": "./dist/dialog/index.js"

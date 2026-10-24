@@ -14,6 +14,8 @@ import '@oddkin/components/define/card';
 import '@oddkin/components/define/checkbox';
 import '@oddkin/components/define/checkbox-group';
 import '@oddkin/components/define/chip';
+import '@oddkin/components/define/combobox';
+import '@oddkin/components/define/command-palette';
 import '@oddkin/components/define/dialog';
 import '@oddkin/components/define/disclosure';
 import '@oddkin/components/define/drawer';
@@ -229,6 +231,8 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-tree label="Files" value="b"></odd-tree>
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
         <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>
+        <odd-combobox label="Topics" name="topics" multiple><option value="a" selected>A</option><option value="b" selected>B</option><option value="c">C</option></odd-combobox>
+        <odd-command-palette label="Commands"></odd-command-palette>
         <odd-menu>Actions<option value="a">A</option><option value="b">B</option></odd-menu>
         <odd-split-button value="save">Save<option value="copy">Save a copy</option></odd-split-button>`;
       (display.querySelector('odd-tree') as HTMLElement & { items: unknown }).items = [
