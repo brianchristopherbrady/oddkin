@@ -41,7 +41,7 @@ forms, normalized to one model inside the element:
 
 | Collection | Declarative children (read as data, never rendered) | Property |
 | --- | --- | --- |
-| Values (`odd-select`, `odd-listbox`, `odd-combobox`, `odd-radio-group`, `odd-segmented-control`) | `<option value disabled selected title>`, `<optgroup label disabled>`; `title` is the option's description, as in accessible-description computation; a disabled group disables its options | `options: readonly OptionRecord[]` with `{ value, label, description?, disabled?, group? }` |
+| Values (`odd-select`, `odd-listbox`, `odd-combobox`, `odd-radio-group`, `odd-segmented-control`) | `<option value disabled selected title>`, `<optgroup label disabled>`; `title` is the option's description, as in accessible-description computation; a disabled group disables its options | `options: readonly OptionRecord[]` with `{ value, label, description?, disabled?, group?, icon? }` (`icon`: a URL, drawn by `odd-segmented-control` only) |
 | Actions (`odd-menu`, `odd-split-button`) | `<option value disabled title>` (value = item id), `<optgroup label>`, `<hr>` (separator) | `items: readonly MenuItemRecord[]`, by `kind`: an action `{ kind?: 'item', id, label, description?, icon?, shortcut?, disabled?, tone?: 'danger', items? }` (`items`: a submenu), a group `{ kind: 'group', label, items }`, a separator `{ kind: 'separator' }` |
 | Commands (`odd-command-palette`), hierarchies (`odd-tree`) | — (data-driven) | `items` (`{ id, label, … }`, tree items nest `children`) |
 | Links (`odd-breadcrumbs`) | `<a href>` descendants (text = label), so a server-rendered `<ol><li><a href>` list works as written | `items: readonly LinkRecord[]` with `{ label, href }` |
@@ -227,11 +227,17 @@ parts); choices sit one target height apart, as Figma's rows.
 
 **`odd-radio-group`** (`radioGroup`, `radio`) — one value from a set (§2.2 values). Native radios in one shadow tree:
 one Tab stop and arrow-key selection come from the platform. Field anatomy, `name`, `value`, `required`, `disabled`,
-`orientation: vertical | horizontal = vertical`. Each option shows its description (`title` or `description`).
+`orientation: vertical | horizontal = vertical`. Each option shows its description (`title` or `description`), which
+describes its radio. `value` is the checked option's value: the attribute, else the last `<option selected>`, is the
+default; without either nothing is checked, and nothing is submitted, as for native radios. `<optgroup label>` runs are
+`role="group"` headings. The round box is the control-indicator box (§2.9); the dot is the group's own. Both elements
+extend one internal base, `OddkinRadioControl` (`src/form-control/radio-control.ts`).
 
 **`odd-segmented-control`** (`segmented`) — the radio-group behaviour with a segmented look (same foundation class,
-another template and style set). `size: sm | md | lg = md`; options may be icon-only when `label` is given in the
-record. Use `odd-tabs` to switch content panels.
+another template and style set). `size: sm | md | lg = md` (segment height `target.min`, `control.height.sm` as Figma,
+`control.height.md`). An option with `icon` (set through `options`) shows the icon alone and its `label` names it;
+descriptions are tooltips (`title`), and groups are one run of segments. Each segment is drawn by its radio
+(`appearance: none`) under its text. Use `odd-tabs` to switch content panels.
 
 **`odd-slider`** (`slider`) — native `<input type="range">`. Field anatomy, `value: string`, `min = 0`, `max = 100`,
 `step = 1`, `name`, `disabled`. Parts `output` (current value) and `min-label`/`max-label` (endpoints);

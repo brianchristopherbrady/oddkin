@@ -31,22 +31,22 @@ export const controlIndicatorStyles = css`
   .indicator-mark {
     color: ${token('color.selection.foreground')};
   }
-  .indicator-box:is(:checked, :indeterminate, [data-state='checked'], [data-state='mixed']) {
+  .indicator-box:is(:checked, [data-state]) {
     border-color: transparent;
     background: ${token('color.selection.background')};
   }
   @media (hover: hover) {
-    .choice:hover .indicator-box:not(:checked, :indeterminate, :disabled) {
+    .choice:hover .indicator-box:not(:checked, [data-state], :disabled) {
       background: ${token('color.surface.hover')};
     }
   }
   .indicator-box[aria-invalid='true'] {
     border-color: ${token('color.danger.foreground')};
   }
-  .indicator-box[aria-invalid='true']:is(:checked, :indeterminate) {
+  .indicator-box[aria-invalid='true']:is(:checked, [data-state]) {
     border-width: ${token('border.width.strong')};
   }
-  .indicator-box:disabled:not(:checked, :indeterminate) {
+  .indicator-box:disabled:not(:checked, [data-state]) {
     background: ${token('color.surface.sunken')};
   }
 `;

@@ -65,6 +65,12 @@ const states = `
     <odd-checkbox-group label="Notifications" description="Choose how to hear from us." required><odd-checkbox name="channel" value="email" checked>Email</odd-checkbox><odd-checkbox name="channel" value="summary">Weekly summary</odd-checkbox></odd-checkbox-group>
     <odd-checkbox-group label="Topics" orientation="horizontal" required error="Choose at least one topic."><odd-checkbox name="topic" value="a">Design</odd-checkbox><odd-checkbox name="topic" value="b">Code</odd-checkbox></odd-checkbox-group>
     <odd-checkbox-group label="Managed" disabled><odd-checkbox name="managed" checked>Synced</odd-checkbox></odd-checkbox-group>
+    <odd-radio-group label="Workspace visibility" description="Who can open it." name="visibility"><option value="private" title="Only invited members" selected>Private</option><option value="team" title="Anyone in your workspace">Team</option><option value="public" disabled>Public</option></odd-radio-group>
+    <odd-radio-group label="Plan" orientation="horizontal" required error="Choose a plan."><optgroup label="Monthly"><option value="m">Team</option></optgroup><optgroup label="Yearly"><option value="y">Team</option></optgroup></odd-radio-group>
+    <odd-radio-group label="Region" disabled><option value="eu" selected>Europe</option><option value="us">Americas</option></odd-radio-group>
+    <odd-segmented-control label="Preview size" name="size"><option value="sm" title="Fits more">Small</option><option value="md" selected>Medium</option><option value="lg">Large</option></odd-segmented-control>
+    <odd-segmented-control label="Density" size="sm" required error="Choose a density."><option value="a">Compact</option><option value="b">Roomy</option></odd-segmented-control>
+    <odd-segmented-control label="Theme" size="lg" disabled><option value="light" selected>Light</option><option value="dark">Dark</option></odd-segmented-control>
     <odd-textarea label="Project description" name="about" placeholder="Describe this project…" maxlength="500"></odd-textarea>
     <odd-textarea label="Feedback" description="Tell us what to improve." name="feedback" required error="Feedback is required." maxlength="200"></odd-textarea>
     <odd-textarea label="Terms" name="terms-text" value="Read only." readonly resize="none"></odd-textarea>

@@ -167,6 +167,10 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/popover/popover.styles.js (popoverStyles)` | yes | 6 |
 | `packages/components/dist/progress/progress.structural.styles.js (progressStructuralStyles)` | yes | 35 |
 | `packages/components/dist/progress/progress.styles.js (progressStyles)` | yes | 12 |
+| `packages/components/dist/radio-group/radio-group.structural.styles.js (radioGroupStructuralStyles)` | yes | 17 |
+| `packages/components/dist/radio-group/radio-group.styles.js (radioGroupStyles)` | yes | 10 |
+| `packages/components/dist/segmented-control/segmented-control.structural.styles.js (segmentedControlStructuralStyles)` | yes | 34 |
+| `packages/components/dist/segmented-control/segmented-control.styles.js (segmentedControlStyles)` | yes | 25 |
 | `packages/components/dist/select/select.structural.styles.js (selectStructuralStyles)` | yes | 23 |
 | `packages/components/dist/select/select.styles.js (selectStyles)` | yes | 11 |
 | `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
@@ -180,8 +184,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/split-button/split-button.styles.js (splitButtonStyles)` | yes | 2 |
 | `packages/components/dist/split-panel/split-panel.structural.styles.js (splitPanelStructuralStyles)` | yes | 36 |
 | `packages/components/dist/split-panel/split-panel.styles.js (splitPanelStyles)` | yes | 25 |
-| `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 42 |
-| `packages/components/dist/styles/control-indicator.styles.js (controlIndicatorStyles)` | yes | 24 |
+| `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 41 |
+| `packages/components/dist/styles/control-indicator.styles.js (controlIndicatorStyles)` | yes | 23 |
 | `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 32 |
 | `packages/components/dist/styles/field.structural.styles.js (fieldStructuralStyles)` | yes | 27 |
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |

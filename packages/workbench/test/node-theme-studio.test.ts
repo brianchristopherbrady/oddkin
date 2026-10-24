@@ -203,6 +203,8 @@ describe('Theme Studio page data', () => {
       'disclosure:odd-disclosure',
       'placeholder:odd-skeleton',
       'progress:odd-progress',
+      'radioGroup:odd-radio-group',
+      'segmented:odd-segmented-control',
       'textArea:odd-textarea',
       'tree:odd-tree',
     ]);

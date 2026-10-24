@@ -15,9 +15,9 @@
   "counts": {
     "style": 92,
     "slot": 35,
-    "controller": 14,
+    "controller": 13,
     "deferred": 11,
-    "native": 4,
+    "native": 5,
     "independent": 2,
     "element": 12
   },
@@ -1342,8 +1342,8 @@
       "source": "Oddkin/Common/radio",
       "sourceId": "159:1209",
       "count": 4,
-      "class": "controller",
-      "reason": "Radios live in the group's one tree (one tab stop, arrow-key selection, one form value): radio parts with the shared roving-focus controller and @oddkin/core/controllers/form."
+      "class": "native",
+      "reason": "Radios are native radios in the group's one shadow tree: the platform gives one tab stop and arrow-key selection; the group submits one value through @oddkin/core/controllers/form. odd-segmented-control shares the class (OddkinRadioControl)."
     },
     {
       "consumer": "Oddkin/Common/search",
@@ -1571,10 +1571,6 @@
       "dependencies": ["odd-button"],
       "reason": "Accept, reject, and undo are complete buttons (Figma: button/sm ×2)."
     },
-    "odd-checkbox-group": {
-      "dependencies": ["odd-checkbox"],
-      "reason": "The choices are complete odd-checkbox elements the author places; each is form-associated on its own, and the group adds the legend, description, error, and required-one rule."
-    },
     "odd-checkpoint": {
       "dependencies": ["odd-button"],
       "reason": "Restore and confirm are complete buttons (Figma: button/sm ×1)."
@@ -1675,6 +1671,10 @@
     "odd-checkbox": {
       "dependencies": []
     },
+    "odd-checkbox-group": {
+      "dependencies": ["odd-checkbox"],
+      "reason": "The choices are complete odd-checkbox elements the author places; each is form-associated on its own, and the group adds the legend, description, error, and required-one rule."
+    },
     "odd-chip": {
       "dependencies": []
     },
@@ -1713,6 +1713,13 @@
     },
     "odd-progress": {
       "dependencies": []
+    },
+    "odd-radio-group": {
+      "dependencies": []
+    },
+    "odd-segmented-control": {
+      "dependencies": ["odd-icon"],
+      "reason": "Option icons are drawn by the complete odd-icon widget authors also place alone."
     },
     "odd-select": {
       "dependencies": []
@@ -1794,7 +1801,9 @@
         "odd-listbox",
         "odd-select",
         "odd-textarea",
-        "odd-checkbox-group"
+        "odd-checkbox-group",
+        "odd-radio-group",
+        "odd-segmented-control"
       ],
       "note": "The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe."
     },
@@ -1868,7 +1877,7 @@
       "home": "@oddkin/components/styles (controlIndicatorStructuralStyles, controlIndicatorStyles)",
       "decision": "Choice rows (a box, dot, or track beside its label) and the checkbox box with check and mixed marks. The radio dot and the switch track and thumb are drawn by one element each and live with it.",
       "status": "existing",
-      "code": ["odd-checkbox", "odd-switch"],
+      "code": ["odd-checkbox", "odd-switch", "odd-radio-group"],
       "figma": ["checkbox", "CheckboxOption", "radio", "switch"]
     },
     {
@@ -1949,7 +1958,9 @@
         "odd-listbox",
         "odd-select",
         "odd-textarea",
-        "odd-checkbox-group"
+        "odd-checkbox-group",
+        "odd-radio-group",
+        "odd-segmented-control"
       ],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]
@@ -1970,7 +1981,15 @@
       "decision": "Collection model, selection, typeahead, active descendant.",
       "status": "in progress (typeahead and active descendant existing)",
       "figma": ["listbox", "combobox", "multiselect", "Menu", "CommandPalette", "Tree"],
-      "code": ["odd-breadcrumbs", "odd-listbox", "odd-select", "odd-menu", "odd-split-button"]
+      "code": [
+        "odd-breadcrumbs",
+        "odd-listbox",
+        "odd-select",
+        "odd-menu",
+        "odd-split-button",
+        "odd-radio-group",
+        "odd-segmented-control"
+      ]
     },
     {
       "id": "position",

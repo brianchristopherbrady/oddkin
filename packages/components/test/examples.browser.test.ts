@@ -82,6 +82,14 @@ describe('authored examples', () => {
       observe: (el) => (el['validity'] as ValidityState).valueMissing,
       wrong: true,
     },
+    'odd-radio-group/requiredFalse': {
+      observe: (el) => (el['validity'] as ValidityState).valueMissing,
+      wrong: true,
+    },
+    'odd-segmented-control/requiredFalse': {
+      observe: (el) => (el['validity'] as ValidityState).valueMissing,
+      wrong: true,
+    },
     'odd-textarea/requiredFalse': {
       observe: (el) => (el['validity'] as ValidityState).valueMissing,
       wrong: true,

@@ -19,6 +19,8 @@ export interface OptionRecord {
   readonly disabled?: boolean;
   /** Label of the group the option belongs to (a declarative `<optgroup label>`). */
   readonly group?: string;
+  /** Icon URL, drawn as `odd-icon` draws `src` (`odd-segmented-control`; from `options` only). */
+  readonly icon?: string;
 }
 
 /** One entry of an action collection (`odd-menu`, `odd-split-button`). */

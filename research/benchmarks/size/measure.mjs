@@ -162,6 +162,13 @@ export const CSS_BUDGETS = {
   // 256: measured 187 on 2026-10-23: the choices' stack and spacing; the legend, help, and error are
   // the shared control module.
   'components:checkbox-group': 256,
+  // 512: measured 402 on 2026-10-23: the round box and its dot, the option and group layout, and
+  // the description inset; the row and box are the control-indicator module, the legend the control
+  // module.
+  'components:radio-group': 512,
+  // 896: measured 812 on 2026-10-23: the track, the segments drawn by their radios, the three sizes,
+  // and the forced-colours states, which only odd-segmented-control draws.
+  'components:segmented-control': 896,
   // 640: measured 569 on 2026-10-23: the track and thumb, which only odd-switch draws.
   'components:switch': 640,
   // 320: measured 264 on 2026-10-23: the resize modes, the field-sizing gate, the block inset, and
@@ -170,7 +177,9 @@ export const CSS_BUDGETS = {
   // 1,152: measured 1,077 on 2026-10-22 once the entry rows moved to the shared navigation-row
   // module (1,234 before, with them).
   'components:side-nav': 1152,
-  // 3,072: measured 3,069 on 2026-10-23 with the control's start and end adornment slots (+51);
+  // 3,072: measured 3,052 on 2026-10-23 once the control-indicator modules stopped using
+  // :indeterminate, which also matches unchecked radios (-17); 3,069 with the control's start and
+  // end adornment slots (+51);
   // 3,018 with the dialog and backdrop fades (+34); 2,984 with
   // the overlay close control, popover motion, and
   // placement limits (+238); 2,746 with the overlay-surface look (+113); 2,633 with

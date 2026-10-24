@@ -1,6 +1,7 @@
 import { describe, it } from 'vitest';
 import {
   compare,
+  deliberate,
   expectNone,
   interact,
   mount,
@@ -309,5 +310,135 @@ describe('Figma parity: CheckboxGroup', () => {
         });
       await transitions(targets);
       expectNone(compare('Oddkin/Common/CheckboxGroup', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: radio', () => {
+  const states = {
+    Default: '',
+    Hover: '',
+    Focus: '',
+    Disabled: ' disabled',
+    Invalid: ' error="Required"',
+  };
+  for (const selection of ['Unchecked', 'Checked'])
+    for (const [state, attribute] of Object.entries(states))
+      it(`${selection}/${state}`, async () => {
+        const value = selection === 'Checked' ? ' value="a"' : '';
+        const el = mount(
+          `<odd-radio-group${value}${attribute}><option value="a">Standard workspace</option></odd-radio-group>`,
+        );
+        await settle(el);
+        const control = el.shadowRoot!.querySelector('input')!;
+        await interact(state, control);
+        await settle(el);
+        const name = selection === 'Checked' ? 'Selected' : state === 'Default' ? selection : state;
+        const root = `Radio / ${name}`;
+        const targets: Target[] = [
+          {
+            layer: [root],
+            el: el.shadowRoot!.querySelector('.choice')!,
+            kind: 'frame',
+            gap: 'column-gap',
+          },
+          {
+            layer: [root, 'Standard workspace'],
+            el: el.shadowRoot!.querySelector('.choice > .label')!,
+            kind: 'text',
+          },
+          { layer: [root, 'Surface'], el: control, kind: 'frame' },
+        ];
+        if (selection === 'Checked')
+          targets.push({
+            layer: [root, 'Surface', 'Ellipse'],
+            el: el.shadowRoot!.querySelector('.indicator-dot')!,
+            kind: 'frame',
+          });
+        if (state === 'Focus')
+          targets.push({ layer: [root, 'Surface [2]'], el: control, kind: 'ring' });
+        if (state === 'Invalid' && selection === 'Unchecked')
+          targets.push({ layer: [root, 'Required'], el: shadowPart(el, 'error'), kind: 'text' });
+        await transitions(targets);
+        expectNone(compare('Oddkin/Common/radio', { Selection: selection, State: state }, targets));
+      });
+});
+
+describe('Figma parity: radioGroup', () => {
+  deliberate([
+    /^radioGroup \S+ Radio group \/ \S+ paddingLeft \(--odd-space-2xs\)/,
+    'Figma insets the group frame by space/2xs, as it does the text input frame; the shared field takes no inset, so the legend lines up with the labels of the fields around it.',
+  ]);
+  const states: Record<string, string> = {
+    Default: '',
+    Invalid: ' error="Choose a visibility setting."',
+  };
+  for (const [state, attributes] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(
+        `<odd-radio-group label="Workspace visibility" value="private"${attributes}><option value="private" title="Only invited members">Private</option><option value="team" title="Anyone in your workspace">Team</option></odd-radio-group>`,
+      );
+      await settle(el);
+      const root = `Radio group / ${state}`;
+      const [first, second] = el.shadowRoot!.querySelectorAll('[part="option-description"]');
+      const option = (name: string, text: string): string[] => [
+        root,
+        `Radio option \u00b7 ${name}`,
+        'Option description',
+        text,
+      ];
+      const targets: Target[] = [
+        { layer: [root], el: shadowPart(el, 'field'), kind: 'frame', gap: 'row-gap' },
+        { layer: [root, 'Workspace visibility'], el: shadowPart(el, 'label'), kind: 'text' },
+        { layer: option('Private', 'Only invited members'), el: first!, kind: 'text' },
+        { layer: option('Team', 'Anyone in your workspace'), el: second!, kind: 'text' },
+      ];
+      if (state === 'Invalid')
+        targets.push({
+          layer: [root, 'Choose a visibility setting.'],
+          el: shadowPart(el, 'error'),
+          kind: 'text',
+        });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/radioGroup', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: segmented', () => {
+  deliberate([
+    /^segmented \S+ Surface( \[\d\])? paddingLeft \(--odd-control-padding-inline-sm\)/,
+    "A segment's surface is its radio, drawn under the segment's text; the inline padding is on the text, which sizes the segment.",
+  ]);
+  const states: Record<string, string> = { Selected: '', Focus: '', Disabled: ' disabled' };
+  for (const [state, attribute] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(
+        `<odd-segmented-control label="Preview size"${attribute}><option value="sm">Small</option><option value="md" selected>Medium</option><option value="lg">Large</option></odd-segmented-control>`,
+      );
+      await settle(el);
+      const boxes = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.segment-box')];
+      const texts = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.segment-label')];
+      await interact(state, boxes[1]!);
+      await settle(el);
+      const root = `Segmented control / ${state}`;
+      const targets: Target[] = [
+        { layer: [root, 'Preview size'], el: shadowPart(el, 'label'), kind: 'text' },
+        {
+          layer: [root, 'Surface'],
+          el: shadowPart(el, 'control'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+      ];
+      ['Small', 'Medium', 'Large'].forEach((text, i) => {
+        const segment = i ? `Surface [${i + 1}]` : 'Surface';
+        targets.push(
+          { layer: [root, 'Surface', segment], el: boxes[i]!, kind: 'frame' },
+          { layer: [root, 'Surface', segment, text], el: texts[i]!, kind: 'text' },
+        );
+      });
+      if (state === 'Focus')
+        targets.push({ layer: [root, 'Surface', 'Surface [4]'], el: boxes[1]!, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/segmented', { State: state }, targets));
     });
 });

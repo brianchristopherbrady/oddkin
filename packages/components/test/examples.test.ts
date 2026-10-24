@@ -133,6 +133,7 @@ describe('component examples', () => {
       'odd-tooltip/inlineEnd': ['component:odd-button'],
       'odd-input/inForm': ['component:odd-button'],
       'odd-listbox/inForm': ['component:odd-button'],
+      'odd-radio-group/inForm': ['component:odd-button'],
       'odd-select/inForm': ['component:odd-button'],
       'odd-tab-panel/default': ['component:odd-tabs'],
       'odd-textarea/inForm': ['component:odd-button'],

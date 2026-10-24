@@ -254,6 +254,30 @@
       "types": "./dist/progress/progress.define.d.ts",
       "default": "./dist/progress/progress.define.js"
     },
+    "./radio-group": {
+      "types": "./dist/radio-group/index.d.ts",
+      "default": "./dist/radio-group/index.js"
+    },
+    "./radio-group/foundation": {
+      "types": "./dist/radio-group/foundation.d.ts",
+      "default": "./dist/radio-group/foundation.js"
+    },
+    "./define/radio-group": {
+      "types": "./dist/radio-group/radio-group.define.d.ts",
+      "default": "./dist/radio-group/radio-group.define.js"
+    },
+    "./segmented-control": {
+      "types": "./dist/segmented-control/index.d.ts",
+      "default": "./dist/segmented-control/index.js"
+    },
+    "./segmented-control/foundation": {
+      "types": "./dist/segmented-control/foundation.d.ts",
+      "default": "./dist/segmented-control/foundation.js"
+    },
+    "./define/segmented-control": {
+      "types": "./dist/segmented-control/segmented-control.define.d.ts",
+      "default": "./dist/segmented-control/segmented-control.define.js"
+    },
     "./select": {
       "types": "./dist/select/index.d.ts",
       "default": "./dist/select/index.js"

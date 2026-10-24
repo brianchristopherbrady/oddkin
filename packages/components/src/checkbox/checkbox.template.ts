@@ -20,6 +20,7 @@ export const checkboxTemplate = (checkbox: OddkinCheckbox) =>
           type="checkbox"
           .checked=${live(checkbox._currentChecked)}
           .indeterminate=${checkbox.indeterminate}
+          data-state=${checkbox.indeterminate ? 'mixed' : null}
           ?required=${checkbox.required}
           ?disabled=${checkbox.disabled || checkbox._formDisabled.value}
           aria-describedby=${checkbox._describedBy}
