@@ -121,6 +121,43 @@ describe('odd-popover', () => {
     expect(Math.round(box(low).bottom)).toBe(Math.round(box(byId('trigger')).top) - 4);
   });
 
+  it('keeps the theme, density, direction, and language of where it is written (F10)', async () => {
+    await mount(POPOVER, {
+      'data-odd-mode': 'dark',
+      'data-odd-density': 'compact',
+      dir: 'rtl',
+      lang: 'de',
+    });
+    const el = byId<OddkinPopover>('p');
+    const base = el.shadowRoot!.querySelector<HTMLElement>('[part~="base"]')!;
+    const langInside = base.matches(':lang(de)');
+    el.show();
+    await placed(el);
+    const scoped = (property: string, value: string) => {
+      const probe = document.createElement('span');
+      probe.style.setProperty(property, value);
+      container.append(probe);
+      const result = getComputedStyle(probe).getPropertyValue(property);
+      probe.remove();
+      return result;
+    };
+    const background = getComputedStyle(el).backgroundColor;
+    expect(background).toBe(scoped('background-color', 'var(--odd-color-surface-raised)'));
+    expect(background).not.toBe(themeValue('background-color', '--odd-color-surface-raised'));
+    const padding = getComputedStyle(base).paddingBlockStart;
+    expect(padding).toBe(scoped('padding-block-start', 'var(--odd-space-md)'));
+    expect(padding).not.toBe(themeValue('padding-block-start', '--odd-space-md'));
+    expect(base.matches(':dir(rtl)')).toBe(true);
+    expect(box(close(el)!).left).toBeLessThan(box(base).left + box(base).width / 2);
+    // The host and its content take the language as written, in the top layer as before it.
+    // Inside the shadow root, Firefox does not match `:lang()` by the host's language (Chromium
+    // and WebKit do), so component styles never select on `:lang()`; strings read `langOf()`.
+    expect(el.matches(':lang(de)')).toBe(true);
+    expect(byId('docs').matches(':lang(de)')).toBe(true);
+    expect(base.matches(':lang(de)')).toBe(langInside);
+    expect(langInside).toBe(server.browser !== 'firefox');
+  });
+
   it('places against `anchor` or `anchorElement` over the invoker', async () => {
     await mount(
       `<button id="other">Other</button>${POPOVER.replace('label=', 'anchor="other" label=')}`,

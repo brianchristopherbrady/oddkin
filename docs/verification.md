@@ -2681,3 +2681,16 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 browser mode with Playwright 1.
 | Size, CSS | `node scripts/check-size.mjs`; `node scripts/compat/check-css.mjs` | `components:toast` is 589 B gzip (budget 704): the stack, the shared pause, the clock, and the grid; the surface, motion, and close button are the shared overlay module. The toast sheets add 2 stylesheets and 3 compatibility keys (`inset: auto`, `grid-template-areas`, `column-gap`), all at the floor; 0 problems. |
 
 **Findings:** a close and an open in one task reach the element as one `toggle` with no close, so opening starts over (clock, region text, stack entry) rather than assuming it was closed. A popover's first resize observation can come before its `toggle`, so the element restacks on opening as well as on size changes. Removing an open popover hides it without a `toggle`, so the element clears `open` itself. Under another lane's lifetime run, Firefox frames slowed enough that fixed sleeps after showing ate a 400 ms duration; the timing tests now measure from the `toggle` that starts each clock. Not verified: screen-reader output (whether each screen reader announces the region's late text), real devices, Safari on macOS.
+
+## 2026-10-23 — CSS regression scenarios F10 and F11 (css-architecture.md §16.1)
+
+**Environment:** Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2). Other work in the same working tree, not in this commit. Runs were made one engine at a time.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| F10 scope inheritance | `npx vitest run --project browser --browser.name=<engine> packages/components/test/popover.browser.test.ts packages/components/test/dialog.browser.test.ts -t F10` | 2 tests pass in Chromium, Firefox, and WebKit. An open `odd-popover` (top layer, `popover`) and an open modal `odd-dialog` (top layer, `<dialog>`) written inside `data-odd-mode="dark" data-odd-density="compact" dir="rtl" lang="de"` take that scope's surface colour (raised, default) and spacing (`space.md`, `space.lg`), which differ from the document's, match `:dir(rtl)` with the close button at the inline start, and the host and its light-DOM content match `:lang(de)`. |
+| Existing F10 and F11 evidence | (no new run) | Recorded in css-architecture.md §16.1: the dialog, drawer, popover, tooltip, and toast tests, last run in three engines for the `odd-toast` commit (9ecfe87), and the menu and position tests, run in their own commits. |
+
+**Finding:** inside a shadow root, Firefox 157 does not match `:lang()` by the shadow host's language (the popover's base part and the dialog's inner `<dialog>` do not match `:lang(de)`, before and after opening); Chromium 156 and WebKit 27.2 do. No component style selects on `:lang()`, and strings and formats read the language with `langOf()`, which walks out of shadow roots. The tests assert the per-engine result, so a change in Firefox shows up.
+
+**Not verified:** a positioning path through native anchor positioning (not adopted, §9); the close path without `transition-behavior: allow-discrete` (floor browsers), which the three current engines do not take; reduced motion outside Chromium's media emulation.

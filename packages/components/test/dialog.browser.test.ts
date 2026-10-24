@@ -499,6 +499,39 @@ describe('odd-dialog', () => {
     );
   });
 
+  it('keeps the theme, density, direction, and language of where it is written (F10)', async () => {
+    await mount(DIALOG, {
+      'data-odd-mode': 'dark',
+      'data-odd-density': 'compact',
+      dir: 'rtl',
+      lang: 'de',
+    });
+    const el = byId<OddkinDialog>('d');
+    el.show();
+    await settle(el);
+    const scoped = (property: string, value: string) => {
+      const probe = document.createElement('span');
+      probe.style.setProperty(property, value);
+      container.append(probe);
+      const result = getComputedStyle(probe).getPropertyValue(property);
+      probe.remove();
+      return result;
+    };
+    const dialog = inner(el);
+    const background = getComputedStyle(dialog).backgroundColor;
+    expect(background).toBe(scoped('background-color', 'var(--odd-color-surface-default)'));
+    expect(background).not.toBe(themeValue('background-color', '--odd-color-surface-default'));
+    const padding = getComputedStyle(part(el, 'header')!).paddingBlockStart;
+    expect(padding).toBe(scoped('padding-block-start', 'var(--odd-space-lg)'));
+    expect(padding).not.toBe(themeValue('padding-block-start', '--odd-space-lg'));
+    expect(dialog.matches(':dir(rtl)')).toBe(true);
+    expect(box(part(el, 'close')!).left).toBeLessThan(box(dialog).left + box(dialog).width / 2);
+    // As in the popover test: Firefox does not match `:lang()` inside the shadow root.
+    expect(el.matches(':lang(de)')).toBe(true);
+    expect(byId('name').matches(':lang(de)')).toBe(true);
+    expect(dialog.matches(':lang(de)')).toBe(server.browser !== 'firefox');
+  });
+
   it('carries a named close button unless no-close', async () => {
     await mount(DIALOG);
     const el = byId<OddkinDialog>('d');
