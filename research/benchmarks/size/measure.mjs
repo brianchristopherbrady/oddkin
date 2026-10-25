@@ -151,6 +151,7 @@ export const CSS_BUDGETS = {
   'components:container': 192, // 161
   'components:copy-button': 448, // 386: the row, the status words, the fallback field; the button look is odd-button's module
   'components:relative-time': 256, // 252: the glyph row, the detail line, and the small type role
+  'components:stat': 512, // 484: the card surface, three type roles, the arrow; the placeholder is odd-skeleton
   'components:status-marker': 576, // 521: the circle, its status colours, the dot; glyphs and the ring are shared modules
   // Collections, measured on 2026-10-23 (structural and default styles; rows are the shared modules).
   'components:tree': 512, // 428

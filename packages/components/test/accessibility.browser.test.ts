@@ -175,6 +175,7 @@ const states = `
   <odd-status-marker status="complete"></odd-status-marker><odd-status-marker status="failed"></odd-status-marker><odd-status-marker status="pending"></odd-status-marker><odd-status-marker>2</odd-status-marker>
   <odd-relative-time datetime="2026-10-24T09:30:00-07:00" detail></odd-relative-time><odd-relative-time></odd-relative-time>
   <odd-copy-button value="ws_83f2a9"></odd-copy-button><odd-copy-button value="ws_83f2a9" disabled></odd-copy-button>
+  <odd-stat label="Active members" value="1,284" trend="increase">+8.2% this month</odd-stat><odd-stat label="Active members" loading></odd-stat><odd-stat label="Active members"></odd-stat>
 `;
 
 let tokens: HTMLLinkElement;

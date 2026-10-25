@@ -211,6 +211,7 @@ describe('Theme Studio page data', () => {
       'rating:odd-rating',
       'segmented:odd-segmented-control',
       'slider:odd-slider',
+      'stat:odd-stat',
       'statusMarker:odd-status-marker',
       'textArea:odd-textarea',
       'tree:odd-tree',

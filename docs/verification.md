@@ -3019,3 +3019,25 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Ot
 | Size, CSS | `node scripts/check-size.mjs`; `npm run compat` | `components:file-input` is 958 B gzip (budget 1,024): the drop zone, the selector button's look (a pseudo-element cannot use `odd-button`'s sheet), the rows, and the remove buttons. Two stylesheets; 0 problems. |
 
 **Findings:** Chromium and WebKit ignore a `dropEffect` set on a constructed `DataTransfer`, and no engine lists `::file-selector-button` transitions in `getAnimations()`: the tests wait out that transition instead. Playwright's WebKit does not focus a clicked button. The authored `chosen` example drops two files from its fixture, so its rows render for the part checks; the shared CEM contract's not-programmatic check now ignores events fired while an example's fixture acts as the user, and still writes each example's props again connected. On the axe page a disabled file input's title takes the disabled colour outside the label that tells axe the input is disabled, so it is excluded as the inactive chip is (WCAG 1.4.3 exempts inactive components); the enabled file inputs, one with dropped files, are audited. Not verified: screen-reader output (how each screen reader announces the native file input and its chosen files), dropping files from the operating system (the tests dispatch drag events with a `DataTransfer`), real devices, Safari on macOS.
+
+## 2026-10-25 — odd-stat (M10 round 5, component-contracts.md §1, §3.2; Figma `stat`)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Other lanes' work in progress in the tree: Agent 2's `odd-calendar`, Agent 3's `odd-picker` and collection modules, Agent 1's `odd-one-time-code`. The committed snapshot (555:2908) is the reference; the Figma MCP tools were not available.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Behaviour | `stat.browser.test.ts` (× 3 engines) | 8/8 in Chromium, Firefox, and WebKit |
+| Figma parity | `figma-parity.display.browser.test.ts` (Increase, Decrease, Neutral, Unavailable, Loading) | 21/21 in three engines (the whole file); no recorded difference |
+| Catalog-wide | stat, copy-button, relative-time, structured, display parity, examples, contract, styling-contract, styling, multi-product, description, accessibility (× 3 engines) | pass for `odd-stat` (explained mistake, contract, axe); failures only from other lanes' work in progress: axe light `color-contrast` on `odd-calendar`'s label, `odd-calendar`'s contract "public methods … in a form", and `odd-picker/itemsAttribute` |
+| Mutation probes | 20 on `src/stat/*` (Chromium) | 15 killed first; 4 killed by new tests (`trend` reflects when set as a property, the value wraps (scroll width), the arrow and the context share a row `space.xs` apart, the arrow is `icon.size.sm`); the dependency declaration is checked by the node `figma-reuse.test.ts` against the built metadata, not by these browser tests |
+| Node project | `npx vitest run --project node` | my entries pass (Theme Studio `stat`, the reuse map's `odd-stat` → `odd-skeleton`); failures: the agent kit's GUIDE.md over its 8,192-byte budget, `odd-picker`'s example `uses` (examples, impact), and `odd-calendar` missing from the reuse map |
+| Lifetime | `node research/benchmarks/lifetime/run.mjs --cycles 1000` | ownership returned in every scenario and engine (WebKit navigation skipped by design) |
+| Typecheck, vocabulary, size, compatibility | `npm run typecheck`, `check-vocabulary`, `check-size`, `npm run compat` | pass; 0 findings; `components:stat` 484 B of 512; compat OK, no new key |
+
+**Findings:**
+- **Element, not recipe:** the trend arrow is a built-in glyph (§2.7), and loading and unavailable are states. Name from Chakra's `Stat`; `label`, `value`, and `loading` are ADR 0045's; `trend` takes Figma's Increase and Decrease.
+- **No assumed meaning:** both directions use the secondary text colour; the direction is said by the arrow and, in words, by the signed value the author writes in the context.
+- **Loading:** the placeholder is a nested `odd-skeleton` (its pulse and reduced-motion rule have one home), recoloured to Figma's sunken surface and one value line tall (`calc(type.display.size * type.display.line-height)`: the line height is unitless); the author's context waits; the element is busy (`ElementInternals.ariaBusy`). The reuse map records `odd-stat` → `odd-skeleton` with its reason.
+- **Unavailable:** an empty `value` shows "—" (hidden from assistive technology) and "Data not available" (`strings.unavailable`).
+- **Glyph:** `arrowUpGlyph` added to `styles/glyphs.ts` from the owner's `direction-arrow-bold-up.svg`; a decrease rotates it.
+- **Not verified:** screen-reader output (reading order, the busy state); Safari on macOS.

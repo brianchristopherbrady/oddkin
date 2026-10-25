@@ -577,7 +577,7 @@
       "sourceId": "396:389",
       "count": 2,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "odd-stat draws the arrow from the shared glyph module (arrowUpGlyph, design/icons/general/direction-arrow-bold-up.svg; rotated for a decrease), icon.size.sm in the secondary text colour."
     },
     {
       "consumer": "Oddkin/Common/toggleButton",
@@ -2074,6 +2074,10 @@
       "reason": "The menu half is a complete odd-menu (Figma splitAction: a button and a Menu), with its keyboard, submenus, and odd-action events; the primary half is a native button part."
     },
     "odd-split-panel": { "dependencies": [] },
+    "odd-stat": {
+      "dependencies": ["odd-skeleton"],
+      "reason": "The loading placeholder is the complete odd-skeleton widget (its pulse and reduced-motion rule), recoloured to the sunken surface; no ARIA relationship crosses its boundary."
+    },
     "odd-status-marker": { "dependencies": [] },
     "odd-suggestions": { "dependencies": [] },
     "odd-switch": { "dependencies": [] },
@@ -2227,7 +2231,8 @@
         "odd-rating",
         "odd-status-marker",
         "odd-relative-time",
-        "odd-copy-button"
+        "odd-copy-button",
+        "odd-stat"
       ],
       "figma": [
         "Built-in affordance glyphs are referenced from Icons page 359:2. The optional 1,723 original Oddkin artwork assets and their provenance live in design/icons; Figma nesting alone does not add runtime icon-element dependencies."

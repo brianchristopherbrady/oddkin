@@ -271,3 +271,43 @@ describe('Figma parity: odd-copy-button (copyButton)', () => {
     }
   });
 });
+
+describe('Figma parity: odd-stat (stat)', () => {
+  const CASES: [string, string, string, string | null][] = [
+    ['Increase', 'value="1,284" trend="increase"', '+8.2% this month', '1,284'],
+    ['Decrease', 'value="1,284" trend="decrease"', '−3.4% this month', '1,284'],
+    ['Neutral', 'value="1,284"', 'Across 12 teams', '1,284'],
+    ['Unavailable', '', 'Data not available', '—'],
+    ['Loading', 'loading', 'Loading…', null],
+  ];
+  for (const [state, attributes, context, value] of CASES)
+    it(state, async () => {
+      const el = mount(`<odd-stat label="Active members" ${attributes}>${context}</odd-stat>`);
+      await settle(el);
+      const part = (name: string) =>
+        el.shadowRoot!.querySelector<HTMLElement>(`[part~="${name}"]`)!;
+      const targets: Target[] = [
+        { layer: [], el: part('base'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Active members'], el: part('label'), kind: 'text' },
+      ];
+      if (value) {
+        targets.push({ layer: [value], el: part('value'), kind: 'text' });
+        targets.push({ layer: ['Context'], el: part('context'), kind: 'frame', gap: 'column-gap' });
+        targets.push({
+          layer: ['Context', context],
+          el: part('context'),
+          kind: 'text',
+        });
+      } else {
+        const placeholder = part('placeholder');
+        await settle(placeholder);
+        targets.push({
+          layer: ['Loading value'],
+          el: placeholder.shadowRoot!.querySelector('.block')!,
+          kind: 'frame',
+        });
+        targets.push({ layer: [context], el: part('context'), kind: 'text' });
+      }
+      expectNone(compare('Oddkin/Common/stat', { State: state }, targets));
+    });
+});

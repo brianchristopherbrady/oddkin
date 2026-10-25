@@ -108,6 +108,7 @@ describe('authored examples', () => {
     'odd-status-marker/statusError': { observe: (el) => el['status'], wrong: 'idle' },
     'odd-relative-time/detailFalse': { observe: (el) => el['detail'], wrong: true },
     'odd-copy-button/disabledFalse': { observe: (el) => el['disabled'], wrong: true },
+    'odd-stat/trendUp': { observe: (el) => el['trend'], wrong: 'none' },
     'odd-scroll-region/heightAttribute': {
       observe: (el) => {
         const base = el.shadowRoot!.querySelector('[part~="base"]')!;
@@ -195,6 +196,7 @@ describe('authored examples', () => {
     'odd-split-panel/orientationColumn': ['element.attribute.invalid'],
     'odd-container/measureWide': ['element.attribute.invalid'],
     'odd-status-marker/statusError': ['element.attribute.invalid'],
+    'odd-stat/trendUp': ['element.attribute.invalid'],
     'odd-button/dangerAppearance': ['element.attribute.invalid'],
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-breadcrumbs/itemsAttribute': ['element.attribute.propertyOnly'],

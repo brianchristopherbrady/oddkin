@@ -42,6 +42,7 @@ import '@oddkin/components/define/slider';
 import '@oddkin/components/define/spinner';
 import '@oddkin/components/define/split-button';
 import '@oddkin/components/define/split-panel';
+import '@oddkin/components/define/stat';
 import '@oddkin/components/define/status-marker';
 import '@oddkin/components/define/switch';
 import '@oddkin/components/define/tabs';
@@ -246,6 +247,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-status-marker status="pending"></odd-status-marker><odd-status-marker>2</odd-status-marker>
         <odd-relative-time datetime="2026-10-24T09:30:00Z" detail></odd-relative-time>
         <odd-copy-button value="ws_83f2a9"></odd-copy-button>
+        <odd-stat label="Members" value="1,284" trend="increase">+8.2% this month</odd-stat><odd-stat label="Members" loading></odd-stat>
         <odd-tree label="Files" value="b"></odd-tree>
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
         <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>
