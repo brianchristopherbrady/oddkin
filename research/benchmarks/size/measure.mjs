@@ -213,9 +213,10 @@ export const CSS_BUDGETS = {
   // .odd-split-end and .odd-auto-grid-fit
   'components:layout': 704,
   'components:button.css': 1024, // measured 999 on 2026-10-23: button.css, the native <button> path, with aria-pressed
-  // 2,176: measured 2,081 on 2026-10-23 with the field recipe's start and end adornments (the shared
-  // control module's, b67b90c); 1,821 on 2026-10-22 for the eight CSS recipes (1,314 before field.css).
-  'components:recipes': 2176,
+  // 2,304: measured 2,270 on 2026-10-25 with description-list.css (+189); 2,081 on 2026-10-23 with the
+  // field recipe's start and end adornments (the shared control module's, b67b90c); 1,821 on 2026-10-22
+  // for the eight CSS recipes (1,314 before field.css).
+  'components:recipes': 2304,
   'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
 };
 
@@ -266,7 +267,17 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
   );
   // The opt-in CSS recipes for native markup (component-contracts.md §4), together.
   sizes['components:recipes'] = gzip(
-    ['typography', 'link', 'divider', 'kbd', 'list', 'table', 'field', 'avatar-group']
+    [
+      'typography',
+      'link',
+      'divider',
+      'kbd',
+      'list',
+      'table',
+      'field',
+      'avatar-group',
+      'description-list',
+    ]
       .map((name) => readFileSync(join(root, `packages/components/dist/css/${name}.css`), 'utf8'))
       .join('\n'),
   );

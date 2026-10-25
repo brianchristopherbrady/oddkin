@@ -533,9 +533,16 @@
       ],
       "webFeature": "subgrid",
       "adoption": "foundation",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
-      "baseline": "Available at the floor; planned where shared alignment matters (card grids with aligned headers and footers, form rows).",
+      "usedBy": ["description-list.css: the rows share the list's term column"],
+      "baseline": "Available at the floor; used where shared alignment matters (the description list's term column; later card grids with aligned headers and footers, form rows).",
+      "tests": [
+        {
+          "file": "packages/components/test/structured.browser.test.ts",
+          "name": "lines every value up on one term column as wide as the longest term"
+        }
+      ],
       "notes": "Subgrid needs the parent grid and child grid in the same tree; a component's shadow internals cannot subgrid onto a page grid."
     },
     {
@@ -770,13 +777,20 @@
       "bcd": ["css.properties.text-wrap.balance"],
       "webFeature": "text-wrap-balance",
       "adoption": "enhancement",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
+      "usedBy": ["typography.css: .odd-type-display, .odd-type-title, .odd-type-section"],
       "baseline": "Normal wrapping.",
       "enhanced": "Short multi-line headings get balanced line lengths.",
-      "gate": "Literal fallback (text-wrap: wrap; then text-wrap: balance; an unsupported value is dropped at parse time) or @supports (text-wrap: balance)",
+      "gate": "@supports (text-wrap: balance)",
       "differences": "Only line-break positions differ; content, size, and order are unchanged.",
-      "detectCss": "(text-wrap: balance)"
+      "detectCss": "(text-wrap: balance)",
+      "tests": [
+        {
+          "file": "packages/components/test/structured.browser.test.ts",
+          "name": "balances the heading roles where the engine supports it, and nothing else"
+        }
+      ]
     },
     {
       "id": "text-wrap-pretty",

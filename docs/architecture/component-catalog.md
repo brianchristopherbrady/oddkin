@@ -82,6 +82,7 @@ tokens, slot content, a native element, or a look-alike.
 | `Tree` | 8 | `odd-tree` | Existing | APG tree with roving focus, typeahead, and `multiple`, on the navigation-row module that `odd-side-nav` groups use. |
 | `Table` | 6 | `table.odd-table` recipe (`css/table.css`) | Existing (CSS recipe) | A native `<table>`: header cells on the sunken surface, rows divided by rules, `aria-sort` headers, a row holding a checked checkbox in the selection colours. Not the data grid. |
 | `List` | 3 | `ul.odd-list` / `ol.odd-list` recipe (`css/list.css`) | Existing (CSS recipe) | Rows divided by rules; `.odd-list-meta` for secondary text; the `aria-current` row in the selection colours. |
+| `descriptionList` | 4 | `dl.odd-description-list` recipe (`css/description-list.css`) | Existing (CSS recipe) | `<div><dt><dd></div>` rows divided by rules on one term column (subgrid); Stacked is the recipe at 36rem of its own width or less (a container query), Long content wraps, and Missing value is author text. |
 | `NavigationItem` | 4 | `odd-side-nav` entry (`entry` part) | Existing (anatomy) | Link, group, action, disabled, current. |
 | `SideNavigation` | 3 | `odd-side-nav` | Existing | References `NavigationItem` ×16; recipe + data model (`NavigationItemModel`). |
 | `Breadcrumbs` | 2 | `odd-breadcrumbs` | Existing | A named trail of links from `items`; with `max-items`, the middle items collapse behind a "more" button. |

@@ -2895,3 +2895,26 @@ Environment: Windows, Node 24.22.1, Playwright 1.64.1, HEAD 6e436d2. Other lanes
 - Pressing Enter in an `odd-input` does not submit its form (the documented limitation: the shadow-root input has no form owner), so the example's test submits with the Save button. Implicit submission is a candidate change to `odd-input`.
 - The field and summary messages are the browser's validation messages. Figma's wording ("Enter a project name.") needs `setCustomValidity()` from the application; the controls take no per-constraint messages. Recorded in the README.
 - Not verified: screen-reader output, Safari on macOS.
+
+## 2026-10-25 — Description list recipe (M10 round 5, component-contracts.md §1, §4; Figma `descriptionList`)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Other lanes' work in progress in the tree: Agent 2's `odd-file-input` (src, tests, exports, contracts text), Agent 3's picker parity file, Agent 1's Form example (`examples/forms`). Figma MCP tools were not available in this session: the committed snapshot `design/figma/components.json` (558:17183) is the only reference.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Recipe behaviour | `npx vitest run --project browser packages/components/test/structured.browser.test.ts` (× 3 engines) | 9/9 in Chromium, Firefox, WebKit |
+| Figma parity | `figma-parity.display.browser.test.ts` (Horizontal, Long content, Missing value, Stacked) | 4/4 in three engines; no recorded difference |
+| Existing recipes | `recipes-css.browser.test.ts` | 12/12 in three engines |
+| Mutation probes | `.tmp/mutate.mjs` on `dist/css/description-list.css` and `typography.css` (Chromium) | 15/15 killed |
+| Node project | `npx vitest run --project node` | 1,164/1,164 |
+| Typecheck | `npm run typecheck` | pass |
+| Size | `node scripts/check-size.mjs` | `components:recipes` 2,290 B of 2,304 (raised from 2,176) |
+| Compatibility | `npm run compat` | OK, 0 problems (after the typography fix below) |
+| Metadata | `node scripts/build-metadata.mjs` | `stylesheet:description-list` published; exit 1 only from `odd-file-input`'s `agent.guidance.unknownReference` (Agent 2, in progress) |
+
+**Findings:**
+- **Element or recipe:** a recipe (contracts §2.1): `<dl>` carries the term and definition semantics, and nothing needs script. Name from HTML's "description list" (ADR 0045 §1).
+- **Layout:** the list is a grid whose rows (`<div>` groups, as HTML allows) are subgrids, so every value starts on one term column, as wide as the longest term (`fit-content()`) up to `--odd-description-list-term-width` (33%), and never narrower than the longest word. Rows are `space.md` apart with a `color.border.default` rule and `space.md` above it, as Figma's dividers; term and value `space.xs` apart. The list is an inline-size container (`odd-description-list`): at 36rem of its own width or less (Figma's recipe-local medium width in `layouts.json`) each term stacks above its value, whatever the viewport (tested at 800, 577, 576, and 320 px). Bare `dt`/`dd` children still pair up in the two columns (no rules, no stacking).
+- **Text:** terms in the secondary colour and the UI role, values in the primary colour and the body role; long values and unbroken strings wrap inside the list. Missing values are author text ("Not provided"), documented in contracts §4.
+- **Compatibility check gap:** `scripts/compat/check-css.mjs` linted only `reset`, `base`, `layout`, and `utilities` among the document stylesheets, so no recipe was ever checked. It now reads every `dist/css/*.css`. That found `text-wrap: balance` ungated three times in `typography.css`; it is now one `@supports (text-wrap: balance)` rule for the display, title, and section roles (tested in three engines). `features.json`: `text-wrap-balance` and `subgrid` are now implemented, with their users and tests.
+- **Not verified:** screen-reader output for the stacked layout; Safari on macOS.

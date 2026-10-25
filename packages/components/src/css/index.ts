@@ -224,14 +224,16 @@ export const typography: DocumentStylesheet = {
         ...(SECONDARY_ROLES.has(role)
           ? ([['color', token('color.text.secondary')]] as [string, string][])
           : []),
-        ...(HEADING_ROLES.has(role)
-          ? ([
-              ['margin-block', '0'],
-              ['text-wrap', 'balance'],
-            ] as [string, string][])
-          : []),
+        ...(HEADING_ROLES.has(role) ? ([['margin-block', '0']] as [string, string][]) : []),
       ]),
-    ).join('\n'),
+    )
+      .concat(
+        `@supports (text-wrap: balance) {\n${rule(
+          [...HEADING_ROLES].map((role) => `.odd-type-${role}`).join(', '),
+          [['text-wrap', 'balance']],
+        )}\n}`,
+      )
+      .join('\n'),
   ),
 };
 
@@ -467,6 +469,62 @@ export const avatarGroup: DocumentStylesheet = {
   `,
 };
 
+/**
+ * `dl.odd-description-list`: term and value pairs, each pair a `div` row (`<div><dt>…</dt>
+ * <dd>…</dd></div>`) divided by rules, with one stable term column for every row (at most
+ * `--odd-description-list-term-width`). The list is an inline-size container: below 36rem of its
+ * own width each term stacks above its value. A missing value is author text ("Not provided").
+ */
+export const descriptionList: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: css`
+    .odd-description-list {
+      container: odd-description-list / inline-size;
+      display: grid;
+      grid-template-columns:
+        fit-content(var(--odd-description-list-term-width, 33%))
+        minmax(0, 1fr);
+      gap: ${token('space.md')} ${token('space.xs')};
+      margin: 0;
+      color: ${token('color.text.primary')};
+      font-family: ${token('type.body.family')};
+      font-size: ${token('type.body.size')};
+      font-weight: ${token('type.body.weight')};
+      line-height: ${token('type.body.line-height')};
+      letter-spacing: ${token('type.body.letter-spacing')};
+    }
+    .odd-description-list > div {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+    }
+    .odd-description-list > div + div {
+      padding-block-start: ${token('space.md')};
+      border-block-start: ${token('border.width.default')} solid ${token('color.border.default')};
+    }
+    .odd-description-list dt {
+      color: ${token('color.text.secondary')};
+      font-family: ${token('type.ui.family')};
+      font-size: ${token('type.ui.size')};
+      font-weight: ${token('type.ui.weight')};
+      line-height: ${token('type.ui.line-height')};
+      letter-spacing: ${token('type.ui.letter-spacing')};
+    }
+    .odd-description-list dd {
+      margin: 0;
+      min-inline-size: 0;
+      overflow-wrap: anywhere;
+    }
+    @container odd-description-list (max-inline-size: 36rem) {
+      .odd-description-list > div {
+        display: flex;
+        flex-direction: column;
+        gap: ${token('space.xs')};
+      }
+    }
+  `,
+};
+
 /** Page-level utilities with the same rules as the shadow-root primitives. */
 export const utilities: DocumentStylesheet = {
   layer: 'odd.utilities',
@@ -502,5 +560,6 @@ export const documentStylesheets = {
   table,
   field,
   'avatar-group': avatarGroup,
+  'description-list': descriptionList,
   utilities,
 } as const;

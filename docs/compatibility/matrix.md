@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 149 stylesheets, 306 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 159 stylesheets, 313 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -37,7 +37,7 @@ Legend: ✓ *n* — fully supported at the floor (first full version *n*); parti
 | cursor-keywords | `cursor: pointer, cursor: not-allowed` | implemented | ✓ 1 | ✓ 12 | ✓ 1.5 | ✓ 3 | Safari iOS: ✗ (none) | limited | odd-button (interactive and disabled cursors). Pointer cursors mark interactive and disabled controls where a mouse pointer exists. **Floor exception:** Safari iOS: No mouse cursor on iOS (BCD records no support; iPad shows the default pointer). The declaration has no effect and nothing depends on it. | `packages/components/test/styling.browser.test.ts` |
 | import-maps | `<script type="importmap">` | implemented | ✓ 89 | ✓ 89 | ✓ 108 | ✓ 16.4 | — | widely (2025-09-27) | No-build examples (plain-html, core-counter, components-only, css-gallery). Bare package specifiers resolve in the browser without a bundler. | `e2e/plain-html.spec.ts`, `tests/floor/probe.js` |
 | has-selector | `:has()` | planned (M10) | ✓ 105 | ✓ 105 | ✓ 121 | ✓ 15.4 | — | widely (2026-06-19) | Available at the floor. Use only for light-DOM or in-shadow structure the component owns; it cannot see into other shadow trees or combine with ::slotted(). | — |
-| subgrid | `grid-template-columns: subgrid, grid-template-rows: subgrid` | planned (M10) | ✓ 117 | ✓ 117 | ✓ 71 | ✓ 16 | — | widely (2026-03-15) | Available at the floor; planned where shared alignment matters (card grids with aligned headers and footers, form rows). | — |
+| subgrid | `grid-template-columns: subgrid, grid-template-rows: subgrid` | implemented (M10) | ✓ 117 | ✓ 117 | ✓ 71 | ✓ 16 | — | widely (2026-03-15) | description-list.css: the rows share the list's term column. Available at the floor; used where shared alignment matters (the description list's term column; later card grids with aligned headers and footers, form rows). | `packages/components/test/structured.browser.test.ts` |
 | aspect-ratio | `aspect-ratio` | planned (M10) | ✓ 88 | ✓ 88 | ✓ 89 | ✓ 15 | — | widely (2024-03-20) | Media frames keep their ratio with object-fit; content taller than the ratio may grow rather than clip text. | — |
 | container-units | `cqi, cqb, cqw, cqh, cqmin, cqmax` | planned (M10) | ✓ 105 | ✓ 105 | ✓ 110 | ✓ 16 | — | widely (2025-08-14) | Only inside a declared size container: the units resolve against the nearest eligible container (or the small viewport when there is none), so a component never assumes an outer container exists. | — |
 | css-nesting | `& nesting selector, nested rules` | planned (M10) | ✓ 120 | ✓ 120 | ✓ 117 | ✓ 17.2 | — | widely (2026-06-11) | Available at the floor without a build step. Nested selectors take the specificity of :is() over their parent list, so specificity is reviewed when existing flat rules are nested. | — |
@@ -57,7 +57,7 @@ Legend: ✓ *n* — fully supported at the floor (first full version *n*); parti
 | Feature | Syntax | Status | Chrome | Edge | Firefox | Safari | Gate | Baseline behaviour | Enhanced behaviour | Differences | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | dialog-closedby | `<dialog closedby="any \| closerequest \| none">` | implemented (M10) | ✗ (full: 134) | ✗ (full: 134) | ✗ (full: 141) | ✗ (none) | 'closedBy' in HTMLDialogElement.prototype, checked at each opening | The dialog emulates closedby: with `any`, a press on the backdrop closes it after a cancelable cancel; with `none`, Escape is cancelled. | The browser applies closedby itself: light dismiss and close requests. | Emulated `none` cancels the cancel event, and Chrome closes anyway on a second Escape without a user activation in between; native `none` ignores Escape. | `packages/components/test/dialog.browser.test.ts` |
-| text-wrap-balance | `text-wrap: balance` | planned (M10) | ✓ 114 | ✓ 114 | ✓ 121 | ✗ (full: 17.5) | Literal fallback (text-wrap: wrap; then text-wrap: balance; an unsupported value is dropped at parse time) or @supports (text-wrap: balance) | Normal wrapping. | Short multi-line headings get balanced line lengths. | Only line-break positions differ; content, size, and order are unchanged. | — |
+| text-wrap-balance | `text-wrap: balance` | implemented (M10) | ✓ 114 | ✓ 114 | ✓ 121 | ✗ (full: 17.5) | @supports (text-wrap: balance) | Normal wrapping. | Short multi-line headings get balanced line lengths. | Only line-break positions differ; content, size, and order are unchanged. | `packages/components/test/structured.browser.test.ts` |
 | text-wrap-pretty | `text-wrap: pretty` | planned (M10) | ✓ 117 | ✓ 117 | ✗ (none) | ✗ (full: 26) | Literal fallback (an unsupported value is dropped at parse time) | Normal wrapping. | Fewer short last lines in long-form text. | Line breaks differ slightly; never relied on for layout. | — |
 | field-sizing | `field-sizing: content` | implemented (M10) | ✓ 123 | ✓ 123 | ✗ (full: 152) | ✗ (full: 26.2) | @supports (field-sizing: content) | Textareas have a fixed initial row count with user resizing; long content scrolls. odd-textarea's resize="auto" measures its height (scrollHeight) as its value or width changes where the engine has no field sizing: the contract's auto-growing field needs it below the floor's field-sizing support. Native and script sizing never run together. | Textareas grow with their content between min-block-size and max-block-size. | Height follows content in supporting browsers; caret, selection, scrolling, and resizing behave natively in both. Native and script sizing never run together. | `packages/components/test/textarea.browser.test.ts` |
 | starting-style | `@starting-style, transition-behavior: allow-discrete` | implemented (M10) | ✓ 117 | ✓ 117 | ✗ (full: 129) | ✗ (full: 17.5) | @supports (transition-behavior: allow-discrete) inside @media (prefers-reduced-motion: no-preference) | Overlays and disclosures open and close immediately; visibility, inertness, and focus change at once. | Entry and exit transitions for top-layer and display:none content. | Animation only; final states, focus, and accessibility state are identical, and cleanup never waits on transitionend. | `packages/components/test/popover.browser.test.ts`, `packages/components/test/dialog.browser.test.ts` |
@@ -122,9 +122,19 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | Stylesheet | Shipped | Compatibility keys |
 | --- | --- | --- |
 | `packages/tokens/dist/css/default.css` | yes | 15 |
-| `packages/components/dist/css/reset.css` | yes | 16 |
+| `packages/components/dist/css/avatar-group.css` | yes | 11 |
 | `packages/components/dist/css/base.css` | yes | 12 |
+| `packages/components/dist/css/button.css` | yes | 53 |
+| `packages/components/dist/css/description-list.css` | yes | 28 |
+| `packages/components/dist/css/divider.css` | yes | 21 |
+| `packages/components/dist/css/field.css` | yes | 57 |
+| `packages/components/dist/css/kbd.css` | yes | 23 |
 | `packages/components/dist/css/layout.css` | yes | 34 |
+| `packages/components/dist/css/link.css` | yes | 18 |
+| `packages/components/dist/css/list.css` | yes | 33 |
+| `packages/components/dist/css/reset.css` | yes | 16 |
+| `packages/components/dist/css/table.css` | yes | 30 |
+| `packages/components/dist/css/typography.css` | yes | 11 |
 | `packages/components/dist/css/utilities.css` | yes | 18 |
 | `packages/components/dist/alert/alert.structural.styles.js (alertStructuralStyles)` | yes | 22 |
 | `packages/components/dist/alert/alert.styles.js (alertStyles)` | yes | 10 |

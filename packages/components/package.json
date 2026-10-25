@@ -555,6 +555,7 @@
     "./css/table.css": "./dist/css/table.css",
     "./css/field.css": "./dist/css/field.css",
     "./css/avatar-group.css": "./dist/css/avatar-group.css",
+    "./css/description-list.css": "./dist/css/description-list.css",
     "./css/utilities.css": "./dist/css/utilities.css",
     "./custom-elements.json": "./custom-elements.json",
     "./oddkin.metadata.json": "./oddkin.metadata.json",

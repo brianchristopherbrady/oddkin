@@ -481,8 +481,11 @@ export async function cssSources() {
     if (existsSync(path)) sources.push({ file, text: readFileSync(path, 'utf8'), shipped });
   };
   add('packages/tokens/dist/css/default.css', true);
-  for (const sheet of ['reset', 'base', 'layout', 'utilities'])
-    add(`packages/components/dist/css/${sheet}.css`, true);
+  // Every document stylesheet: the reset, base, layout, utilities, and the recipes (contracts §4).
+  const sheets = join(root, 'packages/components/dist/css');
+  if (existsSync(sheets))
+    for (const file of readdirSync(sheets).sort())
+      if (file.endsWith('.css')) add(`packages/components/dist/css/${file}`, true);
   sources.push(...(await componentStyles()));
   for (const fixture of ['side-nav', 'page'])
     add(`packages/core/test/fixtures/${fixture}.recipe.css.txt`, true);
