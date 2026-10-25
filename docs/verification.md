@@ -2961,3 +2961,26 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1, HEAD 75adb7
 - In forced colours the engine already forces an unchosen star's `currentColor` to CanvasText; that rule was redundant and removed.
 - Figma's Focus variant rings an unchosen star; native radios move focus and the choice together, so focus is on the chosen star (recorded difference).
 - Not verified: screen-reader output, Safari on macOS.
+
+## 2026-10-25 — odd-relative-time (M10 round 5, component-contracts.md §1, §3.2; Figma `relativeTime`)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Other lanes' work in progress in the tree: Agent 2's `odd-calendar` and `odd-file-input`, Agent 3's `odd-picker` and collection modules, Agent 1's `odd-one-time-code`. The committed snapshot (555:3030) is the reference; the Figma MCP tools were not available.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Behaviour and Figma parity | `relative-time.browser.test.ts` and `figma-parity.display.browser.test.ts` (× 3 engines) | 22/22 in Chromium, Firefox, and WebKit; parity for Past, Recent, Future, Unavailable, Absolute detail with no recorded difference |
+| Catalog-wide | examples, contract, styling-contract, styling, multi-product, description, accessibility (× 3 engines) | pass for `odd-relative-time` (explained mistake, contract, axe in light and dark); failures only for `odd-calendar`, `odd-picker`, and `odd-one-time-code` (other lanes, in progress) |
+| Mutation probes | 23 on `src/relative-time/*` (Chromium) | 22 killed; 1 equivalent (a `\|\| 0` guard against `-0`: every unit's threshold keeps the rounded value at 1 or more), removed |
+| Node project | `npx vitest run --project node` | my entries pass (Theme Studio `relativeTime`); 7 failures, all `odd-calendar` (in `src` without exports or metadata) or `odd-picker` |
+| Lifetime | `node research/benchmarks/lifetime/run.mjs --cycles 1000` | ownership returned in every scenario and engine (WebKit navigation skipped by design) |
+| Typecheck, vocabulary | `npm run typecheck`, `node scripts/check-vocabulary.mjs` | pass; 0 findings. Typecheck also caught a `string \| null` case type in my 75adb7d parity cases, fixed here |
+| Size, compatibility | `node scripts/check-size.mjs`, `npm run compat` | `components:relative-time` 252 B of 256; no new compatibility key (`vertical-align: baseline` would have been one and is the initial value, so it went); compat's only problems are `odd-calendar`'s |
+
+**Findings:**
+- **Element, not recipe:** the text is computed from `datetime` and the language (contracts §2.1). Names: `datetime` from `<time>` (ADR 0045 §1); the element name from GitHub's `relative-time` and Web Awesome's `wa-relative-time`; `detail` for Figma's Absolute detail.
+- **Units:** under 45 s "now", then minutes (< 45 min), hours (< 22 h), days (< 6.5 d), weeks (< 26 d), months (< 320 d), years, rounded, through `Intl.RelativeTimeFormat` with `numeric: 'auto'` ("yesterday", "in 2 days"), in the nearest `lang` (checked for de, fr, ja against `Intl` itself). Figma's "Just now" and "In 2 days" are `Intl`'s "now" and "in 2 days" in English (text is not compared by parity).
+- **Absolute date and time:** `Intl.DateTimeFormat` with the date, time, and short time zone ("October 24, 2026 at 9:30 AM PDT"), as the `<time>`'s `title` and, with `detail`, as a line below in the primary colour.
+- **Unavailable:** an empty or unparseable `datetime` renders "Time unavailable" (`strings.unavailable`) and no `<time>`.
+- **No ticking:** Figma calls it "not a live clock"; the text is computed when the element renders (documented as a limitation), so no shared timer was needed from Agent 3.
+- **Glyph:** `clockGlyph` added to `styles/glyphs.ts` from the owner's `design/icons/general/clock.svg` geometry; the reuse map's `relativeTime` → clock reference names it.
+- **Not verified:** screen-reader output; Safari on macOS; time zones other than the machine's.

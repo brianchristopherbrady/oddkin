@@ -550,7 +550,7 @@
       "sourceId": "159:348",
       "count": 5,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "odd-relative-time draws the clock from the shared glyph module (clockGlyph, design/icons/general/clock.svg), icon.size.sm in the secondary text colour."
     },
     {
       "consumer": "Oddkin/Common/search",
@@ -2049,6 +2049,7 @@
       "dependencies": ["odd-button"],
       "reason": "Submit and cancel are complete buttons (Figma: button/sm ×2)."
     },
+    "odd-relative-time": { "dependencies": [] },
     "odd-scroll-region": { "dependencies": [] },
     "odd-segmented-control": {
       "dependencies": ["odd-icon"],

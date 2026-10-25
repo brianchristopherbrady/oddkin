@@ -29,6 +29,7 @@ import '@oddkin/components/define/pagination';
 import '@oddkin/components/define/popover';
 import '@oddkin/components/define/progress';
 import '@oddkin/components/define/radio-group';
+import '@oddkin/components/define/relative-time';
 import '@oddkin/components/define/rating';
 import '@oddkin/components/define/scroll-region';
 import '@oddkin/components/define/segmented-control';
@@ -240,6 +241,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-scroll-region label="Log" style="max-block-size: 3rem"><p>A</p><p>B</p><p>C</p><p>D</p></odd-scroll-region>
         <odd-container measure="fluid"><p>A</p></odd-container>
         <odd-status-marker status="pending"></odd-status-marker><odd-status-marker>2</odd-status-marker>
+        <odd-relative-time datetime="2026-10-24T09:30:00Z" detail></odd-relative-time>
         <odd-tree label="Files" value="b"></odd-tree>
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
         <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>

@@ -314,6 +314,18 @@
       "types": "./dist/rating/rating.define.d.ts",
       "default": "./dist/rating/rating.define.js"
     },
+    "./relative-time": {
+      "types": "./dist/relative-time/index.d.ts",
+      "default": "./dist/relative-time/index.js"
+    },
+    "./relative-time/foundation": {
+      "types": "./dist/relative-time/foundation.d.ts",
+      "default": "./dist/relative-time/foundation.js"
+    },
+    "./define/relative-time": {
+      "types": "./dist/relative-time/relative-time.define.d.ts",
+      "default": "./dist/relative-time/relative-time.define.js"
+    },
     "./scroll-region": {
       "types": "./dist/scroll-region/index.d.ts",
       "default": "./dist/scroll-region/index.js"

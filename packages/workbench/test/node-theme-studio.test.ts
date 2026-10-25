@@ -205,6 +205,7 @@ describe('Theme Studio page data', () => {
       'placeholder:odd-skeleton',
       'progress:odd-progress',
       'radioGroup:odd-radio-group',
+      'relativeTime:odd-relative-time',
       'rating:odd-rating',
       'segmented:odd-segmented-control',
       'slider:odd-slider',

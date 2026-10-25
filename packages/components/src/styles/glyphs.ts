@@ -111,3 +111,8 @@ export const checkCircleGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria
 export const starGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
   <path d="M10 2l2.5 5 5.5 1-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1z" />
 </svg>`;
+/** The clock beside a relative time (design/icons/general/clock.svg). */
+export const clockGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+  <circle cx="10" cy="10" r="8" />
+  <path d="M10 5v5l4 2" />
+</svg>`;

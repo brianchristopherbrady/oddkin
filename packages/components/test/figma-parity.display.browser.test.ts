@@ -81,7 +81,7 @@ describe('Figma parity: description list recipe (descriptionList)', () => {
 describe('Figma parity: timeline recipe and odd-status-marker (timeline)', () => {
   useRecipeStyles(['base', 'timeline']);
 
-  const EVENT_1: Record<string, [string, string, string | null, string]> = {
+  const EVENT_1: Record<string, [string, string, string, string]> = {
     Default: [
       'complete',
       'Update published',
@@ -152,5 +152,44 @@ describe('Figma parity: timeline recipe and odd-status-marker (timeline)', () =>
         { layer: [event(2), 'Event rail', 'Event marker'], el: marker(2), kind: 'frame' },
       ];
       expectNone(compare('Oddkin/Common/timeline', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: odd-relative-time (relativeTime)', () => {
+  const ago = new Date(Date.now() - 3 * 3600_000).toISOString();
+  const CASES: [string, string, string][] = [
+    ['Past', `datetime="${ago}"`, '3 hours ago'],
+    ['Recent', `datetime="${new Date().toISOString()}"`, 'Just now'],
+    [
+      'Future',
+      `datetime="${new Date(Date.now() + 2 * 86400_000 + 3600_000).toISOString()}"`,
+      'In 2 days',
+    ],
+    ['Unavailable', '', 'Time unavailable'],
+    ['Absolute detail', `datetime="${ago}" detail`, '3 hours ago'],
+  ];
+  for (const [state, attributes, text] of CASES)
+    it(state, async () => {
+      const el = mount(`<odd-relative-time ${attributes}></odd-relative-time>`);
+      await settle(el);
+      const part = (name: string) =>
+        el.shadowRoot!.querySelector<HTMLElement>(`[part~="${name}"]`)!;
+      const targets: Target[] = [
+        { layer: [], el: part('base'), kind: 'frame', gap: 'row-gap' },
+        {
+          layer: ['Relative timestamp'],
+          el: el.shadowRoot!.querySelector('.relative')!,
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        { layer: ['Relative timestamp', text], el: part('time'), kind: 'text' },
+      ];
+      if (state === 'Absolute detail')
+        targets.push({
+          layer: ['October 24, 2026 at 9:30 AM PDT'],
+          el: part('detail'),
+          kind: 'text',
+        });
+      expectNone(compare('Oddkin/Common/relativeTime', { State: state }, targets));
     });
 });

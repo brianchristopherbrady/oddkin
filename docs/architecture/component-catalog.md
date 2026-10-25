@@ -84,6 +84,7 @@ tokens, slot content, a native element, or a look-alike.
 | `Tree` | 8 | `odd-tree` | Existing | APG tree with roving focus, typeahead, and `multiple`, on the navigation-row module that `odd-side-nav` groups use. |
 | `Table` | 6 | `table.odd-table` recipe (`css/table.css`) | Existing (CSS recipe) | A native `<table>`: header cells on the sunken surface, rows divided by rules, `aria-sort` headers, a row holding a checked checkbox in the selection colours. Not the data grid. |
 | `List` | 3 | `ul.odd-list` / `ol.odd-list` recipe (`css/list.css`) | Existing (CSS recipe) | Rows divided by rules; `.odd-list-meta` for secondary text; the `aria-current` row in the selection colours. |
+| `relativeTime` | 5 | `odd-relative-time` | Existing | `datetime` said relative to now in the page's language (Past, Recent "now", Future); `detail` shows the absolute date (Absolute detail); an empty or unparseable `datetime` says "Time unavailable". The clock is the shared glyph module's. |
 | `timeline` | 4 | `ol.odd-timeline` recipe (`css/timeline.css`) with `odd-status-marker` | Existing (CSS recipe and marker element) | Default, Pending, and Error are the event's marker `status` (complete, pending, failed; past events idle); Narrow is the same list wrapping in a narrow column. The marker element draws Figma's check, spinner, and warning icons from the shared modules. |
 | `descriptionList` | 4 | `dl.odd-description-list` recipe (`css/description-list.css`) | Existing (CSS recipe) | `<div><dt><dd></div>` rows divided by rules on one term column (subgrid); Stacked is the recipe at 36rem of its own width or less (a container query), Long content wraps, and Missing value is author text. |
 | `NavigationItem` | 4 | `odd-side-nav` entry (`entry` part) | Existing (anatomy) | Link, group, action, disabled, current. |
@@ -366,7 +367,7 @@ Status: **approved** (2026-10-24). 214 references; controller 13, deferred 12, e
 | number | icon plus × 6 | style | The plus glyph is built into the element and comes from the shared glyph module. |
 | rating | rating/Item × 30 | native | Each star is a native radio in odd-rating's one shadow tree (OddkinRadioControl, as odd-radio-group): the platform gives one Tab stop and arrow-key selection; the rating submits one value through @oddkin/core/controllers/form. |
 | rating/Item | icon General/star × 5 | style | The built-in starGlyph of the shared glyph module (from design/icons/general/star.svg), in the star's text colour and filled when on. |
-| relativeTime | icon clock × 5 | style | Original Oddkin glyph reused with token-bound size and current semantic text color. |
+| relativeTime | icon clock × 5 | style | odd-relative-time draws the clock from the shared glyph module (clockGlyph, design/icons/general/clock.svg), icon.size.sm in the secondary text colour. |
 | search | icon close × 3 | style | The close/remove glyph is built in and comes from the shared glyph module. |
 | search | icon search × 4 | style | The search glyph is built into the element and comes from the shared glyph module. |
 | stat | icon General/direction-arrow-up × 2 | style | Original Oddkin glyph reused with token-bound size and current semantic text color. |
@@ -533,7 +534,7 @@ Status: **approved** (2026-10-24). 214 references; controller 13, deferred 12, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (50) has no element dependency.
+Every other element (51) has no element dependency.
 
 #### Shared homes
 

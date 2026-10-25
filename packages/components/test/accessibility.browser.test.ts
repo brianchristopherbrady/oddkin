@@ -170,6 +170,7 @@ const states = `
   <odd-scroll-region label="Release notes" style="max-block-size: 6rem"><p>Release note 1</p><p>Release note 2</p><p>Release note 3</p><p>Release note 4</p><p>Release note 5</p><p>Release note 6</p><p>Release note 7</p><p>Release note 8</p></odd-scroll-region>
   <odd-container><h3>Release notes</h3><p>Components and tokens were updated.</p></odd-container>
   <odd-status-marker status="complete"></odd-status-marker><odd-status-marker status="failed"></odd-status-marker><odd-status-marker status="pending"></odd-status-marker><odd-status-marker>2</odd-status-marker>
+  <odd-relative-time datetime="2026-10-24T09:30:00-07:00" detail></odd-relative-time><odd-relative-time></odd-relative-time>
 `;
 
 let tokens: HTMLLinkElement;
