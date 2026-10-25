@@ -17,6 +17,7 @@ import '@oddkin/components/define/chip';
 import '@oddkin/components/define/combobox';
 import '@oddkin/components/define/command-palette';
 import '@oddkin/components/define/container';
+import '@oddkin/components/define/copy-button';
 import '@oddkin/components/define/dialog';
 import '@oddkin/components/define/disclosure';
 import '@oddkin/components/define/drawer';
@@ -242,6 +243,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-container measure="fluid"><p>A</p></odd-container>
         <odd-status-marker status="pending"></odd-status-marker><odd-status-marker>2</odd-status-marker>
         <odd-relative-time datetime="2026-10-24T09:30:00Z" detail></odd-relative-time>
+        <odd-copy-button value="ws_83f2a9"></odd-copy-button>
         <odd-tree label="Files" value="b"></odd-tree>
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
         <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>

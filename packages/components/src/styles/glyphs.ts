@@ -116,3 +116,8 @@ export const clockGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidde
   <circle cx="10" cy="10" r="8" />
   <path d="M10 5v5l4 2" />
 </svg>`;
+/** The copy action (design/icons/general/copy.svg): a sheet in front of another. */
+export const copyGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+  <rect x="6" y="6" width="12" height="12" rx="1" />
+  <path d="M3 14H2V2h12v1" />
+</svg>`;

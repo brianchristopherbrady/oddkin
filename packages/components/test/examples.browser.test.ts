@@ -107,6 +107,7 @@ describe('authored examples', () => {
     'odd-container/measureWide': { observe: (el) => el['measure'], wrong: 'constrained' },
     'odd-status-marker/statusError': { observe: (el) => el['status'], wrong: 'idle' },
     'odd-relative-time/detailFalse': { observe: (el) => el['detail'], wrong: true },
+    'odd-copy-button/disabledFalse': { observe: (el) => el['disabled'], wrong: true },
     'odd-scroll-region/heightAttribute': {
       observe: (el) => {
         const base = el.shadowRoot!.querySelector('[part~="base"]')!;

@@ -201,6 +201,7 @@ describe('Theme Studio page data', () => {
       'busyIndicator:odd-spinner',
       'chip:odd-chip',
       'combobox:odd-combobox',
+      'copyButton:odd-copy-button',
       'disclosure:odd-disclosure',
       'placeholder:odd-skeleton',
       'progress:odd-progress',

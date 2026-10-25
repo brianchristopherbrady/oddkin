@@ -171,6 +171,7 @@ const states = `
   <odd-container><h3>Release notes</h3><p>Components and tokens were updated.</p></odd-container>
   <odd-status-marker status="complete"></odd-status-marker><odd-status-marker status="failed"></odd-status-marker><odd-status-marker status="pending"></odd-status-marker><odd-status-marker>2</odd-status-marker>
   <odd-relative-time datetime="2026-10-24T09:30:00-07:00" detail></odd-relative-time><odd-relative-time></odd-relative-time>
+  <odd-copy-button value="ws_83f2a9"></odd-copy-button><odd-copy-button value="ws_83f2a9" disabled></odd-copy-button>
 `;
 
 let tokens: HTMLLinkElement;

@@ -193,3 +193,81 @@ describe('Figma parity: odd-relative-time (relativeTime)', () => {
       expectNone(compare('Oddkin/Common/relativeTime', { State: state }, targets));
     });
 });
+
+describe('Figma parity: odd-copy-button (copyButton)', () => {
+  const own = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+  const clipboard = (refuse: boolean) =>
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: async () => {
+          if (refuse) throw new DOMException('Denied.', 'NotAllowedError');
+        },
+      },
+    });
+  const restore = () => {
+    if (own) Object.defineProperty(navigator, 'clipboard', own);
+    else delete (navigator as { clipboard?: unknown }).clipboard;
+  };
+
+  for (const [state, refuse, text] of [
+    ['Copied', false, 'Copied to clipboard.'],
+    ['Error', true, 'Could not copy. Select the text.'],
+  ] as const)
+    it(state, async () => {
+      clipboard(refuse);
+      try {
+        const el = mount('<odd-copy-button value="ws_83f2a9"></odd-copy-button>') as HTMLElement & {
+          copy(): Promise<boolean>;
+        };
+        await settle(el);
+        await el.copy();
+        await settle(el);
+        const part = (name: string) =>
+          el.shadowRoot!.querySelector<HTMLElement>(`[part~="${name}"]`)!;
+        expectNone(
+          compare('Oddkin/Common/copyButton', { State: state }, [
+            { layer: [], el: part('base'), kind: 'frame', gap: 'column-gap' },
+            { layer: [text], el: part('status'), kind: 'text' },
+          ]),
+        );
+      } finally {
+        restore();
+      }
+    });
+
+  it('Default, Disabled: the button is the small secondary odd-button, property for property', async () => {
+    const root = mount(`<div>
+      <odd-copy-button value="x"></odd-copy-button><odd-button size="sm">Copy</odd-button>
+      <odd-copy-button value="x" disabled></odd-copy-button><odd-button size="sm" disabled>Copy</odd-button>
+    </div>`);
+    const [copy, button, disabledCopy, disabledButton] = [...root.children] as HTMLElement[];
+    for (const el of [copy, button, disabledCopy, disabledButton]) await settle(el!);
+    const inner = (el: HTMLElement) => el.shadowRoot!.querySelector<HTMLElement>('button')!;
+    const PROPS = [
+      'min-block-size',
+      'padding-inline-start',
+      'border-top-width',
+      'border-top-color',
+      'border-top-left-radius',
+      'background-color',
+      'color',
+      'font-size',
+      'font-weight',
+      'line-height',
+      'column-gap',
+      'cursor',
+      'opacity',
+    ];
+    for (const [a, b] of [
+      [copy!, button!],
+      [disabledCopy!, disabledButton!],
+    ] as const) {
+      const x = getComputedStyle(inner(a)),
+        y = getComputedStyle(inner(b));
+      expect(PROPS.map((p) => `${p}: ${x.getPropertyValue(p)}`)).toEqual(
+        PROPS.map((p) => `${p}: ${y.getPropertyValue(p)}`),
+      );
+    }
+  });
+});

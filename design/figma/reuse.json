@@ -13,8 +13,8 @@
     "deferred": "Not classified (data grid, deferred by the owner)."
   },
   "counts": {
-    "style": 112,
-    "slot": 59,
+    "style": 113,
+    "slot": 58,
     "deferred": 12,
     "controller": 13,
     "native": 6,
@@ -306,8 +306,8 @@
       "source": "Oddkin/Common/button/sm",
       "sourceId": "181:2332",
       "count": 5,
-      "class": "slot",
-      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
+      "class": "style",
+      "reason": "odd-copy-button draws a native button with the small secondary odd-button look from the shared button module (nativeButtonStyles, kept equal to odd-button by styling.browser.test.ts): no nested element."
     },
     {
       "consumer": "Oddkin/Common/icon",
@@ -1994,6 +1994,7 @@
       "dependencies": ["odd-activity", "odd-message"],
       "reason": "Renders one odd-message per message record and an odd-activity for run status; both are complete widgets authors also place alone, and no ARIA ID crosses (each labels itself). Repeated per message: the per-instance cost is measured in the lifetime harness."
     },
+    "odd-copy-button": { "dependencies": [] },
     "odd-dialog": { "dependencies": [], "reason": "Actions and fields are slot content." },
     "odd-disclosure": { "dependencies": [] },
     "odd-drawer": {
@@ -2155,7 +2156,8 @@
         "odd-button",
         "AI .text-button (looks like ghost/sm; Figma page 0:1 draws AI actions as button/sm instances)",
         "odd-menu (trigger part)",
-        "odd-split-button (primary part)"
+        "odd-split-button (primary part)",
+        "odd-copy-button (button part)"
       ]
     },
     {
@@ -2181,7 +2183,8 @@
         "odd-listbox",
         "odd-split-button",
         "odd-combobox",
-        "odd-command-palette"
+        "odd-command-palette",
+        "odd-status-marker"
       ],
       "figma": ["button", "spinner", "listbox", "multiselect", "Tree", "CommandPalette", "combobox"]
     },
@@ -2217,7 +2220,10 @@
         "odd-combobox",
         "odd-validation-summary",
         "odd-command-palette",
-        "odd-rating"
+        "odd-rating",
+        "odd-status-marker",
+        "odd-relative-time",
+        "odd-copy-button"
       ],
       "figma": [
         "Built-in affordance glyphs are referenced from Icons page 359:2. The optional 1,723 original Oddkin artwork assets and their provenance live in design/icons; Figma nesting alone does not add runtime icon-element dependencies."

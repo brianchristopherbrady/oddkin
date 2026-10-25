@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 167 stylesheets, 316 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 169 stylesheets, 316 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -162,6 +162,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/command-palette/command-palette.styles.js (commandPaletteStyles)` | yes | 24 |
 | `packages/components/dist/container/container.structural.styles.js (containerStructuralStyles)` | yes | 6 |
 | `packages/components/dist/container/container.styles.js (containerStyles)` | yes | 5 |
+| `packages/components/dist/copy-button/copy-button.structural.styles.js (copyButtonStructuralStyles)` | yes | 12 |
+| `packages/components/dist/copy-button/copy-button.styles.js (copyButtonStyles)` | yes | 11 |
 | `packages/components/dist/dialog/dialog.structural.styles.js (dialogStructuralStyles)` | yes | 38 |
 | `packages/components/dist/dialog/dialog.styles.js (dialogStyles)` | yes | 17 |
 | `packages/components/dist/disclosure/disclosure.structural.styles.js (disclosureStructuralStyles)` | yes | 33 |
