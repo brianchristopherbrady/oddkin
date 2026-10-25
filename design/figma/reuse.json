@@ -1774,7 +1774,7 @@
       "sourceId": "159:285",
       "count": 2,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "odd-status-marker (status=\"complete\") draws the check from the shared glyph module (component-contracts.md §2.7); the .odd-timeline recipe sizes and colours the marker."
     },
     {
       "consumer": "Oddkin/Common/timeline",
@@ -1783,7 +1783,7 @@
       "sourceId": "159:363",
       "count": 1,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "odd-status-marker (status=\"pending\") draws the busy ring from the shared spinner module; the .odd-timeline recipe sizes and colours the marker."
     },
     {
       "consumer": "Oddkin/Common/timeline",
@@ -1792,7 +1792,7 @@
       "sourceId": "159:336",
       "count": 1,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "odd-status-marker (status=\"failed\") draws the warning from the shared glyph module (component-contracts.md §2.7); the .odd-timeline recipe sizes and colours the marker."
     },
     {
       "consumer": "Oddkin/Common/toast",
@@ -2067,6 +2067,7 @@
       "reason": "The menu half is a complete odd-menu (Figma splitAction: a button and a Menu), with its keyboard, submenus, and odd-action events; the primary half is a native button part."
     },
     "odd-split-panel": { "dependencies": [] },
+    "odd-status-marker": { "dependencies": [] },
     "odd-suggestions": { "dependencies": [] },
     "odd-switch": { "dependencies": [] },
     "odd-tab-panel": { "dependencies": [] },

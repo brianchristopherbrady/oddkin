@@ -414,6 +414,18 @@
       "types": "./dist/split-panel/split-panel.define.d.ts",
       "default": "./dist/split-panel/split-panel.define.js"
     },
+    "./status-marker": {
+      "types": "./dist/status-marker/index.d.ts",
+      "default": "./dist/status-marker/index.js"
+    },
+    "./status-marker/foundation": {
+      "types": "./dist/status-marker/foundation.d.ts",
+      "default": "./dist/status-marker/foundation.js"
+    },
+    "./define/status-marker": {
+      "types": "./dist/status-marker/status-marker.define.d.ts",
+      "default": "./dist/status-marker/status-marker.define.js"
+    },
     "./switch": {
       "types": "./dist/switch/index.d.ts",
       "default": "./dist/switch/index.js"
@@ -556,6 +568,7 @@
     "./css/field.css": "./dist/css/field.css",
     "./css/avatar-group.css": "./dist/css/avatar-group.css",
     "./css/description-list.css": "./dist/css/description-list.css",
+    "./css/timeline.css": "./dist/css/timeline.css",
     "./css/utilities.css": "./dist/css/utilities.css",
     "./custom-elements.json": "./custom-elements.json",
     "./oddkin.metadata.json": "./oddkin.metadata.json",

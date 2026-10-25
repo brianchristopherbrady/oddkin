@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { compare, expectNone, mount, useParity, useRecipeStyles, type Target } from './parity.js';
+import {
+  compare,
+  expectNone,
+  mount,
+  settle,
+  useParity,
+  useRecipeStyles,
+  type Target,
+} from './parity.js';
 
 // Figma parity for Agent 4's display families (page 158:22; snapshot design/figma/components.json):
 // the description list, timeline, and stepper recipes, and the relative time, copy button, and stat
@@ -68,4 +76,81 @@ describe('Figma parity: description list recipe (descriptionList)', () => {
       ]),
     );
   });
+});
+
+describe('Figma parity: timeline recipe and odd-status-marker (timeline)', () => {
+  useRecipeStyles(['base', 'timeline']);
+
+  const EVENT_1: Record<string, [string, string, string | null, string]> = {
+    Default: [
+      'complete',
+      'Update published',
+      'Alex Morgan · Workspace settings',
+      'Oddkin/Icon/check',
+    ],
+    Narrow: [
+      'complete',
+      'Update published',
+      'Alex Morgan · Workspace settings',
+      'Oddkin/Icon/check',
+    ],
+    Error: [
+      'failed',
+      'Update could not publish',
+      'Your draft is safe. Try again.',
+      'Oddkin/Icon/warning',
+    ],
+    Pending: [
+      'pending',
+      'Publishing update…',
+      'Alex Morgan · Workspace settings',
+      'Oddkin/Icon/spinner',
+    ],
+  };
+  for (const [state, [status, title, detail]] of Object.entries(EVENT_1))
+    it(state, async () => {
+      const ol =
+        mount(`<div style="inline-size: ${state === 'Narrow' ? 240 : 480}px"><ol class="odd-timeline">
+        <li><odd-status-marker status="${status}"></odd-status-marker><div><p>${title}</p><p>Today · 9:30 AM</p><p>${detail}</p></div></li>
+        <li><odd-status-marker></odd-status-marker><div><p>Review approved</p><p>Yesterday · 4:15 PM</p><p>Jamie Chen reviewed the changes.</p></div></li>
+        <li><odd-status-marker></odd-status-marker><div><p>Draft created</p><p>October 22 · 10:00 AM</p><p>Alex Morgan started this update.</p></div></li>
+      </ol></div>`).firstElementChild as HTMLElement;
+      for (const m of ol.querySelectorAll('odd-status-marker')) await settle(m);
+      const li = [...ol.children] as HTMLElement[];
+      const marker = (i: number) =>
+        li[i]!.querySelector('odd-status-marker')!.shadowRoot!.querySelector<HTMLElement>(
+          '[part~="base"]',
+        )!;
+      const text = (i: number, n: number) => li[i]!.querySelector('div')!.children[n]!;
+      const event = (i: number) => `Event ${i + 1}`;
+      const targets: Target[] = [
+        { layer: [event(0)], el: li[0]!, kind: 'frame', gap: 'column-gap' },
+        {
+          layer: [event(0), 'Event content'],
+          el: li[0]!.querySelector('div')!,
+          kind: 'frame',
+          gap: 'row-gap',
+        },
+        { layer: [event(0), 'Event content', title], el: text(0, 0), kind: 'text' },
+        { layer: [event(0), 'Event content', 'Today · 9:30 AM'], el: text(0, 1), kind: 'text' },
+        { layer: [event(0), 'Event content', detail], el: text(0, 2), kind: 'text' },
+        {
+          layer: [event(0), 'Event rail', 'Connector'],
+          el: li[0]!,
+          pseudo: '::after',
+          kind: 'frame',
+        },
+        { layer: [event(0), 'Event rail', 'Event marker'], el: marker(0), kind: 'frame' },
+        { layer: [event(1), 'Event rail', 'Event marker'], el: marker(1), kind: 'frame' },
+        {
+          layer: [event(1), 'Event rail', 'Event marker', 'Past event'],
+          el: marker(1),
+          pseudo: '::after',
+          kind: 'frame',
+        },
+        { layer: [event(1), 'Event content', 'Review approved'], el: text(1, 0), kind: 'text' },
+        { layer: [event(2), 'Event rail', 'Event marker'], el: marker(2), kind: 'frame' },
+      ];
+      expectNone(compare('Oddkin/Common/timeline', { State: state }, targets));
+    });
 });

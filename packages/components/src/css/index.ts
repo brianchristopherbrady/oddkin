@@ -525,6 +525,91 @@ export const descriptionList: DocumentStylesheet = {
   `,
 };
 
+/**
+ * `ol.odd-timeline`: events newest first, each an `li` holding an `odd-status-marker` and its
+ * content (`<li><odd-status-marker status="complete"></odd-status-marker><div>title, time,
+ * detail</div></li>`). Markers sit on a rail joined by a connector; the title takes the UI role
+ * (the danger colour when the event failed), the time and detail the small secondary role.
+ */
+export const timeline: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: css`
+    .odd-timeline {
+      --_marker: ${token('icon.size.lg')};
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .odd-timeline > li {
+      position: relative;
+      display: flex;
+      gap: ${token('space.sm')};
+    }
+    .odd-timeline > li:not(:last-child) {
+      padding-block-end: ${token('space.md')};
+    }
+    .odd-timeline > li:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      inset-block: calc(var(--_marker) + ${token('space.2xs')}) 0;
+      inset-inline-start: calc((var(--_marker) - ${token('border.width.default')}) / 2);
+      inline-size: ${token('border.width.default')};
+      background: ${token('color.border.default')};
+    }
+    .odd-timeline odd-status-marker {
+      --odd-status-marker-size: var(--_marker);
+    }
+    .odd-timeline odd-status-marker::part(base) {
+      border-width: 0;
+      background: ${token('color.surface.sunken')};
+      color: ${token('color.text.secondary')};
+    }
+    .odd-timeline odd-status-marker:is([status='complete'], [status='pending'])::part(base) {
+      background: ${token('color.selection.surface')};
+      color: ${token('color.selection.foreground')};
+    }
+    .odd-timeline odd-status-marker[status='failed']::part(base) {
+      background: ${token('color.danger.surface')};
+      color: ${token('color.danger.foreground')};
+    }
+    .odd-timeline > li > :last-child {
+      display: flex;
+      flex-direction: column;
+      gap: ${token('space.2xs')};
+      min-inline-size: 0;
+      overflow-wrap: anywhere;
+    }
+    .odd-timeline > li > :last-child > * {
+      margin: 0;
+      color: ${token('color.text.secondary')};
+      font-family: ${token('type.small.family')};
+      font-size: ${token('type.small.size')};
+      font-weight: ${token('type.small.weight')};
+      line-height: ${token('type.small.line-height')};
+    }
+    .odd-timeline > li > :last-child > :first-child {
+      color: ${token('color.text.primary')};
+      font-family: ${token('type.ui.family')};
+      font-size: ${token('type.ui.size')};
+      font-weight: ${token('type.ui.weight')};
+      line-height: ${token('type.ui.line-height')};
+    }
+    .odd-timeline > li:has(> odd-status-marker[status='failed']) > :last-child > :first-child {
+      color: ${token('color.danger.foreground')};
+    }
+    @media (forced-colors: active) {
+      .odd-timeline > li:not(:last-child)::after {
+        background: CanvasText;
+      }
+      .odd-timeline odd-status-marker::part(base) {
+        border-width: ${token('border.width.default')};
+      }
+    }
+  `,
+};
+
 /** Page-level utilities with the same rules as the shadow-root primitives. */
 export const utilities: DocumentStylesheet = {
   layer: 'odd.utilities',
@@ -561,5 +646,6 @@ export const documentStylesheets = {
   field,
   'avatar-group': avatarGroup,
   'description-list': descriptionList,
+  timeline,
   utilities,
 } as const;

@@ -146,6 +146,7 @@ export const CSS_BUDGETS = {
   'components:split-panel': 896, // 818
   'components:scroll-region': 256, // 235
   'components:container': 192, // 161
+  'components:status-marker': 576, // 521: the circle, its status colours, the dot; glyphs and the ring are shared modules
   // Collections, measured on 2026-10-23 (structural and default styles; rows are the shared modules).
   'components:tree': 512, // 428
   'components:listbox': 640, // 602: the rows, field, and spinner are shared modules
@@ -213,10 +214,10 @@ export const CSS_BUDGETS = {
   // .odd-split-end and .odd-auto-grid-fit
   'components:layout': 704,
   'components:button.css': 1024, // measured 999 on 2026-10-23: button.css, the native <button> path, with aria-pressed
-  // 2,304: measured 2,270 on 2026-10-25 with description-list.css (+189); 2,081 on 2026-10-23 with the
-  // field recipe's start and end adornments (the shared control module's, b67b90c); 1,821 on 2026-10-22
-  // for the eight CSS recipes (1,314 before field.css).
-  'components:recipes': 2304,
+  // 2,624: measured 2,594 on 2026-10-25 with timeline.css (+304); 2,290 with description-list.css and
+  // typography's gated text-wrap; 2,081 on 2026-10-23 with the field recipe's start and end adornments
+  // (the shared control module's, b67b90c); 1,821 on 2026-10-22 for the eight CSS recipes.
+  'components:recipes': 2624,
   'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
 };
 
@@ -277,6 +278,7 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
       'field',
       'avatar-group',
       'description-list',
+      'timeline',
     ]
       .map((name) => readFileSync(join(root, `packages/components/dist/css/${name}.css`), 'utf8'))
       .join('\n'),

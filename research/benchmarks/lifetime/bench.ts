@@ -38,6 +38,7 @@ import '@oddkin/components/define/slider';
 import '@oddkin/components/define/spinner';
 import '@oddkin/components/define/split-button';
 import '@oddkin/components/define/split-panel';
+import '@oddkin/components/define/status-marker';
 import '@oddkin/components/define/switch';
 import '@oddkin/components/define/tabs';
 import '@oddkin/components/define/textarea';
@@ -236,6 +237,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
         <odd-scroll-region label="Log" style="max-block-size: 3rem"><p>A</p><p>B</p><p>C</p><p>D</p></odd-scroll-region>
         <odd-container measure="fluid"><p>A</p></odd-container>
+        <odd-status-marker status="pending"></odd-status-marker><odd-status-marker>2</odd-status-marker>
         <odd-tree label="Files" value="b"></odd-tree>
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
         <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>

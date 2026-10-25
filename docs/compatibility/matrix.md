@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 160 stylesheets, 314 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 163 stylesheets, 315 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -134,6 +134,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/css/list.css` | yes | 33 |
 | `packages/components/dist/css/reset.css` | yes | 16 |
 | `packages/components/dist/css/table.css` | yes | 30 |
+| `packages/components/dist/css/timeline.css` | yes | 40 |
 | `packages/components/dist/css/typography.css` | yes | 11 |
 | `packages/components/dist/css/utilities.css` | yes | 18 |
 | `packages/components/dist/alert/alert.structural.styles.js (alertStructuralStyles)` | yes | 22 |
@@ -204,6 +205,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/split-button/split-button.styles.js (splitButtonStyles)` | yes | 2 |
 | `packages/components/dist/split-panel/split-panel.structural.styles.js (splitPanelStructuralStyles)` | yes | 36 |
 | `packages/components/dist/split-panel/split-panel.styles.js (splitPanelStyles)` | yes | 25 |
+| `packages/components/dist/status-marker/status-marker.structural.styles.js (statusMarkerStructuralStyles)` | yes | 23 |
+| `packages/components/dist/status-marker/status-marker.styles.js (statusMarkerStyles)` | yes | 10 |
 | `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 41 |
 | `packages/components/dist/styles/control-indicator.styles.js (controlIndicatorStyles)` | yes | 23 |
 | `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 32 |

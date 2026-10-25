@@ -82,6 +82,7 @@ tokens, slot content, a native element, or a look-alike.
 | `Tree` | 8 | `odd-tree` | Existing | APG tree with roving focus, typeahead, and `multiple`, on the navigation-row module that `odd-side-nav` groups use. |
 | `Table` | 6 | `table.odd-table` recipe (`css/table.css`) | Existing (CSS recipe) | A native `<table>`: header cells on the sunken surface, rows divided by rules, `aria-sort` headers, a row holding a checked checkbox in the selection colours. Not the data grid. |
 | `List` | 3 | `ul.odd-list` / `ol.odd-list` recipe (`css/list.css`) | Existing (CSS recipe) | Rows divided by rules; `.odd-list-meta` for secondary text; the `aria-current` row in the selection colours. |
+| `timeline` | 4 | `ol.odd-timeline` recipe (`css/timeline.css`) with `odd-status-marker` | Existing (CSS recipe and marker element) | Default, Pending, and Error are the event's marker `status` (complete, pending, failed; past events idle); Narrow is the same list wrapping in a narrow column. The marker element draws Figma's check, spinner, and warning icons from the shared modules. |
 | `descriptionList` | 4 | `dl.odd-description-list` recipe (`css/description-list.css`) | Existing (CSS recipe) | `<div><dt><dd></div>` rows divided by rules on one term column (subgrid); Stacked is the recipe at 36rem of its own width or less (a container query), Long content wraps, and Missing value is author text. |
 | `NavigationItem` | 4 | `odd-side-nav` entry (`entry` part) | Existing (anatomy) | Link, group, action, disabled, current. |
 | `SideNavigation` | 3 | `odd-side-nav` | Existing | References `NavigationItem` ×16; recipe + data model (`NavigationItemModel`). |
@@ -492,9 +493,9 @@ Status: **approved** (2026-10-24). 214 references; controller 13, deferred 12, e
 | splitAction | icon chevronDown × 2 | style | The chevronDown affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu). |
 | stepper | button/sm × 9 | slot | The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared. |
 | stepper | icon check × 6 | style | Original Oddkin glyph reused with token-bound size and current semantic text color. |
-| timeline | icon check × 2 | style | Original Oddkin glyph reused with token-bound size and current semantic text color. |
-| timeline | icon spinner × 1 | style | Original Oddkin glyph reused with token-bound size and current semantic text color. |
-| timeline | icon warning × 1 | style | Original Oddkin glyph reused with token-bound size and current semantic text color. |
+| timeline | icon check × 2 | style | odd-status-marker (status="complete") draws the check from the shared glyph module (component-contracts.md §2.7); the .odd-timeline recipe sizes and colours the marker. |
+| timeline | icon spinner × 1 | style | odd-status-marker (status="pending") draws the busy ring from the shared spinner module; the .odd-timeline recipe sizes and colours the marker. |
+| timeline | icon warning × 1 | style | odd-status-marker (status="failed") draws the warning from the shared glyph module (component-contracts.md §2.7); the .odd-timeline recipe sizes and colours the marker. |
 | toast | icon checkCircle × 1 | style | The checkCircle glyph marks a tone; tone glyphs come from the shared tone module with the tone colours. |
 | toast | icon close × 2 | style | The close/remove glyph is built in and comes from the shared glyph module. |
 | toast | icon warning × 1 | style | The warning glyph marks a tone; tone glyphs come from the shared tone module with the tone colours. |
@@ -530,7 +531,7 @@ Status: **approved** (2026-10-24). 214 references; controller 13, deferred 12, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (48) has no element dependency.
+Every other element (49) has no element dependency.
 
 #### Shared homes
 
