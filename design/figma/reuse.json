@@ -13,11 +13,11 @@
     "deferred": "Not classified (data grid, deferred by the owner)."
   },
   "counts": {
-    "style": 113,
+    "style": 112,
     "slot": 59,
     "deferred": 12,
     "controller": 13,
-    "native": 5,
+    "native": 6,
     "element": 12
   },
   "references": [
@@ -531,8 +531,8 @@
       "source": "Oddkin/Common/rating/Item",
       "sourceId": "555:2595",
       "count": 30,
-      "class": "style",
-      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
+      "class": "native",
+      "reason": "Each star is a native radio in odd-rating's one shadow tree (OddkinRadioControl, as odd-radio-group): the platform gives one Tab stop and arrow-key selection; the rating submits one value through @oddkin/core/controllers/form."
     },
     {
       "consumer": "Oddkin/Common/rating/Item",
@@ -541,7 +541,7 @@
       "sourceId": "395:609",
       "count": 5,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "The built-in starGlyph of the shared glyph module (from design/icons/general/star.svg), in the star's text colour and filled when on."
     },
     {
       "consumer": "Oddkin/Common/relativeTime",
@@ -2040,6 +2040,7 @@
       "reason": "Submit and skip are complete buttons (Figma: button/sm ×2)."
     },
     "odd-radio-group": { "dependencies": [] },
+    "odd-rating": { "dependencies": [] },
     "odd-response": {
       "dependencies": ["odd-citation"],
       "reason": "Inline citations are complete odd-citation widgets authors also place alone."
@@ -2138,7 +2139,8 @@
         "odd-radio-group",
         "odd-segmented-control",
         "odd-combobox",
-        "odd-slider"
+        "odd-slider",
+        "odd-rating"
       ],
       "note": "Review decision 2026-10-23: the shared control is canonical: color.border.strong, control.height.md (40 px), control.radius (8 px), and control.padding.inline.md (12 px). Both Figma model-select examples now match the existing implementation. Small controls remain an explicit size choice, not a separate AI default. The --odd-field-* overrides apply to the field recipe and form controls."
     },
@@ -2195,7 +2197,7 @@
       "id": "glyphs",
       "kind": "style",
       "home": "@oddkin/components/styles (glyphStyles and glyph templates)",
-      "decision": "Built-in affordance glyphs: chevrons, check, minus, close, search, more, arrows, external, eye, lock, upload, file, user.",
+      "decision": "Built-in affordance glyphs: chevrons, check, minus, close, search, more, arrows, external, eye, lock, upload, file, user, star.",
       "status": "existing (drawn by Oddkin; Figma's icon assets do not ship, component-contracts.md §2.7)",
       "code": [
         "odd-badge",
@@ -2213,7 +2215,8 @@
         "odd-menu",
         "odd-combobox",
         "odd-validation-summary",
-        "odd-command-palette"
+        "odd-command-palette",
+        "odd-rating"
       ],
       "figma": [
         "Built-in affordance glyphs are referenced from Icons page 359:2. The optional 1,723 original Oddkin artwork assets and their provenance live in design/icons; Figma nesting alone does not add runtime icon-element dependencies."
@@ -2312,7 +2315,8 @@
         "odd-radio-group",
         "odd-segmented-control",
         "odd-combobox",
-        "odd-slider"
+        "odd-slider",
+        "odd-rating"
       ],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]
@@ -2341,6 +2345,7 @@
         "odd-split-button",
         "odd-radio-group",
         "odd-segmented-control",
+        "odd-rating",
         "odd-combobox",
         "odd-command-palette"
       ]

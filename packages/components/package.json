@@ -302,6 +302,18 @@
       "types": "./dist/radio-group/radio-group.define.d.ts",
       "default": "./dist/radio-group/radio-group.define.js"
     },
+    "./rating": {
+      "types": "./dist/rating/index.d.ts",
+      "default": "./dist/rating/index.js"
+    },
+    "./rating/foundation": {
+      "types": "./dist/rating/foundation.d.ts",
+      "default": "./dist/rating/foundation.js"
+    },
+    "./define/rating": {
+      "types": "./dist/rating/rating.define.d.ts",
+      "default": "./dist/rating/rating.define.js"
+    },
     "./scroll-region": {
       "types": "./dist/scroll-region/index.d.ts",
       "default": "./dist/scroll-region/index.js"

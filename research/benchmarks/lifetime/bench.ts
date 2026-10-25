@@ -29,6 +29,7 @@ import '@oddkin/components/define/pagination';
 import '@oddkin/components/define/popover';
 import '@oddkin/components/define/progress';
 import '@oddkin/components/define/radio-group';
+import '@oddkin/components/define/rating';
 import '@oddkin/components/define/scroll-region';
 import '@oddkin/components/define/segmented-control';
 import '@oddkin/components/define/select';
@@ -231,6 +232,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-checkbox-group label="Topics" required><odd-checkbox name="topic" checked>Design</odd-checkbox><odd-checkbox name="topic">Code</odd-checkbox></odd-checkbox-group>
         <odd-switch name="alerts" checked>Alerts</odd-switch>
         <odd-slider label="Scale" name="scale" min="25" max="100" step="5" value="60"></odd-slider>
+        <odd-rating label="Score" name="score" value="3"></odd-rating>
         <odd-radio-group label="Visibility" name="visibility" required><option value="private" title="Invited members" selected>Private</option><option value="team">Team</option></odd-radio-group>
         <odd-segmented-control label="Size" name="size"><option value="sm">Small</option><option value="md" selected>Medium</option></odd-segmented-control>
         <odd-textarea label="Notes" maxlength="200" resize="auto"></odd-textarea>

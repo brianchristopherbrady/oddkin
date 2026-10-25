@@ -2939,3 +2939,25 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Ot
 - **Marker:** `status` takes ADR 0045's lifecycle values (`idle | pending | complete | failed`; "error" is reported and stays idle). It draws `checkGlyph`, `warningGlyph`, or `spinnerTemplate`; idle shows its default slot (a step number) or a dot. It is hidden from assistive technology through `ElementInternals.ariaHidden` (no host attribute). Alone it has Figma's Step status look (`control.height.sm`, `radius.full`, a `border.width.default` ring; action colours when complete, danger when failed); the recipe sizes it to `icon.size.lg` and colours it through `::part(base)`.
 - **Recipe:** events are `space.sm` from their marker; the connector (`color.border.default`, `border.width.default` wide) runs from `space.2xs` below each marker to the next one, and none follows the last event; titles take the UI role (danger when the event failed, through `:has()`), time and detail the small secondary role; long content wraps. In forced colours the connector is `CanvasText` and the markers keep a ring.
 - **Not verified:** screen-reader output (the markers should not be read; the list and titles should); Safari on macOS.
+
+## 2026-10-25 — odd-rating (M10, component-contracts.md §3.3; Figma `rating`, `rating/Item`)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1, HEAD 75adb7d. Other lanes in progress in the tree: Agent 2's `odd-file-input` and `odd-calendar`, Agent 3's `odd-picker` and shared collection internals, Agent 4's `odd-relative-time`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Behaviour | `npx vitest run --project browser packages/components/test/rating.browser.test.ts` (one engine at a time) | 14/14 Chromium; 13/13 Firefox and WebKit (forced colours runs in Chromium only): radiogroup and star names, keys and Tab compared with native radios, look, click, hover, disabled, read only, `max` and options, `strings` with French plural forms, forced colours (Highlight, CanvasText, GrayText), form value, `required`, read-only barred from validation, reset, ownership |
+| Figma parity | `figma-parity.forms.browser.test.ts` (rating, rating/Item) | 11/11 in Chromium, Firefox, WebKit |
+| Catalog-wide | examples, contract, styling-contract, multi-product, accessibility (axe, light and dark), description, keyboard | odd-rating passes in three engines; the failures seen were other lanes' work in progress (odd-picker's contract and `itemsAttribute` example; odd-calendar's parts and `requiredFalse` example) |
+| Node project | `npx vitest run --project node` | 1,172/1,172 before the other lanes' new elements landed in the tree; the rerun's 7 failures are odd-calendar, odd-picker, and odd-relative-time entries not yet added (theirs) |
+| Lifetime | `node research/benchmarks/lifetime/run.mjs --cycles 1000` | ownership returned in every scenario in Chromium, Firefox, WebKit; componentCycles rendered 1,000 each; Chromium retained 25 B/cycle (Agent 4's lifetime run overlapped) |
+| Mutation probes | `.tmp/mutate.mjs`, Chromium (keys also Firefox, WebKit) | 28 probes, 24 killed first; the survivors led to removals (below); GrayText and the click guard then killed |
+| Size | `node scripts/check-size.mjs` | `components:rating` 644 B gzip (budget 704); `components:shared` unchanged at 3,052 |
+| Compatibility | `npm run compat` | odd-rating's sheets pass (`cursor: default` replaced: not in Safari iOS 17.4); the remaining problems are odd-calendar's |
+
+**Findings:**
+- Arrow keys and Space check a radio through a cancelable `click` in Chromium, Firefox, and WebKit, so cancelling `click` alone keeps a read-only rating unchanged; a keydown guard survived every engine and was removed.
+- A form-associated element with a `readonly` attribute is barred from constraint validation by the platform (`willValidate` false), as a native read-only field: a validation override survived and was removed. Validity flags stay set while barred, as on native controls.
+- In forced colours the engine already forces an unchosen star's `currentColor` to CanvasText; that rule was redundant and removed.
+- Figma's Focus variant rings an unchosen star; native radios move focus and the choice together, so focus is on the chosen star (recorded difference).
+- Not verified: screen-reader output, Safari on macOS.

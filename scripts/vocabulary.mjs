@@ -42,11 +42,17 @@ export const ATTRIBUTES = {
   pressed: { type: 'boolean' },
   toggle: { type: 'boolean' },
   // Constraints as on <input>: strings, since date and time types use them. Numbers where the
-  // element's counterpart is numeric: <progress>, and odd-split-panel's percentages.
+  // element's counterpart is numeric: <progress>, odd-split-panel's percentages, and odd-rating's
+  // count of stars.
   min: { type: 'string', native: { 'odd-split-panel': 'number', 'odd-slider': 'number' } },
   max: {
     type: 'string',
-    native: { 'odd-progress': 'number', 'odd-split-panel': 'number', 'odd-slider': 'number' },
+    native: {
+      'odd-progress': 'number',
+      'odd-split-panel': 'number',
+      'odd-slider': 'number',
+      'odd-rating': 'number',
+    },
   },
   step: { type: 'string', native: { 'odd-slider': 'number' } },
   minlength: { type: 'number' },

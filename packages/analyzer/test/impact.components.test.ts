@@ -87,6 +87,7 @@ describe('change impact on @oddkin/components', () => {
         'example:odd-input/inForm',
         'example:odd-listbox/inForm',
         'example:odd-radio-group/inForm',
+        'example:odd-rating/inForm',
         'example:odd-select/inForm',
         'example:odd-slider/inForm',
         'example:odd-textarea/inForm',

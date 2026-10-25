@@ -74,6 +74,10 @@ const states = `
     <odd-slider label="Preview scale" name="scale" min="25" max="100" step="5" value="60" description="Applies to the preview only."></odd-slider>
     <odd-slider label="Print scale" value="90" error="Use 80 or less for print."></odd-slider>
     <odd-slider label="Locked scale" value="40" disabled></odd-slider>
+    <odd-rating label="Your rating" description="Choose one to five stars." name="score" value="3"></odd-rating>
+    <odd-rating label="Service" required error="Choose a rating before continuing."></odd-rating>
+    <odd-rating label="Locked rating" value="2" disabled></odd-rating>
+    <odd-rating label="Average rating" description="Rating from 24 responses." value="4" readonly></odd-rating>
     <odd-textarea label="Project description" name="about" placeholder="Describe this project…" maxlength="500"></odd-textarea>
     <odd-textarea label="Feedback" description="Tell us what to improve." name="feedback" required error="Feedback is required." maxlength="200"></odd-textarea>
     <odd-textarea label="Terms" name="terms-text" value="Read only." readonly resize="none"></odd-textarea>

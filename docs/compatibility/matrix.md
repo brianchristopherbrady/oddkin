@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 163 stylesheets, 315 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 165 stylesheets, 316 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -186,6 +186,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/progress/progress.styles.js (progressStyles)` | yes | 12 |
 | `packages/components/dist/radio-group/radio-group.structural.styles.js (radioGroupStructuralStyles)` | yes | 17 |
 | `packages/components/dist/radio-group/radio-group.styles.js (radioGroupStyles)` | yes | 10 |
+| `packages/components/dist/rating/rating.structural.styles.js (ratingStructuralStyles)` | yes | 29 |
+| `packages/components/dist/rating/rating.styles.js (ratingStyles)` | yes | 18 |
 | `packages/components/dist/scroll-region/scroll-region.structural.styles.js (scrollRegionStructuralStyles)` | yes | 17 |
 | `packages/components/dist/scroll-region/scroll-region.styles.js (scrollRegionStyles)` | yes | 1 |
 | `packages/components/dist/segmented-control/segmented-control.structural.styles.js (segmentedControlStructuralStyles)` | yes | 34 |

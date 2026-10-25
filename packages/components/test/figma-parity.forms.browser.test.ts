@@ -471,3 +471,76 @@ describe('Figma parity: slider', () => {
       expectNone(compare('Oddkin/Common/slider', { State: state }, targets));
     });
 });
+
+describe('Figma parity: rating', () => {
+  const states: Record<string, string> = {
+    Empty: ' description="Choose one to five stars."',
+    Selected: ' description="Choose one to five stars." value="3"',
+    Focus: ' description="Choose one to five stars." value="3"',
+    Invalid: ' required error="Choose a rating before continuing."',
+    Disabled: ' description="Choose one to five stars." value="3" disabled',
+    'Read only': ' description="Rating from 24 responses." value="3" readonly',
+  };
+  for (const [state, attributes] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(`<odd-rating label="Your rating"${attributes}></odd-rating>`);
+      await settle(el);
+      const root = el.shadowRoot!;
+      const star = root.querySelector<HTMLElement>('.star-box:checked, .star-box')!;
+      await interact(state, star);
+      await settle(el);
+      const value = el.getAttribute('value') ? '3 of 5' : 'Not rated';
+      const description = el.getAttribute('description');
+      const targets: Target[] = [
+        { layer: [], el: shadowPart(el, 'field'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Your rating'], el: shadowPart(el, 'label'), kind: 'text' },
+        {
+          layer: ['Stars and value'],
+          el: shadowPart(el, 'control'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        {
+          layer: ['Stars and value', 'Five rating targets'],
+          el: root.querySelector<HTMLElement>('.stars')!,
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        { layer: ['Stars and value', value], el: shadowPart(el, 'value'), kind: 'text' },
+      ];
+      if (description)
+        targets.push({ layer: [description], el: shadowPart(el, 'description'), kind: 'text' });
+      if (state === 'Invalid')
+        targets.push({
+          layer: ['Choose a rating before continuing.'],
+          el: shadowPart(el, 'error'),
+          kind: 'text',
+        });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/rating', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: rating/Item', () => {
+  // A rating with the first star chosen: star 1 is on, star 3 is off.
+  const states: Record<string, [string, number]> = {
+    Off: ['', 2],
+    On: ['', 0],
+    Focus: ['', 0],
+    'Disabled off': [' disabled', 2],
+    'Disabled on': [' disabled', 0],
+  };
+  for (const [state, [attributes, index]] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(`<odd-rating label="Your rating" value="1"${attributes}></odd-rating>`);
+      await settle(el);
+      const star = el.shadowRoot!.querySelectorAll<HTMLElement>('.star-box')[index]!;
+      await interact(state, star);
+      await settle(el);
+      const targets: Target[] = [{ layer: [], el: star, kind: 'frame' }];
+      if (state === 'Focus')
+        targets.push({ layer: ['Focus ring · 2px / 2px offset'], el: star, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/rating/Item', { State: state }, targets));
+    });
+});

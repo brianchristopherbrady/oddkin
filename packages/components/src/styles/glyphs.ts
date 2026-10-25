@@ -107,3 +107,7 @@ export const checkCircleGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria
   <circle cx="10" cy="10" r="7" />
   <path d="M7 10.25l2 2 4-4.5" />
 </svg>`;
+/** The rating star (design/icons/general/star.svg); filled with `fill: currentColor` when on. */
+export const starGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+  <path d="M10 2l2.5 5 5.5 1-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1z" />
+</svg>`;
