@@ -1,0 +1,668 @@
+{
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "sessionId": "eb0bc585-abda-4048-ac7e-830ecaaa57fe",
+  "exportedAt": "2026-10-24",
+  "scope": "Eleven common controls requested by the owner; the navigation/overlays bullet was truncated and remains pending clarification.",
+  "status": "Figma designs only; native date and number runtime implementations remain unchanged.",
+  "families": [
+    {
+      "id": "555:2531",
+      "name": "Oddkin/Common/calendar/Day",
+      "variants": [
+        { "id": "555:2515", "name": "State=Default", "w": 40, "h": 40 },
+        { "id": "555:2517", "name": "State=Adjacent month", "w": 40, "h": 40 },
+        { "id": "555:2519", "name": "State=Today", "w": 40, "h": 40 },
+        { "id": "555:2521", "name": "State=Selected", "w": 40, "h": 40 },
+        { "id": "555:2523", "name": "State=Focus", "w": 40, "h": 40 },
+        { "id": "555:2526", "name": "State=Disabled", "w": 40, "h": 40 },
+        { "id": "555:2528", "name": "State=Selected focus", "w": 40, "h": 40 }
+      ]
+    },
+    {
+      "id": "555:2550",
+      "name": "Oddkin/Common/oneTimeCode/Cell",
+      "variants": [
+        { "id": "555:2536", "name": "State=Empty", "w": 40, "h": 48 },
+        { "id": "555:2538", "name": "State=Filled", "w": 40, "h": 48 },
+        { "id": "555:2540", "name": "State=Focus", "w": 40, "h": 48 },
+        { "id": "555:2544", "name": "State=Invalid", "w": 40, "h": 48 },
+        { "id": "555:2546", "name": "State=Disabled", "w": 40, "h": 48 },
+        { "id": "555:2548", "name": "State=Complete", "w": 40, "h": 48 }
+      ]
+    },
+    {
+      "id": "555:2564",
+      "name": "Oddkin/Common/color/Swatch",
+      "variants": [
+        { "id": "555:2555", "name": "State=Default", "w": 32, "h": 32 },
+        { "id": "555:2556", "name": "State=Selected", "w": 32, "h": 32 },
+        { "id": "555:2561", "name": "State=Focus", "w": 32, "h": 32 },
+        { "id": "555:2563", "name": "State=Disabled", "w": 32, "h": 32 }
+      ]
+    },
+    {
+      "id": "555:2595",
+      "name": "Oddkin/Common/rating/Item",
+      "variants": [
+        { "id": "555:2569", "name": "State=Off", "w": 32, "h": 32 },
+        { "id": "555:2574", "name": "State=On", "w": 32, "h": 32 },
+        { "id": "555:2579", "name": "State=Focus", "w": 32, "h": 32 },
+        { "id": "555:2585", "name": "State=Disabled off", "w": 32, "h": 32 },
+        { "id": "555:2590", "name": "State=Disabled on", "w": 32, "h": 32 }
+      ]
+    },
+    {
+      "id": "555:2787",
+      "name": "Oddkin/Common/rating",
+      "variants": [
+        { "id": "555:2600", "name": "State=Empty", "w": 320, "h": 85 },
+        { "id": "555:2631", "name": "State=Selected", "w": 320, "h": 85 },
+        { "id": "555:2662", "name": "State=Focus", "w": 320, "h": 85 },
+        { "id": "555:2694", "name": "State=Invalid", "w": 320, "h": 85 },
+        { "id": "555:2725", "name": "State=Disabled", "w": 320, "h": 85 },
+        { "id": "555:2756", "name": "State=Read only", "w": 320, "h": 85 }
+      ]
+    },
+    {
+      "id": "159:1097",
+      "name": "Oddkin/Common/number",
+      "variants": [
+        { "id": "159:1069", "name": "State=Default", "w": 264, "h": 100 },
+        { "id": "159:1083", "name": "State=Focus", "w": 264, "h": 100 },
+        { "id": "159:1096", "name": "State=Disabled", "w": 264, "h": 100 },
+        { "id": "555:2798", "name": "State=Minimum", "w": 264, "h": 100 },
+        { "id": "555:2816", "name": "State=Maximum", "w": 264, "h": 100 },
+        { "id": "555:2834", "name": "State=Invalid", "w": 264, "h": 100 }
+      ]
+    },
+    {
+      "id": "555:2908",
+      "name": "Oddkin/Common/stat",
+      "variants": [
+        { "id": "555:2874", "name": "State=Neutral", "w": 320, "h": 148 },
+        { "id": "555:2879", "name": "State=Increase", "w": 320, "h": 148 },
+        { "id": "555:2889", "name": "State=Decrease", "w": 320, "h": 148 },
+        { "id": "555:2899", "name": "State=Loading", "w": 320, "h": 143 },
+        { "id": "555:2903", "name": "State=Unavailable", "w": 320, "h": 148 }
+      ]
+    },
+    {
+      "id": "555:2984",
+      "name": "Oddkin/Common/copyButton",
+      "variants": [
+        { "id": "555:2913", "name": "State=Default", "w": 200, "h": 32 },
+        { "id": "555:2930", "name": "State=Focus", "w": 200, "h": 32 },
+        { "id": "555:2944", "name": "State=Copied", "w": 200, "h": 58 },
+        { "id": "555:2957", "name": "State=Error", "w": 200, "h": 58 },
+        { "id": "555:2971", "name": "State=Disabled", "w": 200, "h": 32 }
+      ]
+    },
+    {
+      "id": "555:3030",
+      "name": "Oddkin/Common/relativeTime",
+      "variants": [
+        { "id": "555:2989", "name": "State=Recent", "w": 320, "h": 18 },
+        { "id": "555:2997", "name": "State=Past", "w": 320, "h": 18 },
+        { "id": "555:3005", "name": "State=Future", "w": 320, "h": 18 },
+        { "id": "555:3013", "name": "State=Absolute detail", "w": 320, "h": 44 },
+        { "id": "555:3022", "name": "State=Unavailable", "w": 320, "h": 18 }
+      ]
+    },
+    {
+      "id": "558:15676",
+      "name": "Oddkin/Common/calendar",
+      "variants": [
+        { "id": "558:15218", "name": "State=Default", "w": 336, "h": 421 },
+        { "id": "558:15373", "name": "State=Focus", "w": 336, "h": 421 },
+        { "id": "558:15525", "name": "State=Restricted dates", "w": 336, "h": 421 }
+      ]
+    },
+    {
+      "id": "558:16131",
+      "name": "Oddkin/Common/datePicker",
+      "variants": [
+        { "id": "558:15681", "name": "State=Empty", "w": 360, "h": 93 },
+        { "id": "558:15709", "name": "State=Selected", "w": 360, "h": 93 },
+        { "id": "558:15737", "name": "State=Open", "w": 360, "h": 515 },
+        { "id": "558:15905", "name": "State=Focus", "w": 360, "h": 515 },
+        { "id": "558:16075", "name": "State=Invalid", "w": 360, "h": 93 },
+        { "id": "558:16103", "name": "State=Disabled", "w": 360, "h": 93 }
+      ]
+    },
+    {
+      "id": "558:16598",
+      "name": "Oddkin/Common/colorPicker",
+      "variants": [
+        { "id": "558:16136", "name": "State=Closed", "w": 360, "h": 93 },
+        { "id": "558:16162", "name": "State=Open", "w": 360, "h": 569 },
+        { "id": "558:16297", "name": "State=Focus", "w": 360, "h": 569 },
+        { "id": "558:16422", "name": "State=Custom hex", "w": 360, "h": 569 },
+        { "id": "558:16546", "name": "State=Invalid", "w": 360, "h": 93 },
+        { "id": "558:16572", "name": "State=Disabled", "w": 360, "h": 93 }
+      ]
+    },
+    {
+      "id": "558:16773",
+      "name": "Oddkin/Common/oneTimeCode",
+      "variants": [
+        { "id": "558:16603", "name": "State=Empty", "w": 320, "h": 183 },
+        { "id": "558:16629", "name": "State=Entering", "w": 320, "h": 183 },
+        { "id": "558:16657", "name": "State=Complete", "w": 320, "h": 183 },
+        { "id": "558:16687", "name": "State=Invalid", "w": 320, "h": 183 },
+        { "id": "558:16713", "name": "State=Verifying", "w": 320, "h": 183 },
+        { "id": "558:16747", "name": "State=Disabled", "w": 320, "h": 183 }
+      ]
+    },
+    {
+      "id": "558:16987",
+      "name": "Oddkin/Common/stepper",
+      "variants": [
+        { "id": "558:16778", "name": "State=Start", "w": 560, "h": 206 },
+        { "id": "558:16821", "name": "State=In progress", "w": 560, "h": 206 },
+        { "id": "558:16863", "name": "State=Error", "w": 560, "h": 248 },
+        { "id": "558:16906", "name": "State=Complete", "w": 560, "h": 206 },
+        { "id": "558:16946", "name": "State=Narrow", "w": 280, "h": 246 }
+      ]
+    },
+    {
+      "id": "558:17114",
+      "name": "Oddkin/Common/timeline",
+      "variants": [
+        { "id": "558:16992", "name": "State=Default", "w": 360, "h": 271 },
+        { "id": "558:17022", "name": "State=Pending", "w": 360, "h": 271 },
+        { "id": "558:17052", "name": "State=Error", "w": 360, "h": 271 },
+        { "id": "558:17084", "name": "State=Narrow", "w": 280, "h": 271 }
+      ]
+    },
+    {
+      "id": "558:17183",
+      "name": "Oddkin/Common/descriptionList",
+      "variants": [
+        { "id": "558:17119", "name": "State=Horizontal", "w": 560, "h": 192 },
+        { "id": "558:17135", "name": "State=Stacked", "w": 280, "h": 300 },
+        { "id": "558:17151", "name": "State=Long content", "w": 560, "h": 216 },
+        { "id": "558:17167", "name": "State=Missing value", "w": 560, "h": 192 }
+      ]
+    }
+  ],
+  "newFamilies": 15,
+  "newDefinitions": 77,
+  "addedNumberStates": 3,
+  "preservedExistingVariantIds": true,
+  "reviewFrames": [
+    {
+      "id": "555:3035",
+      "name": "08 · Form controls · Rating & number",
+      "x": 0,
+      "y": 19000,
+      "w": 1440,
+      "h": 1076
+    },
+    {
+      "id": "555:3037",
+      "name": "09 · Display utilities",
+      "x": 1536,
+      "y": 19000,
+      "w": 1440,
+      "h": 1698
+    },
+    {
+      "id": "558:17188",
+      "name": "14 · Form controls · Calendar, color & code",
+      "x": 0,
+      "y": 24400,
+      "w": 1440,
+      "h": 4792
+    },
+    {
+      "id": "558:17190",
+      "name": "15 · Progress & structured display",
+      "x": 1536,
+      "y": 24400,
+      "w": 1440,
+      "h": 2852
+    }
+  ],
+  "reviewCards": [
+    { "id": "555:3043", "label": "Default", "source": "159:1069" },
+    { "id": "555:3063", "label": "Focus", "source": "159:1083" },
+    { "id": "555:3084", "label": "Disabled", "source": "159:1096" },
+    { "id": "555:3105", "label": "Minimum", "source": "555:2798" },
+    { "id": "555:3125", "label": "Maximum", "source": "555:2816" },
+    { "id": "555:3145", "label": "Invalid", "source": "555:2834" },
+    { "id": "555:3169", "label": "Empty", "source": "555:2600" },
+    { "id": "555:3202", "label": "Selected", "source": "555:2631" },
+    { "id": "555:3235", "label": "Focus", "source": "555:2662" },
+    { "id": "555:3270", "label": "Invalid", "source": "555:2694" },
+    { "id": "555:3303", "label": "Disabled", "source": "555:2725" },
+    { "id": "555:3336", "label": "Read only", "source": "555:2756" },
+    { "id": "555:3373", "label": "Neutral", "source": "555:2874" },
+    { "id": "555:3380", "label": "Increase", "source": "555:2879" },
+    { "id": "555:3392", "label": "Decrease", "source": "555:2889" },
+    { "id": "555:3405", "label": "Loading", "source": "555:2899" },
+    { "id": "555:3411", "label": "Unavailable", "source": "555:2903" },
+    { "id": "555:3422", "label": "Default", "source": "555:2913" },
+    { "id": "555:3433", "label": "Focus", "source": "555:2930" },
+    { "id": "555:3441", "label": "Copied", "source": "555:2944" },
+    { "id": "555:3453", "label": "Error", "source": "555:2957" },
+    { "id": "555:3465", "label": "Disabled", "source": "555:2971" },
+    { "id": "555:3476", "label": "Recent", "source": "555:2989" },
+    { "id": "555:3486", "label": "Past", "source": "555:2997" },
+    { "id": "555:3496", "label": "Future", "source": "555:3005" },
+    { "id": "555:3507", "label": "Absolute detail", "source": "555:3013" },
+    { "id": "555:3518", "label": "Unavailable", "source": "555:3022" },
+    { "id": "558:17196", "label": "Empty", "source": "558:15681" },
+    { "id": "558:17216", "label": "Selected", "source": "558:15709" },
+    { "id": "558:17236", "label": "Open", "source": "558:15737" },
+    { "id": "558:17395", "label": "Focus", "source": "558:15905" },
+    { "id": "558:17555", "label": "Invalid", "source": "558:16075" },
+    { "id": "558:17575", "label": "Disabled", "source": "558:16103" },
+    { "id": "558:17599", "label": "Closed", "source": "558:16136" },
+    { "id": "558:17616", "label": "Open", "source": "558:16162" },
+    { "id": "558:17678", "label": "Focus", "source": "558:16297" },
+    { "id": "558:17742", "label": "Custom hex", "source": "558:16422" },
+    { "id": "558:17804", "label": "Invalid", "source": "558:16546" },
+    { "id": "558:17821", "label": "Disabled", "source": "558:16572" },
+    { "id": "558:17842", "label": "Empty", "source": "558:16603" },
+    { "id": "558:17866", "label": "Entering", "source": "558:16629" },
+    { "id": "558:17892", "label": "Complete", "source": "558:16657" },
+    { "id": "558:17921", "label": "Invalid", "source": "558:16687" },
+    { "id": "558:17945", "label": "Verifying", "source": "558:16713" },
+    { "id": "558:17973", "label": "Disabled", "source": "558:16747" },
+    { "id": "558:18001", "label": "Start", "source": "558:16778" },
+    { "id": "558:18034", "label": "In progress", "source": "558:16821" },
+    { "id": "558:18071", "label": "Error", "source": "558:16863" },
+    { "id": "558:18108", "label": "Complete", "source": "558:16906" },
+    { "id": "558:18147", "label": "Narrow", "source": "558:16946" },
+    { "id": "558:18186", "label": "Default", "source": "558:16992" },
+    { "id": "558:18218", "label": "Pending", "source": "558:17022" },
+    { "id": "558:18250", "label": "Error", "source": "558:17052" },
+    { "id": "558:18285", "label": "Narrow", "source": "558:17084" },
+    { "id": "558:18321", "label": "Horizontal", "source": "558:17119" },
+    { "id": "558:18339", "label": "Stacked", "source": "558:17135" },
+    { "id": "558:18358", "label": "Long content", "source": "558:17151" },
+    { "id": "558:18376", "label": "Missing value", "source": "558:17167" },
+    { "id": "562:17377", "label": "Default", "source": "558:15218" },
+    { "id": "562:17514", "label": "Focus", "source": "558:15373" },
+    { "id": "562:17652", "label": "Restricted dates", "source": "558:15525" }
+  ],
+  "sourceDefinitions": ["555:2511", "555:2513", "558:15214", "558:15216"],
+  "checks": {
+    "geometryIssues": [],
+    "topLevelOverlaps": [],
+    "rotatedIcons": [{ "id": "555:2893", "rotation": 180, "inside": true }],
+    "reviewTextChecked": 617,
+    "reviewContrastExceptions": [
+      {
+        "nodeId": "I555:3086;159:1085",
+        "page": "review",
+        "family": "Disabled",
+        "text": "Seats",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#efedfc",
+        "ratio": 3.76,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I555:3086;159:1087",
+        "page": "review",
+        "family": "Disabled",
+        "text": "12",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I555:3305;555:2726",
+        "page": "review",
+        "family": "Disabled",
+        "text": "Your rating",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#efedfc",
+        "ratio": 3.76,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I555:3467;555:2972;169:2149",
+        "page": "review",
+        "family": "Disabled",
+        "text": "Copy",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I558:17577;558:16104",
+        "page": "review",
+        "family": "Disabled",
+        "text": "Publish date",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#efedfc",
+        "ratio": 3.76,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I558:17577;558:16106;558:16128",
+        "page": "review",
+        "family": "Disabled",
+        "text": "26 / 10 / 2026",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I562:17654;558:15575;555:2527",
+        "page": "review",
+        "family": "Restricted dates",
+        "text": "1",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#ffffff",
+        "ratio": 4.34,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I562:17654;558:15577;555:2527",
+        "page": "review",
+        "family": "Restricted dates",
+        "text": "2",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#ffffff",
+        "ratio": 4.34,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I562:17654;558:15579;555:2527",
+        "page": "review",
+        "family": "Restricted dates",
+        "text": "3",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#ffffff",
+        "ratio": 4.34,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I562:17654;558:15581;555:2527",
+        "page": "review",
+        "family": "Restricted dates",
+        "text": "4",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#ffffff",
+        "ratio": 4.34,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I558:17823;558:16573",
+        "page": "review",
+        "family": "Disabled",
+        "text": "Layer color",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#efedfc",
+        "ratio": 3.76,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I558:17823;558:16575;558:16593",
+        "page": "review",
+        "family": "Disabled",
+        "text": "#2563EB",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17947;558:16717;555:2547",
+        "page": "review",
+        "family": "Verifying",
+        "text": "4",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17947;558:16719;555:2547",
+        "page": "review",
+        "family": "Verifying",
+        "text": "9",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17947;558:16721;555:2547",
+        "page": "review",
+        "family": "Verifying",
+        "text": "2",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17947;558:16723;555:2547",
+        "page": "review",
+        "family": "Verifying",
+        "text": "8",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17947;558:16725;555:2547",
+        "page": "review",
+        "family": "Verifying",
+        "text": "1",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17947;558:16727;555:2547",
+        "page": "review",
+        "family": "Verifying",
+        "text": "6",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17947;558:16735;169:2153",
+        "page": "review",
+        "family": "Verifying",
+        "text": "Resend code",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I558:17975;558:16748",
+        "page": "review",
+        "family": "Disabled",
+        "text": "Verification code",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#efedfc",
+        "ratio": 3.76,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I558:17975;558:16751;555:2547",
+        "page": "review",
+        "family": "Disabled",
+        "text": "4",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17975;558:16753;555:2547",
+        "page": "review",
+        "family": "Disabled",
+        "text": "9",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17975;558:16755;555:2547",
+        "page": "review",
+        "family": "Disabled",
+        "text": "2",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17975;558:16757;555:2547",
+        "page": "review",
+        "family": "Disabled",
+        "text": "8",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17975;558:16759;555:2547",
+        "page": "review",
+        "family": "Disabled",
+        "text": "1",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17975;558:16761;555:2547",
+        "page": "review",
+        "family": "Disabled",
+        "text": "6",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I558:17975;558:16765;169:2153",
+        "page": "review",
+        "family": "Disabled",
+        "text": "Resend code",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I558:18003;558:16801;169:2149",
+        "page": "review",
+        "family": "Start",
+        "text": "Back",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "14px Medium"
+      }
+    ],
+    "darkTextChecked": 80,
+    "darkContrastFailures": [],
+    "sourceActiveContrastFailures": 0,
+    "sourceTextChecked": 2495,
+    "iconScalingIssues": 0,
+    "iconAlignmentCandidates": 0
+  },
+  "calendar": {
+    "month": "2026-10",
+    "weekStartsOn": "Monday",
+    "gridStart": "2026-09-28",
+    "gridEnd": "2026-11-08",
+    "cells": 42,
+    "today": "2026-10-24",
+    "selected": "2026-10-26",
+    "keyboardFocus": "2026-10-27",
+    "restrictedDates": ["2026-10-01", "2026-10-02", "2026-10-03", "2026-10-04"]
+  },
+  "tokens": {
+    "fieldHeight": "control/height/md",
+    "fieldBorder": "color/border/strong",
+    "fieldRadius": "control/radius",
+    "gap": "space/xs",
+    "focusWidth": "focus/width",
+    "focusOffset": "focus/offset",
+    "derivedFocusExtent": 4,
+    "derivedFocusRadius": 12,
+    "popover": "color/surface/raised + color/border/default + control/radius + Oddkin/Overlay",
+    "colorDataExceptions": "User-selected hex, RGB, gradients and swatches are data, not semantic theme roles. Blue #2563EB and custom pink #D4466C samples."
+  },
+  "limitations": [
+    "No runtime controls, interactions or accessibility semantics are implemented by this Figma design task.",
+    "Native dateTime examples remain alongside the proposed custom calendar picker.",
+    "Text contrast covers visible solid paints; gradient control handles are visually reviewed rather than included in the text calculation."
+  ]
+}

@@ -1,0 +1,623 @@
+{
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "sessionId": "62fc8aeb-a32b-403d-920e-255d92d5cb5d",
+  "exportedAt": "2026-10-24",
+  "reviewId": "544:13991",
+  "pickerId": "541:15460",
+  "variantCount": 24,
+  "cases": [
+    {
+      "id": "541:13162",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Empty",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:13165",
+      "popoverId": "541:13192",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:13272",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Selected",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:13275",
+      "popoverId": "541:13294",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:13374",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Open",
+      "width": 384,
+      "height": 447,
+      "fieldId": "541:13377",
+      "popoverId": "541:13396",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": 1
+    },
+    {
+      "id": "541:13476",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Focus",
+      "width": 384,
+      "height": 447,
+      "fieldId": "541:13479",
+      "popoverId": "541:13498",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": 1
+    },
+    {
+      "id": "541:13596",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Invalid",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:13599",
+      "popoverId": "541:13618",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:13698",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Disabled",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:13701",
+      "popoverId": "541:13720",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:13800",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Empty",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:13803",
+      "popoverId": "541:13822",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:13909",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Selected",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:13912",
+      "popoverId": "541:13952",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14039",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Open",
+      "width": 384,
+      "height": 447,
+      "fieldId": "541:14042",
+      "popoverId": "541:14082",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": 3
+    },
+    {
+      "id": "541:14169",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Focus",
+      "width": 384,
+      "height": 447,
+      "fieldId": "541:14172",
+      "popoverId": "541:14212",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": 3
+    },
+    {
+      "id": "541:14313",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Invalid",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:14316",
+      "popoverId": "541:14335",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14422",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Disabled",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:14425",
+      "popoverId": "541:14465",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14552",
+      "Content": "Listbox",
+      "Selection": "Single",
+      "State": "Empty",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:14555",
+      "popoverId": "541:14574",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14611",
+      "Content": "Listbox",
+      "Selection": "Single",
+      "State": "Selected",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:14614",
+      "popoverId": "541:14633",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14670",
+      "Content": "Listbox",
+      "Selection": "Single",
+      "State": "Open",
+      "width": 384,
+      "height": 303,
+      "fieldId": "541:14673",
+      "popoverId": "541:14692",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14729",
+      "Content": "Listbox",
+      "Selection": "Single",
+      "State": "Focus",
+      "width": 384,
+      "height": 303,
+      "fieldId": "541:14732",
+      "popoverId": "541:14751",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14789",
+      "Content": "Listbox",
+      "Selection": "Single",
+      "State": "Invalid",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:14792",
+      "popoverId": "541:14811",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14848",
+      "Content": "Listbox",
+      "Selection": "Single",
+      "State": "Disabled",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:14851",
+      "popoverId": "541:14870",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14907",
+      "Content": "Listbox",
+      "Selection": "Multiple",
+      "State": "Empty",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:14910",
+      "popoverId": "541:14929",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:14985",
+      "Content": "Listbox",
+      "Selection": "Multiple",
+      "State": "Selected",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:14988",
+      "popoverId": "541:15028",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:15084",
+      "Content": "Listbox",
+      "Selection": "Multiple",
+      "State": "Open",
+      "width": 384,
+      "height": 303,
+      "fieldId": "541:15087",
+      "popoverId": "541:15127",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:15183",
+      "Content": "Listbox",
+      "Selection": "Multiple",
+      "State": "Focus",
+      "width": 384,
+      "height": 303,
+      "fieldId": "541:15186",
+      "popoverId": "541:15226",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:15283",
+      "Content": "Listbox",
+      "Selection": "Multiple",
+      "State": "Invalid",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:15286",
+      "popoverId": "541:15305",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    },
+    {
+      "id": "541:15361",
+      "Content": "Listbox",
+      "Selection": "Multiple",
+      "State": "Disabled",
+      "width": 384,
+      "height": 93,
+      "fieldId": "541:15364",
+      "popoverId": "541:15404",
+      "fieldSourceId": "537:2503",
+      "popoverSourceId": "538:14886",
+      "selectedRows": null
+    }
+  ],
+  "issues": [],
+  "overlaps": [],
+  "reviewBounds": {
+    "x": 0,
+    "y": 19060,
+    "width": 1440,
+    "height": 4503
+  },
+  "sourceIds": {
+    "field": "537:2503",
+    "popover": "538:14886",
+    "treeSingle": "538:14890",
+    "treeMultiple": "538:14972",
+    "listbox": "234:5534"
+  },
+  "cards": [
+    {
+      "id": "544:14000",
+      "title": "Single · Open",
+      "instanceId": "544:14002",
+      "source": "541:13374",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Open"
+    },
+    {
+      "id": "544:14093",
+      "title": "Multiple · Open",
+      "instanceId": "544:14095",
+      "source": "541:14039",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Open"
+    },
+    {
+      "id": "544:14217",
+      "title": "Single · Listbox",
+      "instanceId": "544:14219",
+      "source": "541:14670",
+      "Content": "Listbox",
+      "Selection": "Single",
+      "State": "Open"
+    },
+    {
+      "id": "544:14263",
+      "title": "Multiple · Listbox",
+      "instanceId": "544:14265",
+      "source": "541:15084",
+      "Content": "Listbox",
+      "Selection": "Multiple",
+      "State": "Open"
+    },
+    {
+      "id": "544:14346",
+      "title": "Single · Empty",
+      "instanceId": "544:14348",
+      "source": "541:13162",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Empty"
+    },
+    {
+      "id": "544:14362",
+      "title": "Single · Selected",
+      "instanceId": "544:14364",
+      "source": "541:13272",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Selected"
+    },
+    {
+      "id": "544:14382",
+      "title": "Single · Disabled",
+      "instanceId": "544:14384",
+      "source": "541:13698",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Disabled"
+    },
+    {
+      "id": "544:14399",
+      "title": "Multiple · Empty",
+      "instanceId": "544:14401",
+      "source": "541:13800",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Empty"
+    },
+    {
+      "id": "544:14415",
+      "title": "Multiple · Selected",
+      "instanceId": "544:14417",
+      "source": "541:13909",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Selected"
+    },
+    {
+      "id": "544:14456",
+      "title": "Multiple · Disabled",
+      "instanceId": "544:14458",
+      "source": "541:14422",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Disabled"
+    },
+    {
+      "id": "544:14489",
+      "title": "Single · Keyboard focus",
+      "instanceId": "544:14491",
+      "source": "541:13476",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Focus"
+    },
+    {
+      "id": "544:14583",
+      "title": "Multiple · Keyboard focus",
+      "instanceId": "544:14585",
+      "source": "541:14169",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Focus"
+    },
+    {
+      "id": "544:14704",
+      "title": "Single · Invalid",
+      "instanceId": "544:14706",
+      "source": "541:13596",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Invalid"
+    },
+    {
+      "id": "544:14720",
+      "title": "Multiple · Invalid",
+      "instanceId": "544:14722",
+      "source": "541:14313",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Invalid"
+    },
+    {
+      "id": "544:14740",
+      "title": "Loading",
+      "instanceId": "544:14742",
+      "source": "541:13374",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Open"
+    },
+    {
+      "id": "544:14882",
+      "title": "No items available",
+      "instanceId": "544:14884",
+      "source": "541:13374",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Open"
+    },
+    {
+      "id": "544:14981",
+      "title": "Error & recovery",
+      "instanceId": "544:14983",
+      "source": "541:13374",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Open"
+    },
+    {
+      "id": "544:15096",
+      "title": "Multiple · Narrow",
+      "instanceId": "544:15098",
+      "source": "541:14039",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Open"
+    },
+    {
+      "id": "544:15215",
+      "title": "Single · Narrow focus",
+      "instanceId": "544:15217",
+      "source": "541:13476",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Focus"
+    },
+    {
+      "id": "544:15313",
+      "title": "Single · Dark",
+      "instanceId": "544:15315",
+      "source": "541:13374",
+      "Content": "Tree",
+      "Selection": "Single",
+      "State": "Open"
+    },
+    {
+      "id": "544:15405",
+      "title": "Multiple · Dark",
+      "instanceId": "544:15407",
+      "source": "541:14039",
+      "Content": "Tree",
+      "Selection": "Multiple",
+      "State": "Open"
+    }
+  ],
+  "reviewContrast": {
+    "checked": 193,
+    "failures": [
+      {
+        "nodeId": "I544:14384;541:13699",
+        "page": "356:62",
+        "family": "Single · Disabled",
+        "text": "Map layers",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#efedfc",
+        "ratio": 3.76,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I544:14384;541:13701;541:13719",
+        "page": "356:62",
+        "family": "Single · Disabled",
+        "text": "Transportation / Roads",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "16px Regular"
+      },
+      {
+        "nodeId": "I544:14458;541:14423",
+        "page": "356:62",
+        "family": "Multiple · Disabled",
+        "text": "Map layers",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#efedfc",
+        "ratio": 3.76,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I544:14458;541:14425;541:14464;257:901;159:585",
+        "page": "356:62",
+        "family": "Multiple · Disabled",
+        "text": "Roads",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I544:14458;541:14425;541:14464;257:908;159:585",
+        "page": "356:62",
+        "family": "Multiple · Disabled",
+        "text": "Rail",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "14px Medium"
+      },
+      {
+        "nodeId": "I544:14458;541:14425;541:14464;257:916",
+        "page": "356:62",
+        "family": "Multiple · Disabled",
+        "text": "+1",
+        "binding": "VariableID:158:32",
+        "fg": "#767985",
+        "bg": "#f0eff3",
+        "ratio": 3.79,
+        "need": 4.5,
+        "font": "14px Medium"
+      }
+    ]
+  },
+  "geometryDerivations": {
+    "focusExtension": {
+      "pixels": 4,
+      "formula": "focus.width + focus.offset",
+      "width": 2,
+      "offset": 2
+    },
+    "levelTwoIndent": {
+      "pixels": 32,
+      "formula": "2 * navigation.indent",
+      "indent": 16
+    }
+  },
+  "validation": {
+    "structural": "passed",
+    "visual": "passed: selection, flat content, focus/validation, data states, closed states, narrow, dark",
+    "newFrameOverlaps": 0
+  }
+}

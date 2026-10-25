@@ -1,0 +1,32 @@
+{
+  "pages": [
+    {
+      "id": "353:62",
+      "name": "01 · Foundations"
+    },
+    {
+      "id": "158:22",
+      "name": "02 · Primitives"
+    },
+    {
+      "id": "356:62",
+      "name": "03 · Composed components"
+    },
+    {
+      "id": "0:1",
+      "name": "04 · AI components"
+    },
+    {
+      "id": "359:2",
+      "name": "05 · Icons"
+    }
+  ],
+  "families": 331,
+  "components": 661,
+  "preservedFamilies": 203,
+  "preservedComponents": 533,
+  "nestedInstanceEdges": 169,
+  "newIcons": 128,
+  "missingFamilies": [],
+  "missingVariants": []
+}

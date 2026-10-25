@@ -1,4 +1,5 @@
-// Read-only Figma Plugin API check behind the text-contrast findings in design/figma/reuse.json (`figmaIssues`).
+// Read-only Figma Plugin API check behind the text-contrast findings in component-catalog.md §7.
+// design/figma/text-contrast.json records the reviewed findings; disabled controls are reported, not failed.
 // Run through the Figma MCP `use_figma` tool (drop `export`, call it, return the result). For every visible text
 // layer in every component on the given pages, it composites the solid fills painted below the text's centre
 // (depth-first paint order, ancestors and earlier siblings) and reports WCAG 2.2 contrast below 4.5:1 (3:1 for
@@ -79,10 +80,12 @@ export async function checkTextContrast(figma, pageIds) {
         checked++;
         if (r < need)
           failures.push({
+            nodeId: text.id,
             page: pageId,
             family,
             variant: component.parent?.type === 'COMPONENT_SET' ? component.name : undefined,
             text: text.characters.slice(0, 40),
+            binding: top.boundVariables?.color?.id,
             fg: hex(color),
             bg: hex(bg),
             ratio: Math.round(r * 100) / 100,

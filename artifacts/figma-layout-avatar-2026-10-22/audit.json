@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-22",
+  "session": "dea6c8f6-08d3-4ba0-82b4-7e208345aae8",
+  "scope": [
+    "Nested and page-level layout audit",
+    "Avatar appearance",
+    "Grid-cell vertical alignment"
+  ],
+  "audit": {
+    "pages": 5,
+    "topLevel": [
+      {
+        "page": "158:22",
+        "overlaps": [],
+        "panels": 13,
+        "components": 322
+      },
+      {
+        "page": "356:62",
+        "overlaps": [],
+        "panels": 16,
+        "components": 153
+      }
+    ],
+    "nested": [
+      {
+        "page": "353:62",
+        "overlaps": 0,
+        "overflow": 0
+      },
+      {
+        "page": "0:1",
+        "overlaps": 0,
+        "overflow": 0
+      },
+      {
+        "page": "359:2",
+        "overlaps": 0,
+        "overflow": 0
+      },
+      {
+        "page": "158:22",
+        "overlaps": 0,
+        "overflow": 0
+      },
+      {
+        "page": "356:62",
+        "overlaps": 0,
+        "overflow": 0
+      }
+    ]
+  },
+  "changes": {
+    "rebuiltReviewPanels": 6,
+    "avatarVariantSet": "374:1576",
+    "avatarReview": "374:1581",
+    "avatarVariants": 24,
+    "backgrounds": ["Neutral", "Brand", "Success", "Warning", "Danger", "Custom"],
+    "shapeRadii": [0, 4, 8, "full"],
+    "additionalRadiusExample": 12,
+    "sizes": [32, 40, 48],
+    "customHexExamples": ["#0F766E", "#7C3AED", "#9F1239"],
+    "customHexMechanism": "Nested Avatar Fill override; native Figma has no color-typed component property",
+    "centeredCellStates": ["Default", "Selected", "Focus", "Editing"],
+    "invalidCell": "Content-led height with top-aligned value and error"
+  },
+  "validation": {
+    "preservedComponents": 661,
+    "totalComponents": 685,
+    "families": 332,
+    "reuseEdges": 170,
+    "avatarContrastChecks": 48,
+    "avatarMinimumContrast": 4.98,
+    "parityReuseTests": 11,
+    "visualReview": "Passed for repaired surfaces, picker rows, collection rows, spinner, cell states and final avatars",
+    "format": "Passed"
+  },
+  "status": "complete"
+}

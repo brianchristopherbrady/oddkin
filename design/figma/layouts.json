@@ -1,0 +1,445 @@
+{
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "page": "158:22",
+  "section": "457:2078",
+  "review": "457:2082",
+  "definitions": "457:2083",
+  "updatedAt": "2026-10-23",
+  "widths": [320, 640, 960],
+  "tokens": {
+    "gap": 16,
+    "inset": 24,
+    "itemMin": 256,
+    "sidebarWidth": 256,
+    "mainMin": 320
+  },
+  "recipeLocalConditions": {
+    "medium": "layout-demo (min-inline-size: 36rem)",
+    "wide": "layout-demo (min-inline-size: 52rem)"
+  },
+  "families": [
+    {
+      "id": "460:2215",
+      "name": "Oddkin/Layout/AspectRatio",
+      "variants": [
+        {
+          "id": "460:2203",
+          "name": "Ratio=16:9"
+        },
+        {
+          "id": "460:2211",
+          "name": "Ratio=1:1"
+        },
+        {
+          "id": "460:2207",
+          "name": "Ratio=4:3"
+        }
+      ]
+    },
+    {
+      "id": "460:2161",
+      "name": "Oddkin/Layout/AutoGrid",
+      "variants": [
+        {
+          "id": "460:2161",
+          "name": "Oddkin/Layout/AutoGrid"
+        }
+      ]
+    },
+    {
+      "id": "459:2112",
+      "name": "Oddkin/Layout/Box",
+      "variants": [
+        {
+          "id": "459:2100",
+          "name": "Inset=Default"
+        },
+        {
+          "id": "459:2104",
+          "name": "Inset=None"
+        },
+        {
+          "id": "459:2108",
+          "name": "Inset=Roomy"
+        }
+      ]
+    },
+    {
+      "id": "460:2196",
+      "name": "Oddkin/Layout/Center",
+      "variants": [
+        {
+          "id": "460:2196",
+          "name": "Oddkin/Layout/Center"
+        }
+      ]
+    },
+    {
+      "id": "460:2144",
+      "name": "Oddkin/Layout/Cluster",
+      "variants": [
+        {
+          "id": "460:2144",
+          "name": "Oddkin/Layout/Cluster"
+        }
+      ]
+    },
+    {
+      "id": "460:2092",
+      "name": "Oddkin/Layout/Container",
+      "variants": [
+        {
+          "id": "460:2088",
+          "name": "Measure=Constrained"
+        },
+        {
+          "id": "460:2084",
+          "name": "Measure=Fluid"
+        }
+      ]
+    },
+    {
+      "id": "460:2317",
+      "name": "Oddkin/Layout/Grid",
+      "variants": [
+        {
+          "id": "460:2241",
+          "name": "Columns=1"
+        },
+        {
+          "id": "460:2260",
+          "name": "Columns=2"
+        },
+        {
+          "id": "460:2279",
+          "name": "Columns=3"
+        },
+        {
+          "id": "460:2298",
+          "name": "Columns=4"
+        }
+      ]
+    },
+    {
+      "id": "460:2140",
+      "name": "Oddkin/Layout/Row",
+      "variants": [
+        {
+          "id": "460:2132",
+          "name": "Justify=Between"
+        },
+        {
+          "id": "460:2124",
+          "name": "Justify=Start"
+        }
+      ]
+    },
+    {
+      "id": "460:2219",
+      "name": "Oddkin/Layout/ScrollRegion",
+      "variants": [
+        {
+          "id": "460:2219",
+          "name": "Oddkin/Layout/ScrollRegion"
+        }
+      ]
+    },
+    {
+      "id": "459:2095",
+      "name": "Oddkin/Layout/SpecimenItem",
+      "variants": [
+        {
+          "id": "459:2095",
+          "name": "Oddkin/Layout/SpecimenItem"
+        }
+      ]
+    },
+    {
+      "id": "460:2192",
+      "name": "Oddkin/Layout/Split",
+      "variants": [
+        {
+          "id": "460:2178",
+          "name": "Arrangement=Side by side"
+        },
+        {
+          "id": "460:2185",
+          "name": "Arrangement=Stacked"
+        }
+      ]
+    },
+    {
+      "id": "460:2120",
+      "name": "Oddkin/Layout/Stack",
+      "variants": [
+        {
+          "id": "460:2096",
+          "name": "Gap=Default"
+        },
+        {
+          "id": "460:2112",
+          "name": "Gap=Loose"
+        },
+        {
+          "id": "460:2104",
+          "name": "Gap=Tight"
+        }
+      ]
+    }
+  ],
+  "panels": [
+    {
+      "id": "461:2154",
+      "name": "Review · 01 · Box / inset",
+      "examples": [
+        {
+          "id": "461:2162",
+          "width": 320,
+          "height": 112
+        },
+        {
+          "id": "461:2170",
+          "width": 640,
+          "height": 112
+        },
+        {
+          "id": "461:2178",
+          "width": 960,
+          "height": 112
+        }
+      ]
+    },
+    {
+      "id": "461:2184",
+      "name": "Review · 02 · Container / content measure",
+      "examples": [
+        {
+          "id": "461:2192",
+          "width": 320,
+          "height": 64
+        },
+        {
+          "id": "461:2200",
+          "width": 640,
+          "height": 64
+        },
+        {
+          "id": "461:2208",
+          "width": 960,
+          "height": 64
+        }
+      ]
+    },
+    {
+      "id": "461:2214",
+      "name": "Review · 03 · Stack",
+      "examples": [
+        {
+          "id": "461:2222",
+          "width": 320,
+          "height": 224
+        },
+        {
+          "id": "461:2234",
+          "width": 640,
+          "height": 224
+        },
+        {
+          "id": "461:2246",
+          "width": 960,
+          "height": 224
+        }
+      ]
+    },
+    {
+      "id": "461:2256",
+      "name": "Review · 04 · Row",
+      "examples": [
+        {
+          "id": "461:2264",
+          "width": 320,
+          "height": 64
+        },
+        {
+          "id": "461:2276",
+          "width": 640,
+          "height": 64
+        },
+        {
+          "id": "461:2288",
+          "width": 960,
+          "height": 64
+        }
+      ]
+    },
+    {
+      "id": "461:2298",
+      "name": "Review · 05 · Cluster / wrap",
+      "examples": [
+        {
+          "id": "461:2306",
+          "width": 320,
+          "height": 144
+        },
+        {
+          "id": "461:2324",
+          "width": 640,
+          "height": 144
+        },
+        {
+          "id": "461:2342",
+          "width": 960,
+          "height": 64
+        }
+      ]
+    },
+    {
+      "id": "461:2358",
+      "name": "Review · 06 · Grid / fixed columns",
+      "examples": [
+        {
+          "id": "461:2366",
+          "width": 320,
+          "height": 224
+        },
+        {
+          "id": "461:2389",
+          "width": 640,
+          "height": 224
+        },
+        {
+          "id": "461:2412",
+          "width": 960,
+          "height": 224
+        }
+      ]
+    },
+    {
+      "id": "461:2433",
+      "name": "Review · 07 · AutoGrid / minimum item size",
+      "examples": [
+        {
+          "id": "461:2441",
+          "width": 320,
+          "height": 464
+        },
+        {
+          "id": "461:2459",
+          "width": 640,
+          "height": 224
+        },
+        {
+          "id": "461:2477",
+          "width": 960,
+          "height": 144
+        }
+      ]
+    },
+    {
+      "id": "461:2493",
+      "name": "Review · 08 · Split / sidebar and main",
+      "examples": [
+        {
+          "id": "461:2501",
+          "width": 320,
+          "height": 144
+        },
+        {
+          "id": "461:2512",
+          "width": 640,
+          "height": 64
+        },
+        {
+          "id": "461:2523",
+          "width": 960,
+          "height": 64
+        }
+      ]
+    },
+    {
+      "id": "461:2532",
+      "name": "Review · 09 · Center",
+      "examples": [
+        {
+          "id": "461:2540",
+          "width": 320,
+          "height": 192
+        },
+        {
+          "id": "461:2548",
+          "width": 640,
+          "height": 192
+        },
+        {
+          "id": "461:2556",
+          "width": 960,
+          "height": 192
+        }
+      ]
+    },
+    {
+      "id": "461:2562",
+      "name": "Review · 10 · Aspect ratio",
+      "examples": [
+        {
+          "id": "461:2570",
+          "width": 320,
+          "height": 180
+        },
+        {
+          "id": "461:2578",
+          "width": 640,
+          "height": 360
+        },
+        {
+          "id": "461:2586",
+          "width": 960,
+          "height": 540
+        }
+      ]
+    },
+    {
+      "id": "461:2592",
+      "name": "Review · 11 · Scroll region",
+      "examples": [
+        {
+          "id": "461:2600",
+          "width": 320,
+          "height": 192
+        },
+        {
+          "id": "461:2618",
+          "width": 640,
+          "height": 192
+        },
+        {
+          "id": "461:2636",
+          "width": 960,
+          "height": 192
+        }
+      ]
+    },
+    {
+      "id": "461:2652",
+      "name": "Review · 12 · Container query / same cards",
+      "examples": [
+        {
+          "id": "461:2660",
+          "width": 320,
+          "height": 464
+        },
+        {
+          "id": "461:2683",
+          "width": 640,
+          "height": 224
+        },
+        {
+          "id": "461:2706",
+          "width": 960,
+          "height": 144
+        }
+      ]
+    }
+  ],
+  "evidence": "../../artifacts/figma-layout-2026-10-23/audit.json"
+}

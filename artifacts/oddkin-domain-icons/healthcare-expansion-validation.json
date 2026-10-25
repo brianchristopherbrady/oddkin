@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-22",
+  "source": "healthcare-only-icons.json",
+  "referenceEntries": 746,
+  "newOriginalAssets": 570,
+  "reusedExistingAssets": 37,
+  "healthcareAssets": 635,
+  "healthcareCategories": 18,
+  "canonicalAssets": 1723,
+  "allReferenceEntries": 3916,
+  "domains": {
+    "general": 913,
+    "gis": 175,
+    "healthcare": 635
+  },
+  "retainedInventories": [
+    {
+      "source": "gis-icons.json",
+      "path": "design/icons/inventories/gis.json",
+      "entries": 3170
+    },
+    {
+      "source": "healthcare-only-icons.json",
+      "path": "design/icons/inventories/healthcare.json",
+      "entries": 746
+    }
+  ],
+  "retainedInventoryNote": "The root upload files were unavailable at final validation. Portable copies preserve every verified source identity and the metadata needed by the original-artwork renderer; regenerating from these copies left all 1723 catalog entries unchanged.",
+  "figma": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "session": "ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e",
+    "page": "359:2",
+    "root": "359:3",
+    "healthcareCatalog": {
+      "id": "361:12379",
+      "width": 4800,
+      "height": 5874
+    },
+    "components": 1723,
+    "preservedPriorIconIds": 1153,
+    "singleTopLevelFrame": true,
+    "overlaps": [],
+    "overflow": [],
+    "clippedArtwork": [],
+    "unboundStrokes": [],
+    "opaqueSvgContainers": 0,
+    "badCanvasSizes": []
+  },
+  "snapshot": {
+    "families": 1893,
+    "definitions": 2246,
+    "healthcareComponents": 635,
+    "preservedHealthcare": 65,
+    "preservedDefinitions": 1676,
+    "reuseEdges": 170,
+    "newIcons": 570,
+    "totalIcons": 1723,
+    "parts": [
+      {
+        "index": 0,
+        "families": 80,
+        "length": 121601,
+        "hash": 2324528344
+      },
+      {
+        "index": 1,
+        "families": 80,
+        "length": 115057,
+        "hash": 1358191517
+      },
+      {
+        "index": 2,
+        "families": 80,
+        "length": 121860,
+        "hash": 980750747
+      },
+      {
+        "index": 3,
+        "families": 80,
+        "length": 120384,
+        "hash": 1607571712
+      },
+      {
+        "index": 4,
+        "families": 80,
+        "length": 117442,
+        "hash": 3404770454
+      },
+      {
+        "index": 5,
+        "families": 80,
+        "length": 116074,
+        "hash": 1935187647
+      },
+      {
+        "index": 6,
+        "families": 80,
+        "length": 146613,
+        "hash": 2107521888
+      },
+      {
+        "index": 7,
+        "families": 75,
+        "length": 101510,
+        "hash": 862445764
+      }
+    ]
+  },
+  "tests": {
+    "files": 3,
+    "passed": 14,
+    "failed": 0,
+    "command": "node node_modules/vitest/vitest.mjs run --project node packages/tokens/test/figma-parity.test.ts packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts"
+  },
+  "observedChecks": [
+    "All 746 healthcare source IDs and all 3916 combined reference IDs map exactly once.",
+    "All 1723 SVGs pass valid geometry, 20 px canvas, uniform 1.5 px physical strokes, currentColor, clipping and dependency checks.",
+    "All 1153 preceding artwork bodies and Figma component IDs are preserved.",
+    "All 635 Healthcare icons are in one labeled catalog; no opaque containers, overlaps, clipped vectors, overflowing labels, unbound strokes or incorrect canvas sizes.",
+    "Full artwork contact sheets, refinements and final Figma catalog screenshots were visually inspected.",
+    "All 1676 preceding component definitions and 170 reuse edges are preserved in the refreshed snapshot.",
+    "Portable-inventory regeneration produces exactly the same 1723 catalog entries.",
+    "14 targeted token parity, reuse and icon regression tests pass."
+  ],
+  "interpretation": "Original Oddkin artwork follows reference concepts and source identities. Filled/outlined references share the outline style. Functional application and standard badges are original, not official logos; rapid-test marks indicate semantic states rather than manufacturer-specific band positions."
+}

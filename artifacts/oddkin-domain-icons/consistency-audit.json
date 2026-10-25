@@ -1,0 +1,602 @@
+{
+  "date": "2026-10-22",
+  "session": "c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a",
+  "scope": "Audit and reconcile the existing full icon library, semantic classifications, Figma organization and schema-valid repository catalogs.",
+  "icons": 1723,
+  "domains": { "general": 949, "gis": 156, "healthcare": 618 },
+  "categories": 43,
+  "reclassified": {
+    "total": 68,
+    "toGeneral": 52,
+    "toGIS": 16,
+    "changes": [
+      {
+        "name": "wheelchair",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Accessibility & support",
+        "id": "361:13014"
+      },
+      {
+        "name": "biohazard",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Controls, objects & actions",
+        "id": "361:13140"
+      },
+      {
+        "name": "heart",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Controls, objects & actions",
+        "id": "361:12594"
+      },
+      {
+        "name": "sanitizer",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Controls, objects & actions",
+        "id": "416:1483"
+      },
+      {
+        "name": "sanitizer-spray",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Controls, objects & actions",
+        "id": "416:1494"
+      },
+      {
+        "name": "grid-snap-to-pixel",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1797"
+      },
+      {
+        "name": "layers-check",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1804"
+      },
+      {
+        "name": "layers-cube",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1813"
+      },
+      {
+        "name": "layers-edit",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1825"
+      },
+      {
+        "name": "layers-filter",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1834"
+      },
+      {
+        "name": "layers-gear",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1843"
+      },
+      {
+        "name": "layers-image",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1852"
+      },
+      {
+        "name": "layers-minus",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1864"
+      },
+      {
+        "name": "layers-multiple",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1873"
+      },
+      {
+        "name": "layers-network",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1883"
+      },
+      {
+        "name": "layers-off",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1899"
+      },
+      {
+        "name": "layers-plus",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1907"
+      },
+      {
+        "name": "layers-text-csv",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1916"
+      },
+      {
+        "name": "layers-video",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1968"
+      },
+      {
+        "name": "layers-video-plus",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1979"
+      },
+      {
+        "name": "layers-x",
+        "from": "gis",
+        "to": "general",
+        "category": "Data & layout",
+        "id": "397:1992"
+      },
+      {
+        "name": "appointment",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Date & time",
+        "id": "361:12552"
+      },
+      {
+        "name": "geotag-photo",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "361:764"
+      },
+      {
+        "name": "location-history",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "361:812"
+      },
+      {
+        "name": "map",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "361:14"
+      },
+      {
+        "name": "map-export",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "361:788"
+      },
+      {
+        "name": "map-information",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "397:2022"
+      },
+      {
+        "name": "map-off",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "397:2034"
+      },
+      {
+        "name": "map-print",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "361:776"
+      },
+      {
+        "name": "map-search",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "397:1457"
+      },
+      {
+        "name": "map-up",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "397:2042"
+      },
+      {
+        "name": "north-arrow",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "361:62"
+      },
+      {
+        "name": "offline-map",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "361:800"
+      },
+      {
+        "name": "route",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "361:728"
+      },
+      {
+        "name": "waypoint",
+        "from": "gis",
+        "to": "general",
+        "category": "Navigation & location",
+        "id": "361:740"
+      },
+      {
+        "name": "dna",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "361:12948"
+      },
+      {
+        "name": "dna-helix-alt",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "416:647"
+      },
+      {
+        "name": "dna-helix-alt-off",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "416:654"
+      },
+      {
+        "name": "dna-off",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "416:662"
+      },
+      {
+        "name": "lab-flask",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "361:12912"
+      },
+      {
+        "name": "magnet",
+        "from": "gis",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "361:662"
+      },
+      {
+        "name": "microscope",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "361:12924"
+      },
+      {
+        "name": "mortar",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "416:1400"
+      },
+      {
+        "name": "petri-dish",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "361:12936"
+      },
+      {
+        "name": "test-tube",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "361:12900"
+      },
+      {
+        "name": "thermometer",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "361:12630"
+      },
+      {
+        "name": "weight-scale",
+        "from": "healthcare",
+        "to": "general",
+        "category": "Science & measurement",
+        "id": "361:12666"
+      },
+      {
+        "name": "arc-segment",
+        "from": "gis",
+        "to": "general",
+        "category": "Symbols & shapes",
+        "id": "397:1377"
+      },
+      {
+        "name": "centroid",
+        "from": "gis",
+        "to": "general",
+        "category": "Symbols & shapes",
+        "id": "361:200"
+      },
+      {
+        "name": "curve",
+        "from": "gis",
+        "to": "general",
+        "category": "Symbols & shapes",
+        "id": "397:1399"
+      },
+      {
+        "name": "midpoint",
+        "from": "gis",
+        "to": "general",
+        "category": "Symbols & shapes",
+        "id": "397:1466"
+      },
+      {
+        "name": "radial-lines",
+        "from": "gis",
+        "to": "general",
+        "category": "Symbols & shapes",
+        "id": "397:1605"
+      },
+      {
+        "name": "camera-sensor-map",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "394:548"
+      },
+      {
+        "name": "database-map",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "395:16455"
+      },
+      {
+        "name": "database-point",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "395:16482"
+      },
+      {
+        "name": "database-polygon",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "395:16492"
+      },
+      {
+        "name": "database-polyline",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "395:16502"
+      },
+      {
+        "name": "database-raster-grid",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "395:16512"
+      },
+      {
+        "name": "panel-map",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "395:17077"
+      },
+      {
+        "name": "point-plus",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "394:2327"
+      },
+      {
+        "name": "polygon-area",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "394:2336"
+      },
+      {
+        "name": "polygon-check",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "394:2343"
+      },
+      {
+        "name": "polygon-off",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "394:2366"
+      },
+      {
+        "name": "polygon-plus",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "394:2374"
+      },
+      {
+        "name": "server-map",
+        "from": "general",
+        "to": "gis",
+        "category": "Layers & data",
+        "id": "395:17164"
+      },
+      {
+        "name": "clipboard-blood-drop",
+        "from": "general",
+        "to": "gis",
+        "category": "Utilities & infrastructure",
+        "id": "397:1690"
+      },
+      {
+        "name": "map-pin-blood-drop",
+        "from": "general",
+        "to": "gis",
+        "category": "Utilities & infrastructure",
+        "id": "396:1222"
+      },
+      {
+        "name": "polygon-digger",
+        "from": "general",
+        "to": "gis",
+        "category": "Utilities & infrastructure",
+        "id": "394:2352"
+      }
+    ]
+  },
+  "figma": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "page": "359:2",
+    "catalogs": { "general": "361:13200", "gis": "361:3", "healthcare": "361:12379" },
+    "audit": {
+      "components": 1723,
+      "uniqueNames": 1723,
+      "vectorCount": 5809,
+      "weights": { "1.500": 5809 },
+      "issues": {
+        "canvas": [],
+        "stroke": [],
+        "alignment": [],
+        "clipping": [],
+        "opaque": [],
+        "binding": [],
+        "caps": [],
+        "joins": [],
+        "overlap": [],
+        "labelOverflow": [],
+        "category": []
+      },
+      "categories": [
+        { "domain": "general", "category": "Accessibility & support", "count": 2 },
+        { "domain": "general", "category": "Controls, objects & actions", "count": 228 },
+        { "domain": "general", "category": "Core controls", "count": 34 },
+        { "domain": "general", "category": "Data & layout", "count": 143 },
+        { "domain": "general", "category": "Date & time", "count": 15 },
+        { "domain": "general", "category": "Files & documents", "count": 64 },
+        { "domain": "general", "category": "Media & devices", "count": 39 },
+        { "domain": "general", "category": "Nature & weather", "count": 41 },
+        { "domain": "general", "category": "Navigation & location", "count": 147 },
+        { "domain": "general", "category": "People & communication", "count": 30 },
+        { "domain": "general", "category": "Recreation & objects", "count": 13 },
+        { "domain": "general", "category": "Science & measurement", "count": 15 },
+        { "domain": "general", "category": "Symbols & shapes", "count": 59 },
+        { "domain": "general", "category": "Transport & places", "count": 55 },
+        { "domain": "general", "category": "Typography & formatting", "count": 64 },
+        { "domain": "gis", "category": "Editing & quality", "count": 7 },
+        { "domain": "gis", "category": "Field operations", "count": 1 },
+        { "domain": "gis", "category": "Geometry & editing", "count": 28 },
+        { "domain": "gis", "category": "Layers & data", "count": 17 },
+        { "domain": "gis", "category": "Mapping, survey & analysis", "count": 16 },
+        { "domain": "gis", "category": "Navigation", "count": 2 },
+        { "domain": "gis", "category": "Spatial analysis", "count": 8 },
+        { "domain": "gis", "category": "Survey & measurement", "count": 8 },
+        { "domain": "gis", "category": "Terrain, raster & analysis", "count": 34 },
+        { "domain": "gis", "category": "Utilities & infrastructure", "count": 35 },
+        { "domain": "healthcare", "category": "Blood & transfusion", "count": 11 },
+        { "domain": "healthcare", "category": "Clinical anatomy", "count": 40 },
+        { "domain": "healthcare", "category": "Clinical care & procedures", "count": 78 },
+        { "domain": "healthcare", "category": "Clinical devices & equipment", "count": 41 },
+        { "domain": "healthcare", "category": "Clinical imaging & studies", "count": 32 },
+        { "domain": "healthcare", "category": "Conditions & symptoms", "count": 82 },
+        { "domain": "healthcare", "category": "Departments & care services", "count": 54 },
+        { "domain": "healthcare", "category": "Diagnostics & tests", "count": 33 },
+        { "domain": "healthcare", "category": "Facilities & care transport", "count": 17 },
+        { "domain": "healthcare", "category": "Infection & transmission", "count": 48 },
+        { "domain": "healthcare", "category": "Infection control & PPE", "count": 21 },
+        { "domain": "healthcare", "category": "Medicines & treatment", "count": 24 },
+        { "domain": "healthcare", "category": "People & community care", "count": 42 },
+        { "domain": "healthcare", "category": "Public health & reporting", "count": 1 },
+        { "domain": "healthcare", "category": "Quarantine & distancing", "count": 32 },
+        { "domain": "healthcare", "category": "Records & health informatics", "count": 30 },
+        { "domain": "healthcare", "category": "Reproductive & maternal care", "count": 28 },
+        { "domain": "healthcare", "category": "Vitals", "count": 4 }
+      ],
+      "nameHash": { "hash": 955147697, "length": 76331, "components": 1723 },
+      "root": { "id": "359:3", "width": 4896, "height": 15481 },
+      "singleTopLevelFrame": true
+    },
+    "preservedIconIds": 1723,
+    "layoutChanges": { "created": 30, "mutated": 1956, "removed": 16 }
+  },
+  "repository": {
+    "assetFolders": ["design/icons/general", "design/icons/gis", "design/icons/healthcare"],
+    "catalogs": ["general-only-icons.json", "gis-only-icons.json", "healthcare-only-icons.json"],
+    "schema": "design/icons/icon-catalog.schema.json",
+    "retainedReferenceCatalogs": [
+      { "path": "design/icons/inventories/reference-catalogs/gis-only-icons.json", "entries": 342 },
+      {
+        "path": "design/icons/inventories/reference-catalogs/healthcare-only-icons.json",
+        "entries": 746
+      }
+    ],
+    "sourceReferenceIds": 3916,
+    "artworkBodiesChanged": 0,
+    "preservedDefinitions": 2246,
+    "reuseEdges": 170
+  },
+  "observedChecks": [
+    "All 1723 live Figma components have 20 px canvases and centered unclipped artwork.",
+    "All 5809 live vector strokes have 1.5 px physical weight, rounded caps/joins, and foreground variable bindings.",
+    "No opaque component/SVG wrapper/vector fills, category drift, sibling overlaps or overflowing labels.",
+    "All 1723 component ID/name pairs match the repo by sorted FNV-1a hash and length.",
+    "Native 20 px and enlarged 40 px artwork reviewed across nine complete contact sheets; all three final Figma domain catalogs visually reviewed.",
+    "Three generated artwork catalogs and two retained reference catalogs pass the shared schema and application-level uniqueness, count, foreign-key and facet checks.",
+    "Fresh generated records include exact on-disk SVGs, existing Figma IDs/names, stable oddkin/name lookup IDs and reference aliases.",
+    "All 3916 reference IDs appear exactly once across original Oddkin targets; input naming review flags are preserved.",
+    "Final regeneration preserves all 1723 artwork bodies, component IDs, all 2246 definition IDs and 170 reuse edges.",
+    "No stale SVGs, external fonts/images or clipping; source geometry is centered in the 17 px safe area.",
+    "4 targeted Vitest files / 18 tests pass.",
+    "Test TypeScript check passes.",
+    "Formatting and git whitespace checks pass."
+  ],
+  "commands": {
+    "validation": "node design/icons/validate.mjs",
+    "tests": "node node_modules/vitest/vitest.mjs run --project node packages/tokens/test/figma-parity.test.ts packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts packages/components/test/icon-catalog.test.ts",
+    "types": "node node_modules/typescript/bin/tsc -p tsconfig.tests.json --noEmit"
+  },
+  "interpretation": "Taxonomy follows artwork semantics, not reference origin. Native canvas/stroke standards are shared; intentional small/inset shapes and secondary badges retain their proportions. The supplied normalized source catalogs retain all source data and review flags; only their schema paths are made relative to the archive directory. No consuming package was built."
+}

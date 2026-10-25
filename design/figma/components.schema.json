@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oddkin.dev/schemas/figma-components/v1.json",
   "title": "Oddkin Figma components snapshot v1",
-  "description": "design/figma/components.json: a read-only export of the component sets and standalone components on the exported pages of a Figma file (design/figma/components.export.js). Tests read this file and never call Figma. Families are sorted by page (export order), then name, then id; layers by path; field values by value. Each family records its node id, component properties, variants with their property values, and, per layer path (layer names below the variant root; a repeated sibling name gets \" [n]\"), the variables and styles it binds, the values it does not bind (literals), and the component properties it references. A nested instance is not descended into: its styling belongs to its source family, and it is listed under `instances` with its source family, count, the source variants used, and the fields overridden. Variable paths are `<collection name>/<variable name>`, the same strings design/figma/variables.json uses, so the two files join on them; colours are lower-case hex; numbers are Figma's stored values (px).",
+  "description": "design/figma/components.json: a read-only export of the component sets and standalone components on the exported pages of a Figma file (design/figma/components.export.js). Tests read this file and never call Figma. Families are sorted by page (export order), then name, then id; layers by path; field values by value. Each family records its node id, component properties, variants with their property values, and, per layer path (layer names below the variant root; a repeated sibling name gets \" [n]\"), the variables and styles it binds, the values it does not bind (literals), and the component properties it references. A nested instance is listed under `instances` with its source family, count, source variants and overridden fields. Source-owned layers stay with the source family; authored slot contents are descended into and recorded with their containing slot path. Variable paths are `<collection name>/<variable name>`, the same strings design/figma/variables.json uses, so the two files join on them; colours are lower-case hex; numbers are Figma's stored values (px).",
   "type": "object",
   "required": ["$schema", "fileKey", "fileName", "exportedAt", "source", "pages", "families"],
   "additionalProperties": false,
@@ -89,7 +89,7 @@
         "type": { "enum": ["VARIANT", "BOOLEAN", "TEXT", "INSTANCE_SWAP", "SLOT"] },
         "defaultValue": {
           "anyOf": [{ "type": "string" }, { "type": "boolean" }],
-          "description": "For INSTANCE_SWAP, the source family name (and variant) of the default component."
+          "description": "For INSTANCE_SWAP, the source family name (and variant) of the default component. SLOT uses an empty string sentinel; its actual default content is recorded in layers and instances."
         },
         "variantOptions": { "type": "array", "items": { "type": "string" } }
       }

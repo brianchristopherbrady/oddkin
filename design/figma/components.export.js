@@ -212,7 +212,7 @@ export async function exportComponents(figma, pageIds, exportedAt) {
           ? familyOf(target).name +
             (target.parent?.type === 'COMPONENT_SET' ? ` (${target.name})` : '')
           : def.defaultValue;
-      } else entry.defaultValue = def.defaultValue;
+      } else entry.defaultValue = def.type === 'SLOT' ? '' : def.defaultValue;
       if (def.variantOptions) entry.variantOptions = [...def.variantOptions];
       properties.push(entry);
     }
@@ -246,6 +246,15 @@ export async function exportComponents(figma, pageIds, exportedAt) {
           if (main && main.parent?.type === 'COMPONENT_SET') ref.variants.add(main.name);
           for (const o of n.overrides ?? [])
             for (const f of o.overriddenFields) ref.overriddenFields.add(f);
+          // Source-owned layers stay with their source family. Slot contents are authored by
+          // this composition, so export them here (including nested slots, once per owner).
+          const slots = n.findAllWithCriteria({ types: ['SLOT'] });
+          for (const slot of slots) {
+            let owner = slot.parent;
+            while (owner && owner.type !== 'INSTANCE') owner = owner.parent;
+            if (owner !== n) continue;
+            await walk(slot, [...path, slot.name]);
+          }
           return;
         }
         if ('children' in n) {

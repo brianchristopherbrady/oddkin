@@ -112,9 +112,9 @@ exist on every dismissible surface (iOS floor exception, css-architecture.md §9
 
 Built-in affordance and tone glyphs (chevrons, check, minus, close, search, more, arrows, external, upload, file, info,
 warning, check-circle) are drawn by Oddkin from simple geometry in one module (`@oddkin/components/styles` glyphs),
-inline SVG in shadow roots (no image requests, so strict CSP needs no `img-src`). Figma's 34 icon assets are a visual
-reference only and do not ship (their source and licence are unknown, component-catalog.md §7 item 5). Author icons
-are slot content or `odd-icon`.
+inline SVG in shadow roots (no image requests, so strict CSP needs no `img-src`). Figma's original Oddkin artwork and SVG provenance are documented in
+component-catalog.md §5 and design/icons. Optional content icons are slot content or `odd-icon`; built-in glyphs
+remain in the shared module.
 
 ### 2.8 Tone
 

@@ -1,0 +1,1162 @@
+{
+  "count": 128,
+  "gis": 64,
+  "healthcare": 64,
+  "uniqueNames": 128,
+  "duplicatePaths": [],
+  "errors": [],
+  "boxes": [
+    {
+      "name": "Map",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Map pin",
+      "x": 4,
+      "y": 2,
+      "w": 12,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Locate",
+      "x": 1.5,
+      "y": 1.5,
+      "w": 17,
+      "h": 17,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Compass",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "North arrow",
+      "x": 5,
+      "y": 1.5,
+      "w": 10,
+      "h": 15.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Globe",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Coordinates",
+      "x": 1.5,
+      "y": 2,
+      "w": 16.5,
+      "h": 16.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Geofence",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Point",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Multipoint",
+      "x": 2.5,
+      "y": 2.5,
+      "w": 15,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Polyline",
+      "x": 1.799999713897705,
+      "y": 2.799999952316284,
+      "w": 16.400001525878906,
+      "h": 13.40041446685791,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Polygon",
+      "x": 2,
+      "y": 1,
+      "w": 17,
+      "h": 17,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Multipolygon",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Vertex",
+      "x": 2,
+      "y": 4.5,
+      "w": 16,
+      "h": 11.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Bounding box",
+      "x": 1.5,
+      "y": 1.5,
+      "w": 17,
+      "h": 17,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Centroid",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Layers",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Add layer",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Layer visibility",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Vector layer",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 17,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Raster layer",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Attribute table",
+      "x": 2,
+      "y": 3,
+      "w": 16,
+      "h": 14,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Spatial database",
+      "x": 3,
+      "y": 2.75,
+      "w": 14,
+      "h": 14.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Map tiles",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Buffer",
+      "x": 2.5,
+      "y": 2.500000238418579,
+      "w": 15,
+      "h": 15.000001907348633,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Intersect",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Union",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Difference",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Clip",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Dissolve",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Spatial join",
+      "x": 1.5,
+      "y": 3,
+      "w": 17,
+      "h": 14,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Nearest neighbor",
+      "x": 2,
+      "y": 3.500000238418579,
+      "w": 15.5,
+      "h": 14,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Measure distance",
+      "x": 3,
+      "y": 7,
+      "w": 14,
+      "h": 10,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Measure area",
+      "x": 3,
+      "y": 3,
+      "w": 14,
+      "h": 14,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Bearing",
+      "x": 1.5,
+      "y": 3,
+      "w": 14.5,
+      "h": 14,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Elevation profile",
+      "x": 2,
+      "y": 3,
+      "w": 16,
+      "h": 14,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Contour lines",
+      "x": 2,
+      "y": 2.65625,
+      "w": 16.15999984741211,
+      "h": 15.34375,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Scale bar",
+      "x": 2,
+      "y": 5,
+      "w": 16,
+      "h": 10,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "GPS receiver",
+      "x": 5,
+      "y": 2,
+      "w": 12,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Triangulate",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Terrain",
+      "x": 2,
+      "y": 5,
+      "w": 16,
+      "h": 12,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Hillshade",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Satellite",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Aerial imagery",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Point cloud",
+      "x": 2.4000000953674316,
+      "y": 3.4000000953674316,
+      "w": 15.200000762939453,
+      "h": 13.200000762939453,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Watershed",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "River network",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Land cover",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Edit vertex",
+      "x": 2,
+      "y": 4.5,
+      "w": 16,
+      "h": 13.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Add vertex",
+      "x": 2,
+      "y": 3.5,
+      "w": 15,
+      "h": 11.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Remove vertex",
+      "x": 2,
+      "y": 3.5,
+      "w": 15,
+      "h": 11.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Snap",
+      "x": 3,
+      "y": 2,
+      "w": 14,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Split line",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Merge features",
+      "x": 2,
+      "y": 3,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Topology",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Validate geometry",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Route",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Waypoint",
+      "x": 4,
+      "y": 2,
+      "w": 12,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Field survey",
+      "x": 4,
+      "y": 2,
+      "w": 12,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Geotag photo",
+      "x": 2,
+      "y": 3,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Print map",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Export map",
+      "x": 2,
+      "y": 2,
+      "w": 15,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Offline map",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Location history",
+      "x": 2,
+      "y": 4,
+      "w": 16.5,
+      "h": 14,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Hospital",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Clinic",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Emergency care",
+      "x": 3,
+      "y": 2,
+      "w": 14,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Ambulance",
+      "x": 2,
+      "y": 5,
+      "w": 16,
+      "h": 13,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Medical bag",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "First aid kit",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Home care",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Telehealth",
+      "x": 2,
+      "y": 3,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Clinician",
+      "x": 4,
+      "y": 2.5,
+      "w": 12,
+      "h": 14.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Nurse",
+      "x": 4,
+      "y": 2,
+      "w": 12,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Patient",
+      "x": 4,
+      "y": 2.5,
+      "w": 12,
+      "h": 15.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Patient ID",
+      "x": 2,
+      "y": 4,
+      "w": 16,
+      "h": 13,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Care team",
+      "x": 2,
+      "y": 3,
+      "w": 16,
+      "h": 14,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Appointment",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Consultation",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Medical record",
+      "x": 4,
+      "y": 2,
+      "w": 12,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Heart",
+      "x": 1.9364320039749146,
+      "y": 3.4242515563964844,
+      "w": 16.12713623046875,
+      "h": 13.575748443603516,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Heartbeat",
+      "x": 1.9364320039749146,
+      "y": 3.4242515563964844,
+      "w": 16.12713623046875,
+      "h": 13.575748443603516,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Blood pressure",
+      "x": 2,
+      "y": 3,
+      "w": 16,
+      "h": 14,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Thermometer",
+      "x": 5.81965970993042,
+      "y": 2,
+      "w": 11.180339813232422,
+      "h": 17,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Pulse oximeter",
+      "x": 4,
+      "y": 2,
+      "w": 12,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Respiration",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Weight scale",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Height measurement",
+      "x": 3,
+      "y": 2,
+      "w": 14,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Pill",
+      "x": 2.42677640914917,
+      "y": 2.4267759323120117,
+      "w": 15.146446228027344,
+      "h": 15.14644718170166,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Capsule",
+      "x": 2,
+      "y": 6,
+      "w": 16,
+      "h": 8,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Syringe",
+      "x": 3,
+      "y": 2,
+      "w": 15,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Vaccine",
+      "x": 3,
+      "y": 2,
+      "w": 14,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Prescription",
+      "x": 3,
+      "y": 2,
+      "w": 14,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Medication bottle",
+      "x": 4,
+      "y": 2,
+      "w": 12,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "IV bag",
+      "x": 5,
+      "y": 2,
+      "w": 11,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Infusion pump",
+      "x": 3,
+      "y": 2,
+      "w": 14,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Brain",
+      "x": 1.6061229705810547,
+      "y": 2.072078227996826,
+      "w": 16.78775405883789,
+      "h": 16.21363639831543,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Lungs",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 15.285715103149414,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Eye",
+      "x": 2,
+      "y": 4.5,
+      "w": 16,
+      "h": 11,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Ear",
+      "x": 4.945079326629639,
+      "y": 2,
+      "w": 11.109840393066406,
+      "h": 16.239999771118164,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Tooth",
+      "x": 2.26493501663208,
+      "y": 2.3898770809173584,
+      "w": 15.470130920410156,
+      "h": 15.739501953125,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Bone",
+      "x": 1.4536020755767822,
+      "y": 1.255666971206665,
+      "w": 17.054323196411133,
+      "h": 17.29073143005371,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Kidney",
+      "x": 2.1661410331726074,
+      "y": 2.28886079788208,
+      "w": 15.667716979980469,
+      "h": 15.711139678955078,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Liver",
+      "x": 1.75,
+      "y": 4.255666732788086,
+      "w": 16.647258758544922,
+      "h": 12.744333267211914,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Test tube",
+      "x": 3.1727688312530518,
+      "y": 2,
+      "w": 11.827231407165527,
+      "h": 16.82723045349121,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Lab flask",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Microscope",
+      "x": 3,
+      "y": 2,
+      "w": 14.031106948852539,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Petri dish",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "DNA",
+      "x": 5,
+      "y": 2,
+      "w": 10,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "X-ray",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Ultrasound",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Medical scan",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Bandage",
+      "x": 1.5853350162506104,
+      "y": 1.5853348970413208,
+      "w": 16.829330444335938,
+      "h": 16.829330444335938,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Wheelchair",
+      "x": 3.2397491931915283,
+      "y": 1.5,
+      "w": 15.76025104522705,
+      "h": 15.970294952392578,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Crutches",
+      "x": 2,
+      "y": 3,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Rehabilitation",
+      "x": 2,
+      "y": 1.5,
+      "w": 16,
+      "h": 16.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Mental health",
+      "x": 2.517127275466919,
+      "y": 2,
+      "w": 15.48287296295166,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Nutrition",
+      "x": 2.3898773193359375,
+      "y": 1.6666666269302368,
+      "w": 15.220245361328125,
+      "h": 15.999999046325684,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Maternity",
+      "x": 4,
+      "y": 1.7000001668930054,
+      "w": 10.081036567687988,
+      "h": 16.299999237060547,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Pediatrics",
+      "x": 1.5,
+      "y": 1.6862915754318237,
+      "w": 17,
+      "h": 15.313708305358887,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Health protection",
+      "x": 3,
+      "y": 2,
+      "w": 14,
+      "h": 16,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Hand hygiene",
+      "x": 2,
+      "y": 2,
+      "w": 15,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Medical mask",
+      "x": 1,
+      "y": 6,
+      "w": 18,
+      "h": 9.5,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Biohazard",
+      "x": 1.913290023803711,
+      "y": 2,
+      "w": 16.173419952392578,
+      "h": 15.824747085571289,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Allergy",
+      "x": 2,
+      "y": 2,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Blood drop",
+      "x": 3,
+      "y": 2,
+      "w": 14,
+      "h": 17,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Organ donation",
+      "x": 2,
+      "y": 1.81965970993042,
+      "w": 14.799999237060547,
+      "h": 16.180339813232422,
+      "valid": true,
+      "accessible": true
+    },
+    {
+      "name": "Health analytics",
+      "x": 2,
+      "y": 3,
+      "w": 16,
+      "h": 15,
+      "valid": true,
+      "accessible": true
+    }
+  ]
+}

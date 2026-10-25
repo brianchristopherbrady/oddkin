@@ -163,6 +163,7 @@ describe('Figma parity: odd-card (card)', () => {
 
 const BADGES: Record<string, { attributes: string; text: string }> = {
   Neutral: { attributes: '', text: 'Draft' },
+  Info: { attributes: 'tone="info"', text: 'Info' },
   Success: { attributes: 'tone="success"', text: 'Success' },
   Warning: { attributes: 'tone="warning"', text: 'Warning' },
   Danger: { attributes: 'tone="danger"', text: 'Danger' },
@@ -217,7 +218,7 @@ describe('Figma parity: odd-alert (alert)', () => {
       const frame = [`Alert / ${state}`];
       const targets: Target[] = [
         { layer: [...frame, 'Surface'], el: shadowPart(el, 'base'), kind: 'frame' },
-        { layer: [...frame, spec.title], el: shadowPart(el, 'label'), kind: 'text' },
+        { layer: [...frame, 'Header', spec.title], el: shadowPart(el, 'label'), kind: 'text' },
         {
           layer: [...frame, spec.message],
           el: el.shadowRoot!.querySelector('.message')!,

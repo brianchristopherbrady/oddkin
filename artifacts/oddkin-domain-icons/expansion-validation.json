@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-22",
+  "source": "gis-icons.json",
+  "referenceEntries": 3170,
+  "canonicalAssets": 1153,
+  "domains": {
+    "general": 913,
+    "gis": 175,
+    "healthcare": 65
+  },
+  "figma": {
+    "fileKey": "E7LfRysny8V3qU24tv082i",
+    "page": "359:2",
+    "root": "359:3",
+    "components": 1153,
+    "preservedPriorIconIds": 162,
+    "singleTopLevelFrame": true,
+    "overlaps": [],
+    "overflow": [],
+    "clippedArtwork": [],
+    "unboundStrokes": [],
+    "opaqueSvgContainers": 0,
+    "clearedOpaqueContainers": 1153
+  },
+  "snapshot": {
+    "families": 1323,
+    "definitions": 1676,
+    "preservedPriorDefinitions": 685,
+    "reuseEdges": 170
+  },
+  "observedChecks": [
+    "all source IDs mapped exactly once",
+    "1153 valid SVG assets with currentColor, native 20 px canvas and uniform 1.5 px physical strokes",
+    "no SVG clipping, external images, fonts or stale SVG files",
+    "transparent SVG containers verified across all 1153 Figma icons",
+    "Figma screenshots inspected after clearing container fills",
+    "14 tests passed across token parity, Figma reuse and icon regression"
+  ],
+  "limitation": "Reference names and categories guide original concept interpretations. Filled and outlined source entries share the Oddkin outline treatment; functional application marks are not official brand logos."
+}

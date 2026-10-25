@@ -1,0 +1,1853 @@
+{
+  "runId": "oddkin-full-component-audit-20261021",
+  "date": "2026-10-21",
+  "status": "complete",
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "pages": [
+    {
+      "id": "0:1",
+      "name": "Oddkin · Components",
+      "definitions": 84
+    },
+    {
+      "id": "158:22",
+      "name": "Oddkin · Common primitives",
+      "definitions": 358
+    }
+  ],
+  "scope": {
+    "definitions": 442,
+    "commonFamilies": 71,
+    "commonVariants": 324,
+    "icons": 34,
+    "previewInstances": 265,
+    "focusIndicators": 112,
+    "visibleNodeObservations": 5131
+  },
+  "changes": {
+    "sharedListBodies": 9,
+    "visibleSharedOptions": 30,
+    "menuItems": 12,
+    "navigationAndTreeItems": 20,
+    "radioGroupItems": 4,
+    "multiselectChips": 14,
+    "aiActionButtons": 20,
+    "inputDefinitions": 8,
+    "inputInstances": 35,
+    "binaryControlsAligned": 25,
+    "removedUnusedToken": {
+      "id": "VariableID:76:843",
+      "name": "repo/font/size/2xs",
+      "value": 10
+    }
+  },
+  "primitives": {
+    "listboxSurfaceSetId": "234:5551",
+    "listboxSurfaceComponentId": "234:5534",
+    "listboxOptionSetId": "186:5167",
+    "menuItemSetId": "160:974",
+    "navigationItemSetId": "160:1252",
+    "radioSetId": "159:1209",
+    "chipSetId": "159:612"
+  },
+  "validation": {
+    "common": {
+      "counts": {
+        "components": 358,
+        "visibleNodes": 4547,
+        "icons": 328,
+        "buttons": 100
+      },
+      "findings": {
+        "clipped": [],
+        "centering": [],
+        "textOverlap": [],
+        "iconSizing": [],
+        "buttonSizing": [],
+        "unboundColors": [],
+        "missingMasters": []
+      },
+      "boardOverlap": [],
+      "previews": {
+        "pageId": "158:22",
+        "previewCounts": {
+          "instances": 265,
+          "focusOutlines": 106
+        },
+        "previewOverflow": [],
+        "focusClipping": []
+      }
+    },
+    "original": {
+      "counts": {
+        "components": 84,
+        "visibleNodes": 584,
+        "icons": 0,
+        "buttons": 20
+      },
+      "findings": {
+        "clipped": [],
+        "centering": [],
+        "textOverlap": [],
+        "iconSizing": [],
+        "buttonSizing": [],
+        "unboundColors": [],
+        "missingMasters": []
+      },
+      "boardOverlap": [],
+      "previews": {
+        "pageId": "0:1",
+        "previewCounts": {
+          "instances": 0,
+          "focusOutlines": 6
+        },
+        "previewOverflow": [],
+        "focusClipping": []
+      }
+    },
+    "effectModeMismatches": [],
+    "scopeNote": "Checks cover the authored component states and preview instances present in both Figma pages at audit time."
+  },
+  "families": [
+    {
+      "family": "Oddkin/Common/button",
+      "variants": 18,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/iconButton",
+      "variants": 5,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/toggleButton",
+      "variants": 8,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/splitAction",
+      "variants": 2,
+      "references": {
+        "Oddkin/Common/button": 2
+      }
+    },
+    {
+      "family": "Oddkin/Common/link",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/badge",
+      "variants": 5,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/chip",
+      "variants": 4,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/button/sm",
+      "variants": 18,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/button/lg",
+      "variants": 18,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/field",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/input",
+      "variants": 8,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/textarea",
+      "variants": 5,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/number",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/search",
+      "variants": 4,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/checkbox",
+      "variants": 15,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/radio",
+      "variants": 10,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/radioGroup",
+      "variants": 2,
+      "references": {
+        "Oddkin/Common/radio": 4
+      }
+    },
+    {
+      "family": "Oddkin/Common/switch",
+      "variants": 8,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/slider",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/select",
+      "variants": 5,
+      "references": {
+        "Oddkin/Common/ListboxSurface": 2
+      }
+    },
+    {
+      "family": "Oddkin/Common/listbox",
+      "variants": 6,
+      "references": {
+        "Oddkin/Common/ListboxSurface": 3,
+        "Oddkin/Common/spinner": 1,
+        "Oddkin/Common/button": 1
+      }
+    },
+    {
+      "family": "Oddkin/Common/combobox",
+      "variants": 6,
+      "references": {
+        "Oddkin/Common/ListboxSurface": 1
+      }
+    },
+    {
+      "family": "Oddkin/Common/multiselect",
+      "variants": 10,
+      "references": {
+        "Oddkin/Common/chip": 14,
+        "Oddkin/Common/ListboxSurface": 3,
+        "Oddkin/Common/button": 1
+      }
+    },
+    {
+      "family": "Oddkin/Common/segmented",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/dateTime",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/fileUpload",
+      "variants": 3,
+      "references": {
+        "Oddkin/Common/button": 2
+      }
+    },
+    {
+      "family": "Oddkin/Common/ListboxSurface",
+      "variants": 1,
+      "references": {
+        "Oddkin/Common/ListboxOption": 3
+      }
+    },
+    {
+      "family": "Oddkin/Common/ListboxOption",
+      "variants": 6,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/Menu",
+      "variants": 3,
+      "references": {
+        "Oddkin/Common/MenuItem": 12
+      }
+    },
+    {
+      "family": "Oddkin/Common/MenuItem",
+      "variants": 4,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/Tree",
+      "variants": 6,
+      "references": {
+        "Oddkin/Common/NavigationItem": 4,
+        "Oddkin/Common/spinner": 1,
+        "Oddkin/Common/button": 1
+      }
+    },
+    {
+      "family": "Oddkin/Common/Table",
+      "variants": 6,
+      "references": {
+        "Oddkin/Common/button": 1
+      }
+    },
+    {
+      "family": "Oddkin/Common/List",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/NavigationItem",
+      "variants": 4,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/SideNavigation",
+      "variants": 3,
+      "references": {
+        "Oddkin/Common/NavigationItem": 16
+      }
+    },
+    {
+      "family": "Oddkin/Common/Breadcrumbs",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/Pagination",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/Tabs",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/Disclosure",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/Accordion",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/Toolbar",
+      "variants": 3,
+      "references": {
+        "Oddkin/Common/button/sm": 7
+      }
+    },
+    {
+      "family": "Oddkin/Common/card",
+      "variants": 2,
+      "references": {
+        "Oddkin/Common/button": 2
+      }
+    },
+    {
+      "family": "Oddkin/Common/popover",
+      "variants": 2,
+      "references": {
+        "Oddkin/Common/button": 1
+      }
+    },
+    {
+      "family": "Oddkin/Common/tooltip",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/dialog",
+      "variants": 2,
+      "references": {
+        "Oddkin/Common/button": 4
+      }
+    },
+    {
+      "family": "Oddkin/Common/alertDialog",
+      "variants": 1,
+      "references": {
+        "Oddkin/Common/button": 2
+      }
+    },
+    {
+      "family": "Oddkin/Common/drawer",
+      "variants": 2,
+      "references": {
+        "Oddkin/Common/button": 2
+      }
+    },
+    {
+      "family": "Oddkin/Common/alert",
+      "variants": 4,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/toast",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/progress",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/spinner",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/skeleton",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/emptyState",
+      "variants": 2,
+      "references": {
+        "Oddkin/Common/button": 2
+      }
+    },
+    {
+      "family": "Oddkin/Common/avatar",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/icon",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/divider",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/typography",
+      "variants": 1,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/keyboardKey",
+      "variants": 2,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/CommandItem",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/CommandPalette",
+      "variants": 5,
+      "references": {
+        "Oddkin/Common/CommandItem": 6,
+        "Oddkin/Common/spinner": 1,
+        "Oddkin/Common/button": 1
+      }
+    },
+    {
+      "family": "Oddkin/Common/CheckboxGroup",
+      "variants": 3,
+      "references": {
+        "Oddkin/Common/checkbox": 9
+      }
+    },
+    {
+      "family": "Oddkin/Common/ValidationSummary",
+      "variants": 1,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/Form",
+      "variants": 6,
+      "references": {
+        "Oddkin/Common/input": 12,
+        "Oddkin/Common/CheckboxGroup": 6,
+        "Oddkin/Common/button": 12,
+        "Oddkin/Common/ValidationSummary": 1
+      }
+    },
+    {
+      "family": "Oddkin/Common/GridCell",
+      "variants": 5,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/GridColumnHeader",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/GridSelection",
+      "variants": 3,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/GridRow",
+      "variants": 3,
+      "references": {
+        "Oddkin/Common/GridSelection": 3,
+        "Oddkin/Common/GridCell": 12
+      }
+    },
+    {
+      "family": "Oddkin/Common/DataGrid",
+      "variants": 9,
+      "references": {
+        "Oddkin/Common/button": 47,
+        "Oddkin/Common/GridSelection": 9,
+        "Oddkin/Common/GridColumnHeader": 36,
+        "Oddkin/Common/GridRow": 17
+      }
+    },
+    {
+      "family": "Oddkin/Common/Splitter/vertical",
+      "variants": 4,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/Splitter/horizontal",
+      "variants": 4,
+      "references": {}
+    },
+    {
+      "family": "Oddkin/Common/SplitPanels",
+      "variants": 12,
+      "references": {
+        "Oddkin/Common/button": 12,
+        "Oddkin/Common/Splitter/vertical": 5,
+        "Oddkin/Common/Splitter/horizontal": 5
+      }
+    }
+  ],
+  "auditedDefinitionIds": [
+    "159:383",
+    "159:389",
+    "159:395",
+    "159:401",
+    "159:407",
+    "159:414",
+    "159:420",
+    "159:426",
+    "164:2139",
+    "164:2143",
+    "164:2147",
+    "164:2152",
+    "164:2156",
+    "164:2162",
+    "164:2166",
+    "164:2170",
+    "164:2175",
+    "164:2179",
+    "159:445",
+    "159:451",
+    "159:457",
+    "159:464",
+    "159:470",
+    "159:478",
+    "159:485",
+    "159:493",
+    "159:500",
+    "181:2252",
+    "181:2257",
+    "181:2262",
+    "181:2268",
+    "159:515",
+    "159:528",
+    "159:535",
+    "159:541",
+    "159:548",
+    "159:556",
+    "159:563",
+    "159:570",
+    "159:577",
+    "159:581",
+    "159:589",
+    "159:596",
+    "159:604",
+    "159:611",
+    "159:432",
+    "164:2185",
+    "164:2189",
+    "169:2142",
+    "169:2146",
+    "169:2150",
+    "181:2281",
+    "181:2285",
+    "181:2289",
+    "181:2294",
+    "181:2298",
+    "181:2302",
+    "181:2306",
+    "181:2311",
+    "181:2315",
+    "181:2319",
+    "181:2323",
+    "181:2328",
+    "159:438",
+    "164:2193",
+    "164:2197",
+    "169:2154",
+    "169:2158",
+    "169:2162",
+    "181:2339",
+    "181:2343",
+    "181:2347",
+    "181:2352",
+    "181:2356",
+    "181:2360",
+    "181:2364",
+    "181:2369",
+    "181:2373",
+    "181:2377",
+    "181:2381",
+    "181:2386",
+    "159:963",
+    "159:970",
+    "159:977",
+    "159:983",
+    "159:989",
+    "159:996",
+    "159:1002",
+    "159:1008",
+    "159:1014",
+    "159:1023",
+    "159:1030",
+    "159:1036",
+    "159:1043",
+    "159:1049",
+    "159:1055",
+    "159:1069",
+    "159:1083",
+    "159:1096",
+    "159:1106",
+    "159:1118",
+    "159:1131",
+    "159:1143",
+    "159:1148",
+    "159:1155",
+    "159:1162",
+    "159:1166",
+    "159:1171",
+    "159:1176",
+    "159:1180",
+    "181:2157",
+    "181:2162",
+    "181:2168",
+    "181:2173",
+    "181:2178",
+    "181:2183",
+    "181:2189",
+    "181:2194",
+    "159:1185",
+    "159:1190",
+    "159:1194",
+    "159:1199",
+    "159:1204",
+    "159:1208",
+    "181:2215",
+    "181:2220",
+    "181:2226",
+    "181:2231",
+    "159:1219",
+    "159:1230",
+    "159:1236",
+    "159:1241",
+    "159:1246",
+    "159:1252",
+    "159:1257",
+    "181:2236",
+    "181:2241",
+    "181:2247",
+    "159:1267",
+    "159:1277",
+    "159:1286",
+    "159:1296",
+    "159:1315",
+    "159:1336",
+    "159:1345",
+    "159:1354",
+    "159:1370",
+    "159:1386",
+    "159:1401",
+    "186:5168",
+    "186:5174",
+    "186:5190",
+    "159:1411",
+    "159:1430",
+    "159:1444",
+    "159:1459",
+    "159:1473",
+    "159:1482",
+    "159:1496",
+    "159:1522",
+    "159:1549",
+    "186:5200",
+    "186:5216",
+    "186:5222",
+    "186:5232",
+    "223:5415",
+    "223:5436",
+    "223:5476",
+    "159:1560",
+    "159:1571",
+    "159:1581",
+    "159:1597",
+    "159:1613",
+    "159:1628",
+    "159:1646",
+    "159:1662",
+    "159:1677",
+    "234:5534",
+    "186:5140",
+    "186:5143",
+    "186:5146",
+    "186:5149",
+    "186:5155",
+    "186:5161",
+    "160:881",
+    "160:911",
+    "160:940",
+    "160:949",
+    "160:958",
+    "160:966",
+    "160:973",
+    "160:1008",
+    "160:1043",
+    "160:1060",
+    "186:5260",
+    "186:5266",
+    "186:5282",
+    "160:1090",
+    "160:1122",
+    "160:1147",
+    "186:5238",
+    "186:5244",
+    "186:5254",
+    "160:1180",
+    "160:1213",
+    "160:1221",
+    "160:1229",
+    "160:1236",
+    "160:1244",
+    "160:1251",
+    "160:1284",
+    "160:1317",
+    "160:1345",
+    "160:1364",
+    "160:1384",
+    "160:1407",
+    "160:1429",
+    "160:1452",
+    "160:1463",
+    "160:1474",
+    "160:1482",
+    "160:1492",
+    "160:1500",
+    "160:1520",
+    "160:1537",
+    "160:1557",
+    "160:1585",
+    "160:1612",
+    "160:1637",
+    "160:2411",
+    "160:2424",
+    "160:2444",
+    "160:2459",
+    "160:2464",
+    "160:2469",
+    "160:2495",
+    "160:2520",
+    "160:2547",
+    "160:2581",
+    "160:2598",
+    "161:1851",
+    "161:1859",
+    "161:1867",
+    "161:1876",
+    "161:1889",
+    "161:1901",
+    "161:1909",
+    "161:1915",
+    "161:1927",
+    "161:1938",
+    "161:1947",
+    "161:1958",
+    "161:1975",
+    "161:1991",
+    "162:2010",
+    "162:2021",
+    "162:2043",
+    "162:2057",
+    "162:2063",
+    "162:2068",
+    "162:2079",
+    "162:2088",
+    "162:2096",
+    "159:276",
+    "159:279",
+    "159:282",
+    "159:285",
+    "159:288",
+    "159:291",
+    "159:294",
+    "159:297",
+    "159:300",
+    "159:303",
+    "159:306",
+    "159:309",
+    "159:312",
+    "159:315",
+    "159:318",
+    "159:321",
+    "159:324",
+    "159:327",
+    "159:330",
+    "159:333",
+    "159:336",
+    "159:339",
+    "159:342",
+    "159:345",
+    "159:348",
+    "159:351",
+    "159:354",
+    "159:357",
+    "159:360",
+    "159:363",
+    "159:366",
+    "159:369",
+    "159:372",
+    "159:375",
+    "182:2319",
+    "182:2326",
+    "182:2333",
+    "182:2341",
+    "182:2375",
+    "182:2409",
+    "182:2434",
+    "182:2449",
+    "183:2558",
+    "183:2577",
+    "183:2597",
+    "183:2617",
+    "183:2623",
+    "183:2670",
+    "183:2722",
+    "183:2771",
+    "183:2821",
+    "183:2871",
+    "184:3787",
+    "184:3790",
+    "184:3793",
+    "184:3796",
+    "184:3799",
+    "184:3804",
+    "184:3810",
+    "184:3816",
+    "184:3823",
+    "184:3826",
+    "187:5314",
+    "184:3833",
+    "184:3850",
+    "184:3870",
+    "184:3888",
+    "184:3995",
+    "184:4102",
+    "184:4193",
+    "184:4309",
+    "184:4418",
+    "184:4481",
+    "184:4544",
+    "184:4607",
+    "185:4810",
+    "185:4813",
+    "185:4816",
+    "185:4819",
+    "185:4823",
+    "185:4826",
+    "185:4829",
+    "185:4832",
+    "185:4836",
+    "185:4860",
+    "185:4884",
+    "185:4908",
+    "185:4923",
+    "185:4947",
+    "185:4971",
+    "185:4992",
+    "185:5013",
+    "185:5034",
+    "185:5049",
+    "185:5070",
+    "123:52",
+    "123:54",
+    "123:56",
+    "123:60",
+    "123:62",
+    "123:64",
+    "123:68",
+    "123:70",
+    "123:72",
+    "123:77",
+    "123:81",
+    "123:85",
+    "123:90",
+    "123:98",
+    "123:100",
+    "123:102",
+    "123:106",
+    "123:108",
+    "123:110",
+    "123:114",
+    "123:116",
+    "123:118",
+    "123:123",
+    "123:127",
+    "123:131",
+    "123:136",
+    "123:144",
+    "123:150",
+    "123:157",
+    "123:165",
+    "123:173",
+    "123:181",
+    "123:187",
+    "123:194",
+    "123:202",
+    "123:210",
+    "124:50",
+    "124:59",
+    "124:72",
+    "124:77",
+    "124:86",
+    "124:99",
+    "124:116",
+    "124:128",
+    "124:144",
+    "124:147",
+    "124:154",
+    "124:162",
+    "124:174",
+    "124:181",
+    "124:192",
+    "124:200",
+    "124:217",
+    "124:222",
+    "124:231",
+    "124:238",
+    "124:249",
+    "124:265",
+    "124:285",
+    "124:292",
+    "124:303",
+    "124:312",
+    "124:325",
+    "124:334",
+    "124:347",
+    "124:360",
+    "124:377",
+    "124:391",
+    "124:414",
+    "124:426",
+    "124:442",
+    "124:447",
+    "124:456",
+    "124:460",
+    "124:468",
+    "124:481",
+    "124:498",
+    "124:512",
+    "124:530",
+    "124:537",
+    "124:548",
+    "124:555",
+    "124:566",
+    "124:569"
+  ],
+  "createdNodeIds": [
+    "234:5522",
+    "234:5523",
+    "234:5524",
+    "234:5525",
+    "234:5526",
+    "234:5527",
+    "234:5534",
+    "234:5535",
+    "234:5539",
+    "234:5543",
+    "234:5547",
+    "234:5551",
+    "234:5552",
+    "234:5553",
+    "234:5554",
+    "234:5555",
+    "234:5556",
+    "234:5576",
+    "234:5600",
+    "234:5624",
+    "234:5644",
+    "234:5664",
+    "234:5690",
+    "234:5713",
+    "234:5740",
+    "236:5731",
+    "236:5734",
+    "236:5737",
+    "236:5740",
+    "236:5743",
+    "236:5749",
+    "236:5752",
+    "236:5755",
+    "236:5758",
+    "236:5761",
+    "236:5776",
+    "236:5789",
+    "236:5804",
+    "236:5819",
+    "236:5832",
+    "236:5848",
+    "236:5863",
+    "236:5876",
+    "236:5889",
+    "236:5902",
+    "236:5919",
+    "236:5932",
+    "236:5946",
+    "236:5961",
+    "236:5975",
+    "236:5985",
+    "236:5995",
+    "236:6007",
+    "236:6019",
+    "236:6032",
+    "236:6049",
+    "236:6059",
+    "236:6069",
+    "236:6081",
+    "236:6093",
+    "236:6106",
+    "236:6120",
+    "237:5973",
+    "237:5974",
+    "237:5979",
+    "237:5980",
+    "237:5981",
+    "237:5985",
+    "237:5986",
+    "237:5987",
+    "237:5992",
+    "237:5993",
+    "237:5994",
+    "237:5999",
+    "238:6005",
+    "238:6012",
+    "238:6019",
+    "238:6026",
+    "238:6033",
+    "238:6040",
+    "238:6047",
+    "238:6054",
+    "238:6061",
+    "238:6068",
+    "238:6075",
+    "238:6082",
+    "238:6089",
+    "238:6096",
+    "241:6128",
+    "241:6143",
+    "241:6157",
+    "241:6169",
+    "244:6166",
+    "244:6167",
+    "244:6168",
+    "244:6169",
+    "245:6170",
+    "245:6171"
+  ],
+  "styles": [
+    {
+      "id": "S:ed6f27d1c0b299bd0ede565ff2708910d40ad302,",
+      "name": "Oddkin/Display",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 36,
+      "line": {
+        "unit": "PIXELS",
+        "value": 45
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": -2.5
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:defcba86068dd7e966ed5b6393891fccfd4ffce6,",
+      "name": "Oddkin/Section",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 24,
+      "line": {
+        "unit": "PIXELS",
+        "value": 30
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:fb58b3ab2777d4bf16d34a0c5ee2b19e526ea7a2,",
+      "name": "Oddkin/Body",
+      "font": {
+        "family": "Roboto",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "wdth": 100
+        }
+      },
+      "size": 16,
+      "line": {
+        "unit": "PIXELS",
+        "value": 24
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:b18b7944722fd0753c33d6246c210316788362f9,",
+      "name": "Oddkin/UI",
+      "font": {
+        "family": "Roboto",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "wdth": 100
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PIXELS",
+        "value": 19.25
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:895e658104684f92b9e3fdd4af5dcdaff76e9219,",
+      "name": "Oddkin/Small",
+      "font": {
+        "family": "Roboto",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "wdth": 100
+        }
+      },
+      "size": 12,
+      "line": {
+        "unit": "PIXELS",
+        "value": 18
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:9feac0aaef4309ca222bda7f0e85be960ab350b4,",
+      "name": "Oddkin/Eyebrow",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 12,
+      "line": {
+        "unit": "PIXELS",
+        "value": 18
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 5
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:9d79415aca6a202e00db98c0d505296fe53e5c53,",
+      "name": "Oddkin/Code",
+      "font": {
+        "family": "Roboto Mono",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PIXELS",
+        "value": 21
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:50c796ecc6ce267781dea655b7a084d46f1c9c97,",
+      "name": "Oddkin/Wordmark",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 24,
+      "line": {
+        "unit": "PIXELS",
+        "value": 30
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:fe9adc444b5aa133a46a0613015230669a96a249,",
+      "name": "Oddkin/Card title",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 20,
+      "line": {
+        "unit": "PIXELS",
+        "value": 27.5
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:8c4e6728dc08a5588c50a5daf301c2176f965ffb,",
+      "name": "Oddkin/Home display",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 36,
+      "line": {
+        "unit": "PIXELS",
+        "value": 45
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": -2.5
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:747805ec72a8b06298349c2103ec7a9322f641ff,",
+      "name": "Oddkin/Component/Button/sm",
+      "font": {
+        "family": "Roboto",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "wdth": 100
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PERCENT",
+        "value": 137.5
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:c0adb7a8c0d1c2d91f1673e4857c6cb6c1aa7ac2,",
+      "name": "Oddkin/Component/Button/md",
+      "font": {
+        "family": "Roboto",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "wdth": 100
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PERCENT",
+        "value": 137.5
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:399b8a48ac60c19d4d1a3cc23d7194049fc96230,",
+      "name": "Oddkin/Component/Button/lg",
+      "font": {
+        "family": "Roboto",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "wdth": 100
+        }
+      },
+      "size": 16,
+      "line": {
+        "unit": "PERCENT",
+        "value": 137.5
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:015544ff2d967bb208099e28708be22537817a85,",
+      "name": "Oddkin/Component/Navigation/current",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PERCENT",
+        "value": 137.5
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:083ff3d063e2c283e8938e585f07098dbc059f53,",
+      "name": "Oddkin/Component/Status",
+      "font": {
+        "family": "Roboto",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "wdth": 100
+        }
+      },
+      "size": 12,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:9b16b3b7e626e1e1f925df2978d548926838e4fc,",
+      "name": "Oddkin/Component/Field/small",
+      "font": {
+        "family": "Roboto",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "wdth": 100
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    },
+    {
+      "id": "S:3c6d3f84607962df8861a5918942cfda6b2be5bd,",
+      "name": "Oddkin/Component/AI/title",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 16,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "vars": {}
+    }
+  ],
+  "elevationStyles": [
+    {
+      "name": "Oddkin/Elevation/lg/light",
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 8,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.07999999821186066
+          },
+          "offset": {
+            "x": 0,
+            "y": 4
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 32,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.14000000059604645
+          },
+          "offset": {
+            "x": 0,
+            "y": 12
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        }
+      ]
+    },
+    {
+      "name": "Oddkin/Elevation/lg/dark",
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 8,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.3199999928474426
+          },
+          "offset": {
+            "x": 0,
+            "y": 4
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 32,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.47999998927116394
+          },
+          "offset": {
+            "x": 0,
+            "y": 12
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        }
+      ]
+    },
+    {
+      "name": "Oddkin/Elevation/md/light",
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.11999999731779099
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 12,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.07999999821186066
+          },
+          "offset": {
+            "x": 0,
+            "y": 4
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        }
+      ]
+    },
+    {
+      "name": "Oddkin/Elevation/md/dark",
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.4000000059604645
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 12,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.3199999928474426
+          },
+          "offset": {
+            "x": 0,
+            "y": 4
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        }
+      ]
+    },
+    {
+      "name": "Oddkin/Elevation/none/light",
+      "effects": []
+    },
+    {
+      "name": "Oddkin/Elevation/none/dark",
+      "effects": []
+    },
+    {
+      "name": "Oddkin/Elevation/sm/light",
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.07999999821186066
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 3,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.07999999821186066
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        }
+      ]
+    },
+    {
+      "name": "Oddkin/Elevation/sm/dark",
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.30000001192092896
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 3,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.30000001192092896
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        }
+      ]
+    },
+    {
+      "name": "Oddkin/Elevation/xl/light",
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 16,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.10000000149011612
+          },
+          "offset": {
+            "x": 0,
+            "y": 8
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 64,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.20000000298023224
+          },
+          "offset": {
+            "x": 0,
+            "y": 24
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        }
+      ]
+    },
+    {
+      "name": "Oddkin/Elevation/xl/dark",
+      "effects": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 16,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.4000000059604645
+          },
+          "offset": {
+            "x": 0,
+            "y": 8
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 64,
+          "boundVariables": {},
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.6000000238418579
+          },
+          "offset": {
+            "x": 0,
+            "y": 24
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        }
+      ]
+    }
+  ],
+  "sourceFiles": [
+    "packages/tokens/src/generated/default-values.ts",
+    "packages/tokens/themes/default.theme.json",
+    "packages/components/src/input/input.styles.ts",
+    "packages/components/src/button/button.native.styles.ts",
+    "packages/components/src/card/card.styles.ts",
+    "packages/components/src/side-nav/side-nav.styles.ts",
+    "packages/components/src/styles/focus-ring.styles.ts"
+  ],
+  "notes": [
+    "Roboto and Roboto Mono represent the repository sans-serif and monospace font stacks in Figma.",
+    "Row focus uses a 4 px inset and 4 px small radius with the 2 px focus stroke. Standalone outlines retain the repository 2 px offset.",
+    "Original native reference components remain as reference definitions; compatible composed AI actions now use Common button instances."
+  ],
+  "tokenValidation": {
+    "repositoryVariables": {
+      "matched": 180,
+      "missing": [],
+      "mismatches": []
+    },
+    "componentRoleModes": {
+      "matched": 126,
+      "mismatches": [],
+      "missing": [],
+      "sources": [
+        "packages/tokens/src/generated/default-values.ts",
+        "packages/tokens/themes/default.theme.json"
+      ],
+      "precedence": "Theme overrides applied over generated defaults."
+    },
+    "coreTypography": {
+      "matched": 8,
+      "mismatches": []
+    },
+    "elevationStyles": {
+      "matched": 10,
+      "mismatches": []
+    },
+    "sourcePrecedence": "Theme overrides applied over generated defaults; rem converted at 16 px.",
+    "retiredUnusedToken": {
+      "id": "VariableID:76:843",
+      "name": "repo/font/size/2xs",
+      "value": 10
+    }
+  }
+}

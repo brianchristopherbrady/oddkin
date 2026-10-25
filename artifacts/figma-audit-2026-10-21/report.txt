@@ -1,0 +1,124 @@
+Oddkin Figma component audit - October 21, 2026
+
+Status: Complete
+File: https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Untitled
+Pages: Oddkin - Components (0:1); Oddkin - Common primitives (158:22)
+
+SCOPE
+442 component definitions across both pages; 71 Common families, 324 Common variants, and 34 icons.
+265 preview instances and 112 visible focus indicators checked.
+
+CHANGES
+- Select, combobox, multiselect, and standalone listbox now instantiate one ListboxSurface primitive with shared ListboxOption instances: 9 list bodies and 30 option rows.
+- Menu, side navigation, and tree use shared item primitives: 12 menu rows and 20 navigation/tree rows.
+- Radio groups reuse 4 shared radio instances. Multiselect examples reuse 14 shared chip instances, including multiple selections and wrapped chips.
+- 20 composed AI action buttons now reuse Common button instances with their Light/Dark modes.
+- Reworked 8 input definitions and 35 input instances to use auto layout and content height.
+- Corrected checkbox/radio label and validation-hint overlap, centering, and width behavior across 25 binary-control states.
+- Bound remaining matching scalar values to existing spacing, radius, and navigation tokens; retained organized boards and 324 permanent state labels.
+
+SHARED PRIMITIVES
+listboxSurfaceSetId: 234:5551
+listboxSurfaceComponentId: 234:5534
+listboxOptionSetId: 186:5167
+menuItemSetId: 160:974
+navigationItemSetId: 160:1252
+radioSetId: 159:1209
+chipSetId: 159:612
+
+TOKENS AND STYLES
+180 repository variables and 126 Light/Dark component-role values match repository tokens.
+8 core typography styles match size, line height, weight, and tracking. All 10 elevation styles match repository shadows.
+Theme overrides take precedence over generated defaults. Rem values use the repository 16 px basis.
+Removed unused legacy token repo/font/size/2xs (10 px), which no longer exists in the repository. References were checked before removal.
+Roboto and Roboto Mono represent the repository sans-serif and monospace font stacks in Figma.
+Row focus uses a 4 px inset and 4 px small radius with the 2 px focus stroke. Standalone outlines retain the repository 2 px offset.
+Original native reference components remain as reference definitions; compatible composed AI actions now use Common button instances.
+
+VALIDATION
+No remaining findings in clipping, centering, text overlap, icon dimensions, button dimensions/padding, unbound visible solid colors, broken component references, board overlap, preview overflow, focus clipping, or effect-mode mismatch checks.
+Checks cover the authored component states and preview instances present in both Figma pages at audit time.
+
+REPOSITORY SOURCES
+packages/tokens/src/generated/default-values.ts
+packages/tokens/themes/default.theme.json
+packages/components/src/input/input.styles.ts
+packages/components/src/button/button.native.styles.ts
+packages/components/src/card/card.styles.ts
+packages/components/src/side-nav/side-nav.styles.ts
+packages/components/src/styles/focus-ring.styles.ts
+
+COMMON FAMILY INVENTORY
+Oddkin/Common/button: 18 variants
+Oddkin/Common/iconButton: 5 variants
+Oddkin/Common/toggleButton: 8 variants
+Oddkin/Common/splitAction: 2 variants
+Oddkin/Common/link: 3 variants
+Oddkin/Common/badge: 5 variants
+Oddkin/Common/chip: 4 variants
+Oddkin/Common/button/sm: 18 variants
+Oddkin/Common/button/lg: 18 variants
+Oddkin/Common/field: 2 variants
+Oddkin/Common/input: 8 variants
+Oddkin/Common/textarea: 5 variants
+Oddkin/Common/number: 3 variants
+Oddkin/Common/search: 4 variants
+Oddkin/Common/checkbox: 15 variants
+Oddkin/Common/radio: 10 variants
+Oddkin/Common/radioGroup: 2 variants
+Oddkin/Common/switch: 8 variants
+Oddkin/Common/slider: 3 variants
+Oddkin/Common/select: 5 variants
+Oddkin/Common/listbox: 6 variants
+Oddkin/Common/combobox: 6 variants
+Oddkin/Common/multiselect: 10 variants
+Oddkin/Common/segmented: 3 variants
+Oddkin/Common/dateTime: 3 variants
+Oddkin/Common/fileUpload: 3 variants
+Oddkin/Common/ListboxSurface: 1 variants
+Oddkin/Common/ListboxOption: 6 variants
+Oddkin/Common/Menu: 3 variants
+Oddkin/Common/MenuItem: 4 variants
+Oddkin/Common/Tree: 6 variants
+Oddkin/Common/Table: 6 variants
+Oddkin/Common/List: 3 variants
+Oddkin/Common/NavigationItem: 4 variants
+Oddkin/Common/SideNavigation: 3 variants
+Oddkin/Common/Breadcrumbs: 2 variants
+Oddkin/Common/Pagination: 3 variants
+Oddkin/Common/Tabs: 2 variants
+Oddkin/Common/Disclosure: 3 variants
+Oddkin/Common/Accordion: 3 variants
+Oddkin/Common/Toolbar: 3 variants
+Oddkin/Common/card: 2 variants
+Oddkin/Common/popover: 2 variants
+Oddkin/Common/tooltip: 2 variants
+Oddkin/Common/dialog: 2 variants
+Oddkin/Common/alertDialog: 1 variants
+Oddkin/Common/drawer: 2 variants
+Oddkin/Common/alert: 4 variants
+Oddkin/Common/toast: 2 variants
+Oddkin/Common/progress: 2 variants
+Oddkin/Common/spinner: 2 variants
+Oddkin/Common/skeleton: 2 variants
+Oddkin/Common/emptyState: 2 variants
+Oddkin/Common/avatar: 2 variants
+Oddkin/Common/icon: 2 variants
+Oddkin/Common/divider: 2 variants
+Oddkin/Common/typography: 1 variants
+Oddkin/Common/keyboardKey: 2 variants
+Oddkin/Common/CommandItem: 3 variants
+Oddkin/Common/CommandPalette: 5 variants
+Oddkin/Common/CheckboxGroup: 3 variants
+Oddkin/Common/ValidationSummary: 1 variants
+Oddkin/Common/Form: 6 variants
+Oddkin/Common/GridCell: 5 variants
+Oddkin/Common/GridColumnHeader: 3 variants
+Oddkin/Common/GridSelection: 3 variants
+Oddkin/Common/GridRow: 3 variants
+Oddkin/Common/DataGrid: 9 variants
+Oddkin/Common/Splitter/vertical: 4 variants
+Oddkin/Common/Splitter/horizontal: 4 variants
+Oddkin/Common/SplitPanels: 12 variants
+
+Detailed counts, checked definition IDs, primitive references, and validation data are in audit.json.

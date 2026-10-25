@@ -103,7 +103,7 @@ describe('Figma parity: odd-dialog (dialog, alertDialog)', () => {
     const targets: Target[] = [
       { layer: [frame, 'Surface'], el: part(el, 'dialog'), kind: 'frame' },
       { layer: [frame, 'Surface [2]'], el: part(el, 'footer'), kind: 'frame', pseudo: '::before' },
-      { layer: [frame, 'Delete workspace?'], el: part(el, 'title'), kind: 'text' },
+      { layer: [frame, 'Header', 'Delete workspace?'], el: part(el, 'title'), kind: 'text' },
       {
         layer: [frame, 'This permanently deletes Field notes and its shared\ncontent. Thi'],
         el: el.querySelector('p')!,

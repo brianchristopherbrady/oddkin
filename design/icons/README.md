@@ -6,6 +6,8 @@ General holds reusable interface symbols, files, typography, navigation, transpo
 
 The artwork uses a 20 × 20 canvas, 1.5 px physical strokes, rounded caps and joins, no fill, and `currentColor`. In Figma, strokes are bound to `Component roles/color/text/primary`, supporting light and dark modes. SVGs contain editable paths, with no font or image dependencies. Use visible labels for unfamiliar symbols.
 
+Figma's `Artwork` wrapper and its geometry must use **Scale constraints on both axes**. Otherwise a 16 px instance keeps 20 px artwork, making the glyph too large and shifting it down and right. `figma-import.js` establishes the native canvas before enabling these constraints and audits them alongside transparent fills. Component consumers use the existing 16 / 20 / 24 px icon roles. Chip and badge vector strokes use their label's foreground role, including selected and disabled states. `design/figma/icon-layouts.json` records the measured source inventory, compact samples and centered rows; the icon regression tests check this baseline.
+
 ## Reference coverage
 
 The original inputs were `gis-icons.json` (hyphen), containing 3,170 reference entries, and `healthcare-only-icons.json`, containing 746 healthcare entries. All **3,916 source IDs** are covered. The separate `gis_icons.json` fragment is not a source of this expansion.

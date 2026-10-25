@@ -1,8 +1,8 @@
 {
   "$schema": "./reuse.schema.json",
   "snapshot": "./components.json",
-  "status": "proposed",
-  "date": "2026-10-22",
+  "status": "approved",
+  "date": "2026-10-24",
   "classes": {
     "element": "Element dependency: the consumer renders the source element (registered by its define entry).",
     "controller": "Shared controller: parts in the consumer's own tree with behaviour from a core controller or collection model.",
@@ -13,15 +13,680 @@
     "deferred": "Not classified (data grid, deferred by the owner)."
   },
   "counts": {
-    "style": 92,
-    "slot": 35,
+    "style": 113,
+    "slot": 59,
+    "deferred": 12,
     "controller": 13,
-    "deferred": 11,
     "native": 5,
-    "independent": 2,
     "element": 12
   },
   "references": [
+    {
+      "consumer": "Oddkin/Common/CheckboxOption",
+      "consumerId": "258:824",
+      "source": "Oddkin/Common/checkbox",
+      "sourceId": "159:1181",
+      "count": 9,
+      "class": "style",
+      "reason": "An interactive checkbox cannot sit inside role=\"option\"; the option row draws the box and marks from the shared control-indicator module that odd-checkbox uses."
+    },
+    {
+      "consumer": "Oddkin/Common/CheckboxOption",
+      "consumerId": "258:824",
+      "source": "Oddkin/Icon/close",
+      "sourceId": "159:288",
+      "count": 9,
+      "class": "style",
+      "reason": "The close/remove glyph is built in and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/CommandItem",
+      "consumerId": "182:2340",
+      "source": "Oddkin/Icon/file",
+      "sourceId": "159:312",
+      "count": 3,
+      "class": "slot",
+      "reason": "Command icons come from the command data (author content)."
+    },
+    {
+      "consumer": "Oddkin/Common/Disclosure",
+      "consumerId": "160:1501",
+      "source": "Oddkin/Icon/chevronDown",
+      "sourceId": "159:276",
+      "count": 1,
+      "class": "style",
+      "reason": "The chevronDown affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
+    },
+    {
+      "consumer": "Oddkin/Common/Disclosure",
+      "consumerId": "160:1501",
+      "source": "Oddkin/Icon/chevronRight",
+      "sourceId": "159:279",
+      "count": 2,
+      "class": "style",
+      "reason": "The chevronRight affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
+    },
+    {
+      "consumer": "Oddkin/Common/GridColumnHeader",
+      "consumerId": "184:3822",
+      "source": "Oddkin/Icon/chevronDown",
+      "sourceId": "159:276",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
+    },
+    {
+      "consumer": "Oddkin/Common/GridColumnHeader",
+      "consumerId": "184:3822",
+      "source": "Oddkin/Icon/chevronUp",
+      "sourceId": "159:282",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
+    },
+    {
+      "consumer": "Oddkin/Common/GridColumnHeader",
+      "consumerId": "184:3822",
+      "source": "Oddkin/Icon/sort",
+      "sourceId": "159:375",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
+    },
+    {
+      "consumer": "Oddkin/Common/GridSelection",
+      "consumerId": "184:3830",
+      "source": "Oddkin/Icon/check",
+      "sourceId": "159:285",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
+    },
+    {
+      "consumer": "Oddkin/Common/GridSelection",
+      "consumerId": "184:3830",
+      "source": "Oddkin/Icon/minus",
+      "sourceId": "159:294",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
+    },
+    {
+      "consumer": "Oddkin/Common/ListboxOption",
+      "consumerId": "186:5167",
+      "source": "Oddkin/Icon/check",
+      "sourceId": "159:285",
+      "count": 3,
+      "class": "style",
+      "reason": "The check mark is built in and comes from the shared control-indicator glyphs (with odd-checkbox)."
+    },
+    {
+      "consumer": "Oddkin/Common/ListboxSurface",
+      "consumerId": "234:5551",
+      "source": "Oddkin/Common/ListboxOption",
+      "sourceId": "186:5167",
+      "count": 4,
+      "class": "controller",
+      "reason": "Options are parts in the listbox tree (role=\"option\", selection, active descendant); behaviour from the shared collection controller, look from the shared option-row styles."
+    },
+    {
+      "consumer": "Oddkin/Common/MenuItem",
+      "consumerId": "160:974",
+      "source": "Oddkin/Icon/chevronRight",
+      "sourceId": "159:279",
+      "count": 4,
+      "class": "style",
+      "reason": "The chevronRight affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
+    },
+    {
+      "consumer": "Oddkin/Common/MenuItem",
+      "consumerId": "160:974",
+      "source": "Oddkin/Icon/folder",
+      "sourceId": "159:309",
+      "count": 4,
+      "class": "slot",
+      "reason": "Leading item icons are author content (item data or slot), not built into the menu."
+    },
+    {
+      "consumer": "Oddkin/Common/NavigationItem",
+      "consumerId": "160:1252",
+      "source": "Oddkin/Icon/chevronRight",
+      "sourceId": "159:279",
+      "count": 4,
+      "class": "style",
+      "reason": "The chevronRight affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
+    },
+    {
+      "consumer": "Oddkin/Common/NavigationItem",
+      "consumerId": "160:1252",
+      "source": "Oddkin/Icon/grid",
+      "sourceId": "159:318",
+      "count": 4,
+      "class": "slot",
+      "reason": "Item icons come from the navigation item data (author content), not from the element."
+    },
+    {
+      "consumer": "Oddkin/Common/Splitter/horizontal",
+      "consumerId": "185:4835",
+      "source": "Oddkin/Icon/more",
+      "sourceId": "159:300",
+      "count": 4,
+      "class": "style",
+      "reason": "The resize grip uses the shared more glyph; it is a drawn part of the separator, not a nested icon element."
+    },
+    {
+      "consumer": "Oddkin/Common/avatar/Appearance",
+      "consumerId": "374:1576",
+      "source": "Oddkin/Common/AvatarItem",
+      "sourceId": "257:886",
+      "count": 24,
+      "class": "style",
+      "reason": "Avatar appearance variants reuse AvatarItem. In code these backgrounds and corner radii are styles and tokens of the same odd-avatar element; custom HEX colors are author-supplied fill overrides, with no nested element dependency."
+    },
+    {
+      "consumer": "Oddkin/Common/badge",
+      "consumerId": "159:582",
+      "source": "Oddkin/Icon/checkCircle",
+      "sourceId": "159:339",
+      "count": 1,
+      "class": "style",
+      "reason": "The checkCircle glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
+    },
+    {
+      "consumer": "Oddkin/Common/badge",
+      "consumerId": "159:582",
+      "source": "Oddkin/Icon/info",
+      "sourceId": "159:333",
+      "count": 2,
+      "class": "style",
+      "reason": "The info glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
+    },
+    {
+      "consumer": "Oddkin/Common/badge",
+      "consumerId": "159:582",
+      "source": "Oddkin/Icon/warning",
+      "sourceId": "159:336",
+      "count": 2,
+      "class": "style",
+      "reason": "The warning glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
+    },
+    {
+      "consumer": "Oddkin/Common/button",
+      "consumerId": "159:439",
+      "source": "Oddkin/Icon/plus",
+      "sourceId": "159:291",
+      "count": 15,
+      "class": "slot",
+      "reason": "The leading icon is author content in the start slot; odd-button draws no icon of its own."
+    },
+    {
+      "consumer": "Oddkin/Common/button",
+      "consumerId": "159:439",
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 3,
+      "class": "style",
+      "reason": "The busy glyph is the shared spinner module (one decision for odd-button busy, odd-progress indeterminate, and loading parts)."
+    },
+    {
+      "consumer": "Oddkin/Common/button/lg",
+      "consumerId": "181:2390",
+      "source": "Oddkin/Icon/plus",
+      "sourceId": "159:291",
+      "count": 15,
+      "class": "slot",
+      "reason": "The leading icon is author content in the start slot; odd-button draws no icon of its own."
+    },
+    {
+      "consumer": "Oddkin/Common/button/lg",
+      "consumerId": "181:2390",
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 3,
+      "class": "style",
+      "reason": "The busy glyph is the shared spinner module (one decision for odd-button busy, odd-progress indeterminate, and loading parts)."
+    },
+    {
+      "consumer": "Oddkin/Common/button/sm",
+      "consumerId": "181:2332",
+      "source": "Oddkin/Icon/plus",
+      "sourceId": "159:291",
+      "count": 15,
+      "class": "slot",
+      "reason": "The leading icon is author content in the start slot; odd-button draws no icon of its own."
+    },
+    {
+      "consumer": "Oddkin/Common/button/sm",
+      "consumerId": "181:2332",
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 3,
+      "class": "style",
+      "reason": "The busy glyph is the shared spinner module (one decision for odd-button busy, odd-progress indeterminate, and loading parts)."
+    },
+    {
+      "consumer": "Oddkin/Common/checkbox",
+      "consumerId": "159:1181",
+      "source": "Oddkin/Icon/check",
+      "sourceId": "159:285",
+      "count": 5,
+      "class": "style",
+      "reason": "The check mark is built in and comes from the shared control-indicator glyphs (with odd-checkbox)."
+    },
+    {
+      "consumer": "Oddkin/Common/checkbox",
+      "consumerId": "159:1181",
+      "source": "Oddkin/Icon/minus",
+      "sourceId": "159:294",
+      "count": 5,
+      "class": "style",
+      "reason": "The minus mark is built in and comes from the shared control-indicator glyphs (with odd-checkbox)."
+    },
+    {
+      "consumer": "Oddkin/Common/chip",
+      "consumerId": "159:612",
+      "source": "Oddkin/Icon/close",
+      "sourceId": "159:288",
+      "count": 4,
+      "class": "style",
+      "reason": "The close/remove glyph is built in and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/color/Swatch",
+      "consumerId": "555:2564",
+      "source": "Oddkin/Icon/check",
+      "sourceId": "159:285",
+      "count": 1,
+      "class": "style",
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+    },
+    {
+      "consumer": "Oddkin/Common/copyButton",
+      "consumerId": "555:2984",
+      "source": "Oddkin/Common/button/sm",
+      "sourceId": "181:2332",
+      "count": 5,
+      "class": "slot",
+      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
+    },
+    {
+      "consumer": "Oddkin/Common/icon",
+      "consumerId": "162:2058",
+      "source": "Oddkin/Icon/folder",
+      "sourceId": "159:309",
+      "count": 1,
+      "class": "style",
+      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
+    },
+    {
+      "consumer": "Oddkin/Common/icon",
+      "consumerId": "162:2058",
+      "source": "Oddkin/Icon/home",
+      "sourceId": "159:315",
+      "count": 1,
+      "class": "style",
+      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
+    },
+    {
+      "consumer": "Oddkin/Common/icon",
+      "consumerId": "162:2058",
+      "source": "Oddkin/Icon/mail",
+      "sourceId": "159:330",
+      "count": 1,
+      "class": "style",
+      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
+    },
+    {
+      "consumer": "Oddkin/Common/icon",
+      "consumerId": "162:2058",
+      "source": "Oddkin/Icon/more",
+      "sourceId": "159:300",
+      "count": 1,
+      "class": "style",
+      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
+    },
+    {
+      "consumer": "Oddkin/Common/icon",
+      "consumerId": "162:2058",
+      "source": "Oddkin/Icon/search",
+      "sourceId": "159:297",
+      "count": 1,
+      "class": "style",
+      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
+    },
+    {
+      "consumer": "Oddkin/Common/icon",
+      "consumerId": "162:2058",
+      "source": "Oddkin/Icon/settings",
+      "sourceId": "159:321",
+      "count": 4,
+      "class": "style",
+      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
+    },
+    {
+      "consumer": "Oddkin/Common/iconButton",
+      "consumerId": "159:471",
+      "source": "Oddkin/Icon/plus",
+      "sourceId": "159:291",
+      "count": 5,
+      "class": "slot",
+      "reason": "The icon is the author's content; `label` gives the accessible name (odd-button, icon-only)."
+    },
+    {
+      "consumer": "Oddkin/Common/input",
+      "consumerId": "159:1024",
+      "source": "Oddkin/Icon/eye",
+      "sourceId": "159:342",
+      "count": 1,
+      "class": "style",
+      "reason": "The eye glyph is built into the element and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/link",
+      "consumerId": "159:549",
+      "source": "Oddkin/Icon/external",
+      "sourceId": "159:360",
+      "count": 3,
+      "class": "style",
+      "reason": "The external glyph is built into the element and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Field",
+      "consumerId": "257:1654",
+      "source": "Oddkin/Common/multiselect/Value/chips",
+      "sourceId": "257:971",
+      "count": 12,
+      "class": "controller",
+      "reason": "The selection display is a part of the field, rendered from the shared selection model."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Field",
+      "consumerId": "257:1654",
+      "source": "Oddkin/Icon/chevronDown",
+      "sourceId": "159:276",
+      "count": 11,
+      "class": "style",
+      "reason": "The chevronDown affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Field",
+      "consumerId": "257:1654",
+      "source": "Oddkin/Icon/chevronUp",
+      "sourceId": "159:282",
+      "count": 1,
+      "class": "style",
+      "reason": "The chevronUp affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Field",
+      "consumerId": "257:1654",
+      "source": "Oddkin/Icon/close",
+      "sourceId": "159:288",
+      "count": 13,
+      "class": "style",
+      "reason": "The close/remove glyph is built in and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Field",
+      "consumerId": "257:1654",
+      "source": "Oddkin/Icon/lock",
+      "sourceId": "159:366",
+      "count": 1,
+      "class": "style",
+      "reason": "The lock glyph is built into the element and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Field",
+      "consumerId": "257:1654",
+      "source": "Oddkin/Icon/search",
+      "sourceId": "159:297",
+      "count": 2,
+      "class": "style",
+      "reason": "The search glyph is built into the element and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Field",
+      "consumerId": "257:1654",
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 1,
+      "class": "style",
+      "reason": "The busy glyph is the shared spinner module (one decision for odd-button busy, odd-progress indeterminate, and loading parts)."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Value/auto",
+      "consumerId": "257:1105",
+      "source": "Oddkin/Common/chip",
+      "sourceId": "159:612",
+      "count": 7,
+      "class": "style",
+      "reason": "Repeated selected-value parts drawn from the shared chip style module."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Value/auto",
+      "consumerId": "257:1105",
+      "source": "Oddkin/Icon/user",
+      "sourceId": "159:357",
+      "count": 4,
+      "class": "style",
+      "reason": "The user glyph is built into the element and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Value/avatars",
+      "consumerId": "257:1285",
+      "source": "Oddkin/Common/AvatarItem",
+      "sourceId": "257:886",
+      "count": 16,
+      "class": "style",
+      "reason": "Repeated avatar parts drawn from the avatar style module that odd-avatar uses."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Value/chips",
+      "consumerId": "257:971",
+      "source": "Oddkin/Common/chip",
+      "sourceId": "159:612",
+      "count": 9,
+      "class": "style",
+      "reason": "Repeated selected-value parts drawn from the shared chip style module."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Value/count",
+      "consumerId": "257:1004",
+      "source": "Oddkin/Icon/user",
+      "sourceId": "159:357",
+      "count": 5,
+      "class": "style",
+      "reason": "The user glyph is built into the element and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/multiselect/Value/expandable",
+      "consumerId": "257:1240",
+      "source": "Oddkin/Common/chip",
+      "sourceId": "159:612",
+      "count": 16,
+      "class": "style",
+      "reason": "Repeated selected-value parts drawn from the shared chip style module."
+    },
+    {
+      "consumer": "Oddkin/Common/number",
+      "consumerId": "159:1097",
+      "source": "Oddkin/Icon/minus",
+      "sourceId": "159:294",
+      "count": 6,
+      "class": "style",
+      "reason": "The minus mark is built in and comes from the shared control-indicator glyphs (with odd-checkbox)."
+    },
+    {
+      "consumer": "Oddkin/Common/number",
+      "consumerId": "159:1097",
+      "source": "Oddkin/Icon/plus",
+      "sourceId": "159:291",
+      "count": 6,
+      "class": "style",
+      "reason": "The plus glyph is built into the element and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/rating",
+      "consumerId": "555:2787",
+      "source": "Oddkin/Common/rating/Item",
+      "sourceId": "555:2595",
+      "count": 30,
+      "class": "style",
+      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
+    },
+    {
+      "consumer": "Oddkin/Common/rating/Item",
+      "consumerId": "555:2595",
+      "source": "Oddkin/Icon/General/star",
+      "sourceId": "395:609",
+      "count": 5,
+      "class": "style",
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+    },
+    {
+      "consumer": "Oddkin/Common/relativeTime",
+      "consumerId": "555:3030",
+      "source": "Oddkin/Icon/clock",
+      "sourceId": "159:348",
+      "count": 5,
+      "class": "style",
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+    },
+    {
+      "consumer": "Oddkin/Common/search",
+      "consumerId": "159:1144",
+      "source": "Oddkin/Icon/close",
+      "sourceId": "159:288",
+      "count": 3,
+      "class": "style",
+      "reason": "The close/remove glyph is built in and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/search",
+      "consumerId": "159:1144",
+      "source": "Oddkin/Icon/search",
+      "sourceId": "159:297",
+      "count": 4,
+      "class": "style",
+      "reason": "The search glyph is built into the element and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/stat",
+      "consumerId": "555:2908",
+      "source": "Oddkin/Icon/General/direction-arrow-up",
+      "sourceId": "396:389",
+      "count": 2,
+      "class": "style",
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+    },
+    {
+      "consumer": "Oddkin/Common/toggleButton",
+      "consumerId": "159:501",
+      "source": "Oddkin/Icon/bold",
+      "sourceId": "159:354",
+      "count": 8,
+      "class": "slot",
+      "reason": "The icon is the author's content; the toggle owns only its pressed state."
+    },
+    {
+      "consumer": "Oddkin/Layout/AspectRatio",
+      "consumerId": "460:2215",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 3,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/AutoGrid",
+      "consumerId": "460:2161",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 6,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/Box",
+      "consumerId": "459:2112",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 3,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/Center",
+      "consumerId": "460:2196",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 1,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/Cluster",
+      "consumerId": "460:2144",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 6,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/Container",
+      "consumerId": "460:2092",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 2,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/Grid",
+      "consumerId": "460:2317",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 24,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/Row",
+      "consumerId": "460:2140",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 6,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/ScrollRegion",
+      "consumerId": "460:2219",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 6,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/Split",
+      "consumerId": "460:2192",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 4,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
+    {
+      "consumer": "Oddkin/Layout/Stack",
+      "consumerId": "460:2120",
+      "source": "Oddkin/Layout/SpecimenItem",
+      "sourceId": "459:2095",
+      "count": 9,
+      "class": "slot",
+      "reason": "Replaceable demonstration content in a native layout slot. The layout helper owns arrangement and token-bound spacing; the author supplies children, with no custom-element dependency."
+    },
     {
       "consumer": "Oddkin/Common/Accordion",
       "consumerId": "160:1558",
@@ -75,33 +740,6 @@
       "count": 9,
       "class": "slot",
       "reason": "The author places odd-checkbox children; each is form-associated on its own, so no form ownership crosses a shadow boundary; the group adds fieldset semantics, legend, description, and group error."
-    },
-    {
-      "consumer": "Oddkin/Common/CheckboxOption",
-      "consumerId": "258:824",
-      "source": "Oddkin/Common/checkbox",
-      "sourceId": "159:1181",
-      "count": 9,
-      "class": "style",
-      "reason": "An interactive checkbox cannot sit inside role=\"option\"; the option row draws the box and marks from the shared control-indicator module that odd-checkbox uses."
-    },
-    {
-      "consumer": "Oddkin/Common/CheckboxOption",
-      "consumerId": "258:824",
-      "source": "Oddkin/Icon/close",
-      "sourceId": "159:288",
-      "count": 9,
-      "class": "style",
-      "reason": "The close/remove glyph is built in and comes from the shared glyph module."
-    },
-    {
-      "consumer": "Oddkin/Common/CommandItem",
-      "consumerId": "182:2340",
-      "source": "Oddkin/Icon/file",
-      "sourceId": "159:312",
-      "count": 3,
-      "class": "slot",
-      "reason": "Command icons come from the command data (author content)."
     },
     {
       "consumer": "Oddkin/Common/CommandPalette",
@@ -176,24 +814,6 @@
       "reason": "Data grid deferred by the owner (2026-10-21): not classified."
     },
     {
-      "consumer": "Oddkin/Common/Disclosure",
-      "consumerId": "160:1501",
-      "source": "Oddkin/Icon/chevronDown",
-      "sourceId": "159:276",
-      "count": 1,
-      "class": "style",
-      "reason": "The chevronDown affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
-    },
-    {
-      "consumer": "Oddkin/Common/Disclosure",
-      "consumerId": "160:1501",
-      "source": "Oddkin/Icon/chevronRight",
-      "sourceId": "159:279",
-      "count": 2,
-      "class": "style",
-      "reason": "The chevronRight affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
-    },
-    {
       "consumer": "Oddkin/Common/Form",
       "consumerId": "183:2919",
       "source": "Oddkin/Common/CheckboxGroup",
@@ -230,33 +850,6 @@
       "reason": "Form is a composition recipe: the author places odd-input."
     },
     {
-      "consumer": "Oddkin/Common/GridColumnHeader",
-      "consumerId": "184:3822",
-      "source": "Oddkin/Icon/chevronDown",
-      "sourceId": "159:276",
-      "count": 1,
-      "class": "deferred",
-      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
-    },
-    {
-      "consumer": "Oddkin/Common/GridColumnHeader",
-      "consumerId": "184:3822",
-      "source": "Oddkin/Icon/chevronUp",
-      "sourceId": "159:282",
-      "count": 1,
-      "class": "deferred",
-      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
-    },
-    {
-      "consumer": "Oddkin/Common/GridColumnHeader",
-      "consumerId": "184:3822",
-      "source": "Oddkin/Icon/sort",
-      "sourceId": "159:375",
-      "count": 1,
-      "class": "deferred",
-      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
-    },
-    {
       "consumer": "Oddkin/Common/GridRow",
       "consumerId": "184:3887",
       "source": "Oddkin/Common/GridCell",
@@ -271,24 +864,6 @@
       "source": "Oddkin/Common/GridSelection",
       "sourceId": "184:3830",
       "count": 3,
-      "class": "deferred",
-      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
-    },
-    {
-      "consumer": "Oddkin/Common/GridSelection",
-      "consumerId": "184:3830",
-      "source": "Oddkin/Icon/check",
-      "sourceId": "159:285",
-      "count": 1,
-      "class": "deferred",
-      "reason": "Data grid deferred by the owner (2026-10-21): not classified."
-    },
-    {
-      "consumer": "Oddkin/Common/GridSelection",
-      "consumerId": "184:3830",
-      "source": "Oddkin/Icon/minus",
-      "sourceId": "159:294",
-      "count": 1,
       "class": "deferred",
       "reason": "Data grid deferred by the owner (2026-10-21): not classified."
     },
@@ -320,24 +895,6 @@
       "reason": "The list is a CSS recipe over author markup; every icon in it is the author's content."
     },
     {
-      "consumer": "Oddkin/Common/ListboxOption",
-      "consumerId": "186:5167",
-      "source": "Oddkin/Icon/check",
-      "sourceId": "159:285",
-      "count": 3,
-      "class": "style",
-      "reason": "The check mark is built in and comes from the shared control-indicator glyphs (with odd-checkbox)."
-    },
-    {
-      "consumer": "Oddkin/Common/ListboxSurface",
-      "consumerId": "234:5551",
-      "source": "Oddkin/Common/ListboxOption",
-      "sourceId": "186:5167",
-      "count": 4,
-      "class": "controller",
-      "reason": "Options are parts in the listbox tree (role=\"option\", selection, active descendant); behaviour from the shared collection controller, look from the shared option-row styles."
-    },
-    {
       "consumer": "Oddkin/Common/Menu",
       "consumerId": "160:941",
       "source": "Oddkin/Common/MenuItem",
@@ -345,42 +902,6 @@
       "count": 12,
       "class": "controller",
       "reason": "Menu items are parts in the menu's tree (role=\"menuitem\"); roving focus and typeahead from the shared controllers, look from the shared option-row styles."
-    },
-    {
-      "consumer": "Oddkin/Common/MenuItem",
-      "consumerId": "160:974",
-      "source": "Oddkin/Icon/chevronRight",
-      "sourceId": "159:279",
-      "count": 4,
-      "class": "style",
-      "reason": "The chevronRight affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
-    },
-    {
-      "consumer": "Oddkin/Common/MenuItem",
-      "consumerId": "160:974",
-      "source": "Oddkin/Icon/folder",
-      "sourceId": "159:309",
-      "count": 4,
-      "class": "slot",
-      "reason": "Leading item icons are author content (item data or slot), not built into the menu."
-    },
-    {
-      "consumer": "Oddkin/Common/NavigationItem",
-      "consumerId": "160:1252",
-      "source": "Oddkin/Icon/chevronRight",
-      "sourceId": "159:279",
-      "count": 4,
-      "class": "style",
-      "reason": "The chevronRight affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
-    },
-    {
-      "consumer": "Oddkin/Common/NavigationItem",
-      "consumerId": "160:1252",
-      "source": "Oddkin/Icon/grid",
-      "sourceId": "159:318",
-      "count": 4,
-      "class": "slot",
-      "reason": "Item icons come from the navigation item data (author content), not from the element."
     },
     {
       "consumer": "Oddkin/Common/Pagination",
@@ -408,6 +929,60 @@
       "count": 3,
       "class": "style",
       "reason": "The more glyph is built into the element and comes from the shared glyph module."
+    },
+    {
+      "consumer": "Oddkin/Common/Picker",
+      "consumerId": "541:15460",
+      "source": "Oddkin/Common/ListboxSurface",
+      "sourceId": "234:5551",
+      "count": 4,
+      "class": "slot",
+      "reason": "The flat-content composition supplies the existing listbox rows. It shares the field and overlay appearance with Tree while retaining listbox semantics."
+    },
+    {
+      "consumer": "Oddkin/Common/Picker",
+      "consumerId": "541:15460",
+      "source": "Oddkin/Common/Tree",
+      "sourceId": "160:1061",
+      "count": 4,
+      "class": "slot",
+      "reason": "This proposed composition places the existing odd-tree in popover content. Its expansion and selection stay with Tree; no new registered picker element or dependency is declared."
+    },
+    {
+      "consumer": "Oddkin/Common/Picker",
+      "consumerId": "541:15460",
+      "source": "Oddkin/Common/button/sm",
+      "sourceId": "181:2332",
+      "count": 12,
+      "class": "slot",
+      "reason": "The composition author supplies Close, Clear and Done actions in the popover footer."
+    },
+    {
+      "consumer": "Oddkin/Common/Picker",
+      "consumerId": "541:15460",
+      "source": "Oddkin/Common/multiselect/Field",
+      "sourceId": "257:1654",
+      "count": 24,
+      "class": "style",
+      "reason": "The picker trigger reuses the shared field style and replaceable value slot; it adds no registered field element."
+    },
+    {
+      "consumer": "Oddkin/Common/Picker",
+      "consumerId": "541:15460",
+      "source": "Oddkin/Common/multiselect/Value/chips",
+      "sourceId": "257:971",
+      "count": 8,
+      "class": "style",
+      "reason": "Several selected values are parts of the picker field drawn from the existing chip display; they are not separate interactive elements."
+    },
+    {
+      "consumer": "Oddkin/Common/Picker",
+      "consumerId": "541:15460",
+      "source": "Oddkin/Common/popover",
+      "sourceId": "160:2460",
+      "count": 24,
+      "class": "slot",
+      "reason": "The composition supplies the existing anchored popover. Content and footer use its replaceable slots; no new runtime wrapper is registered."
     },
     {
       "consumer": "Oddkin/Common/SideNavigation",
@@ -504,7 +1079,7 @@
       "consumerId": "160:1061",
       "source": "Oddkin/Common/NavigationItem",
       "sourceId": "160:1252",
-      "count": 4,
+      "count": 16,
       "class": "style",
       "reason": "Figma reuses the navigation row for tree rows: indent step, expand glyph, and current marker must change together with odd-side-nav, so both draw rows from one row style module; behaviour differs (links vs treeitems), so no shared element."
     },
@@ -608,94 +1183,22 @@
       "reason": "The warning glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
     },
     {
-      "consumer": "Oddkin/Common/avatar/Appearance",
-      "consumerId": "374:1576",
-      "source": "Oddkin/Common/AvatarItem",
-      "sourceId": "257:886",
-      "count": 24,
-      "class": "style",
-      "reason": "Avatar appearance variants reuse AvatarItem. In code these backgrounds and corner radii are styles and tokens of the same odd-avatar element; custom HEX colors are author-supplied fill overrides, with no nested element dependency."
-    },
-    {
-      "consumer": "Oddkin/Common/badge",
-      "consumerId": "159:582",
-      "source": "Oddkin/Icon/checkCircle",
-      "sourceId": "159:339",
-      "count": 1,
-      "class": "style",
-      "reason": "The checkCircle glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
-    },
-    {
-      "consumer": "Oddkin/Common/badge",
-      "consumerId": "159:582",
-      "source": "Oddkin/Icon/info",
-      "sourceId": "159:333",
-      "count": 1,
-      "class": "style",
-      "reason": "The info glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
-    },
-    {
-      "consumer": "Oddkin/Common/badge",
-      "consumerId": "159:582",
-      "source": "Oddkin/Icon/warning",
-      "sourceId": "159:336",
-      "count": 2,
-      "class": "style",
-      "reason": "The warning glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
-    },
-    {
-      "consumer": "Oddkin/Common/button",
-      "consumerId": "159:439",
-      "source": "Oddkin/Icon/plus",
-      "sourceId": "159:291",
-      "count": 15,
+      "consumer": "Oddkin/Common/calendar",
+      "consumerId": "558:15676",
+      "source": "Oddkin/Common/button/sm",
+      "sourceId": "181:2332",
+      "count": 12,
       "class": "slot",
-      "reason": "The leading icon is author content in the start slot; odd-button draws no icon of its own."
+      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
     },
     {
-      "consumer": "Oddkin/Common/button",
-      "consumerId": "159:439",
-      "source": "Oddkin/Icon/spinner",
-      "sourceId": "159:363",
-      "count": 3,
+      "consumer": "Oddkin/Common/calendar",
+      "consumerId": "558:15676",
+      "source": "Oddkin/Common/calendar/Day",
+      "sourceId": "555:2531",
+      "count": 126,
       "class": "style",
-      "reason": "The busy glyph is the shared spinner module (one decision for odd-button busy, odd-progress indeterminate, and loading parts)."
-    },
-    {
-      "consumer": "Oddkin/Common/button/lg",
-      "consumerId": "181:2390",
-      "source": "Oddkin/Icon/plus",
-      "sourceId": "159:291",
-      "count": 15,
-      "class": "slot",
-      "reason": "The leading icon is author content in the start slot; odd-button draws no icon of its own."
-    },
-    {
-      "consumer": "Oddkin/Common/button/lg",
-      "consumerId": "181:2390",
-      "source": "Oddkin/Icon/spinner",
-      "sourceId": "159:363",
-      "count": 3,
-      "class": "style",
-      "reason": "The busy glyph is the shared spinner module (one decision for odd-button busy, odd-progress indeterminate, and loading parts)."
-    },
-    {
-      "consumer": "Oddkin/Common/button/sm",
-      "consumerId": "181:2332",
-      "source": "Oddkin/Icon/plus",
-      "sourceId": "159:291",
-      "count": 15,
-      "class": "slot",
-      "reason": "The leading icon is author content in the start slot; odd-button draws no icon of its own."
-    },
-    {
-      "consumer": "Oddkin/Common/button/sm",
-      "consumerId": "181:2332",
-      "source": "Oddkin/Icon/spinner",
-      "sourceId": "159:363",
-      "count": 3,
-      "class": "style",
-      "reason": "The busy glyph is the shared spinner module (one decision for odd-button busy, odd-progress indeterminate, and loading parts)."
+      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
     },
     {
       "consumer": "Oddkin/Common/card",
@@ -707,31 +1210,40 @@
       "reason": "Card actions are author content in the footer slot; odd-card never imports odd-button."
     },
     {
-      "consumer": "Oddkin/Common/checkbox",
-      "consumerId": "159:1181",
-      "source": "Oddkin/Icon/check",
-      "sourceId": "159:285",
-      "count": 5,
-      "class": "style",
-      "reason": "The check mark is built in and comes from the shared control-indicator glyphs (with odd-checkbox)."
+      "consumer": "Oddkin/Common/colorPicker",
+      "consumerId": "558:16598",
+      "source": "Oddkin/Common/button/sm",
+      "sourceId": "181:2332",
+      "count": 6,
+      "class": "slot",
+      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
     },
     {
-      "consumer": "Oddkin/Common/checkbox",
-      "consumerId": "159:1181",
-      "source": "Oddkin/Icon/minus",
-      "sourceId": "159:294",
-      "count": 5,
+      "consumer": "Oddkin/Common/colorPicker",
+      "consumerId": "558:16598",
+      "source": "Oddkin/Common/color/Swatch",
+      "sourceId": "555:2564",
+      "count": 21,
       "class": "style",
-      "reason": "The minus mark is built in and comes from the shared control-indicator glyphs (with odd-checkbox)."
+      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
     },
     {
-      "consumer": "Oddkin/Common/chip",
-      "consumerId": "159:612",
-      "source": "Oddkin/Icon/close",
-      "sourceId": "159:288",
-      "count": 4,
+      "consumer": "Oddkin/Common/colorPicker",
+      "consumerId": "558:16598",
+      "source": "Oddkin/Common/multiselect/Field",
+      "sourceId": "257:1654",
+      "count": 12,
       "class": "style",
-      "reason": "The close/remove glyph is built in and comes from the shared glyph module."
+      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
+    },
+    {
+      "consumer": "Oddkin/Common/colorPicker",
+      "consumerId": "558:16598",
+      "source": "Oddkin/Common/popover",
+      "sourceId": "160:2460",
+      "count": 3,
+      "class": "slot",
+      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
     },
     {
       "consumer": "Oddkin/Common/combobox",
@@ -768,6 +1280,33 @@
       "count": 1,
       "class": "style",
       "reason": "The warning glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
+    },
+    {
+      "consumer": "Oddkin/Common/datePicker",
+      "consumerId": "558:16131",
+      "source": "Oddkin/Common/calendar",
+      "sourceId": "558:15676",
+      "count": 2,
+      "class": "deferred",
+      "reason": "New Figma calendar composition reused by the date-picker proposal. Its runtime component contract is not implemented or approved by this design task."
+    },
+    {
+      "consumer": "Oddkin/Common/datePicker",
+      "consumerId": "558:16131",
+      "source": "Oddkin/Common/multiselect/Field",
+      "sourceId": "257:1654",
+      "count": 6,
+      "class": "style",
+      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
+    },
+    {
+      "consumer": "Oddkin/Common/datePicker",
+      "consumerId": "558:16131",
+      "source": "Oddkin/Common/popover",
+      "sourceId": "160:2460",
+      "count": 2,
+      "class": "slot",
+      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
     },
     {
       "consumer": "Oddkin/Common/dateTime",
@@ -905,87 +1444,6 @@
       "reason": "The upload glyph is built into the element and comes from the shared glyph module."
     },
     {
-      "consumer": "Oddkin/Common/icon",
-      "consumerId": "162:2058",
-      "source": "Oddkin/Icon/folder",
-      "sourceId": "159:309",
-      "count": 1,
-      "class": "style",
-      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
-    },
-    {
-      "consumer": "Oddkin/Common/icon",
-      "consumerId": "162:2058",
-      "source": "Oddkin/Icon/home",
-      "sourceId": "159:315",
-      "count": 1,
-      "class": "style",
-      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
-    },
-    {
-      "consumer": "Oddkin/Common/icon",
-      "consumerId": "162:2058",
-      "source": "Oddkin/Icon/mail",
-      "sourceId": "159:330",
-      "count": 1,
-      "class": "style",
-      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
-    },
-    {
-      "consumer": "Oddkin/Common/icon",
-      "consumerId": "162:2058",
-      "source": "Oddkin/Icon/more",
-      "sourceId": "159:300",
-      "count": 1,
-      "class": "style",
-      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
-    },
-    {
-      "consumer": "Oddkin/Common/icon",
-      "consumerId": "162:2058",
-      "source": "Oddkin/Icon/search",
-      "sourceId": "159:297",
-      "count": 1,
-      "class": "style",
-      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
-    },
-    {
-      "consumer": "Oddkin/Common/icon",
-      "consumerId": "162:2058",
-      "source": "Oddkin/Icon/settings",
-      "sourceId": "159:321",
-      "count": 4,
-      "class": "style",
-      "reason": "Specimens of the original Oddkin outline icon set that odd-icon draws; SVG assets and provenance are recorded in design/icons."
-    },
-    {
-      "consumer": "Oddkin/Common/iconButton",
-      "consumerId": "159:471",
-      "source": "Oddkin/Icon/plus",
-      "sourceId": "159:291",
-      "count": 5,
-      "class": "slot",
-      "reason": "The icon is the author's content; `label` gives the accessible name (odd-button, icon-only)."
-    },
-    {
-      "consumer": "Oddkin/Common/input",
-      "consumerId": "159:1024",
-      "source": "Oddkin/Icon/eye",
-      "sourceId": "159:342",
-      "count": 1,
-      "class": "style",
-      "reason": "The eye glyph is built into the element and comes from the shared glyph module."
-    },
-    {
-      "consumer": "Oddkin/Common/link",
-      "consumerId": "159:549",
-      "source": "Oddkin/Icon/external",
-      "sourceId": "159:360",
-      "count": 3,
-      "class": "style",
-      "reason": "The external glyph is built into the element and comes from the shared glyph module."
-    },
-    {
       "consumer": "Oddkin/Common/listbox",
       "consumerId": "159:1402",
       "source": "Oddkin/Common/ListboxSurface",
@@ -1103,76 +1561,13 @@
       "reason": "Anatomy of the one multiselect element: the field and its panel share one tree and the selection controller."
     },
     {
-      "consumer": "Oddkin/Common/multiselect/Field",
-      "consumerId": "257:1654",
-      "source": "Oddkin/Common/multiselect/Value/chips",
-      "sourceId": "257:971",
-      "count": 12,
-      "class": "controller",
-      "reason": "The selection display is a part of the field, rendered from the shared selection model."
-    },
-    {
-      "consumer": "Oddkin/Common/multiselect/Field",
-      "consumerId": "257:1654",
-      "source": "Oddkin/Icon/chevronDown",
-      "sourceId": "159:276",
-      "count": 10,
-      "class": "style",
-      "reason": "The chevronDown affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
-    },
-    {
-      "consumer": "Oddkin/Common/multiselect/Field",
-      "consumerId": "257:1654",
-      "source": "Oddkin/Icon/chevronUp",
-      "sourceId": "159:282",
-      "count": 1,
-      "class": "style",
-      "reason": "The chevronUp affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
-    },
-    {
-      "consumer": "Oddkin/Common/multiselect/Field",
-      "consumerId": "257:1654",
-      "source": "Oddkin/Icon/close",
-      "sourceId": "159:288",
-      "count": 12,
-      "class": "style",
-      "reason": "The close/remove glyph is built in and comes from the shared glyph module."
-    },
-    {
-      "consumer": "Oddkin/Common/multiselect/Field",
-      "consumerId": "257:1654",
-      "source": "Oddkin/Icon/lock",
-      "sourceId": "159:366",
-      "count": 1,
-      "class": "style",
-      "reason": "The lock glyph is built into the element and comes from the shared glyph module."
-    },
-    {
-      "consumer": "Oddkin/Common/multiselect/Field",
-      "consumerId": "257:1654",
-      "source": "Oddkin/Icon/search",
-      "sourceId": "159:297",
-      "count": 2,
-      "class": "style",
-      "reason": "The search glyph is built into the element and comes from the shared glyph module."
-    },
-    {
-      "consumer": "Oddkin/Common/multiselect/Field",
-      "consumerId": "257:1654",
-      "source": "Oddkin/Icon/spinner",
-      "sourceId": "159:363",
-      "count": 1,
-      "class": "style",
-      "reason": "The busy glyph is the shared spinner module (one decision for odd-button busy, odd-progress indeterminate, and loading parts)."
-    },
-    {
       "consumer": "Oddkin/Common/multiselect/InteractionExamples",
       "consumerId": "261:13821",
       "source": "Oddkin/Common/button",
       "sourceId": "159:439",
       "count": 1,
-      "class": "independent",
-      "reason": "Documentation specimen of an interaction sequence, not a composition."
+      "class": "slot",
+      "reason": "Documentation composition: the specimen author places the display examples and action. Reusing their Figma instances does not add a runtime element dependency or make their styling independent."
     },
     {
       "consumer": "Oddkin/Common/multiselect/InteractionExamples",
@@ -1180,8 +1575,8 @@
       "source": "Oddkin/Common/multiselect/Display",
       "sourceId": "257:1934",
       "count": 9,
-      "class": "independent",
-      "reason": "Documentation specimens of one element in sequence, not a composition."
+      "class": "slot",
+      "reason": "Documentation composition: the specimen author places the display examples and action. Reusing their Figma instances does not add a runtime element dependency or make their styling independent."
     },
     {
       "consumer": "Oddkin/Common/multiselect/SelectedItems",
@@ -1247,76 +1642,40 @@
       "reason": "The search glyph is built into the element and comes from the shared glyph module."
     },
     {
-      "consumer": "Oddkin/Common/multiselect/Value/auto",
-      "consumerId": "257:1105",
-      "source": "Oddkin/Common/chip",
-      "sourceId": "159:612",
-      "count": 7,
-      "class": "style",
-      "reason": "Repeated selected-value parts drawn from the shared chip style module."
+      "consumer": "Oddkin/Common/oneTimeCode",
+      "consumerId": "558:16773",
+      "source": "Oddkin/Common/button/sm",
+      "sourceId": "181:2332",
+      "count": 6,
+      "class": "slot",
+      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
     },
     {
-      "consumer": "Oddkin/Common/multiselect/Value/auto",
-      "consumerId": "257:1105",
-      "source": "Oddkin/Icon/user",
-      "sourceId": "159:357",
-      "count": 4,
+      "consumer": "Oddkin/Common/oneTimeCode",
+      "consumerId": "558:16773",
+      "source": "Oddkin/Common/oneTimeCode/Cell",
+      "sourceId": "555:2550",
+      "count": 36,
       "class": "style",
-      "reason": "The user glyph is built into the element and comes from the shared glyph module."
+      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
     },
     {
-      "consumer": "Oddkin/Common/multiselect/Value/avatars",
-      "consumerId": "257:1285",
-      "source": "Oddkin/Common/AvatarItem",
-      "sourceId": "257:886",
-      "count": 16,
+      "consumer": "Oddkin/Common/oneTimeCode",
+      "consumerId": "558:16773",
+      "source": "Oddkin/Icon/check",
+      "sourceId": "159:285",
+      "count": 1,
       "class": "style",
-      "reason": "Repeated avatar parts drawn from the avatar style module that odd-avatar uses."
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
     },
     {
-      "consumer": "Oddkin/Common/multiselect/Value/chips",
-      "consumerId": "257:971",
-      "source": "Oddkin/Common/chip",
-      "sourceId": "159:612",
-      "count": 9,
+      "consumer": "Oddkin/Common/oneTimeCode",
+      "consumerId": "558:16773",
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 1,
       "class": "style",
-      "reason": "Repeated selected-value parts drawn from the shared chip style module."
-    },
-    {
-      "consumer": "Oddkin/Common/multiselect/Value/count",
-      "consumerId": "257:1004",
-      "source": "Oddkin/Icon/user",
-      "sourceId": "159:357",
-      "count": 5,
-      "class": "style",
-      "reason": "The user glyph is built into the element and comes from the shared glyph module."
-    },
-    {
-      "consumer": "Oddkin/Common/multiselect/Value/expandable",
-      "consumerId": "257:1240",
-      "source": "Oddkin/Common/chip",
-      "sourceId": "159:612",
-      "count": 16,
-      "class": "style",
-      "reason": "Repeated selected-value parts drawn from the shared chip style module."
-    },
-    {
-      "consumer": "Oddkin/Common/number",
-      "consumerId": "159:1097",
-      "source": "Oddkin/Icon/minus",
-      "sourceId": "159:294",
-      "count": 3,
-      "class": "style",
-      "reason": "The minus mark is built in and comes from the shared control-indicator glyphs (with odd-checkbox)."
-    },
-    {
-      "consumer": "Oddkin/Common/number",
-      "consumerId": "159:1097",
-      "source": "Oddkin/Icon/plus",
-      "sourceId": "159:291",
-      "count": 3,
-      "class": "style",
-      "reason": "The plus glyph is built into the element and comes from the shared glyph module."
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
     },
     {
       "consumer": "Oddkin/Common/popover",
@@ -1344,24 +1703,6 @@
       "count": 4,
       "class": "native",
       "reason": "Radios are native radios in the group's one shadow tree: the platform gives one tab stop and arrow-key selection; the group submits one value through @oddkin/core/controllers/form. odd-segmented-control shares the class (OddkinRadioControl)."
-    },
-    {
-      "consumer": "Oddkin/Common/search",
-      "consumerId": "159:1144",
-      "source": "Oddkin/Icon/close",
-      "sourceId": "159:288",
-      "count": 3,
-      "class": "style",
-      "reason": "The close/remove glyph is built in and comes from the shared glyph module."
-    },
-    {
-      "consumer": "Oddkin/Common/search",
-      "consumerId": "159:1144",
-      "source": "Oddkin/Icon/search",
-      "sourceId": "159:297",
-      "count": 4,
-      "class": "style",
-      "reason": "The search glyph is built into the element and comes from the shared glyph module."
     },
     {
       "consumer": "Oddkin/Common/select",
@@ -1409,6 +1750,51 @@
       "reason": "The chevronDown affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu)."
     },
     {
+      "consumer": "Oddkin/Common/stepper",
+      "consumerId": "558:16987",
+      "source": "Oddkin/Common/button/sm",
+      "sourceId": "181:2332",
+      "count": 9,
+      "class": "slot",
+      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
+    },
+    {
+      "consumer": "Oddkin/Common/stepper",
+      "consumerId": "558:16987",
+      "source": "Oddkin/Icon/check",
+      "sourceId": "159:285",
+      "count": 6,
+      "class": "style",
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+    },
+    {
+      "consumer": "Oddkin/Common/timeline",
+      "consumerId": "558:17114",
+      "source": "Oddkin/Icon/check",
+      "sourceId": "159:285",
+      "count": 2,
+      "class": "style",
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+    },
+    {
+      "consumer": "Oddkin/Common/timeline",
+      "consumerId": "558:17114",
+      "source": "Oddkin/Icon/spinner",
+      "sourceId": "159:363",
+      "count": 1,
+      "class": "style",
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+    },
+    {
+      "consumer": "Oddkin/Common/timeline",
+      "consumerId": "558:17114",
+      "source": "Oddkin/Icon/warning",
+      "sourceId": "159:336",
+      "count": 1,
+      "class": "style",
+      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+    },
+    {
       "consumer": "Oddkin/Common/toast",
       "consumerId": "161:1902",
       "source": "Oddkin/Icon/checkCircle",
@@ -1434,15 +1820,6 @@
       "count": 1,
       "class": "style",
       "reason": "The warning glyph marks a tone; tone glyphs come from the shared tone module with the tone colours."
-    },
-    {
-      "consumer": "Oddkin/Common/toggleButton",
-      "consumerId": "159:501",
-      "source": "Oddkin/Icon/bold",
-      "sourceId": "159:354",
-      "count": 8,
-      "class": "slot",
-      "reason": "The icon is the author's content; the toggle owns only its pressed state."
     },
     {
       "consumer": "odd-action-approval/Requested/dark",
@@ -1497,6 +1874,24 @@
       "count": 1,
       "class": "element",
       "reason": "A complete odd-button (approve, reject, send, skip, …) with no ARIA ID relationship or form ownership across the shadow boundary: an element dependency, as the code already declares."
+    },
+    {
+      "consumer": "odd-model-select/Available model/dark",
+      "consumerId": "124:77",
+      "source": "Oddkin/Icon/chevronDown",
+      "sourceId": "159:276",
+      "count": 1,
+      "class": "style",
+      "reason": "The native model picker draws the shared chevronDown glyph through the field style module; no nested icon element dependency."
+    },
+    {
+      "consumer": "odd-model-select/Available model/light",
+      "consumerId": "124:72",
+      "source": "Oddkin/Icon/chevronDown",
+      "sourceId": "159:276",
+      "count": 1,
+      "class": "style",
+      "reason": "The native model picker draws the shared chevronDown glyph through the field style module; no nested icon element dependency."
     },
     {
       "consumer": "odd-prompt-input/Draft ready/dark",
@@ -1558,35 +1953,61 @@
       "dependencies": ["odd-button"],
       "reason": "Approve, reject, and edit are complete buttons (Figma: button ×2)."
     },
-    "odd-activity": {
-      "dependencies": []
+    "odd-activity": { "dependencies": [] },
+    "odd-ai-label": { "dependencies": [] },
+    "odd-alert": { "dependencies": [] },
+    "odd-artifact": { "dependencies": [] },
+    "odd-avatar": { "dependencies": [] },
+    "odd-badge": { "dependencies": [] },
+    "odd-breadcrumbs": { "dependencies": [] },
+    "odd-button": {
+      "dependencies": [],
+      "reason": "A simple component: no element, overlay, positioning, or collection dependency."
     },
-    "odd-ai-label": {
-      "dependencies": []
-    },
-    "odd-artifact": {
-      "dependencies": []
-    },
+    "odd-card": { "dependencies": [], "reason": "Actions are slot content." },
     "odd-change-review": {
       "dependencies": ["odd-button"],
       "reason": "Accept, reject, and undo are complete buttons (Figma: button/sm ×2)."
+    },
+    "odd-checkbox": { "dependencies": [] },
+    "odd-checkbox-group": {
+      "dependencies": ["odd-checkbox"],
+      "reason": "The choices are complete odd-checkbox elements the author places; each is form-associated on its own, and the group adds the legend, description, error, and required-one rule."
     },
     "odd-checkpoint": {
       "dependencies": ["odd-button"],
       "reason": "Restore and confirm are complete buttons (Figma: button/sm ×1)."
     },
-    "odd-citation": {
-      "dependencies": []
+    "odd-chip": { "dependencies": [] },
+    "odd-citation": { "dependencies": [] },
+    "odd-combobox": {
+      "dependencies": [],
+      "reason": "Rows, chips, and the clear button are parts drawn from the option-row, listbox, chip, and input sheets (one shadow tree: the input's aria-activedescendant names the options); no nested elements."
     },
-    "odd-context-picker": {
-      "dependencies": []
+    "odd-command-palette": {
+      "dependencies": ["odd-icon"],
+      "reason": "Command icons are drawn by the complete odd-icon widget, as on odd-menu; rows are option-row parts in the dialog's one tree (the input's aria-activedescendant names them)."
     },
+    "odd-container": { "dependencies": [] },
+    "odd-context-picker": { "dependencies": [] },
     "odd-conversation": {
       "dependencies": ["odd-activity", "odd-message"],
       "reason": "Renders one odd-message per message record and an odd-activity for run status; both are complete widgets authors also place alone, and no ARIA ID crosses (each labels itself). Repeated per message: the per-instance cost is measured in the lifetime harness."
     },
-    "odd-inline-assist": {
-      "dependencies": []
+    "odd-dialog": { "dependencies": [], "reason": "Actions and fields are slot content." },
+    "odd-disclosure": { "dependencies": [] },
+    "odd-drawer": {
+      "dependencies": [],
+      "reason": "It extends odd-dialog's class and template; actions and fields are slot content."
+    },
+    "odd-empty-state": { "dependencies": [] },
+    "odd-icon": { "dependencies": [] },
+    "odd-inline-assist": { "dependencies": [] },
+    "odd-input": { "dependencies": [] },
+    "odd-listbox": { "dependencies": [] },
+    "odd-menu": {
+      "dependencies": ["odd-icon"],
+      "reason": "Item icons are drawn by the complete odd-icon widget authors also place alone."
     },
     "odd-message": {
       "dependencies": [
@@ -1602,13 +2023,14 @@
       ],
       "reason": "A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, artifacts, branch, feedback, AI label) and odd-button for save/cancel while editing; each is a complete widget authors also place alone."
     },
-    "odd-message-branch": {
-      "dependencies": []
-    },
+    "odd-message-branch": { "dependencies": [] },
     "odd-model-select": {
       "dependencies": [],
       "reason": "A styled native `<button>`; no listbox dependency."
     },
+    "odd-pagination": { "dependencies": [] },
+    "odd-popover": { "dependencies": [] },
+    "odd-progress": { "dependencies": [] },
     "odd-prompt-input": {
       "dependencies": ["odd-button"],
       "reason": "Send and stop are complete buttons (Figma: button ×1)."
@@ -1617,6 +2039,7 @@
       "dependencies": ["odd-button"],
       "reason": "Submit and skip are complete buttons (Figma: button/sm ×2)."
     },
+    "odd-radio-group": { "dependencies": [] },
     "odd-response": {
       "dependencies": ["odd-citation"],
       "reason": "Inline citations are complete odd-citation widgets authors also place alone."
@@ -1625,169 +2048,57 @@
       "dependencies": ["odd-button"],
       "reason": "Submit and cancel are complete buttons (Figma: button/sm ×2)."
     },
-    "odd-sources": {
-      "dependencies": []
+    "odd-scroll-region": { "dependencies": [] },
+    "odd-segmented-control": {
+      "dependencies": ["odd-icon"],
+      "reason": "Option icons are drawn by the complete odd-icon widget authors also place alone."
     },
-    "odd-suggestions": {
-      "dependencies": []
+    "odd-select": { "dependencies": [] },
+    "odd-side-nav": {
+      "dependencies": [],
+      "reason": "Entries are parts rendered from the navigation item model."
     },
-    "odd-task-plan": {
-      "dependencies": []
+    "odd-skeleton": { "dependencies": [] },
+    "odd-slider": { "dependencies": [] },
+    "odd-sources": { "dependencies": [] },
+    "odd-spinner": { "dependencies": [] },
+    "odd-split-button": {
+      "dependencies": ["odd-menu"],
+      "reason": "The menu half is a complete odd-menu (Figma splitAction: a button and a Menu), with its keyboard, submenus, and odd-action events; the primary half is a native button part."
+    },
+    "odd-split-panel": { "dependencies": [] },
+    "odd-suggestions": { "dependencies": [] },
+    "odd-switch": { "dependencies": [] },
+    "odd-tab-panel": { "dependencies": [] },
+    "odd-tabs": { "dependencies": ["odd-tab-panel"] },
+    "odd-task-plan": { "dependencies": [] },
+    "odd-textarea": { "dependencies": [] },
+    "odd-toast": {
+      "dependencies": [],
+      "reason": "The action is the author's button in the end slot; the close button is the shared overlay control."
     },
     "odd-tool-call": {
       "dependencies": ["odd-action-approval"],
       "reason": "A tool call that needs approval renders the complete odd-action-approval widget."
     },
-    "odd-transcript": {
-      "dependencies": []
-    },
-    "odd-usage-meter": {
-      "dependencies": []
-    },
-    "odd-voice-input": {
-      "dependencies": ["odd-transcript"],
-      "reason": "Shows the live odd-transcript widget authors also place alone."
-    },
-    "odd-alert": {
-      "dependencies": []
-    },
-    "odd-avatar": {
-      "dependencies": []
-    },
-    "odd-badge": {
-      "dependencies": []
-    },
-    "odd-breadcrumbs": {
-      "dependencies": []
-    },
-    "odd-button": {
-      "dependencies": [],
-      "reason": "A simple component: no element, overlay, positioning, or collection dependency."
-    },
-    "odd-card": {
-      "dependencies": [],
-      "reason": "Actions are slot content."
-    },
-    "odd-checkbox": {
-      "dependencies": []
-    },
-    "odd-checkbox-group": {
-      "dependencies": ["odd-checkbox"],
-      "reason": "The choices are complete odd-checkbox elements the author places; each is form-associated on its own, and the group adds the legend, description, error, and required-one rule."
-    },
-    "odd-chip": {
-      "dependencies": []
-    },
-    "odd-combobox": {
-      "dependencies": [],
-      "reason": "Rows, chips, and the clear button are parts drawn from the option-row, listbox, chip, and input sheets (one shadow tree: the input's aria-activedescendant names the options); no nested elements."
-    },
-    "odd-command-palette": {
-      "dependencies": ["odd-icon"],
-      "reason": "Command icons are drawn by the complete odd-icon widget, as on odd-menu; rows are option-row parts in the dialog's one tree (the input's aria-activedescendant names them)."
-    },
-    "odd-container": {
-      "dependencies": []
-    },
-    "odd-dialog": {
-      "dependencies": [],
-      "reason": "Actions and fields are slot content."
-    },
-    "odd-disclosure": {
-      "dependencies": []
-    },
-    "odd-drawer": {
-      "dependencies": [],
-      "reason": "It extends odd-dialog's class and template; actions and fields are slot content."
-    },
-    "odd-empty-state": {
-      "dependencies": []
-    },
-    "odd-icon": {
-      "dependencies": []
-    },
-    "odd-input": {
-      "dependencies": []
-    },
-    "odd-listbox": {
-      "dependencies": []
-    },
-    "odd-menu": {
-      "dependencies": ["odd-icon"],
-      "reason": "Item icons are drawn by the complete odd-icon widget authors also place alone."
-    },
-    "odd-pagination": {
-      "dependencies": []
-    },
-    "odd-popover": {
-      "dependencies": []
-    },
-    "odd-progress": {
-      "dependencies": []
-    },
-    "odd-radio-group": {
-      "dependencies": []
-    },
-    "odd-scroll-region": {
-      "dependencies": []
-    },
-    "odd-segmented-control": {
-      "dependencies": ["odd-icon"],
-      "reason": "Option icons are drawn by the complete odd-icon widget authors also place alone."
-    },
-    "odd-select": {
-      "dependencies": []
-    },
-    "odd-side-nav": {
-      "dependencies": [],
-      "reason": "Entries are parts rendered from the navigation item model."
-    },
-    "odd-skeleton": {
-      "dependencies": []
-    },
-    "odd-slider": {
-      "dependencies": []
-    },
-    "odd-spinner": {
-      "dependencies": []
-    },
-    "odd-split-button": {
-      "dependencies": ["odd-menu"],
-      "reason": "The menu half is a complete odd-menu (Figma splitAction: a button and a Menu), with its keyboard, submenus, and odd-action events; the primary half is a native button part."
-    },
-    "odd-split-panel": {
-      "dependencies": []
-    },
-    "odd-switch": {
-      "dependencies": []
-    },
-    "odd-tab-panel": {
-      "dependencies": []
-    },
-    "odd-tabs": {
-      "dependencies": ["odd-tab-panel"]
-    },
-    "odd-textarea": {
-      "dependencies": []
-    },
-    "odd-toast": {
-      "dependencies": [],
-      "reason": "The action is the author's button in the end slot; the close button is the shared overlay control."
-    },
-    "odd-toolbar": {
-      "dependencies": []
-    },
+    "odd-toolbar": { "dependencies": [] },
     "odd-tooltip": {
       "dependencies": [],
       "reason": "It describes the element it is anchored to; the anchor is any element, not a dependency."
     },
+    "odd-transcript": { "dependencies": [] },
     "odd-tree": {
       "dependencies": ["odd-icon"],
       "reason": "Item icons are drawn by the complete odd-icon widget authors also place alone."
     },
+    "odd-usage-meter": { "dependencies": [] },
     "odd-validation-summary": {
       "dependencies": [],
       "reason": "Its links point at the form's own controls; the danger look and glyph are the shared tone module."
+    },
+    "odd-voice-input": {
+      "dependencies": ["odd-transcript"],
+      "reason": "Shows the live odd-transcript widget authors also place alone."
     }
   },
   "modules": [
@@ -1828,7 +2139,7 @@
         "odd-combobox",
         "odd-slider"
       ],
-      "note": "The owner chose the Common page (158:22): odd-model-select moved from border/default and control/height/sm (page 0:1) to border/strong and control/height/md. The --odd-field-* variables apply to every form control and the recipe."
+      "note": "Review decision 2026-10-23: the shared control is canonical: color.border.strong, control.height.md (40 px), control.radius (8 px), and control.padding.inline.md (12 px). Both Figma model-select examples now match the existing implementation. Small controls remain an explicit size choice, not a separate AI default. The --odd-field-* overrides apply to the field recipe and form controls."
     },
     {
       "id": "button",
@@ -1903,7 +2214,9 @@
         "odd-validation-summary",
         "odd-command-palette"
       ],
-      "figma": ["34 icons on page 158:22"]
+      "figma": [
+        "Built-in affordance glyphs are referenced from Icons page 359:2. The optional 1,723 original Oddkin artwork assets and their provenance live in design/icons; Figma nesting alone does not add runtime icon-element dependencies."
+      ]
     },
     {
       "id": "control-indicator",
@@ -2066,6 +2379,32 @@
       "status": "existing",
       "code": ["odd-side-nav"],
       "figma": ["SideNavigation", "Tree", "Breadcrumbs"]
+    },
+    {
+      "id": "common-control-proposals",
+      "kind": "style",
+      "home": "Figma Primitives and Composed components; shared control, button and overlay styles",
+      "decision": "Design eleven requested controls using current tokens and linked repeatable anatomy. Preserve native date/number runtime implementations until separate implementation work.",
+      "status": "proposed (Figma design only)",
+      "code": [],
+      "figma": [
+        "calendar",
+        "calendar/Day",
+        "datePicker",
+        "color/Swatch",
+        "colorPicker",
+        "rating",
+        "rating/Item",
+        "oneTimeCode",
+        "oneTimeCode/Cell",
+        "stepper",
+        "timeline",
+        "descriptionList",
+        "stat",
+        "copyButton",
+        "relativeTime"
+      ],
+      "note": "Fifteen new Figma families. Number extends the existing family to six states. These designs add no public element, runtime prop or registration."
     }
   ]
 }

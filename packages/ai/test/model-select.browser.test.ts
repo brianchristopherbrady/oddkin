@@ -3,7 +3,7 @@ import { server } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 
 // odd-model-select draws the shared field look of @oddkin/components (control.styles.ts): the
-// Common page's control surface, not page 0:1's lighter border and smaller height.
+// shared medium control surface, also bound by the light/dark Figma model-select examples.
 let theme: HTMLLinkElement;
 let container: HTMLElement;
 beforeAll(async () => {

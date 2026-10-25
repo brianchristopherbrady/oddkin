@@ -450,8 +450,8 @@ function parity(): Report {
 const report = parity();
 
 /**
- * Remaining coverage gaps: unused foundation steps, motion, stacking, info tones, the non-neutral
- * tone borders, and scrim. Font stacks are represented by the explicit Figma fallback adapters.
+ * Remaining coverage gaps: unused foundation steps, motion, stacking, non-info tone borders,
+ * and scrim. Font stacks are represented by the explicit Figma fallback adapters.
  */
 const REPO_ONLY = [
   'font.weight.bold',
@@ -460,9 +460,7 @@ const REPO_ONLY = [
   ...['fast', 'normal', 'slow', 'slower'].map((name) => `motion.duration.${name}`),
   ...['enter', 'exit', 'linear', 'standard'].map((name) => `motion.easing.${name}`),
   ...['base', 'overlay', 'raised', 'sticky'].map((name) => `z-index.${name}`),
-  ...['info', 'success', 'warning', 'danger'].map((tone) => `color.${tone}.border`),
-  ...['foreground', 'surface'].map((part) => `color.info.${part}`),
-  ...[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((step) => `ref.info.${step}`),
+  ...['success', 'warning', 'danger'].map((tone) => `color.${tone}.border`),
   'color.scrim',
   // odd-container's measure; Figma's Container uses a recipe-local 40rem.
   'layout.measure',
@@ -491,8 +489,8 @@ describe('Figma parity (design/figma/variables.json)', () => {
 
   it('has equal values in light and dark with no known mismatches', () => {
     expect(report.mismatches).toEqual([]);
-    // 470 token pairs, 8 adapter checks, 52 type metrics, 10 static and 2 themed effect checks.
-    expect(report.matches).toBe(542);
+    // 504 token pairs, 8 adapter checks, 52 type metrics, 10 static and 2 themed effect checks.
+    expect(report.matches).toBe(576);
   });
 
   it('preserves repository alias chains, including their exact targets', () => {

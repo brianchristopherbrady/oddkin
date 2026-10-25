@@ -1,0 +1,4126 @@
+{
+  "date": "2026-10-22",
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "pages": ["0:1", "158:22"],
+  "validation": {
+    "repository": {
+      "matches": 336,
+      "mismatches": [],
+      "gaps": [],
+      "unknown": []
+    },
+    "roleMatches": 134,
+    "typeMatches": 52,
+    "shadowMatches": 4,
+    "errors": [],
+    "overlayCount": 31,
+    "roundFocusCount": 4,
+    "styleCount": 13
+  },
+  "collections": [
+    {
+      "id": "VariableCollectionId:76:824",
+      "name": "Oddkin · Repository tokens",
+      "variables": 199
+    },
+    {
+      "id": "VariableCollectionId:158:23",
+      "name": "Oddkin · Component roles",
+      "variables": 69
+    }
+  ],
+  "retired": {
+    "sharedThemeCollection": "VariableCollectionId:8:2",
+    "sharedVariableCount": 89,
+    "unsuffixedSelectionVariables": ["VariableID:76:830", "VariableID:76:831"],
+    "duplicateTextStyles": [
+      "S:50c796ecc6ce267781dea655b7a084d46f1c9c97,",
+      "S:8c4e6728dc08a5588c50a5daf301c2176f965ffb,",
+      "S:747805ec72a8b06298349c2103ec7a9322f641ff,",
+      "S:c0adb7a8c0d1c2d91f1673e4857c6cb6c1aa7ac2,"
+    ]
+  },
+  "typography": {
+    "bound": ["fontFamily", "fontSize", "fontWeight", "zero letterSpacing"],
+    "proportionalExceptions": [
+      "Line height uses repository unitless ratios converted to percent; Figma variable binding forces pixels.",
+      "Nonzero tracking uses repository em values converted to percent; Figma variable binding forces pixels."
+    ]
+  },
+  "componentFixes": {
+    "mutatedNodeIds": [
+      "160:2427",
+      "160:2446",
+      "160:2462",
+      "160:2466",
+      "160:854",
+      "160:883",
+      "160:913",
+      "159:1358",
+      "159:1373",
+      "159:1389",
+      "186:5171",
+      "186:5177",
+      "186:5193",
+      "212:5396",
+      "159:1290",
+      "212:5397",
+      "159:1299",
+      "159:1304",
+      "212:5403",
+      "159:1318",
+      "159:1324",
+      "212:5409",
+      "159:1339",
+      "212:5410",
+      "159:1348",
+      "212:5411",
+      "159:1405",
+      "212:5412",
+      "159:1414",
+      "159:1419",
+      "212:5416",
+      "159:1433",
+      "159:1438",
+      "212:5417",
+      "159:1447",
+      "159:1452",
+      "212:5418",
+      "159:1462",
+      "159:1467",
+      "212:5419",
+      "159:1476",
+      "212:5420",
+      "159:1486",
+      "212:5422",
+      "159:1499",
+      "159:1508",
+      "212:5429",
+      "159:1525",
+      "159:1534",
+      "212:5436",
+      "206:5327",
+      "186:5203",
+      "212:5440",
+      "206:5339",
+      "186:5219",
+      "212:5444",
+      "206:5348",
+      "186:5225",
+      "212:5448",
+      "206:5357",
+      "223:5418",
+      "223:5419",
+      "223:5439",
+      "223:5440",
+      "223:5447",
+      "223:5479",
+      "223:5480",
+      "258:825",
+      "258:936",
+      "258:1038",
+      "258:1140",
+      "258:1294",
+      "261:10392",
+      "186:5141",
+      "186:5144",
+      "186:5147",
+      "186:5150",
+      "186:5156",
+      "186:5162",
+      "258:787",
+      "258:799",
+      "258:812",
+      "159:1198",
+      "181:2225",
+      "159:1251",
+      "181:2246",
+      "159:551",
+      "I159:552;159:335",
+      "159:555",
+      "159:579",
+      "159:580",
+      "161:1845",
+      "I161:1846;159:335",
+      "161:1849",
+      "161:1850",
+      "160:2460",
+      "160:2470",
+      "160:941",
+      "159:1355",
+      "159:1483",
+      "159:1550",
+      "258:1467",
+      "186:5167",
+      "258:824"
+    ],
+    "outerIds": [
+      "160:2427",
+      "160:2446",
+      "160:2462",
+      "160:2466",
+      "160:854",
+      "160:883",
+      "160:913",
+      "159:1358",
+      "159:1373",
+      "159:1389",
+      "186:5171",
+      "186:5177",
+      "186:5193",
+      "212:5396",
+      "212:5397",
+      "212:5403",
+      "212:5409",
+      "212:5410",
+      "212:5411",
+      "212:5412",
+      "212:5416",
+      "212:5417",
+      "212:5418",
+      "212:5419",
+      "212:5420",
+      "212:5422",
+      "212:5429",
+      "212:5436",
+      "212:5440",
+      "212:5444",
+      "212:5448",
+      "223:5418",
+      "223:5439",
+      "223:5479",
+      "258:825",
+      "258:936",
+      "258:1038",
+      "258:1140",
+      "258:1294",
+      "261:10392"
+    ],
+    "innerIds": [
+      "159:1290",
+      "159:1299",
+      "159:1304",
+      "159:1318",
+      "159:1324",
+      "159:1339",
+      "159:1348",
+      "159:1405",
+      "159:1414",
+      "159:1419",
+      "159:1433",
+      "159:1438",
+      "159:1447",
+      "159:1452",
+      "159:1462",
+      "159:1467",
+      "159:1476",
+      "159:1486",
+      "159:1499",
+      "159:1508",
+      "159:1525",
+      "159:1534",
+      "206:5327",
+      "186:5203",
+      "206:5339",
+      "186:5219",
+      "206:5348",
+      "186:5225",
+      "206:5357",
+      "223:5419",
+      "223:5440",
+      "223:5447",
+      "223:5480"
+    ],
+    "optionIds": [
+      "186:5141",
+      "186:5144",
+      "186:5147",
+      "186:5150",
+      "186:5156",
+      "186:5162",
+      "258:787",
+      "258:799",
+      "258:812"
+    ],
+    "focusIds": ["159:1198", "181:2225", "159:1251", "181:2246"],
+    "toneIds": [
+      "159:551",
+      "I159:552;159:335",
+      "159:555",
+      "159:579",
+      "159:580",
+      "161:1845",
+      "I161:1846;159:335",
+      "161:1849",
+      "161:1850"
+    ],
+    "overlayStyleId": "S:2c92035d835d14c496dee26aaca85f87ae58ca3a,"
+  },
+  "variableExport": [
+    {
+      "id": "VariableID:76:825",
+      "name": "repo/border/width/default",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 1
+      }
+    },
+    {
+      "id": "VariableID:76:826",
+      "name": "repo/border/width/strong",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 2
+      }
+    },
+    {
+      "id": "VariableID:76:827",
+      "name": "repo/card/padding",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:851"
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:828",
+      "name": "repo/card/radius",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:856"
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:829",
+      "name": "repo/color/accent/decorative",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.8745098114013672,
+          "g": 0.929411768913269,
+          "b": 0.6666666865348816,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:832",
+      "name": "repo/control/gap",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:925"
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:833",
+      "name": "repo/control/height/lg",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 48
+      }
+    },
+    {
+      "id": "VariableID:76:834",
+      "name": "repo/control/height/md",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 40
+      }
+    },
+    {
+      "id": "VariableID:76:835",
+      "name": "repo/control/height/sm",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 32
+      }
+    },
+    {
+      "id": "VariableID:76:836",
+      "name": "repo/control/padding/inline/lg",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:921"
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:837",
+      "name": "repo/control/padding/inline/md",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:923"
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:838",
+      "name": "repo/control/padding/inline/sm",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:925"
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:839",
+      "name": "repo/control/radius",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:857"
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:840",
+      "name": "repo/focus/offset",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 2
+      }
+    },
+    {
+      "id": "VariableID:76:841",
+      "name": "repo/focus/width",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 2
+      }
+    },
+    {
+      "id": "VariableID:76:842",
+      "name": "repo/font/size/2xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 24
+      }
+    },
+    {
+      "id": "VariableID:76:844",
+      "name": "repo/font/size/3xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 30
+      }
+    },
+    {
+      "id": "VariableID:76:845",
+      "name": "repo/font/size/lg",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 18
+      }
+    },
+    {
+      "id": "VariableID:76:846",
+      "name": "repo/font/size/md",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 16
+      }
+    },
+    {
+      "id": "VariableID:76:847",
+      "name": "repo/font/size/sm",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 14
+      }
+    },
+    {
+      "id": "VariableID:76:848",
+      "name": "repo/font/size/xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 20
+      }
+    },
+    {
+      "id": "VariableID:76:849",
+      "name": "repo/font/size/xs",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 12
+      }
+    },
+    {
+      "id": "VariableID:76:850",
+      "name": "repo/layout/gap",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:921"
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:851",
+      "name": "repo/layout/inset",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:920"
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:852",
+      "name": "repo/layout/item-min",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 256
+      }
+    },
+    {
+      "id": "VariableID:76:853",
+      "name": "repo/layout/main-min",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 320
+      }
+    },
+    {
+      "id": "VariableID:76:854",
+      "name": "repo/layout/sidebar-width",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 256
+      }
+    },
+    {
+      "id": "VariableID:76:855",
+      "name": "repo/radius/full",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 9999
+      }
+    },
+    {
+      "id": "VariableID:76:856",
+      "name": "repo/radius/lg",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 12
+      }
+    },
+    {
+      "id": "VariableID:76:857",
+      "name": "repo/radius/md",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 8
+      }
+    },
+    {
+      "id": "VariableID:76:858",
+      "name": "repo/radius/none",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 0
+      }
+    },
+    {
+      "id": "VariableID:76:859",
+      "name": "repo/radius/sm",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 4
+      }
+    },
+    {
+      "id": "VariableID:76:860",
+      "name": "repo/ref/brand/50",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9529411792755127,
+          "g": 0.95686274766922,
+          "b": 1,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:861",
+      "name": "repo/ref/brand/100",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9058823585510254,
+          "g": 0.9137254953384399,
+          "b": 1,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:862",
+      "name": "repo/ref/brand/200",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.8156862854957581,
+          "g": 0.8313725590705872,
+          "b": 1,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:863",
+      "name": "repo/ref/brand/300",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.6980392336845398,
+          "g": 0.7137255072593689,
+          "b": 1,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:864",
+      "name": "repo/ref/brand/400",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.5764706134796143,
+          "g": 0.5764706134796143,
+          "b": 1,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:865",
+      "name": "repo/ref/brand/500",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.46666666865348816,
+          "g": 0.42352941632270813,
+          "b": 1,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:866",
+      "name": "repo/ref/brand/600",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.3843137323856354,
+          "g": 0.30980393290519714,
+          "b": 0.9058823585510254,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:867",
+      "name": "repo/ref/brand/700",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.3019607961177826,
+          "g": 0.23137255012989044,
+          "b": 0.7529411911964417,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:868",
+      "name": "repo/ref/brand/800",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.22745098173618317,
+          "g": 0.16862745583057404,
+          "b": 0.5843137502670288,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:869",
+      "name": "repo/ref/brand/900",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.1568627506494522,
+          "g": 0.10980392247438431,
+          "b": 0.42352941632270813,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:870",
+      "name": "repo/ref/brand/950",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.08627451211214066,
+          "g": 0.054901961237192154,
+          "b": 0.27450981736183167,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:871",
+      "name": "repo/ref/danger/50",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 1,
+          "g": 0.9490196108818054,
+          "b": 0.9411764740943909,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:872",
+      "name": "repo/ref/danger/100",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 1,
+          "g": 0.8941176533699036,
+          "b": 0.8784313797950745,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:873",
+      "name": "repo/ref/danger/200",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 1,
+          "g": 0.7843137383460999,
+          "b": 0.7568627595901489,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:874",
+      "name": "repo/ref/danger/300",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 1,
+          "g": 0.6313725709915161,
+          "b": 0.5882353186607361,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:875",
+      "name": "repo/ref/danger/400",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9764705896377563,
+          "g": 0.4431372582912445,
+          "b": 0.3960784375667572,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:876",
+      "name": "repo/ref/danger/500",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9019607901573181,
+          "g": 0.2666666805744171,
+          "b": 0.239215686917305,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:877",
+      "name": "repo/ref/danger/600",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.7882353067398071,
+          "g": 0.13725490868091583,
+          "b": 0.1411764770746231,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:878",
+      "name": "repo/ref/danger/700",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.6470588445663452,
+          "g": 0.054901961237192154,
+          "b": 0.08235294371843338,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:879",
+      "name": "repo/ref/danger/800",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.501960813999176,
+          "g": 0.027450980618596077,
+          "b": 0.05098039284348488,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:880",
+      "name": "repo/ref/danger/900",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.3607843220233917,
+          "g": 0.007843137718737125,
+          "b": 0.0235294122248888,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:881",
+      "name": "repo/ref/danger/950",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.22745098173618317,
+          "g": 0,
+          "b": 0.007843137718737125,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:882",
+      "name": "repo/ref/neutral/0",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 1,
+          "g": 1,
+          "b": 1,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:883",
+      "name": "repo/ref/neutral/50",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9607843160629272,
+          "g": 0.9607843160629272,
+          "b": 0.9647058844566345,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:884",
+      "name": "repo/ref/neutral/100",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9215686321258545,
+          "g": 0.9215686321258545,
+          "b": 0.929411768913269,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:885",
+      "name": "repo/ref/neutral/200",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.843137264251709,
+          "g": 0.843137264251709,
+          "b": 0.8588235378265381,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:886",
+      "name": "repo/ref/neutral/300",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.7372549176216125,
+          "g": 0.7411764860153198,
+          "b": 0.7686274647712708,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:887",
+      "name": "repo/ref/neutral/400",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.6274510025978088,
+          "g": 0.6313725709915161,
+          "b": 0.6627451181411743,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:888",
+      "name": "repo/ref/neutral/500",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.5176470875740051,
+          "g": 0.5215686559677124,
+          "b": 0.5607843399047852,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:889",
+      "name": "repo/ref/neutral/600",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.4274509847164154,
+          "g": 0.4313725531101227,
+          "b": 0.46666666865348816,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:890",
+      "name": "repo/ref/neutral/700",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.33725491166114807,
+          "g": 0.34117648005485535,
+          "b": 0.3764705955982208,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:891",
+      "name": "repo/ref/neutral/800",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.2549019753932953,
+          "g": 0.25882354378700256,
+          "b": 0.2823529541492462,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:892",
+      "name": "repo/ref/neutral/900",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.1764705926179886,
+          "g": 0.1764705926179886,
+          "b": 0.19607843458652496,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:893",
+      "name": "repo/ref/neutral/950",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.10196078568696976,
+          "g": 0.10196078568696976,
+          "b": 0.11764705926179886,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:894",
+      "name": "repo/ref/neutral/1000",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:895",
+      "name": "repo/ref/success/50",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.929411768913269,
+          "g": 0.9764705896377563,
+          "b": 0.9372549057006836,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:896",
+      "name": "repo/ref/success/100",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.8627451062202454,
+          "g": 0.9490196108818054,
+          "b": 0.8784313797950745,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:897",
+      "name": "repo/ref/success/200",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.7372549176216125,
+          "g": 0.8901960849761963,
+          "b": 0.7647058963775635,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:898",
+      "name": "repo/ref/success/300",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.5647059082984924,
+          "g": 0.8156862854957581,
+          "b": 0.615686297416687,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:899",
+      "name": "repo/ref/success/400",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.3803921639919281,
+          "g": 0.7215686440467834,
+          "b": 0.4627451002597809,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:900",
+      "name": "repo/ref/success/500",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.18039216101169586,
+          "g": 0.6196078658103943,
+          "b": 0.32156863808631897,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:901",
+      "name": "repo/ref/success/600",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0,
+          "g": 0.5215686559677124,
+          "b": 0.23529411852359772,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:902",
+      "name": "repo/ref/success/700",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0,
+          "g": 0.41960784792900085,
+          "b": 0.18039216101169586,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:903",
+      "name": "repo/ref/success/800",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0,
+          "g": 0.3176470696926117,
+          "b": 0.12941177189350128,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:904",
+      "name": "repo/ref/success/900",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0,
+          "g": 0.2235294133424759,
+          "b": 0.08235294371843338,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:905",
+      "name": "repo/ref/success/950",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0,
+          "g": 0.13333334028720856,
+          "b": 0.03921568766236305,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:906",
+      "name": "repo/ref/warning/50",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9882352948188782,
+          "g": 0.95686274766922,
+          "b": 0.9098039269447327,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:907",
+      "name": "repo/ref/warning/100",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9764705896377563,
+          "g": 0.9137254953384399,
+          "b": 0.8274509906768799,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:908",
+      "name": "repo/ref/warning/200",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9372549057006836,
+          "g": 0.8274509906768799,
+          "b": 0.6745098233222961,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:909",
+      "name": "repo/ref/warning/300",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.8901960849761963,
+          "g": 0.7098039388656616,
+          "b": 0.4588235318660736,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:910",
+      "name": "repo/ref/warning/400",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.8156862854957581,
+          "g": 0.5843137502670288,
+          "b": 0.21960784494876862,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:911",
+      "name": "repo/ref/warning/500",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.7019608020782471,
+          "g": 0.4745098054409027,
+          "b": 0,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:912",
+      "name": "repo/ref/warning/600",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.5843137502670288,
+          "g": 0.38823530077934265,
+          "b": 0,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:913",
+      "name": "repo/ref/warning/700",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.46666666865348816,
+          "g": 0.30980393290519714,
+          "b": 0,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:914",
+      "name": "repo/ref/warning/800",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.35686275362968445,
+          "g": 0.23137255012989044,
+          "b": 0,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:915",
+      "name": "repo/ref/warning/900",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.250980406999588,
+          "g": 0.1568627506494522,
+          "b": 0,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:916",
+      "name": "repo/ref/warning/950",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.15294118225574493,
+          "g": 0.09019608050584793,
+          "b": 0,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:76:917",
+      "name": "repo/space/2xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 48
+      }
+    },
+    {
+      "id": "VariableID:76:918",
+      "name": "repo/space/2xs",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 4
+      }
+    },
+    {
+      "id": "VariableID:76:919",
+      "name": "repo/space/3xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 64
+      }
+    },
+    {
+      "id": "VariableID:76:920",
+      "name": "repo/space/lg",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 24
+      }
+    },
+    {
+      "id": "VariableID:76:921",
+      "name": "repo/space/md",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 16
+      }
+    },
+    {
+      "id": "VariableID:76:922",
+      "name": "repo/space/none",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 0
+      }
+    },
+    {
+      "id": "VariableID:76:923",
+      "name": "repo/space/sm",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 12
+      }
+    },
+    {
+      "id": "VariableID:76:924",
+      "name": "repo/space/xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 32
+      }
+    },
+    {
+      "id": "VariableID:76:925",
+      "name": "repo/space/xs",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 8
+      }
+    },
+    {
+      "id": "VariableID:76:926",
+      "name": "repo/target/min",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 24
+      }
+    },
+    {
+      "id": "VariableID:83:1011",
+      "name": "repo/color/action/default/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.3843137323856354,
+          "g": 0.3137255012989044,
+          "b": 0.9098039269447327,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1012",
+      "name": "repo/color/action/default/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.7058823704719543,
+          "g": 0.658823549747467,
+          "b": 1,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1013",
+      "name": "repo/color/action/hover/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.3176470696926117,
+          "g": 0.250980406999588,
+          "b": 0.800000011920929,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1014",
+      "name": "repo/color/action/hover/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.772549033164978,
+          "g": 0.7372549176216125,
+          "b": 1,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1015",
+      "name": "repo/color/action/pressed/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.26274511218070984,
+          "g": 0.20000000298023224,
+          "b": 0.6784313917160034,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1016",
+      "name": "repo/color/action/pressed/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.6078431606292725,
+          "g": 0.5490196347236633,
+          "b": 0.9411764740943909,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1017",
+      "name": "repo/color/border/default/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.8509804010391235,
+          "g": 0.8470588326454163,
+          "b": 0.8823529481887817,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1018",
+      "name": "repo/color/border/default/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.3333333432674408,
+          "g": 0.32549020648002625,
+          "b": 0.40784314274787903,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1019",
+      "name": "repo/color/border/strong/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.5254902243614197,
+          "g": 0.5372549295425415,
+          "b": 0.5921568870544434,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1020",
+      "name": "repo/color/border/strong/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.5215686559677124,
+          "g": 0.5137255191802979,
+          "b": 0.5843137502670288,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1021",
+      "name": "repo/color/canvas/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9647058844566345,
+          "g": 0.9607843160629272,
+          "b": 0.9450980424880981,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1022",
+      "name": "repo/color/canvas/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.09019608050584793,
+          "g": 0.0941176488995552,
+          "b": 0.12941177189350128,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1023",
+      "name": "repo/color/danger/foreground/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.7058823704719543,
+          "g": 0.13725490868091583,
+          "b": 0.22745098173618317,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1024",
+      "name": "repo/color/danger/foreground/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 1,
+          "g": 0.6078431606292725,
+          "b": 0.6705882549285889,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1025",
+      "name": "repo/color/danger/surface/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 1,
+          "g": 0.9411764740943909,
+          "b": 0.9490196108818054,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1026",
+      "name": "repo/color/danger/surface/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.239215686917305,
+          "g": 0.125490203499794,
+          "b": 0.16470588743686676,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1027",
+      "name": "repo/color/focus/ring/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1011"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1028",
+      "name": "repo/color/focus/ring/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1012"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1029",
+      "name": "repo/color/link/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1011"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1030",
+      "name": "repo/color/link/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1012"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1031",
+      "name": "repo/color/selection/background/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1011"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1032",
+      "name": "repo/color/selection/background/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1012"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1033",
+      "name": "repo/color/selection/foreground/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1051"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1034",
+      "name": "repo/color/selection/foreground/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1052"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1035",
+      "name": "repo/color/success/foreground/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.14901961386203766,
+          "g": 0.4627451002597809,
+          "b": 0.32549020648002625,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1036",
+      "name": "repo/color/success/foreground/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.5607843399047852,
+          "g": 0.8392156958580017,
+          "b": 0.7019608020782471,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1037",
+      "name": "repo/color/success/surface/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9176470637321472,
+          "g": 0.9647058844566345,
+          "b": 0.9372549057006836,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1038",
+      "name": "repo/color/success/surface/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.10980392247438431,
+          "g": 0.2078431397676468,
+          "b": 0.16862745583057404,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1039",
+      "name": "repo/color/surface/default/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:882"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1040",
+      "name": "repo/color/surface/default/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.1411764770746231,
+          "g": 0.14901961386203766,
+          "b": 0.1921568661928177,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1041",
+      "name": "repo/color/surface/hover/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9411764740943909,
+          "g": 0.9372549057006836,
+          "b": 0.9607843160629272,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1042",
+      "name": "repo/color/surface/hover/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.1882352977991104,
+          "g": 0.19607843458652496,
+          "b": 0.24705882370471954,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1043",
+      "name": "repo/color/surface/raised/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:882"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1044",
+      "name": "repo/color/surface/raised/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.1764705926179886,
+          "g": 0.18431372940540314,
+          "b": 0.23137255012989044,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1045",
+      "name": "repo/color/surface/specimen/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9372549057006836,
+          "g": 0.929411768913269,
+          "b": 0.9882352948188782,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1046",
+      "name": "repo/color/surface/specimen/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.16078431904315948,
+          "g": 0.14901961386203766,
+          "b": 0.239215686917305,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1047",
+      "name": "repo/color/surface/sunken/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9411764740943909,
+          "g": 0.9372549057006836,
+          "b": 0.9529411792755127,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1048",
+      "name": "repo/color/surface/sunken/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.06666667014360428,
+          "g": 0.07058823853731155,
+          "b": 0.09803921729326248,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1049",
+      "name": "repo/color/text/disabled/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.4627451002597809,
+          "g": 0.4745098054409027,
+          "b": 0.5215686559677124,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1050",
+      "name": "repo/color/text/disabled/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.5215686559677124,
+          "g": 0.5137255191802979,
+          "b": 0.5764706134796143,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1051",
+      "name": "repo/color/text/on-action/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:882"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1052",
+      "name": "repo/color/text/on-action/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.13725490868091583,
+          "g": 0.14509804546833038,
+          "b": 0.16862745583057404,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1053",
+      "name": "repo/color/text/primary/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.13725490868091583,
+          "g": 0.14509804546833038,
+          "b": 0.16862745583057404,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1054",
+      "name": "repo/color/text/primary/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9607843160629272,
+          "g": 0.9529411792755127,
+          "b": 0.9921568632125854,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1055",
+      "name": "repo/color/text/secondary/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.37254902720451355,
+          "g": 0.3843137323856354,
+          "b": 0.43529412150382996,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1056",
+      "name": "repo/color/text/secondary/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.7411764860153198,
+          "g": 0.7333333492279053,
+          "b": 0.8039215803146362,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1057",
+      "name": "repo/color/warning/foreground/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.5411764979362488,
+          "g": 0.3490196168422699,
+          "b": 0,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1058",
+      "name": "repo/color/warning/foreground/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.9137254953384399,
+          "g": 0.7686274647712708,
+          "b": 0.47058823704719543,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1059",
+      "name": "repo/color/warning/surface/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 1,
+          "g": 0.9607843160629272,
+          "b": 0.8705882430076599,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1060",
+      "name": "repo/color/warning/surface/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "r": 0.22745098173618317,
+          "g": 0.18039216101169586,
+          "b": 0.0941176488995552,
+          "a": 1
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1061",
+      "name": "repo/font/size/4xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 36
+      }
+    },
+    {
+      "id": "VariableID:83:1062",
+      "name": "repo/icon/size/lg",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 24
+      }
+    },
+    {
+      "id": "VariableID:83:1063",
+      "name": "repo/icon/size/md",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 20
+      }
+    },
+    {
+      "id": "VariableID:83:1064",
+      "name": "repo/icon/size/sm",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 16
+      }
+    },
+    {
+      "id": "VariableID:83:1065",
+      "name": "repo/letter-spacing/normal",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 0
+      }
+    },
+    {
+      "id": "VariableID:83:1066",
+      "name": "repo/navigation/indent",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:921"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1067",
+      "name": "repo/navigation/item/gap",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:925"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1068",
+      "name": "repo/navigation/item/min-height",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:834"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1069",
+      "name": "repo/navigation/item/padding/block",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:925"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1070",
+      "name": "repo/navigation/item/padding/inline",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:923"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1071",
+      "name": "repo/radius/2xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 24
+      }
+    },
+    {
+      "id": "VariableID:83:1072",
+      "name": "repo/radius/xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 16
+      }
+    },
+    {
+      "id": "VariableID:83:1073",
+      "name": "repo/radius/xs",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 2
+      }
+    },
+    {
+      "id": "VariableID:83:1074",
+      "name": "repo/space/3xs",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 2
+      }
+    },
+    {
+      "id": "VariableID:83:1075",
+      "name": "repo/space/4xl",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 96
+      }
+    },
+    {
+      "id": "VariableID:83:1076",
+      "name": "repo/type/body/letter-spacing",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1077",
+      "name": "repo/type/body/size",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:846"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1078",
+      "name": "repo/type/code/letter-spacing",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1079",
+      "name": "repo/type/code/size",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:847"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1080",
+      "name": "repo/type/display/size",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1061"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1081",
+      "name": "repo/type/eyebrow/size",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:849"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1082",
+      "name": "repo/type/section/letter-spacing",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1083",
+      "name": "repo/type/section/size",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:842"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1084",
+      "name": "repo/type/small/letter-spacing",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1085",
+      "name": "repo/type/small/size",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:849"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1086",
+      "name": "repo/type/title/letter-spacing",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1087",
+      "name": "repo/type/title/size",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:848"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1088",
+      "name": "repo/type/ui/letter-spacing",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        }
+      }
+    },
+    {
+      "id": "VariableID:83:1089",
+      "name": "repo/type/ui/size",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:847"
+        }
+      }
+    },
+    {
+      "id": "VariableID:326:11569",
+      "name": "repo/font/weight/regular",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 400
+      }
+    },
+    {
+      "id": "VariableID:326:11570",
+      "name": "repo/font/weight/medium",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 500
+      }
+    },
+    {
+      "id": "VariableID:326:11571",
+      "name": "repo/font/weight/semibold",
+      "type": "FLOAT",
+      "values": {
+        "76:0": 600
+      }
+    },
+    {
+      "id": "VariableID:326:11572",
+      "name": "repo/type/body/weight",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11569"
+        }
+      }
+    },
+    {
+      "id": "VariableID:326:11573",
+      "name": "repo/type/code/weight",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11569"
+        }
+      }
+    },
+    {
+      "id": "VariableID:326:11574",
+      "name": "repo/type/display/weight",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11571"
+        }
+      }
+    },
+    {
+      "id": "VariableID:326:11575",
+      "name": "repo/type/eyebrow/weight",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11571"
+        }
+      }
+    },
+    {
+      "id": "VariableID:326:11576",
+      "name": "repo/type/section/weight",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11571"
+        }
+      }
+    },
+    {
+      "id": "VariableID:326:11577",
+      "name": "repo/type/small/weight",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11569"
+        }
+      }
+    },
+    {
+      "id": "VariableID:326:11578",
+      "name": "repo/type/title/weight",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11571"
+        }
+      }
+    },
+    {
+      "id": "VariableID:326:11579",
+      "name": "repo/type/ui/weight",
+      "type": "FLOAT",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11570"
+        }
+      }
+    },
+    {
+      "id": "VariableID:326:11580",
+      "name": "figma/font/family/sans",
+      "type": "STRING",
+      "values": {
+        "76:0": "Roboto"
+      }
+    },
+    {
+      "id": "VariableID:326:11581",
+      "name": "figma/font/family/mono",
+      "type": "STRING",
+      "values": {
+        "76:0": "Roboto Mono"
+      }
+    },
+    {
+      "id": "VariableID:332:62",
+      "name": "repo/color/neutral/foreground/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1055"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:63",
+      "name": "repo/color/neutral/surface/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1047"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:64",
+      "name": "repo/color/neutral/border/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1017"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:65",
+      "name": "repo/color/selection/surface/light",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:861"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:66",
+      "name": "repo/color/neutral/foreground/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1056"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:67",
+      "name": "repo/color/neutral/surface/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1048"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:68",
+      "name": "repo/color/neutral/border/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1018"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:69",
+      "name": "repo/color/selection/surface/dark",
+      "type": "COLOR",
+      "values": {
+        "76:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:869"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:24",
+      "name": "color/canvas",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1021"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1022"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:25",
+      "name": "color/surface/default",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1039"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1040"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:26",
+      "name": "color/surface/raised",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1043"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1044"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:27",
+      "name": "color/surface/sunken",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1047"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1048"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:28",
+      "name": "color/surface/hover",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1041"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1042"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:29",
+      "name": "color/surface/specimen",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1045"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1046"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:30",
+      "name": "color/text/primary",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1053"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1054"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:31",
+      "name": "color/text/secondary",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1055"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1056"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:32",
+      "name": "color/text/disabled",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1049"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1050"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:33",
+      "name": "color/text/on-action",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1051"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1052"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:34",
+      "name": "color/action/default",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1011"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1012"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:35",
+      "name": "color/action/hover",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1013"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1014"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:36",
+      "name": "color/action/pressed",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1015"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1016"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:37",
+      "name": "color/link",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1029"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1030"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:38",
+      "name": "color/focus/ring",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1027"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1028"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:39",
+      "name": "color/border/default",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1017"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1018"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:40",
+      "name": "color/border/strong",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1019"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1020"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:41",
+      "name": "color/selection/background",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1031"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1032"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:42",
+      "name": "color/selection/foreground",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1033"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1034"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:43",
+      "name": "color/danger/foreground",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1023"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1024"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:44",
+      "name": "color/danger/surface",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1025"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1026"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:45",
+      "name": "color/success/foreground",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1035"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1036"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:46",
+      "name": "color/success/surface",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1037"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1038"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:47",
+      "name": "color/warning/foreground",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1057"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1058"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:48",
+      "name": "color/warning/surface",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1059"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1060"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:49",
+      "name": "color/accent/decorative",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:829"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:829"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:50",
+      "name": "space/none",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:922"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:922"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:51",
+      "name": "space/3xs",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1074"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1074"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:52",
+      "name": "space/2xs",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:918"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:918"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:53",
+      "name": "space/xs",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:925"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:925"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:54",
+      "name": "space/sm",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:923"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:923"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:55",
+      "name": "space/md",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:921"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:921"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:56",
+      "name": "space/lg",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:920"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:920"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:57",
+      "name": "space/xl",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:924"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:924"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:58",
+      "name": "space/2xl",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:917"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:917"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:59",
+      "name": "space/3xl",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:919"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:919"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:60",
+      "name": "space/4xl",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1075"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1075"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:61",
+      "name": "control/height/sm",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:835"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:835"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:62",
+      "name": "control/height/md",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:834"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:834"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:63",
+      "name": "control/height/lg",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:833"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:833"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:64",
+      "name": "control/padding/inline/sm",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:838"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:838"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:65",
+      "name": "control/padding/inline/md",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:837"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:837"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:66",
+      "name": "control/padding/inline/lg",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:836"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:836"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:67",
+      "name": "control/gap",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:832"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:832"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:68",
+      "name": "control/radius",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:839"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:839"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:69",
+      "name": "card/radius",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:828"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:828"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:70",
+      "name": "card/padding",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:827"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:827"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:71",
+      "name": "border/width/default",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:825"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:825"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:72",
+      "name": "border/width/strong",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:826"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:826"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:73",
+      "name": "focus/width",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:841"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:841"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:74",
+      "name": "focus/offset",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:840"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:840"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:75",
+      "name": "radius/none",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:858"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:858"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:76",
+      "name": "radius/xs",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1073"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1073"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:77",
+      "name": "radius/sm",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:859"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:859"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:78",
+      "name": "radius/md",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:857"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:857"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:79",
+      "name": "radius/lg",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:856"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:856"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:80",
+      "name": "radius/xl",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1072"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1072"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:81",
+      "name": "radius/2xl",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1071"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1071"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:82",
+      "name": "radius/full",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:855"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:855"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:83",
+      "name": "icon/size/sm",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1064"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1064"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:84",
+      "name": "icon/size/md",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1063"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1063"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:85",
+      "name": "icon/size/lg",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1062"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1062"
+        }
+      }
+    },
+    {
+      "id": "VariableID:158:86",
+      "name": "target/min",
+      "type": "FLOAT",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:926"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:926"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:70",
+      "name": "color/neutral/foreground",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:332:62"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:332:66"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:71",
+      "name": "color/neutral/surface",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:332:63"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:332:67"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:72",
+      "name": "color/neutral/border",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:332:64"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:332:68"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:73",
+      "name": "color/selection/surface",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:332:65"
+        },
+        "158:1": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:332:69"
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:74",
+      "name": "figma/elevation/md/key",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 0.11999999731779099
+        },
+        "158:1": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 0.4000000059604645
+        }
+      }
+    },
+    {
+      "id": "VariableID:332:75",
+      "name": "figma/elevation/md/ambient",
+      "type": "COLOR",
+      "values": {
+        "158:0": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 0.07999999821186066
+        },
+        "158:1": {
+          "r": 0,
+          "g": 0,
+          "b": 0,
+          "a": 0.3199999928474426
+        }
+      }
+    }
+  ],
+  "textStyles": [
+    {
+      "id": "S:ed6f27d1c0b299bd0ede565ff2708910d40ad302,",
+      "name": "Oddkin/Display",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 36,
+      "line": {
+        "unit": "PERCENT",
+        "value": 125
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": -2.5
+      },
+      "b": {
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1080"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11574"
+        }
+      }
+    },
+    {
+      "id": "S:defcba86068dd7e966ed5b6393891fccfd4ffce6,",
+      "name": "Oddkin/Section",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 24,
+      "line": {
+        "unit": "PERCENT",
+        "value": 125
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1082"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1083"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11576"
+        }
+      }
+    },
+    {
+      "id": "S:fb58b3ab2777d4bf16d34a0c5ee2b19e526ea7a2,",
+      "name": "Oddkin/Body",
+      "font": {
+        "family": "Roboto",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "wdth": 100
+        }
+      },
+      "size": 16,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1076"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1077"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11572"
+        }
+      }
+    },
+    {
+      "id": "S:b18b7944722fd0753c33d6246c210316788362f9,",
+      "name": "Oddkin/UI",
+      "font": {
+        "family": "Roboto",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "wdth": 100
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PERCENT",
+        "value": 137.5
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1088"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1089"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11579"
+        }
+      }
+    },
+    {
+      "id": "S:895e658104684f92b9e3fdd4af5dcdaff76e9219,",
+      "name": "Oddkin/Small",
+      "font": {
+        "family": "Roboto",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "wdth": 100
+        }
+      },
+      "size": 12,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1084"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1085"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11577"
+        }
+      }
+    },
+    {
+      "id": "S:9feac0aaef4309ca222bda7f0e85be960ab350b4,",
+      "name": "Oddkin/Eyebrow",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 12,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PERCENT",
+        "value": 5
+      },
+      "b": {
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1081"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11575"
+        }
+      }
+    },
+    {
+      "id": "S:9d79415aca6a202e00db98c0d505296fe53e5c53,",
+      "name": "Oddkin/Code",
+      "font": {
+        "family": "Roboto Mono",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1078"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1079"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11581"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11573"
+        }
+      }
+    },
+    {
+      "id": "S:fe9adc444b5aa133a46a0613015230669a96a249,",
+      "name": "Oddkin/Card title",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 20,
+      "line": {
+        "unit": "PERCENT",
+        "value": 137.5
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1086"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1087"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11578"
+        }
+      }
+    },
+    {
+      "id": "S:399b8a48ac60c19d4d1a3cc23d7194049fc96230,",
+      "name": "Oddkin/Component/Button/lg",
+      "font": {
+        "family": "Roboto",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "wdth": 100
+        }
+      },
+      "size": 16,
+      "line": {
+        "unit": "PERCENT",
+        "value": 137.5
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:846"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11570"
+        }
+      }
+    },
+    {
+      "id": "S:015544ff2d967bb208099e28708be22537817a85,",
+      "name": "Oddkin/Component/Navigation/current",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PERCENT",
+        "value": 137.5
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:847"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11571"
+        }
+      }
+    },
+    {
+      "id": "S:083ff3d063e2c283e8938e585f07098dbc059f53,",
+      "name": "Oddkin/Component/Status",
+      "font": {
+        "family": "Roboto",
+        "style": "Medium",
+        "variationSettings": {
+          "wght": 500,
+          "wdth": 100
+        }
+      },
+      "size": 12,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:849"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11570"
+        }
+      }
+    },
+    {
+      "id": "S:9b16b3b7e626e1e1f925df2978d548926838e4fc,",
+      "name": "Oddkin/Component/Field/small",
+      "font": {
+        "family": "Roboto",
+        "style": "Regular",
+        "variationSettings": {
+          "wght": 400,
+          "wdth": 100
+        }
+      },
+      "size": 14,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:847"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11569"
+        }
+      }
+    },
+    {
+      "id": "S:3c6d3f84607962df8861a5918942cfda6b2be5bd,",
+      "name": "Oddkin/Component/AI/title",
+      "font": {
+        "family": "Roboto",
+        "style": "SemiBold",
+        "variationSettings": {
+          "wght": 600,
+          "wdth": 100
+        }
+      },
+      "size": 16,
+      "line": {
+        "unit": "PERCENT",
+        "value": 150
+      },
+      "letter": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "b": {
+        "letterSpacing": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:83:1065"
+        },
+        "fontSize": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:76:846"
+        },
+        "fontFamily": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11580"
+        },
+        "fontWeight": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:326:11571"
+        }
+      }
+    }
+  ],
+  "effects": [
+    {
+      "id": "S:2c92035d835d14c496dee26aaca85f87ae58ca3a,",
+      "e": [
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 2,
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:332:74"
+            }
+          },
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.11999999731779099
+          },
+          "offset": {
+            "x": 0,
+            "y": 1
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        },
+        {
+          "type": "DROP_SHADOW",
+          "visible": true,
+          "radius": 12,
+          "boundVariables": {
+            "color": {
+              "type": "VARIABLE_ALIAS",
+              "id": "VariableID:332:75"
+            }
+          },
+          "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 0.07999999821186066
+          },
+          "offset": {
+            "x": 0,
+            "y": 4
+          },
+          "spread": 0,
+          "blendMode": "NORMAL",
+          "showShadowBehindNode": true
+        }
+      ]
+    }
+  ],
+  "referenceChecks": [
+    {
+      "page": "0:1",
+      "nodeCount": 2331,
+      "textCount": 1097,
+      "missingVars": [],
+      "missingStyles": [],
+      "missingCollections": []
+    },
+    {
+      "page": "158:22",
+      "nodeCount": 17322,
+      "textCount": 4850,
+      "missingVars": [],
+      "missingStyles": [],
+      "missingCollections": []
+    }
+  ],
+  "visualChecks": [
+    "Light select and combobox states",
+    "Light multiselect selection manager",
+    "Dark select, combobox, multiselect, selection manager, menu, popover, tooltip, neutral alert and badge, radio and switch focus indicators"
+  ],
+  "temporaryAuditBoardRemoved": true,
+  "repositorySnapshotChanged": false
+}
