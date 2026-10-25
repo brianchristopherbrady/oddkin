@@ -336,10 +336,14 @@ returns; while focus is outside, the chips that do not fit on one line become th
 `strings.more`). Form semantics are odd-listbox's (one internal base class: the declared default, each value under
 `name`, `required` through a detached native select pointed at the input, reset, restore).
 
-**`odd-file-input`** (`fileUpload`) — native `<input type="file">` whose `::file-selector-button` takes the button
-look. Field anatomy, `name`, `accept`, `multiple`, `required`, `disabled`; read-only `files: readonly File[]`.
-Chosen files are rows (part `file`, glyph, name, size) with remove buttons; the form value is the files under
-`name`. `input` and `change` on user changes.
+**`odd-file-input`** (`fileUpload`) — a drop zone (part `surface`) over a native `<input type="file">` whose
+`::file-selector-button` takes the secondary button look. Field anatomy, the `error` taking the place of the `title`
+("Choose a file or drop it here", `strings.title` and `strings.titleMultiple`); `name`, `accept`, `multiple`,
+`required`, `disabled`; read-only `files: readonly File[]`. Files dropped on the surface replace the choice (the first
+only unless `multiple`; not filtered by `accept`, as natively). Chosen files are rows (part `file`, glyph, name, size
+in the page language) with remove buttons (part `remove`, `strings.remove`, "Remove {name}"; after a removal focus
+moves to the next row's button, the previous one, or the input); the form value is the files under `name`, as a
+native file input submits them. `input` and `change` on user changes only.
 
 **`odd-validation-summary`** (`ValidationSummary`) — `label: string` (heading; default `strings.title`, "Please fix
 {count} fields", and `strings.titleOne` for one, chosen by the page language's plural rules), `form: string` (ID;

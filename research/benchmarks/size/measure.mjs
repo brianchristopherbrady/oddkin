@@ -142,6 +142,9 @@ export const CSS_BUDGETS = {
   // 512: measured 451 on 2026-10-23: the danger surface and border, heading row, and link list; the
   // tone colours and glyph are the shared tone module.
   'components:validation-summary': 512,
+  // 1,024: measured 958 on 2026-10-25: the drop zone, the selector button's look (a pseudo-element
+  // cannot reuse odd-button's sheet), the file rows, and the remove buttons.
+  'components:file-input': 1024,
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   'components:scroll-region': 256, // 235

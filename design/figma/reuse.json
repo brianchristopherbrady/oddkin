@@ -2002,6 +2002,10 @@
       "reason": "It extends odd-dialog's class and template; actions and fields are slot content."
     },
     "odd-empty-state": { "dependencies": [] },
+    "odd-file-input": {
+      "dependencies": [],
+      "reason": "The picker button is the native input's ::file-selector-button with the button look; the glyphs come from the shared glyph module."
+    },
     "odd-icon": { "dependencies": [] },
     "odd-inline-assist": { "dependencies": [] },
     "odd-input": { "dependencies": [] },

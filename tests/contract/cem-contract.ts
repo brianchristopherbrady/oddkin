@@ -353,7 +353,12 @@ export async function describeCemContract(
     });
 
     const authored = options.examples?.[declaration.tagName] as
-      | { examples: Record<string, { props?: Record<string, unknown>; incorrect?: unknown }> }
+      | {
+          examples: Record<
+            string,
+            { props?: Record<string, unknown>; incorrect?: unknown; fixture?: unknown }
+          >;
+        }
       | undefined;
 
     it.skipIf(!userEvents(declaration).length)(
@@ -372,9 +377,13 @@ export async function describeCemContract(
           // Rich values come from the authored examples: mounted, then written again connected.
           for (const [name, example] of Object.entries(authored?.examples ?? {})) {
             if (example.incorrect) continue;
+            const before = fired.length;
             const mounted = await mountExample({ ...authored!, component: tag } as never, name);
             const host = mounted.element as unknown as Host;
             await settle(host);
+            // A fixture may act as the user (odd-file-input's drops files): what it fires then is
+            // user intent, not a property write. The props are still written again below.
+            if (example.fixture) fired.length = before;
             for (const [key, value] of Object.entries(example.props ?? {})) {
               host[key] = Array.isArray(value) ? [...value] : value;
               await settle(host);

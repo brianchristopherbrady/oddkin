@@ -218,6 +218,18 @@
       "types": "./dist/empty-state/empty-state.define.d.ts",
       "default": "./dist/empty-state/empty-state.define.js"
     },
+    "./file-input": {
+      "types": "./dist/file-input/index.d.ts",
+      "default": "./dist/file-input/index.js"
+    },
+    "./file-input/foundation": {
+      "types": "./dist/file-input/foundation.d.ts",
+      "default": "./dist/file-input/foundation.js"
+    },
+    "./define/file-input": {
+      "types": "./dist/file-input/file-input.define.d.ts",
+      "default": "./dist/file-input/file-input.define.js"
+    },
     "./icon": {
       "types": "./dist/icon/index.d.ts",
       "default": "./dist/icon/index.js"

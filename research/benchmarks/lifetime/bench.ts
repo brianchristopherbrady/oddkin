@@ -22,6 +22,7 @@ import '@oddkin/components/define/dialog';
 import '@oddkin/components/define/disclosure';
 import '@oddkin/components/define/drawer';
 import '@oddkin/components/define/empty-state';
+import '@oddkin/components/define/file-input';
 import '@oddkin/components/define/icon';
 import '@oddkin/components/define/input';
 import '@oddkin/components/define/listbox';
@@ -238,6 +239,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-radio-group label="Visibility" name="visibility" required><option value="private" title="Invited members" selected>Private</option><option value="team">Team</option></odd-radio-group>
         <odd-segmented-control label="Size" name="size"><option value="sm">Small</option><option value="md" selected>Medium</option></odd-segmented-control>
         <odd-textarea label="Notes" maxlength="200" resize="auto"></odd-textarea>
+        <odd-file-input label="Files" name="files" multiple></odd-file-input>
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
         <odd-scroll-region label="Log" style="max-block-size: 3rem"><p>A</p><p>B</p><p>C</p><p>D</p></odd-scroll-region>
         <odd-container measure="fluid"><p>A</p></odd-container>

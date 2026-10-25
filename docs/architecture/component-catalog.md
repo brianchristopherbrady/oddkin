@@ -76,7 +76,7 @@ tokens, slot content, a native element, or a look-alike.
 | `rating` | 6 | `odd-rating` | Existing | The radio-group base drawn as stars: native radios in one shadow tree (one Tab stop, arrow keys from the platform), filled up to the chosen star, with the value beside them ("3 of 5", `strings.empty` "Not rated"); `max` stars named "1 star" to "5 stars", or options that name them; `readonly` (`aria-readonly`, still submitted, barred from validation). Figma's Focus variant rings an unchosen star; native radios focus the chosen one (recorded difference). |
 | `rating/Item` | 5 | the star (`option` part) of `odd-rating` | Existing (part) | A `control.height.sm` target drawn by its radio, holding the built-in star glyph (`icon.size.md`) in the strong border colour, filled in the selection colour when on, in the disabled text colour while disabled. |
 | `dateTime` | 3 | `odd-input type="date"` / `"time"` | Existing (variant) | Native date and time inputs (also `datetime-local`, `month`, `week`); the engine draws the picker. |
-| `fileUpload` | 3 | file field | Planned (unlisted) | `odd-context-picker` (AI) has a file-add flow; shared behavior decided at M10. |
+| `fileUpload` | 3 | `odd-file-input` | Existing | A drop zone over a native file input (its button takes the button look); rows with remove buttons. |
 | `ListboxSurface` | 1 | listbox surface part (popover in the top layer) | Anatomy primitive | Instantiated by select, listbox, combobox, multiselect. |
 | `ListboxOption` | 6 | option part / `role="option"` row | Anatomy primitive | 30 option rows reuse it. |
 | `Menu` | 3 | `odd-menu` | Existing | Menu button (APG) with groups, separators, icons, shortcuts, the danger tone, and submenus (nested popovers on the overlay wiring, ADR 0044); rows are the option-row module. |
@@ -535,7 +535,7 @@ Status: **approved** (2026-10-24). 214 references; controller 13, deferred 12, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (52) has no element dependency.
+Every other element (53) has no element dependency.
 
 #### Shared homes
 

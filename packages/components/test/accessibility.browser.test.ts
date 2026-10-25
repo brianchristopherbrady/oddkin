@@ -81,6 +81,9 @@ const states = `
     <odd-textarea label="Project description" name="about" placeholder="Describe this project…" maxlength="500"></odd-textarea>
     <odd-textarea label="Feedback" description="Tell us what to improve." name="feedback" required error="Feedback is required." maxlength="200"></odd-textarea>
     <odd-textarea label="Terms" name="terms-text" value="Read only." readonly resize="none"></odd-textarea>
+    <odd-file-input id="a11y-attachments" label="Project attachments" name="attachments" description="PDF, PNG, JPG · Maximum 10 MB" multiple></odd-file-input>
+    <odd-file-input label="Signed contract" name="contract" required error="File is too large"></odd-file-input>
+    <odd-file-input id="inactive-file-input" label="Archived files" name="archive" disabled></odd-file-input>
     <odd-textarea label="History" name="history" value="Managed." disabled resize="auto"></odd-textarea>
     <odd-button type="submit" appearance="primary">Submit</odd-button>
     <odd-button type="reset">Reset</odd-button>
@@ -249,9 +252,26 @@ async function audit(mode: 'light' | 'dark') {
     await validationSummary.updateComplete;
     flush();
     expect(validationSummary.shadowRoot!.querySelectorAll('[part~="link"]')).toHaveLength(2);
+    // Dropped files: their rows, sizes, and remove buttons are audited.
+    const attachments = container.querySelector<HTMLElement & { updateComplete: Promise<void> }>(
+      '#a11y-attachments',
+    )!;
+    const files = new DataTransfer();
+    files.items.add(new File(['%PDF'], 'project-brief.pdf'));
+    files.items.add(new File(['JPG'], 'site-photo.jpg'));
+    attachments
+      .shadowRoot!.querySelector('[part~="surface"]')!
+      .dispatchEvent(new DragEvent('drop', { cancelable: true, dataTransfer: files }));
+    await attachments.updateComplete;
+    flush();
+    expect(attachments.shadowRoot!.querySelectorAll('[part~="remove"]')).toHaveLength(2);
     // A disabled chip's text takes the disabled colour, as Figma draws it: WCAG 1.4.3 exempts
     // inactive components, but axe cannot tell that a chip is one. The same chip enabled is audited.
-    const context = { include: [container], exclude: [['#inactive-chip']] };
+    // So does a disabled file input's title, outside the label that tells axe the input is disabled.
+    const context = {
+      include: [container],
+      exclude: [['#inactive-chip'], ['#inactive-file-input']],
+    };
     const result = await axe().run(context, { runOnly: { type: 'tag', values: TAGS } });
     const summary = (results: AxeResult[]) =>
       results.map((r) => `${r.id}: ${r.nodes.map((n) => JSON.stringify(n.target)).join(' ')}`);
