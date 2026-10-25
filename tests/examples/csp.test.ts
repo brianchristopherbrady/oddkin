@@ -12,6 +12,7 @@ const pages = [
   'editable-list',
   'composite-roles',
   'full-app',
+  'forms',
 ];
 
 describe.each(pages)('%s CSP', (name) => {

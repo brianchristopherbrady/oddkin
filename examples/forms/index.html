@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-1MEmPzIdfcdymlR2yvCpZ91RjlM15VKTet4SRT5KZxs='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>Form — a settings form from Oddkin form controls</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/base.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/layout.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/core/controllers/form": "../../packages/core/dist/controllers/form.js",
+          "@oddkin/core/controllers/position": "../../packages/core/dist/controllers/position.js",
+          "@oddkin/core/element": "../../packages/core/dist/element/index.js",
+          "@oddkin/core/helpers/live": "../../packages/core/dist/helpers/live.js",
+          "@oddkin/core/i18n": "../../packages/core/dist/i18n/index.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/scope": "../../packages/core/dist/scope/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/template/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js",
+          "@oddkin/components/define/alert": "../../packages/components/dist/alert/alert.define.js",
+          "@oddkin/components/define/button": "../../packages/components/dist/button/button.define.js",
+          "@oddkin/components/define/card": "../../packages/components/dist/card/card.define.js",
+          "@oddkin/components/define/checkbox-group": "../../packages/components/dist/checkbox-group/checkbox-group.define.js",
+          "@oddkin/components/define/input": "../../packages/components/dist/input/input.define.js",
+          "@oddkin/components/define/validation-summary": "../../packages/components/dist/validation-summary/validation-summary.define.js"
+        }
+      }
+    </script>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <main>
+      <odd-card label="Project settings">
+        <h1 slot="header">Project settings</h1>
+        <form id="settings" class="odd-stack">
+          <p class="intro">Keep the details and notification preferences up to date.</p>
+          <div id="feedback" role="status"></div>
+          <odd-validation-summary></odd-validation-summary>
+          <fieldset id="fields" class="odd-stack">
+            <legend>Project details</legend>
+            <div class="odd-auto-grid">
+              <odd-input
+                label="Project name"
+                description="Visible to your workspace."
+                name="project"
+                placeholder="Enter a project name"
+                value="Design system"
+                required
+              ></odd-input>
+              <odd-input
+                label="Owner email"
+                description="Receives project notifications."
+                name="owner"
+                type="email"
+                autocomplete="email"
+                value="avery@example.com"
+                required
+              ></odd-input>
+            </div>
+            <odd-checkbox-group
+              label="Notifications"
+              description="Choose how you want to hear about project updates."
+            >
+              <odd-checkbox name="notify" value="email" checked>Email notifications</odd-checkbox>
+              <odd-checkbox name="notify" value="desktop">Desktop notifications</odd-checkbox>
+              <odd-checkbox name="notify" value="summary">Weekly summary</odd-checkbox>
+            </odd-checkbox-group>
+          </fieldset>
+          <p id="unsaved" class="unsaved" hidden>
+            You have unsaved changes. Save before leaving this page.
+          </p>
+          <div class="odd-cluster">
+            <odd-button id="save" appearance="primary" type="submit">Save changes</odd-button>
+            <odd-button id="cancel" type="reset">Cancel</odd-button>
+          </div>
+        </form>
+      </odd-card>
+    </main>
+  </body>
+</html>

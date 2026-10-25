@@ -2876,3 +2876,22 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 browser mode with Playwright 1.
 - **Catalog-wide:** the explained mistake `measure="wide"` (observed: `measure` stays constrained, unlike `fluid`), the axe page (WCAG 2.2 A and AA, light and dark, three engines: pass), the lifetime scenario (1,000 cycles: ownership returned in every scenario and engine, WebKit navigation skipped by design; Chromium retained 403 / 14 B per cycle), the reuse map (no dependency), exports, the matrix (no new compatibility key; the summary line now also counts the committed slider sheets: 149 stylesheets, 306 keys). Node project 1,156/1,156; vocabulary 0 findings; agent kits current; typecheck fails only on the owner's untracked `figma-component-export.test.ts`.
 - **Analyzer:** guidance naming `.odd-box` was reported as an unknown member; `referenceIndex()` now collects the published stylesheets' classes (`ReferenceIndex.classes`), and a `.class` span that names one is accepted; an unknown one is still reported (`references.test.ts`).
 - **Mutation probes:** 10 (measure, token, centring, fluid selector, container, its name, block display, reflection; the reference index accepting only published classes): 10 killed.
+
+## 2026-10-25 — The Form example (M10, component-contracts.md §1; Figma `Form`)
+
+Environment: Windows, Node 24.22.1, Playwright 1.64.1, HEAD 6e436d2. Other lanes in progress in the tree: Agent 2's `odd-file-input` (in `src`, metadata not rebuilt), Agent 4's recipes (`src/css/index.ts`) and display tests.
+
+`examples/forms` is a project settings form (Figma Form lifecycle, 183:2924) in plain HTML and JavaScript: `odd-card` around a native `<form>` with `odd-validation-summary`, a `<fieldset>` of two `odd-input`s in an `.odd-auto-grid` and an `odd-checkbox-group`, an unsaved-changes note, and `odd-button` Save (submit) and Cancel (reset) in an `.odd-cluster`. The save is simulated (`data-save-fails` on `<body>` fails it). The page runs under the strict CSP of the other examples, with its import map hashed.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Import maps, CSP | `npx vitest run --project node tests/examples/import-maps.test.ts tests/examples/csp.test.ts` | 14/14 (the first run found `@oddkin/core/controllers/position` unmapped; mapped) |
+| e2e, three engines | `npx playwright test e2e/forms-example.spec.ts` | 12/12 (Chromium, Firefox, WebKit): Editing (FormData, no console errors), Invalid (summary "Please fix 2 fields" focused, its links focus each control, entries kept), Submitting then Success (fieldset and Cancel disabled, "Saving…", saved values kept by Cancel), Error (entries kept, "Retry save", unsaved note) |
+| axe (WCAG 2.2 A/AA tags) | in each of the four tests | no violations in Editing, Invalid, Submitting, Error |
+| Node project | `npx vitest run --project node` | 1,156 passed, 5 failed: `examples.test.ts` (4, `odd-file-input` in `src` before its metadata) and `metadata.test.ts` (1, document stylesheets): other lanes' work in progress |
+| Typecheck | `npm run typecheck` | passed |
+
+**Findings:**
+- Pressing Enter in an `odd-input` does not submit its form (the documented limitation: the shadow-root input has no form owner), so the example's test submits with the Save button. Implicit submission is a candidate change to `odd-input`.
+- The field and summary messages are the browser's validation messages. Figma's wording ("Enter a project name.") needs `setCustomValidity()` from the application; the controls take no per-constraint messages. Recorded in the README.
+- Not verified: screen-reader output, Safari on macOS.

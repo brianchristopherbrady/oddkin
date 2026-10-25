@@ -10,7 +10,14 @@ import { describe, expect, it } from 'vitest';
 // After editing a map, run `node scripts/update-csp-hash.mjs <page>` (see csp.test.ts).
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const pages = ['core-counter', 'components-only', 'css-gallery', 'side-nav', 'editable-list'];
+const pages = [
+  'core-counter',
+  'components-only',
+  'css-gallery',
+  'side-nav',
+  'editable-list',
+  'forms',
+];
 
 const IMPORTS = [
   /\b(?:import|export)\s[^'"`;]*?\bfrom\s*['"]([^'"]+)['"]/g,

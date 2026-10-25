@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+  padding: var(--odd-space-xl);
+  max-inline-size: 40rem;
+  font-family: var(--odd-font-family-sans);
+  color: var(--odd-color-text-primary);
+  background: var(--odd-color-surface-sunken);
+}
+
+h1 {
+  margin: 0;
+  font-size: var(--odd-type-title-size);
+  font-weight: var(--odd-type-title-weight);
+  line-height: var(--odd-type-title-line-height);
+}
+
+form {
+  --odd-stack-gap: var(--odd-space-lg);
+}
+
+.intro {
+  margin: 0;
+  color: var(--odd-color-text-secondary);
+}
+
+#feedback:empty {
+  display: none;
+}
+
+fieldset {
+  --odd-stack-gap: var(--odd-space-md);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  padding: 0;
+  margin-block-end: var(--odd-space-sm);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+  line-height: var(--odd-type-ui-line-height);
+}
+
+.odd-auto-grid {
+  --odd-auto-grid-min: 14rem;
+}
+
+.unsaved {
+  margin: 0;
+  color: var(--odd-color-warning-foreground);
+  font-size: var(--odd-type-small-size);
+}

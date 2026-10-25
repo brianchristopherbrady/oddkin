@@ -112,7 +112,7 @@ tokens, slot content, a native element, or a look-alike.
 | `CommandPalette` | 5 | `odd-command-palette` | Existing | A modal dialog on the shared modal wiring with a combobox search over `CommandItem` rows (option-row module); `odd-action` runs a command and closes it. |
 | `CheckboxGroup` | 3 | `odd-checkbox-group` | Existing | Slotted `odd-checkbox` choices in a named group with one legend, description, and error; `required` means at least one. |
 | `ValidationSummary` | 1 | `odd-validation-summary` | Existing | After a blocked submission the user started, lists the invalid fields as links that move focus to each; `form` names a form elsewhere. |
-| `Form` | 6 | form composition (example/recipe), not an element | Planned (unlisted) | References `input`, `CheckboxGroup`, `button`, `ValidationSummary`; today `examples/components-only` and `examples/editable-list`. |
+| `Form` | 6 | `examples/forms` (a composition, not an element) | Existing (example) | A project settings form from `odd-input`, `odd-checkbox-group` with `odd-checkbox`, `odd-validation-summary`, `odd-button`, `odd-alert`, `odd-card`, and the layout classes, in a native `<form>` and `<fieldset>`; `e2e/forms-example.spec.ts` covers Figma's Form lifecycle states (Editing, Invalid, Submitting, Success, Error, Unsaved changes) in three engines. The error wording is the browser's: Figma's messages are application text (`setCustomValidity()`). |
 | `GridCell` | 5 | — | Deferred (data grid) | |
 | `GridColumnHeader` | 3 | — | Deferred (data grid) | |
 | `GridSelection` | 3 | — | Deferred (data grid) | |
