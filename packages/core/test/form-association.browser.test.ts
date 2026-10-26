@@ -281,3 +281,60 @@ describe('FormValue anchor', () => {
     expect(entries(form)).toEqual([['role', 'editor']]);
   });
 });
+
+// Typed text that is not a value (a date picker's, a number field's): `badInput` below the
+// custom error and above the control's flags; a detached control without an anchor points the
+// message at the element itself.
+class TypedField extends HTMLElement {
+  static formAssociated = true;
+  readonly internals = this.attachInternals();
+  readonly typed = signal('');
+  readonly error = signal('');
+  readonly mirror = document.createElement('input');
+  readonly controller = new FormValue({
+    internals: () => this.internals,
+    value: () => null,
+    control: () => {
+      this.mirror.required = true;
+      return this.mirror;
+    },
+    error: () => this.error.value,
+    badInput: () => (this.typed.value ? `“${this.typed.value}” is not a date.` : ''),
+  });
+  #scope: Scope | undefined;
+  connectedCallback() {
+    this.#scope = createScope({ name: 'typed-field' });
+    this.#scope.use(this.controller);
+  }
+  disconnectedCallback() {
+    this.#scope?.dispose();
+  }
+}
+if (!customElements.get('test-typed-field')) customElements.define('test-typed-field', TypedField);
+
+describe('FormValue badInput', () => {
+  it('fails badInput with its message, under the custom error and over the control flags', () => {
+    const form = forms('<form id="a"></form>')('a');
+    const el = document.createElement('test-typed-field') as TypedField;
+    el.setAttribute('name', 'due');
+    // The detached control needs no anchor: its required flag points at the element.
+    step(() => form.append(el));
+    expect(el.internals.validity.valueMissing).toBe(true);
+    expect(el.internals.validity.badInput).toBe(false);
+    step(() => (el.typed.value = '31/02'));
+    expect(el.internals.validity.badInput).toBe(true);
+    expect(el.internals.validity.valueMissing).toBe(false);
+    expect(el.internals.validationMessage).toBe('“31/02” is not a date.');
+    expect(form.checkValidity()).toBe(false);
+    expect(el.controller.invalid.value).toBe(true);
+    step(() => (el.error.value = 'Choose a weekday.'));
+    expect(el.internals.validity.customError).toBe(true);
+    expect(el.internals.validity.badInput).toBe(false);
+    expect(el.internals.validationMessage).toBe('Choose a weekday.');
+    step(() => (el.error.value = ''));
+    expect(el.internals.validity.badInput).toBe(true);
+    step(() => (el.typed.value = ''));
+    expect(el.internals.validity.badInput).toBe(false);
+    expect(el.internals.validity.valueMissing).toBe(true);
+  });
+});

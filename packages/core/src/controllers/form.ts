@@ -28,9 +28,16 @@ export interface FormValueOptions {
   /** Custom error; while non-empty the element is invalid with this message. */
   readonly error?: () => string;
   /**
+   * Typed text that is not a value (a date that does not parse, a number field's letters): while
+   * non-empty the element fails `badInput` with this message. Below `error`, above the control's
+   * flags, as in a native control that holds text it cannot convert.
+   */
+  readonly badInput?: () => string;
+  /**
    * Where the browser points the validation message and moves focus on a blocked submission: a
-   * focusable part of the element's shadow tree. Default: `control`. Give it when `control` is not
-   * rendered (a detached native control that only supplies the flags and the message).
+   * focusable part of the element's shadow tree. Default: `control` while it is in the document,
+   * else the element itself. Give it when `control` is not rendered (a detached native control
+   * that only supplies the flags and the message).
    */
   readonly anchor?: () => HTMLElement | null | undefined;
   /** Other reactive inputs that change validity (`required`, `type`, …), read for tracking. */
@@ -98,9 +105,10 @@ export class FormValue implements Controller {
         const value = options.value();
         const state = options.state?.();
         const error = options.error?.() ?? '';
+        const bad = options.badInput?.() ?? '';
         options.watch?.();
         void this.#disabled.value;
-        untracked(() => this.#sync(value, state, error));
+        untracked(() => this.#sync(value, state, error, bad));
       },
       { phase: 'post', name: 'form value' },
     );
@@ -126,14 +134,17 @@ export class FormValue implements Controller {
     this.#options.onRestore?.(state, mode);
   }
 
-  #sync(value: FormState, state: FormState | undefined, error: string): void {
+  #sync(value: FormState, state: FormState | undefined, error: string, bad: string): void {
     const internals = this.#options.internals();
     if (state === undefined) internals.setFormValue(value);
     else internals.setFormValue(value, state);
     const control = this.#options.control?.() ?? undefined;
-    const anchor = this.#options.anchor?.() ?? control;
+    // An anchor must be in the element's shadow tree: a detached control points at the element.
+    const anchor = this.#options.anchor?.() ?? (control?.isConnected ? control : undefined);
     if (error) {
       internals.setValidity({ customError: true }, error, anchor);
+    } else if (bad) {
+      internals.setValidity({ badInput: true }, bad, anchor);
     } else if (control?.willValidate && !control.validity.valid) {
       // A barred control (disabled, read-only) keeps failing flags but has no message.
       const flags: ValidityStateFlags = {};
