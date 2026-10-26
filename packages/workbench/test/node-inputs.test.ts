@@ -325,13 +325,15 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     expect(JSON.parse(build.files.get('frame.importmap.json')!)).toEqual(build.frameImportMap);
     expect(build.packages.get('@acme/ui@1.4.0')).toBe(join(dir, 'node_modules', '@acme', 'ui'));
     expect(build.packages.get('@oddkin/workbench@0.0.0')).toBe(WORKBENCH_DIR.replace(/[\\/]$/, ''));
-    // The shell page: its own import map, the default theme's tokens, and the live-update stream.
+    // The shell page: its own import map, the default theme's tokens, the layout classes its
+    // templates use, and the live-update stream.
     const shell = build.shell!;
     expect(shell).toContain('<title>Acme UI</title>');
     expect(shell).toContain(
       '<oddkin-workbench index="/_oddkin/index.json" events="/_oddkin/events">',
     );
     expect(shell).toContain('href="/_oddkin/m/@oddkin/tokens@0.0.0/dist/css/default.css"');
+    expect(shell).toContain('href="/_oddkin/m/@oddkin/components@0.0.0/dist/css/layout.css"');
     const shellMap = JSON.parse(/<script type="importmap">(.*?)<\/script>/.exec(shell)![1]!);
     expect(shellMap.imports['@oddkin/app/router']).toBe(
       '/_oddkin/m/@oddkin/app@0.0.0/dist/router/index.js',

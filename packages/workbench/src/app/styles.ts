@@ -1,6 +1,10 @@
 /**
  * Shell styles (workbench-pages.md §3): light DOM, so every selector is scoped to
- * `oddkin-workbench`. Values come from Oddkin tokens; layout responds to container widths.
+ * `oddkin-workbench`. Values come from Oddkin tokens; layout responds to container widths. The
+ * shell page links `@oddkin/components/css/layout.css`: rows, clusters, stacks, and the card grid
+ * are its classes on the templates (with their override properties here). The two-column frame
+ * (`.wb-layout`, `.wb-page`) is this sheet's own: it switches at the `wb-shell` and `wb-main`
+ * thresholds together with the sidebar disclosure and the table of contents.
  */
 import { css } from '@oddkin/core/styles';
 
@@ -58,18 +62,13 @@ export const shellStyles = css`
 
   /* Header */
   oddkin-workbench .wb-header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--odd-space-sm) var(--odd-space-lg);
+    --odd-cluster-gap: var(--odd-space-sm) var(--odd-space-lg);
     padding: var(--odd-space-sm) var(--odd-space-xl);
     background: var(--odd-color-surface-default);
     border-block-end: var(--odd-border-width-default) solid var(--odd-color-border-default);
   }
   oddkin-workbench .wb-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--odd-space-xs);
+    --odd-row-gap: var(--odd-space-xs);
     color: inherit;
     font-weight: var(--odd-font-weight-semibold);
     text-decoration: none;
@@ -87,9 +86,8 @@ export const shellStyles = css`
     padding: 0;
   }
   oddkin-workbench .wb-primary ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--odd-space-xs) var(--odd-space-lg);
+    --odd-cluster-gap: var(--odd-space-xs) var(--odd-space-lg);
+    align-items: stretch;
   }
   oddkin-workbench .wb-primary a {
     display: inline-block;
@@ -102,16 +100,11 @@ export const shellStyles = css`
     box-shadow: inset 0 calc(-1 * var(--odd-border-width-strong)) 0 var(--odd-color-action-default);
   }
   oddkin-workbench .wb-tools {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--odd-space-sm) var(--odd-space-md);
+    --odd-cluster-gap: var(--odd-space-sm) var(--odd-space-md);
     margin-inline-start: auto;
   }
   oddkin-workbench .wb-tools label {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--odd-space-xs);
+    --odd-row-gap: var(--odd-space-xs);
     color: var(--odd-color-text-secondary);
     font-size: var(--odd-font-size-sm);
   }
@@ -285,23 +278,19 @@ export const shellStyles = css`
     margin-block-start: var(--odd-space-2xl);
   }
   oddkin-workbench .wb-cards {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--odd-space-md);
+    --odd-grid-columns: 1;
+    --odd-grid-gap: var(--odd-space-md);
   }
   oddkin-workbench .wb-card {
     block-size: 100%;
   }
   oddkin-workbench .wb-catalog-filters {
-    display: flex;
-    flex-wrap: wrap;
+    --odd-cluster-gap: var(--odd-space-md);
     align-items: end;
-    gap: var(--odd-space-md);
     margin-block-end: var(--odd-space-lg);
   }
   oddkin-workbench .wb-catalog-filters label {
-    display: grid;
-    gap: var(--odd-space-2xs);
+    --odd-stack-gap: var(--odd-space-2xs);
     color: var(--odd-color-text-secondary);
     font-size: var(--odd-font-size-sm);
   }
@@ -331,12 +320,12 @@ export const shellStyles = css`
   }
   @container wb-main (width >= 32rem) {
     oddkin-workbench .wb-cards {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      --odd-grid-columns: 2;
     }
   }
   @container wb-main (width >= 52rem) {
     oddkin-workbench .wb-cards {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      --odd-grid-columns: 3;
     }
     oddkin-workbench .wb-page.wb-has-toc {
       grid-template-columns: minmax(0, 1fr) 13rem;

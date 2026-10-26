@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { settled } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import '../src/app/define.js';
@@ -12,6 +12,19 @@ import type { CemPackage, OddkinMetadataLike } from '../src/pages/index.js';
 
 // The shell over the Acme fixture library, in hash mode so the test page's own path is left
 // alone. Data comes from an injected source; the dev server and real HTTP are e2e territory.
+
+// The shell page links the layout classes the templates use (node/workbench.ts, SHELL_LAYOUT).
+beforeAll(async () => {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = new URL('../../components/dist/css/layout.css', import.meta.url).href;
+  const loaded = new Promise((resolve, reject) => {
+    link.onload = resolve;
+    link.onerror = reject;
+  });
+  document.head.append(link);
+  await loaded;
+});
 
 const fixture = async (name: string) =>
   (await fetch(new URL(`./fixtures/${name}`, import.meta.url))).json() as Promise<unknown>;

@@ -29,6 +29,8 @@ const NODE_ONLY = ['@oddkin/analyzer'];
 export const ASSET_DIR = '_oddkin/';
 /** The shell's own stylesheet: the default theme's tokens. */
 const SHELL_STYLES = { package: '@oddkin/tokens', export: './css/default.css' };
+/** The shell page's arrangement classes (`.odd-cluster`, `.odd-grid`, ?; layout-recipes.md ?12). */
+const SHELL_LAYOUT = { package: '@oddkin/components', export: './css/layout.css' };
 
 export interface WorkbenchBuild {
   readonly root: string;
@@ -209,8 +211,13 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
     }),
   );
 
-  const tokens = shellGraph.find((pkg) => pkg.name === SHELL_STYLES.package);
-  const stylesheet = tokens && resolveExport(tokens.manifest, SHELL_STYLES.export);
+  const shellStylesheets = [SHELL_STYLES, SHELL_LAYOUT].flatMap(
+    ({ package: name, export: path }) => {
+      const pkg = shellGraph.find((entry) => entry.name === name);
+      const file = pkg && resolveExport(pkg.manifest, path);
+      return pkg && file ? [`${packageRoot(pkg, { base, versioned: true })}${file.slice(2)}`] : [];
+    },
+  );
   const assets = `${config.hosting.basePath}${ASSET_DIR}`;
   return {
     root: loaded.root,
@@ -225,10 +232,7 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
       title: data.index.branding.name,
       ...(config.content.defaultLocale ? { lang: config.content.defaultLocale } : {}),
       importMap: shell.importMap,
-      stylesheets:
-        tokens && stylesheet
-          ? [`${packageRoot(tokens, { base, versioned: true })}${stylesheet.slice(2)}`]
-          : [],
+      stylesheets: shellStylesheets,
       index: `${assets}index.json`,
       ...(options.events ? { events: `${assets}events` } : {}),
       module: '@oddkin/workbench/app/define',

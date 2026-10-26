@@ -66,12 +66,12 @@ export function header(
   const home = ctx.registry.pages.find((p) => p.id === 'home' && p.visible) ?? primary[0];
   const state = (entry: PageEntry) =>
     current?.id === entry.id ? 'page' : current?.section === entry.section ? 'true' : null;
-  return html`<header class="wb-header">
-    <a class="wb-brand" href=${ctx.href(home?.route ?? '/')}
+  return html`<header class="wb-header odd-cluster">
+    <a class="wb-brand odd-row" href=${ctx.href(home?.route ?? '/')}
       >${brand.logo ? html`<img src=${brand.logo} alt="" />` : nothing}<span>${brand.name}</span></a
     >
     <nav class="wb-primary" aria-label=${COPY.primaryNavigation}>
-      <ul>
+      <ul class="odd-cluster">
         ${repeat(
           primary,
           (entry) => entry.id,
@@ -82,13 +82,13 @@ export function header(
         )}
       </ul>
     </nav>
-    <div class="wb-tools">${tools}</div>
+    <div class="wb-tools odd-cluster">${tools}</div>
   </header>`;
 }
 
 export function appearanceControl(value: Appearance, change: (value: Appearance) => void) {
   const options = Object.entries(COPY.appearances) as [Appearance, string][];
-  return html`<label
+  return html`<label class="odd-row"
     >${COPY.appearance}
     <select
       class="wb-appearance"
@@ -202,11 +202,11 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
     filters === undefined
       ? nothing
       : html`<form
-          class="wb-catalog-filters"
+          class="wb-catalog-filters odd-cluster"
           role="search"
           @submit=${(event: Event) => event.preventDefault()}
         >
-          <label
+          <label class="odd-stack"
             >${COPY.componentSearch}
             <input
               type="search"
@@ -216,7 +216,7 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
                 filters.update((event.target as HTMLInputElement).value, filters.category)}
             />
           </label>
-          <label
+          <label class="odd-stack"
             >${COPY.categoryFilter}
             <select
               name="category"
@@ -240,7 +240,7 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
   if (groups.size === 1 && groups.has(''))
     return html`<div class="wb-body">
       ${controls}
-      <ul class="wb-cards">
+      <ul class="wb-cards odd-grid">
         ${repeat(
           entries,
           (entry) => entry.id,
@@ -254,7 +254,7 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
       ([group, pages], i) =>
         html`<section class="wb-group" aria-labelledby=${`wb-group-${i}`}>
           <h2 id=${`wb-group-${i}`}>${group} <span class="wb-muted">(${pages.length})</span></h2>
-          <ul class="wb-cards">
+          <ul class="wb-cards odd-grid">
             ${repeat(
               pages,
               (entry) => entry.id,
