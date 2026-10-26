@@ -312,7 +312,7 @@ The consumers above still write these layouts by hand; moving them to the classe
 | Component geometry | 83 |
 | Not counted (src/css recipes, generated sheet, example) | 18 |
 
-Lanes (the owner converts its own candidates with its tests and parity unchanged): Agent 1 form controls 5, Agent 2 overlays, navigation, file input, and every `@oddkin/ai` element 74, Agent 3 collections and layout 8, Agent 4 display, odd-combobox, and odd-picker 10.
+Lanes (the owner converts its own candidates with its tests and parity unchanged): Agent 1 form controls 5, Agent 2 overlays, navigation, file input, and every `@oddkin/ai` element 74, Agent 3 collections and layout 8 (converted 2026-10-26: `listbox.recipe.ts`, `tree.recipe.ts`, `command-palette.recipe.ts`, `scroll-region.recipe.ts`, and a `group-items` region in `side-nav.recipe.ts`; each extracted sheet opens the element's structural sheet, so odd-combobox and odd-picker, which compose the listbox and tree sheets, get the same rules; browser tests and Figma parity unchanged in three engines; `components:listbox` 663 B and `components:scroll-region` 266 B gzip, budgets 704 and 288, as each recipe brings its layer order), Agent 4 display, odd-combobox, and odd-picker 10.
 
 | File | Lane | Same decision as a primitive | Component geometry |
 |---|---|---|---|

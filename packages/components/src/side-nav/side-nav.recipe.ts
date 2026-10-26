@@ -13,6 +13,7 @@ export const sideNavRecipe = defineLayoutRecipe({
     root: stack({ gap: token('navigation.item.gap') }),
     header: row({ justify: 'space-between', wrap: true }),
     content: stack({ gap: token('navigation.item.gap') }),
+    'group-items': stack({ gap: token('navigation.item.gap') }),
     footer: row({ wrap: true }),
   },
   when: {

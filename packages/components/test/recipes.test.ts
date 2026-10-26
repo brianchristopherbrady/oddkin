@@ -1,7 +1,15 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
+import { commandPaletteRecipe } from '../src/command-palette/command-palette.recipe.js';
+import { commandPaletteRecipeStyles } from '../src/command-palette/command-palette.recipe.styles.js';
+import { listboxRecipe } from '../src/listbox/listbox.recipe.js';
+import { listboxRecipeStyles } from '../src/listbox/listbox.recipe.styles.js';
+import { scrollRegionRecipe } from '../src/scroll-region/scroll-region.recipe.js';
+import { scrollRegionRecipeStyles } from '../src/scroll-region/scroll-region.recipe.styles.js';
 import { sideNavRecipe } from '../src/side-nav/side-nav.recipe.js';
 import { sideNavRecipeStyles } from '../src/side-nav/side-nav.recipe.styles.js';
+import { treeRecipe } from '../src/tree/tree.recipe.js';
+import { treeRecipeStyles } from '../src/tree/tree.recipe.styles.js';
 
 // Build-time recipe extraction (layout-recipes.md §9): shipped definitions use the recipe's CSS
 // as a precompiled module, so registration entries never load the recipe engine. The extracted
@@ -13,6 +21,34 @@ const extracted = [
     source: './side-nav.recipe.ts',
     recipe: sideNavRecipe,
     styles: sideNavRecipeStyles,
+  },
+  {
+    file: '../src/listbox/listbox.recipe.styles.ts',
+    exportName: 'listboxRecipeStyles',
+    source: './listbox.recipe.ts',
+    recipe: listboxRecipe,
+    styles: listboxRecipeStyles,
+  },
+  {
+    file: '../src/tree/tree.recipe.styles.ts',
+    exportName: 'treeRecipeStyles',
+    source: './tree.recipe.ts',
+    recipe: treeRecipe,
+    styles: treeRecipeStyles,
+  },
+  {
+    file: '../src/command-palette/command-palette.recipe.styles.ts',
+    exportName: 'commandPaletteRecipeStyles',
+    source: './command-palette.recipe.ts',
+    recipe: commandPaletteRecipe,
+    styles: commandPaletteRecipeStyles,
+  },
+  {
+    file: '../src/scroll-region/scroll-region.recipe.styles.ts',
+    exportName: 'scrollRegionRecipeStyles',
+    source: './scroll-region.recipe.ts',
+    recipe: scrollRegionRecipe,
+    styles: scrollRegionRecipeStyles,
   },
 ];
 

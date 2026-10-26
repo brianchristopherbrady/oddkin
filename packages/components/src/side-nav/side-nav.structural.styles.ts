@@ -14,10 +14,6 @@ export const sideNavStructuralStyles = css`
     padding: 0;
     list-style: none;
   }
-  .group-items {
-    display: flex;
-    flex-direction: column;
-  }
   ::slotted(a) {
     box-sizing: border-box;
     display: flex;

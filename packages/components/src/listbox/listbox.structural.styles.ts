@@ -1,4 +1,5 @@
 import { css } from '@oddkin/core/styles';
+import { listboxRecipeStyles } from './listbox.recipe.styles.js';
 
 /**
  * What the listbox's behaviour depends on beyond the field layout and the option rows: the surface
@@ -6,6 +7,7 @@ import { css } from '@oddkin/core/styles';
  * (so the active option can be scrolled into view), and groups as columns. No visual tokens.
  */
 export const listboxStructuralStyles = css`
+  ${listboxRecipeStyles}
   :host {
     display: block;
   }
@@ -18,9 +20,5 @@ export const listboxStructuralStyles = css`
   .listbox {
     max-block-size: var(--odd-listbox-max-height, none);
     overflow-y: auto;
-  }
-  .state {
-    display: flex;
-    align-items: center;
   }
 `;

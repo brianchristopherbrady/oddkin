@@ -1,4 +1,5 @@
 import { css } from '@oddkin/core/styles';
+import { treeRecipeStyles } from './tree.recipe.styles.js';
 
 /**
  * What the tree's behaviour depends on beyond the navigation rows (`navRowStructuralStyles`):
@@ -6,13 +7,9 @@ import { css } from '@oddkin/core/styles';
  * at one level line up), and the state rows. No visual tokens; the skin sets `--_indent`.
  */
 export const treeStructuralStyles = css`
+  ${treeRecipeStyles}
   :host {
     display: block;
-  }
-  .root,
-  .tree {
-    display: flex;
-    flex-direction: column;
   }
   .entry {
     inline-size: auto;
@@ -25,9 +22,5 @@ export const treeStructuralStyles = css`
     justify-content: center;
     inline-size: 1.25em;
     block-size: 1.25em;
-  }
-  .state {
-    display: flex;
-    align-items: center;
   }
 `;

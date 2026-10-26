@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-26** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)), text-wrap-balance (newly (2024-05-13)), scrollbar-gutter (newly (2024-12-11)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 182 stylesheets, 316 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 186 stylesheets, 316 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -159,7 +159,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/chip/chip.styles.js (chipStyles)` | yes | 26 |
 | `packages/components/dist/combobox/combobox.structural.styles.js (comboboxStructuralStyles)` | yes | 40 |
 | `packages/components/dist/combobox/combobox.styles.js (comboboxStyles)` | yes | 24 |
-| `packages/components/dist/command-palette/command-palette.structural.styles.js (commandPaletteStructuralStyles)` | yes | 40 |
+| `packages/components/dist/command-palette/command-palette.recipe.styles.js (commandPaletteRecipeStyles)` | yes | 13 |
+| `packages/components/dist/command-palette/command-palette.structural.styles.js (commandPaletteStructuralStyles)` | yes | 45 |
 | `packages/components/dist/command-palette/command-palette.styles.js (commandPaletteStyles)` | yes | 24 |
 | `packages/components/dist/container/container.structural.styles.js (containerStructuralStyles)` | yes | 6 |
 | `packages/components/dist/container/container.styles.js (containerStyles)` | yes | 5 |
@@ -181,8 +182,9 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/icon/icon.styles.js (iconStyles)` | yes | 2 |
 | `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 16 |
 | `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 11 |
-| `packages/components/dist/listbox/listbox.structural.styles.js (listboxStructuralStyles)` | yes | 11 |
-| `packages/components/dist/listbox/listbox.styles.js (listboxStyles)` | yes | 20 |
+| `packages/components/dist/listbox/listbox.recipe.styles.js (listboxRecipeStyles)` | yes | 11 |
+| `packages/components/dist/listbox/listbox.structural.styles.js (listboxStructuralStyles)` | yes | 17 |
+| `packages/components/dist/listbox/listbox.styles.js (listboxStyles)` | yes | 19 |
 | `packages/components/dist/menu/menu.structural.styles.js (menuStructuralStyles)` | yes | 11 |
 | `packages/components/dist/menu/menu.styles.js (menuStyles)` | yes | 12 |
 | `packages/components/dist/one-time-code/one-time-code.structural.styles.js (oneTimeCodeStructuralStyles)` | yes | 20 |
@@ -201,14 +203,15 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/rating/rating.styles.js (ratingStyles)` | yes | 18 |
 | `packages/components/dist/relative-time/relative-time.structural.styles.js (relativeTimeStructuralStyles)` | yes | 8 |
 | `packages/components/dist/relative-time/relative-time.styles.js (relativeTimeStyles)` | yes | 7 |
-| `packages/components/dist/scroll-region/scroll-region.structural.styles.js (scrollRegionStructuralStyles)` | yes | 17 |
-| `packages/components/dist/scroll-region/scroll-region.styles.js (scrollRegionStyles)` | yes | 1 |
+| `packages/components/dist/scroll-region/scroll-region.recipe.styles.js (scrollRegionRecipeStyles)` | yes | 7 |
+| `packages/components/dist/scroll-region/scroll-region.structural.styles.js (scrollRegionStructuralStyles)` | yes | 19 |
+| `packages/components/dist/scroll-region/scroll-region.styles.js (scrollRegionStyles)` | yes | 0 |
 | `packages/components/dist/segmented-control/segmented-control.structural.styles.js (segmentedControlStructuralStyles)` | yes | 34 |
 | `packages/components/dist/segmented-control/segmented-control.styles.js (segmentedControlStyles)` | yes | 25 |
 | `packages/components/dist/select/select.structural.styles.js (selectStructuralStyles)` | yes | 23 |
 | `packages/components/dist/select/select.styles.js (selectStyles)` | yes | 11 |
 | `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
-| `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 22 |
+| `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 20 |
 | `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 38 |
 | `packages/components/dist/skeleton/skeleton.structural.styles.js (skeletonStructuralStyles)` | yes | 27 |
 | `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
@@ -255,8 +258,9 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/toolbar/toolbar.styles.js (toolbarStyles)` | yes | 16 |
 | `packages/components/dist/tooltip/tooltip.structural.styles.js (tooltipStructuralStyles)` | yes | 3 |
 | `packages/components/dist/tooltip/tooltip.styles.js (tooltipStyles)` | yes | 7 |
-| `packages/components/dist/tree/tree.structural.styles.js (treeStructuralStyles)` | yes | 18 |
-| `packages/components/dist/tree/tree.styles.js (treeStyles)` | yes | 13 |
+| `packages/components/dist/tree/tree.recipe.styles.js (treeRecipeStyles)` | yes | 12 |
+| `packages/components/dist/tree/tree.structural.styles.js (treeStructuralStyles)` | yes | 24 |
+| `packages/components/dist/tree/tree.styles.js (treeStyles)` | yes | 12 |
 | `packages/components/dist/validation-summary/validation-summary.structural.styles.js (validationSummaryStructuralStyles)` | yes | 18 |
 | `packages/components/dist/validation-summary/validation-summary.styles.js (validationSummaryStyles)` | yes | 15 |
 | `packages/ai/dist/action-approval/action-approval.styles.js (actionApprovalStyles)` | yes | 27 |

@@ -158,7 +158,7 @@ export const CSS_BUDGETS = {
   'components:date-picker': 384,
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
-  'components:scroll-region': 256, // 235
+  'components:scroll-region': 288, // 266 on 2026-10-26 (235 before): the content column is a layout recipe (layout-recipes.md §14)
   'components:container': 192, // 161
   'components:copy-button': 448, // 386: the row, the status words, the fallback field; the button look is odd-button's module
   'components:relative-time': 256, // 252: the glyph row, the detail line, and the small type role
@@ -166,7 +166,7 @@ export const CSS_BUDGETS = {
   'components:status-marker': 576, // 521: the circle, its status colours, the dot; glyphs and the ring are shared modules
   // Collections, measured on 2026-10-23 (structural and default styles; rows are the shared modules).
   'components:tree': 512, // 428
-  'components:listbox': 640, // 602: the rows, field, and spinner are shared modules
+  'components:listbox': 704, // 663 on 2026-10-26 (602 before): the state row is a layout recipe (layout-recipes.md §14); the rows, field, and spinner are shared modules
   'components:select': 512, // 448: the field, the option rows, and the picker surface are shared modules
   // 960: measured 876 on 2026-10-25 (860 on 2026-10-23): the field box (its states, the search
   // glyph and chevron padding), the chips' "+N" collapse, and the popup width; the field, rows,

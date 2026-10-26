@@ -15,7 +15,6 @@ export const sideNavStyles = css`
     letter-spacing: ${token('type.ui.letter-spacing')};
   }
   .group-items {
-    gap: ${token('navigation.item.gap')};
     margin-block-start: ${token('navigation.item.gap')};
     padding-inline-start: ${token('navigation.indent')};
   }

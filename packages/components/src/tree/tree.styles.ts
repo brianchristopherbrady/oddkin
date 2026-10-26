@@ -9,7 +9,6 @@ import { token } from '@oddkin/tokens/refs';
 export const treeStyles = css`
   .root {
     --_indent: ${token('navigation.indent')};
-    gap: ${token('space.sm')};
     padding: ${token('space.sm')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('card.radius')};
@@ -21,11 +20,7 @@ export const treeStyles = css`
     line-height: ${token('type.ui.line-height')};
     letter-spacing: ${token('type.ui.letter-spacing')};
   }
-  .tree {
-    gap: ${token('navigation.item.gap')};
-  }
   .state {
-    gap: ${token('space.sm')};
     padding: ${token('space.md')};
     color: ${token('color.text.secondary')};
   }

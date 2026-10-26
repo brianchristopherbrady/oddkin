@@ -1,4 +1,5 @@
 import { css } from '@oddkin/core/styles';
+import { scrollRegionRecipeStyles } from './scroll-region.recipe.styles.js';
 
 /**
  * The element is a one-track grid, so a `block-size` or `max-block-size` on it bounds the
@@ -7,6 +8,7 @@ import { css } from '@oddkin/core/styles';
  * scroll. No tokens.
  */
 export const scrollRegionStructuralStyles = css`
+  ${scrollRegionRecipeStyles}
   :host {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -21,10 +23,5 @@ export const scrollRegionStructuralStyles = css`
     .base {
       scrollbar-gutter: stable;
     }
-  }
-  .content {
-    display: flex;
-    flex-direction: column;
-    min-inline-size: 0;
   }
 `;

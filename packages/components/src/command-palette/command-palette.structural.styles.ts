@@ -1,4 +1,5 @@
 import { css } from '@oddkin/core/styles';
+import { commandPaletteRecipeStyles } from './command-palette.recipe.styles.js';
 
 /**
  * What the command palette depends on beyond the overlay surface and the option rows: the dialog
@@ -7,6 +8,7 @@ import { css } from '@oddkin/core/styles';
  * brand tokens.
  */
 export const commandPaletteStructuralStyles = css`
+  ${commandPaletteRecipeStyles}
   :host {
     display: contents;
   }
@@ -20,9 +22,7 @@ export const commandPaletteStructuralStyles = css`
     flex-direction: column;
   }
   .search {
-    display: flex;
     flex: none;
-    align-items: center;
   }
   .search-glyph {
     display: inline-flex;
@@ -53,14 +53,8 @@ export const commandPaletteStructuralStyles = css`
   .option:not([aria-disabled='true']) {
     cursor: pointer;
   }
-  .state {
-    display: flex;
-    align-items: center;
-  }
   .footer {
-    display: flex;
     flex: none;
-    flex-wrap: wrap;
   }
   @media (forced-colors: active) {
     :host .listbox .option.active {

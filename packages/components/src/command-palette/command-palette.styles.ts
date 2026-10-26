@@ -18,7 +18,6 @@ export const commandPaletteStyles = css`
     background: ${token('color.surface.raised')};
   }
   .search {
-    gap: ${token('space.sm')};
     min-block-size: ${token('control.height.lg')};
     padding: ${token('space.sm')};
     border: ${token('border.width.default')} solid ${token('color.border.strong')};
@@ -47,9 +46,6 @@ export const commandPaletteStyles = css`
     font-family: ${token('type.small.family')};
     font-size: ${token('type.small.size')};
     line-height: ${token('type.small.line-height')};
-  }
-  .footer {
-    gap: ${token('space.md')};
   }
   .group + .group,
   .group + .option,
@@ -88,7 +84,6 @@ export const commandPaletteStyles = css`
     color: ${token('color.selection.foreground')};
   }
   .state {
-    gap: ${token('space.sm')};
     padding-block: ${token('space.sm')};
     color: ${token('color.text.secondary')};
     font-family: ${token('type.body.family')};

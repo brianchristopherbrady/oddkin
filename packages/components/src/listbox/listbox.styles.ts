@@ -38,7 +38,6 @@ export const listboxStyles = css`
     line-height: ${token('type.small.line-height')};
   }
   .state {
-    gap: ${token('space.sm')};
     padding: ${token('space.md')};
     color: ${token('color.text.secondary')};
     font-family: ${token('type.ui.family')};

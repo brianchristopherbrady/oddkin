@@ -40,7 +40,7 @@ describe('the @oddkin/components kit', () => {
       'tokens:layout',
       'tokens:reference',
       'tokens:semantic',
-      'recipe:side-nav',
+      ...Object.keys(metadata.recipes).sort(),
       ...Object.keys(metadata.stylesheets).sort(),
       'model:oddkin.navigation',
       'json:components',
