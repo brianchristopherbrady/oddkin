@@ -1,5 +1,6 @@
 // 1,000-cycle lifetime and retained-memory run (plan M8 917). Outside shipped code.
-// Usage: node research/benchmarks/lifetime/run.mjs [--cycles 1000]
+// Usage: node research/benchmarks/lifetime/run.mjs [--cycles 1000] [--scenario componentCycles,...]
+// A --scenario subset writes research/benchmarks/.build/lifetime-partial.json, not the dated results.
 // For each engine: warm up, then two batches of N cycles per scenario. Ownership (core's
 // scopeStats) must return to its baseline after every batch; Chromium also reports the retained
 // heap after forced GC (CDP HeapProfiler.collectGarbage, Runtime.getHeapUsage), before and after
@@ -14,6 +15,16 @@ import { chromium, firefox, webkit } from 'playwright';
 const args = process.argv.slice(2);
 const CYCLES = Number(args[args.indexOf('--cycles') + 1] || 1000) || 1000;
 const WARMUP = Math.min(100, CYCLES);
+const ALL_SCENARIOS = ['appCycles', 'navigationCycles', 'themeEditCycles', 'componentCycles'];
+const only = args.includes('--scenario')
+  ? args[args.indexOf('--scenario') + 1]?.split(',')
+  : undefined;
+const unknown = only?.filter((name) => !ALL_SCENARIOS.includes(name)) ?? [];
+if (only && (only.length === 0 || unknown.length > 0))
+  throw new Error(
+    `--scenario takes a comma list of ${ALL_SCENARIOS.join(', ')}; got ${only.join(',')}`,
+  );
+const SCENARIOS = only ?? ALL_SCENARIOS;
 const root = resolve('.');
 const out = 'research/benchmarks/.build';
 await mkdir(out, { recursive: true });
@@ -42,7 +53,6 @@ const server = createServer(async (request, response) => {
 await new Promise((done) => server.listen(0, '127.0.0.1', done));
 const url = `http://127.0.0.1:${server.address().port}/research/benchmarks/lifetime/`;
 
-const SCENARIOS = ['appCycles', 'navigationCycles', 'themeEditCycles', 'componentCycles'];
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const results = {};
 try {
@@ -109,7 +119,9 @@ try {
 }
 
 const date = new Date().toISOString().slice(0, 10);
-const file = `research/benchmarks/results/lifetime-${date}-${platform()}.json`;
+const file = only
+  ? join(out, 'lifetime-partial.json')
+  : `research/benchmarks/results/lifetime-${date}-${platform()}.json`;
 await writeFile(
   file,
   `${JSON.stringify(
