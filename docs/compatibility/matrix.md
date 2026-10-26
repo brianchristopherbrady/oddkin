@@ -134,7 +134,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/css/stepper.css` | yes | 35 |
 | `packages/components/dist/css/table.css` | yes | 30 |
 | `packages/components/dist/css/timeline.css` | yes | 40 |
-| `packages/components/dist/css/typography.css` | yes | 11 |
+| `packages/components/dist/css/typography.css` | yes | 10 |
 | `packages/components/dist/css/utilities.css` | yes | 18 |
 | `packages/components/dist/alert/alert.structural.styles.js (alertStructuralStyles)` | yes | 22 |
 | `packages/components/dist/alert/alert.styles.js (alertStyles)` | yes | 10 |

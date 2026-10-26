@@ -228,10 +228,9 @@ export const typography: DocumentStylesheet = {
       ]),
     )
       .concat(
-        `@supports (text-wrap: balance) {\n${rule(
-          [...HEADING_ROLES].map((role) => `.odd-type-${role}`).join(', '),
-          [['text-wrap', 'balance']],
-        )}\n}`,
+        rule([...HEADING_ROLES].map((role) => `.odd-type-${role}`).join(', '), [
+          ['text-wrap', 'balance'],
+        ]),
       )
       .join('\n'),
   ),

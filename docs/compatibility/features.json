@@ -785,10 +785,10 @@
       "tests": [
         {
           "file": "packages/components/test/structured.browser.test.ts",
-          "name": "balances the heading roles where the engine supports it, and nothing else"
+          "name": "balances the heading roles, and nothing else"
         }
       ],
-      "notes": "At the floor since the Baseline 2024 re-resolution (ADR 0046 D1). typography.css still applies it inside @supports (text-wrap: balance); its owner may drop the gate after re-testing."
+      "notes": "At the floor since the Baseline 2024 re-resolution (ADR 0046 D1); typography.css applies it ungated since 2026-10-26 (re-tested in Chromium, Firefox, and WebKit)."
     },
     {
       "id": "text-wrap-pretty",

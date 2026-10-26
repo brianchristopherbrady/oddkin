@@ -172,17 +172,15 @@ describe('description list recipe', () => {
 });
 
 describe('typography recipe: balanced headings', () => {
-  it('balances the heading roles where the engine supports it, and nothing else', () => {
+  it('balances the heading roles, and nothing else', () => {
     const root = mount(
       ['display', 'title', 'section', 'body']
         .map((r) => `<p class="odd-type-${r}">${r}</p>`)
         .join(''),
     ).parentElement!;
-    const supported = CSS.supports('text-wrap', 'balance');
+    // At the floor (Baseline 2024, ADR 0046 D1) in every engine, so ungated.
     for (const role of ['display', 'title', 'section'])
-      expect(style(root.querySelector(`.odd-type-${role}`)!).textWrap === 'balance', role).toBe(
-        supported,
-      );
+      expect(style(root.querySelector(`.odd-type-${role}`)!).textWrap, role).toBe('balance');
     expect(style(root.querySelector('.odd-type-body')!).textWrap).not.toBe('balance');
   });
 });
