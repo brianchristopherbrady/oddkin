@@ -4,7 +4,7 @@ import { scrollRegionRecipeStyles } from './scroll-region.recipe.styles.js';
 /**
  * The element is a one-track grid, so a `block-size` or `max-block-size` on it bounds the
  * scroller, and as a flex or grid item it shrinks to the space left instead of its content's size.
- * Where supported, the scrollbar gutter is stable, so content does not shift when it starts to
+ * The scrollbar gutter is stable, so content does not shift when it starts to
  * scroll. No tokens.
  */
 export const scrollRegionStructuralStyles = css`
@@ -18,10 +18,6 @@ export const scrollRegionStructuralStyles = css`
   }
   .base {
     overflow: auto;
-  }
-  @supports (scrollbar-gutter: stable) {
-    .base {
-      scrollbar-gutter: stable;
-    }
+    scrollbar-gutter: stable;
   }
 `;

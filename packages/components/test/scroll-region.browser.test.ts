@@ -153,8 +153,9 @@ describe('odd-scroll-region', () => {
     expect(el.getBoundingClientRect().height).toBe(150);
     expect(base(el).getBoundingClientRect().height).toBe(150);
     expect(base(el).getAttribute('role')).toBe('region');
-    if (CSS.supports('scrollbar-gutter', 'stable'))
-      expect(getComputedStyle(base(el)).scrollbarGutter).toBe('stable');
+    // In every engine at the floor (5bd7415), so no longer gated.
+    expect(CSS.supports('scrollbar-gutter', 'stable')).toBe(true);
+    expect(getComputedStyle(base(el)).scrollbarGutter).toBe('stable');
   });
 
   it('names itself from strings when label is empty, and follows label changes', async () => {

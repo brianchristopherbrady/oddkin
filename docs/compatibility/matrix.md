@@ -204,7 +204,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/relative-time/relative-time.structural.styles.js (relativeTimeStructuralStyles)` | yes | 8 |
 | `packages/components/dist/relative-time/relative-time.styles.js (relativeTimeStyles)` | yes | 7 |
 | `packages/components/dist/scroll-region/scroll-region.recipe.styles.js (scrollRegionRecipeStyles)` | yes | 7 |
-| `packages/components/dist/scroll-region/scroll-region.structural.styles.js (scrollRegionStructuralStyles)` | yes | 19 |
+| `packages/components/dist/scroll-region/scroll-region.structural.styles.js (scrollRegionStructuralStyles)` | yes | 18 |
 | `packages/components/dist/scroll-region/scroll-region.styles.js (scrollRegionStyles)` | yes | 0 |
 | `packages/components/dist/segmented-control/segmented-control.structural.styles.js (segmentedControlStructuralStyles)` | yes | 34 |
 | `packages/components/dist/segmented-control/segmented-control.styles.js (segmentedControlStyles)` | yes | 25 |
