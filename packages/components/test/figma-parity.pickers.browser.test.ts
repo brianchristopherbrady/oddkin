@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import type { OddkinCalendar } from '../src/calendar/calendar.js';
+import type { OddkinDatePicker } from '../src/date-picker/date-picker.js';
 import type { OddkinFileInput } from '../src/file-input/file-input.js';
 import {
   compare,
   expectNone,
+  interact,
   mount,
   settle,
   shadowPart,
@@ -13,7 +15,8 @@ import {
   type Target,
 } from './parity.js';
 
-// Figma parity of the pickers: the file input and the calendar (component-contracts.md §3.3).
+// Figma parity of the pickers: the file input, the calendar, and the date picker
+// (component-contracts.md §3.3).
 useParity();
 
 describe('Figma parity: odd-file-input (fileUpload)', () => {
@@ -142,5 +145,70 @@ describe('Figma parity: odd-calendar (calendar, calendar/Day)', () => {
       }
       await transitions(targets);
       expectNone(compare('Oddkin/Common/calendar/Day', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: odd-date-picker (datePicker)', () => {
+  const field = ['Date field and calendar', 'Field focus boundary'];
+  const value = [...field, 'Oddkin/Common/multiselect/Field', 'Value'];
+  const description = 'DD / MM / YYYY · Choose a date or type it.';
+  const states = {
+    Disabled: ' value="2026-10-26" disabled',
+    Empty: ' placeholder="Choose a date"',
+    Focus: ' value="2026-10-26"',
+    Invalid: ' error="Enter a valid date in DD / MM / YYYY."',
+    Open: ' value="2026-10-26"',
+    Selected: ' value="2026-10-26"',
+  } as const;
+  for (const [state, attributes] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(
+        `<odd-date-picker lang="en-GB" label="Publish date" description="${description}"${attributes}></odd-date-picker>`,
+      ) as OddkinDatePicker;
+      await settle(el);
+      const part = (name: string) => shadowPart(el, name);
+      const control = part('control') as HTMLInputElement;
+      if (state === 'Invalid') {
+        await userEvent.type(control, '31/02/2026');
+        await userEvent.tab();
+      }
+      if (state === 'Focus') await interact('Focus', control);
+      if (state === 'Open') await userEvent.click(part('button'));
+      await settle(el);
+      const text = { Empty: 'Choose a date', Invalid: '31 / 02 / 2026' }[state as string];
+      const targets: Target[] = [
+        { layer: [], el: part('field'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Publish date'], el: part('label'), kind: 'text' },
+        {
+          layer: [...value, text ?? '26 / 10 / 2026'],
+          el: control,
+          kind: 'text',
+          ...(state === 'Empty' ? { pseudo: '::placeholder' } : {}),
+        },
+      ];
+      if (state === 'Invalid')
+        targets.push({
+          layer: ['Enter a valid date in DD / MM / YYYY.'],
+          el: part('error'),
+          kind: 'text',
+        });
+      else targets.push({ layer: [description], el: part('description'), kind: 'text' });
+      if (state === 'Focus')
+        targets.push({
+          layer: [...field, 'Focus ring · 2px / 2px offset'],
+          el: control,
+          kind: 'ring',
+        });
+      if (state === 'Open') {
+        expect(part('popup').matches(':popover-open')).toBe(true);
+        const calendar = el.shadowRoot!.querySelector('odd-calendar')!;
+        targets.push({
+          layer: ['Date field and calendar', 'Oddkin/Common/popover', 'Content'],
+          el: calendar,
+          kind: 'frame',
+        });
+      }
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/datePicker', { State: state }, targets));
     });
 });

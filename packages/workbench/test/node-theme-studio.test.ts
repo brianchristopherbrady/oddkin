@@ -203,6 +203,7 @@ describe('Theme Studio page data', () => {
       'chip:odd-chip',
       'combobox:odd-combobox',
       'copyButton:odd-copy-button',
+      'datePicker:odd-date-picker',
       'disclosure:odd-disclosure',
       'fileInput:odd-file-input',
       'placeholder:odd-skeleton',

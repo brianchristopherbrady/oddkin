@@ -409,7 +409,11 @@ export class OddkinCalendar extends OddkinFormControl.with({
     scope.effect(
       () => {
         void this._active.value;
-        if (!this.#focusActive) return;
+        // A date that had focus but no longer holds the Tab stop (the value or bounds moved it)
+        // passes focus on too.
+        const focused = this.shadowRoot?.activeElement as HTMLElement | null | undefined;
+        const stray = !!focused?.matches('[part~="day"]') && focused.tabIndex !== 0;
+        if (!this.#focusActive && !stray) return;
         this.#focusActive = false;
         untracked(() => this._activeCell?.focus());
       },

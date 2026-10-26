@@ -19,6 +19,7 @@ import '@oddkin/components/define/combobox';
 import '@oddkin/components/define/command-palette';
 import '@oddkin/components/define/container';
 import '@oddkin/components/define/copy-button';
+import '@oddkin/components/define/date-picker';
 import '@oddkin/components/define/dialog';
 import '@oddkin/components/define/disclosure';
 import '@oddkin/components/define/drawer';
@@ -243,6 +244,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-textarea label="Notes" maxlength="200" resize="auto"></odd-textarea>
         <odd-file-input label="Files" name="files" multiple></odd-file-input>
         <odd-calendar label="Date" name="date" value="2026-10-26"></odd-calendar>
+        <odd-date-picker label="Due" name="due" value="2026-10-26"></odd-date-picker>
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
         <odd-scroll-region label="Log" style="max-block-size: 3rem"><p>A</p><p>B</p><p>C</p><p>D</p></odd-scroll-region>
         <odd-container measure="fluid"><p>A</p></odd-container>

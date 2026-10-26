@@ -334,6 +334,16 @@ describe('odd-calendar', () => {
     expect(free).toEqual(['ArrowRight']);
   });
 
+  it('keeps focus on the Tab stop when the value moves it', async () => {
+    const { el, active } = await mount(
+      `<odd-calendar value="2026-10-26" first-day="1"></odd-calendar>`,
+    );
+    el.focus();
+    el.value = '2026-12-14';
+    await settle(el);
+    expect(active()).toBe('2026-12-14');
+  });
+
   it('swaps Left and Right in right-to-left text', async () => {
     const { el, active } = await mount(
       `<odd-calendar dir="rtl" value="2026-10-26" first-day="1"></odd-calendar>`,

@@ -182,6 +182,18 @@
       "types": "./dist/copy-button/copy-button.define.d.ts",
       "default": "./dist/copy-button/copy-button.define.js"
     },
+    "./date-picker": {
+      "types": "./dist/date-picker/index.d.ts",
+      "default": "./dist/date-picker/index.js"
+    },
+    "./date-picker/foundation": {
+      "types": "./dist/date-picker/foundation.d.ts",
+      "default": "./dist/date-picker/foundation.js"
+    },
+    "./define/date-picker": {
+      "types": "./dist/date-picker/date-picker.define.d.ts",
+      "default": "./dist/date-picker/date-picker.define.js"
+    },
     "./dialog": {
       "types": "./dist/dialog/index.d.ts",
       "default": "./dist/dialog/index.js"

@@ -148,6 +148,9 @@ export const CSS_BUDGETS = {
   // 960: measured 939 on 2026-10-25: the surface, the month row, the date table and its cell
   // states, the divider; the buttons are the shared native-button sheet's.
   'components:calendar': 960,
+  // 384: measured 337 on 2026-10-25: the calendar button's target and hover, and the popup
+  // holding the calendar without its own surface; the field is the shared control look.
+  'components:date-picker': 384,
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   'components:scroll-region': 256, // 235

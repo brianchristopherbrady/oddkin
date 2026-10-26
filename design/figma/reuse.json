@@ -14,11 +14,11 @@
   },
   "counts": {
     "style": 114,
-    "slot": 57,
-    "deferred": 12,
-    "controller": 13,
+    "slot": 56,
+    "deferred": 11,
+    "controller": 14,
     "native": 6,
-    "element": 12
+    "element": 13
   },
   "references": [
     {
@@ -1287,8 +1287,8 @@
       "source": "Oddkin/Common/calendar",
       "sourceId": "558:15676",
       "count": 2,
-      "class": "deferred",
-      "reason": "New Figma calendar composition reused by the date-picker proposal. Its runtime component contract is not implemented or approved by this design task."
+      "class": "element",
+      "reason": "The popup holds a complete odd-calendar, a definition dependency of odd-date-picker."
     },
     {
       "consumer": "Oddkin/Common/datePicker",
@@ -1297,7 +1297,7 @@
       "sourceId": "257:1654",
       "count": 6,
       "class": "style",
-      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
+      "reason": "The field is the shared control look of odd-input (controlStyles): a text input with the calendar button at its end; no nested element."
     },
     {
       "consumer": "Oddkin/Common/datePicker",
@@ -1305,8 +1305,8 @@
       "source": "Oddkin/Common/popover",
       "sourceId": "160:2460",
       "count": 2,
-      "class": "slot",
-      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
+      "class": "controller",
+      "reason": "The popup is a popover in the date picker’s tree, placed and dismissed by the shared overlay wiring (Overlay) and drawn by the overlay-surface module; no nested odd-popover."
     },
     {
       "consumer": "Oddkin/Common/dateTime",
@@ -1999,6 +1999,10 @@
       "reason": "Renders one odd-message per message record and an odd-activity for run status; both are complete widgets authors also place alone, and no ARIA ID crosses (each labels itself). Repeated per message: the per-instance cost is measured in the lifetime harness."
     },
     "odd-copy-button": { "dependencies": [] },
+    "odd-date-picker": {
+      "dependencies": ["odd-calendar"],
+      "reason": "The popup holds a complete odd-calendar (a definition dependency) that shares the date picker’s value, bounds, first day, disabled-date hook, read-only state, and strings."
+    },
     "odd-dialog": { "dependencies": [], "reason": "Actions and fields are slot content." },
     "odd-disclosure": { "dependencies": [] },
     "odd-drawer": {

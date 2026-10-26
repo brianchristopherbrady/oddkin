@@ -87,6 +87,9 @@ const states = `
     <odd-calendar label="Publish date" description="Any weekday." name="publish" value="2026-10-26" min="2026-10-05" first-day="1"></odd-calendar>
     <odd-calendar label="Start date" name="start" required error="Choose a start date."></odd-calendar>
     <odd-calendar label="Archived on" value="2026-10-26" disabled></odd-calendar>
+    <odd-date-picker label="Due date" description="DD/MM/YYYY" name="due" value="2026-10-26" min="2026-10-05"></odd-date-picker>
+    <odd-date-picker label="Review date" name="review" required error="Choose a review date."></odd-date-picker>
+    <odd-date-picker label="Signed on" value="2026-10-26" disabled></odd-date-picker>
     <odd-textarea label="History" name="history" value="Managed." disabled resize="auto"></odd-textarea>
     <odd-button type="submit" appearance="primary">Submit</odd-button>
     <odd-button type="reset">Reset</odd-button>
