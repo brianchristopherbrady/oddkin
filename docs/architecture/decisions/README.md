@@ -58,3 +58,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0043](./0043-composite-dependency-mechanism.md) | Composite dependency mechanism: element-reference parts and definition roles | Accepted | Core / Components |
 | [0044](./0044-overlay-positioning-and-top-layer.md) | Overlay positioning and the top layer | Accepted | Components / Core / Platform |
 | [0045](./0045-api-vocabulary.md) | API vocabulary for elements: names, values, events, form behavior | Accepted | Components / AI / Metadata |
+| [0046](./0046-plan-audit-2026-10-26.md) | Plan audit (2026-10-26): revised decisions | Accepted | Platform / Components / Agent / Process |

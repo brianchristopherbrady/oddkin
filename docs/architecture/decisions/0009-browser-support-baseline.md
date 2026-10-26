@@ -1,6 +1,6 @@
 # 0009. Browser support baseline
 
-- **Status:** Accepted (2026-10-17, pinned for the v1 cycle and re-resolved each release; Safari 17.4 runtime evidence pending)
+- **Status:** Accepted (2026-10-17, pinned for the v1 cycle and re-resolved each release; Safari 17.4 runtime evidence pending). **Floor revised to Baseline 2024 (Chrome/Edge 130, Firefox 132, Safari 18.2) by [ADR 0046](./0046-plan-audit-2026-10-26.md) D1, 2026-10-26;** this ADR's process (pinned data, registry, gates, lint, floor probe, per-release re-resolution) is unchanged
 - **Date:** 2026-10-17
 - **Area:** Platform
 - **Detailed contract:** [IMPLEMENTATION_PLAN.md §2.5](../../../IMPLEMENTATION_PLAN.md), [css-architecture.md §2](../css-architecture.md); registry [features.json](../../compatibility/features.json); generated [matrix](../../compatibility/matrix.md)
