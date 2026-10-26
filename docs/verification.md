@@ -3115,3 +3115,25 @@ The floor is Chrome and Edge 130, Firefox 132, Safari 18.2, and their mobile equ
 **Findings:** The floor probe had stopped reporting: its import map lacked `@oddkin/core/i18n`, which `odd-input` imports since b67b90c, so the probe page stayed at "Running…" in every browser until the entry was added. Firefox 132 has `@property`, so registration now masks a `var()` fallback in every floor browser; the never-register policy for tokens and component variables stands on the masking itself.
 
 **Gaps:** Safari 18.2 and Safari iOS 18.2 are not run (no macOS host; Playwright's WebKit 27.2 is not Safari 18.2); Edge 130 relies on Chrome 130; the Android floors rely on data; the floor run is not in CI.
+
+## 2026-10-26 ? Layout primitives in use: pages (M10 round 6; layout-recipes.md ?12??13)
+
+Environment: Windows, Node 24.22.1, Playwright 1.64.1 and Vitest 5.0.5 (Chromium, Firefox, WebKit). Other lanes' work in progress in the tree: Agent 3's `odd-picker` and collection modules, Agent 1's `odd-one-time-code`, a Theme Studio roles change. Boxes were recorded with a Playwright script (every light-DOM element, and the `oddkin-*` panels' shadow roots, keyed by tag, page classes, and order) before and after each conversion, on the pages' own servers.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Example pages (a1318c4, 107b74a) | boxes at 320, 768, 1,280 px (? 3 engines): `ai-agent`, `ai-research`, `ai-writing`, `css-gallery`, `components-only`, `full-app` | identical within 1 px, except the AI shells' intrinsic wrap (768 px now two columns; stacked at 560 px) and narrow `ai-research` in DOM order |
+| Docs (107b74a) | boxes at 320, 560, 768, 1,280 px (? 3 engines) on `/`, `/foundations`, `/search`, `/layout/side-nav` | identical at 1,280; at 320 the header search fits instead of overflowing by 5 px; 768 two columns |
+| Workbench shell (75826fc) | boxes at 320, 768, 1,280 px (? 3 engines) on the overview, `/components`, `/components/odd-button`, `/theme-studio`, `/foundations/spacing` (up to 1,610 boxes) | identical; Theme Studio's "Generated in ? ms" line appears or not by timing (Firefox) |
+| e2e | `ai-demos`, `css-compat`, `components-only`, `packed-consumers`, `docs`, `workbench*` | 99 passed and 6 skipped; then 530 passed: Firefox context-teardown timeouts re-run green (7/7); `workbench-theme-studio` "previews the baseline" fails in 3 engines on the role list (another lane's roles change, not layout) |
+| Workbench tests | `npx vitest run packages/workbench --project node`; the six browser files (? 3 engines) | 117 passed; 99 passed (the card-columns test needed the shell page's `layout.css`, now loaded by the test) |
+| Page layout check | `npm run lint:layout`; `tests/examples/page-layout.test.ts`; `tests/examples` | 39 files, 25 kept with a reason, 0 unlisted, 0 stale; 5 cases; 154 passed (the import-map test now covers `full-app`) |
+| Typography gate (bb8f237) | `structured.browser.test.ts` "balances the heading roles" (? 3 engines); `npm run compat` | 3 passed with `text-wrap: balance` ungated; 0 problems |
+
+**Findings:**
+- **Unlayered page rules beat the classes:** a page's `min-inline-size: 0` on a split's main child (left over from a grid track) silently stops `.odd-split` from wrapping, so the pages drop it. A 20rem `--odd-split-main-min` overflows a container narrower than 20rem; the pages cap it with `min(?, 100%)` until `layout.css` does (requested from Agent 3).
+- **Override properties inherit:** a stack's `--odd-stack-gap` reaches nested stacks, so each nested stack sets its own value or uses a preset.
+- **WebKit stretches a `legend`** in a flex `fieldset` (not in a grid one); `inline-size: fit-content` keeps it.
+- **Workbench:** a scoped layout recipe (`defineLayoutRecipe` with `scope`) was built for the shell and the panels together, then measured and dropped: `@oddkin/core/layout` costs 5.4 KB gzip in production, the docs-embedded panels would pay it, and the docs page would load component JavaScript (its e2e caught it). The shell links `layout.css` (0.7 KB of CSS) instead; the panels' shadow-root sheet stays structural CSS.
+- **Stale import map:** `full-app` had no `@oddkin/core/i18n` mapping since `odd-input` imported it; its page did not start.
+- **Not verified:** screen-reader passes (deferred by the owner); Safari on macOS.
