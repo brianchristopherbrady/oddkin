@@ -9,11 +9,12 @@
     />
     <title>Inline writing assistant — @oddkin/ai demo (simulated)</title>
     <link rel="stylesheet" href="./dist/tokens.css" />
+    <link rel="stylesheet" href="./dist/layout.css" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./dist/main.js"></script>
   </head>
   <body>
-    <div id="app" class="app">
+    <div id="app" class="app odd-stack odd-box">
       <header class="banner">
         <h1>Inline writing assistant</h1>
         <p class="simulated" role="note">
@@ -21,34 +22,37 @@
           model, or credentials.
         </p>
       </header>
-      <main class="editor-pane">
-        <label for="editor" class="editor-label">Document</label>
-        <textarea id="editor" rows="10" aria-describedby="editor-help"></textarea>
-        <p id="editor-help" class="muted">
-          Select text, then choose an action. Proposals apply only to the text they were made for.
-        </p>
-        <odd-ai-label hidden></odd-ai-label>
-        <h2>Dictation</h2>
-        <odd-voice-input></odd-voice-input>
-      </main>
-      <aside class="assist-pane">
-        <h2>Assist</h2>
-        <odd-inline-assist></odd-inline-assist>
-        <h2>Review</h2>
-        <odd-change-review announce></odd-change-review>
-        <details class="controls">
-          <summary>Simulation controls</summary>
-          <div class="control-form">
-            <label
-              >Response delay (ms) <input id="delay" type="number" min="0" max="10000" value="1200"
-            /></label>
-            <button id="edit-now" type="button">
-              Edit the document now (makes pending proposals stale)
-            </button>
-            <label><input id="deny" type="checkbox" /> Deny microphone permission</label>
-          </div>
-        </details>
-      </aside>
+      <div class="workspace odd-split odd-split-end">
+        <main class="editor-pane odd-stack odd-stack-tight">
+          <label for="editor" class="editor-label">Document</label>
+          <textarea id="editor" rows="10" aria-describedby="editor-help"></textarea>
+          <p id="editor-help" class="muted">
+            Select text, then choose an action. Proposals apply only to the text they were made for.
+          </p>
+          <odd-ai-label hidden></odd-ai-label>
+          <h2>Dictation</h2>
+          <odd-voice-input></odd-voice-input>
+        </main>
+        <aside class="assist-pane odd-stack odd-stack-tight">
+          <h2>Assist</h2>
+          <odd-inline-assist></odd-inline-assist>
+          <h2>Review</h2>
+          <odd-change-review announce></odd-change-review>
+          <details class="controls">
+            <summary>Simulation controls</summary>
+            <div class="control-form odd-stack odd-stack-tight">
+              <label
+                >Response delay (ms)
+                <input id="delay" type="number" min="0" max="10000" value="1200"
+              /></label>
+              <button id="edit-now" type="button">
+                Edit the document now (makes pending proposals stale)
+              </button>
+              <label><input id="deny" type="checkbox" /> Deny microphone permission</label>
+            </div>
+          </details>
+        </aside>
+      </div>
     </div>
   </body>
 </html>

@@ -6,9 +6,7 @@ body {
 }
 
 .app {
-  display: grid;
-  gap: var(--odd-space-md);
-  padding: var(--odd-space-md);
+  --odd-box-inset: var(--odd-space-md);
 }
 
 .banner h1 {
@@ -26,10 +24,8 @@ body {
 }
 
 .toolbar {
-  display: flex;
-  flex-wrap: wrap;
+  --odd-cluster-gap: var(--odd-space-sm);
   align-items: start;
-  gap: var(--odd-space-sm);
 }
 
 .toolbar button,
@@ -54,22 +50,15 @@ body {
 }
 
 .control-form {
-  display: grid;
-  gap: var(--odd-space-xs);
   font-size: var(--odd-font-size-sm);
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: var(--odd-space-md);
+  --odd-auto-grid-min: 22rem;
 }
 
 .panel {
-  display: grid;
-  align-content: start;
-  gap: var(--odd-space-sm);
-  min-inline-size: 0;
+  --odd-stack-gap: var(--odd-space-sm);
   padding: var(--odd-space-sm);
   border-radius: var(--odd-radius-lg);
   background: var(--odd-color-surface-default);
@@ -78,11 +67,6 @@ body {
 .panel h2 {
   margin: 0;
   font-size: var(--odd-font-size-md);
-}
-
-.stack {
-  display: grid;
-  gap: var(--odd-space-xs);
 }
 
 .log-panel odd-conversation {

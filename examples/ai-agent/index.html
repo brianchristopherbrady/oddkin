@@ -9,21 +9,22 @@
     />
     <title>Agent task panel — @oddkin/ai demo (simulated)</title>
     <link rel="stylesheet" href="./dist/tokens.css" />
+    <link rel="stylesheet" href="./dist/layout.css" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./dist/main.js"></script>
   </head>
   <body>
-    <div id="app" class="app">
+    <div id="app" class="app odd-stack odd-box">
       <header class="banner">
         <h1>Agent task panel</h1>
         <p class="simulated" role="note">
           Simulated: a local script plays the agent. No network requests, model, or credentials.
         </p>
-        <div class="toolbar">
+        <div class="toolbar odd-cluster">
           <button id="start" type="button" class="primary">Start run</button>
           <details class="controls">
             <summary>Simulation controls</summary>
-            <div class="control-form">
+            <div class="control-form odd-stack odd-stack-tight">
               <label><input id="fail-tool" type="checkbox" /> Make one parallel tool fail</label>
               <label><input id="expire" type="checkbox" /> Approval expires after 4 seconds</label>
               <label><input id="restore-fails" type="checkbox" /> Checkpoint restore fails</label>
@@ -35,24 +36,24 @@
           </details>
         </div>
       </header>
-      <main class="grid">
-        <section class="panel" aria-labelledby="plan-heading">
+      <main class="grid odd-auto-grid odd-auto-grid-fit">
+        <section class="panel odd-stack" aria-labelledby="plan-heading">
           <h2 id="plan-heading">Plan</h2>
           <odd-activity></odd-activity>
           <odd-task-plan></odd-task-plan>
         </section>
-        <section class="panel" aria-labelledby="tools-heading">
+        <section class="panel odd-stack" aria-labelledby="tools-heading">
           <h2 id="tools-heading">Tools</h2>
-          <div id="tools" class="stack"></div>
+          <div id="tools" class="stack odd-stack odd-stack-tight"></div>
           <odd-question announce hidden></odd-question>
           <odd-action-approval announce hidden></odd-action-approval>
         </section>
-        <section class="panel" aria-labelledby="checkpoints-heading">
+        <section class="panel odd-stack" aria-labelledby="checkpoints-heading">
           <h2 id="checkpoints-heading">Checkpoints</h2>
           <p id="empty-checkpoints" class="muted">No checkpoints yet.</p>
-          <div id="checkpoints" class="stack"></div>
+          <div id="checkpoints" class="stack odd-stack odd-stack-tight"></div>
         </section>
-        <section class="panel log-panel" aria-labelledby="log-heading">
+        <section class="panel log-panel odd-stack" aria-labelledby="log-heading">
           <h2 id="log-heading">Run log</h2>
           <odd-conversation id="run-log" label="Run log" announce="none"></odd-conversation>
         </section>

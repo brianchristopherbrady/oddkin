@@ -9,6 +9,7 @@
     />
     <title>CSS compatibility gallery — Oddkin</title>
     <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/layout.css" />
     <link rel="stylesheet" href="./gallery.css" />
     <link rel="stylesheet" href="./enhancements.css" id="enhancements" />
     <script type="importmap">
@@ -43,11 +44,15 @@
       </p>
     </header>
 
-    <main>
-      <form id="controls" class="controls" aria-label="Gallery settings">
-        <fieldset>
+    <main class="odd-stack">
+      <form
+        id="controls"
+        class="controls odd-auto-grid odd-auto-grid-fit"
+        aria-label="Gallery settings"
+      >
+        <fieldset class="odd-stack">
           <legend>Theme</legend>
-          <label>
+          <label class="odd-stack">
             Mode
             <select id="mode">
               <option value="system">System</option>
@@ -55,21 +60,21 @@
               <option value="dark">Dark</option>
             </select>
           </label>
-          <label>
+          <label class="odd-stack">
             Nested surface
             <select id="nested-mode">
               <option value="opposite">Opposite mode</option>
               <option value="inherit">Inherit</option>
             </select>
           </label>
-          <label>
+          <label class="odd-stack">
             Density
             <select id="density">
               <option value="">Comfortable</option>
               <option value="compact">Compact</option>
             </select>
           </label>
-          <label>
+          <label class="odd-stack">
             Profile
             <select id="profile">
               <option value="">None</option>
@@ -77,33 +82,33 @@
             </select>
           </label>
         </fieldset>
-        <fieldset>
+        <fieldset class="odd-stack">
           <legend>Layout and content</legend>
-          <label>
+          <label class="odd-stack">
             Direction
             <select id="direction">
               <option value="ltr">Left to right</option>
               <option value="rtl">Right to left</option>
             </select>
           </label>
-          <label>
+          <label class="odd-stack">
             Container width
             <input id="width" type="range" min="10" max="60" step="1" value="36" />
             <output id="width-value" for="width">36rem</output>
           </label>
-          <label class="check"
+          <label class="check odd-row"
             ><input id="long" type="checkbox" /> Long and localized content</label
           >
         </fieldset>
-        <fieldset>
+        <fieldset class="odd-stack">
           <legend>States</legend>
-          <label class="check"><input id="disabled" type="checkbox" /> Disabled</label>
-          <label class="check"><input id="loading" type="checkbox" /> Loading</label>
-          <label class="check"><input id="invalid" type="checkbox" /> Invalid</label>
+          <label class="check odd-row"><input id="disabled" type="checkbox" /> Disabled</label>
+          <label class="check odd-row"><input id="loading" type="checkbox" /> Loading</label>
+          <label class="check odd-row"><input id="invalid" type="checkbox" /> Invalid</label>
         </fieldset>
-        <fieldset>
+        <fieldset class="odd-stack">
           <legend>Enhancements and preferences</legend>
-          <label class="check">
+          <label class="check odd-row">
             <input id="enhanced" type="checkbox" checked /> Load the enhancement stylesheet
           </label>
           <p id="preferences" class="hint"></p>
@@ -117,7 +122,7 @@
           they are given.
         </p>
         <div id="stage" class="stage" data-odd-mode="system">
-          <div id="frame" class="frame">
+          <div id="frame" class="frame odd-stack">
             <odd-card id="card" label="Account">
               <h3
                 slot="header"
@@ -140,7 +145,7 @@
               >
                 Changes apply after you save.
               </p>
-              <div slot="footer" class="actions">
+              <div slot="footer" class="actions odd-cluster">
                 <odd-button id="cancel" data-long="Abbrechen und Änderungen verwerfen"
                   >Cancel</odd-button
                 >
@@ -156,7 +161,7 @@
 
             <section
               id="nested"
-              class="nested"
+              class="nested odd-stack"
               data-odd-mode="dark"
               aria-labelledby="nested-heading"
             >
@@ -165,14 +170,14 @@
               <odd-button appearance="primary">Nested action</odd-button>
             </section>
 
-            <section class="native" aria-labelledby="native-heading">
+            <section class="native odd-grid" aria-labelledby="native-heading">
               <h3 id="native-heading" class="balanced">Native controls</h3>
-              <label class="native-field">
+              <label class="native-field odd-stack">
                 Notes
                 <textarea id="notes" rows="2">
 A native textarea that grows with its content where field-sizing is supported.</textarea>
               </label>
-              <label class="check native-check">
+              <label class="check native-check odd-row">
                 <input type="checkbox" checked /> Native checkbox (accent colour where supported)
               </label>
               <details>

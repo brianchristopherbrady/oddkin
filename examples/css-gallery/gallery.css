@@ -17,10 +17,7 @@ main {
 }
 
 main {
-  display: grid;
-  /* minmax(0, 1fr): a definite-width child (the resizable frame) must not widen the page track. */
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--odd-space-xl);
+  --odd-stack-gap: var(--odd-space-xl);
 }
 
 h1,
@@ -40,15 +37,12 @@ a {
 }
 
 .controls {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-  gap: var(--odd-space-md);
+  --odd-auto-grid-min: 15rem;
+  --odd-auto-grid-gap: var(--odd-space-md);
 }
 
 fieldset {
-  display: grid;
-  gap: var(--odd-space-sm);
-  align-content: start;
+  --odd-stack-gap: var(--odd-space-sm);
   min-inline-size: 0;
   margin: 0;
   padding: var(--odd-space-md);
@@ -58,19 +52,17 @@ fieldset {
 }
 
 legend {
+  inline-size: fit-content;
   padding-inline: var(--odd-space-2xs);
   font-weight: var(--odd-font-weight-semibold);
 }
 
 label {
-  display: grid;
-  gap: var(--odd-space-2xs);
+  --odd-stack-gap: var(--odd-space-2xs);
 }
 
 label.check {
-  display: flex;
-  align-items: center;
-  gap: var(--odd-space-xs);
+  --odd-row-gap: var(--odd-space-xs);
 }
 
 select,
@@ -96,18 +88,16 @@ input[type='range'] {
 
 /* The frame is a named query container; the components inside never declare containers. */
 .frame {
-  display: grid;
-  gap: var(--odd-space-md);
+  --odd-stack-gap: var(--odd-space-md);
   inline-size: 36rem;
   max-inline-size: 100%;
   container: gallery-frame / inline-size;
 }
 
 .actions {
-  display: flex;
-  flex-wrap: wrap;
+  --odd-cluster-gap: var(--odd-space-sm);
   justify-content: flex-end;
-  gap: var(--odd-space-sm);
+  align-items: stretch;
 }
 
 .note {
@@ -115,11 +105,19 @@ input[type='range'] {
   color: var(--odd-color-text-secondary);
 }
 
+.nested {
+  --odd-stack-gap: var(--odd-space-sm);
+  align-items: start;
+}
+
+.native {
+  --odd-grid-columns: 1;
+  --odd-grid-gap: var(--odd-space-sm);
+  justify-items: start;
+}
+
 .nested,
 .native {
-  display: grid;
-  gap: var(--odd-space-sm);
-  justify-items: start;
   padding: var(--odd-layout-inset);
   border-radius: var(--odd-radius-lg);
   color: var(--odd-color-text-primary);
@@ -143,7 +141,7 @@ details[open] > summary {
 /* Two columns once the frame, not the viewport, is wide enough. */
 @container gallery-frame (min-width: 44rem) {
   .native {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    --odd-grid-columns: 2;
   }
 
   .native > h3 {

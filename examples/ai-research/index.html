@@ -9,11 +9,12 @@
     />
     <title>Research assistant — @oddkin/ai demo (simulated)</title>
     <link rel="stylesheet" href="./dist/tokens.css" />
+    <link rel="stylesheet" href="./dist/layout.css" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./dist/main.js"></script>
   </head>
   <body>
-    <div id="app" class="app">
+    <div id="app" class="app odd-stack odd-box">
       <header class="banner">
         <h1>Research assistant</h1>
         <p class="simulated" role="note">
@@ -21,53 +22,56 @@
           or credentials.
         </p>
       </header>
-      <aside class="side" aria-labelledby="context-heading">
-        <h2 id="context-heading">Context</h2>
-        <odd-context-picker allow-urls accept="image/*,.pdf,.txt,.md"></odd-context-picker>
-        <h2>Usage</h2>
-        <odd-usage-meter label="Usage of the last response"></odd-usage-meter>
-        <details class="controls">
-          <summary>Simulation controls</summary>
-          <form class="control-form">
-            <label
-              >Chunk delay (ms) <input id="speed" type="number" min="5" max="500" value="40"
-            /></label>
-            <label><input id="fail-send" type="checkbox" /> Reject the next send</label>
-            <label>
-              Stop outcome
-              <select id="stop-behavior">
-                <option value="cancel">Cancelled</option>
-                <option value="already-finished">Already finished</option>
-                <option value="unknown">Unknown</option>
-                <option value="fail">Request fails</option>
-              </select>
-            </label>
-            <label
-              >Stop delay (ms) <input id="stop-delay" type="number" min="0" max="5000" value="400"
-            /></label>
-            <div class="buttons">
-              <button id="disconnect" type="button">Disconnect stream</button>
-              <button id="resume" type="button">Resume</button>
-              <button id="switch" type="button">Switch conversation</button>
-              <button id="late" type="button">Inject late event</button>
-            </div>
-          </form>
-          <p class="muted">State: <span id="state">idle</span></p>
-          <ol id="log" class="log" aria-label="Simulation log"></ol>
-        </details>
-      </aside>
-      <main class="main">
-        <odd-conversation label="Research conversation">
-          <odd-prompt-input
-            slot="composer"
-            label="Ask a research question"
-            placeholder="Ask about ocean warming…"
-          >
-            <odd-suggestions slot="header"></odd-suggestions>
-            <odd-model-select slot="toolbar-start" label="Model"></odd-model-select>
-          </odd-prompt-input>
-        </odd-conversation>
-      </main>
+      <div class="workspace odd-split">
+        <aside class="side" aria-labelledby="context-heading">
+          <h2 id="context-heading">Context</h2>
+          <odd-context-picker allow-urls accept="image/*,.pdf,.txt,.md"></odd-context-picker>
+          <h2>Usage</h2>
+          <odd-usage-meter label="Usage of the last response"></odd-usage-meter>
+          <details class="controls">
+            <summary>Simulation controls</summary>
+            <form class="control-form odd-stack odd-stack-tight">
+              <label
+                >Chunk delay (ms) <input id="speed" type="number" min="5" max="500" value="40"
+              /></label>
+              <label><input id="fail-send" type="checkbox" /> Reject the next send</label>
+              <label>
+                Stop outcome
+                <select id="stop-behavior">
+                  <option value="cancel">Cancelled</option>
+                  <option value="already-finished">Already finished</option>
+                  <option value="unknown">Unknown</option>
+                  <option value="fail">Request fails</option>
+                </select>
+              </label>
+              <label
+                >Stop delay (ms)
+                <input id="stop-delay" type="number" min="0" max="5000" value="400"
+              /></label>
+              <div class="buttons odd-cluster">
+                <button id="disconnect" type="button">Disconnect stream</button>
+                <button id="resume" type="button">Resume</button>
+                <button id="switch" type="button">Switch conversation</button>
+                <button id="late" type="button">Inject late event</button>
+              </div>
+            </form>
+            <p class="muted">State: <span id="state">idle</span></p>
+            <ol id="log" class="log" aria-label="Simulation log"></ol>
+          </details>
+        </aside>
+        <main class="main odd-stack">
+          <odd-conversation label="Research conversation">
+            <odd-prompt-input
+              slot="composer"
+              label="Ask a research question"
+              placeholder="Ask about ocean warming…"
+            >
+              <odd-suggestions slot="header"></odd-suggestions>
+              <odd-model-select slot="toolbar-start" label="Model"></odd-model-select>
+            </odd-prompt-input>
+          </odd-conversation>
+        </main>
+      </div>
     </div>
   </body>
 </html>

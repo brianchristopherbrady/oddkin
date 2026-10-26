@@ -6,14 +6,12 @@ body {
 }
 
 .app {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(16rem, 2fr);
-  gap: var(--odd-space-md);
-  padding: var(--odd-space-md);
+  --odd-box-inset: var(--odd-space-md);
 }
 
-.banner {
-  grid-column: 1 / -1;
+/* The assistant takes two fifths of the row, never less than 16rem. */
+.workspace {
+  --odd-split-side-width: max(16rem, (100% - var(--odd-layout-gap)) * 2 / 5);
 }
 
 .banner h1 {
@@ -32,9 +30,7 @@ body {
 
 .editor-pane,
 .assist-pane {
-  display: grid;
-  align-content: start;
-  gap: var(--odd-space-xs);
+  box-sizing: border-box;
   min-inline-size: 0;
   padding: var(--odd-space-sm);
   border-radius: var(--odd-radius-lg);
@@ -67,8 +63,6 @@ h2 {
 }
 
 .control-form {
-  display: grid;
-  gap: var(--odd-space-xs);
   font-size: var(--odd-font-size-sm);
 }
 
@@ -82,10 +76,4 @@ h2 {
   margin: 0;
   color: var(--odd-color-text-secondary);
   font-size: var(--odd-font-size-sm);
-}
-
-@media (max-width: 48rem) {
-  .app {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }

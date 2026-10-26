@@ -9,6 +9,7 @@
     />
     <title>Components only — @oddkin/components without state or app packages</title>
     <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/layout.css" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="importmap">
       {
@@ -31,7 +32,7 @@
     <script type="module" src="./main.js"></script>
   </head>
   <body>
-    <main>
+    <main class="odd-stack odd-stack-loose">
       <h1>Components only</h1>
       <p>
         <code>@oddkin/components</code> with <code>@oddkin/core</code> and
@@ -52,7 +53,7 @@
           ></odd-input>
         </form>
         <p id="result" role="status"></p>
-        <div slot="footer" class="actions">
+        <div slot="footer" class="actions odd-row">
           <odd-button type="reset" form="billing">Reset</odd-button>
           <odd-button
             id="save"

@@ -6,17 +6,14 @@ body {
 }
 
 .app {
-  display: grid;
-  grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: var(--odd-space-md);
+  --odd-box-inset: var(--odd-space-md);
   min-block-size: 100vh;
-  padding: var(--odd-space-md);
   box-sizing: border-box;
 }
 
-.banner {
-  grid-column: 1 / -1;
+.workspace {
+  --odd-split-side-width: 22rem;
+  flex-grow: 1;
 }
 
 .banner h1 {
@@ -41,14 +38,17 @@ body {
   background: var(--odd-color-surface-default);
 }
 
+.side {
+  box-sizing: border-box;
+}
+
 .side h2 {
   margin: var(--odd-space-sm) 0 var(--odd-space-xs);
   font-size: var(--odd-font-size-md);
 }
 
 .main {
-  display: flex;
-  flex-direction: column;
+  --odd-stack-gap: 0;
   min-block-size: 32rem;
   block-size: calc(100vh - 8rem);
 }
@@ -68,15 +68,11 @@ odd-conversation {
 }
 
 .control-form {
-  display: grid;
-  gap: var(--odd-space-xs);
   font-size: var(--odd-font-size-sm);
 }
 
 .buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--odd-space-2xs);
+  --odd-cluster-gap: var(--odd-space-2xs);
 }
 
 .buttons button,
@@ -90,15 +86,4 @@ odd-conversation {
 .log {
   color: var(--odd-color-text-secondary);
   font-size: var(--odd-font-size-xs);
-}
-
-@media (max-width: 48rem) {
-  .app {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .main {
-    order: -1;
-    block-size: 80vh;
-  }
 }

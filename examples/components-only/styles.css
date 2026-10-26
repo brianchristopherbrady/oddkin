@@ -7,13 +7,8 @@ body {
   background: var(--odd-color-surface-sunken);
 }
 
-main {
-  display: grid;
-  gap: var(--odd-space-lg);
-}
-
 .actions {
-  display: flex;
+  --odd-row-gap: var(--odd-space-sm);
   justify-content: flex-end;
-  gap: var(--odd-space-sm);
+  align-items: stretch;
 }

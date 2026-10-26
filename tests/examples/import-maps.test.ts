@@ -17,6 +17,7 @@ const pages = [
   'side-nav',
   'editable-list',
   'forms',
+  'full-app',
 ];
 
 const IMPORTS = [
