@@ -35,7 +35,7 @@ export async function buildProduction(packageDir) {
     const result = await transform(code, {
       loader: 'js',
       format: 'esm',
-      target: 'es2022',
+      target: 'es2024',
       minifySyntax: true,
       define: usesDev ? { DEV: 'false' } : {},
       sourcefile: rel,

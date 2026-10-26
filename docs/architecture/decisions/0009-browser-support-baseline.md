@@ -9,9 +9,9 @@
 Oddkin relies on modern platform features. The baseline must be explicit, evidence-based, and tested in CI.
 
 ## Decision
-Minimum versions: **Chrome 125, Edge 125, Firefox 126, Safari 17.4**, and the mobile equivalents **Chrome Android 125, Firefox Android 126, Safari iOS 17.4** (all released between March and May 2024). These cover every required feature below. Newer features are feature-detected with documented fallbacks (ADR 0038). The floor, the data versions it was resolved with, and the date are pinned in `docs/compatibility/features.json` and checked by `npm run lint:css`; the token generator's `BROWSER_FLOOR` must match.
+Minimum versions: **Chrome 130, Edge 130, Firefox 132, Safari 18.2**, and the mobile equivalents **Chrome Android 130, Firefox Android 132, Safari iOS 18.2** (released between October and December 2024): **Baseline 2024**, the versions that support every feature `web-features` lists as newly available by 2024-12-31 (ADR 0046 D1, re-resolved 2026-10-26). Until then the floor was Chrome/Edge 125, Firefox 126, Safari 17.4, set by custom states. These cover every required feature below. Newer features are feature-detected with documented fallbacks (ADR 0038). The floor, the data versions it was resolved with, and the date are pinned in `docs/compatibility/features.json` and checked by `npm run lint:css`; the token generator's `BROWSER_FLOOR` must match.
 
-Relation to Baseline: on 2026-10-17, Baseline Widely Available corresponds to Chrome/Edge 123, Firefox 124, Safari 17.4 (computed from web-features 3.43.0). The floor is slightly higher because components require custom states (`:state()`, `ElementInternals.states`: Baseline newly available 2024-05-17, widely available 2026-11-17).
+Relation to Baseline: the floor is the Baseline year that is Widely Available (30 months after newly available) at or near the v1 release, re-resolved for each release and never lowered for one feature. On 2026-10-26, Baseline Widely Available corresponds to Chrome/Edge 123, Firefox 124, Safari 17.4 (computed from web-features 3.43.0).
 
 | Feature (BCD 8.1.6) | Chrome | Edge | Firefox | Safari | Use |
 | --- | --- | --- | --- | --- | --- |
@@ -30,7 +30,7 @@ Relation to Baseline: on 2026-10-17, Baseline Widely Available corresponds to Ch
 | Scoped custom element registries | 146 | 146 | preview | 26 | Feature-detected; not relied on |
 | Trusted Types | 83 | 83 | 148 | 26 | Enforced where supported |
 
-The JavaScript floor matches: shipped TypeScript targets ES2022 with the ES2023 library, so built-ins newer than the floor (set methods, iterator helpers) do not type-check.
+The JavaScript floor matches: shipped TypeScript targets ES2024 with the ES2024 library (every ES2024 built-in is at the floor except `Atomics.waitAsync`, which Firefox 132 lacks and Oddkin does not use), so built-ins newer than the floor (iterator helpers, `Promise.try`) do not type-check.
 
 ## Alternatives considered
 - "Last two major versions" — moving target; harder to reason about features.
@@ -41,7 +41,9 @@ The JavaScript floor matches: shipped TypeScript targets ES2022 with the ES2023 
 CI runs Playwright's Chromium, Firefox, and WebKit; the floor probe runs the oldest Chrome and Firefox; the published matrix states tested versions. Generated CSS may use `oklch()` directly (it currently emits sRGB hex). Browsers below the floor are unsupported and get no compatibility build.
 
 ## Evidence
-`@mdn/browser-compat-data` 8.1.6 and `web-features` 3.43.0 (queried 2026-10-17; pinned as exact dev dependencies). Floor runs (2026-10-17, `npm run compat:floor`, [floor-results.json](../../../research/compatibility/floor-results.json)): Chrome for Testing 125.0.6422.141 and Firefox 126.0 on Windows load the production core build, register `odd-button`, `odd-card`, and `odd-input` through an import map, share adopted sheets, resolve layered tokens in nested scopes, set `:state(user-invalid)`, submit form-associated values, and evaluate container queries (16/16 checks each); 20 feature detections per browser match BCD for that version. Pending: Safari 17.4 and Safari iOS 17.4 (not automatable on the current host), mobile Chrome and Firefox (data only), and the floor run in CI.
+`@mdn/browser-compat-data` 8.1.6 and `web-features` 3.43.0 (queried 2026-10-17; pinned as exact dev dependencies). Floor runs (2026-10-17, `npm run compat:floor`, [floor-results.json](../../../research/compatibility/floor-results.json)): Chrome for Testing 125.0.6422.141 and Firefox 126.0 on Windows load the production core build, register `odd-button`, `odd-card`, and `odd-input` through an import map, share adopted sheets, resolve layered tokens in nested scopes, set `:state(user-invalid)`, submit form-associated values, and evaluate container queries (16/16 checks each); 20 feature detections per browser match BCD for that version. Pending then: Safari 17.4 and Safari iOS 17.4 (not automatable on the current host), mobile Chrome and Firefox (data only), and the floor run in CI.
+
+Re-resolved for Baseline 2024 (2026-10-26, ADR 0046 D1): `node scripts/compat/baseline-floor.mjs 2024-12-31` gives Chrome/Edge 130, Firefox 132, Safari 18.2 and the same mobile versions (691 features). `npm run compat`: 71 registered features, 178 stylesheets, 314 compatibility keys, no problems. Floor runs (`npm run compat:floor`): Chrome for Testing 130.0.6723.116 and Firefox 132.0 pass 16/16 checks each and all 23 feature detections per browser match BCD. Pending: Safari 18.2 and Safari iOS 18.2 (no macOS host), mobile Chrome and Firefox (data only), and the floor run in CI.
 
 ## Revisit when
 Each release (raise the floor if a feature becomes essential); or if adopters need older Safari versions.

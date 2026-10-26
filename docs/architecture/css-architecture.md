@@ -22,14 +22,14 @@ Oddkin uses a reliable CSS baseline and adds modern capabilities as tested enhan
 
 | Browser | Floor | Released |
 | --- | --- | --- |
-| Chrome, Chrome Android | 125 | 2024-05-14 |
-| Edge | 125 | 2024-05-17 |
-| Firefox, Firefox Android | 126 | 2024-05-14 |
-| Safari, Safari iOS | 17.4 | 2024-03-05 |
+| Chrome, Chrome Android | 130 | 2024-10-15 |
+| Edge | 130 | 2024-10-17 |
+| Firefox, Firefox Android | 132 | 2024-10-29 |
+| Safari, Safari iOS | 18.2 | 2024-12-11 |
 
-Resolved on **2026-10-17** with `@mdn/browser-compat-data` **8.1.6** and `web-features` **3.43.0**, pinned as exact dev dependencies and recorded in [features.json](../compatibility/features.json). Baseline Widely Available on that date, computed from web-features, is Chrome/Edge 123, Firefox 124, Safari 17.4. The floor sits slightly above it because of custom states (`:state()`, `ElementInternals.states`: newly available 2024-05-17, widely available 2026-11-17), which Oddkin components require. Baseline status is an adoption signal; the exact syntax and behavior used are tested.
+**Baseline 2024** ([ADR 0046](./decisions/0046-plan-audit-2026-10-26.md) D1): the versions that support every feature `web-features` lists as newly available by 2024-12-31 (691 features; `node scripts/compat/baseline-floor.mjs 2024-12-31`). The floor is the Baseline year that is Widely Available at or near the v1 release, re-resolved for each release and never lowered for one feature. Resolved on **2026-10-26** with `@mdn/browser-compat-data` **8.1.6** and `web-features` **3.43.0**, pinned as exact dev dependencies and recorded in [features.json](../compatibility/features.json). Baseline Widely Available on that date, computed from web-features, is Chrome/Edge 123, Firefox 124, Safari 17.4. The previous floor (Chrome/Edge 125, Firefox 126, Safari 17.4, set by custom states) is recorded in ADR 0009. Baseline status is an adoption signal; the exact syntax and behavior used are tested.
 
-The JavaScript and Web Component floor is the same: TypeScript compiles to ES2022 with the ES2023 library, so newer built-ins (set methods, iterator helpers) do not type-check in shipped code; DOM features above the floor are feature-detected (§2.3).
+The JavaScript and Web Component floor is the same: TypeScript compiles to ES2024 with the ES2024 library (every ES2024 built-in is at the floor except `Atomics.waitAsync`, which Firefox 132 lacks and Oddkin does not use), so newer built-ins (iterator helpers, `Promise.try`) do not type-check in shipped code; DOM features above the floor are feature-detected (§2.3).
 
 ### 2.2 Categories
 
@@ -38,7 +38,7 @@ The JavaScript and Web Component floor is the same: TypeScript compiles to ES202
 3. **Experimental** — isolated evaluation only, never in shipped CSS (§15).
 4. **Deferred / declined** — evaluated with a recorded reason and owner.
 
-**Browsers outside the floor** (e.g. Safari 17.3, Firefox 125) are not supported: Oddkin may fail there, and no compatibility build targets them. Raising or lowering the floor is a release decision recorded in ADR 0009 with re-resolved data.
+**Browsers outside the floor** (e.g. Safari 18.1, Firefox 131) are not supported: Oddkin may fail there, and no compatibility build targets them. Raising or lowering the floor is a release decision recorded in ADR 0009 with re-resolved data.
 
 ### 2.3 Re-pinning each release
 
@@ -74,7 +74,7 @@ Unit tests prove each rule catches its hazard (`tests/compat/check-css.test.ts`)
 
 ### 4.1 One canonical engine
 
-Primitive (reference), semantic, and component tokens keep their responsibilities (theming-and-styling.md §5, §11.1): reference tokens describe values, semantic tokens describe roles, component tokens and component variables are intentional customization points. Compatible and enhanced CSS both come from `@oddkin/tokens/generate`; no component, compatibility build, or tool computes token values independently. Theme, mode, product, density, and profile contexts compose through the same engine with alias-closure re-declaration (ADR 0007), so nested themes and dependent aliases re-resolve at every boundary — verified in nested scopes, across shadow roots, and in Chrome 125 and Firefox 126 (`tests/floor/probe.js`: `scope-*`). DTCG Format and Resolver interoperability stays owned by M9 (theming-and-styling.md §9).
+Primitive (reference), semantic, and component tokens keep their responsibilities (theming-and-styling.md §5, §11.1): reference tokens describe values, semantic tokens describe roles, component tokens and component variables are intentional customization points. Compatible and enhanced CSS both come from `@oddkin/tokens/generate`; no component, compatibility build, or tool computes token values independently. Theme, mode, product, density, and profile contexts compose through the same engine with alias-closure re-declaration (ADR 0007), so nested themes and dependent aliases re-resolve at every boundary — verified in nested scopes, across shadow roots, and in Chrome 130 and Firefox 132 (`tests/floor/probe.js`: `scope-*`). DTCG Format and Resolver interoperability stays owned by M9 (theming-and-styling.md §9).
 
 Coverage today: colours and foreground/background pairs (contrast-selected roles and the approved default palette, theming-and-styling.md §10.1), status roles for danger, success, and warning, spacing and layout roles, typography scales and eight text-style roles (§10.2), radius and border scales, elevation `none`–`xl`, motion durations (0ms under reduced motion) and easings, in-flow stacking levels, icon sizes, control sizing and density, focus width/offset/colour, target minimum (§10.3, ADR 0042). Planned for M9: fluid type and font-metric fallbacks, scrims, a reduced-motion scope for in-page toggles.
 
@@ -82,11 +82,11 @@ Media and container thresholds are literal query strings generated by the canoni
 
 ### 4.2 Unsupported syntax inside custom properties
 
-A custom property accepts almost any value. When a declaration reads it with `var()` and the substituted value does not parse for that property, the declaration is **invalid at computed-value time**: the property behaves as `unset` (inherits or takes its initial value). The `var()` fallback is not used, because the variable is defined, and earlier declarations of the property have already lost the cascade. So unsupported syntax inside a token can silently remove essential colours or sizes. Evidence: `packages/tokens/test/cascade.browser.test.ts` (three engines) and the floor probe, which reproduces it with real syntax — `contrast-color(red)` in Chrome 125, `oklch(from red l c h)` in Firefox 126 — while the `@supports`-gated version keeps the baseline.
+A custom property accepts almost any value. When a declaration reads it with `var()` and the substituted value does not parse for that property, the declaration is **invalid at computed-value time**: the property behaves as `unset` (inherits or takes its initial value). The `var()` fallback is not used, because the variable is defined, and earlier declarations of the property have already lost the cascade. So unsupported syntax inside a token can silently remove essential colours or sizes. Evidence: `packages/tokens/test/cascade.browser.test.ts` (three engines) and the floor probe, which reproduces it with real syntax — `contrast-color(red)` in Chrome 130 and Firefox 132 — while the `@supports`-gated version keeps the baseline.
 
 Rules:
 
-- Token values stay within the floor. The generator reports `value.syntax.aboveFloor` (warning; `--strict` fails) for value syntax the floor cannot parse (`light-dark()`, relative colour syntax, `contrast-color()`, `calc-size()`, `anchor()`, `anchor-size()`, `if()`, `abs()`, `sign()`, `progress()`, `sibling-index()`, `sibling-count()`, `random()`), naming the browsers; literal colour overrides already fail `color.invalid`, whose suggestion now names the floor. The list lives in `@oddkin/tokens/generate` (`ABOVE_FLOOR_SYNTAX`) and is verified against the pinned data.
+- Token values stay within the floor. The generator reports `value.syntax.aboveFloor` (warning; `--strict` fails) for value syntax the floor cannot parse (`contrast-color()`, `calc-size()`, `anchor()`, `anchor-size()`, `if()`, `abs()`, `sign()`, `progress()`, `sibling-index()`, `sibling-count()`, `random()`), naming the browsers; literal colour overrides already fail `color.invalid`, whose suggestion now names the floor. The list lives in `@oddkin/tokens/generate` (`ABOVE_FLOOR_SYNTAX`) and is verified against the pinned data; `light-dark()` and relative colour syntax left it with the Baseline 2024 floor.
 - Enhanced values are assigned only inside `@supports` blocks that test the consuming syntax, after a baseline assignment. When the generator emits enhanced token values (first use: wide-gamut ramps, M9), it emits the gated block itself, per scope, from the same definitions.
 - The CSS lint applies the same rule to every stylesheet.
 
@@ -97,8 +97,8 @@ Rules:
 | OKLCH / OKLab | Foundation for generation; output is gamut-mapped sRGB hex (ADR 0006) |
 | Wide gamut (P3) | Deferred to M9: P3 ramp values from the same OKLCH definitions in a `(color-gamut: p3)` block, only after contrast is verified for the P3 values |
 | `color-mix()` | At the floor; planned for scrims and elevation (M9) with contrast measured against real backgrounds |
-| Relative colour syntax | Deferred to M9: derived state colours from consumer-supplied component colours, gated, with contrast verification; never in tokens |
-| `light-dark()` | Declined for tokens: the inherited mode toggles work at the floor for any value type and nest with every scope; `light-dark()` needs Safari 17.5 and covers colours only |
+| Relative colour syntax | Within the floor since Baseline 2024; deriving state colours from consumer-supplied component colours stays deferred to M9, with contrast verification of the derived pairs |
+| `light-dark()` | Within the floor since Baseline 2024 (Safari 17.5). ADR 0046 D2 measures emitting colour tokens once as `light-dark()` against the inherited mode toggles, which work for any value type and stay for values that are not colours |
 | `contrast-color()` | Declined as an accessibility mechanism (black or white only); semantic foregrounds stay authoritative; possible bounded enhancement in M9 |
 
 Light and dark themes, explicit overrides of the system preference (`data-odd-mode`), nested opposite-mode surfaces, and runtime mode changes are verified (`generate.browser.test.ts`, `e2e/tokens-css-only.spec.ts`, `e2e/css-compat.spec.ts`). Every mode scope sets `color-scheme`, so native controls and scrollbars follow it. The CSS-only path has no theme flash: the generated stylesheet decides the mode at first paint; there is no script-driven theme application or hydration step (an SSR/hydration strategy is deferred by the plan).
@@ -135,7 +135,7 @@ Emission options: `generate(config, { css: { layer } })`, `buildTheme(config, { 
 - Shadow DOM is a separate encapsulation context: for normal declarations, outer-context rules that reach the host or an exposed part (host selectors, `::part()`) win over the component's inner rules regardless of specificity; inner `!important` wins over outer normal. Document layer order never reaches into a shadow root, and global descendant selectors never style internals.
 - A root override does not cross a nested scope that re-declares the role (alias closure): theme-wide changes belong in the configuration's `overrides`, which the generator emits into every scope.
 
-Evidence: `packages/tokens/test/cascade.browser.test.ts`, `packages/components/test/styling.browser.test.ts` (three engines), `tests/floor/probe.js` `layer-order` (Chrome 125, Firefox 126).
+Evidence: `packages/tokens/test/cascade.browser.test.ts`, `packages/components/test/styling.browser.test.ts` (three engines), `tests/floor/probe.js` `layer-order` (Chrome 130, Firefox 132).
 
 ### 5.3 Theme precedence
 
@@ -153,7 +153,7 @@ From strongest to weakest for a given element:
 - Customization surface: inherited semantic tokens; documented component variables (normally unset, read with a semantic fallback); stable parts; custom states (`odd-input:state(user-invalid)::part(control)`); appearance attributes. Component defaults never re-declare the theme on `:host`.
 - `:has()` does not see into other shadow trees and cannot be combined with `::slotted()`; `::slotted()` matches only top-level slotted elements; `::part()` cannot be followed by attribute selectors, so component states are exposed as custom states, not attributes on internal elements. *(`::slotted()`, `::part()`, and `exportparts` limits verified in `packages/core/test/container-contract.browser.test.ts`, three engines.)*
 - Container names are not encapsulated by shadow roots (same test): a page query by name finds a container named inside a component when it styles slotted content. Components name only their host as a container, or namespace internal names.
-- `@scope` is deferred to docs-only light-DOM styling (M11; Firefox 126 and Safari 17.4 lack full support). Light-DOM components scope by tag or class.
+- `@scope` is deferred to docs-only light-DOM styling (M11; Firefox 132 lacks it). Light-DOM components scope by tag or class.
 
 ## 6. Component styling rules (implemented)
 
@@ -168,7 +168,7 @@ From strongest to weakest for a given element:
 Decision (ADR 0038): **no registrations now**.
 
 - Theme tokens are never registered: they must inherit, and the mode toggles depend on guaranteed-invalid values that registration would replace with an initial value.
-- Component variables are never registered: a registered initial value always satisfies `var(--odd-button-background, <semantic fallback>)`, so the semantic fallback would never apply. Evidence: the floor probe's `registration-masks-fallback` shows the mask in Chrome 125, while Firefox 126 (no `@property`) uses the fallback — the same CSS would behave differently across floor browsers.
+- Component variables are never registered: a registered initial value always satisfies `var(--odd-button-background, <semantic fallback>)`, so the semantic fallback would never apply. Evidence: the floor probe's `registration-masks-fallback` shows the mask in Chrome 130 and Firefox 132 (at the previous floor, Firefox 126 had no `@property` and used the fallback, so the same CSS behaved differently across floor browsers).
 - Later candidates (M10) are component-private animatable properties (progress, skeleton). Each registration records name, owner, syntax, `inherits: false`, a valid initial value, registration once per document by the owning definition (not per instance), a deterministic conflict policy (an existing registration with a different syntax is reported, never re-registered), and unregistered behavior as the baseline. Essential validation stays in the token and configuration system.
 
 ## 8. Layout primitives
@@ -260,7 +260,7 @@ Fluid type scales (`clamp()` with a `rem`-dominant slope, verified under zoom), 
 
 ### 13.1 Implemented
 
-- One constructed `CSSStyleSheet` per style definition per document, adopted by every instance; a `<style>` path with a CSP nonce for policy needs; per-document ownership after adoption (ADR 0008). Verified in three engines and in Chrome 125 and Firefox 126 (`shared-sheet`).
+- One constructed `CSSStyleSheet` per style definition per document, adopted by every instance; a `<style>` path with a CSP nonce for policy needs; per-document ownership after adoption (ADR 0008). Verified in three engines and in Chrome 130 and Firefox 132 (`shared-sheet`).
 - Theme changes are inherited custom-property updates; component sheets are never regenerated per instance or per theme.
 - Strict CSP with Trusted Types: the components-only example and the gallery run under `default-src 'none'` and `require-trusted-types-for 'script'`; inline styles are set through the CSSOM only.
 - CSS budgets (gzip, `npm run size`): generated default theme 3,072 B (measured 2,764 B with the approved palette and the complete foundation scales, ADRs 0041–0042; 1,827 B before), button styles 1,280 B (1,056 B), card 640 B (531 B), input 768 B (590 B), shared primitives 384 B (297 B), document stylesheets 768 B (612 B), `button.css` 1,024 B (864 B).
@@ -307,10 +307,10 @@ Maintenance and delivery cost for each: CSS bytes in shipped styles, a gate and 
 
 | ID | Required outcome | Status | Evidence |
 | --- | --- | --- | --- |
-| F01 | Baseline usable without enhancements | Verified | Gallery with the enhancement sheet disabled (`e2e/css-compat.spec.ts`); Chrome 125 and Firefox 126 probe |
+| F01 | Baseline usable without enhancements | Verified | Gallery with the enhancement sheet disabled (`e2e/css-compat.spec.ts`); Chrome 130 and Firefox 132 probe |
 | F02 | Unsupported syntax in tokens cannot silently remove essentials | Verified | `cascade.browser.test.ts`; probe `naive-token-syntax`/`gated-token-syntax` with real syntax in floor browsers; generator `value.syntax.aboveFloor`; CSS lint |
 | F03 | Nested themes produce intended values incl. dependent aliases | Verified | `generate.browser.test.ts`; `e2e/tokens-css-only.spec.ts`; gallery nested surface; probe `scope-*` |
-| F04 | Typed registration preserves inheritance and fallbacks | Policy verified | No registrations; probe `registration-masks-fallback` (Chrome 125 masks, Firefox 126 falls back) |
+| F04 | Typed registration preserves inheritance and fallbacks | Policy verified | No registrations; probe `registration-masks-fallback` (Chrome 130 and Firefox 132 mask) |
 | F05 | Application overrides behave as documented across layers and Shadow DOM | Verified | `cascade.browser.test.ts`; `styling.browser.test.ts`; probe `layer-order` |
 | F06 | Compatibility output preserves cascade and specificity | Not applicable | No compatibility output exists (§14); a single artifact ships |
 | F07 | Components adapt in narrow containers without viewport changes | Verified (current components) | `styling.browser.test.ts`; gallery frame test |
@@ -327,5 +327,5 @@ Maintenance and delivery cost for each: CSS bytes in shipped styles, a gate and 
 ### 16.2 Browsers
 
 - Current engines: Playwright 1.64.1 — Chromium 156, Firefox 157, WebKit 27.2 — run every browser test and e2e spec.
-- Floor engines: `npm run compat:floor` installs Chrome for Testing 125.0.6422.141 and Firefox 126.0 outside the repository (win64, linux64; sandbox kept on) and runs [tests/floor/probe.html](../../tests/floor/probe.html), which reports over HTTP; results in [research/compatibility/floor-results.json](../../research/compatibility/floor-results.json) include each browser's feature detections compared with BCD for that version.
-- **Gaps:** Safari 17.4 and Safari iOS 17.4 are not run (no automation on this host; WebKit 27.2 in Playwright is not Safari 17.4); Chrome Android and Firefox Android floors rely on data; Edge 125 relies on Chrome 125 (same engine); screen readers and real zoom are manual M8 work; the floor run is not yet in CI.
+- Floor engines: `npm run compat:floor` installs Chrome for Testing 130.0.6723.116 and Firefox 132.0 outside the repository (win64, linux64; sandbox kept on) and runs [tests/floor/probe.html](../../tests/floor/probe.html), which reports over HTTP; results in [research/compatibility/floor-results.json](../../research/compatibility/floor-results.json) include each browser's feature detections compared with BCD for that version.
+- **Gaps:** Safari 18.2 and Safari iOS 18.2 are not run (no automation on this host, which has no macOS; WebKit 27.2 in Playwright is not Safari 18.2); Chrome Android and Firefox Android floors rely on data; Edge 130 relies on Chrome 130 (same engine); screen readers and real zoom are manual M8 work; the floor run is not yet in CI.

@@ -33,7 +33,7 @@ Early development; nothing is published. `@oddkin/core`, `@oddkin/tokens`, and `
 
 ## Requirements and commands
 
-Node.js 24.12 or newer, npm 11. Supported browsers: Chrome and Edge 125, Firefox 126, Safari 17.4, and later ([css-architecture.md](./docs/architecture/css-architecture.md)).
+Node.js 24.12 or newer, npm 11. Supported browsers: Chrome and Edge 130, Firefox 132, Safari 18.2, and later (Baseline 2024) ([css-architecture.md](./docs/architecture/css-architecture.md)).
 
 ```sh
 npm install
@@ -47,7 +47,7 @@ npm run test:e2e       # browser tests in Chromium, Firefox, and WebKit (Playwri
 npm run verify:packs   # pack, install outside the workspace, verify imports and types
 npm run verify         # all of the above
 npm run compat         # regenerate docs/compatibility/matrix.md after editing features.json
-npm run compat:floor   # install Chrome 125 and Firefox 126 outside the repo and run the floor probe
+npm run compat:floor   # install Chrome 130 and Firefox 132 outside the repo and run the floor probe
 ```
 
 ## Licence

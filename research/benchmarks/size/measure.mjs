@@ -1,5 +1,5 @@
 // Shared bundle-size measurement for the benchmark runner and the size-budget check.
-// Production build (default export conditions), esbuild bundle + minify, ESM, es2022.
+// Production build (default export conditions), esbuild bundle + minify, ESM, es2024.
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -325,7 +325,7 @@ export async function measureSizes(root = fileURLToPath(new URL('../../..', impo
       bundle: true,
       minify: true,
       format: 'esm',
-      target: 'es2022',
+      target: 'es2024',
       platform: 'browser',
       write: false,
       legalComments: 'none',

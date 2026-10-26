@@ -12,10 +12,10 @@
  * which fails when an entry no longer matches the pinned data.
  */
 export const BROWSER_FLOOR = {
-  chrome: '125',
-  edge: '125',
-  firefox: '126',
-  safari: '17.4',
+  chrome: '130',
+  edge: '130',
+  firefox: '132',
+  safari: '18.2',
 } as const;
 
 export type FloorBrowser = keyof typeof BROWSER_FLOOR;
@@ -43,24 +43,17 @@ const ALL: readonly FloorBrowser[] = ['chrome', 'edge', 'firefox', 'safari'];
 
 export const ABOVE_FLOOR_SYNTAX: readonly AboveFloorSyntax[] = [
   {
-    syntax: 'light-dark()',
-    pattern: fn('light-dark'),
-    bcd: 'css.types.color.light-dark',
-    unsupported: ['safari'],
-  },
-  {
-    syntax: 'relative colour syntax (e.g. oklch(from …))',
-    pattern: /(?<![\w-])(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(\s*from\s/i,
-    bcd: 'css.types.color.oklch.relative_syntax',
-    unsupported: ['firefox', 'safari'],
-  },
-  {
     syntax: 'contrast-color()',
     pattern: fn('contrast-color'),
     bcd: 'css.types.color.contrast-color',
     unsupported: ALL,
   },
-  { syntax: 'calc-size()', pattern: fn('calc-size'), bcd: 'css.types.calc-size', unsupported: ALL },
+  {
+    syntax: 'calc-size()',
+    pattern: fn('calc-size'),
+    bcd: 'css.types.calc-size',
+    unsupported: ['firefox', 'safari'],
+  },
   {
     syntax: 'anchor()',
     pattern: fn('anchor'),
@@ -92,7 +85,7 @@ export const ABOVE_FLOOR_SYNTAX: readonly AboveFloorSyntax[] = [
   { syntax: 'random()', pattern: fn('random'), bcd: 'css.types.random', unsupported: ALL },
 ];
 
-/** Readable list of floor browsers, e.g. "Firefox 126, Safari 17.4". */
+/** Readable list of floor browsers, e.g. "Firefox 132, Safari 18.2". */
 export function floorLabel(browsers: readonly FloorBrowser[]): string {
   return browsers.map((b) => `${LABELS[b]} ${BROWSER_FLOOR[b]}`).join(', ');
 }

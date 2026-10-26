@@ -1,7 +1,7 @@
 // Installs the pinned floor browsers (ADR 0009, ADR 0038) into a cache directory outside the
 // repository so compatibility probes can run in named older releases:
-//   Chrome for Testing 125.0.6422.141 and Firefox 126.0 (win64 and linux64).
-// Safari 17.4 cannot be installed this way; its coverage is recorded as a gap.
+//   Chrome for Testing 130.0.6723.116 and Firefox 132.0 (win64 and linux64), the Baseline 2024
+//   floor (ADR 0046 D1). Safari 18.2 cannot be installed this way; its coverage is recorded as a gap.
 // Usage: node scripts/compat/floor-browsers.mjs [--force]
 import { spawnSync } from 'node:child_process';
 import { createWriteStream, existsSync } from 'node:fs';
@@ -13,8 +13,8 @@ import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 
 export const FLOOR_BROWSERS = {
-  chrome: { version: '125.0.6422.141', label: 'Chrome for Testing 125.0.6422.141' },
-  firefox: { version: '126.0', label: 'Firefox 126.0' },
+  chrome: { version: '130.0.6723.116', label: 'Chrome for Testing 130.0.6723.116' },
+  firefox: { version: '132.0', label: 'Firefox 132.0' },
 };
 
 export function cacheDir() {

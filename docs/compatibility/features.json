@@ -1,19 +1,19 @@
 {
   "$schema": "../schemas/compatibility.v1.schema.json",
   "policy": "ADR 0009 (browser floor), ADR 0038 (compatibility and progressive enhancement), ADR 0039 (cascade layer order)",
-  "checked": "2026-10-17",
+  "checked": "2026-10-26",
   "data": {
     "@mdn/browser-compat-data": "8.1.6",
     "web-features": "3.43.0"
   },
   "floor": {
-    "chrome": "125",
-    "chrome_android": "125",
-    "edge": "125",
-    "firefox": "126",
-    "firefox_android": "126",
-    "safari": "17.4",
-    "safari_ios": "17.4"
+    "chrome": "130",
+    "chrome_android": "130",
+    "edge": "130",
+    "firefox": "132",
+    "firefox_android": "132",
+    "safari": "18.2",
+    "safari_ios": "18.2"
   },
   "features": [
     {
@@ -598,7 +598,7 @@
       "adoption": "foundation",
       "status": "planned",
       "milestone": "M9",
-      "baseline": "Available at the floor (Chrome 125 is the first supporting Chrome). Candidate for snapping fluid spacing and type to a grid."
+      "baseline": "Available at the floor since Chrome 125. Candidate for snapping fluid spacing and type to a grid."
     },
     {
       "id": "dynamic-viewport-units",
@@ -776,21 +776,19 @@
       "kind": "css",
       "bcd": ["css.properties.text-wrap.balance"],
       "webFeature": "text-wrap-balance",
-      "adoption": "enhancement",
+      "adoption": "foundation",
       "status": "implemented",
       "milestone": "M10",
       "usedBy": ["typography.css: .odd-type-display, .odd-type-title, .odd-type-section"],
-      "baseline": "Normal wrapping.",
-      "enhanced": "Short multi-line headings get balanced line lengths.",
-      "gate": "@supports (text-wrap: balance)",
-      "differences": "Only line-break positions differ; content, size, and order are unchanged.",
+      "baseline": "Short multi-line headings get balanced line lengths.",
       "detectCss": "(text-wrap: balance)",
       "tests": [
         {
           "file": "packages/components/test/structured.browser.test.ts",
           "name": "balances the heading roles where the engine supports it, and nothing else"
         }
-      ]
+      ],
+      "notes": "At the floor since the Baseline 2024 re-resolution (ADR 0046 D1). typography.css still applies it inside @supports (text-wrap: balance); its owner may drop the gate after re-testing."
     },
     {
       "id": "text-wrap-pretty",
@@ -902,7 +900,7 @@
           "name": "fades with its backdrop only with motion allowed, never waiting for the fade"
         }
       ],
-      "notes": "Popovers fade in with a keyframes animation, which is at the floor, so @starting-style is not used yet: the compatibility check gates an at-rule only behind an @supports that names it (at-rule()), which the floor lacks."
+      "notes": "Popovers fade in with a keyframes animation, which is at the floor, so @starting-style is not used yet: the compatibility check gates an at-rule only behind an @supports that names it (at-rule()), which the floor lacks. The gate stays at the Baseline 2024 floor: Firefox 132 implements transition-behavior only partly (no display transitions with allow-discrete, bug 1882408), so the fade-out does not run there."
     },
     {
       "id": "anchor-positioning",
@@ -948,21 +946,19 @@
       "kind": "css",
       "bcd": ["css.properties.scrollbar-gutter", "css.properties.scrollbar-gutter.stable"],
       "webFeature": "scrollbar-gutter",
-      "adoption": "enhancement",
+      "adoption": "foundation",
       "status": "implemented",
       "milestone": "M10",
       "usedBy": ["odd-scroll-region (its scroller)"],
-      "baseline": "Layout may shift by the scrollbar width when content starts to scroll.",
-      "enhanced": "Scroll regions reserve the gutter, avoiding the shift.",
-      "gate": "@supports (scrollbar-gutter: stable)",
-      "differences": "A possible layout shift in floor browsers without support.",
+      "baseline": "Scroll regions reserve the scrollbar gutter, so content does not shift when it starts to scroll.",
       "detectCss": "(scrollbar-gutter: stable)",
       "tests": [
         {
           "file": "packages/components/test/scroll-region.browser.test.ts",
           "name": "is bounded by block-size too, and keeps a stable gutter"
         }
-      ]
+      ],
+      "notes": "At the floor since the Baseline 2024 re-resolution (ADR 0046 D1; Safari 18.2 added it). odd-scroll-region still applies it inside @supports (scrollbar-gutter: stable); its owner may drop the gate after re-testing."
     },
     {
       "id": "overscroll-behavior",
@@ -1144,7 +1140,7 @@
       "status": "evaluated",
       "baseline": "No registrations: tokens and component variables are ordinary custom properties in every browser.",
       "useCase": "Interpolating component-private values (progress, skeleton shimmer) and validating their syntax.",
-      "decision": "Theme tokens and component variables are never registered: a registered initial value would always satisfy var(--odd-button-background, <semantic fallback>) and mask the fallback chain, and the mode toggles rely on guaranteed-invalid values. Component-private properties may be registered later (M10) once per document by the owning definition, with inherits: false, a valid initial value, a deterministic conflict policy, and unregistered behaviour as the baseline (Firefox 126 lacks @property).",
+      "decision": "Theme tokens and component variables are never registered: a registered initial value would always satisfy var(--odd-button-background, <semantic fallback>) and mask the fallback chain, and the mode toggles rely on guaranteed-invalid values. Component-private properties may be registered later (M10) once per document by the owning definition, with inherits: false, a valid initial value, a deterministic conflict policy, and unregistered behaviour as the baseline (every Baseline 2024 floor browser supports registration, so the masking, not support, is the reason).",
       "tests": [
         {
           "file": "tests/floor/probe.js",
@@ -1162,7 +1158,7 @@
       "status": "evaluated",
       "baseline": "Hover, active, and selected colours are explicit roles chosen by measured contrast.",
       "useCase": "Deriving state colours from a consumer-supplied component colour (e.g. --odd-button-background).",
-      "decision": "Deferred to M9 with contrast verification of derived pairs; never inside tokens (the generator warns with value.syntax.aboveFloor) and only in @supports-gated component rules.",
+      "decision": "At the floor since the Baseline 2024 re-resolution (ADR 0046 D1), so the token generator no longer warns about it and no gate is needed. Deriving state colours from consumer-supplied component colours stays deferred to M9, because derived pairs need contrast verification.",
       "tests": [
         {
           "file": "tests/floor/probe.js",
@@ -1176,10 +1172,10 @@
       "kind": "css",
       "bcd": ["css.types.color.light-dark"],
       "webFeature": "light-dark",
-      "adoption": "declined",
+      "adoption": "deferred",
       "status": "evaluated",
       "baseline": "Inherited --odd-mode-light/--odd-mode-dark toggles switch every mode-dependent role.",
-      "decision": "Not adopted for tokens: the toggles work at the floor for any value type, nest with product, density, and profile scopes, and keep color-scheme in step; light-dark() needs Safari 17.5 and applies to colours only."
+      "decision": "At the floor since the Baseline 2024 re-resolution (ADR 0046 D1; Safari 17.5 added it). Re-opened by ADR 0046 D2: emitting each mode-dependent colour token once as light-dark() is measured against the inherited mode toggles (bytes, nested scopes, products, forced colours, resolveToken, inspection, Theme Studio); the toggles stay for values that are not colours."
     },
     {
       "id": "contrast-color-function",
@@ -1202,7 +1198,7 @@
       "status": "evaluated",
       "baseline": "Light-DOM styles scope themselves with classes or tag names; components keep Shadow DOM encapsulation.",
       "useCase": "Proximity-scoped documentation and page styles in the docs application.",
-      "decision": "Deferred to M11 as a docs-only enhancement: Firefox 126 and Safari 17.4 lack full support, so essential styles never depend on it."
+      "decision": "Deferred to M11 as a docs-only enhancement: Firefox 132 lacks it, so essential styles never depend on it."
     },
     {
       "id": "view-transitions",

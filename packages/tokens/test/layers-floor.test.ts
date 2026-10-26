@@ -71,30 +71,30 @@ describe('token values above the browser floor (css-architecture.md §4.2)', () 
     const found = result.diagnostics.filter((d) => d.code === 'value.syntax.aboveFloor');
     expect(found).toHaveLength(1);
     expect(found[0]).toMatchObject({ severity: 'warning', path: '/overrides/layout.inset' });
-    expect(found[0]?.message).toContain('Chrome 125, Edge 125, Firefox 126, Safari 17.4');
+    expect(found[0]?.message).toContain('Chrome 130, Edge 130, Firefox 132, Safari 18.2');
     expect(found[0]?.message).toContain('invalid at computed-value time');
   });
 
   it('explains the floor when a literal colour fails the colour parser, without a duplicate', () => {
     const result = generate({
       ...config,
-      overrides: { 'color.surface.default': 'light-dark(#ffffff, #101010)' },
+      overrides: { 'color.surface.default': 'contrast-color(#ffffff)' },
     });
     expect(result.ok).toBe(false);
     expect(result.diagnostics.map((d) => d.code)).toEqual(['color.invalid']);
     expect(result.diagnostics[0]?.suggestion).toContain(
-      'light-dark() is not parsed by Safari 17.4',
+      'contrast-color() is not parsed by Chrome 130, Edge 130, Firefox 132, Safari 18.2',
     );
   });
 
-  it('reports relative colour syntax per token, once across modes, and in profiles', () => {
+  it('reports above-floor syntax per token, once across modes, and in profiles', () => {
     expect(
       codes({
         ...config,
         overrides: {
           'color.surface.hover': {
-            light: 'oklch(from {ref.neutral.100} l c h)',
-            dark: 'oklch(from {ref.neutral.800} l c h)',
+            light: 'contrast-color({ref.neutral.100})',
+            dark: 'contrast-color({ref.neutral.800})',
           },
         },
       }).filter(([code]) => code === 'value.syntax.aboveFloor'),
@@ -113,6 +113,9 @@ describe('token values above the browser floor (css-architecture.md §4.2)', () 
       'color-mix(in oklch, #ffffff 20%, #000000)',
       'round(nearest, 1.37rem, 0.25rem)',
       'clamp(1rem, 0.9rem + 0.5vw, 1.25rem)',
+      // Within the Baseline 2024 floor (ADR 0046 D1).
+      'light-dark(#ffffff, #101010)',
+      'oklch(from #3366cc calc(l + 0.1) c h)',
     ]) {
       expect(aboveFloorSyntax(value), value).toEqual([]);
     }

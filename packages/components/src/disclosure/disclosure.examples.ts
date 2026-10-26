@@ -33,7 +33,7 @@ export default defineExamples('odd-disclosure', {
           <odd-disclosure name="faq" label="Can I use my own components?"
             >Yes. Oddkin elements work beside any other custom elements.</odd-disclosure
           ><odd-disclosure name="faq" label="Which browsers are supported?"
-            >Chrome and Edge 125, Firefox 126, and Safari 17.4 or later.</odd-disclosure
+            >Chrome and Edge 130, Firefox 132, and Safari 18.2 or later.</odd-disclosure
           >
         </div>`,
       );

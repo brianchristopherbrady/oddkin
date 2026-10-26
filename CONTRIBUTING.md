@@ -50,13 +50,13 @@ Visual baselines are updated only through an explicit accept step that lists the
 
 ## CSS and browser support
 
-The browser floor is Chrome and Edge 125, Firefox 126, Safari 17.4 (and their mobile equivalents), pinned with its compatibility data in [docs/compatibility/features.json](./docs/compatibility/features.json) ([ADR 0009](./docs/architecture/decisions/0009-browser-support-baseline.md), [ADR 0038](./docs/architecture/decisions/0038-css-compatibility-and-progressive-enhancement.md)). Contracts: [css-architecture.md](./docs/architecture/css-architecture.md).
+The browser floor is Baseline 2024: Chrome and Edge 130, Firefox 132, Safari 18.2 (and their mobile equivalents), pinned with its compatibility data in [docs/compatibility/features.json](./docs/compatibility/features.json) ([ADR 0009](./docs/architecture/decisions/0009-browser-support-baseline.md), [ADR 0038](./docs/architecture/decisions/0038-css-compatibility-and-progressive-enhancement.md)). Contracts: [css-architecture.md](./docs/architecture/css-architecture.md).
 
 - `npm run lint:css` (part of `npm run lint`) rejects any property, value, function, unit, selector, or at-rule some floor browser lacks unless it is a registered enhancement behind a gate: `@supports`, or a literal parse-time fallback after a floor value — never a `var()` fallback, and never inside a shared selector list.
 - To adopt a feature, add it to `features.json` with every BCD subfeature you rely on, its gate, baseline and enhanced behavior, differences, and tests of both paths; then run `npm run compat` to regenerate [the matrix](./docs/compatibility/matrix.md).
 - Token values stay within the floor (`value.syntax.aboveFloor`). Never register tokens, component variables, or mode toggles with `@property`.
 - Document-level stylesheets start with `@layer odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities;` ([ADR 0039](./docs/architecture/decisions/0039-cascade-layer-order.md)); application overrides stay unlayered.
-- `npm run compat:floor` installs Chrome for Testing 125 and Firefox 126 outside the repository and runs `tests/floor/probe.html` in them; record the results in [docs/verification.md](./docs/verification.md).
+- `npm run compat:floor` installs Chrome for Testing 130 and Firefox 132 outside the repository and runs `tests/floor/probe.html` in them; record the results in [docs/verification.md](./docs/verification.md).
 
 ## Workflow
 

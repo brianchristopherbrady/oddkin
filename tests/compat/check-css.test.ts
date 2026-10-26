@@ -31,18 +31,16 @@ describe('CSS compatibility lint', () => {
   });
 
   it('accepts a literal parse-time fallback, but not one that goes through var()', () => {
-    expect(lint('h2 { text-wrap: wrap; text-wrap: balance; }')).toEqual([]);
-    expect(lint('h2 { text-wrap: balance; }')).toHaveLength(1);
-    expect(lint('h2 { text-wrap: var(--wrap); text-wrap: balance; }')).toHaveLength(1);
+    expect(lint('h2 { text-wrap: wrap; text-wrap: pretty; }')).toEqual([]);
+    expect(lint('h2 { text-wrap: pretty; }')).toHaveLength(1);
+    expect(lint('h2 { text-wrap: var(--wrap); text-wrap: pretty; }')).toHaveLength(1);
   });
 
   it('rejects features outside the floor that are not registered enhancements, even when gated', () => {
-    expect(lint('.a { color: oklch(from red l c h); }')[0]).toContain(
-      'not a registered enhancement',
-    );
+    expect(lint('.a { color: contrast-color(red); }')[0]).toContain('not a registered enhancement');
     expect(
-      lint('@supports (color: light-dark(red, red)) { :root { --c: light-dark(#fff, #000); } }')[0],
-    ).toContain('light-dark() in --c');
+      lint('@supports (color: contrast-color(red)) { :root { --c: contrast-color(#fff); } }')[0],
+    ).toContain('contrast-color() in --c');
     expect(lint('.a { interpolate-size: allow-keywords; }')[0]).toContain('interpolate-size');
   });
 
@@ -67,14 +65,14 @@ describe('CSS compatibility lint', () => {
 describe('registry and token syntax checks', () => {
   it('rejects a foundation that the floor does not support and a stale enhancement', () => {
     const bad = structuredClone(registry);
-    const balance = bad.features.find((f) => f.id === 'text-wrap-balance')!;
-    balance.adoption = 'foundation';
+    const sizing = bad.features.find((f) => f.id === 'field-sizing')!;
+    sizing.adoption = 'foundation';
     const layers = bad.features.find((f) => f.id === 'cascade-layers')!;
     layers.adoption = 'enhancement';
     layers.gate = layers.enhanced = layers.differences = 'x';
     const problems = checkRegistry(bad).join('\n');
     expect(problems).toContain(
-      '"text-wrap-balance": foundation feature not fully supported by Safari 17.4',
+      '"field-sizing": foundation feature not fully supported by Safari 18.2',
     );
     expect(problems).toContain('"cascade-layers": every floor browser fully supports it');
   });
@@ -82,9 +80,9 @@ describe('registry and token syntax checks', () => {
   it('rejects token syntax entries that disagree with the data', () => {
     expect(
       checkTokenSyntax(
-        [{ syntax: 'light-dark()', bcd: 'css.types.color.light-dark', unsupported: ['firefox'] }],
+        [{ syntax: 'anchor()', bcd: 'css.types.anchor', unsupported: ['firefox'] }],
         registry.floor,
       )[0],
-    ).toContain('data says unsupported by [safari]');
+    ).toContain('data says unsupported by [firefox, safari]');
   });
 });

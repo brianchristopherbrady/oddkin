@@ -10,7 +10,7 @@ node scripts/serve-static.mjs
 # open http://localhost:4173/examples/css-gallery/
 ```
 
-- `gallery.css` uses only features every floor browser supports (Chrome and Edge 125, Firefox 126, Safari 17.4).
+- `gallery.css` uses only features every floor browser supports (Chrome and Edge 130, Firefox 132, Safari 18.2).
 - `enhancements.css` contains only gated enhancements or literal parse-time fallbacks. Untick **Load the enhancement stylesheet** to see the baseline: nothing on the page depends on it.
 - Overlays, motion between states, and AI interfaces are not covered yet; they arrive with their components (M10).
 

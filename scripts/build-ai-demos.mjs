@@ -21,7 +21,7 @@ for (const demo of DEMOS) {
     bundle: true,
     minify: true,
     format: 'esm',
-    target: 'es2022',
+    target: 'es2024',
     platform: 'browser',
     legalComments: 'none',
     metafile: true,
