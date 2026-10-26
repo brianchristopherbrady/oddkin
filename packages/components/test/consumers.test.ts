@@ -88,7 +88,7 @@ const components = manifests.get('@oddkin/components')!.manifest;
 const consumerEntries = Object.entries(components.exports ?? {})
   .filter(([key, value]) => /\.js$/.test(target(value) ?? ''))
   .map(([key]) => key)
-  .filter((key) => !['./models', './layout', './side-nav/recipe'].includes(key))
+  .filter((key) => !['./models', './layout', './side-nav/recipe', './composition'].includes(key))
   .map((key) => `@oddkin/components${key.slice(1)}`);
 
 describe('minimal component consumers', () => {
@@ -119,5 +119,14 @@ describe('minimal component consumers', () => {
     expect((await reach('@oddkin/components/side-nav/recipe')).specifiers).toContain(
       '@oddkin/core/layout',
     );
+    // Composition documents (ADR 0046 D3) validate values with the model builder and the published
+    // models; no schema emitter, recipe engine, or tooling.
+    const composition = await reach('@oddkin/components/composition');
+    expect(composition.specifiers).toContain('@oddkin/core/model');
+    expect(EXCLUDED.filter(([, test]) => test(composition)).map(([label]) => label)).toEqual([
+      'component model validators',
+      'the core model builder',
+      'the data-composition renderer',
+    ]);
   });
 });

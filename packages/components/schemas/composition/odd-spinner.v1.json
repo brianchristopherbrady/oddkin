@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-spinner.v1.json",
+  "title": "odd-spinner",
+  "description": "An indeterminate busy indicator with a status label. It never shows a percentage; when the amount of work is known, use `odd-progress`.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-spinner"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Accessible name when there is no visible text; default \"Loading\".",
+          "default": ""
+        },
+        "size": {
+          "enum": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "description": "Ring size: 16, 20, or 24 px.",
+          "default": "md"
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "loading": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

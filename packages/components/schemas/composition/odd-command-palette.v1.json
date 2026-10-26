@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-command-palette.v1.json",
+  "title": "odd-command-palette",
+  "description": "A command palette: a modal dialog with a search input and the matching commands below it (APG combobox with a listbox popup that is always shown). Typing filters the commands by label and makes the first match active; Enter or a click runs it (`odd-action`) and closes the palette; Escape or a press on the backdrop closes it, and focus returns to where it was.",
+  "$comment": "Slots: \"empty\", \"status\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-command-palette"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Names the dialog. Required.",
+          "default": ""
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Text shown in the empty search input.",
+          "default": ""
+        },
+        "open": {
+          "type": "boolean",
+          "description": "Whether it is open.",
+          "default": false
+        },
+        "loading": {
+          "type": "boolean",
+          "description": "Shows a busy row and marks the results busy.",
+          "default": false
+        },
+        "no-filter": {
+          "type": "boolean",
+          "description": "The element does not filter: listen to `odd-query-change` and replace `items` with the matches.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            },
+            "loading": {
+              "type": "string"
+            },
+            "navigate": {
+              "type": "string"
+            },
+            "choose": {
+              "type": "string"
+            },
+            "close": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "odd-action": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "odd-query-change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

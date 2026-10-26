@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-tabs.v1.json",
+  "title": "odd-tabs",
+  "description": "Tabs that switch between related panels (APG tabs). Panels are `odd-tab-panel` children; the element draws a tab for each and assigns each panel to a tab panel inside its own shadow root (manual slot assignment), so each tab and its panel reference each other while the content stays in the light DOM.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-tabs"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Names the tab list.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "The selected panel's `value` (its position when it has none). Without a match, the first enabled panel shows.",
+          "default": ""
+        },
+        "orientation": {
+          "enum": [
+            "vertical",
+            "horizontal"
+          ],
+          "description": "Tabs in a row above the panel, or in a column beside it.",
+          "default": "horizontal"
+        },
+        "activation": {
+          "enum": [
+            "automatic",
+            "manual"
+          ],
+          "description": "Select a tab when it receives focus, or only with Enter or Space (APG).",
+          "default": "automatic"
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

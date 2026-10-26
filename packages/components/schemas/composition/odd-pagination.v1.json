@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-pagination.v1.json",
+  "title": "odd-pagination",
+  "description": "Page navigation: the position as text, previous and next, and the first, last, and nearby pages with ellipses between. With `href`, pages are links; without it, buttons that report `odd-action` so the application can load the page.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-pagination"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Names the navigation; default `strings.label`.",
+          "default": ""
+        },
+        "current": {
+          "type": "string",
+          "description": "The current page number.",
+          "default": "1"
+        },
+        "page-count": {
+          "type": "number",
+          "description": "The number of pages (at least 1).",
+          "default": 1
+        },
+        "href": {
+          "type": "string",
+          "format": "uri-reference",
+          "pattern": "^(?![\\u0000-\\u0020]*(?:[jJ]\\s*[aA]\\s*[vV]\\s*[aA]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT]|[vV]\\s*[bB]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT])\\s*:)",
+          "description": "A link template with `{page}`, as in \"?page={page}\"; when set, pages are links.",
+          "default": ""
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "previous": {
+              "type": "string"
+            },
+            "next": {
+              "type": "string"
+            },
+            "page": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "odd-action": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

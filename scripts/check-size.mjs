@@ -62,6 +62,10 @@ for (const [entry, size] of Object.entries(sizes)) {
       ['layout/', 'model/', 'controllers/'].map((f) => `packages/core/dist/prod/${f}`),
     );
   if (entry === 'side-nav') forbid(entry, size, FEATURES);
+  // Composition documents (ADR 0046 D3): only an application that renders them loads the entry,
+  // and the entry registers no element.
+  if (entry === 'composition') forbid(entry, size, ['.define.js']);
+  else forbid(entry, size, ['packages/components/dist/composition/']);
   // The DOM-free store loads only the reactive graph and diagnostics: no element, template, or
   // style modules, no Scope, and nothing from @oddkin/app.
   if (entry === 'store')

@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-input.v1.json",
+  "title": "odd-input",
+  "description": "A labelled single-line text field that participates in forms like a native input.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-input"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the control.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Initial value; the `value` attribute, as on native inputs.",
+          "default": ""
+        },
+        "minlength": {
+          "type": "number",
+          "description": "Fewest characters."
+        },
+        "maxlength": {
+          "type": "number",
+          "description": "Most characters; typing stops there."
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder; never a substitute for a label.",
+          "default": ""
+        },
+        "autocomplete": {
+          "type": "string",
+          "description": "Autofill hint for the native field.",
+          "default": ""
+        },
+        "required": {
+          "type": "boolean",
+          "description": "A value is required to submit.",
+          "default": false
+        },
+        "readonly": {
+          "type": "boolean",
+          "description": "Prevents editing; still submitted.",
+          "default": false
+        },
+        "type": {
+          "enum": [
+            "number",
+            "search",
+            "time",
+            "text",
+            "url",
+            "email",
+            "password",
+            "tel",
+            "date",
+            "datetime-local",
+            "month",
+            "week"
+          ],
+          "description": "Native input type.",
+          "default": "text"
+        },
+        "min": {
+          "type": "string",
+          "description": "Lowest value (number and date types), as on native inputs."
+        },
+        "max": {
+          "type": "string",
+          "description": "Highest value (number and date types), as on native inputs."
+        },
+        "step": {
+          "type": "string",
+          "description": "Step between values (number and date types); `any` allows every value."
+        },
+        "pattern": {
+          "type": "string",
+          "description": "A regular expression the whole value must match (text types)."
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "clear": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        },
+        "value": {
+          "type": "string",
+          "description": "The current value. Setting it (or typing) detaches it from `defaultValue`."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

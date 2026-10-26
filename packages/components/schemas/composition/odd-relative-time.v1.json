@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-relative-time.v1.json",
+  "title": "odd-relative-time",
+  "description": "A date and time said relative to now (\"3 hours ago\", \"in 2 days\", \"now\") in the page's language, as a `<time>` that keeps the exact value; the absolute date and time is its tooltip, and with `detail` it is shown as well. An empty or unparseable `datetime` says so in words.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-relative-time"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "datetime": {
+          "type": "string",
+          "description": "When: an ISO 8601 date and time, as on `<time datetime>`.",
+          "default": ""
+        },
+        "detail": {
+          "type": "boolean",
+          "description": "Also shows the absolute date and time.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "unavailable": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    }
+  }
+}

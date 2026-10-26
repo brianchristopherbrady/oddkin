@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-copy-button.v1.json",
+  "title": "odd-copy-button",
+  "description": "A button that copies text to the clipboard: `value`, or the form value or text of the element named by `from`. It says the outcome in words, \"Copied to clipboard.\" for two seconds or \"Could not copy. Select the text.\" (announced as well), and when the browser refuses (no permission, an insecure page, no Clipboard API) it selects the text so the user can copy it by hand.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-copy-button"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The text to copy; wins over `from`.",
+          "default": ""
+        },
+        "from": {
+          "type": "string",
+          "description": "The id of the element whose text is copied (an input or textarea: its value), in the same document or shadow root.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "The button text; default `strings.copy` (\"Copy\").",
+          "default": ""
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Disables the button.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "copy": {
+              "type": "string"
+            },
+            "copied": {
+              "type": "string"
+            },
+            "failed": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "odd-copy": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

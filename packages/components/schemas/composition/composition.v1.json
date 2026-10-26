@@ -1,0 +1,608 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/composition.v1.json",
+  "title": "Oddkin composition",
+  "description": "An interface described as data: published Oddkin elements and native text elements, their attributes and properties, text, and events mapped to action names. Rendered by renderComposition() from @oddkin/components/composition.",
+  "$comment": "Also enforced by validateComposition(), not expressible here: a slot must be published by the parent; text only where the parent has a default slot; list items only in lists; unique ids; model rules; at most 16 levels and 500 nodes by default.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "root"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "const": 1
+    },
+    "root": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    }
+  },
+  "$defs": {
+    "node": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Text, rendered as a text node."
+        },
+        {
+          "$ref": "#/$defs/native-p"
+        },
+        {
+          "$ref": "#/$defs/native-h1"
+        },
+        {
+          "$ref": "#/$defs/native-h2"
+        },
+        {
+          "$ref": "#/$defs/native-h3"
+        },
+        {
+          "$ref": "#/$defs/native-h4"
+        },
+        {
+          "$ref": "#/$defs/native-h5"
+        },
+        {
+          "$ref": "#/$defs/native-h6"
+        },
+        {
+          "$ref": "#/$defs/native-span"
+        },
+        {
+          "$ref": "#/$defs/native-strong"
+        },
+        {
+          "$ref": "#/$defs/native-em"
+        },
+        {
+          "$ref": "#/$defs/native-a"
+        },
+        {
+          "$ref": "#/$defs/native-ul"
+        },
+        {
+          "$ref": "#/$defs/native-ol"
+        },
+        {
+          "$ref": "#/$defs/native-li"
+        },
+        {
+          "$ref": "odd-alert.v1.json"
+        },
+        {
+          "$ref": "odd-avatar.v1.json"
+        },
+        {
+          "$ref": "odd-badge.v1.json"
+        },
+        {
+          "$ref": "odd-breadcrumbs.v1.json"
+        },
+        {
+          "$ref": "odd-button.v1.json"
+        },
+        {
+          "$ref": "odd-calendar.v1.json"
+        },
+        {
+          "$ref": "odd-card.v1.json"
+        },
+        {
+          "$ref": "odd-checkbox.v1.json"
+        },
+        {
+          "$ref": "odd-checkbox-group.v1.json"
+        },
+        {
+          "$ref": "odd-chip.v1.json"
+        },
+        {
+          "$ref": "odd-combobox.v1.json"
+        },
+        {
+          "$ref": "odd-command-palette.v1.json"
+        },
+        {
+          "$ref": "odd-container.v1.json"
+        },
+        {
+          "$ref": "odd-copy-button.v1.json"
+        },
+        {
+          "$ref": "odd-date-picker.v1.json"
+        },
+        {
+          "$ref": "odd-dialog.v1.json"
+        },
+        {
+          "$ref": "odd-disclosure.v1.json"
+        },
+        {
+          "$ref": "odd-drawer.v1.json"
+        },
+        {
+          "$ref": "odd-empty-state.v1.json"
+        },
+        {
+          "$ref": "odd-file-input.v1.json"
+        },
+        {
+          "$ref": "odd-icon.v1.json"
+        },
+        {
+          "$ref": "odd-input.v1.json"
+        },
+        {
+          "$ref": "odd-listbox.v1.json"
+        },
+        {
+          "$ref": "odd-menu.v1.json"
+        },
+        {
+          "$ref": "odd-one-time-code.v1.json"
+        },
+        {
+          "$ref": "odd-pagination.v1.json"
+        },
+        {
+          "$ref": "odd-picker.v1.json"
+        },
+        {
+          "$ref": "odd-popover.v1.json"
+        },
+        {
+          "$ref": "odd-progress.v1.json"
+        },
+        {
+          "$ref": "odd-radio-group.v1.json"
+        },
+        {
+          "$ref": "odd-rating.v1.json"
+        },
+        {
+          "$ref": "odd-relative-time.v1.json"
+        },
+        {
+          "$ref": "odd-scroll-region.v1.json"
+        },
+        {
+          "$ref": "odd-segmented-control.v1.json"
+        },
+        {
+          "$ref": "odd-select.v1.json"
+        },
+        {
+          "$ref": "odd-side-nav.v1.json"
+        },
+        {
+          "$ref": "odd-skeleton.v1.json"
+        },
+        {
+          "$ref": "odd-slider.v1.json"
+        },
+        {
+          "$ref": "odd-spinner.v1.json"
+        },
+        {
+          "$ref": "odd-split-button.v1.json"
+        },
+        {
+          "$ref": "odd-split-panel.v1.json"
+        },
+        {
+          "$ref": "odd-stat.v1.json"
+        },
+        {
+          "$ref": "odd-status-marker.v1.json"
+        },
+        {
+          "$ref": "odd-switch.v1.json"
+        },
+        {
+          "$ref": "odd-tab-panel.v1.json"
+        },
+        {
+          "$ref": "odd-tabs.v1.json"
+        },
+        {
+          "$ref": "odd-textarea.v1.json"
+        },
+        {
+          "$ref": "odd-toast.v1.json"
+        },
+        {
+          "$ref": "odd-toolbar.v1.json"
+        },
+        {
+          "$ref": "odd-tooltip.v1.json"
+        },
+        {
+          "$ref": "odd-tree.v1.json"
+        },
+        {
+          "$ref": "odd-validation-summary.v1.json"
+        }
+      ]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][\\w-]*$",
+      "description": "The element's id, unique in the document."
+    },
+    "slot": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A named slot of the parent element."
+    },
+    "action": {
+      "type": "string",
+      "pattern": "^[a-z][a-zA-Z0-9-]*(?:\\.[a-zA-Z0-9-]+)*$",
+      "description": "An action name the host handles, such as \"settings.save\"; never code."
+    },
+    "native-p": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "p"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-h1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "h1"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-h2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "h2"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-h3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "h3"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-h4": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "h4"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-h5": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "h5"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-h6": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "h6"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-span": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "span"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-strong": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "strong"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-em": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "em"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-a": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "a"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "href": {
+              "type": "string",
+              "format": "uri-reference",
+              "pattern": "^(?![\\u0000-\\u0020]*(?:[jJ]\\s*[aA]\\s*[vV]\\s*[aA]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT]|[vV]\\s*[bB]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT])\\s*:)"
+            },
+            "target": {
+              "enum": [
+                "_blank",
+                "_self",
+                "_parent",
+                "_top"
+              ]
+            },
+            "rel": {
+              "type": "string"
+            }
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-ul": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "ul"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-ol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "ol"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-li": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "li"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    }
+  }
+}

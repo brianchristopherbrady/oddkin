@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-button.v1.json",
+  "title": "odd-button",
+  "description": "A button for actions. Renders a native `<button>` in its shadow root, so keyboard activation, focus, and accessible naming come from the platform.",
+  "$comment": "Slots: default, \"end\", \"start\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-button"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "appearance": {
+          "enum": [
+            "primary",
+            "secondary",
+            "ghost"
+          ],
+          "description": "Visual emphasis.",
+          "default": "secondary"
+        },
+        "size": {
+          "enum": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "description": "Size.",
+          "default": "md"
+        },
+        "type": {
+          "enum": [
+            "button",
+            "submit",
+            "reset"
+          ],
+          "description": "Form behavior, as on a native button.",
+          "default": "button"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and focus.",
+          "default": false
+        },
+        "loading": {
+          "type": "boolean",
+          "description": "Shows a spinner and ignores activation; the button stays focusable.",
+          "default": false
+        },
+        "full-width": {
+          "type": "boolean",
+          "description": "Fills the inline size of its container.",
+          "default": false
+        },
+        "toggle": {
+          "type": "boolean",
+          "description": "Keeps a pressed state that each activation flips (`aria-pressed`).",
+          "default": false
+        },
+        "pressed": {
+          "type": "boolean",
+          "description": "Whether a `toggle` button is pressed.",
+          "default": false
+        },
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Value submitted with the form.",
+          "default": ""
+        },
+        "formaction": {
+          "type": "string",
+          "format": "uri-reference",
+          "pattern": "^(?![\\u0000-\\u0020]*(?:[jJ]\\s*[aA]\\s*[vV]\\s*[aA]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT]|[vV]\\s*[bB]\\s*[sS]\\s*[cC]\\s*[rR]\\s*[iI]\\s*[pP]\\s*[tT])\\s*:)",
+          "description": "URL this button submits to instead of the form's `action`."
+        },
+        "formmethod": {
+          "type": "string",
+          "description": "Method (`get`, `post`, `dialog`) this button submits with instead of the form's."
+        },
+        "formenctype": {
+          "type": "string",
+          "description": "Encoding this button submits with instead of the form's `enctype`."
+        },
+        "formtarget": {
+          "type": "string",
+          "description": "Navigable this button submits to instead of the form's `target`."
+        },
+        "formnovalidate": {
+          "type": "boolean",
+          "description": "Submits without constraint validation.",
+          "default": false
+        },
+        "label": {
+          "type": "string",
+          "description": "Accessible name when the content has no text (icon-only buttons).",
+          "default": ""
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "click": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

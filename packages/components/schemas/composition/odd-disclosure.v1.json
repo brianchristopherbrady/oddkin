@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-disclosure.v1.json",
+  "title": "odd-disclosure",
+  "description": "One trigger that shows or hides one related region: a native `<details>` and `<summary>`. Disclosures that share a `name` in the same tree form an accordion: opening one closes the others, and adjacent ones draw as one surface.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-disclosure"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "The summary text; names the disclosure button.",
+          "default": ""
+        },
+        "open": {
+          "type": "boolean",
+          "description": "Shows the content.",
+          "default": false
+        },
+        "name": {
+          "type": "string",
+          "description": "Exclusive group: opening one closes the others with the same name in the same tree, as native `<details name>` does.",
+          "default": ""
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "The summary cannot be activated and leaves the Tab order.",
+          "default": false
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "toggle": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

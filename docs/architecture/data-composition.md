@@ -218,41 +218,118 @@ export type NavigationItem = Infer<typeof NavigationItemModel>;
 | `@oddkin/core/model/schema`         | JSON Schema emitter                                                                                                                   | No (tooling)                                    |
 | `@oddkin/components/side-nav`       | Element class, `NavigationItem` type, `navigationKinds`                                                                               | Yes for side-nav users                          |
 | `@oddkin/components/models`         | Runtime validators and migrations for all component models (`navigationModel(kinds)` for project kinds)                              | No, unless imported                             |
-| `@oddkin/components/schemas/*.json` | Generated JSON Schemas                                                                                                                | Data                                            |
-| `@oddkin/components/composition`    | Data-composition schema renderer `renderComposition()` (§8, experimental); unrelated to the component-definition composer `compose()` | **Never** unless imported                       |
+| `@oddkin/components/schemas/*.json` | Generated JSON Schemas, including `schemas/composition/` (§8)                                                                        | Data                                            |
+| `@oddkin/components/composition`    | `validateComposition()` and `renderComposition()` for composition documents, with the generated catalog (§8); unrelated to the component-definition composer `compose()` | **Never** unless imported                       |
 
 Boundary checks assert that a button-only or side-nav-only consumer contains no `models` validators, JSON Schema emitter, `components/composition` renderer, or `@oddkin/agent`.
 
-## 8. Composition schema (later, optional)
+## 8. Composition schema (implemented, M10; ADR 0046 D3)
 
-Only after the side-nav and editable-collection slices pass M8 and at least two concrete use cases (e.g. a configurable dashboard and a settings form) justify it.
+An interface described as data, for agents that generate structured output, for Workbench's saved compositions (M11), and for the AI package's `data` parts (ai-interaction.md §5.6). It was deferred until two use cases justified it; ADR 0046 D3 found three. `@oddkin/components/composition` provides `validateComposition()` and `renderComposition()`, and `schemas/composition/` provides one JSON Schema per element and the document schema. Element entries never import it.
 
-Bounded initial contract:
+**Document (version 1):**
 
 ```json
 {
-  "$schema": "https://…/oddkin-composition/v1.json",
+  "$schema": "https://oddkin.dev/schemas/composition/composition.v1.json",
   "version": 1,
-  "root": {
-    "id": "dashboard",
-    "type": "pattern.dashboard",
-    "recipe": "page-shell",
-    "profile": "navigation.compact",
-    "regions": {
-      "nav": [{ "id": "primary-nav", "type": "odd-side-nav", "props": { "label": "Primary", "items": { "$ref": "#/data/nav" } } }],
-      "main": [{ "id": "stats", "type": "pattern.stat-grid", "props": { "source": { "$binding": "stats" } } }]
+  "root": [
+    {
+      "element": "odd-card",
+      "id": "profile",
+      "attributes": { "appearance": "filled", "label": "Profile" },
+      "children": [
+        { "element": "h2", "slot": "header", "children": ["Profile"] },
+        {
+          "element": "odd-input",
+          "attributes": { "label": "Display name", "name": "name", "required": true },
+          "properties": { "value": "Ada" }
+        },
+        { "element": "odd-checkbox", "attributes": { "name": "email" }, "children": ["Show my email"] },
+        {
+          "element": "odd-button",
+          "slot": "footer",
+          "attributes": { "appearance": "primary" },
+          "actions": { "click": "profile.save" },
+          "children": ["Save"]
+        }
+      ]
     }
-  },
-  "data": { "nav": [] }
+  ]
 }
 ```
 
-- **Registered types only** (components or patterns registered with their model, regions, and allowed bindings).
-- **Typed properties** validated by each type's model; **named regions** only.
-- **Stable `id`s** for keyed reconciliation and migrations.
-- **References**, not code: `recipe`, `profile`, token names, `$ref` to data, `$binding` / `$action` names resolved by the host application. No executable strings, arbitrary HTML, event-handler attributes, or unrestricted DOM property assignment.
-- **Versioned** with migrations and diagnostics.
-- Rendered with the existing template renderer via `renderComposition(doc, { registry, bindings, actions })`; separately importable from `@oddkin/components/composition`.
+A node is either text (a string, rendered as a text node) or an element with these fields:
+
+- `element`, the tag;
+- `id`, unique in the document;
+- `slot`, a published slot of the parent;
+- `attributes`, `properties`, `children`, and `actions`.
+
+**What a document may contain.** Everything is generated from the published metadata (`custom-elements.json`, `oddkin.metadata.json`); nothing is hand-written per element.
+
+| Field        | Accepts |
+| ------------ | ------- |
+| `element`    | A published `odd-*` element, or a native text element: `p`, `h1`–`h6`, `span`, `strong`, `em`, `a`, `ul`, `ol`, and `li`. List items only appear in lists. |
+| `attributes` | Published attributes, typed as the metadata types them: string; number; boolean (`true` writes the attribute, `false` leaves it out); or a string-literal enum. `href`, `src`, and `formaction` are URLs, and script URLs are refused. |
+| `properties` | Writable properties without an attribute whose values JSON can carry:<br>- strings, numbers, and booleans (`value`, `checked`);<br>- string lists (`values`, `expanded`);<br>- `strings` overrides;<br>- record lists with a published model (`odd-side-nav` `items`: `oddkin.navigation`). |
+| `children`   | Text and nodes. A child without `slot` goes to the parent's default slot; text is allowed only where the parent has one. An element without slots takes no children. |
+| `actions`    | A published event name mapped to an action name (`settings.save`, the `@oddkin/core/model` `actionRef` form). The host receives `onAction({ action, event, element, id })`. `odd-button` also maps `click`, which it stops at the host while disabled or loading. |
+
+**Never allowed:**
+
+- `on*` attributes, `style`, and HTML strings: text is always text;
+- `<script>`, and any element outside the catalog;
+- `javascript:` URLs;
+- functions, elements, and other non-JSON values;
+- properties that hold code or elements: `renderLabel`, `renderValue`, `isDateDisabled`, `anchorElement`, `kinds`;
+- read-only properties.
+
+Record lists without a published model (`OptionRecord`, `MenuItemRecord`, `LinkRecord`, `TreeItemRecord`, `CommandRecord`) are not portable in version 1. They become portable when their models are published in `@oddkin/components/models`; the generator picks them up through its type table.
+
+**Validation.** `validateComposition(document, { limits })` returns `{ ok, diagnostics }`. Each diagnostic has a JSON-pointer `path`, a stable `code`, a message, and usually a suggestion that lists the allowed names.
+
+- Value types go through `@oddkin/core/model`, so a wrong type is `model.type.mismatch`, a value outside an enum is `model.value.invalid`, a script URL is `model.url.unsafe`, and model rules apply too (`model.id.duplicate`, `model.label.empty`).
+- The structure has `composition.*` codes:
+  - `node.invalid`, `key.unknown`, `version.unsupported`, `required.missing`;
+  - `element.unknown`, `element.misplaced`;
+  - `slot.unknown`, `slot.missing`, `text.unsupported`, `children.unsupported`;
+  - `id.invalid`, `id.duplicate`;
+  - `value.executable`;
+  - `attribute.unknown`, `attribute.propertyOnly`;
+  - `property.unknown`, `property.useAttribute`, `property.notPortable`;
+  - `action.unknown`, `action.invalid`;
+  - `depth.exceeded` (default 16 levels), `size.exceeded` (default 500 nodes).
+
+Each code has a failing example in `composition.test.ts`.
+
+**Rendering.** `renderComposition(document, target, { allow, onAction, limits })` validates first and refuses the whole document on any error, so nothing is rendered then. It also refuses when an element is not in the `allow` list (`composition.element.notAllowed`; natives included) or not registered in the target's own registry (`composition.element.unregistered`). Otherwise it:
+
+- creates each element with `document.createElement`;
+- sets attributes, then properties, so a property such as `value` wins as script after markup does;
+- appends children and text nodes;
+- adds one listener per mapped event.
+
+It returns `{ ok, diagnostics, nodes, dispose }`; `dispose()` removes the nodes and the listeners. A rendered composition matches the same hand-written markup in light and shadow DOM, names, and roles (`composition.browser.test.ts`, three engines).
+
+**Schemas and versioning.** `scripts/build-composition-schemas.mjs` runs in `npm run build` after the metadata. It writes:
+
+- `src/composition/catalog.ts`, what the runtime accepts;
+- `packages/components/schemas/composition/<tag>.v1.json`, one per element;
+- `composition.v1.json`, the document, with the native elements and shared definitions.
+
+`--check` fails when any of them is stale (`composition.test.ts`), so a change to an element's attributes, fields, slots, or events regenerates them. Value schemas come from the same `@oddkin/core/model` nodes the validator uses. A model-typed value references the model's published schema. Rules JSON Schema cannot express are listed in the document schema's `$comment`: slots by parent, text by default slot, unique ids, model rules, and limits.
+
+`version` is 1. New elements, attributes, and events do not change it. A change to the document's shape increments it, with a migration.
+
+**Size.** The entry is 8,053 B gzip with its catalog of 52 elements (about 45 B each), within its 8,704 B budget. It registers no element (`graph.test.ts`), and no other entry loads it (`check-size.mjs`, `consumers.test.ts`).
+
+**Not yet:**
+
+- the A2UI catalog adapter (waits for A2UI 1.0);
+- `$ref` data and `$binding` (the earlier sketch);
+- keyed updates of a rendered composition (render again instead);
+- `@oddkin/ai` elements in the catalog.
 
 AI support never makes this schema mandatory: agent tooling recommends templates, data models, or hybrids by the §9 criteria and works without the composition schema ([agent-tooling.md](./agent-tooling.md) §8).
 
@@ -265,7 +342,7 @@ AI support never makes this schema mandatory: agent tooling recommends templates
 | One-off or highly custom structure                                                  | Template / HTML                                          |
 | Standard list plus custom header/footer                                             | Hybrid (data + slots)                                    |
 | Item needs extra visuals but same semantics                                         | Local `render*` function or registered kind              |
-| Whole page assembled from configuration                                             | Composition schema (later), only for justified use cases |
+| Whole page or panel assembled from configuration or agent output                    | Composition schema (§8)                                  |
 
 ## 10. Acceptance fixtures
 

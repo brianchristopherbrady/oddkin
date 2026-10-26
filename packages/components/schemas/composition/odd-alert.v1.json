@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-alert.v1.json",
+  "title": "odd-alert",
+  "description": "A persistent inline message about the page or a region: a tone glyph, a title, a message, and optional actions. It stays until the situation changes; a passing result belongs in a toast.",
+  "$comment": "Slots: default, \"end\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-alert"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tone": {
+          "enum": [
+            "neutral",
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ],
+          "description": "Meaning colour and glyph.",
+          "default": "neutral"
+        },
+        "label": {
+          "type": "string",
+          "description": "The title, shown above the message.",
+          "default": ""
+        },
+        "announce": {
+          "enum": [
+            "none",
+            "important"
+          ],
+          "description": "Announces the alert when it appears or changes (`role=\"alert\"`).",
+          "default": "none"
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

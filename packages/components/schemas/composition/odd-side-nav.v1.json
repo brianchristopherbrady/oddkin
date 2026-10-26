@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-side-nav.v1.json",
+  "title": "odd-side-nav",
+  "description": "Side navigation: links, actions, and expandable groups from `.items` (or native links in the default slot), arranged by the `side-nav` layout recipe, which responds to the element's own width with container queries only.",
+  "$comment": "Slots: default, \"footer\", \"header\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-side-nav"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Accessible name of the navigation landmark, e.g. \"Primary\".",
+          "default": ""
+        },
+        "current": {
+          "type": "string",
+          "description": "Id of the current link; it gets `aria-current=\"page\"`.",
+          "default": ""
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "$ref": "https://oddkin.dev/schemas/components/oddkin.navigation.v1.json",
+          "description": "Entries. When set (even to an empty array) it is the only source; slotted entries are not rendered."
+        },
+        "expanded": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ids of expanded groups, owned by the caller. Omit it to let the element track expansion."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "odd-action": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "odd-toggle": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

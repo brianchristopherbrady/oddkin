@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-stat.v1.json",
+  "title": "odd-stat",
+  "description": "One metric: its `label`, its `value`, and the context in the default slot (\"+8.2% this month\"). `trend` adds an arrow for the direction of change, without saying whether it is good: the signed value in the context says it in words. While `loading` a placeholder stands in for the value; an empty `value` says \"Data not available\".",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-stat"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "What the value measures.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "The value, formatted: \"1,284\", \"$4.2M\", \"98.6%\".",
+          "default": ""
+        },
+        "trend": {
+          "enum": [
+            "none",
+            "increase",
+            "decrease"
+          ],
+          "description": "An arrow for the direction of change, with no colour for good or bad.",
+          "default": "none"
+        },
+        "loading": {
+          "type": "boolean",
+          "description": "Shows a placeholder for the value.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "loading": {
+              "type": "string"
+            },
+            "unavailable": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

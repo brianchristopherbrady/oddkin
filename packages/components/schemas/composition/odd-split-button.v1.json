@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-split-button.v1.json",
+  "title": "odd-split-button",
+  "description": "A primary action with a menu of related actions beside it: two independent targets in one element, a primary button and a menu button (odd-menu, whose parts it forwards). Menu items come from `<option value>` (the value is the item's `id`), `<optgroup label>`, and `<hr>` children, or from `items`; other children are the primary button's content.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-split-button"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Reported as the `odd-action` detail `id` when the primary half is pressed.",
+          "default": ""
+        },
+        "appearance": {
+          "enum": [
+            "primary",
+            "secondary",
+            "ghost"
+          ],
+          "description": "Visual emphasis of both halves, as on odd-button.",
+          "default": "secondary"
+        },
+        "size": {
+          "enum": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "description": "Size of both halves, as on odd-button.",
+          "default": "md"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Disables both halves.",
+          "default": false
+        },
+        "loading": {
+          "type": "boolean",
+          "description": "Shows a busy indicator in the primary half, which then ignores presses.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "more": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "odd-action": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

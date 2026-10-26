@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-calendar.v1.json",
+  "title": "odd-calendar",
+  "description": "A month of dates to choose one from: the WAI-ARIA date grid, with the month and buttons to the months before and after above it, and Today and Clear below. The value is a `YYYY-MM-DD` date, submitted under `name` as a native date input submits it. Weeks start on the page language's first day (`first-day` sets it); names come from `Intl.DateTimeFormat`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-calendar"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the calendar.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Initial date, `YYYY-MM-DD`; the `value` attribute, as on a native date input.",
+          "default": ""
+        },
+        "min": {
+          "type": "string",
+          "description": "Earliest date that can be chosen, `YYYY-MM-DD`.",
+          "default": ""
+        },
+        "max": {
+          "type": "string",
+          "description": "Latest date that can be chosen, `YYYY-MM-DD`.",
+          "default": ""
+        },
+        "required": {
+          "type": "boolean",
+          "description": "A date is required to submit.",
+          "default": false
+        },
+        "readonly": {
+          "type": "boolean",
+          "description": "The dates can be moved through but the value cannot change; still submitted, and not validated.",
+          "default": false
+        },
+        "first-day": {
+          "type": "number",
+          "description": "First day of the week, 1 (Monday) to 7 (Sunday) as in `Intl.Locale` week information; 0 follows the page language.",
+          "default": 0
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "previousMonth": {
+              "type": "string"
+            },
+            "nextMonth": {
+              "type": "string"
+            },
+            "today": {
+              "type": "string"
+            },
+            "clear": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides: `previousMonth`, `nextMonth`, `today`, `clear`."
+        },
+        "value": {
+          "type": "string",
+          "description": "The chosen date, `YYYY-MM-DD`, or empty. Setting it detaches it from `defaultValue`."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

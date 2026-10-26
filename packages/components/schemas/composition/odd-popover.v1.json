@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-popover.v1.json",
+  "title": "odd-popover",
+  "description": "A non-modal surface anchored to the control that opens it. The host is the popover (`popover=\"auto\"`), so `<button popovertarget=\"id\">` opens and closes it with no script; it also closes on Escape, on a press outside, and with its close button, and focus returns to the trigger.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-popover"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Names the popover.",
+          "default": ""
+        },
+        "anchor": {
+          "type": "string",
+          "description": "The ID of the element it is placed against, in the same document or shadow root. Default: the button whose `popovertarget` names it; with neither, it is centred.",
+          "default": ""
+        },
+        "side": {
+          "enum": [
+            "inline-end",
+            "inline-start",
+            "block-end",
+            "block-start"
+          ],
+          "description": "The side of the anchor it opens on, in the anchor's writing direction; it flips to the other side when there is more room there.",
+          "default": "block-end"
+        },
+        "align": {
+          "enum": [
+            "center",
+            "start",
+            "end"
+          ],
+          "description": "How it lines up with the anchor along that side.",
+          "default": "start"
+        },
+        "no-close": {
+          "type": "boolean",
+          "description": "Hides the close button. Keep it wherever touch users need it: Safari on iOS before 18.3 does not close a popover on a tap outside.",
+          "default": false
+        },
+        "open": {
+          "type": "boolean",
+          "description": "Whether it is open.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "close": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

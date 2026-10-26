@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-tooltip.v1.json",
+  "title": "odd-tooltip",
+  "description": "A short description of the control it is anchored to, shown while the pointer rests on the control or the control has focus. It stays while the pointer is over the control or the tooltip, and until Escape (WCAG 1.4.13). It describes the control and is never its name.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-tooltip"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchor": {
+          "type": "string",
+          "description": "The ID of the element it describes and is placed against, in the same document or shadow root.",
+          "default": ""
+        },
+        "side": {
+          "enum": [
+            "inline-end",
+            "inline-start",
+            "block-end",
+            "block-start"
+          ],
+          "description": "The side of the anchor it shows on, in the anchor's writing direction; it flips when there is more room on the other side.",
+          "default": "block-start"
+        },
+        "align": {
+          "enum": [
+            "center",
+            "start",
+            "end"
+          ],
+          "description": "How it lines up with the anchor along that side.",
+          "default": "center"
+        },
+        "open": {
+          "type": "boolean",
+          "description": "Whether it is shown.",
+          "default": false
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-progress.v1.json",
+  "title": "odd-progress",
+  "description": "Progress of a task. With a `value` it shows how much is done; without, it shows that work is under way and never a percentage.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-progress"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Work done, from 0 to `max`; absent: indeterminate."
+        },
+        "max": {
+          "type": "number",
+          "description": "Value at completion, as on a native progress (1).",
+          "default": 1
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the progress bar.",
+          "default": ""
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the bar.",
+          "default": ""
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    }
+  }
+}

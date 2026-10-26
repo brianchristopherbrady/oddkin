@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-select.v1.json",
+  "title": "odd-select",
+  "description": "A compact choice of one option in a form: a styled native `<select>`, so the engine's own picker, keyboard, and assistive-technology support come with it. Options come from `<option>` and `<optgroup>` children, written as for a native select (`selected` marks the default), or from `options`. Where `appearance: base-select` is supported, the open picker is drawn as Oddkin's raised listbox surface with option rows; elsewhere the engine draws it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-select"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the select.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Value of the chosen option; the `value` attribute sets the default.",
+          "default": ""
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Shown, and submitted as an empty value, until an option is chosen; with `required`, it blocks submission. Never a substitute for a label.",
+          "default": ""
+        },
+        "required": {
+          "type": "boolean",
+          "description": "An option must be chosen to submit.",
+          "default": false
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

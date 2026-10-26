@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-drawer.v1.json",
+  "title": "odd-drawer",
+  "description": "A panel at an inline edge of the viewport: odd-dialog with a side-sheet layout. It is modal by default, so the rest of the page is inert until it closes; with `no-modal` the page stays usable beside it. `side` is logical, so it mirrors in right-to-left text.",
+  "$comment": "Slots: default, \"footer\", \"header\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-drawer"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "The title, which names the dialog. Required.",
+          "default": ""
+        },
+        "alert": {
+          "type": "boolean",
+          "description": "Makes it an alert dialog: an urgent message that needs a response, such as confirming that something is deleted. Its body describes it.",
+          "default": false
+        },
+        "closedby": {
+          "enum": [
+            "none",
+            "closerequest",
+            "any"
+          ],
+          "description": "What closes it besides its controls: Escape (`closerequest`), also a press on the backdrop (`any`), or neither (`none`). The browser does it where it can; elsewhere the dialog does.",
+          "default": "closerequest"
+        },
+        "no-close": {
+          "type": "boolean",
+          "description": "Hides the close button. Keep another way out, such as a Cancel button.",
+          "default": false
+        },
+        "open": {
+          "type": "boolean",
+          "description": "Whether it is open.",
+          "default": false
+        },
+        "side": {
+          "enum": [
+            "inline-end",
+            "inline-start"
+          ],
+          "description": "The edge it opens at: `inline-end` is the right in left-to-right text and the left in right-to-left text.",
+          "default": "inline-end"
+        },
+        "no-modal": {
+          "type": "boolean",
+          "description": "Leaves the page usable while it is open: no backdrop, nothing inert, and focus may leave it.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "close": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        },
+        "returnValue": {
+          "type": "string",
+          "description": "The `close()` argument, or the value of the button that submitted its form."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

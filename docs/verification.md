@@ -3226,3 +3226,24 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 15
 | Lifetime | `node research/benchmarks/lifetime/run.mjs --scenario componentCycles` | Ownership was returned in Chromium, Firefox, and WebKit, and 1,000 elements rendered in each. Chromium retained 513 B, or 15 B per cycle. |
 
 **Findings:** None beyond the equivalent `watch` entry.
+
+## 2026-10-26 — Composition schema: `@oddkin/components/composition` (M10 round 7, ADR 0046 D3, data-composition.md §8)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2), HEAD 46f0905. Other lanes in progress in the tree: Agent 1's number stepper (`src/input/`, `src/form-control/`).
+
+**Change:** composition documents, version 1. The new entry `@oddkin/components/composition` provides `validateComposition()` and `renderComposition()`. `scripts/build-composition-schemas.mjs` runs in `npm run build` after the metadata. From the CEM and metadata it generates the runtime catalog (`src/composition/catalog.ts`) and 53 JSON Schemas in `packages/components/schemas/composition/`: one per element, plus the document schema. data-composition.md §7–§9 describe the implemented design.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Validation | `npx vitest run --project node packages/components/test/composition.test.ts` | 13 of 13. Covers:<br>- a valid document of published elements, natives, text, a model value, and action names;<br>- a failing example for each of the validator's 22 `composition.*` codes and for the `model.*` codes that values reach;<br>- the schemas are current (`--check`);<br>- Ajv 2020 and `validateComposition()` agree on valid and invalid documents;<br>- the catalog covers every published element. |
+| Rendering, three engines | `npx vitest run --project browser --browser.name=<engine> packages/components/test/composition.browser.test.ts`, one engine at a time | 4 of 4 in Chromium, Firefox, and WebKit:<br>- the same light and shadow DOM (serialized, attributes sorted) as hand-written markup for `odd-side-nav` with items, `odd-card`, `odd-input`, `odd-checkbox`, `odd-alert`, `odd-disclosure`, `odd-badge`, `odd-button`, and native text;<br>- the same roles and names (navigation, link, heading, textbox, checkbox, button);<br>- actions from `change` and `click`, none from a disabled button, and none after `dispose()`, which removes the nodes;<br>- refusal of a not-allowed element and of an element unregistered in the target's registry (`composition.element.notAllowed`, `composition.element.unregistered`), with nothing rendered;<br>- adversarial text and values stay inert. |
+| Boundaries | `npx vitest run --project node packages/components/test/consumers.test.ts packages/components/test/graph.test.ts` | 181 of 181. No component, foundation, or registration entry loads `dist/composition/`. The entry loads the composition modules, the navigation model, and `@oddkin/core/model`, and registers nothing. |
+| Size | `node scripts/check-size.mjs` | `composition` is 8,053 of 8,704 B gzip. No other measured entry contains it, and it contains no `.define.js`. |
+| Node project | `npx vitest run --project node` | 1,227 of 1,229. One composition test still expected `click` to be refused. `consumers.test.ts` already kept the composition renderer out of every consumer entry, and now lists `./composition` as an opt-in entry beside `./models`. Both files pass after these fixes (rows above). |
+| Types, build, packs | `npm run typecheck`; `npm run lint:boundaries` (full build); `npm run verify:packs`; `node scripts/check-vocabulary.mjs`; `npm run lint:contracts`; `npm run compat`; prettier on the changed files | All pass. `verify:metadata` reports only stale contract-test records (228, from the tree's uncommitted changes); a full `npm test` refreshes them. |
+
+**Findings:**
+- The CEM lists `click` for no element. `odd-button` stops `click` at its host while disabled or loading, so the generator adds `click` as `odd-button`'s action event (its `NATIVE_EVENTS` table). Without it, a composed button could not report an action.
+- Record lists without a published model are not portable in version 1: `OptionRecord`, `MenuItemRecord`, `LinkRecord`, `TreeItemRecord`, and `CommandRecord`. Until those models are published, the elements that take them (select, menu, breadcrumbs, tree, and command palette, among others) compose without their `options` or `items`.
+- A read-only field given as an attribute reports `composition.attribute.unknown`; for example, `odd-button` has no `form` attribute.
+- Not done here: the agent kit's reference to the entry (Agent 4, D6).

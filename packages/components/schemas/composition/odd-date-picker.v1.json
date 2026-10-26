@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-date-picker.v1.json",
+  "title": "odd-date-picker",
+  "description": "One date, typed in the page language's numeric order or chosen from a calendar in a popup: the WAI-ARIA date picker dialog. The value is a `YYYY-MM-DD` date, submitted under `name` as a native date input submits it; the field shows it as the language writes dates in digits (26/10/2026 in British English, 10/26/2026 in American English).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-date-picker"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the field.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Initial date, `YYYY-MM-DD`; the `value` attribute, as on a native date input.",
+          "default": ""
+        },
+        "min": {
+          "type": "string",
+          "description": "Earliest date, `YYYY-MM-DD`.",
+          "default": ""
+        },
+        "max": {
+          "type": "string",
+          "description": "Latest date, `YYYY-MM-DD`.",
+          "default": ""
+        },
+        "required": {
+          "type": "boolean",
+          "description": "A date is required to submit.",
+          "default": false
+        },
+        "readonly": {
+          "type": "boolean",
+          "description": "The date can be read and the calendar opened, not changed; still submitted.",
+          "default": false
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder; never a substitute for a label.",
+          "default": ""
+        },
+        "first-day": {
+          "type": "number",
+          "description": "The calendar's first day of the week, 1 (Monday) to 7 (Sunday); 0 follows the page language.",
+          "default": 0
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "choose": {
+              "type": "string"
+            },
+            "change": {
+              "type": "string"
+            },
+            "invalid": {
+              "type": "string"
+            },
+            "day": {
+              "type": "string"
+            },
+            "month": {
+              "type": "string"
+            },
+            "year": {
+              "type": "string"
+            },
+            "previousMonth": {
+              "type": "string"
+            },
+            "nextMonth": {
+              "type": "string"
+            },
+            "today": {
+              "type": "string"
+            },
+            "clear": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides: `choose`, `change` (`{date}`), `invalid` (`{format}`), `day`, `month`, `year`, and the calendar's `previousMonth`, `nextMonth`, `today`, `clear`."
+        },
+        "value": {
+          "type": "string",
+          "description": "The chosen date, `YYYY-MM-DD`, or empty. Setting it detaches it from `defaultValue`."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

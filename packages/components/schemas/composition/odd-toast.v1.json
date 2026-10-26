@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-toast.v1.json",
+  "title": "odd-toast",
+  "description": "A short message about something that just happened, at the block-end and inline-end corner of the viewport: a tone glyph, a title, the message, an optional action, and a close button. It closes by itself after `duration` unless it has an action; no toast's time runs while the pointer or focus is on any open toast, or while the page is hidden (WCAG 2.2.1). Open toasts stack in document order, the last at the corner, so reading and Tab order follow the screen.",
+  "$comment": "Slots: default, \"end\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-toast"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tone": {
+          "enum": [
+            "neutral",
+            "info",
+            "success",
+            "warning",
+            "danger"
+          ],
+          "description": "Meaning colour and glyph; `danger` is an `alert`, announced at once.",
+          "default": "neutral"
+        },
+        "label": {
+          "type": "string",
+          "description": "The title, shown above the message.",
+          "default": ""
+        },
+        "duration": {
+          "type": "number",
+          "description": "Milliseconds it stays open, counted only while no open toast has the pointer or focus and the page is visible; read at each opening. 0, or an action in the `end` slot, keeps it open until it is closed.",
+          "default": 5000
+        },
+        "open": {
+          "type": "boolean",
+          "description": "Whether it is shown.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "close": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

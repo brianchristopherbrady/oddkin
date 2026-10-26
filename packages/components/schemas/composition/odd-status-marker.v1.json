@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-status-marker.v1.json",
+  "title": "odd-status-marker",
+  "description": "The status marker of a timeline event or a step (Figma's Event marker and Step status): a circle with the built-in glyph for `status`, or its own content (a step number) while idle. Decorative: hidden from assistive technology, so the list and the words beside it carry the meaning. The `.odd-timeline` and `.odd-stepper` recipes size and colour it; alone it has its own look.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-status-marker"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "idle",
+            "pending",
+            "complete",
+            "failed"
+          ],
+          "description": "Idle: the content or a dot. Pending: a busy ring. Complete: a check. Failed: a warning glyph.",
+          "default": "idle"
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

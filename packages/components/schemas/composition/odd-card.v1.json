@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-card.v1.json",
+  "title": "odd-card",
+  "description": "A surface that groups related content, with optional header and footer.",
+  "$comment": "Slots: default, \"footer\", \"header\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-card"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "appearance": {
+          "enum": [
+            "outlined",
+            "filled",
+            "elevated"
+          ],
+          "description": "Surface treatment.",
+          "default": "outlined"
+        },
+        "padding": {
+          "enum": [
+            "none",
+            "sm",
+            "md",
+            "lg"
+          ],
+          "description": "Inner padding step.",
+          "default": "md"
+        },
+        "label": {
+          "type": "string",
+          "description": "Accessible name; makes the card a region.",
+          "default": ""
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

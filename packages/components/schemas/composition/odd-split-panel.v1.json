@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-split-panel.v1.json",
+  "title": "odd-split-panel",
+  "description": "Two panes side by side or stacked, with a separator the user drags or moves with the keyboard (APG window splitter). Nest split panels for more panes.",
+  "$comment": "Slots: \"end\", \"start\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-split-panel"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "orientation": {
+          "enum": [
+            "vertical",
+            "horizontal"
+          ],
+          "description": "Panes side by side (horizontal) or stacked (vertical).",
+          "default": "horizontal"
+        },
+        "position": {
+          "type": "number",
+          "description": "Size of the start pane, in percent of the element, between `min` and `max`.",
+          "default": 50
+        },
+        "min": {
+          "type": "number",
+          "description": "Smallest `position`, in percent.",
+          "default": 0
+        },
+        "max": {
+          "type": "number",
+          "description": "Largest `position`, in percent.",
+          "default": 100
+        },
+        "collapsed": {
+          "type": "boolean",
+          "description": "Hides the start pane; Enter on the separator toggles it, keeping `position`.",
+          "default": false
+        },
+        "label": {
+          "type": "string",
+          "description": "Names the separator.",
+          "default": ""
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

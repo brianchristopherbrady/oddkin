@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-breadcrumbs.v1.json",
+  "title": "odd-breadcrumbs",
+  "description": "A location trail: links to the pages above this one, then the current page as text. Items come from `<a href>` descendants (a server-rendered `<ol><li><a href>` list works as written) or the `items` property; with `max-items`, the middle items wait behind a \"more\" button.",
+  "$comment": "Slots: \"home\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-breadcrumbs"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Names the navigation; default `strings.label`.",
+          "default": ""
+        },
+        "max-items": {
+          "type": "number",
+          "description": "Collapse when there are more items than this: the first item, a \"more\" button, and the last `max-items − 1` items show. 0 never collapses.",
+          "default": 0
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "more": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

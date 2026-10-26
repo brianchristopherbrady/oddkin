@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-listbox.v1.json",
+  "title": "odd-listbox",
+  "description": "Persistent choices in a form (APG listbox): the listbox keeps focus and the active option is its `aria-activedescendant`. Options come from `<option>` and `<optgroup>` children, written as for a native select (`selected` marks the default), or from `options`.",
+  "$comment": "Slots: \"empty\", \"status\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-listbox"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the control.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Value of the selected option; the `value` attribute sets the default.",
+          "default": ""
+        },
+        "multiple": {
+          "type": "boolean",
+          "description": "Several options can be selected.",
+          "default": false
+        },
+        "required": {
+          "type": "boolean",
+          "description": "An option must be selected to submit.",
+          "default": false
+        },
+        "loading": {
+          "type": "boolean",
+          "description": "Shows a busy row and marks the options busy.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Values of the selected options with `multiple`."
+        },
+        "strings": {
+          "type": "object",
+          "properties": {
+            "loading": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

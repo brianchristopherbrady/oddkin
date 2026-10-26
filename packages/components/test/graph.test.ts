@@ -133,3 +133,20 @@ describe('@oddkin/components/side-nav import graphs', () => {
     expect(packages).not.toContain('@oddkin/core/model/schema');
   });
 });
+
+// No component entry loads it: consumers.test.ts.
+describe('@oddkin/components/composition import graphs', () => {
+  it('the composition entry registers nothing and loads only the model validators', async () => {
+    const { files, packages } = await graph('composition/index.js');
+    expect(files).toEqual([
+      // The generated catalog: plain data, no element classes.
+      'composition/catalog.js',
+      'composition/index.js',
+      'composition/render.js',
+      'composition/validate.js',
+      'composition/vocabulary.js',
+      'models/navigation.js',
+    ]);
+    expect(packages).toEqual(['@oddkin/core/model']);
+  });
+});

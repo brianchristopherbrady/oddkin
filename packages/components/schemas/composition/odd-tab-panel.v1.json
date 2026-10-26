@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-tab-panel.v1.json",
+  "title": "odd-tab-panel",
+  "description": "One panel of `odd-tabs`: its tab's text, its value, and the content shown while its tab is selected. `odd-tabs` assigns it to a tab panel inside its own shadow root, so the tab and the panel reference each other while the content stays in the light DOM.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-tab-panel"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "The text of its tab.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Identifies the panel in `odd-tabs` `value`; without it, its position (\"0\", \"1\", …).",
+          "default": ""
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Its tab cannot be selected.",
+          "default": false
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

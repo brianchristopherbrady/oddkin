@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-slider.v1.json",
+  "title": "odd-slider",
+  "description": "A number from a bounded range, chosen by dragging a thumb along a track or with the keys, with the current value and both endpoints shown. Drawn as an ARIA slider rather than a native `<input type=\"range\">`, whose track and thumb can only be styled through engine-prefixed pseudo-elements. Values follow the native range: snapped to `step` from `min`, clamped to the range; without a `value` attribute the default is halfway.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-slider"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the slider.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Initial value; the `value` attribute, as on a native range (default: halfway).",
+          "default": ""
+        },
+        "min": {
+          "type": "number",
+          "description": "Lowest value.",
+          "default": 0
+        },
+        "max": {
+          "type": "number",
+          "description": "Highest value.",
+          "default": 100
+        },
+        "step": {
+          "type": "number",
+          "description": "Granularity, counted from `min`.",
+          "default": 1
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The current value, as a string (native range). Setting it detaches it from `defaultValue`."
+        },
+        "valueAsNumber": {
+          "type": "number",
+          "description": "The current value as a number."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

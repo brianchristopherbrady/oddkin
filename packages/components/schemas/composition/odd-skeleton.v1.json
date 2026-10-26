@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-skeleton.v1.json",
+  "title": "odd-skeleton",
+  "description": "A content-shaped placeholder while a region loads. Hidden from assistive technology: mark the loading region with `aria-busy=\"true\"` and replace the placeholders when the content arrives.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-skeleton"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "shape": {
+          "enum": [
+            "circle",
+            "rect",
+            "text"
+          ],
+          "description": "Text lines, a rectangle, or a circle. Size rect and circle with CSS on the element.",
+          "default": "text"
+        },
+        "lines": {
+          "type": "number",
+          "description": "Number of text lines; the last of several is shorter.",
+          "default": 1
+        }
+      }
+    }
+  }
+}

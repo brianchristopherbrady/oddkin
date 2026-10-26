@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-rating.v1.json",
+  "title": "odd-rating",
+  "description": "A score from one to `max` stars (default five), with the chosen value beside the stars (\"3 of 5\"): the radio-group behavior drawn as stars, each filled up to the chosen one. Without `<option>` children or `options`, the stars are named by `strings.star` (\"3 stars\"); options name them instead (\"Good\"), and their count replaces `max`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-rating"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the group.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Value of the checked option; the `value` attribute sets the default.",
+          "default": ""
+        },
+        "required": {
+          "type": "boolean",
+          "description": "An option must be checked to submit.",
+          "default": false
+        },
+        "max": {
+          "type": "number",
+          "description": "How many stars, when the options are not given.",
+          "default": 5
+        },
+        "readonly": {
+          "type": "boolean",
+          "description": "Shows the value without letting the user change it; still submitted and, as a native read-only field, barred from validation.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "star": {
+              "type": "string"
+            },
+            "starOne": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides: `star` and `starOne` (a star's name, \"{count} stars\"), `summary` (\"{value} of {max}\"), `empty` (nothing chosen)."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

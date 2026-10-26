@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-container.v1.json",
+  "title": "odd-container",
+  "description": "A content measure and an inline-size container: container queries and layout recipe conditions inside it resolve against its width, not the viewport's. `measure=\"constrained\"` (the default) centres it with the theme's `layout.measure` as its maximum inline size; `fluid` fills the space. Insets are the page's: put an `.odd-box` inside or around it.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-container"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "measure": {
+          "enum": [
+            "constrained",
+            "fluid"
+          ],
+          "description": "Constrained: centred, at most the measure wide. Fluid: the full width.",
+          "default": "constrained"
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    }
+  }
+}

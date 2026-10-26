@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-file-input.v1.json",
+  "title": "odd-file-input",
+  "description": "A file chooser over a native `<input type=\"file\">`: a drop zone with a title, the help text, the browser's own picker button, and the chosen files as rows with their size and a remove button. The form value is the files under `name`, as a native file input submits them.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-file-input"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the control.",
+          "default": ""
+        },
+        "accept": {
+          "type": "string",
+          "description": "File types the picker offers, as on native inputs (image/*, or .pdf for PDFs).",
+          "default": ""
+        },
+        "multiple": {
+          "type": "boolean",
+          "description": "Several files can be chosen.",
+          "default": false
+        },
+        "required": {
+          "type": "boolean",
+          "description": "A file is required to submit.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "titleMultiple": {
+              "type": "string"
+            },
+            "remove": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides: `title`, `titleMultiple`, `remove`."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-textarea.v1.json",
+  "title": "odd-textarea",
+  "description": "A labelled multi-line text field that participates in forms like a native textarea, with a character count while `maxlength` is set.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-textarea"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the control.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Initial value; the `value` attribute, as on native inputs.",
+          "default": ""
+        },
+        "minlength": {
+          "type": "number",
+          "description": "Fewest characters."
+        },
+        "maxlength": {
+          "type": "number",
+          "description": "Most characters; typing stops there."
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder; never a substitute for a label.",
+          "default": ""
+        },
+        "autocomplete": {
+          "type": "string",
+          "description": "Autofill hint for the native field.",
+          "default": ""
+        },
+        "required": {
+          "type": "boolean",
+          "description": "A value is required to submit.",
+          "default": false
+        },
+        "readonly": {
+          "type": "boolean",
+          "description": "Prevents editing; still submitted.",
+          "default": false
+        },
+        "rows": {
+          "type": "number",
+          "description": "Visible lines; the least the field shows while `resize` is `auto`.",
+          "default": 4
+        },
+        "resize": {
+          "enum": [
+            "none",
+            "vertical",
+            "auto"
+          ],
+          "description": "How the field changes height: the user drags it (`vertical`), never (`none`), or it follows its content (`auto`).",
+          "default": "vertical"
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides; `count` takes `{count}` and `{max}`."
+        },
+        "value": {
+          "type": "string",
+          "description": "The current value. Setting it (or typing) detaches it from `defaultValue`."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

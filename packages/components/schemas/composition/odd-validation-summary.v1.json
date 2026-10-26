@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-validation-summary.v1.json",
+  "title": "odd-validation-summary",
+  "description": "Lists a form's problems after a submission that validation blocked: a heading with the count, then each invalid control's label and message as a link that moves focus to the control. It takes focus when it appears, shrinks as fields are fixed, and hides once the form is valid. Entered values are never cleared.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-validation-summary"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "The heading; default `strings.title`, \"Please fix {count} fields\".",
+          "default": ""
+        },
+        "form": {
+          "type": "string",
+          "description": "ID of the form it reports on; default: the ancestor form.",
+          "default": ""
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "titleOne": {
+              "type": "string"
+            },
+            "entry": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides: `title`, `titleOne` (one problem), `entry`."
+        }
+      }
+    }
+  }
+}

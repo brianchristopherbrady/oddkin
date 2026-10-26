@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-tree.v1.json",
+  "title": "odd-tree",
+  "description": "A hierarchy the user browses and selects in (APG tree view): rows of items that expand and collapse, from `items`. Items holding a selected item start expanded. Children of a `lazy` item load when it first expands: listen to `odd-toggle`, then assign new `items` in which that item has `children`.",
+  "$comment": "Slots: \"empty\", \"status\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-tree"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Names the tree.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Id of the selected item.",
+          "default": ""
+        },
+        "multiple": {
+          "type": "boolean",
+          "description": "Several items can be selected.",
+          "default": false
+        },
+        "loading": {
+          "type": "boolean",
+          "description": "Shows a busy row and marks the tree busy.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "expanded": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ids of expanded items, owned by the caller. Omit it to let the element track expansion."
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ids of the selected items with `multiple`."
+        },
+        "strings": {
+          "type": "object",
+          "properties": {
+            "loading": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "odd-toggle": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

@@ -20,6 +20,7 @@ export const ENTRIES = [
   'ai-response',
   'ai-chat',
   'side-nav',
+  'composition',
   'store',
   'context',
   'persist',
@@ -65,6 +66,10 @@ export const BUDGETS = {
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
   'side-nav': 16384,
+  // 8.5 KiB; measured 8,053 on 2026-10-26 (@oddkin/components/composition, ADR 0046 D3:
+  // validateComposition and renderComposition with the generated catalog of 52 elements, about
+  // 45 B gzip each, over @oddkin/core/model and the navigation model; no element registrations).
+  composition: 8704,
   // 2.5 KiB; measured 2,214 on 2026-10-19 (@oddkin/state/store: createStore, select, action, and
   // frozen snapshots over the reactive graph and diagnostics; no DOM module).
   store: 2560,

@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-one-time-code.v1.json",
+  "title": "odd-one-time-code",
+  "description": "A one-time code (a verification code sent by text message or email) entered into `maxlength` cells (default six). It is one native input with `autocomplete=\"one-time-code\"` and a numeric keyboard (the global `inputmode` attribute, `numeric` unless the host sets it) behind the drawn cells, so the platform's autofill, paste, and form value work as on any field: digits only, typed or pasted, the caret always after the last digit. `status` reports the verification the page runs: `pending` keeps the code read-only with a busy line, `complete` confirms it; a failure is `error`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-one-time-code"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the control.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Initial value; the `value` attribute, as on native inputs.",
+          "default": ""
+        },
+        "minlength": {
+          "type": "number",
+          "description": "Fewest characters."
+        },
+        "maxlength": {
+          "type": "number",
+          "description": "Most characters; typing stops there."
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder; never a substitute for a label.",
+          "default": ""
+        },
+        "autocomplete": {
+          "type": "string",
+          "description": "Autofill hint for the native field.",
+          "default": ""
+        },
+        "required": {
+          "type": "boolean",
+          "description": "A value is required to submit.",
+          "default": false
+        },
+        "readonly": {
+          "type": "boolean",
+          "description": "Prevents editing; still submitted.",
+          "default": false
+        },
+        "status": {
+          "enum": [
+            "idle",
+            "pending",
+            "complete"
+          ],
+          "description": "The verification the page runs: `pending` makes the code read-only and shows `strings.pending`; `complete` shows `strings.complete`.",
+          "default": "idle"
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "hint": {
+              "type": "string"
+            },
+            "pending": {
+              "type": "string"
+            },
+            "complete": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides: `hint` (under the cells while idle), `pending`, `complete`."
+        },
+        "value": {
+          "type": "string",
+          "description": "The current value. Setting it (or typing) detaches it from `defaultValue`."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}
