@@ -298,7 +298,7 @@
       "sourceId": "159:285",
       "count": 1,
       "class": "style",
-      "reason": "The chosen suggested colour of odd-color-picker shows the shared check glyph (glyphs module) at the small icon size, white or black, whichever contrasts more with the colour."
+      "reason": "The chosen suggested colour of odd-color-picker shows the shared check glyph (glyphs module) at the small icon size, white, or black where white falls below 3:1 on the colour."
     },
     {
       "consumer": "Oddkin/Common/copyButton",

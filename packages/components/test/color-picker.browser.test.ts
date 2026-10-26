@@ -519,9 +519,9 @@ describe('popup', () => {
     ]);
     const swatches = root.querySelectorAll<HTMLElement>('[part~="option-swatch"]');
     expect(getComputedStyle(swatches[1]!).backgroundColor).toBe('rgb(212, 70, 108)');
-    // The check contrasts with the colour.
+    // The check is white unless white falls below 3:1 on the colour.
     expect(getComputedStyle(swatches[0]!).color).toBe('rgb(255, 255, 255)');
-    expect(getComputedStyle(swatches[1]!).color).toBe('rgb(0, 0, 0)');
+    expect(getComputedStyle(swatches[1]!).color).toBe('rgb(255, 255, 255)');
     expect(getComputedStyle(swatches[2]!).color).toBe('rgb(0, 0, 0)');
     expect(getComputedStyle(swatches[0]!.querySelector('.glyph')!).visibility).toBe('visible');
     expect(getComputedStyle(swatches[1]!.querySelector('.glyph')!).visibility).toBe('hidden');
@@ -542,6 +542,7 @@ describe('popup', () => {
       { value: '#000000', label: 'Ink' },
       { value: '#2563eb80', label: 'Glass' },
       { value: 'nonsense', label: 'None' },
+      { value: '#d9922e', label: 'Amber' },
     ];
     el.value = '#000000';
     await settle(el);
@@ -551,7 +552,9 @@ describe('popup', () => {
       ['Ink', true],
       ['Glass', false],
       ['None', false],
+      ['Amber', false],
     ]);
+    expect(getComputedStyle(next[3]!.parentElement!).color).toBe('rgb(0, 0, 0)');
     expect(getComputedStyle(next[2]!.parentElement!).backgroundColor).toBe('rgba(0, 0, 0, 0)');
     await userEvent.click(next[1]!.parentElement!);
     await settle(el);
@@ -694,9 +697,10 @@ describe('look', () => {
 
 describe('forms', () => {
   it('submits the value under its name; reset returns to the value attribute; disabled submits nothing', async () => {
-    const { el, control, form, button } = await mount(
+    const { el, control, form, button, part } = await mount(
       '<form><odd-color-picker label="Color" name="layer" value="#2563eb"></odd-color-picker></form>',
     );
+    expect(getComputedStyle(part('swatch')).opacity).toBe('1');
     expect([...new FormData(form!)]).toEqual([['layer', '#2563eb']]);
     await type(el, control, '#d4466c');
     expect([...new FormData(form!)]).toEqual([['layer', '#d4466c']]);
@@ -708,6 +712,8 @@ describe('forms', () => {
     await settle(el);
     expect([...new FormData(form!)]).toEqual([]);
     expect([control.disabled, button.disabled]).toEqual([true, true]);
+    // Dimmed as a disabled suggested colour (Figma Disabled).
+    expect(getComputedStyle(part('swatch')).opacity).toBe('0.45');
   });
 
   it('error marks it invalid and points the browser at the field', async () => {

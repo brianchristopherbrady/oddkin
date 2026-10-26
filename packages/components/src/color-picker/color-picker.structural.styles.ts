@@ -7,7 +7,7 @@ import { colorPickerRecipeStyles } from './color-picker.recipe.styles.js';
  * text input's ends, as adornments; the popup (the shared overlay surface) as wide as the field
  * box, stacking the area, the hue slider (the shared slider area, its track the full width), the
  * hex and opacity entries side by side, the RGB values, the suggested colours (each a native radio
- * over its square, its check white or black, whichever contrasts more with the colour), and the
+ * over its square, its check white, or black where white falls below 3:1 on the colour), and the
  * actions at the end (those columns and rows are the layout recipe in `color-picker.recipe.ts`).
  * The area paints saturation across and brightness up for the hue (`--_hue`,
  * `--_s`, `--_v`); the hue track paints the hues; both are mirrored right to left. They and the

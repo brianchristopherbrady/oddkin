@@ -90,9 +90,9 @@ const linear = (c: number) => {
   return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
 };
 
-/** Dark text contrasts more with the colour than light text does (WCAG relative luminance). */
+/** White on the colour falls below WCAG's 3:1 for graphics, so a mark on it is drawn black. */
 export function isLight({ r, g, b }: Rgba): boolean {
-  return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b) > 0.179;
+  return 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b) > 0.3;
 }
 
 export function toHsva({ r, g, b, a }: Rgba): Hsva {

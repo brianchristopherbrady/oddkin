@@ -3332,3 +3332,21 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 15
 - `.field` stays in `field.structural.styles.ts`: that sheet is also the source of the published light-DOM `css/field.css` recipe in `@layer odd.components`, so a shadow recipe would move the layout of every form control and of the page recipe into the `odd.layout` layers.
 - WebKit caught odd-color-picker's popup at the viewport margin (x 8 instead of 32) in two of three runs: Overlay sets `--_anchor-inline-size` after the first placement has measured the popup at its automatic width, and the surface's resize places it again a frame later. The test now waits for the second placement; the order is noted for Agent 2.
 - Not verified: screen-reader output (the markup is unchanged).
+
+## 2026-10-26 — odd-color-picker against Figma's review rows (M10 round 7, Agent 1)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2), HEAD 3b59ce9. No other lane's work was in the tree.
+
+**Change:** Figma's review frame "14 · Form controls · Calendar, color & code" (Color picker 558:17595; dark 558:18394; read-only screenshots) against the element. Two differences fixed: the field's swatch is dimmed to 45% while the picker is disabled, as a disabled suggested colour (Figma Disabled); a suggested colour's check is white, as Figma draws it in light mode, and black only where white falls below WCAG's 3:1 for graphics on that colour (before: whichever of white and black contrasted more, which drew black on Figma's #D4466C).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Review rows | Figma MCP `get_screenshot` 558:17595 and 558:18394 | The six cards are the six `colorPicker` variants, already in parity. Differences found: the two fixed above; the swatches' heading "Recent colors" (the element's default is "Suggested colors", `strings.swatches`, since the page supplies them); the help text under the field (every Oddkin field puts it under the label); the opacity field (shown only with `alpha`) |
+| odd-color-picker and parity | `color-picker.browser.test.ts`, `figma-parity.pickers.browser.test.ts`, three engines | Chromium 56 of 56; Firefox 55 passed, 1 skipped; WebKit 54 passed, 2 skipped |
+| Catalog-wide | accessibility, examples, styling-contract, Chromium | 31 of 31 |
+| Mutation probes | 3 probes (the check's threshold up and down, the disabled swatch rule) | 3 of 3 killed |
+| Size, CSS | `node scripts/check-size.mjs`; `npm run compat` | `components:color-picker` 1,698 B gzip (budget 1,728); compat 0 problems |
+
+**Findings:**
+- In the dark review row, Figma draws the check in the theme's on-action colour, which is dark in dark mode: dark on #2563EB is about 2.9:1, below 3:1. The element draws the check from the user's colour, not the theme (recorded in the catalog row).
+- Not verified: screen-reader output.
