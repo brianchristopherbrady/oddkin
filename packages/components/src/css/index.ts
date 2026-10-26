@@ -104,7 +104,8 @@ function layoutClasses(): CSSResult {
     main: 'main',
     gap: gap('split'),
     sideWidth: knob('split-side-width', token('layout.sidebar-width')),
-    mainMin: knob('split-main-min', token('layout.main-min')),
+    // Capped at the container: a main minimum wider than the split would overflow it.
+    mainMin: `min(${knob('split-main-min', token('layout.main-min'))}, 100%)`,
   });
   return unsafeCSS(
     [

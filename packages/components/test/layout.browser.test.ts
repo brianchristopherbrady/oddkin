@@ -63,6 +63,20 @@ describe('layout.css', () => {
     expect(side.getBoundingClientRect().width).toBe(150);
   });
 
+  it('caps the main minimum at the container, in both orders', () => {
+    // 150px is narrower than the 200px main minimum: stacked, the main content fits it.
+    container.style.width = '150px';
+    for (const markup of [
+      '<div class="odd-split"><nav>Side</nav><main id="main">Main</main></div>',
+      '<div class="odd-split odd-split-end"><main id="main">Main</main><aside>Side</aside></div>',
+    ]) {
+      container.innerHTML = markup;
+      const main = container.querySelector('#main') as HTMLElement;
+      expect(main.getBoundingClientRect().width).toBe(150);
+      expect(container.firstElementChild!.scrollWidth).toBe(150);
+    }
+  });
+
   it('stretches a few items across the row with odd-auto-grid-fit', () => {
     container.innerHTML =
       '<div class="odd-auto-grid" id="fill"><p>a</p><p>b</p></div><div class="odd-auto-grid odd-auto-grid-fit" id="fit"><p>a</p><p>b</p></div>';
