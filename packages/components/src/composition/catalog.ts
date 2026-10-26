@@ -133,6 +133,39 @@ export const CATALOG: Catalog = {
     slots: [''],
     events: ['odd-chip-remove'],
   },
+  'odd-color-picker': {
+    attributes: {
+      name: 'string',
+      disabled: 'boolean',
+      description: 'string',
+      error: 'string',
+      label: 'string',
+      value: 'string',
+      alpha: 'boolean',
+    },
+    properties: {
+      strings: {
+        texts: [
+          'choose',
+          'change',
+          'invalid',
+          'area',
+          'areaValue',
+          'hue',
+          'hex',
+          'opacity',
+          'rgb',
+          'swatches',
+          'cancel',
+          'apply',
+        ],
+      },
+      value: 'string',
+    },
+    fixed: ['form', 'options', 'validationMessage', 'validity', 'willValidate'],
+    slots: [],
+    events: ['change', 'input'],
+  },
   'odd-combobox': {
     attributes: {
       name: 'string',

@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-color-picker.v1.json",
+  "title": "odd-color-picker",
+  "description": "One colour, typed as hex or chosen in a popup: a saturation-and-brightness area, a hue slider, hex and opacity entry, the RGB values, and suggested swatches, applied or cancelled. The value is a native colour input's: `#rrggbb`, or with `alpha`, the CSS form color(srgb r g b / a); it is always a colour (black by default).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-color-picker"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name submitted with the form. Reflected: a form-associated element submits under its name attribute."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Prevents interaction and submission.",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "description": "Help text below the label.",
+          "default": ""
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message; marks the field invalid (custom validity) while set.",
+          "default": ""
+        },
+        "label": {
+          "type": "string",
+          "description": "Visible label; names the field.",
+          "default": ""
+        },
+        "value": {
+          "type": "string",
+          "description": "Initial colour; the `value` attribute, as on a native colour input.",
+          "default": ""
+        },
+        "alpha": {
+          "type": "boolean",
+          "description": "The colour takes an opacity, as HTML’s `alpha` on a colour input.",
+          "default": false
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "choose": {
+              "type": "string"
+            },
+            "change": {
+              "type": "string"
+            },
+            "invalid": {
+              "type": "string"
+            },
+            "area": {
+              "type": "string"
+            },
+            "areaValue": {
+              "type": "string"
+            },
+            "hue": {
+              "type": "string"
+            },
+            "hex": {
+              "type": "string"
+            },
+            "opacity": {
+              "type": "string"
+            },
+            "rgb": {
+              "type": "string"
+            },
+            "swatches": {
+              "type": "string"
+            },
+            "cancel": {
+              "type": "string"
+            },
+            "apply": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides: `choose`, `change` (`{color}`), `invalid`, `area`, `areaValue` (`{saturation}`, `{brightness}`), `hue`, `hex`, `opacity`, `rgb` (`{r}`, `{g}`, `{b}`), `swatches`, `cancel`, `apply`."
+        },
+        "value": {
+          "type": "string",
+          "description": "The colour: `#rrggbb`, or with `alpha`, color(srgb r g b / a). Setting it detaches it from `defaultValue`."
+        }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

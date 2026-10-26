@@ -156,6 +156,10 @@ export const CSS_BUDGETS = {
   // 384: measured 337 on 2026-10-25: the calendar button's target and hover, and the popup
   // holding the calendar without its own surface; the field is the shared control look.
   'components:date-picker': 384,
+  // 1,664: measured 1,644 on 2026-10-26: the field swatch and button, the joined popup, the area
+  // and hue (with the shared range sheets the hue is drawn on), the entries, the suggested-colour
+  // radios, and the actions (the buttons are the shared native-button sheet's).
+  'components:color-picker': 1664,
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   'components:scroll-region': 288, // 266 on 2026-10-26 (235 before): the content column is a layout recipe (layout-recipes.md §14)

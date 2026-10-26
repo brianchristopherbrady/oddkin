@@ -145,6 +145,7 @@ describe('authored examples', () => {
     'odd-file-input/multipleFalse': { observe: (el) => el['multiple'], wrong: true },
     'odd-calendar/requiredFalse': { observe: (el) => el['required'], wrong: true },
     'odd-date-picker/requiredFalse': { observe: (el) => el['required'], wrong: true },
+    'odd-color-picker/alphaFalse': { observe: (el) => el['alpha'], wrong: true },
     'odd-validation-summary/forAttribute': {
       observe: (el) => el.shadowRoot!.querySelector<HTMLElement>('[part~="base"]')!.hidden,
       wrong: true,

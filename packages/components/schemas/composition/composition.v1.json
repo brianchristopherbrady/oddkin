@@ -104,6 +104,9 @@
           "$ref": "odd-chip.v1.json"
         },
         {
+          "$ref": "odd-color-picker.v1.json"
+        },
+        {
           "$ref": "odd-combobox.v1.json"
         },
         {

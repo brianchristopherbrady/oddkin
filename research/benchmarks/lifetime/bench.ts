@@ -15,6 +15,7 @@ import '@oddkin/components/define/card';
 import '@oddkin/components/define/checkbox';
 import '@oddkin/components/define/checkbox-group';
 import '@oddkin/components/define/chip';
+import '@oddkin/components/define/color-picker';
 import '@oddkin/components/define/combobox';
 import '@oddkin/components/define/command-palette';
 import '@oddkin/components/define/container';
@@ -248,6 +249,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-file-input label="Files" name="files" multiple></odd-file-input>
         <odd-calendar label="Date" name="date" value="2026-10-26"></odd-calendar>
         <odd-date-picker label="Due" name="due" value="2026-10-26"></odd-date-picker>
+        <odd-color-picker label="Color" name="color" value="#2563eb"><option value="#d4466c">Rose</option></odd-color-picker>
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
         <odd-scroll-region label="Log" style="max-block-size: 3rem"><p>A</p><p>B</p><p>C</p><p>D</p></odd-scroll-region>
         <odd-container measure="fluid"><p>A</p></odd-container>

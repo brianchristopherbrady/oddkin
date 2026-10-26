@@ -95,6 +95,9 @@ const states = `
     <odd-date-picker label="Due date" description="DD/MM/YYYY" name="due" value="2026-10-26" min="2026-10-05"></odd-date-picker>
     <odd-date-picker label="Review date" name="review" required error="Choose a review date."></odd-date-picker>
     <odd-date-picker label="Signed on" value="2026-10-26" disabled></odd-date-picker>
+    <odd-color-picker label="Layer color" description="Hex, RGB and opacity describe the selected color." name="layer" value="#2563eb" alpha><option value="#2563eb">Blue</option><option value="#d4466c">Rose</option></odd-color-picker>
+    <odd-color-picker label="Label color" name="label-color" error="Choose a darker color."></odd-color-picker>
+    <odd-color-picker label="Archived color" value="#d4466c" disabled></odd-color-picker>
     <odd-textarea label="History" name="history" value="Managed." disabled resize="auto"></odd-textarea>
     <odd-button type="submit" appearance="primary">Submit</odd-button>
     <odd-button type="reset">Reset</odd-button>

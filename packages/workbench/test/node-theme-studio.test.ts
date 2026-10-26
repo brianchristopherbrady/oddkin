@@ -201,6 +201,7 @@ describe('Theme Studio page data', () => {
       'busyIndicator:odd-spinner',
       'calendar:odd-calendar',
       'chip:odd-chip',
+      'colorPicker:odd-color-picker',
       'combobox:odd-combobox',
       'copyButton:odd-copy-button',
       'datePicker:odd-date-picker',

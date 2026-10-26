@@ -991,6 +991,30 @@
       "detectCss": "(accent-color: red)"
     },
     {
+      "id": "forced-color-adjust",
+      "syntax": "forced-color-adjust: none",
+      "kind": "css",
+      "bcd": ["css.properties.forced-color-adjust", "css.properties.forced-color-adjust.none"],
+      "webFeature": "forced-colors",
+      "adoption": "enhancement",
+      "status": "implemented",
+      "milestone": "M10",
+      "usedBy": [
+        "odd-color-picker (only the user's colour data: the swatches, the saturation-and-brightness area, and the hue track)"
+      ],
+      "baseline": "An engine without the property has no forced colours mode (Safari), so the colours show as authored.",
+      "enhanced": "In forced colours, the user's colours stay visible; every control around them still takes system colours.",
+      "gate": "@supports (forced-color-adjust: none)",
+      "differences": "None: where the property is missing, there are no forced colours to opt out of. Never used for theme colours.",
+      "detectCss": "(forced-color-adjust: none)",
+      "tests": [
+        {
+          "file": "packages/components/test/color-picker.browser.test.ts",
+          "name": "keeps the user’s colours in forced colours"
+        }
+      ]
+    },
+    {
       "id": "resize-cursors",
       "syntax": "cursor: col-resize, cursor: row-resize",
       "kind": "css",

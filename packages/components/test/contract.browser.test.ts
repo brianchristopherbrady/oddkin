@@ -54,13 +54,13 @@ describe.each(Object.entries(definitions))(
         .map((m) => m.name)
         .filter((name) => (customElements.get(tag)!.prototype[name] as () => unknown).length === 0);
       const getters = members.filter((m) => m.kind === 'field' && m.readonly).map((m) => m.name);
-      // Boolean attributes except the two that bar an element from constraint validation and
-      // `checked`, which satisfies `required`.
+      // Boolean attributes except the two that bar an element from constraint validation,
+      // `checked`, which satisfies `required`, and `alpha`, which only adds an opacity.
       const constraints = (declaration.attributes ?? []).filter((attribute) => {
         const field = fields(declaration).find((f) => f.name === attribute.fieldName);
         return (
           field?.type?.text === 'boolean' &&
-          !['disabled', 'readonly', 'checked'].includes(attribute.name)
+          !['disabled', 'readonly', 'checked', 'alpha'].includes(attribute.name)
         );
       });
       const snapshot = async (name: string, constrained: boolean) => {

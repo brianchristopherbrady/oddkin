@@ -13,10 +13,10 @@
     "deferred": "Not classified (data grid, deferred by the owner)."
   },
   "counts": {
-    "style": 114,
-    "slot": 52,
+    "style": 115,
+    "slot": 50,
     "deferred": 11,
-    "controller": 17,
+    "controller": 18,
     "native": 7,
     "element": 13
   },
@@ -298,7 +298,7 @@
       "sourceId": "159:285",
       "count": 1,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "The chosen suggested colour of odd-color-picker shows the shared check glyph (glyphs module) at the small icon size, white or black, whichever contrasts more with the colour."
     },
     {
       "consumer": "Oddkin/Common/copyButton",
@@ -1215,8 +1215,8 @@
       "source": "Oddkin/Common/button/sm",
       "sourceId": "181:2332",
       "count": 6,
-      "class": "slot",
-      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
+      "class": "style",
+      "reason": "Cancel and Apply are native buttons in odd-color-picker's shadow root with the small secondary and primary looks of the shared native-button sheet (nativeButtonStyles)."
     },
     {
       "consumer": "Oddkin/Common/colorPicker",
@@ -1225,7 +1225,7 @@
       "sourceId": "555:2564",
       "count": 21,
       "class": "style",
-      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
+      "reason": "The field's colour (part swatch) and each suggested colour (part option-swatch, a native radio over its square) are parts of odd-color-picker; no element of their own."
     },
     {
       "consumer": "Oddkin/Common/colorPicker",
@@ -1234,7 +1234,7 @@
       "sourceId": "257:1654",
       "count": 12,
       "class": "style",
-      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
+      "reason": "The field and the popup's hex and opacity inputs take the shared control look of odd-input (controlStyles): text inputs, the field's with the swatch at its start and the button at its end; no nested element."
     },
     {
       "consumer": "Oddkin/Common/colorPicker",
@@ -1242,8 +1242,8 @@
       "source": "Oddkin/Common/popover",
       "sourceId": "160:2460",
       "count": 3,
-      "class": "slot",
-      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
+      "class": "controller",
+      "reason": "The popup is a popover in the colour picker’s tree, joined under the field, placed and dismissed by the shared overlay wiring (Overlay) and drawn by the overlay-surface module; no nested odd-popover."
     },
     {
       "consumer": "Oddkin/Common/combobox",
@@ -1984,6 +1984,7 @@
     },
     "odd-chip": { "dependencies": [] },
     "odd-citation": { "dependencies": [] },
+    "odd-color-picker": { "dependencies": [] },
     "odd-combobox": {
       "dependencies": [],
       "reason": "Rows, chips, and the clear button are parts drawn from the option-row, listbox, chip, and input sheets (one shadow tree: the input's aria-activedescendant names the options); no nested elements."
@@ -2164,7 +2165,8 @@
         "odd-combobox",
         "odd-slider",
         "odd-rating",
-        "odd-one-time-code"
+        "odd-one-time-code",
+        "odd-color-picker"
       ],
       "note": "Review decision 2026-10-23: the shared control is canonical: color.border.strong, control.height.md (40 px), control.radius (8 px), and control.padding.inline.md (12 px). Both Figma model-select examples now match the existing implementation. Small controls remain an explicit size choice, not a separate AI default. The --odd-field-* overrides apply to the field recipe and form controls."
     },
@@ -2248,7 +2250,8 @@
         "odd-status-marker",
         "odd-relative-time",
         "odd-copy-button",
-        "odd-stat"
+        "odd-stat",
+        "odd-color-picker"
       ],
       "figma": [
         "Built-in affordance glyphs are referenced from Icons page 359:2. The optional 1,723 original Oddkin artwork assets and their provenance live in design/icons; Figma nesting alone does not add runtime icon-element dependencies."
@@ -2269,8 +2272,8 @@
       "home": "packages/components/src/styles/range.structural.styles.ts and range.styles.ts (rangeStructuralStyles, rangeStyles; interpolated into each element's sheets; internal to @oddkin/components)",
       "decision": "Slider areas an element draws: the track, the fill, and the round thumb placed by the value's fraction (mirrored right to left), touch drags, and forced colours.",
       "status": "existing",
-      "code": ["odd-slider"],
-      "figma": ["slider"]
+      "code": ["odd-slider", "odd-color-picker (the hue)"],
+      "figma": ["slider", "colorPicker"]
     },
     {
       "id": "range-input",
@@ -2278,8 +2281,8 @@
       "home": "packages/components/src/form-control/range.ts (parseNumber, rangeEnds, stepNumber, snapNumber, keyValue, pointerDrag; internal to @oddkin/components)",
       "decision": "Numbers on a step grid and the input that moves them: HTML's number syntax and stepUp() algorithm, a range's snap to the nearest value, the APG slider and spinbutton keys, and a pointer drag along an area.",
       "status": "existing",
-      "code": ["odd-input (number)", "odd-slider"],
-      "figma": ["number", "slider"]
+      "code": ["odd-input (number)", "odd-slider", "odd-color-picker"],
+      "figma": ["number", "slider", "colorPicker"]
     },
     {
       "id": "option-row",
@@ -2334,7 +2337,8 @@
         "toast",
         "select (open)",
         "combobox",
-        "multiselect"
+        "multiselect",
+        "colorPicker"
       ],
       "code": [
         "odd-popover",
@@ -2345,7 +2349,8 @@
         "odd-drawer",
         "odd-toast",
         "odd-combobox",
-        "odd-command-palette"
+        "odd-command-palette",
+        "odd-color-picker"
       ]
     },
     {
@@ -2367,7 +2372,8 @@
         "odd-combobox",
         "odd-slider",
         "odd-rating",
-        "odd-one-time-code"
+        "odd-one-time-code",
+        "odd-color-picker"
       ],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]

@@ -134,6 +134,18 @@
       "types": "./dist/chip/chip.define.d.ts",
       "default": "./dist/chip/chip.define.js"
     },
+    "./color-picker": {
+      "types": "./dist/color-picker/index.d.ts",
+      "default": "./dist/color-picker/index.js"
+    },
+    "./color-picker/foundation": {
+      "types": "./dist/color-picker/foundation.d.ts",
+      "default": "./dist/color-picker/foundation.js"
+    },
+    "./define/color-picker": {
+      "types": "./dist/color-picker/color-picker.define.d.ts",
+      "default": "./dist/color-picker/color-picker.define.js"
+    },
     "./combobox": {
       "types": "./dist/combobox/index.d.ts",
       "default": "./dist/combobox/index.js"

@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import type { OddkinCalendar } from '../src/calendar/calendar.js';
+import type { OddkinColorPicker } from '../src/color-picker/color-picker.js';
 import type { OddkinDatePicker } from '../src/date-picker/date-picker.js';
 import type { OddkinFileInput } from '../src/file-input/file-input.js';
 import {
   compare,
+  deliberate,
   expectNone,
   interact,
   mount,
@@ -15,8 +17,8 @@ import {
   type Target,
 } from './parity.js';
 
-// Figma parity of the pickers: the file input, the calendar, and the date picker
-// (component-contracts.md §3.3).
+// Figma parity of the pickers: the file input, the calendar, the date picker, and the colour
+// picker (component-contracts.md §3.3).
 useParity();
 
 describe('Figma parity: odd-file-input (fileUpload)', () => {
@@ -216,5 +218,151 @@ describe('Figma parity: odd-date-picker (datePicker)', () => {
       }
       await transitions(targets);
       expectNone(compare('Oddkin/Common/datePicker', { State: state }, targets));
+    });
+});
+
+// Figma's five recent colours, as `<option>` children.
+const SWATCHES = ['#2563EB', '#D4466C', '#14A39A', '#7C4DCC', '#D9922E']
+  .map((color) => `<option value="${color}">${color}</option>`)
+  .join('');
+
+describe('Figma parity: odd-color-picker (colorPicker)', () => {
+  const field = ['Color field and panel', 'Field focus boundary'];
+  const value = [...field, 'Oddkin/Common/multiselect/Field', 'Value'];
+  const controls = ['Color field and panel', 'Oddkin/Common/popover', 'Content', 'Color controls'];
+  const entries = [...controls, 'Hex and opacity'];
+  const description = 'Hex, RGB and opacity describe the selected color.';
+  const error = 'Enter a six-digit hex color, such as #2563EB.';
+  const states = {
+    Closed: ' value="#2563eb"',
+    'Custom hex': ' value="#d4466c"',
+    Disabled: ' value="#2563eb" disabled',
+    Focus: ' value="#2563eb"',
+    Invalid: ` value="#2563eb" error="${error}"`,
+    Open: ' value="#2563eb"',
+  } as const;
+  for (const [state, attributes] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(
+        `<odd-color-picker label="Layer color" description="${description}" alpha${attributes}>${SWATCHES}</odd-color-picker>`,
+      ) as OddkinColorPicker;
+      await settle(el);
+      const part = (name: string) => shadowPart(el, name);
+      const control = part('control') as HTMLInputElement;
+      if (state === 'Invalid') {
+        await userEvent.clear(control);
+        await userEvent.type(control, '#12ZZ34');
+        await userEvent.tab();
+      }
+      if (state === 'Focus') await interact('Focus', control);
+      const open = state === 'Open' || state === 'Custom hex';
+      if (open) await userEvent.click(part('button'));
+      await settle(el);
+      const hex = state === 'Custom hex' ? '#D4466C' : '#2563EB';
+      const targets: Target[] = [
+        { layer: [], el: part('field'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Layer color'], el: part('label'), kind: 'text' },
+        { layer: [...value, state === 'Invalid' ? '#12ZZ34' : hex], el: control, kind: 'text' },
+        state === 'Invalid'
+          ? { layer: [error], el: part('error'), kind: 'text' }
+          : { layer: [description], el: part('description'), kind: 'text' },
+      ];
+      if (state === 'Focus')
+        targets.push({
+          layer: [...field, 'Focus ring · 2px / 2px offset'],
+          el: control,
+          kind: 'ring',
+        });
+      if (open) {
+        expect(part('popup').matches(':popover-open')).toBe(true);
+        const root = el.shadowRoot!;
+        const [hexEntry, opacityEntry] = root.querySelectorAll<HTMLElement>('.entry');
+        const rgb = state === 'Custom hex' ? 'RGB 212, 70, 108' : 'RGB 37, 99, 235';
+        const opacity = [...entries, 'Opacity'];
+        targets.push(
+          { layer: controls, el: root.querySelector('.controls')!, kind: 'frame', gap: 'row-gap' },
+          {
+            layer: [...controls, 'Saturation and brightness · color data'],
+            el: part('area'),
+            kind: 'frame',
+          },
+          {
+            layer: [...controls, 'Hue · color data'],
+            el: part('hue').querySelector('.track')!,
+            kind: 'frame',
+          },
+          {
+            layer: [...controls, 'Hue · color data', 'Ellipse'],
+            el: part('hue-thumb'),
+            kind: 'frame',
+          },
+          { layer: entries, el: root.querySelector('.entries')!, kind: 'frame', gap: 'column-gap' },
+          { layer: [...entries, 'Hex'], el: hexEntry!, kind: 'frame', gap: 'row-gap' },
+          { layer: [...entries, 'Hex', 'Hex'], el: hexEntry!.firstElementChild!, kind: 'text' },
+          {
+            layer: [...entries, 'Hex', 'Oddkin/Common/multiselect/Field', 'Value', hex],
+            el: part('hex'),
+            kind: 'text',
+          },
+          { layer: opacity, el: opacityEntry!, kind: 'frame', gap: 'row-gap' },
+          { layer: [...opacity, 'Opacity'], el: opacityEntry!.firstElementChild!, kind: 'text' },
+          {
+            layer: [...opacity, 'Oddkin/Common/multiselect/Field', 'Value', '100%'],
+            el: part('opacity'),
+            kind: 'text',
+          },
+          { layer: [...controls, rgb], el: part('rgb'), kind: 'text' },
+          {
+            layer: [...controls, 'Recent colors'],
+            el: root.querySelector('.swatches-label')!,
+            kind: 'text',
+          },
+          {
+            layer: [...controls, 'Recent swatches'],
+            el: root.querySelector('.swatch-row')!,
+            kind: 'frame',
+            gap: 'column-gap',
+          },
+          {
+            layer: [...controls, 'Color actions'],
+            el: root.querySelector('.actions')!,
+            kind: 'frame',
+            gap: 'column-gap',
+          },
+        );
+      }
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/colorPicker', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: odd-color-picker suggested colours (color/Swatch)', () => {
+  deliberate([
+    /^color\/Swatch \S+ \S+ fills \(none\)/,
+    'The swatch is filled with its colour, user data that Figma deliberately binds to no role.',
+  ]);
+  for (const state of ['Default', 'Disabled', 'Focus', 'Selected'] as const)
+    it(state, async () => {
+      const disabled = state === 'Disabled' ? ' disabled' : '';
+      const el = mount(
+        `<odd-color-picker label="Layer color" value="${state === 'Default' ? '#000000' : '#2563eb'}"><option value="#2563eb"${disabled}>Blue</option></odd-color-picker>`,
+      ) as OddkinColorPicker;
+      await settle(el);
+      // Opened from the keyboard, so focus in the popup is visible.
+      shadowPart(el, 'button').focus();
+      await userEvent.keyboard('{Enter}');
+      await settle(el);
+      const swatch = shadowPart(el, 'option-swatch');
+      if (state === 'Focus') {
+        await userEvent.keyboard('{Tab}{Tab}{Tab}');
+        expect(swatch.matches(':has(:focus-visible)')).toBe(true);
+      }
+      expect(swatch.querySelector('input')!.checked).toBe(state !== 'Default');
+      const targets: Target[] = [{ layer: [], el: swatch, kind: 'frame' }];
+      if (state === 'Focus')
+        targets.push({ layer: ['Focus ring · 2px / 2px offset'], el: swatch, kind: 'ring' });
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/color/Swatch', { State: state }, targets));
+      if (state === 'Disabled') expect(getComputedStyle(swatch).opacity).toBe('0.45');
     });
 });
