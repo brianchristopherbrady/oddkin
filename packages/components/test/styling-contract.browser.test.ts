@@ -36,8 +36,8 @@ const components: Record<
     part: string;
     content: string;
     variables: Record<string, Variable>;
-    /** Attributes under which every documented part renders. */
-    allParts?: string;
+    /** Attribute sets under which, together, every documented part renders. */
+    allParts?: string[];
   }
 > = {
   'odd-button': {
@@ -80,7 +80,7 @@ const components: Record<
   'odd-input': {
     part: 'control',
     content: '',
-    allParts: 'type="search"',
+    allParts: ['type="search"', 'type="number"'],
     variables: {
       '--odd-field-background': {
         property: 'background-color',
@@ -391,13 +391,20 @@ describe('parts', () => {
     page.replaceSync(
       parts.map((name) => `${tag}::part(${name}) { outline: 3px dotted rgb(9, 8, 7); }`).join('\n'),
     );
-    const [host] = await render(instance(tag, undefined, components[tag]!.allParts));
-    const rendered = [...host!.shadowRoot!.querySelectorAll('[part]')].flatMap((el) =>
-      el.getAttribute('part')!.split(/\s+/),
+    const hosts = await render(
+      (components[tag]!.allParts ?? ['']).map((set) => instance(tag, undefined, set)).join(''),
     );
-    expect(rendered.sort()).toEqual([...parts].sort());
+    const rendered = new Set(
+      hosts.flatMap((host) =>
+        [...host.shadowRoot!.querySelectorAll('[part]')].flatMap((el) =>
+          el.getAttribute('part')!.split(/\s+/),
+        ),
+      ),
+    );
+    expect([...rendered].sort()).toEqual([...parts].sort());
     for (const name of parts) {
-      const style = getComputedStyle(partOf(host!, name));
+      const host = hosts.find((h) => partOf(h, name))!;
+      const style = getComputedStyle(partOf(host, name));
       expect([style.outlineStyle, style.outlineColor], name).toEqual(['dotted', 'rgb(9, 8, 7)']);
     }
   });

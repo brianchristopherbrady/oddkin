@@ -191,9 +191,11 @@ export const CSS_BUDGETS = {
   'components:spinner': 384, // 319
   'components:button': 1280, // measured 1,238 on 2026-10-23 with the toggle's pressed state (1,028 before)
   'components:card': 768, // measured 678 with type.body and a type.title heading default (571 before)
-  // 320: measured 290 on 2026-10-23 with the search field's clear button, which only odd-input
-  // draws (55 before; the field look is the shared control module).
-  'components:input': 320,
+  // 576: measured 511 on 2026-10-26 with the number field's stepper (Figma `number`: the sunken
+  // segment inside the border, its two buttons, and the text's end padding); 290 on 2026-10-23
+  // with the search field's clear button. Only odd-input draws them (55 before; the field look is
+  // the shared control module).
+  'components:input': 576,
   // 128: measured 56 on 2026-10-23; the row, box, and marks are the shared control-indicator module.
   'components:checkbox': 128,
   // 256: measured 187 on 2026-10-23: the choices' stack and spacing; the legend, help, and error are

@@ -124,6 +124,15 @@
           "properties": {
             "clear": {
               "type": "string"
+            },
+            "decrement": {
+              "type": "string"
+            },
+            "increment": {
+              "type": "string"
+            },
+            "badInput": {
+              "type": "string"
             }
           },
           "description": "Localized string overrides."
@@ -131,6 +140,10 @@
         "value": {
           "type": "string",
           "description": "The current value. Setting it (or typing) detaches it from `defaultValue`."
+        },
+        "valueAsNumber": {
+          "type": "number",
+          "description": "The value as a number (a date or time as milliseconds), as on native inputs; `NaN` when empty."
         }
       }
     },

@@ -60,7 +60,7 @@ tokens, slot content, a native element, or a look-alike.
 | `field` | 2 | the field anatomy of every form control; `.odd-field` recipe (`css/field.css`) | Existing (shared module) | Not an element: each form control renders label, description, control, and error (`OddkinFormControl`, the control module); the recipe gives plain HTML fields the same look. |
 | `input` | 8 | `odd-input` | Existing | Types text, email, password, tel, url, search, number, date, time, datetime-local, month, week. |
 | `textarea` | 5 | `odd-textarea` (native `<textarea>`, `field-sizing` gated, F12) | Existing | `rows`, `resize` (`auto` follows the content), and a `count` part with `maxlength`. |
-| `number` | 3 | `odd-input type="number"` | Existing (variant) | The engine's spin buttons stay, unstyled (only prefixed pseudo-elements hide them); Figma's stepper segment is a recorded difference. |
+| `number` | 6 | `odd-input type="number"` | Existing (variant) | The WAI-ARIA spinbutton the element draws (owner decision B): Figma's stepper segment as part `stepper` with `decrement` and `increment`, disabled at the ends of the range; validity and messages from a detached native number input, typed text that is not a number `badInput`. |
 | `search` | 4 | `odd-input type="search"` | Existing (variant) | A searchbox with a search glyph and a clear button (parts `icon`, `clear`); Escape clears. |
 | `checkbox` | 15 | `odd-checkbox` | Existing | |
 | `radio` | 10 | native radio inside `odd-radio-group` | Existing (part) | The control-indicator box made round, with the group's own dot; checked, hover, focus, disabled, and invalid as Figma. |

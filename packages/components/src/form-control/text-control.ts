@@ -56,8 +56,13 @@ export class OddkinTextControl extends OddkinFormControl.with({
   /** @internal The host's text-entry hints (`inputmode`, `spellcheck`, …) for the native field. */
   readonly _hints = new TextHints(this);
 
-  /** @internal The value as a readable for the template's live binding. */
-  readonly _currentValue: Readable<string> = computed(() => this.value);
+  /**
+   * @internal The text in the native field, for the template's live binding: what the user typed,
+   * even when the value cannot hold it (a number field's letters), else the value.
+   */
+  readonly _currentValue: Readable<string> = computed(
+    () => this.#value.value ?? this._sanitize(this.defaultValue),
+  );
 
   constructor() {
     super();
@@ -71,10 +76,19 @@ export class OddkinTextControl extends OddkinFormControl.with({
 
   /** The current value. Setting it (or typing) detaches it from `defaultValue`. */
   get value(): string {
-    return this.#value.value ?? this.defaultValue;
+    const typed = this.#value.value;
+    return typed === undefined ? this._sanitize(this.defaultValue) : this._sanitize(typed, true);
   }
   set value(value: string) {
-    this.#value.value = String(value ?? '');
+    this.#value.value = this._sanitize(String(value ?? ''));
+  }
+
+  /**
+   * @internal The value a text stands for, as a native input's value sanitization: the text
+   * itself here. `typed` text came from the user and may be read more loosely.
+   */
+  protected _sanitize(text: string, _typed = false): string {
+    return text;
   }
 
   protected override connected(scope: Scope): void {

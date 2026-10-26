@@ -321,7 +321,11 @@ export const CATALOG: Catalog = {
       step: 'string',
       pattern: 'string',
     },
-    properties: { strings: { texts: ['clear'] }, value: 'string' },
+    properties: {
+      strings: { texts: ['clear', 'decrement', 'increment', 'badInput'] },
+      value: 'string',
+      valueAsNumber: 'number',
+    },
     fixed: ['form', 'validationMessage', 'validity', 'willValidate'],
     slots: [],
     events: ['change', 'input'],

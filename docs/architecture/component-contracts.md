@@ -155,10 +155,24 @@ nothing. Figma `toggleButton` Value On → `pressed`: the selection colours in e
 **`odd-input`** — `type` adds `number`, `date`, `time`, `datetime-local`, `month`, `week` (an engine without
 one falls back to text, as the native input does); adds `min`, `max`, `step` (strings, as on `<input>`: number and
 date types), `minlength`, `maxlength`, `pattern` (text types). The global `inputmode` attribute on the host is
-forwarded to the native input (a property of that name would shadow `HTMLElement.inputMode`). `type="number"` keeps
-the engine's spin buttons, unstyled, and arrow keys step: only engine-prefixed pseudo-elements hide them, and the CSS
-policy allows no prefixed-only feature, so there are no `decrement`/`increment` parts and Figma's stepper segment is
-a deliberate difference. `type="search"` is a text input with `role="searchbox"` and `enterkeyhint="search"`, for
+forwarded to the native input (a property of that name would shadow `HTMLElement.inputMode`). `type="number"` is the
+WAI-ARIA spinbutton, drawn by the element (owner decision B, 2026-10-25; Figma `number`): only engine-prefixed
+pseudo-elements hide the engine's spin buttons, and the CSS policy allows no prefixed-only feature. A text input with
+`role="spinbutton"`, `inputmode="decimal"` (unless the host sets one), `aria-valuenow`, `aria-valuemin`,
+`aria-valuemax`, and `aria-valuetext` when the text is not the plain number; part `stepper` (Figma's sunken segment
+inside the border) holds parts `decrement` and `increment` (buttons, `tabindex="-1"`, named by `strings.decrement`
+and `strings.increment`; a press keeps focus in the field; each is disabled where its step cannot move the value, and
+both while disabled or read-only). Up and Down step by `step`, Page Up and Page Down by ten steps, Home and End go to
+the lowest and highest values on the grid when `min` and `max` are set; each step that moves the value dispatches
+`input` and `change`, as a native number field's arrow keys do. Stepping is HTML's `stepUp()` algorithm, the same in
+every engine (the engines differ at its edges: on `stepUp`, Chromium and WebKit move a value at a maximum off the grid
+down onto it; WebKit leaves an empty field empty on `stepDown`); `step="any"` steps by one. `value` is sanitized as a native number field's
+(a valid floating-point number, else empty); typed text that is not one stays in the field, the value and the
+submission are empty, and validity is `badInput` with `strings.badInput` ("Enter a number."; a trailing full stop
+reads as the number, as the engines read it). `rangeUnderflow`, `rangeOverflow`, `stepMismatch`, and `valueMissing`
+and their messages come from a detached native number input. Adds `valueAsNumber`, `stepUp(n)`, and `stepDown(n)`
+as on `<input>` (other types answer through a detached native input of their type). `type="search"` is a text input
+with `role="searchbox"` and `enterkeyhint="search"`, for
 the same reason (the native cancel button cannot be hidden otherwise): part `icon` (the search glyph) and part
 `clear` (a button, `tabindex="-1"`, named by `strings.clear`, shown while there is a value and the field is enabled
 and editable; it clears, dispatches `input` and `change`, and keeps focus). Escape clears too. Date and time types

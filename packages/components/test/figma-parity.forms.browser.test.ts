@@ -126,23 +126,55 @@ describe('Figma parity: toggleButton', () => {
 });
 
 describe('Figma parity: odd-input types (number, search, dateTime)', () => {
-  for (const state of ['Default', 'Disabled', 'Focus'])
+  const numbers = {
+    Default: ['12', ''],
+    Disabled: ['12', ' disabled'],
+    Focus: ['12', ''],
+    Minimum: ['1', ''],
+    Maximum: ['50', ''],
+    Invalid: ['0', ' error="Enter a value between 1 and 50."'],
+  } as const;
+  for (const [state, [value, attribute]] of Object.entries(numbers))
     it(`number ${state}`, async () => {
-      const disabled = state === 'Disabled' ? ' disabled' : '';
+      const description = state === 'Invalid' ? '' : ' description="1–50 seats available."';
       const el = mount(
-        `<odd-input type="number" label="Seats" description="1–50 seats available." value="12" min="1" max="50"${disabled}></odd-input>`,
+        `<odd-input type="number" label="Seats"${description} value="${value}" min="1" max="50"${attribute}></odd-input>`,
       );
       await settle(el);
       const control = shadowPart(el, 'control');
       await interact(state, control);
       await settle(el);
-      const root = `Number input / ${state}`;
+      // Minimum, Maximum, and Invalid are drawn in a frame named after the default state.
+      const root = `Number input / ${state in { Disabled: 1, Focus: 1 } ? state : 'Default'}`;
       const targets: Target[] = [
         { layer: [root, 'Seats'], el: shadowPart(el, 'label'), kind: 'text' },
-        { layer: [root, '1–50 seats available.'], el: shadowPart(el, 'description'), kind: 'text' },
         { layer: [root, 'Surface'], el: control, kind: 'frame' },
-        { layer: [root, 'Surface', '12'], el: control, kind: 'text' },
+        { layer: [root, 'Surface', value], el: control, kind: 'text' },
+        { layer: [root, 'Surface', 'Surface'], el: shadowPart(el, 'stepper'), kind: 'frame' },
+        {
+          layer: [root, 'Surface', 'Surface', 'Decrease value'],
+          el: shadowPart(el, 'decrement'),
+          kind: 'frame',
+        },
+        {
+          layer: [root, 'Surface', 'Surface', 'Increase value'],
+          el: shadowPart(el, 'increment'),
+          kind: 'frame',
+        },
       ];
+      targets.push(
+        state === 'Invalid'
+          ? {
+              layer: [root, 'Enter a value between 1 and 50.'],
+              el: shadowPart(el, 'error'),
+              kind: 'text',
+            }
+          : {
+              layer: [root, '1–50 seats available.'],
+              el: shadowPart(el, 'description'),
+              kind: 'text',
+            },
+      );
       if (state === 'Focus')
         targets.push({ layer: [root, 'Surface [2]'], el: control, kind: 'ring' });
       await transitions(targets);

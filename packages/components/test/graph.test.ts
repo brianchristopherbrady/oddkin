@@ -85,6 +85,8 @@ describe('@oddkin/components/input import graphs', () => {
     expect(files).toEqual([
       'form-control/description.js',
       'form-control/form-control.js',
+      // The number field's step grid.
+      'form-control/range.js',
       'form-control/text-control.js',
       'form-control/text-hints.js',
       'input/foundation.js',
@@ -92,7 +94,7 @@ describe('@oddkin/components/input import graphs', () => {
       'input/input.structural.styles.js',
       'input/input.template.js',
       'styles/field.structural.styles.js',
-      // The search and clear glyph templates.
+      // The search, clear, and stepper glyph templates.
       'styles/glyphs.js',
       'styles/host.styles.js',
     ]);

@@ -124,9 +124,13 @@ describe('@oddkin/components published metadata', () => {
       ],
       intents: { 'event:odd-side-nav#odd-action': 'user', 'event:odd-side-nav#odd-toggle': 'user' },
     });
-    // `value` is an accessor; the `value` attribute sets `defaultValue`.
+    // `value` is an accessor; the `value` attribute sets `defaultValue`. `valueAsNumber` has no attribute.
     expect(facts('odd-input')).toEqual({
-      propertyOnly: ['property:odd-input#strings', 'property:odd-input#value'],
+      propertyOnly: [
+        'property:odd-input#strings',
+        'property:odd-input#value',
+        'property:odd-input#valueAsNumber',
+      ],
       intents: { 'event:odd-input#change': 'user', 'event:odd-input#input': 'user' },
     });
     expect(facts('odd-button')).toEqual({
