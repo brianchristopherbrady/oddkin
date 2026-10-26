@@ -10,7 +10,7 @@ import { loadTheme, probeTag, semantics, settle, themeValue } from './probe.js';
 
 // Agent 4's structured-content recipes (component-contracts.md §4), loaded as a page would load them
 // from the built package (`dist/css/<name>.css`), with the shipped theme.
-const RECIPES = ['typography', 'description-list', 'timeline'];
+const RECIPES = ['typography', 'description-list', 'timeline', 'stepper'];
 let links: HTMLLinkElement[] = [];
 let unload: () => void;
 beforeAll(async () => {
@@ -388,4 +388,129 @@ describe('timeline recipe', () => {
       }
     },
   );
+});
+
+const STEPS = `<ol class="odd-stepper" aria-label="Setup progress">
+  <li><odd-status-marker status="complete"></odd-status-marker><div><a href="#details">Details</a><span>Complete</span></div></li>
+  <li aria-current="step"><odd-status-marker>2</odd-status-marker><div><span>Members</span><span>Current step</span></div></li>
+  <li><odd-status-marker>3</odd-status-marker><div><span>Review</span><span>Not started</span></div></li>
+</ol>`;
+
+describe('stepper recipe', () => {
+  it('keeps the ordered list semantics and marks the current step', async () => {
+    const ol = mount(STEPS);
+    await settleAll(ol);
+    await expect.element(page.getByRole('list', { name: 'Setup progress' })).toBeVisible();
+    expect(page.getByRole('listitem').elements()).toHaveLength(3);
+    expect(ol.children[1]!.getAttribute('aria-current')).toBe('step');
+    expect(style(ol.firstElementChild!).listStyleType).toBe('none');
+  });
+
+  it('puts the steps in a row, space.sm apart, each marker space.xs from its words', async () => {
+    const ol = mount(STEPS, 800);
+    await settleAll(ol);
+    const steps = [...ol.children] as HTMLElement[];
+    expect(new Set(steps.map((li) => box(li).top)).size).toBe(1);
+    expect(box(steps[1]!).left - box(steps[0]!).right).toBe(px('gap', '--odd-space-sm'));
+    // The steps share the row equally.
+    const widths = steps.map((li) => Math.round(box(li).width));
+    expect(new Set(widths).size).toBe(1);
+    expect(widths[0]! * 3 + 2 * px('gap', '--odd-space-sm')).toBeCloseTo(box(ol).width, -1);
+    const marker = steps[0]!.querySelector('odd-status-marker')!;
+    expect(box(steps[0]!.lastElementChild!).left - box(marker).right).toBe(
+      px('gap', '--odd-space-xs'),
+    );
+  });
+
+  it('stacks the steps at 36rem of its own width, not of the viewport', async () => {
+    for (const [width, stacked] of [
+      [577, false],
+      [576, true],
+      [320, true],
+    ] as const) {
+      const ol = mount(STEPS, width);
+      await settleAll(ol);
+      const steps = [...ol.children] as HTMLElement[];
+      const tops = steps.map((li) => box(li).top);
+      if (stacked) {
+        expect(tops[1]! - box(steps[0]!).bottom, `${width}px`).toBe(px('gap', '--odd-space-sm'));
+        expect(box(steps[2]!).width, `${width}px`).toBe(box(ol).width);
+      } else expect(new Set(tops).size, `${width}px`).toBe(1);
+      container.remove();
+    }
+  });
+
+  it('shows each step’s name in the UI role and its status small and secondary', async () => {
+    const ol = mount(STEPS);
+    await settleAll(ol);
+    const [name, status] = [...ol.querySelector('li > div')!.children];
+    expect(style(name!).color).toBe(themeValue('color', '--odd-color-text-primary'));
+    expect(style(name!).fontSize).toBe(themeValue('font-size', '--odd-type-ui-size'));
+    expect(style(status!).color).toBe(themeValue('color', '--odd-color-text-secondary'));
+    expect(style(status!).fontSize).toBe(themeValue('font-size', '--odd-type-small-size'));
+    expect(box(status!).top - box(name!).bottom).toBe(px('gap', '--odd-space-2xs'));
+    // A step link keeps the text colour and its underline.
+    expect(style(name!).textDecorationLine).toBe('underline');
+  });
+
+  it('gives the current step the action colours, complete steps the action fill, upcoming ones the sunken ring', async () => {
+    const ol = mount(STEPS);
+    await settleAll(ol);
+    const [complete, current, upcoming] = [...ol.querySelectorAll('odd-status-marker')].map(part);
+    expect(style(current!).backgroundColor).toBe(themeValue('color', '--odd-color-action-default'));
+    expect(style(current!).color).toBe(themeValue('color', '--odd-color-text-on-action'));
+    expect(style(current!).borderTopColor).toBe(themeValue('color', '--odd-color-action-default'));
+    expect(style(complete!).backgroundColor).toBe(
+      themeValue('color', '--odd-color-action-default'),
+    );
+    expect(style(upcoming!).backgroundColor).toBe(
+      themeValue('color', '--odd-color-surface-sunken'),
+    );
+    expect(style(upcoming!).borderTopColor).toBe(themeValue('color', '--odd-color-border-strong'));
+    expect(box(upcoming!).width).toBe(px('inline-size', '--odd-control-height-sm'));
+  });
+
+  it('marks the current step from aria-current on its link too', async () => {
+    const ol = mount(
+      STEPS.replace(' aria-current="step"', '').replace(
+        '<a href="#details">',
+        '<a href="#details" aria-current="step">',
+      ),
+    );
+    await settleAll(ol);
+    const marker = part(ol.querySelector('odd-status-marker')!);
+    // The complete marker is in the action colours either way; the second is not current now.
+    expect(style(part(ol.querySelectorAll('odd-status-marker')[1]!)).backgroundColor).toBe(
+      themeValue('color', '--odd-color-surface-sunken'),
+    );
+    expect(style(marker).borderTopColor).toBe(themeValue('color', '--odd-color-action-default'));
+    const idle = mount(
+      STEPS.replace('status="complete"', '')
+        .replace(' aria-current="step"', '')
+        .replace('<a href="#details">', '<a href="#details" aria-current="step">'),
+    );
+    await settleAll(idle);
+    expect(style(part(idle.querySelector('odd-status-marker')!)).backgroundColor).toBe(
+      themeValue('color', '--odd-color-action-default'),
+    );
+  });
+
+  it('says a failed step needs attention in the danger colour', async () => {
+    const ol = mount(
+      STEPS.replace(
+        '<odd-status-marker>2</odd-status-marker>',
+        '<odd-status-marker status="failed"></odd-status-marker>',
+      ).replace('Current step', 'Needs attention'),
+    );
+    await settleAll(ol);
+    const failed = ol.children[1]!;
+    const status = failed.querySelector('div > :last-child')!;
+    expect(style(status).color).toBe(themeValue('color', '--odd-color-danger-foreground'));
+    expect(style(failed.querySelector('div > :first-child')!).color).toBe(
+      themeValue('color', '--odd-color-text-primary'),
+    );
+    expect(style(ol.children[2]!.querySelector('div > :last-child')!).color).toBe(
+      themeValue('color', '--odd-color-text-secondary'),
+    );
+  });
 });

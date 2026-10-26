@@ -610,6 +610,72 @@ export const timeline: DocumentStylesheet = {
   `,
 };
 
+/**
+ * `ol.odd-stepper`: the steps of a task, each an `li` holding an `odd-status-marker` (a number,
+ * or complete or failed) and its words (`<div><a href>Name</a><span>Complete</span></div>`). The
+ * current step has `aria-current="step"` (on the `li` or its link) and the action colours; a
+ * failed step's words take the danger colour. Step links keep the text colour and their underline.
+ * Steps sit in a row and stack at 36rem of the list.
+ */
+export const stepper: DocumentStylesheet = {
+  layer: 'odd.components',
+  styles: css`
+    .odd-stepper {
+      container: odd-stepper / inline-size;
+      display: flex;
+      flex-wrap: wrap;
+      gap: ${token('space.sm')};
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .odd-stepper > li {
+      display: flex;
+      flex: 1 1 0;
+      align-items: center;
+      gap: ${token('space.xs')};
+      min-inline-size: 0;
+    }
+    .odd-stepper > li > :last-child {
+      display: flex;
+      flex-direction: column;
+      gap: ${token('space.2xs')};
+      min-inline-size: 0;
+      overflow-wrap: anywhere;
+      color: ${token('color.text.primary')};
+      font-family: ${token('type.ui.family')};
+      font-size: ${token('type.ui.size')};
+      font-weight: ${token('type.ui.weight')};
+      line-height: ${token('type.ui.line-height')};
+    }
+    .odd-stepper > li > :last-child > :not(:first-child) {
+      color: ${token('color.text.secondary')};
+      font-family: ${token('type.small.family')};
+      font-size: ${token('type.small.size')};
+      font-weight: ${token('type.small.weight')};
+      line-height: ${token('type.small.line-height')};
+    }
+    .odd-stepper a {
+      color: inherit;
+    }
+    .odd-stepper > li:has(> odd-status-marker[status='failed']) > :last-child > :not(:first-child) {
+      color: ${token('color.danger.foreground')};
+    }
+    .odd-stepper
+      > :is([aria-current='step'], :has([aria-current='step']))
+      > odd-status-marker::part(base) {
+      border-color: ${token('color.action.default')};
+      background: ${token('color.action.default')};
+      color: ${token('color.text.on-action')};
+    }
+    @container odd-stepper (max-inline-size: 36rem) {
+      .odd-stepper > li {
+        flex-basis: 100%;
+      }
+    }
+  `,
+};
+
 /** Page-level utilities with the same rules as the shadow-root primitives. */
 export const utilities: DocumentStylesheet = {
   layer: 'odd.utilities',
@@ -647,5 +713,6 @@ export const documentStylesheets = {
   'avatar-group': avatarGroup,
   'description-list': descriptionList,
   timeline,
+  stepper,
   utilities,
 } as const;

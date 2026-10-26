@@ -10,7 +10,7 @@ export default defineExamples('odd-status-marker', {
     recommended: true,
     preset: true,
     guidance:
-      'Use it inside the `.odd-timeline` recipe, and say the status in words beside it: the marker is hidden from assistive technology.',
+      'Use it inside the `.odd-timeline` or `.odd-stepper` recipe, and say the status in words beside it: the marker is hidden from assistive technology.',
   },
   step: {
     label: 'Step number',

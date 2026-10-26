@@ -3041,3 +3041,22 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Ot
 - **Unavailable:** an empty `value` shows "—" (hidden from assistive technology) and "Data not available" (`strings.unavailable`).
 - **Glyph:** `arrowUpGlyph` added to `styles/glyphs.ts` from the owner's `direction-arrow-bold-up.svg`; a decrease rotates it.
 - **Not verified:** screen-reader output (reading order, the busy state); Safari on macOS.
+
+## 2026-10-25 — Stepper recipe (M10 round 5, component-contracts.md §1, §4; Figma `stepper`)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Other lanes' work in progress in the tree: Agent 2's `odd-calendar`, Agent 3's `odd-picker` and collection modules, Agent 1's `odd-one-time-code`. The committed snapshot (558:16987) is the reference; the Figma MCP tools were not available.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Behaviour and Figma parity | `structured.browser.test.ts` and `figma-parity.display.browser.test.ts` (stepper Start, In progress, Narrow, Error, Complete) (× 3 engines) | Chromium 54/54; Firefox and WebKit 52 passed, 2 skipped (forced colours runs in Chromium only); no recorded parity difference |
+| Catalog-wide | structured, display parity, recipes-css, examples, contract, accessibility (× 3 engines) | pass; the only failure is `odd-picker/itemsAttribute` (Agent 3, in progress) |
+| Mutation probes | 18 on `dist/css/stepper.css` and the marker's line height (Chromium) | 16 killed first; equal step widths killed by a new test; the marker's line height (1 or the UI role's) is equivalent and stays 1 |
+| Node project, typecheck | `npx vitest run --project node`, `npm run typecheck` | typecheck passes; node: 3 failures, all other lanes' (the agent kit's GUIDE.md budget; `odd-picker`'s example `uses` in examples and impact) |
+| Size, compatibility | `node scripts/check-size.mjs`, `npm run compat` | `components:recipes` 2,735 B of 2,752 (raised from 2,624); compat OK, no new key |
+
+**Findings:**
+- **Recipe, not element:** a stepper is navigation through a task; the list and `aria-current="step"` carry the semantics, and the markers' glyphs come from the shared `odd-status-marker` (decision C of the 14:46 owner question). Panels, actions, and validation stay application content, as Figma says.
+- **States:** complete and failed are the marker's `status`; current and upcoming steps show their number, and the current step (`aria-current="step"` on the `li` or on its link, through `:has()`) takes the action fill, ring, and text colours, as Figma's Step status does. A failed step's words ("Needs attention") take the danger colour; Figma draws "!" as text in the failed marker, where the marker draws its warning glyph.
+- **Layout:** steps share the row equally, `space.sm` apart, marker and words `space.xs` apart, name and status `space.2xs` apart; the list is an inline-size container (`odd-stepper`) and at 36rem of its own width or less each step takes the whole row (tested at 577, 576, and 320 px). Step links keep the text colour and their underline.
+- **Shared element docs:** `odd-status-marker`'s description and example guidance now name the `.odd-stepper` recipe; the reuse map's stepper references name the marker (check) and the application's own buttons (actions).
+- **Not verified:** screen-reader output for `aria-current="step"`; Safari on macOS.

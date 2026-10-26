@@ -629,6 +629,7 @@
     "./css/avatar-group.css": "./dist/css/avatar-group.css",
     "./css/description-list.css": "./dist/css/description-list.css",
     "./css/timeline.css": "./dist/css/timeline.css",
+    "./css/stepper.css": "./dist/css/stepper.css",
     "./css/utilities.css": "./dist/css/utilities.css",
     "./custom-elements.json": "./custom-elements.json",
     "./oddkin.metadata.json": "./oddkin.metadata.json",

@@ -223,10 +223,10 @@ export const CSS_BUDGETS = {
   // .odd-split-end and .odd-auto-grid-fit
   'components:layout': 704,
   'components:button.css': 1024, // measured 999 on 2026-10-23: button.css, the native <button> path, with aria-pressed
-  // 2,624: measured 2,594 on 2026-10-25 with timeline.css (+304); 2,290 with description-list.css and
-  // typography's gated text-wrap; 2,081 on 2026-10-23 with the field recipe's start and end adornments
-  // (the shared control module's, b67b90c); 1,821 on 2026-10-22 for the eight CSS recipes.
-  'components:recipes': 2624,
+  // 2,752: measured 2,735 on 2026-10-25 with stepper.css (+141); 2,594 with timeline.css; 2,290 with
+  // description-list.css and typography's gated text-wrap; 2,081 on 2026-10-23 with the field recipe's
+  // start and end adornments (b67b90c); 1,821 on 2026-10-22 for the eight CSS recipes.
+  'components:recipes': 2752,
   'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
 };
 
@@ -288,6 +288,7 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
       'avatar-group',
       'description-list',
       'timeline',
+      'stepper',
     ]
       .map((name) => readFileSync(join(root, `packages/components/dist/css/${name}.css`), 'utf8'))
       .join('\n'),

@@ -311,3 +311,99 @@ describe('Figma parity: odd-stat (stat)', () => {
       expectNone(compare('Oddkin/Common/stat', { State: state }, targets));
     });
 });
+
+describe('Figma parity: stepper recipe and odd-status-marker (stepper)', () => {
+  useRecipeStyles(['base', 'stepper']);
+
+  type Step = ['complete' | 'current' | 'upcoming' | 'failed', string];
+  const NAMES = ['Details', 'Members', 'Review'];
+  const VARIANTS: Record<string, [number, Step[]]> = {
+    Start: [
+      640,
+      [
+        ['current', 'Current step'],
+        ['upcoming', 'Not started'],
+        ['upcoming', 'Not started'],
+      ],
+    ],
+    'In progress': [
+      640,
+      [
+        ['complete', 'Complete'],
+        ['current', 'Current step'],
+        ['upcoming', 'Not started'],
+      ],
+    ],
+    Narrow: [
+      320,
+      [
+        ['complete', 'Complete'],
+        ['current', 'Current step'],
+        ['upcoming', 'Not started'],
+      ],
+    ],
+    Error: [
+      640,
+      [
+        ['complete', 'Complete'],
+        ['failed', 'Needs attention'],
+        ['upcoming', 'Not started'],
+      ],
+    ],
+    Complete: [
+      640,
+      [
+        ['complete', 'Complete'],
+        ['complete', 'Complete'],
+        ['complete', 'Complete'],
+      ],
+    ],
+  };
+  for (const [state, [width, steps]] of Object.entries(VARIANTS))
+    it(state, async () => {
+      const markup = steps
+        .map(([kind, words], i) => {
+          const marker =
+            kind === 'complete' || kind === 'failed'
+              ? `<odd-status-marker status="${kind}"></odd-status-marker>`
+              : `<odd-status-marker>${i + 1}</odd-status-marker>`;
+          return `<li${kind === 'current' ? ' aria-current="step"' : ''}>${marker}<div><span>${NAMES[i]}</span><span>${words}</span></div></li>`;
+        })
+        .join('');
+      const ol = mount(
+        `<div style="inline-size: ${width}px"><ol class="odd-stepper">${markup}</ol></div>`,
+      ).firstElementChild as HTMLElement;
+      for (const m of ol.querySelectorAll('odd-status-marker')) await settle(m);
+      const targets: Target[] = [
+        {
+          layer: ['Wizard progress'],
+          el: ol,
+          kind: 'frame',
+          gap: state === 'Narrow' ? 'row-gap' : 'column-gap',
+        },
+      ];
+      steps.forEach(([kind, words], i) => {
+        const li = ol.children[i] as HTMLElement;
+        const step = ['Wizard progress', `Step ${i + 1}`];
+        const [name, status] = [...li.querySelector('div')!.children];
+        const base = li
+          .querySelector('odd-status-marker')!
+          .shadowRoot!.querySelector<HTMLElement>('[part~="base"]')!;
+        targets.push(
+          { layer: step, el: li, kind: 'frame', gap: 'column-gap' },
+          {
+            layer: [...step, 'Step label'],
+            el: li.querySelector('div')!,
+            kind: 'frame',
+            gap: 'row-gap',
+          },
+          { layer: [...step, 'Step label', NAMES[i]!], el: name!, kind: 'text' },
+          { layer: [...step, 'Step label', words], el: status!, kind: 'text' },
+          { layer: [...step, 'Step status'], el: base, kind: 'frame' },
+        );
+        if (kind === 'current' || kind === 'upcoming')
+          targets.push({ layer: [...step, 'Step status', String(i + 1)], el: base, kind: 'text' });
+      });
+      expectNone(compare('Oddkin/Common/stepper', { State: state }, targets));
+    });
+});

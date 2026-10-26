@@ -1756,7 +1756,7 @@
       "sourceId": "181:2332",
       "count": 9,
       "class": "slot",
-      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
+      "reason": "The wizard actions are application content beside the .odd-stepper recipe (the author's odd-button elements); the recipe declares no dependency."
     },
     {
       "consumer": "Oddkin/Common/stepper",
@@ -1765,7 +1765,7 @@
       "sourceId": "159:285",
       "count": 6,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "odd-status-marker (status=\"complete\") draws the check from the shared glyph module (component-contracts.md §2.7) in the .odd-stepper recipe."
     },
     {
       "consumer": "Oddkin/Common/timeline",
