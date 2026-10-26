@@ -197,9 +197,10 @@ export const CSS_BUDGETS = {
   // 512: measured 402 on 2026-10-23: the round box and its dot, the option and group layout, and
   // the description inset; the row and box are the control-indicator module, the legend the control
   // module.
-  // 704: measured 643 on 2026-10-25: the cells, the transparent input over them, the active cell's
-  // ring and caret, the complete, invalid, pending, and disabled cells, and the status line.
-  'components:one-time-code': 704,
+  // 640: measured 614 on 2026-10-26 (643 before its mutation probes removed three redundant rules):
+  // the cells, the transparent input over them, the active cell's ring and caret, the complete,
+  // invalid, pending, and disabled cells, and the status line.
+  'components:one-time-code': 640,
   'components:radio-group': 512,
   // 704: measured 644 on 2026-10-25: the star targets drawn by their radios, the filled stars, the
   // value, and the forced-colours states, which only odd-rating draws.

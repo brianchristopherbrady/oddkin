@@ -3,9 +3,9 @@ import { css } from '@oddkin/core/styles';
 /**
  * The code is a block; its label, description, and error use the shared field layout. The
  * native input and the row of cells share one grid cell: the input covers the cells, takes the
- * pointer and the keys, and is transparent (`opacity: 0`); each cell centres its digit and,
- * after the last digit, the caret. While focused, the active cell carries the focus ring. No
- * brand tokens.
+ * pointer and the keys, and is transparent (`opacity: 0`, which also paints it above the cells);
+ * each cell centres its digit and, after the last digit, the caret. While focused, the active
+ * cell carries the focus ring. No brand tokens.
  */
 export const oneTimeCodeStructuralStyles = css`
   :host {
@@ -24,7 +24,6 @@ export const oneTimeCodeStructuralStyles = css`
   }
   .cells {
     display: flex;
-    pointer-events: none;
   }
   .cell {
     display: flex;
@@ -41,7 +40,7 @@ export const oneTimeCodeStructuralStyles = css`
   .code:focus + .cells .caret {
     display: block;
   }
-  .status:not([hidden]) {
+  .status {
     display: flex;
     align-items: center;
   }

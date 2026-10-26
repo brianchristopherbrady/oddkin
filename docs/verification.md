@@ -3193,3 +3193,20 @@ Environment: Windows, Node 24.22.1, Playwright 1.64.1 engines. At the owner's re
 - The calendar parity tests depended on the real date: on 2026-10-14, 10-26, and 10-27 a fixed date doubled as today. They now fake only `Date` (`vi.useFakeTimers({ toFake: ['Date'] })`), as `calendar.browser.test.ts` already did.
 - The components guide grew with the catalog through its one-import-per-element table. The rule (`<package>/define/<name>` for `<prefix-name>`) is stated once, elements are listed by category, and any registration that differs from the rule is listed by name, so the guide grows by a tag, not a table row.
 - Not run: mutation probes for odd-picker and odd-one-time-code (next round); the round-end checks (full lifetime, `npm run verify`). Not verified: screen-reader output.
+
+## 2026-10-26 — odd-one-time-code mutation probes (M10, component-contracts.md §3.3)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1, HEAD c665af5. Other lanes in progress in the tree: Agent 2's odd-date-picker change to core `badInput`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Mutation probes | `node .tmp/mutate.mjs .tmp/f-mut-otp.json` (Chromium: `one-time-code.browser.test.ts`, `figma-parity.forms.browser.test.ts`) | 37 probes (one retargeted to the template's current text), 34 killed first. Survivors: the disabled label's colour, `pointer-events: none` on the cells, and `.status:not([hidden])` |
+| Survivors | source and test changes below | All three were redundant: removed. The error test now also checks the status line is not rendered (`display: none`) |
+| Behaviour and parity | `npx vitest run --project browser one-time-code.browser.test.ts figma-parity.forms.browser.test.ts` | Chromium 102 of 102; Firefox and WebKit 101 passed, 1 skipped (forced colours runs in Chromium only) |
+| Size | `node scripts/check-size.mjs` | `components:one-time-code` 614 B gzip (643 before); budget 704 → 640 |
+| Compatibility | `npm run compat`; `node scripts/compat/check-css.mjs --write` | 0 problems; the structural sheet's row 23 → 20 keys, summary unchanged |
+
+**Findings:**
+- The shared control module already dims the label of a field whose control is disabled (`.field:has(.control:disabled) .label`), so the element's own rule repeated it.
+- The transparent input paints above the cells in all three engines, because `opacity` below 1 makes it a stacking context painted after the in-flow cells; `pointer-events: none` on the cells changed nothing (the click test passes in Chromium, Firefox, and WebKit without it).
+- The shared host styles hide every `[hidden]` element with `display: none !important`, so the status rule needs no `:not([hidden])`.

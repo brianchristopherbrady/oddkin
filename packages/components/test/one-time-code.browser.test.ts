@@ -207,9 +207,10 @@ describe('odd-one-time-code', () => {
     );
     expect([
       part('status').hidden,
+      getComputedStyle(part('status')).display,
       part('error').textContent,
       input.getAttribute('aria-describedby'),
-    ]).toEqual([true, 'That code has expired.', 'error']);
+    ]).toEqual([true, 'none', 'That code has expired.', 'error']);
     expect(getComputedStyle(cells()[0]!).borderTopColor).toBe(
       themeValue('border-top-color', '--odd-color-danger-foreground'),
     );

@@ -45,9 +45,6 @@ export const oneTimeCodeStyles = css`
     background: ${token('color.surface.sunken')};
     color: ${token('color.text.disabled')};
   }
-  :host(:disabled) .label {
-    color: ${token('color.text.disabled')};
-  }
   .status {
     gap: ${token('space.xs')};
     color: ${token('color.text.secondary')};
