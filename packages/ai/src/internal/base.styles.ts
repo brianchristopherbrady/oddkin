@@ -1,10 +1,16 @@
-import { focusRingStyles, hostStyles, visuallyHiddenStyles } from '@oddkin/components/styles';
+import {
+  focusRingStyles,
+  hostStyles,
+  toneStyles,
+  visuallyHiddenStyles,
+} from '@oddkin/components/styles';
 import { css, type StyleInput } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 
 /**
  * Styles every `@oddkin/ai` element adds to the shared component primitives: host text
- * defaults, status labels, action rows, and text buttons.
+ * defaults, status labels (coloured by `data-tone` through the shared tone styles), action rows,
+ * and text buttons.
  */
 export const aiElementStyles = css`
   :host {
@@ -26,22 +32,21 @@ export const aiElementStyles = css`
     gap: ${token('space.2xs')};
     padding-block: 0.125rem;
     padding-inline: ${token('space.xs')};
-    border: ${token('border.width.default')} solid ${token('color.border.default')};
+    border: ${token('border.width.default')} solid var(--_tone-border);
     border-radius: ${token('radius.full')};
     font-size: ${token('font.size.xs')};
     font-weight: ${token('font.weight.medium')};
-    color: ${token('color.text.secondary')};
+    color: var(--_tone-foreground);
     white-space: nowrap;
   }
-  .status[data-tone='success'] {
+  .status:is(
+    [data-tone='info'],
+    [data-tone='success'],
+    [data-tone='warning'],
+    [data-tone='danger']
+  ) {
     border-color: currentColor;
-    color: ${token('color.success.foreground')};
-    background: ${token('color.success.surface')};
-  }
-  .status[data-tone='danger'] {
-    border-color: currentColor;
-    color: ${token('color.danger.foreground')};
-    background: ${token('color.danger.surface')};
+    background: var(--_tone-surface);
   }
   .status[data-tone='active'] {
     border-color: ${token('color.border.strong')};
@@ -98,5 +103,6 @@ export const aiBaseStyles: readonly StyleInput[] = [
   hostStyles,
   visuallyHiddenStyles,
   focusRingStyles,
+  toneStyles,
   aiElementStyles,
 ];

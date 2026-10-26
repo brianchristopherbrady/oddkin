@@ -265,7 +265,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 32 |
 | `packages/ai/dist/conversation/conversation.styles.js (conversationStyles)` | yes | 47 |
 | `packages/ai/dist/inline-assist/inline-assist.styles.js (inlineAssistStyles)` | yes | 25 |
-| `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 42 |
+| `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 43 |
 | `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 31 |
 | `packages/ai/dist/message-branch/message-branch.styles.js (messageBranchStyles)` | yes | 6 |
 | `packages/ai/dist/model-select/model-select.styles.js (modelSelectStyles)` | yes | 9 |

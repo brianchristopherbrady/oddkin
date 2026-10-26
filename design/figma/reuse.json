@@ -2184,7 +2184,7 @@
       "status": "existing",
       "code": ["odd-badge", "odd-alert", "odd-toast", "odd-validation-summary"],
       "figma": ["badge", "alert", "toast", "alertDialog", "fileUpload", "combobox"],
-      "note": "AI .status (aiElementStyles) still draws its own tone colours; it moves onto toneStyles later."
+      "note": "AI status labels (.status in @oddkin/ai's aiElementStyles) take their colours from toneStyles too."
     },
     {
       "id": "spinner",

@@ -3155,3 +3155,19 @@ The generator gains an experimental option, `CssOptions.modeColors: 'light-dark'
 **Decision:** Not adopted (ADR 0046 D2: smaller, but not equivalent). `light-dark-function` returns to declined with this evidence (features.json, css-architecture.md §4.3, theming-and-styling.md §5.1).
 
 **Gaps:** The floor browsers (Chrome 130, Firefox 132) were not run with this script. Real Windows high-contrast themes were not tried; only Playwright's emulation was.
+
+## 2026-10-26 — `@oddkin/ai` status labels on the shared tone module (round 6, step 6)
+
+`.status` in `aiElementStyles` no longer names tone colours itself. It reads the private properties of `toneStyles` (`@oddkin/components/styles`, now part of `aiBaseStyles`), as `odd-badge`, `odd-alert`, `odd-toast`, and `odd-validation-summary` do:
+- neutral labels use the neutral foreground and border;
+- info, success, warning, and danger are filled with the tone surface and have a `currentColor` border;
+- `active` keeps its own border and text colour.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Parity | `npx vitest run --project browser --browser.name=chromium packages/ai/test/elements.browser.test.ts -t "status labels"` with HEAD's `base.styles.ts` | The new test ("status labels take their colours from the shared tone styles") passes on the old styles too. It compares colour, background, and border colour of `odd-tool-call`'s neutral, success, danger, and active labels with the tokens, under the default theme. |
+| AI elements | `npx vitest run --project browser --browser.name=<engine> packages/ai/test` | Chromium, Firefox, and WebKit: 8 files, 209 passed, 4 skipped each. |
+| Mutation probes | `node .tmp/n-mutate.mjs .tmp/n-mutants-tone.json` (Chromium) | 4 of 4 killed: tone styles left out, no fill, the tone border instead of `currentColor`, a fixed neutral border. |
+| Node, size, CSS | `node scripts/build-metadata.mjs`; `npx vitest run --project node packages/ai/test tests`; `node scripts/check-size.mjs`; `npm run compat` | Node 324 of 325; the failure is the agent-kit GUIDE.md budget (another lane). `ai:styles` 4,503 of 4,608 B gzip (4,476 before). Compat 0 problems; `aiElementStyles` 43 keys (42). |
+
+**Docs:** component-catalog.md (the badge row and the tone home, rendered from `design/figma/reuse.json`).

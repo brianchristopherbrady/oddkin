@@ -228,6 +228,61 @@ describe('odd-tool-call and odd-action-approval', () => {
     expect(retries).toEqual([{ toolCallId: 't1' }]);
   });
 
+  it('status labels take their colours from the shared tone styles', async () => {
+    const theme = document.createElement('link');
+    theme.rel = 'stylesheet';
+    theme.href = new URL('../../tokens/dist/css/default.css', import.meta.url).href;
+    await new Promise((resolve, reject) => {
+      theme.onload = resolve;
+      theme.onerror = reject;
+      document.head.append(theme);
+    });
+    try {
+      const el = await mount(
+        'odd-tool-call',
+        () => import('../src/tool-call/tool-call.define.js'),
+        (e) => {
+          e.tool = tool('input-available');
+        },
+      );
+      const probe = container.appendChild(document.createElement('span'));
+      const resolved = (property: string, value: string) => {
+        probe.style.setProperty(property, value);
+        return getComputedStyle(probe).getPropertyValue(property);
+      };
+      const look = async (status: ToolCallRecord['status']) => {
+        el.tool = tool(status);
+        await settle(el);
+        const style = getComputedStyle($(el, '.status')!);
+        return [style.color, style.backgroundColor, style.borderTopColor];
+      };
+      const colours = (foreground: string, surface: string, border: string) => [
+        resolved('color', `var(--odd-color-${foreground})`),
+        resolved(
+          'background-color',
+          surface === 'none' ? 'transparent' : `var(--odd-color-${surface})`,
+        ),
+        resolved('border-top-color', `var(--odd-color-${border})`),
+      ];
+      // Neutral (no tone), success and danger (filled, with a currentColor border), and active.
+      expect(await look('input-available')).toEqual(
+        colours('text-secondary', 'none', 'border-default'),
+      );
+      expect(await look('output-available')).toEqual(
+        colours('success-foreground', 'success-surface', 'success-foreground'),
+      );
+      expect(await look('output-error')).toEqual(
+        colours('danger-foreground', 'danger-surface', 'danger-foreground'),
+      );
+      expect(await look('executing')).toEqual(colours('text-primary', 'none', 'border-strong'));
+      expect(
+        new Set([await look('input-available'), await look('output-available')].map(String)).size,
+      ).toBe(2);
+    } finally {
+      theme.remove();
+    }
+  });
+
   it('A10: a decision is requested once, stays pending until the record changes, and a new revision resets it', async () => {
     const approval = (status: ApprovalRecord['status'], revision = 1): ApprovalRecord => ({
       approvalId: 'ap',
