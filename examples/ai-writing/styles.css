@@ -12,7 +12,6 @@ body {
 /* The assistant takes two fifths of the row, never less than 16rem. */
 .workspace {
   --odd-split-side-width: max(16rem, (100% - var(--odd-layout-gap)) * 2 / 5);
-  --odd-split-main-min: min(var(--odd-layout-main-min), 100%);
 }
 
 .banner h1 {

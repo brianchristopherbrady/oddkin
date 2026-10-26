@@ -13,7 +13,6 @@ body {
 
 .workspace {
   --odd-split-side-width: 22rem;
-  --odd-split-main-min: min(var(--odd-layout-main-min), 100%);
   flex-grow: 1;
 }
 
@@ -33,13 +32,10 @@ body {
 
 .side,
 .main {
+  box-sizing: border-box;
   padding: var(--odd-space-sm);
   border-radius: var(--odd-radius-lg);
   background: var(--odd-color-surface-default);
-}
-
-.side {
-  box-sizing: border-box;
 }
 
 .side h2 {
@@ -47,10 +43,11 @@ body {
   font-size: var(--odd-font-size-md);
 }
 
+/* Border boxes, so the split's capped minimum includes the padding; the heights add it back. */
 .main {
   --odd-stack-gap: 0;
-  min-block-size: 32rem;
-  block-size: calc(100vh - 8rem);
+  min-block-size: calc(32rem + 2 * var(--odd-space-sm));
+  block-size: calc(100vh - 8rem + 2 * var(--odd-space-sm));
 }
 
 odd-conversation {

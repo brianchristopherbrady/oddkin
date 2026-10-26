@@ -78,7 +78,6 @@ button {
 .site-layout {
   --odd-split-side-width: 16rem;
   --odd-split-gap: clamp(1.5rem, 4vw, 4rem);
-  --odd-split-main-min: min(var(--odd-layout-main-min), 100%);
   width: min(78rem, 100%);
   margin-inline: auto;
   padding: 2rem 1.5rem 4rem;

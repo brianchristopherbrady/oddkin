@@ -3367,3 +3367,17 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1, HEAD 52ecb8
 **Findings:**
 - Round 7 by lane: Agent 1 finished its queue (38b1d5a, 910ef7f, 120651d, 9937805, 3b59ce9, 52ecb89); Agent 2 shipped 46f0905 and 5af9e0d and stopped before the AI layout candidates, waiting for the audit that landed two minutes later; Agent 3 shipped e200094, a6aeb4d, e51c382, 2d187f1, and 6883ddf and stopped before odd-picker's probes and D5; Agent 4 did not start.
 - Not run: the round-end browser suites (`npm test`, the e2e set) and the full lifetime run.
+
+## 2026-10-26 ? Pages: the split caps come from layout.css (M10 round 8; layout-recipes.md ?12)
+
+Environment: Windows, Node 24.22.1, Playwright 1.64.1 (Chromium, Firefox, WebKit). Other lanes' work in progress: Agent 2's overlay first-placement change and AI layout recipes, Agent 3's picker probes.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Boxes | every light-DOM element of `apps/docs` `/`, `ai-research`, `ai-writing` at 320, 560, 768, 1,280 px (? 3 engines), before and after | identical without the pages' `--odd-split-main-min` caps (e51c382 caps it in `layout.css`) |
+| ai-research at 320 px | e2e "ai-research has no horizontal scrolling" | failed in 3 engines with the cap and without: `.main` was 312 px wide in a 288 px column (the 100% minimum is the content box, the padding added 24 px; from 107b74a). Border boxes for `.side` and `.main`, heights raised by the padding: 288 px, heights unchanged, other widths identical |
+| e2e | `ai-demos`, `docs` | 47 passed with failures in Firefox and WebKit under load; rerun one worker: 33 passed, 3 failed; each rerun alone passed, except WebKit docs "every published component" (waits for "Showing 53 of 53 components"), which failed 1 of 2 alone without the change and passed once with it: a timing flake |
+| Page layout | `npm run lint:layout` | 39 files, 25 kept, 0 unlisted |
+
+**Findings:**
+- The capped minimum is a content-box size: a split child with padding needs `box-sizing: border-box` to stay inside its column at the narrowest widths.
