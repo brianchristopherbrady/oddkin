@@ -48,7 +48,7 @@ export function renderSection(project) {
     '- Commands:',
     ...Object.entries(context.commands).map(([key, command]) => `  - ${key}: \`${command}\``),
     '- Agent kits: `node scripts/agent-kit/kit.mjs` writes one per component package into `.oddkin/agent-kit/`; add `--check` to find stale kits.',
-    '- Scope, status, and evidence: `IMPLEMENTATION_PLAN.md` (milestones, §10 progress log, §11 continuation) and `docs/verification.md` (record only observed results).',
+    '- Scope, status, and evidence: `IMPLEMENTATION_PLAN.md` (milestones, §11 continuation), `docs/progress-log.md` (one row per slice), and `docs/verification.md` (record only observed results).',
     '',
     END,
   ];
