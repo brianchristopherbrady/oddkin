@@ -13,8 +13,8 @@
     "deferred": "Not classified (data grid, deferred by the owner)."
   },
   "counts": {
-    "style": 113,
-    "slot": 58,
+    "style": 114,
+    "slot": 57,
     "deferred": 12,
     "controller": 13,
     "native": 6,
@@ -1188,8 +1188,8 @@
       "source": "Oddkin/Common/button/sm",
       "sourceId": "181:2332",
       "count": 12,
-      "class": "slot",
-      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
+      "class": "style",
+      "reason": "The month buttons and the Today and Clear actions are native buttons in odd-calendar's shadow root with the small ghost look of the shared native-button sheet (nativeButtonStyles)."
     },
     {
       "consumer": "Oddkin/Common/calendar",
@@ -1198,7 +1198,7 @@
       "sourceId": "555:2531",
       "count": 126,
       "class": "style",
-      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
+      "reason": "Each day is a gridcell of odd-calendar's date grid (part day, with day-outside, day-today, day-selected, and day-disabled); no element of its own."
     },
     {
       "consumer": "Oddkin/Common/card",
@@ -1963,6 +1963,10 @@
     "odd-button": {
       "dependencies": [],
       "reason": "A simple component: no element, overlay, positioning, or collection dependency."
+    },
+    "odd-calendar": {
+      "dependencies": [],
+      "reason": "The month buttons and the Today and Clear actions are native buttons drawn with the small ghost button look; the date cells are the grid's own cells."
     },
     "odd-card": { "dependencies": [], "reason": "Actions are slot content." },
     "odd-change-review": {

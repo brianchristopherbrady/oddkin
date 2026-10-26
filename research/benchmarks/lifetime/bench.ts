@@ -10,6 +10,7 @@ import '@oddkin/components/define/avatar';
 import '@oddkin/components/define/badge';
 import '@oddkin/components/define/breadcrumbs';
 import '@oddkin/components/define/button';
+import '@oddkin/components/define/calendar';
 import '@oddkin/components/define/card';
 import '@oddkin/components/define/checkbox';
 import '@oddkin/components/define/checkbox-group';
@@ -241,6 +242,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-segmented-control label="Size" name="size"><option value="sm">Small</option><option value="md" selected>Medium</option></odd-segmented-control>
         <odd-textarea label="Notes" maxlength="200" resize="auto"></odd-textarea>
         <odd-file-input label="Files" name="files" multiple></odd-file-input>
+        <odd-calendar label="Date" name="date" value="2026-10-26"></odd-calendar>
         <odd-split-panel label="Resize" position="40"><p slot="start">A</p><p slot="end">B</p></odd-split-panel>
         <odd-scroll-region label="Log" style="max-block-size: 3rem"><p>A</p><p>B</p><p>C</p><p>D</p></odd-scroll-region>
         <odd-container measure="fluid"><p>A</p></odd-container>

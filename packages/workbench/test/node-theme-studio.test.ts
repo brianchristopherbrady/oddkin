@@ -199,6 +199,7 @@ describe('Theme Studio page data', () => {
       'alert:odd-alert',
       'avatar:odd-avatar',
       'busyIndicator:odd-spinner',
+      'calendar:odd-calendar',
       'chip:odd-chip',
       'combobox:odd-combobox',
       'copyButton:odd-copy-button',

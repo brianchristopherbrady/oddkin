@@ -139,6 +139,7 @@ describe('authored examples', () => {
     'odd-drawer/physicalSide': { observe: (el) => el['side'], wrong: 'inline-end' },
     'odd-toast/errorTone': { observe: (el) => el['tone'], wrong: 'neutral' },
     'odd-file-input/multipleFalse': { observe: (el) => el['multiple'], wrong: true },
+    'odd-calendar/requiredFalse': { observe: (el) => el['required'], wrong: true },
     'odd-validation-summary/forAttribute': {
       observe: (el) => el.shadowRoot!.querySelector<HTMLElement>('[part~="base"]')!.hidden,
       wrong: true,

@@ -145,6 +145,9 @@ export const CSS_BUDGETS = {
   // 1,024: measured 958 on 2026-10-25: the drop zone, the selector button's look (a pseudo-element
   // cannot reuse odd-button's sheet), the file rows, and the remove buttons.
   'components:file-input': 1024,
+  // 960: measured 939 on 2026-10-25: the surface, the month row, the date table and its cell
+  // states, the divider; the buttons are the shared native-button sheet's.
+  'components:calendar': 960,
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   'components:scroll-region': 256, // 235

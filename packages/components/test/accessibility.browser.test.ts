@@ -84,6 +84,9 @@ const states = `
     <odd-file-input id="a11y-attachments" label="Project attachments" name="attachments" description="PDF, PNG, JPG · Maximum 10 MB" multiple></odd-file-input>
     <odd-file-input label="Signed contract" name="contract" required error="File is too large"></odd-file-input>
     <odd-file-input id="inactive-file-input" label="Archived files" name="archive" disabled></odd-file-input>
+    <odd-calendar label="Publish date" description="Any weekday." name="publish" value="2026-10-26" min="2026-10-05" first-day="1"></odd-calendar>
+    <odd-calendar label="Start date" name="start" required error="Choose a start date."></odd-calendar>
+    <odd-calendar label="Archived on" value="2026-10-26" disabled></odd-calendar>
     <odd-textarea label="History" name="history" value="Managed." disabled resize="auto"></odd-textarea>
     <odd-button type="submit" appearance="primary">Submit</odd-button>
     <odd-button type="reset">Reset</odd-button>

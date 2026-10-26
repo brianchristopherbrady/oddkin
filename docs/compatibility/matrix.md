@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-17** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 174 stylesheets, 317 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 176 stylesheets, 318 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 17.4 (`css.selectors.state`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -149,6 +149,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 52 |
 | `packages/components/dist/button/button.structural.styles.js (buttonStructuralStyles)` | yes | 35 |
 | `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 28 |
+| `packages/components/dist/calendar/calendar.structural.styles.js (calendarStructuralStyles)` | yes | 38 |
+| `packages/components/dist/calendar/calendar.styles.js (calendarStyles)` | yes | 29 |
 | `packages/components/dist/card/card.structural.styles.js (cardStructuralStyles)` | yes | 20 |
 | `packages/components/dist/card/card.styles.js (cardStyles)` | yes | 18 |
 | `packages/components/dist/checkbox/checkbox.structural.styles.js (checkboxStructuralStyles)` | yes | 3 |
