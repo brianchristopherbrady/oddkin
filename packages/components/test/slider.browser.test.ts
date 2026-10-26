@@ -270,6 +270,23 @@ describe('odd-slider', () => {
   );
 });
 
+describe('layout', () => {
+  it('puts the output at the end of the label row and the end labels at the ends', async () => {
+    const { part } = await mount('<odd-slider label="Volume" value="40"></odd-slider>');
+    const box = (name: string) => part(name).getBoundingClientRect();
+    const field = box('field');
+    expect([box('output').top, Math.round(box('output').right)]).toEqual([
+      box('label').top,
+      Math.round(field.right),
+    ]);
+    expect([
+      Math.round(box('min-label').left),
+      Math.round(box('max-label').right),
+      box('max-label').top,
+    ]).toEqual([Math.round(field.left), Math.round(field.right), box('min-label').top]);
+  });
+});
+
 describe('forms', () => {
   it('submits the value under its name; reset returns to the value attribute; disabled submits nothing', async () => {
     const { el, thumb, form } = await mount(

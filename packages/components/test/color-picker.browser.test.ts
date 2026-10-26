@@ -266,6 +266,9 @@ describe('popup', () => {
     ]);
     expect(root.activeElement).toBe(part('area-thumb'));
     const field = root.querySelector('.control-box')!.getBoundingClientRect();
+    // The first placement measures the popup before it takes the field's width (Overlay sets
+    // --_anchor-inline-size as it places); the resize places it again.
+    await expect.poll(() => popup.getBoundingClientRect().left).toBe(field.left);
     const box = popup.getBoundingClientRect();
     expect([box.left, box.width, Math.round(box.top)]).toEqual([
       field.left,
@@ -645,6 +648,20 @@ describe('look', () => {
       small,
     ]);
     expect([handle.left, handle.top]).toEqual([track.left, track.top]);
+  });
+
+  it('lines up the hex and opacity entries and ends the actions row', async () => {
+    const { part, root, openPopup } = await mount(
+      '<odd-color-picker label="Color" alpha value="#2563eb"></odd-color-picker>',
+    );
+    await openPopup();
+    const hex = part('hex').getBoundingClientRect();
+    const opacity = part('opacity').getBoundingClientRect();
+    expect([opacity.top, opacity.left > hex.right]).toEqual([hex.top, true]);
+    const controls = root.querySelector<HTMLElement>('.controls')!;
+    const end =
+      controls.getBoundingClientRect().right - parseFloat(getComputedStyle(controls).paddingRight);
+    expect(Math.round(part('apply').getBoundingClientRect().right)).toBe(Math.round(end));
   });
 
   it.runIf(server.browser === 'chromium')(

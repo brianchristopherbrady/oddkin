@@ -7,11 +7,11 @@ import { rangeStyles } from '../styles/range.styles.js';
  * control look with the colour's swatch (large-icon size, small radius, strong border) at its
  * start and the chevron button (as the date picker's) at its end. The popup is the overlay
  * surface joined to the field box: the shared corners at the far side only, no border on the near
- * side. Inside, with medium spacing: the area (small radius; a ring for the handle), the hue (the
- * shared slider look, small-icon thick, round, its handle the surface colour with a strong
- * border), the hex and opacity entries (small spacing; small secondary labels), the RGB values,
- * the suggested colours under a divider (small-control squares, small spacing; the check small-icon
- * size), and the actions (small buttons).
+ * side. Inside, padded by medium spacing (the arrangement and gaps are the layout recipe in
+ * `color-picker.recipe.ts`): the area (small radius; a ring for the handle), the hue (the shared
+ * slider look, small-icon thick, round, its handle the surface colour with a strong border), the
+ * hex and opacity entries (small secondary labels), the RGB values, the suggested colours under a
+ * divider (small-control squares; the check small-icon size), and the actions (small buttons).
  */
 export const colorPickerStyles = css`
   ${rangeStyles}
@@ -43,7 +43,6 @@ export const colorPickerStyles = css`
     }
   }
   .controls {
-    gap: ${token('space.md')};
     padding: ${token('space.md')};
   }
   .popup[data-side='block-end'] {
@@ -89,12 +88,6 @@ export const colorPickerStyles = css`
     border: ${token('border.width.default')} solid ${token('color.border.strong')};
     background: ${token('color.surface.default')};
   }
-  .entries {
-    gap: ${token('space.sm')};
-  }
-  .entry {
-    gap: ${token('space.xs')};
-  }
   .entry-label,
   .rgb,
   .swatches-label {
@@ -103,15 +96,11 @@ export const colorPickerStyles = css`
     line-height: ${token('type.small.line-height')};
   }
   .swatches {
-    gap: ${token('space.md')};
     padding-block-start: ${token('space.md')};
     border-block-start: ${token('border.width.default')} solid ${token('color.border.default')};
   }
   .swatches-label {
     margin: 0;
-  }
-  .swatch-row {
-    gap: ${token('space.sm')};
   }
   .option-swatch {
     inline-size: ${token('control.height.sm')};
@@ -124,8 +113,5 @@ export const colorPickerStyles = css`
   }
   .option-swatch:has(:disabled) {
     opacity: 0.45;
-  }
-  .actions {
-    gap: ${token('space.xs')};
   }
 `;

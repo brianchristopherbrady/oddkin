@@ -1,5 +1,6 @@
 import { css } from '@oddkin/core/styles';
 import { rangeStructuralStyles } from '../styles/range.structural.styles.js';
+import { colorPickerRecipeStyles } from './color-picker.recipe.styles.js';
 
 /**
  * The colour picker is a block with the shared field layout: the swatch and the button over the
@@ -7,12 +8,14 @@ import { rangeStructuralStyles } from '../styles/range.structural.styles.js';
  * box, stacking the area, the hue slider (the shared slider area, its track the full width), the
  * hex and opacity entries side by side, the RGB values, the suggested colours (each a native radio
  * over its square, its check white or black, whichever contrasts more with the colour), and the
- * actions at the end. The area paints saturation across and brightness up for the hue (`--_hue`,
+ * actions at the end (those columns and rows are the layout recipe in `color-picker.recipe.ts`).
+ * The area paints saturation across and brightness up for the hue (`--_hue`,
  * `--_s`, `--_v`); the hue track paints the hues; both are mirrored right to left. They and the
  * swatches are the user's colour data, not theme colours: where forced colours exist, they keep
  * their colours (`forced-color-adjust`, a registered enhancement). No brand tokens.
  */
 export const colorPickerStructuralStyles = css`
+  ${colorPickerRecipeStyles}
   ${rangeStructuralStyles}
   :host {
     display: block;
@@ -40,10 +43,6 @@ export const colorPickerStructuralStyles = css`
   .popup {
     box-sizing: border-box;
     inline-size: var(--_anchor-inline-size, auto);
-  }
-  .controls {
-    display: flex;
-    flex-direction: column;
   }
   .area {
     position: relative;
@@ -82,25 +81,11 @@ export const colorPickerStructuralStyles = css`
       forced-color-adjust: none;
     }
   }
-  .entries {
-    display: flex;
-  }
   .entry {
-    display: flex;
     flex: 1;
-    flex-direction: column;
-    min-inline-size: 0;
   }
   .rgb {
     margin: 0;
-  }
-  .swatches {
-    display: flex;
-    flex-direction: column;
-  }
-  .swatch-row {
-    display: flex;
-    flex-wrap: wrap;
   }
   .option-swatch {
     position: relative;
@@ -127,10 +112,5 @@ export const colorPickerStructuralStyles = css`
   }
   .option-swatch:has(:disabled) {
     cursor: not-allowed;
-  }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
   }
 `;

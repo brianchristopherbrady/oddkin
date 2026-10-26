@@ -10,7 +10,6 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const radioGroupStyles = css`
   .options {
-    gap: ${token('space.lg')};
     padding-block: ${token('space.sm')};
   }
   .indicator-box,

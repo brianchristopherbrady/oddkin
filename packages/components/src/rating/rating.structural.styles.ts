@@ -1,19 +1,17 @@
 import { css } from '@oddkin/core/styles';
+import { ratingRecipeStyles } from './rating.recipe.styles.js';
 
 /**
  * The rating is a block; its label, description, and error use the shared field layout. The row
+ * (the layout recipe in `rating.recipe.ts`)
  * holds the stars and the value; each star stacks its radio, drawn as the star's target
  * (`appearance: none`), under the glyph, which lets pointer events through to the radio. A star
  * that is on fills its glyph. No brand tokens.
  */
 export const ratingStructuralStyles = css`
+  ${ratingRecipeStyles}
   :host {
     display: block;
-  }
-  .row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
   }
   .stars {
     display: flex;

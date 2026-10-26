@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-26** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)), text-wrap-balance (newly (2024-05-13)), scrollbar-gutter (newly (2024-12-11)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 190 stylesheets, 325 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 195 stylesheets, 325 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -154,12 +154,14 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/card/card.styles.js (cardStyles)` | yes | 18 |
 | `packages/components/dist/checkbox/checkbox.structural.styles.js (checkboxStructuralStyles)` | yes | 3 |
 | `packages/components/dist/checkbox/checkbox.styles.js (checkboxStyles)` | yes | 0 |
-| `packages/components/dist/checkbox-group/checkbox-group.structural.styles.js (checkboxGroupStructuralStyles)` | yes | 11 |
-| `packages/components/dist/checkbox-group/checkbox-group.styles.js (checkboxGroupStyles)` | yes | 2 |
+| `packages/components/dist/checkbox-group/checkbox-group.recipe.styles.js (checkboxGroupRecipeStyles)` | yes | 14 |
+| `packages/components/dist/checkbox-group/checkbox-group.structural.styles.js (checkboxGroupStructuralStyles)` | yes | 15 |
+| `packages/components/dist/checkbox-group/checkbox-group.styles.js (checkboxGroupStyles)` | yes | 1 |
 | `packages/components/dist/chip/chip.structural.styles.js (chipStructuralStyles)` | yes | 32 |
 | `packages/components/dist/chip/chip.styles.js (chipStyles)` | yes | 26 |
-| `packages/components/dist/color-picker/color-picker.structural.styles.js (colorPickerStructuralStyles)` | yes | 66 |
-| `packages/components/dist/color-picker/color-picker.styles.js (colorPickerStyles)` | yes | 44 |
+| `packages/components/dist/color-picker/color-picker.recipe.styles.js (colorPickerRecipeStyles)` | yes | 15 |
+| `packages/components/dist/color-picker/color-picker.structural.styles.js (colorPickerStructuralStyles)` | yes | 71 |
+| `packages/components/dist/color-picker/color-picker.styles.js (colorPickerStyles)` | yes | 43 |
 | `packages/components/dist/combobox/combobox.structural.styles.js (comboboxStructuralStyles)` | yes | 40 |
 | `packages/components/dist/combobox/combobox.styles.js (comboboxStyles)` | yes | 24 |
 | `packages/components/dist/command-palette/command-palette.recipe.styles.js (commandPaletteRecipeStyles)` | yes | 13 |
@@ -200,9 +202,11 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/popover/popover.styles.js (popoverStyles)` | yes | 6 |
 | `packages/components/dist/progress/progress.structural.styles.js (progressStructuralStyles)` | yes | 35 |
 | `packages/components/dist/progress/progress.styles.js (progressStyles)` | yes | 12 |
-| `packages/components/dist/radio-group/radio-group.structural.styles.js (radioGroupStructuralStyles)` | yes | 17 |
-| `packages/components/dist/radio-group/radio-group.styles.js (radioGroupStyles)` | yes | 10 |
-| `packages/components/dist/rating/rating.structural.styles.js (ratingStructuralStyles)` | yes | 29 |
+| `packages/components/dist/radio-group/radio-group.recipe.styles.js (radioGroupRecipeStyles)` | yes | 14 |
+| `packages/components/dist/radio-group/radio-group.structural.styles.js (radioGroupStructuralStyles)` | yes | 20 |
+| `packages/components/dist/radio-group/radio-group.styles.js (radioGroupStyles)` | yes | 9 |
+| `packages/components/dist/rating/rating.recipe.styles.js (ratingRecipeStyles)` | yes | 11 |
+| `packages/components/dist/rating/rating.structural.styles.js (ratingStructuralStyles)` | yes | 34 |
 | `packages/components/dist/rating/rating.styles.js (ratingStyles)` | yes | 18 |
 | `packages/components/dist/relative-time/relative-time.structural.styles.js (relativeTimeStructuralStyles)` | yes | 8 |
 | `packages/components/dist/relative-time/relative-time.styles.js (relativeTimeStyles)` | yes | 7 |
@@ -218,7 +222,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 38 |
 | `packages/components/dist/skeleton/skeleton.structural.styles.js (skeletonStructuralStyles)` | yes | 27 |
 | `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
-| `packages/components/dist/slider/slider.structural.styles.js (sliderStructuralStyles)` | yes | 36 |
+| `packages/components/dist/slider/slider.recipe.styles.js (sliderRecipeStyles)` | yes | 12 |
+| `packages/components/dist/slider/slider.structural.styles.js (sliderStructuralStyles)` | yes | 43 |
 | `packages/components/dist/slider/slider.styles.js (sliderStyles)` | yes | 13 |
 | `packages/components/dist/spinner/spinner.structural.styles.js (spinnerStructuralStyles)` | yes | 10 |
 | `packages/components/dist/spinner/spinner.styles.js (spinnerElementStyles)` | yes | 10 |

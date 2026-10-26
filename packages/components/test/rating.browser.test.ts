@@ -268,6 +268,19 @@ describe('odd-rating', () => {
   );
 });
 
+describe('layout', () => {
+  it('puts the value beside the stars, and under them when the row does not fit', async () => {
+    const { rating, part } = await mount('<odd-rating label="Rating" value="3"></odd-rating>');
+    const stars = rating.shadowRoot!.querySelector('.stars')!.getBoundingClientRect();
+    expect(part('value').getBoundingClientRect().left).toBeGreaterThan(stars.right);
+    container.style.inlineSize = '120px';
+    await settle(rating);
+    expect(part('value').getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      rating.shadowRoot!.querySelector('.stars')!.getBoundingClientRect().bottom,
+    );
+  });
+});
+
 describe('forms', () => {
   it('submits the chosen value as a native radio group; required blocks an empty submission', async () => {
     const { rating, radios, form } = await mount(

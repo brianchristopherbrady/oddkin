@@ -7,7 +7,6 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const checkboxGroupStyles = css`
   .options {
-    gap: ${token('space.lg')};
     padding-block: ${token('space.sm')};
   }
 `;

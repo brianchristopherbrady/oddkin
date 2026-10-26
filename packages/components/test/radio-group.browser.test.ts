@@ -237,6 +237,20 @@ describe('odd-radio-group', () => {
   });
 });
 
+describe('layout', () => {
+  it('spaces the options in a group as the options themselves', async () => {
+    const { group } = await mount(
+      '<odd-radio-group label="Plan"><optgroup label="Personal"><option value="a">A</option><option value="b">B</option></optgroup></odd-radio-group>',
+    );
+    const options = group.shadowRoot!.querySelector<HTMLElement>('.options')!;
+    const inGroup = group.shadowRoot!.querySelector<HTMLElement>('.group')!;
+    expect([getComputedStyle(options).rowGap, getComputedStyle(inGroup).rowGap]).toEqual([
+      themeValue('row-gap', '--odd-space-lg'),
+      themeValue('row-gap', '--odd-space-lg'),
+    ]);
+  });
+});
+
 describe('forms', () => {
   it('submits the checked value under its name, and nothing while none is checked', async () => {
     const { group, radio, form } = await mount(

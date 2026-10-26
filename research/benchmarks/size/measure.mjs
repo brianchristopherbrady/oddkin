@@ -156,10 +156,11 @@ export const CSS_BUDGETS = {
   // 384: measured 337 on 2026-10-25: the calendar button's target and hover, and the popup
   // holding the calendar without its own surface; the field is the shared control look.
   'components:date-picker': 384,
-  // 1,664: measured 1,644 on 2026-10-26: the field swatch and button, the joined popup, the area
+  // 1,728: measured 1,689 on 2026-10-26 with its layout recipe (+45: the popup's columns and rows,
+  // layout-recipes.md §14); 1,644 before: the field swatch and button, the joined popup, the area
   // and hue (with the shared range sheets the hue is drawn on), the entries, the suggested-colour
   // radios, and the actions (the buttons are the shared native-button sheet's).
-  'components:color-picker': 1664,
+  'components:color-picker': 1728,
   // Layout, measured on 2026-10-23 (structural and default styles).
   'components:split-panel': 896, // 818
   'components:scroll-region': 288, // 266 on 2026-10-26 (235 before): the content column is a layout recipe (layout-recipes.md §14)
@@ -219,9 +220,10 @@ export const CSS_BUDGETS = {
   // 896: measured 812 on 2026-10-23: the track, the segments drawn by their radios, the three sizes,
   // and the forced-colours states, which only odd-segmented-control draws.
   'components:segmented-control': 896,
-  // 768: measured 721 on 2026-10-24: the label row, track, fill, thumb, endpoints, and forced-colours
-  // states, which only odd-slider draws (an ARIA slider; owner decision 2026-10-23).
-  'components:slider': 768,
+  // 832: measured 806 on 2026-10-26 with its layout recipe (+83: the label and endpoint rows,
+  // layout-recipes.md §14); 721 on 2026-10-24: the label row, track, fill, thumb, endpoints, and
+  // forced-colours states, which only odd-slider draws (an ARIA slider; owner decision 2026-10-23).
+  'components:slider': 832,
   // 640: measured 569 on 2026-10-23: the track and thumb, which only odd-switch draws.
   'components:switch': 640,
   // 320: measured 264 on 2026-10-23: the resize modes, the field-sizing gate, the block inset, and

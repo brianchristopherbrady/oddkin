@@ -3313,3 +3313,22 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 15
 - WebKit does not focus a button or a radio on a click: Apply, Cancel, and the suggested colours focus themselves, so focus returns to the field's button when the popup closes.
 - Figma always draws the opacity field; the element shows it only with `alpha`, as HTML gives a colour input an alpha component. Figma labels the swatches "Recent colors"; the element's default is "Suggested colors" (`strings.swatches`), since the page supplies them.
 - Not verified: screen-reader output (the area's value text), real touch drags, Safari on macOS.
+
+## 2026-10-26 — Layout recipes in Agent 1's shadow roots (M10 round 7, Agent 1, layout-recipes.md §14)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2), HEAD 9937805. No other lane's work was in the tree.
+
+**Change:** the audit's candidates in Agent 1's lane, done as in Agent 3's worked example (a6aeb4d): `<name>.recipe.ts` with `defineLayoutRecipe`, extracted by `recipes.test.ts` into `<name>.recipe.styles.ts`, which opens the structural sheet; the hand-written display, direction, wrap, alignment, and gap are gone. odd-checkbox-group: the choices' column and, with `orientation="horizontal"`, the wrapping row (a recipe variant). odd-radio-group: the options and each group's options. odd-rating: the row of stars and value. odd-slider: the label row and the end labels. odd-color-picker (new this round): the popup's columns and rows. Not converted: `.field` (see Findings).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Extraction | `UPDATE_FIXTURES=1 npx vitest run --project node recipes.test.ts`, then without | 10 of 10 (five new extracted sheets) |
+| Elements and parity, three engines | checkbox-group, radio-group, rating, slider, color-picker, validation-summary, `figma-parity.forms`, `figma-parity.pickers`, `figma-parity`, accessibility, contract, examples, keyboard, styling-contract, styling, multi-product, description | Chromium 1,162 passed, 50 skipped; WebKit 1,156 passed, 56 skipped; Firefox 3 timeouts under load (a hover, a click, and a checkbox parity test), rerun alone: 128 of 128. With the new layout tests, the seven element and parity files: Chromium 206 passed; Firefox 203 passed, 3 skipped; WebKit 201 passed, 4 skipped, 1 failure (odd-color-picker's popup position, see Findings), then 25 of 25 in three WebKit runs of that file after the fix |
+| Mutation probes | `node .tmp/mutate.mjs .tmp/f-mut-layout.json` (Chromium), on the shipped extracted sheets | 19 probes, 9 killed first. The 10 survivors were arrangements no test pinned before the conversion either: choices at their own width, the horizontal choices wrapping, a group's option gap, the rating's value wrapping under the stars, the end labels at the track's ends, the colour picker's entries side by side and actions at the end, and the slider label row's `justify`, redundant with the output's auto margin (removed). Layout tests added in each element's file; the 8 remaining probes rerun: all killed |
+| Node | `npx vitest run --project node` | 1,240 of 1,240 |
+| Size, CSS | `node scripts/check-size.mjs`; `npm run compat` | Each recipe brings its layer order statement and full declarations: checkbox-group 187 → 248, radio-group 397 → 441, rating 644 → 700, slider 723 → 807 (budget 768 → 832), color-picker 1,644 → 1,689 B gzip (budget 1,664 → 1,728). Compat 0 problems (195 stylesheets) |
+
+**Findings:**
+- `.field` stays in `field.structural.styles.ts`: that sheet is also the source of the published light-DOM `css/field.css` recipe in `@layer odd.components`, so a shadow recipe would move the layout of every form control and of the page recipe into the `odd.layout` layers.
+- WebKit caught odd-color-picker's popup at the viewport margin (x 8 instead of 32) in two of three runs: Overlay sets `--_anchor-inline-size` after the first placement has measured the popup at its automatic width, and the surface's resize places it again a frame later. The test now waits for the second placement; the order is noted for Agent 2.
+- Not verified: screen-reader output (the markup is unchanged).

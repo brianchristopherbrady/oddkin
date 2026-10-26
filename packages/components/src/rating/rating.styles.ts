@@ -9,9 +9,6 @@ import { token } from '@oddkin/tokens/refs';
  * in the small type role and the secondary text colour; the label is dimmed while disabled.
  */
 export const ratingStyles = css`
-  .row {
-    gap: ${token('space.sm')};
-  }
   .stars {
     gap: ${token('space.2xs')};
   }

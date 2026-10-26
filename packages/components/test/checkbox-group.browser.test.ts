@@ -107,6 +107,24 @@ describe('odd-checkbox-group', () => {
   });
 });
 
+describe('layout', () => {
+  it('stacks the choices at their own width, or lines them up and wraps them', async () => {
+    container.style.inlineSize = '240px';
+    const { group, choices } = await mount(
+      `<odd-checkbox-group label="Channels">${CHOICES}</odd-checkbox-group>`,
+    );
+    const box = (el: Element) => el.getBoundingClientRect();
+    const options = group.shadowRoot!.querySelector('[part="control"]')!;
+    expect(box(choices[0]!).width).toBeLessThan(box(options).width);
+    expect(box(choices[1]!).top).toBeGreaterThan(box(choices[0]!).top);
+    group.setAttribute('orientation', 'horizontal');
+    await settle(group);
+    expect(box(choices[1]!).top).toBe(box(choices[0]!).top);
+    // The choice that does not fit wraps to the next line.
+    expect(box(choices[2]!).top).toBeGreaterThan(box(choices[0]!).top);
+  });
+});
+
 describe('forms', () => {
   it('submits each choice under its own name and nothing for the group', async () => {
     const { group, choices, form } = await mount(
