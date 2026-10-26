@@ -2264,6 +2264,24 @@
       "figma": ["checkbox", "CheckboxOption", "radio", "switch"]
     },
     {
+      "id": "range",
+      "kind": "style",
+      "home": "packages/components/src/styles/range.structural.styles.ts and range.styles.ts (rangeStructuralStyles, rangeStyles; interpolated into each element's sheets; internal to @oddkin/components)",
+      "decision": "Slider areas an element draws: the track, the fill, and the round thumb placed by the value's fraction (mirrored right to left), touch drags, and forced colours.",
+      "status": "existing",
+      "code": ["odd-slider"],
+      "figma": ["slider"]
+    },
+    {
+      "id": "range-input",
+      "kind": "controller",
+      "home": "packages/components/src/form-control/range.ts (parseNumber, rangeEnds, stepNumber, snapNumber, keyValue, pointerDrag; internal to @oddkin/components)",
+      "decision": "Numbers on a step grid and the input that moves them: HTML's number syntax and stepUp() algorithm, a range's snap to the nearest value, the APG slider and spinbutton keys, and a pointer drag along an area.",
+      "status": "existing",
+      "code": ["odd-input (number)", "odd-slider"],
+      "figma": ["number", "slider"]
+    },
+    {
       "id": "option-row",
       "kind": "style",
       "home": "@oddkin/components/styles (optionRowStructuralStyles, optionRowStyles); optionRowPickerStyles (the gated select picker rows, imported relatively from styles/option-row.styles.ts)",

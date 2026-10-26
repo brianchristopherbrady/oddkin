@@ -665,6 +665,9 @@ describe('number', () => {
     // With a modifier, the keys are the platform's (line and document moves).
     await userEvent.keyboard('{Control>}{ArrowUp}{/Control}');
     expect([el.value, seen.at(-1)]).toEqual(['1', false]);
+    // Left and Right move the caret, not the value.
+    await userEvent.keyboard('{ArrowRight}{ArrowLeft}');
+    expect([el.value, seen.slice(-2)]).toEqual(['1', [false, false]]);
     // Read-only and disabled fields do not step; `step="any"` steps by one, Home and End to the bounds.
     el.readonly = true;
     await settle(el);

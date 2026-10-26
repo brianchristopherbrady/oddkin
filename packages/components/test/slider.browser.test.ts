@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { page, userEvent } from 'vitest/browser';
+import { cdp, page, server, userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import type { OddkinSlider } from '../src/slider/slider.js';
@@ -221,6 +221,53 @@ describe('odd-slider', () => {
       themeValue('background-color', '--odd-color-text-disabled'),
     );
   });
+
+  it('Page Up and Page Down move at least one step when a tenth of the range is less', async () => {
+    const { el, thumb } = await mount(
+      '<odd-slider label="A" min="0" max="4" step="1" value="2"></odd-slider>',
+    );
+    thumb.focus();
+    await userEvent.keyboard('{PageUp}');
+    expect(el.value).toBe('3');
+    await userEvent.keyboard('{PageDown}{PageDown}');
+    expect(el.value).toBe('1');
+  });
+
+  it('takes touch drags itself in an area one field high', async () => {
+    const { part } = await mount('<odd-slider label="A"></odd-slider>');
+    const area = part('control');
+    expect(getComputedStyle(area).touchAction).toBe('none');
+    expect(area.getBoundingClientRect().height).toBe(
+      parseFloat(themeValue('padding-top', '--odd-control-height-md')),
+    );
+  });
+
+  it.runIf(server.browser === 'chromium')(
+    'keeps the track, fill, and thumb visible in forced colours',
+    async () => {
+      const session = cdp();
+      await session.send('Emulation.setEmulatedMedia', {
+        features: [{ name: 'forced-colors', value: 'active' }],
+      });
+      try {
+        const { part, thumb } = await mount('<odd-slider label="A" value="40"></odd-slider>');
+        expect(matchMedia('(forced-colors: active)').matches).toBe(true);
+        const probe = document.createElement('span');
+        container.append(probe);
+        const system = (color: string) => {
+          probe.style.color = color;
+          return getComputedStyle(probe).color;
+        };
+        expect([
+          getComputedStyle(part('track')).backgroundColor,
+          getComputedStyle(part('fill')).backgroundColor,
+          getComputedStyle(thumb).borderTopColor,
+        ]).toEqual([system('GrayText'), system('Highlight'), system('ButtonText')]);
+      } finally {
+        await session.send('Emulation.setEmulatedMedia', { features: [] });
+      }
+    },
+  );
 });
 
 describe('forms', () => {

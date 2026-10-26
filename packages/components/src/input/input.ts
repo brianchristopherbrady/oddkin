@@ -1,7 +1,7 @@
 import { prop, type ElementEvents } from '@oddkin/core/element';
 import { strings } from '@oddkin/core/i18n';
 import type { FormControlOptions } from '../form-control/form-control.js';
-import { parseNumber, rangeEnds, stepNumber, type NumberRange } from '../form-control/range.js';
+import { keyValue, parseNumber, stepNumber, type NumberRange } from '../form-control/range.js';
 import { OddkinTextControl, changeEvent, inputEvent } from '../form-control/text-control.js';
 
 export { changeEvent, inputEvent };
@@ -261,21 +261,8 @@ export class OddkinInput extends OddkinTextControl.with({
     if (this.type === 'number') {
       // A disabled field takes no keys; a read-only one keeps its value.
       if (event.altKey || event.ctrlKey || event.metaKey || this.readonly) return;
-      const steps: Record<string, number> = {
-        ArrowUp: 1,
-        ArrowDown: -1,
-        PageUp: PAGE,
-        PageDown: -PAGE,
-      };
-      const { low, high } = rangeEnds(this.#range);
-      const next =
-        event.key in steps
-          ? this.#stepped(steps[event.key]!)
-          : event.key === 'Home'
-            ? low
-            : event.key === 'End'
-              ? high
-              : undefined;
+      // Left and Right stay text-editing keys, as Home and End without bounds.
+      const next = keyValue(event.key, parseNumber(this.value), this.#range, { page: PAGE });
       if (next === undefined) return;
       event.preventDefault();
       this.#commit(next);

@@ -3269,3 +3269,23 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 15
 - The text control bound `value` to the native field, so a value sanitized to empty would have erased the user's typing. It now binds the typed text, and subclasses sanitize through `_sanitize`.
 - WebKit's `elementFromPoint` does not apply a rounded overflow clip to descendants, so the stepper's corner hit test runs in Chromium and Firefox only.
 - Not verified: screen-reader output; holding a stepper button steps once (a recorded limitation).
+
+## 2026-10-26 — The shared range pieces; odd-slider on them (M10 round 7, Agent 1)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2), HEAD 910ef7f.
+
+**Change:** `src/form-control/range.ts` (internal to @oddkin/components) gains `snapNumber` (a range input's snap to the nearest grid value within the bounds), `keyValue` (the APG slider and spinbutton keys: Up and Down a step, Page Up and Page Down `page` steps, Home and End the grid's ends, Right and Left with `horizontal`, swapped right to left), and `pointerDrag` (a pressed pointer followed to release or cancel: captured, document listeners in a child scope, fractions of the area inside an inset, mirrored right to left). The slider area's look moves to `styles/range.structural.styles.ts` and `styles/range.styles.ts` (track, fill, thumb, forced colours), interpolated into odd-slider's sheets (not in `@oddkin/components/styles`: no second package needs them). odd-slider and odd-input's number field use them; the slider's own snap, key table, and drag are gone.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Elements, three engines | `range`, `slider`, `input`, `figma-parity.forms`, `examples`, `contract`, `accessibility`, `keyboard`, `description`, `styling-contract`, `multi-product`, one engine at a time | Chromium 972 passed, 50 skipped; Firefox and WebKit 969 passed, 53 skipped. The slider's existing tests are unchanged |
+| Mutation probes | `node .tmp/mutate.mjs .tmp/f-mut-range.json` (Chromium: slider, input, forms parity, then `range.browser.test.ts`) | 35 probes, 25 killed first. Survivors were untested slider behaviour from before the move: drag clamping, pointer capture, other pointers, cancel, Page Up in a short range, the area's height, `touch-action`, the forced-colours fill, and Left/Right in the number field. Tests added (`range.browser.test.ts` for the drag; three slider tests; one input assertion); the 9 and a new probe for the forced-colours track rule are killed |
+| Node, types, metadata | `npx tsc -b packages/components`; `node scripts/build-metadata.mjs`; `node scripts/build-composition-schemas.mjs --check`; `npx vitest run --project node` | Node 1,231 of 1,231; composition up to date |
+| Size, CSS | `node scripts/check-size.mjs`; `npm run compat` | `components:slider` 723 B gzip (721 before), budget 768. Compat 0 problems; two new rows for the range sheets |
+| Reuse map | `node design/figma/reuse.render.mjs --write`; `figma-reuse.test.ts` | Shared homes `range` (style) and `range-input` (controller) |
+
+**Findings:**
+- In forced colours, odd-slider's track was invisible: the forced-colours `.track { background: GrayText }` lost to the visual sheet's `.track` colour (same specificity, later sheet), which forced colours turn to Canvas. It is now `.slider > .track`, as the fill and thumb rules already were; a Chromium test checks GrayText, Highlight, and ButtonText.
+- The grid's rounding is now one function for both elements: `toFixed` at the base's and step's decimals, where the slider rounded to 12 significant digits (which drops decimals from values above about 10^9).
+- A CSS comment in a shared sheet ships in every consumer's sheet (+63 B gzip here); the note moved to the module's doc comment.
+- Not rerun: the lifetime scenario (the slider's ownership test, including a removal mid-drag, and the drag's scope test pass).

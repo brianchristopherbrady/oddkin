@@ -3,6 +3,7 @@ import { formatNumber, langOf } from '@oddkin/core/i18n';
 import { computed, signal, type Readable } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import { OddkinFormControl, type FormControlOptions } from '../form-control/form-control.js';
+import { keyValue, pointerDrag, snapNumber, type NumberRange } from '../form-control/range.js';
 
 /** Dispatched for every change the user makes (a key, a drag step), as on a native range. */
 export const inputEvent = event('input', {
@@ -90,25 +91,16 @@ export class OddkinSlider extends OddkinFormControl.with({
   get _max(): number {
     return Math.max(this.min, this.max);
   }
-  /** @internal The step, or 1 when it is not positive. */
-  get #step(): number {
-    return this.step > 0 ? this.step : 1;
-  }
-
-  /** @internal The nearest value on the step grid within the range. */
-  _snap(value: number): number {
-    const { min } = this;
-    const step = this.#step;
-    const last = Math.floor((this._max - min) / step + 1e-9);
-    const steps = Math.min(Math.max(Math.round((value - min) / step), 0), last);
-    // Rounds away the binary noise of `min + steps * step` (0.1 + 0.2).
-    return Number((min + steps * step).toPrecision(12));
+  // The grid: `step` (1 when it is not positive) from `min`, within `min` and `max`.
+  get #range(): NumberRange & { readonly step: number } {
+    return { min: this.min, max: this._max, step: this.step > 0 ? this.step : 1, base: this.min };
   }
 
   /** @internal The current value as a number on the grid. */
   readonly _number: Readable<number> = computed(() => {
     const parsed = Number.parseFloat(this.#value.value ?? this.defaultValue);
-    return this._snap(Number.isFinite(parsed) ? parsed : (this.min + this._max) / 2);
+    const value = Number.isFinite(parsed) ? parsed : (this.min + this._max) / 2;
+    return snapNumber(value, this.#range);
   });
 
   /** The current value, as a string (native range). Setting it detaches it from `defaultValue`. */
@@ -156,7 +148,7 @@ export class OddkinSlider extends OddkinFormControl.with({
 
   // Sets the value the user chose; true when it changed.
   #move(value: number): boolean {
-    const next = this._snap(value);
+    const next = snapNumber(value, this.#range);
     if (next === this._number.peek()) return false;
     this.value = String(next);
     this.emit(inputEvent);
@@ -166,23 +158,14 @@ export class OddkinSlider extends OddkinFormControl.with({
   /** @internal Template handler: keys on the thumb. */
   readonly _onKeydown = (event: KeyboardEvent): void => {
     if (this.#disabled || event.altKey || event.ctrlKey || event.metaKey) return;
-    const current = this._number.peek();
-    const step = this.#step;
-    const page = Math.max(1, Math.round((this._max - this.min) / 10 / step)) * step;
+    const range = this.#range;
+    // A tenth of the range, in whole steps.
+    const page = Math.max(1, Math.round((this._max - this.min) / 10 / range.step));
     const rtl = getComputedStyle(this).direction === 'rtl';
-    const next: Record<string, number> = {
-      ArrowUp: current + step,
-      ArrowDown: current - step,
-      ArrowRight: rtl ? current - step : current + step,
-      ArrowLeft: rtl ? current + step : current - step,
-      PageUp: current + page,
-      PageDown: current - page,
-      Home: this.min,
-      End: this._max,
-    };
-    if (!(event.key in next)) return;
+    const next = keyValue(event.key, this._number.peek(), range, { page, horizontal: true, rtl });
+    if (next === undefined) return;
     event.preventDefault();
-    if (this.#move(next[event.key]!)) this.emit(changeEvent);
+    if (this.#move(next)) this.emit(changeEvent);
   };
 
   // A press on the track or thumb moves the value there and starts a drag that follows the pointer.
@@ -194,32 +177,13 @@ export class OddkinSlider extends OddkinFormControl.with({
     event.preventDefault();
     thumb.focus({ preventScroll: true });
     const start = this._number.peek();
-    const at = (e: PointerEvent) => {
-      const rect = area.getBoundingClientRect();
-      const size = thumb.offsetWidth;
-      const usable = rect.width - size;
-      let fraction = usable > 0 ? (e.clientX - rect.left - size / 2) / usable : 0;
-      fraction = Math.min(Math.max(fraction, 0), 1);
-      if (getComputedStyle(this).direction === 'rtl') fraction = 1 - fraction;
-      this.#move(this.min + fraction * (this._max - this.min));
-    };
-    at(event);
-    try {
-      area.setPointerCapture(event.pointerId);
-    } catch {
-      // Synthetic or already released pointers cannot be captured; the document still sees them.
-    }
-    const drag = scope.child({ name: 'slider drag' });
-    const ours = (e: PointerEvent) => e.pointerId === event.pointerId;
-    const doc = area.ownerDocument;
-    drag.listen(doc, 'pointermove', (e: PointerEvent) => ours(e) && at(e));
-    const end = (e: PointerEvent) => {
-      if (!ours(e)) return;
-      drag.dispose();
-      if (this._number.peek() !== start) this.emit(changeEvent);
-    };
-    drag.listen(doc, 'pointerup', end);
-    drag.listen(doc, 'pointercancel', end);
+    pointerDrag(scope, area, event, {
+      inset: thumb.offsetWidth / 2,
+      move: (x) => this.#move(this.min + x * (this._max - this.min)),
+      end: () => {
+        if (this._number.peek() !== start) this.emit(changeEvent);
+      },
+    });
   }
 
   protected override mounted(scope: Scope): void {
