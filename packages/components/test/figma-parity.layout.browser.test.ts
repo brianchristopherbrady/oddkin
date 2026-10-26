@@ -3,6 +3,7 @@ import { commands } from 'vitest/browser';
 import { defineLayoutRecipe, grid, stack } from '@oddkin/core/layout';
 import {
   compare,
+  deliberate,
   expectNone,
   figma,
   mount,
@@ -19,6 +20,10 @@ import {
 // and 960 px holds (Review · 01–10): the outcomes are read from the families' descriptions.
 useParity();
 useRecipeStyles(['layout']);
+deliberate([
+  /^Oddkin\/Layout\/Split \S.* minWidth \(--odd-layout-main-min\): min-inline-size min\((\d+px), 100%\), token \1$/,
+  "The main minimum is Figma's token capped at the container (min(token, 100%)), so a split narrower than it stacks without overflowing; the token is unchanged.",
+]);
 
 const WIDTHS = [320, 640, 960] as const;
 const at = (width: number, markup: string) =>
