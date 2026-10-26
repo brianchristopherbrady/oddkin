@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import type { OddkinCalendar } from '../src/calendar/calendar.js';
 import type { OddkinDatePicker } from '../src/date-picker/date-picker.js';
@@ -76,6 +76,12 @@ describe('Figma parity: odd-file-input (fileUpload)', () => {
 });
 
 describe('Figma parity: odd-calendar (calendar, calendar/Day)', () => {
+  // Figma's today is 24 October 2026; on a real 26 October the chosen date would also be today.
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 9, 24, 12));
+  });
+  afterEach(() => vi.useRealTimers());
   const grid = 'Month grid · Monday first';
   const calendar = async (attributes = '') => {
     const el = mount(

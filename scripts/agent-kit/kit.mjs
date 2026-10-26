@@ -399,6 +399,18 @@ function guide(project, library, components, categories, entries) {
   const contracts = Object.entries(metadata.contracts ?? {});
   const commands = Object.entries(project.context.commands ?? {});
   const refs = (kind) => entries.filter((e) => e.kind === kind);
+  // One stated rule for every `<prefix-name>` → `<package>/define/<name>` entry keeps the guide within budget.
+  const defineEntry = (c) => `${library.name}/define/${c.tag.slice(c.tag.indexOf('-') + 1)}`;
+  const regular = components.filter((c) => c.registration === defineEntry(c));
+  const irregular = components.filter((c) => c.registration !== defineEntry(c));
+  const byCategory = new Map();
+  for (const c of components) {
+    const label = c.category ? (categories[c.category]?.label ?? c.category) : 'Other';
+    byCategory.set(label, [...(byCategory.get(label) ?? []), c.tag]);
+  }
+  const groups = [...byCategory].sort(([a], [b]) =>
+    a === 'Other' ? 1 : b === 'Other' ? -1 : a.localeCompare(b),
+  );
   return `${[
     `# ${library.name} ${library.version}: agent guide`,
     '',
@@ -407,20 +419,25 @@ function guide(project, library, components, categories, entries) {
     '## Install and register',
     '',
     `- Package ${code(library.name)}${deps.length ? `, which depends on ${deps.map(code).join(', ')}` : ''}.`,
-    '- Each element has a registration entry; import it once before using the tag (listed below). Class exports are in each component reference.',
+    ...(regular.length
+      ? [
+          `- Register an element once before using its tag: ${code(`import '${library.name}/define/<name>';`)}, where \`<name>\` is the tag after its prefix (${code(`<${regular[0].tag}>`)}: ${code(`import '${regular[0].registration}';`)}). Class exports are in each component reference.`,
+        ]
+      : []),
+    ...(irregular.length
+      ? [
+          `- Registration entries${regular.length ? ' that differ from that rule' : ''}: ${irregular.map((c) => `${code(`<${c.tag}>`)} ${code(`import '${c.registration}';`)}`).join('; ')}.`,
+        ]
+      : []),
     '',
     '## Components',
     '',
     'Each has a reference at `references/components/<tag>.md` with its exact API, guidance, and examples.',
     '',
-    table(
-      ['Element', 'Category', 'Register'],
-      components.map((c) => [
-        code(`<${c.tag}>`),
-        c.category ? (categories[c.category]?.label ?? c.category) : '',
-        code(`import '${c.registration}';`),
-      ]),
+    ...groups.map(
+      ([label, tags]) => `- **${label}:** ${tags.map((t) => code(`<${t}>`)).join(', ')}`,
     ),
+    '',
     'Choosing between them: references/choosing-components.md.',
     '',
     '## Rules from the metadata',
