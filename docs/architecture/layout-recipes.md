@@ -287,3 +287,107 @@ Decided from demonstrated needs: a preset ships only where real consumers alread
 | Toolbar: a row of actions that wraps, or spreads to both ends | `examples/ai-agent` `.toolbar`, `examples/ai-research` `.buttons`, `examples/css-gallery` `.actions`; `apps/docs` `.site-header` | `.odd-cluster` and `.odd-row-between`; `odd-toolbar` when the row is an ARIA toolbar (one tab stop, arrow keys) |
 
 The consumers above still write these layouts by hand; moving them to the classes is follow-up work for their owners. Checked by `packages/components/test/layout.browser.test.ts` (the side after the main content, wide and stacked; a few items across the row) and `layout.test.ts`, in three engines.
+
+## 14. Layout in shadow roots (M10 audit, 2026-10-26)
+
+**Rule.** An element's shadow root uses a layout helper where its arrangement is the decision a page makes with a primitive: children in a column (`stack`), in one row (`row`), in a row that wraps (`row({ wrap: true })`, the cluster), equal columns (`grid`), as many columns as fit (`autoGrid`), or a side beside the main content (`split`), spaced by one gap token. It keeps its own CSS where the arrangement is component geometry:
+
+| Geometry | What it is | Examples |
+| --- | --- | --- |
+| Inline box | The element's own box centring its glyph and label | button, chip, badge, tab, pagination tile |
+| Centred box | A glyph or image centred in a fixed box | avatar, chip remove, control indicator, star |
+| Control box | A control and its adornments sharing one cell; chips that wrap around an input | field `.control-box`, combobox `.box`, picker trigger |
+| Roving row | Rows and lists of a composite widget whose keyboard model follows their order and axis | option row, navigation row, tab list, rating stars |
+| Track | Children that share one track | slider, segmented control, split panel |
+| Cell grid | Named or sized columns | toast, progress, one-time code, usage meter entry |
+| Anchored surface | A popup or dialog shown as a column only while open; lists whose rows are flush | picker popup, dialog, command palette, listbox |
+
+**How an element uses a helper.** As `odd-side-nav` does (§9, §10): `<name>.recipe.ts` defines the arrangement with `defineLayoutRecipe({ name, regions })` from `@oddkin/components/layout`, one region per class it arranges (a region named `footer` styles `.footer`), with the gap token the element used (`row({ gap: token('space.sm'), wrap: true })`); `recipes.test.ts` extracts it into `<name>.recipe.styles.ts` (`UPDATE_FIXTURES=1`), which the definition lists before the element's structural sheet; the hand-written `display`, direction, wrapping, alignment, and gap leave the structural and visual sheets. The extracted rules sit in `@layer odd.layout.base`, so the element's unlayered rules still win where they differ, and `hidden` still hides (host styles' `!important`). A helper that cannot express a common decision is extended in `@oddkin/core/layout`, not worked around.
+
+**Audit.** Every `display: flex`, `inline-flex`, `grid`, or `inline-grid` in `packages/components/src` (129 rules in 51 files; the generated side-nav sheet holds five of them) and `packages/ai/src` (69 in 24 files), each rule classified by its declarations and the element's behaviour. Not element arrangements, so not counted as either class: the light-DOM recipes in `src/css` (page classes, §13), the generated side-nav sheet (already helpers), and one example's page CSS.
+
+| Class | Rules |
+| --- | --- |
+| Same decision as a primitive | 97 (`stack` 51, `row` 45, `autoGrid` 1) |
+| Component geometry | 83 |
+| Not counted (src/css recipes, generated sheet, example) | 18 |
+
+Lanes (the owner converts its own candidates with its tests and parity unchanged): Agent 1 form controls 5, Agent 2 overlays, navigation, file input, and every `@oddkin/ai` element 74, Agent 3 collections and layout 8, Agent 4 display, odd-combobox, and odd-picker 10.
+
+| File | Lane | Same decision as a primitive | Component geometry |
+|---|---|---|---|
+| components/alert/alert.structural.styles.ts | Agent 4 | `.alert` row({ gap: space.sm, align: 'start', wrap: true }); `.end` row({ gap: space.xs, wrap: true }) | `.marker`: inline box: glyph and label inside the element box |
+| components/avatar/avatar.structural.styles.ts | Agent 4 | — | `.avatar`: centred box: centres a glyph or image |
+| components/badge/badge.structural.styles.ts | Agent 4 | — | `.badge`, `.marker`: inline box: glyph and label inside the element box |
+| components/breadcrumbs/breadcrumbs.structural.styles.ts | Agent 2 | `.list` row({ gap: space.sm, wrap: true }) | `.item`, `.link, .current, .more`, `.separator`: inline box: glyph and label inside the element box |
+| components/button/button.native.styles.ts | Agent 1 | — | `.odd-button`: inline box: glyph and label inside the element box |
+| components/button/button.structural.styles.ts | Agent 1 | — | `button`, `.label`: inline box: glyph and label inside the element box |
+| components/calendar/calendar.structural.styles.ts | Agent 2 | `.calendar` stack({ gap: space.sm }); `.header, .actions` row({ gap: space.xs }) | — |
+| components/card/card.structural.styles.ts | Agent 4 | `.card` stack({ gap: space.sm }) | — |
+| components/checkbox-group/checkbox-group.structural.styles.ts | Agent 1 | `.options` stack({ gap: space.lg, align: 'start' }) | — |
+| components/chip/chip.structural.styles.ts | Agent 4 | — | `.chip`: inline box: glyph and label inside the element box; `.remove`: centred box: centres a glyph inside the element box |
+| components/combobox/combobox.structural.styles.ts | Agent 4 | `.chips` row({ gap: control.gap, wrap: true }) | `.chevron`: inline box: glyph and label inside the element box; `.box`: control box: chips wrap around the input, which takes the rest of the line |
+| components/command-palette/command-palette.structural.styles.ts | Agent 3 | `.search` row({ gap: space.sm }); `.state` row({ gap: space.sm }); `.footer` row({ gap: space.md, align: 'stretch', wrap: true }) | `.palette[open]`: anchored surface: the top-layer dialog shows as a column only while open; `.search-glyph`: inline box: glyph and label inside the element box; `.listbox, .group`: anchored surface: rows flush in the scrolling list (no gap) |
+| components/copy-button/copy-button.structural.styles.ts | Agent 4 | — | `.base`: inline box: glyph and label inside the element box |
+| components/css/index.ts | Agent 4 | — | `.odd-divider:not(hr)`, `.odd-list > li`, `.odd-avatar-group`, `.odd-description-list`, `.odd-description-list > div`, `@container odd-description-list (max`, `.odd-timeline`, `.odd-timeline > li`, `.odd-timeline > li > :last-child`, `.odd-stepper`, `.odd-stepper > li`, `.odd-stepper > li > :last-child`: light-DOM recipe (src/css), not a shadow root: page classes are layout-recipes.md §13 |
+| components/date-picker/date-picker.structural.styles.ts | Agent 2 | — | `.button`: centred box: centres a glyph or image |
+| components/dialog/dialog.structural.styles.ts | Agent 2 | `.header` row({ gap: space.sm, align: 'start' }); `.footer` row({ gap: space.sm, align: 'stretch', wrap: true, justify: 'end' }) | `.dialog[open]`: anchored surface: the modal shows as a column only while open |
+| components/disclosure/disclosure.structural.styles.ts | Agent 2 | `.summary` row({ gap: space.sm }) | `.marker`: inline box: glyph and label inside the element box |
+| components/empty-state/empty-state.structural.styles.ts | Agent 4 | `.empty` stack({ gap: space.sm, align: 'center' }); `.footer:not([hidden])` row({ gap: 0, align: 'stretch', wrap: true, justify: 'center' }) | `.media:not([hidden])`: centred box: centres a glyph or image |
+| components/file-input/file-input.structural.styles.ts | Agent 2 | `.surface` stack({ gap: space.xs, align: 'start' }); `.header, .file` row({ gap: space.md }); `.files` stack({ gap: space.sm }); `.file-text` stack({ gap: 0 }) | `.header-glyph, .file-glyph`, `.remove`: inline box: glyph and label inside the element box |
+| components/input/input.structural.styles.ts | Agent 1 | — | `.clear, .step`: centred box: centres a glyph or image; `.stepper`: control box: the decrement and increment buttons pinned to the end of the field |
+| components/listbox/listbox.structural.styles.ts | Agent 3 | `.state` row({ gap: space.sm }) | `.surface, .listbox, .group`: anchored surface: rows flush in the scrolling list (no gap; rows draw their own spacing) |
+| components/menu/menu.structural.styles.ts | Agent 3 | — | `.trigger-glyph`: inline box: glyph and label inside the element box |
+| components/one-time-code/one-time-code.structural.styles.ts | Agent 1 | — | `.box`: cell grid: the input over the drawn cells, one shared cell; `.cells`: cell grid: one drawn cell per character of the input; `.cell`: cell grid: centres a character in its cell; `.status`: cell grid: the status line under the cells |
+| components/pagination/pagination.structural.styles.ts | Agent 2 | `.pagination` row({ gap: space.sm, wrap: true, justify: 'space-between' }); `.list` row({ gap: space.xs, wrap: true }) | `.tile`, `.ellipsis`: inline box: glyph and label inside the element box |
+| components/picker/picker.structural.styles.ts | Agent 4 | `.footer` row({ gap: space.xs }) | `.combobox`: control box: the trigger fills the field box and truncates its value; `.popup:popover-open`: anchored surface: the popover shows as a column only while open |
+| components/popover/popover.structural.styles.ts | Agent 2 | — | `.popover`: anchored surface: content beside the close button in the popover |
+| components/progress/progress.structural.styles.ts | Agent 4 | `.head` row({ gap: 0, align: 'baseline', justify: 'space-between' }) | `.progress`: cell grid: label, value, and track in named cells |
+| components/radio-group/radio-group.structural.styles.ts | Agent 1 | `.options, .group` stack({ gap: inherit, align: 'start' }) | — |
+| components/rating/rating.structural.styles.ts | Agent 1 | `.row` row({ gap: space.sm, wrap: true }) | `.stars`: roving row: the stars of one radio group (arrow keys); `.star`: centred box: centres a glyph or image |
+| components/relative-time/relative-time.structural.styles.ts | Agent 4 | — | `.base`, `.relative`: inline box: glyph and label inside the element box |
+| components/scroll-region/scroll-region.structural.styles.ts | Agent 3 | `.content` stack({ gap: layout.gap }) | `:host`: container contract: the host is the scroll container and its single cell |
+| components/segmented-control/segmented-control.structural.styles.ts | Agent 1 | — | `.track`: track: segments share one track with the selection indicator; `.segment`: track: a segment centres its label in its share of the track; `.segment-label`: track: glyph and label inside a segment |
+| components/side-nav/side-nav.recipe.styles.ts | Agent 3 | — | `\n .root`, `\n .header`, `\n .content`, `\n .footer`, `\n@layer odd.layout.condition`: already a helper (side-nav recipe, generated) |
+| components/side-nav/side-nav.structural.styles.ts | Agent 3 | `.group-items` stack({ gap: navigation.item.gap }) | `::slotted(a)`: roving row: slotted links take the navigation row geometry |
+| components/skeleton/skeleton.structural.styles.ts | Agent 4 | — | `.lines`: placeholder geometry: line boxes spaced by the text line height (0.5em), not a layout token |
+| components/slider/slider.structural.styles.ts | Agent 1 | `.heading, .endpoints` row({ gap: 0, align: 'baseline', justify: 'space-between' }) | `.slider`: track: thumb and track share one cell |
+| components/spinner/spinner.structural.styles.ts | Agent 4 | — | `.base`: inline box: glyph and label inside the element box |
+| components/split-button/split-button.structural.styles.ts | Agent 3 | — | `:host`: joined pair: the action and the menu button share one border |
+| components/split-panel/split-panel.structural.styles.ts | Agent 3 | — | `.split`: track: start pane, separator, end pane sized by the separator position; `.separator`: track: centres the grip in the separator |
+| components/stat/stat.structural.styles.ts | Agent 4 | `.base` stack({ gap: space.xs }); `.context` row({ gap: space.xs }) | — |
+| components/status-marker/status-marker.structural.styles.ts | Agent 4 | — | `:host`: centred box: the marker is its own inline cell; `.base`: centred box: centres a glyph or image |
+| components/styles/control-indicator.structural.styles.ts | Agent 1 | — | `.choice`: inline box: glyph and label inside the element box; `.indicator`: centred box: centres a glyph inside the element box |
+| components/styles/field.structural.styles.ts | Agent 1 | `.field` stack({ gap: space.xs }) | `.control-box`: control box: the control and its adornments share one grid cell; `.control-start, .control-end`: control box: adornments pinned to the ends of the shared cell |
+| components/styles/nav-row.structural.styles.ts | Agent 3 | — | `.entry`: roving row: the navigation row (marker, label, end) is the focus target |
+| components/styles/option-row.structural.styles.ts | Agent 3 | — | `.option`: roving row: start, label (grows), end slots of an active-descendant row; `.option-start, .option-end, .option-`: inline box: glyph and label inside the element box; `.option-label`: roving row: label over description inside the row |
+| components/styles/overlay-surface.structural.styles.ts | Agent 2 | — | `.overlay-close`: centred box: centres a glyph inside the element box |
+| components/tabs/tabs.structural.styles.ts | Agent 2 | — | `.tabs`: roving row: the tab list above its panels (orientation switches the axis); `.list`: roving row: the tablist (arrow keys between tabs; overflow scroll); `.tab`: inline box: glyph and label inside the element box; `.panels`: roving row: panels under the tab list, one shown |
+| components/toast/toast.structural.styles.ts | Agent 2 | — | `.toast`: cell grid: marker, content, and actions in template areas; `.marker`: inline box: glyph and label inside the element box; `.end`: cell grid: the actions cell of the toast grid |
+| components/toolbar/toolbar.structural.styles.ts | Agent 2 | `.toolbar` row({ gap: space.sm, wrap: true }) | — |
+| components/tree/tree.structural.styles.ts | Agent 3 | `.root, .tree` stack({ gap: space.sm }); `.state` row({ gap: space.sm }) | `.toggle`: inline box: glyph and label inside the element box |
+| components/validation-summary/validation-summary.structural.styles.ts | Agent 2 | `.summary` stack({ gap: space.sm }); `.header` row({ gap: space.xs, align: 'start' }); `.list` stack({ gap: space.sm }) | `.marker`: inline box: glyph and label inside the element box |
+| ai/action-approval/action-approval.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.changes` stack({ gap: space.2xs }); `.change` row({ gap: space.xs, align: 'stretch', wrap: true }); `.reason` stack({ gap: space.2xs }) | — |
+| ai/activity/activity.styles.ts | Agent 2 | `.base` row({ gap: space.xs, wrap: true }) | — |
+| ai/ai-label/ai-label.styles.ts | Agent 2 | `.details div` row({ gap: space.xs, align: 'stretch' }) | `.label`: inline box: glyph and label inside the element box |
+| ai/artifact/artifact.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.header` row({ gap: space.xs, wrap: true }) | — |
+| ai/change-review/change-review.styles.ts | Agent 2 | `.list` stack({ gap: space.sm }); `.proposal` stack({ gap: space.xs }); `.split` autoGrid({ min: '14rem', fill: 'auto-fit', gap: space.sm }) | — |
+| ai/checkpoint/checkpoint.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.confirm` stack({ gap: space.xs }) | — |
+| ai/citation/citation.styles.ts | Agent 2 | `.preview` stack({ gap: space.2xs }) | `.trigger`: inline box: glyph and label inside the element box |
+| ai/context-picker/context-picker.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.list` stack({ gap: space.2xs }); `.row` row({ gap: space.xs, wrap: true }); `.url` row({ gap: space.2xs, align: 'stretch', wrap: true }) | — |
+| ai/conversation/conversation.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.feed` stack({ gap: space.lg }); `.history, .empty` row({ gap: space.xs, align: 'stretch', wrap: true, justify: 'center' }) | — |
+| ai/inline-assist/inline-assist.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.toolbar` row({ gap: space.2xs, align: 'stretch', wrap: true }); `.language` row({ gap: space.xs, wrap: true }) | — |
+| ai/internal/base.styles.ts | Agent 2 | `.actions` row({ gap: space.xs, wrap: true }) | `.status`: inline box: glyph and label inside the element box |
+| ai/message/message.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.header` row({ gap: space.xs, wrap: true }); `.content` stack({ gap: space.sm }); `.edit` stack({ gap: space.xs }) | — |
+| ai/model-select/model-select.styles.ts | Agent 1 | — | `:host`: control box: the native select fills the host; `.details`: cell grid: model name and details in two cells |
+| ai/prompt-input/prompt-input.styles.ts | Agent 2 | `.toolbar` row({ gap: space.xs, wrap: true }); `.attachments, .issues` row({ gap: space.xs, align: 'stretch', wrap: true }); `.attachment` row({ gap: space.2xs, wrap: true }) | `.form`: control box: the textarea and the toolbar share the bordered box; `.drop-hint`: centred box: the drop hint over the form |
+| ai/question/question.styles.ts | Agent 2 | `.form` stack({ gap: space.xs }); `fieldset` stack({ gap: space.xs }); `.options` stack({ gap: space.2xs }); `.option` row({ gap: space.xs }); `.field` stack({ gap: space.2xs }) | — |
+| ai/response/response.examples.ts | Agent 2 | — | `css\n@container (min-inline-size: 40`: example page CSS (author content in an example), not element styles |
+| ai/response-feedback/response-feedback.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.form` stack({ gap: space.xs }); `fieldset` stack({ gap: space.2xs }); `.check` row({ gap: space.xs }); `.field` stack({ gap: space.2xs }) | — |
+| ai/sources/sources.styles.ts | Agent 2 | `.list` stack({ gap: space.xs }); `.item` stack({ gap: 0.125rem }) | — |
+| ai/suggestions/suggestions.styles.ts | Agent 2 | `.list` row({ gap: space.xs, align: 'stretch', wrap: true }) | `.item`: inline box: glyph and label inside the element box |
+| ai/task-plan/task-plan.styles.ts | Agent 2 | `.base` stack({ gap: space.sm }); `.progress` row({ gap: space.xs, wrap: true }); `.steps, .tasks` stack({ gap: space.xs }); `.step, .task` row({ gap: space.xs, align: 'stretch' }); `.body` stack({ gap: 0.125rem }) | — |
+| ai/tool-call/tool-call.styles.ts | Agent 2 | `:host` stack({ gap: space.xs }); `.summary` row({ gap: space.xs, wrap: true }); `.body` stack({ gap: space.xs }); `.failure` row({ gap: space.xs, wrap: true }) | — |
+| ai/transcript/transcript.styles.ts | Agent 2 | `.list` stack({ gap: space.2xs }) | — |
+| ai/usage-meter/usage-meter.styles.ts | Agent 2 | `.list` stack({ gap: space.xs }); `dd` stack({ gap: space.2xs }) | `.entry`: cell grid: named or sized columns |
+| ai/voice-input/voice-input.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }) | `.record`: inline box: glyph and label inside the element box |
