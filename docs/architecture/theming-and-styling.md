@@ -64,7 +64,7 @@ interface Diagnostic {
 }
 ```
 
-`value.syntax.aboveFloor` (warning) reports token values that use syntax the browser floor cannot parse (`light-dark()`, relative colour syntax, `contrast-color()`, `anchor-size()`, `if()`, …): readers of such a token become invalid at computed-value time in those browsers ([css-architecture.md](./css-architecture.md) §4.2). The list is `ABOVE_FLOOR_SYNTAX` in `@oddkin/tokens/generate`, verified against `@mdn/browser-compat-data` by `npm run lint:css`. Literal colour overrides already fail `color.invalid`; its suggestion names the floor browsers.
+`value.syntax.aboveFloor` (warning) reports token values that use syntax the browser floor cannot parse (`contrast-color()`, `calc-size()`, `anchor-size()`, `if()`, …; `light-dark()` and relative colour syntax are at the Baseline 2024 floor): readers of such a token become invalid at computed-value time in those browsers ([css-architecture.md](./css-architecture.md) §4.2). The list is `ABOVE_FLOOR_SYNTAX` in `@oddkin/tokens/generate`, verified against `@mdn/browser-compat-data` by `npm run lint:css`. Literal colour overrides already fail `color.invalid`; its suggestion names the floor browsers.
 
 The shared diagnostic envelope planned in [agent-tooling.md](./agent-tooling.md) §9.1 only adds optional fields (`kind`, `subject`, `expected`/`received`, `docs`, `fix`) to this shape. Agent tooling explains tokens from the inspection output; it never recomputes them.
 
@@ -179,6 +179,14 @@ A product or density scope must re-declare the roles that depend on it, and thos
 ```
 
 A guaranteed-invalid toggle (`initial`) selects its fallback; an empty toggle contributes nothing. Each scope re-declares the same expression, which resolves on that element with its inherited toggles and reference tokens, so mode, product, and density scopes nest in any order. `:root` follows `prefers-color-scheme` unless `data-odd-mode` is set; `data-odd-mode="system"` restores system behavior inside an explicit subtree. `color-scheme` is set with each mode. Verified with computed styles in nested scopes and a shadow root in Chromium, Firefox, and WebKit (`packages/tokens/test/generate.browser.test.ts`).
+
+`light-dark()` was measured as the output for colours ([ADR 0046](./decisions/0046-plan-audit-2026-10-26.md) D2; `CssOptions.modeColors: 'light-dark'`, experimental). It is 168 B gzip smaller for the default theme, and mode scopes re-declare 4 values instead of 40. It is identical in every scope in three engines. It is not adopted, because it is not equivalent in three cases:
+
+- In Firefox forced colours, content that opts out with `forced-color-adjust: none` inside a dark scope gets the light values.
+- An author `color-scheme` without `data-odd-mode` flips colours but not the toggled shadows.
+- Scripts that read computed custom properties get `light-dark()` strings.
+
+Evidence: [research/experiments/light-dark](../../research/experiments/light-dark/README.md).
 
 Consequences: product scopes may change only brand inputs (reference tokens), and contrast-selected roles choose steps that pass for the base brand and every product, so role expressions are identical in every scope. Product-specific role overrides are not supported yet. A nested `data-odd-theme` scope re-declares all tokens, but mode/product/density scopes inside it use the expressions of the last loaded theme file; one theme per document is the supported case for now.
 

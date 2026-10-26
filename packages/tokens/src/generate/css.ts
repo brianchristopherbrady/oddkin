@@ -9,17 +9,20 @@
  *   role:  var(--odd-mode-light, LIGHT) var(--odd-mode-dark, DARK)
  *
  * A guaranteed-invalid toggle (`initial`) selects its fallback; an empty toggle
- * contributes nothing. Contract: theming-and-styling.md §5.
+ * contributes nothing. Contract: theming-and-styling.md §5. With `modeColors: 'light-dark'`,
+ * colours that differ by mode are written once as `light-dark(LIGHT, DARK)` instead, resolved
+ * from the `color-scheme` every mode scope sets, and only the other values use the toggles.
  *
  * Declarations are emitted into the `odd.tokens` cascade layer after the canonical Oddkin
  * layer order (ADR 0039), so unlayered application CSS overrides generated values whatever
  * the stylesheet order. Contract: css-architecture.md §5.
  */
-import type { Mode } from '../theme/types.js';
+import type { Mode, ModeValues } from '../theme/types.js';
 import {
   compileValue,
   cssVariable,
   dependents,
+  isModeDependent,
   MODE_TOGGLE,
   type TokenDefinition,
   type TokenMap,
@@ -52,6 +55,14 @@ export interface CssOptions {
    * unlayered CSS.
    */
   readonly layer?: string | false;
+  /**
+   * How colours that differ by mode are written: `'toggles'` (default), like every other
+   * mode-dependent value, or `'light-dark'`, once as `light-dark(LIGHT, DARK)`. Experimental
+   * (ADR 0046 D2): smaller, but not equivalent in Firefox forced colours, under an author
+   * `color-scheme` without `data-odd-mode`, or for scripts reading computed custom properties
+   * (research/experiments/light-dark).
+   */
+  readonly modeColors?: 'toggles' | 'light-dark';
 }
 
 const LAYER_NAME = /^-?[A-Za-z_][\w-]*(?:\.-?[A-Za-z_][\w-]*)*$/;
@@ -78,11 +89,22 @@ const toggles = (mode: Mode): Declaration[] => [
   [MODE_TOGGLE.dark, mode === 'dark' ? 'initial' : ''],
 ];
 
+/** A colour that differs by mode, written once as light-dark(): no toggle re-resolves it. */
+const isLightDark = (t: TokenDefinition, modes: readonly Mode[], lightDark: boolean): boolean =>
+  lightDark && t.type === 'color' && isModeDependent(t.value, modes);
+
+function compileToken(t: TokenDefinition, modes: readonly Mode[], lightDark: boolean): string {
+  if (!isLightDark(t, modes, lightDark)) return compileValue(t.value, modes);
+  const { light, dark } = t.value as ModeValues;
+  return `light-dark(${compileValue(light, modes)}, ${compileValue(dark, modes)})`;
+}
+
 function tokenDeclarations(
   tokens: Iterable<TokenDefinition>,
   modes: readonly Mode[],
+  lightDark: boolean,
 ): Declaration[] {
-  return [...tokens].map((t) => [cssVariable(t.name), compileValue(t.value, modes)] as const);
+  return [...tokens].map((t) => [cssVariable(t.name), compileToken(t, modes, lightDark)] as const);
 }
 
 /** Emit the theme as CSS custom properties. Deterministic: same theme and options, same bytes. */
@@ -91,7 +113,7 @@ export function emitCss(theme: ResolvedTheme, options: CssOptions = {}): string 
   if (layer !== false && !isLayerName(layer))
     throw new TypeError(`emitCss: "${layer}" is not a valid cascade layer name.`);
   const header = `/* @oddkin/tokens — theme "${theme.name}". Generated file: change the theme configuration instead of editing it. */\n`;
-  const body = emitBlocks(theme);
+  const body = emitBlocks(theme, options.modeColors === 'light-dark');
   if (layer === false) return [header, body].join('\n');
   const order = layer === DEFAULT_TOKEN_LAYER ? `@layer ${LAYER_ORDER.join(', ')};\n\n` : '';
   const indented = body
@@ -101,18 +123,29 @@ export function emitCss(theme: ResolvedTheme, options: CssOptions = {}): string 
   return `${header}\n${order}@layer ${layer} {\n${indented.trimEnd()}\n}\n`;
 }
 
-function emitBlocks(theme: ResolvedTheme): string {
+function emitBlocks(theme: ResolvedTheme, lightDark: boolean): string {
   const { modes, tokens } = theme;
   const baseSelectors = [':root', `[data-odd-theme="${theme.name}"]`];
-  const parts: string[] = [block(baseSelectors, tokenDeclarations(tokens.values(), modes))];
+  const parts: string[] = [
+    block(baseSelectors, tokenDeclarations(tokens.values(), modes, lightDark)),
+  ];
 
   if (modes.length === 1) {
     parts.push(block([':root'], [['color-scheme', modes[0] as Mode]]));
   } else {
-    const closure = [...dependents(tokens, new Set(['$mode']), modes)].map(
+    // light-dark() colours resolve where they are used: they keep their references but no
+    // longer depend on the toggles, so only the toggled values and their aliases re-declare.
+    const toggled: TokenMap = new Map(
+      [...tokens].map(([name, t]) => {
+        if (!isLightDark(t, modes, lightDark)) return [name, t];
+        const { light, dark } = t.value as ModeValues;
+        return [name, { ...t, value: `${light} ${dark}` }];
+      }),
+    );
+    const closure = [...dependents(toggled, new Set(['$mode']), modes)].map(
       (n) => tokens.get(n) as TokenDefinition,
     );
-    const closureDeclarations = tokenDeclarations(closure, modes);
+    const closureDeclarations = tokenDeclarations(closure, modes, lightDark);
     // The root follows the system preference unless a mode is set explicitly.
     parts.push(block([':root'], toggles('light')));
     parts.push(
@@ -145,7 +178,7 @@ function emitBlocks(theme: ResolvedTheme): string {
             `[data-odd-profile~="${scope.name}"] :is([data-odd-mode], [data-odd-product], [data-odd-density], [data-odd-theme])`,
           ]
         : [`[data-odd-${scope.kind}="${scope.name}"]`];
-    parts.push(block(selectors, tokenDeclarations(scope.tokens.values(), modes)));
+    parts.push(block(selectors, tokenDeclarations(scope.tokens.values(), modes, lightDark)));
   }
   return parts.filter(Boolean).join('\n');
 }

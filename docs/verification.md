@@ -3137,3 +3137,21 @@ Environment: Windows, Node 24.22.1, Playwright 1.64.1 and Vitest 5.0.5 (Chromium
 - **Workbench:** a scoped layout recipe (`defineLayoutRecipe` with `scope`) was built for the shell and the panels together, then measured and dropped: `@oddkin/core/layout` costs 5.4 KB gzip in production, the docs-embedded panels would pay it, and the docs page would load component JavaScript (its e2e caught it). The shell links `layout.css` (0.7 KB of CSS) instead; the panels' shadow-root sheet stays structural CSS.
 - **Stale import map:** `full-app` had no `@oddkin/core/i18n` mapping since `odd-input` imported it; its page did not start.
 - **Not verified:** screen-reader passes (deferred by the owner); Safari on macOS.
+
+## 2026-10-26 — `light-dark()` for colour tokens measured (ADR 0046 D2): not adopted
+
+The generator gains an experimental option, `CssOptions.modeColors: 'light-dark'`. With it, each colour that differs by mode is written once as `light-dark(LIGHT, DARK)`; mode scopes set `color-scheme` and re-declare only what still depends on the toggles. The default (`'toggles'`) is unchanged.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Option | `npx vitest run --project node packages/tokens/test/mode-colors.test.ts` | 5 tests: the default output is byte-identical; each colour that differs by mode becomes `light-dark()` and every other value is unchanged; mode scopes keep only the toggled values (the 4 shadows), not the colour aliases; product colours carry no toggles; a `light-dark()` colour that reads a toggled token through either value stays in the mode scopes. |
+| Mutation probes | `node .tmp/n-mutate.mjs .tmp/n-mutants-d2.json` | 9 of 9 killed (option default, colour-only, value order, reference closure, base, scope, and mode-scope compilation). |
+| Bytes | `node research/experiments/light-dark/measure.mjs` | `tokens:default.css` 28,155 → 16,775 B raw, 3,067 → 2,899 B gzip (−168). Mode-scope declarations 40 → 4. The `products-density` case is −202 B gzip and the harbor example −195. |
+| Equivalence | same script; Chromium 156, Firefox 157, WebKit 27.2; light and dark preference; forced colours emulated | Every colour and shadow token compared on 22 probes for each of 3 themes. The probes cover root, light/dark/system scopes nested both ways, products and densities in modes, a profile, a nested theme, several axes on one element, shadow roots with and without adopted CSS, two levels deep, and slotted content. Identical everywhere without forced colours, except the probe with an author `color-scheme: dark` (36 colours flip; by design of `light-dark()`). In forced colours, Chromium is identical. Firefox differs on the light-DOM probes in dark scopes (8 or 10 probes × 36 colours), because it computes `color-scheme` as `normal` on forced elements, so opted-out descendants get light values. WebKit's emulation forces no colours. |
+| Parity | same script | `resolveToken` and DTCG output are identical. `emitInspectJson` still describes the toggles, so adoption would need it moved into the token graph. Theme Studio regenerates through `generate()`, which would follow; it takes 6.4 ms instead of 6.1 ms for the default theme. |
+
+**Findings:** Firefox resolves `light-dark()` from a forced `color-scheme: normal` in forced colours, where Chromium keeps the author's scheme (checked with a bare `light-dark()` in each engine). Scripts reading `getPropertyValue('--odd-color-…')` get `light-dark(#6250e8, #b4a8ff)` instead of `#b4a8ff`.
+
+**Decision:** Not adopted (ADR 0046 D2: smaller, but not equivalent). `light-dark-function` returns to declined with this evidence (features.json, css-architecture.md §4.3, theming-and-styling.md §5.1).
+
+**Gaps:** The floor browsers (Chrome 130, Firefox 132) were not run with this script. Real Windows high-contrast themes were not tried; only Playwright's emulation was.

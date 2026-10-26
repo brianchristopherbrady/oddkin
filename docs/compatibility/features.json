@@ -1172,10 +1172,10 @@
       "kind": "css",
       "bcd": ["css.types.color.light-dark"],
       "webFeature": "light-dark",
-      "adoption": "deferred",
+      "adoption": "declined",
       "status": "evaluated",
       "baseline": "Inherited --odd-mode-light/--odd-mode-dark toggles switch every mode-dependent role.",
-      "decision": "At the floor since the Baseline 2024 re-resolution (ADR 0046 D1; Safari 17.5 added it). Re-opened by ADR 0046 D2: emitting each mode-dependent colour token once as light-dark() is measured against the inherited mode toggles (bytes, nested scopes, products, forced colours, resolveToken, inspection, Theme Studio); the toggles stay for values that are not colours."
+      "decision": "Measured for ADR 0046 D2 (research/experiments/light-dark, 2026-10-26): emitting each colour that differs by mode once as light-dark() makes tokens:default.css 168 B gzip smaller (3,067 to 2,899) and is identical in every scope in Chromium, Firefox, and WebKit, but it is not equivalent: in Firefox forced colours, content that opts out with forced-color-adjust: none inside a dark scope gets the light values (Firefox computes color-scheme as normal on forced elements); an author color-scheme without data-odd-mode flips colours but not the toggled shadows; and scripts reading computed custom properties get light-dark() strings. Not adopted: the inherited mode toggles stay the output for every value. At the floor since the Baseline 2024 re-resolution (Safari 17.5)."
     },
     {
       "id": "contrast-color-function",
