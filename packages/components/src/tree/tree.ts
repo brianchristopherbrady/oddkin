@@ -2,24 +2,18 @@ import { FocusRecovery, RovingFocus } from '@oddkin/core/controllers/focus';
 import { Typeahead } from '@oddkin/core/controllers/typeahead';
 import { OddkinElement, event, prop, type ElementEvents } from '@oddkin/core/element';
 import { strings } from '@oddkin/core/i18n';
-import { computed, signal, type Readable } from '@oddkin/core/reactive';
+import type { Readable } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { TreeItemRecord } from '../collection/collection.js';
-import type { NavigationToggleDetail } from '../side-nav/side-nav.js';
+import { TreeModel, treeToggleEvent, type TreeRow } from '../collection/tree-model.js';
 
 export type { TreeItemRecord } from '../collection/collection.js';
+export type { TreeRow } from '../collection/tree-model.js';
 
 export const TREE_STRINGS = { loading: 'Loading…', empty: 'No items available' };
 
 /** The user asked to expand or collapse an item; cancel it to keep the current state. */
-export const treeToggleEvent = event<NavigationToggleDetail>('odd-toggle', {
-  bubbles: true,
-  composed: true,
-  cancelable: true,
-  intent: 'user',
-  description:
-    'An item is about to expand or collapse; cancelable. Load the children of a lazy item here.',
-});
+export { treeToggleEvent };
 /** The user selected an item (`value`, or `values` with `multiple`). */
 export const treeInputEvent = event('input', {
   bubbles: true,
@@ -35,21 +29,6 @@ export const treeChangeEvent = event('change', {
   cancelable: false,
   intent: 'user',
 });
-
-/** A shown row: its item, place in the hierarchy, and state. */
-export interface TreeRow {
-  readonly item: TreeItemRecord;
-  /** 1 at the top. */
-  readonly level: number;
-  readonly size: number;
-  readonly position: number;
-  readonly parent: TreeItemRecord | undefined;
-  readonly expandable: boolean;
-  readonly expanded: boolean;
-  readonly selected: boolean;
-  /** Expanded while its lazy children load. */
-  readonly busy: boolean;
-}
 
 /**
  * A hierarchy the user browses and selects in (APG tree view): rows of items that expand and
@@ -100,8 +79,12 @@ export class OddkinTree extends OddkinElement.with({
   };
   declare readonly _events?: ElementEvents<typeof OddkinTree>;
 
-  // Expansion the user chose while `expanded` is not set; other items follow the selection.
-  readonly #toggled = signal<ReadonlyMap<string, boolean>>(new Map());
+  readonly #model = new TreeModel({
+    items: () => this.items,
+    expanded: () => this.expanded,
+    selected: (item) => this._isSelected(item),
+    report: (detail) => this.emit(treeToggleEvent, detail),
+  });
   readonly #roving = new RovingFocus({
     target: () => this.#tree(),
     items: () => this._rowElements(),
@@ -116,50 +99,11 @@ export class OddkinTree extends OddkinElement.with({
   });
 
   /** @internal The shown rows, in order. */
-  readonly _rows: Readable<readonly TreeRow[]> = computed(() => {
-    const rows: TreeRow[] = [];
-    const walk = (items: readonly TreeItemRecord[], level: number, parent?: TreeItemRecord) =>
-      items.forEach((item, index) => {
-        const expanded = this._isExpanded(item);
-        rows.push({
-          item,
-          level,
-          size: items.length,
-          position: index + 1,
-          parent,
-          expandable: this._expandable(item),
-          expanded,
-          selected: this._isSelected(item),
-          busy: expanded && !!item.lazy && !item.children,
-        });
-        if (expanded && item.children) walk(item.children, level + 1, item);
-      });
-    walk(this.items ?? [], 1);
-    return rows;
-  });
+  readonly _rows: Readable<readonly TreeRow[]> = this.#model.rows;
 
   /** @internal Localized strings. */
   get _strings(): typeof TREE_STRINGS {
     return strings(TREE_STRINGS, this.strings);
-  }
-
-  /** @internal Whether the item has (or will load) children. */
-  _expandable(item: TreeItemRecord): boolean {
-    return item.children ? item.children.length > 0 : !!item.lazy;
-  }
-
-  /**
-   * @internal Whether the item is expanded: as `expanded` says, else as the user left it, else
-   * open when it holds a selected item.
-   */
-  _isExpanded(item: TreeItemRecord): boolean {
-    if (!this._expandable(item)) return false;
-    if (this.expanded) return this.expanded.includes(item.id);
-    return this.#toggled.value.get(item.id) ?? this.#holdsSelected(item);
-  }
-
-  #holdsSelected(item: TreeItemRecord): boolean {
-    return !!item.children?.some((child) => this._isSelected(child) || this.#holdsSelected(child));
   }
 
   /** @internal Whether the item is selected. */
@@ -182,16 +126,9 @@ export class OddkinTree extends OddkinElement.with({
     return this._rows.peek()[index];
   }
 
-  #focus(item: TreeItemRecord | undefined): void {
+  #focus(item: TreeItemRecord): void {
     const index = this._rows.peek().findIndex((row) => row.item === item);
     if (index >= 0) this.#roving.setActive(index, { focus: true });
-  }
-
-  /** @internal Expands or collapses an item after `odd-toggle`, unless that is cancelled. */
-  _toggle(item: TreeItemRecord, expanded = !this._isExpanded(item)): void {
-    if (item.disabled || !this._expandable(item) || expanded === this._isExpanded(item)) return;
-    if (!this.emit(treeToggleEvent, { id: item.id, expanded }) || this.expanded) return;
-    this.#toggled.value = new Map(this.#toggled.peek()).set(item.id, expanded);
   }
 
   /** @internal Selects the item (with `multiple`, toggles it) and reports it. */
@@ -217,7 +154,7 @@ export class OddkinTree extends OddkinElement.with({
     const toggle = event
       .composedPath()
       .some((node) => (node as Element).classList?.contains('toggle'));
-    if (toggle) this._toggle(row.item);
+    if (toggle) this.#model.toggle(row.item);
     else this._select(row.item);
   };
 
@@ -228,17 +165,7 @@ export class OddkinTree extends OddkinElement.with({
     if (!row || event.isComposing) return;
     const { item } = row;
     const rtl = getComputedStyle(this).direction === 'rtl';
-    const mirrored = { ArrowLeft: 'ArrowRight', ArrowRight: 'ArrowLeft' } as Record<string, string>;
-    switch ((rtl && mirrored[event.key]) || event.key) {
-      case 'ArrowRight':
-        if (!row.expandable) return;
-        if (!row.expanded) this._toggle(item, true);
-        else this.#focus(item.children?.[0]);
-        break;
-      case 'ArrowLeft':
-        if (row.expanded) this._toggle(item, false);
-        else this.#focus(row.parent);
-        break;
+    switch (event.key) {
       case 'Enter':
         this._select(item);
         break;
@@ -246,11 +173,12 @@ export class OddkinTree extends OddkinElement.with({
         // Space continues a typeahead query in progress; otherwise it selects.
         if (!this.#typeahead.type(' ')) this._select(item);
         break;
-      case '*':
-        for (const sibling of row.parent?.children ?? this.items ?? []) this._toggle(sibling, true);
-        break;
       default:
-        if (!this.#typeahead.type(event.key)) return;
+        if (
+          !this.#model.key(event.key, row, rtl, (to) => this.#focus(to)) &&
+          !this.#typeahead.type(event.key)
+        )
+          return;
     }
     event.preventDefault();
   };

@@ -3171,3 +3171,25 @@ The generator gains an experimental option, `CssOptions.modeColors: 'light-dark'
 | Node, size, CSS | `node scripts/build-metadata.mjs`; `npx vitest run --project node packages/ai/test tests`; `node scripts/check-size.mjs`; `npm run compat` | Node 324 of 325; the failure is the agent-kit GUIDE.md budget (another lane). `ai:styles` 4,503 of 4,608 B gzip (4,476 before). Compat 0 problems; `aiElementStyles` 43 keys (42). |
 
 **Docs:** component-catalog.md (the badge row and the tone home, rendered from `design/figma/reuse.json`).
+
+## 2026-10-26 — Round 6 close-out: odd-picker, odd-one-time-code, core badInput (M10, component-contracts.md §3.3; core-contracts.md)
+
+Environment: Windows, Node 24.22.1, Playwright 1.64.1 engines. At the owner's request ("commit everything"), Agent 1 verified the whole working tree after the owner stopped Agent 3, whose odd-picker run (announced 00:37) never reported. Agents 2 and 4 were idle with nothing uncommitted. One run covered Agent 3's odd-picker, its shared collection internals, the panel-12 parity test, and the core `badInput` option, and Agent 1's odd-one-time-code.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Build | `npm run build`; `node scripts/build-metadata.mjs` | Pass |
+| Types | `npm run typecheck` | Pass (framework typings OK; the 4 expected Svelte errors) |
+| Node project | `npx vitest run --project node` | 1 failure: `tests/agent-kit/kit.test.ts`, the components guide 8,713 of 8,192 B. After the guide change (one registration rule instead of one import per element): 5,661 B, AI 6,312 B; the agent-kit tests 30 of 30; the node project rerun 106 files, 1,213 tests passed |
+| Compatibility | `npm run compat` | 0 problems: 71 features, 182 stylesheets, 316 keys |
+| Size | `node scripts/check-size.mjs` | All within budget; `components:picker` 883 of 896 B, `components:one-time-code` 643 of 704 B, counter 9,531 of 9,728 B |
+| Browser, Chromium | `npx vitest run --project browser --browser.name=chromium` | 2 failures: calendar parity Day Selected and Selected focus. The tests choose 26 October 2026, which was today, so the cell also drew today's outline. Fixed by pinning the clock to Figma's today (24 October 2026); the picker parity file then 19 of 19 in each engine |
+| Browser, Firefox | the same, `firefox` | 4 failures under load (date-picker, menu, one-time-code, split-panel); the four files alone: 49 passed, 3 skipped |
+| Browser, WebKit | the same, `webkit` | 1 failure: the Workbench shell's preview frame (a known load flake); alone 8 of 8 |
+| Lifetime | `node research/benchmarks/lifetime/run.mjs --cycles 1000 --scenario componentCycles` | Chromium: ownership returned; 44620 / 48513 ms; retained 477 / 277 B/cycle. Firefox: ownership returned; 80139 / 103838 ms. WebKit: ownership returned; 85641 / 78141 ms |
+| Format, stale copies | `npx prettier --check` (changed files); `node .tmp/stale.mjs` | Clean |
+
+**Findings:**
+- The calendar parity tests depended on the real date: on 2026-10-14, 10-26, and 10-27 a fixed date doubled as today. They now fake only `Date` (`vi.useFakeTimers({ toFake: ['Date'] })`), as `calendar.browser.test.ts` already did.
+- The components guide grew with the catalog through its one-import-per-element table. The rule (`<package>/define/<name>` for `<prefix-name>`) is stated once, elements are listed by category, and any registration that differs from the rule is listed by name, so the guide grows by a tag, not a table row.
+- Not run: mutation probes for odd-picker and odd-one-time-code (next round); the round-end checks (full lifetime, `npm run verify`). Not verified: screen-reader output.

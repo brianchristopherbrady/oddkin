@@ -136,6 +136,8 @@ describe('component examples', () => {
       'odd-combobox/inForm': ['component:odd-button'],
       'odd-command-palette/default': ['component:odd-button'],
       'odd-radio-group/inForm': ['component:odd-button'],
+      'odd-one-time-code/inForm': ['component:odd-button'],
+      'odd-picker/inForm': ['component:odd-button'],
       'odd-rating/inForm': ['component:odd-button'],
       'odd-select/inForm': ['component:odd-button'],
       'odd-slider/inForm': ['component:odd-button'],

@@ -1,8 +1,9 @@
 import { live } from '@oddkin/core/helpers/live';
-import { html, nothing, repeat } from '@oddkin/core/template';
-import { groupsOf, type OptionRow } from '../collection/collection.js';
+import { html, nothing } from '@oddkin/core/template';
+import { chipsTemplate, fieldEndTemplate } from '../collection/option-field.template.js';
+import { optionListTemplate } from '../collection/option-rows.template.js';
 import { externalDescriptionTemplate } from '../form-control/description.js';
-import { checkGlyph, chevronDownGlyph, closeGlyph, searchGlyph } from '../styles/glyphs.js';
+import { chevronDownGlyph, searchGlyph } from '../styles/glyphs.js';
 import { spinnerTemplate } from '../styles/spinner.styles.js';
 import type { OddkinCombobox } from './combobox.js';
 
@@ -21,44 +22,13 @@ import type { OddkinCombobox } from './combobox.js';
 export const comboboxTemplate = (combobox: OddkinCombobox) => {
   const options = combobox._shownOptions.value;
   const selected = combobox._selected.value;
-  const active = combobox._activeIndex.value;
   const multiple = combobox.multiple;
   const disabled = combobox.disabled || combobox._formDisabled.value;
   const strings = combobox._strings;
-  const rows = (each: readonly OptionRow[]) =>
-    repeat(
-      each,
-      ({ option }) => option.value,
-      ({ option, index }) => {
-        const chosen = selected.includes(option.value);
-        return html`<div
-          role="option"
-          part="option"
-          class=${index === active ? 'option active' : 'option'}
-          aria-selected=${chosen ? 'true' : 'false'}
-          aria-disabled=${option.disabled ? 'true' : null}
-        >
-          ${
-            multiple
-              ? html`<span class="option-start indicator" aria-hidden="true"
-                  ><span class="indicator-box" data-state=${chosen ? 'checked' : null}></span
-                  ><span class="indicator-mark indicator-check">${checkGlyph}</span></span
-                >`
-              : nothing
-          }<span class="option-label"
-            ><span class="option-text">${option.label}</span>${
-              option.description
-                ? html`<span class="option-description">${option.description}</span>`
-                : nothing
-            }</span
-          >${multiple ? nothing : html`<span class="option-check">${checkGlyph}</span>`}
-        </div>`;
-      },
-    );
   const input = html`<input
     part="input"
     id="control"
-    class="entry"
+    class="combobox"
     type="text"
     role="combobox"
     autocomplete="off"
@@ -82,45 +52,6 @@ export const comboboxTemplate = (combobox: OddkinCombobox) => {
     @keydown=${combobox._onKeydown}
   />`;
   const collapsed = combobox._collapsed.value;
-  const shown = collapsed ? combobox._shown.value : Number.POSITIVE_INFINITY;
-  const hidden = Math.max(0, selected.length - shown);
-  const chips = html`<span class="chips" role="list" aria-label=${strings.selected}
-    >${repeat(
-      selected,
-      (value) => value,
-      (value, index) => {
-        const label = combobox._labelOf(value);
-        return html`<span
-          role="listitem"
-          part="chip"
-          class=${index < shown ? 'chip' : 'chip overflow'}
-          ><span class="chip-text">${label}</span>${
-            combobox.readonly
-              ? nothing
-              : html`<button
-                  part="chip-remove"
-                  class="remove"
-                  type="button"
-                  tabindex="-1"
-                  aria-label=${combobox._removeLabel(label)}
-                  ?disabled=${disabled}
-                  @click=${() => combobox._onChipRemove(value)}
-                  @keydown=${(event: KeyboardEvent) => combobox._onChipKeydown(event, value)}
-                >
-                  ${closeGlyph}
-                </button>`
-          }</span
-        >`;
-      },
-    )}<span
-      role="listitem"
-      part="more"
-      class=${hidden ? 'chip more' : 'chip more empty'}
-      ?hidden=${!collapsed}
-      ><span aria-hidden="true">+${hidden}</span
-      ><span class="visually-hidden">${combobox._moreLabel(hidden)}</span></span
-    ></span
-  >`;
   return html`<div part="field" class="field">
       <label part="label" id="label" class="label" for="control" ?hidden=${!combobox.label}
         >${combobox.label}</label
@@ -133,22 +64,10 @@ export const comboboxTemplate = (combobox: OddkinCombobox) => {
           part="control"
           class=${multiple && collapsed ? 'control box collapsed' : 'control box'}
         >
-          ${multiple && selected.length ? chips : nothing}${input}
+          ${multiple && selected.length ? chipsTemplate(combobox, combobox.readonly, disabled) : nothing}${input}
         </div>
         ${multiple ? nothing : html`<span class="control-start" aria-hidden="true">${searchGlyph}</span>`}
-        <span class="control-end">
-          <button
-            part="clear"
-            class="clear"
-            type="button"
-            tabindex="-1"
-            aria-label=${strings.clear}
-            ?hidden=${!combobox._clearable}
-            @click=${combobox._onClear}
-          >
-            ${closeGlyph}</button
-          >${multiple ? html`<span class="chevron" aria-hidden="true">${chevronDownGlyph}</span>` : nothing}
-        </span>
+        ${fieldEndTemplate(combobox, multiple ? chevronDownGlyph : undefined)}
       </div>
       <div part="error" id="error" class="error" ?hidden=${!combobox.error}>${combobox.error}</div>
       ${externalDescriptionTemplate(combobox._externalDescription)}
@@ -170,18 +89,7 @@ export const comboboxTemplate = (combobox: OddkinCombobox) => {
         aria-busy=${combobox.loading ? 'true' : null}
         ?hidden=${!options.length}
       >
-        ${repeat(
-          groupsOf(options),
-          (group, n) =>
-            group.label === undefined ? `option ${group.rows[0]!.option.value}` : `group ${n}`,
-          (group, n) =>
-            group.label === undefined
-              ? rows(group.rows)
-              : html`<div role="group" class="group" aria-labelledby=${`group-${n}`}>
-                  <div part="group" id=${`group-${n}`} class="group-label">${group.label}</div>
-                  ${rows(group.rows)}
-                </div>`,
-        )}
+        ${optionListTemplate(options, selected, combobox._activeIndex.value, multiple)}
       </div>
       <div part="loading" class="state" ?hidden=${!combobox.loading}>
         ${spinnerTemplate}${strings.loading}

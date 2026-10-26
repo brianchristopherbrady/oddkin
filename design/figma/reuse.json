@@ -14,10 +14,10 @@
   },
   "counts": {
     "style": 114,
-    "slot": 56,
+    "slot": 52,
     "deferred": 11,
-    "controller": 14,
-    "native": 6,
+    "controller": 17,
+    "native": 7,
     "element": 13
   },
   "references": [
@@ -936,8 +936,8 @@
       "source": "Oddkin/Common/ListboxSurface",
       "sourceId": "234:5551",
       "count": 4,
-      "class": "slot",
-      "reason": "The flat-content composition supplies the existing listbox rows. It shares the field and overlay appearance with Tree while retaining listbox semantics."
+      "class": "controller",
+      "reason": "The trigger and its listbox reference each other (aria-controls, aria-activedescendant), so the flat content is part of the picker tree: odd-listbox’s option rows, driven by the shared collection model."
     },
     {
       "consumer": "Oddkin/Common/Picker",
@@ -945,8 +945,8 @@
       "source": "Oddkin/Common/Tree",
       "sourceId": "160:1061",
       "count": 4,
-      "class": "slot",
-      "reason": "This proposed composition places the existing odd-tree in popover content. Its expansion and selection stay with Tree; no new registered picker element or dependency is declared."
+      "class": "controller",
+      "reason": "The trigger names the active tree row (aria-activedescendant), so the hierarchy is part of the picker tree: odd-tree’s rows (navigation-row module) and the shared tree model, which keeps expansion apart from selection; no nested odd-tree."
     },
     {
       "consumer": "Oddkin/Common/Picker",
@@ -954,8 +954,8 @@
       "source": "Oddkin/Common/button/sm",
       "sourceId": "181:2332",
       "count": 12,
-      "class": "slot",
-      "reason": "The composition author supplies Close, Clear and Done actions in the popover footer."
+      "class": "style",
+      "reason": "Close, Clear, and Done are native `<button>` parts in the popup with the shared button look (the native button module); no nested odd-button."
     },
     {
       "consumer": "Oddkin/Common/Picker",
@@ -964,7 +964,7 @@
       "sourceId": "257:1654",
       "count": 24,
       "class": "style",
-      "reason": "The picker trigger reuses the shared field style and replaceable value slot; it adds no registered field element."
+      "reason": "The field is odd-combobox’s (the control look, chips, clear button, and chevron), drawn from the same sheets in the picker tree around a select-only trigger."
     },
     {
       "consumer": "Oddkin/Common/Picker",
@@ -973,7 +973,7 @@
       "sourceId": "257:971",
       "count": 8,
       "class": "style",
-      "reason": "Several selected values are parts of the picker field drawn from the existing chip display; they are not separate interactive elements."
+      "reason": "Chosen values are chip parts of the field (odd-combobox’s, from the chip style module), collapsed to \"+N\"; they are not separate elements."
     },
     {
       "consumer": "Oddkin/Common/Picker",
@@ -981,8 +981,8 @@
       "source": "Oddkin/Common/popover",
       "sourceId": "160:2460",
       "count": 24,
-      "class": "slot",
-      "reason": "The composition supplies the existing anchored popover. Content and footer use its replaceable slots; no new runtime wrapper is registered."
+      "class": "controller",
+      "reason": "The popup is a manual popover in the picker tree, placed by the shared overlay wiring and drawn by the overlay-surface module; no nested odd-popover."
     },
     {
       "consumer": "Oddkin/Common/SideNavigation",
@@ -1648,7 +1648,7 @@
       "sourceId": "181:2332",
       "count": 6,
       "class": "slot",
-      "reason": "The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared."
+      "reason": "Resend code is the page's own odd-button beside the field: the page decides when a new code may be sent; odd-one-time-code declares no dependency."
     },
     {
       "consumer": "Oddkin/Common/oneTimeCode",
@@ -1656,8 +1656,8 @@
       "source": "Oddkin/Common/oneTimeCode/Cell",
       "sourceId": "555:2550",
       "count": 36,
-      "class": "style",
-      "reason": "Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element."
+      "class": "native",
+      "reason": "One native input (autocomplete=one-time-code, inputmode=numeric) carries the code, its autofill, paste, and form value; the cells are parts odd-one-time-code draws under it, hidden from assistive technology."
     },
     {
       "consumer": "Oddkin/Common/oneTimeCode",
@@ -1666,7 +1666,7 @@
       "sourceId": "159:285",
       "count": 1,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "The complete status draws checkGlyph from the shared glyph module, in the success colour."
     },
     {
       "consumer": "Oddkin/Common/oneTimeCode",
@@ -1675,7 +1675,7 @@
       "sourceId": "159:363",
       "count": 1,
       "class": "style",
-      "reason": "Original Oddkin glyph reused with token-bound size and current semantic text color."
+      "reason": "The pending status draws the busy ring from the shared spinner module (spinnerTemplate)."
     },
     {
       "consumer": "Oddkin/Common/popover",
@@ -2018,6 +2018,7 @@
     "odd-inline-assist": { "dependencies": [] },
     "odd-input": { "dependencies": [] },
     "odd-listbox": { "dependencies": [] },
+    "odd-one-time-code": { "dependencies": [] },
     "odd-menu": {
       "dependencies": ["odd-icon"],
       "reason": "Item icons are drawn by the complete odd-icon widget authors also place alone."
@@ -2042,6 +2043,10 @@
       "reason": "A styled native `<button>`; no listbox dependency."
     },
     "odd-pagination": { "dependencies": [] },
+    "odd-picker": {
+      "dependencies": ["odd-icon"],
+      "reason": "Tree item icons are drawn by the complete odd-icon widget authors also place alone."
+    },
     "odd-popover": { "dependencies": [] },
     "odd-progress": { "dependencies": [] },
     "odd-prompt-input": {
@@ -2158,7 +2163,8 @@
         "odd-segmented-control",
         "odd-combobox",
         "odd-slider",
-        "odd-rating"
+        "odd-rating",
+        "odd-one-time-code"
       ],
       "note": "Review decision 2026-10-23: the shared control is canonical: color.border.strong, control.height.md (40 px), control.radius (8 px), and control.padding.inline.md (12 px). Both Figma model-select examples now match the existing implementation. Small controls remain an explicit size choice, not a separate AI default. The --odd-field-* overrides apply to the field recipe and form controls."
     },
@@ -2200,6 +2206,7 @@
         "odd-split-button",
         "odd-combobox",
         "odd-command-palette",
+        "odd-one-time-code",
         "odd-status-marker"
       ],
       "figma": ["button", "spinner", "listbox", "multiselect", "Tree", "CommandPalette", "combobox"]
@@ -2237,6 +2244,7 @@
         "odd-validation-summary",
         "odd-command-palette",
         "odd-rating",
+        "odd-one-time-code",
         "odd-status-marker",
         "odd-relative-time",
         "odd-copy-button",
@@ -2340,7 +2348,8 @@
         "odd-segmented-control",
         "odd-combobox",
         "odd-slider",
-        "odd-rating"
+        "odd-rating",
+        "odd-one-time-code"
       ],
       "note": "Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller.",
       "figma": ["every form control"]

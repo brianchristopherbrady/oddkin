@@ -1,7 +1,6 @@
-import { html, repeat } from '@oddkin/core/template';
-import { groupsOf, type OptionRow } from '../collection/collection.js';
+import { html } from '@oddkin/core/template';
+import { optionListTemplate } from '../collection/option-rows.template.js';
 import { externalDescriptionTemplate } from '../form-control/description.js';
-import { checkGlyph } from '../styles/glyphs.js';
 import { spinnerTemplate } from '../styles/spinner.styles.js';
 import type { OddkinListbox } from './listbox.js';
 
@@ -14,31 +13,8 @@ import type { OddkinListbox } from './listbox.js';
  */
 export const listboxTemplate = (listbox: OddkinListbox) => {
   const options = listbox._options.value;
-  const selected = listbox._selected.value;
-  const active = listbox._activeIndex.value;
   const disabled = listbox.disabled || listbox._formDisabled.value;
   const strings = listbox._strings;
-  const rows = (each: readonly OptionRow[]) =>
-    repeat(
-      each,
-      ({ option }) => option.value,
-      ({ option, index }) =>
-        html`<div
-          role="option"
-          part="option"
-          class=${index === active ? 'option active' : 'option'}
-          aria-selected=${selected.includes(option.value) ? 'true' : 'false'}
-          aria-disabled=${option.disabled ? 'true' : null}
-        >
-          <span class="option-label"
-            ><span class="option-text">${option.label}</span>${
-              option.description
-                ? html`<span class="option-description">${option.description}</span>`
-                : null
-            }</span
-          ><span class="option-check">${checkGlyph}</span>
-        </div>`,
-    );
   return html`<div part="field" class="field">
     <span part="label" id="label" class="label">${listbox.label}</span>
     <div part="description" id="description" class="description" ?hidden=${!listbox.description}>
@@ -63,18 +39,7 @@ export const listboxTemplate = (listbox: OddkinListbox) => {
         @focus=${listbox._onFocus}
         @blur=${listbox._onListboxBlur}
       >
-        ${repeat(
-          groupsOf(options),
-          (group, n) =>
-            group.label === undefined ? `option ${group.rows[0]!.option.value}` : `group ${n}`,
-          (group, n) =>
-            group.label === undefined
-              ? rows(group.rows)
-              : html`<div role="group" class="group" aria-labelledby=${`group-${n}`}>
-                  <div part="group" id=${`group-${n}`} class="group-label">${group.label}</div>
-                  ${rows(group.rows)}
-                </div>`,
-        )}
+        ${optionListTemplate(options, listbox._selected.value, listbox._activeIndex.value)}
       </div>
       <div part="loading" class="state" ?hidden=${!listbox.loading}>
         ${spinnerTemplate}${strings.loading}

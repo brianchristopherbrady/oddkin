@@ -59,7 +59,7 @@ export const comboboxStructuralStyles = css`
     position: absolute;
     visibility: hidden;
   }
-  .entry {
+  .combobox {
     flex: 1 1 4em;
     min-inline-size: 4em;
     margin: 0;
@@ -69,7 +69,7 @@ export const comboboxStructuralStyles = css`
     color: inherit;
     font: inherit;
   }
-  .entry:focus-visible {
+  .combobox:focus-visible {
     outline: none;
   }
 `;

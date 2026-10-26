@@ -13,11 +13,13 @@ import {
   expectNone,
   figma,
   interact,
+  layersOf,
   mount,
   settle,
   shadowPart,
   transitions,
   useParity,
+  variantIndex,
   type Target,
 } from './parity.js';
 import { themeValue } from './probe.js';
@@ -25,6 +27,7 @@ import type { OddkinCombobox } from '../src/combobox/combobox.js';
 import type { OddkinCommandPalette } from '../src/command-palette/command-palette.js';
 import type { OddkinListbox } from '../src/listbox/listbox.js';
 import type { MenuItemRecord, OddkinMenu } from '../src/menu/menu.js';
+import type { OddkinPicker } from '../src/picker/picker.js';
 import type { OddkinSelect } from '../src/select/select.js';
 import type { OddkinSplitButton } from '../src/split-button/split-button.js';
 import type { OddkinSplitPanel } from '../src/split-panel/split-panel.js';
@@ -862,4 +865,263 @@ describe('Figma parity: odd-command-palette rows (CommandItem)', () => {
       await transitions(targets);
       expectNone(compare('Oddkin/Common/CommandItem', { State: state }, targets));
     });
+});
+
+// Figma's Picker sample: map layers, three deep (picker.json).
+const PICKER_LAYERS: TreeItemRecord[] = [
+  {
+    id: 'workspace',
+    label: 'Workspace layers',
+    children: [
+      {
+        id: 'transportation',
+        label: 'Transportation',
+        children: [
+          { id: 'roads', label: 'Roads' },
+          { id: 'rail', label: 'Rail' },
+        ],
+      },
+      { id: 'boundaries', label: 'Boundaries' },
+      { id: 'buildings', label: 'Buildings' },
+    ],
+  },
+];
+const PICKER_OPTIONS =
+  '<option value="roads">Roads</option><option value="rail">Rail</option><option value="boundaries">Boundaries</option><option value="buildings">Buildings</option>';
+type PickerContent = 'Tree' | 'Listbox';
+type PickerSelection = 'Single' | 'Multiple';
+const PICKER_STATES = ['Empty', 'Selected', 'Open', 'Focus', 'Invalid', 'Disabled'] as const;
+
+/** A picker in one of Figma's states: chosen as Figma draws it, opened by pointer or keyboard. */
+const mountPicker = async (
+  content: PickerContent,
+  selection: PickerSelection,
+  state: (typeof PICKER_STATES)[number],
+) => {
+  const multiple = selection === 'Multiple';
+  const attributes = [
+    'label="Map layers"',
+    state === 'Invalid'
+      ? 'error="Select at least one layer."'
+      : 'description="Choose from the available layers."',
+    `placeholder="${multiple ? 'Choose layers…' : 'Choose a layer…'}"`,
+    multiple ? 'multiple' : '',
+    state === 'Disabled' ? 'disabled' : '',
+  ].join(' ');
+  const el = mount(
+    `<odd-picker style="inline-size: 384px" ${attributes}>${content === 'Listbox' ? PICKER_OPTIONS : ''}</odd-picker>`,
+  ) as OddkinPicker;
+  if (content === 'Tree') el.items = PICKER_LAYERS;
+  if (state !== 'Empty' && state !== 'Invalid') {
+    if (multiple) el.values = ['roads', 'rail', 'boundaries'];
+    else el.value = 'roads';
+  }
+  await settle(el);
+  const popup = shadowPart(el, 'popup');
+  if (state === 'Open') await userEvent.click(shadowPart(el, 'control'));
+  if (state === 'Focus') {
+    await userEvent.tab();
+    expect(shadowPart(el, 'trigger').matches(':focus-visible')).toBe(true);
+    // Focus apart from the selection: Buildings in the tree, Rail in the list.
+    await userEvent.keyboard(content === 'Tree' ? '{ArrowDown}{End}' : '{ArrowDown}{ArrowDown}');
+  }
+  if (state === 'Open' || state === 'Focus')
+    await expect.poll(() => popup.matches(':popover-open')).toBe(true);
+  await settle(el);
+  return el;
+};
+const pickerRow = (el: Element, label: string) =>
+  [...el.shadowRoot!.querySelectorAll<HTMLElement>('[role="treeitem"], [role="option"]')].find(
+    (row) => row.querySelector('.label, .option-text')!.textContent === label,
+  )!;
+
+// The popup is a top-layer popover over the help text below the field, where Figma lays the
+// popover out in the flow above it; the bindings are the same.
+describe('Figma parity: odd-picker (Picker)', () => {
+  for (const content of ['Tree', 'Listbox'] as const)
+    for (const selection of ['Single', 'Multiple'] as const)
+      for (const state of PICKER_STATES)
+        it(`${content}/${selection}/${state}`, async () => {
+          const el = await mountPicker(content, selection, state);
+          const multiple = selection === 'Multiple';
+          const open = state === 'Open' || state === 'Focus';
+          const chosen = state !== 'Empty' && state !== 'Invalid';
+          const surface = 'Picker surface';
+          const field = `Field · ${selection}`;
+          const popover = `Popover · ${content}`;
+          const targets: Target[] = [
+            { layer: ['Map layers'], el: shadowPart(el, 'label'), kind: 'text' },
+            state === 'Invalid'
+              ? { layer: ['Select at least one layer.'], el: shadowPart(el, 'error'), kind: 'text' }
+              : {
+                  layer: ['Choose from the available layers.'],
+                  el: shadowPart(el, 'description'),
+                  kind: 'text',
+                },
+          ];
+          if (!chosen)
+            targets.push({
+              layer: [surface, field, 'Value', 'Choose a layer…'],
+              el: el.shadowRoot!.querySelector('.placeholder')!,
+              kind: 'text',
+            });
+          else if (!multiple)
+            targets.push({
+              layer: [surface, field, 'Value', 'Transportation / Roads'],
+              el: el.shadowRoot!.querySelector('.value')!,
+              kind: 'text',
+            });
+          else
+            targets.push({
+              layer: [surface, field, 'Value'],
+              el: el.shadowRoot!.querySelector('.chips')!,
+              kind: 'frame',
+              gap: 'column-gap',
+            });
+          if (open) {
+            const actions = [surface, popover, 'Footer', 'Picker actions'];
+            targets.push(
+              {
+                layer: [surface, popover, 'Content'],
+                el: el.shadowRoot!.querySelector('.content')!,
+                kind: 'frame',
+                gap: 'row-gap',
+                fields: [['minHeight', 'min-block-size']],
+              },
+              { layer: actions, el: shadowPart(el, 'footer'), kind: 'frame', gap: 'column-gap' },
+              {
+                layer: [...actions, multiple ? '3 selected' : 'Choose one item'],
+                el: shadowPart(el, 'summary'),
+                kind: 'text',
+              },
+            );
+          }
+          if (state === 'Focus')
+            targets.push({
+              layer: [surface, 'Focus indicator'],
+              el: shadowPart(el, 'popup'),
+              pseudo: '::before',
+              kind: 'frame',
+            });
+          await transitions(targets);
+          expectNone(
+            compare(
+              'Oddkin/Common/Picker',
+              { Content: content, Selection: selection, State: state },
+              targets,
+            ),
+          );
+
+          // The field is multiselect/Field in its Picker state; Invalid and Disabled override its
+          // stroke and fill as the control module draws them.
+          const box = shadowPart(el, 'control');
+          if (state === 'Invalid')
+            expect(getComputedStyle(box).borderTopColor).toBe(
+              themeValue('border-top-color', '--odd-color-danger-foreground'),
+            );
+          else if (state === 'Disabled')
+            expect(getComputedStyle(box).backgroundColor).toBe(
+              themeValue('background-color', '--odd-color-surface-sunken'),
+            );
+          else {
+            const fieldTargets: Target[] = [
+              {
+                layer: [],
+                el: box,
+                kind: 'frame',
+                gap: 'column-gap',
+                fields: [['minHeight', 'min-block-size']],
+              },
+            ];
+            expectNone(
+              compare('Oddkin/Common/multiselect/Field', { State: 'Picker' }, fieldTargets),
+            );
+          }
+          if (!open) return;
+          // The popup is popover in its Picker state; the content is Tree (Picker states) or the
+          // listbox surface's rows.
+          const popupTargets: Target[] = [
+            { layer: [], el: shadowPart(el, 'popup'), kind: 'frame' },
+          ];
+          expectNone(compare('Oddkin/Common/popover', { State: 'Picker' }, popupTargets));
+          if (content === 'Tree') {
+            const tree: Target[] = [
+              { layer: [], el: shadowPart(el, 'tree'), kind: 'frame', gap: 'row-gap' },
+            ];
+            expectNone(
+              compare('Oddkin/Common/Tree', { State: `Picker ${selection.toLowerCase()}` }, tree),
+            );
+            // Two levels below the top, as Figma's derived indent (2 × navigation.indent).
+            const top = pickerRow(el, 'Workspace layers').getBoundingClientRect().left;
+            expect(pickerRow(el, 'Roads').getBoundingClientRect().left - top).toBe(32);
+            const roads = pickerRow(el, 'Roads');
+            const current: Target[] = [
+              {
+                layer: ['NavigationItem / Current', 'Surface'],
+                el: roads,
+                kind: 'frame',
+                gap: 'column-gap',
+              },
+              {
+                layer: ['NavigationItem / Current', 'Surface', 'Surface'],
+                el: roads,
+                kind: 'marker',
+              },
+            ];
+            expectNone(compare('Oddkin/Common/NavigationItem', { State: 'Current' }, current));
+            if (state === 'Focus') {
+              const buildings = pickerRow(el, 'Buildings');
+              expect(buildings.classList.contains('active')).toBe(true);
+              const ring: Target[] = [
+                {
+                  layer: ['NavigationItem / Focus', 'Surface', 'Surface'],
+                  el: buildings,
+                  kind: 'ring',
+                },
+              ];
+              expectNone(compare('Oddkin/Common/NavigationItem', { State: 'Focus' }, ring));
+            }
+          } else {
+            const roads = pickerRow(el, 'Roads');
+            const rows: Target[] = [
+              { layer: ['Listbox option'], el: roads, kind: 'frame', gap: 'column-gap' },
+            ];
+            expectNone(
+              compare('Oddkin/Common/ListboxOption', { Selected: 'True', State: 'Default' }, rows),
+            );
+            if (state === 'Focus') {
+              const rail = pickerRow(el, 'Rail');
+              expect(rail.classList.contains('active')).toBe(true);
+              const ring: Target[] = [
+                { layer: ['Listbox option', 'Focus indicator · inset'], el: rail, kind: 'ring' },
+              ];
+              expectNone(
+                compare(
+                  'Oddkin/Common/ListboxOption',
+                  { Selected: multiple ? 'True' : 'False', State: 'Focus' },
+                  ring,
+                ),
+              );
+            }
+          }
+          // The footer's actions are sm buttons: Close and Clear ghost, Done primary.
+          for (const [part, appearance] of multiple
+            ? ([
+                ['clear-all', 'ghost'],
+                ['close', 'primary'],
+              ] as const)
+            : ([['close', 'ghost']] as const)) {
+            const family = figma.get('Oddkin/Common/button/sm')!;
+            const values = { Appearance: appearance, Size: 'sm', State: 'Default' };
+            const frame = layersOf(family, variantIndex(family, values)).find(
+              (l) => l.path.length === 1,
+            )!.path;
+            const button = shadowPart(el, part);
+            const buttons: Target[] = [
+              { layer: frame, el: button, kind: 'frame', gap: 'column-gap' },
+              { layer: [...frame, 'Label'], el: button, kind: 'text' },
+            ];
+            expectNone(compare('Oddkin/Common/button/sm', values, buttons));
+          }
+        });
 });

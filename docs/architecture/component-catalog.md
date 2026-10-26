@@ -3,7 +3,7 @@
 Status: **draft (2026-10-22)**. Common primitives mapped at family level; the AI page mapped per definition (§4). The
 read-only snapshot is `design/figma/components.json` (schema `components.schema.json`, export function
 `components.export.js`). ADR 0045 is accepted and the owner asked for every family to be built (2026-10-22): the API
-of each element and recipe is in [component-contracts.md](./component-contracts.md), which defines the runtime contracts. Section 3.2 records the new Picker design proposal. A "planned" row below exists in code only once its contract's element ships.
+of each element and recipe is in [component-contracts.md](./component-contracts.md), which defines the runtime contracts. Section 3.2 records the Picker design and how `odd-picker` builds it. A "planned" row below exists in code only once its contract's element ships.
 
 ## 1. Sources
 
@@ -71,9 +71,12 @@ tokens, slot content, a native element, or a look-alike.
 | `listbox` | 6 | `odd-listbox` | Existing | Option rows on Figma's raised surface with `aria-activedescendant`, typeahead, and `multiple`; the form semantics are the internal option-control base it shares with `odd-combobox`. |
 | `combobox` | 6 | `odd-combobox` | Existing | APG combobox with list autocomplete in one shadow tree (no nested elements): the field box with Figma's search glyph, a popup listbox on the overlay wiring (ADR 0044), `no-filter` with `odd-query-change`. |
 | `multiselect` | 10 | `odd-combobox multiple` | Existing | Chips drawn with odd-chip's sheets collapse to "+N" while the field is not in use; rows start with the control indicator's decorative box (`CheckboxOption`). The other display strategies stay an exploration (below). |
+| `Picker` | 24 | `odd-picker` | Existing | APG select-only combobox (§3.2): odd-combobox's field around a focusable `role="combobox"` trigger; the popup is a listbox of option rows, or with `items` a tree of odd-tree's rows on the shared tree model (expansion apart from selection). Single closes on activation; multiple toggles at once, with Clear and Done in the footer; Escape closes without clearing. One focus ring surrounds the field and the open popup. |
 | `multiselect/Display`, `multiselect/Field`, `multiselect/SelectionPanel`, `multiselect/SelectedItems`, `multiselect/InteractionExamples`, `multiselect/Value/{chips,count,text,auto,expandable,avatars,grouped}`, `CheckboxOption`, `AvatarItem` | 89 + 2 | anatomy of the multiselect | Exploration | 12 sets and 2 components, frame "02 · Multiselect · Density, states & interaction reference" and the Fields main components. |
 | `segmented` | 3 | `odd-segmented-control` | Existing | The radio-group base with a segmented look; `size` sm/md/lg; icon-only options named by `label`. |
 | `rating` | 6 | `odd-rating` | Existing | The radio-group base drawn as stars: native radios in one shadow tree (one Tab stop, arrow keys from the platform), filled up to the chosen star, with the value beside them ("3 of 5", `strings.empty` "Not rated"); `max` stars named "1 star" to "5 stars", or options that name them; `readonly` (`aria-readonly`, still submitted, barred from validation). Figma's Focus variant rings an unchosen star; native radios focus the chosen one (recorded difference). |
+| `oneTimeCode` | 6 | `odd-one-time-code` | Existing | One native input (`autocomplete="one-time-code"`, `inputmode="numeric"`) over `maxlength` drawn cells (default six): the platform's autofill, paste, and form value; digits only, the caret after the last digit; `minlength` defaults to the cell count. `status` `pending` (read-only, a busy line) and `complete` (the success border and a check); a failure is `error`. Resend code is the page's own button beside the field. |
+| `oneTimeCode/Cell` | 6 | the cell (`cell` part) of `odd-one-time-code` | Existing (part) | `control.height.md` by `control.height.lg`, the control radius and strong border on the default surface, the digit in the body role; the active cell's focus ring and caret; danger, success, and sunken states. |
 | `rating/Item` | 5 | the star (`option` part) of `odd-rating` | Existing (part) | A `control.height.sm` target drawn by its radio, holding the built-in star glyph (`icon.size.md`) in the strong border colour, filled in the selection colour when on, in the disabled text colour while disabled. |
 | `dateTime` | 3 | `odd-input type="date"` / `"time"` | Existing (variant) | Native date and time inputs (also `datetime-local`, `month`, `week`); the engine draws the picker. |
 | `fileUpload` | 3 | `odd-file-input` | Existing | A drop zone over a native file input (its button takes the button look); rows with remove buttons. |
@@ -202,12 +205,15 @@ Review frame `544:13991` is organized beneath Resizable panels. It includes both
 Listbox modes, labeled closed/focus/validation states, existing Tree loading/empty/error content adapted to fill the
 popup, 320 px examples, and Dark variable-mode examples. Main variants are in `Definitions · Picker · Listbox & Tree`.
 
-This is a **Figma composition proposal**. Runtime implementation remains separate; current select/combobox contracts
-still apply. Sharing the visual structure does not merge the content widgets’ keyboard or selection behavior.
-The [ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) permits Listbox or Tree popups;
-multiple-selection behavior and integration with the existing Tree’s focus model need a dedicated runtime contract.
-`design/figma/picker.json` records source IDs, per-variant field geometry, selected-row counts, review cards and
-validation evidence. Slot-authored content is included in `components.json` and the reuse map.
+This began as a **Figma composition proposal**; the owner approved building it on 2026-10-25, and `odd-picker`
+implements it (component-contracts.md §3.3). The [ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/)
+permits Listbox or Tree popups: the trigger keeps focus and names the active row with `aria-activedescendant`
+(`aria-haspopup="tree"` with `items`), so odd-tree's roving focus does not apply inside the popup. Its rows,
+expansion model, and APG hierarchy keys are odd-tree's (`src/collection/tree-model.ts`); the field, chips, clear
+button, and popup wiring are odd-combobox's (`src/collection/option-field.ts`); the option rows are odd-listbox's.
+The popup is a top-layer popover joined below the field, as wide, so it covers the help text that Figma lays out
+below it. `design/figma/picker.json` records source IDs, per-variant field geometry, selected-row counts, review
+cards and validation evidence. Slot-authored content is included in `components.json` and the reuse map.
 
 ## 4. AI components (page 0:1)
 
@@ -304,7 +310,7 @@ retain their recorded status.
 
 <!-- oddkin:reuse:begin (generated by node design/figma/reuse.render.mjs --write) -->
 
-Status: **approved** (2026-10-24). 214 references; controller 14, deferred 11, element 13, native 6, slot 56, style 114.
+Status: **approved** (2026-10-24). 214 references; controller 17, deferred 11, element 13, native 7, slot 52, style 114.
 
 | Class | Meaning |
 | --- | --- |
@@ -410,12 +416,12 @@ Status: **approved** (2026-10-24). 214 references; controller 14, deferred 11, e
 | Pagination | icon arrowLeft × 3 | style | The arrowLeft glyph is built into the element and comes from the shared glyph module. |
 | Pagination | icon arrowRight × 3 | style | The arrowRight glyph is built into the element and comes from the shared glyph module. |
 | Pagination | icon more × 3 | style | The more glyph is built into the element and comes from the shared glyph module. |
-| Picker | ListboxSurface × 4 | slot | The flat-content composition supplies the existing listbox rows. It shares the field and overlay appearance with Tree while retaining listbox semantics. |
-| Picker | Tree × 4 | slot | This proposed composition places the existing odd-tree in popover content. Its expansion and selection stay with Tree; no new registered picker element or dependency is declared. |
-| Picker | button/sm × 12 | slot | The composition author supplies Close, Clear and Done actions in the popover footer. |
-| Picker | multiselect/Field × 24 | style | The picker trigger reuses the shared field style and replaceable value slot; it adds no registered field element. |
-| Picker | multiselect/Value/chips × 8 | style | Several selected values are parts of the picker field drawn from the existing chip display; they are not separate interactive elements. |
-| Picker | popover × 24 | slot | The composition supplies the existing anchored popover. Content and footer use its replaceable slots; no new runtime wrapper is registered. |
+| Picker | ListboxSurface × 4 | controller | The trigger and its listbox reference each other (aria-controls, aria-activedescendant), so the flat content is part of the picker tree: odd-listbox’s option rows, driven by the shared collection model. |
+| Picker | Tree × 4 | controller | The trigger names the active tree row (aria-activedescendant), so the hierarchy is part of the picker tree: odd-tree’s rows (navigation-row module) and the shared tree model, which keeps expansion apart from selection; no nested odd-tree. |
+| Picker | button/sm × 12 | style | Close, Clear, and Done are native `<button>` parts in the popup with the shared button look (the native button module); no nested odd-button. |
+| Picker | multiselect/Field × 24 | style | The field is odd-combobox’s (the control look, chips, clear button, and chevron), drawn from the same sheets in the picker tree around a select-only trigger. |
+| Picker | multiselect/Value/chips × 8 | style | Chosen values are chip parts of the field (odd-combobox’s, from the chip style module), collapsed to "+N"; they are not separate elements. |
+| Picker | popover × 24 | controller | The popup is a manual popover in the picker tree, placed by the shared overlay wiring and drawn by the overlay-surface module; no nested odd-popover. |
 | SideNavigation | NavigationItem × 16 | controller | Entries are parts of odd-side-nav's tree (aria-current, aria-expanded on groups), rendered from the shared navigation item model (components/src/models). |
 | SplitPanels | Splitter/horizontal × 5 | controller | A splitter (role="separator") references the pane it resizes (aria-controls), so splitters are parts of the split-panels tree with a shared resize and keyboard controller. |
 | SplitPanels | Splitter/vertical × 5 | controller | A splitter (role="separator") references the pane it resizes (aria-controls), so splitters are parts of the split-panels tree with a shared resize and keyboard controller. |
@@ -489,10 +495,10 @@ Status: **approved** (2026-10-24). 214 references; controller 14, deferred 11, e
 | multiselect/SelectionPanel | icon chevronDown × 1 | style | The chevronDown affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu). |
 | multiselect/SelectionPanel | icon chevronUp × 1 | style | The chevronUp affordance glyph is built in and comes from the shared glyph module (one chevron for every disclosure, picker, and submenu). |
 | multiselect/SelectionPanel | icon search × 6 | style | The search glyph is built into the element and comes from the shared glyph module. |
-| oneTimeCode | button/sm × 6 | slot | The proposed composition uses existing buttons or the shared popover as content; no new runtime dependency edge is declared. |
-| oneTimeCode | oneTimeCode/Cell × 36 | style | Figma-only control proposal reuses the shared field or repeatable cell/item anatomy; this declares no standalone runtime element. |
-| oneTimeCode | icon check × 1 | style | Original Oddkin glyph reused with token-bound size and current semantic text color. |
-| oneTimeCode | icon spinner × 1 | style | Original Oddkin glyph reused with token-bound size and current semantic text color. |
+| oneTimeCode | button/sm × 6 | slot | Resend code is the page's own odd-button beside the field: the page decides when a new code may be sent; odd-one-time-code declares no dependency. |
+| oneTimeCode | oneTimeCode/Cell × 36 | native | One native input (autocomplete=one-time-code, inputmode=numeric) carries the code, its autofill, paste, and form value; the cells are parts odd-one-time-code draws under it, hidden from assistive technology. |
+| oneTimeCode | icon check × 1 | style | The complete status draws checkGlyph from the shared glyph module, in the success colour. |
+| oneTimeCode | icon spinner × 1 | style | The pending status draws the busy ring from the shared spinner module (spinnerTemplate). |
 | popover | button × 1 | slot | The popover's action is author content. |
 | popover | icon close × 2 | style | The close/remove glyph is built in and comes from the shared glyph module. |
 | radioGroup | radio × 4 | native | Radios are native radios in the group's one shadow tree: the platform gives one tab stop and arrow-key selection; the group submits one value through @oddkin/core/controllers/form. odd-segmented-control shares the class (OddkinRadioControl). |
@@ -531,6 +537,7 @@ Status: **approved** (2026-10-24). 214 references; controller 14, deferred 11, e
 | `odd-date-picker` | `odd-calendar` | The popup holds a complete odd-calendar (a definition dependency) that shares the date picker’s value, bounds, first day, disabled-date hook, read-only state, and strings. |
 | `odd-menu` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-message` | `odd-action-approval`, `odd-ai-label`, `odd-artifact`, `odd-button`, `odd-message-branch`, `odd-response`, `odd-response-feedback`, `odd-sources`, `odd-tool-call` | A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, artifacts, branch, feedback, AI label) and odd-button for save/cancel while editing; each is a complete widget authors also place alone. |
+| `odd-picker` | `odd-icon` | Tree item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-prompt-input` | `odd-button` | Send and stop are complete buttons (Figma: button ×1). |
 | `odd-question` | `odd-button` | Submit and skip are complete buttons (Figma: button/sm ×2). |
 | `odd-response` | `odd-citation` | Inline citations are complete odd-citation widgets authors also place alone. |
@@ -543,7 +550,7 @@ Status: **approved** (2026-10-24). 214 references; controller 14, deferred 11, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (54) has no element dependency.
+Every other element (55) has no element dependency.
 
 #### Shared homes
 
@@ -551,19 +558,19 @@ Every other element (54) has no element dependency.
 | --- | --- | --- | --- | --- | --- |
 | tokens: Every value: colour, space, size, radius, type, motion, elevation. | tokens | @oddkin/tokens (token() from @oddkin/tokens/refs) | existing | all |  |
 | focus-ring: The keyboard focus indicator. | style | @oddkin/components/styles focusRingStyles | existing | all interactive elements |  |
-| control: Field control surface: border, radius, height, inline padding, gap, hover/invalid/disabled/read-only states, label/description/error type roles. Figma binds the same tokens on input, textarea, number, search, select, dateTime, combobox, and multiselect/Field. | style | @oddkin/components/styles (fieldStructuralStyles, controlStyles; css/field.css generated from them) | existing | odd-input, odd-checkbox, odd-switch, odd-model-select, .odd-field recipe, odd-listbox, odd-select, odd-textarea, odd-checkbox-group, odd-radio-group, odd-segmented-control, odd-combobox, odd-slider, odd-rating | Review decision 2026-10-23: the shared control is canonical: color.border.strong, control.height.md (40 px), control.radius (8 px), and control.padding.inline.md (12 px). Both Figma model-select examples now match the existing implementation. Small controls remain an explicit size choice, not a separate AI default. The --odd-field-* overrides apply to the field recipe and form controls. |
+| control: Field control surface: border, radius, height, inline padding, gap, hover/invalid/disabled/read-only states, label/description/error type roles. Figma binds the same tokens on input, textarea, number, search, select, dateTime, combobox, and multiselect/Field. | style | @oddkin/components/styles (fieldStructuralStyles, controlStyles; css/field.css generated from them) | existing | odd-input, odd-checkbox, odd-switch, odd-model-select, .odd-field recipe, odd-listbox, odd-select, odd-textarea, odd-checkbox-group, odd-radio-group, odd-segmented-control, odd-combobox, odd-slider, odd-rating, odd-one-time-code | Review decision 2026-10-23: the shared control is canonical: color.border.strong, control.height.md (40 px), control.radius (8 px), and control.padding.inline.md (12 px). Both Figma model-select examples now match the existing implementation. Small controls remain an explicit size choice, not a separate AI default. The --odd-field-* overrides apply to the field recipe and form controls. |
 | button: Button look: appearance, size, states, busy. | style | @oddkin/components/button styles (shared by odd-button, the CSS-only path, and native button parts) | existing (odd-button + css/button.css) | odd-button, AI .text-button (looks like ghost/sm; Figma page 0:1 draws AI actions as button/sm instances), odd-menu (trigger part), odd-split-button (primary part), odd-copy-button (button part) |  |
 | tone: Tone colours (neutral, info, success, warning, danger) with one glyph per tone. | style | @oddkin/components/styles (TONES, toneStyles, toneGlyph) | existing | odd-badge, odd-alert, odd-toast, odd-validation-summary | AI status labels (.status in @oddkin/ai's aiElementStyles) take their colours from toneStyles too. |
-| spinner: Indeterminate busy indicator, reduced-motion behaviour. | style | @oddkin/components/styles (spinnerStyles) | existing | odd-button, odd-spinner, odd-tree, odd-listbox, odd-split-button, odd-combobox, odd-command-palette, odd-status-marker |  |
+| spinner: Indeterminate busy indicator, reduced-motion behaviour. | style | @oddkin/components/styles (spinnerStyles) | existing | odd-button, odd-spinner, odd-tree, odd-listbox, odd-split-button, odd-combobox, odd-command-palette, odd-one-time-code, odd-status-marker |  |
 | progress-pulse: The "work in progress" dot pulse (1.2 s, opacity 0.3, off under reduced motion). | style | packages/ai/src/internal (pulse styles, proposed) | proposed | odd-activity, odd-response | Byte-identical keyframes in both today; odd-voice-input's recording pulse (1 s, 0.35, danger colour) means something else and stays separate. |
-| glyphs: Built-in affordance glyphs: chevrons, check, minus, close, search, more, arrows, external, eye, lock, upload, file, user, star. | style | @oddkin/components/styles (glyphStyles and glyph templates) | existing (drawn by Oddkin; Figma's icon assets do not ship, component-contracts.md §2.7) | odd-badge, odd-alert, odd-chip, odd-disclosure, odd-checkbox, odd-pagination, odd-breadcrumbs, odd-split-panel, odd-tree, odd-listbox, odd-select, odd-input, odd-menu, odd-combobox, odd-validation-summary, odd-command-palette, odd-rating, odd-status-marker, odd-relative-time, odd-copy-button, odd-stat |  |
+| glyphs: Built-in affordance glyphs: chevrons, check, minus, close, search, more, arrows, external, eye, lock, upload, file, user, star. | style | @oddkin/components/styles (glyphStyles and glyph templates) | existing (drawn by Oddkin; Figma's icon assets do not ship, component-contracts.md §2.7) | odd-badge, odd-alert, odd-chip, odd-disclosure, odd-checkbox, odd-pagination, odd-breadcrumbs, odd-split-panel, odd-tree, odd-listbox, odd-select, odd-input, odd-menu, odd-combobox, odd-validation-summary, odd-command-palette, odd-rating, odd-one-time-code, odd-status-marker, odd-relative-time, odd-copy-button, odd-stat |  |
 | control-indicator: Choice rows (a box, dot, or track beside its label) and the checkbox box with check and mixed marks. The radio dot and the switch track and thumb are drawn by one element each and live with it. | style | @oddkin/components/styles (controlIndicatorStructuralStyles, controlIndicatorStyles) | existing | odd-checkbox, odd-switch, odd-radio-group, odd-combobox (CheckboxOption) |  |
 | option-row: Option and menu rows: height, padding, selected check, active and disabled states. | style | @oddkin/components/styles (optionRowStructuralStyles, optionRowStyles); optionRowPickerStyles (the gated select picker rows, imported relatively from styles/option-row.styles.ts) | existing (element consumers: odd-listbox, odd-select's customizable picker, odd-menu, odd-combobox, odd-command-palette) | odd-listbox, odd-select, odd-menu, odd-combobox, odd-command-palette |  |
 | nav-row: Hierarchical navigation rows: indent step, expand glyph, current marker. | style | @oddkin/components/styles (navRowStructuralStyles, navRowStyles; moved out of odd-side-nav) | existing | odd-side-nav, odd-tree |  |
 | chip: Chip look and remove affordance. | style | @oddkin/components/chip styles | existing | odd-chip, odd-combobox (chips, multiple) |  |
 | avatar: Avatar look and stacking. | style | @oddkin/components/avatar styles | existing | odd-avatar, .odd-avatar-group recipe |  |
 | overlay-surface: Overlay surface: the raised background, default border, control radius, and elevation md of anchored overlays; `.sheet`: the default surface, card radius, elevation xl, and scrim of dialogs and drawers. | style | @oddkin/components/styles (overlaySurfaceStructuralStyles, overlaySurfaceStyles); overlayPickerStyles (the gated select picker, imported relatively from styles/overlay-surface.styles.ts) | existing | odd-popover, odd-dialog, odd-select, odd-menu, odd-tooltip, odd-drawer, odd-toast, odd-combobox, odd-command-palette |  |
-| form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input, odd-checkbox, odd-switch, odd-listbox, odd-select, odd-textarea, odd-checkbox-group, odd-radio-group, odd-segmented-control, odd-combobox, odd-slider, odd-rating | Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller. |
+| form: Form association, validity, reset, restore. | controller | @oddkin/core/controllers/form | existing | odd-input, odd-checkbox, odd-switch, odd-listbox, odd-select, odd-textarea, odd-checkbox-group, odd-radio-group, odd-segmented-control, odd-combobox, odd-slider, odd-rating, odd-one-time-code | Form controls extend OddkinFormControl (packages/components/src/form-control): name, disabled, description, error, the validity API, and the user-invalid state over this controller. |
 | focus: Roving focus. | controller | @oddkin/core/controllers/focus | existing | odd-tabs, odd-toolbar, odd-tree, odd-menu |  |
 | collection: Collection model, selection, typeahead, active descendant. | controller | @oddkin/core/controllers/typeahead (Typeahead), @oddkin/core/controllers/active-descendant (ActiveDescendant); the collection source (component-contracts.md §2.2) in @oddkin/components, planned | in progress (typeahead and active descendant existing) | odd-breadcrumbs, odd-listbox, odd-select, odd-menu, odd-split-button, odd-radio-group, odd-segmented-control, odd-rating, odd-combobox, odd-command-palette |  |
 | position: Anchored overlay placement and dismissal. | controller | @oddkin/core/controllers/position (PositionController, ADR 0044) | existing | odd-popover, odd-menu, odd-tooltip, odd-combobox |  |

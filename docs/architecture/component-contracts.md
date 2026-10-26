@@ -18,8 +18,8 @@ The Figma mapping, the reuse classes, and the shared style homes stay in [compon
 | Kind | Figma families → Oddkin |
 | --- | --- |
 | Existing element | `button`, `button/sm`, `button/lg`, `iconButton` → `odd-button` (`size`, `label`); `toggleButton` → `odd-button toggle`; `input`, `search`, `number`, `dateTime` → `odd-input` (`type`); `card` → `odd-card`; `SideNavigation`, `NavigationItem` → `odd-side-nav` |
-| New element (`@oddkin/components`) | `badge` → `odd-badge`; `icon` → `odd-icon`; `spinner` → `odd-spinner`; `progress` → `odd-progress`; `skeleton` → `odd-skeleton`; `avatar` → `odd-avatar`; `chip` → `odd-chip`; `alert` → `odd-alert`; `emptyState` → `odd-empty-state`; `textarea` → `odd-textarea`; `checkbox` → `odd-checkbox`; `switch` → `odd-switch`; `CheckboxGroup` → `odd-checkbox-group`; `radioGroup`, `radio` → `odd-radio-group`; `segmented` → `odd-segmented-control`; `slider` → `odd-slider`; `rating`, `rating/Item` → `odd-rating`; `select` → `odd-select`; `fileUpload` → `odd-file-input`; `calendar`, `calendar/Day` → `odd-calendar`; `datePicker` → `odd-date-picker`; `ValidationSummary` → `odd-validation-summary`; `Disclosure`, `Accordion` → `odd-disclosure` (`name`); `Tabs` → `odd-tabs`, `odd-tab-panel`; `Breadcrumbs` → `odd-breadcrumbs`; `Pagination` → `odd-pagination`; `Toolbar` → `odd-toolbar`; `popover` → `odd-popover`; `tooltip` → `odd-tooltip`; `dialog`, `alertDialog` → `odd-dialog` (`alert`); `drawer` → `odd-drawer`; `toast` → `odd-toast`; `listbox` → `odd-listbox`; `Menu`, `MenuItem` → `odd-menu`; `splitAction` → `odd-split-button`; `combobox`, `multiselect` → `odd-combobox` (`multiple`); `CommandPalette`, `CommandItem` → `odd-command-palette`; `Tree` → `odd-tree`; `SplitPanels`, `Splitter/*` → `odd-split-panel`; `relativeTime` → `odd-relative-time`; `copyButton` → `odd-copy-button`; `stat` → `odd-stat` |
-| Part of an element | `ListboxSurface`, `ListboxOption` (listbox, select's enhanced picker, combobox); `MenuItem` (menu, split button); `CommandItem` (command palette); `radio` (radio group); `rating/Item` (rating); `calendar/Day` (calendar); `CheckboxOption` (combobox `multiple`, drawn with the shared control-indicator module, never a nested interactive checkbox); `AvatarItem` (avatar); `Splitter/*` (split panel); timeline `Event marker` and stepper `Step status` → `odd-status-marker` (an element the `.odd-timeline` and `.odd-stepper` recipes hold: §2.7 keeps the check and warning glyphs in shadow roots) |
+| New element (`@oddkin/components`) | `badge` → `odd-badge`; `icon` → `odd-icon`; `spinner` → `odd-spinner`; `progress` → `odd-progress`; `skeleton` → `odd-skeleton`; `avatar` → `odd-avatar`; `chip` → `odd-chip`; `alert` → `odd-alert`; `emptyState` → `odd-empty-state`; `textarea` → `odd-textarea`; `checkbox` → `odd-checkbox`; `switch` → `odd-switch`; `CheckboxGroup` → `odd-checkbox-group`; `radioGroup`, `radio` → `odd-radio-group`; `segmented` → `odd-segmented-control`; `slider` → `odd-slider`; `rating`, `rating/Item` → `odd-rating`; `oneTimeCode`, `oneTimeCode/Cell` → `odd-one-time-code`; `select` → `odd-select`; `fileUpload` → `odd-file-input`; `calendar`, `calendar/Day` → `odd-calendar`; `datePicker` → `odd-date-picker`; `ValidationSummary` → `odd-validation-summary`; `Disclosure`, `Accordion` → `odd-disclosure` (`name`); `Tabs` → `odd-tabs`, `odd-tab-panel`; `Breadcrumbs` → `odd-breadcrumbs`; `Pagination` → `odd-pagination`; `Toolbar` → `odd-toolbar`; `popover` → `odd-popover`; `tooltip` → `odd-tooltip`; `dialog`, `alertDialog` → `odd-dialog` (`alert`); `drawer` → `odd-drawer`; `toast` → `odd-toast`; `listbox` → `odd-listbox`; `Menu`, `MenuItem` → `odd-menu`; `splitAction` → `odd-split-button`; `combobox`, `multiselect` → `odd-combobox` (`multiple`); `Picker` → `odd-picker`; `CommandPalette`, `CommandItem` → `odd-command-palette`; `Tree` → `odd-tree`; `SplitPanels`, `Splitter/*` → `odd-split-panel`; `relativeTime` → `odd-relative-time`; `copyButton` → `odd-copy-button`; `stat` → `odd-stat` |
+| Part of an element | `ListboxSurface`, `ListboxOption` (listbox, select's enhanced picker, combobox, picker); `MenuItem` (menu, split button); `CommandItem` (command palette); `radio` (radio group); `rating/Item` (rating); `calendar/Day` (calendar); `oneTimeCode/Cell` (one-time code); `CheckboxOption` (combobox `multiple`, drawn with the shared control-indicator module, never a nested interactive checkbox); `AvatarItem` (avatar); `Splitter/*` (split panel); timeline `Event marker` and stepper `Step status` → `odd-status-marker` (an element the `.odd-timeline` and `.odd-stepper` recipes hold: §2.7 keeps the check and warning glyphs in shadow roots) |
 | Layout (`layout.css` classes and elements, §3.7, §4) | `Stack`, `Row`, `Cluster`, `Grid`, `AutoGrid`, `Split` → the existing `.odd-stack`, `.odd-row`, `.odd-cluster`, `.odd-grid`, `.odd-auto-grid`, `.odd-split` with Figma's variants; `Box` → `.odd-box`; `Center` → `.odd-center`; `AspectRatio` → `.odd-aspect-ratio`; `ScrollRegion` → `odd-scroll-region`; `Container` → `odd-container`; `SpecimenItem` is a Figma specimen, not built |
 | Recipe (document CSS, no element) | `typography` → `.odd-type-<role>`; `link` → `a` in `base.css` and `.odd-link`; `divider` → `hr` and `.odd-divider`; `keyboardKey` → `kbd` and `.odd-kbd`; `List` → `.odd-list`; `Table` → `.odd-table`; `field` → `.odd-field` (for native and third-party controls; Oddkin controls carry the field anatomy themselves); avatar `Group` → `.odd-avatar-group`; `descriptionList` → `dl.odd-description-list`; `timeline` → `ol.odd-timeline` (markers: `odd-status-marker`); `stepper` → `ol.odd-stepper` (markers: `odd-status-marker`) |
 | Example (composition) | `Form` → `examples/forms`: `odd-input`, `odd-checkbox-group`, `odd-validation-summary`, `odd-button`, layout classes |
@@ -44,9 +44,9 @@ forms, normalized to one model inside the element:
 
 | Collection | Declarative children (read as data, never rendered) | Property |
 | --- | --- | --- |
-| Values (`odd-select`, `odd-listbox`, `odd-combobox`, `odd-radio-group`, `odd-segmented-control`) | `<option value disabled selected title>`, `<optgroup label disabled>`; `title` is the option's description, as in accessible-description computation; a disabled group disables its options | `options: readonly OptionRecord[]` with `{ value, label, description?, disabled?, group?, icon? }` (`icon`: a URL, drawn by `odd-segmented-control` only) |
+| Values (`odd-select`, `odd-listbox`, `odd-combobox`, `odd-picker`, `odd-radio-group`, `odd-segmented-control`) | `<option value disabled selected title>`, `<optgroup label disabled>`; `title` is the option's description, as in accessible-description computation; a disabled group disables its options | `options: readonly OptionRecord[]` with `{ value, label, description?, disabled?, group?, icon? }` (`icon`: a URL, drawn by `odd-segmented-control` only) |
 | Actions (`odd-menu`, `odd-split-button`) | `<option value disabled title>` (value = item id), `<optgroup label>`, `<hr>` (separator) | `items: readonly MenuItemRecord[]`, by `kind`: an action `{ kind?: 'item', id, label, description?, icon?, shortcut?, disabled?, tone?: 'danger', items? }` (`items`: a submenu), a group `{ kind: 'group', label, items }`, a separator `{ kind: 'separator' }` |
-| Commands (`odd-command-palette`), hierarchies (`odd-tree`) | — (data-driven) | `items` (`{ id, label, … }`, tree items nest `children`) |
+| Commands (`odd-command-palette`), hierarchies (`odd-tree`, `odd-picker` with `items`) | — (data-driven) | `items` (`{ id, label, … }`, tree items nest `children`) |
 | Links (`odd-breadcrumbs`) | `<a href>` descendants (text = label), so a server-rendered `<ol><li><a href>` list works as written | `items: readonly LinkRecord[]` with `{ label, href }` |
 
 When both are present the property wins (even an empty array) and `collection.source.conflict` is reported once per
@@ -305,6 +305,17 @@ rated"). `<option>` children or `options` name the stars instead, and their coun
 (`option`) is drawn by its radio (`appearance: none`) under the built-in star glyph (§2.7); stars up to the chosen
 one are `data-state="on"`. Part `value` shows the chosen position. Whole stars only.
 
+**`odd-one-time-code`** (`oneTimeCode`, `oneTimeCode/Cell`) — a verification code sent by message, entered into
+`maxlength` cells (default six). One native input on `OddkinTextControl` carries it: `autocomplete="one-time-code"`
+(the platform offers the code from a message), `inputmode="numeric"`, and paste work as on any field; separate inputs
+per digit would break autofill and read the code as six fields. The input is transparent over the drawn `cell`
+parts (hidden from assistive technology); input keeps digits only, at most `maxlength`, and the caret stays after
+the last digit (the arrow, Home, and End keys do not move it; a click puts it there; Tab selects the code, as in any\nfield). `minlength` defaults to the cell count, so a short
+code is `tooShort` as on a native field. `status: idle | pending | complete = idle` reports the page's check:
+`pending` makes the input read-only and shows `strings.pending` with the busy ring, `complete` shows
+`strings.complete` with a check; a failure is `error`, which replaces the status line (`role="status"`,
+`strings.hint` while idle). Resend is the page's own button.
+
 **`odd-select`** (`select`) — native `<select>` built from the options (§2.2). Field anatomy, `name`, `value` (the
 attribute is the default, then the last `<option selected>`, then, without a placeholder, the first usable option, as
 native), `options`, `required`, `disabled`, `placeholder` (a disabled empty first option: native valueMissing with
@@ -344,6 +355,33 @@ chosen option's text, and on a closed combobox clears the text and the value (AP
 returns; while focus is outside, the chips that do not fit on one line become the `more` part ("+N", read as
 `strings.more`). Form semantics are odd-listbox's (one internal base class: the declared default, each value under
 `name`, `required` through a detached native select pointed at the input, reset, restore).
+
+**`odd-picker`** (`Picker`) — a field that opens a list or a hierarchy to choose from (APG select-only combobox). One
+element whose popup content follows the data (§2.2): `<option>`/`<optgroup>` children or `options` give a listbox;
+`items` (`TreeItemRecord`, as `odd-tree`) gives a tree. Name (ADR 0045): HTML's `select` is `odd-select`, a native
+select that can hold neither a tree nor chips; APG's `combobox` is `odd-combobox`, which edits text; "picker" is the
+name Figma, React Spectrum (`Picker`), and Oddkin's date and colour pickers give a field that opens a chooser, and
+covers both contents (the common `TreeSelect` names the tree alone). Field anatomy, `name`, `value`, `values` and
+chips with `multiple`, `required`, `disabled`, `placeholder`, `loading`, `options`, `items`, `expanded` (as
+`odd-tree`), `strings` (`loading`, `empty`, `clear`, `remove`, `selected`, `more`, `hint`, `count`, `close`, `done`,
+`path`), slots `empty`, `status`. Form semantics are odd-combobox's (one internal base: the declared default, each
+value under `name`, `required` through a detached native select pointed at the trigger, reset, restore); value
+changes dispatch `input` and `change`, expanding dispatches `odd-toggle` (cancelable, as `odd-tree`). One shadow
+tree on odd-combobox's field and popup wiring (an internal base, `src/collection/option-field.ts`): the field box
+(part `control`) holds the chips and the trigger, a `div` with `role="combobox"` (part `trigger`, the one Tab stop,
+`aria-haspopup="tree"` with `items`) that keeps focus and names the active row with `aria-activedescendant`; the
+single value shows as its label, a tree item after its parent (`strings.path`, "Transportation / Roads"). The popup
+(part `popup`, a manual popover as wide as the field and joined below it) holds the listbox (odd-listbox's rows) or
+the tree (odd-tree's rows and its expansion model, `src/collection/tree-model.ts`: expanding never selects, and
+selecting a branch never selects its descendants), the states (§2.5), and the footer (part `footer`): the hint or
+with `multiple` the count (part `summary`), Clear (part `clear-all`) with `multiple`, and Close, Done with `multiple`
+(part `close`), native buttons with the button look. Keyboard: Down, Up, Enter, Space, and Alt+Down open on the
+chosen (or first) row, Home and End on the first and last, typing on the next match; in the popup, Up, Down, Home,
+and End move the active row, Enter and Space choose it (single: closes; multiple: toggles and stays open), Escape
+and Alt+Up close without changing the value; in a tree, Right, Left (mirrored right to left), and `*` as `odd-tree`.
+Focus stays on the trigger; leaving closes the popup. On the closed trigger, Backspace removes the last value, and
+with `multiple` Left moves to the chips (odd-combobox's chip keys). While the trigger has keyboard focus and the
+popup is open, one focus ring (`radius.lg`) surrounds the field and the popup.
 
 **`odd-file-input`** (`fileUpload`) — a drop zone (part `surface`) over a native `<input type="file">` whose
 `::file-selector-button` takes the secondary button look. Field anatomy, the `error` taking the place of the `title`
@@ -451,7 +489,8 @@ unset, items holding a selected item start expanded and the user's toggles are k
 its current-row marker). A click on a row selects it; a click on its chevron expands or collapses it. Selection
 dispatches `input` and `change`; expanding dispatches `odd-toggle`, detail `{ id, expanded }`, cancelable (lazy
 children: the row is busy until the host assigns new `items` in which the item has `children`). APG tree keyboard
-(arrows mirrored right to left, Home/End, `*`, Enter and Space, typeahead); one Tab stop, on the selected row.
+(arrows mirrored right to left, Home/End, `*`, Enter and Space, typeahead); one Tab stop, on the selected row. The
+rows, their expansion, and the hierarchy keys are one internal model shared with `odd-picker`'s tree.
 
 ### 3.5 Overlays
 

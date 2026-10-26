@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-26** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)), text-wrap-balance (newly (2024-05-13)), scrollbar-gutter (newly (2024-12-11)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 178 stylesheets, 314 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 182 stylesheets, 316 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -185,8 +185,12 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/listbox/listbox.styles.js (listboxStyles)` | yes | 20 |
 | `packages/components/dist/menu/menu.structural.styles.js (menuStructuralStyles)` | yes | 11 |
 | `packages/components/dist/menu/menu.styles.js (menuStyles)` | yes | 12 |
+| `packages/components/dist/one-time-code/one-time-code.structural.styles.js (oneTimeCodeStructuralStyles)` | yes | 23 |
+| `packages/components/dist/one-time-code/one-time-code.styles.js (oneTimeCodeStyles)` | yes | 19 |
 | `packages/components/dist/pagination/pagination.structural.styles.js (paginationStructuralStyles)` | yes | 32 |
 | `packages/components/dist/pagination/pagination.styles.js (paginationStyles)` | yes | 20 |
+| `packages/components/dist/picker/picker.structural.styles.js (pickerStructuralStyles)` | yes | 31 |
+| `packages/components/dist/picker/picker.styles.js (pickerStyles)` | yes | 29 |
 | `packages/components/dist/popover/popover.structural.styles.js (popoverStructuralStyles)` | yes | 9 |
 | `packages/components/dist/popover/popover.styles.js (popoverStyles)` | yes | 6 |
 | `packages/components/dist/progress/progress.structural.styles.js (progressStructuralStyles)` | yes | 35 |

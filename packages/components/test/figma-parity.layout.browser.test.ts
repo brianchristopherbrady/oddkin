@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { commands } from 'vitest/browser';
+import { defineLayoutRecipe, grid, stack } from '@oddkin/core/layout';
 import {
   compare,
   expectNone,
@@ -256,6 +258,58 @@ describe('Figma parity: layout classes (Oddkin/Layout/*)', () => {
         expect(el.getBoundingClientRect().width, `${measure} at ${width}px`).toBe(expected);
         done(el);
       }
+    }
+  });
+});
+
+// Review · 12 (panel 461:2652): the same cards in a recipe-local container query, read from
+// layouts.json. The layout-demo container answers, not the viewport: 1, 2, then 3 columns at its
+// medium (36rem) and wide (52rem) conditions, 64 px cards layout.gap apart, as Figma's 320, 640,
+// and 960 px examples are 464, 224, and 144 px high.
+describe('Figma parity: recipe-local container query (Review · 12)', () => {
+  it('lays the same cards out in 1, 2, and 3 columns at the layout-demo container’s 36rem and 52rem', async () => {
+    const layouts = JSON.parse(await commands.readFile('design/figma/layouts.json'));
+    const panel = layouts.panels.find((p: { id: string }) => p.id === '461:2652');
+    const { medium, wide } = layouts.recipeLocalConditions as Record<string, string>;
+    expect([medium, wide]).toEqual([
+      'layout-demo (min-inline-size: 36rem)',
+      'layout-demo (min-inline-size: 52rem)',
+    ]);
+    const gap = 'var(--odd-layout-gap)';
+    const cards = defineLayoutRecipe({
+      name: 'layout-demo',
+      scope: 'layout-demo',
+      container: { region: 'root', name: 'layout-demo' },
+      regions: { root: stack({ gap }), cards: grid({ columns: 1, gap }) },
+      conditions: {
+        medium: { kind: 'container', query: medium! },
+        wide: { kind: 'container', query: wide! },
+      },
+      when: {
+        medium: { cards: grid({ columns: 2, gap }) },
+        wide: { cards: grid({ columns: 3, gap }) },
+      },
+    });
+    const sheet = cards.styles.sheetFor(document)!;
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+    const viewport = window.innerWidth;
+    try {
+      const expected = { 320: 1, 640: 2, 960: 3 } as const;
+      for (const width of WIDTHS) {
+        const example = panel.examples.find((e: { width: number }) => e.width === width);
+        const root = at(
+          width,
+          `<div class="layout-demo__root"><div class="layout-demo__cards">${items(6, 'block-size: 64px')}</div></div>`,
+        );
+        const list = root.firstElementChild!;
+        expect(columns(list), `${width}px`).toBe(expected[width]);
+        expect(list.getBoundingClientRect().height, `${width}px`).toBe(example.height);
+        done(root);
+      }
+      // The viewport never changed; only the container did.
+      expect(window.innerWidth).toBe(viewport);
+    } finally {
+      document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s !== sheet);
     }
   });
 });

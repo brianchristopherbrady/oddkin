@@ -544,3 +544,84 @@ describe('Figma parity: rating/Item', () => {
       expectNone(compare('Oddkin/Common/rating/Item', { State: state }, targets));
     });
 });
+
+describe('Figma parity: oneTimeCode', () => {
+  const description = 'Enter the six-digit code sent to a•••@example.com.';
+  const states: Record<string, [string, string]> = {
+    Empty: ['', 'You can paste the entire code.'],
+    Entering: [' value="492"', 'You can paste the entire code.'],
+    Complete: [' value="492816" status="complete"', 'Code accepted.'],
+    Verifying: [' value="492816" status="pending"', 'Verifying code…'],
+    Invalid: [' value="492816" error="That code has expired. Request a new code."', ''],
+    Disabled: [' disabled', 'You can paste the entire code.'],
+  };
+  for (const [state, [attributes, status]] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(
+        `<odd-one-time-code label="Verification code" description="${description}"${attributes}></odd-one-time-code>`,
+      );
+      await settle(el);
+      const root = el.shadowRoot!;
+      const targets: Target[] = [
+        { layer: [], el: shadowPart(el, 'field'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Verification code'], el: shadowPart(el, 'label'), kind: 'text' },
+        { layer: [description], el: shadowPart(el, 'description'), kind: 'text' },
+        {
+          layer: ['Six code inputs'],
+          el: root.querySelector<HTMLElement>('.cells')!,
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        state === 'Invalid'
+          ? {
+              layer: ['Code status', 'That code has expired. Request a new code.'],
+              el: shadowPart(el, 'error'),
+              kind: 'text',
+            }
+          : { layer: ['Code status', status], el: shadowPart(el, 'status'), kind: 'text' },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/oneTimeCode', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: oneTimeCode/Cell', () => {
+  // [attributes, which cell]: a filled first cell, or the empty active one after it.
+  const states: Record<string, [string, number]> = {
+    Empty: ['', 0],
+    Filled: [' value="4"', 0],
+    Focus: [' value="4"', 1],
+    Complete: [' value="4" status="complete"', 0],
+    Invalid: [' value="4" error="That code has expired."', 0],
+    Disabled: [' value="4" disabled', 0],
+  };
+  for (const [state, [attributes, index]] of Object.entries(states))
+    it(state, async () => {
+      const el = mount(
+        `<odd-one-time-code label="Verification code"${attributes}></odd-one-time-code>`,
+      );
+      await settle(el);
+      await interact(state, shadowPart(el, 'control'));
+      await settle(el);
+      const cell = el.shadowRoot!.querySelectorAll<HTMLElement>('[part="cell"]')[index]!;
+      const targets: Target[] = [
+        { layer: [], el: cell, kind: 'frame' },
+        {
+          layer: [cell.textContent ? '4' : 'Text'],
+          el: cell,
+          kind: 'text',
+        },
+      ];
+      if (state === 'Focus')
+        targets.push(
+          { layer: ['Focus ring · 2px / 2px offset'], el: cell, kind: 'ring' },
+          {
+            layer: ['Insertion caret'],
+            el: cell.querySelector<HTMLElement>('.caret')!,
+            kind: 'frame',
+          },
+        );
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/oneTimeCode/Cell', { State: state }, targets));
+    });
+});

@@ -23,7 +23,7 @@ export const comboboxStyles = css`
     gap: ${token('control.gap')};
     padding-inline: ${token('control.padding.inline.md')};
   }
-  :host([multiple]) .box,
+  .control-box:has(.chevron) > .box,
   .control-box:has(.clear:not([hidden])) > .box {
     padding-inline-end: calc(${token('control.padding.inline.md')} + 1em + ${token('control.gap')});
   }
@@ -31,7 +31,7 @@ export const comboboxStyles = css`
     padding-block: ${token('space.xs')};
     padding-inline-start: ${token('control.padding.inline.sm')};
   }
-  :host([multiple]) .control-box:has(.clear:not([hidden])) > .box {
+  .control-box:has(.chevron):has(.clear:not([hidden])) > .box {
     padding-inline-end: calc(
       ${token('control.padding.inline.md')} + 2em + 2 * ${token('control.gap')}
     );
@@ -39,27 +39,28 @@ export const comboboxStyles = css`
   .chips {
     gap: ${token('control.gap')};
   }
-  .box:has(.entry:focus-visible) {
+  .box:has(.combobox:focus-visible) {
     outline: ${token('focus.width')} solid ${token('color.focus.ring')};
     outline-offset: ${token('focus.offset')};
   }
-  .entry::placeholder {
+  .combobox::placeholder,
+  .combobox .placeholder {
     color: ${token('color.text.secondary')};
     opacity: 1;
   }
   @media (hover: hover) {
-    .box:has(.entry:read-write):hover {
+    .box:has(.combobox:read-write):hover {
       background: var(--odd-field-background, ${token('color.surface.hover')});
     }
   }
-  .box:has(.entry[aria-invalid='true']) {
+  .box:has(.combobox[aria-invalid='true']) {
     border-color: ${token('color.danger.foreground')};
   }
-  .box:has(.entry:disabled) {
+  .box:has(.combobox:disabled, .combobox[aria-disabled='true']) {
     background: ${token('color.surface.sunken')};
     color: ${token('color.text.disabled')};
   }
-  .field:has(.entry:disabled) .label {
+  .field:has(.combobox:disabled, .combobox[aria-disabled='true']) .label {
     color: ${token('color.text.disabled')};
   }
 `;

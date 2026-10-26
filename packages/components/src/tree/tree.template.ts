@@ -1,19 +1,25 @@
 import { styleMap } from '@oddkin/core/helpers/style-map';
 import { html, repeat } from '@oddkin/core/template';
+import type { TreeRow } from '../collection/tree-model.js';
 import { chevronDownGlyph, chevronEndGlyph } from '../styles/glyphs.js';
 import { spinnerTemplate } from '../styles/spinner.styles.js';
-import type { OddkinTree, TreeRow } from './tree.js';
+import type { OddkinTree } from './tree.js';
 
-const row = (tree: OddkinTree, row: TreeRow) =>
+/**
+ * One `treeitem` row (navigation-row module), shared with `odd-picker`'s tree: its place in the
+ * hierarchy, expansion, selection, and busy state; a chevron (`.toggle`, a click on it expands or
+ * collapses), an optional icon (`odd-icon`), and the label. `active` marks the active descendant.
+ */
+export const treeItemTemplate = (row: TreeRow, multiple: boolean, active = false) =>
   html`<div
     role="treeitem"
     part="item"
-    class="entry"
+    class=${active ? 'entry active' : 'entry'}
     aria-level=${row.level}
     aria-setsize=${row.size}
     aria-posinset=${row.position}
     aria-expanded=${row.expandable ? String(row.expanded) : null}
-    aria-selected=${row.selected ? 'true' : tree.multiple ? 'false' : null}
+    aria-selected=${row.selected ? 'true' : multiple ? 'false' : null}
     aria-disabled=${row.item.disabled ? 'true' : null}
     aria-busy=${row.busy ? 'true' : null}
     style=${styleMap({ '--_level': String(row.level - 1) })}
@@ -50,7 +56,7 @@ export const treeTemplate = (tree: OddkinTree) => {
       ${repeat(
         rows,
         (each) => each.item.id,
-        (each) => row(tree, each),
+        (each) => treeItemTemplate(each, tree.multiple),
       )}
     </div>
     <div part="loading" class="state" ?hidden=${!tree.loading}>

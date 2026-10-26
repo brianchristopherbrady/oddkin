@@ -29,7 +29,9 @@ import '@oddkin/components/define/icon';
 import '@oddkin/components/define/input';
 import '@oddkin/components/define/listbox';
 import '@oddkin/components/define/menu';
+import '@oddkin/components/define/one-time-code';
 import '@oddkin/components/define/pagination';
+import '@oddkin/components/define/picker';
 import '@oddkin/components/define/popover';
 import '@oddkin/components/define/progress';
 import '@oddkin/components/define/radio-group';
@@ -239,6 +241,7 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-switch name="alerts" checked>Alerts</odd-switch>
         <odd-slider label="Scale" name="scale" min="25" max="100" step="5" value="60"></odd-slider>
         <odd-rating label="Score" name="score" value="3"></odd-rating>
+        <odd-one-time-code label="Code" name="code" value="49" status="pending"></odd-one-time-code>
         <odd-radio-group label="Visibility" name="visibility" required><option value="private" title="Invited members" selected>Private</option><option value="team">Team</option></odd-radio-group>
         <odd-segmented-control label="Size" name="size"><option value="sm">Small</option><option value="md" selected>Medium</option></odd-segmented-control>
         <odd-textarea label="Notes" maxlength="200" resize="auto"></odd-textarea>
@@ -256,12 +259,17 @@ function componentCycles(cycles: number): Promise<Cycles> {
         <odd-listbox label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-listbox>
         <odd-select label="Role" name="role"><option value="a">A</option><option value="b" selected>B</option></odd-select>
         <odd-combobox label="Topics" name="topics" multiple><option value="a" selected>A</option><option value="b" selected>B</option><option value="c">C</option></odd-combobox>
+        <odd-picker label="Layers" name="layers" multiple></odd-picker>
         <odd-command-palette label="Commands"></odd-command-palette>
         <odd-menu>Actions<option value="a">A</option><option value="b">B</option></odd-menu>
         <odd-split-button value="save">Save<option value="copy">Save a copy</option></odd-split-button>`;
       (display.querySelector('odd-tree') as HTMLElement & { items: unknown }).items = [
         { id: 'a', label: 'A', children: [{ id: 'b', label: 'B' }] },
       ];
+      Object.assign(display.querySelector('odd-picker')!, {
+        items: [{ id: 'a', label: 'A', children: [{ id: 'b', label: 'B' }] }],
+        values: ['b'],
+      });
       const elements = [button, input, card, nav, badge, ...display.children];
       container.append(button, input, card, nav, badge, display);
       await tick();

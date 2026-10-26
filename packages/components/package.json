@@ -302,6 +302,18 @@
       "types": "./dist/menu/menu.define.d.ts",
       "default": "./dist/menu/menu.define.js"
     },
+    "./one-time-code": {
+      "types": "./dist/one-time-code/index.d.ts",
+      "default": "./dist/one-time-code/index.js"
+    },
+    "./one-time-code/foundation": {
+      "types": "./dist/one-time-code/foundation.d.ts",
+      "default": "./dist/one-time-code/foundation.js"
+    },
+    "./define/one-time-code": {
+      "types": "./dist/one-time-code/one-time-code.define.d.ts",
+      "default": "./dist/one-time-code/one-time-code.define.js"
+    },
     "./pagination": {
       "types": "./dist/pagination/index.d.ts",
       "default": "./dist/pagination/index.js"
@@ -313,6 +325,18 @@
     "./define/pagination": {
       "types": "./dist/pagination/pagination.define.d.ts",
       "default": "./dist/pagination/pagination.define.js"
+    },
+    "./picker": {
+      "types": "./dist/picker/index.d.ts",
+      "default": "./dist/picker/index.js"
+    },
+    "./picker/foundation": {
+      "types": "./dist/picker/foundation.d.ts",
+      "default": "./dist/picker/foundation.js"
+    },
+    "./define/picker": {
+      "types": "./dist/picker/picker.define.d.ts",
+      "default": "./dist/picker/picker.define.js"
     },
     "./popover": {
       "types": "./dist/popover/index.d.ts",

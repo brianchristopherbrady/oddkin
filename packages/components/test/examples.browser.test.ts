@@ -90,6 +90,10 @@ describe('authored examples', () => {
       observe: (el) => (el['validity'] as ValidityState).valueMissing,
       wrong: true,
     },
+    'odd-one-time-code/requiredFalse': {
+      observe: (el) => (el['validity'] as ValidityState).valueMissing,
+      wrong: true,
+    },
     'odd-rating/requiredFalse': {
       observe: (el) => (el['validity'] as ValidityState).valueMissing,
       wrong: true,
@@ -165,6 +169,10 @@ describe('authored examples', () => {
       observe: (el) => el.shadowRoot!.querySelectorAll('[role="option"]').length,
       wrong: 0,
     },
+    'odd-picker/itemsAttribute': {
+      observe: (el) => el.shadowRoot!.querySelectorAll('[role="treeitem"]').length,
+      wrong: 0,
+    },
     'odd-select/optionsAttribute': {
       observe: (el) => el.shadowRoot!.querySelectorAll('option').length,
       wrong: 0,
@@ -203,6 +211,7 @@ describe('authored examples', () => {
     'odd-side-nav/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-breadcrumbs/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-tree/itemsAttribute': ['element.attribute.propertyOnly'],
+    'odd-picker/itemsAttribute': ['element.attribute.propertyOnly'],
     'odd-listbox/optionsAttribute': ['element.attribute.propertyOnly'],
     'odd-combobox/optionsAttribute': ['element.attribute.propertyOnly'],
     'odd-command-palette/itemsAttribute': ['element.attribute.propertyOnly'],

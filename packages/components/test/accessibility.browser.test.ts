@@ -78,6 +78,11 @@ const states = `
     <odd-rating label="Service" required error="Choose a rating before continuing."></odd-rating>
     <odd-rating label="Locked rating" value="2" disabled></odd-rating>
     <odd-rating label="Average rating" description="Rating from 24 responses." value="4" readonly></odd-rating>
+    <odd-one-time-code label="Verification code" description="Enter the six-digit code sent to your email." name="otp" value="4928"></odd-one-time-code>
+    <odd-one-time-code label="Expired code" value="492816" error="That code has expired. Request a new code."></odd-one-time-code>
+    <odd-one-time-code label="Checking code" value="492816" status="pending"></odd-one-time-code>
+    <odd-one-time-code label="Accepted code" value="492816" status="complete"></odd-one-time-code>
+    <odd-one-time-code label="Locked code" disabled></odd-one-time-code>
     <odd-textarea label="Project description" name="about" placeholder="Describe this project…" maxlength="500"></odd-textarea>
     <odd-textarea label="Feedback" description="Tell us what to improve." name="feedback" required error="Feedback is required." maxlength="200"></odd-textarea>
     <odd-textarea label="Terms" name="terms-text" value="Read only." readonly resize="none"></odd-textarea>
@@ -168,6 +173,10 @@ const states = `
   <odd-combobox label="Topics" name="topics" multiple required error="Choose at least one topic"><option value="design" selected>Design</option><option value="research" selected>Research</option><option value="sales">Sales</option></odd-combobox>
   <odd-combobox label="Person" no-filter loading></odd-combobox>
   <odd-combobox label="Archive" disabled><option value="a" selected>2025</option></odd-combobox>
+  <odd-picker id="a11y-picker" label="Map layers" description="Choose from the available layers." value="text-field" data-items></odd-picker>
+  <odd-picker label="Shared layers" multiple required error="Select at least one layer." data-items></odd-picker>
+  <odd-picker id="a11y-picker-list" label="Basemap" name="basemap" multiple><option value="streets" selected>Streets</option><option value="satellite">Satellite</option><option value="terrain" disabled>Terrain</option></odd-picker>
+  <odd-picker label="Archived layers" value="text-field" disabled data-items></odd-picker>
   <odd-select label="Workspace role" name="role" description="Who can change things"><option value="viewer">Viewer</option><option value="editor" selected>Editor</option><option value="owner" disabled>Owner</option></odd-select>
   <odd-select label="Region" placeholder="Choose a region…" required error="Choose a region to continue"><optgroup label="Europe"><option value="fra" title="Germany">Frankfurt</option></optgroup><option value="any">Any region</option></odd-select>
   <odd-select label="Archive" disabled><option value="a">2025</option></odd-select>
@@ -216,9 +225,9 @@ async function audit(mode: 'light' | 'dark') {
   container.style.backgroundColor = 'var(--odd-color-canvas)';
   container.style.color = 'var(--odd-color-text-primary)';
   container.innerHTML = states;
-  // Rich data is a property: trees marked data-items get theirs here.
+  // Rich data is a property: trees and pickers marked data-items get theirs here.
   for (const tree of container.querySelectorAll<HTMLElement & { items?: unknown }>(
-    'odd-tree[data-items]',
+    'odd-tree[data-items], odd-picker[data-items]',
   ))
     tree.items = [
       {
@@ -247,6 +256,13 @@ async function audit(mode: 'light' | 'dark') {
     await blocked.updateComplete;
     flush();
     expect(blocked.shadowRoot!.querySelector('input')!.getAttribute('aria-invalid')).toBe('true');
+    // Open pickers: their popup tree or listbox, rows, and footer actions are audited.
+    for (const id of ['#a11y-picker', '#a11y-picker-list']) {
+      const picker = container.querySelector<HTMLElement & { updateComplete: Promise<void> }>(id)!;
+      picker.shadowRoot!.getElementById('popup')!.showPopover();
+      await picker.updateComplete;
+    }
+    flush();
     // A submission the user starts and validation blocks: the summary lists the problems.
     const summaryForm = container.querySelector<HTMLFormElement>('#summary-form')!;
     summaryForm.addEventListener('submit', (event) => event.preventDefault());

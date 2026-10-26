@@ -163,10 +163,15 @@ export const CSS_BUDGETS = {
   'components:tree': 512, // 428
   'components:listbox': 640, // 602: the rows, field, and spinner are shared modules
   'components:select': 512, // 448: the field, the option rows, and the picker surface are shared modules
-  // 960: measured 860 on 2026-10-23: the field box (its states, the search glyph and chevron
-  // padding), the chips' "+N" collapse, and the popup width; the field, rows, listbox rows, surface,
-  // chips, and clear button are shared sheets.
+  // 960: measured 876 on 2026-10-25 (860 on 2026-10-23): the field box (its states, the search
+  // glyph and chevron padding), the chips' "+N" collapse, and the popup width; the field, rows,
+  // listbox rows, surface, chips, and clear button are shared sheets. odd-picker uses these sheets.
   'components:combobox': 960,
+  // 896: measured 883 on 2026-10-25: the trigger and its value, the popup joined to the field (as
+  // wide, stacked over the footer, and the focus ring around both), the tree content's padding and
+  // type, the active row's ring, and the footer; the field, chips, rows, surface, and footer
+  // buttons are odd-combobox's, the shared modules', and the native button sheet.
+  'components:picker': 896,
   // 1,184: measured 1,096 on 2026-10-23: the palette's surface, search field, group headings in the
   // eyebrow role, Figma CommandItem rows (padding, surface, the active one in the selection
   // colours, the shortcut in the code role), and the hints; the rows' base, surface, and spinner are
@@ -192,6 +197,9 @@ export const CSS_BUDGETS = {
   // 512: measured 402 on 2026-10-23: the round box and its dot, the option and group layout, and
   // the description inset; the row and box are the control-indicator module, the legend the control
   // module.
+  // 704: measured 643 on 2026-10-25: the cells, the transparent input over them, the active cell's
+  // ring and caret, the complete, invalid, pending, and disabled cells, and the status line.
+  'components:one-time-code': 704,
   'components:radio-group': 512,
   // 704: measured 644 on 2026-10-25: the star targets drawn by their radios, the filled stars, the
   // value, and the forced-colours states, which only odd-rating draws.
