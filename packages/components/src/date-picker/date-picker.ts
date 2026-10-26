@@ -34,17 +34,6 @@ export const datePickerChangeEvent = event('change', {
 });
 
 /**
- * What FormValue reads of a native control, reporting `badInput` with `message`: a native date
- * input's flag for text that is not a date, which no script can set on one.
- */
-const badInputSource = (message: string) =>
-  ({
-    willValidate: true,
-    validity: { valid: false, badInput: true },
-    validationMessage: message,
-  }) as unknown as HTMLInputElement;
-
-/**
  * One date, typed in the page language's numeric order or chosen from a calendar in a popup: the
  * WAI-ARIA date picker dialog. The value is a `YYYY-MM-DD` date, submitted under `name` as a
  * native date input submits it; the field shows it as the language writes dates in digits
@@ -194,20 +183,19 @@ export class OddkinDatePicker extends OddkinFormControl.with({
   protected override _formOptions(): FormControlOptions {
     return {
       value: () => this._value.value,
-      control: () => {
-        const native = Object.assign(this.#validator, {
+      control: () =>
+        Object.assign(this.#validator, {
           required: this.required,
           readOnly: this.readonly,
           disabled: this._inactive,
           min: this.min,
           max: this.max,
           value: this._value.value,
-        });
-        const bad = this._badInput.value;
-        return bad && native.willValidate ? badInputSource(bad) : native;
-      },
+        }),
+      // Barred, as the read-only or disabled native input is, so its text is not reported.
+      badInput: () => (this.readonly || this._inactive ? '' : this._badInput.value),
       anchor: () => this.shadowRoot?.querySelector<HTMLElement>('[part~="control"]'),
-      watch: () => [this.required, this.readonly, this.min, this.max, this._badInput.value],
+      watch: () => [this.required, this.min, this.max],
       onReset: () => {
         this.#value.value = undefined;
         this.#typed.value = undefined;

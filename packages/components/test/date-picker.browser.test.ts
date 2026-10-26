@@ -347,6 +347,14 @@ describe('odd-date-picker', () => {
     await settle(el);
     expect(el.willValidate).toBe(false);
     expect(el.validity.valid).toBe(true);
+    // Text that is not a date, typed before the field became read-only, is not reported either.
+    el.readonly = false;
+    await settle(el);
+    await type(el, control, 'soon');
+    expect(el.validity.badInput).toBe(true);
+    el.readonly = true;
+    await settle(el);
+    expect(el.validity.valid).toBe(true);
   });
 
   it('is inactive when disabled, also by a fieldset', async () => {

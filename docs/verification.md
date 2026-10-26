@@ -3210,3 +3210,19 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1, HEAD c665af
 - The shared control module already dims the label of a field whose control is disabled (`.field:has(.control:disabled) .label`), so the element's own rule repeated it.
 - The transparent input paints above the cells in all three engines, because `opacity` below 1 makes it a stacking context painted after the in-flow cells; `pointer-events: none` on the cells changed nothing (the click test passes in Chromium, Firefox, and WebKit without it).
 - The shared host styles hide every `[hidden]` element with `display: none !important`, so the status rule needs no `:not([hidden])`.
+
+## 2026-10-26 — odd-date-picker reports bad input through core `badInput` (M10 round 7, component-contracts.md §3.3)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2), HEAD 38b1d5a. Other lanes in progress in the tree: Agent 1's number stepper (`src/input/`, `src/form-control/text-control.ts`, `range.ts`).
+
+**Change:** typed text that is not a date now reaches the element's validity through core's `FormValueOptions.badInput` (99b67a7). The date picker no longer returns a stand-in control object to `FormValue`. The flag (`badInput`) and the message (`strings.invalid`) are unchanged. While the picker is read-only or disabled, the text is not reported, as with a barred native date input.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Parity with the stand-in | `npx vitest run --project browser --browser.name=chromium packages/components/test/date-picker.browser.test.ts` with HEAD's `date-picker.ts` | 12 of 12 pass on the old code too, including the one new assertion (text typed before the field became read-only is not reported). |
+| Mutation probes | `node .tmp/n-mutate.mjs .tmp/n-mutants-badinput.json` (Chromium, date-picker tests) | 4 probes, 3 killed: the read-only and disabled bars, and the missing `badInput`. The survivor, `readonly` in `watch`, was equivalent because the `badInput` closure reads it; it was removed. |
+| Elements, three engines | date-picker, calendar, `figma-parity.pickers`, `examples`, `contract`, `accessibility`, `keyboard`, `description`, `styling-contract`, `multi-product`, one engine at a time | Chromium 881 passed, 50 skipped; Firefox and WebKit 879 passed, 52 skipped. |
+| Node, types, size, CSS | `npx tsc -b packages/components`; `node scripts/build-metadata.mjs`; `npx vitest run --project node`; `npm run typecheck`; `node scripts/check-size.mjs`; `npm run compat` | Node 1,212 of 1,213. `tests/experiments/analyzability.test.ts` timed out at 50 s under load and passes alone (2 of 2). Typecheck passes. `components:date-picker` is 337 of 384 B. Compat reports 0 problems. |
+| Lifetime | `node research/benchmarks/lifetime/run.mjs --scenario componentCycles` | Ownership was returned in Chromium, Firefox, and WebKit, and 1,000 elements rendered in each. Chromium retained 513 B, or 15 B per cycle. |
+
+**Findings:** None beyond the equivalent `watch` entry.
