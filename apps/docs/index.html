@@ -6,23 +6,24 @@
     <title>Oddkin documentation</title>
     <link rel="stylesheet" href="/apps/docs/styles.css" />
     <link rel="stylesheet" href="/public/@oddkin/tokens/css/default.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/layout.css" />
     <script type="importmap" id="oddkin-import-map"></script>
     <script type="module" src="/apps/docs/dist/main.js"></script>
   </head>
   <body>
     <div id="docs-app">
       <a class="skip-link" href="#main">Skip to content</a>
-      <header class="site-header">
+      <header class="site-header odd-row odd-row-between">
         <a class="brand" href="/">Oddkin</a>
-        <form class="header-search" action="/search">
+        <form class="header-search odd-row" action="/search">
           <label class="visually-hidden" for="site-search">Search documentation</label>
           <input id="site-search" type="search" name="q" placeholder="Search documentation" />
           <button type="submit">Search</button>
         </form>
       </header>
       <p id="route-status" role="status" aria-live="polite"></p>
-      <div class="site-layout">
-        <nav class="side-nav" aria-label="Documentation">
+      <div class="site-layout odd-split">
+        <nav class="side-nav odd-auto-grid odd-auto-grid-fit" aria-label="Documentation">
           <p class="eyebrow">Learn</p>
           <a href="/" aria-current="page">Getting started</a>
           <a href="/layout/side-nav">Layout guide</a>

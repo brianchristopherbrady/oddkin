@@ -46,10 +46,7 @@ input {
 }
 
 .site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  --odd-row-gap: 1rem;
   padding: 1rem max(1rem, calc((100vw - 78rem) / 2));
   border-block-end: 1px solid var(--odd-color-border-default, #d9d8e1);
 }
@@ -63,9 +60,7 @@ input {
 
 .header-search,
 .search-form {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  --odd-row-gap: 0.5rem;
 }
 
 .header-search input,
@@ -81,9 +76,9 @@ button {
 }
 
 .site-layout {
-  display: grid;
-  grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr);
-  gap: clamp(1.5rem, 4vw, 4rem);
+  --odd-split-side-width: 16rem;
+  --odd-split-gap: clamp(1.5rem, 4vw, 4rem);
+  --odd-split-main-min: min(var(--odd-layout-main-min), 100%);
   width: min(78rem, 100%);
   margin-inline: auto;
   padding: 2rem 1.5rem 4rem;
@@ -94,11 +89,10 @@ button {
   padding-inline: max(1rem, calc((100vw - 78rem) / 2));
 }
 
+/* One column beside the content; links share rows once the layout wraps. */
 .side-nav {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.5rem;
+  --odd-auto-grid-min: 8rem;
+  --odd-auto-grid-gap: 0.5rem;
   align-self: start;
   position: sticky;
   inset-block-start: 1rem;
@@ -125,7 +119,6 @@ button {
 }
 
 #main {
-  min-width: 0;
   min-height: 65vh;
 }
 
@@ -172,16 +165,17 @@ pre {
   font-family: ui-monospace, monospace;
 }
 
+.side-nav .eyebrow {
+  grid-column: 1 / -1;
+}
+
 .card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  gap: 1rem;
+  --odd-auto-grid-min: 15rem;
+  --odd-auto-grid-gap: 1rem;
 }
 
 .doc-card {
-  display: grid;
-  align-content: start;
-  gap: 0.4rem;
+  --odd-stack-gap: 0.4rem;
   padding: 1rem;
   border: 1px solid var(--odd-color-border-default, #d9d8e1);
   border-radius: 0.4rem;
@@ -234,18 +228,11 @@ th {
 
 @media (max-width: 48rem) {
   .site-layout {
-    grid-template-columns: 1fr;
     padding-inline: 1rem;
   }
 
   .side-nav {
     position: static;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
-  }
-
-  .side-nav .eyebrow {
-    grid-column: 1 / -1;
   }
 
   .site-header {

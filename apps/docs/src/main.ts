@@ -251,11 +251,11 @@ function renderFoundations(main: HTMLElement, data: DocsData): void {
       'Published design-system facts, with token values sourced from the generated inspection.',
     ),
   );
-  const grid = node('div', 'card-grid');
+  const grid = node('div', 'card-grid odd-auto-grid odd-auto-grid-fit');
   for (const [key, value] of entries(data.metadata['foundations'])) {
     const foundation = isRecord(value) ? value : {};
     const id = text(foundation['id'], key.replace(/^foundation:/, ''));
-    const card = node('article', 'doc-card');
+    const card = node('article', 'doc-card odd-stack');
     card.append(node('h2', undefined, id));
     card.append(
       node('p', undefined, `${strings(foundation['tokens']).length} published token references`),
@@ -438,7 +438,7 @@ function renderSearch(main: HTMLElement, query: string, data: DocsData): void {
       'Search this page index locally; no remote service or component module is loaded.',
     ),
   );
-  const form = node('form', 'search-form');
+  const form = node('form', 'search-form odd-row');
   const label = node('label', undefined, 'Search guides, foundations, components, and tokens');
   label.htmlFor = 'docs-search';
   const input = node('input');

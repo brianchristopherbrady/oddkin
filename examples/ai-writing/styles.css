@@ -12,6 +12,7 @@ body {
 /* The assistant takes two fifths of the row, never less than 16rem. */
 .workspace {
   --odd-split-side-width: max(16rem, (100% - var(--odd-layout-gap)) * 2 / 5);
+  --odd-split-main-min: min(var(--odd-layout-main-min), 100%);
 }
 
 .banner h1 {
@@ -31,7 +32,6 @@ body {
 .editor-pane,
 .assist-pane {
   box-sizing: border-box;
-  min-inline-size: 0;
   padding: var(--odd-space-sm);
   border-radius: var(--odd-radius-lg);
   background: var(--odd-color-surface-default);
