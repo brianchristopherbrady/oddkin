@@ -14,6 +14,7 @@ import type { Scope } from '@oddkin/core/scope';
  * @useFor Pictograms beside text, or alone with `label`.
  * @notFor The only name of a control (give the control its own label); decoration that belongs in CSS.
  * @category Display
+ * @customization 1 2 3
  */
 export class OddkinIcon extends OddkinElement.with({
   src: prop.string({

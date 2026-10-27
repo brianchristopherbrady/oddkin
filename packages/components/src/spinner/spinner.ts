@@ -17,6 +17,7 @@ export const SPINNER_STRINGS = { loading: 'Loading' };
  * @useFor Waiting of unknown length: loading a region, saving.
  * @notFor Known progress (use odd-progress); content-shaped placeholders (use odd-skeleton).
  * @category Feedback
+ * @customization 1 2 3
  */
 export class OddkinSpinner extends OddkinElement.with({
   label: prop.string({

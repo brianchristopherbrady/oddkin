@@ -13,6 +13,7 @@ import type { Scope } from '@oddkin/core/scope';
  * @useFor Regions whose layout is known before their content: lists, cards, avatars with text.
  * @notFor Waiting with no known layout (use odd-spinner); progress of a task (use odd-progress).
  * @category Feedback
+ * @customization 1 2 3
  */
 export class OddkinSkeleton extends OddkinElement.with({
   shape: prop.enum(['text', 'rect', 'circle'], {

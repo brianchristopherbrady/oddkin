@@ -14,6 +14,7 @@ import { TONES } from '../styles/tone.styles.js';
  * @useFor Short status labels and counts next to the thing they describe.
  * @notFor Actions or filters (use a button); messages that need attention (use an alert).
  * @category Feedback
+ * @customization 1 2 3
  */
 export class OddkinBadge extends OddkinElement.with({
   tone: prop.enum(TONES, {

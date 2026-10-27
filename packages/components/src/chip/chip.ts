@@ -28,6 +28,7 @@ export const chipRemoveEvent = event<Record<string, never>>('odd-chip-remove', {
  * @useFor Selected values, applied filters, and tags that can be removed.
  * @notFor Actions (use a button); status (use a badge).
  * @category Display
+ * @customization 1 2 3
  */
 export class OddkinChip extends OddkinElement.with({
   removable: prop.boolean({ reflect: true, description: 'Shows a remove button.' }),

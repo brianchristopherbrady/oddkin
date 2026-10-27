@@ -17,6 +17,7 @@ import { TONES } from '../styles/tone.styles.js';
  * @useFor Errors and warnings that affect a page or region, confirmations that must stay visible.
  * @notFor Field errors (use the field's `error`); passing results (a toast); counts and labels (use odd-badge).
  * @category Feedback
+ * @customization 1 2 3
  */
 export class OddkinAlert extends OddkinElement.with({
   tone: prop.enum(TONES, {

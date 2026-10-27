@@ -56,6 +56,7 @@ export const comboboxQueryEvent = queryChangeEvent;
  * @useFor Choosing from a long list by typing: people, projects, countries; several values with `multiple`.
  * @notFor A short list (use odd-select or odd-radio-group); free text with suggestions only (use odd-input); commands (use odd-command-palette).
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinCombobox extends OddkinOptionField.with({
   readonly: prop.boolean({

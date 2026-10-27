@@ -21,6 +21,7 @@ export const STAT_STRINGS = { loading: 'Loading…', unavailable: 'Data not avai
  * @useFor A key figure on a dashboard or summary: a count, a total, a rate, with its change.
  * @notFor Progress toward a goal (use a progress bar); several figures compared side by side (use a table or chart).
  * @category Display
+ * @customization 1 2 3
  */
 export class OddkinStat extends OddkinElement.with({
   label: prop.string({ default: '', description: 'What the value measures.' }),

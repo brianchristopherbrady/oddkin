@@ -43,6 +43,7 @@ export const copyEvent = event<CopyDetail>('odd-copy', {
  * @useFor Copying an identifier, a code snippet, a link, or a key that people paste elsewhere.
  * @notFor Copying rich content or files; a share action (use the page's share flow).
  * @category Actions
+ * @customization 1 2 3
  */
 export class OddkinCopyButton extends OddkinElement.with({
   value: prop.string({ default: '', description: 'The text to copy; wins over `from`.' }),

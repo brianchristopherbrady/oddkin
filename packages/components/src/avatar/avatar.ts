@@ -16,6 +16,7 @@ import type { Scope } from '@oddkin/core/scope';
  * @useFor Identifying people in lists, comments, assignments, and member groups.
  * @notFor Product or file images; decorative illustrations.
  * @category Display
+ * @customization 1 2 3
  */
 export class OddkinAvatar extends OddkinElement.with({
   label: prop.string({

@@ -25,6 +25,7 @@ export type ProgressValueRenderer = (value: number, max: number) => string;
  * @useFor Uploads, imports, and other work with a measurable amount.
  * @notFor Work of unknown length in a small space (use odd-spinner); a measurement within a known range such as disk usage.
  * @category Feedback
+ * @customization 1 2 3
  */
 export class OddkinProgress extends OddkinElement.with({
   value: prop.number({ description: 'Work done, from 0 to `max`; absent: indeterminate.' }),

@@ -3459,3 +3459,12 @@ Environment: Windows, Node 24.22.1, Playwright 1.64.1 (Chromium, Firefox, WebKit
 - **Import maps:** the autoloader imports definitions by URL, which no static graph shows, so its pages' maps cover every `define/*` entry's graph (the packed-consumer tool's `dynamicDefines`, and `--import-map … --html <page>`).
 - **Diagnostics:** `@oddkin/components` has no development build, so the unknown-tag report runs in every build, once per tag; an application can route it with `setErrorHandler`.
 - **Not verified:** performance on a real network or device (the times are a local static server under parallel test load).
+
+## 2026-10-26 — Customization levels of the display elements, odd-combobox, and odd-picker (M10 round 8; multi-product.md)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Metadata | `node scripts/build-metadata.mjs` | no warnings; 17 elements with authored `customization.levels` [1, 2, 3] (16 new and odd-side-nav) |
+| Node project | `npx vitest run --project node` | the metadata test pinned odd-card's levels as unknown; updated (odd-button and odd-input, Agent 1's, stay unknown); other failures are other lanes' (core contracts, AI metadata) or load (analyzability, passed alone) |
+
+**Findings:** level 3 has evidence for every component already: `test/derived.ts` composes a derived implementation from each definition's template and structural styles, and `contract.browser.test.ts` runs both. Level 4 needs a typed anatomy contract, which no element has.

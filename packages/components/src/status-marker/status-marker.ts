@@ -14,6 +14,7 @@ import { OddkinElement, prop } from '@oddkin/core/element';
  * @useFor Timeline events and steps, inside the `.odd-timeline` and `.odd-stepper` recipes.
  * @notFor Status on its own (use a badge, which carries words); a progress value (use a progress bar).
  * @category Display
+ * @customization 1 2 3
  */
 export class OddkinStatusMarker extends OddkinElement.with({
   status: prop.enum(['idle', 'pending', 'complete', 'failed'], {

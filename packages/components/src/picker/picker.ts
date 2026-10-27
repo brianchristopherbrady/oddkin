@@ -60,6 +60,7 @@ export const PICKER_STRINGS = {
  * @useFor Choosing from a fixed list or a hierarchy in a form: map layers, folders, categories, one or several.
  * @notFor A short list of plain options (use odd-select); a long list to search (use odd-combobox); browsing a hierarchy without a form value (use odd-tree).
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinPicker extends OddkinOptionField.with({
   placeholder: prop.string({ default: '', description: 'Text shown while nothing is chosen.' }),

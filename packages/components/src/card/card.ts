@@ -29,6 +29,7 @@ const HEADING = 'h1, h2, h3, h4, h5, h6, [role="heading"]';
  * @notFor Page layout; use layout recipes. A whole clickable card; put a link or button inside.
  * @limitation Naming the region from a slotted heading needs `ElementInternals.ariaLabelledByElements` (newer than the browser baseline); without it, use `label`.
  * @category Containers
+ * @customization 1 2 3
  */
 export class OddkinCard extends OddkinElement.with({
   appearance: prop.enum(['outlined', 'filled', 'elevated'], {

@@ -17,6 +17,7 @@ import { signal } from '@oddkin/core/reactive';
  * @useFor Empty lists, tables, and searches with no results.
  * @notFor Errors (use odd-alert); loading (use odd-skeleton or odd-spinner).
  * @category Feedback
+ * @customization 1 2 3
  */
 export class OddkinEmptyState extends OddkinElement.with({
   label: prop.string({ default: '', description: 'The title.' }),

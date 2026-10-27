@@ -159,7 +159,12 @@ describe('@oddkin/components published metadata', () => {
       'slot:odd-side-nav#header',
     ]);
     expect(customization('odd-side-nav').parts).toContain('part:odd-side-nav#group-toggle');
-    for (const tag of ['odd-button', 'odd-card', 'odd-input'])
+    // Every component's level 3 runs in contract.browser.test.ts through test/derived.ts.
+    expect(customization('odd-card').levels).toMatchObject({
+      value: [1, 2, 3],
+      provenance: 'authored',
+    });
+    for (const tag of ['odd-button', 'odd-input'])
       expect(customization(tag).levels, tag).toEqual({ known: false, provenance: 'extracted' });
     expect(customization('odd-button').variables).toContain(
       'cssprop:odd-button#--odd-button-radius',

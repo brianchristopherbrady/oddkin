@@ -45,6 +45,7 @@ export function relativeUnit(date: number, now: number): [number, Intl.RelativeT
  * @useFor When something happened or will happen, where closeness matters more than the exact time: activity, comments, updates.
  * @notFor Exact times that people compare or copy (show the absolute date); a running countdown.
  * @category Display
+ * @customization 1 2 3
  */
 export class OddkinRelativeTime extends OddkinElement.with({
   datetime: prop.string({
