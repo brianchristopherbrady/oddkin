@@ -3510,3 +3510,11 @@ Run on the shared working tree at cb2f157. Uncommitted work from Agents 1, 2, an
 | Compatibility | `npm run compat` | OK: 72 features, 209 stylesheets, 326 keys, 0 problems. The committed matrix has 201 / 325; the other 8 stylesheets are Agent 2's uncommitted AI recipe sheets, left for its commit |
 
 **Remaining (deferred by the owner):** screen-reader passes and old-browser floor runtime evidence.
+
+## 2026-10-27 — Forms e2e fixture import map (Agent 1)
+
+| Check | Command | Result |
+|---|---|---|
+| Bare imports | walk of `button.define.js`, `input.define.js`, `forms.js`, and the mapped core and tokens entries | only `@oddkin/core/i18n` was unmapped; no further bare imports below it |
+| e2e | `npx playwright test e2e/forms.spec.ts --project=<engine>` | Chromium 2 passed, Firefox 2 passed, WebKit 2 passed (all three failed before the change) |
+| Format | `npx prettier --check tests/forms/index.html` | OK |
