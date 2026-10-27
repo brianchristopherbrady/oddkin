@@ -84,6 +84,8 @@ export class OddkinInput extends OddkinTextControl.with({
 
   // A detached native input of this type: number validity, `valueAsNumber`, and date stepping.
   #nativeInput?: HTMLInputElement;
+  // The value when the field took focus or last reported a change.
+  #reported = '';
 
   protected override _constraints(): unknown[] {
     return [...super._constraints(), this.type, this.min, this.max, this.step];
@@ -91,7 +93,9 @@ export class OddkinInput extends OddkinTextControl.with({
 
   protected override _sanitize(text: string, typed = false): string {
     if (this.type !== 'number') return text;
-    // Typed text may end in a full stop on the way to decimals; engines read "1." as 1.
+    // Typed text may hold full-width digits from an input method, as a native number field reads
+    // them, and may end in a full stop on the way to decimals; engines read "1." as 1.
+    if (typed) text = text.normalize('NFKC');
     const number = typed && /^-?\d+\.$/.test(text) ? text.slice(0, -1) : text;
     return parseNumber(number) === undefined ? '' : number;
   }
@@ -190,9 +194,24 @@ export class OddkinInput extends OddkinTextControl.with({
   #commit(next: number | undefined): void {
     if (next === undefined || next === parseNumber(this.value)) return;
     this.value = String(next);
+    this.#reported = this.value;
     this.emit(inputEvent);
     this.emit(changeEvent);
   }
+
+  /** @internal Template handler: the field took focus. */
+  readonly _onFocus = (): void => {
+    this.#reported = this.value;
+  };
+  /**
+   * @internal Template handler: the user committed a change. As on the native number field, a
+   * number field reports a change of its value, not of text that leaves the value as it was.
+   */
+  override readonly _onChange = (): void => {
+    if (this.type === 'number' && this.value === this.#reported) return;
+    this.#reported = this.value;
+    this.emit(changeEvent);
+  };
 
   /** @internal The number field's ARIA value attributes and which stepper buttons can act. */
   get _spin(): {
@@ -258,6 +277,8 @@ export class OddkinInput extends OddkinTextControl.with({
    * search value as native search fields do.
    */
   readonly _onKeydown = (event: KeyboardEvent): void => {
+    // Keys an input method is composing with are its own (choosing a candidate, cancelling).
+    if (event.isComposing) return;
     if (this.type === 'number') {
       // A disabled field takes no keys; a read-only one keeps its value.
       if (event.altKey || event.ctrlKey || event.metaKey || this.readonly) return;

@@ -13,7 +13,7 @@ import type { OddkinOneTimeCode } from './one-time-code.js';
  * `pending` or `complete` text with its glyph; `error` replaces it.
  */
 export const oneTimeCodeTemplate = (code: OddkinOneTimeCode) => {
-  const value = code._currentValue.value;
+  const value = code.value;
   const cells = code._cells;
   const active = Math.min(value.length, cells - 1);
   const status = code.error ? null : 'status';
@@ -45,6 +45,7 @@ export const oneTimeCodeTemplate = (code: OddkinOneTimeCode) => {
         aria-describedby=${describedBy}
         aria-invalid=${code._userInvalid.value ? 'true' : null}
         @input=${code._onCodeInput}
+        @compositionend=${code._onCodeInput}
         @change=${code._onChange}
         @blur=${code._onBlur}
         @keydown=${code._onCodeKeydown}

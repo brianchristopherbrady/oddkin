@@ -72,6 +72,11 @@ export class OddkinTextarea extends OddkinTextControl.with({
     return [super._describedBy, this._countShown && 'count'].filter(Boolean).join(' ') || null;
   }
 
+  // As a native textarea, the value's line breaks are line feeds.
+  protected override _sanitize(text: string): string {
+    return text.replace(/\r\n?/g, '\n');
+  }
+
   protected override mounted(scope: Scope): void {
     super.mounted(scope);
     const area = this.shadowRoot!.querySelector('textarea')!;

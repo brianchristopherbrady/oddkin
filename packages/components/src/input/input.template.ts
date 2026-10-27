@@ -54,6 +54,7 @@ export const inputTemplate = (input: OddkinInput) => {
         aria-invalid=${input._userInvalid.value ? 'true' : null}
         @input=${input._onInput}
         @change=${input._onChange}
+        @focus=${input._onFocus}
         @blur=${input._onBlur}
         @keydown=${input._onKeydown}
       />

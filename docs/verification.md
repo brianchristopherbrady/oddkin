@@ -3468,3 +3468,24 @@ Environment: Windows, Node 24.22.1, Playwright 1.64.1 (Chromium, Firefox, WebKit
 | Node project | `npx vitest run --project node` | the metadata test pinned odd-card's levels as unknown; updated (odd-button and odd-input, Agent 1's, stay unknown); other failures are other lanes' (core contracts, AI metadata) or load (analyzability, passed alone) |
 
 **Findings:** level 3 has evidence for every component already: `test/derived.ts` composes a derived implementation from each definition's template and structural styles, and `contract.browser.test.ts` runs both. Level 4 needs a typed anatomy contract, which no element has.
+
+## 2026-10-26 — Real-browser text entry (Agent 1, M8)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Text entry and the elements' own tests | `packages/components/test/{text-entry,input,textarea,one-time-code,color-picker,figma-parity.forms,figma-parity.pickers}.browser.test.ts`, three engines | Chromium 238/238; Firefox 231 + 7 skipped (Chromium-only IME); WebKit 230 + 8 skipped |
+| Mutation probes | 21 probes on the changed source, Chromium, `text-entry.browser.test.ts` | 20 killed; 1 survivor (below) |
+| Size | `node scripts/check-size.mjs` | input 511/576, one-time-code 614/640, textarea 264/320, color-picker 1,698/1,728 |
+
+**Observed:**
+- Typing the same keys into odd-input (text, email, url, tel, search, password, number) and odd-textarea gives the same `input` events, `inputType`s, values, and `change` as the native field, in all three engines.
+- The caret and selection survive a re-render (error, placeholder, label) and the same value set again, as native. A new value set from script while the field has focus keeps the caret where it was (`live()`); a native field moves it to the end. Deliberate.
+- Full-width digits (`１２．５`) read as the native number field reads them in all three engines; the one-time code and the colour picker's hex and opacity read them too.
+- IME (Chromium, `Input.imeSetComposition` then `Input.insertText`): composed text is not committed before it ends; the number field, the one-time code (cells show only digits while composing), and the colour picker's field and hex end with the final text; arrow and Escape keys pressed while composing are left to the input method. **Firefox and WebKit: not tested; no driver.**
+- Autofill: `autocomplete` reaches the native field (input, textarea, one-time code default `one-time-code`, colour picker `off`); a value set as autofill sets it (value, then `input` and `change`) reaches the value, validity, events, and `FormData`. `:autofill` and `:-webkit-autofill` are supported in all three engines; no element styles them, so each engine's own autofill look shows.
+
+**Fixed:** the one-time code lost IME text, dropped full-width digits, and left the caret mid-code after a script set; the number field ignored full-width digits, stepped or cleared on keys pressed while composing, and fired `change` when only its text changed; the colour picker ignored full-width hex and opacity; odd-textarea kept CR from script.
+
+**Survivor:** the one-time code's `input.value === this.value` guard in `updated()` (no caret move while composing). A CDP composition is not disturbed by a selection change, so no test can show it; kept for real input methods.

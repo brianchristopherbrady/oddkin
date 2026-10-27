@@ -71,17 +71,27 @@ export class OddkinOneTimeCode extends OddkinTextControl.with({
     return [...super._constraints(), this.status, this.maxLength, this.minLength];
   }
 
-  /** @internal Template handler: digits only, at most one per cell, then the shared handler. */
+  // Typed text: its digits (full-width ones from an input method too), at most one per cell.
+  protected override _sanitize(text: string, typed = false): string {
+    return typed ? text.normalize('NFKC').replace(/\D/g, '').slice(0, this._cells) : text;
+  }
+
+  /**
+   * @internal Template handler (`input`, `compositionend`): the field keeps only its digits, then
+   * the shared handler. Text an input method is composing stays until the composition ends.
+   */
   readonly _onCodeInput = (event: Event): void => {
     const input = event.target as HTMLInputElement;
-    const digits = input.value.replace(/\D/g, '').slice(0, this._cells);
-    if (digits !== input.value) input.value = digits;
+    if (!(event as InputEvent).isComposing) {
+      const digits = this._sanitize(input.value, true);
+      if (digits !== input.value) input.value = digits;
+    }
     this._onInput(event);
   };
 
   /** @internal Template handler: the caret stays after the last digit. */
   readonly _onCodeKeydown = (event: KeyboardEvent): void => {
-    if (CARET_KEYS.has(event.key)) event.preventDefault();
+    if (CARET_KEYS.has(event.key) && !event.isComposing) event.preventDefault();
   };
 
   /** @internal Template handler: a click puts the caret after the last digit. */
@@ -91,6 +101,15 @@ export class OddkinOneTimeCode extends OddkinTextControl.with({
     if (input.selectionStart !== end || input.selectionEnd !== end)
       input.setSelectionRange(end, end);
   };
+
+  protected override updated(): void {
+    // A value set while the field has focus keeps the caret where it was: put it after the last
+    // digit. A selection of the whole code stays, and so does text an input method is composing.
+    const input = this.shadowRoot?.querySelector<HTMLInputElement>('.control');
+    const end = this.value.length;
+    if (input?.value === this.value && input.selectionEnd !== end)
+      input.setSelectionRange(end, end);
+  }
 }
 
 declare global {

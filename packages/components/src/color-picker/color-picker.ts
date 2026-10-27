@@ -183,9 +183,10 @@ export class OddkinColorPicker extends OddkinFormControl.with({
     return this.#typed.value ?? hexText(this._color.value);
   }
 
-  // Hex the field and the popup take: three or six digits, four or eight with `alpha`.
+  // Hex the field and the popup take: three or six digits, four or eight with `alpha`; full-width
+  // characters from an input method read as their ASCII forms.
   #parseHex(text: string): Rgba | undefined {
-    const color = parseHex(text);
+    const color = parseHex(text.normalize('NFKC'));
     return color && (this.alpha || color.a === 1) ? color : undefined;
   }
 
@@ -350,7 +351,7 @@ export class OddkinColorPicker extends OddkinFormControl.with({
   /** @internal Template handler: the opacity input. */
   readonly _onOpacityInput = (event: Event): void => {
     const text = (event.target as HTMLInputElement).value;
-    const number = Number(text.replace(/%\s*$/, '').trim());
+    const number = Number(text.normalize('NFKC').replace(/%\s*$/, '').trim());
     if (text.trim() && Number.isFinite(number))
       this.#draft.value = { ...this.#draft.peek(), a: Math.min(100, Math.max(0, number)) / 100 };
     this.#opacityTyped.value = text;
@@ -358,7 +359,7 @@ export class OddkinColorPicker extends OddkinFormControl.with({
 
   /** @internal Template handler: keys on the opacity input. */
   readonly _onOpacityKeydown = (event: KeyboardEvent): void => {
-    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return;
     const next = keyValue(event.key, percent(this.#draft.peek().a), PERCENT, { page: 10 });
     if (next === undefined) return;
     event.preventDefault();
