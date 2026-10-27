@@ -1,5 +1,10 @@
 import { html, nothing, repeat } from '@oddkin/core/template';
-import { chipsTemplate, fieldEndTemplate } from '../collection/option-field.template.js';
+import {
+  fieldEndTemplate,
+  reviewTemplate,
+  selectionTemplate,
+  valueTemplate,
+} from '../collection/option-field.template.js';
 import { optionListTemplate } from '../collection/option-rows.template.js';
 import { externalDescriptionTemplate } from '../form-control/description.js';
 import { chevronDownGlyph, chevronUpGlyph } from '../styles/glyphs.js';
@@ -79,8 +84,11 @@ export const pickerTemplate = (picker: OddkinPicker) => {
         @pointerdown=${picker._onBoxPointerdown}
         @click=${picker._onBoxClick}
       >
-        <div part="control" class=${multiple ? 'control box collapsed' : 'control box'}>
-          ${multiple && selected.length ? chipsTemplate(picker, false, disabled) : nothing}
+        <div
+          part="control"
+          class=${!multiple ? 'control box' : picker._view.value === 'expandable' ? 'control box two-rows' : 'control box collapsed'}
+        >
+          ${multiple ? valueTemplate(picker, false, disabled) : nothing}
           <div
             part="trigger"
             id="control"
@@ -99,7 +107,7 @@ export const pickerTemplate = (picker: OddkinPicker) => {
           >
             ${
               text
-                ? html`<span class="value">${text}</span>`
+                ? html`<span part="value" class="value">${text}</span>`
                 : selected.length
                   ? html`<span class="visually-hidden"
                       >${selected.map((value) => picker._labelOf(value)).join(', ')}</span
@@ -110,6 +118,7 @@ export const pickerTemplate = (picker: OddkinPicker) => {
         </div>
         ${fieldEndTemplate(picker, open ? chevronUpGlyph : chevronDownGlyph)}
       </div>
+      ${multiple ? reviewTemplate(picker, false, disabled) : nothing}
       <div part="error" id="error" class="error" ?hidden=${!picker.error}>${picker.error}</div>
       ${externalDescriptionTemplate(picker._externalDescription)}
     </div>
@@ -121,7 +130,7 @@ export const pickerTemplate = (picker: OddkinPicker) => {
       @click=${picker._onPopupClick}
     >
       <div class="content root">
-        ${content}
+        ${selectionTemplate(picker, tree ? [] : options, false)} ${content}
         <div part="loading" class="state" ?hidden=${!picker.loading}>
           ${spinnerTemplate}${strings.loading}
         </div>

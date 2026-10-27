@@ -1,4 +1,5 @@
 import { compose } from '@oddkin/core/element';
+import { avatarDefinition } from '../avatar/avatar.definition.js';
 import { nativeButtonStyles } from '../button/button.native.styles.js';
 import { chipStructuralStyles } from '../chip/chip.structural.styles.js';
 import { chipStyles } from '../chip/chip.styles.js';
@@ -9,6 +10,8 @@ import { inputStructuralStyles } from '../input/input.structural.styles.js';
 import { inputStyles } from '../input/input.styles.js';
 import { listboxStructuralStyles } from '../listbox/listbox.structural.styles.js';
 import { listboxStyles } from '../listbox/listbox.styles.js';
+import { controlIndicatorStructuralStyles } from '../styles/control-indicator.structural.styles.js';
+import { controlIndicatorStyles } from '../styles/control-indicator.styles.js';
 import { controlStyles } from '../styles/control.styles.js';
 import { fieldStructuralStyles } from '../styles/field.structural.styles.js';
 import { focusRingStyles } from '../styles/focus-ring.styles.js';
@@ -40,6 +43,7 @@ export const pickerDefinition = compose({
     chipStructuralStyles,
     fieldStructuralStyles,
     optionRowStructuralStyles,
+    controlIndicatorStructuralStyles,
     listboxStructuralStyles,
     navRowStructuralStyles,
     treeStructuralStyles,
@@ -56,6 +60,7 @@ export const pickerDefinition = compose({
     inputStyles,
     nativeButtonStyles,
     overlaySurfaceStyles,
+    controlIndicatorStyles,
     optionRowStyles,
     listboxStyles,
     navRowStyles,
@@ -63,5 +68,5 @@ export const pickerDefinition = compose({
     pickerStyles,
   ],
   // Tree item icons are drawn by odd-icon.
-  dependencies: { icon: iconDefinition },
+  dependencies: { avatar: avatarDefinition, icon: iconDefinition },
 });

@@ -3401,3 +3401,27 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Ot
 - **Collapsed chips:** with focus outside, the combobox chips stay on one line (a structural rule after the recipe); the recipe's wrap applies once focus is in. The test pins both.
 - **Cost:** each recipe brings its layer order statement, about 40–56 B gzip per element.
 - Not verified: Safari on macOS.
+
+## 2026-10-26 — Multiselect value views, selected-items review, and selection panel (M10 round 8; component-contracts.md §3.3)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Other lanes' work in progress: Agent 2's `@oddkin/ai` recipes and overlay first placement, Agent 1's text-entry tests and input changes, Agent 3's core contracts (D5). Started from Agent 3's drafts in `.tmp/c-staging/view/` (written on 1efc120, current).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Views and panel | `option-views.browser.test.ts` (× 3 engines), odd-combobox and odd-picker | 17 passed in each engine: count, text, auto, avatars, grouped, expandable (two rows, Show all, review removal), select-all (mixed, disabled options untouched, one input and change), review (View N more, focus to the next remove button) |
+| Figma parity | `figma-parity.collections.browser.test.ts`: `multiselect/Value/*` at every Count (chips, count, text, auto, expandable, grouped), `AvatarItem`, `SelectedItems`, `SelectionPanel` Inline and Inline collapsed | all pass; deliberate: odd-avatar's 50% circle for `radius.full` |
+| Browser set (`--catalog`) | picker, option-views, combobox, collections and forms parity | Chromium 1,142, Firefox 1,135, WebKit 1,135 passed |
+| Mutation probes (Chromium) | 24 on `option-field.ts`, its template, and the combobox sheets | 20 killed first; 4 survivors (group fallback, the second row, View N more while collapsed, the panel padding) killed by new assertions |
+| Node project | `npx vitest run --project node` | 1,250 passed; 3 failures are other lanes' (core contracts, AI metadata padding) or load (icon catalog, passed alone) |
+| Vocabulary, kits | `node scripts/check-vocabulary.mjs`; `node scripts/agent-kit/kit.mjs --check` | 0 findings (`view` controlled, with the AI elements' families); kits regenerated, current |
+| Size | `node scripts/check-size.mjs` | `components:combobox` 932 → 1,483 B (budget 960 → 1,536); `components:picker` unchanged (it reuses the combobox sheets) |
+| Compatibility | `npm run compat` | 0 problems; no new key |
+
+**Findings:**
+- **One field, two elements:** the views live on `src/collection/option-field.ts`, so odd-picker draws them in the same commit (its metadata would otherwise list props it ignores). The picker's footer keeps the count and Clear; Select all is for a listbox, not a tree.
+- **The combobox keeps its input:** the value area leaves the input's 4em on the last row, so the views fit fewer items than Figma's select-only field at the same width (two groups at 320 px, two rows of chips from about 400 px).
+- **Two rows:** the chips list takes `display: contents` in the expandable view, so the input shares the second row (the list keeps its role in three engines).
+- **Figma's selected rows** are checked CheckboxOptions; the review draws rows with remove buttons, so the listbox stays the popup's only set of options.
+- **The "+N" item and group summaries** take Figma's tag look (radius.sm, space.xs, sunken surface), not the chip look.
+- **TypeScript 7.0.2:** `tsc -b` reported types from stale incremental info after an exported const changed; deleting `packages/components/tsconfig.tsbuildinfo` fixed it.
+- **Not verified:** screen-reader output for the views, the select-all check box, and the review; Safari on macOS; the Composed review rows 373:10524 and 373:10526 (not in the snapshot).

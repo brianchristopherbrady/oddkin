@@ -1,6 +1,11 @@
 import { live } from '@oddkin/core/helpers/live';
 import { html, nothing } from '@oddkin/core/template';
-import { chipsTemplate, fieldEndTemplate } from '../collection/option-field.template.js';
+import {
+  fieldEndTemplate,
+  reviewTemplate,
+  selectionTemplate,
+  valueTemplate,
+} from '../collection/option-field.template.js';
 import { optionListTemplate } from '../collection/option-rows.template.js';
 import { externalDescriptionTemplate } from '../form-control/description.js';
 import { chevronDownGlyph, searchGlyph } from '../styles/glyphs.js';
@@ -62,13 +67,14 @@ export const comboboxTemplate = (combobox: OddkinCombobox) => {
       <div class="control-box">
         <div
           part="control"
-          class=${multiple && collapsed ? 'control box collapsed' : 'control box'}
+          class=${!multiple || !collapsed ? 'control box' : combobox._view.value === 'expandable' ? 'control box two-rows' : 'control box collapsed'}
         >
-          ${multiple && selected.length ? chipsTemplate(combobox, combobox.readonly, disabled) : nothing}${input}
+          ${multiple ? valueTemplate(combobox, combobox.readonly, disabled) : nothing}${input}
         </div>
         ${multiple ? nothing : html`<span class="control-start" aria-hidden="true">${searchGlyph}</span>`}
         ${fieldEndTemplate(combobox, multiple ? chevronDownGlyph : undefined)}
       </div>
+      ${multiple ? reviewTemplate(combobox, combobox.readonly, disabled) : nothing}
       <div part="error" id="error" class="error" ?hidden=${!combobox.error}>${combobox.error}</div>
       ${externalDescriptionTemplate(combobox._externalDescription)}
     </div>
@@ -79,6 +85,7 @@ export const comboboxTemplate = (combobox: OddkinCombobox) => {
       @pointerdown=${combobox._onPopupPointerdown}
       @click=${combobox._onPopupClick}
     >
+      ${selectionTemplate(combobox, options, true)}
       <div
         part="listbox"
         id="listbox"

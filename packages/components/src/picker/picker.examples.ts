@@ -63,8 +63,17 @@ export default defineExamples('odd-picker', {
     },
   },
   listMultiple: {
-    label: 'Several from a list',
-    props: { ...field, name: 'layers', placeholder: 'Choose layers…', multiple: true },
+    label: 'Several from a list, counted, with Select all',
+    props: {
+      ...field,
+      name: 'layers',
+      placeholder: 'Choose layers…',
+      multiple: true,
+      view: 'count',
+      selectAll: true,
+    },
+    guidance:
+      '`view` shows the chosen values as on odd-combobox (`count` here); `select-all` adds a Select all check box above a listbox (not a tree); `review` starts the popup with the chosen values.',
     fixture({ element }) {
       element.innerHTML = flat.replace('"roads"', '"roads" selected');
     },

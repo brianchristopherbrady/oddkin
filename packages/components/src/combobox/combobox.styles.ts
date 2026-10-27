@@ -60,4 +60,61 @@ export const comboboxStyles = css`
   .field:has(.combobox:disabled, .combobox[aria-disabled='true']) .label {
     color: ${token('color.text.disabled')};
   }
+  .chip.more,
+  .chip.tag {
+    padding: ${token('space.xs')};
+    border-radius: ${token('radius.sm')};
+    background: ${token('color.surface.sunken')};
+    color: ${token('color.text.primary')};
+  }
+  .avatar odd-avatar {
+    --odd-avatar-size: ${token('control.height.sm')};
+  }
+  .avatar odd-avatar::part(base) {
+    border: ${token('border.width.strong')} solid ${token('color.surface.default')};
+    background: ${token('color.surface.specimen')};
+    color: ${token('color.text.primary')};
+  }
+  .avatar + .avatar {
+    margin-inline-start: calc(-1 * ${token('space.2xs')});
+  }
+  .review {
+    padding: ${token('space.sm')};
+    border: ${token('border.width.default')} solid ${token('color.border.default')};
+    border-radius: ${token('control.radius')};
+    background: ${token('color.surface.default')};
+  }
+  .review-count,
+  .summary {
+    color: ${token('color.text.secondary')};
+    font-family: ${token('type.small.family')};
+    font-size: ${token('type.small.size')};
+    font-weight: ${token('type.small.weight')};
+    line-height: ${token('type.small.line-height')};
+  }
+  .selection {
+    padding: ${token('space.sm')};
+  }
+  .selected-section {
+    border-radius: ${token('radius.sm')};
+    background: ${token('color.surface.sunken')};
+  }
+  .selected-toggle,
+  .view-more {
+    padding: ${token('space.xs')};
+    font-family: ${token('type.ui.family')};
+    font-size: ${token('type.ui.size')};
+    font-weight: ${token('type.ui.weight')};
+    line-height: ${token('type.ui.line-height')};
+  }
+  .view-more {
+    color: ${token('color.link')};
+  }
+  .selected-option {
+    min-block-size: ${token('control.height.sm')};
+    padding-inline: ${token('space.xs')};
+  }
+  .select-all {
+    border-block-end: ${token('border.width.default')} solid ${token('color.border.default')};
+  }
 `;

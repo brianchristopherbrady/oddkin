@@ -39,6 +39,19 @@ export const ATTRIBUTES = {
   multiple: { type: 'boolean' },
   // The page filters the options (odd-combobox, odd-command-palette): odd-query-change reports the text.
   'no-filter': { type: 'boolean' },
+  // Content presentation: how a multiple option field shows its chosen values (odd-combobox,
+  // odd-picker; Figma multiselect/Value), an artifact's source or preview, a change review's layout.
+  view: {
+    families: {
+      'chosen-values': ['chips', 'count', 'text', 'auto', 'expandable', 'avatars', 'grouped'],
+      artifact: ['source', 'preview'],
+      'change-review': ['split', 'inline'],
+    },
+  },
+  // A Select all check box over the options shown (PrimeReact showSelectAll; Figma Show select all).
+  'select-all': { type: 'boolean' },
+  // The open popup starts with the chosen values, each removable (Figma SelectionPanel Inline).
+  review: { type: 'boolean' },
   pressed: { type: 'boolean' },
   toggle: { type: 'boolean' },
   // Constraints as on <input>: strings, since date and time types use them. Numbers where the

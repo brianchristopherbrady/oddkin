@@ -163,9 +163,9 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/color-picker/color-picker.recipe.styles.js (colorPickerRecipeStyles)` | yes | 15 |
 | `packages/components/dist/color-picker/color-picker.structural.styles.js (colorPickerStructuralStyles)` | yes | 71 |
 | `packages/components/dist/color-picker/color-picker.styles.js (colorPickerStyles)` | yes | 43 |
-| `packages/components/dist/combobox/combobox.recipe.styles.js (comboboxRecipeStyles)` | yes | 11 |
-| `packages/components/dist/combobox/combobox.structural.styles.js (comboboxStructuralStyles)` | yes | 44 |
-| `packages/components/dist/combobox/combobox.styles.js (comboboxStyles)` | yes | 24 |
+| `packages/components/dist/combobox/combobox.recipe.styles.js (comboboxRecipeStyles)` | yes | 14 |
+| `packages/components/dist/combobox/combobox.structural.styles.js (comboboxStructuralStyles)` | yes | 61 |
+| `packages/components/dist/combobox/combobox.styles.js (comboboxStyles)` | yes | 38 |
 | `packages/components/dist/command-palette/command-palette.recipe.styles.js (commandPaletteRecipeStyles)` | yes | 13 |
 | `packages/components/dist/command-palette/command-palette.structural.styles.js (commandPaletteStructuralStyles)` | yes | 45 |
 | `packages/components/dist/command-palette/command-palette.styles.js (commandPaletteStyles)` | yes | 24 |

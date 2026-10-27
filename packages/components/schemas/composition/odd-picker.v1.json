@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oddkin.dev/schemas/composition/odd-picker.v1.json",
   "title": "odd-picker",
-  "description": "A field that opens a list or a hierarchy to choose from (APG select-only combobox): a popup listbox of options, or, with `items`, a popup tree whose rows expand and collapse without selecting. Single: activating a row chooses it and closes. Multiple: rows toggle at once, the chosen values are chips in the field (\"+N\" for those that do not fit), and Done closes. Options come from `<option>` and `<optgroup>` children, written as for a native select, or from `options`; a hierarchy comes from `items`.",
+  "description": "A field that opens a list or a hierarchy to choose from (APG select-only combobox): a popup listbox of options, or, with `items`, a popup tree whose rows expand and collapse without selecting. Single: activating a row chooses it and closes. Multiple: rows toggle at once, the chosen values show in the field as `view` says (chips with \"+N\" by default, as on odd-combobox), and Done closes. Options come from `<option>` and `<optgroup>` children, written as for a native select, or from `options`; a hierarchy comes from `items`.",
   "$comment": "Slots: \"empty\", \"status\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
   "type": "object",
   "additionalProperties": false,
@@ -67,6 +67,29 @@
           "description": "Shows a busy row and marks the options busy.",
           "default": false
         },
+        "view": {
+          "enum": [
+            "text",
+            "chips",
+            "count",
+            "auto",
+            "expandable",
+            "avatars",
+            "grouped"
+          ],
+          "description": "With `multiple`, how the chosen values show in the field: chips (\"+N\" for those that do not fit), a count, a sentence (`text`), chips up to four and then the count (`auto`), two rows of chips with Show all (`expandable`), initials (`avatars`), or a count per group (`grouped`).",
+          "default": "chips"
+        },
+        "select-all": {
+          "type": "boolean",
+          "description": "With `multiple` and options, a \"Select all\" check box above them: it chooses every usable option shown, or clears them when all are chosen.",
+          "default": false
+        },
+        "review": {
+          "type": "boolean",
+          "description": "With `multiple`, the open popup starts with the chosen values: \"Selected (N)\", a disclosure of the first three, each removable, and View N more.",
+          "default": false
+        },
         "placeholder": {
           "type": "string",
           "description": "Text shown while nothing is chosen.",
@@ -91,45 +114,6 @@
             "type": "string"
           },
           "description": "Ids of expanded items with `items`, owned by the caller. Omit it to let the element track expansion."
-        },
-        "strings": {
-          "type": "object",
-          "properties": {
-            "loading": {
-              "type": "string"
-            },
-            "empty": {
-              "type": "string"
-            },
-            "clear": {
-              "type": "string"
-            },
-            "remove": {
-              "type": "string"
-            },
-            "selected": {
-              "type": "string"
-            },
-            "more": {
-              "type": "string"
-            },
-            "hint": {
-              "type": "string"
-            },
-            "count": {
-              "type": "string"
-            },
-            "close": {
-              "type": "string"
-            },
-            "done": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
-          },
-          "description": "Localized string overrides; `remove` takes `{label}`, `more` and `count` take `{count}`, `path` takes `{parent}` and `{label}`."
         }
       }
     },

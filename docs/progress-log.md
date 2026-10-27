@@ -232,3 +232,4 @@ Moved from `IMPLEMENTATION_PLAN.md` §10 on 2026-10-26 ([ADR 0046](./architectur
 | 2026-10-26 | Round 7 close (owner request): lint, types, node (1,240), and size pass; the round-end browser suites did not run. Round 8 plan in §11: finish M10 (multiselect displays, layout candidates, D6, D9), then M8's foundation work (D5, real-browser tests, the forms accessibility sweep) | [verification.md](./verification.md) |
 | 2026-10-26 | Pages: the split caps come from `layout.css`; ai-research no longer overflows at 320 px | [verification.md](./verification.md) |
 | 2026-10-26 | Layout recipes in the display elements' shadow roots: alert, empty-state, progress, stat, and the combobox chips; card kept as the styling-contract example | [verification.md](./verification.md) |
+| 2026-10-26 | Multiselect value views (`view`), the selected-items review, and the selection panel (`select-all`, `review`) on odd-combobox and odd-picker | [verification.md](./verification.md) |

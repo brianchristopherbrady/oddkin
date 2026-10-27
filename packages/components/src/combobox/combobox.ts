@@ -8,18 +8,15 @@ import {
   type QueryChangeDetail,
 } from '../collection/collection.js';
 import { optionChangeEvent, optionInputEvent } from '../collection/option-control.js';
-import { OddkinOptionField } from '../collection/option-field.js';
+import { OddkinOptionField, OPTION_FIELD_STRINGS } from '../collection/option-field.js';
 import { TextHints } from '../form-control/text-hints.js';
 
 export type { OptionRecord } from '../collection/collection.js';
 
 export const COMBOBOX_STRINGS = {
+  ...OPTION_FIELD_STRINGS,
   loading: 'Loading…',
   empty: 'No matching options',
-  clear: 'Clear',
-  remove: 'Remove {label}',
-  selected: 'Selected',
-  more: '{count} more',
 };
 
 /** The details of `odd-query-change`. */

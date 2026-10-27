@@ -70,4 +70,57 @@ export const comboboxStructuralStyles = css`
   .combobox:focus-visible {
     outline: none;
   }
+  .value {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .count {
+    flex: none;
+  }
+  .avatars {
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+  .avatar {
+    flex: none;
+  }
+  .box.two-rows {
+    flex-wrap: wrap;
+  }
+  .box.two-rows .chips {
+    display: contents;
+  }
+  .avatar.overflow,
+  .box.two-rows .chip.overflow {
+    position: absolute;
+    visibility: hidden;
+  }
+  .review .chips,
+  .selected-list.all {
+    max-block-size: 10rem;
+    overflow-y: auto;
+  }
+  .selected-toggle,
+  .select-all,
+  .view-more {
+    box-sizing: border-box;
+    inline-size: 100%;
+    margin: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .select-all:disabled {
+    cursor: not-allowed;
+  }
+  .selected-option .option-label {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
 `;

@@ -19,11 +19,11 @@ The Figma mapping, the reuse classes, and the shared style homes stay in [compon
 | --- | --- |
 | Existing element | `button`, `button/sm`, `button/lg`, `iconButton` → `odd-button` (`size`, `label`); `toggleButton` → `odd-button toggle`; `input`, `search`, `number`, `dateTime` → `odd-input` (`type`); `card` → `odd-card`; `SideNavigation`, `NavigationItem` → `odd-side-nav` |
 | New element (`@oddkin/components`) | `badge` → `odd-badge`; `icon` → `odd-icon`; `spinner` → `odd-spinner`; `progress` → `odd-progress`; `skeleton` → `odd-skeleton`; `avatar` → `odd-avatar`; `chip` → `odd-chip`; `alert` → `odd-alert`; `emptyState` → `odd-empty-state`; `textarea` → `odd-textarea`; `checkbox` → `odd-checkbox`; `switch` → `odd-switch`; `CheckboxGroup` → `odd-checkbox-group`; `radioGroup`, `radio` → `odd-radio-group`; `segmented` → `odd-segmented-control`; `slider` → `odd-slider`; `rating`, `rating/Item` → `odd-rating`; `oneTimeCode`, `oneTimeCode/Cell` → `odd-one-time-code`; `select` → `odd-select`; `fileUpload` → `odd-file-input`; `calendar`, `calendar/Day` → `odd-calendar`; `datePicker` → `odd-date-picker`; `colorPicker`, `color/Swatch` → `odd-color-picker`; `ValidationSummary` → `odd-validation-summary`; `Disclosure`, `Accordion` → `odd-disclosure` (`name`); `Tabs` → `odd-tabs`, `odd-tab-panel`; `Breadcrumbs` → `odd-breadcrumbs`; `Pagination` → `odd-pagination`; `Toolbar` → `odd-toolbar`; `popover` → `odd-popover`; `tooltip` → `odd-tooltip`; `dialog`, `alertDialog` → `odd-dialog` (`alert`); `drawer` → `odd-drawer`; `toast` → `odd-toast`; `listbox` → `odd-listbox`; `Menu`, `MenuItem` → `odd-menu`; `splitAction` → `odd-split-button`; `combobox`, `multiselect` → `odd-combobox` (`multiple`); `Picker` → `odd-picker`; `CommandPalette`, `CommandItem` → `odd-command-palette`; `Tree` → `odd-tree`; `SplitPanels`, `Splitter/*` → `odd-split-panel`; `relativeTime` → `odd-relative-time`; `copyButton` → `odd-copy-button`; `stat` → `odd-stat` |
-| Part of an element | `ListboxSurface`, `ListboxOption` (listbox, select's enhanced picker, combobox, picker); `MenuItem` (menu, split button); `CommandItem` (command palette); `radio` (radio group); `rating/Item` (rating); `calendar/Day` (calendar); `oneTimeCode/Cell` (one-time code); `CheckboxOption` (combobox `multiple`, drawn with the shared control-indicator module, never a nested interactive checkbox); `AvatarItem` (avatar); `Splitter/*` (split panel); timeline `Event marker` and stepper `Step status` → `odd-status-marker` (an element the `.odd-timeline` and `.odd-stepper` recipes hold: §2.7 keeps the check and warning glyphs in shadow roots) |
+| Part of an element | `ListboxSurface`, `ListboxOption` (listbox, select's enhanced picker, combobox, picker); `MenuItem` (menu, split button); `CommandItem` (command palette); `radio` (radio group); `rating/Item` (rating); `calendar/Day` (calendar); `oneTimeCode/Cell` (one-time code); `CheckboxOption` (combobox `multiple`, drawn with the shared control-indicator module, never a nested interactive checkbox); `AvatarItem` (avatar; the avatars view of `odd-combobox multiple` nests `odd-avatar` and draws AvatarItem's ring through its `base` part); `multiselect/Value/*` (chips, count, text, auto, expandable, avatars, grouped) → `view` of `odd-combobox multiple` (parts `chip`, `value`, `avatar`, `group-summary`, `more`); `multiselect/SelectedItems` → the `review` part below the field (`view="expandable"`, Show all); `multiselect/SelectionPanel` Inline and Inline collapsed → the popup's `summary`, `clear-all`, `selected`, `selected-toggle`, `selected-option`, `selected-remove`, `view-more` (`review`) and `select-all` (`select-all`) parts; `Splitter/*` (split panel); timeline `Event marker` and stepper `Step status` → `odd-status-marker` (an element the `.odd-timeline` and `.odd-stepper` recipes hold: §2.7 keeps the check and warning glyphs in shadow roots) |
 | Layout (`layout.css` classes and elements, §3.7, §4) | `Stack`, `Row`, `Cluster`, `Grid`, `AutoGrid`, `Split` → the existing `.odd-stack`, `.odd-row`, `.odd-cluster`, `.odd-grid`, `.odd-auto-grid`, `.odd-split` with Figma's variants; `Box` → `.odd-box`; `Center` → `.odd-center`; `AspectRatio` → `.odd-aspect-ratio`; `ScrollRegion` → `odd-scroll-region`; `Container` → `odd-container`; `SpecimenItem` is a Figma specimen, not built |
 | Recipe (document CSS, no element) | `typography` → `.odd-type-<role>`; `link` → `a` in `base.css` and `.odd-link`; `divider` → `hr` and `.odd-divider`; `keyboardKey` → `kbd` and `.odd-kbd`; `List` → `.odd-list`; `Table` → `.odd-table`; `field` → `.odd-field` (for native and third-party controls; Oddkin controls carry the field anatomy themselves); avatar `Group` → `.odd-avatar-group`; `descriptionList` → `dl.odd-description-list`; `timeline` → `ol.odd-timeline` (markers: `odd-status-marker`); `stepper` → `ol.odd-stepper` (markers: `odd-status-marker`) |
 | Example (composition) | `Form` → `examples/forms`: `odd-input`, `odd-checkbox-group`, `odd-validation-summary`, `odd-button`, layout classes |
-| Not built | `multiselect/*` display strategies other than the recommended one, `multiselect/SelectionPanel`, `multiselect/InteractionExamples` (design exploration; `odd-combobox multiple` builds the recommended default: chips that collapse to "+N"); the data grid (deferred); Figma's icon assets (§2.7) |
+| Not built | `multiselect/SelectionPanel` Tabbed all, Tabbed selected, Dual pane, and Unified (the behaviour Inline builds, arranged otherwise: the combobox input is the panel's search, the listbox its rows); `multiselect/InteractionExamples` (author content: a footer hint goes in the `status` slot, a maximum in `description`); the data grid (deferred); Figma's icon assets (§2.7) |
 
 ## 2. Rules every element follows
 
@@ -368,7 +368,20 @@ chosen option's text, and on a closed combobox clears the text and the value (AP
 `chip-remove`, a list named by `strings.selected`), where Left and Right move, Backspace and Delete remove, and Escape
 returns; while focus is outside, the chips that do not fit on one line become the `more` part ("+N", read as
 `strings.more`). Form semantics are odd-listbox's (one internal base class: the declared default, each value under
-`name`, `required` through a detached native select pointed at the input, reset, restore).
+`name`, `required` through a detached native select pointed at the input, reset, restore). With `multiple`,
+`view` (ADR 0045: `mode` → `view`; reflected; Figma `multiselect/Value/*`) chooses how the chosen values show:
+`chips` (default), `count` (the user glyph and `strings.count`, part `value`), `text` (two labels and "N others" in
+the page language, part `value`), `auto` (chips up to four values, then the count), `expandable` (two rows and "+N
+more", with Show all, part `show-all`, opening the `review` part below the field: the count and every chip, each
+removable, in a 160 px scrolling area), `avatars` (a nested `odd-avatar` per value, part `avatar`, "+N"), and
+`grouped` (a chip per option `group` with its count, part `group-summary`, or the total when they do not fit). The
+input keeps its 4em beside the values. `select-all` adds a `role="checkbox"` button (part `select-all`, mixed while
+some are chosen) above the options shown: it chooses every usable option shown, or clears them, as one `input` and
+`change`. `review` starts the open popup with the count and Clear all (parts `summary`, `clear-all`) and the chosen
+values (part `selected`: a disclosure, part `selected-toggle`, "Selected (N)"; the first three as rows, part
+`selected-option`, each with a remove button, part `selected-remove`, that moves focus to the next; and View N more,
+part `view-more`). Figma draws those rows as checked `CheckboxOption`s; remove buttons keep the listbox the popup's
+only set of options.
 
 **`odd-picker`** (`Picker`) — a field that opens a list or a hierarchy to choose from (APG select-only combobox). One
 element whose popup content follows the data (§2.2): `<option>`/`<optgroup>` children or `options` give a listbox;
@@ -389,7 +402,9 @@ single value shows as its label, a tree item after its parent (`strings.path`, "
 the tree (odd-tree's rows and its expansion model, `src/collection/tree-model.ts`: expanding never selects, and
 selecting a branch never selects its descendants), the states (§2.5), and the footer (part `footer`): the hint or
 with `multiple` the count (part `summary`), Clear (part `clear-all`) with `multiple`, and Close, Done with `multiple`
-(part `close`), native buttons with the button look. Keyboard: Down, Up, Enter, Space, and Alt+Down open on the
+(part `close`), native buttons with the button look. With `multiple`, `view`, `select-all` (above a listbox, not a
+tree), and `review` work as on `odd-combobox`, which shares the field (`src/collection/option-field.ts`); the footer
+keeps the count and Clear, so the popup's selection panel has no summary of its own. Keyboard: Down, Up, Enter, Space, and Alt+Down open on the
 chosen (or first) row, Home and End on the first and last, typing on the next match; in the popup, Up, Down, Home,
 and End move the active row, Enter and Space choose it (single: closes; multiple: toggles and stays open), Escape
 and Alt+Up close without changing the value; in a tree, Right, Left (mirrored right to left), and `*` as `odd-tree`.

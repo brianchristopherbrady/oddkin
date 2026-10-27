@@ -1,4 +1,6 @@
 import { compose } from '@oddkin/core/element';
+import { avatarDefinition } from '../avatar/avatar.definition.js';
+import { nativeButtonStyles } from '../button/button.native.styles.js';
 import { chipStructuralStyles } from '../chip/chip.structural.styles.js';
 import { chipStyles } from '../chip/chip.styles.js';
 import { inputStructuralStyles } from '../input/input.structural.styles.js';
@@ -24,11 +26,13 @@ import { comboboxStyles } from './combobox.styles.js';
 import { comboboxTemplate } from './combobox.template.js';
 
 // One home per decision: the chips are odd-chip's sheets, the clear button odd-input's, the rows
-// and states odd-listbox's (no nested elements; constructed sheets are shared per document).
+// and states odd-listbox's, Show all and Clear all odd-button's native look (constructed sheets
+// are shared per document). The avatars view nests odd-avatar (ADR 0043).
 export const comboboxDefinition = compose({
   name: 'odd-combobox',
   element: OddkinCombobox,
   template: comboboxTemplate,
+  dependencies: { avatar: avatarDefinition },
   styles: [
     hostStyles,
     chipStructuralStyles,
@@ -46,6 +50,7 @@ export const comboboxDefinition = compose({
     controlStyles,
     controlIndicatorStyles,
     chipStyles,
+    nativeButtonStyles,
     inputStyles,
     overlaySurfaceStyles,
     optionRowStyles,

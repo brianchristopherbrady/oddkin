@@ -5,21 +5,17 @@ import type { Readable } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { OptionRecord, TreeItemRecord } from '../collection/collection.js';
 import { optionChangeEvent, optionInputEvent } from '../collection/option-control.js';
-import { OddkinOptionField } from '../collection/option-field.js';
+import { OddkinOptionField, OPTION_FIELD_STRINGS } from '../collection/option-field.js';
 import { TreeModel, treeToggleEvent, type TreeRow } from '../collection/tree-model.js';
 import type { OverlayOptions } from '../overlay/overlay.js';
 
 export type { OptionRecord, TreeItemRecord } from '../collection/collection.js';
 
 export const PICKER_STRINGS = {
+  ...OPTION_FIELD_STRINGS,
   loading: 'Loading…',
   empty: 'No items available',
-  clear: 'Clear',
-  remove: 'Remove {label}',
-  selected: 'Selected',
-  more: '{count} more',
   hint: 'Choose one item',
-  count: '{count} selected',
   close: 'Close',
   done: 'Done',
   path: '{parent} / {label}',
@@ -29,7 +25,7 @@ export const PICKER_STRINGS = {
  * A field that opens a list or a hierarchy to choose from (APG select-only combobox): a popup
  * listbox of options, or, with `items`, a popup tree whose rows expand and collapse without
  * selecting. Single: activating a row chooses it and closes. Multiple: rows toggle at once, the
- * chosen values are chips in the field ("+N" for those that do not fit), and Done closes. Options
+ * chosen values show in the field as `view` says (chips with "+N" by default, as on odd-combobox), and Done closes. Options
  * come from `<option>` and `<optgroup>` children, written as for a native select, or from
  * `options`; a hierarchy comes from `items`.
  *

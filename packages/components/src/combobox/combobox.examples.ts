@@ -11,6 +11,15 @@ const projects = [
   { value: 'ember', label: 'Ember' },
   { value: 'falcon', label: 'Falcon' },
 ];
+const members = [
+  { value: 'amelia', label: 'Amelia Johnson', group: 'Design' },
+  { value: 'noah', label: 'Noah Williams', group: 'Engineering' },
+  { value: 'olivia', label: 'Olivia Brown', group: 'Design' },
+  { value: 'liam', label: 'Liam Wilson', group: 'Engineering' },
+  { value: 'sophia', label: 'Sophia Davis', group: 'Product' },
+  { value: 'ethan', label: 'Ethan Miller', group: 'Engineering' },
+];
+const chosen = ['amelia', 'noah', 'olivia', 'liam', 'sophia'];
 const topics =
   '<option value="design">Design</option><option value="research" selected>Research</option><option value="engineering" selected>Engineering</option><option value="marketing">Marketing</option><option value="support">Support</option><option value="sales">Sales</option>';
 
@@ -38,6 +47,44 @@ export default defineExamples('odd-combobox', {
     fixture({ element }) {
       element.innerHTML = topics;
     },
+  },
+  views: {
+    label: 'Chosen values as a count',
+    props: {
+      label: 'Team members',
+      multiple: true,
+      view: 'count',
+      options: members,
+      values: chosen,
+    },
+    guidance:
+      '`view` shows the chosen values as chips (the default), a count, a sentence (`text`), chips up to four and then the count (`auto`), two rows of chips with Show all (`expandable`), initials (`avatars`), or a count per option `group` (`grouped`). Past a handful of values, prefer `count`, `auto`, or `grouped`.',
+  },
+  grouped: {
+    label: 'Chosen values counted by group',
+    props: {
+      label: 'Team members',
+      multiple: true,
+      view: 'grouped',
+      options: members,
+      values: chosen,
+    },
+    guidance:
+      'Give each option a `group`; the field shows one chip per group with its count, or the total when they do not fit.',
+  },
+  selectAll: {
+    label: 'Select all and review',
+    props: {
+      label: 'Team members',
+      multiple: true,
+      view: 'auto',
+      selectAll: true,
+      review: true,
+      options: members,
+      values: chosen,
+    },
+    guidance:
+      '`select-all` puts a Select all check box above the options shown (mixed while some are chosen); `review` starts the open popup with the chosen values, each removable, and the count with Clear all.',
   },
   children: {
     label: 'Options as children',

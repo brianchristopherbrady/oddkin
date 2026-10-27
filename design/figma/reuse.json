@@ -13,12 +13,12 @@
     "deferred": "Not classified (data grid, deferred by the owner)."
   },
   "counts": {
-    "style": 115,
+    "style": 114,
     "slot": 50,
     "deferred": 11,
     "controller": 18,
     "native": 7,
-    "element": 13
+    "element": 14
   },
   "references": [
     {
@@ -477,8 +477,8 @@
       "source": "Oddkin/Common/AvatarItem",
       "sourceId": "257:886",
       "count": 16,
-      "class": "style",
-      "reason": "Repeated avatar parts drawn from the avatar style module that odd-avatar uses."
+      "class": "element",
+      "reason": "The avatars view nests odd-avatar per chosen value (a definition dependency, ADR 0043): the initials rule, the picture fallback, and the name stay odd-avatar's; the AvatarItem ring and fill are drawn through its base part."
     },
     {
       "consumer": "Oddkin/Common/multiselect/Value/chips",
@@ -1986,8 +1986,8 @@
     "odd-citation": { "dependencies": [] },
     "odd-color-picker": { "dependencies": [] },
     "odd-combobox": {
-      "dependencies": [],
-      "reason": "Rows, chips, and the clear button are parts drawn from the option-row, listbox, chip, and input sheets (one shadow tree: the input's aria-activedescendant names the options); no nested elements."
+      "dependencies": ["odd-avatar"],
+      "reason": "Rows, chips, and the clear button are parts drawn from the option-row, listbox, chip, and input sheets (one shadow tree: the input's aria-activedescendant names the options). The avatars view nests odd-avatar, a complete widget with no ID relationship across the boundary."
     },
     "odd-command-palette": {
       "dependencies": ["odd-icon"],
@@ -2045,8 +2045,8 @@
     },
     "odd-pagination": { "dependencies": [] },
     "odd-picker": {
-      "dependencies": ["odd-icon"],
-      "reason": "Tree item icons are drawn by the complete odd-icon widget authors also place alone."
+      "dependencies": ["odd-avatar", "odd-icon"],
+      "reason": "Tree item icons are drawn by the complete odd-icon widget authors also place alone; the avatars view nests odd-avatar, as on odd-combobox."
     },
     "odd-popover": { "dependencies": [] },
     "odd-progress": { "dependencies": [] },

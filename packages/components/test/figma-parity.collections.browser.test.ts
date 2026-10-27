@@ -1125,3 +1125,252 @@ describe('Figma parity: odd-picker (Picker)', () => {
           }
         });
 });
+
+// Figma's multiselect members: 75 people in three departments (Design, Eng., Product), as the
+// value displays and selection panels count them.
+const DEPARTMENTS = ['Design', 'Engineering', 'Product'] as const;
+const FIRST = [
+  'Amelia',
+  'Noah',
+  'Olivia',
+  'Liam',
+  'Isabella',
+  'Benjamin',
+  'Charlotte',
+  'Henry',
+  'Mia',
+  'Lucas',
+  'Harper',
+  'James',
+  'Sophia',
+  'Ethan',
+  'Ava',
+];
+const LAST = ['Johnson', 'Williams', 'Brown', 'Wilson', 'Moore'];
+const MEMBERS = Array.from({ length: 75 }, (_, i) => ({
+  value: `m${i + 1}`,
+  label: `${FIRST[i % FIRST.length]} ${LAST[Math.floor(i / FIRST.length) % LAST.length]}`,
+  group: DEPARTMENTS[i % 3]!,
+}));
+const VALUE_WIDTH = 360; // Figma's multiselect/Field and Display (the value area is 276 px of it)
+
+/** A multiple combobox drawing `count` chosen members with `view`, measured at Figma's width. */
+const mountMembers = async (view: string, count: number, attributes = '') => {
+  const el = mount(
+    `<odd-combobox style="inline-size: ${VALUE_WIDTH}px" label="Team members" placeholder="Choose members…" multiple view="${view}" ${attributes}></odd-combobox>`,
+  ) as OddkinCombobox;
+  el.options = MEMBERS;
+  el.values = MEMBERS.slice(0, count).map((m) => m.value);
+  await settle(el);
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  await settle(el);
+  return el;
+};
+
+/** The one layer below `parent` in a variant (Figma names the "+N" text by its count). */
+const childLayer = (family: string, values: Record<string, string>, parent: string[]) => {
+  const f = figma.get(family)!;
+  const at = parent.join(' > ') + ' > ';
+  const layer = layersOf(f, variantIndex(f, values)).find(
+    (l) => l.path.join(' > ').startsWith(at) && l.path.length === parent.length + 1,
+  );
+  return layer?.path;
+};
+const valueFamily = (view: string) => `Oddkin/Common/multiselect/Value/${view}`;
+const hasLayer = (family: string, values: Record<string, string>, path: string[]) => {
+  const f = figma.get(family)!;
+  return layersOf(f, variantIndex(f, values)).some((l) => l.path.join(' > ') === path.join(' > '));
+};
+
+// Figma's Count options per value display (multiselect/Value/<view>).
+const COUNTS: Record<string, string[]> = {
+  chips: ['0', '1', '3', '10', '32', '75'],
+  count: ['0', '1', '3', '10', '32', '75'],
+  text: ['0', '1', '2', '3', '10', '32', '75'],
+  auto: ['0', '1', '2', '3', '4', '5', '10', '32', '75'],
+  expandable: ['0', '1', '3', '10', '32', '75'],
+  grouped: ['0', '1', '3', '10', '32', '75'],
+  avatars: ['0', '1', '3', '10', '32', '75'],
+};
+
+describe('Figma parity: multiple value views (multiselect/Value/*)', () => {
+  for (const view of ['chips', 'count', 'text', 'auto', 'expandable', 'grouped'] as const)
+    for (const count of COUNTS[view]!)
+      it(`${view} ${count}`, async () => {
+        const family = valueFamily(view);
+        const values = { Count: count };
+        const el = await mountMembers(view, Number(count));
+        const root = el.shadowRoot!;
+        const targets: Target[] = [];
+        const more = (parent: string[]) => {
+          const overflow = [...parent, 'Selection overflow'];
+          if (!hasLayer(family, values, overflow)) return;
+          targets.push({ layer: overflow, el: shadowPart(el, 'more'), kind: 'frame' });
+          targets.push({
+            layer: childLayer(family, values, overflow)!,
+            el: shadowPart(el, 'more'),
+            kind: 'text',
+          });
+        };
+        if (count === '0')
+          targets.push({
+            layer: ['Placeholder'],
+            el: shadowPart(el, 'input'),
+            kind: 'text',
+            pseudo: '::placeholder',
+          });
+        else if (hasLayer(family, values, ['Visible chips'])) {
+          targets.push({
+            layer: ['Visible chips'],
+            el: root.querySelector('.chips')!,
+            kind: 'frame',
+            gap: 'column-gap',
+          });
+          more(['Visible chips']);
+        } else if (hasLayer(family, values, ['Count summary']))
+          targets.push(
+            {
+              layer: ['Count summary'],
+              el: shadowPart(el, 'value'),
+              kind: 'frame',
+              gap: 'column-gap',
+            },
+            {
+              layer: ['Count summary', 'Value'],
+              el: root.querySelector('.value-text')!,
+              kind: 'text',
+            },
+          );
+        else if (view === 'text')
+          targets.push({ layer: ['Value'], el: shadowPart(el, 'value'), kind: 'text' });
+        else if (view === 'expandable') {
+          targets.push({
+            layer: ['Selected chips · row 1'],
+            el: root.querySelector('.chips')!,
+            kind: 'frame',
+            gap: 'column-gap',
+          });
+          more(['Selected chips · row 2']);
+        } else if (view === 'grouped') {
+          const summaries = [...root.querySelectorAll<HTMLElement>('[part~="group-summary"]')];
+          targets.push({
+            layer: ['Group summary'],
+            el: root.querySelector('.chips')!,
+            kind: 'frame',
+            gap: 'column-gap',
+          });
+          summaries.forEach((summary, i) => {
+            const layer = [
+              'Group summary',
+              i ? `Selection overflow [${i + 1}]` : 'Selection overflow',
+            ];
+            if (!hasLayer(family, values, layer)) return;
+            targets.push({ layer, el: summary, kind: 'frame' });
+            targets.push({ layer: childLayer(family, values, layer)!, el: summary, kind: 'text' });
+          });
+        }
+        await transitions(targets);
+        expectNone(compare(family, values, targets));
+      });
+});
+
+deliberate([
+  /^AvatarItem .* (top|bottom)(Left|Right)Radius \(--odd-radius-full\): border-(start|end)-(start|end)-radius 50%/,
+  'odd-avatar draws its circle with 50% of its own size; radius.full (9999px) draws the same circle.',
+]);
+
+describe('Figma parity: the avatars view (multiselect/Value/avatars, AvatarItem)', () => {
+  it('draws each chosen member as an AvatarItem, overlapping by space.2xs', async () => {
+    const el = await mountMembers('avatars', 3);
+    const avatars = [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="avatar"]')];
+    expect(avatars).toHaveLength(3);
+    const base = avatars[0]!.shadowRoot!.querySelector<HTMLElement>('[part~="base"]')!;
+    const targets: Target[] = [
+      { layer: [], el: base, kind: 'frame' },
+      { layer: ['Initials'], el: base, kind: 'text' },
+    ];
+    await transitions(targets);
+    expectNone(compare('Oddkin/Common/AvatarItem', {}, targets));
+    // Figma's stack: itemSpacing -4 (a literal), the theme's space.2xs.
+    const [first, second] = avatars.map((a) => a.getBoundingClientRect());
+    expect(Math.round(first!.right - second!.left)).toBe(
+      Math.round(parseFloat(themeValue('column-gap', '--odd-space-2xs'))),
+    );
+  });
+});
+
+describe('Figma parity: the selection panel (multiselect/SelectionPanel Inline)', () => {
+  for (const layout of ['Inline', 'Inline collapsed'] as const)
+    it(layout, async () => {
+      const el = await mountMembers('count', 32, 'review');
+      shadowPart(el, 'input').focus();
+      await userEvent.keyboard('{ArrowDown}');
+      await settle(el);
+      if (layout === 'Inline collapsed') {
+        shadowPart(el, 'selected-toggle').click();
+        await settle(el);
+      }
+      const root = el.shadowRoot!;
+      const section = ['Menu content', 'Selected-items section'];
+      const targets: Target[] = [
+        {
+          layer: ['Menu content'],
+          el: root.querySelector('.selection')!,
+          kind: 'frame',
+          gap: 'row-gap',
+        },
+        {
+          layer: ['Menu content', 'Selection summary'],
+          el: root.querySelector('.selection-summary')!,
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        {
+          layer: ['Menu content', 'Selection summary', '32 selected'],
+          el: shadowPart(el, 'summary'),
+          kind: 'text',
+        },
+        { layer: section, el: shadowPart(el, 'selected'), kind: 'frame' },
+        {
+          layer: [...section, 'Selected section toggle'],
+          el: shadowPart(el, 'selected-toggle'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        {
+          layer: [...section, 'Selected section toggle', 'Selected (32)'],
+          el: root.querySelector('.selected-heading')!,
+          kind: 'text',
+        },
+      ];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/multiselect/SelectionPanel', { Layout: layout }, targets));
+    });
+});
+
+describe('Figma parity: the selected-items review (multiselect/SelectedItems)', () => {
+  it('Show all opens the bounded review of every chosen value', async () => {
+    const el = await mountMembers('expandable', 32);
+    shadowPart(el, 'show-all').click();
+    await settle(el);
+    const review = shadowPart(el, 'review');
+    const targets: Target[] = [
+      { layer: [], el: review, kind: 'frame', gap: 'row-gap' },
+      {
+        layer: ['32 selected · scroll to review all names'],
+        el: review.querySelector('.review-count')!,
+        kind: 'text',
+      },
+      {
+        layer: ['Bounded selected-chip area', 'All selected chips'],
+        el: review.querySelector('.chips')!,
+        kind: 'frame',
+        gap: 'column-gap',
+      },
+    ];
+    await transitions(targets);
+    expectNone(compare('Oddkin/Common/multiselect/SelectedItems', {}, targets));
+    // Figma's 160 px scrolling area.
+    expect(getComputedStyle(review.querySelector('.chips')!).maxBlockSize).toBe('160px');
+  });
+});

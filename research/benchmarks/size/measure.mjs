@@ -173,10 +173,12 @@ export const CSS_BUDGETS = {
   'components:tree': 512, // 428
   'components:listbox': 704, // 663 on 2026-10-26 (602 before): the state row is a layout recipe (layout-recipes.md §14); the rows, field, and spinner are shared modules
   'components:select': 512, // 448: the field, the option rows, and the picker surface are shared modules
-  // 960: measured 876 on 2026-10-25 (860 on 2026-10-23): the field box (its states, the search
-  // glyph and chevron padding), the chips' "+N" collapse, and the popup width; the field, rows,
-  // listbox rows, surface, chips, and clear button are shared sheets. odd-picker uses these sheets.
-  'components:combobox': 960,
+  // 1,536: measured 1,483 on 2026-10-26 (932 before): the field box (its states, the search glyph
+  // and chevron padding), the chips' "+N" collapse, and the popup width, plus the value views (the
+  // count, the sentence, the overlapping avatars, the group tags, two rows), the review below the
+  // field, and the popup's selection panel and Select all; the field, rows, listbox rows, surface,
+  // chips, and clear button are shared sheets. odd-picker uses these sheets.
+  'components:combobox': 1536,
   // 896: measured 883 on 2026-10-25: the trigger and its value, the popup joined to the field (as
   // wide, stacked over the footer, and the focus ring around both), the tree content's padding and
   // type, the active row's ring, and the footer; the field, chips, rows, surface, and footer

@@ -126,6 +126,11 @@ export const copyGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden
   <rect x="6" y="6" width="12" height="12" rx="1" />
   <path d="M3 14H2V2h12v1" />
 </svg>`;
+/** A person (design/icons/general/person.svg): the count of chosen people in a multiple field. */
+export const userGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+  <circle cx="10" cy="5" r="3" />
+  <path d="M3 18v-3c0-7 14-7 14 0v3" />
+</svg>`;
 /** An upward arrow (design/icons/general/direction-arrow-bold-up.svg); rotated for downward. */
 export const arrowUpGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
   <path d="M10 18V2M4 8l6-6 6 6" />
