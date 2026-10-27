@@ -35,6 +35,16 @@
         "inputs": { "type": "string", "pattern": "^sha256-[0-9a-f]{64}$" }
       }
     },
+    "metadata": {
+      "type": "object",
+      "description": "The published metadata file the kit was generated from, so a packed kit can be checked against the packed file (verify-packs)",
+      "required": ["file", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "file": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
     "guide": {
       "type": "object",
       "required": ["path", "budgetBytes"],
@@ -55,7 +65,17 @@
           "id": { "type": "string", "description": "Stable id, e.g. component:odd-button or task:theming" },
           "path": { "type": "string" },
           "kind": {
-            "enum": ["component", "choosing", "tokens", "recipe", "stylesheet", "model", "task", "json"]
+            "enum": [
+              "component",
+              "choosing",
+              "tokens",
+              "recipe",
+              "stylesheet",
+              "model",
+              "composition",
+              "task",
+              "json"
+            ]
           },
           "provenance": {
             "enum": ["extracted", "authored", "verified"],

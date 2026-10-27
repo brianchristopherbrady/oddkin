@@ -703,6 +703,7 @@
   "files": [
     "dist",
     "schemas",
+    "agent",
     "custom-elements.json",
     "oddkin.metadata.json",
     "README.md"

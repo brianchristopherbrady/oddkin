@@ -236,7 +236,11 @@ export function resolveProjectContext(rootDir, options = {}) {
         return file ? join(dir, file) : undefined;
       })());
   if (inspectionFile && existsSync(inspectionFile))
-    inspection = { file: inspectionFile, data: readJson(inspectionFile) };
+    inspection = {
+      file: inspectionFile,
+      data: readJson(inspectionFile),
+      ...(sources[0] && !options.inspection ? { source: sources[0] } : {}),
+    };
   if (options.themeConfig) readInput(resolve(root, options.themeConfig));
   for (const name of readdirSync(root).filter((f) =>
     /^oddkin\.docs\.(ts|mts|js|mjs|json)$/.test(f),

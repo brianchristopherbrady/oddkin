@@ -14,7 +14,7 @@
   - lint: `npm run lint`
   - verify: `npm run verify`
   - metadata: `npm run verify:metadata`
-- Agent kits: `node scripts/agent-kit/kit.mjs` writes one per component package into `.oddkin/agent-kit/`; add `--check` to find stale kits.
+- Agent kits: each component package ships one matched to its version (`node_modules/@oddkin/ai/agent/GUIDE.md`, `node_modules/@oddkin/components/agent/GUIDE.md`; written by the build with `node scripts/agent-kit/package-kits.mjs`, `--check` to find stale ones). In this repository, `node scripts/agent-kit/kit.mjs` writes them into `.oddkin/agent-kit/`; add `--check` to find stale kits.
 - Scope, status, and evidence: `IMPLEMENTATION_PLAN.md` (milestones, §11 continuation), `docs/progress-log.md` (one row per slice), and `docs/verification.md` (record only observed results).
 
 <!-- oddkin:agents:end -->

@@ -3425,3 +3425,20 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Ot
 - **The "+N" item and group summaries** take Figma's tag look (radius.sm, space.xs, sunken surface), not the chip look.
 - **TypeScript 7.0.2:** `tsc -b` reported types from stale incremental info after an exported const changed; deleting `packages/components/tsconfig.tsbuildinfo` fixed it.
 - **Not verified:** screen-reader output for the views, the select-all check box, and the review; Safari on macOS; the Composed review rows 373:10524 and 373:10526 (not in the snapshot).
+
+## 2026-10-26 — Version-matched agent kits inside the packages (M10 round 8; ADR 0046 D6)
+
+Environment: Windows, Node 24.22.1, npm (workspaces). Other lanes' work in progress: Agent 2's `@oddkin/ai` recipes, Agent 1's text-entry tests, Agent 3's core contracts.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Packaged kits | `node scripts/agent-kit/package-kits.mjs`; `--check` | @oddkin/components 95 files (GUIDE.md 6,355 of 8,192 B), @oddkin/ai 55 files (6,637 B); `--check` current |
+| Kit tests | `npx vitest run --project node tests/agent-kit` | 33 passed (3 new: packaged contents and schema, the metadata hash, the composition reference) |
+| Packed consumer | `node scripts/verify-packs.mjs` | OK: both kits ship GUIDE.md, kit.json, and llms.txt and match their packed metadata, version, budget, and entries; tarballs @oddkin/components 688.6 KiB, @oddkin/ai 394.0 KiB |
+| Tarball cost | `npm pack --dry-run` with and without `agent/` | @oddkin/components 622.2 → 688.6 KiB (+66.3), @oddkin/ai 366.1 → 394.0 KiB (+27.9) |
+| AGENTS.md | `node scripts/agent-kit/agents-md.mjs --check` | managed section current |
+
+**Findings:**
+- **No repeated JSON:** the workspace kit's `json/components.json` (1.07 MB) repeats `custom-elements.json` and `oddkin.metadata.json`, which the package already ships; the packaged kit omits the JSON bundles and points at those files and the token inspection (1,490 → 340 KiB unpacked).
+- **Composition reference:** generated from what the package publishes (the entry's declarations, `schemas/composition/`); its example is checked with the package's own `validateComposition` at generation.
+- **Not verified:** how coding agents actually discover `node_modules/<package>/agent/` (round 7's planned agent evaluation).

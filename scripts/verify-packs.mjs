@@ -42,6 +42,8 @@ const work = await mkdtemp(join(tmpdir(), 'oddkin-packs-'));
 const failures = [];
 const cemConsumers = [];
 let contractCount = 0;
+const sizes = [];
+const kits = [];
 try {
   const tarballs = [];
   for (const { name, dir } of names) {
@@ -54,6 +56,20 @@ try {
     if (name === '@oddkin/core')
       for (const file of ['CONTRACTS.md', 'contracts.json'])
         if (!files.includes(file)) failures.push(`${name}: tarball has no ${file}`);
+    // A package that lists `agent` ships its version-matched agent kit (ADR 0046 D6).
+    const manifest = JSON.parse(await readFile(join(dir, 'package.json'), 'utf8'));
+    const agentBytes = info.files
+      .filter((file) => file.path.startsWith('agent/'))
+      .reduce((sum, file) => sum + file.size, 0);
+    if (manifest.files?.includes('agent')) {
+      for (const file of ['agent/GUIDE.md', 'agent/kit.json', 'agent/llms.txt'])
+        if (!files.includes(file))
+          failures.push(`${name}: tarball has no ${file} (run npm run build)`);
+      kits.push(name);
+    }
+    sizes.push(
+      `${name} ${(info.size / 1024).toFixed(1)} KiB${agentBytes ? ` (agent kit ${(agentBytes / 1024).toFixed(1)} KiB unpacked)` : ''}`,
+    );
     tarballs.push(join(work, info.filename));
   }
 
@@ -116,6 +132,30 @@ try {
     ].join('\n'),
   );
   node(['assets.mjs'], consumer);
+
+  // Each packed agent kit matches the packed metadata it was generated from, keeps its guide within
+  // budget, and lists only files it ships.
+  await writeFile(
+    join(consumer, 'kits.mjs'),
+    [
+      "import { createHash } from 'node:crypto';",
+      "import { existsSync, readFileSync } from 'node:fs';",
+      "import { dirname, join } from 'node:path';",
+      "import { fileURLToPath } from 'node:url';",
+      `for (const name of ${JSON.stringify(kits)}) {`,
+      "  const dir = dirname(fileURLToPath(import.meta.resolve(name + '/package.json')));",
+      "  const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));",
+      "  const kit = JSON.parse(readFileSync(join(dir, 'agent', 'kit.json'), 'utf8'));",
+      "  if (kit.library.name !== name || kit.library.version !== pkg.version) throw new Error(name + ': kit is for ' + kit.library.name + '@' + kit.library.version);",
+      "  const hash = createHash('sha256').update(readFileSync(join(dir, kit.metadata.file))).digest('hex');",
+      "  if (hash !== kit.metadata.sha256) throw new Error(name + ': agent kit does not match the packed ' + kit.metadata.file);",
+      "  const guide = Buffer.byteLength(readFileSync(join(dir, 'agent', kit.guide.path), 'utf8'));",
+      "  if (guide !== kit.guide.bytes || guide > kit.guide.budgetBytes) throw new Error(name + ': GUIDE.md is ' + guide + ' bytes (budget ' + kit.guide.budgetBytes + ')');",
+      "  for (const entry of kit.entries) if (!existsSync(join(dir, 'agent', entry.path))) throw new Error(name + ': kit lists missing ' + entry.path);",
+      '}',
+    ].join('\n'),
+  );
+  node(['kits.mjs'], consumer);
 
   // Contract ids resolve offline to the installed @oddkin/core's own CONTRACTS.md and version.
   await writeFile(
@@ -294,5 +334,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}; agent kits match their packed metadata in ${kits.join(' and ')}. Tarballs: ${sizes.join('; ')}.`,
 );
