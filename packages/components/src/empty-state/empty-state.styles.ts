@@ -4,7 +4,6 @@ import { token } from '@oddkin/tokens/refs';
 /** Oddkin's default empty state: Figma `emptyState` (sunken media circle, title, Body text). */
 export const emptyStateStyles = css`
   .empty {
-    gap: ${token('space.sm')};
     padding: ${token('space.lg')};
     color: ${token('color.text.secondary')};
     font-family: ${token('type.body.family')};
@@ -28,7 +27,6 @@ export const emptyStateStyles = css`
     letter-spacing: ${token('type.title.letter-spacing')};
   }
   .footer {
-    gap: ${token('space.xs')};
     margin-block-start: ${token('space.xs')};
   }
 `;

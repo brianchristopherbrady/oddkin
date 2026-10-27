@@ -1,5 +1,15 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
+import { alertRecipe } from '../src/alert/alert.recipe.js';
+import { alertRecipeStyles } from '../src/alert/alert.recipe.styles.js';
+import { comboboxRecipe } from '../src/combobox/combobox.recipe.js';
+import { comboboxRecipeStyles } from '../src/combobox/combobox.recipe.styles.js';
+import { emptyStateRecipe } from '../src/empty-state/empty-state.recipe.js';
+import { emptyStateRecipeStyles } from '../src/empty-state/empty-state.recipe.styles.js';
+import { progressRecipe } from '../src/progress/progress.recipe.js';
+import { progressRecipeStyles } from '../src/progress/progress.recipe.styles.js';
+import { statRecipe } from '../src/stat/stat.recipe.js';
+import { statRecipeStyles } from '../src/stat/stat.recipe.styles.js';
 import { checkboxGroupRecipe } from '../src/checkbox-group/checkbox-group.recipe.js';
 import { checkboxGroupRecipeStyles } from '../src/checkbox-group/checkbox-group.recipe.styles.js';
 import { colorPickerRecipe } from '../src/color-picker/color-picker.recipe.js';
@@ -94,6 +104,41 @@ const extracted = [
     source: './color-picker.recipe.ts',
     recipe: colorPickerRecipe,
     styles: colorPickerRecipeStyles,
+  },
+  {
+    file: '../src/alert/alert.recipe.styles.ts',
+    exportName: 'alertRecipeStyles',
+    source: './alert.recipe.ts',
+    recipe: alertRecipe,
+    styles: alertRecipeStyles,
+  },
+  {
+    file: '../src/combobox/combobox.recipe.styles.ts',
+    exportName: 'comboboxRecipeStyles',
+    source: './combobox.recipe.ts',
+    recipe: comboboxRecipe,
+    styles: comboboxRecipeStyles,
+  },
+  {
+    file: '../src/empty-state/empty-state.recipe.styles.ts',
+    exportName: 'emptyStateRecipeStyles',
+    source: './empty-state.recipe.ts',
+    recipe: emptyStateRecipe,
+    styles: emptyStateRecipeStyles,
+  },
+  {
+    file: '../src/progress/progress.recipe.styles.ts',
+    exportName: 'progressRecipeStyles',
+    source: './progress.recipe.ts',
+    recipe: progressRecipe,
+    styles: progressRecipeStyles,
+  },
+  {
+    file: '../src/stat/stat.recipe.styles.ts',
+    exportName: 'statRecipeStyles',
+    source: './stat.recipe.ts',
+    recipe: statRecipe,
+    styles: statRecipeStyles,
   },
 ];
 

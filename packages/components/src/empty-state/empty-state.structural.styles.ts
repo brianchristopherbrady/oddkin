@@ -1,16 +1,14 @@
 import { css } from '@oddkin/core/styles';
+import { emptyStateRecipeStyles } from './empty-state.recipe.styles.js';
 
 /** A centred column; the media circle centres its content. No brand or visual tokens. */
 export const emptyStateStructuralStyles = css`
+  ${emptyStateRecipeStyles}
   :host {
     display: block;
   }
   .empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     text-align: center;
-    min-inline-size: 0;
     overflow-wrap: anywhere;
   }
   .media:not([hidden]) {
@@ -20,10 +18,5 @@ export const emptyStateStructuralStyles = css`
   }
   .label {
     margin: 0;
-  }
-  .footer:not([hidden]) {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
   }
 `;

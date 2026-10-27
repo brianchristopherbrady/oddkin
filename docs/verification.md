@@ -3381,3 +3381,23 @@ Environment: Windows, Node 24.22.1, Playwright 1.64.1 (Chromium, Firefox, WebKit
 
 **Findings:**
 - The capped minimum is a content-box size: a split child with padding needs `box-sizing: border-box` to stay inside its column at the narrowest widths.
+
+## 2026-10-26 — Layout recipes in the display elements' shadow roots (M10 round 8; layout-recipes.md §14)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5 (Chromium, Firefox, WebKit). Other lanes' work in progress: Agent 2's `@oddkin/ai` layout recipes and overlay first placement, Agent 1's text-entry tests, Agent 3's core contracts (D5).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Recipes | `alert.recipe.ts`, `empty-state.recipe.ts`, `progress.recipe.ts`, `stat.recipe.ts`, `combobox.recipe.ts` (the chips), extracted by `recipes.test.ts` (`UPDATE_FIXTURES=1`) | byte-identical; the hand-written display, direction, wrap, alignment, and gap are gone from the structural and skin sheets |
+| Browser set (× 3 engines, `--catalog`) | card, combobox, display, stat, structured, layout-recipes.display, the four parity files | Chromium 1,152 passed; WebKit 1,143 passed, 1 failed (combobox popup width), which passed alone; Firefox 3 suites timed out in setup hooks under load, 170 passed alone |
+| Mutation probes (Chromium) | 51, one per declaration of each region | 11 killed by the existing tests; 36 of the 40 survivors killed by `layout-recipes.display.browser.test.ts`; 4 equivalent (`min-inline-size: auto` on a region root that is no flex item resolves to 0) |
+| Node project | `npx vitest run --project node` | 1,250 passed, 4 failed: card's graph and styling contract (fixed by keeping card, below); `core-contracts` (another lane's uncommitted core-contracts.md); `icon-catalog` (timed out under load, passed alone) |
+| Typecheck | `npm run typecheck` | fails only in `text-entry.browser.test.ts` (Agent 1, uncommitted) |
+| Size | `node scripts/check-size.mjs` | alert 500 → 540 B (budget 512 → 576), stat 484 → 529 (512 → 576), empty-state 434 → 487, progress 695 → 747, combobox 876 → 932; `ai-chat` and `ai:styles` over (Agent 2, uncommitted) |
+| Compatibility | `npm run compat` | 0 problems; my five recipe sheets add no compatibility key |
+
+**Findings:**
+- **Card kept:** the card is the styling-contract example: its structural sheet reads no `--odd-*` variable and its foundation entry loads no tokens; its gap is the public `--odd-card-gap` in the skin. A recipe would move that visual decision into the structural sheet. The new layout test still pins the card's column and its override.
+- **Collapsed chips:** with focus outside, the combobox chips stay on one line (a structural rule after the recipe); the recipe's wrap applies once focus is in. The test pins both.
+- **Cost:** each recipe brings its layer order statement, about 40–56 B gzip per element.
+- Not verified: Safari on macOS.

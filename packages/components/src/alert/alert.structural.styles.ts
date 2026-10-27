@@ -1,18 +1,14 @@
 import { css } from '@oddkin/core/styles';
+import { alertRecipeStyles } from './alert.recipe.styles.js';
 
 /**
  * Glyph, text column, and actions in a row that wraps the actions under the text when narrow.
  * No brand or visual tokens.
  */
 export const alertStructuralStyles = css`
+  ${alertRecipeStyles}
   :host {
     display: block;
-  }
-  .alert {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    min-inline-size: 0;
   }
   .marker {
     display: inline-flex;
@@ -25,11 +21,6 @@ export const alertStructuralStyles = css`
   }
   .label {
     margin: 0;
-  }
-  .end {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
   }
   @media (forced-colors: active) {
     .alert {

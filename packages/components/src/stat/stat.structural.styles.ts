@@ -1,21 +1,14 @@
 import { css } from '@oddkin/core/styles';
+import { statRecipeStyles } from './stat.recipe.styles.js';
 
 /** A column: label, value, context; the arrow points down for a decrease. No tokens. */
 export const statStructuralStyles = css`
+  ${statRecipeStyles}
   :host {
     display: block;
   }
-  .base {
-    display: flex;
-    flex-direction: column;
-    min-inline-size: 0;
-  }
   .value {
     overflow-wrap: anywhere;
-  }
-  .context {
-    display: flex;
-    align-items: center;
   }
   :host([trend='decrease']) .glyph {
     rotate: 180deg;

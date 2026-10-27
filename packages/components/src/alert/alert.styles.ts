@@ -7,7 +7,6 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const alertStyles = css`
   .alert {
-    gap: ${token('space.sm')};
     padding: ${token('space.sm')};
     border-radius: var(--odd-alert-radius, ${token('control.radius')});
     background: var(--_tone-surface);
@@ -33,8 +32,5 @@ export const alertStyles = css`
     font-size: ${token('type.ui.size')};
     font-weight: ${token('type.ui.weight')};
     line-height: ${token('type.ui.line-height')};
-  }
-  .end {
-    gap: ${token('space.xs')};
   }
 `;

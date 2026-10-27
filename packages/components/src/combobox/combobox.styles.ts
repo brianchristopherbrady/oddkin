@@ -36,9 +36,6 @@ export const comboboxStyles = css`
       ${token('control.padding.inline.md')} + 2em + 2 * ${token('control.gap')}
     );
   }
-  .chips {
-    gap: ${token('control.gap')};
-  }
   .box:has(.combobox:focus-visible) {
     outline: ${token('focus.width')} solid ${token('color.focus.ring')};
     outline-offset: ${token('focus.offset')};

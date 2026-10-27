@@ -9,7 +9,6 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const statStyles = css`
   .base {
-    gap: ${token('space.xs')};
     padding: ${token('card.padding')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('card.radius')};
@@ -31,7 +30,6 @@ export const statStyles = css`
     letter-spacing: ${token('type.display.letter-spacing')};
   }
   .context {
-    gap: ${token('space.xs')};
     color: ${token('color.text.secondary')};
     font-family: ${token('type.small.family')};
     font-size: ${token('type.small.size')};

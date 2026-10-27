@@ -1,4 +1,5 @@
 import { css } from '@oddkin/core/styles';
+import { comboboxRecipeStyles } from './combobox.recipe.styles.js';
 
 /**
  * What the combobox depends on beyond the field layout, the option rows, the listbox rows, the
@@ -8,6 +9,7 @@ import { css } from '@oddkin/core/styles';
  * chip. No brand tokens.
  */
 export const comboboxStructuralStyles = css`
+  ${comboboxRecipeStyles}
   :host {
     display: block;
   }
@@ -33,10 +35,6 @@ export const comboboxStructuralStyles = css`
     cursor: text;
   }
   .chips {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    min-inline-size: 0;
     max-inline-size: 100%;
   }
   .box.collapsed,

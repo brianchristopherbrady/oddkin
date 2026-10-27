@@ -1,4 +1,5 @@
 import { css } from '@oddkin/core/styles';
+import { progressRecipeStyles } from './progress.recipe.styles.js';
 
 /**
  * The bar fills to `--_progress` (0–1) from the inline start; without a value a third of the bar
@@ -6,6 +7,7 @@ import { css } from '@oddkin/core/styles';
  * visual tokens.
  */
 export const progressStructuralStyles = css`
+  ${progressRecipeStyles}
   :host {
     display: block;
   }
@@ -14,10 +16,6 @@ export const progressStructuralStyles = css`
     min-inline-size: 0;
   }
   .head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    min-inline-size: 0;
     overflow-wrap: anywhere;
   }
   .track {
