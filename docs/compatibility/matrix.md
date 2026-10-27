@@ -193,7 +193,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/listbox/listbox.recipe.styles.js (listboxRecipeStyles)` | yes | 11 |
 | `packages/components/dist/listbox/listbox.structural.styles.js (listboxStructuralStyles)` | yes | 17 |
 | `packages/components/dist/listbox/listbox.styles.js (listboxStyles)` | yes | 19 |
-| `packages/components/dist/menu/menu.structural.styles.js (menuStructuralStyles)` | yes | 11 |
+| `packages/components/dist/menu/menu.structural.styles.js (menuStructuralStyles)` | yes | 15 |
 | `packages/components/dist/menu/menu.styles.js (menuStyles)` | yes | 12 |
 | `packages/components/dist/one-time-code/one-time-code.structural.styles.js (oneTimeCodeStructuralStyles)` | yes | 20 |
 | `packages/components/dist/one-time-code/one-time-code.styles.js (oneTimeCodeStyles)` | yes | 19 |

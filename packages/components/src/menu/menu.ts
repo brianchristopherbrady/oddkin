@@ -1,8 +1,8 @@
-import { RovingFocus } from '@oddkin/core/controllers/focus';
+﻿import { RovingFocus } from '@oddkin/core/controllers/focus';
 import { Typeahead } from '@oddkin/core/controllers/typeahead';
 import { event, OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
-import { computed, signal, type Readable } from '@oddkin/core/reactive';
-import type { Scope } from '@oddkin/core/scope';
+import { computed, signal, untracked, type Readable } from '@oddkin/core/reactive';
+import type { Release, Scope } from '@oddkin/core/scope';
 import {
   assignContent,
   CollectionSource,
@@ -43,7 +43,8 @@ const none = () => false;
 /**
  * A menu button (APG): a button that opens a menu of actions, with groups, separators, and
  * submenus. Items come from `<option value>` (the value is the item's `id`), `<optgroup label>`,
- * and `<hr>` children, or from `items`.
+ * and `<hr>` children, or from `items`. With `context`, it is also the context menu of another
+ * element.
  *
  * @slot - The trigger's content.
  * @csspart trigger - The button that opens the menu.
@@ -52,8 +53,8 @@ const none = () => false;
  * @csspart item - Each menu item.
  * @csspart group - Each group's heading.
  * @csspart separator - Each separator.
- * @a11y The trigger has `aria-haspopup="menu"` and `aria-expanded`, and names the menu; `label` names a trigger that shows only a glyph. Items are `menuitem`s (disabled ones stay focusable, as APG recommends), groups are named by their heading, and an item with a submenu has `aria-haspopup` and `aria-expanded`. The danger tone is colour only: let the label say what the action does ("Delete project").
- * @keyboard On the trigger: Enter, Space, and Down open the menu on its first item, Up on its last. In the menu: Up and Down move (wrapping), Home and End go to the first and last item, typing moves to the next item starting with the typed characters, Enter and Space choose. Right opens a submenu on its first item; Left and Escape close one level and return focus to its item; Tab and Shift+Tab close every level as focus leaves.
+ * @a11y The trigger has `aria-haspopup="menu"` and `aria-expanded`, and names the menu; `label` names a trigger that shows only a glyph. Items are `menuitem`s (disabled ones stay focusable, as APG recommends), groups are named by their heading, and an item with a submenu has `aria-haspopup` and `aria-expanded`. The danger tone is colour only: let the label say what the action does ("Delete project"). A context menu is hidden from people who cannot right-click or do not know Shift+F10: keep the trigger visible as the way to the same actions.
+ * @keyboard On the trigger: Enter, Space, and Down open the menu on its first item, Up on its last. With `context`, Shift+F10 or the Menu key while focus is in that element opens the menu on its first item. In the menu: Up and Down move (wrapping), Home and End go to the first and last item, typing moves to the next item starting with the typed characters, Enter and Space choose. Right opens a submenu on its first item; Left and Escape close one level and return focus to its item; Escape on the menu returns focus to the trigger, or to where it was when a context menu opened; Tab and Shift+Tab close every level as focus leaves.
  * @previewRole menu
  * @useFor A short list of actions behind one button: row actions, "more" actions, create menus.
  * @notFor Choosing a value in a form (use odd-select or odd-listbox); navigation between pages (use links or odd-side-nav); a searchable list of commands (use odd-command-palette).
@@ -80,6 +81,11 @@ export class OddkinMenu extends OddkinElement.with({
     description: "The trigger's size, as on odd-button.",
   }),
   disabled: prop.boolean({ reflect: true, description: 'Disables the trigger.' }),
+  context: prop.string({
+    default: '',
+    description:
+      'The ID of an element, in the same document or shadow root, whose context menu it also is: a right-click or long press on it opens the menu at the pointer, and Shift+F10 or the Menu key while focus is in it opens the menu beside the focused element. The browser keeps its own menu while the trigger is disabled.',
+  }),
 }) {
   // Manual assignment: the default slot takes the trigger's content, never the item children.
   static override shadowRootOptions: ShadowRootInit = {
@@ -99,9 +105,10 @@ export class OddkinMenu extends OddkinElement.with({
   readonly #overlay = new Overlay({
     host: this,
     surface: () => this._menu(),
-    anchor: () => this._trigger(),
-    // Also after a press that did not focus the trigger (WebKit).
-    returnFocus: () => this._trigger(),
+    anchor: () => this.#at ?? this._trigger(),
+    // Also after a press that did not focus the trigger (WebKit). A context menu returns focus
+    // to where it was when it opened.
+    returnFocus: () => (this.#at ? null : this._trigger()),
     onToggle: (open) => this.#onToggle(open),
   });
   readonly #roving = new RovingFocus({
@@ -120,6 +127,12 @@ export class OddkinMenu extends OddkinElement.with({
   // Where focus lands when the menu opens, and whether it shows (opened from the keyboard).
   #landing: 'first' | 'last' = 'first';
   #keyboard = false;
+  // What a context menu opened against (the pointer's point, or the focused element); null when
+  // the trigger opened it. Kept after it closes, until the next open, for the focus return.
+  #at: Element | null = null;
+  // Shift+F10 or the Menu key opened it, so the `contextmenu` event a browser may send for the
+  // same key does not open it again at the pointer.
+  #byKey = false;
 
   /** @internal The entries in use. */
   readonly _items: Readable<readonly MenuItemRecord[]> = this.#source.records;
@@ -156,8 +169,9 @@ export class OddkinMenu extends OddkinElement.with({
     return this.shadowRoot?.getElementById('menu');
   }
 
-  /** Opens the menu and focuses its first item. */
+  /** Opens the menu below its trigger and focuses its first item. */
   show(): void {
+    this.#at = null;
     this.#overlay.show();
   }
 
@@ -243,6 +257,7 @@ export class OddkinMenu extends OddkinElement.with({
   readonly _onTriggerClick = (event: MouseEvent): void => {
     // Enter and Space click with no pointer detail.
     this.#keyboard = event.detail === 0;
+    if (!this._open.peek()) this.#at = null;
     this.#overlay.toggle();
   };
 
@@ -286,6 +301,79 @@ export class OddkinMenu extends OddkinElement.with({
     event.preventDefault();
   };
 
+  /** Opens the menu as the context menu, against the pointer's point or the focused element. */
+  #openAt(at: Element, keyboard: boolean): void {
+    if (this.disabled) return;
+    this.#keyboard = keyboard;
+    this.#landing = 'first';
+    // Open again at the new place when it is already open.
+    if (this._open.peek()) this.#overlay.hide();
+    this.#at = at;
+    this.#overlay.show();
+  }
+
+  /** Places the zero-size `point` element at the viewport point `x`, `y`. */
+  #pointAt(x: number, y: number): HTMLElement | null {
+    const point = this.shadowRoot?.getElementById('point');
+    if (!point) return null;
+    // Inline offsets run from the right in right-to-left text.
+    const sign = getComputedStyle(point).direction === 'rtl' ? -1 : 1;
+    const place = (inline: number, block: number) => {
+      point.style.setProperty('--_point-inline', `${inline}px`);
+      point.style.setProperty('--_point-block', `${block}px`);
+    };
+    const inline = sign > 0 ? x : document.documentElement.clientWidth - x;
+    place(inline, y);
+    // A transformed or contained ancestor is the fixed box's containing block: correct for it.
+    const box = point.getBoundingClientRect();
+    if (box.left !== x || box.top !== y) place(inline + sign * (x - box.left), 2 * y - box.top);
+    return point;
+  }
+
+  /** Listens on the `context` element while it is set and found. */
+  #attachContext(target: Element, run: Scope): void {
+    // The menu may be inside its target: keys and presses in the open menu are the menu's.
+    const inMenu = (event: Event) => {
+      const menu = this._menu();
+      return !!menu && event.composedPath().includes(menu);
+    };
+    run.listen<KeyboardEvent>(target, 'keydown', (event) => {
+      const key = event.key === 'ContextMenu' || (event.key === 'F10' && event.shiftKey);
+      if (!key || event.defaultPrevented || this.disabled || inMenu(event)) return;
+      event.preventDefault();
+      this.#byKey = true;
+      const focused = event.composedPath()[0];
+      this.#openAt(focused instanceof Element ? focused : target, true);
+    });
+    run.listen<MouseEvent>(target, 'contextmenu', (event) => {
+      if (event.defaultPrevented || this.disabled) return;
+      event.preventDefault();
+      if (inMenu(event)) return;
+      if (this.#byKey && this._open.peek()) {
+        this.#byKey = false;
+        return;
+      }
+      this.#byKey = false;
+      const point = this.#pointAt(event.clientX, event.clientY);
+      if (!point) return;
+      if (!event.buttons) {
+        this.#openAt(point, false);
+        return;
+      }
+      // Firefox, WebKit, and browsers on macOS and Linux send it while the button is still down;
+      // the pointerup would light-dismiss a popover opened now, so it opens after that.
+      const releases: Release[] = [];
+      const open = () => {
+        for (const release of releases.splice(0)) release();
+        run.timeout(() => this.#openAt(point, false), 0);
+      };
+      releases.push(
+        run.listen(document, 'pointerup', open, true),
+        run.listen(document, 'pointercancel', open, true),
+      );
+    });
+  }
+
   protected override connected(scope: Scope): void {
     scope.use(this.#source);
   }
@@ -306,6 +394,12 @@ export class OddkinMenu extends OddkinElement.with({
     if (this.shadowRoot) scope.listen(this.shadowRoot, 'focusin', leave, true);
     scope.use(this.#roving);
     scope.use(this.#typeahead);
+    scope.effect((run) => {
+      const id = this.context;
+      if (!id) return;
+      const target = (this.getRootNode() as Document | ShadowRoot).getElementById(id);
+      if (target) untracked(() => this.#attachContext(target, run));
+    });
     scope.add(() => (this.#scope = undefined), 'menu scope');
   }
 }

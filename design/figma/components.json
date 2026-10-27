@@ -3,7 +3,7 @@
   "fileKey": "E7LfRysny8V3qU24tv082i",
   "fileName": "Document",
   "exportedAt": "2026-10-24",
-  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks.",
+  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained.",
   "pages": [
     { "id": "353:62", "name": "01 · Foundations" },
     { "id": "158:22", "name": "02 · Primitives" },
@@ -24497,6 +24497,216 @@
       ]
     },
     {
+      "id": "613:18461",
+      "name": "Oddkin/Common/appHeader",
+      "page": "356:62",
+      "frame": "Definitions · Navigation & contextual overlays",
+      "kind": "COMPONENT_SET",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Design specification.\nFigma asset: Oddkin/Common/appHeader.\nImplementation: design-only; no verified public component.\nNo corresponding implementation verified. Do not invent an element or import.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nApplication-level header composed from existing actions and navigation. Desktop has brand, primary destinations, search, notifications and account. Narrow layout has an explicit menu trigger; expanded narrow navigation preserves the active destination. Name icon-only controls and expose one banner landmark. Figma design specification; runtime behavior requires implementation.",
+      "properties": [
+        { "name": "Brand", "type": "TEXT", "defaultValue": "Oddkin" },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Desktop",
+          "variantOptions": ["Desktop", "Keyboard focus", "Narrow", "Narrow menu open"]
+        }
+      ],
+      "variants": [
+        { "id": "613:18291", "name": "State=Desktop", "values": { "State": "Desktop" } },
+        {
+          "id": "613:18333",
+          "name": "State=Keyboard focus",
+          "values": { "State": "Keyboard focus" }
+        },
+        { "id": "613:18376", "name": "State=Narrow", "values": { "State": "Narrow" } },
+        {
+          "id": "613:18416",
+          "name": "State=Narrow menu open",
+          "values": { "State": "Narrow menu open" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"]
+          }
+        },
+        {
+          "path": ["Application banner"],
+          "types": ["FRAME"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/sm"],
+            "paddingLeft": ["Oddkin · Component roles/space/sm"],
+            "paddingRight": ["Oddkin · Component roles/space/sm"],
+            "paddingTop": ["Oddkin · Component roles/space/sm"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        { "path": ["Application banner", "Account"], "types": ["INSTANCE"] },
+        { "path": ["Application banner", "Notifications"], "types": ["INSTANCE"], "in": [0, 1] },
+        {
+          "path": ["Application banner", "Oddkin"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/title/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/title/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/title/letter-spacing"],
+            "textStyle": ["Oddkin/Card title"]
+          },
+          "properties": { "characters": ["Brand"] }
+        },
+        { "path": ["Application banner", "Open navigation"], "types": ["INSTANCE"], "in": [2, 3] },
+        {
+          "path": ["Application banner", "Primary navigation"],
+          "types": ["FRAME"],
+          "in": [0, 1],
+          "bound": { "itemSpacing": ["Oddkin · Component roles/space/lg"] }
+        },
+        {
+          "path": ["Application banner", "Primary navigation", "Overview"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/link"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Application banner", "Primary navigation", "People"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Application banner", "Primary navigation", "Projects"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        { "path": ["Application banner", "Search"], "types": ["INSTANCE"] },
+        {
+          "path": ["Expanded primary navigation"],
+          "types": ["FRAME"],
+          "in": [3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/surface/raised"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Expanded primary navigation", "Notifications"],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Expanded primary navigation", "Overview · current page"],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/link"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Expanded primary navigation", "People"],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Expanded primary navigation", "Projects"],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/iconButton",
+          "sourceId": "159:471",
+          "count": 12,
+          "variants": ["State=Default", "State=Focus"],
+          "overriddenFields": ["name"]
+        }
+      ]
+    },
+    {
       "id": "558:15676",
       "name": "Oddkin/Common/calendar",
       "page": "356:62",
@@ -25253,6 +25463,521 @@
           "count": 2,
           "variants": ["Appearance=secondary, Size=md, State=Default"],
           "overriddenFields": ["height", "minHeight", "minWidth", "width"]
+        }
+      ]
+    },
+    {
+      "id": "613:17999",
+      "name": "Oddkin/Common/carousel",
+      "page": "356:62",
+      "frame": "Definitions · Navigation & contextual overlays",
+      "kind": "COMPONENT_SET",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Design specification.\nFigma asset: Oddkin/Common/carousel.\nImplementation: design-only; no verified public component.\nNo corresponding implementation verified. Do not invent an element or import.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nManual carousel with previous/next controls, named slides, position and direct selection. First and last controls disable at boundaries. No automatic advancement. Keyboard focus is distinct from the displayed slide; announce user-initiated changes without moving focus. Narrow layout retains all controls. Figma design specification; runtime behavior requires implementation.",
+      "properties": [
+        { "name": "Heading", "type": "TEXT", "defaultValue": "Workspace highlights" },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "First slide",
+          "variantOptions": [
+            "First slide",
+            "Middle slide",
+            "Last slide",
+            "Keyboard focus",
+            "Narrow"
+          ]
+        }
+      ],
+      "variants": [
+        { "id": "613:17776", "name": "State=First slide", "values": { "State": "First slide" } },
+        {
+          "id": "613:17910",
+          "name": "State=Keyboard focus",
+          "values": { "State": "Keyboard focus" }
+        },
+        { "id": "613:17868", "name": "State=Last slide", "values": { "State": "Last slide" } },
+        { "id": "613:17826", "name": "State=Middle slide", "values": { "State": "Middle slide" } },
+        { "id": "613:17957", "name": "State=Narrow", "values": { "State": "Narrow" } }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"]
+          }
+        },
+        {
+          "path": ["Slide 1 of 3"],
+          "types": ["FRAME"],
+          "in": [0, 4],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/lg"],
+            "paddingLeft": ["Oddkin · Component roles/space/lg"],
+            "paddingRight": ["Oddkin · Component roles/space/lg"],
+            "paddingTop": ["Oddkin · Component roles/space/lg"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Slide 1 of 3", "01 / WORK TOGETHER"],
+          "types": ["TEXT"],
+          "in": [0, 4],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/eyebrow/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/eyebrow/weight"],
+            "textStyle": ["Oddkin/Eyebrow"]
+          }
+        },
+        {
+          "path": ["Slide 1 of 3", "A place for every project"],
+          "types": ["TEXT"],
+          "in": [0, 4],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/section/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/section/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/section/letter-spacing"],
+            "textStyle": ["Oddkin/Section"]
+          }
+        },
+        { "path": ["Slide 1 of 3", "Explore workspace"], "types": ["INSTANCE"], "in": [0, 4] },
+        {
+          "path": ["Slide 1 of 3", "Organize shared work in one workspace."],
+          "types": ["TEXT"],
+          "in": [0, 4],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          }
+        },
+        {
+          "path": ["Slide 2 of 3"],
+          "types": ["FRAME"],
+          "in": [1, 3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/lg"],
+            "paddingLeft": ["Oddkin · Component roles/space/lg"],
+            "paddingRight": ["Oddkin · Component roles/space/lg"],
+            "paddingTop": ["Oddkin · Component roles/space/lg"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Slide 2 of 3", "02 / WORK TOGETHER"],
+          "types": ["TEXT"],
+          "in": [1, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/eyebrow/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/eyebrow/weight"],
+            "textStyle": ["Oddkin/Eyebrow"]
+          }
+        },
+        { "path": ["Slide 2 of 3", "Explore workspace"], "types": ["INSTANCE"], "in": [1, 3] },
+        {
+          "path": ["Slide 2 of 3", "Keep your team in sync"],
+          "types": ["TEXT"],
+          "in": [1, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/section/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/section/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/section/letter-spacing"],
+            "textStyle": ["Oddkin/Section"]
+          }
+        },
+        {
+          "path": ["Slide 2 of 3", "Share updates and keep decisions close to the work."],
+          "types": ["TEXT"],
+          "in": [1, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          }
+        },
+        {
+          "path": ["Slide 3 of 3"],
+          "types": ["FRAME"],
+          "in": [2],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/lg"],
+            "paddingLeft": ["Oddkin · Component roles/space/lg"],
+            "paddingRight": ["Oddkin · Component roles/space/lg"],
+            "paddingTop": ["Oddkin · Component roles/space/lg"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Slide 3 of 3", "03 / WORK TOGETHER"],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/eyebrow/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/eyebrow/weight"],
+            "textStyle": ["Oddkin/Eyebrow"]
+          }
+        },
+        {
+          "path": ["Slide 3 of 3", "Bring the next step into focus."],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          }
+        },
+        { "path": ["Slide 3 of 3", "Explore workspace"], "types": ["INSTANCE"], "in": [2] },
+        {
+          "path": ["Slide 3 of 3", "Move from idea to delivery"],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/section/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/section/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/section/letter-spacing"],
+            "textStyle": ["Oddkin/Section"]
+          }
+        },
+        {
+          "path": ["Slide controls"],
+          "types": ["FRAME"],
+          "bound": { "itemSpacing": ["Oddkin · Component roles/space/sm"] }
+        },
+        {
+          "path": ["Slide controls", "1 of 3"],
+          "types": ["TEXT"],
+          "in": [0, 4],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Slide controls", "2 of 3"],
+          "types": ["TEXT"],
+          "in": [1, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Slide controls", "3 of 3"],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 1"],
+          "types": ["FRAME"],
+          "in": [1, 2, 3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 1", "1"],
+          "types": ["TEXT"],
+          "in": [1, 2, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 1 · current"],
+          "types": ["FRAME"],
+          "in": [0, 4],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/selection/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 1 · current", "1"],
+          "types": ["TEXT"],
+          "in": [0, 4],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/link"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 2"],
+          "types": ["FRAME"],
+          "in": [0, 2, 4],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 2", "2"],
+          "types": ["TEXT"],
+          "in": [0, 2, 4],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 2 · current"],
+          "types": ["FRAME"],
+          "in": [1, 3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/selection/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 2 · current", "2"],
+          "types": ["TEXT"],
+          "in": [1, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/link"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 3"],
+          "types": ["FRAME"],
+          "in": [0, 1, 3, 4],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 3", "3"],
+          "types": ["TEXT"],
+          "in": [0, 1, 3, 4],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 3 · current"],
+          "types": ["FRAME"],
+          "in": [2],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/selection/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Slide controls", "Go to slide 3 · current", "3"],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/link"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        { "path": ["Slide controls", "Next slide"], "types": ["INSTANCE"] },
+        { "path": ["Slide controls", "Previous slide"], "types": ["INSTANCE"] },
+        {
+          "path": ["Workspace highlights"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/title/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/title/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/title/letter-spacing"],
+            "textStyle": ["Oddkin/Card title"]
+          },
+          "properties": { "characters": ["Heading"] }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 5,
+          "variants": ["Appearance=secondary, Size=md, State=Default"],
+          "overriddenFields": ["boundVariables", "counterAxisSizingMode", "name"]
+        },
+        {
+          "source": "Oddkin/Common/iconButton",
+          "sourceId": "159:471",
+          "count": 10,
+          "variants": ["State=Default", "State=Disabled", "State=Focus"],
+          "overriddenFields": ["name"]
         }
       ]
     },
@@ -26965,6 +27690,113 @@
           "count": 1,
           "variants": [],
           "overriddenFields": ["name", "strokes"]
+        }
+      ]
+    },
+    {
+      "id": "613:18290",
+      "name": "Oddkin/Common/contextMenu",
+      "page": "356:62",
+      "frame": "Definitions · Navigation & contextual overlays",
+      "kind": "COMPONENT_SET",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Design specification.\nFigma asset: Oddkin/Common/contextMenu.\nImplementation: design-only; no verified public component.\nNo corresponding implementation verified. Do not invent an element or import.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nContextual actions reuse the existing Menu and MenuItem primitives. Open by right-click, Shift+F10 or the visible more-actions button. Arrow keys navigate, Enter activates, Escape closes and restores trigger focus. Disabled and destructive actions stay distinct. Figma design specification; runtime behavior requires implementation.",
+      "properties": [
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Closed",
+          "variantOptions": ["Closed", "Open", "Keyboard focus", "Disabled item"]
+        }
+      ],
+      "variants": [
+        { "id": "613:18050", "name": "State=Closed", "values": { "State": "Closed" } },
+        {
+          "id": "613:18216",
+          "name": "State=Disabled item",
+          "values": { "State": "Disabled item" }
+        },
+        {
+          "id": "613:18141",
+          "name": "State=Keyboard focus",
+          "values": { "State": "Keyboard focus" }
+        },
+        { "id": "613:18067", "name": "State=Open", "values": { "State": "Open" } }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"]
+          }
+        },
+        {
+          "path": ["Context target"],
+          "types": ["FRAME"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/sm"],
+            "paddingLeft": ["Oddkin · Component roles/space/sm"],
+            "paddingRight": ["Oddkin · Component roles/space/sm"],
+            "paddingTop": ["Oddkin · Component roles/space/sm"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        { "path": ["Context target", "More actions"], "types": ["INSTANCE"] },
+        {
+          "path": ["Context target", "Project brief"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        { "path": ["Project actions menu"], "types": ["INSTANCE"], "in": [1, 2, 3] },
+        {
+          "path": ["Right-click or use More actions"],
+          "types": ["TEXT"],
+          "in": [0],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/Menu",
+          "sourceId": "160:941",
+          "count": 3,
+          "variants": ["State=Disabled item", "State=Keyboard focus", "State=Open"],
+          "overriddenFields": ["counterAxisSizingMode", "name", "primaryAxisSizingMode"]
+        },
+        {
+          "source": "Oddkin/Common/iconButton",
+          "sourceId": "159:471",
+          "count": 4,
+          "variants": ["State=Default"],
+          "overriddenFields": ["name"]
         }
       ]
     },
@@ -29239,6 +30071,211 @@
           "count": 2,
           "variants": [],
           "overriddenFields": ["height", "name", "strokes", "width"]
+        }
+      ]
+    },
+    {
+      "id": "613:18049",
+      "name": "Oddkin/Common/hoverCard",
+      "page": "356:62",
+      "frame": "Definitions · Navigation & contextual overlays",
+      "kind": "COMPONENT_SET",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Design specification.\nFigma asset: Oddkin/Common/hoverCard.\nImplementation: design-only; no verified public component.\nNo corresponding implementation verified. Do not invent an element or import.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nSupplementary profile preview opened by pointer hover or keyboard focus and available through an explicit trigger on touch. Pointer can enter the card; Escape dismisses. Essential information remains available on the profile destination. Interactive content uses a popover rather than tooltip semantics. Figma design specification; runtime behavior requires implementation.",
+      "properties": [
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Closed",
+          "variantOptions": ["Closed", "Open", "Keyboard focus", "Narrow"]
+        },
+        { "name": "Trigger label", "type": "TEXT", "defaultValue": "Alex Morgan" }
+      ],
+      "variants": [
+        { "id": "613:18000", "name": "State=Closed", "values": { "State": "Closed" } },
+        {
+          "id": "613:18018",
+          "name": "State=Keyboard focus",
+          "values": { "State": "Keyboard focus" }
+        },
+        { "id": "613:18034", "name": "State=Narrow", "values": { "State": "Narrow" } },
+        { "id": "613:18003", "name": "State=Open", "values": { "State": "Open" } }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"]
+          }
+        },
+        {
+          "path": ["Alex Morgan"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/link"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          },
+          "properties": { "characters": ["Trigger label"] }
+        },
+        {
+          "path": ["Profile preview"],
+          "types": ["FRAME"],
+          "in": [1, 2, 3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "effectStyle": ["Oddkin/Overlay"],
+            "effects": [
+              "Oddkin · Component roles/figma/elevation/md/ambient",
+              "Oddkin · Component roles/figma/elevation/md/key"
+            ],
+            "fills": ["Oddkin · Component roles/color/surface/raised"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/lg"],
+            "paddingLeft": ["Oddkin · Component roles/space/lg"],
+            "paddingRight": ["Oddkin · Component roles/space/lg"],
+            "paddingTop": ["Oddkin · Component roles/space/lg"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Profile preview", "12 projects · Joined October 2026"],
+          "types": ["TEXT"],
+          "in": [1, 2, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["Profile preview", "Designing thoughtful tools for teams."],
+          "types": ["TEXT"],
+          "in": [1, 2, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          }
+        },
+        {
+          "path": ["Profile preview", "Profile heading"],
+          "types": ["FRAME"],
+          "in": [1, 2, 3],
+          "bound": { "itemSpacing": ["Oddkin · Component roles/space/sm"] }
+        },
+        {
+          "path": ["Profile preview", "Profile heading", "Avatar"],
+          "types": ["FRAME"],
+          "in": [1, 2, 3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
+            "fills": ["Oddkin · Component roles/color/neutral/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/sm"],
+            "paddingLeft": ["Oddkin · Component roles/space/sm"],
+            "paddingRight": ["Oddkin · Component roles/space/sm"],
+            "paddingTop": ["Oddkin · Component roles/space/sm"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/control/radius"],
+            "topRightRadius": ["Oddkin · Component roles/control/radius"]
+          }
+        },
+        {
+          "path": ["Profile preview", "Profile heading", "Avatar", "AM"],
+          "types": ["TEXT"],
+          "in": [1, 2, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Profile preview", "Profile heading", "Identity"],
+          "types": ["FRAME"],
+          "in": [1, 2, 3],
+          "bound": { "itemSpacing": ["Oddkin · Component roles/space/sm"] }
+        },
+        {
+          "path": ["Profile preview", "Profile heading", "Identity", "Alex Morgan"],
+          "types": ["TEXT"],
+          "in": [1, 2, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/title/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/title/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/title/letter-spacing"],
+            "textStyle": ["Oddkin/Card title"]
+          }
+        },
+        {
+          "path": ["Profile preview", "Profile heading", "Identity", "Product designer"],
+          "types": ["TEXT"],
+          "in": [1, 2, 3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        { "path": ["Profile preview", "View profile"], "types": ["INSTANCE"], "in": [1, 2, 3] },
+        {
+          "path": ["View profile"],
+          "types": ["TEXT"],
+          "in": [0],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 3,
+          "variants": [
+            "Appearance=secondary, Size=md, State=Default",
+            "Appearance=secondary, Size=md, State=Focus"
+          ],
+          "overriddenFields": ["boundVariables", "counterAxisSizingMode", "name"]
         }
       ]
     },

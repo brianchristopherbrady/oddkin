@@ -417,3 +417,142 @@ describe('odd-menu', () => {
     expect(scopeStats()).toEqual(before);
   });
 });
+
+describe('odd-menu as a context menu (Figma contextMenu)', () => {
+  // The target holds a focusable control and the menu's own More actions trigger, as in Figma.
+  async function mountContext(attributes = 'context="brief"') {
+    const result = await mount(`label="More actions" ${attributes}`, CHILDREN);
+    const brief = document.createElement('div');
+    brief.id = 'brief';
+    brief.tabIndex = 0;
+    brief.style.cssText = 'display: flex; gap: 8px; padding: 24px; inline-size: 320px';
+    brief.innerHTML = '<span>Project brief</span><button type="button" id="open">Open</button>';
+    container.prepend(brief);
+    brief.append(result.el);
+    await settle(result.el);
+    const prevented: boolean[] = [];
+    const record = (event: Event) => prevented.push(event.defaultPrevented);
+    document.addEventListener('contextmenu', record);
+    return {
+      ...result,
+      brief,
+      prevented,
+      release: () => document.removeEventListener('contextmenu', record),
+    };
+  }
+  const box = (el: Element) => el.getBoundingClientRect();
+
+  it('opens at the pointer on a right-click in its target, in place of the browser menu', async () => {
+    const { el, brief, prevented, release } = await mountContext();
+    try {
+      brief.focus();
+      await userEvent.click(brief, { button: 'right', position: { x: 40, y: 12 } });
+      await expect.poll(() => isOpen(menu(el))).toBe(true);
+      await settle(el);
+      expect(prevented).toEqual([true]);
+      const surface = box(menu(el));
+      expect(surface.left).toBeCloseTo(box(brief).left + 40, 0);
+      expect(surface.top).toBeGreaterThanOrEqual(box(brief).top + 12);
+      expect(surface.top).toBeLessThanOrEqual(box(brief).top + 12 + 8);
+      await expect.poll(() => focused(el)).toBe('item-0');
+      // A right-click in the open menu keeps it where it is.
+      await userEvent.click(item(el, '1'), { button: 'right' });
+      expect(isOpen(menu(el))).toBe(true);
+      expect(box(menu(el)).left).toBeCloseTo(surface.left, 0);
+      // Escape returns focus to where it was, not to the trigger.
+      await userEvent.keyboard('{Escape}');
+      await expect.poll(() => isOpen(menu(el))).toBe(false);
+      expect(document.activeElement).toBe(brief);
+      // The trigger still opens it below itself.
+      await userEvent.click(trigger(el));
+      await expect.poll(() => isOpen(menu(el))).toBe(true);
+      expect(box(menu(el)).top).toBeCloseTo(box(trigger(el)).bottom + 4, 0);
+    } finally {
+      release();
+    }
+  });
+
+  it('opens beside the focused element with Shift+F10 or the Menu key; a choice reports and returns focus', async () => {
+    const { el, log } = await mountContext();
+    const open = container.querySelector<HTMLElement>('#open')!;
+    open.focus();
+    // F10 alone is the browser's (its menu bar).
+    await userEvent.keyboard('{F10}');
+    expect(isOpen(menu(el))).toBe(false);
+    open.focus();
+    await userEvent.keyboard('{Shift>}{F10}{/Shift}');
+    await expect.poll(() => isOpen(menu(el))).toBe(true);
+    await settle(el);
+    await expect.poll(() => focused(el)).toBe('item-0');
+    const surface = box(menu(el));
+    expect(surface.left).toBeCloseTo(box(open).left, 0);
+    expect(surface.top).toBeCloseTo(box(open).bottom + 4, 0);
+    // The contextmenu event a browser may send for the same key does not move it to the pointer.
+    open.dispatchEvent(
+      new MouseEvent('contextmenu', { bubbles: true, cancelable: true, composed: true }),
+    );
+    expect(isOpen(menu(el))).toBe(true);
+    expect(box(menu(el)).left).toBeCloseTo(surface.left, 0);
+    await userEvent.keyboard('{Enter}');
+    expect(log).toEqual(['select new']);
+    await expect.poll(() => isOpen(menu(el))).toBe(false);
+    expect(document.activeElement).toBe(open);
+    await userEvent.keyboard('{ContextMenu}');
+    await expect.poll(() => isOpen(menu(el))).toBe(true);
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => isOpen(menu(el))).toBe(false);
+    expect(document.activeElement).toBe(open);
+  });
+
+  it('opens at the pointer in right-to-left text and inside a transformed ancestor', async () => {
+    const { el, brief, release } = await mountContext();
+    release();
+    container.dir = 'rtl';
+    container.style.transform = 'translate(12px, 6px)';
+    await settle(el);
+    await userEvent.click(brief, { button: 'right', position: { x: 300, y: 12 } });
+    await expect.poll(() => isOpen(menu(el))).toBe(true);
+    await settle(el);
+    const point = box(el.shadowRoot!.getElementById('point')!);
+    expect(point.left).toBeCloseTo(box(brief).left + 300, 0);
+    expect(point.top).toBeCloseTo(box(brief).top + 12, 0);
+    // Right to left, the menu lines up with the pointer at its inline start, on the right.
+    expect(box(menu(el)).right).toBeCloseTo(point.left, 0);
+  });
+
+  it('leaves the browser menu alone outside its target, while disabled, and without context', async () => {
+    const { el, brief, release } = await mountContext();
+    release();
+    // Dispatched rather than pressed: a browser menu left open would take the next right-click.
+    // `dispatchEvent` is true when nothing cancelled the event.
+    const browserMenu = (target: Element) =>
+      target.dispatchEvent(
+        new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 8, clientY: 8 }),
+      );
+    expect(browserMenu(container.querySelector('#after')!)).toBe(true);
+    el.disabled = true;
+    await settle(el);
+    expect(browserMenu(brief)).toBe(true);
+    el.disabled = false;
+    el.context = '';
+    await settle(el);
+    expect(browserMenu(brief)).toBe(true);
+    expect(isOpen(menu(el))).toBe(false);
+    // Set again, it is the target's context menu again.
+    el.context = 'brief';
+    await settle(el);
+    expect(browserMenu(brief)).toBe(false);
+    await expect.poll(() => isOpen(menu(el))).toBe(true);
+  });
+
+  it('releases its target listeners when removed', async () => {
+    const before = scopeStats();
+    const { el, brief, release } = await mountContext();
+    release();
+    await userEvent.click(brief, { button: 'right' });
+    await expect.poll(() => isOpen(menu(el))).toBe(true);
+    container.remove();
+    flush();
+    expect(scopeStats()).toEqual(before);
+  });
+});

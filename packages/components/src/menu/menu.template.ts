@@ -5,8 +5,9 @@ import type { OddkinMenu } from './menu.js';
 
 /**
  * Anatomy: the `trigger` part (a native `<button>` with the button look, `aria-haspopup="menu"`,
- * `aria-expanded`, and `aria-controls`; the default slot and a chevron) and the `menu` part (a
- * `role="menu"` popover labelled by the trigger). Entries render in order: an action is a
+ * `aria-expanded`, and `aria-controls`; the default slot and a chevron), an empty `point` the menu
+ * opens against as a context menu, and the `menu` part (a `role="menu"` popover labelled by the
+ * trigger). Entries render in order: an action is a
  * `menuitem` (`part="item"`, option-row anatomy: icon, label with description, shortcut), a group
  * is a `role="group"` named by its `part="group"` heading, and a separator is
  * `role="separator"`. An action with `items` is wrapped with its submenu (`role="none"`): the item
@@ -85,6 +86,7 @@ export const menuTemplate = (menu: OddkinMenu) => {
     >
       <slot></slot><span class="trigger-glyph">${chevronDownGlyph}</span>
     </button>
+    <span id="point" class="point"></span>
     <div
       part="menu"
       id="menu"

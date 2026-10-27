@@ -629,6 +629,50 @@ describe('Figma parity: odd-menu (Menu)', () => {
     });
 });
 
+describe('Figma parity: odd-menu as a context menu (contextMenu)', () => {
+  // Figma's contextMenu holds a Menu instance in each open state (its target and hint are the
+  // author's markup): the menu a right-click or Shift+F10 opens is that Menu.
+  for (const state of ['Open', 'Keyboard focus', 'Disabled item'] as const)
+    it(state, async () => {
+      const target = mount(
+        '<div id="brief" tabindex="0">Project brief <odd-menu label="More actions" context="brief"></odd-menu></div>',
+      );
+      const el = target.querySelector<OddkinMenu>('odd-menu')!;
+      el.items = menuItems(state === 'Disabled item' ? 'move' : '');
+      await settle(el);
+      const surface = el.shadowRoot!.getElementById('menu')!;
+      if (state === 'Keyboard focus') {
+        target.focus();
+        await userEvent.keyboard('{Shift>}{F10}{/Shift}');
+      } else await userEvent.click(target, { button: 'right', position: { x: 8, y: 8 } });
+      await expect.poll(() => surface.matches(':popover-open')).toBe(true);
+      await settle(el);
+      if (state === 'Keyboard focus') {
+        await expect.poll(() => el.shadowRoot!.activeElement?.id).toBe('item-0-0');
+        await userEvent.keyboard('{ArrowDown}');
+        expect(el.shadowRoot!.getElementById('item-0-1')!.matches(':focus-visible')).toBe(true);
+      }
+      const frame = [`Menu / ${state}`, 'Surface'];
+      const targets: Target[] = [
+        { layer: frame, el: surface, kind: 'frame' },
+        {
+          layer: [...frame, 'Project actions'],
+          el: surface.querySelector('.group-label')!,
+          kind: 'text',
+        },
+        {
+          layer: [...frame, 'Surface [4]'],
+          el: surface.querySelector('.separator')!,
+          kind: 'frame',
+        },
+      ];
+      await transitions(targets);
+      const family = figma.get('Oddkin/Common/contextMenu')!;
+      expect(family.variants.map((v) => v.values['State'])).toContain(state);
+      expectNone(compare('Oddkin/Common/Menu', { State: state }, targets));
+    });
+});
+
 describe('Figma parity: odd-split-button (splitAction)', () => {
   for (const state of ['Default', 'Focus'] as const)
     it(state, async () => {

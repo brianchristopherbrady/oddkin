@@ -13,8 +13,8 @@
     "deferred": "Not classified (data grid, deferred by the owner)."
   },
   "counts": {
-    "style": 114,
-    "slot": 50,
+    "style": 116,
+    "slot": 54,
     "deferred": 11,
     "controller": 18,
     "native": 7,
@@ -175,6 +175,15 @@
       "reason": "The resize grip uses the shared more glyph; it is a drawn part of the separator, not a nested icon element."
     },
     {
+      "consumer": "Oddkin/Common/appHeader",
+      "consumerId": "613:18461",
+      "source": "Oddkin/Common/iconButton",
+      "sourceId": "159:471",
+      "count": 12,
+      "class": "slot",
+      "reason": "appHeader is a composition example (examples/app-header): the author places odd-button with `label` for search, notifications, account, and the narrow menu button."
+    },
+    {
       "consumer": "Oddkin/Common/avatar/Appearance",
       "consumerId": "374:1576",
       "source": "Oddkin/Common/AvatarItem",
@@ -265,6 +274,24 @@
       "reason": "The busy glyph is the shared spinner module (one decision for odd-button busy, odd-progress indeterminate, and loading parts)."
     },
     {
+      "consumer": "Oddkin/Common/carousel",
+      "consumerId": "613:17999",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 5,
+      "class": "slot",
+      "reason": "The slide actions are author content inside each slide; odd-carousel never imports odd-button."
+    },
+    {
+      "consumer": "Oddkin/Common/carousel",
+      "consumerId": "613:17999",
+      "source": "Oddkin/Common/iconButton",
+      "sourceId": "159:471",
+      "count": 10,
+      "class": "style",
+      "reason": "Previous and next are native `<button>` parts of odd-carousel with the arrow glyphs and the look of the shared button module; they stay focusable when unavailable at either end (`aria-disabled`)."
+    },
+    {
       "consumer": "Oddkin/Common/checkbox",
       "consumerId": "159:1181",
       "source": "Oddkin/Icon/check",
@@ -301,6 +328,24 @@
       "reason": "The chosen suggested colour of odd-color-picker shows the shared check glyph (glyphs module) at the small icon size, white, or black where white falls below 3:1 on the colour."
     },
     {
+      "consumer": "Oddkin/Common/contextMenu",
+      "consumerId": "613:18290",
+      "source": "Oddkin/Common/Menu",
+      "sourceId": "160:941",
+      "count": 3,
+      "class": "slot",
+      "reason": "contextMenu is odd-menu with `context`: the author places the menu and names its target; the target frame and the hint are the authorÃ¢â‚¬â„¢s markup."
+    },
+    {
+      "consumer": "Oddkin/Common/contextMenu",
+      "consumerId": "613:18290",
+      "source": "Oddkin/Common/iconButton",
+      "sourceId": "159:471",
+      "count": 4,
+      "class": "style",
+      "reason": "More actions is odd-menuÃ¢â‚¬â„¢s own trigger part (a native `<button>` with the shared button look and `label`), the visible way to the same actions."
+    },
+    {
       "consumer": "Oddkin/Common/copyButton",
       "consumerId": "555:2984",
       "source": "Oddkin/Common/button/sm",
@@ -308,6 +353,15 @@
       "count": 5,
       "class": "style",
       "reason": "odd-copy-button draws a native button with the small secondary odd-button look from the shared button module (nativeButtonStyles, kept equal to odd-button by styling.browser.test.ts): no nested element."
+    },
+    {
+      "consumer": "Oddkin/Common/hoverCard",
+      "consumerId": "613:18049",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 3,
+      "class": "slot",
+      "reason": "View profile is author content in odd-popover (`interest`); the popover never imports odd-button."
     },
     {
       "consumer": "Oddkin/Common/icon",

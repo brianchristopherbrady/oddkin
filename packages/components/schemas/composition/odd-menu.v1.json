@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oddkin.dev/schemas/composition/odd-menu.v1.json",
   "title": "odd-menu",
-  "description": "A menu button (APG): a button that opens a menu of actions, with groups, separators, and submenus. Items come from `<option value>` (the value is the item's `id`), `<optgroup label>`, and `<hr>` children, or from `items`.",
+  "description": "A menu button (APG): a button that opens a menu of actions, with groups, separators, and submenus. Items come from `<option value>` (the value is the item's `id`), `<optgroup label>`, and `<hr>` children, or from `items`. With `context`, it is also the context menu of another element.",
   "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
   "type": "object",
   "additionalProperties": false,
@@ -50,6 +50,11 @@
           "type": "boolean",
           "description": "Disables the trigger.",
           "default": false
+        },
+        "context": {
+          "type": "string",
+          "description": "The ID of an element, in the same document or shadow root, whose context menu it also is: a right-click or long press on it opens the menu at the pointer, and Shift+F10 or the Menu key while focus is in it opens the menu beside the focused element. The browser keeps its own menu while the trigger is disabled.",
+          "default": ""
         }
       }
     },

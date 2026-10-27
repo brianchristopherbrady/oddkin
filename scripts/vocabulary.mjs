@@ -80,6 +80,8 @@ export const ATTRIBUTES = {
   anchor: { type: 'string' },
   side: { values: ['block-start', 'block-end', 'inline-start', 'inline-end'] },
   align: { values: ['start', 'center', 'end'] },
+  // The ID of the element whose context menu it also is (odd-menu; Figma contextMenu).
+  context: { type: 'string' },
 };
 
 /** Replaced attribute and property names → the canonical name (ADR 0045 §3). */

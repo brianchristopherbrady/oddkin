@@ -1,3 +1,4 @@
+﻿import { html } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-menu> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './menu.js';
@@ -48,6 +49,21 @@ export default defineExamples('odd-menu', {
     fixture({ element }) {
       element.innerHTML =
         '<option value="rename">Rename</option><option value="move">Move</option><option value="delete">Delete</option>';
+    },
+  },
+  contextMenu: {
+    label: 'Context menu of an element',
+    props: { context: 'menu-project-brief', label: 'More actions' },
+    previewRoles: ['menu'],
+    guidance:
+      'Set `context` to the ID of the element whose context menu it is: a right-click or long press there opens it at the pointer, Shift+F10 or the Menu key beside the focused element. Keep the trigger visible next to the element: it is the way to the same actions for everyone who does not right-click.',
+    fixture({ element, mount }) {
+      element.innerHTML = actions;
+      const parts = mount(
+        html`<div><div id="menu-project-brief" tabindex="0">Project brief</div></div>`,
+      );
+      element.before(...parts.children);
+      parts.remove();
     },
   },
   disabled: {

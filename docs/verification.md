@@ -3571,3 +3571,17 @@ Run on the shared working tree at cb2f157. Uncommitted work from Agents 1, 2, an
 | Node project | `npx vitest run --project node` | 108 files passed; `analyzer/test/docs.test.ts` and `workbench/test/node-theme-studio.test.ts` timed out under the full run and pass alone (18 passed: load noise) |
 | Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-analyzer-private.json` | 2 of 2 killed (the exclusion removed; the prefix changed to `--__`) |
 | Typecheck, lint | `npm run typecheck`, `npm run lint` | OK |
+## 2026-10-27 — odd-menu as a context menu (Figma contextMenu) (Agent 1)
+
+Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 156, Firefox 157, WebKit 27.2).
+
+| Check | Command | Result |
+|---|---|---|
+| Figma snapshot | `use_figma` (session 7002425c-0f4c-4f23-91e6-158c86b5c519), `components.export.js` filtered to the four sets on page 356:62 | 4 families, 17 definitions, two slices (length 40129, FNV-1a 2408851036); the 1,921 earlier families parse identical to HEAD |
+| Menu behaviour | `node ../oddkin-lanes/tools/browser-set.mjs packages/components/test/menu.browser.test.ts` | Chromium, Firefox, WebKit 17 passed each (5 context-menu tests: pointer open and placement, a right-click inside the open menu, Escape's focus return, the trigger after a context open, Shift+F10 and the Menu key, F10 alone, a key-sent `contextmenu`, right to left inside a transformed ancestor, the browser menu outside the target, while disabled, and without `context`, and the release on removal) |
+| Parity | `figma-parity.collections.browser.test.ts` | Chromium 134 passed; Firefox and WebKit 130 passed, 4 skipped; the context-opened menu matches `Menu` Open, Keyboard focus, and Disabled item, the instances `contextMenu` holds |
+| Other browser files | `examples`, `contract`, `split-button`, `accessibility` browser tests | Chromium and WebKit 817 passed, 50 skipped; Firefox 812 passed, 55 skipped, with `accessibility.browser.test.ts` timing out a hook under the four-file load and passing alone (5 passed) |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/context-probes.json` | 11 of 11 killed (the cancelled browser menu, presses inside the menu, the key-sent event, focus return, opening while the button is down (Firefox), disabled, the containing-block correction, F10 without Shift, the anchor, the trigger after a context open, right to left) |
+| Reuse map | `npx vitest run --project node packages/components/test/figma-reuse.test.ts` | 4 passed; six references added (slot 54, style 116), catalog tables re-rendered |
+| Build, typecheck, lint, node | `npm run build`, `npm run typecheck`, `npm run lint`, `npx vitest run --project node packages/components` | OK; 442 passed, 1 skipped; the compatibility matrix's menu row regenerated (`npm run compat`) |
+| Size | `node scripts/check-size.mjs` | components:menu 463 B gzip (budget 512); 538 B before the point's rule was cut to its position |

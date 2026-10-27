@@ -409,6 +409,7 @@ export const CATALOG: Catalog = {
       appearance: { enum: ['primary', 'secondary', 'ghost'] },
       size: { enum: ['sm', 'md', 'lg'] },
       disabled: 'boolean',
+      context: 'string',
     },
     properties: {},
     fixed: ['items'],
