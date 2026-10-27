@@ -38,6 +38,7 @@ const isItem = (el: Element): el is HTMLElement =>
  * @useFor Several related actions or formatting controls used together, such as above a table or an editor.
  * @notFor A single action or two (place buttons directly); navigation (use links or odd-side-nav); a menu of commands (use odd-menu).
  * @category Actions
+ * @customization 1 2 3
  */
 export class OddkinToolbar extends OddkinElement.with({
   label: prop.string({ default: '', description: 'Names the toolbar.' }),

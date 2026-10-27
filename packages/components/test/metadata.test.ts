@@ -165,7 +165,12 @@ describe('@oddkin/components published metadata', () => {
       provenance: 'authored',
     });
     for (const tag of ['odd-button', 'odd-input'])
-      expect(customization(tag).levels, tag).toEqual({ known: false, provenance: 'extracted' });
+      expect(customization(tag).levels, tag).toMatchObject({
+        value: [1, 2, 3],
+        provenance: 'authored',
+      });
+    // What each declared level ships is checked in customization.test.ts.
+    expect(customization('odd-tab-panel').levels).toMatchObject({ value: [2, 3] });
     expect(customization('odd-button').variables).toContain(
       'cssprop:odd-button#--odd-button-radius',
     );

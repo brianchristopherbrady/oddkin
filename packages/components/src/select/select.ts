@@ -47,6 +47,7 @@ export const selectChangeEvent = event('change', {
  * @limitation Option descriptions are each option's tooltip (`title`); the closed select shows the label only.
  * @limitation Under a strict `style-src` Content Security Policy, WebKit reports a `style-src-attr` violation for each native `<select>` from its own rendering; nothing visible is blocked. Allow for it where violations are collected.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinSelect extends OddkinFormControl.with({
   label: prop.string({ default: '', description: 'Visible label; names the select.' }),

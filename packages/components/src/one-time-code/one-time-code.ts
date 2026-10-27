@@ -38,6 +38,7 @@ const CARET_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', '
  * @notFor Passwords and PINs the user chooses (use odd-input type="password"); long reference numbers (use odd-input).
  * @limitation Digits only. A digit in the middle cannot be selected alone: Backspace back to it.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinOneTimeCode extends OddkinTextControl.with({
   status: prop.enum(['idle', 'pending', 'complete'], {

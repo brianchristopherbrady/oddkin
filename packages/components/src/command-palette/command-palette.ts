@@ -54,6 +54,7 @@ export const commandActionEvent = event<NavigationActionDetail>('odd-action', {
  * @useFor Finding and running any command or destination by name, from anywhere in an app (typically opened with Ctrl+K or Cmd+K).
  * @notFor A few actions behind a button (use odd-menu); choosing a value in a form (use odd-combobox); site search results (use a page).
  * @category Actions
+ * @customization 1 2 3
  */
 export class OddkinCommandPalette extends OddkinElement.with({
   label: prop.string({ default: '', description: 'Names the dialog. Required.' }),

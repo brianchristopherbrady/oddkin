@@ -52,6 +52,7 @@ const UNITS = ['byte', 'kilobyte', 'megabyte', 'gigabyte'] as const;
  * @limitation The picker button's text ("Choose File", "Browse…") is the browser's and follows the browser's language; the input's own file-count text is hidden, since the rows list the files.
  * @limitation `files` is read-only; the user chooses, drops, and removes files. Dropped files are not filtered by `accept`, as on a native input: check them on the server. Reset clears them, and the browser does not restore chosen files after navigation.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinFileInput extends OddkinFormControl.with({
   label: prop.string({ default: '', description: 'Visible label; names the control.' }),

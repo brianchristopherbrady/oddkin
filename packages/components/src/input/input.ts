@@ -45,6 +45,7 @@ const PAGE = 10;
  * @limitation Validation bubbles anchor to the inner input. `formStateRestoreCallback` restores the value; autofill depends on the inner input's `autocomplete`.
  * @limitation Enter in the field does not submit the form (no implicit submission): the native input inside the shadow root has no form owner. Give the form a submit button.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinInput extends OddkinTextControl.with({
   type: prop.enum(

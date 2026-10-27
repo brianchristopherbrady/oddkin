@@ -23,6 +23,7 @@ export { changeEvent, inputEvent } from '../form-control/radio-control.js';
  * @notFor Switching between content panels (use odd-tabs); options that need descriptions (use odd-radio-group); actions (use odd-button or odd-toolbar).
  * @limitation Option descriptions are each segment's tooltip (`title`); groups (`<optgroup>`) are drawn as one run of segments.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinSegmentedControl extends OddkinRadioControl.with({
   size: prop.enum(['sm', 'md', 'lg'], {

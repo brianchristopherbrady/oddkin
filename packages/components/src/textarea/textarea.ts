@@ -33,6 +33,7 @@ export const TEXTAREA_STRINGS = { count: '{count} / {max} characters' };
  * @limitation `resize="auto"` grows with `field-sizing: content` where the engine has it; elsewhere the element measures the field as its value or width changes. iOS and Firefox for Android draw no resize handle.
  * @limitation Validation bubbles anchor to the inner textarea. `formStateRestoreCallback` restores the value; autofill depends on the inner textarea's `autocomplete`.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinTextarea extends OddkinTextControl.with({
   rows: prop.number({

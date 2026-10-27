@@ -259,7 +259,7 @@ Shared interaction fixtures become portable conformance suites, and product-affe
 
 - Definition lineage: self-referencing `source` field vs an explicit `extend()` helper.
 - Composite dependency mechanism (§8 candidates).
-- Which M4/M10 components are declared recomposable, and at which customization levels.
+- ~~Which M4/M10 components are declared recomposable, and at which customization levels.~~ Resolved 2026-10-27: every element declares levels 1–3 with `@customization`, except odd-tab-panel (2–3: it has no look of its own). `packages/components/test/customization.test.ts` checks what each declared level ships. Level 4 needs a typed anatomy contract, which no element has yet.
 - Product-specific role overrides and several themes per document: generator and CSS-size implications.
 - Product selector threshold and comparison limit in Workbench.
 

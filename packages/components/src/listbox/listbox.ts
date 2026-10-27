@@ -44,6 +44,7 @@ export const listboxChangeEvent = optionChangeEvent;
  * @useFor A visible list of a few to a few dozen choices, one or several, in a form.
  * @notFor A compact choice (use odd-select); a long list to search (use odd-combobox); actions (use odd-menu).
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinListbox extends OddkinOptionControl.with({
   strings: prop.object<Partial<typeof LISTBOX_STRINGS>>({

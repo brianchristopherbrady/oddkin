@@ -12,6 +12,7 @@ import type { Scope } from '@oddkin/core/scope';
  * @useFor The content of one tab of odd-tabs.
  * @notFor Content outside odd-tabs (use a section with a heading).
  * @category Navigation
+ * @customization 2 3
  */
 export class OddkinTabPanel extends OddkinElement.with({
   label: prop.string({ default: '', description: 'The text of its tab.' }),

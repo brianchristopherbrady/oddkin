@@ -124,6 +124,7 @@ export interface CalendarDay {
  * @notFor A memorable date such as a birth date (use odd-input type="date" or separate fields); a date and time (use odd-input type="datetime-local"); a range of dates.
  * @limitation Where the browser has no week information (`Intl.Locale` without `getWeekInfo`), weeks start on Monday unless `first-day` is set.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinCalendar extends OddkinFormControl.with({
   label: prop.string({ default: '', description: 'Visible label; names the calendar.' }),

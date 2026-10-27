@@ -58,6 +58,7 @@ const none = () => false;
  * @useFor A short list of actions behind one button: row actions, "more" actions, create menus.
  * @notFor Choosing a value in a form (use odd-select or odd-listbox); navigation between pages (use links or odd-side-nav); a searchable list of commands (use odd-command-palette).
  * @category Actions
+ * @customization 1 2 3
  */
 export class OddkinMenu extends OddkinElement.with({
   label: prop.string({

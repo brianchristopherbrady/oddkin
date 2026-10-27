@@ -46,6 +46,7 @@ export type PaginationEntry =
  * @useFor Moving through a long list or result set one page at a time.
  * @notFor Steps of a process; switching views (use odd-tabs); short lists (show everything).
  * @category Navigation
+ * @customization 1 2 3
  */
 export class OddkinPagination extends OddkinElement.with({
   label: prop.string({

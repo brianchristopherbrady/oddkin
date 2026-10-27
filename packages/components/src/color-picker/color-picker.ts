@@ -89,6 +89,7 @@ const percent = (fraction: number) => Math.round(fraction * 100);
  * @notFor Theme colours (use design tokens); one colour from a short fixed set (use odd-radio-group or odd-segmented-control).
  * @limitation The value is sRGB, 8 bits per channel (HTML's limited-srgb colour space); HTML's display-p3 colour space is not offered. Typed colours are hex; the value also takes any CSS colour from script.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinColorPicker extends OddkinFormControl.with({
   label: prop.string({ default: '', description: 'Visible label; names the field.' }),

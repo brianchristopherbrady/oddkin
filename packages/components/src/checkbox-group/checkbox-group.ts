@@ -24,6 +24,7 @@ import { OddkinFormControl, type FormControlOptions } from '../form-control/form
  * @limitation `disabled` sets `disabled` on the choices that were enabled and clears it from those again when the group is enabled; a `<fieldset disabled>` around the group disables everything natively.
  * @limitation A required group reports the browser's own message for an unselected set ("Please select one of these options." in English) at its first enabled choice; set `error` for your own wording.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinCheckboxGroup extends OddkinFormControl.with({
   label: prop.string({ default: '', description: 'Visible legend; names the group.' }),

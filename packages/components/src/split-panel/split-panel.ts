@@ -40,6 +40,7 @@ export const splitPanelChangeEvent = event('change', {
  * @notFor A fixed page layout (use the layout recipes); hiding content without resizing (use odd-disclosure).
  * @limitation Stacked panes need a height on the element; side-by-side panes take their content's height.
  * @category Layout
+ * @customization 1 2 3
  */
 export class OddkinSplitPanel extends OddkinElement.with({
   orientation: prop.enum(['horizontal', 'vertical'], {

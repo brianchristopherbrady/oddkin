@@ -26,6 +26,7 @@ export const SWITCH_STRINGS = { on: 'On', off: 'Off' };
  * @notFor A choice confirmed with a submit button (use odd-checkbox); one choice among several (use odd-radio-group).
  * @limitation Validation bubbles anchor to the inner checkbox.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinSwitch extends OddkinCheckable.with({
   strings: prop.object<Partial<typeof SWITCH_STRINGS>>({

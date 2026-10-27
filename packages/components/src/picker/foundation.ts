@@ -8,6 +8,7 @@ export { listboxStructuralStyles } from '../listbox/listbox.structural.styles.js
 export { navRowStructuralStyles } from '../styles/nav-row.structural.styles.js';
 export { treeStructuralStyles } from '../tree/tree.structural.styles.js';
 export { overlaySurfaceStructuralStyles } from '../styles/overlay-surface.structural.styles.js';
+export { controlIndicatorStructuralStyles } from '../styles/control-indicator.structural.styles.js';
 export { inputStructuralStyles } from '../input/input.structural.styles.js';
 export { visuallyHiddenStyles } from '../styles/visually-hidden.styles.js';
 export { comboboxStructuralStyles } from '../combobox/combobox.structural.styles.js';

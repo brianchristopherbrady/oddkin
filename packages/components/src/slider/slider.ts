@@ -49,6 +49,7 @@ export type SliderValueRenderer = (value: number) => string;
  * @useFor A setting within a known range where the approximate position matters more than the exact number: a zoom level, a volume, a preview scale.
  * @notFor An exact number (use odd-input type="number"); one of a few named values (use odd-segmented-control); progress of a task (use odd-progress).
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinSlider extends OddkinFormControl.with({
   label: prop.string({ default: '', description: 'Visible label; names the slider.' }),

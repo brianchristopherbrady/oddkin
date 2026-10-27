@@ -28,6 +28,7 @@ let ids = 0;
  * @useFor A short hint about a control: what an icon button does, a keyboard shortcut.
  * @notFor Content to read at length or interact with (use odd-popover); a control's only name (use its label).
  * @category Overlays
+ * @customization 1 2 3
  */
 export class OddkinTooltip extends OddkinElement.with({
   anchor: prop.string({

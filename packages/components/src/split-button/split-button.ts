@@ -45,6 +45,7 @@ export const splitActionEvent = event<NavigationActionDetail>('odd-action', {
  * @useFor A frequent action with a few alternatives: "Save" with "Save as" and "Save a copy", "Merge" with merge strategies.
  * @notFor Unrelated actions (use separate buttons or odd-toolbar); only a list of actions (use odd-menu).
  * @category Actions
+ * @customization 1 2 3
  */
 export class OddkinSplitButton extends OddkinElement.with({
   value: prop.string({

@@ -24,6 +24,7 @@ export const POPOVER_STRINGS = {
  * @useFor Extra controls or details next to the control that shows them: a share form, settings, a definition.
  * @notFor Content that must be answered before going on (use odd-dialog); a list of actions (use odd-menu); a hint on hover or focus (use odd-tooltip).
  * @category Overlays
+ * @customization 1 2 3
  */
 export class OddkinPopover extends OddkinElement.with({
   label: prop.string({ default: '', description: 'Names the popover.' }),

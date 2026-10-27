@@ -35,6 +35,7 @@ const members = new Set<OddkinDisclosure>();
  * @useFor Optional detail, advanced settings, and frequently asked questions (an accordion with `name`).
  * @notFor Switching between views (use odd-tabs); navigation menus; content everyone needs to read.
  * @category Navigation
+ * @customization 1 2 3
  */
 export class OddkinDisclosure extends OddkinElement.with({
   label: prop.string({

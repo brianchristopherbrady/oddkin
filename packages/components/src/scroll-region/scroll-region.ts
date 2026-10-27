@@ -21,6 +21,7 @@ export const SCROLL_REGION_STRINGS = { label: 'Scrollable content' };
  * @useFor A bounded area that scrolls inside a page: a long list in a panel, a log, a preview pane.
  * @notFor The page itself (let the document scroll); a set of choices (use a listbox, which manages focus itself).
  * @category Layout
+ * @customization 1 2 3
  */
 export class OddkinScrollRegion extends OddkinElement.with({
   label: prop.string({ default: '', description: 'Names the region while it scrolls.' }),

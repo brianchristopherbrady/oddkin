@@ -21,6 +21,7 @@ export { changeEvent, inputEvent };
  * @notFor An immediate on/off setting (use odd-switch); one choice among several (use odd-radio-group).
  * @limitation Validation bubbles anchor to the inner checkbox.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinCheckbox extends OddkinCheckable.with({
   indeterminate: prop.boolean({

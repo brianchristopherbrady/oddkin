@@ -37,6 +37,7 @@ const held = new Set<OddkinToast>();
  * @useFor A passing result of the user's action: saved, sent, copied, with Undo or Retry.
  * @notFor A message that must stay with its region (use odd-alert); a decision (use odd-dialog); a field error (use the field's `error`).
  * @category Overlays
+ * @customization 1 2 3
  */
 export class OddkinToast extends OddkinElement.with({
   tone: prop.enum(TONES, {

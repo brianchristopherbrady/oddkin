@@ -3527,3 +3527,15 @@ Run on the shared working tree at cb2f157. Uncommitted work from Agents 1, 2, an
 | Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs` with the three survivors from `c-mutants-picker.json` (Chromium) | all three killed: "popup narrow" by "keeps the popup as wide as the field when a row is wider", "leaf right handled" by "leaves Right on a row without children to the page", "capped widths" by the combobox's "counts each chip at its full width" |
 | Typecheck | `npm run typecheck` | OK |
 | Format | `npx prettier --check` on the two test files | OK |
+
+## 2026-10-27 — Customization levels for every element (Agent 1)
+
+| Check | Command | Result |
+|---|---|---|
+| Build and metadata | `npm run build` | OK; `build-metadata.mjs` gives no warnings; 53 elements with authored levels (52 with [1, 2, 3], odd-tab-panel [2, 3]) |
+| Levels | `npx vitest run --project node packages/components/test/customization.test.ts` | 159 passed, 1 skipped (odd-tab-panel's level 1) |
+| Node project (components) | `npx vitest run --project node packages/components` | 21 files, 442 passed, 1 skipped; `metadata.test.ts` now expects odd-button and odd-input levels [1, 2, 3] |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/levels-probes.json` | 5 of 5 killed: a foundation without a structural sheet (picker, input), a foundation exporting its skin (card), a structural sheet reading a colour role (tab-panel) or a radius role (status-marker) |
+| Typecheck, lint, size | `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` | OK |
+
+**Findings:** the analyzer publishes private `--_*` properties as CEM `cssProperties` and metadata `customization.variables`, with empty descriptions (59 entries on 27 elements); the level-2 check skips them, and the analyzer change is posted to Agent 2. Level 3 for the elements with several skins (odd-checkbox, odd-picker) means a product composes its own visual sheets on the foundation's structural sheets; `test/derived.ts` replaces only the last sheet.

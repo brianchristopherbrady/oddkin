@@ -55,6 +55,7 @@ export const datePickerChangeEvent = event('change', {
  * @notFor A memorable date such as a birth date (separate fields, or odd-input type="date"); a date and time (odd-input type="datetime-local"); a range of dates; an inline month to choose from (odd-calendar).
  * @limitation Typed dates are read as three groups of digits in the language's order with a four-digit year; month names are not read.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinDatePicker extends OddkinFormControl.with({
   label: prop.string({ default: '', description: 'Visible label; names the field.' }),

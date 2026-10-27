@@ -42,6 +42,7 @@ const valueOf = (panel: OddkinTabPanel, index: number) => panel.value || String(
  * @useFor Switching between related views of the same subject in place.
  * @notFor Page navigation (use links or odd-side-nav); a choice of value in a form (use a radio group or segmented control); steps of a process.
  * @category Navigation
+ * @customization 1 2 3
  */
 export class OddkinTabs extends OddkinElement.with({
   label: prop.string({ default: '', description: 'Names the tab list.' }),

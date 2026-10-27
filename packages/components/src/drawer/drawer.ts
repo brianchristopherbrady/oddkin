@@ -22,6 +22,7 @@ import { OddkinDialog } from '../dialog/dialog.js';
  * @useFor Details or a task beside the page that keeps its context: an item's properties, filters, settings.
  * @notFor A decision that must be made first (use odd-dialog); extra detail next to its trigger (use odd-popover); a passing confirmation (use odd-toast).
  * @category Overlays
+ * @customization 1 2 3
  */
 export class OddkinDrawer extends OddkinDialog.with({
   side: prop.enum(['inline-end', 'inline-start'], {

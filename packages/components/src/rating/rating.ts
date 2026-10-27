@@ -34,6 +34,7 @@ export const RATING_STRINGS = {
  * @notFor A number on a long or continuous scale (use odd-slider); choices that are not ordered (use odd-radio-group).
  * @limitation Whole stars only: no half values. The focus ring and the chosen value move together, as on native radios.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinRating extends OddkinRadioControl.with({
   max: prop.number({

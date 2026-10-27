@@ -49,6 +49,7 @@ export const treeChangeEvent = event('change', {
  * @useFor Browsing and choosing in nested data: files, folders, categories, an outline.
  * @notFor Site navigation (use odd-side-nav); a flat list of choices (use odd-listbox); content sections (use odd-disclosure).
  * @category Collections
+ * @customization 1 2 3
  */
 export class OddkinTree extends OddkinElement.with({
   label: prop.string({ default: '', description: 'Names the tree.' }),

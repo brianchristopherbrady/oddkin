@@ -39,6 +39,7 @@ export type BreadcrumbEntry =
  * @useFor Showing where a page sits in a hierarchy, with links to the levels above it.
  * @notFor The steps of a process; primary navigation (use odd-side-nav); a back button.
  * @category Navigation
+ * @customization 1 2 3
  */
 export class OddkinBreadcrumbs extends OddkinElement.with({
   label: prop.string({

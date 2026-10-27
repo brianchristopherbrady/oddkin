@@ -14,6 +14,7 @@ import { OddkinElement, prop } from '@oddkin/core/element';
  * @useFor A readable column of page content; a region whose children respond to its width with container queries.
  * @notFor Spacing alone (use `.odd-box`); a scrolling area (use `odd-scroll-region`).
  * @category Layout
+ * @customization 1 2 3
  */
 export class OddkinContainer extends OddkinElement.with({
   measure: prop.enum(['constrained', 'fluid'], {

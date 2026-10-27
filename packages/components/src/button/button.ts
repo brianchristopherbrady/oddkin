@@ -50,6 +50,7 @@ export const changeEvent = event('change', {
  * @limitation Implicit submission: Enter in a text field never uses this element as the default button. The default button is the form's first native submit button; without one, Enter submits with no submitter, and only when the form has a single text field, so this element's `name`, `value`, and overrides are not sent. Use a native submit button where Enter must submit through it.
  * @limitation `formAction`, `formMethod`, `formEnctype`, and `formTarget` return the attribute text: unlike a native button they neither resolve URLs nor report the form's values. The temporary button receives them unchanged, so missing and invalid values behave as on a native button.
  * @category Actions
+ * @customization 1 2 3
  */
 export class OddkinButton extends OddkinElement.with({
   appearance: prop.enum(['primary', 'secondary', 'ghost'], {

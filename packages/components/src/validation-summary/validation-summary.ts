@@ -75,6 +75,7 @@ const invalid = (control: Control) => !!control.willValidate && control.validity
  * @limitation It reports submissions the user starts inside the form (a click on a submit button there, or Enter in a field). `form.requestSubmit()` and `form.checkValidity()` called by a script, and a submit button outside the form (its `form` attribute), leave it hidden. A form with `novalidate` is never blocked, so the summary never shows.
  * @limitation The form is found when the summary connects or its `form` attribute changes: the ancestor form, or the form with that ID in the same document or shadow root.
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinValidationSummary extends OddkinElement.with({
   label: prop.string({

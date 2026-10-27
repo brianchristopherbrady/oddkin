@@ -24,6 +24,7 @@ export { changeEvent, inputEvent } from '../form-control/radio-control.js';
  * @useFor One choice from a few options that should all stay visible, especially with descriptions: a visibility setting, a plan.
  * @notFor Several independent choices (use odd-checkbox-group); a long list (use odd-select or odd-combobox); a compact switch between a few short values (use odd-segmented-control).
  * @category Forms
+ * @customization 1 2 3
  */
 export class OddkinRadioGroup extends OddkinRadioControl.with({
   orientation: prop.enum(['vertical', 'horizontal'], {

@@ -31,6 +31,7 @@ export const DIALOG_STRINGS = {
  * @useFor A task or decision that must be finished or dismissed before going on: a short form, a confirmation, a destructive action.
  * @notFor Extra detail next to its trigger (use odd-popover); a panel beside the page (use odd-drawer); a passing confirmation (use odd-toast).
  * @category Overlays
+ * @customization 1 2 3
  */
 export class OddkinDialog extends OddkinElement.with({
   label: prop.string({ default: '', description: 'The title, which names the dialog. Required.' }),
