@@ -70,4 +70,5 @@ export function observe(root: Document | ShadowRoot | Element): () => void {
   return () => observer.disconnect();
 }
 
-observe(document);
+// Loading without a document (server rendering, a Node import) registers nothing.
+if (typeof document !== 'undefined') observe(document);

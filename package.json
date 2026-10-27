@@ -28,7 +28,7 @@
     "test": "npm run build && vitest run",
     "test:e2e": "playwright test",
     "verify:packs": "node scripts/verify-packs.mjs && node apps/docs/snippets/verify.mjs",
-    "verify:metadata": "node scripts/verify-metadata.mjs && node scripts/check-vocabulary.mjs",
+    "verify:metadata": "node scripts/verify-metadata.mjs && node scripts/check-vocabulary.mjs && node scripts/agent-kit/package-kits.mjs",
     "dev": "tsc -b apps/docs && node apps/docs/dev.mjs",
     "verify": "npm run lint && npm run typecheck && npm test && npm run verify:metadata && npm run size && npm run test:e2e && npm run verify:packs",
     "size": "node scripts/check-size.mjs"
