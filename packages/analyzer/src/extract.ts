@@ -574,13 +574,17 @@ export function extract(program: ts.Program, root: string): Extraction {
   const attributeValue = (attributes: string, name: string) =>
     new RegExp(`(?:^|\\s)${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'>]+))`).exec(attributes);
 
-  /** CSS custom properties read with `var()` and tokens read with `var(--odd-…)` or `token()`. */
+  /**
+   * CSS custom properties read with `var()` and tokens read with `var(--odd-…)` or `token()`.
+   * Private `--_*` properties are the element's own wiring, not a customization path.
+   */
   function styleReads(node: ts.Node): { cssProperties: string[]; tokens: string[] } {
     const cssProperties: string[] = [];
     const tokens: string[] = [];
     scanTemplates(node, 'css', (text, template) => {
       for (const match of text.matchAll(/var\(\s*(--[\w-]+)/g)) {
         const variable = match[1] as string;
+        if (variable.startsWith('--_')) continue;
         (variable.startsWith('--odd-') ? tokens : cssProperties).push(variable);
       }
       const walk = (child: ts.Node) => {

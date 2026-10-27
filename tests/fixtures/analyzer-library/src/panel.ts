@@ -29,6 +29,7 @@ export class AcmePanel extends OddkinElement.with({
       padding: ${token('layout.inset')};
       gap: var(--acme-panel-gap, 1rem);
       color: var(--odd-color-text-primary);
+      margin-block-end: var(--_panel-trailing, 0);
     }
   `;
   static override events = { dismiss };

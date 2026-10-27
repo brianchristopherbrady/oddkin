@@ -3561,3 +3561,13 @@ Run on the shared working tree at cb2f157. Uncommitted work from Agents 1, 2, an
 | Contracts, typecheck, lint | `npm run contracts`, `npm run typecheck`, `npm run lint` | OK |
 
 **Finding:** before this change a part removed the node it last inserted wherever that node had moved, so swapping two nodes in an unkeyed list (`${[a, b]}` then `${[b, a]}`) left only one. A part now removes its node only while it sits just before the part's end marker.
+
+## 2026-10-27 — Private custom properties stay private (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Analyzer and agent kit | `npx vitest run --project node packages/analyzer tests/agent-kit` | 18 files, 162 passed; the library fixture's panel reads `var(--_panel-trailing)` and publishes only `--acme-panel-gap` |
+| Published metadata | `node scripts/build-metadata.mjs`, then a count of `"--_` and `#--_` in both packages' `oddkin.metadata.json` and `custom-elements.json` | components 0 (97 before: 58 `customization.variables`, 39 `styles[…].cssProperties`), ai 0; no warnings |
+| Node project | `npx vitest run --project node` | 108 files passed; `analyzer/test/docs.test.ts` and `workbench/test/node-theme-studio.test.ts` timed out under the full run and pass alone (18 passed: load noise) |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-analyzer-private.json` | 2 of 2 killed (the exclusion removed; the prefix changed to `--__`) |
+| Typecheck, lint | `npm run typecheck`, `npm run lint` | OK |
