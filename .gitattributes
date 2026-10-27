@@ -1,2 +1,5 @@
 * text=auto eol=lf
 *.png binary
+# Append-only logs: a rebase keeps both sides' new rows instead of conflicting.
+docs/progress-log.md merge=union
+docs/verification.md merge=union
