@@ -237,6 +237,26 @@ describe('odd-picker', () => {
     expect(shown(el)).toContain('Roads');
   });
 
+  it('leaves Right on a row without children to the page', async () => {
+    const { el } = await tree();
+    const seen: string[] = [];
+    container.addEventListener('keydown', (event) =>
+      seen.push(`${event.key} ${event.defaultPrevented}`),
+    );
+    await press(el, '{ArrowDown}{End}');
+    expect(active(el)).toBe('Imagery');
+    seen.length = 0;
+    await press(el, '{ArrowRight}');
+    expect(seen).toEqual(['ArrowRight false']);
+    expect(active(el)).toBe('Imagery');
+    // On a row with children, Right is the picker's.
+    await press(el, '{Home}');
+    seen.length = 0;
+    await press(el, '{ArrowRight}');
+    expect(seen).toEqual(['ArrowRight true']);
+    expect(shown(el)).toContain('Transportation');
+  });
+
   it('keeps the expansion the caller owns, reporting odd-toggle only', async () => {
     const { el, log } = await tree({ expanded: [] });
     el.addEventListener('odd-toggle', (event) => event.preventDefault());
@@ -559,6 +579,21 @@ describe('odd-picker', () => {
     expect(part(el, 'control').getBoundingClientRect().width).toBe(200);
     expect(value.scrollWidth).toBeGreaterThan(value.clientWidth);
     expect(part(el, 'control').getBoundingClientRect().height).toBeLessThan(60);
+  });
+
+  it('keeps the popup as wide as the field when a row is wider', async () => {
+    const label = 'Regional transportation and logistics networks of the coast';
+    const { el } = await mount('label="Map layers"', {
+      items: [{ id: 'long', label }, ...LAYERS],
+    });
+    el.style.inlineSize = '200px';
+    await settle(el);
+    await press(el, '{ArrowDown}');
+    const field = part(el, 'control').getBoundingClientRect();
+    const popup = part(el, 'popup').getBoundingClientRect();
+    expect(field.width).toBe(200);
+    expect(popup.width).toBeCloseTo(field.width, 0);
+    expect(row(el, label).getBoundingClientRect().right).toBeLessThanOrEqual(popup.right + 0.5);
   });
 
   it('scrolls the rows while the footer stays, and flips above the field when there is no room below', async () => {

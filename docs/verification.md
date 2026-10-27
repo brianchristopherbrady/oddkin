@@ -3518,3 +3518,12 @@ Run on the shared working tree at cb2f157. Uncommitted work from Agents 1, 2, an
 | Bare imports | walk of `button.define.js`, `input.define.js`, `forms.js`, and the mapped core and tokens entries | only `@oddkin/core/i18n` was unmapped; no further bare imports below it |
 | e2e | `npx playwright test e2e/forms.spec.ts --project=<engine>` | Chromium 2 passed, Firefox 2 passed, WebKit 2 passed (all three failed before the change) |
 | Format | `npx prettier --check tests/forms/index.html` | OK |
+
+## 2026-10-27 — odd-picker probe survivors (Agent 1)
+
+| Check | Command | Result |
+|---|---|---|
+| Browser tests | `node ../oddkin-lanes/tools/browser-set.mjs` on `picker`, `combobox`, and `tree` browser tests | Chromium 65 passed; Firefox 62 passed, 3 skipped; WebKit 62 passed, 3 skipped (forced colours is Chromium only) |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs` with the three survivors from `c-mutants-picker.json` (Chromium) | all three killed: "popup narrow" by "keeps the popup as wide as the field when a row is wider", "leaf right handled" by "leaves Right on a row without children to the page", "capped widths" by the combobox's "counts each chip at its full width" |
+| Typecheck | `npm run typecheck` | OK |
+| Format | `npx prettier --check` on the two test files | OK |

@@ -330,6 +330,32 @@ describe('odd-combobox', () => {
     expect(part(el, 'more').textContent).toContain(`+${5 - visible().length}`);
   });
 
+  it('counts each chip at its full width, so one longer than the field is "+1" however it was laid out', async () => {
+    const long = '<option value="long">Regional transportation and logistics networks</option>';
+    const { el } = await mount(
+      'label="Topics" multiple style="inline-size: 200px"',
+      long + PROJECTS.replace(' selected', ''),
+    );
+    const visible = () =>
+      parts(el, 'chip').filter((chip) => getComputedStyle(chip).visibility === 'visible');
+    const more = () => part(el, 'more');
+    // Chosen alone: the chip would be cut short in the field, so it does not fit.
+    el.values = ['long'];
+    await expect.poll(() => more()?.hidden).toBe(false);
+    expect(visible()).toHaveLength(0);
+    expect(more().textContent).toContain('+1');
+    // Left alone after another value fitted before it: the same count.
+    el.values = ['atlas', 'long'];
+    await expect
+      .poll(() => visible().map((chip) => chip.querySelector('.chip-text')!.textContent))
+      .toEqual(['Atlas']);
+    el.values = ['long'];
+    await settle(el);
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    expect(visible()).toHaveLength(0);
+    expect(more().textContent).toContain('+1');
+  });
+
   it('submits, requires, resets, and restores like a native select', async () => {
     const { el, form } = await mount(
       'label="Project" name="project" required',
