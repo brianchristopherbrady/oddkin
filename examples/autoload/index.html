@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-g5nm9+ZZldlqkD9ECDs/DwDaENUm2IgZf0B1my3tctQ='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>Autoload · Oddkin</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/layout.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/components/autoload": "../../packages/components/dist/autoload/autoload.js",
+          "@oddkin/core/controllers/active-descendant": "../../packages/core/dist/controllers/active-descendant.js",
+          "@oddkin/core/controllers/announce": "../../packages/core/dist/controllers/announce.js",
+          "@oddkin/core/controllers/focus": "../../packages/core/dist/controllers/focus.js",
+          "@oddkin/core/controllers/form": "../../packages/core/dist/controllers/form.js",
+          "@oddkin/core/controllers/observe": "../../packages/core/dist/controllers/observe.js",
+          "@oddkin/core/controllers/position": "../../packages/core/dist/controllers/position.js",
+          "@oddkin/core/controllers/resize": "../../packages/core/dist/controllers/resize.js",
+          "@oddkin/core/controllers/typeahead": "../../packages/core/dist/controllers/typeahead.js",
+          "@oddkin/core/diagnostics": "../../packages/core/dist/diagnostics/index.js",
+          "@oddkin/core/element": "../../packages/core/dist/element/index.js",
+          "@oddkin/core/helpers/live": "../../packages/core/dist/helpers/live.js",
+          "@oddkin/core/helpers/style-map": "../../packages/core/dist/helpers/style-map.js",
+          "@oddkin/core/i18n": "../../packages/core/dist/i18n/index.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/template/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js"
+        }
+      }
+    </script>
+    <script type="module" src="./autoload.js"></script>
+  </head>
+  <body>
+    <main class="odd-stack odd-box">
+      <h1>Autoload</h1>
+      <p>
+        Each element is registered on its first appearance by
+        <code>@oddkin/components/autoload</code>: no per-element imports.
+      </p>
+      <odd-alert tone="info" label="Billing changes"
+        >Invoices move to the first of the month.</odd-alert
+      >
+      <odd-card label="Billing">
+        <h2 slot="header">Billing <odd-badge tone="success">Active</odd-badge></h2>
+        <odd-input label="Email" name="email" type="email" value="ada@example.com"></odd-input>
+        <odd-button slot="footer" appearance="primary">Save</odd-button>
+      </odd-card>
+    </main>
+  </body>
+</html>

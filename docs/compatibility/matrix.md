@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-26** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)), text-wrap-balance (newly (2024-05-13)), scrollbar-gutter (newly (2024-12-11)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 200 stylesheets, 325 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 201 stylesheets, 325 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -308,6 +308,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `examples/ai-agent/styles.css` | example | 21 |
 | `examples/ai-research/styles.css` | example | 26 |
 | `examples/ai-writing/styles.css` | example | 26 |
+| `examples/autoload/styles.css` | example | 6 |
 | `examples/binding-rule/styles.css` | example | 32 |
 | `examples/components-only/styles.css` | example | 11 |
 | `examples/core-counter/styles.css` | example | 33 |

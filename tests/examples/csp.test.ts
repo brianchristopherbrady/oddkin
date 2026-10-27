@@ -13,6 +13,7 @@ const pages = [
   'composite-roles',
   'full-app',
   'forms',
+  'autoload',
 ];
 
 describe.each(pages)('%s CSP', (name) => {

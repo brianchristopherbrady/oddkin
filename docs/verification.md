@@ -3442,3 +3442,20 @@ Environment: Windows, Node 24.22.1, npm (workspaces). Other lanes' work in progr
 - **No repeated JSON:** the workspace kit's `json/components.json` (1.07 MB) repeats `custom-elements.json` and `oddkin.metadata.json`, which the package already ships; the packaged kit omits the JSON bundles and points at those files and the token inspection (1,490 → 340 KiB unpacked).
 - **Composition reference:** generated from what the package publishes (the entry's declarations, `schemas/composition/`); its example is checked with the package's own `validateComposition` at generation.
 - **Not verified:** how coding agents actually discover `node_modules/<package>/agent/` (round 7's planned agent evaluation).
+
+## 2026-10-26 — The optional autoloader (M10 round 8; ADR 0046 D9)
+
+Environment: Windows, Node 24.22.1, Playwright 1.64.1 (Chromium, Firefox, WebKit). Other lanes' work in progress: Agent 2's `@oddkin/ai` recipes, Agent 1's text-entry tests, Agent 3's core contracts.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| e2e | `npx playwright test e2e/autoload.spec.ts` | 9 passed (3 engines): workspace build and packed tarballs register every element under the strict CSP with no violation or error; one `define` request per tag; elements added later, and in a shadow root after `observe()`, load once per tag; after `stop()` the shadow root is not watched; `<odd-nope>` is reported as `autoload.tag.unknown` |
+| Requests and time to defined | annotations of the same run | module requests: autoload 72, explicit 70 (packed 71, 69). Time to the five elements defined, packed: Chromium 507 / 409 ms, Firefox 1,369 / 1,932, WebKit 413 / 329; workspace: Chromium 2,150 / 835, Firefox 3,469 / 1,847, WebKit 381 / 297. An earlier run gave other times (workspace Chromium 1,171 / 256): parallel workers make the times noisy; the request counts were stable |
+| Isolation, names | `npx vitest run --project node packages/components/test/autoload.test.ts` | 2 passed: the names match the 53 `define/*` exports; no other module imports it |
+| Size | `node scripts/check-size.mjs` | `autoload` 1,046 B gzip (budget 1,088) |
+| Example pages | `tests/examples`; `npm run lint:layout` | 161 passed (CSP hash and import map of `autoload`); 42 files, 0 unlisted |
+
+**Findings:**
+- **Import maps:** the autoloader imports definitions by URL, which no static graph shows, so its pages' maps cover every `define/*` entry's graph (the packed-consumer tool's `dynamicDefines`, and `--import-map … --html <page>`).
+- **Diagnostics:** `@oddkin/components` has no development build, so the unknown-tag report runs in every build, once per tag; an application can route it with `setErrorHandler`.
+- **Not verified:** performance on a real network or device (the times are a local static server under parallel test load).

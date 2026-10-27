@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  font-family: var(--odd-font-family-sans);
+  color: var(--odd-color-text-primary);
+  background: var(--odd-color-canvas);
+}
+
+main {
+  max-inline-size: 40rem;
+}

@@ -18,6 +18,7 @@ const pages = [
   'editable-list',
   'forms',
   'full-app',
+  'autoload',
 ];
 
 const IMPORTS = [

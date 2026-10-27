@@ -18,6 +18,16 @@ Importing `@oddkin/components/button` gives the class, template, styles, and def
 
 Styles read semantic tokens through component variables (`--odd-button-radius`, `--odd-button-background`, …), so a theme or a scoped override restyles the button without JavaScript. Load a theme stylesheet such as `@oddkin/tokens/css/default.css`.
 
+## Autoload (optional)
+
+```js
+import '@oddkin/components/autoload'; // registers each odd-* element on its first appearance
+```
+
+The autoloader imports an element's `define/<name>` entry when its tag first appears in the document, once per tag, resolved relative to the autoloader so import maps and CDNs serve the same files. Call `observe(shadowRoot)` for shadow roots your page creates; `load(tag)` registers one tag ahead of time. An `odd-*` tag that is not an Oddkin element is reported once (`autoload.tag.unknown`, through `@oddkin/core/diagnostics`).
+
+Use it for markup you do not control the imports of: content written by people or agents, prototypes, CMS pages. For an application, import each `define/<name>` you use: a bundler sees them, the browser can preload them, and nothing is fetched after the first render. Measured with the same five elements under a strict CSP: two more module requests (the autoloader and its list of names), and the definitions start loading only once it runs (`e2e/autoload.spec.ts`).
+
 ## Side navigation from data
 
 ```js

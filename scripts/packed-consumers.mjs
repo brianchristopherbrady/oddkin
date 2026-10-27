@@ -45,6 +45,15 @@ export const CONSUMERS = {
     page: 'examples/full-app',
     files: ['index.html', 'main.js', 'styles.css'],
   },
+  // The optional autoloader (ADR 0046 D9) beside the same markup with explicit define imports.
+  autoload: {
+    packages: ['core', 'tokens', 'components'],
+    page: 'examples/autoload',
+    files: ['index.html', 'explicit.html', 'autoload.js', 'explicit.js', 'styles.css'],
+    pages: ['index.html', 'explicit.html'],
+    // The autoloader imports define/* entries by URL, which no static graph shows.
+    dynamicDefines: true,
+  },
 };
 
 const npmCli = process.env['npm_execpath']?.endsWith('.js')
@@ -78,6 +87,15 @@ const urlFrom = (from, file) => {
   const path = relative(from, file).split(sep).join('/');
   return path.startsWith('.') ? path : `./${path}`;
 };
+
+/** Every define/* entry of @oddkin/components under `modules`, as files. */
+async function defineEntries(modules, condition) {
+  const dir = await realpath(join(modules, '@oddkin', 'components'));
+  const manifest = JSON.parse(await readFile(join(dir, 'package.json'), 'utf8'));
+  return Object.keys(manifest.exports ?? {})
+    .filter((key) => key.startsWith('./define/'))
+    .map((key) => join(dir, exported(manifest, key, condition)));
+}
 
 /** The module scripts an HTML page loads, as files. */
 const moduleScripts = (html, dir) =>
@@ -187,18 +205,23 @@ export async function packConsumer(name, work) {
     const bin = join(site, 'node_modules/@oddkin/tokens', Object.values(manifest.bin)[0]);
     run([bin, ...consumer.generate], site);
   }
-  let html = await readFile(join(site, 'index.html'), 'utf8');
-  const map = await importMap(moduleScripts(html, site), {
-    modules: join(site, 'node_modules'),
-    pageDir: site,
-  });
-  html = withImportMap(html, map.imports);
-  for (const [, href] of html.matchAll(/href="([^"]+)"/g))
-    html = html.replace(`href="${href}"`, `href="${await publishedFile(site, href)}"`);
-  if (html.includes('../../'))
-    throw new Error(`${name}: index.html still references the workspace`);
-  await writeFile(join(site, 'index.html'), html);
-  return { site, installed: [...installed].sort(), ...map };
+  const modules = join(site, 'node_modules');
+  const dynamic = consumer.dynamicDefines ? await defineEntries(modules, 'default') : [];
+  let result;
+  for (const page of consumer.pages ?? ['index.html']) {
+    let html = await readFile(join(site, page), 'utf8');
+    const map = await importMap([...moduleScripts(html, site), ...dynamic], {
+      modules,
+      pageDir: site,
+    });
+    html = withImportMap(html, map.imports);
+    for (const [, href] of html.matchAll(/href="([^"]+)"/g))
+      html = html.replace(`href="${href}"`, `href="${await publishedFile(site, href)}"`);
+    if (html.includes('../../')) throw new Error(`${name}: ${page} still references the workspace`);
+    await writeFile(join(site, page), html);
+    result ??= map;
+  }
+  return { site, installed: [...installed].sort(), ...result };
 }
 
 const types = {
@@ -270,9 +293,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (page) {
     // The workspace import map of a page (development builds), for its index.html.
     const pageDir = resolve(root, page);
-    const html = await readFile(join(pageDir, 'index.html'), 'utf8');
-    const { imports } = await importMap(moduleScripts(html, pageDir), {
-      modules: join(root, 'node_modules'),
+    const html = await readFile(join(pageDir, arg('--html') ?? 'index.html'), 'utf8');
+    const consumer = Object.values(CONSUMERS).find((c) => resolve(root, c.page) === pageDir);
+    const modules = join(root, 'node_modules');
+    const dynamic = consumer?.dynamicDefines ? await defineEntries(modules, 'development') : [];
+    const { imports } = await importMap([...moduleScripts(html, pageDir), ...dynamic], {
+      modules,
       pageDir,
       condition: 'development',
     });

@@ -234,3 +234,4 @@ Moved from `IMPLEMENTATION_PLAN.md` §10 on 2026-10-26 ([ADR 0046](./architectur
 | 2026-10-26 | Layout recipes in the display elements' shadow roots: alert, empty-state, progress, stat, and the combobox chips; card kept as the styling-contract example | [verification.md](./verification.md) |
 | 2026-10-26 | Multiselect value views (`view`), the selected-items review, and the selection panel (`select-all`, `review`) on odd-combobox and odd-picker | [verification.md](./verification.md) |
 | 2026-10-26 | Version-matched agent kits inside @oddkin/components and @oddkin/ai (ADR 0046 D6): `agent/` with `llms.txt` and the composition reference, checked by verify-packs | [verification.md](./verification.md) |
+| 2026-10-26 | The optional autoloader `@oddkin/components/autoload` (ADR 0046 D9), with autoload and explicit pages measured in a packed consumer under strict CSP | [verification.md](./verification.md) |

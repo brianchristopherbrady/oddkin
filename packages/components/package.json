@@ -658,6 +658,10 @@
       "types": "./dist/models/index.d.ts",
       "default": "./dist/models/index.js"
     },
+    "./autoload": {
+      "types": "./dist/autoload/autoload.d.ts",
+      "default": "./dist/autoload/autoload.js"
+    },
     "./composition": {
       "types": "./dist/composition/index.d.ts",
       "default": "./dist/composition/index.js"
