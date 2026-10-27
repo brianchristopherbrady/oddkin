@@ -49,6 +49,13 @@ export function deepActiveElement(): Element | null {
   return active;
 }
 
+const sideways = (el: Element) => /^(vertical|sideways)/.test(getComputedStyle(el).writingMode);
+
+/** A listbox surface is at least as wide as its field (Figma ListboxSurface). */
+function sizeToAnchor(surface: HTMLElement, anchor: DOMRectReadOnly, across = sideways(surface)) {
+  surface.style.setProperty('--_anchor-inline-size', `${across ? anchor.height : anchor.width}px`);
+}
+
 /** Whether `node` is `container` or inside it in the composed tree (slots and shadow roots). */
 export function composedContains(container: Node, node: Node | null): boolean {
   for (let n = node; n; n = (n as Element).assignedSlot ?? n.parentNode ?? (n as ShadowRoot).host)
@@ -88,16 +95,13 @@ export class Overlay implements Controller {
       onPlace: (placement) => {
         const surface = o.surface();
         if (surface) {
-          const sideways = /^(vertical|sideways)/.test(getComputedStyle(surface).writingMode);
-          const { availableWidth: width, availableHeight: height, anchor } = placement;
+          const across = sideways(surface);
+          const { availableWidth: width, availableHeight: height } = placement;
           const style = surface.style;
-          style.setProperty('--_overlay-max-inline-size', `${sideways ? height : width}px`);
-          style.setProperty('--_overlay-max-block-size', `${sideways ? width : height}px`);
-          // A listbox surface is at least as wide as its field (Figma ListboxSurface).
-          style.setProperty(
-            '--_anchor-inline-size',
-            `${sideways ? anchor.height : anchor.width}px`,
-          );
+          style.setProperty('--_overlay-max-inline-size', `${across ? height : width}px`);
+          style.setProperty('--_overlay-max-block-size', `${across ? width : height}px`);
+          // Later placements follow the anchor's size changes.
+          sizeToAnchor(surface, placement.anchor, across);
         }
         o.onPlace?.(placement);
       },
@@ -171,7 +175,11 @@ export class Overlay implements Controller {
    * that comes first, so `onToggle(true)` always follows the first placement.
    */
   #startPlacing(): void {
-    if (this.#placing || !this.#scope || !this.#options.surface()?.matches(':popover-open')) return;
+    const surface = this.#options.surface();
+    if (this.#placing || !this.#scope || !surface?.matches(':popover-open')) return;
+    // Before the first measurement, so a surface sized by the anchor is placed at that size.
+    const anchor = this.#options.anchor?.();
+    if (anchor) sizeToAnchor(surface, anchor.getBoundingClientRect());
     this.#placing = this.#scope.child({ name: 'overlay placement' });
     this.#placing.use(this.#position);
   }

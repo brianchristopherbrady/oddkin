@@ -4,6 +4,7 @@ import { OddkinElement, define } from '@oddkin/core/element';
 import { computed, flush } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import { scopeStats } from '@oddkin/core/scope';
+import { css } from '@oddkin/core/styles';
 import { html } from '@oddkin/core/template';
 import { Overlay, deepActiveElement } from '../src/overlay/overlay.js';
 import { popoverDefinition } from '../src/popover/index.js';
@@ -384,6 +385,53 @@ class TestMenuButton extends OddkinElement {
 }
 define('test-menu-button', TestMenuButton);
 
+// A surface as wide as its anchor, as odd-color-picker's popup is; unsized, its content is wider than the viewport.
+class TestFieldPopup extends OddkinElement {
+  static override styles = [
+    hostStyles,
+    overlaySurfaceStructuralStyles,
+    overlaySurfaceStyles,
+    css`
+      :host {
+        display: block;
+        inline-size: 10rem;
+        margin-inline-start: 2rem;
+      }
+      [part~='trigger'] {
+        inline-size: 100%;
+      }
+      [part~='surface'] {
+        inline-size: var(--_anchor-inline-size, auto);
+      }
+      [part~='wide'] {
+        inline-size: 200vw;
+      }
+    `,
+  ];
+  readonly placements: number[] = [];
+  opened: DOMRect | undefined;
+  readonly overlay = new Overlay({
+    host: this,
+    surface: () => this.shadowRoot?.querySelector<HTMLElement>('[part~="surface"]'),
+    anchor: () => this.shadowRoot?.querySelector('[part~="trigger"]'),
+    onPlace: (placement) => this.placements.push(placement.x),
+    onToggle: (open) => {
+      if (open)
+        this.opened = this.shadowRoot!.querySelector('[part~="surface"]')!.getBoundingClientRect();
+    },
+  });
+  override render() {
+    return html`<button part="trigger" @click=${() => this.overlay.toggle()}>Colour</button>
+      <div part="surface" class="overlay-surface" role="dialog" aria-label="Choose">
+        <div part="wide"></div>
+      </div>`;
+  }
+  protected override mounted(scope: Scope): void {
+    scope.use(this.overlay);
+  }
+}
+define('test-field-popup', TestFieldPopup);
+
 describe('overlay wiring (an inner surface)', () => {
   const parts = (el: Element) => ({
     trigger: el.shadowRoot!.querySelector<HTMLElement>('[part~="trigger"]')!,
@@ -500,6 +548,53 @@ describe('overlay wiring (an inner surface)', () => {
     expect(deepActiveElement()).toBe(trigger);
     expect(getComputedStyle(parts(el).surface).getPropertyValue('--_anchor-inline-size')).toBe(
       `${trigger.getBoundingClientRect().width}px`,
+    );
+  });
+
+  it('places a surface sized by its anchor at that size from the first placement', async () => {
+    await mount('<test-field-popup id="f"></test-field-popup>');
+    const el = byId<TestFieldPopup>('f');
+    const trigger = el.shadowRoot!.querySelector<HTMLElement>('[part~="trigger"]')!;
+    for (const open of [() => trigger.click(), () => el.overlay.show()]) {
+      el.placements.length = 0;
+      const opened = toggled(el);
+      open();
+      await opened;
+      const anchor = trigger.getBoundingClientRect();
+      // Read in the frame it opens: unsized, the first placement would clamp it to the 8 px margin.
+      expect([el.opened?.left, el.opened?.width]).toEqual([anchor.left, anchor.width]);
+      expect(el.placements[0]).toBe(Math.round(anchor.left));
+      const closed = toggled(el);
+      el.overlay.hide();
+      await closed;
+    }
+  });
+
+  it('keeps a surface sized by its anchor as the anchor resizes, and in a vertical writing mode', async () => {
+    await mount('<test-field-popup id="f"></test-field-popup>');
+    const el = byId<TestFieldPopup>('f');
+    const trigger = el.shadowRoot!.querySelector<HTMLElement>('[part~="trigger"]')!;
+    const surface = el.shadowRoot!.querySelector<HTMLElement>('[part~="surface"]')!;
+    let changed = toggled(el);
+    el.overlay.show();
+    await changed;
+    const placed = el.placements.length;
+    el.style.inlineSize = '12rem';
+    await expect.poll(() => el.placements.length).toBeGreaterThan(placed);
+    expect(surface.getBoundingClientRect().width).toBe(trigger.getBoundingClientRect().width);
+    changed = toggled(el);
+    el.overlay.hide();
+    await changed;
+    el.style.writingMode = 'vertical-rl';
+    // Near the viewport's end, where only a surface measured at its full inline size shifts to fit.
+    el.style.marginTop = `${innerHeight - 100 - trigger.getBoundingClientRect().top}px`;
+    changed = toggled(el);
+    el.overlay.show();
+    await changed;
+    expect(el.opened?.height).toBe(trigger.getBoundingClientRect().height);
+    expect(el.opened!.bottom).toBeLessThanOrEqual(innerHeight - 8);
+    expect(surface.style.getPropertyValue('--_anchor-inline-size')).toBe(
+      `${trigger.getBoundingClientRect().height}px`,
     );
   });
 

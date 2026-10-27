@@ -3539,3 +3539,13 @@ Run on the shared working tree at cb2f157. Uncommitted work from Agents 1, 2, an
 | Typecheck, lint, size | `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` | OK |
 
 **Findings:** the analyzer publishes private `--_*` properties as CEM `cssProperties` and metadata `customization.variables`, with empty descriptions (59 entries on 27 elements); the level-2 check skips them, and the analyzer change is posted to Agent 2. Level 3 for the elements with several skins (odd-checkbox, odd-picker) means a product composes its own visual sheets on the foundation's structural sheets; `test/derived.ts` replaces only the last sheet.
+
+## 2026-10-27 — Overlay first-placement width (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Consumers, three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the popover, select, menu, combobox, picker, command-palette, date-picker, color-picker, tooltip, split-button, dialog, toast, and validation-summary browser tests | Chromium 228 passed, 1 skipped; Firefox 213 passed, 14 skipped, 2 date-picker failures that pass when the file reruns alone (12 passed: load noise); WebKit 214 passed, 15 skipped |
+| Popover, three engines (with the new tests) | `browser-set.mjs packages/components/test/popover.browser.test.ts` | Chromium 26 passed; Firefox 24 passed, 2 skipped; WebKit 24 passed, 2 skipped (the two skips are Chromium-only tests) |
+| New tests | `popover.browser.test.ts` | a surface sized by its anchor has the anchor's left edge and width in the frame it opens (`onToggle(true)`), from a click and from `show()`; it follows the anchor as the anchor resizes; in `vertical-rl` it takes the anchor's height and, near the viewport's end, shifts to fit from the first placement |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-overlay.json` (Chromium) | 6 of 6 killed: no first-placement sizing, no later-placement sizing, the anchor's width in every writing mode, the first or the later placement ignoring the writing mode, `vertical` dropped from the writing-mode test |
+| Typecheck, lint, size | `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` | OK |
