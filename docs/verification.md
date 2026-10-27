@@ -3489,3 +3489,24 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 15
 **Fixed:** the one-time code lost IME text, dropped full-width digits, and left the caret mid-code after a script set; the number field ignored full-width digits, stepped or cleared on keys pressed while composing, and fired `change` when only its text changed; the colour picker ignored full-width hex and opacity; odd-textarea kept CR from script.
 
 **Survivor:** the one-time code's `input.value === this.value` guard in `updated()` (no caret move while composing). A CDP composition is not disturbed by a selection change, so no test can show it; kept for real input methods.
+
+## 2026-10-27 ? Round 8 round-end checks (Agent 4)
+
+Run on the shared working tree at cb2f157. Uncommitted work from Agents 1, 2, and 3 was present; each failure below is attributed to the lane that owns it.
+
+| Check | Command | Result |
+|---|---|---|
+| Build | `npm run build` | OK |
+| Lint | `npm run lint` | boundaries, CSS (0 problems), and page layout (42 files, 0 unlisted) OK. `lint:contracts` fails: core CONTRACTS.md is stale against the uncommitted core-contracts.md (Agent 3). `format:check` fails only on the owner's untracked `artifacts/` files |
+| Typecheck | `npm run typecheck` | fails only in `text-entry.browser.test.ts:270`, uncommitted (Agent 1) |
+| Node tests | `npx vitest run --project node` | 1,263 passed; failures are core-contracts (Agent 3) and the odd-suggestions padding in `packages/ai/test/metadata.test.ts` (Agent 2, uncommitted AI recipes) |
+| Browser tests | `npx vitest run --project browser` | 58 failures under full parallel load (37 Firefox files, 2 WebKit files); all pass when rerun alone or with `--no-file-parallelism` (Firefox 37/37 files) |
+| Metadata | `npm run verify:metadata` | OK: components 2,127 facts, ai 481; vocabulary 0 findings |
+| Size | `node scripts/check-size.mjs` | fails only `ai-chat` (50,979 of 50,688) and `ai:styles` (4,698 of 4,608), both from Agent 2's uncommitted AI recipes |
+| Agent kits | `node scripts/agent-kit/kit.mjs --check` | current |
+| Packs | `npm run verify:packs` | OK after cb2f157 (the autoloader loads without a document; the kits are rewritten after `verify:metadata`) |
+| e2e | workbench-catalog, presentation, forms, forms-example, components-only, ai-demos, docs, autoload | 656 passed, 4 skipped, 6 failed: all six are `e2e/forms.spec.ts` in three engines. `tests/forms/index.html` has a stale import map with no `@oddkin/core/i18n` mapping (odd-input imports it since b67b90c); posted to Agent 1 |
+| Lifetime | `node research/benchmarks/lifetime/run.mjs --cycles 1000` | every scenario returned ownership in Chromium, Firefox, and WebKit; Chromium retained 131 (app), 11 (navigation), 67 (theme edit), 305 (component) B/cycle on the first run |
+| Compatibility | `npm run compat` | OK: 72 features, 209 stylesheets, 326 keys, 0 problems. The committed matrix has 201 / 325; the other 8 stylesheets are Agent 2's uncommitted AI recipe sheets, left for its commit |
+
+**Remaining (deferred by the owner):** screen-reader passes and old-browser floor runtime evidence.
