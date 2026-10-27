@@ -336,8 +336,27 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 
 ### 6.1 Behaviors settled in the M3 implementation
 
-- **Child values:** `null`, `undefined`, and `false` render nothing; other primitives render as text; iterables render unkeyed items; a readable inside a list binds like any readable. Functions are never called (`template.value.function`).
-- **Attribute values:** `null` and `undefined` remove the attribute; `false` renders `"false"` (so `aria-*` values work). Use `?name=` for presence.
+- **Binding-value matrix** (verified in `packages/core/test/binding-values.browser.test.ts`, three engines). A value a position has no meaning for is reported through `setErrorHandler` and writes nothing; it is never guessed into text.
+
+| Value | Child `${v}` | Attribute `name=${v}` (and each value in `name="a ${v}"`) | Boolean `?name=${v}` | Property `.name=${v}` |
+| --- | --- | --- | --- | --- |
+| `null`, `undefined` | Nothing | Removes the attribute (in text: empty) | Removes | Assigned as is |
+| `false` | Nothing | `"false"` (so `aria-*` values work) | Removes | Assigned |
+| `''` | An empty text node | `""` (present, empty) | Removes | Assigned |
+| `true`, numbers (`0`, `NaN`), bigints, strings | Text, never parsed as HTML | Their text (URL attributes block `javascript:`) | By truthiness | Assigned (URL properties block `javascript:`) |
+| Readable | Bound: the part updates without re-rendering | Bound | Bound | Bound |
+| Template result | A nested instance, reused while the template is the same | — | — | Assigned |
+| DOM node | Inserted; see node ownership | — | — | Assigned |
+| Arrays and other iterables | Unkeyed items, each by this table | `String(v)` (`"a,b"`) | By truthiness | Assigned |
+| Objects with their own string form (`URL`, `Date`, a class with `toString()`) | Their text | Their text | By truthiness | Assigned |
+| Plain objects and objects without a string form | `template.value.object`; nothing | `template.value.object`; removes (in text: empty) | By truthiness | Assigned |
+| Functions | `template.value.function`; nothing (never called) | `template.value.function`; removes | `template.value.function`; removes | Assigned (callbacks) |
+| Symbols | `template.value.symbol`; nothing | `template.value.symbol`; removes | By truthiness | Assigned |
+| Attribute directive (`classMap`, `styleMap`, `ref`, `live`) | `template.directive.position` | Applied when it is the whole value | Applied where it accepts the binding | Applied where it accepts the binding |
+| Event `@name=${v}` | — | — | — | A function or `{ handleEvent }` listener object; `null` removes the listener; anything else throws `template.event.invalid`, a readable `template.event.readable` |
+
+  Writes are skipped when the value is the same as the last one written (`Object.is`, so `NaN` writes once and `-0` after `0` writes again). Classes and styles have no special position: `class=${…}` and `style=${…}` write text, and `classMap`/`styleMap` manage only their own entries. SVG attributes follow the attribute column; elements are created in the SVG namespace inside `svg` templates.
+- **Node ownership.** A part owns the node it inserted while that node stays where the part put it. A node bound in a second place moves there (DOM semantics) and ends in the last place committed; a part never removes a node that the page or another part has moved away. One template result rendered in two places creates two independent instances. Slot projection is the browser's: slotted children belong to the page, never to a part (§6.3 roles render child elements; they do not adopt slotted ones).
 - **Event bindings:** one listener per part; swapping handlers never re-adds it. Handlers run with the component as `this`. A listener object (`{ handleEvent, capture, passive, once }`) supplies listener options; the listener is re-added only when its options change.
 - **Attribute directives:** objects carrying `ATTRIBUTE_DIRECTIVE` manage an element through a binding position instead of writing a string. They must be the whole binding value (`template.directive.position`) in an accepted binding (`template.directive.binding`), and are cleared when the binding is disposed or switches to a plain value. Other libraries can author directives with the exported protocol.
 - **Helpers** (separate subpaths, not in the root entry): `helpers/class-map` toggles only its own classes through `classList`; `helpers/style-map` writes through the CSSOM (works under strict `style-src`); `helpers/ref` provides `createRef()` (reactive `value`) and callback `ref()`, bound as `ref=${…}` and never written as an attribute; `helpers/live` compares with the element's current property, defers writes during IME composition, and keeps the caret of a focused field. Autofill is handled by the same current-value comparison.

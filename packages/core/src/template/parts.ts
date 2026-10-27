@@ -32,6 +32,36 @@ export interface Part {
 
 const REPEAT: typeof RepeatKey = Symbol.for('oddkin.repeat') as never;
 
+const UNSUPPORTED = {
+  function:
+    'Functions are never called or written as text; call it, pass a computed(), bind it as an event (@event=${fn}), or assign it as a property (.name=${fn}).',
+  symbol: 'A symbol has no text; pass its description or a string.',
+  object:
+    'An object without its own string form would be written as "[object Object]"; pass a string, assign it as a property (.name=${obj}), or give it a toString().',
+};
+
+/**
+ * Reports a value a text or attribute position has no meaning for (core-contracts.md §6.1): a
+ * function, a symbol, or an object whose only string form is Object.prototype's (or none).
+ */
+function unsupported(value: unknown): boolean {
+  const toString = (value as { toString?: unknown } | null)?.toString;
+  const kind =
+    typeof value === 'function'
+      ? 'function'
+      : typeof value === 'symbol'
+        ? 'symbol'
+        : typeof value === 'object' &&
+            value !== null &&
+            (toString === Object.prototype.toString || typeof toString !== 'function')
+          ? 'object'
+          : undefined;
+  if (!kind) return false;
+  const code = `template.value.${kind}`;
+  reportOddkinError(new OddkinError(code, DEV ? UNSUPPORTED[kind] : ''), { code });
+  return true;
+}
+
 function isRepeat(value: unknown): value is RepeatDirective {
   return (
     typeof value === 'object' &&
@@ -142,7 +172,8 @@ export class ChildPart implements Part {
         this.#text = undefined;
         break;
       case 'node':
-        (this.#node as ChildNode | undefined)?.remove();
+        // A node the page or another part has moved away is no longer this part's to remove.
+        if (this.#holds(this.#node)) (this.#node as ChildNode).remove();
         this.#node = undefined;
         break;
       case 'template':
@@ -175,20 +206,20 @@ export class ChildPart implements Part {
       this.#commitList([value]);
     } else if (typeof value === 'object' && Symbol.iterator in value) {
       this.#commitList(value as Iterable<unknown>);
-    } else if (typeof value === 'function') {
-      reportOddkinError(
-        new OddkinError(
-          'template.value.function',
-          DEV
-            ? 'A function was interpolated in a child position. Functions are never called automatically; call it, pass a computed(), or bind it as an event (@event=${fn}).'
-            : '',
-        ),
-        { code: 'template.value.function' },
-      );
+    } else if (unsupported(value)) {
       this.#clear();
     } else {
       this.#commitText(String(value));
     }
+  }
+
+  /** Whether `node` is still where this part put it: just before the end marker. */
+  #holds(node: Node | undefined): node is Node {
+    return (
+      !!node &&
+      node.parentNode === (this.#end ? this.#end.parentNode : this.#container) &&
+      node.nextSibling === this.#end
+    );
   }
 
   #commitText(text: string): void {
@@ -207,7 +238,7 @@ export class ChildPart implements Part {
   }
 
   #commitNode(node: Node): void {
-    if (this.#content === 'node' && this.#node === node) return;
+    if (this.#content === 'node' && this.#node === node && this.#holds(node)) return;
     this.#clear();
     this.#node = node;
     this.#insert(node);
@@ -431,7 +462,7 @@ abstract class ValuePart implements Part {
             : '',
         );
       }
-      text += String(value ?? '') + strings[i];
+      text += (unsupported(value) ? '' : String(value ?? '')) + strings[i];
     }
     return text;
   }
@@ -456,7 +487,8 @@ const UNSET = Symbol('unset');
 class AttributePart extends ValuePart {
   protected write(value: unknown): void {
     const { name } = this.descriptor;
-    if (value === null || value === undefined) this.element.removeAttribute(name);
+    if (value === null || value === undefined || unsupported(value))
+      this.element.removeAttribute(name);
     else {
       const safe = URL_ATTRIBUTES.has(name.toLowerCase()) ? safeUrl(String(value), name) : value;
       this.element.setAttribute(name, String(safe));
@@ -466,7 +498,9 @@ class AttributePart extends ValuePart {
 
 class BooleanAttributePart extends ValuePart {
   protected write(value: unknown): void {
-    this.element.toggleAttribute(this.descriptor.name, !!value);
+    // A function is always truthy: report it rather than guess that it means "on".
+    const on = typeof value === 'function' ? !unsupported(value) : !!value;
+    this.element.toggleAttribute(this.descriptor.name, on);
   }
 }
 

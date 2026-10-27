@@ -3549,3 +3549,15 @@ Run on the shared working tree at cb2f157. Uncommitted work from Agents 1, 2, an
 | New tests | `popover.browser.test.ts` | a surface sized by its anchor has the anchor's left edge and width in the frame it opens (`onToggle(true)`), from a click and from `show()`; it follows the anchor as the anchor resizes; in `vertical-rl` it takes the anchor's height and, near the viewport's end, shifts to fit from the first placement |
 | Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-overlay.json` (Chromium) | 6 of 6 killed: no first-placement sizing, no later-placement sizing, the anchor's width in every writing mode, the first or the later placement ignoring the writing mode, `vertical` dropped from the writing-mode test |
 | Typecheck, lint, size | `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` | OK |
+## 2026-10-27 — D5 binding-value matrix (Agent 3)
+
+| Check | Command | Result |
+|---|---|---|
+| Core browser tests | `node ../oddkin-lanes/tools/browser-set.mjs packages/core/test` | Chromium 238 passed; Firefox 238 passed; WebKit 237 passed, 1 skipped (before the four node-ownership and null-prototype tests were added) |
+| D5 files | `browser-set.mjs` on `binding-values` and `ordering` browser tests | Chromium, Firefox, WebKit 27 passed each |
+| Consumers reporting a value | `npx vitest run --project browser --browser.name=chromium --silent=false` on the catalog files and `packages/ai/test`, then on `packages/components/test`, `packages/app/test`, `packages/state/test`, `packages/workbench/test` | no `template.value.*` report in any output (1,065 + 2,166 passing tests): no element passes a function, a symbol, or a plain object to an attribute or child. The second run had 5 failures: `checkbox` and `input` "imports > … register nothing" fail alone and without D5 on main 7a9c9ab (posted to Agent 1); `split-button`, `toast`, and Workbench `panels` pass alone (load noise) |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-d5.json` (Chromium) | 12 of 12 killed: each kind of unsupported value unreported or written, the attribute, text-interpolation, and `?bool` paths, and the four node-position checks; the swap and root-part probes needed new tests |
+| Size | `node scripts/check-size.mjs` | OK; counter 9,531 → 9,657 B gzip (budget 9,728), component 10,821 → 10,938; the development messages are not in the production bundle |
+| Contracts, typecheck, lint | `npm run contracts`, `npm run typecheck`, `npm run lint` | OK |
+
+**Finding:** before this change a part removed the node it last inserted wherever that node had moved, so swapping two nodes in an unkeyed list (`${[a, b]}` then `${[b, a]}`) left only one. A part now removes its node only while it sits just before the part's end marker.
