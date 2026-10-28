@@ -6,7 +6,11 @@ import { existsSync, statSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { dirname, extname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { resolveWorkbenchConfig, type ResolvedWorkbenchConfig } from '../config/index.js';
+import {
+  resolveWorkbenchConfig,
+  type ResolvedWorkbenchConfig,
+  type Routing,
+} from '../config/index.js';
 import { DiagnosticList, type WorkbenchDiagnostic } from '../internal/diagnostics.js';
 
 export const CONFIG_FILES = [
@@ -54,8 +58,14 @@ export interface LoadedConfig {
   readonly diagnostics: WorkbenchDiagnostic[];
 }
 
-/** Find and load the configuration from a file, or from the first `CONFIG_FILES` entry in a directory. */
-export async function loadWorkbenchConfig(target = '.'): Promise<LoadedConfig> {
+/**
+ * Find and load the configuration from a file, or from the first `CONFIG_FILES` entry in a
+ * directory. `hosting` replaces the file's values (a build's `--base`), validated like them.
+ */
+export async function loadWorkbenchConfig(
+  target = '.',
+  hosting?: { readonly basePath?: string; readonly routing?: Routing },
+): Promise<LoadedConfig> {
   const out = new DiagnosticList();
   const path = resolve(target);
   let file: string | undefined = path;
@@ -80,6 +90,13 @@ export async function loadWorkbenchConfig(target = '.'): Promise<LoadedConfig> {
     out.error('node.config.load', loadFailure(file, error));
     return { file, root, config: undefined, diagnostics: out.items };
   }
-  const { config, diagnostics } = resolveWorkbenchConfig(raw);
+  const { config, diagnostics } = resolveWorkbenchConfig(
+    hosting && raw && typeof raw === 'object' && !Array.isArray(raw)
+      ? {
+          ...raw,
+          hosting: { ...(raw as { hosting?: object }).hosting, ...hosting },
+        }
+      : raw,
+  );
   return { file, root, config, diagnostics: [...out.items, ...diagnostics] };
 }

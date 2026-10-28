@@ -3780,3 +3780,15 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Example pages | `npx vitest run --project node tests/examples` | Pass, with `app-header` in the CSP and import-map lists |
 | Code Connect | each proposed mapping in `artifacts/code-connect/implementation-audit.json` checked for its source file, its export, and a package export for its import | All match the code (Form is an example: no export, as intended); 44 saved bindings differ (38 name nothing that exists or are blank), listed for the owner |
 | Compatibility | `npm run compat`, then `npm run lint` | Matrix current: the system-colors row and `examples/app-header/styles.css` (example, 36 keys) |
+## 2026-10-27 — Workbench static build (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Node tests | `npx vitest run --project node packages/workbench/test/node-build.test.ts` | 5 passed: layout under `/docs/ui/`, every written page path answered by the shell's routes, browser files only, every import-map file present; a rebuild writes nothing and removes a stale file; the CLI and its usage errors; hash mode; errors write nothing; an unmarked default directory is refused |
+| Probes | 11 mutants (`.tmp/probes-static*.json`) | 10 killed; 1 removed (warning de-duplication across the two import maps: each document's map is reported) |
+| Frame tests | `frame.browser.test.ts`, 3 engines | 4 passed each, including a `specimen` request that outlasts the request timeout (probe: killed) |
+| Workbench browser tests | `panels`, `preview`, `shell` browser tests, 3 engines | 18 passed each |
+| Workbench Node tests | `npx vitest run --project node packages/workbench` | 121 passed and 1 timed out (`node-cli` analyze), then 120 and 2 (also `node-theme-studio`'s 20 s data build) on the loaded machine; both files pass alone (12 tests) |
+| e2e | `npx playwright test e2e/workbench-static.spec.ts` per engine, under the lock | Chromium 4 passed (a first run: Theme Studio "Frame request 1 timed out", fixed above); WebKit 4 passed; Firefox 4 passed |
+| Timing | `buildStatic` of `tests/fixtures/workbench-oddkin` | 1,454 files; fresh 7.5–25 s and unchanged rebuild 6–18 s on this machine under other agents' load (data build 2.2 s) |
+| Typecheck, lint, size | `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` | pass; budgets unchanged |

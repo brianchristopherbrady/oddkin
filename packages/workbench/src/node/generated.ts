@@ -5,7 +5,7 @@
  * as links, never followed.
  */
 import { existsSync } from 'node:fs';
-import { lstat, mkdir, readdir, readFile, rm, rmdir, writeFile } from 'node:fs/promises';
+import { copyFile, lstat, mkdir, readdir, readFile, rm, rmdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
 export const MARKER = 'oddkin-generated.json';
@@ -17,6 +17,9 @@ export const MARKER_CONTENT = `${JSON.stringify(
   null,
   2,
 )}\n`;
+
+/** Text to write, or a file whose bytes are copied. */
+export type GeneratedContent = string | { readonly source: string };
 
 export class GeneratedDirectoryError extends Error {
   constructor(
@@ -41,14 +44,22 @@ function checkPath(path: string): void {
     );
 }
 
-async function writeIfChanged(file: string, content: string): Promise<boolean> {
+async function writeIfChanged(file: string, content: GeneratedContent): Promise<boolean> {
+  let existing: Buffer | undefined;
   try {
-    if ((await readFile(file, 'utf8')) === content) return false;
+    existing = await readFile(file);
   } catch {
     // Missing: written below.
   }
+  if (typeof content === 'string') {
+    if (existing?.toString('utf8') === content) return false;
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, content);
+    return true;
+  }
+  if (existing && existing.equals(await readFile(content.source))) return false;
   await mkdir(dirname(file), { recursive: true });
-  await writeFile(file, content);
+  await copyFile(content.source, file);
   return true;
 }
 
@@ -68,12 +79,12 @@ async function walk(dir: string, prefix = ''): Promise<{ files: string[]; dirs: 
 }
 
 /**
- * Make `dir` hold exactly `files` (relative POSIX path → content) plus the marker. Returns the
- * paths written (new or changed) and removed.
+ * Make `dir` hold exactly `files` (relative POSIX path → text, or a file to copy) plus the
+ * marker. Returns the paths written (new or changed) and removed.
  */
 export async function writeGenerated(
   dir: string,
-  files: ReadonlyMap<string, string>,
+  files: ReadonlyMap<string, GeneratedContent>,
 ): Promise<{ written: string[]; removed: string[] }> {
   for (const path of files.keys()) checkPath(path);
   if (existsSync(dir)) {
@@ -87,9 +98,18 @@ export async function writeGenerated(
   }
   await mkdir(dir, { recursive: true });
   await writeIfChanged(join(dir, MARKER), MARKER_CONTENT);
-  const written: string[] = [];
-  for (const [path, content] of files)
-    if (await writeIfChanged(join(dir, ...path.split('/')), content)) written.push(path);
+  // Files are independent: a few at a time, so a static build's thousands of copies overlap.
+  const entries = [...files];
+  const changed = new Array<boolean>(entries.length).fill(false);
+  let next = 0;
+  const worker = async () => {
+    for (let i = next++; i < entries.length; i = next++) {
+      const [path, content] = entries[i] as [string, GeneratedContent];
+      changed[i] = await writeIfChanged(join(dir, ...path.split('/')), content);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(16, entries.length) }, worker));
+  const written = entries.flatMap(([path], i) => (changed[i] ? [path] : []));
   const removed: string[] = [];
   const existing = await walk(dir);
   for (const path of existing.files) {

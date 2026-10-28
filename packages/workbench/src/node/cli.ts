@@ -1,15 +1,17 @@
 /**
  * The `oddkin` command (workbench.md §10): `analyze` runs `@oddkin/analyzer`'s own command with
- * the same arguments, and `workbench dev` serves the Workbench with live updates.
+ * the same arguments, `workbench dev` serves the Workbench with live updates, and
+ * `workbench build` writes it as a static app.
  * Exit codes: 0 success, 1 errors, 2 usage errors.
  */
 import { spawn } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { GeneratedDirectoryError } from './generated.js';
 import { DEFAULT_PORT, DevServerError, startDevServer, type DevServer } from './server.js';
+import { buildStatic, type StaticBuild } from './static.js';
 import { formatDiagnostic, WORKBENCH_DIR } from './workbench.js';
 
 export interface CliIO {
@@ -28,6 +30,8 @@ export const USAGE = `Usage:
                                              (the options of oddkin-analyze; "oddkin analyze --help")
   oddkin workbench dev [--config <file or directory>] [--port <number>] [--host <name>] [--no-watch]
                                              Serve the Workbench with live updates (port ${DEFAULT_PORT})
+  oddkin workbench build [--config <file or directory>] [--out <directory>] [--base <path>] [--routing history|hash]
+                                             Write the Workbench as a static app (default .oddkin/workbench-build)
   oddkin --help | --version`;
 
 const version = () =>
@@ -131,6 +135,62 @@ async function dev(args: readonly string[], io: CliIO): Promise<number> {
   return 0;
 }
 
+async function build(args: readonly string[], io: CliIO): Promise<number> {
+  let values: { config?: string; out?: string; base?: string; routing?: string; help?: boolean };
+  try {
+    ({ values } = parseArgs({
+      args: [...args],
+      options: {
+        config: { type: 'string' },
+        out: { type: 'string' },
+        base: { type: 'string' },
+        routing: { type: 'string' },
+        help: { type: 'boolean', short: 'h' },
+      },
+    }));
+  } catch (error) {
+    io.err(`${error instanceof Error ? error.message : String(error)}\n${USAGE}`);
+    return 2;
+  }
+  if (values.help) {
+    io.out(USAGE);
+    return 0;
+  }
+  const routing = values.routing;
+  if (routing !== undefined && routing !== 'history' && routing !== 'hash') {
+    io.err(`--routing must be "history" or "hash".\n${USAGE}`);
+    return 2;
+  }
+  const hosting: { basePath?: string; routing?: 'history' | 'hash' } = {
+    ...(values.base !== undefined ? { basePath: values.base } : {}),
+    ...(routing ? { routing } : {}),
+  };
+  let result: StaticBuild;
+  try {
+    result = await buildStatic({
+      ...(values.config ? { config: values.config } : {}),
+      ...(values.out ? { out: resolve(values.out) } : {}),
+      ...(Object.keys(hosting).length ? { hosting } : {}),
+    });
+  } catch (error) {
+    if (error instanceof GeneratedDirectoryError) {
+      io.err(`error ${error.code}: ${error.message}`);
+      return 1;
+    }
+    throw error;
+  }
+  for (const d of result.diagnostics)
+    (d.severity === 'error' ? io.err : io.out)(formatDiagnostic(d));
+  if (!result.out) {
+    io.err('The Workbench was not built; nothing was written.');
+    return 1;
+  }
+  io.out(
+    `Workbench build: ${relative(process.cwd(), result.out) || '.'} (${result.files.length} files: ${result.written.length} written, ${result.removed.length} removed), base path ${result.build.config?.hosting.basePath}`,
+  );
+  return 0;
+}
+
 /** Run `oddkin` with `args`; resolves with the exit code. */
 export async function run(args: readonly string[], io: CliIO): Promise<number> {
   const [command, ...rest] = args;
@@ -144,6 +204,7 @@ export async function run(args: readonly string[], io: CliIO): Promise<number> {
   }
   if (command === 'analyze') return analyze(rest, io);
   if (command === 'workbench' && rest[0] === 'dev') return dev(rest.slice(1), io);
+  if (command === 'workbench' && rest[0] === 'build') return build(rest.slice(1), io);
   io.err(
     command === undefined
       ? USAGE

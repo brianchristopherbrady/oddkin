@@ -211,6 +211,15 @@ describe('isolated preview frames', () => {
     expect(patient.iframe.contentDocument?.querySelector('fixture-button')?.shadowRoot).not.toBe(
       null,
     );
+    // Theme Studio's specimens import module graphs too.
+    const specimens = create({ timeoutMs: 2_000 });
+    await specimens.ready;
+    await specimens.request('specimen', {
+      items: [{ ...payload({ registration: slow }), role: 'primaryAction', label: 'Primary' }],
+    });
+    expect(specimens.iframe.contentDocument?.querySelector('fixture-button')?.shadowRoot).not.toBe(
+      null,
+    );
     // A fetch that never settles within the mount timeout is still reported.
     const bounded = create({ mountTimeoutMs: 500 });
     await bounded.ready;

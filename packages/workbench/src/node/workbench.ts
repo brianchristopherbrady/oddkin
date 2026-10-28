@@ -4,7 +4,7 @@
  * `workbench dev` now and by `workbench build` (M7).
  */
 import { fileURLToPath } from 'node:url';
-import type { ResolvedWorkbenchConfig } from '../config/index.js';
+import type { ResolvedWorkbenchConfig, Routing } from '../config/index.js';
 import { buildWorkbenchData, pageFile, serializeData } from '../data/build.js';
 import {
   createImportMap,
@@ -54,6 +54,8 @@ export interface BuildOptions {
   readonly config?: string;
   /** Point the shell at the live-update stream (dev server). */
   readonly events?: boolean;
+  /** Replaces the configuration's `hosting` values. */
+  readonly hosting?: { readonly basePath?: string; readonly routing?: Routing };
 }
 
 const versioned = (pkg: InstalledPackage) => `${pkg.name}@${pkg.version}`;
@@ -143,7 +145,7 @@ function frameAssets(
 
 /** Build everything the Workbench serves or writes for one configuration. Never throws for bad input. */
 export async function buildWorkbench(options: BuildOptions = {}): Promise<WorkbenchBuild> {
-  const loaded = await loadWorkbenchConfig(options.config);
+  const loaded = await loadWorkbenchConfig(options.config, options.hosting);
   const empty = {
     root: loaded.root,
     configFile: loaded.file,
