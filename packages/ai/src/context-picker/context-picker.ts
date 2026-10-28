@@ -34,6 +34,7 @@ export const CONTEXT_PICKER_STRINGS = {
  * Select, inspect, and remove the context sent with a request: files, documents, links, and
  * selected text. Adding is a request; items appear when the host adds their records.
  *
+ * @csspart base - The labelled group around the items and the add controls.
  * @csspart list - Context items.
  * @csspart item - One item.
  * @csspart add - Add controls.

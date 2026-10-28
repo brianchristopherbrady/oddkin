@@ -32,6 +32,7 @@ const SYMBOL: Record<StepStatus, string> = {
  * An agent's plan: ordered steps, parallel tasks within a step, blockers, progress, and requests
  * for input.
  *
+ * @csspart base - The section labelled by the plan's title.
  * @csspart progress - The native progress bar and its text.
  * @csspart steps - The ordered list of steps.
  * @a11y An ordered list; each step's status is text (symbols are decorative). Progress is a labelled native `<progress>` with a text equivalent.

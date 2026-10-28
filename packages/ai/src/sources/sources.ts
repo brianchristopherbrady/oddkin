@@ -13,6 +13,7 @@ export const SOURCES_STRINGS = {
 /**
  * The list of sources behind a response. Each entry is a navigation target for citations.
  *
+ * @csspart base - The region labelled by the heading, around the list.
  * @csspart list - The ordered list of sources.
  * @csspart item - One source.
  * @a11y A labelled list; entries are numbered in citation order. `reveal()` scrolls to and focuses an entry (only on user request).

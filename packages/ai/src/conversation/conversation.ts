@@ -53,6 +53,7 @@ const FOLLOW_THRESHOLD = 48;
  * @slot composer - The prompt input.
  * @slot empty - Content shown when there are no messages.
  * @slot status - Extra status content (usage, model) above the composer.
+ * @csspart base - The column of the scroll container, the run status, and the composer.
  * @csspart scroller - The scroll container.
  * @csspart feed - The feed of messages.
  * @csspart jump - The "Jump to latest" button.

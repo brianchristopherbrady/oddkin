@@ -27,6 +27,7 @@ export const VOICE_INPUT_STRINGS = {
  * device, interruption, and processing states. Uses a replaceable `VoiceAdapter`; an element
  * that creates its own controller releases the microphone when disconnected.
  *
+ * @csspart base - The column of the controls, the status, and the transcript.
  * @csspart controls - Record, cancel, and use controls.
  * @csspart status - Status text.
  * @a11y The record control is a toggle button (`aria-pressed`). Status changes (denied, interrupted) are announced once through the surface's announcer; interim text is never announced.

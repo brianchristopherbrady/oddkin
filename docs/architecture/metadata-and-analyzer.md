@@ -184,6 +184,17 @@ Stale generated artifacts are removed only inside directories that carry an Oddk
 
 Analyzer diagnostics already carry `code`, `severity`, `message`, `source`, and `suggestion`. The shared envelope in [agent-tooling.md](./agent-tooling.md) §9.1 adds optional `kind` (error, recommendation, unresolved), `subject` (stable id), `expected`/`received`, `docs` references, and a `fix` only when it is sufficiently supported. Static analysis stays separate from executing trusted project examples in a preview.
 
+## 10. M8 review (2026-10-27)
+
+Evidence: the published `oddkin.metadata.json` and `custom-elements.json` of `@oddkin/components` and `@oddkin/ai` after `npm run build`, the analyzer and agent-kit tests (18 files, 162 tests), and Workbench's coverage test ([verification.md](../verification.md), 2026-10-27).
+
+- **Coverage of the real elements.** All 77 elements (53 components, 24 AI) are extracted, registered (`registration`), categorized, and carry `useFor`, `notFor`, and `a11y`; 61 carry `keyboard`; every element has examples (332 and 43). Neither package's build reports a diagnostic. Undocumented API: the form-control foundation's `validity`, `validationMessage`, and `willValidate` on the 18 form-associated elements and odd-picker's `value` part (posted to Agent 1), and 8 AI parts (documented in this review).
+- **Customization levels.** Authored on every components element (52 × `1 2 3`, odd-tab-panel `2 3`); the AI elements are unknown until they declare theirs.
+- **Provenance.** Every style mapping is `extracted` (1,188 and 218). Two extraction faults were found and fixed: private `--_*` properties were published as CSS properties and level-2 variables (97 entries, 42465d7), and a style source interpolated into a `css` template (every extracted layout recipe) was read as a computed selector, so 14 elements published no style mappings at all (fc23a18). No fact is `verified`: the build finds no current contract-test records ("Verified facts from current contract-test records: 0"), so verified provenance waits for the conformance records (M8 assurance review).
+- **Dynamic definitions.** Computed tags, registrations, definitions, styles, examples, and event intents report `analyzer.dynamic.*` with their location (`analyzer-dynamic` fixture); nothing is guessed.
+- **CEM interoperability.** Both manifests validate against the pinned CEM 2.1.0 schema, and Workbench renders a library that publishes only a standard CEM (`data.test.ts`, `pages.test.ts`). No editor format is generated yet (VS Code custom data, JetBrains web-types): see the open questions.
+- **Not reviewed here:** Theme Studio live editing (M9) and example reuse in tests beyond Workbench's coverage test.
+
 ## Open questions
 
 - TypeScript compiler API vs a faster parser plus TS for types only (performance experiment in M3).

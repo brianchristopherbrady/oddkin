@@ -17,6 +17,7 @@ export const AI_LABEL_STRINGS = {
  * A provenance label for generated or assisted content, with the origin details the application
  * supplied in a native disclosure. Shows information as supplied; it never asserts accuracy.
  *
+ * @csspart base - The native disclosure around the label and its details.
  * @csspart label - The visible label (the disclosure summary).
  * @csspart details - The origin details.
  * @a11y The label is a native `<summary>`; its details are read in document order when expanded.

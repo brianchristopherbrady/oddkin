@@ -3663,3 +3663,14 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Metadata | `npm run build`; style mappings and documentation per element | every AI element publishes style mappings; no warnings |
 | Compatibility | `node scripts/compat/check-css.mjs --write` | 222 stylesheets, 326 keys; OK |
 | Size | `node scripts/check-size.mjs` | ai-chat 50,942 B, ai:styles 4,846 B gzip (before the recipes 50,671 and 4,503) |
+
+## 2026-10-27 — Metadata, tooling, and agent-kit reviews (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Element coverage | `npm run build`, then `node .tmp/meta-keys.mjs` and `node .tmp/meta-coverage.mjs` over both packages' `oddkin.metadata.json` and `custom-elements.json` | components: 53 elements, 53 registered, 53 with use-for, not-for, a11y, levels authored on 53 (52 × [1, 2, 3], odd-tab-panel [2, 3]), 39 with keyboard, 332 examples, 49 with style mappings; ai: 24 elements, 24 registered, 24 with use-for, not-for, a11y, 22 with keyboard, levels unknown, 43 examples, 24 with style mappings; `diagnostics: []` in both |
+| Undocumented API | `node .tmp/undocumented.mjs` | components: `validity`, `validationMessage`, `willValidate` on 18 form-associated elements, odd-picker part `value`; ai: 8 parts before, 0 after this change |
+| Provenance | the same metadata | every style mapping `extracted` (1,188 and 218); `build-metadata.mjs` prints "Verified facts from current contract-test records: 0" |
+| Kit freshness | `node scripts/agent-kit/package-kits.mjs --check`, `node scripts/agent-kit/kit.mjs --check` | after partial builds: `agent.kit.stale: packages/ai/agent (40 of 68 files differ)`; after `npm run build`: both package kits current; repository kits `agent.kit.missing` until `kit.mjs` writes them |
+| Schemas | `tests/agent-kit/kit.test.ts`, `context.test.ts`, `tests/schemas/diagnostics.test.ts` (in the node project runs above) | pass |
+| Guide sizes | `packages/*/agent/GUIDE.md` | components 6,355 B, ai 6,637 B (budget 8,192) |

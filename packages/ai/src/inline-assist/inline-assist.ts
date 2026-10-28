@@ -34,6 +34,7 @@ export interface AssistActionOption {
  * against the text they were made for. Rewrites become proposals for `odd-change-review`;
  * explanations and summaries show in the result area.
  *
+ * @csspart base - The column of the toolbar, the status, and the result.
  * @csspart toolbar - The action toolbar.
  * @csspart result - Result text (Markdown, rendered inertly).
  * @a11y An ARIA toolbar: one tab stop, arrow keys move between actions. Pending and stale states are text.

@@ -14,6 +14,7 @@ export const MODEL_SELECT_STRINGS = {
  * Choose among application-provided models, with capabilities and availability. Built on a
  * native `<select>`; unavailable models are listed but disabled, with the host's reason.
  *
+ * @csspart label - The visible label of the select.
  * @csspart select - The native select.
  * @csspart details - Description, capabilities, and availability of the selected model.
  * @cssprop --odd-field-height - Minimum height of the select (never below the target-size token). Shared by every form control.
