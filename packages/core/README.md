@@ -3,8 +3,10 @@
 Author custom elements with typed properties, fine-grained reactivity, tagged templates, and one ownership primitive (`Scope`) for listeners, timers, effects, and cancellation. No runtime dependencies, no compiler, no decorators; works in plain JavaScript with an import map or in any bundler.
 
 ```sh
-npm install @oddkin/core
+npm install @oddkin/core@beta
 ```
+
+The current release is a beta (`1.0.0-beta.0`, on the `beta` dist-tag): contracts may still change before 1.0.0.
 
 ## A counter
 

@@ -1,6 +1,6 @@
 # Release process
 
-Status: **proposed for the owner to settle** (plan M12; Agent 3, 2026-10-27). Nothing is published. Every package is version `0.0.0` and `private: true`. Publishing, the npm scope, and deployment are the owner's decisions and actions; agents prepare and verify, and never publish.
+Status: **beta settled by the owner (2026-10-27)**: all eight packages publish as `1.0.0-beta.0` on the `beta` dist-tag under the owner's `@oddkin` npm scope (§5); `main` carries those versions, caret internal ranges, and public access, and no package is `private` any more. Nothing is published yet. Publishing and deployment are the owner's actions; agents prepare and verify, and never publish. The final 1.0.0 versions below are still a proposal.
 
 ## 1. Proposed v1 versioning
 
@@ -13,13 +13,13 @@ Each package has its own version and changelog (semantic versioning). The v1 cut
 | `@oddkin/components` | 1.0.0 | Tag names, attributes, properties, events, slots, parts, CSS properties, custom states, and the `define/*` entries in `custom-elements.json` |
 | `@oddkin/ai` | 1.0.0 | As components, for the AI elements |
 | `@oddkin/state`, `@oddkin/app` | 1.0.0 | Stores, context, persistence, resources, commands, router, and app roots (core-contracts.md §7–§9) |
-| `@oddkin/analyzer`, `@oddkin/workbench` | 0.1.0 | Their completion (plan M11, §5c, §5d) follows v1; their config, frame protocol, and page contracts are still moving, so a 0.x minor may break them |
+| `@oddkin/analyzer`, `@oddkin/workbench` | 1.0.0 (beta: `1.0.0-beta.0`, owner) | The first proposal was 0.1.0, because their completion (plan M11, §5c, §5d) follows v1; the owner put them on `1.0.0-beta.0` with the rest, so a later 0.x would sort below the beta. Their config, frame protocol, and page contracts are not frozen by the candidate list (ADR 0047) and say so in their READMEs before 1.0.0 |
 
-- **Internal ranges.** Workspace packages depend on each other with caret ranges of the released version (`"@oddkin/core": "^1.0.0"`), never `*` or an exact pin. Today every internal dependency is the exact `0.0.0`; the release step replaces them (`scripts/release/set-versions.mjs`, §5).
+- **Internal ranges.** Workspace packages depend on each other with caret ranges of the released version (`"@oddkin/core": "^1.0.0-beta.0"`, which also accepts later betas and every `1.x`), never `*` or an exact pin. `scripts/release/set-versions.mjs` sets them with the versions (§5).
 - **Compatible versions.** Any `1.x` runtime packages work together; a minor adds, a patch fixes, and only a major removes or changes a frozen contract (ADR 0029). Two copies of `@oddkin/core` on one page, at any versions, follow core-contracts.md §5.1: DOM protocols and the external-store contract cross copies; readables, scopes, and error handlers do not; nothing compares versions at run time.
 - **Schemas and metadata.** `oddkin-metadata.v1`, `theme-config.v1`, the composition schema, `examples.v1`, and the agent kit's `kit.json` carry their own version; an additive field is a minor change of the package that emits it; a breaking change is a new schema version, with the previous one still read for one major (ADR 0029).
 - **Deprecation.** A deprecated API keeps working for at least one minor release, reports a development-only diagnostic naming its replacement, and is removed only in the next major, with a migration note in the changelog.
-- **Changelogs.** One `CHANGELOG.md` per package, newest first, with *Added*, *Changed*, *Fixed*, *Deprecated*, and *Removed* sections; entries come from the release's rows in [progress-log.md](./progress-log.md) and name the contract id or element they change. The first entry of each package is its first version. No changelog is written before the owner settles the versions.
+- **Changelogs.** One `CHANGELOG.md` per package, newest first, with *Added*, *Changed*, *Fixed*, *Deprecated*, and *Removed* sections; entries come from the release's rows in [progress-log.md](./progress-log.md) and name the contract id or element they change. The first entry of each package is its first version. No changelog is written for the betas; the first entries come with 1.0.0.
 
 ## 2. Tag-name conflicts (an honest note)
 
@@ -37,9 +37,9 @@ Package hygiene, checked by `npm run verify:packs` on the tarballs:
 - [x] `license` (MIT) in every manifest and a `LICENSE` file in every tarball.
 - [x] `README.md` in every tarball; `type: "module"`; `sideEffects` declared (`false`, or the `define` entries that register).
 - [x] Every JavaScript export has its declarations (`types`); `customElements` points at the manifest in the element packages.
-- [x] No `src/` or `test/` file in a tarball; no third-party runtime dependency outside Node-only tooling.
-- [ ] Versions, internal caret ranges, and changelogs as in §1, after the owner settles them (`scripts/release/set-versions.mjs` sets the versions and ranges, §5).
-- [ ] `private: true` removed from the published packages, after the owner confirms the `@oddkin` npm scope.
+- [x] No `src/` or `test/` file in a tarball, and no `dist` module whose source is gone; no third-party runtime dependency outside Node-only tooling.
+- [x] Beta versions and internal caret ranges (`1.0.0-beta.0`, owner 2026-10-27; `scripts/release/set-versions.mjs --check`). Changelogs start at 1.0.0.
+- [x] `private: true` removed from the eight packages and `publishConfig` with public access (the owner owns `@oddkin`); the docs app and the workspace root stay private.
 
 Verification (results recorded in [verification.md](./verification.md), by owner of each failure):
 
@@ -67,14 +67,24 @@ Other versions are not claimed. The fixtures live beside the packages' tests rat
 
 ## 5. Beta release
 
-The owner's direction (2026-10-27) puts a published beta first. Proposed: §1's versions as prereleases, `1.0.0-beta.0` for the runtime packages and `0.1.0-beta.0` for the analyzer and Workbench, published under the `beta` dist-tag. Publishing with `--tag beta` leaves `latest` alone, so users opt in with `npm install @oddkin/core@beta`. A prerelease promises no stability: the freeze (ADR 0029, ADR 0047) starts at 1.0.0.
+Settled by the owner (2026-10-27): all eight packages publish as `1.0.0-beta.0` on the `beta` dist-tag under the owner's `@oddkin` scope. `--tag beta` leaves `latest` alone, so users opt in with `npm install @oddkin/core@beta`. A prerelease promises no stability: the freeze (ADR 0029, ADR 0047) starts at 1.0.0. On `main` the versions, the caret internal ranges, and `publishConfig` (`access: public`, `tag: beta`) are set (`node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 1.0.0-beta.0 --public`; `--check` confirms them), and the eight packages are no longer `private`.
 
-The owner publishes; agents prepare and verify:
+**Owner commands** (agents never publish; run from a clean checkout of `main`):
 
-1. Set the versions: `node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 0.1.0-beta.0`, then `npm install` for the lockfile. Internal dependencies become caret ranges (`^1.0.0-beta.0` accepts later betas and every `1.x`), and each manifest gets `publishConfig` with public access. `--check` reports a package that is not at the requested versions.
-2. Build from nothing: `node scripts/release/clean.mjs` (every package's `dist` and TypeScript build info), then `npm run build` and the §3 verification. `npm run verify:packs` installs the tarballs with their real versions and rejects one that would publish a `dist` module whose source is gone; the agent kits and metadata carry the package version.
-3. The owner confirms the `@oddkin` scope and removes `private: true` from the eight packages.
-4. Publish in dependency order, each with `--dry-run` first: `npm publish --workspace packages/<name> --tag beta` for `tokens`, `core`, `state`, `app`, `components`, `ai`, `analyzer`, `workbench`. The `--tag` is required: npm 11.19 ignores a `tag` in `publishConfig` and would publish the beta as `latest` (seen in the dry run, below); `publishConfig` supplies the public access.
-5. Tag the commit (`v1.0.0-beta.0`) and announce the install line (`@beta`). Later betas repeat steps 1–5 with the next prerelease number; 1.0.0 drops the suffix, publishes under `latest`, and starts the changelogs (§1).
+```sh
+npm ci
+node scripts/release/clean.mjs        # every package's dist and TypeScript build info
+npm run build
+npm run verify:packs                  # tarballs installed outside the workspace; no stale dist module
+node scripts/agent-kit/package-kits.mjs --check
+node scripts/release/publish.mjs      # dry run of all eight, in dependency order, with --tag beta
+npm login                             # with the account's two-factor authentication
+node scripts/release/publish.mjs --publish
+npm dist-tag ls @oddkin/core          # beta: 1.0.0-beta.0
+git tag v1.0.0-beta.0
+git push origin v1.0.0-beta.0
+```
 
-**Trial (2026-10-27, in a worktree, then reverted):** steps 1, 2, and 4 as dry runs with `1.0.0-beta.0` / `0.1.0-beta.0`. The clean build, `verify:packs`, and the kit check pass, and all eight packages would publish (27–732 kB each; [verification.md](./verification.md)). Before step 1 lands on `main`: five Workbench and agent-kit tests that expect `0.0.0` read the manifests instead, and the metadata's `oddkinVersion` follows the analyzer's version (Agent 2). The owner's `npm login` (with two-factor authentication, if enabled on the account) is needed for step 4.
+`scripts/release/publish.mjs` publishes `tokens`, `core`, `state`, `app`, `components`, `ai`, `analyzer`, and `workbench` in that order (each package's dependencies first), each as `npm publish --workspace packages/<name> --tag beta`, and refuses a package that is private or not public. The `--tag` is passed on the command line because npm 11.19 ignores `publishConfig.tag`: a dry run without it reported "Publishing … with tag latest" (verification.md, 2026-10-27). Then the owner checks a fresh install (`npm install @oddkin/core@beta @oddkin/components@beta` in an empty directory) and announces the `@beta` install line.
+
+Later betas: `set-versions.mjs` with the next prerelease number (`1.0.0-beta.1`), `npm install`, the §3 checks, and the same commands. 1.0.0 drops the suffix, publishes under `latest`, and starts the changelogs (§1).

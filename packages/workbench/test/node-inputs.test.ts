@@ -19,6 +19,9 @@ const projects: string[] = [];
 const track = (dir: string) => (projects.push(dir), dir);
 afterAll(() => projects.forEach(removeProject));
 beforeAll(() => init);
+/** `@oddkin/<name>@<version>` as build keys and module URLs name a workspace package. */
+const oddkin = (name: string) =>
+  `@oddkin/${name}@${(JSON.parse(readFileSync(`packages/${name}/package.json`, 'utf8')) as { version: string }).version}`;
 
 // Loading TypeScript configs and reading real packages; allow for a busy machine.
 describe('configuration loading', { timeout: 30_000 }, () => {
@@ -319,12 +322,12 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
       '@acme/ui': '/_oddkin/m/@acme/ui@1.4.0/dist/index.js',
       '@acme/ui/define/button': '/_oddkin/m/@acme/ui@1.4.0/dist/define/button.js',
       '@acme/ui/oddkin.metadata.json': '/_oddkin/m/@acme/ui@1.4.0/oddkin.metadata.json',
-      '@oddkin/core/scope': '/_oddkin/m/@oddkin/core@0.0.0/dist/scope/index.js',
-      '@oddkin/workbench/frame': '/_oddkin/m/@oddkin/workbench@0.0.0/dist/frame/index.js',
+      '@oddkin/core/scope': `/_oddkin/m/${oddkin('core')}/dist/scope/index.js`,
+      '@oddkin/workbench/frame': `/_oddkin/m/${oddkin('workbench')}/dist/frame/index.js`,
     });
     expect(JSON.parse(build.files.get('frame.importmap.json')!)).toEqual(build.frameImportMap);
     expect(build.packages.get('@acme/ui@1.4.0')).toBe(join(dir, 'node_modules', '@acme', 'ui'));
-    expect(build.packages.get('@oddkin/workbench@0.0.0')).toBe(WORKBENCH_DIR.replace(/[\\/]$/, ''));
+    expect(build.packages.get(oddkin('workbench'))).toBe(WORKBENCH_DIR.replace(/[\\/]$/, ''));
     // The shell page: its own import map, the default theme's tokens, the layout classes its
     // templates use, and the live-update stream.
     const shell = build.shell!;
@@ -332,11 +335,11 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     expect(shell).toContain(
       '<oddkin-workbench index="/_oddkin/index.json" events="/_oddkin/events">',
     );
-    expect(shell).toContain('href="/_oddkin/m/@oddkin/tokens@0.0.0/dist/css/default.css"');
-    expect(shell).toContain('href="/_oddkin/m/@oddkin/components@0.0.0/dist/css/layout.css"');
+    expect(shell).toContain(`href="/_oddkin/m/${oddkin('tokens')}/dist/css/default.css"`);
+    expect(shell).toContain(`href="/_oddkin/m/${oddkin('components')}/dist/css/layout.css"`);
     const shellMap = JSON.parse(/<script type="importmap">(.*?)<\/script>/.exec(shell)![1]!);
     expect(shellMap.imports['@oddkin/app/router']).toBe(
-      '/_oddkin/m/@oddkin/app@0.0.0/dist/router/index.js',
+      `/_oddkin/m/${oddkin('app')}/dist/router/index.js`,
     );
     // Node-only dependencies never reach the shell.
     expect(Object.keys(shellMap.imports).some((k) => k.startsWith('@oddkin/analyzer'))).toBe(false);
@@ -407,10 +410,7 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
       .map(([, url]) => url);
     // One registration entry per published component.
     const manifest = JSON.parse(
-      readFileSync(
-        join(build.packages.get('@oddkin/components@0.0.0')!, 'custom-elements.json'),
-        'utf8',
-      ),
+      readFileSync(join(build.packages.get(oddkin('components'))!, 'custom-elements.json'), 'utf8'),
     ) as { modules: { declarations?: { tagName?: string }[] }[] };
     const tags = manifest.modules.flatMap((m) => (m.declarations ?? []).filter((d) => d.tagName));
     expect(pending.length).toBe(tags.length);
@@ -434,7 +434,7 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     // The real components' frames load the default token stylesheet; examples come from sources.
     const frame = build.files.get('frame.html')!;
     expect(frame).toContain(
-      '<link rel="stylesheet" href="/_oddkin/m/@oddkin/tokens@0.0.0/dist/css/default.css" />',
+      `<link rel="stylesheet" href="/_oddkin/m/${oddkin('tokens')}/dist/css/default.css" />`,
     );
     const button = JSON.parse(
       build.files.get('pages/components/odd-button.json')!,

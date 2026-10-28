@@ -14,6 +14,9 @@ import { acmeProject, removeProject } from './node-project.js';
 
 const projects: string[] = [];
 const servers: DevServer[] = [];
+/** `@oddkin/<name>@<version>` as module URLs name a workspace package. */
+const oddkin = (name: string) =>
+  `@oddkin/${name}@${(JSON.parse(readFileSync(`packages/${name}/package.json`, 'utf8')) as { version: string }).version}`;
 afterAll(async () => {
   await Promise.all(servers.map((s) => s.close()));
   projects.forEach(removeProject);
@@ -133,7 +136,7 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
     expect(head.status).toBe(200);
     expect(await head.text()).toBe('');
     // The shell's own packages are served from the same place.
-    expect((await get('_oddkin/m/@oddkin/core@0.0.0/package.json')).status).toBe(200);
+    expect((await get(`_oddkin/m/${oddkin('core')}/package.json`)).status).toBe(200);
   });
 
   it('refuses paths outside packages, unknown packages and versions, and other methods', async () => {
@@ -157,7 +160,7 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
       '_oddkin/m/@acme/ui/dist/index.js',
       '_oddkin/m/left-pad@1.0.0/index.js',
       '_oddkin/m/%E0%A4%A/index.js',
-      '_oddkin/m/@oddkin/analyzer@0.0.0/package.json',
+      `_oddkin/m/${oddkin('analyzer')}/package.json`,
     ])
       expect((await get(path)).status, path).toBe(404);
     const post = await get('', { method: 'POST' });

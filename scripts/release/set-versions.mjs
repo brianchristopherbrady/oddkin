@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Sets release versions in every published package (release-process.md §1, §5): the runtime
 // packages share one version, the tools (analyzer, Workbench) another. Internal dependencies
-// become caret ranges of the version they point at, and publishConfig gets public access. The
-// dist-tag goes to `npm publish --tag` (npm 11.19 ignores publishConfig.tag; a prerelease must
-// never publish as `latest`). `private` is left alone: the owner removes it when publishing is
-// authorized. The private apps (`apps/*`) keep their version and get the same internal ranges.
-// Run `npm install` afterwards for the lockfile.
-//   node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 0.1.0-beta.0 [--check]
+// become caret ranges of the version they point at, and publishConfig gets public access and,
+// for a prerelease, its dist-tag. npm 11.19 ignores publishConfig.tag, so the publish command
+// still passes `--tag` (a prerelease must never publish as `latest`). `--public` removes
+// `private` (only once the owner has authorized publishing). The private apps (`apps/*`) keep
+// their version and `private`, and get the same internal ranges. Run `npm install` afterwards.
+//   node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 1.0.0-beta.0 [--public] [--check]
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -32,6 +32,7 @@ for (const [group, version] of Object.entries(versions))
     process.exit(2);
   }
 const check = process.argv.includes('--check');
+const publish = process.argv.includes('--public');
 
 const read = (folder) =>
   readdirSync(join(root, folder)).map((dir) => {
@@ -61,8 +62,14 @@ for (const { file, manifest, published } of workspaces) {
     );
   }
   if (published) {
-    const { tag: _ignoredByNpm, ...publishConfig } = manifest.publishConfig ?? {};
-    next.publishConfig = { ...publishConfig, access: 'public' };
+    const { tag: _previous, ...publishConfig } = manifest.publishConfig ?? {};
+    const tag = tagOf(version);
+    next.publishConfig = {
+      ...publishConfig,
+      access: 'public',
+      ...(tag === 'latest' ? {} : { tag }),
+    };
+    if (publish) delete next.private;
   }
   const text = `${JSON.stringify(next, null, 2)}\n`;
   if (text === readFileSync(file, 'utf8')) continue;
@@ -74,5 +81,5 @@ if (check && stale.length) {
   process.exit(1);
 }
 console.log(
-  `${check ? 'Checked' : 'Set'} ${packages.length} packages: runtime ${versions.runtime} and tools ${versions.tools}; publish with --tag ${tagOf(versions.runtime)} (tools: --tag ${tagOf(versions.tools)}).${stale.length && !check ? ' Run npm install to update the lockfile.' : ''}`,
+  `${check ? 'Checked' : 'Set'} ${packages.length} packages: runtime ${versions.runtime} and tools ${versions.tools}${publish ? ', publishable' : ''}; publish with --tag ${tagOf(versions.runtime)} (tools: --tag ${tagOf(versions.tools)}).${stale.length && !check ? ' Run npm install to update the lockfile.' : ''}`,
 );

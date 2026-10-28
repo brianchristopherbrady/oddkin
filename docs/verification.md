@@ -3829,3 +3829,18 @@ Tried in the a3 worktree, then reverted (main keeps `0.0.0` and `private: true`)
 | Revert | `git checkout` of the 9 manifests; `npm install`; `npm run build` | Main keeps `0.0.0`; the lockfile gains the `license` fields added on 2026-10-27 (30b1878 had not synced it) |
 
 **Findings:** (1) A beta published as written in the first draft of release-process.md §5 would have become `latest`: npm 11.19 ignores `publishConfig.tag`, so `--tag beta` is part of the publish command and the script no longer writes a tag. (2) Before the versions change on main, Agent 2's five tests must read versions from the manifests instead of `0.0.0`, and `ANALYZER_VERSION` must follow the analyzer's package version (taken by Agent 2). (3) The release build needs a clean `dist`: `tsc -b` leaves modules whose source was deleted, and `files: ["dist"]` would publish them; `verify-packs` now fails on them.
+
+## 2026-10-28 — Beta versions on main (Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Versions | `node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 1.0.0-beta.0 --public`; `npm install` | 8 packages at `1.0.0-beta.0`, internal ranges `^1.0.0-beta.0` (the docs app too, still private), `private` removed, `publishConfig` `{ access: public, tag: beta }`; lockfile updated |
+| Clean build | `node scripts/release/clean.mjs`; `npm run build` | Pass |
+| Node project | `npx vitest run --project node` | 1,464 pass, 1 fail: `node-server.test.ts` "pushes updates for configuration, content, data, and module changes" (a file-watch timing test), which passes alone (6/6): load noise. The five tests that expected `0.0.0` pass |
+| Packs | `npm run verify:packs` | Pass (tarballs at `1.0.0-beta.0`, 27 docs snippets, no stale `dist` module) |
+| Kits, typecheck, size, compat | `package-kits.mjs --check`; `npm run typecheck`; `npm run size`; `npm run compat` | Pass |
+| Metadata | contract tests (`packages/components/test/contract.browser.test.ts`, `packages/ai/test/contract.browser.test.ts`) in Chromium, Firefox, WebKit, then `npm run verify:metadata` | 978 pass, 54 skipped per engine; 2,163 verified facts across 54 component elements and 481 across 24 AI elements; vocabulary 0 findings. (Before the rerun every record was stale: the manifest hash includes the version) |
+| Packed consumers | `npx playwright test e2e/packed-consumers.spec.ts --project=chromium --workers=2` (e2e lock taken) | 7 passed |
+| Publish dry run | `node scripts/release/publish.mjs`; `npm publish --dry-run --workspace packages/core --tag beta` | All 8 would publish in order; npm reports "with tag beta and public access" (core 190.9 kB, 245 files) |
+
+**Findings:** (1) Every contract-test record goes stale with a version change (the CEM manifest's hash is an input), so a release reruns the two contract tests in three engines before `verify:metadata`. (2) `scripts/release/publish.mjs` refuses a private or non-public package and passes `--tag` itself; it publishes only with `--publish`, which agents never use. (3) The docs app's install line (`apps/docs/src/pages/reference.ts`, Agent 1) still says `npm install @oddkin/tokens @oddkin/core @oddkin/components` without `@beta`.

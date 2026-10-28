@@ -9,6 +9,9 @@ import { acmeProject, makeProject, removeProject } from './node-project.js';
 const projects: string[] = [];
 const track = (dir: string) => (projects.push(dir), dir);
 afterAll(() => projects.forEach(removeProject));
+const { version } = JSON.parse(readFileSync('packages/workbench/package.json', 'utf8')) as {
+  version: string;
+};
 
 async function cli(
   args: string[],
@@ -39,7 +42,7 @@ describe('the oddkin command', { timeout: 60_000 }, () => {
     expect(help.code).toBe(0);
     expect(help.out).toContain('oddkin workbench dev');
     expect(help.out).toContain('oddkin analyze');
-    expect((await cli(['--version'])).out).toBe('0.0.0');
+    expect((await cli(['--version'])).out).toBe(version);
     for (const args of [[], ['nope'], ['workbench'], ['workbench', 'serve']]) {
       const result = await cli(args);
       expect(result.code, args.join(' ')).toBe(2);

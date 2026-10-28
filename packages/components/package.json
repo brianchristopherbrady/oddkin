@@ -1,7 +1,6 @@
 {
   "name": "@oddkin/components",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0-beta.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -730,10 +729,14 @@
     "README.md"
   ],
   "dependencies": {
-    "@oddkin/core": "0.0.0",
-    "@oddkin/tokens": "0.0.0"
+    "@oddkin/core": "^1.0.0-beta.0",
+    "@oddkin/tokens": "^1.0.0-beta.0"
   },
   "devDependencies": {
-    "@oddkin/workbench": "0.0.0"
+    "@oddkin/workbench": "^1.0.0-beta.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "beta"
   }
 }

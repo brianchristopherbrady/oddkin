@@ -59,9 +59,9 @@ describe('the @oddkin/components kit', () => {
     expect(manifest.guide.bytes).toBe(Buffer.byteLength(file('GUIDE.md')));
     expect(manifest.guide.bytes).toBeLessThanOrEqual(manifest.guide.budgetBytes);
     expect(manifest.fingerprint.packages).toEqual({
-      '@oddkin/components': '0.0.0',
-      '@oddkin/core': '0.0.0',
-      '@oddkin/tokens': '0.0.0',
+      '@oddkin/components': json('packages/components/package.json').version,
+      '@oddkin/core': json('packages/core/package.json').version,
+      '@oddkin/tokens': json('packages/tokens/package.json').version,
     });
   });
 
