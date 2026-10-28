@@ -48,5 +48,19 @@ Verification (results recorded in [verification.md](./verification.md), by owner
 - [ ] `npm run verify:metadata`, `npm run size`, `npm run verify:packs`, the packed consumers (`e2e/packed-consumers.spec.ts`, `e2e/components-only.spec.ts`, `e2e/autoload.spec.ts`), and `npm run compat` with the floor probe (`npm run compat:floor`).
 - [ ] The browser floor re-resolved and the matrix regenerated ([compatibility/matrix.md](./compatibility/matrix.md)); Safari 17.4 and screen-reader evidence recorded as limitations until a macOS host and assistive technology are available.
 - [ ] `oddkin-impact` against the previous release once there is one, with the semver impact reviewed.
+- [ ] The framework fixtures pass in three engines and §4 names the versions they ran against.
 
 Then the owner tags, publishes, and deploys.
+
+## 4. Verified frameworks
+
+The framework fixtures render Oddkin elements through each framework in Chromium, Firefox, and WebKit: properties arrive as values (never attributes), events reach the framework's handlers, form controls bind, and elements defined after the framework rendered upgrade in place. Last verified 2026-10-27 (Chromium 156, Firefox 157, WebKit 27.2; 20 tests per engine):
+
+| Framework | Version | Runtime fixtures | Type checks |
+| --- | --- | --- | --- |
+| React | 19.3.1 (`react`, `react-dom`) | `packages/components/test/frameworks.browser.test.ts`, `frameworks-forms`, `frameworks-late`; `packages/ai/test/frameworks.browser.test.ts` | `@oddkin/components/frameworks/react` JSX types: `tests/frameworks/react/react.types.tsx` (TypeScript 7.0.2) |
+| Vue | 3.5.44 | the same three components files and the AI file | `@oddkin/components/frameworks/vue`: `tests/frameworks/vue/Shell.vue` with vue-tsc 3.3.13 (`strictTemplates`, TypeScript 5.9.3) |
+| Svelte | 5.57.2 (runes; `@sveltejs/vite-plugin-svelte` 7.3.1) | `frameworks-svelte`, `frameworks-forms`, `frameworks-late` | `@oddkin/components/frameworks/svelte`: `tests/frameworks/svelte` with svelte-check 4.7.7 |
+| Angular | 22.2.3 (JIT, zoneless, `CUSTOM_ELEMENTS_SCHEMA`) | `frameworks-angular`, `frameworks-forms`, `frameworks-late` | None: Angular templates are not type-checked against the elements |
+
+Other versions are not claimed. The fixtures live beside the packages' tests rather than in a separate `integration/` folder; `scripts/check-size.mjs` fails if any measured entry pulls in one of these frameworks.

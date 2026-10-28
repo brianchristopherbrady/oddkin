@@ -3759,3 +3759,14 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Lint | `npm run lint` | Pass |
 
 **Findings:** No code changed. The counts ADR 0047 cites were taken from the tree at 81a927c: `packages/core/contracts.json` lists the 16 ids; the conformance and impact figures are those recorded in this file on 2026-10-19 and in M4. The comprehension review has no reader evidence: it is marked partial in the plan.
+
+## 2026-10-27 — M12: verified framework versions (Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Build | `npm run build` | Pass |
+| Framework fixtures | `node ../oddkin-lanes/tools/browser-set.mjs` on `packages/components/test/frameworks{,-angular,-forms,-late,-svelte}.browser.test.ts` and `packages/ai/test/frameworks.browser.test.ts` | 20 tests pass in each of Chromium 156, Firefox 157, and WebKit 27.2 (one engine at a time) |
+| Type checks | `npm run typecheck` (includes `check-framework-types.mjs`) | Pass: React JSX types (TypeScript 7.0.2), Vue with vue-tsc 3.3.13 `strictTemplates`, Svelte with svelte-check 4.7.7 (4 expected errors in `Mistakes.svelte`) |
+| Versions | read from the installed `package.json` files | React and React DOM 19.3.1, Vue 3.5.44, Svelte 5.57.2, `@sveltejs/vite-plugin-svelte` 7.3.1, Angular 22.2.3 |
+
+**Findings:** No code changed. Angular templates have no type check (no typings fixture), which release-process.md §4 states.
