@@ -57,7 +57,12 @@ export { foundationsFrom } from './foundations.js';
 export type { InspectedToken, InspectionSource, TokenInspection } from './foundations.js';
 export { gitHistory, type SourceHistory } from './history.js';
 
-export const ANALYZER_VERSION = '0.0.0';
+/** This package's version, which every metadata file records as `oddkinVersion`. */
+export const ANALYZER_VERSION: string = (
+  JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {
+    version: string;
+  }
+).version;
 
 /** Core contracts every element relies on (`@oddkin/core/CONTRACTS.md`). */
 export const ELEMENT_CONTRACTS = [

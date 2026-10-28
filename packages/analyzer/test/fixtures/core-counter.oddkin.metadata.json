@@ -1,6 +1,6 @@
 {
   "schema": "https://oddkin.dev/schemas/oddkin-metadata/v1.json",
-  "oddkinVersion": "0.0.0",
+  "oddkinVersion": "<analyzer>",
   "library": {
     "name": "core-counter",
     "version": "0.0.0",

@@ -3,7 +3,7 @@ import { Ajv } from 'ajv';
 import addFormats from 'ajv-formats';
 import { readFile, writeFile } from 'node:fs/promises';
 import { describe, expect, it, vi } from 'vitest';
-import { analyze, stableJson } from '../src/index.js';
+import { analyze, ANALYZER_VERSION, stableJson } from '../src/index.js';
 
 // Each analysis builds a TypeScript program (~1 s); allow for parallel test load.
 vi.setConfig({ testTimeout: 30_000 });
@@ -204,7 +204,8 @@ describe('analyzer on the core-counter example', () => {
 
   for (const [file, data] of [
     ['core-counter.custom-elements.json', result.manifest],
-    ['core-counter.oddkin.metadata.json', result.metadata],
+    // The analyzer's own version is checked below, so a release does not change the fixture.
+    ['core-counter.oddkin.metadata.json', { ...result.metadata, oddkinVersion: '<analyzer>' }],
   ] as const) {
     it(`${file} matches the committed fixture (UPDATE_FIXTURES=1 to regenerate)`, async () => {
       const url = new URL(`./fixtures/${file}`, import.meta.url);
@@ -212,6 +213,14 @@ describe('analyzer on the core-counter example', () => {
       expect(stableJson(data)).toBe(await readFile(url, 'utf8'));
     });
   }
+
+  it("records the analyzer's package version", async () => {
+    const manifest = JSON.parse(
+      await readFile(new URL('../package.json', import.meta.url), 'utf8'),
+    ) as { version: string };
+    expect(result.metadata.oddkinVersion).toBe(manifest.version);
+    expect(ANALYZER_VERSION).toBe(manifest.version);
+  });
 
   it('is valid and diagnostic-free', () => {
     expect(validateCem(result.manifest)).toBe(true);
