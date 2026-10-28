@@ -45,6 +45,12 @@
   white-space: nowrap;
 }
 
+/* Figma 20:291: brand 188 px and navigation 500 px; the row spreads the five groups between. */
+.brand {
+  --odd-row-gap: var(--odd-space-xs);
+  flex: 0 1 11.75rem;
+}
+
 .brand-name {
   font-family: var(--odd-type-display-family);
   font-size: 1.75rem;
@@ -54,15 +60,12 @@
 }
 
 .brand-docs {
-  margin-inline-start: var(--odd-space-xs);
   color: var(--odd-color-text-secondary);
-  font-family: var(--odd-type-ui-family);
-  font-size: var(--odd-type-ui-size);
-  font-weight: var(--odd-type-ui-weight);
 }
 
 .primary-nav {
   --odd-row-gap: var(--odd-space-lg);
+  flex: 0 1 31.25rem;
 }
 
 .primary-nav a {
@@ -84,20 +87,17 @@
   color: var(--odd-color-link);
 }
 
-.header-tools {
+.search-group {
   --odd-row-gap: var(--odd-space-sm);
 }
 
 .search-trigger {
-  min-inline-size: 13rem;
+  min-inline-size: 15.5rem;
   text-decoration: none;
 }
 
 .shortcut,
 .version {
-  color: var(--odd-color-text-secondary);
-  font-size: var(--odd-type-small-size);
-  line-height: var(--odd-type-small-line-height);
   white-space: nowrap;
 }
 
@@ -368,18 +368,17 @@ odd-side-nav:not(:defined) > a {
   block-size: 100%;
 }
 
-.resource-card p {
+.resource-card > p:not([slot]),
+.card-meta {
   margin: 0;
   color: var(--odd-color-text-secondary);
 }
 
-.resource-card .card-meta {
-  margin-block-start: var(--odd-space-md);
+/* Figma Docs/ResourceCard: a 1 px rule, then the package line and the action, a card gap apart. */
+.card-footer {
+  --odd-stack-gap: var(--odd-space-md);
   padding-block-start: var(--odd-space-md);
   border-block-start: var(--odd-border-width-default) solid var(--odd-color-border-default);
-  font-family: var(--odd-type-ui-family);
-  font-size: var(--odd-type-ui-size);
-  font-weight: var(--odd-type-ui-weight);
 }
 
 .resource-card .odd-button {
@@ -550,8 +549,9 @@ odd-side-nav:not(:defined) > a {
   align-items: start;
 }
 
+/* Figma Docs/Footer 5:1240: 240 px columns. */
 .footer-column {
-  min-inline-size: 10rem;
+  inline-size: 15rem;
 }
 
 .footer-heading {
@@ -563,7 +563,7 @@ odd-side-nav:not(:defined) > a {
 }
 
 .footer-column ul {
-  --odd-stack-gap: var(--odd-space-sm);
+  --odd-stack-gap: var(--odd-space-md);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -629,9 +629,11 @@ odd-side-nav:not(:defined) > a {
   padding: var(--odd-space-3xl) max(var(--odd-space-3xl), calc((100% - 82rem) / 2));
 }
 
-.home-hero {
-  --odd-auto-grid-min: 24rem;
-  --odd-auto-grid-gap: var(--odd-space-2xl);
+/* Figma 20:294: the copy is 616 px beside the specimen, 48 px apart; below that they stack. */
+.hero-split {
+  --odd-split-side-width: 38.5rem;
+  --odd-split-main-min: 30rem;
+  --odd-split-gap: var(--odd-space-2xl);
   align-items: center;
 }
 
@@ -641,19 +643,23 @@ odd-side-nav:not(:defined) > a {
   margin: 0;
 }
 
-.hero-copy > * + * {
-  margin-block-start: var(--odd-space-lg);
+.hero-copy .eyebrow,
+.section-heading .eyebrow {
+  color: var(--odd-color-link);
 }
 
+/* Figma 20:297: 64 px, line height 1.15, off the type scale (no variable is bound). */
 #main .hero-title {
-  font-size: clamp(2.25rem, 1.5rem + 2.5vw, 3.5rem);
-  line-height: 1.1;
+  font-size: 4rem;
+  line-height: 1.15;
 }
 
+/* Figma 20:299: 20 px, line height 1.15, 520 px wide. */
 .hero-lede {
-  max-inline-size: 34rem;
+  max-inline-size: 32.5rem;
   color: var(--odd-color-text-secondary);
   font-size: var(--odd-font-size-xl);
+  line-height: 1.15;
 }
 
 .hero-actions {
@@ -664,45 +670,28 @@ odd-side-nav:not(:defined) > a {
   text-decoration: none;
 }
 
-.hero-note {
-  color: var(--odd-color-text-secondary);
-  font-size: var(--odd-type-small-size);
-}
-
+/* Figma 20:304: the 1 px stroke is inside the 32 px padding, so the content is 584 px wide. */
 .specimen {
-  padding: var(--odd-space-xl);
+  padding: calc(var(--odd-space-xl) - var(--odd-border-width-default));
   border: var(--odd-border-width-default) solid var(--odd-color-border-default);
-  border-radius: var(--odd-radius-lg);
-  background: var(--odd-color-surface-default);
+  border-radius: var(--odd-radius-2xl);
+  background: var(--odd-color-surface-specimen);
 }
 
-.specimen > * + * {
-  margin-block-start: var(--odd-space-lg);
-}
-
+/* Figma 20:308: two 280 px columns, 24 px apart; the card centred beside the controls. */
 .specimen-components {
-  --odd-auto-grid-min: 14rem;
+  --odd-auto-grid-min: 17.5rem;
   --odd-auto-grid-gap: var(--odd-space-lg);
-  align-items: start;
-}
-
-.specimen-controls {
-  --odd-stack-gap: var(--odd-space-md);
-}
-
-.specimen-card-title {
-  font-family: var(--odd-type-title-family);
-  font-size: var(--odd-type-title-size);
-  font-weight: var(--odd-type-title-weight);
-  line-height: var(--odd-type-title-line-height);
+  align-items: center;
 }
 
 .specimen odd-card p {
   margin: 0;
 }
 
+/* Figma 20:319: five 108 px tiles, 8 px apart. */
 .token-palette {
-  --odd-auto-grid-min: 6rem;
+  --odd-auto-grid-min: 6.75rem;
   --odd-auto-grid-gap: var(--odd-space-xs);
   margin: 0;
   padding: 0;
@@ -919,18 +908,16 @@ odd-side-nav:not(:defined) > a {
 /* At the 320 px reflow width the brand and three header buttons fit only when tighter. */
 @media (width < 22rem) {
   .site-header {
-    padding-inline: var(--odd-space-md);
-  }
-
-  .header-tools {
     --odd-row-gap: var(--odd-space-2xs);
+    padding-inline: var(--odd-space-md);
   }
 
   .site-header .brand-name {
     font-size: var(--odd-font-size-2xl);
   }
 
-  .header-tools .odd-button {
+  .site-header > .odd-button,
+  .search-group .odd-button {
     --odd-button-height: var(--odd-control-height-sm);
     min-inline-size: var(--odd-control-height-sm);
   }

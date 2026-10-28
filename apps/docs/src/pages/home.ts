@@ -1,6 +1,6 @@
 import type { SiteFacts } from './document.js';
 import { icons } from './icons.js';
-import { codeSample, escapeHtml, type Page } from './model.js';
+import { codeSample, escapeHtml, resourceCard, type Page } from './model.js';
 import { routeExists } from './site.js';
 import { startApp, startAuthor, startComponents, startTokens, startWorkbench } from './start.js';
 
@@ -20,7 +20,7 @@ const pick = <T extends { path: string }>(...choices: T[]): T =>
 
 function hero(site: SiteFacts, page: Page): string {
   const [headline = page.summary, ...rest] = page.summary.split(/(?<=\.)\s+/);
-  return `<section class="home-hero odd-auto-grid" aria-labelledby="home-title"><div class="hero-copy"><p class="eyebrow">Oddkin ${escapeHtml(site.version)}</p><h1 id="home-title" class="hero-title">${escapeHtml(headline)}</h1><p class="hero-lede">${escapeHtml(rest.join(' '))}</p><div class="hero-actions odd-cluster"><a class="odd-button" data-appearance="primary" href="/getting-started">Get started</a><a class="odd-button" href="/components">Browse components</a></div><p class="hero-note">Supported browsers: ${escapeHtml(site.browsers)}, and later.</p></div>${specimen()}</section>`;
+  return `<section class="home-hero" aria-labelledby="home-title"><div class="hero-split odd-split"><div class="hero-copy odd-stack odd-stack-loose"><p class="eyebrow">Oddkin ${escapeHtml(site.version)}</p><h1 id="home-title" class="hero-title">${escapeHtml(headline)}</h1><p class="hero-lede">${escapeHtml(rest.join(' '))}</p><div class="hero-actions odd-cluster"><a class="odd-button" data-appearance="primary" href="/getting-started">Get started</a><a class="odd-button" href="/components">Browse components</a></div><p class="hero-note odd-type-small">Supported browsers: ${escapeHtml(site.browsers)}, and later.</p></div>${specimen()}</div></section>`;
 }
 
 const swatches: readonly [string, string][] = [
@@ -32,7 +32,7 @@ const swatches: readonly [string, string][] = [
 ];
 
 function specimen(): string {
-  return `<div class="specimen" role="group" aria-labelledby="specimen-title"><div class="specimen-header odd-row odd-row-between"><p class="eyebrow" id="specimen-title">Component examples</p><odd-badge>Default theme</odd-badge></div><div class="specimen-components odd-auto-grid"><odd-card><p slot="header" class="specimen-card-title">Weekly report</p><p>Revenue grew 12% since last week.</p><odd-button slot="footer" size="sm">Open report</odd-button></odd-card><div class="specimen-controls odd-stack"><odd-input label="Full name" autocomplete="name"></odd-input><odd-switch checked>Notifications</odd-switch><div class="odd-cluster"><odd-badge tone="success">Published</odd-badge><odd-badge>Draft</odd-badge></div><div class="odd-cluster"><odd-button>Cancel</odd-button><odd-button appearance="primary">Continue</odd-button></div></div></div><ul class="token-palette odd-auto-grid" role="list" aria-label="Colour roles">${swatches
+  return `<div class="specimen odd-stack odd-stack-loose" role="group" aria-labelledby="specimen-title"><div class="specimen-header odd-row odd-row-between"><p class="eyebrow" id="specimen-title">Component examples</p><odd-badge>Default theme</odd-badge></div><div class="specimen-components odd-auto-grid"><odd-card class="resource-card"><p slot="header" class="odd-type-title">Weekly report</p><p>Revenue grew 12% since last week.</p><div slot="footer" class="card-footer odd-stack"><p class="card-meta odd-type-ui">odd-card</p><odd-button>Open report</odd-button></div></odd-card><div class="specimen-controls odd-stack odd-stack-loose"><odd-input label="Full name" autocomplete="name"></odd-input><odd-switch checked>Notifications</odd-switch><div class="odd-cluster"><odd-badge tone="success">Published</odd-badge><odd-badge>Draft</odd-badge></div><div class="odd-cluster"><odd-button>Cancel</odd-button><odd-button appearance="primary">Continue</odd-button></div></div></div><ul class="token-palette odd-auto-grid" role="list" aria-label="Colour roles">${swatches
     .map(
       ([name, role]) =>
         `<li><span class="swatch swatch-${name}"></span><code>${role
@@ -97,10 +97,7 @@ function explore(site: SiteFacts): string {
     'Explore the framework',
     'Each package depends only on the ones it needs. Tokens work without JavaScript; components work in any framework or none; state, app services, and the tooling are optional.',
   )}<ul class="card-list odd-auto-grid odd-auto-grid-fit" role="list">${cards
-    .map(
-      (card) =>
-        `<li><odd-card class="resource-card"><h3 slot="header">${escapeHtml(card.title)}</h3><p>${escapeHtml(card.text ?? '')}</p><p class="card-meta">${escapeHtml(card.meta)}</p><a slot="footer" class="odd-button" data-full-width href="/${card.path}">${escapeHtml(card.action)}</a></odd-card></li>`,
-    )
+    .map((card) => resourceCard({ ...card, text: card.text ?? '', href: `/${card.path}` }))
     .join('')}</ul></section>`;
 }
 

@@ -221,12 +221,13 @@ export function codeSample({ code, lang, caption, file }: CodeBlock, id: string)
   }</figure>`;
 }
 
-function card({ title, text, href, action, meta }: Card): string {
+/** A resource card (Figma Docs/ResourceCard 10:755): the package line and the action share the footer. */
+export function resourceCard({ title, text, href, action, meta }: Card): string {
   return `<li><odd-card class="resource-card"><h3 slot="header">${escapeHtml(title)}</h3><p>${escapeHtml(
     text,
-  )}</p>${meta ? `<p class="card-meta">${escapeHtml(meta)}</p>` : ''}<a slot="footer" class="odd-button" data-full-width href="${escapeHtml(
+  )}</p><div slot="footer" class="card-footer odd-stack">${meta ? `<p class="card-meta odd-type-ui">${escapeHtml(meta)}</p>` : ''}<a class="odd-button" data-full-width href="${escapeHtml(
     href,
-  )}">${escapeHtml(action)}</a></odd-card></li>`;
+  )}">${escapeHtml(action)}</a></div></odd-card></li>`;
 }
 
 function block(item: Block, facts: FactBlocks, ids: () => string): string {
@@ -238,7 +239,7 @@ function block(item: Block, facts: FactBlocks, ids: () => string): string {
   }
   if ('code' in item) return codeSample(item.code, ids());
   if ('cards' in item)
-    return `<ul class="card-list odd-auto-grid" role="list">${item.cards.map(card).join('')}</ul>`;
+    return `<ul class="card-list odd-auto-grid" role="list">${item.cards.map(resourceCard).join('')}</ul>`;
   if ('ramp' in item)
     return `<figure class="ramp"><figcaption>${escapeHtml(item.ramp.title)}</figcaption><ol class="ramp-steps odd-cluster" role="list">${item.ramp.steps
       .map(
