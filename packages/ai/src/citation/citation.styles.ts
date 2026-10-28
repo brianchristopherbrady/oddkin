@@ -1,7 +1,10 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { citationRecipeStyles } from './citation.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `citation.recipe.ts`. */
 export const citationStyles = css`
+  ${citationRecipeStyles}
   :host {
     display: inline;
     position: relative;
@@ -35,9 +38,6 @@ export const citationStyles = css`
     color: ${token('color.text.secondary')};
   }
   .preview {
-    display: flex;
-    flex-direction: column;
-    gap: ${token('space.2xs')};
     margin-block: ${token('space.xs')};
     padding: ${token('space.sm')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};

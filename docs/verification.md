@@ -3630,3 +3630,15 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Contracts, typecheck, lint, node | `npm run contracts`, `npm run typecheck`, `npm run lint`, `npx vitest run --project node packages/core` | OK; 131 passed |
 
 **Findings:** (1) Firefox 157's `moveBefore()` keeps a focused element's focus in the light DOM but blurs it inside a shadow root (a probe: no exception, `activeElement` null afterwards), so `repeat()` lost focus in a shadow-root list; it now restores focus after any move that lost it. (2) WebKit's fallback restored the selection without its direction (a backward selection became forward); the direction is kept now. (3) A `repeat()` item template that threw left the rows created before it in the DOM, untracked, so the next good list showed an extra row; keys and templates are now evaluated before the DOM changes. (4) A template that failed while committing (a binding rejecting its value) kept its earlier bindings subscribed with no owner; they are released now, and the part stays empty until the next good value. Keeping the previous content instead would need the new template built before the old one is released, which reverses the order refs see (a shared `createRef()` would end `undefined`): not done.
+## 2026-10-27 — AI layout recipes, first batch (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Extraction | `npx vitest run --project node packages/ai` (`recipes.test.ts` with `UPDATE_FIXTURES=1` once) | 75 passed; each extracted sheet equals its recipe's CSS (without the layer order statement where only base regions exist) and opens the element's sheet |
+| AI browser tests, three engines | `browser-set.mjs` on the 9 `packages/ai/test/*.browser.test.ts` files | Chromium, Firefox, WebKit: 221 passed, 4 skipped each |
+| Workbench coverage (renders every AI example) | `browser-set.mjs packages/workbench/test/coverage.browser.test.ts` | 1 passed in each engine |
+| e2e | `npx playwright test e2e/ai-demos.spec.ts` (all projects, then each project alone) | all projects together: 29 passed, 10 failed (Firefox teardown and WebKit timeouts); alone: Chromium 13 passed; Firefox 11 passed, 2 failed with "Tearing down context exceeded the test timeout", which pass with `--workers=1` (3 passed); WebKit 9 passed, 4 failed (timeouts), which pass with `--last-failed --workers=1` (4 passed): load noise |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-recipes-b1.json` on the extracted sheets (Chromium, `layout.browser.test.ts`) | 17 of 18 killed; "suggestions centred" (`align-items: center` instead of `stretch`) is equivalent: suggestion chips on one line have one line of text, so the same height, and a label long enough to wrap takes a line of its own |
+| Metadata | `node scripts/build-metadata.mjs`; `packages/ai/test/metadata.test.ts` | no warnings; the eight elements publish style mappings (after fc23a18) |
+| Compatibility | `node scripts/compat/check-css.mjs --write` | 209 stylesheets (+8), 326 keys; OK |
+| Size | `node scripts/check-size.mjs` | ai-chat 50,938 B (was 50,671), ai:styles 4,672 B (was 4,503); see the budget row |

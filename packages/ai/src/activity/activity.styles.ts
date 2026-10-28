@@ -1,12 +1,11 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { activityRecipeStyles } from './activity.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `activity.recipe.ts`. */
 export const activityStyles = css`
+  ${activityRecipeStyles}
   .base {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.xs')};
     min-block-size: ${token('target.min')};
     color: ${token('color.text.secondary')};
     font-size: ${token('font.size.sm')};

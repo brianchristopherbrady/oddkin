@@ -1,20 +1,15 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { artifactRecipeStyles } from './artifact.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `artifact.recipe.ts`. */
 export const artifactStyles = css`
+  ${artifactRecipeStyles}
   .base {
-    display: grid;
-    gap: ${token('space.xs')};
     padding: ${token('space.sm')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('radius.lg')};
     background: ${token('color.surface.default')};
-  }
-  .header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.xs')};
   }
   .title {
     flex: 1 1 12rem;

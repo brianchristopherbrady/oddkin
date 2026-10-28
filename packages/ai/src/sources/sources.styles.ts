@@ -1,7 +1,10 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { sourcesRecipeStyles } from './sources.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `sources.recipe.ts`. */
 export const sourcesStyles = css`
+  ${sourcesRecipeStyles}
   .heading {
     margin: 0 0 ${token('space.xs')};
     font-size: ${token('font.size.sm')};
@@ -9,16 +12,11 @@ export const sourcesStyles = css`
     color: ${token('color.text.secondary')};
   }
   .list {
-    display: grid;
-    gap: ${token('space.xs')};
     margin: 0;
     padding-inline-start: ${token('space.lg')};
     font-size: ${token('font.size.sm')};
   }
   .item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
     padding: ${token('space.2xs')} ${token('space.xs')};
     border-radius: ${token('radius.sm')};
   }

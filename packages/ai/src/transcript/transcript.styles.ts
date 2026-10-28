@@ -1,13 +1,14 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { transcriptRecipeStyles } from './transcript.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `transcript.recipe.ts`. */
 export const transcriptStyles = css`
+  ${transcriptRecipeStyles}
   p {
     margin: 0;
   }
   .list {
-    display: grid;
-    gap: ${token('space.2xs')};
     margin: 0;
     padding: 0;
     list-style: none;

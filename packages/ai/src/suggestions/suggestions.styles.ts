@@ -1,11 +1,11 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { suggestionsRecipeStyles } from './suggestions.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `suggestions.recipe.ts`. */
 export const suggestionsStyles = css`
+  ${suggestionsRecipeStyles}
   .list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: ${token('space.xs')};
     margin: 0;
     padding: 0;
     list-style: none;

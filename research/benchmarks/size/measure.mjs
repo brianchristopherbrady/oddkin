@@ -64,7 +64,9 @@ export const BUDGETS = {
   // helpers and recover focus after removal too). 50,720 since 2026-10-27, measured 50,705: core's
   // repeat() fixes (focus restored after Firefox's moveBefore in a shadow root, the selection
   // direction, item templates evaluated before the DOM changes) cost 34 B here (50,671 before).
-  'ai-chat': 50720,
+  // 51,200 (50 KiB) since 2026-10-27, measured 50,980: the AI layout recipes (layout-recipes.md
+  // §14, 21 elements and the shared action row, extracted at build time) cost 275 B here.
+  'ai-chat': 51200,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
@@ -265,7 +267,10 @@ export const CSS_BUDGETS = {
   // description-list.css and typography's gated text-wrap; 2,081 on 2026-10-23 with the field recipe's
   // start and end adornments (b67b90c); 1,821 on 2026-10-22 for the eight CSS recipes.
   'components:recipes': 2752,
-  'ai:styles': 4608, // 4.5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together
+  // 5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together. 4,846 on
+  // 2026-10-27 with the AI layout recipes (+343 B: each extracted sheet counts once on its own and
+  // once inside the element sheet it opens).
+  'ai:styles': 5120,
 };
 
 /** Gzip sizes of the shipped CSS: generated token CSS and component style modules. */

@@ -1,7 +1,10 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { conversationRecipeStyles } from './conversation.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `conversation.recipe.ts`. */
 export const conversationStyles = css`
+  ${conversationRecipeStyles}
   :host {
     display: block;
     block-size: 100%;
@@ -9,9 +12,6 @@ export const conversationStyles = css`
   }
   .base {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: ${token('space.xs')};
     block-size: 100%;
     min-block-size: 0;
   }
@@ -26,8 +26,6 @@ export const conversationStyles = css`
     outline-offset: -2px;
   }
   .feed {
-    display: grid;
-    gap: ${token('space.lg')};
     max-inline-size: var(--odd-conversation-max-width, 48rem);
     margin-inline: auto;
   }
@@ -40,10 +38,6 @@ export const conversationStyles = css`
   }
   .history,
   .empty {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: ${token('space.xs')};
     margin-block-end: ${token('space.sm')};
   }
   .jump {

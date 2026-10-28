@@ -1,29 +1,17 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { messageRecipeStyles } from './message.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `message.recipe.ts`. */
 export const messageStyles = css`
-  .base {
-    display: grid;
-    gap: ${token('space.xs')};
-  }
-  .header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.xs')};
-  }
+  ${messageRecipeStyles}
   .role {
     font-size: ${token('font.size.sm')};
     font-weight: ${token('font.weight.semibold')};
     color: ${token('color.text.secondary')};
   }
-  .content {
-    display: grid;
-    gap: ${token('space.sm')};
-    min-inline-size: 0;
-  }
   .base[data-role='user'] .content {
-    justify-self: start;
+    align-self: start;
     max-inline-size: 100%;
     padding: ${token('space.xs')} ${token('space.sm')};
     border-radius: ${token('radius.lg')};
@@ -58,10 +46,6 @@ export const messageStyles = css`
     border-radius: ${token('radius.sm')};
     color: ${token('color.text.secondary')};
     font-size: ${token('font.size.sm')};
-  }
-  .edit {
-    display: grid;
-    gap: ${token('space.xs')};
   }
   .edit textarea {
     inline-size: 100%;
