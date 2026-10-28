@@ -141,6 +141,11 @@ test.describe('static docs site', () => {
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     const violations = await watchPolicy(page, browserName);
+    await page.goto(`${site}/`);
+    // The home page's examples are real elements, registered on first use by the autoloader.
+    await expect(page.locator('.specimen odd-switch')).toHaveJSProperty('checked', true, {
+      timeout: catalogLoad,
+    });
     const response = await page.goto(`${site}/getting-started`);
     expect(response?.status()).toBe(200);
     expect(new URL(page.url()).pathname).toBe('/getting-started/');

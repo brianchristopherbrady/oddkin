@@ -175,7 +175,10 @@ const docsRoute = route({
 
 // Authored pages arrive as HTML from the server, readable before this script runs; they need no data.
 const pageRoutes = new Map(
-  pages.map((page) => [route({ path: page.path, title: page.title }) as AnyRoute, page]),
+  pages.map((page) => [
+    route({ path: page.path, ...(page.path ? { title: page.title } : {}) }) as AnyRoute,
+    page,
+  ]),
 );
 
 const router = createRouter({

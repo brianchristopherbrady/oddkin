@@ -137,8 +137,12 @@ describe('the docs shell', async () => {
   it('links only to pages that exist', () => {
     for (const path of ['/', '/getting-started', '/components', '/404']) {
       const html = shell(path);
-      const shellOnly = html.slice(0, html.indexOf('<main')) + html.slice(html.indexOf('</main>'));
-      for (const [, href = ''] of shellOnly.matchAll(/href="(\/[^"]*)"/g)) {
+      // The home page's own content is checked here too; other pages' content is checked above.
+      const checked =
+        path === '/'
+          ? html
+          : html.slice(0, html.indexOf('<main')) + html.slice(html.indexOf('</main>'));
+      for (const [, href = ''] of checked.matchAll(/href="(\/[^"]*)"/g)) {
         if (/\.(?:css|js)$/.test(href) || href.startsWith('/public/')) continue;
         const known = pages.some((page) => `/${page.path}` === href);
         expect(known || clientRoutes.some((route) => route.test(href)), `${path} → ${href}`).toBe(
@@ -146,5 +150,17 @@ describe('the docs shell', async () => {
         );
       }
     }
+  });
+
+  it('renders the home page from the pages, manifests, and registry, without the sidebar column', () => {
+    const html = shell('/');
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+    expect(html).toContain('<div class="site-layout odd-split" data-home>');
+    expect(main).toContain(`Oddkin ${release.version}`);
+    expect(main).toContain(`Supported browsers: ${release.browsers}, and later.`);
+    expect(main).toContain(`${release.components} elements`);
+    for (const page of pages.filter((p) => p.parent === 'getting-started'))
+      expect(main).toContain(`href="/${page.path}"`);
+    expect(main).not.toContain('undefined');
   });
 });

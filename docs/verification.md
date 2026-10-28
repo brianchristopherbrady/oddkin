@@ -3896,3 +3896,13 @@ Design source: Figma "Oddkin Docs Website" (`zF87qftdRznmJJezxy23gd`), pages 00 
 | Static build | `node apps/docs/build.mjs` | 79 routes and 404.html, 1,242 files, about 2 s (Windows: a first run into a new folder took 60 s while the new files were scanned) |
 
 **Not verified:** the deployment itself (needs the owner's Pages source, custom domain, and DNS; the repository is private, so Pages needs a paid plan or a public repository); screen-reader passes (owner deferral).
+
+## 2026-10-28 — Docs site slice 2: the Home page (Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Pages and shell | `npx vitest run --project node tests/docs` | 16 passed (adds: the home page renders the version, the supported browsers, and the component count from the published files, links every starting point, and has no sidebar column) |
+| Docs e2e | `npx playwright test e2e/docs.spec.ts e2e/docs-site.spec.ts --workers=2` (three engines, E2E lock) | 30 passed; the static site's home page registers its example elements through the autoloader. A first run with four workers lost Firefox to a browser crash (GFX "RenderCompositorSWGL failed mapping default framebuffer") under load; the rerun passed |
+| Types, layout lint, format | `npm run typecheck`; `node scripts/check-page-layout.mjs`; `npx prettier --check` on the changed files | Pass (0 unlisted hand-written layouts) |
+
+Visual check against the Figma frame in Chromium at 1,152 and 312 px wide (light and dark): hero, examples, starting points, cards, tools, quick start, and footer follow the frame's arrangement and tokens; the hero headline is the site summary (longer than the frame's placeholder), so it is set smaller.

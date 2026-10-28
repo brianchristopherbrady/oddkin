@@ -1,3 +1,4 @@
+import { renderHome } from './home.js';
 import { icons } from './icons.js';
 import { escapeHtml, renderPage, type FactBlocks } from './model.js';
 import {
@@ -17,6 +18,12 @@ export interface SiteFacts {
   repository: string;
   /** What Oddkin is: the README's first sentence. */
   description: string;
+  /** The oldest supported desktop browsers, from the compatibility registry. */
+  browsers: string;
+  /** How many elements `@oddkin/components` publishes. */
+  components: number;
+  /** Each package's description, by package name, from its manifest. */
+  packages: Readonly<Record<string, string>>;
 }
 
 const clean = (path: string): string => path.replace(/^\/+|\/+$/g, '');
@@ -113,8 +120,11 @@ export function renderDocument(
   site: SiteFacts,
 ): string {
   const page = pageAt(pathname);
+  const home = page?.path === '';
   const main = page
-    ? renderPage(page, facts)
+    ? home
+      ? renderHome(page, site)
+      : renderPage(page, facts)
     : '<header class="page-header"><p class="eyebrow">Documentation</p><h1>Loading</h1><p class="lede">This page is built in the browser from the published metadata.</p></header>';
   const title = page && page.path ? `${page.title} · Oddkin` : 'Oddkin';
   return template
@@ -123,6 +133,12 @@ export function renderDocument(
     .replace('<!-- docs:header -->', siteHeader(pathname, site))
     .replace('<!-- docs:nav -->', siteSidebar(pathname, site))
     .replace('<!-- docs:footer -->', siteFooter(site))
+    .replace(
+      '<div class="site-layout odd-split">',
+      home
+        ? '<div class="site-layout odd-split" data-home>'
+        : '<div class="site-layout odd-split">',
+    )
     .replace(
       '<main id="main" tabindex="-1"><!-- docs:main -->',
       page

@@ -13,6 +13,7 @@ export const install: Page = {
       title: 'npm',
       blocks: [
         { p: ['Install the packages you use; each one brings only its own dependencies.'] },
+        { fact: 'packages' },
         {
           code: {
             lang: 'sh',

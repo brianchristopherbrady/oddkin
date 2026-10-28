@@ -21,6 +21,17 @@ export async function siteFacts(root) {
   const core = await json(join(root, 'packages/core/package.json'));
   const readme = await readFile(join(root, 'README.md'), 'utf8');
   const intro = readme.split(/\n\s*\n/).find((block) => !block.startsWith('#')) ?? '';
+  const { floor } = await json(join(root, 'docs/compatibility/features.json'));
+  const desktop = ['chrome', 'edge', 'firefox', 'safari'].map(
+    (id) => `${BROWSERS[id]} ${floor[id]}`,
+  );
+  const metadata = await json(join(root, 'packages/components/oddkin.metadata.json'));
+  const packages = {};
+  for (const entry of await readdir(join(root, 'packages'), { withFileTypes: true }))
+    if (entry.isDirectory()) {
+      const manifest = await json(join(root, 'packages', entry.name, 'package.json'));
+      packages[manifest.name] = manifest.description ?? '';
+    }
   return {
     version: core.version,
     license: core.license,
@@ -29,6 +40,9 @@ export async function siteFacts(root) {
       .replace(/\s+/g, ' ')
       .replace(/(\.)\s.*$|: .*$/, '$1')
       .trim(),
+    browsers: `${desktop.slice(0, -1).join(', ')}, and ${desktop.at(-1)}`,
+    components: Object.keys(metadata.components).length,
+    packages,
   };
 }
 

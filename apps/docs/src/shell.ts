@@ -141,8 +141,6 @@ export function startShell(scope: Scope, navigate: (path: string) => void): void
   modeToggle(scope);
   menu(scope);
   search(scope, navigate);
-  void import('@oddkin/components/define/side-nav');
-  if (document.querySelector('odd-copy-button'))
-    void import('@oddkin/components/define/copy-button');
-  if (document.querySelector('odd-card')) void import('@oddkin/components/define/card');
+  // Pages carry the elements they show (sidebar, copy buttons, cards, the home page's examples).
+  void import('@oddkin/components/autoload');
 }

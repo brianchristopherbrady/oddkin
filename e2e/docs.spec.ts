@@ -30,15 +30,15 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   const response = await page.goto(`${docs}/`);
   expect(response?.status()).toBe(200);
   expect(response?.headers()['content-security-policy']).toContain("default-src 'none'");
-  await expect(page.getByRole('heading', { name: 'Oddkin', level: 1 })).toBeVisible();
-  await expect(page.getByRole('table', { name: 'Oddkin packages' })).toContainText('@oddkin/core');
-  // The sidebar is odd-side-nav over the server's links.
-  await expect(page.getByRole('navigation', { name: 'Documentation' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Web components, design tokens, and the tools around them.',
+  );
 
-  // An authored page reached from the navigation is the server's document for that path; the
-  // sidebar lists a section's pages when it is open.
-  await page.locator('.side-nav a[href="/getting-started"]').click();
+  // An authored page reached from a link is the server's document for that path; the sidebar
+  // (odd-side-nav over the server's links) lists a section's pages when it is open.
+  await page.getByRole('link', { name: 'Get started' }).click();
   await expect(page).toHaveURL(`${docs}/getting-started`);
+  await expect(page.getByRole('navigation', { name: 'Documentation' })).toBeVisible();
   await page.locator('.side-nav a[href="/getting-started/tokens"]').click();
   await expect(page).toHaveURL(`${docs}/getting-started/tokens`);
   await expect(page.getByRole('heading', { name: 'Tokens only', level: 1 })).toBeVisible();
@@ -154,6 +154,8 @@ test('authored pages are readable before client boot and metadata pages show pen
     page.getByRole('heading', { name: 'Components in any app', level: 1 }),
   ).toBeVisible();
   await expect(page.getByText("import '@oddkin/components/define/button';")).toBeVisible();
+  await page.goto(`${docs}/installation`);
+  await expect(page.getByRole('table', { name: 'Oddkin packages' })).toContainText('@oddkin/core');
   await page.goto(`${docs}/support/browsers`);
   // Generated from docs/compatibility/features.json on the server.
   await expect(page.getByRole('table', { name: /Supported browsers/ })).toContainText('Firefox');
