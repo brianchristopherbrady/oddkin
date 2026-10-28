@@ -3605,3 +3605,12 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 15
 | Contracts, typecheck, lint | `npm run contracts`, `npm run typecheck`, `npm run lint` | OK |
 
 **Findings:** (1) WebKit 27.2 rejects an aborted `fetch` with its own `AbortError`, not the signal's reason (Chromium 156 and Firefox 157 reject with the reason); core-contracts.md §4 says to read the reason from `scope.signal`. (2) The autoloader turned a failed definition import into an unhandled rejection and kept the rejected promise, so the tag could never load on that page; it now reports `autoload.import.failed` through core's handler and forgets the failure. (3) No core source changed: M3's behaviour held for every case written down.
+
+## 2026-10-27 — Style mappings through extracted recipes (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Analyzer, agent kit, metadata | `npx vitest run --project node packages/analyzer tests/agent-kit packages/components/test/metadata.test.ts packages/components/test/customization.test.ts packages/ai/test/metadata.test.ts` | 21 files, 337 passed, 1 skipped; the composed fixture's panel interpolates `panelLayoutStyles` and maps `body padding -> layout.inset` through it, and its published CSS keeps a non-style substitution as `unknown()` |
+| Published metadata | `node scripts/build-metadata.mjs`, then the style-mapping count per element | before: 18 `@oddkin/components` elements without mappings; after: 4 (odd-container, odd-icon, odd-scroll-region, odd-tab-panel); no warnings |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-interp.json` | 3 of 3 killed (interpolation written as `unknown()`, other substitutions written as nothing, identifiers not followed) |
+| Typecheck, lint | `npm run typecheck`, `npm run lint` | typecheck OK; lint OK except the compatibility matrix, which is out of date only for the uncommitted AI recipe sheets in this worktree's `dist` |

@@ -655,8 +655,9 @@ export function extract(program: ts.Program, root: string): Extraction {
   }
 
   /**
-   * A style source's CSS with each `token('name')` written as `token(name)` and any other
-   * substitution as `unknown()`: a css`` template or `unsafeCSS('…')`. `undefined` otherwise.
+   * A style source's CSS with each `token('name')` written as `token(name)`, each interpolated
+   * style source of this library (`${recipeStyles}`) as its own CSS, and any other substitution
+   * as `unknown()`: a css`` template or `unsafeCSS('…')`. `undefined` otherwise.
    */
   function tokenCss(node: ts.Node): TokenCss | undefined {
     if (
@@ -682,7 +683,9 @@ export function extract(program: ts.Program, root: string): Extraction {
         expression.expression.text === 'token'
           ? stringOf(expression.arguments[0])
           : undefined;
-      text += (name ? `token(${name})` : 'unknown()') + span.literal.text;
+      const found = ts.isIdentifier(expression) ? initializerOf(expression) : undefined;
+      const inner = found ? tokenCss(found.node) : undefined;
+      text += (name ? `token(${name})` : (inner ?? 'unknown()')) + span.literal.text;
     }
     return text;
   }

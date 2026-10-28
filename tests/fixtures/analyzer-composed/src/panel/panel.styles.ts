@@ -1,7 +1,9 @@
 import { css } from '@oddkin/core';
 import { token } from '@oddkin/tokens/refs';
+import { panelLayoutStyles } from './panel.layout.styles.js';
 
 export const panelStyles = css`
+  ${panelLayoutStyles}
   :host {
     display: block;
     padding: ${token('layout.inset')};

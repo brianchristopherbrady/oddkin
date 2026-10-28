@@ -385,6 +385,22 @@ describe('compose() definitions in a folder-structured library', () => {
     ]);
   });
 
+  it('maps styles through a sheet interpolated into another, as an extracted recipe is', () => {
+    const metadata = composed.metadata as {
+      components: Record<string, { styleMappings?: Array<Record<string, string>> }>;
+      styles: Record<string, { css?: string }>;
+    };
+    expect(
+      metadata.components['component:acme-panel']?.styleMappings?.map(
+        (m) => `${m['part'] ?? ':host'} ${m['cssProperty']} -> ${m['token']}`,
+      ),
+    ).toEqual(['body padding -> layout.inset', ':host padding -> layout.inset']);
+    // Published with the interpolated sheet's text; a substitution that is no style stays unknown.
+    expect(metadata.styles['dist/panel/panel.styles.js#panelStyles']?.css).toMatch(
+      /@layer acme\.layout \{\s+div \{\s+padding: token\(layout\.inset\);\s+margin-block-end: unknown\(\);/,
+    );
+  });
+
   it('reports definitions it cannot resolve', () => {
     const dynamic = analyze({ project: path('tests/fixtures/analyzer-dynamic/tsconfig.json') });
     expect(
