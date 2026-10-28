@@ -1,7 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { emitDtcg, generate } from '../src/index.js';
+import { emitContrastReport, emitDtcg, generate } from '../src/index.js';
 import { run } from '../src/node/cli.js';
 import { loadConfig } from '../src/node/index.js';
 
@@ -77,6 +77,7 @@ describe('oddkin-tokens CLI', { timeout: 30_000 }, () => {
       'acme',
     );
     const theme = generate(config).theme as never;
+    expect(await readFile(at('out/acme.contrast.json'), 'utf8')).toBe(emitContrastReport(theme));
     for (const mode of ['light', 'dark'] as const)
       expect(await readFile(at(`out/acme.${mode}.tokens.json`), 'utf8')).toBe(
         emitDtcg(theme, { mode }).text,

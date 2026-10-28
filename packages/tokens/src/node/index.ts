@@ -7,6 +7,7 @@ import { extname, join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
   emitConditionsModule,
+  emitContrastReport,
   emitDtcg,
   emitInspectJson,
   emitRefsModule,
@@ -150,7 +151,8 @@ export interface BuildResult {
 
 /**
  * Generate and write outputs: `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`,
- * `<name>.conditions.ts`, `<name>.inspect.json`, and one DTCG 2025.10 `<name>.<mode>.tokens.json` per mode.
+ * `<name>.conditions.ts`, `<name>.inspect.json` with `<name>.contrast.json` (the role-pair
+ * report), and one DTCG 2025.10 `<name>.<mode>.tokens.json` per mode.
  */
 export async function buildTheme(config: unknown, options: BuildOptions): Promise<BuildResult> {
   const result = generate(
@@ -169,7 +171,10 @@ export async function buildTheme(config: unknown, options: BuildOptions): Promis
       [`${name}.conditions.ts`, emitConditionsModule(result.theme)],
     );
   if (formats.includes('json'))
-    outputs.push([`${name}.inspect.json`, emitInspectJson(result.theme, result.diagnostics)]);
+    outputs.push(
+      [`${name}.inspect.json`, emitInspectJson(result.theme, result.diagnostics)],
+      [`${name}.contrast.json`, emitContrastReport(result.theme)],
+    );
   if (formats.includes('dtcg'))
     for (const mode of result.theme.modes)
       outputs.push([`${name}.${mode}.tokens.json`, emitDtcg(result.theme, { mode }).text]);

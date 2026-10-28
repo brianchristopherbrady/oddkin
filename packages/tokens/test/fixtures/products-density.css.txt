@@ -405,6 +405,14 @@
     }
   }
 
+  [data-odd-motion="reduce"],
+  [data-odd-motion="reduce"] [data-odd-theme] {
+    --odd-motion-duration-fast: 0ms;
+    --odd-motion-duration-normal: 0ms;
+    --odd-motion-duration-slow: 0ms;
+    --odd-motion-duration-slower: 0ms;
+  }
+
   [data-odd-product="clinic"] {
     --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
     --odd-color-action-hover: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));

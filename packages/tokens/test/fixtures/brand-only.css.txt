@@ -410,6 +410,14 @@
     }
   }
 
+  [data-odd-motion="reduce"],
+  [data-odd-motion="reduce"] [data-odd-theme] {
+    --odd-motion-duration-fast: 0ms;
+    --odd-motion-duration-normal: 0ms;
+    --odd-motion-duration-slow: 0ms;
+    --odd-motion-duration-slower: 0ms;
+  }
+
   [data-odd-density="compact"] {
     --odd-card-padding: var(--odd-layout-inset);
     --odd-control-gap: var(--odd-space-xs);

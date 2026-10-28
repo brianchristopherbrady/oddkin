@@ -163,10 +163,15 @@ function emitBlocks(theme: ResolvedTheme, lightDark: boolean): string {
   const reduced: Declaration[] = [...tokens.values()]
     .filter((t) => t.reducedMotion !== undefined)
     .map((t) => [cssVariable(t.name), compileValue(t.reducedMotion as string, modes)]);
-  if (reduced.length)
+  if (reduced.length) {
     parts.push(
       `@media (prefers-reduced-motion: reduce) {\n${block(baseSelectors, reduced, '  ')}}\n`,
     );
+    // An in-page setting reduces motion for a subtree, nested theme scopes included.
+    parts.push(
+      block(['[data-odd-motion="reduce"]', '[data-odd-motion="reduce"] [data-odd-theme]'], reduced),
+    );
+  }
 
   for (const scope of theme.scopes) {
     const selectors =

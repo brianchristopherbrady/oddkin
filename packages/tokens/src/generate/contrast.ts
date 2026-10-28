@@ -79,6 +79,48 @@ export function contrastReport(theme: ResolvedTheme): ContrastEntry[] {
   return out;
 }
 
+/** One measured pair in the emitted report, keyed by `foreground|background|mode[|product]`. */
+export interface ContrastPair extends ContrastEntry {
+  readonly id: string;
+}
+
+/** The role-pair contrast report the build writes as `<name>.contrast.json`. */
+export interface ContrastReportFile {
+  readonly version: 1;
+  readonly theme: string;
+  readonly method: string;
+  readonly modes: readonly Mode[];
+  readonly products: readonly string[];
+  readonly summary: { readonly pass: number; readonly fail: number; readonly exempt: number };
+  readonly pairs: readonly ContrastPair[];
+}
+
+/**
+ * The report tools read (Theme Studio's contrast view): the declared role pairs only, measured
+ * in every mode and product. A pair no contract declares is not in it; it is not certification.
+ */
+export function emitContrastReport(theme: ResolvedTheme): string {
+  const pairs: ContrastPair[] = contrastReport(theme).map((entry) => ({
+    id: [entry.foreground, entry.background, entry.mode, entry.product]
+      .filter((part) => part !== undefined)
+      .join('|'),
+    ...entry,
+  }));
+  const count = (status: ContrastEntry['status']) =>
+    pairs.filter((pair) => pair.status === status).length;
+  const report: ContrastReportFile = {
+    version: 1,
+    theme: theme.name,
+    method:
+      'WCAG 2.2 contrast ratio of the resolved sRGB colours, rounded down to two decimals, for each declared role pair (theming-and-styling.md §10.4)',
+    modes: theme.modes,
+    products: theme.scopes.filter((scope) => scope.kind === 'product').map((scope) => scope.name),
+    summary: { pass: count('pass'), fail: count('fail'), exempt: count('exempt') },
+    pairs,
+  };
+  return `${JSON.stringify(report, null, 2)}\n`;
+}
+
 /** The reference ramp a role's preset value comes from, following aliases between roles. */
 const RAMP_OF: ReadonlyMap<string, string> = (() => {
   const map = new Map<string, string>(CONTRAST_ROLES.map((role) => [role.name, role.ramp]));

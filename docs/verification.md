@@ -3729,3 +3729,15 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | e2e, WebKit | `--project=webkit` | 4 passed; "every published component is listed under its category" timed out (the known WebKit flake, queue item 8) |
 | e2e, Firefox | `--project=firefox`, then the same spec from main without this change | with the change 2 passed, 3 failed (timeouts on `page.goto` and the catalog's first load); main without it 1 passed, 4 failed (the same timeouts): Firefox is slow on this machine today, not broken by the change. A direct Firefox run of `/start/tokens`, `/layout/side-nav`, and `/components` on port 4177 renders all three headings |
 | Typecheck, lint | `npm run typecheck`, `npm run lint` | see the commit |
+
+## 2026-10-27 — Role-pair contrast report and the in-page motion scope (Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Token node tests | `npx vitest run --project node packages/tokens` | 13 files, 123 passed: the report's shape, unique ids, summary, and determinism (`generate.test.ts`); `oddkin-tokens build` writes `acme.contrast.json` byte for byte (`cli.test.ts`); the two CSS fixtures regenerated for the motion block (`UPDATE_FIXTURES=1`) |
+| Token browser tests | `node ../oddkin-lanes/tools/browser-set.mjs packages/tokens/test` | Chromium, Firefox, WebKit 46 passed each: `data-odd-motion="reduce"` sets durations to `0s` in its subtree and inside a nested `data-odd-theme`, and not outside. Firefox's first attempt could not connect to its browser session under load and passed on the next run |
+| Default report | `node scripts/build-token-assets.mjs` | `packages/tokens/dist/inspect/default.contrast.json`: 130 pairs, 124 pass, 0 fail, 6 exempt (disabled text) |
+| Mutation probes | `mutate.mjs .tmp/probes-contrast.json`, `.tmp/probes-motion.json` | 6 of 6 killed: an id without the mode, products including other scopes, failures counted as passes, the build not writing the report, no motion scope, a nested theme restoring motion |
+| Packed | `node scripts/verify-packs.mjs` | OK; the installed CLI writes `default.contrast.json`, and `@oddkin/tokens/inspect/default.contrast.json` resolves with the expected ids |
+| Size | `node scripts/check-size.mjs` | `tokens:default.css` 3,096 B gzip (3,067 without the motion scope); budget 3,072 → 3,136 with the reason in `measure.mjs` |
+| Typecheck, lint | `npm run typecheck`, `npm run lint` | OK |

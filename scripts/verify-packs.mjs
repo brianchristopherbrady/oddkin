@@ -138,6 +138,7 @@ try {
       "  '@oddkin/tokens/css/default.css': '--odd-color-action-default',",
       "  '@oddkin/tokens/schema.json': 'Oddkin theme configuration',",
       '  \'@oddkin/tokens/inspect/default.json\': \'"cssVariable": "--odd-space-md"\',',
+      '  \'@oddkin/tokens/inspect/default.contrast.json\': \'"id": "color.text.primary|color.canvas|light"\',',
       '  \'@oddkin/components/custom-elements.json\': \'"tagName": "odd-button"\',',
       '  \'@oddkin/components/oddkin.metadata.json\': \'"registration": "@oddkin/components/define/button"\',',
       '};',
@@ -252,6 +253,7 @@ try {
     'default.refs.ts',
     'default.values.ts',
     'default.inspect.json',
+    'default.contrast.json',
   ]) {
     if (!built.includes(file))
       failures.push(`oddkin-tokens build in a consumer did not write ${file}`);

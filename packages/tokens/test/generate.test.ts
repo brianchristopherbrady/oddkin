@@ -4,6 +4,7 @@ import {
   contrastRatio,
   contrastReport,
   cssStats,
+  emitContrastReport,
   emitDtcg,
   gamutMap,
   generate,
@@ -487,6 +488,53 @@ describe('colour', () => {
       expect(entry.status).toBe(entry.foreground === 'color.text.disabled' ? 'exempt' : 'pass');
     }
     expect(report.filter((e) => e.product === 'p')).toHaveLength(expected / 2);
+  });
+
+  it('emits the role-pair report with a stable id per pair and its summary', () => {
+    const config = {
+      name: 'acme',
+      brand: { primary: '#5b46e8' },
+      products: { p: { brand: { primary: '#0f766e' } } },
+      density: { compact: { scale: 0.75 } },
+      overrides: { 'color.text.secondary': '#9a9a9a' },
+    };
+    const { theme } = generate(config);
+    const file = JSON.parse(emitContrastReport(theme as never)) as {
+      version: number;
+      theme: string;
+      modes: string[];
+      products: string[];
+      summary: Record<string, number>;
+      pairs: Array<{ id: string; status: string; foreground: string; background: string }>;
+    };
+    expect([file.version, file.theme, file.modes, file.products]).toEqual([
+      1,
+      'acme',
+      ['light', 'dark'],
+      ['p'],
+    ]);
+    expect(file.pairs).toEqual(
+      contrastReport(theme as never).map((entry) => ({
+        id: [entry.foreground, entry.background, entry.mode, entry.product]
+          .filter(Boolean)
+          .join('|'),
+        ...entry,
+      })),
+    );
+    expect(new Set(file.pairs.map((p) => p.id)).size).toBe(file.pairs.length);
+    expect(file.pairs[0]?.id).toBe(
+      `${file.pairs[0]?.foreground}|${file.pairs[0]?.background}|light`,
+    );
+    const count = (status: string) => file.pairs.filter((p) => p.status === status).length;
+    expect(file.summary).toEqual({
+      pass: count('pass'),
+      fail: count('fail'),
+      exempt: count('exempt'),
+    });
+    expect(file.summary.fail).toBeGreaterThan(0);
+    expect(emitContrastReport(generate(config).theme as never)).toBe(
+      emitContrastReport(theme as never),
+    );
   });
 
   it('chooses generated roles against every background their contracts name', () => {

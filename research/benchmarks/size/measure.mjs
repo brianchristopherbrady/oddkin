@@ -130,9 +130,11 @@ export const BUDGETS = {
  * the generated default theme and each component's combined structural and default styles.
  */
 export const CSS_BUDGETS = {
-  // Measured 3,059 on 2026-10-22 (2,770 before the info ramp and the tone, selection, and scrim
+  // Measured 3,096 on 2026-10-27: +29 B for the in-page reduced-motion scope
+  // (`data-odd-motion="reduce"`, theming-and-styling.md §10.3) over 3,067. Measured 3,059 on
+  // 2026-10-22 (2,770 before the info ramp and the tone, selection, and scrim
   // roles; 2,764 at ADRs 0041-0042, 1,827 before the approved palette and foundation scales).
-  'tokens:default.css': 3072,
+  'tokens:default.css': 3136,
   'components:badge': 384, // measured 375 on 2026-10-22: structural and default styles
   // Display elements, measured on 2026-10-22 (structural and default styles).
   'components:alert': 576, // 540 on 2026-10-26 (500 before its layout recipe, layout-recipes.md §14)

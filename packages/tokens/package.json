@@ -42,6 +42,7 @@
     },
     "./css/default.css": "./dist/css/default.css",
     "./inspect/default.json": "./dist/inspect/default.inspect.json",
+    "./inspect/default.contrast.json": "./dist/inspect/default.contrast.json",
     "./schema.json": "./schema/theme-config.v1.schema.json",
     "./package.json": "./package.json"
   },

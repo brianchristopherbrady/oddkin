@@ -130,3 +130,21 @@ describe('unsupported syntax inside custom properties (F02)', () => {
     expect(result.diagnostics.map((d) => d.code)).toContain('value.syntax.aboveFloor');
   });
 });
+
+describe('an in-page reduced-motion scope (theming-and-styling.md §10.3)', () => {
+  it('sets every duration to 0ms in its subtree, nested theme scopes included, and nowhere else', () => {
+    use(sheet(layered));
+    fixture.innerHTML = `
+      <div id="full"><span class="probe"></span></div>
+      <div data-odd-motion="reduce" id="reduced"><span class="probe"></span>
+        <div data-odd-theme="acme" id="nested"><span class="probe"></span></div>
+      </div>`;
+    const duration = (id: string) => {
+      const el = fixture.querySelector(`#${id} > .probe`) as HTMLElement;
+      el.style.transitionDuration = 'var(--odd-motion-duration-normal)';
+      return getComputedStyle(el).transitionDuration;
+    };
+    expect(duration('full')).not.toBe('0s');
+    expect([duration('reduced'), duration('nested')]).toEqual(['0s', '0s']);
+  });
+});
