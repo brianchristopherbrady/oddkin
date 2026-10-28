@@ -1,6 +1,6 @@
 # Data-driven composition, collections, and models
 
-Status: §3 (collections) and §5 (models) are **implemented** in `@oddkin/core` (M3; settled behaviors in §11). The first component data API, `odd-side-nav` with `NavigationItemModel`, its JSON Schema, and §4 region sources, is **implemented** in `@oddkin/components` (M4; §12), and the editable-list example (§13) passes the editable-collection fixture. Local render functions, `navigationKinds`, the `props()` experiment, and composition remain **proposals**. These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
+Status: §3 (collections) and §5 (models) are **implemented** in `@oddkin/core` (M3; settled behaviors in §11). The first component data API, `odd-side-nav` with `NavigationItemModel`, its JSON Schema, and §4 region sources, is **implemented** in `@oddkin/components` (M4; §12), and the editable-list example (§13) passes the editable-collection fixture. Local render functions and `navigationKinds` remain **proposals**; the `props()` experiment is **dropped** for v1 (§2, M8 review), and the composition schema is implemented (§8). These APIs reach candidate v1 status at the M8 compatibility checkpoint. Catalog expansion depends on passing the relevant foundation acceptance criteria. Breaking changes after M8 require an ADR, migration plan, and renewed verification. Final v1 contracts freeze at M12 after the shipped feature set passes release verification. Related: [core-contracts.md](./core-contracts.md), [layout-recipes.md](./layout-recipes.md), [agent-tooling.md](./agent-tooling.md).
 
 ## 1. Direction
 
@@ -89,6 +89,15 @@ html`<odd-side-nav ${props({ label: 'Primary', items: navigation, current })}></
 Decision at M8: keep, rename, or drop based on the ergonomics study.
 
 **M3 assessment** ([research/experiments/props](../../research/experiments/props/README.md)): a prototype on the public directive protocol meets the key, reset, cleanup, upgrade, and readable rows. It cannot use an element position: there is no element part, so it binds as `.props=${…}`. It cannot enforce precedence over explicit bindings: the last change wins. It costs 662 B gzip. Recommendation: not in core for M4–M7. If kept at M8, use the named binding, replace the precedence rule with "do not bind a key both ways", and add a typed `props<typeof Element>()` signature.
+
+**Decision (M8 review, 2026-10-27): dropped; `props()` is not part of v1.** Evidence:
+
+- **No forwarding need in the shipped code.** A scan of every `html` template in `packages/`, `examples/`, and `apps/docs/src` finds 18 custom elements bound with `.prop=${…}` (2 with four or more bindings outside `@oddkin/ai`). The largest, odd-conversation's 13 bindings on each odd-message, computes every value from a different source (the message, its attempt, the conversation's tools, approvals, branches, feedback, capabilities, renderers): there is no configuration object to forward, which is the only case the helper shortens.
+- **The data-driven case has its own contract.** A configuration that arrives as data (from an agent, a server, or a CMS) is a composition description (§8): `validateComposition()` checks it against the per-element JSON Schemas generated from the metadata, and `renderComposition()` sets only declared properties on allow-listed elements. That is typed, validated, and has no precedence question.
+- **The contract cannot be met as written.** Explicit bindings cannot win without per-element part bookkeeping in core; the element position does not exist; and `.prop` is the binding core-contracts.md §6.1 (D5) documents for every value kind.
+- **Cost:** 662 B gzip and a second way to set the same property, with order-dependent results.
+
+Reopen only if the ergonomics studies (plan §8.3, after v1) show configuration-object forwarding in real applications; the M3 recommendation then gives the shape (named `.props=${…}` binding, "do not bind a key both ways", a typed signature).
 
 ## 3. Shared collection infrastructure (`@oddkin/core/collections`)
 
@@ -326,7 +335,7 @@ It returns `{ ok, diagnostics, nodes, dispose }`; `dispose()` removes the nodes 
 
 **Not yet:**
 
-- the A2UI catalog adapter (waits for A2UI 1.0);
+- the A2UI catalog adapter (waits for A2UI 1.0: on 2026-10-27 <https://a2ui.org/> lists v0.9.1 as current and v1.0 as a release candidate);
 - `$ref` data and `$binding` (the earlier sketch);
 - keyed updates of a rendered composition (render again instead);
 - `@oddkin/ai` elements in the catalog.
@@ -362,7 +371,7 @@ AI support never makes this schema mandatory: agent tooling recommends templates
 
 ## 11. Behaviors settled in the M3 implementation
 
-`@oddkin/core/collections`, `@oddkin/core/model`, and `@oddkin/core/model/schema` are implemented (unbranded, DOM-free) and verified; component models, the `props()` helper, and composition remain later work.
+`@oddkin/core/collections`, `@oddkin/core/model`, and `@oddkin/core/model/schema` are implemented (unbranded, DOM-free) and verified; component models and composition followed (§12, §8), and the `props()` helper was dropped at the M8 review (§2).
 
 - **Collections.** `collection({ key, children?, disabled?, owner?, childrenPath? })` exposes `items`, `flat` (document order with `depth`, `parentKey`, `index`, `position`, `hasChildren`, `disabled`, and a JSON-pointer `path`), `diagnostics`, `byKey`, `childrenOf`, and `ancestorsOf`. Entries keep their identity when key, item, and position are unchanged. Missing and duplicate keys are reported (`collection.key.missing`, `collection.key.duplicate`) with paths, and those items are skipped. Nesting is bounded: children below `maxDepth` (default 32) are reported once as `collection.depth.exceeded` and not rendered, so deep or hostile data cannot exhaust the stack (100,000 levels verified).
 - **Per-entry ownership.** `scopeFor(key, init?)` returns the entry's scope, disposed when the key leaves or the owner ends. Item templates re-run whenever their entry changes, so one-time setup belongs in `init`, which runs only when the scope is created.

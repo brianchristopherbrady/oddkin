@@ -1,5 +1,7 @@
 # `props()` assessment (M3)
 
+**Outcome (M8 review, 2026-10-27): dropped for v1.** The evidence and the conditions for reopening are in [data-composition.md §2](../../../docs/architecture/data-composition.md).
+
 A prototype of the optional property-binding helper proposed in [data-composition.md §2](../../../docs/architecture/data-composition.md), built only on public APIs: the attribute-directive protocol and `elementProperties()`. It is not published. The keep/rename/drop decision stays at M8 with the ergonomics study.
 
 ```ts

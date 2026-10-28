@@ -3642,3 +3642,11 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Metadata | `node scripts/build-metadata.mjs`; `packages/ai/test/metadata.test.ts` | no warnings; the eight elements publish style mappings (after fc23a18) |
 | Compatibility | `node scripts/compat/check-css.mjs --write` | 209 stylesheets (+8), 326 keys; OK |
 | Size | `node scripts/check-size.mjs` | ai-chat 50,938 B (was 50,671), ai:styles 4,672 B (was 4,503); see the budget row |
+
+## 2026-10-27 — Data composition review: `props()` (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Property-binding use | `node .tmp/prop-bindings.mjs` (custom elements with `.prop=${…}` in `html` templates of `packages/`, `examples/`, `apps/docs/src`; a lower bound: attribute lists containing `>` stop the scan) | 18 elements: 3 with one binding, 4 with two, 6 with three, 2 with four, 1 with five, 1 with seven, 1 with thirteen (odd-conversation → odd-message, every value from a different source) |
+| A2UI status | <https://a2ui.org/>, read 2026-10-27 | v0.9.1 current; v1.0 release candidate (adds `actionResponse`, action IDs; renames `theme` to `surfaceProperties`) |
+| Format | `npx prettier --check` on the edited documents | OK |

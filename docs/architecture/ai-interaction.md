@@ -166,7 +166,7 @@ AG-UI events (<https://docs.ag-ui.com/concepts/events>, read 2026-10-17) map clo
 
 ### 5.6 A2UI (evaluation)
 
-A2UI (<https://a2ui.org/>, v0.9 era drafts with a v1.0 candidate, read 2026-10-17) describes UI declaratively for an agent to request from a client catalog; it is a *UI description* format, whereas AG-UI and the AI SDK stream are *event* protocols. Oddkin's role would be a catalog provider: a renderer for `data` parts that validates an A2UI surface description against a catalog of Oddkin elements and renders only registered, validated components. Decision: out of scope for this package version; the `data` part with registered renderers (§9.4) is the extension point, so no change to the records is needed later.
+A2UI (<https://a2ui.org/>, v0.9 era drafts with a v1.0 candidate, read 2026-10-17; read again 2026-10-27: v0.9.1 is the current release and v1.0 a release candidate that adds client-to-server `actionResponse`, action IDs, and renames `theme` to `surfaceProperties`) describes UI declaratively for an agent to request from a client catalog; it is a *UI description* format, whereas AG-UI and the AI SDK stream are *event* protocols. Oddkin's role would be a catalog provider: a renderer for `data` parts that validates an A2UI surface description against a catalog of Oddkin elements and renders only registered, validated components. Decision: out of scope for this package version; the `data` part with registered renderers (§9.4) is the extension point, so no change to the records is needed later.
 
 ## 6. Element API (Web Components)
 
