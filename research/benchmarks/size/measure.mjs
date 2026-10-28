@@ -71,10 +71,11 @@ export const BUDGETS = {
   // validateComposition and renderComposition with the generated catalog of 52 elements, about
   // 45 B gzip each, over @oddkin/core/model and the navigation model; no element registrations).
   composition: 8704,
-  // 1,088 B; measured 1,046 on 2026-10-26 (@oddkin/components/autoload, ADR 0046 D9: the document
+  // 1,152 B; measured 1,098 on 2026-10-27 (@oddkin/components/autoload, ADR 0046 D9: the document
   // and shadow-root observers, the 53 define/* names, and core's diagnostics; each definition is
-  // imported by URL at run time, outside this graph).
-  autoload: 1088,
+  // imported by URL at run time, outside this graph). Was 1,088 (1,046 measured): +52 B report a
+  // failed import as autoload.import.failed and forget it so load() tries again (plan §3.2).
+  autoload: 1152,
   // 2.5 KiB; measured 2,214 on 2026-10-19 (@oddkin/state/store: createStore, select, action, and
   // frozen snapshots over the reactive graph and diagnostics; no DOM module).
   store: 2560,

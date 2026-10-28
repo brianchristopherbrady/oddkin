@@ -126,4 +126,37 @@ test.describe('behaviour', () => {
     expect(errors.some((message) => message.includes('autoload.tag.unknown'))).toBe(true);
     expect(errors.filter((message) => !message.includes('autoload.tag.unknown'))).toEqual([]);
   });
+
+  test('a definition that fails to load is reported, and a later load() tries again', async ({
+    page,
+  }) => {
+    const { errors } = await measure(page, '/examples/autoload/');
+    await page.route('**/avatar.define.js', (route) => route.abort());
+    const reported = await page.evaluate(async () => {
+      const { setErrorHandler } = (await import('@oddkin/core/diagnostics')) as {
+        setErrorHandler: (handler: (error: unknown, context: { code: string }) => void) => void;
+      };
+      const codes: string[] = [];
+      setErrorHandler((_error, context) => codes.push(context.code));
+      document.querySelector('main')!.append(document.createElement('odd-avatar'));
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      return codes;
+    });
+    expect(reported).toEqual(['autoload.import.failed']);
+    expect(errors).toEqual([]);
+    expect(await page.evaluate(() => !!customElements.get('odd-avatar'))).toBe(false);
+    await page.unroute('**/avatar.define.js');
+    const retried = await page.evaluate(async () => {
+      const { load } = (await import('@oddkin/components/autoload')) as {
+        load: (tag: string) => Promise<void>;
+      };
+      return load('odd-avatar').then(
+        () => 'defined',
+        (error: unknown) => `rejected: ${String(error)}`,
+      );
+    });
+    // Chromium 156, Firefox 157, and WebKit 27.2 fetch a module again after a network failure.
+    expect(retried).toBe('defined');
+    expect(errors).toEqual([]);
+  });
 });

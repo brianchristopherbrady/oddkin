@@ -4,7 +4,7 @@
  * later, by importing that tag's `define/<name>` entry (once per tag), resolved relative to this
  * module so import maps and CDNs serve the same files. `observe(root)` does the same inside a
  * shadow root the page creates. An `odd-*` tag that is not an Oddkin element is reported once
- * (`autoload.tag.unknown`).
+ * (`autoload.tag.unknown`); a definition that fails to load is reported (`autoload.import.failed`).
  *
  * Explicit `define/<name>` imports stay the recommended production path: a bundler sees them,
  * the browser can preload them, and nothing is fetched after first render. No other entry
@@ -19,6 +19,7 @@ const requested = new Map<string, Promise<void>>();
 /**
  * Register `tag` if it is an Oddkin element not yet defined: resolves once its definition (and
  * those it depends on) is registered. Unknown `odd-*` tags are reported once and resolve at once.
+ * A failed import rejects and is not kept, so a later call tries again.
  */
 export function load(tag: string): Promise<void> {
   const name = tag.toLowerCase();
@@ -40,15 +41,27 @@ export function load(tag: string): Promise<void> {
     const entry = name.slice(4);
     promise = import(new URL(`../${entry}/${entry}.define.js`, import.meta.url).href).then(
       () => undefined,
+      (error: unknown) => {
+        // Forget the failure so a later load() tries again.
+        requested.delete(name);
+        throw error;
+      },
     );
   }
   requested.set(name, promise);
   return promise;
 }
 
+/** Loads for the observer: a failed import goes to core's error handler, not `unhandledrejection`. */
+function register(tag: string): void {
+  load(tag).catch((error: unknown) =>
+    reportOddkinError(error, { code: 'autoload.import.failed', origin: tag }),
+  );
+}
+
 function scan(root: ParentNode): void {
   for (const element of root.querySelectorAll(':not(:defined)'))
-    if (element.localName.startsWith('odd-')) void load(element.localName);
+    if (element.localName.startsWith('odd-')) register(element.localName);
 }
 
 /**
@@ -62,7 +75,7 @@ export function observe(root: Document | ShadowRoot | Element): () => void {
       for (const node of record.addedNodes)
         if (node instanceof Element) {
           if (node.localName.startsWith('odd-') && !customElements.get(node.localName))
-            void load(node.localName);
+            register(node.localName);
           scan(node);
         }
   });

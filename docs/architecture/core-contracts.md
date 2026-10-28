@@ -132,6 +132,8 @@ class DemoGreeting extends OddkinElement.with({
 - Events have typed `detail` and explicit `bubbles` / `composed` / `cancelable` in their definitions. Preserve native `input`/`change` semantics; never re-emit across a shadow boundary twice or treat a programmatic assignment as a user edit. Event contracts appear in generated metadata.
 - An event definition may declare `intent`, for tooling only (no runtime cost): `'user'` events report user interaction and are never emitted by property writes; `'notification'` events report a state change from any source. Without it, metadata records the intent as unknown. The contract suite checks every `'user'` event: setting each scalar property, and every property of the correct authored examples while connected, emits none (`event:<tag>#<name>/not-programmatic`).
 - **Typed listeners:** `static events` is keyed by event name, and the element declares `declare readonly _events?: ElementEvents<typeof Self>` (type-only, no runtime cost). Its `addEventListener` and `removeEventListener` then receive `CustomEvent<Detail>`, or the native event type for a re-dispatched DOM event. Custom event names carry the `odd-` prefix (ADR 0045), so packages also add them to `GlobalEventHandlersEventMap` and document-level listeners are typed too. Once `_events` is declared, the analyzer reports a key that differs from its event name (`analyzer.event.key`).
+- **Targets, propagation, and cancellation** (verified in `packages/core/test/authoring-semantics.browser.test.ts`, three engines). A template listener (`@click=${fn}`) runs with the host as `this`; inside the shadow tree `event.target` and `event.currentTarget` are what the DOM gives (the bound element is `currentTarget`). Outside the shadow root the browser retargets the event to the host, and `composedPath()` lists the inner nodes only for an open root. `emit()` dispatches with the definition's `bubbles`, `composed`, and `cancelable` and returns `false` when a listener called `preventDefault()`; an element applies the change a cancelable event announces only after `emit()` returns `true`. An event that is not composed stays inside its shadow tree. Listener options: §6.1.
+- **No feedback loops.** Property writes never emit events, so a listener that writes the reported value back (a controlled framework binding) cannot loop; writing the value a property already has is no change (`Object.is`) and runs no `updated()`.
 
 <!-- /contract:core/events -->
 
@@ -153,6 +155,7 @@ The base class owns native callbacks; authors use these hooks without `super.con
 | `updateComplete` | Promise for this element's scheduled commits and synchronous lifecycle work through a defined flush. Does not await descendants, resources, or paint. Detached updates have a documented paused/resume outcome. |
 
 - Disconnect disposes connection work immediately. Reconnect creates new ownership and resumes retained bindings without resetting local state or replacing stable nodes.
+- **Constructors** (verified in `authoring-semantics.browser.test.ts`). `OddkinElement`'s constructor only replays properties assigned before the upgrade. A constructed element (`document.createElement`, `new`, or the parser) has no attributes, children, or shadow root and owns no scope, listener, timer, or effect until it connects; reflected attributes and the first render come with the connection. Public properties are accessors on the prototype, so `'name' in element` holds from construction (framework property detection) and values set before connection apply when it connects. An author's constructor initializes local fields only; work that needs the document, the connection, or the network belongs in `connected(scope)`.
 - Native `moveBefore()` / `connectedMoveCallback` may preserve a connection where supported (feature-detected). Ordinary remove/insert follows normal disconnect/reconnect; no global delayed-cleanup heuristic. [R21]
 - Queued callbacks recheck the connection generation before committing. Slot-dependent setup uses `slotchange` or an explicit parser-ready strategy.
 - Browser page suspension (back/forward cache) is **not** a disconnect: elements stay connected, their scopes stay alive, and paused timers and promises resume on restore. Components never listen to page-lifecycle events themselves; application-level policy lives in §9.1.
@@ -208,6 +211,36 @@ Required semantics:
 | Effect run | Initial run or rerun | Next invalidation or parent disposal |
 | Request | Resource starts a load | Supersession, cancellation, settlement, or owner disposal |
 | Application | `start()` | `stop()`; other app roots unaffected |
+
+**Examples** (each one runs in `packages/core/test/authoring-semantics.browser.test.ts`, "Scope examples", in three engines; `scope.test.ts` covers the API in Node):
+
+```ts
+connected(scope: Scope) {
+  scope.listen(window, 'online', this.retry);                    // an external target
+  const observer = new ResizeObserver(this.measure);
+  observer.observe(this);
+  scope.add(() => observer.disconnect(), 'resize observer');     // stopping observation
+  scope.interval(this.tick, 1000);                               // a timer
+  fetch(this.src, { signal: scope.signal })                      // cancellable work (resource(), §8, does this for you)
+    .then((response) => response.json())
+    .then(
+      (data) => { if (!scope.signal.aborted) this.data.value = data; },
+      (error) => { if (!scope.signal.aborted) this.error.value = error; },
+    );
+}
+
+// A caller's signal: join it for an API that takes one…
+fetch(url, { signal: AbortSignal.any([scope.signal, options.signal]) });
+// …or end a child scope with it. Already aborted, the child starts disposed and starts nothing.
+const work = scope.child();
+if (signal.aborted) work.dispose(signal.reason);
+else work.listen(signal, 'abort', () => work.dispose(signal.reason));
+```
+
+- **Cleanup, stopping observation, and cancellation differ.** Removing a listener or disconnecting an observer stops observing; nothing is cancelled. Disposal aborts `scope.signal`, which cancels only work that takes it (`fetch`, `AbortSignal.any`, listeners added with `{ signal }`). A promise that ignores the signal keeps running: guard where it commits (`if (!scope.signal.aborted)`).
+- **Abort reasons.** The reason is `scope.signal.reason`. A `fetch` rejects with an `AbortError`: Chromium and Firefox reject with the reason itself, WebKit 27.2 with its own `AbortError`, so read the reason from the signal.
+- **Disposal during a callback** (a listener that disposes its own scope) stops the scope's other work at once, including later listeners for the same event.
+- **Reconnection** gets a fresh scope; the previous signal stays aborted. Never keep a scope or its signal across connections (`failure-paths.browser.test.ts`).
 
 <!-- /contract:core/scope -->
 
@@ -356,10 +389,24 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 | Event `@name=${v}` | — | — | — | A function or `{ handleEvent }` listener object; `null` removes the listener; anything else throws `template.event.invalid`, a readable `template.event.readable` |
 
   Writes are skipped when the value is the same as the last one written (`Object.is`, so `NaN` writes once and `-0` after `0` writes again). Classes and styles have no special position: `class=${…}` and `style=${…}` write text, and `classMap`/`styleMap` manage only their own entries. SVG attributes follow the attribute column; elements are created in the SVG namespace inside `svg` templates.
-- **Node ownership.** A part owns the node it inserted while that node stays where the part put it. A node bound in a second place moves there (DOM semantics) and ends in the last place committed; a part never removes a node that the page or another part has moved away. One template result rendered in two places creates two independent instances. Slot projection is the browser's: slotted children belong to the page, never to a part (§6.3 roles render child elements; they do not adopt slotted ones).
+- **Node ownership.** A part owns the node it inserted while that node stays where the part put it. A node bound in a second place moves there (DOM semantics) and ends in the last place committed; a part never removes a node that the page or another part has moved away. One template result rendered in two places creates two independent instances. Slot projection is the browser's: slotted children belong to the page, never to a part (§6.3 roles render child elements; they do not adopt slotted ones), and no template change or disconnection moves them.
+- **Template lifecycle** (verified in `authoring-semantics.browser.test.ts` and `template.browser.test.ts`). A part creates a template instance the first time it commits a template result from a call site it does not already hold (the static strings identify the template), and updates that instance in place while the same call site comes back, keeping its nodes. A result from another call site, a value that is not a template, or the part's removal disposes the instance: its bindings are released and its nodes removed. When the host disconnects, every binding pauses (subscriptions released, instance and DOM kept); on reconnection `render()` runs again and the same nodes take the current values. Prepared templates are cached per call site in a `WeakMap`, so the cache is bounded by the code.
+- **Ordering** (verified in `packages/core/test/ordering.browser.test.ts`, three engines):
+  - First connection, before `append()` returns: `connected(scope)`, the effects it creates (first run), `render()` with the computed values it reads, and `mounted(scope)` with the DOM committed. `updated()` (no changes) runs in the next flush, before `updateComplete` resolves.
+  - A property or attribute write applies at once (the getter returns the new value); inside `batch()` computed values read the latest writes. The DOM changes in the microtask flush: `render()` and the commit, then `updated(changes)` with the previous value of each changed public property, then the post-commit effects (`scope.effect`), then `updateComplete` resolves.
+  - A write in `updated()` schedules one more pass in the same flush; `updateComplete` resolves after it.
+  - Writes while detached render nothing and run no `updated()`; `updateComplete` resolves (nothing is pending). Reconnection runs `connected`, its effects, `render()` with the latest values, and `mounted` synchronously, then `updated(changes)` with what changed while detached.
+  - A `render()` that throws keeps the last DOM and reports `reactive.effect.error`; `updated()` still runs for that pass, and the next good value renders.
+  - `updateComplete` covers this element only: not child elements (a child defined later renders when it is defined), fonts, layout, network resources, or paint.
 - **Event bindings:** one listener per part; swapping handlers never re-adds it. Handlers run with the component as `this`. A listener object (`{ handleEvent, capture, passive, once }`) supplies listener options; the listener is re-added only when its options change.
-- **Attribute directives:** objects carrying `ATTRIBUTE_DIRECTIVE` manage an element through a binding position instead of writing a string. They must be the whole binding value (`template.directive.position`) in an accepted binding (`template.directive.binding`), and are cleared when the binding is disposed or switches to a plain value. Other libraries can author directives with the exported protocol.
-- **Helpers** (separate subpaths, not in the root entry): `helpers/class-map` toggles only its own classes through `classList`; `helpers/style-map` writes through the CSSOM (works under strict `style-src`); `helpers/ref` provides `createRef()` (reactive `value`) and callback `ref()`, bound as `ref=${…}` and never written as an attribute; `helpers/live` compares with the element's current property, defers writes during IME composition, and keeps the caret of a focused field. Autofill is handled by the same current-value comparison.
+- **Attribute directives (the extension contract):** an object carrying `ATTRIBUTE_DIRECTIVE`, whose value is a `DirectiveHandler`, manages an element through a binding position instead of writing a string. `classMap`, `styleMap`, `ref`, and `live` are built on it, and other libraries author directives with the same exported types (verified in `authoring-semantics.browser.test.ts` and `helpers.browser.test.ts`).
+  - *Identity:* the handler object. A binding keeps one state while the same handler comes back, and clears it before applying a different handler or a plain value.
+  - *Updates:* `apply(directive, element, { type, name }, state)` runs on every commit of the binding (no equality skip: compare in `apply`) and returns `{ state, changed }`; `changed` counts as a DOM commit for `updated()`.
+  - *Ownership and teardown:* the state belongs to the binding. `clear(element, state)` runs when the binding is disposed (its template removed or replaced, the root disposed) or switches to a plain value; a paused binding (detached host) keeps its state.
+  - *Positions:* the whole value of an accepted binding (`parts`, and `bindingName` when set); otherwise `template.directive.position` or `template.directive.binding` is thrown to the caller.
+
+  Controllers (`connect(scope)`, §4.1) are the other extension point. Child-position helpers (`when`, `match`, `repeat`) are core's own: there is no second use case for a public child-position extension.
+- **Helpers** (separate subpaths, not in the root entry): `helpers/class-map` toggles only its own classes through `classList`; `helpers/style-map` writes through the CSSOM (works under strict `style-src`); `helpers/ref` provides `createRef()` (reactive `value`) and callback `ref()`, bound as `ref=${…}` and never written as an attribute; `helpers/live` compares with the element's current property, defers writes during IME composition, and keeps the caret of a focused field: a value set from script while the field has focus leaves the caret and selection where they were (clamped to the new length), where assigning a native field's `value` moves the caret to the end (deliberate; `packages/components/test/text-entry.browser.test.ts`, 0e6b26c). Autofill is handled by the same current-value comparison.
 - **Light-DOM styles:** components with `shadowRootOptions = null` add their `styles` once to the nearest root (document or shadow root), reference-counted across instances and removed with the last one; selectors must scope themselves, and `:host` in such styles reports `element.styles.lightDomHost`.
 - **`css` interpolation:** `css` results, finite numbers, and `var(--name[, fallback])` strings whose fallback has balanced parentheses and no declaration, block, string, comment, `!`, `url()`/`image()`, or at-rule syntax (`isCSSVariableReference`).
 - **Keyed `repeat`:** a longest run of items already in order stays in place and only the others move. With `moveBefore()` each item moves with its state preserved. Without it (WebKit), moved ranges are detached from the end of the list and each run is inserted before its stable anchor as one fragment, because per-item `insertBefore` is quadratic for `<li>` in WebKit: reversing 1,000 items took 319 ms before batching and 9 ms after. Focus and text selection are then restored once. Duplicate keys report `template.repeat.duplicateKey` and render without DOM reuse. The reconciler ships only with `repeat()`.
@@ -398,6 +445,12 @@ Errors that cannot be thrown to a caller go to the handler set with `setErrorHan
 | Lifecycle hook throws | `element.<hook>.error` | element | Rendering and bindings | Next connection calls the hook again |
 
 Disposal during callbacks is safe: a handler that removes its own host leaves no subscriptions or owned resources, and an effect that disconnects another element prevents that element's queued effect from running. Each connection gets a fresh scope. The previous scope is aborted, and listeners do not accumulate. Direct binding updates do not re-render the host or read layout (layout getters, `getBoundingClientRect`, and `getComputedStyle` were spied during updates). Production builds report the same codes and owners with short messages (ADR 0031).
+
+**Owners outside core.** Asynchronous work has its owner in `@oddkin/app`: a resource's or a command's failure is its `error` state (§8, §8.1), and a lazy route module that fails to load is its level's `error`, loaded again by `refresh()` (§9). The autoloader reports a definition that fails to load as `autoload.import.failed` (origin: the tag) and forgets it, so `load(tag)` tries again (`e2e/autoload.spec.ts`; Chromium, Firefox, and WebKit fetch the module again). Example setup belongs to Workbench (`mountExample`, workbench.md).
+
+**What a `Scope` cannot catch.** A scope owns what was registered on it. It does not intercept a rejected promise nobody handles (the browser's `unhandledrejection`) or an error thrown by a listener (`scope.listen` adds the handler as is, so the browser reports it as a `window` `error`); its timers report `scope.timer.error`.
+
+**Inspection** reads the ownership records core already keeps; there is no second reactive engine. `scopeStats()` (both builds) counts live scopes, listeners, timers, and effects, and leak tests and the lifetime benchmark (`research/benchmarks/lifetime/`) compare it before and after 1,000 cycles. `@oddkin/state/inspect` keeps a bounded update log (§7.1). Caches are bounded: prepared templates per call site (`WeakMap`), 64 `Intl` formatters (§4.2), 500 announced keys (§4.1). Per-readable graph inspection and commit causes are `@oddkin/core/inspect`, proposed for development builds with Workbench's runtime explanations (plan M11); it is not built.
 
 <!-- /contract:core/failure-ownership -->
 
