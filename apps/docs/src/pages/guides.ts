@@ -1,9 +1,10 @@
 import { repository, type Page } from './model.js';
 
 export const frameworks: Page = {
-  path: 'frameworks',
-  group: 'Guides',
-  eyebrow: 'Guides',
+  path: 'installation/frameworks',
+  group: 'Start here',
+  parent: 'installation',
+  eyebrow: 'Installation',
   title: 'Framework guides',
   summary:
     'The elements are standard custom elements: frameworks render them like any HTML element. Opt-in typings check properties and events in React, Vue, and Svelte templates.',
@@ -176,9 +177,10 @@ const name = ref('Ada');
 };
 
 export const browserSupport: Page = {
-  path: 'browser-support',
-  group: 'Reference',
-  eyebrow: 'Reference',
+  path: 'support/browsers',
+  group: 'Project',
+  parent: 'support',
+  eyebrow: 'Help and releases',
   title: 'Browser support',
   summary:
     'The supported browsers and every platform feature Oddkin uses, with how it is adopted and what happens below its baseline. Generated from the compatibility registry.',
@@ -205,9 +207,9 @@ export const browserSupport: Page = {
 };
 
 export const agents: Page = {
-  path: 'agents',
-  group: 'Guides',
-  eyebrow: 'Guides',
+  path: 'tooling',
+  group: 'Explore',
+  eyebrow: 'Tools',
   title: 'Agent tooling',
   summary:
     'Each installed package carries an agent kit generated from its own metadata, so an agent reads the API of the version you installed.',

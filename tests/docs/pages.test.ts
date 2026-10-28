@@ -1,7 +1,14 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { docsFacts } from '../../apps/docs/facts.mjs';
-import { codeBlocks, navigation, pages, renderPage } from '../../apps/docs/src/pages/index.js';
+import { docsFacts, siteFacts } from '../../apps/docs/facts.mjs';
+import {
+  codeBlocks,
+  navigation,
+  pages,
+  renderDocument,
+  renderPage,
+} from '../../apps/docs/src/pages/index.js';
 
 // The authored docs pages (apps/docs/src/pages) as the docs server renders them: every internal
 // link reaches a page, every fact is generated, and every code sample says how it is verified
@@ -49,7 +56,7 @@ describe('authored docs pages', async () => {
       expect(JSON.stringify(blocks), name).not.toMatch(/unknown/);
     }
     const html = renderPage(
-      pages.find((page) => page.path === 'browser-support')!,
+      pages.find((page) => page.path === 'support/browsers')!,
       facts,
     );
     expect(html).toContain('Firefox');
@@ -66,11 +73,78 @@ describe('authored docs pages', async () => {
 
   it('escape authored text', () => {
     const html = renderPage(
-      { path: 'x', group: 'Start', eyebrow: '<b>', title: 'a & b', summary: '"q"', sections: [] },
+      {
+        path: 'x',
+        group: 'Start here',
+        eyebrow: '<b>',
+        title: 'a & b',
+        summary: '"q"',
+        sections: [],
+      },
       facts,
     );
     expect(html).toContain('&lt;b&gt;');
     expect(html).toContain('a &amp; b');
     expect(html).toContain('&quot;q&quot;');
+  });
+
+  it('give each code sample an id that its copy button names', () => {
+    for (const page of pages) {
+      const html = renderPage(page, facts);
+      const ids = [...html.matchAll(/<pre class="code" id="([^"]+)"/g)].map(([, id]) => id);
+      expect(new Set(ids).size, page.path).toBe(ids.length);
+      expect(ids.length, page.path).toBe(codeBlocks(page).length);
+      for (const id of ids) expect(html, page.path).toContain(`<odd-copy-button from="${id}">`);
+    }
+  });
+});
+
+describe('the docs shell', async () => {
+  const facts = await docsFacts(root);
+  const release = await siteFacts(root);
+  const template = readFileSync(`${root}apps/docs/index.html`, 'utf8');
+  const shell = (path: string) => renderDocument(template, path, facts, release);
+
+  it('fills every part of the template but the policy, which the server or the build adds', () => {
+    const html = shell('/installation');
+    expect(html.match(/<!-- docs:[a-z]+ -->/g)).toEqual(['<!-- docs:csp -->']);
+    expect(html).toContain('<title>Installation · Oddkin</title>');
+    expect(html).toContain('<main id="main" tabindex="-1" data-page="installation">');
+  });
+
+  it('names the release from the manifests and Oddkin from the README', () => {
+    const core = JSON.parse(readFileSync(`${root}packages/core/package.json`, 'utf8'));
+    expect(release.version).toBe(core.version);
+    expect(shell('/')).toContain(`v${core.version}`);
+    expect(release.description).toMatch(/^Oddkin is .+\.$/);
+    expect(release.repository).toMatch(/^https:\/\/github\.com\/[^/]+\/oddkin$/);
+  });
+
+  it('marks the current page, its section, and lists only that section’s children', () => {
+    const sidebar = (html: string) =>
+      html.slice(html.indexOf('<odd-side-nav'), html.indexOf('</odd-side-nav>'));
+    const html = shell('/getting-started/tokens');
+    expect(html).toContain(
+      '<a class="nav-child" href="/getting-started/tokens" aria-current="page">',
+    );
+    expect(html).toContain('<a href="/getting-started" aria-current="true">');
+    expect(html).toContain('<a href="/getting-started" aria-current="true">Learn</a>');
+    expect(sidebar(html)).not.toContain('href="/guides/theming"');
+    expect(sidebar(shell('/guides'))).toContain('<a class="nav-child" href="/guides/theming">');
+    expect(shell('/components/odd-button')).toContain('<a href="/components" aria-current="true">');
+  });
+
+  it('links only to pages that exist', () => {
+    for (const path of ['/', '/getting-started', '/components', '/404']) {
+      const html = shell(path);
+      const shellOnly = html.slice(0, html.indexOf('<main')) + html.slice(html.indexOf('</main>'));
+      for (const [, href = ''] of shellOnly.matchAll(/href="(\/[^"]*)"/g)) {
+        if (/\.(?:css|js)$/.test(href) || href.startsWith('/public/')) continue;
+        const known = pages.some((page) => `/${page.path}` === href);
+        expect(known || clientRoutes.some((route) => route.test(href)), `${path} → ${href}`).toBe(
+          true,
+        );
+      }
+    }
   });
 });

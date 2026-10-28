@@ -3,7 +3,7 @@ import { createServer } from 'node:http';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { docsFacts } from './facts.mjs';
+import { docsFacts, siteFacts } from './facts.mjs';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const portIndex = process.argv.indexOf('--port');
@@ -48,38 +48,13 @@ function relativePackagePath(packageName, target) {
 const { imports, manifests } = await publicExports();
 const site = await import(pathToFileURL(join(root, 'apps/docs/dist/pages/index.js')).href);
 const facts = await docsFacts(root);
+const release = await siteFacts(root);
 const shell = join(root, 'apps/docs/index.html');
 
-/** The shell filled for `pathname`: an authored page in full, or a placeholder the client replaces. */
-function documentFor(template, pathname) {
-  const { escapeHtml, navigation, pageAt, renderPage } = site;
-  const page = pageAt(pathname);
-  const nav = navigation()
-    .map(
-      ({ group, links }) =>
-        `<p class="eyebrow">${escapeHtml(group)}</p>` +
-        links
-          .map(
-            ({ label, href }) =>
-              `<a href="${escapeHtml(href)}"${href === pathname ? ' aria-current="page"' : ''}>${escapeHtml(label)}</a>`,
-          )
-          .join(''),
-    )
-    .join('');
-  const main = page
-    ? renderPage(page, facts)
-    : '<header class="page-header"><p class="eyebrow">Documentation</p><h1>Loading</h1><p class="lede">This page is built in the browser from the published metadata.</p></header>';
-  const title = page && page.path ? `${page.title} · Oddkin` : 'Oddkin';
-  return template
-    .replace('<!-- docs:title -->', escapeHtml(title))
-    .replace('<!-- docs:nav -->', nav)
-    .replace(
-      '<main id="main" tabindex="-1"><!-- docs:main -->',
-      page
-        ? `<main id="main" tabindex="-1" data-page="${escapeHtml(page.path)}">${main}`
-        : `<main id="main" tabindex="-1" aria-busy="true">${main}`,
-    );
-}
+/** The shell filled for `pathname`; the server sends its policy as a header, not a meta element. */
+const documentFor = (template, pathname) =>
+  site.renderDocument(template, pathname, facts, release).replace('<!-- docs:csp -->', '');
+
 const server = createServer(async (request, response) => {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     response.writeHead(405, { allow: 'GET, HEAD' }).end();

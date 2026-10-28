@@ -1,9 +1,9 @@
 import { repository, type Page } from './model.js';
 
 export const install: Page = {
-  path: 'install',
-  group: 'Start',
-  eyebrow: 'Reference',
+  path: 'installation',
+  group: 'Start here',
+  eyebrow: 'Start here',
   title: 'Installation',
   summary:
     'Install from npm, or load the packages as native ES modules through an import map. Types ship with every package.',
@@ -17,16 +17,14 @@ export const install: Page = {
           code: {
             lang: 'sh',
             verify: 'none',
-            code: 'npm install @oddkin/tokens @oddkin/core @oddkin/components',
+            code: 'npm install @oddkin/tokens@beta @oddkin/core@beta @oddkin/components@beta',
           },
         },
         {
           note: [
-            'Not published yet: until the first release, build the packages in the repository (',
-            { code: 'npm run build' },
-            ') and pack them (',
-            { code: 'npm run verify:packs' },
-            ' installs every pack outside the workspace and checks its imports and types).',
+            'The packages are in beta: the ',
+            { code: '@beta' },
+            ' tag installs the current beta, and contracts may still change before 1.0.0.',
           ],
         },
       ],
@@ -121,7 +119,7 @@ if (button) button.disabled = true;`,
         { fact: 'browser-floor' },
         {
           p: [
-            { link: 'Browser support', href: '/browser-support' },
+            { link: 'Browser support', href: '/support/browsers' },
             ' lists what each platform feature needs and how it falls back.',
           ],
         },
@@ -131,9 +129,10 @@ if (button) button.disabled = true;`,
 };
 
 export const concepts: Page = {
-  path: 'concepts',
-  group: 'Start',
-  eyebrow: 'Reference',
+  path: 'core',
+  group: 'Build',
+  label: 'Core and state',
+  eyebrow: 'Core and state',
   title: 'Core concepts',
   summary:
     'Signals hold state, templates bind to it, and a scope owns every piece of work an element starts. The full contracts are in core-contracts.md.',

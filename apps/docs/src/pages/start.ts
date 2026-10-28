@@ -2,8 +2,9 @@ import type { Page } from './model.js';
 
 /** The five getting-started paths (plan M11). */
 export const startTokens: Page = {
-  path: 'start/tokens',
-  group: 'Start',
+  path: 'getting-started/tokens',
+  group: 'Start here',
+  parent: 'getting-started',
   eyebrow: 'Getting started',
   title: 'Tokens only',
   summary:
@@ -111,8 +112,9 @@ npx oddkin-tokens build oddkin.theme.json --out tokens`,
 };
 
 export const startComponents: Page = {
-  path: 'start/components',
-  group: 'Start',
+  path: 'getting-started/components',
+  group: 'Start here',
+  parent: 'getting-started',
   eyebrow: 'Getting started',
   title: 'Components in any app',
   summary:
@@ -150,7 +152,7 @@ import '@oddkin/components/define/input';`,
         {
           p: [
             'Load a theme stylesheet too (',
-            { link: 'Tokens only', href: '/start/tokens' },
+            { link: 'Tokens only', href: '/getting-started/tokens' },
             '): component styles read the semantic tokens.',
           ],
         },
@@ -196,7 +198,7 @@ import '@oddkin/components/define/input';`,
               ': every element with its API and examples.',
             ],
             [
-              { link: 'Framework guides', href: '/frameworks' },
+              { link: 'Framework guides', href: '/installation/frameworks' },
               ': React, Angular, Vue, and Svelte.',
             ],
             [{ link: 'Forms and accessibility', href: '/guides/forms-accessibility' }],
@@ -208,8 +210,9 @@ import '@oddkin/components/define/input';`,
 };
 
 export const startAuthor: Page = {
-  path: 'start/author',
-  group: 'Start',
+  path: 'getting-started/author',
+  group: 'Start here',
+  parent: 'getting-started',
   eyebrow: 'Getting started',
   title: 'Author custom elements',
   summary:
@@ -286,7 +289,7 @@ define(demoGreetingDefinition);`,
             ' while rendering tracks it, so the element renders again when it changes. Work started in ',
             { code: 'connected(scope)' },
             ' belongs to that scope and stops when the element disconnects. ',
-            { link: 'Core concepts', href: '/concepts' },
+            { link: 'Core concepts', href: '/core' },
             ' explains both.',
           ],
         },
@@ -296,8 +299,9 @@ define(demoGreetingDefinition);`,
 };
 
 export const startApp: Page = {
-  path: 'start/app',
-  group: 'Start',
+  path: 'getting-started/app',
+  group: 'Start here',
+  parent: 'getting-started',
   eyebrow: 'Getting started',
   title: 'A full Oddkin application',
   summary:
@@ -376,8 +380,9 @@ shop.start();`,
 };
 
 export const startWorkbench: Page = {
-  path: 'start/workbench',
-  group: 'Start',
+  path: 'getting-started/workbench',
+  group: 'Start here',
+  parent: 'getting-started',
   eyebrow: 'Getting started',
   title: 'Document your library with Workbench',
   summary:

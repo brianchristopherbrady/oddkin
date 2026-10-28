@@ -4,6 +4,8 @@
  * component counts) are named here and filled in from the published files when the page is served.
  */
 
+import { icons } from './icons.js';
+
 /** Inline content: text, code, a link, or emphasis. */
 export type Inline =
   string | { code: string } | { link: string; href: string } | { strong: string };
@@ -25,13 +27,24 @@ export interface CodeBlock {
 export type Fact =
   'packages' | 'browser-floor' | 'browser-features' | 'component-counts' | 'framework-versions';
 
+/** Another page summarized as a card: what it covers, the package it is about, and a link to it. */
+export interface Card {
+  title: string;
+  text: string;
+  href: string;
+  /** The link's text; it names the destination, as several cards share a page. */
+  action: string;
+  meta?: string;
+}
+
 export type Block =
   | { p: Inline[] }
   | { list: Inline[][]; ordered?: true }
   | { code: CodeBlock }
   | { table: { caption: string; head: string[]; rows: Inline[][][] } }
   | { fact: Fact }
-  | { note: Inline[] };
+  | { note: Inline[] }
+  | { cards: Card[] };
 
 export interface Section {
   id: string;
@@ -39,17 +52,25 @@ export interface Section {
   blocks: Block[];
 }
 
+/** Sidebar groups, in order. */
+export const groups = ['Start here', 'Build', 'Explore', 'Project'] as const;
+export type Group = (typeof groups)[number];
+
 export interface Page {
   /** Route path without a leading slash; '' is the home page. */
   path: string;
   /** Navigation group. */
-  group: 'Start' | 'Guides' | 'Reference';
+  group: Group;
+  /** Path of the page this one belongs to; the sidebar lists it below that page. */
+  parent?: string;
   eyebrow: string;
   title: string;
   /** Navigation label, when shorter than the title. */
   label?: string;
   summary: string;
   sections: Section[];
+  /** The page to read next, linked after the last section. */
+  next?: { label: string; href: string };
 }
 
 /** A fact rendered as blocks; the server supplies them. */
@@ -75,23 +96,47 @@ function inline(content: readonly Inline[]): string {
     .join('');
 }
 
-function block(item: Block, facts: FactBlocks): string {
+const languages: Record<CodeBlock['lang'], string> = {
+  html: 'HTML',
+  js: 'JavaScript',
+  ts: 'TypeScript',
+  css: 'CSS',
+  sh: 'Terminal',
+  json: 'JSON',
+};
+
+/** A code sample with its language (or file name) and a copy button for the code. */
+export function codeSample({ code, lang, caption, file }: CodeBlock, id: string): string {
+  return `<figure class="code-block"><div class="code-toolbar odd-row odd-row-between"><span class="code-label">${escapeHtml(
+    file ?? languages[lang],
+  )}</span><odd-copy-button from="${escapeHtml(id)}"></odd-copy-button></div><pre class="code" id="${escapeHtml(
+    id,
+  )}" data-lang="${lang}" tabindex="0"><code>${escapeHtml(code)}</code></pre>${
+    caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''
+  }</figure>`;
+}
+
+function card({ title, text, href, action, meta }: Card): string {
+  return `<li><odd-card class="resource-card"><h3 slot="header">${escapeHtml(title)}</h3><p>${escapeHtml(
+    text,
+  )}</p>${meta ? `<p class="card-meta">${escapeHtml(meta)}</p>` : ''}<a slot="footer" class="odd-button" data-full-width href="${escapeHtml(
+    href,
+  )}">${escapeHtml(action)}</a></odd-card></li>`;
+}
+
+function block(item: Block, facts: FactBlocks, ids: () => string): string {
   if ('p' in item) return `<p>${inline(item.p)}</p>`;
   if ('note' in item) return `<p class="note">${inline(item.note)}</p>`;
   if ('list' in item) {
     const tag = item.ordered ? 'ol' : 'ul';
     return `<${tag}>${item.list.map((entry) => `<li>${inline(entry)}</li>`).join('')}</${tag}>`;
   }
-  if ('code' in item) {
-    const { code, lang, caption } = item.code;
-    const figure = `<pre class="code" data-lang="${lang}" tabindex="0"><code>${escapeHtml(code)}</code></pre>`;
-    return caption
-      ? `<figure class="code-sample"><figcaption>${escapeHtml(caption)}</figcaption>${figure}</figure>`
-      : figure;
-  }
+  if ('code' in item) return codeSample(item.code, ids());
+  if ('cards' in item)
+    return `<ul class="card-list odd-auto-grid" role="list">${item.cards.map(card).join('')}</ul>`;
   if ('table' in item) {
     const { caption, head, rows } = item.table;
-    return `<div class="table-scroll" tabindex="0" role="region" aria-label="${escapeHtml(caption)}"><table><caption>${escapeHtml(caption)}</caption><thead><tr>${head
+    return `<div class="table-scroll" tabindex="0" role="region" aria-label="${escapeHtml(caption)}"><table class="odd-table"><caption>${escapeHtml(caption)}</caption><thead><tr>${head
       .map((h) => `<th scope="col">${escapeHtml(h)}</th>`)
       .join('')}</tr></thead><tbody>${rows
       .map(
@@ -100,25 +145,30 @@ function block(item: Block, facts: FactBlocks): string {
       )
       .join('')}</tbody></table></div>`;
   }
-  return facts[item.fact].map((b) => block(b, facts)).join('');
+  return facts[item.fact].map((b) => block(b, facts, ids)).join('');
 }
 
 /** The page's `<main>` content. */
 export function renderPage(page: Page, facts: FactBlocks): string {
   const toc = page.sections.length > 2;
+  let count = 0;
+  const ids = () => `code-${++count}`;
   return [
     `<header class="page-header"><p class="eyebrow">${escapeHtml(page.eyebrow)}</p><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.summary)}</p></header>`,
     toc
-      ? `<nav class="toc" aria-label="On this page"><p class="eyebrow">On this page</p><ul>${page.sections
+      ? `<nav class="toc" aria-label="On this page"><p class="eyebrow">On this page</p><ul class="odd-cluster">${page.sections
           .map((s) => `<li><a href="#${escapeHtml(s.id)}">${escapeHtml(s.title)}</a></li>`)
           .join('')}</ul></nav>`
       : '',
     ...page.sections.map(
       (s) =>
         `<section class="content-section" id="${escapeHtml(s.id)}" aria-labelledby="${escapeHtml(s.id)}-title"><h2 id="${escapeHtml(s.id)}-title">${escapeHtml(s.title)}</h2>${s.blocks
-          .map((b) => block(b, facts))
+          .map((b) => block(b, facts, ids))
           .join('')}</section>`,
     ),
+    page.next
+      ? `<p class="page-next"><a class="odd-link" href="${escapeHtml(page.next.href)}">${escapeHtml(page.next.label)}${icons.arrowRight}</a></p>`
+      : '',
   ].join('');
 }
 

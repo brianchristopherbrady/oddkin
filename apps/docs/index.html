@@ -1,34 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-odd-mode="system">
   <head>
     <meta charset="utf-8" />
+    <!-- docs:csp -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title><!-- docs:title --></title>
-    <link rel="stylesheet" href="/apps/docs/styles.css" />
+    <meta name="description" content="<!-- docs:description -->" />
     <link rel="stylesheet" href="/public/@oddkin/tokens/css/default.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/reset.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/base.css" />
     <link rel="stylesheet" href="/public/@oddkin/components/css/layout.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/button.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/link.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/table.css" />
+    <link rel="stylesheet" href="/public/@oddkin/components/css/utilities.css" />
+    <link rel="stylesheet" href="/apps/docs/styles.css" />
+    <script src="/apps/docs/mode.js"></script>
     <script type="importmap" id="oddkin-import-map"></script>
     <script type="module" src="/apps/docs/dist/main.js"></script>
   </head>
   <body>
     <div id="docs-app">
       <a class="skip-link" href="#main">Skip to content</a>
-      <header class="site-header odd-row odd-row-between">
-        <a class="brand" href="/">Oddkin</a>
-        <form class="header-search odd-row" action="/search">
-          <label class="visually-hidden" for="site-search">Search documentation</label>
-          <input id="site-search" type="search" name="q" placeholder="Search documentation" />
-          <button type="submit">Search</button>
-        </form>
-      </header>
-      <p id="route-status" role="status" aria-live="polite"></p>
+      <!-- docs:header -->
+      <p id="route-status" class="odd-visually-hidden" role="status" aria-live="polite"></p>
       <div class="site-layout odd-split">
-        <nav class="side-nav odd-auto-grid odd-auto-grid-fit" aria-label="Documentation">
-          <!-- docs:nav -->
-        </nav>
+        <!-- docs:nav -->
         <main id="main" tabindex="-1"><!-- docs:main --></main>
       </div>
-      <footer class="site-footer">Oddkin · open web components and design-system tooling</footer>
+      <!-- docs:footer -->
     </div>
   </body>
 </html>

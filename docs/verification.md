@@ -3882,3 +3882,17 @@ A temporary detached worktree of main 2cc56d3 (removed afterwards), with the com
 | Packs, kits | `npm run verify:packs`; `node scripts/agent-kit/package-kits.mjs --check` | Pass |
 | Versions | `node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 1.0.0-beta.0 --public --check` | Pass: 8 packages publishable |
 | Publish, dry run | `node scripts/release/publish.mjs` | All 8 would publish in dependency order with `--tag beta` |
+
+## 2026-10-28 — Docs site slice 1: shell, information architecture, static build, Pages workflow (Agent 1)
+
+Design source: Figma "Oddkin Docs Website" (`zF87qftdRznmJJezxy23gd`), pages 00 (website map) and 06 (shared patterns); the variables it binds are Oddkin tokens (`--odd-color-canvas`, `--odd-type-*`, `--odd-space-*`, `--odd-radius-lg`), so the site reads the same tokens.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Pages, shell, static build | `npx vitest run --project node tests/docs` | 15 passed (links, facts, escaping, code-sample ids named by their copy buttons, the shell's placeholders, current-page marks, section children, release facts; the build's routes, 404 page, policy hash, files named by documents and the import map, browser files only, refusal to replace a folder it did not write) |
+| Docs e2e | `npx playwright test e2e/docs.spec.ts e2e/docs-site.spec.ts` (three engines, E2E lock) | 30 passed: the journey (sidebar sections, the layout guide, catalog, references, foundations, palette search to the case study, no policy violation), boot without script, metadata error and retry, not found, every component page; the light/dark switch persists across a reload; at 320 px nothing scrolls sideways and the sidebar sits behind the menu button (Escape returns focus); Ctrl K finds and opens a component; the static build served as GitHub Pages serves it (folder redirect, 404.html with status 404): pages, a component route, and an unknown path, with no policy violation or page error |
+| Types | `npm run typecheck` | Pass |
+| Layout lint, boundaries | `node scripts/check-page-layout.mjs`; `node scripts/architecture/check-boundaries.mjs --artifacts` | Pass: 0 unlisted hand-written layouts (the shell uses the layout classes); boundaries OK |
+| Static build | `node apps/docs/build.mjs` | 79 routes and 404.html, 1,242 files, about 2 s (Windows: a first run into a new folder took 60 s while the new files were scanned) |
+
+**Not verified:** the deployment itself (needs the owner's Pages source, custom domain, and DNS; the repository is private, so Pages needs a paid plan or a public repository); screen-reader passes (owner deferral).

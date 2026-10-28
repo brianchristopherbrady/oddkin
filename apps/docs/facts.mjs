@@ -16,6 +16,22 @@ const BROWSERS = {
 const json = async (path) => JSON.parse(await readFile(path, 'utf8'));
 const cell = (text) => [text];
 
+/** The shell's facts: the release version and license, the source repository, and what Oddkin is. */
+export async function siteFacts(root) {
+  const core = await json(join(root, 'packages/core/package.json'));
+  const readme = await readFile(join(root, 'README.md'), 'utf8');
+  const intro = readme.split(/\n\s*\n/).find((block) => !block.startsWith('#')) ?? '';
+  return {
+    version: core.version,
+    license: core.license,
+    repository: core.repository.url.replace(/^git\+/, '').replace(/\.git$/, ''),
+    description: intro
+      .replace(/\s+/g, ' ')
+      .replace(/(\.)\s.*$|: .*$/, '$1')
+      .trim(),
+  };
+}
+
 /** Every fact of the `Fact` union in `src/pages/model.ts`, as page blocks. */
 export async function docsFacts(root) {
   const manifests = [];

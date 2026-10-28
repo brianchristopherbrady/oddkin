@@ -32,15 +32,21 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   expect(response?.headers()['content-security-policy']).toContain("default-src 'none'");
   await expect(page.getByRole('heading', { name: 'Oddkin', level: 1 })).toBeVisible();
   await expect(page.getByRole('table', { name: 'Oddkin packages' })).toContainText('@oddkin/core');
-  expect(requests.some((url) => /\/packages\/components\/.*\.js$/.test(url))).toBe(false);
+  // The sidebar is odd-side-nav over the server's links.
+  await expect(page.getByRole('navigation', { name: 'Documentation' })).toBeVisible();
 
-  // An authored page reached from the navigation is the server's document for that path.
-  await page.locator('.side-nav a[href="/start/tokens"]').click();
-  await expect(page).toHaveURL(`${docs}/start/tokens`);
+  // An authored page reached from the navigation is the server's document for that path; the
+  // sidebar lists a section's pages when it is open.
+  await page.locator('.side-nav a[href="/getting-started"]').click();
+  await expect(page).toHaveURL(`${docs}/getting-started`);
+  await page.locator('.side-nav a[href="/getting-started/tokens"]').click();
+  await expect(page).toHaveURL(`${docs}/getting-started/tokens`);
   await expect(page.getByRole('heading', { name: 'Tokens only', level: 1 })).toBeVisible();
   await expect(page.locator('.side-nav a[aria-current="page"]')).toHaveText('Tokens only');
+  await expect(page.locator('.side-nav a[aria-current="true"]')).toHaveText('Getting started');
 
   // The layout guide's route loads its element modules before it commits (catalogLoad).
+  await page.locator('.side-nav a[href="/guides"]').click();
   await page.locator('.side-nav a[href="/layout/side-nav"]').click();
   await expect(page.getByRole('heading', { name: 'Side navigation', exact: true })).toBeVisible({
     timeout: catalogLoad,
@@ -59,7 +65,6 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   const sideNavPanel = page.locator('oddkin-component-panel');
   expect(await sideNavPanel.evaluate((element) => element.shadowRoot?.mode)).toBe('open');
   await expect(sideNavPanel.getByRole('heading', { name: 'Overview', level: 2 })).toBeVisible();
-  expect(requests.some((url) => /\/packages\/components\/.*\.js$/.test(url))).toBe(false);
 
   await page.locator('.side-nav a[href="/components"]').click();
   await expect(page).toHaveURL(`${docs}/components`, { timeout: catalogLoad });
@@ -77,12 +82,10 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(page).toHaveURL(`${docs}/layout/side-nav`);
   await page.goForward();
   await expect(page.getByRole('searchbox', { name: 'Search components' })).toBeVisible();
-  // Catalog cards render with odd-card: the only component module the docs load.
   const componentModules = () =>
     requests
       .filter((url) => /\/packages\/components\/.*\.js$/.test(url))
       .map((url) => new URL(url).pathname);
-  expect(componentModules().every((path) => /\/(card|styles)\//.test(path))).toBe(true);
   const before = componentModules().length;
 
   // A shadow-root link inside the panel navigates through the docs router.
@@ -102,13 +105,12 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(page).toHaveURL(`${docs}/foundations/spacing`);
   await expect(page.getByRole('rowheader', { name: 'space.md --odd-space-md' })).toBeVisible();
 
-  await page.locator('#site-search').fill('navigation');
-  await page.locator('#site-search').press('Enter');
-  await expect(page).toHaveURL(`${docs}/search?q=navigation`);
-  await expect(page.getByRole('heading', { name: 'Search Oddkin docs' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Side navigation layout guide' })).toBeVisible();
-
-  await page.locator('.side-nav a[href="/architecture/scope-ownership"]').click();
+  // Search is odd-command-palette over every page and component (Ctrl K or the header button).
+  await page.getByRole('link', { name: 'Search docs' }).click();
+  const palette = page.getByRole('dialog', { name: 'Search docs' });
+  await palette.getByRole('combobox').fill('scope ownership');
+  await palette.getByRole('option', { name: 'Case study: scope ownership' }).click();
+  await expect(page).toHaveURL(`${docs}/architecture/scope-ownership`);
   await expect(page.getByRole('heading', { name: 'Scope ownership for navigation' })).toBeVisible();
   // WebKit reports style-src-attr for every <select> inserted under a strict style-src, even one
   // made with createElement on a page without Oddkin code (verification.md, 2026-10-21); once the
@@ -120,6 +122,12 @@ test('docs guides, metadata references, local search, and shadow-root links', as
       (v) => !(browserName === 'webkit' && /^style-src-attr (select|#document)$/.test(v)),
     ),
   ).toEqual([]);
+
+  await page.goto(`${docs}/search?q=navigation`);
+  await expect(page.getByRole('heading', { name: 'Search Oddkin docs' })).toBeVisible({
+    timeout: catalogLoad,
+  });
+  await expect(page.getByRole('link', { name: 'Side navigation layout guide' })).toBeVisible();
 });
 
 test('authored pages are readable before client boot and metadata pages show pending then ready', async ({
@@ -141,12 +149,12 @@ test('authored pages are readable before client boot and metadata pages show pen
   });
 
   await page.route('**/apps/docs/dist/main.js', (route) => route.abort());
-  await page.goto(`${docs}/start/components`);
+  await page.goto(`${docs}/getting-started/components`);
   await expect(
     page.getByRole('heading', { name: 'Components in any app', level: 1 }),
   ).toBeVisible();
   await expect(page.getByText("import '@oddkin/components/define/button';")).toBeVisible();
-  await page.goto(`${docs}/browser-support`);
+  await page.goto(`${docs}/support/browsers`);
   // Generated from docs/compatibility/features.json on the server.
   await expect(page.getByRole('table', { name: /Supported browsers/ })).toContainText('Firefox');
   await expect(page.getByRole('table', { name: 'Platform features by adoption' })).toBeVisible();

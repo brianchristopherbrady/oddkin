@@ -1,278 +1,542 @@
-:root {
-  color-scheme: light dark;
-  font-family: system-ui, sans-serif;
-  line-height: 1.55;
-  color: var(--odd-color-text-primary, #222);
-  background: var(--odd-color-surface-canvas, #fff);
+/*
+ * The docs site's own styles: the shell from the Figma "Oddkin Docs Website" file, on Oddkin
+ * tokens and the published CSS recipes (layout, button, link, table). Arrangements use the
+ * layout classes in the markup; this sheet sets sizes, spacing, and type.
+ */
+
+.odd-button[hidden] {
+  display: none;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-a {
-  color: var(--odd-color-action-default, #5140cc);
-  text-underline-offset: 0.18em;
-}
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible {
-  outline: 3px solid var(--odd-color-focus-ring, #5140cc);
-  outline-offset: 3px;
-}
-
-button,
-input {
-  font: inherit;
+.icon {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  vertical-align: middle;
 }
 
 .skip-link {
   position: absolute;
-  inset-block-start: 0.5rem;
-  inset-inline-start: 0.5rem;
+  inset-block-start: var(--odd-space-xs);
+  inset-inline-start: var(--odd-space-xs);
   z-index: 2;
-  padding: 0.5rem 0.75rem;
-  transform: translateY(-160%);
-  background: Canvas;
+  padding: var(--odd-space-xs) var(--odd-space-sm);
+  border-radius: var(--odd-radius-sm);
+  background: var(--odd-color-surface-default);
+  transform: translateY(-200%);
 }
 
 .skip-link:focus {
   transform: none;
 }
 
+/* Header */
+
 .site-header {
-  --odd-row-gap: 1rem;
-  padding: 1rem max(1rem, calc((100vw - 78rem) / 2));
-  border-block-end: 1px solid var(--odd-color-border-default, #d9d8e1);
+  --odd-row-gap: var(--odd-space-md);
+  padding: var(--odd-space-xl);
+  border-block-end: var(--odd-border-width-default) solid var(--odd-color-border-default);
 }
 
-.brand {
-  color: inherit;
-  font-size: 1.2rem;
-  font-weight: 700;
+.brand,
+.footer-brand .brand-name {
+  color: var(--odd-color-text-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand-name {
+  font-family: var(--odd-type-display-family);
+  font-size: 1.75rem;
+  font-weight: var(--odd-type-display-weight);
+  line-height: 1.15;
+  letter-spacing: var(--odd-type-display-letter-spacing);
+}
+
+.brand-docs {
+  margin-inline-start: var(--odd-space-xs);
+  color: var(--odd-color-text-secondary);
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+}
+
+.primary-nav {
+  --odd-row-gap: var(--odd-space-lg);
+}
+
+.primary-nav a {
+  color: var(--odd-color-text-primary);
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+  line-height: var(--odd-type-ui-line-height);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.primary-nav a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.primary-nav a[aria-current] {
+  color: var(--odd-color-link);
+}
+
+.header-tools {
+  --odd-row-gap: var(--odd-space-sm);
+}
+
+.search-trigger {
+  min-inline-size: 13rem;
   text-decoration: none;
 }
 
-.header-search,
-.search-form {
-  --odd-row-gap: 0.5rem;
+.shortcut,
+.version {
+  color: var(--odd-color-text-secondary);
+  font-size: var(--odd-type-small-size);
+  line-height: var(--odd-type-small-line-height);
+  white-space: nowrap;
 }
 
-.header-search input,
-.search-form input {
-  min-width: 12rem;
-  padding: 0.45rem 0.6rem;
+.icon-button {
+  --odd-button-padding-inline: var(--odd-space-xs);
+  min-inline-size: var(--odd-control-height-md);
 }
 
-.header-search button,
-.search-form button,
-button {
-  padding: 0.45rem 0.75rem;
+.mode-toggle .icon + .icon,
+.mode-toggle[aria-pressed='true'] .icon:first-of-type,
+.menu-toggle .icon + .icon,
+.menu-toggle[aria-expanded='true'] .icon:first-of-type {
+  display: none;
 }
+
+.mode-toggle[aria-pressed='true'] .icon + .icon,
+.menu-toggle[aria-expanded='true'] .icon + .icon {
+  display: inline;
+}
+
+/* The icon says which mode is on; the recipe's pressed fill would read as a selected tool. */
+.mode-toggle[aria-pressed='true'] {
+  border-color: transparent;
+  background: transparent;
+  color: var(--odd-color-text-primary);
+}
+
+@media (hover: hover) {
+  .mode-toggle[aria-pressed='true']:hover {
+    background: var(--odd-color-surface-hover);
+  }
+}
+
+@media (width >= 55.5rem) {
+  .menu-toggle {
+    display: none;
+  }
+}
+
+/* Sidebar and content */
 
 .site-layout {
-  --odd-split-side-width: 16rem;
-  --odd-split-gap: clamp(1.5rem, 4vw, 4rem);
-  width: min(78rem, 100%);
-  margin-inline: auto;
-  padding: 2rem 1.5rem 4rem;
+  --odd-split-side-width: 15.5rem;
+  --odd-split-main-min: 38rem;
+  --odd-split-gap: 0;
+  align-items: start;
 }
 
-#route-status {
-  margin: 0;
-  padding-inline: max(1rem, calc((100vw - 78rem) / 2));
-}
-
-/* One column beside the content; links share rows once the layout wraps. */
 .side-nav {
-  --odd-auto-grid-min: 8rem;
-  --odd-auto-grid-gap: 0.5rem;
-  align-self: start;
   position: sticky;
-  inset-block-start: 1rem;
+  inset-block-start: 0;
+  max-block-size: 100vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding: var(--odd-space-lg);
 }
 
-.side-nav a {
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.25rem;
-}
-
-.side-nav a[aria-current='page'] {
-  color: inherit;
-  background: var(--odd-color-surface-raised, #f1f0f7);
-  font-weight: 650;
-}
-
-.eyebrow {
-  margin-block: 0.4rem;
-  color: var(--odd-color-text-secondary, #575568);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+.nav-group {
+  margin: 0;
+  color: var(--odd-color-text-secondary);
+  font-family: var(--odd-type-eyebrow-family);
+  font-size: var(--odd-type-eyebrow-size);
+  font-weight: var(--odd-type-eyebrow-weight);
+  line-height: var(--odd-type-eyebrow-line-height);
+  letter-spacing: var(--odd-type-eyebrow-letter-spacing);
   text-transform: uppercase;
 }
 
+.nav-group:not(:first-child) {
+  margin-block-start: var(--odd-space-md);
+}
+
+.side-nav > a {
+  color: var(--odd-color-text-primary);
+}
+
+.side-nav > a[aria-current='true'] {
+  font-weight: var(--odd-font-weight-semibold);
+}
+
+.side-nav > a.nav-child {
+  padding-inline-start: calc(var(--odd-navigation-item-padding-inline) + var(--odd-space-md));
+  color: var(--odd-color-text-secondary);
+}
+
+.side-nav > a.nav-child[aria-current='page'] {
+  color: var(--odd-color-text-primary);
+}
+
+.nav-footer {
+  margin: var(--odd-space-md) 0 0;
+  padding-block-start: var(--odd-space-lg);
+  border-block-start: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  color: var(--odd-color-text-secondary);
+  font-size: var(--odd-type-small-size);
+  line-height: var(--odd-type-small-line-height);
+}
+
+/* Before odd-side-nav upgrades, its entries are plain links: one per line. */
+odd-side-nav:not(:defined) > a {
+  display: block;
+  padding: var(--odd-space-xs) var(--odd-space-sm);
+}
+
 #main {
-  min-height: 65vh;
+  min-block-size: 65vh;
+  padding: var(--odd-space-2xl);
 }
 
 #main:focus {
   outline: none;
 }
 
-.page-header {
-  margin-block-end: 2rem;
+#main > * {
+  max-inline-size: 68.5rem;
 }
 
-.page-header h1 {
-  margin-block: 0.3rem 0.8rem;
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.15;
+#main > * + * {
+  margin-block-start: var(--odd-space-2xl);
 }
 
-.lede {
-  max-width: 48rem;
-  font-size: 1.15rem;
-  color: var(--odd-color-text-secondary, #575568);
+.eyebrow {
+  margin: 0;
+  color: var(--odd-color-text-secondary);
+  font-family: var(--odd-type-eyebrow-family);
+  font-size: var(--odd-type-eyebrow-size);
+  font-weight: var(--odd-type-eyebrow-weight);
+  line-height: var(--odd-type-eyebrow-line-height);
+  letter-spacing: var(--odd-type-eyebrow-letter-spacing);
+  text-transform: uppercase;
 }
 
-.content-section,
-.detail-panel {
-  margin-block: 2rem;
-}
-
-.content-section h2,
-.detail-panel h2 {
-  margin-block: 0 0.75rem;
-}
-
-pre {
-  overflow-x: auto;
-  padding: 1rem;
-  border: 1px solid var(--odd-color-border-default, #d9d8e1);
-  border-radius: 0.4rem;
-  background: var(--odd-color-surface-raised, #f5f4f8);
-}
-
-code,
-pre {
-  font-family: ui-monospace, monospace;
-}
-
-.side-nav .eyebrow {
-  grid-column: 1 / -1;
-}
-
-.card-grid {
-  --odd-auto-grid-min: 15rem;
-  --odd-auto-grid-gap: 1rem;
-}
-
-.doc-card {
-  --odd-stack-gap: 0.4rem;
-  padding: 1rem;
-  border: 1px solid var(--odd-color-border-default, #d9d8e1);
-  border-radius: 0.4rem;
-}
-
-.doc-card h2,
-.doc-card p {
+.page-header > * {
   margin: 0;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: start;
+.page-header > * + * {
+  margin-block-start: var(--odd-space-md);
 }
 
-th,
-td {
-  padding: 0.55rem;
-  border-block-end: 1px solid var(--odd-color-border-default, #d9d8e1);
-  text-align: start;
-  vertical-align: top;
+#main h1 {
+  font-family: var(--odd-type-display-family);
+  font-size: var(--odd-type-display-size);
+  font-weight: var(--odd-type-display-weight);
+  line-height: var(--odd-type-display-line-height);
+  letter-spacing: var(--odd-type-display-letter-spacing);
 }
 
-th {
-  font-weight: 650;
+#main h2 {
+  margin: 0 0 var(--odd-space-lg);
+  font-family: var(--odd-type-section-family);
+  font-size: var(--odd-type-section-size);
+  font-weight: var(--odd-type-section-weight);
+  line-height: var(--odd-type-section-line-height);
+  letter-spacing: var(--odd-type-section-letter-spacing);
 }
 
-.panel-link {
-  margin-block-start: 1.5rem;
+#main h3 {
+  margin: 0;
+  font-family: var(--odd-type-title-family);
+  font-size: var(--odd-type-title-size);
+  font-weight: var(--odd-type-title-weight);
+  line-height: var(--odd-type-title-line-height);
+  letter-spacing: var(--odd-type-title-letter-spacing);
+}
+
+.lede {
+  color: var(--odd-color-text-secondary);
+}
+
+.content-section > :is(p, ul, ol, figure, .table-scroll, .note) {
+  margin-block: var(--odd-space-md) 0;
+}
+
+.content-section > h2 + * {
+  margin-block-start: 0;
+}
+
+.content-section > :is(p, ul, ol, .note),
+.lede {
+  max-inline-size: 72ch;
+}
+
+.content-section li + li {
+  margin-block-start: var(--odd-space-xs);
+}
+
+#main code {
+  font-family: var(--odd-type-code-family);
+  font-size: 0.9em;
 }
 
 .note {
-  padding: 0.75rem 1rem;
-  border-inline-start: 4px solid var(--odd-color-border-strong, #9997a8);
-  background: var(--odd-color-surface-raised, #f5f4f8);
+  padding: var(--odd-space-md);
+  border-radius: var(--odd-radius-md);
+  background: var(--odd-color-surface-specimen);
 }
+
+.toc ul {
+  --odd-cluster-gap: var(--odd-space-xs) var(--odd-space-lg);
+  margin: var(--odd-space-xs) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc a,
+.page-next a {
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+}
+
+.page-next {
+  padding-block-start: var(--odd-space-lg);
+  border-block-start: var(--odd-border-width-default) solid var(--odd-color-border-default);
+}
+
+.page-next .icon {
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-inline-start: var(--odd-space-xs);
+}
+
+/* Code blocks */
+
+.code-block {
+  --odd-row-gap: var(--odd-space-md);
+  margin-inline: 0;
+  padding: var(--odd-space-lg);
+  border-radius: var(--odd-radius-lg);
+  background: var(--odd-color-surface-sunken);
+}
+
+.code-label {
+  color: var(--odd-color-text-primary);
+  font-size: var(--odd-font-size-sm);
+}
+
+.code-block pre {
+  margin: var(--odd-space-md) 0 0;
+  overflow-x: auto;
+  font-family: var(--odd-type-code-family);
+  font-size: var(--odd-type-code-size);
+  line-height: var(--odd-type-code-line-height);
+}
+
+#main .code-block pre code {
+  font-size: inherit;
+}
+
+.code-block figcaption {
+  margin-block-start: var(--odd-space-sm);
+  color: var(--odd-color-text-secondary);
+  font-size: var(--odd-type-small-size);
+}
+
+/* Cards */
+
+.card-list {
+  --odd-auto-grid-min: 18rem;
+  --odd-auto-grid-gap: var(--odd-space-lg);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resource-card {
+  --odd-card-padding: var(--odd-space-lg);
+  --odd-card-gap: var(--odd-space-md);
+  --odd-card-radius: var(--odd-radius-lg);
+  --odd-card-background: var(--odd-color-surface-default);
+  --odd-card-border-color: var(--odd-color-border-default);
+  block-size: 100%;
+}
+
+.resource-card p {
+  margin: 0;
+  color: var(--odd-color-text-secondary);
+}
+
+.resource-card .card-meta {
+  margin-block-start: var(--odd-space-md);
+  padding-block-start: var(--odd-space-md);
+  border-block-start: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+}
+
+.resource-card .odd-button {
+  text-decoration: none;
+}
+
+/* Tables */
 
 .table-scroll {
   overflow-x: auto;
 }
 
-caption {
-  padding-block: 0.5rem;
-  font-weight: 650;
-  text-align: start;
+.table-scroll .odd-table {
+  inline-size: 100%;
 }
 
-.code-sample {
-  margin-inline: 0;
-}
-
-.code-sample figcaption {
-  margin-block-end: 0.4rem;
-  color: var(--odd-color-text-secondary, #575568);
-}
+/* Footer */
 
 .site-footer {
-  padding: 1.5rem;
-  border-block-start: 1px solid var(--odd-color-border-default, #d9d8e1);
-  text-align: center;
+  padding: var(--odd-space-2xl);
+  background: var(--odd-color-surface-sunken);
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
+.footer-columns {
+  --odd-cluster-gap: var(--odd-space-xl) var(--odd-space-3xl);
+  align-items: start;
+}
+
+.footer-brand {
+  inline-size: min(22.5rem, 100%);
+}
+
+.footer-brand p {
+  margin: 0;
+}
+
+.footer-brand p + p {
+  margin-block-start: var(--odd-space-md);
+  color: var(--odd-color-text-secondary);
+}
+
+.footer-nav {
+  --odd-cluster-gap: var(--odd-space-xl) var(--odd-space-3xl);
+  align-items: start;
+}
+
+.footer-column {
+  min-inline-size: 10rem;
+}
+
+.footer-heading {
+  margin: 0 0 var(--odd-space-md);
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+  line-height: var(--odd-type-ui-line-height);
+}
+
+.footer-column ul {
+  --odd-stack-gap: var(--odd-space-sm);
+  margin: 0;
   padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  list-style: none;
 }
 
-@media (max-width: 48rem) {
-  .site-layout {
-    padding-inline: 1rem;
+.footer-column a,
+.footer-meta {
+  color: var(--odd-color-text-secondary);
+  font-size: var(--odd-type-small-size);
+  line-height: var(--odd-type-small-line-height);
+}
+
+.footer-meta {
+  --odd-cluster-gap: var(--odd-space-xs) var(--odd-space-3xl);
+  margin-block-start: var(--odd-space-xl);
+  padding-block-start: var(--odd-space-md);
+  border-block-start: var(--odd-border-width-default) solid var(--odd-color-border-default);
+}
+
+.footer-meta p {
+  margin: 0;
+}
+
+.footer-meta a {
+  color: inherit;
+}
+
+.footer-meta .icon {
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-inline-start: var(--odd-space-2xs);
+}
+
+/* Narrow screens: the header keeps the brand, search, and the menu that discloses the sidebar. */
+
+@media (width < 55.5rem) {
+  .site-header {
+    padding: var(--odd-space-lg);
+  }
+
+  .primary-nav,
+  .shortcut,
+  .version {
+    display: none;
+  }
+
+  .search-trigger {
+    --odd-button-padding-inline: var(--odd-space-xs);
+    min-inline-size: var(--odd-control-height-md);
+  }
+
+  .search-label {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  [data-docs-js] .side-nav:not([data-open]) {
+    display: none;
   }
 
   .side-nav {
     position: static;
+    max-block-size: none;
+    border-block-end: var(--odd-border-width-default) solid var(--odd-color-border-default);
   }
 
-  .site-header {
-    align-items: flex-start;
-  }
-
-  .header-search input {
-    min-width: 0;
-    width: 9rem;
+  #main,
+  .site-footer {
+    padding: var(--odd-space-lg);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
+/* At the 320 px reflow width the brand and three header buttons fit only when tighter. */
+@media (width < 22rem) {
+  .site-header {
+    padding-inline: var(--odd-space-md);
+  }
+
+  .header-tools {
+    --odd-row-gap: var(--odd-space-2xs);
+  }
+
+  .site-header .brand-name {
+    font-size: var(--odd-font-size-2xl);
+  }
+
+  .header-tools .odd-button {
+    --odd-button-height: var(--odd-control-height-sm);
+    min-inline-size: var(--odd-control-height-sm);
   }
 }

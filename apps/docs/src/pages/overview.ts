@@ -2,7 +2,7 @@ import type { Page } from './model.js';
 
 export const overview: Page = {
   path: '',
-  group: 'Start',
+  group: 'Start here',
   eyebrow: 'Documentation',
   title: 'Oddkin',
   label: 'Overview',
@@ -21,11 +21,11 @@ export const overview: Page = {
         { fact: 'packages' },
         {
           note: [
-            'Oddkin is not on npm yet: every package is marked private until its release. In this repository, ',
-            { code: 'npm run build' },
-            ' builds them and ',
-            { code: 'npm run verify:packs' },
-            ' installs the packed packages outside the workspace.',
+            'Beta: the packages install from the ',
+            { code: 'beta' },
+            ' tag on npm (',
+            { code: 'npm install @oddkin/core@beta' },
+            '), and their contracts may still change before 1.0.0.',
           ],
         },
       ],
@@ -41,27 +41,32 @@ export const overview: Page = {
             rows: [
               [
                 ['Theme plain CSS or another component library'],
-                [{ link: 'Tokens only', href: '/start/tokens' }],
+                [{ link: 'Tokens only', href: '/getting-started/tokens' }],
                 [{ code: '@oddkin/tokens' }],
               ],
               [
                 ['Use accessible components in an existing app'],
-                [{ link: 'Components in any app', href: '/start/components' }],
+                [{ link: 'Components in any app', href: '/getting-started/components' }],
                 [{ code: '@oddkin/components' }, ', ', { code: '@oddkin/tokens' }],
               ],
               [
                 ['Write your own custom elements'],
-                [{ link: 'Author custom elements', href: '/start/author' }],
+                [{ link: 'Author custom elements', href: '/getting-started/author' }],
                 [{ code: '@oddkin/core' }],
               ],
               [
                 ['Build a whole application'],
-                [{ link: 'A full Oddkin application', href: '/start/app' }],
+                [{ link: 'A full Oddkin application', href: '/getting-started/app' }],
                 [{ code: '@oddkin/app' }, ', ', { code: '@oddkin/state' }, ', and the above'],
               ],
               [
                 ['Document a custom-element library'],
-                [{ link: 'Document your library with Workbench', href: '/start/workbench' }],
+                [
+                  {
+                    link: 'Document your library with Workbench',
+                    href: '/getting-started/workbench',
+                  },
+                ],
                 [{ code: '@oddkin/analyzer' }, ', ', { code: '@oddkin/workbench' }],
               ],
             ],
@@ -76,11 +81,11 @@ export const overview: Page = {
         {
           list: [
             [
-              { link: 'Installation', href: '/install' },
+              { link: 'Installation', href: '/installation' },
               ': npm, native ES modules, and import maps.',
             ],
             [
-              { link: 'Core concepts', href: '/concepts' },
+              { link: 'Core concepts', href: '/core' },
               ': signals, the binding rule, and ownership.',
             ],
             [
@@ -88,7 +93,7 @@ export const overview: Page = {
               ': every published element, from its metadata.',
             ],
             [
-              { link: 'Browser support', href: '/browser-support' },
+              { link: 'Browser support', href: '/support/browsers' },
               ': the supported browsers and what each feature needs.',
             ],
           ],

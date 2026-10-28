@@ -7,8 +7,8 @@ import type {
   TokenInspectionLike,
   WorkbenchData,
 } from '@oddkin/workbench/data';
-import { componentSnippet, tokenCssSnippet } from './snippets.js';
 import { pages, type Page } from './pages/index.js';
+import { showRoute, startShell } from './shell.js';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -116,10 +116,6 @@ function displayError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-const gettingStartedRoute = route({
-  path: 'getting-started',
-  title: 'Getting started with tokens',
-});
 // Each page loads only the Workbench panel it renders; the router awaits it before committing.
 const componentPanelModule = () => import('@oddkin/workbench/panels/component/define');
 const layoutGuideRoute = route({
@@ -166,7 +162,6 @@ const docsRoute = route({
   title: 'Oddkin docs',
   load: ({ signal }) => loadDocsData(signal),
   children: [
-    gettingStartedRoute,
     layoutGuideRoute,
     foundationsRoute,
     foundationRoute,
@@ -208,46 +203,6 @@ function section(title: string, description?: string): HTMLElement {
   result.append(node('h2', undefined, title));
   if (description) result.append(node('p', undefined, description));
   return result;
-}
-
-function renderGettingStarted(main: HTMLElement): void {
-  main.append(
-    pageHeader(
-      'Documentation',
-      'Getting started',
-      'Start with Oddkin tokens: use the published CSS variables to keep your interface aligned with the active theme.',
-    ),
-  );
-  const first = section('Use design tokens');
-  first.append(
-    node(
-      'p',
-      undefined,
-      'Load the published token stylesheet, then reference semantic variables in your own CSS. This starting guide stays token-only; component packages are optional.',
-    ),
-  );
-  first.append(
-    node(
-      'p',
-      undefined,
-      'Load the published stylesheet from the @oddkin/tokens ./css/default.css export before applying these declarations.',
-    ),
-  );
-  const pre = node('pre');
-  const code = node('code');
-  code.textContent = tokenCssSnippet;
-  pre.append(code);
-  first.append(pre);
-  first.append(makeLink('Read the token reference', '/foundations/spacing'));
-  main.append(first);
-
-  const more = section('Continue learning');
-  more.append(makeLink('Layout guide: side navigation', '/layout/side-nav'));
-  more.append(document.createTextNode(' · '));
-  more.append(makeLink('Browse foundations', '/foundations'));
-  more.append(document.createTextNode(' · '));
-  more.append(makeLink('Browse components', '/components'));
-  main.append(more);
 }
 
 function renderFoundations(main: HTMLElement, data: DocsData): void {
@@ -470,11 +425,6 @@ function renderSearch(main: HTMLElement, query: string, data: DocsData): void {
       body: `${page.summary} ${page.sections.map((s) => s.title).join(' ')}`,
     })),
     {
-      title: 'Getting started with tokens',
-      path: '/getting-started',
-      body: 'tokens CSS design variables',
-    },
-    {
       title: 'Side navigation layout guide',
       path: '/layout/side-nav',
       body: 'layout recipe regions conditions profile data declarative hybrid sources',
@@ -611,12 +561,7 @@ function renderRoute(state: RouterState): void {
 
   status.textContent = state.navigating ? 'Loading the requested page…' : '';
   main.setAttribute('aria-busy', state.navigating ? 'true' : 'false');
-  for (const link of document.querySelectorAll<HTMLAnchorElement>('.side-nav a')) {
-    const path = new URL(link.href).pathname;
-    const currentPath = state.location?.path;
-    if (currentPath && path === router.href(currentPath)) link.setAttribute('aria-current', 'page');
-    else link.removeAttribute('aria-current');
-  }
+  if (state.location) showRoute(state.location.path);
   if (state.status === 'idle' && state.matches.length === 0) return;
   if (state.navigating && state.matches.length === 0) return;
 
@@ -676,8 +621,7 @@ function renderRoute(state: RouterState): void {
   }
   main.replaceChildren();
   main.setAttribute('aria-busy', 'false');
-  if (last.route === gettingStartedRoute) renderGettingStarted(main);
-  else if (last.route === layoutGuideRoute) renderLayoutGuide(main, data);
+  if (last.route === layoutGuideRoute) renderLayoutGuide(main, data);
   else if (last.route === foundationsRoute) renderFoundations(main, data);
   else if (last.route === componentsRoute)
     renderComponents(main, data, last.search as CatalogFilter);
@@ -731,14 +675,7 @@ createApp({
   root,
   setup({ use, scope }) {
     use(router);
-    const headerSearch = document.querySelector<HTMLFormElement>('.header-search');
-    const headerSearchInput = document.querySelector<HTMLInputElement>('#site-search');
-    if (!headerSearch || !headerSearchInput)
-      throw new Error('Docs shell is missing its header search form or input.');
-    scope.listen<SubmitEvent>(headerSearch, 'submit', (event) => {
-      event.preventDefault();
-      void router.navigate(`/search?q=${encodeURIComponent(headerSearchInput.value.trim())}`);
-    });
+    startShell(scope, (path) => void router.navigate(path));
     scope.effect(() => renderRoute(router.state.value));
   },
 }).start();

@@ -2,7 +2,8 @@ import { repository, type Page } from './model.js';
 
 export const theming: Page = {
   path: 'guides/theming',
-  group: 'Guides',
+  group: 'Build',
+  parent: 'guides',
   eyebrow: 'Guides',
   title: 'Theming and styling',
   summary:
@@ -94,7 +95,8 @@ odd-input:state(user-invalid)::part(control) {
 
 export const layout: Page = {
   path: 'guides/layout',
-  group: 'Guides',
+  group: 'Build',
+  parent: 'guides',
   eyebrow: 'Guides',
   title: 'Layout',
   summary:
@@ -197,7 +199,8 @@ export const layout: Page = {
 
 export const formsAccessibility: Page = {
   path: 'guides/forms-accessibility',
-  group: 'Guides',
+  group: 'Build',
+  parent: 'guides',
   eyebrow: 'Guides',
   title: 'Forms and accessibility',
   summary:
@@ -280,7 +283,8 @@ export const formsAccessibility: Page = {
 
 export const composition: Page = {
   path: 'guides/composition',
-  group: 'Guides',
+  group: 'Build',
+  parent: 'guides',
   eyebrow: 'Guides',
   title: 'Composition: data, templates, or both',
   summary:
@@ -342,7 +346,7 @@ if (result.ok) nav.items = result.value;`,
           p: [
             { code: '@oddkin/components/composition' },
             ' validates and renders a composition document: published elements, attributes, and properties only, with actions reported to your handler by name. See ',
-            { link: 'Agent tooling', href: '/agents' },
+            { link: 'Agent tooling', href: '/tooling' },
             ' and ',
             {
               link: 'data-composition.md §8',
