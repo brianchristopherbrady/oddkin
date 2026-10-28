@@ -1011,18 +1011,18 @@ Design: [workbench.md](./docs/architecture/workbench.md), [workbench-pages.md](.
 
 **Information architecture (`apps/docs`)**
 
-- [ ] Overview + package chooser
-- [ ] Getting started — five paths: tokens only · components in any app · author custom elements · full Oddkin application · **document your own library with Workbench**
-- [ ] Installation (npm, native ESM, import maps, browser matrix); plain JS and TS examples
-- [ ] Core concepts + API reference
+- [x] Overview + package chooser *(2026-10-27, `apps/docs/src/pages/overview.ts`; the package table is generated from the manifests)*
+- [x] Getting started — five paths: tokens only · components in any app · author custom elements · full Oddkin application · **document your own library with Workbench** *(2026-10-27, `pages/start.ts`; samples verified by `apps/docs/snippets/verify.mjs`)*
+- [x] Installation (npm, native ESM, import maps, browser matrix); plain JS and TS examples *(2026-10-27, `pages/reference.ts`; the browser table is generated from features.json)*
+- [~] Core concepts + API reference *(concepts and the binding rule, linking core-contracts.md: `pages/reference.ts`; element references are the Workbench panels; a core API reference remains)*
 - [ ] Components catalog (embedded Workbench panels; counts and status from metadata)
-- [ ] Theming, styling, layout, composition (component and page authors) guides
-- [ ] Browser support and CSS compatibility pages generated from features.json and the matrix: supported browsers, gates and fallbacks per feature, the layer order and override rules, and live demonstrations of the actual emitted CSS with baseline and enhanced paths in the production static build (F16); docs-only light-DOM styling may use `@scope` as a gated enhancement; route view transitions as an optional enhancement with instant navigation as the baseline
+- [~] Theming, styling, layout, composition (component and page authors) guides *(2026-10-27, page-author guides in `pages/guides-core.ts`; component-author depth remains)*
+- [~] Browser support and CSS compatibility pages generated from features.json and the matrix: supported browsers, gates and fallbacks per feature, the layer order and override rules, and live demonstrations of the actual emitted CSS with baseline and enhanced paths in the production static build (F16); docs-only light-DOM styling may use `@scope` as a gated enhancement; route view transitions as an optional enhancement with instant navigation as the baseline
 - [ ] Data composition guide: when to use data, templates, or hybrid; models and runtime validation of external JSON (TS types don't validate JSON); controlled vs uncontrolled state; region sources; customization ladder (options → slots/parts → render functions → registered kinds); local vs portable configuration; versioning and migrations; composition schema (if shipped)
 - [ ] **Tooling guides:** analyzer (supported patterns, explicit metadata, diagnostics, provenance, CEM vs enrichment), Workbench (config, examples, adapters, preview roles, standard-CEM baseline, static builds and hosting), Theme Studio (controls, specimens, mapping your components, sharing, exports)
-- [ ] Forms, accessibility, debugging (incl. explanations, impact reports, conformance suites, reproductions, page suspension)
-- [ ] Agent tooling: install, instructions, CLI, MCP, what it reads, limits
-- [ ] Recipes (labelled fictional), framework guides (React/Angular/Vue/Svelte, pinned verified versions); start from [React custom elements](https://react.dev/reference/react-dom/components#custom-html-elements), [Angular schemas](https://angular.dev/api/core/CUSTOM_ELEMENTS_SCHEMA) and [forms adapters](https://angular.dev/api/forms/ControlValueAccessor), [Vue Web Components](https://vuejs.org/guide/extras/web-components), and [Svelte custom elements](https://svelte.dev/docs/svelte/custom-elements)
+- [~] Forms, accessibility, debugging (incl. explanations, impact reports, conformance suites, reproductions, page suspension) *(forms and accessibility: `pages/guides-core.ts`; debugging remains)*
+- [x] Agent tooling: install, instructions, CLI, MCP, what it reads, limits *(2026-10-27, `pages/guides.ts`: the packaged kits, the metadata, the composition schema; no CLI or MCP exists, and the page says so (D7 skipped))*
+- [~] Recipes (labelled fictional), framework guides (React/Angular/Vue/Svelte, pinned verified versions); start from [React custom elements](https://react.dev/reference/react-dom/components#custom-html-elements), [Angular schemas](https://angular.dev/api/core/CUSTOM_ELEMENTS_SCHEMA) and [forms adapters](https://angular.dev/api/forms/ControlValueAccessor), [Vue Web Components](https://vuejs.org/guide/extras/web-components), and [Svelte custom elements](https://svelte.dev/docs/svelte/custom-elements)
 - [ ] Architecture & decisions, including "How Oddkin compares"
 - [ ] Troubleshooting, upgrades, release notes, contributing
 - [ ] Document the binding rule (render-tracked `.value` reads, direct readable bindings, untracked snapshots in handlers/async callbacks), cancellation ownership, common error codes, localization, native form strategies/limits, version coexistence, external-store integration, and client-only versus server-rendered host use.
