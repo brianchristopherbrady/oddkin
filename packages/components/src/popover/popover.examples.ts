@@ -20,6 +20,22 @@ export default defineExamples('odd-popover', {
       host.remove();
     },
   },
+  hoverCard: {
+    label: 'Hover card on a link',
+    previewRoles: ['popover'],
+    props: { label: 'Alex Morgan', anchor: 'popover-alex', interest: true, noClose: true },
+    slots: {
+      default:
+        '<div class="odd-stack"><strong>Alex Morgan</strong><span>Product designer</span><span>Designing thoughtful tools for teams.</span></div>',
+    },
+    guidance:
+      "`interest` makes it a hover card for its `anchor`: it opens once the pointer rests on the anchor or the anchor has focus, and stays while either is over the anchor or the card. Put it right after the anchor so Tab moves into it, and keep the anchor's own destination: touch users do not hover.",
+    fixture({ element, mount }) {
+      const host = mount(html`<div><a href="#people-alex" id="popover-alex">Alex Morgan</a></div>`);
+      element.before(...host.children);
+      host.remove();
+    },
+  },
   inlineEnd: {
     label: 'Beside its trigger',
     props: { label: 'Display preferences', side: 'inline-end', align: 'center' },

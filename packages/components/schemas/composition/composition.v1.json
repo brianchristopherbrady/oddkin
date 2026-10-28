@@ -95,6 +95,9 @@
           "$ref": "odd-card.v1.json"
         },
         {
+          "$ref": "odd-carousel.v1.json"
+        },
+        {
           "$ref": "odd-checkbox.v1.json"
         },
         {

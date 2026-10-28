@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-carousel.v1.json",
+  "title": "odd-carousel",
+  "description": "A carousel (APG carousel, manual only): one slide at a time, with previous and next, the position, and a button per slide. It never moves by itself. Each element child is a slide; the element assigns each to a slide group inside its own shadow root (manual slot assignment), so the content stays in the light DOM.",
+  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-carousel"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Names the carousel.",
+          "default": ""
+        },
+        "current": {
+          "type": "string",
+          "description": "The shown slide's number, from 1 (as odd-pagination's `current`); out of range, the nearest slide shows.",
+          "default": "1"
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strings": {
+          "type": "object",
+          "properties": {
+            "carousel": {
+              "type": "string"
+            },
+            "slide": {
+              "type": "string"
+            },
+            "position": {
+              "type": "string"
+            },
+            "previous": {
+              "type": "string"
+            },
+            "next": {
+              "type": "string"
+            },
+            "picker": {
+              "type": "string"
+            },
+            "goTo": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

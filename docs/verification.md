@@ -3674,3 +3674,18 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Kit freshness | `node scripts/agent-kit/package-kits.mjs --check`, `node scripts/agent-kit/kit.mjs --check` | after partial builds: `agent.kit.stale: packages/ai/agent (40 of 68 files differ)`; after `npm run build`: both package kits current; repository kits `agent.kit.missing` until `kit.mjs` writes them |
 | Schemas | `tests/agent-kit/kit.test.ts`, `context.test.ts`, `tests/schemas/diagnostics.test.ts` (in the node project runs above) | pass |
 | Guide sizes | `packages/*/agent/GUIDE.md` | components 6,355 B, ai 6,637 B (budget 8,192) |
+
+## 2026-10-27 — Figma hoverCard and carousel (Agent 1)
+
+| Check | Command | Result |
+|---|---|---|
+| Browser set | `node ../oddkin-lanes/tools/browser-set.mjs` on popover, carousel, figma-parity.overlays, figma-parity.navigation, accessibility, examples, contract | Chromium 912 passed, 50 skipped; Firefox 4 failures under full load (carousel, contract command-palette, examples button, popover), all passing alone (862 passed, 52 skipped); WebKit axe light mode failed under load and passed alone; one real WebKit failure fixed (below) |
+| Popover and carousel after the fixes | `npx vitest run --project browser --browser.name=<engine>` on the two files | Chromium 43 passed; Firefox 41 passed, 2 skipped; WebKit 41 passed, 2 skipped |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/item5-probes.json` (Chromium) | 23 run: 16 killed at once; 7 survived. Two were redundant timer cancels (the close timer re-checks hover and focus when it fires), removed from the code. The other five became tests: the 250 ms close delay, focus in the card keeping it open, staying closed after Escape, `interest` off, focus not pulled from outside, and controls wrapping without overlap. All six rerun: killed |
+| Node project (components) | `npx vitest run --project node packages/components` | 21 files passed after `autoload/names.ts` was regenerated (`UPDATE_FIXTURES=1`, the new `define/carousel` export) |
+| Build, typecheck, lint, size | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` | OK; `lint:css` first flagged `cursor: default` (not in Safari iOS 18.2), removed; `docs/compatibility/matrix.md` regenerated with `npm run compat` |
+
+**Findings:**
+- Browsers return focus to where it was when a popover opened. A hover card the pointer opened therefore sent focus away from its anchor on Escape, so the card now moves focus to its anchor itself.
+- WebKit, as Safari, does not keep focus on a clicked button. The carousel keeps keyboard focus on next once it is unavailable at the last slide, so that test now uses the keyboard.
+- Playwright cannot see ElementInternals roles; the carousel's region, label, and role description are read through a probe subclass, as on odd-card.

@@ -351,6 +351,134 @@ describe('odd-popover', () => {
   });
 });
 
+describe('odd-popover as a hover card (interest; Figma hoverCard)', () => {
+  const CARD = `<a href="#people-alex" id="alex">Alex Morgan</a><odd-popover id="card" anchor="alex" interest label="Alex Morgan" no-close><p>Product designer</p><button type="button" id="view">View profile</button></odd-popover>`;
+  const isOpen = (el: Element) => el.matches(':popover-open');
+  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  it('opens once the pointer rests on its anchor, below it, and stays while the pointer moves into it', async () => {
+    await mount(CARD);
+    const el = byId<OddkinPopover>('card');
+    const anchor = byId('alex');
+    await userEvent.hover(anchor);
+    await wait(150);
+    expect(isOpen(el)).toBe(false);
+    await expect.poll(() => isOpen(el)).toBe(true);
+    await placed(el);
+    expect(el.open).toBe(true);
+    expect(Math.abs(box(el).top - (box(anchor).bottom + 4))).toBeLessThanOrEqual(1);
+    await userEvent.hover(byId('view'));
+    await wait(400);
+    expect(isOpen(el)).toBe(true);
+    // Left for a moment, it stays (interest-delay-end), then closes.
+    await userEvent.hover(byId('after'));
+    await wait(80);
+    expect(isOpen(el)).toBe(true);
+    await expect.poll(() => isOpen(el)).toBe(false);
+  });
+
+  it('opens on focus of its anchor; Tab moves into it, and it closes once focus leaves both', async () => {
+    await mount(CARD);
+    const el = byId<OddkinPopover>('card');
+    // Focused from script: WebKit's Tab skips links unless the user turns that on.
+    byId('alex').focus();
+    await expect.poll(() => isOpen(el)).toBe(true);
+    await userEvent.tab();
+    expect(document.activeElement).toBe(byId('view'));
+    await wait(400);
+    expect(isOpen(el)).toBe(true);
+    await userEvent.tab();
+    expect(document.activeElement).toBe(byId('after'));
+    await expect.poll(() => isOpen(el)).toBe(false);
+    // Closing because interest ended leaves focus where the user put it.
+    expect(document.activeElement).toBe(byId('after'));
+  });
+
+  it('closes on Escape, returning focus to its anchor, and opens again only after interest ends', async () => {
+    await mount(CARD);
+    const el = byId<OddkinPopover>('card');
+    const anchor = byId('alex');
+    anchor.focus();
+    await expect.poll(() => isOpen(el)).toBe(true);
+    byId('view').focus();
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => isOpen(el)).toBe(false);
+    expect(document.activeElement).toBe(anchor);
+    await wait(700);
+    expect(isOpen(el)).toBe(false);
+    byId('after').focus();
+    await wait(400);
+    anchor.focus();
+    await expect.poll(() => isOpen(el)).toBe(true);
+  });
+
+  it('returns focus to its anchor from a card the pointer opened, staying closed there', async () => {
+    await mount(CARD);
+    const el = byId<OddkinPopover>('card');
+    byId('before').focus();
+    await userEvent.hover(byId('alex'));
+    await expect.poll(() => isOpen(el)).toBe(true);
+    await userEvent.hover(byId('view'));
+    byId('view').focus();
+    // Focus in the card keeps it open after the pointer has left.
+    await userEvent.hover(byId('after'));
+    await wait(400);
+    expect(isOpen(el)).toBe(true);
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => isOpen(el)).toBe(false);
+    expect(document.activeElement).toBe(byId('alex'));
+    await wait(700);
+    expect(isOpen(el)).toBe(false);
+  });
+
+  it('opens on interest only while `interest` is set', async () => {
+    await mount(CARD);
+    const el = byId<OddkinPopover>('card');
+    el.interest = false;
+    await settle(el);
+    await userEvent.hover(byId('alex'));
+    await wait(700);
+    expect(isOpen(el)).toBe(false);
+    await userEvent.hover(byId('after'));
+    el.interest = true;
+    await settle(el);
+    await userEvent.hover(byId('alex'));
+    await expect.poll(() => isOpen(el)).toBe(true);
+  });
+
+  it('keeps a touch for the anchor, opens from a popovertarget button, and stops with interest off', async () => {
+    await mount(
+      `${CARD}<button type="button" popovertarget="card" id="more">Profile preview</button>`,
+    );
+    const el = byId<OddkinPopover>('card');
+    const anchor = byId('alex');
+    anchor.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'touch' }));
+    await wait(700);
+    expect(isOpen(el)).toBe(false);
+    await userEvent.click(byId('more'));
+    await expect.poll(() => isOpen(el)).toBe(true);
+    el.close();
+    el.interest = false;
+    await settle(el);
+    await userEvent.hover(anchor);
+    await wait(700);
+    expect(isOpen(el)).toBe(false);
+  });
+
+  it('follows anchorElement, and releases its listeners when removed while open', async () => {
+    const before = scopeStats();
+    await mount(`<span id="other">Sam Lee</span>${CARD}`);
+    const el = byId<OddkinPopover>('card');
+    el.anchorElement = byId('other');
+    await settle(el);
+    await userEvent.hover(byId('other'));
+    await expect.poll(() => isOpen(el)).toBe(true);
+    container.remove();
+    flush();
+    expect(scopeStats()).toEqual(before);
+  });
+});
+
 // The wiring as another lane uses it: a trigger and an inner `[popover]` surface in one shadow root.
 class TestMenuButton extends OddkinElement {
   static override styles = [hostStyles, overlaySurfaceStructuralStyles, overlaySurfaceStyles];

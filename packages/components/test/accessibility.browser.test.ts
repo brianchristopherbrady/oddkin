@@ -155,6 +155,8 @@ const states = `
   <odd-toolbar label="Project actions"><input aria-label="Search projects" type="search" /><hr aria-orientation="vertical" /><odd-button size="sm" appearance="ghost">Filter</odd-button><span>3 selected</span><odd-button size="sm" appearance="primary">New item</odd-button></odd-toolbar>
   <odd-pagination label="Search results" current="3" page-count="12"></odd-pagination>
   <odd-pagination label="Articles" current="1" page-count="4" href="#page-{page}"></odd-pagination>
+  <odd-carousel label="Workspace highlights"><div><h3>A place for every project</h3><p>Organize shared work in one workspace.</p></div><div><h3>Keep your team in sync</h3></div><div><h3>Move from idea to delivery</h3></div></odd-carousel>
+  <odd-carousel label="Release notes" current="2"><p>Tokens were updated.</p><p>Components were added.</p></odd-carousel>
   <odd-breadcrumbs><ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#forms">Forms</a></li></ol></odd-breadcrumbs>
   <odd-popover label="Share workspace" open><p>Invite people to collaborate.</p><a href="#docs">Sharing settings</a></odd-popover>
   <odd-button id="a11y-archive">Archive</odd-button><odd-tooltip anchor="a11y-archive">You can restore it from settings.</odd-tooltip>

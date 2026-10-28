@@ -2023,6 +2023,10 @@
       "reason": "The month buttons and the Today and Clear actions are native buttons drawn with the small ghost button look; the date cells are the grid's own cells."
     },
     "odd-card": { "dependencies": [], "reason": "Actions are slot content." },
+    "odd-carousel": {
+      "dependencies": [],
+      "reason": "Previous and next are native buttons drawn with the small button look, and the slide buttons are its own; the slides are author content."
+    },
     "odd-change-review": {
       "dependencies": ["odd-button"],
       "reason": "Accept, reject, and undo are complete buttons (Figma: button/sm ×2)."

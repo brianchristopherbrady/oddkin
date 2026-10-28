@@ -82,6 +82,8 @@ export const ATTRIBUTES = {
   align: { values: ['start', 'center', 'end'] },
   // The ID of the element whose context menu it also is (odd-menu; Figma contextMenu).
   context: { type: 'string' },
+  // Opens on interest in its anchor, hover or focus (odd-popover; HTML interest invokers, Figma hoverCard).
+  interest: { type: 'boolean' },
 };
 
 /** Replaced attribute and property names → the canonical name (ADR 0045 §3). */

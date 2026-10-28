@@ -257,3 +257,42 @@ describe('Figma parity: odd-disclosure name (Accordion)', () => {
       expectNone(compare('Oddkin/Common/Accordion', { State: state }, targets));
     });
 });
+
+describe('Figma parity: odd-carousel (carousel)', () => {
+  // The slide's eyebrow, title, body, and button are the author's markup; the element draws the
+  // slide surface, the controls row, the position, and the slide buttons. Previous and next are
+  // Figma iconButton instances (compared with odd-button). The heading is the author's.
+  const SHOWN: Record<string, number> = {
+    'First slide': 1,
+    'Middle slide': 2,
+    'Last slide': 3,
+    'Keyboard focus': 2,
+    Narrow: 1,
+  };
+  for (const [state, current] of Object.entries(SHOWN))
+    it(state, async () => {
+      const el = mount(
+        `<odd-carousel label="Workspace highlights" current="${current}" style="inline-size: ${state === 'Narrow' ? 280 : 520}px"><div>A place for every project</div><div>Keep your team in sync</div><div>Move from idea to delivery</div></odd-carousel>`,
+      );
+      await settle(el);
+      const slide = [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="slide"]')].find(
+        (s) => !s.hidden,
+      )!;
+      const picks = [...el.shadowRoot!.querySelectorAll<HTMLElement>('[part~="pick"]')];
+      const controls = ['Slide controls'];
+      const pick = (n: number) =>
+        n === current ? `Go to slide ${n} · current` : `Go to slide ${n}`;
+      const targets: Target[] = [
+        { layer: [`Slide ${current} of 3`], el: slide, kind: 'frame' },
+        { layer: controls, el: shadowPart(el, 'controls'), kind: 'frame', gap: 'column-gap' },
+        { layer: [...controls, `${current} of 3`], el: shadowPart(el, 'position'), kind: 'text' },
+        ...[1, 2, 3].flatMap((n): Target[] => [
+          { layer: [...controls, pick(n)], el: picks[n - 1]!, kind: 'frame' },
+          { layer: [...controls, pick(n), String(n)], el: picks[n - 1]!, kind: 'text' },
+        ]),
+      ];
+      if (state === 'Keyboard focus') await interact('Focus', shadowPart(el, 'next'));
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/carousel', { State: state }, targets));
+    });
+});

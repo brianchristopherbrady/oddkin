@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 import { OddkinElement, define } from '@oddkin/core/element';
 import { html } from '@oddkin/core/template';
 import { hostStyles } from '../src/styles/host.styles.js';
@@ -6,6 +6,7 @@ import { overlaySurfaceStructuralStyles } from '../src/styles/overlay-surface.st
 import { overlaySurfaceStyles } from '../src/styles/overlay-surface.styles.js';
 import {
   compare,
+  deliberate,
   expectNone,
   figma,
   layersOf,
@@ -17,7 +18,7 @@ import {
   type Target,
 } from './parity.js';
 
-// Figma parity of the overlays lane (component-contracts.md §2.6, §3.5). The overlay-surface module
+// Figma parity of the overlays lane (component-contracts.md Â§2.6, Â§3.5). The overlay-surface module
 // is also drawn by a test element, for the families whose elements are still to come: the anchored
 // look on Figma's popover, tooltip, and Menu surfaces, and the sheet look on dialog, alertDialog,
 // drawer, and toast.
@@ -42,6 +43,35 @@ describe('Figma parity: odd-popover (popover)', () => {
       const targets: Target[] = [{ layer: [`Popover / ${state}`, 'Surface'], el, kind: 'frame' }];
       await transitions(targets);
       expectNone(compare('Oddkin/Common/popover', { State: state }, targets));
+    });
+});
+
+describe('Figma parity: odd-popover interest (hoverCard)', () => {
+  // The card is odd-popover opened by interest in its anchor; the profile inside is the author's
+  // markup. Narrow is the same card in a narrower column.
+  deliberate(
+    [
+      /^hoverCard [^>]+ Profile preview (paddingLeft|paddingTop) \(--odd-space-lg\): padding-\S+ 0px/,
+      "A hover card keeps every popover's inset (space.md, on its base part) so popovers line up; Figma's hoverCard insets its profile by space.lg. An author who wants more sets it on ::part(base).",
+    ],
+    [
+      /^hoverCard [^>]+ Profile preview itemSpacing \(--odd-space-sm\): row-gap normal/,
+      "The profile's rows are the author's markup inside the popover, spaced by the author's layout (an .odd-stack), not by the popover.",
+    ],
+  );
+  for (const state of ['Open', 'Keyboard focus', 'Narrow'])
+    it(state, async () => {
+      const host = mount(
+        `<div><a href="#alex" id="alex">Alex Morgan</a><odd-popover anchor="alex" interest label="Alex Morgan" no-close><p>Designing thoughtful tools for teams.</p><button type="button">View profile</button></odd-popover></div>`,
+      );
+      const el = host.querySelector('odd-popover')!;
+      if (state === 'Narrow') host.style.inlineSize = '20rem';
+      host.querySelector<HTMLElement>('#alex')!.focus();
+      await expect.poll(() => el.matches(':popover-open')).toBe(true);
+      await settle(el);
+      const targets: Target[] = [{ layer: ['Profile preview'], el, kind: 'frame', gap: 'row-gap' }];
+      await transitions(targets);
+      expectNone(compare('Oddkin/Common/hoverCard', { State: state }, targets));
     });
 });
 

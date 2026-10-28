@@ -95,6 +95,15 @@ export const CATALOG: Catalog = {
     slots: ['', 'footer', 'header'],
     events: [],
   },
+  'odd-carousel': {
+    attributes: { label: 'string', current: 'string' },
+    properties: {
+      strings: { texts: ['carousel', 'slide', 'position', 'previous', 'next', 'picker', 'goTo'] },
+    },
+    fixed: [],
+    slots: [''],
+    events: ['change', 'input'],
+  },
   'odd-checkbox': {
     attributes: {
       name: 'string',
@@ -473,6 +482,7 @@ export const CATALOG: Catalog = {
       align: { enum: ['center', 'start', 'end'] },
       'no-close': 'boolean',
       open: 'boolean',
+      interest: 'boolean',
     },
     properties: { strings: { texts: ['close'] } },
     fixed: ['anchorElement'],

@@ -103,12 +103,14 @@ tokens, slot content, a native element, or a look-alike.
 | `SideNavigation` | 3 | `odd-side-nav` | Existing | References `NavigationItem` ×16; recipe + data model (`NavigationItemModel`). |
 | `Breadcrumbs` | 2 | `odd-breadcrumbs` | Existing | A named trail of links from `items`; with `max-items`, the middle items collapse behind a "more" button. |
 | `Pagination` | 3 | `odd-pagination` | Existing | `current`, `page-count`, and an `href` pattern; previous and next, with ellipses. |
+| `carousel` | 5 | `odd-carousel` | Existing | APG carousel, manual only: element children are slides (groups named "2 of 3"), a polite live region, previous and next `aria-disabled` at the ends, the position, and "Go to slide N" buttons; `current` as on odd-pagination. The slide is drawn on the sunken surface; its eyebrow, title, body, and action are the author's markup, the heading beside it too. References `button` ×5 (author content), `iconButton` ×10 (previous and next, drawn with the native button look). |
 | `Tabs` | 2 | `odd-tabs` with `odd-tab-panel` children | Existing | `orientation`, `activation` automatic/manual, roving focus; panel content stays in the light DOM. |
 | `Disclosure` | 3 | `odd-disclosure` | Existing | `label`, `open`, `disabled`. |
 | `Accordion` | 3 | `odd-disclosure` elements sharing a `name` | Existing (variant) | Same-name disclosures open one at a time, as native `<details name>` do. |
 | `Toolbar` | 3 | `odd-toolbar` | Existing | A named group with roving focus (`@oddkin/core/controllers/focus`) and `orientation`; its items are author content. References `button/sm` ×7. |
 | `card` | 2 | `odd-card` | Existing | `appearance` outlined/filled/elevated, `padding`, header/body/footer slots. References `button` ×2 (footer actions). |
 | `popover` | 3 | `odd-popover` | Existing | ADR 0044. The host is the popover; `popovertarget` opens it. |
+| `hoverCard` | 4 | `odd-popover interest` | Existing (variant) | A hover card for the anchor: it opens once the pointer rests on the anchor or the anchor has focus (500 ms), stays while the pointer or focus is on either, and closes 250 ms after both are left (HTML interest invokers' delays); a touch keeps the anchor's action and a `popovertarget` button opens it. Escape closes it until interest ends and returns focus to the anchor. The profile is the author's markup; the card keeps the popover's inset (§8). |
 | `tooltip` | 2 | `odd-tooltip` | Existing | ADR 0044 (`popover="manual"`); describes its anchor, never names it. |
 | `dialog` | 2 | `odd-dialog` | Existing | `<dialog>` + `showModal()`; `closedby`, a slotted `<form method="dialog">`. |
 | `alertDialog` | 1 | `odd-dialog alert` | Existing (variant) | The warning glyph and its circle are slot content. |
@@ -560,7 +562,7 @@ Status: **approved** (2026-10-24). 220 references; controller 18, deferred 11, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (55) has no element dependency.
+Every other element (56) has no element dependency.
 
 #### Shared homes
 
@@ -670,6 +672,9 @@ Deliberate differences:
 - Placeholder line height is not compared: the placeholder renders in the control's line box, and engines report a
   user-agent value for the pseudo-element.
 - Firefox applies no `:active` while Space is held, so pressed states are compared in Chromium and WebKit only.
+- `hoverCard` insets its profile by `space/lg` and spaces its rows by `space/sm`; the card is `odd-popover interest`,
+  which keeps every popover's `space/md` inset on its base part so popovers line up, and the rows are the author's
+  markup (an `.odd-stack`). An author who wants more sets it on `::part(base)`.
 
 Open, for the owner: Figma's `button` defaults to `Appearance=primary`, the element to `secondary` (an API
 default, unchanged here); Figma's card draws body text in `color/text/secondary` and a divider above the footer,

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oddkin.dev/schemas/composition/odd-popover.v1.json",
   "title": "odd-popover",
-  "description": "A non-modal surface anchored to the control that opens it. The host is the popover (`popover=\"auto\"`), so `<button popovertarget=\"id\">` opens and closes it with no script; it also closes on Escape, on a press outside, and with its close button, and focus returns to the trigger.",
+  "description": "A non-modal surface anchored to the control that opens it. The host is the popover (`popover=\"auto\"`), so `<button popovertarget=\"id\">` opens and closes it with no script; it also closes on Escape, on a press outside, and with its close button, and focus returns to the trigger. With `interest`, it is a hover card: it also opens while the pointer rests on its anchor or the anchor has focus.",
   "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
   "type": "object",
   "additionalProperties": false,
@@ -60,6 +60,11 @@
         "open": {
           "type": "boolean",
           "description": "Whether it is open.",
+          "default": false
+        },
+        "interest": {
+          "type": "boolean",
+          "description": "A hover card (HTML interest invokers): it also opens once the pointer has rested on its anchor, or the anchor has had focus, for half a second, and closes a quarter of a second after both have left the anchor and the popover. A touch keeps the anchor's own action.",
           "default": false
         }
       }

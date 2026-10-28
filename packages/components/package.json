@@ -98,6 +98,18 @@
       "types": "./dist/card/card.define.d.ts",
       "default": "./dist/card/card.define.js"
     },
+    "./carousel": {
+      "types": "./dist/carousel/index.d.ts",
+      "default": "./dist/carousel/index.js"
+    },
+    "./carousel/foundation": {
+      "types": "./dist/carousel/foundation.d.ts",
+      "default": "./dist/carousel/foundation.js"
+    },
+    "./define/carousel": {
+      "types": "./dist/carousel/carousel.define.d.ts",
+      "default": "./dist/carousel/carousel.define.js"
+    },
     "./checkbox": {
       "types": "./dist/checkbox/index.d.ts",
       "default": "./dist/checkbox/index.js"
