@@ -3933,3 +3933,21 @@ The owner asked for the publish after `npm login` (account `poisonsushi`, owner 
 | Types, lint, format | `npm run typecheck`; `node scripts/check-page-layout.mjs`; `node scripts/compat/check-css.mjs`; `npx prettier --check` on the changed files | Pass |
 
 Before the fix, the Firefox journey failed in 3 of 8 runs. The first failure was at the sidebar landmark: its 5 s default wait ran out while the element loaded through the autoloader. The last failure was at the layout guide's heading. The sidebar now loads its definition directly, and that step waits up to 15 s, the same as the other module-loading steps. In one Firefox-only run, three other tests timed out in `page.goto`; they passed in the next runs.
+
+## 2026-10-28 — Beta 1.0.0-beta.0 on npm; version stepping and the publish guard (Agent 3)
+
+The owner published; every published tarball matches the build in the a3 worktree (main ad0f7fb, packages checked at be7c66d).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Registry | `npm view @oddkin/<name> dist-tags`, `time`, `_npmUser` | All eight at `1.0.0-beta.0`, published by `poisonsushi` between 19:18 and 19:24 UTC; `beta` and `latest` both name `1.0.0-beta.0` (the registry pointed `latest` at each new package's first version) |
+| Published contents | `node scripts/release/publish.mjs` (the guard below) | Each of the eight tarballs on npm has the same integrity as `npm pack` of the local build |
+| Commands kept | `npm view @oddkin/<name> bin` | tokens `oddkin-tokens`, analyzer `oddkin-analyze` and `oddkin-impact`, workbench `oddkin` |
+| Fresh install | `npm install` of all eight `@beta` in an empty folder | Pass (9 packages added); the four commands print their usage (`--help` exits 0); `import('@oddkin/tokens')` in Node gives 40 exports |
+| Pack and publish hashes | `npm pack --dry-run --json --workspace packages/tokens` | shasum `25a292a1…`, the same as the publish attempt's notice for the same build |
+| Step the versions | `node scripts/release/set-versions.mjs --next --public`, then `--next rc --public` (manifests restored with `git restore packages apps`) | `1.0.0-beta.1` for both lines with `--tag beta`, every internal range `^1.0.0-beta.1`, `apps/docs` still `0.0.0` and private; `--next rc` gives `1.0.0-rc.0` with `--tag rc`; `--next` with `--runtime` exits 2 |
+| Guard: nothing to publish | `node scripts/release/publish.mjs` after the publish | Exits 1: "Nothing to publish: every package is on npm at its version; step the versions first: node scripts/release/set-versions.mjs --next." |
+| Guard: other contents | the same, with a line added to `packages/tokens/README.md` (restored) | Exits 1: "Already on npm with other contents: @oddkin/tokens@1.0.0-beta.0; …" |
+| Guard: resume | the same dry run, run while the owner's publish was part way | "4 packages would publish (4 already there)" |
+
+The `--next` check rewrote and restored the manifests in this worktree while the owner's publish was running in it; the integrity comparison above shows no published package was affected.
