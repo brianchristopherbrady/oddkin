@@ -410,6 +410,8 @@ Tagged `html` templates, cached static `<template>` structure, explicit binding 
 - **Light-DOM styles:** components with `shadowRootOptions = null` add their `styles` once to the nearest root (document or shadow root), reference-counted across instances and removed with the last one; selectors must scope themselves, and `:host` in such styles reports `element.styles.lightDomHost`.
 - **`css` interpolation:** `css` results, finite numbers, and `var(--name[, fallback])` strings whose fallback has balanced parentheses and no declaration, block, string, comment, `!`, `url()`/`image()`, or at-rule syntax (`isCSSVariableReference`).
 - **Keyed `repeat`:** a longest run of items already in order stays in place and only the others move. With `moveBefore()` each item moves with its state preserved. Without it (WebKit), moved ranges are detached from the end of the list and each run is inserted before its stable anchor as one fragment, because per-item `insertBefore` is quadratic for `<li>` in WebKit: reversing 1,000 items took 319 ms before batching and 9 ms after. Focus and text selection are then restored once. Duplicate keys report `template.repeat.duplicateKey` and render without DOM reuse. The reconciler ships only with `repeat()`.
+  - Firefox 157's `moveBefore()` blurs a focused element inside a shadow root, so after any move that lost it, focus and the text selection, with its direction, are restored (`foundation.browser.test.ts`: a moved row in a shadow root, and a focused field inside a nested component, in three engines).
+  - Keys and item templates are evaluated before the DOM changes: an item template that throws leaves the list as it was, and the next good list renders exactly.
 
 <!-- contract:core/update-complete "updateComplete and commit timing" -->
 
@@ -441,6 +443,8 @@ Errors that cannot be thrown to a caller go to the handler set with `setErrorHan
 | Direct binding's readable throws | `reactive.effect.error` | template binding | Sibling bindings in the same template; no re-render | Re-runs when its dependencies change |
 | Effect throws | `reactive.effect.error` | effect name | Other effects in the same flush | Re-runs on its next dependency change |
 | Commit or property setter throws | `reactive.effect.error` | the effect or binding | Sibling bindings | Next value is written again |
+| A new template fails while committing (a binding rejects its value) | `reactive.effect.error` in an element; thrown by `render()` | `<tag> render` | The part's previous content is released first (so refs see the old element go before a new one arrives), then everything the failed template bound; the part is empty | The next value renders |
+| A `repeat()` item template throws | `reactive.effect.error` in an element; thrown by `render()` | `<tag> render` | The list as it was | The next good list renders exactly |
 | Cleanup throws | `scope.cleanup.error` | scope name | Every other cleanup in the scope runs, in reverse order | — |
 | Lifecycle hook throws | `element.<hook>.error` | element | Rendering and bindings | Next connection calls the hook again |
 

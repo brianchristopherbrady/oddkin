@@ -66,7 +66,7 @@
     "contract:core/rendering": {
       "title": "Rendering behaviors",
       "anchor": "rendering",
-      "sha256": "9efc83057a6371de846e6ad12d9bbcfb47dff84899e3d6e9efff78bc1696d738"
+      "sha256": "32b61b0cfb2b2983de2d593d433c30293ac70cbcdea475822ca52272b5d7079e"
     },
     "contract:core/update-complete": {
       "title": "updateComplete and commit timing",
@@ -76,7 +76,7 @@
     "contract:core/failure-ownership": {
       "title": "Failure ownership",
       "anchor": "failure-ownership",
-      "sha256": "783e8f36d38f116a3ad65755ac7fc9c60e9465ebd2fb274422823050ed08e6e0"
+      "sha256": "bc903db30d76989b5b4514706d0d7bfce95c92f0187672def9d82c24fa2e8942"
     },
     "contract:core/roles": {
       "title": "Composite roles",

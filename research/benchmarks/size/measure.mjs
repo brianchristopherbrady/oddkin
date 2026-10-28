@@ -61,8 +61,10 @@ export const BUDGETS = {
   // 49.5 KiB; measured 50,340 on 2026-10-23 with odd-button's toggle and the description hook
   // tooltips use (48,782 on 2026-10-18: odd-conversation + odd-prompt-input, all nested elements;
   // +625 B since the shared core focus, announce, and observe controllers replaced AI-internal
-  // helpers and recover focus after removal too).
-  'ai-chat': 50688,
+  // helpers and recover focus after removal too). 50,720 since 2026-10-27, measured 50,705: core's
+  // repeat() fixes (focus restored after Firefox's moveBefore in a shadow root, the selection
+  // direction, item templates evaluated before the DOM changes) cost 34 B here (50,671 before).
+  'ai-chat': 50720,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

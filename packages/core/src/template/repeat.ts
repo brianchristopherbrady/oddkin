@@ -38,7 +38,8 @@ const supportsMoveBefore = typeof Element !== 'undefined' && 'moveBefore' in Ele
 type Focusable = HTMLElement & {
   selectionStart?: number | null;
   selectionEnd?: number | null;
-  setSelectionRange?(a: number, b: number): void;
+  selectionDirection?: string | null;
+  setSelectionRange?(a: number, b: number, direction?: string): void;
 };
 
 /** The focused element inside `root`, following open shadow roots to the deepest one. */
@@ -50,7 +51,7 @@ function deepActiveElement(root: Node): Focusable | null {
 
 interface FocusSnapshot {
   readonly element: Focusable;
-  readonly selection: [number, number] | undefined;
+  readonly selection: [number, number, string] | undefined;
 }
 
 /** Remember the focused element (and text selection) under `parent` before fallback moves. */
@@ -59,10 +60,15 @@ function captureFocus(parent: Node): FocusSnapshot | null {
   if (!element || !parent.contains((parent.getRootNode() as Document | ShadowRoot).activeElement)) {
     return null;
   }
-  let selection: [number, number] | undefined;
+  let selection: FocusSnapshot['selection'];
   try {
-    if (typeof element.selectionStart === 'number' && typeof element.selectionEnd === 'number') {
-      selection = [element.selectionStart, element.selectionEnd];
+    // An element with a numeric selectionStart has the whole selection API.
+    if (typeof element.selectionStart === 'number') {
+      selection = [
+        element.selectionStart,
+        element.selectionEnd as number,
+        element.selectionDirection as string,
+      ];
     }
   } catch {
     // Inputs without selection support.
@@ -70,13 +76,13 @@ function captureFocus(parent: Node): FocusSnapshot | null {
   return { element, selection };
 }
 
-/** Without moveBefore, removing a focused subtree blurs it: restore focus and selection. */
+/** Restore focus and selection after a move blurred them (WebKit's fallback; Firefox's moveBefore in a shadow root). */
 function restoreFocus(snapshot: FocusSnapshot, parent: Node): void {
   const { element, selection } = snapshot;
   if (!element.isConnected || deepActiveElement(parent) === element) return;
   element.focus({ preventScroll: true });
   try {
-    if (selection) element.setSelectionRange?.(selection[0], selection[1]);
+    if (selection) element.setSelectionRange?.(...selection);
   } catch {
     // Selection unsupported.
   }
@@ -180,6 +186,8 @@ function reconcile<P extends RepeatItemPart>(
   const items: P[] = [];
   const keys: unknown[] = [];
   const seen = new Set<unknown>();
+  // Keys and item templates first: one that throws leaves the list as it was.
+  const values: unknown[] = [];
   let index = 0;
   let changed = false;
   for (const item of directive.items) {
@@ -197,17 +205,19 @@ function reconcile<P extends RepeatItemPart>(
       key = { duplicate: key, index };
     }
     seen.add(key);
+    keys.push(key);
+    values.push(directive.template(item, index++));
+  }
+  keys.forEach((key, i) => {
     let part = old.get(key);
     if (part) old.delete(key);
     else {
       part = createItem();
       changed = true;
     }
-    part.setValue(directive.template(item, index));
+    part.setValue(values[i]);
     items.push(part);
-    keys.push(key);
-    index++;
-  }
+  });
   for (const part of old.values()) {
     part.remove();
     changed = true;
@@ -219,6 +229,7 @@ function reconcile<P extends RepeatItemPart>(
   if (firstMoved) {
     const parent = (firstMoved.startNode as Comment).parentNode as Node;
     if (supportsMoveBefore && parent.isConnected) {
+      const focus = captureFocus(parent);
       let ref: Node | null = end;
       for (let i = items.length - 1; i >= 0; i--) {
         const part = items[i] as P;
@@ -230,6 +241,7 @@ function reconcile<P extends RepeatItemPart>(
         }
         ref = start;
       }
+      if (focus) restoreFocus(focus, parent);
     } else {
       moveBatched(parent, items, stable, previousIndex, previous.length, end);
       changed = true;

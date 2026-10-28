@@ -156,9 +156,13 @@ export class ChildPart implements Part {
     return (this.#container.ownerDocument ?? this.#container) as Document;
   }
 
+  /** The node this part's content lives in: the end marker's parent, or the container. */
+  get #parent(): Node {
+    return (this.#end ? this.#end.parentNode : this.#container) as Node;
+  }
+
   #insert(node: Node): void {
-    const parent = (this.#end ? this.#end.parentNode : this.#container) as Node;
-    parent.insertBefore(node, this.#end);
+    this.#parent.insertBefore(node, this.#end);
   }
 
   #committed(): void {
@@ -215,11 +219,7 @@ export class ChildPart implements Part {
 
   /** Whether `node` is still where this part put it: just before the end marker. */
   #holds(node: Node | undefined): node is Node {
-    return (
-      !!node &&
-      node.parentNode === (this.#end ? this.#end.parentNode : this.#container) &&
-      node.nextSibling === this.#end
-    );
+    return !!node && node.parentNode === this.#parent && node.nextSibling === this.#end;
   }
 
   #commitText(text: string): void {
@@ -252,9 +252,16 @@ export class ChildPart implements Part {
       this.#instance.update(result.values);
       return;
     }
+    // The previous content goes first, so refs see the old element released before the new one.
     this.#clear();
     const instance = new TemplateInstance(prepared, this.#document, this.#options);
-    instance.update(result.values);
+    try {
+      instance.update(result.values);
+    } catch (error) {
+      // A template that fails while committing releases what it bound; the next value renders.
+      instance.dispose();
+      throw error;
+    }
     this.#insert(instance.takeFragment());
     this.#instance = instance;
     this.#content = 'template';
@@ -265,9 +272,7 @@ export class ChildPart implements Part {
     const doc = this.#document;
     const start = doc.createComment('');
     const end = doc.createComment('');
-    const parent = (
-      before ? before.parentNode : this.#end ? this.#end.parentNode : this.#container
-    ) as Node;
+    const parent = (before ? before.parentNode : this.#parent) as Node;
     const ref = before ?? this.#end;
     parent.insertBefore(start, ref);
     parent.insertBefore(end, ref);
