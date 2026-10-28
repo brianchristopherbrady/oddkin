@@ -3906,3 +3906,20 @@ Design source: Figma "Oddkin Docs Website" (`zF87qftdRznmJJezxy23gd`), pages 00 
 | Types, layout lint, format | `npm run typecheck`; `node scripts/check-page-layout.mjs`; `npx prettier --check` on the changed files | Pass (0 unlisted hand-written layouts) |
 
 Visual check against the Figma frame in Chromium at 1,152 and 312 px wide (light and dark): hero, examples, starting points, cards, tools, quick start, and footer follow the frame's arrangement and tokens; the hero headline is the site summary (longer than the frame's placeholder), so it is set smaller.
+
+## 2026-10-28 — Beta publish: bin paths fixed; the publish waits on the owner's npm sign-in (Agent 3)
+
+The owner asked for the publish after `npm login` (account `poisonsushi`, owner of the `oddkin` npm organization).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Earlier dry-run logs, read again | the saved output of `node scripts/release/publish.mjs` | npm warned `"bin[oddkin-tokens]" script name dist/node/bin.js was invalid and removed`, and the same for `oddkin-analyze` and `oddkin-impact` (analyzer) and `oddkin` (workbench): bins written as `./dist/...` would have been dropped from the published manifests. The earlier dry-run records missed the warning |
+| npm's own fix, on a copy of the tokens manifest | `npm pkg fix` | Rewrote the bin to `dist/node/bin.js` (no `./`) |
+| Fixed manifests (tokens, analyzer, workbench) | `npm publish --dry-run --workspace packages/<name> --tag beta` | No warning |
+| Pack check | `npm run verify:packs` | Pass; it now fails on a bin with a leading `./` or one naming a file the tarball lacks |
+| Pre-publish checks at be7c66d | `node scripts/release/clean.mjs`; `npm run build`; `npm run verify:packs`; `node scripts/agent-kit/package-kits.mjs --check`; `set-versions.mjs ... --check`; `node scripts/release/publish.mjs`; `npm run verify:metadata` | All pass; the dry run has no "auto-corrected" or "invalid" line |
+| Resumable publish (8827edf) | `node scripts/release/publish.mjs` | "8 packages would publish (0 already there)": a package already on the registry at its version is skipped |
+| Publish | `node scripts/release/publish.mjs --publish` (two attempts) | Both stopped at `@oddkin/tokens`: npm printed its sign-in link and polled the registry until the sign-in expired unapproved (about 5 minutes on the second attempt, 19:02:38 to 19:07:53 UTC), then failed with `E404 Not Found - GET https://registry.npmjs.org/-/v1/done?authId=***` |
+| Registry | `npm view @oddkin/tokens versions` | E404: nothing is published |
+
+**Not verified:** the publish and a fresh install from the registry. Both wait for the owner to approve npm's sign-in once per package, within about 5 minutes of each prompt (release-process.md §5).

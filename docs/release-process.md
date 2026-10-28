@@ -69,7 +69,7 @@ Other versions are not claimed. The fixtures live beside the packages' tests rat
 
 Settled by the owner (2026-10-27): all eight packages publish as `1.0.0-beta.0` on the `beta` dist-tag under the owner's `@oddkin` scope. `--tag beta` leaves `latest` alone, so users opt in with `npm install @oddkin/core@beta`. A prerelease promises no stability: the freeze (ADR 0029, ADR 0047) starts at 1.0.0. On `main` the versions, the caret internal ranges, and `publishConfig` (`access: public`, `tag: beta`) are set (`node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 1.0.0-beta.0 --public`; `--check` confirms them), and the eight packages are no longer `private`.
 
-**Owner commands** (agents never publish; run from a clean checkout of `main`):
+**Owner commands** (the publish needs the owner's npm account and its two-factor approval; run from a clean checkout of `main`):
 
 ```sh
 npm ci
@@ -87,6 +87,10 @@ git push origin v1.0.0-beta.0
 
 `scripts/release/publish.mjs` publishes `tokens`, `core`, `state`, `app`, `components`, `ai`, `analyzer`, and `workbench` in that order (each package's dependencies first), each as `npm publish --workspace packages/<name> --tag beta`, and refuses a package that is private or not public. The `--tag` is passed on the command line because npm 11.19 ignores `publishConfig.tag`: a dry run without it reported "Publishing … with tag latest" (verification.md, 2026-10-27). Then the owner checks a fresh install (`npm install @oddkin/core@beta @oddkin/components@beta` in an empty directory) and announces the `@beta` install line.
 
-Rehearsed on 2026-10-28 from a clean checkout of main (2cc56d3) up to the dry run: `npm ci`, the clean build, `verify:packs`, the kit check, and `publish.mjs` all pass ([verification.md](./verification.md)).
+npm's two-factor check comes once per package: npm prints "Authenticate your account at:" with a link and "Press ENTER to open in the browser...", then waits for the approval on npmjs.com. An approval not given within about 5 minutes ends that publish with `E404 Not Found - GET https://registry.npmjs.org/-/v1/done?authId=***`; both attempts on 2026-10-28 ended that way at the first package, and nothing was published. So the owner stays at the browser for eight approvals. `publish.mjs` skips a package already on the registry at its version, so rerunning it after an expired prompt resumes where it stopped.
+
+Bin paths are plain `dist/...` paths. npm 11.19 publish rewrites a bin written as `./dist/...` and drops it from the published manifest (`npm warn publish "bin[oddkin-tokens]" script name dist/node/bin.js was invalid and removed`); `verify:packs` fails on such a bin, and the dry run must show no "auto-corrected" or "invalid" line.
+
+Rehearsed on 2026-10-28 from a clean checkout of main (2cc56d3) up to the dry run: `npm ci`, the clean build, `verify:packs`, the kit check, and `publish.mjs` all pass ([verification.md](./verification.md)). Repeated at be7c66d after the bin fix, with `npm run verify:metadata`: all pass, and the dry run shows no npm rewrite.
 
 Later betas: `set-versions.mjs` with the next prerelease number (`1.0.0-beta.1`), `npm install`, the §3 checks, and the same commands. 1.0.0 drops the suffix, publishes under `latest`, and starts the changelogs (§1).
