@@ -8,6 +8,136 @@ The aim is to make correct, maintainable components easy to write and easy to do
 
 **Legend:** `[ ]` todo · `[x]` implemented **and** verified · `[~]` in progress · `[!]` blocked (add note). A milestone is complete only with its acceptance evidence. Once the workspace exists, every milestone leaves packages buildable and the current docs/Workbench slice runnable; before the docs slice exists, keep a working plain-HTML consumer.
 
+## Priority plan (round 10, from 2026-10-28)
+
+**Owner direction (2026-10-28).** Work in priority order. First come the foundations people need to install Oddkin and build with it, working together as one system. Then Workbench and the AI tooling must work end to end. Then the remaining foundations, and only then new capability, starting with the SVG icon packages. The milestones (M0–M12) and the numbered sections stay as the detailed backlog and the evidence record; this section sets the order and the owners. Take an item when its tier is reached, or earlier when an item in a higher tier depends on it. Tick an item here and in the milestone item it names.
+
+**Lanes** (log, tools, and prompts in `C:\SLT_Backup_10-21-2026\oddkin-lanes`: `lanes-r10.md`, `prompts/round-10/`):
+
+| Lane | Owns |
+| --- | --- |
+| Agent 1, runtime foundations and release | `@oddkin/core`, `state`, `app`, `tokens`, and `components` (every element; not `src/composition/`); the CSS recipes and compatibility data; size budgets; packed consumers; CI; releases. Later `@oddkin/icons` |
+| Agent 2, tooling | `@oddkin/workbench` (Theme Studio and the panels other sites embed), `@oddkin/analyzer`, `@oddkin/ai`, the composition schema, the agent kits and `llms.txt`, and the AI examples |
+| Agent 3, documentation | the docs site (`apps/docs`, its workflow and tests). Figma fidelity comes first, then content that is accurate and covers every package, including the package READMEs |
+
+Agents 1 and 2 no longer work on the docs site. They answer Agent 3's questions and fix, in their own packages, what Agent 3 reports.
+
+### P0: people can install Oddkin and build with it (now)
+
+Exit criteria:
+- In a clean directory, every adoption path below builds and runs from the published beta, and in CI from packed tarballs.
+- Workbench documents a component library with live, editable previews.
+- The AI elements stream from a real endpoint.
+- CI runs the whole gate on every push.
+- The owner has published 1.0.0-beta.1.
+
+- [ ] **P0.1 Fresh-install matrix (Agent 1).**
+  - Build scripted consumers in temporary directories, from the registry's beta and from packed tarballs:
+    - plain HTML with an import map;
+    - a Vite TypeScript app;
+    - tokens as CSS only, and through Sass;
+    - core only;
+    - components only, with the autoloader and with explicit `define` imports;
+    - a full app with the router, state, a form, and an AI element;
+    - React, Vue, Svelte, and Angular apps;
+    - `oddkin-tokens` building a theme config.
+  - Each page must render, register its elements, submit its form, and log no console error, in three engines.
+  - Fix every failure where it starts. Failures in another lane's package go to that lane with a reproduction.
+  - Covers M12 "Independent consumers…", M11 "Every copied/generated example and exported theme verified in fresh directories…", and M1 "Node tooling's required compiler/build dependencies…".
+- [ ] **P0.2 Cross-package compatibility (Agent 1).**
+  - Close §2.5's open items: two independently built consumers and duplicate core copies.
+  - Make version ranges compatible across the packages, token outputs, metadata, configuration, and frames.
+  - Make dependency declarations install a single core, and add duplicate-version diagnostics.
+  - Covers M12 "Verify installed Node tool dependencies, optional framework declarations/adapters, duplicate-version diagnostics…".
+- [ ] **P0.3 Workbench in working order (Agent 2).**
+  - **The consumer path.** A library author installs the packed `@oddkin/workbench` and `@oddkin/analyzer` and writes `oddkin.config.ts`. `oddkin workbench dev` and `oddkin workbench build` then work against an Oddkin library and against a standard-CEM fixture library.
+  - **Component pages.** Each renders the real component in its frame. Editing attributes, properties, slots, and CSS custom properties in the API table updates the preview in place. Presets, Reset, the events log, and Copy example work, and the catalog's live previews load.
+  - **The owner's report (2026-10-28).** On the docs site's component pages, the real components and their examples do not reliably load or update when the table changes.
+    - Reproduce it in Workbench and in the embedded panels, and fix it in the panels and the frame runtime.
+    - Give Agent 3 a written embedding contract: the files to serve, the frame document, the policy, and the panel properties.
+  - **Theme Studio's baseline flow** works: load the library's theme, edit it, preview light and dark, and export.
+  - **Watch mode** survives renames and deletions.
+  - Covers M5's `oddkin workbench dev`, catalog, detail-page, and Theme Studio baseline items; §5d.1; M11 "Watch-mode robustness"; and M7 "Static build served under a subpath…" for Workbench.
+- [ ] **P0.4 The AI tooling in working order (Agent 2).**
+  - **Streaming from a real endpoint.** `@oddkin/ai`, installed from the packed beta in a fresh app, streams from a real endpoint through the AI SDK UI message stream adapter.
+    - Write an example with a small local server that streams recorded responses.
+    - Document the switch to a real provider: keys come from the environment and are never committed.
+  - **The AI demos** (`examples/ai-*`) run from packed packages.
+  - **Agent kits.** Kits regenerated from packed packages pass their freshness check, and a real coding agent builds a small page from the kit alone (M11 "Distribute agent instruction/plugin assets… test them in at least one actual agent").
+  - **`llms.txt`** is generated from the metadata, for the docs site to serve.
+  - **The composition schema** validates the interfaces agents generate (M10 "Composition schema…").
+- [ ] **P0.5 The golden path, end to end (Agent 1 owns the harness and the runtime half; Agent 2 the tooling half).**
+  - One packed-package scenario runs the whole system, in this order:
+    1. a theme config, built to CSS by `oddkin-tokens`;
+    2. a consumer library of two components on `@oddkin/core`;
+    3. its metadata from `oddkin-analyze`;
+    4. its site from `oddkin workbench build`, with the catalog, live previews, and Theme Studio;
+    5. its agent kit;
+    6. an app that uses the library with the router, state, and an AI element.
+  - It runs in CI.
+  - Covers M12 "Packed `@oddkin/analyzer` + `@oddkin/workbench` run in a fresh project…" and "Agent kits regenerated from packed `@oddkin/components` and a packed consuming fixture library…".
+- [ ] **P0.6 CI is the integration gate (Agent 1).**
+  - `.github/workflows/ci.yml` passes on GitHub with these steps:
+    - build, lint, and typecheck;
+    - the node project;
+    - the browser project per engine with `--no-file-parallelism` (the owner's interim rule);
+    - e2e, size, packs, and metadata;
+    - P0.1's consumers and P0.5's golden path.
+  - A failure blocks `main`.
+  - A scheduled job installs from the registry.
+  - Record each step's runtime.
+  - Covers M12 "Full unit/type/browser suite…" and M1's CI item.
+- [ ] **P0.7 Docs site (Agent 3).** Figma fidelity for every route first, then accurate content for every package and its README, then the coverage gaps (M11's documentation items, §5f). Agent 3's prompts set the detail; Agents 1 and 2 support it.
+- [ ] **P0.8 1.0.0-beta.1 (Agent 1; the owner publishes).** After P0.1–P0.6's fixes: the release checklist (release-process.md §5), changelogs, `set-versions --next`, and the dry run. The owner publishes.
+
+### P1: finish the foundations (after P0's exit)
+
+- [ ] **P1.1 Theming (Agent 1).**
+  - M9's generator items:
+    - product role overrides and several themes in one document. The default theme pins its approved roles, so a product that sets only `brand.primary` cannot recolour its actions or links (multi-product.md §9);
+    - the CSS token domains still missing;
+    - DTCG output checked by an independent reader;
+    - equivalent CSS, SCSS, and TS consumption;
+    - P3 values.
+  - §5.1's open items: adopted-sheet ownership and the DTCG resolver experiment.
+- [ ] **P1.2 Components (Agent 1).**
+  - M10's partial items: the remaining Figma families, the collections, CSS contracts for new components, and customization levels, including level 4's typed anatomy contracts.
+  - M4's partial items: the details of `odd-button`, `odd-input`, and `odd-card`; the scripted keyboard suite; framework remount behaviour.
+  - §5f's localization contracts and its loading and fallback presentation.
+- [ ] **P1.3 Core semantics (Agent 1).** §3.2's bounded inspection, M8's comprehension review of the binding rule, and M8's scope and direction item.
+- [ ] **P1.4 Accessibility and guidance (Agent 1; deferred by the owner).** The sweep over every element (M8), and guidance with correct and incorrect example pairs (M10). Recommended before the v1 freeze. It starts when the owner lifts the deferral.
+- [ ] **P1.5 Theme Studio (Agent 2).** M9's Theme Studio items: controls for every category, specimens, role mapping, token inspection, visualizations, layout roles, comparison, undo, share, export, save to file, and complete keyboard and screen-reader operation.
+- [ ] **P1.6 Analyzer and metadata (Agent 2).** §5c, M4's analyzer relationships, and the remainder of M8's metadata and tooling review.
+- [ ] **P1.7 Assurance (Agent 2, with Agent 1).** Conformance suites per catalog component (M10), the ADR 0043 role compatibility check, and visual baselines (M5).
+
+### P2: new capability on the foundations
+
+- [ ] **P2.1 SVG icons ([SVG_PACKAGE_PLAN.md](./SVG_PACKAGE_PLAN.md); Agents 1 and 2).**
+  - Phases 1–3 (discovery, the contracts as an ADR, the collection SDK) may start once P0 exits, alongside P1. Phases 4–10 follow P1.2.
+  - Agent 1 builds `@oddkin/icons` (`<odd-icon>`, the registry, providers, renderers, and the compiler) and the healthcare and GIS collections from the original artwork.
+  - Agent 2 adds Workbench collection discovery (§17 of that plan) and analyzer metadata for icons.
+  - A third, fixture collection proves that a new collection needs no framework change.
+  - Prerequisites: P0.6 (CI), P0.3 (Workbench), and the `icon.size.*` tokens.
+- [ ] **P2.2 Agent package and MCP (Agent 2).** D7 (`@oddkin/agent`) and the optional MCP adapter return only with the owner's approval; they were skipped on 2026-10-27.
+- [ ] **P2.3 Workbench completion (Agent 2).** M11's Workbench items (composition previews, model editors, content customization, API comparison, explanations, reproductions, product comparison) and §5d.2.
+- [ ] **P2.4 Products (Agents 1 and 2).** M9's products-and-modes items, built on P1.1's overrides.
+
+### P3: the v1 freeze, then parked work
+
+- [ ] **P3.1 v1 freeze (Agent 1; the owner settles the cut).** M12: the browser floor re-resolved and the matrix regenerated, the floor probe, the final freeze over the shipped APIs, and the policies.
+- **Parked until the owner reopens them:**
+  - the data grid ([DATA_GRID_IMPLEMENTATION_PLAN.md](./DATA_GRID_IMPLEMENTATION_PLAN.md));
+  - comparative benchmarks (D4, §8.2);
+  - the ergonomics studies (§8.3);
+  - M0's research backlog;
+  - migration walkthroughs (M11), which wait for the docs content pass;
+  - screen-reader and Safari runtime evidence, which needs hardware.
+
+**Every tier.**
+- Each file has one owner, the lane in the table above; post before changing another lane's file.
+- Each slice keeps the whole system green: CI, the packed consumers, and (from P0.5) the golden path.
+- Evidence goes in `docs/verification.md`. Nothing is ticked without evidence.
+
 ### Documents
 
 | Document | Role |
@@ -1378,6 +1508,21 @@ Use §12 as the direct-source reading map; keep decisions tied to executable evi
   - **Recommended v1 gates, not started this round:** the owner's three deferrals above. The goal names accessible components with complete guidance, so the per-element sweep and the guidance pairs should land before the freeze; per-engine serial browser runs are accepted as v1 evidence, with the parallel-load failures recorded as a test-infrastructure limitation.
 - *After v1, unless the owner says otherwise:* Theme Studio's full scope and the foundation and product pages (M9, all but the generator items); Workbench's completion (M11 "Workbench completion", §5d.2 beyond what the docs app embeds); migration walkthroughs and onboarding studies (M11, §8.3); `@oddkin/agent` (D7) and the comparative benchmarks (D4, §8.2); published conformance suites, impact, explanation, and reproduction records (§5h, M10, M12's packed assurance items); §5c's published-declaration inputs, editor outputs, and the CEM Analyzer plugin evaluation; §5f's `oddkin doctor`, agent plugin assets, and case studies; typed anatomy contracts (level 4); the A2UI adapter; the data grid; D10's adoption (the experiment runs this round; adopting it is not a v1 gate).
 - *Why:* the runtime packages are what consumers and agents depend on and what a freeze can honestly cover today; Theme Studio (34 items) and Workbench completion (52 items with the docs app) cannot land with evidence this round, and freezing their config, frame protocol, and page contracts now would freeze contracts still moving. Proposed versioning (release-process.md): `@oddkin/tokens`, `core`, `components`, `ai`, `state`, and `app` at 1.0.0; `@oddkin/analyzer` and `@oddkin/workbench` at 0.x until their completion lands. *(Owner, 2026-10-27: all eight packages publish first as `1.0.0-beta.0` on the `beta` dist-tag; the analyzer and Workbench contracts stay unfrozen instead of 0.x; release-process.md §5.)*
+
+**Round 9 result (2026-10-28):**
+- **Release.** All eight packages are on npm as `1.0.0-beta.0` (Agent 3 with the owner).
+- **Docs site.** It has its shell, information architecture, static build, and Pages workflow. Its pages are Home, Getting started, the guides, Architecture, Roadmap, Help and releases, Recipes, and the ten generated Foundations pages (Agent 1). The component catalog and the reference pages show live previews from the Workbench panels (Agent 2).
+- **Components.** The four new Figma families landed (Agent 1), as did the remaining shadow-root layout candidates (Agent 1).
+- **Core and reviews.** D5, the core real-browser tests, and the CSS review landed (Agent 3).
+- **Open from the round.** The owner reports that the docs site's design fidelity is off, and that its component pages do not reliably load or update their live examples.
+
+**Next step (round 10, from 2026-10-28):** the priority plan at the top of this file sets the order of work.
+- Lanes:
+  - Agent 1: runtime foundations and release. It takes over core, tokens, compatibility, performance, and release from Agent 3.
+  - Agent 2: Workbench, the analyzer, AI, and the agent kits.
+  - Agent 3: the docs site.
+- Log: `C:\SLT_Backup_10-21-2026\oddkin-lanes\lanes-r10.md`.
+- Prompts: `prompts/round-10/agent-N.md`.
 
 At every pause: update verified checkboxes and the log; record the next concrete task, unresolved failures, package versions, and test commands/results. Keep the current consumer/docs/Workbench slice working. Never mark performance, accessibility, SSR, framework compatibility, or parity with the reference application as delivered without evidence.
 

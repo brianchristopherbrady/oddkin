@@ -48,7 +48,7 @@ export function renderSection(project) {
     '- Commands:',
     ...Object.entries(context.commands).map(([key, command]) => `  - ${key}: \`${command}\``),
     `- Agent kits: each component package ships one matched to its version (${owned.map((l) => `\`node_modules/${l.name}/agent/GUIDE.md\``).join(', ')}; written by the build with \`node scripts/agent-kit/package-kits.mjs\`, \`--check\` to find stale ones). In this repository, \`node scripts/agent-kit/kit.mjs\` writes them into \`.oddkin/agent-kit/\`; add \`--check\` to find stale kits.`,
-    '- Scope, status, and evidence: `IMPLEMENTATION_PLAN.md` (milestones, §11 continuation), `docs/progress-log.md` (one row per slice), and `docs/verification.md` (record only observed results).',
+    '- Order of work, scope, status, and evidence: `IMPLEMENTATION_PLAN.md` (the priority plan first, then the milestones and §11 continuation), `docs/progress-log.md` (one row per slice), and `docs/verification.md` (record only observed results).',
     '',
     END,
   ];
