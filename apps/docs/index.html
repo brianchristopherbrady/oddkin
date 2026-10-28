@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Oddkin documentation</title>
+    <title><!-- docs:title --></title>
     <link rel="stylesheet" href="/apps/docs/styles.css" />
     <link rel="stylesheet" href="/public/@oddkin/tokens/css/default.css" />
     <link rel="stylesheet" href="/public/@oddkin/components/css/layout.css" />
@@ -23,46 +23,8 @@
       </header>
       <p id="route-status" role="status" aria-live="polite"></p>
       <div class="site-layout odd-split">
-        <nav class="side-nav odd-auto-grid odd-auto-grid-fit" aria-label="Documentation">
-          <p class="eyebrow">Learn</p>
-          <a href="/" aria-current="page">Getting started</a>
-          <a href="/layout/side-nav">Layout guide</a>
-          <a href="/foundations">Foundations</a>
-          <a href="/components">Components</a>
-          <p class="eyebrow">Architecture</p>
-          <a href="/architecture/scope-ownership">Scope ownership case study</a>
-        </nav>
-        <main id="main" tabindex="-1" aria-busy="true">
-          <header class="page-header">
-            <p class="eyebrow">Documentation</p>
-            <h1>Getting started</h1>
-            <p class="lede">
-              Start with Oddkin tokens: use the published CSS variables to keep your interface
-              aligned with the active theme.
-            </p>
-          </header>
-          <section class="content-section">
-            <h2>Use design tokens</h2>
-            <p>
-              Load the published token stylesheet, then reference semantic variables in your own
-              CSS. This starting guide stays token-only; component packages are optional.
-            </p>
-            <p>
-              Load the published stylesheet from the <code>@oddkin/tokens</code>
-              <code>./css/default.css</code> export before applying these declarations.
-            </p>
-            <pre><code>.notice {<br />  color: var(--odd-color-text-primary);<br />  padding: var(--odd-space-md);<br />}</code></pre>
-            <a href="/foundations/spacing">Read the token reference</a>
-          </section>
-          <section class="content-section">
-            <h2>Continue learning</h2>
-            <a href="/layout/side-nav">Layout guide: side navigation</a>
-            <span aria-hidden="true"> · </span>
-            <a href="/foundations">Browse foundations</a>
-            <span aria-hidden="true"> · </span>
-            <a href="/components">Browse components</a>
-          </section>
-        </main>
+        <nav class="side-nav odd-auto-grid odd-auto-grid-fit" aria-label="Documentation"><!-- docs:nav --></nav>
+        <main id="main" tabindex="-1"><!-- docs:main --></main>
       </div>
       <footer class="site-footer">Oddkin · open web components and design-system tooling</footer>
     </div>

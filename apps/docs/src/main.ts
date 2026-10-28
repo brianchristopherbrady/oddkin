@@ -8,6 +8,7 @@ import type {
   WorkbenchData,
 } from '@oddkin/workbench/data';
 import { componentSnippet, tokenCssSnippet } from './snippets.js';
+import { pages, type Page } from './pages/index.js';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -115,8 +116,10 @@ function displayError(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-const gettingStartedRoute = route({ path: '', title: 'Getting started' });
-const tokensGuideRoute = route({ path: 'getting-started', title: 'Getting started with tokens' });
+const gettingStartedRoute = route({
+  path: 'getting-started',
+  title: 'Getting started with tokens',
+});
 // Each page loads only the Workbench panel it renders; the router awaits it before committing.
 const componentPanelModule = () => import('@oddkin/workbench/panels/component/define');
 const layoutGuideRoute = route({
@@ -164,7 +167,6 @@ const docsRoute = route({
   load: ({ signal }) => loadDocsData(signal),
   children: [
     gettingStartedRoute,
-    tokensGuideRoute,
     layoutGuideRoute,
     foundationsRoute,
     foundationRoute,
@@ -176,8 +178,13 @@ const docsRoute = route({
   ],
 });
 
+// Authored pages arrive as HTML from the server, readable before this script runs; they need no data.
+const pageRoutes = new Map(
+  pages.map((page) => [route({ path: page.path, title: page.title }) as AnyRoute, page]),
+);
+
 const router = createRouter({
-  routes: [docsRoute as AnyRoute],
+  routes: [...pageRoutes.keys(), docsRoute as AnyRoute],
   focus: () => document.querySelector('#main h1'),
   formatTitle: (title) => (title ? `${title} · Oddkin` : 'Oddkin'),
 });
@@ -457,6 +464,11 @@ function renderSearch(main: HTMLElement, query: string, data: DocsData): void {
   main.append(form);
 
   const searchItems: { title: string; path: string; body: string }[] = [
+    ...pages.map((page: Page) => ({
+      title: page.title,
+      path: `/${page.path}`,
+      body: `${page.summary} ${page.sections.map((s) => s.title).join(' ')}`,
+    })),
     {
       title: 'Getting started with tokens',
       path: '/getting-started',
@@ -602,16 +614,25 @@ function renderRoute(state: RouterState): void {
   for (const link of document.querySelectorAll<HTMLAnchorElement>('.side-nav a')) {
     const path = new URL(link.href).pathname;
     const currentPath = state.location?.path;
-    const onGettingStarted =
-      (currentPath === '/' || currentPath === '/getting-started') && path === '/getting-started';
-    if (onGettingStarted || (currentPath && path === router.href(currentPath)))
-      link.setAttribute('aria-current', 'page');
+    if (currentPath && path === router.href(currentPath)) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   }
   if (state.status === 'idle' && state.matches.length === 0) return;
   if (state.navigating && state.matches.length === 0) return;
 
   const last = state.matches.at(-1);
+  const page = last && pageRoutes.get(last.route);
+  if (page && !state.navigating) {
+    // The server renders authored pages; a page reached in the client loads its document, once.
+    const reloaded = sessionStorage.getItem('oddkin-docs-reload') === page.path;
+    sessionStorage.removeItem('oddkin-docs-reload');
+    if (main.dataset['page'] !== page.path && !reloaded) {
+      sessionStorage.setItem('oddkin-docs-reload', page.path);
+      location.reload();
+    } else main.setAttribute('aria-busy', 'false');
+    return;
+  }
+  delete main.dataset['page'];
   if (state.status === 'error' || last?.status === 'error') {
     const error =
       state.status === 'error' ? state.error : last?.status === 'error' ? last.error : undefined;
@@ -655,8 +676,7 @@ function renderRoute(state: RouterState): void {
   }
   main.replaceChildren();
   main.setAttribute('aria-busy', 'false');
-  if (last.route === gettingStartedRoute || last.route === tokensGuideRoute)
-    renderGettingStarted(main);
+  if (last.route === gettingStartedRoute) renderGettingStarted(main);
   else if (last.route === layoutGuideRoute) renderLayoutGuide(main, data);
   else if (last.route === foundationsRoute) renderFoundations(main, data);
   else if (last.route === componentsRoute)

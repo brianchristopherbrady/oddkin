@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 const docs = 'http://127.0.0.1:4177';
+// The catalog panel's modules load before its route commits: seconds in Firefox, unbundled.
+const catalogLoad = 15_000;
 
 test('docs guides, metadata references, local search, and shadow-root links', async ({
   page,
@@ -28,11 +30,15 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   const response = await page.goto(`${docs}/`);
   expect(response?.status()).toBe(200);
   expect(response?.headers()['content-security-policy']).toContain("default-src 'none'");
-  await expect(page.getByRole('heading', { name: 'Getting started' })).toBeVisible();
-  await expect(page.getByText('Start with Oddkin tokens')).toBeVisible();
-  // Client-rendered: the router now handles link clicks (the static guide is readable before boot).
-  await expect(page.getByRole('heading', { name: 'Use design tokens' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Oddkin', level: 1 })).toBeVisible();
+  await expect(page.getByRole('table', { name: 'Oddkin packages' })).toContainText('@oddkin/core');
   expect(requests.some((url) => /\/packages\/components\/.*\.js$/.test(url))).toBe(false);
+
+  // An authored page reached from the navigation is the server's document for that path.
+  await page.locator('.side-nav a[href="/start/tokens"]').click();
+  await expect(page).toHaveURL(`${docs}/start/tokens`);
+  await expect(page.getByRole('heading', { name: 'Tokens only', level: 1 })).toBeVisible();
+  await expect(page.locator('.side-nav a[aria-current="page"]')).toHaveText('Tokens only');
 
   await page.locator('.side-nav a[href="/layout/side-nav"]').click();
   await expect(page.getByRole('heading', { name: 'Side navigation', exact: true })).toBeVisible();
@@ -53,7 +59,7 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   expect(requests.some((url) => /\/packages\/components\/.*\.js$/.test(url))).toBe(false);
 
   await page.locator('.side-nav a[href="/components"]').click();
-  await expect(page).toHaveURL(`${docs}/components`);
+  await expect(page).toHaveURL(`${docs}/components`, { timeout: catalogLoad });
   await expect(page.getByRole('heading', { name: 'Component references' })).toBeVisible();
   // The catalog's filter is mirrored in the URL without a new entry, and typing keeps focus.
   const search = page.getByRole('searchbox', { name: 'Search components' });
@@ -113,7 +119,7 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   ).toEqual([]);
 });
 
-test('initial guide is readable before client boot and async metadata shows pending then ready', async ({
+test('authored pages are readable before client boot and metadata pages show pending then ready', async ({
   page,
 }) => {
   let releaseMetadata: (() => void) | undefined;
@@ -124,16 +130,23 @@ test('initial guide is readable before client boot and async metadata shows pend
     await metadataGate;
     await route.continue();
   });
-  await page.goto(`${docs}/`);
-  await expect(page.getByRole('heading', { name: 'Getting started' })).toBeVisible();
+  await page.goto(`${docs}/components`);
   await expect(page.locator('#route-status')).toHaveText('Loading the requested page…');
   releaseMetadata?.();
-  await expect(page.getByRole('heading', { name: 'Use design tokens' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Component references' })).toBeVisible({
+    timeout: catalogLoad,
+  });
 
   await page.route('**/apps/docs/dist/main.js', (route) => route.abort());
-  await page.goto(`${docs}/`);
-  await expect(page.getByRole('heading', { name: 'Getting started', exact: true })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Read the token reference' })).toBeVisible();
+  await page.goto(`${docs}/start/components`);
+  await expect(
+    page.getByRole('heading', { name: 'Components in any app', level: 1 }),
+  ).toBeVisible();
+  await expect(page.getByText("import '@oddkin/components/define/button';")).toBeVisible();
+  await page.goto(`${docs}/browser-support`);
+  // Generated from docs/compatibility/features.json on the server.
+  await expect(page.getByRole('table', { name: /Supported browsers/ })).toContainText('Firefox');
+  await expect(page.getByRole('table', { name: 'Platform features by adoption' })).toBeVisible();
 });
 
 test('metadata loading error is visible and the retry action recovers', async ({ page }) => {
@@ -145,13 +158,15 @@ test('metadata loading error is visible and the retry action recovers', async ({
     } else await route.continue();
   });
 
-  await page.goto(`${docs}/`);
+  await page.goto(`${docs}/components`);
   await expect(
     page.getByRole('heading', { name: 'Documentation could not be loaded' }),
   ).toBeVisible();
   await expect(page.getByText(/HTTP 503/)).toBeVisible();
   await page.getByRole('button', { name: 'Retry loading docs' }).click();
-  await expect(page.getByRole('heading', { name: 'Use design tokens' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Component references' })).toBeVisible({
+    timeout: catalogLoad,
+  });
 });
 
 test('unknown local references render a not-found state', async ({ page }) => {

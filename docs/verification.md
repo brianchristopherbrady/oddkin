@@ -3718,3 +3718,14 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Browser floor | `npm run compat:floor` | Chrome for Testing 130.0.6723.116 and Firefox 132.0: 16/16 checks each, 24 detections, none differing from BCD; `research/compatibility/floor-results.json` gains the `forced-color-adjust` detection both support. `run-floor.mjs` wrote its results but did not exit, and was stopped by hand. Safari 18.2 stays a recorded gap |
 
 **Remaining (M12):** versions, internal ranges, and changelogs wait for the owner (release-process.md §1); a Sass consumer waits for M9's Sass output; two released versions installed side by side need a release.
+## 2026-10-27 — Docs app v1 core, first slice (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Code samples | `npx tsc -b apps/docs && node apps/docs/snippets/verify.mjs` (packs core, tokens, components, state, app) | 27 authored samples pass; the verifier first caught an import-map sample pointing at the development build of `@oddkin/core/element` (`default` is `dist/prod/`), now fixed |
+| Pages | `npx vitest run --project node tests/docs/pages.test.ts` | 5 passed: unique paths and navigation, links resolve (it first caught two links to guides not yet written), every fact generated, every sample verified, escaping |
+| Served HTML | `node apps/docs/dev.mjs --port 4190`, then GET `/start/tokens`, `/browser-support`, `/components` | 200; `<h1>Tokens only</h1>` and `data-page="start/tokens"` in the document; the browser-support tables (46 rows) in the document; `/components` serves the shell for the client |
+| e2e, Chromium | `npx playwright test e2e/docs.spec.ts --project=chromium` (lock held) | 5 passed |
+| e2e, WebKit | `--project=webkit` | 4 passed; "every published component is listed under its category" timed out (the known WebKit flake, queue item 8) |
+| e2e, Firefox | `--project=firefox`, then the same spec from main without this change | with the change 2 passed, 3 failed (timeouts on `page.goto` and the catalog's first load); main without it 1 passed, 4 failed (the same timeouts): Firefox is slow on this machine today, not broken by the change. A direct Firefox run of `/start/tokens`, `/layout/side-nav`, and `/components` on port 4177 renders all three headings |
+| Typecheck, lint | `npm run typecheck`, `npm run lint` | see the commit |
