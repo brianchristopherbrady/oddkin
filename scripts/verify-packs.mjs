@@ -5,7 +5,7 @@
 import { execFileSync } from 'node:child_process';
 import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import boundaries from './architecture/boundaries.config.mjs';
 
@@ -58,6 +58,22 @@ try {
         if (!files.includes(file)) failures.push(`${name}: tarball has no ${file}`);
     // A package that lists `agent` ships its version-matched agent kit (ADR 0046 D6).
     const manifest = JSON.parse(await readFile(join(dir, 'package.json'), 'utf8'));
+    // Release hygiene (docs/release-process.md §3).
+    for (const file of ['LICENSE', 'README.md'])
+      if (!files.includes(file)) failures.push(`${name}: tarball has no ${file}`);
+    const directory = relative(root, dir).split(sep).join('/');
+    if (manifest.license !== 'MIT') failures.push(`${name}: license is ${manifest.license}`);
+    if (!manifest.description) failures.push(`${name}: no description`);
+    if (manifest.type !== 'module') failures.push(`${name}: type is not "module"`);
+    if (manifest.sideEffects === undefined) failures.push(`${name}: sideEffects is not declared`);
+    if (manifest.repository?.directory !== directory)
+      failures.push(`${name}: repository.directory is not ${directory}`);
+    for (const [key, value] of Object.entries(manifest.exports ?? {}))
+      if (
+        /\.m?js$/.test(typeof value === 'string' ? value : (value?.default ?? '')) &&
+        !value?.types
+      )
+        failures.push(`${name}: export ${key} has no types`);
     const agentBytes = info.files
       .filter((file) => file.path.startsWith('agent/'))
       .reduce((sum, file) => sum + file.size, 0);
@@ -243,7 +259,16 @@ try {
 
   await writeFile(
     join(consumer, 'types.ts'),
-    `${imports}\nexport const all: readonly object[] = [${specifiers.map((_, i) => `p${i}`).join(', ')}];\n`,
+    [
+      imports,
+      `export const all: readonly object[] = [${specifiers.map((_, i) => `p${i}`).join(', ')}];`,
+      // Typed refs: the default theme's token names are a closed union.
+      "import { token, tokenVariable } from '@oddkin/tokens/refs';",
+      "export const refs: string[] = [token('color.action.default'), tokenVariable('space.md')];",
+      '// @ts-expect-error -- not a token of the default theme',
+      "export const unknownRef = token('color.action.nope');",
+      '',
+    ].join('\n'),
   );
   await writeFile(
     join(consumer, 'tsconfig.json'),
@@ -334,5 +359,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; runtime imports and declarations resolve; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}; agent kits match their packed metadata in ${kits.join(' and ')}. Tarballs: ${sizes.join('; ')}.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; each tarball has LICENSE and README.md, and each manifest its licence, description, repository directory, module type, sideEffects, and types for every JavaScript export; runtime imports and declarations resolve; typed token refs reject an unknown name; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}; agent kits match their packed metadata in ${kits.join(' and ')}. Tarballs: ${sizes.join('; ')}.`,
 );

@@ -30,6 +30,13 @@ export const CONSUMERS = {
     // The CSS-only path: the installed CLI generates the stylesheet the page links.
     generate: ['build', 'theme.json', '--out', 'generated', '--format', 'css', '--strict'],
   },
+  // CSS only with the recipes: the theme stylesheet and components' CSS (layout.css among them),
+  // no script. Core is installed only as the components package's dependency.
+  'css-recipes': {
+    packages: ['core', 'tokens', 'components'],
+    page: 'tests/css-recipes',
+    files: ['index.html'],
+  },
   'core-only': {
     packages: ['core'],
     page: 'examples/core-counter',

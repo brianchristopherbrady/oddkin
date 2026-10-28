@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'"
+    />
+    <title>CSS only with recipes · Oddkin packed consumer</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/reset.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/base.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/layout.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/typography.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/button.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/field.css" />
+  </head>
+  <body>
+    <!-- A packed-consumer fixture (scripts/packed-consumers.mjs, consumer css-recipes): the
+         theme and the CSS recipes from installed tarballs, and no script. -->
+    <main class="odd-stack" id="page">
+      <h1 class="odd-type-title">Delivery details</h1>
+      <div class="odd-field">
+        <label class="odd-field-label" for="email">Email</label>
+        <input class="odd-field-control" id="email" type="email" autocomplete="email" />
+      </div>
+      <div class="odd-cluster" id="actions">
+        <button class="odd-button" type="button" data-appearance="primary">Save</button>
+        <button class="odd-button" type="button" data-appearance="secondary">Cancel</button>
+      </div>
+    </main>
+  </body>
+</html>

@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
+    "directory": "packages/tokens"
+  },
   "description": "Theme configuration, pure token generation, and CSS/SCSS/JSON/TS outputs. Browser entry points are DOM-free.",
   "type": "module",
   "sideEffects": false,

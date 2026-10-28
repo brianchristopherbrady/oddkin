@@ -1,12 +1,52 @@
-# Release process (stub)
+# Release process
 
-Status: **stub**. Nothing is published, and every package is `private: true`. Publishing and deployment are separately authorized actions (plan M12).
+Status: **proposed for the owner to settle** (plan M12; Agent 3, 2026-10-27). Nothing is published. Every package is version `0.0.0` and `private: true`. Publishing, the npm scope, and deployment are the owner's decisions and actions; agents prepare and verify, and never publish.
 
-Before the first release:
+## 1. Proposed v1 versioning
 
-- [ ] Choose a licence and add `LICENSE`; set `license` in every manifest.
-- [ ] Confirm ownership of the `@oddkin` npm scope; remove `private: true` from publishable packages.
-- [ ] Decide independent versioning tooling and changelog format (per-package changelogs).
-- [ ] Define compatibility, deprecation, and upgrade policies, including metadata schema versioning (ADR 0029).
-- [ ] Run `npm run verify` and the full M12 release matrix; record results in [verification.md](./verification.md).
-- [ ] Run `oddkin analyze --compare` against the previous release once the analyzer exists, and review semver impact.
+Each package has its own version and changelog (semantic versioning). The v1 cut ([IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md) §11) decides which contracts are frozen; the versions follow it:
+
+| Package | First version | Why |
+| --- | --- | --- |
+| `@oddkin/tokens` | 1.0.0 | Token names, the theme schema (`theme-config.v1`), CSS custom properties, and the CLI are the CSS-only path's contract |
+| `@oddkin/core` | 1.0.0 | The authoring contracts published in `CONTRACTS.md` (stable ids) |
+| `@oddkin/components` | 1.0.0 | Tag names, attributes, properties, events, slots, parts, CSS properties, custom states, and the `define/*` entries in `custom-elements.json` |
+| `@oddkin/ai` | 1.0.0 | As components, for the AI elements |
+| `@oddkin/state`, `@oddkin/app` | 1.0.0 | Stores, context, persistence, resources, commands, router, and app roots (core-contracts.md §7–§9) |
+| `@oddkin/analyzer`, `@oddkin/workbench` | 0.1.0 | Their completion (plan M11, §5c, §5d) follows v1; their config, frame protocol, and page contracts are still moving, so a 0.x minor may break them |
+
+- **Internal ranges.** Workspace packages depend on each other with caret ranges of the released version (`"@oddkin/core": "^1.0.0"`), never `*` or an exact pin. Today every internal dependency is the exact `0.0.0`; the release step replaces them.
+- **Compatible versions.** Any `1.x` runtime packages work together; a minor adds, a patch fixes, and only a major removes or changes a frozen contract (ADR 0029). Two copies of `@oddkin/core` on one page, at any versions, follow core-contracts.md §5.1: DOM protocols and the external-store contract cross copies; readables, scopes, and error handlers do not; nothing compares versions at run time.
+- **Schemas and metadata.** `oddkin-metadata.v1`, `theme-config.v1`, the composition schema, `examples.v1`, and the agent kit's `kit.json` carry their own version; an additive field is a minor change of the package that emits it; a breaking change is a new schema version, with the previous one still read for one major (ADR 0029).
+- **Deprecation.** A deprecated API keeps working for at least one minor release, reports a development-only diagnostic naming its replacement, and is removed only in the next major, with a migration note in the changelog.
+- **Changelogs.** One `CHANGELOG.md` per package, newest first, with *Added*, *Changed*, *Fixed*, *Deprecated*, and *Removed* sections; entries come from the release's rows in [progress-log.md](./progress-log.md) and name the contract id or element they change. The first entry of each package is its first version. No changelog is written before the owner settles the versions.
+
+## 2. Tag-name conflicts (an honest note)
+
+Custom element names are global per registry. Oddkin registers `odd-*` names in the page's global registry:
+
+- Loading two copies of `@oddkin/components` (or two applications that each bundle it) on one page registers each name once: the second `define()` throws `registry.collision` and the first registration stays (core-contracts.md §5.1; `e2e/duplicate-core.spec.ts`). Deduplicate the install, or isolate the second copy in a frame.
+- Renaming tags does not avoid the conflict: an element's internal dependencies keep their names.
+- Scoped custom element registries are not used or tested; they are not a supported workaround until they are.
+- Workbench previews run in frames, each with its own registry, and reject incompatible registrations (`frame.registration.incompatible`).
+
+## 3. Release checklist
+
+Package hygiene, checked by `npm run verify:packs` on the tarballs:
+
+- [x] `license` (MIT) in every manifest and a `LICENSE` file in every tarball.
+- [x] `README.md` in every tarball; `type: "module"`; `sideEffects` declared (`false`, or the `define` entries that register).
+- [x] Every JavaScript export has its declarations (`types`); `customElements` points at the manifest in the element packages.
+- [x] No `src/` or `test/` file in a tarball; no third-party runtime dependency outside Node-only tooling.
+- [ ] Versions, internal caret ranges, and changelogs as in §1, after the owner settles them.
+- [ ] `private: true` removed from the published packages, after the owner confirms the `@oddkin` npm scope.
+
+Verification (results recorded in [verification.md](./verification.md), by owner of each failure):
+
+- [ ] `npm run build`, `npm run lint`, `npm run typecheck`, and the node project.
+- [ ] The browser project per engine with `--no-file-parallelism` (the full parallel run is deferred by the owner, 2026-10-27), and `npm run test:e2e`.
+- [ ] `npm run verify:metadata`, `npm run size`, `npm run verify:packs`, the packed consumers (`e2e/packed-consumers.spec.ts`, `e2e/components-only.spec.ts`, `e2e/autoload.spec.ts`), and `npm run compat` with the floor probe (`npm run compat:floor`).
+- [ ] The browser floor re-resolved and the matrix regenerated ([compatibility/matrix.md](./compatibility/matrix.md)); Safari 17.4 and screen-reader evidence recorded as limitations until a macOS host and assistive technology are available.
+- [ ] `oddkin-impact` against the previous release once there is one, with the semver impact reviewed.
+
+Then the owner tags, publishes, and deploys.

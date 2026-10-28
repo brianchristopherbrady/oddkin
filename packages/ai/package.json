@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
+    "directory": "packages/ai"
+  },
   "description": "Optional AI interaction elements, headless controllers, and stream adapters for conversation, inline assistance, research, and agent workflows.",
   "type": "module",
   "sideEffects": [

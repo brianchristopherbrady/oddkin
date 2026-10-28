@@ -7,7 +7,7 @@ import { expect, request, test, type Page } from '@playwright/test';
 // builds, Node or tooling entries, examples, or optional modules it does not use.
 const server = 'http://127.0.0.1:4174';
 const tooling =
-  /\/(node|inspect|test|frameworks)\/|\.examples\.|@oddkin\/(analyzer|workbench|ai)\//;
+  /\/(node|inspect|test|frameworks|agent|composition)\/|\.examples\.|@oddkin\/(analyzer|workbench|ai)\//;
 
 interface Packed {
   installed: string[];
@@ -104,6 +104,60 @@ test.describe('CSS only', () => {
         getComputedStyle(document.documentElement).getPropertyValue('--odd-color-canvas').trim(),
       ),
     ).not.toBe('');
+    expect(errors).toEqual([]);
+  });
+});
+
+test.describe('CSS only with the recipes', () => {
+  test.beforeAll(async () => {
+    test.setTimeout(180_000);
+    await ready('css-recipes');
+  });
+
+  test('styles a page with the installed theme and recipe stylesheets (layout.css too) and no script', async ({
+    page,
+  }) => {
+    const packed = await ready('css-recipes');
+    expect(packed.installed).toEqual(['@oddkin/components', '@oddkin/core', '@oddkin/tokens']);
+    expect(packed.files).toEqual([]);
+    const requests: string[] = [];
+    page.on('request', (request) => requests.push(new URL(request.url()).pathname));
+    const errors = await open(page, `${server}/css-recipes/`);
+    expect(requests.filter((path) => /\.m?js$/.test(path))).toEqual([]);
+    expect(requests.filter((path) => path.endsWith('.css')).sort()).toEqual(
+      [
+        'tokens/dist/css/default.css',
+        ...['reset', 'base', 'layout', 'typography', 'button', 'field'].map(
+          (sheet) => `components/dist/css/${sheet}.css`,
+        ),
+      ]
+        .map((file) => `/css-recipes/node_modules/@oddkin/${file}`)
+        .sort(),
+    );
+    const styles = await page.evaluate(() => {
+      const probe = document.createElement('div');
+      probe.style.columnGap = 'var(--odd-layout-gap)';
+      document.body.append(probe);
+      const css = (selector: string) =>
+        getComputedStyle(document.querySelector(selector) as Element);
+      const [save, cancel] = [...document.querySelectorAll('#actions button')].map(
+        (button) => getComputedStyle(button).backgroundColor,
+      );
+      return {
+        stack: [css('#page').display, css('#page').flexDirection, css('#page').rowGap],
+        cluster: [css('#actions').display, css('#actions').flexWrap],
+        layoutGap: getComputedStyle(probe).columnGap,
+        buttons: save !== cancel && save !== 'rgba(0, 0, 0, 0)',
+      };
+    });
+    expect(styles).toEqual({
+      stack: ['flex', 'column', styles.layoutGap],
+      cluster: ['flex', 'wrap'],
+      layoutGap: styles.layoutGap,
+      buttons: true,
+    });
+    expect(styles.layoutGap).not.toBe('normal');
+    expect(await violations(page)).toEqual([]);
     expect(errors).toEqual([]);
   });
 });

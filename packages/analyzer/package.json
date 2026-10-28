@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
+    "directory": "packages/analyzer"
+  },
   "description": "Node-only static analysis of Oddkin component libraries: Custom Elements Manifest and oddkin.metadata.json, without executing component code.",
   "type": "module",
   "sideEffects": false,

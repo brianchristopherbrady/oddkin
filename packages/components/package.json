@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
+    "directory": "packages/components"
+  },
   "description": "Accessible, themed custom elements, Oddkin layout presets, and component metadata.",
   "type": "module",
   "sideEffects": [

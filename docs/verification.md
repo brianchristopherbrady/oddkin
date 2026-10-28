@@ -3704,3 +3704,17 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Negative check | `@customization 1 2 3` on odd-activity, metadata rebuilt | "every element declares levels 1 and 2" fails; restored |
 | Node tests | `npx vitest run --project node packages/ai packages/analyzer/test/analyzer.test.ts tests/agent-kit` | 14 files, 150 passed |
 | Typecheck, format | `npm run typecheck`, `npx prettier --check` | OK; `build-metadata.mjs` gives no warnings |
+
+## 2026-10-27 — Release readiness, first pass (Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Package hygiene audit | `node .tmp/pkg-audit.mjs` (manifest fields per package) | before: no package had a `LICENSE` file or `repository`; every JavaScript export already had `types`; `sideEffects` declared everywhere; `@oddkin/core`'s README had no example; every package `0.0.0`, `private`, internal dependencies pinned to `0.0.0`, no changelog |
+| Packed packages | `npm run verify:packs` | OK: 8 packages from tarballs; each tarball has `LICENSE` and `README.md`; each manifest its licence, description, repository directory, module type, `sideEffects`, and `types` for every JavaScript export; typed token refs reject an unknown name; docs snippets resolve |
+| Hygiene probes | `verify-packs` with `packages/state/LICENSE` removed and `packages/app`'s `repository.directory` wrong | both reported (`@oddkin/state: tarball has no LICENSE`, `@oddkin/app: repository.directory is not packages/app`); restored |
+| Packed consumers | `npx playwright test e2e/packed-consumers.spec.ts e2e/components-only.spec.ts --workers=2` | 44 passed, 4 skipped (engine skips), three engines, including the new `css-recipes` consumer: `@oddkin/components`, `core`, and `tokens` installed, no script requested, the seven stylesheets served from `node_modules`, `.odd-stack` a flex column with the theme's layout gap, `.odd-cluster` wrapping, primary and secondary buttons styled differently, no CSP violation. With the default workers, Chromium's first requests timed out in `__ready` (170 s) while the server packed four consumers at once under load, and Firefox requested `/favicon.ico`, which the fixture's CSP blocked until it allowed `img-src 'self'` |
+| Core README | the two snippets type-checked with `tsc --strict --module nodenext` against the built `@oddkin/core` | OK |
+| Compatibility matrix | `node scripts/compat/check-css.mjs --write` | OK: 72 features, 201 stylesheets, 325 keys; no change |
+| Browser floor | `npm run compat:floor` | Chrome for Testing 130.0.6723.116 and Firefox 132.0: 16/16 checks each, 24 detections, none differing from BCD; `research/compatibility/floor-results.json` gains the `forced-color-adjust` detection both support. `run-floor.mjs` wrote its results but did not exit, and was stopped by hand. Safari 18.2 stays a recorded gap |
+
+**Remaining (M12):** versions, internal ranges, and changelogs wait for the owner (release-process.md §1); a Sass consumer waits for M9's Sass output; two released versions installed side by side need a release.

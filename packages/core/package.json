@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
+    "directory": "packages/core"
+  },
   "description": "Authoring foundation: reactive primitives, Scope, OddkinElement, templates, styles, layout recipes, collections, models, registration.",
   "type": "module",
   "sideEffects": false,
