@@ -25,12 +25,12 @@ Candidates are the contracts the proposed v1 cut ships (plan §11). Each is back
 | Metadata | CEM 2.1.0 plus `oddkin-metadata.v1`, `diagnostic.v1`, `examples.v1` (the `defineExamples` output), `agent-kit.v1` and the packaged kits, the composition schema (D3) | `verify-metadata`, `verify-packs`, schema tests |
 | State and app | core-contracts.md §7–§9 | `packages/state/test`, `packages/app/test`, `e2e/router*.spec.ts` |
 
-Not candidates (released as 0.x with `@oddkin/analyzer` and `@oddkin/workbench`, whose completion follows v1): `workbench-config.v1`, `page-registry.v1`, `docs-content.v1`, `share-payload.v1`, `theme-studio-composition.v1`, the frame protocol, `product.v1`, `project-context.v1`, and the assurance contracts below. The `defineExamples()` helper lives in Workbench; its output format, `examples.v1`, is the candidate.
+Not candidates (not frozen at 1.0.0; `@oddkin/analyzer` and `@oddkin/workbench`, whose completion follows v1, were proposed as 0.x, but the owner put all eight packages on `1.0.0-beta.0` on 2026-10-27, so these contracts are listed as unfrozen in their packages instead): `workbench-config.v1`, `page-registry.v1`, `docs-content.v1`, `share-payload.v1`, `theme-studio-composition.v1`, the frame protocol, `product.v1`, `project-context.v1`, and the assurance contracts below. The `defineExamples()` helper lives in Workbench; its output format, `examples.v1`, is the candidate.
 
 ### 2. Assurance review
 
-- **Conformance (`conformance.v1`, `conformance-result.v1`).** One suite exists (`oddkin.button`, M4): 11 cases pass for the default, a recomposed, and an alternative-template button in three engines, and six targeted mutants are rejected on their cases; no false positive was observed, but one suite is not a population. Not frozen: it stays a 0.x Workbench contract until M10's conformance suites per component.
-- **Impact (`comparison-snapshot.v1`, `impact-report.v1`).** 46 known-answer cases with hand-written expected selections (no missed and no extra dependency), real snapshots of both component packages (945 items, 0 unresolved), selected checks run in three engines, and git-revision bases (verification.md, 2026-10-19). 9 of 9 mutants killed. Not covered: visual baselines and real product contexts. Not frozen: analyzer 0.x.
+- **Conformance (`conformance.v1`, `conformance-result.v1`).** One suite exists (`oddkin.button`, M4): 11 cases pass for the default, a recomposed, and an alternative-template button in three engines, and six targeted mutants are rejected on their cases; no false positive was observed, but one suite is not a population. Not frozen: it stays an unfrozen Workbench contract until M10's conformance suites per component.
+- **Impact (`comparison-snapshot.v1`, `impact-report.v1`).** 46 known-answer cases with hand-written expected selections (no missed and no extra dependency), real snapshots of both component packages (945 items, 0 unresolved), selected checks run in three engines, and git-revision bases (verification.md, 2026-10-19). 9 of 9 mutants killed. Not covered: visual baselines and real product contexts. Not frozen: an unfrozen analyzer contract.
 - **Explanations and reproductions (`explanation.v1`, `reproduction.v1`).** Not implemented: M11, after v1.
 - **Inspection overhead.** `@oddkin/core/inspect` is not built, so production builds carry no inspector; they carry `scopeStats()` (live counts, both builds) and nothing that records history. Graph inspection belongs to M11's runtime explanations (core-contracts.md §6.2 "Inspection").
 
@@ -59,13 +59,13 @@ Every open or partial contract in plan §2.4–§5f has an owner:
 | --- | --- |
 | §2.5 browser/AT baseline | Browser part done; assistive-technology pairs and Safari runtime evidence deferred by the owner (hardware), recorded as limitations |
 | §2.5 independent consumers and duplicates | Done for copies at one version; different released versions: M12, after a release |
-| §2.5 version ranges | Proposed in release-process.md §1; share payloads and the frame protocol: Workbench 0.x (M11) |
+| §2.5 version ranges | Set: caret ranges of `1.0.0-beta.0` (release-process.md §1, §5); share payloads and the frame protocol: unfrozen Workbench contracts (M11) |
 | §3.2 bounded inspection | Lifetime and store inspection done; graph inspection: M11 |
 | §5.1 adopted sheet ownership | Constructed sheets are per document (`element.browser.test.ts`, `foundation.browser.test.ts` adoption), preview-owned sheets never replace shared ones (`preview.browser.test.ts`); a written rule for sheets a consumer supplies: M9 (Theme Studio) |
 | §5.1 DTCG Resolver | M9 |
 | §5.1 colour contracts | Done for the base theme and products (contrast report); colour roles overridden by profiles: M9 |
 | §5a page-author recipes | Classes and override properties shipped (`layout.css`, M10); handwritten comparison exists (`examples/side-nav/hand.css`); authoring-time comparison: §8.3, after v1 |
-| §5c analyzer (5 items) | After v1 (analyzer 0.x), except that browser-safe declarations are checked at M12 (`verify-packs` type-checks every declaration with `skipLibCheck: false`) |
+| §5c analyzer (5 items) | After v1 (unfrozen analyzer contracts), except that browser-safe declarations are checked at M12 (`verify-packs` type-checks every declaration with `skipLibCheck: false`) |
 | §5d.1 Workbench correctness (6 items) | Handshake validation, lazy loading, and Workbench's own accessibility: v1 (Agent 2, round 9); the rest M11 |
 | §5d.2 Workbench pages (9 items) | M11, after v1, except what the docs app embeds |
 | §5f docs (8 items) | Starting points, static readable pages, and loading and failure presentation: the docs app's v1 core (Agent 2); case studies, `oddkin doctor`, agent assets: after v1; localization contracts: core-contracts.md §4.2 now, product guidance M11; scope review: this checkpoint, and every milestone |

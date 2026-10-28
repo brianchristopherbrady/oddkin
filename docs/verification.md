@@ -3843,4 +3843,10 @@ Tried in the a3 worktree, then reverted (main keeps `0.0.0` and `private: true`)
 | Packed consumers | `npx playwright test e2e/packed-consumers.spec.ts --project=chromium --workers=2` (e2e lock taken) | 7 passed |
 | Publish dry run | `node scripts/release/publish.mjs`; `npm publish --dry-run --workspace packages/core --tag beta` | All 8 would publish in order; npm reports "with tag beta and public access" (core 190.9 kB, 245 files) |
 
-**Findings:** (1) Every contract-test record goes stale with a version change (the CEM manifest's hash is an input), so a release reruns the two contract tests in three engines before `verify:metadata`. (2) `scripts/release/publish.mjs` refuses a private or non-public package and passes `--tag` itself; it publishes only with `--publish`, which agents never use. (3) The docs app's install line (`apps/docs/src/pages/reference.ts`, Agent 1) still says `npm install @oddkin/tokens @oddkin/core @oddkin/components` without `@beta`.
+**Findings:** (1) Every contract-test record goes stale with a version change (the CEM manifest's hash is an input), so a release reruns the two contract tests in three engines before `verify:metadata`. (2) `publishConfig` carries `tag: beta` again, as the owner asked, although npm 11.19 ignores it (the trial above); `scripts/release/publish.mjs` passes `--tag` itself, refuses a private or non-public package, and publishes only with `--publish`, which agents never use. (3) The docs app's install line (`apps/docs/src/pages/reference.ts`, Agent 1) still says `npm install @oddkin/tokens @oddkin/core @oddkin/components` without `@beta`.
+
+## 2026-10-28 — Containment in WebKit (Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Containment, WebKit | `node research/experiments/containment/run.mjs --engines webkit --rounds 5` (machine load about 50–80%) | WebKit 27.2, merged into `research/benchmarks/results/containment-2026-10-28.json`; tables in the experiment README. Cards (none → `contain` / `content-visibility`): theme 375 ms → 340.5 ms / 318 ms, resize 428.5 ms → 391 ms / 20.5 ms, first layout 320 ms → 559 ms / 199 ms; 97,721 viewport pixels change with containment; last card found by `window.find()`: true. Conversation: theme 104.5 ms → 89 ms / 111 ms, resize 169.5 ms → 173.5 ms / 12 ms, stream 109 ms → 81 ms / 88.5 ms; follows the latest: true |

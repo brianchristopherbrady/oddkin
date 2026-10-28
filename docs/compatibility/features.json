@@ -795,7 +795,7 @@
       "adoption": "foundation",
       "status": "evaluated",
       "baseline": "Not applied by default. Containment changes containing blocks, stacking, intrinsic size, and overflow clipping, so it is added per component only with measurements and checks that focus rings, shadows, overlays, and sticky content still render.",
-      "decision": "Not applied by any component (M8 CSS review, research/experiments/containment): contain: content on 400 cards or 200 conversation messages gave no consistent gain on theme changes or resizing in Chromium or Firefox (WebKit not yet measured), and its paint containment clips an elevated card's shadow, which an element inside the shadow root draws. Revisit per component only with a measured need."
+      "decision": "Not applied by any component (M8 CSS review, research/experiments/containment): contain: content on 400 cards or 200 conversation messages gave no consistent gain on theme changes or resizing in Chromium, Firefox, or WebKit (its one gain: WebKit's streaming layout, 28 to 8 ms per snapshot), and its paint containment clips an elevated card's shadow, which an element inside the shadow root draws. Revisit per component only with a measured need."
     },
     {
       "id": "wide-gamut-color",

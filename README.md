@@ -15,7 +15,7 @@ Packages are published under `@oddkin/*`; elements use the `odd-` prefix (`<odd-
 
 ## Status
 
-Early development; nothing is published. `@oddkin/core`, `@oddkin/tokens`, and `@oddkin/analyzer` have implemented, tested public APIs; `@oddkin/components` has its first three elements (M4 in progress); `@oddkin/ai` is implemented with 24 elements, controllers, adapters, and three simulated demos. See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for milestones and current state, and [docs/verification.md](./docs/verification.md) for recorded results.
+Beta. The eight packages are versioned `1.0.0-beta.0` and ready to publish on the `beta` dist-tag (`npm install @oddkin/core@beta`); the owner publishes them ([release-process.md](./docs/release-process.md) §5), and contracts may still change before 1.0.0. `@oddkin/components` has 54 elements and `@oddkin/ai` 24, each with contract-test evidence in three engines. See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for milestones and current state, and [docs/verification.md](./docs/verification.md) for recorded results.
 
 ## Repository layout
 
@@ -52,4 +52,4 @@ npm run compat:floor   # install Chrome 130 and Firefox 132 outside the repo and
 
 ## Licence
 
-MIT; see [LICENSE](./LICENSE). All packages stay marked `private` until npm scope ownership is confirmed (see the plan's release checklist).
+MIT; see [LICENSE](./LICENSE). The eight packages publish with public access under the owner's `@oddkin` scope; the docs app and the workspace root stay private.
