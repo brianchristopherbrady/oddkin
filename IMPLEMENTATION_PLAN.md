@@ -105,7 +105,7 @@ Exit criteria:
   - M4's partial items: the details of `odd-button`, `odd-input`, and `odd-card`; the scripted keyboard suite; framework remount behaviour.
   - §5f's localization contracts and its loading and fallback presentation.
 - [ ] **P1.3 Core semantics (Agent 1).** §3.2's bounded inspection, M8's comprehension review of the binding rule, and M8's scope and direction item.
-- [ ] **P1.4 Accessibility and guidance (Agent 1; deferred by the owner).** The sweep over every element (M8), and guidance with correct and incorrect example pairs (M10). Recommended before the v1 freeze. It starts when the owner lifts the deferral.
+- [ ] **P1.4 Accessibility and guidance (the owner).** The owner will run its own agentic accessibility flow over the components later (2026-10-28), so no agent runs the sweep over every element (M8). Agents keep each element they touch accessible and tested. Guidance with correct and incorrect example pairs (M10) stays deferred.
 - [ ] **P1.5 Theme Studio (Agent 2).** M9's Theme Studio items: controls for every category, specimens, role mapping, token inspection, visualizations, layout roles, comparison, undo, share, export, save to file, and complete keyboard and screen-reader operation.
 - [ ] **P1.6 Analyzer and metadata (Agent 2).** §5c, M4's analyzer relationships, and the remainder of M8's metadata and tooling review.
 - [ ] **P1.7 Assurance (Agent 2, with Agent 1).** Conformance suites per catalog component (M10), the ADR 0043 role compatibility check, and visual baselines (M5).
@@ -118,7 +118,7 @@ Exit criteria:
   - Agent 2 adds Workbench collection discovery (§17 of that plan) and analyzer metadata for icons.
   - A third, fixture collection proves that a new collection needs no framework change.
   - Prerequisites: P0.6 (CI), P0.3 (Workbench), and the `icon.size.*` tokens.
-- [ ] **P2.2 Agent package and MCP (Agent 2).** D7 (`@oddkin/agent`) and the optional MCP adapter return only with the owner's approval; they were skipped on 2026-10-27.
+- [ ] **P2.2 Agent package and MCP (Agent 2).** D7 (`@oddkin/agent`) and the optional MCP adapter stay skipped (owner, 2026-10-27, confirmed 2026-10-28: not fundamental yet). They return only with the owner's approval.
 - [ ] **P2.3 Workbench completion (Agent 2).** M11's Workbench items (composition previews, model editors, content customization, API comparison, explanations, reproductions, product comparison) and §5d.2.
 - [ ] **P2.4 Products (Agents 1 and 2).** M9's products-and-modes items, built on P1.1's overrides.
 
