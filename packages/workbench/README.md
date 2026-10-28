@@ -2,6 +2,8 @@
 
 Metadata-driven documentation tooling for any custom-element library. **Status:** the DOM-free contract entries, the data files, the shell, panels, isolated previews, Theme Studio, and the Node tooling (`oddkin analyze`, `oddkin workbench dev`, `oddkin workbench build`) exist (design: [workbench.md](../../docs/architecture/workbench.md) §2.1 and §5.1).
 
+**Stability:** Workbench is versioned `1.0.0` with the other Oddkin packages, but its own contracts are **not frozen by 1.0.0** ([ADR 0047](../../docs/architecture/decisions/0047-m8-checkpoint-candidate-v1-contracts.md)): the configuration (`workbench-config.v1`), the page registry (`page-registry.v1`), authored content (`docs-content.v1`), example links (`share-payload.v1`), Theme Studio compositions (`theme-studio-composition.v1`), the preview frame protocol, and the conformance suites and results (`conformance.v1`, `conformance-result.v1`). Until they are frozen they can change in a minor release ([release-process.md](../../docs/release-process.md) §1). The format `defineExamples()` writes, `examples.v1`, is a candidate v1 contract.
+
 | Entry | Contents |
 | --- | --- |
 | `@oddkin/workbench/examples` | `defineExamples(tag, examples)`, typed from `HTMLElementTagNameMap` (unknown property keys and wrong value types are compile errors); `toExamplesJSON` (the `examples.v1` serializable layer, with fixtures reduced to `hasFixture`); `checkExamples(set, contract)` for plain-JavaScript authors; `exampleId` |

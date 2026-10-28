@@ -38,26 +38,35 @@ test.describe('Theme Studio', () => {
     await expect(page.locator('main h1')).toHaveText('Theme Studio');
     for (const [i, mode] of MODES.entries()) {
       const frame = page.frameLocator('oddkin-workbench-theme-studio iframe').nth(i);
-      expect(
-        await frame
-          .locator('figure')
-          .evaluateAll((figures) =>
-            figures.map(
-              (f) => `${(f as HTMLElement).dataset['role']}:${f.lastElementChild?.localName}`,
-            ),
-          ),
-      ).toEqual([
+      const figures = await frame
+        .locator('figure')
+        .evaluateAll((all) =>
+          all.map((f) => `${(f as HTMLElement).dataset['role']}:${f.lastElementChild?.localName}`),
+        );
+      // The built-in specimen roles first, in their order; then the roles examples add, by name.
+      expect(figures.slice(0, 8)).toEqual([
         'surface:odd-card',
+        'badge:odd-badge',
         'textInput:odd-input',
+        'checkbox:odd-checkbox',
+        'switch:odd-switch',
         'primaryAction:odd-button',
         'secondaryAction:odd-button',
         'navigation:odd-side-nav',
       ]);
+      const added = figures.slice(8).map((figure) => figure.split(':'));
+      expect(added.length).toBeGreaterThan(0);
+      const names = added.map(([role]) => role ?? '');
+      expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));
+      for (const [, tag] of added) expect(tag).toMatch(/^odd-[a-z-]+$/);
       await expect(frame.locator('[data-oddkin-preview]')).toHaveAttribute('data-odd-mode', mode);
     }
-    // Roles without a claiming example are labelled with what supplies them.
-    await expect(page.locator('[data-missing="role:checkbox"]')).toContainText(
-      "previewRoles: ['checkbox']",
+    // Roles without a claiming example, or claimed twice, are labelled with what supplies them.
+    await expect(page.locator('[data-missing="role:heading"]')).toContainText(
+      "previewRoles: ['heading']",
+    );
+    await expect(page.locator('[data-missing="role:menu"]')).toContainText(
+      'themeStudio.preview.roles.menu (claimed by odd-menu/',
     );
   });
 
