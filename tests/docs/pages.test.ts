@@ -16,6 +16,7 @@ import {
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const clientRoutes = [
   /^\/components(\/[a-z0-9-]+)?$/,
+  /^\/ai$/,
   /^\/layout\/side-nav$/,
   /^\/architecture\/scope-ownership$/,
   /^\/search$/,

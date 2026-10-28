@@ -189,6 +189,39 @@ test('unknown local references render a not-found state', async ({ page }) => {
   expect((await page.request.get(`${docs}/favicon.ico`)).status()).toBe(404);
 });
 
+test('the AI page shows a live conversation and links every AI element to its reference', async ({
+  page,
+}) => {
+  const metadata = (await (
+    await page.request.get(`${docs}/public/@oddkin/ai/oddkin.metadata.json`)
+  ).json()) as { components: Record<string, { tag: string }> };
+  const tags = Object.values(metadata.components).map(({ tag }) => tag);
+  await page.goto(`${docs}/ai`);
+  await expect(page.getByRole('heading', { name: 'AI interfaces', level: 1 })).toBeVisible({
+    timeout: catalogLoad,
+  });
+  // The conversation and composer examples, composed; the conversation renders its records.
+  await expect(page.locator('.ai-example odd-conversation')).toContainText(
+    'Summarize the release notes.',
+    { timeout: catalogLoad },
+  );
+  await expect(
+    page.locator('.ai-example odd-conversation > odd-prompt-input[slot="composer"]'),
+  ).toBeAttached();
+  await expect(
+    page.getByRole('heading', { name: `${tags.length} interaction elements` }),
+  ).toBeVisible();
+  const links = page.locator('.ai-element-links a');
+  expect(
+    (await links.evaluateAll((list) => list.map((a) => a.getAttribute('href')))).sort(),
+  ).toEqual(tags.map((tag) => `/components/${tag}`).sort());
+  await page.locator('.ai-element-links a[href="/components/odd-prompt-input"]').click();
+  await expect(page.locator('#main .page-header .eyebrow')).toHaveText('AI · odd-prompt-input', {
+    timeout: catalogLoad,
+  });
+  await expect(page.locator('oddkin-component-panel')).toBeVisible();
+});
+
 test('every published component is listed under its category and has a reference page', async ({
   page,
 }) => {

@@ -64,18 +64,23 @@ function defaultExample(page: ComponentPageData) {
   };
 }
 
-/** Builds a component's default example in `host`: its registration, attributes, properties, and slot text. */
-async function renderPreview(host: HTMLElement, index: WorkbenchIndex, entry: PageEntry) {
-  const tag = entry.id.replace(/^components\//, '');
-  const page = await loadComponent(index, tag);
-  const registration = page?.enrichment?.['registration'];
-  const values = page && defaultExample(page);
-  if (!page || typeof registration !== 'string' || !values) return;
+/**
+ * A component's default example as an element: its registration loaded, then its attributes,
+ * properties, and (unless `slots` is false) slot text. Undefined when it has no such example.
+ */
+export async function exampleElement(
+  page: ComponentPageData,
+  { slots = true }: { slots?: boolean } = {},
+): Promise<HTMLElement | undefined> {
+  const registration = page.enrichment?.['registration'];
+  const values = defaultExample(page);
+  if (typeof registration !== 'string' || !values) return undefined;
   await import(registration);
-  const element = document.createElement(tag);
+  const element = document.createElement(page.tag);
   for (const [name, value] of Object.entries(values.attributes))
     if (typeof value === 'string') element.setAttribute(name, value);
   for (const [name, value] of Object.entries(values.properties)) Reflect.set(element, name, value);
+  if (!slots) return element;
   for (const [slot, text] of Object.entries(values.slots)) {
     if (typeof text !== 'string') continue;
     if (slot === 'default') element.append(text);
@@ -86,7 +91,14 @@ async function renderPreview(host: HTMLElement, index: WorkbenchIndex, entry: Pa
       element.append(part);
     }
   }
-  host.replaceChildren(element);
+  return element;
+}
+
+/** Builds a component's default example in `host`. */
+async function renderPreview(host: HTMLElement, index: WorkbenchIndex, entry: PageEntry) {
+  const page = await loadComponent(index, entry.id.replace(/^components\//, ''));
+  const element = page && (await exampleElement(page));
+  if (element) host.replaceChildren(element);
 }
 
 /**

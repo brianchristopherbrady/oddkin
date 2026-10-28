@@ -8,6 +8,7 @@ import type {
   WorkbenchIndex,
 } from '@oddkin/workbench/data';
 import { pages, type Page } from './pages/index.js';
+import { AI_DESCRIPTION, renderAi, type AiData } from './ai.js';
 import {
   catalogGroups,
   catalogPreviews,
@@ -155,6 +156,18 @@ const componentRoute = route({
   params: ({ tag }) => (tag && /^[a-z0-9-]+$/.test(tag) ? { tag } : undefined),
   title: ({ params }) => `<${params.tag}>`,
 });
+const aiRoute = route({
+  path: 'ai',
+  load: async ({ signal }: { signal: AbortSignal }): Promise<AiData> => {
+    const index = await loadIndex(signal);
+    const [conversation, composer] = await Promise.all([
+      loadComponent(index, 'odd-conversation', signal),
+      loadComponent(index, 'odd-prompt-input', signal),
+    ]);
+    return { index, conversation, composer };
+  },
+  title: 'AI interfaces',
+});
 const caseStudyRoute = route({
   path: 'architecture/scope-ownership',
   title: 'Case study: scope ownership',
@@ -174,6 +187,7 @@ const docsRoute = route({
     layoutGuideRoute,
     componentsRoute,
     componentRoute,
+    aiRoute,
     caseStudyRoute,
     searchRoute,
     notFoundRoute,
@@ -627,7 +641,14 @@ function renderRoute(state: RouterState): void {
       ),
       componentPanel(index, page),
     );
-  } else if (last.route === caseStudyRoute) renderCaseStudy(main);
+  } else if (last.route === aiRoute)
+    renderAi(
+      main,
+      last.data as AiData,
+      pageHeader('@oddkin/ai', 'AI interfaces', AI_DESCRIPTION),
+      panelHref,
+    );
+  else if (last.route === caseStudyRoute) renderCaseStudy(main);
   else if (last.route === searchRoute) renderSearch(main, String(last.search ?? ''), data);
   else if (last.route === notFoundRoute)
     main.replaceChildren(

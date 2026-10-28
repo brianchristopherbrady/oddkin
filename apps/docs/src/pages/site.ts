@@ -44,6 +44,7 @@ export interface ClientPage {
 
 export const clientPages: readonly ClientPage[] = [
   { path: 'components', title: 'Components', group: 'Build' },
+  { path: 'ai', title: 'AI interfaces', group: 'Build' },
   { path: 'layout/side-nav', title: 'Layout: side navigation', group: 'Build', parent: 'guides' },
   {
     path: 'architecture/scope-ownership',

@@ -80,10 +80,18 @@ describe('the static docs build', () => {
   it('writes the reference data with example values, a document per reference page, and the preview frame', () => {
     const index = JSON.parse(readFileSync(join(out, '_oddkin/index.json'), 'utf8')) as {
       pages: Record<string, string>;
-      registry: { pages: { id: string; kind: string; route: string; group?: string }[] };
+      registry: {
+        pages: { id: string; kind: string; route: string; group?: string; title: string }[];
+      };
     };
     const components = index.registry.pages.filter((page) => page.kind === 'component');
     expect(components.some((page) => page.group === 'AI')).toBe(true);
+    // Titles a tag cannot spell come from the docs' authored content (apps/docs/oddkin.docs.ts).
+    const title = (id: string) => components.find((page) => page.id === id)?.title;
+    expect([title('components/odd-ai-label'), title('components/odd-one-time-code')]).toEqual([
+      'AI label',
+      'One-time code',
+    ]);
     for (const page of components) {
       expect(existsSync(documentAt(out, page.route)), page.route).toBe(true);
       expect(existsSync(join(out, '_oddkin', index.pages[page.id]!)), page.id).toBe(true);
