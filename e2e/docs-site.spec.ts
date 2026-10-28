@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
@@ -171,6 +172,30 @@ test.describe('static docs site', () => {
     const missing = await page.goto(`${site}/not-a-page`);
     expect(missing?.status()).toBe(404);
     await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
+  test('draws each Foundations swatch with its token, in each mode, under the policy', async ({
+    page,
+    browserName,
+  }) => {
+    const { tokens } = JSON.parse(
+      readFileSync('packages/tokens/dist/inspect/default.inspect.json', 'utf8'),
+    ) as { tokens: { name: string; value: Record<string, string> }[] };
+    const canvas = tokens.find((token) => token.name === 'color.canvas')!.value;
+    const rgb = (hex: string) =>
+      `rgb(${[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(', ')})`;
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    const violations = await watchPolicy(page, browserName);
+    await page.goto(`${site}/foundations/color`);
+    for (const mode of ['light', 'dark'])
+      await expect(
+        page.locator(
+          `#roles .mode-scope[data-odd-mode="${mode}"] [data-token="--odd-color-canvas"]`,
+        ),
+      ).toHaveCSS('background-color', rgb(canvas[mode]!));
+    expect(await violations()).toEqual([]);
     expect(errors).toEqual([]);
   });
 });

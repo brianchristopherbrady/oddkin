@@ -281,7 +281,8 @@ odd-side-nav:not(:defined) > a {
   max-inline-size: 72ch;
 }
 
-.content-section li + li {
+/* Prose lists; card and specimen lists (role="list") keep their own spacing. */
+.content-section :is(ul, ol):not([role='list']) > li + li {
   margin-block-start: var(--odd-space-xs);
 }
 
@@ -398,6 +399,125 @@ odd-side-nav:not(:defined) > a {
 /* Words stay whole when the columns are sized; the region scrolls instead. */
 .table-scroll .odd-table :is(th, td) {
   overflow-wrap: break-word;
+}
+
+/* Foundations: each preview is drawn by its own token, set by the shell (data-preview). */
+.token-preview {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.token-preview-color {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  border-radius: var(--odd-radius-sm);
+}
+
+/* A swatch stays beside its value. */
+.odd-table td:has(> .mode-scope) {
+  white-space: nowrap;
+}
+
+.token-preview-radius {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border: var(--odd-border-width-strong) solid var(--odd-color-border-strong);
+  background: var(--odd-color-surface-sunken);
+}
+
+.token-preview-space {
+  block-size: 0.75rem;
+  background: var(--odd-color-action-default);
+}
+
+.token-preview-font-size {
+  font-family: var(--odd-font-family-sans);
+  line-height: 1;
+}
+
+.ramp {
+  margin: 0 0 var(--odd-space-xl);
+}
+
+.ramp figcaption,
+.mode-specimen figcaption,
+.reflow-specimen figcaption {
+  margin-block-end: var(--odd-space-sm);
+  font: var(--odd-type-ui-weight) var(--odd-type-ui-size) / var(--odd-type-ui-line-height)
+    var(--odd-type-ui-family);
+}
+
+.ramp-steps {
+  gap: var(--odd-space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ramp-steps li {
+  inline-size: 3.5rem;
+  gap: var(--odd-space-3xs);
+  font-size: var(--odd-type-small-size);
+}
+
+.ramp-steps .token-preview-color {
+  inline-size: 100%;
+  block-size: 3rem;
+}
+
+.ramp-steps code {
+  color: var(--odd-color-text-secondary);
+}
+
+.mode-specimens {
+  margin-block: var(--odd-space-lg);
+}
+
+.mode-specimen {
+  margin: 0;
+  padding: var(--odd-space-lg);
+  border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  border-radius: var(--odd-radius-lg);
+  background: var(--odd-color-canvas);
+  color: var(--odd-color-text-primary);
+}
+
+.elevation-tiles,
+.role-swatches,
+.tone-list,
+.reflow-specimen ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.elevation-tile {
+  min-inline-size: 7rem;
+  padding: var(--odd-space-md);
+  border-radius: var(--odd-radius-md);
+  background: var(--odd-color-surface-raised);
+}
+
+.role-swatches li {
+  gap: var(--odd-space-sm);
+}
+
+.reflow-specimen {
+  margin: 0;
+  padding: var(--odd-space-md);
+  border: var(--odd-border-width-default) dashed var(--odd-color-border-strong);
+  border-radius: var(--odd-radius-md);
+}
+
+.reflow-specimen li {
+  padding: var(--odd-space-sm);
+  border-radius: var(--odd-radius-sm);
+  background: var(--odd-color-surface-sunken);
+}
+
+.duration-meter {
+  inline-size: 8rem;
 }
 
 /* Footer */

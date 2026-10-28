@@ -1,3 +1,4 @@
+import { foundationPages } from './foundations.js';
 import { agents, browserSupport, frameworks } from './guides.js';
 import { composition, formsAccessibility, layout, theming } from './guides-core.js';
 import { gettingStarted, guides, recipes } from './landing.js';
@@ -18,6 +19,7 @@ export const pages: readonly Page[] = [
   startWorkbench,
   install,
   frameworks,
+  ...foundationPages,
   concepts,
   guides,
   theming,
@@ -42,7 +44,6 @@ export interface ClientPage {
 
 export const clientPages: readonly ClientPage[] = [
   { path: 'components', title: 'Components', group: 'Build' },
-  { path: 'foundations', title: 'Foundations', group: 'Build' },
   { path: 'layout/side-nav', title: 'Layout: side navigation', group: 'Build', parent: 'guides' },
   {
     path: 'architecture/scope-ownership',

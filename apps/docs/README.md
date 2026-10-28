@@ -24,8 +24,8 @@ uses a strict CSP with Trusted Types enforcement.
 ## Static site and deployment
 
 `node apps/docs/build.mjs [--out <dir>]` (default `.oddkin/docs-site`) writes the static site: one
-document per route (authored pages in full, every component and foundation route as the shell the
-client fills), `404.html` for any other path, and the browser files of the packages the pages load.
+document per route (authored pages in full, every component route as the shell the client fills),
+`404.html` for any other path, and the browser files of the packages the pages load.
 Each document carries its Content-Security-Policy as a meta element that allows the import map by
 its hash. `.github/workflows/docs.yml` builds it on every push to `main` and deploys it to GitHub
 Pages; the repository's Pages settings name the source (GitHub Actions) and the custom domain.
@@ -37,14 +37,20 @@ Authored pages are data in `src/pages/` (blocks of text, lists, tables, code, an
 The dev server and the static build render each page into `index.html`, with the facts `facts.mjs`
 generates from the published files (package manifests, component metadata,
 `docs/compatibility/features.json`, the framework versions the typing fixtures use), so every
-authored page is readable before any script runs. `src/shell.ts` adds the dark mode switch, the
+authored page is readable before any script runs. The Foundations pages (`src/pages/foundations.ts`)
+read their values from `foundation-facts.mjs`: the default theme's tokens inspection and contrast
+report, odd-alert's documented examples, and tables of
+`docs/architecture/theming-and-styling.md`. Their swatches, shadows, corners, and bars name a token
+(`data-preview`, `data-token`); `src/shell.ts` draws each with its own `var()` through CSSOM, as the
+policy allows no inline style, and a `data-odd-mode` scope around a swatch shows that mode's value.
+`src/shell.ts` adds the dark mode switch, the
 narrow-screen menu, and search; the client keeps a page the server rendered and loads a page's
-document when its router reaches one. Metadata-backed routes (components, foundations, the layout
+document when its router reaches one. Metadata-backed routes (components, the layout
 guide, search) are rendered in the browser and need JavaScript and the published metadata/token
 JSON assets. There is no server-rendering of components, streaming, or hydration.
 
-Component, foundation, and catalog references are the public Workbench panels
-(`@oddkin/workbench/panels/{component,foundation,catalog}`), in open shadow roots. The docs app
+Component and catalog references are the public Workbench panels
+(`@oddkin/workbench/panels/{component,catalog}`), in open shadow roots. The docs app
 builds their data in the browser with `buildWorkbenchData` from `@oddkin/workbench/data`, from the
 same three published files, and passes `index`, `page`, and `href` (the router's `href`, so panel
 links navigate in the docs router). Each route loads only the panel it renders. `frameUrl` is left

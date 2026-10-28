@@ -16,7 +16,6 @@ import {
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const clientRoutes = [
   /^\/components(\/[a-z0-9-]+)?$/,
-  /^\/foundations(\/[a-z-]+)?$/,
   /^\/layout\/side-nav$/,
   /^\/architecture\/scope-ownership$/,
   /^\/search$/,
@@ -61,6 +60,56 @@ describe('authored docs pages', async () => {
     );
     expect(html).toContain('Firefox');
     expect(html).toContain('<code>custom-properties</code>');
+  });
+
+  it('show the default theme’s tokens as the inspection and the contrast report give them', () => {
+    interface Token {
+      name: string;
+      cssVariable: string;
+      category: string;
+      value: string | Record<string, string>;
+    }
+    const read = (file: string) =>
+      JSON.parse(readFileSync(`${root}packages/tokens/dist/inspect/${file}`, 'utf8')) as {
+        tokens: Token[];
+        modes: string[];
+        conditions: { atRule: string }[];
+        summary: { pass: number };
+      };
+    const inspection = read('default.inspect.json');
+    const contrast = read('default.contrast.json');
+    const html = (path: string) =>
+      renderPage(
+        pages.find((page) => page.path === path)!,
+        facts,
+      );
+    const color = html('foundations/color');
+    for (const token of inspection.tokens.filter((t) => t.category === 'reference')) {
+      expect(color, token.name).toContain(`data-token="${token.cssVariable}"`);
+      expect(color, token.name).toContain(`<code>${String(token.value)}</code>`);
+    }
+    // Each role is drawn in each mode's scope, beside that mode's value.
+    const canvas = inspection.tokens.find((t) => t.name === 'color.canvas')!;
+    for (const mode of inspection.modes)
+      expect(color).toContain(
+        `<span class="mode-scope" data-odd-mode="${mode}"><span class="token-preview token-preview-color" data-preview="color" data-token="--odd-color-canvas" aria-hidden="true"></span></span> <code>${(canvas.value as Record<string, string>)[mode]}</code>`,
+      );
+    expect(color).toContain(`${contrast.summary.pass} pairs pass`);
+    const families: Record<string, string> = {
+      'font.size.': 'foundations/typography',
+      'space.': 'foundations/spacing',
+      'radius.': 'foundations/borders-and-radii',
+      'elevation.': 'foundations/elevation',
+      'motion.': 'foundations/motion',
+      'layout.': 'foundations/responsive',
+    };
+    for (const [prefix, path] of Object.entries(families)) {
+      const page = html(path);
+      for (const token of inspection.tokens.filter((t) => t.name.startsWith(prefix)))
+        expect(page, token.name).toContain(`<code>${token.name}</code>`);
+    }
+    for (const condition of inspection.conditions)
+      expect(html('foundations/responsive')).toContain(`<code>${condition.atRule}</code>`);
   });
 
   it('say how each code sample is verified', () => {

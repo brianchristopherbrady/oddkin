@@ -2,7 +2,6 @@ import { createApp } from '@oddkin/app/app';
 import { createRouter, route, type AnyRoute, type RouterState } from '@oddkin/app/router';
 import type {
   ComponentPageData,
-  FoundationPageData,
   LibraryInput,
   TokenInspectionLike,
   WorkbenchData,
@@ -123,13 +122,6 @@ const layoutGuideRoute = route({
   title: 'Side navigation layout guide',
   load: componentPanelModule,
 });
-const foundationsRoute = route({ path: 'foundations', title: 'Foundations' });
-const foundationRoute = route({
-  path: 'foundations/:id',
-  load: () => import('@oddkin/workbench/panels/foundation/define'),
-  params: ({ id }) => (id ? { id } : undefined),
-  title: ({ params }) => `Foundation: ${params.id}`,
-});
 const componentsRoute = route({
   path: 'components',
   // The catalog renders its cards with odd-card, so this page alone loads a component module.
@@ -163,8 +155,6 @@ const docsRoute = route({
   load: ({ signal }) => loadDocsData(signal),
   children: [
     layoutGuideRoute,
-    foundationsRoute,
-    foundationRoute,
     componentsRoute,
     componentRoute,
     caseStudyRoute,
@@ -208,29 +198,6 @@ function section(title: string, description?: string): HTMLElement {
   return result;
 }
 
-function renderFoundations(main: HTMLElement, data: DocsData): void {
-  main.append(
-    pageHeader(
-      'Foundations',
-      'Design foundations',
-      'Published design-system facts, with token values sourced from the generated inspection.',
-    ),
-  );
-  const grid = node('div', 'card-grid odd-auto-grid odd-auto-grid-fit');
-  for (const [key, value] of entries(data.metadata['foundations'])) {
-    const foundation = isRecord(value) ? value : {};
-    const id = text(foundation['id'], key.replace(/^foundation:/, ''));
-    const card = node('article', 'doc-card odd-stack');
-    card.append(node('h2', undefined, id));
-    card.append(
-      node('p', undefined, `${strings(foundation['tokens']).length} published token references`),
-    );
-    card.append(makeLink(`Read ${id}`, `/foundations/${id}`));
-    grid.append(card);
-  }
-  main.append(grid);
-}
-
 interface CatalogFilter {
   readonly query: string;
   readonly category: string;
@@ -245,16 +212,6 @@ function componentPanel(data: DocsData, tag: string): HTMLElement | undefined {
   const panel = document.createElement('oddkin-component-panel');
   panel.index = data.workbench.index;
   panel.page = page as ComponentPageData;
-  panel.href = panelHref;
-  return panel;
-}
-
-function foundationPanel(data: DocsData, id: string): HTMLElement | undefined {
-  const page = data.workbench.pages[`foundations/${id}`];
-  if (page?.kind !== 'foundation') return undefined;
-  const panel = document.createElement('oddkin-foundation-panel');
-  panel.index = data.workbench.index;
-  panel.page = page as FoundationPageData;
   panel.href = panelHref;
   return panel;
 }
@@ -395,6 +352,19 @@ function renderLayoutGuide(main: HTMLElement, data: DocsData): void {
   if (panel) main.append(panel);
 }
 
+/** The Foundations page that documents a token, by its name. */
+function foundationOf(name: string): string {
+  const [head = '', second = ''] = name.split('.');
+  if (head === 'color' || head === 'ref') return 'color';
+  if (['type', 'font', 'line-height', 'letter-spacing'].includes(head)) return 'typography';
+  if (head === 'space') return 'spacing';
+  if (['border', 'radius', 'focus'].includes(head) || second === 'radius')
+    return 'borders-and-radii';
+  if (head === 'elevation' || head === 'motion') return head;
+  if (head === 'layout') return 'responsive';
+  return 'tokens';
+}
+
 function renderSearch(main: HTMLElement, query: string, data: DocsData): void {
   main.append(
     pageHeader(
@@ -433,11 +403,6 @@ function renderSearch(main: HTMLElement, query: string, data: DocsData): void {
       body: 'layout recipe regions conditions profile data declarative hybrid sources',
     },
     {
-      title: 'Design foundations',
-      path: '/foundations',
-      body: 'foundations color spacing borders radii',
-    },
-    {
       title: 'Component references',
       path: '/components',
       body: 'component api custom elements metadata',
@@ -457,15 +422,6 @@ function renderSearch(main: HTMLElement, query: string, data: DocsData): void {
       body: `${tag} ${strings(value['useFor']).join(' ')} ${strings(value['tokenReads']).join(' ')}`,
     });
   }
-  for (const [key, value] of entries(data.metadata['foundations'])) {
-    if (!isRecord(value)) continue;
-    const id = text(value['id'], key.replace(/^foundation:/, ''));
-    searchItems.push({
-      title: `${id} foundation`,
-      path: `/foundations/${id}`,
-      body: `${id} ${strings(value['tokens']).join(' ')}`,
-    });
-  }
   const tokens = Array.isArray(data.inspection['tokens'])
     ? data.inspection['tokens'].filter(isRecord)
     : [];
@@ -473,13 +429,7 @@ function renderSearch(main: HTMLElement, query: string, data: DocsData): void {
     const name = text(token['name']);
     searchItems.push({
       title: name,
-      path: `/foundations/${
-        name.startsWith('space.')
-          ? 'spacing'
-          : name.startsWith('border.') || name.startsWith('radius.')
-            ? 'borders-and-radii'
-            : 'color'
-      }`,
+      path: `/foundations/${foundationOf(name)}`,
       body: `${name} ${text(token['cssVariable'])} ${typeof token['value'] === 'string' ? token['value'] : ''}`,
     });
   }
@@ -627,24 +577,9 @@ function renderRoute(state: RouterState): void {
   main.replaceChildren();
   main.setAttribute('aria-busy', 'false');
   if (last.route === layoutGuideRoute) renderLayoutGuide(main, data);
-  else if (last.route === foundationsRoute) renderFoundations(main, data);
   else if (last.route === componentsRoute)
     renderComponents(main, data, last.search as CatalogFilter);
-  else if (last.route === foundationRoute) {
-    const id = String(record(last.params)['id']);
-    const panel = foundationPanel(data, id);
-    if (!panel) {
-      main.replaceChildren(
-        pageHeader(
-          'Not found',
-          'Foundation not found',
-          `No published foundation has the id \u201c${id}\u201d.`,
-        ),
-      );
-      return;
-    }
-    main.replaceChildren(pageHeader('Foundations', 'Foundation reference'), panel);
-  } else if (last.route === componentRoute) {
+  else if (last.route === componentRoute) {
     const tag = String(record(last.params)['tag']);
     const panel = componentPanel(data, tag);
     if (!panel) {

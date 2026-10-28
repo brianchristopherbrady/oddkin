@@ -3964,3 +3964,14 @@ The `--next` check rewrote and restored the manifests in this worktree while the
 | A next beta | a temporary worktree of HEAD with the new `publish.mjs` (removed afterwards): `set-versions.mjs --next --public`, then `publish.mjs` | For each of the eight in order: "Dry run: @oddkin/<name>@1.0.0-beta.1 --tag beta", then "Dry run, not run: npm dist-tag add @oddkin/<name>@1.0.0-beta.1 latest"; "8 packages would publish and latest would move for 8 (0 already there)" |
 
 **Not verified:** a live `latest` move; the first comes with the next beta.
+## 2026-10-28 — Docs site: the Foundations pages (Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Pages and shell | `npx vitest run tests/docs` | 17 passed. A new test checks that every reference step appears with its token and value, that `color.canvas` is drawn in each mode's scope beside that mode's value, the contrast summary, every token of six families on its page, and every condition |
+| Docs e2e | `npx playwright test e2e/docs.spec.ts e2e/docs-site.spec.ts --workers=2` (three engines, E2E lock) | 33 passed (3.5 min). The journey now goes through the authored Foundations pages. The static site draws `color.canvas` in each mode with the inspection's light and dark values, with no policy violation |
+| Static site, three engines | `.tmp` script on the built site: `/foundations/color/` in Chromium, Firefox, and WebKit | Light swatch `rgb(246, 245, 241)` and dark swatch `rgb(23, 24, 33)` in every engine (the inspection's `#f6f5f1` and `#171821`); no policy violation |
+| Build | `node apps/docs/build.mjs --out .oddkin/docs-site` | 89 routes and 404.html |
+| Types, lint, format | `npm run typecheck`; `node scripts/check-page-layout.mjs`; `node scripts/compat/check-css.mjs`; `npx prettier --check` on the changed files | Pass |
+
+Visual check in Chromium at 1,280 px (light, and dark for Themes) and at 320 px, with no horizontal overflow on any of the ten pages: ramps on one row, role tables with both swatches, action, elevation, and baseline specimens in each mode's scope, alerts in five tones, duration meters, and the reflow specimen with one column and then two.

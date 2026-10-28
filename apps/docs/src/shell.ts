@@ -135,9 +135,33 @@ export function showRoute(path: string): void {
   setMenu(false);
 }
 
+/** The CSS property each kind of token preview sets (`data-preview` in `pages/model.ts`). */
+const previewProperties: Readonly<Record<string, string>> = {
+  color: 'background-color',
+  shadow: 'box-shadow',
+  radius: 'border-radius',
+  space: 'inline-size',
+  'font-size': 'font-size',
+  width: 'max-inline-size',
+};
+
+/**
+ * Draws each token preview with the token itself. The policy allows no inline style, and CSSOM is
+ * not inline style; only Oddkin custom properties and the properties above are accepted.
+ */
+function drawTokens(): void {
+  for (const element of document.querySelectorAll<HTMLElement>('[data-preview][data-token]')) {
+    const property = previewProperties[element.dataset['preview'] ?? ''];
+    const token = element.dataset['token'] ?? '';
+    if (property && /^--odd-[a-z0-9-]+$/.test(token))
+      element.style.setProperty(property, `var(${token})`);
+  }
+}
+
 /** Starts the shell's behavior; `navigate` moves the docs router. */
 export function startShell(scope: Scope, navigate: (path: string) => void): void {
   root.toggleAttribute('data-docs-js', true);
+  drawTokens();
   modeToggle(scope);
   menu(scope);
   search(scope, navigate);

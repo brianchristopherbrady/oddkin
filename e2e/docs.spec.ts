@@ -101,11 +101,12 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(buttonPanel.getByText('Preview unavailable')).toBeVisible();
   expect(componentModules()).toHaveLength(before);
 
+  // Foundations are authored pages; their tables and swatches come from the tokens inspection.
   await page.locator('.side-nav a[href="/foundations"]').click();
-  await expect(page.getByRole('heading', { name: 'Design foundations' })).toBeVisible();
-  await page.getByRole('link', { name: 'Read spacing' }).click();
+  await expect(page.getByRole('heading', { name: 'Foundations', level: 1 })).toBeVisible();
+  await page.getByRole('link', { name: 'Read about spacing' }).click();
   await expect(page).toHaveURL(`${docs}/foundations/spacing`);
-  await expect(page.getByRole('rowheader', { name: 'space.md --odd-space-md' })).toBeVisible();
+  await expect(page.getByRole('rowheader', { name: 'space.md' })).toBeVisible();
 
   // Search is odd-command-palette over every page and component (Ctrl K or the header button).
   await page.getByRole('link', { name: 'Search docs' }).click();

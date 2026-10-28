@@ -3,6 +3,7 @@
 // typing fixtures are checked with. Nothing here is typed by hand.
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
+import { foundationFacts } from './foundation-facts.mjs';
 
 const BROWSERS = {
   chrome: 'Chrome',
@@ -159,6 +160,7 @@ export async function docsFacts(root) {
   const version = (name) => root_.devDependencies?.[name] ?? root_.dependencies?.[name];
 
   return {
+    ...(await foundationFacts(root)),
     decisions: [
       {
         table: {

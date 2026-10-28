@@ -6,9 +6,25 @@
 
 import { icons } from './icons.js';
 
-/** Inline content: text, code, a link, or emphasis. */
+/** What a token preview draws: the shell sets the matching CSS property to `var(<token>)`. */
+export type Preview = 'color' | 'shadow' | 'radius' | 'space' | 'font-size';
+export type Mode = 'light' | 'dark';
+/** The text roles of `@oddkin/components/css/typography.css` (`odd-type-<role>`). */
+export type TextRole =
+  'display' | 'section' | 'title' | 'body' | 'ui' | 'small' | 'eyebrow' | 'code';
+
+/** Inline content: text, code, a link, emphasis, or a token drawn with its own value. */
 export type Inline =
-  string | { code: string } | { link: string; href: string } | { strong: string };
+  | string
+  | { code: string }
+  | { link: string; href: string }
+  | { strong: string }
+  /** A token's value drawn by the shell (swatch, shadow, corner, bar, size), in a mode when named. */
+  | { preview: Preview; token: string; mode?: Mode; text?: string }
+  /** Text set in one of the text roles. */
+  | { sample: string; role: TextRole }
+  /** A duration drawn as a bar on a scale shared by its table. */
+  | { meter: number; max: number; label: string };
 
 /** Architecture documents and examples are linked in the source repository. */
 export const repository = 'https://github.com/brianchristopherbrady/oddkin/blob/main/';
@@ -32,7 +48,34 @@ export type Fact =
   | 'framework-versions'
   | 'decisions'
   | 'milestones'
-  | 'examples';
+  | 'examples'
+  | 'token-categories'
+  | 'token-pipeline'
+  | 'token-trace'
+  | 'palette'
+  | 'color-roles'
+  | 'action-roles'
+  | 'tone-roles'
+  | 'contrast-pairs'
+  | 'font-families'
+  | 'type-scale'
+  | 'text-styles'
+  | 'space-scale'
+  | 'layout-vocabulary'
+  | 'border-widths'
+  | 'border-roles'
+  | 'radii'
+  | 'radius-mappings'
+  | 'elevation-levels'
+  | 'motion-durations'
+  | 'motion-easings'
+  | 'theme-baseline'
+  | 'scope-attributes'
+  | 'scope-composition'
+  | 'conditions'
+  | 'layout-roles'
+  | 'profiles'
+  | 'layout-concerns';
 
 /** Another page summarized as a card: what it covers, the package it is about, and a link to it. */
 export interface Card {
@@ -51,7 +94,24 @@ export type Block =
   | { table: { caption: string; head: string[]; rows: Inline[][][] } }
   | { fact: Fact }
   | { note: Inline[] }
-  | { cards: Card[] };
+  | { cards: Card[] }
+  /** A reference colour ramp: each step's swatch, label, and value. */
+  | { ramp: { title: string; steps: { label: string; value: string; token: string }[] } }
+  /** The same specimen in each mode's scope, side by side. */
+  | { modes: { caption: string; modes: Mode[]; specimen: Specimen } }
+  /** One alert per tone, as `odd-alert` draws it. */
+  | { tones: { tone: string; label: string; token: string }[] }
+  /** The same items in a container as wide as each named layout token. */
+  | { reflow: { items: string[]; widths: { token: string; caption: string }[] } };
+
+/** What a mode specimen shows. */
+export type Specimen =
+  /** A primary `odd-button` with this label. */
+  | { action: string }
+  /** A surface per elevation token. */
+  | { elevation: string[] }
+  /** A swatch per colour token, with its name. */
+  | { roles: string[] };
 
 export interface Section {
   id: string;
@@ -92,12 +152,50 @@ const escapes: Record<string, string> = {
 };
 export const escapeHtml = (text: string): string => text.replace(/[&<>"']/g, (c) => escapes[c]!);
 
+/** A token drawn with its own value; the shell sets the property, so the page needs no inline style. */
+const preview = (kind: Preview, token: string, content = ''): string =>
+  `<span class="token-preview token-preview-${kind}" data-preview="${kind}" data-token="${escapeHtml(
+    token,
+  )}" aria-hidden="true">${content}</span>`;
+
+const capitalized = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
+
+function specimen(content: Specimen): string {
+  if ('action' in content)
+    return `<odd-button appearance="primary">${escapeHtml(content.action)}</odd-button>`;
+  if ('elevation' in content)
+    return `<ul class="elevation-tiles odd-cluster" role="list">${content.elevation
+      .map(
+        (name) =>
+          `<li class="elevation-tile token-preview-shadow" data-preview="shadow" data-token="--odd-${escapeHtml(
+            name.replace(/\./g, '-'),
+          )}"><code>${escapeHtml(name)}</code></li>`,
+      )
+      .join('')}</ul>`;
+  return `<ul class="role-swatches odd-stack" role="list">${content.roles
+    .map(
+      (name) =>
+        `<li class="odd-row">${preview('color', `--odd-${name.replace(/\./g, '-')}`)}<code>${escapeHtml(name)}</code></li>`,
+    )
+    .join('')}</ul>`;
+}
+
 function inline(content: readonly Inline[]): string {
   return content
     .map((part) => {
       if (typeof part === 'string') return escapeHtml(part);
       if ('code' in part) return `<code>${escapeHtml(part.code)}</code>`;
       if ('strong' in part) return `<strong>${escapeHtml(part.strong)}</strong>`;
+      if ('preview' in part) {
+        const drawn = preview(part.preview, part.token, escapeHtml(part.text ?? ''));
+        return part.mode
+          ? `<span class="mode-scope" data-odd-mode="${part.mode}">${drawn}</span>`
+          : drawn;
+      }
+      if ('sample' in part)
+        return `<span class="type-sample odd-type-${part.role}">${escapeHtml(part.sample)}</span>`;
+      if ('meter' in part)
+        return `<meter class="duration-meter" min="0" max="${part.max}" value="${part.meter}" aria-label="${escapeHtml(part.label)}"></meter>`;
       return `<a href="${escapeHtml(part.href)}">${escapeHtml(part.link)}</a>`;
     })
     .join('');
@@ -141,6 +239,36 @@ function block(item: Block, facts: FactBlocks, ids: () => string): string {
   if ('code' in item) return codeSample(item.code, ids());
   if ('cards' in item)
     return `<ul class="card-list odd-auto-grid" role="list">${item.cards.map(card).join('')}</ul>`;
+  if ('ramp' in item)
+    return `<figure class="ramp"><figcaption>${escapeHtml(item.ramp.title)}</figcaption><ol class="ramp-steps odd-cluster" role="list">${item.ramp.steps
+      .map(
+        (step) =>
+          `<li class="odd-stack">${preview('color', step.token)}<span class="ramp-label">${escapeHtml(step.label)}</span><code>${escapeHtml(step.value)}</code></li>`,
+      )
+      .join('')}</ol></figure>`;
+  if ('modes' in item)
+    return `<div class="mode-specimens odd-auto-grid" role="group" aria-label="${escapeHtml(item.modes.caption)}">${item.modes.modes
+      .map(
+        (mode) =>
+          `<figure class="mode-specimen odd-stack" data-odd-mode="${mode}"><figcaption>${capitalized(mode)}</figcaption>${specimen(item.modes.specimen)}</figure>`,
+      )
+      .join('')}</div>`;
+  if ('tones' in item)
+    return `<ul class="tone-list odd-stack" role="list">${item.tones
+      .map(
+        (tone) =>
+          `<li><odd-alert tone="${escapeHtml(tone.tone)}" label="${escapeHtml(tone.label)}"><code>${escapeHtml(tone.token)}</code></odd-alert></li>`,
+      )
+      .join('')}</ul>`;
+  if ('reflow' in item)
+    return `<div class="reflow-specimens odd-stack">${item.reflow.widths
+      .map(
+        (width) =>
+          `<figure class="reflow-specimen" data-preview="width" data-token="${escapeHtml(width.token)}"><figcaption>${escapeHtml(width.caption)}</figcaption><ul class="odd-auto-grid" role="list">${item.reflow.items
+            .map((entry) => `<li><code>${escapeHtml(entry)}</code></li>`)
+            .join('')}</ul></figure>`,
+      )
+      .join('')}</div>`;
   if ('table' in item) {
     const { caption, head, rows } = item.table;
     return `<div class="table-scroll" tabindex="0" role="region" aria-label="${escapeHtml(caption)}"><table class="odd-table"><caption>${escapeHtml(caption)}</caption><thead><tr>${head
