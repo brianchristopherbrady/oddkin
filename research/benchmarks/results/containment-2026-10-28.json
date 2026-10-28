@@ -1,0 +1,219 @@
+{
+  "date": "2026-10-28T06:10:21.439Z",
+  "method": "Median of per-round medians. Times are synchronous style and layout forced with offsetHeight after each change (paint is not included), except render (insertion to every element updated) and stream (snapshot to updated message, plus layout).",
+  "rounds": 5,
+  "engines": {
+    "chromium": {
+      "version": "156.0.8078.4",
+      "summary": {
+        "cards": {
+          "none": {
+            "render": 257.7,
+            "firstLayout": 165.7,
+            "theme": 144.35,
+            "resize": 29.3,
+            "scrollHeight": 28598,
+            "viewportDiff": {
+              "pixels": 0,
+              "max": 0
+            },
+            "focusedCardDiff": {
+              "pixels": 0,
+              "max": 0
+            },
+            "findInPage": true,
+            "lastCardInAccessibilityTree": true
+          },
+          "contain": {
+            "render": 231.4,
+            "firstLayout": 217.4,
+            "theme": 135.1,
+            "resize": 23.55,
+            "scrollHeight": 28598,
+            "viewportDiff": {
+              "pixels": 108499,
+              "max": 220
+            },
+            "focusedCardDiff": {
+              "pixels": 12416,
+              "max": 34
+            },
+            "findInPage": true,
+            "lastCardInAccessibilityTree": true
+          },
+          "visibility": {
+            "render": 224,
+            "firstLayout": 17.6,
+            "theme": 15.4,
+            "resize": 4.25,
+            "scrollHeight": 27724,
+            "viewportDiff": {
+              "pixels": 108499,
+              "max": 220
+            },
+            "focusedCardDiff": {
+              "pixels": 12416,
+              "max": 34
+            },
+            "findInPage": true,
+            "lastCardInAccessibilityTree": true
+          }
+        },
+        "transcript": {
+          "none": {
+            "render": 449.9,
+            "firstLayout": 2.8,
+            "stream": 14.45,
+            "streamLayout": 2.1,
+            "theme": 27.95,
+            "resize": 16.55,
+            "sheetKept": true,
+            "atEnd": true,
+            "scrollHeight": 34736,
+            "viewportDiff": {
+              "pixels": 0,
+              "max": 0
+            }
+          },
+          "contain": {
+            "render": 474.3,
+            "firstLayout": 25.2,
+            "stream": 12.6,
+            "streamLayout": 1.1,
+            "theme": 21.65,
+            "resize": 13.85,
+            "sheetKept": true,
+            "atEnd": true,
+            "scrollHeight": 34736,
+            "viewportDiff": {
+              "pixels": 2,
+              "max": 25
+            }
+          },
+          "visibility": {
+            "render": 375.1,
+            "firstLayout": 15.9,
+            "stream": 12.2,
+            "streamLayout": 1.4,
+            "theme": 3.9,
+            "resize": 2,
+            "sheetKept": true,
+            "atEnd": true,
+            "scrollHeight": 36858,
+            "viewportDiff": {
+              "pixels": 2,
+              "max": 25
+            }
+          }
+        }
+      },
+      "errors": {}
+    },
+    "firefox": {
+      "version": "157.0",
+      "summary": {
+        "cards": {
+          "none": {
+            "render": 869,
+            "firstLayout": 296,
+            "theme": 149.5,
+            "resize": 50,
+            "scrollHeight": 28598,
+            "viewportDiff": {
+              "pixels": 0,
+              "max": 0
+            },
+            "focusedCardDiff": {
+              "pixels": 0,
+              "max": 0
+            },
+            "findInPage": true,
+            "lastCardInAccessibilityTree": null
+          },
+          "contain": {
+            "render": 763,
+            "firstLayout": 267,
+            "theme": 178.5,
+            "resize": 65.5,
+            "scrollHeight": 28598,
+            "viewportDiff": {
+              "pixels": 106508,
+              "max": 35
+            },
+            "focusedCardDiff": {
+              "pixels": 15726,
+              "max": 35
+            },
+            "findInPage": true,
+            "lastCardInAccessibilityTree": null
+          },
+          "visibility": {
+            "render": 841,
+            "firstLayout": 94,
+            "theme": 221,
+            "resize": 15,
+            "scrollHeight": 27696,
+            "viewportDiff": {
+              "pixels": 106508,
+              "max": 35
+            },
+            "focusedCardDiff": {
+              "pixels": 15726,
+              "max": 35
+            },
+            "findInPage": true,
+            "lastCardInAccessibilityTree": null
+          }
+        },
+        "transcript": {
+          "none": {
+            "render": 961,
+            "firstLayout": 23,
+            "stream": 30.5,
+            "streamLayout": 5,
+            "theme": 22.5,
+            "resize": 35,
+            "sheetKept": true,
+            "atEnd": true,
+            "scrollHeight": 34736,
+            "viewportDiff": {
+              "pixels": 0,
+              "max": 0
+            }
+          },
+          "contain": {
+            "render": 921,
+            "firstLayout": 108,
+            "stream": 29.5,
+            "streamLayout": 2,
+            "theme": 23,
+            "resize": 32.5,
+            "sheetKept": true,
+            "atEnd": true,
+            "scrollHeight": 34736,
+            "viewportDiff": {
+              "pixels": 0,
+              "max": 0
+            }
+          },
+          "visibility": {
+            "render": 1007,
+            "firstLayout": 59,
+            "stream": 29.5,
+            "streamLayout": 2,
+            "theme": 19,
+            "resize": 5,
+            "sheetKept": true,
+            "atEnd": true,
+            "scrollHeight": 37026,
+            "viewportDiff": {
+              "pixels": 0,
+              "max": 0
+            }
+          }
+        }
+      },
+      "errors": {}
+    }
+  }
+}

@@ -518,9 +518,23 @@
       "bcd": ["css.selectors.has"],
       "webFeature": "has",
       "adoption": "foundation",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
+      "usedBy": [
+        "Form controls in their own shadow roots: disabled labels, focus and invalid boxes, start and end slots (control, combobox, picker, select, listbox, file-input, color-picker, segmented-control, chip, disclosure)",
+        "Light-DOM recipes: field.css, table.css (checked rows), timeline.css and stepper.css (failed and current steps)"
+      ],
       "baseline": "Available at the floor. Use only for light-DOM or in-shadow structure the component owns; it cannot see into other shadow trees or combine with ::slotted().",
+      "tests": [
+        {
+          "file": "packages/components/test/select.browser.test.ts",
+          "name": "draws the field: the chevron, the placeholder in secondary text, and the error and disabled states"
+        },
+        {
+          "file": "packages/components/test/segmented-control.browser.test.ts",
+          "name": "dims the label and the unchecked segments while disabled; the checked one keeps its colours"
+        }
+      ],
       "notes": "Avoid broad, frequently invalidated relational selectors (e.g. :has() on html or large containers) in highly dynamic interfaces; measure before adopting in collections."
     },
     {
@@ -552,9 +566,19 @@
       "bcd": ["css.properties.aspect-ratio"],
       "webFeature": "aspect-ratio",
       "adoption": "foundation",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
-      "baseline": "Media frames keep their ratio with object-fit; content taller than the ratio may grow rather than clip text."
+      "usedBy": [
+        "layout.css .odd-aspect-ratio (16 / 9 unless --odd-aspect-ratio says otherwise)",
+        "odd-skeleton shape=circle"
+      ],
+      "baseline": "Media frames keep their ratio with object-fit; content taller than the ratio may grow rather than clip text.",
+      "tests": [
+        {
+          "file": "packages/components/test/figma-parity.layout.browser.test.ts",
+          "name": "AspectRatio: 16:9 by default (180, 360, 540 px high), 4:3 and 1:1 through the property"
+        }
+      ]
     },
     {
       "id": "container-units",
@@ -743,9 +767,24 @@
       "bcd": ["css.selectors.dir"],
       "webFeature": "dir-pseudo",
       "adoption": "foundation",
-      "status": "planned",
+      "status": "implemented",
       "milestone": "M10",
-      "baseline": "Direction-dependent icons (chevrons, arrows) flip with the inherited direction, including inside shadow roots."
+      "usedBy": [
+        "Shared glyphs (.glyph.mirror: chevrons and arrows)",
+        "odd-color-picker area and hue track",
+        "odd-progress indeterminate sweep"
+      ],
+      "baseline": "Direction-dependent icons (chevrons, arrows) flip with the inherited direction, including inside shadow roots.",
+      "tests": [
+        {
+          "file": "packages/components/test/color-picker.browser.test.ts",
+          "name": "right to left, Left and Right swap and the area and hue are mirrored"
+        },
+        {
+          "file": "packages/components/test/carousel.browser.test.ts",
+          "name": "takes localized strings and mirrors its arrows right to left"
+        }
+      ]
     },
     {
       "id": "containment",
@@ -754,9 +793,9 @@
       "bcd": ["css.properties.contain", "css.properties.contain-intrinsic-size"],
       "webFeature": "contain",
       "adoption": "foundation",
-      "status": "planned",
-      "milestone": "M8",
-      "baseline": "Not applied by default. Containment changes containing blocks, stacking, intrinsic size, and overflow clipping, so it is added per component only with measurements and checks that focus rings, shadows, overlays, and sticky content still render."
+      "status": "evaluated",
+      "baseline": "Not applied by default. Containment changes containing blocks, stacking, intrinsic size, and overflow clipping, so it is added per component only with measurements and checks that focus rings, shadows, overlays, and sticky content still render.",
+      "decision": "Not applied by any component (M8 CSS review, research/experiments/containment): contain: content on 400 cards or 200 conversation messages gave no consistent gain on theme changes or resizing in Chromium or Firefox (WebKit not yet measured), and its paint containment clips an elevated card's shadow, which an element inside the shadow root draws. Revisit per component only with a measured need."
     },
     {
       "id": "wide-gamut-color",
@@ -915,10 +954,10 @@
         "css.properties.anchor-scope"
       ],
       "webFeature": "anchor-positioning",
-      "adoption": "enhancement",
-      "status": "planned",
-      "milestone": "M10",
-      "baseline": "One shared Oddkin positioning controller (in @oddkin/components) places overlays from measured rectangles while they are open, with flip and shift fallbacks, and stops observing when they close.",
+      "adoption": "deferred",
+      "status": "evaluated",
+      "decision": "Not adopted with the M10 overlays: the measured controller is the only positioning backend (ADR 0044 point 4, a later backend chosen at open time). It needs every subfeature the contract uses, including anchor-scope for repeated instances, and anchor names do not cross shadow roots; Firefox 132 and Safari 18.2 lack it. Revisit when the floor supports every subfeature.",
+      "baseline": "One shared Oddkin positioning controller (@oddkin/core/controllers/position) places overlays from measured rectangles while they are open, with flip and shift fallbacks, and stops observing when they close.",
       "enhanced": "Native anchoring places and re-places overlays without script when every subfeature the overlay contract needs is supported.",
       "gate": "Per-subfeature detection (anchor-name, position-area, position-try-fallbacks, anchor-scope); exactly one backend owns positioning at a time",
       "differences": "Placement should match within a pixel; fallback placement may update one frame later on scroll or resize.",
@@ -931,14 +970,14 @@
       "kind": "css",
       "bcd": ["css.properties.content-visibility", "css.properties.content-visibility.auto"],
       "webFeature": "content-visibility",
-      "adoption": "enhancement",
-      "status": "planned",
-      "milestone": "M8",
+      "adoption": "deferred",
+      "status": "evaluated",
       "baseline": "Normal rendering of every item.",
       "enhanced": "Off-screen sections of long collections and streaming transcripts skip rendering work.",
       "gate": "@supports (content-visibility: auto), with contain-intrinsic-size",
       "differences": "Rendering cost only; find-in-page, focus, and the accessibility tree must be unchanged (measured before adoption).",
-      "detectCss": "(content-visibility: auto)"
+      "detectCss": "(content-visibility: auto)",
+      "decision": "Not applied by components (M8 CSS review, research/experiments/containment). On item hosts it cuts the style and layout of resizing 400 cards or 200 messages several times over (and of theme changes in Chromium), keeps off-screen text findable and (Chromium) in the accessibility tree, and leaves streaming unchanged, but it clips an elevated card's shadow (paint containment) and the estimated sizes change the scroll height until items render, which the conversation's follow-latest and position restore read. Whether a list is long is the page's knowledge: page authors may apply it to items whose ink stays inside their box (css-architecture.md §13.2)."
     },
     {
       "id": "scrollbar-gutter",

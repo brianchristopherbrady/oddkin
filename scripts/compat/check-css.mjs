@@ -455,7 +455,15 @@ async function packageStyles(pkg) {
     let files;
     try {
       files = readdirSync(dir)
-        .filter((f) => f.endsWith('.styles.js'))
+        .filter(
+          (f) =>
+            f.endsWith('.styles.js') ||
+            (name === 'styles' && f.endsWith('.js') && f !== 'index.js'),
+        )
+        // Only modules the sources still have: a stale dist file must not reach the matrix.
+        .filter((f) =>
+          existsSync(join(root, `packages/${pkg}/src/${name}/${f.replace(/\.js$/, '.ts')}`)),
+        )
         .sort();
     } catch {
       continue;
