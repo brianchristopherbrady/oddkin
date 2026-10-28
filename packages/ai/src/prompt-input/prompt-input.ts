@@ -65,6 +65,7 @@ export const PROMPT_INPUT_STRINGS = {
  * @useFor The input of a conversation or assistant.
  * @notFor Single-line form fields; use `odd-input`.
  * @limitation Mentions and slash commands are host integrations through the slots and the `input` part; the composer does not parse them.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinPromptInput extends OddkinElement.with({

@@ -42,6 +42,7 @@ export const CONTEXT_PICKER_STRINGS = {
  * @keyboard Tab through items and controls; Enter adds a link.
  * @useFor Attaching and reviewing context for research and agent requests.
  * @notFor File management.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinContextPicker extends OddkinElement.with({

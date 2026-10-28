@@ -19,6 +19,7 @@ export const SOURCES_STRINGS = {
  * @a11y A labelled list; entries are numbered in citation order. `reveal()` scrolls to and focuses an entry (only on user request).
  * @useFor Showing the sources a response used, with titles, hosts, and excerpts.
  * @notFor Arbitrary link lists; use a list of links.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinSources extends OddkinElement.with({

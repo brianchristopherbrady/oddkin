@@ -332,7 +332,7 @@ Tasks and fixture configurations are held out from kit authoring. Example validi
 
 With `@oddkin/agent` skipped for now (ADR 0046 D7, owner 2026-10-27), the packaged kits, the published metadata, and the composition schema are the whole agent surface. Evidence in [verification.md](../verification.md), 2026-10-27.
 
-- **Agent-facing metadata fields.** Every element of both packages publishes `useFor`, `notFor`, `a11y`, `registration`, `category`, `contracts`, and its customization paths; 61 of 77 publish `keyboard`, 30 `limitations`, 20 `syncPairs`, and the event intents (§3.1). Gaps: the AI elements' customization levels are unknown until they declare them, and the usage pairs (correct/incorrect examples) are deferred by the owner (M10).
+- **Agent-facing metadata fields.** Every element of both packages publishes `useFor`, `notFor`, `a11y`, `registration`, `category`, `contracts`, and its customization paths; 61 of 77 publish `keyboard`, 30 `limitations`, 20 `syncPairs`, and the event intents (§3.1). Gap: the usage pairs (correct/incorrect examples) are deferred by the owner (M10).
 - **Diagnostic envelope.** `diagnostic.v1` is published (`docs/schemas/diagnostic.v1.schema.json`), and the token, analyzer, model, collection, and Workbench shapes validate against it (`tests/schemas/diagnostics.test.ts`).
 - **Kit and context schemas.** `kit.json` validates against `agent-kit.v1` and the project context against `project-context.v1` (`tests/agent-kit/kit.test.ts`, `context.test.ts`), including the fingerprint of every input.
 - **Size.** `GUIDE.md` is 6,355 B for `@oddkin/components` and 6,637 B for `@oddkin/ai`, within the 8,192 B budget.

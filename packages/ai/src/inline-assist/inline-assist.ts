@@ -41,6 +41,7 @@ export interface AssistActionOption {
  * @keyboard Left/Right (or Up/Down) move between actions; Home/End go to the first/last; Enter or Space activates.
  * @useFor Contextual help on selected text in editors and documents.
  * @notFor Whole-document chat; use the conversation.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinInlineAssist extends OddkinElement.with({

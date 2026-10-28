@@ -42,6 +42,7 @@ export const revealSourceEvent = event<{ readonly sourceId: string }>('odd-sourc
  * @keyboard Enter or Space toggles the preview; Escape closes it and returns focus to the marker.
  * @useFor Inline references from generated text to its sources.
  * @notFor Footnotes in authored documents; use links.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinCitation extends OddkinElement.with({

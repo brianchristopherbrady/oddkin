@@ -63,6 +63,7 @@ export interface DataRenderer {
  * @keyboard Tab through actions; Escape cancels editing.
  * @useFor Rendering a message from a conversation record.
  * @notFor Free-form chat bubbles without records.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinMessage extends OddkinElement.with({

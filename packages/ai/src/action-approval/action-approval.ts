@@ -50,6 +50,7 @@ export const APPROVAL_STRINGS = {
  * @useFor Human approval of agent actions (tool calls, writes, purchases).
  * @notFor Confirming the user's own direct actions; use a dialog.
  * @limitation Authorization and execution are enforced by the host; this element only collects intent.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinActionApproval extends OddkinElement.with({

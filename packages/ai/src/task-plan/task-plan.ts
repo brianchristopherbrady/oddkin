@@ -39,6 +39,7 @@ const SYMBOL: Record<StepStatus, string> = {
  * @keyboard Tab reaches "Respond" buttons on steps that need input.
  * @useFor Showing multi-step agent work as it proceeds.
  * @notFor Static checklists the user edits.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinTaskPlan extends OddkinElement.with({

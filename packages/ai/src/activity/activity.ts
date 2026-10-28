@@ -38,6 +38,7 @@ export const ACTIVITY_STRINGS = {
  * @keyboard Tab to the actions.
  * @useFor Run status under a conversation or agent panel.
  * @notFor Per-message status (messages show their own).
+ * @customization 1 2
  * @category AI
  */
 export class OddkinActivity extends OddkinElement.with({

@@ -25,6 +25,7 @@ export const AI_LABEL_STRINGS = {
  * @useFor Marking responses, artifacts, or edits as AI generated or assisted, with origin details.
  * @notFor Asserting factual accuracy or safety; use the host's own review states.
  * @limitation Labels and details are application-supplied; nothing is inferred from content.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinAiLabel extends OddkinElement.with({

@@ -20,6 +20,7 @@ export const MESSAGE_BRANCH_STRINGS = {
  * @keyboard Tab to the buttons; Enter or Space switches.
  * @useFor Alternative responses and edited prompts.
  * @notFor Pagination of unrelated content.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinMessageBranch extends OddkinElement.with({

@@ -3696,3 +3696,11 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 |---|---|---|
 | Undocumented CEM entries | `node scripts/build-metadata.mjs`, then a count of public members, parts, slots, events, and CSS properties without a description in `packages/components/custom-elements.json` | 36 before (form-control getters and validity methods on the form-associated elements, odd-picker's `value` part), 0 after |
 | Metadata tests | `npx vitest run --project node packages/components/test/metadata.test.ts packages/components/test/customization.test.ts` | 172 passed, 1 skipped |
+## 2026-10-27 — Customization levels for the AI elements (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Levels | `node scripts/build-metadata.mjs`, then `npx vitest run --project node packages/ai/test/customization.test.ts` | 4 passed: 24 elements with authored [1, 2]; each reads theme tokens; each documents its parts, slots, and variables; no foundation export |
+| Negative check | `@customization 1 2 3` on odd-activity, metadata rebuilt | "every element declares levels 1 and 2" fails; restored |
+| Node tests | `npx vitest run --project node packages/ai packages/analyzer/test/analyzer.test.ts tests/agent-kit` | 14 files, 150 passed |
+| Typecheck, format | `npm run typecheck`, `npx prettier --check` | OK; `build-metadata.mjs` gives no warnings |

@@ -41,6 +41,7 @@ export const CHANGE_REVIEW_STRINGS = {
  * @keyboard Tab through proposals' actions; Enter or Space activates.
  * @useFor Reviewing AI-proposed edits to text or code before they change the document.
  * @notFor Version-control diffs of whole files.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinChangeReview extends OddkinElement.with({

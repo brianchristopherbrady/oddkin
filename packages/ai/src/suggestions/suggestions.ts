@@ -19,6 +19,7 @@ export const SUGGESTIONS_STRINGS = {
  * @keyboard Tab between buttons; Enter or Space activates.
  * @useFor Follow-up prompts and quick actions after a response.
  * @notFor Navigation menus.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinSuggestions extends OddkinElement.with({

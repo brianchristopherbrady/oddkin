@@ -37,6 +37,7 @@ export type ResponseStatus = 'streaming' | 'complete' | 'interrupted' | 'cancell
  * @useFor Assistant output that may stream: answers, explanations, summaries.
  * @notFor User-authored text (render it literally) or trusted HTML.
  * @limitation Raw HTML renders as text unless `markdown.html` is `sanitize` with a host sanitizer. Images render as links unless `markdown.images` is `load`.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinResponse extends OddkinElement.with({

@@ -19,6 +19,7 @@ export const TRANSCRIPT_STRINGS = {
  * @keyboard Editable segments are native text areas.
  * @useFor Showing and correcting speech-to-text results.
  * @notFor Chat transcripts; use the conversation.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinTranscript extends OddkinElement.with({

@@ -30,6 +30,7 @@ export const FEEDBACK_STRINGS = {
  * @keyboard Tab and Enter or Space; the form keeps focus order rating → reasons → comment → submit.
  * @useFor Collecting user feedback on generated responses.
  * @notFor Surveys or general forms.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinResponseFeedback extends OddkinElement.with({

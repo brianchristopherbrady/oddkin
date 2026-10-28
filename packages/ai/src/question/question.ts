@@ -33,6 +33,7 @@ export const QUESTION_STRINGS = {
  * @keyboard Native form controls; Enter in a single-line field submits.
  * @useFor Asking the user for missing information before continuing.
  * @notFor General-purpose forms unrelated to an agent's request.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinQuestion extends OddkinElement.with({

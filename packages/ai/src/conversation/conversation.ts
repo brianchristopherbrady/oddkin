@@ -64,6 +64,7 @@ const FOLLOW_THRESHOLD = 48;
  * @useFor Chat and assistant conversations, including tool use, approvals, artifacts, and branches.
  * @notFor Activity logs without messages; use `odd-task-plan` or `odd-activity`.
  * @limitation All messages stay in the DOM (no virtualization) so find-in-page, selection, and assistive technology reading keep working; see the performance fixture for measured limits.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinConversation extends OddkinElement.with({

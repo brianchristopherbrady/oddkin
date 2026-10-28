@@ -26,6 +26,7 @@ export const MODEL_SELECT_STRINGS = {
  * @useFor Letting users choose the model used for the next request.
  * @notFor Settings unrelated to models.
  * @limitation Programmatic `value` changes never dispatch `odd-model-change`.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinModelSelect extends OddkinElement.with({

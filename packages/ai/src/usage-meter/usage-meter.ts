@@ -21,6 +21,7 @@ export const USAGE_STRINGS = {
  * @useFor Showing consumption of tokens, context window, quota, or cost.
  * @notFor Billing statements; amounts are informational.
  * @limitation Precision labels come from the host (`measured` / `estimated` / `unknown`).
+ * @customization 1 2
  * @category AI
  */
 export class OddkinUsageMeter extends OddkinElement.with({

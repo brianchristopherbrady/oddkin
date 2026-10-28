@@ -35,6 +35,7 @@ export const VOICE_INPUT_STRINGS = {
  * @useFor Dictating prompts or notes.
  * @notFor Audio recording for its own sake.
  * @limitation Capability depends on the adapter: browser speech recognition, a recorder plus host transcription, or a scripted adapter.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinVoiceInput extends OddkinElement.with({

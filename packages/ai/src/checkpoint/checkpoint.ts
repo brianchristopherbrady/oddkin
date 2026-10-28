@@ -35,6 +35,7 @@ export const CHECKPOINT_STRINGS = {
  * @keyboard Tab and Enter or Space; focus moves to the confirmation and back to the status when controls disappear.
  * @useFor Restoring agent or editor state to an earlier point.
  * @notFor Undoing a single text edit; use the change review's undo.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinCheckpoint extends OddkinElement.with({

@@ -49,6 +49,7 @@ export interface ExportFormat {
  * @useFor Documents, code, tables, and other outputs users keep, compare, and export.
  * @notFor Short inline answers; use the response.
  * @limitation `html` and other executable kinds never render without a host renderer; the built-in preview supports `markdown`, `code`, and `text`.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinArtifact extends OddkinElement.with({

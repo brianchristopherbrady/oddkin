@@ -36,6 +36,7 @@ export type ToolOutputRenderer = (tool: ToolCallRecord) => Node | undefined;
  * @useFor Showing what an agent or model asked a tool to do, and what happened.
  * @notFor Arbitrary log output.
  * @limitation Results render as formatted JSON text unless a host `renderOutput` returns a node.
+ * @customization 1 2
  * @category AI
  */
 export class OddkinToolCall extends OddkinElement.with({
