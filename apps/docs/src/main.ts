@@ -570,7 +570,9 @@ function renderRoute(state: RouterState): void {
 
   const last = state.matches.at(-1);
   const page = last && pageRoutes.get(last.route);
-  if (page && !state.navigating) {
+  if (page) {
+    // The authored page stays as it is while the next route loads.
+    if (state.navigating) return;
     // The server renders authored pages; a page reached in the client loads its document, once.
     const reloaded = sessionStorage.getItem('oddkin-docs-reload') === page.path;
     sessionStorage.removeItem('oddkin-docs-reload');

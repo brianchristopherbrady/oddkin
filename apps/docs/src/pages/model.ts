@@ -25,7 +25,14 @@ export interface CodeBlock {
 
 /** Facts generated from the published metadata, manifests, tokens, and compatibility data. */
 export type Fact =
-  'packages' | 'browser-floor' | 'browser-features' | 'component-counts' | 'framework-versions';
+  | 'packages'
+  | 'browser-floor'
+  | 'browser-features'
+  | 'component-counts'
+  | 'framework-versions'
+  | 'decisions'
+  | 'milestones'
+  | 'examples';
 
 /** Another page summarized as a card: what it covers, the package it is about, and a link to it. */
 export interface Card {

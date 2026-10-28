@@ -46,8 +46,90 @@ export async function siteFacts(root) {
   };
 }
 
+/** Markdown inline marks removed, for text that the pages escape and show as is. */
+const plain = (text) =>
+  text
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[`*]/g, '')
+    .trim();
+
+async function decisionRows(root, source) {
+  const dir = join(root, 'docs/architecture/decisions');
+  const rows = [];
+  for (const name of (await readdir(dir)).sort()) {
+    if (!/^\d{4}-.+\.md$/.test(name) || name.startsWith('0000')) continue;
+    const text = await readFile(join(dir, name), 'utf8');
+    const [, number = '', title = ''] = /^# (\d{4})\. (.+)$/m.exec(text) ?? [];
+    const field = (label) =>
+      plain(new RegExp(`^- \\*\\*${label}:\\*\\* (.+)$`, 'm').exec(text)?.[1] ?? '');
+    rows.push([
+      [number],
+      [{ link: plain(title), href: `${source}docs/architecture/decisions/${name}` }],
+      [field('Area')],
+      [field('Status').replace(/\s*\(.*$/, '')],
+    ]);
+  }
+  return rows;
+}
+
+/** Each milestone of the plan with its checklist counted: done, partly done, and open items. */
+async function milestoneRows(root) {
+  const plan = await readFile(join(root, 'IMPLEMENTATION_PLAN.md'), 'utf8');
+  const parts = plan.split(/^### (M\d+) \u2014 (.+)$/m);
+  const rows = [];
+  for (let i = 1; i < parts.length; i += 3) {
+    const body = parts[i + 2].split(/^## /m)[0];
+    const count = (mark) => (body.match(new RegExp(`^\\s*- \\[${mark}\\]`, 'gm')) ?? []).length;
+    const [done, partly, open] = [count('x'), count('~'), count(' ')];
+    const status = partly + open === 0 ? 'Done' : done + partly === 0 ? 'Planned' : 'In progress';
+    rows.push([
+      [parts[i]],
+      [parts[i + 1]],
+      [String(done)],
+      [String(partly)],
+      [String(open)],
+      [status],
+    ]);
+  }
+  return rows;
+}
+
+/** Example applications in the repository, from each page's own title. */
+const EXAMPLES = [
+  'app-header',
+  'side-nav',
+  'forms',
+  'editable-list',
+  'ai-research',
+  'ai-agent',
+  'ai-writing',
+];
+
+async function exampleCards(root, source) {
+  const cards = [];
+  for (const dir of EXAMPLES) {
+    const html = await readFile(join(root, 'examples', dir, 'index.html'), 'utf8');
+    const [title = dir, about = ''] = (/<title>([^<]+)<\/title>/.exec(html)?.[1] ?? dir)
+      .split(' \u2014 ')
+      .map((part) => part.trim());
+    const elements = [...new Set(html.match(/<(odd-[a-z-]+|oddkin-ai-[a-z-]+)/g) ?? [])]
+      .map((tag) => tag.slice(1))
+      .slice(0, 3);
+    cards.push({
+      title,
+      text: about.charAt(0).toUpperCase() + about.slice(1),
+      href: `${source.replace('/blob/', '/tree/')}examples/${dir}`,
+      action: `View the ${title.toLowerCase()} source`,
+      ...(elements.length ? { meta: elements.join(' \u00b7 ') } : {}),
+    });
+  }
+  return cards;
+}
+
 /** Every fact of the `Fact` union in `src/pages/model.ts`, as page blocks. */
 export async function docsFacts(root) {
+  const { repository } = await siteFacts(root);
+  const source = `${repository}/blob/main/`;
   const manifests = [];
   for (const entry of await readdir(join(root, 'packages'), { withFileTypes: true }))
     if (entry.isDirectory())
@@ -77,6 +159,25 @@ export async function docsFacts(root) {
   const version = (name) => root_.devDependencies?.[name] ?? root_.dependencies?.[name];
 
   return {
+    decisions: [
+      {
+        table: {
+          caption: 'Architecture decision records',
+          head: ['Record', 'Decision', 'Area', 'Status'],
+          rows: await decisionRows(root, source),
+        },
+      },
+    ],
+    milestones: [
+      {
+        table: {
+          caption: 'Milestones in IMPLEMENTATION_PLAN.md, by checklist item',
+          head: ['Milestone', 'Scope', 'Done', 'Partly done', 'Open', 'Status'],
+          rows: await milestoneRows(root),
+        },
+      },
+    ],
+    examples: [{ cards: await exampleCards(root, source) }],
     packages: [
       {
         table: {

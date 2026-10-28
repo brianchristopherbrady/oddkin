@@ -10,6 +10,36 @@ const cardOf = (page: Page, action: string, meta: string): Card => ({
   meta,
 });
 
+export const recipes: Page = {
+  path: 'recipes',
+  group: 'Explore',
+  eyebrow: 'Recipes',
+  title: 'Recipes',
+  summary:
+    'Example applications in the repository, built from the same components, tokens, and layout recipes as everything else.',
+  sections: [
+    {
+      id: 'examples',
+      title: 'Examples to build on',
+      blocks: [
+        {
+          note: [
+            'Run them from a clone of the repository: ',
+            { code: 'npm run build' },
+            ', then ',
+            { code: 'node scripts/serve-static.mjs' },
+            ' and open ',
+            { code: 'http://localhost:4173/examples/<name>/' },
+            '. The AI demos simulate their model responses.',
+          ],
+        },
+        { fact: 'examples' },
+      ],
+    },
+  ],
+  next: { label: 'Browse the component catalog', href: '/components' },
+};
+
 export const gettingStarted: Page = {
   path: 'getting-started',
   group: 'Start here',

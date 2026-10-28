@@ -3923,3 +3923,13 @@ The owner asked for the publish after `npm login` (account `poisonsushi`, owner 
 | Registry | `npm view @oddkin/tokens versions` | E404: nothing is published |
 
 **Not verified:** the publish and a fresh install from the registry. Both wait for the owner to approve npm's sign-in once per package, within about 5 minutes of each prompt (release-process.md §5).
+## 2026-10-28 — Docs site slice 3: Architecture, Roadmap, Help and releases, Recipes (Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Pages and shell | `npx vitest run tests/docs` | 16 passed |
+| Docs e2e | `npx playwright test e2e/docs.spec.ts e2e/docs-site.spec.ts --workers=2` (three engines, E2E lock) | 30 passed |
+| Firefox route race | `.tmp` experiment in Firefox and Chromium: on the authored /guides page, click the /layout/side-nav link while the next route loads | Before: Firefox stayed on /guides, because the renderer threw while navigating, removed the page marker, and the authored page reloaded. Chromium reported "The docs index route did not provide its loaded data." After: both reach /layout/side-nav with no page error |
+| Types, lint, format | `npm run typecheck`; `node scripts/check-page-layout.mjs`; `node scripts/compat/check-css.mjs`; `npx prettier --check` on the changed files | Pass |
+
+Before the fix, the Firefox journey failed in 3 of 8 runs. The first failure was at the sidebar landmark: its 5 s default wait ran out while the element loaded through the autoloader. The last failure was at the layout guide's heading. The sidebar now loads its definition directly, and that step waits up to 15 s, the same as the other module-loading steps. In one Firefox-only run, three other tests timed out in `page.goto`; they passed in the next runs.

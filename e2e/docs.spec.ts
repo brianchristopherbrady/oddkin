@@ -38,7 +38,9 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   // (odd-side-nav over the server's links) lists a section's pages when it is open.
   await page.getByRole('link', { name: 'Get started' }).click();
   await expect(page).toHaveURL(`${docs}/getting-started`);
-  await expect(page.getByRole('navigation', { name: 'Documentation' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Documentation' })).toBeVisible({
+    timeout: catalogLoad,
+  });
   await page.locator('.side-nav a[href="/getting-started/tokens"]').click();
   await expect(page).toHaveURL(`${docs}/getting-started/tokens`);
   await expect(page.getByRole('heading', { name: 'Tokens only', level: 1 })).toBeVisible();

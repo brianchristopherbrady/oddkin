@@ -395,6 +395,11 @@ odd-side-nav:not(:defined) > a {
   inline-size: 100%;
 }
 
+/* Words stay whole when the columns are sized; the region scrolls instead. */
+.table-scroll .odd-table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
 /* Footer */
 
 .site-footer {

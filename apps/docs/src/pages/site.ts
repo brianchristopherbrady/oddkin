@@ -1,8 +1,9 @@
 import { agents, browserSupport, frameworks } from './guides.js';
 import { composition, formsAccessibility, layout, theming } from './guides-core.js';
-import { gettingStarted, guides } from './landing.js';
+import { gettingStarted, guides, recipes } from './landing.js';
 import { groups, type Group, type Page } from './model.js';
 import { overview } from './overview.js';
+import { architecture, roadmap, support } from './project.js';
 import { concepts, install } from './reference.js';
 import { startApp, startAuthor, startComponents, startTokens, startWorkbench } from './start.js';
 
@@ -24,6 +25,10 @@ export const pages: readonly Page[] = [
   formsAccessibility,
   composition,
   agents,
+  recipes,
+  architecture,
+  roadmap,
+  support,
   browserSupport,
 ];
 
@@ -39,7 +44,12 @@ export const clientPages: readonly ClientPage[] = [
   { path: 'components', title: 'Components', group: 'Build' },
   { path: 'foundations', title: 'Foundations', group: 'Build' },
   { path: 'layout/side-nav', title: 'Layout: side navigation', group: 'Build', parent: 'guides' },
-  { path: 'architecture/scope-ownership', title: 'Case study: scope ownership', group: 'Project' },
+  {
+    path: 'architecture/scope-ownership',
+    title: 'Case study: scope ownership',
+    group: 'Project',
+    parent: 'architecture',
+  },
 ];
 
 /** Sidebar order within each group (the website map); pages not named here follow in page order. */

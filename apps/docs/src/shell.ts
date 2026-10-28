@@ -141,6 +141,7 @@ export function startShell(scope: Scope, navigate: (path: string) => void): void
   modeToggle(scope);
   menu(scope);
   search(scope, navigate);
-  // Pages carry the elements they show (sidebar, copy buttons, cards, the home page's examples).
+  // Every page has the sidebar; the autoloader registers whatever else a page shows.
+  void import('@oddkin/components/define/side-nav');
   void import('@oddkin/components/autoload');
 }
