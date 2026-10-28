@@ -170,14 +170,14 @@
       "file": "CONTRACTS.md",
       "title": "Events",
       "anchor": "events",
-      "sha256": "47392da91b9601d1b4b7846c08050587cab65be1a26b95eea1b36b880ed25911"
+      "sha256": "f6c0b7d27f7eb9efec32045b210c8943db6de76a8bea6c1983a75787cb5bfa1c"
     },
     "contract:core/lifecycle": {
       "package": "@oddkin/core",
       "file": "CONTRACTS.md",
       "title": "Lifecycle",
       "anchor": "lifecycle",
-      "sha256": "a5ba0d94a3c5874b0323fd1e62a53f7a82a8af7460f7b9cd610c0b5f97034c88"
+      "sha256": "aee4346da965d5e0c32afd4ed75d2cf014998617e3ff66a623e500bb749947e4"
     },
     "contract:core/update-complete": {
       "package": "@oddkin/core",
@@ -191,7 +191,7 @@
       "file": "CONTRACTS.md",
       "title": "Scope: ownership and cleanup",
       "anchor": "scope",
-      "sha256": "4fc4879ea79aa80501b148e7af25776da94059679ddbda20dea7c6d261a0e917"
+      "sha256": "0af15b5f0a4b197148523e9ff945e49d61b34866fa54dfc05c09fd10a07fa9d0"
     },
     "contract:core/composition": {
       "package": "@oddkin/core",
