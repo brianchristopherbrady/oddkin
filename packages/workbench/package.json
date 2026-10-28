@@ -20,7 +20,7 @@
     "node": ">=24.12"
   },
   "bin": {
-    "oddkin": "./dist/node/bin.js"
+    "oddkin": "dist/node/bin.js"
   },
   "exports": {
     "./examples": {

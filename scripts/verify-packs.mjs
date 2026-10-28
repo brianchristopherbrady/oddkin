@@ -87,6 +87,10 @@ try {
         !value?.types
       )
         failures.push(`${name}: export ${key} has no types`);
+    // npm publish drops a bin whose path it has to rewrite (a leading ./ is enough).
+    for (const [command, target] of Object.entries(manifest.bin ?? {}))
+      if (target.startsWith('./') || !files.includes(target))
+        failures.push(`${name}: bin ${command} must name a packed file without ./ (${target})`);
     const agentBytes = info.files
       .filter((file) => file.path.startsWith('agent/'))
       .reduce((sum, file) => sum + file.size, 0);

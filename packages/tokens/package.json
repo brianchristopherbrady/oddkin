@@ -51,7 +51,7 @@
     "README.md"
   ],
   "bin": {
-    "oddkin-tokens": "./dist/node/bin.js"
+    "oddkin-tokens": "dist/node/bin.js"
   },
   "engines": {
     "node": ">=24.12"
