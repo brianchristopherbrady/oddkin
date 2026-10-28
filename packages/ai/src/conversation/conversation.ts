@@ -63,7 +63,7 @@ const FOLLOW_THRESHOLD = 48;
  * @keyboard Page Down / Page Up move between messages; Ctrl+Home / Ctrl+End leave the feed toward its start or the composer; "Jump to latest" moves focus to the newest message.
  * @useFor Chat and assistant conversations, including tool use, approvals, artifacts, and branches.
  * @notFor Activity logs without messages; use `odd-task-plan` or `odd-activity`.
- * @limitation All messages stay in the DOM (no virtualization) so find-in-page, selection, and assistive technology reading keep working; see the performance fixture for measured limits.
+ * @limitation All messages stay in the DOM (no virtualization) so find-in-page, selection, and assistive technology reading keep working; with 200 messages a streamed snapshot took about 15 ms in Chromium and 30 ms in Firefox (research/experiments/containment, 2026-10-28).
  * @customization 1 2
  * @category AI
  */
