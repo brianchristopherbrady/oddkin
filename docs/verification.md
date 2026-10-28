@@ -3992,3 +3992,20 @@ Environment: Windows, Node 24.22.1, Playwright browsers of the repository (Chrom
 | Size, CSS, lints | `npm run size`; `npm run compat`; `node scripts/check-page-layout.mjs`; `node scripts/build-contracts.mjs --check`; `node scripts/agent-kit/package-kits.mjs --check` | Every budget passes; `components:toolbar` 536 B (budget 512 → 576) and `components:calendar` 992 B gzip (960 → 1,024). Compat 0 problems (234 stylesheets; matrix.md regenerated). Layout lint, contracts, and kits current |
 
 Not run: `npm run verify:metadata`, which needs current per-engine contract records from a full `npm test`.
+
+## 2026-10-28 — M8 reviews: recipe conditions and multi-product (round 9, Agent 1, item 6)
+
+Environment: Windows, Node 24.22.1, the repository's Playwright browsers, main f378813. The CSS review in this item was done by Agent 3 (f025db3).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Conditions shipped by component recipes | every `@container` and `@media` in `packages/components/src/*/*.recipe.styles.ts` and `dist/css/layout.css` | One: odd-side-nav's `@container side-nav (min-inline-size: 40rem)`. Baseline syntax, a literal rem threshold, a named container |
+| The theme's named conditions | the default inspection's `conditions` | `@media (prefers-reduced-motion: reduce)`, `@container shell (min-inline-size: 48rem)`, `@media (min-width: 40rem)`, `@media (min-width: 64rem)`: baseline syntax, no range syntax |
+| Side-nav in three engines | `side-nav`, `side-nav.scopes` browser tests | Chromium 31 passed; Firefox and WebKit 30 passed, 1 skipped (one column when narrow, three columns from 40rem of its own width, no resize observer) |
+| Multi-product evidence | `interactions`, `multi-product`, `contract`, core `roles` browser tests; `packages/tokens/test/products.test.ts`, `packages/analyzer/test/products.test.ts` | Chromium and WebKit 836 passed, 50 skipped. Firefox lost one `roles` test to a click timeout under load; that file rerun alone passed 8 of 8. Node 15 of 15 |
+| CSS growth | `.tmp/products-growth.mjs`: the shipped `default.theme.json` with 0, 1, 2, 3, and 10 products (the test's brands), gzip -9 | 28,388 / 3,096 B; 29,320 / 3,277; 30,252 / 3,419; 31,184 / 3,530; 37,602 / 4,325 (raw / gzip). That is about 921 B raw and 123 B gzip per product, one rule each, of 23 declarations (20 for one brand) |
+
+**Findings:**
+- odd-side-nav keys its recipe-local query to its own container (40rem), not to the theme's `navigation.expanded` (the `shell` container, 48rem). A theme that moves `navigation.expanded` leaves the side-nav's breakpoint where it is. layout-recipes.md describes `when` keys as named conditions, so this is a recipe-local exception, recorded in the plan.
+- On the shipped default theme, a product rule re-declares the brand and neutral ramps and `color.selection.surface` only. `default.theme.json` pins the approved roles (actions, links, the focus ring, surfaces, text, tones) as overrides, so a product that sets only `brand.primary` keeps the base's primary actions and links. `products.test.ts` builds its base from `brand.primary` alone, without overrides, so it does not show this. Recolouring a product's roles needs product role overrides, the known M9 gap (multi-product.md §9). The growth numbers there are updated. The M4 numbers (41 declarations per product) were measured before the default theme pinned the approved palette (ADR 0041).
+- Remaining for the multi-product review: the role compatibility check (ADR 0043 point 5) and candidate v1 contracts for the customization levels.
