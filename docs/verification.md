@@ -3951,3 +3951,16 @@ The owner published; every published tarball matches the build in the a3 worktre
 | Guard: resume | the same dry run, run while the owner's publish was part way | "4 packages would publish (4 already there)" |
 
 The `--next` check rewrote and restored the manifests in this worktree while the owner's publish was running in it; the integrity comparison above shows no published package was affected.
+
+## 2026-10-28 — `latest` follows the betas until a stable version (Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| npm's choice for a range | `npm-pick-manifest/lib/index.js` in npm 11.19 | Takes the `latest` version when it satisfies the range (lines 118–123), so a `latest` left on `1.0.0-beta.0` would hold `^1.0.0-beta.0` there |
+| A tag move needs the check | `npm/lib/commands/dist-tag.js` | `add` and `rm` go through `otplease` (the npm sign-in) |
+| Registry now | `npm view @oddkin/core versions dist-tags --json` | versions `0.0.0-stage`, `1.0.0-beta.0`; `latest` and `beta` both `1.0.0-beta.0` |
+| The `0.0.0-stage` version | `npm view @oddkin/<name> versions time`; `npm view @oddkin/core@0.0.0-stage description _npmUser` | In all eight, created with the package (tokens 19:18:57 UTC, its created time): "Temporary package placeholder for staged publishing", by `poisonsushi`; a prerelease, so it does not count as a stable version |
+| Nothing to do | `node scripts/release/publish.mjs` | Exits 1: "Nothing to publish" (all at `1.0.0-beta.0`, `latest` already there) |
+| A next beta | a temporary worktree of HEAD with the new `publish.mjs` (removed afterwards): `set-versions.mjs --next --public`, then `publish.mjs` | For each of the eight in order: "Dry run: @oddkin/<name>@1.0.0-beta.1 --tag beta", then "Dry run, not run: npm dist-tag add @oddkin/<name>@1.0.0-beta.1 latest"; "8 packages would publish and latest would move for 8 (0 already there)" |
+
+**Not verified:** a live `latest` move; the first comes with the next beta.

@@ -2,10 +2,12 @@
 // Publishes the eight packages in dependency order (release-process.md §5). By default every
 // publish is a dry run; `--publish` publishes for real, on the owner's say-so. Each package
 // publishes with the dist-tag its version implies (`1.0.0-beta.0` -> `beta`), passed as `--tag`
-// because npm 11.19 ignores publishConfig.tag. A version already on npm with the same packed
-// contents is skipped, so a run stopped part way (a missed npm sign-in) resumes. Other contents
-// under a published version, or nothing left to publish, stop the run, dry run included: the
-// versions were not stepped (set-versions.mjs --next). Run after a clean build and the §3 checks.
+// because npm 11.19 ignores publishConfig.tag. Until a package has a stable version, `latest`
+// moves to each new prerelease too (`npm dist-tag add`, one more npm approval per package).
+// A version already on npm with the same packed contents is skipped, so a run stopped part way
+// (a missed npm sign-in) resumes. Other contents under a published version, or nothing left to
+// do, stop the run, dry run included: the versions were not stepped (set-versions.mjs --next).
+// Run after a clean build and the §3 checks.
 //   node scripts/release/publish.mjs            # dry run of all eight
 //   node scripts/release/publish.mjs --publish  # the owner, logged in to npm
 import { execFileSync } from 'node:child_process';
@@ -37,9 +39,9 @@ if (problems.length) {
 }
 const npm = (...args) =>
   execFileSync(process.execPath, [npmCli, ...args], { cwd: root, encoding: 'utf8', stdio: 'pipe' });
-const publishedIntegrity = (m) => {
+const view = (...args) => {
   try {
-    return npm('view', `${m.name}@${m.version}`, 'dist.integrity').trim();
+    return JSON.parse(npm('view', ...args, '--json'));
   } catch (error) {
     if (/\bE404\b/.test(String(error.stderr))) return undefined;
     throw error;
@@ -48,34 +50,61 @@ const publishedIntegrity = (m) => {
 const packedIntegrity = (m) =>
   JSON.parse(npm('pack', '--dry-run', '--json', '--workspace', `packages/${m.dir}`))[0].integrity;
 
-const already = [];
-const changed = [];
-const pending = manifests.filter((m) => {
-  const published = publishedIntegrity(m);
-  if (published === undefined) return true;
-  (published === packedIntegrity(m) ? already : changed).push(`${m.name}@${m.version}`);
-  return false;
+const plan = manifests.map((m) => {
+  const registry = view(m.name, 'versions', 'dist-tags');
+  const versions = [registry?.versions ?? []].flat();
+  const published = versions.includes(m.version);
+  return {
+    ...m,
+    spec: `${m.name}@${m.version}`,
+    publish: !published,
+    changed: published && view(`${m.name}@${m.version}`, 'dist.integrity') !== packedIntegrity(m),
+    // Until a stable release, latest follows the prereleases; a first publish takes it anyway.
+    latest:
+      m.version.includes('-') &&
+      registry !== undefined &&
+      !versions.some((v) => !v.includes('-')) &&
+      registry['dist-tags']?.latest !== m.version,
+  };
 });
 const step = 'step the versions first: node scripts/release/set-versions.mjs --next';
+const changed = plan.filter((p) => p.changed).map((p) => p.spec);
 if (changed.length) {
   console.error(`Already on npm with other contents: ${changed.join(', ')}; ${step}.`);
   process.exit(1);
 }
-if (!pending.length) {
+const todo = plan.filter((p) => p.publish || p.latest);
+if (!todo.length) {
   console.error(`Nothing to publish: every package is on npm at its version; ${step}.`);
   process.exit(1);
 }
-for (const name of already) console.log(`Already on npm with these contents: ${name}`);
-for (const m of pending) {
-  const tag = /-([0-9A-Za-z-]+)/.exec(m.version)?.[1] ?? 'latest';
-  const args = [npmCli, 'publish', '--workspace', `packages/${m.dir}`, '--tag', tag];
-  if (!live) args.push('--dry-run');
-  console.log(`${live ? 'Publishing' : 'Dry run:'} ${m.name}@${m.version} --tag ${tag}`);
-  // Inherited stdio: npm may ask the owner for a one-time password.
-  execFileSync(process.execPath, args, { cwd: root, stdio: live ? 'inherit' : 'pipe' });
+for (const p of plan) if (!p.publish) console.log(`Already on npm with these contents: ${p.spec}`);
+for (const p of todo) {
+  if (p.publish) {
+    const tag = /-([0-9A-Za-z-]+)/.exec(p.version)?.[1] ?? 'latest';
+    const args = [npmCli, 'publish', '--workspace', `packages/${p.dir}`, '--tag', tag];
+    if (!live) args.push('--dry-run');
+    console.log(`${live ? 'Publishing' : 'Dry run:'} ${p.spec} --tag ${tag}`);
+    // Inherited stdio: npm may ask the owner for a one-time password.
+    execFileSync(process.execPath, args, { cwd: root, stdio: live ? 'inherit' : 'pipe' });
+  }
+  if (p.latest) {
+    // npm dist-tag has no dry run.
+    console.log(
+      `${live ? 'Moving latest:' : 'Dry run, not run:'} npm dist-tag add ${p.spec} latest`,
+    );
+    if (live)
+      execFileSync(process.execPath, [npmCli, 'dist-tag', 'add', p.spec, 'latest'], {
+        cwd: root,
+        stdio: 'inherit',
+      });
+  }
 }
+const published = todo.filter((p) => p.publish).length;
+const moved = todo.filter((p) => p.latest).length;
+const there = plan.length - published;
 console.log(
   live
-    ? `Published ${pending.length} packages (${already.length} already there). Check: npm dist-tag ls @oddkin/core`
-    : `${pending.length} packages would publish (${already.length} already there); the owner runs this with --publish.`,
+    ? `Published ${published} packages and moved latest for ${moved} (${there} already there). Check: npm dist-tag ls @oddkin/core`
+    : `${published} packages would publish and latest would move for ${moved} (${there} already there); the owner runs this with --publish.`,
 );
