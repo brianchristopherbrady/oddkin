@@ -3792,3 +3792,11 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | e2e | `npx playwright test e2e/workbench-static.spec.ts` per engine, under the lock | Chromium 4 passed (a first run: Theme Studio "Frame request 1 timed out", fixed above); WebKit 4 passed; Firefox 4 passed |
 | Timing | `buildStatic` of `tests/fixtures/workbench-oddkin` | 1,454 files; fresh 7.5–25 s and unchanged rebuild 6–18 s on this machine under other agents' load (data build 2.2 s) |
 | Typecheck, lint, size | `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` | pass; budgets unchanged |
+
+## 2026-10-27 — Docs e2e WebKit flake (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Cause | the catalog test alone per engine, instrumented (54 components) | catalog 2.3 s and 54 round trips 22.0 s in Chromium; 2.2 s and 35.2 s in WebKit; 6.4 s and 45.0 s in Firefox (1.2 min with startup), against a fixed 90 s budget: beside other runs, about twice as long |
+| e2e, WebKit | `npx playwright test e2e/docs.spec.ts --project=webkit` (lock held) | 5 passed |
+| e2e, three engines at once | `npx playwright test e2e/docs.spec.ts` | first 14 passed, 1 failed (Firefox: the layout guide's heading after 5 s); with `catalogLoad` there, 15 passed; a repeat with the CPU at 100% from other agents' runs took 6.8 min and timed out 6 tests in Firefox and WebKit (page loads and the catalog test's 138 s budget alike): load, recorded, not a pass |

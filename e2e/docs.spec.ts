@@ -40,8 +40,11 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(page.getByRole('heading', { name: 'Tokens only', level: 1 })).toBeVisible();
   await expect(page.locator('.side-nav a[aria-current="page"]')).toHaveText('Tokens only');
 
+  // The layout guide's route loads its element modules before it commits (catalogLoad).
   await page.locator('.side-nav a[href="/layout/side-nav"]').click();
-  await expect(page.getByRole('heading', { name: 'Side navigation', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Side navigation', exact: true })).toBeVisible({
+    timeout: catalogLoad,
+  });
   await expect(page.getByRole('heading', { name: 'Recipe and regions' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Data-driven' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Declarative' })).toBeVisible();
@@ -181,7 +184,6 @@ test('unknown local references render a not-found state', async ({ page }) => {
 test('every published component is listed under its category and has a reference page', async ({
   page,
 }) => {
-  test.slow();
   const metadata = (await (
     await page.request.get(`${docs}/public/@oddkin/components/oddkin.metadata.json`)
   ).json()) as {
@@ -190,6 +192,10 @@ test('every published component is listed under its category and has a reference
   };
   const components = Object.values(metadata.components);
   expect(components.length).toBeGreaterThan(0);
+  // A round trip per component (reference page, then back to the catalog): 0.4 s in Chromium,
+  // 0.65 s in WebKit, and 0.85 s in Firefox alone (54 components, 2026-10-27), about twice that
+  // beside other runs. A fixed budget failed as the catalog grew, so it grows with it.
+  test.setTimeout(30_000 + components.length * 2_000);
   const count = (category: string) => components.filter((c) => c.category === category).length;
 
   await page.goto(`${docs}/components`);
