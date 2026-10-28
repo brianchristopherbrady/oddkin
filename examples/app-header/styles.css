@@ -1,0 +1,106 @@
+/* Page chrome and the application header (Figma appHeader). Rows are the layout.css classes; this
+   sheet draws the bar and, when the header itself is narrow, swaps the destinations for the menu
+   button that discloses them below the bar. */
+body {
+  margin: 0;
+  background: var(--odd-color-canvas);
+  color: var(--odd-color-text-primary);
+  font-family: var(--odd-type-body-family);
+  font-size: var(--odd-type-body-size);
+  line-height: var(--odd-type-body-line-height);
+}
+
+.app-header {
+  container: app-header / inline-size;
+  padding: var(--odd-space-md);
+}
+
+.bar {
+  --odd-cluster-gap: var(--odd-space-sm);
+  padding: var(--odd-space-sm);
+  border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  border-radius: var(--odd-control-radius);
+  background: var(--odd-color-surface-default);
+}
+
+.brand {
+  color: var(--odd-color-text-primary);
+  font-family: var(--odd-type-title-family);
+  font-size: var(--odd-type-title-size);
+  font-weight: var(--odd-type-title-weight);
+  line-height: var(--odd-type-title-line-height);
+  letter-spacing: var(--odd-type-title-letter-spacing);
+  text-decoration: none;
+}
+
+.destinations {
+  --odd-cluster-gap: var(--odd-space-lg);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.destinations a {
+  color: var(--odd-color-text-primary);
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+  line-height: var(--odd-type-ui-line-height);
+  letter-spacing: var(--odd-type-ui-letter-spacing);
+  text-decoration: none;
+}
+
+/* The current destination keeps its colour and underline in both layouts. */
+.destinations a[aria-current='page'] {
+  color: var(--odd-color-link);
+  text-decoration: underline;
+}
+
+.brand:focus-visible,
+.destinations a:focus-visible {
+  outline: var(--odd-focus-width) solid var(--odd-color-focus-ring);
+  outline-offset: var(--odd-focus-offset);
+}
+
+.actions {
+  --odd-cluster-gap: var(--odd-space-2xs);
+  margin-inline-start: auto;
+}
+
+main {
+  padding: var(--odd-space-md);
+}
+
+main h1 {
+  margin: 0;
+}
+
+@container app-header (width >= 40rem) {
+  .menu-toggle,
+  .menu-only {
+    display: none;
+  }
+}
+
+@container app-header (width < 40rem) {
+  .wide-only {
+    display: none;
+  }
+  .primary {
+    display: none;
+    flex-basis: 100%;
+    order: 1;
+    padding: var(--odd-space-md);
+    border: var(--odd-border-width-default) solid var(--odd-color-border-default);
+    border-radius: var(--odd-control-radius);
+    background: var(--odd-color-surface-raised);
+  }
+  .app-header[data-menu-open] .primary {
+    display: block;
+  }
+  .destinations {
+    --odd-cluster-gap: var(--odd-space-sm);
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

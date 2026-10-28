@@ -3770,3 +3770,13 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Versions | read from the installed `package.json` files | React and React DOM 19.3.1, Vue 3.5.44, Svelte 5.57.2, `@sveltejs/vite-plugin-svelte` 7.3.1, Angular 22.2.3 |
 
 **Findings:** No code changed. Angular templates have no type check (no typings fixture), which release-process.md §4 states.
+## 2026-10-27 — Figma appHeader and the Code Connect check (Agent 1)
+
+**Change:** `examples/app-header` (index.html with its CSP hash, main.js, styles.css), `e2e/app-header.spec.ts`, the page in `tests/examples/csp.test.ts` and `import-maps.test.ts`, `appHeader` rows in component-contracts.md §1 and component-catalog.md; `artifacts/code-connect/corrections-2026-10-27.md`; the Code Connect item in IMPLEMENTATION_PLAN.md; the system-colors baseline in `docs/compatibility/features.json` and the regenerated matrix.
+
+| Check | Command | Result |
+|---|---|---|
+| App header, three engines | `npx playwright test e2e/app-header.spec.ts` per engine, under the E2E lock | Chromium 3 passed, Firefox 3 passed, WebKit 3 passed: wide banner (brand, destinations, named icon buttons); narrow disclosure (`aria-expanded`, the current destination kept); 200% text in a 320 px viewport without horizontal scrolling |
+| Example pages | `npx vitest run --project node tests/examples` | Pass, with `app-header` in the CSP and import-map lists |
+| Code Connect | each proposed mapping in `artifacts/code-connect/implementation-audit.json` checked for its source file, its export, and a package export for its import | All match the code (Form is an example: no export, as intended); 44 saved bindings differ (38 name nothing that exists or are blank), listed for the owner |
+| Compatibility | `npm run compat`, then `npm run lint` | Matrix current: the system-colors row and `examples/app-header/styles.css` (example, 36 keys) |

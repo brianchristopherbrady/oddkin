@@ -14,6 +14,7 @@ const pages = [
   'full-app',
   'forms',
   'autoload',
+  'app-header',
 ];
 
 describe.each(pages)('%s CSP', (name) => {

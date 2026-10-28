@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-26** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)), text-wrap-balance (newly (2024-05-13)), scrollbar-gutter (newly (2024-12-11)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 224 stylesheets, 326 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 233 stylesheets, 326 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -144,11 +144,13 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/avatar/avatar.styles.js (avatarStyles)` | yes | 8 |
 | `packages/components/dist/badge/badge.structural.styles.js (badgeStructuralStyles)` | yes | 16 |
 | `packages/components/dist/badge/badge.styles.js (badgeStyles)` | yes | 11 |
+| `packages/components/dist/breadcrumbs/breadcrumbs.recipe.styles.js (breadcrumbsRecipeStyles)` | yes | 11 |
 | `packages/components/dist/breadcrumbs/breadcrumbs.structural.styles.js (breadcrumbsStructuralStyles)` | yes | 34 |
 | `packages/components/dist/breadcrumbs/breadcrumbs.styles.js (breadcrumbsStyles)` | yes | 14 |
 | `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 52 |
 | `packages/components/dist/button/button.structural.styles.js (buttonStructuralStyles)` | yes | 35 |
 | `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 28 |
+| `packages/components/dist/calendar/calendar.recipe.styles.js (calendarRecipeStyles)` | yes | 13 |
 | `packages/components/dist/calendar/calendar.structural.styles.js (calendarStructuralStyles)` | yes | 38 |
 | `packages/components/dist/calendar/calendar.styles.js (calendarStyles)` | yes | 29 |
 | `packages/components/dist/card/card.structural.styles.js (cardStructuralStyles)` | yes | 20 |
@@ -177,8 +179,10 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/copy-button/copy-button.styles.js (copyButtonStyles)` | yes | 11 |
 | `packages/components/dist/date-picker/date-picker.structural.styles.js (datePickerStructuralStyles)` | yes | 18 |
 | `packages/components/dist/date-picker/date-picker.styles.js (datePickerStyles)` | yes | 14 |
+| `packages/components/dist/dialog/dialog.recipe.styles.js (dialogRecipeStyles)` | yes | 14 |
 | `packages/components/dist/dialog/dialog.structural.styles.js (dialogStructuralStyles)` | yes | 38 |
 | `packages/components/dist/dialog/dialog.styles.js (dialogStyles)` | yes | 17 |
+| `packages/components/dist/disclosure/disclosure.recipe.styles.js (disclosureRecipeStyles)` | yes | 11 |
 | `packages/components/dist/disclosure/disclosure.structural.styles.js (disclosureStructuralStyles)` | yes | 33 |
 | `packages/components/dist/disclosure/disclosure.styles.js (disclosureStyles)` | yes | 26 |
 | `packages/components/dist/drawer/drawer.structural.styles.js (drawerStructuralStyles)` | yes | 26 |
@@ -186,6 +190,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/empty-state/empty-state.recipe.styles.js (emptyStateRecipeStyles)` | yes | 14 |
 | `packages/components/dist/empty-state/empty-state.structural.styles.js (emptyStateStructuralStyles)` | yes | 25 |
 | `packages/components/dist/empty-state/empty-state.styles.js (emptyStateStyles)` | yes | 11 |
+| `packages/components/dist/file-input/file-input.recipe.styles.js (fileInputRecipeStyles)` | yes | 13 |
 | `packages/components/dist/file-input/file-input.structural.styles.js (fileInputStructuralStyles)` | yes | 25 |
 | `packages/components/dist/file-input/file-input.styles.js (fileInputStyles)` | yes | 44 |
 | `packages/components/dist/icon/icon.structural.styles.js (iconStructuralStyles)` | yes | 19 |
@@ -199,6 +204,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/menu/menu.styles.js (menuStyles)` | yes | 12 |
 | `packages/components/dist/one-time-code/one-time-code.structural.styles.js (oneTimeCodeStructuralStyles)` | yes | 20 |
 | `packages/components/dist/one-time-code/one-time-code.styles.js (oneTimeCodeStyles)` | yes | 19 |
+| `packages/components/dist/pagination/pagination.recipe.styles.js (paginationRecipeStyles)` | yes | 12 |
 | `packages/components/dist/pagination/pagination.structural.styles.js (paginationStructuralStyles)` | yes | 32 |
 | `packages/components/dist/pagination/pagination.styles.js (paginationStyles)` | yes | 20 |
 | `packages/components/dist/picker/picker.structural.styles.js (pickerStructuralStyles)` | yes | 31 |
@@ -271,6 +277,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/textarea/textarea.styles.js (textareaStyles)` | yes | 6 |
 | `packages/components/dist/toast/toast.structural.styles.js (toastStructuralStyles)` | yes | 21 |
 | `packages/components/dist/toast/toast.styles.js (toastStyles)` | yes | 14 |
+| `packages/components/dist/toolbar/toolbar.recipe.styles.js (toolbarRecipeStyles)` | yes | 16 |
 | `packages/components/dist/toolbar/toolbar.structural.styles.js (toolbarStructuralStyles)` | yes | 23 |
 | `packages/components/dist/toolbar/toolbar.styles.js (toolbarStyles)` | yes | 16 |
 | `packages/components/dist/tooltip/tooltip.structural.styles.js (tooltipStructuralStyles)` | yes | 3 |
@@ -278,6 +285,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/tree/tree.recipe.styles.js (treeRecipeStyles)` | yes | 12 |
 | `packages/components/dist/tree/tree.structural.styles.js (treeStructuralStyles)` | yes | 24 |
 | `packages/components/dist/tree/tree.styles.js (treeStyles)` | yes | 12 |
+| `packages/components/dist/validation-summary/validation-summary.recipe.styles.js (validationSummaryRecipeStyles)` | yes | 12 |
 | `packages/components/dist/validation-summary/validation-summary.structural.styles.js (validationSummaryStructuralStyles)` | yes | 18 |
 | `packages/components/dist/validation-summary/validation-summary.styles.js (validationSummaryStyles)` | yes | 15 |
 | `packages/ai/dist/action-approval/action-approval.recipe.styles.js (actionApprovalRecipeStyles)` | yes | 12 |
@@ -331,6 +339,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `examples/ai-agent/styles.css` | example | 21 |
 | `examples/ai-research/styles.css` | example | 26 |
 | `examples/ai-writing/styles.css` | example | 26 |
+| `examples/app-header/styles.css` | example | 36 |
 | `examples/autoload/styles.css` | example | 6 |
 | `examples/binding-rule/styles.css` | example | 32 |
 | `examples/components-only/styles.css` | example | 11 |

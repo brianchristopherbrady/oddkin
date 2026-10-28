@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-4NZVVN8MsPj3wIHctkEhVZ2qyxTgkmfROftZcHs9iXk='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>Application header — banner, destinations, and the narrow menu</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/layout.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/button.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/core/element": "../../packages/core/dist/element/index.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/template/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js",
+          "@oddkin/components/define/button": "../../packages/components/dist/button/button.define.js"
+        }
+      }
+    </script>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="bar odd-cluster">
+        <a class="brand" href="#overview">Oddkin</a>
+        <nav id="primary" class="primary" aria-label="Primary">
+          <ul class="destinations odd-cluster">
+            <li><a href="#overview" aria-current="page">Overview</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#people">People</a></li>
+            <li class="menu-only"><a href="#notifications">Notifications</a></li>
+          </ul>
+        </nav>
+        <div class="actions odd-cluster">
+          <odd-button label="Search" appearance="ghost">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 20 20"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            >
+              <circle cx="9" cy="9" r="5.5" />
+              <path d="M13 13l4 4" />
+            </svg>
+          </odd-button>
+          <odd-button class="wide-only" label="Notifications" appearance="ghost">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 20 20"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 13V9a5 5 0 0 1 10 0v4l1.5 2h-13z" />
+              <path d="M8.5 17h3" />
+            </svg>
+          </odd-button>
+          <odd-button label="Account" appearance="ghost">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 20 20"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <circle cx="10" cy="7" r="3.5" />
+              <path d="M3.5 17a6.5 6.5 0 0 1 13 0" />
+            </svg>
+          </odd-button>
+          <button
+            type="button"
+            class="odd-button menu-toggle"
+            data-appearance="ghost"
+            aria-label="Navigation"
+            aria-expanded="false"
+            aria-controls="primary"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 20 20"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+            >
+              <path d="M3.5 6h13M3.5 10h13M3.5 14h13" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+    <main id="main" class="odd-stack">
+      <h1 id="overview">Overview</h1>
+      <p>
+        One <code>&lt;header&gt;</code> is the page's banner landmark: the brand, the primary
+        destinations, and search, notifications, and account as named icon buttons. When the header
+        is narrow, a menu button discloses the destinations (and notifications) below the bar, and
+        the current destination stays marked.
+      </p>
+      <p id="projects">Projects.</p>
+      <p id="people">People.</p>
+      <p id="notifications">Notifications.</p>
+    </main>
+  </body>
+</html>

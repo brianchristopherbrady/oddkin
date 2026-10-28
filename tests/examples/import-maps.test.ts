@@ -19,6 +19,7 @@ const pages = [
   'forms',
   'full-app',
   'autoload',
+  'app-header',
 ];
 
 const IMPORTS = [
