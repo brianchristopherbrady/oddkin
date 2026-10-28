@@ -1,0 +1,1136 @@
+{
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "preparedAt": "2026-10-26",
+  "status": "partially-connected",
+  "scope": "Top-level Oddkin Common component families on Primitives and Composed components pages; excludes legacy specimen components, icons file, and AI page (no components found).",
+  "limitations": [
+    "Figma add_code_connect_map refused the write, reporting Organization/Enterprise required.",
+    "Current Figma documentation supports Code Connect UI on Professional; browser fallback timed out.",
+    "Candidate source references only; no property-to-code templates or functional parity certification.",
+    "Origin/main existence checked against locally cached remote-tracking ref; not a fresh network fetch."
+  ],
+  "mappings": [
+    {
+      "nodeId": "159:439",
+      "figmaName": "Oddkin/Common/button",
+      "source": "packages/components/src/button/button.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/button/button.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinButton",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:471",
+      "figmaName": "Oddkin/Common/iconButton",
+      "source": "packages/components/src/button/button.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/button/button.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinButton",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:501",
+      "figmaName": "Oddkin/Common/toggleButton",
+      "source": "packages/components/src/button/button.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/button/button.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinButton",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:582",
+      "figmaName": "Oddkin/Common/badge",
+      "source": "packages/components/src/badge/badge.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/badge/badge.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinBadge",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:612",
+      "figmaName": "Oddkin/Common/chip",
+      "source": "packages/components/src/chip/chip.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/chip/chip.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinChip",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "181:2332",
+      "figmaName": "Oddkin/Common/button/sm",
+      "source": "packages/components/src/button/button.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/button/button.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinButton",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "181:2390",
+      "figmaName": "Oddkin/Common/button/lg",
+      "source": "packages/components/src/button/button.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/button/button.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinButton",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1024",
+      "figmaName": "Oddkin/Common/input",
+      "source": "packages/components/src/input/input.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/input/input.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinInput",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1056",
+      "figmaName": "Oddkin/Common/textarea",
+      "source": "packages/components/src/textarea/textarea.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/textarea/textarea.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinTextarea",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1144",
+      "figmaName": "Oddkin/Common/search",
+      "source": "packages/components/src/input/input.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/input/input.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinInput",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1181",
+      "figmaName": "Oddkin/Common/checkbox",
+      "source": "packages/components/src/checkbox/checkbox.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/checkbox/checkbox.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinCheckbox",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1258",
+      "figmaName": "Oddkin/Common/switch",
+      "source": "packages/components/src/switch/switch.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/switch/switch.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinSwitch",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1287",
+      "figmaName": "Oddkin/Common/slider",
+      "source": "packages/components/src/slider/slider.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/slider/slider.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinSlider",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:1501",
+      "figmaName": "Oddkin/Common/Disclosure",
+      "source": "packages/components/src/disclosure/disclosure.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/disclosure/disclosure.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinDisclosure",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:2470",
+      "figmaName": "Oddkin/Common/tooltip",
+      "source": "packages/components/src/tooltip/tooltip.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/tooltip/tooltip.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinTooltip",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "161:1916",
+      "figmaName": "Oddkin/Common/progress",
+      "source": "packages/components/src/progress/progress.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/progress/progress.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinProgress",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "161:1939",
+      "figmaName": "Oddkin/Common/spinner",
+      "source": "packages/components/src/spinner/spinner.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/spinner/spinner.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinSpinner",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "161:1959",
+      "figmaName": "Oddkin/Common/skeleton",
+      "source": "packages/components/src/skeleton/skeleton.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/skeleton/skeleton.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinSkeleton",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "162:2022",
+      "figmaName": "Oddkin/Common/avatar",
+      "source": "packages/components/src/avatar/avatar.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/avatar/avatar.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinAvatar",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "162:2058",
+      "figmaName": "Oddkin/Common/icon",
+      "source": "packages/components/src/icon/icon.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/icon/icon.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinIcon",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "555:2787",
+      "figmaName": "Oddkin/Common/rating",
+      "source": "packages/components/src/rating/rating.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/rating/rating.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinRating",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1097",
+      "figmaName": "Oddkin/Common/number",
+      "source": "packages/components/src/input/input.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/input/input.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinInput",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "555:2908",
+      "figmaName": "Oddkin/Common/stat",
+      "source": "packages/components/src/stat/stat.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/stat/stat.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinStat",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "555:2984",
+      "figmaName": "Oddkin/Common/copyButton",
+      "source": "packages/components/src/copy-button/copy-button.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/copy-button/copy-button.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinCopyButton",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "555:3030",
+      "figmaName": "Oddkin/Common/relativeTime",
+      "source": "packages/components/src/relative-time/relative-time.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/relative-time/relative-time.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinRelativeTime",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1355",
+      "figmaName": "Oddkin/Common/select",
+      "source": "packages/components/src/select/select.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/select/select.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinSelect",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1402",
+      "figmaName": "Oddkin/Common/listbox",
+      "source": "packages/components/src/listbox/listbox.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/listbox/listbox.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinListbox",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1483",
+      "figmaName": "Oddkin/Common/combobox",
+      "source": "packages/components/src/combobox/combobox.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/combobox/combobox.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinCombobox",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1231",
+      "figmaName": "Oddkin/Common/radioGroup",
+      "source": "packages/components/src/radio-group/radio-group.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/radio-group/radio-group.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinRadioGroup",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1582",
+      "figmaName": "Oddkin/Common/segmented",
+      "source": "packages/components/src/segmented-control/segmented-control.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/segmented-control/segmented-control.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinSegmentedControl",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1629",
+      "figmaName": "Oddkin/Common/dateTime",
+      "source": "packages/components/src/input/input.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/input/input.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinInput",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:1678",
+      "figmaName": "Oddkin/Common/fileUpload",
+      "source": "packages/components/src/file-input/file-input.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/file-input/file-input.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinFileInput",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "183:2616",
+      "figmaName": "Oddkin/Common/CheckboxGroup",
+      "source": "packages/components/src/checkbox-group/checkbox-group.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/checkbox-group/checkbox-group.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinCheckboxGroup",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "183:2622",
+      "figmaName": "Oddkin/Common/ValidationSummary",
+      "source": "packages/components/src/validation-summary/validation-summary.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/validation-summary/validation-summary.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinValidationSummary",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:941",
+      "figmaName": "Oddkin/Common/Menu",
+      "source": "packages/components/src/menu/menu.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/menu/menu.ts",
+      "label": "Web Components",
+      "status": "source-mapping-verified",
+      "componentName": "OddkinMenu",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true,
+        "remoteSourceMappingReadBack": true
+      },
+      "actualLabel": "Javascript",
+      "savedComponentName": "OddkinMenu"
+    },
+    {
+      "nodeId": "160:1061",
+      "figmaName": "Oddkin/Common/Tree",
+      "source": "packages/components/src/tree/tree.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/tree/tree.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinTree",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:1346",
+      "figmaName": "Oddkin/Common/SideNavigation",
+      "source": "packages/components/src/side-nav/side-nav.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/side-nav/side-nav.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinSideNav",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:1385",
+      "figmaName": "Oddkin/Common/Breadcrumbs",
+      "source": "packages/components/src/breadcrumbs/breadcrumbs.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/breadcrumbs/breadcrumbs.ts",
+      "label": "Web Components",
+      "status": "source-mapping-verified",
+      "componentName": "OddkinBreadcrumbs",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true,
+        "remoteSourceMappingReadBack": true
+      },
+      "actualLabel": "Javascript",
+      "savedComponentName": null
+    },
+    {
+      "nodeId": "160:1453",
+      "figmaName": "Oddkin/Common/Pagination",
+      "source": "packages/components/src/pagination/pagination.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/pagination/pagination.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinPagination",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:1475",
+      "figmaName": "Oddkin/Common/Tabs",
+      "source": "packages/components/src/tabs/tabs.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/tabs/tabs.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinTabs",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:1638",
+      "figmaName": "Oddkin/Common/Toolbar",
+      "source": "packages/components/src/toolbar/toolbar.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/toolbar/toolbar.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinToolbar",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "159:529",
+      "figmaName": "Oddkin/Common/splitAction",
+      "source": "packages/components/src/split-button/split-button.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/split-button/split-button.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinSplitButton",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:2425",
+      "figmaName": "Oddkin/Common/card",
+      "source": "packages/components/src/card/card.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/card/card.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinCard",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:2460",
+      "figmaName": "Oddkin/Common/popover",
+      "source": "packages/components/src/popover/popover.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/popover/popover.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinPopover",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:2521",
+      "figmaName": "Oddkin/Common/dialog",
+      "source": "packages/components/src/dialog/dialog.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/dialog/dialog.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinDialog",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "160:2599",
+      "figmaName": "Oddkin/Common/drawer",
+      "source": "packages/components/src/drawer/drawer.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/drawer/drawer.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinDrawer",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "161:1877",
+      "figmaName": "Oddkin/Common/alert",
+      "source": "packages/components/src/alert/alert.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/alert/alert.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinAlert",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "161:1902",
+      "figmaName": "Oddkin/Common/toast",
+      "source": "packages/components/src/toast/toast.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/toast/toast.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinToast",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "161:1992",
+      "figmaName": "Oddkin/Common/emptyState",
+      "source": "packages/components/src/empty-state/empty-state.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/empty-state/empty-state.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinEmptyState",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "182:2469",
+      "figmaName": "Oddkin/Common/CommandPalette",
+      "source": "packages/components/src/command-palette/command-palette.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/command-palette/command-palette.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinCommandPalette",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "185:5091",
+      "figmaName": "Oddkin/Common/SplitPanels",
+      "source": "packages/components/src/split-panel/split-panel.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/split-panel/split-panel.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "note": "Shares an implementation; requires configuration or content appropriate to this Figma component.",
+      "componentName": "OddkinSplitPanel",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "541:15460",
+      "figmaName": "Oddkin/Common/Picker",
+      "source": "packages/components/src/picker/picker.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/picker/picker.ts",
+      "label": "Web Components",
+      "status": "source-mapping-verified",
+      "componentName": "OddkinPicker",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true,
+        "remoteSourceMappingReadBack": true
+      },
+      "actualLabel": "Javascript",
+      "savedComponentName": null
+    },
+    {
+      "nodeId": "558:15676",
+      "figmaName": "Oddkin/Common/calendar",
+      "source": "packages/components/src/calendar/calendar.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/calendar/calendar.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinCalendar",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "558:16131",
+      "figmaName": "Oddkin/Common/datePicker",
+      "source": "packages/components/src/date-picker/date-picker.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/date-picker/date-picker.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinDatePicker",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "558:16598",
+      "figmaName": "Oddkin/Common/colorPicker",
+      "source": "packages/components/src/color-picker/color-picker.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/color-picker/color-picker.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinColorPicker",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    },
+    {
+      "nodeId": "558:16773",
+      "figmaName": "Oddkin/Common/oneTimeCode",
+      "source": "packages/components/src/one-time-code/one-time-code.ts",
+      "githubUrl": "https://github.com/brianchristopherbrady/oddkin/blob/main/packages/components/src/one-time-code/one-time-code.ts",
+      "label": "Web Components",
+      "status": "prepared-not-published",
+      "componentName": "OddkinOneTimeCode",
+      "verification": {
+        "localSourceExists": true,
+        "exportedClassFound": true,
+        "fileExistsOnCachedOriginMain": true
+      }
+    }
+  ],
+  "needsReview": [
+    {
+      "nodeId": "159:549",
+      "figmaName": "Oddkin/Common/link",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "159:971",
+      "figmaName": "Oddkin/Common/field",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "159:1209",
+      "figmaName": "Oddkin/Common/radio",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "234:5551",
+      "figmaName": "Oddkin/Common/ListboxSurface",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "186:5167",
+      "figmaName": "Oddkin/Common/ListboxOption",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "258:824",
+      "figmaName": "Oddkin/Common/CheckboxOption",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "160:974",
+      "figmaName": "Oddkin/Common/MenuItem",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "160:1252",
+      "figmaName": "Oddkin/Common/NavigationItem",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "182:2340",
+      "figmaName": "Oddkin/Common/CommandItem",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "162:2069",
+      "figmaName": "Oddkin/Common/divider",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "162:2080",
+      "figmaName": "Oddkin/Common/typography",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "162:2097",
+      "figmaName": "Oddkin/Common/keyboardKey",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "374:1576",
+      "figmaName": "Oddkin/Common/avatar/Appearance",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:971",
+      "figmaName": "Oddkin/Common/multiselect/Value/chips",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:1004",
+      "figmaName": "Oddkin/Common/multiselect/Value/count",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:1017",
+      "figmaName": "Oddkin/Common/multiselect/Value/text",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:1105",
+      "figmaName": "Oddkin/Common/multiselect/Value/auto",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:1240",
+      "figmaName": "Oddkin/Common/multiselect/Value/expandable",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:1285",
+      "figmaName": "Oddkin/Common/multiselect/Value/avatars",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:1320",
+      "figmaName": "Oddkin/Common/multiselect/Value/grouped",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:1654",
+      "figmaName": "Oddkin/Common/multiselect/Field",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:886",
+      "figmaName": "Oddkin/Common/AvatarItem",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "184:3803",
+      "figmaName": "Oddkin/Common/GridCell",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "184:3822",
+      "figmaName": "Oddkin/Common/GridColumnHeader",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "184:3830",
+      "figmaName": "Oddkin/Common/GridSelection",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "185:4822",
+      "figmaName": "Oddkin/Common/Splitter/vertical",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "185:4835",
+      "figmaName": "Oddkin/Common/Splitter/horizontal",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "459:2095",
+      "figmaName": "Oddkin/Layout/SpecimenItem",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "459:2112",
+      "figmaName": "Oddkin/Layout/Box",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2092",
+      "figmaName": "Oddkin/Layout/Container",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2120",
+      "figmaName": "Oddkin/Layout/Stack",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2140",
+      "figmaName": "Oddkin/Layout/Row",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2144",
+      "figmaName": "Oddkin/Layout/Cluster",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2317",
+      "figmaName": "Oddkin/Layout/Grid",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2161",
+      "figmaName": "Oddkin/Layout/AutoGrid",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2192",
+      "figmaName": "Oddkin/Layout/Split",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2196",
+      "figmaName": "Oddkin/Layout/Center",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2215",
+      "figmaName": "Oddkin/Layout/AspectRatio",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "460:2219",
+      "figmaName": "Oddkin/Layout/ScrollRegion",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "555:2531",
+      "figmaName": "Oddkin/Common/calendar/Day",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "555:2550",
+      "figmaName": "Oddkin/Common/oneTimeCode/Cell",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "555:2564",
+      "figmaName": "Oddkin/Common/color/Swatch",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "555:2595",
+      "figmaName": "Oddkin/Common/rating/Item",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "159:1550",
+      "figmaName": "Oddkin/Common/multiselect",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "257:1934",
+      "figmaName": "Oddkin/Common/multiselect/Display",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "258:1467",
+      "figmaName": "Oddkin/Common/multiselect/SelectionPanel",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "261:13821",
+      "figmaName": "Oddkin/Common/multiselect/InteractionExamples",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "261:10449",
+      "figmaName": "Oddkin/Common/multiselect/SelectedItems",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "183:2919",
+      "figmaName": "Oddkin/Common/Form",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "160:1148",
+      "figmaName": "Oddkin/Common/Table",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "160:1222",
+      "figmaName": "Oddkin/Common/List",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "160:1558",
+      "figmaName": "Oddkin/Common/Accordion",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "160:2548",
+      "figmaName": "Oddkin/Common/alertDialog",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "184:3887",
+      "figmaName": "Oddkin/Common/GridRow",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "184:4717",
+      "figmaName": "Oddkin/Common/DataGrid",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "558:16987",
+      "figmaName": "Oddkin/Common/stepper",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "558:17114",
+      "figmaName": "Oddkin/Common/timeline",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "558:17183",
+      "figmaName": "Oddkin/Common/descriptionList",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "613:17999",
+      "figmaName": "Oddkin/Common/carousel",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "613:18049",
+      "figmaName": "Oddkin/Common/hoverCard",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "613:18290",
+      "figmaName": "Oddkin/Common/contextMenu",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    },
+    {
+      "nodeId": "613:18461",
+      "figmaName": "Oddkin/Common/appHeader",
+      "reason": "No verified one-to-one exported custom element. May be an internal part, native/CSS recipe, composition, or design-only specification."
+    }
+  ],
+  "lastCheckedAt": "2026-10-26",
+  "verifiedConnectedCount": 3,
+  "latestAttempt": {
+    "connectorWrite": "rejected-plan-restriction",
+    "debugId": "8d399228-544d-4858-8f10-4f96345f0cb7",
+    "desktopUI": "working; three mappings read back through connector; stopped repeatedly by concurrent user input"
+  }
+}

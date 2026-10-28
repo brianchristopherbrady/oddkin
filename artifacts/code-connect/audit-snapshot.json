@@ -1,0 +1,4237 @@
+{
+  "auditedAt": "2026-10-26",
+  "fileKey": "E7LfRysny8V3qU24tv082i",
+  "records": [
+    {
+      "id": "159:439",
+      "name": "Oddkin/Common/button",
+      "description": "Primary, secondary and ghost actions. Small 32 / medium 40 / large 48 px; focus and busy states. Existing @oddkin/components implementation; extra visual states remain specifications.",
+      "variants": [
+        {
+          "id": "159:383",
+          "name": "Appearance=primary, Size=md, State=Default"
+        },
+        {
+          "id": "159:389",
+          "name": "Appearance=secondary, Size=md, State=Default"
+        },
+        {
+          "id": "159:395",
+          "name": "Appearance=ghost, Size=md, State=Default"
+        },
+        {
+          "id": "159:401",
+          "name": "Appearance=primary, Size=md, State=Hover"
+        },
+        {
+          "id": "159:407",
+          "name": "Appearance=primary, Size=md, State=Pressed"
+        },
+        {
+          "id": "159:414",
+          "name": "Appearance=primary, Size=md, State=Focus"
+        },
+        {
+          "id": "159:420",
+          "name": "Appearance=primary, Size=md, State=Disabled"
+        },
+        {
+          "id": "159:426",
+          "name": "Appearance=primary, Size=md, State=Loading"
+        },
+        {
+          "id": "164:2139",
+          "name": "Appearance=secondary, Size=md, State=Hover"
+        },
+        {
+          "id": "164:2143",
+          "name": "Appearance=secondary, Size=md, State=Pressed"
+        },
+        {
+          "id": "164:2147",
+          "name": "Appearance=secondary, Size=md, State=Focus"
+        },
+        {
+          "id": "164:2152",
+          "name": "Appearance=secondary, Size=md, State=Disabled"
+        },
+        {
+          "id": "164:2156",
+          "name": "Appearance=secondary, Size=md, State=Loading"
+        },
+        {
+          "id": "164:2162",
+          "name": "Appearance=ghost, Size=md, State=Hover"
+        },
+        {
+          "id": "164:2166",
+          "name": "Appearance=ghost, Size=md, State=Pressed"
+        },
+        {
+          "id": "164:2170",
+          "name": "Appearance=ghost, Size=md, State=Focus"
+        },
+        {
+          "id": "164:2175",
+          "name": "Appearance=ghost, Size=md, State=Disabled"
+        },
+        {
+          "id": "164:2179",
+          "name": "Appearance=ghost, Size=md, State=Loading"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinButton",
+          "source": "packages/components/src/button/button.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:471",
+      "name": "Oddkin/Common/iconButton",
+      "description": "A compact action with a visible focus ring and a required accessible name. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:445",
+          "name": "State=Default"
+        },
+        {
+          "id": "159:451",
+          "name": "State=Hover"
+        },
+        {
+          "id": "159:457",
+          "name": "State=Pressed"
+        },
+        {
+          "id": "159:464",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:470",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "159:501",
+      "name": "Oddkin/Common/toggleButton",
+      "description": "An action with a persistent pressed state; pair colour with an inset marker. Design proposal; not a promised custom-element API. Selection/value and interaction state are independent axes; original component IDs retained.",
+      "variants": [
+        {
+          "id": "159:478",
+          "name": "Value=Off, State=Default"
+        },
+        {
+          "id": "159:485",
+          "name": "Value=On, State=Default"
+        },
+        {
+          "id": "159:493",
+          "name": "Value=Off, State=Focus"
+        },
+        {
+          "id": "159:500",
+          "name": "Value=Off, State=Disabled"
+        },
+        {
+          "id": "181:2252",
+          "name": "Value=Off, State=Hover"
+        },
+        {
+          "id": "181:2257",
+          "name": "Value=On, State=Hover"
+        },
+        {
+          "id": "181:2262",
+          "name": "Value=On, State=Focus"
+        },
+        {
+          "id": "181:2268",
+          "name": "Value=On, State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "159:549",
+      "name": "Oddkin/Common/link",
+      "description": "A native destination, with a clear underline on interaction and a visible focus indicator. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:535",
+          "name": "State=Default"
+        },
+        {
+          "id": "159:541",
+          "name": "State=Hover"
+        },
+        {
+          "id": "159:548",
+          "name": "State=Focus"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/css/index.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:582",
+      "name": "Oddkin/Common/badge",
+      "description": "Passive status or count. Use words and a marker; do not style it as an action. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:556",
+          "name": "State=Neutral"
+        },
+        {
+          "id": "159:563",
+          "name": "State=Success"
+        },
+        {
+          "id": "159:570",
+          "name": "State=Warning"
+        },
+        {
+          "id": "159:577",
+          "name": "State=Danger"
+        },
+        {
+          "id": "159:581",
+          "name": "State=Count"
+        },
+        {
+          "id": "499:2513",
+          "name": "State=Info"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinBadge",
+          "source": "packages/components/src/badge/badge.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:612",
+      "name": "Oddkin/Common/chip",
+      "description": "A compact token with an explicit remove target; selected chips use the selection roles. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:589",
+          "name": "State=Default"
+        },
+        {
+          "id": "159:596",
+          "name": "State=Selected"
+        },
+        {
+          "id": "159:604",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:611",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinChip",
+          "source": "packages/components/src/chip/chip.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "181:2332",
+      "name": "Oddkin/Common/button/sm",
+      "description": "Canonical sm button family. All appearance and interaction states; original variant IDs preserved.",
+      "variants": [
+        {
+          "id": "159:432",
+          "name": "Appearance=primary, Size=sm, State=Default"
+        },
+        {
+          "id": "164:2185",
+          "name": "Appearance=secondary, Size=sm, State=Default"
+        },
+        {
+          "id": "164:2189",
+          "name": "Appearance=ghost, Size=sm, State=Default"
+        },
+        {
+          "id": "169:2142",
+          "name": "Appearance=primary, Size=sm, State=Disabled"
+        },
+        {
+          "id": "169:2146",
+          "name": "Appearance=secondary, Size=sm, State=Disabled"
+        },
+        {
+          "id": "169:2150",
+          "name": "Appearance=ghost, Size=sm, State=Disabled"
+        },
+        {
+          "id": "181:2281",
+          "name": "Appearance=primary, Size=sm, State=Hover"
+        },
+        {
+          "id": "181:2285",
+          "name": "Appearance=primary, Size=sm, State=Pressed"
+        },
+        {
+          "id": "181:2289",
+          "name": "Appearance=primary, Size=sm, State=Focus"
+        },
+        {
+          "id": "181:2294",
+          "name": "Appearance=primary, Size=sm, State=Loading"
+        },
+        {
+          "id": "181:2298",
+          "name": "Appearance=secondary, Size=sm, State=Hover"
+        },
+        {
+          "id": "181:2302",
+          "name": "Appearance=secondary, Size=sm, State=Pressed"
+        },
+        {
+          "id": "181:2306",
+          "name": "Appearance=secondary, Size=sm, State=Focus"
+        },
+        {
+          "id": "181:2311",
+          "name": "Appearance=secondary, Size=sm, State=Loading"
+        },
+        {
+          "id": "181:2315",
+          "name": "Appearance=ghost, Size=sm, State=Hover"
+        },
+        {
+          "id": "181:2319",
+          "name": "Appearance=ghost, Size=sm, State=Pressed"
+        },
+        {
+          "id": "181:2323",
+          "name": "Appearance=ghost, Size=sm, State=Focus"
+        },
+        {
+          "id": "181:2328",
+          "name": "Appearance=ghost, Size=sm, State=Loading"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/button/button.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "181:2390",
+      "name": "Oddkin/Common/button/lg",
+      "description": "Canonical lg button family. All appearance and interaction states; original variant IDs preserved.",
+      "variants": [
+        {
+          "id": "159:438",
+          "name": "Appearance=primary, Size=lg, State=Default"
+        },
+        {
+          "id": "164:2193",
+          "name": "Appearance=secondary, Size=lg, State=Default"
+        },
+        {
+          "id": "164:2197",
+          "name": "Appearance=ghost, Size=lg, State=Default"
+        },
+        {
+          "id": "169:2154",
+          "name": "Appearance=primary, Size=lg, State=Disabled"
+        },
+        {
+          "id": "169:2158",
+          "name": "Appearance=secondary, Size=lg, State=Disabled"
+        },
+        {
+          "id": "169:2162",
+          "name": "Appearance=ghost, Size=lg, State=Disabled"
+        },
+        {
+          "id": "181:2339",
+          "name": "Appearance=primary, Size=lg, State=Hover"
+        },
+        {
+          "id": "181:2343",
+          "name": "Appearance=primary, Size=lg, State=Pressed"
+        },
+        {
+          "id": "181:2347",
+          "name": "Appearance=primary, Size=lg, State=Focus"
+        },
+        {
+          "id": "181:2352",
+          "name": "Appearance=primary, Size=lg, State=Loading"
+        },
+        {
+          "id": "181:2356",
+          "name": "Appearance=secondary, Size=lg, State=Hover"
+        },
+        {
+          "id": "181:2360",
+          "name": "Appearance=secondary, Size=lg, State=Pressed"
+        },
+        {
+          "id": "181:2364",
+          "name": "Appearance=secondary, Size=lg, State=Focus"
+        },
+        {
+          "id": "181:2369",
+          "name": "Appearance=secondary, Size=lg, State=Loading"
+        },
+        {
+          "id": "181:2373",
+          "name": "Appearance=ghost, Size=lg, State=Hover"
+        },
+        {
+          "id": "181:2377",
+          "name": "Appearance=ghost, Size=lg, State=Pressed"
+        },
+        {
+          "id": "181:2381",
+          "name": "Appearance=ghost, Size=lg, State=Focus"
+        },
+        {
+          "id": "181:2386",
+          "name": "Appearance=ghost, Size=lg, State=Loading"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/button/button.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:971",
+      "name": "Oddkin/Common/field",
+      "description": "Label → description → control → validation. Required state is written as well as marked. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:963",
+          "name": "State=Required"
+        },
+        {
+          "id": "159:970",
+          "name": "State=Invalid"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/css/index.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1024",
+      "name": "Oddkin/Common/input",
+      "description": "One-line text. Email, URL, telephone and password share this anatomy; native semantics remain intact. Existing @oddkin/components implementation; extra visual states remain specifications.",
+      "variants": [
+        {
+          "id": "159:977",
+          "name": "State=Empty"
+        },
+        {
+          "id": "159:983",
+          "name": "State=Filled"
+        },
+        {
+          "id": "159:989",
+          "name": "State=Hover"
+        },
+        {
+          "id": "159:996",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:1002",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "159:1008",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "159:1014",
+          "name": "State=Read only"
+        },
+        {
+          "id": "159:1023",
+          "name": "State=Password"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinInput",
+          "source": "packages/components/src/input/input.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1056",
+      "name": "Oddkin/Common/textarea",
+      "description": "Multiline text with a persistent label, helpful limit and optional validation. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:1030",
+          "name": "State=Empty"
+        },
+        {
+          "id": "159:1036",
+          "name": "State=Filled"
+        },
+        {
+          "id": "159:1043",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:1049",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "159:1055",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinTextarea",
+          "source": "packages/components/src/textarea/textarea.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1144",
+      "name": "Oddkin/Common/search",
+      "description": "A search landmark or labelled field, with a clear action after text is entered. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:1106",
+          "name": "State=Empty"
+        },
+        {
+          "id": "159:1118",
+          "name": "State=Filled"
+        },
+        {
+          "id": "159:1131",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:1143",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "159:1181",
+      "name": "Oddkin/Common/checkbox",
+      "description": "Independent choices. Checked and mixed states always include a non-colour marker. Design proposal; not a promised custom-element API. Selection/value and interaction state are independent axes; original component IDs retained.",
+      "variants": [
+        {
+          "id": "159:1148",
+          "name": "Selection=Unchecked, State=Default"
+        },
+        {
+          "id": "159:1155",
+          "name": "Selection=Checked, State=Default"
+        },
+        {
+          "id": "159:1162",
+          "name": "Selection=Mixed, State=Default"
+        },
+        {
+          "id": "159:1166",
+          "name": "Selection=Unchecked, State=Hover"
+        },
+        {
+          "id": "159:1171",
+          "name": "Selection=Unchecked, State=Focus"
+        },
+        {
+          "id": "159:1176",
+          "name": "Selection=Unchecked, State=Invalid"
+        },
+        {
+          "id": "159:1180",
+          "name": "Selection=Unchecked, State=Disabled"
+        },
+        {
+          "id": "181:2157",
+          "name": "Selection=Checked, State=Hover"
+        },
+        {
+          "id": "181:2162",
+          "name": "Selection=Checked, State=Focus"
+        },
+        {
+          "id": "181:2168",
+          "name": "Selection=Checked, State=Invalid"
+        },
+        {
+          "id": "181:2173",
+          "name": "Selection=Checked, State=Disabled"
+        },
+        {
+          "id": "181:2178",
+          "name": "Selection=Mixed, State=Hover"
+        },
+        {
+          "id": "181:2183",
+          "name": "Selection=Mixed, State=Focus"
+        },
+        {
+          "id": "181:2189",
+          "name": "Selection=Mixed, State=Invalid"
+        },
+        {
+          "id": "181:2194",
+          "name": "Selection=Mixed, State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinCheckbox",
+          "source": "packages/components/src/checkbox/checkbox.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1209",
+      "name": "Oddkin/Common/radio",
+      "description": "One choice within a named group; the dot remains visible in the selected state. Design proposal; not a promised custom-element API. Selection/value and interaction state are independent axes; original component IDs retained.",
+      "variants": [
+        {
+          "id": "159:1185",
+          "name": "Selection=Unchecked, State=Default"
+        },
+        {
+          "id": "159:1190",
+          "name": "Selection=Checked, State=Default"
+        },
+        {
+          "id": "159:1194",
+          "name": "Selection=Unchecked, State=Hover"
+        },
+        {
+          "id": "159:1199",
+          "name": "Selection=Unchecked, State=Focus"
+        },
+        {
+          "id": "159:1204",
+          "name": "Selection=Unchecked, State=Invalid"
+        },
+        {
+          "id": "159:1208",
+          "name": "Selection=Unchecked, State=Disabled"
+        },
+        {
+          "id": "181:2215",
+          "name": "Selection=Checked, State=Hover"
+        },
+        {
+          "id": "181:2220",
+          "name": "Selection=Checked, State=Focus"
+        },
+        {
+          "id": "181:2226",
+          "name": "Selection=Checked, State=Invalid"
+        },
+        {
+          "id": "181:2231",
+          "name": "Selection=Checked, State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/form-control/radio-input.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1258",
+      "name": "Oddkin/Common/switch",
+      "description": "An immediate on / off setting; thumb position and written value express the state. Design proposal; not a promised custom-element API. Selection/value and interaction state are independent axes; original component IDs retained.",
+      "variants": [
+        {
+          "id": "159:1236",
+          "name": "Value=Off, State=Default"
+        },
+        {
+          "id": "159:1241",
+          "name": "Value=On, State=Default"
+        },
+        {
+          "id": "159:1246",
+          "name": "Value=Off, State=Hover"
+        },
+        {
+          "id": "159:1252",
+          "name": "Value=Off, State=Focus"
+        },
+        {
+          "id": "159:1257",
+          "name": "Value=Off, State=Disabled"
+        },
+        {
+          "id": "181:2236",
+          "name": "Value=On, State=Hover"
+        },
+        {
+          "id": "181:2241",
+          "name": "Value=On, State=Focus"
+        },
+        {
+          "id": "181:2247",
+          "name": "Value=On, State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinSwitch",
+          "source": "packages/components/src/switch/switch.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1287",
+      "name": "Oddkin/Common/slider",
+      "description": "Adjust a bounded value, with the current value and labelled endpoints visible. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:1267",
+          "name": "State=Default"
+        },
+        {
+          "id": "159:1277",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:1286",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinSlider",
+          "source": "packages/components/src/slider/slider.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "234:5551",
+      "name": "Oddkin/Common/ListboxSurface",
+      "description": "Shared list body for select, combobox, multiselect and standalone listbox. Its rows are instances of ListboxOption, with editable label, divider and selection/focus/disabled variants. No outer border or shadow; those belong to the composed control.",
+      "variants": [
+        {
+          "id": "234:5534",
+          "name": "State=Default"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "ListboxSurface",
+          "source": "packages/components/src/collection/option-rows.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "186:5167",
+      "name": "Oddkin/Common/ListboxOption",
+      "description": "Reusable value option. Selection and keyboard interaction are independent. Used for persistent listboxes and selection popups; disabled choices cannot be committed.\n\nFocus outline: 2 px stroke, 4 px equal inset derived from focus width + offset, and the radius/sm 4 px corner token. Matches select and combobox; the focused row omits its divider.\nShared styling: overlays use color.surface.raised, control.radius, border.width.default, color.border.default, and the mode-aware Oddkin/Overlay effect (elevation.md). Selected rows use color.selection.surface, separately from color.surface.hover.",
+      "variants": [
+        {
+          "id": "186:5140",
+          "name": "Selected=False, State=Default"
+        },
+        {
+          "id": "186:5143",
+          "name": "Selected=False, State=Focus"
+        },
+        {
+          "id": "186:5146",
+          "name": "Selected=False, State=Disabled"
+        },
+        {
+          "id": "186:5149",
+          "name": "Selected=True, State=Default"
+        },
+        {
+          "id": "186:5155",
+          "name": "Selected=True, State=Focus"
+        },
+        {
+          "id": "186:5161",
+          "name": "Selected=True, State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "ListboxOption",
+          "source": "packages/components/src/collection/option-rows.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "258:824",
+      "name": "Oddkin/Common/CheckboxOption",
+      "description": "Checkbox option row. Uses the Common checkbox primitive, 40 px listbox row height, token colors, and a rounded 4 px inset keyboard focus indicator.\nShared styling: overlays use color.surface.raised, control.radius, border.width.default, color.border.default, and the mode-aware Oddkin/Overlay effect (elevation.md). Selected rows use color.selection.surface, separately from color.surface.hover.",
+      "variants": [
+        {
+          "id": "258:759",
+          "name": "Selected=False, State=Default"
+        },
+        {
+          "id": "258:768",
+          "name": "Selected=False, State=Focus"
+        },
+        {
+          "id": "258:778",
+          "name": "Selected=False, State=Disabled"
+        },
+        {
+          "id": "258:787",
+          "name": "Selected=True, State=Default"
+        },
+        {
+          "id": "258:799",
+          "name": "Selected=True, State=Focus"
+        },
+        {
+          "id": "258:812",
+          "name": "Selected=True, State=Disabled"
+        },
+        {
+          "id": "263:5210",
+          "name": "Selected=Mixed, State=Default"
+        },
+        {
+          "id": "263:5225",
+          "name": "Selected=Mixed, State=Focus"
+        },
+        {
+          "id": "263:5239",
+          "name": "Selected=Mixed, State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinCheckbox",
+          "source": "packages/components/src/checkbox/checkbox.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:974",
+      "name": "Oddkin/Common/MenuItem",
+      "description": "Action label, optional icon, shortcut, and sub-menu indicator. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:949",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:958",
+          "name": "State=Focus"
+        },
+        {
+          "id": "160:966",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "160:973",
+          "name": "State=Destructive"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/menu/menu.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1252",
+      "name": "Oddkin/Common/NavigationItem",
+      "description": "Shared navigation entry used by side navigation and tree leaves. Spacing, padding and minimum height bind to the repository navigation.* roles. Current entries use the shared action bar and semibold UI text. Side navigation shows an upward chevron when expanded and a downward chevron when collapsed, matching side-nav.styles.ts.",
+      "variants": [
+        {
+          "id": "160:1229",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:1236",
+          "name": "State=Current"
+        },
+        {
+          "id": "160:1244",
+          "name": "State=Focus"
+        },
+        {
+          "id": "160:1251",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "NavigationItem",
+          "source": "packages/components/src/side-nav/side-nav.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "182:2340",
+      "name": "Oddkin/Common/CommandItem",
+      "description": "Search result or command option. Active keyboard focus is independent of execution. Reuse inside command palettes.",
+      "variants": [
+        {
+          "id": "182:2319",
+          "name": "State=Default"
+        },
+        {
+          "id": "182:2326",
+          "name": "State=Focus"
+        },
+        {
+          "id": "182:2333",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/app/src/command/command.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1501",
+      "name": "Oddkin/Common/Disclosure",
+      "description": "One trigger reveals or hides one related content region. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:1482",
+          "name": "State=Closed"
+        },
+        {
+          "id": "160:1492",
+          "name": "State=Expanded"
+        },
+        {
+          "id": "160:1500",
+          "name": "State=Focus"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinDisclosure",
+          "source": "packages/components/src/disclosure/disclosure.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:2470",
+      "name": "Oddkin/Common/tooltip",
+      "description": "Brief supplementary text; never the only accessible label. Design proposal; not a promised custom-element API.\nShared styling: overlays use color.surface.raised, control.radius, border.width.default, color.border.default, and the mode-aware Oddkin/Overlay effect (elevation.md). Selected rows use color.selection.surface, separately from color.surface.hover.",
+      "variants": [
+        {
+          "id": "160:2464",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:2469",
+          "name": "State=Description"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinTooltip",
+          "source": "packages/components/src/tooltip/tooltip.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "161:1916",
+      "name": "Oddkin/Common/progress",
+      "description": "Known progress is explicit; unknown progress never shows a percentage. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "161:1909",
+          "name": "State=Determinate"
+        },
+        {
+          "id": "161:1915",
+          "name": "State=Indeterminate"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinProgress",
+          "source": "packages/components/src/progress/progress.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "161:1939",
+      "name": "Oddkin/Common/spinner",
+      "description": "A small busy indicator paired with a meaningful status label. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "161:1927",
+          "name": "State=Default"
+        },
+        {
+          "id": "161:1938",
+          "name": "State=Inline"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinSpinner",
+          "source": "packages/components/src/spinner/spinner.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "161:1959",
+      "name": "Oddkin/Common/skeleton",
+      "description": "A temporary content-shaped placeholder while a region loads. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "161:1947",
+          "name": "State=Default"
+        },
+        {
+          "id": "161:1958",
+          "name": "State=List"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinSkeleton",
+          "source": "packages/components/src/skeleton/skeleton.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "162:2022",
+      "name": "Oddkin/Common/avatar",
+      "description": "A person or group marker with an accessible name. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "162:2010",
+          "name": "State=Initials"
+        },
+        {
+          "id": "162:2021",
+          "name": "State=Group"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinAvatar",
+          "source": "packages/components/src/avatar/avatar.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "162:2058",
+      "name": "Oddkin/Common/icon",
+      "description": "A restrained 20px icon vocabulary; decorative icons stay silent. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "162:2043",
+          "name": "State=Default"
+        },
+        {
+          "id": "162:2057",
+          "name": "State=Sizes"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinIcon",
+          "source": "packages/components/src/icon/icon.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "162:2069",
+      "name": "Oddkin/Common/divider",
+      "description": "A subtle boundary between related groups of content. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "162:2063",
+          "name": "State=Horizontal"
+        },
+        {
+          "id": "162:2068",
+          "name": "State=Labelled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/css/index.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "162:2080",
+      "name": "Oddkin/Common/typography",
+      "description": "All eight canonical text roles, mapped to the repository scales. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "162:2079",
+          "name": "State=Default"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/css/index.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "162:2097",
+      "name": "Oddkin/Common/keyboardKey",
+      "description": "Display a keyboard shortcut without making it look clickable. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "162:2088",
+          "name": "State=Default"
+        },
+        {
+          "id": "162:2096",
+          "name": "State=Sequence"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "374:1576",
+      "name": "Oddkin/Common/avatar/Appearance",
+      "description": "Reusable avatar appearance variants. Background: Neutral, Brand, Success, Warning, Danger, Custom. Shape: Square (0), Small radius (4), Rounded (8), Circle (full). Initials are exposed from the shared AvatarItem. Native Figma custom HEX colors are set on the nested Avatar Fill; foreground is independently overridable.",
+      "variants": [
+        {
+          "id": "374:1504",
+          "name": "Background=Neutral, Shape=Square"
+        },
+        {
+          "id": "374:1507",
+          "name": "Background=Brand, Shape=Square"
+        },
+        {
+          "id": "374:1510",
+          "name": "Background=Success, Shape=Square"
+        },
+        {
+          "id": "374:1513",
+          "name": "Background=Warning, Shape=Square"
+        },
+        {
+          "id": "374:1516",
+          "name": "Background=Danger, Shape=Square"
+        },
+        {
+          "id": "374:1519",
+          "name": "Background=Custom, Shape=Square"
+        },
+        {
+          "id": "374:1522",
+          "name": "Background=Neutral, Shape=Small radius"
+        },
+        {
+          "id": "374:1525",
+          "name": "Background=Brand, Shape=Small radius"
+        },
+        {
+          "id": "374:1528",
+          "name": "Background=Success, Shape=Small radius"
+        },
+        {
+          "id": "374:1531",
+          "name": "Background=Warning, Shape=Small radius"
+        },
+        {
+          "id": "374:1534",
+          "name": "Background=Danger, Shape=Small radius"
+        },
+        {
+          "id": "374:1537",
+          "name": "Background=Custom, Shape=Small radius"
+        },
+        {
+          "id": "374:1540",
+          "name": "Background=Neutral, Shape=Rounded"
+        },
+        {
+          "id": "374:1543",
+          "name": "Background=Brand, Shape=Rounded"
+        },
+        {
+          "id": "374:1546",
+          "name": "Background=Success, Shape=Rounded"
+        },
+        {
+          "id": "374:1549",
+          "name": "Background=Warning, Shape=Rounded"
+        },
+        {
+          "id": "374:1552",
+          "name": "Background=Danger, Shape=Rounded"
+        },
+        {
+          "id": "374:1555",
+          "name": "Background=Custom, Shape=Rounded"
+        },
+        {
+          "id": "374:1558",
+          "name": "Background=Neutral, Shape=Circle"
+        },
+        {
+          "id": "374:1561",
+          "name": "Background=Brand, Shape=Circle"
+        },
+        {
+          "id": "374:1564",
+          "name": "Background=Success, Shape=Circle"
+        },
+        {
+          "id": "374:1567",
+          "name": "Background=Warning, Shape=Circle"
+        },
+        {
+          "id": "374:1570",
+          "name": "Background=Danger, Shape=Circle"
+        },
+        {
+          "id": "374:1573",
+          "name": "Background=Custom, Shape=Circle"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "257:971",
+      "name": "Oddkin/Common/multiselect/Value/chips",
+      "description": "Selected-value renderer for display=&quot;chips&quot;. Count uses the same Amelia, Noah, Olivia, Liam member dataset. Width-sensitive previews may reduce visible values and update the hidden count.",
+      "variants": [
+        {
+          "id": "257:888",
+          "name": "Count=0"
+        },
+        {
+          "id": "257:890",
+          "name": "Count=1"
+        },
+        {
+          "id": "257:899",
+          "name": "Count=3"
+        },
+        {
+          "id": "257:917",
+          "name": "Count=10"
+        },
+        {
+          "id": "257:935",
+          "name": "Count=32"
+        },
+        {
+          "id": "257:953",
+          "name": "Count=75"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinChip",
+          "source": "packages/components/src/chip/chip.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "257:1004",
+      "name": "Oddkin/Common/multiselect/Value/count",
+      "description": "Selected-value renderer for display=&quot;count&quot;. Count uses the same Amelia, Noah, Olivia, Liam member dataset. Width-sensitive previews may reduce visible values and update the hidden count.",
+      "variants": [
+        {
+          "id": "257:972",
+          "name": "Count=0"
+        },
+        {
+          "id": "257:974",
+          "name": "Count=1"
+        },
+        {
+          "id": "257:980",
+          "name": "Count=3"
+        },
+        {
+          "id": "257:986",
+          "name": "Count=10"
+        },
+        {
+          "id": "257:992",
+          "name": "Count=32"
+        },
+        {
+          "id": "257:998",
+          "name": "Count=75"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "257:1017",
+      "name": "Oddkin/Common/multiselect/Value/text",
+      "description": "Selected-value renderer for display=&quot;text&quot;. Count uses the same Amelia, Noah, Olivia, Liam member dataset. Width-sensitive previews may reduce visible values and update the hidden count.",
+      "variants": [
+        {
+          "id": "257:1005",
+          "name": "Count=0"
+        },
+        {
+          "id": "257:1007",
+          "name": "Count=1"
+        },
+        {
+          "id": "257:1009",
+          "name": "Count=3"
+        },
+        {
+          "id": "257:1011",
+          "name": "Count=10"
+        },
+        {
+          "id": "257:1013",
+          "name": "Count=32"
+        },
+        {
+          "id": "257:1015",
+          "name": "Count=75"
+        },
+        {
+          "id": "263:5285",
+          "name": "Count=2"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "257:1105",
+      "name": "Oddkin/Common/multiselect/Value/auto",
+      "description": "Selected-value renderer for display=&quot;auto&quot;. Count uses the same Amelia, Noah, Olivia, Liam member dataset. Width-sensitive previews may reduce visible values and update the hidden count.",
+      "variants": [
+        {
+          "id": "257:1018",
+          "name": "Count=0"
+        },
+        {
+          "id": "257:1020",
+          "name": "Count=1"
+        },
+        {
+          "id": "257:1029",
+          "name": "Count=2"
+        },
+        {
+          "id": "257:1045",
+          "name": "Count=3"
+        },
+        {
+          "id": "257:1063",
+          "name": "Count=4"
+        },
+        {
+          "id": "257:1081",
+          "name": "Count=5"
+        },
+        {
+          "id": "257:1087",
+          "name": "Count=10"
+        },
+        {
+          "id": "257:1093",
+          "name": "Count=32"
+        },
+        {
+          "id": "257:1099",
+          "name": "Count=75"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "257:1240",
+      "name": "Oddkin/Common/multiselect/Value/expandable",
+      "description": "Selected-value renderer for display=&quot;expandable&quot;. Count uses the same Amelia, Noah, Olivia, Liam member dataset. Width-sensitive previews may reduce visible values and update the hidden count.",
+      "variants": [
+        {
+          "id": "257:1106",
+          "name": "Count=0"
+        },
+        {
+          "id": "257:1108",
+          "name": "Count=1"
+        },
+        {
+          "id": "257:1117",
+          "name": "Count=3"
+        },
+        {
+          "id": "257:1141",
+          "name": "Count=10"
+        },
+        {
+          "id": "257:1174",
+          "name": "Count=32"
+        },
+        {
+          "id": "257:1207",
+          "name": "Count=75"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "257:1285",
+      "name": "Oddkin/Common/multiselect/Value/avatars",
+      "description": "Selected-value renderer for display=&quot;avatars&quot;. Count uses the same Amelia, Noah, Olivia, Liam member dataset. Width-sensitive previews may reduce visible values and update the hidden count.",
+      "variants": [
+        {
+          "id": "257:1241",
+          "name": "Count=0"
+        },
+        {
+          "id": "257:1243",
+          "name": "Count=1"
+        },
+        {
+          "id": "257:1247",
+          "name": "Count=3"
+        },
+        {
+          "id": "257:1255",
+          "name": "Count=10"
+        },
+        {
+          "id": "257:1265",
+          "name": "Count=32"
+        },
+        {
+          "id": "257:1275",
+          "name": "Count=75"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinAvatar",
+          "source": "packages/components/src/avatar/avatar.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "257:1320",
+      "name": "Oddkin/Common/multiselect/Value/grouped",
+      "description": "Selected-value renderer for display=&quot;grouped&quot;. Count uses the same Amelia, Noah, Olivia, Liam member dataset. Width-sensitive previews may reduce visible values and update the hidden count.",
+      "variants": [
+        {
+          "id": "257:1286",
+          "name": "Count=0"
+        },
+        {
+          "id": "257:1288",
+          "name": "Count=1"
+        },
+        {
+          "id": "257:1292",
+          "name": "Count=3"
+        },
+        {
+          "id": "257:1296",
+          "name": "Count=10"
+        },
+        {
+          "id": "257:1304",
+          "name": "Count=32"
+        },
+        {
+          "id": "257:1312",
+          "name": "Count=75"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "257:1654",
+      "name": "Oddkin/Common/multiselect/Field",
+      "description": "48 px trigger using Oddkin control tokens. Inset rounded focus stays inside the border. Status states preserve existing selections.",
+      "variants": [
+        {
+          "id": "257:1321",
+          "name": "State=Default"
+        },
+        {
+          "id": "257:1347",
+          "name": "State=Hover"
+        },
+        {
+          "id": "257:1373",
+          "name": "State=Focused"
+        },
+        {
+          "id": "257:1400",
+          "name": "State=Expanded"
+        },
+        {
+          "id": "257:1426",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "257:1452",
+          "name": "State=Read-only"
+        },
+        {
+          "id": "257:1478",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "257:1505",
+          "name": "State=Loading"
+        },
+        {
+          "id": "257:1537",
+          "name": "State=Empty options"
+        },
+        {
+          "id": "257:1569",
+          "name": "State=No search results"
+        },
+        {
+          "id": "257:1601",
+          "name": "State=Maximum reached"
+        },
+        {
+          "id": "257:1628",
+          "name": "State=Chip removal focus"
+        },
+        {
+          "id": "537:2503",
+          "name": "State=Picker"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinField",
+          "source": "packages/components/src/combobox/combobox.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "257:886",
+      "name": "Oddkin/Common/AvatarItem",
+      "description": "32 px initials fallback for a person. Name is conveyed in the multiselect summary and selected-items review.",
+      "variants": [],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinAvatar",
+          "source": "packages/components/src/avatar/avatar.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "184:3803",
+      "name": "Oddkin/Common/GridCell",
+      "description": "Interactive data-grid cell. Focus is distinct from row selection. Editing and invalid content have explicit visual treatments.",
+      "variants": [
+        {
+          "id": "184:3787",
+          "name": "State=Default"
+        },
+        {
+          "id": "184:3790",
+          "name": "State=Selected"
+        },
+        {
+          "id": "184:3793",
+          "name": "State=Focus"
+        },
+        {
+          "id": "184:3796",
+          "name": "State=Editing"
+        },
+        {
+          "id": "184:3799",
+          "name": "State=Invalid"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "184:3822",
+      "name": "Oddkin/Common/GridColumnHeader",
+      "description": "Column header with explicit sort direction. Activate to cycle sorting; expose sort semantics in the implementation.",
+      "variants": [
+        {
+          "id": "184:3804",
+          "name": "Sort=None"
+        },
+        {
+          "id": "184:3810",
+          "name": "Sort=Ascending"
+        },
+        {
+          "id": "184:3816",
+          "name": "Sort=Descending"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "184:3830",
+      "name": "Oddkin/Common/GridSelection",
+      "description": "Grid row selection control. Requires an accessible row-specific label; select-all uses the existing mixed checkbox state.",
+      "variants": [
+        {
+          "id": "184:3823",
+          "name": "Selected=False"
+        },
+        {
+          "id": "184:3826",
+          "name": "Selected=True"
+        },
+        {
+          "id": "187:5314",
+          "name": "Selected=Mixed"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "185:4822",
+      "name": "Oddkin/Common/Splitter/vertical",
+      "description": "Vertical separator resizes left/right panes. Arrow Left/Right adjusts size; Home/End move to allowed limits; Enter collapses or restores the primary pane. Focus remains visible.",
+      "variants": [
+        {
+          "id": "185:4810",
+          "name": "State=Default"
+        },
+        {
+          "id": "185:4813",
+          "name": "State=Hover"
+        },
+        {
+          "id": "185:4816",
+          "name": "State=Focus"
+        },
+        {
+          "id": "185:4819",
+          "name": "State=Dragging"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "185:4835",
+      "name": "Oddkin/Common/Splitter/horizontal",
+      "description": "Horizontal separator resizes top/bottom panes. Arrow Up/Down adjusts size; Home/End moves to limits. Label the affected panes and expose current/minimum/maximum sizes.",
+      "variants": [
+        {
+          "id": "185:4823",
+          "name": "State=Default"
+        },
+        {
+          "id": "185:4826",
+          "name": "State=Hover"
+        },
+        {
+          "id": "185:4829",
+          "name": "State=Focus"
+        },
+        {
+          "id": "185:4832",
+          "name": "State=Dragging"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:52",
+      "name": "odd-button/primary/sm/light",
+      "description": "Source: packages/components/src/button. appearance=primary; size=sm",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:54",
+      "name": "odd-button/primary/md/light",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:56",
+      "name": "odd-button/primary/lg/light",
+      "description": "Source: packages/components/src/button. appearance=primary; size=lg",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:60",
+      "name": "odd-button/secondary/sm/light",
+      "description": "Source: packages/components/src/button. appearance=secondary; size=sm",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:62",
+      "name": "odd-button/secondary/md/light",
+      "description": "Source: packages/components/src/button. appearance=secondary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:64",
+      "name": "odd-button/secondary/lg/light",
+      "description": "Source: packages/components/src/button. appearance=secondary; size=lg",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:68",
+      "name": "odd-button/ghost/sm/light",
+      "description": "Source: packages/components/src/button. appearance=ghost; size=sm",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:70",
+      "name": "odd-button/ghost/md/light",
+      "description": "Source: packages/components/src/button. appearance=ghost; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:72",
+      "name": "odd-button/ghost/lg/light",
+      "description": "Source: packages/components/src/button. appearance=ghost; size=lg",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:77",
+      "name": "odd-button/primary/hover/light",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:81",
+      "name": "odd-button/primary/pressed/light",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:85",
+      "name": "odd-button/primary/focus/light",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:90",
+      "name": "odd-button/primary/disabled/light",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:98",
+      "name": "odd-button/primary/sm/dark",
+      "description": "Source: packages/components/src/button. appearance=primary; size=sm",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:100",
+      "name": "odd-button/primary/md/dark",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:102",
+      "name": "odd-button/primary/lg/dark",
+      "description": "Source: packages/components/src/button. appearance=primary; size=lg",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:106",
+      "name": "odd-button/secondary/sm/dark",
+      "description": "Source: packages/components/src/button. appearance=secondary; size=sm",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:108",
+      "name": "odd-button/secondary/md/dark",
+      "description": "Source: packages/components/src/button. appearance=secondary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:110",
+      "name": "odd-button/secondary/lg/dark",
+      "description": "Source: packages/components/src/button. appearance=secondary; size=lg",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:114",
+      "name": "odd-button/ghost/sm/dark",
+      "description": "Source: packages/components/src/button. appearance=ghost; size=sm",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:116",
+      "name": "odd-button/ghost/md/dark",
+      "description": "Source: packages/components/src/button. appearance=ghost; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:118",
+      "name": "odd-button/ghost/lg/dark",
+      "description": "Source: packages/components/src/button. appearance=ghost; size=lg",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:123",
+      "name": "odd-button/primary/hover/dark",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:127",
+      "name": "odd-button/primary/pressed/dark",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:131",
+      "name": "odd-button/primary/focus/dark",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:136",
+      "name": "odd-button/primary/disabled/dark",
+      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:144",
+      "name": "odd-input/empty/light",
+      "description": "Source: packages/components/src/input. Defined state: Empty",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:150",
+      "name": "odd-input/filled/light",
+      "description": "Source: packages/components/src/input. Defined state: Filled",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:157",
+      "name": "odd-input/focus/light",
+      "description": "Source: packages/components/src/input. Defined state: Focus",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:165",
+      "name": "odd-input/invalid/light",
+      "description": "Source: packages/components/src/input. Defined state: Invalid",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:173",
+      "name": "odd-input/disabled/light",
+      "description": "Source: packages/components/src/input. Defined state: Disabled",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:181",
+      "name": "odd-input/empty/dark",
+      "description": "Source: packages/components/src/input. Defined state: Empty",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:187",
+      "name": "odd-input/filled/dark",
+      "description": "Source: packages/components/src/input. Defined state: Filled",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:194",
+      "name": "odd-input/focus/dark",
+      "description": "Source: packages/components/src/input. Defined state: Focus",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:202",
+      "name": "odd-input/invalid/dark",
+      "description": "Source: packages/components/src/input. Defined state: Invalid",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "123:210",
+      "name": "odd-input/disabled/dark",
+      "description": "Source: packages/components/src/input. Defined state: Disabled",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "459:2095",
+      "name": "Oddkin/Layout/SpecimenItem",
+      "description": "Demo content only. A replaceable child for layout examples, using existing Oddkin typography, surface, border and radius roles.",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "459:2112",
+      "name": "Oddkin/Layout/Box",
+      "description": "Inset wrapper. Uses layout.inset (24 px) by default; None and Roomy use the existing 0 and 32 px steps. CSS pattern: padding with min-inline-size: 0; not a separate shipped helper.",
+      "variants": [
+        {
+          "id": "459:2100",
+          "name": "Inset=Default"
+        },
+        {
+          "id": "459:2104",
+          "name": "Inset=None"
+        },
+        {
+          "id": "459:2108",
+          "name": "Inset=Roomy"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2092",
+      "name": "Oddkin/Layout/Container",
+      "description": "A named inline-size container and optional content measure. Fluid content fills available space; the constrained example uses a recipe-local 40rem maximum, centered. This is a CSS recipe pattern, not a shipped container() helper. Children own their response rules.",
+      "variants": [
+        {
+          "id": "460:2084",
+          "name": "Measure=Fluid"
+        },
+        {
+          "id": "460:2088",
+          "name": "Measure=Constrained"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2120",
+      "name": "Oddkin/Layout/Stack",
+      "description": "stack() / .odd-stack: vertical flow, full-width children and layout.gap (16 px) by default. Tight and Loose reuse space.xs (8 px) and space.lg (24 px). Content slot accepts arbitrary children.",
+      "variants": [
+        {
+          "id": "460:2096",
+          "name": "Gap=Default"
+        },
+        {
+          "id": "460:2104",
+          "name": "Gap=Tight"
+        },
+        {
+          "id": "460:2112",
+          "name": "Gap=Loose"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2140",
+      "name": "Oddkin/Layout/Row",
+      "description": "row() / .odd-row: non-wrapping horizontal flow, centered on the cross axis. Default gap is layout.gap (16 px). Between maps to justify-content: space-between. Fixed 80 px children demonstrate unchanged widths.",
+      "variants": [
+        {
+          "id": "460:2124",
+          "name": "Justify=Start"
+        },
+        {
+          "id": "460:2132",
+          "name": "Justify=Between"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2144",
+      "name": "Oddkin/Layout/Cluster",
+      "description": "row({wrap:true}) / .odd-cluster: intrinsic wrapping with layout.gap (16 px) in both axes. The example uses six 96 px children; available width determines how many fit per row. No breakpoint or viewport query is required.",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2317",
+      "name": "Oddkin/Layout/Grid",
+      "description": "grid({columns}) / .odd-grid: equal minmax(0,1fr) columns, a 16 px gap and content-sized rows. The Columns property offers 1–4 as common presets; the code helper supports 1–24. Each cell is a native editable slot. Column count changes only when configured or selected by a recipe rule.",
+      "variants": [
+        {
+          "id": "460:2241",
+          "name": "Columns=1"
+        },
+        {
+          "id": "460:2260",
+          "name": "Columns=2"
+        },
+        {
+          "id": "460:2279",
+          "name": "Columns=3"
+        },
+        {
+          "id": "460:2298",
+          "name": "Columns=4"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2161",
+      "name": "Oddkin/Layout/AutoGrid",
+      "description": "autoGrid() / .odd-auto-grid: repeat(auto-fill,minmax(min(layout.item-min,100%),1fr)). Defaults: item-min 256 px, gap 16 px. Intrinsic 1/2/3-column response at 320/640/960 px. Figma wrapping uses minimum-width children; CSS additionally clamps the minimum below 256 px.",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2192",
+      "name": "Oddkin/Layout/Split",
+      "description": "split() / .odd-split: sidebar basis 256 px, main minimum 320 px, gap 16 px. Intrinsic CSS wrap threshold is 592 px; the Figma Arrangement variants show the corresponding stacked/side-by-side states. Figma does not automatically swap variants when resized. CSS distributes remaining width with side/main flex-grow 1:999; the Figma side-by-side state holds the preferred 256 px sidebar basis.",
+      "variants": [
+        {
+          "id": "460:2178",
+          "name": "Arrangement=Side by side"
+        },
+        {
+          "id": "460:2185",
+          "name": "Arrangement=Stacked"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2196",
+      "name": "Oddkin/Layout/Center",
+      "description": "Centered content pattern using CSS grid place-items:center or flex alignment. This example centers a 256 px content slot within a 192 px-high region; those dimensions are example configuration. No center() helper is currently shipped.",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2215",
+      "name": "Oddkin/Layout/AspectRatio",
+      "description": "Aspect-ratio container pattern. Native locked ratios preserve proportion as width changes; content slot fills the surface. Use aspect-ratio with min-inline-size:0 in a recipe. Not a shipped named helper.",
+      "variants": [
+        {
+          "id": "460:2203",
+          "name": "Ratio=16:9"
+        },
+        {
+          "id": "460:2207",
+          "name": "Ratio=4:3"
+        },
+        {
+          "id": "460:2211",
+          "name": "Ratio=1:1"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "460:2219",
+      "name": "Oddkin/Layout/ScrollRegion",
+      "description": "Bounded scroll region pattern: 192 px example block-size, overflow-y:auto and min-block-size:0. Six stacked children remain full-width with a 16 px gap. Content intentionally clips at the viewport boundary; scroll in presentation to inspect the rest. Not a shipped named helper.",
+      "variants": [],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "555:2531",
+      "name": "Oddkin/Common/calendar/Day",
+      "description": "Calendar day. Monday-first seven-column grid; 40px cells. Today and selection are distinct; inset focus avoids adjacent cells. Day label is editable. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "555:2515",
+          "name": "State=Default"
+        },
+        {
+          "id": "555:2517",
+          "name": "State=Adjacent month"
+        },
+        {
+          "id": "555:2519",
+          "name": "State=Today"
+        },
+        {
+          "id": "555:2521",
+          "name": "State=Selected"
+        },
+        {
+          "id": "555:2523",
+          "name": "State=Focus"
+        },
+        {
+          "id": "555:2526",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "555:2528",
+          "name": "State=Selected focus"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinCalendarDay",
+          "source": "packages/components/src/calendar/calendar.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "555:2550",
+      "name": "Oddkin/Common/oneTimeCode/Cell",
+      "description": "Single editable numeric code cell. 40 × 48; 8px inter-cell spacing. Keyboard focus reserves 4px outside the cell. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "555:2536",
+          "name": "State=Empty"
+        },
+        {
+          "id": "555:2538",
+          "name": "State=Filled"
+        },
+        {
+          "id": "555:2540",
+          "name": "State=Focus"
+        },
+        {
+          "id": "555:2544",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "555:2546",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "555:2548",
+          "name": "State=Complete"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinOneTimeCodeCell",
+          "source": "onet-time-code.cell.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "555:2564",
+      "name": "Oddkin/Common/color/Swatch",
+      "description": "Selected color is user data (#2563EB sample), intentionally not a theme role. Change the editable fill for a custom hex value; border, radius, check and focus use Oddkin tokens. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "555:2555",
+          "name": "State=Default"
+        },
+        {
+          "id": "555:2556",
+          "name": "State=Selected"
+        },
+        {
+          "id": "555:2561",
+          "name": "State=Focus"
+        },
+        {
+          "id": "555:2563",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/one-time-code/one-time-code.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "555:2595",
+      "name": "Oddkin/Common/rating/Item",
+      "description": "Five-star rating item. 32px target, 20px original Oddkin star. Selected value is reinforced by visible numeric summary. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "555:2569",
+          "name": "State=Off"
+        },
+        {
+          "id": "555:2574",
+          "name": "State=On"
+        },
+        {
+          "id": "555:2579",
+          "name": "State=Focus"
+        },
+        {
+          "id": "555:2585",
+          "name": "State=Disabled off"
+        },
+        {
+          "id": "555:2590",
+          "name": "State=Disabled on"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/rating/rating.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "555:2787",
+      "name": "Oddkin/Common/rating",
+      "description": "Single-choice five-star rating with explicit numeric value. Empty, chosen, keyboard, validation, disabled and read-only examples. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "555:2600",
+          "name": "State=Empty"
+        },
+        {
+          "id": "555:2631",
+          "name": "State=Selected"
+        },
+        {
+          "id": "555:2662",
+          "name": "State=Focus"
+        },
+        {
+          "id": "555:2694",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "555:2725",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "555:2756",
+          "name": "State=Read only"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinRating",
+          "source": "packages/components/src/rating/rating.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1097",
+      "name": "Oddkin/Common/number",
+      "description": "A native numeric field with separate decrement and increment controls where appropriate. Design proposal; not a promised custom-element API. Custom decrement/increment targets are centered in the existing 40px field. Added minimum, maximum and invalid examples; runtime still uses the native number spinner.",
+      "variants": [
+        {
+          "id": "159:1069",
+          "name": "State=Default"
+        },
+        {
+          "id": "159:1083",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:1096",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "555:2798",
+          "name": "State=Minimum"
+        },
+        {
+          "id": "555:2816",
+          "name": "State=Maximum"
+        },
+        {
+          "id": "555:2834",
+          "name": "State=Invalid"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "555:2908",
+      "name": "Oddkin/Common/stat",
+      "description": "Single metric with label, value and comparison context. Trend direction uses an arrow and signed value; no assumed positive/negative business meaning. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "555:2874",
+          "name": "State=Neutral"
+        },
+        {
+          "id": "555:2879",
+          "name": "State=Increase"
+        },
+        {
+          "id": "555:2889",
+          "name": "State=Decrease"
+        },
+        {
+          "id": "555:2899",
+          "name": "State=Loading"
+        },
+        {
+          "id": "555:2903",
+          "name": "State=Unavailable"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinStat",
+          "source": "packages/components/src/stat/stat.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "555:2984",
+      "name": "Oddkin/Common/copyButton",
+      "description": "Copy action reuses the small secondary button and original copy/check icons. Success text is available to an announced status; errors offer a manual-copy fallback. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "555:2913",
+          "name": "State=Default"
+        },
+        {
+          "id": "555:2930",
+          "name": "State=Focus"
+        },
+        {
+          "id": "555:2944",
+          "name": "State=Copied"
+        },
+        {
+          "id": "555:2957",
+          "name": "State=Error"
+        },
+        {
+          "id": "555:2971",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "158:22",
+      "bindings": [
+        {
+          "componentName": "OddkinCopyButton",
+          "source": "packages/components/src/copy-button/copy-button.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "555:3030",
+      "name": "Oddkin/Common/relativeTime",
+      "description": "Display a localized relative timestamp backed by an absolute datetime. Absolute detail is accessible on hover/focus or as accompanying text; this is not a live clock prototype. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "555:2989",
+          "name": "State=Recent"
+        },
+        {
+          "id": "555:2997",
+          "name": "State=Past"
+        },
+        {
+          "id": "555:3005",
+          "name": "State=Future"
+        },
+        {
+          "id": "555:3013",
+          "name": "State=Absolute detail"
+        },
+        {
+          "id": "555:3022",
+          "name": "State=Unavailable"
+        }
+      ],
+      "page": "158:22",
+      "bindings": []
+    },
+    {
+      "id": "159:1355",
+      "name": "Oddkin/Common/select",
+      "description": "Open controls use one shared outer border, the 8 px control/radius token, and the Oddkin md elevation style around input and popup. Input, separator, and popup fill the same width; the separator uses the 1 px border token. Continuous 40 px menu rows use a neutral selected fill, accent checkmark, and inset dividers. Focus uses a 2 px stroke, 4 px inset derived from width + offset, and 4 px radius/sm corners. Permanent labels identify each example.\nShared styling: overlays use color.surface.raised, control.radius, border.width.default, color.border.default, and the mode-aware Oddkin/Overlay effect (elevation.md). Selected rows use color.selection.surface, separately from color.surface.hover.",
+      "variants": [
+        {
+          "id": "159:1296",
+          "name": "State=Closed"
+        },
+        {
+          "id": "159:1315",
+          "name": "State=Open"
+        },
+        {
+          "id": "159:1336",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:1345",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "159:1354",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/select/select.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1402",
+      "name": "Oddkin/Common/listbox",
+      "description": "Persistent form choices, with selection and keyboard focus shown separately. Design proposal; not a promised custom-element API. Includes explicit asynchronous/empty/recovery examples.\n\nFocus outline: 2 px stroke, 4 px equal inset derived from focus width + offset, and the radius/sm 4 px corner token. Matches select and combobox; the focused row omits its divider.",
+      "variants": [
+        {
+          "id": "159:1370",
+          "name": "State=Selected"
+        },
+        {
+          "id": "159:1386",
+          "name": "State=Keyboard focus"
+        },
+        {
+          "id": "159:1401",
+          "name": "State=Disabled option"
+        },
+        {
+          "id": "186:5168",
+          "name": "State=Empty"
+        },
+        {
+          "id": "186:5174",
+          "name": "State=Loading"
+        },
+        {
+          "id": "186:5190",
+          "name": "State=Error"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinListbox",
+          "source": "packages/components/src/listbox/listbox.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1483",
+      "name": "Oddkin/Common/combobox",
+      "description": "Open controls use one shared outer border, the 8 px control/radius token, and the Oddkin md elevation style around input and popup. Input, separator, and popup fill the same width; the separator uses the 1 px border token. Continuous 40 px menu rows use a neutral selected fill, accent checkmark, and inset dividers. Focus uses a 2 px stroke, 4 px inset derived from width + offset, and 4 px radius/sm corners. Permanent labels identify each example.\nShared styling: overlays use color.surface.raised, control.radius, border.width.default, color.border.default, and the mode-aware Oddkin/Overlay effect (elevation.md). Selected rows use color.selection.surface, separately from color.surface.hover.",
+      "variants": [
+        {
+          "id": "159:1411",
+          "name": "State=Closed"
+        },
+        {
+          "id": "159:1430",
+          "name": "State=Open"
+        },
+        {
+          "id": "159:1444",
+          "name": "State=No results"
+        },
+        {
+          "id": "159:1459",
+          "name": "State=Loading"
+        },
+        {
+          "id": "159:1473",
+          "name": "State=Error"
+        },
+        {
+          "id": "159:1482",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": []
+    },
+    {
+      "id": "159:1550",
+      "name": "Oddkin/Common/multiselect",
+      "description": "Base multiselect interaction-state examples. Display strategies, high-density selection management, and supporting parts are documented in this same Multiselect section.\nShared styling: overlays use color.surface.raised, control.radius, border.width.default, color.border.default, and the mode-aware Oddkin/Overlay effect (elevation.md). Selected rows use color.selection.surface, separately from color.surface.hover.",
+      "variants": [
+        {
+          "id": "159:1496",
+          "name": "State=Closed"
+        },
+        {
+          "id": "159:1522",
+          "name": "State=Open"
+        },
+        {
+          "id": "159:1549",
+          "name": "State=Focus"
+        },
+        {
+          "id": "186:5200",
+          "name": "State=Loading"
+        },
+        {
+          "id": "186:5216",
+          "name": "State=No results"
+        },
+        {
+          "id": "186:5222",
+          "name": "State=Error"
+        },
+        {
+          "id": "186:5232",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "223:5415",
+          "name": "State=Multiple selected"
+        },
+        {
+          "id": "223:5436",
+          "name": "State=Multiple selected open"
+        },
+        {
+          "id": "223:5476",
+          "name": "State=Wrapped selection"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/combobox/combobox.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "257:1934",
+      "name": "Oddkin/Common/multiselect/Display",
+      "description": "High-density multiselect exploration. Independent nested properties: Display; Count; Field State; Clearable; later Selection panel. Proposed APIs are not existing Oddkin code contracts. Default recommendation: auto, collapseAt=4, tabbed selection management.",
+      "variants": [
+        {
+          "id": "257:1655",
+          "name": "Display=chips"
+        },
+        {
+          "id": "257:1701",
+          "name": "Display=count"
+        },
+        {
+          "id": "257:1735",
+          "name": "Display=text"
+        },
+        {
+          "id": "257:1765",
+          "name": "Display=auto"
+        },
+        {
+          "id": "257:1799",
+          "name": "Display=expandable"
+        },
+        {
+          "id": "257:1860",
+          "name": "Display=avatars"
+        },
+        {
+          "id": "257:1898",
+          "name": "Display=grouped"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkindMultiSelectDisplay",
+          "source": "packages/components/src/collection/option-field.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "258:1467",
+      "name": "Oddkin/Common/multiselect/SelectionPanel",
+      "description": "Selection management is independent from value display. Unified, tabbed, inline, and desktop dual-pane layouts share SelectionOption instances. Scroll viewports are bounded. Counts describe this local 120-member example; remote lists use loaded/filtered counts.\nShared styling: overlays use color.surface.raised, control.radius, border.width.default, color.border.default, and the mode-aware Oddkin/Overlay effect (elevation.md). Selected rows use color.selection.surface, separately from color.surface.hover.",
+      "variants": [
+        {
+          "id": "258:825",
+          "name": "Layout=Unified"
+        },
+        {
+          "id": "258:936",
+          "name": "Layout=Tabbed all"
+        },
+        {
+          "id": "258:1038",
+          "name": "Layout=Tabbed selected"
+        },
+        {
+          "id": "258:1140",
+          "name": "Layout=Inline"
+        },
+        {
+          "id": "258:1294",
+          "name": "Layout=Dual pane"
+        },
+        {
+          "id": "261:10392",
+          "name": "Layout=Inline collapsed"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/collection/option-field.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "261:13821",
+      "name": "Oddkin/Common/multiselect/InteractionExamples",
+      "description": "Interactive high-density multiselect flow: open overflow, remove a visible or hidden selection, clear all, select/deselect four loaded filtered results, reopen with the same selection, and expand/collapse selected chips. Text entry is represented by the prefilled Ari state.",
+      "variants": [
+        {
+          "id": "261:11701",
+          "name": "Step=Closed 32"
+        },
+        {
+          "id": "261:11848",
+          "name": "Step=Review 32"
+        },
+        {
+          "id": "261:12155",
+          "name": "Step=Removed 31"
+        },
+        {
+          "id": "261:12302",
+          "name": "Step=Review 31"
+        },
+        {
+          "id": "261:12609",
+          "name": "Step=Cleared 0"
+        },
+        {
+          "id": "261:12757",
+          "name": "Step=Filtered 32"
+        },
+        {
+          "id": "261:13092",
+          "name": "Step=Filtered 36"
+        },
+        {
+          "id": "261:13406",
+          "name": "Step=Expanded chips"
+        },
+        {
+          "id": "263:5287",
+          "name": "Step=Expandable collapsed"
+        }
+      ],
+      "page": "356:62",
+      "bindings": []
+    },
+    {
+      "id": "261:10449",
+      "name": "Oddkin/Common/multiselect/SelectedItems",
+      "description": "Bounded selected-items manager for expandable chips. 160 px internal scrolling area. Removal acts on the same selection model as menu rows.",
+      "variants": [],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/collection/option-field.template.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1231",
+      "name": "Oddkin/Common/radioGroup",
+      "description": "A visible group label and one shared value, with descriptions for each option. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:1219",
+          "name": "State=Default"
+        },
+        {
+          "id": "159:1230",
+          "name": "State=Invalid"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinRadioGroup",
+          "source": "packages/components/src/radio-group/radio-group.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1582",
+      "name": "Oddkin/Common/segmented",
+      "description": "A single form value from a small set. Use Tabs when changing content panels. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:1560",
+          "name": "State=Selected"
+        },
+        {
+          "id": "159:1571",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:1581",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinSegmentedControl",
+          "source": "packages/components/src/segmented-control/segmented-control.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1629",
+      "name": "Oddkin/Common/dateTime",
+      "description": "Native date and time anatomy. Calendar and time-picker behavior stays platform appropriate. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:1597",
+          "name": "State=Default"
+        },
+        {
+          "id": "159:1613",
+          "name": "State=Focus"
+        },
+        {
+          "id": "159:1628",
+          "name": "State=Invalid"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinDateTime",
+          "source": "packages/components/src/input/input.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:1678",
+      "name": "Oddkin/Common/fileUpload",
+      "description": "An explicit file chooser, accepted types and a removable uploaded-file row. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:1646",
+          "name": "State=Empty"
+        },
+        {
+          "id": "159:1662",
+          "name": "State=Uploaded"
+        },
+        {
+          "id": "159:1677",
+          "name": "State=Error"
+        }
+      ],
+      "page": "356:62",
+      "bindings": []
+    },
+    {
+      "id": "183:2616",
+      "name": "Oddkin/Common/CheckboxGroup",
+      "description": "Named group of independent checkbox choices with a legend, description and shared validation message. Child choices retain independent selection and interaction state.",
+      "variants": [
+        {
+          "id": "183:2558",
+          "name": "State=Default"
+        },
+        {
+          "id": "183:2577",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "183:2597",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/checkbox-group/checkbox-group.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "183:2622",
+      "name": "Oddkin/Common/ValidationSummary",
+      "description": "Form-level validation summary. On failed submission focus this summary; each listed error links to the matching invalid control. Preserve entered values.",
+      "variants": [
+        {
+          "id": "183:2617",
+          "name": "State=Errors"
+        }
+      ],
+      "page": "356:62",
+      "bindings": []
+    },
+    {
+      "id": "183:2919",
+      "name": "Oddkin/Common/Form",
+      "description": "Reusable settings form composition. Editing, field validation, submission, success, retryable failure and dirty-state feedback. Design specification; runtime form semantics and focus management must be implemented.",
+      "variants": [
+        {
+          "id": "183:2623",
+          "name": "State=Editing"
+        },
+        {
+          "id": "183:2670",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "183:2722",
+          "name": "State=Submitting"
+        },
+        {
+          "id": "183:2771",
+          "name": "State=Success"
+        },
+        {
+          "id": "183:2821",
+          "name": "State=Error"
+        },
+        {
+          "id": "183:2871",
+          "name": "State=Unsaved changes"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "FormValue",
+          "source": "packages/core/src/controllers/form.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:941",
+      "name": "Oddkin/Common/Menu",
+      "description": "Actions in a popup; values belong in a select or listbox. Design proposal; not a promised custom-element API.\nShared styling: overlays use color.surface.raised, control.radius, border.width.default, color.border.default, and the mode-aware Oddkin/Overlay effect (elevation.md). Selected rows use color.selection.surface, separately from color.surface.hover.",
+      "variants": [
+        {
+          "id": "160:881",
+          "name": "State=Open"
+        },
+        {
+          "id": "160:911",
+          "name": "State=Keyboard focus"
+        },
+        {
+          "id": "160:940",
+          "name": "State=Disabled item"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinMenu",
+          "source": "packages/components/src/menu/menu.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1061",
+      "name": "Oddkin/Common/Tree",
+      "description": "Hierarchical items with independent expansion, focus, and selection. Design proposal; not a promised custom-element API. Includes explicit asynchronous/empty/recovery examples.",
+      "variants": [
+        {
+          "id": "160:1008",
+          "name": "State=Selected"
+        },
+        {
+          "id": "160:1043",
+          "name": "State=Keyboard focus"
+        },
+        {
+          "id": "160:1060",
+          "name": "State=Collapsed"
+        },
+        {
+          "id": "186:5260",
+          "name": "State=Empty"
+        },
+        {
+          "id": "186:5266",
+          "name": "State=Loading"
+        },
+        {
+          "id": "186:5282",
+          "name": "State=Error"
+        },
+        {
+          "id": "538:14890",
+          "name": "State=Picker single"
+        },
+        {
+          "id": "538:14972",
+          "name": "State=Picker multiple"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinTree",
+          "source": "packages/components/src/tree/tree.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1148",
+      "name": "Oddkin/Common/Table",
+      "description": "Readable tabular records; an interactive grid is a separate pattern. Design proposal; not a promised custom-element API. Includes explicit asynchronous/empty/recovery examples.",
+      "variants": [
+        {
+          "id": "160:1090",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:1122",
+          "name": "State=Selected row"
+        },
+        {
+          "id": "160:1147",
+          "name": "State=Loading"
+        },
+        {
+          "id": "186:5238",
+          "name": "State=Empty"
+        },
+        {
+          "id": "186:5244",
+          "name": "State=Error"
+        },
+        {
+          "id": "186:5254",
+          "name": "State=Sorted"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinTable",
+          "source": "packages/components/src/css/index.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1222",
+      "name": "Oddkin/Common/List",
+      "description": "Repeated content with a clear hierarchy and optional trailing action. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:1180",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:1213",
+          "name": "State=Selected"
+        },
+        {
+          "id": "160:1221",
+          "name": "State=Empty"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "List",
+          "source": "packages/components/src/css/index.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1346",
+      "name": "Oddkin/Common/SideNavigation",
+      "description": "Existing @oddkin/components side navigation. Native destination links and independent disclosure groups. Additional states in this kit are design specifications.",
+      "variants": [
+        {
+          "id": "160:1284",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:1317",
+          "name": "State=Keyboard focus"
+        },
+        {
+          "id": "160:1345",
+          "name": "State=Collapsed group"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/side-nav/side-nav.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1385",
+      "name": "Oddkin/Common/Breadcrumbs",
+      "description": "A location trail; the current page is text, preceding items are links. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:1364",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:1384",
+          "name": "State=Truncated"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/breadcrumbs/breadcrumbs.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1453",
+      "name": "Oddkin/Common/Pagination",
+      "description": "Page navigation with current position and explicit previous / next. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:1407",
+          "name": "State=Middle page"
+        },
+        {
+          "id": "160:1429",
+          "name": "State=First page"
+        },
+        {
+          "id": "160:1452",
+          "name": "State=Keyboard focus"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/pagination/pagination.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1475",
+      "name": "Oddkin/Common/Tabs",
+      "description": "Choose a related panel; selected and keyboard-focused tabs may differ. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:1463",
+          "name": "State=Selected"
+        },
+        {
+          "id": "160:1474",
+          "name": "State=Keyboard focus"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinTabs",
+          "source": "packages/components/src/tabs/tabs.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1558",
+      "name": "Oddkin/Common/Accordion",
+      "description": "A coordinated set of disclosures; expansion policy is explicit. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:1520",
+          "name": "State=One expanded"
+        },
+        {
+          "id": "160:1537",
+          "name": "State=All collapsed"
+        },
+        {
+          "id": "160:1557",
+          "name": "State=Keyboard focus"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/disclosure/disclosure.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:1638",
+      "name": "Oddkin/Common/Toolbar",
+      "description": "Related actions in a named group, with a selection-aware alternative. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:1585",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:1612",
+          "name": "State=Selection"
+        },
+        {
+          "id": "160:1637",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinToolbar",
+          "source": "packages/components/src/toolbar/toolbar.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "159:529",
+      "name": "Oddkin/Common/splitAction",
+      "description": "A primary action with a separate menu trigger; preserve two independent targets. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "159:515",
+          "name": "State=Default"
+        },
+        {
+          "id": "159:528",
+          "name": "State=Focus"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinSplitAction",
+          "source": "packages/components/src/split-button/split-button.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:2425",
+      "name": "Oddkin/Common/card",
+      "description": "Grouped content with an optional header, body, and action. Existing @oddkin/components implementation; extra visual states remain specifications.",
+      "variants": [
+        {
+          "id": "160:2411",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:2424",
+          "name": "State=Filled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinCard",
+          "source": "packages/components/src/card/card.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:2460",
+      "name": "Oddkin/Common/popover",
+      "description": "A temporary contextual surface anchored to its trigger. Design proposal; not a promised custom-element API.\nShared styling: overlays use color.surface.raised, control.radius, border.width.default, color.border.default, and the mode-aware Oddkin/Overlay effect (elevation.md). Selected rows use color.selection.surface, separately from color.surface.hover.",
+      "variants": [
+        {
+          "id": "160:2444",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:2459",
+          "name": "State=Settings"
+        },
+        {
+          "id": "538:14886",
+          "name": "State=Picker"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinPopover",
+          "source": "packages/components/src/popover/popover.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:2521",
+      "name": "Oddkin/Common/dialog",
+      "description": "A focused task with a title, body, and explicit actions. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:2495",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:2520",
+          "name": "State=Validation"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinDialog",
+          "source": "packages/components/src/dialog/dialog.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:2548",
+      "name": "Oddkin/Common/alertDialog",
+      "description": "A consequential choice with a clear safe exit. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:2547",
+          "name": "State=Default"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinAlert",
+          "source": "packages/components/src/alert/alert.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "160:2599",
+      "name": "Oddkin/Common/drawer",
+      "description": "A side panel that preserves the surrounding task context. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "160:2581",
+          "name": "State=Default"
+        },
+        {
+          "id": "160:2598",
+          "name": "State=Read only"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinDrawer",
+          "source": "packages/components/src/drawer/drawer.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "161:1877",
+      "name": "Oddkin/Common/alert",
+      "description": "Persistent inline status, using an icon and words as well as colour. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "161:1851",
+          "name": "State=Neutral"
+        },
+        {
+          "id": "161:1859",
+          "name": "State=Success"
+        },
+        {
+          "id": "161:1867",
+          "name": "State=Warning"
+        },
+        {
+          "id": "161:1876",
+          "name": "State=Danger"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinAlert",
+          "source": "packages/components/src/alert/alert.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "161:1902",
+      "name": "Oddkin/Common/toast",
+      "description": "A concise event result with an optional recovery action. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "161:1889",
+          "name": "State=Success"
+        },
+        {
+          "id": "161:1901",
+          "name": "State=Danger"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinToast",
+          "source": "packages/components/src/toast/toast.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "161:1992",
+      "name": "Oddkin/Common/emptyState",
+      "description": "Explain an empty result and offer the next useful step. Design proposal; not a promised custom-element API.",
+      "variants": [
+        {
+          "id": "161:1975",
+          "name": "State=First use"
+        },
+        {
+          "id": "161:1991",
+          "name": "State=No results"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinEmptyState",
+          "source": "packages/components/src/empty-state/empty-state.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "182:2469",
+      "name": "Oddkin/Common/CommandPalette",
+      "description": "Global command search. On open, focus the input; arrows navigate results, Enter executes, Escape dismisses and restores trigger focus. Loading, no results and retryable failure are separate design states.",
+      "variants": [
+        {
+          "id": "182:2341",
+          "name": "State=Recent"
+        },
+        {
+          "id": "182:2375",
+          "name": "State=Results"
+        },
+        {
+          "id": "182:2409",
+          "name": "State=Loading"
+        },
+        {
+          "id": "182:2434",
+          "name": "State=No results"
+        },
+        {
+          "id": "182:2449",
+          "name": "State=Error"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/command-palette/command-palette.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "184:3887",
+      "name": "Oddkin/Common/GridRow",
+      "description": "Reusable data row composed of selection and cell instances. Row selection and active cell focus are separate states.",
+      "variants": [
+        {
+          "id": "184:3833",
+          "name": "State=Default"
+        },
+        {
+          "id": "184:3850",
+          "name": "State=Selected"
+        },
+        {
+          "id": "184:3870",
+          "name": "State=Focus"
+        }
+      ],
+      "page": "356:62",
+      "bindings": []
+    },
+    {
+      "id": "184:4717",
+      "name": "Oddkin/Common/DataGrid",
+      "description": "Interactive data grid specification. Includes sorting, filtering, bulk selection, editing, loading, empty and failure states, and column visibility controls. Use arrow keys for cells, Enter/F2 to edit and Escape to cancel; maintain one grid tab stop.",
+      "variants": [
+        {
+          "id": "184:3888",
+          "name": "State=Default"
+        },
+        {
+          "id": "184:3995",
+          "name": "State=Sorted"
+        },
+        {
+          "id": "184:4102",
+          "name": "State=Filtered"
+        },
+        {
+          "id": "184:4193",
+          "name": "State=Selected"
+        },
+        {
+          "id": "184:4309",
+          "name": "State=Editing"
+        },
+        {
+          "id": "184:4418",
+          "name": "State=Loading"
+        },
+        {
+          "id": "184:4481",
+          "name": "State=Empty"
+        },
+        {
+          "id": "184:4544",
+          "name": "State=Error"
+        },
+        {
+          "id": "184:4607",
+          "name": "State=Column controls"
+        }
+      ],
+      "page": "356:62",
+      "bindings": []
+    },
+    {
+      "id": "185:5091",
+      "name": "Oddkin/Common/SplitPanels",
+      "description": "Resizable workspace composition with side-by-side and stacked layouts. Includes focused/dragging handles, collapsed panes and both size limits. Restore the previous size after expanding; runtime dragging and keyboard behavior require implementation.",
+      "variants": [
+        {
+          "id": "185:4836",
+          "name": "Layout=Side by side, State=Default"
+        },
+        {
+          "id": "185:4860",
+          "name": "Layout=Side by side, State=Focus"
+        },
+        {
+          "id": "185:4884",
+          "name": "Layout=Side by side, State=Resizing"
+        },
+        {
+          "id": "185:4908",
+          "name": "Layout=Side by side, State=Collapsed"
+        },
+        {
+          "id": "185:4923",
+          "name": "Layout=Side by side, State=Minimum"
+        },
+        {
+          "id": "185:4947",
+          "name": "Layout=Side by side, State=Maximum"
+        },
+        {
+          "id": "185:4971",
+          "name": "Layout=Stacked, State=Default"
+        },
+        {
+          "id": "185:4992",
+          "name": "Layout=Stacked, State=Focus"
+        },
+        {
+          "id": "185:5013",
+          "name": "Layout=Stacked, State=Resizing"
+        },
+        {
+          "id": "185:5034",
+          "name": "Layout=Stacked, State=Collapsed"
+        },
+        {
+          "id": "185:5049",
+          "name": "Layout=Stacked, State=Minimum"
+        },
+        {
+          "id": "185:5070",
+          "name": "Layout=Stacked, State=Maximum"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/split-panel/split-panel.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "541:15460",
+      "name": "Oddkin/Common/Picker",
+      "description": "Composed Picker design: Content=Tree or Listbox; Selection=Single or Multiple. Both use the existing shared field and popover components with replaceable content. Tree rows retain independent expansion and selection; selecting a branch does not cascade. Single selection closes on activation; multiple selection updates immediately and Done closes. Escape closes without clearing values; return focus to the trigger. This is a Figma composition proposal, not a new shipped runtime API.",
+      "variants": [
+        {
+          "id": "541:13162",
+          "name": "Content=Tree, Selection=Single, State=Empty"
+        },
+        {
+          "id": "541:13272",
+          "name": "Content=Tree, Selection=Single, State=Selected"
+        },
+        {
+          "id": "541:13374",
+          "name": "Content=Tree, Selection=Single, State=Open"
+        },
+        {
+          "id": "541:13476",
+          "name": "Content=Tree, Selection=Single, State=Focus"
+        },
+        {
+          "id": "541:13596",
+          "name": "Content=Tree, Selection=Single, State=Invalid"
+        },
+        {
+          "id": "541:13698",
+          "name": "Content=Tree, Selection=Single, State=Disabled"
+        },
+        {
+          "id": "541:13800",
+          "name": "Content=Tree, Selection=Multiple, State=Empty"
+        },
+        {
+          "id": "541:13909",
+          "name": "Content=Tree, Selection=Multiple, State=Selected"
+        },
+        {
+          "id": "541:14039",
+          "name": "Content=Tree, Selection=Multiple, State=Open"
+        },
+        {
+          "id": "541:14169",
+          "name": "Content=Tree, Selection=Multiple, State=Focus"
+        },
+        {
+          "id": "541:14313",
+          "name": "Content=Tree, Selection=Multiple, State=Invalid"
+        },
+        {
+          "id": "541:14422",
+          "name": "Content=Tree, Selection=Multiple, State=Disabled"
+        },
+        {
+          "id": "541:14552",
+          "name": "Content=Listbox, Selection=Single, State=Empty"
+        },
+        {
+          "id": "541:14611",
+          "name": "Content=Listbox, Selection=Single, State=Selected"
+        },
+        {
+          "id": "541:14670",
+          "name": "Content=Listbox, Selection=Single, State=Open"
+        },
+        {
+          "id": "541:14729",
+          "name": "Content=Listbox, Selection=Single, State=Focus"
+        },
+        {
+          "id": "541:14789",
+          "name": "Content=Listbox, Selection=Single, State=Invalid"
+        },
+        {
+          "id": "541:14848",
+          "name": "Content=Listbox, Selection=Single, State=Disabled"
+        },
+        {
+          "id": "541:14907",
+          "name": "Content=Listbox, Selection=Multiple, State=Empty"
+        },
+        {
+          "id": "541:14985",
+          "name": "Content=Listbox, Selection=Multiple, State=Selected"
+        },
+        {
+          "id": "541:15084",
+          "name": "Content=Listbox, Selection=Multiple, State=Open"
+        },
+        {
+          "id": "541:15183",
+          "name": "Content=Listbox, Selection=Multiple, State=Focus"
+        },
+        {
+          "id": "541:15283",
+          "name": "Content=Listbox, Selection=Multiple, State=Invalid"
+        },
+        {
+          "id": "541:15361",
+          "name": "Content=Listbox, Selection=Multiple, State=Disabled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/picker/picker.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "558:15676",
+      "name": "Oddkin/Common/calendar",
+      "description": "Reusable calendar. October 2026 sample, Monday-first, six complete weeks. Today=24, selected=26; keyboard focus=27. Restricted example disables Oct 1–4. Navigation controls are separate from date cells. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "558:15218",
+          "name": "State=Default"
+        },
+        {
+          "id": "558:15373",
+          "name": "State=Focus"
+        },
+        {
+          "id": "558:15525",
+          "name": "State=Restricted dates"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinCalendar",
+          "source": "packages/components/src/calendar/calendar.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "558:16131",
+      "name": "Oddkin/Common/datePicker",
+      "description": "Editable date field with a calendar popover. Reuses the existing field, popover, calendar and button primitives. Joined open surface, shared strong border and 40px field. Distinct from the existing native dateTime example; runtime remains native. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "558:15681",
+          "name": "State=Empty"
+        },
+        {
+          "id": "558:15709",
+          "name": "State=Selected"
+        },
+        {
+          "id": "558:15737",
+          "name": "State=Open"
+        },
+        {
+          "id": "558:15905",
+          "name": "State=Focus"
+        },
+        {
+          "id": "558:16075",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "558:16103",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinDatePicker",
+          "source": "packages/components/src/date-picker/date-picker.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "558:16598",
+      "name": "Oddkin/Common/colorPicker",
+      "description": "Color field and shared popover with saturation/value, hue, hex, opacity, RGB readout and recent colors. Hue/swatch values are user color data, not theme tokens. Theme controls use existing Oddkin roles. Custom hex sample #D4466C. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "558:16136",
+          "name": "State=Closed"
+        },
+        {
+          "id": "558:16162",
+          "name": "State=Open"
+        },
+        {
+          "id": "558:16297",
+          "name": "State=Focus"
+        },
+        {
+          "id": "558:16422",
+          "name": "State=Custom hex"
+        },
+        {
+          "id": "558:16546",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "558:16572",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinColorPicker",
+          "source": "packages/components/src/color-picker/color-picker.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "558:16773",
+      "name": "Oddkin/Common/oneTimeCode",
+      "description": "Six-digit code entry reusing one cell primitive. Paste and autofill accept the full code; keyboard uses one logical field with predictable movement. Verifying disables entry, errors explain recovery, success has words and a check. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "558:16603",
+          "name": "State=Empty"
+        },
+        {
+          "id": "558:16629",
+          "name": "State=Entering"
+        },
+        {
+          "id": "558:16657",
+          "name": "State=Complete"
+        },
+        {
+          "id": "558:16687",
+          "name": "State=Invalid"
+        },
+        {
+          "id": "558:16713",
+          "name": "State=Verifying"
+        },
+        {
+          "id": "558:16747",
+          "name": "State=Disabled"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinOneTimeCode",
+          "source": "packages/components/src/one-time-code/one-time-code.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "558:16987",
+      "name": "Oddkin/Common/stepper",
+      "description": "Three-step wizard navigation with numbered, complete, current, upcoming and error states. Narrow example changes the progress track to a vertical stack. Steps report current position; panels and validation remain application content. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "558:16778",
+          "name": "State=Start"
+        },
+        {
+          "id": "558:16821",
+          "name": "State=In progress"
+        },
+        {
+          "id": "558:16863",
+          "name": "State=Error"
+        },
+        {
+          "id": "558:16906",
+          "name": "State=Complete"
+        },
+        {
+          "id": "558:16946",
+          "name": "State=Narrow"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/css/index.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "558:17114",
+      "name": "Oddkin/Common/timeline",
+      "description": "Chronological activity list with marker, connector, timestamp and event detail. Status uses words and icons. Narrow layout wraps content; examples are newest first. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "558:16992",
+          "name": "State=Default"
+        },
+        {
+          "id": "558:17022",
+          "name": "State=Pending"
+        },
+        {
+          "id": "558:17052",
+          "name": "State=Error"
+        },
+        {
+          "id": "558:17084",
+          "name": "State=Narrow"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/css/index.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "558:17183",
+      "name": "Oddkin/Common/descriptionList",
+      "description": "Semantic term/value pairs. Horizontal rows use a stable label column; narrow containers stack each term above its value. Long values wrap; missing values use explicit wording. Figma design proposal; no runtime component is registered by this design.",
+      "variants": [
+        {
+          "id": "558:17119",
+          "name": "State=Horizontal"
+        },
+        {
+          "id": "558:17135",
+          "name": "State=Stacked"
+        },
+        {
+          "id": "558:17151",
+          "name": "State=Long content"
+        },
+        {
+          "id": "558:17167",
+          "name": "State=Missing value"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": null,
+          "source": "packages/components/src/css/index.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "613:17999",
+      "name": "Oddkin/Common/carousel",
+      "description": "Manual carousel with previous/next controls, named slides, position and direct selection. First and last controls disable at boundaries. No automatic advancement. Keyboard focus is distinct from the displayed slide; announce user-initiated changes without moving focus. Narrow layout retains all controls. Figma design specification; runtime behavior requires implementation.",
+      "variants": [
+        {
+          "id": "613:17776",
+          "name": "State=First slide"
+        },
+        {
+          "id": "613:17826",
+          "name": "State=Middle slide"
+        },
+        {
+          "id": "613:17868",
+          "name": "State=Last slide"
+        },
+        {
+          "id": "613:17910",
+          "name": "State=Keyboard focus"
+        },
+        {
+          "id": "613:17957",
+          "name": "State=Narrow"
+        }
+      ],
+      "page": "356:62",
+      "bindings": []
+    },
+    {
+      "id": "613:18049",
+      "name": "Oddkin/Common/hoverCard",
+      "description": "Supplementary profile preview opened by pointer hover or keyboard focus and available through an explicit trigger on touch. Pointer can enter the card; Escape dismisses. Essential information remains available on the profile destination. Interactive content uses a popover rather than tooltip semantics. Figma design specification; runtime behavior requires implementation.",
+      "variants": [
+        {
+          "id": "613:18000",
+          "name": "State=Closed"
+        },
+        {
+          "id": "613:18003",
+          "name": "State=Open"
+        },
+        {
+          "id": "613:18018",
+          "name": "State=Keyboard focus"
+        },
+        {
+          "id": "613:18034",
+          "name": "State=Narrow"
+        }
+      ],
+      "page": "356:62",
+      "bindings": [
+        {
+          "componentName": "OddkinCardHover",
+          "source": "packages/components/src/card/card.ts",
+          "version": "unknown",
+          "hasTemplate": false
+        }
+      ]
+    },
+    {
+      "id": "613:18290",
+      "name": "Oddkin/Common/contextMenu",
+      "description": "Contextual actions reuse the existing Menu and MenuItem primitives. Open by right-click, Shift+F10 or the visible more-actions button. Arrow keys navigate, Enter activates, Escape closes and restores trigger focus. Disabled and destructive actions stay distinct. Figma design specification; runtime behavior requires implementation.",
+      "variants": [
+        {
+          "id": "613:18050",
+          "name": "State=Closed"
+        },
+        {
+          "id": "613:18067",
+          "name": "State=Open"
+        },
+        {
+          "id": "613:18141",
+          "name": "State=Keyboard focus"
+        },
+        {
+          "id": "613:18216",
+          "name": "State=Disabled item"
+        }
+      ],
+      "page": "356:62",
+      "bindings": []
+    },
+    {
+      "id": "613:18461",
+      "name": "Oddkin/Common/appHeader",
+      "description": "Application-level header composed from existing actions and navigation. Desktop has brand, primary destinations, search, notifications and account. Narrow layout has an explicit menu trigger; expanded narrow navigation preserves the active destination. Name icon-only controls and expose one banner landmark. Figma design specification; runtime behavior requires implementation.",
+      "variants": [
+        {
+          "id": "613:18291",
+          "name": "State=Desktop"
+        },
+        {
+          "id": "613:18333",
+          "name": "State=Keyboard focus"
+        },
+        {
+          "id": "613:18376",
+          "name": "State=Narrow"
+        },
+        {
+          "id": "613:18416",
+          "name": "State=Narrow menu open"
+        }
+      ],
+      "page": "356:62",
+      "bindings": []
+    }
+  ]
+}
