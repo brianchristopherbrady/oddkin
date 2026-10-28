@@ -11,8 +11,6 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   // One journey through ten routes: Firefox took 17.8 s alone and 25.1 s beside the other engines
   // (2026-10-22), too close to the default 30 s.
   test.slow();
-  const requests: string[] = [];
-  page.on('request', (request) => requests.push(request.url()));
   await page.addInitScript(() => {
     const seen: string[] = [];
     (window as unknown as { __csp: string[] }).__csp = seen;
@@ -70,7 +68,7 @@ test('docs guides, metadata references, local search, and shadow-root links', as
 
   await page.locator('.side-nav a[href="/components"]').click();
   await expect(page).toHaveURL(`${docs}/components`, { timeout: catalogLoad });
-  await expect(page.getByRole('heading', { name: 'Component references' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible();
   // The catalog's filter is mirrored in the URL without a new entry, and typing keeps focus.
   const search = page.getByRole('searchbox', { name: 'Search components' });
   await search.fill('card');
@@ -84,22 +82,19 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(page).toHaveURL(`${docs}/layout/side-nav`);
   await page.goForward();
   await expect(page.getByRole('searchbox', { name: 'Search components' })).toBeVisible();
-  const componentModules = () =>
-    requests
-      .filter((url) => /\/packages\/components\/.*\.js$/.test(url))
-      .map((url) => new URL(url).pathname);
-  const before = componentModules().length;
 
-  // A shadow-root link inside the panel navigates through the docs router.
-  await page.getByRole('link', { name: 'Button', exact: true }).click();
+  // A shadow-root link inside the panel navigates through the docs router; the reference page
+  // shows the component's documented default example live, in a frame.
+  await page.getByRole('link', { name: 'View reference: Button', exact: true }).click();
   await expect(page).toHaveURL(`${docs}/components/odd-button`);
-  await expect(page.locator('#main h1')).toHaveText('<odd-button>');
+  await expect(page.locator('#main h1')).toHaveText('Button');
   const buttonPanel = page.locator('oddkin-component-panel');
   await expect(
     buttonPanel.getByText("import '@oddkin/components/define/button';", { exact: true }),
   ).toBeVisible();
-  await expect(buttonPanel.getByText('Preview unavailable')).toBeVisible();
-  expect(componentModules()).toHaveLength(before);
+  await expect(
+    page.frameLocator('oddkin-component-panel iframe').first().locator('odd-button'),
+  ).toHaveText('Save', { timeout: catalogLoad });
 
   // Foundations are authored pages; their tables and swatches come from the tokens inspection.
   await page.locator('.side-nav a[href="/foundations"]').click();
@@ -147,7 +142,7 @@ test('authored pages are readable before client boot and metadata pages show pen
   await page.goto(`${docs}/components`);
   await expect(page.locator('#route-status')).toHaveText('Loading the requested page…');
   releaseMetadata?.();
-  await expect(page.getByRole('heading', { name: 'Component references' })).toBeVisible({
+  await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible({
     timeout: catalogLoad,
   });
 
@@ -180,7 +175,7 @@ test('metadata loading error is visible and the retry action recovers', async ({
   ).toBeVisible();
   await expect(page.getByText(/HTTP 503/)).toBeVisible();
   await page.getByRole('button', { name: 'Retry loading docs' }).click();
-  await expect(page.getByRole('heading', { name: 'Component references' })).toBeVisible({
+  await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible({
     timeout: catalogLoad,
   });
 });
@@ -227,11 +222,11 @@ test('every published component is listed under its category and has a reference
   // Each reference page renders from the published metadata, reached through the catalog's links.
   for (const { tag, registration } of components) {
     await page.locator(`oddkin-catalog-panel a[href="/components/${tag}"]`).click();
-    await expect(page.locator('#main h1')).toHaveText(`<${tag}>`);
+    await expect(page.locator('#main .page-header .eyebrow')).toHaveText(new RegExp(` · ${tag}$`));
     const panel = page.locator('oddkin-component-panel');
     await expect(panel.getByRole('heading', { name: 'Overview', level: 2 })).toBeVisible();
     await expect(panel.getByText(`import '${registration}';`, { exact: true })).toBeVisible();
     await page.goBack();
-    await expect(page.getByRole('heading', { name: 'Component references' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible();
   }
 });

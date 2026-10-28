@@ -23,6 +23,7 @@ export const SOURCES = {
     'packages/workbench/src/app/styles.ts',
     'packages/workbench/src/panels/styles.ts',
     'packages/workbench/src/panels/catalog-styles.ts',
+    'packages/workbench/src/panels/example-styles.ts',
     'packages/workbench/src/node/html.ts',
   ],
 };
@@ -79,6 +80,12 @@ export const EXCEPTIONS = [
     selector: '*',
     reason:
       "the catalog panel's arrangement in its shadow root (catalogLayoutStyles), for the same reason as the panels' content sheet; the shell arranges the same markup with layout classes",
+  },
+  {
+    file: 'packages/workbench/src/panels/example-styles.ts',
+    selector: '*',
+    reason:
+      "the component page's interactive example, split from the panels' content sheet so the other panels do not load it; adopted in the component panel's shadow root for the same reason",
   },
   {
     file: 'packages/workbench/src/node/html.ts',

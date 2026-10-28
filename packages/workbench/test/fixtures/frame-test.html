@@ -23,6 +23,11 @@
         }
       }
     </script>
+    <script>
+      // Vitest's browser runner wraps dynamic imports in the modules it serves with a global that
+      // only its own test frame defines; this preview frame is a plain document.
+      window.__vitest_browser_runner__ ??= { wrapDynamicImport: (load) => load() };
+    </script>
     <script type="module">
       import '@oddkin/workbench/frame';
     </script>

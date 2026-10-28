@@ -84,7 +84,7 @@ test.describe('docs shell', () => {
     await palette.getByRole('combobox').fill('copy-button');
     await palette.getByRole('option', { name: '<odd-copy-button>' }).click();
     await expect(page).toHaveURL(`${docs}/components/odd-copy-button`);
-    await expect(page.locator('#main h1')).toHaveText('<odd-copy-button>', {
+    await expect(page.locator('#main h1')).toHaveText('Copy button', {
       timeout: catalogLoad,
     });
   });
@@ -167,7 +167,11 @@ test.describe('static docs site', () => {
     page.on('pageerror', (error) => errors.push(error.message));
     const violations = await watchPolicy(page, browserName);
     await page.goto(`${site}/components/odd-button`);
-    await expect(page.locator('#main h1')).toHaveText('<odd-button>', { timeout: catalogLoad });
+    await expect(page.locator('#main h1')).toHaveText('Button', { timeout: catalogLoad });
+    // The live example runs in a same-origin frame under the static policy.
+    await expect(
+      page.frameLocator('oddkin-component-panel iframe').first().locator('odd-button'),
+    ).toHaveText('Save', { timeout: catalogLoad });
     expect(await violations()).toEqual([]);
     const missing = await page.goto(`${site}/not-a-page`);
     expect(missing?.status()).toBe(404);

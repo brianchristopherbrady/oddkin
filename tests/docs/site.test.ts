@@ -77,6 +77,35 @@ describe('the static docs build', () => {
     expect(existsSync(join(out, 'packages/core/dist/index.js'))).toBe(true);
   });
 
+  it('writes the reference data with example values, a document per reference page, and the preview frame', () => {
+    const index = JSON.parse(readFileSync(join(out, '_oddkin/index.json'), 'utf8')) as {
+      pages: Record<string, string>;
+      registry: { pages: { id: string; kind: string; route: string; group?: string }[] };
+    };
+    const components = index.registry.pages.filter((page) => page.kind === 'component');
+    expect(components.some((page) => page.group === 'AI')).toBe(true);
+    for (const page of components) {
+      expect(existsSync(documentAt(out, page.route)), page.route).toBe(true);
+      expect(existsSync(join(out, '_oddkin', index.pages[page.id]!)), page.id).toBe(true);
+    }
+    const button = JSON.parse(
+      readFileSync(join(out, '_oddkin', index.pages['components/odd-button']!), 'utf8'),
+    ) as { examples: { name: string; definition?: { slots?: Record<string, string> } }[] };
+    expect(button.examples.find((e) => e.name === 'default')?.definition?.slots).toEqual({
+      default: 'Save',
+    });
+    // The frame document: the import map allowed by its hash, its module and stylesheets present.
+    const frame = readFileSync(join(out, 'apps/docs/frame.html'), 'utf8');
+    const map = /<script type="importmap">([^<]*)<\/script>/.exec(frame)?.[1] ?? '';
+    const hash = createHash('sha256').update(map).digest('base64');
+    expect(frame).toContain(`script-src 'self' 'sha256-${hash}';`);
+    expect(frame.match(/<script(?![^>]*\bsrc=)[^>]*>/g)).toEqual(['<script type="importmap">']);
+    for (const [, path = ''] of frame.matchAll(/(?:href|src)="(\/[^"]+)"/g))
+      expect(existsSync(join(out, ...path.split('/').filter(Boolean))), path).toBe(true);
+    // Pages allow the frames.
+    expect(readFileSync(documentAt(out, '/components'), 'utf8')).toContain("frame-src 'self'");
+  });
+
   it('replaces only a folder it wrote', () => {
     const other = mkdtempSync(join(tmpdir(), 'oddkin-docs-other-'));
     writeFileSync(join(other, 'keep.txt'), 'not the docs site');

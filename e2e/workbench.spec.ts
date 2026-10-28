@@ -258,10 +258,10 @@ test.describe('Workbench shell', () => {
         )
         .not.toBe('rgba(0, 0, 0, 0)');
 
-      const appearance = page.locator(
-        'tr[data-row="property:odd-button#appearance"] select[aria-label^="appearance"]',
-      );
-      await appearance.selectOption('primary');
+      await page
+        .locator('tr[data-row="property:odd-button#appearance"]')
+        .getByRole('radio', { name: 'primary' })
+        .check();
       await expect(frame.locator('odd-button')).toHaveAttribute('appearance', 'primary');
       // The shell is not restyled by the preview: no odd-button is registered in the shell.
       expect(await page.evaluate(() => customElements.get('odd-button') === undefined)).toBe(true);

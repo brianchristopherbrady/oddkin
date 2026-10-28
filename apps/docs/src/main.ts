@@ -5,8 +5,16 @@ import type {
   LibraryInput,
   TokenInspectionLike,
   WorkbenchData,
+  WorkbenchIndex,
 } from '@oddkin/workbench/data';
 import { pages, type Page } from './pages/index.js';
+import {
+  catalogGroups,
+  catalogPreviews,
+  FRAME_URL,
+  loadComponent,
+  loadIndex,
+} from './reference.js';
 import { showRoute, startShell } from './shell.js';
 
 type JsonRecord = Record<string, unknown>;
@@ -124,8 +132,13 @@ const layoutGuideRoute = route({
 });
 const componentsRoute = route({
   path: 'components',
-  // The catalog renders its cards with odd-card, so this page alone loads a component module.
-  load: () => import('@oddkin/workbench/panels/catalog/define'),
+  load: async ({ signal }: { signal: AbortSignal }) => {
+    const [index] = await Promise.all([
+      loadIndex(signal),
+      import('@oddkin/workbench/panels/catalog/define'),
+    ]);
+    return index;
+  },
   search: (params): CatalogFilter => ({
     query: params.get('q')?.trim() ?? '',
     category: params.get('category')?.trim() ?? '',
@@ -134,7 +147,11 @@ const componentsRoute = route({
 });
 const componentRoute = route({
   path: 'components/:tag',
-  load: componentPanelModule,
+  load: async ({ params, signal }: { params: { tag: string }; signal: AbortSignal }) => {
+    const [index] = await Promise.all([loadIndex(signal), componentPanelModule()]);
+    const page = await loadComponent(index, params.tag, signal);
+    return { index, page };
+  },
   params: ({ tag }) => (tag && /^[a-z0-9-]+$/.test(tag) ? { tag } : undefined),
   title: ({ params }) => `<${params.tag}>`,
 });
@@ -206,13 +223,16 @@ interface CatalogFilter {
 /** Maps a Workbench route (`/components/odd-button`, `/foundations/color#tokens`) to a docs URL. */
 const panelHref = (path: string): string => router.href(path);
 
-function componentPanel(data: DocsData, tag: string): HTMLElement | undefined {
-  const page = data.workbench.pages[`components/${tag}`];
-  if (page?.kind !== 'component') return undefined;
+function componentPanel(
+  index: WorkbenchIndex,
+  page: ComponentPageData,
+  frameUrl = FRAME_URL,
+): HTMLElement {
   const panel = document.createElement('oddkin-component-panel');
-  panel.index = data.workbench.index;
-  panel.page = page as ComponentPageData;
+  panel.index = index;
+  panel.page = page;
   panel.href = panelHref;
+  panel.frameUrl = frameUrl;
   return panel;
 }
 
@@ -224,17 +244,19 @@ function catalogUrl({ query, category }: CatalogFilter): string {
   return search ? `/components?${search}` : '/components';
 }
 
-function renderComponents(main: HTMLElement, data: DocsData, filter: CatalogFilter): void {
+function renderComponents(main: HTMLElement, index: WorkbenchIndex, filter: CatalogFilter): void {
   main.append(
     pageHeader(
-      'Components',
-      'Component references',
-      'Reference pages use the published Custom Elements Manifest and Oddkin metadata. No component implementation is loaded.',
+      'Reference',
+      'Component catalog',
+      'Every published component, with a live example of its documented default. Each reference page has the full API, an interactive example, and the generated code.',
     ),
   );
   const panel = document.createElement('oddkin-catalog-panel');
-  panel.index = data.workbench.index;
+  panel.index = index;
   panel.href = panelHref;
+  panel.groups = catalogGroups(index);
+  panel.preview = catalogPreviews(index);
   panel.query = filter.query;
   panel.category = filter.category;
   // The panel updates itself; the URL follows without a new history entry or a re-render.
@@ -348,8 +370,9 @@ function renderLayoutGuide(main: HTMLElement, data: DocsData): void {
   roles.append(makeLink('Browse the side-nav component reference', '/components/odd-side-nav'));
   main.append(roles);
 
-  const panel = componentPanel(data, 'odd-side-nav');
-  if (panel) main.append(panel);
+  const page = data.workbench.pages['components/odd-side-nav'];
+  if (page?.kind === 'component')
+    main.append(componentPanel(data.workbench.index, page as ComponentPageData, ''));
 }
 
 /** The Foundations page that documents a token, by its name. */
@@ -578,11 +601,14 @@ function renderRoute(state: RouterState): void {
   main.setAttribute('aria-busy', 'false');
   if (last.route === layoutGuideRoute) renderLayoutGuide(main, data);
   else if (last.route === componentsRoute)
-    renderComponents(main, data, last.search as CatalogFilter);
+    renderComponents(main, last.data as WorkbenchIndex, last.search as CatalogFilter);
   else if (last.route === componentRoute) {
     const tag = String(record(last.params)['tag']);
-    const panel = componentPanel(data, tag);
-    if (!panel) {
+    const { index, page } = last.data as {
+      index: WorkbenchIndex;
+      page: ComponentPageData | undefined;
+    };
+    if (!page) {
       main.replaceChildren(
         pageHeader(
           'Not found',
@@ -592,7 +618,15 @@ function renderRoute(state: RouterState): void {
       );
       return;
     }
-    main.replaceChildren(pageHeader('Components', `<${tag}>`), panel);
+    const entry = index.registry.pages.find((p) => p.id === page.id);
+    main.replaceChildren(
+      pageHeader(
+        `${entry?.group ?? 'Components'} · ${tag}`,
+        entry?.title ?? `<${tag}>`,
+        entry?.summary,
+      ),
+      componentPanel(index, page),
+    );
   } else if (last.route === caseStudyRoute) renderCaseStudy(main);
   else if (last.route === searchRoute) renderSearch(main, String(last.search ?? ''), data);
   else if (last.route === notFoundRoute)

@@ -3,7 +3,8 @@
  *   node apps/docs/build.mjs [--out <dir>]   (default .oddkin/docs-site; run after `npm run build`)
  *
  * Writes one document per route (authored pages in full, metadata routes as the shell the client
- * fills), 404.html for every other path, the docs app's own files, and the published browser files
+ * fills), 404.html for every other path, the docs app's own files, the reference pages' Workbench
+ * data (_oddkin/) and preview frame (apps/docs/frame.html), and the published browser files
  * of the packages the pages load. Each document carries its Content-Security-Policy as a meta
  * element, with the import map allowed by its hash. The output directory is replaced only when it
  * is empty or was written by this script.
@@ -90,14 +91,17 @@ async function main() {
     "style-src 'self'",
     "connect-src 'self'",
     "img-src 'self'",
+    // Reference pages show live examples in same-origin frames (frame.html).
+    "frame-src 'self'",
     "base-uri 'none'",
     "form-action 'none'",
     "require-trusted-types-for 'script'",
     'trusted-types oddkin-template',
   ].join('; ');
   const documentFor = (pathname) =>
-    site
-      .renderDocument(template, pathname, facts, release)
+    withPolicy(site.renderDocument(template, pathname, facts, release));
+  const withPolicy = (document) =>
+    document
       .replace(
         '<!-- docs:csp -->',
         `<meta http-equiv="Content-Security-Policy" content="${policy}" />`,
@@ -107,6 +111,27 @@ async function main() {
         `<script type="importmap">${importMap}</script>`,
       );
 
+  // Reference pages (src/reference.ts): Workbench data with the packages' authored examples.
+  const { buildWorkbench } = await import(
+    pathToFileURL(join(root, 'packages/workbench/dist/node/index.js')).href
+  );
+  const reference = await buildWorkbench({
+    config: join(root, 'apps/docs'),
+    hosting: { basePath: '/' },
+  });
+  if (!reference.data)
+    throw new Error(
+      `The reference data could not be built: ${reference.diagnostics.map((d) => d.message).join(' ')}`,
+    );
+  const referenceFiles = [...reference.files.keys()]
+    .filter((path) => path === 'index.json' || path.startsWith('pages/'))
+    .sort();
+  for (const path of referenceFiles) {
+    const file = join(out, '_oddkin', ...path.split('/'));
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, reference.files.get(path));
+  }
+
   // Metadata routes: the shell, which the client renders from the published files.
   const metadata = JSON.parse(
     await readFile(join(root, 'packages/components/oddkin.metadata.json'), 'utf8'),
@@ -114,7 +139,9 @@ async function main() {
   const routes = [
     ...site.pages.map((page) => `/${page.path}`),
     ...site.clientPages.map((page) => `/${page.path}`),
-    ...Object.values(metadata.components).map(({ tag }) => `/components/${tag}`),
+    ...reference.data.index.registry.pages
+      .filter((page) => page.kind === 'component' && page.visible)
+      .map((page) => page.route),
     ...Object.entries(metadata.foundations).map(
       ([key, value]) => `/foundations/${value.id ?? key.replace(/^foundation:/, '')}`,
     ),
@@ -143,10 +170,15 @@ async function main() {
   files += await copyTree(join(root, 'apps/docs/dist'), join(out, 'apps/docs/dist'), (name) =>
     name.endsWith('.js'),
   );
-  for (const name of ['styles.css', 'mode.js']) {
+  for (const name of ['styles.css', 'mode.js', 'frame.css']) {
     await copyFile(join(root, 'apps/docs', name), join(out, 'apps/docs', name));
     files++;
   }
+  await writeFile(
+    join(out, 'apps/docs/frame.html'),
+    withPolicy(await readFile(join(root, 'apps/docs/frame.html'), 'utf8')),
+  );
+  files += 1 + referenceFiles.length;
   console.log(
     `Docs site: ${new Set(routes).size} routes and 404.html, ${files} files, in ${urlPath(relative(root, out)) || '.'}`,
   );

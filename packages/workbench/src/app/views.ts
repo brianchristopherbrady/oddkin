@@ -181,10 +181,11 @@ function card(ctx: ViewContext, page: PageEntry, level: 2 | 3) {
       ${page.summary ? html`<p>${inline(page.summary)}</p>` : nothing} ${metaLine(page, ctx.lang)}
       <div class="wb-card-footer" slot="footer">
         ${tag ? html`<p class="wb-card-tag"><code>${tag}</code></p>` : nothing}
-        <a class="wb-card-action" href=${ctx.href(page.route)}
-          >${COPY.viewPage(tag !== undefined)}<span class="wb-visually-hidden"
-            >: ${page.title}</span
-          ></a
+        <a
+          class="wb-card-action"
+          href=${ctx.href(page.route)}
+          aria-label=${`${COPY.viewPage(tag !== undefined)}: ${page.title}`}
+          >${COPY.viewPage(tag !== undefined)}</a
         >
       </div>
     </odd-card>

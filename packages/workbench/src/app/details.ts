@@ -6,10 +6,11 @@ import { ComponentDetailElement } from '../panels/component-detail.js';
 import { FoundationDetailElement } from '../panels/foundation-detail.js';
 import type { StyleInput } from '@oddkin/core/styles';
 import { contentStyles } from '../panels/styles.js';
+import { exampleStyles } from '../panels/example-styles.js';
 
 export class WorkbenchComponentDetail extends ComponentDetailElement {
   static override shadowRootOptions = null;
-  static override styles: StyleInput = contentStyles;
+  static override styles: StyleInput = [contentStyles, exampleStyles];
 }
 
 export class WorkbenchFoundationDetail extends FoundationDetailElement {

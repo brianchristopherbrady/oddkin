@@ -388,22 +388,33 @@ export function pageCoverage(page: ComponentPageData): CoverageItem[] {
     id: string,
     state: CoverageState,
     extra: Omit<CoverageItem, 'id' | 'section' | 'state'> = {},
-  ) => items.push({ id, section: id.slice(0, id.indexOf('/')), state, ...extra });
+    section = id.slice(0, id.indexOf('/')),
+  ) => items.push({ id, section, state, ...extra });
   const documented = (id: string, present: boolean, source: string, subject?: string) =>
     item(id, present ? 'documented' : 'missing', {
       ...(present ? {} : { source }),
       ...(subject ? { subject } : {}),
     });
-  const declared = (id: string, list: readonly (NamedEntry | ApiRow)[], empty: string) => {
+  const declared = (
+    id: string,
+    list: readonly (NamedEntry | ApiRow)[],
+    empty: string,
+    section?: string,
+  ) => {
     const undocumented = list
       .filter((entry) => !entry.description)
       .map((entry) =>
         'name' in entry ? entry.name || '(default)' : (entry.property ?? entry.attribute ?? ''),
       );
-    item(id, list.length ? 'documented' : 'none', {
-      ...(list.length ? {} : { empty }),
-      ...(undocumented.length ? { undocumented } : {}),
-    });
+    item(
+      id,
+      list.length ? 'documented' : 'none',
+      {
+        ...(list.length ? {} : { empty }),
+        ...(undocumented.length ? { undocumented } : {}),
+      },
+      section,
+    );
   };
 
   documented('overview/description', Boolean(description), 'a JSDoc description on the class');
@@ -415,8 +426,14 @@ export function pageCoverage(page: ComponentPageData): CoverageItem[] {
     'Presets',
   );
   documented('interactive-example/preview', registered, REGISTRATION_SOURCE, 'Preview');
-  declared('api/properties', facts.rows, 'No properties or attributes are declared.');
-  declared('api/slots', facts.slots, 'None declared.');
+  // The editable controls render in the interactive example (its "Controls and API").
+  declared(
+    'api/properties',
+    facts.rows,
+    'No properties or attributes are declared.',
+    'interactive-example',
+  );
+  declared('api/slots', facts.slots, 'None declared.', 'interactive-example');
   declared('api/events', facts.events, 'None declared.');
   declared('api/methods', facts.methods, 'None declared.');
   declared('api/parts', facts.parts, 'None declared.');

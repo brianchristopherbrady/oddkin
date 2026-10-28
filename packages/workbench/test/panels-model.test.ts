@@ -297,6 +297,12 @@ describe('detail model', () => {
     // Entries listed without a description are named, so their rows can say so.
     expect(at('api/slots')?.undocumented).toEqual(['(default)', 'end']);
     expect(at('api/properties')?.undocumented).toContain('legacy-mode');
+    // The editable properties and slots render as the interactive example's controls.
+    expect([at('api/properties')?.section, at('api/slots')?.section]).toEqual([
+      'interactive-example',
+      'interactive-example',
+    ]);
+    expect(at('api/events')?.section).toBe('api');
 
     // Nothing registered and no examples: the preview, imports, presets, and examples are missing.
     const bare = states(page({ enrichment: {}, examples: [] }));

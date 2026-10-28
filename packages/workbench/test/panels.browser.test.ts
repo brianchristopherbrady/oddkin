@@ -205,6 +205,10 @@ function componentPanel(data = probeData()) {
   return { panel, root, frames, probe, row, change };
 }
 
+/** Pick a value in a row's segmented control (a radio group). */
+const choose = (row: Element, value: string) =>
+  row.querySelector<HTMLInputElement>(`[role="radiogroup"] input[value="${value}"]`)!.click();
+
 /** Wait for `n` new writes and return them. */
 async function writesAfter(probe: () => Probe | null | undefined, start: number, n: number) {
   await until(() => (probe()?.writes.length ?? 0) >= start + n, `${n} write(s)`);
@@ -268,8 +272,17 @@ describe('<oddkin-component-panel>', () => {
     const { row } = {
       row: (n: string) => root.querySelector(`tr[data-row="property:wb-probe#${n}"]`)!,
     };
-    expect(row('open').querySelector('th small')?.textContent).toBe('attr open, reflects');
-    expect(row('items').querySelector('th small')?.textContent).toBe('property only');
+    const contract = (n: string) =>
+      row(n).querySelector('[data-label="Contract"]')?.textContent?.replace(/\s+/g, ' ').trim();
+    expect(contract('open')).toBe('property open, reflects boolean');
+    expect(contract('items')).toMatch(/^property only /);
+    expect(row('open').querySelector('th small')?.textContent).toBe('Open.');
+    // Rows group as attributes, then properties without one.
+    expect(
+      [...root.querySelectorAll('[data-table="api"] .wb-group-row')].map((r) =>
+        r.textContent?.trim(),
+      ),
+    ).toEqual(['Attributes', 'Properties']);
     expect(row('renderer').textContent).toContain('Requires fixture');
     expect(row('form').textContent).toContain('Read-only');
     expect(row('form').querySelector('input, select, textarea')).toBeNull();
@@ -330,6 +343,9 @@ describe('<oddkin-component-panel>', () => {
     expect(probe()!.textContent).toBe('Hello');
 
     // Boolean attribute: presence, never the property.
+    expect(row('open').querySelector('input[type="checkbox"]')!.getAttribute('role')).toBe(
+      'switch',
+    );
     let start = probe()!.writes.length;
     row('open').querySelector<HTMLInputElement>('input[type="checkbox"]')!.click();
     expect(await writesAfter(probe, start, 1)).toEqual(['attr open=""']);
@@ -385,10 +401,14 @@ describe('<oddkin-component-panel>', () => {
     await until(() => probe() !== assigned && !!probe()?.isConnected, 'a clean instance');
     expect(probe()!.writes).toEqual(['prop open=true', 'prop count=0']);
 
-    // Enum as an attribute; a JSON array property; invalid JSON is reported and not written.
+    // Enum as an attribute (a segmented choice); a JSON array property; invalid JSON is reported.
+    const unsetTone = () =>
+      [...row('tone').querySelectorAll('button')].find((b) => b.textContent?.trim() === 'Unset')!;
+    expect(unsetTone().disabled).toBe(true);
     start = probe()!.writes.length;
-    change(row('tone').querySelector<HTMLSelectElement>('select[aria-label^="tone"]')!, 'loud');
+    choose(row('tone'), 'loud');
     expect(await writesAfter(probe, start, 1)).toEqual(['attr tone="loud"']);
+    expect(unsetTone().disabled).toBe(false);
     start = probe()!.writes.length;
     change(row('items').querySelector('textarea')!, '["a","b"]');
     expect(await writesAfter(probe, start, 1)).toEqual(['prop items=["a","b"]']);
@@ -409,6 +429,20 @@ describe('<oddkin-component-panel>', () => {
     expect(probe()!.writes.length).toBe(start);
 
     // The snippet reproduces the configuration with public imports and property assignments.
+    // It stays hidden until "See code" expands it.
+    const codeArea = root.querySelector<HTMLElement>('#wb-example-code')!;
+    const toggle = root.querySelector<HTMLButtonElement>(
+      'button[aria-controls="wb-example-code"]',
+    )!;
+    const codeState = () => [
+      codeArea.hidden,
+      toggle.textContent?.trim(),
+      toggle.getAttribute('aria-expanded'),
+    ];
+    expect(codeState()).toEqual([true, 'See code', 'false']);
+    toggle.click();
+    await settled();
+    expect(codeState()).toEqual([false, 'Hide code', 'true']);
     const code = root.querySelector('.wb-snippet')?.textContent ?? '';
     expect(code).toContain(`import '${probeUrl}';`);
     expect(code).toContain('tone="loud"');
@@ -460,10 +494,7 @@ describe('<oddkin-component-panel>', () => {
   it('copies a versioned example link that restores the configuration', async () => {
     const first = componentPanel();
     await until(() => !!first.probe()?.isConnected, 'the probe preview');
-    first.change(
-      first.row('tone').querySelector<HTMLSelectElement>('select[aria-label^="tone"]')!,
-      'loud',
-    );
+    choose(first.row('tone'), 'loud');
     first.change(
       first.row('label').querySelector<HTMLInputElement>('input[type="text"]')!,
       'Shared',
@@ -485,6 +516,12 @@ describe('<oddkin-component-panel>', () => {
     await until(() => !!second.probe()?.isConnected, 'the shared preview');
     expect(second.panel.previewState.attributes).toEqual({ tone: 'loud', label: 'Shared' });
     expect(second.probe()!.writes).toEqual(['attr tone="loud"', 'attr label="Shared"']);
+    // The restored value is the segmented control's checked choice.
+    expect(
+      [...second.row('tone').querySelectorAll<HTMLInputElement>('[role="radiogroup"] input')]
+        .filter((radio) => radio.checked)
+        .map((radio) => radio.value),
+    ).toEqual(['loud']);
 
     // A link for another component, or naming undeclared properties, never writes them.
     second.panel.remove();
@@ -520,7 +557,7 @@ describe('<oddkin-component-panel>', () => {
       panel.previews.map((p) => p.iframe.contentDocument?.documentElement.dataset['oddMode']),
     ).toEqual(['light', 'dark']);
     expect(previewProtocolStats().liveFrames).toBe(frames + 2);
-    change(row('tone').querySelector<HTMLSelectElement>('select[aria-label^="tone"]')!, 'loud');
+    choose(row('tone'), 'loud');
     await until(
       () => probe(0)!.getAttribute('tone') === 'loud' && probe(1)!.getAttribute('tone') === 'loud',
       'both previews updated',
@@ -600,6 +637,8 @@ describe('<oddkin-catalog-panel>', () => {
     await until(() => !!root.querySelector('.wb-card-preview wb-preview-probe'), 'the preview');
     const node = root.querySelector('wb-preview-probe');
     expect(node).toBe(nodes.get('components/wb-probe'));
+    // The preview fills the card's header edge to edge.
+    expect(node!.closest('odd-card')!.getAttribute('padding')).toBe('none');
     // A filter change re-renders the cards around the same preview node.
     panel.query = 'probe';
     await settled();

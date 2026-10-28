@@ -50,6 +50,14 @@ const site = await import(pathToFileURL(join(root, 'apps/docs/dist/pages/index.j
 const facts = await docsFacts(root);
 const release = await siteFacts(root);
 const shell = join(root, 'apps/docs/index.html');
+// Reference pages (src/reference.ts): Workbench data with the packages' authored examples, built in Node.
+const { buildWorkbench } = await import(
+  pathToFileURL(join(root, 'packages/workbench/dist/node/index.js')).href
+);
+const reference = await buildWorkbench({
+  config: join(root, 'apps/docs'),
+  hosting: { basePath: '/' },
+});
 
 /** The shell filled for `pathname`; the server sends its policy as a header, not a meta element. */
 const documentFor = (template, pathname) =>
@@ -70,6 +78,14 @@ const server = createServer(async (request, response) => {
   }
 
   let path;
+  if (pathname.startsWith('/_oddkin/')) {
+    const file = pathname.endsWith('.json')
+      ? reference.files.get(pathname.slice('/_oddkin/'.length))
+      : undefined;
+    if (file === undefined) response.writeHead(404).end('Not found');
+    else response.writeHead(200, { 'content-type': types['.json'] }).end(file);
+    return;
+  }
   if (pathname.startsWith('/public/')) {
     const parts = pathname.slice('/public/'.length).split('/');
     const packageName = parts.slice(0, 2).join('/');
@@ -126,7 +142,7 @@ const server = createServer(async (request, response) => {
     response.writeHead(200, {
       'content-type': types[extname(path)] ?? 'application/octet-stream',
       'x-content-type-options': 'nosniff',
-      'content-security-policy': `default-src 'none'; script-src 'self' 'nonce-${nonce}'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template`,
+      'content-security-policy': `default-src 'none'; script-src 'self' 'nonce-${nonce}'; style-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template`,
     });
     response.end(request.method === 'HEAD' ? undefined : content);
   } catch (error) {

@@ -1,0 +1,19 @@
+/* The preview frame of the reference pages (frame.html): the Workbench frame harness, with the
+   previewed element centred on the specimen surface. */
+html,
+body {
+  margin: 0;
+  min-block-size: 100%;
+}
+body {
+  container: preview-frame / inline-size;
+  background: var(--odd-color-surface-specimen, Canvas);
+  color: var(--odd-color-text-primary, CanvasText);
+  font-family: var(--odd-font-family-sans, system-ui);
+}
+[data-oddkin-preview] {
+  min-block-size: 100vh;
+  padding: var(--odd-space-md, 1rem);
+  box-sizing: border-box;
+  container: preview / inline-size;
+}

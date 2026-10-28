@@ -115,7 +115,8 @@ describe('<oddkin-workbench>', () => {
       'Layout (1)',
       'Other components (2)',
     ]);
-    expect(cardLink(shell, 'Button').textContent).toBe('View reference: Button');
+    expect(cardLink(shell, 'Button').textContent).toBe('View reference');
+    expect(cardLink(shell, 'Button').getAttribute('aria-label')).toBe('View reference: Button');
     expect([...shell.querySelectorAll('.wb-card-tag')].map((p) => p.textContent)).toEqual([
       'acme-card',
       'acme-button',

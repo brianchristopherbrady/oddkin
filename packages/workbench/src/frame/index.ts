@@ -102,53 +102,16 @@ function loadRegistration(runtime: Runtime, registration: string): Promise<void>
   if (runtime.registrations.has(registration)) return Promise.resolve();
   const scope = runtime.scope;
   if (!scope || scope.disposed) return Promise.reject(new Error('The preview frame was disposed.'));
-  const script = runtime.document.createElement('script');
-  script.type = 'module';
-  script.textContent = `try {
-    await import(${JSON.stringify(registration)});
-    document.dispatchEvent(new CustomEvent('oddkin:registration', {
-      detail: { registration: ${JSON.stringify(registration)}, ok: true }
-    }));
-  } catch (error) {
-    document.dispatchEvent(new CustomEvent('oddkin:registration', {
-      detail: { registration: ${JSON.stringify(registration)}, ok: false, message: String(error) }
-    }));
-  }`;
-  const releaseScript = scope.add(() => script.remove(), 'registration module');
-  return new Promise<void>((resolve, reject) => {
-    let complete = false;
-    let releaseLoad = () => {};
-    let releaseError = () => {};
-    const finish = (error?: Error) => {
-      if (complete) return;
-      complete = true;
-      releaseLoad();
-      releaseError();
-      releaseAbort();
-      releaseScript();
-      if (error) reject(error);
-      else resolve();
-    };
-    releaseLoad = scope.listen(
-      runtime.document,
-      'oddkin:registration',
-      (event: CustomEvent<{ registration: string; ok: boolean; message?: string }>) => {
-        if (event.detail.registration !== registration) return;
-        finish(
-          event.detail.ok
-            ? undefined
-            : new Error(event.detail.message ?? `Could not load registration "${registration}".`),
-        );
-      },
-    );
-    releaseError = scope.listen(script, 'error', () =>
-      finish(new Error(`Could not execute registration "${registration}".`)),
-    );
-    const releaseAbort = scope.add(() => {
-      if (!complete) finish(new Error('The preview frame was disposed.'));
-    });
-    runtime.document.head.append(script);
-  });
+  // The runtime lives in the frame's realm, so its import loads into the frame's registry; a
+  // strict Content-Security-Policy (no inline script, Trusted Types) allows it.
+  return import(/* @vite-ignore */ registration).then(
+    () => {
+      if (scope.disposed) throw new Error('The preview frame was disposed.');
+    },
+    (error: unknown) => {
+      throw new Error(String(error));
+    },
+  );
 }
 
 /** Load a component's registration once per frame and create it with its initial state. */

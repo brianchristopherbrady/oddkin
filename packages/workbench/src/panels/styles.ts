@@ -148,7 +148,6 @@ export const contentStyles = css`
     }
   }
 
-  /* Interactive example */
   .wb-content .wb-toolbar {
     display: flex;
     flex-wrap: wrap;

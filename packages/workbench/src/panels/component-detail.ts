@@ -37,8 +37,10 @@ import {
 } from './model.js';
 import type { StyleInput } from '@oddkin/core/styles';
 import { contentStyles, panelHostStyles } from './styles.js';
+import { exampleStyles } from './example-styles.js';
 
 const LOG_LIMIT = 50;
+const SEGMENTED_MAX = 4;
 
 export interface EventLogEntry {
   readonly id: number;
@@ -131,7 +133,7 @@ export class ComponentDetailElement extends OddkinElement.with({
     description: 'URL of the preview frame document.',
   }),
 }) {
-  static override styles: StyleInput = [panelHostStyles, contentStyles];
+  static override styles: StyleInput = [panelHostStyles, contentStyles, exampleStyles];
 
   readonly #state = signal<PreviewState>({
     preset: 'default',
@@ -153,6 +155,8 @@ export class ComponentDetailElement extends OddkinElement.with({
     alert: false,
   });
   readonly #link = signal('');
+  /** The generated code is shown under the example. */
+  readonly #code = signal(false);
   readonly #hosts: readonly [HTMLDivElement, HTMLDivElement];
   #previews: IsolatedPreview[] = [];
   #previewScope: Scope | undefined;
@@ -552,20 +556,30 @@ export class ComponentDetailElement extends OddkinElement.with({
         (section) =>
           html`<section id=${section.id} aria-labelledby=${`${section.id}-title`}>
             <h2 id=${`${section.id}-title`}>${section.title}</h2>
-            ${this.#section(section.id, page, facts, at)}
+            ${this.#section(section.id, page, facts, at, sections)}
           </section>`,
       )}
     </div>`;
   }
 
-  #section(id: string, page: ComponentPageData, facts: ComponentFacts, at: Covered) {
+  #section(
+    id: string,
+    page: ComponentPageData,
+    facts: ComponentFacts,
+    at: Covered,
+    sections: readonly { readonly id: string }[],
+  ) {
     switch (id) {
       case 'overview':
         return this.#overview(page, at);
       case 'interactive-example':
         return this.#interactive(page, facts, at);
       case 'api':
-        return this.#api(facts, at);
+        return this.#api(
+          facts,
+          at,
+          sections.some((s) => s.id === 'interactive-example'),
+        );
       case 'examples':
         return at('examples/examples', () => this.#examples(page));
       case 'tokens':
@@ -670,145 +684,177 @@ export class ComponentDetailElement extends OddkinElement.with({
     const link = this.#link.value;
     const frameSettings = settings.pair ? {} : this.#frameSettings(0);
     const update = (patch: Partial<Settings>) => this.#applySettings({ ...settings, ...patch });
-    return html`<div class="wb-toolbar">
-        ${at(
-          'interactive-example/presets',
-          () =>
-            html`<label
-              >Preset
-              <select
-                .value=${state.preset}
-                @change=${(event: Event) => {
-                  const name = (event.target as HTMLSelectElement).value;
-                  const entry = entries.find((p) => p.name === name);
-                  if (entry) this.#applyPreset(entry);
-                }}
-              >
-                ${entries.map(
-                  (p) =>
-                    html`<option value=${p.name} ?selected=${p.name === state.preset}>
-                      ${p.label}${p.incorrect ? ' (incorrect usage)' : ''}
-                    </option>`,
-                )}
-              </select></label
-            >`,
-        )}
-        <label
-          >Mode
-          <select
-            .value=${settings.mode}
-            ?disabled=${settings.pair}
-            @change=${(event: Event) =>
-              update({ mode: (event.target as HTMLSelectElement).value as Settings['mode'] })}
-          >
-            <option value="site" ?selected=${settings.mode === 'site'}>Same as site</option>
-            <option value="light" ?selected=${settings.mode === 'light'}>Light</option>
-            <option value="dark" ?selected=${settings.mode === 'dark'}>Dark</option>
-          </select></label
-        >
-        <label
-          ><span>Light and dark side by side</span>
-          <input
-            type="checkbox"
-            .checked=${settings.pair}
-            @change=${(event: Event) =>
-              update({ pair: (event.target as HTMLInputElement).checked })}
-        /></label>
-        <label
-          >Direction
-          <select
-            .value=${settings.direction}
-            @change=${(event: Event) =>
-              update({
-                direction: (event.target as HTMLSelectElement).value as Settings['direction'],
-              })}
-          >
-            <option value="ltr" ?selected=${settings.direction === 'ltr'}>Left to right</option>
-            <option value="rtl" ?selected=${settings.direction === 'rtl'}>Right to left</option>
-          </select></label
-        >
-        <label
-          >Width
-          <select
-            .value=${settings.width}
-            @change=${(event: Event) =>
-              update({ width: (event.target as HTMLSelectElement).value as Width })}
-          >
-            <option value="fill" ?selected=${settings.width === 'fill'}>Fill</option>
-            <option value="narrow" ?selected=${settings.width === 'narrow'}>Narrow (320px)</option>
-            <option value="medium" ?selected=${settings.width === 'medium'}>Medium (640px)</option>
-            <option value="wide" ?selected=${settings.width === 'wide'}>Wide (960px)</option>
-            <option value="custom" ?selected=${settings.width === 'custom'}>Custom</option>
-          </select></label
-        >
-        ${
-          settings.width === 'custom'
-            ? html`<label
-                >Width in px
-                <input
-                  type="number"
-                  min=${String(MIN_SHARE_WIDTH)}
-                  max=${String(MAX_SHARE_WIDTH)}
-                  step="1"
-                  .value=${String(settings.customWidth)}
+    const code = this.#code.value;
+    return html`<div class="wb-example">
+        <div class="wb-example-bar">
+          <p class="wb-example-title">Interactive example · <code>${page.tag}</code></p>
+          ${at(
+            'interactive-example/presets',
+            () =>
+              html`<label
+                >Preset
+                <select
+                  .value=${state.preset}
                   @change=${(event: Event) => {
-                    const value = Number((event.target as HTMLInputElement).value);
-                    if (
-                      Number.isInteger(value) &&
-                      value >= MIN_SHARE_WIDTH &&
-                      value <= MAX_SHARE_WIDTH
-                    )
-                      update({ customWidth: value });
+                    const name = (event.target as HTMLSelectElement).value;
+                    const entry = entries.find((p) => p.name === name);
+                    if (entry) this.#applyPreset(entry);
                   }}
+                >
+                  ${entries.map(
+                    (p) =>
+                      html`<option value=${p.name} ?selected=${p.name === state.preset}>
+                        ${p.label}${p.incorrect ? ' (incorrect usage)' : ''}
+                      </option>`,
+                  )}
+                </select></label
+              >`,
+          )}
+          <button
+            type="button"
+            aria-expanded=${code ? 'true' : 'false'}
+            aria-controls="wb-example-code"
+            @click=${() => (this.#code.value = !code)}
+          >
+            ${code ? 'Hide code' : 'See code'}
+          </button>
+          <button type="button" @click=${() => this.#copyLink(page)}>Copy example link</button>
+          <button type="button" class="wb-quiet" @click=${() => this.#reset()}>Reset</button>
+        </div>
+        ${
+          link
+            ? html`<label class="wb-share"
+                >Example link <input type="url" readonly .value=${link} size="40"
               /></label>`
             : nothing
         }
-        <button type="button" @click=${() => this.#reset()}>Reset</button>
-        <button type="button" @click=${() => this.#copyLink(page)}>Copy example link</button>
-      </div>
-      <p class="wb-muted wb-settings-summary">
-        Preview only:
-        ${settings.pair ? 'light and dark' : settings.mode === 'site' ? 'same mode as the site' : settings.mode}
-        · ${settings.direction === 'rtl' ? 'right to left' : 'left to right'} ·
-        ${
-          settings.width === 'fill'
-            ? 'fills the column'
-            : `${settings.width === 'custom' ? settings.customWidth : WIDTHS[settings.width]}px container`
-        }
-      </p>
-      ${
-        link
-          ? html`<label class="wb-share"
-              >Example link <input type="url" readonly .value=${link} size="40"
-            /></label>`
-          : nothing
-      }
-      ${at(
-        'interactive-example/preview',
-        () =>
-          html`<div class=${settings.pair ? 'wb-previews wb-pair' : 'wb-previews'}>
-            <div class="wb-preview">
-              ${settings.pair ? html`<p>Light</p>` : nothing}${this.#hosts[0]}
+        <div class="wb-example-body">
+          <div class="wb-example-stage">
+            ${at(
+              'interactive-example/preview',
+              () =>
+                html`<div class=${settings.pair ? 'wb-previews wb-pair' : 'wb-previews'}>
+                  <div class="wb-preview">
+                    ${settings.pair ? html`<p>Light</p>` : nothing}${this.#hosts[0]}
+                  </div>
+                  ${
+                    settings.pair
+                      ? html`<div class="wb-preview">
+                          <p>Dark</p>
+                          ${this.#hosts[1]}
+                        </div>`
+                      : nothing
+                  }
+                </div>`,
+            )}
+            <p class="wb-status" role=${status.alert ? 'alert' : 'status'}>${status.text}</p>
+            <div class="wb-toolbar">
+              <label
+                >Mode
+                <select
+                  .value=${settings.mode}
+                  ?disabled=${settings.pair}
+                  @change=${(event: Event) =>
+                    update({ mode: (event.target as HTMLSelectElement).value as Settings['mode'] })}
+                >
+                  <option value="site" ?selected=${settings.mode === 'site'}>Same as site</option>
+                  <option value="light" ?selected=${settings.mode === 'light'}>Light</option>
+                  <option value="dark" ?selected=${settings.mode === 'dark'}>Dark</option>
+                </select></label
+              >
+              <label
+                ><span>Light and dark side by side</span>
+                <input
+                  type="checkbox"
+                  .checked=${settings.pair}
+                  @change=${(event: Event) =>
+                    update({ pair: (event.target as HTMLInputElement).checked })}
+              /></label>
+              <label
+                >Direction
+                <select
+                  .value=${settings.direction}
+                  @change=${(event: Event) =>
+                    update({
+                      direction: (event.target as HTMLSelectElement).value as Settings['direction'],
+                    })}
+                >
+                  <option value="ltr" ?selected=${settings.direction === 'ltr'}>
+                    Left to right
+                  </option>
+                  <option value="rtl" ?selected=${settings.direction === 'rtl'}>
+                    Right to left
+                  </option>
+                </select></label
+              >
+              <label
+                >Width
+                <select
+                  .value=${settings.width}
+                  @change=${(event: Event) =>
+                    update({ width: (event.target as HTMLSelectElement).value as Width })}
+                >
+                  <option value="fill" ?selected=${settings.width === 'fill'}>Fill</option>
+                  <option value="narrow" ?selected=${settings.width === 'narrow'}>
+                    Narrow (320px)
+                  </option>
+                  <option value="medium" ?selected=${settings.width === 'medium'}>
+                    Medium (640px)
+                  </option>
+                  <option value="wide" ?selected=${settings.width === 'wide'}>Wide (960px)</option>
+                  <option value="custom" ?selected=${settings.width === 'custom'}>Custom</option>
+                </select></label
+              >
+              ${
+                settings.width === 'custom'
+                  ? html`<label
+                      >Width in px
+                      <input
+                        type="number"
+                        min=${String(MIN_SHARE_WIDTH)}
+                        max=${String(MAX_SHARE_WIDTH)}
+                        step="1"
+                        .value=${String(settings.customWidth)}
+                        @change=${(event: Event) => {
+                          const value = Number((event.target as HTMLInputElement).value);
+                          if (
+                            Number.isInteger(value) &&
+                            value >= MIN_SHARE_WIDTH &&
+                            value <= MAX_SHARE_WIDTH
+                          )
+                            update({ customWidth: value });
+                        }}
+                    /></label>`
+                  : nothing
+              }
             </div>
-            ${
-              settings.pair
-                ? html`<div class="wb-preview">
-                    <p>Dark</p>
-                    ${this.#hosts[1]}
-                  </div>`
-                : nothing
-            }
-          </div>`,
-      )}
-      <p class="wb-status" role=${status.alert ? 'alert' : 'status'}>${status.text}</p>
+            <p class="wb-muted wb-settings-summary">
+              Preview only:
+              ${settings.pair ? 'light and dark' : settings.mode === 'site' ? 'same mode as the site' : settings.mode}
+              · ${settings.direction === 'rtl' ? 'right to left' : 'left to right'} ·
+              ${
+                settings.width === 'fill'
+                  ? 'fills the column'
+                  : `${settings.width === 'custom' ? settings.customWidth : WIDTHS[settings.width]}px container`
+              }
+            </p>
+          </div>
+          <div class="wb-example-controls">
+            <h3>Controls and API</h3>
+            ${at('api/properties', () => this.#apiTable(facts))}
+            ${at('api/slots', () => this.#slots(facts))}
+          </div>
+        </div>
+        <div class="wb-example-code" id="wb-example-code" ?hidden=${!code}>
+          <p class="wb-example-title">HTML and JavaScript · current example</p>
+          <pre
+            class="wb-code wb-snippet"
+            tabindex="0"
+          ><code>${snippet(page, state, { settings: frameSettings })}</code></pre>
+        </div>
+      </div>
       <h3>Event log</h3>
-      ${this.#eventLog(facts)}
-      <h3>Code</h3>
-      <p class="wb-muted">Plain HTML and JavaScript for the current configuration.</p>
-      <pre
-        class="wb-code wb-snippet"
-        tabindex="0"
-      ><code>${snippet(page, state, { settings: frameSettings })}</code></pre>`;
+      ${this.#eventLog(facts)}`;
   }
 
   #eventLog(facts: ComponentFacts) {
@@ -843,10 +889,15 @@ export class ComponentDetailElement extends OddkinElement.with({
     </div>`;
   }
 
-  #api(facts: ComponentFacts, at: Covered) {
-    return html`${at('api/properties', () => this.#apiTable(facts))}
-      <h3>Slots</h3>
-      ${at('api/slots', () => this.#slots(facts))}
+  #api(facts: ComponentFacts, at: Covered, inExample: boolean) {
+    return html`${
+        inExample
+          ? html`<p class="wb-muted">
+              Properties, attributes, and slots are in the interactive example's controls above.
+            </p>`
+          : html`${at('api/properties', () => this.#apiTable(facts))}
+            ${at('api/slots', () => this.#slots(facts))}`
+      }
       <h3>Events</h3>
       ${at('api/events', () => this.#namedTable(facts.events, 'events', 'Event', true))}
       <h3>Methods</h3>
@@ -895,6 +946,10 @@ export class ComponentDetailElement extends OddkinElement.with({
   }
 
   #apiTable(facts: ComponentFacts) {
+    const groups = [
+      ['Attributes', facts.rows.filter((row) => row.attribute)],
+      ['Properties', facts.rows.filter((row) => !row.attribute)],
+    ] as const;
     return html`<div class="wb-table-wrap">
       <table class="wb-stack wb-api" data-table="api">
         <caption>
@@ -904,15 +959,21 @@ export class ComponentDetailElement extends OddkinElement.with({
         <thead>
           <tr>
             <th scope="col">Name</th>
-            <th scope="col">Type</th>
+            <th scope="col">Contract</th>
             <th scope="col">Default</th>
-            <th scope="col">Current value</th>
-            <th scope="col">Description</th>
+            <th scope="col">Control and current value</th>
           </tr>
         </thead>
-        <tbody>
-          ${facts.rows.map((row) => this.#apiRow(row))}
-        </tbody>
+        ${groups.map(([label, rows]) =>
+          rows.length
+            ? html`<tbody>
+                <tr class="wb-group-row">
+                  <th scope="colgroup" colspan="4">${label}</th>
+                </tr>
+                ${rows.map((row) => this.#apiRow(row))}
+              </tbody>`
+            : nothing,
+        )}
       </table>
     </div>`;
   }
@@ -921,20 +982,27 @@ export class ComponentDetailElement extends OddkinElement.with({
     const name = row.property ?? row.attribute ?? '';
     const notes: string[] = [];
     if (row.property && row.attribute)
-      notes.push(`attr ${row.attribute}${row.reflects ? ', reflects' : ''}`);
+      notes.push(
+        `property ${row.property}${row.attribute !== row.property ? ` · attribute ${row.attribute}` : ''}${row.reflects ? ', reflects' : ''}`,
+      );
     else if (!row.property) notes.push('attribute only');
     else notes.push(row.propertyOnly ? 'property only' : 'no attribute');
     return html`<tr data-row=${row.id}>
-      <th scope="row" data-label="Name"><code>${name}</code><small>${notes.join(' · ')}</small></th>
-      <td data-label="Type">
-        <code>${row.values ? row.values.map((v) => JSON.stringify(v)).join(' | ') : row.type}</code>
-        ${row.nullable ? html`<small>nullable</small>` : nothing}
+      <th scope="row" data-label="Name">
+        <code>${name}</code>
+        <small
+          >${row.description ? inline(row.description) : html`<span class="wb-not-documented">Not documented</span>`}</small
+        >
+      </th>
+      <td data-label="Contract">
+        ${notes.join(' · ')}
+        <small
+          ><code>${row.values ? row.values.join(' | ') : row.type}</code
+          >${row.nullable ? ' · nullable' : ''}</small
+        >
       </td>
       <td data-label="Default">${row.default ? html`<code>${row.default}</code>` : 'Unknown'}</td>
-      <td data-label="Current value">${this.#control(row)}</td>
-      <td data-label="Description">
-        ${row.description ? inline(row.description) : html`<span class="wb-not-documented">Not documented</span>`}
-      </td>
+      <td data-label="Control">${this.#control(row)}</td>
     </tr>`;
   }
 
@@ -977,6 +1045,8 @@ export class ComponentDetailElement extends OddkinElement.with({
       const checked = mode === 'attribute' ? attrValue !== undefined : propValue === true;
       control = html`<input
           type="checkbox"
+          role="switch"
+          class="wb-switch"
           aria-label=${label}
           .checked=${checked}
           @change=${(event: Event) => {
@@ -1005,28 +1075,61 @@ export class ComponentDetailElement extends OddkinElement.with({
               ? '\u0000null'
               : String(propValue)
             : '';
-      control = html`<select
-        aria-label=${label}
-        .value=${current}
-        @change=${(event: Event) => {
-          const value = (event.target as HTMLSelectElement).value;
-          if (mode === 'attribute') this.#writeAttribute(row, value === '' ? null : value);
-          else if (value === '') this.#unsetProperty(row);
-          else this.#writeProperty(row, value === '\u0000null' ? null : value);
-        }}
-      >
-        <option value="" ?selected=${current === ''}>(unset)</option>
-        ${(row.values ?? []).map(
-          (value) => html`<option value=${value} ?selected=${current === value}>${value}</option>`,
-        )}
-        ${
-          mode === 'property' && row.nullable
-            ? html`<option value=${'\u0000null'} ?selected=${current === '\u0000null'}>
-                null
-              </option>`
-            : nothing
-        }
-      </select>`;
+      const write = (value: string) => {
+        if (mode === 'attribute') this.#writeAttribute(row, value === '' ? null : value);
+        else if (value === '') this.#unsetProperty(row);
+        else this.#writeProperty(row, value === '\u0000null' ? null : value);
+      };
+      const values = row.values ?? [];
+      // A few values read best side by side; longer lists stay a select.
+      control =
+        values.length <= SEGMENTED_MAX
+          ? html`<div class="wb-segmented" role="radiogroup" aria-label=${label}>
+                ${values.map(
+                  (value) =>
+                    html`<label
+                      ><input
+                        type="radio"
+                        name=${`${row.id}:${mode}`}
+                        value=${value}
+                        .checked=${current === value}
+                        @change=${() => write(value)}
+                      /><span>${value}</span></label
+                    >`,
+                )}
+              </div>
+              <button type="button" ?disabled=${current === ''} @click=${() => write('')}>
+                Unset
+              </button>
+              ${
+                mode === 'property' && row.nullable
+                  ? html`<button
+                      type="button"
+                      ?disabled=${current === '\u0000null'}
+                      @click=${() => write('\u0000null')}
+                    >
+                      Set null
+                    </button>`
+                  : nothing
+              }`
+          : html`<select
+              aria-label=${label}
+              .value=${current}
+              @change=${(event: Event) => write((event.target as HTMLSelectElement).value)}
+            >
+              <option value="" ?selected=${current === ''}>(unset)</option>
+              ${values.map(
+                (value) =>
+                  html`<option value=${value} ?selected=${current === value}>${value}</option>`,
+              )}
+              ${
+                mode === 'property' && row.nullable
+                  ? html`<option value=${'\u0000null'} ?selected=${current === '\u0000null'}>
+                      null
+                    </option>`
+                  : nothing
+              }
+            </select>`;
     } else if (row.control === 'json') {
       control = html`<textarea
         aria-label=${label}
@@ -1122,15 +1225,22 @@ export class ComponentDetailElement extends OddkinElement.with({
   #slots(facts: ComponentFacts) {
     const state = this.#state.value;
     return html`<div class="wb-table-wrap">
-      <table class="wb-stack" data-table="slots">
-        <thead>
+      <table class="wb-stack wb-api" data-table="slots">
+        <caption class="wb-visually-hidden">
+          Slots: text content written into the preview.
+        </caption>
+        <thead class="wb-visually-hidden">
           <tr>
             <th scope="col">Slot</th>
             <th scope="col">Description</th>
+            <th scope="col">Default</th>
             <th scope="col">Text content</th>
           </tr>
         </thead>
         <tbody>
+          <tr class="wb-group-row">
+            <th scope="colgroup" colspan="4">Slots</th>
+          </tr>
           ${facts.slots.map((slot) => {
             const label = slot.name || '(default)';
             return html`<tr data-slot=${slot.name}>
@@ -1138,6 +1248,7 @@ export class ComponentDetailElement extends OddkinElement.with({
               <td data-label="Description">
                 ${slot.description ? inline(slot.description) : html`<span class="wb-not-documented">Not documented</span>`}
               </td>
+              <td data-label="Default">—</td>
               <td data-label="Text content">
                 <input
                   type="text"

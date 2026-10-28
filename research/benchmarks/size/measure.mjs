@@ -113,15 +113,23 @@ export const BUDGETS = {
   lifecycle: 5120,
   // Workbench entries, measured 2026-10-22 (Agent 3). Public panels, each registering one element
   // with its renderer and the preview host: component 27,112 (28 KiB), foundation 15,199
-  // (16 KiB), catalog 16,654 (17 KiB).
+  // (16 KiB), catalog 16,654 (17 KiB). On 2026-10-28 (docs slice 4, the Figma component
+  // reference): component 28,469 (27,296 before: the interactive example's bar, code toggle,
+  // grouped API rows, segmented enums, and switches, with their own sheet), foundation 15,233.
   'workbench-panel-component': 28672,
   'workbench-panel-foundation': 16384,
-  'workbench-panel-catalog': 17408,
-  // 49 KiB; measured 48,775: the shell with router, search, and every page renderer. This harness
-  // does not split, so it includes Theme Studio (about 3.2 KiB), which the shell imports only on
-  // its route; with splitting, the initial load is 45,876 and Theme Studio a 4,150 B chunk.
-  'workbench-shell': 50176,
-  // 7.5 KiB; measured 7,055: the preview frame runtime (protocol, Scope, mount, specimen, theme).
+  // 18 KiB; measured 17,772 on 2026-10-28 (16,849 before: the search hint, count pills, category
+  // buttons, and cards with a preview header and a footer; `preview` and `groups`). Was 17 KiB.
+  'workbench-panel-catalog': 18432,
+  // 51 KiB; measured 51,248 on 2026-10-28 (48,972 before: the catalog and component reference
+  // above, both in the shell). Was 49 KiB (48,775 measured on 2026-10-22): the shell with router,
+  // search, and every page renderer. This harness does not split, so it includes Theme Studio
+  // (about 3.2 KiB), which the shell imports only on its route; with splitting, the initial load
+  // was 45,876 and Theme Studio a 4,150 B chunk.
+  'workbench-shell': 52224,
+  // 7.5 KiB; measured 6,786 on 2026-10-28 (7,055 before: the frame imports a registration with
+  // import() instead of an inline module script): the preview frame runtime (protocol, Scope,
+  // mount, specimen, theme).
   'workbench-frame': 7680,
 };
 
