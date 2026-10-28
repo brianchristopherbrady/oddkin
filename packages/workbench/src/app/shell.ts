@@ -25,6 +25,7 @@ import { COPY } from './copy.js';
 import { shellRoutes, type ShellView } from './routes.js';
 import { search, searchItems, type SearchItem } from './search.js';
 import { shellStyles } from './styles.js';
+import { catalogStyles } from '../panels/catalog-styles.js';
 import {
   appearanceControl,
   header,
@@ -132,7 +133,7 @@ export class OddkinWorkbench extends OddkinElement.with({
   }),
 }) {
   static override shadowRootOptions = null;
-  static override styles = shellStyles;
+  static override styles = [shellStyles, catalogStyles];
 
   /** Replaces HTTP loading, for embedding and tests. Read when the element connects. */
   source: WorkbenchSource | undefined;

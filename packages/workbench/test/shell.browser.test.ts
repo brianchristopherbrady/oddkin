@@ -74,6 +74,12 @@ async function mount(source: WorkbenchSource): Promise<OddkinWorkbench> {
 }
 
 const heading = (shell: Element) => shell.querySelector('main h1')?.textContent;
+const cardTitles = (shell: Element) =>
+  [...shell.querySelectorAll('odd-card.wb-card :is(h2, h3)')].map((h) => h.textContent);
+const cardLink = (shell: Element, title: string) =>
+  [...shell.querySelectorAll('odd-card.wb-card')]
+    .find((card) => card.querySelector(':is(h2, h3)')?.textContent === title)!
+    .querySelector<HTMLAnchorElement>('a.wb-card-action')!;
 async function until(check: () => boolean, what: string) {
   for (let i = 0; i < 200 && !check(); i++) await new Promise((r) => setTimeout(r, 10));
   if (!check()) throw new Error(`timed out waiting for ${what}`);
@@ -102,17 +108,21 @@ describe('<oddkin-workbench>', () => {
     expect(document.title).toBe('Components · Acme UI');
     expect(primary[1]!.getAttribute('aria-current')).toBe('page');
     expect(primary[0]!.hasAttribute('aria-current')).toBe(false);
-    const cards = [...shell.querySelectorAll('odd-card.wb-card a')].map((a) => a.textContent);
+    const cards = cardTitles(shell);
     // Card has a known category (Layout); the others fall back to "Other components".
     expect(cards).toEqual(['Card', 'Button', 'Side nav']);
     expect([...shell.querySelectorAll('.wb-group h2')].map((h) => h.textContent)).toEqual([
       'Layout (1)',
       'Other components (2)',
     ]);
+    expect(cardLink(shell, 'Button').textContent).toBe('View reference: Button');
+    expect([...shell.querySelectorAll('.wb-card-tag')].map((p) => p.textContent)).toEqual([
+      'acme-card',
+      'acme-button',
+      'acme-side-nav',
+    ]);
 
-    [...shell.querySelectorAll<HTMLAnchorElement>('odd-card.wb-card a')]
-      .find((a) => a.textContent === 'Button')!
-      .click();
+    cardLink(shell, 'Button').click();
     await until(() => heading(shell) === 'Button', 'Button');
     await settled();
     expect(document.activeElement).toBe(shell.querySelector('main h1'));
@@ -131,42 +141,37 @@ describe('<oddkin-workbench>', () => {
     location.hash = '#/components?q=button';
     const shell = await mount(sourceFor(await acmeData()));
     await until(() => heading(shell) === 'Components', 'Components');
-    await until(
-      () =>
-        [...shell.querySelectorAll('odd-card.wb-card a')].some(
-          (link) => link.textContent === 'Button',
-        ),
-      'the filtered component',
-    );
-    expect(
-      [...shell.querySelectorAll('odd-card.wb-card a')].map((link) => link.textContent),
-    ).toEqual(['Button']);
+    await until(() => cardTitles(shell).includes('Button'), 'the filtered component');
+    expect(cardTitles(shell)).toEqual(['Button']);
     expect(shell.querySelector('.wb-catalog-filters [aria-live="polite"]')?.textContent).toContain(
       'Showing 1 of 3 components',
     );
+    expect([...shell.querySelectorAll('.wb-count')].map((c) => c.textContent)).toEqual([
+      '3 components',
+      '2 categories',
+    ]);
     expect(shell.querySelector('iframe')).toBeNull();
 
-    const category = shell.querySelector<HTMLSelectElement>('.wb-catalog-filters select')!;
-    category.value = 'Layout';
-    category.dispatchEvent(new Event('change', { bubbles: true }));
+    const categories = [...shell.querySelectorAll<HTMLButtonElement>('.wb-categories button')];
+    expect(categories.map((b) => [b.textContent?.trim(), b.getAttribute('aria-pressed')])).toEqual([
+      ['All', 'true'],
+      ['Layout', 'false'],
+      ['Other components', 'false'],
+    ]);
+    categories[1]!.click();
     await until(() => location.hash.includes('category=Layout'), 'the category URL filter');
     expect(shell.querySelector('.wb-catalog-filters [aria-live="polite"]')?.textContent).toContain(
       'Showing 0 of 3 components',
     );
+    expect(
+      shell.querySelector('.wb-categories button[aria-pressed="true"]')?.textContent?.trim(),
+    ).toBe('Layout');
 
     const search = shell.querySelector<HTMLInputElement>('.wb-catalog-filters input')!;
     search.value = '';
     search.dispatchEvent(new Event('input', { bubbles: true }));
-    await until(
-      () =>
-        [...shell.querySelectorAll('odd-card.wb-card a')].some(
-          (link) => link.textContent === 'Card',
-        ),
-      'the category results',
-    );
-    expect(
-      [...shell.querySelectorAll('odd-card.wb-card a')].map((link) => link.textContent),
-    ).toEqual(['Card']);
+    await until(() => cardTitles(shell).includes('Card'), 'the category results');
+    expect(cardTitles(shell)).toEqual(['Card']);
     expect(location.hash).toContain('category=Layout');
     expect(location.hash).not.toContain('q=');
   });
@@ -197,9 +202,7 @@ describe('<oddkin-workbench>', () => {
     await until(() => heading(shell) === 'Foundations', 'the first destination');
     shell.querySelector<HTMLAnchorElement>('.wb-primary a[href="#/components"]')!.click();
     await until(() => heading(shell) === 'Components', 'Components');
-    [...shell.querySelectorAll<HTMLAnchorElement>('odd-card.wb-card a')]
-      .find((link) => link.textContent === 'Button')!
-      .click();
+    cardLink(shell, 'Button').click();
     await until(() => heading(shell) === 'Button', 'the component detail');
     const frame = () => shell.querySelector<HTMLIFrameElement>('oddkin-workbench-component iframe');
     await until(

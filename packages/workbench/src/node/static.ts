@@ -115,30 +115,17 @@ export function shellPaths(build: WorkbenchBuild): string[] {
 }
 
 /**
- * Build the Workbench and write it as a static app. Writes nothing when the configuration or
- * metadata has errors. The output directory carries the generated-directory marker, so a later
- * build replaces it and an unmarked directory is refused (`GeneratedDirectoryError`).
+ * The files below `_oddkin/` (relative to the base path): data, the frame document and import
+ * maps, Theme Studio's worker, and the packages' published browser files. A site that serves its
+ * own pages and embeds the panels (apps/docs) needs these and no shell.
  */
-export async function buildStatic(options: StaticBuildOptions = {}): Promise<StaticBuild> {
-  const build = await buildWorkbench({
-    ...(options.config ? { config: options.config } : {}),
-    ...(options.hosting ? { hosting: options.hosting } : {}),
-  });
+export async function embedFiles(
+  build: WorkbenchBuild,
+): Promise<{ files: Map<string, GeneratedContent>; diagnostics: WorkbenchDiagnostic[] }> {
   const out = new DiagnosticList();
-  out.items.push(...build.diagnostics);
-  const nothing = { build, out: undefined, files: [], written: [], removed: [] };
-  if (!build.config || !build.data || !build.shell || out.items.some((d) => d.severity === 'error'))
-    return { ...nothing, diagnostics: out.items };
-
-  const base = build.config.hosting.basePath;
   const files = new Map<string, GeneratedContent>();
-  files.set('index.html', build.shell);
-  if (build.config.hosting.routing === 'history') {
-    for (const path of shellPaths(build)) files.set(`${path}/index.html`, build.shell);
-    files.set('404.html', build.shell);
-  }
+  if (!build.config) return { files, diagnostics: out.items };
   for (const [path, content] of build.files) files.set(`${ASSET_DIR}${path}`, content);
-
   const packages = [...build.packages].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
   for (const [versioned, dir] of packages) {
     const name = versioned.slice(0, versioned.lastIndexOf('@'));
@@ -147,6 +134,7 @@ export async function buildStatic(options: StaticBuildOptions = {}): Promise<Sta
   }
 
   // Every browser file each document's import map names is in the output.
+  const base = build.config.hosting.basePath;
   const prefix = `${base}${ASSET_DIR}`;
   for (const name of ['shell.importmap.json', 'frame.importmap.json']) {
     const map = JSON.parse(build.files.get(name) ?? '{"imports":{}}') as {
@@ -162,6 +150,34 @@ export async function buildStatic(options: StaticBuildOptions = {}): Promise<Sta
         );
     }
   }
+  return { files, diagnostics: out.items };
+}
+
+/**
+ * Build the Workbench and write it as a static app. Writes nothing when the configuration or
+ * metadata has errors. The output directory carries the generated-directory marker, so a later
+ * build replaces it and an unmarked directory is refused (`GeneratedDirectoryError`).
+ */
+export async function buildStatic(options: StaticBuildOptions = {}): Promise<StaticBuild> {
+  const build = await buildWorkbench({
+    ...(options.config ? { config: options.config } : {}),
+    ...(options.hosting ? { hosting: options.hosting } : {}),
+  });
+  const out = new DiagnosticList();
+  out.items.push(...build.diagnostics);
+  const nothing = { build, out: undefined, files: [], written: [], removed: [] };
+  if (!build.config || !build.data || !build.shell || out.items.some((d) => d.severity === 'error'))
+    return { ...nothing, diagnostics: out.items };
+
+  const files = new Map<string, GeneratedContent>();
+  files.set('index.html', build.shell);
+  if (build.config.hosting.routing === 'history') {
+    for (const path of shellPaths(build)) files.set(`${path}/index.html`, build.shell);
+    files.set('404.html', build.shell);
+  }
+  const embedded = await embedFiles(build);
+  for (const [path, content] of embedded.files) files.set(path, content);
+  out.items.push(...embedded.diagnostics);
 
   const target = options.out ?? join(build.root, '.oddkin', 'workbench-build');
   const sorted = new Map([...files].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));

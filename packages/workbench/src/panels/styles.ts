@@ -258,57 +258,6 @@ export const contentStyles = css`
     background: var(--odd-color-action-default);
     border-radius: var(--odd-radius-sm);
   }
-
-  /* Catalog */
-  .wb-content .wb-catalog-filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: var(--odd-space-md);
-    margin-block-end: var(--odd-space-lg);
-  }
-  .wb-content .wb-catalog-filters label {
-    display: grid;
-    gap: var(--odd-space-2xs);
-    color: var(--odd-color-text-secondary);
-    font-size: var(--odd-font-size-sm);
-  }
-  .wb-content .wb-catalog-filters p {
-    margin: 0;
-  }
-  .wb-content .wb-group + .wb-group {
-    margin-block-start: var(--odd-space-2xl);
-  }
-  .wb-content .wb-cards {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--odd-space-md);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .wb-content .wb-card {
-    block-size: 100%;
-  }
-  .wb-content .wb-card h2,
-  .wb-content .wb-card h3 {
-    margin: 0;
-    font-size: var(--odd-font-size-lg);
-    font-weight: var(--odd-font-weight-semibold);
-  }
-  .wb-content .wb-card p {
-    margin: var(--odd-space-xs) 0 0;
-  }
-  @container wb-content (width >= 32rem) {
-    .wb-content .wb-cards {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  @container wb-content (width >= 52rem) {
-    .wb-content .wb-cards {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
   @media (forced-colors: active) {
     .wb-content .wb-bar {
       background: CanvasText;

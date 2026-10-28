@@ -6,6 +6,7 @@ import { shellRoutes } from '../src/app/routes.js';
 import type { WorkbenchIndex } from '../src/data/index.js';
 import {
   buildStatic,
+  embedFiles,
   GeneratedDirectoryError,
   MARKER,
   run,
@@ -86,6 +87,13 @@ describe('workbench build', { timeout: 180_000 }, () => {
         expect(existsSync(join(out, url.slice('/docs/ui/'.length))), url).toBe(true);
     }
     expect(readdirSync(out)).toContain(MARKER);
+
+    // A site with its own pages embeds the panels from the _oddkin/ files alone.
+    const embedded = await embedFiles(result.build);
+    expect([...embedded.files.keys()].every((path) => path.startsWith('_oddkin/'))).toBe(true);
+    expect([...embedded.files.keys()].sort()).toEqual(
+      result.files.filter((path) => path.startsWith('_oddkin/')),
+    );
   });
 
   it('is deterministic, rewrites nothing unchanged, and removes what it no longer writes', async () => {

@@ -17,7 +17,7 @@ export { findPackageDir, isPackageName, packageGraph, readPackage } from './pack
 export type { InstalledPackage, PackageJson } from './packages.js';
 export { DEFAULT_PORT, DevServerError, startDevServer } from './server.js';
 export type { DevServer, DevServerOptions, UpdateEvent } from './server.js';
-export { buildStatic, shellPaths } from './static.js';
+export { buildStatic, embedFiles, shellPaths } from './static.js';
 export type { StaticBuild, StaticBuildOptions } from './static.js';
 export { ASSET_DIR, buildWorkbench, formatDiagnostic, WORKBENCH_DIR } from './workbench.js';
 export type { BuildOptions, WorkbenchBuild } from './workbench.js';

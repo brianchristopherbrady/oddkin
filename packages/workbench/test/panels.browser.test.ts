@@ -552,10 +552,12 @@ describe('<oddkin-catalog-panel>', () => {
     const root = panel.shadowRoot!;
     expect(root.mode).toBe('open');
     await until(() => !!root.querySelector('odd-card a'), 'the cards');
-    expect(root.querySelector('odd-card a')?.getAttribute('href')).toBe(
+    expect(root.querySelector('odd-card a.wb-card-action')?.getAttribute('href')).toBe(
       '/docs/components/wb-probe',
     );
+    expect(root.querySelector('.wb-card-tag')?.textContent).toBe('wb-probe');
     expect(root.querySelector('iframe')).toBeNull();
+    expect(root.querySelector('.wb-card-preview')).toBeNull();
     const events: unknown[] = [];
     document.addEventListener(
       'oddkin-catalog-filter',
@@ -581,6 +583,39 @@ describe('<oddkin-catalog-panel>', () => {
     expect(await columns(400)).toBe(1);
     expect(await columns(640)).toBe(2);
     expect(await columns(1000)).toBe(3);
+  });
+
+  it('shows host previews in the cards and lists only the given categories', async () => {
+    const data = probeData();
+    const panel = document.createElement('oddkin-catalog-panel');
+    panel.index = data.index;
+    const nodes = new Map<string, Node>();
+    panel.preview = (page) => {
+      if (!nodes.has(page.id)) nodes.set(page.id, document.createElement('wb-preview-probe'));
+      return nodes.get(page.id);
+    };
+    mounted.push(panel);
+    document.body.append(panel);
+    const root = panel.shadowRoot!;
+    await until(() => !!root.querySelector('.wb-card-preview wb-preview-probe'), 'the preview');
+    const node = root.querySelector('wb-preview-probe');
+    expect(node).toBe(nodes.get('components/wb-probe'));
+    // A filter change re-renders the cards around the same preview node.
+    panel.query = 'probe';
+    await settled();
+    expect(root.querySelector('wb-preview-probe')).toBe(node);
+
+    const group = data.index.registry.pages.find((p) => p.id === 'components/wb-probe')!.group!;
+    panel.groups = ['Not a category'];
+    await settled();
+    expect(root.querySelector('odd-card')).toBeNull();
+    expect([...root.querySelectorAll('.wb-count')].map((c) => c.textContent)).toEqual([
+      '0 components',
+      '0 categories',
+    ]);
+    panel.groups = [group];
+    await settled();
+    expect(root.querySelector('odd-card')).not.toBeNull();
   });
 });
 

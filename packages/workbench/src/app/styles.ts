@@ -285,34 +285,17 @@ export const shellStyles = css`
     block-size: 100%;
   }
   oddkin-workbench .wb-catalog-filters {
-    --odd-cluster-gap: var(--odd-space-md);
-    align-items: end;
-    margin-block-end: var(--odd-space-lg);
+    --odd-stack-gap: var(--odd-space-lg);
+    margin-block-end: var(--odd-space-xl);
   }
-  oddkin-workbench .wb-catalog-filters label {
+  oddkin-workbench :is(.wb-catalog-search, .wb-counts, .wb-categories) {
+    --odd-cluster-gap: var(--odd-space-sm);
+    align-items: center;
+  }
+  oddkin-workbench .wb-catalog-search label {
     --odd-stack-gap: var(--odd-space-2xs);
-    color: var(--odd-color-text-secondary);
-    font-size: var(--odd-font-size-sm);
-  }
-  oddkin-workbench .wb-catalog-filters input,
-  oddkin-workbench .wb-catalog-filters select {
-    min-inline-size: 12rem;
-    padding: var(--odd-space-2xs) var(--odd-space-xs);
-    background: var(--odd-color-surface-default);
-    border: var(--odd-border-width-default) solid var(--odd-color-border-strong);
-    border-radius: var(--odd-radius-sm);
-  }
-  oddkin-workbench .wb-catalog-filters p {
-    margin: 0;
-  }
-  oddkin-workbench .wb-card h2,
-  oddkin-workbench .wb-card h3 {
-    margin: 0;
-    font-size: var(--odd-font-size-lg);
-    font-weight: var(--odd-font-weight-semibold);
-  }
-  oddkin-workbench .wb-card p {
-    margin: var(--odd-space-xs) 0 0;
+    flex: 1 1 18rem;
+    max-inline-size: 32rem;
   }
   oddkin-workbench .wb-meta {
     color: var(--odd-color-text-secondary);

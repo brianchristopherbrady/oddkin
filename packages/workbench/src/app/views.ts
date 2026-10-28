@@ -17,6 +17,10 @@ export interface ViewContext {
     readonly query: string;
     readonly category: string;
     readonly update: (query: string, category: string) => void;
+    /** Groups (categories) to list; empty lists every group. */
+    readonly groups?: readonly string[];
+    /** A live preview for a card, supplied by a host that loads the library (the docs). */
+    readonly preview?: (page: PageEntry) => Node | undefined;
   };
 }
 
@@ -165,11 +169,24 @@ export function pageHeader(ctx: ViewContext, page: PageEntry) {
 }
 
 function card(ctx: ViewContext, page: PageEntry, level: 2 | 3) {
-  const title = html`<a href=${ctx.href(page.route)}>${page.title}</a>`;
+  const tag = page.kind === 'component' ? page.id.replace(/^components\//, '') : undefined;
+  const preview = ctx.catalog?.preview?.(page);
   return html`<li>
-    <odd-card class="wb-card">
-      ${level === 2 ? html`<h2>${title}</h2>` : html`<h3>${title}</h3>`}
+    <odd-card
+      class=${preview ? 'wb-card wb-has-preview' : 'wb-card'}
+      padding=${preview ? 'none' : null}
+    >
+      ${preview ? html`<div class="wb-card-preview" slot="header">${preview}</div>` : nothing}
+      ${level === 2 ? html`<h2>${page.title}</h2>` : html`<h3>${page.title}</h3>`}
       ${page.summary ? html`<p>${inline(page.summary)}</p>` : nothing} ${metaLine(page, ctx.lang)}
+      <div class="wb-card-footer" slot="footer">
+        ${tag ? html`<p class="wb-card-tag"><code>${tag}</code></p>` : nothing}
+        <a class="wb-card-action" href=${ctx.href(page.route)}
+          >${COPY.viewPage(tag !== undefined)}<span class="wb-visually-hidden"
+            >: ${page.title}</span
+          ></a
+        >
+      </div>
     </odd-card>
   </li>`;
 }
@@ -181,8 +198,11 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
       <p><strong>${page.id === 'foundations' ? COPY.noFoundations : COPY.noComponents}</strong></p>
       ${page.id === 'foundations' ? html`<p class="wb-muted">${COPY.noFoundationsHelp}</p>` : nothing}
     </div>`;
-  const allEntries = cards(ctx.registry, page.section);
   const filters = page.section === 'components' ? ctx.catalog : undefined;
+  const shown = filters?.groups?.length ? new Set(filters.groups) : undefined;
+  const allEntries = cards(ctx.registry, page.section).filter(
+    (entry) => !shown || shown.has(entry.group ?? ''),
+  );
   const categories = [...new Set(allEntries.map((entry) => entry.group ?? ''))];
   const selectedCategory = filters && categories.includes(filters.category) ? filters.category : '';
   const entries = filters
@@ -202,32 +222,41 @@ export function overviewBody(ctx: ViewContext, page: PageEntry) {
     filters === undefined
       ? nothing
       : html`<form
-          class="wb-catalog-filters odd-cluster"
+          class="wb-catalog-filters odd-stack"
           role="search"
           @submit=${(event: Event) => event.preventDefault()}
         >
-          <label class="odd-stack"
-            >${COPY.componentSearch}
-            <input
-              type="search"
-              name="q"
-              .value=${filters.query}
-              @input=${(event: Event) =>
-                filters.update((event.target as HTMLInputElement).value, filters.category)}
-            />
-          </label>
-          <label class="odd-stack"
-            >${COPY.categoryFilter}
-            <select
-              name="category"
-              .value=${selectedCategory}
-              @change=${(event: Event) =>
-                filters.update(filters.query, (event.target as HTMLSelectElement).value)}
-            >
-              <option value="">${COPY.allCategories}</option>
-              ${categories.map((category) => html`<option value=${category}>${category}</option>`)}
-            </select>
-          </label>
+          <div class="wb-catalog-search odd-cluster">
+            <label class="odd-stack"
+              >${COPY.componentSearch}
+              <input
+                type="search"
+                name="q"
+                placeholder=${COPY.componentSearchPlaceholder}
+                aria-describedby="wb-catalog-hint"
+                .value=${filters.query}
+                @input=${(event: Event) =>
+                  filters.update((event.target as HTMLInputElement).value, filters.category)}
+              />
+              <small id="wb-catalog-hint">${COPY.componentSearchHint}</small>
+            </label>
+            <p class="wb-counts odd-cluster">
+              <span class="wb-count">${COPY.componentCount(allEntries.length)}</span>
+              <span class="wb-count">${COPY.categoryCount(categories.length)}</span>
+            </p>
+          </div>
+          <div class="wb-categories odd-cluster" role="group" aria-label=${COPY.categoryFilter}>
+            ${['', ...categories].map(
+              (category) =>
+                html`<button
+                  type="button"
+                  aria-pressed=${category === selectedCategory ? 'true' : 'false'}
+                  @click=${() => filters.update(filters.query, category)}
+                >
+                  ${category || COPY.allCategories}
+                </button>`,
+            )}
+          </div>
           <p class="wb-muted" aria-live="polite">
             ${COPY.componentResults(entries.length, allEntries.length)}
           </p>
