@@ -42,6 +42,7 @@ describe('imports', () => {
         'checkboxTemplate',
         'controlIndicatorStructuralStyles',
         'fieldStructuralStyles',
+        'glyphStyles',
         'hostStyles',
         'inputEvent',
       ].sort(),

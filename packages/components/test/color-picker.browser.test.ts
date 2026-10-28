@@ -266,9 +266,7 @@ describe('popup', () => {
     ]);
     expect(root.activeElement).toBe(part('area-thumb'));
     const field = root.querySelector('.control-box')!.getBoundingClientRect();
-    // The first placement measures the popup before it takes the field's width (Overlay sets
-    // --_anchor-inline-size as it places); the resize places it again.
-    await expect.poll(() => popup.getBoundingClientRect().left).toBe(field.left);
+    // The overlay sizes the popup to the field before its first placement (4b7a1ab): it opens in place.
     const box = popup.getBoundingClientRect();
     expect([box.left, box.width, Math.round(box.top)]).toEqual([
       field.left,

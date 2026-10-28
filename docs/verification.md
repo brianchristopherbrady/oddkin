@@ -3585,3 +3585,11 @@ Environment: Windows, Node 24.22.1, Vitest 5.0.5, Playwright 1.64.1 (Chromium 15
 | Reuse map | `npx vitest run --project node packages/components/test/figma-reuse.test.ts` | 4 passed; six references added (slot 54, style 116), catalog tables re-rendered |
 | Build, typecheck, lint, node | `npm run build`, `npm run typecheck`, `npm run lint`, `npx vitest run --project node packages/components` | OK; 442 passed, 1 skipped; the compatibility matrix's menu row regenerated (`npm run compat`) |
 | Size | `node scripts/check-size.mjs` | components:menu 463 B gzip (budget 512); 538 B before the point's rule was cut to its position |
+
+## 2026-10-27 — Foundation export tests, item 9, and D5 (Agent 1)
+
+| Check | Command | Result |
+|---|---|---|
+| Browser tests | `node ../oddkin-lanes/tools/browser-set.mjs` on `checkbox`, `input`, `color-picker`, `menu`, and `figma-parity.collections` browser tests, after `npm run build` on main 42465d7 (D5 7f2f7b8 and the overlay 4b7a1ab included) | Chromium 228 passed; WebKit 220 passed, 8 skipped; Firefox 220 passed, 7 skipped, and `input`'s import test failed once under the five-file load and passed alone (35 passed, 1 skipped) |
+| Node | `npx vitest run --project node packages/components/test/customization.test.ts packages/components/test/metadata.test.ts` | 169 passed, 1 skipped |
+| D5 | Agent 3's scan (lanes log 16:19 and 16:32) | zero `template.value.*` reports across the catalog and every components browser file; no element to fix |

@@ -82,10 +82,12 @@ describe('customization levels', () => {
         'level 2: documents parts, slots, or variables, and reads each variable it documents',
         () => {
           const declaration = declarations.find((d) => d['tagName'] === tag)!;
-          // `--_` properties are the element's own wiring, not customization paths.
-          const variables = (
-            (declaration['cssProperties'] ?? []) as { name: string; description?: string }[]
-          ).filter((variable) => !variable.name.startsWith('--_'));
+          // The analyzer publishes no `--_` property, the element's own wiring (42465d7).
+          const variables = (declaration['cssProperties'] ?? []) as {
+            name: string;
+            description?: string;
+          }[];
+          expect(variables.filter((variable) => variable.name.startsWith('--_'))).toEqual([]);
           const documented = [
             ...(declaration['cssParts'] ?? []),
             ...(declaration['slots'] ?? []),
