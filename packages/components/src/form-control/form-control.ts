@@ -101,18 +101,23 @@ export class OddkinFormControl extends OddkinElement.with({
   get form(): HTMLFormElement | null {
     return this.internals.form;
   }
+  /** The field's validity, as on a native form control. */
   get validity(): ValidityState {
     return this.internals.validity;
   }
+  /** The message the browser would show for the field's invalid state, or empty. */
   get validationMessage(): string {
     return this.internals.validationMessage;
   }
+  /** Whether the field takes part in constraint validation (false while disabled or read-only). */
   get willValidate(): boolean {
     return this.internals.willValidate;
   }
+  /** Whether the field is valid; when not, fires `invalid` at it, as on native controls. */
   checkValidity(): boolean {
     return this.internals.checkValidity();
   }
+  /** As `checkValidity()`, and an invalid field also shows its error to the user. */
   reportValidity(): boolean {
     return this.internals.reportValidity();
   }

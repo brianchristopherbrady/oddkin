@@ -3689,3 +3689,10 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 - Browsers return focus to where it was when a popover opened. A hover card the pointer opened therefore sent focus away from its anchor on Escape, so the card now moves focus to its anchor itself.
 - WebKit, as Safari, does not keep focus on a clicked button. The carousel keeps keyboard focus on next once it is unavailable at the last slide, so that test now uses the keyboard.
 - Playwright cannot see ElementInternals roles; the carousel's region, label, and role description are read through a probe subclass, as on odd-card.
+
+## 2026-10-27 — Component metadata descriptions (Agent 1)
+
+| Check | Command | Result |
+|---|---|---|
+| Undocumented CEM entries | `node scripts/build-metadata.mjs`, then a count of public members, parts, slots, events, and CSS properties without a description in `packages/components/custom-elements.json` | 36 before (form-control getters and validity methods on the form-associated elements, odd-picker's `value` part), 0 after |
+| Metadata tests | `npx vitest run --project node packages/components/test/metadata.test.ts packages/components/test/customization.test.ts` | 172 passed, 1 skipped |

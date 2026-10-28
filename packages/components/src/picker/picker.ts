@@ -36,6 +36,7 @@ export const PICKER_STRINGS = {
  * @csspart description - Help text, referenced by `aria-describedby`.
  * @csspart control - The field box holding the trigger and, with `multiple`, the chips.
  * @csspart trigger - The `role="combobox"` element showing the chosen value or the placeholder; it keeps focus.
+ * @csspart value - The chosen item's text in the trigger (single).
  * @csspart chip - Each chosen value with `multiple`.
  * @csspart chip-remove - The button that removes a chip's value.
  * @csspart more - The "+N" chip that stands for the chips not shown.
