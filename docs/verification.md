@@ -3870,3 +3870,15 @@ On main 237d85e (all eight packages at `1.0.0-beta.0`), from a clean `dist` (`no
 | Lifetime | `node research/benchmarks/lifetime/run.mjs` | Ownership back to baseline after every batch in every scenario and engine (app start/stop, 2,000 navigations in Chromium and Firefox, Theme Studio's token side, component connect/remove); Chromium retained heap, second batch: 3, 0, −2, 38 B/cycle. `research/benchmarks/results/lifetime-2026-10-28-win32.json` |
 
 **Findings:** (1) The beta is releasable on this evidence: the only remaining failure is a stale Workbench e2e expectation, outside the published runtime packages' behaviour. (2) Tests that read `history.length` break in a serial run once the tab's history reaches Chromium's 50-entry cap; counting the router's writes is exact in any order. (3) The README claimed SCSS output from the token pipeline (it emits CSS, JSON, DTCG, and TypeScript) and an `@oddkin/agent` package (skipped by the owner); both corrected, with the tokens package description.
+
+## 2026-10-28 — The owner's publish commands, rehearsed from a clean checkout (Agent 3)
+
+A temporary detached worktree of main 2cc56d3 (removed afterwards), with the commands of release-process.md §5 up to the dry run:
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Install | `npm ci` | Pass (the lockfile matches every manifest) |
+| Build | `node scripts/release/clean.mjs`; `npm run build` | Pass; the build leaves no tracked file changed |
+| Packs, kits | `npm run verify:packs`; `node scripts/agent-kit/package-kits.mjs --check` | Pass |
+| Versions | `node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 1.0.0-beta.0 --public --check` | Pass: 8 packages publishable |
+| Publish, dry run | `node scripts/release/publish.mjs` | All 8 would publish in dependency order with `--tag beta` |

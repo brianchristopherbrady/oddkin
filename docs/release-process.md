@@ -87,4 +87,6 @@ git push origin v1.0.0-beta.0
 
 `scripts/release/publish.mjs` publishes `tokens`, `core`, `state`, `app`, `components`, `ai`, `analyzer`, and `workbench` in that order (each package's dependencies first), each as `npm publish --workspace packages/<name> --tag beta`, and refuses a package that is private or not public. The `--tag` is passed on the command line because npm 11.19 ignores `publishConfig.tag`: a dry run without it reported "Publishing … with tag latest" (verification.md, 2026-10-27). Then the owner checks a fresh install (`npm install @oddkin/core@beta @oddkin/components@beta` in an empty directory) and announces the `@beta` install line.
 
+Rehearsed on 2026-10-28 from a clean checkout of main (2cc56d3) up to the dry run: `npm ci`, the clean build, `verify:packs`, the kit check, and `publish.mjs` all pass ([verification.md](./verification.md)).
+
 Later betas: `set-versions.mjs` with the next prerelease number (`1.0.0-beta.1`), `npm install`, the §3 checks, and the same commands. 1.0.0 drops the suffix, publishes under `latest`, and starts the changelogs (§1).
