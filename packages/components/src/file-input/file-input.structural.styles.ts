@@ -1,26 +1,21 @@
 import { css } from '@oddkin/core/styles';
+import { fileInputRecipeStyles } from './file-input.recipe.styles.js';
 
 /**
  * The drop zone under the label: the glyph and title in a row, then the description, the picker
  * button, and the file rows, indented under the title; each row a glyph, the name over the size,
- * and the remove button. The native input shows only its button: its own file-count text is
+ * and the remove button (the layout recipe in `file-input.recipe.ts`). The native input shows
+ * only its button: its own file-count text is
  * sized out, since the rows list the files. No brand or visual tokens.
  */
 export const fileInputStructuralStyles = css`
+  ${fileInputRecipeStyles}
   :host {
     display: block;
   }
-  .surface {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
   .header,
   .file {
-    display: flex;
-    align-items: center;
     align-self: stretch;
-    min-inline-size: 0;
   }
   .header-glyph,
   .file-glyph {
@@ -39,15 +34,9 @@ export const fileInputStructuralStyles = css`
     font-size: initial;
   }
   .files {
-    display: flex;
-    flex-direction: column;
     align-self: stretch;
     margin: 0;
     padding: 0;
-  }
-  .file-text {
-    display: flex;
-    flex-direction: column;
   }
   .remove {
     display: inline-flex;

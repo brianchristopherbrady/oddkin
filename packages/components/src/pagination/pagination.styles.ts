@@ -8,7 +8,6 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const paginationStyles = css`
   .pagination {
-    gap: ${token('space.sm')};
     padding: ${token('space.xs')};
     border-radius: var(--odd-pagination-radius, ${token('control.radius')});
     background: ${token('color.surface.default')};
@@ -20,9 +19,6 @@ export const paginationStyles = css`
   }
   .status {
     color: ${token('color.text.secondary')};
-  }
-  .list {
-    gap: ${token('space.xs')};
   }
   .tile {
     min-inline-size: ${token('control.height.md')};

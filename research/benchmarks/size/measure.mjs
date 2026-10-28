@@ -144,7 +144,7 @@ export const CSS_BUDGETS = {
   'components:disclosure': 768, // 704
   'components:tabs': 768, // 731
   'components:tab-panel': 128, // 96: structural only; odd-tabs draws the panel
-  'components:toolbar': 512, // 473
+  'components:toolbar': 576, // 536 on 2026-10-27 with its layout recipe (473 before, layout-recipes.md §14)
   'components:pagination': 768, // 702
   'components:breadcrumbs': 640, // 561
   'components:popover': 256, // 226: the surface, motion, and close button are the shared overlay module
@@ -164,7 +164,7 @@ export const CSS_BUDGETS = {
   'components:file-input': 1024,
   // 960: measured 939 on 2026-10-25: the surface, the month row, the date table and its cell
   // states, the divider; the buttons are the shared native-button sheet's.
-  'components:calendar': 960,
+  'components:calendar': 1024, // 992 on 2026-10-27 with its layout recipe (939 before)
   // 384: measured 337 on 2026-10-25: the calendar button's target and hover, and the popup
   // holding the calendar without its own surface; the field is the shared control look.
   'components:date-picker': 384,

@@ -1,27 +1,19 @@
 import { css } from '@oddkin/core/styles';
+import { paginationRecipeStyles } from './pagination.recipe.styles.js';
 
 /**
- * The position text at the start and the controls at the end of one row, wrapping when narrow.
- * No brand or visual tokens.
+ * The position text at the start and the controls at the end of one row, wrapping when narrow:
+ * the layout recipe in `pagination.recipe.ts`. No brand or visual tokens.
  */
 export const paginationStructuralStyles = css`
+  ${paginationRecipeStyles}
   :host {
     display: block;
-  }
-  .pagination {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    min-inline-size: 0;
   }
   .status {
     margin: 0;
   }
   .list {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
     margin: 0;
     padding: 0;
     list-style: none;

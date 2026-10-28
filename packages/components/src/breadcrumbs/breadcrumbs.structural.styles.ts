@@ -1,17 +1,16 @@
 import { css } from '@oddkin/core/styles';
+import { breadcrumbsRecipeStyles } from './breadcrumbs.recipe.styles.js';
 
 /**
- * One wrapping row of items with separators between them. No brand or visual tokens.
+ * One wrapping row of items with separators between them: the layout recipe in
+ * `breadcrumbs.recipe.ts`. No brand or visual tokens.
  */
 export const breadcrumbsStructuralStyles = css`
+  ${breadcrumbsRecipeStyles}
   :host {
     display: block;
   }
   .list {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    min-inline-size: 0;
     margin: 0;
     padding: 0;
     list-style: none;

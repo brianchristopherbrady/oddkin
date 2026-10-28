@@ -30,6 +30,22 @@ import { sliderRecipe } from '../src/slider/slider.recipe.js';
 import { sliderRecipeStyles } from '../src/slider/slider.recipe.styles.js';
 import { treeRecipe } from '../src/tree/tree.recipe.js';
 import { treeRecipeStyles } from '../src/tree/tree.recipe.styles.js';
+import { breadcrumbsRecipe } from '../src/breadcrumbs/breadcrumbs.recipe.js';
+import { breadcrumbsRecipeStyles } from '../src/breadcrumbs/breadcrumbs.recipe.styles.js';
+import { calendarRecipe } from '../src/calendar/calendar.recipe.js';
+import { calendarRecipeStyles } from '../src/calendar/calendar.recipe.styles.js';
+import { dialogRecipe } from '../src/dialog/dialog.recipe.js';
+import { dialogRecipeStyles } from '../src/dialog/dialog.recipe.styles.js';
+import { disclosureRecipe } from '../src/disclosure/disclosure.recipe.js';
+import { disclosureRecipeStyles } from '../src/disclosure/disclosure.recipe.styles.js';
+import { fileInputRecipe } from '../src/file-input/file-input.recipe.js';
+import { fileInputRecipeStyles } from '../src/file-input/file-input.recipe.styles.js';
+import { paginationRecipe } from '../src/pagination/pagination.recipe.js';
+import { paginationRecipeStyles } from '../src/pagination/pagination.recipe.styles.js';
+import { toolbarRecipe } from '../src/toolbar/toolbar.recipe.js';
+import { toolbarRecipeStyles } from '../src/toolbar/toolbar.recipe.styles.js';
+import { validationSummaryRecipe } from '../src/validation-summary/validation-summary.recipe.js';
+import { validationSummaryRecipeStyles } from '../src/validation-summary/validation-summary.recipe.styles.js';
 
 // Build-time recipe extraction (layout-recipes.md §9): shipped definitions use the recipe's CSS
 // as a precompiled module, so registration entries never load the recipe engine. The extracted
@@ -139,6 +155,62 @@ const extracted = [
     source: './stat.recipe.ts',
     recipe: statRecipe,
     styles: statRecipeStyles,
+  },
+  {
+    file: '../src/breadcrumbs/breadcrumbs.recipe.styles.ts',
+    exportName: 'breadcrumbsRecipeStyles',
+    source: './breadcrumbs.recipe.ts',
+    recipe: breadcrumbsRecipe,
+    styles: breadcrumbsRecipeStyles,
+  },
+  {
+    file: '../src/calendar/calendar.recipe.styles.ts',
+    exportName: 'calendarRecipeStyles',
+    source: './calendar.recipe.ts',
+    recipe: calendarRecipe,
+    styles: calendarRecipeStyles,
+  },
+  {
+    file: '../src/dialog/dialog.recipe.styles.ts',
+    exportName: 'dialogRecipeStyles',
+    source: './dialog.recipe.ts',
+    recipe: dialogRecipe,
+    styles: dialogRecipeStyles,
+  },
+  {
+    file: '../src/disclosure/disclosure.recipe.styles.ts',
+    exportName: 'disclosureRecipeStyles',
+    source: './disclosure.recipe.ts',
+    recipe: disclosureRecipe,
+    styles: disclosureRecipeStyles,
+  },
+  {
+    file: '../src/file-input/file-input.recipe.styles.ts',
+    exportName: 'fileInputRecipeStyles',
+    source: './file-input.recipe.ts',
+    recipe: fileInputRecipe,
+    styles: fileInputRecipeStyles,
+  },
+  {
+    file: '../src/pagination/pagination.recipe.styles.ts',
+    exportName: 'paginationRecipeStyles',
+    source: './pagination.recipe.ts',
+    recipe: paginationRecipe,
+    styles: paginationRecipeStyles,
+  },
+  {
+    file: '../src/toolbar/toolbar.recipe.styles.ts',
+    exportName: 'toolbarRecipeStyles',
+    source: './toolbar.recipe.ts',
+    recipe: toolbarRecipe,
+    styles: toolbarRecipeStyles,
+  },
+  {
+    file: '../src/validation-summary/validation-summary.recipe.styles.ts',
+    exportName: 'validationSummaryRecipeStyles',
+    source: './validation-summary.recipe.ts',
+    recipe: validationSummaryRecipe,
+    styles: validationSummaryRecipeStyles,
   },
 ];
 

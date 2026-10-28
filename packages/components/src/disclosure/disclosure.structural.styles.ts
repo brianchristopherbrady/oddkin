@@ -1,16 +1,17 @@
 import { css } from '@oddkin/core/styles';
+import { disclosureRecipeStyles } from './disclosure.recipe.styles.js';
 
 /**
- * A summary row (text, then the chevron at the inline end) above the content. Disclosures joined
+ * A summary row (text, then the chevron at the inline end; the layout recipe in
+ * `disclosure.recipe.ts`) above the content. Disclosures joined
  * in a group share their borders. No brand or visual tokens.
  */
 export const disclosureStructuralStyles = css`
+  ${disclosureRecipeStyles}
   :host {
     display: block;
   }
   .summary {
-    display: flex;
-    align-items: center;
     list-style: none;
     cursor: pointer;
   }

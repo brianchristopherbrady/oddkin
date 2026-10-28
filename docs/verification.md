@@ -3975,3 +3975,20 @@ The `--next` check rewrote and restored the manifests in this worktree while the
 | Types, lint, format | `npm run typecheck`; `node scripts/check-page-layout.mjs`; `node scripts/compat/check-css.mjs`; `npx prettier --check` on the changed files | Pass |
 
 Visual check in Chromium at 1,280 px (light, and dark for Themes) and at 320 px, with no horizontal overflow on any of the ten pages: ramps on one row, role tables with both swatches, action, elevation, and baseline specimens in each mode's scope, alerts in five tones, duration meters, and the reflow specimen with one column and then two.
+
+## 2026-10-28 — Layout recipes in the remaining shadow-root candidates (round 9, Agent 1, item 8)
+
+Environment: Windows, Node 24.22.1, Playwright browsers of the repository (Chromium, Firefox, WebKit), on main ac7b40f plus this change.
+
+**Change:** the candidates in layout-recipes.md §14 that make the same decision as a primitive, done as a6aeb4d and 3b59ce9 did. `breadcrumbs.recipe.ts`, `calendar.recipe.ts`, `dialog.recipe.ts`, `disclosure.recipe.ts`, `file-input.recipe.ts`, `pagination.recipe.ts`, `toolbar.recipe.ts` (with `orientation="vertical"`), and `validation-summary.recipe.ts`, each extracted into `<name>.recipe.styles.ts`. The hand-written display, direction, wrap, alignment, justification, and gap are gone from the structural sheets. The date-picker, popover, tabs, toast, and menu rows have no primitive decision.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Extraction | `npx vitest run packages/components/test/recipes.test.ts` | 23 of 23 |
+| Elements, parity, shared component tests | the eight elements, drawer, date-picker, every `figma-parity*`, `layout*`, accessibility, contract, examples, keyboard, styling-contract, styling, multi-product (28 files, `--project browser`) | Chromium 1,452 passed, 50 skipped; WebKit 1,437 passed, 65 skipped; Firefox in the full run lost five parity files to a `beforeAll` timeout and one date-picker test under load (CPU 75%). Those six files rerun alone: 372 passed, 13 skipped |
+| Mutation probes | `node .tmp/mutate.mjs .tmp/item8-mutants.json` (Chromium; the element's tests and the files that render it) | 25 probes: 12 killed by the existing tests. The 13 survivors were breadcrumbs' trail (display, gap, wrap), the calendar header's row, the dialog header's alignment and footer wrap, pagination (justify, wrap, page gap), the toolbar's gap and vertical column, and the validation summary's header alignment and list. Rerun with the new `layout-recipes.controls.browser.test.ts`: all 13 killed |
+| New layout tests | `layout-recipes.controls.browser.test.ts` | 6 of 6 in Chromium, Firefox, and WebKit |
+| Node | `npx vitest run --project node` | 1,485 passed, 1 skipped |
+| Size, CSS, lints | `npm run size`; `npm run compat`; `node scripts/check-page-layout.mjs`; `node scripts/build-contracts.mjs --check`; `node scripts/agent-kit/package-kits.mjs --check` | Every budget passes; `components:toolbar` 536 B (budget 512 → 576) and `components:calendar` 992 B gzip (960 → 1,024). Compat 0 problems (234 stylesheets; matrix.md regenerated). Layout lint, contracts, and kits current |
+
+Not run: `npm run verify:metadata`, which needs current per-engine contract records from a full `npm test`.

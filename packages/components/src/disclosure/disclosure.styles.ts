@@ -22,7 +22,6 @@ export const disclosureStyles = css`
     outline-offset: ${token('focus.offset')};
   }
   .summary {
-    gap: ${token('space.sm')};
     padding: ${token('space.md')};
   }
   .marker {

@@ -13,7 +13,6 @@ export const dialogStyles = css`
     max-block-size: calc(100dvh - 2 * ${token('space.md')});
   }
   .header {
-    gap: ${token('space.sm')};
     padding: ${token('space.lg')} ${token('space.lg')} ${token('space.sm')};
   }
   .title {
@@ -33,7 +32,6 @@ export const dialogStyles = css`
     color: ${token('color.text.secondary')};
   }
   .footer {
-    gap: ${token('space.sm')};
     padding: ${token('space.md')} ${token('space.lg')};
   }
   .footer::before {

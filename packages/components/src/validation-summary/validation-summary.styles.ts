@@ -7,15 +7,11 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const validationSummaryStyles = css`
   .summary {
-    gap: ${token('space.sm')};
     padding: ${token('space.md')};
     border: ${token('border.width.default')} solid var(--_tone-foreground);
     border-radius: ${token('control.radius')};
     background: var(--_tone-surface);
     color: ${token('color.text.primary')};
-  }
-  .header {
-    gap: ${token('space.xs')};
   }
   .marker,
   .label {
@@ -29,9 +25,6 @@ export const validationSummaryStyles = css`
     font-size: ${token('type.ui.size')};
     font-weight: ${token('type.ui.weight')};
     line-height: ${token('type.ui.line-height')};
-  }
-  .list {
-    gap: ${token('space.sm')};
   }
   .link {
     color: ${token('color.link')};

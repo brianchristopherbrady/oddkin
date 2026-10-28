@@ -1,34 +1,27 @@
 import { css } from '@oddkin/core/styles';
+import { calendarRecipeStyles } from './calendar.recipe.styles.js';
 
 /**
  * The calendar under the field label: the month row (buttons at the ends, the month centred), the
- * date table, a divider, and the actions row. Cells keep a transparent border, so today's outline
+ * date table, a divider, and the actions row, arranged by the layout recipe in `calendar.recipe.ts`.
+ * Cells keep a transparent border, so today's outline
  * moves nothing. Forced colours paint every border in CanvasText, so dates other than today take
  * Canvas; the chosen date takes the system selection colours, and dates that cannot be chosen
  * GrayText (`.grid` outranks the skin's states). No brand or visual tokens.
  */
 export const calendarStructuralStyles = css`
+  ${calendarRecipeStyles}
   :host {
     display: block;
   }
   .calendar {
-    display: flex;
-    flex-direction: column;
     box-sizing: border-box;
     inline-size: fit-content;
     max-inline-size: 100%;
   }
-  .header,
-  .actions {
-    display: flex;
-    align-items: center;
-  }
   .heading {
     flex: 1 1 auto;
     text-align: center;
-  }
-  .actions {
-    justify-content: space-between;
   }
   .odd-button {
     flex: none;

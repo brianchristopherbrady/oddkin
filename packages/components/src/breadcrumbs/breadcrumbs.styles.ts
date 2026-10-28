@@ -16,7 +16,6 @@ export const breadcrumbsStyles = css`
     font-weight: ${token('type.ui.weight')};
     line-height: ${token('type.ui.line-height')};
   }
-  .list,
   .item {
     gap: ${token('space.sm')};
   }

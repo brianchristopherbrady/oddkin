@@ -1,22 +1,17 @@
 import { css } from '@oddkin/core/styles';
+import { validationSummaryRecipeStyles } from './validation-summary.recipe.styles.js';
 
 /**
- * The heading row (glyph and heading) above the list, in one column that wraps long text. No
- * brand or visual tokens.
+ * The heading row (glyph and heading) above the list, in one column that wraps long text (the
+ * layout recipe in `validation-summary.recipe.ts`). No brand or visual tokens.
  */
 export const validationSummaryStructuralStyles = css`
+  ${validationSummaryRecipeStyles}
   :host {
     display: block;
   }
   .summary {
-    display: flex;
-    flex-direction: column;
-    min-inline-size: 0;
     overflow-wrap: anywhere;
-  }
-  .header {
-    display: flex;
-    align-items: flex-start;
   }
   .marker {
     display: inline-flex;
@@ -26,8 +21,6 @@ export const validationSummaryStructuralStyles = css`
     margin: 0;
   }
   .list {
-    display: flex;
-    flex-direction: column;
     margin: 0;
     padding: 0;
     list-style: none;

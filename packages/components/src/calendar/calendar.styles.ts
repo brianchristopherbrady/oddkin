@@ -14,12 +14,8 @@ export const calendarStyles = css`
     color: ${token('color.text.disabled')};
   }
   .calendar {
-    gap: ${token('space.sm')};
     padding: ${token('space.md')};
     background: ${token('color.surface.raised')};
-  }
-  .header {
-    gap: ${token('space.xs')};
   }
   .heading,
   .day {
@@ -79,8 +75,5 @@ export const calendarStyles = css`
   .divider {
     block-size: ${token('border.width.default')};
     background: ${token('color.border.default')};
-  }
-  .actions {
-    gap: ${token('space.xs')};
   }
 `;

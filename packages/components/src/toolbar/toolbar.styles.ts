@@ -7,7 +7,6 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const toolbarStyles = css`
   .toolbar {
-    gap: ${token('space.sm')};
     padding: ${token('space.md')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: var(--odd-toolbar-radius, ${token('card.radius')});

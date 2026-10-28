@@ -11,7 +11,6 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const fileInputStyles = css`
   .surface {
-    gap: ${token('space.xs')};
     padding: ${token('card.padding')};
     border: ${token('border.width.default')} solid ${token('color.border.strong')};
     border-radius: ${token('card.radius')};
@@ -23,10 +22,6 @@ export const fileInputStyles = css`
   :host(:state(drop-target)) .surface {
     border-color: ${token('color.action.default')};
     background: ${token('color.selection.surface')};
-  }
-  .header,
-  .file {
-    gap: ${token('space.md')};
   }
   .header-glyph,
   .file-glyph {
@@ -92,9 +87,6 @@ export const fileInputStyles = css`
   }
   .field:has(.picker:disabled) :is(.label, .title) {
     color: ${token('color.text.disabled')};
-  }
-  .files {
-    gap: ${token('space.sm')};
   }
   .file-size {
     color: ${token('color.text.secondary')};
