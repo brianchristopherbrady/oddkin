@@ -3,11 +3,11 @@
 Oddkin is a modular frontend framework built on custom elements and browser APIs. It includes:
 
 - **`@oddkin/core`** — authoring foundation: reactive primitives, ownership (`Scope`), templates, styles, layout recipes, collections, and models.
-- **`@oddkin/tokens`** — theme configuration and a deterministic token pipeline that emits CSS, SCSS, JSON, and TypeScript. Use the tokens with plain CSS and no Oddkin JavaScript.
+- **`@oddkin/tokens`** — theme configuration and a deterministic token pipeline that emits CSS, JSON, DTCG, and TypeScript (Sass output is planned). Use the tokens with plain CSS and no Oddkin JavaScript.
 - **`@oddkin/components`** — accessible, themeable custom elements that work in plain HTML or in any framework.
 - **`@oddkin/ai`** — optional AI interaction elements, headless controllers, and stream adapters for conversations, inline assistance, research tools, and agent workflows.
 - **`@oddkin/state`** and **`@oddkin/app`** — optional stores, context, routing, and async resources.
-- **Optional tooling** — `@oddkin/analyzer` (metadata), `@oddkin/workbench` (generated documentation, interactive component pages, Theme Studio), and `@oddkin/agent` (IDE agent support).
+- **Optional tooling** — `@oddkin/analyzer` (metadata) and `@oddkin/workbench` (component documentation generated from a library's metadata, served locally, with interactive pages and Theme Studio). An `@oddkin/agent` package for IDE agents is not built (skipped for now by the owner); agents use the kits that `@oddkin/components` and `@oddkin/ai` ship.
 
 ## Names
 

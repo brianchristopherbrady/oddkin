@@ -74,18 +74,18 @@ describe('the router', () => {
     ]);
     expect(document.title).toBe('Product 7');
     const listMatch = router.state.value.matches[0];
-    const length = history.length;
+    const length = fixture.pushes;
 
     expect(await router.navigate('/products/8')).toBe(true);
     expect(here()).toBe('/app/products/8');
-    expect(history.length).toBe(length + 1);
+    expect(fixture.pushes).toBe(length + 1);
     expect(loads).toEqual(['products', 'product 7', 'product 8']);
     expect(router.state.value.matches[0]).toBe(listMatch); // the kept level is the same match
     expect(left).toEqual(['product 7: router left ":id"']);
     expect(document.title).toBe('Product 8');
 
     await router.navigate('/products', { replace: true });
-    expect(history.length).toBe(length + 1);
+    expect(fixture.pushes).toBe(length + 1);
     expect(here()).toBe('/app/products');
     expect(router.state.value.matches.map((m) => m.route.path)).toEqual(['products', '']);
     expect(document.title).toBe('Products');
@@ -109,7 +109,7 @@ describe('the router', () => {
     });
     const router = start('/app/', { routes: [route({ path: '' }), page] });
     expect(router.state.value.status).toBe('ready');
-    const length = history.length;
+    const length = fixture.pushes;
 
     const a = router.navigate('/a');
     expect(router.state.value).toMatchObject({
@@ -129,7 +129,7 @@ describe('the router', () => {
     expect(await b).toBe(true);
     expect(router.state.value.matches.map((m) => m.status === 'ready' && m.data)).toEqual(['B']);
     expect(here()).toBe('/app/b');
-    expect(history.length).toBe(length + 1);
+    expect(fixture.pushes).toBe(length + 1);
 
     stop();
     expect(scopeStats()).toEqual(baseline);
@@ -252,7 +252,7 @@ describe('the router', () => {
     const router = start('/app/', {
       routes: [route({ path: '' }), route({ path: 'products/:id' }), route({ path: 'file.pdf' })],
     });
-    const length = history.length;
+    const length = fixture.pushes;
     expect(await click(link('/app/products/1'))).toBe(true);
     expect(here()).toBe('/app/products/1');
     const host = document.createElement('div');
@@ -264,7 +264,7 @@ describe('the router', () => {
     expect(here()).toBe('/app/products/2');
     expect(await click(link('3', { target: '_self' }))).toBe(true); // relative to the page URL
     expect(here()).toBe('/app/products/3');
-    expect(history.length).toBe(length + 3);
+    expect(fixture.pushes).toBe(length + 3);
 
     const escapes: [string, HTMLAnchorElement, MouseEventInit | undefined][] = [
       ['ctrl', link('/app/products/4'), { ctrlKey: true }],
@@ -287,10 +287,10 @@ describe('the router', () => {
     await click(handled); // the application handled it first
     expect(router.state.value.location?.path).toBe('/products/3');
     expect(here()).toBe('/app/products/3');
-    expect(history.length).toBe(length + 3);
+    expect(fixture.pushes).toBe(length + 3);
 
     expect(await click(link('/app/products/3'))).toBe(true); // the same URL replaces
-    expect(history.length).toBe(length + 3);
+    expect(fixture.pushes).toBe(length + 3);
     expect(await click(link('/app'))).toBe(true); // the base path without its trailing slash
     expect(router.state.value.location).toEqual({ path: '/', search: '', hash: '' });
     expect(here()).toBe('/app/');
@@ -309,10 +309,10 @@ describe('the router', () => {
     });
     expect(here()).toBe('/app/components?tag=odd-button'); // the legacy URL was replaced
     expect(router.match(components)).toBeDefined();
-    const length = history.length;
+    const length = fixture.pushes;
     expect(await click(link('/app/playground'))).toBe(true);
     expect(here()).toBe('/app/components');
-    expect(history.length).toBe(length + 1);
+    expect(fixture.pushes).toBe(length + 1);
 
     await router.navigate('/loop-a');
     expect(router.state.value).toMatchObject({

@@ -13,6 +13,11 @@ export const fixture = {
   reported: [] as ErrorContext[],
   lastClick: undefined as { prevented: boolean } | undefined,
   owner: undefined as Scope | undefined,
+  /**
+   * History entries pushed during the test. `history.length` cannot count them: in a serial run
+   * every test file shares the tab's session history, which Chromium caps at 50 entries.
+   */
+  pushes: 0,
 };
 
 /** Register the hooks: a container, captured reports, the click guard, and a clean URL after. */
@@ -25,6 +30,12 @@ export function useRouterFixture(): void {
   beforeEach(() => {
     fixture.lastClick = undefined;
     fixture.reported = [];
+    fixture.pushes = 0;
+    const push = History.prototype.pushState;
+    history.pushState = function (...args: Parameters<History['pushState']>) {
+      fixture.pushes++;
+      push.apply(this, args);
+    };
     setErrorHandler((_error, context) => fixture.reported.push(context));
     window.addEventListener('click', guard);
     fixture.container = document.createElement('div');
@@ -32,6 +43,7 @@ export function useRouterFixture(): void {
   });
   afterEach(() => {
     stop();
+    delete (history as Partial<History>).pushState;
     fixture.container.remove();
     window.removeEventListener('click', guard);
     setErrorHandler(undefined);

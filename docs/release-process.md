@@ -43,12 +43,12 @@ Package hygiene, checked by `npm run verify:packs` on the tarballs:
 
 Verification (results recorded in [verification.md](./verification.md), by owner of each failure):
 
-- [ ] `npm run build`, `npm run lint`, `npm run typecheck`, and the node project.
-- [ ] The browser project per engine with `--no-file-parallelism` (the full parallel run is deferred by the owner, 2026-10-27), and `npm run test:e2e`.
-- [ ] `npm run verify:metadata`, `npm run size`, `npm run verify:packs`, the packed consumers (`e2e/packed-consumers.spec.ts`, `e2e/components-only.spec.ts`, `e2e/autoload.spec.ts`), and `npm run compat` with the floor probe (`npm run compat:floor`).
-- [ ] The browser floor re-resolved and the matrix regenerated ([compatibility/matrix.md](./compatibility/matrix.md)); Safari 18.2 and screen-reader evidence recorded as limitations until a macOS host and assistive technology are available.
+- [x] `npm run build`, `npm run lint`, `npm run typecheck`, and the node project (beta, 2026-10-28: pass).
+- [x] The browser project per engine with `--no-file-parallelism` (the full parallel run is deferred by the owner, 2026-10-27), and `npm run test:e2e` (beta, 2026-10-28: every browser file passes in three engines after one order-dependent router test was fixed; e2e 948 passed, one stale Theme Studio expectation open with Agent 2).
+- [x] `npm run verify:metadata`, `npm run size`, `npm run verify:packs`, the packed consumers (`e2e/packed-consumers.spec.ts`, `e2e/components-only.spec.ts`, `e2e/autoload.spec.ts`), and `npm run compat` with the floor probe (`npm run compat:floor`) (beta, 2026-10-28; the floor probe on 2026-10-27, 16/16 in Chrome 130 and Firefox 132).
+- [ ] The browser floor re-resolved and the matrix regenerated ([compatibility/matrix.md](./compatibility/matrix.md)); Safari 18.2 and screen-reader evidence recorded as limitations until a macOS host and assistive technology are available. (For the beta: the floor resolved on 2026-10-26 and the matrix regenerated on 2026-10-28 stand; re-resolve before 1.0.0.)
 - [ ] `oddkin-impact` against the previous release once there is one, with the semver impact reviewed.
-- [ ] The framework fixtures pass in three engines and §4 names the versions they ran against.
+- [x] The framework fixtures pass in three engines and §4 names the versions they ran against (2026-10-27; again in the beta browser runs).
 
 Then the owner tags, publishes, and deploys.
 

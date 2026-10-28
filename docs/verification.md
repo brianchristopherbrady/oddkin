@@ -3850,3 +3850,23 @@ Tried in the a3 worktree, then reverted (main keeps `0.0.0` and `private: true`)
 | Check | Command | Result |
 | --- | --- | --- |
 | Containment, WebKit | `node research/experiments/containment/run.mjs --engines webkit --rounds 5` (machine load about 50–80%) | WebKit 27.2, merged into `research/benchmarks/results/containment-2026-10-28.json`; tables in the experiment README. Cards (none → `contain` / `content-visibility`): theme 375 ms → 340.5 ms / 318 ms, resize 428.5 ms → 391 ms / 20.5 ms, first layout 320 ms → 559 ms / 199 ms; 97,721 viewport pixels change with containment; last card found by `window.find()`: true. Conversation: theme 104.5 ms → 89 ms / 111 ms, resize 169.5 ms → 173.5 ms / 12 ms, stream 109 ms → 81 ms / 88.5 ms; follows the latest: true |
+
+## 2026-10-28 — Release verification of the beta (Agent 3)
+
+On main 237d85e (all eight packages at `1.0.0-beta.0`), from a clean `dist` (`node scripts/release/clean.mjs`). Chromium 156, Firefox 157, WebKit 27.2; Node 24.22.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Build | `node scripts/release/clean.mjs`; `npm run build` | Pass |
+| Lint, typecheck | `npm run lint`; `npm run typecheck` | Pass |
+| Node project | `npx vitest run --project node` | 114 files, 1,465 pass, 1 skipped |
+| Browser, Chromium | `npx vitest run --project browser --browser.name=chromium --no-file-parallelism` | 2,824 pass, 56 skipped, 1 failed: `packages/app/test/router.browser.test.ts` "redirects where a navigation ends…" expected `history.length` to grow by one; it passes alone (9/9). In a serial run every file shares the tab's session history, and Chromium keeps at most 50 entries. Fixed: the router fixture counts the router's `pushState` calls; the router files pass in three engines (14 each), and 2 of 2 mutants of the push/replace choice are killed |
+| Browser, Firefox | same, `--browser.name=firefox` | 2,770 pass, 111 skipped |
+| Browser, WebKit | same, `--browser.name=webkit` | 2,776 pass, 105 skipped |
+| Metadata | `npm run verify:metadata` (after the browser runs) | 2,163 verified facts across 54 component elements, 481 across 24 AI elements; vocabulary 0 findings |
+| Size | `npm run size` | 88 budgets pass (counter 9,664 of 9,728 B; `tokens:default.css` 3,096 of 3,136 B; ai-chat 50,980 of 51,200 B) |
+| Packs, kits, compat | `npm run verify:packs`; `node scripts/agent-kit/package-kits.mjs --check`; `npm run compat` | Pass (72 features, 226 stylesheets, 335 compatibility keys) |
+| E2E | `npx playwright test --workers=2` (26 specs, three engines; e2e lock held) | 948 passed, 12 skipped (engine-specific: accessibility tree and hover in Firefox and WebKit, back/forward cache, a modified click, forced colours in WebKit), 3 failed: `e2e/workbench-theme-studio.spec.ts:37` "previews the baseline on the real components, in light and dark" in every engine, expecting 5 roles where Theme Studio now previews 32 (components declared their theme roles from 9703c57 on, 2026-10-22; the full set had not run since). Owner: Agent 2. 18.0 min |
+| Lifetime | `node research/benchmarks/lifetime/run.mjs` | Ownership back to baseline after every batch in every scenario and engine (app start/stop, 2,000 navigations in Chromium and Firefox, Theme Studio's token side, component connect/remove); Chromium retained heap, second batch: 3, 0, −2, 38 B/cycle. `research/benchmarks/results/lifetime-2026-10-28-win32.json` |
+
+**Findings:** (1) The beta is releasable on this evidence: the only remaining failure is a stale Workbench e2e expectation, outside the published runtime packages' behaviour. (2) Tests that read `history.length` break in a serial run once the tab's history reaches Chromium's 50-entry cap; counting the router's writes is exact in any order. (3) The README claimed SCSS output from the token pipeline (it emits CSS, JSON, DTCG, and TypeScript) and an `@oddkin/agent` package (skipped by the owner); both corrected, with the tokens package description.
