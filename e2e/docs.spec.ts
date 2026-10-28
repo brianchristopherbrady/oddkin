@@ -255,7 +255,10 @@ test('every published component is listed under its category and has a reference
   // Each reference page renders from the published metadata, reached through the catalog's links.
   for (const { tag, registration } of components) {
     await page.locator(`oddkin-catalog-panel a[href="/components/${tag}"]`).click();
-    await expect(page.locator('#main .page-header .eyebrow')).toHaveText(new RegExp(` · ${tag}$`));
+    // The first reference page also loads the component panel's modules (catalogLoad).
+    await expect(page.locator('#main .page-header .eyebrow')).toHaveText(new RegExp(` · ${tag}$`), {
+      timeout: catalogLoad,
+    });
     const panel = page.locator('oddkin-component-panel');
     await expect(panel.getByRole('heading', { name: 'Overview', level: 2 })).toBeVisible();
     await expect(panel.getByText(`import '${registration}';`, { exact: true })).toBeVisible();
