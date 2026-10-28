@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Publishes the eight packages in dependency order (release-process.md §5). By default every
-// publish is a dry run; `--publish` is for the owner alone (agents never publish). Each package
+// publish is a dry run; `--publish` publishes for real, on the owner's say-so. Each package
 // publishes with the dist-tag its version implies (`1.0.0-beta.0` -> `beta`), passed as `--tag`
-// because npm 11.19 ignores publishConfig.tag. Run after a clean build and the §3 checks.
+// because npm 11.19 ignores publishConfig.tag. A version already on the registry is skipped, so
+// a run stopped part way (a missed npm sign-in) resumes. Run after a clean build and the §3 checks.
 //   node scripts/release/publish.mjs            # dry run of all eight
 //   node scripts/release/publish.mjs --publish  # the owner, logged in to npm
 import { execFileSync } from 'node:child_process';
@@ -32,7 +33,22 @@ if (problems.length) {
   console.error(`Not publishable: ${problems.join('; ')}.`);
   process.exit(1);
 }
+const onRegistry = (m) => {
+  try {
+    const args = [npmCli, 'view', `${m.name}@${m.version}`, 'version'];
+    const options = { cwd: root, encoding: 'utf8', stdio: 'pipe' };
+    return execFileSync(process.execPath, args, options).trim() === m.version;
+  } catch {
+    return false; // E404: not published yet
+  }
+};
+let skipped = 0;
 for (const m of manifests) {
+  if (onRegistry(m)) {
+    console.log(`Already on the registry: ${m.name}@${m.version}`);
+    skipped++;
+    continue;
+  }
   const tag = /-([0-9A-Za-z-]+)/.exec(m.version)?.[1] ?? 'latest';
   const args = [npmCli, 'publish', '--workspace', `packages/${m.dir}`, '--tag', tag];
   if (!live) args.push('--dry-run');
@@ -42,6 +58,6 @@ for (const m of manifests) {
 }
 console.log(
   live
-    ? `Published ${manifests.length} packages. Check: npm dist-tag ls @oddkin/core`
-    : `All ${manifests.length} packages would publish; the owner runs this with --publish.`,
+    ? `Published ${manifests.length - skipped} packages (${skipped} already there). Check: npm dist-tag ls @oddkin/core`
+    : `${manifests.length - skipped} packages would publish (${skipped} already there); the owner runs this with --publish.`,
 );
