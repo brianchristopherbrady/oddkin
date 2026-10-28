@@ -1,7 +1,10 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { toolCallRecipeStyles } from './tool-call.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `tool-call.recipe.ts`. */
 export const toolCallStyles = css`
+  ${toolCallRecipeStyles}
   :host {
     display: grid;
     gap: ${token('space.xs')};
@@ -12,10 +15,6 @@ export const toolCallStyles = css`
     background: ${token('color.surface.default')};
   }
   .summary {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.xs')};
     min-block-size: ${token('target.min')};
     padding: ${token('space.xs')} ${token('space.sm')};
     cursor: pointer;
@@ -29,8 +28,6 @@ export const toolCallStyles = css`
     flex-basis: 100%;
   }
   .body {
-    display: grid;
-    gap: ${token('space.xs')};
     padding: 0 ${token('space.sm')} ${token('space.sm')};
   }
   .label {
@@ -51,10 +48,6 @@ export const toolCallStyles = css`
     white-space: pre-wrap;
   }
   .failure {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.xs')};
     padding: ${token('space.xs')} ${token('space.sm')};
     border-block-start: ${token('border.width.default')} solid ${token('color.danger.foreground')};
   }

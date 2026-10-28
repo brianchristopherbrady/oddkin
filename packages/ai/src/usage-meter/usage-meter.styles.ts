@@ -1,10 +1,11 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { usageMeterRecipeStyles } from './usage-meter.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `usage-meter.recipe.ts`. */
 export const usageMeterStyles = css`
+  ${usageMeterRecipeStyles}
   .list {
-    display: grid;
-    gap: ${token('space.xs')};
     margin: 0;
     font-size: ${token('font.size.sm')};
   }

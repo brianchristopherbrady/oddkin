@@ -1,17 +1,16 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { changeReviewRecipeStyles } from './change-review.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `change-review.recipe.ts`. */
 export const changeReviewStyles = css`
+  ${changeReviewRecipeStyles}
   .list {
-    display: grid;
-    gap: ${token('space.sm')};
     margin: 0;
     padding: 0;
     list-style: none;
   }
   .proposal {
-    display: grid;
-    gap: ${token('space.xs')};
     padding: ${token('space.sm')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('radius.md')};
@@ -47,11 +46,6 @@ export const changeReviewStyles = css`
     background: ${token('color.success.surface')};
     color: ${token('color.success.foreground')};
     text-decoration: underline;
-  }
-  .split {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
-    gap: ${token('space.sm')};
   }
   .split > div {
     min-inline-size: 0;

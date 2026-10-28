@@ -1,10 +1,11 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { checkpointRecipeStyles } from './checkpoint.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `checkpoint.recipe.ts`. */
 export const checkpointStyles = css`
+  ${checkpointRecipeStyles}
   .base {
-    display: grid;
-    gap: ${token('space.xs')};
     padding: ${token('space.sm')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('radius.md')};
@@ -31,8 +32,6 @@ export const checkpointStyles = css`
     color: ${token('color.danger.foreground')};
   }
   .confirm {
-    display: grid;
-    gap: ${token('space.xs')};
     padding: ${token('space.xs')};
     border-radius: ${token('radius.sm')};
     background: ${token('color.surface.sunken')};

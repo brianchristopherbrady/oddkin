@@ -59,7 +59,7 @@ function space(name: string): number {
   return size;
 }
 
-/** The in-flow boxes a region arranges; a slot stands for what it shows. */
+/** The margin boxes (what flex lays out) of the in-flow boxes a region arranges; a slot stands for what it shows. */
 function items(region: Element): DOMRect[] {
   const elements = [...region.children].flatMap((child) => {
     if (!(child instanceof HTMLSlotElement)) return [child];
@@ -71,8 +71,32 @@ function items(region: Element): DOMRect[] {
       const style = getComputedStyle(el);
       return style.display !== 'none' && !/absolute|fixed/.test(style.position);
     })
-    .map((el) => el.getBoundingClientRect())
+    .map((el) => {
+      const box = el.getBoundingClientRect();
+      const style = getComputedStyle(el);
+      const [top, right, bottom, left] = ['Top', 'Right', 'Bottom', 'Left'].map((side) =>
+        parseFloat(style.getPropertyValue(`margin-${side.toLowerCase()}`)),
+      ) as [number, number, number, number];
+      return new DOMRect(
+        box.x - left,
+        box.y - top,
+        box.width + left + right,
+        box.height + top + bottom,
+      );
+    })
     .filter((box) => box.width > 0 || box.height > 0);
+}
+
+/** Rows that lay out text directly: the text's box counts as an item. */
+function itemsWithText(region: Element): DOMRect[] {
+  const range = document.createRange();
+  const text = [...region.childNodes]
+    .filter((node) => node.nodeType === Node.TEXT_NODE && node.textContent!.trim())
+    .map((node) => {
+      range.selectNodeContents(node);
+      return range.getBoundingClientRect();
+    });
+  return [...items(region), ...text].sort((a, b) => a.left - b.left);
 }
 const round = (n: number) => Math.round(n * 2) / 2;
 const middle = (box: DOMRect) => round(box.top + box.height / 2);
@@ -90,20 +114,30 @@ function expectColumn(region: Element, gap: number) {
 function expectRow(
   region: Element,
   gap: number,
-  { align = 'center', justify }: { align?: 'center' | 'stretch'; justify?: 'center' } = {},
+  {
+    align = 'center',
+    justify,
+    text,
+  }: {
+    align?: 'center' | 'stretch' | 'baseline' | 'unseen';
+    justify?: 'center';
+    text?: boolean;
+  } = {},
 ) {
-  const boxes = items(region);
+  const boxes = text ? itemsWithText(region) : items(region);
   expect(boxes.length, 'items').toBeGreaterThan(1);
   const line = boxes.filter((box) => box.top < boxes[0]!.bottom);
   expect(line.length, 'items on the first line').toBeGreaterThan(1);
   expect(line.slice(1).map((box, i) => round(box.left - line[i]!.right))).toEqual(
     line.slice(1).map(() => round(gap)),
   );
-  // Items of different natural heights, so the alignment shows.
-  if (align === 'center') {
+  // Items of different natural heights, so the alignment shows ('unseen': the items share one).
+  if (align === 'center' || align === 'baseline') {
     expect(new Set(line.map((box) => Math.round(box.height))).size, 'heights').toBeGreaterThan(1);
-    expect(line.map(middle)).toEqual(line.map(() => middle(line[0]!)));
-  } else
+    const at = align === 'center' ? middle : (box: DOMRect) => round(box.top);
+    // Within a pixel: a text item is measured by its glyphs, not its line box.
+    for (const box of line) expect(Math.abs(at(box) - at(line[0]!))).toBeLessThanOrEqual(1);
+  } else if (align === 'stretch')
     expect(line.map((box) => round(box.height))).toEqual(line.map(() => round(line[0]!.height)));
   if (justify === 'center') {
     const box = region.getBoundingClientRect();
@@ -369,5 +403,242 @@ describe('odd-artifact', () => {
     const header = $(el, '.header');
     expectRow(header, space('xs'));
     await expectWraps(header, '12rem');
+  });
+});
+
+// The second batch mounts each element with its documented example's props and slots.
+type ExampleSet = {
+  examples: Record<string, { props?: Record<string, unknown>; slots?: Record<string, string> }>;
+};
+const exampleSets = import.meta.glob<ExampleSet>('../src/*/*.examples.ts', { import: 'default' });
+const definitions = import.meta.glob('../src/*/*.define.ts');
+async function example<E extends Updating>(
+  name: string,
+  key = 'default',
+  change: (props: Record<string, unknown>) => Record<string, unknown> = (props) => props,
+): Promise<E> {
+  const set = await exampleSets[`../src/${name}/${name}.examples.ts`]!();
+  const { props = {}, slots = {} } = set.examples[key]!;
+  const children = Object.entries(slots)
+    .map(([slot, text]) => `<span slot="${slot}">${text}</span>`)
+    .join('');
+  return mount<E>(
+    `odd-${name}`,
+    definitions[`../src/${name}/${name}.define.ts`]!,
+    (el) => Object.assign(el, change(props)),
+    children,
+  );
+}
+const settle = async (el: Updating) => {
+  await el.updateComplete;
+  flush();
+  await frames();
+};
+
+describe('odd-action-approval', () => {
+  it('stacks the card and its changes; each change is a row that wraps', async () => {
+    const el = await example('action-approval', 'default', (props) => ({
+      ...props,
+      approval: {
+        ...(props['approval'] as object),
+        changes: [
+          { label: 'Subject', before: 'Draft', after: 'Release 2.0' },
+          { label: 'To', before: 'Me', after: 'The whole team' },
+        ],
+      },
+    }));
+    expectColumn($(el, '.base'), space('xs'));
+    expectColumn($(el, '.changes'), space('2xs'));
+    const change = $(el, '.change');
+    expectRow(change, space('xs'), { align: 'stretch' });
+    expectColumn($(el, '.reason'), space('2xs'));
+    // The shared action row wraps: the reason takes a line of its own above the buttons.
+    const [reason, ...buttons] = items($(el, '.actions'));
+    expect(buttons.every((box) => box.top >= reason!.bottom)).toBe(true);
+    await expectWraps(change, '7rem');
+  });
+});
+
+describe('odd-change-review', () => {
+  it('stacks the proposals and their parts; a split diff fits 14rem columns', async () => {
+    const el = await example('change-review', 'default', (props) => {
+      const [first] = props['proposals'] as Record<string, unknown>[];
+      return {
+        ...props,
+        proposals: [first, { ...first, proposalId: 'p2', label: 'Shorter' }],
+        view: 'split',
+      };
+    });
+    expectColumn($(el, '.list'), space('sm'));
+    expectColumn($(el, '.proposal'), space('xs'));
+    const split = $(el, '.split');
+    expectRow(split, space('sm'), { align: 'stretch' });
+    container.style.inlineSize = '20rem';
+    await frames();
+    expectColumn(split, space('sm'));
+  });
+});
+
+describe('odd-checkpoint', () => {
+  it('stacks the card and the restore confirmation', async () => {
+    const el = await example('checkpoint');
+    expectColumn($(el, '.base'), space('xs'));
+    $(el, '.actions odd-button').click();
+    await settle(el);
+    expectColumn($(el, '.confirm'), space('xs'));
+  });
+});
+
+describe('odd-context-picker', () => {
+  it('stacks the items; an item is a centred row that wraps; the URL form is a row', async () => {
+    const el = await example('context-picker');
+    expectColumn($(el, '.base'), space('xs'));
+    expectColumn($(el, '.list'), space('2xs'));
+    const row = $(el, '.row');
+    expectRow(row, space('xs'));
+    expectRow($(el, '.url'), space('2xs'), { align: 'stretch' });
+    await expectWraps(row, '8rem');
+    // The URL field keeps its own width, so the button moves under it.
+    await expectWraps($(el, '.url'), '14rem');
+  });
+});
+
+describe('odd-inline-assist', () => {
+  it('stacks toolbar and result; the toolbar is a row that wraps', async () => {
+    const el = await example('inline-assist', 'result');
+    expectColumn($(el, '.base'), space('xs'));
+    const toolbar = $(el, '.toolbar');
+    expectRow(toolbar, space('2xs'), { align: 'stretch' });
+    await expectWraps(toolbar, '8rem');
+  });
+
+  it('lines up the language label and its choice', async () => {
+    const el = await example('inline-assist', 'default', (props) => ({
+      ...props,
+      languages: [
+        { id: 'en', label: 'English' },
+        { id: 'fr', label: 'French' },
+      ],
+    }));
+    const language = $(el, '.language');
+    expectRow(language, space('xs'));
+    await expectWraps(language, '5rem');
+  });
+});
+
+describe('odd-prompt-input', () => {
+  it('lines up the toolbar and each attachment in centred rows that wrap; issues stack', async () => {
+    const el = await example<Updating & { activeController: { addFiles(files: File[]): void } }>(
+      'prompt-input',
+      'default',
+      (props) => ({ ...props, accept: 'image/*' }),
+    );
+    el.activeController.addFiles(
+      ['a.png', 'b.png'].map((name) => new File(['x'], name, { type: 'image/png' })),
+    );
+    // Refused files are reported through the file input, as a user picks them.
+    const files = new DataTransfer();
+    for (const name of ['c.txt', 'd.txt'])
+      files.items.add(new File(['x'], name, { type: 'text/plain' }));
+    const input = el.shadowRoot!.querySelector<HTMLInputElement>('input[type="file"]')!;
+    input.files = files.files;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    await settle(el);
+    const toolbar = $(el, '.toolbar');
+    expectRow(toolbar, space('xs'));
+    expectRow($(el, '.attachments'), space('xs'), { align: 'stretch' });
+    expectRow($(el, '.attachment'), space('2xs'));
+    expectColumn($(el, '.issues'), space('xs'));
+    await expectWraps(toolbar, '6rem');
+    await expectWraps($(el, '.attachments'), '6rem');
+    await expectWraps($(el, '.attachment'), '6rem');
+  });
+});
+
+describe('odd-question', () => {
+  it('stacks the form and the options; an option is a centred row', async () => {
+    const el = await example('question');
+    expectColumn($(el, '.form'), space('xs'));
+    expectColumn($(el, '.options'), space('2xs'));
+    expectRow($(el, '.option'), space('xs'));
+  });
+
+  it('stacks each field', async () => {
+    const el = await example('question', 'form');
+    expectColumn($(el, '.field'), space('2xs'));
+  });
+});
+
+describe('odd-response-feedback', () => {
+  it('lines up the rating actions', async () => {
+    const el = await example('response-feedback');
+    expectRow($(el, '.actions'), space('xs'), { align: 'unseen' });
+  });
+
+  it('centres the outcome beside the rating actions', async () => {
+    const el = await example('response-feedback', 'negative', (props) => ({
+      ...props,
+      feedback: { messageId: 'm2', rating: 'negative', status: 'submitted' },
+    }));
+    expectRow($(el, '.actions'), space('xs'));
+  });
+
+  it('stacks the reasons form; a reason is a centred row', async () => {
+    const el = await example('response-feedback', 'negative');
+    $(el, '[data-rating="negative"]').click();
+    await settle(el);
+    expectColumn($(el, '.base'), space('xs'));
+    expectColumn($(el, '.form'), space('xs'));
+    expectRow($(el, '.check'), space('xs'), { text: true });
+    expectColumn($(el, '.field'), space('2xs'));
+  });
+});
+
+describe('odd-task-plan', () => {
+  it('stacks the plan, its steps and tasks; a step and a task sit on the baseline', async () => {
+    const el = await example('task-plan');
+    expectColumn($(el, '.base'), space('sm'));
+    const progress = $(el, '.progress');
+    expectRow(progress, space('xs'));
+    expectColumn($(el, '.steps'), space('xs'));
+    expectColumn($(el, '.tasks'), space('xs'));
+    expectRow($(el, '.step'), space('xs'), { align: 'baseline' });
+    // A task's symbol, title, and status are one line each.
+    expectRow($(el, '.task'), space('xs'), { align: 'unseen' });
+    expectColumn($(el, '.body'), 2);
+    await expectWraps(progress, '10rem');
+  });
+});
+
+describe('odd-tool-call', () => {
+  it('lines up the summary and the failure in centred rows that wrap', async () => {
+    const el = await example('tool-call', 'failed');
+    const summary = $(el, '.summary');
+    expectRow(summary, space('xs'));
+    expectRow($(el, '.failure'), space('xs'));
+    await expectWraps(summary, '8rem');
+    await expectWraps($(el, '.failure'), '8rem');
+  });
+
+  it('stacks the arguments and the result', async () => {
+    const el = await example('tool-call');
+    el.shadowRoot!.querySelector('details')!.open = true;
+    await settle(el);
+    expectColumn($(el, '.body'), space('xs'));
+  });
+});
+
+describe('odd-usage-meter', () => {
+  it('stacks the entries', async () => {
+    const el = await example('usage-meter');
+    expectColumn($(el, '.list'), space('xs'));
+  });
+});
+
+describe('odd-voice-input', () => {
+  it('stacks the record button and its status', async () => {
+    // Without an adapter it says that voice input is unsupported.
+    const el = await example('voice-input', 'default', () => ({}));
+    expectColumn($(el, '.base'), space('xs'));
   });
 });

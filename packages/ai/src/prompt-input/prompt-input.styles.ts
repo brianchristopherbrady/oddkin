@@ -1,7 +1,10 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { promptInputRecipeStyles } from './prompt-input.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `prompt-input.recipe.ts`. */
 export const promptInputStyles = css`
+  ${promptInputRecipeStyles}
   .form {
     position: relative;
     display: grid;
@@ -30,32 +33,16 @@ export const promptInputStyles = css`
     resize: none;
     overflow-y: auto;
   }
-  .toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.xs')};
-  }
   .spacer {
     flex: 1 1 auto;
   }
   .attachments,
   .issues {
-    display: flex;
-    flex-wrap: wrap;
-    gap: ${token('space.xs')};
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .issues {
-    flex-direction: column;
-  }
   .attachment {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.2xs')};
     max-inline-size: 100%;
     padding-inline: ${token('space.xs')} 0;
     border: ${token('border.width.default')} solid ${token('color.border.default')};

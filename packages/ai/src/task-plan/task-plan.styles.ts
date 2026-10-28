@@ -1,46 +1,25 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { taskPlanRecipeStyles } from './task-plan.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `task-plan.recipe.ts`. */
 export const taskPlanStyles = css`
-  .base {
-    display: grid;
-    gap: ${token('space.sm')};
-  }
+  ${taskPlanRecipeStyles}
   .title {
     margin: 0;
     font-weight: ${token('font.weight.semibold')};
-  }
-  .progress {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.xs')};
   }
   progress {
     inline-size: min(100%, 16rem);
   }
   .steps,
   .tasks {
-    display: grid;
-    gap: ${token('space.xs')};
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  .step,
-  .task {
-    display: flex;
-    gap: ${token('space.xs')};
-    align-items: baseline;
-  }
   .task {
     font-size: ${token('font.size.sm')};
-  }
-  .body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-    min-inline-size: 0;
   }
   .symbol {
     inline-size: 1.25em;

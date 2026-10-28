@@ -1,14 +1,11 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { responseFeedbackRecipeStyles } from './response-feedback.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `response-feedback.recipe.ts`. */
 export const responseFeedbackStyles = css`
-  .base {
-    display: grid;
-    gap: ${token('space.xs')};
-  }
+  ${responseFeedbackRecipeStyles}
   .form {
-    display: grid;
-    gap: ${token('space.xs')};
     max-inline-size: 36rem;
   }
   fieldset {
@@ -26,14 +23,7 @@ export const responseFeedbackStyles = css`
     font-size: ${token('font.size.sm')};
   }
   .check {
-    display: flex;
-    align-items: center;
-    gap: ${token('space.xs')};
     min-block-size: ${token('target.min')};
-  }
-  .field {
-    display: grid;
-    gap: ${token('space.2xs')};
   }
   textarea {
     padding: ${token('space.2xs')} ${token('space.xs')};

@@ -1,10 +1,11 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { actionApprovalRecipeStyles } from './action-approval.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `action-approval.recipe.ts`. */
 export const actionApprovalStyles = css`
+  ${actionApprovalRecipeStyles}
   .base {
-    display: grid;
-    gap: ${token('space.xs')};
     padding: ${token('space.sm')};
     border: ${token('border.width.strong')} solid ${token('color.border.strong')};
     border-radius: ${token('radius.md')};
@@ -24,14 +25,7 @@ export const actionApprovalStyles = css`
     font-weight: ${token('font.weight.semibold')};
   }
   .changes {
-    display: grid;
-    gap: ${token('space.2xs')};
     font-size: ${token('font.size.sm')};
-  }
-  .change {
-    display: flex;
-    flex-wrap: wrap;
-    gap: ${token('space.xs')};
   }
   .change-label {
     font-weight: ${token('font.weight.medium')};
@@ -53,9 +47,7 @@ export const actionApprovalStyles = css`
     color: ${token('color.danger.foreground')};
   }
   .reason {
-    display: grid;
     flex: 1 1 100%;
-    gap: ${token('space.2xs')};
   }
   textarea {
     min-block-size: ${token('target.min')};

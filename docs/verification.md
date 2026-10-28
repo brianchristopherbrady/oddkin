@@ -3650,3 +3650,16 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Property-binding use | `node .tmp/prop-bindings.mjs` (custom elements with `.prop=${…}` in `html` templates of `packages/`, `examples/`, `apps/docs/src`; a lower bound: attribute lists containing `>` stop the scan) | 18 elements: 3 with one binding, 4 with two, 6 with three, 2 with four, 1 with five, 1 with seven, 1 with thirteen (odd-conversation → odd-message, every value from a different source) |
 | A2UI status | <https://a2ui.org/>, read 2026-10-27 | v0.9.1 current; v1.0 release candidate (adds `actionResponse`, action IDs; renames `theme` to `surfaceProperties`) |
 | Format | `npx prettier --check` on the edited documents | OK |
+
+## 2026-10-27 — AI layout recipes, second batch (Agent 2)
+
+| Check | Command | Result |
+|---|---|---|
+| Extraction | `npx vitest run --project node packages/ai` (`recipes.test.ts`, 21 recipes; `UPDATE_FIXTURES=1` once) | 88 passed |
+| Layout, three engines | `browser-set.mjs packages/ai/test/layout.browser.test.ts` | Chromium, Firefox, WebKit: 29 passed each |
+| AI and Workbench browser tests | `browser-set.mjs` on the 9 AI browser files and `packages/workbench/test/coverage.browser.test.ts` | Chromium 238 passed, 4 skipped; Firefox 233 passed, 6 skipped, 3 failures that pass when their files rerun alone (45 passed: load noise); WebKit 238 passed, 4 skipped |
+| e2e | `npx playwright test e2e/ai-demos.spec.ts --project=<engine>`, one engine at a time | Chromium 13, Firefox 13, WebKit 13 passed |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-recipes-b2.json` (110 probes on the extracted sheets: direction, wrapping, alignment, gap, column minimum), then the survivors again after new wrap and alignment checks | 105 of 110 killed. Equivalent: `align-items: start` instead of `stretch` on rows whose items share one height (approval change, inline-assist toolbar, prompt attachments) and instead of `baseline` where every item has the same font size (task-plan step and task) |
+| Metadata | `npm run build`; style mappings and documentation per element | every AI element publishes style mappings; no warnings |
+| Compatibility | `node scripts/compat/check-css.mjs --write` | 222 stylesheets, 326 keys; OK |
+| Size | `node scripts/check-size.mjs` | ai-chat 50,942 B, ai:styles 4,846 B gzip (before the recipes 50,671 and 4,503) |

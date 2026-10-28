@@ -1,11 +1,10 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { voiceInputRecipeStyles } from './voice-input.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `voice-input.recipe.ts`. */
 export const voiceInputStyles = css`
-  .base {
-    display: grid;
-    gap: ${token('space.xs')};
-  }
+  ${voiceInputRecipeStyles}
   .record {
     display: inline-flex;
     align-items: center;

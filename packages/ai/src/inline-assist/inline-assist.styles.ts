@@ -1,15 +1,11 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { inlineAssistRecipeStyles } from './inline-assist.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `inline-assist.recipe.ts`. */
 export const inlineAssistStyles = css`
-  .base {
-    display: grid;
-    gap: ${token('space.xs')};
-  }
+  ${inlineAssistRecipeStyles}
   .toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: ${token('space.2xs')};
     padding: ${token('space.2xs')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('radius.md')};
@@ -18,12 +14,6 @@ export const inlineAssistStyles = css`
   .toolbar [aria-disabled='true'] {
     color: ${token('color.text.disabled')};
     cursor: not-allowed;
-  }
-  .language {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.xs')};
   }
   select {
     min-block-size: ${token('target.min')};

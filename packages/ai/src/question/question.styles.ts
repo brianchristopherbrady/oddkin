@@ -1,10 +1,11 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { questionRecipeStyles } from './question.recipe.styles.js';
 
+/** The arrangement is the layout recipe in `question.recipe.ts`. */
 export const questionStyles = css`
+  ${questionRecipeStyles}
   .form {
-    display: grid;
-    gap: ${token('space.xs')};
     padding: ${token('space.sm')};
     border: ${token('border.width.default')} solid ${token('color.border.strong')};
     border-radius: ${token('radius.md')};
@@ -26,19 +27,8 @@ export const questionStyles = css`
   p {
     margin: 0;
   }
-  .options {
-    display: grid;
-    gap: ${token('space.2xs')};
-  }
   .option {
-    display: flex;
-    align-items: center;
-    gap: ${token('space.xs')};
     min-block-size: ${token('target.min')};
-  }
-  .field {
-    display: grid;
-    gap: ${token('space.2xs')};
   }
   :is(input:not([type='radio'], [type='checkbox']), textarea, select) {
     min-block-size: ${token('target.min')};

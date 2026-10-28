@@ -6,13 +6,15 @@ import {
 } from '@oddkin/components/styles';
 import { css, type StyleInput } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
+import { aiElementRecipeStyles } from './ai-element.recipe.styles.js';
 
 /**
  * Styles every `@oddkin/ai` element adds to the shared component primitives: host text
- * defaults, status labels (coloured by `data-tone` through the shared tone styles), action rows,
- * and text buttons.
+ * defaults, status labels (coloured by `data-tone` through the shared tone styles), action rows
+ * (the layout recipe in `ai-element.recipe.ts`), and text buttons.
  */
 export const aiElementStyles = css`
+  ${aiElementRecipeStyles}
   :host {
     display: block;
     min-inline-size: 0;
@@ -51,12 +53,6 @@ export const aiElementStyles = css`
   .status[data-tone='active'] {
     border-color: ${token('color.border.strong')};
     color: ${token('color.text.primary')};
-  }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: ${token('space.xs')};
   }
   .error {
     color: ${token('color.danger.foreground')};
