@@ -1,0 +1,78 @@
+#!/usr/bin/env node
+// Sets release versions in every published package (release-process.md §1, §5): the runtime
+// packages share one version, the tools (analyzer, Workbench) another. Internal dependencies
+// become caret ranges of the version they point at, and publishConfig gets public access. The
+// dist-tag goes to `npm publish --tag` (npm 11.19 ignores publishConfig.tag; a prerelease must
+// never publish as `latest`). `private` is left alone: the owner removes it when publishing is
+// authorized. The private apps (`apps/*`) keep their version and get the same internal ranges.
+// Run `npm install` afterwards for the lockfile.
+//   node scripts/release/set-versions.mjs --runtime 1.0.0-beta.0 --tools 0.1.0-beta.0 [--check]
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+const TOOLS = new Set(['@oddkin/analyzer', '@oddkin/workbench']);
+const SEMVER = /^\d+\.\d+\.\d+(?:-([0-9A-Za-z-]+)(?:\.[0-9A-Za-z-]+)*)?$/;
+const DEPENDENCY_FIELDS = [
+  'dependencies',
+  'peerDependencies',
+  'optionalDependencies',
+  'devDependencies',
+];
+
+const arg = (name) => {
+  const at = process.argv.indexOf(name);
+  return at > -1 ? process.argv[at + 1] : undefined;
+};
+const versions = { runtime: arg('--runtime'), tools: arg('--tools') };
+for (const [group, version] of Object.entries(versions))
+  if (!version || !SEMVER.test(version)) {
+    console.error(`--${group} needs a semantic version (got ${version ?? 'nothing'}).`);
+    process.exit(2);
+  }
+const check = process.argv.includes('--check');
+
+const read = (folder) =>
+  readdirSync(join(root, folder)).map((dir) => {
+    const file = join(root, folder, dir, 'package.json');
+    return {
+      file,
+      manifest: JSON.parse(readFileSync(file, 'utf8')),
+      published: folder === 'packages',
+    };
+  });
+const packages = read('packages');
+const workspaces = [...packages, ...read('apps')];
+const versionOf = (name) => (TOOLS.has(name) ? versions.tools : versions.runtime);
+const tagOf = (version) =>
+  SEMVER.exec(version)[1]?.replace(/\d+$/, '').replace(/[.-]$/, '') || 'latest';
+
+const stale = [];
+for (const { file, manifest, published } of workspaces) {
+  const version = published ? versionOf(manifest.name) : manifest.version;
+  const next = { ...manifest, version };
+  for (const field of DEPENDENCY_FIELDS) {
+    if (!manifest[field]) continue;
+    next[field] = Object.fromEntries(
+      Object.entries(manifest[field]).map(([name, range]) =>
+        name.startsWith('@oddkin/') ? [name, `^${versionOf(name)}`] : [name, range],
+      ),
+    );
+  }
+  if (published) {
+    const { tag: _ignoredByNpm, ...publishConfig } = manifest.publishConfig ?? {};
+    next.publishConfig = { ...publishConfig, access: 'public' };
+  }
+  const text = `${JSON.stringify(next, null, 2)}\n`;
+  if (text === readFileSync(file, 'utf8')) continue;
+  stale.push(manifest.name);
+  if (!check) writeFileSync(file, text);
+}
+if (check && stale.length) {
+  console.error(`Not at the requested versions: ${stale.join(', ')}.`);
+  process.exit(1);
+}
+console.log(
+  `${check ? 'Checked' : 'Set'} ${packages.length} packages: runtime ${versions.runtime} and tools ${versions.tools}; publish with --tag ${tagOf(versions.runtime)} (tools: --tag ${tagOf(versions.tools)}).${stale.length && !check ? ' Run npm install to update the lockfile.' : ''}`,
+);

@@ -3,6 +3,7 @@
 // consumer outside the workspace, and verifies runtime imports, declarations,
 // and the installed dependency graph. Run after `npm run build`.
 import { execFileSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve, sep } from 'node:path';
@@ -51,6 +52,18 @@ try {
     const files = info.files.map((file) => file.path);
     const leaked = files.filter((file) => file.startsWith('src/') || file.startsWith('test/'));
     if (leaked.length) failures.push(`${name}: tarball includes ${leaked.join(', ')}`);
+    // A module an earlier build left in dist (its source is gone) must not be published.
+    const stale = files.filter(
+      (file) =>
+        /^dist\/(?!prod\/).*\.js$/.test(file) &&
+        !['.ts', '.tsx', '.js', '.mjs'].some((ext) =>
+          existsSync(join(dir, 'src', file.slice('dist/'.length, -'.js'.length) + ext)),
+        ),
+    );
+    if (stale.length)
+      failures.push(
+        `${name}: dist modules without a source (delete dist and rebuild): ${stale.slice(0, 5).join(', ')}`,
+      );
     if (!files.some((file) => file.startsWith('dist/')))
       failures.push(`${name}: tarball has no dist/ (run npm run build)`);
     if (name === '@oddkin/core')
