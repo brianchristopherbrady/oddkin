@@ -110,6 +110,7 @@ describe('layout.css', () => {
       '.odd-center',
       '.odd-aspect-ratio',
       '.odd-auto-grid-fit',
+      '.odd-grid-stretch > *',
       '.odd-split-end > :first-child',
     ])
       expect(body(selector).length, selector).toBeGreaterThan(0);

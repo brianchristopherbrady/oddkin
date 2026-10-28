@@ -87,6 +87,36 @@ describe('layout.css', () => {
     expect(width('#fit')).toBe(245);
   });
 
+  it('gives each item’s child its row’s height with odd-grid-stretch, row by row', () => {
+    const long = 'A longer description that wraps onto several lines. '.repeat(4);
+    container.innerHTML = `<ul class="odd-auto-grid odd-grid-stretch" style="margin: 0; padding: 0; list-style: none"><li><article>Short</article></li><li><article>${long}</article></li><li><article>Mid length text</article></li></ul>`;
+    const cards = [...container.querySelectorAll('article')];
+    const heights = () => cards.map((card) => card.getBoundingClientRect().height);
+    // 500px: four 117.5px tracks, so all three share one row.
+    expect(new Set(heights()).size).toBe(1);
+    expect(heights()[0]).toBeGreaterThan(40);
+    // Content that grows later re-equalizes the row.
+    cards[0]!.textContent = `${long}${long}`;
+    expect(new Set(heights()).size).toBe(1);
+    // One column: each item has its own row, so each child keeps its own height.
+    container.style.width = '80px';
+    expect(new Set(heights()).size).toBe(3);
+    // Without the modifier, the children keep their own heights in a shared row.
+    container.style.width = '500px';
+    container.firstElementChild!.classList.remove('odd-grid-stretch');
+    expect(new Set(heights()).size).toBe(3);
+  });
+
+  it('stretches the children of odd-grid too, and keeps a long word inside its column', () => {
+    container.innerHTML =
+      '<div class="odd-grid odd-grid-stretch"><div><p id="a">a</p></div><div><p id="b">b<br>b<br>b</p></div><div><p id="c">Supercalifragilisticexpialidocious</p></div></div>';
+    const box = (id: string) =>
+      (container.querySelector(id) as HTMLElement).getBoundingClientRect();
+    expect(box('#a').height).toBe(box('#b').height);
+    container.style.width = '120px';
+    expect(box('#c').width).toBeLessThanOrEqual(55);
+  });
+
   it('fits as many auto-grid columns as the item minimum allows', () => {
     container.innerHTML = `<div class="odd-auto-grid">${'<p>x</p>'.repeat(6)}</div>`;
     const columns = () =>

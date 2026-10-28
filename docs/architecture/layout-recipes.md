@@ -268,6 +268,7 @@ Verified in `packages/components/test/layout.test.ts` (Node) and `layout.browser
 | `.odd-cluster` | Row that wraps | `--odd-cluster-gap` |
 | `.odd-grid` | Equal columns, `minmax(0, 1fr)` | `--odd-grid-columns` (`2`), `--odd-grid-gap` |
 | `.odd-auto-grid` | As many columns as fit, `min(item-min, 100%)`; `.odd-auto-grid-fit` lets a few items stretch across the row (`auto-fit`) | `--odd-auto-grid-min` (`layout.item-min`), `--odd-auto-grid-gap` |
+| `.odd-grid-stretch` | On `.odd-grid` or `.odd-auto-grid`: each item's one child fills the row's height, so cards in a row are equally tall (a one-column grid leaves each its own height) | — |
 | `.odd-split` | Two children in DOM order: the first is the side, the last takes the rest and wraps below its minimum, which is capped at the container (`min(main minimum, 100%)`), so a split narrower than it stacks without overflowing; `.odd-split-end` puts the side after the main content (the first child is the main content) | `--odd-split-side-width` (`layout.sidebar-width`), `--odd-split-main-min` (`layout.main-min`), `--odd-split-gap` |
 | `.odd-box` | Inset wrapper, `min-inline-size: 0`; `.odd-box-none` and `.odd-box-roomy` use `space.none` and `space.xl` | `--odd-box-inset` (`layout.inset`) |
 | `.odd-center` | Grid that centres its content on both axes | — |

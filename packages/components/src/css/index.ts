@@ -139,6 +139,11 @@ function layoutClasses(): CSSResult {
           .autoGrid({ min: knob('auto-grid-min', token('layout.item-min')), fill: 'auto-fit' })
           .declarations.filter(([property]) => property === 'grid-template-columns'),
       ),
+      // On either grid: each item's one child fills the row's height, so cards in a row match.
+      rule('.odd-grid-stretch > *', [
+        ['display', 'grid'],
+        ['grid-template-columns', 'minmax(0, 1fr)'],
+      ]),
       rule(
         '.odd-box',
         helpers.css({ padding: knob('box-inset', token('layout.inset')), 'min-inline-size': '0' })
@@ -188,7 +193,8 @@ function layoutClasses(): CSSResult {
  * Page-author layout classes generated from the same helpers as recipes, with an override
  * property per option (`--odd-stack-gap`, `--odd-split-side-width`, …) defaulting to the
  * theme's layout roles: `.odd-stack` (`-tight`, `-loose`), `.odd-row` (`-between`),
- * `.odd-cluster`, `.odd-grid`, `.odd-auto-grid` (`-fit`), `.odd-split` (`-end`), `.odd-box`
+ * `.odd-cluster`, `.odd-grid`, `.odd-auto-grid` (`-fit`), `.odd-grid-stretch` (on either grid),
+ * `.odd-split` (`-end`), `.odd-box`
  * (`-none`, `-roomy`), `.odd-center`, and `.odd-aspect-ratio`.
  */
 export const layout: DocumentStylesheet = { layer: 'odd.layout', styles: layoutClasses() };

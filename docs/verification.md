@@ -4024,3 +4024,12 @@ Environment: Windows, Node 24.22.1, the repository's Playwright browsers, main f
 Visual check in Chromium at 1,440 px against the Figma "03 · Component reference" frames, after the last change: the catalog's search, counts, category buttons, and cards with live previews; the Button reference's interactive example with Preset, See code, Copy example link, and Reset, the preview beside "Controls and API" with grouped rows, segmented enums, and switches. The static build's case in `e2e/docs-site.spec.ts` (served as GitHub Pages serves it) mounts the Button's live example under the meta CSP with no policy violation, in each engine.
 
 **Not verified:** a screen reader on the segmented controls and switches. **Known gaps:** a card's preview is empty when the default example draws nothing until opened (`odd-command-palette`); the reference page's tab strip, meta row, and states from the Figma frames are not built yet.
+
+## 2026-10-28 — layout.css `.odd-grid-stretch` (round 10, Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Layout classes (node) | `npx vitest run --project node packages/components/test/layout.test.ts` | 7 passed (the built `layout.css` contains `.odd-grid-stretch > *`) |
+| Layout in real engines | `node ../oddkin-lanes/tools/browser-set.mjs --engines chromium,firefox,webkit packages/components/test/layout.browser.test.ts` | 9 passed in each engine. The new tests: three items with unequal text share one height, also after one grows; at one column each keeps its own height; without the class heights differ; on `.odd-grid` too; a long word stays inside a 55px column |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/stretch-probes.json` (Chromium) | 2 of 2 killed: `display: block` instead of `grid`, and an `auto` column instead of `minmax(0, 1fr)` |
+| Size, CSS, layout lint | `node scripts/check-size.mjs`; `node scripts/compat/check-css.mjs`; `node scripts/check-page-layout.mjs` | `components:layout` 679 B gzip (budget 704); compat 0 problems; 0 unlisted layouts |
