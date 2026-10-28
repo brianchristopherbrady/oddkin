@@ -3741,3 +3741,21 @@ Live Figma inspection in file E7LfRysny8V3qU24tv082i confirmed existing datePick
 | Packed | `node scripts/verify-packs.mjs` | OK; the installed CLI writes `default.contrast.json`, and `@oddkin/tokens/inspect/default.contrast.json` resolves with the expected ids |
 | Size | `node scripts/check-size.mjs` | `tokens:default.css` 3,096 B gzip (3,067 without the motion scope); budget 3,072 → 3,136 with the reason in `measure.mjs` |
 | Typecheck, lint | `npm run typecheck`, `npm run lint` | OK |
+
+## 2026-10-27 — D10: declarative shadow DOM first paint (Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Experiment | `node research/experiments/dsd-first-paint/run.mjs --samples 9` (Chromium 156; workspace served through Playwright routes) | Results in `research/benchmarks/results/dsd-first-paint-2026-10-28.json` and the experiment README. Upgrade-only versus prerendered with stylesheet links (strict CSP) versus prerendered with inline styles: CLS 0.040 → 0 (components-only) and 0.138 → 0 (content page); LCP 124 → 120 / 148 ms and 124 → 324 / 168 ms with modules at once, 132 → 144 / 184 ms and 132 → 236 / 228 ms with each module delayed 800 ms; style recalculation +2–8 ms; HTML +3.2–4.2 KB (links) or +26–28 KB (inline). Every shadow root after the upgrade equals the upgrade-only page's, template markers aside |
+
+**Findings:** (1) The first comparison reported every page as different after the upgrade: template part markers (`<!--oddkin-…-->`) carry a per-load nonce, so the check now ignores comments. (2) The upgrade-only content page's layout shift (0.138) is above the 0.1 counted as good: undefined elements render their light DOM inline until they upgrade. Reserving their boxes in page CSS is the cheaper fix; prerendering is not adopted (no LCP gain). Measured on a machine shared with other agents' test runs; the medians of alternating loads are compared, not absolute times.
+
+## 2026-10-27 — M8 checkpoint: candidate v1 contracts and reviews (Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Links | `node .tmp/check-links.mjs` (every relative link in ADR 0047 resolves to a file) | Pass |
+| Compatibility | `npm run compat` after the `system-colors` baseline text change | 72 registered features, 0 problems; `matrix.md` regenerated (one row) |
+| Lint | `npm run lint` | Pass |
+
+**Findings:** No code changed. The counts ADR 0047 cites were taken from the tree at 81a927c: `packages/core/contracts.json` lists the 16 ids; the conformance and impact figures are those recorded in this file on 2026-10-19 and in M4. The comprehension review has no reader evidence: it is marked partial in the plan.

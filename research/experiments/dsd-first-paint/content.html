@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Inline scripts are allowed only for the import map run.mjs generates; styles stay 'self'. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; base-uri 'none'"
+    />
+    <title>Release notes · D10 content fixture</title>
+    <link rel="stylesheet" href="../../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../../packages/components/dist/css/base.css" />
+    <link rel="stylesheet" href="../../../packages/components/dist/css/layout.css" />
+    <script type="importmap">
+      {}
+    </script>
+    <script type="module" src="./content.js"></script>
+  </head>
+  <body>
+    <!-- A documentation content page made of display elements (the docs app's pages carry
+         none yet): what a prerendered first paint would show before any module loads. -->
+    <main class="odd-stack odd-box" id="article">
+      <h1>Release notes</h1>
+      <odd-alert tone="info" label="Upgrade note">
+        Version 1 renames no tags; every attribute from the preview keeps its meaning.
+      </odd-alert>
+      <div class="odd-cluster">
+        <odd-badge tone="success">Stable</odd-badge>
+        <odd-badge tone="info">Tokens 1.0</odd-badge>
+        <odd-badge tone="warning">Workbench preview</odd-badge>
+        <odd-status-marker status="complete">Released</odd-status-marker>
+      </div>
+      <div class="odd-auto-grid">
+        <odd-stat label="Elements" value="77"></odd-stat>
+        <odd-stat label="Contracts" value="16"></odd-stat>
+        <odd-stat label="Engines tested" value="3"></odd-stat>
+      </div>
+      <odd-card appearance="elevated" label="What changed">
+        <h2 slot="header">What changed</h2>
+        <p>
+          The binding-value matrix is published, unsupported values are reported instead of written
+          as text, and keyed lists keep focus and selection when a row moves. Packages carry their
+          licence and a user-facing README, and the token build writes a role-pair contrast report
+          next to its inspection file, so tools read measured pairs instead of recomputing them.
+        </p>
+        <p slot="footer">
+          <odd-avatar label="Release team" size="sm"></odd-avatar>
+          Published by the release team.
+        </p>
+      </odd-card>
+      <odd-empty-state label="No breaking changes">
+        <p>Nothing to migrate in this release.</p>
+      </odd-empty-state>
+    </main>
+  </body>
+</html>

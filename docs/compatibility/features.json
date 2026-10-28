@@ -415,7 +415,7 @@
       "adoption": "foundation",
       "status": "implemented",
       "usedBy": ["Forced-colors rules in odd-button, odd-input, odd-card"],
-      "baseline": "Control boundaries use system colours in forced-colors mode; no forced-color-adjust opt-out is used.",
+      "baseline": "Control boundaries use system colours in forced-colors mode; the only forced-color-adjust opt-out is for user colour data in odd-color-picker (see forced-color-adjust).",
       "tests": [
         {
           "file": "e2e/css-compat.spec.ts",
