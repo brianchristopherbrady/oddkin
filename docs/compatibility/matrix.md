@@ -295,7 +295,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/activity/activity.styles.js (activityStyles)` | yes | 29 |
 | `packages/ai/dist/ai-label/ai-label.styles.js (aiLabelStyles)` | yes | 25 |
 | `packages/ai/dist/artifact/artifact.recipe.styles.js (artifactRecipeStyles)` | yes | 12 |
-| `packages/ai/dist/artifact/artifact.styles.js (artifactStyles)` | yes | 35 |
+| `packages/ai/dist/artifact/artifact.styles.js (artifactStyles)` | yes | 36 |
 | `packages/ai/dist/change-review/change-review.recipe.styles.js (changeReviewRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/change-review/change-review.styles.js (changeReviewStyles)` | yes | 36 |
 | `packages/ai/dist/checkpoint/checkpoint.recipe.styles.js (checkpointRecipeStyles)` | yes | 7 |
@@ -303,11 +303,11 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/citation/citation.recipe.styles.js (citationRecipeStyles)` | yes | 7 |
 | `packages/ai/dist/citation/citation.styles.js (citationStyles)` | yes | 45 |
 | `packages/ai/dist/context-picker/context-picker.recipe.styles.js (contextPickerRecipeStyles)` | yes | 13 |
-| `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 36 |
+| `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 37 |
 | `packages/ai/dist/conversation/conversation.recipe.styles.js (conversationRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/conversation/conversation.styles.js (conversationStyles)` | yes | 51 |
 | `packages/ai/dist/inline-assist/inline-assist.recipe.styles.js (inlineAssistRecipeStyles)` | yes | 13 |
-| `packages/ai/dist/inline-assist/inline-assist.styles.js (inlineAssistStyles)` | yes | 30 |
+| `packages/ai/dist/inline-assist/inline-assist.styles.js (inlineAssistStyles)` | yes | 31 |
 | `packages/ai/dist/internal/ai-element.recipe.styles.js (aiElementRecipeStyles)` | yes | 11 |
 | `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 46 |
 | `packages/ai/dist/message/message.recipe.styles.js (messageRecipeStyles)` | yes | 12 |
