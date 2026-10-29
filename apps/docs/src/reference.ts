@@ -61,11 +61,10 @@ interface ExampleValues {
   slots: Json;
 }
 
-/** An authored example's values, when it needs no fixture and is not an incorrect one. */
+/** An authored example's values, when it needs no fixture. */
 function exampleValues(example: Json | undefined): ExampleValues | undefined {
   const definition = isRecord(example?.['definition']) ? example['definition'] : undefined;
   if (!definition || definition['hasFixture'] === true) return undefined;
-  if (isRecord(definition['incorrect']) || isRecord(example?.['incorrect'])) return undefined;
   const record = (value: unknown) => (isRecord(value) ? value : {});
   return {
     attributes: record(definition['attributes']),
@@ -74,21 +73,29 @@ function exampleValues(example: Json | undefined): ExampleValues | undefined {
   };
 }
 
+const incorrect = (example: Json) =>
+  isRecord(example['incorrect']) ||
+  (isRecord(example['definition']) && isRecord(example['definition']['incorrect']));
+
+/** A preview never opens an overlay over the page. */
+const opensNothing = (values: ExampleValues | undefined) =>
+  values && values.properties['open'] !== true && !('open' in values.attributes)
+    ? values
+    : undefined;
+
 const defaultValues = (page: ComponentPageData) =>
   exampleValues(page.examples.find((entry) => entry['name'] === 'default'));
 
 /**
- * A catalog card's values: the `default` example, or else the first authored example that needs
- * no fixture (fixtures run only in the test runner) and opens nothing (a card never opens an
- * overlay).
+ * A catalog card's values: the `default` example, or else the first correct authored example
+ * that needs no fixture (fixtures run only in the test runner) and opens nothing.
  */
 export const previewValues = (page: ComponentPageData) =>
   defaultValues(page) ??
   page.examples
+    .filter((example) => !incorrect(example))
     .map(exampleValues)
-    .find(
-      (values) => values && values.properties['open'] !== true && !('open' in values.attributes),
-    );
+    .find(opensNothing);
 
 /**
  * A component's example as an element (its `default` unless `values` are given): its registration
@@ -120,41 +127,61 @@ export async function exampleElement(
   return element;
 }
 
-/** Builds a component's preview example in `host`. */
-async function renderPreview(host: HTMLElement, index: WorkbenchIndex, entry: PageEntry) {
-  const page = await loadComponent(index, entry.id.replace(/^components\//, ''));
-  const values = page && previewValues(page);
-  const element = page && values && (await exampleElement(page, { values }));
-  if (element) host.replaceChildren(element);
+/** Inert hosts, one per key, that build their content when they first scroll into view. */
+function lazyHosts(className: string) {
+  const hosts = new Map<string, HTMLElement>();
+  const pending = new Map<Element, () => Promise<void>>();
+  const observer = new IntersectionObserver((records) => {
+    for (const record of records) {
+      const build = pending.get(record.target);
+      if (!record.isIntersecting || !build) continue;
+      pending.delete(record.target);
+      observer.unobserve(record.target);
+      build().catch(reportError);
+    }
+  });
+  return (key: string, render: () => Promise<Node | undefined>): HTMLElement => {
+    let host = hosts.get(key);
+    if (!host) {
+      const created = document.createElement('div');
+      created.className = className;
+      created.inert = true;
+      hosts.set(key, created);
+      pending.set(created, async () => {
+        const element = await render();
+        if (element) created.replaceChildren(element);
+      });
+      observer.observe(created);
+      host = created;
+    }
+    return host;
+  };
 }
 
 /**
- * Live previews for the catalog's cards: each component's default example, built when its card
- * first scrolls into view. Previews are inert: the card's link is its only stop.
+ * Live previews for the catalog's cards: each component's preview example. Inert: the card's
+ * link is its only stop.
  */
 export function catalogPreviews(index: WorkbenchIndex): (entry: PageEntry) => Node | undefined {
-  const hosts = new Map<string, HTMLElement>();
-  const pending = new Map<Element, PageEntry>();
-  const observer = new IntersectionObserver((records) => {
-    for (const record of records) {
-      const entry = pending.get(record.target);
-      if (!record.isIntersecting || !entry) continue;
-      pending.delete(record.target);
-      observer.unobserve(record.target);
-      renderPreview(record.target as HTMLElement, index, entry).catch(reportError);
-    }
-  });
-  return (entry) => {
-    if (entry.kind !== 'component') return undefined;
-    let host = hosts.get(entry.id);
-    if (!host) {
-      host = document.createElement('div');
-      host.className = 'catalog-preview';
-      host.inert = true;
-      hosts.set(entry.id, host);
-      pending.set(host, entry);
-      observer.observe(host);
-    }
-    return host;
+  const host = lazyHosts('catalog-preview');
+  return (entry) =>
+    entry.kind === 'component'
+      ? host(entry.id, async () => {
+          const page = await loadComponent(index, entry.id.replace(/^components\//, ''));
+          const values = page && previewValues(page);
+          return page && values ? exampleElement(page, { values }) : undefined;
+        })
+      : undefined;
+}
+
+/**
+ * Specimens for the example cards of a reference page (`example:<tag>/<name>`): the example's
+ * element, for examples that need no fixture and open nothing; other cards show no specimen.
+ */
+export function examplePreviews(): (page: ComponentPageData, id: string) => Node | undefined {
+  const host = lazyHosts('example-preview');
+  return (page, id) => {
+    const values = opensNothing(exampleValues(page.examples.find((e) => e['id'] === id)));
+    return values ? host(id, () => exampleElement(page, { values })) : undefined;
   };
 }

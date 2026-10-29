@@ -163,6 +163,11 @@
   padding: var(--odd-space-lg);
 }
 
+/* The header does not stick, so a section reached from the panel's page links lands near the top. */
+oddkin-component-panel {
+  --oddkin-panel-scroll-margin: var(--odd-space-lg);
+}
+
 .nav-group,
 .nav-heading {
   margin: 0;

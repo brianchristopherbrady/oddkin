@@ -4179,3 +4179,22 @@ Design source: Figma NavigationItem, State=Current (5:749; the instance in Docs/
 | Types, lint, size | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Pass; pass (the frame's canvas rule recorded in check-page-layout.mjs); component panel 30,997 B of 32,768, shell 54,117 of 55,296, frame 6,938 |
 
 **Not verified:** the docs site (Agent 3 sets `layout`, `examplePreview`, and the section visibility, then verifies against the Figma frame), and examples whose default needs a fixture (the frame runs no fixtures yet; next item).
+
+## 2026-10-29 — Docs component pages on the reference layout (Figma 20:2190; round 10, Agent 3)
+
+Design source: Figma `zF87qftdRznmJJezxy23gd` 20:2190 (1440 × 3394) and the interactive example 33:6755, screenshots retrieved 2026-10-29 (`.agent-notes/oddkin-docs/figma/page-20-2190-*.png`). Rendered: `/components/odd-button`, Chromium 1440 × 1000, light, docs dev server (`.agent-notes/oddkin-docs/after/button-page-*.png`).
+
+| Check (the owner's list) | Command | Result |
+| --- | --- | --- |
+| Page order | browser, the panel's h2s | Overview, Interactive example (heading visually hidden), Source and package, States and examples, Reference, Accessibility, Known limitations; section links Overview, Controls, Examples, Accessibility |
+| Source and package below the interactive section, no border | the same | After the example; the section has no border (0px none) on the sunken surface, rgb(240, 239, 243); four cards and the Register row each have their own border |
+| Overview cards, token sections, old Source section, long examples list | the same | Gone: Tokens and Guidance hidden by `apps/docs/oddkin.docs.ts`; the layout has no Event log or presets; four example cards then "Show all 11 examples" |
+| Controls region | the same | `region` "Controls and API", `tabindex=0`, max-block-size 552 px, overflow-y auto, 552 tall with 2,597 px of content |
+| The specimen stays visible while the table scrolls | scrollTop 0 → 400 | The preview frame (224 px tall) did not move |
+| Controls update the specimen and the code | select appearance "primary"; type "Build something" in "default slot text"; Reset | The frame's odd-button became `appearance="primary"`, then read "Build something"; the generated HTML followed each change (`<odd-button appearance="primary"> Build something </odd-button>`); Reset restored `secondary` "Save" |
+| Keyboard | Tab from Reset | Reset → the preview frame → the Controls and API region (2 px solid outline in action colour, :focus-visible) → the first select; PageDown scrolls the region (469 px) |
+| No horizontal page overflow | widths 390, 768, 1024 | Document scroll width equals its client width at each; the table scrolls inside its region |
+| Example cards | the same | Live inert specimens: Save, Continue, Cancel, Delete (disabled) |
+| Docs e2e, three engines | `e2e/docs.spec.ts`, `e2e/docs-site.spec.ts` (E2E lock) | 36 passed (4.0 min); the journey checks the section links, the h2 order, the region, and a live card specimen; the layout guide's headings are matched exactly, since the embedded panel has a "declarative" example heading of its own (Agent 2's docs.spec.ts:62 note) |
+| Typecheck, docs tests, layout and format | `npm run typecheck`; `npx vitest run tests/docs`; `node scripts/check-page-layout.mjs`; `npx prettier --check apps/docs e2e/docs.spec.ts` | Pass; 25 passed; 0 unlisted (the frame centres with `odd-cluster`); formatted |
+| Remaining differences from Figma (the panel's styles; reported to Agent 2) | comparison of the slices | Section headings 20 px (Figma 24); the section links and the example title 16 px regular (Figma UI 14 / 500); selects show "(unset)" instead of the current value and use the native chevron; switches carry an "absent" label; the start and end slots are text fields (Figma: a switch with the Oddkin plus icon, and "Empty · optional content"); the caption sits below the 224 px canvas rather than inside it. Agent 2's own deviations: property descriptions under the names, no A11y group in the table |

@@ -1,5 +1,6 @@
-/* The preview frame of the reference pages (frame.html): the Workbench frame harness, with the
-   previewed element centred on the specimen surface. */
+/* The preview frame of the reference pages (frame.html): the Workbench frame harness and its
+   canvas (packages/workbench/src/node/html.ts), the previewed element centred on the specimen
+   surface. */
 html,
 body {
   margin: 0;
@@ -7,13 +8,20 @@ body {
 }
 body {
   container: preview-frame / inline-size;
-  background: var(--odd-color-surface-specimen, Canvas);
+  background: var(--odd-color-canvas, Canvas);
   color: var(--odd-color-text-primary, CanvasText);
   font-family: var(--odd-font-family-sans, system-ui);
 }
+/* main is an odd-cluster: the component, or what its fixture mounts, wraps centred on the canvas. */
 [data-oddkin-preview] {
+  justify-content: center;
   min-block-size: 100vh;
   padding: var(--odd-space-md, 1rem);
   box-sizing: border-box;
+  background: var(--odd-color-surface-specimen, transparent);
   container: preview / inline-size;
+}
+[data-oddkin-preview]:has(> [data-oddkin-specimen]) {
+  display: block;
+  background: none;
 }

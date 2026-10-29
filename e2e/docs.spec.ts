@@ -57,10 +57,15 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(page.getByRole('heading', { name: 'Side navigation', exact: true })).toBeVisible({
     timeout: catalogLoad,
   });
-  await expect(page.getByRole('heading', { name: 'Recipe and regions' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Data-driven' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Declarative' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Hybrid composition' })).toBeVisible();
+  // The embedded panel has example headings of its own ("declarative"): match the guide's exactly.
+  await expect(
+    page.getByRole('heading', { name: 'Recipe and regions', exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Data-driven', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Declarative', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Hybrid composition', exact: true }),
+  ).toBeVisible();
   await expect(
     page.locator('pre').filter({ hasText: '<odd-side-nav id="sections"' }),
   ).toContainText('slot="footer"');
@@ -115,6 +120,26 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(
     page.frameLocator('oddkin-component-panel iframe').first().locator('odd-button'),
   ).toHaveText('Save', { timeout: catalogLoad });
+  // The documentation layout (Figma 20:2190): section links, one scrolling controls region, and
+  // no token or usage sections; example cards show live elements.
+  await expect(
+    buttonPanel.getByRole('navigation', { name: 'Page sections' }).getByRole('link'),
+  ).toHaveText(['Overview', 'Controls', 'Examples', 'Accessibility']);
+  await expect(buttonPanel.getByRole('heading', { level: 2 })).toHaveText([
+    'Overview',
+    'Interactive example',
+    'Source and package',
+    'States and examples',
+    'Reference',
+    'Accessibility',
+    'Known limitations',
+  ]);
+  const controls = buttonPanel.getByRole('region', { name: 'Controls and API' });
+  await expect(controls).toHaveAttribute('tabindex', '0');
+  await expect(controls).toHaveCSS('overflow-y', 'auto');
+  const specimen = buttonPanel.locator('.example-preview').first();
+  await specimen.scrollIntoViewIfNeeded();
+  await expect(specimen.locator('odd-button')).toHaveText('Save');
 
   // Foundations are authored pages; their tables and swatches come from the tokens inspection.
   await primary.getByRole('link', { name: 'Foundations' }).click();
