@@ -55,11 +55,17 @@ export const catalogGroups = (index: WorkbenchIndex): string[] => [
 export const sourcePath = (page: { package: string; module: string }): string =>
   `packages/${page.package.replace(/^@oddkin\//, '')}/${page.module.replace(/^dist\//, 'src/').replace(/\.js$/, '.ts')}`;
 
-/** The values of a component's `default` example, when it has some and needs no fixture. */
-function defaultExample(page: ComponentPageData) {
-  const example = page.examples.find((entry) => entry['name'] === 'default');
+interface ExampleValues {
+  attributes: Json;
+  properties: Json;
+  slots: Json;
+}
+
+/** An authored example's values, when it needs no fixture and is not an incorrect one. */
+function exampleValues(example: Json | undefined): ExampleValues | undefined {
   const definition = isRecord(example?.['definition']) ? example['definition'] : undefined;
   if (!definition || definition['hasFixture'] === true) return undefined;
+  if (isRecord(definition['incorrect']) || isRecord(example?.['incorrect'])) return undefined;
   const record = (value: unknown) => (isRecord(value) ? value : {});
   return {
     attributes: record(definition['attributes']),
@@ -68,16 +74,32 @@ function defaultExample(page: ComponentPageData) {
   };
 }
 
+const defaultValues = (page: ComponentPageData) =>
+  exampleValues(page.examples.find((entry) => entry['name'] === 'default'));
+
 /**
- * A component's default example as an element: its registration loaded, then its attributes,
- * properties, and (unless `slots` is false) slot text. Undefined when it has no such example.
+ * A catalog card's values: the `default` example, or else the first authored example that needs
+ * no fixture (fixtures run only in the test runner) and opens nothing (a card never opens an
+ * overlay).
+ */
+export const previewValues = (page: ComponentPageData) =>
+  defaultValues(page) ??
+  page.examples
+    .map(exampleValues)
+    .find(
+      (values) => values && values.properties['open'] !== true && !('open' in values.attributes),
+    );
+
+/**
+ * A component's example as an element (its `default` unless `values` are given): its registration
+ * loaded, then its attributes, properties, and (unless `slots` is false) slot text. Undefined
+ * when it has no such example.
  */
 export async function exampleElement(
   page: ComponentPageData,
-  { slots = true }: { slots?: boolean } = {},
+  { slots = true, values = defaultValues(page) }: { slots?: boolean; values?: ExampleValues } = {},
 ): Promise<HTMLElement | undefined> {
   const registration = page.enrichment?.['registration'];
-  const values = defaultExample(page);
   if (typeof registration !== 'string' || !values) return undefined;
   await import(registration);
   const element = document.createElement(page.tag);
@@ -98,10 +120,11 @@ export async function exampleElement(
   return element;
 }
 
-/** Builds a component's default example in `host`. */
+/** Builds a component's preview example in `host`. */
 async function renderPreview(host: HTMLElement, index: WorkbenchIndex, entry: PageEntry) {
   const page = await loadComponent(index, entry.id.replace(/^components\//, ''));
-  const element = page && (await exampleElement(page));
+  const values = page && previewValues(page);
+  const element = page && values && (await exampleElement(page, { values }));
   if (element) host.replaceChildren(element);
 }
 

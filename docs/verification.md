@@ -4148,3 +4148,12 @@ Design source: Figma NavigationItem, State=Current (5:749; the instance in Docs/
 | Component browser tests, three engines | `npx vitest run --project browser` side-nav, side-nav scopes, tree, picker, and both Figma parity files | 880 passed, 23 skipped (18 files). The tests read the marker from `::before` now (colour, width, inline side in RTL, forced colours Highlight); the parity helper compares the Figma bar's fill with it |
 | Side-nav e2e | `e2e/side-nav.spec.ts`, three engines (E2E lock) | 18 passed; the handwritten example (`examples/side-nav/hand.css`) draws the same bar and still computes the same styles at every width |
 | Node tests, compatibility, size | `npx vitest run --project node tests/examples packages/components/test`; `npm run compat`; `node scripts/check-size.mjs` | 622 passed; 0 problems (matrix regenerated); components:side-nav 1,138 B (was 1,070), components:shared 3,091 B (was 3,052, budget raised to 3,136 with the measurement) |
+
+## 2026-10-28 — Docs catalog previews without fixtures (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Empty previews, before | browser (Chromium, 1440 × 900) on `/components`, each `.catalog-preview` scrolled into view | 25 of 54 empty: every one has a `default` example with `hasFixture: true` (`/_oddkin/` page data), which the catalog skipped |
+| Previews, after | the same | 37 of 54 filled; no page errors. Newly filled from the first correct fixture-free example without `open`: Select and Segmented control, Listbox, and Radio group (`fromData`), Pagination (`fewPages`), Breadcrumbs (`collapsed`), Empty state (`noResults`), Icon (`fromUrl`). Still empty, only fixture examples: Command palette, Menu, Split button, Toolbar, Checkbox group, Validation summary, Container, Scroll region, Split panel, Carousel, Tab panel, Tabs, Dialog, Drawer, Popover, Toast, Tooltip |
+| The fallback's rule | `npx vitest run tests/docs` | 25 passed; `catalog previews` checks the default first, then skips fixture, incorrect, and `open` examples |
+| Known issue, not docs | the Segmented control card | Its `Medium` segment wraps: the track's `flex: 1 1 0` segments share the sum of their widths equally in a shrink-to-fit parent (the card centres its preview), so the longest label gets less than it needs. Reported to Agent 1 with a fix (an equal-column grid track) |

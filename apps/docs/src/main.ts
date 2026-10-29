@@ -309,7 +309,7 @@ function renderComponents(main: HTMLElement, index: WorkbenchIndex, filter: Cata
     pageHeader(
       'Reference',
       'Component catalog',
-      'Every published component, with a live example of its documented default. Each reference page has the full API, an interactive example, and the generated code.',
+      'Every published component, with a live example where one needs no setup script. Each reference page has the full API, an interactive example, and the generated code.',
     ),
   );
   const panel = document.createElement('oddkin-catalog-panel');

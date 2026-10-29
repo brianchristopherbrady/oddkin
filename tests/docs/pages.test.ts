@@ -10,6 +10,7 @@ import {
   renderDocument,
   renderPage,
 } from '../../apps/docs/src/pages/index.js';
+import { previewValues } from '../../apps/docs/src/reference.js';
 
 // The authored docs pages (apps/docs/src/pages) as the docs server renders them: every internal
 // link reaches a page, every fact is generated, and every code sample says how it is verified
@@ -327,5 +328,30 @@ describe('the docs shell', async () => {
     for (const page of pages.filter((p) => p.parent === 'getting-started'))
       expect(main).toContain(`href="/${page.path}"`);
     expect(main).not.toContain('undefined');
+  });
+});
+
+describe('catalog previews', () => {
+  const example = (name: string, definition: Record<string, unknown>) => ({ name, definition });
+  const page = (...examples: ReturnType<typeof example>[]) =>
+    ({ examples }) as unknown as Parameters<typeof previewValues>[0];
+
+  it('use the default example, or else the first correct one that needs no fixture and opens nothing', () => {
+    const options = { props: { options: [{ value: 'a', label: 'A' }] } };
+    expect(previewValues(page(example('default', { props: { label: 'Role' } })))).toEqual({
+      attributes: {},
+      properties: { label: 'Role' },
+      slots: {},
+    });
+    const fallback = previewValues(
+      page(
+        example('default', { hasFixture: true }),
+        example('wrong', { ...options, incorrect: { explanation: 'No.' } }),
+        example('open', { props: { open: true } }),
+        example('fromData', options),
+      ),
+    );
+    expect(fallback?.properties).toEqual(options.props);
+    expect(previewValues(page(example('default', { hasFixture: true })))).toBeUndefined();
   });
 });
