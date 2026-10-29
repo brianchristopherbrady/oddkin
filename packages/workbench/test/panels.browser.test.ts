@@ -92,6 +92,16 @@ const probeCem: CemPackage = {
           events: [{ name: 'wb-ping', type: { text: 'CustomEvent' }, description: 'Pinged.' }],
           slots: [{ name: '', description: 'Content.' }, { name: 'end' }],
           cssParts: [{ name: 'control', description: 'The control.' }],
+          cssProperties: [
+            {
+              name: '--wb-probe-accent',
+              syntax: '<color>',
+              default: 'rebeccapurple',
+              description: 'Accent.',
+            },
+            { name: '--wb-probe-gap' },
+            { name: 'color', description: 'Declared without the dashes.' },
+          ],
         },
       ],
     },
@@ -631,6 +641,64 @@ describe('<oddkin-component-panel>', () => {
     expect(third.root.querySelector('.wb-status')?.textContent).toContain(
       'Ignored property "secret"',
     );
+  });
+
+  it('sets CSS custom properties as the reader types; the code and the link carry them', async () => {
+    const first = componentPanel();
+    await until(() => !!first.probe()?.isConnected, 'the probe preview');
+    const css = (name: string) => first.root.querySelector(`tr[data-css="${name}"]`)!;
+    // In the example's controls, with the syntax and default the manifest declares.
+    expect(css('--wb-probe-accent').closest('section')?.id).toBe('interactive-example');
+    expect(css('--wb-probe-accent').querySelector('th small')?.textContent).toBe('<color>');
+    expect(
+      css('--wb-probe-accent').querySelector('[data-label="Default"]')?.textContent?.trim(),
+    ).toBe('rebeccapurple');
+    expect(css('--wb-probe-gap').textContent).toContain('Not documented');
+    expect(css('color').querySelector('input')).toBeNull();
+    expect(css('color').textContent).toContain('Not editable: not a custom property name.');
+    const field = css('--wb-probe-accent').querySelector<HTMLInputElement>('input')!;
+    const unset = css('--wb-probe-accent').querySelector('button')!;
+    expect(unset.disabled).toBe(true);
+    for (const text of ['t', 'teal']) {
+      field.value = text;
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    const accent = () => first.probe()!.style.getPropertyValue('--wb-probe-accent');
+    await until(() => accent() === 'teal', 'the typed value');
+    // A style, not a property or an attribute write.
+    expect(first.probe()!.writes).toEqual([]);
+    expect(first.panel.previewState.styles).toEqual({ '--wb-probe-accent': 'teal' });
+    await settled();
+    expect(unset.disabled).toBe(false);
+    first.root.querySelector<HTMLButtonElement>('button[aria-controls="wb-example-code"]')!.click();
+    await settled();
+    expect(first.root.querySelector('.wb-snippet')?.textContent).toContain(
+      'element.style.setProperty("--wb-probe-accent", "teal");',
+    );
+
+    [...first.root.querySelectorAll('button')]
+      .find((b) => b.textContent === 'Copy example link')!
+      .click();
+    await until(
+      () => !!first.root.querySelector<HTMLInputElement>('input[type="url"]')?.value,
+      'the link',
+    );
+    const link = first.root.querySelector<HTMLInputElement>('input[type="url"]')!.value;
+    // Unset removes the value from the element and the state.
+    unset.click();
+    await until(() => accent() === '', 'the removed value');
+    expect(first.panel.previewState.styles).toEqual({});
+    await settled();
+    expect(field.value).toBe('');
+    first.panel.remove();
+
+    history.replaceState(null, '', link);
+    const second = componentPanel();
+    await until(() => !!second.probe()?.isConnected, 'the shared preview');
+    expect(second.probe()!.style.getPropertyValue('--wb-probe-accent')).toBe('teal');
+    expect(
+      second.root.querySelector<HTMLInputElement>('tr[data-css="--wb-probe-accent"] input')!.value,
+    ).toBe('teal');
   });
 
   it('shows light and dark side by side and releases every frame and scope when removed', async () => {

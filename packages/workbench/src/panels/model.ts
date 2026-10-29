@@ -5,7 +5,12 @@
  * labelled "requires fixture", never guessed.
  */
 import type { ComponentPageData, JsonObject } from '../data/types.js';
-import { isJsonValue, type FrameSettings, type JsonValue } from '../protocol/index.js';
+import {
+  isCustomPropertyName,
+  isJsonValue,
+  type FrameSettings,
+  type JsonValue,
+} from '../protocol/index.js';
 
 export type ControlKind =
   'boolean' | 'enum' | 'string' | 'number' | 'json' | 'readonly' | 'fixture';
@@ -36,7 +41,10 @@ export interface ApiRow {
 export interface NamedEntry {
   readonly name: string;
   readonly description?: string;
+  /** The CEM type text, or a CSS custom property's `syntax`. */
   readonly type?: string;
+  /** The CEM `default` (CSS custom properties). */
+  readonly default?: string;
 }
 
 export interface ComponentFacts {
@@ -58,6 +66,8 @@ export interface PreviewState {
   readonly attributes: Readonly<Record<string, string>>;
   readonly properties: Readonly<Record<string, JsonValue>>;
   readonly slots: Readonly<Record<string, string>>;
+  /** CSS custom property values on the element, by name (`--odd-button-background`). */
+  readonly styles?: Readonly<Record<string, string>>;
 }
 
 export interface PresetEntry {
@@ -197,8 +207,17 @@ export function componentFacts(page: ComponentPageData): ComponentFacts {
       const name = typeof entry['name'] === 'string' ? entry['name'] : undefined;
       if (name === undefined) return [];
       const description = text(entry['description']);
-      const type = text(isRecord(entry['type']) ? entry['type']['text'] : undefined);
-      return [{ name, ...(description ? { description } : {}), ...(type ? { type } : {}) }];
+      const type =
+        text(isRecord(entry['type']) ? entry['type']['text'] : undefined) ?? text(entry['syntax']);
+      const fallback = text(entry['default']);
+      return [
+        {
+          name,
+          ...(description ? { description } : {}),
+          ...(type ? { type } : {}),
+          ...(fallback ? { default: fallback } : {}),
+        },
+      ];
     });
   const methods = named(
     list(declaration['members']).filter(
@@ -433,11 +452,16 @@ export function pageCoverage(page: ComponentPageData): CoverageItem[] {
     'No properties or attributes are declared.',
     'interactive-example',
   );
-  declared('api/slots', facts.slots, 'None declared.', 'interactive-example');
+  declared('api/slots', facts.slots, 'No slots are declared.', 'interactive-example');
+  declared(
+    'api/css-properties',
+    facts.cssProperties,
+    'No CSS custom properties are declared.',
+    'interactive-example',
+  );
   declared('api/events', facts.events, 'None declared.');
   declared('api/methods', facts.methods, 'None declared.');
   declared('api/parts', facts.parts, 'None declared.');
-  declared('api/css-properties', facts.cssProperties, 'None declared.');
   declared('api/css-states', facts.cssStates, 'None declared.');
   documented('examples/examples', entries.length > 0, EXAMPLES_SOURCE);
   const mappings = list(enrichment['styleMappings']);
@@ -514,11 +538,14 @@ export function snippet(
       `  // No registration entry is published for <${page.tag}>; import its define module.`,
     );
   const properties = Object.entries(state.properties);
+  const styles = Object.entries(state.styles ?? {});
   const events = options.events ?? componentFacts(page).events.map((e) => e.name);
-  if (properties.length || events.length) {
+  if (properties.length || styles.length || events.length) {
     lines.push('', `  const element = document.querySelector('${page.tag}');`);
     for (const [name, value] of properties)
       lines.push(`  element.${name} = ${JSON.stringify(value)};`);
+    for (const [name, value] of styles)
+      lines.push(`  element.style.setProperty(${JSON.stringify(name)}, ${JSON.stringify(value)});`);
     for (const name of events)
       lines.push(
         `  element.addEventListener('${name}', (event) => console.log(event.type, event.detail));`,
@@ -552,6 +579,8 @@ export interface SharePayload {
   readonly attributes?: Readonly<Record<string, string>>;
   /** Slot text by slot name; the default slot is `default`. */
   readonly slots?: Readonly<Record<string, string>>;
+  /** CSS custom property values by name. */
+  readonly styles?: Readonly<Record<string, string>>;
   readonly preview?: SharePreview;
 }
 
@@ -583,6 +612,7 @@ export function sharePayload(
     ...(Object.keys(state.properties).length ? { props: state.properties } : {}),
     ...(Object.keys(state.attributes).length ? { attributes: state.attributes } : {}),
     ...(Object.keys(slots).length ? { slots } : {}),
+    ...(Object.keys(state.styles ?? {}).length ? { styles: state.styles } : {}),
     ...(preview ? { preview } : {}),
   };
 }
@@ -617,6 +647,9 @@ export function decodeShare(
   );
   const attributes = new Set(facts.rows.flatMap((r) => (r.attribute ? [r.attribute] : [])));
   const slots = new Set(facts.slots.map((s) => s.name || 'default'));
+  const cssProperties = new Set(
+    facts.cssProperties.map((p) => p.name).filter((name) => isCustomPropertyName(name)),
+  );
   const problems: string[] = [];
   const pick = <T>(
     source: unknown,
@@ -637,12 +670,14 @@ export function decodeShare(
   for (const [name, text] of Object.entries(pick(value['slots'], slots, isString, 'slot')))
     slotText[name === 'default' ? '' : name] = text;
   const preview = isRecord(value['preview']) ? sanitizePreview(value['preview']) : undefined;
+  const styles = pick(value['styles'], cssProperties, isString, 'CSS custom property');
   return {
     state: {
       preset: typeof value['preset'] === 'string' ? value['preset'] : 'default',
       attributes: pick(value['attributes'], attributes, isString, 'attribute'),
       properties: pick(value['props'], properties, isJsonValue, 'property'),
       slots: slotText,
+      ...(Object.keys(styles).length ? { styles } : {}),
     },
     ...(preview ? { preview } : {}),
     problems,

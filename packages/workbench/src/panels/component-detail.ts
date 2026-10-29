@@ -14,7 +14,12 @@ import {
   PreviewFrameError,
   type IsolatedPreview,
 } from '../preview/frame.js';
-import type { FrameNotification, FrameSettings, JsonValue } from '../protocol/index.js';
+import {
+  isCustomPropertyName,
+  type FrameNotification,
+  type FrameSettings,
+  type JsonValue,
+} from '../protocol/index.js';
 import {
   authoredValues,
   componentFacts,
@@ -281,6 +286,7 @@ export class ComponentDetailElement extends OddkinElement.with({
       properties: state.properties,
       attributes: state.attributes,
       slots: state.slots,
+      styles: state.styles ?? {},
       events: facts.events.map((event) => event.name),
       sync: facts.syncPairs,
       settings: this.#frameSettings(index),
@@ -447,6 +453,16 @@ export class ComponentDetailElement extends OddkinElement.with({
     const state = this.#state.peek();
     this.#state.value = { ...state, slots: { ...state.slots, [name]: text } };
     this.#send('slot', { name, text });
+  }
+
+  /** A CSS custom property on the element's style; `null` removes it. */
+  #writeStyle(name: string, value: string | null): void {
+    const state = this.#state.peek();
+    const styles = { ...state.styles };
+    if (value === null) delete styles[name];
+    else styles[name] = value;
+    this.#state.value = { ...state, styles };
+    this.#send('set', { cssProperty: name, cssValue: value });
   }
 
   /** Mount the current state again in the existing frames (a clean instance, same realm). */
@@ -863,6 +879,7 @@ export class ComponentDetailElement extends OddkinElement.with({
             <h3>Controls and API</h3>
             ${at('api/properties', () => this.#apiTable(facts))}
             ${at('api/slots', () => this.#slots(facts))}
+            ${at('api/css-properties', () => this.#cssTable(facts))}
           </div>
         </div>
         <div class="wb-example-code" id="wb-example-code" ?hidden=${!code}>
@@ -913,10 +930,12 @@ export class ComponentDetailElement extends OddkinElement.with({
     return html`${
         inExample
           ? html`<p class="wb-muted">
-              Properties, attributes, and slots are in the interactive example's controls above.
+              Properties, attributes, slots, and CSS custom properties are in the interactive
+              example's controls above.
             </p>`
           : html`${at('api/properties', () => this.#apiTable(facts))}
-            ${at('api/slots', () => this.#slots(facts))}`
+            ${at('api/slots', () => this.#slots(facts))}
+            ${at('api/css-properties', () => this.#cssTable(facts))}`
       }
       <h3>Events</h3>
       ${at('api/events', () => this.#namedTable(facts.events, 'events', 'Event', true))}
@@ -931,10 +950,6 @@ export class ComponentDetailElement extends OddkinElement.with({
       )}
       <h3>CSS parts</h3>
       ${at('api/parts', () => this.#namedTable(facts.parts, 'parts', 'Part', false))}
-      <h3>CSS custom properties</h3>
-      ${at('api/css-properties', () =>
-        this.#namedTable(facts.cssProperties, 'css-properties', 'Property', false),
-      )}
       <h3>Custom states</h3>
       ${at('api/css-states', () => this.#namedTable(facts.cssStates, 'states', 'State', false))}`;
   }
@@ -1239,48 +1254,104 @@ export class ComponentDetailElement extends OddkinElement.with({
       ${error ? html`<p class="wb-error" role="alert">${error}</p>` : nothing}`;
   }
 
-  #slots(facts: ComponentFacts) {
-    const state = this.#state.value;
+  /** One group of the example's controls: a four-column table under a group row. */
+  #group(id: string, label: string, caption: string, heads: readonly string[], rows: unknown) {
     return html`<div class="wb-table-wrap">
-      <table class="wb-stack wb-api" data-table="slots">
+      <table class="wb-stack wb-api" data-table=${id}>
         <caption class="wb-visually-hidden">
-          Slots: text content written into the preview.
+          ${caption}
         </caption>
         <thead class="wb-visually-hidden">
           <tr>
-            <th scope="col">Slot</th>
-            <th scope="col">Description</th>
-            <th scope="col">Default</th>
-            <th scope="col">Text content</th>
+            ${heads.map((head) => html`<th scope="col">${head}</th>`)}
           </tr>
         </thead>
         <tbody>
           <tr class="wb-group-row">
-            <th scope="colgroup" colspan="4">Slots</th>
+            <th scope="colgroup" colspan="4">${label}</th>
           </tr>
-          ${facts.slots.map((slot) => {
-            const label = slot.name || '(default)';
-            return html`<tr data-slot=${slot.name}>
-              <th scope="row" data-label="Slot"><code>${label}</code></th>
-              <td data-label="Description">
-                ${slot.description ? inline(slot.description) : html`<span class="wb-not-documented">Not documented</span>`}
-              </td>
-              <td data-label="Default">—</td>
-              <td data-label="Text content">
-                <input
-                  type="text"
-                  aria-label=${`${label} slot text`}
-                  .value=${state.slots[slot.name] ?? ''}
-                  @input=${(event: Event) =>
-                    this.#writeSlot(slot.name, (event.target as HTMLInputElement).value)}
-                />
-                <small>Text only; richer compositions need a fixture from defineExamples.</small>
-              </td>
-            </tr>`;
-          })}
+          ${rows}
         </tbody>
       </table>
     </div>`;
+  }
+
+  #slots(facts: ComponentFacts) {
+    const state = this.#state.value;
+    return this.#group(
+      'slots',
+      'Slots',
+      'Slots: text content written into the preview.',
+      ['Slot', 'Description', 'Default', 'Text content'],
+      facts.slots.map((slot) => {
+        const label = slot.name || '(default)';
+        return html`<tr data-slot=${slot.name}>
+          <th scope="row" data-label="Slot"><code>${label}</code></th>
+          <td data-label="Description">
+            ${slot.description ? inline(slot.description) : html`<span class="wb-not-documented">Not documented</span>`}
+          </td>
+          <td data-label="Default">—</td>
+          <td data-label="Text content">
+            <input
+              type="text"
+              aria-label=${`${label} slot text`}
+              .value=${state.slots[slot.name] ?? ''}
+              @input=${(event: Event) =>
+                this.#writeSlot(slot.name, (event.target as HTMLInputElement).value)}
+            />
+            <small>Text only; richer compositions need a fixture from defineExamples.</small>
+          </td>
+        </tr>`;
+      }),
+    );
+  }
+
+  #cssTable(facts: ComponentFacts) {
+    const styles = this.#state.value.styles ?? {};
+    return this.#group(
+      'css-properties',
+      'CSS custom properties',
+      "CSS custom properties: values set on the preview element's style.",
+      ['Property', 'Description', 'Default', 'Value'],
+      facts.cssProperties.map((entry) => {
+        const value = styles[entry.name];
+        return html`<tr data-css=${entry.name}>
+          <th scope="row" data-label="Property">
+            <code>${entry.name}</code>
+            ${entry.type ? html`<small><code>${entry.type}</code></small>` : nothing}
+          </th>
+          <td data-label="Description">
+            ${entry.description ? inline(entry.description) : html`<span class="wb-not-documented">Not documented</span>`}
+          </td>
+          <td data-label="Default">${entry.default ? html`<code>${entry.default}</code>` : '—'}</td>
+          <td data-label="Value">
+            ${
+              isCustomPropertyName(entry.name)
+                ? html`<div class="wb-cell-controls">
+                    <input
+                      type="text"
+                      aria-label=${`${entry.name} value`}
+                      placeholder="unset"
+                      .value=${value ?? ''}
+                      @input=${(event: Event) => {
+                        const text = (event.target as HTMLInputElement).value;
+                        this.#writeStyle(entry.name, text === '' ? null : text);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      ?disabled=${value === undefined}
+                      @click=${() => this.#writeStyle(entry.name, null)}
+                    >
+                      Unset
+                    </button>
+                  </div>`
+                : html`<span class="wb-muted">Not editable: not a custom property name.</span>`
+            }
+          </td>
+        </tr>`;
+      }),
+    );
   }
 
   #examples(page: ComponentPageData) {

@@ -117,6 +117,28 @@ describe('isolated preview frames', () => {
     expect(scopeStats().scopes).toBeGreaterThan(before.scopes);
   });
 
+  it('sets CSS custom properties on the element, on mount and one at a time', async () => {
+    const preview = createPreview();
+    await preview.ready;
+    await preview.request('mount', payload({ styles: { '--frame-accent': 'rgb(1, 2, 3)' } }));
+    const view = preview.iframe.contentWindow!;
+    const element = preview.iframe.contentDocument!.querySelector<HTMLElement>('fixture-button')!;
+    expect(view.getComputedStyle(element).getPropertyValue('--frame-accent')).toBe('rgb(1, 2, 3)');
+
+    await preview.request('set', { cssProperty: '--frame-gap', cssValue: '2px' });
+    expect(element.style.getPropertyValue('--frame-gap')).toBe('2px');
+    await preview.request('set', { cssProperty: '--frame-accent', cssValue: 'teal' });
+    expect(element.style.getPropertyValue('--frame-accent')).toBe('teal');
+    await preview.request('set', { cssProperty: '--frame-accent', cssValue: null });
+    expect(element.style.getPropertyValue('--frame-accent')).toBe('');
+    expect(element.style.getPropertyValue('--frame-gap')).toBe('2px');
+    // Only custom properties: anything else is refused before it reaches the frame.
+    await expect(
+      preview.request('set', { cssProperty: 'color', cssValue: 'red' } as never),
+    ).rejects.toThrow();
+    expect(element.style.getPropertyValue('color')).toBe('');
+  });
+
   it('rejects wrong sources and stale generations, isolates errors, and releases host scopes', async () => {
     const before = scopeStats();
     const protocolBefore = previewProtocolStats();

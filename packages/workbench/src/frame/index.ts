@@ -135,6 +135,9 @@ async function createPreviewElement(
     if (value === null) element.removeAttribute(name);
     else element.setAttribute(name, value);
   }
+  // Through the CSSOM: a strict style-src allows it, unlike a style attribute.
+  for (const [name, value] of Object.entries(config.styles ?? {}))
+    element.style.setProperty(name, value);
   for (const [name, text] of Object.entries(config.slots ?? {})) {
     const slot = runtime.document.createElement('span');
     if (name) slot.slot = name;
@@ -303,7 +306,12 @@ async function handle(runtime: Runtime, scope: Scope, request: FrameRequest) {
         return { mounted: request.payload.items.length };
       case 'set': {
         if (!runtime.element) throw new Error('There is no mounted component to update.');
-        if (request.payload.property !== undefined) {
+        if (request.payload.cssProperty !== undefined) {
+          const value = request.payload.cssValue;
+          if (value === null || value === undefined)
+            runtime.element.style.removeProperty(request.payload.cssProperty);
+          else runtime.element.style.setProperty(request.payload.cssProperty, value);
+        } else if (request.payload.property !== undefined) {
           if (request.payload.unset === true)
             Reflect.deleteProperty(runtime.element, request.payload.property);
           else if (Object.hasOwn(request.payload, 'value'))

@@ -343,6 +343,28 @@ test.describe('Workbench shell', () => {
       await expect(button).toHaveText('Publish');
       await expect(page.locator('#interactive-example .wb-status')).toBeEmpty();
     });
+
+    test('restyles the preview through its declared CSS custom properties', async ({ page }) => {
+      await open(page, 'components/odd-button', 'Button');
+      const button = page
+        .frameLocator('oddkin-workbench-component iframe')
+        .first()
+        .locator('odd-button');
+      await expect(button).toHaveText('Save', { timeout: 20_000 });
+      const row = page.locator('tr[data-css="--odd-button-background"]');
+      await row.getByRole('textbox').fill('rgb(1, 2, 3)');
+      const background = () =>
+        button.evaluate(
+          (el) => getComputedStyle(el.shadowRoot!.querySelector('button')!).backgroundColor,
+        );
+      await expect.poll(background, { timeout: 10_000 }).toBe('rgb(1, 2, 3)');
+      await expect(page.locator('.wb-snippet')).toContainText(
+        'element.style.setProperty("--odd-button-background", "rgb(1, 2, 3)");',
+      );
+      await row.getByRole('button', { name: 'Unset' }).click();
+      await expect.poll(background, { timeout: 10_000 }).not.toBe('rgb(1, 2, 3)');
+      await expect(page.locator('#interactive-example .wb-status')).toBeEmpty();
+    });
   });
 
   test('records startup timing', async ({ page }, testInfo) => {

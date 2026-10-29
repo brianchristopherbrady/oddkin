@@ -67,6 +67,16 @@ const page = (overrides: Partial<ComponentPageData> = {}): ComponentPageData => 
   ...overrides,
 });
 
+const shareSchema = () =>
+  new Ajv2020({ strict: true, strictRequired: false, allowUnionTypes: true }).compile(
+    JSON.parse(
+      readFileSync(
+        new URL('../../../docs/schemas/share-payload.v1.schema.json', import.meta.url),
+        'utf8',
+      ),
+    ) as object,
+  );
+
 describe('detail model', () => {
   it('splits unions at the top level only', () => {
     expect(unionMembers(`'a|b' | Map<string, 1 | 2> | { x: 1 | 2 }`)).toEqual([
@@ -167,17 +177,7 @@ describe('detail model', () => {
   });
 
   it('writes share links in the share-payload.v1 shape and validates them on the way back', () => {
-    const schema = JSON.parse(
-      readFileSync(
-        new URL('../../../docs/schemas/share-payload.v1.schema.json', import.meta.url),
-        'utf8',
-      ),
-    ) as object;
-    const validate = new Ajv2020({
-      strict: true,
-      strictRequired: false,
-      allowUnionTypes: true,
-    }).compile(schema);
+    const validate = shareSchema();
     const payload = sharePayload(
       'x-box',
       {
@@ -217,6 +217,50 @@ describe('detail model', () => {
       preview: { mode: 'dark', direction: 'rtl', width: 640 },
       problems: [],
     });
+  });
+
+  it('carries declared CSS custom properties in snippets and share links', () => {
+    const styled = page({
+      declaration: {
+        ...page().declaration,
+        cssProperties: [
+          { name: '--x-box-accent', syntax: '<color>', default: 'teal', description: 'Accent.' },
+          { name: '--x-box-gap', type: { text: 'length' } },
+          { name: 'color' },
+        ],
+      },
+    });
+    expect(componentFacts(styled).cssProperties).toEqual([
+      { name: '--x-box-accent', description: 'Accent.', type: '<color>', default: 'teal' },
+      { name: '--x-box-gap', type: 'length' },
+      { name: 'color' },
+    ]);
+    const state = { ...initialState(styled), styles: { '--x-box-accent': 'a"b' } };
+    expect(snippet(styled, state)).toContain(
+      `  element.style.setProperty("--x-box-accent", "a\\"b");`,
+    );
+    const payload = sharePayload('x-box', state);
+    expect(payload.styles).toEqual({ '--x-box-accent': 'a"b' });
+    const validate = shareSchema();
+    expect(validate(payload), JSON.stringify(validate.errors)).toBe(true);
+    expect(validate({ ...payload, styles: { color: 'red' } })).toBe(false);
+    // Only declared custom properties come back; a declared name that is not one is dropped too.
+    const decoded = decodeShare(
+      styled,
+      encodeShare({
+        ...payload,
+        styles: { ...payload.styles, '--x-box-other': '1', color: 'red' },
+      }),
+    );
+    expect(decoded.state?.styles).toEqual({ '--x-box-accent': 'a"b' });
+    expect(decoded.problems).toEqual([
+      'Ignored CSS custom property "--x-box-other".',
+      'Ignored CSS custom property "color".',
+    ]);
+    // None set: neither the link nor the state names any.
+    const plain = sharePayload('x-box', initialState(styled));
+    expect(plain).not.toHaveProperty('styles');
+    expect(decodeShare(styled, encodeShare(plain)).state).not.toHaveProperty('styles');
   });
 
   it('drops what the contract does not declare, and rejects foreign or unsupported links', () => {
@@ -303,6 +347,18 @@ describe('detail model', () => {
       'interactive-example',
     ]);
     expect(at('api/events')?.section).toBe('api');
+    expect(at('api/css-properties')).toMatchObject({
+      section: 'interactive-example',
+      state: 'none',
+      empty: 'No CSS custom properties are declared.',
+    });
+    // In page order: the example's controls come before the API's other tables.
+    expect(coverage.map((item) => item.id).slice(4, 8)).toEqual([
+      'api/properties',
+      'api/slots',
+      'api/css-properties',
+      'api/events',
+    ]);
 
     // Nothing registered and no examples: the preview, imports, presets, and examples are missing.
     const bare = states(page({ enrichment: {}, examples: [] }));

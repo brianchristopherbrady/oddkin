@@ -75,6 +75,42 @@ describe('frame protocol', () => {
     expect(isFrameMessage({ ...identity, kind: 'hello', generation: 0 })).toBe(false);
   });
 
+  it('accepts CSS custom properties by name only, on mount and one at a time', () => {
+    const mount = (styles: unknown) =>
+      isFrameRequest({
+        ...identity,
+        kind: 'mount',
+        id: 1,
+        payload: {
+          tag: 'odd-button',
+          registration: '@oddkin/components/define/button',
+          example: 'example:odd-button/primary',
+          styles,
+        },
+      });
+    expect(mount({ '--odd-button-background': 'rebeccapurple' })).toBe(true);
+    expect(mount({})).toBe(true);
+    expect(mount({ background: 'red' })).toBe(false);
+    expect(mount({ '--odd-button-background': 1 })).toBe(false);
+    expect(mount(['--odd-button-background'])).toBe(false);
+
+    const set = (payload: unknown) => isFrameRequest({ ...identity, kind: 'set', id: 2, payload });
+    expect(set({ cssProperty: '--odd-button-background', cssValue: 'red' })).toBe(true);
+    expect(set({ cssProperty: '--odd-button-background', cssValue: null })).toBe(true);
+    expect(set({ cssProperty: 'background', cssValue: 'red' })).toBe(false);
+    expect(set({ cssProperty: '--', cssValue: 'red' })).toBe(false);
+    expect(set({ cssProperty: '--a: red; --b', cssValue: 'red' })).toBe(false);
+    expect(set({ cssProperty: '--odd-button-background' })).toBe(false);
+    expect(set({ cssProperty: '--odd-button-background', cssValue: 1 })).toBe(false);
+    // One write per request: a CSS property, a property, or an attribute.
+    expect(set({ cssProperty: '--a', cssValue: 'red', property: 'label', value: 'Go' })).toBe(
+      false,
+    );
+    expect(set({ cssProperty: '--a', cssValue: 'red', attribute: 'id', attributeValue: 'a' })).toBe(
+      false,
+    );
+  });
+
   it('validates inspectPreview request limits and stable ids without executing previews', () => {
     const inspect = {
       ...identity,

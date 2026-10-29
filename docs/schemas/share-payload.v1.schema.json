@@ -18,6 +18,7 @@
         "props": { "type": "object" },
         "attributes": { "type": "object", "additionalProperties": { "type": ["string", "null"] } },
         "slots": { "type": "object", "additionalProperties": { "type": "string" } },
+        "styles": { "type": "object", "description": "CSS custom property values set on the element, by name", "propertyNames": { "pattern": "^--" }, "additionalProperties": { "type": "string" } },
         "preview": { "$ref": "#/$defs/preview" },
         "excluded": { "type": "array", "items": { "type": "string" } }
       },

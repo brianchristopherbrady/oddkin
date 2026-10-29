@@ -38,15 +38,23 @@ export interface FrameMountPayload {
    * inferred from event names.
    */
   readonly sync?: readonly { readonly property: string; readonly event: string }[];
+  /** CSS custom property values set on the element (`style.setProperty`); names start with `--`. */
+  readonly styles?: Readonly<Record<string, string>>;
   readonly settings?: FrameSettings;
 }
 
+/**
+ * One write: a property (a value, or `unset`), an attribute (a string, or `null` to remove it), or
+ * a CSS custom property on the element's style (a value, or `null` to remove it).
+ */
 export interface FrameSetPayload {
   readonly property?: string;
   readonly value?: JsonValue;
   readonly unset?: boolean;
   readonly attribute?: string;
   readonly attributeValue?: string | null;
+  readonly cssProperty?: string;
+  readonly cssValue?: string | null;
 }
 
 export interface FrameSlotPayload {
@@ -241,6 +249,9 @@ const isPositiveInteger = (value: unknown): value is number =>
 
 const isStringRecord = (value: unknown): value is Record<string, string> =>
   isRecord(value) && Object.values(value).every((item) => typeof item === 'string');
+/** A CSS custom property name: `--` and at least one more character, no spaces or colons. */
+export const isCustomPropertyName = (value: unknown): value is string =>
+  typeof value === 'string' && /^--[^\s:;{}]+$/.test(value);
 export const isExampleId = (value: unknown): value is ExampleId =>
   typeof value === 'string' && /^example:[^/]+\/[^/]+$/.test(value);
 const isEventId = (value: unknown): value is EventId =>
@@ -299,6 +310,11 @@ export function isFrameMountPayload(value: unknown): value is FrameMountPayload 
       return false;
   }
   if (value['slots'] !== undefined && !isStringRecord(value['slots'])) return false;
+  if (
+    value['styles'] !== undefined &&
+    (!isStringRecord(value['styles']) || !Object.keys(value['styles']).every(isCustomPropertyName))
+  )
+    return false;
   if (
     value['events'] !== undefined &&
     (!Array.isArray(value['events']) || !value['events'].every((item) => typeof item === 'string'))
@@ -447,7 +463,13 @@ export function isFrameRequest(value: unknown): value is FrameRequest {
       if (!isRecord(request.payload)) return false;
       const hasProperty = typeof request.payload['property'] === 'string';
       const hasAttribute = typeof request.payload['attribute'] === 'string';
-      if (hasProperty === hasAttribute) return false;
+      const hasCss = request.payload['cssProperty'] !== undefined;
+      if (Number(hasProperty) + Number(hasAttribute) + Number(hasCss) !== 1) return false;
+      if (hasCss)
+        return (
+          isCustomPropertyName(request.payload['cssProperty']) &&
+          (request.payload['cssValue'] === null || typeof request.payload['cssValue'] === 'string')
+        );
       return hasProperty
         ? (request.payload['unset'] === true ||
             (Object.hasOwn(request.payload, 'value') && isJsonValue(request.payload['value']))) &&
