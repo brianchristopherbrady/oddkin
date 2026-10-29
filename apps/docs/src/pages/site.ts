@@ -126,7 +126,12 @@ export const primaryLinks: readonly { label: string; path: string; section: read
     { label: 'Components', path: 'components', section: ['components'] },
     { label: 'Foundations', path: 'foundations', section: ['foundations'] },
     { label: 'Theme Studio', path: 'theme-studio', section: ['theme-studio'] },
-    { label: 'Tools', path: 'workbench', section: ['workbench', 'tooling'] },
+    {
+      // Figma's Tools goes to /workbench; until that page exists, to the section's first page.
+      label: 'Tools',
+      path: ['workbench', 'tooling'].find((path) => routeExists(path)) ?? 'workbench',
+      section: ['workbench', 'tooling', 'ai'],
+    },
   ];
 
 /** The entry whose children the sidebar shows at `pathname`: the page's parent, or the page. */

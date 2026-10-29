@@ -258,6 +258,23 @@ describe('the docs shell', async () => {
     ]);
   });
 
+  it('links the header destinations that exist: Tools goes to its first page until /workbench exists', () => {
+    const html = shell('/ai');
+    const start = html.indexOf('<nav class="primary-nav');
+    const header = html.slice(start, html.indexOf('</nav>', start));
+    expect(
+      [...header.matchAll(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g)].map(
+        ([, href, label]) => `${label} ${href}`,
+      ),
+    ).toEqual([
+      'Learn /getting-started',
+      'Components /components',
+      'Foundations /foundations',
+      'Tools /tooling',
+    ]);
+    expect(header).toContain('<a href="/tooling" aria-current="true">Tools</a>');
+  });
+
   it('gives every page but Home a section, and Home and search the site map alone', () => {
     for (const path of [...pages, ...clientPages].map((page) => page.path).filter(Boolean))
       expect(sidebar(shell(`/${path}`)), path).toMatch(/data-section="[a-z]+"/);
