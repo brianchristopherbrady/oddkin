@@ -354,6 +354,22 @@ test.describe('Workbench shell', () => {
       await expect(page.locator('#interactive-example .wb-status')).toBeEmpty();
     });
 
+    test('runs the fixture of an example that needs one, such as the tabs', async ({ page }) => {
+      const errors: string[] = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      await open(page, 'components/odd-tabs', 'Tabs');
+      const frame = page.frameLocator('oddkin-workbench-component iframe').first();
+      // The tabs' examples build their tabs and panels in a fixture: the preview shows them.
+      await expect(frame.getByRole('tab')).toHaveText(['Overview', 'Activity', 'Settings'], {
+        timeout: 20_000,
+      });
+      await expect(
+        frame.getByText('This panel belongs to the selected Overview tab.'),
+      ).toBeVisible();
+      await expect(page.locator('#interactive-example .wb-status')).toBeEmpty();
+      expect(errors).toEqual([]);
+    });
+
     test('restyles the preview through its declared CSS custom properties', async ({ page }) => {
       await open(page, 'components/odd-button', 'Button');
       const button = page

@@ -36,6 +36,7 @@ A site that renders its own pages can show the catalog, component, and foundatio
 1. **Build the files in Node.** `buildWorkbench({ config, hosting: { basePath } })` from `@oddkin/workbench/node` reads the configuration (`oddkin.config.*`, and authored content in `oddkin.docs.*` beside it), the documented packages, their metadata, and their authored examples. `embedFiles(build)` returns every file the panels and previews load, as paths below the base path, each a string or `{ source }` (a file to copy):
    - `_oddkin/index.json`: the index (registry, branding, libraries, diagnostics), the panels' `index`;
    - `_oddkin/pages/…json`: one file per visible page, named by `index.pages[id]`, the panels' `page`, with each example's values (read in Node from the `*.examples.ts` sources; a browser cannot build them);
+   - `_oddkin/examples/<tag>.js`: for a component whose examples have fixtures, its `*.examples.ts` source with the types stripped, which a frame imports to run the fixture of the example it mounts (the page file names it as `exampleModule`). Fixtures that write markup with `innerHTML` need a frame without enforced Trusted Types, or a policy the site chooses;
    - `_oddkin/frame.html`, the preview frame document, and the import maps as JSON: `frame.importmap.json` (the documented packages and the frame runtime) and `shell.importmap.json` (also Workbench's own entries, the panels included);
    - `_oddkin/theme-studio.worker.js`, Theme Studio's generator;
    - `_oddkin/m/<name>@<version>/…`: each package's published browser files.

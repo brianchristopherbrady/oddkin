@@ -68,6 +68,11 @@ describe('frame protocol', () => {
     expect(isFrameRequest({ ...request, payload: { ...request.payload, events: [1] } })).toBe(
       false,
     );
+    // The example module whose fixture the frame runs: a URL.
+    const fixture = (value: unknown) =>
+      isFrameRequest({ ...request, payload: { ...request.payload, fixture: value } });
+    expect(fixture('/_oddkin/examples/odd-button.js')).toBe(true);
+    expect(fixture({ url: '/_oddkin/examples/odd-button.js' })).toBe(false);
 
     const reply = { ...identity, kind: 'reply', replyTo: 1, payload: { mounted: true } };
     expect(isFrameReply(reply)).toBe(true);

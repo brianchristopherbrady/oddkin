@@ -14,8 +14,9 @@ import {
   type PackageManifest,
 } from '../data/import-map.js';
 import type { WorkbenchData } from '../data/types.js';
-import { DiagnosticList, type WorkbenchDiagnostic } from '../internal/diagnostics.js';
+import { DiagnosticList, isObject, type WorkbenchDiagnostic } from '../internal/diagnostics.js';
 import { loadWorkbenchConfig } from './config.js';
+import { exampleModule, registrationsByTag } from './example-modules.js';
 import { frameHtml, shellHtml } from './html.js';
 import { loadInputs, type WorkbenchInputs } from './inputs.js';
 import { packageGraph, readPackage, type InstalledPackage } from './packages.js';
@@ -189,9 +190,35 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
   for (const pkg of [...shellGraph, ...inputs.graph])
     if (!packages.has(versioned(pkg))) packages.set(versioned(pkg), pkg.dir);
 
+  const assets = `${config.hosting.basePath}${ASSET_DIR}`;
   const roots = new Map([...packages].map(([name, dir]) => [`${base}${name}/`, dir]));
   const files = new Map<string, string>([['index.json', serializeData(data.index)]]);
-  for (const [id, page] of Object.entries(data.pages)) files.set(pageFile(id), serializeData(page));
+  // Frames run an example's fixture from its example module, which ships beside the page data.
+  const registrations = registrationsByTag(inputs.libraries);
+  const pages = { ...data.pages };
+  for (const [id, page] of Object.entries(pages)) {
+    const file = page.kind === 'component' ? inputs.exampleFiles.get(page.tag) : undefined;
+    if (
+      page.kind !== 'component' ||
+      !file ||
+      !page.examples.some((example) => {
+        const definition = example['definition'];
+        return isObject(definition) && definition['hasFixture'] === true;
+      })
+    )
+      continue;
+    try {
+      files.set(`examples/${page.tag}.js`, await exampleModule(file, registrations));
+      pages[id] = { ...page, exampleModule: `${assets}examples/${page.tag}.js` };
+    } catch (error) {
+      result.warn(
+        'node.examples.module',
+        `${file}: ${error instanceof Error ? error.message : String(error)}; its fixtures do not run in previews.`,
+        `/pages/${id}`,
+      );
+    }
+  }
+  for (const [id, page] of Object.entries(pages)) files.set(pageFile(id), serializeData(page));
   if (generator) files.set(THEME_WORKER, themeWorker(generator));
   files.set('frame.importmap.json', `${JSON.stringify(frame.importMap, null, 2)}\n`);
   files.set('shell.importmap.json', `${JSON.stringify(shell.importMap, null, 2)}\n`);
@@ -220,12 +247,11 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
       return pkg && file ? [`${packageRoot(pkg, { base, versioned: true })}${file.slice(2)}`] : [];
     },
   );
-  const assets = `${config.hosting.basePath}${ASSET_DIR}`;
   return {
     root: loaded.root,
     configFile: loaded.file,
     config,
-    data,
+    data: { ...data, pages },
     inputs,
     files,
     packages,

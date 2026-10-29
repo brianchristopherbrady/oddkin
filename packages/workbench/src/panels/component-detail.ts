@@ -360,6 +360,7 @@ export class ComponentDetailElement extends OddkinElement.with({
   #mountPayload(page: ComponentPageData, registration: string, index: number) {
     const state = this.#state.peek();
     const facts = componentFacts(page);
+    const fixture = presets(page).some((p) => p.name === state.preset && p.fixture);
     return {
       tag: page.tag,
       registration,
@@ -368,6 +369,7 @@ export class ComponentDetailElement extends OddkinElement.with({
       attributes: state.attributes,
       slots: state.slots,
       styles: state.styles ?? {},
+      ...(fixture && page.exampleModule ? { fixture: page.exampleModule } : {}),
       events: facts.events.map((event) => event.name),
       sync: facts.syncPairs,
       settings: this.#frameSettings(index),

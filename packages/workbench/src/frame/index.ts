@@ -156,6 +156,41 @@ async function mount(runtime: Runtime, config: FrameMountPayload): Promise<void>
   runtime.wrapper.append(element);
   runtime.mount = config;
   runtime.mountScope = runtime.scope?.child({ name: `preview-example:${config.example}` });
+  if (config.fixture) await runFixture(runtime, config.fixture, config.example, element);
+}
+
+interface ExampleModule {
+  readonly default?: {
+    readonly examples?: Readonly<
+      Record<string, { readonly fixture?: (context: object) => unknown } | undefined>
+    >;
+  };
+  /** `render` from `@oddkin/core/template`, exported by the module Workbench serves. */
+  readonly oddkinFrameRender?: (content: unknown, host: Element) => { dispose(): void };
+}
+
+/** Run the example's fixture once its element is connected, as `mountExample` does in tests. */
+async function runFixture(runtime: Runtime, url: string, example: string, element: HTMLElement) {
+  const module = (await import(/* @vite-ignore */ url)) as ExampleModule;
+  const fixture = module.default?.examples?.[example.slice(example.indexOf('/') + 1)]?.fixture;
+  const scope = runtime.mountScope;
+  if (typeof fixture !== 'function' || !scope) return;
+  await fixture({
+    scope,
+    element,
+    mount(content: unknown) {
+      const host = runtime.document.createElement('div');
+      runtime.wrapper.append(host);
+      if (content instanceof (runtime.window as Window & typeof globalThis).Node)
+        host.append(content);
+      else if (module.oddkinFrameRender) {
+        const part = module.oddkinFrameRender(content, host);
+        scope.add(() => part.dispose(), 'fixture template');
+      } else host.textContent = String(content);
+      return host.firstElementChild ?? host;
+    },
+  });
+  await (element as HTMLElement & { updateComplete?: Promise<unknown> }).updateComplete;
 }
 
 /** Every role's element in one frame, each captioned with its role. */

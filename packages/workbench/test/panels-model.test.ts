@@ -219,6 +219,22 @@ describe('detail model', () => {
     });
   });
 
+  it('makes fixture examples presets when the page names its example module', () => {
+    const wired = (data: ComponentPageData) => presets(data).find((p) => p.name === 'wired')!;
+    expect(wired(page())).toMatchObject({ fixture: true, requiresFixture: true });
+    expect(wired(page())).not.toHaveProperty('state');
+    const served = page({ exampleModule: '/_oddkin/examples/x-box.js' });
+    expect(wired(served)).toMatchObject({
+      fixture: true,
+      requiresFixture: false,
+      state: { preset: 'wired', attributes: {}, properties: {}, slots: {} },
+    });
+    expect(snippet(served, wired(served).state!)).toContain(
+      '// The "wired" example also runs setup code: its fixture in defineExamples.',
+    );
+    expect(snippet(served, initialState(served))).not.toContain('setup code');
+  });
+
   it('carries declared CSS custom properties in snippets and share links', () => {
     const styled = page({
       declaration: {

@@ -96,6 +96,11 @@ export interface ComponentPageData extends PageDataBase {
    */
   readonly examples: readonly JsonObject[];
   /**
+   * URL of the element's example module as preview frames load it, when its examples have
+   * fixtures and their source was found: frames run the fixture of the example they mount.
+   */
+  readonly exampleModule?: string;
+  /**
    * The tokens the component reads (`tokenReads`), resolved from the token inspection in their
    * order. A token missing from the inspection keeps only its name (`missing: true`).
    */

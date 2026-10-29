@@ -117,6 +117,23 @@ describe('isolated preview frames', () => {
     expect(scopeStats().scopes).toBeGreaterThan(before.scopes);
   });
 
+  it('runs the example fixture from its module once the element is connected', async () => {
+    const preview = createPreview();
+    await preview.ready;
+    const fixture = new URL('./fixtures/frame-examples.ts', import.meta.url).href;
+    await preview.request('mount', payload({ example: 'example:fixture-button/staged', fixture }));
+    const doc = preview.iframe.contentDocument!;
+    expect(doc.querySelector('fixture-button')?.getAttribute('data-fixture')).toBe('connected');
+    // What the fixture mounts goes beside the element: a node as is, a template through its renderer.
+    const mounted = () =>
+      [...doc.querySelectorAll('[data-oddkin-preview] > div')].map((host) => host.textContent);
+    expect(mounted()).toEqual(['Mounted node', 'Mounted template']);
+    // Another example replaces the element and everything its fixture added.
+    await preview.request('mount', payload());
+    expect(mounted()).toEqual([]);
+    expect(doc.querySelector('fixture-button')?.hasAttribute('data-fixture')).toBe(false);
+  });
+
   it('sets CSS custom properties on the element, on mount and one at a time', async () => {
     const preview = createPreview();
     await preview.ready;

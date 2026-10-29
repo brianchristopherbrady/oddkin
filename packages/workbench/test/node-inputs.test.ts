@@ -447,6 +447,45 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     });
   });
 
+  it('serves each example set with fixtures as a module whose imports the frames resolve', async () => {
+    const build = await buildWorkbench({ config: 'tests/fixtures/workbench-oddkin' });
+    expect(build.diagnostics.filter((d) => d.code === 'node.examples.module')).toEqual([]);
+    const imports = build.frameImportMap!.imports;
+    const resolves = (specifier: string) =>
+      specifier in imports ||
+      Object.keys(imports).some((key) => key.endsWith('/') && specifier.startsWith(key));
+    const pages = Object.values(build.data!.pages).filter(
+      (page): page is ComponentPageData => page.kind === 'component',
+    );
+    const withFixtures = pages.filter((page) =>
+      page.examples.some((e) => (e['definition'] as { hasFixture?: boolean })?.hasFixture),
+    );
+    expect(withFixtures.length).toBeGreaterThanOrEqual(17);
+    // A page names its module exactly when one of its examples has a fixture.
+    for (const page of pages)
+      expect(page.exampleModule, page.tag).toBe(
+        withFixtures.includes(page) ? `/_oddkin/examples/${page.tag}.js` : undefined,
+      );
+    for (const page of withFixtures) {
+      const file = `examples/${page.tag}.js`;
+      expect(JSON.parse(build.files.get(`pages/components/${page.tag}.json`)!)).toMatchObject({
+        exampleModule: `/_oddkin/${file}`,
+      });
+      const code = build.files.get(file)!;
+      // Types stripped, so it parses as JavaScript; the elements it names are registered.
+      const [found] = parse(code);
+      const specifiers = found.flatMap(({ specifier }) => (specifier ? [specifier] : []));
+      expect(
+        specifiers.filter((s) => !resolves(s)),
+        file,
+      ).toEqual([]);
+      expect(specifiers, file).toContain(`@oddkin/components/define/${page.tag.slice(4)}`);
+      expect(code, file).toMatch(
+        /export \{ render as oddkinFrameRender \} from '@oddkin\/core\/template';\n$/,
+      );
+    }
+  });
+
   it('loads example sets named in metadata as data, and diagnoses ones that fail', async () => {
     const metadata = JSON.parse(
       readFileSync(new URL('./fixtures/acme.oddkin.metadata.json', import.meta.url), 'utf8'),

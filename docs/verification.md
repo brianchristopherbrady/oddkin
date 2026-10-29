@@ -4256,3 +4256,15 @@ Design source: Figma `zF87qftdRznmJJezxy23gd` 20:2190 (1440 × 3394) and the int
 | Card lists | `node .tmp/width-chain.mjs` at 2,560 | Before: the Foundations topic list took the prose cap (72ch, 621 px, 2 columns). After: 1,440 px, 4 columns of 342 |
 | Layout lint | `node scripts/check-page-layout.mjs` | 0 unlisted: the docs add no `display: flex` or `grid`; the column is odd-box, odd-container, and odd-stack |
 | Docs tests and e2e | `npx vitest run tests/docs`; `e2e/docs.spec.ts`, `e2e/docs-site.spec.ts` (three engines, E2E lock) | 25 passed; docs e2e 13 passed per engine (Chromium in the three-engine run; Firefox and WebKit each run alone, after the three-engine run timed out and crashed Firefox's compositor with 212 MB of memory free) |
+## 2026-10-29 — Previews run example fixtures (Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The 17 fixture-only components | Workbench dev on tests/fixtures/workbench-oddkin; `node .tmp/check-fixtures.mjs odd-command-palette … odd-tooltip` (each page's frame, Chromium) | Every one mounts with its fixture's content (odd-tabs: three tabs and a panel; odd-menu: five items; odd-select: four options); overlays (dialog, drawer, popover, toast, tooltip, command palette) show the triggers their fixtures mount; no page or console error |
+| Build | `npx vitest run --project node packages/workbench/test/node-inputs.test.ts` | Each of the 17+ pages with fixture examples names `/_oddkin/examples/<tag>.js`, no other page does, and every import in every module resolves in the frame's import map |
+| Browser tests, 3 engines | `node ../oddkin-lanes/tools/browser-set.mjs --out .tmp/bs-fx …/frame.browser.test.ts …/panels.browser.test.ts …/coverage.browser.test.ts` | Chromium and WebKit 23 of 23; Firefox 22 of 23, the request-order test timed out under load and passed alone (8 of 8) |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-fixtures.json` | 9 of 9 killed (the frame skipping the fixture, dropping mounted nodes or templates; the panel not naming the module; fixtures always required; the snippet's note; pages without the module; no registrations; no renderer) |
+| E2E, 3 engines | `npx playwright test e2e/workbench.spec.ts -g "runs the fixture"` (E2E lock), and the Workbench, embed, and static specs | odd-tabs' preview shows its tabs and panel in Chromium, Firefox, and WebKit; the other 75 tests pass |
+| Types, lint, size | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Pass; pass; frame runtime 7,147 B of 7,680, component panel 31,102 of 32,768, shell 54,231 of 55,296 |
+
+**Not verified:** the docs site. Its documents enforce Trusted Types, so the 12 example sets whose fixtures assign `innerHTML` (breadcrumbs, color picker, combobox, listbox, menu, picker, radio group, rating, segmented control, select, split button, tree) will fail there until the fixtures build their content another way or the docs frame allows it.

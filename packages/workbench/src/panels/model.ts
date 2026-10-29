@@ -78,6 +78,8 @@ export interface PresetEntry {
   readonly state?: PreviewState;
   readonly preset: boolean;
   readonly requiresFixture: boolean;
+  /** The example has setup code (`fixture`), which frames run from the page's example module. */
+  readonly fixture: boolean;
   readonly guidance?: string;
   readonly incorrect?: { readonly explanation?: string; readonly correct?: string };
 }
@@ -283,7 +285,9 @@ export function presets(page: ComponentPageData): PresetEntry[] {
     const id = text(example['id']);
     if (!name || !id) return [];
     const definition = isRecord(example['definition']) ? example['definition'] : undefined;
-    const requiresFixture = definition?.['hasFixture'] === true;
+    const fixture = definition?.['hasFixture'] === true;
+    // A frame runs the fixture from the example module, when the page names one.
+    const requiresFixture = fixture && !page.exampleModule;
     const state = definition && !requiresFixture ? stateFrom(name, definition) : undefined;
     const incorrect = isRecord(definition?.['incorrect'])
       ? (definition['incorrect'] as Record<string, unknown>)
@@ -302,6 +306,7 @@ export function presets(page: ComponentPageData): PresetEntry[] {
         ...(state ? { state } : {}),
         preset: definition?.['preset'] === true,
         requiresFixture,
+        fixture,
         ...(guidance ? { guidance } : {}),
         ...(incorrect
           ? {
@@ -536,6 +541,10 @@ export function snippet(
   else
     lines.push(
       `  // No registration entry is published for <${page.tag}>; import its define module.`,
+    );
+  if (presets(page).some((p) => p.name === state.preset && p.fixture))
+    lines.push(
+      `  // The "${state.preset}" example also runs setup code: its fixture in defineExamples.`,
     );
   const properties = Object.entries(state.properties);
   const styles = Object.entries(state.styles ?? {});

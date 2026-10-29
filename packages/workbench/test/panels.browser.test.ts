@@ -571,6 +571,27 @@ describe('<oddkin-component-panel>', () => {
     expect(code).toContain('<span slot="end">After</span>');
   });
 
+  it("runs a fixture example from the page's example module", async () => {
+    const data = probeData();
+    const page = data.pages['components/wb-probe'] as ComponentPageData;
+    const exampleModule = new URL('./fixtures/probe-examples.ts', import.meta.url).href;
+    const { root, probe, change } = componentPanel({
+      ...data,
+      pages: { ...data.pages, 'components/wb-probe': { ...page, exampleModule } },
+    });
+    await until(() => !!probe()?.isConnected, 'the probe preview');
+    const preset = root.querySelector<HTMLSelectElement>('.wb-example-bar select')!;
+    expect([...preset.options].map((o) => o.value)).toEqual(['default', 'loud', 'fixtureOnly']);
+    expect(
+      root.querySelector('[data-example="example:wb-probe/fixtureOnly"]')?.textContent,
+    ).not.toContain('Requires fixture');
+    change(preset, 'fixtureOnly');
+    await until(() => probe()?.textContent === 'Set up by its fixture', 'the fixture');
+    expect(root.querySelector('.wb-snippet')?.textContent).toContain(
+      '// The "fixtureOnly" example also runs setup code',
+    );
+  });
+
   it('applies edits made while the first preview is still loading, in order, with no error', async () => {
     // The owner's report (2026-10-28): on a cold page, an edit made before the component's module
     // graph has loaded was lost, and the preview kept the example's first values.

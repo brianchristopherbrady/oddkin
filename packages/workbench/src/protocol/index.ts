@@ -40,6 +40,11 @@ export interface FrameMountPayload {
   readonly sync?: readonly { readonly property: string; readonly event: string }[];
   /** CSS custom property values set on the element (`style.setProperty`); names start with `--`. */
   readonly styles?: Readonly<Record<string, string>>;
+  /**
+   * URL of the example module (a `defineExamples` default export) whose fixture for `example`
+   * runs after the element is connected, as `mountExample` runs it in tests.
+   */
+  readonly fixture?: string;
   readonly settings?: FrameSettings;
 }
 
@@ -310,6 +315,7 @@ export function isFrameMountPayload(value: unknown): value is FrameMountPayload 
       return false;
   }
   if (value['slots'] !== undefined && !isStringRecord(value['slots'])) return false;
+  if (value['fixture'] !== undefined && typeof value['fixture'] !== 'string') return false;
   if (
     value['styles'] !== undefined &&
     (!isStringRecord(value['styles']) || !Object.keys(value['styles']).every(isCustomPropertyName))

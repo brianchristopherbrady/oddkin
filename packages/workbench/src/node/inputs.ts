@@ -37,6 +37,8 @@ export interface WorkbenchInputs {
   readonly theme?: { readonly config: JsonObject; readonly source: string };
   /** Files read as data; a change to one rebuilds the data. */
   readonly dataFiles: readonly string[];
+  /** Each loaded example set's source file, by component tag. */
+  readonly exampleFiles: ReadonlyMap<string, string>;
   /** Authored content files that were read or attempted (watched with the configuration). */
   readonly contentFiles: readonly string[];
 }
@@ -155,6 +157,7 @@ async function loadExampleSets(
   metadata: OddkinMetadataLike | undefined,
   out: DiagnosticList,
   dataFiles: string[],
+  exampleFiles: Map<string, string>,
 ): Promise<ExampleSetLike[]> {
   const files = new Set<string>();
   for (const example of Object.values(metadata?.examples ?? {})) {
@@ -186,6 +189,7 @@ async function loadExampleSets(
       continue;
     }
     sets.push(toExamplesJSON(value as unknown as ExampleSet) as unknown as ExampleSetLike);
+    exampleFiles.set(value['component'], path);
   }
   return sets;
 }
@@ -201,6 +205,7 @@ export async function loadInputs(
   for (const pkg of graph) if (!byName.has(pkg.name)) byName.set(pkg.name, pkg);
   const explicitCem = (config.library.cem ?? []).map((file) => resolve(root, file));
   const dataFiles: string[] = [];
+  const exampleFiles = new Map<string, string>();
   const libraries: LibraryInput[] = [];
   for (const name of config.library.packages) {
     const pkg = byName.get(name);
@@ -229,7 +234,7 @@ export async function loadInputs(
       metadata = readJson(metadataFile, out, 'node.metadata.invalid') as OddkinMetadataLike;
       dataFiles.push(metadataFile);
     }
-    const examples = await loadExampleSets(pkg.dir, metadata, out, dataFiles);
+    const examples = await loadExampleSets(pkg.dir, metadata, out, dataFiles, exampleFiles);
     libraries.push({
       name,
       version: pkg.version,
@@ -284,6 +289,7 @@ export async function loadInputs(
     ...(content.docs ? { docs: content.docs } : {}),
     ...(tokens ? { tokens } : {}),
     dataFiles,
+    exampleFiles,
     contentFiles: content.files,
   };
 }
