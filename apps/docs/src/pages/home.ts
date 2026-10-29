@@ -96,7 +96,7 @@ function explore(site: SiteFacts): string {
     'Reference',
     'Explore the framework',
     'Each package depends only on the ones it needs. Tokens work without JavaScript; components work in any framework or none; state, app services, and the tooling are optional.',
-  )}<ul class="card-list odd-auto-grid odd-auto-grid-fit" role="list">${cards
+  )}<ul class="card-list odd-auto-grid odd-auto-grid-fit odd-grid-stretch" role="list">${cards
     .map((card) => resourceCard({ ...card, text: card.text ?? '', href: `/${card.path}` }))
     .join('')}</ul></section>`;
 }

@@ -365,7 +365,6 @@ odd-side-nav:not(:defined) > a {
   --odd-card-radius: var(--odd-radius-lg);
   --odd-card-background: var(--odd-color-surface-default);
   --odd-card-border-color: var(--odd-color-border-default);
-  block-size: 100%;
 }
 
 .resource-card > p:not([slot]),

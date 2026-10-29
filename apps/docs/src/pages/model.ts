@@ -239,7 +239,7 @@ function block(item: Block, facts: FactBlocks, ids: () => string): string {
   }
   if ('code' in item) return codeSample(item.code, ids());
   if ('cards' in item)
-    return `<ul class="card-list odd-auto-grid" role="list">${item.cards.map(resourceCard).join('')}</ul>`;
+    return `<ul class="card-list odd-auto-grid odd-grid-stretch" role="list">${item.cards.map(resourceCard).join('')}</ul>`;
   if ('ramp' in item)
     return `<figure class="ramp"><figcaption>${escapeHtml(item.ramp.title)}</figcaption><ol class="ramp-steps odd-cluster" role="list">${item.ramp.steps
       .map(
