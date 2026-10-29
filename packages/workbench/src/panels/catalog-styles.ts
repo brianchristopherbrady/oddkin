@@ -126,10 +126,12 @@ export const catalogLayoutStyles = css`
   .wb-content .wb-card.wb-has-preview::part(footer) {
     padding: 0 var(--odd-space-lg) var(--odd-space-lg);
   }
+  /* A fixed height, as in Figma 03: a preview built as its card scrolls in never moves the cards. */
   .wb-content .wb-card-preview {
     display: grid;
     place-items: center;
-    min-block-size: 10rem;
+    block-size: 10rem;
+    overflow: hidden;
     padding: var(--odd-space-md);
     background: var(--odd-color-surface-specimen);
   }
