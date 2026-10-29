@@ -35,8 +35,22 @@ const REQUIRED = [
   'guidance/usage-pairs',
 ];
 
-const json = async <T>(path: string) =>
-  (await (await fetch(new URL(path, import.meta.url))).json()) as T;
+/** A published file from the dev server. CI on Linux once read an empty or cut-off body here. */
+async function json<T>(path: string): Promise<T> {
+  const url = new URL(path, import.meta.url);
+  for (let attempt = 1; ; attempt++) {
+    const response = await fetch(url, { cache: 'no-store' });
+    const text = await response.text();
+    try {
+      return JSON.parse(text) as T;
+    } catch (error) {
+      if (attempt === 2)
+        throw new Error(
+          `${url.pathname}: HTTP ${response.status}, ${text.length} characters read, content-length ${response.headers.get('content-length')}: ${String(error)}`,
+        );
+    }
+  }
+}
 const exampleSets = (modules: Record<string, ExampleSet<Element>>) =>
   Object.values(modules).map((set) => toExamplesJSON(set) as unknown as ExampleSetLike);
 

@@ -4157,3 +4157,12 @@ Design source: Figma NavigationItem, State=Current (5:749; the instance in Docs/
 | Previews, after | the same | 37 of 54 filled; no page errors. Newly filled from the first correct fixture-free example without `open`: Select and Segmented control, Listbox, and Radio group (`fromData`), Pagination (`fewPages`), Breadcrumbs (`collapsed`), Empty state (`noResults`), Icon (`fromUrl`). Still empty, only fixture examples: Command palette, Menu, Split button, Toolbar, Checkbox group, Validation summary, Container, Scroll region, Split panel, Carousel, Tab panel, Tabs, Dialog, Drawer, Popover, Toast, Tooltip |
 | The fallback's rule | `npx vitest run tests/docs` | 25 passed; `catalog previews` checks the default first, then skips fixture, incorrect, and `open` examples |
 | Known issue, not docs | the Segmented control card | Its `Medium` segment wraps: the track's `flex: 1 1 0` segments share the sum of their widths equally in a shrink-to-fit parent (the card centres its preview), so the longest label gets less than it needs. Reported to Agent 1 with a fix (an equal-column grid track) |
+
+## 2026-10-28 — CI: coverage file reads and font-independent row alignment (Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The two tests | `npx vitest run --project browser --browser.name=chromium packages/workbench/test/coverage.browser.test.ts packages/ai/test/layout.browser.test.ts` | 30 passed |
+| Same URL fetched earlier in the run | `npx vitest run --project browser --browser.name=chromium --no-file-parallelism packages/components/test/styling-contract.browser.test.ts packages/workbench/test/coverage.browser.test.ts` | 19 passed: the CI failure did not reproduce on Windows |
+
+**Not verified:** the Linux CI run (the coverage test's message now names the status and lengths if it fails again).
