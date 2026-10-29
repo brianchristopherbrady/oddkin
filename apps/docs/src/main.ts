@@ -276,7 +276,7 @@ function componentMeta(page: ComponentPageData): HTMLElement {
   const row = node('div', 'component-meta odd-cluster');
   const status = node('odd-badge', undefined, 'In repository');
   status.setAttribute('tone', 'success');
-  const source = node('a', 'odd-link', 'Source');
+  const source = node('a', 'odd-link', 'View source');
   source.href = `${repository}${sourcePath(page)}`;
   source.append(arrowIcon());
   row.append(status, node('code', undefined, page.package), source);
