@@ -157,22 +157,30 @@ export function renderDocument(
       : renderPage(page, facts)
     : '<header class="page-header"><p class="eyebrow">Documentation</p><h1>Loading</h1><p class="lede">This page is built in the browser from the published metadata.</p></header>';
   const title = page && page.path ? `${page.title} · Oddkin` : 'Oddkin';
-  return template
-    .replace('<!-- docs:title -->', escapeHtml(title))
-    .replace('<!-- docs:description -->', escapeHtml(page?.summary ?? site.description))
-    .replace('<!-- docs:header -->', siteHeader(pathname, site))
-    .replace('<!-- docs:nav -->', siteSidebar(pathname, site))
-    .replace('<!-- docs:footer -->', siteFooter(site))
-    .replace(
-      '<div class="site-layout odd-split">',
-      home
-        ? '<div class="site-layout odd-split" data-home>'
-        : '<div class="site-layout odd-split">',
-    )
-    .replace(
-      '<main id="main" tabindex="-1"><!-- docs:main -->',
-      page
-        ? `<main id="main" tabindex="-1" data-page="${escapeHtml(page.path)}">${main}`
-        : `<main id="main" tabindex="-1" aria-busy="true">${main}`,
-    );
+  return (
+    template
+      .replace('<!-- docs:title -->', escapeHtml(title))
+      .replace('<!-- docs:description -->', escapeHtml(page?.summary ?? site.description))
+      .replace('<!-- docs:header -->', siteHeader(pathname, site))
+      .replace('<!-- docs:nav -->', siteSidebar(pathname, site))
+      .replace('<!-- docs:footer -->', siteFooter(site))
+      .replace(
+        '<div class="site-layout odd-split">',
+        home
+          ? '<div class="site-layout odd-split" data-home>'
+          : '<div class="site-layout odd-split">',
+      )
+      .replace(
+        '<main id="main" tabindex="-1" class="odd-box">',
+        page
+          ? `<main id="main" tabindex="-1" class="odd-box" data-page="${escapeHtml(page.path)}">`
+          : '<main id="main" tabindex="-1" class="odd-box" aria-busy="true">',
+      )
+      // The home's sections run edge to edge and centre their own content.
+      .replace(/<odd-container class="page-column"\s*>/, (tag) =>
+        home ? '<odd-container class="page-column" measure="fluid">' : tag,
+      )
+      // A function, so `$` in a page's code samples is not a replacement pattern.
+      .replace('<!-- docs:main -->', () => main)
+  );
 }

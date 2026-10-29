@@ -259,21 +259,23 @@ odd-side-nav:not(:defined) > a {
   padding: var(--odd-space-xs) var(--odd-space-sm);
 }
 
+/* main is an odd-box around an odd-container (.page-column) whose #content is an odd-stack of the
+   page's sections. The inset follows the viewport; the column centres at most 90rem wide. */
 #main {
+  --odd-box-inset: clamp(var(--odd-space-lg), 4vi, var(--odd-space-2xl));
   min-block-size: 65vh;
-  padding: var(--odd-space-2xl);
 }
 
 #main:focus {
   outline: none;
 }
 
-#main > * {
-  max-inline-size: 68.5rem;
+.page-column {
+  --odd-container-measure: 90rem;
 }
 
-#main > * + * {
-  margin-block-start: var(--odd-space-2xl);
+#content {
+  --odd-stack-gap: var(--odd-space-2xl);
 }
 
 .eyebrow {
@@ -354,7 +356,8 @@ odd-side-nav:not(:defined) > a {
   margin-block-start: 0;
 }
 
-.content-section > :is(p, ul, ol, .note),
+/* Prose keeps a reading measure; card and specimen lists (role="list") take the column. */
+.content-section > :is(p, ul, ol, .note):not([role='list']),
 .lede {
   max-inline-size: 72ch;
 }
@@ -696,12 +699,11 @@ odd-side-nav:not(:defined) > a {
 /* Home: full width, without the sidebar on wide screens; sections centre an 82rem column. */
 
 [data-home] > #main {
-  padding: 0;
+  --odd-box-inset: 0;
 }
 
-[data-home] #main > * {
-  max-inline-size: none;
-  margin: 0;
+[data-home] #content {
+  --odd-stack-gap: 0;
 }
 
 .home-hero,
@@ -979,7 +981,6 @@ odd-side-nav:not(:defined) > a {
     border-block-end: var(--odd-border-width-default) solid var(--odd-color-border-default);
   }
 
-  #main,
   .site-footer,
   .home-hero,
   .home-section {

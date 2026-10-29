@@ -190,7 +190,9 @@ describe('the docs shell', async () => {
     const html = shell('/installation');
     expect(html.match(/<!-- docs:[a-z]+ -->/g)).toEqual(['<!-- docs:csp -->']);
     expect(html).toContain('<title>Installation · Oddkin</title>');
-    expect(html).toContain('<main id="main" tabindex="-1" data-page="installation">');
+    expect(html).toContain(
+      '<main id="main" tabindex="-1" class="odd-box" data-page="installation">',
+    );
   });
 
   it('names the release from the manifests and Oddkin from the README', () => {

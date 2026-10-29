@@ -37,7 +37,7 @@ describe('the static docs build', () => {
     ];
     for (const route of routes) expect(existsSync(documentAt(out, route)), route).toBe(true);
     const notFound = readFileSync(join(out, '404.html'), 'utf8');
-    expect(notFound).toContain('<main id="main" tabindex="-1" aria-busy="true">');
+    expect(notFound).toContain('<main id="main" tabindex="-1" class="odd-box" aria-busy="true">');
     expect(readFileSync(documentAt(out, '/installation'), 'utf8')).toContain(
       '<h1>Installation</h1>',
     );

@@ -626,8 +626,10 @@ function reload(path: string): void {
 
 function renderRoute(state: RouterState): void {
   const main = document.querySelector<HTMLElement>('#main');
+  const column = document.querySelector<HTMLElement>('#content');
   const status = document.querySelector<HTMLElement>('#route-status');
-  if (!main || !status) throw new Error('Docs shell is missing its main or route status region.');
+  if (!main || !column || !status)
+    throw new Error('Docs shell is missing its main, content column, or route status region.');
 
   status.textContent = state.navigating ? 'Loading the requested page…' : '';
   main.setAttribute('aria-busy', state.navigating ? 'true' : 'false');
@@ -647,6 +649,8 @@ function renderRoute(state: RouterState): void {
     return;
   }
   delete main.dataset['page'];
+  // Only the home (an authored document) fills the width; the client's pages are constrained.
+  column.closest('odd-container')?.setAttribute('measure', 'constrained');
   if (state.status === 'error' || last?.status === 'error') {
     const error =
       state.status === 'error' ? state.error : last?.status === 'error' ? last.error : undefined;
@@ -659,11 +663,11 @@ function renderRoute(state: RouterState): void {
     retry.type = 'button';
     retry.addEventListener('click', () => void router.refresh());
     content.append(retry);
-    main.replaceChildren(content);
+    column.replaceChildren(content);
     return;
   }
   if (state.status === 'not-found' || !last) {
-    main.replaceChildren(
+    column.replaceChildren(
       pageHeader(
         'Not found',
         'Page not found',
@@ -680,7 +684,7 @@ function renderRoute(state: RouterState): void {
   if (last.route === componentsRoute) {
     // A filter change from the catalog itself keeps the panel (and the focus in its search field).
     const filter = last.search as CatalogFilter;
-    const current = main.querySelector('oddkin-catalog-panel');
+    const current = column.querySelector('oddkin-catalog-panel');
     if (current) {
       current.query = filter.query;
       current.category = filter.category;
@@ -688,11 +692,11 @@ function renderRoute(state: RouterState): void {
       return;
     }
   }
-  main.replaceChildren();
+  column.replaceChildren();
   main.setAttribute('aria-busy', 'false');
-  if (last.route === layoutGuideRoute) renderLayoutGuide(main, data);
+  if (last.route === layoutGuideRoute) renderLayoutGuide(column, data);
   else if (last.route === componentsRoute)
-    renderComponents(main, last.data as WorkbenchIndex, last.search as CatalogFilter);
+    renderComponents(column, last.data as WorkbenchIndex, last.search as CatalogFilter);
   else if (last.route === componentRoute) {
     const tag = String(record(last.params)['tag']);
     const { index, page } = last.data as {
@@ -700,7 +704,7 @@ function renderRoute(state: RouterState): void {
       page: ComponentPageData | undefined;
     };
     if (!page) {
-      main.replaceChildren(
+      column.replaceChildren(
         pageHeader(
           'Not found',
           'Component not found',
@@ -710,7 +714,7 @@ function renderRoute(state: RouterState): void {
       return;
     }
     const entry = index.registry.pages.find((p) => p.id === page.id);
-    main.replaceChildren(
+    column.replaceChildren(
       pageHeader(
         `${entry?.group ?? 'Components'} · ${tag}`,
         entry?.title ?? `<${tag}>`,
@@ -721,15 +725,15 @@ function renderRoute(state: RouterState): void {
     );
   } else if (last.route === aiRoute)
     renderAi(
-      main,
+      column,
       last.data as AiData,
       pageHeader('@oddkin/ai', 'AI interfaces', AI_DESCRIPTION),
       panelHref,
     );
-  else if (last.route === caseStudyRoute) renderCaseStudy(main);
-  else if (last.route === searchRoute) renderSearch(main, String(last.search ?? ''), data);
+  else if (last.route === caseStudyRoute) renderCaseStudy(column);
+  else if (last.route === searchRoute) renderSearch(column, String(last.search ?? ''), data);
   else if (last.route === notFoundRoute)
-    main.replaceChildren(
+    column.replaceChildren(
       pageHeader(
         'Not found',
         'Page not found',

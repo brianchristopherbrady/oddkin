@@ -4247,3 +4247,12 @@ Design source: Figma `zF87qftdRznmJJezxy23gd` 20:2190 (1440 × 3394) and the int
 | Contracts, kits, types, lint | `node scripts/build-contracts.mjs --check`; `node scripts/agent-kit/package-kits.mjs --check`; `npx tsc -p tsconfig.tests.json`; `npm run lint` | Up to date (16 sections); current; pass; pass |
 
 **Not verified:** a share link written by a released Workbench, opened by the current one (Agent 2's contract), and windows opened with `window.open` (only frames were tested).
+
+## 2026-10-29 — Docs page width from Oddkin layout components (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Column per page and width | `node .tmp/layout-check.mjs` (Chromium; `/`, `/components`, `/components/odd-button`, `/foundations`, `/getting-started`; 390, 800, 1,440, 2,560 px) | Constrained pages: 342 px at 390 (inset 24), 736 at 800 (inset 32), 1,095 at 1,440 (the Figma column, 1,096), 1,440 centred at 2,560 (left 685 in a 2,310 px main). Home: fluid, full width. Stack gap 48 px (home 0). No page overflow at any width. odd-container defined on every page |
+| Card lists | `node .tmp/width-chain.mjs` at 2,560 | Before: the Foundations topic list took the prose cap (72ch, 621 px, 2 columns). After: 1,440 px, 4 columns of 342 |
+| Layout lint | `node scripts/check-page-layout.mjs` | 0 unlisted: the docs add no `display: flex` or `grid`; the column is odd-box, odd-container, and odd-stack |
+| Docs tests and e2e | `npx vitest run tests/docs`; `e2e/docs.spec.ts`, `e2e/docs-site.spec.ts` (three engines, E2E lock) | 25 passed; docs e2e 13 passed per engine (Chromium in the three-engine run; Firefox and WebKit each run alone, after the three-engine run timed out and crashed Firefox's compositor with 212 MB of memory free) |

@@ -186,7 +186,8 @@ export function startShell(scope: Scope, navigate: (path: string) => void): void
   modeToggle(scope);
   menu(scope);
   search(scope, navigate);
-  // Every page has the sidebar; the autoloader registers whatever else a page shows.
+  // Every page has the sidebar and the content column; the autoloader registers the rest.
   void import('@oddkin/components/define/side-nav');
+  void import('@oddkin/components/define/container');
   void import('@oddkin/components/autoload');
 }
