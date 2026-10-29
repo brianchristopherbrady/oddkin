@@ -4,10 +4,14 @@ import { escapeHtml, renderPage, type FactBlocks } from './model.js';
 import {
   currentOf,
   navigation,
+  openEntry,
   pageAt,
   primaryCurrent,
   primaryLinks,
   routeExists,
+  sectionLinks,
+  sectionOf,
+  type NavLink,
 } from './site.js';
 
 /** Facts about the release for the shell, from the package manifests and the README. */
@@ -24,6 +28,8 @@ export interface SiteFacts {
   components: number;
   /** Each package's description, by package name, from its manifest. */
   packages: Readonly<Record<string, string>>;
+  /** The catalog's reference pages, by title, for the Components sidebar. */
+  catalog: readonly { href: string; label: string }[];
 }
 
 const clean = (path: string): string => path.replace(/^\/+|\/+$/g, '');
@@ -37,28 +43,47 @@ function siteHeader(pathname: string, site: SiteFacts): string {
         `<a href="/${link.path}"${current(primaryCurrent(link, pathname))}>${escapeHtml(link.label)}</a>`,
     )
     .join('');
-  return `<header class="site-header odd-row odd-row-between"><a class="brand odd-row" href="/"><span class="brand-name">oddkin</span><span class="brand-docs odd-type-ui">/ docs</span></a><nav class="primary-nav odd-row" aria-label="Primary">${links}</nav><div class="search-group odd-row"><a class="odd-button search-trigger" href="/search" aria-keyshortcuts="Control+K Meta+K">${icons.search}<span class="search-label">Search docs</span></a><span class="shortcut odd-type-small" aria-hidden="true">Ctrl K</span></div><button class="odd-button icon-button mode-toggle" type="button" data-appearance="ghost" aria-pressed="false" hidden>${icons.moon}${icons.sun}<span class="odd-visually-hidden">Dark mode</span></button><span class="version odd-type-small">v${escapeHtml(site.version)}</span><button class="odd-button icon-button menu-toggle" type="button" data-appearance="ghost" aria-expanded="false" aria-controls="docs-nav" hidden>${icons.menu}${icons.close}<span class="odd-visually-hidden">Menu</span></button></header>`;
+  return `<header class="site-header odd-row odd-row-between"><a class="brand odd-row" href="/"><span class="brand-name">oddkin</span><span class="brand-docs odd-type-ui">/ docs</span></a><nav class="primary-nav odd-row" aria-label="Primary">${links}</nav><div class="search-group odd-row"><a class="odd-button search-trigger" href="/search" aria-keyshortcuts="Control+K Meta+K"><span class="search-label">Search docs</span>${icons.search}</a><span class="shortcut odd-type-small" aria-hidden="true">Ctrl K</span></div><button class="odd-button icon-button mode-toggle" type="button" data-appearance="ghost" aria-pressed="false" hidden>${icons.moon}${icons.sun}<span class="odd-visually-hidden">Dark mode</span></button><span class="version odd-type-small">v${escapeHtml(site.version)}</span><button class="odd-button icon-button menu-toggle" type="button" data-appearance="ghost" aria-expanded="false" aria-controls="docs-nav" hidden>${icons.menu}${icons.close}<span class="odd-visually-hidden">Menu</span></button></header>`;
 }
 
+/**
+ * One sidebar with two sets of links: the current section's (wide screens) and the site map (the
+ * narrow-screen menu, and pages outside a section), which shows a page's children while it is
+ * open. The shell keeps the marks and the open entry up to date as the client changes route.
+ */
 function siteSidebar(pathname: string, site: SiteFacts): string {
   const here = `/${clean(pathname)}`;
   const groups = navigation();
-  const all = groups.flatMap((group) => group.links);
-  const active = all.find((link) => link.href === here || here.startsWith(`${link.href}/`));
-  const open = active?.parent ?? active?.href;
-  const entries = groups
-    .map(({ group, links }) => {
-      const shown = links.filter((link) => !link.parent || link.parent === open);
-      if (!shown.length) return '';
-      return `<p class="nav-group">${escapeHtml(group)}</p>${shown
-        .map(
-          (link) =>
-            `<a${link.parent ? ' class="nav-child"' : ''} href="${escapeHtml(link.href)}"${current(currentOf(link.href, here))}>${escapeHtml(link.label)}</a>`,
-        )
-        .join('')}`;
-    })
+  const open = openEntry(
+    groups.flatMap((group) => group.links),
+    here,
+  );
+  const link = (set: string, entry: NavLink & { exact?: boolean }) => {
+    const classes = entry.parent ? `${set} nav-child` : set;
+    const parent = entry.parent
+      ? ` data-parent="${escapeHtml(entry.parent)}"${entry.parent === open ? '' : ' hidden'}`
+      : '';
+    const exact = entry.exact ? ' data-exact' : '';
+    return `<a class="${classes}" href="${escapeHtml(entry.href)}"${parent}${exact}${current(currentOf(entry.href, here, entry.exact))}>${escapeHtml(entry.label)}</a>`;
+  };
+  const map = groups
+    .map(
+      ({ group, links }) =>
+        `<p class="nav-group nav-global">${escapeHtml(group)}</p>${links.map((entry) => link('nav-global', entry)).join('')}`,
+    )
     .join('');
-  return `<odd-side-nav id="docs-nav" class="side-nav" label="Documentation">${entries}<p slot="footer" class="nav-footer">Built with Oddkin ${escapeHtml(site.version)}</p></odd-side-nav>`;
+  const section = sectionOf(pathname);
+  const note = (lines: readonly string[]) => lines.map((line) => `<p>${escapeHtml(line)}</p>`);
+  const local = section
+    ? [
+        `<p slot="header" class="nav-heading nav-section">${escapeHtml(section.label)}</p>`,
+        ...sectionLinks(section, site.catalog).map((entry) => link('nav-section', entry)),
+        `<div slot="footer" class="nav-footer nav-section odd-stack">${note(section.note).join('')}</div>`,
+      ].join('')
+    : '';
+  const id = section ? ` data-section="${section.id}"` : '';
+  // The site map comes first, so its first group heading is the element's first child.
+  return `<odd-side-nav id="docs-nav" class="side-nav"${id} label="Documentation">${map}<div slot="footer" class="nav-footer nav-global odd-stack">${note([`Built with Oddkin ${site.version}`]).join('')}</div>${local}</odd-side-nav>`;
 }
 
 const footerColumns: readonly [string, readonly [string, string][]][] = [

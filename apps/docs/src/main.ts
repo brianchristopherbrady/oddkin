@@ -8,6 +8,8 @@ import type {
   WorkbenchIndex,
 } from '@oddkin/workbench/data';
 import { pages, type Page } from './pages/index.js';
+import { icons } from './pages/icons.js';
+import { repository } from './pages/model.js';
 import { AI_DESCRIPTION, renderAi, type AiData } from './ai.js';
 import {
   catalogGroups,
@@ -15,8 +17,9 @@ import {
   FRAME_URL,
   loadComponent,
   loadIndex,
+  sourcePath,
 } from './reference.js';
-import { showRoute, startShell } from './shell.js';
+import { sectionChanged, showRoute, startShell } from './shell.js';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -236,6 +239,40 @@ interface CatalogFilter {
 
 /** Maps a Workbench route (`/components/odd-button`, `/foundations/color#tokens`) to a docs URL. */
 const panelHref = (path: string): string => router.href(path);
+
+/** The arrow of `pages/icons.ts`, made without parsing markup (the page's Trusted Types policy). */
+function arrowIcon(): SVGSVGElement {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  const attributes = {
+    class: 'icon',
+    'aria-hidden': 'true',
+    focusable: 'false',
+    viewBox: '0 0 20 20',
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': '1.5',
+    'stroke-linecap': 'round',
+    'stroke-linejoin': 'round',
+  };
+  for (const [name, value] of Object.entries(attributes)) svg.setAttribute(name, value);
+  const path = document.createElementNS(ns, 'path');
+  path.setAttribute('d', / d="([^"]+)"/.exec(icons.arrowRight)?.[1] ?? '');
+  svg.append(path);
+  return svg;
+}
+
+/** A reference page's status, package, and source file (Figma "Component metadata", 20:2200). */
+function componentMeta(page: ComponentPageData): HTMLElement {
+  const row = node('div', 'component-meta odd-cluster');
+  const status = node('odd-badge', undefined, 'In repository');
+  status.setAttribute('tone', 'success');
+  const source = node('a', 'odd-link', 'Source');
+  source.href = `${repository}${sourcePath(page)}`;
+  source.append(arrowIcon());
+  row.append(status, node('code', undefined, page.package), source);
+  return row;
+}
 
 function componentPanel(
   index: WorkbenchIndex,
@@ -544,6 +581,23 @@ function renderCaseStudy(main: HTMLElement): void {
   main.append(snippet);
 }
 
+// A route the server renders differently (an authored page, another section's sidebar) loads its
+// document; the document it loads says so to its first route, so a path never loads in a loop.
+const RELOAD = 'oddkin-docs-reload';
+let reloadedFor = sessionStorage.getItem(RELOAD);
+sessionStorage.removeItem(RELOAD);
+
+function loadedFor(path: string): boolean {
+  const again = reloadedFor === path;
+  reloadedFor = null;
+  return again;
+}
+
+function reload(path: string): void {
+  sessionStorage.setItem(RELOAD, path);
+  location.reload();
+}
+
 function renderRoute(state: RouterState): void {
   const main = document.querySelector<HTMLElement>('#main');
   const status = document.querySelector<HTMLElement>('#route-status');
@@ -561,13 +615,15 @@ function renderRoute(state: RouterState): void {
     // The authored page stays as it is while the next route loads.
     if (state.navigating) return;
     // The server renders authored pages; a page reached in the client loads its document, once.
-    const reloaded = sessionStorage.getItem('oddkin-docs-reload') === page.path;
-    sessionStorage.removeItem('oddkin-docs-reload');
-    if (main.dataset['page'] !== page.path && !reloaded) {
-      sessionStorage.setItem('oddkin-docs-reload', page.path);
-      location.reload();
-    } else main.setAttribute('aria-busy', 'false');
+    const again = loadedFor(page.path);
+    if (main.dataset['page'] !== page.path && !again) reload(page.path);
+    else main.setAttribute('aria-busy', 'false');
     return;
+  }
+  // The server renders each section's sidebar: a route in another section loads its document too.
+  if (state.location && !state.navigating) {
+    const again = loadedFor(state.location.path);
+    if (sectionChanged(state.location.path) && !again) return reload(state.location.path);
   }
   delete main.dataset['page'];
   if (state.status === 'error' || last?.status === 'error') {
@@ -639,6 +695,7 @@ function renderRoute(state: RouterState): void {
         entry?.title ?? `<${tag}>`,
         entry?.summary,
       ),
+      componentMeta(page),
       componentPanel(index, page),
     );
   } else if (last.route === aiRoute)

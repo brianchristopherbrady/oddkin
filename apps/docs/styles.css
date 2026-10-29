@@ -91,9 +91,17 @@
   --odd-row-gap: var(--odd-space-sm);
 }
 
+/* Figma "Search trigger": a secondary button, its label at the start and a 16 px icon at the end. */
 .search-trigger {
+  --odd-button-padding-inline: var(--odd-space-sm);
+  justify-content: space-between;
   min-inline-size: 15.5rem;
   text-decoration: none;
+}
+
+.search-trigger .icon {
+  inline-size: 1rem;
+  block-size: 1rem;
 }
 
 .shortcut,
@@ -155,7 +163,8 @@
   padding: var(--odd-space-lg);
 }
 
-.nav-group {
+.nav-group,
+.nav-heading {
   margin: 0;
   color: var(--odd-color-text-secondary);
   font-family: var(--odd-type-eyebrow-family);
@@ -188,12 +197,55 @@
 }
 
 .nav-footer {
-  margin: var(--odd-space-md) 0 0;
-  padding-block-start: var(--odd-space-lg);
+  --odd-stack-gap: var(--odd-space-2xs);
+  /* The footer region is a row: the note fills it, so the divider spans the sidebar. */
+  flex: 1;
+  padding-block-start: var(--odd-space-md);
   border-block-start: var(--odd-border-width-default) solid var(--odd-color-border-default);
   color: var(--odd-color-text-secondary);
   font-size: var(--odd-type-small-size);
   line-height: var(--odd-type-small-line-height);
+}
+
+.nav-footer > p {
+  margin: 0;
+}
+
+.nav-footer.nav-global {
+  margin-block-start: var(--odd-space-md);
+  padding-block-start: var(--odd-space-lg);
+}
+
+/* A child page shows while its parent is open (`hidden` otherwise, over the recipe's display). */
+.side-nav > [hidden] {
+  display: none;
+}
+
+/*
+ * Wide screens show the section's sidebar (Figma "Docs / Components sidebar" and its siblings):
+ * heading, links, and note 16 px apart, and the links 4 px apart (the design binds that gap to
+ * space.2xs, tighter than the side-nav's default navigation.item.gap). The narrow-screen menu
+ * shows the site map.
+ */
+@media (width >= 55.5rem) {
+  .side-nav[data-section] {
+    --odd-navigation-item-gap: var(--odd-space-2xs);
+    background: var(--odd-color-surface-default);
+  }
+
+  .side-nav[data-section] > .nav-global {
+    display: none;
+  }
+
+  .side-nav[data-section]::part(base) {
+    gap: var(--odd-space-md);
+  }
+}
+
+@media (width < 55.5rem) {
+  .side-nav > .nav-section {
+    display: none;
+  }
 }
 
 /* Before odd-side-nav upgrades, its entries are plain links: one per line. */
@@ -236,6 +288,27 @@ odd-side-nav:not(:defined) > a {
 
 .page-header > * + * {
   margin-block-start: var(--odd-space-md);
+}
+
+/* Figma "Component metadata" (20:2200): status, package (a 360 px column), and source, 16 px apart. */
+.component-meta {
+  --odd-cluster-gap: var(--odd-space-md);
+  align-items: center;
+}
+
+.component-meta > code {
+  flex: 0 1 22.5rem;
+  color: var(--odd-color-text-secondary);
+  font-family: var(--odd-type-code-family);
+  font-size: var(--odd-type-code-size);
+  line-height: var(--odd-type-code-line-height);
+}
+
+.component-meta > .odd-link {
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+  line-height: var(--odd-type-ui-line-height);
 }
 
 #main h1 {
@@ -643,7 +716,8 @@ odd-side-nav:not(:defined) > a {
 }
 
 .hero-copy .eyebrow,
-.section-heading .eyebrow {
+.section-heading .eyebrow,
+.page-header .eyebrow {
   color: var(--odd-color-link);
 }
 
@@ -874,6 +948,7 @@ odd-side-nav:not(:defined) > a {
 
   .search-trigger {
     --odd-button-padding-inline: var(--odd-space-xs);
+    justify-content: center;
     min-inline-size: var(--odd-control-height-md);
   }
 

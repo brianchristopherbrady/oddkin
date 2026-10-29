@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { docsFacts, siteFacts } from '../../apps/docs/facts.mjs';
 import {
+  clientPages,
   codeBlocks,
   navigation,
   pages,
@@ -151,9 +152,32 @@ describe('authored docs pages', async () => {
 
 describe('the docs shell', async () => {
   const facts = await docsFacts(root);
-  const release = await siteFacts(root);
+  // The catalog comes from the Workbench reference index the server builds; one page stands in.
+  const release = await siteFacts(root, {
+    registry: {
+      pages: [
+        { kind: 'component', route: '/components/odd-button', title: 'Button', visible: true },
+        {
+          kind: 'component',
+          route: '/components/odd-conversation',
+          title: 'Conversation',
+          group: 'AI',
+          visible: true,
+        },
+      ],
+    },
+  });
   const template = readFileSync(`${root}apps/docs/index.html`, 'utf8');
   const shell = (path: string) => renderDocument(template, path, facts, release);
+  const sidebar = (html: string) =>
+    html.slice(html.indexOf('<odd-side-nav'), html.indexOf('</odd-side-nav>'));
+  /** The section sidebar's links, as label and aria-current. */
+  const sectionNav = (html: string) =>
+    [
+      ...sidebar(html).matchAll(
+        /<a class="nav-section" href="([^"]+)"[^>]*?(?: aria-current="([a-z]+)")?>([^<]+)<\/a>/g,
+      ),
+    ].map(([, href, current, label]) => `${label} ${href}${current ? ` [${current}]` : ''}`);
 
   it('fills every part of the template but the policy, which the server or the build adds', () => {
     const html = shell('/installation');
@@ -170,18 +194,77 @@ describe('the docs shell', async () => {
     expect(release.repository).toMatch(/^https:\/\/github\.com\/[^/]+\/oddkin$/);
   });
 
-  it('marks the current page, its section, and lists only that section’s children', () => {
-    const sidebar = (html: string) =>
-      html.slice(html.indexOf('<odd-side-nav'), html.indexOf('</odd-side-nav>'));
+  it('marks the current page and its section in the site map, which shows only the open page’s children', () => {
     const html = shell('/getting-started/tokens');
-    expect(html).toContain(
-      '<a class="nav-child" href="/getting-started/tokens" aria-current="page">',
+    expect(sidebar(html)).toContain(
+      '<a class="nav-global nav-child" href="/getting-started/tokens" data-parent="/getting-started" aria-current="page">',
     );
-    expect(html).toContain('<a href="/getting-started" aria-current="true">');
+    expect(sidebar(html)).toContain(
+      '<a class="nav-global" href="/getting-started" aria-current="true">',
+    );
     expect(html).toContain('<a href="/getting-started" aria-current="true">Learn</a>');
-    expect(sidebar(html)).not.toContain('href="/guides/theming"');
-    expect(sidebar(shell('/guides'))).toContain('<a class="nav-child" href="/guides/theming">');
-    expect(shell('/components/odd-button')).toContain('<a href="/components" aria-current="true">');
+    expect(sidebar(html)).toContain(
+      '<a class="nav-global nav-child" href="/guides/theming" data-parent="/guides" hidden>',
+    );
+    expect(sidebar(shell('/guides'))).toContain(
+      '<a class="nav-global nav-child" href="/guides/theming" data-parent="/guides">',
+    );
+    expect(sidebar(shell('/components/odd-button'))).toContain(
+      '<a class="nav-global" href="/components" aria-current="true">',
+    );
+  });
+
+  it('shows the section’s sidebar: its heading, its pages as the design lists them, and its note', () => {
+    const learn = shell('/getting-started');
+    expect(sidebar(learn)).toContain('data-section="learn"');
+    expect(sidebar(learn)).toContain('<p slot="header" class="nav-heading nav-section">Learn</p>');
+    expect(sectionNav(learn)).toEqual([
+      'Getting started /getting-started [page]',
+      'Installation /installation',
+      'Core and state /core',
+      'Guides /guides',
+      'Recipes /recipes',
+    ]);
+    expect(sidebar(learn)).toContain(
+      '<div slot="footer" class="nav-footer nav-section odd-stack"><p>Oddkin docs</p></div>',
+    );
+    // A page under a listed one marks it; its own pages are linked from its content.
+    expect(sectionNav(shell('/getting-started/tokens'))[0]).toBe(
+      'Getting started /getting-started [true]',
+    );
+    expect(sectionNav(shell('/layout/side-nav'))).toContain('Guides /guides');
+
+    // Browse all and Overview list pages under them, so they are current on their own page only.
+    expect(sectionNav(shell('/components/odd-button'))).toEqual([
+      'Browse all /components',
+      'Button /components/odd-button [page]',
+    ]);
+    expect(sectionNav(shell('/components'))[0]).toBe('Browse all /components [page]');
+    expect(sidebar(shell('/components'))).toContain('<p>@oddkin/components</p>');
+    const color = sectionNav(shell('/foundations/color'));
+    expect(color[0]).toBe('Overview /foundations');
+    expect(color).toContain('Color /foundations/color [page]');
+    expect(sidebar(shell('/foundations'))).toContain(
+      '<p>@oddkin/tokens</p><p>Default theme baseline</p>',
+    );
+    expect(sectionNav(shell('/ai'))).toEqual([
+      'Analyzer and agents /tooling',
+      'AI interfaces /ai [page]',
+    ]);
+    expect(sectionNav(shell('/architecture/scope-ownership'))).toEqual([
+      'Architecture /architecture [true]',
+      'Roadmap /roadmap',
+      'Help and releases /support',
+    ]);
+  });
+
+  it('gives every page but Home a section, and Home and search the site map alone', () => {
+    for (const path of [...pages, ...clientPages].map((page) => page.path).filter(Boolean))
+      expect(sidebar(shell(`/${path}`)), path).toMatch(/data-section="[a-z]+"/);
+    for (const path of ['/', '/search', '/404']) {
+      expect(sidebar(shell(path)), path).not.toContain('data-section');
+      expect(sidebar(shell(path)), path).not.toContain('nav-section');
+    }
   });
 
   it('links only to pages that exist', () => {

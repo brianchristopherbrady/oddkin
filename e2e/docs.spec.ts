@@ -32,22 +32,28 @@ test('docs guides, metadata references, local search, and shadow-root links', as
     'Web components, design tokens, and the tools around them.',
   );
 
-  // An authored page reached from a link is the server's document for that path; the sidebar
-  // (odd-side-nav over the server's links) lists a section's pages when it is open.
+  // An authored page reached from a link is the server's document for that path; on wide screens
+  // the sidebar (odd-side-nav over the server's links) lists the section's pages, and a page
+  // under one of them marks it.
   await page.getByRole('link', { name: 'Get started' }).click();
   await expect(page).toHaveURL(`${docs}/getting-started`);
   await expect(page.getByRole('navigation', { name: 'Documentation' })).toBeVisible({
     timeout: catalogLoad,
   });
-  await page.locator('.side-nav a[href="/getting-started/tokens"]').click();
+  // Its links are the odd-side-nav host's children, slotted into its shadow nav.
+  const sidebar = page.locator('#docs-nav');
+  await page.getByRole('link', { name: 'Use tokens only' }).click();
   await expect(page).toHaveURL(`${docs}/getting-started/tokens`);
   await expect(page.getByRole('heading', { name: 'Tokens only', level: 1 })).toBeVisible();
-  await expect(page.locator('.side-nav a[aria-current="page"]')).toHaveText('Tokens only');
-  await expect(page.locator('.side-nav a[aria-current="true"]')).toHaveText('Getting started');
+  await expect(sidebar.getByRole('link', { name: 'Getting started' })).toHaveAttribute(
+    'aria-current',
+    'true',
+  );
 
   // The layout guide's route loads its element modules before it commits (catalogLoad).
-  await page.locator('.side-nav a[href="/guides"]').click();
-  await page.locator('.side-nav a[href="/layout/side-nav"]').click();
+  await sidebar.getByRole('link', { name: 'Guides' }).click();
+  await page.getByRole('link', { name: 'Read the layout guide' }).click();
+  await page.getByRole('link', { name: 'side navigation guide' }).click();
   await expect(page.getByRole('heading', { name: 'Side navigation', exact: true })).toBeVisible({
     timeout: catalogLoad,
   });
@@ -66,9 +72,17 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   expect(await sideNavPanel.evaluate((element) => element.shadowRoot?.mode)).toBe('open');
   await expect(sideNavPanel.getByRole('heading', { name: 'Overview', level: 2 })).toBeVisible();
 
-  await page.locator('.side-nav a[href="/components"]').click();
+  // Another section's route loads its document, with that section's sidebar.
+  const primary = page.getByRole('navigation', { name: 'Primary' });
+  await primary.getByRole('link', { name: 'Components' }).click();
   await expect(page).toHaveURL(`${docs}/components`, { timeout: catalogLoad });
-  await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible({
+    timeout: catalogLoad,
+  });
+  await expect(sidebar.getByRole('link', { name: 'Browse all' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
   // The catalog's filter is mirrored in the URL without a new entry, and typing keeps focus.
   const search = page.getByRole('searchbox', { name: 'Search components' });
   await search.fill('card');
@@ -81,13 +95,19 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await page.goBack();
   await expect(page).toHaveURL(`${docs}/layout/side-nav`);
   await page.goForward();
-  await expect(page.getByRole('searchbox', { name: 'Search components' })).toBeVisible();
+  await expect(page.getByRole('searchbox', { name: 'Search components' })).toBeVisible({
+    timeout: catalogLoad,
+  });
 
   // A shadow-root link inside the panel navigates through the docs router; the reference page
   // shows the component's documented default example live, in a frame.
   await page.getByRole('link', { name: 'View reference: Button', exact: true }).click();
   await expect(page).toHaveURL(`${docs}/components/odd-button`);
   await expect(page.locator('#main h1')).toHaveText('Button');
+  await expect(sidebar.getByRole('link', { name: 'Button', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
   const buttonPanel = page.locator('oddkin-component-panel');
   await expect(
     buttonPanel.getByText("import '@oddkin/components/define/button';", { exact: true }),
@@ -97,7 +117,7 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   ).toHaveText('Save', { timeout: catalogLoad });
 
   // Foundations are authored pages; their tables and swatches come from the tokens inspection.
-  await page.locator('.side-nav a[href="/foundations"]').click();
+  await primary.getByRole('link', { name: 'Foundations' }).click();
   await expect(page.getByRole('heading', { name: 'Foundations', level: 1 })).toBeVisible();
   await page.getByRole('link', { name: 'Read about spacing' }).click();
   await expect(page).toHaveURL(`${docs}/foundations/spacing`);

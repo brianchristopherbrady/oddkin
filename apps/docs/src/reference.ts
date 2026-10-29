@@ -51,6 +51,10 @@ export const catalogGroups = (index: WorkbenchIndex): string[] => [
   ),
 ];
 
+/** A reference page's source file in the repository: a package's `dist/<path>.js` is `src/<path>.ts`. */
+export const sourcePath = (page: { package: string; module: string }): string =>
+  `packages/${page.package.replace(/^@oddkin\//, '')}/${page.module.replace(/^dist\//, 'src/').replace(/\.js$/, '.ts')}`;
+
 /** The values of a component's `default` example, when it has some and needs no fixture. */
 function defaultExample(page: ComponentPageData) {
   const example = page.examples.find((entry) => entry['name'] === 'default');

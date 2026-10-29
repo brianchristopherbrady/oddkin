@@ -114,6 +114,23 @@ describe('the static docs build', () => {
     expect(readFileSync(documentAt(out, '/components'), 'utf8')).toContain("frame-src 'self'");
   });
 
+  it('lists every catalog component in the Components sidebar, and links each to its source', async () => {
+    const { sourcePath } = await import('../../apps/docs/src/reference.js');
+    const index = JSON.parse(readFileSync(join(out, '_oddkin/index.json'), 'utf8')) as {
+      pages: Record<string, string>;
+      registry: { pages: { id: string; kind: string; route: string; group?: string }[] };
+    };
+    const html = readFileSync(documentAt(out, '/components/odd-button'), 'utf8');
+    const sidebar = html.slice(html.indexOf('<odd-side-nav'), html.indexOf('</odd-side-nav>'));
+    for (const page of index.registry.pages.filter((p) => p.kind === 'component')) {
+      const listed = sidebar.includes(`<a class="nav-section" href="${page.route}"`);
+      // The AI elements have their own page (/ai), as in the catalog.
+      expect(listed, page.route).toBe(page.group !== 'AI');
+      const data = JSON.parse(readFileSync(join(out, '_oddkin', index.pages[page.id]!), 'utf8'));
+      expect(existsSync(join(root, sourcePath(data))), page.id).toBe(true);
+    }
+  });
+
   it('replaces only a folder it wrote', () => {
     const other = mkdtempSync(join(tmpdir(), 'oddkin-docs-other-'));
     writeFileSync(join(other, 'keep.txt'), 'not the docs site');

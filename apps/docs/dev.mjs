@@ -48,7 +48,6 @@ function relativePackagePath(packageName, target) {
 const { imports, manifests } = await publicExports();
 const site = await import(pathToFileURL(join(root, 'apps/docs/dist/pages/index.js')).href);
 const facts = await docsFacts(root);
-const release = await siteFacts(root);
 const shell = join(root, 'apps/docs/index.html');
 // Reference pages (src/reference.ts): Workbench data with the packages' authored examples, built in Node.
 const { buildWorkbench } = await import(
@@ -58,6 +57,7 @@ const reference = await buildWorkbench({
   config: join(root, 'apps/docs'),
   hosting: { basePath: '/' },
 });
+const release = await siteFacts(root, reference.data?.index);
 
 /** The shell filled for `pathname`; the server sends its policy as a header, not a meta element. */
 const documentFor = (template, pathname) =>
@@ -99,7 +99,11 @@ const server = createServer(async (request, response) => {
     }
     path = resolve(pkg.directory, target);
   } else {
-    const requestPath = pathname === '/' ? '/apps/docs/index.html' : pathname;
+    // Routes have no file extension and live outside /packages/ and /apps/: the shell serves
+    // them even where a folder of the repository has the same name (/tooling, /docs).
+    const route =
+      !pathname.startsWith('/packages/') && !pathname.startsWith('/apps/') && !extname(pathname);
+    const requestPath = pathname === '/' || route ? '/apps/docs/index.html' : pathname;
     path = resolve(root, normalize(`.${requestPath}`));
     if (path !== root && !path.startsWith(root + sep)) {
       response.writeHead(403).end('Forbidden');
@@ -108,15 +112,8 @@ const server = createServer(async (request, response) => {
     try {
       if ((await stat(path)).isDirectory()) path = join(path, 'index.html');
     } catch (error) {
-      // Routes have no file extension; a missing asset (such as /favicon.ico) is a 404, not the shell.
-      if (
-        error?.code === 'ENOENT' &&
-        !pathname.startsWith('/packages/') &&
-        !pathname.startsWith('/apps/') &&
-        !extname(pathname)
-      ) {
-        path = join(root, 'apps/docs/index.html');
-      } else if (error?.code === 'ENOENT') {
+      // A missing asset (such as /favicon.ico) is a 404, not the shell.
+      if (error?.code === 'ENOENT') {
         response.writeHead(404).end('Not found');
         return;
       } else {

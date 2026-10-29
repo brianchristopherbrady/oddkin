@@ -62,7 +62,9 @@ test.describe('docs shell', () => {
       ),
     ).toBe(true);
     const menu = page.getByRole('button', { name: 'Menu' });
-    const link = page.locator('.side-nav a[href="/getting-started"]');
+    // The menu shows the site map; the section's own links are for wide screens. (Links are
+    // found from the odd-side-nav host: they are its children, slotted into its shadow nav.)
+    const link = page.locator('#docs-nav').getByRole('link', { name: 'Getting started' });
     await expect(page.getByRole('navigation', { name: 'Primary' })).toBeHidden();
     await expect(menu).toHaveAttribute('aria-expanded', 'false');
     await expect(link).toBeHidden();
@@ -154,7 +156,9 @@ test.describe('static docs site', () => {
     await expect(page.getByRole('navigation', { name: 'Documentation' })).toBeVisible();
     await page.getByRole('link', { name: 'Use tokens only' }).click();
     await expect(page.locator('#main h1')).toHaveText('Tokens only');
-    await expect(page.locator('.side-nav a[aria-current="page"]')).toHaveText('Tokens only');
+    await expect(
+      page.locator('#docs-nav').getByRole('link', { name: 'Getting started' }),
+    ).toHaveAttribute('aria-current', 'true');
     expect(await violations()).toEqual([]);
     expect(errors).toEqual([]);
   });

@@ -1,6 +1,13 @@
 import type { CommandRecord, OddkinCommandPalette } from '@oddkin/components/command-palette';
 import type { Scope } from '@oddkin/core/scope';
-import { currentOf, navigation, primaryCurrent, primaryLinks } from './pages/site.js';
+import {
+  currentOf,
+  navigation,
+  openEntry,
+  primaryCurrent,
+  primaryLinks,
+  sectionOf,
+} from './pages/site.js';
 
 /**
  * The docs shell's behavior: the light and dark switch, the narrow-screen menu, search (an
@@ -119,10 +126,15 @@ function search(scope: Scope, navigate: (path: string) => void): void {
 
 /** Marks the links to the page at `path` and above it, and closes the narrow-screen menu. */
 export function showRoute(path: string): void {
+  const open = openEntry(
+    navigation().flatMap((group) => group.links),
+    path,
+  );
   for (const link of document.querySelectorAll<HTMLAnchorElement>('.side-nav > a')) {
-    const value = currentOf(new URL(link.href).pathname, path);
+    const value = currentOf(new URL(link.href).pathname, path, link.hasAttribute('data-exact'));
     if (value) link.setAttribute('aria-current', value);
     else link.removeAttribute('aria-current');
+    if (link.dataset['parent']) link.hidden = link.dataset['parent'] !== open;
   }
   for (const link of document.querySelectorAll<HTMLAnchorElement>('.primary-nav a')) {
     const destination = primaryLinks.find(
@@ -134,6 +146,10 @@ export function showRoute(path: string): void {
   }
   setMenu(false);
 }
+
+/** Whether the page at `path` belongs to another section than the sidebar the server rendered. */
+export const sectionChanged = (path: string): boolean =>
+  (sidebar()?.dataset['section'] ?? '') !== (sectionOf(path)?.id ?? '');
 
 /** The CSS property each kind of token preview sets (`data-preview` in `pages/model.ts`). */
 const previewProperties: Readonly<Record<string, string>> = {

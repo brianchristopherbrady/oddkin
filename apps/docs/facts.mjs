@@ -17,8 +17,12 @@ const BROWSERS = {
 const json = async (path) => JSON.parse(await readFile(path, 'utf8'));
 const cell = (text) => [text];
 
-/** The shell's facts: the release version and license, the source repository, and what Oddkin is. */
-export async function siteFacts(root) {
+/**
+ * The shell's facts: the release version and license, the source repository, what Oddkin is, and
+ * the catalog's reference pages from the Workbench `index` the server builds (the AI elements
+ * have their own page, /ai, as in the catalog).
+ */
+export async function siteFacts(root, index) {
   const core = await json(join(root, 'packages/core/package.json'));
   const readme = await readFile(join(root, 'README.md'), 'utf8');
   const intro = readme.split(/\n\s*\n/).find((block) => !block.startsWith('#')) ?? '';
@@ -44,6 +48,10 @@ export async function siteFacts(root) {
     browsers: `${desktop.slice(0, -1).join(', ')}, and ${desktop.at(-1)}`,
     components: Object.keys(metadata.components).length,
     packages,
+    catalog: (index?.registry.pages ?? [])
+      .filter((page) => page.kind === 'component' && page.visible && page.group !== 'AI')
+      .map((page) => ({ href: page.route, label: page.title }))
+      .sort((a, b) => a.label.localeCompare(b.label, 'en')),
   };
 }
 

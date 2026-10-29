@@ -78,9 +78,22 @@ const html = (path) => join(out, ...path.split('/').filter(Boolean), 'index.html
 async function main() {
   const site = await import(pathToFileURL(join(root, 'apps/docs/dist/pages/index.js')).href);
   const facts = await docsFacts(root);
-  const release = await siteFacts(root);
   const template = await readFile(join(root, 'apps/docs/index.html'), 'utf8');
   await prepareOut();
+
+  // Reference pages (src/reference.ts): Workbench data with the packages' authored examples.
+  const { buildWorkbench } = await import(
+    pathToFileURL(join(root, 'packages/workbench/dist/node/index.js')).href
+  );
+  const reference = await buildWorkbench({
+    config: join(root, 'apps/docs'),
+    hosting: { basePath: '/' },
+  });
+  if (!reference.data)
+    throw new Error(
+      `The reference data could not be built: ${reference.diagnostics.map((d) => d.message).join(' ')}`,
+    );
+  const release = await siteFacts(root, reference.data.index);
 
   const { imports, assets } = await packages();
   const importMap = JSON.stringify({ imports }).replace(/</g, '\\u003c');
@@ -111,18 +124,6 @@ async function main() {
         `<script type="importmap">${importMap}</script>`,
       );
 
-  // Reference pages (src/reference.ts): Workbench data with the packages' authored examples.
-  const { buildWorkbench } = await import(
-    pathToFileURL(join(root, 'packages/workbench/dist/node/index.js')).href
-  );
-  const reference = await buildWorkbench({
-    config: join(root, 'apps/docs'),
-    hosting: { basePath: '/' },
-  });
-  if (!reference.data)
-    throw new Error(
-      `The reference data could not be built: ${reference.diagnostics.map((d) => d.message).join(' ')}`,
-    );
   const referenceFiles = [...reference.files.keys()]
     .filter((path) => path === 'index.json' || path.startsWith('pages/'))
     .sort();

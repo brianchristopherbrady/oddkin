@@ -1,4 +1,5 @@
 import { foundationPages } from './foundations.js';
+
 import { agents, browserSupport, frameworks } from './guides.js';
 import { composition, formsAccessibility, layout, theming } from './guides-core.js';
 import { gettingStarted, guides, recipes } from './landing.js';
@@ -128,12 +129,118 @@ export const primaryLinks: readonly { label: string; path: string; section: read
     { label: 'Tools', path: 'workbench', section: ['workbench', 'tooling'] },
   ];
 
+/** The entry whose children the sidebar shows at `pathname`: the page's parent, or the page. */
+export function openEntry(links: readonly NavLink[], pathname: string): string | undefined {
+  const here = `/${clean(pathname)}`;
+  const active = links.find((link) => link.href === here || here.startsWith(`${link.href}/`));
+  return active?.parent ?? active?.href;
+}
+
+/**
+ * A header section's context sidebar (Figma "Docs / Learn sidebar" and its siblings): a heading,
+ * the section's pages, and a note under a divider. Wide screens show it in place of the site map.
+ */
+export interface NavSection {
+  id: string;
+  label: string;
+  /** The pages listed, in order, each with the sidebar's own label where it has one. */
+  links: readonly { path: string; label?: string }[];
+  /** Lines under the divider. */
+  note: readonly string[];
+}
+
+export const sections: readonly NavSection[] = [
+  {
+    id: 'learn',
+    label: 'Learn',
+    links: [
+      { path: 'getting-started' },
+      { path: 'installation' },
+      { path: 'core' },
+      { path: 'guides', label: 'Guides' },
+      { path: 'recipes' },
+    ],
+    note: ['Oddkin docs'],
+  },
+  {
+    id: 'components',
+    label: 'Components',
+    // The catalog's components follow, from the reference index (`SiteFacts.catalog`).
+    links: [{ path: 'components', label: 'Browse all' }],
+    note: ['@oddkin/components'],
+  },
+  {
+    id: 'foundations',
+    label: 'Foundations',
+    links: [
+      { path: 'foundations', label: 'Overview' },
+      ...foundationPages.filter((page) => page.parent === 'foundations'),
+      { path: 'theme-studio' },
+    ],
+    note: ['@oddkin/tokens', 'Default theme baseline'],
+  },
+  {
+    id: 'tools',
+    label: 'Tools',
+    links: [
+      { path: 'theme-studio' },
+      { path: 'workbench' },
+      { path: 'tooling', label: 'Analyzer and agents' },
+      { path: 'ai' },
+    ],
+    note: ['Explore the tools'],
+  },
+  {
+    id: 'project',
+    label: 'Project',
+    links: [{ path: 'architecture' }, { path: 'roadmap' }, { path: 'support' }],
+    note: ['Oddkin docs'],
+  },
+];
+
+/** The section of the page at `pathname`: one that lists it, a page above it, or its parent. */
+export function sectionOf(pathname: string): NavSection | undefined {
+  const here = clean(pathname);
+  const parent = entries().find((entry) => entry.path === here)?.parent;
+  return sections.find((section) =>
+    section.links.some(
+      ({ path }) => path === here || here.startsWith(`${path}/`) || path === parent,
+    ),
+  );
+}
+
+/**
+ * The links of `section` that exist (a page's own pages are linked from its content, as in the
+ * design). A link with pages of its own in the list (Browse all, Overview) is current on its
+ * page alone; the others also on the pages under them.
+ */
+export function sectionLinks(
+  section: NavSection,
+  catalog: readonly { href: string; label: string }[],
+): (NavLink & { exact?: boolean })[] {
+  const all = entries();
+  const links: NavLink[] = section.links
+    .filter((link) => routeExists(link.path))
+    .map(({ path, label }) => ({
+      label: label ?? all.find((entry) => entry.path === path)?.label ?? path,
+      href: `/${path}`,
+    }));
+  if (section.id === 'components') links.push(...catalog);
+  return links.map((link) =>
+    links.some((other) => other.href.startsWith(`${link.href}/`)) ? { ...link, exact: true } : link,
+  );
+}
+
 /** `aria-current` of a sidebar link to `href` at `pathname`: the page itself, a page above it, or neither. */
-export function currentOf(href: string, pathname: string): 'page' | 'true' | undefined {
+export function currentOf(
+  href: string,
+  pathname: string,
+  exact = false,
+): 'page' | 'true' | undefined {
   const target = clean(href);
   const here = clean(pathname);
   if (target === here) return 'page';
-  return target && here.startsWith(`${target}/`) ? 'true' : undefined;
+  return !exact && target && here.startsWith(`${target}/`) ? 'true' : undefined;
 }
 
 /** `aria-current` of a header destination at `pathname`: its page, or a page of its section. */
