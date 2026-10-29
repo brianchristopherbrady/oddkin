@@ -6,18 +6,20 @@ import { expect, request, test, type Page } from '@playwright/test';
 // actual import graph holds production builds of the runtime entries it imports: no development
 // builds, Node or tooling entries, examples, or optional modules it does not use.
 const server = 'http://127.0.0.1:4174';
-const tooling =
-  /\/(node|inspect|test|frameworks|agent|composition)\/|\.examples\.|@oddkin\/(analyzer|workbench|ai)\//;
+// Tooling no page loads; @oddkin/ai only where a page uses an AI element (the full app).
+const toolingPaths =
+  /\/(node|inspect|test|frameworks|agent|composition)\/|\.examples\.|@oddkin\/(analyzer|workbench)\//;
+const tooling = new RegExp(`${toolingPaths.source}|@oddkin\\/ai\\/`);
 
 interface Packed {
   installed: string[];
   imports: Record<string, string>;
   files: string[];
 }
-async function ready(name: string): Promise<Packed> {
+async function ready(name: string, timeout = 170_000): Promise<Packed> {
   const api = await request.newContext();
   try {
-    const response = await api.get(`${server}/${name}/__ready`, { timeout: 170_000 });
+    const response = await api.get(`${server}/${name}/__ready`, { timeout });
     expect(response.ok(), await response.text()).toBe(true);
     return (await response.json()) as Packed;
   } finally {
@@ -164,8 +166,9 @@ test.describe('CSS only with the recipes', () => {
 
 test.describe('full application', () => {
   test.beforeAll(async () => {
-    test.setTimeout(180_000);
-    await ready('full-app');
+    // Six packages to pack and install, beside the other consumers being prepared.
+    test.setTimeout(300_000);
+    await ready('full-app', 290_000);
   });
 
   for (const source of [
@@ -176,22 +179,26 @@ test.describe('full application', () => {
       const errors = await open(page, source.url);
       await expect(page.locator('body')).toHaveAttribute('data-ready', 'true');
       await expect(page).toHaveTitle('Profile · Full application');
-      await page.getByLabel('Name').fill('Grace');
+      // The AI element: choosing a suggested name puts it in the field.
+      await expect(page.getByRole('list', { name: 'Suggested names' })).toBeVisible();
+      await page.getByRole('button', { name: 'Grace', exact: true }).click();
+      await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Grace');
       await page.getByRole('button', { name: 'Save' }).click();
       await expect(page).toHaveTitle('Summary · Full application');
       await expect(page.locator('#summary')).toHaveText('Grace, saved 1 time.');
       await expect(page.getByRole('heading', { level: 1, name: 'Summary' })).toBeFocused();
       await page.getByRole('link', { name: 'Edit the profile' }).click();
       await expect(page).toHaveTitle('Profile · Full application');
-      await expect(page.getByLabel('Name')).toHaveValue('Grace');
+      await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Grace');
       expect(await violations(page)).toEqual([]);
       expect(errors).toEqual([]);
     });
   }
 
-  test('the packed application installs its five packages and loads only runtime modules it uses', async () => {
+  test('the packed application installs its six packages and loads only runtime modules it uses', async () => {
     const packed = await ready('full-app');
     expect(packed.installed).toEqual([
+      '@oddkin/ai',
       '@oddkin/app',
       '@oddkin/components',
       '@oddkin/core',
@@ -200,9 +207,9 @@ test.describe('full application', () => {
     ]);
     const modules = installedModules(packed);
     const production =
-      /^\.\/node_modules\/@oddkin\/((core|state|app)\/dist\/prod|tokens\/dist|components\/dist)\//;
+      /^\.\/node_modules\/@oddkin\/((core|state|app|ai)\/dist\/prod|tokens\/dist|components\/dist)\//;
     expect(modules.filter((f) => !production.test(f))).toEqual([]);
-    expect(modules.filter((f) => tooling.test(f))).toEqual([]);
+    expect(modules.filter((f) => toolingPaths.test(f))).toEqual([]);
     // Optional entries this page does not import stay out of its graph.
     expect(
       Object.keys(packed.imports).filter((s) =>

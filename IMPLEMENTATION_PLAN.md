@@ -35,7 +35,7 @@ Exit criteria:
   - Build scripted consumers in temporary directories, from the registry's beta and from packed tarballs:
     - plain HTML with an import map;
     - a Vite TypeScript app;
-    - tokens as CSS only, and through Sass;
+    - tokens as CSS only, and in a Sass build (the tokens package has no Sass output; Sass styles read the custom properties);
     - core only;
     - components only, with the autoloader and with explicit `define` imports;
     - a full app with the router, state, a form, and an AI element;
@@ -44,6 +44,7 @@ Exit criteria:
   - Each page must render, register its elements, submit its form, and log no console error, in three engines.
   - Fix every failure where it starts. Failures in another lane's package go to that lane with a reproduction.
   - Covers M12 "Independent consumers…", M11 "Every copied/generated example and exported theme verified in fresh directories…", and M1 "Node tooling's required compiler/build dependencies…".
+  - *(2026-10-28, Agent 1: fresh Vite TypeScript (with Sass), React, Vue, and Svelte apps install the packed packages and their own build tools, type-check (TypeScript, TSX), build with Vite, and pass in three engines: they register the elements, report typed input, and submit the form with no console error (`tests/consumers/`, `e2e/fresh-consumers.spec.ts`, `scripts/packed-consumers.mjs`). The full app now also uses an AI element (`odd-suggestions` fills the form). `ODDKIN_CONSUMERS_FROM=<dist-tag>` installs from the registry instead (`.github/workflows/registry-smoke.yml`). Remaining: an Angular app (typings only so far) and the registry run's first result.)*
 - [ ] **P0.2 Cross-package compatibility (Agent 1).**
   - Close §2.5's open items: two independently built consumers and duplicate core copies.
   - Make version ranges compatible across the packages, token outputs, metadata, configuration, and frames.
@@ -87,6 +88,7 @@ Exit criteria:
   - A scheduled job installs from the registry.
   - Record each step's runtime.
   - Covers M12 "Full unit/type/browser suite…" and M1's CI item.
+  - *(2026-10-28, Agent 1: `ci.yml` runs the build, the node project, and the browser project per engine with `--no-file-parallelism`; its e2e run includes P0.1's fresh apps; `registry-smoke.yml` installs from the registry weekly and by hand. The Linux-only failures at 8d20b26 were the app header's reflow test (a wider default font; fixed) and WebKit's Tab order on Linux (both orders accepted); the AI layout failure went to Agent 2 and the docs Firefox failure to Agent 3. Until branch protection fits the push-to-`main` flow, a red run blocks the next push: Agent 1 fixes it or sends it to its lane first. Remaining: a green run, P0.5 in CI, and each step's runtime.)*
 - [ ] **P0.7 Docs site (Agent 3).** Figma fidelity for every route first, then accurate content for every package and its README, then the coverage gaps (M11's documentation items, §5f). Agent 3's prompts set the detail; Agents 1 and 2 support it.
 - [ ] **P0.8 1.0.0-beta.1 (Agent 1; the owner publishes).** After P0.1–P0.6's fixes: the release checklist (release-process.md §5), changelogs, `set-versions --next`, and the dry run. The owner publishes.
 

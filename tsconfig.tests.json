@@ -19,5 +19,7 @@
     "scripts/**/*.d.mts",
     "vitest.config.ts",
     "playwright.config.ts"
-  ]
+  ],
+  // Each consumer type-checks in its own fresh project, against the packed packages.
+  "exclude": ["tests/consumers"]
 }

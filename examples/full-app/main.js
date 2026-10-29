@@ -1,5 +1,7 @@
-// A full application with no build step: an application root, a router in hash mode, a store,
-// and the components on the default theme, under a strict CSP with Trusted Types.
+// A full application with no build step: an application root, a router in hash mode, a store, a
+// form, and the components and an AI element on the default theme, under a strict CSP with
+// Trusted Types.
+import '@oddkin/ai/define/suggestions';
 import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
 import '@oddkin/components/define/input';
@@ -26,11 +28,19 @@ const element = (tag, attributes = {}, ...children) => {
 };
 
 function profile({ name }) {
-  const form = element(
-    'form',
-    { id: 'profile' },
-    element('odd-input', { label: 'Name', name: 'name', value: name, required: '' }),
-  );
+  const input = element('odd-input', { label: 'Name', name: 'name', value: name, required: '' });
+  // Suggested names: choosing one puts it in the field, for editing before Save.
+  const suggestions = element('odd-suggestions', { 'insert-only': '' });
+  suggestions.strings = { label: 'Suggested names' };
+  suggestions.suggestions = ['Grace', 'Katherine'].map((label) => ({
+    id: label.toLowerCase(),
+    label,
+    prompt: label,
+  }));
+  suggestions.addEventListener('odd-suggestion-select', (event) => {
+    input.value = event.detail.prompt;
+  });
+  const form = element('form', { id: 'profile', class: 'odd-stack' }, input, suggestions);
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const next = String(new FormData(form).get('name'));

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; script-src 'self' 'sha256-AhB0kDHxzXtD4hcg8nDEIRx4XP44a20CDnsemPXJ0Kk='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+      content="default-src 'none'; script-src 'self' 'sha256-57THxUVvMishTUVVPgHCt8xco0WmTure1VM4FDTIHkE='; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
     />
     <title>Full application · Oddkin</title>
     <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
@@ -14,11 +14,13 @@
     <script type="importmap">
       {
         "imports": {
+          "@oddkin/ai/define/suggestions": "../../packages/ai/dist/suggestions/suggestions.define.js",
           "@oddkin/app/app": "../../packages/app/dist/app/index.js",
           "@oddkin/app/router": "../../packages/app/dist/router/index.js",
           "@oddkin/components/define/button": "../../packages/components/dist/button/button.define.js",
           "@oddkin/components/define/card": "../../packages/components/dist/card/card.define.js",
           "@oddkin/components/define/input": "../../packages/components/dist/input/input.define.js",
+          "@oddkin/components/styles": "../../packages/components/dist/styles/index.js",
           "@oddkin/core/controllers/announce": "../../packages/core/dist/controllers/announce.js",
           "@oddkin/core/controllers/form": "../../packages/core/dist/controllers/form.js",
           "@oddkin/core/diagnostics": "../../packages/core/dist/diagnostics/index.js",

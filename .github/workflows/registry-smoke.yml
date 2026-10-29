@@ -1,0 +1,42 @@
+name: Registry smoke
+
+# The published packages, installed from the npm registry into the same fresh projects CI builds
+# from packed tarballs (scripts/packed-consumers.mjs with ODDKIN_CONSUMERS_FROM): the packed-consumer
+# pages, and the Vite TypeScript, React, Vue, and Svelte apps. Weekly, and by hand after a publish.
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: A dist-tag or version of the @oddkin packages
+        default: beta
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      # Playwright starts every web server in playwright.config.ts; Workbench's and the docs' need the build.
+      - run: npm run build
+      - run: npx playwright test e2e/fresh-consumers.spec.ts e2e/packed-consumers.spec.ts e2e/components-only.spec.ts e2e/autoload.spec.ts
+        env:
+          ODDKIN_CONSUMERS_FROM: ${{ inputs.version || 'beta' }}
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: registry-smoke-${{ github.run_attempt }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14

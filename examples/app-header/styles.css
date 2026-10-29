@@ -8,6 +8,8 @@ body {
   font-family: var(--odd-type-body-family);
   font-size: var(--odd-type-body-size);
   line-height: var(--odd-type-body-line-height);
+  /* At 200% text in 320 px a wide font's heading is longer than the line: it wraps instead. */
+  overflow-wrap: break-word;
 }
 
 .app-header {

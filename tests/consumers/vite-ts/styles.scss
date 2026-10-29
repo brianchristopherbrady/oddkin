@@ -1,0 +1,8 @@
+// A Sass build reads the theme through its custom properties.
+$surface: var(--odd-color-surface-default);
+
+.consumer {
+  max-inline-size: 32rem;
+  background: $surface;
+  color: var(--odd-color-text-primary);
+}

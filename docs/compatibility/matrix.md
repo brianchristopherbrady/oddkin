@@ -340,7 +340,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `examples/ai-agent/styles.css` | example | 21 |
 | `examples/ai-research/styles.css` | example | 26 |
 | `examples/ai-writing/styles.css` | example | 26 |
-| `examples/app-header/styles.css` | example | 36 |
+| `examples/app-header/styles.css` | example | 38 |
 | `examples/autoload/styles.css` | example | 6 |
 | `examples/binding-rule/styles.css` | example | 32 |
 | `examples/components-only/styles.css` | example | 11 |
