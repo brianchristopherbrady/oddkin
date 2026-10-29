@@ -120,7 +120,9 @@ test.describe('Workbench over the whole catalog', () => {
       }
       await expect(page.locator('.wb-status[role="alert"]')).toHaveCount(0);
 
-      // Only the component's registration entry and what it imports, from either package.
+      // Only the component's registration entry and what it imports, from either package, and
+      // the example module, when the page has one: its fixtures render other elements, whose
+      // registrations it imports.
       const data = await getJson<ComponentPageData>(`_oddkin/pages/components/${tag}.json`);
       const map = await getJson<ImportMap>('_oddkin/frame.importmap.json');
       const entry = resolve(
@@ -130,6 +132,8 @@ test.describe('Workbench over the whole catalog', () => {
       );
       expect(entry, 'the registration entry resolves through the frame import map').toBeTruthy();
       const graph = await moduleGraph(map, entry as string);
+      if (data.exampleModule)
+        for (const url of await moduleGraph(map, at(data.exampleModule))) graph.add(url);
       expect([...loaded]).toContain(entry);
       expect([...loaded].filter((url) => !graph.has(url))).toEqual([]);
       expect(errors).toEqual([]);
