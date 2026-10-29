@@ -303,7 +303,7 @@ export function renderPage(page: Page, facts: FactBlocks): string {
           .join('')}</section>`,
     ),
     page.next
-      ? `<p class="page-next"><a class="odd-link" href="${escapeHtml(page.next.href)}">${escapeHtml(page.next.label)}${icons.arrowRight}</a></p>`
+      ? `<div class="page-next"><a class="odd-link" href="${escapeHtml(page.next.href)}">${escapeHtml(page.next.label)}${icons.arrowRight}</a></div>`
       : '',
   ].join('');
 }

@@ -377,16 +377,19 @@ odd-side-nav:not(:defined) > a {
   list-style: none;
 }
 
-.toc a,
-.page-next a {
+.toc a {
   font-family: var(--odd-type-ui-family);
   font-size: var(--odd-type-ui-size);
   font-weight: var(--odd-type-ui-weight);
 }
 
+/* Figma "Link / /installation" (20:708–20:709): an odd-link 48 px below a full-width divider
+   (the line is the link's own UI type, so nothing adds to the 48). */
 .page-next {
-  padding-block-start: var(--odd-space-lg);
+  padding-block-start: var(--odd-space-2xl);
   border-block-start: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  font-size: var(--odd-type-ui-size);
+  line-height: var(--odd-type-ui-line-height);
 }
 
 /* Code blocks */

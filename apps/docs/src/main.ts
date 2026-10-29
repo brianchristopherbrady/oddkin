@@ -314,7 +314,13 @@ function renderComponents(main: HTMLElement, index: WorkbenchIndex, filter: Cata
   panel.addEventListener('oddkin-catalog-filter', (event) => {
     void router.navigate(catalogUrl(event.detail), { replace: true });
   });
-  main.append(panel);
+  // The AI elements have their own page (Figma 20:1926, under a divider).
+  const next = node('div', 'page-next');
+  const ai = makeLink('Explore AI interaction components', '/ai');
+  ai.className = 'odd-link';
+  ai.append(arrowIcon());
+  next.append(ai);
+  main.append(panel, next);
 }
 function renderLayoutGuide(main: HTMLElement, data: DocsData): void {
   const recipe = record(record(data.metadata['recipes'])['recipe:side-nav']);
