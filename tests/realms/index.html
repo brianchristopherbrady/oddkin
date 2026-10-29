@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oddkin across realms</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <script type="module" src="./parent.bundle.js"></script>
+  </head>
+  <body>
+    <!-- A test fixture (e2e/realms.spec.ts): this document and a same-origin frame are two realms,
+         each with its own copy of @oddkin/core and its own custom element registry. parent.js
+         adds the frame once this realm is set up. -->
+    <main>
+      <form id="parent-form">
+        <odd-input id="moving" name="email" label="Email" required></odd-input>
+      </form>
+    </main>
+  </body>
+</html>

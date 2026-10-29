@@ -1,1 +1,4 @@
-export function bundleConsumers(options?: { write?: boolean }): Promise<{ a: string; b: string }>;
+export function bundleConsumers(options?: {
+  write?: boolean;
+  released?: string;
+}): Promise<{ a: string; b: string }>;

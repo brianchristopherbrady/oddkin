@@ -4235,3 +4235,15 @@ Design source: Figma `zF87qftdRznmJJezxy23gd` 20:2190 (1440 × 3394) and the int
 | The published packages, 3 engines | `ODDKIN_CONSUMERS_FROM=beta npx playwright test e2e/fresh-consumers.spec.ts` | 15 passed (2.3 min), Angular included: the published 1.0.0-beta.0 packages build and run in the Angular app too |
 | CI at 74d068c | GitHub run 40937697278 | The e2e step passed: 1,008 passed, 12 skipped, 15.9 min, the golden path included. The node step failed at `packages/analyzer/test/analyzer.test.ts:213`: core-counter.oddkin.metadata.json records the composition contract's sha256, which my core-contracts.md §1.1 edit changed. Regenerated with `UPDATE_FIXTURES=1 npx vitest run --project node packages/analyzer/test/analyzer.test.ts`; then 26 passed without the variable. The browser steps still fail on Agent 2's coverage test (HTTP 404) |
 | Types, lint | `npx tsc -p tsconfig.tests.json`; `npm run lint` | Pass; pass |
+
+## 2026-10-29 — P0.2 two versions of core on one page, and other realms (round 10, Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Two versions, 3 engines | `npx playwright test e2e/duplicate-core.spec.ts` (E2E lock) | 30 passed. Every check runs twice: both consumers on the workspace's packages, then consumer A on the published 1.0.0-beta.0, installed from npm. Each consumer has its own copy. Consumer B's copy diagnoses the collision, and the error carries its `code`. B's template sets A's button's `disabled` and hears its click. The foreign readable is reported once, and the bridge follows it; effects do not track it. With 1.0.0-beta.0, only the current copy is listed under `Symbol.for('oddkin.core.copies')` (beta.0 predates the list), and nothing warns |
+| Realms, 3 engines | `npx playwright test e2e/realms.spec.ts` | 12 passed. The page and a same-origin frame each define `odd-button`, with their own classes and their own core. The page's `odd-input`, moved into the frame's form, keeps its class and its control's computed style (radius 8px, padding 12px, font 16px, min-height 40px). It is invalid while empty, and the frame's `FormData` submits `ada@example.com`. Its input events reach a listener added in the page. Moved back, the page's form submits it. The page's signal in the frame's template is reported (`reactive.readable.foreign`) and followed when bridged. A collision error is the page copy's `OddkinError`, not the frame's |
+| Mutation probe | `node .tmp/probe-realms.mjs` (core's built `adoptedCallback` without the style re-adoption; the file is restored after) | Killed: in the frame, the control fell back to the browser's style (0px, 2px, 13.3333px, 0px) |
+| Node project | `npx vitest run --project node` | 1,500 passed, 1 skipped |
+| Contracts, kits, types, lint | `node scripts/build-contracts.mjs --check`; `node scripts/agent-kit/package-kits.mjs --check`; `npx tsc -p tsconfig.tests.json`; `npm run lint` | Up to date (16 sections); current; pass; pass |
+
+**Not verified:** a share link written by a released Workbench, opened by the current one (Agent 2's contract), and windows opened with `window.open` (only frames were tested).
