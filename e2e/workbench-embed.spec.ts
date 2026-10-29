@@ -27,6 +27,7 @@ Object.assign(document.querySelector('oddkin-catalog-panel'), { index, href });
 Object.assign(document.querySelector('oddkin-component-panel'), {
   index,
   href,
+  layout: 'reference',
   frameUrl: '/_oddkin/frame.html',
   page: await json('/_oddkin/' + index.pages['components/odd-button']),
 });
@@ -93,10 +94,21 @@ test('a page of its own embeds the catalog and a live, editable component panel'
   await expect(button).toHaveText('Save', { timeout: 20_000 });
   await panel
     .locator('tr[data-row="property:odd-button#appearance"]')
-    .getByRole('radio', { name: 'primary' })
-    .check();
+    .getByRole('combobox', { name: 'appearance (attribute)' })
+    .selectOption('primary');
   await expect(button).toHaveAttribute('appearance', 'primary');
   await panel.locator('tr[data-slot=""] input').fill('Embedded');
   await expect(button).toHaveText('Embedded');
+  // The reference layout (Figma 20:2190): links to the page's sections, and the controls in one
+  // named region that scrolls on its own and takes keyboard focus.
+  const links = panel.getByRole('navigation', { name: 'Page sections' }).getByRole('link');
+  await expect(links).toHaveText(['Overview', 'Controls', 'Examples', 'Accessibility']);
+  const region = panel.getByRole('region', { name: 'Controls and API' });
+  await expect(region).toHaveCSS('max-height', '552px');
+  await region.focus();
+  await expect(region).toBeFocused();
+  await links.nth(2).click();
+  await expect(panel.locator('#examples-title')).toBeFocused();
+  await expect(links.nth(2)).toHaveAttribute('aria-current', 'true');
   expect(errors).toEqual([]);
 });

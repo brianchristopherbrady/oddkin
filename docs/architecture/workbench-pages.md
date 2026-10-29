@@ -112,15 +112,19 @@ Each component's documentation and interactive controls live on its detail page.
 
 ### 7.1 Section order (every section shown; missing items labelled)
 
-1. **Overview** — description, imports, registration entry, related components.
-2. **Interactive example** — preview, preset selector (from `defineExamples`), Reset, Copy example link, preview settings, generated code.
-3. **API** — the editable API table (§7.2), followed by slots, events, methods, parts, CSS custom properties, and custom states.
-4. **Examples** — authored examples rendered in isolated previews (lazy).
-5. **Tokens** — "From property to token" trace and "Every token read" table (§7.5).
-6. **Behavior and accessibility** — states, keyboard, accessibility contract, responsive behavior, form participation.
-7. **Guidance** — intended use ("Use it for" / "Not for": `@useFor`/`@notFor`, or authored `useFor`/`notFor`), correct and incorrect usage (each explained mistake from `defineExamples` with the correct example it names), and authored section guidance.
-8. **Source** — source references and package exports.
+The order and titles follow the owner's component page (Figma 20:2190, 2026-10-28).
+
+1. **Overview** — the description.
+2. **Interactive example** — preview (the component centred on the canvas), See code with Copy code, Reset; in Workbench also the preset selector (from `defineExamples`), Copy example link, preview settings, and the event log. Its "Controls and API" is one region that scrolls on its own (552 px at most) with a header row per group: Properties (§7.2), Slots, CSS custom properties.
+3. **Source and package** — package, module, class, and definition as cards, then the register import.
+4. **States and examples** — authored examples as cards, presets first; a host may supply a live specimen per card (`examplePreview`).
+5. **Reference** — events, CSS parts, methods, custom states, and the CSS custom properties.
+6. **Tokens** — "From property to token" trace and "Every token read" table (§7.5).
+7. **Accessibility** — behavior, then keyboard and guidance.
+8. **Guidance** — intended use ("Use it for" / "Not for": `@useFor`/`@notFor`, or authored `useFor`/`notFor`), correct and incorrect usage (each explained mistake from `defineExamples` with the correct example it names), and authored section guidance.
 9. **Known limitations** — the declared limitations, or "None documented".
+
+**Reference layout.** `<oddkin-component-panel layout="reference">` is the documentation page: links to Overview, Controls, Examples, and Accessibility at the top (a click scrolls the section into view and focuses its heading; the link of the section in view is `aria-current`), no Workbench tools in the example, four example cards and the rest on request, and items the library does not supply left out rather than labelled. A site hides Tokens and Guidance through its own section visibility.
 
 **Coverage (owner decision, 2026-10-22).** A component page has no unlabelled gap. `pageCoverage(page)` (the panels' DOM-free model, `packages/workbench/src/panels/model.ts`) lists every item of the page in order with one of three states: *documented* (shown with content), *none* (the component declares none of these, e.g. "None declared."), or *missing* ("Not documented. Supplied by `<input>`.", naming the tag, file, or metadata field that would supply it). The panel renders each item from that list and marks it with `data-coverage` and `data-state`. Sections are never hidden for lack of data; authored content may still hide one (`visible: false`). One browser check (`packages/workbench/test/coverage.browser.test.ts`) walks every component in the `@oddkin/components` and `@oddkin/ai` metadata and fails on any item that is unlisted, unmarked, out of order, empty, or labelled differently from its state, on any empty section or table cell, and on any hidden section; new components are covered without new tests. Missing items are component-side gaps, reported to the components' owner.
 

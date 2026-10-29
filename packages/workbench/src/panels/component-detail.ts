@@ -39,6 +39,7 @@ import {
   type ApiRow,
   type ComponentFacts,
   type CoverageItem,
+  type NamedEntry,
   type PresetEntry,
   type SharePreview,
   type PreviewState,
@@ -49,7 +50,6 @@ import { contentStyles, panelHostStyles } from './styles.js';
 import { exampleStyles } from './example-styles.js';
 
 const LOG_LIMIT = 50;
-const SEGMENTED_MAX = 4;
 
 export interface EventLogEntry {
   readonly id: number;
@@ -105,14 +105,34 @@ const bullets = (items: readonly string[]) =>
     ${items.map((item) => html`<li>${inline(item)}</li>`)}
   </ul>`;
 
+/** The reference layout's links to its sections (Figma 19:874), by section id. */
+const PAGE_LINKS = [
+  ['overview', 'Overview'],
+  ['interactive-example', 'Controls'],
+  ['examples', 'Examples'],
+  ['behavior-and-accessibility', 'Accessibility'],
+] as const;
+
+/** `'secondary'` reads as `secondary`; an empty literal stays as written. */
+const unquote = (value: string) => (/^(['"`]).+\1$/.test(value) ? value.slice(1, -1) : value);
+
+/** A row's name cell: the name, and its description or "Not documented". */
+const named = (name: string, description?: string) =>
+  html`<th scope="row" data-label="Name">
+    <code>${name}</code>
+    <small
+      >${description ? inline(description) : html`<span class="wb-not-documented">Not documented</span>`}</small
+    >
+  </th>`;
+
 /** Renders one page item: its content, or the label its coverage gives it. */
 type Covered = (id: string, content: () => unknown) => unknown;
 
-function covered(coverage: readonly CoverageItem[]): Covered {
+function covered(coverage: readonly CoverageItem[], quiet: boolean): Covered {
   const byId = new Map(coverage.map((item) => [item.id, item] as const));
   return (id, content) => {
     const item = byId.get(id);
-    if (!item) return nothing;
+    if (!item || (quiet && item.state !== 'documented')) return nothing;
     return html`<div data-coverage=${id} data-state=${item.state}>
       ${
         item.state === 'documented'
@@ -141,6 +161,26 @@ export class ComponentDetailElement extends OddkinElement.with({
     attribute: false,
     description: 'URL of the preview frame document.',
   }),
+  layout: prop.enum(['workbench', 'reference'], {
+    default: 'workbench',
+    description:
+      "'reference' is the documentation page (Figma 20:2190): links to the page's sections, no preview tools (presets, settings, example link, event log), and absent items left out instead of labelled.",
+  }),
+  examplePreview: prop.custom<
+    ((page: ComponentPageData, example: string) => Node | undefined) | undefined
+  >({
+    default: () => undefined,
+    coerce: (value) =>
+      value === undefined || typeof value === 'function'
+        ? {
+            ok: true,
+            value: value as
+              ((page: ComponentPageData, example: string) => Node | undefined) | undefined,
+          }
+        : { ok: false, reason: 'expected a function' },
+    description:
+      'Returns a live element for an example card (the example id, `example:<tag>/<name>`). Only a host that loads the library supplies one; the same example should get the same node.',
+  }),
 }) {
   static override styles: StyleInput = [panelHostStyles, contentStyles, exampleStyles];
 
@@ -166,6 +206,10 @@ export class ComponentDetailElement extends OddkinElement.with({
   readonly #link = signal('');
   /** The generated code is shown under the example. */
   readonly #code = signal(false);
+  /** The section the reference layout's links mark as current. */
+  readonly #current = signal('');
+  /** The reference layout shows every example card, not the first four. */
+  readonly #allExamples = signal(false);
   readonly #hosts: readonly [HTMLDivElement, HTMLDivElement];
   #previews: IsolatedPreview[] = [];
   #previewScope: Scope | undefined;
@@ -197,6 +241,43 @@ export class ComponentDetailElement extends OddkinElement.with({
       this.#key = '';
       this.#stop();
     });
+    let frame = 0;
+    scope.listen(
+      this.ownerDocument,
+      'scroll',
+      () => {
+        if (this.layout === 'reference' && !frame)
+          frame = requestAnimationFrame(() => {
+            frame = 0;
+            this.#spy();
+          });
+      },
+      { capture: true, passive: true },
+    );
+    scope.add(() => cancelAnimationFrame(frame));
+  }
+
+  /** The current section is the last linked one whose top has passed a third of the view. */
+  #spy(): void {
+    const view = this.ownerDocument.defaultView;
+    const page = this.ownerDocument.scrollingElement;
+    if (!view || !page) return;
+    const linked = PAGE_LINKS.flatMap(([id]) => this.shadowRoot?.getElementById(id) ?? []);
+    const atEnd = page.scrollTop + view.innerHeight >= page.scrollHeight - 2;
+    let current = linked[0]?.id ?? '';
+    for (const section of linked)
+      if (atEnd || section.getBoundingClientRect().top <= view.innerHeight / 3)
+        current = section.id;
+    this.#current.value = current;
+  }
+
+  /** Scroll a section into view and move focus to its heading. */
+  #jump(event: Event, id: string): void {
+    event.preventDefault();
+    const section = this.shadowRoot?.getElementById(id);
+    section?.scrollIntoView({ block: 'start' });
+    section?.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
+    this.#current.value = id;
   }
 
   /** Restart the preview only when the component, registration, or frame document changes. */
@@ -576,6 +657,14 @@ export class ComponentDetailElement extends OddkinElement.with({
     );
   }
 
+  #copyCode(): void {
+    const code = this.shadowRoot?.querySelector('.wb-snippet')?.textContent ?? '';
+    this.ownerDocument.defaultView?.navigator.clipboard?.writeText(code).then(
+      () => (this.#status.value = { text: 'Code copied.', alert: false, keep: true }),
+      () => undefined,
+    );
+  }
+
   // ---- Rendering ----
 
   protected override render() {
@@ -583,15 +672,41 @@ export class ComponentDetailElement extends OddkinElement.with({
     const index = this.index;
     if (!page || !index) return html`<div class="wb-content"></div>`;
     const entry = index.registry.pages.find((p) => p.id === page.id);
-    const sections = (entry?.sections ?? []).filter((s) => s.visible);
+    const reference = this.layout === 'reference';
     const facts = componentFacts(page);
-    const at = covered(pageCoverage(page));
+    const coverage = pageCoverage(page);
+    const at = covered(coverage, reference);
+    // The reference layout leaves out a section with nothing to show; Workbench labels it.
+    const sections = (entry?.sections ?? []).filter(
+      (s) =>
+        s.visible &&
+        (!reference ||
+          coverage.some((item) => item.section === s.id && item.state === 'documented') ||
+          (s.id === 'api' && facts.cssProperties.length > 0)),
+    );
+    const links = reference ? PAGE_LINKS.filter(([id]) => sections.some((s) => s.id === id)) : [];
+    const current = this.#current.value || links[0]?.[0];
     // Sections are built eagerly (not with repeat()), so the signals they read are tracked.
     return html`<div class="wb-content">
+      ${
+        links.length
+          ? html`<nav class="wb-page-nav" aria-label="Page sections">
+              ${links.map(
+                ([id, label]) =>
+                  html`<a
+                    href=${`#${id}`}
+                    aria-current=${current === id ? 'true' : null}
+                    @click=${(event: Event) => this.#jump(event, id)}
+                    >${label}</a
+                  >`,
+              )}
+            </nav>`
+          : nothing
+      }
       ${sections.map(
         (section) =>
           html`<section id=${section.id} aria-labelledby=${`${section.id}-title`}>
-            <h2 id=${`${section.id}-title`}>${section.title}</h2>
+            <h2 id=${`${section.id}-title`} tabindex="-1">${section.title}</h2>
             ${this.#section(section.id, page, facts, at, sections)}
           </section>`,
       )}
@@ -611,7 +726,7 @@ export class ComponentDetailElement extends OddkinElement.with({
       case 'interactive-example':
         return this.#interactive(page, facts, at);
       case 'api':
-        return this.#api(
+        return this.#reference(
           facts,
           at,
           sections.some((s) => s.id === 'interactive-example'),
@@ -621,14 +736,18 @@ export class ComponentDetailElement extends OddkinElement.with({
       case 'tokens':
         return this.#tokens(page, at);
       case 'behavior-and-accessibility':
-        return this.#behavior(page, facts, at);
+        return this.#behavior(page, at);
       case 'guidance':
         return this.#guidance(page, at);
       case 'source':
-        return at('source/module', () => this.#source(page));
+        return this.#source(page, at);
       case 'known-limitations':
-        return at('known-limitations/limitations', () =>
-          bullets(authoredValues(page.enrichment?.['limitations'])),
+        return at(
+          'known-limitations/limitations',
+          () =>
+            html`<div class="wb-callout">
+              ${bullets(authoredValues(page.enrichment?.['limitations']))}
+            </div>`,
         );
       default:
         return notDocumented(`pages["${page.id}"].sections["${id}"] in oddkin.docs.ts`);
@@ -638,33 +757,11 @@ export class ComponentDetailElement extends OddkinElement.with({
   #overview(page: ComponentPageData, at: Covered) {
     const description =
       typeof page.declaration['description'] === 'string' ? page.declaration['description'] : '';
-    const registration = page.enrichment?.['registration'];
-    const related = Array.isArray(page.enrichment?.['related'])
-      ? (page.enrichment['related'] as unknown[]).filter((r): r is string => typeof r === 'string')
-      : [];
-    return html`${at('overview/description', () =>
-        description
-          .split(/\n\s*\n/)
-          .map((paragraph) => html`<p>${inline(paragraph.replace(/\s*\n\s*/g, ' '))}</p>`),
-      )}
-      <h3>Imports</h3>
-      ${at(
-        'overview/imports',
-        () =>
-          html`<p>Register the element with its define entry:</p>
-            <pre class="wb-code" tabindex="0"><code>import '${String(registration)}';</code></pre>`,
-      )}
-      ${
-        related.length
-          ? html`<h3>Related components</h3>
-              <ul class="wb-list">
-                ${related.map((tag) => {
-                  const name = tag.replace(/^component:/, '');
-                  return html`<li><a href=${this.href(`/components/${name}`)}>${name}</a></li>`;
-                })}
-              </ul>`
-          : nothing
-      }`;
+    return at('overview/description', () =>
+      description
+        .split(/\n\s*\n/)
+        .map((paragraph) => html`<p>${inline(paragraph.replace(/\s*\n\s*/g, ' '))}</p>`),
+    );
   }
 
   /** Intended use and explained mistakes, each paired with the example to use instead. */
@@ -721,31 +818,36 @@ export class ComponentDetailElement extends OddkinElement.with({
     const frameSettings = settings.pair ? {} : this.#frameSettings(0);
     const update = (patch: Partial<Settings>) => this.#applySettings({ ...settings, ...patch });
     const code = this.#code.value;
+    const tools = this.layout === 'workbench';
     return html`<div class="wb-example">
         <div class="wb-example-bar">
-          <p class="wb-example-title">Interactive example · <code>${page.tag}</code></p>
-          ${at(
-            'interactive-example/presets',
-            () =>
-              html`<label
-                >Preset
-                <select
-                  .value=${state.preset}
-                  @change=${(event: Event) => {
-                    const name = (event.target as HTMLSelectElement).value;
-                    const entry = entries.find((p) => p.name === name);
-                    if (entry) this.#applyPreset(entry);
-                  }}
-                >
-                  ${entries.map(
-                    (p) =>
-                      html`<option value=${p.name} ?selected=${p.name === state.preset}>
-                        ${p.label}${p.incorrect ? ' (incorrect usage)' : ''}
-                      </option>`,
-                  )}
-                </select></label
-              >`,
-          )}
+          <p class="wb-example-title">Interactive example · ${page.tag}</p>
+          ${
+            tools
+              ? at(
+                  'interactive-example/presets',
+                  () =>
+                    html`<label
+                      >Preset
+                      <select
+                        .value=${state.preset}
+                        @change=${(event: Event) => {
+                          const name = (event.target as HTMLSelectElement).value;
+                          const entry = entries.find((p) => p.name === name);
+                          if (entry) this.#applyPreset(entry);
+                        }}
+                      >
+                        ${entries.map(
+                          (p) =>
+                            html`<option value=${p.name} ?selected=${p.name === state.preset}>
+                              ${p.label}${p.incorrect ? ' (incorrect usage)' : ''}
+                            </option>`,
+                        )}
+                      </select></label
+                    >`,
+                )
+              : nothing
+          }
           <button
             type="button"
             aria-expanded=${code ? 'true' : 'false'}
@@ -754,7 +856,13 @@ export class ComponentDetailElement extends OddkinElement.with({
           >
             ${code ? 'Hide code' : 'See code'}
           </button>
-          <button type="button" @click=${() => this.#copyLink(page)}>Copy example link</button>
+          ${
+            tools
+              ? html`<button type="button" @click=${() => this.#copyLink(page)}>
+                  Copy example link
+                </button>`
+              : nothing
+          }
           <button type="button" class="wb-quiet" @click=${() => this.#reset()}>Reset</button>
         </div>
         ${
@@ -764,12 +872,11 @@ export class ComponentDetailElement extends OddkinElement.with({
               /></label>`
             : nothing
         }
-        <div class="wb-example-body">
-          <div class="wb-example-stage">
-            ${at(
-              'interactive-example/preview',
-              () =>
-                html`<div class=${settings.pair ? 'wb-previews wb-pair' : 'wb-previews'}>
+        <div class="wb-example-stage">
+          ${at(
+            'interactive-example/preview',
+            () =>
+              html`<div class=${settings.pair ? 'wb-previews wb-pair' : 'wb-previews'}>
                   <div class="wb-preview">
                     ${settings.pair ? html`<p>Light</p>` : nothing}${this.#hosts[0]}
                   </div>
@@ -781,117 +888,128 @@ export class ComponentDetailElement extends OddkinElement.with({
                         </div>`
                       : nothing
                   }
-                </div>`,
-            )}
-            <p class="wb-status" role=${status.alert ? 'alert' : 'status'}>${status.text}</p>
-            <div class="wb-toolbar">
-              <label
-                >Mode
-                <select
-                  .value=${settings.mode}
-                  ?disabled=${settings.pair}
-                  @change=${(event: Event) =>
-                    update({ mode: (event.target as HTMLSelectElement).value as Settings['mode'] })}
-                >
-                  <option value="site" ?selected=${settings.mode === 'site'}>Same as site</option>
-                  <option value="light" ?selected=${settings.mode === 'light'}>Light</option>
-                  <option value="dark" ?selected=${settings.mode === 'dark'}>Dark</option>
-                </select></label
-              >
-              <label
-                ><span>Light and dark side by side</span>
-                <input
-                  type="checkbox"
-                  .checked=${settings.pair}
-                  @change=${(event: Event) =>
-                    update({ pair: (event.target as HTMLInputElement).checked })}
-              /></label>
-              <label
-                >Direction
-                <select
-                  .value=${settings.direction}
-                  @change=${(event: Event) =>
-                    update({
-                      direction: (event.target as HTMLSelectElement).value as Settings['direction'],
-                    })}
-                >
-                  <option value="ltr" ?selected=${settings.direction === 'ltr'}>
-                    Left to right
-                  </option>
-                  <option value="rtl" ?selected=${settings.direction === 'rtl'}>
-                    Right to left
-                  </option>
-                </select></label
-              >
-              <label
-                >Width
-                <select
-                  .value=${settings.width}
-                  @change=${(event: Event) =>
-                    update({ width: (event.target as HTMLSelectElement).value as Width })}
-                >
-                  <option value="fill" ?selected=${settings.width === 'fill'}>Fill</option>
-                  <option value="narrow" ?selected=${settings.width === 'narrow'}>
-                    Narrow (320px)
-                  </option>
-                  <option value="medium" ?selected=${settings.width === 'medium'}>
-                    Medium (640px)
-                  </option>
-                  <option value="wide" ?selected=${settings.width === 'wide'}>Wide (960px)</option>
-                  <option value="custom" ?selected=${settings.width === 'custom'}>Custom</option>
-                </select></label
-              >
-              ${
-                settings.width === 'custom'
-                  ? html`<label
-                      >Width in px
-                      <input
-                        type="number"
-                        min=${String(MIN_SHARE_WIDTH)}
-                        max=${String(MAX_SHARE_WIDTH)}
-                        step="1"
-                        .value=${String(settings.customWidth)}
-                        @change=${(event: Event) => {
-                          const value = Number((event.target as HTMLInputElement).value);
-                          if (
-                            Number.isInteger(value) &&
-                            value >= MIN_SHARE_WIDTH &&
-                            value <= MAX_SHARE_WIDTH
-                          )
-                            update({ customWidth: value });
-                        }}
-                    /></label>`
-                  : nothing
-              }
-            </div>
-            <p class="wb-muted wb-settings-summary">
-              Preview only:
-              ${settings.pair ? 'light and dark' : settings.mode === 'site' ? 'same mode as the site' : settings.mode}
-              · ${settings.direction === 'rtl' ? 'right to left' : 'left to right'} ·
-              ${
-                settings.width === 'fill'
-                  ? 'fills the column'
-                  : `${settings.width === 'custom' ? settings.customWidth : WIDTHS[settings.width]}px container`
-              }
-            </p>
-          </div>
-          <div class="wb-example-controls">
+                </div>
+                <p class="wb-muted wb-example-caption">Changes appear here as you edit.</p>`,
+          )}
+          <p class="wb-status" role=${status.alert ? 'alert' : 'status'}>${status.text}</p>
+        </div>
+        ${tools ? this.#settingsBar(settings, update) : nothing}
+        <div class="wb-example-controls">
+          <div class="wb-controls-head">
             <h3>Controls and API</h3>
+            <p class="wb-muted">Scroll the table; the preview stays in view.</p>
+          </div>
+          <div class="wb-controls-scroll" role="region" aria-label="Controls and API" tabindex="0">
             ${at('api/properties', () => this.#apiTable(facts))}
             ${at('api/slots', () => this.#slots(facts))}
             ${at('api/css-properties', () => this.#cssTable(facts))}
           </div>
         </div>
         <div class="wb-example-code" id="wb-example-code" ?hidden=${!code}>
-          <p class="wb-example-title">HTML and JavaScript · current example</p>
+          <div class="wb-code-head">
+            <p class="wb-example-title">Generated HTML · follows the current controls</p>
+            <button type="button" @click=${() => this.#copyCode()}>Copy code</button>
+          </div>
           <pre
             class="wb-code wb-snippet"
             tabindex="0"
           ><code>${snippet(page, state, { settings: frameSettings })}</code></pre>
         </div>
       </div>
-      <h3>Event log</h3>
-      ${this.#eventLog(facts)}`;
+      ${
+        tools
+          ? html`<h3>Event log</h3>
+              ${this.#eventLog(facts)}`
+          : nothing
+      }`;
+  }
+
+  /** Workbench's preview settings: mode, light and dark together, direction, and width. */
+  #settingsBar(settings: Settings, update: (patch: Partial<Settings>) => void) {
+    return html`<div class="wb-example-settings">
+      <div class="wb-toolbar">
+        <label
+          >Mode
+          <select
+            .value=${settings.mode}
+            ?disabled=${settings.pair}
+            @change=${(event: Event) =>
+              update({ mode: (event.target as HTMLSelectElement).value as Settings['mode'] })}
+          >
+            <option value="site" ?selected=${settings.mode === 'site'}>Same as site</option>
+            <option value="light" ?selected=${settings.mode === 'light'}>Light</option>
+            <option value="dark" ?selected=${settings.mode === 'dark'}>Dark</option>
+          </select></label
+        >
+        <label
+          ><span>Light and dark side by side</span>
+          <input
+            type="checkbox"
+            .checked=${settings.pair}
+            @change=${(event: Event) =>
+              update({ pair: (event.target as HTMLInputElement).checked })}
+        /></label>
+        <label
+          >Direction
+          <select
+            .value=${settings.direction}
+            @change=${(event: Event) =>
+              update({
+                direction: (event.target as HTMLSelectElement).value as Settings['direction'],
+              })}
+          >
+            <option value="ltr" ?selected=${settings.direction === 'ltr'}>Left to right</option>
+            <option value="rtl" ?selected=${settings.direction === 'rtl'}>Right to left</option>
+          </select></label
+        >
+        <label
+          >Width
+          <select
+            .value=${settings.width}
+            @change=${(event: Event) =>
+              update({ width: (event.target as HTMLSelectElement).value as Width })}
+          >
+            <option value="fill" ?selected=${settings.width === 'fill'}>Fill</option>
+            <option value="narrow" ?selected=${settings.width === 'narrow'}>Narrow (320px)</option>
+            <option value="medium" ?selected=${settings.width === 'medium'}>Medium (640px)</option>
+            <option value="wide" ?selected=${settings.width === 'wide'}>Wide (960px)</option>
+            <option value="custom" ?selected=${settings.width === 'custom'}>Custom</option>
+          </select></label
+        >
+        ${
+          settings.width === 'custom'
+            ? html`<label
+                >Width in px
+                <input
+                  type="number"
+                  min=${String(MIN_SHARE_WIDTH)}
+                  max=${String(MAX_SHARE_WIDTH)}
+                  step="1"
+                  .value=${String(settings.customWidth)}
+                  @change=${(event: Event) => {
+                    const value = Number((event.target as HTMLInputElement).value);
+                    if (
+                      Number.isInteger(value) &&
+                      value >= MIN_SHARE_WIDTH &&
+                      value <= MAX_SHARE_WIDTH
+                    )
+                      update({ customWidth: value });
+                  }}
+              /></label>`
+            : nothing
+        }
+      </div>
+      <p class="wb-muted wb-settings-summary">
+        Preview only:
+        ${settings.pair ? 'light and dark' : settings.mode === 'site' ? 'same mode as the site' : settings.mode}
+        · ${settings.direction === 'rtl' ? 'right to left' : 'left to right'} ·
+        ${
+          settings.width === 'fill'
+            ? 'fills the column'
+            : `${settings.width === 'custom' ? settings.customWidth : WIDTHS[settings.width]}px container`
+        }
+      </p>
+    </div>`;
   }
 
   #eventLog(facts: ComponentFacts) {
@@ -926,117 +1044,81 @@ export class ComponentDetailElement extends OddkinElement.with({
     </div>`;
   }
 
-  #api(facts: ComponentFacts, at: Covered, inExample: boolean) {
+  /** Contracts beside the controls (Figma 232:9895): events, parts, methods, states, and styling hooks. */
+  #reference(facts: ComponentFacts, at: Covered, inExample: boolean) {
+    const reference = this.layout === 'reference';
+    const card = (
+      id: string,
+      title: string,
+      entries: readonly NamedEntry[],
+      name = (n: string) => n,
+    ) =>
+      reference && !entries.length
+        ? nothing
+        : html`<div class="wb-box" data-card=${id}>
+            <h3>${title}</h3>
+            ${at(
+              `api/${id}`,
+              () =>
+                html`<ul class="wb-plain">
+                  ${entries.map(
+                    (entry) =>
+                      html`<li>
+                        <code>${name(entry.name)}</code
+                        >${entry.description ? html` — ${inline(entry.description)}` : nothing}
+                      </li>`,
+                  )}
+                </ul>`,
+            )}
+          </div>`;
     return html`${
         inExample
-          ? html`<p class="wb-muted">
-              Properties, attributes, slots, and CSS custom properties are in the interactive
-              example's controls above.
+          ? html`<p class="wb-lede">
+              Contracts that complement the properties and slots table above.
             </p>`
           : html`${at('api/properties', () => this.#apiTable(facts))}
             ${at('api/slots', () => this.#slots(facts))}
             ${at('api/css-properties', () => this.#cssTable(facts))}`
       }
-      <h3>Events</h3>
-      ${at('api/events', () => this.#namedTable(facts.events, 'events', 'Event', true))}
-      <h3>Methods</h3>
-      ${at(
-        'api/methods',
-        () =>
-          html`<p class="wb-muted">
-              Methods are documented here and never invoked by the Workbench.
-            </p>
-            ${this.#namedTable(facts.methods, 'methods', 'Method', false)}`,
-      )}
-      <h3>CSS parts</h3>
-      ${at('api/parts', () => this.#namedTable(facts.parts, 'parts', 'Part', false))}
-      <h3>Custom states</h3>
-      ${at('api/css-states', () => this.#namedTable(facts.cssStates, 'states', 'State', false))}`;
-  }
-
-  #namedTable(entries: ComponentFacts['events'], id: string, label: string, withType: boolean) {
-    return html`<div class="wb-table-wrap">
-      <table class="wb-stack" data-table=${id}>
-        <thead>
-          <tr>
-            <th scope="col">${label}</th>
-            ${withType ? html`<th scope="col">Type</th>` : nothing}
-            <th scope="col">Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${entries.map(
-            (entry) =>
-              html`<tr>
-                <td data-label=${label}><code>${entry.name || '(default)'}</code></td>
-                ${withType ? html`<td data-label="Type"><code>${entry.type ?? 'Unknown'}</code></td>` : nothing}
-                <td data-label="Description">
-                  ${entry.description ? inline(entry.description) : html`<span class="wb-not-documented">Not documented</span>`}
-                </td>
-              </tr>`,
-          )}
-        </tbody>
-      </table>
-    </div>`;
+      <div class="wb-boxes">
+        ${card('events', 'Events', facts.events)} ${card('parts', 'CSS parts', facts.parts)}
+        ${card('methods', 'Methods', facts.methods)}
+        ${card('css-states', 'Custom states', facts.cssStates, (n) => `:state(${n})`)}
+      </div>
+      ${
+        facts.cssProperties.length
+          ? html`<div class="wb-box wb-sunken" data-card="css-properties">
+              <h3>CSS custom properties</h3>
+              <ul class="wb-plain wb-names">
+                ${facts.cssProperties.map((entry) => html`<li><code>${entry.name}</code></li>`)}
+              </ul>
+            </div>`
+          : nothing
+      }`;
   }
 
   #apiTable(facts: ComponentFacts) {
-    const groups = [
-      ['Attributes', facts.rows.filter((row) => row.attribute)],
-      ['Properties', facts.rows.filter((row) => !row.attribute)],
-    ] as const;
-    return html`<div class="wb-table-wrap">
-      <table class="wb-stack wb-api" data-table="api">
-        <caption>
-          Editing a value updates the preview: one write per change, as a property or as an
-          attribute. Reflected attributes are not written back.
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Contract</th>
-            <th scope="col">Default</th>
-            <th scope="col">Control and current value</th>
-          </tr>
-        </thead>
-        ${groups.map(([label, rows]) =>
-          rows.length
-            ? html`<tbody>
-                <tr class="wb-group-row">
-                  <th scope="colgroup" colspan="4">${label}</th>
-                </tr>
-                ${rows.map((row) => this.#apiRow(row))}
-              </tbody>`
-            : nothing,
-        )}
-      </table>
-    </div>`;
+    return this.#group(
+      'api',
+      'Editing a value updates the preview: one write per change, as a property or as an attribute. Reflected attributes are not written back.',
+      ['Properties', 'Types', 'Default', 'Attribute', 'Reflected', 'Control / current value'],
+      facts.rows.map((row) => this.#apiRow(row)),
+    );
   }
 
   #apiRow(row: ApiRow) {
-    const name = row.property ?? row.attribute ?? '';
-    const notes: string[] = [];
-    if (row.property && row.attribute)
-      notes.push(
-        `property ${row.property}${row.attribute !== row.property ? ` · attribute ${row.attribute}` : ''}${row.reflects ? ', reflects' : ''}`,
-      );
-    else if (!row.property) notes.push('attribute only');
-    else notes.push(row.propertyOnly ? 'property only' : 'no attribute');
     return html`<tr data-row=${row.id}>
-      <th scope="row" data-label="Name">
-        <code>${name}</code>
-        <small
-          >${row.description ? inline(row.description) : html`<span class="wb-not-documented">Not documented</span>`}</small
-        >
-      </th>
-      <td data-label="Contract">
-        ${notes.join(' · ')}
-        <small
-          ><code>${row.values ? row.values.join(' | ') : row.type}</code
-          >${row.nullable ? ' · nullable' : ''}</small
-        >
+      ${named(row.property ?? row.attribute ?? '', row.description)}
+      <td data-label="Types">
+        ${row.values ? row.values.join(', ') : row.type}${row.values && row.nullable ? ' · nullable' : ''}
       </td>
-      <td data-label="Default">${row.default ? html`<code>${row.default}</code>` : 'Unknown'}</td>
+      <td data-label="Default">${row.default ? unquote(row.default) : 'Unknown'}</td>
+      <td data-label="Attribute">
+        ${row.attribute ? (row.property ? row.attribute : `${row.attribute} (attribute only)`) : row.propertyOnly ? 'Property only' : 'None'}
+      </td>
+      <td data-label="Reflected">
+        ${row.property && row.attribute ? (row.reflects ? 'Yes' : 'No') : '—'}
+      </td>
       <td data-label="Control">${this.#control(row)}</td>
     </tr>`;
   }
@@ -1060,7 +1142,11 @@ export class ComponentDetailElement extends OddkinElement.with({
     const propSet = prop !== undefined && prop in state.properties;
     const propValue = prop !== undefined ? state.properties[prop] : undefined;
     const modeSwitch =
-      row.property && row.attribute && !row.propertyOnly && row.control !== 'json'
+      this.layout === 'workbench' &&
+      row.property &&
+      row.attribute &&
+      !row.propertyOnly &&
+      row.control !== 'json'
         ? html`<select
             aria-label=${`Write ${name} as`}
             .value=${mode}
@@ -1116,55 +1202,23 @@ export class ComponentDetailElement extends OddkinElement.with({
         else this.#writeProperty(row, value === '\u0000null' ? null : value);
       };
       const values = row.values ?? [];
-      // A few values read best side by side; longer lists stay a select.
-      control =
-        values.length <= SEGMENTED_MAX
-          ? html`<div class="wb-segmented" role="radiogroup" aria-label=${label}>
-                ${values.map(
-                  (value) =>
-                    html`<label
-                      ><input
-                        type="radio"
-                        name=${`${row.id}:${mode}`}
-                        value=${value}
-                        .checked=${current === value}
-                        @change=${() => write(value)}
-                      /><span>${value}</span></label
-                    >`,
-                )}
-              </div>
-              <button type="button" ?disabled=${current === ''} @click=${() => write('')}>
-                Unset
-              </button>
-              ${
-                mode === 'property' && row.nullable
-                  ? html`<button
-                      type="button"
-                      ?disabled=${current === '\u0000null'}
-                      @click=${() => write('\u0000null')}
-                    >
-                      Set null
-                    </button>`
-                  : nothing
-              }`
-          : html`<select
-              aria-label=${label}
-              .value=${current}
-              @change=${(event: Event) => write((event.target as HTMLSelectElement).value)}
-            >
-              <option value="" ?selected=${current === ''}>(unset)</option>
-              ${values.map(
-                (value) =>
-                  html`<option value=${value} ?selected=${current === value}>${value}</option>`,
-              )}
-              ${
-                mode === 'property' && row.nullable
-                  ? html`<option value=${'\u0000null'} ?selected=${current === '\u0000null'}>
-                      null
-                    </option>`
-                  : nothing
-              }
-            </select>`;
+      control = html`<select
+        aria-label=${label}
+        .value=${current}
+        @change=${(event: Event) => write((event.target as HTMLSelectElement).value)}
+      >
+        <option value="" ?selected=${current === ''}>(unset)</option>
+        ${values.map(
+          (value) => html`<option value=${value} ?selected=${current === value}>${value}</option>`,
+        )}
+        ${
+          mode === 'property' && row.nullable
+            ? html`<option value=${'\u0000null'} ?selected=${current === '\u0000null'}>
+                null
+              </option>`
+            : nothing
+        }
+      </select>`;
     } else if (row.control === 'json') {
       control = html`<textarea
         aria-label=${label}
@@ -1254,22 +1308,27 @@ export class ComponentDetailElement extends OddkinElement.with({
       ${error ? html`<p class="wb-error" role="alert">${error}</p>` : nothing}`;
   }
 
-  /** One group of the example's controls: a four-column table under a group row. */
-  #group(id: string, label: string, caption: string, heads: readonly string[], rows: unknown) {
+  /** One group of the controls: its header row names the group and its columns, and stays in view. */
+  #group(id: string, caption: string, heads: readonly string[], rows: unknown[]) {
     return html`<div class="wb-table-wrap">
       <table class="wb-stack wb-api" data-table=${id}>
         <caption class="wb-visually-hidden">
           ${caption}
         </caption>
-        <thead class="wb-visually-hidden">
+        <colgroup>
+          ${[0, 1, 2, 3, 4, 5].map(() => html`<col />`)}
+        </colgroup>
+        <thead>
           <tr>
-            ${heads.map((head) => html`<th scope="col">${head}</th>`)}
+            ${heads.map(
+              (head, i) =>
+                html`<th scope="col" colspan=${heads.length === 5 && i === 3 ? '2' : null}>
+                  ${head}
+                </th>`,
+            )}
           </tr>
         </thead>
         <tbody>
-          <tr class="wb-group-row">
-            <th scope="colgroup" colspan="4">${label}</th>
-          </tr>
           ${rows}
         </tbody>
       </table>
@@ -1280,18 +1339,19 @@ export class ComponentDetailElement extends OddkinElement.with({
     const state = this.#state.value;
     return this.#group(
       'slots',
-      'Slots',
       'Slots: text content written into the preview.',
-      ['Slot', 'Description', 'Default', 'Text content'],
+      ['Slots', 'Content type', 'Default', 'Name', 'Position', 'Control / current content'],
       facts.slots.map((slot) => {
-        const label = slot.name || '(default)';
+        const label = slot.name || 'default';
         return html`<tr data-slot=${slot.name}>
-          <th scope="row" data-label="Slot"><code>${label}</code></th>
-          <td data-label="Description">
+          ${named(label, undefined)}
+          <td data-label="Content type">Text</td>
+          <td data-label="Default">Empty</td>
+          <td data-label="Name">${slot.name || '(none)'}</td>
+          <td data-label="Position">
             ${slot.description ? inline(slot.description) : html`<span class="wb-not-documented">Not documented</span>`}
           </td>
-          <td data-label="Default">—</td>
-          <td data-label="Text content">
+          <td data-label="Control">
             <input
               type="text"
               aria-label=${`${label} slot text`}
@@ -1299,7 +1359,6 @@ export class ComponentDetailElement extends OddkinElement.with({
               @input=${(event: Event) =>
                 this.#writeSlot(slot.name, (event.target as HTMLInputElement).value)}
             />
-            <small>Text only; richer compositions need a fixture from defineExamples.</small>
           </td>
         </tr>`;
       }),
@@ -1310,21 +1369,18 @@ export class ComponentDetailElement extends OddkinElement.with({
     const styles = this.#state.value.styles ?? {};
     return this.#group(
       'css-properties',
-      'CSS custom properties',
       "CSS custom properties: values set on the preview element's style.",
-      ['Property', 'Description', 'Default', 'Value'],
+      ['CSS custom properties', 'Syntax', 'Default', 'Description', 'Control / current value'],
       facts.cssProperties.map((entry) => {
         const value = styles[entry.name];
         return html`<tr data-css=${entry.name}>
-          <th scope="row" data-label="Property">
-            <code>${entry.name}</code>
-            ${entry.type ? html`<small><code>${entry.type}</code></small>` : nothing}
-          </th>
-          <td data-label="Description">
+          ${named(entry.name, undefined)}
+          <td data-label="Syntax">${entry.type ?? 'Unknown'}</td>
+          <td data-label="Default">${entry.default ?? 'Unknown'}</td>
+          <td data-label="Description" colspan="2">
             ${entry.description ? inline(entry.description) : html`<span class="wb-not-documented">Not documented</span>`}
           </td>
-          <td data-label="Default">${entry.default ? html`<code>${entry.default}</code>` : '—'}</td>
-          <td data-label="Value">
+          <td data-label="Control">
             ${
               isCustomPropertyName(entry.name)
                 ? html`<div class="wb-cell-controls">
@@ -1354,32 +1410,54 @@ export class ComponentDetailElement extends OddkinElement.with({
     );
   }
 
+  /** The published examples as cards (Figma 20:2266), each with a live specimen when the host gives one. */
   #examples(page: ComponentPageData) {
-    const entries = presets(page);
-    return html`<ul class="wb-list wb-examples">
-      ${entries.map(
-        (entry) =>
-          html`<li data-example=${entry.id}>
-            <strong>${entry.label}</strong> <code>${entry.id}</code>
-            ${entry.incorrect ? html`<small>Incorrect usage</small>` : nothing}
-            ${entry.guidance ? html`<p>${inline(entry.guidance)}</p>` : nothing}
-            ${entry.incorrect?.explanation ? html`<p>${inline(entry.incorrect.explanation)}</p>` : nothing}
-            ${
-              entry.requiresFixture
-                ? html`<p class="wb-muted">
-                    Requires fixture: rendered by its example module only.
-                  </p>`
-                : entry.state
-                  ? html`<button type="button" @click=${() => this.#applyPreset(entry)}>
-                      Show in preview
-                    </button>`
-                  : html`<p class="wb-muted">
-                      Values not published (the example module was not loaded).
+    const preview = this.examplePreview;
+    const tools = this.layout === 'workbench';
+    const shown = presets(page).filter((e) => !e.incorrect && (tools || !e.requiresFixture));
+    // Presets lead; the reference layout shows four and keeps the rest one action away.
+    const ordered = [...shown.filter((e) => e.preset), ...shown.filter((e) => !e.preset)];
+    const all = tools || this.#allExamples.value;
+    return html`<p class="wb-lede">Compare the published examples without leaving the page.</p>
+      <ul class="wb-boxes wb-examples" role="list">
+        ${(all ? ordered : ordered.slice(0, 4)).map((entry) => {
+          const node = preview?.(page, entry.id);
+          return html`<li class="wb-box" data-example=${entry.id}>
+            ${node ? html`<div class="wb-specimen">${node}</div>` : nothing}
+            <div class="wb-box-body">
+              <h3>${entry.label}</h3>
+              ${entry.guidance ? html`<p>${inline(entry.guidance)}</p>` : nothing}
+              ${
+                entry.requiresFixture
+                  ? html`<p class="wb-muted">
+                      Requires fixture: rendered by its example module only.
                     </p>`
-            }
-          </li>`,
-      )}
-    </ul>`;
+                  : !tools
+                    ? nothing
+                    : entry.state
+                      ? html`<button type="button" @click=${() => this.#applyPreset(entry)}>
+                          Show in preview
+                        </button>`
+                      : html`<p class="wb-muted">
+                          Values not published (the example module was not loaded).
+                        </p>`
+              }
+            </div>
+          </li>`;
+        })}
+      </ul>
+      ${
+        !tools && ordered.length > 4
+          ? html`<button
+              type="button"
+              class="wb-more"
+              aria-expanded=${all ? 'true' : 'false'}
+              @click=${() => (this.#allExamples.value = !all)}
+            >
+              ${all ? 'Show fewer examples' : `Show all ${ordered.length} examples`}
+            </button>`
+          : nothing
+      }`;
   }
 
   #tokens(page: ComponentPageData, at: Covered) {
@@ -1478,47 +1556,59 @@ export class ComponentDetailElement extends OddkinElement.with({
       )}`;
   }
 
-  #behavior(page: ComponentPageData, facts: ComponentFacts, at: Covered) {
-    return html`<h3>Accessibility</h3>
-      ${at('behavior-and-accessibility/a11y', () => bullets(authoredValues(page.enrichment?.['a11y'])))}
-      <h3>Keyboard</h3>
-      ${at('behavior-and-accessibility/keyboard', () =>
-        bullets(authoredValues(page.enrichment?.['keyboard'])),
-      )}
-      ${
-        facts.cssStates.length
-          ? html`<h3>States</h3>
-              <ul class="wb-list">
-                ${facts.cssStates.map(
-                  (s) =>
-                    html`<li>
-                      <code>:state(${s.name})</code
-                      >${s.description ? html` — ${inline(s.description)}` : nothing}
-                    </li>`,
-                )}
-              </ul>`
-          : nothing
-      }`;
+  /** Accessibility as two cards (Figma 20:2292): behavior, then keyboard and guidance. */
+  #behavior(page: ComponentPageData, at: Covered) {
+    const card = (title: string, key: 'a11y' | 'keyboard') => {
+      const items = authoredValues(page.enrichment?.[key]);
+      return this.layout === 'reference' && !items.length
+        ? nothing
+        : html`<div class="wb-box">
+            <h3>${title}</h3>
+            ${at(`behavior-and-accessibility/${key}`, () => bullets(items))}
+          </div>`;
+    };
+    return html`<div class="wb-boxes">
+      ${card('Behavior', 'a11y')} ${card('Keyboard and guidance', 'keyboard')}
+    </div>`;
   }
 
-  #source(page: ComponentPageData) {
+  /** Where the element lives and how to register it (Figma 232:9845). */
+  #source(page: ComponentPageData, at: Covered) {
     const definition = isRecord(page.enrichment?.['definition'])
       ? (page.enrichment['definition'] as JsonObject)
       : undefined;
     const ref = isRecord(definition?.['ref']) ? (definition['ref'] as JsonObject) : undefined;
-    return html`<dl>
-      <dt>Package</dt>
-      <dd><code>${page.package}</code></dd>
-      <dt>Module</dt>
-      <dd><code>${page.module}</code></dd>
-      <dt>Class</dt>
-      <dd><code>${String(page.declaration['name'] ?? 'Unknown')}</code></dd>
-      ${
-        ref
-          ? html`<dt>Definition</dt>
-              <dd><code>${String(ref['module'])}</code> (<code>${String(ref['name'])}</code>)</dd>`
-          : nothing
-      }
-    </dl>`;
+    const field = (label: string, ...values: unknown[]) =>
+      html`<div class="wb-fact">
+        <span class="wb-fact-label">${label}</span>
+        ${values.map(
+          (value) =>
+            html`<code
+              >${String(value)
+                .split('/')
+                .map((part, i) => (i ? html`/<wbr />${part}` : part))}</code
+            >`,
+        )}
+      </div>`;
+    return html`<p class="wb-lede">
+        Where the element is published, so it is easy to locate, import, and verify.
+      </p>
+      ${at(
+        'source/module',
+        () =>
+          html`<div class="wb-facts">
+            ${field('Package', page.package)} ${field('Module', page.module)}
+            ${field('Class', page.declaration['name'] ?? 'Unknown')}
+            ${ref ? field('Definition', ref['name'], ref['module']) : nothing}
+          </div>`,
+      )}
+      ${at(
+        'source/register',
+        () =>
+          html`<div class="wb-fact wb-register">
+            <span class="wb-fact-label">Register</span>
+            <code>import '${String(page.enrichment?.['registration'])}';</code>
+          </div>`,
+      )}`;
   }
 }

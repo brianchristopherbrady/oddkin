@@ -217,9 +217,12 @@ function componentPanel(data = probeData()) {
   return { panel, root, frames, probe, row, change };
 }
 
-/** Pick a value in a row's segmented control (a radio group). */
-const choose = (row: Element, value: string) =>
-  row.querySelector<HTMLInputElement>(`[role="radiogroup"] input[value="${value}"]`)!.click();
+/** Pick a value in a row's enumerated control (a select). */
+const choose = (row: Element, value: string) => {
+  const select = row.querySelector<HTMLSelectElement>('select:not([aria-label^="Write "])')!;
+  select.value = value;
+  select.dispatchEvent(new Event('change', { bubbles: true }));
+};
 
 /** Wait for `n` new writes and return them. */
 async function writesAfter(probe: () => Probe | null | undefined, start: number, n: number) {
@@ -237,12 +240,12 @@ describe('<oddkin-component-panel>', () => {
     expect(sections).toEqual([
       'overview',
       'interactive-example',
-      'api',
+      'source',
       'examples',
+      'api',
       'tokens',
       'behavior-and-accessibility',
       'guidance',
-      'source',
       'known-limitations',
     ]);
     const text = root.textContent ?? '';
@@ -251,7 +254,14 @@ describe('<oddkin-component-panel>', () => {
     expect(text).toContain('Not documented. Supplied by @a11y');
     expect(text).toContain('Enter pings.');
     expect(root.querySelector('#known-limitations')?.textContent).toContain('None documented.');
-    expect(root.querySelector(`#overview pre`)?.textContent).toBe(`import '${probeUrl}';`);
+    expect(root.querySelector('#source .wb-register code')?.textContent).toBe(
+      `import '${probeUrl}';`,
+    );
+    expect(
+      [...root.querySelectorAll('#source .wb-facts .wb-fact-label')].map((l) => l.textContent),
+    ).toEqual(['Package', 'Module', 'Class']);
+    // The page links belong to the reference layout only.
+    expect(root.querySelector('nav')).toBeNull();
     // Tokens: declared mappings and every read, with unknown values never guessed.
     const reads = [...root.querySelectorAll('[data-table="token-reads"] tbody tr')].map((tr) =>
       [...tr.querySelectorAll('td')].map((td) => td.textContent?.replace(/\s+/g, ' ').trim()),
@@ -284,17 +294,28 @@ describe('<oddkin-component-panel>', () => {
     const { row } = {
       row: (n: string) => root.querySelector(`tr[data-row="property:wb-probe#${n}"]`)!,
     };
-    const contract = (n: string) =>
-      row(n).querySelector('[data-label="Contract"]')?.textContent?.replace(/\s+/g, ' ').trim();
-    expect(contract('open')).toBe('property open, reflects boolean');
-    expect(contract('items')).toMatch(/^property only /);
-    expect(row('open').querySelector('th small')?.textContent).toBe('Open.');
-    // Rows group as attributes, then properties without one.
+    // Every property row: name, types, default, attribute, reflected, control (Figma 33:6755).
+    const cells = (n: string) =>
+      [...row(n).querySelectorAll('th, td')]
+        .slice(1, 5)
+        .map((cell) => cell.textContent?.replace(/\s+/g, ' ').trim());
+    expect(cells('open')).toEqual(['boolean', 'false', 'open', 'Yes']);
+    expect(cells('tone')).toEqual(['calm, loud', 'calm', 'tone', 'No']);
+    expect(cells('label')).toEqual(['string | null', "''", 'label', 'No']);
+    expect(cells('items')).toEqual(['string[]', 'Unknown', 'Property only', '—']);
+    expect(cells('value')).toEqual(['string', "''", 'None', '—']);
+    // Each group's header row names it and its columns.
     expect(
-      [...root.querySelectorAll('[data-table="api"] .wb-group-row')].map((r) =>
-        r.textContent?.trim(),
+      [...root.querySelectorAll('#interactive-example [data-table] thead tr')].map((tr) =>
+        [...tr.children].map((th) => th.textContent?.trim()).join(' | '),
       ),
-    ).toEqual(['Attributes', 'Properties']);
+    ).toEqual([
+      'Properties | Types | Default | Attribute | Reflected | Control / current value',
+      'Slots | Content type | Default | Name | Position | Control / current content',
+      'CSS custom properties | Syntax | Default | Description | Control / current value',
+    ]);
+    expect(row('open').querySelector('th small')?.textContent).toBe('Open.');
+    expect(row('tone').querySelector('select')?.value).toBe('');
     expect(row('renderer').textContent).toContain('Requires fixture');
     expect(row('form').textContent).toContain('Read-only');
     expect(row('form').querySelector('input, select, textarea')).toBeNull();
@@ -302,7 +323,93 @@ describe('<oddkin-component-panel>', () => {
       'Unknown',
     );
     expect(row('label').textContent).toContain('Not documented');
-    expect(root.querySelector('[data-table="methods"]')?.textContent).toContain('focusInput');
+    expect(root.querySelector('[data-card="methods"]')?.textContent).toContain('focusInput');
+    expect(root.querySelector('[data-card="parts"]')?.textContent).toContain(
+      'control — The control.',
+    );
+  });
+
+  it('lays out the reference page: section links, no preview tools, nothing absent labelled', async () => {
+    const data = probeData();
+    const page = data.pages['components/wb-probe'] as ComponentPageData;
+    const more = (name: string) => ({
+      id: `example:wb-probe/${name}`,
+      name,
+      definition: { label: name, props: { count: name.length } },
+    });
+    const { panel, root, probe } = componentPanel({
+      ...data,
+      pages: {
+        ...data.pages,
+        'components/wb-probe': {
+          ...page,
+          // No slots: the reference layout leaves the group out instead of saying so.
+          declaration: { ...page.declaration, slots: [] },
+          examples: [more('aa'), ...page.examples, more('bbb'), more('cccc')],
+        },
+      },
+    });
+    const specimens = new Map<string, HTMLElement>();
+    panel.examplePreview = (_page, id) => {
+      if (!specimens.has(id))
+        specimens.set(id, Object.assign(document.createElement('b'), { textContent: id }));
+      return specimens.get(id);
+    };
+    panel.layout = 'reference';
+    await until(() => !!probe()?.isConnected, 'the probe preview');
+    await settled();
+    const links = [
+      ...root.querySelectorAll<HTMLAnchorElement>('nav[aria-label="Page sections"] a'),
+    ];
+    expect(links.map((a) => a.textContent?.trim())).toEqual([
+      'Overview',
+      'Controls',
+      'Examples',
+      'Accessibility',
+    ]);
+    expect(links[0]!.getAttribute('aria-current')).toBe('true');
+    // See code and Reset only: no presets, preview settings, example link, write modes, or log.
+    expect(
+      [...root.querySelectorAll('.wb-example-bar button')].map((b) => b.textContent?.trim()),
+    ).toEqual(['See code', 'Reset']);
+    expect(
+      root.querySelector('.wb-example-settings, .wb-event-log, select[aria-label^="Write "]'),
+    ).toBeNull();
+    // What the library does not supply is left out, never labelled or invented.
+    expect(root.textContent).not.toContain('Supplied by');
+    expect(root.textContent).not.toContain('No slots are declared');
+    expect(root.querySelector('[data-table="slots"]')).toBeNull();
+    expect(root.querySelector('#guidance, #known-limitations')).toBeNull();
+    expect(root.querySelector('[data-card="css-states"]')).toBeNull();
+    // Example cards: presets first, fixture-only ones left out, four shown, each with the host's
+    // live specimen; the rest are one action away.
+    const cards = () =>
+      [...root.querySelectorAll('[data-example]')].map((card) =>
+        card.getAttribute('data-example')?.replace('example:wb-probe/', ''),
+      );
+    expect(cards()).toEqual(['default', 'loud', 'aa', 'bbb']);
+    expect(
+      root.querySelector('[data-example="example:wb-probe/loud"] .wb-specimen')?.textContent,
+    ).toBe('example:wb-probe/loud');
+    const all = [...root.querySelectorAll<HTMLButtonElement>('#examples button')].find(
+      (b) => b.textContent?.trim() === 'Show all 5 examples',
+    )!;
+    expect(all.getAttribute('aria-expanded')).toBe('false');
+    all.click();
+    await settled();
+    expect(cards()).toEqual(['default', 'loud', 'aa', 'bbb', 'cccc']);
+    // A link scrolls its section into view and moves focus to the section's heading.
+    links[2]!.click();
+    await settled();
+    expect(root.activeElement?.id).toBe('examples-title');
+    expect(links[2]!.getAttribute('aria-current')).toBe('true');
+    // The controls scroll in one named, focusable region of at most 552 px.
+    const region = root.querySelector<HTMLElement>(
+      '[role="region"][aria-label="Controls and API"]',
+    )!;
+    expect(region.tabIndex).toBe(0);
+    expect(getComputedStyle(region).overflowY).toBe('auto');
+    expect(getComputedStyle(region).maxHeight).toBe('552px');
   });
 
   it('teaches usage: intended use, each mistake with its correct example, authored guidance', async () => {
@@ -413,14 +520,13 @@ describe('<oddkin-component-panel>', () => {
     await until(() => probe() !== assigned && !!probe()?.isConnected, 'a clean instance');
     expect(probe()!.writes).toEqual(['prop open=true', 'prop count=0']);
 
-    // Enum as an attribute (a segmented choice); a JSON array property; invalid JSON is reported.
-    const unsetTone = () =>
-      [...row('tone').querySelectorAll('button')].find((b) => b.textContent?.trim() === 'Unset')!;
-    expect(unsetTone().disabled).toBe(true);
+    // Enum as an attribute (a select); a JSON array property; invalid JSON is reported.
+    const tone = () => row('tone').querySelector('select')!;
+    expect(tone().value).toBe('');
     start = probe()!.writes.length;
     choose(row('tone'), 'loud');
     expect(await writesAfter(probe, start, 1)).toEqual(['attr tone="loud"']);
-    expect(unsetTone().disabled).toBe(false);
+    expect(tone().value).toBe('loud');
     start = probe()!.writes.length;
     change(row('items').querySelector('textarea')!, '["a","b"]');
     expect(await writesAfter(probe, start, 1)).toEqual(['prop items=["a","b"]']);
@@ -601,7 +707,7 @@ describe('<oddkin-component-panel>', () => {
     );
     await until(() => first.probe()!.writes.length === 2, 'two writes');
     [...first.root.querySelectorAll('button')]
-      .find((b) => b.textContent === 'Copy example link')!
+      .find((b) => b.textContent?.trim() === 'Copy example link')!
       .click();
     await until(
       () => !!first.root.querySelector<HTMLInputElement>('input[type="url"]')?.value,
@@ -616,12 +722,8 @@ describe('<oddkin-component-panel>', () => {
     await until(() => !!second.probe()?.isConnected, 'the shared preview');
     expect(second.panel.previewState.attributes).toEqual({ tone: 'loud', label: 'Shared' });
     expect(second.probe()!.writes).toEqual(['attr tone="loud"', 'attr label="Shared"']);
-    // The restored value is the segmented control's checked choice.
-    expect(
-      [...second.row('tone').querySelectorAll<HTMLInputElement>('[role="radiogroup"] input')]
-        .filter((radio) => radio.checked)
-        .map((radio) => radio.value),
-    ).toEqual(['loud']);
+    // The restored value is the select's choice.
+    expect(second.row('tone').querySelector('select')?.value).toBe('loud');
 
     // A link for another component, or naming undeclared properties, never writes them.
     second.panel.remove();
@@ -649,7 +751,12 @@ describe('<oddkin-component-panel>', () => {
     const css = (name: string) => first.root.querySelector(`tr[data-css="${name}"]`)!;
     // In the example's controls, with the syntax and default the manifest declares.
     expect(css('--wb-probe-accent').closest('section')?.id).toBe('interactive-example');
-    expect(css('--wb-probe-accent').querySelector('th small')?.textContent).toBe('<color>');
+    expect(
+      css('--wb-probe-accent').querySelector('[data-label="Syntax"]')?.textContent?.trim(),
+    ).toBe('<color>');
+    expect(
+      css('--wb-probe-accent').querySelector('[data-label="Description"]')?.textContent?.trim(),
+    ).toBe('Accent.');
     expect(
       css('--wb-probe-accent').querySelector('[data-label="Default"]')?.textContent?.trim(),
     ).toBe('rebeccapurple');
@@ -677,7 +784,7 @@ describe('<oddkin-component-panel>', () => {
     );
 
     [...first.root.querySelectorAll('button')]
-      .find((b) => b.textContent === 'Copy example link')!
+      .find((b) => b.textContent?.trim() === 'Copy example link')!
       .click();
     await until(
       () => !!first.root.querySelector<HTMLInputElement>('input[type="url"]')?.value,

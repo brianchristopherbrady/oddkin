@@ -4166,3 +4166,16 @@ Design source: Figma NavigationItem, State=Current (5:749; the instance in Docs/
 | Same URL fetched earlier in the run | `npx vitest run --project browser --browser.name=chromium --no-file-parallelism packages/components/test/styling-contract.browser.test.ts packages/workbench/test/coverage.browser.test.ts` | 19 passed: the CI failure did not reproduce on Windows |
 
 **Not verified:** the Linux CI run (the coverage test's message now names the status and lengths if it fails again).
+
+## 2026-10-28 — CSS custom properties and the component page per Figma 20:2190 (Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Workbench browser tests, 3 engines | `node ../oddkin-lanes/tools/browser-set.mjs --out .tmp/bs-page packages/workbench/test/panels.browser.test.ts …/coverage.browser.test.ts …/frame.browser.test.ts …/shell.browser.test.ts` | Chromium, Firefox, WebKit: 29 of 29 each. The coverage check walks every @oddkin/components and @oddkin/ai page in the new section order |
+| Workbench node tests | `npx vitest run --project node packages/workbench` | 124 passed (protocol: custom property names only; model: snippets, share links valid against share-payload.v1, the new page order) |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-css.json`, `.tmp/probes-page.json` | 12 of 12 and 10 of 10 killed: the frame's mount styles, set, and remove (built `dist`), name validation, snippets, share links, decoding, the panel's writes; the reference layout's quiet coverage, left-out sections, link focus and `aria-current`, four example cards, presets first, fixture-only cards, write modes, and the region's focusability and 552 px limit |
+| E2E, 3 engines | `npx playwright test e2e/workbench.spec.ts e2e/workbench-embed.spec.ts e2e/workbench-static.spec.ts --workers=2` (E2E lock) | 75 passed: typing `--odd-button-background` restyles the real button and Unset restores it; the button sits in the middle of its frame; the embedded panel in the reference layout shows the section links, the named 552 px region takes focus, and a link focuses its section's heading |
+| Screens | Workbench dev, `/components/odd-button` with `layout = 'reference'`, one viewport at a time (1440 wide) | Compared with Figma 33:6755, 232:9845, 20:2266, 232:9895, 20:2292: matches in order, structure, and tokens; property descriptions stay under the names (Figma has none), and no A11y group (no structured contracts exist) |
+| Types, lint, size | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Pass; pass (the frame's canvas rule recorded in check-page-layout.mjs); component panel 30,997 B of 32,768, shell 54,117 of 55,296, frame 6,938 |
+
+**Not verified:** the docs site (Agent 3 sets `layout`, `examplePreview`, and the section visibility, then verifies against the Figma frame), and examples whose default needs a fixture (the frame runs no fixtures yet; next item).

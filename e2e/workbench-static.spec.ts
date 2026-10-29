@@ -80,8 +80,8 @@ test.describe('static Workbench build under a subpath', () => {
     await expect(frame.locator('odd-button')).toHaveText('Save', { timeout: 30_000 });
     await page
       .locator('tr[data-row="property:odd-button#appearance"]')
-      .getByRole('radio', { name: 'primary' })
-      .check();
+      .getByRole('combobox', { name: 'appearance (attribute)' })
+      .selectOption('primary');
     await expect(frame.locator('odd-button')).toHaveAttribute('appearance', 'primary');
     await page.getByRole('button', { name: 'Copy example link' }).click();
     const link = await page.locator('input[type="url"]').inputValue();

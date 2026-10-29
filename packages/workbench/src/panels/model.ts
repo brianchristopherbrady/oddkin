@@ -437,7 +437,6 @@ export function pageCoverage(page: ComponentPageData): CoverageItem[] {
   };
 
   documented('overview/description', Boolean(description), 'a JSDoc description on the class');
-  documented('overview/imports', registered, REGISTRATION_SOURCE);
   documented(
     'interactive-example/presets',
     entries.some((p) => p.state && !p.incorrect),
@@ -459,11 +458,13 @@ export function pageCoverage(page: ComponentPageData): CoverageItem[] {
     'No CSS custom properties are declared.',
     'interactive-example',
   );
-  declared('api/events', facts.events, 'None declared.');
-  declared('api/methods', facts.methods, 'None declared.');
-  declared('api/parts', facts.parts, 'None declared.');
-  declared('api/css-states', facts.cssStates, 'None declared.');
+  item('source/module', 'documented');
+  documented('source/register', registered, REGISTRATION_SOURCE);
   documented('examples/examples', entries.length > 0, EXAMPLES_SOURCE);
+  declared('api/events', facts.events, 'None declared.');
+  declared('api/parts', facts.parts, 'None declared.');
+  declared('api/methods', facts.methods, 'None declared.');
+  declared('api/css-states', facts.cssStates, 'None declared.');
   const mappings = list(enrichment['styleMappings']);
   item('tokens/style-mappings', mappings.length ? 'documented' : 'none', {
     ...(mappings.length ? {} : { empty: 'No style mappings are declared.' }),
@@ -490,7 +491,6 @@ export function pageCoverage(page: ComponentPageData): CoverageItem[] {
     entries.some((p) => p.incorrect),
     'an incorrect example that names its correct one (`incorrect` in defineExamples)',
   );
-  item('source/module', 'documented');
   const limitations = authoredValues(enrichment['limitations']);
   item('known-limitations/limitations', limitations.length ? 'documented' : 'none', {
     ...(limitations.length ? {} : { empty: 'None documented.' }),

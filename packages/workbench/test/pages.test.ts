@@ -227,12 +227,12 @@ describe('page registry from fixture metadata', () => {
     expect(sections()).toEqual([
       ['overview', true],
       ['interactive-example', true],
-      ['api', true],
+      ['source', true],
       ['examples', true],
+      ['api', true],
       ['tokens', true],
       ['behavior-and-accessibility', true],
       ['guidance', true],
-      ['source', true],
       ['known-limitations', true],
     ]);
     const hidden = sections(

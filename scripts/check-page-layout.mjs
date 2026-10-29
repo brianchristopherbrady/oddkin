@@ -93,6 +93,12 @@ export const EXCEPTIONS = [
     reason:
       "preview frame harness: a frame loads only the previewed package's stylesheets, not layout.css",
   },
+  {
+    file: 'packages/workbench/src/node/html.ts',
+    selector: '[data-oddkin-preview]',
+    reason:
+      "preview frame harness: the frame is the example's canvas and centres the component (Figma 33:6755), without layout.css",
+  },
 ];
 
 const LAYOUT = /\bdisplay\s*:\s*(?:inline-)?(?:flex|grid)\b/g;

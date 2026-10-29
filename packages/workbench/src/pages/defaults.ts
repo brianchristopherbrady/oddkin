@@ -63,10 +63,10 @@ export const SECTION_TITLES: Readonly<Record<string, string>> = {
   // Components
   overview: 'Overview',
   'interactive-example': 'Interactive example',
-  api: 'API',
-  examples: 'Examples',
+  api: 'Reference',
+  examples: 'States and examples',
   tokens: 'Tokens',
-  'behavior-and-accessibility': 'Behavior and accessibility',
+  'behavior-and-accessibility': 'Accessibility',
   guidance: 'Guidance',
   'known-limitations': 'Known limitations',
 };

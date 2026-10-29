@@ -107,12 +107,12 @@ test.describe('Workbench shell', () => {
     await expect(toc.getByRole('link')).toHaveText([
       'Overview',
       'Interactive example',
-      'API',
-      'Examples',
+      'Source and package',
+      'States and examples',
+      'Reference',
       'Tokens',
-      'Behavior and accessibility',
+      'Accessibility',
       'Guidance',
-      'Source',
       'Known limitations',
     ]);
     await page.setViewportSize({ width: 1280, height: 500 });
@@ -259,11 +259,21 @@ test.describe('Workbench shell', () => {
           { timeout: 20_000 },
         )
         .not.toBe('rgba(0, 0, 0, 0)');
+      // The frame is the canvas: the component sits in its middle (Figma 33:6755).
+      const offset = await frame.locator('odd-button').evaluate((el) => {
+        const box = el.getBoundingClientRect();
+        const view = el.ownerDocument.documentElement;
+        return [
+          Math.round(box.left + box.width / 2 - view.clientWidth / 2),
+          Math.round(box.top + box.height / 2 - view.clientHeight / 2),
+        ];
+      });
+      expect(offset.map((value) => Math.abs(value) <= 1)).toEqual([true, true]);
 
       await page
         .locator('tr[data-row="property:odd-button#appearance"]')
-        .getByRole('radio', { name: 'primary' })
-        .check();
+        .getByRole('combobox', { name: 'appearance (attribute)' })
+        .selectOption('primary');
       await expect(frame.locator('odd-button')).toHaveAttribute('appearance', 'primary');
       // The shell is not restyled by the preview: no odd-button is registered in the shell.
       expect(await page.evaluate(() => customElements.get('odd-button') === undefined)).toBe(true);
@@ -326,12 +336,12 @@ test.describe('Workbench shell', () => {
       await open(page, 'components/odd-button', 'Button');
       await page
         .locator('tr[data-row="property:odd-button#appearance"]')
-        .getByRole('radio', { name: 'primary' })
-        .check();
+        .getByRole('combobox', { name: 'appearance (attribute)' })
+        .selectOption('primary');
       await page
         .locator('tr[data-row="property:odd-button#size"]')
-        .getByRole('radio', { name: 'sm' })
-        .check();
+        .getByRole('combobox', { name: 'size (attribute)' })
+        .selectOption('sm');
       const button = page
         .frameLocator('oddkin-workbench-component iframe')
         .first()

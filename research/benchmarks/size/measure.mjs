@@ -116,7 +116,10 @@ export const BUDGETS = {
   // (16 KiB), catalog 16,654 (17 KiB). On 2026-10-28 (docs slice 4, the Figma component
   // reference): component 28,469 (27,296 before: the interactive example's bar, code toggle,
   // grouped API rows, segmented enums, and switches, with their own sheet), foundation 15,233.
-  'workbench-panel-component': 28672,
+  // 32 KiB from 2026-10-28 (Agent 2; requested in the lanes at 17:56 and 23:06, the owner's
+  // priority page): measured 30,997 with CSS custom property controls and Figma 20:2190's page
+  // (the reference layout's section links, one scrolling controls region, and the card sections).
+  'workbench-panel-component': 32768,
   'workbench-panel-foundation': 16384,
   // 18 KiB; measured 17,772 on 2026-10-28 (16,849 before: the search hint, count pills, category
   // buttons, and cards with a preview header and a footer; `preview` and `groups`). Was 17 KiB.
@@ -125,8 +128,9 @@ export const BUDGETS = {
   // above, both in the shell). Was 49 KiB (48,775 measured on 2026-10-22): the shell with router,
   // search, and every page renderer. This harness does not split, so it includes Theme Studio
   // (about 3.2 KiB), which the shell imports only on its route; with splitting, the initial load
-  // was 45,876 and Theme Studio a 4,150 B chunk.
-  'workbench-shell': 52224,
+  // was 45,876 and Theme Studio a 4,150 B chunk. 54 KiB from 2026-10-28 (Agent 2): measured
+  // 54,117 with the component page above.
+  'workbench-shell': 55296,
   // 7.5 KiB; measured 6,786 on 2026-10-28 (7,055 before: the frame imports a registration with
   // import() instead of an inline module script): the preview frame runtime (protocol, Scope,
   // mount, specimen, theme).

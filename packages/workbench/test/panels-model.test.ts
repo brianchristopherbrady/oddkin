@@ -308,7 +308,7 @@ describe('detail model', () => {
       Object.fromEntries(pageCoverage(data).map((item) => [item.id, item.state]));
     expect(states(page())).toEqual({
       'overview/description': 'missing',
-      'overview/imports': 'documented',
+      'source/register': 'documented',
       'interactive-example/presets': 'documented',
       'interactive-example/preview': 'documented',
       'api/properties': 'documented',
@@ -352,18 +352,25 @@ describe('detail model', () => {
       state: 'none',
       empty: 'No CSS custom properties are declared.',
     });
-    // In page order: the example's controls come before the API's other tables.
-    expect(coverage.map((item) => item.id).slice(4, 8)).toEqual([
+    // In page order (Figma 20:2190): the example's controls, Source and package, the examples,
+    // then the reference cards.
+    expect(coverage.map((item) => item.id).slice(3, 13)).toEqual([
       'api/properties',
       'api/slots',
       'api/css-properties',
+      'source/module',
+      'source/register',
+      'examples/examples',
       'api/events',
+      'api/parts',
+      'api/methods',
+      'api/css-states',
     ]);
 
-    // Nothing registered and no examples: the preview, imports, presets, and examples are missing.
+    // Nothing registered and no examples: the preview, the import, presets, and examples are missing.
     const bare = states(page({ enrichment: {}, examples: [] }));
     expect(bare).toMatchObject({
-      'overview/imports': 'missing',
+      'source/register': 'missing',
       'interactive-example/preview': 'missing',
       'interactive-example/presets': 'missing',
       'examples/examples': 'missing',

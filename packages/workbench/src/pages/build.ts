@@ -225,12 +225,12 @@ export function buildPageRegistry(input: RegistryInput): {
         section('overview', true, 'built-in'),
         // Every section is shown; the panel labels what the library does not supply (§7.1).
         section('interactive-example', true),
-        section('api', true),
+        { ...section('source', true), title: 'Source and package' },
         section('examples', true),
+        section('api', true),
         section('tokens', true),
         section('behavior-and-accessibility', true),
         section('guidance', true),
-        section('source', true),
         section('known-limitations', true),
       ],
     };
