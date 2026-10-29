@@ -263,9 +263,13 @@ export async function interact(state: string, control: HTMLElement) {
     container.prepend(before);
     before.focus();
     await userEvent.tab();
+    const tabbed = (control.getRootNode() as ShadowRoot).activeElement === control;
     // WebKit's Tab skips links unless the user turns that on; focus after the key press instead.
-    if ((control.getRootNode() as ShadowRoot).activeElement !== control) control.focus();
-    expect(control.matches(':focus-visible')).toBe(true);
+    if (!tabbed) control.focus();
+    expect(
+      control.matches(':focus-visible'),
+      `:focus-visible after ${tabbed ? 'Tab' : 'Tab and focus()'} (:focus ${control.matches(':focus')}, ${control.localName} ${(control as HTMLInputElement).type ?? ''})`,
+    ).toBe(true);
   }
   if (state === 'Pressed') {
     control.focus();

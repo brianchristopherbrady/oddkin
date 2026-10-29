@@ -63,6 +63,9 @@ const parts = (el: Element, name: string) => [
 ];
 const visible = (items: HTMLElement[]) =>
   items.filter((item) => getComputedStyle(item).visibility === 'visible');
+// Linux CI's DejaVu Sans is much wider than Windows' and macOS's fonts; fitting is measured in a wide font.
+const wide = new CSSStyleSheet();
+wide.replaceSync(':root { --odd-font-family-sans: Verdana, "DejaVu Sans", sans-serif; }');
 
 for (const tag of ['odd-combobox', 'odd-picker'] as const)
   describe(`${tag} view`, () => {
@@ -120,26 +123,33 @@ for (const tag of ['odd-combobox', 'odd-picker'] as const)
     });
 
     it('grouped: a chip per option group, or the total when they do not fit', async () => {
-      const el = await mount(tag, 'grouped', ['amelia', 'olivia', 'sophia']);
-      expect(visible(parts(el, 'group-summary')).map((c) => c.textContent!.trim())).toEqual([
-        'Design · 2',
-        'Product · 1',
-      ]);
-      expect(part(el, 'more').hidden).toBe(true);
-      el.values = ALL;
-      await expect.poll(() => part(el, 'more').hidden).toBe(false);
-      expect(part(el, 'more').textContent!.trim()).toBe('6 total');
-      expect(visible(parts(el, 'group-summary'))).toEqual([]);
-      // An option without a group counts under its own label.
-      el.options = options.map((o) =>
-        o.value === 'amelia' ? { value: o.value, label: o.label } : o,
-      );
-      el.values = ['amelia', 'sophia'];
-      await settle(el);
-      expect(parts(el, 'group-summary').map((c) => c.textContent!.trim())).toEqual([
-        'Amelia Johnson · 1',
-        'Product · 1',
-      ]);
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, wide];
+      try {
+        // Room for two group chips beside the combobox's input; three never fit in 200px.
+        const el = await mount(tag, 'grouped', ['amelia', 'olivia', 'sophia'], 560);
+        expect(visible(parts(el, 'group-summary')).map((c) => c.textContent!.trim())).toEqual([
+          'Design · 2',
+          'Product · 1',
+        ]);
+        expect(part(el, 'more').hidden).toBe(true);
+        el.style.inlineSize = '200px';
+        el.values = ALL;
+        await expect.poll(() => part(el, 'more').hidden).toBe(false);
+        expect(part(el, 'more').textContent!.trim()).toBe('6 total');
+        expect(visible(parts(el, 'group-summary'))).toEqual([]);
+        // An option without a group counts under its own label.
+        el.options = options.map((o) =>
+          o.value === 'amelia' ? { value: o.value, label: o.label } : o,
+        );
+        el.values = ['amelia', 'sophia'];
+        await settle(el);
+        expect(parts(el, 'group-summary').map((c) => c.textContent!.trim())).toEqual([
+          'Amelia Johnson · 1',
+          'Product · 1',
+        ]);
+      } finally {
+        document.adoptedStyleSheets = document.adoptedStyleSheets.filter((s) => s !== wide);
+      }
     });
 
     it('expandable: two rows of chips and "+N more"; Show all reviews and removes every value', async () => {
