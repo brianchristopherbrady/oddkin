@@ -2,7 +2,7 @@
 
 Status: proposed implementation plan  
 Owner decision required before public API work  
-Last reviewed: 2026-10-29
+Last reviewed: 2026-10-29. Checked against the repository (`main` at `0d08543`) the same day: §1a lists what exists, and corrections are inline.
 
 ## 1. Purpose
 
@@ -24,13 +24,35 @@ User goal
 
 The first product value is not autonomous product design. It is making a design engineer's decisions explicit, reusable, reviewable, and verifiable across products and coding agents.
 
+## 1a. Repository starting point (checked 2026-10-29)
+
+| Plan element | In the repository | Gap for this plan |
+| --- | --- | --- |
+| Components in the examples | `odd-dialog` returns focus to its opener when it closes. `odd-input`, `odd-textarea`, `odd-checkbox`, `odd-radio-group`, and `odd-select` take part in forms, and `odd-validation-summary` collects and announces field errors. `odd-button` has `primary`, `secondary`, and `ghost` appearances | `odd-button` has no danger style, so a destructive action cannot rely on one |
+| Agent approval (pilot C) | `@oddkin/ai` has `odd-action-approval`, `odd-checkpoint`, `odd-tool-call`, and `odd-change-review`, and the `oddkin.ai.approval.v1` record schema | — |
+| DOM-free types for `workbench/patterns` | `@oddkin/core/model`, `@oddkin/core/model/schema`, and `@oddkin/core/diagnostics`. Workbench's DOM-free entries are `./examples`, `./config`, `./pages`, `./data`, `./content`, and `./conformance` | No `patterns` entry |
+| Examples and fixtures | `defineExamples`; the serializable `examples.v1` layer keeps a fixture as `hasFixture` | — |
+| Products | `product.v1` manifests; Workbench's optional Products pages; impact treats each product as a context (`oddkin-impact snapshot --product`) | — |
+| Recipes and models | `defineLayoutRecipe` and `defineModel` (`@oddkin/core`); both appear in `oddkin.metadata.json` and in the agent kits | Neither is an item in the impact graph |
+| Metadata | `oddkin-metadata.v1`, with the sections components, categories, recipes, models, templates, styles, contracts, foundations, stylesheets, examples, docs, and diagnostics | Pattern sections change that schema |
+| Impact graph | Items: component, class, property, attribute, event, method, slot, part, cssprop, state, registration, export, definition, template, style, token, theme, product, example, and suite. Checks: `example:<tag>/<name>` and `suite:<id>#<tag>`, per product | No recipe, model, route, or pattern items; scenarios would be a third kind of check |
+| Routes | `@oddkin/app`'s router declares routes in application code | No artifact records a stable route identity |
+| Agent kits | The package kits ship `GUIDE.md`, `kit.json`, `llms.txt`, and `references/` (components, tokens, recipes, stylesheets, models, `choosing-components.md`, `composition.md`). The generator can also write `json/` bundles | No query operations: the owner skipped `@oddkin/agent` and MCP (IMPLEMENTATION_PLAN.md P2.2). No consumer kit command yet (P0.5 step 5) |
+| Agent evaluation | [agent-tooling.md](../docs/architecture/agent-tooling.md) §11 proposes one; P0.4 has a real agent build a page from a kit | No evaluation harness |
+| Figma | Code Connect mappings are repository artifacts (`artifacts/code-connect/`); publishing them to Figma was refused because it needs an Organization or Enterprise plan | Figma references stay provenance only |
+| Schemas | 16 in `docs/schemas`, named `https://oddkin.dev/schemas/<name>/v1.json` | The three pattern schemas in §12 follow this convention |
+| Decisions | The highest ADR is 0047 | The Phase 0 ADR takes the next number |
+| Accessibility evidence | axe checks in the e2e suite. Screen-reader and Safari-on-hardware evidence is parked until hardware is available (P3), and the owner's own accessibility review is pending (P1.4) | Phase 4's manual assistive-technology reviews depend on both |
+| Priority | Not in IMPLEMENTATION_PLAN.md's tiers P0 to P3 | Starts only when the owner places it (§24) |
+
 ## 2. Problem
 
-A component contract can establish that `odd-dialog` supports focus return and that `odd-button` supports a danger appearance. It cannot answer product questions such as:
+A component contract can establish that `odd-dialog` returns focus to its opener when it closes, and that `odd-button` offers `primary`, `secondary`, and `ghost` appearances. (It has no danger style; `appearance="danger"` is reported and the default is used.) It cannot answer product questions such as:
 
 - who may initiate workspace deletion;
 - whether deletion is reversible;
 - what consequences must be explained;
+- how the destructive choice stands out when the button has no danger style;
 - whether typed confirmation is required;
 - what happens during partial failure;
 - where focus and navigation go after completion;
@@ -110,6 +132,7 @@ Reasons:
 - patterns are development and assurance inputs rather than browser runtime dependencies;
 - Workbench already owns examples, page data, documentation projections, and testing helpers;
 - the contract can stabilize before creating another public package;
+- Workbench's contracts are not frozen at 1.0.0 (ADR 0047), so a prototype entry there freezes nothing;
 - production components must never depend on product-pattern definitions.
 
 ### Extraction decision
@@ -126,11 +149,12 @@ Extraction is justified only if products or independent tools need the contract 
 
 Initial rules:
 
-- `workbench/patterns` may use DOM-free Oddkin model and diagnostic types.
+- `workbench/patterns` may use DOM-free Oddkin model and diagnostic types (`@oddkin/core/model`, `@oddkin/core/model/schema`, `@oddkin/core/diagnostics`).
 - Components, tokens, core, state, app, and AI never depend on patterns.
 - Pattern files reference component, token, recipe, model, product, route, and suite identities as data.
 - Product applications own implementations, permissions, effects, routes, persistence, and analytics.
 - Analyzer and Workbench tooling consume pattern artifacts; browser runtime bundles do not.
+- The boundary check (`npm run lint:boundaries`, `scripts/architecture/boundaries.config.mjs`) already keeps the runtime packages from importing Workbench outside colocated `.examples` files. A `./patterns` entry joins Workbench's `domFree` list there.
 
 ## 7. Authoring model
 
@@ -194,7 +218,7 @@ export default definePattern({
 });
 ```
 
-The example is illustrative. Final names must follow the repository vocabulary review and must be tested against at least three patterns before acceptance.
+The example is illustrative. Final names must follow the repository vocabulary review and must be tested against at least three patterns before acceptance. The three components exist. `odd-button` has no danger appearance, so `destructive-submit` names a role, and the product decides how that role is marked.
 
 ## 8. Data model
 
@@ -433,6 +457,7 @@ patternScenarios[]
 Rules:
 
 - standard CEM remains unchanged;
+- the sections extend `oddkin-metadata.v1` (§1a); the Phase 0 ADR decides between an additive change and a new major version;
 - enrichment uses stable ids and content hashes;
 - documentation prose may override presentation, not generated facts;
 - private source paths are excluded unless configured for local or private output;
@@ -484,6 +509,8 @@ route → implementation
 deviation → requirement
 ```
 
+Prerequisites: the impact graph has no recipe, model, or route items today (§1a). Edges from recipes need recipe items first, and `route → implementation` needs a route identity that no artifact records yet. Pattern scenarios would become a third kind of check, beside `example:<tag>/<name>` and `suite:<id>#<tag>`.
+
 Expected behavior:
 
 - a changed component contract selects pattern scenarios and product suites that depend on its role;
@@ -532,7 +559,7 @@ The diagram is a projection of the contract, never a separate editable source of
 
 ### Product view
 
-On a product page, show:
+On a product page (Workbench's optional Products pages exist today), show:
 
 - implemented patterns;
 - missing required implementations where configured;
@@ -551,6 +578,8 @@ json/patterns.json
 json/pattern-implementations.json
 json/pattern-scenarios.json
 ```
+
+The package kits hold `GUIDE.md`, `kit.json`, `llms.txt`, and `references/` today. The generator can write `json/` bundles, but the shipped kits omit them. A kit for a product, or for a library outside this repository, needs the consumer kit command (IMPLEMENTATION_PLAN.md P0.5 step 5).
 
 Agent guidance must instruct the agent to:
 
@@ -571,6 +600,8 @@ Potential deterministic operations after the contract stabilizes:
 - `validatePatternImplementation({ id, product, sourceRevision })`;
 - `explainPatternImpact({ report, id })`.
 
+These need an operations layer. The owner skipped `@oddkin/agent` and its MCP adapter until further notice (IMPLEMENTATION_PLAN.md P2.2), so Phase 5 starts with references only.
+
 Do not add generative page-building operations until retrieval and validation demonstrate value.
 
 ## 17. Figma relationship
@@ -580,7 +611,7 @@ The first version supports authored references to:
 - Figma file;
 - page;
 - section or flow node;
-- component-set mappings already covered by Code Connect;
+- component-set mappings from the Code Connect work (repository artifacts in `artifacts/code-connect/`; publishing them to Figma needs an Organization or Enterprise plan);
 - optional review status.
 
 Figma remains a design source and review surface, not the executable pattern contract. A later experiment may compare Figma flow connections, component instances, and variables with the authored pattern. It must report differences without automatically rewriting either side.
@@ -641,7 +672,7 @@ Compare against component-only context. Record unfavorable results.
 - design-engineer comprehension of the contract;
 - product-designer review of applicability and flow projection;
 - developer ability to implement from the contract;
-- assistive-technology testing for selected pilot patterns;
+- assistive-technology testing for selected pilot patterns, once the hardware and the owner's accessibility review allow it (§1a);
 - whether the contract preserves rather than obscures product judgment.
 
 ## 19. Initial pilot patterns
@@ -652,13 +683,19 @@ Use three patterns with different structures.
 
 Tests consequences, permissions, deliberate confirmation, pending behavior, failure recovery, completion, focus, and audit requirements.
 
+Components: `odd-dialog`, `odd-input`, and `odd-button`, which has no danger appearance.
+
 ### B. Validated submission
 
 Tests field and form errors, server rejection, pending state, preservation of user input, summary and field association, retry, success, and navigation.
 
+Components: the form controls and `odd-validation-summary`. `examples/forms` is an existing fixture (`e2e/forms-example.spec.ts`).
+
 ### C. Agent action approval
 
 Tests proposal revision, stale approval, authorization, grouped information, approve/reject, execution state, failure, recovery, checkpoint, and audit history.
+
+Components: `odd-action-approval`, `odd-checkpoint`, `odd-tool-call`, and `odd-change-review` from `@oddkin/ai`, with the `oddkin.ai.approval.v1` record. `examples/ai-agent` already uses `odd-action-approval`.
 
 Each pilot must have:
 
@@ -680,7 +717,7 @@ Do not start with onboarding, checkout, or another broad flow whose domain decis
 - author the three pilot patterns in plain Markdown;
 - identify repeated fields and meaningful differences;
 - decide whether a directed graph is sufficient;
-- write an ADR for package location, authority, and non-executable boundaries.
+- write an ADR (the next number after 0047) for package location, authority, and non-executable boundaries.
 
 Exit: the three patterns can be reviewed by design and engineering without an API.
 
@@ -726,7 +763,7 @@ Exit: each pilot pattern has verified happy, failure, recovery, and keyboard pat
 ### Phase 5 — Agent kit and evaluations, 2–4 weeks
 
 - generate pattern references and JSON indexes;
-- add retrieval operations where justified;
+- add retrieval operations where justified, if the owner reopens `@oddkin/agent` (P2.2);
 - create controlled implementation tasks;
 - compare pattern context with component-only context;
 - measure unsupported API, missing state, and deviation behavior.
@@ -831,7 +868,8 @@ Do not use raw pattern count as a success metric.
 4. Decide which pattern data may enter public package metadata.
 5. Decide whether authored Figma references are public, private, or omitted.
 6. Choose the design and engineering reviewers for the first contracts.
-7. Decide whether this work precedes or follows the first paid assurance pilot.
+7. Decide whether this work precedes or follows the first assurance pilot (the technical plan's Workstreams B to D).
+8. Place this work in IMPLEMENTATION_PLAN.md's priority tiers; it is in none today.
 
 ## 25. Recommended next step
 

@@ -18,12 +18,12 @@ Evidence base: `main` on 2026-10-29 (the commit that adds this file), the eight 
 
 ## Where this plan departs from its sources
 
-The commercialization documents were written against an older state. They say the packages "remain private and versioned `0.0.0`" (technical plan §2) and ask that "preview versions replace `0.0.0`" (Gate A). In fact all eight packages have been public on npm at `1.0.0-beta.0` since 2026-10-28, by the owner's decision of 2026-10-27 ([release-process.md](../../docs/release-process.md) §5). This plan therefore starts from a published beta, not from private packages. Two consequences:
+The owner's original commercialization documents (commit `cdad50c`) were written against an older state. They said the packages "remain private and versioned `0.0.0`" and asked that "preview versions replace `0.0.0`" (Gate A). In fact all eight packages have been public on npm at `1.0.0-beta.0` since 2026-10-28, by the owner's decision of 2026-10-27 ([release-process.md](../../docs/release-process.md) §5). This plan therefore starts from a published beta, not from private packages. The technical documents in `future_plans/` have since been rewritten to match the repository (Appendix A). Two consequences remain:
 
 - The "public package cut" is no longer about what is installable: all eight are published. npm allows unpublishing a version within 72 hours (beta.0's window closes on 2026-10-31), and later only under narrow conditions, and unpublishing working packages would break installs. The cut is now about support tiers and messaging (§4).
-- The technical plan recommends `@oddkin/workbench` "as `0.x`". It is published as `1.0.0-beta.0`, and every `0.x` version sorts below that, so the recommendation needs an owner decision (§5, D-2).
+- The original technical plan recommended `@oddkin/workbench` "as `0.x`". It is published as `1.0.0-beta.0`, and every `0.x` version sorts below that, so the version line is an owner decision (§5, D-2).
 
-Appendix A lists the remaining stale statements and the link audit of `future_plans/`.
+Appendix A records the audit of the original documents and what replaced them.
 
 ## 1. Executive objective
 
@@ -41,7 +41,7 @@ The work stops at Gate A. It adds no components, no product-pattern contracts, a
 | Capability | Class | Evidence | Gap |
 | --- | --- | --- | --- |
 | Eight packages published, public, `1.0.0-beta.0` | Verified | Manifests (no `private`, `publishConfig` `{access: public, tag: beta}`); `npm view @oddkin/core dist-tags` 2026-10-29 | None |
-| Public package cut and messaging | Owner | Owner decision 2026-10-27 (all eight); the technical plan recommends a narrower set and Workbench as `0.x` | Support tiers and messaging (D-1, D-2) |
+| Public package cut and messaging | Owner | Owner decision 2026-10-27 (all eight); the original technical plan recommended a narrower set and Workbench as `0.x` | Support tiers and messaging (D-1, D-2) |
 | Version stepping (`set-versions --next`, `--check`) | Verify | Rehearsed and reverted on 2026-10-29 (plan P0.8); beta.1 not cut | A real cut (RF-15) |
 | `latest` follows betas | Verified | `publish.mjs` moves `latest`; registry shows `latest` = `1.0.0-beta.0` | None |
 | Manifest hygiene: exports, `types`, `files`, `sideEffects`, license, `customElements`, bins | Verified | `npm run verify:packs` passed in CI run 40945402821 (2026-10-29); rules in `scripts/verify-packs.mjs` lines 53–93, 216–224 | `homepage`, `bugs`, and `keywords` are absent (RF-06) |
@@ -351,11 +351,11 @@ External dependencies:
 | D-6 | Create the external fixture repository (name, visibility) | Public, small, owner-owned | RF-11 |
 | D-7 | Accessibility wording until the owner's own audit | Evidence-scoped wording ("tested with axe and keyboard checks in three engines; screen readers not yet verified") | RF-03 |
 | D-8 | Security contact and disclosure policy | A `SECURITY.md` with a private reporting channel (GitHub private vulnerability reporting) | RF-13 |
-| D-9 | The runtime stays MIT (dossier decision 1) | Record it; no change in this plan | Gate A license line |
+| D-9 | The runtime stays MIT (technical plan §10, O-1) | Record it; no change in this plan | Gate A license line |
 | D-10 | Scope and timing of beta.1 | Cut once CI is green; Agent 2's open P0 items go to beta.2 if not ready | RF-15 |
 | D-11 | Publish evidence bundles as GitHub Release assets | Yes, attached to each release | RF-10 |
 
-The dossier's other decisions (proprietary capabilities, business model, product name) do not block the release foundation.
+The technical plan's other owner decisions (§10: proprietary capabilities, ordering, the agent package, the product name, hosted timing) do not block the release foundation.
 
 ## 20. Risks and rollback
 
@@ -652,26 +652,25 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - Add `release-evidence/` to `.gitignore`, and one line each to release-process §3 and §5 naming the command.
 - Verify with `npx vitest run --project node tests/release/evidence.test.ts`, `npm run lint`, and `npx tsc -p tsconfig.tests.json`. Run `node scripts/release/evidence.mjs --out release-evidence/main` on a clean checkout. Record the results in `docs/verification.md` and a progress-log row.
 
-## Appendix A. `future_plans/` link and statement audit (2026-10-29)
+## Appendix A. `future_plans/` audit (2026-10-29)
 
-Links (checked by script; no file renamed or moved):
+The first version of this plan audited the owner's seven original documents (commit `cdad50c`). Every relative link resolved, and the business plan's six external links answered HTTP 200. One link's text, "Customer discovery and paid pilot playbook", did not match its file name. Seven statements disagreed with the repository, all about the release state:
 
-| File | Link | Result |
-| --- | --- | --- |
-| `COMMERCIALIZATION_DOSSIER.md` | six relative links to the other plan documents | All resolve |
-| `TECHNICAL_COMMERCIALIZATION_PLAN.md` | `./PRODUCT_PATTERNS_AND_FLOW_CONTRACTS_IMPLEMENTATION_PLAN.md` | Resolves |
-| `ODDKIN_BUSINESS_PLAN.md` | storybook.js.org/ai, chromatic.com/docs/visual/, supernova.io/pricing, zeroheight.com/pricing/, vaadin.com/enterprise, vercel.com/changelog/introducing-ai-elements | HTTP 200 for each (reachability only; their content was not re-read) |
+- packages "private and versioned `0.0.0`";
+- status documentation inconsistent with the catalog (by then only four package READMEs were);
+- no release or compatibility history (beta.0 is released, and a test now runs against it);
+- Workbench "as `0.x`";
+- preview versions still to set (in both the technical plan and the scorecard);
+- packages to keep private or at `0.x`.
 
-No broken links. One naming mismatch: the dossier's link text "Customer discovery and paid pilot playbook" points at `CUSTOMER_DISCOVERY_AND_PAID_PRICING_PLAN.md` ("pricing" in the file name). The file resolves; renaming is the owner's call.
+The same day, at the owner's direction, the folder was reduced to technical documents and rewritten against the repository:
 
-Statements that disagree with the repository:
+| Original | Now |
+| --- | --- |
+| `TECHNICAL_COMMERCIALIZATION_PLAN.md` | Rewritten: the current foundation, the place of each workstream in the priority plan, today's state per workstream, the technical requirements from the business planning (§7), and owner decisions O-1 to O-8 |
+| `COMMERCIAL_READINESS_SCORECARD.md` | Rewritten: the technical lines of gates A–D, with their classes |
+| `PRODUCT_PATTERNS_AND_FLOW_CONTRACTS_IMPLEMENTATION_PLAN.md` | Corrected: the repository starting point (§1a), `odd-button`'s appearances, and the impact-graph, kit, Figma, accessibility, and priority prerequisites |
+| `COMMERCIALIZATION_DOSSIER.md` | Removed; its technical principles and decisions are in the technical plan (§1, §10) |
+| `ODDKIN_BUSINESS_PLAN.md`, `GO_TO_MARKET_PRICING_PLAN.md`, `CUSTOMER_DISCOVERY_AND_PAID_PRICING_PLAN.md` | Removed; the owner keeps them outside the repository. Their technical requirements are in the technical plan (§7) |
 
-| File | Statement | Repository today |
-| --- | --- | --- |
-| `TECHNICAL_COMMERCIALIZATION_PLAN.md` §2 | "packages remain private and versioned `0.0.0`" | Public at `1.0.0-beta.0` since 2026-10-28 |
-| `TECHNICAL_COMMERCIALIZATION_PLAN.md` §2 | "the top-level and package status documentation is inconsistent with the current catalog" | Partly: the root README now matches; four package READMEs do not (§7) |
-| `TECHNICAL_COMMERCIALIZATION_PLAN.md` §2 | "there is no … release history … or compatibility history between releases" | One release exists (beta.0); a released-version compatibility test runs since 2026-10-29 |
-| `TECHNICAL_COMMERCIALIZATION_PLAN.md` §4 A | "Recommended preview package set: … `@oddkin/workbench` as `0.x`" | Published as `1.0.0-beta.0` (D-2) |
-| `TECHNICAL_COMMERCIALIZATION_PLAN.md` §4 A | "Set preview versions and decide the public package set" | Versions set; tiers pending (D-1) |
-| `COMMERCIAL_READINESS_SCORECARD.md` Gate A | "Preview versions replace `0.0.0`." | Met; wording outdated |
-| `COMMERCIALIZATION_DOSSIER.md` decisions | "Which packages … remain private or `0.x`" | All eight are public on the beta line |
+Every relative link in the folder resolves (checked by script).

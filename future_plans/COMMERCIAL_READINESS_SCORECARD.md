@@ -1,152 +1,106 @@
-# Commercial readiness scorecard
+# Commercial readiness scorecard: technical gates
 
-Status: proposed gates  
-Last reviewed: 2026-10-29
+Status: proposed gates. Rewritten on 2026-10-29 from the owner's scorecard (the original is in commit `cdad50c`) and checked against the repository (`main` at `0d08543`).
 
-Use this scorecard to prevent technical completeness from being mistaken for commercial readiness. A gate passes only with recorded evidence.
+A gate passes only with recorded evidence; code that exists is not enough. This file keeps the technical lines. The owner tracks the commercial lines (offers, pricing, contracts, payment, target accounts, interviews, buyers, revenue, references, and case studies) outside the repository.
 
-## Gate A — Public technical preview
+Classes, as in the [technical plan](./TECHNICAL_COMMERCIALIZATION_PLAN.md): **Verified**, **Verify**, **Partial**, **Planned** (not started), **Owner**, **Stale**, **Unknown**. Lines about a hosted service stay Planned until a service exists.
 
-### Product and release
+## Gate A: public technical preview
 
-- [ ] Public package cut is decided.
-- [ ] Preview versions replace `0.0.0`.
-- [ ] Package privacy flags match the release decision.
-- [ ] README status matches the generated catalog.
-- [ ] Changelogs and release notes exist.
-- [ ] License and ownership decisions are recorded.
-- [ ] Export, declaration, files, side-effect, and `customElements` checks pass from tarballs.
-- [ ] Clean external installation completes the quick start.
-- [ ] Browser and Node support policy is published.
-- [ ] Known limitations are visible.
+The release plan maps each line to its evidence and tasks ([RELEASE_FOUNDATION_IMPLEMENTATION_PLAN.md](./implementation/RELEASE_FOUNDATION_IMPLEMENTATION_PLAN.md) §22). On 2026-10-29, 8 of 23 lines are Verified.
 
-### Verification
+| Line | Class | Next |
+| --- | --- | --- |
+| Public package cut is decided. | Owner | All eight are published; support tiers and Workbench's version line are D-1 and D-2 |
+| Preview versions replace `0.0.0`. | Verified | All eight at `1.0.0-beta.0` since 2026-10-28 |
+| Package privacy flags match the release decision. | Verified | — |
+| README status matches the generated catalog. | Stale | RF-01, RF-02 |
+| Changelogs and release notes exist. | Partial | RF-08: betas get release notes; changelogs start at 1.0.0 |
+| License and ownership decisions are recorded. | Verify | MIT in the README, the manifests, and `LICENSE`; the owner confirms it for the preview (O-1, D-9) |
+| Export, declaration, files, side-effect, and `customElements` checks pass from tarballs. | Verified | `npm run verify:packs` in CI |
+| Clean external installation completes the quick start. | Partial | RF-11 |
+| Browser and Node support policy is published. | Partial | RF-04, RF-05 |
+| Known limitations are visible. | Partial | RF-04, RF-08 |
+| Serial Chromium, Firefox, and WebKit evidence is current. | Verify | A green CI run; one Workbench browser test fails (Agent 2) |
+| Parallel-run limitation is documented. | Verified | release-process.md §3 |
+| Packed-consumer matrix passes. | Verified | CI e2e |
+| Metadata and generated agent kits are current. | Verified | `verify:metadata`; the kit `--check` |
+| Size budgets pass. | Verified | CI `npm run size` |
+| Compatibility matrix is current. | Verified | `lint:css` |
+| No accessibility claim exceeds recorded evidence. | Stale | RF-03 (D-7) |
+| Release evidence bundle is downloadable. | Planned | RF-09, RF-10 |
+| Installation guide takes less than 15 minutes in observation. | Planned | RF-18 |
+| A sample project produces a useful impact report. | Partial | RF-07 |
+| Error messages identify the corrective action. | Unknown | RF-19 |
+| The docs distinguish local, hosted, implemented, and planned capabilities. | Unknown | RF-17 |
+| The primary message does not require understanding every Oddkin package. | Owner | D-1, RF-16, RF-17 |
 
-- [ ] Serial Chromium, Firefox, and WebKit evidence is current.
-- [ ] Parallel-run limitation is documented.
-- [ ] Packed-consumer matrix passes.
-- [ ] Metadata and generated agent kits are current.
-- [ ] Size budgets pass.
-- [ ] Compatibility matrix is current.
-- [ ] No accessibility claim exceeds recorded evidence.
-- [ ] Release evidence bundle is downloadable.
+## Gate B: pilot readiness (technical lines)
 
-### Product experience
+| Line | Class | Evidence or next step |
+| --- | --- | --- |
+| One repository not built with Oddkin has completed local analysis. | Planned | The analyzer reads Oddkin-authored components only; Workbench reads standard CEM, and P0.3 adds a fixture for it (Workstream B) |
+| Customer CI can upload or export agreed artifacts. | Partial | Reports export as JSON and Markdown files, and CI results merge with `oddkin-impact compare --results`; there is no upload path (C, D) |
+| Snapshots and reports contain source and tool provenance. | Partial | Tool versions and artifact hashes are recorded; the source revision and dirty state are not (C) |
+| Unresolved edges widen verification conservatively. | Verify | The impact prototype ([change-impact-and-verification.md](../docs/architecture/change-impact-and-verification.md) §2.5) and its tests; not yet run on an external library |
+| Reports never imply a pass when execution is missing. | Verify | The `not-executed` state and `mergeResults` (§2.4, §2.7); not yet run on an external library |
+| Customer data can be exported and deleted. | Planned | Today every artifact is a local file; this applies once a service stores data |
+| Secrets are excluded from artifacts by default. | Partial | Snapshots store hashes, not sources; nothing scans for secrets; the evidence bundle's test checks for environment values (RF-09) |
+| The integration can be removed cleanly. | Unknown | No integration exists yet; the local tools are development dependencies |
+| Baseline release time and verification behavior can be recorded. | Partial | CI step runtimes (P0.6 records them) |
+| Product usage is measured without collecting unnecessary source data. | Planned | Nothing measures usage |
 
-- [ ] Installation guide takes less than 15 minutes in observation.
-- [ ] A sample project produces a useful impact report.
-- [ ] Error messages identify the corrective action.
-- [ ] The docs distinguish local, hosted, implemented, and planned capabilities.
-- [ ] The primary message does not require understanding every Oddkin package.
+## Gate C: repeatable beta (technical lines)
 
-## Gate B — Paid pilot readiness
+| Line | Class | Evidence or next step |
+| --- | --- | --- |
+| Common integrations no longer require repository-author intervention. | Planned | Workstreams B and D |
+| GitHub integration is idempotent and observable. | Planned | Workstream D |
+| Artifact retention and deletion are configurable. | Planned | Workstream E |
+| Baseline approval history is durable. | Planned | Visual baselines are not implemented (P1.7); the accept command is designed in change-impact-and-verification.md §2.6 |
+| Agent-context releases are versioned and reviewable. | Partial | Kits are versioned and fingerprinted; no review, approval, or diff (Workstream F) |
+| Service incidents have an owner and response process. | Planned | No service exists |
 
-### Commercial
-
-- [ ] Pilot offer, scope, exclusions, and price exist.
-- [ ] Proposal and statement-of-work templates have been reviewed appropriately.
-- [ ] Payment and invoicing process exists.
-- [ ] Data handling and confidentiality terms exist.
-- [ ] Support hours and response expectations are explicit.
-- [ ] A target-account list contains at least 50 organizations.
-- [ ] At least 10 discovery interviews are complete.
-- [ ] At least one economic buyer has reviewed the offer.
-
-### Technical
-
-- [ ] One non-Oddkin repository has completed local analysis.
-- [ ] Customer CI can upload or export agreed artifacts.
-- [ ] Snapshots and reports contain source and tool provenance.
-- [ ] Unresolved edges widen verification conservatively.
-- [ ] Reports never imply a pass when execution is missing.
-- [ ] Customer data can be exported and deleted.
-- [ ] Secrets are excluded from artifacts by default.
-- [ ] The integration can be removed cleanly.
-
-### Measurement
-
-- [ ] Baseline release time and verification behavior can be recorded.
-- [ ] Pilot success metrics are selected before implementation.
-- [ ] Support and onboarding hours are tracked.
-- [ ] Product usage is measured without collecting unnecessary source data.
-- [ ] A final buy/extend/stop review is scheduled.
-
-## Gate C — Repeatable paid beta
-
-- [ ] At least two organizations have paid.
-- [ ] The same core problem appeared in at least three organizations.
-- [ ] At least one pilot converted or entered procurement.
-- [ ] Onboarding follows a written playbook.
-- [ ] Common integrations no longer require repository-author intervention.
-- [ ] Pricing covers expected compute and support cost.
-- [ ] GitHub integration is idempotent and observable.
-- [ ] Artifact retention and deletion are configurable.
-- [ ] Baseline approval history is durable.
-- [ ] Agent-context releases are versioned and reviewable.
-- [ ] Service incidents have an owner and response process.
-- [ ] Customer-requested features are separated into repeated versus bespoke needs.
-
-## Gate D — General availability
+## Gate D: general availability (technical lines)
 
 ### Service
 
-- [ ] Availability and support objectives are published.
-- [ ] Backups and restoration are tested.
-- [ ] Tenant isolation is reviewed.
-- [ ] Authentication and authorization are reviewed.
-- [ ] Audit logging covers sensitive actions.
-- [ ] Data retention and deletion are tested.
-- [ ] Subprocessors and hosting regions are documented.
-- [ ] Vulnerability reporting and incident response exist.
-- [ ] Billing, cancellation, and export paths work.
+| Line | Class |
+| --- | --- |
+| Availability objectives are published. | Planned |
+| Backups and restoration are tested. | Planned |
+| Tenant isolation is reviewed. | Planned |
+| Authentication and authorization are reviewed. | Planned |
+| Audit logging covers sensitive actions. | Planned |
+| Data retention and deletion are tested. | Planned |
+| Subprocessors and hosting regions are documented. | Planned |
+| Vulnerability reporting and incident response exist. | Planned: there is no `SECURITY.md` (RF-13 covers the packages) |
+| Billing, cancellation, and export paths work. | Planned |
 
 ### Product
 
-- [ ] Stable artifact compatibility policy exists.
-- [ ] Upgrade and deprecation policy exists.
-- [ ] At least five customers are referenceable, or the private-enterprise strategy is intentional.
-- [ ] The product has a clear boundary with Storybook, Chromatic, documentation platforms, and CI.
-- [ ] Hosted value is demonstrated independently of consulting.
-- [ ] At least one case study quantifies a customer outcome.
-- [ ] The roadmap is based on repeated demand.
+| Line | Class |
+| --- | --- |
+| A stable artifact compatibility policy exists. | Partial: schemas carry versions, and release-process.md covers the packages; no policy for artifacts |
+| An upgrade and deprecation policy exists. | Partial: release-process.md for the packages; none for a service |
+| The boundary with Storybook, Chromatic, documentation platforms, and CI is documented. | Planned (technical plan §7, interoperability) |
 
 ### Enterprise
 
-- [ ] SSO and role requirements are validated by paying customers.
-- [ ] Security review materials exist.
-- [ ] Private execution or customer-CI architecture is documented.
-- [ ] Support escalation and maintenance terms are defined.
-- [ ] Contractual claims match the verification evidence.
+| Line | Class |
+| --- | --- |
+| SSO and roles are built to requirements validated by paying customers. | Planned (Workstream G) |
+| Security review materials exist. | Planned |
+| The private-execution or customer-CI architecture is documented. | Planned (Workstream D, step 1) |
+| Published claims match the verification evidence. | Partial (RF-03, RF-04) |
 
-## Monthly operating review
+## Technical status, 2026-10-29
 
-Record:
+- **Foundation:** the published beta, with CI green except one Workbench browser test.
+- **Gate A:** 8 of 23 lines Verified.
+- **External installation evidence:** in-repository fixtures, packed consumers, and the golden path, plus a weekly install of the published packages whose first run is pending; no external repository yet.
+- **Libraries not built with Oddkin:** Workbench reads their CEM; analysis and impact do not.
+- **Hosted product:** not started.
 
-- qualified interviews;
-- active evaluations;
-- paid pilots;
-- pilot revenue;
-- recurring revenue;
-- time to first report;
-- onboarding and support hours;
-- compute and storage cost;
-- graph resolution and unresolved rates;
-- regressions caught;
-- unsupported agent API rate;
-- requested features by frequency;
-- reasons opportunities were lost;
-- continue, narrow, or stop decisions.
-
-## Current high-level status
-
-Based on repository evidence as of 2026-10-29:
-
-- Technical foundation: strong.
-- Public preview readiness: incomplete.
-- External installation evidence: limited to repository fixtures and packed consumers.
-- Paid-pilot readiness: not yet established.
-- Hosted product readiness: not started as a commercial service.
-- Market validation: no recorded paying customers.
-
-The next meaningful milestone is not another component. It is one external repository producing a useful, trusted impact report followed by a paid pilot.
-
+The next technical milestone is one external repository that produces a useful, trusted impact report.
