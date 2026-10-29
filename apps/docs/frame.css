@@ -25,3 +25,35 @@ body {
   display: block;
   background: none;
 }
+/* Fields and block layouts fill a row: centred at their intrinsic width, they would show too
+   narrow to use, or not at all (a skeleton's lines take their container's width). */
+[data-oddkin-preview]
+  > :is(
+    odd-input,
+    odd-textarea,
+    odd-select,
+    odd-combobox,
+    odd-slider,
+    odd-progress,
+    odd-date-picker,
+    odd-color-picker,
+    odd-file-input,
+    odd-model-select,
+    odd-prompt-input,
+    odd-skeleton
+  ) {
+  inline-size: min(100%, 22.5rem);
+}
+[data-oddkin-preview]
+  > :is(
+    odd-carousel,
+    odd-container,
+    odd-empty-state,
+    odd-scroll-region,
+    odd-split-panel,
+    odd-tabs,
+    odd-tab-panel,
+    odd-validation-summary
+  ) {
+  inline-size: min(100%, 40rem);
+}

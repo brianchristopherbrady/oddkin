@@ -4211,3 +4211,17 @@ Design source: Figma `zF87qftdRznmJJezxy23gd` 20:2190 (1440 × 3394) and the int
 | Contracts, kits, types, lint | `node scripts/build-contracts.mjs --check`; `node scripts/agent-kit/package-kits.mjs --check`; `npx tsc -p tsconfig.tests.json`; `npm run lint` | Up to date (16 sections); current; pass; pass |
 
 **Not verified:** a GitHub CI run with the golden path (next push), and step 5 (the library's agent kit).
+
+## 2026-10-29 — Docs example frames fit their component; checkbox marks and the combobox glyph (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Cause of the scrolling popup | browser on `/components/odd-color-picker` | In the 224 px frame the popup opened above the field with max-height 110.6 px for 475 px; with the frame at 700 px it had 295 px below the centred field. The component fits its popup to its viewport, as designed |
+| Overlays | `node .tmp/overlay-frame.mjs`, `node .tmp/overlay-others.mjs` (Playwright, 1440 × 900) | Color picker, Chromium, Firefox, WebKit: 224 → 666–667 px open, popup whole (nothing to scroll), field unmoved (127 px from the top); back to 224 after Escape, after a press outside, and after Reset while open. Date picker 224 → 618, combobox 224 → 437, both back to 224 |
+| Content taller than the canvas | `node .tmp/frame-heights.mjs` (Chromium, WebKit) | Calendar 481 px, tree 338 px, command palette (open at load, modal) 587 px; button, textarea, slider, progress stay 224 px; tooltip, toast, popover, drawer, and dialog pages stay 224 px (nothing open at load) |
+| Widths | `node .tmp/frame-shots.mjs` | Textarea, slider, and progress 360 px wide on the 1,093 px canvas; the skeleton's three lines show (they had no width) |
+| Checkbox marks | `node .tmp/checkbox-check.mjs`, three engines | Before: box 102–122, check 106.5–122.5 (2.5 px low). After: check 104–120, centred |
+| Combobox glyph | `node .tmp/combobox-glyph.mjs` | Before: the box (position: relative) painted over the static `.control-start`, so only its 36 px start padding showed. After: the search glyph shows in that space |
+| Component browser tests, three engines | `npx vitest run --project browser` checkbox, checkbox-group, combobox, select, input, radio-group, listbox, tree, picker, date-picker, color-picker, switch, and the nine Figma parity files | 66 files, 1,978 passed, 41 skipped |
+| Size, compatibility | `node scripts/check-size.mjs`; `npm run compat` | components:shared 3,096 B (budget 3,136), combobox 1,483 (1,536), checkbox 56 (128); 0 problems, matrix regenerated |
+| e2e | `e2e/docs.spec.ts`, `e2e/docs-site.spec.ts` (with "grows the example frame while a popup lacks room, and takes its height back"), `e2e/css-compat.spec.ts`, `e2e/forms.spec.ts`, `e2e/forms-example.spec.ts`, three engines (E2E lock) | docs e2e 39 passed in three engines (the catalog walk now waits for the catalog's cards after Back: three mixed-engine runs had lost the click on odd-tree in WebKit while the cards were redrawn; the walk passed alone and in a WebKit-only run); css-compat, forms, and forms-example e2e 75 passed, 2 skipped |

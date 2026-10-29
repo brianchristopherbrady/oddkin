@@ -126,7 +126,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/css/button.css` | yes | 53 |
 | `packages/components/dist/css/description-list.css` | yes | 28 |
 | `packages/components/dist/css/divider.css` | yes | 21 |
-| `packages/components/dist/css/field.css` | yes | 57 |
+| `packages/components/dist/css/field.css` | yes | 59 |
 | `packages/components/dist/css/kbd.css` | yes | 23 |
 | `packages/components/dist/css/layout.css` | yes | 34 |
 | `packages/components/dist/css/link.css` | yes | 18 |
@@ -248,10 +248,10 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/stat/stat.styles.js (statStyles)` | yes | 14 |
 | `packages/components/dist/status-marker/status-marker.structural.styles.js (statusMarkerStructuralStyles)` | yes | 20 |
 | `packages/components/dist/status-marker/status-marker.styles.js (statusMarkerStyles)` | yes | 10 |
-| `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 41 |
+| `packages/components/dist/styles/control-indicator.structural.styles.js (controlIndicatorStructuralStyles)` | yes | 42 |
 | `packages/components/dist/styles/control-indicator.styles.js (controlIndicatorStyles)` | yes | 23 |
 | `packages/components/dist/styles/control.styles.js (controlStyles)` | yes | 32 |
-| `packages/components/dist/styles/field.structural.styles.js (fieldStructuralStyles)` | yes | 27 |
+| `packages/components/dist/styles/field.structural.styles.js (fieldStructuralStyles)` | yes | 29 |
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |
 | `packages/components/dist/styles/glyphs.js (glyphStyles)` | yes | 20 |
 | `packages/components/dist/styles/host.styles.js (hostStyles)` | yes | 7 |

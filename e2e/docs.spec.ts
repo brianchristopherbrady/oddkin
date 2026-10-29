@@ -316,5 +316,9 @@ test('every published component is listed under its category and has a reference
     await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible({
       timeout: catalogLoad,
     });
+    // The panel has drawn its cards again before the next click (a click on a card being replaced is lost).
+    await expect(
+      page.getByText(`Showing ${components.length} of ${components.length} components`),
+    ).toBeVisible();
   }
 });

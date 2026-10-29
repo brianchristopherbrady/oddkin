@@ -3,6 +3,7 @@ import { css } from '@oddkin/core/styles';
 /**
  * Layout of the field anatomy every Oddkin form control renders (`.field` holding `.label`,
  * `.description`, `.control`, and `.error`): stacked, wrapping, the control filling the field.
+ * Adornments are positioned, so they paint above a positioned control box (combobox).
  * No brand tokens. The `.odd-field` recipe is generated from these rules.
  */
 export const fieldStructuralStyles = css`
@@ -30,6 +31,7 @@ export const fieldStructuralStyles = css`
   .control-start,
   .control-end {
     display: flex;
+    position: relative;
     pointer-events: none;
   }
   .control-start {

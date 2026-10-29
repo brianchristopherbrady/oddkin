@@ -196,6 +196,35 @@ test.describe('static docs site', () => {
     expect(errors).toEqual([]);
   });
 
+  test('grows the example frame while a popup lacks room, and takes its height back', async ({
+    page,
+    browserName,
+  }) => {
+    const violations = await watchPolicy(page, browserName);
+    await page.goto(`${site}/components/odd-color-picker`);
+    const iframe = page.locator('oddkin-component-panel iframe').first();
+    const picker = page
+      .frameLocator('oddkin-component-panel iframe')
+      .first()
+      .locator('odd-color-picker');
+    const button = picker.getByRole('button', { name: /^Change color/ });
+    await expect(button).toBeVisible({ timeout: catalogLoad });
+    const height = async () => Math.round((await iframe.boundingBox())!.height);
+    const closed = await height();
+    const popup = picker.getByRole('dialog', { name: 'Choose color' });
+    await button.click();
+    await expect(popup).toBeVisible();
+    // The whole popup shows (nothing to scroll), and the frame is taller than its 14rem.
+    await expect
+      .poll(() => popup.evaluate((element) => element.scrollHeight - element.clientHeight))
+      .toBe(0);
+    expect(await height()).toBeGreaterThan(closed);
+    await page.keyboard.press('Escape');
+    await expect(popup).toBeHidden();
+    await expect.poll(height).toBe(closed);
+    expect(await violations()).toEqual([]);
+  });
+
   test('draws each Foundations swatch with its token, in each mode, under the policy', async ({
     page,
     browserName,

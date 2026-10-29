@@ -40,6 +40,7 @@ export const controlIndicatorStructuralStyles = css`
     cursor: inherit;
   }
   .indicator-mark {
+    display: grid;
     pointer-events: none;
     visibility: hidden;
   }
