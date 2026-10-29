@@ -4033,3 +4033,18 @@ Visual check in Chromium at 1,440 px against the Figma "03 · Component referenc
 | Layout in real engines | `node ../oddkin-lanes/tools/browser-set.mjs --engines chromium,firefox,webkit packages/components/test/layout.browser.test.ts` | 9 passed in each engine. The new tests: three items with unequal text share one height, also after one grows; at one column each keeps its own height; without the class heights differ; on `.odd-grid` too; a long word stays inside a 55px column |
 | Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/stretch-probes.json` (Chromium) | 2 of 2 killed: `display: block` instead of `grid`, and an `auto` column instead of `minmax(0, 1fr)` |
 | Size, CSS, layout lint | `node scripts/check-size.mjs`; `node scripts/compat/check-css.mjs`; `node scripts/check-page-layout.mjs` | `components:layout` 679 B gzip (budget 704); compat 0 problems; 0 unlisted layouts |
+
+## 2026-10-28 — Docs, Figma pass batch 1: header, Home hero and specimen, resource cards (round 10, Agent 3)
+
+Design source: Figma "Oddkin Docs Website" (`zF87qftdRznmJJezxy23gd`), prototype page 19:3307, read through the Figma MCP (metadata, design context, variables). The frame inventory, the route-to-frame map, and the extracted values are in `.agent-notes/oddkin-docs/figma-spec.json`; the handoff is `.agent-notes/oddkin-docs/design-handoff.md`. Browser: the VS Code integrated browser (Chromium 150), 1,440 px layout width, light.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Header (Figma 20:291) | browser measurements against `get_metadata 20:291` | brand x 32 w 188, search button 248, search group 289, as in Figma; navigation at x 293 against 306: the mode switch is a 40 px button where Figma draws a 20 px icon, and the real version text is longer |
+| Home hero and specimen (20:293, 20:304) | browser measurements | copy 617 beside the specimen 647 × 531 (Figma 616, 648 × 529); specimen content 584; card and controls 280 each, 24 apart; title 64 px / 73.6, -1.6 px; lede 20 / 23 at 520; eyebrow #6250e8 |
+| Equal-height cards (`.odd-grid-stretch`, 97c7351) | browser: Home cards at 1,440, after lengthening one description, and at 600 | 273 px each with the footers at one y; 393 px each after the change, footers aligned; one column at 600, each card its own height |
+| Docs node tests, layout lint, format, vocabulary | `npx vitest run tests/docs`; `node scripts/check-page-layout.mjs`; Prettier; `node scripts/check-vocabulary.mjs` | 18 passed; 0 unlisted layouts; formatted; 0 findings |
+| Docs e2e | `e2e/docs.spec.ts`, `e2e/docs-site.spec.ts`, three engines, `--workers=2` (E2E lock) | 28 passed, 5 failed, all in Firefox: three on the component pages (search to a component, the catalog, a reference page), one Firefox graphics crash ("RenderCompositorSWGL failed mapping default framebuffer"), one static-site click that never became stable under load. The last two pass when rerun alone in Firefox (2 passed) |
+| Baseline for the component-page failures | the four component-page tests on be4ef86 with these changes stashed, three engines, one worker | 3 failed, 9 passed, in the same places (the catalog heading, a reference page eyebrow, the search combobox focus): they precede this change; reported to Agent 2 (P0.3) |
+
+**Not verified:** the rest of Home (adoption paths, the explore band's fill, tools, quick start) and every other route; mobile widths against the 390 px frames.
