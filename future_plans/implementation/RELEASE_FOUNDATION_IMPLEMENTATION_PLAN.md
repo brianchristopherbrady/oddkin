@@ -1,6 +1,6 @@
 # Release foundation implementation plan
 
-Status: proposed (Agent 1, 2026-10-29). Planning only: nothing here is implemented by this document, and no version, `private` flag, licence, or publish state changes because of it.
+Status: proposed (Agent 1, 2026-10-29). Planning only: nothing here is implemented by this document, and no version, `private` flag, license, or publish state changes because of it.
 
 Scope: [TECHNICAL_COMMERCIALIZATION_PLAN.md](../TECHNICAL_COMMERCIALIZATION_PLAN.md) Workstream A, "Release foundation", and Milestone T0's release items; [COMMERCIAL_READINESS_SCORECARD.md](../COMMERCIAL_READINESS_SCORECARD.md) Gate A, "Public technical preview".
 
@@ -44,7 +44,7 @@ The work stops at Gate A. It adds no components, no product-pattern contracts, a
 | Public package cut and messaging | Owner | Owner decision 2026-10-27 (all eight); the technical plan recommends a narrower set and Workbench as `0.x` | Support tiers and messaging (D-1, D-2) |
 | Version stepping (`set-versions --next`, `--check`) | Verify | Rehearsed and reverted on 2026-10-29 (plan P0.8); beta.1 not cut | A real cut (RF-15) |
 | `latest` follows betas | Verified | `publish.mjs` moves `latest`; registry shows `latest` = `1.0.0-beta.0` | None |
-| Manifest hygiene: exports, `types`, `files`, `sideEffects`, licence, `customElements`, bins | Verified | `npm run verify:packs` passed in CI run 40945402821 (2026-10-29); rules in `scripts/verify-packs.mjs` lines 53–93, 216–224 | `homepage`, `bugs`, and `keywords` are absent (RF-06) |
+| Manifest hygiene: exports, `types`, `files`, `sideEffects`, license, `customElements`, bins | Verified | `npm run verify:packs` passed in CI run 40945402821 (2026-10-29); rules in `scripts/verify-packs.mjs` lines 53–93, 216–224 | `homepage`, `bugs`, and `keywords` are absent (RF-06) |
 | Every export imports in Node | Verified | `verify-packs.mjs` imports every specifier, including `define/*`, in Node 24 | Only Node 24 is tested (RF-05) |
 | No third-party runtime dependency; no lifecycle scripts | Verified | `verify-packs.mjs` "unexpected runtime dependencies"; no `install`/`prepare` scripts in any manifest | None |
 | Packed-consumer matrix from tarballs | Verified | CI e2e at `6486921`: 1,014 passed, 12 skipped (fresh Vite, React, Vue, Svelte, and Angular apps, the golden path, and the packed consumers) | §11 gaps |
@@ -351,7 +351,7 @@ External dependencies:
 | D-6 | Create the external fixture repository (name, visibility) | Public, small, owner-owned | RF-11 |
 | D-7 | Accessibility wording until the owner's own audit | Evidence-scoped wording ("tested with axe and keyboard checks in three engines; screen readers not yet verified") | RF-03 |
 | D-8 | Security contact and disclosure policy | A `SECURITY.md` with a private reporting channel (GitHub private vulnerability reporting) | RF-13 |
-| D-9 | The runtime stays MIT (dossier decision 1) | Record it; no change in this plan | Gate A licence line |
+| D-9 | The runtime stays MIT (dossier decision 1) | Record it; no change in this plan | Gate A license line |
 | D-10 | Scope and timing of beta.1 | Cut once CI is green; Agent 2's open P0 items go to beta.2 if not ready | RF-15 |
 | D-11 | Publish evidence bundles as GitHub Release assets | Yes, attached to each release | RF-10 |
 
