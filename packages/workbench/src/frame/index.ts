@@ -404,24 +404,11 @@ export function installFrameRuntime(win: Window = window): void {
     const scope = createScope({ name: `preview-frame:${identity.frame}:${identity.generation}` });
     runtime.scope = scope;
     scope.add(() => port.close(), 'message port');
-    scope.listen(port, 'message', (portEvent: MessageEvent) => {
-      const request: unknown = portEvent.data;
-      if (!isFrameRequest(request)) {
-        runtime.rejectedRequests++;
-        post(runtime, 'state', { rejectedRequests: runtime.rejectedRequests });
-        return;
-      }
-      if (
-        request.frame !== identity.frame ||
-        request.generation !== identity.generation ||
-        request.id <= runtime.lastRequest
-      ) {
-        runtime.staleRequests++;
-        post(runtime, 'state', { staleRequests: runtime.staleRequests });
-        return;
-      }
-      runtime.lastRequest = request.id;
-      void handle(runtime, scope, request).then(
+    // Requests run one at a time, in their order: a change that arrives while a mount is still
+    // loading its module graph applies to the element that mount creates.
+    let queue: Promise<void> = Promise.resolve();
+    const run = (request: FrameRequest) =>
+      handle(runtime, scope, request).then(
         (payload) => {
           if (scope.disposed) return;
           const reply = {
@@ -441,6 +428,24 @@ export function installFrameRuntime(win: Window = window): void {
           });
         },
       );
+    scope.listen(port, 'message', (portEvent: MessageEvent) => {
+      const request: unknown = portEvent.data;
+      if (!isFrameRequest(request)) {
+        runtime.rejectedRequests++;
+        post(runtime, 'state', { rejectedRequests: runtime.rejectedRequests });
+        return;
+      }
+      if (
+        request.frame !== identity.frame ||
+        request.generation !== identity.generation ||
+        request.id <= runtime.lastRequest
+      ) {
+        runtime.staleRequests++;
+        post(runtime, 'state', { staleRequests: runtime.staleRequests });
+        return;
+      }
+      runtime.lastRequest = request.id;
+      queue = queue.then(() => run(request)).catch(() => undefined);
     });
     port.start();
     scope.listen(win, 'error', (event: ErrorEvent) =>

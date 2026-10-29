@@ -199,7 +199,9 @@ function componentPanel(data = probeData()) {
     element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
     value: string,
   ) => {
+    // An edit as the reader makes it: input while typing, then change when it is committed.
     element.value = value;
+    element.dispatchEvent(new Event('input', { bubbles: true }));
     element.dispatchEvent(new Event('change', { bubbles: true }));
   };
   return { panel, root, frames, probe, row, change };
@@ -453,8 +455,92 @@ describe('<oddkin-component-panel>', () => {
     expect(code).toContain('<span slot="end">After</span>');
   });
 
+  it('applies edits made while the first preview is still loading, in order, with no error', async () => {
+    // The owner's report (2026-10-28): on a cold page, an edit made before the component's module
+    // graph has loaded was lost, and the preview kept the example's first values.
+    const data = probeData();
+    const page = data.pages['components/wb-probe'] as ComponentPageData;
+    const slow: ComponentPageData = {
+      ...page,
+      enrichment: {
+        ...page.enrichment,
+        registration: new URL('./fixtures/probe-element-slow.ts', import.meta.url).href,
+      },
+    };
+    const { panel, root, probe, row, change } = componentPanel({
+      ...data,
+      pages: { ...data.pages, 'components/wb-probe': slow },
+    });
+    // One edit before the frame has even connected, the others while its registration loads.
+    await until(() => panel.previews.length === 1, 'the preview frame');
+    choose(row('tone'), 'loud');
+    await panel.previews[0]!.ready;
+    // The mount is out; its registration takes 1.5 s more to load.
+    expect(probe()).toBeFalsy();
+    change(row('label').querySelector<HTMLInputElement>('input[type="text"]')!, 'Early');
+    change(root.querySelector<HTMLInputElement>('tr[data-slot="end"] input')!, 'After');
+    await until(() => !!probe()?.isConnected, 'the probe preview');
+    await until(() => probe()!.writes.length === 2, 'the two attribute writes');
+    // Each edit reaches the mounted element, in order.
+    expect(probe()!.writes).toEqual(['attr tone="loud"', 'attr label="Early"']);
+    await until(
+      () => probe()!.querySelector('[slot="end"]')?.textContent === 'After',
+      'the end slot',
+    );
+    expect(root.querySelector('.wb-status')?.textContent?.trim()).toBe('');
+  });
+
+  it('follows text fields as the reader types', async () => {
+    const { probe, row, root } = componentPanel();
+    await until(() => !!probe()?.isConnected, 'the probe preview');
+    const field = row('label').querySelector<HTMLInputElement>('input[type="text"]')!;
+    for (const text of ['H', 'Hi']) {
+      field.value = text;
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    await until(() => probe()!.getAttribute('label') === 'Hi', 'the typed attribute');
+    expect(probe()!.writes).toEqual(['attr label="H"', 'attr label="Hi"']);
+    const slot = root.querySelector<HTMLInputElement>('tr[data-slot=""] input')!;
+    slot.value = 'Typed';
+    slot.dispatchEvent(new Event('input', { bubbles: true }));
+    await until(() => probe()!.textContent === 'Typed', 'the typed slot');
+    // A number field writes once its text is a number, and says why it waits otherwise.
+    const count = row('count').querySelector<HTMLInputElement>('input[type="number"]')!;
+    count.value = '';
+    count.dispatchEvent(new Event('input', { bubbles: true }));
+    count.dispatchEvent(new Event('change', { bubbles: true }));
+    // An empty attribute is a value.
+    await until(() => probe()!.writes.at(-1) === 'attr count=""', 'the empty count attribute');
+    expect(row('count').querySelector('[role="alert"]')).toBeNull();
+    count.value = '5';
+    count.dispatchEvent(new Event('input', { bubbles: true }));
+    await until(() => probe()!.writes.at(-1) === 'attr count="5"', 'the typed count attribute');
+    // As a property, a field that is not a number yet writes nothing and says why when committed.
+    const mode = row('count').querySelector<HTMLSelectElement>(
+      'select[aria-label="Write count as"]',
+    )!;
+    mode.value = 'property';
+    mode.dispatchEvent(new Event('change', { bubbles: true }));
+    await settled();
+    const before = probe()!.writes.length;
+    const number = row('count').querySelector<HTMLInputElement>('input[type="number"]')!;
+    number.value = '';
+    number.dispatchEvent(new Event('input', { bubbles: true }));
+    number.dispatchEvent(new Event('change', { bubbles: true }));
+    await settled();
+    expect(row('count').querySelector('[role="alert"]')?.textContent).toContain(
+      'Not written: enter a number',
+    );
+    number.value = '7';
+    number.dispatchEvent(new Event('input', { bubbles: true }));
+    await until(() => probe()!.writes.at(-1) === 'prop count=7', 'the typed number');
+    expect(probe()!.writes.length).toBe(before + 1);
+    await settled();
+    expect(row('count').querySelector('[role="alert"]')).toBeNull();
+  });
+
   it('applies presets, logs declared events safely, syncs declared pairs, and resets in a fresh frame', async () => {
-    const { panel, root, probe, change } = componentPanel();
+    const { panel, root, probe, row, change } = componentPanel();
     await until(() => !!probe()?.isConnected, 'the probe preview');
     const preset = [...root.querySelectorAll<HTMLSelectElement>('#interactive-example select')][0]!;
     expect([...preset.options].map((o) => o.value)).toEqual(['default', 'loud']);
@@ -481,14 +567,18 @@ describe('<oddkin-component-panel>', () => {
     await new Promise((r) => setTimeout(r, 50));
     expect(probe()!.writes.some((w) => w.startsWith('prop value'))).toBe(false);
 
-    // Reset: a new frame generation with the preset's authored values; the log is cleared.
+    // Reset: a new frame generation with the preset's authored values; the log is cleared. An edit
+    // still on its way to the old frame is dropped with it, without an error.
     const generation = panel.previews[0]!.identity.generation;
+    change(row('label').querySelector<HTMLInputElement>('input[type="text"]')!, 'Dropped');
     [...root.querySelectorAll('button')].find((b) => b.textContent === 'Reset')!.click();
     await until(() => panel.previews[0]!.identity.generation === generation + 1, 'a fresh frame');
     await until(() => probe()?.textContent === 'Loud!', 'the reset preset');
     expect(probe()!.writes).toEqual(['prop tone="loud"', 'prop count=3', 'attr label="Hey"']);
     expect(panel.previewState.properties).toEqual({ tone: 'loud', count: 3 });
     expect(root.querySelector('.wb-log li')).toBeNull();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(root.querySelector('.wb-status')?.textContent?.trim()).toBe('');
   });
 
   it('copies a versioned example link that restores the configuration', async () => {

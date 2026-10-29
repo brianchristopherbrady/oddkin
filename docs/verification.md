@@ -4059,3 +4059,25 @@ Design source: Figma "Oddkin Docs Website" (`zF87qftdRznmJJezxy23gd`), prototype
 | Wide-font reflow (Linux CI) | `node .tmp/app-header-wide.mjs http://127.0.0.1:4195 Verdana` (Verdana through adoptedStyleSheets, 200% text, 320 px) | Before: scrollWidth 371 for a 320 px viewport, from the page's h1 "Overview". After `overflow-wrap: break-word` on the example's body: 320 |
 | Example pages | `npx vitest run --project node tests/examples` | 166 passed (import maps resolve; CSP hashes match) |
 | Format, test types, page layout | `npx prettier --check .`; `npx tsc -p tsconfig.tests.json`; `node scripts/check-page-layout.mjs` | Clean; 0 errors; 0 unlisted layouts |
+## 2026-10-28 — Docs handoff: the AI interfaces page (Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Docs node tests | `npx vitest run --project node tests/docs` | 20 passed in 3 files. New: `tests/docs/ai.test.ts` checks the page's description against the AI manifest and its demos against the README links, each demo's own title, and the metadata's tags; the static build test checks the authored titles "AI label" and "One-time code" |
+| Docs e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, one worker, E2E lock | WebKit 12 of 12 (the catalog test's first reference page now waits the catalog load time, 2 passed alone after the change). Firefox 11 of 12: the docs-site Ctrl K test timed out waiting for the palette. Chromium (two workers with WebKit, CPU near 60%): everything but the journey's "Search docs" click, which went to /search before the shell had enhanced the link. Both palette failures are in the shell, recorded for Agent 3 |
+| Visual check | `.tmp` Playwright scripts at 1,440 and 320 px, light and dark | The live conversation with its composer, 24 element links, demo cards, install and registration code; no sideways scroll at 320 px, no errors, no tab stop inside the inert example |
+| Types, lint | `npm run typecheck`; `npm run lint` | Pass |
+
+## 2026-10-28 — P0.3.1: live examples that load and update reliably (Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reproduction, before | `.tmp/repro-p03.mjs` on the docs site's `/components/odd-button` (Chromium) | An edit made as soon as the controls appeared (about 8 s into a cold load) was lost: `appearance` stayed `secondary`. Typing in the slot field changed nothing until Enter or blur |
+| Reproduction, after | The same script on the docs site (port 4296) and on `oddkin workbench dev --config tests/fixtures/workbench-oddkin`, Chromium, Firefox, and WebKit | Every step applied in every engine on both servers: the early edit, two quick size choices (the last wins), the switch, the slot while typing, presets, and edits after a preset; no page errors |
+| Tests that fail before the fix | `npx vitest run --project browser --browser.name=chromium` on the new tests, with the old sources | 4 of 4 failed: a set behind a slow mount (`There is no mounted component to update.`), a raw host's set behind a slow mount, edits during the first load (lost writes), typing (no write) |
+| Workbench browser tests | `node ../oddkin-lanes/tools/browser-set.mjs` on the six Workbench browser files | 38 passed in each of Chromium, Firefox, and WebKit |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs` (9 probes: the host queue, the frame queue in `dist`, the mount queued at once, superseded errors, typing, slot typing, number checks, the committed error) | 9 of 9 killed |
+| Workbench e2e | `e2e/workbench.spec.ts`, `workbench-static.spec.ts`, `workbench-theme-studio.spec.ts`; E2E lock | Firefox (one worker) 27 of 27. Chromium and WebKit (two workers, CPU at 90–100% from other work): 53 of 54; the WebKit miss was the live-update test's first heading within 5 s, which passed alone (5 of 5). The side-by-side frames' waits now allow 20 s, as the first frame does; the new e2e test holds the button's registration back 2 s, edits during that time, then types into the slot field |
+| Node tests, types, lint, size | `npx vitest run --project node packages/workbench`; `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | 122 passed; pass; pass; component panel 28,562 B of 28,672, frame runtime 6,816 B, shell 51,345 B |
+
+**Not verified:** the static docs build with the fix (Agent 3 verifies it on the site), and a reader with a screen reader typing into the fields.

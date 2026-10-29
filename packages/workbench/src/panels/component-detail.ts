@@ -9,7 +9,11 @@ import { signal, untracked } from '@oddkin/core/reactive';
 import { createScope, type Scope } from '@oddkin/core/scope';
 import { html, nothing, repeat } from '@oddkin/core/template';
 import type { ComponentPageData, JsonObject, WorkbenchIndex } from '../data/types.js';
-import { createIsolatedPreview, type IsolatedPreview } from '../preview/frame.js';
+import {
+  createIsolatedPreview,
+  PreviewFrameError,
+  type IsolatedPreview,
+} from '../preview/frame.js';
 import type { FrameNotification, FrameSettings, JsonValue } from '../protocol/index.js';
 import {
   authoredValues,
@@ -325,12 +329,10 @@ export class ComponentDetailElement extends OddkinElement.with({
   }
 
   #mountAll(scope: Scope, page: ComponentPageData, registration: string): void {
-    const previews = [...this.#previews];
+    // Each preview handles requests in order, so changes made from now on follow this mount.
     void Promise.all(
-      previews.map((preview, i) =>
-        preview.ready.then(() =>
-          preview.request('mount', this.#mountPayload(page, registration, i)),
-        ),
+      this.#previews.map((preview, i) =>
+        preview.request('mount', this.#mountPayload(page, registration, i)),
       ),
     ).then(
       () => {
@@ -344,6 +346,12 @@ export class ComponentDetailElement extends OddkinElement.with({
   }
 
   #fail(error: unknown): void {
+    // A request for a frame that was replaced (Reset) or removed has nothing left to report.
+    if (
+      error instanceof PreviewFrameError &&
+      (error.code === 'frame.generation.superseded' || error.code === 'frame.disposed')
+    )
+      return;
     this.#status.value = { text: `Preview unavailable: ${message(error)}`, alert: true };
   }
 
@@ -390,6 +398,18 @@ export class ComponentDetailElement extends OddkinElement.with({
     if (text) errors[id] = text;
     else delete errors[id];
     this.#errors.value = errors;
+  }
+
+  /** Why a typed value is not written (a number field's text that is not a number yet). */
+  #textProblem(number: boolean, mode: WriteMode, text: string): string | undefined {
+    if (!number) return undefined;
+    if (mode === 'attribute')
+      return text !== '' && !Number.isFinite(Number(text))
+        ? 'Not written: not a number.'
+        : undefined;
+    return text.trim() === '' || !Number.isFinite(Number(text))
+      ? 'Not written: enter a number, or use Unset.'
+      : undefined;
   }
 
   #writeAttribute(row: ApiRow, value: string | null): void {
@@ -1166,23 +1186,20 @@ export class ComponentDetailElement extends OddkinElement.with({
           aria-label=${label}
           placeholder=${isSet ? '' : 'unset'}
           .value=${shown}
-          @change=${(event: Event) => {
+          @input=${(event: Event) => {
+            // The preview follows the field as the reader types; an unfinished number waits.
             const text = (event.target as HTMLInputElement).value;
-            if (mode === 'attribute') {
-              if (number && text !== '' && !Number.isFinite(Number(text))) {
-                this.#setError(row.id, 'Not written: not a number.');
-                return;
-              }
-              this.#writeAttribute(row, text);
-              return;
-            }
-            if (number) {
-              if (text.trim() === '' || !Number.isFinite(Number(text))) {
-                this.#setError(row.id, 'Not written: enter a number, or use Unset.');
-                return;
-              }
-              this.#writeProperty(row, Number(text));
-            } else this.#writeProperty(row, text);
+            if (this.#textProblem(number, mode, text)) return;
+            if (mode === 'attribute') this.#writeAttribute(row, text);
+            else this.#writeProperty(row, number ? Number(text) : text);
+          }}
+          @change=${(event: Event) => {
+            const problem = this.#textProblem(
+              number,
+              mode,
+              (event.target as HTMLInputElement).value,
+            );
+            if (problem) this.#setError(row.id, problem);
           }}
         />
         <button
@@ -1254,7 +1271,7 @@ export class ComponentDetailElement extends OddkinElement.with({
                   type="text"
                   aria-label=${`${label} slot text`}
                   .value=${state.slots[slot.name] ?? ''}
-                  @change=${(event: Event) =>
+                  @input=${(event: Event) =>
                     this.#writeSlot(slot.name, (event.target as HTMLInputElement).value)}
                 />
                 <small>Text only; richer compositions need a fixture from defineExamples.</small>

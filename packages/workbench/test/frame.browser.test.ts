@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { scopeStats } from '@oddkin/core/scope';
 import { userEvent } from 'vitest/browser';
 import { createIsolatedPreview, previewProtocolStats } from '../src/preview/frame.js';
+import { frameEnvelope } from '../src/protocol/index.js';
 import type { FrameNotification, FrameMountPayload } from '../src/protocol/index.js';
 
 const previews: ReturnType<typeof createIsolatedPreview>[] = [];
@@ -226,6 +227,75 @@ describe('isolated preview frames', () => {
     await expect(bounded.request('mount', payload({ registration: slow }))).rejects.toMatchObject({
       code: 'frame.request.timeout',
     });
+  });
+
+  it('sends requests one at a time: a change made during a slow mount reaches its element', async () => {
+    const slow = new URL('./fixtures/frame-element-slow.ts', import.meta.url).href;
+    // Each request's timeout counts from when it is sent: the set waits out the 2.5 s mount.
+    const preview = createIsolatedPreview({
+      document,
+      container: document.body,
+      frameUrl,
+      title: 'Ordered preview',
+      timeoutMs: 1_000,
+    });
+    previews.push(preview);
+    await preview.ready;
+    const results = await Promise.all([
+      preview.request('mount', payload({ registration: slow })),
+      preview.request('set', { property: 'label', value: 'Later' }),
+      preview.request('set', { attribute: 'data-step', attributeValue: '2' }),
+    ]);
+    expect(results).toEqual([{ mounted: true }, { updated: true }, { updated: true }]);
+    const button = preview.iframe.contentDocument?.querySelector('fixture-button') as
+      (HTMLElement & { label?: string }) | null | undefined;
+    expect([button?.label, button?.getAttribute('data-step')]).toEqual(['Later', '2']);
+  });
+
+  it('handles the requests of any host one at a time, in order', async () => {
+    // A host that does not wait for replies (not createIsolatedPreview) sends a set right behind
+    // a slow mount; the frame applies it to the mounted element instead of failing it.
+    const slow = new URL('./fixtures/frame-element-slow.ts', import.meta.url).href;
+    const identity = { frame: 'raw-host', generation: 1 };
+    const url = new URL(frameUrl);
+    url.searchParams.set('frame', identity.frame);
+    url.searchParams.set('generation', '1');
+    const iframe = document.createElement('iframe');
+    const hello = new Promise<void>((resolve) => {
+      const onMessage = (event: MessageEvent) => {
+        if (event.source !== iframe.contentWindow || event.data?.kind !== 'hello') return;
+        removeEventListener('message', onMessage);
+        resolve();
+      };
+      addEventListener('message', onMessage);
+    });
+    iframe.src = url.href;
+    document.body.append(iframe);
+    const channel = new MessageChannel();
+    try {
+      await hello;
+      const replies = new Map<number, { payload?: unknown; error?: unknown }>();
+      channel.port1.onmessage = (event: MessageEvent) => {
+        if (event.data?.kind === 'reply') replies.set(event.data.replyTo, event.data);
+      };
+      iframe.contentWindow!.postMessage(frameEnvelope(identity, 'connect'), location.origin, [
+        channel.port2,
+      ]);
+      const send = (id: number, kind: 'mount' | 'set', body: unknown) =>
+        channel.port1.postMessage({ ...frameEnvelope(identity, kind), id, payload: body });
+      send(1, 'mount', payload({ registration: slow }));
+      send(2, 'set', { property: 'label', value: 'Later' });
+      for (let i = 0; i < 600 && !replies.has(2); i++)
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      expect(replies.get(1)).toEqual(expect.objectContaining({ payload: { mounted: true } }));
+      expect(replies.get(2)).toEqual(expect.objectContaining({ payload: { updated: true } }));
+      const button = iframe.contentDocument?.querySelector('fixture-button') as
+        (HTMLElement & { label?: string }) | null | undefined;
+      expect(button?.label).toBe('Later');
+    } finally {
+      channel.port1.close();
+      iframe.remove();
+    }
   });
 
   it('refuses superseded generations, disposed frames, and incompatible protocol versions', async () => {

@@ -251,10 +251,12 @@ test.describe('Workbench shell', () => {
       await expect(frame.locator('odd-button')).toHaveText('Save', { timeout: 20_000 });
       // Frames load the theme: the button's control is styled by tokens, not the UA default.
       await expect
-        .poll(() =>
-          frame
-            .locator('odd-button')
-            .evaluate((el) => getComputedStyle(el.ownerDocument.body).backgroundColor),
+        .poll(
+          () =>
+            frame
+              .locator('odd-button')
+              .evaluate((el) => getComputedStyle(el.ownerDocument.body).backgroundColor),
+          { timeout: 20_000 },
         )
         .not.toBe('rgba(0, 0, 0, 0)');
 
@@ -276,18 +278,22 @@ test.describe('Workbench shell', () => {
       await page.getByLabel('Light and dark side by side').check();
       const frames = page.locator('oddkin-workbench-component iframe');
       await expect(frames).toHaveCount(2);
+      // Two new frame documents load the module graph again: seconds in WebKit and Firefox when
+      // the machine is busy (2026-10-28), so these waits get the first load's allowance.
       await expect
-        .poll(() =>
-          frames.evaluateAll((list) =>
-            list.map(
-              (f) => (f as HTMLIFrameElement).contentDocument?.documentElement.dataset['oddMode'],
+        .poll(
+          () =>
+            frames.evaluateAll((list) =>
+              list.map(
+                (f) => (f as HTMLIFrameElement).contentDocument?.documentElement.dataset['oddMode'],
+              ),
             ),
-          ),
+          { timeout: 20_000 },
         )
         .toEqual(['light', 'dark']);
       await expect(
         page.frameLocator('oddkin-workbench-component iframe').nth(1).locator('odd-button'),
-      ).toHaveText('Continue');
+      ).toHaveText('Continue', { timeout: 20_000 });
       const backgrounds = await frames.evaluateAll((list) =>
         list.map(
           (f) => getComputedStyle((f as HTMLIFrameElement).contentDocument!.body).backgroundColor,
@@ -308,6 +314,34 @@ test.describe('Workbench shell', () => {
       await expect(
         page.locator('tr[data-row="property:odd-input#value"] input[type="text"]'),
       ).toHaveValue('hello');
+    });
+
+    test('applies edits made while the preview loads, and follows typing', async ({ page }) => {
+      // The owner's report (2026-10-28): an edit made before the first preview had loaded its
+      // module graph was lost. The button's registration is held back 2 s to make that window.
+      await page.route('**/define/button.js', async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, 2_000));
+        await route.continue();
+      });
+      await open(page, 'components/odd-button', 'Button');
+      await page
+        .locator('tr[data-row="property:odd-button#appearance"]')
+        .getByRole('radio', { name: 'primary' })
+        .check();
+      await page
+        .locator('tr[data-row="property:odd-button#size"]')
+        .getByRole('radio', { name: 'sm' })
+        .check();
+      const button = page
+        .frameLocator('oddkin-workbench-component iframe')
+        .first()
+        .locator('odd-button');
+      await expect(button).toHaveAttribute('appearance', 'primary', { timeout: 20_000 });
+      await expect(button).toHaveAttribute('size', 'sm');
+      // Typing updates the preview without leaving the field.
+      await page.locator('tr[data-slot=""] input').fill('Publish');
+      await expect(button).toHaveText('Publish');
+      await expect(page.locator('#interactive-example .wb-status')).toBeEmpty();
     });
   });
 

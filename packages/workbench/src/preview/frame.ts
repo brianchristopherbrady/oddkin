@@ -252,6 +252,53 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
   const mountTimeoutMs = options.mountTimeoutMs ?? 60_000;
   startGeneration();
 
+  const send = async (
+    requestIdentity: FrameIdentity,
+    requestReady: Promise<void>,
+    kind: FrameRequest['kind'],
+    payload: FrameRequestPayload | undefined,
+  ): Promise<JsonValue | undefined> => {
+    await requestReady;
+    if (identity().generation !== requestIdentity.generation)
+      throw new PreviewFrameError('frame.generation.superseded', 'The preview frame was replaced.');
+    if (scope.disposed || !port)
+      throw new PreviewFrameError('frame.disposed', 'The preview frame is not connected.');
+    const id = ++nextRequestId;
+    const limit = kind === 'mount' || kind === 'specimen' ? mountTimeoutMs : timeoutMs;
+    return new Promise<JsonValue | undefined>((resolve, reject) => {
+      const releaseTimer = scope.timeout(() => {
+        pending.delete(id);
+        reject(new PreviewFrameError('frame.request.timeout', `Frame request ${id} timed out.`));
+      }, limit);
+      pending.set(id, {
+        resolve: (value) => {
+          releaseTimer();
+          resolve(value);
+        },
+        reject: (error) => {
+          releaseTimer();
+          reject(error);
+        },
+      });
+      const request = {
+        ...frameEnvelope(requestIdentity, kind),
+        id,
+        ...(payload === undefined ? {} : { payload }),
+      };
+      if (!isFrameRequest(request)) {
+        pending.delete(id);
+        releaseTimer();
+        reject(new TypeError(`Invalid ${kind} frame request payload.`));
+        return;
+      }
+      port?.postMessage(request);
+    });
+  };
+  // One request at a time, in call order: each is sent when the one before it has settled, so a
+  // change made during a slow mount reaches the element that mount creates, and its timeout
+  // counts from when it is sent.
+  let queue: Promise<unknown> = Promise.resolve();
+
   return {
     iframe,
     get identity() {
@@ -260,47 +307,13 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
     get ready() {
       return ready;
     },
-    async request(kind, payload) {
+    request(kind, payload) {
       const requestIdentity = identity();
       const requestReady = ready;
-      await requestReady;
-      if (identity().generation !== requestIdentity.generation)
-        throw new PreviewFrameError(
-          'frame.generation.superseded',
-          'The preview frame was replaced.',
-        );
-      if (scope.disposed || !port)
-        throw new PreviewFrameError('frame.disposed', 'The preview frame is not connected.');
-      const id = ++nextRequestId;
-      const limit = kind === 'mount' || kind === 'specimen' ? mountTimeoutMs : timeoutMs;
-      return new Promise<JsonValue | undefined>((resolve, reject) => {
-        const releaseTimer = scope.timeout(() => {
-          pending.delete(id);
-          reject(new PreviewFrameError('frame.request.timeout', `Frame request ${id} timed out.`));
-        }, limit);
-        pending.set(id, {
-          resolve: (value) => {
-            releaseTimer();
-            resolve(value);
-          },
-          reject: (error) => {
-            releaseTimer();
-            reject(error);
-          },
-        });
-        const request = {
-          ...frameEnvelope(requestIdentity, kind),
-          id,
-          ...(payload === undefined ? {} : { payload }),
-        };
-        if (!isFrameRequest(request)) {
-          pending.delete(id);
-          releaseTimer();
-          reject(new TypeError(`Invalid ${kind} frame request payload.`));
-          return;
-        }
-        port?.postMessage(request);
-      });
+      const run = () => send(requestIdentity, requestReady, kind, payload);
+      const result = queue.then(run, run);
+      queue = result.catch(() => undefined);
+      return result;
     },
     setViewport(width, height) {
       if (!Number.isFinite(width) || width <= 0 || !Number.isFinite(height) || height <= 0)
