@@ -5,9 +5,15 @@ import { token } from '@oddkin/tokens/refs';
  * Oddkin's default input look beyond the shared control module: the search field's clear button,
  * a round target of the minimum size around its 1em glyph, in secondary text; and Figma
  * `number`'s stepper, a sunken segment inside the field's border at its end, of two buttons a
- * control height wide, the text kept clear of it by `space.xs`.
+ * control height wide, the text kept clear of it by `space.xs`. The control takes the focus ring
+ * on `:focus`: a text field matches `:focus-visible` on any focus anyway, and WebKit focuses a date
+ * or time field's own segments, so there the input never matches it.
  */
 export const inputStyles = css`
+  .control:focus {
+    outline: ${token('focus.width')} solid ${token('color.focus.ring')};
+    outline-offset: ${token('focus.offset')};
+  }
   .clear {
     inline-size: ${token('target.min')};
     block-size: ${token('target.min')};

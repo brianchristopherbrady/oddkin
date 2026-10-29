@@ -318,9 +318,11 @@
     "README.md"
   ],
   "dependencies": {
-    "@oddkin/components": "^1.0.0-beta.0",
-    "@oddkin/core": "^1.0.0-beta.0",
     "@oddkin/tokens": "^1.0.0-beta.0"
+  },
+  "peerDependencies": {
+    "@oddkin/components": "^1.0.0-beta.0",
+    "@oddkin/core": "^1.0.0-beta.0"
   },
   "devDependencies": {
     "@oddkin/workbench": "^1.0.0-beta.0"

@@ -100,6 +100,16 @@ for (const { file, manifest, published } of workspaces) {
   stale.push(manifest.name);
   if (!check) writeFileSync(file, text);
 }
+// Core names its version when two copies meet on one page (core-contracts.md §5.1).
+const versionFile = join(root, 'packages/core/src/internal/version.ts');
+const versionText = readFileSync(versionFile, 'utf8').replace(
+  /VERSION = '[^']*'/,
+  `VERSION = '${versionOf('@oddkin/core')}'`,
+);
+if (versionText !== readFileSync(versionFile, 'utf8')) {
+  stale.push('@oddkin/core (src/internal/version.ts)');
+  if (!check) writeFileSync(versionFile, versionText);
+}
 if (check && stale.length) {
   console.error(`Not at the requested versions: ${stale.join(', ')}.`);
   process.exit(1);

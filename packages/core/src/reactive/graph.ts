@@ -13,7 +13,10 @@
  *   effects run before post-phase effects in each pass.
  */
 import { DEV } from '../internal/dev.js';
+import { registerCopy } from '../internal/copies.js';
 import { OddkinError, reportOddkinError } from '../diagnostics/index.js';
+
+if (DEV) registerCopy();
 
 /** Brand identifying any Oddkin readable (signals, computed values, readable adapters). */
 export const READABLE: unique symbol = Symbol.for('oddkin.readable') as never;

@@ -100,7 +100,8 @@ describe('odd-scroll-region', () => {
       .poll(() => scroller.scrollTop)
       .toBeGreaterThanOrEqual(scroller.scrollHeight - scroller.clientHeight - 1);
     await userEvent.keyboard('{Home}');
-    await expect.poll(() => scroller.scrollTop).toBe(0);
+    // WebKit on Linux can stop its keyboard scroll a pixel short, as End allows below the end.
+    await expect.poll(() => scroller.scrollTop).toBeLessThanOrEqual(1);
   });
 
   it('follows its content and its own size', async () => {

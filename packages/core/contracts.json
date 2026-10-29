@@ -46,7 +46,7 @@
     "contract:core/reactivity": {
       "title": "Reactivity",
       "anchor": "reactivity",
-      "sha256": "09046e28577c6dcbde156fdc7ecabef151dbb271b83a3fa12bb24a1c8def3fc3"
+      "sha256": "0ccba0b35de7330fd422b69df7d6fb0efef0ca0dfcdd2d19823fc4bb7eabe4c6"
     },
     "contract:core/external-store": {
       "title": "External stores",
@@ -56,7 +56,7 @@
     "contract:core/copies": {
       "title": "Several copies of core on one page",
       "anchor": "copies",
-      "sha256": "4eb98ec2f5f6d5d4704691fd90d92b852bc9e42f9bcf4fb542c2d92cadebe3f6"
+      "sha256": "e520638870b00b1dddbf05f60f3d18cc4533b3c6cc2ed105bfef74bdc2508175"
     },
     "contract:core/templates": {
       "title": "Templates and rendering",

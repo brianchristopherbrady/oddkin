@@ -45,6 +45,7 @@ apps/docs         → core, state, app, tokens, components, workbench (browser p
 ```
 
 - Core knows nothing about Oddkin tokens, brand, components, routes, or stores. Its `css` helper is generic.
+- An arrow to a package whose copies must not differ on a page is a peer dependency: `@oddkin/core` from components, state, app, and ai; `@oddkin/state` from app; `@oddkin/components` from ai. `@oddkin/tokens` is a plain dependency, and so is everything the tools (analyzer, Workbench) use ([release-process.md](../release-process.md) §1).
 - Tokens knows nothing about core, components, state, or app. Its browser entry points touch no DOM globals.
 - Components never import state or app, never require a provider, global store, or bootstrap.
 - The generic layout-recipe mechanism lives in core and is unbranded; Oddkin defaults and presets live in `@oddkin/components/layout`; tokens stay unaware of recipes. See [layout-recipes.md](./layout-recipes.md).

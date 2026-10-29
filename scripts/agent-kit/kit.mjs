@@ -56,7 +56,10 @@ function kitInputs(project, library) {
 
 function fingerprintOf(project, library, inputs) {
   const versions = { [library.name]: library.version };
-  for (const dep of Object.keys(library.manifest.dependencies ?? {}))
+  for (const dep of Object.keys({
+    ...library.manifest.dependencies,
+    ...library.manifest.peerDependencies,
+  }))
     for (const p of project.context.packages) if (p.name === dep) versions[p.name] = p.version;
   return {
     generator: { ...project.context.fingerprint.generator },
@@ -391,9 +394,12 @@ function modelReference(library, id, model) {
 
 /** The guide: what to read first, small enough for every context window. */
 function guide(project, library, components, categories, entries, packaged) {
-  const deps = Object.keys(library.manifest.dependencies ?? {}).filter((d) =>
-    d.startsWith('@oddkin/'),
-  );
+  const deps = Object.keys({
+    ...library.manifest.dependencies,
+    ...library.manifest.peerDependencies,
+  })
+    .filter((d) => d.startsWith('@oddkin/'))
+    .sort();
   const metadata = library.metadata;
   const propertyOnly = components.flatMap((c) =>
     (c.propertyOnly ?? []).map((p) => code(`${c.tag}.${p.property.split('#')[1]}`)),

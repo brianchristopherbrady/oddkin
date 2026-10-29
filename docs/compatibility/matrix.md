@@ -196,7 +196,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/icon/icon.structural.styles.js (iconStructuralStyles)` | yes | 19 |
 | `packages/components/dist/icon/icon.styles.js (iconStyles)` | yes | 2 |
 | `packages/components/dist/input/input.structural.styles.js (inputStructuralStyles)` | yes | 22 |
-| `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 19 |
+| `packages/components/dist/input/input.styles.js (inputStyles)` | yes | 23 |
 | `packages/components/dist/listbox/listbox.recipe.styles.js (listboxRecipeStyles)` | yes | 11 |
 | `packages/components/dist/listbox/listbox.structural.styles.js (listboxStructuralStyles)` | yes | 17 |
 | `packages/components/dist/listbox/listbox.styles.js (listboxStyles)` | yes | 19 |

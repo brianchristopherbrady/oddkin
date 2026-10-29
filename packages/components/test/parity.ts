@@ -266,8 +266,12 @@ export async function interact(state: string, control: HTMLElement) {
     const tabbed = (control.getRootNode() as ShadowRoot).activeElement === control;
     // WebKit's Tab skips links unless the user turns that on; focus after the key press instead.
     if (!tabbed) control.focus();
+    // WebKit focuses a date or time field's own segments: the input matches :focus only.
+    const segmented = /^(date|time|datetime-local|month|week)$/.test(
+      (control as HTMLInputElement).type,
+    );
     expect(
-      control.matches(':focus-visible'),
+      control.matches(segmented ? ':focus' : ':focus-visible'),
       `:focus-visible after ${tabbed ? 'Tab' : 'Tab and focus()'} (:focus ${control.matches(':focus')}, ${control.localName} ${(control as HTMLInputElement).type ?? ''})`,
     ).toBe(true);
   }

@@ -28,9 +28,12 @@ type Page2 = typeof globalThis & {
   };
 };
 
-async function open(page: Page): Promise<string[]> {
+async function open(page: Page, warnings: string[] = []): Promise<string[]> {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'warning') warnings.push(message.text());
+  });
   await page.route('**/examples/duplicate-core/dist/consumer-*.js', (route) =>
     route.fulfill({
       contentType: 'text/javascript',
@@ -43,7 +46,8 @@ async function open(page: Page): Promise<string[]> {
 }
 
 test('each consumer runs on its own copy of core', async ({ page }) => {
-  const errors = await open(page);
+  const warnings: string[] = [];
+  const errors = await open(page, warnings);
   const distinct = await page.evaluate(() => {
     const { consumerA: a, consumerB: b } = globalThis as Page2;
     return {
@@ -55,6 +59,10 @@ test('each consumer runs on its own copy of core', async ({ page }) => {
   expect(distinct).toEqual({ signal: true, element: true, button: true });
   await expect(page.locator('a-greeting p')).toHaveText('A says hello, Ada');
   await expect(page.getByRole('button', { name: 'Registered by consumer A' })).toBeVisible();
+  // The second copy's development build says so once, with both versions.
+  const copies = warnings.filter((text) => text.startsWith('[core.copies]'));
+  expect(copies).toHaveLength(1);
+  expect(copies[0]).toMatch(/Two copies of @oddkin\/core run on this page \(\d[^ ]* and \d[^ ]*\)/);
   expect(errors).toEqual([]);
 });
 

@@ -323,7 +323,7 @@ console.log(total.value); // 30, immediately
 
 ### 5.1 Several copies of `@oddkin/core` on one page
 
-Two independently built applications can each bundle their own `@oddkin/core`. Each copy keeps its own reactive graph, scopes, error handler, and definition bindings; no copy shares state through globals. What crosses copies:
+Two independently built applications can each bundle their own `@oddkin/core`. Each copy keeps its own reactive graph, scopes, error handler, and definition bindings; no copy shares state through globals (development builds keep one global, the list of copies on the page, below). What crosses copies:
 
 - **DOM protocols:** elements, attributes, properties, events, slots, parts, and CSS custom properties work whichever copy defined the element.
 - **Readables do not cross copies.** Reading `.value` registers a dependency only in the graph that owns the readable, so another copy's effects, computed values, and template bindings see its first value and no change after. Readables carry a registered brand (`Symbol.for('oddkin.readable')`), so where a template binding or helper (`classMap`, `styleMap`, `live`, `when`, `match`, `repeat`) receives one from another copy, development builds report `reactive.readable.foreign` once per readable. Bridge with `fromExternal(toExternal(readable))` (either copy's functions): the external-store contract crosses copies, and the bridge subscribes only while observed. Following foreign readables automatically was measured at 205 B gzip more for the minimal counter bundle, paid by every application for a case a deduplicated install avoids.
@@ -331,7 +331,7 @@ Two independently built applications can each bundle their own `@oddkin/core`. E
 - **Errors** cross copies by `code`: `instanceof OddkinError` holds only for the copy that threw.
 - **Context keys** from two copies of `@oddkin/state` differ (§7.2).
 
-Different versions of core follow the same rules; nothing compares versions at runtime. *(Verified 2026-10-21 with two esbuild bundles on one page, `examples/duplicate-core` and `e2e/duplicate-core.spec.ts`, and `packages/core/test/foreign-readables.browser.test.ts`. Released artifacts installed at different versions: plan §2.5.)*
+Different versions of core follow the same rules. In development builds, each copy adds its version to a list under `Symbol.for('oddkin.core.copies')` when its reactive graph loads, and the second copy warns once (`[core.copies]`), naming both versions; production builds keep no list and say nothing. Within one install there is one copy: the packages that build on core take it as a peer dependency (release-process.md §1). *(Verified 2026-10-21 with two esbuild bundles on one page, `examples/duplicate-core` and `e2e/duplicate-core.spec.ts`, and `packages/core/test/foreign-readables.browser.test.ts`; the warning, 2026-10-28: `packages/core/test/copies.browser.test.ts` and the same e2e spec. Released artifacts installed at different versions: plan §2.5.)*
 
 <!-- /contract:core/copies -->
 

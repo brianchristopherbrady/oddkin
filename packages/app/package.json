@@ -47,7 +47,7 @@
     "dist",
     "README.md"
   ],
-  "dependencies": {
+  "peerDependencies": {
     "@oddkin/core": "^1.0.0-beta.0",
     "@oddkin/state": "^1.0.0-beta.0"
   },
