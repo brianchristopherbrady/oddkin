@@ -16,6 +16,8 @@ export const inlineAssistStyles = css`
     cursor: not-allowed;
   }
   select {
+    /* Never wider than the language row (narrow containers, wide fonts). */
+    max-inline-size: 100%;
     min-block-size: ${token('target.min')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('control.radius')};

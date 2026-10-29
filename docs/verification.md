@@ -4089,3 +4089,14 @@ Design source: Figma "Oddkin Docs Website" (`zF87qftdRznmJJezxy23gd`), prototype
 | A page of its own embeds the panels | `npx playwright test e2e/workbench-embed.spec.ts --project=chromium --project=firefox --project=webkit --workers=1` (E2E lock) | 3 passed. A small HTTP server serves an `index.html`, a `host.js`, and the `embedFiles` output for tests/fixtures/workbench-oddkin (no diagnostics): the catalog shows its cards, the component panel's frame shows the button's default example, a segmented choice and typing in the slot field update it, and no page error |
 | Files the contract names | `buildWorkbench` + `embedFiles` on tests/fixtures/workbench-oddkin | `_oddkin/index.json`, 84 `_oddkin/pages/` files, `frame.html`, `frame.importmap.json`, `shell.importmap.json` (with the three panels' entries), `theme-studio.worker.js`, and 1,295 published files under `_oddkin/m/@oddkin/` |
 | Format, test types | `npx prettier --check`; `npx tsc -p tsconfig.tests.json --noEmit` | Pass |
+
+## 2026-10-28 — AI layout with wide fonts (Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reproduced | `packages/ai/test/layout.browser.test.ts` with the AI elements' font token set to Verdana (Windows, Chromium) | Before the fix: odd-artifact's header row overflowed by 17 px (the revision select's label) and odd-context-picker's URL form by 7 px; odd-inline-assist passed at 5rem in Verdana, so CI's DejaVu Sans is wider there |
+| Layout tests, 3 engines | `node ../oddkin-lanes/tools/browser-set.mjs --out .tmp/bs-ai-layout3 packages/ai/test/layout.browser.test.ts` | Chromium, Firefox, WebKit: 29 of 29 each, with wrapping measured in a wide font and the controls inside each row checked |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-ai-layout.json` | 5 of 5 killed: each label's `min-inline-size: 0` and each control's `max-inline-size: 100%` removed in turn (the language select only once the row is measured at 4rem) |
+| AI browser tests | `npx vitest run --project browser --browser.name=chromium packages/ai/test` | 8 files passed; `contract.browser.test.ts` failed to collect once under load and passed alone (164 passed, 4 skipped) |
+
+**Not verified:** the Linux CI run itself (Agent 1 pushes main to origin and checks the next run).

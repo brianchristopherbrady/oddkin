@@ -35,7 +35,12 @@ export const contextPickerStyles = css`
     font-size: ${token('font.size.xs')};
     white-space: pre-wrap;
   }
+  .url > label {
+    min-inline-size: 0;
+  }
   input[type='url'] {
+    /* Its own width, but never wider than the form (narrow containers, wide fonts). */
+    max-inline-size: 100%;
     min-block-size: ${token('target.min')};
     padding-inline: ${token('space.xs')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};

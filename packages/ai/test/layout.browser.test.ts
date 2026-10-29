@@ -149,14 +149,32 @@ function expectRow(
   }
 }
 
-/** In a narrow container the row breaks onto a new line and stays inside the region. */
+// Linux CI's DejaVu Sans is much wider than Segoe UI, so a narrow system font can hide a row that
+// overflows (2026-10-28: odd-inline-assist's language row). Wrapping is measured in a wide font.
+const wide = new CSSStyleSheet();
+wide.replaceSync(':root { --odd-font-family-sans: Verdana, "DejaVu Sans", sans-serif; }');
+
+/** In a narrow container, in a wide font, the row breaks onto a new line and stays inside the region. */
 async function expectWraps(region: Element, inlineSize: string) {
-  container.style.inlineSize = inlineSize;
-  await frames();
-  const boxes = items(region);
-  const right = region.getBoundingClientRect().right;
-  expect(boxes.at(-1)!.top, 'last item on a new line').toBeGreaterThanOrEqual(boxes[0]!.bottom);
-  expect(boxes.every((box) => box.right <= right + 0.5)).toBe(true);
+  document.adoptedStyleSheets = [...document.adoptedStyleSheets, wide];
+  try {
+    container.style.inlineSize = inlineSize;
+    await frames();
+    const boxes = items(region);
+    const right = region.getBoundingClientRect().right;
+    expect(boxes.at(-1)!.top, 'last item on a new line').toBeGreaterThanOrEqual(boxes[0]!.bottom);
+    expect(
+      boxes.map((box) => Math.max(0, Math.round(box.right - right))),
+      'overflow',
+    ).toEqual(boxes.map(() => 0));
+    // A form control does not shrink with the item that holds it unless its styles let it.
+    const controls = [...region.querySelectorAll('select, input, textarea, button')]
+      .filter((control) => control.getClientRects().length)
+      .map((control) => Math.max(0, Math.round(control.getBoundingClientRect().right - right)));
+    expect(controls, 'control overflow').toEqual(controls.map(() => 0));
+  } finally {
+    document.adoptedStyleSheets = document.adoptedStyleSheets.filter((sheet) => sheet !== wide);
+  }
 }
 
 const conversation = (messages: unknown[], more: Record<string, unknown> = {}) => ({
@@ -522,7 +540,8 @@ describe('odd-inline-assist', () => {
     }));
     const language = $(el, '.language');
     expectRow(language, space('xs'));
-    await expectWraps(language, '5rem');
+    // Narrower than the select's own width in any font (CI's DejaVu Sans failed at 5rem).
+    await expectWraps(language, '4rem');
   });
 });
 

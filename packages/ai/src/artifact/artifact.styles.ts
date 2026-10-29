@@ -19,7 +19,12 @@ export const artifactStyles = css`
   p {
     margin: 0;
   }
+  .revision {
+    min-inline-size: 0;
+  }
   select {
+    /* Never wider than the header: a wide font in a narrow container clips the label instead. */
+    max-inline-size: 100%;
     min-block-size: ${token('target.min')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('control.radius')};
