@@ -11,6 +11,13 @@ import {
 import { toExamplesJSON, type ExampleSet } from '../src/examples/index.js';
 import type { CemPackage, OddkinMetadataLike } from '../src/pages/index.js';
 import { pageCoverage, type CoverageItem } from '../src/panels/model.js';
+// Imported as text through Vite's module graph, like contract.browser.test.ts: a runtime fetch of
+// new URL(path, import.meta.url) was a 404 in CI on Linux (the path was not under the server root).
+import componentsCem from '../../components/custom-elements.json?raw';
+import componentsMetadata from '../../components/oddkin.metadata.json?raw';
+import aiCem from '../../ai/custom-elements.json?raw';
+import aiMetadata from '../../ai/oddkin.metadata.json?raw';
+import tokenInspection from '../../tokens/dist/inspect/default.inspect.json?raw';
 
 // One check over every component the @oddkin/components and @oddkin/ai metadata publish: its
 // detail page shows every item the coverage model lists, with content or a label, and nothing on
@@ -35,39 +42,24 @@ const REQUIRED = [
   'guidance/usage-pairs',
 ];
 
-/** A published file from the dev server. CI on Linux once read an empty or cut-off body here. */
-async function json<T>(path: string): Promise<T> {
-  const url = new URL(path, import.meta.url);
-  for (let attempt = 1; ; attempt++) {
-    const response = await fetch(url, { cache: 'no-store' });
-    const text = await response.text();
-    try {
-      return JSON.parse(text) as T;
-    } catch (error) {
-      if (attempt === 2)
-        throw new Error(
-          `${url.pathname}: HTTP ${response.status}, ${text.length} characters read, content-length ${response.headers.get('content-length')}: ${String(error)}`,
-        );
-    }
-  }
-}
 const exampleSets = (modules: Record<string, ExampleSet<Element>>) =>
   Object.values(modules).map((set) => toExamplesJSON(set) as unknown as ExampleSetLike);
 
-async function catalog() {
-  const library = async (dir: string, name: string, sets: ExampleSetLike[]) => ({
+function catalog() {
+  const library = (name: string, cem: string, metadata: string, sets: ExampleSetLike[]) => ({
     name,
     version: '0.0.0',
-    cem: await json<CemPackage>(`../../${dir}/custom-elements.json`),
-    metadata: await json<OddkinMetadataLike>(`../../${dir}/oddkin.metadata.json`),
+    cem: JSON.parse(cem) as CemPackage,
+    metadata: JSON.parse(metadata) as OddkinMetadataLike,
     examples: sets,
   });
   const { data, diagnostics } = buildWorkbenchData({
     config: { library: { packages: ['@oddkin/components', '@oddkin/ai'] } },
     libraries: [
-      await library(
-        'components',
+      library(
         '@oddkin/components',
+        componentsCem,
+        componentsMetadata,
         exampleSets(
           import.meta.glob<ExampleSet<Element>>('../../components/src/**/*.examples.ts', {
             eager: true,
@@ -75,9 +67,10 @@ async function catalog() {
           }),
         ),
       ),
-      await library(
-        'ai',
+      library(
         '@oddkin/ai',
+        aiCem,
+        aiMetadata,
         exampleSets(
           import.meta.glob<ExampleSet<Element>>('../../ai/src/**/*.examples.ts', {
             eager: true,
@@ -86,7 +79,7 @@ async function catalog() {
         ),
       ),
     ],
-    tokens: await json<TokenInspectionLike>('../../tokens/dist/inspect/default.inspect.json'),
+    tokens: JSON.parse(tokenInspection) as TokenInspectionLike,
   });
   if (!data) throw new Error(JSON.stringify(diagnostics));
   return { data, diagnostics };
@@ -147,7 +140,7 @@ afterEach(async () => {
 
 describe('component detail coverage', () => {
   it('every @oddkin/components and @oddkin/ai page shows each item, with content or a label', async () => {
-    const { data, diagnostics } = await catalog();
+    const { data, diagnostics } = catalog();
     expect(diagnostics.filter((d) => d.severity === 'error')).toEqual([]);
     const entries = data.index.registry.pages.filter((p) => p.kind === 'component');
     // Both packages are walked; the count only grows as components land.
