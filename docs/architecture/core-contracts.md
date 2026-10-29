@@ -66,6 +66,7 @@ import { cardStyles } from './card.styles.js';
 export const cardDefinition = compose({ name: 'odd-card', element: Card, template: cardTemplate, styles: cardStyles });
 
 // card/card.define.ts — explicit registration
+/// <reference path="./card.ts" preserve="true" />
 import { define } from '@oddkin/core/element';
 import { cardDefinition } from './card.definition.js';
 define(cardDefinition);
@@ -75,6 +76,7 @@ Settled behavior:
 
 - An external template runs in the same tracked render context as `render()`. The binding rule, lifecycle order, `Scope` cleanup, and DOM identity are unchanged. Templates reach only the host's public members; members that exist for a template only use a leading `_` or `@internal`.
 - Definitions are frozen and side-effect free. `define(definition)` registers dependencies first, then binds the definition to its exact constructor (a private `WeakMap`) before registering, so upgrades see it. Classes and definitions are never mutated.
+- A define entry exports nothing, so its declaration file would not reach the class module's `HTMLElementTagNameMap` entry. The `/// <reference path="./card.ts" preserve="true" />` directive keeps it, so importing the entry alone (`import '<package>/define/card'`) types `document.createElement('odd-card')`. Oddkin's packages and the golden path's library (`tests/golden-path/`) do this.
 - A definition's `styles` is the complete, ordered style list and replaces the class's `static styles`; without `styles`, the class's styles apply. A definition's `template` replaces `render()`; development builds report `definition.render.ignored` when both exist.
 - Codes: `registry.definitionConflict`, `registry.constructorReused`, `registry.collision`, `registry.definition.invalid`, `definition.element.invalid`, `definition.template.invalid`, `definition.dependency.invalid`. A failed registration leaves no binding.
 - Size budgets (ADR 0031) still pass; the counter fixture is 9,521 B gzip of 9,728 B.

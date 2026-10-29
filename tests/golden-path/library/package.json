@@ -1,0 +1,56 @@
+{
+  "name": "@acme/widgets",
+  "version": "0.1.0",
+  "description": "The golden path's library: two elements on @oddkin/core, styled with its theme's tokens.",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist",
+    "theme.json",
+    "custom-elements.json",
+    "oddkin.metadata.json"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./greeting": {
+      "types": "./dist/greeting/index.d.ts",
+      "default": "./dist/greeting/index.js"
+    },
+    "./tally": {
+      "types": "./dist/tally/index.d.ts",
+      "default": "./dist/tally/index.js"
+    },
+    "./define/greeting": {
+      "types": "./dist/greeting/greeting.define.d.ts",
+      "default": "./dist/greeting/greeting.define.js"
+    },
+    "./define/tally": {
+      "types": "./dist/tally/tally.define.d.ts",
+      "default": "./dist/tally/tally.define.js"
+    },
+    "./theme.css": "./dist/theme/acme.css",
+    "./theme.json": "./theme.json",
+    "./custom-elements.json": "./custom-elements.json",
+    "./oddkin.metadata.json": "./oddkin.metadata.json",
+    "./package.json": "./package.json"
+  },
+  "customElements": "./custom-elements.json",
+  "sideEffects": [
+    "./dist/**/*.define.js",
+    "./dist/theme/*.css"
+  ],
+  "dependencies": {
+    "@oddkin/tokens": "^1.0.0-beta.0"
+  },
+  "peerDependencies": {
+    "@oddkin/core": "^1.0.0-beta.0"
+  },
+  "devDependencies": {
+    "@oddkin/analyzer": "^1.0.0-beta.0",
+    "@oddkin/workbench": "^1.0.0-beta.0",
+    "typescript": "^7.0.2"
+  }
+}

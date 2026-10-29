@@ -2,7 +2,8 @@ name: Registry smoke
 
 # The published packages, installed from the npm registry into the same fresh projects CI builds
 # from packed tarballs (scripts/packed-consumers.mjs with ODDKIN_CONSUMERS_FROM): the packed-consumer
-# pages, and the Vite TypeScript, React, Vue, and Svelte apps. Weekly, and by hand after a publish.
+# pages, the Vite TypeScript, React, Vue, and Svelte apps, and the golden path (a library, its
+# Workbench site, and an app on it). Weekly, and by hand after a publish.
 on:
   schedule:
     - cron: '0 6 * * 1'
@@ -28,7 +29,7 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       # Playwright starts every web server in playwright.config.ts; Workbench's and the docs' need the build.
       - run: npm run build
-      - run: npx playwright test e2e/fresh-consumers.spec.ts e2e/packed-consumers.spec.ts e2e/components-only.spec.ts e2e/autoload.spec.ts
+      - run: npx playwright test e2e/fresh-consumers.spec.ts e2e/packed-consumers.spec.ts e2e/components-only.spec.ts e2e/autoload.spec.ts e2e/golden-path.spec.ts
         env:
           ODDKIN_CONSUMERS_FROM: ${{ inputs.version || 'beta' }}
       - if: failure()

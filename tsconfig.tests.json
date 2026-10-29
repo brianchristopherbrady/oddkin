@@ -20,6 +20,7 @@
     "vitest.config.ts",
     "playwright.config.ts"
   ],
-  // Each consumer type-checks in its own fresh project, against the packed packages.
-  "exclude": ["tests/consumers"]
+  // Each consumer, and each golden-path project, type-checks in its own fresh project, against
+  // the packed packages.
+  "exclude": ["tests/consumers", "tests/golden-path"]
 }

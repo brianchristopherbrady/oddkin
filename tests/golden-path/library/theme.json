@@ -1,0 +1,5 @@
+{
+  "$schema": "./node_modules/@oddkin/tokens/schema/theme-config.v1.schema.json",
+  "name": "acme",
+  "brand": { "primary": "#6d28d9" }
+}

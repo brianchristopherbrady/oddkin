@@ -4,15 +4,17 @@
 // installed modules through each package's `exports` (default, production conditions); its
 // stylesheets must be published files; its CSP hash is recomputed. Bundled consumers (fresh Vite
 // TypeScript, React, Vue, and Svelte projects) also install their build tools, type-check, and are
-// served from their `vite build` output. ODDKIN_CONSUMERS_FROM=<dist-tag or version> installs the
-// published packages instead of tarballs. Run after `npm run build`.
+// served from their `vite build` output. The golden path (P0.5, scripts/golden-path.mjs) builds a
+// library, its Workbench site, and an app on it. ODDKIN_CONSUMERS_FROM=<dist-tag or version>
+// installs the published packages instead of tarballs. Run after `npm run build`.
 //
 //   node scripts/packed-consumers.mjs --port 4174
 //   node scripts/packed-consumers.mjs --import-map examples/full-app   (prints the workspace map)
 //
 // Serves /<consumer>/ for each consumer below; packing starts on the first request for it, and
 // /<consumer>/__ready reports the installed packages, the import map, and every module file the
-// page loads (e2e/packed-consumers.spec.ts, e2e/components-only.spec.ts).
+// page loads (e2e/packed-consumers.spec.ts, e2e/components-only.spec.ts), and for the golden path
+// the library's tarball and each step's time (e2e/golden-path.spec.ts).
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
@@ -105,16 +107,20 @@ export const CONSUMERS = {
     tools: ['vite', '@sveltejs/vite-plugin-svelte', 'svelte'],
     bundle: true,
   },
+  // The golden path: a library team's workspaces (the library and its Workbench site) and another
+  // team's app on the library's tarball (scripts/golden-path.mjs). The app is served at
+  // /golden-path/, the site at /golden-path/site/.
+  'golden-path': { goldenPath: true },
 };
 
 // Build tools at the versions the workspace verifies; the rest pinned (checked 2026-10-28).
 const PINNED = { sass: '1.107.0', '@vitejs/plugin-react': '6.1.2', '@vitejs/plugin-vue': '6.0.10' };
-async function toolVersion(name) {
-  if (PINNED[name]) return PINNED[name];
+async function toolSpec(name) {
+  if (PINNED[name]) return `${name}@${PINNED[name]}`;
   const manifest = JSON.parse(
     await readFile(join(root, 'node_modules', ...name.split('/'), 'package.json'), 'utf8'),
   );
-  return manifest.version;
+  return `${name}@${manifest.version}`;
 }
 
 async function filesUnder(dir, base = dir) {
@@ -247,29 +253,8 @@ function pack(name, work) {
   return tarballs.get(name);
 }
 
-/**
- * Pack, install, and copy the consumer's page into `work/<name>` (emptied first). Returns the
- * site directory, the installed packages, the import map, and every module file the page loads.
- */
-export async function packConsumer(name, work) {
-  const consumer = CONSUMERS[name];
-  if (!consumer) throw new Error(`Unknown consumer ${name}`);
-  await mkdir(join(work, 'tarballs'), { recursive: true });
-  const site = join(work, name);
-  await rm(site, { recursive: true, force: true });
-  await mkdir(site, { recursive: true });
-  await writeFile(
-    join(site, 'package.json'),
-    JSON.stringify({ name: `${name}-consumer`, private: true, type: 'module' }),
-  );
-  const files = await Promise.all(
-    consumer.packages.map((pkg) =>
-      registry ? `@oddkin/${pkg}@${registry}` : pack(pkg, join(work, 'tarballs')),
-    ),
-  );
-  const tools = await Promise.all(
-    (consumer.tools ?? []).map(async (tool) => `${tool}@${await toolVersion(tool)}`),
-  );
+/** Install `specs` into the project `dir`. */
+async function install(dir, specs) {
   // Exact tool versions come from the npm cache when it has them; a dist-tag is looked up.
   await npm(
     [
@@ -278,11 +263,25 @@ export async function packConsumer(name, work) {
       '--no-fund',
       '--ignore-scripts',
       ...(registry ? [] : ['--prefer-offline']),
-      ...files,
-      ...tools,
+      ...specs,
     ],
-    site,
+    dir,
   );
+}
+
+/** A fresh project in `dir` (emptied first) with `specs` installed. */
+async function freshProject(dir, specs) {
+  await rm(dir, { recursive: true, force: true });
+  await mkdir(dir, { recursive: true });
+  await writeFile(
+    join(dir, 'package.json'),
+    JSON.stringify({ name: 'packed-consumer', private: true, type: 'module' }),
+  );
+  await install(dir, specs);
+}
+
+/** Every package installed in the project `dir`, sorted. */
+async function installedIn(dir) {
   const installed = new Set();
   const walk = (deps = {}) => {
     for (const [dep, info] of Object.entries(deps)) {
@@ -290,7 +289,44 @@ export async function packConsumer(name, work) {
       walk(info.dependencies);
     }
   };
-  walk(JSON.parse(await npm(['ls', '--all', '--json'], site)).dependencies);
+  walk(JSON.parse(await npm(['ls', '--all', '--json'], dir)).dependencies);
+  return [...installed].sort();
+}
+
+/**
+ * Pack, install, and copy the consumer's page into `work/<name>` (emptied first). Returns the
+ * site directory, the installed packages, the import map, and every module file the page loads.
+ */
+export async function packConsumer(name, work) {
+  const consumer = CONSUMERS[name];
+  if (!consumer) throw new Error(`Unknown consumer ${name}`);
+  await mkdir(join(work, 'tarballs'), { recursive: true });
+  const oddkin = (pkg) =>
+    registry ? `@oddkin/${pkg}@${registry}` : pack(pkg, join(work, 'tarballs'));
+  const site = join(work, name);
+  if (consumer.goldenPath) {
+    await rm(site, { recursive: true, force: true });
+    await mkdir(site, { recursive: true });
+    const { buildGoldenPath } = await import('./golden-path.mjs');
+    const helpers = {
+      root,
+      oddkin,
+      tool: toolSpec,
+      tarballs: !registry,
+      install,
+      freshProject,
+      installedIn,
+      filesUnder,
+      run,
+      npm,
+    };
+    return buildGoldenPath(site, `/${name}/`, helpers);
+  }
+  await freshProject(site, [
+    ...(await Promise.all(consumer.packages.map(oddkin))),
+    ...(await Promise.all((consumer.tools ?? []).map(toolSpec))),
+  ]);
+  const installed = await installedIn(site);
 
   const pageDir = join(root, consumer.page);
   for (const file of consumer.files)
@@ -313,7 +349,7 @@ export async function packConsumer(name, work) {
     const dist = join(site, 'dist');
     return {
       site: dist,
-      installed: [...installed].filter((dep) => dep.startsWith('@oddkin/')).sort(),
+      installed: installed.filter((dep) => dep.startsWith('@oddkin/')),
       imports: {},
       files: await filesUnder(dist),
     };
@@ -334,14 +370,17 @@ export async function packConsumer(name, work) {
     await writeFile(join(site, page), html);
     result ??= map;
   }
-  return { site, installed: [...installed].sort(), ...result };
+  return { site, installed, ...result };
 }
 
 const types = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.map': 'application/json; charset=utf-8',
+  '.svg': 'image/svg+xml',
 };
 
 function serve(port) {
@@ -368,9 +407,10 @@ function serve(port) {
       return void response.writeHead(500).end(report);
     }
     if (rest === '/__ready') {
-      const { installed, imports, files } = consumer;
+      // Everything but the local directory.
+      const { site, ...report } = consumer;
       response.writeHead(200, { 'content-type': types['.json'] });
-      return void response.end(JSON.stringify({ installed, imports, files }));
+      return void response.end(JSON.stringify(report));
     }
     let path = normalize(join(consumer.site, decodeURIComponent(rest)));
     if (path !== consumer.site && !path.startsWith(consumer.site + sep))
@@ -409,7 +449,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     // The workspace import map of a page (development builds), for its index.html.
     const pageDir = resolve(root, page);
     const html = await readFile(join(pageDir, arg('--html') ?? 'index.html'), 'utf8');
-    const consumer = Object.values(CONSUMERS).find((c) => resolve(root, c.page) === pageDir);
+    const consumer = Object.values(CONSUMERS).find(
+      (c) => c.page && resolve(root, c.page) === pageDir,
+    );
     const modules = join(root, 'node_modules');
     const dynamic = consumer?.dynamicDefines ? await defineEntries(modules, 'development') : [];
     const { imports } = await importMap([...moduleScripts(html, pageDir), ...dynamic], {
