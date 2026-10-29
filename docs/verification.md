@@ -4081,3 +4081,11 @@ Design source: Figma "Oddkin Docs Website" (`zF87qftdRznmJJezxy23gd`), prototype
 | Node tests, types, lint, size | `npx vitest run --project node packages/workbench`; `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | 122 passed; pass; pass; component panel 28,562 B of 28,672, frame runtime 6,816 B, shell 51,345 B |
 
 **Not verified:** the static docs build with the fix (Agent 3 verifies it on the site), and a reader with a screen reader typing into the fields.
+
+## 2026-10-28 — P0.3.2: the embedding contract (Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| A page of its own embeds the panels | `npx playwright test e2e/workbench-embed.spec.ts --project=chromium --project=firefox --project=webkit --workers=1` (E2E lock) | 3 passed. A small HTTP server serves an `index.html`, a `host.js`, and the `embedFiles` output for tests/fixtures/workbench-oddkin (no diagnostics): the catalog shows its cards, the component panel's frame shows the button's default example, a segmented choice and typing in the slot field update it, and no page error |
+| Files the contract names | `buildWorkbench` + `embedFiles` on tests/fixtures/workbench-oddkin | `_oddkin/index.json`, 84 `_oddkin/pages/` files, `frame.html`, `frame.importmap.json`, `shell.importmap.json` (with the three panels' entries), `theme-studio.worker.js`, and 1,295 published files under `_oddkin/m/@oddkin/` |
+| Format, test types | `npx prettier --check`; `npx tsc -p tsconfig.tests.json --noEmit` | Pass |
