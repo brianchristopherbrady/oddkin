@@ -1,12 +1,13 @@
 import { expect, request, test } from '@playwright/test';
 
-// Fresh projects (priority plan P0.1): Vite with TypeScript and Sass, React, Vue, and Svelte. Each
-// installs the packed packages and its own build tools (scripts/packed-consumers.mjs on port
-// 4174), type-checks when it is TypeScript, and is served from its production build.
+// Fresh projects (priority plan P0.1): Vite with TypeScript and Sass, React, Vue, Svelte, and
+// Angular (its CLI, AOT). Each installs the packed packages and its own build tools
+// (scripts/packed-consumers.mjs on port 4174), type-checks when it is TypeScript, and is served
+// from its production build.
 const server = 'http://127.0.0.1:4174';
-const consumers = ['vite-ts', 'react', 'vue', 'svelte'] as const;
+const consumers = ['vite-ts', 'react', 'vue', 'svelte', 'angular'] as const;
 
-// Each install takes minutes on a cold npm cache: start all four at once (the server keeps each
+// Each install takes minutes on a cold npm cache: start them all at once (the server keeps each
 // one's result), then each block waits for its own.
 test.beforeAll(() => {
   for (const name of consumers) void fetch(`${server}/${name}/__ready`).catch(() => {});

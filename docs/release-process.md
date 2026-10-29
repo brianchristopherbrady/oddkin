@@ -62,9 +62,11 @@ The framework fixtures render Oddkin elements through each framework in Chromium
 | React | 19.3.1 (`react`, `react-dom`) | `packages/components/test/frameworks.browser.test.ts`, `frameworks-forms`, `frameworks-late`; `packages/ai/test/frameworks.browser.test.ts` | `@oddkin/components/frameworks/react` JSX types: `tests/frameworks/react/react.types.tsx` (TypeScript 7.0.2) |
 | Vue | 3.5.44 | the same three components files and the AI file | `@oddkin/components/frameworks/vue`: `tests/frameworks/vue/Shell.vue` with vue-tsc 3.3.13 (`strictTemplates`, TypeScript 5.9.3) |
 | Svelte | 5.57.2 (runes; `@sveltejs/vite-plugin-svelte` 7.3.1) | `frameworks-svelte`, `frameworks-forms`, `frameworks-late` | `@oddkin/components/frameworks/svelte`: `tests/frameworks/svelte` with svelte-check 4.7.7 |
-| Angular | 22.2.3 (JIT, zoneless, `CUSTOM_ELEMENTS_SCHEMA`) | `frameworks-angular`, `frameworks-forms`, `frameworks-late` | None: Angular templates are not type-checked against the elements |
+| Angular | 22.2.3 (JIT, zoneless, `CUSTOM_ELEMENTS_SCHEMA`) | `frameworks-angular`, `frameworks-forms`, `frameworks-late` | Templates: none (`CUSTOM_ELEMENTS_SCHEMA`). The fresh Angular app below compiles the packages' declarations with TypeScript 6.0.3 |
 
 Other versions are not claimed. The fixtures live beside the packages' tests rather than in a separate `integration/` folder; `scripts/check-size.mjs` fails if any measured entry pulls in one of these frameworks.
+
+The fresh apps (`tests/consumers/`, `e2e/fresh-consumers.spec.ts`, 2026-10-29) install the packed packages into new projects and build them with each framework's own tools: Vite 8.3.4 with TypeScript 7.0.2 and Sass, React, Vue, and Svelte through their Vite plugins, and the Angular CLI 22.2.3 (AOT, `strictTemplates`, TypeScript 6.0.3, as Angular 22.2 requires). The TypeScript apps check library declarations too (`skipLibCheck: false`).
 
 ## 5. Beta release
 
