@@ -4,7 +4,7 @@ Status: proposed. Rewritten on 2026-10-29 from the owner's commercialization doc
 
 This plan holds the technical work of the commercialization path. The owner keeps the business planning (business model, pricing, go-to-market, customer discovery, and sales) outside the repository. Where that planning sets a technical requirement, §7 states it.
 
-[IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md) remains the single source of truth for scope and order. Nothing here is scheduled until the owner places it in that plan's priority tiers (§2).
+[IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md) remains the single source of truth for scope and order. Only what the owner places in that plan's priority tiers is scheduled. On 2026-10-29 the owner placed tier CF there, after P0 (§2, §11).
 
 | Document | Contents |
 | --- | --- |
@@ -34,20 +34,28 @@ Principles:
 - Missing evidence is never reported as a pass.
 - Contracts and artifacts stay portable: a team can export its metadata, reports, and verification evidence.
 - Hosted features are built only after the same need appears repeatedly in the owner's discovery evidence.
-- The component catalog does not grow during the first commercialization window unless a pilot requires it (this conflicts with the current priority plan; §8, O-4).
+- The component catalog does not grow during the first commercialization window unless a pilot requires it (owner decision O-4, 2026-10-29; §8).
 
 ## 2. Place in the current priority plan
 
-IMPLEMENTATION_PLAN.md (round 10, from 2026-10-28) orders the work: P0, people can install Oddkin and build with it; P1, finish the foundations; P2, new capability (SVG icons, the agent package, Workbench completion, products); P3, the v1 freeze; then parked items. The workstreams in §5 relate to it as follows.
+IMPLEMENTATION_PLAN.md (round 10, from 2026-10-28; reordered by the owner on 2026-10-29) orders the work:
 
-| Workstream | Already in the priority plan | Not in it yet |
+- P0: people can install Oddkin and build with it;
+- CF: the commercialization foundations (CF.1 release trust basics, CF.2 the change-impact demonstration, CF.3 libraries not built with Oddkin);
+- P1: finish the foundations, starting with the items tier CF needs;
+- P2: new capability (products; the SVG icons and Workbench completion are parked, and the agent package stays skipped);
+- P3: the v1 freeze; then parked items.
+
+The workstreams in §5 relate to it as follows.
+
+| Workstream | In the priority plan | Not in it yet |
 | --- | --- | --- |
-| A. Release foundation | P0.1, P0.2, P0.5, P0.6, and P0.8 (Agent 1) | The release plan's tasks: evidence bundle, external fixture repository, trusted publishing, support and security policies |
-| B. Generalize assurance inputs | P0.3's standard-CEM fixture library (Agent 2); P1.6, analyzer and metadata | Adapter API; fixture libraries not built with Oddkin |
-| C. Assurance artifact protocol | The impact prototype (M5) | Provenance, verification plan, approval, evidence, and context-release formats |
-| D. Pull-request integration | — | All |
+| A. Release foundation | P0.1, P0.2, P0.5, P0.6, and P0.8 (Agent 1); CF.1: RF-01 to RF-04 and RF-09 | The other release-plan tasks: evidence in CI, the external fixture repository, trusted publishing, the security policy |
+| B. Generalize assurance inputs | P0.3's standard-CEM fixture library (Agent 2); CF.3; P1.6, analyzer and metadata | Framework inputs (task 5); identities across releases (task 6) |
+| C. Assurance artifact protocol | The impact prototype (M5), which CF.2 uses | Provenance, verification plan, approval, evidence, and context-release formats |
+| D. Pull-request integration | CF.2: the impact report in CI (step 1) | The hosted GitHub App (step 2) |
 | E. Verification workers | P1.7: conformance suites and visual baselines, run locally | Hosted workers |
-| F. Approved agent context | P0.4's kit checks and P0.5 step 5's kit command (Agent 2). P2.2, `@oddkin/agent` and MCP, is skipped by the owner | Context approval and context diff |
+| F. Approved agent context | P0.4's kit checks and P0.5 step 5's kit command (Agent 2). P2.2, `@oddkin/agent` and MCP, stays skipped (O-5) | Context approval and context diff |
 | G. Enterprise controls | — | All |
 | Product patterns | — | All |
 
@@ -278,7 +286,7 @@ Today:
 - A component reference covers import and registration, properties, methods, events, slots, parts, CSS custom properties, custom states, authored guidance, examples, and customization.
 - Kits carry no verification state and no source revision.
 - There is no approval step, context diff, or consumer command (P0.5 step 5).
-- There is no MCP access: the owner skipped `@oddkin/agent` and its MCP adapter (P2.2).
+- There is no MCP access: the owner skipped `@oddkin/agent` and its MCP adapter (P2.2), and confirmed it on 2026-10-29 (O-5).
 - P0.4 has a real coding agent build a page from a kit (Agent 2).
 
 Tasks:
@@ -287,7 +295,7 @@ Tasks:
 2. Include APIs, examples, tokens, recipes, and models (all included today), plus limitations and verification state (missing).
 3. Mark stale or unresolved context per entry, not only per kit.
 4. Require human approval before organization-wide publication.
-5. Offer downloadable references and JSON indexes. The generator can write `json/` bundles; the shipped kits omit them. Offer MCP access only if the owner reopens P2.2 (O-5).
+5. Offer downloadable references and JSON indexes. The generator can write `json/` bundles; the shipped kits omit them. MCP stays paused (O-5): revisit it once the consumer kit command (P0.5 step 5) and the context diff (task 7) exist, as a thin read-only adapter over the kit files.
 6. Record which context release an agent or a generated change used.
 7. Review context diffs between releases.
 
@@ -317,8 +325,8 @@ None of it exists.
 
 | Milestone | Technical items | Today |
 | --- | --- | --- |
-| T0, baseline | Package tiers and versions (versions done; tiers are D-1); repair stale documentation (RF-01 to RF-03); one end-to-end assurance demonstration from a clean checkout (§7); release evidence from a clean checkout (RF-09, RF-10) | Partial |
-| T1, external local preview | Installation in an external repository (RF-11); the standard-CEM baseline (B); portable snapshots and reports with provenance (C); a prototype that ingests customer-CI results (D, step 1); two observed onboarding sessions (RF-18) | Planned, except Workbench's CEM input |
+| T0, baseline | Package tiers and versions (versions done; tiers are D-1); repair stale documentation (RF-01 to RF-03; CF.1); one end-to-end assurance demonstration from a clean checkout (§7; CF.2); release evidence from a clean checkout (RF-09 in CF.1; RF-10) | Partial |
+| T1, external local preview | Installation in an external repository (RF-11); the standard-CEM baseline (B; CF.3); portable snapshots and reports with provenance (C); a prototype that ingests customer-CI results (D, step 1; CF.2); two observed onboarding sessions (RF-18) | Planned, except Workbench's CEM input |
 | T2, hosted pilot | GitHub App; an organization and project model; persistent reports and artifacts; pull-request checks | Planned |
 | T3, repeatable beta | Onboarding that needs no help from the repository author; baseline approvals; agent-context releases; a support and incident process for the service | Planned |
 | T4, general availability | Security and privacy review; service reliability objectives; customer-controlled retention; billing, cancellation, and export paths; an artifact migration policy | Planned |
@@ -381,18 +389,18 @@ The original plan deferred the items below unless a paying pilot needs them. Eac
 
 | Deferred item | Priority plan today | Conflict |
 | --- | --- | --- |
-| More standard components | P1.2 finishes M10's partial items, including the remaining Figma families and the collections | Yes (O-4) |
+| More standard components | P1.2's remaining Figma families and collections | Resolved (O-4, 2026-10-29): parked; P1.2 keeps its quality items |
 | The data grid | Parked (P3) | No |
 | A complete hosted code editor | Not planned | No |
 | Arbitrary application hosting | Not planned | No |
 | A general-purpose CI replacement | Not planned | No |
-| Every Theme Studio feature | P1.5 lists M9's full Theme Studio set, after P0.3's baseline flow | Yes (O-4) |
+| Every Theme Studio feature | P1.5 | Resolved (O-4): P1.5 polishes the baseline flow; the rest is parked |
 | AG-UI or A2UI adapters without a concrete integration | [docs/AI_COMPONENTS_IMPLEMENTATION_PLAN.md](../docs/AI_COMPONENTS_IMPLEMENTATION_PLAN.md) asks only for evaluation notes | No |
 | Self-hosting before the service architecture settles | Not planned | No |
 | Performance claims before comparative evidence | Comparative benchmarks are parked (P3); no performance claim is made | No |
 | Automatic semantic-version decisions from token value changes | The impact prototype never maps a token value change to a version increment | No |
 
-The SVG icon packages (P2.1, after P0) were not in the original list. Whether they wait during the commercialization window is part of O-4.
+The SVG icon packages (P2.1) and Workbench completion (P2.3) were not in the original list. The owner parked both on 2026-10-29 (O-4).
 
 ## 9. Technical success metrics
 
@@ -417,22 +425,26 @@ None of these is measured automatically today. The impact report's JSON already 
 | O-1 | The runtime stays MIT | Gate A's license line (release plan D-9) |
 | O-2 | Which new capabilities are proprietary, and where their code lives: this public repository or a private one | D, E, G, and any closed part of C or F |
 | O-3 | Package tiers and Workbench's version line | Workstream A (release plan D-1, D-2) |
-| O-4 | Order against the priority plan: whether P1.2's new component families, P1.5's full Theme Studio, and P2.1's icons wait during the commercialization window | §8 |
-| O-5 | Whether to reopen P2.2 (`@oddkin/agent` and MCP) for Workstream F | F tasks 5 to 7; the pattern retrieval operations |
+| O-4 | Order against the priority plan. **Decided 2026-10-29:** tier CF follows P0. P1.2's new component families and collections, Theme Studio beyond its baseline flow (P1.5), the SVG icons (P2.1), and Workbench completion (P2.3) are parked | §8 |
+| O-5 | Whether to reopen P2.2 (`@oddkin/agent` and MCP) for Workstream F. **Decided 2026-10-29:** it stays paused. Revisit it once the consumer kit command and a context diff exist, as a thin read-only adapter over the kit files | F task 5; the pattern retrieval operations |
 | O-6 | The product name ("Oddkin Assurance" is a placeholder) | Command and package names in C |
 | O-7 | When hosted work starts (D step 2, E, G), based on the owner's discovery evidence | T2 onward |
 | O-8 | The product-patterns decisions (that plan's §24) | That plan |
 
 ## 11. Next technical actions
 
-1. Close P0: a green CI (Agent 2's coverage test), P0.3, P0.4, and P0.5 step 5. Then cut `1.0.0-beta.1` (P0.8).
-2. Release foundation: RF-09 (the evidence bundle v0), then RF-01 to RF-03 (documentation truth).
-3. Package the impact demonstration: a scripted, reproducible change between two commits, with a published sample Markdown report (T0).
-4. Create the independent fixture repository (RF-11) and one fixture library not built with Oddkin (B, task 7).
-5. Run `oddkin-impact` in this repository's CI and publish its report as a job summary and an artifact. This is D's step 1, and it defines the smallest artifact set a CI uploads (C).
-6. Product patterns Phase 0 (patterns written in Markdown, and an ADR), after the owner's decisions.
+The owner set this order on 2026-10-29 (O-4), and IMPLEMENTATION_PLAN.md holds it.
 
-Actions 3 to 6 are not in IMPLEMENTATION_PLAN.md yet; they start when the owner places them (O-4).
+1. Close P0: a green CI, P0.3, P0.4, and P0.5 step 5. Then cut `1.0.0-beta.1` (P0.8).
+2. CF.1, the release trust basics: RF-01 to RF-04 and RF-09.
+3. CF.2, the change-impact demonstration:
+   - a scripted, reproducible change between two commits;
+   - its report produced in CI and published as a job summary and an artifact. This is D's step 1, and it defines the smallest artifact set a CI uploads (C);
+   - a docs page that presents the sample report.
+4. CF.3, libraries not built with Oddkin (B).
+5. The P1 items tier CF needs: P1.6 (analyzer), P1.7 (conformance and visual baselines), and P1.1 (theming).
+
+Not placed yet: the external fixture repository (RF-11, D-6) and the other release tasks; product patterns Phase 0 (O-8).
 
 ## 12. Product patterns
 

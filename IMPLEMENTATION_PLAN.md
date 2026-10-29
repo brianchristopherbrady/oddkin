@@ -12,6 +12,8 @@ The aim is to make correct, maintainable components easy to write and easy to do
 
 **Owner direction (2026-10-28).** Work in priority order. First come the foundations people need to install Oddkin and build with it, working together as one system. Then Workbench and the AI tooling must work end to end. Then the remaining foundations, and only then new capability, starting with the SVG icon packages. The milestones (M0–M12) and the numbered sections stay as the detailed backlog and the evidence record; this section sets the order and the owners. Take an item when its tier is reached, or earlier when an item in a higher tier depends on it. Tick an item here and in the milestone item it names.
 
+**Owner direction (2026-10-29).** Two goals set the order after P0. The docs site is Oddkin's showcase, so it must be polished and work reliably. And the foundations for commercializing Oddkin come next ([future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md](./future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md), decisions O-4 and O-5). After P0 comes tier CF. Then come the P1 items that tier CF needs (P1.6, P1.7, P1.1) and P1.2's quality items, and then the rest of P1. The catalog does not grow: P1.2's new component families and collections, Theme Studio beyond its baseline flow (P1.5), the SVG icons (P2.1), and Workbench completion (P2.3) are parked. `@oddkin/agent` and MCP (P2.2) stay skipped.
+
 **Lanes** (log, tools, and prompts in `C:\SLT_Backup_10-21-2026\oddkin-lanes`: `lanes-r10.md`, `prompts/round-10/`):
 
 | Lane | Owns |
@@ -95,7 +97,26 @@ Exit criteria:
 - [ ] **P0.8 1.0.0-beta.1 (Agent 1; the owner publishes).** After P0.1–P0.6's fixes: the release checklist (release-process.md §5), changelogs, `set-versions --next`, and the dry run. The owner publishes.
   - *(2026-10-29, Agent 1: `set-versions --next`, rehearsed on main and reverted, steps the eight packages, the docs app's ranges, and core's `VERSION` to 1.0.0-beta.1, and its `--check` passes. At the cut: `npm install`, `npm test` (the contract records carry the version), `npm run verify:metadata`, the §3 checks, the dry run, and the prose that names `1.0.0-beta.0` (the root README and `packages/core/README.md`, Agent 3; release-process.md §5's tag commands). Release-process §1 writes no changelog for a beta; betas get release notes instead (owner, 2026-10-29), drafted in [docs/releases/1.0.0-beta.1.md](./docs/releases/1.0.0-beta.1.md) and completed at the cut. Waiting for a green CI (Agent 2's coverage test), P0.3 and P0.4 (Agent 2), and the owner's go.)*
 
-### P1: finish the foundations (after P0's exit)
+### CF: commercialization foundations (after P0's exit; owner, 2026-10-29)
+
+The details are in [future_plans/](./future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md). In order:
+
+- [ ] **CF.1 Release trust basics (Agent 1, with Agent 3).** From the [release-foundation plan](./future_plans/implementation/RELEASE_FOUNDATION_IMPLEMENTATION_PLAN.md):
+  - README and status statements taken from generated facts, and a check that keeps them true (RF-01, RF-02; Agent 3 writes the READMEs);
+  - accessibility wording that names its evidence (RF-03; owner decision D-7);
+  - a public browser and Node support policy that lists its limitations (RF-04);
+  - the release evidence bundle, first as a local command (RF-09).
+- [ ] **CF.2 The change-impact demonstration (Agents 1 and 2; Agent 3 for the page).**
+  - A scripted, reproducible real change between two commits, with its impact report: reason paths, and the selected checks' results in three engines (`scripts/impact.mjs`; Agent 2 owns `@oddkin/analyzer`).
+  - The same report produced in CI and published as a job summary and an artifact (the technical plan's Workstream D, step 1; Agent 1).
+  - A docs page that presents the sample report and links the site to its evidence: CI in three browsers, the fresh-install tests, the change-impact analysis, and the architecture decisions (Agent 3).
+- [ ] **CF.3 Libraries not built with Oddkin (Agent 2).** The technical plan's Workstream B:
+  - the minimum standard-CEM experience across Workbench, impact, and kits;
+  - a fixture library not built with Oddkin;
+  - whether `oddkin-impact` works from a CEM alone;
+  - an ADR for adapters to other metadata sources.
+
+### P1: finish the foundations (after tier CF; P1.6, P1.7, and P1.1 first, as tier CF needs them)
 
 - [ ] **P1.1 Theming (Agent 1).**
   - M9's generator items:
@@ -105,26 +126,26 @@ Exit criteria:
     - equivalent CSS, SCSS, and TS consumption;
     - P3 values.
   - §5.1's open items: adopted-sheet ownership and the DTCG resolver experiment.
-- [ ] **P1.2 Components (Agent 1).**
-  - M10's partial items: the remaining Figma families, the collections, CSS contracts for new components, and customization levels, including level 4's typed anatomy contracts.
-  - M4's partial items: the details of `odd-button`, `odd-input`, and `odd-card`; the scripted keyboard suite; framework remount behaviour.
+- [ ] **P1.2 Components (Agent 1).** The catalog does not grow (owner, 2026-10-29). M10's remaining Figma families and the collections, with their CSS contracts, are parked (P3), unless the docs site's design needs a family or a pilot asks for one. What remains:
+  - first, M4's partial items: the details of `odd-button`, `odd-input`, and `odd-card`; the scripted keyboard suite; framework remount behaviour;
+  - M10's customization levels, including level 4's typed anatomy contracts;
   - §5f's localization contracts and its loading and fallback presentation.
 - [ ] **P1.3 Core semantics (Agent 1).** §3.2's bounded inspection, M8's comprehension review of the binding rule, and M8's scope and direction item.
 - [ ] **P1.4 Accessibility and guidance (the owner).** The owner will run its own agentic accessibility flow over the components later (2026-10-28), so no agent runs the sweep over every element (M8). Agents keep each element they touch accessible and tested. Guidance with correct and incorrect example pairs (M10) stays deferred.
-- [ ] **P1.5 Theme Studio (Agent 2).** M9's Theme Studio items: controls for every category, specimens, role mapping, token inspection, visualizations, layout roles, comparison, undo, share, export, save to file, and complete keyboard and screen-reader operation.
+- [ ] **P1.5 Theme Studio (Agent 2).** Polish the baseline flow from P0.3 (load a theme, edit it, preview light and dark, and export, all by keyboard too); it is one of the docs site's showcase features. The rest of M9's Theme Studio items are parked (owner, 2026-10-29): controls for every category, specimens, role mapping, token inspection, visualizations, layout roles, comparison, undo, share, save to file, and complete keyboard and screen-reader operation of every control.
 - [ ] **P1.6 Analyzer and metadata (Agent 2).** §5c, M4's analyzer relationships, and the remainder of M8's metadata and tooling review.
 - [ ] **P1.7 Assurance (Agent 2, with Agent 1).** Conformance suites per catalog component (M10), the ADR 0043 role compatibility check, and visual baselines (M5).
 
 ### P2: new capability on the foundations
 
-- [ ] **P2.1 SVG icons ([SVG_PACKAGE_PLAN.md](./SVG_PACKAGE_PLAN.md); Agents 1 and 2).**
-  - Phases 1–3 (discovery, the contracts as an ADR, the collection SDK) may start once P0 exits, alongside P1. Phases 4–10 follow P1.2.
+- [ ] **P2.1 SVG icons ([SVG_PACKAGE_PLAN.md](./SVG_PACKAGE_PLAN.md); Agents 1 and 2).** Parked (owner, 2026-10-29) until the owner reopens it; the plan stays as written:
+  - When reopened, phases 1–3 (discovery, the contracts as an ADR, the collection SDK) may run alongside P1. Phases 4–10 follow P1.2.
   - Agent 1 builds `@oddkin/icons` (`<odd-icon>`, the registry, providers, renderers, and the compiler) and the healthcare and GIS collections from the original artwork.
   - Agent 2 adds Workbench collection discovery (§17 of that plan) and analyzer metadata for icons.
   - A third, fixture collection proves that a new collection needs no framework change.
   - Prerequisites: P0.6 (CI), P0.3 (Workbench), and the `icon.size.*` tokens.
-- [ ] **P2.2 Agent package and MCP (Agent 2).** D7 (`@oddkin/agent`) and the optional MCP adapter stay skipped (owner, 2026-10-27, confirmed 2026-10-28: not fundamental yet). They return only with the owner's approval.
-- [ ] **P2.3 Workbench completion (Agent 2).** M11's Workbench items (composition previews, model editors, content customization, API comparison, explanations, reproductions, product comparison) and §5d.2.
+- [ ] **P2.2 Agent package and MCP (Agent 2).** D7 (`@oddkin/agent`) and the optional MCP adapter stay skipped (owner, 2026-10-27, confirmed 2026-10-28: not fundamental yet). They return only with the owner's approval. Confirmed again on 2026-10-29 (the technical plan's O-5): revisit once P0.5 step 5's kit command and a release-to-release context diff exist, and then only as a thin read-only adapter over the kit files.
+- [ ] **P2.3 Workbench completion (Agent 2).** Parked (owner, 2026-10-29) unless the docs site needs an item: M11's Workbench items (composition previews, model editors, content customization, API comparison, explanations, reproductions, product comparison) and §5d.2.
 - [ ] **P2.4 Products (Agents 1 and 2).** M9's products-and-modes items, built on P1.1's overrides.
 
 ### P3: the v1 freeze, then parked work
@@ -136,7 +157,8 @@ Exit criteria:
   - the ergonomics studies (§8.3);
   - M0's research backlog;
   - migration walkthroughs (M11), which wait for the docs content pass;
-  - screen-reader and Safari runtime evidence, which needs hardware.
+  - screen-reader and Safari runtime evidence, which needs hardware;
+  - the catalog's growth during the commercialization window (owner, 2026-10-29): P1.2's new component families and collections, Theme Studio beyond its baseline flow (P1.5), the SVG icons (P2.1), and Workbench completion (P2.3).
 
 **Every tier.**
 - Each file has one owner, the lane in the table above; post before changing another lane's file.
@@ -148,6 +170,7 @@ Exit criteria:
 | Document | Role |
 | --- | --- |
 | **This plan** | Single source of truth for scope, milestones, and acceptance |
+| [future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md](./future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md) | The technical work of the commercialization path: workstreams A–G, readiness gates, owner decisions; tier CF comes from it |
 | [docs/architecture/packages.md](./docs/architecture/packages.md) | Package boundaries, dependency map, entry points |
 | [docs/architecture/core-contracts.md](./docs/architecture/core-contracts.md) | Authoring, lifecycle, `Scope`, reactivity, templates, stores, resources, router |
 | [docs/architecture/theming-and-styling.md](./docs/architecture/theming-and-styling.md) | Theme config, token pipeline, spacing, scopes, outputs, styling, layout roles/conditions/profiles |
