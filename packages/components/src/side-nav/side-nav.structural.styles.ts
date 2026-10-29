@@ -15,6 +15,7 @@ export const sideNavStructuralStyles = css`
     list-style: none;
   }
   ::slotted(a) {
+    position: relative;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -22,9 +23,14 @@ export const sideNavStructuralStyles = css`
     text-decoration: none;
     overflow-wrap: anywhere;
   }
+  ::slotted(a[aria-current='page'])::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+  }
   @media (forced-colors: active) {
-    .root ::slotted(a[aria-current='page']) {
-      border-inline-start-color: Highlight;
+    .root ::slotted(a[aria-current='page'])::before {
+      background: Highlight;
     }
   }
 `;

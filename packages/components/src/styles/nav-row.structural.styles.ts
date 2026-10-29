@@ -3,11 +3,14 @@ import { css } from '@oddkin/core/styles';
 /**
  * Navigation rows (component-catalog.md §6 "nav-row"), shared by `odd-side-nav` and `odd-tree`:
  * full-width `.entry` rows (a link, a button, or a treeitem) with a `.label` that wraps long text.
- * Structural rules here; the look is `navRowStyles`. The forced-colours markers are prefixed with
- * `.root` (the element's container) to outrank a skin's state rules, which load later.
+ * Structural rules here; the look is `navRowStyles`. The current or selected row's marker is a
+ * `::before` bar at the inline start, sized and coloured by the skin. The forced-colours markers
+ * are prefixed with `.root` (the element's container) to outrank a skin's state rules, which load
+ * later.
  */
 export const navRowStructuralStyles = css`
   .entry {
+    position: relative;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -31,10 +34,14 @@ export const navRowStructuralStyles = css`
   .entry[aria-disabled='true'] {
     cursor: not-allowed;
   }
+  .entry:is([aria-current='page'], [aria-selected='true'])::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+  }
   @media (forced-colors: active) {
-    .root .entry[aria-current='page'],
-    .root .entry[aria-selected='true'] {
-      border-inline-start-color: Highlight;
+    .root .entry:is([aria-current='page'], [aria-selected='true'])::before {
+      background: Highlight;
     }
     .root .entry:disabled,
     .root .entry[aria-disabled='true'] {

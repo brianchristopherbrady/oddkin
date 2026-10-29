@@ -265,8 +265,9 @@ export const CSS_BUDGETS = {
   // 2026-10-22 with the navigation-row (+294, moved from odd-side-nav) and
   // option-row (+330) modules; 1,604 before them with the field layout, control look, and select
   // chevron every form control shares (717 before: spinner, tone, glyphs, host, focus ring, visually
-  // hidden).
-  'components:shared': 3072,
+  // hidden). 3,091 on 2026-10-28 (+39) once the navigation row's current or selected marker became a
+  // straight ::before bar (Figma NavigationItem) instead of a border bent by the row's radius.
+  'components:shared': 3136,
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   // measured 660 on 2026-10-24 (411 on 2026-10-18): layout.css page-author classes, with
   // Figma's Oddkin/Layout variants, .odd-box, .odd-center, .odd-aspect-ratio, and the presets

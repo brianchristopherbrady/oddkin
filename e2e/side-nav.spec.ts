@@ -67,6 +67,7 @@ test('the recipe and the handwritten CSS compute the same styles at every width'
       const root = el.shadowRoot!;
       const c = getComputedStyle(root.querySelector('.content')!);
       const a = getComputedStyle(root.querySelector('a[aria-current]')!);
+      const bar = getComputedStyle(root.querySelector('a[aria-current]')!, '::before');
       const b = getComputedStyle(root.querySelector('a:not([aria-current])')!);
       return [
         c.display,
@@ -74,7 +75,9 @@ test('the recipe and the handwritten CSS compute the same styles at every width'
         c.rowGap,
         a.paddingInlineStart,
         a.minHeight,
-        a.borderInlineStartColor,
+        bar.backgroundColor,
+        bar.width,
+        bar.height,
         a.backgroundColor,
         a.fontWeight,
         b.fontSize,
@@ -85,6 +88,7 @@ test('the recipe and the handwritten CSS compute the same styles at every width'
     const right = await hand.evaluate((el) => {
       const c = getComputedStyle(el.querySelector('.hand-nav__content')!);
       const a = getComputedStyle(el.querySelector('a[aria-current]')!);
+      const bar = getComputedStyle(el.querySelector('a[aria-current]')!, '::before');
       const b = getComputedStyle(el.querySelector('a:not([aria-current])')!);
       return [
         c.display,
@@ -92,7 +96,9 @@ test('the recipe and the handwritten CSS compute the same styles at every width'
         c.rowGap,
         a.paddingInlineStart,
         a.minHeight,
-        a.borderInlineStartColor,
+        bar.backgroundColor,
+        bar.width,
+        bar.height,
         a.backgroundColor,
         a.fontWeight,
         b.fontSize,
@@ -202,12 +208,17 @@ test('forced colors keep the current marker and the disabled state visible', asy
     probe.remove();
     return { highlight, gray };
   });
-  await expect
-    .poll(() => inner(nav, 'a[aria-current="page"]', 'border-inline-start-color'))
-    .toBe(system.highlight);
-  expect(
-    parseFloat(await inner(nav, 'a[aria-current="page"]', 'border-inline-start-width')),
-  ).toBeGreaterThan(0);
+  const bar = (property: string) =>
+    nav.evaluate(
+      (el, p) =>
+        getComputedStyle(
+          el.shadowRoot!.querySelector('a[aria-current="page"]')!,
+          '::before',
+        ).getPropertyValue(p),
+      property,
+    );
+  await expect.poll(() => bar('background-color')).toBe(system.highlight);
+  expect(parseFloat(await bar('width'))).toBeGreaterThan(0);
   expect(await inner(nav, 'a[aria-disabled="true"]', 'color')).toBe(system.gray);
   await clean();
 });

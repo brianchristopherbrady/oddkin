@@ -40,9 +40,10 @@ async function navIn(attributes: Record<string, string>) {
   roots.push(scope);
   await nav.updateComplete;
   flush();
-  const style = getComputedStyle(nav.shadowRoot!.querySelector('a[aria-current]')!);
+  const link = nav.shadowRoot!.querySelector('a[aria-current]')!;
+  const style = getComputedStyle(link);
   return {
-    marker: style.borderInlineStartColor,
+    marker: getComputedStyle(link, '::before').backgroundColor,
     padding: style.paddingInlineStart,
     height: style.minHeight,
     text: style.color,
@@ -78,9 +79,10 @@ describe('odd-side-nav in generated theme scopes', () => {
     nested.append(nav);
     outer.append(nested);
     await nav.updateComplete;
-    const style = getComputedStyle(nav.shadowRoot!.querySelector('a[aria-current]')!);
+    const link = nav.shadowRoot!.querySelector('a[aria-current]')!;
+    const style = getComputedStyle(link);
     const product = await navIn({ 'data-odd-product': 'clinic' });
-    expect(style.borderInlineStartColor).toBe(product.marker);
+    expect(getComputedStyle(link, '::before').backgroundColor).toBe(product.marker);
     expect(style.paddingInlineStart).toBe(inner.padding);
   });
 });
@@ -120,14 +122,17 @@ describe('odd-side-nav sources render equivalently', () => {
   ];
   const box = (a: Element) => {
     const s = getComputedStyle(a);
+    const bar = getComputedStyle(a, '::before');
     return [
       s.display,
       s.alignItems,
       s.minHeight,
       s.paddingInlineStart,
       s.paddingBlockStart,
-      s.borderInlineStartWidth,
-      s.borderInlineStartColor,
+      bar.content,
+      bar.width,
+      bar.height,
+      bar.backgroundColor,
       s.borderTopLeftRadius,
       s.backgroundColor,
       s.color,

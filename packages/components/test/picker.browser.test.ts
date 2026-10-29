@@ -493,8 +493,8 @@ describe('odd-picker', () => {
     expect(surface.boxShadow).not.toBe('none');
     // Selection: the bar and weight of the navigation row; focus: the ring on another row.
     const roads = getComputedStyle(row(el, 'Roads'));
-    expect(roads.borderInlineStartColor).toBe(
-      themeValue('border-inline-start-color', '--odd-color-action-default'),
+    expect(getComputedStyle(row(el, 'Roads'), '::before').backgroundColor).toBe(
+      themeValue('background-color', '--odd-color-action-default'),
     );
     expect(roads.outlineStyle).toBe('none');
     expect(getComputedStyle(row(el, 'Rail')).outlineColor).toBe(
@@ -517,7 +517,7 @@ describe('odd-picker', () => {
         const probe = document.createElement('span');
         probe.style.color = 'Highlight';
         container.append(probe);
-        expect(getComputedStyle(row(el, 'Roads')).borderInlineStartColor).toBe(
+        expect(getComputedStyle(row(el, 'Roads'), '::before').backgroundColor).toBe(
           getComputedStyle(probe).color,
         );
         probe.style.color = 'GrayText';

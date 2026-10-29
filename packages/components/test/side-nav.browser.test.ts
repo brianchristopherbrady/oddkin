@@ -572,15 +572,15 @@ describe('robustness', () => {
       el.style.setProperty('--odd-border-width-strong', '3px');
       el.style.setProperty('--odd-color-action-default', 'rgb(1, 2, 3)');
     });
+    // A straight bar at the inline start (left in LTR, right in RTL), not a border on the corner.
     const marker = () => {
-      const s = getComputedStyle($('a[aria-current="page"]')!);
-      return { left: s.borderLeftColor, right: s.borderRightColor };
+      const s = getComputedStyle($('a[aria-current="page"]')!, '::before');
+      return { color: s.backgroundColor, width: s.width, left: s.left, right: s.right };
     };
-    expect(marker().left).toBe('rgb(1, 2, 3)');
+    expect(marker()).toMatchObject({ color: 'rgb(1, 2, 3)', width: '3px', left: '0px' });
     el.dir = 'rtl';
     await settle(el);
-    expect(marker().right).toBe('rgb(1, 2, 3)');
-    expect(marker().left).not.toBe('rgb(1, 2, 3)');
+    expect(marker()).toMatchObject({ color: 'rgb(1, 2, 3)', right: '0px' });
   });
 
   it('renders 1,000 entries and five levels of groups, with every text from the caller', async () => {
@@ -663,7 +663,7 @@ describe('navigation rows (shared with odd-tree)', () => {
           container.append(probe);
           return getComputedStyle(probe).getPropertyValue(property);
         };
-        expect(getComputedStyle($$('.entry')[0]!).borderInlineStartColor).toBe(
+        expect(getComputedStyle($$('.entry')[0]!, '::before').backgroundColor).toBe(
           system('color', 'Highlight'),
         );
         expect(getComputedStyle($$('.entry')[2]!).color).toBe(system('color', 'GrayText'));

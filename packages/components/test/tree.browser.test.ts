@@ -369,8 +369,8 @@ describe('odd-tree', () => {
     const label = (each: string) => row(el, each).querySelector('.label')!.getBoundingClientRect();
     expect(label('Navigation').left).toBeCloseTo(label('Forms').left, 0);
     const selected = getComputedStyle(row(el, 'Text field'));
-    expect(selected.borderInlineStartColor).toBe(
-      themeValue('border-left-color', '--odd-color-action-default'),
+    expect(getComputedStyle(row(el, 'Text field'), '::before').backgroundColor).toBe(
+      themeValue('background-color', '--odd-color-action-default'),
     );
     expect(selected.fontWeight).toBe(themeValue('font-weight', '--odd-font-weight-semibold'));
     expect(getComputedStyle(row(el, 'Combobox')).fontWeight).not.toBe(selected.fontWeight);
@@ -399,7 +399,7 @@ describe('odd-tree', () => {
       const probe = document.createElement('span');
       probe.style.color = 'Highlight';
       container.append(probe);
-      expect(getComputedStyle(row(el, 'Text field')).borderInlineStartColor).toBe(
+      expect(getComputedStyle(row(el, 'Text field'), '::before').backgroundColor).toBe(
         getComputedStyle(probe).color,
       );
     } finally {

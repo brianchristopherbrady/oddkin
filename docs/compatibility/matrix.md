@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-26** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)), text-wrap-balance (newly (2024-05-13)), scrollbar-gutter (newly (2024-12-11)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 234 stylesheets, 335 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 234 stylesheets, 334 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -230,7 +230,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/select/select.structural.styles.js (selectStructuralStyles)` | yes | 23 |
 | `packages/components/dist/select/select.styles.js (selectStyles)` | yes | 11 |
 | `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
-| `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 20 |
+| `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 26 |
 | `packages/components/dist/side-nav/side-nav.styles.js (sideNavStyles)` | yes | 38 |
 | `packages/components/dist/skeleton/skeleton.structural.styles.js (skeletonStructuralStyles)` | yes | 27 |
 | `packages/components/dist/skeleton/skeleton.styles.js (skeletonStyles)` | yes | 3 |
@@ -255,7 +255,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/styles/focus-ring.styles.js (focusRingStyles)` | yes | 4 |
 | `packages/components/dist/styles/glyphs.js (glyphStyles)` | yes | 20 |
 | `packages/components/dist/styles/host.styles.js (hostStyles)` | yes | 7 |
-| `packages/components/dist/styles/nav-row.structural.styles.js (navRowStructuralStyles)` | yes | 30 |
+| `packages/components/dist/styles/nav-row.structural.styles.js (navRowStructuralStyles)` | yes | 36 |
 | `packages/components/dist/styles/nav-row.styles.js (navRowStyles)` | yes | 20 |
 | `packages/components/dist/styles/option-row.structural.styles.js (optionRowStructuralStyles)` | yes | 34 |
 | `packages/components/dist/styles/option-row.styles.js (optionRowPickerStyles)` | yes | 25 |
@@ -350,7 +350,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `examples/editable-list/styles.css` | example | 22 |
 | `examples/forms/styles.css` | example | 17 |
 | `examples/full-app/styles.css` | example | 8 |
-| `examples/side-nav/hand.css` | example | 48 |
+| `examples/side-nav/hand.css` | example | 51 |
 | `examples/side-nav/styles.css` | example | 20 |
 | `examples/tokens-css-only/styles.css` | example | 30 |
 | `examples/tokens-css-only/generated/harbor.css` | example | 15 |

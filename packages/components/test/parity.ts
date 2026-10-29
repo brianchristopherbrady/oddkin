@@ -233,8 +233,11 @@ export function compare(familyName: string, values: Record<string, string>, targ
       check('strokes', 'outline-color', style.outlineColor);
       check('strokeTopWeight', 'outline-width', style.outlineWidth);
     }
-    if (t.kind === 'marker')
-      check('fills', 'border-inline-start-color', style.borderInlineStartColor);
+    if (t.kind === 'marker') {
+      // The current-row bar is the row's ::before (Figma's inner "Surface" layer).
+      const bar = getComputedStyle(t.el, '::before');
+      check('fills', 'background-color', bar.backgroundColor);
+    }
   }
   return out.filter((line) => !DELIBERATE.some(([pattern]) => pattern.test(line)));
 }

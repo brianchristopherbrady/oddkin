@@ -3,9 +3,13 @@ import { token } from '@oddkin/tokens/refs';
 
 /**
  * Oddkin's default visual styles for the side navigation, through `navigation.*` roles. Entry
- * rows look as `navRowStyles` draws them; slotted native links take the same look here.
+ * rows look as `navRowStyles` draws them; slotted native links take the same look here. A size
+ * container reports no content width, so in a shrink-to-fit parent the host takes a sidebar's.
  */
 export const sideNavStyles = css`
+  :host {
+    contain-intrinsic-inline-size: ${token('layout.sidebar-width')};
+  }
   .root {
     color: ${token('color.text.primary')};
     font-family: ${token('type.ui.family')};
@@ -22,7 +26,6 @@ export const sideNavStyles = css`
     gap: ${token('navigation.item.gap')};
     min-block-size: max(${token('navigation.item.min-height')}, ${token('target.min')});
     padding: ${token('navigation.item.padding.block')} ${token('navigation.item.padding.inline')};
-    border-inline-start: ${token('border.width.strong')} solid transparent;
     border-radius: ${token('control.radius')};
     transition-property: background-color, color;
     transition-duration: ${token('motion.duration.fast')};
@@ -35,9 +38,13 @@ export const sideNavStyles = css`
   }
   /* The current page is marked by a bar and weight, not colour alone. */
   ::slotted(a[aria-current='page']) {
-    border-inline-start-color: ${token('color.action.default')};
     background: ${token('color.surface.hover')};
     font-weight: ${token('font.weight.semibold')};
+  }
+  ::slotted(a[aria-current='page'])::before {
+    inset-block: ${token('navigation.item.padding.block')};
+    inline-size: ${token('border.width.strong')};
+    background: ${token('color.action.default')};
   }
   .badge {
     flex: none;
