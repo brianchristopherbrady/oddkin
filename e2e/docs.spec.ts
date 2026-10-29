@@ -72,7 +72,7 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   expect(await sideNavPanel.evaluate((element) => element.shadowRoot?.mode)).toBe('open');
   await expect(sideNavPanel.getByRole('heading', { name: 'Overview', level: 2 })).toBeVisible();
 
-  // Another section's route loads its document, with that section's sidebar.
+  // A route in another section shows that section's sidebar.
   const primary = page.getByRole('navigation', { name: 'Primary' });
   await primary.getByRole('link', { name: 'Components' }).click();
   await expect(page).toHaveURL(`${docs}/components`, { timeout: catalogLoad });
@@ -124,6 +124,8 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(page.getByRole('rowheader', { name: 'space.md' })).toBeVisible();
 
   // Search is odd-command-palette over every page and component (Ctrl K or the header button).
+  // Before the shell runs, the button is a link to /search: wait for the shell (data-docs-js).
+  await expect(page.locator('html[data-docs-js]')).toBeAttached({ timeout: catalogLoad });
   await page.getByRole('link', { name: 'Search docs' }).click();
   const palette = page.getByRole('dialog', { name: 'Search docs' });
   await palette.getByRole('combobox').fill('scope ownership');
@@ -255,8 +257,10 @@ test('every published component is listed under its category and has a reference
   expect(components.length).toBeGreaterThan(0);
   // A round trip per component (reference page, then back to the catalog): 0.4 s in Chromium,
   // 0.65 s in WebKit, and 0.85 s in Firefox alone (54 components, 2026-10-27), about twice that
-  // beside other runs. A fixed budget failed as the catalog grew, so it grows with it.
-  test.setTimeout(30_000 + components.length * 2_000);
+  // beside other runs, and over 4 s with the machine busy (2026-10-28, Firefox and WebKit; the
+  // docs sidebar measured no part of it). A fixed budget failed as the catalog grew, so it grows
+  // with it.
+  test.setTimeout(30_000 + components.length * 5_000);
   const count = (category: string) => components.filter((c) => c.category === category).length;
 
   await page.goto(`${docs}/components`);
@@ -283,6 +287,9 @@ test('every published component is listed under its category and has a reference
     await expect(panel.getByRole('heading', { name: 'Overview', level: 2 })).toBeVisible();
     await expect(panel.getByText(`import '${registration}';`, { exact: true })).toBeVisible();
     await page.goBack();
-    await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible();
+    // The catalog renders its 54 live previews again (seconds in Firefox under load).
+    await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible({
+      timeout: catalogLoad,
+    });
   }
 });

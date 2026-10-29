@@ -71,12 +71,12 @@ async function componentCommands(): Promise<CommandRecord[]> {
   const response = await fetch('/public/@oddkin/components/oddkin.metadata.json');
   if (!response.ok) throw new Error(`Could not load the component index: HTTP ${response.status}.`);
   const { components } = (await response.json()) as {
-    components: Record<string, { tag: string; useFor?: string[] }>;
+    components: Record<string, { tag: string; useFor?: { value: string }[] }>;
   };
   return Object.values(components).map(({ tag, useFor }) => ({
     id: `/components/${tag}`,
     label: `<${tag}>`,
-    ...(useFor?.[0] ? { description: useFor[0] } : {}),
+    ...(useFor?.[0]?.value ? { description: useFor[0].value } : {}),
     group: 'Components',
   }));
 }
@@ -124,7 +124,10 @@ function search(scope: Scope, navigate: (path: string) => void): void {
   });
 }
 
-/** Marks the links to the page at `path` and above it, and closes the narrow-screen menu. */
+/**
+ * Marks the links to the page at `path` and above it, shows its section's sidebar (or the site
+ * map outside a section), and closes the narrow-screen menu.
+ */
 export function showRoute(path: string): void {
   const open = openEntry(
     navigation().flatMap((group) => group.links),
@@ -136,6 +139,12 @@ export function showRoute(path: string): void {
     else link.removeAttribute('aria-current');
     if (link.dataset['parent']) link.hidden = link.dataset['parent'] !== open;
   }
+  const section = sectionOf(path)?.id;
+  const nav = sidebar();
+  if (nav && section) nav.dataset['section'] = section;
+  else if (nav) delete nav.dataset['section'];
+  for (const entry of document.querySelectorAll<HTMLElement>('.side-nav > [data-section]'))
+    entry.hidden = entry.dataset['section'] !== section;
   for (const link of document.querySelectorAll<HTMLAnchorElement>('.primary-nav a')) {
     const destination = primaryLinks.find(
       (candidate) => `/${candidate.path}` === new URL(link.href).pathname,
@@ -146,10 +155,6 @@ export function showRoute(path: string): void {
   }
   setMenu(false);
 }
-
-/** Whether the page at `path` belongs to another section than the sidebar the server rendered. */
-export const sectionChanged = (path: string): boolean =>
-  (sidebar()?.dataset['section'] ?? '') !== (sectionOf(path)?.id ?? '');
 
 /** The CSS property each kind of token preview sets (`data-preview` in `pages/model.ts`). */
 const previewProperties: Readonly<Record<string, string>> = {

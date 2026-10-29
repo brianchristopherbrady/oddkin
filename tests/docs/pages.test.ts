@@ -171,13 +171,19 @@ describe('the docs shell', async () => {
   const shell = (path: string) => renderDocument(template, path, facts, release);
   const sidebar = (html: string) =>
     html.slice(html.indexOf('<odd-side-nav'), html.indexOf('</odd-side-nav>'));
-  /** The section sidebar's links, as label and aria-current. */
+  /** The shown section's links (the others are `hidden`), as label, href, and aria-current. */
   const sectionNav = (html: string) =>
-    [
-      ...sidebar(html).matchAll(
-        /<a class="nav-section" href="([^"]+)"[^>]*?(?: aria-current="([a-z]+)")?>([^<]+)<\/a>/g,
-      ),
-    ].map(([, href, current, label]) => `${label} ${href}${current ? ` [${current}]` : ''}`);
+    [...sidebar(html).matchAll(/<a class="nav-section" href="([^"]+)"([^>]*)>([^<]+)<\/a>/g)]
+      .filter(([, , attributes = '']) => !/ hidden\b/.test(attributes))
+      .map(([, href, attributes = '', label]) => {
+        const current = /aria-current="([a-z]+)"/.exec(attributes)?.[1];
+        return `${label} ${href}${current ? ` [${current}]` : ''}`;
+      });
+  /** The shown section's note under the divider. */
+  const note = (html: string, section: string) =>
+    new RegExp(
+      `<div slot="footer" class="nav-footer nav-section odd-stack" data-section="${section}">(.*?)</div>`,
+    ).exec(sidebar(html))?.[1];
 
   it('fills every part of the template but the policy, which the server or the build adds', () => {
     const html = shell('/installation');
@@ -216,8 +222,16 @@ describe('the docs shell', async () => {
 
   it('shows the section’s sidebar: its heading, its pages as the design lists them, and its note', () => {
     const learn = shell('/getting-started');
-    expect(sidebar(learn)).toContain('data-section="learn"');
-    expect(sidebar(learn)).toContain('<p slot="header" class="nav-heading nav-section">Learn</p>');
+    expect(sidebar(learn)).toMatch(
+      /^<odd-side-nav id="docs-nav" class="side-nav" data-section="learn"/,
+    );
+    expect(sidebar(learn)).toContain(
+      '<p slot="header" class="nav-heading nav-section" data-section="learn">Learn</p>',
+    );
+    // Every section is in the document, so the client can show another without loading one.
+    expect(sidebar(learn)).toContain(
+      '<p slot="header" class="nav-heading nav-section" data-section="components" hidden>Components</p>',
+    );
     expect(sectionNav(learn)).toEqual([
       'Getting started /getting-started [page]',
       'Installation /installation',
@@ -225,9 +239,7 @@ describe('the docs shell', async () => {
       'Guides /guides',
       'Recipes /recipes',
     ]);
-    expect(sidebar(learn)).toContain(
-      '<div slot="footer" class="nav-footer nav-section odd-stack"><p>Oddkin docs</p></div>',
-    );
+    expect(note(learn, 'learn')).toBe('<p>Oddkin docs</p>');
     // A page under a listed one marks it; its own pages are linked from its content.
     expect(sectionNav(shell('/getting-started/tokens'))[0]).toBe(
       'Getting started /getting-started [true]',
@@ -240,11 +252,11 @@ describe('the docs shell', async () => {
       'Button /components/odd-button [page]',
     ]);
     expect(sectionNav(shell('/components'))[0]).toBe('Browse all /components [page]');
-    expect(sidebar(shell('/components'))).toContain('<p>@oddkin/components</p>');
+    expect(note(shell('/components'), 'components')).toBe('<p>@oddkin/components</p>');
     const color = sectionNav(shell('/foundations/color'));
     expect(color[0]).toBe('Overview /foundations');
     expect(color).toContain('Color /foundations/color [page]');
-    expect(sidebar(shell('/foundations'))).toContain(
+    expect(note(shell('/foundations'), 'foundations')).toBe(
       '<p>@oddkin/tokens</p><p>Default theme baseline</p>',
     );
     expect(sectionNav(shell('/ai'))).toEqual([
@@ -276,11 +288,14 @@ describe('the docs shell', async () => {
   });
 
   it('gives every page but Home a section, and Home and search the site map alone', () => {
-    for (const path of [...pages, ...clientPages].map((page) => page.path).filter(Boolean))
-      expect(sidebar(shell(`/${path}`)), path).toMatch(/data-section="[a-z]+"/);
+    const opening = (html: string) => sidebar(html).slice(0, sidebar(html).indexOf('>') + 1);
+    for (const path of [...pages, ...clientPages].map((page) => page.path).filter(Boolean)) {
+      expect(opening(shell(`/${path}`)), path).toMatch(/ data-section="[a-z]+" /);
+      expect(sectionNav(shell(`/${path}`)).length, path).toBeGreaterThan(0);
+    }
     for (const path of ['/', '/search', '/404']) {
-      expect(sidebar(shell(path)), path).not.toContain('data-section');
-      expect(sidebar(shell(path)), path).not.toContain('nav-section');
+      expect(opening(shell(path)), path).not.toContain('data-section');
+      expect(sectionNav(shell(path)), path).toEqual([]);
     }
   });
 

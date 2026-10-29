@@ -79,16 +79,26 @@ test.describe('docs shell', () => {
   });
 
   test('opens search with Ctrl K and goes to the chosen component', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(`${docs}/installation`);
+    // The shortcut belongs to the shell's script: wait for it to run (data-docs-js).
+    await expect(page.locator('html[data-docs-js]')).toBeAttached({ timeout: catalogLoad });
     await page.keyboard.press('Control+k');
     const palette = page.getByRole('dialog', { name: 'Search docs' });
     await expect(palette.getByRole('combobox')).toBeFocused();
     await palette.getByRole('combobox').fill('copy-button');
-    await palette.getByRole('option', { name: '<odd-copy-button>' }).click();
+    const option = palette.getByRole('option', { name: '<odd-copy-button>' });
+    // A component's description is the first "use for" entry of its metadata (loaded on open).
+    await expect(option).toContainText('Copying an identifier, a code snippet', {
+      timeout: catalogLoad,
+    });
+    await option.click();
     await expect(page).toHaveURL(`${docs}/components/odd-copy-button`);
     await expect(page.locator('#main h1')).toHaveText('Copy button', {
       timeout: catalogLoad,
     });
+    expect(errors).toEqual([]);
   });
 });
 
@@ -179,7 +189,10 @@ test.describe('static docs site', () => {
     expect(await violations()).toEqual([]);
     const missing = await page.goto(`${site}/not-a-page`);
     expect(missing?.status()).toBe(404);
-    await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+    // The client renders the not-found state once it has started (seconds under load).
+    await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible({
+      timeout: catalogLoad,
+    });
     expect(errors).toEqual([]);
   });
 

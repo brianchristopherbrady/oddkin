@@ -11,6 +11,7 @@ import {
   routeExists,
   sectionLinks,
   sectionOf,
+  sections,
   type NavLink,
 } from './site.js';
 
@@ -47,9 +48,10 @@ function siteHeader(pathname: string, site: SiteFacts): string {
 }
 
 /**
- * One sidebar with two sets of links: the current section's (wide screens) and the site map (the
- * narrow-screen menu, and pages outside a section), which shows a page's children while it is
- * open. The shell keeps the marks and the open entry up to date as the client changes route.
+ * One sidebar with the site map (the narrow-screen menu, and pages outside a section), which
+ * shows a page's children while it is open, and every section's own links (wide screens), the
+ * current section's shown. The shell keeps the marks, the open entry, and the shown section up
+ * to date as the client changes route, so a route in another section needs no new document.
  */
 function siteSidebar(pathname: string, site: SiteFacts): string {
   const here = `/${clean(pathname)}`;
@@ -58,13 +60,13 @@ function siteSidebar(pathname: string, site: SiteFacts): string {
     groups.flatMap((group) => group.links),
     here,
   );
-  const link = (set: string, entry: NavLink & { exact?: boolean }) => {
+  const link = (set: string, entry: NavLink & { exact?: boolean }, extra = '') => {
     const classes = entry.parent ? `${set} nav-child` : set;
     const parent = entry.parent
       ? ` data-parent="${escapeHtml(entry.parent)}"${entry.parent === open ? '' : ' hidden'}`
       : '';
     const exact = entry.exact ? ' data-exact' : '';
-    return `<a class="${classes}" href="${escapeHtml(entry.href)}"${parent}${exact}${current(currentOf(entry.href, here, entry.exact))}>${escapeHtml(entry.label)}</a>`;
+    return `<a class="${classes}" href="${escapeHtml(entry.href)}"${parent}${exact}${extra}${current(currentOf(entry.href, here, entry.exact))}>${escapeHtml(entry.label)}</a>`;
   };
   const map = groups
     .map(
@@ -72,16 +74,19 @@ function siteSidebar(pathname: string, site: SiteFacts): string {
         `<p class="nav-group nav-global">${escapeHtml(group)}</p>${links.map((entry) => link('nav-global', entry)).join('')}`,
     )
     .join('');
-  const section = sectionOf(pathname);
+  const shown = sectionOf(pathname);
   const note = (lines: readonly string[]) => lines.map((line) => `<p>${escapeHtml(line)}</p>`);
-  const local = section
-    ? [
-        `<p slot="header" class="nav-heading nav-section">${escapeHtml(section.label)}</p>`,
-        ...sectionLinks(section, site.catalog).map((entry) => link('nav-section', entry)),
-        `<div slot="footer" class="nav-footer nav-section odd-stack">${note(section.note).join('')}</div>`,
-      ].join('')
-    : '';
-  const id = section ? ` data-section="${section.id}"` : '';
+  const local = sections
+    .map((section) => {
+      const of = ` data-section="${section.id}"${section === shown ? '' : ' hidden'}`;
+      return [
+        `<p slot="header" class="nav-heading nav-section"${of}>${escapeHtml(section.label)}</p>`,
+        ...sectionLinks(section, site.catalog).map((entry) => link('nav-section', entry, of)),
+        `<div slot="footer" class="nav-footer nav-section odd-stack"${of}>${note(section.note).join('')}</div>`,
+      ].join('');
+    })
+    .join('');
+  const id = shown ? ` data-section="${shown.id}"` : '';
   // The site map comes first, so its first group heading is the element's first child.
   return `<odd-side-nav id="docs-nav" class="side-nav"${id} label="Documentation">${map}<div slot="footer" class="nav-footer nav-global odd-stack">${note([`Built with Oddkin ${site.version}`]).join('')}</div>${local}</odd-side-nav>`;
 }

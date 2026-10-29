@@ -19,7 +19,7 @@ import {
   loadIndex,
   sourcePath,
 } from './reference.js';
-import { sectionChanged, showRoute, startShell } from './shell.js';
+import { showRoute, startShell } from './shell.js';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -52,6 +52,15 @@ function strings(value: unknown): string[] {
   return Array.isArray(value)
     ? value.filter((item): item is string => typeof item === 'string')
     : [];
+}
+
+/** The `key` text of each record in a metadata list (`useFor` values, `tokenReads` tokens). */
+function fields(value: unknown, key: string): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    const field = isRecord(item) ? item[key] : undefined;
+    return typeof field === 'string' ? [field] : [];
+  });
 }
 
 function node<K extends keyof HTMLElementTagNameMap>(
@@ -499,7 +508,7 @@ function renderSearch(main: HTMLElement, query: string, data: DocsData): void {
     searchItems.push({
       title: `<${tag}>`,
       path: `/components/${tag}`,
-      body: `${tag} ${strings(value['useFor']).join(' ')} ${strings(value['tokenReads']).join(' ')}`,
+      body: `${tag} ${fields(value['useFor'], 'value').join(' ')} ${fields(value['tokenReads'], 'token').join(' ')}`,
     });
   }
   const tokens = Array.isArray(data.inspection['tokens'])
@@ -587,8 +596,8 @@ function renderCaseStudy(main: HTMLElement): void {
   main.append(snippet);
 }
 
-// A route the server renders differently (an authored page, another section's sidebar) loads its
-// document; the document it loads says so to its first route, so a path never loads in a loop.
+// The server renders authored pages: one reached in the client loads its document; the document
+// it loads says so to its first route, so a path never loads in a loop.
 const RELOAD = 'oddkin-docs-reload';
 let reloadedFor = sessionStorage.getItem(RELOAD);
 sessionStorage.removeItem(RELOAD);
@@ -625,11 +634,6 @@ function renderRoute(state: RouterState): void {
     if (main.dataset['page'] !== page.path && !again) reload(page.path);
     else main.setAttribute('aria-busy', 'false');
     return;
-  }
-  // The server renders each section's sidebar: a route in another section loads its document too.
-  if (state.location && !state.navigating) {
-    const again = loadedFor(state.location.path);
-    if (sectionChanged(state.location.path) && !again) return reload(state.location.path);
   }
   delete main.dataset['page'];
   if (state.status === 'error' || last?.status === 'error') {
