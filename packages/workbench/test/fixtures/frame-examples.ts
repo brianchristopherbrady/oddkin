@@ -22,5 +22,11 @@ export default {
         mount(html`<b>Mounted template</b>`);
       },
     },
+    broken: {
+      label: 'Broken setup',
+      fixture() {
+        throw new Error('Setup failed');
+      },
+    },
   },
 };

@@ -457,6 +457,16 @@ export class ComponentDetailElement extends OddkinElement.with({
         ...(payload['detail'] !== undefined ? { detail: JSON.stringify(payload['detail']) } : {}),
       };
       this.#log.value = [entry, ...this.#log.peek()].slice(0, LOG_LIMIT);
+    } else if (
+      notification.kind === 'error' &&
+      isRecord(payload) &&
+      payload['phase'] === 'fixture'
+    ) {
+      this.#status.value = {
+        text: `The example's setup did not run (${String(payload['message'])}), so the preview shows the element without it.`,
+        alert: false,
+        keep: true,
+      };
     } else if (notification.kind === 'error' && isRecord(payload)) {
       this.#status.value = {
         text: `Preview ${String(payload['phase'])} failed: ${String(payload['message'])}. Use Reset to start a fresh preview.`,

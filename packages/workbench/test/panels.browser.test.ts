@@ -592,6 +592,22 @@ describe('<oddkin-component-panel>', () => {
     );
   });
 
+  it('shows the element with a note when the example module cannot load', async () => {
+    const data = probeData();
+    const page = data.pages['components/wb-probe'] as ComponentPageData;
+    const exampleModule = new URL('./fixtures/missing-examples.js', import.meta.url).href;
+    const { root, probe, change } = componentPanel({
+      ...data,
+      pages: { ...data.pages, 'components/wb-probe': { ...page, exampleModule } },
+    });
+    await until(() => !!probe()?.isConnected, 'the probe preview');
+    change(root.querySelector<HTMLSelectElement>('.wb-example-bar select')!, 'fixtureOnly');
+    const status = () => root.querySelector('#interactive-example .wb-status');
+    await until(() => /setup did not run/.test(status()?.textContent ?? ''), 'the setup note');
+    expect(status()?.getAttribute('role')).not.toBe('alert');
+    expect(probe()?.isConnected).toBe(true);
+  });
+
   it('applies edits made while the first preview is still loading, in order, with no error', async () => {
     // The owner's report (2026-10-28): on a cold page, an edit made before the component's module
     // graph has loaded was lost, and the preview kept the example's first values.

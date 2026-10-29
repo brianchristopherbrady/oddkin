@@ -156,7 +156,14 @@ async function mount(runtime: Runtime, config: FrameMountPayload): Promise<void>
   runtime.wrapper.append(element);
   runtime.mount = config;
   runtime.mountScope = runtime.scope?.child({ name: `preview-example:${config.example}` });
-  if (config.fixture) await runFixture(runtime, config.fixture, config.example, element);
+  if (!config.fixture) return;
+  try {
+    await runFixture(runtime, config.fixture, config.example, element);
+  } catch (error) {
+    // The element stays: only the example's setup is missing (a module the host does not serve,
+    // or a fixture the page's policy stops).
+    post(runtime, 'error', { phase: 'fixture', message: errorMessage(error) });
+  }
 }
 
 interface ExampleModule {

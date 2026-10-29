@@ -134,6 +134,34 @@ describe('isolated preview frames', () => {
     expect(doc.querySelector('fixture-button')?.hasAttribute('data-fixture')).toBe(false);
   });
 
+  it('keeps the element when an example module cannot load or its fixture throws', async () => {
+    const messages: FrameNotification[] = [];
+    const preview = createPreview(messages);
+    await preview.ready;
+    const doc = preview.iframe.contentDocument!;
+    const errors = () =>
+      messages.filter((m) => m.kind === 'error').map((m) => m.payload as Record<string, unknown>);
+    // A host that does not serve the module (the docs did not, 2026-10-29).
+    const missing = new URL('./fixtures/missing-examples.js', import.meta.url).href;
+    await preview.request(
+      'mount',
+      payload({ example: 'example:fixture-button/staged', fixture: missing }),
+    );
+    expect(doc.querySelector('fixture-button')?.shadowRoot?.textContent).toContain('Save');
+    await until(() => errors().length === 1, 'the setup notice');
+    expect(errors()[0]?.['phase']).toBe('fixture');
+    expect(doc.querySelector('[role="alert"]')).toBeNull();
+
+    const fixture = new URL('./fixtures/frame-examples.ts', import.meta.url).href;
+    await preview.request('mount', payload({ example: 'example:fixture-button/broken', fixture }));
+    expect(doc.querySelector('fixture-button')?.shadowRoot?.textContent).toContain('Save');
+    await until(() => errors().length === 2, 'the second setup notice');
+    expect(errors()[1]).toMatchObject({ phase: 'fixture', message: 'Setup failed' });
+    // The frame still serves requests.
+    await preview.request('set', { property: 'label', value: 'Continue' });
+    expect(doc.querySelector('fixture-button')?.shadowRoot?.textContent).toContain('Continue');
+  });
+
   it('sets CSS custom properties on the element, on mount and one at a time', async () => {
     const preview = createPreview();
     await preview.ready;
