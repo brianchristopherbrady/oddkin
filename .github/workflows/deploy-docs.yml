@@ -1,0 +1,102 @@
+name: Deploy Oddkin docs
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  # Set this to the verified, generated static website directory.
+  # Leave blank for the first run to inspect the build output.
+  DOCS_OUTPUT_DIR: ""
+
+  # Default for this workflow; match the project's required version.
+  NODE_VERSION: "24"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oddkin-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: read
+      pages: read
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Oddkin
+        run: npm run build
+
+      - name: Check docs output
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "index.html files present after the build:"
+          find . \
+            -type d \( -name node_modules -o -name .git \) -prune \
+            -o -type f -name index.html -print
+
+          if [[ -z "$DOCS_OUTPUT_DIR" ]]; then
+            echo "::error::DOCS_OUTPUT_DIR is not configured. Set it to the verified generated static website directory, then rerun."
+            exit 1
+          fi
+
+          if [[ ! -f "$DOCS_OUTPUT_DIR/index.html" ]]; then
+            echo "::error::No index.html found in the configured DOCS_OUTPUT_DIR."
+            exit 1
+          fi
+
+          site="$(realpath "$DOCS_OUTPUT_DIR")"
+          workspace="$(realpath "$GITHUB_WORKSPACE")"
+
+          if [[ "$site" == "$workspace" || "$site" != "$workspace/"* ]]; then
+            echo "::error::The upload directory must be a subdirectory of the repository, not its root or an external location."
+            exit 1
+          fi
+
+          echo "Website directory: $site"
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ env.DOCS_OUTPUT_DIR }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
