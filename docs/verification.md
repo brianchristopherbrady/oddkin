@@ -4466,3 +4466,11 @@ The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workben
 | After | `node .tmp/img-src.mjs chromium`, `firefox`, `webkit` | `img-src 'self' data:`; 0 `img-src` violations on both pages in each engine (WebKit still logs its "Refused to apply a stylesheet" style-src message, as before) |
 | Whole words | `node .tmp/broken-words.mjs <engine> <width>` (every word in odd-tabs, odd-tab, and odd-segmented-control text, light and shadow DOM, all frames: a word whose range spans two line tops is broken) | Chromium, Firefox, WebKit at 1440 and Chromium at 390: catalog 25 words, odd-tabs page 35, odd-segmented-control page 23; 0 broken |
 | Tests | `npx vitest run tests/docs`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check` | 25 passed (the site test now checks `img-src 'self' data:` in the catalog page and the frame); typecheck and formatting clean |
+
+## 2026-10-30 — Docs e2e in three engines on 8580088 (round 10, Agent 3)
+
+Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d106 (the select's text centred) and 8580088 (data: images allowed).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| e2e | `node ../oddkin-lanes/tools/e2e-when-free.mjs 3 <out> e2e/docs.spec.ts e2e/docs-site.spec.ts --project=<engine> --workers=1 --reporter=list`, one engine at a time (about 470 MB free) | WebKit: 15 passed (2.6 min). Firefox: 15 passed (3.9 min). Chromium: 15 passed (1.6 min) |
