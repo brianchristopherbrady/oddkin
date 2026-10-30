@@ -99,6 +99,18 @@ export const EXCEPTIONS = [
     reason:
       "preview frame harness: the frame is the example's canvas and centres the component (Figma 33:6755), without layout.css",
   },
+  {
+    file: 'apps/docs/styles.css',
+    selector: '.resource-card:not(:defined)',
+    reason:
+      "odd-card's own column until it registers (after the first paint), so a link in the card does not move as it upgrades; a layout class would stay on the host after the upgrade",
+  },
+  {
+    file: 'apps/docs/styles.css',
+    selector: '.side-nav[data-section]:not(:defined)',
+    reason:
+      "odd-side-nav's own column until it registers (after the first paint), so its links do not move as it upgrades; a layout class would stay on the host after the upgrade",
+  },
 ];
 
 const LAYOUT = /\bdisplay\s*:\s*(?:inline-)?(?:flex|grid)\b/g;

@@ -22,11 +22,17 @@ async function json(path: string, signal?: AbortSignal): Promise<unknown> {
   return response.json();
 }
 
+// The data is static for a build: a route that has it already commits without waiting for the
+// network, where the frames' module loads may hold every connection.
+let indexLoaded: WorkbenchIndex | undefined;
+const pagesLoaded = new Map<string, ComponentPageData>();
+
 export async function loadIndex(signal: AbortSignal): Promise<WorkbenchIndex> {
+  if (indexLoaded) return indexLoaded;
   const index = await json(`${DATA}index.json`, signal);
   if (!isRecord(index) || !isRecord(index['registry']) || !isRecord(index['pages']))
     throw new Error('The reference index has no page registry.');
-  return index as unknown as WorkbenchIndex;
+  return (indexLoaded = index as unknown as WorkbenchIndex);
 }
 
 export async function loadComponent(
@@ -36,10 +42,12 @@ export async function loadComponent(
 ): Promise<ComponentPageData | undefined> {
   const file = index.pages[`components/${tag}`];
   if (!file) return undefined;
+  const known = pagesLoaded.get(file);
+  if (known) return known;
   const page = await json(`${DATA}${file}`, signal);
-  return isRecord(page) && page['kind'] === 'component'
-    ? (page as unknown as ComponentPageData)
-    : undefined;
+  if (!isRecord(page) || page['kind'] !== 'component') return undefined;
+  pagesLoaded.set(file, page as unknown as ComponentPageData);
+  return page as unknown as ComponentPageData;
 }
 
 /** Catalog groups to list: every category but the AI elements. */

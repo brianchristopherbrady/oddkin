@@ -31,6 +31,9 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'Web components, design tokens, and the tools around them.',
   );
+  // The hero is centred beside its live examples, which register after the first paint and grow
+  // (about 100 px): a click while they upgrade can end off the link.
+  await expect(page.locator('.specimen :not(:defined)')).toHaveCount(0, { timeout: catalogLoad });
 
   // An authored page reached from a link is the server's document for that path; on wide screens
   // the sidebar (odd-side-nav over the server's links) lists the section's pages, and a page
@@ -311,6 +314,10 @@ test('every published component is listed under its category and has a reference
     const panel = page.locator('oddkin-component-panel');
     await expect(panel.getByRole('heading', { name: 'Overview', level: 2 })).toBeVisible();
     await expect(panel.getByText(`import '${registration}';`, { exact: true })).toBeVisible();
+    // Its live example mounts (the frame loaded the element's registration).
+    await expect(
+      page.frameLocator('oddkin-component-panel iframe').first().locator(tag),
+    ).toBeAttached({ timeout: catalogLoad });
     await page.goBack();
     // The catalog renders its 54 live previews again (seconds in Firefox under load).
     await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible({
@@ -321,4 +328,15 @@ test('every published component is listed under its category and has a reference
       page.getByText(`Showing ${components.length} of ${components.length} components`),
     ).toBeVisible();
   }
+});
+
+test('a live example runs its setup script', async ({ page }) => {
+  // The breadcrumbs example's fixture writes its trail with innerHTML: the docs serve the example
+  // module (_oddkin/examples/), and the frame's Trusted Types policy lets it write markup.
+  await page.goto(`${docs}/components/odd-breadcrumbs`);
+  const frame = page.frameLocator('oddkin-component-panel iframe').first();
+  await expect(frame.getByRole('link', { name: 'Home' })).toBeVisible({ timeout: catalogLoad });
+  await expect(page.locator('oddkin-component-panel').getByText(/setup did not run/)).toHaveCount(
+    0,
+  );
 });

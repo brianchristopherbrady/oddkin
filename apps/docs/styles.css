@@ -245,6 +245,21 @@ oddkin-component-panel {
   .side-nav[data-section]::part(base) {
     gap: var(--odd-space-md);
   }
+
+  /* Before odd-side-nav registers: the same column and gaps, so its links do not move as it upgrades. */
+  .side-nav[data-section]:not(:defined) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--odd-navigation-item-gap);
+  }
+
+  .side-nav[data-section]:not(:defined) > [slot='header'] {
+    margin-block-end: calc(var(--odd-space-md) - var(--odd-navigation-item-gap));
+  }
+
+  .side-nav[data-section]:not(:defined) > [slot='footer'] {
+    margin-block-start: calc(var(--odd-space-md) - var(--odd-navigation-item-gap));
+  }
 }
 
 @media (width < 55.5rem) {
@@ -257,6 +272,9 @@ oddkin-component-panel {
 odd-side-nav:not(:defined) > a {
   display: block;
   padding: var(--odd-space-xs) var(--odd-space-sm);
+  color: var(--odd-color-text-primary);
+  font-weight: var(--odd-type-ui-weight);
+  text-decoration: none;
 }
 
 /* main is an odd-box around an odd-container (.page-column) whose #content is an odd-stack of the
@@ -449,6 +467,27 @@ odd-side-nav:not(:defined) > a {
   --odd-card-radius: var(--odd-radius-lg);
   --odd-card-background: var(--odd-color-surface-default);
   --odd-card-border-color: var(--odd-color-border-default);
+}
+
+/* Until odd-card registers (on first use, after the first paint) a card has the box and column it
+   upgrades to, so a link in it stays under the pointer as it upgrades. */
+.resource-card:not(:defined) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--odd-card-gap);
+  padding: var(--odd-card-padding);
+  border: var(--odd-border-width-default) solid var(--odd-card-border-color);
+  border-radius: var(--odd-card-radius);
+  background: var(--odd-card-background);
+}
+
+/* The upgraded card's body is one region: no gap between its paragraphs. */
+.resource-card:not(:defined) > :not([slot]) + :not([slot]) {
+  margin-block-start: calc(-1 * var(--odd-card-gap));
+}
+
+.resource-card:not(:defined) > [slot='footer'] {
+  margin-block-start: auto;
 }
 
 .resource-card > p:not([slot]),

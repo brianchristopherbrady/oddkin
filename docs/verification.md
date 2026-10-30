@@ -4268,3 +4268,22 @@ Design source: Figma `zF87qftdRznmJJezxy23gd` 20:2190 (1440 × 3394) and the int
 | Types, lint, size | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Pass; pass; frame runtime 7,147 B of 7,680, component panel 31,102 of 32,768, shell 54,231 of 55,296 |
 
 **Not verified:** the docs site. Its documents enforce Trusted Types, so the 12 example sets whose fixtures assign `innerHTML` (breadcrumbs, color picker, combobox, listbox, menu, picker, radio group, rating, segmented control, select, split button, tree) will fail there until the fixtures build their content another way or the docs frame allows it.
+
+## 2026-10-29 — Docs live examples run their fixtures; links stay put while elements register (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Fixture cause | `node .tmp/frame-content.mjs odd-breadcrumbs` (three engines) | Before: "Preview mount failed: Failed to fetch dynamically imported module …/_oddkin/examples/odd-breadcrumbs.js" (dev server 404; Firefox: disallowed MIME type). After serving the module: "This document requires 'TrustedHTML' assignment" (Chromium), "Sink type mismatch violation blocked by CSP" (Firefox), "This assignment requires a TrustedHTML" (WebKit), from the fixture's `element.innerHTML` |
+| Fixture fix | the same | Chromium, Firefox, WebKit: `<odd-breadcrumbs><ol>…Home…Forms</ol></odd-breadcrumbs>`; Firefox mounts in about 2 s and the fixture's markup follows |
+| Every page | `node .tmp/live-examples2.mjs` (Chromium, 78 component pages) | 76 with content, 2 drawn without children (odd-skeleton and odd-status-marker draw in their shadow roots), 0 failed |
+| Static build | `node .tmp/reference-files.mjs` | Workbench builds index.json, 84 pages, 43 example modules, and its own frame and import maps; the docs write index.json, pages/, and examples/ |
+| Lost click, traced | `node .tmp/click-trace.mjs firefox 25` (/components/odd-button, primary 'Foundations', then 'Read about spacing' as soon as it shows) | 1 of 25 lost: pointerdown and mousedown on the link at 1091 and 1100 ms, odd-card defined at 1206 ms, mouseup at 1471 ms on `ul.card-list`, and the click went to the list. Playwright checks only the first event's target, so it did not retry |
+| Card links, before | `node .tmp/shift-probe.mjs firefox,chromium` (full loads, 1280 × 720) | /guides 'Read the layout guide' 617,550 296 × 40 → 642,631 246 × 40 when odd-card registers (Firefox 668 ms, Chromium 191 ms); /foundations 'Read about spacing' 297,647 → 322,906; /getting-started 'Use tokens only' 297,550 → 322,631 |
+| Card links, after | `node .tmp/shift-probe3.mjs firefox,chromium,webkit` | Each link at its upgraded place from the first paint (642,631; 322,906; 322,631) and unmoved when odd-card registers (Firefox 493–791 ms, Chromium 179–230 ms, WebKit 784–1007 ms) |
+| Sidebar, before and after | `node .tmp/sidebar-probe.mjs` (/getting-started/tokens, odd-side-nav's definition blocked, then allowed) | Before: links at y 147–307, footer 347, moving to 163–339 and 395 on upgrade ('Guides' 267 → 295). After: 163–339 and 395 in both states; the links no longer show underlined before the upgrade |
+| Upgraded look unchanged | `node .tmp/cards-shot.mjs` (Chromium) | The guides cards with odd-card unregistered and registered look the same; card boxes 296 × 298 (row 1) and 296 × 349 |
+| Repeat | `node .tmp/click-trace.mjs firefox 30` | 0 of 30 lost |
+| Still moving | `node .tmp/home-probe.mjs`, `node .tmp/shift-links.mjs firefox,webkit` | The home hero is centred beside its live examples, which grow from 764 to 865 px as odd-input (0 → 67 px), odd-button (24 → 40), and odd-card register, so 'Get started' moves 710 → 776 (Firefox 1031–1052 ms, WebKit 903 ms). The header's links move 24–48 px left when the shell runs, less than half their width. docs.spec.ts:7 waits for the home's examples to register |
+| Page layout | `node scripts/check-page-layout.mjs` | 48 files, 42 kept with a reason (2 new: the cards' and the sidebar's pre-upgrade columns), 0 unlisted, 0 stale |
+| Unit | `npx vitest run tests/docs tests/examples/page-layout.test.ts` | 30 passed |
+| e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, three engines, `--workers=2` | 42 passed (4.1 min). The catalog walk, which now waits for each live example to mount: Chromium 38 s, WebKit 78 s, Firefox 126 s of its 300 s budget. New: a live example runs its setup script (dev server) and the static site's breadcrumbs example shows its links |

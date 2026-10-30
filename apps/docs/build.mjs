@@ -98,34 +98,39 @@ async function main() {
   const { imports, assets } = await packages();
   const importMap = JSON.stringify({ imports }).replace(/</g, '\\u003c');
   const hash = createHash('sha256').update(importMap).digest('base64');
-  const policy = [
-    "default-src 'none'",
-    `script-src 'self' 'sha256-${hash}'`,
-    "style-src 'self'",
-    "connect-src 'self'",
-    "img-src 'self'",
-    // Reference pages show live examples in same-origin frames (frame.html).
-    "frame-src 'self'",
-    "base-uri 'none'",
-    "form-action 'none'",
-    "require-trusted-types-for 'script'",
-    'trusted-types oddkin-template',
-  ].join('; ');
+  const policyFor = (frame) =>
+    [
+      "default-src 'none'",
+      `script-src 'self' 'sha256-${hash}'`,
+      "style-src 'self'",
+      "connect-src 'self'",
+      "img-src 'self'",
+      // Reference pages show live examples in same-origin frames (frame.html).
+      "frame-src 'self'",
+      "base-uri 'none'",
+      "form-action 'none'",
+      "require-trusted-types-for 'script'",
+      // The frame's default policy lets example fixtures write markup (src/frame.ts).
+      frame ? 'trusted-types oddkin-template default' : 'trusted-types oddkin-template',
+    ].join('; ');
   const documentFor = (pathname) =>
     withPolicy(site.renderDocument(template, pathname, facts, release));
-  const withPolicy = (document) =>
+  const withPolicy = (document, frame = false) =>
     document
       .replace(
         '<!-- docs:csp -->',
-        `<meta http-equiv="Content-Security-Policy" content="${policy}" />`,
+        `<meta http-equiv="Content-Security-Policy" content="${policyFor(frame)}" />`,
       )
       .replace(
         '<script type="importmap" id="oddkin-import-map"></script>',
         `<script type="importmap">${importMap}</script>`,
       );
 
+  // Page data, and the example modules the preview frame imports to run example fixtures.
   const referenceFiles = [...reference.files.keys()]
-    .filter((path) => path === 'index.json' || path.startsWith('pages/'))
+    .filter(
+      (path) => path === 'index.json' || path.startsWith('pages/') || path.startsWith('examples/'),
+    )
     .sort();
   for (const path of referenceFiles) {
     const file = join(out, '_oddkin', ...path.split('/'));
@@ -177,7 +182,7 @@ async function main() {
   }
   await writeFile(
     join(out, 'apps/docs/frame.html'),
-    withPolicy(await readFile(join(root, 'apps/docs/frame.html'), 'utf8')),
+    withPolicy(await readFile(join(root, 'apps/docs/frame.html'), 'utf8'), true),
   );
   files += 1 + referenceFiles.length;
   console.log(
