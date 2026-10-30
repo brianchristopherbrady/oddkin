@@ -187,8 +187,7 @@ test.describe('static docs site', () => {
       page.frameLocator('oddkin-component-panel iframe').first().locator('odd-button'),
     ).toHaveText('Save', { timeout: catalogLoad });
     expect(await violations()).toEqual([]);
-    // An example's setup script (fixture) runs too: the build writes the example modules, and the
-    // frame's policy lets the fixture write its markup.
+    // An example's setup script (fixture) runs too, from the example modules the build writes.
     await page.goto(`${site}/components/odd-breadcrumbs`);
     await expect(
       page

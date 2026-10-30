@@ -4323,3 +4323,12 @@ GitHub Actions run 40976886045 at `b50ed7e` was the first fully green run: job `
 The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workbench catalog's module-graph check, after previews began importing example modules (fixed in `f236fa5`); at `f236fa5`, one Firefox click in `e2e/docs.spec.ts`, lost to a card that grew under the pointer (fixed in `5052d62`).
 
 **Not verified:** the registry smoke's first run (`registry-smoke.yml`, weekly or by hand).
+## 2026-10-29 — Docs frame back to the strict Trusted Types policy (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Example sources | every `*.examples.ts` under `packages/` (78 files), searched for `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `createContextualFragment`, `document.write`, `srcdoc` | None (da8a486 rewrote the 12 that used `innerHTML`) |
+| Breadcrumbs fixture | `node .tmp/frame-content.mjs odd-breadcrumbs` | Chromium, Firefox, WebKit: `<odd-breadcrumbs><ol>…Home…Forms</ol></odd-breadcrumbs>`, no status, no errors |
+| Every page | `node .tmp/fixture-notes.mjs` (Chromium, 78 component pages) | 25 load a fixture module; no "setup did not run" note, no "Preview unavailable" or "Preview … failed" status, no Trusted Types or CSP error |
+| Every page | `node .tmp/live-examples2.mjs` | 76 with content, 2 drawn only in their shadow roots (odd-skeleton, odd-status-marker), 0 failed |
+| e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, three engines, `--workers=2` | Docs e2e, both specs in three engines (--workers=2): 42 passed (5.8 min) |

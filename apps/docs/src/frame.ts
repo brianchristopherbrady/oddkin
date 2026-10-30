@@ -1,16 +1,6 @@
 // The Workbench frame runtime for the reference pages' live previews (apps/docs/frame.html).
 import '@oddkin/workbench/frame';
 
-// Example fixtures write markup with innerHTML. The frame's policy (only this document's) allows
-// a default Trusted Types policy for it; scripts still run only from 'self', so markup runs none.
-(
-  globalThis as {
-    trustedTypes?: {
-      createPolicy(name: string, rules: { createHTML(html: string): string }): void;
-    };
-  }
-).trustedTypes?.createPolicy('default', { createHTML: (html) => html });
-
 // The reference page gives the example a short canvas (14rem). The frame grows to fit what the
 // component draws in flow, gives a modal dialog a room to open in, and grows further while an
 // anchored overlay is held at its edge; it takes its height back as these go away.

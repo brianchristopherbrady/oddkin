@@ -49,7 +49,6 @@ const { imports, manifests } = await publicExports();
 const site = await import(pathToFileURL(join(root, 'apps/docs/dist/pages/index.js')).href);
 const facts = await docsFacts(root);
 const shell = join(root, 'apps/docs/index.html');
-const frameDocument = join(root, 'apps/docs/frame.html');
 // Reference pages (src/reference.ts): Workbench data with the packages' authored examples, built in Node.
 const { buildWorkbench } = await import(
   pathToFileURL(join(root, 'packages/workbench/dist/node/index.js')).href
@@ -134,8 +133,6 @@ const server = createServer(async (request, response) => {
     const html = extname(path) === '.html';
     const text = html ? body.toString('utf8') : '';
     const page = path === shell ? documentFor(text, pathname) : text;
-    // The frame's default policy lets example fixtures write markup (src/frame.ts).
-    const policies = path === frameDocument ? 'oddkin-template default' : 'oddkin-template';
     const content = html
       ? page.replace(
           '<script type="importmap" id="oddkin-import-map"></script>',
@@ -145,7 +142,7 @@ const server = createServer(async (request, response) => {
     response.writeHead(200, {
       'content-type': types[extname(path)] ?? 'application/octet-stream',
       'x-content-type-options': 'nosniff',
-      'content-security-policy': `default-src 'none'; script-src 'self' 'nonce-${nonce}'; style-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types ${policies}`,
+      'content-security-policy': `default-src 'none'; script-src 'self' 'nonce-${nonce}'; style-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template`,
     });
     response.end(request.method === 'HEAD' ? undefined : content);
   } catch (error) {

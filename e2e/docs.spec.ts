@@ -331,8 +331,8 @@ test('every published component is listed under its category and has a reference
 });
 
 test('a live example runs its setup script', async ({ page }) => {
-  // The breadcrumbs example's fixture writes its trail with innerHTML: the docs serve the example
-  // module (_oddkin/examples/), and the frame's Trusted Types policy lets it write markup.
+  // The breadcrumbs example's fixture renders its trail (core's html, under the docs' Trusted Types
+  // policy) from the example module the docs serve (_oddkin/examples/).
   await page.goto(`${docs}/components/odd-breadcrumbs`);
   const frame = page.frameLocator('oddkin-component-panel iframe').first();
   await expect(frame.getByRole('link', { name: 'Home' })).toBeVisible({ timeout: catalogLoad });
