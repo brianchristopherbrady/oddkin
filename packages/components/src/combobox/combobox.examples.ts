@@ -1,4 +1,4 @@
-import { html } from '@oddkin/core/template';
+import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-combobox> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './combobox.js';
@@ -20,8 +20,12 @@ const members = [
   { value: 'ethan', label: 'Ethan Miller', group: 'Engineering' },
 ];
 const chosen = ['amelia', 'noah', 'olivia', 'liam', 'sophia'];
-const topics =
-  '<option value="design">Design</option><option value="research" selected>Research</option><option value="engineering" selected>Engineering</option><option value="marketing">Marketing</option><option value="support">Support</option><option value="sales">Sales</option>';
+const topics = html`<option value="design">Design</option>
+  <option value="research" selected>Research</option>
+  <option value="engineering" selected>Engineering</option>
+  <option value="marketing">Marketing</option>
+  <option value="support">Support</option>
+  <option value="sales">Sales</option>`;
 
 export default defineExamples('odd-combobox', {
   default: {
@@ -45,7 +49,7 @@ export default defineExamples('odd-combobox', {
     guidance:
       'With `multiple`, chosen values are chips in the field; while the field is not in use they collapse to the ones that fit and "+N". Backspace in the empty input removes the last one.',
     fixture({ element }) {
-      element.innerHTML = topics;
+      render(topics, element);
     },
   },
   views: {
@@ -91,8 +95,17 @@ export default defineExamples('odd-combobox', {
     props: { label: 'Region', name: 'region' },
     guidance: 'Write `<option>` and `<optgroup>` children, as for a native select.',
     fixture({ element }) {
-      element.innerHTML =
-        '<optgroup label="Europe"><option value="fra">Frankfurt</option><option value="dub">Dublin</option></optgroup><optgroup label="Americas"><option value="iad" selected>Virginia</option><option value="gru">São Paulo</option></optgroup>';
+      render(
+        html`<optgroup label="Europe">
+            <option value="fra">Frankfurt</option>
+            <option value="dub">Dublin</option>
+          </optgroup>
+          <optgroup label="Americas">
+            <option value="iad" selected>Virginia</option>
+            <option value="gru">São Paulo</option>
+          </optgroup>`,
+        element,
+      );
     },
   },
   serverFiltered: {

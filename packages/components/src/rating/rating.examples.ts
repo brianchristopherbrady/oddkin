@@ -1,4 +1,4 @@
-import { html } from '@oddkin/core/template';
+import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-rating> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './rating.js';
@@ -57,8 +57,14 @@ export default defineExamples('odd-rating', {
     guidance:
       '`<option>` children (or `options`) name each star in order; their count replaces `max`, and the value is the chosen option’s.',
     fixture({ element }) {
-      element.innerHTML =
-        '<option value="poor">Poor</option><option value="fair">Fair</option><option value="good">Good</option><option value="great">Great</option><option value="excellent">Excellent</option>';
+      render(
+        html`<option value="poor">Poor</option>
+          <option value="fair">Fair</option>
+          <option value="good">Good</option>
+          <option value="great">Great</option>
+          <option value="excellent">Excellent</option>`,
+        element,
+      );
     },
   },
   requiredFalse: {

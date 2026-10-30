@@ -1,9 +1,11 @@
+import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-split-button> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './split-button.js';
 
-const saves =
-  'Save<option value="save-as">Save as…</option><option value="copy">Save a copy</option>';
+const saves = html`Save
+  <option value="save-as">Save as…</option>
+  <option value="copy">Save a copy</option>`;
 
 export default defineExamples('odd-split-button', {
   default: {
@@ -15,7 +17,7 @@ export default defineExamples('odd-split-button', {
     guidance:
       'The primary half reports `{ id: value, action: "primary" }`; the `<option value>` children are the menu, reporting `{ id, action: "select" }`.',
     fixture({ element }) {
-      element.innerHTML = saves;
+      render(saves, element);
     },
   },
   secondary: {
@@ -23,8 +25,16 @@ export default defineExamples('odd-split-button', {
     props: { value: 'merge' },
     preset: true,
     fixture({ element }) {
-      element.innerHTML =
-        'Merge<optgroup label="Strategy"><option value="squash">Squash and merge</option><option value="rebase">Rebase and merge</option></optgroup><hr><option value="settings">Merge settings</option>';
+      render(
+        html`Merge
+          <optgroup label="Strategy">
+            <option value="squash">Squash and merge</option>
+            <option value="rebase">Rebase and merge</option>
+          </optgroup>
+          <hr />
+          <option value="settings">Merge settings</option>`,
+        element,
+      );
     },
   },
   fromData: {
@@ -55,14 +65,14 @@ export default defineExamples('odd-split-button', {
     guidance:
       'While `loading`, the primary half shows a spinner and ignores presses; the menu still opens.',
     fixture({ element }) {
-      element.innerHTML = saves;
+      render(saves, element);
     },
   },
   disabled: {
     label: 'Disabled',
     props: { value: 'save', appearance: 'primary', disabled: true },
     fixture({ element }) {
-      element.innerHTML = saves;
+      render(saves, element);
     },
   },
   itemsAttribute: {

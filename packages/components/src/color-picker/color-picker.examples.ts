@@ -1,3 +1,4 @@
+import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-color-picker> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './color-picker.js';
@@ -43,8 +44,12 @@ export default defineExamples('odd-color-picker', {
     props: { label: 'Label color', name: 'label' },
     guidance: 'Write `<option>` children for the suggested colours, their text naming each one.',
     fixture({ element }) {
-      element.innerHTML =
-        '<option value="#2563eb">Blue</option><option value="#16a34a">Green</option><option value="#f59e0b">Amber</option>';
+      render(
+        html`<option value="#2563eb">Blue</option>
+          <option value="#16a34a">Green</option>
+          <option value="#f59e0b">Amber</option>`,
+        element,
+      );
     },
   },
   invalid: {

@@ -1,4 +1,4 @@
-import { html } from '@oddkin/core/template';
+import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-picker> into HTMLElementTagNameMap, so props are checked against the element.
 import type { TreeItemRecord } from './picker.js';
@@ -21,10 +21,16 @@ const layers: readonly TreeItemRecord[] = [
     ],
   },
 ];
-const flat =
-  '<option value="roads">Roads</option><option value="rail">Rail</option><option value="boundaries">Boundaries</option><option value="buildings">Buildings</option>';
-const grouped =
-  '<optgroup label="Transportation"><option value="roads">Roads</option><option value="rail">Rail</option></optgroup><option value="boundaries">Boundaries</option><option value="buildings">Buildings</option>';
+const flat = html`<option value="roads" selected>Roads</option>
+  <option value="rail">Rail</option>
+  <option value="boundaries">Boundaries</option>
+  <option value="buildings">Buildings</option>`;
+const grouped = html`<optgroup label="Transportation">
+    <option value="roads">Roads</option>
+    <option value="rail">Rail</option>
+  </optgroup>
+  <option value="boundaries">Boundaries</option>
+  <option value="buildings">Buildings</option>`;
 const field = {
   label: 'Map layers',
   description: 'Choose from the available layers.',
@@ -59,7 +65,7 @@ export default defineExamples('odd-picker', {
     guidance:
       'Without `items`, the popup is a listbox: write `<option>` and `<optgroup>` children, as for a native select, or assign `options`.',
     fixture({ element }) {
-      element.innerHTML = grouped;
+      render(grouped, element);
     },
   },
   listMultiple: {
@@ -75,7 +81,7 @@ export default defineExamples('odd-picker', {
     guidance:
       '`view` shows the chosen values as on odd-combobox (`count` here); `select-all` adds a Select all check box above a listbox (not a tree); `review` starts the popup with the chosen values.',
     fixture({ element }) {
-      element.innerHTML = flat.replace('"roads"', '"roads" selected');
+      render(flat, element);
     },
   },
   loading: {

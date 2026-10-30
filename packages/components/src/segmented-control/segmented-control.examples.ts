@@ -1,9 +1,12 @@
+import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-segmented-control> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './segmented-control.js';
 
-const sizes =
-  '<option value="sm">Small</option><option value="md" selected>Medium</option><option value="lg">Large</option>';
+const sizes = (selected = true) =>
+  html`<option value="sm">Small</option>
+    <option value="md" ?selected=${selected}>Medium</option>
+    <option value="lg">Large</option>`;
 const svg = (body: string) =>
   `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"%3E${body}%3C/svg%3E`;
 const listIcon = svg(
@@ -22,7 +25,7 @@ export default defineExamples('odd-segmented-control', {
     guidance:
       'Write the options as `<option>` children, as for a native select; `selected` marks the default.',
     fixture({ element }) {
-      element.innerHTML = sizes;
+      render(sizes(), element);
     },
   },
   fromData: {
@@ -59,21 +62,21 @@ export default defineExamples('odd-segmented-control', {
     label: 'Small',
     props: { label: 'Preview size', size: 'sm' },
     fixture({ element }) {
-      element.innerHTML = sizes;
+      render(sizes(), element);
     },
   },
   large: {
     label: 'Large',
     props: { label: 'Preview size', size: 'lg' },
     fixture({ element }) {
-      element.innerHTML = sizes;
+      render(sizes(), element);
     },
   },
   disabled: {
     label: 'Disabled',
     props: { label: 'Preview size', disabled: true },
     fixture({ element }) {
-      element.innerHTML = sizes;
+      render(sizes(), element);
     },
   },
   requiredFalse: {
@@ -87,7 +90,7 @@ export default defineExamples('odd-segmented-control', {
       correct: 'default',
     },
     fixture({ element }) {
-      element.innerHTML = sizes.replace(' selected', '');
+      render(sizes(false), element);
     },
   },
 });

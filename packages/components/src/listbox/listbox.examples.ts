@@ -1,10 +1,13 @@
-﻿import { html } from '@oddkin/core/template';
+﻿import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-listbox> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './listbox.js';
 
-const roles =
-  '<option value="viewer">Viewer</option><option value="editor" selected>Editor</option><option value="admin">Administrator</option><option value="owner">Owner</option>';
+const roles = ({ selected = true, ownerDisabled = false } = {}) =>
+  html`<option value="viewer">Viewer</option>
+    <option value="editor" ?selected=${selected}>Editor</option>
+    <option value="admin">Administrator</option>
+    <option value="owner" ?disabled=${ownerDisabled}>Owner</option>`;
 
 export default defineExamples('odd-listbox', {
   default: {
@@ -16,7 +19,7 @@ export default defineExamples('odd-listbox', {
     guidance:
       'Write the choices as `<option>` children, as for a native select; `selected` marks the default.',
     fixture({ element }) {
-      element.innerHTML = roles;
+      render(roles(), element);
     },
   },
   multiple: {
@@ -25,26 +28,37 @@ export default defineExamples('odd-listbox', {
     preset: true,
     guidance: 'With `multiple`, Space and a click toggle an option; Shift with an arrow extends.',
     fixture({ element }) {
-      element.innerHTML =
-        '<option value="mentions" selected>Mentions</option><option value="comments" selected>Comments</option><option value="releases">Releases</option><option value="digest" title="Every Monday">Weekly digest</option>';
+      render(
+        html`<option value="mentions" selected>Mentions</option>
+          <option value="comments" selected>Comments</option>
+          <option value="releases">Releases</option>
+          <option value="digest" title="Every Monday">Weekly digest</option>`,
+        element,
+      );
     },
   },
   groups: {
     label: 'Groups',
     props: { label: 'Region', name: 'region' },
     fixture({ element }) {
-      element.innerHTML =
-        '<optgroup label="Europe"><option value="fra">Frankfurt</option><option value="dub">Dublin</option></optgroup><optgroup label="Americas"><option value="iad">Virginia</option><option value="gru">SÃ£o Paulo</option></optgroup>';
+      render(
+        html`<optgroup label="Europe">
+            <option value="fra">Frankfurt</option>
+            <option value="dub">Dublin</option>
+          </optgroup>
+          <optgroup label="Americas">
+            <option value="iad">Virginia</option>
+            <option value="gru">São Paulo</option>
+          </optgroup>`,
+        element,
+      );
     },
   },
   disabledOption: {
     label: 'Disabled option',
     props: { label: 'Workspace role', name: 'role' },
     fixture({ element }) {
-      element.innerHTML = roles.replace(
-        '<option value="owner">',
-        '<option value="owner" disabled>',
-      );
+      render(roles({ ownerDisabled: true }), element);
     },
   },
   fromData: {
@@ -78,7 +92,7 @@ export default defineExamples('odd-listbox', {
     guidance:
       'Participates in its form like a native select: submits the selected value, blocks submission while required and empty (the message points at the listbox), and resets to the declared selection.',
     fixture({ scope, element, mount }) {
-      element.innerHTML = roles.replace(' selected', '');
+      render(roles({ selected: false }), element);
       const form = mount(
         html`<form>
           <odd-button type="submit" appearance="primary">Continue</odd-button>

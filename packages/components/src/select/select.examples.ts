@@ -1,10 +1,13 @@
-import { html } from '@oddkin/core/template';
+import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-select> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './select.js';
 
-const roles =
-  '<option value="viewer">Viewer</option><option value="editor" selected>Editor</option><option value="admin">Administrator</option><option value="owner">Owner</option>';
+const roles = (selected = true) =>
+  html`<option value="viewer">Viewer</option>
+    <option value="editor" ?selected=${selected}>Editor</option>
+    <option value="admin">Administrator</option>
+    <option value="owner">Owner</option>`;
 
 export default defineExamples('odd-select', {
   default: {
@@ -16,7 +19,7 @@ export default defineExamples('odd-select', {
     guidance:
       'Write the choices as `<option>` children, as for a native select; `selected` marks the default.',
     fixture({ element }) {
-      element.innerHTML = roles;
+      render(roles(), element);
     },
   },
   placeholder: {
@@ -30,15 +33,24 @@ export default defineExamples('odd-select', {
     guidance:
       'A placeholder shows until an option is chosen and submits an empty value; it is never the label.',
     fixture({ element }) {
-      element.innerHTML = roles.replace(' selected', '');
+      render(roles(false), element);
     },
   },
   groups: {
     label: 'Groups',
     props: { label: 'Region', name: 'region' },
     fixture({ element }) {
-      element.innerHTML =
-        '<optgroup label="Europe"><option value="fra">Frankfurt</option><option value="dub">Dublin</option></optgroup><optgroup label="Americas"><option value="iad">Virginia</option><option value="gru">São Paulo</option></optgroup>';
+      render(
+        html`<optgroup label="Europe">
+            <option value="fra">Frankfurt</option>
+            <option value="dub">Dublin</option>
+          </optgroup>
+          <optgroup label="Americas">
+            <option value="iad">Virginia</option>
+            <option value="gru">São Paulo</option>
+          </optgroup>`,
+        element,
+      );
     },
   },
   fromData: {
@@ -58,7 +70,7 @@ export default defineExamples('odd-select', {
     label: 'Disabled',
     props: { label: 'Workspace role', disabled: true },
     fixture({ element }) {
-      element.innerHTML = roles;
+      render(roles(), element);
     },
   },
   withError: {
@@ -66,7 +78,7 @@ export default defineExamples('odd-select', {
     props: { label: 'Workspace role', error: 'Choose a role to continue.' },
     guidance: 'Set `error` to show a message and mark the select invalid until it is cleared.',
     fixture({ element }) {
-      element.innerHTML = roles;
+      render(roles(), element);
     },
   },
   inForm: {
@@ -77,7 +89,7 @@ export default defineExamples('odd-select', {
     guidance:
       'Participates in its form like a native select: submits the chosen value, blocks submission while required and on the placeholder, and resets to the declared choice.',
     fixture({ scope, element, mount }) {
-      element.innerHTML = roles.replace(' selected', '');
+      render(roles(false), element);
       const form = mount(
         html`<form>
           <odd-button type="submit" appearance="primary">Continue</odd-button>

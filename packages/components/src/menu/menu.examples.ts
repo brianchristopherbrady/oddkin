@@ -1,10 +1,14 @@
-﻿import { html } from '@oddkin/core/template';
+﻿import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-menu> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './menu.js';
 
-const actions =
-  'Project actions<option value="new">New project</option><option value="duplicate" title="With its files">Duplicate project</option><option value="archive" disabled>Archive</option><hr><optgroup label="Danger zone"><option value="delete">Delete project</option></optgroup>';
+const actions = html`Project actions
+  <option value="new">New project</option>
+  <option value="duplicate" title="With its files">Duplicate project</option>
+  <option value="archive" disabled>Archive</option>
+  <hr />
+  <optgroup label="Danger zone"><option value="delete">Delete project</option></optgroup>`;
 
 export default defineExamples('odd-menu', {
   default: {
@@ -15,7 +19,7 @@ export default defineExamples('odd-menu', {
     guidance:
       'Write the trigger text and the items as `<option value>` children (the value is the `id` that `odd-action` reports); `<hr>` separates, `<optgroup label>` groups.',
     fixture({ element }) {
-      element.innerHTML = actions;
+      render(actions, element);
     },
   },
   fromData: {
@@ -47,8 +51,12 @@ export default defineExamples('odd-menu', {
     props: { label: 'More actions', appearance: 'ghost', size: 'sm' },
     guidance: 'With no trigger text, `label` names the button.',
     fixture({ element }) {
-      element.innerHTML =
-        '<option value="rename">Rename</option><option value="move">Move</option><option value="delete">Delete</option>';
+      render(
+        html`<option value="rename">Rename</option>
+          <option value="move">Move</option>
+          <option value="delete">Delete</option>`,
+        element,
+      );
     },
   },
   contextMenu: {
@@ -58,7 +66,7 @@ export default defineExamples('odd-menu', {
     guidance:
       'Set `context` to the ID of the element whose context menu it is: a right-click or long press there opens it at the pointer, Shift+F10 or the Menu key beside the focused element. Keep the trigger visible next to the element: it is the way to the same actions for everyone who does not right-click.',
     fixture({ element, mount }) {
-      element.innerHTML = actions;
+      render(actions, element);
       const parts = mount(
         html`<div><div id="menu-project-brief" tabindex="0">Project brief</div></div>`,
       );
@@ -70,7 +78,7 @@ export default defineExamples('odd-menu', {
     label: 'Disabled',
     props: { disabled: true },
     fixture({ element }) {
-      element.innerHTML = actions;
+      render(actions, element);
     },
   },
   itemsAttribute: {

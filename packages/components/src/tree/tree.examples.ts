@@ -1,3 +1,4 @@
+import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-tree> into HTMLElementTagNameMap, so props are checked against the element.
 import type { TreeItemRecord } from './tree.js';
@@ -104,8 +105,14 @@ export default defineExamples('odd-tree', {
     guidance:
       'Show a failure in the `status` slot with a way to try again, and replace the empty text.',
     fixture({ element }) {
-      element.innerHTML =
-        '<span slot="empty"></span><div slot="status" role="alert"><p>Unable to load. Try again to reload these items.</p><button type="button">Retry</button></div>';
+      render(
+        html`<span slot="empty"></span>
+          <div slot="status" role="alert">
+            <p>Unable to load. Try again to reload these items.</p>
+            <button type="button">Retry</button>
+          </div>`,
+        element,
+      );
     },
   },
   itemsAttribute: {

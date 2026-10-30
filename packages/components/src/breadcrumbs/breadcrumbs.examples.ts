@@ -1,3 +1,4 @@
+import { html, render } from '@oddkin/core/template';
 import { defineExamples } from '@oddkin/workbench/examples';
 // Brings <odd-breadcrumbs> into HTMLElementTagNameMap, so props are checked against the element.
 import type {} from './breadcrumbs.js';
@@ -20,8 +21,15 @@ export default defineExamples('odd-breadcrumbs', {
     guidance:
       'Write the trail as an ordered list of links, as a server would; the last link is the current page and shows as text.',
     fixture({ element }) {
-      element.innerHTML =
-        '<ol><li><a href="#home">Home</a></li><li><a href="#workspace">Workspace</a></li><li><a href="#components">Components</a></li><li><a href="#forms">Forms</a></li></ol>';
+      render(
+        html`<ol>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#workspace">Workspace</a></li>
+          <li><a href="#components">Components</a></li>
+          <li><a href="#forms">Forms</a></li>
+        </ol>`,
+        element,
+      );
     },
   },
   items: {
@@ -42,8 +50,24 @@ export default defineExamples('odd-breadcrumbs', {
     guidance:
       "Put an icon (or other text) in the `home` slot to replace the first item's text; an icon is decorative, and the label stays as hidden text.",
     fixture({ element }) {
-      element.innerHTML =
-        '<svg slot="home" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" /></svg>';
+      render(
+        html`<svg
+          slot="home"
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 11l9-8 9 8" />
+          <path d="M5 10v10h14V10" />
+        </svg>`,
+        element,
+      );
     },
   },
   itemsAttribute: {
