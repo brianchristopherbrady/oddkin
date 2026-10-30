@@ -4287,3 +4287,39 @@ Design source: Figma `zF87qftdRznmJJezxy23gd` 20:2190 (1440 × 3394) and the int
 | Page layout | `node scripts/check-page-layout.mjs` | 48 files, 42 kept with a reason (2 new: the cards' and the sidebar's pre-upgrade columns), 0 unlisted, 0 stale |
 | Unit | `npx vitest run tests/docs tests/examples/page-layout.test.ts` | 30 passed |
 | e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, three engines, `--workers=2` | 42 passed (4.1 min). The catalog walk, which now waits for each live example to mount: Chromium 38 s, WebKit 78 s, Firefox 126 s of its 300 s budget. New: a live example runs its setup script (dev server) and the static site's breadcrumbs example shows its links |
+
+## 2026-10-29 — Example fixtures without `innerHTML` (round 10, Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| No markup strings | `git grep -n -E 'innerHTML\|insertAdjacentHTML\|outerHTML'` over `packages/components` and `packages/ai` examples | None. The 12 sets render their children with core's `html` and `render()` (the `oddkin-template` policy) |
+| Every example, 3 engines | `npx vitest run --project browser --browser.name=<engine> --no-file-parallelism packages/components/test/examples.browser.test.ts` | 8 of 8 in Chromium, Firefox, and WebKit: every example mounts with its properties, attributes, slots, and fixture, then releases everything; each explained mistake does what it says |
+| Workbench, 3 engines | the same, for `packages/workbench/test/{frame,panels,coverage}.browser.test.ts` | 25 of 25 in each engine |
+| Catalog previews | `npx playwright test e2e/workbench-catalog.spec.ts --project=chromium` (E2E lock) | 156 passed: each preview loads only its registration's and its example module's graphs |
+| Node, types, lint | `npx vitest run --project node packages/components/test/examples.test.ts`; `npm run typecheck`; `npm run lint` | 5 passed; pass; pass |
+
+**Not verified:** the docs frame without its pass-through default Trusted Types policy (Agent 3's follow-up).
+
+## 2026-10-29 — P0.6 the first fully green CI runs (round 10, Agent 1)
+
+GitHub Actions run 40976886045 at `b50ed7e` was the first fully green run: job `verify` succeeded in 28 min 50 s (e2e 13 min 33 s, 1,047 passed, 12 skipped). The next, 40978743390 at `da8a486`, succeeded in 27 min 54 s; its steps:
+
+| Step | Time |
+| --- | --- |
+| Set up, checkout, Node, `npm ci` | 9 s |
+| `npx playwright install --with-deps chromium firefox webkit` | 39 s |
+| `npm run lint` | 32 s |
+| `npm run typecheck` | 5 s |
+| `npm run build` | 6 s |
+| `npx vitest run --project node` | 27 s |
+| Browser project, Chromium (`--no-file-parallelism`) | 4 min 17 s |
+| Browser project, Firefox | 4 min 26 s |
+| Browser project, WebKit | 4 min 10 s |
+| `npm run verify:metadata` | 1 s |
+| `npm run size` | 2 s |
+| `npm run test:e2e` | 12 min 43 s: 1,047 passed, 12 skipped |
+| `npm run verify:packs` | 14 s |
+
+The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workbench catalog's module-graph check, after previews began importing example modules (fixed in `f236fa5`); at `f236fa5`, one Firefox click in `e2e/docs.spec.ts`, lost to a card that grew under the pointer (fixed in `5052d62`).
+
+**Not verified:** the registry smoke's first run (`registry-smoke.yml`, weekly or by hand).
