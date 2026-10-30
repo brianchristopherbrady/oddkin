@@ -103,7 +103,8 @@ async function main() {
     `script-src 'self' 'sha256-${hash}'`,
     "style-src 'self'",
     "connect-src 'self'",
-    "img-src 'self'",
+    // Icon examples draw images from data: URLs: odd-icon's src, the segmented control's icons.
+    "img-src 'self' data:",
     // Reference pages show live examples in same-origin frames (frame.html).
     "frame-src 'self'",
     "base-uri 'none'",

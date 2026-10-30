@@ -142,7 +142,7 @@ const server = createServer(async (request, response) => {
     response.writeHead(200, {
       'content-type': types[extname(path)] ?? 'application/octet-stream',
       'x-content-type-options': 'nosniff',
-      'content-security-policy': `default-src 'none'; script-src 'self' 'nonce-${nonce}'; style-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template`,
+      'content-security-policy': `default-src 'none'; script-src 'self' 'nonce-${nonce}'; style-src 'self'; connect-src 'self'; img-src 'self' data:; frame-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template`,
     });
     response.end(request.method === 'HEAD' ? undefined : content);
   } catch (error) {

@@ -110,8 +110,10 @@ describe('the static docs build', () => {
     expect(frame.match(/<script(?![^>]*\bsrc=)[^>]*>/g)).toEqual(['<script type="importmap">']);
     for (const [, path = ''] of frame.matchAll(/(?:href|src)="(\/[^"]+)"/g))
       expect(existsSync(join(out, ...path.split('/').filter(Boolean))), path).toBe(true);
-    // Pages allow the frames.
-    expect(readFileSync(documentAt(out, '/components'), 'utf8')).toContain("frame-src 'self'");
+    // Pages allow the frames, and data: images, which icon examples draw from.
+    const catalog = readFileSync(documentAt(out, '/components'), 'utf8');
+    expect(catalog).toContain("frame-src 'self'");
+    for (const html of [catalog, frame]) expect(html).toContain("img-src 'self' data:;");
   });
 
   it('lists every catalog component in the Components sidebar, and links each to its source', async () => {

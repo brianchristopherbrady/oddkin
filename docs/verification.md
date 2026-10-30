@@ -4457,3 +4457,12 @@ The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workben
 | The test catches it | `npx vitest run --project "browser (chromium)" packages/components/test/select.browser.test.ts -t "middle of the field"` with the rule set back to `align-items: normal` | Fails: expected 15 to be less than or equal to 2 |
 | Browser tests | `npx vitest run --project "browser (<engine>)"` on `select`, `figma-parity.collections`, `segmented-control` | Chromium: 160 passed, 1 skipped. Firefox: select 16 passed, 2 skipped; parity and segmented control 139 passed, 4 skipped. WebKit: select 16 passed, 2 skipped; parity and segmented control 139 passed, 4 skipped. The first runs of all three files at once failed on time-outs on the loaded machine (Firefox `locator.hover` 1.5 s in the parity suite's hook; WebKit screenshots 5 s) and passed run in two groups |
 | Generated and static | `npm run build`; `npm run compat`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check` | Built; compatibility check OK (72 features, 0 problems; the select's structural rules 23 → 25 in the matrix); typecheck and formatting clean |
+
+## 2026-10-29 — Docs: data: images allowed; whole words in tabs and segments (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `node .tmp/img-src.mjs chromium` (the icon and segmented-control reference pages, scrolled through, frames included) | `img-src 'self'`: 1 violation on /components/odd-icon, 2 on /components/odd-segmented-control (`data:image/svg+xml` icons) |
+| After | `node .tmp/img-src.mjs chromium`, `firefox`, `webkit` | `img-src 'self' data:`; 0 `img-src` violations on both pages in each engine (WebKit still logs its "Refused to apply a stylesheet" style-src message, as before) |
+| Whole words | `node .tmp/broken-words.mjs <engine> <width>` (every word in odd-tabs, odd-tab, and odd-segmented-control text, light and shadow DOM, all frames: a word whose range spans two line tops is broken) | Chromium, Firefox, WebKit at 1440 and Chromium at 390: catalog 25 words, odd-tabs page 35, odd-segmented-control page 23; 0 broken |
+| Tests | `npx vitest run tests/docs`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check` | 25 passed (the site test now checks `img-src 'self' data:` in the catalog page and the frame); typecheck and formatting clean |
