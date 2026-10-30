@@ -81,7 +81,7 @@ function toRoutes(registry: PageRegistry, node: Node, load: PageLoader): AnyRout
  * Routes for every visible page (nested by path segment), each legacy route of a visible page
  * as a redirect resolved like `resolveLegacyRoute`, `/foundations/products` as a notice when
  * Products and modes is not shown, and, without a home page, `/` redirecting to the first
- * primary destination.
+ * primary destination that has content.
  */
 export function shellRoutes(registry: PageRegistry, load: PageLoader): AnyRoute[] {
   const root: Node = { children: new Map() };
@@ -107,8 +107,12 @@ export function shellRoutes(registry: PageRegistry, load: PageLoader): AnyRoute[
     if (!node.page) node.notice = 'products.disabled';
   }
   const own = level(registry, root, load);
-  // Without a home page, the base URL goes to the first primary destination.
-  const first = registry.pages.find((p) => p.id === registry.primaryNav[0] && p.visible);
+  // Without a home page, the base URL goes to the first primary destination with content: a
+  // library without foundation data opens on its components, not on an explanation.
+  const primary = registry.primaryNav.flatMap((id) =>
+    registry.pages.filter((p) => p.id === id && p.visible),
+  );
+  const first = primary.find((p) => p.availability !== 'unavailable') ?? primary[0];
   const entry = own ?? (first && first.route !== '/' ? { redirect: first.route } : undefined);
   return [...(entry ? [route({ ...entry, path: '' })] : []), ...toRoutes(registry, root, load)];
 }

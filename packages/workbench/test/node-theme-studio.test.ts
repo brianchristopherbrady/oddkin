@@ -207,57 +207,63 @@ describe('Theme Studio page data', () => {
     expect(page.studio.missing.slice(0, 2).map((m) => m.item)).toEqual(['generator', 'config']);
   });
 
-  it("builds Oddkin's own Theme Studio from its theme file and generator", async () => {
-    const build = await buildWorkbench({ config: 'tests/fixtures/workbench-oddkin' });
-    const page = JSON.parse(build.files.get('pages/theme-studio.json')!) as ThemeStudioPageData;
-    expect(page.studio.source).toBe('../../../packages/tokens/themes/default.theme.json');
-    expect(page.studio.config).toMatchObject({
-      name: 'default',
-      brand: { primary: expect.any(String) },
-    });
-    expect(page.studio.worker).toBe(`/_oddkin/${THEME_WORKER}`);
-    expect(page.studio.roles.map((r) => `${r.role}:${r.tag}`)).toEqual([
-      'surface:odd-card',
-      'badge:odd-badge',
-      'textInput:odd-input',
-      'checkbox:odd-checkbox',
-      'switch:odd-switch',
-      'primaryAction:odd-button',
-      'secondaryAction:odd-button',
-      'navigation:odd-side-nav',
-      // Roles the specimen recipe does not draw follow, in catalog order.
-      'alert:odd-alert',
-      'avatar:odd-avatar',
-      'busyIndicator:odd-spinner',
-      'calendar:odd-calendar',
-      'chip:odd-chip',
-      'colorPicker:odd-color-picker',
-      'combobox:odd-combobox',
-      'copyButton:odd-copy-button',
-      'datePicker:odd-date-picker',
-      'disclosure:odd-disclosure',
-      'fileInput:odd-file-input',
-      'oneTimeCode:odd-one-time-code',
-      'picker:odd-picker',
-      'placeholder:odd-skeleton',
-      'progress:odd-progress',
-      'radioGroup:odd-radio-group',
-      'rating:odd-rating',
-      'relativeTime:odd-relative-time',
-      'segmented:odd-segmented-control',
-      'slider:odd-slider',
-      'stat:odd-stat',
-      'statusMarker:odd-status-marker',
-      'textArea:odd-textarea',
-      'tree:odd-tree',
-    ]);
-    const worker = build.files.get(THEME_WORKER)!;
-    // Workers have no import map: the library's own generator, by URL.
-    expect(worker).toContain(
-      `import { generate } from ${JSON.stringify(build.frameImportMap?.imports['@oddkin/tokens/generate'])};`,
-    );
-    expect(build.diagnostics.filter((d) => d.code.startsWith('node.themeStudio'))).toEqual([]);
-  });
+  // A whole build of the Oddkin fixture, as in node-build.test.ts: 15 s alone on a busy machine,
+  // past the default limit when the other test files run beside it.
+  it(
+    "builds Oddkin's own Theme Studio from its theme file and generator",
+    { timeout: 120_000 },
+    async () => {
+      const build = await buildWorkbench({ config: 'tests/fixtures/workbench-oddkin' });
+      const page = JSON.parse(build.files.get('pages/theme-studio.json')!) as ThemeStudioPageData;
+      expect(page.studio.source).toBe('../../../packages/tokens/themes/default.theme.json');
+      expect(page.studio.config).toMatchObject({
+        name: 'default',
+        brand: { primary: expect.any(String) },
+      });
+      expect(page.studio.worker).toBe(`/_oddkin/${THEME_WORKER}`);
+      expect(page.studio.roles.map((r) => `${r.role}:${r.tag}`)).toEqual([
+        'surface:odd-card',
+        'badge:odd-badge',
+        'textInput:odd-input',
+        'checkbox:odd-checkbox',
+        'switch:odd-switch',
+        'primaryAction:odd-button',
+        'secondaryAction:odd-button',
+        'navigation:odd-side-nav',
+        // Roles the specimen recipe does not draw follow, in catalog order.
+        'alert:odd-alert',
+        'avatar:odd-avatar',
+        'busyIndicator:odd-spinner',
+        'calendar:odd-calendar',
+        'chip:odd-chip',
+        'colorPicker:odd-color-picker',
+        'combobox:odd-combobox',
+        'copyButton:odd-copy-button',
+        'datePicker:odd-date-picker',
+        'disclosure:odd-disclosure',
+        'fileInput:odd-file-input',
+        'oneTimeCode:odd-one-time-code',
+        'picker:odd-picker',
+        'placeholder:odd-skeleton',
+        'progress:odd-progress',
+        'radioGroup:odd-radio-group',
+        'rating:odd-rating',
+        'relativeTime:odd-relative-time',
+        'segmented:odd-segmented-control',
+        'slider:odd-slider',
+        'stat:odd-stat',
+        'statusMarker:odd-status-marker',
+        'textArea:odd-textarea',
+        'tree:odd-tree',
+      ]);
+      const worker = build.files.get(THEME_WORKER)!;
+      // Workers have no import map: the library's own generator, by URL.
+      expect(worker).toContain(
+        `import { generate } from ${JSON.stringify(build.frameImportMap?.imports['@oddkin/tokens/generate'])};`,
+      );
+      expect(build.diagnostics.filter((d) => d.code.startsWith('node.themeStudio'))).toEqual([]);
+    },
+  );
 
   it('validates specimen requests like mounts, item by item', () => {
     const envelope = { protocol: 'oddkin.frame', version: 1, frame: 'f', generation: 1, id: 1 };

@@ -128,6 +128,22 @@ describe('shell routes from the page registry', () => {
       () => undefined,
     );
     expect(redirectOf(leaf(reordered, '/'), '/')).toBe('/components');
+    // A library without foundation data (a standard Custom Elements Manifest alone) opens on
+    // its components, not on Foundations' explanation.
+    const cemOnly = buildPageRegistry({
+      config: { library: { packages: ['@oddkin/components'] } },
+      cem,
+    }).registry!;
+    expect(cemOnly.pages.find((p) => p.id === 'foundations')?.availability).toBe('unavailable');
+    expect(
+      redirectOf(
+        leaf(
+          shellRoutes(cemOnly, () => undefined),
+          '/',
+        ),
+        '/',
+      ),
+    ).toBe('/components');
     const home = shellRoutes(registry({ navigation: { home: true } }), (page) => page.id);
     const root = leaf(home, '/');
     expect(root?.name).toBe('home');

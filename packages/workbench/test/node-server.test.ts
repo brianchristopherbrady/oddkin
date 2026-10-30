@@ -1,6 +1,16 @@
-import { existsSync, mkdirSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join } from 'node:path';
-import { afterAll, describe, expect, it } from 'vitest';
+import type { EventEmitter } from 'node:events';
+import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { WorkbenchIndex } from '../src/data/index.js';
 import {
   DevServerError,
@@ -11,6 +21,18 @@ import {
   type UpdateEvent,
 } from '../src/node/index.js';
 import { acmeProject, removeProject } from './node-project.js';
+
+// Every watcher the server starts, so a test can make one fail.
+const watches = vi.hoisted(() => [] as { dir: string; watcher: EventEmitter }[]);
+vi.mock('node:fs', async (importOriginal) => {
+  const fs = await importOriginal<typeof import('node:fs')>();
+  const watch = ((dir: string, ...rest: unknown[]) => {
+    const watcher = (fs.watch as (...args: unknown[]) => EventEmitter)(dir, ...rest);
+    watches.push({ dir: String(dir), watcher });
+    return watcher;
+  }) as unknown as typeof fs.watch;
+  return { ...fs, watch, default: { ...fs, watch } };
+});
 
 const projects: string[] = [];
 const servers: DevServer[] = [];
@@ -25,10 +47,16 @@ afterAll(async () => {
 async function serve(extra: Record<string, string> = {}, watch = true) {
   const dir = acmeProject(extra);
   projects.push(dir);
-  const server = await startDevServer({ config: dir, port: 0, watch });
+  const logs: string[] = [];
+  const server = await startDevServer({
+    config: dir,
+    port: 0,
+    watch,
+    log: (line) => logs.push(line),
+  });
   servers.push(server);
   const get = (path: string, init: RequestInit = {}) => fetch(new URL(path, server.url), init);
-  return { dir, server, get };
+  return { dir, server, get, logs };
 }
 
 const html = { headers: { accept: 'text/html,application/xhtml+xml' } };
@@ -318,5 +346,91 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
     await server.close();
     expect(await stream.ended()).toBe(true);
     await expect(get('_oddkin/index.json')).rejects.toThrow();
+  });
+
+  it('keeps watching through renames, and through a package deleted and installed again', async () => {
+    const { dir, server, logs } = await serve();
+    const stream = await subscribe(server.url);
+    const config = join(dir, 'oddkin.config.ts');
+    const original = readFileSync(config, 'utf8');
+
+    // The configuration renamed away (some editors save so) and back stays watched.
+    renameSync(config, `${config}.bak`);
+    let event = await stream.next();
+    expect(event.ok).toBe(false);
+    renameSync(`${config}.bak`, config);
+    writeFileSync(config, original.replace("name: 'Acme UI'", "name: 'Acme Three'"));
+    event = await stream.next();
+    expect(event).toMatchObject({ ok: true, index: true });
+    expect(server.build.data?.index.branding.name).toBe('Acme Three');
+
+    // A reinstall deletes the package directory: its pages go, and the build says it is missing.
+    const until = async (match: (event: UpdateEvent) => boolean) => {
+      for (;;) {
+        const next = await stream.next();
+        if (match(next)) return next;
+      }
+    };
+    const missing = (next: UpdateEvent) =>
+      next.diagnostics.some((d) => d.code === 'node.package.missing');
+    // Once the server has noticed, the directory's old watcher is gone, whatever it still hears.
+    const noticed = async () => {
+      const seen = logs.filter((line) => line.includes('went away')).length;
+      await vi.waitFor(
+        () => expect(logs.filter((line) => line.includes('went away')).length).toBe(seen + 1),
+        { timeout: 10_000 },
+      );
+    };
+    const ui = join(dir, 'node_modules', '@acme', 'ui');
+    const copy = join(dir, 'ui-copy');
+    cpSync(ui, copy, { recursive: true });
+    const gone = noticed();
+    rmSync(ui, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+    await until(missing);
+    await gone;
+    // A new directory in its place brings them back and is watched again.
+    cpSync(copy, ui, { recursive: true });
+    await until((next) => !missing(next) && next.pages.includes('components/acme-button'));
+    const cem = join(ui, 'custom-elements.json');
+    writeFileSync(
+      cem,
+      readFileSync(cem, 'utf8').replace('Triggers an action.', 'Starts an action.'),
+    );
+    const served = () =>
+      server.build.files.get(server.build.data!.index.pages['components/acme-button']!) ?? '';
+    await until(() => served().includes('Starts an action.'));
+    // npm moves an old package aside before writing the new one, and Windows reports no event
+    // for a watched directory renamed away: the server still rebuilds without it, then with the
+    // new directory, which it watches.
+    const aside = noticed();
+    renameSync(ui, join(dir, 'ui-aside'));
+    await until(missing);
+    await aside;
+    cpSync(copy, ui, { recursive: true });
+    await until((next) => !missing(next));
+    writeFileSync(
+      cem,
+      readFileSync(cem, 'utf8').replace('Triggers an action.', 'Begins an action.'),
+    );
+    await until(() => served().includes('Begins an action.'));
+    stream.close();
+  });
+
+  it('watches a directory again when its watcher fails', async () => {
+    const { dir, server } = await serve();
+    const stream = await subscribe(server.url);
+    const ui = join(dir, 'node_modules', '@acme', 'ui');
+    const failing = watches.findLast((w) => w.dir.toLowerCase() === ui.toLowerCase());
+    // Windows reports a watched directory deleted under it as an error (EPERM), not an event.
+    failing!.watcher.emit('error', Object.assign(new Error('EPERM'), { code: 'EPERM' }));
+    const cem = join(ui, 'custom-elements.json');
+    writeFileSync(
+      cem,
+      readFileSync(cem, 'utf8').replace('Triggers an action.', 'Starts an action.'),
+    );
+    const served = () =>
+      server.build.files.get(server.build.data!.index.pages['components/acme-button']!) ?? '';
+    while (!served().includes('Starts an action.')) await stream.next();
+    stream.close();
   });
 });

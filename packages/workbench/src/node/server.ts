@@ -3,7 +3,7 @@
  * (workbench.md §2.1), watches the inputs, rebuilds, and pushes updates over Server-Sent Events.
  * An invalid edit keeps the last valid data and reports what is wrong.
  */
-import { watch, type FSWatcher } from 'node:fs';
+import { statSync, watch, type FSWatcher } from 'node:fs';
 import { readFile, realpath, stat } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
@@ -234,6 +234,15 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
   // Watching: package directories recursively; the configuration's directory and the
   // directories of authored content and data files outside packages, by file name.
   const watchers = new Map<string, FSWatcher>();
+  /** Each watched directory's inode when its watcher started. */
+  const identities = new Map<string, bigint>();
+  /** Every directory watched so far, with the names it reacts to (from the latest build). */
+  const wanted = new Map<string, (name: string) => boolean>();
+  /**
+   * Watched directories that went away: deleted (a reinstall deletes a package's) or replaced by
+   * a new directory, whose old watcher hears nothing more. Each is watched again once it is back.
+   */
+  const gone = new Set<string>();
   let pending = new Set<string>();
   let timer: ReturnType<typeof setTimeout> | undefined;
   let running: Promise<unknown> = Promise.resolve();
@@ -273,26 +282,31 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
   }
 
   function rewatch(build: WorkbenchBuild) {
-    if (options.watch === false) return;
-    const targets = watchTargets(build);
-    for (const [key, watcher] of watchers)
-      if (!targets.has(key)) {
-        watcher.close();
-        watchers.delete(key);
-      }
-    for (const [key, accept] of targets) {
+    if (options.watch === false || closed) return;
+    // Kept even when a later build lacks one, as a build with a package missing mid-reinstall
+    // does: the directory's next files rebuild, and the build that finds them again.
+    for (const [key, accept] of watchTargets(build)) wanted.set(key, accept);
+    for (const key of wanted.keys()) {
       if (watchers.has(key)) continue;
       const dir = key.slice(2);
+      // The directory itself, which a watcher follows even through a rename.
+      const identity = statSync(dir, { throwIfNoEntry: false, bigint: true })?.ino;
+      if (identity === undefined) {
+        gone.add(key);
+        continue;
+      }
       try {
         const watcher = watch(dir, { recursive: key.startsWith('r:') }, (_event, name) => {
-          if (name && accept(String(name))) changed(join(dir, String(name)));
+          if (name && wanted.get(key)?.(String(name))) changed(join(dir, String(name)));
         });
-        watcher.on('error', (error) => {
-          log(`warning: stopped watching ${dir}: ${error.message}`);
-          watcher.close();
-          watchers.delete(key);
-        });
+        watcher.on('error', () => lose(key, watcher));
         watchers.set(key, watcher);
+        identities.set(key, identity);
+        // Back after it went away: rebuild with what it holds now.
+        if (gone.delete(key)) {
+          log(`${dir} is back`);
+          changed(dir);
+        }
       } catch (error) {
         log(
           `warning: cannot watch ${dir}: ${error instanceof Error ? error.message : String(error)}`,
@@ -300,6 +314,34 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
       }
     }
   }
+
+  /** A watched directory was deleted or replaced: rebuild, and watch it again once it is back. */
+  function lose(key: string, watcher: FSWatcher) {
+    if (watchers.get(key) !== watcher) return;
+    watcher.close();
+    watchers.delete(key);
+    identities.delete(key);
+    gone.add(key);
+    log(`warning: ${key.slice(2)} went away; watching for it to come back`);
+    changed(key.slice(2));
+    rewatch(current);
+  }
+
+  // Not every change has an event: Windows reports none for a watched directory renamed away
+  // (npm moves a package aside before writing the new one), and a swapped symlink has none.
+  const poll =
+    options.watch === false
+      ? undefined
+      : setInterval(() => {
+          for (const [key, watcher] of watchers)
+            if (
+              statSync(key.slice(2), { throwIfNoEntry: false, bigint: true })?.ino !==
+              identities.get(key)
+            )
+              lose(key, watcher);
+          if (gone.size) rewatch(current);
+        }, 500);
+  poll?.unref();
 
   const broadcast = (event: UpdateEvent) => {
     const text = `event: update\ndata: ${JSON.stringify(event)}\n\n`;
@@ -399,6 +441,7 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
     async close() {
       closed = true;
       clearTimeout(timer);
+      clearInterval(poll);
       for (const watcher of watchers.values()) watcher.close();
       watchers.clear();
       await running.catch(() => {});

@@ -4474,3 +4474,16 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Check | Command | Result |
 | --- | --- | --- |
 | e2e | `node ../oddkin-lanes/tools/e2e-when-free.mjs 3 <out> e2e/docs.spec.ts e2e/docs-site.spec.ts --project=<engine> --workers=1 --reporter=list`, one engine at a time (about 470 MB free) | WebKit: 15 passed (2.6 min). Firefox: 15 passed (3.9 min). Chromium: 15 passed (1.6 min) |
+
+### 2026-10-30 — Workbench watch mode through renames and deletions; landing without foundations (P0.3, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The server by hand | `node .tmp/watch-diag2.mjs` (an Acme project: `@acme/ui` deleted, copied back, edited, renamed aside, replaced, edited) | Deleted: a rebuild 175 ms later reports `node.package.missing`; the identity check logs "went away" about 0.5 s after the deletion. Copied back: "is back" within 0.5 s, then a rebuild with its 5 pages. Renamed aside and replaced: "went away" and "is back" in the same check. Both edits were served |
+| Node tests | `npx vitest run --project node packages/workbench/test/node-server.test.ts` (3 runs), then every node project | 8 of 8 in each run, with new tests: the configuration renamed away and back; the package deleted and installed again; renamed aside and replaced; a watcher's error (emitted through a wrapped `fs.watch`). Every node project: 1,514 passed and 2 failed (the examples tests Agent 1 fixed in 7121309). After rebasing onto it and rebuilding: those and Workbench's, 141 of 141 |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutants-watch2.json`; `.tmp/mutants-landing.json` | 6 of 6 killed: a watcher's error only closing it; only the latest build's directories watched; no rebuild when a directory is back; a directory that went away never watched again; no identity check; no rebuild when a directory goes away. 1 of 1 for the landing (the first primary destination even without content). The tests first let the old watcher's last events mask four of them, so they now wait until the server has logged that the directory went away |
+| Browser tests, 3 engines | `node ../oddkin-lanes/tools/browser-set.mjs` with the shell and card-preview tests | 12 of 12 in each engine |
+| E2E, 3 engines | `e2e/workbench.spec.ts` and `e2e/workbench-static.spec.ts` under the E2E lock: Chromium with the default workers, Firefox and WebKit with `--workers=1` | 26 of 26 in each engine. The day before, the same specs with several workers in Firefox and WebKit gave 42 failures, all page.goto, newPage, and setup timeouts, at about 500 MB free memory |
+| Types, lint, size | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Pass; pass; workbench-shell 52,207 B of 54,272, workbench-theme-studio 4,852 of 5,632 |
+
+**Not verified:** the packed project's spec (it runs `workbench dev` but no watch scenario), and Linux, where inotify follows a renamed directory; CI runs the server test there.

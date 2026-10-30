@@ -219,7 +219,7 @@ export default defineWorkbenchConfig({
 ## 11. Standard-CEM-only libraries
 
 - Components catalog and component detail pages work at the documented baseline.
-- Foundations shows only what a supplied Oddkin theme config, token files, or explicit adapter provides; otherwise the Foundations destination shows a single explanatory "No foundation data supplied" page with setup guidance, not empty tables. Unknown foundation data is never invented.
+- Foundations shows only what a supplied Oddkin theme config, token files, or explicit adapter provides; otherwise the Foundations destination shows a single explanatory "No foundation data supplied" page with setup guidance, not empty tables, and the base URL opens Components instead (2026-10-30). Unknown foundation data is never invented.
 
 ## 12. Acceptance (Workbench pages)
 

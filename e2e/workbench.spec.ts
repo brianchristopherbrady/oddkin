@@ -514,7 +514,11 @@ test.describe('Workbench live updates', () => {
         { value: 'Edited limitation.', provenance: 'authored' },
       ];
       writeFileSync(file, JSON.stringify(metadata));
-      await expect(page.locator('#known-limitations')).toContainText('Edited limitation.');
+      // The rebuild can outlast the default 5 s while other engines run theirs (Firefox,
+      // 2026-10-29; 4 of 4 alone).
+      await expect(page.locator('#known-limitations')).toContainText('Edited limitation.', {
+        timeout: 20_000,
+      });
       expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
 
       // The shell page changes (its title comes from branding): the document reloads. Wait for
@@ -549,7 +553,8 @@ test.describe('Workbench live updates', () => {
       expect(src).toContain('generation=1');
       await page.evaluate(() => ((window as unknown as { marker: number }).marker = 1));
 
-      // A dependency's module changed: a fresh frame document loads the new code.
+      // A dependency's module changed: a fresh frame document loads the new code. The rebuild
+      // takes longer than the default 5 s on a busy machine (WebKit, 2026-10-29).
       writeFileSync(
         join(dir, 'node_modules', '@acme', 'icons', 'index.js'),
         "export const icon = '◆';\n",
@@ -557,6 +562,7 @@ test.describe('Workbench live updates', () => {
       await expect(page.locator('oddkin-workbench-component iframe')).toHaveAttribute(
         'src',
         /generation=2/,
+        { timeout: 20_000 },
       );
       await expect(frame.locator('acme-button')).toHaveText('◆', { timeout: 20_000 });
       expect(await page.evaluate(() => (window as unknown as { marker?: number }).marker)).toBe(1);
