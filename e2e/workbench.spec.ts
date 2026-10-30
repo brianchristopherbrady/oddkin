@@ -118,12 +118,20 @@ test.describe('Workbench shell', () => {
     expect(await page.evaluate(() => customElements.get('odd-button') === undefined)).toBe(true);
     // Outside the tab order: the card's link stays its only stop.
     await expect(button.locator('.wb-card-frame')).toHaveJSProperty('inert', true);
+    // A filter takes the card out and back, which reloads its frame's document: it loads again.
+    const search = page.locator('.wb-catalog-filters input');
+    await search.fill('zzzz');
+    await expect(page.locator('odd-card.wb-card')).toHaveCount(0);
+    await search.fill('');
+    await expect(element).toHaveText('Save', { timeout: 20_000 });
     // Frames load as their cards near the view, so the far cards have none yet. Cards scrolled
-    // past before their turn drop out of the queue, so the last one loads after those in flight.
+    // past before their turn drop out of the queue, so the last one loads after those in flight,
+    // and at most twelve frames are kept: those of cards out of view longest go first.
     const hosts = page.locator('.wb-card-frame');
     expect(await hosts.locator('iframe').count()).toBeLessThan(await hosts.count());
     await hosts.last().scrollIntoViewIfNeeded();
     await expect(hosts.last().locator('iframe')).toHaveCount(1, { timeout: 30_000 });
+    expect(await hosts.locator('iframe').count()).toBeLessThanOrEqual(12);
     // Leaving the catalog removes them.
     await page
       .getByRole('navigation', { name: 'Primary' })
