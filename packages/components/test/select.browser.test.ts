@@ -47,6 +47,36 @@ const transitioned = (el: Element) =>
   Promise.all(el.getAnimations().map((animation) => animation.finished));
 const inset = () => parseFloat(themeValue('margin-left', '--odd-control-padding-inline-md'));
 
+/**
+ * The space above and below the text the select draws, in device pixels: the rows of a screenshot
+ * of the select with dark pixels left of the chevron, its border rows left out. The engine draws
+ * the chosen option's text where no element can be measured.
+ */
+async function textGaps(select: HTMLSelectElement) {
+  const shot = await page.screenshot({ element: select, save: false });
+  const image = await createImageBitmap(
+    await (await fetch(`data:image/png;base64,${shot}`)).blob(),
+  );
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const context = canvas.getContext('2d', { willReadFrequently: true })!;
+  context.drawImage(image, 0, 0);
+  const { data, width, height } = context.getImageData(0, 0, image.width, image.height);
+  const border = Math.ceil(2 * devicePixelRatio);
+  const rows: number[] = [];
+  for (let y = border; y < height - border; y++)
+    for (let x = 3 * border; x < width * 0.6; x++) {
+      const i = (y * width + x) * 4;
+      if (0.2126 * data[i]! + 0.7152 * data[i + 1]! + 0.0722 * data[i + 2]! < 150) {
+        rows.push(y);
+        break;
+      }
+    }
+  expect(rows.length).toBeGreaterThan(0);
+  return { above: rows[0]!, below: height - 1 - rows.at(-1)! };
+}
+
 // The customizable select: Chromium and WebKit here; Firefox draws its own picker.
 const enhanced = CSS.supports('(appearance: base-select) and selector(::picker(select))');
 // WebKit draws a `base-select` select in a shadow root styled but reports unstyled computed
@@ -315,6 +345,13 @@ describe('odd-select', () => {
     expect(getComputedStyle(part(el, 'label')).color).toBe(
       themeValue('color', '--odd-color-text-disabled'),
     );
+  });
+
+  it('keeps the chosen option’s text in the middle of the field', async () => {
+    const { el } = await mount();
+    const { above, below } = await textGaps(control(el));
+    // Chromium lays a `base-select` box's content at its top unless the select centres it.
+    expect(Math.abs(above - below)).toBeLessThanOrEqual(2 * devicePixelRatio);
   });
 
   it.runIf(enhanced)(

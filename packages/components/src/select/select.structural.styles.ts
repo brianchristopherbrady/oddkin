@@ -3,10 +3,12 @@ import { css } from '@oddkin/core/styles';
 /**
  * The select is a block; its field layout is the shared `fieldStructuralStyles`. Where
  * `appearance: base-select` and `::picker(select)` are supported, the select and its picker opt
- * into the customizable select: the engine's arrow gives way to the element's chevron and each
- * option's check moves to the row's end, as on the option rows. Rows size their borders in; a
- * placeholder stays out of the open picker; in forced colours the chosen option and disabled text
- * keep system colours, as on the option rows. No brand tokens.
+ * into the customizable select: the engine's arrow gives way to the element's chevron, the chosen
+ * option's text stays in the middle of the field as in a native select (Chromium lays a
+ * `base-select` box's content at its top), and each option's check moves to the row's end, as on
+ * the option rows. Rows size their borders in; a placeholder stays out of the open picker; in
+ * forced colours the chosen option and disabled text keep system colours, as on the option rows.
+ * No brand tokens.
  */
 export const selectStructuralStyles = css`
   :host {
@@ -16,6 +18,9 @@ export const selectStructuralStyles = css`
     .control-box > select.control,
     .control::picker(select) {
       appearance: base-select;
+    }
+    .control-box > select.control {
+      align-items: center;
     }
     .control option {
       box-sizing: border-box;

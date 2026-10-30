@@ -227,7 +227,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/scroll-region/scroll-region.styles.js (scrollRegionStyles)` | yes | 0 |
 | `packages/components/dist/segmented-control/segmented-control.structural.styles.js (segmentedControlStructuralStyles)` | yes | 37 |
 | `packages/components/dist/segmented-control/segmented-control.styles.js (segmentedControlStyles)` | yes | 25 |
-| `packages/components/dist/select/select.structural.styles.js (selectStructuralStyles)` | yes | 23 |
+| `packages/components/dist/select/select.structural.styles.js (selectStructuralStyles)` | yes | 25 |
 | `packages/components/dist/select/select.styles.js (selectStyles)` | yes | 11 |
 | `packages/components/dist/side-nav/side-nav.recipe.styles.js (sideNavRecipeStyles)` | yes | 23 |
 | `packages/components/dist/side-nav/side-nav.structural.styles.js (sideNavStructuralStyles)` | yes | 26 |
