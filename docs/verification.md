@@ -4346,3 +4346,15 @@ The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workben
 | Types, lint, size, kits | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs`; `node scripts/agent-kit/package-kits.mjs --check` | Pass; pass; component panel 31,131 B of 32,768, catalog panel 17,823 of 18,432, shell 54,327 of 55,296, frame 7,147 of 7,680; pass after regenerating (the kits are generated from the metadata) |
 
 **Not verified:** the registry smoke (`ODDKIN_CONSUMERS_FROM`), which does not run this spec; the published 1.0.0-beta.0 has neither fix.
+
+## 2026-10-29 — Every catalog card shows a live example (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `node .tmp/catalog-inventory3.mjs` (Chromium, 1440 × 900) | 18 of 54 cards empty: command palette, menu, split button, toolbar, skeleton (0 × 64: no width), checkbox group, validation summary, container, scroll region, split panel, carousel, tab panel, tabs, dialog, drawer, popover, toast, tooltip |
+| After | `node .tmp/catalog-check.mjs chromium`, `firefox`, `webkit` | 54 of 54 cards draw an example in each engine; no page errors. WebKit logs 5 "Refused to apply a stylesheet" console errors on the catalog, as before this change (4 before, and a blocked `data:` image) |
+| Look | `node .tmp/catalog-check.mjs chromium --shots` (12 groups) | Menu "Project actions", split button "Save" and its menu button, toolbar Filter, Export, New item, tabs and tab panel, carousel slides stacked by their layout classes, fields at the card's width; overlays show the control that opens them (Rename, Send invitation, Copy link, Search commands) |
+| Reference pages | `node .tmp/example-cards.mjs` (Chromium, 78 component pages) | 230 of 230 example cards draw a specimen. 3 console errors: the docs' `img-src 'self'` refuses the `data:` SVGs of the icon and segmented-control examples (not from this change) |
+| Still to fix (components) | `node .tmp/segmented.mjs` | odd-segmented-control's default example wraps "Medium" mid-word in its own frame too (its label span is 57 × 39, `overflow-wrap: anywhere`); vertical odd-tabs labels break the same way in a narrow card |
+| Unit | `npx vitest run tests/docs` | 25 passed |
+| e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, three engines | Docs e2e, one engine at a time (another worktree's Firefox browser tests running, 585-1,000 MB free): Chromium 15 passed (2.2 min), Firefox 15 passed (4.1 min), WebKit 15 passed (3.5 min). The catalog walk took 60 s, 108 s, and 108 s (Chromium on the committed docs under the same load: 56 s); the new 'every catalog card shows a live example' 8-9 s. A three-engine run with two workers at that load timed out 5 tests (Firefox's and WebKit's shortest tests ran about 10 times slower than usual) |

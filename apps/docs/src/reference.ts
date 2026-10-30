@@ -1,3 +1,4 @@
+import { createScope } from '@oddkin/core/scope';
 import type { ComponentPageData, WorkbenchIndex } from '@oddkin/workbench/data';
 import type { PageEntry } from '@oddkin/workbench/pages';
 
@@ -69,16 +70,22 @@ interface ExampleValues {
   slots: Json;
 }
 
-/** An authored example's values, when it needs no fixture. */
-function exampleValues(example: Json | undefined): ExampleValues | undefined {
+/** An authored example's values (`definition`), with or without a fixture. */
+function definitionValues(example: Json | undefined): ExampleValues | undefined {
   const definition = isRecord(example?.['definition']) ? example['definition'] : undefined;
-  if (!definition || definition['hasFixture'] === true) return undefined;
+  if (!definition) return undefined;
   const record = (value: unknown) => (isRecord(value) ? value : {});
   return {
     attributes: record(definition['attributes']),
     properties: record(definition['props']),
     slots: record(definition['slots']),
   };
+}
+
+/** An authored example's values, when it needs no fixture. */
+function exampleValues(example: Json | undefined): ExampleValues | undefined {
+  const definition = isRecord(example?.['definition']) ? example['definition'] : undefined;
+  return definition?.['hasFixture'] === true ? undefined : definitionValues(example);
 }
 
 const incorrect = (example: Json) =>
@@ -94,16 +101,27 @@ const opensNothing = (values: ExampleValues | undefined) =>
 const defaultValues = (page: ComponentPageData) =>
   exampleValues(page.examples.find((entry) => entry['name'] === 'default'));
 
-/**
- * A catalog card's values: the `default` example, or else the first correct authored example
- * that needs no fixture (fixtures run only in the test runner) and opens nothing.
- */
-export const previewValues = (page: ComponentPageData) =>
-  defaultValues(page) ??
-  page.examples
-    .filter((example) => !incorrect(example))
-    .map(exampleValues)
-    .find(opensNothing);
+/** An example a preview draws: its name (for its fixture), values, and whether it has a fixture. */
+export interface PreviewExample {
+  readonly name: string;
+  readonly values: ExampleValues;
+  readonly fixture: boolean;
+}
+
+/** A correct example that opens nothing, as a preview draws it. */
+function previewable(example: Json | undefined): PreviewExample | undefined {
+  if (!example || incorrect(example)) return undefined;
+  const values = opensNothing(definitionValues(example));
+  const name = example['name'];
+  if (!values || typeof name !== 'string') return undefined;
+  const definition = example['definition'] as Json;
+  return { name, values, fixture: definition['hasFixture'] === true };
+}
+
+/** A catalog card's example: the `default` one, or else the first correct one that opens nothing. */
+export const previewExample = (page: ComponentPageData): PreviewExample | undefined =>
+  previewable(page.examples.find((example) => example['name'] === 'default')) ??
+  page.examples.map(previewable).find((example) => example !== undefined);
 
 /**
  * A component's example as an element (its `default` unless `values` are given): its registration
@@ -135,7 +153,29 @@ export async function exampleElement(
   return element;
 }
 
-/** Inert hosts, one per key, that build their content when they first scroll into view. */
+let componentSheets: CSSStyleSheet[] | undefined;
+
+/** Copies of the page's Oddkin component stylesheets (layout, type, buttons), for shadow roots. */
+function pageSheets(): CSSStyleSheet[] {
+  return (componentSheets ??= [...document.styleSheets]
+    .filter((sheet) => sheet.href?.includes('/@oddkin/components/css/'))
+    .map((sheet) => {
+      const copy = new CSSStyleSheet();
+      copy.replaceSync(
+        [...sheet.cssRules]
+          .filter((rule) => !(rule instanceof CSSImportRule))
+          .map((rule) => rule.cssText)
+          .join('\n'),
+      );
+      return copy;
+    }));
+}
+
+/**
+ * Inert hosts, one per key, that draw their content when they first scroll into view. Each draws
+ * in a shadow root with the page's component stylesheets: the panels that show the hosts keep
+ * them in shadow roots of their own, where the page's layout classes do not reach.
+ */
 function lazyHosts(className: string) {
   const hosts = new Map<string, HTMLElement>();
   const pending = new Map<Element, () => Promise<void>>();
@@ -148,22 +188,109 @@ function lazyHosts(className: string) {
       build().catch(reportError);
     }
   });
-  return (key: string, render: () => Promise<Node | undefined>): HTMLElement => {
+  return (
+    key: string,
+    draw: (host: HTMLElement, root: ShadowRoot) => Promise<void>,
+  ): HTMLElement => {
     let host = hosts.get(key);
     if (!host) {
       const created = document.createElement('div');
       created.className = className;
       created.inert = true;
+      // Words break as on a page, not anywhere as in the card around the preview.
+      created.style.overflowWrap = 'normal';
+      const root = created.attachShadow({ mode: 'open' });
+      root.adoptedStyleSheets = pageSheets();
       hosts.set(key, created);
-      pending.set(created, async () => {
-        const element = await render();
-        if (element) created.replaceChildren(element);
-      });
+      pending.set(created, () => draw(created, root));
       observer.observe(created);
       host = created;
     }
     return host;
   };
+}
+
+interface ExampleModule {
+  readonly default?: {
+    readonly examples?: Readonly<
+      Record<string, { readonly fixture?: (context: object) => unknown } | undefined>
+    >;
+  };
+  /** `render` from `@oddkin/core/template`, which Workbench adds to the module it serves. */
+  readonly oddkinFrameRender?: (content: unknown, host: Element) => unknown;
+}
+
+/**
+ * Runs an example's fixture as a preview frame does, beside `element` in `root`. A preview is a
+ * still picture: the fixture's listeners and timers stop once it has drawn.
+ */
+async function runFixture(
+  page: ComponentPageData,
+  name: string,
+  element: HTMLElement,
+  root: ShadowRoot,
+): Promise<void> {
+  if (!page.exampleModule) return;
+  const module = (await import(page.exampleModule)) as ExampleModule;
+  const fixture = module.default?.examples?.[name]?.fixture;
+  if (typeof fixture !== 'function') return;
+  const scope = createScope({ name: `docs-preview:${page.tag}` });
+  try {
+    await fixture({
+      scope,
+      element,
+      mount(content: unknown) {
+        const box = document.createElement('div');
+        root.append(box);
+        if (content instanceof Node) box.append(content);
+        else module.oddkinFrameRender?.(content, box);
+        return box.firstElementChild ?? box;
+      },
+    });
+    await (element as HTMLElement & { updateComplete?: Promise<unknown> }).updateComplete;
+  } finally {
+    scope.dispose();
+  }
+  // A preview never opens an overlay over the page, even one its setup opens.
+  if (Reflect.get(element, 'open') === true) Reflect.set(element, 'open', false);
+}
+
+/** Fields and block layouts take the card's width: centred at their own, some would not show. */
+const FILL = new Set(
+  [
+    'input',
+    'textarea',
+    'select',
+    'combobox',
+    'slider',
+    'progress',
+    'date-picker',
+    'color-picker',
+    'file-input',
+    'skeleton',
+    'carousel',
+    'container',
+    'empty-state',
+    'scroll-region',
+    'split-panel',
+    'tabs',
+    'tab-panel',
+    'validation-summary',
+  ].map((name) => `odd-${name}`),
+);
+
+/** Draws an example in `root`: its element, then what its fixture sets up. */
+async function drawExample(
+  page: ComponentPageData,
+  example: PreviewExample,
+  host: HTMLElement,
+  root: ShadowRoot,
+): Promise<void> {
+  const element = await exampleElement(page, { values: example.values });
+  if (!element) return;
+  if (FILL.has(page.tag)) host.style.inlineSize = '100%';
+  root.replaceChildren(element);
+  if (example.fixture) await runFixture(page, example.name, element, root);
 }
 
 /**
@@ -174,22 +301,29 @@ export function catalogPreviews(index: WorkbenchIndex): (entry: PageEntry) => No
   const host = lazyHosts('catalog-preview');
   return (entry) =>
     entry.kind === 'component'
-      ? host(entry.id, async () => {
+      ? host(entry.id, async (into, root) => {
           const page = await loadComponent(index, entry.id.replace(/^components\//, ''));
-          const values = page && previewValues(page);
-          return page && values ? exampleElement(page, { values }) : undefined;
+          const example = page && previewExample(page);
+          if (page && example) await drawExample(page, example, into, root);
         })
       : undefined;
 }
 
 /**
  * Specimens for the example cards of a reference page (`example:<tag>/<name>`): the example's
- * element, for examples that need no fixture and open nothing; other cards show no specimen.
+ * element and what its fixture sets up, for correct examples that open nothing; an incorrect
+ * example shows one only when it needs no fixture.
  */
 export function examplePreviews(): (page: ComponentPageData, id: string) => Node | undefined {
   const host = lazyHosts('example-preview');
   return (page, id) => {
-    const values = opensNothing(exampleValues(page.examples.find((e) => e['id'] === id)));
-    return values ? host(id, () => exampleElement(page, { values })) : undefined;
+    const entry = page.examples.find((e) => e['id'] === id);
+    const values = opensNothing(exampleValues(entry));
+    const example =
+      previewable(entry) ??
+      (values && typeof entry?.['name'] === 'string'
+        ? { name: entry['name'], values, fixture: false }
+        : undefined);
+    return example ? host(id, (into, root) => drawExample(page, example, into, root)) : undefined;
   };
 }

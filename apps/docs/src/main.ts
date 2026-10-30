@@ -285,6 +285,7 @@ function componentMeta(page: ComponentPageData): HTMLElement {
 }
 
 let examplePreview: ReturnType<typeof examplePreviews> | undefined;
+let catalogPreview: ReturnType<typeof catalogPreviews> | undefined;
 
 function componentPanel(
   index: WorkbenchIndex,
@@ -320,14 +321,14 @@ function renderComponents(main: HTMLElement, index: WorkbenchIndex, filter: Cata
     pageHeader(
       'Reference',
       'Component catalog',
-      'Every published component, with a live example where one needs no setup script. Each reference page has the full API, an interactive example, and the generated code.',
+      'Every published component, with a live example. Each reference page has the full API, an interactive example, and the generated code.',
     ),
   );
   const panel = document.createElement('oddkin-catalog-panel');
   panel.index = index;
   panel.href = panelHref;
   panel.groups = catalogGroups(index);
-  panel.preview = catalogPreviews(index);
+  panel.preview = catalogPreview ??= catalogPreviews(index);
   panel.query = filter.query;
   panel.category = filter.category;
   // The panel updates itself; the URL follows without a new history entry or a re-render.

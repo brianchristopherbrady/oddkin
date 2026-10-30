@@ -340,3 +340,28 @@ test('a live example runs its setup script', async ({ page }) => {
     0,
   );
 });
+
+test('every catalog card shows a live example', async ({ page }) => {
+  await page.goto(`${docs}/components`);
+  await expect(page.getByText(/Showing \d+ of \d+ components/)).toBeVisible({
+    timeout: catalogLoad,
+  });
+  const previews = page.locator('oddkin-catalog-panel .catalog-preview');
+  const count = await previews.count();
+  expect(count).toBeGreaterThan(50);
+  for (let i = 0; i < count; i++) {
+    const preview = previews.nth(i);
+    // A preview draws when it scrolls into view, running its example's fixture if it has one.
+    const card = await preview.evaluate((host) => {
+      host.scrollIntoView({ block: 'center' });
+      const link = host.closest('article, li')?.querySelector('a[href*="/components/"]');
+      return link?.getAttribute('href')?.split('/').pop();
+    });
+    await expect
+      .poll(() => preview.evaluate((host) => host.shadowRoot?.childElementCount ?? 0), {
+        message: `the ${card ?? `card ${i + 1}`} card draws its example`,
+        timeout: catalogLoad,
+      })
+      .toBeGreaterThan(0);
+  }
+});

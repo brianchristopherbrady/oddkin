@@ -10,7 +10,7 @@ import {
   renderDocument,
   renderPage,
 } from '../../apps/docs/src/pages/index.js';
-import { previewValues } from '../../apps/docs/src/reference.js';
+import { previewExample } from '../../apps/docs/src/reference.js';
 
 // The authored docs pages (apps/docs/src/pages) as the docs server renders them: every internal
 // link reaches a page, every fact is generated, and every code sample says how it is verified
@@ -336,24 +336,28 @@ describe('the docs shell', async () => {
 describe('catalog previews', () => {
   const example = (name: string, definition: Record<string, unknown>) => ({ name, definition });
   const page = (...examples: ReturnType<typeof example>[]) =>
-    ({ examples }) as unknown as Parameters<typeof previewValues>[0];
+    ({ examples }) as unknown as Parameters<typeof previewExample>[0];
 
-  it('use the default example, or else the first correct one that needs no fixture and opens nothing', () => {
+  it('use the default example, or else the first correct one that opens nothing, fixture or not', () => {
     const options = { props: { options: [{ value: 'a', label: 'A' }] } };
-    expect(previewValues(page(example('default', { props: { label: 'Role' } })))).toEqual({
-      attributes: {},
-      properties: { label: 'Role' },
-      slots: {},
+    expect(previewExample(page(example('default', { props: { label: 'Role' } })))).toEqual({
+      name: 'default',
+      values: { attributes: {}, properties: { label: 'Role' }, slots: {} },
+      fixture: false,
     });
-    const fallback = previewValues(
+    expect(previewExample(page(example('default', { hasFixture: true })))).toMatchObject({
+      name: 'default',
+      fixture: true,
+    });
+    const fallback = previewExample(
       page(
-        example('default', { hasFixture: true }),
+        example('default', { props: { open: true } }),
         example('wrong', { ...options, incorrect: { explanation: 'No.' } }),
-        example('open', { props: { open: true } }),
-        example('fromData', options),
+        example('fromData', { ...options, hasFixture: true }),
       ),
     );
-    expect(fallback?.properties).toEqual(options.props);
-    expect(previewValues(page(example('default', { hasFixture: true })))).toBeUndefined();
+    expect(fallback).toMatchObject({ name: 'fromData', fixture: true });
+    expect(fallback?.values.properties).toEqual(options.props);
+    expect(previewExample(page(example('open', { props: { open: true } })))).toBeUndefined();
   });
 });
