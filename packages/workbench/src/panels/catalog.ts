@@ -11,7 +11,8 @@ import type { WorkbenchIndex } from '../data/types.js';
 import type { PageEntry } from '../pages/types.js';
 import { overviewBody, type ViewContext } from '../app/views.js';
 import type { StyleInput } from '@oddkin/core/styles';
-import { catalogLayoutStyles, catalogStyles } from './catalog-styles.js';
+import { catalogLayoutStyles } from './catalog-layout-styles.js';
+import { catalogStyles } from './catalog-styles.js';
 import { contentStyles, panelHostStyles } from './styles.js';
 
 export interface CatalogFilterDetail {

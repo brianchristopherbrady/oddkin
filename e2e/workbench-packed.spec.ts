@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, request, test, type Page } from '@playwright/test';
 
 // Workbench from packed packages (priority plan P0.3, M12; scripts/workbench-consumer.mjs). A
@@ -134,6 +135,45 @@ test.describe('the dev server of a fresh project', () => {
     await open(page, `${report.dev}components/odd-input`, 'Input');
     await preview(page).locator('odd-input input').fill('hello', { timeout: 30_000 });
     await expect(page.locator('.wb-log li').first()).toContainText('input');
+  });
+
+  test("Theme Studio loads the project's theme, previews it light and dark, and exports an edit", async ({
+    page,
+  }) => {
+    const errors = pageErrors(page);
+    await open(page, `${report.dev}theme-studio`, 'Theme Studio');
+    // The theme `oddkin-tokens init` wrote, named by the project's oddkin.config.ts.
+    await expect(page.locator('#generate')).toContainText('Draft of ./oddkin.theme.json');
+    await expect(page.locator('#live-preview .wb-status')).toContainText('Generated in', {
+      timeout: 30_000,
+    });
+    const frames = page.frameLocator('oddkin-workbench-theme-studio iframe');
+    for (const [i, mode] of ['light', 'dark'].entries())
+      await expect(frames.nth(i).locator('[data-oddkin-preview]')).toHaveAttribute(
+        'data-odd-mode',
+        mode,
+      );
+    // The packed components' examples claim the specimen roles through the published metadata.
+    const action = frames.nth(0).locator('figure[data-role="primaryAction"] > :last-child');
+    const background = () =>
+      action.evaluate(
+        (el) => getComputedStyle(el.shadowRoot?.querySelector('button') ?? el).backgroundColor,
+      );
+    const before = await background();
+
+    await page.getByLabel('Brand primary').focus();
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.type('#0a7d33');
+    await page.keyboard.press('Tab');
+    await expect.poll(background, { timeout: 30_000 }).not.toBe(before);
+    const config = page.getByRole('button', { name: 'Download oddkin.theme.json' });
+    await expect(config).toBeEnabled();
+    const [file] = await Promise.all([page.waitForEvent('download'), config.press('Enter')]);
+    expect(JSON.parse(readFileSync(await file.path(), 'utf8'))).toMatchObject({
+      name: 'default',
+      brand: { primary: '#0a7d33' },
+    });
+    expect(errors).toEqual([]);
   });
 
   test('documents a standard-CEM library: its preview, every control, the events log, and Reset', async ({

@@ -21,6 +21,8 @@ import {
 import type { FrameSpecimenItem } from '../protocol/index.js';
 import { contentStyles, panelHostStyles } from './styles.js';
 import {
+  exportBlocked,
+  exportNames,
   fieldValue,
   parseDraft,
   pathText,
@@ -48,6 +50,11 @@ export class ThemeStudioElement extends OddkinElement.with({
     text: '',
     alert: false,
   });
+  /** From a draft's request until its result: a delivered result is always the newest draft's. */
+  readonly #pending = signal(false);
+  /** Why the generator cannot run, or ''. */
+  readonly #unavailable = signal('');
+  readonly #exported = signal('');
   readonly #hosts: readonly [HTMLDivElement, HTMLDivElement];
   #previews: IsolatedPreview[] = [];
   #generation: ThemeGeneration | undefined;
@@ -108,6 +115,9 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#jsonError.value = '';
     this.#result.value = undefined;
     this.#status.value = { text: '', alert: false };
+    this.#pending.value = false;
+    this.#unavailable.value = '';
+    this.#exported.value = '';
     if (!page || !studio?.config || !studio.worker) return;
     const scope = createScope({ name: 'workbench-theme-studio' });
     this.#studioScope = scope;
@@ -116,10 +126,12 @@ export class ThemeStudioElement extends OddkinElement.with({
       scope,
       (result) => this.#apply(result),
       (message) => {
+        this.#unavailable.value = message;
         this.#status.value = { text: `Generation unavailable: ${message}`, alert: true };
       },
     );
     if (frameUrl && studio.roles.length) this.#specimens(scope, page, frameUrl);
+    this.#pending.value = true;
     this.#generation.request(studio.config);
   }
 
@@ -163,6 +175,7 @@ export class ThemeStudioElement extends OddkinElement.with({
 
   /** A valid result replaces the specimens' theme sheet; an invalid one keeps the last valid. */
   #apply(result: GenerationResult): void {
+    this.#pending.value = false;
     this.#result.value = result;
     if (!result.ok || result.css === undefined) return;
     this.#css = result.css;
@@ -178,7 +191,61 @@ export class ThemeStudioElement extends OddkinElement.with({
       this.#json.value = JSON.stringify(draft, null, 2);
       this.#jsonError.value = '';
     }
+    this.#exported.value = '';
+    if (this.#generation) this.#pending.value = true;
     this.#generation?.request(draft);
+  }
+
+  #blocked(): string {
+    return exportBlocked({
+      generator: !!this.page?.studio.worker,
+      jsonError: !!this.#jsonError.value,
+      unavailable: this.#unavailable.value,
+      pending: this.#pending.value,
+      ok: this.#result.value?.ok,
+    });
+  }
+
+  /** Download the draft shown: its configuration, or the CSS generated from it. */
+  #export(kind: 'config' | 'css'): void {
+    const css = this.#result.peek()?.css;
+    if (this.#blocked() || css === undefined) return;
+    const names = exportNames(this.page?.studio.source);
+    const [name, type, text] =
+      kind === 'config'
+        ? [names.config, 'application/json', `${JSON.stringify(this.#draft.peek(), null, 2)}\n`]
+        : [names.css, 'text/css', css];
+    const doc = this.ownerDocument;
+    const link = doc.createElement('a');
+    link.href = URL.createObjectURL(new Blob([text], { type }));
+    link.download = name;
+    doc.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    this.#exported.value = `Downloaded ${name}.`;
+  }
+
+  #exportSection(source: string | undefined) {
+    const blocked = this.#blocked();
+    const names = exportNames(source);
+    const button = (kind: 'config' | 'css', name: string) =>
+      html`<button
+        type="button"
+        ?disabled=${!!blocked}
+        aria-describedby="ts-export-note"
+        @click=${() => this.#export(kind)}
+      >
+        Download ${name}
+      </button>`;
+    return html`<section id="export" aria-labelledby="export-title">
+      <h2 id="export-title">Export</h2>
+      <div class="wb-toolbar">${button('config', names.config)} ${button('css', names.css)}</div>
+      <p id="ts-export-note" class="wb-muted">
+        ${blocked || 'The draft shown: its configuration, and the CSS generated from it.'}
+      </p>
+      <p class="wb-status" role="status">${this.#exported.value}</p>
+    </section>`;
   }
 
   #field(field: ThemeField) {
@@ -369,6 +436,7 @@ export class ThemeStudioElement extends OddkinElement.with({
             : nothing
         }
       </section>
+      ${draft === undefined ? nothing : this.#exportSection(studio.source)}
       <section id="method" aria-labelledby="method-title">
         <h2 id="method-title">Method and limits</h2>
         <p>

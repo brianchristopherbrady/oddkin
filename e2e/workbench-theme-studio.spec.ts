@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 
 // Theme Studio on the Workbench dev server (port 4175; tests/fixtures/workbench-oddkin sets
@@ -116,5 +117,45 @@ test.describe('Theme Studio', () => {
     // Baseline + the first edit run; the next three are superseded before they run.
     expect(stats['sent']).toBeLessThan(1 + values.length);
     expect(stats['superseded']).toBeGreaterThan(0);
+  });
+
+  test('exports the draft it shows, by keyboard, once that draft is generated', async ({
+    page,
+  }) => {
+    // Edit by keyboard: the change applies when the field loses focus.
+    await page.locator('input[data-path="/overrides/color.action.default/light"]').focus();
+    await page.keyboard.press('ControlOrMeta+a');
+    await page.keyboard.type('#0a7d33');
+    await page.keyboard.press('Tab');
+    await expect.poll(async () => (await primary(page, 0)).background).toBe('rgb(10, 125, 51)');
+
+    const config = page.getByRole('button', { name: 'Download default.theme.json' });
+    const css = page.getByRole('button', { name: 'Download default.theme.css' });
+    await config.focus();
+    const [file] = await Promise.all([page.waitForEvent('download'), page.keyboard.press('Enter')]);
+    expect(file.suggestedFilename()).toBe('default.theme.json');
+    expect(JSON.parse(readFileSync(await file.path(), 'utf8'))).toMatchObject({
+      name: 'default',
+      overrides: { 'color.action.default': { light: '#0a7d33' } },
+    });
+    await expect(page.locator('#export [role="status"]')).toHaveText(
+      'Downloaded default.theme.json.',
+    );
+    await page.keyboard.press('Tab');
+    await expect(css).toBeFocused();
+    const [sheet] = await Promise.all([
+      page.waitForEvent('download'),
+      page.keyboard.press('Enter'),
+    ]);
+    expect(sheet.suggestedFilename()).toBe('default.theme.css');
+    expect(readFileSync(await sheet.path(), 'utf8')).toContain(
+      '--odd-color-action-default: var(--odd-mode-light, #0a7d33)',
+    );
+
+    // Text that does not parse is not the draft: nothing exports, and the page says why.
+    await page.locator('#ts-json').fill('{ "brand": ');
+    await expect(config).toBeDisabled();
+    await expect(css).toBeDisabled();
+    await expect(page.locator('#ts-export-note')).toContainText('The JSON has an error');
   });
 });

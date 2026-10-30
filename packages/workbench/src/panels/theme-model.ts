@@ -189,3 +189,31 @@ export function parseDraft(text: string): DraftParse {
     return { ok: false, message: error instanceof Error ? error.message : String(error) };
   }
 }
+
+/** Export file names for a draft loaded from `source`: `./oddkin.theme.json` → `oddkin.theme.*`. */
+export function exportNames(source: string | undefined): { config: string; css: string } {
+  const stem = (source?.split(/[\\/]/).pop() ?? '').replace(/\.(?:json|[cm]?[jt]s)$/i, '');
+  return { config: `${stem || 'theme'}.json`, css: `${stem || 'theme'}.css` };
+}
+
+/**
+ * Why the draft cannot be exported now, or '' when it can. An export is always the draft shown,
+ * once the generator has accepted it: never an older draft presented as the latest.
+ */
+export function exportBlocked(state: {
+  readonly generator: boolean;
+  /** The JSON editor's text does not parse, so the draft is not what it shows. */
+  readonly jsonError: boolean;
+  /** Why generation is unavailable, or ''. */
+  readonly unavailable: string;
+  /** A newer draft than the last result is being generated. */
+  readonly pending: boolean;
+  /** The last result's validity; undefined before the first. */
+  readonly ok: boolean | undefined;
+}): string {
+  if (!state.generator) return 'Export needs the theme generator (see Method and limits).';
+  if (state.jsonError) return 'The JSON has an error: fix it to export the draft shown.';
+  if (state.unavailable) return `Generation unavailable: ${state.unavailable}`;
+  if (state.pending || state.ok === undefined) return 'Generating the latest draft…';
+  return state.ok ? '' : 'This draft is invalid: fix it to export.';
+}

@@ -5,6 +5,8 @@ import { resolveWorkbenchConfig } from '../src/config/index.js';
 import { DiagnosticList } from '../src/internal/diagnostics.js';
 import { buildWorkbench, THEME_WORKER } from '../src/node/workbench.js';
 import {
+  exportBlocked,
+  exportNames,
   fieldValue,
   getPath,
   parseDraft,
@@ -106,6 +108,34 @@ describe('Theme Studio editor model', () => {
       ok: false,
       message: expect.stringContaining('object'),
     });
+  });
+
+  it("exports the draft shown under the theme file's name, only once it is generated", () => {
+    expect(exportNames('./oddkin.theme.json')).toEqual({
+      config: 'oddkin.theme.json',
+      css: 'oddkin.theme.css',
+    });
+    expect(exportNames('../../packages/tokens/themes/default.theme.json').css).toBe(
+      'default.theme.css',
+    );
+    expect(exportNames('C:\\themes\\brand.config.ts')).toEqual({
+      config: 'brand.config.json',
+      css: 'brand.config.css',
+    });
+    expect(exportNames(undefined)).toEqual({ config: 'theme.json', css: 'theme.css' });
+
+    const ready = { generator: true, jsonError: false, unavailable: '', pending: false, ok: true };
+    expect(exportBlocked(ready)).toBe('');
+    expect(exportBlocked({ ...ready, generator: false })).toContain('theme generator');
+    // The editor's text does not parse: the draft is not the one shown.
+    expect(exportBlocked({ ...ready, jsonError: true })).toContain('JSON has an error');
+    expect(exportBlocked({ ...ready, unavailable: 'no worker' })).toBe(
+      'Generation unavailable: no worker',
+    );
+    // A newer draft than the last result, or none yet: never an older draft as the latest.
+    expect(exportBlocked({ ...ready, pending: true })).toBe('Generating the latest draft…');
+    expect(exportBlocked({ ...ready, ok: undefined })).toBe('Generating the latest draft…');
+    expect(exportBlocked({ ...ready, ok: false })).toContain('invalid');
   });
 });
 

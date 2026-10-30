@@ -23,6 +23,7 @@ export const SOURCES = {
     'packages/workbench/src/app/styles.ts',
     'packages/workbench/src/panels/styles.ts',
     'packages/workbench/src/panels/catalog-styles.ts',
+    'packages/workbench/src/panels/catalog-layout-styles.ts',
     'packages/workbench/src/panels/example-styles.ts',
     'packages/workbench/src/node/html.ts',
   ],
@@ -76,10 +77,10 @@ export const EXCEPTIONS = [
       "the panels' content sheet, also adopted in their shadow roots (the docs embed them), where the document's layout.css does not reach; the helpers' runtime there would cost 5.4 KB gzip (measured 2026-10-26), so the arrangement stays structural CSS (shadow roots: the layout audit)",
   },
   {
-    file: 'packages/workbench/src/panels/catalog-styles.ts',
+    file: 'packages/workbench/src/panels/catalog-layout-styles.ts',
     selector: '*',
     reason:
-      "the catalog panel's arrangement in its shadow root (catalogLayoutStyles), for the same reason as the panels' content sheet; the shell arranges the same markup with layout classes",
+      "the catalog panel's arrangement in its shadow root, for the same reason as the panels' content sheet; the shell arranges the same markup with layout classes",
   },
   {
     file: 'packages/workbench/src/panels/example-styles.ts',
