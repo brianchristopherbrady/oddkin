@@ -50,7 +50,7 @@ export default defineExamples('odd-icon', {
     label: 'From a URL',
     props: { src: dot, label: 'Online' },
     guidance:
-      'An SVG file by URL is drawn in the current text colour; the page must allow the URL in `img-src`.',
+      "An SVG file by URL is drawn in the current text colour; the page must allow the URL in `img-src`. This `data:` URL needs `img-src data:`; a file on the page's own origin needs only `img-src 'self'`.",
   },
   altAttribute: {
     label: '"alt" instead of "label"',

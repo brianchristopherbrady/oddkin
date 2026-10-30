@@ -7,14 +7,11 @@ const sizes = (selected = true) =>
   html`<option value="sm">Small</option>
     <option value="md" ?selected=${selected}>Medium</option>
     <option value="lg">Large</option>`;
-const svg = (body: string) =>
-  `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"%3E${body}%3C/svg%3E`;
-const listIcon = svg(
-  '%3Crect x="3" y="4" width="14" height="2"/%3E%3Crect x="3" y="9" width="14" height="2"/%3E%3Crect x="3" y="14" width="14" height="2"/%3E',
-);
-const gridIcon = svg(
-  '%3Crect x="3" y="3" width="6" height="6"/%3E%3Crect x="11" y="3" width="6" height="6"/%3E%3Crect x="3" y="11" width="6" height="6"/%3E%3Crect x="11" y="11" width="6" height="6"/%3E',
-);
+// Spelled out, not built by a helper, so the published metadata carries this preset's values.
+const listIcon =
+  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"%3E%3Crect x="3" y="4" width="14" height="2"/%3E%3Crect x="3" y="9" width="14" height="2"/%3E%3Crect x="3" y="14" width="14" height="2"/%3E%3C/svg%3E';
+const gridIcon =
+  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"%3E%3Crect x="3" y="3" width="6" height="6"/%3E%3Crect x="11" y="3" width="6" height="6"/%3E%3Crect x="3" y="11" width="6" height="6"/%3E%3Crect x="11" y="11" width="6" height="6"/%3E%3C/svg%3E';
 
 export default defineExamples('odd-segmented-control', {
   default: {
@@ -56,7 +53,7 @@ export default defineExamples('odd-segmented-control', {
     },
     preset: true,
     guidance:
-      'An option with an `icon` shows the icon alone; its `label` stays its accessible name, so always give one.',
+      'An option with an `icon` shows the icon alone; its `label` stays its accessible name, so always give one. The icon is drawn from its URL, so the page must allow the URL in `img-src`: these `data:` URLs need `img-src data:`.',
   },
   small: {
     label: 'Small',

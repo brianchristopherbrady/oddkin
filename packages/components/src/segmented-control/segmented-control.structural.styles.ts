@@ -2,21 +2,23 @@ import { css } from '@oddkin/core/styles';
 
 /**
  * The control is a block; its label, description, and error use the shared field layout. The
- * track lines up equal segments; each segment stacks its radio, drawn as the segment's surface
- * (`appearance: none`), under its text, which lets pointer events through to the radio. No
- * brand tokens.
+ * track is a row of equal columns, each at least as wide as its option's longest word, so an
+ * option's text wraps between words, never inside one (a control sized to its content gets room
+ * for its widest option in every column). Each segment stacks its radio, drawn as the segment's
+ * surface (`appearance: none`), under its text, which lets pointer events through to the radio.
+ * No brand tokens.
  */
 export const segmentedControlStructuralStyles = css`
   :host {
     display: block;
   }
   .track {
-    display: flex;
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
   }
   .segment {
     display: grid;
-    flex: 1 1 0;
-    min-inline-size: 0;
     cursor: pointer;
   }
   .segment:has(:disabled) {
@@ -38,8 +40,8 @@ export const segmentedControlStructuralStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    min-inline-size: 0;
     text-align: center;
+    overflow-wrap: break-word;
     pointer-events: none;
   }
   @media (forced-colors: active) {

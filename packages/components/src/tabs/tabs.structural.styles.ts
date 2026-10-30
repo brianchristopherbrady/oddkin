@@ -2,7 +2,8 @@ import { css } from '@oddkin/core/styles';
 
 /**
  * A row of tabs above the panels (a column beside them when vertical); tabs wrap rather than
- * overflow. No brand or visual tokens.
+ * overflow. A vertical list takes up to 40% of the width, and at least its longest word, so tab
+ * labels wrap between words. No brand or visual tokens.
  */
 export const tabsStructuralStyles = css`
   :host {
@@ -54,7 +55,11 @@ export const tabsStructuralStyles = css`
     flex: none;
     flex-direction: column;
     flex-wrap: nowrap;
+    min-inline-size: min-content;
     max-inline-size: 40%;
+  }
+  :host([orientation='vertical']) .tab {
+    overflow-wrap: break-word;
   }
   :host([orientation='vertical']) .panel {
     flex: 1 1 auto;

@@ -4411,3 +4411,17 @@ The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workben
 | Types, size, layout | `npm run typecheck`; `node scripts/check-size.mjs` (split harness, 395a47c); `node scripts/check-page-layout.mjs` | Pass; `workbench-shell` 52,176 B of 54,272, `workbench-theme-studio` 4,852 of 5,632, catalog panel 17,861 of 18,432; 49 files, 0 unlisted, 0 stale |
 
 **Not verified:** a library whose Theme Studio has no generator (the export note's first reason), outside the unit test.
+## 2026-10-29 — Whole words in the segmented control and vertical tabs; examples in the metadata (round 10, Agent 1; Agent 3's report, owner request)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The cause, segmented control | `node .tmp/segmented-why-1.mjs` (Chromium, the docs' reference page at 1,440 px) | The control is a flex item of the frame's `.odd-cluster`, so it takes its content's width: 205 px, the options' summed widths. Its flex track then shared that equally, 57 px a segment, narrower than "Medium" (`overflow-wrap: anywhere`, from the field) |
+| The cause, vertical tabs | `node .tmp/tabs-why-1.mjs` (the tabs reference page's example cards) | The vertical example's card is 230 px; the list keeps to 40%, 91 px, so 75 px tabs with 24 px padding broke "Overview" over 3 lines and "Activity" over 2 |
+| New tests on the old CSS | `.tmp/old-css-check.ps1` (the old styles restored, then put back) | 2 failed: "sized to its content, gives every equal column room for the widest option" and "when vertical in a narrow box, widens the list past 40% rather than break a word" |
+| Browser tests, 3 engines | segmented-control, tabs, figma-parity.forms, figma-parity.navigation, examples, and accessibility browser tests (`--no-file-parallelism`) | Chromium 150 passed; Firefox and WebKit 149 passed, 1 skipped |
+| Node tests | `npx vitest run --project node` | 1,511 passed, 2 failed: `icon-catalog.test.ts` and `node-theme-studio.test.ts` timed out at 20 s on the loaded machine (353 s run). Alone with both examples tests: 21 of 21 (23 s) |
+| Examples in the metadata | `node .tmp/examples-no-definition.mjs` after `npm run build` | Components: 335 of 335 examples carry `definition` (334 before: the segmented control's `iconOnly` preset built its icons with a helper). AI: 40 of 43; `odd-checkpoint/default`, `odd-checkpoint/restored`, and `odd-voice-input/default` compute values |
+| Size, compatibility | `node scripts/check-size.mjs`; `npm run compat` | `components:tabs` 753 B of 768, `components:segmented-control` 839 of 896; matrix regenerated, 338 compatibility keys, 0 problems |
+| Types, lint | `npm run typecheck`; `npm run lint` | Pass; pass after the matrix was regenerated |
+
+**Not verified:** the docs frames themselves, which serve Agent 3's build; `verify:metadata` locally (its contract records are written by the browser run CI makes first).

@@ -177,6 +177,8 @@ describe('component examples', () => {
                 }
               : {}),
             ...(uses[`${set.component}/${name}`] ? { uses: uses[`${set.component}/${name}`] } : {}),
+            // Every example spells out its values, so a published package has all its presets.
+            definition: toExamplesJSON(set).examples[name],
           },
         ]),
       ),

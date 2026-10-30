@@ -143,6 +143,23 @@ describe('odd-segmented-control', () => {
     expect(new Set(widths).size).toBe(1);
   });
 
+  it('sized to its content, gives every equal column room for the widest option', async () => {
+    // A flex item takes its content's width, as in the docs' example frames; equal shares of the
+    // options' summed widths broke "Medium" inside the word.
+    const { radio } = await mount(
+      `<div style="display: flex"><odd-segmented-control label="Preview size">${SIZES}</odd-segmented-control></div>`,
+    );
+    const lines = (value: string) => {
+      const range = document.createRange();
+      range.selectNodeContents(radio(value).nextElementSibling!);
+      return new Set([...range.getClientRects()].map((rect) => Math.round(rect.top))).size;
+    };
+    const widths = ['sm', 'md', 'lg'].map((v) =>
+      Math.round(radio(v).getBoundingClientRect().width),
+    );
+    expect([new Set(widths).size, ['sm', 'md', 'lg'].map(lines)]).toEqual([1, [1, 1, 1]]);
+  });
+
   it('dims the label and the unchecked segments while disabled; the checked one keeps its colours', async () => {
     const { control, part, radio, radios } = await mount(
       `<odd-segmented-control label="Size" disabled>${SIZES}</odd-segmented-control>`,

@@ -104,6 +104,13 @@ describe('@oddkin/ai examples', () => {
     const metadata = await read<{ examples?: Record<string, Record<string, unknown>> }>(
       '../oddkin.metadata.json',
     );
+    // Examples whose values the source computes (imported or built at run time): the analyzer
+    // records no definition for them.
+    const computed = new Set([
+      'odd-checkpoint/default',
+      'odd-checkpoint/restored',
+      'odd-voice-input/default',
+    ]);
     const expected = Object.fromEntries(
       Object.entries(files).flatMap(([path, set]) =>
         Object.entries(set.examples).map(([name, example]) => [
@@ -124,6 +131,9 @@ describe('@oddkin/ai examples', () => {
                   },
                 }
               : {}),
+            ...(computed.has(`${set.component}/${name}`)
+              ? {}
+              : { definition: toExamplesJSON(set).examples[name] }),
           },
         ]),
       ),

@@ -215,6 +215,17 @@ describe('odd-tabs', () => {
     expect(panel.left).toBeGreaterThanOrEqual(list.right);
   });
 
+  it('when vertical in a narrow box, widens the list past 40% rather than break a word', async () => {
+    const el = await mount('orientation="vertical" style="inline-size: 230px"');
+    const lines = (tab: HTMLElement) => {
+      const range = document.createRange();
+      range.selectNodeContents(tab);
+      return new Set([...range.getClientRects()].map((rect) => Math.round(rect.top))).size;
+    };
+    const list = el.shadowRoot!.querySelector('[part~="list"]')!.getBoundingClientRect();
+    expect([tabs(el).map(lines), list.width > 230 * 0.4]).toEqual([[1, 1, 1], true]);
+  });
+
   it('follows added, removed, renamed, and late panels', async () => {
     const el = await mount();
     const panel = document.createElement('odd-tab-panel');
