@@ -1,6 +1,8 @@
 import { createScope } from '@oddkin/core/scope';
 import type { ComponentPageData, WorkbenchIndex } from '@oddkin/workbench/data';
 import type { PageEntry } from '@oddkin/workbench/pages';
+import { createIsolatedPreview } from '@oddkin/workbench/preview';
+import type { FrameMountPayload, JsonValue } from '@oddkin/workbench/protocol';
 
 /**
  * The component catalog and reference pages (Figma "03 · Reference"): the Workbench panels over
@@ -171,10 +173,15 @@ function pageSheets(): CSSStyleSheet[] {
     }));
 }
 
+/** The preview frames that hosts hold, disposed when a host is drawn again in a new panel. */
+const framesOf = new WeakMap<HTMLElement, { dispose(): void }>();
+
 /**
  * Inert hosts, one per key, that draw their content when they first scroll into view. Each draws
  * in a shadow root with the page's component stylesheets: the panels that show the hosts keep
- * them in shadow roots of their own, where the page's layout classes do not reach.
+ * them in shadow roots of their own, where the page's layout classes do not reach. A host that
+ * holds a frame is drawn anew once it has left the page, since a frame removed from the page
+ * loses its document.
  */
 function lazyHosts(className: string) {
   const hosts = new Map<string, HTMLElement>();
@@ -193,6 +200,11 @@ function lazyHosts(className: string) {
     draw: (host: HTMLElement, root: ShadowRoot) => Promise<void>,
   ): HTMLElement => {
     let host = hosts.get(key);
+    const frame = host && !host.isConnected ? framesOf.get(host) : undefined;
+    if (frame) {
+      frame.dispose();
+      host = undefined;
+    }
     if (!host) {
       const created = document.createElement('div');
       created.className = className;
@@ -293,6 +305,71 @@ async function drawExample(
   if (example.fixture) await runFixture(page, example.name, element, root);
 }
 
+/** Overlays open in the top layer, outside any card: their cards show them open in a frame. */
+const OVERLAYS = new Set(
+  ['command-palette', 'dialog', 'drawer', 'popover', 'toast', 'tooltip'].map(
+    (name) => `odd-${name}`,
+  ),
+);
+
+const strings = (values: Json) =>
+  Object.fromEntries(
+    Object.entries(values).filter(
+      (entry): entry is [string, string] => typeof entry[1] === 'string',
+    ),
+  );
+
+/**
+ * Draws an overlay's example open, in a still frame (frame.html) at twice the card's size scaled
+ * by half: the whole card, edge to edge, as a page the overlay opens over.
+ */
+async function drawOverlay(
+  page: ComponentPageData,
+  example: PreviewExample,
+  host: HTMLElement,
+  root: ShadowRoot,
+): Promise<void> {
+  const registration = page.enrichment?.['registration'];
+  if (typeof registration !== 'string') return;
+  // A card that only passes through the viewport loads no frame.
+  await new Promise((settled) => setTimeout(settled, 300));
+  if (!host.isConnected) return;
+  const edge = 'var(--odd-space-md)';
+  host.style.inlineSize = host.style.blockSize = `calc(100% + 2 * ${edge})`;
+  host.style.margin = `calc(-1 * ${edge})`;
+  const container = document.createElement('div');
+  container.style.blockSize = '100%';
+  root.replaceChildren(container);
+  const preview = createIsolatedPreview({
+    document,
+    container,
+    frameUrl: FRAME_URL,
+    title: `${page.tag} example`,
+  });
+  framesOf.set(host, preview);
+  // Read by src/frame.ts before the example mounts: the frame keeps its size and takes no focus.
+  preview.iframe.dataset['still'] = '';
+  preview.iframe.style.cssText =
+    'display:block;inline-size:200%;block-size:200%;border:0;transform:scale(0.5);transform-origin:0 0';
+  const mount: FrameMountPayload = {
+    tag: page.tag,
+    registration,
+    example: `example:${page.tag}/${example.name}`,
+    properties: example.values.properties as Record<string, JsonValue>,
+    attributes: strings(example.values.attributes),
+    // The frame names the default slot ''.
+    slots: Object.fromEntries(
+      Object.entries(strings(example.values.slots)).map(([name, text]) => [
+        name === 'default' ? '' : name,
+        text,
+      ]),
+    ),
+    ...(example.fixture && page.exampleModule ? { fixture: page.exampleModule } : {}),
+  };
+  await preview.request('mount', mount);
+  await preview.request('set', { property: 'open', value: true });
+}
+
 /**
  * Live previews for the catalog's cards: each component's preview example. Inert: the card's
  * link is its only stop.
@@ -304,7 +381,9 @@ export function catalogPreviews(index: WorkbenchIndex): (entry: PageEntry) => No
       ? host(entry.id, async (into, root) => {
           const page = await loadComponent(index, entry.id.replace(/^components\//, ''));
           const example = page && previewExample(page);
-          if (page && example) await drawExample(page, example, into, root);
+          if (!page || !example) return;
+          const draw = OVERLAYS.has(page.tag) ? drawOverlay : drawExample;
+          await draw(page, example, into, root);
         })
       : undefined;
 }

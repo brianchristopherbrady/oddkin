@@ -91,4 +91,10 @@ function fitFrame(frame: HTMLIFrameElement): void {
 
 // Same origin: the frame sizes its own iframe element (another realm, so no instanceof).
 const host = window.frameElement;
-if (host?.localName === 'iframe') fitFrame(host as HTMLIFrameElement);
+// A catalog card's still frame keeps the size the card gives it, and nothing in it takes focus: a
+// modal dialog escapes inert, so its dialogs open without it.
+if (host?.hasAttribute('data-still')) {
+  document.documentElement.inert = true;
+  document.documentElement.dataset['still'] = '';
+  HTMLDialogElement.prototype.showModal = HTMLDialogElement.prototype.show;
+} else if (host?.localName === 'iframe') fitFrame(host as HTMLIFrameElement);

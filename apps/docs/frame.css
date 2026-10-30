@@ -25,6 +25,12 @@ body {
   display: block;
   background: none;
 }
+/* A catalog card's still frame opens dialogs without modality (src/frame.ts): placed as modal. */
+html[data-still] odd-dialog::part(dialog) {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+}
 /* Fields and block layouts fill a row: centred at their intrinsic width, they would show too
    narrow to use, or not at all (a skeleton's lines take their container's width). */
 [data-oddkin-preview]

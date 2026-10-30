@@ -4434,3 +4434,15 @@ The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workben
 | Annotation lines | `node scripts/ci/impact-summary.mjs --out <dir>` with `GITHUB_ACTIONS=true`, `IMPACT_BASE` empty, then 40 `f`s | `::notice title=Change impact::Not compared: no base revision (a new branch, or its first push).` and `::notice title=Change impact::Not compared: the base commit ffffffffffff is not in this clone.` |
 | Evidence tests | `npx vitest run --project node tests/release/evidence.test.ts` | 6 passed, 1 skipped; `renderEvidenceLine()` checked with no results, a dirty tree, and the fixture results |
 | Format, types | `npx prettier --write`; `npx tsc -p tsconfig.tests.json` | Unchanged; pass |
+
+## 2026-10-29 — The catalog's overlay cards show the overlay open (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | the catalog after e612aa0 | Command palette "Search commands", dialog "Rename", drawer "Alex Morgan", popover "Share", toast "Send invitation", tooltip "Copy link": the control only |
+| Open | `node .tmp/overlay-cards.mjs chromium`, `webkit`; `firefox 20000` | Each of the six frames: document inert, the element open (`open` attribute), the frame's focus on its body, no page errors. Screenshots: the command palette with its commands, the dialog "Rename workspace" with its field and Cancel and Save, the drawer "Member details" at the inline end, the popover "Invite people to collaborate" beside Share, the toast "Invitation sent" with Undo in the corner, the tooltip "Copy a link to this workspace" over Copy link. Firefox's frames opened within 20 s on the loaded machine (6 s was too short) |
+| Focus, before the still-frame fix | `node .tmp/focus-check.mjs` (Chromium) | At load the page's focus was in the command palette's frame (its search input); after typing in the catalog's search field and scrolling to the overlays, it was in the dialog's frame (odd-input). A modal dialog escapes the frame document's inert, and the frame took the page's focus with it |
+| Focus, after | `node .tmp/focus-check.mjs chromium`, `firefox`, `webkit` | At load: body. While typing in the search field and after the overlay frames draw: the search field |
+| Size | `node .tmp/overlay-size.mjs` | Card preview area 347 × 192; host 347 × 192 (the preview's padding cancelled); frame 694 × 384 scaled to 347 × 192 |
+| Every card | `node .tmp/catalog-check.mjs chromium` | 54 of 54 cards draw; no errors. WebKit logs its "Refused to apply a stylesheet" console errors inside the frames too (15 with six frames), as on the page before |
+| e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, one engine at a time | Chromium: 15 passed (8.1 min, while a2's Firefox vitest runs held the machine at 400 MB free; the shortest tests took 4-8 s). Firefox: no evidence either way; at 255-411 MB free its compositor failed (RenderCompositorSWGL crash annotations), and 4 tests failed in browserContext.newPage/close, unrelated ones included (light and dark) |
