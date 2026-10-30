@@ -377,6 +377,35 @@ export function renderEvidenceMarkdown(evidence) {
   return `${lines.join('\n')}\n`;
 }
 
+const plural = (count, word) => `${count} ${word}${count === 1 ? '' : 's'}`;
+
+/** The evidence in one line, for a CI annotation on the run's page. */
+export function renderEvidenceLine(evidence) {
+  const { source, checks } = evidence;
+  const parts = [
+    `Packed ${plural(evidence.packages.length, 'package')} and hashed ${plural(evidence.artifacts.length, 'generated file')} at commit ${source.commit.slice(0, 12)}${source.dirty ? ' (dirty)' : ''}`,
+  ];
+  if (checks.state === 'not-run') parts.push('checks not run');
+  else {
+    if (checks.tests.length)
+      parts.push(
+        `Vitest: ${checks.tests.map((run) => `${run.run} ${run.passed} passed${run.failed ? ` (${run.failed} failed)` : ''}`).join(', ')}`,
+      );
+    if (checks.e2e)
+      parts.push(
+        `e2e: ${checks.e2e.passed} passed${checks.e2e.failed ? ` (${checks.e2e.failed} failed)` : ''}${checks.e2e.flaky ? `, ${checks.e2e.flaky} flaky` : ''}`,
+      );
+    if (checks.impact) parts.push(`change impact: ${checks.impact.state}`);
+    if (checks.steps)
+      parts.push(
+        checks.steps.state === 'read'
+          ? `step times: ${plural(checks.steps.steps.length, 'step')}`
+          : 'step times unavailable',
+      );
+  }
+  return parts.join(' · ');
+}
+
 /** Write evidence.json and EVIDENCE.md into `out`. */
 export async function writeEvidence(out, evidence) {
   await mkdir(out, { recursive: true });
@@ -402,6 +431,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     await writeEvidence(dir, evidence);
     if (args.includes('--ci') && process.env['GITHUB_STEP_SUMMARY'])
       await appendFile(process.env['GITHUB_STEP_SUMMARY'], renderEvidenceMarkdown(evidence));
+    if (args.includes('--ci') && process.env['GITHUB_ACTIONS'] === 'true')
+      console.log(
+        `::notice title=Release evidence::${renderEvidenceLine(evidence).replace(/%/g, '%25')}`,
+      );
     console.log(
       `Release evidence: ${join(out, 'evidence.json')} (${evidence.packages.length} packages, ${evidence.artifacts.length} files hashed, commit ${evidence.source.commit.slice(0, 12)}${evidence.source.dirty ? ', dirty' : ''}; checks ${evidence.checks.state}).`,
     );

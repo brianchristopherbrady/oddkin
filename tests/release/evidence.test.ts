@@ -11,6 +11,7 @@ import {
   listPackages,
   readResults,
   readSteps,
+  renderEvidenceLine,
   renderEvidenceMarkdown,
   SCHEMA,
   type PackEntry,
@@ -106,6 +107,9 @@ describe('release evidence', () => {
       },
     ]);
     expect(evidence.checks).toEqual({ state: 'not-run', reason: expect.any(String) });
+    expect(renderEvidenceLine(evidence)).toBe(
+      `Packed 1 package and hashed 1 generated file at commit ${commit.slice(0, 12)} · checks not run`,
+    );
   });
 
   it('refuses a dirty working tree unless told to record it', async () => {
@@ -122,6 +126,7 @@ describe('release evidence', () => {
     });
     expect(evidence.source).toMatchObject({ dirty: true, changes: 1 });
     expect(renderEvidenceMarkdown(evidence)).toContain('**dirty** (1 uncommitted change(s))');
+    expect(renderEvidenceLine(evidence)).toMatch(/ \(dirty\) · checks not run$/);
   });
 
   it('records this checkout as git reports it, with the eight published packages', async () => {
@@ -269,7 +274,7 @@ describe('release evidence', () => {
       fullVerification: null,
     });
 
-    const { dir } = await fixtureRepo();
+    const { dir, commit } = await fixtureRepo();
     const evidence = await collectEvidence({ root: dir, out, pack: fakePack, env: {} });
     expect(evidence.checks).toEqual({ state: 'recorded', ...results, steps: null });
     const markdown = renderEvidenceMarkdown(evidence);
@@ -277,6 +282,9 @@ describe('release evidence', () => {
     expect(markdown).toContain('| firefox | 1 | 1 | 0 | 1 |');
     expect(markdown).toContain(`Change impact: written against \`${base.slice(0, 12)}\``);
     expect(markdown).not.toContain('Not run');
+    expect(renderEvidenceLine(evidence)).toBe(
+      `Packed 1 package and hashed 1 generated file at commit ${commit.slice(0, 12)} · Vitest: chromium 8 passed (1 failed), node 3 passed · e2e: 2 passed (1 failed), 1 flaky · change impact: written`,
+    );
   });
 
   it("reads this job's step times from GitHub, and says when it cannot", async () => {

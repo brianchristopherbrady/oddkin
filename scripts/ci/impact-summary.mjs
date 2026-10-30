@@ -23,12 +23,17 @@ const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: '
 // GitHub keeps 1 MiB of summary per step: a longer report is cut there and kept whole in <dir>.
 const SUMMARY_LIMIT = 900_000;
 
-async function finish(status, markdown, code) {
+async function finish(status, markdown, code, line) {
   await mkdir(out, { recursive: true });
   await writeFile(join(out, 'status.json'), `${JSON.stringify(status, null, 2)}\n`);
   const summary = process.env['GITHUB_STEP_SUMMARY'];
   if (summary) await appendFile(summary, `## Change impact\n\n${markdown}\n`);
   console.log(markdown);
+  // The outcome in one line, as an annotation on the run's page.
+  if (process.env['GITHUB_ACTIONS'] === 'true')
+    console.log(
+      `::${status.state === 'failed' ? 'warning' : 'notice'} title=Change impact::${line.replace(/%/g, '%25').replace(/\r?\n/g, ' ')}`,
+    );
   process.exit(code);
 }
 
@@ -38,12 +43,14 @@ if (!/^[0-9a-f]{40}$/.test(base) || /^0+$/.test(base))
     { state: 'unavailable', base: base || null, head, reason: 'no base revision to compare with' },
     'No base revision to compare with (a new branch, or its first push).',
     0,
+    'Not compared: no base revision (a new branch, or its first push).',
   );
 if (spawnSync('git', ['cat-file', '-e', `${base}^{commit}`], { cwd: root }).status !== 0)
   await finish(
     { state: 'unavailable', base, head, reason: 'the base commit is not in this clone' },
     `The base commit \`${base.slice(0, 12)}\` is not in this clone (a force push?).`,
     0,
+    `Not compared: the base commit ${base.slice(0, 12)} is not in this clone.`,
   );
 
 const result = spawnSync(
@@ -63,16 +70,19 @@ if (result.status !== 0 || !existsSync(report) || !existsSync(markdownReport))
     },
     `The comparison with \`${base.slice(0, 12)}\` failed (scripts/impact.mjs exited with ${result.status ?? result.signal}); see this step's log.`,
     1,
+    `The comparison with ${base.slice(0, 12)} failed (scripts/impact.mjs exited with ${result.status ?? result.signal}).`,
   );
 
 await mkdir(out, { recursive: true });
 await copyFile(report, join(out, 'report.json'));
 await copyFile(markdownReport, join(out, 'report.md'));
 let markdown = (await readFile(markdownReport, 'utf8')).replace(/^# [^\n]*\n+/, '');
+const headline = markdown.split('\n').find((text) => text.trim()) ?? '';
 if (markdown.length > SUMMARY_LIMIT)
   markdown = `${markdown.slice(0, SUMMARY_LIMIT)}\n\n(Cut here; the whole report is in the release-evidence artifact.)`;
 await finish(
   { state: 'written', base, head },
   `Against \`${base.slice(0, 12)}\`, without running the selected checks (CI runs every check):\n\n${markdown}`,
   0,
+  `Against ${base.slice(0, 12)}: ${headline} (report in the job summary and the release-evidence artifact).`,
 );

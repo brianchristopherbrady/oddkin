@@ -4425,3 +4425,12 @@ The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workben
 | Types, lint | `npm run typecheck`; `npm run lint` | Pass; pass after the matrix was regenerated |
 
 **Not verified:** the docs frames themselves, which serve Agent 3's build; `verify:metadata` locally (its contract records are written by the browser run CI makes first).
+
+## 2026-10-29 — CI annotations for the evidence and the change impact (round 10, Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| First CI run with the steps | run 41001469995 at `83d4a6a` | The impact step (8 s), the evidence step (4 s), and the upload succeeded; `release-evidence-1` is 343,763 B and expires on 2026-11-29. The artifact download and the job summary need a signed-in user (the API answered 401), so the impact outcome was not readable. The run failed only in the node step (the examples tests, fixed in `705b669`) |
+| Annotation lines | `node scripts/ci/impact-summary.mjs --out <dir>` with `GITHUB_ACTIONS=true`, `IMPACT_BASE` empty, then 40 `f`s | `::notice title=Change impact::Not compared: no base revision (a new branch, or its first push).` and `::notice title=Change impact::Not compared: the base commit ffffffffffff is not in this clone.` |
+| Evidence tests | `npx vitest run --project node tests/release/evidence.test.ts` | 6 passed, 1 skipped; `renderEvidenceLine()` checked with no results, a dirty tree, and the fixture results |
+| Format, types | `npx prettier --write`; `npx tsc -p tsconfig.tests.json` | Unchanged; pass |

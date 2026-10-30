@@ -131,4 +131,5 @@ export declare function collectEvidence(options?: {
   env?: Environment;
 }): Promise<ReleaseEvidence>;
 export declare function renderEvidenceMarkdown(evidence: ReleaseEvidence): string;
+export declare function renderEvidenceLine(evidence: ReleaseEvidence): string;
 export declare function writeEvidence(out: string, evidence: ReleaseEvidence): Promise<void>;
