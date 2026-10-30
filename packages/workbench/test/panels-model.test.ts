@@ -12,6 +12,7 @@ import {
   intendedUse,
   pageCoverage,
   presets,
+  registrationOf,
   sharePayload,
   snippet,
   unionMembers,
@@ -174,6 +175,20 @@ describe('detail model', () => {
     expect(snippet(page({ enrichment: {} }), initialState(page()))).toContain(
       'No registration entry is published for <x-box>',
     );
+    // A standard-CEM element registers through its custom-element-definition module; the
+    // enrichment's entry wins when both exist.
+    const cem = page({ enrichment: {}, registration: '@x/ui/box.js' });
+    expect(registrationOf(cem)).toBe('@x/ui/box.js');
+    expect(snippet(cem, initialState(cem))).toContain("import '@x/ui/box.js';");
+    expect(registrationOf(page({ registration: '@x/ui/box.js' }))).toBe('@x/ui/define/box');
+    const states = (p: ComponentPageData) =>
+      pageCoverage(p)
+        .filter(
+          (item) => item.id === 'interactive-example/preview' || item.id === 'source/register',
+        )
+        .map((item) => item.state);
+    expect(states(cem)).toEqual(['documented', 'documented']);
+    expect(states(page({ enrichment: {} }))).toEqual(['missing', 'missing']);
   });
 
   it('writes share links in the share-payload.v1 shape and validates them on the way back', () => {

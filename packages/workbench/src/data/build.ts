@@ -98,6 +98,8 @@ interface Declared {
   readonly declaration: CemDeclaration;
   readonly module: string;
   readonly package: string;
+  /** From the standard CEM (`LibraryInput.registrations`). */
+  readonly registration?: string;
 }
 
 /** Custom-element declarations by tag; the first package that declares a tag wins, as in the registry. */
@@ -108,7 +110,13 @@ function declarations(libraries: readonly LibraryInput[]): Map<string, Declared>
       for (const declaration of module.declarations ?? []) {
         if (!declaration.customElement || !declaration.tagName || found.has(declaration.tagName))
           continue;
-        found.set(declaration.tagName, { declaration, module: module.path, package: library.name });
+        const registration = library.registrations?.[declaration.tagName];
+        found.set(declaration.tagName, {
+          declaration,
+          module: module.path,
+          package: library.name,
+          ...(registration ? { registration } : {}),
+        });
       }
     }
   }
@@ -179,6 +187,10 @@ function componentPage(
     module: declared.module,
     declaration: declared.declaration as unknown as JsonObject,
     ...(enrichment ? { enrichment: enrichment as unknown as JsonObject } : {}),
+    ...(declared.registration &&
+    typeof (enrichment as JsonObject | undefined)?.['registration'] !== 'string'
+      ? { registration: declared.registration }
+      : {}),
     examples,
     ...(tokens.length ? { tokens } : {}),
     ...(Object.keys(prose).length ? { authored: prose } : {}),

@@ -4332,3 +4332,17 @@ The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workben
 | Every page | `node .tmp/fixture-notes.mjs` (Chromium, 78 component pages) | 25 load a fixture module; no "setup did not run" note, no "Preview unavailable" or "Preview … failed" status, no Trusted Types or CSP error |
 | Every page | `node .tmp/live-examples2.mjs` | 76 with content, 2 drawn only in their shadow roots (odd-skeleton, odd-status-marker), 0 failed |
 | e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, three engines, `--workers=2` | Docs e2e, both specs in three engines (--workers=2): 42 passed (5.8 min) |
+### 2026-10-29 — Workbench from packed packages (P0.3.3, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Packed consumer, 3 engines | `npx playwright test e2e/workbench-packed.spec.ts` (E2E lock; `scripts/workbench-consumer.mjs` through `scripts/packed-consumers.mjs`) | 18 of 18 in Chromium, Firefox, and WebKit, pack and install included (1.5 min). Every `@oddkin` package in the fresh project's lockfile resolves to a tarball; `oddkin workbench build` under `/workbench/` and `oddkin workbench dev` on port 4176 |
+| Gaps found by the check | The same project before the fixes | `@plain/widgets` (standard CEM only) had no preview: "Preview: not documented. Supplied by the registration entry in oddkin.metadata.json". The packed `odd-button` had no presets and an empty default preview, because the tarball ships no `*.examples.ts` |
+| Example values in the metadata | `node scripts/build-metadata.mjs` | `definition` on 334 of 335 component examples and 40 of 43 AI examples; the four without one use an imported or computed value |
+| Node tests | `npx vitest run --project node packages/workbench packages/analyzer` | 262 passed (30 files), with new tests for literal, constant, template, spread, and `JSON.stringify()` values, computed values left out, a `__proto__` key, CEM registrations through exact, pattern, excluded, and missing exports, and the enrichment's registration winning |
+| Browser tests, 3 engines | `node ../oddkin-lanes/tools/browser-set.mjs` with the panels, frame, shell, preview, and coverage tests | 33 of 33 in each engine |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutants-p03.json` and `.tmp/mutants-p03b.json` | 18 of 18 killed. Three survivors of the first set were closed with a test each: any export kind accepted as a registration, `undefined` kept in objects, and template spans dropped |
+| E2E, Workbench specs | `e2e/workbench*.spec.ts` and `e2e/golden-path.spec.ts` (E2E lock) | Chromium: all pass, after the catalog spec allowed the example module's graph (f236fa5). Firefox and WebKit: 69 of 70; WebKit's "replaces the preview frame when component code changes" timed out once in a 9.3 min run on a busy machine and passed 6 of 6 alone (WebKit and Chromium, 3 times each) |
+| Types, lint, size, kits | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs`; `node scripts/agent-kit/package-kits.mjs --check` | Pass; pass; component panel 31,131 B of 32,768, catalog panel 17,823 of 18,432, shell 54,327 of 55,296, frame 7,147 of 7,680; pass after regenerating (the kits are generated from the metadata) |
+
+**Not verified:** the registry smoke (`ODDKIN_CONSUMERS_FROM`), which does not run this spec; the published 1.0.0-beta.0 has neither fix.

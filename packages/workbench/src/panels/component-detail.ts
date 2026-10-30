@@ -30,6 +30,7 @@ import {
   intendedUse,
   pageCoverage,
   presets,
+  registrationOf,
   usagePairs,
   MAX_SHARE_WIDTH,
   MIN_SHARE_WIDTH,
@@ -282,7 +283,7 @@ export class ComponentDetailElement extends OddkinElement.with({
 
   /** Restart the preview only when the component, registration, or frame document changes. */
   #sync(page: ComponentPageData | undefined, frameUrl: string): void {
-    const registration = page?.enrichment?.['registration'];
+    const registration = page && registrationOf(page);
     const key = page ? `${page.tag}\n${String(registration)}\n${frameUrl}` : '';
     if (key === this.#key) return;
     const sameTag = this.#key.split('\n')[0] === page?.tag;
@@ -381,9 +382,9 @@ export class ComponentDetailElement extends OddkinElement.with({
     this.#stop();
     const page = this.page;
     if (!page || !this.isConnected) return;
-    const registration = page.enrichment?.['registration'];
+    const registration = registrationOf(page);
     // Without a registration entry the preview item itself says what is missing.
-    if (typeof registration !== 'string') {
+    if (registration === undefined) {
       if (!this.#status.peek().keep) this.#status.value = { text: '', alert: false };
       return;
     }
@@ -561,9 +562,9 @@ export class ComponentDetailElement extends OddkinElement.with({
   /** Mount the current state again in the existing frames (a clean instance, same realm). */
   #remount(note?: string): void {
     const page = this.page;
-    const registration = page?.enrichment?.['registration'];
+    const registration = page && registrationOf(page);
     const scope = this.#previewScope;
-    if (!page || typeof registration !== 'string' || !scope) return;
+    if (!page || registration === undefined || !scope) return;
     this.#status.value = { text: note ?? '', alert: false, ...(note ? { keep: true } : {}) };
     this.#mountAll(scope, page, registration);
   }
@@ -598,9 +599,9 @@ export class ComponentDetailElement extends OddkinElement.with({
 
   #replace(): Promise<void> {
     const page = this.page;
-    const registration = page?.enrichment?.['registration'];
+    const registration = page && registrationOf(page);
     const scope = this.#previewScope;
-    if (!page || typeof registration !== 'string' || !scope) {
+    if (!page || registration === undefined || !scope) {
       this.#restart();
       return Promise.resolve();
     }
@@ -1619,7 +1620,7 @@ export class ComponentDetailElement extends OddkinElement.with({
         () =>
           html`<div class="wb-fact wb-register">
             <span class="wb-fact-label">Register</span>
-            <code>import '${String(page.enrichment?.['registration'])}';</code>
+            <code>import '${String(registrationOf(page))}';</code>
           </div>`,
       )}`;
   }

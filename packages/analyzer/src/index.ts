@@ -271,6 +271,7 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
               }
             : {}),
           ...(e.uses ? { uses: e.uses.map((tag) => `component:${tag}`) } : {}),
+          ...(e.definition ? { definition: e.definition } : {}),
         },
       ]),
   );

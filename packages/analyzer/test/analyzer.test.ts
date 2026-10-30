@@ -289,18 +289,35 @@ describe('compose() definitions in a folder-structured library', () => {
         name: 'default',
         file: 'src/panel/panel.examples.ts',
         previewRoles: ['role:surface'],
+        // The values, as toExamplesJSON() gives them: a published package carries them.
+        definition: { slots: { default: 'Panel body' }, previewRoles: ['surface'] },
       },
       'example:acme-panel/dismissible': {
         component: 'component:acme-panel',
         name: 'dismissible',
         file: 'src/panel/panel.examples.ts',
         hasFixture: true,
+        definition: {
+          attributes: { dismissible: '' },
+          slots: { default: 'Close me' },
+          hasFixture: true,
+        },
       },
       'example:acme-panel/dismissibleFalse': {
         component: 'component:acme-panel',
         name: 'dismissibleFalse',
         file: 'src/panel/panel.examples.ts',
         incorrect: { diagnostic: 'usage.boolean.false', correct: 'example:acme-panel/default' },
+        definition: {
+          attributes: { dismissible: 'false' },
+          slots: { default: 'Still dismissible' },
+          incorrect: {
+            explanation:
+              "The attribute's presence makes the panel dismissible, whatever its value.",
+            diagnostic: 'usage.boolean.false',
+            correct: 'default',
+          },
+        },
       },
       'example:acme-panel/withAlert': {
         component: 'component:acme-panel',
@@ -308,6 +325,7 @@ describe('compose() definitions in a folder-structured library', () => {
         file: 'src/panel/panel.examples.ts',
         hasFixture: true,
         uses: ['component:acme-alert'],
+        definition: { slots: { default: 'Saved.' }, hasFixture: true },
       },
     });
     expect(composed.program.getSourceFiles().some((f) => f.fileName.endsWith('.examples.ts'))).toBe(

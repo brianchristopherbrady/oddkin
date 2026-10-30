@@ -1,0 +1,23 @@
+{
+  "name": "@plain/widgets",
+  "version": "1.0.0",
+  "description": "A web component library without Oddkin: plain custom elements described by a standard Custom Elements Manifest (Workbench's standard-CEM baseline fixture).",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./chip.js": "./chip.js",
+    "./custom-elements.json": "./custom-elements.json",
+    "./package.json": "./package.json"
+  },
+  "customElements": "custom-elements.json",
+  "files": [
+    "index.js",
+    "chip.js",
+    "custom-elements.json"
+  ],
+  "sideEffects": [
+    "./chip.js",
+    "./index.js"
+  ]
+}

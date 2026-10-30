@@ -240,6 +240,64 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     expect(inputs.contentFiles).toHaveLength(5);
   });
 
+  it("reads a standard-CEM element's registration from its custom-element-definition export", async () => {
+    const definition = (path: string, tag: string) => ({
+      kind: 'javascript-module',
+      path,
+      declarations: [{ kind: 'class', name: 'X', customElement: true, tagName: tag }],
+      exports: [
+        { kind: 'js', name: 'X', declaration: { name: 'X' } },
+        { kind: 'custom-element-definition', name: tag, declaration: { name: 'X' } },
+      ],
+    });
+    const dir = track(
+      acmeProject({
+        'oddkin.config.json': JSON.stringify({
+          library: { packages: ['@plain/kit', '@plain/old'] },
+        }),
+        'node_modules/@plain/kit/package.json': JSON.stringify({
+          name: '@plain/kit',
+          version: '1.0.0',
+          customElements: 'custom-elements.json',
+          exports: {
+            '.': './index.js',
+            './elements/*': './dist/elements/*.js',
+            './elements/secret': null,
+          },
+        }),
+        'node_modules/@plain/kit/custom-elements.json': JSON.stringify({
+          schemaVersion: '2.1.0',
+          modules: [
+            definition('dist/elements/chip.js', 'plain-chip'),
+            definition('index.js', 'plain-badge'),
+            // Excluded by its export, or reached by none: no consumer could import either.
+            definition('dist/elements/secret.js', 'plain-secret'),
+            definition('internal/other.js', 'plain-other'),
+          ],
+        }),
+        // Without "exports", every file is reachable.
+        'node_modules/@plain/old/package.json': JSON.stringify({
+          name: '@plain/old',
+          version: '0.1.0',
+          main: 'index.js',
+          customElements: 'custom-elements.json',
+        }),
+        'node_modules/@plain/old/custom-elements.json': JSON.stringify({
+          schemaVersion: '2.1.0',
+          modules: [definition('src/old.js', 'plain-old')],
+        }),
+      }),
+    );
+    const { config } = await loadWorkbenchConfig(join(dir, 'oddkin.config.json'));
+    const out = new DiagnosticList();
+    const inputs = await loadInputs(dir, config!, out);
+    expect(out.items).toEqual([]);
+    expect(inputs.libraries.map((library) => library.registrations)).toEqual([
+      { 'plain-chip': '@plain/kit/elements/chip', 'plain-badge': '@plain/kit' },
+      { 'plain-old': '@plain/old/src/old.js' },
+    ]);
+  });
+
   it('takes a listed manifest inside a package that declares none', async () => {
     const dir = track(
       acmeProject({

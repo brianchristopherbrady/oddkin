@@ -5,7 +5,7 @@
  */
 import type { ResolvedWorkbenchConfig } from '../config/index.js';
 import type { DiagnosticList } from '../internal/diagnostics.js';
-import { presets } from '../panels/model.js';
+import { presets, registrationOf } from '../panels/model.js';
 import {
   DATA_VERSION,
   PAGE_FORMAT,
@@ -49,17 +49,13 @@ export function themeStudioPage(
   input: ThemeStudioInput,
   out: DiagnosticList,
 ): ThemeStudioPageData {
-  const registration = (page: ComponentPageData) => {
-    const value = page.enrichment?.['registration'];
-    return typeof value === 'string' ? value : undefined;
-  };
   const role = (
     name: string,
     page: ComponentPageData,
     exampleName: string | undefined,
     source: SpecimenRole['source'],
   ): SpecimenRole | undefined => {
-    const entry = registration(page);
+    const entry = registrationOf(page);
     const all = presets(page);
     const example = exampleName
       ? all.find((p) => p.name === exampleName)

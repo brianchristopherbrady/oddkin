@@ -44,7 +44,7 @@ authored examples (*.examples.ts) ─────────┤
 | Level | Input | Experience |
 | --- | --- | --- |
 | **Full Oddkin** | Oddkin-authored library + analyzer enrichment + theme config | Everything: typed controls, models, recipes, profiles, Theme Studio with generation, token provenance, examples |
-| **Standard CEM** | Any library with a valid `custom-elements.json` and loadable modules | API docs, controls for CEM-typed properties/attributes, slots, events log, CSS custom property editing, parts listing, snippets. Theme Studio limited to editing CSS custom properties the library declares (no generator) unless an Oddkin theme config is supplied |
+| **Standard CEM** | Any library with a valid `custom-elements.json` and loadable modules | Live previews from the module whose exports hold the tag's `custom-element-definition`, when the package's `exports` reach it (2026-10-29); API docs, controls for CEM-typed properties/attributes, slots, events log, CSS custom property editing, parts listing, snippets. Theme Studio limited to editing CSS custom properties the library declares (no generator) unless an Oddkin theme config is supplied |
 | **Missing enrichment** | Any field not provided | Shown as "Not documented" / "Unknown default" / "No adapter" — never invented |
 
 ### 2.1 Shell, data, and serving (proposal, M5)

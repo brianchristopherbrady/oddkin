@@ -149,9 +149,25 @@ describe('Workbench data from published outputs', () => {
       slots: { default: 'Save' },
       preset: true,
     });
-    // Listed in metadata without published values: kept verbatim, no definition invented.
-    expect(byName['primary']).toBeDefined();
-    expect(byName['primary']?.['definition']).toBeUndefined();
+    // Values the metadata publishes (a package without its sources) are kept verbatim.
+    const published = (
+      components.metadata as { examples: Record<string, { definition?: unknown }> }
+    ).examples['example:odd-button/primary']?.definition;
+    expect(published).toMatchObject({ label: 'Primary', preset: true });
+    expect(byName['primary']?.['definition']).toEqual(published);
+    // Listed without published values: kept verbatim, no definition invented.
+    const unpublished = JSON.parse(JSON.stringify(components.metadata)) as {
+      examples: Record<string, { definition?: unknown }>;
+    };
+    delete unpublished.examples['example:odd-button/primary']?.definition;
+    const listed = (
+      build({
+        config,
+        libraries: [{ ...components, metadata: unpublished } as LibraryInput],
+      }).data.pages['components/odd-button'] as ComponentPageData
+    ).examples.find((e) => e['name'] === 'primary');
+    expect(listed).toBeDefined();
+    expect(listed?.['definition']).toBeUndefined();
     expect(page.examples.at(-1)).toEqual({
       id: 'example:odd-button/unlisted',
       component: 'component:odd-button',
@@ -356,6 +372,26 @@ describe('Workbench data from published outputs', () => {
     // No foundations without enrichment: the destination explains instead of showing pages.
     expect(Object.keys(data.pages).filter((id) => id.startsWith('foundations/'))).toEqual([]);
     expect(diagnostics.filter((d) => d.code === 'data.tokens.missing')).toEqual([]);
+    // Without a registration from the host (Node reads it from the CEM), the preview has none.
+    expect(page).not.toHaveProperty('registration');
+  });
+
+  it("gives a standard-CEM element its CEM registration; an enrichment's registration wins", () => {
+    const registrations = {
+      'acme-button': '@acme/ui/button.js',
+      'odd-button': '@acme/ui/odd-button.js',
+    };
+    const cemOnly = build({
+      config: { library: { packages: ['@acme/ui'] } },
+      libraries: [{ ...acme, registrations }],
+    }).data.pages['components/acme-button'] as ComponentPageData;
+    expect(cemOnly.registration).toBe('@acme/ui/button.js');
+    const enriched = build({
+      config,
+      libraries: [{ ...components, registrations }],
+    }).data.pages['components/odd-button'] as ComponentPageData;
+    expect(enriched.enrichment?.['registration']).toBe('@oddkin/components/define/button');
+    expect(enriched).not.toHaveProperty('registration');
   });
 
   it('writes no data for hidden pages', () => {

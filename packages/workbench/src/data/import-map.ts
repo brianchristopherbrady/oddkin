@@ -140,6 +140,40 @@ export function resolveExport(
 }
 
 /**
+ * The bare specifier that reaches the package-relative `file` (`chip.js`, `./dist/x.js`) through
+ * the package's `exports`: an exact subpath first, then a pattern that Node resolves back to the
+ * file. Without `exports`, every file is reachable. `undefined` when no export reaches the file.
+ */
+export function exportedSpecifier(
+  pkg: PackageManifest,
+  file: string,
+  conditions: readonly string[] = DEFAULT_CONDITIONS,
+): string | undefined {
+  const path = file.startsWith('./') ? file : `./${file.replace(/^\/+/, '')}`;
+  const specifier = (subpath: string) =>
+    subpath === '.' ? pkg.name : `${pkg.name}/${subpath.slice(2)}`;
+  const map = subpaths(pkg, new DiagnosticList());
+  if (map === undefined) return specifier(path);
+  const active = new Set(conditions);
+  for (const [key, target] of Object.entries(map))
+    if (!key.includes('*') && resolveTarget(target, active) === path) return specifier(key);
+  for (const [key, target] of Object.entries(map)) {
+    const resolved = resolveTarget(target, active);
+    if (!key.includes('*') || typeof resolved !== 'string') continue;
+    const star = resolved.indexOf('*');
+    if (star === -1) continue;
+    const prefix = resolved.slice(0, star);
+    const suffix = resolved.slice(star + 1);
+    if (path.length < prefix.length + suffix.length) continue;
+    if (!path.startsWith(prefix) || !path.endsWith(suffix)) continue;
+    const subpath = key.replaceAll('*', path.slice(prefix.length, path.length - suffix.length));
+    // A more specific key may map the subpath elsewhere or exclude it.
+    if (resolveExport(pkg, subpath, conditions) === path) return specifier(subpath);
+  }
+  return undefined;
+}
+
+/**
  * The import map for `packages`, in the order given: a package name seen again (another copy of
  * the same package) is skipped with a diagnostic, since one document can load one copy per
  * specifier. Subpath patterns become prefix mappings when the prefix mapping is exact.

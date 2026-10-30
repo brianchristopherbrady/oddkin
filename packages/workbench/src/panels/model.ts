@@ -394,7 +394,14 @@ export interface CoverageItem {
 }
 
 const EXAMPLES_SOURCE = 'an example set (defineExamples)';
-const REGISTRATION_SOURCE = 'the registration entry in oddkin.metadata.json';
+const REGISTRATION_SOURCE =
+  'the registration entry in oddkin.metadata.json, or a custom-element-definition export in custom-elements.json';
+
+/** The module that registers the element: the Oddkin enrichment's, else the standard CEM's. */
+export function registrationOf(page: ComponentPageData): string | undefined {
+  const value = page.enrichment?.['registration'];
+  return typeof value === 'string' ? value : page.registration;
+}
 
 /**
  * Every item a component's detail page shows, in page order, and how it is shown. The panel
@@ -405,7 +412,7 @@ export function pageCoverage(page: ComponentPageData): CoverageItem[] {
   const entries = presets(page);
   const { useFor, notFor } = intendedUse(page);
   const enrichment = page.enrichment ?? {};
-  const registered = typeof enrichment['registration'] === 'string';
+  const registered = registrationOf(page) !== undefined;
   const description = text(page.declaration['description']);
   const items: CoverageItem[] = [];
   const item = (
@@ -515,7 +522,7 @@ export function snippet(
   state: PreviewState,
   options: { readonly events?: readonly string[]; readonly settings?: FrameSettings } = {},
 ): string {
-  const registration = text(page.enrichment?.['registration']);
+  const registration = registrationOf(page);
   const attrs = Object.entries(state.attributes).map(([name, value]) =>
     value === '' ? ` ${name}` : ` ${name}="${escapeHtml(value)}"`,
   );

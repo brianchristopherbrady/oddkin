@@ -1116,6 +1116,10 @@
             "type": "string",
             "pattern": "^component:"
           }
+        },
+        "definition": {
+          "type": "object",
+          "description": "The example's values as toExamplesJSON() serializes them (examples.v1: label, props, attributes, slots, preset, recommended, guidance, previewRoles, incorrect, and hasFixture for a fixture). Extracted when the source spells out every value (literals, or module-level constants of literals), so a published package carries its examples' values without their source; a fixture is code and stays in the source. Absent when a value is computed."
         }
       }
     },

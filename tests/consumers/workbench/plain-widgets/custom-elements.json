@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "2.1.0",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "chip.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "PlainChip",
+          "tagName": "plain-chip",
+          "customElement": true,
+          "summary": "A compact label for a filter, a tag, or a choice.",
+          "description": "A chip shows a short label, an optional count, and an optional remove button.",
+          "superclass": { "name": "HTMLElement" },
+          "attributes": [
+            {
+              "name": "label",
+              "type": { "text": "string" },
+              "default": "''",
+              "description": "The chip's text.",
+              "fieldName": "label"
+            },
+            {
+              "name": "tone",
+              "type": { "text": "'neutral' | 'info' | 'warning'" },
+              "default": "'neutral'",
+              "description": "The chip's colour.",
+              "fieldName": "tone"
+            },
+            {
+              "name": "removable",
+              "type": { "text": "boolean" },
+              "default": "false",
+              "description": "Shows a remove button, which fires plain-remove.",
+              "fieldName": "removable"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "label",
+              "type": { "text": "string" },
+              "default": "''",
+              "description": "The chip's text.",
+              "attribute": "label",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "tone",
+              "type": { "text": "'neutral' | 'info' | 'warning'" },
+              "default": "'neutral'",
+              "description": "The chip's colour.",
+              "attribute": "tone",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "removable",
+              "type": { "text": "boolean" },
+              "default": "false",
+              "description": "Shows a remove button, which fires plain-remove.",
+              "attribute": "removable",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "count",
+              "type": { "text": "number | undefined" },
+              "description": "A count shown after the label. A property only: no attribute sets it."
+            }
+          ],
+          "slots": [
+            { "name": "", "description": "Text after the label." },
+            { "name": "icon", "description": "An icon before the label." }
+          ],
+          "cssProperties": [
+            {
+              "name": "--plain-chip-background",
+              "syntax": "<color>",
+              "default": "#e8e8ef",
+              "description": "The chip's background."
+            },
+            {
+              "name": "--plain-chip-color",
+              "syntax": "<color>",
+              "default": "#1d1d2b",
+              "description": "The chip's text colour."
+            }
+          ],
+          "cssParts": [
+            { "name": "label", "description": "The label." },
+            { "name": "count", "description": "The count." },
+            { "name": "remove", "description": "The remove button." }
+          ],
+          "events": [
+            {
+              "name": "plain-remove",
+              "type": { "text": "CustomEvent<{ label: string }>" },
+              "description": "Fired when the remove button is pressed."
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "PlainChip",
+          "declaration": { "name": "PlainChip", "module": "chip.js" }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "plain-chip",
+          "declaration": { "name": "PlainChip", "module": "chip.js" }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "index.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "PlainChip",
+          "declaration": { "name": "PlainChip", "module": "chip.js" }
+        }
+      ]
+    }
+  ]
+}

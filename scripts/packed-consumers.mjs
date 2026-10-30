@@ -135,6 +135,10 @@ export const CONSUMERS = {
   // team's app on the library's tarball (scripts/golden-path.mjs). The app is served at
   // /golden-path/, the site at /golden-path/site/.
   'golden-path': { goldenPath: true },
+  // Workbench from packed packages (scripts/workbench-consumer.mjs): an Oddkin library and a
+  // standard-CEM library documented by a fresh project. Its static build is served at
+  // /workbench/; /workbench/__ready also reports the URL of its `oddkin workbench dev`.
+  workbench: { workbench: true },
 };
 
 // Build tools at the versions the workspace verifies; the rest pinned (checked 2026-10-28). A spec
@@ -336,10 +340,9 @@ export async function packConsumer(name, work) {
   const oddkin = (pkg) =>
     registry ? `@oddkin/${pkg}@${registry}` : pack(pkg, join(work, 'tarballs'));
   const site = join(work, name);
-  if (consumer.goldenPath) {
+  if (consumer.goldenPath || consumer.workbench) {
     await rm(site, { recursive: true, force: true });
     await mkdir(site, { recursive: true });
-    const { buildGoldenPath } = await import('./golden-path.mjs');
     const helpers = {
       root,
       oddkin,
@@ -352,6 +355,11 @@ export async function packConsumer(name, work) {
       run,
       npm,
     };
+    if (consumer.workbench) {
+      const { buildWorkbenchConsumer } = await import('./workbench-consumer.mjs');
+      return buildWorkbenchConsumer(site, `/${name}/`, helpers);
+    }
+    const { buildGoldenPath } = await import('./golden-path.mjs');
     return buildGoldenPath(site, `/${name}/`, helpers);
   }
   await freshProject(site, [

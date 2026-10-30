@@ -24,6 +24,12 @@ export interface LibraryInput {
   readonly metadata?: OddkinMetadataLike;
   /** Authored example sets as data (`toExamplesJSON()` of each `defineExamples` module). */
   readonly examples?: readonly ExampleSetLike[];
+  /**
+   * Tag → the import specifier of the module that registers it, from the standard CEM: the module
+   * whose exports hold the tag's `custom-element-definition`, as the package's `exports` reach it.
+   * Used when the Oddkin enrichment names no `registration`.
+   */
+  readonly registrations?: Readonly<Record<string, string>>;
 }
 
 /** One component's examples as plain data (`@oddkin/workbench/examples` `ExamplesJSON`). */
@@ -89,6 +95,11 @@ export interface ComponentPageData extends PageDataBase {
   readonly declaration: JsonObject;
   /** The Oddkin enrichment entry, verbatim, when published. */
   readonly enrichment?: JsonObject;
+  /**
+   * The module that registers the element, as an import specifier, when the enrichment names none:
+   * from the standard CEM's `custom-element-definition` export (`LibraryInput.registrations`).
+   */
+  readonly registration?: string;
   /**
    * Authored examples for the element (metadata `examples`), verbatim, with their ids. When the
    * example set was loaded, `definition` holds its values (label, props, attributes, slots,

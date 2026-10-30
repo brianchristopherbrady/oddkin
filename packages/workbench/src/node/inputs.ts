@@ -6,7 +6,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { DOCS_SCHEMA, type DocsContent, type ResolvedWorkbenchConfig } from '../config/index.js';
-import { resolveExport } from '../data/import-map.js';
+import { exportedSpecifier, resolveExport, type PackageManifest } from '../data/import-map.js';
 import type {
   ExampleSetLike,
   JsonObject,
@@ -194,6 +194,25 @@ async function loadExampleSets(
   return sets;
 }
 
+/**
+ * Each element's registering module from the standard CEM: the module whose exports hold its
+ * `custom-element-definition`, as an import specifier through the package's `exports`. A module
+ * that no export reaches is left out, since no consumer could import it either.
+ */
+function cemRegistrations(
+  manifest: PackageManifest,
+  cem: CemPackage | undefined,
+): Record<string, string> {
+  const found: Record<string, string> = {};
+  for (const module of cem?.modules ?? [])
+    for (const entry of module.exports ?? []) {
+      if (entry.kind !== 'custom-element-definition' || !entry.name || found[entry.name]) continue;
+      const specifier = exportedSpecifier(manifest, module.path);
+      if (specifier) found[entry.name] = specifier;
+    }
+  return found;
+}
+
 /** Read every input of the Workbench data for the configuration at `root`. */
 export async function loadInputs(
   root: string,
@@ -235,12 +254,15 @@ export async function loadInputs(
       dataFiles.push(metadataFile);
     }
     const examples = await loadExampleSets(pkg.dir, metadata, out, dataFiles, exampleFiles);
+    // Importers use the name the package is installed under.
+    const registrations = cemRegistrations({ ...(pkg.manifest as PackageManifest), name }, cem);
     libraries.push({
       name,
       version: pkg.version,
       ...(cem ? { cem } : {}),
       ...(metadata ? { metadata } : {}),
       ...(examples.length ? { examples } : {}),
+      ...(Object.keys(registrations).length ? { registrations } : {}),
     });
   }
   for (const file of explicitCem) {
