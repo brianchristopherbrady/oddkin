@@ -51,6 +51,7 @@ Verification (results recorded in [verification.md](./verification.md), by owner
 - [ ] The browser floor re-resolved and the matrix regenerated ([compatibility/matrix.md](./compatibility/matrix.md)); Safari 18.2 and screen-reader evidence recorded as limitations until a macOS host and assistive technology are available. (For the beta: the floor resolved on 2026-10-26 and the matrix regenerated on 2026-10-28 stand; re-resolve before 1.0.0.)
 - [ ] `oddkin-impact` against the previous release once there is one, with the semver impact reviewed.
 - [x] The framework fixtures pass in three engines and §4 names the versions they ran against (2026-10-27; again in the beta browser runs).
+- [ ] The release evidence (§5) for the release commit: the CI run's `release-evidence-<attempt>` artifact, and `node scripts/release/evidence.mjs` from the clean checkout. After the publish, each package's `integrity` in `evidence.json` matches `npm view <name>@<version> dist.integrity`.
 
 Then the owner tags, publishes, and deploys.
 
@@ -81,6 +82,7 @@ node scripts/release/clean.mjs        # every package's dist and TypeScript buil
 npm run build
 npm run verify:packs                  # tarballs installed outside the workspace; no stale dist module
 node scripts/agent-kit/package-kits.mjs --check
+node scripts/release/evidence.mjs --out release-evidence/1.0.0-beta.0   # what would be published, with its hashes
 node scripts/release/publish.mjs      # dry run of all eight, in dependency order, with --tag beta
 npm login                             # with the account's two-factor authentication
 node scripts/release/publish.mjs --publish
@@ -90,6 +92,8 @@ git push origin v1.0.0-beta.0
 ```
 
 `scripts/release/publish.mjs` publishes `tokens`, `core`, `state`, `app`, `components`, `ai`, `analyzer`, and `workbench` in that order (each package's dependencies first), each as `npm publish --workspace packages/<name> --tag beta`, and refuses a package that is private or not public. The `--tag` is passed on the command line because npm 11.19 ignores `publishConfig.tag`: a dry run without it reported "Publishing … with tag latest" (verification.md, 2026-10-27). Then the owner checks a fresh install (`npm install @oddkin/core@beta @oddkin/components@beta` in an empty directory) and announces the `@beta` install line.
+
+`scripts/release/evidence.mjs` records what the checkout would publish in `release-evidence.v0`, an internal format: `evidence.json` and a readable `EVIDENCE.md`. They hold the commit, Node, npm, and the OS; each package's version, tarball integrity, file count, and sizes from one `npm pack --dry-run`; and the SHA-256 of each package's `custom-elements.json`, `oddkin.metadata.json`, `contracts.json`, and `agent/kit.json`. The command makes no network request of its own. It stops when the tree has uncommitted changes; `--allow-dirty` records them instead. A local run lists the checks as not run. CI writes the same files on every run and keeps them as the artifact `release-evidence-<attempt>` for 30 days, together with the Vitest results of the node project and of each engine, the Playwright results, the outcome and time of each step before it, and the change-impact report against the previous commit (`scripts/ci/impact-summary.mjs`). The evidence and the impact report also appear on the run's summary page.
 
 npm's two-factor check comes once per package: npm prints "Authenticate your account at:" with a link and "Press ENTER to open in the browser...", then waits for the approval on npmjs.com. An approval not given within about 5 minutes ends that publish with `E404 Not Found - GET https://registry.npmjs.org/-/v1/done?authId=***`; both attempts on 2026-10-28 ended that way at the first package, and nothing was published; the owner's own run then published all eight (19:18 to 19:24 UTC). So the owner stays at the browser: eight approvals for the first publish, sixteen for a later beta (each package's publish and its `latest` move, which also needs the check). `publish.mjs` skips a package already on npm at its version only when its packed contents are identical (`npm view <name>@<version> dist.integrity` against `npm pack --dry-run --json`), and a `latest` already moved, so rerunning it after an expired prompt resumes where it stopped. A published version with other contents, or nothing left to do, stops the run, dry run included, with the next step: the versions were not stepped. `npm dist-tag` has no dry run, so a dry run only lists the `latest` moves.
 

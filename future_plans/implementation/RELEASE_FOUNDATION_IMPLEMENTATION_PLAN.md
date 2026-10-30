@@ -258,6 +258,8 @@ Where:
 - in CI, as an artifact of the run that verified the candidate (RF-10);
 - with the owner's approval, as GitHub Release assets (D-11).
 
+Version 0 (2026-10-29) writes `evidence.json` and `EVIDENCE.md`; in CI, also `results/` (the Vitest and Playwright JSON reports) and `impact/` (the report against the previous commit, not yet against the previous release). The other steps' outcomes and times come from the GitHub API rather than from `results/`. Not yet: the SBOM, the release notes, and the registry smoke.
+
 ## 15. npm scope and trusted-publishing setup
 
 - **Today:**
@@ -274,9 +276,8 @@ Where:
 
 ## 16. CI and verification sequence
 
-**Every push to `main` (exists, `ci.yml`):** `npm ci`, Playwright install, lint, typecheck, build, node project, browser project per engine with `--no-file-parallelism`, `verify:metadata`, size, e2e, `verify:packs`. To add:
+**Every push to `main` (exists, `ci.yml`):** `npm ci`, Playwright install, lint, typecheck, build, node project, browser project per engine with `--no-file-parallelism`, `verify:metadata`, size, e2e, `verify:packs`, the change-impact report against the previous commit (CF.2), and the evidence artifact (RF-10). To add:
 
-- an evidence artifact on success (RF-10);
 - an `npm audit --omit=dev` report, kept informational at first (RF-13).
 
 **Release candidate, from a clean checkout:**
@@ -312,7 +313,7 @@ Where:
 | Runtime dependencies | None outside `@oddkin`, enforced by `verify-packs` | Verified | — |
 | Install scripts in packages | None | Verified | Add a `verify-packs` rule to keep it so (RF-13) |
 | Tarball contents | No `src`, `test`, or stale files; explicit `files` | Verified | — |
-| Workflow permissions | `contents: read`; Pages deploy uses `id-token: write` in its own job | Verified | — |
+| Workflow permissions | `contents: read`, and in `ci.yml` `actions: read` (the evidence reads its job's step times); Pages deploy uses `id-token: write` in its own job | Verified | — |
 | Action pinning | Major tags (`@v7`), not commits | Partial | RF-13 (pin by SHA, or record the decision) |
 | Dependency updates | No Dependabot or Renovate | Planned | RF-13 |
 | Vulnerability reporting | No `SECURITY.md` | Planned | RF-13 (D-8) |
@@ -491,6 +492,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** `evidence.json` and `EVIDENCE.md`.
 - **Done when:** one command (`node scripts/release/evidence.mjs --out release-evidence/<label>`) writes the bundle from a clean checkout without network access, and the test passes on Windows and in CI on Linux.
 - **Risks:** `npm pack --dry-run` packs all eight packages on each run; keep it out of the per-push CI until RF-10.
+- **State (2026-10-29, Agent 1):** done. On Windows the command takes 16 s. The test compares integrity by packing the eight packages again, one at a time, so that comparison runs in CI and with `ODDKIN_RELEASE_TESTS=1` (97 s on Windows); the other tests stand in for `npm pack` with the manifests.
 
 ### RF-10 Evidence in CI
 
@@ -503,6 +505,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the evidence artifact of each CI run on `main`.
 - **Done when:** each run on `main` keeps a downloadable evidence artifact (with an agreed retention). The release run's artifact is attached to the GitHub Release when D-11 is yes.
 - **Risks:** reporter changes affect other agents' local output; enable them only when `CI` is set.
+- **State (2026-10-29, Agent 1):** in `ci.yml`. The Vitest steps add the JSON reporter beside `default` and `github-actions`, and Playwright adds its JSON reporter when `CI` is set. After `verify:packs`, CI writes the change-impact report (CF.2) and the evidence with `--ci`, which reads the job's step times from the GitHub API (`actions: read`), and uploads `release-evidence/` as `release-evidence-<attempt>`, kept 30 days, from every run that was not cancelled. Attaching it to a GitHub Release waits for D-11.
 
 ### RF-11 External fixture repository
 

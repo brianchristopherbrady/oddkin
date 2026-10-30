@@ -106,9 +106,11 @@ The details are in [future_plans/](./future_plans/TECHNICAL_COMMERCIALIZATION_PL
   - accessibility wording that names its evidence (RF-03; owner decision D-7);
   - a public browser and Node support policy that lists its limitations (RF-04);
   - the release evidence bundle, first as a local command (RF-09).
+    - *(2026-10-29, Agent 1: done, and in CI (RF-10). `node scripts/release/evidence.mjs --out <dir>` writes `evidence.json` and `EVIDENCE.md`: the commit and whether the tree is clean, the toolchain, each package's tarball integrity, file count, and sizes, and the hashes of the generated metadata, contracts, and kits. Every CI run keeps them as the artifact `release-evidence-<attempt>` (30 days), with the test results per project and engine, the e2e results, the step times, and the change-impact report. release-process.md §3 and §5 name both.)*
 - [ ] **CF.2 The change-impact demonstration (Agents 1 and 2; Agent 3 for the page).**
   - A scripted, reproducible real change between two commits, with its impact report: reason paths, and the selected checks' results in three engines (`scripts/impact.mjs`; Agent 2 owns `@oddkin/analyzer`).
   - The same report produced in CI and published as a job summary and an artifact (the technical plan's Workstream D, step 1; Agent 1).
+    - *(2026-10-29, Agent 1: each CI run compares its commit with the one before it (a pull request: with its base) through `scripts/ci/impact-summary.mjs`, adds the report to the job summary, and keeps it in the `release-evidence-<attempt>` artifact. CI still runs every check; the report lists the ones it would select. The step only informs: its failure does not fail the run. `scripts/impact.mjs --base-ref` now builds the base with the base's own build steps (it failed on the token assets and core's production build) and removes its links on Linux.)*
   - A docs page that presents the sample report and links the site to its evidence: CI in three browsers, the fresh-install tests, the change-impact analysis, and the architecture decisions (Agent 3).
 - [ ] **CF.3 Libraries not built with Oddkin (Agent 2).** The technical plan's Workstream B:
   - the minimum standard-CEM experience across Workbench, impact, and kits;

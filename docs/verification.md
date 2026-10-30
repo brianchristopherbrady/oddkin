@@ -4371,3 +4371,17 @@ The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workben
 | Types, lint, size | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Pass; pass; shell 55,143 B of 55,296 (99.7%), catalog panel 17,855 of 18,432 |
 
 **Not verified:** a library with hundreds of components (only 78 here), and the registry smoke.
+
+## 2026-10-29 — Release evidence, and the change-impact report in CI (round 10, Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Evidence tests | `npx vitest run --project node tests/release/evidence.test.ts` | 6 passed, 1 skipped: the integrity comparison, which runs in CI or with `ODDKIN_RELEASE_TESTS=1` |
+| Integrity against npm, Windows | The same, with `ODDKIN_RELEASE_TESTS=1` | 7 passed (97 s): the command's name, version, integrity, and file count for each package equal those of a separate `npm pack --dry-run --json` of that package |
+| The command | `node scripts/release/evidence.mjs --out .tmp/ev-flags` on the uncommitted tree, then with `--allow-dirty` | First: "The working tree has 8 uncommitted change(s): commit them, or pass --allow-dirty…", exit 1. Then: 8 packages, 7 files hashed, the tree recorded as dirty, and the node project's results read from its Vitest JSON report; 16 s for both runs |
+| CI's reporter flags | `npx vitest run --project node tests/release/evidence.test.ts --reporter=default --reporter=github-actions --reporter=json --outputFile.json=.tmp/ev-flags/results/vitest-node.json` | The JSON report is written where the evidence reads it |
+| Impact summary without a base | `node scripts/ci/impact-summary.mjs --out <dir>` with `IMPACT_BASE` empty, then 40 `f`s (a commit not in the clone) | Exit 0 both times; the summary says why there is no report; `status.json` says `unavailable` |
+| Impact summary against the previous commit, Windows | `IMPACT_BASE=e612aa0` at `5037030` | Before the fix, `scripts/impact.mjs --base-ref` failed building the base: ENOENT for `packages/tokens/dist/inspect/default.inspect.json`, then, with the token assets built, ERR_MODULE_NOT_FOUND for `@oddkin/core/dist/prod/layout/index.js`. After it: exit 0 in 231 s, "0 changes (0 incompatible) · 0 products affected · 0 checks" (`5037030` changes only Workbench and documentation), and the base's worktree removed |
+| Format, types | `npx prettier --check` on the changed files; `npx tsc -p tsconfig.tests.json` | Pass; pass |
+
+**Not verified:** Linux, until the first CI run with these steps.

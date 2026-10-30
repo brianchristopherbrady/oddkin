@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  # The release evidence step reads this job's step times.
+  actions: read
 
 jobs:
   verify:
@@ -27,20 +29,20 @@ jobs:
       # runs here as its parts: the build, the node project, and the browser project one engine at a
       # time with --no-file-parallelism (the owner's interim rule: Firefox and WebKit fail under
       # parallel load; every file passes alone). The e2e run includes the fresh projects
-      # (e2e/fresh-consumers.spec.ts).
+      # (e2e/fresh-consumers.spec.ts). Test runs also write JSON results for the release evidence.
       - run: npm run lint
       - if: ${{ !cancelled() }}
         run: npm run typecheck
       - if: ${{ !cancelled() }}
         run: npm run build
       - if: ${{ !cancelled() }}
-        run: npx vitest run --project node
+        run: npx vitest run --project node --reporter=default --reporter=github-actions --reporter=json --outputFile.json=release-evidence/results/vitest-node.json
       - if: ${{ !cancelled() }}
-        run: npx vitest run --project browser --browser.name=chromium --no-file-parallelism
+        run: npx vitest run --project browser --browser.name=chromium --no-file-parallelism --reporter=default --reporter=github-actions --reporter=json --outputFile.json=release-evidence/results/vitest-chromium.json
       - if: ${{ !cancelled() }}
-        run: npx vitest run --project browser --browser.name=firefox --no-file-parallelism
+        run: npx vitest run --project browser --browser.name=firefox --no-file-parallelism --reporter=default --reporter=github-actions --reporter=json --outputFile.json=release-evidence/results/vitest-firefox.json
       - if: ${{ !cancelled() }}
-        run: npx vitest run --project browser --browser.name=webkit --no-file-parallelism
+        run: npx vitest run --project browser --browser.name=webkit --no-file-parallelism --reporter=default --reporter=github-actions --reporter=json --outputFile.json=release-evidence/results/vitest-webkit.json
       - if: ${{ !cancelled() }}
         run: npm run verify:metadata
       - if: ${{ !cancelled() }}
@@ -49,6 +51,26 @@ jobs:
         run: npm run test:e2e
       - if: ${{ !cancelled() }}
         run: npm run verify:packs
+      # What this push or pull request changes, and which checks that selects (IMPLEMENTATION_PLAN.md
+      # CF.2), in the job summary. Informational: a failure marks this step, not the run.
+      - if: ${{ !cancelled() }}
+        continue-on-error: true
+        env:
+          IMPACT_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/ci/impact-summary.mjs --out release-evidence/impact
+      # The release evidence (RELEASE_FOUNDATION_IMPLEMENTATION_PLAN.md RF-09, RF-10): the packages
+      # as npm packs them, the generated files' hashes, the test counts, and the step times.
+      - if: ${{ !cancelled() }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/release/evidence.mjs --out release-evidence --allow-dirty --ci
+      - if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-evidence-${{ github.run_attempt }}
+          path: release-evidence/
+          if-no-files-found: ignore
+          retention-days: 30
       - if: failure()
         uses: actions/upload-artifact@v7
         with:

@@ -21,6 +21,7 @@ import {
   rmSync,
   rmdirSync,
   symlinkSync,
+  unlinkSync,
   writeFileSync,
 } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -153,13 +154,29 @@ async function snapshotRef(ref, out) {
   let links = [];
   try {
     links = linkDependencies(worktree);
-    run(process.execPath, [join(worktree, 'node_modules/typescript/bin/tsc'), '-b'], worktree);
-    run(process.execPath, ['scripts/build-metadata.mjs'], worktree);
+    // The base's own build steps, read from its package.json, up to its metadata: they change
+    // over time (the metadata now reads the token assets and the production build).
+    const steps = JSON.parse(readFileSync(join(worktree, 'package.json'), 'utf8'))
+      .scripts.build.split('&&')
+      .map((step) => step.trim().split(/\s+/));
+    for (const [command, ...args] of steps) {
+      if (command === 'tsc')
+        run(
+          process.execPath,
+          [join(worktree, 'node_modules/typescript/bin/tsc'), ...args],
+          worktree,
+        );
+      else if (command === 'node') run(process.execPath, args, worktree);
+      else throw new Error(`Unsupported build step at ${ref}: ${command} ${args.join(' ')}`);
+      if (args[0] === 'scripts/build-metadata.mjs') break;
+    }
     await snapshot(worktree, out);
   } finally {
-    // Unlink junctions first, so removing the worktree can never reach their targets.
+    // Unlink junctions first, so removing the worktree can never reach their targets. rmdir
+    // removes a Windows junction; a POSIX symlink is unlinked (rmdir fails on it with ENOTDIR).
     for (const path of links.reverse())
-      if (lstatSync(path, { throwIfNoEntry: false })?.isSymbolicLink()) rmdirSync(path);
+      if (lstatSync(path, { throwIfNoEntry: false })?.isSymbolicLink())
+        (process.platform === 'win32' ? rmdirSync : unlinkSync)(path);
     run('git', ['worktree', 'remove', '--force', worktree], ROOT);
   }
   console.log(`Base: ${ref} (${commit.slice(0, 12)})`);

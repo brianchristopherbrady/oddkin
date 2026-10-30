@@ -5,6 +5,8 @@ dist/
 coverage/
 test-results/
 playwright-report/
+# Written by scripts/release/evidence.mjs and CI's test reporters
+release-evidence/
 .oddkin/
 .tmp/
 .vitest/

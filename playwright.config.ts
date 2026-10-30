@@ -6,7 +6,14 @@ export default defineConfig({
   testDir: 'e2e',
   fullyParallel: true,
   forbidOnly: !!process.env['CI'],
-  reporter: process.env['CI'] ? [['github'], ['html', { open: 'never' }]] : 'list',
+  reporter: process.env['CI']
+    ? [
+        ['github'],
+        ['html', { open: 'never' }],
+        // Read by the release evidence (scripts/release/evidence.mjs).
+        ['json', { outputFile: 'release-evidence/results/e2e.json' }],
+      ]
+    : 'list',
   use: {
     baseURL: `http://localhost:${port}`,
     // CI uploads these on failure, so Linux-only failures can be inspected in the trace viewer.

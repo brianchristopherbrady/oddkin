@@ -50,7 +50,7 @@ The workstreams in §5 relate to it as follows.
 
 | Workstream | In the priority plan | Not in it yet |
 | --- | --- | --- |
-| A. Release foundation | P0.1, P0.2, P0.5, P0.6, and P0.8 (Agent 1); CF.1: RF-01 to RF-04 and RF-09 | The other release-plan tasks: evidence in CI, the external fixture repository, trusted publishing, the security policy |
+| A. Release foundation | P0.1, P0.2, P0.5, P0.6, and P0.8 (Agent 1); CF.1: RF-01 to RF-04 and RF-09, with RF-10 (evidence in CI) done beside RF-09 | The other release-plan tasks: the external fixture repository, trusted publishing, the security policy |
 | B. Generalize assurance inputs | P0.3's standard-CEM fixture library (Agent 2); CF.3; P1.6, analyzer and metadata | Framework inputs (task 5); identities across releases (task 6) |
 | C. Assurance artifact protocol | The impact prototype (M5), which CF.2 uses | Provenance, verification plan, approval, evidence, and context-release formats |
 | D. Pull-request integration | CF.2: the impact report in CI (step 1) | The hosted GitHub App (step 2) |
@@ -193,7 +193,7 @@ Missing formats:
 - a standalone check-result format (results enter as `CheckResult` records through `mergeResults`);
 - references to visual and accessibility artifacts;
 - an approval decision;
-- the release evidence bundle (RF-09 writes a local `release-evidence.v0`);
+- the release evidence bundle as a published format (RF-09 and RF-10 write an internal `release-evidence.v0`, locally and in each CI run);
 - an agent-context release.
 
 Required properties:
