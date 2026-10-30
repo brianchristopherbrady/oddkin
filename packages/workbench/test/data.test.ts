@@ -374,6 +374,7 @@ describe('Workbench data from published outputs', () => {
     expect(diagnostics.filter((d) => d.code === 'data.tokens.missing')).toEqual([]);
     // Without a registration from the host (Node reads it from the CEM), the preview has none.
     expect(page).not.toHaveProperty('registration');
+    expect(data.index.previews).toEqual([]);
   });
 
   it("gives a standard-CEM element its CEM registration; an enrichment's registration wins", () => {
@@ -381,11 +382,14 @@ describe('Workbench data from published outputs', () => {
       'acme-button': '@acme/ui/button.js',
       'odd-button': '@acme/ui/odd-button.js',
     };
-    const cemOnly = build({
+    const cemOnlyData = build({
       config: { library: { packages: ['@acme/ui'] } },
       libraries: [{ ...acme, registrations }],
-    }).data.pages['components/acme-button'] as ComponentPageData;
+    }).data;
+    const cemOnly = cemOnlyData.pages['components/acme-button'] as ComponentPageData;
     expect(cemOnly.registration).toBe('@acme/ui/button.js');
+    // The catalog previews the components that register, and only those.
+    expect(cemOnlyData.index.previews).toEqual(['components/acme-button']);
     const enriched = build({
       config,
       libraries: [{ ...components, registrations }],

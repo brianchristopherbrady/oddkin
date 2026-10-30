@@ -74,6 +74,8 @@ export interface WorkbenchIndex {
   readonly registry: PageRegistry;
   /** Page id → its data file, relative to the index. Visible pages only. */
   readonly pages: Readonly<Record<string, string>>;
+  /** Component pages whose element has a registration: the catalog shows each live in its card. */
+  readonly previews?: readonly string[];
   readonly diagnostics: readonly WorkbenchDiagnostic[];
 }
 

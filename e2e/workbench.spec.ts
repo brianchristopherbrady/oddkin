@@ -101,6 +101,39 @@ test.describe('Workbench shell', () => {
     await expect(page).toHaveTitle('Page not found · Oddkin components');
   });
 
+  test('previews each component live in its catalog card as the card nears the view', async ({
+    page,
+  }) => {
+    test.setTimeout(90_000);
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await open(page, 'components', 'Components');
+    const button = page
+      .locator('odd-card.wb-card')
+      .filter({ has: page.locator('h3', { hasText: /^Button$/ }) });
+    // The first example, upgraded in the card's frame; the shell's realm registers no library element.
+    const element = button.frameLocator('iframe').locator('odd-button');
+    await expect(element).toHaveText('Save', { timeout: 20_000 });
+    expect(await element.evaluate((el) => el.shadowRoot !== null)).toBe(true);
+    expect(await page.evaluate(() => customElements.get('odd-button') === undefined)).toBe(true);
+    // Outside the tab order: the card's link stays its only stop.
+    await expect(button.locator('.wb-card-frame')).toHaveJSProperty('inert', true);
+    // Frames load as their cards near the view, so the far cards have none yet. Cards scrolled
+    // past before their turn drop out of the queue, so the last one loads after those in flight.
+    const hosts = page.locator('.wb-card-frame');
+    expect(await hosts.locator('iframe').count()).toBeLessThan(await hosts.count());
+    await hosts.last().scrollIntoViewIfNeeded();
+    await expect(hosts.last().locator('iframe')).toHaveCount(1, { timeout: 30_000 });
+    // Leaving the catalog removes them.
+    await page
+      .getByRole('navigation', { name: 'Primary' })
+      .getByRole('link', { name: 'Foundations' })
+      .click();
+    await expect(page.locator('main h1')).toHaveText('Foundations');
+    await expect(page.locator('iframe')).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+
   test('lists the page’s sections and jumps to them', async ({ page }) => {
     await open(page, 'components/odd-button', 'Button');
     const toc = page.getByRole('navigation', { name: 'On this page' });

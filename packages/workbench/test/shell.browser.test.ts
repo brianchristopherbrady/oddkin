@@ -9,6 +9,7 @@ import {
   type WorkbenchData,
 } from '../src/data/index.js';
 import type { CemPackage, OddkinMetadataLike } from '../src/pages/index.js';
+import { previewProtocolStats } from '../src/preview/frame.js';
 
 // The shell over the Acme fixture library, in hash mode so the test page's own path is left
 // alone. Data comes from an injected source; the dev server and real HTTP are e2e territory.
@@ -138,7 +139,7 @@ describe('<oddkin-workbench>', () => {
       expect(shell.querySelector(`section#${link.hash.split('#').pop()}`)).not.toBeNull();
   });
 
-  it('filters the component catalog from URL state without mounting previews in cards', async () => {
+  it('filters the component catalog from URL state', async () => {
     location.hash = '#/components?q=button';
     const shell = await mount(sourceFor(await acmeData()));
     await until(() => heading(shell) === 'Components', 'Components');
@@ -151,6 +152,7 @@ describe('<oddkin-workbench>', () => {
       '3 components',
       '2 categories',
     ]);
+    // No Acme component registers, so no card has a preview.
     expect(shell.querySelector('iframe')).toBeNull();
 
     const categories = [...shell.querySelectorAll<HTMLButtonElement>('.wb-categories button')];
@@ -215,6 +217,63 @@ describe('<oddkin-workbench>', () => {
     expect(iframe.contentDocument?.querySelector('acme-button')?.shadowRoot?.textContent).toContain(
       'Preview ready',
     );
+    shell.remove();
+    shells.length = 0;
+    await settled();
+    expect(scopeStats()).toEqual(before);
+  });
+
+  it('previews registered components live in their catalog cards, outside the tab order', async () => {
+    const before = scopeStats();
+    const frames = previewProtocolStats().liveFrames;
+    const data = await acmeData();
+    const base = sourceFor(data);
+    const buttonPage = data.pages['components/acme-button'] as ComponentPageData;
+    const buttonFile = data.index.pages['components/acme-button'];
+    const source: WorkbenchSource = {
+      ...base,
+      // The data build lists the components whose page has a registration; here, the button.
+      index: async () => ({ ...data.index, previews: ['components/acme-button'] }),
+      previewFrameUrl: new URL('./fixtures/frame-test.html', import.meta.url).href,
+      page: async (file, signal) =>
+        file === buttonFile
+          ? {
+              ...buttonPage,
+              registration: new URL('./fixtures/acme-preview-element.ts', import.meta.url).href,
+            }
+          : base.page(file, signal),
+    };
+    location.hash = '#/components';
+    const shell = await mount(source);
+    await until(() => cardTitles(shell).includes('Button'), 'the cards');
+    const card = (title: string) =>
+      [...shell.querySelectorAll('odd-card.wb-card')].find(
+        (c) => c.querySelector(':is(h2, h3)')?.textContent === title,
+      )!;
+    // A card's frame is created as the card nears the view.
+    card('Button').scrollIntoView();
+    const frame = () => card('Button').querySelector<HTMLIFrameElement>('.wb-card-preview iframe');
+    await until(
+      () => !!frame()?.contentDocument?.querySelector('acme-button')?.shadowRoot,
+      'the card preview',
+    );
+    expect(frame()!.contentDocument!.querySelector('acme-button')!.shadowRoot!.textContent).toBe(
+      'Preview ready',
+    );
+    // The element registers in the frame's realm only.
+    expect(customElements.get('acme-button')).toBeUndefined();
+    // Inert and out of the tab order: the card's link stays its only stop.
+    expect(card('Button').querySelector<HTMLElement>('.wb-card-frame')!.inert).toBe(true);
+    expect(frame()!.tabIndex).toBe(-1);
+    expect(previewProtocolStats().liveFrames).toBe(frames + 1);
+    // A component without a registration keeps a plain card.
+    expect(card('Card').classList.contains('wb-has-preview')).toBe(false);
+    expect(card('Card').querySelector('.wb-card-preview')).toBeNull();
+
+    // Leaving the catalog releases the cards' frames.
+    shell.querySelector<HTMLAnchorElement>('.wb-primary a[href="#/foundations"]')!.click();
+    await until(() => heading(shell) === 'Foundations', 'Foundations');
+    expect(previewProtocolStats().liveFrames).toBe(frames);
     shell.remove();
     shells.length = 0;
     await settled();
@@ -348,6 +407,40 @@ describe('<oddkin-workbench>', () => {
           !!detail()!.previews[0]!.iframe.contentDocument?.querySelector('acme-button')?.shadowRoot,
         'the remounted preview',
       );
+    });
+
+    it("rebuilds the catalog cards' previews when component modules change", async () => {
+      window.EventSource = StandInEventSource as unknown as typeof EventSource;
+      const data = await acmeData();
+      const base = sourceFor(data);
+      const page = data.pages['components/acme-button'] as ComponentPageData;
+      const source: WorkbenchSource = {
+        ...base,
+        index: async () => ({ ...data.index, previews: ['components/acme-button'] }),
+        previewFrameUrl: new URL('./fixtures/frame-test.html', import.meta.url).href,
+        page: async (file, signal) =>
+          file === data.index.pages['components/acme-button']
+            ? {
+                ...page,
+                registration: new URL('./fixtures/acme-preview-element.ts', import.meta.url).href,
+              }
+            : base.page(file, signal),
+      };
+      location.hash = '#/components';
+      const shell = document.createElement('oddkin-workbench');
+      shell.source = source;
+      shell.events = '/stand-in-events';
+      shells.push(shell);
+      document.body.append(shell);
+      await until(() => !!shell.querySelector('.wb-card-preview'), 'the card');
+      shell.querySelector('.wb-card-preview')!.scrollIntoView();
+      const frame = () => shell.querySelector<HTMLIFrameElement>('.wb-card-preview iframe');
+      const ready = () => !!frame()?.contentDocument?.querySelector('acme-button')?.shadowRoot;
+      await until(ready, 'the card preview');
+      const first = frame();
+      StandInEventSource.last!.send({ modules: ['@acme/ui@1.4.0'] });
+      await until(() => frame() !== first && ready(), 'a fresh card preview');
+      expect(first!.isConnected).toBe(false);
     });
   });
 

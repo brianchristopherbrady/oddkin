@@ -60,11 +60,28 @@ test('installs Workbench, the Oddkin components, and the plain library from tarb
 test.describe('the dev server of a fresh project', () => {
   test.describe.configure({ timeout: 90_000 });
 
-  test('lists both libraries in the catalog', async ({ page }) => {
+  test('lists both libraries in the catalog, each card with a live preview', async ({ page }) => {
     await open(page, `${report.dev}components`, 'Components');
     const cards = page.locator('odd-card.wb-card');
-    await expect(cards.filter({ hasText: 'odd-button' })).toHaveCount(1);
-    await expect(cards.filter({ hasText: 'plain-chip' })).toHaveCount(1);
+    const button = cards.filter({ hasText: 'odd-button' });
+    await expect(button).toHaveCount(1);
+    await expect(button.frameLocator('iframe').locator('odd-button')).toHaveText('Save', {
+      timeout: 30_000,
+    });
+    // The standard-CEM library's card registers its element through the CEM as well.
+    const chip = cards.filter({ hasText: 'plain-chip' });
+    await expect(chip).toHaveCount(1);
+    await chip.scrollIntoViewIfNeeded();
+    await expect
+      .poll(
+        () =>
+          chip
+            .frameLocator('iframe')
+            .locator('plain-chip')
+            .evaluate((el) => customElements.get(el.localName) !== undefined),
+        { timeout: 30_000 },
+      )
+      .toBe(true);
   });
 
   test('documents the Oddkin library: its real component, edits in place, presets, Reset, and a link', async ({

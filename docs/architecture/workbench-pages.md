@@ -102,7 +102,7 @@ Built first, from the library's actual spacing contracts:
 - **Search** by name, tag name, summary, and tags. **Category filter** from the library's configured categories ("All categories" default). **Result count** ("Showing N of M").
 - Groups: heading with count, optional group description, card grid (title, summary, `Updated · tags`). Categories come from metadata/config (`@category` tag, enrichment, or config mapping). Components without a category go to a configurable fallback group (default "Other components"). No forced Layout / Primitive / Composite taxonomy.
 - Filter and search state live in the URL (`?q=&category=`) and are shareable.
-- Lightweight: no live previews or iframes in cards; component modules are not loaded on the catalog.
+- Live previews (owner, 2026-10-29, P0.3; this replaces "no live previews or iframes in cards"): the card of each component with a registration shows its first example, in a frame in Workbench's shell or as a node the host supplies (`preview(page)`, apps/docs). The index lists those components (`previews`), so the other cards stay plain. Frames are created as their cards near the view and load two at a time, a card scrolled past before its turn waits until it comes back, they are inert (the card's link stays its only stop), and they are released when the catalog closes. The shell's own realm still loads no component module.
 
 ## 7. Component detail page — documentation and interactive example combined
 
@@ -228,7 +228,7 @@ export default defineWorkbenchConfig({
 - [ ] Two different library configurations (fixtures) produce different, correct content without editing application templates
 - [ ] Card dates, tags, counts, and verification statements are accurate or omitted; build time is never shown as an updated date
 - [ ] Configuration changes regenerate relevant content without overwriting authored guidance
-- [ ] Components catalog keeps search, category filter, counts, grouping, fallback group, and URL state; no previews in cards
+- [ ] Components catalog keeps search, category filter, counts, grouping, fallback group, and URL state; cards preview their components live, loaded lazily in inert frames
 - [ ] Each component detail page combines documentation, editable API table, slots, preview settings, presets, reset, sharing, and reproducible plain HTML/JS code
 - [ ] No standalone Playground destination; legacy routes redirect where configured
 - [ ] Theme Studio is a primary destination and absent from Foundations cards and sidebar; the Themes page links to it

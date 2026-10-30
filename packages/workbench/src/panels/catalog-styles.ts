@@ -78,6 +78,31 @@ export const catalogStyles = css`
   a.wb-card-action:hover {
     background: var(--odd-color-surface-hover);
   }
+  /* Live previews: a host that loads the library supplies elements; Workbench's shell, frames. */
+  .wb-card.wb-has-preview::part(base) {
+    overflow: hidden;
+  }
+  .wb-card.wb-has-preview::part(header) {
+    border-block-end: var(--odd-border-width-default) solid var(--odd-color-border-default);
+  }
+  .wb-card.wb-has-preview::part(body) {
+    padding: var(--odd-space-sm) var(--odd-space-lg) 0;
+  }
+  .wb-card.wb-has-preview::part(footer) {
+    padding: 0 var(--odd-space-lg) var(--odd-space-lg);
+  }
+  /* A fixed height, as in Figma 03: a preview built as its card scrolls in never moves the cards. */
+  .wb-card-preview {
+    position: relative;
+    block-size: 10rem;
+    overflow: hidden;
+    padding: var(--odd-space-md);
+    background: var(--odd-color-surface-specimen);
+  }
+  .wb-card-frame {
+    position: absolute;
+    inset: 0;
+  }
 `;
 
 /** The arrangement in the panel's shadow root, which the page's layout.css cannot reach. */
@@ -113,27 +138,9 @@ export const catalogLayoutStyles = css`
   .wb-content .wb-card {
     block-size: 100%;
   }
-  /* Live previews: only a host that loads the library supplies them, so only the panel has them. */
-  .wb-content .wb-card.wb-has-preview::part(base) {
-    overflow: hidden;
-  }
-  .wb-content .wb-card.wb-has-preview::part(header) {
-    border-block-end: var(--odd-border-width-default) solid var(--odd-color-border-default);
-  }
-  .wb-content .wb-card.wb-has-preview::part(body) {
-    padding: var(--odd-space-sm) var(--odd-space-lg) 0;
-  }
-  .wb-content .wb-card.wb-has-preview::part(footer) {
-    padding: 0 var(--odd-space-lg) var(--odd-space-lg);
-  }
-  /* A fixed height, as in Figma 03: a preview built as its card scrolls in never moves the cards. */
   .wb-content .wb-card-preview {
     display: grid;
     place-items: center;
-    block-size: 10rem;
-    overflow: hidden;
-    padding: var(--odd-space-md);
-    background: var(--odd-color-surface-specimen);
   }
   @container wb-content (width >= 32rem) {
     .wb-content .wb-cards {

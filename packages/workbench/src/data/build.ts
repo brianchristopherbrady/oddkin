@@ -13,6 +13,7 @@ import {
 import { DiagnosticList, isObject, type WorkbenchDiagnostic } from '../internal/diagnostics.js';
 import { buildPageRegistry } from '../pages/build.js';
 import { FOUNDATIONS } from '../pages/defaults.js';
+import { registrationOf } from '../panels/model.js';
 import { themeStudioPage, type ThemeStudioInput } from './theme-studio.js';
 import type { CemDeclaration, OddkinMetadataLike, PageEntry } from '../pages/types.js';
 import {
@@ -322,6 +323,9 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
     }),
     registry,
     pages: files,
+    previews: Object.values(pages).flatMap((page) =>
+      page.kind === 'component' && registrationOf(page) !== undefined ? [page.id] : [],
+    ),
     diagnostics: out.items,
   };
   return { data: { index, pages }, diagnostics: out.items };

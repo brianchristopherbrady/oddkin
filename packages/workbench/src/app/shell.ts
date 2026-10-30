@@ -22,6 +22,7 @@ import {
 import { href as registryHref } from '../pages/navigation.js';
 import type { PageEntry } from '../pages/types.js';
 import { COPY } from './copy.js';
+import { cardPreviews, type CardPreviews } from './card-previews.js';
 import { shellRoutes, type ShellView } from './routes.js';
 import { search, searchItems, type SearchItem } from './search.js';
 import { shellStyles } from './styles.js';
@@ -147,6 +148,11 @@ export class OddkinWorkbench extends OddkinElement.with({
   readonly #appearance = signal<Appearance>('system');
   #items: SearchItem[] = [];
   #previewFrameUrl = '';
+  #source: WorkbenchSource | undefined;
+  /** The catalog cards' live previews, while the catalog shows. */
+  #cards: CardPreviews | undefined;
+  /** Bumped when the cards' previews must be built again (changed component code). */
+  readonly #cardsVersion = signal(0);
   /** Theme Studio's module, imported on the first visit to its route. */
   #studio: Promise<unknown> | undefined;
   readonly #studioError = signal('');
@@ -180,6 +186,8 @@ export class OddkinWorkbench extends OddkinElement.with({
       index: (signal) => fetchJson(indexUrl, signal),
       page: (file, signal) => fetchJson(new URL(file, indexUrl), signal),
     };
+    this.#source = source;
+    scope.add(() => this.#disposeCards());
     const events = this.events ? new URL(this.events, doc.baseURI) : undefined;
     // One application per connection. The page lifecycle service suspends it while the page is
     // in the back/forward cache, which closes the live-update stream (Firefox keeps a cached
@@ -218,6 +226,7 @@ export class OddkinWorkbench extends OddkinElement.with({
     if (current && JSON.stringify(current) === JSON.stringify(value)) return;
     if (!current) performance.mark('oddkin-workbench:index');
     this.#run?.dispose();
+    this.#disposeCards();
     this.#failure.value = undefined;
     this.#index.value = value;
     this.#items = searchItems(value.registry);
@@ -308,8 +317,13 @@ export class OddkinWorkbench extends OddkinElement.with({
     }
     this.#stale.value = undefined;
     // Changed component code needs a fresh realm: a registration cannot be redefined in place.
-    if (update.modules?.length)
+    if (update.modules?.length) {
       void this.querySelector('oddkin-workbench-component')?.replacePreview();
+      if (this.#cards) {
+        this.#disposeCards();
+        this.#cardsVersion.value++;
+      }
+    }
     if (update.index) {
       void this.#load(source, root);
       return;
@@ -322,6 +336,30 @@ export class OddkinWorkbench extends OddkinElement.with({
   #view(state: RouterState | undefined): ShellView | undefined {
     const leaf = state?.matches.at(-1);
     return leaf?.status === 'ready' ? (leaf.data as ShellView | undefined) : undefined;
+  }
+
+  #disposeCards(): void {
+    this.#cards?.dispose();
+    this.#cards = undefined;
+  }
+
+  /** Live previews for the catalog's cards: each component's first example in a frame. */
+  #cardPreview(index: WorkbenchIndex) {
+    void this.#cardsVersion.value;
+    const source = this.#source;
+    if (!source || !index.previews?.length) return undefined;
+    const cards = (this.#cards ??= cardPreviews({
+      document: this.ownerDocument,
+      frameUrl: this.#previewFrameUrl,
+      page: async (id, signal) => {
+        const file = index.pages[id];
+        const data = file ? await source.page(file, signal) : undefined;
+        return isComponentPageData(data) ? data : undefined;
+      },
+    }));
+    // Only components with a registration get a preview area; the others keep a plain card.
+    const previews = new Set(index.previews);
+    return (entry: PageEntry) => (previews.has(entry.id) ? cards.preview(entry) : undefined);
   }
 
   #searchView(ctx: ViewContext) {
@@ -437,13 +475,17 @@ export class OddkinWorkbench extends OddkinElement.with({
     const state = router?.state.value;
     const view = this.#view(state);
     const current = view?.kind === 'page' ? view.page : undefined;
+    const catalog = current?.section === 'components' && current.kind === 'overview';
+    if (!catalog) this.#disposeCards();
+    const preview = catalog ? this.#cardPreview(index) : undefined;
     const ctx: ViewContext = {
       registry: index.registry,
       href: (to) => router?.href(to) ?? registryHref(index.registry, to),
       lang: this.ownerDocument.documentElement.lang || 'en',
-      ...(current?.section === 'components' && current.kind === 'overview'
+      ...(current && catalog
         ? {
             catalog: {
+              ...(preview ? { preview } : {}),
               query: new URLSearchParams(state?.location?.search).get('q') ?? '',
               category: new URLSearchParams(state?.location?.search).get('category') ?? '',
               update: (query: string, category: string) => {
