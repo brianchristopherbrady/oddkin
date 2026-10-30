@@ -2,7 +2,7 @@
 // Production build (default export conditions), esbuild bundle + minify, ESM, es2024.
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 
@@ -36,6 +36,16 @@ export const ENTRIES = [
   'workbench-shell',
   'workbench-frame',
 ];
+
+/**
+ * Entries measured with code splitting, as a browser loads them. The entry's budget covers its
+ * initial load: its file and the chunks those import statically, each compressed on its own. Each
+ * module named here, which the entry imports with `import()`, is measured as its own entry: the
+ * files that import adds.
+ */
+export const LAZY = {
+  'workbench-shell': { 'workbench-theme-studio': 'packages/workbench/dist/app/theme-studio.js' },
+};
 
 /** Budgets in gzip bytes (ADR 0019). Measured 2026-10-17 in the comments. */
 export const BUDGETS = {
@@ -126,11 +136,13 @@ export const BUDGETS = {
   'workbench-panel-catalog': 18432,
   // 51 KiB; measured 51,248 on 2026-10-28 (48,972 before: the catalog and component reference
   // above, both in the shell). Was 49 KiB (48,775 measured on 2026-10-22): the shell with router,
-  // search, and every page renderer. This harness does not split, so it includes Theme Studio
-  // (about 3.2 KiB), which the shell imports only on its route; with splitting, the initial load
-  // was 45,876 and Theme Studio a 4,150 B chunk. 54 KiB from 2026-10-28 (Agent 2): measured
-  // 54,117 with the component page above.
-  'workbench-shell': 55296,
+  // search, and every page renderer. 54 KiB from 2026-10-28 (Agent 2): measured 54,117 with the
+  // component page above. From 2026-10-29 the initial load only (LAZY; Agent 2's request): 53 KiB.
+  // Theme Studio's Export made the unsplit bundle 55,709 against 55,296; split, the initial load
+  // was 51,987 B in 2 chunks and Theme Studio a 4,852 B chunk.
+  'workbench-shell': 54272,
+  // 5.5 KiB from 2026-10-29: Theme Studio, which the shell imports on its route (LAZY).
+  'workbench-theme-studio': 5632,
   // 7.5 KiB; measured 6,786 on 2026-10-28 (7,055 before: the frame imports a registration with
   // import() instead of an inline module script): the preview frame runtime (protocol, Scope,
   // mount, specimen, theme).
@@ -370,7 +382,21 @@ export async function measureCssSizes(root = fileURLToPath(new URL('../../..', i
 
 export async function measureSizes(root = fileURLToPath(new URL('../../..', import.meta.url))) {
   const sizes = {};
+  const normalize = (path) => path.replace(/\\/g, '/').replace(/^.*?packages\//, 'packages/');
+  // Each file compressed on its own, as it is served.
+  const measure = (files, inputs) => ({
+    minified: files.reduce((total, code) => total + code.length, 0),
+    gzip: files.reduce((total, code) => total + gzipSync(code, { level: 9 }).length, 0),
+    brotli: files.reduce(
+      (total, code) =>
+        total +
+        brotliCompressSync(code, { params: { [constants.BROTLI_PARAM_QUALITY]: 11 } }).length,
+      0,
+    ),
+    modules: [...new Set(inputs.map(normalize))].sort(),
+  });
   for (const entry of ENTRIES) {
+    const lazy = LAZY[entry];
     const result = await build({
       absWorkingDir: root,
       entryPoints: [`research/benchmarks/size/${entry}.ts`],
@@ -383,17 +409,45 @@ export async function measureSizes(root = fileURLToPath(new URL('../../..', impo
       legalComments: 'none',
       metafile: true,
       logLevel: 'silent',
+      ...(lazy && { splitting: true, outdir: 'size-out' }),
     });
-    const code = result.outputFiles[0].contents;
-    const inputs = Object.values(result.metafile.outputs)[0].inputs;
-    sizes[entry] = {
-      minified: code.length,
-      gzip: gzipSync(code, { level: 9 }).length,
-      brotli: brotliCompressSync(code, { params: { [constants.BROTLI_PARAM_QUALITY]: 11 } }).length,
-      modules: Object.keys(inputs)
-        .map((p) => p.replace(/\\/g, '/').replace(/^.*?packages\//, 'packages/'))
-        .sort(),
+    if (!lazy) {
+      const inputs = Object.values(result.metafile.outputs)[0].inputs;
+      sizes[entry] = measure([result.outputFiles[0].contents], Object.keys(inputs));
+      continue;
+    }
+    const { outputs } = result.metafile;
+    const contents = new Map(
+      result.outputFiles.map((file) => [
+        relative(root, file.path).replace(/\\/g, '/'),
+        file.contents,
+      ]),
+    );
+    const outputFor = (module) => {
+      const key = Object.keys(outputs).find(
+        (candidate) =>
+          outputs[candidate].entryPoint && normalize(outputs[candidate].entryPoint) === module,
+      );
+      if (!key) throw new Error(`${entry}: no chunk starts at ${module}; is it still imported?`);
+      return key;
     };
+    // The output and every chunk it imports statically, transitively.
+    const loads = (key, seen = new Set()) => {
+      if (seen.has(key)) return seen;
+      seen.add(key);
+      for (const { path, kind } of outputs[key].imports)
+        if (kind === 'import-statement') loads(path, seen);
+      return seen;
+    };
+    const sized = (keys) =>
+      measure(
+        keys.map((key) => contents.get(key)),
+        keys.flatMap((key) => Object.keys(outputs[key].inputs)),
+      );
+    const initial = loads(outputFor(`research/benchmarks/size/${entry}.ts`));
+    sizes[entry] = sized([...initial]);
+    for (const [name, module] of Object.entries(lazy))
+      sizes[name] = sized([...loads(outputFor(module))].filter((key) => !initial.has(key)));
   }
   return sizes;
 }

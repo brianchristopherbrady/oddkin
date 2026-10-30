@@ -3,6 +3,7 @@
 import {
   BUDGETS,
   CSS_BUDGETS,
+  LAZY,
   measureCssSizes,
   measureSizes,
 } from '../research/benchmarks/size/measure.mjs';
@@ -62,6 +63,8 @@ for (const [entry, size] of Object.entries(sizes)) {
       ['layout/', 'model/', 'controllers/'].map((f) => `packages/core/dist/prod/${f}`),
     );
   if (entry === 'side-nav') forbid(entry, size, FEATURES);
+  // A module measured as a lazy chunk stays out of its entry's initial load.
+  forbid(entry, size, Object.values(LAZY[entry] ?? {}));
   // Composition documents (ADR 0046 D3): only an application that renders them loads the entry,
   // and the entry registers no element.
   if (entry === 'composition') forbid(entry, size, ['.define.js']);

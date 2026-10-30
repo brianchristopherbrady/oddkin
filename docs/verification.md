@@ -4385,3 +4385,13 @@ The runs before them failed in e2e only: at `46fb78d` and `5f2a4a3`, the Workben
 | Format, types | `npx prettier --check` on the changed files; `npx tsc -p tsconfig.tests.json` | Pass; pass |
 
 **Not verified:** Linux, until the first CI run with these steps.
+
+## 2026-10-29 — Size: the Workbench shell's initial load and Theme Studio (round 10, Agent 1; Agent 2's request)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Size budgets | `npm run build`, then `node scripts/check-size.mjs` at `83d4a6a` | Pass. `workbench-shell`, now measured with code splitting as its initial load (its file and the chunks it imports statically): 52,144 B of 54,272 (96.1%). `workbench-theme-studio`, the chunk the shell imports on Theme Studio's route: 4,151 B of 5,632 (73.7%). Unsplit, the shell was 55,143 of 55,296 |
+| The split | `node .tmp/size-split-facts.mjs` | The initial load holds 53 modules, without `packages/workbench/dist/app/theme-studio.js`; the Theme Studio chunk holds 4: the route module, the panel, its model, and the theme generation |
+| Format | `npx prettier --check` on both files | Pass |
+
+**Not verified:** Agent 2's Export commit against the new budgets (Agent 2 measured 51,987 and 4,852 with it).
