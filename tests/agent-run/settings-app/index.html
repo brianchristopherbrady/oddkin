@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Notification settings</title>
+    <link rel="stylesheet" href="./node_modules/@oddkin/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="./node_modules/@oddkin/components/dist/css/base.css" />
+    <link rel="stylesheet" href="./node_modules/@oddkin/components/dist/css/layout.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/components/define/alert": "./node_modules/@oddkin/components/dist/alert/alert.define.js",
+          "@oddkin/components/define/button": "./node_modules/@oddkin/components/dist/button/button.define.js",
+          "@oddkin/components/define/card": "./node_modules/@oddkin/components/dist/card/card.define.js",
+          "@oddkin/components/define/input": "./node_modules/@oddkin/components/dist/input/input.define.js",
+          "@oddkin/components/define/select": "./node_modules/@oddkin/components/dist/select/select.define.js",
+          "@oddkin/components/define/switch": "./node_modules/@oddkin/components/dist/switch/switch.define.js",
+          "@oddkin/core/controllers/form": "./node_modules/@oddkin/core/dist/prod/controllers/form.js",
+          "@oddkin/core/element": "./node_modules/@oddkin/core/dist/prod/element/index.js",
+          "@oddkin/core/helpers/live": "./node_modules/@oddkin/core/dist/prod/helpers/live.js",
+          "@oddkin/core/i18n": "./node_modules/@oddkin/core/dist/prod/i18n/index.js",
+          "@oddkin/core/reactive": "./node_modules/@oddkin/core/dist/prod/reactive/index.js",
+          "@oddkin/core/styles": "./node_modules/@oddkin/core/dist/prod/styles/index.js",
+          "@oddkin/core/template": "./node_modules/@oddkin/core/dist/prod/template/index.js",
+          "@oddkin/tokens/refs": "./node_modules/@oddkin/tokens/dist/refs/index.js"
+        }
+      }
+    </script>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <main class="page odd-center">
+      <form id="settings-form" class="settings" novalidate>
+        <odd-card label="Notification settings">
+          <h1 slot="header">Notification settings</h1>
+          <odd-input id="email" name="email" type="email" label="Email" autocomplete="email" required></odd-input>
+          <odd-switch id="digest" name="digest">Weekly digest</odd-switch>
+          <odd-select id="frequency" name="frequency" label="Frequency">
+            <option value="daily">Daily</option>
+            <option value="weekly" selected>Weekly</option>
+            <option value="monthly">Monthly</option>
+          </odd-select>
+          <div id="status" class="status" role="status"></div>
+          <odd-button slot="footer" type="submit" appearance="primary">Save</odd-button>
+        </odd-card>
+      </form>
+    </main>
+  </body>
+</html>

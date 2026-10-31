@@ -12,6 +12,8 @@ packages/tokens/test/fixtures/*.css.txt
 packages/tokens/src/generated
 packages/core/test/fixtures/*.css.txt
 packages/analyzer/test/fixtures
+# A coding agent's output, kept exactly as it wrote it (tests/agent-run/README.md).
+tests/agent-run/*/
 research/compatibility/floor-results.json
 # Written by the benchmark harnesses with JSON.stringify; their layout is the harness's.
 research/benchmarks/results

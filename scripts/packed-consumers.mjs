@@ -145,6 +145,23 @@ export const CONSUMERS = {
   // The @oddkin/ai demonstrations (scripts/ai-demos-consumer.mjs), bundled by a fresh project's
   // esbuild from the packed packages, at /ai-demos/<demo>/.
   'ai-demos': { aiDemos: true },
+  // A coding agent's pages, written from the packaged kit alone (tests/agent-run/README.md) and
+  // served exactly as it wrote them, its own import maps included; /agent-run/__ready also
+  // reports the map each page needs, computed from the installed packages.
+  'agent-run': {
+    packages: ['core', 'tokens', 'components'],
+    page: 'tests/agent-run/settings-app',
+    files: [
+      'index.html',
+      'main.js',
+      'styles.css',
+      'composition.html',
+      'composition.js',
+      'settings.composition.json',
+    ],
+    pages: ['index.html', 'composition.html'],
+    verbatim: true,
+  },
 };
 
 // Build tools at the versions the workspace verifies; the rest pinned (checked 2026-10-28). A spec
@@ -432,20 +449,24 @@ export async function packConsumer(name, work) {
   const modules = join(site, 'node_modules');
   const dynamic = consumer.dynamicDefines ? await defineEntries(modules, 'default') : [];
   let result;
+  const maps = {};
   for (const page of consumer.pages ?? ['index.html']) {
     let html = await readFile(join(site, page), 'utf8');
     const map = await importMap([...moduleScripts(html, site), ...dynamic], {
       modules,
       pageDir: site,
     });
+    maps[page] = map.imports;
+    result ??= map;
+    // A verbatim page is served as written: its own import map and stylesheet links.
+    if (consumer.verbatim) continue;
     html = withImportMap(html, map.imports);
     for (const [, href] of html.matchAll(/href="([^"]+)"/g))
       html = html.replace(`href="${href}"`, `href="${await publishedFile(site, href)}"`);
     if (html.includes('../../')) throw new Error(`${name}: ${page} still references the workspace`);
     await writeFile(join(site, page), html);
-    result ??= map;
   }
-  return { site, installed, ...result };
+  return { site, installed, ...result, ...(consumer.verbatim ? { maps } : {}) };
 }
 
 const types = {

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://oddkin.dev/schemas/composition/composition.v1.json",
+  "version": 1,
+  "root": [
+    {
+      "element": "odd-card",
+      "attributes": {
+        "label": "Notification settings"
+      },
+      "children": [
+        {
+          "element": "h1",
+          "slot": "header",
+          "children": ["Notification settings"]
+        },
+        {
+          "element": "odd-input",
+          "id": "email",
+          "attributes": {
+            "name": "email",
+            "type": "email",
+            "label": "Email",
+            "autocomplete": "email",
+            "required": true
+          }
+        },
+        {
+          "element": "odd-switch",
+          "id": "digest",
+          "attributes": {
+            "name": "digest"
+          },
+          "children": ["Weekly digest"]
+        },
+        {
+          "element": "odd-select",
+          "id": "frequency",
+          "attributes": {
+            "name": "frequency",
+            "label": "Frequency",
+            "value": "weekly"
+          }
+        },
+        {
+          "element": "odd-button",
+          "id": "save",
+          "slot": "footer",
+          "attributes": {
+            "appearance": "primary"
+          },
+          "children": ["Save"],
+          "actions": {
+            "click": "settings.save"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+/* Shared by index.html and composition.html. Unlayered, so it wins over the theme's layered rules. */
+body {
+  margin: 0;
+}
+
+.page {
+  box-sizing: border-box;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  padding: var(--odd-space-xl) var(--odd-space-md);
+}
+
+.settings {
+  inline-size: min(100%, 28rem);
+}
+
+/* The card body is a plain block: space the fields (a composition cannot carry wrapper elements). */
+.settings odd-card > :not([slot], .status) + :not([slot], .status) {
+  margin-block-start: var(--odd-space-md);
+}
+
+.status > odd-alert {
+  margin-block-start: var(--odd-space-md);
+}
+
+/* Until <odd-select> is defined, its <option> children would render as loose text. */
+odd-select:not(:defined) > * {
+  display: none;
+}

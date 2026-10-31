@@ -4589,3 +4589,16 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Unit | `npx vitest run tests/docs` | 29 passed: `tabOf` opens #controls and #api in Controls, #examples in Examples, #known-limitations in Accessibility, #source, #interactive-example, an empty or unknown fragment in Overview |
 | Static | `npx tsc -b apps/docs`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check`; `node scripts/check-page-layout.mjs`; `npm run lint:css` | Clean; the strip uses the auto-grid recipe (no hand-written layout); compatibility check OK |
 | e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, one engine at a time; the reference-page test now checks the tablist, the headings each tab shows, ArrowRight and End, a click, the tab panel's name, the URL, and that the example's frame is still connected after the switches | Docs e2e, one engine at a time: Chromium 15 passed (2.4 min), WebKit 15 passed (5.9 min), Firefox 15 passed (6.3 min). |
+
+### 2026-10-30 — A coding agent builds from the packaged kit alone (P0.4, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The run | A subagent of GitHub Copilot's agent (Claude Opus 5.5) worked in `C:\SLT_Backup_10-21-2026\oddkin-agent-run\settings-app`. It held core, tokens, and components 1.0.0-beta.0, packed from `409c5b5`. The prompt and conditions are in `tests/agent-run/README.md` | 6 files written plus 3 helper scripts. It read about 50 package files and ran 20 commands, all in the project. 1 repair: `validateComposition` refused its first document (`composition.property.notPortable`) |
+| First load, 3 engines | `node .tmp/probe-agent-run.mjs` (the agent's directory served as it was) | Chromium, Firefox, WebKit: empty and malformed email refused with the engine's message in the field; valid email shows "Settings saved." in a success alert; the composition page renders 6 tags, the select gets 3 options, Save reports `settings.save`; no console errors, page errors, or failed requests |
+| APIs | `node .tmp/check-agent-apis.mjs` (every attribute, property, and slot used, against the installed `custom-elements.json`) | All declared, except `updateComplete`, which the elements inherit from `@oddkin/core` (`contract:core/update-complete` in its CONTRACTS.md) |
+| E2E, from packed packages | `e2e/agent-run.spec.ts`, 3 engines with `--workers=1` | 9 of 9. Each page's import map equals the map computed from the installed packages |
+| Composition | `npx vitest run --project node tests/agent-run` | 2 of 2: the document is valid by the published JSON Schemas (Ajv 2020) and `validateComposition`; its first draft is refused by both |
+| Formatting | `npx prettier --check .` | Pass; the agent's files are listed in `.prettierignore`, kept as written |
+
+**Not verified:** a second agent or model, a held-out task set, or screen readers (agent-tooling.md §11 asks for more than one run before claims).

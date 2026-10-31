@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Notification settings (composition)</title>
+    <link rel="stylesheet" href="./node_modules/@oddkin/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="./node_modules/@oddkin/components/dist/css/base.css" />
+    <link rel="stylesheet" href="./node_modules/@oddkin/components/dist/css/layout.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/components/composition": "./node_modules/@oddkin/components/dist/composition/index.js",
+          "@oddkin/components/define/button": "./node_modules/@oddkin/components/dist/button/button.define.js",
+          "@oddkin/components/define/card": "./node_modules/@oddkin/components/dist/card/card.define.js",
+          "@oddkin/components/define/input": "./node_modules/@oddkin/components/dist/input/input.define.js",
+          "@oddkin/components/define/select": "./node_modules/@oddkin/components/dist/select/select.define.js",
+          "@oddkin/components/define/switch": "./node_modules/@oddkin/components/dist/switch/switch.define.js",
+          "@oddkin/core/controllers/form": "./node_modules/@oddkin/core/dist/prod/controllers/form.js",
+          "@oddkin/core/element": "./node_modules/@oddkin/core/dist/prod/element/index.js",
+          "@oddkin/core/helpers/live": "./node_modules/@oddkin/core/dist/prod/helpers/live.js",
+          "@oddkin/core/i18n": "./node_modules/@oddkin/core/dist/prod/i18n/index.js",
+          "@oddkin/core/model": "./node_modules/@oddkin/core/dist/prod/model/index.js",
+          "@oddkin/core/reactive": "./node_modules/@oddkin/core/dist/prod/reactive/index.js",
+          "@oddkin/core/styles": "./node_modules/@oddkin/core/dist/prod/styles/index.js",
+          "@oddkin/core/template": "./node_modules/@oddkin/core/dist/prod/template/index.js",
+          "@oddkin/tokens/refs": "./node_modules/@oddkin/tokens/dist/refs/index.js"
+        }
+      }
+    </script>
+    <script type="module" src="./composition.js"></script>
+  </head>
+  <body>
+    <main class="page odd-center">
+      <div class="settings odd-stack">
+        <div id="app"></div>
+        <section aria-labelledby="actions-heading">
+          <h2 id="actions-heading">Actions</h2>
+          <ul id="actions"></ul>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>
