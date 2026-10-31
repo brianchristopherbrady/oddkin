@@ -123,6 +123,7 @@ The details are in [future_plans/](./future_plans/TECHNICAL_COMMERCIALIZATION_PL
   - the minimum standard-CEM experience across Workbench, impact, and kits;
   - a fixture library not built with Oddkin;
   - whether `oddkin-impact` works from a CEM alone;
+    - *(2026-10-30, Agent 2: it does, for what a CEM states. The snapshot reads the API, the registration, the exports, and each class's module (hashed). It no longer claims a metadata artifact it did not read. With no examples, a change selects no checks, and the report lists each affected component nothing checks as a coverage gap ([change-impact-and-verification.md](./docs/architecture/change-impact-and-verification.md) §2.7).)*
   - an ADR for adapters to other metadata sources.
 
 ### P1: finish the foundations (after tier CF; P1.6, P1.7, and P1.1 first, as tier CF needs them)

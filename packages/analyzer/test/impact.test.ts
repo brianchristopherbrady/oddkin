@@ -1,10 +1,13 @@
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { describe, expect, it } from 'vitest';
 import {
   compareSnapshots,
   createSnapshot,
+  readPackage,
   renderImpactMarkdown,
   type BaselineResult,
   type ImpactReport,
@@ -189,7 +192,7 @@ describe.each([1, 2, 3, 10])('change impact with %i product(s)', (n) => {
 
   it('a dynamic dependency widens selection to every example of the package', () => {
     const report = impact(n, (head) => {
-      head.packages[0]!.metadata.diagnostics = [
+      head.packages[0]!.metadata!.diagnostics = [
         { code: 'analyzer.dynamic.property', source: { file: 'src/card/card.ts', line: 12 } },
       ];
       edit(head, 'dist/card/card.styles.js');
@@ -204,7 +207,7 @@ describe.each([1, 2, 3, 10])('change impact with %i product(s)', (n) => {
 
   it('an unresolved token read widens selection too, but only when the package is affected', () => {
     const unresolved = (inputs: LibraryInputs) => {
-      inputs.packages[0]!.metadata.styles!['dist/field/field.styles.js#fieldStyles'] = {
+      inputs.packages[0]!.metadata!.styles!['dist/field/field.styles.js#fieldStyles'] = {
         tokens: ['color.surface', '--odd-color-missing'],
       };
     };
@@ -433,5 +436,114 @@ describe('change impact states and fallbacks', () => {
     );
     expect(markdown).toContain('| selected | `example:acme-dialog/default` | p1 |');
     expect(markdown).toContain('`definition:acme-dialog`');
+  });
+});
+
+describe('a library described by a standard CEM alone (CF.3)', () => {
+  const CHIP = `export class PlainChip extends HTMLElement {}\ncustomElements.define('plain-chip', PlainChip);\n`;
+  const cem = (attributes: string[], registeredIn = 'chip.js') => ({
+    schemaVersion: '2.1.0',
+    modules: [
+      {
+        kind: 'javascript-module',
+        path: 'chip.js',
+        declarations: [
+          {
+            kind: 'class',
+            name: 'PlainChip',
+            tagName: 'plain-chip',
+            customElement: true,
+            attributes: attributes.map((name) => ({ name, type: { text: 'string' } })),
+            cssParts: [{ name: 'label' }],
+          },
+        ],
+        exports: [
+          { kind: 'js', name: 'PlainChip', declaration: { name: 'PlainChip', module: 'chip.js' } },
+        ],
+      },
+      {
+        kind: 'javascript-module',
+        path: registeredIn,
+        exports: [
+          {
+            kind: 'custom-element-definition',
+            name: 'plain-chip',
+            declaration: { name: 'PlainChip', module: 'chip.js' },
+          },
+        ],
+      },
+    ],
+  });
+  /** A package directory as npm installs it: package.json, the CEM, and the module. */
+  const packageDir = (manifest: object, source = CHIP) => {
+    const dir = mkdtempSync(join(tmpdir(), 'oddkin-cem-only-'));
+    writeFileSync(
+      join(dir, 'package.json'),
+      JSON.stringify({
+        name: '@plain/widgets',
+        version: '1.0.0',
+        exports: { '.': './chip.js' },
+        customElements: 'custom-elements.json',
+      }),
+    );
+    writeFileSync(join(dir, 'custom-elements.json'), JSON.stringify(manifest));
+    writeFileSync(join(dir, 'chip.js'), source);
+    return dir;
+  };
+  const snapshotOf = (dir: string) => {
+    const snapshot = createSnapshot({ packages: [readPackage(dir)] });
+    expect(validSnapshot(snapshot), JSON.stringify(validSnapshot.errors)).toBe(true);
+    return snapshot;
+  };
+  const compare = (base: string, head: string) => {
+    const report = compareSnapshots(snapshotOf(base), snapshotOf(head));
+    expect(validReport(report), JSON.stringify(validReport.errors)).toBe(true);
+    return report;
+  };
+
+  it('reads the API, the source, and the registration from the CEM, and claims no Oddkin metadata', () => {
+    const snapshot = snapshotOf(packageDir(cem(['label'])));
+    expect(Object.keys(snapshot.packages[0]!.artifacts).sort()).toEqual([
+      'custom-elements.json',
+      'package.json#exports',
+    ]);
+    expect(Object.keys(snapshot.items).sort()).toEqual([
+      'attribute:plain-chip#label',
+      'class:plain-chip',
+      'component:plain-chip',
+      'export:@plain/widgets/.',
+      'part:plain-chip#label',
+      'registration:plain-chip',
+    ]);
+    expect(snapshot.unresolved).toEqual([]);
+  });
+
+  it('a source edit the CEM does not show still changes the class, and the report says nothing checks it', () => {
+    const report = compare(
+      packageDir(cem(['label'])),
+      packageDir(cem(['label']), `${CHIP}// a behavior change\n`),
+    );
+    expect(report.changes.map((c) => [c.id, c.classification])).toEqual([
+      ['class:plain-chip', 'review'],
+    ]);
+    expect(report.affected.components.map((a) => a.id)).toEqual(['component:plain-chip']);
+    expect(report.checks).toEqual([]);
+    expect(report.coverageGaps).toEqual([
+      { item: 'component:plain-chip', reason: 'affected, and no example or suite checks it' },
+    ]);
+    expect(renderImpactMarkdown(report)).toContain(
+      '- `component:plain-chip`: affected, and no example or suite checks it',
+    );
+  });
+
+  it('a removed attribute is incompatible; a registration that moves is a change to review', () => {
+    const report = compare(
+      packageDir(cem(['label', 'tone'])),
+      packageDir(cem(['label'], 'define.js')),
+    );
+    expect(report.changes.map((c) => [c.id, c.change, c.classification])).toEqual([
+      ['attribute:plain-chip#tone', 'removed', 'incompatible'],
+      ['registration:plain-chip', 'changed', 'review'],
+    ]);
   });
 });

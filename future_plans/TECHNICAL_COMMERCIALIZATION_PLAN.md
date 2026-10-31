@@ -158,7 +158,7 @@ Today:
 
 - Workbench documents a library from standard CEM alone (Partial: P0.3 adds a standard-CEM fixture library and runs the consumer path against it).
 - The analyzer recognizes Oddkin-authored components only, and there is no adapter API.
-- Whether `oddkin-impact snapshot` works on a package with a CEM but no `oddkin.metadata.json` is Unknown.
+- `oddkin-impact snapshot` works on a package with a CEM but no `oddkin.metadata.json` (2026-10-30). It reads the API, registrations, exports, and class sources. With no examples a change selects no checks, and the report lists each affected component nothing checks as a coverage gap.
 - Migration records and authoritative renames exist in the impact prototype (`--migrations`).
 - Unresolved edges are explicit and widen the selection (Prototype).
 - There is no fixture library that is not built with Oddkin.

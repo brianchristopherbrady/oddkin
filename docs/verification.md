@@ -4644,3 +4644,13 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Gates | `npm run lint`; `npm run typecheck`; `npx vitest run --project node packages/analyzer tests/impact tests/agent-kit tests/golden-path` | All exit 0; 21 files, 176 tests passed |
 
 **Not verified here:** the demonstration on Linux or macOS. It uses the same worktree code as CI's `--base-ref`, which runs on Linux.
+
+## 2026-10-30 — `oddkin-impact` from a standard CEM alone (CF.3; round 10, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Unit | `npx vitest run --project node packages/analyzer/test/impact.test.ts` | 53 passed. The 3 new tests use a package directory with a CEM and no metadata. (1) The snapshot has the attribute, class, component, export, part, and registration items, no unresolved entries, and no `oddkin.metadata.json` artifact. (2) A module edit the CEM does not show changes `class:plain-chip` (review); 0 checks; the coverage gap. (3) A removed attribute is incompatible, and a registration that moves modules is a review |
+| Mutations | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutate-cem.json` | 3 of 3 killed: no coverage gap (1 failed), the empty metadata artifact back (1 failed), no registration from the CEM (2 failed) |
+| The fixture library | `node .tmp/cem-run.mjs`: `oddkin-impact snapshot tests/consumers/workbench/plain-widgets`, and a copy with `tone` removed from the CEM and `chip.js` edited | 22 and 21 items, 0 unresolved; the report has `attribute:plain-chip#tone` removed (incompatible), `class:plain-chip` changed (review), 0 checks, and the coverage gap for `component:plain-chip` |
+| Oddkin's own packages | `node scripts/impact.mjs snapshot`; `.tmp/unchecked.mjs` | 3,106 items, 4,257 edges, 78 registrations as before; no component lacks an example or suite, so Oddkin's reports gain no gap |
+| Gates | `npm run typecheck`; `npx vitest run --project node packages/analyzer`; `npx prettier --check packages/analyzer` | All exit 0; 15 files, 141 tests passed |

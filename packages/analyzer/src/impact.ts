@@ -49,6 +49,12 @@ export interface CemManifest {
   readonly modules: readonly {
     readonly path?: string;
     readonly declarations?: readonly CemDeclaration[];
+    /** `custom-element-definition` entries say which module registers a tag. */
+    readonly exports?: readonly {
+      readonly kind: string;
+      readonly name: string;
+      readonly declaration?: { readonly name: string; readonly module?: string };
+    }[];
   }[];
 }
 interface SourceRef {
@@ -136,7 +142,8 @@ export interface SnapshotInputs {
     readonly name: string;
     readonly version: string;
     readonly manifest: CemManifest;
-    readonly metadata: MetadataInput;
+    /** Absent for a library described by a standard CEM alone. */
+    readonly metadata?: MetadataInput;
     /** `package.json` `exports`; each key becomes an `export:<package>/<key>` item. */
     readonly exports?: Readonly<Record<string, unknown>>;
     /** Source text of published modules and example files by path; only hashes are kept. */
@@ -318,6 +325,7 @@ export function createSnapshot(inputs: SnapshotInputs): ComparisonSnapshot {
     ),
   );
   for (const pkg of inputs.packages) {
+    const metadata = pkg.metadata ?? {};
     const at = (ref: SourceRef) => `${ref.package ?? pkg.name}/${ref.module}#${ref.name}`;
     /** The publisher's item wins: only it can hash the source. */
     const source = (id: string, kind: 'template' | 'style', ref: SourceRef, facts: unknown) => {
@@ -350,7 +358,7 @@ export function createSnapshot(inputs: SnapshotInputs): ComparisonSnapshot {
       version: pkg.version,
       artifacts: {
         'custom-elements.json': hashOf(pkg.manifest),
-        'oddkin.metadata.json': hashOf(pkg.metadata),
+        ...(pkg.metadata ? { 'oddkin.metadata.json': hashOf(pkg.metadata) } : {}),
         ...(pkg.exports ? { 'package.json#exports': hashOf(pkg.exports) } : {}),
       },
     });
@@ -368,6 +376,15 @@ export function createSnapshot(inputs: SnapshotInputs): ComparisonSnapshot {
           .map((d) => [d.tagName as string, { d, path: m.path }] as const),
       ),
     );
+    // Where the CEM says each tag is registered; Oddkin metadata states it as a specifier instead.
+    const registeredIn = new Map(
+      pkg.manifest.modules.flatMap((m) =>
+        (m.exports ?? [])
+          .filter((e) => e.kind === 'custom-element-definition')
+          .map((e) => [e.name, m.path] as const),
+      ),
+    );
+    const metadataTags = new Set(Object.values(metadata.components ?? {}).map((c) => c.tag));
     for (const [tag, { d, path }] of declarations) {
       allTags.push(tag);
       const component = `component:${tag}`;
@@ -445,9 +462,17 @@ export function createSnapshot(inputs: SnapshotInputs): ComparisonSnapshot {
         hash: hashOf({ tag }),
         package: pkg.name,
       });
+      if (registeredIn.has(tag) && !metadataTags.has(tag)) {
+        item(`registration:${tag}`, {
+          kind: 'registration',
+          hash: hashOf({ module: registeredIn.get(tag) ?? null }),
+          package: pkg.name,
+        });
+        edge(component, `registration:${tag}`, 'member', 'extracted');
+      }
     }
 
-    for (const [id, c] of Object.entries(pkg.metadata.components ?? {})) {
+    for (const [id, c] of Object.entries(metadata.components ?? {})) {
       const tag = c.tag;
       if (c.registration) {
         item(`registration:${tag}`, {
@@ -477,13 +502,13 @@ export function createSnapshot(inputs: SnapshotInputs): ComparisonSnapshot {
           template,
           'template',
           def.template,
-          pkg.metadata.templates?.[`${def.template.module}#${def.template.name}`] ?? null,
+          metadata.templates?.[`${def.template.module}#${def.template.name}`] ?? null,
         );
         edge(definition, template, 'template', 'extracted');
       }
       for (const ref of def.styles ?? []) {
         const style = `style:${at(ref)}`;
-        const facts = pkg.metadata.styles?.[`${ref.module}#${ref.name}`];
+        const facts = metadata.styles?.[`${ref.module}#${ref.name}`];
         source(style, 'style', ref, facts ?? null);
         edge(definition, style, 'style', 'extracted');
         for (const read of facts?.tokens ?? []) {
@@ -511,7 +536,7 @@ export function createSnapshot(inputs: SnapshotInputs): ComparisonSnapshot {
         );
     }
 
-    for (const [id, e] of Object.entries(pkg.metadata.examples ?? {})) {
+    for (const [id, e] of Object.entries(metadata.examples ?? {})) {
       // Explained mistakes are never checks to run.
       if (e.incorrect) continue;
       const file = e.file ? pkg.modules?.[e.file] : undefined;
@@ -524,7 +549,7 @@ export function createSnapshot(inputs: SnapshotInputs): ComparisonSnapshot {
       // Fixtures that render other elements depend on them too.
       for (const used of e.uses ?? []) edge(id, used, 'uses', 'extracted');
     }
-    for (const d of pkg.metadata.diagnostics ?? [])
+    for (const d of metadata.diagnostics ?? [])
       if (d.code.startsWith('analyzer.dynamic.') || d.code === 'analyzer.published.missing')
         unresolved.push({
           item: `package:${pkg.name}`,
@@ -925,6 +950,16 @@ export function compareSnapshots(
 
   // Unresolved dependencies widen selection to every example of an affected package.
   const coverageGaps = head.unresolved.map((u) => ({ item: u.item, reason: u.reason }));
+  // An affected component that no example renders and no suite targets is checked by nothing,
+  // as with a library described by a standard CEM alone.
+  const checked = new Set(
+    head.edges
+      .filter((e) => e.kind === 'example' || e.kind === 'uses' || e.kind === 'suite')
+      .map((e) => e.to),
+  );
+  for (const id of new Set(affectedComponents.map((a) => a.id)))
+    if (head.items[id] && !checked.has(id))
+      coverageGaps.push({ item: id, reason: 'affected, and no example or suite checks it' });
   const affectedPackages = new Set(
     [...roots, ...affectedComponents.map((a) => a.id)]
       .map((id) => head.items[id]?.package ?? base.items[id]?.package)
@@ -1071,18 +1106,18 @@ export function readPackage(dir: string): SnapshotInputs['packages'][number] {
   const manifest = json<CemManifest>(pkg.customElements ?? 'custom-elements.json');
   const metadata = existsSync(join(dir, 'oddkin.metadata.json'))
     ? json<MetadataInput>('oddkin.metadata.json')
-    : {};
+    : undefined;
   const paths = new Set<string>([
     ...manifest.modules
       .filter((m) => m.declarations?.some((d) => d.tagName))
       .flatMap((m) => (m.path ? [m.path] : [])),
-    ...Object.values(metadata.components ?? {}).flatMap((c) => [
+    ...Object.values(metadata?.components ?? {}).flatMap((c) => [
       ...(c.definition?.template && !c.definition.template.package
         ? [c.definition.template.module]
         : []),
       ...(c.definition?.styles ?? []).filter((s) => !s.package).map((s) => s.module),
     ]),
-    ...Object.values(metadata.examples ?? {}).flatMap((e) => (e.file ? [e.file] : [])),
+    ...Object.values(metadata?.examples ?? {}).flatMap((e) => (e.file ? [e.file] : [])),
   ]);
   const modules: Record<string, string> = {};
   for (const path of [...paths].sort())
@@ -1091,7 +1126,7 @@ export function readPackage(dir: string): SnapshotInputs['packages'][number] {
     name: pkg.name,
     version: pkg.version,
     manifest,
-    metadata,
+    ...(metadata ? { metadata } : {}),
     ...(pkg.exports ? { exports: pkg.exports } : {}),
     modules,
   };
