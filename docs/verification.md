@@ -4536,3 +4536,18 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Layout | `docs/`, `docs/schemas/`, `scripts/` | `docs/reference/` does not exist; `docs/releases/` holds `1.0.0-beta.1.md`; `packages/components/schemas` and `packages/ai/schemas` exist |
 | Commands | root `package.json` scripts | `build` runs `tsc -b` and the token, production, CSS, metadata, schema, AI-demo, and kit builds; `lint` runs contracts, boundaries, CSS, layout, and formatting; `test` builds, then runs Vitest; `verify` includes `verify:metadata` |
 | Tests | `npx vitest run tests/docs` (the site facts read the README; the AI test reads the AI README); `npx prettier --check` on the edited files | 25 passed; formatting clean |
+
+### 2026-10-30 — `oddkin-kit` in `@oddkin/analyzer`; the golden path's agent-kit step (P0.4, P0.5, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Build | `npm run build` (its last step runs `oddkin-kit package` through `scripts/agent-kit/package-kits.mjs`), then `node scripts/agent-kit/package-kits.mjs --check` | Both kits written with generator `@oddkin/analyzer/kit` `1.0.0-beta.0+b1a1688a9929`; both current |
+| Packs | `node scripts/verify-packs.mjs` | OK: all eight packages from tarballs, with the analyzer's `./kit` export typed and its `oddkin-kit` bin packed; the kits match their packed metadata |
+| The packed command | `node .tmp/try-kit-check.mjs` (packed `@oddkin/components` and `@oddkin/analyzer` in a new project) | `oddkin-kit package --check --package @oddkin/components`: current. A project kit written and then checked: current. `oddkin-kit package` with no package of its own: exit 1 and a hint to name installed ones |
+| Tests | `npx vitest run --project node tests/agent-kit` (now against the analyzer's sources) | 34 of 34, with the generator test reading the new version and the CLI test the new refresh command (`npx oddkin-kit --package @acme/ui --out …`) |
+| Every node project | `npx vitest run --project node` | 1,521 passed, 6 timed out at 613 MB free memory (in `tests/agent-kit/package-kits.test.ts`, `tests/release/evidence.test.ts`, and `packages/analyzer/test/bin.test.ts`). Those three files alone: 13 passed, 1 skipped |
+| The golden path by hand | `node .tmp/try-golden.mjs` (`packConsumer('golden-path')`) | Steps theme, compile, analyze, kit (0.3 s), agents-md (0.6 s), site, check, bundle, kit-check (0.9 s). 11 `agent/` files in the library's tarball. `kit-check` passed for `@acme/widgets`, `@oddkin/ai`, and `@oddkin/components`; 160 import specifiers resolved, none unresolved; AGENTS.md kept the team's text and gained the managed section |
+| E2E | `e2e/golden-path.spec.ts`, Chromium, Firefox, and WebKit with `--workers=1` | 18 of 18 |
+| Gates | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Pass; pass; pass |
+
+**Not verified:** published examples against the packed packages (the M12 item's remaining check), and a real agent run from the kit alone.

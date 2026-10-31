@@ -2,14 +2,17 @@
 // would run it (sources in tests/golden-path/):
 //   repo/       a library team's npm workspaces, with the packed Oddkin packages installed:
 //     library/  its theme config built to CSS by `oddkin-tokens`; two elements on @oddkin/core
-//               compiled by tsc; their metadata, examples included, from `oddkin-analyze`; then
-//               packed like any package;
+//               compiled by tsc; their metadata, examples included, from `oddkin-analyze`; its
+//               agent kit from `oddkin-kit`, beside the team's AGENTS.md; then packed like any
+//               package;
 //     site/     the library's Workbench site from `oddkin workbench build`: the catalog, each
 //               element's live preview, and Theme Studio on the library's theme;
 //   app/        another team's application on the library's tarball, with the router, state, and
-//               an AI element, type-checked and bundled by Vite.
+//               an AI element, type-checked and bundled by Vite. The kits its packages ship are
+//               checked there: regenerated from the installed packages, and every import they
+//               name resolved.
 // scripts/packed-consumers.mjs runs it for /golden-path/ (the app, with the site under site/), and
-// e2e/golden-path.spec.ts checks both. Still to come: the library's agent kit (P0.5's step 5).
+// e2e/golden-path.spec.ts checks both.
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -29,6 +32,40 @@ async function onlyTarballs(dir) {
     .map(([path, entry]) => `${path} (${entry.resolved})`);
   if (fetched.length) throw new Error(`${dir} installed from the registry: ${fetched.join(', ')}`);
 }
+
+// The AGENTS.md the library team wrote; `oddkin-kit agents-md --write` must keep this text.
+const AGENTS_NOTES = '# Acme widgets\n\nNotes the team wrote for coding agents, kept as written.\n';
+
+// Run in the app: every import specifier the kits name (registration entries, classes, and entry
+// points, in the guides and references) resolved through the installed packages' exports.
+const RESOLVE_KIT_IMPORTS = `import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+const names = process.argv.slice(2);
+const result = { checked: 0, unresolved: [] };
+for (const name of names) {
+  const dir = join('node_modules', ...name.split('/'), 'agent');
+  const refs = join(dir, 'references');
+  const texts = [
+    join(dir, 'GUIDE.md'),
+    ...readdirSync(refs, { recursive: true })
+      .filter((file) => file.endsWith('.md'))
+      .map((file) => join(refs, file)),
+  ];
+  const specifiers = new Set();
+  for (const file of texts)
+    for (const [, spec] of readFileSync(file, 'utf8').matchAll(/(?:import|from) '([^'<>]+)'/g))
+      specifiers.add(spec);
+  for (const spec of specifiers) {
+    result.checked++;
+    try {
+      import.meta.resolve(spec);
+    } catch (error) {
+      result.unresolved.push(name + ': ' + spec + ' (' + error.code + ')');
+    }
+  }
+}
+console.log(JSON.stringify(result));
+`;
 
 /**
  * Build the projects in `work`, the site for `base` (the app's URL path). The helpers come from
@@ -71,6 +108,13 @@ export async function buildGoldenPath(work, base, helpers) {
   const analyzer = await bin(repo, '@oddkin/analyzer', 'oddkin-analyze');
   const analyze = ['tsconfig.json', '--out', '.', '--no-history', '--strict'];
   await step('analyze', [analyzer, ...analyze], library);
+  // 5. The library's agent kit, written from its metadata into library/agent/ (which its "files"
+  // list) before it is packed, and the managed section of the team's AGENTS.md.
+  const kit = await bin(repo, '@oddkin/analyzer', 'oddkin-kit');
+  await step('kit', [kit, 'package'], repo);
+  await writeFile(join(repo, 'AGENTS.md'), AGENTS_NOTES);
+  await step('agents-md', [kit, 'agents-md', '--write'], repo);
+  const agentsMd = await readFile(join(repo, 'AGENTS.md'), 'utf8');
   const [pack] = JSON.parse(await npm(['pack', '--json', '--pack-destination', work], library));
   const tarball = join(work, pack.filename);
 
@@ -92,6 +136,13 @@ export async function buildGoldenPath(work, base, helpers) {
   await step('check', [join(app, 'node_modules/typescript/bin/tsc'), '-p', '.'], app);
   const vite = join(app, 'node_modules/vite/bin/vite.js');
   await step('bundle', [vite, 'build', '--base', './', '--outDir', 'dist', '--emptyOutDir'], app);
+  // 5, on the app's side: each kit its packages ship comes out file for file from the installed
+  // package (the library team's packed oddkin-kit), and every import a kit names resolves.
+  const shipped = ['@acme/widgets', '@oddkin/ai', '@oddkin/components'];
+  const check = ['package', '--check', '--root', app, ...shipped.flatMap((n) => ['--package', n])];
+  await step('kit-check', [kit, ...check], app);
+  await writeFile(join(app, 'kit-imports.mjs'), RESOLVE_KIT_IMPORTS);
+  const imports = JSON.parse(await run([join(app, 'kit-imports.mjs'), ...shipped], app));
   const dist = join(app, 'dist');
   const files = await filesUnder(dist);
   await cp(join(repo, 'site/dist'), join(dist, 'site'), { recursive: true });
@@ -110,6 +161,15 @@ export async function buildGoldenPath(work, base, helpers) {
         .flatMap((declaration) => (declaration.tagName ? [declaration.tagName] : []))
         .sort(),
       brand: /--odd-ref-brand-600:\s*([^;]+);/.exec(css)?.[1],
+    },
+    kit: {
+      shipped,
+      imports,
+      agentsMd: {
+        kept: agentsMd.startsWith(AGENTS_NOTES),
+        managed:
+          agentsMd.includes('<!-- oddkin:agents:begin') && agentsMd.includes('@acme/widgets'),
+      },
     },
     steps,
   };

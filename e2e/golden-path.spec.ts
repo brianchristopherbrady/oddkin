@@ -2,9 +2,10 @@ import { expect, request, test, type Page } from '@playwright/test';
 
 // The golden path (priority plan P0.5; scripts/golden-path.mjs, sources in tests/golden-path/).
 // From packed tarballs, a library team builds its theme with `oddkin-tokens`, compiles two
-// elements on @oddkin/core, writes their metadata with `oddkin-analyze`, packs the library, and
-// builds its Workbench site with `oddkin workbench build`. Another team's Vite app installs the
-// library's tarball and uses it with the router, state, and an AI element. Served by
+// elements on @oddkin/core, writes their metadata with `oddkin-analyze` and its agent kit with
+// `oddkin-kit`, packs the library, and builds its Workbench site with `oddkin workbench build`.
+// Another team's Vite app installs the library's tarball and uses it with the router, state, and
+// an AI element; the kits its packages ship are checked there. Served by
 // scripts/packed-consumers.mjs on port 4174: the app at /golden-path/, the site under site/.
 const base = 'http://127.0.0.1:4174/golden-path/';
 
@@ -14,6 +15,11 @@ interface Report {
     readonly files: readonly string[];
     readonly elements: readonly string[];
     readonly brand: string;
+  };
+  readonly kit: {
+    readonly shipped: readonly string[];
+    readonly imports: { readonly checked: number; readonly unresolved: readonly string[] };
+    readonly agentsMd: { readonly kept: boolean; readonly managed: boolean };
   };
   readonly steps: readonly { readonly name: string; readonly ms: number }[];
 }
@@ -54,9 +60,12 @@ test('packs the library with its theme, metadata, and types, and without its sou
     'theme',
     'compile',
     'analyze',
+    'kit',
+    'agents-md',
     'site',
     'check',
     'bundle',
+    'kit-check',
   ]);
   expect(report.library.elements).toEqual(['acme-greeting', 'acme-tally']);
   expect(report.library.files).toEqual(
@@ -67,6 +76,11 @@ test('packs the library with its theme, metadata, and types, and without its sou
       'dist/theme/acme.css',
       'dist/tally/tally.define.js',
       'dist/tally/tally.define.d.ts',
+      'agent/GUIDE.md',
+      'agent/kit.json',
+      'agent/llms.txt',
+      'agent/references/components/acme-greeting.md',
+      'agent/references/components/acme-tally.md',
     ]),
   );
   expect(report.library.files.filter((file) => /^src\/|\.examples\./.test(file))).toEqual([]);
@@ -80,6 +94,15 @@ test('packs the library with its theme, metadata, and types, and without its sou
     '@oddkin/state',
     '@oddkin/tokens',
   ]);
+});
+
+test('ships the library agent kit; every shipped kit is current in the app and its imports resolve', () => {
+  // kit-check (oddkin-kit package --check in the app) would have failed the build on a stale kit.
+  expect(report.kit.shipped).toEqual(['@acme/widgets', '@oddkin/ai', '@oddkin/components']);
+  expect(report.kit.imports.checked).toBeGreaterThan(50);
+  expect(report.kit.imports.unresolved).toEqual([]);
+  // The team's own AGENTS.md text stays; the managed section follows it.
+  expect(report.kit.agentsMd).toEqual({ kept: true, managed: true });
 });
 
 test('the app uses the library on its theme, with the router, state, and an AI element', async ({

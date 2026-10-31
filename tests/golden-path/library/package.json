@@ -6,6 +6,7 @@
   "type": "module",
   "files": [
     "dist",
+    "agent",
     "theme.json",
     "custom-elements.json",
     "oddkin.metadata.json"
