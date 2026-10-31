@@ -53,7 +53,7 @@ Exit criteria:
   - Make dependency declarations install a single core, and add duplicate-version diagnostics.
   - Covers M12 "Verify installed Node tool dependencies, optional framework declarations/adapters, duplicate-version diagnostics…".
   - *(2026-10-28, Agent 1: one copy per install. `@oddkin/core` is a peer dependency of components, state, app, and ai; `@oddkin/state` of app; `@oddkin/components` of ai; `@oddkin/tokens` stays a dependency (release-process.md §1, `tests/architecture/single-core.test.ts`). Development builds record each copy of core under `Symbol.for('oddkin.core.copies')`, and the second copy warns once (`[core.copies]`) with both versions; production builds carry none of it (core-contracts.md §5.1; `packages/core/test/copies.browser.test.ts`, `e2e/duplicate-core.spec.ts`). 2026-10-29: the duplicate-core page also runs with one consumer on the published 1.0.0-beta.0, so two versions share a page; a same-origin frame is checked as another realm (`e2e/realms.spec.ts`); release-process.md §1 states the frame protocol and share-link rules as Workbench's code has them. Remaining: a share link from a released Workbench opened by the current one (Agent 2).)*
-- [ ] **P0.3 Workbench in working order (Agent 2).**
+- [x] **P0.3 Workbench in working order (Agent 2).**
   - **The consumer path.** A library author installs the packed `@oddkin/workbench` and `@oddkin/analyzer` and writes `oddkin.config.ts`. `oddkin workbench dev` and `oddkin workbench build` then work against an Oddkin library and against a standard-CEM fixture library.
   - **Component pages.** Each renders the real component in its frame. Editing attributes, properties, slots, and CSS custom properties in the API table updates the preview in place. Presets, Reset, the events log, and Copy example work, and the catalog's live previews load.
   - **The owner's report (2026-10-28).** On the docs site's component pages, the real components and their examples do not reliably load or update when the table changes.
@@ -62,6 +62,7 @@ Exit criteria:
   - **Theme Studio's baseline flow** works: load the library's theme, edit it, preview light and dark, and export.
   - **Watch mode** survives renames and deletions.
   - Covers M5's `oddkin workbench dev`, catalog, detail-page, and Theme Studio baseline items; §5d.1; M11 "Watch-mode robustness"; and M7 "Static build served under a subpath…" for Workbench.
+  - *(2026-10-30, Agent 2: done; the evidence is in docs/verification.md. The consumer path: a new project installs the packed Workbench, the Oddkin components, and a standard-CEM library from tarballs, and runs `workbench build` under `/workbench/` and `workbench dev` (c19efe6; `scripts/workbench-consumer.mjs`, `e2e/workbench-packed.spec.ts`). Component pages apply every edit in order, also during the first load (2da8098), and run their example fixtures (2d9303a). Agent 3's embedding contract is in Workbench's README and workbench.md (8512f6d). The catalog shows live previews and keeps at most twelve frames (5037030, 231a06a). Theme Studio's baseline flow ends with Export, by keyboard too (0e4a3a2). Watch mode survives renames, deletions, and reinstalls (0ac9819).)*
 - [ ] **P0.4 The AI tooling in working order (Agent 2).**
   - **Streaming from a real endpoint.** `@oddkin/ai`, installed from the packed beta in a fresh app, streams from a real endpoint through the AI SDK UI message stream adapter.
     - Write an example with a small local server that streams recorded responses.
@@ -70,6 +71,7 @@ Exit criteria:
   - **Agent kits.** Kits regenerated from packed packages pass their freshness check, and a real coding agent builds a small page from the kit alone (M11 "Distribute agent instruction/plugin assets… test them in at least one actual agent").
   - **`llms.txt`** is generated from the metadata, for the docs site to serve.
   - **The composition schema** validates the interfaces agents generate (M10 "Composition schema…").
+  - *(2026-10-30, Agent 2: streaming done. `examples/ai-stream` streams from its own server in the AI SDK UI message stream format, and its README documents the switch to a real provider, with keys in the server's environment. `e2e/ai-stream.spec.ts` runs it from the packed packages in a new project (`scripts/ai-stream-consumer.mjs`) in three engines (48be454). That e2e found a stop race in `@oddkin/ai`, fixed in 3596b4f. Remaining: the demos and the agent kits from packed packages, `llms.txt`, and the composition schema.)*
 - [ ] **P0.5 The golden path, end to end (Agent 1 owns the harness and the runtime half; Agent 2 the tooling half).**
   - One packed-package scenario runs the whole system, in this order:
     1. a theme config, built to CSS by `oddkin-tokens`;
