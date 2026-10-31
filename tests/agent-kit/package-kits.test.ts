@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { describe, expect, it, vi } from 'vitest';
@@ -34,6 +35,8 @@ describe('packaged agent kits', () => {
     expect(Buffer.byteLength(guide)).toBeLessThanOrEqual(GUIDE_BUDGET);
     expect(guide).toContain('matches the installed version');
     expect(guide).not.toContain('scripts/agent-kit');
+    // The repository's own commands mean nothing in a project that installs the package.
+    expect(guide).not.toContain('## Workspace commands');
     expect(guide).toContain('references/composition.md');
     expect(guide).toContain('`@oddkin/components/oddkin.metadata.json`');
     const llms = files.get('llms.txt')!;
@@ -62,5 +65,39 @@ describe('packaged agent kits', () => {
     // The example parses and names the document schema.
     const example = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(text)![1]!);
     expect(example.$schema).toBe('https://oddkin.dev/schemas/composition/composition.v1.json');
+  });
+
+  it('come out the same from the installed package, so a project can check them', async () => {
+    // A project that installs the packages: their published files, copied out of the workspace.
+    const consumer = mkdtempSync(join(tmpdir(), 'oddkin-kit-'));
+    try {
+      const names = ['core', 'tokens', 'components'];
+      writeFileSync(
+        join(consumer, 'package.json'),
+        JSON.stringify({
+          name: 'consumer',
+          private: true,
+          dependencies: Object.fromEntries(names.map((name) => [`@oddkin/${name}`, '*'])),
+        }),
+      );
+      for (const name of names) {
+        const from = join(repo, 'packages', name);
+        const manifest = json(`packages/${name}/package.json`) as { files: string[] };
+        for (const entry of ['package.json', ...manifest.files.filter((f) => f !== 'agent')])
+          if (existsSync(join(from, entry)))
+            cpSync(join(from, entry), join(consumer, 'node_modules', '@oddkin', name, entry), {
+              recursive: true,
+            });
+      }
+      const installed = resolveProjectContext(consumer);
+      const components = installed.libraries.find((l) => l.name === '@oddkin/components')!;
+      expect(components.owned).toBe(false);
+      const regenerated = await packageKit(installed, components);
+      const built = await packageKit(project, library('@oddkin/components'));
+      expect([...regenerated.files.keys()].sort()).toEqual([...built.files.keys()].sort());
+      for (const [path, text] of built.files) expect(regenerated.files.get(path), path).toBe(text);
+    } finally {
+      rmSync(consumer, { recursive: true, force: true });
+    }
   });
 });

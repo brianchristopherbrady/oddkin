@@ -54,6 +54,33 @@ function kitInputs(project, library) {
   );
 }
 
+/**
+ * A packaged kit's inputs: the files its package publishes, by path in the package, and the
+ * theme's token inspection, by its package export. The same in the workspace that builds the
+ * package and in a project that installs it, so the installed package can regenerate its kit.
+ */
+function packagedInputs(project, library) {
+  const published = (path) =>
+    path === 'package.json' ||
+    (library.manifest.files ?? []).some((entry) => {
+      const name = entry.replace(/^\.\//, '').replace(/\/$/, '');
+      return path === name || path.startsWith(`${name}/`);
+    });
+  const inputs = new Map();
+  for (const [path, hash] of project.inputs) {
+    const inPackage = relative(library.dir, resolve(project.root, path)).split('\\').join('/');
+    if (!inPackage.startsWith('../') && !inPackage.startsWith('agent/') && published(inPackage))
+      inputs.set(inPackage, hash);
+  }
+  const inspection = project.inspection;
+  if (inspection?.source) {
+    const path = relative(project.root, inspection.file).split('\\').join('/');
+    const hash = project.inputs.get(path);
+    if (hash) inputs.set(`${inspection.source.package}${inspection.source.export.slice(1)}`, hash);
+  }
+  return inputs;
+}
+
 function fingerprintOf(project, library, inputs) {
   const versions = { [library.name]: library.version };
   for (const dep of Object.keys({
@@ -509,7 +536,7 @@ function guide(project, library, components, categories, entries, packaged) {
       : `- JSON contract bundles keyed by stable id: ${refs('json')
           .map((e) => e.path)
           .join(', ')}.`,
-    ...(commands.length
+    ...(commands.length && !packaged
       ? ['', '## Workspace commands', '', ...commands.map(([k, v]) => `- ${k}: ${code(v)}`)]
       : []),
   ]
@@ -526,7 +553,7 @@ function guide(project, library, components, categories, entries, packaged) {
 export function generateKit(project, name, { packaged = false, extra = [] } = {}) {
   const library = project.libraries.find((l) => l.name === name);
   if (!library) throw new Error(`${name} publishes no oddkin.metadata.json in this workspace.`);
-  const inputs = kitInputs(project, library);
+  const inputs = packaged ? packagedInputs(project, library) : kitInputs(project, library);
   const fingerprint = fingerprintOf(project, library, inputs);
   const metadata = library.metadata;
   const categories = metadata.categories ?? {};

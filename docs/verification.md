@@ -4514,3 +4514,13 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Gates | `npm run lint`; `npm run typecheck`; `node scripts/check-size.mjs`; `npx vitest run --project node` | Pass; pass; pass; 1,526 passed, 2 skipped |
 
 **Not verified:** the packed demos outside Windows (CI runs the e2e on Linux).
+
+### 2026-10-30 — Packaged agent kits regenerated from the packed packages (P0.4, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `node .tmp/kit-from-packed.mjs <project>` (a project with the packed core, tokens, components, and ai installed; each shipped kit regenerated with `packageKit` from the installed package) | `@oddkin/ai` 2 of 68 files differ, `@oddkin/components` 2 of 104: GUIDE.md (a "Workspace commands" section only in the shipped guide) and kit.json (the inputs hash) |
+| After | `node scripts/agent-kit/package-kits.mjs`, then packed and installed again (`packConsumer('ai-demos')`), then the same comparison | 0 of 68 and 0 of 104 files differ |
+| Tests | `npx vitest run --project node tests/agent-kit` | 34 of 34, with a new test: a project that installs the published files of core, tokens, and components regenerates the components kit byte for byte, and the guide has no workspace commands |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutants-kit.json` | 3 of 3 killed: the packaged fingerprint covering workspace inputs; the guide listing workspace commands; the inspection keyed by its path in the project instead of its package export |
+| Gates | `npm run lint`; `npx vitest run --project node` | Pass; 1,527 passed, 2 skipped |
