@@ -6,4 +6,4 @@ Shows `odd-task-plan` (parallel tasks, needs-input, blocked), `odd-activity` (St
 
 A local timer script plays the agent; no network requests, model, or credentials. Build with `npm run build`, serve with `node scripts/serve-static.mjs`, and open `http://localhost:4173/examples/ai-agent/`.
 
-Simulation controls: make one tool fail, approval expiry after 4 seconds, failing restore, pace, and "Change the pending proposal" (a new revision; decisions for the old one are refused). Exercised by `e2e/ai-demos.spec.ts`.
+Simulation controls: make one tool fail, approval expiry after 4 seconds, failing restore, pace, and "Change the pending proposal" (a new revision; decisions for the old one are refused). Exercised by `e2e/ai-demos.spec.ts`, on the workspace build and on a bundle that a new project builds from the packed packages (`scripts/ai-demos-consumer.mjs`).

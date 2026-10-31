@@ -4501,3 +4501,16 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Gates | `npm run typecheck`; `npm run lint` (after `npm run compat`, which adds the example's stylesheet to `docs/compatibility/matrix.md`); `node scripts/check-size.mjs`; `npx vitest run --project node` | Pass; pass; pass; 1,526 passed, 2 skipped |
 
 **Not verified:** a real model behind the server (the README's route is a sketch from the AI SDK documentation, checked 2026-10-30; there is no key here), and the e2e outside Windows.
+
+### 2026-10-30 — AI demos from the packed packages; Stop stays in place (P0.4, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The packed build by hand | `node .tmp/try-ai-demos.mjs` (`packConsumer('ai-demos')`) | 45 s from packing to three bundles. Installed `@oddkin/ai`, `components`, `core`, and `tokens`. Inputs: ai-research 170 (168 from `@oddkin`), ai-writing 105 (104), ai-agent 157 (156), none from a development build. Each `main.js` has the same size as the workspace build's (239,556, 102,217, and 191,597 B) |
+| Where Stop is | `node .tmp/probe-stop.mjs webkit` (the research demo; the button's box every frame for 3 s after Enter) | Before: Send at y 611; Stop at 582 while the attempt was submitted, then at 611 from about 190 ms, when it was accepted. After the fix: Stop at 611 throughout |
+| E2E, both builds | `e2e/ai-demos.spec.ts` under the E2E lock: Chromium; Firefox and WebKit with `--workers=1` | Before the fix: 21 of 21 in Chromium; 41 of 42 in Firefox and WebKit (WebKit, packed research demo: the Stop click missed, the state stayed `stop none`). The same test then passed 18 times with `--repeat-each` (4 on each build, then 10 on the packed one). After the fix, with `e2e/ai-stream.spec.ts`: 25 of 25 in Chromium; 50 of 50 in Firefox and WebKit |
+| Composer | `node ../oddkin-lanes/tools/browser-set.mjs` with the prompt-input tests, then every `@oddkin/ai` browser test file | 11 of 11 in each engine, with a new test: Stop keeps its box while the host acknowledges, in a bottom-anchored composer. Every file: 239 passed, 4 skipped in each engine |
+| Mutation probe | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutants-prompt-stop.json` | 1 of 1 killed ("Sending…" shown under Stop) |
+| Gates | `npm run lint`; `npm run typecheck`; `node scripts/check-size.mjs`; `npx vitest run --project node` | Pass; pass; pass; 1,526 passed, 2 skipped |
+
+**Not verified:** the packed demos outside Windows (CI runs the e2e on Linux).

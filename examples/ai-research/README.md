@@ -11,4 +11,4 @@ npm run build                       # bundles src/main.js into dist/ (production
 node scripts/serve-static.mjs       # then open http://localhost:4173/examples/ai-research/
 ```
 
-Prompts containing "tool fail" make the tool fail; "drop" drops the connection midway (the attempt becomes interrupted; Retry or Resume). The simulation controls reject the next send, choose the stop outcome and delay, disconnect, resume, switch conversations, and inject a late event for the previous conversation (it is ignored). Exercised by `e2e/ai-demos.spec.ts`.
+Prompts containing "tool fail" make the tool fail; "drop" drops the connection midway (the attempt becomes interrupted; Retry or Resume). The simulation controls reject the next send, choose the stop outcome and delay, disconnect, resume, switch conversations, and inject a late event for the previous conversation (it is ignored). Exercised by `e2e/ai-demos.spec.ts`, on the workspace build and on a bundle that a new project builds from the packed packages (`scripts/ai-demos-consumer.mjs`).

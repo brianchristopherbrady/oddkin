@@ -1,7 +1,8 @@
 // Production static builds of the @oddkin/ai demonstrations. Each demo's src/main.js is bundled
 // with the packages' default (production) export conditions into examples/<demo>/dist/main.js,
 // next to the token CSS and layout.css (the page's stacks, clusters, and grids), so examples/<demo>/ is a self-contained static site: no backend, no
-// credentials, no import maps. Run after `npm run build`.
+// credentials, no import maps. Run after `npm run build`. scripts/ai-demos-consumer.mjs builds the
+// same demos from the packed packages.
 import { copyFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,7 +11,7 @@ import { build } from 'esbuild';
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 export const DEMOS = ['ai-research', 'ai-writing', 'ai-agent'];
 
-for (const demo of DEMOS) {
+for (const demo of process.argv[1] === fileURLToPath(import.meta.url) ? DEMOS : []) {
   const dir = join(root, 'examples', demo);
   const out = join(dir, 'dist');
   await mkdir(out, { recursive: true });

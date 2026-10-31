@@ -142,6 +142,9 @@ export const CONSUMERS = {
   // @oddkin/ai streaming from a real endpoint (scripts/ai-stream-consumer.mjs): examples/ai-stream
   // on the packed packages, with its own server, whose URL /ai-stream/__ready reports.
   'ai-stream': { aiStream: true },
+  // The @oddkin/ai demonstrations (scripts/ai-demos-consumer.mjs), bundled by a fresh project's
+  // esbuild from the packed packages, at /ai-demos/<demo>/.
+  'ai-demos': { aiDemos: true },
 };
 
 // Build tools at the versions the workspace verifies; the rest pinned (checked 2026-10-28). A spec
@@ -355,6 +358,20 @@ export async function packConsumer(name, work) {
       importMap,
       withImportMap,
       publishedFile,
+    });
+  }
+  if (consumer.aiDemos) {
+    await rm(site, { recursive: true, force: true });
+    const { buildAiDemosConsumer } = await import('./ai-demos-consumer.mjs');
+    return buildAiDemosConsumer(site, {
+      root,
+      oddkin,
+      tool: toolSpec,
+      tarballs: !registry,
+      freshProject,
+      installedIn,
+      publishedFile,
+      run,
     });
   }
   if (consumer.goldenPath || consumer.workbench) {

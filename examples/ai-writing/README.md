@@ -6,4 +6,4 @@ Suggestions come from deterministic local functions; no network requests, model,
 
 Build with `npm run build`, serve with `node scripts/serve-static.mjs`, and open `http://localhost:4173/examples/ai-writing/`.
 
-Simulation controls: response delay, "Edit the document now" (makes a pending proposal stale; it cannot be applied), and microphone permission denial. Exercised by `e2e/ai-demos.spec.ts`.
+Simulation controls: response delay, "Edit the document now" (makes a pending proposal stale; it cannot be applied), and microphone permission denial. Exercised by `e2e/ai-demos.spec.ts`, on the workspace build and on a bundle that a new project builds from the packed packages (`scripts/ai-demos-consumer.mjs`).
