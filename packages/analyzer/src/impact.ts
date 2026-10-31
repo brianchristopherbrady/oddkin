@@ -253,7 +253,8 @@ const hashOf = (value: unknown) => sha256(canonical(value));
 const sortBy = <T>(list: T[], key: (item: T) => string) =>
   list.sort((a, b) => (key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0));
 
-const DIMENSION = /(-?\d*\.?\d+)([a-z%]+)$/i;
+/** A whole value that is a number and a unit, e.g. `0.75rem`; never a colour such as `#29263d`. */
+const DIMENSION = /^-?\d*\.?\d+([a-z%]+)$/i;
 function unitsOf(value: unknown): string | undefined {
   const values =
     typeof value === 'string'
@@ -261,7 +262,7 @@ function unitsOf(value: unknown): string | undefined {
       : value && typeof value === 'object'
         ? Object.values(value).filter((v): v is string => typeof v === 'string')
         : [];
-  const units = [...new Set(values.map((v) => DIMENSION.exec(v.trim())?.[2]).filter(Boolean))];
+  const units = [...new Set(values.map((v) => DIMENSION.exec(v.trim())?.[1]).filter(Boolean))];
   return units.length ? units.sort().join(' ') : undefined;
 }
 const refsIn = (definition: unknown) =>

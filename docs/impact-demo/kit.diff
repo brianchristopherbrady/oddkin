@@ -1,0 +1,71 @@
+diff --git a/kits/base/ai/kit.json b/kits/head/ai/kit.json
+index 5994a67..0aee8fb 100644
+--- a/kits/base/ai/kit.json
++++ b/kits/head/ai/kit.json
+@@ -16,7 +16,7 @@
+       "@oddkin/components": "1.0.0-beta.1",
+       "@oddkin/core": "1.0.0-beta.1"
+     },
+-    "inputs": "sha256-741221bff86df8859bec45486a8847cd68572eb09ff425b0f45b78c9497d9552"
++    "inputs": "sha256-1be9f45c153d7ca607eae175a3c205511373607133f258b3864b89268569d71c"
+   },
+   "metadata": {
+     "file": "oddkin.metadata.json",
+diff --git a/kits/base/ai/references/tokens/semantic.md b/kits/head/ai/references/tokens/semantic.md
+index a1df92d..5014d7e 100644
+--- a/kits/base/ai/references/tokens/semantic.md
++++ b/kits/head/ai/references/tokens/semantic.md
+@@ -32,7 +32,7 @@ Theme `default`, modes light, dark. From the theme's token inspection.
+ | `color.surface.default` | `--odd-color-surface-default` | color | light: #ffffff; dark: #242631 | light: {ref.neutral.0}; dark: #242631 | overridden |
+ | `color.surface.hover` | `--odd-color-surface-hover` | color | light: #f0eff5; dark: #30323f | light: #f0eff5; dark: #30323f | overridden |
+ | `color.surface.raised` | `--odd-color-surface-raised` | color | light: #ffffff; dark: #2d2f3b | light: {ref.neutral.0}; dark: #2d2f3b | overridden |
+-| `color.surface.specimen` | `--odd-color-surface-specimen` | color | light: #efedfc; dark: #29263d | light: #efedfc; dark: #29263d | overridden |
++| `color.surface.specimen` | `--odd-color-surface-specimen` | color | light: #f3f1fd; dark: #29263d | light: #f3f1fd; dark: #29263d | overridden |
+ | `color.surface.sunken` | `--odd-color-surface-sunken` | color | light: #f0eff3; dark: #111219 | light: #f0eff3; dark: #111219 | overridden |
+ | `color.text.disabled` | `--odd-color-text-disabled` | color | light: #767985; dark: #858393 | light: #767985; dark: #858393 | overridden |
+ | `color.text.on-action` | `--odd-color-text-on-action` | color | light: #ffffff; dark: #23252b | light: {ref.neutral.0}; dark: #23252b | overridden |
+diff --git a/kits/base/components/kit.json b/kits/head/components/kit.json
+index 2249936..7531a8c 100644
+--- a/kits/base/components/kit.json
++++ b/kits/head/components/kit.json
+@@ -15,11 +15,11 @@
+       "@oddkin/tokens": "1.0.0-beta.1",
+       "@oddkin/core": "1.0.0-beta.1"
+     },
+-    "inputs": "sha256-028460ee8e78c8ca6e2a44f3728c4eae6f93c5eec149d3a44cc4b4c3d7afe262"
++    "inputs": "sha256-a6a8e79383c4e688bc98df4fba81fe2911691d563127be535b1168a5e7fe020f"
+   },
+   "metadata": {
+     "file": "oddkin.metadata.json",
+-    "sha256": "e98db6cbe341adeaf7bd1606d4727b73d0f734da6eae19fbbe093997c01b6549"
++    "sha256": "ca8b9da036d2a0dbf428b064f3ec9966108ae098e52e7892c7f70008863d84e2"
+   },
+   "guide": {
+     "path": "GUIDE.md",
+diff --git a/kits/base/components/references/components/odd-menu.md b/kits/head/components/references/components/odd-menu.md
+index c79c53f..e8ea635 100644
+--- a/kits/base/components/references/components/odd-menu.md
++++ b/kits/head/components/references/components/odd-menu.md
+@@ -48,8 +48,8 @@ element.
+ | Name | Description |
+ | --- | --- |
+ | `group` | Each group's heading. |
+-| `item` | Each menu item. |
+ | `menu` | Every menu surface: the menu and its submenus. |
++| `menuitem` | Each menu item. |
+ | `separator` | Each separator. |
+ | `submenu` | Each submenu surface. |
+ | `trigger` | The button that opens the menu. |
+diff --git a/kits/base/components/references/tokens/semantic.md b/kits/head/components/references/tokens/semantic.md
+index a1df92d..5014d7e 100644
+--- a/kits/base/components/references/tokens/semantic.md
++++ b/kits/head/components/references/tokens/semantic.md
+@@ -32,7 +32,7 @@ Theme `default`, modes light, dark. From the theme's token inspection.
+ | `color.surface.default` | `--odd-color-surface-default` | color | light: #ffffff; dark: #242631 | light: {ref.neutral.0}; dark: #242631 | overridden |
+ | `color.surface.hover` | `--odd-color-surface-hover` | color | light: #f0eff5; dark: #30323f | light: #f0eff5; dark: #30323f | overridden |
+ | `color.surface.raised` | `--odd-color-surface-raised` | color | light: #ffffff; dark: #2d2f3b | light: {ref.neutral.0}; dark: #2d2f3b | overridden |
+-| `color.surface.specimen` | `--odd-color-surface-specimen` | color | light: #efedfc; dark: #29263d | light: #efedfc; dark: #29263d | overridden |
++| `color.surface.specimen` | `--odd-color-surface-specimen` | color | light: #f3f1fd; dark: #29263d | light: #f3f1fd; dark: #29263d | overridden |
+ | `color.surface.sunken` | `--odd-color-surface-sunken` | color | light: #f0eff3; dark: #111219 | light: #f0eff3; dark: #111219 | overridden |
+ | `color.text.disabled` | `--odd-color-text-disabled` | color | light: #767985; dark: #858393 | light: #767985; dark: #858393 | overridden |
+ | `color.text.on-action` | `--odd-color-text-on-action` | color | light: #ffffff; dark: #23252b | light: {ref.neutral.0}; dark: #23252b | overridden |

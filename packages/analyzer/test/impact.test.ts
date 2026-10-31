@@ -100,6 +100,14 @@ describe.each([1, 2, 3, 10])('change impact with %i product(s)', (n) => {
     expect(report.affected.products.map((a) => a.id)).toEqual(products(n));
   });
 
+  it('a colour change is a value change, whatever its hex digits end with', () => {
+    // `#29263d` ends in digits and a letter, like a dimension; it has no unit.
+    const report = impact(n, (head) => brand(head, 'color.surface', '#29263d'));
+    expect(report.changes.map((c) => [c.id, c.classification, c.reason])).toEqual([
+      ['token:color.surface', 'review', 'value or definition changed'],
+    ]);
+  });
+
   it('a token unit change is incompatible; a product that sets the alias keeps its own value', () => {
     const report = impact(n, (head) => {
       brand(head, 'radius.base', '0.25rem');

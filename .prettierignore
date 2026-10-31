@@ -17,3 +17,5 @@ tests/agent-run/*/
 research/compatibility/floor-results.json
 # Written by the benchmark harnesses with JSON.stringify; their layout is the harness's.
 research/benchmarks/results
+# Recorded by scripts/impact-demo.mjs --record; the layout is oddkin-impact's.
+docs/impact-demo

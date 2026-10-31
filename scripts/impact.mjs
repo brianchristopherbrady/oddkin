@@ -10,9 +10,11 @@
 // Tool versions are content hashes of the core, tokens, and analyzer builds, so a change to any of
 // them is a version change (full verification, no reuse). Reports are written to
 // .oddkin/impact/report.json and report.md. Exit code 1 when a merged check failed.
+// scripts/impact-demo.mjs reuses the exports: building a revision, snapshots, and the check run.
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
+  copyFileSync,
   existsSync,
   lstatSync,
   mkdirSync,
@@ -27,8 +29,8 @@ import {
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-const DIR = join(ROOT, '.oddkin/impact');
+export const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+export const DIR = join(ROOT, '.oddkin/impact');
 const BIN = join(ROOT, 'packages/analyzer/dist/impact-bin.js');
 const PACKAGES = ['packages/components', 'packages/ai'];
 const THEME = 'packages/tokens/themes/default.theme.json';
@@ -42,11 +44,16 @@ const fail = (message) => {
   console.error(message);
   process.exit(2);
 };
-const run = (command, args, cwd) => {
-  const result = spawnSync(command, args, { cwd, stdio: 'inherit' });
+export const run = (command, args, cwd, env) => {
+  const result = spawnSync(command, args, {
+    cwd,
+    stdio: 'inherit',
+    ...(env ? { env: { ...process.env, ...env } } : {}),
+  });
   if (result.status !== 0) throw new Error(`${command} ${args.join(' ')} failed in ${cwd}`);
 };
-const cli = (args) => {
+/** Run the oddkin-impact command line; its usage errors (exit 2) stop this script. */
+export const cli = (args) => {
   const result = spawnSync(process.execPath, [BIN, ...args], { encoding: 'utf8' });
   if (result.status === 2) fail(result.stderr || result.stdout);
   return result;
@@ -71,7 +78,7 @@ function buildHash(dir) {
 }
 
 /** Snapshot the built packages of the checkout at `root` with the current oddkin-impact CLI. */
-async function snapshot(root, out) {
+export async function snapshot(root, out) {
   if (!existsSync(BIN)) fail('Build first: npm run build');
   mkdirSync(dirname(out), { recursive: true });
   const { generate, emitInspectJson } = await import(
@@ -141,21 +148,37 @@ function linkDependencies(worktree) {
   return links;
 }
 
-/** Build `ref` in a temporary worktree and snapshot it; the worktree is always removed. */
-async function snapshotRef(ref, out) {
+/** The commit a git revision names; an unknown revision stops this script. */
+export function commitOf(ref, cwd = ROOT) {
   const sha = spawnSync('git', ['rev-parse', '--verify', `${ref}^{commit}`], {
-    cwd: ROOT,
+    cwd,
     encoding: 'utf8',
   });
   if (sha.status !== 0) fail(`Unknown git revision: ${ref}`);
-  const commit = sha.stdout.trim();
-  const worktree = join(DIR, `base-${commit.slice(0, 12)}`);
+  return sha.stdout.trim();
+}
+
+/** The build step a snapshot needs last: the metadata reads the token assets and production build. */
+export const METADATA_STEP = 'scripts/build-metadata.mjs';
+
+/**
+ * Check `ref` out in a temporary worktree, let `prepare(worktree)` change it (the demonstration
+ * commits its change there), give it its own dependencies, build it with its own build steps
+ * through the step `through`, and return `fn(worktree)`. The worktree is always removed.
+ */
+export async function withBuiltRevision(
+  ref,
+  fn,
+  { prepare, through = METADATA_STEP, name = 'base' } = {},
+) {
+  const commit = commitOf(ref);
+  const worktree = join(DIR, `${name}-${commit.slice(0, 12)}`);
   run('git', ['worktree', 'add', '--detach', worktree, commit], ROOT);
   let links = [];
   try {
+    if (prepare) await prepare(worktree);
     links = linkDependencies(worktree);
-    // The base's own build steps, read from its package.json, up to its metadata: they change
-    // over time (the metadata now reads the token assets and the production build).
+    // The revision's own build steps, read from its package.json: they change over time.
     const steps = JSON.parse(readFileSync(join(worktree, 'package.json'), 'utf8'))
       .scripts.build.split('&&')
       .map((step) => step.trim().split(/\s+/));
@@ -168,9 +191,9 @@ async function snapshotRef(ref, out) {
         );
       else if (command === 'node') run(process.execPath, args, worktree);
       else throw new Error(`Unsupported build step at ${ref}: ${command} ${args.join(' ')}`);
-      if (args[0] === 'scripts/build-metadata.mjs') break;
+      if (args[0] === through) break;
     }
-    await snapshot(worktree, out);
+    return await fn(worktree);
   } finally {
     // Unlink junctions first, so removing the worktree can never reach their targets. rmdir
     // removes a Windows junction; a POSIX symlink is unlinked (rmdir fails on it with ENOTDIR).
@@ -179,10 +202,61 @@ async function snapshotRef(ref, out) {
         (process.platform === 'win32' ? rmdirSync : unlinkSync)(path);
     run('git', ['worktree', 'remove', '--force', worktree], ROOT);
   }
-  console.log(`Base: ${ref} (${commit.slice(0, 12)})`);
 }
 
-const [command, ...rest] = process.argv.slice(2);
+/** Build `ref` in a temporary worktree and snapshot it. */
+async function snapshotRef(ref, out) {
+  await withBuiltRevision(ref, (worktree) => snapshot(worktree, out));
+  console.log(`Base: ${ref} (${commitOf(ref).slice(0, 12)})`);
+}
+
+/**
+ * Run the checks `report` selected on the checkout at `root` (built) in Chromium, Firefox, and
+ * WebKit (tests/impact/selected.browser.test.ts), and return the result files, copied to
+ * `results` when that is not where the run writes them.
+ */
+export function runSelected(root, report, results = join(root, '.oddkin/impact/results')) {
+  const selected = JSON.parse(readFileSync(report, 'utf8')).checks.filter(
+    (c) => c.state === 'selected',
+  );
+  const own = join(root, '.oddkin/impact');
+  const written = join(own, 'results');
+  rmSync(written, { recursive: true, force: true });
+  mkdirSync(own, { recursive: true });
+  const selection = join(own, 'selection.json');
+  writeFileSync(
+    selection,
+    `${JSON.stringify({ checks: selected.map(({ id, product }) => ({ id, ...(product ? { product } : {}) })) }, null, 2)}\n`,
+  );
+  try {
+    if (selected.length) {
+      const vitest = spawnSync(
+        process.execPath,
+        [
+          join(root, 'node_modules/vitest/vitest.mjs'),
+          'run',
+          '--project',
+          'browser',
+          'tests/impact/selected.browser.test.ts',
+        ],
+        { cwd: root, stdio: 'inherit' },
+      );
+      if (vitest.status !== 0)
+        console.error(`Vitest exited with ${vitest.status}; merging what ran.`);
+    }
+  } finally {
+    rmSync(selection, { force: true });
+  }
+  const files = existsSync(written) ? readdirSync(written) : [];
+  if (resolve(results) === resolve(written)) return files.map((file) => join(written, file));
+  rmSync(results, { recursive: true, force: true });
+  mkdirSync(results, { recursive: true });
+  for (const file of files) copyFileSync(join(written, file), join(results, file));
+  return files.map((file) => join(results, file));
+}
+
+const main = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+const [command, ...rest] = main ? process.argv.slice(2) : [];
 const option = (name) => {
   const at = rest.indexOf(name);
   return at >= 0 ? rest[at + 1] : undefined;
@@ -191,7 +265,9 @@ const positionals = rest.filter(
   (arg, i) => !arg.startsWith('--') && !['--out', '--base-ref'].includes(rest[i - 1] ?? ''),
 );
 
-if (command === 'snapshot') {
+if (!main) {
+  // Imported: the exports only.
+} else if (command === 'snapshot') {
   await snapshot(ROOT, resolve(option('--out') ?? join(DIR, 'snapshot.json')));
 } else if (command === 'compare') {
   const ref = option('--base-ref');
@@ -209,32 +285,7 @@ if (command === 'snapshot') {
   const markdown = join(DIR, 'report.md');
   let result = cli(['compare', base, head, '--json', report, '--markdown', markdown]);
   if (rest.includes('--run')) {
-    const selected = JSON.parse(readFileSync(report, 'utf8')).checks.filter(
-      (c) => c.state === 'selected',
-    );
-    const results = join(DIR, 'results');
-    rmSync(results, { recursive: true, force: true });
-    const selection = join(DIR, 'selection.json');
-    writeFileSync(
-      selection,
-      `${JSON.stringify({ checks: selected.map(({ id, product }) => ({ id, ...(product ? { product } : {}) })) }, null, 2)}\n`,
-    );
-    try {
-      if (selected.length) {
-        const vitest = spawnSync(
-          'npx',
-          ['vitest', 'run', '--project', 'browser', 'tests/impact/selected.browser.test.ts'],
-          { cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32' },
-        );
-        if (vitest.status !== 0)
-          console.error(`Vitest exited with ${vitest.status}; merging what ran.`);
-      }
-    } finally {
-      rmSync(selection, { force: true });
-    }
-    const files = existsSync(results)
-      ? readdirSync(results).map((file) => join(results, file))
-      : [];
+    const files = runSelected(ROOT, report);
     result = cli([
       'compare',
       base,

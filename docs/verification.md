@@ -4631,3 +4631,16 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Again on `1c3a040` | `node scripts/release/clean.mjs`; `npm run build`; `npm run typecheck`; `npx vitest run --project node`; `npm run verify:packs`; `node scripts/agent-kit/package-kits.mjs --check`; `node scripts/release/publish.mjs` (the lockfile unchanged, so no second `npm ci`) | All exit 0 (4, 92, 34, 235, 285, 3, and 89 s); node tests 1,535 passed, 2 skipped (122 files); the dry run as before |
 
 **Not verified here:** the browser tests and e2e, which the release commit's CI run covers; the publish itself (the owner's npm account).
+
+## 2026-10-30 — The change-impact demonstration (CF.2; round 10, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Demonstration | `node scripts/impact-demo.mjs --run`, twice (before and after the unit fix); the second with `--record docs/impact-demo` | Exit 0 both times. Base `35b6dcd`, head `749a34f` both times (the same commits: `d74d1f3`, `749a34f`). Two worktree builds, then Vitest in the head's worktree: 3 files, 3 passed (Chromium, Firefox, WebKit). Report: 6 changes (1 incompatible: `part:odd-menu#item` removed, possible rename to `part:odd-menu#menuitem`; 4 review; 1 informational); 4 components affected (`odd-split-button` through `odd-menu`, `odd-picker` through the combobox styles); 29 checks, all passed in the three engines. Kit diff: 5 files (both kits' `kit.json` inputs, the menu's parts table, and the token's value in both semantic token references). The temporary worktrees were removed |
+| Analyzer bug | the first run's report | `token:color.surface.specimen` was `incompatible`, "unit changed from d to d fd": the unit pattern read `#29263d` as `263d`. Fixed: a unit is read only from a whole number-and-unit value. The second run reports it as a review, "value or definition changed" |
+| Regression test | `npx vitest run --project node packages/analyzer/test/impact.test.ts` | 50 passed. Mutation (the unanchored pattern back) killed: 4 failed, the new test once per product count |
+| Scripted edits | `tests/impact/demo-change.test.ts` | 2 passed: every edit matches exactly once on this checkout, and a missing or repeated match is refused |
+| The command line after the refactor | `node scripts/impact.mjs compare <snap> <snap>`; `node scripts/impact.mjs compare --base-ref HEAD` | 0 changes; the base-ref path built HEAD in a worktree, compared, and removed it (full verification, as expected: the analyzer build differed) |
+| Gates | `npm run lint`; `npm run typecheck`; `npx vitest run --project node packages/analyzer tests/impact tests/agent-kit tests/golden-path` | All exit 0; 21 files, 176 tests passed |
+
+**Not verified here:** the demonstration on Linux or macOS. It uses the same worktree code as CI's `--base-ref`, which runs on Linux.

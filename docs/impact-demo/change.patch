@@ -1,0 +1,68 @@
+From d74d1f391f9cb66d454d06b63fb422c23cccd9ac Mon Sep 17 00:00:00 2001
+From: Oddkin demonstration <demonstration@oddkin.invalid>
+Date: Fri, 30 Oct 2026 12:00:00 +0000
+Subject: [PATCH 1/2] Menu: name the item part after its role, menuitem
+
+---
+ packages/components/src/menu/menu.template.ts | 4 ++--
+ packages/components/src/menu/menu.ts          | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/packages/components/src/menu/menu.template.ts b/packages/components/src/menu/menu.template.ts
+index 0180fdf..6920043 100644
+--- a/packages/components/src/menu/menu.template.ts
++++ b/packages/components/src/menu/menu.template.ts
+@@ -8,7 +8,7 @@ import type { OddkinMenu } from './menu.js';
+  * `aria-expanded`, and `aria-controls`; the default slot and a chevron), an empty `point` the menu
+  * opens against as a context menu, and the `menu` part (a `role="menu"` popover labelled by the
+  * trigger). Entries render in order: an action is a
+- * `menuitem` (`part="item"`, option-row anatomy: icon, label with description, shortcut), a group
++ * `menuitem` (`part="menuitem"`, option-row anatomy: icon, label with description, shortcut), a group
+  * is a `role="group"` named by its `part="group"` heading, and a separator is
+  * `role="separator"`. An action with `items` is wrapped with its submenu (`role="none"`): the item
+  * has `aria-haspopup`, `aria-expanded`, and `aria-controls`, and the submenu is a nested
+@@ -19,7 +19,7 @@ export const menuTemplate = (menu: OddkinMenu) => {
+   const action = (record: MenuActionRecord, path: string) =>
+     html`<div
+       role="menuitem"
+-      part="item"
++      part="menuitem"
+       class=${record.tone === 'danger' ? 'option danger' : 'option'}
+       id=${`item-${path}`}
+       data-path=${path}
+diff --git a/packages/components/src/menu/menu.ts b/packages/components/src/menu/menu.ts
+index 8954ede..877c1a3 100644
+--- a/packages/components/src/menu/menu.ts
++++ b/packages/components/src/menu/menu.ts
+@@ -50,7 +50,7 @@ const none = () => false;
+  * @csspart trigger - The button that opens the menu.
+  * @csspart menu - Every menu surface: the menu and its submenus.
+  * @csspart submenu - Each submenu surface.
+- * @csspart item - Each menu item.
++ * @csspart menuitem - Each menu item.
+  * @csspart group - Each group's heading.
+  * @csspart separator - Each separator.
+  * @a11y The trigger has `aria-haspopup="menu"` and `aria-expanded`, and names the menu; `label` names a trigger that shows only a glyph. Items are `menuitem`s (disabled ones stay focusable, as APG recommends), groups are named by their heading, and an item with a submenu has `aria-haspopup` and `aria-expanded`. The danger tone is colour only: let the label say what the action does ("Delete project"). A context menu is hidden from people who cannot right-click or do not know Shift+F10: keep the trigger visible as the way to the same actions.
+
+From 749a34f00b91c253b35d9a9d48ba27ac01315a46 Mon Sep 17 00:00:00 2001
+From: Oddkin demonstration <demonstration@oddkin.invalid>
+Date: Fri, 30 Oct 2026 12:00:00 +0000
+Subject: [PATCH 2/2] Theme: a lighter specimen surface
+
+---
+ packages/tokens/themes/default.theme.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/packages/tokens/themes/default.theme.json b/packages/tokens/themes/default.theme.json
+index 48f4279..1eaef1d 100644
+--- a/packages/tokens/themes/default.theme.json
++++ b/packages/tokens/themes/default.theme.json
+@@ -8,7 +8,7 @@
+     "color.surface.raised": { "light": "{ref.neutral.0}", "dark": "#2d2f3b" },
+     "color.surface.sunken": { "light": "#f0eff3", "dark": "#111219" },
+     "color.surface.hover": { "light": "#f0eff5", "dark": "#30323f" },
+-    "color.surface.specimen": { "light": "#efedfc", "dark": "#29263d" },
++    "color.surface.specimen": { "light": "#f3f1fd", "dark": "#29263d" },
+     "color.text.primary": { "light": "#23252b", "dark": "#f5f3fd" },
+     "color.text.secondary": { "light": "#5f626f", "dark": "#bdbbcd" },
+     "color.text.disabled": { "light": "#767985", "dark": "#858393" },

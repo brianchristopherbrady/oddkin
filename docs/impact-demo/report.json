@@ -1,0 +1,906 @@
+{
+  "schema": "https://oddkin.dev/schemas/impact-report/v1.json",
+  "base": {
+    "versions": {
+      "core": "sha256-0f45120b391c6484",
+      "tokens": "sha256-4c0bf2c1db758ebd",
+      "analyzer": "sha256-d5a22fcedadcee6a"
+    }
+  },
+  "head": {
+    "versions": {
+      "core": "sha256-0f45120b391c6484",
+      "tokens": "sha256-4c0bf2c1db758ebd",
+      "analyzer": "sha256-d5a22fcedadcee6a"
+    }
+  },
+  "changes": [
+    {
+      "id": "class:odd-menu",
+      "kind": "class",
+      "change": "changed",
+      "classification": "review",
+      "reason": "class changed"
+    },
+    {
+      "id": "part:odd-menu#item",
+      "kind": "part",
+      "change": "removed",
+      "classification": "incompatible",
+      "reason": "removed",
+      "possibleRename": "part:odd-menu#menuitem"
+    },
+    {
+      "id": "part:odd-menu#menuitem",
+      "kind": "part",
+      "change": "added",
+      "classification": "informational",
+      "reason": "added"
+    },
+    {
+      "id": "template:@oddkin/components/dist/menu/menu.template.js#menuTemplate",
+      "kind": "template",
+      "change": "changed",
+      "classification": "review",
+      "reason": "template changed"
+    },
+    {
+      "id": "theme:base",
+      "kind": "theme",
+      "change": "changed",
+      "classification": "review",
+      "reason": "theme changed"
+    },
+    {
+      "id": "token:color.surface.specimen",
+      "kind": "token",
+      "change": "changed",
+      "classification": "review",
+      "reason": "value or definition changed"
+    }
+  ],
+  "affected": {
+    "products": [],
+    "components": [
+      {
+        "id": "component:odd-combobox",
+        "via": [
+          "token:color.surface.specimen",
+          "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+          "definition:odd-combobox",
+          "component:odd-combobox"
+        ]
+      },
+      {
+        "id": "component:odd-menu",
+        "via": [
+          "class:odd-menu",
+          "component:odd-menu"
+        ]
+      },
+      {
+        "id": "component:odd-picker",
+        "via": [
+          "token:color.surface.specimen",
+          "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+          "definition:odd-picker",
+          "component:odd-picker"
+        ]
+      },
+      {
+        "id": "component:odd-split-button",
+        "via": [
+          "class:odd-menu",
+          "component:odd-menu",
+          "definition:odd-split-button",
+          "component:odd-split-button"
+        ]
+      }
+    ]
+  },
+  "coverageGaps": [],
+  "checks": [
+    {
+      "id": "example:odd-combobox/children",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/children"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/default",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/default"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/disabled",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/disabled"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/grouped",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/grouped"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/inForm",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/inForm"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/loading",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/loading"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/multiple",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/multiple"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/readonly",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/readonly"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/selectAll",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/selectAll"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/serverFiltered",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/serverFiltered"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-combobox/views",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-combobox",
+        "component:odd-combobox",
+        "example:odd-combobox/views"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-menu/contextMenu",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "example:odd-menu/contextMenu"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-menu/default",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "example:odd-menu/default"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-menu/disabled",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "example:odd-menu/disabled"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-menu/fromData",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "example:odd-menu/fromData"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-menu/glyphOnly",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "example:odd-menu/glyphOnly"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-picker/default",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-picker",
+        "component:odd-picker",
+        "example:odd-picker/default"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-picker/disabled",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-picker",
+        "component:odd-picker",
+        "example:odd-picker/disabled"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-picker/empty",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-picker",
+        "component:odd-picker",
+        "example:odd-picker/empty"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-picker/inForm",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-picker",
+        "component:odd-picker",
+        "example:odd-picker/inForm"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-picker/list",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-picker",
+        "component:odd-picker",
+        "example:odd-picker/list"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-picker/listMultiple",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-picker",
+        "component:odd-picker",
+        "example:odd-picker/listMultiple"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-picker/loading",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-picker",
+        "component:odd-picker",
+        "example:odd-picker/loading"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-picker/multiple",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "token:color.surface.specimen",
+        "style:@oddkin/components/dist/combobox/combobox.styles.js#comboboxStyles",
+        "definition:odd-picker",
+        "component:odd-picker",
+        "example:odd-picker/multiple"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-split-button/default",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "definition:odd-split-button",
+        "component:odd-split-button",
+        "example:odd-split-button/default"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-split-button/disabled",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "definition:odd-split-button",
+        "component:odd-split-button",
+        "example:odd-split-button/disabled"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-split-button/fromData",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "definition:odd-split-button",
+        "component:odd-split-button",
+        "example:odd-split-button/fromData"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-split-button/loading",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "definition:odd-split-button",
+        "component:odd-split-button",
+        "example:odd-split-button/loading"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "example:odd-split-button/secondary",
+      "state": "passed",
+      "reason": "an input on its path changed",
+      "via": [
+        "class:odd-menu",
+        "component:odd-menu",
+        "definition:odd-split-button",
+        "component:odd-split-button",
+        "example:odd-split-button/secondary"
+      ],
+      "conditions": {
+        "runs": [
+          {
+            "browser": "chromium",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36"
+          },
+          {
+            "browser": "firefox",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0"
+          },
+          {
+            "browser": "webkit",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15"
+          }
+        ]
+      }
+    }
+  ]
+}
