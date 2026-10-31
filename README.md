@@ -6,7 +6,7 @@ Oddkin is a modular frontend framework built on custom elements and browser APIs
 - **`@oddkin/tokens`** — theme configuration and a deterministic token pipeline that emits CSS, JSON, DTCG, and TypeScript (Sass output is planned). Use the tokens with plain CSS and no Oddkin JavaScript.
 - **`@oddkin/components`** — themeable custom elements that work in plain HTML or in any framework, tested with keyboard checks and axe-core in three browser engines (screen readers not yet verified).
 - **`@oddkin/workbench`** — tooling preview: component documentation generated from a library's metadata, with interactive pages and Theme Studio, served locally (`oddkin workbench dev`) or built as a static site (`oddkin workbench build`).
-- **`@oddkin/analyzer`** — tooling preview: the metadata Workbench reads (`oddkin-analyze` writes a Custom Elements Manifest and `oddkin.metadata.json` without running the code), and the change-impact tools (`oddkin-impact` snapshots a library's contracts and reports what changed between two snapshots, what it affects, and which checks cover it).
+- **`@oddkin/analyzer`** — tooling preview: the metadata Workbench reads (`oddkin-analyze` writes a Custom Elements Manifest and `oddkin.metadata.json` without running the code), the change-impact tools (`oddkin-impact` snapshots a library's contracts and reports what changed between two snapshots, what it affects, and which checks cover it), and agent kits (`oddkin-kit` writes a library's guide and references for coding agents from that metadata).
 - **`@oddkin/ai`** — an optional add-on to the components: AI interaction elements, headless controllers, and stream adapters for conversations, inline assistance, research tools, and agent workflows.
 - **`@oddkin/state`** and **`@oddkin/app`** — optional stores, context, routing, and async resources.
 
@@ -14,7 +14,7 @@ Workbench's and the analyzer's own contracts (configuration, page registry, fram
 
 ## Names
 
-Packages are published under `@oddkin/*`; elements use the `odd-` prefix (`<odd-button>`), CSS custom properties `--odd-*`, and theme scopes `data-odd-*`; command-line tools are `oddkin` (Workbench), `oddkin-tokens`, `oddkin-analyze`, and `oddkin-impact`. See [ADR 0037](./docs/architecture/decisions/0037-naming-contract.md).
+Packages are published under `@oddkin/*`; elements use the `odd-` prefix (`<odd-button>`), CSS custom properties `--odd-*`, and theme scopes `data-odd-*`; command-line tools are `oddkin` (Workbench), `oddkin-tokens`, `oddkin-analyze`, `oddkin-impact`, and `oddkin-kit`. See [ADR 0037](./docs/architecture/decisions/0037-naming-contract.md).
 
 ## Status
 
