@@ -6,7 +6,7 @@ Author custom elements with typed properties, fine-grained reactivity, tagged te
 npm install @oddkin/core@beta
 ```
 
-The current release is a beta (`1.0.0-beta.0`, on the `beta` dist-tag): contracts may still change before 1.0.0.
+The current release is a beta (`1.0.0-beta.1`, on the `beta` dist-tag): contracts may still change before 1.0.0.
 
 ## A counter
 

@@ -42,7 +42,7 @@ React 19.3, Vue 3.5, Svelte 5.57, and Angular 22.2, in three engines ([release-p
 ## Copies and versions on one page
 
 - One copy of `@oddkin/core` per install is the supported setup (`tests/architecture/single-core.test.ts`).
-- Two copies of core on one page keep working, including the published 1.0.0-beta.0 beside the current packages (`e2e/duplicate-core.spec.ts`; [core-contracts.md §5.1](./architecture/core-contracts.md)).
+- Two copies of core on one page keep working, including the previous published release beside the current packages (`e2e/duplicate-core.spec.ts`; [core-contracts.md §5.1](./architecture/core-contracts.md)).
 - Each element name registers once per page ([release-process.md §2](./release-process.md#2-tag-name-conflicts-an-honest-note)).
 
 ## Fixes

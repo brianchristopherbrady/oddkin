@@ -1,6 +1,6 @@
 {
   "name": "@oddkin/workbench",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -106,12 +106,12 @@
     "README.md"
   ],
   "dependencies": {
-    "@oddkin/analyzer": "^1.0.0-beta.0",
-    "@oddkin/app": "^1.0.0-beta.0",
-    "@oddkin/components": "^1.0.0-beta.0",
-    "@oddkin/core": "^1.0.0-beta.0",
-    "@oddkin/state": "^1.0.0-beta.0",
-    "@oddkin/tokens": "^1.0.0-beta.0"
+    "@oddkin/analyzer": "^1.0.0-beta.1",
+    "@oddkin/app": "^1.0.0-beta.1",
+    "@oddkin/components": "^1.0.0-beta.1",
+    "@oddkin/core": "^1.0.0-beta.1",
+    "@oddkin/state": "^1.0.0-beta.1",
+    "@oddkin/tokens": "^1.0.0-beta.1"
   },
   "publishConfig": {
     "access": "public",

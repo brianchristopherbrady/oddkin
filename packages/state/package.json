@@ -1,6 +1,6 @@
 {
   "name": "@oddkin/state",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -43,7 +43,7 @@
     "README.md"
   ],
   "peerDependencies": {
-    "@oddkin/core": "^1.0.0-beta.0"
+    "@oddkin/core": "^1.0.0-beta.1"
   },
   "publishConfig": {
     "access": "public",
