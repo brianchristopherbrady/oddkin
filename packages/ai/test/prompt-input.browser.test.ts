@@ -220,6 +220,33 @@ describe('odd-prompt-input', () => {
     );
   });
 
+  it('Stop stays in place while the host acknowledges the submission', async () => {
+    // e2e 2026-10-30, WebKit: the research demo's Stop appeared above a "Sending…" line and moved
+    // down when the line went away, so a click right after Stop appeared could miss it. The
+    // composer sits at the bottom, as in a chat.
+    container.style.cssText =
+      'display: flex; flex-direction: column; justify-content: flex-end; block-size: 20rem';
+    const { el, area, submits } = await mount((e) => {
+      e.capabilities = { send: { available: true }, stop: { available: true } };
+    });
+    const status = () => el.shadowRoot!.querySelector<HTMLElement>('[part="status"]')!;
+    await type(el, area, 'question');
+    key(area, {});
+    await settle(el);
+    // A host without Stop yet: the submission shows as sending.
+    expect(status().textContent?.trim()).toBe('Sending…');
+    el.loading = true;
+    el.attemptId = 'attempt-1';
+    await settle(el);
+    const stop = el.shadowRoot!.querySelector<HTMLElement>('odd-button.stop')!;
+    expect(status().hidden).toBe(true);
+    const before = stop.getBoundingClientRect().top;
+    expect(el.acknowledge(submits[0]!.submissionId)).toBe(true);
+    await settle(el);
+    expect(el.shadowRoot!.querySelector('odd-button.stop')).toBe(stop);
+    expect(stop.getBoundingClientRect().top).toBe(before);
+  });
+
   it('a slotted model select with a long option never widens a narrow composer', async () => {
     // CI 2026-10-21: WebKit on Linux (wider system font) overflowed the 320 px research demo.
     // An option far wider than the container reproduces it with any font.

@@ -17,11 +17,14 @@ export const promptInputTemplate = (host: OddkinPromptInput) => {
   const showStop = host.loading && can(host.capabilities, 'stop');
   const attachments = host._attachmentsAvailable();
   const blocked = host._blocked.value;
-  const status = submitting
-    ? t.sending
-    : failure
-      ? format(t.failed, { message: failure.message })
-      : blocked;
+  // While Stop shows, it stands for the work in progress. A "Sending…" line under it would go
+  // away when the host acknowledges the submission and move Stop under the pointer.
+  const status =
+    submitting && !showStop
+      ? t.sending
+      : failure
+        ? format(t.failed, { message: failure.message })
+        : blocked;
   const describedBy = ['hint', state.issues.length ? 'issues' : '', status ? 'status' : '']
     .filter(Boolean)
     .join(' ');
