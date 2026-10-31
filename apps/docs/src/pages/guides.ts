@@ -264,6 +264,41 @@ export const agents: Page = {
       ],
     },
     {
+      id: 'your-library',
+      title: 'A kit for your own library',
+      blocks: [
+        {
+          p: [
+            { code: 'oddkin-kit' },
+            ' (in ',
+            { code: '@oddkin/analyzer' },
+            ') writes the same kit for your library from the metadata the analyzer publishes, checks it, and keeps a managed section of ',
+            { code: 'AGENTS.md' },
+            ' that points agents at the kits. Run it in the workspace root:',
+          ],
+        },
+        {
+          code: {
+            lang: 'sh',
+            verify: 'none',
+            code: `# The kit your package ships, in <package>/agent/ (list "agent" in the package's "files")
+npx oddkin-kit package
+# Check it against the package's metadata; --package <name> checks an installed package's kit
+npx oddkin-kit package --check
+# The managed section of AGENTS.md; text outside its markers is kept
+npx oddkin-kit agents-md --write`,
+          },
+        },
+        {
+          p: [
+            'A stale, missing, or over-budget kit, or a stale ',
+            { code: 'AGENTS.md' },
+            ' section, exits with 1, so CI can run the checks. A kit a package ships depends only on what the package publishes, so a project that installs it regenerates the same files.',
+          ],
+        },
+      ],
+    },
+    {
       id: 'composition',
       title: 'Interfaces as data',
       blocks: [
@@ -300,10 +335,12 @@ if (!result.ok) console.table(result.diagnostics);`,
         {
           list: [
             [
-              'There is no Oddkin MCP server or agent CLI yet; the kits and the metadata are the interface.',
+              'There is no Oddkin MCP server or agent package yet; the kits and the metadata are the interface.',
             ],
             [
-              'The kits describe the installed version only; they do not track your own components unless you generate a kit for your library.',
+              'A packaged kit describes the version installed; for your own components, write a kit with ',
+              { code: 'oddkin-kit' },
+              '.',
             ],
           ],
         },
