@@ -47,6 +47,50 @@ function declaredFunctions(file: string): Array<{ name: string; doc: string; sig
   );
 }
 
+/** Each `export interface` and `export type` of a declaration file, with its doc comments. */
+function declaredTypes(file: string): Array<{
+  name: string;
+  doc: string;
+  alias?: string;
+  members: Array<{ text: string; doc: string }>;
+}> {
+  if (!file || !existsSync(file)) return [];
+  const text = readFileSync(file, 'utf8');
+  const docText = (comment: string) =>
+    comment
+      .trim()
+      .replace(/^\/\*\*|\*\/$/g, '')
+      .split('\n')
+      .map((line) => line.replace(/^\s*\*\s?/, '').trim())
+      .filter(Boolean)
+      .join(' ');
+  const types: Array<{
+    name: string;
+    doc: string;
+    alias?: string;
+    members: Array<{ text: string; doc: string }>;
+  }> = [];
+  const declarations =
+    /(\/\*\*(?:(?!\*\/)[\s\S])*\*\/\s*)?export (?:interface (\w+) \{\n([\s\S]*?)\n\}|type (\w+) = ([^;]+);)/g;
+  for (const [, comment = '', name, body = '', alias, target] of text.matchAll(declarations)) {
+    if (alias) {
+      types.push({ name: alias, doc: docText(comment), alias: target!.trim(), members: [] });
+      continue;
+    }
+    const members: Array<{ text: string; doc: string }> = [];
+    let doc = '';
+    for (const member of body.matchAll(/\s*(\/\*\*[\s\S]*?\*\/)|\s*([^\n]+);/g)) {
+      if (member[1]) doc = docText(member[1]);
+      else if (member[2]) {
+        members.push({ text: member[2].trim().replace(/^readonly /, ''), doc });
+        doc = '';
+      }
+    }
+    types.push({ name: name!, doc: docText(comment), members });
+  }
+  return types;
+}
+
 /**
  * The composition reference (data-composition.md §8), from what the package publishes: the
  * entry's declarations, the document schema, and the per-element schemas. Its example is
@@ -73,6 +117,10 @@ export async function compositionReference(library: Library): Promise<KitFile | 
   const functions = [
     ...declaredFunctions(types ? join(dir, types.replace(/index\.d\.ts$/, 'validate.d.ts')) : ''),
     ...declaredFunctions(types ? join(dir, types.replace(/index\.d\.ts$/, 'render.d.ts')) : ''),
+  ];
+  const declared = [
+    ...declaredTypes(types ? join(dir, types.replace(/index\.d\.ts$/, 'validate.d.ts')) : ''),
+    ...declaredTypes(types ? join(dir, types.replace(/index\.d\.ts$/, 'render.d.ts')) : ''),
   ];
   const { validateComposition, COMPOSITION_VERSION } = (await import(
     pathToFileURL(join(dir, target)).href
@@ -115,6 +163,17 @@ export async function compositionReference(library: Library): Promise<KitFile | 
     `- ${code(`import { validateComposition, renderComposition } from '${library.name}/composition';`)} (never imported by element entries).`,
     ...functions.map((f) => `- ${code(f.signature)}${f.doc ? `: ${f.doc}` : ''}`),
     '',
+    ...(declared.length
+      ? [
+          '## Types',
+          '',
+          ...declared.flatMap((t) => [
+            `- ${code(t.alias ? `${t.name} = ${t.alias}` : t.name)}${t.doc ? `: ${t.doc}` : ''}`,
+            ...t.members.map((m) => `  - ${code(m.text)}${m.doc ? `: ${m.doc}` : ''}`),
+          ]),
+          '',
+        ]
+      : []),
     '## Document',
     '',
     `- Schema: ${code(`${library.name}/schemas/composition/composition.v1.json`)} (${code(documentSchema['$id'])}). Required: ${((documentSchema['required'] as string[] | undefined) ?? []).map(code).join(', ')}; ${code('version')} is ${code(COMPOSITION_VERSION)}.`,

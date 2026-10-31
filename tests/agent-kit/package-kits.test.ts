@@ -60,6 +60,17 @@ describe('packaged agent kits', () => {
     expect(text).toContain("from '@oddkin/components/composition'");
     expect(text).toMatch(/`validateComposition\(document: unknown/);
     expect(text).toMatch(/`renderComposition\(document: unknown, target: ParentNode/);
+    // The types the entry's functions take and return, with their members and doc comments.
+    expect(text).toContain('- `RenderCompositionOptions`');
+    expect(text).toContain(
+      '  - `allow: readonly string[]`: Every tag the renderer may create, natives included; anything else is refused.',
+    );
+    expect(text).toContain('  - `onAction?: (action: CompositionAction) => void`: ');
+    expect(text).toContain(
+      '- `CompositionAction`: An event of a rendered element, mapped to an action name by the composition.\n',
+    );
+    expect(text).toContain('- `CompositionNode = string | CompositionElement`');
+    expect(text).toContain('  - `dispose(): void`: Removes the nodes and their action listeners.');
     expect(text).toContain('@oddkin/components/schemas/composition/composition.v1.json');
     expect(text).toContain('`odd-button`');
     // The example parses and names the document schema.
