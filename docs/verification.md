@@ -4618,3 +4618,16 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | The golden path by hand | `node .tmp/try-golden.mjs` | `@oddkin/components`: 335 checked, 54 mistakes, 0 problems. `@oddkin/ai`: 40 checked, 4 mistakes, 3 computed (not checked), 0 problems. `@acme/widgets`: 3 checked, 0 problems. 362 s in all at the machine's load |
 | E2E | `e2e/golden-path.spec.ts`, Chromium, Firefox, and WebKit with `--workers=1` | 21 of 21, with the new test of the examples report |
 | Types | `npx tsc -p tsconfig.tests.json` | Pass |
+## 2026-10-30 — 1.0.0-beta.1 cut (P0.8, round 10, Agent 1; owner decision D-10)
+
+On the release commit, in a worktree with no other changes: first as `fd4d020`, then again as `1c3a040`, after a rebase onto `6677001`, whose kit changes ship in this release. It was pushed as `7c889ab` after one more rebase, onto `ed4432c`, which changes no package file:
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Versions | `node scripts/release/set-versions.mjs --next`, `npm install`, then `--check --runtime 1.0.0-beta.1 --tools 1.0.0-beta.1 --public` | 8 packages at 1.0.0-beta.1, publishable, `--tag beta` |
+| Contracts against the release | `node scripts/impact.mjs compare --base-ref v1.0.0-beta.0` (88 s) | 347 changes, none incompatible: 317 examples (their values in the metadata), 29 stylesheets, 1 template (`odd-prompt-input`) |
+| Build, types, node tests, lint | `npm run build`; `npm run typecheck`; `npx vitest run --project node`; `npm run lint` | Pass; pass; 1,533 passed, 2 skipped (121 files); pass |
+| The owner's steps up to the dry run | `npm ci`; `node scripts/release/clean.mjs`; `npm run build`; `npm run verify:packs`; `node scripts/agent-kit/package-kits.mjs --check`; `node scripts/release/evidence.mjs --out release-evidence/1.0.0-beta.1`; `node scripts/release/publish.mjs` | All exit 0 (215, 12, 144, 351, 3, 35, and 131 s). The evidence records the commit as clean and the 8 packages. The dry run: every package with `--tag beta` in dependency order, and `latest` to move for all 8 |
+| Again on `1c3a040` | `node scripts/release/clean.mjs`; `npm run build`; `npm run typecheck`; `npx vitest run --project node`; `npm run verify:packs`; `node scripts/agent-kit/package-kits.mjs --check`; `node scripts/release/publish.mjs` (the lockfile unchanged, so no second `npm ci`) | All exit 0 (4, 92, 34, 235, 285, 3, and 89 s); node tests 1,535 passed, 2 skipped (122 files); the dry run as before |
+
+**Not verified here:** the browser tests and e2e, which the release commit's CI run covers; the publish itself (the owner's npm account).
