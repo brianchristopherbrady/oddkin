@@ -406,3 +406,94 @@ export function examplePreviews(): (page: ComponentPageData, id: string) => Node
     return example ? host(id, (into, root) => drawExample(page, example, into, root)) : undefined;
   };
 }
+
+/** A reference page's tabs (Figma 19:874), each with the panel sections it shows. */
+export const COMPONENT_TABS = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    sections: ['overview', 'interactive-example', 'source', 'guidance'],
+  },
+  { id: 'controls', label: 'Controls', sections: ['interactive-example', 'api'] },
+  { id: 'examples', label: 'Examples', sections: ['examples', 'tokens'] },
+  {
+    id: 'accessibility',
+    label: 'Accessibility',
+    sections: ['behavior-and-accessibility', 'known-limitations'],
+  },
+] as const;
+
+/** The tab a URL fragment names: by its id, else the first tab that shows that section. */
+export function tabOf(hash: string): number {
+  const id = decodeURIComponent(hash.replace(/^#/, ''));
+  const named = COMPONENT_TABS.findIndex((tab) => tab.id === id);
+  const showing = COMPONENT_TABS.findIndex((tab) =>
+    (tab.sections as readonly string[]).includes(id),
+  );
+  return Math.max(named >= 0 ? named : showing, 0);
+}
+
+/** The tab an arrow key moves to, in left-to-right text; the order flips right to left. */
+const ARROWS: Partial<Record<string, number>> = { ArrowLeft: -1, ArrowRight: 1 };
+
+/**
+ * Tabs over a reference page's panel (APG tabs, automatic activation), and the one tab panel
+ * that holds it: each tab sets the panel's `sections`, so the live example is never reloaded.
+ * The URL fragment names the tab shown.
+ */
+export function componentTabs(
+  panel: HTMLElement & { sections: readonly string[] | null },
+): [HTMLElement, HTMLElement] {
+  const list = document.createElement('div');
+  list.className = 'component-tabs odd-auto-grid odd-auto-grid-fit';
+  list.setAttribute('role', 'tablist');
+  list.setAttribute('aria-label', 'Component documentation');
+  const body = document.createElement('div');
+  body.className = 'component-tabpanel';
+  body.id = 'component-tabpanel';
+  body.setAttribute('role', 'tabpanel');
+  body.tabIndex = 0;
+  body.append(panel);
+  const tabs = COMPONENT_TABS.map(({ id, label }) => {
+    const tab = document.createElement('button');
+    tab.type = 'button';
+    tab.id = `tab-${id}`;
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-controls', body.id);
+    tab.textContent = label;
+    return tab;
+  });
+  const show = (index: number) => {
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('aria-selected', String(i === index));
+      tab.tabIndex = i === index ? 0 : -1;
+    });
+    body.setAttribute('aria-labelledby', tabs[index]!.id);
+    panel.sections = COMPONENT_TABS[index]!.sections;
+  };
+  const choose = (index: number) => {
+    show(index);
+    history.replaceState(history.state, '', `#${COMPONENT_TABS[index]!.id}`);
+  };
+  tabs.forEach((tab, index) => tab.addEventListener('click', () => choose(index)));
+  list.addEventListener('keydown', (event) => {
+    const index = tabs.indexOf(event.target as HTMLButtonElement);
+    const step = ARROWS[event.key];
+    const rtl = getComputedStyle(list).direction === 'rtl';
+    const next =
+      event.key === 'Home'
+        ? 0
+        : event.key === 'End'
+          ? tabs.length - 1
+          : step === undefined
+            ? -1
+            : (index + (rtl ? -step : step) + tabs.length) % tabs.length;
+    if (index < 0 || next < 0) return;
+    event.preventDefault();
+    choose(next);
+    tabs[next]!.focus();
+  });
+  list.append(...tabs);
+  show(tabOf(location.hash));
+  return [list, body];
+}

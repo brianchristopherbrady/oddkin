@@ -123,26 +123,41 @@ test('docs guides, metadata references, local search, and shadow-root links', as
   await expect(
     page.frameLocator('oddkin-component-panel iframe').first().locator('odd-button'),
   ).toHaveText('Save', { timeout: catalogLoad });
-  // The documentation layout (Figma 20:2190): section links, one scrolling controls region, and
-  // no token or usage sections; example cards show live elements.
-  await expect(
-    buttonPanel.getByRole('navigation', { name: 'Page sections' }).getByRole('link'),
-  ).toHaveText(['Overview', 'Controls', 'Examples', 'Accessibility']);
-  await expect(buttonPanel.getByRole('heading', { level: 2 })).toHaveText([
+  // The documentation layout (Figma 20:2190): tabs over the panel's sections, one scrolling
+  // controls region, and no token or usage sections; example cards show live elements.
+  const tabs = page.getByRole('tablist', { name: 'Component documentation' });
+  await expect(tabs.getByRole('tab')).toHaveText([
     'Overview',
-    'Interactive example',
-    'Source and package',
-    'States and examples',
-    'Reference',
+    'Controls',
+    'Examples',
     'Accessibility',
-    'Known limitations',
   ]);
+  await expect(tabs.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+  const headings = buttonPanel.getByRole('heading', { level: 2 });
+  await expect(headings).toHaveText(['Overview', 'Interactive example', 'Source and package']);
   const controls = buttonPanel.getByRole('region', { name: 'Controls and API' });
   await expect(controls).toHaveAttribute('tabindex', '0');
   await expect(controls).toHaveCSS('overflow-y', 'auto');
+  // Arrow keys and clicks switch tabs; the URL names the tab, and the example's frame stays.
+  const frame = await buttonPanel.locator('iframe').first().elementHandle();
+  await tabs.getByRole('tab', { name: 'Overview' }).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(tabs.getByRole('tab', { name: 'Controls' })).toBeFocused();
+  await expect(headings).toHaveText(['Interactive example', 'Reference']);
+  await expect(page).toHaveURL(`${docs}/components/odd-button#controls`);
+  await page.keyboard.press('End');
+  await expect(headings).toHaveText(['Accessibility', 'Known limitations']);
+  await tabs.getByRole('tab', { name: 'Examples' }).click();
+  await expect(page.getByRole('tabpanel', { name: 'Examples' })).toBeVisible();
+  await expect(headings).toHaveText(['States and examples']);
   const specimen = buttonPanel.locator('.example-preview').first();
   await specimen.scrollIntoViewIfNeeded();
   await expect(specimen.locator('odd-button')).toHaveText('Save');
+  await tabs.getByRole('tab', { name: 'Overview' }).click();
+  expect(await frame?.evaluate((element) => element.isConnected)).toBe(true);
 
   // Foundations are authored pages; their tables and swatches come from the tokens inspection.
   await primary.getByRole('link', { name: 'Foundations' }).click();

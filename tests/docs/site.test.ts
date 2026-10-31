@@ -133,6 +133,20 @@ describe('the static docs build', () => {
     }
   });
 
+  it('puts every section a reference page shows in one of its tabs', async () => {
+    const { COMPONENT_TABS } = await import('../../apps/docs/src/reference.js');
+    const index = JSON.parse(readFileSync(join(out, '_oddkin/index.json'), 'utf8')) as {
+      registry: {
+        pages: { id: string; kind: string; sections?: { id: string; visible: boolean }[] }[];
+      };
+    };
+    // The panel hides the sections no tab lists, so a new section needs a tab.
+    const tabbed = new Set<string>(COMPONENT_TABS.flatMap((tab) => tab.sections));
+    for (const page of index.registry.pages.filter((p) => p.kind === 'component'))
+      for (const section of page.sections ?? [])
+        if (section.visible) expect(tabbed.has(section.id), `${page.id} #${section.id}`).toBe(true);
+  });
+
   it('replaces only a folder it wrote', () => {
     const other = mkdtempSync(join(tmpdir(), 'oddkin-docs-other-'));
     writeFileSync(join(other, 'keep.txt'), 'not the docs site');

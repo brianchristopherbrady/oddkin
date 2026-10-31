@@ -10,7 +10,7 @@ import {
   renderDocument,
   renderPage,
 } from '../../apps/docs/src/pages/index.js';
-import { previewExample } from '../../apps/docs/src/reference.js';
+import { COMPONENT_TABS, previewExample, tabOf } from '../../apps/docs/src/reference.js';
 
 // The authored docs pages (apps/docs/src/pages) as the docs server renders them: every internal
 // link reaches a page, every fact is generated, and every code sample says how it is verified
@@ -426,5 +426,20 @@ describe('catalog previews', () => {
     expect(fallback).toMatchObject({ name: 'fromData', fixture: true });
     expect(fallback?.values.properties).toEqual(options.props);
     expect(previewExample(page(example('open', { props: { open: true } })))).toBeUndefined();
+  });
+});
+
+describe('reference page tabs', () => {
+  it('open the tab a URL fragment names, or the one showing that section, else the first', () => {
+    expect(COMPONENT_TABS.map((tab) => tab.label)).toEqual([
+      'Overview',
+      'Controls',
+      'Examples',
+      'Accessibility',
+    ]);
+    const fragments = ['#controls', '#api', '#examples', '#known-limitations', '#source'];
+    expect(fragments.map(tabOf)).toEqual([1, 1, 2, 3, 0]);
+    // The interactive example is in two tabs; a share link's fragment opens the first.
+    expect(['#interactive-example', '', '#unknown'].map(tabOf)).toEqual([0, 0, 0]);
   });
 });

@@ -4579,3 +4579,13 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutants-llms.json` | 3 of 3 killed (kit files not written; relative links; any base accepted). The third survived at first, because a relative base already failed to parse; a `file:` base now covers it |
 | By hand | `node packages/analyzer/dist/kit-bin.js llms --base https://oddkin.dev/ --out .tmp/llms-site --title Oddkin` | 188 lines, 29,062 bytes; `agent/oddkin-ai/` and `agent/oddkin-components/` beside it |
 | Gates | `npm run typecheck`; `npm run lint` | Pass; pass |
+## 2026-10-30 — Docs: tabs on the component reference pages (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Geometry | `node .tmp/tabs-check.mjs <engine> <width>` on /components/odd-button | Chromium, Firefox, and WebKit at 1440: the strip 1095 × 28 at y 393, four tabs of 256 × 28 24 px apart, 48 px below the metadata row; the first section 48 px below the strip (Figma 20:2190: 1096 × 28, 48 and 48). At 390: two by two, 159 px tabs (at 6rem the fourth tab wrapped alone, so the minimum is 7rem) |
+| Tabs | the same script | Overview shows overview, interactive-example, and source; Controls interactive-example and api; Examples examples; Accessibility behavior-and-accessibility and known-limitations. The URL becomes #controls, #examples, #accessibility. No console errors |
+| Sections covered | `tests/docs/site.test.ts` | Every visible section of the 78 component pages in the built index (overview, interactive-example, source, examples, api, behavior-and-accessibility, known-limitations) is in a tab; the panel would hide a section no tab lists |
+| Unit | `npx vitest run tests/docs` | 29 passed: `tabOf` opens #controls and #api in Controls, #examples in Examples, #known-limitations in Accessibility, #source, #interactive-example, an empty or unknown fragment in Overview |
+| Static | `npx tsc -b apps/docs`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check`; `node scripts/check-page-layout.mjs`; `npm run lint:css` | Clean; the strip uses the auto-grid recipe (no hand-written layout); compatibility check OK |
+| e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, one engine at a time; the reference-page test now checks the tablist, the headings each tab shows, ArrowRight and End, a click, the tab panel's name, the URL, and that the example's frame is still connected after the switches | Docs e2e, one engine at a time: Chromium 15 passed (2.4 min), WebKit 15 passed (5.9 min), Firefox 15 passed (6.3 min). |

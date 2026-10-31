@@ -14,6 +14,7 @@ import { AI_DESCRIPTION, renderAi, type AiData } from './ai.js';
 import {
   catalogGroups,
   catalogPreviews,
+  componentTabs,
   examplePreviews,
   FRAME_URL,
   loadComponent,
@@ -301,7 +302,10 @@ function componentPanel(
 }
 
 /** A component reference page's panel: the documentation layout of Figma 20:2190. */
-function referencePanel(index: WorkbenchIndex, page: ComponentPageData): HTMLElement {
+function referencePanel(
+  index: WorkbenchIndex,
+  page: ComponentPageData,
+): HTMLElementTagNameMap['oddkin-component-panel'] {
   const panel = componentPanel(index, page) as HTMLElementTagNameMap['oddkin-component-panel'];
   panel.layout = 'reference';
   panel.examplePreview = examplePreview ??= examplePreviews();
@@ -722,7 +726,7 @@ function renderRoute(state: RouterState): void {
         entry?.summary,
       ),
       componentMeta(page),
-      referencePanel(index, page),
+      ...componentTabs(referencePanel(index, page)),
     );
   } else if (last.route === aiRoute)
     renderAi(

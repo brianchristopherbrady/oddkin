@@ -163,11 +163,6 @@
   padding: var(--odd-space-lg);
 }
 
-/* The header does not stick, so a section reached from the panel's page links lands near the top. */
-oddkin-component-panel {
-  --oddkin-panel-scroll-margin: var(--odd-space-lg);
-}
-
 .nav-group,
 .nav-heading {
   margin: 0;
@@ -334,6 +329,47 @@ odd-side-nav:not(:defined) > a {
   font-size: var(--odd-type-ui-size);
   font-weight: var(--odd-type-ui-weight);
   line-height: var(--odd-type-ui-line-height);
+}
+
+/* Figma Docs/TabStrip (19:874): equal tabs 24 px apart, the selected one in the link colour over a
+   1 px rule; two by two on a phone. */
+.component-tabs {
+  --odd-auto-grid-min: 7rem;
+  --odd-auto-grid-gap: var(--odd-space-xs) var(--odd-space-lg);
+}
+
+.component-tabs > [role='tab'] {
+  margin: 0;
+  padding: 0 0 var(--odd-space-xs);
+  border: 0;
+  border-block-end: var(--odd-border-width-default) solid transparent;
+  background: none;
+  color: var(--odd-color-text-secondary);
+  font-family: var(--odd-type-ui-family);
+  font-size: var(--odd-type-ui-size);
+  font-weight: var(--odd-type-ui-weight);
+  line-height: var(--odd-type-ui-line-height);
+  text-align: start;
+  cursor: pointer;
+}
+
+.component-tabs > [aria-selected='false']:hover {
+  color: var(--odd-color-text-primary);
+}
+
+.component-tabs > [aria-selected='true'] {
+  border-color: var(--odd-color-action-default);
+  color: var(--odd-color-link);
+}
+
+@media (forced-colors: active) {
+  .component-tabs > [role='tab'] {
+    border-color: Canvas;
+  }
+
+  .component-tabs > [aria-selected='true'] {
+    border-color: Highlight;
+  }
 }
 
 #main h1 {
