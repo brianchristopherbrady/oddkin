@@ -30,5 +30,6 @@ export {
   type KitManifest,
 } from './kit.js';
 export { PACKAGE_KIT_DIR, compositionReference, llmsText, packageKit } from './package-kit.js';
+export { siteLlmsText, type SiteKit } from './llms.js';
 export { BEGIN, END, lineDiff, renderSection, updateAgentsMd } from './agents-md.js';
 export { USAGE, main, type Io } from './cli.js';

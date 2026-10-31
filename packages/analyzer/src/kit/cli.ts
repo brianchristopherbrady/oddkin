@@ -4,16 +4,19 @@
  *   oddkin-kit [--root <dir>] [--package <name>]... [--out <dir>] [--theme-config <file>] [--check]
  *   oddkin-kit package [--root <dir>] [--package <name>]... [--check]
  *   oddkin-kit agents-md [--root <dir>] [--write | --check]
+ *   oddkin-kit llms --base <url> --out <dir> [--root <dir>] [--package <name>]... [--title <text>]
+ *                   [--summary <text>]
  *
  * Exit codes: 0 success; 1 a stale, missing, or over-budget kit, or a stale AGENTS.md section;
  * 2 usage error.
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { lineDiff, renderSection, updateAgentsMd } from './agents-md.js';
 import { resolveProjectContext, type Project } from './context.js';
 import { checkKit, generateKit, kitDirName, refreshCommand, writeKit } from './kit.js';
+import { siteLlmsText, type SiteKit } from './llms.js';
 import { packageKit } from './package-kit.js';
 
 export const USAGE = `Usage:
@@ -26,14 +29,17 @@ export const USAGE = `Usage:
       packages, or those named with --package. --check regenerates each kit and compares it
       with the files there, installed packages included.
   oddkin-kit agents-md [--root <dir>] [--write | --check]
-      Show, write, or check the managed section of the workspace's AGENTS.md.`;
+      Show, write, or check the managed section of the workspace's AGENTS.md.
+  oddkin-kit llms --base <url> --out <dir> [--root <dir>] [--package <name>]... [--title <text>] [--summary <text>]
+      Write a documentation site's llms.txt into <dir>: an index of the packages' kits, linked
+      under <url>, and the kit files it links, in <dir>/agent/<name>/.`;
 
 export interface Io {
   readonly out: (text: string) => void;
   readonly err: (text: string) => void;
 }
 
-const COMMANDS = new Set(['package', 'agents-md']);
+const COMMANDS = new Set(['package', 'agents-md', 'llms']);
 
 /** Run one command; resolves with the exit code. */
 export async function main(argv: readonly string[], io: Io): Promise<number> {
@@ -51,6 +57,9 @@ export async function main(argv: readonly string[], io: Io): Promise<number> {
         'theme-config': { type: 'string' },
         check: { type: 'boolean', default: false },
         write: { type: 'boolean', default: false },
+        base: { type: 'string' },
+        title: { type: 'string' },
+        summary: { type: 'string' },
         help: { type: 'boolean', short: 'h', default: false },
       },
     }));
@@ -61,6 +70,20 @@ export async function main(argv: readonly string[], io: Io): Promise<number> {
   if (values.help) {
     io.out(USAGE);
     return 0;
+  }
+  let base: URL | undefined;
+  if (command === 'llms') {
+    try {
+      base = new URL(values.base ?? '');
+    } catch {
+      base = undefined;
+    }
+    const out = args.some((arg) => arg === '--out' || arg.startsWith('--out='));
+    if (!base || !/^https?:$/.test(base.protocol) || !out) {
+      io.err(`llms needs --base <absolute http(s) URL> and --out <dir>.\n${USAGE}`);
+      return 2;
+    }
+    if (!base.pathname.endsWith('/')) base.pathname += '/';
   }
   if (command === 'agents-md') {
     if (values.write && values.check) {
@@ -85,9 +108,43 @@ export async function main(argv: readonly string[], io: Io): Promise<number> {
       io.err(`error agent.kit.unknownPackage: ${name} publishes no oddkin.metadata.json here.`);
       return 1;
     }
+  if (command === 'llms' && base) {
+    const title =
+      values.title ??
+      (JSON.parse(readFileSync(join(project.root, 'package.json'), 'utf8')) as { name?: string })
+        .name ??
+      'Agent kits';
+    return llms(project, names, resolve(values.root, values.out), base, title, values.summary, io);
+  }
   return command === 'package'
     ? packaged(project, names, values.check, io)
     : kits(project, names, values.root, values.out, values.check, io);
+}
+
+async function llms(
+  project: Project,
+  names: string[],
+  out: string,
+  base: URL,
+  title: string,
+  summary: string | undefined,
+  io: Io,
+): Promise<number> {
+  const site: SiteKit[] = [];
+  for (const name of names) {
+    const library = project.libraries.find((l) => l.name === name)!;
+    const { files, manifest } = await packageKit(project, library);
+    const path = `agent/${kitDirName(name)}/`;
+    writeKit(join(out, path), files);
+    site.push({ library, manifest, url: new URL(path, base).href });
+  }
+  mkdirSync(out, { recursive: true });
+  writeFileSync(
+    join(out, 'llms.txt'),
+    siteLlmsText({ title, ...(summary ? { summary } : {}), kits: site }),
+  );
+  io.out(`llms.txt and ${site.length} kits in ${out}, linked under ${base.href}`);
+  return 0;
 }
 
 function kits(

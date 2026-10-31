@@ -4570,3 +4570,12 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Node tests | `npx vitest run --project node packages/workbench` | 131 of 131 |
 | E2E, Chromium | `e2e/workbench-embed.spec.ts`, `e2e/workbench.spec.ts` | 23 of 23 |
 | Size, types | `node scripts/check-size.mjs`; `npm run typecheck` | workbench-panel-component 31,478 B of 32,768, workbench-shell 52,540 of 54,272; pass |
+
+### 2026-10-30 — `oddkin-kit llms` (P0.4, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Tests | `npx vitest run --project node tests/agent-kit` | 36 of 36, with two new tests. (1) A site llms.txt for the repository under `https://oddkin.test/docs/` has the H1, the summary, and the sections `@oddkin/ai`, `@oddkin/components`, then "Optional". It has more than 80 links, each absolute under the base and each a file the command wrote, and the served guide is byte for byte the one the package ships. (2) The command refuses a missing, relative, or `file:` base, and a missing `--out` (exit 2) |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutants-llms.json` | 3 of 3 killed (kit files not written; relative links; any base accepted). The third survived at first, because a relative base already failed to parse; a `file:` base now covers it |
+| By hand | `node packages/analyzer/dist/kit-bin.js llms --base https://oddkin.dev/ --out .tmp/llms-site --title Oddkin` | 188 lines, 29,062 bytes; `agent/oddkin-ai/` and `agent/oddkin-components/` beside it |
+| Gates | `npm run typecheck`; `npm run lint` | Pass; pass |

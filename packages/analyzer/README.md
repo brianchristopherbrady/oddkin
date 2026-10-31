@@ -30,9 +30,11 @@ oddkin-kit package --check --package @oddkin/components
 oddkin-kit [--package <name>]... [--out <dir>] [--theme-config <file>] [--check]
 # The managed section of AGENTS.md; text outside its markers is kept.
 oddkin-kit agents-md [--write | --check]
+# A documentation site's llms.txt (llmstxt.org) and the kit files it links, in <dir>/agent/<name>/.
+oddkin-kit llms --base https://docs.example/ --out <dir> [--title <text>] [--summary <text>]
 ```
 
-Exit codes: 0 success; 1 a stale, missing, or over-budget kit, or a stale `AGENTS.md` section; 2 usage error. The same functions are exported from `@oddkin/analyzer/kit` (`resolveProjectContext`, `generateKit`, `checkKit`, `packageKit`, `renderSection`, `updateAgentsMd`, and `main`). A kit a package ships depends only on what the package publishes, so a project that installs it regenerates the same files.
+Exit codes: 0 success; 1 a stale, missing, or over-budget kit, or a stale `AGENTS.md` section; 2 usage error. The same functions are exported from `@oddkin/analyzer/kit` (`resolveProjectContext`, `generateKit`, `checkKit`, `packageKit`, `siteLlmsText`, `renderSection`, `updateAgentsMd`, and `main`). A kit a package ships depends only on what the package publishes, so a project that installs it regenerates the same files.
 
 ## Stability
 
