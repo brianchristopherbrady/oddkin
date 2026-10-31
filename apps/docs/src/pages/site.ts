@@ -5,7 +5,7 @@ import { composition, formsAccessibility, layout, theming } from './guides-core.
 import { gettingStarted, guides, recipes } from './landing.js';
 import { groups, type Group, type Page } from './model.js';
 import { overview } from './overview.js';
-import { architecture, roadmap, support } from './project.js';
+import { architecture, roadmap, support, supportPolicy } from './project.js';
 import { concepts, install } from './reference.js';
 import { startApp, startAuthor, startComponents, startTokens, startWorkbench } from './start.js';
 
@@ -32,6 +32,7 @@ export const pages: readonly Page[] = [
   architecture,
   roadmap,
   support,
+  supportPolicy,
   browserSupport,
 ];
 

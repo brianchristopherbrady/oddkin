@@ -39,6 +39,22 @@ export interface CodeBlock {
   file?: string;
 }
 
+/**
+ * The sections of docs/support.md, in its order: each id is the heading's anchor there, and each is
+ * a fact the server renders from that file, so the page and the policy say the same thing.
+ */
+export const supportSections = [
+  ['browsers', 'Browsers'],
+  ['accessibility', 'Accessibility'],
+  ['nodejs', 'Node.js'],
+  ['typescript', 'TypeScript'],
+  ['frameworks', 'Frameworks'],
+  ['package-managers-and-bundlers', 'Package managers and bundlers'],
+  ['copies-and-versions-on-one-page', 'Copies and versions on one page'],
+  ['fixes', 'Fixes'],
+] as const;
+export type SupportSection = (typeof supportSections)[number][0];
+
 /** Facts generated from the published metadata, manifests, tokens, and compatibility data. */
 export type Fact =
   | 'packages'
@@ -49,6 +65,8 @@ export type Fact =
   | 'decisions'
   | 'milestones'
   | 'examples'
+  | 'support-intro'
+  | `support-${SupportSection}`
   | 'token-categories'
   | 'token-pipeline'
   | 'token-trace'
@@ -135,6 +153,8 @@ export interface Page {
   /** Navigation label, when shorter than the title. */
   label?: string;
   summary: string;
+  /** Paragraphs under the summary, before the sections. */
+  intro?: Block[];
   sections: Section[];
   /** The page to read next, linked after the last section. */
   next?: { label: string; href: string };
@@ -290,7 +310,11 @@ export function renderPage(page: Page, facts: FactBlocks): string {
   let count = 0;
   const ids = () => `code-${++count}`;
   return [
-    `<header class="page-header"><p class="eyebrow">${escapeHtml(page.eyebrow)}</p><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.summary)}</p></header>`,
+    `<header class="page-header"><p class="eyebrow">${escapeHtml(page.eyebrow)}</p><h1>${escapeHtml(page.title)}</h1><p class="lede">${escapeHtml(page.summary)}</p>${(
+      page.intro ?? []
+    )
+      .map((b) => block(b, facts, ids))
+      .join('')}</header>`,
     toc
       ? `<nav class="toc" aria-label="On this page"><p class="eyebrow">On this page</p><ul class="odd-cluster">${page.sections
           .map((s) => `<li><a href="#${escapeHtml(s.id)}">${escapeHtml(s.title)}</a></li>`)

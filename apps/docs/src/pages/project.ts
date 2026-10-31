@@ -1,4 +1,4 @@
-import { repository, type Page } from './model.js';
+import { repository, supportSections, type Page } from './model.js';
 
 const source = repository.replace(/\/blob\/main\/$/, '');
 
@@ -111,7 +111,8 @@ export const support: Page = {
   group: 'Project',
   eyebrow: 'Help and releases',
   title: 'Help and releases',
-  summary: 'Supported browsers, how releases are made, and how to report a problem or contribute.',
+  summary:
+    'What Oddkin is tested with, the supported browsers, how releases are made, and how to report a problem or contribute.',
   sections: [
     {
       id: 'help',
@@ -119,6 +120,13 @@ export const support: Page = {
       blocks: [
         {
           cards: [
+            {
+              title: 'Support policy',
+              text: 'What each package is tested with, and what is not: browsers, accessibility, Node.js, TypeScript, frameworks, and tools.',
+              href: '/support/policy',
+              action: 'Read the support policy',
+              meta: 'docs/support.md',
+            },
             {
               title: 'Browser support',
               text: 'The supported browsers and every platform feature Oddkin uses, with what happens below its baseline.',
@@ -162,4 +170,21 @@ export const support: Page = {
       ],
     },
   ],
+};
+
+/** docs/support.md, section by section: the server renders each part from that file. */
+export const supportPolicy: Page = {
+  path: 'support/policy',
+  group: 'Project',
+  parent: 'support',
+  eyebrow: 'Help and releases',
+  title: 'Support policy',
+  summary: 'What Oddkin’s packages are tested with, and what is not.',
+  intro: [{ fact: 'support-intro' }],
+  sections: supportSections.map(([id, title]) => ({
+    id,
+    title,
+    blocks: [{ fact: `support-${id}` as const }],
+  })),
+  next: { label: 'See the supported browsers and features', href: '/support/browsers' },
 };

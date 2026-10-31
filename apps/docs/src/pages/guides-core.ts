@@ -204,7 +204,7 @@ export const formsAccessibility: Page = {
   eyebrow: 'Guides',
   title: 'Forms and accessibility',
   summary:
-    'Form controls behave like native fields, and every element follows the WAI-ARIA Authoring Practices for its pattern.',
+    'Form controls behave like native fields, and each element’s reference names the WAI-ARIA pattern and keyboard model it follows. Tested by keyboard and with axe-core in three browser engines; screen readers are not yet verified.',
   sections: [
     {
       id: 'forms',
@@ -263,7 +263,7 @@ export const formsAccessibility: Page = {
               ' in the metadata).',
             ],
             [
-              'Focus rings are outlines that stay visible in forced-colours mode; colour never carries meaning alone.',
+              'Focus rings are outlines that stay visible in forced-colours mode (checked with forced-colours emulation in three engines); colour never carries meaning alone.',
             ],
             [
               'Targets never fall below the target-size token; text wraps inside narrow containers.',
@@ -271,9 +271,12 @@ export const formsAccessibility: Page = {
             ['Motion follows ', { code: 'prefers-reduced-motion' }, '.'],
           ],
         },
+        { fact: 'support-accessibility' },
         {
-          note: [
-            'Screen-reader passes and some browser and zoom checks are still open; they are listed as limitations, not passes, in the verification record.',
+          p: [
+            'The ',
+            { link: 'support policy', href: '/support/policy#accessibility' },
+            ' lists this evidence with the rest of what Oddkin is tested with.',
           ],
         },
       ],

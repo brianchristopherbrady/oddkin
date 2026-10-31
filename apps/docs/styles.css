@@ -376,6 +376,7 @@ odd-side-nav:not(:defined) > a {
 
 /* Prose keeps a reading measure; card and specimen lists (role="list") take the column. */
 .content-section > :is(p, ul, ol, .note):not([role='list']),
+.page-header > p,
 .lede {
   max-inline-size: 72ch;
 }

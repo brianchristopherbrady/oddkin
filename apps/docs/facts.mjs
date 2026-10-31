@@ -135,6 +135,82 @@ async function exampleCards(root, source) {
   return cards;
 }
 
+/** GitHub's anchor for a heading: lower case, punctuation dropped, spaces as hyphens. */
+const anchor = (heading) =>
+  heading
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N} -]/gu, '')
+    .replace(/ /g, '-');
+
+/** Markdown code, bold, and links as page inlines; a relative link resolves against `base`. */
+function inlines(text, base) {
+  const parts = [];
+  let last = 0;
+  for (const m of text.matchAll(/`([^`]+)`|\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)\s]+)\)/g)) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    if (m[1] !== undefined) parts.push({ code: m[1] });
+    else if (m[2] !== undefined) parts.push({ strong: m[2] });
+    else parts.push({ link: m[3].replace(/`/g, ''), href: new URL(m[4], base).href });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts;
+}
+
+/**
+ * Markdown paragraphs and bullets as page blocks: plain bullets make a list, and a labelled
+ * bullet (`**Evidence:** …`) a paragraph, followed by its own bullets as a list.
+ */
+function markdownBlocks(markdown, base) {
+  const tokens = [];
+  for (const line of markdown.split('\n')) {
+    const last = tokens.at(-1);
+    const nested = /^\s+- (.*)$/.exec(line);
+    const item = /^- (.*)$/.exec(line);
+    if (!line.trim()) tokens.push({});
+    else if (nested && last?.item !== undefined) last.children.push(nested[1]);
+    else if (item) tokens.push({ item: item[1], children: [] });
+    else if (last?.p !== undefined) last.p += ` ${line.trim()}`;
+    else tokens.push({ p: line.trim() });
+  }
+  const blocks = [];
+  let list;
+  for (const token of tokens) {
+    if (token.item !== undefined && !token.children.length && !/^\*\*[^*]+:\*\*/.test(token.item)) {
+      if (!list) blocks.push((list = { list: [] }));
+      list.list.push(inlines(token.item, base));
+      continue;
+    }
+    list = undefined;
+    if (token.p !== undefined) blocks.push({ p: inlines(token.p, base) });
+    if (token.item === undefined) continue;
+    blocks.push({ p: inlines(token.item, base) });
+    if (token.children.length)
+      blocks.push({ list: token.children.map((child) => inlines(child, base)) });
+  }
+  return blocks;
+}
+
+/**
+ * docs/support.md as facts: `support-intro`, the opening paragraph after its first sentence (the
+ * page's summary), without references to owner decisions; and `support-<anchor>` per section.
+ */
+async function supportFacts(root, source) {
+  const text = await readFile(join(root, 'docs/support.md'), 'utf8');
+  const base = `${source}docs/`;
+  const [head = '', ...sections] = text.split(/^## /m);
+  const intro = head
+    .replace(/^# .*$/m, '')
+    .trim()
+    .replace(/\s*\(owner decision [^)]*\)/g, '');
+  const facts = { 'support-intro': markdownBlocks(intro.replace(/^.*?\.\s+/s, ''), base) };
+  for (const section of sections) {
+    const [heading = '', ...body] = section.split('\n');
+    facts[`support-${anchor(heading.trim())}`] = markdownBlocks(body.join('\n'), base);
+  }
+  return facts;
+}
+
 /** Every fact of the `Fact` union in `src/pages/model.ts`, as page blocks. */
 export async function docsFacts(root) {
   const { repository } = await siteFacts(root);
@@ -169,6 +245,7 @@ export async function docsFacts(root) {
 
   return {
     ...(await foundationFacts(root)),
+    ...(await supportFacts(root, source)),
     decisions: [
       {
         table: {

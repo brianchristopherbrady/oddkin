@@ -24,6 +24,25 @@ const clientRoutes = [
   /^\/search$/,
 ];
 
+/** A rendered page's text, as a reader sees it. */
+const text = (html: string) =>
+  html
+    .replace(/<[^>]+>/g, '')
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
+
+/** A line of Markdown as text: no bullet, emphasis, code marks, link targets, or decision ids. */
+const plain = (markdown: string) =>
+  markdown
+    .replace(/^\s*- /, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[`*]/g, '')
+    .replace(/\s*\(owner decision [^)]*\)/g, '')
+    .trim();
+
 describe('authored docs pages', async () => {
   const facts = await docsFacts(root);
 
@@ -44,10 +63,14 @@ describe('authored docs pages', async () => {
           continue;
         }
         if (/^https:\/\//.test(href)) continue;
+        const [path = '', hash] = href.split('#');
         expect(
-          known.has(href) || clientRoutes.some((route) => route.test(href)),
+          known.has(path) || clientRoutes.some((route) => route.test(path)),
           `${page.path} → ${href}`,
         ).toBe(true);
+        const target = pages.find((other) => `/${other.path}` === path);
+        if (hash && target)
+          expect(renderPage(target, facts), `${page.path} → ${href}`).toContain(`id="${hash}"`);
       }
     }
   });
@@ -121,6 +144,50 @@ describe('authored docs pages', async () => {
         expect(['module', 'markup', 'css', 'none'], `${page.path} #${section}`).toContain(
           code.verify,
         );
+  });
+
+  it('show the support policy as docs/support.md says it, section by section', async () => {
+    const policy = readFileSync(`${root}docs/support.md`, 'utf8');
+    const page = pages.find((p) => p.path === 'support/policy')!;
+    const html = renderPage(page, facts);
+    const shown = text(html);
+    // The policy's sections, in order, at the anchors GitHub gives them.
+    expect(page.sections.map((s) => s.title)).toEqual(
+      [...policy.matchAll(/^## (.+)$/gm)].map(([, heading]) => heading),
+    );
+    for (const { title, id } of page.sections)
+      expect(id).toBe(
+        title
+          .toLowerCase()
+          .replace(/[^a-z0-9 -]/g, '')
+          .replace(/ /g, '-'),
+      );
+    // The summary is its first sentence; the rest of the opening follows, without decision ids.
+    const [opening = '', ...lines] = policy
+      .split('\n')
+      .filter((line) => /^[^#\s]|^\s+-/.test(line));
+    const [first = '', rest = ''] = plain(opening).split(/(?<=\.)\s+(.*)/s);
+    expect(page.summary.replace(/’/g, "'")).toBe(first);
+    expect(shown).toContain(rest);
+    expect(shown).not.toContain('owner decision');
+    // Every line of every section, and every link, resolved in the repository.
+    for (const line of lines) expect(shown).toContain(plain(line));
+    const { repository } = await siteFacts(root);
+    for (const [, href = ''] of policy.matchAll(/\]\(([^)]+)\)/g))
+      expect(html).toContain(`href="${new URL(href, `${repository}/blob/main/docs/`).href}"`);
+  });
+
+  it('name the evidence for accessibility, and that screen readers are not yet verified', () => {
+    const policy = readFileSync(`${root}docs/support.md`, 'utf8');
+    const accessibility = policy.split(/^## /m).find((part) => part.startsWith('Accessibility'))!;
+    const guide = pages.find((p) => p.path === 'guides/forms-accessibility')!;
+    const shown = text(renderPage(guide, facts));
+    for (const line of accessibility
+      .split('\n')
+      .slice(1)
+      .filter((l) => l.trim()))
+      expect(shown).toContain(plain(line));
+    expect(guide.summary).toContain('screen readers are not yet verified');
   });
 
   it('escape authored text', () => {
