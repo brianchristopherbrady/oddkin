@@ -515,6 +515,12 @@ function guide(
   );
   const inspection = project.inspection;
   const firstContract = contracts[0]?.[1];
+  // The theme's stylesheet: the CSS export named after the theme, in the package the inspection comes from.
+  const themeCss = inspection?.source
+    ? project.context.packages
+        .find((p) => p.name === inspection.source!.package)
+        ?.exports?.find((specifier) => specifier.endsWith(`/css/${inspection.data['theme']}.css`))
+    : undefined;
   return `${[
     `# ${library.name} ${library.version}: agent guide`,
     '',
@@ -535,6 +541,12 @@ function guide(
           `- Registration entries${regular.length ? ' that differ from that rule' : ''}: ${irregular.map((c) => `${code(`<${c.tag}>`)} ${code(`import '${c.registration}';`)}`).join('; ')}.`,
         ]
       : []),
+    ...(themeCss
+      ? [
+          `- Link the theme's stylesheet once per document, ${code(themeCss)}: the design tokens every component reads.`,
+        ]
+      : []),
+    `- Without a bundler, an import map must map every bare specifier a page loads, the packages' own imports included${deps.length ? ` (${deps.map((d) => code(`${d}/…`)).join(', ')})` : ''}, to the file each package's \`exports\` names under the \`default\` condition. Never mix in a \`development\` build: it is a second copy of the package.`,
     '',
     '## Components',
     '',

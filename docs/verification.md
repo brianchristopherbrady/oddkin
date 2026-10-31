@@ -4602,3 +4602,11 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Formatting | `npx prettier --check .` | Pass; the agent's files are listed in `.prettierignore`, kept as written |
 
 **Not verified:** a second agent or model, a held-out task set, or screen readers (agent-tooling.md §11 asks for more than one run before claims).
+
+### 2026-10-30 — Kit gaps from the agent run (Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Tests | `npx vitest run --project node tests/agent-kit` (after `node scripts/agent-kit/package-kits.mjs`) | 36 of 36. The components guide names `@oddkin/tokens/css/default.css` and the import-map rule (with `@oddkin/core/…`, `@oddkin/tokens/…`). The composition reference says that a document sets only what an element's schema lists. Run once before the kits were rewritten, the llms test failed, as it should: the served guide differed from the stale one on disk |
+| Kits | `node scripts/agent-kit/package-kits.mjs --check` after `npm run lint` (which builds) | Both current; guides 7,347 and 6,889 B of 8,192 |
+| Gates | `npm run lint`; `npm run typecheck` | Pass; pass |

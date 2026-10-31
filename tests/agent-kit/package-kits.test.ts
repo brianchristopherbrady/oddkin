@@ -37,6 +37,14 @@ describe('packaged agent kits', () => {
     expect(guide).not.toContain('scripts/agent-kit');
     // The repository's own commands mean nothing in a project that installs the package.
     expect(guide).not.toContain('## Workspace commands');
+    // What the agent run (tests/agent-run) had to find elsewhere: the theme's stylesheet, and
+    // how to load the packages without a bundler.
+    expect(guide).toContain(
+      "- Link the theme's stylesheet once per document, `@oddkin/tokens/css/default.css`: ",
+    );
+    expect(guide).toMatch(
+      /- Without a bundler, an import map must map every bare specifier a page loads, the packages' own imports included \(`@oddkin\/core\/…`, `@oddkin\/tokens\/…`\)/,
+    );
     expect(guide).toContain('references/composition.md');
     expect(guide).toContain('`@oddkin/components/oddkin.metadata.json`');
     const llms = files.get('llms.txt')!;
@@ -71,6 +79,11 @@ describe('packaged agent kits', () => {
     );
     expect(text).toContain('- `CompositionNode = string | CompositionElement`');
     expect(text).toContain('  - `dispose(): void`: Removes the nodes and their action listeners.');
+    // Which properties a document may set: what each element's schema lists.
+    expect(text).toContain(
+      "A document sets only what an element's schema lists. A property the schema leaves out",
+    );
+    expect(text).toContain('`composition.property.notPortable`');
     expect(text).toContain('@oddkin/components/schemas/composition/composition.v1.json');
     expect(text).toContain('`odd-button`');
     // The example parses and names the document schema.

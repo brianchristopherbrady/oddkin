@@ -185,6 +185,8 @@ export async function compositionReference(library: Library): Promise<KitFile | 
     '',
     `${elementSchemas.length} files in ${code(`${library.name}/schemas/composition/`)}: ${elementSchemas.map((file) => code(file.replace(/\.v\d+\.json$/, ''))).join(', ')}. Each lists the element's attributes with their types, its slots, and its actions.`,
     '',
+    `A document sets only what an element's schema lists. A property the schema leaves out (it holds code, an element, or data the host owns) is the host's to set after rendering, and ${code('validateComposition')} reports it as ${code('composition.property.notPortable')}. Read an element's schema before writing it.`,
+    '',
     '## Example (validated when this kit was generated)',
     '',
     '```json',

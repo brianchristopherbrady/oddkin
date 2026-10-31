@@ -1,6 +1,6 @@
 # A coding agent builds from the packaged kit alone (2026-10-30)
 
-The record of one run of a real coding agent against the agent kit that `@oddkin/components` ships (IMPLEMENTATION_PLAN.md P0.4; M11 "test them in at least one actual agent"; agent-tooling.md §11). `settings-app/` holds what the agent wrote, byte for byte. `e2e/agent-run.spec.ts` serves those files from the packed packages and checks them in Chromium, Firefox, and WebKit. `composition.test.ts` checks the composition document against the published JSON Schemas and `validateComposition`.
+The record of one run of a real coding agent against the agent kit that `@oddkin/components` ships (IMPLEMENTATION_PLAN.md P0.4; M11 "test them in at least one actual agent"; agent-tooling.md §11). `settings-app/` holds what the agent wrote, unchanged apart from line endings, which git normalizes. `e2e/agent-run.spec.ts` serves those files from the packed packages and checks them in Chromium, Firefox, and WebKit. `composition.test.ts` checks the composition document against the published JSON Schemas and `validateComposition`.
 
 ## Conditions
 
@@ -36,3 +36,5 @@ Build a small "Notification settings" interface with the Oddkin components, in t
 - The theme's CSS: the guide lists tokens but not the stylesheet to link; the agent found it in the components README and the tokens package's `exports`.
 - Which properties a composition may set: the reference listed `properties`, and only the validator said that `odd-select`'s `options` cannot be written from a document.
 - `odd-input`'s reference says `reportValidity()` shows the error, but the field shows its visible message only through `error`; the agent copied `validationMessage` into `error`.
+
+Changed in the kit since this run: the guide names the theme's stylesheet, from the token package's exports, and states the import-map rule for loading without a bundler. The composition reference says that a document sets only what an element's schema lists. The `odd-input` point went to Agent 1, who owns the components.
