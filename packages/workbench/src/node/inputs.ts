@@ -196,18 +196,36 @@ async function loadExampleSets(
 
 /**
  * Each element's registering module from the standard CEM: the module whose exports hold its
- * `custom-element-definition`, as an import specifier through the package's `exports`. A module
- * that no export reaches is left out, since no consumer could import it either.
+ * `custom-element-definition`, as an import specifier through the package's `exports`. When no
+ * export reaches that module, the shortest export of a module that re-exports from it (an ES
+ * re-export loads the module). A module that nothing reaches is left out, since no consumer could
+ * import it either. The agent kits resolve registrations the same way (`@oddkin/analyzer/kit`).
  */
 function cemRegistrations(
   manifest: PackageManifest,
   cem: CemPackage | undefined,
 ): Record<string, string> {
   const found: Record<string, string> = {};
-  for (const module of cem?.modules ?? [])
+  const modules = cem?.modules ?? [];
+  const clean = (path: string) => path.replace(/^\.?\/+/, '');
+  for (const module of modules)
     for (const entry of module.exports ?? []) {
       if (entry.kind !== 'custom-element-definition' || !entry.name || found[entry.name]) continue;
-      const specifier = exportedSpecifier(manifest, module.path);
+      const specifier =
+        exportedSpecifier(manifest, module.path) ??
+        modules
+          .filter(
+            (other) =>
+              clean(other.path) !== clean(module.path) &&
+              (other.exports ?? []).some(
+                (e) =>
+                  typeof e.declaration?.module === 'string' &&
+                  clean(e.declaration.module) === clean(module.path),
+              ),
+          )
+          .map((other) => exportedSpecifier(manifest, other.path))
+          .filter((s): s is string => Boolean(s))
+          .sort((a, b) => a.length - b.length || (a < b ? -1 : 1))[0];
       if (specifier) found[entry.name] = specifier;
     }
   return found;

@@ -134,6 +134,104 @@ export function exportTarget(manifest: Record<string, any>, subpath: string): st
   return typeof file === 'string' ? file.replace(/^\.\//, '') : undefined;
 }
 
+// Node's resolution of package `exports`, kept equal to @oddkin/workbench's data/import-map.ts
+// (`resolveExport`, `exportedSpecifier`), so Workbench and the kits name the same registration
+// entry; tests/agent-kit/standard-cem.test.ts compares the two.
+const CONDITIONS = new Set(['development', 'browser', 'import']);
+
+function resolveTarget(
+  target: unknown,
+  conditions: ReadonlySet<string>,
+): string | null | undefined {
+  if (typeof target === 'string') return target;
+  if (target === null) return null;
+  if (Array.isArray(target)) {
+    for (const item of target) {
+      const resolved = resolveTarget(item, conditions);
+      if (resolved !== undefined) return resolved;
+    }
+    return undefined;
+  }
+  if (target && typeof target === 'object')
+    for (const [condition, value] of Object.entries(target)) {
+      if (condition !== 'default' && !conditions.has(condition)) continue;
+      const resolved = resolveTarget(value, conditions);
+      if (resolved !== undefined) return resolved;
+    }
+  return undefined;
+}
+
+/** `exports` as a subpath map; `undefined` without `exports`, `{}` when Node would reject it. */
+function exportSubpaths(manifest: Record<string, any>): Record<string, unknown> | undefined {
+  const exports: unknown = manifest['exports'];
+  if (exports === undefined) return undefined;
+  if (typeof exports === 'string' || Array.isArray(exports) || exports === null)
+    return { '.': exports };
+  if (typeof exports !== 'object') return {};
+  const keys = Object.keys(exports);
+  const relative = keys.filter((key) => key.startsWith('.'));
+  if (relative.length === 0) return { '.': exports };
+  return relative.length === keys.length ? (exports as Record<string, unknown>) : {};
+}
+
+/** The package-relative file (`./dist/x.js`) an export subpath resolves to, as Node does. */
+function resolveExport(manifest: Record<string, any>, subpath: string): string | undefined {
+  const map = exportSubpaths(manifest);
+  if (map === undefined) {
+    if (subpath !== '.') return subpath;
+    const main: string = manifest['module'] ?? manifest['main'] ?? './index.js';
+    return main.startsWith('./') ? main : `./${main}`;
+  }
+  const relative = (target: unknown) =>
+    typeof target === 'string' && target.startsWith('./') ? target : undefined;
+  if (Object.hasOwn(map, subpath)) return relative(resolveTarget(map[subpath], CONDITIONS));
+  let best: { key: string; prefix: string; suffix: string } | undefined;
+  for (const key of Object.keys(map)) {
+    const star = key.indexOf('*');
+    if (star === -1) continue;
+    const prefix = key.slice(0, star);
+    const suffix = key.slice(star + 1);
+    const matches =
+      subpath.length >= prefix.length + suffix.length &&
+      subpath.startsWith(prefix) &&
+      subpath.endsWith(suffix);
+    if (matches && (!best || prefix.length > best.prefix.length)) best = { key, prefix, suffix };
+  }
+  if (!best) return undefined;
+  const target = relative(resolveTarget(map[best.key], CONDITIONS));
+  const match = subpath.slice(best.prefix.length, subpath.length - best.suffix.length);
+  return target?.replaceAll('*', match);
+}
+
+/**
+ * The bare specifier that reaches the package-relative `file` through the package's `exports`: an
+ * exact subpath first, then a pattern Node resolves back to the file. Without `exports`, every
+ * file is reachable. `undefined` when no export reaches it.
+ */
+export function exportedSpecifier(manifest: Record<string, any>, file: string): string | undefined {
+  const name: string = manifest['name'];
+  const path = file.startsWith('./') ? file : `./${file.replace(/^\/+/, '')}`;
+  const specifier = (subpath: string) => (subpath === '.' ? name : `${name}/${subpath.slice(2)}`);
+  const map = exportSubpaths(manifest);
+  if (map === undefined) return specifier(path);
+  for (const [key, target] of Object.entries(map))
+    if (!key.includes('*') && resolveTarget(target, CONDITIONS) === path) return specifier(key);
+  for (const [key, target] of Object.entries(map)) {
+    const resolved = resolveTarget(target, CONDITIONS);
+    if (!key.includes('*') || typeof resolved !== 'string') continue;
+    const star = resolved.indexOf('*');
+    if (star === -1) continue;
+    const prefix = resolved.slice(0, star);
+    const suffix = resolved.slice(star + 1);
+    if (path.length < prefix.length + suffix.length) continue;
+    if (!path.startsWith(prefix) || !path.endsWith(suffix)) continue;
+    const subpath = key.replaceAll('*', path.slice(prefix.length, path.length - suffix.length));
+    // A more specific key may map the subpath elsewhere or exclude it.
+    if (resolveExport(manifest, subpath) === path) return specifier(subpath);
+  }
+  return undefined;
+}
+
 /** Node's lookup of an installed package from `from`, through symlinks. */
 function findPackage(name: string, from: string): string | undefined {
   for (let dir = from; ; dir = dirname(dir)) {
@@ -195,8 +293,9 @@ function layoutOf(component: any): 'folders' | 'colocated' {
 /**
  * The components a standard CEM states, keyed as in `oddkin.metadata.json`: the tag, its
  * declaration, the module with its `custom-element-definition` export (`registeredIn`), and the
- * shortest package specifier that loads that module (`registration`): an export of the module
- * itself, else an export whose module re-exports from it. Without one, there is no registration.
+ * specifier that loads that module (`registration`): the export that reaches it, else the
+ * shortest export of a module that re-exports from it (an ES re-export loads the module). Without
+ * either, there is no registration.
  */
 export function standardComponents(
   name: string,
@@ -204,16 +303,9 @@ export function standardComponents(
   cem: Record<string, any>,
 ): Record<string, any> {
   const clean = (path: unknown) =>
-    typeof path === 'string' ? path.replace(/^\.\//, '') : undefined;
+    typeof path === 'string' ? path.replace(/^\.?\/+/, '') : undefined;
   const modules: any[] = cem['modules'] ?? [];
-  const subpaths = Object.keys(manifest['exports'] ?? {}).filter((s) => s !== './package.json');
-  const specifier = (subpath: string) => (subpath === '.' ? name : `${name}${subpath.slice(1)}`);
-  const reexports = (target: string | undefined, module: string) =>
-    modules.some(
-      (m) =>
-        clean(m.path) === target &&
-        (m.exports ?? []).some((e: any) => clean(e.declaration?.module) === module),
-    );
+  const pkg = { ...manifest, name };
   const components: Record<string, any> = {};
   for (const m of modules)
     for (const d of m.declarations ?? []) {
@@ -225,17 +317,18 @@ export function standardComponents(
           ),
         )?.path,
       );
-      const direct = registeredIn
-        ? subpaths.filter((s) => exportTarget(manifest, s) === registeredIn)
-        : [];
-      const loading = direct.length
-        ? direct
-        : registeredIn
-          ? subpaths.filter((s) => reexports(exportTarget(manifest, s), registeredIn))
-          : [];
-      const registration = loading
-        .map(specifier)
-        .sort((a, b) => a.length - b.length || (a < b ? -1 : 1))[0];
+      const registration = registeredIn
+        ? (exportedSpecifier(pkg, registeredIn) ??
+          modules
+            .filter(
+              (r) =>
+                clean(r.path) !== registeredIn &&
+                (r.exports ?? []).some((e: any) => clean(e.declaration?.module) === registeredIn),
+            )
+            .map((r) => exportedSpecifier(pkg, clean(r.path) ?? ''))
+            .filter((s): s is string => Boolean(s))
+            .sort((a, b) => a.length - b.length || (a < b ? -1 : 1))[0])
+        : undefined;
       components[`component:${d.tagName}`] = {
         tag: d.tagName,
         cem: { module: clean(m.path), name: d.name },

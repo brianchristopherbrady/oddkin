@@ -6,11 +6,16 @@ import addFormats from 'ajv-formats';
 import { afterAll, describe, expect, it } from 'vitest';
 import { main } from '../../packages/analyzer/src/kit/cli.js';
 import {
+  exportedSpecifier,
   resolveProjectContext,
   standardComponents,
 } from '../../packages/analyzer/src/kit/context.js';
 import { generateKit } from '../../packages/analyzer/src/kit/kit.js';
 import { packageKit } from '../../packages/analyzer/src/kit/package-kit.js';
+import {
+  exportedSpecifier as workbenchSpecifier,
+  type PackageManifest,
+} from '../../packages/workbench/src/data/import-map.js';
 import { repo } from './acme.js';
 
 // A library not built with Oddkin (CF.3): plain custom elements described by a standard Custom
@@ -85,6 +90,72 @@ describe('a library described by a standard CEM alone', () => {
       cem: { module: 'chip.js', name: 'PlainChip' },
       registeredIn: 'chip.js',
     });
+  });
+
+  it('names the registration entry Workbench names: exact subpaths, patterns, exclusions, no exports', () => {
+    // Workbench's own case (packages/workbench/test/node-inputs.test.ts), through the kit.
+    const definition = (path: string, tag: string) => ({
+      kind: 'javascript-module',
+      path,
+      declarations: [{ kind: 'class', name: 'X', customElement: true, tagName: tag }],
+      exports: [
+        { kind: 'js', name: 'X', declaration: { name: 'X' } },
+        { kind: 'custom-element-definition', name: tag, declaration: { name: 'X' } },
+      ],
+    });
+    const registrations = (manifest: Record<string, unknown>, modules: object[]) =>
+      Object.fromEntries(
+        Object.values<{ tag: string; registration?: string }>(
+          standardComponents(manifest['name'] as string, manifest, { modules }),
+        ).map((c) => [c.tag, c.registration ?? null]),
+      );
+    expect(
+      registrations(
+        {
+          name: '@plain/kit',
+          exports: {
+            '.': './index.js',
+            './elements/*': './dist/elements/*.js',
+            './elements/secret': null,
+          },
+        },
+        [
+          definition('dist/elements/chip.js', 'plain-chip'),
+          definition('index.js', 'plain-badge'),
+          definition('dist/elements/secret.js', 'plain-secret'),
+          definition('internal/other.js', 'plain-other'),
+        ],
+      ),
+    ).toEqual({
+      'plain-chip': '@plain/kit/elements/chip',
+      'plain-badge': '@plain/kit',
+      'plain-secret': null,
+      'plain-other': null,
+    });
+    expect(
+      registrations({ name: '@plain/old', main: 'index.js' }, [
+        definition('src/old.js', 'plain-old'),
+      ]),
+    ).toEqual({ 'plain-old': '@plain/old/src/old.js' });
+    // Every case resolves as Workbench's import maps do.
+    const cases: [Record<string, unknown>, string][] = [
+      [{ name: 'a', exports: './i.js' }, 'i.js'],
+      [{ name: 'a', exports: { import: './i.js', require: './i.cjs' } }, './i.js'],
+      [{ name: 'a', exports: { '.': { development: './dev.js', default: './i.js' } } }, 'i.js'],
+      [{ name: 'a', exports: { '.': { development: './dev.js', default: './i.js' } } }, 'dev.js'],
+      [{ name: 'a', exports: { './x/*': './dist/x/*.js', './x/hidden': null } }, 'dist/x/y.js'],
+      [
+        { name: 'a', exports: { './x/*': './dist/x/*.js', './x/hidden': null } },
+        'dist/x/hidden.js',
+      ],
+      [{ name: 'a', exports: { './*': ['./dist/*.js'] } }, 'dist/z.js'],
+      [{ name: 'a', exports: { '.': './i.js', require: './i.cjs' } }, 'i.js'],
+      [{ name: 'a' }, 'lib/q.js'],
+    ];
+    for (const [manifest, file] of cases)
+      expect(exportedSpecifier(manifest, file), JSON.stringify([manifest, file])).toBe(
+        workbenchSpecifier(manifest as unknown as PackageManifest, file),
+      );
   });
 
   it('gets a kit of the manifest facts that states what is unknown, and invents nothing', () => {

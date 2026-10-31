@@ -83,7 +83,12 @@ export interface CemPackage {
     readonly path: string;
     readonly declarations?: readonly CemDeclaration[];
     /** The module's exports; a `custom-element-definition` names a tag the module registers. */
-    readonly exports?: readonly { readonly kind: string; readonly name: string }[];
+    readonly exports?: readonly {
+      readonly kind: string;
+      readonly name: string;
+      /** Where the exported value is declared; another module for a re-export. */
+      readonly declaration?: { readonly name?: string; readonly module?: string };
+    }[];
   }[];
 }
 

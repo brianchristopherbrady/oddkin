@@ -4663,3 +4663,12 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Mutations | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutate-kit-cem.json` | 4 of 4 killed: no registration through a re-export, the synthesized entry in the JSON bundle, the library counted as an Oddkin path, the manifest not read |
 | Oddkin's kits | `node scripts/agent-kit/package-kits.mjs`, then a diff against copies taken before | Only `kit.json`'s generator version differs in each (`1.0.0-beta.1+49bd82ea5834` to `+1db27384b7e7`); guides 7,347 and 6,889 bytes as before |
 | Gates | `npm run typecheck`; `npx vitest run --project node tests/agent-kit packages/analyzer tests/golden-path`; `npx prettier --check packages/analyzer tests/agent-kit` | All exit 0; 21 files, 181 tests passed |
+
+## 2026-10-30 — One registration rule for Workbench and the kits (CF.3; round 10, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Parity | `npx vitest run --project node tests/agent-kit/standard-cem.test.ts` | 5 passed. Workbench's own registration case, run through the kit, gives Workbench's answers: `@plain/kit/elements/chip` (a pattern), `@plain/kit`, none for an excluded and an unreachable module, and `@plain/old/src/old.js` without `exports`. 9 export cases give the same specifier from both implementations: a string, conditions, development against default, a pattern, a pattern with a `null` exclusion, an array target, mixed keys, and no `exports` |
+| Workbench | `npx vitest run --project node packages/workbench/test/node-inputs.test.ts` | 21 passed. `@plain/indexed`, which exports only `./index.js` re-exporting its element, registers through `@plain/indexed` |
+| Mutations | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutate-parity2.json` | 2 of 2 killed: the kit without patterns (1 failed), Workbench without the re-export fallback (1 failed) |
+| Gates | `npm run typecheck`; `npx vitest run --project node packages/workbench tests/agent-kit packages/analyzer` | All exit 0; 36 files, 313 tests passed |

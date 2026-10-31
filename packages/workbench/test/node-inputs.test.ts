@@ -253,7 +253,7 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     const dir = track(
       acmeProject({
         'oddkin.config.json': JSON.stringify({
-          library: { packages: ['@plain/kit', '@plain/old'] },
+          library: { packages: ['@plain/kit', '@plain/old', '@plain/indexed'] },
         }),
         'node_modules/@plain/kit/package.json': JSON.stringify({
           name: '@plain/kit',
@@ -286,6 +286,24 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
           schemaVersion: '2.1.0',
           modules: [definition('src/old.js', 'plain-old')],
         }),
+        // Only the index is exported; it re-exports the element, so importing it registers it.
+        'node_modules/@plain/indexed/package.json': JSON.stringify({
+          name: '@plain/indexed',
+          version: '1.0.0',
+          customElements: 'custom-elements.json',
+          exports: { '.': './index.js' },
+        }),
+        'node_modules/@plain/indexed/custom-elements.json': JSON.stringify({
+          schemaVersion: '2.1.0',
+          modules: [
+            definition('chip.js', 'plain-indexed'),
+            {
+              kind: 'javascript-module',
+              path: 'index.js',
+              exports: [{ kind: 'js', name: 'X', declaration: { name: 'X', module: 'chip.js' } }],
+            },
+          ],
+        }),
       }),
     );
     const { config } = await loadWorkbenchConfig(join(dir, 'oddkin.config.json'));
@@ -295,6 +313,7 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     expect(inputs.libraries.map((library) => library.registrations)).toEqual([
       { 'plain-chip': '@plain/kit/elements/chip', 'plain-badge': '@plain/kit' },
       { 'plain-old': '@plain/old/src/old.js' },
+      { 'plain-indexed': '@plain/indexed' },
     ]);
   });
 
