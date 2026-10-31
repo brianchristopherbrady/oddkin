@@ -4672,3 +4672,12 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Workbench | `npx vitest run --project node packages/workbench/test/node-inputs.test.ts` | 21 passed. `@plain/indexed`, which exports only `./index.js` re-exporting its element, registers through `@plain/indexed` |
 | Mutations | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutate-parity2.json` | 2 of 2 killed: the kit without patterns (1 failed), Workbench without the re-export fallback (1 failed) |
 | Gates | `npm run typecheck`; `npx vitest run --project node packages/workbench tests/agent-kit packages/analyzer` | All exit 0; 36 files, 313 tests passed |
+
+## 2026-10-30 — CF.3's document, ADR, and Workbench labels (round 10, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Labelled gaps | `npx vitest run --project node packages/workbench/test/data.test.ts` | 25 passed. A manifest-only page with a registration labels 7 items as missing, each with its source: presets and examples (an example set), a11y, keyboard, use-for, not-for, and usage pairs. Without a registration, the preview and the register line are missing too (`.tmp/cem-coverage.mjs`, against the built `dist`) |
+| Claims in the document | Read against the code | The kits skip a package without `exports` (`context.ts`); change impact's `readPackage` and Workbench's registrations do not. The analyzer records examples for tags it did not extract, with `analyzer.examples.unknownComponent` (`index.ts`). The kits record `oddkin.docs.*` as inputs and do not show their content |
+
+**Not verified here:** `e2e/workbench-packed.spec.ts` was not run again; nothing it covers changed (`@plain/widgets` exports its defining module directly).

@@ -60,3 +60,4 @@ Create a new ADR by copying [0000-template.md](./0000-template.md) to the next n
 | [0045](./0045-api-vocabulary.md) | API vocabulary for elements: names, values, events, form behavior | Accepted | Components / AI / Metadata |
 | [0046](./0046-plan-audit-2026-10-26.md) | Plan audit (2026-10-26): revised decisions | Accepted | Platform / Components / Agent / Process |
 | [0047](./0047-m8-checkpoint-candidate-v1-contracts.md) | M8 checkpoint: candidate v1 contracts, assurance and comprehension reviews | Proposed | Process / Contracts |
+| [0048](./0048-libraries-not-built-with-oddkin.md) | Libraries not built with Oddkin: the standard-CEM baseline, enrichment, and metadata adapters | Accepted | Metadata / Workbench / Agent |

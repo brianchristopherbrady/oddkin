@@ -311,7 +311,7 @@ First slice with real `odd-button`, `odd-input`, `odd-card`, and `odd-side-nav`,
 - [ ] Shared examples drive at least one docs page and one browser test
 - [ ] Watch mode and builds deterministic; authored files preserved
 - [x] Static build under a hosting subpath with Theme Studio editing intact *(`e2e/workbench-static.spec.ts`, three engines, 2026-10-27; §10)*
-- [ ] Standard-CEM-only library (fixture outside Oddkin) gets the documented baseline with missing enrichment labelled
+- [x] Standard-CEM-only library (fixture outside Oddkin) gets the documented baseline with missing enrichment labelled *(`@plain/widgets` in `e2e/workbench-packed.spec.ts`; the labelled gaps in `packages/workbench/test/data.test.ts`; [libraries-without-oddkin.md](./libraries-without-oddkin.md), 2026-10-30)*
 - [ ] Ordinary component consumers contain no analyzer, Workbench, or agent code
 
 ## Open questions

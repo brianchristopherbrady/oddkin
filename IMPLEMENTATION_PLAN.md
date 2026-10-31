@@ -119,12 +119,15 @@ The details are in [future_plans/](./future_plans/TECHNICAL_COMMERCIALIZATION_PL
   - The same report produced in CI and published as a job summary and an artifact (the technical plan's Workstream D, step 1; Agent 1).
     - *(2026-10-29, Agent 1: each CI run compares its commit with the one before it (a pull request: with its base) through `scripts/ci/impact-summary.mjs`, adds the report to the job summary, and keeps it in the `release-evidence-<attempt>` artifact. CI still runs every check; the report lists the ones it would select. The step only informs: its failure does not fail the run. `scripts/impact.mjs --base-ref` now builds the base with the base's own build steps (it failed on the token assets and core's production build) and removes its links on Linux.)*
   - A docs page that presents the sample report and links the site to its evidence: CI in three browsers, the fresh-install tests, the change-impact analysis, and the architecture decisions (Agent 3).
-- [ ] **CF.3 Libraries not built with Oddkin (Agent 2).** The technical plan's Workstream B:
+- [x] **CF.3 Libraries not built with Oddkin (Agent 2).** The technical plan's Workstream B:
   - the minimum standard-CEM experience across Workbench, impact, and kits;
+    - *(2026-10-30, Agent 2: done. [libraries-without-oddkin.md](./docs/architecture/libraries-without-oddkin.md) lists what each tool does from a manifest alone, what each enrichment layer adds, and what is missing. All three tools now read a manifest-only library and say what is unknown. Workbench and the kits name the same registration entry.)*
   - a fixture library not built with Oddkin;
+    - *(2026-10-30, Agent 2: `@plain/widgets` (`tests/consumers/workbench/plain-widgets`): plain custom elements with a hand-written manifest. Workbench (packed), change impact, and the kits all use it. Not built: Workstream B's other two shapes (a library made with another authoring library, and a bundled package), examples for such libraries, and adapters (ADR 0048 §3–§4).)*
   - whether `oddkin-impact` works from a CEM alone;
     - *(2026-10-30, Agent 2: it does, for what a CEM states. The snapshot reads the API, the registration, the exports, and each class's module (hashed). It no longer claims a metadata artifact it did not read. With no examples, a change selects no checks, and the report lists each affected component nothing checks as a coverage gap ([change-impact-and-verification.md](./docs/architecture/change-impact-and-verification.md) §2.7).)*
   - an ADR for adapters to other metadata sources.
+    - *(2026-10-30, Agent 2: [ADR 0048](./docs/architecture/decisions/0048-libraries-not-built-with-oddkin.md). The manifest is read directly. Enrichment is a layer keyed by tag; examples come first, needing an analyzer mode for libraries it did not extract. Adapters are static readers that write contracts Oddkin already has, built when a pilot needs one: Storybook stories, DTCG tokens, then framework docgen.)*
 
 ### P1: finish the foundations (after tier CF; P1.6, P1.7, and P1.1 first, as tier CF needs them)
 

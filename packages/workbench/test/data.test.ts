@@ -16,6 +16,7 @@ import {
   type TokenInspectionLike,
 } from '../src/data/index.js';
 import type { CemPackage, OddkinMetadataLike } from '../src/pages/index.js';
+import { pageCoverage } from '../src/panels/model.js';
 
 const json = (path: string) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
 
@@ -388,6 +389,23 @@ describe('Workbench data from published outputs', () => {
     }).data;
     const cemOnly = cemOnlyData.pages['components/acme-button'] as ComponentPageData;
     expect(cemOnly.registration).toBe('@acme/ui/button.js');
+    // Every enrichment it lacks is labelled "Not documented" with the input that supplies it.
+    expect(
+      pageCoverage(cemOnly)
+        .filter((item) => item.state === 'missing')
+        .map((item) => [item.id, item.source]),
+    ).toEqual([
+      ['interactive-example/presets', 'an example set (defineExamples)'],
+      ['examples/examples', 'an example set (defineExamples)'],
+      ['behavior-and-accessibility/a11y', '@a11y'],
+      ['behavior-and-accessibility/keyboard', '@keyboard'],
+      ['guidance/use-for', '@useFor'],
+      ['guidance/not-for', '@notFor'],
+      [
+        'guidance/usage-pairs',
+        'an incorrect example that names its correct one (`incorrect` in defineExamples)',
+      ],
+    ]);
     // The catalog previews the components that register, and only those.
     expect(cemOnlyData.index.previews).toEqual(['components/acme-button']);
     const enriched = build({
