@@ -2,7 +2,7 @@
 
 Optional stores, selectors, context, persistence, and inspection. Reusable components never need it: an application feature owns a store and hands values to components as properties.
 
-**Status:** M6 in progress. Implemented: `./store` and `./context` (both re-exported from the root entry), `./inspect`, and `./persist`. Contract: [core-contracts.md §7](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
+**Status:** beta, published under npm's `beta` tag. Entries: `./store` and `./context` (both re-exported from the root entry), `./inspect`, and `./persist`. Contract: [core-contracts.md §7](../../docs/architecture/core-contracts.md); entries: [packages.md](../../docs/architecture/packages.md).
 
 ## Stores (`@oddkin/state/store`, DOM-free)
 

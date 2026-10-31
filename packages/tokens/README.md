@@ -2,7 +2,7 @@
 
 Theme configuration, the pure token generator, and its outputs. Browser entry points are DOM-free and use no Node APIs, so the same generator runs in the CLI, browsers, and Workers.
 
-**Status:** M2 in progress.
+**Status:** beta, published under npm's `beta` tag. The theme configuration, the generator, the `oddkin-tokens` command, and the outputs below ship.
 
 | Entry | Contents |
 | --- | --- |

@@ -6,7 +6,7 @@ Optional AI interaction package: typed records, DOM-free controllers, stream ada
 
 ## Install and register
 
-Depends on `@oddkin/core`, `@oddkin/tokens`, and `@oddkin/components`. Load a theme stylesheet (e.g. `@oddkin/tokens/css/default.css`). Register only what you use:
+`@oddkin/core` and `@oddkin/components` are peer dependencies, which npm installs with it; with Yarn, add them yourself (`yarn add @oddkin/components @oddkin/core`). `@oddkin/tokens` is a dependency. Load a theme stylesheet (e.g. `@oddkin/tokens/css/default.css`). Register only what you use:
 
 ```js
 import '@oddkin/ai/define/conversation'; // also registers odd-message, odd-response, odd-tool-call, …

@@ -42,7 +42,7 @@ No novice study has run (plan §8.3: after v1), so this review records where eac
 | --- | --- | --- |
 | Render-tracked reads, direct bindings, untracked snapshots | core-contracts.md §1, `@oddkin/core` README, the docs app's concepts page | `e2e/binding-rule.spec.ts` (plain JS and TS tables); no reader evidence |
 | Production errors and debug stripping | core-contracts.md §6.1–§6.2, README | `production.test.ts`, failure paths in the production build |
-| Duplicate core and versions | core-contracts.md §5.1, release-process.md §1–§2 | `e2e/duplicate-core.spec.ts`; released versions side by side wait for a release |
+| Duplicate core and versions | core-contracts.md §5.1, release-process.md §1–§2 | `e2e/duplicate-core.spec.ts`, also with the published 1.0.0-beta.0 beside the current packages (2026-10-29) |
 | Host, slot, and container boundaries | core-contracts.md §6.1, layout-recipes.md §5, css-architecture.md §5.4 | `container-contract.browser.test.ts`, `authoring-semantics.browser.test.ts` |
 | Form limitations | component-contracts.md, element `@limitation`s | `text-entry.browser.test.ts`, form-association tests; screen readers unverified |
 | Localization | core-contracts.md §4.2 | `i18n` tests; no translated product |

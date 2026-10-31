@@ -4524,3 +4524,15 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Tests | `npx vitest run --project node tests/agent-kit` | 34 of 34, with a new test: a project that installs the published files of core, tokens, and components regenerates the components kit byte for byte, and the guide has no workspace commands |
 | Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutants-kit.json` | 3 of 3 killed: the packaged fingerprint covering workspace inputs; the guide listing workspace commands; the inspection keyed by its path in the project instead of its package export |
 | Gates | `npm run lint`; `npx vitest run --project node` | Pass; 1,527 passed, 2 skipped |
+## 2026-10-30 — README pass for beta.1 (round 10, Agent 3; D-1, RF-01)
+
+| Check | Source | Result |
+| --- | --- | --- |
+| Command-line tools | each package's `bin` | `oddkin` (workbench), `oddkin-tokens` (tokens), `oddkin-analyze` and `oddkin-impact` (analyzer); no package provides `oddkin-agent` |
+| Dependency kinds | each package's `dependencies` and `peerDependencies` | ai: peers core and components, depends on tokens; components: peer core, depends on tokens; state: peer core; app: peers core and state |
+| Element counts | `oddkin.metadata.json` `components` | components 54, ai 24 |
+| Versions | each `package.json` | all eight `1.0.0-beta.0`; the README now says "under the `beta` tag", which stays true after beta.1 |
+| Examples | `examples/`, each `index.html` | 20 directories: 14 load through an import map with no bundler, `tokens-css-only` has no script, the three AI demos and `duplicate-core` load bundles, `ai-stream` uses an import map and its own server |
+| Layout | `docs/`, `docs/schemas/`, `scripts/` | `docs/reference/` does not exist; `docs/releases/` holds `1.0.0-beta.1.md`; `packages/components/schemas` and `packages/ai/schemas` exist |
+| Commands | root `package.json` scripts | `build` runs `tsc -b` and the token, production, CSS, metadata, schema, AI-demo, and kit builds; `lint` runs contracts, boundaries, CSS, layout, and formatting; `test` builds, then runs Vitest; `verify` includes `verify:metadata` |
+| Tests | `npx vitest run tests/docs` (the site facts read the README; the AI test reads the AI README); `npx prettier --check` on the edited files | 25 passed; formatting clean |
