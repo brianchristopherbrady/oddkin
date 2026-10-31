@@ -445,7 +445,12 @@ export class ConversationController implements ExternalSource<ConversationState>
       const next = applyStopOutcome(a.status, outcome);
       return { ...a, ...next };
     });
-    if (outcome === 'cancelled') this.#sinks.get(attemptId)?._invalidate();
+    if (outcome === 'cancelled') {
+      // The stream's own end may never arrive now: its events are dropped from here on.
+      if (this.#state.peek().attempts[attemptId]?.status === 'cancelled')
+        this.#settle(attemptId, 'cancelled');
+      this.#sinks.get(attemptId)?._invalidate();
+    }
     return outcome === 'rejected' ? { ok: false, reason: 'rejected' } : { ok: true, attemptId };
   }
 
@@ -953,6 +958,11 @@ export class ConversationController implements ExternalSource<ConversationState>
         ...(error ? { error } : {}),
       };
     });
+    this.#settle(attemptId, status);
+  }
+
+  /** An attempt that ended: its message parts stop streaming, and when cancelled or failed, its tools. */
+  #settle(attemptId: string, status: AttemptStatus): void {
     const attempt = this.#state.peek().attempts[attemptId];
     if (!attempt) return;
     this.#updateMessage(attempt.messageId, (msg) =>

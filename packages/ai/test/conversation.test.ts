@@ -212,6 +212,11 @@ describe('ConversationController: stop, disconnect, resume', () => {
     await stopping;
     expect(attempt(c)).toMatchObject({ status: 'cancelled', stop: 'confirmed' });
     expect(textOf(c.getSnapshot())).toBe('partial');
+    // The confirmation ends the stream (whose own end, arriving later, is dropped): the partial
+    // text no longer reads as still being written.
+    expect(c.getSnapshot().messages[1]?.parts[0]).toMatchObject({ state: 'done' });
+    push(sink(), { type: 'abort' });
+    expect(c.getSnapshot().messages[1]?.parts[0]).toMatchObject({ state: 'done' });
   });
 
   it('A07: completion racing a stop yields completed + too-late, never cancelled', async () => {
@@ -220,11 +225,20 @@ describe('ConversationController: stop, disconnect, resume', () => {
     const c = new ConversationController({ transport, onDiagnostic: () => {} });
     await c.send({ text: 'q' });
     const stopping = c.stop();
-    push(sink(), { type: 'text-delta', partId: 'p', delta: 'done' }, { type: 'finish' });
+    push(
+      sink(),
+      { type: 'tool-input-start', toolCallId: 't1', toolName: 'search' },
+      { type: 'text-delta', partId: 'p', delta: 'done' },
+      { type: 'finish' },
+    );
     expect(attempt(c)).toMatchObject({ status: 'completed', stop: 'too-late' });
+    const before = c.getSnapshot();
     resolveStop('cancelled');
     await stopping;
     expect(attempt(c)).toMatchObject({ status: 'completed', stop: 'too-late' });
+    // A stop confirmed too late changes nothing the stream produced.
+    expect(c.getSnapshot().tools).toEqual(before.tools);
+    expect(c.getSnapshot().messages).toEqual(before.messages);
   });
 
   it('A07: an unconfirmable or failed stop reports unknown/failed, and a stale response is ignored', async () => {
