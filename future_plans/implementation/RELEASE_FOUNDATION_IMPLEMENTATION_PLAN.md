@@ -96,7 +96,7 @@ The contract column comes from ADR 0047 (proposed). Every package has `MIT`, a `
 
 ## 4. Proposed public preview package cut
 
-All eight stay published; the cut assigns a support tier and a place in the messaging. This needs the owner's decision (D-1).
+All eight stay published; the cut assigns a support tier and a place in the messaging. The owner decided it as below on 2026-10-30 (D-1); the README names Workbench and the change-impact tools right after the primary packages.
 
 - **Primary, preview-supported:** `@oddkin/core`, `@oddkin/tokens`, `@oddkin/components`. These are the CSS-only path, the authoring model, and the elements. The quick start and README lead with them.
 - **Primary, optional:** `@oddkin/ai`, presented as an add-on to components, not as the entry point.
@@ -108,7 +108,7 @@ Why not narrow by unpublishing: installs already resolve these versions, and npm
 
 ## 5. Versioning and prerelease strategy
 
-- **Keep one beta line for all eight** (`1.0.0-beta.N`). `set-versions.mjs` already keeps a runtime line and a tools line and steps both with `--next`. Recommended answer to D-2: Workbench and the analyzer stay on this line. Their READMEs and the release notes state that their contracts are not frozen.
+- **Keep one beta line for all eight** (`1.0.0-beta.N`). `set-versions.mjs` already keeps a runtime line and a tools line and steps both with `--next`. Decided answer to D-2 (2026-10-30): Workbench and the analyzer stay on this line. Their READMEs and the release notes state that their contracts are not frozen.
 - **Why not `0.x` for Workbench:** `0.x` sorts below `1.0.0-beta.0`. Moving `latest` backwards and deprecating the beta would make `npm install @oddkin/workbench` resolve an older-looking version. The docs app and the golden-path site depend on `^1.0.0-beta.0`.
 - **Sequence:** `1.0.0-beta.1` (P0.8), further betas while Gate A closes, then `1.0.0-rc.0` once the owner settles ADR 0047, then `1.0.0`. Contracts freeze at 1.0.0 (ADR 0029, 0047).
 - **Dist-tags:** `beta` and `latest` both move to each beta until a package has a stable version (owner, 2026-10-28; `publish.mjs`).
@@ -316,7 +316,7 @@ Version 0 (2026-10-29) writes `evidence.json` and `EVIDENCE.md`; in CI, also `re
 | Workflow permissions | `contents: read`, and in `ci.yml` `actions: read` (the evidence reads its job's step times); Pages deploy uses `id-token: write` in its own job | Verified | — |
 | Action pinning | Major tags (`@v7`), not commits | Partial | RF-13 (pin by SHA, or record the decision) |
 | Dependency updates | No Dependabot or Renovate | Planned | RF-13 |
-| Vulnerability reporting | No `SECURITY.md` | Planned | RF-13 (D-8) |
+| Vulnerability reporting | `SECURITY.md` (2026-10-30) sends reports to GitHub private vulnerability reporting, which the owner enables in the repository settings | Partial | RF-13 |
 | Provenance and SBOM | None | Planned | RF-12, RF-09 |
 | Publishing credentials | The owner's interactive 2FA; no stored token | Verified for now | RF-12 |
 | Analyzer's bundled TypeScript | Exact `typescript@5.9.3`, Node-only | Verified | Track its advisories (RF-13) |
@@ -341,6 +341,13 @@ External dependencies:
 - The owner: decisions, npm configuration, creating the external repository, observing an installation.
 
 ## 19. Owner decisions
+
+**Decided by the owner on 2026-10-30: all eleven, as recommended below.** Specifics:
+
+- D-1: the README lists Workbench and the change-impact tools right after the primary packages.
+- D-4: the claims and limitations are in [docs/support.md](../../docs/support.md).
+- D-5 and D-6 come after beta.1.
+- D-10: beta.1 is cut once CI passes on the release commit; P0.4's remaining items go to beta.2 unless they have landed by then.
 
 | Id | Decision | Recommendation | Blocks |
 | --- | --- | --- | --- |
@@ -420,6 +427,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the revised descriptions and README lines.
 - **Done when:** each accessibility statement names its evidence and says screen readers are not yet verified.
 - **Risks:** wording disagreement; the owner decides.
+- **State (2026-10-30, Agent 1):** the components description no longer says "Accessible"; the root, components, and AI READMEs name the keyboard and axe-core evidence and say screen readers are not yet verified, linking [docs/support.md](../../docs/support.md#accessibility). Open: the docs site's copy (Agent 3) and the RF-02 rule.
 
 ### RF-04 Public support policy
 
@@ -432,6 +440,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the policy.
 - **Done when:** each supported range names its evidence, and each unverified area (Safari hardware, screen readers, pnpm, Yarn, Node below 24, webpack) is a listed limitation.
 - **Risks:** promising more than CI checks.
+- **State (2026-10-30, Agent 1):** [docs/support.md](../../docs/support.md) states the browser floor, accessibility evidence, Node for the tools and the browser packages, TypeScript 5.9 or newer, the tested framework versions, npm 11 and the tested bundlers, and copies on one page, each with its evidence, and lists pnpm, Yarn, webpack, Rspack, Node below 24, mobile browsers, Apple hardware, and screen readers as untested. The README links it. Open: the docs site page (Agent 3) and an RF-02 check of the README's floor.
 
 ### RF-05 Coverage for claimed ranges
 
@@ -542,6 +551,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** `SECURITY.md`, `.github/dependabot.yml`, the audit report, the SBOM in the bundle.
 - **Done when:** a reporting channel exists; dependency and action updates are proposed weekly; the SBOM is in the evidence bundle.
 - **Risks:** update noise; group the updates.
+- **State (2026-10-30, Agent 1):** `SECURITY.md` points to GitHub private vulnerability reporting (D-8), which the owner enables under the repository's Settings, Security. Open: Dependabot, the audit report, action pins, and the SBOM.
 
 ### RF-14 Metadata and kit order at release
 
@@ -619,15 +629,15 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 
 | Gate A line | Class now | Evidence now | Task | Passes when |
 | --- | --- | --- | --- | --- |
-| Public package cut is decided. | Owner | All eight public (2026-10-27); tiers undecided | RF-16 (D-1, D-2) | Tiers recorded in release-process §1 and the README |
+| Public package cut is decided. | Partial | All eight public (2026-10-27); tiers and the version line decided on 2026-10-30 (D-1, D-2); not yet in the README or release-process §1 | RF-01, RF-16 | Tiers recorded in release-process §1 and the README |
 | Preview versions replace `0.0.0`. | Verified | `1.0.0-beta.0` on npm, `beta` and `latest` | — | Already true (the line's wording is stale) |
 | Package privacy flags match the release decision. | Verified | No `private` in the eight; docs app and root private | — | Already true |
 | README status matches the generated catalog. | Stale | §7 | RF-01, RF-02 | The lint check passes |
 | Changelogs and release notes exist. | Partial | beta.1 draft; changelogs from 1.0.0 by policy | RF-08 | Notes complete at the cut |
-| License and ownership decisions are recorded. | Verify | MIT in README, manifests, `LICENSE`; the owner owns `@oddkin` | D-9 | The owner confirms MIT for the preview in writing |
+| License and ownership decisions are recorded. | Verified | MIT in README, manifests, `LICENSE`; the owner owns `@oddkin` and confirmed MIT on 2026-10-30 (D-9) | — | Already true |
 | Export, declaration, files, side-effect, and `customElements` checks pass from tarballs. | Verified | `verify:packs`, CI run 40945402821 | RF-06 (extras) | Stays green in each release run |
 | Clean external installation completes the quick start. | Partial | Registry runs of in-repository fixtures (local, 2026-10-29) | RF-11 | The external repository's CI passes against the published version |
-| Browser and Node support policy is published. | Partial | README, matrix, release-process §4 | RF-04, RF-05 | The policy page exists with evidence and limitations |
+| Browser and Node support policy is published. | Partial | [docs/support.md](../../docs/support.md) (2026-10-30), linked from the README | RF-04 (docs site page), RF-05 | The policy page exists with evidence and limitations |
 | Known limitations are visible. | Partial | Component pages' known limitations; release-process §3 | RF-08, RF-04 | Release notes and the policy list them |
 | Serial Chromium, Firefox, and WebKit evidence is current. | Verify | CI per-engine steps; one failing Workbench test | P0.6 (Agent 2), RF-10 | A green CI run on the release commit, in the evidence bundle |
 | Parallel-run limitation is documented. | Verified | release-process §3 | RF-01 (README line) | Also in the README's commands |
@@ -635,7 +645,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 | Metadata and generated agent kits are current. | Verified | `verify:metadata`, kit check, `verify-packs` | RF-14 | Hashes in the evidence bundle match the tarballs |
 | Size budgets pass. | Verified | CI `npm run size` | — | Green on the release commit |
 | Compatibility matrix is current. | Verified | `lint:css`; regenerated 2026-10-29 | — | Green; floor re-resolved before 1.0.0 |
-| No accessibility claim exceeds recorded evidence. | Stale | §2 | RF-03 (D-7) | Wording names its evidence |
+| No accessibility claim exceeds recorded evidence. | Partial | The npm description and the READMEs name their evidence (2026-10-30); the docs home copy is Agent 3's | RF-03 | Wording names its evidence |
 | Release evidence bundle is downloadable. | Planned | none | RF-09, RF-10 | Attached to the run (and release) |
 | Installation guide takes less than 15 minutes in observation. | Planned | none | RF-18 | Two observed sessions |
 | A sample project produces a useful impact report. | Partial | Impact tests with real snapshots | RF-07 | The beta.0-to-beta.1 report in the bundle and the notes |

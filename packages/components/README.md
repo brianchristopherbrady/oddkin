@@ -1,6 +1,6 @@
 # @oddkin/components
 
-Accessible, themed custom elements, Oddkin layout presets, and component metadata.
+Themed custom elements, Oddkin layout presets, and component metadata. Accessibility is tested with keyboard checks and axe-core audits in Chromium, Firefox, and WebKit; screen readers are not yet verified ([support policy](../../docs/support.md#accessibility)).
 
 **Status:** M4 in progress. Implemented: `odd-button`, `odd-card`, `odd-input`, `odd-side-nav`. See [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) and [packages.md](../../docs/architecture/packages.md).
 

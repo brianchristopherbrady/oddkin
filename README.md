@@ -4,7 +4,7 @@ Oddkin is a modular frontend framework built on custom elements and browser APIs
 
 - **`@oddkin/core`** — authoring foundation: reactive primitives, ownership (`Scope`), templates, styles, layout recipes, collections, and models.
 - **`@oddkin/tokens`** — theme configuration and a deterministic token pipeline that emits CSS, JSON, DTCG, and TypeScript (Sass output is planned). Use the tokens with plain CSS and no Oddkin JavaScript.
-- **`@oddkin/components`** — accessible, themeable custom elements that work in plain HTML or in any framework.
+- **`@oddkin/components`** — themeable custom elements that work in plain HTML or in any framework, tested with keyboard checks and axe-core in three browser engines (screen readers not yet verified).
 - **`@oddkin/ai`** — optional AI interaction elements, headless controllers, and stream adapters for conversations, inline assistance, research tools, and agent workflows.
 - **`@oddkin/state`** and **`@oddkin/app`** — optional stores, context, routing, and async resources.
 - **Optional tooling** — `@oddkin/analyzer` (metadata) and `@oddkin/workbench` (component documentation generated from a library's metadata, served locally, with interactive pages and Theme Studio). An `@oddkin/agent` package for IDE agents is not built (skipped for now by the owner); agents use the kits that `@oddkin/components` and `@oddkin/ai` ship.
@@ -33,7 +33,7 @@ Beta. The eight packages are published on npm as `1.0.0-beta.0` (`npm install @o
 
 ## Requirements and commands
 
-Node.js 24.12 or newer, npm 11. Supported browsers: Chrome and Edge 130, Firefox 132, Safari 18.2, and later (Baseline 2024) ([css-architecture.md](./docs/architecture/css-architecture.md)).
+Node.js 24.12 or newer, npm 11. Supported browsers: Chrome and Edge 130, Firefox 132, Safari 18.2, and later (Baseline 2024). The [support policy](./docs/support.md) lists what each package is tested with and what is not.
 
 ```sh
 npm install

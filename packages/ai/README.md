@@ -1,6 +1,6 @@
 # @oddkin/ai
 
-Optional AI interaction package: typed records, DOM-free controllers, stream adapters, and accessible `odd-*` elements for conversation interfaces, inline assistance, research tools, and agent workflows. No model calls, no storage, no third-party runtime dependencies.
+Optional AI interaction package: typed records, DOM-free controllers, stream adapters, and `odd-*` elements for conversation interfaces, inline assistance, research tools, and agent workflows. No model calls, no storage, no third-party runtime dependencies. The AI demos are audited with axe-core in Chromium, Firefox, and WebKit; screen readers are not yet verified ([support policy](../../docs/support.md#accessibility)).
 
 **Status:** implemented and verified (IMPLEMENTATION_PLAN.md §5j). Contract: [ai-interaction.md](../../docs/architecture/ai-interaction.md). Decision: [ADR 0040](../../docs/architecture/decisions/0040-ai-interaction-package.md). Demos: [research assistant](../../examples/ai-research/), [inline writing assistant](../../examples/ai-writing/), [agent task panel](../../examples/ai-agent/).
 

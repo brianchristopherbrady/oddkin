@@ -422,14 +422,14 @@ None of these is measured automatically today. The impact report's JSON already 
 
 | Id | Decision | Blocks |
 | --- | --- | --- |
-| O-1 | The runtime stays MIT | Gate A's license line (release plan D-9) |
-| O-2 | Which new capabilities are proprietary, and where their code lives: this public repository or a private one | D, E, G, and any closed part of C or F |
-| O-3 | Package tiers and Workbench's version line | Workstream A (release plan D-1, D-2) |
+| O-1 | The runtime stays MIT. **Decided 2026-10-30:** yes; a proprietary capability would ship in separate packages, never by relicensing these | Gate A's license line (release plan D-9) |
+| O-2 | Which new capabilities are proprietary, and where their code lives: this public repository or a private one. **Deferred 2026-10-30**, to be decided before any hosted code; working direction: what runs locally (analyzer, change impact, Workbench, kits) stays open here, and hosted services live in a private repository | D, E, G, and any closed part of C or F |
+| O-3 | Package tiers and Workbench's version line. **Decided 2026-10-30:** release plan D-1 and D-2 | Workstream A (release plan D-1, D-2) |
 | O-4 | Order against the priority plan. **Decided 2026-10-29:** tier CF follows P0. P1.2's new component families and collections, Theme Studio beyond its baseline flow (P1.5), the SVG icons (P2.1), and Workbench completion (P2.3) are parked | §8 |
 | O-5 | Whether to reopen P2.2 (`@oddkin/agent` and MCP) for Workstream F. **Decided 2026-10-29:** it stays paused. Revisit it once the consumer kit command and a context diff exist, as a thin read-only adapter over the kit files | F task 5; the pattern retrieval operations |
-| O-6 | The product name ("Oddkin Assurance" is a placeholder) | Command and package names in C |
-| O-7 | When hosted work starts (D step 2, E, G), based on the owner's discovery evidence | T2 onward |
-| O-8 | The product-patterns decisions (that plan's §24) | That plan |
+| O-6 | The product name ("Oddkin Assurance" is a placeholder). **Deferred 2026-10-30;** no package or command takes the placeholder name meanwhile | Command and package names in C |
+| O-7 | When hosted work starts (D step 2, E, G), based on the owner's discovery evidence. **Deferred 2026-10-30;** working direction: not before CF.1 to CF.3 are done and onboarding sessions have been observed | T2 onward |
+| O-8 | The product-patterns decisions (that plan's §24). **Deferred 2026-10-30:** product patterns stay parked behind tier CF (O-4) | That plan |
 
 ## 11. Next technical actions
 

@@ -12,23 +12,23 @@ The release plan maps each line to its evidence and tasks ([RELEASE_FOUNDATION_I
 
 | Line | Class | Next |
 | --- | --- | --- |
-| Public package cut is decided. | Owner | All eight are published; support tiers and Workbench's version line are D-1 and D-2 |
+| Public package cut is decided. | Partial | Decided 2026-10-30 (D-1, D-2); the README's order is RF-01 |
 | Preview versions replace `0.0.0`. | Verified | All eight at `1.0.0-beta.0` since 2026-10-28 |
 | Package privacy flags match the release decision. | Verified | — |
 | README status matches the generated catalog. | Stale | RF-01, RF-02 |
 | Changelogs and release notes exist. | Partial | RF-08: betas get release notes; changelogs start at 1.0.0 |
-| License and ownership decisions are recorded. | Verify | MIT in the README, the manifests, and `LICENSE`; the owner confirms it for the preview (O-1, D-9) |
+| License and ownership decisions are recorded. | Verified | MIT in the README, the manifests, and `LICENSE`; the owner confirmed it on 2026-10-30 (O-1, D-9) |
 | Export, declaration, files, side-effect, and `customElements` checks pass from tarballs. | Verified | `npm run verify:packs` in CI |
 | Clean external installation completes the quick start. | Partial | RF-11 |
-| Browser and Node support policy is published. | Partial | RF-04, RF-05 |
-| Known limitations are visible. | Partial | RF-04, RF-08 |
+| Browser and Node support policy is published. | Partial | `docs/support.md` (2026-10-30, RF-04); the docs site page and RF-05 remain |
+| Known limitations are visible. | Partial | `docs/support.md` lists the untested areas; release notes are RF-08 |
 | Serial Chromium, Firefox, and WebKit evidence is current. | Verify | A green CI run; one Workbench browser test fails (Agent 2) |
 | Parallel-run limitation is documented. | Verified | release-process.md §3 |
 | Packed-consumer matrix passes. | Verified | CI e2e |
 | Metadata and generated agent kits are current. | Verified | `verify:metadata`; the kit `--check` |
 | Size budgets pass. | Verified | CI `npm run size` |
 | Compatibility matrix is current. | Verified | `lint:css` |
-| No accessibility claim exceeds recorded evidence. | Stale | RF-03 (D-7) |
+| No accessibility claim exceeds recorded evidence. | Partial | The npm description and READMEs name their evidence (RF-03, 2026-10-30); the docs site's copy remains |
 | Release evidence bundle is downloadable. | Planned | RF-09, RF-10 |
 | Installation guide takes less than 15 minutes in observation. | Planned | RF-18 |
 | A sample project produces a useful impact report. | Partial | RF-07 |
