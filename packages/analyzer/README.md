@@ -36,6 +36,8 @@ oddkin-kit llms --base https://docs.example/ --out <dir> [--title <text>] [--sum
 
 Exit codes: 0 success; 1 a stale, missing, or over-budget kit, or a stale `AGENTS.md` section; 2 usage error. The same functions are exported from `@oddkin/analyzer/kit` (`resolveProjectContext`, `generateKit`, `checkKit`, `packageKit`, `siteLlmsText`, `renderSection`, `updateAgentsMd`, and `main`). A kit a package ships depends only on what the package publishes, so a project that installs it regenerates the same files.
 
+A library not built with Oddkin gets a kit from its standard Custom Elements Manifest alone (the package's `customElements` field). Each component reference lists the API the manifest states and the registration entry: the package export that loads the module with the tag's `custom-element-definition`. The guide says that property-only values, event intents, guidance, examples, and verification are unknown.
+
 ## Stability
 
 The analyzer is versioned `1.0.0` with the other Oddkin packages, but only its outputs follow candidate v1 contracts: Custom Elements Manifest 2.1.0, `oddkin-metadata.v1`, `diagnostic.v1`, and the agent kits' `agent-kit.v1` and `project-context.v1`. Its own contracts are **not frozen by 1.0.0** ([ADR 0047](../../docs/architecture/decisions/0047-m8-checkpoint-candidate-v1-contracts.md)): the impact snapshot and report (`comparison-snapshot.v1`, `impact-report.v1`) and the `product.v1` input `oddkin-impact` reads. Until they are frozen they can change in a minor release; only frozen contracts wait for a major ([release-process.md](../../docs/release-process.md) §1).

@@ -83,6 +83,11 @@ export interface Library {
   metadata: Record<string, any>;
   cem?: Record<string, any>;
   owned: boolean;
+  /**
+   * Described by a standard Custom Elements Manifest alone: `metadata.components` holds only what
+   * the CEM states (tag, declaration, and the specifier that registers it), and nothing else.
+   */
+  standard?: { cemFile: string };
 }
 
 export interface ContextDiagnostic {
@@ -187,6 +192,60 @@ function layoutOf(component: any): 'folders' | 'colocated' {
     : 'colocated';
 }
 
+/**
+ * The components a standard CEM states, keyed as in `oddkin.metadata.json`: the tag, its
+ * declaration, the module with its `custom-element-definition` export (`registeredIn`), and the
+ * shortest package specifier that loads that module (`registration`): an export of the module
+ * itself, else an export whose module re-exports from it. Without one, there is no registration.
+ */
+export function standardComponents(
+  name: string,
+  manifest: Record<string, any>,
+  cem: Record<string, any>,
+): Record<string, any> {
+  const clean = (path: unknown) =>
+    typeof path === 'string' ? path.replace(/^\.\//, '') : undefined;
+  const modules: any[] = cem['modules'] ?? [];
+  const subpaths = Object.keys(manifest['exports'] ?? {}).filter((s) => s !== './package.json');
+  const specifier = (subpath: string) => (subpath === '.' ? name : `${name}${subpath.slice(1)}`);
+  const reexports = (target: string | undefined, module: string) =>
+    modules.some(
+      (m) =>
+        clean(m.path) === target &&
+        (m.exports ?? []).some((e: any) => clean(e.declaration?.module) === module),
+    );
+  const components: Record<string, any> = {};
+  for (const m of modules)
+    for (const d of m.declarations ?? []) {
+      if (!d.tagName) continue;
+      const registeredIn = clean(
+        modules.find((r) =>
+          (r.exports ?? []).some(
+            (e: any) => e.kind === 'custom-element-definition' && e.name === d.tagName,
+          ),
+        )?.path,
+      );
+      const direct = registeredIn
+        ? subpaths.filter((s) => exportTarget(manifest, s) === registeredIn)
+        : [];
+      const loading = direct.length
+        ? direct
+        : registeredIn
+          ? subpaths.filter((s) => reexports(exportTarget(manifest, s), registeredIn))
+          : [];
+      const registration = loading
+        .map(specifier)
+        .sort((a, b) => a.length - b.length || (a < b ? -1 : 1))[0];
+      components[`component:${d.tagName}`] = {
+        tag: d.tagName,
+        cem: { module: clean(m.path), name: d.name },
+        ...(registration ? { registration } : {}),
+        ...(registeredIn ? { registeredIn } : {}),
+      };
+    }
+  return components;
+}
+
 const themeAxes = (inspection: Record<string, any>) => {
   const values = (attribute: string): string[] =>
     [
@@ -275,9 +334,9 @@ export function resolveProjectContext(
       .filter((subpath) => subpath !== './package.json')
       .map((subpath) => (subpath === '.' ? name : `${name}${subpath.slice(1)}`));
     const metadataFile = exportTarget(manifest, './oddkin.metadata.json');
+    const cemFile = (manifest['customElements'] as string | undefined)?.replace(/^\.\//, '');
     if (metadataFile && existsSync(join(dir, metadataFile))) {
       const metadata = readJson(join(dir, metadataFile));
-      const cemFile = (manifest['customElements'] as string | undefined)?.replace(/^\.\//, '');
       const cem =
         cemFile && existsSync(join(dir, cemFile)) ? readJson(join(dir, cemFile)) : undefined;
       record.registrations = Object.fromEntries(
@@ -294,6 +353,25 @@ export function resolveProjectContext(
         metadata,
         ...(cem ? { cem } : {}),
         owned,
+      });
+    } else if (cemFile && existsSync(join(dir, cemFile))) {
+      // A library not built with Oddkin: what its standard CEM states, and nothing more.
+      const cem = readJson(join(dir, cemFile));
+      const components = standardComponents(name, manifest, cem);
+      const registrations = Object.values<any>(components).filter((c) => c.registration);
+      if (registrations.length)
+        record.registrations = Object.fromEntries(
+          registrations.map((c) => [c.tag, c.registration]),
+        );
+      libraries.push({
+        name,
+        version: record.version,
+        dir,
+        manifest,
+        metadata: { components },
+        cem,
+        owned,
+        standard: { cemFile },
       });
     }
     packages.push(record);
@@ -367,7 +445,8 @@ export function resolveProjectContext(
 
   const names = new Set(packages.map((p) => p.name));
   const hasServices = names.has('@oddkin/state') || names.has('@oddkin/app');
-  const hasComponents = libraries.length > 0;
+  // The capability paths are Oddkin's adoption paths: a library not built with Oddkin is none.
+  const hasComponents = libraries.some((l) => !l.standard);
   const capabilityPaths: ProjectContext['capabilityPaths'] = [
     ...(hasServices ? (['application-services'] as const) : []),
     ...(hasComponents && !hasServices ? (['components-without-state'] as const) : []),
@@ -379,7 +458,7 @@ export function resolveProjectContext(
 
   const layouts = new Set(
     libraries
-      .filter((l) => l.owned)
+      .filter((l) => l.owned && !l.standard)
       .flatMap((l) => Object.values<any>(l.metadata['components'] ?? {}).map(layoutOf)),
   );
   const fingerprint: Fingerprint = {

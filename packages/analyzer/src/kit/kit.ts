@@ -136,10 +136,10 @@ function fingerprintOf(
   };
 }
 
-/** SHA-256 of a library's published metadata file, as packed. */
-export const metadataHash = (dir: string): string =>
+/** SHA-256 of a library's published metadata file (`file`, by default its Oddkin metadata), as packed. */
+export const metadataHash = (dir: string, file = 'oddkin.metadata.json'): string =>
   createHash('sha256')
-    .update(readFileSync(join(dir, 'oddkin.metadata.json')))
+    .update(readFileSync(join(dir, file)))
     .digest('hex');
 
 const declarationOf = (cem: any, component: any): any =>
@@ -187,12 +187,18 @@ function componentReference(
   const lines: string[] = [
     `# ${code(`<${tag}>`)}${declaration.name ? ` (${declaration.name})` : ''}`,
     '',
-    `Package ${code(library.name)} ${library.version}${category ? ` · category ${category}` : ''}. Generated from \`custom-elements.json\` and \`oddkin.metadata.json\`; facts are extracted unless marked authored or verified.`,
+    library.standard
+      ? `Package ${code(library.name)} ${library.version}. Generated from \`${library.standard.cemFile}\` alone: the package publishes no Oddkin metadata, so this component's guidance, examples, event intents, and verification are unknown.`
+      : `Package ${code(library.name)} ${library.version}${category ? ` · category ${category}` : ''}. Generated from \`custom-elements.json\` and \`oddkin.metadata.json\`; facts are extracted unless marked authored or verified.`,
     '',
     ...(declaration.description ? [declaration.description, ''] : []),
     '## Import and register',
     '',
-    `- Register: ${code(`import '${component.registration}';`)}`,
+    component.registration
+      ? `- Register: ${code(`import '${component.registration}';`)}`
+      : component.registeredIn
+        ? `- Register: no export of the package loads ${code(component.registeredIn)}, the module that registers it (from the CEM).`
+        : '- Register: the CEM names no module that registers it.',
     imported
       ? `- Class: ${code(`import { ${component.cem.name} } from '${imported}';`)}`
       : '- Class: no public export of the class was found.',
@@ -504,7 +510,8 @@ function guide(
   // One stated rule for every `<prefix-name>` → `<package>/define/<name>` entry keeps the guide within budget.
   const defineEntry = (c: any) => `${library.name}/define/${c.tag.slice(c.tag.indexOf('-') + 1)}`;
   const regular = components.filter((c) => c.registration === defineEntry(c));
-  const irregular = components.filter((c) => c.registration !== defineEntry(c));
+  const irregular = components.filter((c) => c.registration && c.registration !== defineEntry(c));
+  const unregistered = components.filter((c) => !c.registration);
   const byCategory = new Map<string, string[]>();
   for (const c of components) {
     const label: string = c.category ? (categories[c.category]?.label ?? c.category) : 'Other';
@@ -536,9 +543,18 @@ function guide(
           `- Register an element once before using its tag: ${code(`import '${library.name}/define/<name>';`)}, where \`<name>\` is the tag after its prefix (${code(`<${regular[0].tag}>`)}: ${code(`import '${regular[0].registration}';`)}). Class exports are in each component reference.`,
         ]
       : []),
-    ...(irregular.length
+    ...(irregular.length > 12
       ? [
-          `- Registration entries${regular.length ? ' that differ from that rule' : ''}: ${irregular.map((c) => `${code(`<${c.tag}>`)} ${code(`import '${c.registration}';`)}`).join('; ')}.`,
+          `- Registration entries${regular.length ? ' that differ from that rule' : ''}: each component reference names its own.`,
+        ]
+      : irregular.length
+        ? [
+            `- Registration entries${regular.length ? ' that differ from that rule' : ''}: ${irregular.map((c) => `${code(`<${c.tag}>`)} ${code(`import '${c.registration}';`)}`).join('; ')}.`,
+          ]
+        : []),
+    ...(unregistered.length
+      ? [
+          `- No export of the package registers ${unregistered.map((c) => code(`<${c.tag}>`)).join(', ')}: see each reference.`,
         ]
       : []),
     ...(themeCss
@@ -550,22 +566,32 @@ function guide(
     '',
     '## Components',
     '',
-    'Each has a reference at `references/components/<tag>.md` with its exact API, guidance, and examples.',
+    library.standard
+      ? 'Each has a reference at `references/components/<tag>.md` with its exact API from the manifest.'
+      : 'Each has a reference at `references/components/<tag>.md` with its exact API, guidance, and examples.',
     '',
-    ...groups.map(
-      ([label, tags]) => `- **${label}:** ${tags.map((t) => code(`<${t}>`)).join(', ')}`,
-    ),
+    ...(groups.length === 1 && groups[0]![0] === 'Other'
+      ? [`- ${groups[0]![1].map((t) => code(`<${t}>`)).join(', ')}`]
+      : groups.map(
+          ([label, tags]) => `- **${label}:** ${tags.map((t) => code(`<${t}>`)).join(', ')}`,
+        )),
     '',
     'Choosing between them: references/choosing-components.md.',
     '',
     '## Rules from the metadata',
     '',
-    propertyOnly.length
-      ? `- Property-only values (assign as JavaScript properties, never attributes): ${propertyOnly.join(', ')}.`
-      : '- No property-only values.',
-    userEvents.length
-      ? `- Events declared with user intent (authored; see each reference): ${[...new Set(userEvents)].join(', ')}. Other events state their intent, or that it is unknown, in each reference.`
-      : '- No events declare user intent.',
+    ...(library.standard
+      ? [
+          `- This package publishes a standard Custom Elements Manifest (${code(library.standard.cemFile)}) and no Oddkin metadata. Which values are property-only, which events carry user intent, and the components' guidance, examples, and verification are unknown: use only the API each reference lists.`,
+        ]
+      : [
+          propertyOnly.length
+            ? `- Property-only values (assign as JavaScript properties, never attributes): ${propertyOnly.join(', ')}.`
+            : '- No property-only values.',
+          userEvents.length
+            ? `- Events declared with user intent (authored; see each reference): ${[...new Set(userEvents)].join(', ')}. Other events state their intent, or that it is unknown, in each reference.`
+            : '- No events declare user intent.',
+        ]),
     ...(firstContract
       ? [
           `- Contracts the components reference (${code(`${firstContract.package}/${firstContract.file}`)}): ${contracts.map(([id, c]) => `${code(id)} ${c.title}`).join('; ')}.`,
@@ -608,7 +634,9 @@ function guide(
         ]
       : []),
     packaged
-      ? `- JSON keyed by stable id, shipped beside this kit: ${code(`${library.name}/oddkin.metadata.json`)} (components, recipes, stylesheets, models), ${code(`${library.name}/custom-elements.json`)}${inspection?.source ? `, and the theme's tokens in ${code(`${inspection.source.package}${inspection.source.export.slice(1)}`)}` : ''}.`
+      ? library.standard
+        ? `- JSON shipped beside this kit: ${code(`${library.name}/${library.standard.cemFile}`)}, the custom elements manifest.`
+        : `- JSON keyed by stable id, shipped beside this kit: ${code(`${library.name}/oddkin.metadata.json`)} (components, recipes, stylesheets, models), ${code(`${library.name}/custom-elements.json`)}${inspection?.source ? `, and the theme's tokens in ${code(`${inspection.source.package}${inspection.source.export.slice(1)}`)}` : ''}.`
       : `- JSON contract bundles keyed by stable id: ${refs('json')
           .map((e) => e.path)
           .join(', ')}.`,
@@ -632,7 +660,10 @@ export function generateKit(
   { packaged = false, extra = [] }: { packaged?: boolean; extra?: KitFile[] } = {},
 ): { files: Map<string, string>; manifest: KitManifest } {
   const library = project.libraries.find((l) => l.name === name);
-  if (!library) throw new Error(`${name} publishes no oddkin.metadata.json in this workspace.`);
+  if (!library)
+    throw new Error(
+      `${name} publishes no component metadata (oddkin.metadata.json or a custom elements manifest) in this workspace.`,
+    );
   const inputs = packaged ? packagedInputs(project, library) : kitInputs(project, library);
   const fingerprint = fingerprintOf(project, library, inputs);
   const metadata = library.metadata;
@@ -704,7 +735,7 @@ export function generateKit(
               package: library.name,
               version: library.version,
               declaration: declarationOf(library.cem, c) ?? null,
-              metadata: c,
+              metadata: library.standard ? null : c,
             },
           ]),
         ),
@@ -744,7 +775,12 @@ export function generateKit(
     library: { name: library.name, version: library.version },
     fingerprint,
     // The metadata the kit was generated from, so a packed kit can be checked against the packed file.
-    metadata: { file: 'oddkin.metadata.json', sha256: metadataHash(library.dir) },
+    metadata: library.standard
+      ? {
+          file: library.standard.cemFile,
+          sha256: metadataHash(library.dir, library.standard.cemFile),
+        }
+      : { file: 'oddkin.metadata.json', sha256: metadataHash(library.dir) },
     guide: { path: 'GUIDE.md', budgetBytes: GUIDE_BUDGET, bytes: Buffer.byteLength(guideText) },
     entries,
   };

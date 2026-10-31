@@ -99,13 +99,15 @@ export async function main(argv: readonly string[], io: Io): Promise<number> {
   const names = values.package ?? project.libraries.filter((l) => l.owned).map((l) => l.name);
   if (!names.length) {
     io.err(
-      'No package of this workspace publishes oddkin.metadata.json; name installed ones with --package.',
+      'No package of this workspace publishes component metadata (oddkin.metadata.json or a custom elements manifest); name installed ones with --package.',
     );
     return 1;
   }
   for (const name of names)
     if (!project.libraries.some((l) => l.name === name)) {
-      io.err(`error agent.kit.unknownPackage: ${name} publishes no oddkin.metadata.json here.`);
+      io.err(
+        `error agent.kit.unknownPackage: ${name} publishes no component metadata here (oddkin.metadata.json or a custom elements manifest).`,
+      );
       return 1;
     }
   if (command === 'llms' && base) {

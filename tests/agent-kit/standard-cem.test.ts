@@ -1,0 +1,163 @@
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { Ajv2020 } from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
+import { afterAll, describe, expect, it } from 'vitest';
+import { main } from '../../packages/analyzer/src/kit/cli.js';
+import {
+  resolveProjectContext,
+  standardComponents,
+} from '../../packages/analyzer/src/kit/context.js';
+import { generateKit } from '../../packages/analyzer/src/kit/kit.js';
+import { packageKit } from '../../packages/analyzer/src/kit/package-kit.js';
+import { repo } from './acme.js';
+
+// A library not built with Oddkin (CF.3): plain custom elements described by a standard Custom
+// Elements Manifest alone. Its kit holds what the manifest states and says what is unknown.
+
+const FIXTURE = join(repo, 'tests/consumers/workbench/plain-widgets');
+const temps: string[] = [];
+afterAll(() => {
+  for (const dir of temps) rmSync(dir, { recursive: true, force: true });
+});
+const temp = () => {
+  const dir = mkdtempSync(join(tmpdir(), 'oddkin-standard-cem-'));
+  temps.push(dir);
+  return dir;
+};
+const schema = (name: string) =>
+  JSON.parse(readFileSync(join(repo, `docs/schemas/${name}.v1.schema.json`), 'utf8')) as object;
+const ajv = new Ajv2020({ allErrors: true, strict: true, strictRequired: false });
+addFormats.default(ajv);
+const validKit = ajv.compile(schema('agent-kit'));
+const validContext = ajv.compile(schema('project-context'));
+
+/** An application that installs @plain/widgets and nothing from Oddkin. */
+function consumer(): string {
+  const root = temp();
+  writeFileSync(
+    join(root, 'package.json'),
+    JSON.stringify({
+      name: 'plain-app',
+      private: true,
+      dependencies: { '@plain/widgets': '^1.0.0' },
+    }),
+  );
+  mkdirSync(join(root, 'node_modules/@plain'), { recursive: true });
+  cpSync(FIXTURE, join(root, 'node_modules/@plain/widgets'), { recursive: true });
+  return root;
+}
+
+describe('a library described by a standard CEM alone', () => {
+  it('enters the project context with what its manifest states, and no Oddkin adoption path', () => {
+    const project = resolveProjectContext(consumer());
+    expect(validContext(project.context), JSON.stringify(validContext.errors)).toBe(true);
+    const library = project.libraries.find((l) => l.name === '@plain/widgets');
+    expect(library?.standard).toEqual({ cemFile: 'custom-elements.json' });
+    expect(library?.metadata).toEqual({
+      components: {
+        'component:plain-chip': {
+          tag: 'plain-chip',
+          cem: { module: 'chip.js', name: 'PlainChip' },
+          registration: '@plain/widgets/chip.js',
+          registeredIn: 'chip.js',
+        },
+      },
+    });
+    expect(project.context.packages).toEqual([
+      expect.objectContaining({
+        name: '@plain/widgets',
+        registrations: { 'plain-chip': '@plain/widgets/chip.js' },
+      }),
+    ]);
+    expect(project.context.packages[0]).not.toHaveProperty('metadata');
+    expect(project.context.capabilityPaths).toEqual([]);
+  });
+
+  it('registers through an export that re-exports the defining module, or says none does', () => {
+    const cem = JSON.parse(readFileSync(join(FIXTURE, 'custom-elements.json'), 'utf8'));
+    const only = (exports: Record<string, string>) =>
+      standardComponents('@plain/widgets', { exports }, cem)['component:plain-chip'];
+    expect(only({ '.': './index.js' }).registration).toBe('@plain/widgets');
+    expect(only({ './other': './other.js' })).toEqual({
+      tag: 'plain-chip',
+      cem: { module: 'chip.js', name: 'PlainChip' },
+      registeredIn: 'chip.js',
+    });
+  });
+
+  it('gets a kit of the manifest facts that states what is unknown, and invents nothing', () => {
+    const project = resolveProjectContext(consumer());
+    const { files, manifest } = generateKit(project, '@plain/widgets');
+    expect(validKit(manifest), JSON.stringify(validKit.errors)).toBe(true);
+    expect([...files.keys()].sort()).toEqual([
+      'GUIDE.md',
+      'inputs.json',
+      'json/components.json',
+      'kit.json',
+      'references/choosing-components.md',
+      'references/components/plain-chip.md',
+    ]);
+    expect(manifest.metadata?.file).toBe('custom-elements.json');
+    const reference = files.get('references/components/plain-chip.md')!;
+    expect(reference).toContain(
+      'Generated from `custom-elements.json` alone: the package publishes no Oddkin metadata',
+    );
+    expect(reference).toContain("- Register: `import '@plain/widgets/chip.js';`");
+    expect(reference).toContain("- Class: `import { PlainChip } from '@plain/widgets';`");
+    for (const fact of [
+      '`removable`',
+      '`plain-remove`',
+      '`icon`',
+      '`count`',
+      '`--plain-chip-color`',
+    ])
+      expect(reference).toContain(fact);
+    expect(reference).toContain('| `count` | none |');
+    expect(reference).toContain('Not authored for this component.');
+    expect(reference).toContain('None authored.');
+    const guide = files.get('GUIDE.md')!;
+    expect(guide).toContain(
+      "Registration entries: `<plain-chip>` `import '@plain/widgets/chip.js';`.",
+    );
+    expect(guide).toContain('- `<plain-chip>`');
+    expect(guide).toContain('publishes a standard Custom Elements Manifest');
+    expect(guide).toContain('- Tokens: no token inspection was found for this library.');
+    expect(guide).not.toContain('Property-only values');
+    expect(guide).not.toContain('**Other:**');
+    const bundle = JSON.parse(files.get('json/components.json')!);
+    expect(bundle.entries['component:plain-chip'].metadata).toBeNull();
+    expect(bundle.entries['component:plain-chip'].declaration.tagName).toBe('plain-chip');
+  });
+
+  it('is packaged by its own workspace, and the command line writes and checks it', async () => {
+    const root = temp();
+    writeFileSync(
+      join(root, 'package.json'),
+      JSON.stringify({ name: 'plain-repo', private: true, workspaces: ['packages/*'] }),
+    );
+    cpSync(FIXTURE, join(root, 'packages/widgets'), { recursive: true });
+    const project = resolveProjectContext(root);
+    const library = project.libraries.find((l) => l.name === '@plain/widgets')!;
+    expect(library.owned).toBe(true);
+    const { files, manifest } = await packageKit(project, library);
+    expect(validKit(manifest), JSON.stringify(validKit.errors)).toBe(true);
+    expect(files.get('GUIDE.md')).toContain(
+      '- JSON shipped beside this kit: `@plain/widgets/custom-elements.json`, the custom elements manifest.',
+    );
+    expect(files.get('llms.txt')).toContain(
+      '- [custom-elements.json](../custom-elements.json): the custom elements manifest',
+    );
+    expect(files.get('llms.txt')).not.toContain('oddkin.metadata.json');
+
+    const io = { out: () => {}, err: (text: string) => errors.push(text) };
+    const errors: string[] = [];
+    expect(await main(['package', '--root', root], io)).toBe(0);
+    expect(await main(['package', '--root', root, '--check'], io)).toBe(0);
+    const app = consumer();
+    expect(await main(['--root', app, '--package', '@plain/widgets'], io)).toBe(0);
+    expect(await main(['--root', app, '--package', '@plain/widgets', '--check'], io)).toBe(0);
+    expect(errors).toEqual([]);
+  });
+});
