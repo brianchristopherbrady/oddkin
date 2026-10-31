@@ -1,6 +1,6 @@
 # Agent tooling, generated agent kits, and shared metadata contracts
 
-Status: **proposal**. `@oddkin/agent` is optional, development-only, and not implemented. A Node-script pilot of project context, kit generation, freshness, and the managed `AGENTS.md` section exists in `scripts/agent-kit/` (M5 items 859–862); it moves into `@oddkin/agent` in M11. Nothing here is a browser runtime feature. §3.2 separates what exists today from what needs extension and what remains proposed. Decision record: [ADR 0032](./decisions/0032-generated-agent-kits.md) (extends [ADR 0022](./decisions/0022-agent-boundaries.md)).
+Status: **proposal**. `@oddkin/agent` is optional, development-only, and not implemented. Project context, kit generation, freshness, and the managed `AGENTS.md` section ship in `@oddkin/analyzer`: the `oddkin-kit` command and the `@oddkin/analyzer/kit` entry (2026-10-30; first a Node-script pilot in `scripts/agent-kit/`, M5 items 859–862, whose scripts now run the command). With `@oddkin/agent` skipped (ADR 0046 D7), that is where they stay. Nothing here is a browser runtime feature. §3.2 separates what exists today from what needs extension and what remains proposed. Decision record: [ADR 0032](./decisions/0032-generated-agent-kits.md) (extends [ADR 0022](./decisions/0022-agent-boundaries.md)).
 
 ## 1. Purpose and central outcome
 
@@ -88,7 +88,7 @@ Rules:
 | Examples | `@oddkin/workbench/examples`: `defineExamples` typed from `HTMLElementTagNameMap`, `examples.v1`, `checkExamples`, `validateUsage`; explained incorrect examples with expected diagnostics (M4); checks against workspace public exports | Incorrect examples for code-level mistakes (registration, events, bindings, reconnect, theme scopes); checks against packed packages | Kit references generated from examples |
 | Pages and content | `@oddkin/workbench/pages`, `./config`, `defineDocs` | Validation of API references inside authored guidance | Clean Markdown pages and `llms.txt` in static docs builds |
 | Diagnostics | Five shapes sharing `code`, `severity`, `message`, a location (`path` or `source`), and an optional `suggestion`: tokens `Diagnostic`, `AnalyzerDiagnostic`, `ModelDiagnostic`, `WorkbenchDiagnostic`, `CollectionDiagnostic`; core `OddkinError` codes | Optional envelope fields (§9.1) | `diagnostic.v1` schema |
-| Agent tooling | Pilot scripts (M5, `scripts/agent-kit/`): `resolveProjectContext`, kit generation with entry guide, component/token/recipe/model references and `json/` bundles, fingerprints and `--check`, the managed `AGENTS.md` section | Task references, packaging adapters | `@oddkin/agent` package, operations, CLI, MCP adapter, preview feedback, evaluation |
+| Agent tooling | `@oddkin/analyzer/kit` and `oddkin-kit` (first a pilot in `scripts/agent-kit/`, M5): `resolveProjectContext`, kit generation with entry guide, component/token/recipe/model references and `json/` bundles, fingerprints and `--check`, packaged kits and their check from an installed package, the managed `AGENTS.md` section | Task references, packaging adapters | `@oddkin/agent` package, operations, MCP adapter, preview feedback, evaluation |
 
 ## 4. Project context and freshness
 
@@ -106,11 +106,11 @@ It also reports which **capability paths** are in use (core-only authoring, toke
 
 **Freshness.** Every generated artifact carries a fingerprint: generator name and version, schema version, installed package versions, and a content hash of its inputs (metadata files, theme config, authored content, example files). `oddkin-agent kit --check` recomputes it; a mismatch reports `agent.kit.stale` with the changed inputs and the refresh command, and exits non-zero in CI. Every operation result states its `source` (package, version, metadata path, fingerprint) and `freshness` (`current`, `stale`, or `unknown`). Current website documentation is never silently substituted for an older installed API.
 
-*(Pilot, M5: `scripts/agent-kit/context.mjs` resolves the context from manifests, published metadata, the token inspection the foundations reference, source maps (component sources), example files, and `oddkin.docs.*`; nothing is executed. Theme axes come from the inspection's scopes; the component layout is `folders` when a definition's template is its own module beside the class. Capability paths follow the installed packages: `application-services` with `@oddkin/state` or `@oddkin/app`, otherwise `components-without-state` when a component library is present; `core-authoring` with project-owned components; `tokens-only` with `@oddkin/tokens` and neither. The generator version is a hash of the pilot's sources, and `inputs.json` beside `kit.json` records each input's hash so `--check` names what changed.)*
+*(Implemented, `@oddkin/analyzer/kit` (`resolveProjectContext`; first the M5 pilot): the context comes from manifests, published metadata, the token inspection the foundations reference, source maps (component sources), example files, and `oddkin.docs.*`; nothing is executed. Theme axes come from the inspection's scopes; the component layout is `folders` when a definition's template is its own module beside the class. Capability paths follow the installed packages: `application-services` with `@oddkin/state` or `@oddkin/app`, otherwise `components-without-state` when a component library is present; `core-authoring` with project-owned components; `tokens-only` with `@oddkin/tokens` and neither. The generator version is the analyzer's version and a hash of the kit modules (the same bytes in the workspace and in an installed package), and `inputs.json` beside `kit.json` records each input's hash so `--check` names what changed.)*
 
 ## 5. Generated agent kit
 
-`oddkin-agent kit` (and the `./kit` API) writes a versioned kit from the library's own inputs. It works without Workbench.
+`oddkin-agent kit` (and the `./kit` API) writes a versioned kit from the library's own inputs. It works without Workbench. *(Implemented as `oddkin-kit` and `@oddkin/analyzer/kit`, 2026-10-30.)*
 
 ```text
 agent-kit/

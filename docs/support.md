@@ -20,7 +20,7 @@ Chrome and Edge 130, Firefox 132, Safari 18.2, and later, on desktop ([ADR 0009]
 
 ## Node.js
 
-- The command-line tools (`oddkin` in `@oddkin/workbench`, `oddkin-tokens`, `oddkin-analyze`, and `oddkin-impact`) need Node.js 24.12 or newer, as their `engines` field says. CI runs Node 24.
+- The command-line tools (`oddkin` in `@oddkin/workbench`, `oddkin-tokens`, and `oddkin-analyze`, `oddkin-impact`, and `oddkin-kit` in `@oddkin/analyzer`) need Node.js 24.12 or newer, as their `engines` field says. CI runs Node 24.
 - The other packages are browser libraries and declare no Node version. Every export imports in Node 24 (`npm run verify:packs`), but server-side rendering is not supported.
 - Node.js below 24 is not tested.
 

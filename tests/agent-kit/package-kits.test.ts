@@ -4,9 +4,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { describe, expect, it, vi } from 'vitest';
-import { resolveProjectContext } from '../../scripts/agent-kit/context.mjs';
-import { GUIDE_BUDGET } from '../../scripts/agent-kit/kit.mjs';
-import { packageKit } from '../../scripts/agent-kit/package-kits.mjs';
+import { resolveProjectContext } from '../../packages/analyzer/src/kit/context.js';
+import { GUIDE_BUDGET } from '../../packages/analyzer/src/kit/kit.js';
+import { packageKit } from '../../packages/analyzer/src/kit/package-kit.js';
 import { repo } from './acme.js';
 
 // Version-matched agent kits inside the packages (ADR 0046 D6): what the build writes into

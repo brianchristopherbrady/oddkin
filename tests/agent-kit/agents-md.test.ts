@@ -1,8 +1,13 @@
 import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it, vi } from 'vitest';
-import { BEGIN, END, renderSection, updateAgentsMd } from '../../scripts/agent-kit/agents-md.mjs';
-import { resolveProjectContext } from '../../scripts/agent-kit/context.mjs';
+import {
+  BEGIN,
+  END,
+  renderSection,
+  updateAgentsMd,
+} from '../../packages/analyzer/src/kit/agents-md.js';
+import { resolveProjectContext } from '../../packages/analyzer/src/kit/context.js';
 import { acmeWorkspace, repo } from './acme.js';
 
 // Agent-kit pilot, item 862: the managed AGENTS.md section (agent-tooling.md §5).
@@ -51,11 +56,11 @@ describe('renderSection', () => {
 
   it('keeps the repository’s own AGENTS.md section current', () => {
     const file = join(repo, 'AGENTS.md');
-    expect(existsSync(file), 'run node scripts/agent-kit/agents-md.mjs --write').toBe(true);
+    expect(existsSync(file), 'run npx oddkin-kit agents-md --write').toBe(true);
     const text = readFileSync(file, 'utf8');
     expect(
       updateAgentsMd(text, renderSection(resolveProjectContext(repo))),
-      'run node scripts/agent-kit/agents-md.mjs --write',
+      'run npx oddkin-kit agents-md --write',
     ).toBe(text);
   });
 });

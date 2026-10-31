@@ -2,10 +2,10 @@ import { readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { afterAll, describe, expect, it, vi } from 'vitest';
-import { resolveProjectContext } from '../../scripts/agent-kit/context.mjs';
+import { resolveProjectContext } from '../../packages/analyzer/src/kit/context.js';
 import { acmeWorkspace, repo } from './acme.js';
 
-// Agent-kit pilot, item 859: project context (agent-tooling.md §4, project-context.v1). The
+// Agent kits (@oddkin/analyzer/kit), item 859: project context (agent-tooling.md §4, project-context.v1). The
 // Oddkin cases read this repository's build outputs (`npm run build` first).
 vi.setConfig({ testTimeout: 60_000 });
 

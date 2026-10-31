@@ -3,11 +3,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { afterAll, describe, expect, it, vi } from 'vitest';
-import { resolveProjectContext } from '../../scripts/agent-kit/context.mjs';
-import { checkKit, generateKit, main, writeKit } from '../../scripts/agent-kit/kit.mjs';
+import { main } from '../../packages/analyzer/src/kit/cli.js';
+import { GENERATOR, resolveProjectContext } from '../../packages/analyzer/src/kit/context.js';
+import { checkKit, generateKit, writeKit } from '../../packages/analyzer/src/kit/kit.js';
 import { acmeWorkspace, repo } from './acme.js';
 
-// Agent-kit pilot, items 860–861: kits for @oddkin/components and a consuming library with a
+// Agent kits (@oddkin/analyzer/kit): kits for @oddkin/components and a consuming library with a
 // different prefix, packages, and theme (agent-tooling.md §5, agent-kit.v1), and freshness.
 vi.setConfig({ testTimeout: 60_000 });
 
@@ -217,7 +218,7 @@ describe('a consuming library’s kit', () => {
     kit.fingerprint.packages['@acme/ui'] = '2.2.0';
     writeKit(dir, new Map([...files, ['kit.json', JSON.stringify(kit)]]));
     expect(checkKit(dir, load(), '@acme/ui').changed).toEqual([
-      expect.stringMatching(/^generator 0\.0\.0-pilot\.000000000000 → 0\.0\.0-pilot\./),
+      `generator 0.0.0-pilot.000000000000 → ${GENERATOR.version}`,
       '@acme/ui 2.2.0 → 2.3.0',
     ]);
   });
@@ -231,22 +232,17 @@ describe('a consuming library’s kit', () => {
   });
 
   it('names the refresh command when --check finds a stale kit', async () => {
-    const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const logs = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const errors: string[] = [];
+    const io = { out: () => {}, err: (text: string) => errors.push(text) };
     const out = join(temp, 'cli');
-    expect(await main(['--root', root, '--theme-config', 'theme.json', '--out', out])).toBe(0);
-    expect(
-      await main(['--root', root, '--theme-config', 'theme.json', '--out', out, '--check']),
-    ).toBe(0);
+    const args = ['--root', root, '--theme-config', 'theme.json', '--out', out];
+    expect(await main(args, io)).toBe(0);
+    expect(await main([...args, '--check'], io)).toBe(0);
     writeFileSync(join(root, 'theme.json'), `${readFileSync(join(root, 'theme.json'), 'utf8')}\n`);
-    expect(
-      await main(['--root', root, '--theme-config', 'theme.json', '--out', out, '--check']),
-    ).toBe(1);
-    const message = errors.mock.calls.map((c) => String(c[0])).join('\n');
+    expect(await main([...args, '--check'], io)).toBe(1);
+    const message = errors.join('\n');
     expect(message).toContain('error agent.kit.stale: @acme/ui');
     expect(message).toContain('theme.json (changed)');
-    expect(message).toContain(`→ node scripts/agent-kit/kit.mjs --package @acme/ui --out ${out}`);
-    errors.mockRestore();
-    logs.mockRestore();
+    expect(message).toContain(`→ npx oddkin-kit --package @acme/ui --out ${out}`);
   });
 });

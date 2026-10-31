@@ -7,7 +7,7 @@
     "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
     "directory": "packages/analyzer"
   },
-  "description": "Node-only static analysis of Oddkin component libraries: Custom Elements Manifest and oddkin.metadata.json, without executing component code.",
+  "description": "Node-only static analysis of Oddkin component libraries: Custom Elements Manifest and oddkin.metadata.json, without executing component code, and the agent kits generated from them.",
   "type": "module",
   "sideEffects": false,
   "engines": {
@@ -15,7 +15,8 @@
   },
   "bin": {
     "oddkin-analyze": "dist/bin.js",
-    "oddkin-impact": "dist/impact-bin.js"
+    "oddkin-impact": "dist/impact-bin.js",
+    "oddkin-kit": "dist/kit-bin.js"
   },
   "exports": {
     ".": {
@@ -25,6 +26,10 @@
     "./impact": {
       "types": "./dist/impact.d.ts",
       "default": "./dist/impact.js"
+    },
+    "./kit": {
+      "types": "./dist/kit/index.d.ts",
+      "default": "./dist/kit/index.js"
     },
     "./package.json": "./package.json"
   },
