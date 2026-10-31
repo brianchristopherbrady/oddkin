@@ -19,6 +19,17 @@ interface Report {
   readonly kit: {
     readonly shipped: readonly string[];
     readonly imports: { readonly checked: number; readonly unresolved: readonly string[] };
+    readonly examples: Readonly<
+      Record<
+        string,
+        {
+          readonly checked: number;
+          readonly mistakes: number;
+          readonly computed: number;
+          readonly problems: readonly string[];
+        }
+      >
+    >;
     readonly agentsMd: { readonly kept: boolean; readonly managed: boolean };
   };
   readonly steps: readonly { readonly name: string; readonly ms: number }[];
@@ -103,6 +114,21 @@ test('ships the library agent kit; every shipped kit is current in the app and i
   expect(report.kit.imports.unresolved).toEqual([]);
   // The team's own AGENTS.md text stays; the managed section follows it.
   expect(report.kit.agentsMd).toEqual({ kept: true, managed: true });
+});
+
+test('the published examples pass against the installed manifests, mistakes as declared', () => {
+  // The packed Workbench's checkExamples and validateUsage, on each package's published examples.
+  const { examples } = report.kit;
+  expect(Object.keys(examples).sort()).toEqual([
+    '@acme/widgets',
+    '@oddkin/ai',
+    '@oddkin/components',
+  ]);
+  for (const [name, result] of Object.entries(examples)) {
+    expect(result.problems, name).toEqual([]);
+    expect(result.checked, name).toBeGreaterThan(0);
+  }
+  expect(examples['@oddkin/components']!.mistakes).toBeGreaterThan(40);
 });
 
 test('the app uses the library on its theme, with the router, state, and an AI element', async ({

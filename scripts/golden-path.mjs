@@ -67,6 +67,67 @@ for (const name of names) {
 console.log(JSON.stringify(result));
 `;
 
+// Run in the library team's repository (it has the packed @oddkin/workbench): the examples each
+// package publishes in its metadata, checked against the manifest it publishes, as installed in
+// the app. Correct examples give no diagnostic; each explained mistake gives the one it declares.
+const CHECK_PUBLISHED_EXAMPLES = `import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { checkExamples, validateUsage } from '@oddkin/workbench/examples';
+const [modules, ...names] = process.argv.slice(2);
+const read = (file) => JSON.parse(readFileSync(file, 'utf8'));
+const report = {};
+for (const name of names) {
+  const dir = join(modules, ...name.split('/'));
+  const manifest = read(join(dir, 'package.json'));
+  const metadata = read(join(dir, 'oddkin.metadata.json'));
+  const cem = read(join(dir, manifest.customElements.replace(/^\\.\\//, '')));
+  const declarations = cem.modules.flatMap((m) => m.declarations ?? []).filter((d) => d.tagName);
+  const sets = new Map();
+  let computed = 0;
+  for (const example of Object.values(metadata.examples ?? {})) {
+    // An example whose values are computed has no literal definition to check.
+    if (!example.definition) {
+      computed++;
+      continue;
+    }
+    const tag = example.component.replace(/^component:/, '');
+    const set = sets.get(tag) ?? { component: tag, examples: {} };
+    set.examples[example.name] = example.definition;
+    sets.set(tag, set);
+  }
+  const problems = [];
+  let checked = 0;
+  let mistakes = 0;
+  for (const set of sets.values()) {
+    const declaration = declarations.find((d) => d.tagName === set.component);
+    if (!declaration) {
+      problems.push(set.component + ': not in the manifest');
+      continue;
+    }
+    const fields = (declaration.members ?? []).filter(
+      (m) => m.kind === 'field' && !m.static && !m.readonly,
+    );
+    const slots = (declaration.slots ?? []).map((s) => s.name);
+    for (const d of checkExamples(set, { properties: fields.map((m) => m.name), slots }))
+      problems.push(set.component + ': ' + d.code + ' at ' + d.path);
+    const found = validateUsage(set, {
+      properties: fields.map((m) => ({ name: m.name, type: m.type?.text, attribute: m.attribute })),
+      slots,
+    });
+    for (const [example, definition] of Object.entries(set.examples)) {
+      checked++;
+      if (definition.incorrect) mistakes++;
+      const codes = found.filter((d) => d.path?.startsWith('/examples/' + example + '/')).map((d) => d.code);
+      const expected = definition.incorrect ? [definition.incorrect.diagnostic] : [];
+      if (codes.join() !== expected.join())
+        problems.push(set.component + '/' + example + ': ' + (codes.join() || 'none') + ', expected ' + (expected.join() || 'none'));
+    }
+  }
+  report[name] = { checked, mistakes, computed, problems };
+}
+console.log(JSON.stringify(report));
+`;
+
 /**
  * Build the projects in `work`, the site for `base` (the app's URL path). The helpers come from
  * scripts/packed-consumers.mjs: `oddkin(name)` is the install spec of a packed package (or of the
@@ -143,6 +204,11 @@ export async function buildGoldenPath(work, base, helpers) {
   await step('kit-check', [kit, ...check], app);
   await writeFile(join(app, 'kit-imports.mjs'), RESOLVE_KIT_IMPORTS);
   const imports = JSON.parse(await run([join(app, 'kit-imports.mjs'), ...shipped], app));
+  // The examples those packages publish, against the manifests installed in the app.
+  await writeFile(join(repo, 'check-examples.mjs'), CHECK_PUBLISHED_EXAMPLES);
+  const examples = JSON.parse(
+    await run([join(repo, 'check-examples.mjs'), join(app, 'node_modules'), ...shipped], repo),
+  );
   const dist = join(app, 'dist');
   const files = await filesUnder(dist);
   await cp(join(repo, 'site/dist'), join(dist, 'site'), { recursive: true });
@@ -165,6 +231,7 @@ export async function buildGoldenPath(work, base, helpers) {
     kit: {
       shipped,
       imports,
+      examples,
       agentsMd: {
         kept: agentsMd.startsWith(AGENTS_NOTES),
         managed:

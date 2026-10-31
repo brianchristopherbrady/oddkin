@@ -4610,3 +4610,11 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Tests | `npx vitest run --project node tests/agent-kit` (after `node scripts/agent-kit/package-kits.mjs`) | 36 of 36. The components guide names `@oddkin/tokens/css/default.css` and the import-map rule (with `@oddkin/core/…`, `@oddkin/tokens/…`). The composition reference says that a document sets only what an element's schema lists. Run once before the kits were rewritten, the llms test failed, as it should: the served guide differed from the stale one on disk |
 | Kits | `node scripts/agent-kit/package-kits.mjs --check` after `npm run lint` (which builds) | Both current; guides 7,347 and 6,889 B of 8,192 |
 | Gates | `npm run lint`; `npm run typecheck` | Pass; pass |
+
+### 2026-10-30 — Published examples against the packed packages (M12, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The golden path by hand | `node .tmp/try-golden.mjs` | `@oddkin/components`: 335 checked, 54 mistakes, 0 problems. `@oddkin/ai`: 40 checked, 4 mistakes, 3 computed (not checked), 0 problems. `@acme/widgets`: 3 checked, 0 problems. 362 s in all at the machine's load |
+| E2E | `e2e/golden-path.spec.ts`, Chromium, Firefox, and WebKit with `--workers=1` | 21 of 21, with the new test of the examples report |
+| Types | `npx tsc -p tsconfig.tests.json` | Pass |
