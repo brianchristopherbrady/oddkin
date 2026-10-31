@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' 'sha256-VlGM32Def9y8lXqVWXUjHiy33I7bLzhK3H9ZRLvi45U='; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types oddkin-template"
+    />
+    <title>Streaming chat · Oddkin</title>
+    <link rel="stylesheet" href="../../packages/tokens/dist/css/default.css" />
+    <link rel="stylesheet" href="../../packages/components/dist/css/layout.css" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@oddkin/ai/controllers": "../../packages/ai/dist/controllers/index.js",
+          "@oddkin/ai/define/conversation": "../../packages/ai/dist/conversation/conversation.define.js",
+          "@oddkin/ai/define/prompt-input": "../../packages/ai/dist/prompt-input/prompt-input.define.js",
+          "@oddkin/ai/stream": "../../packages/ai/dist/stream/index.js",
+          "@oddkin/components/button": "../../packages/components/dist/button/index.js",
+          "@oddkin/components/styles": "../../packages/components/dist/styles/index.js",
+          "@oddkin/core/controllers/announce": "../../packages/core/dist/controllers/announce.js",
+          "@oddkin/core/controllers/focus": "../../packages/core/dist/controllers/focus.js",
+          "@oddkin/core/controllers/observe": "../../packages/core/dist/controllers/observe.js",
+          "@oddkin/core/element": "../../packages/core/dist/element/index.js",
+          "@oddkin/core/helpers/live": "../../packages/core/dist/helpers/live.js",
+          "@oddkin/core/i18n": "../../packages/core/dist/i18n/index.js",
+          "@oddkin/core/model": "../../packages/core/dist/model/index.js",
+          "@oddkin/core/reactive": "../../packages/core/dist/reactive/index.js",
+          "@oddkin/core/styles": "../../packages/core/dist/styles/index.js",
+          "@oddkin/core/template": "../../packages/core/dist/template/index.js",
+          "@oddkin/tokens/refs": "../../packages/tokens/dist/refs/index.js"
+        }
+      }
+    </script>
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <div id="app" class="chat odd-stack odd-box">
+      <header>
+        <h1>Streaming chat</h1>
+        <p class="note" role="note">
+          Answers stream from this page's server in the AI SDK UI message stream format. The server
+          replays canned answers: ask about the weather, ask for something long, or say fail.
+        </p>
+      </header>
+      <odd-conversation label="Chat">
+        <odd-prompt-input slot="composer" label="Message" placeholder="Ask something…">
+        </odd-prompt-input>
+      </odd-conversation>
+      <p id="chat-status" class="note" role="status"></p>
+    </div>
+  </body>
+</html>

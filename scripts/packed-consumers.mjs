@@ -139,6 +139,9 @@ export const CONSUMERS = {
   // standard-CEM library documented by a fresh project. Its static build is served at
   // /workbench/; /workbench/__ready also reports the URL of its `oddkin workbench dev`.
   workbench: { workbench: true },
+  // @oddkin/ai streaming from a real endpoint (scripts/ai-stream-consumer.mjs): examples/ai-stream
+  // on the packed packages, with its own server, whose URL /ai-stream/__ready reports.
+  'ai-stream': { aiStream: true },
 };
 
 // Build tools at the versions the workspace verifies; the rest pinned (checked 2026-10-28). A spec
@@ -340,6 +343,20 @@ export async function packConsumer(name, work) {
   const oddkin = (pkg) =>
     registry ? `@oddkin/${pkg}@${registry}` : pack(pkg, join(work, 'tarballs'));
   const site = join(work, name);
+  if (consumer.aiStream) {
+    await rm(site, { recursive: true, force: true });
+    const { buildAiStreamConsumer } = await import('./ai-stream-consumer.mjs');
+    return buildAiStreamConsumer(site, {
+      root,
+      oddkin,
+      tarballs: !registry,
+      freshProject,
+      installedIn,
+      importMap,
+      withImportMap,
+      publishedFile,
+    });
+  }
   if (consumer.goldenPath || consumer.workbench) {
     await rm(site, { recursive: true, force: true });
     await mkdir(site, { recursive: true });

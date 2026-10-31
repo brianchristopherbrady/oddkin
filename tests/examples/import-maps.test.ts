@@ -20,6 +20,7 @@ const pages = [
   'full-app',
   'autoload',
   'app-header',
+  'ai-stream',
 ];
 
 const IMPORTS = [

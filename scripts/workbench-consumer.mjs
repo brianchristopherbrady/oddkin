@@ -22,7 +22,7 @@ async function bin(dir, pkg, command) {
 }
 
 /** Throw if the project `dir` took an @oddkin package from the registry instead of a tarball. */
-async function onlyTarballs(dir) {
+export async function onlyTarballs(dir) {
   const lock = JSON.parse(await readFile(join(dir, 'package-lock.json'), 'utf8'));
   const fetched = Object.entries(lock.packages)
     .filter(([path, entry]) => /node_modules\/@oddkin\/[^/]+$/.test(path) && !entry.link)

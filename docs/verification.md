@@ -4487,3 +4487,17 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Types, lint, size | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Pass; pass; workbench-shell 52,207 B of 54,272, workbench-theme-studio 4,852 of 5,632 |
 
 **Not verified:** the packed project's spec (it runs `workbench dev` but no watch scenario), and Linux, where inotify follows a renamed directory; CI runs the server test there.
+
+### 2026-10-30 — Streaming chat example from the packed packages; stop race (P0.4, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Example server | `npx vitest run --project node tests/examples` | 176 of 176. 5 server tests read the stream through `UiMessageStreamReader`: a canned answer with a tool and a source; an error chunk; a stop (`cancelled`, an `abort` chunk before `[DONE]`, then `already-finished`); static files (403 outside the root, 404, 405, 400 on bad JSON, 413 above 1 MB); hidden files (`.env`, `%2eenv`, `site/..%2f.env`, `.git/config`, `.git/`) answered 404 |
+| Controller | `npx vitest run --project node packages/ai/test/conversation.test.ts` | 19 of 19. The A07 tests assert that a confirmed stop leaves the parts done, and that a stop confirmed too late changes no message or tool |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutants-stop.json`; `.tmp/mutants-hidden.json` | 2 of 2 killed (a confirmed stop leaving the message streaming; settling an attempt that had ended otherwise); 1 of 1 (hidden files served) |
+| Browser tests, 3 engines | `node ../oddkin-lanes/tools/browser-set.mjs` with the conversation, prompt-input, frameworks, examples, and elements tests of `@oddkin/ai` | 41 of 41 in each engine |
+| E2E, 3 engines | `e2e/ai-stream.spec.ts` with `--workers=1` under the E2E lock | 12 of 12, and the stop test 9 of 9 with `--repeat-each=3`. Before the fix, the stop test failed in each engine ("Generating…" under "Response stopped."). After the fix, WebKit's click on Stop timed out once ("element is not stable"), because the composer moved down with each word; the page's fixed height fixed it |
+| AI demos | `e2e/ai-demos.spec.ts`: Chromium, then Firefox and WebKit with `--workers=1` | 13 of 13; 26 of 26 |
+| Gates | `npm run typecheck`; `npm run lint` (after `npm run compat`, which adds the example's stylesheet to `docs/compatibility/matrix.md`); `node scripts/check-size.mjs`; `npx vitest run --project node` | Pass; pass; pass; 1,526 passed, 2 skipped |
+
+**Not verified:** a real model behind the server (the README's route is a sketch from the AI SDK documentation, checked 2026-10-30; there is no key here), and the e2e outside Windows.

@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  font-family: var(--odd-font-family-sans);
+  color: var(--odd-color-text-primary);
+  background: var(--odd-color-canvas);
+}
+
+.chat {
+  --odd-box-inset: var(--odd-space-lg);
+  max-inline-size: 48rem;
+  /* A fixed height keeps the composer in place: answers scroll inside the conversation. */
+  block-size: 100dvh;
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+h1 {
+  margin: 0;
+  font-size: var(--odd-font-size-2xl);
+}
+
+.note {
+  margin: 0;
+  color: var(--odd-color-text-secondary);
+}
+
+odd-conversation {
+  flex: 1;
+  min-block-size: 24rem;
+}

@@ -15,6 +15,7 @@ const pages = [
   'forms',
   'autoload',
   'app-header',
+  'ai-stream',
 ];
 
 describe.each(pages)('%s CSP', (name) => {

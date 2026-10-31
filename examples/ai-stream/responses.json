@@ -1,0 +1,1275 @@
+{
+  "$comment": "Canned answers as AI SDK UI message stream v1 chunks (https://ai-sdk.dev/docs/ai-sdk-ui/stream-protocol, checked 2026-10-30), written by hand, not captured from a model. server.mjs answers with the first whose match occurs in the last user message (any case); the last has none. MESSAGE_ID becomes the requested message id.",
+  "responses": [
+    {
+      "match": "weather",
+      "chunks": [
+        {
+          "type": "start",
+          "messageId": "MESSAGE_ID"
+        },
+        {
+          "type": "start-step"
+        },
+        {
+          "type": "reasoning-start",
+          "id": "reasoning-1"
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "The "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "question "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "needs "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "current "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "conditions, "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "so "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "I "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "call "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "the "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "weather "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "tool "
+        },
+        {
+          "type": "reasoning-delta",
+          "id": "reasoning-1",
+          "delta": "first."
+        },
+        {
+          "type": "reasoning-end",
+          "id": "reasoning-1"
+        },
+        {
+          "type": "tool-input-start",
+          "toolCallId": "call-weather-1",
+          "toolName": "getWeather"
+        },
+        {
+          "type": "tool-input-delta",
+          "toolCallId": "call-weather-1",
+          "inputTextDelta": "{\"city"
+        },
+        {
+          "type": "tool-input-delta",
+          "toolCallId": "call-weather-1",
+          "inputTextDelta": "\":\"Lis"
+        },
+        {
+          "type": "tool-input-delta",
+          "toolCallId": "call-weather-1",
+          "inputTextDelta": "bon\"}"
+        },
+        {
+          "type": "tool-input-available",
+          "toolCallId": "call-weather-1",
+          "toolName": "getWeather",
+          "input": {
+            "city": "Lisbon"
+          }
+        },
+        {
+          "type": "tool-output-available",
+          "toolCallId": "call-weather-1",
+          "output": {
+            "city": "Lisbon",
+            "conditions": "sunny",
+            "high": 24,
+            "low": 16,
+            "unit": "celsius"
+          }
+        },
+        {
+          "type": "finish-step"
+        },
+        {
+          "type": "start-step"
+        },
+        {
+          "type": "text-start",
+          "id": "text-1"
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "It "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "is "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "sunny "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "in "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "Lisbon "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "today, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "with "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "high "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "of "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "24 "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "°C "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "and "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "low "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "of "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "16 "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "°C."
+        },
+        {
+          "type": "text-end",
+          "id": "text-1"
+        },
+        {
+          "type": "source-url",
+          "sourceId": "source-1",
+          "url": "https://ai-sdk.dev/docs/ai-sdk-ui/stream-protocol",
+          "title": "AI SDK stream protocol"
+        },
+        {
+          "type": "finish-step"
+        },
+        {
+          "type": "finish"
+        }
+      ]
+    },
+    {
+      "match": "long",
+      "chunks": [
+        {
+          "type": "start",
+          "messageId": "MESSAGE_ID"
+        },
+        {
+          "type": "start-step"
+        },
+        {
+          "type": "text-start",
+          "id": "text-1"
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "This "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "is "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "long "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "answer, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "so "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "there "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "is "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "time "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "to "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "stop "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "it. "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "Each "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "word "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "arrives "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "as "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "its "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "own "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "text-delta "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "chunk, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "way "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "model "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "streams "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "tokens, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "and "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "page "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "appends "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "it "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "to "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "message "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "as "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "it "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "comes. "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "Stopping "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "sends "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "request "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "to "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "server, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "which "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "ends "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "response "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "early; "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "message "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "keeps "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "words "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "that "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "arrived "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "and "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "says "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "that "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "it "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "was "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "stopped. "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "A "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "real "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "model "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "would "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "go "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "on "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "to "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "explain "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "topic "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "in "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "depth, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "with "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "examples "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "and "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "summary "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "at "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "end, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "which "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "is "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "why "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "long "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "answers "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "are "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "ones "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "people "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "stop. "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "Streaming "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "also "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "means "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "first "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "words "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "are "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "readable "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "long "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "before "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "last "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "ones "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "exist, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "and "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "slow "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "or "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "broken "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "connection "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "shows "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "as "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "an "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "interrupted "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "answer "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "instead "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "of "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "blank "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "page. "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "Everything "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "here "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "is "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "canned "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "recording "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "in "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "protocol "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "AI "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "SDK "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "uses, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "replayed "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "by "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "example "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "server "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "at "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "steady "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "pace."
+        },
+        {
+          "type": "text-end",
+          "id": "text-1"
+        },
+        {
+          "type": "finish-step"
+        },
+        {
+          "type": "finish"
+        }
+      ]
+    },
+    {
+      "match": "fail",
+      "chunks": [
+        {
+          "type": "start",
+          "messageId": "MESSAGE_ID"
+        },
+        {
+          "type": "start-step"
+        },
+        {
+          "type": "text-start",
+          "id": "text-1"
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "Let "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "me "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "check "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "that "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "for "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "you"
+        },
+        {
+          "type": "text-end",
+          "id": "text-1"
+        },
+        {
+          "type": "error",
+          "errorText": "The model provider is unavailable. (A canned error from the example server.)"
+        }
+      ]
+    },
+    {
+      "chunks": [
+        {
+          "type": "start",
+          "messageId": "MESSAGE_ID"
+        },
+        {
+          "type": "start-step"
+        },
+        {
+          "type": "text-start",
+          "id": "text-1"
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "Hello! "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "This "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "answer "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "streams "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "from "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "example "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "server "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "in "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "AI "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "SDK "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "UI "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "message "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "stream "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "format: "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "one "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "text-delta "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "per "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "word. "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "Ask "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "about "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "the "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "weather "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "for "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "a "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "tool "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "call, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "ask "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "for "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "something "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "long "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "to "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "try "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "Stop, "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "or "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "say "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "fail "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "to "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "see "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "an "
+        },
+        {
+          "type": "text-delta",
+          "id": "text-1",
+          "delta": "error."
+        },
+        {
+          "type": "text-end",
+          "id": "text-1"
+        },
+        {
+          "type": "finish-step"
+        },
+        {
+          "type": "finish"
+        }
+      ]
+    }
+  ]
+}
