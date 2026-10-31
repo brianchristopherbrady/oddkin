@@ -84,10 +84,12 @@ export interface Library {
   cem?: Record<string, any>;
   owned: boolean;
   /**
-   * Described by a standard Custom Elements Manifest alone: `metadata.components` holds only what
-   * the CEM states (tag, declaration, and the specifier that registers it), and nothing else.
+   * Described by a standard Custom Elements Manifest: `metadata.components` holds only what the
+   * CEM states (tag, declaration, and the specifier that registers it). `metadataFile`: the
+   * package also publishes `oddkin.metadata.json` without components, for its examples
+   * (`oddkin-analyze --manifest`, ADR 0048 §3).
    */
-  standard?: { cemFile: string };
+  standard?: { cemFile: string; metadataFile?: string };
 }
 
 export interface ContextDiagnostic {
@@ -432,9 +434,17 @@ export function resolveProjectContext(
       const metadata = readJson(join(dir, metadataFile));
       const cem =
         cemFile && existsSync(join(dir, cemFile)) ? readJson(join(dir, cemFile)) : undefined;
-      record.registrations = Object.fromEntries(
-        Object.values<any>(metadata['components'] ?? {}).map((c) => [c.tag, c.registration]),
-      );
+      // Metadata that describes no components enriches a library not built with Oddkin, whose
+      // components are what its manifest states.
+      const standard =
+        cem && cemFile && !Object.keys(metadata['components'] ?? {}).length
+          ? { cemFile, metadataFile }
+          : undefined;
+      const components =
+        standard && cem ? standardComponents(name, manifest, cem) : (metadata['components'] ?? {});
+      const listed = Object.values<any>(components).filter((c) => !standard || c.registration);
+      if (!standard || listed.length)
+        record.registrations = Object.fromEntries(listed.map((c) => [c.tag, c.registration]));
       record.metadata = rel(join(dir, metadataFile));
       for (const example of Object.values<any>(metadata['examples'] ?? {}))
         if (existsSync(join(dir, example.file))) readInput(join(dir, example.file));
@@ -443,9 +453,10 @@ export function resolveProjectContext(
         version: record.version,
         dir,
         manifest,
-        metadata,
+        metadata: standard ? { ...metadata, components } : metadata,
         ...(cem ? { cem } : {}),
         owned,
+        ...(standard ? { standard } : {}),
       });
     } else if (cemFile && existsSync(join(dir, cemFile))) {
       // A library not built with Oddkin: what its standard CEM states, and nothing more.

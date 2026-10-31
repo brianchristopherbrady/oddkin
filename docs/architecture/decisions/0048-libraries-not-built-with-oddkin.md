@@ -1,6 +1,6 @@
 # 0048. Libraries not built with Oddkin: the standard-CEM baseline, enrichment, and metadata adapters
 
-- **Status:** Accepted (§1 and §2 implemented; §3 and §4 decide the direction, nothing is built)
+- **Status:** Accepted (§1, §2, and §3's examples implemented; §4 decides the direction, nothing is built)
 - **Date:** 2026-10-30
 - **Area:** Metadata, Workbench, change impact, agent kits
 - **Detailed contract:** [libraries-without-oddkin.md](../libraries-without-oddkin.md); IMPLEMENTATION_PLAN.md CF.3; the [technical plan](../../../future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md) Workstream B
@@ -25,6 +25,8 @@ Enrichment stays a separate, optional layer keyed by stable ids, which joins the
 
 - an analyzer mode that reads example files against the package's published manifest, instead of warning that it did not register the tag, and that never writes a manifest of its own;
 - kits that take components from the manifest when `oddkin.metadata.json` describes none of them, marking those components as described by the manifest alone.
+
+Both were built on 2026-10-30 (P1.6): `oddkin-analyze --manifest` writes that metadata, and Workbench, change impact, and the kits each read the components from the manifest and the examples from the metadata.
 
 Authored pages (`oddkin.docs.ts`) already work in Workbench for any library. The kits should show them too. Component guidance written as JSDoc tags stays an Oddkin analyzer feature.
 
@@ -57,7 +59,7 @@ Adapters live in `@oddkin/analyzer` as Node-only subpath entries, and consumers'
 ## Consequences
 
 - A library not built with Oddkin gets a catalog with live previews, an impact report with classified changes, and an agent kit, all from its manifest. None of them invents a fact.
-- Until §3 is built, such a library has no examples in any tool. A change selects no checks, and the report says so.
+- Without examples, such a library gets no checks: a change selects none, and the report says so. With the metadata `oddkin-analyze --manifest` writes, its examples are checks like an Oddkin library's.
 - Two copies of the `exports` resolution must stay equal. The parity test fails when they differ.
 
 ## Evidence
@@ -65,6 +67,7 @@ Adapters live in `@oddkin/analyzer` as Node-only subpath entries, and consumers'
 - Workbench: `e2e/workbench-packed.spec.ts` (`@plain/widgets` from tarballs); `packages/workbench/test/data.test.ts` (pages and labelled gaps); `packages/workbench/test/node-inputs.test.ts` (registrations).
 - Change impact: `packages/analyzer/test/impact.test.ts` ("a library described by a standard CEM alone"), with 3 of 3 mutations killed.
 - Kits: `tests/agent-kit/standard-cem.test.ts`, with 4 of 4 kit mutations killed. Both parity mutations were killed too.
+- Examples (§3): `packages/analyzer/test/manifest.test.ts` and `tests/libraries-without-oddkin/examples.test.ts`, with 5 of 5 mutations killed.
 
 ## Revisit when
 

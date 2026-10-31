@@ -4681,3 +4681,15 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Claims in the document | Read against the code | The kits skip a package without `exports` (`context.ts`); change impact's `readPackage` and Workbench's registrations do not. The analyzer records examples for tags it did not extract, with `analyzer.examples.unknownComponent` (`index.ts`). The kits record `oddkin.docs.*` as inputs and do not show their content |
 
 **Not verified here:** `e2e/workbench-packed.spec.ts` was not run again; nothing it covers changed (`@plain/widgets` exports its defining module directly).
+
+## 2026-10-30 — Examples for a library not built with Oddkin (P1.6; round 10, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Manifest mode | `npx vitest run --project node packages/analyzer/test/manifest.test.ts` | 5 passed. The examples of `@plain/widgets` are read against its manifest, with their literal values and fixtures. An undeclared tag is warned about, and a file without modules is refused. The command writes only `oddkin.metadata.json` and leaves the manifest untouched; `--strict` fails on a warning, and `--manifest` beside a tsconfig is a usage error |
+| Three tools | `npx vitest run --project node tests/libraries-without-oddkin` | 3 passed. Workbench: presets and examples on `components/plain-chip`, five items still labelled missing, and an example module that registers `@plain/widgets/chip.js`. Change impact: an edit to `chip.js` selects the three examples via `class:plain-chip → component:plain-chip`, with no coverage gap; an edit to the example file selects them as changed examples. Kits: the reference lists the examples and says what is still unknown; the guide and `llms.txt` name the metadata file |
+| Mutations | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutate-manifest.json` | 5 of 5 killed: no warning for an undeclared tag, components copied from the manifest, examples-only metadata read as an Oddkin library by the kits, example modules without the manifest's registrations, and the guide's examples line dropped |
+| Gates | `npm run lint`; `npm run typecheck`; `npx vitest run --project node` | All exit 0; 126 files, 1,557 tests passed |
+| Kits | `node scripts/check-vocabulary.mjs`; `node scripts/agent-kit/package-kits.mjs`; `oddkin-kit package --check` | 0 findings; both packaged kits regenerated and current |
+
+**Not verified here:** `npm run verify:metadata` stops at its first step in this worktree, because the contract-test records predate the beta.1 version and stay stale until `npm test` runs the browser tests (CI runs them first; unrelated to this change). The packed Workbench run (`e2e/workbench-packed.spec.ts`) was not repeated: the packed `@plain/widgets` publishes no metadata, so nothing it loads changed.

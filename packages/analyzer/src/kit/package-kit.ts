@@ -236,6 +236,11 @@ export function llmsText(library: Library, manifest: KitManifest): string {
     ...(library.standard
       ? [
           `- [${library.standard.cemFile}](../${library.standard.cemFile}): the custom elements manifest`,
+          ...(library.standard.metadataFile
+            ? [
+                `- [${library.standard.metadataFile}](../${library.standard.metadataFile}): the examples by stable id`,
+              ]
+            : []),
         ]
       : [
           '- [oddkin.metadata.json](../oddkin.metadata.json): every component, recipe, stylesheet, and model by stable id',

@@ -188,7 +188,9 @@ function componentReference(
     `# ${code(`<${tag}>`)}${declaration.name ? ` (${declaration.name})` : ''}`,
     '',
     library.standard
-      ? `Package ${code(library.name)} ${library.version}. Generated from \`${library.standard.cemFile}\` alone: the package publishes no Oddkin metadata, so this component's guidance, examples, event intents, and verification are unknown.`
+      ? library.standard.metadataFile
+        ? `Package ${code(library.name)} ${library.version}. Generated from \`${library.standard.cemFile}\` and the examples in \`${library.standard.metadataFile}\`: the package publishes no other Oddkin metadata, so this component's guidance, event intents, and verification are unknown.`
+        : `Package ${code(library.name)} ${library.version}. Generated from \`${library.standard.cemFile}\` alone: the package publishes no Oddkin metadata, so this component's guidance, examples, event intents, and verification are unknown.`
       : `Package ${code(library.name)} ${library.version}${category ? ` · category ${category}` : ''}. Generated from \`custom-elements.json\` and \`oddkin.metadata.json\`; facts are extracted unless marked authored or verified.`,
     '',
     ...(declaration.description ? [declaration.description, ''] : []),
@@ -567,7 +569,7 @@ function guide(
     '## Components',
     '',
     library.standard
-      ? 'Each has a reference at `references/components/<tag>.md` with its exact API from the manifest.'
+      ? `Each has a reference at \`references/components/<tag>.md\` with its exact API from the manifest${library.standard.metadataFile ? ', and its examples' : ''}.`
       : 'Each has a reference at `references/components/<tag>.md` with its exact API, guidance, and examples.',
     '',
     ...(groups.length === 1 && groups[0]![0] === 'Other'
@@ -582,7 +584,9 @@ function guide(
     '',
     ...(library.standard
       ? [
-          `- This package publishes a standard Custom Elements Manifest (${code(library.standard.cemFile)}) and no Oddkin metadata. Which values are property-only, which events carry user intent, and the components' guidance, examples, and verification are unknown: use only the API each reference lists.`,
+          library.standard.metadataFile
+            ? `- This package publishes a standard Custom Elements Manifest (${code(library.standard.cemFile)}) and, in ${code(library.standard.metadataFile)}, examples only. Which values are property-only, which events carry user intent, and the components' guidance and verification are unknown: use only the API each reference lists.`
+            : `- This package publishes a standard Custom Elements Manifest (${code(library.standard.cemFile)}) and no Oddkin metadata. Which values are property-only, which events carry user intent, and the components' guidance, examples, and verification are unknown: use only the API each reference lists.`,
         ]
       : [
           propertyOnly.length
@@ -635,7 +639,7 @@ function guide(
       : []),
     packaged
       ? library.standard
-        ? `- JSON shipped beside this kit: ${code(`${library.name}/${library.standard.cemFile}`)}, the custom elements manifest.`
+        ? `- JSON shipped beside this kit: ${code(`${library.name}/${library.standard.cemFile}`)}, the custom elements manifest${library.standard.metadataFile ? `, and ${code(`${library.name}/${library.standard.metadataFile}`)}, the examples by stable id` : ''}.`
         : `- JSON keyed by stable id, shipped beside this kit: ${code(`${library.name}/oddkin.metadata.json`)} (components, recipes, stylesheets, models), ${code(`${library.name}/custom-elements.json`)}${inspection?.source ? `, and the theme's tokens in ${code(`${inspection.source.package}${inspection.source.export.slice(1)}`)}` : ''}.`
       : `- JSON contract bundles keyed by stable id: ${refs('json')
           .map((e) => e.path)

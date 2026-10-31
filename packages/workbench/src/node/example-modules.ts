@@ -7,16 +7,25 @@ import { readFile } from 'node:fs/promises';
 import { stripTypeScriptTypes } from 'node:module';
 import type { OddkinMetadataLike } from '../pages/types.js';
 
-/** Registration entries by tag, from the documented libraries' metadata. */
+/**
+ * Registration entries by tag: the documented libraries' metadata, then the registrations their
+ * standard manifests name (a library not built with Oddkin).
+ */
 export function registrationsByTag(
-  libraries: readonly { readonly metadata?: OddkinMetadataLike }[],
+  libraries: readonly {
+    readonly metadata?: OddkinMetadataLike;
+    readonly registrations?: Readonly<Record<string, string>>;
+  }[],
 ): Map<string, string> {
   const out = new Map<string, string>();
-  for (const library of libraries)
+  for (const library of libraries) {
     for (const entry of Object.values(library.metadata?.components ?? {})) {
       const registration = (entry as { registration?: unknown }).registration;
       if (typeof registration === 'string' && !out.has(entry.tag)) out.set(entry.tag, registration);
     }
+    for (const [tag, registration] of Object.entries(library.registrations ?? {}))
+      if (!out.has(tag)) out.set(tag, registration);
+  }
   return out;
 }
 

@@ -21,6 +21,8 @@ export interface ModulePaths {
   readonly specifierOf: (modulePath: string) => string | undefined;
 }
 
+export const METADATA_SCHEMA = 'https://oddkin.dev/schemas/oddkin-metadata/v1.json';
+
 export interface LibraryInfo {
   readonly name: string;
   readonly version: string;
@@ -486,7 +488,7 @@ export function buildMetadata(
   }));
   const { categories } = categoryRecords(extraction);
   return {
-    schema: 'https://oddkin.dev/schemas/oddkin-metadata/v1.json',
+    schema: METADATA_SCHEMA,
     oddkinVersion,
     library,
     components,

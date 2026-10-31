@@ -12,6 +12,7 @@ import {
   buildManifest,
   buildMetadata,
   categoryRecords,
+  METADATA_SCHEMA,
   sortDiagnostics,
   stableJson,
   type LibraryInfo,
@@ -251,30 +252,7 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
     ...exampleDiagnostics,
     ...contractDiagnostics,
   ]);
-  const examples = Object.fromEntries(
-    [...found.examples]
-      .sort((a, b) => (`${a.component}/${a.name}` < `${b.component}/${b.name}` ? -1 : 1))
-      .map((e) => [
-        `example:${e.component}/${e.name}`,
-        {
-          component: `component:${e.component}`,
-          name: e.name,
-          file: e.file,
-          ...(e.hasFixture ? { hasFixture: true } : {}),
-          ...(e.previewRoles ? { previewRoles: e.previewRoles.map((role) => `role:${role}`) } : {}),
-          ...(e.incorrect
-            ? {
-                incorrect: {
-                  diagnostic: e.incorrect.diagnostic,
-                  correct: `example:${e.component}/${e.incorrect.correct}`,
-                },
-              }
-            : {}),
-          ...(e.uses ? { uses: e.uses.map((tag) => `component:${tag}`) } : {}),
-          ...(e.definition ? { definition: e.definition } : {}),
-        },
-      ]),
-  );
+  const examples = exampleRecords(found.examples);
   const { diagnostics: metadataDiagnostics, ...metadata } = buildMetadata(
     { ...extraction, diagnostics },
     paths,
@@ -336,6 +314,111 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
     extraction,
     examples: found.examples,
     program,
+  };
+}
+
+/** The `examples` records of `oddkin.metadata.json`, by stable id. */
+function exampleRecords(examples: readonly ExampleInfo[]): Record<string, unknown> {
+  return Object.fromEntries(
+    [...examples]
+      .sort((a, b) => (`${a.component}/${a.name}` < `${b.component}/${b.name}` ? -1 : 1))
+      .map((e) => [
+        `example:${e.component}/${e.name}`,
+        {
+          component: `component:${e.component}`,
+          name: e.name,
+          file: e.file,
+          ...(e.hasFixture ? { hasFixture: true } : {}),
+          ...(e.previewRoles ? { previewRoles: e.previewRoles.map((role) => `role:${role}`) } : {}),
+          ...(e.incorrect
+            ? {
+                incorrect: {
+                  diagnostic: e.incorrect.diagnostic,
+                  correct: `example:${e.component}/${e.incorrect.correct}`,
+                },
+              }
+            : {}),
+          ...(e.uses ? { uses: e.uses.map((tag) => `component:${tag}`) } : {}),
+          ...(e.definition ? { definition: e.definition } : {}),
+        },
+      ]),
+  );
+}
+
+export interface ManifestAnalyzeOptions {
+  /** The library's own standard Custom Elements Manifest (`customElements` in its package.json). */
+  readonly manifest: string;
+  /** Package root (example paths are relative to it); defaults to the manifest's directory. */
+  readonly root?: string;
+  /** Library identity; defaults to the root package.json. */
+  readonly library?: Partial<LibraryInfo> & { readonly name: string; readonly version: string };
+  /** Example files; defaults to those under the root. */
+  readonly examples?: readonly string[];
+}
+
+export interface ManifestAnalyzeResult {
+  readonly metadata: Record<string, unknown>;
+  readonly diagnostics: readonly AnalyzerDiagnostic[];
+  readonly examples: readonly ExampleInfo[];
+}
+
+/**
+ * Enrichment for a library the analyzer did not author (ADR 0048 §3): its examples, read against
+ * the tags its own manifest declares. The metadata describes no components, so each tool takes
+ * them from that manifest, which stays the library's: no manifest is written.
+ */
+export function analyzeManifest(options: ManifestAnalyzeOptions): ManifestAnalyzeResult {
+  const file = resolve(options.manifest);
+  const root = resolve(options.root ?? dirname(file));
+  const cem = JSON.parse(readFileSync(file, 'utf8')) as { modules?: unknown };
+  if (!Array.isArray(cem.modules))
+    throw new Error(`${options.manifest} is not a Custom Elements Manifest: it has no modules.`);
+  const modules = cem.modules as ReadonlyArray<{
+    declarations?: ReadonlyArray<{ tagName?: string }>;
+  }>;
+  const declared = new Set(
+    modules.flatMap((m) => (m.declarations ?? []).flatMap((d) => (d.tagName ? [d.tagName] : []))),
+  );
+  const manifestFile = relative(root, file).split(sep).join('/');
+  const packagePath = join(root, 'package.json');
+  const packageJson = existsSync(packagePath)
+    ? (JSON.parse(readFileSync(packagePath, 'utf8')) as Record<string, unknown>)
+    : undefined;
+  const found = extractExamples(
+    options.examples?.map((path) => resolve(root, path)) ?? findExampleFiles(root),
+    root,
+  );
+  const diagnostics = sortDiagnostics([
+    ...found.diagnostics,
+    ...found.examples
+      .filter((example) => !declared.has(example.component))
+      .map((example): AnalyzerDiagnostic => ({
+        code: 'analyzer.examples.unknownComponent',
+        severity: 'warning',
+        message: `Example "${example.name}" is for <${example.component}>, which ${manifestFile} does not declare.`,
+        source: example.location,
+      })),
+  ]);
+  const name = options.library?.name ?? (packageJson?.['name'] as string | undefined) ?? 'library';
+  const version =
+    options.library?.version ?? (packageJson?.['version'] as string | undefined) ?? '0.0.0';
+  const library: LibraryInfo = {
+    name,
+    version,
+    ...(options.library?.prefix ? { prefix: options.library.prefix } : {}),
+    packages: options.library?.packages ?? [{ name, version, customElements: `./${manifestFile}` }],
+  };
+  return {
+    metadata: {
+      schema: METADATA_SCHEMA,
+      oddkinVersion: ANALYZER_VERSION,
+      library,
+      components: {},
+      ...(found.examples.length ? { examples: exampleRecords(found.examples) } : {}),
+      diagnostics,
+    },
+    diagnostics,
+    examples: found.examples,
   };
 }
 

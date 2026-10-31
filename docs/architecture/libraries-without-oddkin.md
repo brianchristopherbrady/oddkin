@@ -35,6 +35,7 @@ Evidence:
 - Workbench: `e2e/workbench-packed.spec.ts` documents `@plain/widgets` from packed tarballs: the preview, every control, the events log, snippets, and Reset. `packages/workbench/test/data.test.ts` checks the pages of a manifest-only library and the "Not documented" items with their sources. `packages/workbench/test/node-inputs.test.ts` checks the registration rule, the re-export fallback included.
 - Change impact: `packages/analyzer/test/impact.test.ts`, "a library described by a standard CEM alone".
 - Kits: `tests/agent-kit/standard-cem.test.ts`, which also checks that the kits name the same registration entries as Workbench.
+- Examples for such a library, in all three tools: `tests/libraries-without-oddkin/examples.test.ts`, on the metadata `oddkin-analyze --manifest` writes for `@plain/widgets` (`packages/analyzer/test/manifest.test.ts`).
 
 ## 3. What each enrichment layer adds
 
@@ -42,7 +43,7 @@ Enrichment is optional, and every layer is keyed by stable ids (`component:<tag>
 
 | Layer | What it adds | Where it comes from | For a library not built with Oddkin |
 | --- | --- | --- | --- |
-| Examples (`examples.v1`, `defineExamples`) | Workbench presets and examples. The checks change impact selects. The examples each kit reference lists | `examples` in `oddkin.metadata.json`. `oddkin-analyze` reads `*.examples.ts` files by parsing them | Not available yet. Example files exist apart from the authoring library, but the analyzer warns on tags it did not extract (`analyzer.examples.unknownComponent`) and writes its own manifest. With no examples, change impact selects no checks for such a library ([ADR 0048](./decisions/0048-libraries-not-built-with-oddkin.md) §3) |
+| Examples (`examples.v1`, `defineExamples`) | Workbench presets and examples. The checks change impact selects. The examples each kit reference lists | `examples` in `oddkin.metadata.json`. `oddkin-analyze` reads `*.examples.ts` files by parsing them | `oddkin-analyze --manifest custom-elements.json` reads the example files against the library's own manifest and writes an `oddkin.metadata.json` that describes no components ([ADR 0048](./decisions/0048-libraries-not-built-with-oddkin.md) §3). Exported as `./oddkin.metadata.json`, it gives Workbench presets and examples, gives change impact checks with reason paths, and gives each kit reference its examples. Without it, change impact selects no checks for such a library |
 | Authored pages (`oddkin.docs.ts`, `docs-content.v1`) | Titles, summaries, guidance, intended use, and section order on Workbench pages | The workspace's `oddkin.docs.ts`, keyed by page id | Works today in Workbench. The kits record the file as an input, but they do not show its content |
 | Component guidance (`@useFor`, `@notFor`, `@a11y`, `@keyboard`, limitations) | Workbench's guidance and accessibility sections. Kits' guidance and choosing references | JSDoc tags read by the Oddkin analyzer | Not available. Authored pages cover Workbench's intended use |
 | Definitions, templates, styles, and token reads | Change impact's edges from tokens and shared styles to components. Workbench's token sections | The analyzer's reading of `compose()` definitions | Not available. Token and style changes are seen only through the class module's hash |
@@ -53,7 +54,7 @@ Enrichment is optional, and every layer is keyed by stable ids (`component:<tag>
 
 ## 4. Fixtures
 
-- `@plain/widgets` (`tests/consumers/workbench/plain-widgets`): plain custom elements without a framework, with a hand-written manifest. It is used by Workbench (packed), change impact, and the kits.
+- `@plain/widgets` (`tests/consumers/workbench/plain-widgets`): plain custom elements without a framework, with a hand-written manifest and a development-only example file (`chip.examples.js`, not in `files`). It is used by Workbench (packed), change impact, and the kits.
 - Inline manifests in the tests cover subpath patterns, exclusions, packages without `exports`, and an index that only re-exports.
 
 Not built yet: a library made with another authoring library, and a bundled package whose manifest names sources it does not publish (Workstream B task 7). For such a package, change impact reports "source of … not supplied; edits inside it are not detected", and the kit says that no export loads the module. Neither shape has a fixture yet.

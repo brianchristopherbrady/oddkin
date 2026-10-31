@@ -81,7 +81,7 @@ Known gaps:
 - Screen-reader and Safari-on-hardware evidence is parked until hardware is available (P3), and the owner's own accessibility review is pending (P1.4).
 - Several package READMEs state old statuses (release plan §7).
 - There is no support process, security policy (`SECURITY.md`), or trusted publishing (RF-12, RF-13).
-- One fixture library is not built with Oddkin (plain custom elements). The analyzer reads Oddkin-authored components only, so such a library cannot publish examples yet (ADR 0048 §3).
+- One fixture library is not built with Oddkin (plain custom elements). Its examples reach every tool through `oddkin-analyze --manifest` (ADR 0048 §3), but no library made with another authoring library is a fixture yet.
 - Impact reports record tool versions, not the source revision or whether the working tree was dirty.
 - There is no hosted service of any kind: no identity, tenancy, persistence, billing, or service security controls.
 - Nothing measures product usage. `@oddkin/ai` leaves telemetry to the host by design.
@@ -157,12 +157,12 @@ Goal: the tooling works on a team's own component library, not only on Oddkin's.
 Today (2026-10-30; CF.3 is done, [libraries-without-oddkin.md](../docs/architecture/libraries-without-oddkin.md)):
 
 - Workbench documents a library from standard CEM alone. The fixture `@plain/widgets` runs through the packed consumer path: live previews, controls, the events log, and snippets. Missing enrichment is labelled.
-- The analyzer recognizes Oddkin-authored components only. The adapter direction is [ADR 0048](../docs/architecture/decisions/0048-libraries-not-built-with-oddkin.md); no adapter is built.
-- `oddkin-impact snapshot` works on a package with a CEM but no `oddkin.metadata.json`. It reads the API, registrations, exports, and class sources. With no examples a change selects no checks, and the report lists each affected component nothing checks as a coverage gap.
+- The analyzer recognizes Oddkin-authored components only. For any other library it reads the library's own manifest instead: `oddkin-analyze --manifest` writes the library's examples into an `oddkin.metadata.json` that describes no components (P1.6, 2026-10-30). The adapter direction is [ADR 0048](../docs/architecture/decisions/0048-libraries-not-built-with-oddkin.md); no adapter is built.
+- `oddkin-impact snapshot` works on a package with a CEM but no `oddkin.metadata.json`. It reads the API, registrations, exports, and class sources. With no examples a change selects no checks, and the report lists each affected component nothing checks as a coverage gap. With the examples `oddkin-analyze --manifest` writes, a change selects them, with reason paths.
 - `oddkin-kit` writes a kit from a CEM alone. The kit says what is unknown, and it names the same registration entries as Workbench.
 - Migration records and authoritative renames exist in the impact prototype (`--migrations`).
 - Unresolved edges are explicit and widen the selection (Prototype).
-- One fixture library is not built with Oddkin: plain custom elements (`@plain/widgets`). A library made with another authoring library and a bundled package are not fixtures yet. A library not built with Oddkin cannot yet publish examples (ADR 0048 §3).
+- One fixture library is not built with Oddkin: plain custom elements (`@plain/widgets`), with a development-only example file. A library made with another authoring library and a bundled package are not fixtures yet.
 
 Tasks:
 
