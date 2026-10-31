@@ -4560,3 +4560,13 @@ Closes the Firefox evidence the overlay cards (0d9a56f) lacked, and covers a95d1
 | Static | `npx tsc -b apps/docs`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check`; `node scripts/check-page-layout.mjs`; `npm run lint:css` | Clean; 0 unlisted layouts; compatibility check OK |
 | Look | `node .tmp/support-shots.mjs` (Chromium, 1440) | /support/policy: the lede, the opening paragraph, "On this page" with the eight sections, each with its Evidence and Limitations; Help and releases with the Support policy card first; the guide's Accessibility section with the evidence and limitations. No console errors |
 | e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts`, one engine at a time | Docs e2e, one engine at a time, at about 485 MB free: Chromium 15 passed (2.2 min). WebKit 14 passed; the catalog card test timed out on odd-tree's card (15 s), which my dev server draws in WebKit within 1 s, and a rerun passed it (8.9 s) and the reference-page walk. Firefox 14 passed; the reference-page walk (5.3 min) timed out on odd-file-input's frame, and alone it passed (4.3 min). |
+
+### 2026-10-30 — The component panel's `sections` property (Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Browser tests, 3 engines | `node ../oddkin-lanes/tools/browser-set.mjs` with `panels.browser.test.ts` and `shell.browser.test.ts` | 26 of 26 in each engine. The new test steps through Agent 3's tabs: Controls, then Examples, then Overview, then `null`. It checks which sections show, that the section links leave and come back, that the first section shown has no space above it while a later one has 48 px, and that the frame and its live element are the same after every switch |
+| Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutants-sections.json` | 3 of 3 killed: space above the first section shown; sections not listed still shown; section links kept beside the host's tabs |
+| Node tests | `npx vitest run --project node packages/workbench` | 131 of 131 |
+| E2E, Chromium | `e2e/workbench-embed.spec.ts`, `e2e/workbench.spec.ts` | 23 of 23 |
+| Size, types | `node scripts/check-size.mjs`; `npm run typecheck` | workbench-panel-component 31,478 B of 32,768, workbench-shell 52,540 of 54,272; pass |

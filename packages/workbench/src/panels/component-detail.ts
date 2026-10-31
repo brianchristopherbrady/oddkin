@@ -182,6 +182,17 @@ export class ComponentDetailElement extends OddkinElement.with({
     description:
       'Returns a live element for an example card (the example id, `example:<tag>/<name>`). Only a host that loads the library supplies one; the same example should get the same node.',
   }),
+  sections: prop.custom<readonly string[] | null>({
+    default: () => null,
+    coerce: (value) =>
+      value === null || value === undefined
+        ? { ok: true, value: null }
+        : Array.isArray(value) && value.every((id) => typeof id === 'string')
+          ? { ok: true, value: Object.freeze([...(value as string[])]) }
+          : { ok: false, reason: 'expected an array of section ids, or null' },
+    description:
+      "The section ids to show, for a host's tabs (overview, interactive-example, api, examples, tokens, behavior-and-accessibility, guidance, source, known-limitations); null shows every section. The others stay rendered but hidden, so the example's preview and controls survive a switch, and the panel leaves out its own section links.",
+  }),
 }) {
   static override styles: StyleInput = [panelHostStyles, contentStyles, exampleStyles];
 
@@ -697,8 +708,12 @@ export class ComponentDetailElement extends OddkinElement.with({
           coverage.some((item) => item.section === s.id && item.state === 'documented') ||
           (s.id === 'api' && facts.cssProperties.length > 0)),
     );
-    const links = reference ? PAGE_LINKS.filter(([id]) => sections.some((s) => s.id === id)) : [];
+    const links =
+      reference && !this.sections
+        ? PAGE_LINKS.filter(([id]) => sections.some((s) => s.id === id))
+        : [];
     const current = this.#current.value || links[0]?.[0];
+    const shown = this.sections;
     // Sections are built eagerly (not with repeat()), so the signals they read are tracked.
     return html`<div class="wb-content">
       ${
@@ -718,7 +733,11 @@ export class ComponentDetailElement extends OddkinElement.with({
       }
       ${sections.map(
         (section) =>
-          html`<section id=${section.id} aria-labelledby=${`${section.id}-title`}>
+          html`<section
+            id=${section.id}
+            aria-labelledby=${`${section.id}-title`}
+            ?hidden=${!!shown && !shown.includes(section.id)}
+          >
             <h2 id=${`${section.id}-title`} tabindex="-1">${section.title}</h2>
             ${this.#section(section.id, page, facts, at, sections)}
           </section>`,

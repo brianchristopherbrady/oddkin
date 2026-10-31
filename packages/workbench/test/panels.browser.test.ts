@@ -412,6 +412,46 @@ describe('<oddkin-component-panel>', () => {
     expect(getComputedStyle(region).maxHeight).toBe('552px');
   });
 
+  it("shows the sections a host's tabs list and keeps the others, the frame included", async () => {
+    const { panel, root, frames, probe } = componentPanel();
+    panel.layout = 'reference';
+    // The space between sections is a token; this page loads no theme.
+    panel.style.setProperty('--odd-space-2xl', '48px');
+    await until(() => !!probe()?.isConnected, 'the probe preview');
+    await settled();
+    const frame = frames()[0];
+    const shown = () =>
+      [...root.querySelectorAll<HTMLElement>('.wb-content > section')]
+        .filter((section) => !section.hidden && section.offsetHeight > 0)
+        .map((section) => section.id);
+    const nav = () => root.querySelector('nav[aria-label="Page sections"]');
+    expect(nav()).not.toBeNull();
+    // Agent 3's tabs: Controls, then Examples, then Overview, which shows the example again.
+    panel.sections = ['interactive-example', 'api'];
+    await settled();
+    expect(shown()).toEqual(['interactive-example', 'api']);
+    // The tabs replace the panel's own section links.
+    expect(nav()).toBeNull();
+    // The first section shown starts at the top: no space above it for the hidden ones.
+    const first = root.querySelector<HTMLElement>('#interactive-example')!;
+    expect(getComputedStyle(first).marginBlockStart).toBe('0px');
+    panel.sections = ['examples', 'tokens'];
+    await settled();
+    expect(shown()).toEqual(['examples', 'tokens']);
+    expect(getComputedStyle(root.querySelector('#examples')!).marginBlockStart).toBe('0px');
+    expect(getComputedStyle(root.querySelector('#tokens')!).marginBlockStart).toBe('48px');
+    panel.sections = ['overview', 'interactive-example', 'guidance'];
+    await settled();
+    expect(shown()).toEqual(['overview', 'interactive-example']);
+    // Never reloaded: the same frame, and the same live element in it.
+    expect(frames()[0]).toBe(frame);
+    expect(probe()?.isConnected).toBe(true);
+    panel.sections = null;
+    await settled();
+    expect(shown()).toContain('behavior-and-accessibility');
+    expect(nav()).not.toBeNull();
+  });
+
   it('teaches usage: intended use, each mistake with its correct example, authored guidance', async () => {
     const data = probeData();
     const page = data.pages['components/wb-probe'] as ComponentPageData;

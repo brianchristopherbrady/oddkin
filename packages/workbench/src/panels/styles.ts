@@ -55,7 +55,8 @@ export const contentStyles = css`
     border-radius: var(--odd-radius-sm);
     cursor: pointer;
   }
-  .wb-content > section + section {
+  /* Space between the sections shown: a host's tabs may hide some (the panel's sections property). */
+  .wb-content > section:not([hidden]) ~ section {
     margin-block-start: var(--odd-space-2xl);
   }
   .wb-content h2 {
