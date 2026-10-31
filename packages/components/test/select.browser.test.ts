@@ -350,8 +350,9 @@ describe('odd-select', () => {
   it('keeps the chosen option’s text in the middle of the field', async () => {
     const { el } = await mount();
     const { above, below } = await textGaps(control(el));
-    // Chromium lays a `base-select` box's content at its top unless the select centres it.
-    expect(Math.abs(above - below)).toBeLessThanOrEqual(2 * devicePixelRatio);
+    // Chromium lays a `base-select` box's content at its top unless the select centres it (15 px
+    // off). Glyph ink is not symmetric in its line: Linux's DejaVu Sans leaves 3 px when centred.
+    expect(Math.abs(above - below)).toBeLessThanOrEqual(4 * devicePixelRatio);
   });
 
   it.runIf(enhanced)(
