@@ -1,11 +1,13 @@
 /**
  * Static build of the docs site, for GitHub Pages or any host that serves files:
- *   node apps/docs/build.mjs [--out <dir>]   (default .oddkin/docs-site; run after `npm run build`)
+ *   node apps/docs/build.mjs [--out <dir>] [--site <url>]
+ *   (default .oddkin/docs-site and https://www.oddkin.dev/; run after `npm run build`)
  *
  * Writes one document per route (authored pages in full, metadata routes as the shell the client
  * fills), 404.html for every other path, the docs app's own files, the reference pages' Workbench
- * data (_oddkin/) and preview frame (apps/docs/frame.html), and the published browser files
- * of the packages the pages load. Each document carries its Content-Security-Policy as a meta
+ * data (_oddkin/) and preview frame (apps/docs/frame.html), the published browser files
+ * of the packages the pages load, and llms.txt with the agent kits it links (agent/), linked
+ * under the site's address. Each document carries its Content-Security-Policy as a meta
  * element, with the import map allowed by its hash. The output directory is replaced only when it
  * is empty or was written by this script.
  */
@@ -14,10 +16,16 @@ import { copyFile, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { docsFacts, siteFacts } from './facts.mjs';
+import { writeLlms } from './llms.mjs';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
-const outIndex = process.argv.indexOf('--out');
-const out = resolve(root, outIndex === -1 ? '.oddkin/docs-site' : process.argv[outIndex + 1]);
+const option = (name) => {
+  const index = process.argv.indexOf(name);
+  return index === -1 ? undefined : process.argv[index + 1];
+};
+const out = resolve(root, option('--out') ?? '.oddkin/docs-site');
+// GitHub Pages serves the site at its custom domain; https://oddkin.dev redirects there.
+const siteUrl = option('--site') ?? 'https://www.oddkin.dev/';
 const MARKER = '.oddkin-docs-site';
 
 /** Packages whose browser files the pages load; the analyzer runs only in Node. */
@@ -184,8 +192,9 @@ async function main() {
     withPolicy(await readFile(join(root, 'apps/docs/frame.html'), 'utf8')),
   );
   files += 1 + referenceFiles.length;
+  await writeLlms(root, out, siteUrl);
   console.log(
-    `Docs site: ${new Set(routes).size} routes and 404.html, ${files} files, in ${urlPath(relative(root, out)) || '.'}`,
+    `Docs site: ${new Set(routes).size} routes and 404.html, ${files} files, and llms.txt under ${siteUrl}, in ${urlPath(relative(root, out)) || '.'}`,
   );
 }
 

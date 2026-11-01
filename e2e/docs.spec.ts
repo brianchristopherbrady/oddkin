@@ -356,6 +356,20 @@ test('a live example runs its setup script', async ({ page }) => {
   );
 });
 
+test('serves llms.txt, linking the agent kits under its own address', async ({ request }) => {
+  const index = await request.get(`${docs}/llms.txt`);
+  expect(index.status()).toBe(200);
+  expect(index.headers()['content-type']).toContain('text/plain');
+  const links = [...(await index.text()).matchAll(/\]\((https?:[^)]+)\)/g)].map(
+    ([, href]) => href!,
+  );
+  expect(links.length).toBeGreaterThan(70);
+  for (const href of links) expect(href.startsWith(`${docs}/agent/`), href).toBe(true);
+  const guide = await request.get(links[0]!);
+  expect(guide.status()).toBe(200);
+  expect(guide.headers()['content-type']).toContain('text/markdown');
+});
+
 test('every catalog card shows a live example', async ({ page }) => {
   await page.goto(`${docs}/components`);
   await expect(page.getByText(/Showing \d+ of \d+ components/)).toBeVisible({

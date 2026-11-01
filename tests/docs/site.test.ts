@@ -147,6 +147,26 @@ describe('the static docs build', () => {
         if (section.visible) expect(tabbed.has(section.id), `${page.id} #${section.id}`).toBe(true);
   });
 
+  it('writes llms.txt, linking the kits it writes beside it under the site address', async () => {
+    const { siteFacts } = await import('../../apps/docs/facts.mjs');
+    const { description } = await siteFacts(root);
+    const text = readFileSync(join(out, 'llms.txt'), 'utf8');
+    expect(text.startsWith(`# Oddkin\n\n> ${description}\n`)).toBe(true);
+    const links = [...text.matchAll(/\]\((https?:[^)]+)\)/g)].map(([, href]) => new URL(href!));
+    expect(links.length).toBeGreaterThan(70);
+    for (const url of links) {
+      expect(url.href.startsWith('https://www.oddkin.dev/agent/'), url.href).toBe(true);
+      expect(existsSync(join(out, ...url.pathname.split('/').filter(Boolean))), url.href).toBe(
+        true,
+      );
+    }
+    // The site serves the kits the packages ship.
+    for (const name of ['components', 'ai'])
+      expect(readFileSync(join(out, `agent/oddkin-${name}/GUIDE.md`), 'utf8')).toBe(
+        readFileSync(join(root, `packages/${name}/agent/GUIDE.md`), 'utf8'),
+      );
+  });
+
   it('replaces only a folder it wrote', () => {
     const other = mkdtempSync(join(tmpdir(), 'oddkin-docs-other-'));
     writeFileSync(join(other, 'keep.txt'), 'not the docs site');

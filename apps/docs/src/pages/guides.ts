@@ -247,6 +247,15 @@ export const agents: Page = {
             ' line, for example) at the guide of each package you use. Publishing a file does not make every assistant read it.',
           ],
         },
+        {
+          p: [
+            'This site publishes the same kits for the version it documents: its ',
+            { link: 'llms.txt', href: '/llms.txt' },
+            ' lists each package’s guide and references, one link per component, with the files under ',
+            { code: '/agent/' },
+            '.',
+          ],
+        },
       ],
     },
     {

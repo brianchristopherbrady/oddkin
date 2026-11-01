@@ -55,6 +55,8 @@ describe('authored docs pages', async () => {
 
   it('link only to pages that exist', () => {
     const known = new Set(pages.map((page) => `/${page.path}`));
+    // Files the build writes beside the pages (tests/docs/site.test.ts).
+    const files = new Set(['/llms.txt']);
     for (const page of pages) {
       const html = renderPage(page, facts);
       for (const [, href = ''] of html.matchAll(/href="([^"]+)"/g)) {
@@ -65,7 +67,7 @@ describe('authored docs pages', async () => {
         if (/^https:\/\//.test(href)) continue;
         const [path = '', hash] = href.split('#');
         expect(
-          known.has(path) || clientRoutes.some((route) => route.test(path)),
+          known.has(path) || files.has(path) || clientRoutes.some((route) => route.test(path)),
           `${page.path} → ${href}`,
         ).toBe(true);
         const target = pages.find((other) => `/${other.path}` === path);

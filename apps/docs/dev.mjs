@@ -1,9 +1,10 @@
 import { randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { readFile, readdir, rm, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { docsFacts, siteFacts } from './facts.mjs';
+import { writeLlms } from './llms.mjs';
 
 const root = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const portIndex = process.argv.indexOf('--port');
@@ -16,6 +17,7 @@ const types = {
   '.json': 'application/json; charset=utf-8',
   '.map': 'application/json; charset=utf-8',
   '.md': 'text/markdown; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8',
 };
 
 function targetOf(value) {
@@ -58,6 +60,10 @@ const reference = await buildWorkbench({
   hosting: { basePath: '/' },
 });
 const release = await siteFacts(root, reference.data?.index);
+// llms.txt and the kits it links, under this server's own address (the static build uses the site's).
+const llms = join(root, '.oddkin', `docs-dev-llms-${port}`);
+await rm(llms, { recursive: true, force: true });
+await writeLlms(root, llms, `http://${host}:${port}/`);
 
 /** The shell filled for `pathname`; the server sends its policy as a header, not a meta element. */
 const documentFor = (template, pathname) =>
@@ -78,7 +84,13 @@ const server = createServer(async (request, response) => {
   }
 
   let path;
-  if (pathname.startsWith('/_oddkin/')) {
+  if (pathname === '/llms.txt' || pathname.startsWith('/agent/')) {
+    path = resolve(llms, normalize(`.${pathname}`));
+    if (!path.startsWith(llms + sep)) {
+      response.writeHead(403).end('Forbidden');
+      return;
+    }
+  } else if (pathname.startsWith('/_oddkin/')) {
     // Page data, and the example modules a preview frame imports to run an example's fixture.
     const type = types[extname(pathname)];
     const file =
@@ -88,8 +100,7 @@ const server = createServer(async (request, response) => {
     if (file === undefined) response.writeHead(404).end('Not found');
     else response.writeHead(200, { 'content-type': type }).end(file);
     return;
-  }
-  if (pathname.startsWith('/public/')) {
+  } else if (pathname.startsWith('/public/')) {
     const parts = pathname.slice('/public/'.length).split('/');
     const packageName = parts.slice(0, 2).join('/');
     const subpath = parts.slice(2).join('/');
@@ -146,7 +157,8 @@ const server = createServer(async (request, response) => {
     });
     response.end(request.method === 'HEAD' ? undefined : content);
   } catch (error) {
-    if (error?.code === 'ENOENT') response.writeHead(404).end('Not found');
+    if (error?.code === 'ENOENT' || error?.code === 'EISDIR')
+      response.writeHead(404).end('Not found');
     else {
       console.error(`Could not serve ${pathname}`, error);
       response.writeHead(500).end('Unable to serve file');

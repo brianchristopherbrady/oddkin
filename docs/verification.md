@@ -4693,3 +4693,14 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Kits | `node scripts/check-vocabulary.mjs`; `node scripts/agent-kit/package-kits.mjs`; `oddkin-kit package --check` | 0 findings; both packaged kits regenerated and current |
 
 **Not verified here:** `npm run verify:metadata` stops at its first step in this worktree, because the contract-test records predate the beta.1 version and stay stale until `npm test` runs the browser tests (CI runs them first; unrelated to this change). The packed Workbench run (`e2e/workbench-packed.spec.ts`) was not repeated: the packed `@plain/widgets` publishes no metadata, so nothing it loads changed.
+
+## 2026-11-01 — Docs: llms.txt from the build and the dev server (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The address | `node .tmp/site-host.mjs` (redirects not followed) | `https://oddkin.dev/` and `/llms.txt` answer 301 to `https://www.oddkin.dev/…`; `https://www.oddkin.dev/` answers 200 (GitHub.com). The build links under `https://www.oddkin.dev/` |
+| Static build | `npx vitest run tests/docs` (the site test builds the site) | 30 passed. New: `llms.txt` starts with "# Oddkin" and the README's description as its summary; every link is under `https://www.oddkin.dev/agent/` and names a file the build wrote; `agent/oddkin-components/GUIDE.md` and `agent/oddkin-ai/GUIDE.md` equal the packages' own. The docs pages may link `/llms.txt` |
+| Output | `.oddkin/docs-site-test/llms.txt` | Sections @oddkin/ai 1.0.0-beta.1, @oddkin/components 1.0.0-beta.1, and Optional; `agent/oddkin-ai/` and `agent/oddkin-components/` |
+| Dev server | `node .tmp/llms-dev.mjs` against `apps/docs/dev.mjs --port 4183` | `/llms.txt` 200 `text/plain`, 170 links, all under `http://127.0.0.1:4183/agent/`; the first guide 200 `text/markdown`; `kit.json` 200 JSON; `/agent/oddkin-components/` 404; `/agent/..%2f..%2fpackage.json` 403; a missing file 404; /tooling links `/llms.txt` |
+| Static checks | `npx tsc -b apps/docs`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check`; `node scripts/architecture/check-boundaries.mjs --artifacts`; `npm run lint:contracts`; `node scripts/check-page-layout.mjs` | Clean |
+| e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts` (Chromium); the new test alone (`--grep=llms`) in WebKit and Firefox | Chromium 16 passed (1.6 min); WebKit 1 passed; Firefox 1 passed |

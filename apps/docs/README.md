@@ -19,13 +19,18 @@ and `odd-side-nav`, `odd-copy-button`, `odd-card`, and `odd-command-palette` (se
 After `npm run build`, run `npm run dev` at the workspace root. The Node server binds to
 `127.0.0.1:4177` (`--port` changes it), serves `/` and client-side routes, and generates an import
 map only from published JavaScript exports. Public JSON and CSS assets use the same export map. It
-uses a strict CSP with Trusted Types enforcement.
+uses a strict CSP with Trusted Types enforcement. It also serves `/llms.txt` and the agent kits it
+links (`/agent/`), written at start into `.oddkin/docs-dev-llms-<port>/` and linked under the
+server's own address.
 
 ## Static site and deployment
 
-`node apps/docs/build.mjs [--out <dir>]` (default `.oddkin/docs-site`) writes the static site: one
+`node apps/docs/build.mjs [--out <dir>] [--site <url>]` (defaults `.oddkin/docs-site` and
+`https://www.oddkin.dev/`) writes the static site: one
 document per route (authored pages in full, every component route as the shell the client fills),
-`404.html` for any other path, and the browser files of the packages the pages load.
+`404.html` for any other path, the browser files of the packages the pages load, and `llms.txt`
+([llmstxt.org](https://llmstxt.org/)) with the agent kits it links (`agent/<package>/`), written by
+the analyzer's `oddkin-kit llms` and linked under `--site`.
 Each document carries its Content-Security-Policy as a meta element that allows the import map by
 its hash. `.github/workflows/docs.yml` builds it on every push to `main` and deploys it to GitHub
 Pages; the repository's Pages settings name the source (GitHub Actions) and the custom domain.
