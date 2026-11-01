@@ -4704,3 +4704,14 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Dev server | `node .tmp/llms-dev.mjs` against `apps/docs/dev.mjs --port 4183` | `/llms.txt` 200 `text/plain`, 170 links, all under `http://127.0.0.1:4183/agent/`; the first guide 200 `text/markdown`; `kit.json` 200 JSON; `/agent/oddkin-components/` 404; `/agent/..%2f..%2fpackage.json` 403; a missing file 404; /tooling links `/llms.txt` |
 | Static checks | `npx tsc -b apps/docs`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check`; `node scripts/architecture/check-boundaries.mjs --artifacts`; `npm run lint:contracts`; `node scripts/check-page-layout.mjs` | Clean |
 | e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts` (Chromium); the new test alone (`--grep=llms`) in WebKit and Firefox | Chromium 16 passed (1.6 min); WebKit 1 passed; Firefox 1 passed |
+
+## 2026-11-01 — P0.4's last item: the docs site's `llms.txt` (round 10, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Docs build | `node apps/docs/build.mjs --out .tmp/docs-site-p04` on d91f3e6, after `npm run build` | 115 routes, 1,386 files, and `llms.txt` under https://www.oddkin.dev/ |
+| Links | `node .tmp/check-llms-p04.mjs` | `llms.txt` starts with "# Oddkin" and the README's one-line description. Its 170 links are all on www.oddkin.dev, and none names a file the build did not write |
+| Same as the command | The same script, against `oddkin-kit llms --base https://www.oddkin.dev/ --title Oddkin --summary <the same line>` | `llms.txt` and every kit file are identical |
+| Same as the packages | The same script, against `packages/components/agent/` and `packages/ai/agent/` | 104 and 68 files served, each byte for byte the packaged kit's; no extra or missing file |
+
+**Not verified here:** the deployed site, since d91f3e6 is not on origin yet, and the dev server's `/llms.txt` (Agent 3's e2e covers it in three engines).
