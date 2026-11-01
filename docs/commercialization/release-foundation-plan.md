@@ -1,6 +1,6 @@
 # Release foundation implementation plan
 
-Status: proposed (Agent 1, 2026-10-29). Planning only: nothing here is implemented by this document, and no version, `private` flag, license, or publish state changes because of it.
+Status: proposed (Agent 1, 2026-10-29). Planning only: nothing here is implemented by this document, and no version, `private` flag, license, or publish state changes because of it. Since then: the owner decided D-1 to D-11 on 2026-10-30 (§19), and `1.0.0-beta.1` was published on 2026-11-01. Progress on the tasks is tracked in [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) tier CF and the [scorecard](./commercial-readiness-scorecard.md); the body below is the plan as written on 2026-10-29.
 
 Scope: [technical-commercialization-plan.md](./technical-commercialization-plan.md) Workstream A, "Release foundation", and Milestone T0's release items; [commercial-readiness-scorecard.md](./commercial-readiness-scorecard.md) Gate A, "Public technical preview".
 
@@ -18,7 +18,7 @@ Evidence base: `main` on 2026-10-29 (the commit that adds this file), the eight 
 
 ## Where this plan departs from its sources
 
-The owner's original commercialization documents (commit `cdad50c`) were written against an older state. They said the packages "remain private and versioned `0.0.0`" and asked that "preview versions replace `0.0.0`" (Gate A). In fact all eight packages have been public on npm at `1.0.0-beta.0` since 2026-10-28, by the owner's decision of 2026-10-27 ([release-process.md](../release-process.md) §5). This plan therefore starts from a published beta, not from private packages. The technical documents in `future_plans/` have since been rewritten to match the repository (Appendix A). Two consequences remain:
+The owner's original commercialization documents (commit `cdad50c`) were written against an older state. They said the packages "remain private and versioned `0.0.0`" and asked that "preview versions replace `0.0.0`" (Gate A). In fact all eight packages have been public on npm at `1.0.0-beta.0` since 2026-10-28, by the owner's decision of 2026-10-27 ([release-process.md](../release-process.md) §5). This plan therefore starts from a published beta, not from private packages. The technical documents in `future_plans/` have since been rewritten to match the repository (Appendix A); they are now in `docs/commercialization/` and `docs/architecture/`. Two consequences remain:
 
 - The "public package cut" is no longer about what is installable: all eight are published. npm allows unpublishing a version within 72 hours (beta.0's window closes on 2026-10-31), and later only under narrow conditions, and unpublishing working packages would break installs. The cut is now about support tiers and messaging (§4).
 - The original technical plan recommended `@oddkin/workbench` "as `0.x`". It is published as `1.0.0-beta.0`, and every `0.x` version sorts below that, so the version line is an owner decision (§5, D-2).
@@ -151,7 +151,7 @@ Corrections come from generated or verified facts: manifests, metadata, `bin` ma
 | `README.md` | "`docs/schemas/` Draft JSON Schemas (move into their packages in M3/M5)" | `docs/schemas/` still holds the v1 schemas (agent kit, diagnostics, examples, impact, …); `components` and `ai` have their own `schemas/`. Whether the rest move is undecided | Unknown |
 | `README.md` | `npm test` without the parallel-run limitation | release-process §3 records it | Partial |
 | ADR 0047 | "released versions side by side wait for a release" | Done 2026-10-29 (`duplicate-core.spec.ts`, consumer A on beta.0) | Stale |
-| `future_plans/*` | See Appendix A | — | Stale |
+| `future_plans/*` (now `docs/commercialization/*`) | See Appendix A | — | Corrected |
 
 Mechanism: RF-01 corrects the text once, and RF-02 adds a lint check so the drift cannot return.
 
@@ -687,3 +687,5 @@ The same day, at the owner's direction, the folder was reduced to technical docu
 | `ODDKIN_BUSINESS_PLAN.md`, `GO_TO_MARKET_PRICING_PLAN.md`, `CUSTOMER_DISCOVERY_AND_PAID_PRICING_PLAN.md` | Removed; the owner keeps them outside the repository. Their technical requirements are in the technical plan (§7) |
 
 Every relative link in the folder resolves (checked by script).
+
+On 2026-11-01, at the owner's direction, `future_plans/` was removed. The technical documents moved under `docs/`: [technical-commercialization-plan.md](./technical-commercialization-plan.md), [commercial-readiness-scorecard.md](./commercial-readiness-scorecard.md), this plan, and [product-patterns-and-flows.md](../architecture/product-patterns-and-flows.md). The owner's business documents joined them in `docs/commercialization/`: the dossier as [README.md](./README.md), the [business plan](./business-plan.md), the [go-to-market and pricing plan](./go-to-market-and-pricing.md), and the [customer discovery and paid pilot playbook](./customer-discovery-and-pilot-playbook.md), with their statements about the repository checked. The scorecard has its commercial lines again.

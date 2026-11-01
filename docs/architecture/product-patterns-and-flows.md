@@ -1,8 +1,8 @@
 # Product patterns and flow contracts
 
-Status: proposed implementation plan  
+Status: proposed implementation plan, parked behind tier CF (owner decision O-8, 2026-10-30; [technical plan](../commercialization/technical-commercialization-plan.md) §10 and §12)  
 Owner decision required before public API work  
-Last reviewed: 2026-10-29. Checked against the repository (`main` at `0d08543`) the same day: §1a lists what exists, and corrections are inline.
+Last reviewed: 2026-10-29. Checked against the repository (`main` at `0d08543`) the same day: §1a lists what exists, and corrections are inline. Moved from `future_plans/` on 2026-11-01.
 
 ## 1. Purpose
 

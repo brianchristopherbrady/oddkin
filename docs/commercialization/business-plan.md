@@ -1,11 +1,11 @@
 # Oddkin business plan
 
 Status: hypothesis to validate  
-Last reviewed: 2026-10-29
+Last reviewed: 2026-10-29; repository facts checked on 2026-11-01
 
 ## 1. Executive summary
 
-Oddkin is a browser-native component and design-system platform with a differentiated assurance layer. Its repository already connects component definitions, design tokens, metadata, documentation, examples, Figma mappings, generated agent guidance, change-impact analysis, and verification evidence.
+Oddkin is a browser-native component and design-system platform with a differentiated assurance layer. Its repository already connects component definitions, design tokens, metadata, documentation, examples, generated agent guidance, change-impact analysis (a prototype), and verification evidence. Figma Code Connect mappings exist as repository artifacts; they are not yet part of that chain.
 
 The proposed business is not primarily the sale of UI components. It is a hybrid open-source and commercial business:
 
@@ -37,14 +37,18 @@ Existing documentation platforms are good at publishing knowledge. Visual-testin
 
 ### Open-source Oddkin
 
+Published today as eight MIT packages at `1.0.0-beta.1` ([README](./README.md#where-oddkin-stands-2026-11-01)):
+
 - browser-native authoring core;
 - tokens and theme generation;
 - standard and AI interaction components;
 - static analyzer and standard CEM output;
 - local Workbench, examples, and agent kits;
-- local change-impact and verification artifacts.
+- local change-impact and verification artifacts (change impact is a prototype).
 
 ### Oddkin Assurance Cloud
+
+Proposed; none of it exists yet ([technical plan](./technical-commercialization-plan.md) §4 and workstreams C–G).
 
 - pull-request contract and token diffs;
 - affected-product and affected-check analysis;
@@ -298,12 +302,16 @@ Mitigation: begin with paid repository-level pilots that can run through custome
 
 ### Validation gate
 
+State on 2026-11-01: none of the counts below is recorded yet.
+
 - 15 qualified interviews;
 - 5 teams agree to evaluate;
 - 2 paid pilots;
 - one repeated problem across at least three teams.
 
 ### Product gate
+
+The [scorecard](./commercial-readiness-scorecard.md) tracks the technical evidence for these lines.
 
 - external install succeeds without repository knowledge;
 - time to first report under one working session;

@@ -1,7 +1,7 @@
 # Go-to-market and pricing plan
 
 Status: proposed experiments  
-Last reviewed: 2026-10-29
+Last reviewed: 2026-10-29; repository facts checked on 2026-11-01
 
 ## 1. Positioning
 
@@ -11,7 +11,7 @@ Last reviewed: 2026-10-29
 
 ### Short description
 
-Oddkin Assurance connects component contracts, design tokens, examples, products, tests, Figma mappings, and agent guidance. It turns a UI-system change into an explainable impact report and a focused verification plan.
+Oddkin Assurance connects component contracts, design tokens, examples, products, tests, and agent guidance, and will add Figma mappings (today Code Connect mappings are repository artifacts only). It turns a UI-system change into an explainable impact report and a focused verification plan.
 
 ### Avoid leading with
 
@@ -32,6 +32,8 @@ The first demonstration should use a real change and show:
 3. the reason path for every selected check;
 4. browser, accessibility, visual, and package evidence;
 5. the resulting reviewed agent-context change.
+
+State on 2026-11-01: the recorded demonstration ([docs/impact-demo](../impact-demo/README.md), presented at https://www.oddkin.dev/change-impact) covers items 1–3 on a scripted change to Oddkin itself, runs the selected checks in Chromium, Firefox, and WebKit, and diffs the packaged agent kits (5, without a review step). Visual evidence is not compared yet, and no customer repository has been run ([technical plan](./technical-commercialization-plan.md) §7).
 
 ## 3. Messaging by audience
 
@@ -73,6 +75,8 @@ Price: free.
 - limited or no hosted retention.
 
 Purpose: adoption, trust, and evaluation.
+
+Available today in the published `1.0.0-beta.1` packages: local analysis (`oddkin-analyze`), the impact report (`oddkin-impact`, a prototype), local Workbench (`oddkin`), agent kits (`oddkin-kit`), and the public schemas. The Team, Business, and Enterprise tiers below describe a hosted service that does not exist yet.
 
 ### Team
 
@@ -155,6 +159,20 @@ Required before outreach:
 - installation guide under 15 minutes;
 - pricing or at least a paid-pilot page;
 - one architecture page explaining local versus hosted data.
+
+State on 2026-11-01:
+
+| Asset | State |
+| --- | --- |
+| Five-minute recorded demo | Not made |
+| Public sample impact report | Exists: https://www.oddkin.dev/change-impact, from [docs/impact-demo](../impact-demo/README.md) |
+| Sample release evidence bundle | Exists: every CI run keeps one (`release-evidence-<attempt>`), and the release notes of `1.0.0-beta.1` name the bundle to attach to its GitHub Release (owner decision D-11) |
+| Before/after agent task | One recorded agent run built pages from the packaged kit alone ([tests/agent-run](../../tests/agent-run/README.md)); no before/after comparison |
+| Security and data-flow overview | [SECURITY.md](../../SECURITY.md) covers vulnerability reports; no data-flow overview (nothing leaves the user's machine today) |
+| Clear limitations page | Exists: [docs/support.md](../support.md), at https://www.oddkin.dev/support/policy |
+| Installation guide under 15 minutes | Not observed (release plan RF-18) |
+| Pricing or paid-pilot page | Not made |
+| Local versus hosted architecture page | Not made (release plan RF-17) |
 
 Useful technical content:
 
@@ -256,6 +274,8 @@ Commercial:
 ## 11. 12-week launch sequence
 
 ### Weeks 1–2
+
+Partly done in the repository by 2026-11-01: the package and message scope (owner decisions D-1 and D-2), the status documentation (the README pass for `1.0.0-beta.1`), and the demonstration and sample report (CF.2). The pilot definition and target list are not recorded.
 
 - settle package and message scope;
 - repair status documentation;

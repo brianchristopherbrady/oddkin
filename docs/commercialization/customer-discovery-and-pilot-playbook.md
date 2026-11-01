@@ -1,7 +1,7 @@
 # Customer discovery and paid pilot playbook
 
 Status: ready to use  
-Last reviewed: 2026-10-29
+Last reviewed: 2026-10-29; tooling facts checked on 2026-11-01
 
 ## 1. Purpose
 
@@ -97,7 +97,7 @@ Before proposing integration, ask the team for:
 - any incident or review notes;
 - time spent.
 
-Run Oddkin locally or model the graph manually. Present:
+Run Oddkin locally or model the graph manually. What the published tools can do on 2026-11-01: `oddkin-impact snapshot` and `compare` (`@oddkin/analyzer`, a prototype) compare two revisions of a library authored with Oddkin, or of any library through its Custom Elements Manifest ([libraries-without-oddkin.md](../architecture/libraries-without-oddkin.md)). Checks are selected from examples, so a library without examples gets a list of affected components that nothing checks (coverage gaps) rather than selected checks. Snapshots store hashes of the sources, never the sources. Present:
 
 - what Oddkin could resolve;
 - what remained unknown;
@@ -134,6 +134,8 @@ Determine whether Oddkin can reduce release uncertainty and improve agent contex
 - weekly findings;
 - final measured assessment;
 - production rollout proposal or explicit recommendation not to proceed.
+
+On 2026-11-01 the CI integration exists only inside this repository (`scripts/ci/impact-summary.mjs` adds the report to each run's summary); a pilot would adapt it to the customer's CI. There is no GitHub App ([technical plan](./technical-commercialization-plan.md) workstream D).
 
 ### Customer responsibilities
 
@@ -255,7 +257,7 @@ Response: investigate review preparation, product impact, agent context, and rel
 
 ### “Web Components are not our stack.”
 
-Response: evaluate the standard-CEM and adapter path. If Oddkin cannot model the customer's components honestly, do not sell the pilot as supported.
+Response: evaluate the standard-CEM and adapter path. If Oddkin cannot model the customer's components honestly, do not sell the pilot as supported. On 2026-11-01 Workbench, change impact, and the agent kits read any library's Custom Elements Manifest, and say what they do not know; adapters for other sources (Storybook stories, DTCG tokens, then framework docgen) are planned for when a pilot needs one, and none is built ([ADR 0048](../architecture/decisions/0048-libraries-not-built-with-oddkin.md)).
 
 ### “We can build this ourselves.”
 

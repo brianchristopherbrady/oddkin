@@ -1,17 +1,18 @@
 # Technical commercialization plan
 
-Status: proposed. Rewritten on 2026-10-29 from the owner's commercialization documents (the originals are in commit `cdad50c`) and checked against the repository (`main` at `0d08543`).
+Status: proposed. Rewritten on 2026-10-29 from the owner's commercialization documents (the originals are in commit `cdad50c`) and checked against the repository (`main` at `0d08543`); §3, §6, and §11 updated on 2026-11-01 (`main` at `8830ef5`).
 
-This plan holds the technical work of the commercialization path. The owner keeps the business planning (business model, pricing, go-to-market, customer discovery, and sales) outside the repository. Where that planning sets a technical requirement, §7 states it.
+This plan holds the technical work of the commercialization path. The business planning (business model, pricing, go-to-market, customer discovery, and sales) is in the [business plan](./business-plan.md), the [go-to-market and pricing plan](./go-to-market-and-pricing.md), and the [customer discovery and paid pilot playbook](./customer-discovery-and-pilot-playbook.md); §7 states the technical requirements they set.
 
 [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md) remains the single source of truth for scope and order. Only what the owner places in that plan's priority tiers is scheduled. On 2026-10-29 the owner placed tier CF there, after P0 (§2, §11).
 
 | Document | Contents |
 | --- | --- |
 | This plan | Objective, principles, current foundation, local and hosted boundary, workstreams A–G, milestones, requirements from the business planning, deferrals, metrics, owner decisions, next actions |
-| [commercial-readiness-scorecard.md](./commercial-readiness-scorecard.md) | The technical lines of readiness gates A–D, with their status |
+| [commercial-readiness-scorecard.md](./commercial-readiness-scorecard.md) | Readiness gates A–D, commercial and technical lines, with their status |
 | [product-patterns-and-flows.md](../architecture/product-patterns-and-flows.md) | The proposed product pattern and flow contract layer |
 | [release-foundation-plan.md](./release-foundation-plan.md) | Workstream A, Milestone T0's release items, and Gate A, as tasks RF-01 to RF-19 with owner decisions D-1 to D-11 |
+| [business-plan.md](./business-plan.md), [go-to-market-and-pricing.md](./go-to-market-and-pricing.md), [customer-discovery-and-pilot-playbook.md](./customer-discovery-and-pilot-playbook.md) | The business planning |
 
 Classes, as in the release plan: **Verified** (implemented and currently verified), **Verify** (implemented, verification remaining), **Partial**, **Prototype** (implemented as a prototype, as its architecture document says), **Planned** (not started), **Owner** (blocked by an owner decision), **Unknown** (requires investigation).
 
@@ -33,7 +34,7 @@ Principles:
 - No performance, accessibility, compatibility, or savings claim goes beyond recorded evidence.
 - Missing evidence is never reported as a pass.
 - Contracts and artifacts stay portable: a team can export its metadata, reports, and verification evidence.
-- Hosted features are built only after the same need appears repeatedly in the owner's discovery evidence.
+- Hosted features are built only after the same need appears repeatedly in the owner's discovery evidence ([playbook](./customer-discovery-and-pilot-playbook.md)).
 - The component catalog does not grow during the first commercialization window unless a pilot requires it (owner decision O-4, 2026-10-29; §8).
 
 ## 2. Place in the current priority plan
@@ -59,28 +60,28 @@ The workstreams in §5 relate to it as follows.
 | G. Enterprise controls | — | All |
 | Product patterns | — | All |
 
-## 3. Current foundation (checked 2026-10-29)
+## 3. Current foundation (checked 2026-10-29; updated 2026-11-01)
 
 | Capability | Class | Evidence |
 | --- | --- | --- |
-| Published packages | Verified | All eight `@oddkin/*` packages are public on npm at `1.0.0-beta.0` (dist-tags `beta` and `latest`) since 2026-10-28. Notes for `1.0.0-beta.1` are drafted in [docs/releases/1.0.0-beta.1.md](../releases/1.0.0-beta.1.md) |
+| Published packages | Verified | All eight `@oddkin/*` packages are public on npm at `1.0.0-beta.1` (dist-tags `beta` and `latest`) since 2026-11-01, each identical to its release evidence; `1.0.0-beta.0` was published on 2026-10-28. Release notes: [docs/releases/1.0.0-beta.1.md](../releases/1.0.0-beta.1.md) |
 | Static analysis: `@oddkin/analyzer`, `oddkin-analyze` | Verified | Uses the TypeScript compiler API and never imports or executes the analyzed modules ([packages/analyzer/README.md](../../packages/analyzer/README.md)). Writes a standard Custom Elements Manifest (schema 2.1.0) and `oddkin.metadata.json`, whose sections are components, categories, recipes, models, templates, styles, contracts, foundations, stylesheets, examples, docs, and diagnostics. It recognizes Oddkin-authored components only: `OddkinElement` subclasses and `compose()` definitions ([metadata-and-analyzer.md](../architecture/metadata-and-analyzer.md) §2) |
-| Change impact: `@oddkin/analyzer/impact`, `oddkin-impact` | Prototype | [change-impact-and-verification.md](../architecture/change-impact-and-verification.md) §1 and §2.7. `snapshot` hashes each package's artifacts and named sources (it never stores them) and records tool versions. `compare` classifies changes as `incompatible`, `review`, or `informational`, follows dependency edges with reason paths, selects examples and suites per product, and widens the selection on unresolved edges. It reuses a baseline result only when that result passed. It merges CI results (`--results`) into six states: `selected`, `passed`, `failed`, `reused`, `not-executed`, and `unresolved`. It writes JSON and Markdown. Renames need authoritative migration records (`--migrations`). Not run in CI. No visual baselines |
-| Impact demonstration | Prototype | In this repository only: `node scripts/impact.mjs compare --base-ref <ref> --run` builds the base revision in a temporary worktree, snapshots both revisions, runs the selected checks in Chromium, Firefox, and WebKit (`tests/impact/selected.browser.test.ts`), and merges the results. `node scripts/impact-demo.mjs --run` scripts a real change between two commits and adds the kit diff; [docs/impact-demo/](../impact-demo/README.md) records a run. Nothing packages the demonstration for another repository |
+| Change impact: `@oddkin/analyzer/impact`, `oddkin-impact` | Prototype | [change-impact-and-verification.md](../architecture/change-impact-and-verification.md) §1 and §2.7. `snapshot` hashes each package's artifacts and named sources (it never stores them) and records tool versions. `compare` classifies changes as `incompatible`, `review`, or `informational`, follows dependency edges with reason paths, selects examples and suites per product, and widens the selection on unresolved edges. It reuses a baseline result only when that result passed. It merges CI results (`--results`) into six states: `selected`, `passed`, `failed`, `reused`, `not-executed`, and `unresolved`. It writes JSON and Markdown. Renames need authoritative migration records (`--migrations`). This repository's CI writes the report on every run (CF.2). No visual baselines |
+| Impact demonstration | Prototype | In this repository only: `node scripts/impact.mjs compare --base-ref <ref> --run` builds the base revision in a temporary worktree, snapshots both revisions, runs the selected checks in Chromium, Firefox, and WebKit (`tests/impact/selected.browser.test.ts`), and merges the results. `node scripts/impact-demo.mjs --run` scripts a real change between two commits and adds the kit diff; [docs/impact-demo/](../impact-demo/README.md) records a run, which the docs site presents at /change-impact. Nothing packages the demonstration for another repository |
 | Tokens: `@oddkin/tokens`, `oddkin-tokens` | Verified | The generator uses no Node APIs, and Node, a browser, and a module Worker produce byte-identical output (`packages/tokens/test/generate.browser.test.ts`). Structured diagnostics with JSON-pointer paths, inspection and contrast JSON, and DTCG output (format 2025.10, extension `dev.oddkin`, with lossless, lossy, and unsupported mappings). A check of the DTCG output by an independent reader is open (P1.1) |
-| Workbench: `@oddkin/workbench`, `oddkin` | Partial | Configuration (`defineWorkbenchConfig`), the page registry, examples (`defineExamples`; the serializable `examples.v1` layer keeps fixtures as `hasFixture`), site data, a dev server with watch mode, import maps from package `exports`, testing helpers (`mountExample`, `runConformance`), Theme Studio, share links (version 1), the frame protocol (version 1), and optional Products pages. It reads standard CEM for libraries without Oddkin enrichment (`library.cem`, or the package's `customElements` field). Its contracts are not frozen at 1.0.0 ([ADR 0047](../architecture/decisions/0047-m8-checkpoint-candidate-v1-contracts.md)). The consumer path, live previews, and Theme Studio's baseline flow are P0.3 (Agent 2, in progress) |
+| Workbench: `@oddkin/workbench`, `oddkin` | Partial | Configuration (`defineWorkbenchConfig`), the page registry, examples (`defineExamples`; the serializable `examples.v1` layer keeps fixtures as `hasFixture`), site data, a dev server with watch mode, import maps from package `exports`, testing helpers (`mountExample`, `runConformance`), Theme Studio, share links (version 1), the frame protocol (version 1), and optional Products pages. It reads standard CEM for libraries without Oddkin enrichment (`library.cem`, or the package's `customElements` field). Its contracts are not frozen at 1.0.0 ([ADR 0047](../architecture/decisions/0047-m8-checkpoint-candidate-v1-contracts.md)). The consumer path, live previews, Theme Studio's baseline flow, and watch mode are done (P0.3) |
 | Agent kits | Partial | Generated by `oddkin-kit` (`@oddkin/analyzer`), and shipped in `@oddkin/components` and `@oddkin/ai`: `GUIDE.md`, `kit.json` (a fingerprint of the generator version, the package versions, the input hashes, and the metadata's sha-256), `llms.txt`, and references for components, tokens, recipes, stylesheets, and models. `--check` reports a stale kit. A project writes kits for what it installs (P0.5 step 5), and a library not built with Oddkin gets one from its CEM (CF.3). The docs site serves `llms.txt` and the kits it links, byte for byte the packaged ones. `scripts/impact-demo.mjs` diffs the kits of two revisions. There is no approval step, MCP server, or agent evaluation harness ([agent-tooling.md](../architecture/agent-tooling.md) is a proposal) |
 | Portable conformance | Prototype | `conformance.v1`, `conformance-result.v1`, `@oddkin/workbench/conformance`, `./conformance/button`, and `runConformance` (change-impact-and-verification.md §1). Suites for the rest of the catalog are P1.7 |
-| Verification infrastructure | Verify | `.github/workflows/ci.yml` runs the build, lint, typecheck, the node project, the browser project in each engine serially, e2e, size budgets, packs, and metadata. The e2e step covers packed consumers (plain HTML, Vite, React, Vue, Svelte, and Angular), the golden path, two versions of core on one page, and axe checks in several specs. At `6486921` every step passed except one Workbench browser test (`coverage.browser.test.ts`, Agent 2). `registry-smoke.yml` installs the published packages weekly; its first scheduled run is pending |
+| Verification infrastructure | Verified | `.github/workflows/ci.yml` runs the build, lint, typecheck, the node project, the browser project in each engine serially, e2e, size budgets, packs, and metadata, then writes the release evidence and the impact report. The e2e step covers packed consumers (plain HTML, Vite, React, Vue, Svelte, and Angular), the golden path, two versions of core on one page (one from npm), and axe checks in several specs. Every step passed at `8830ef5` (run 41357723623). The registry smoke's specs pass against the published `1.0.0-beta.1` in three engines (run locally on 2026-11-01); `registry-smoke.yml`'s first scheduled run is pending |
 | Schemas | Verified | 16 schemas in `docs/schemas` under `https://oddkin.dev/schemas/<name>/v1.json`, including `comparison-snapshot`, `impact-report`, `conformance`, `conformance-result`, `diagnostic`, `examples`, `product`, `project-context`, and `agent-kit`. `@oddkin/ai` and `@oddkin/components` ship their record and navigation schemas |
-| Docs site and Figma | Partial | The docs site is deployed to www.oddkin.dev by `docs.yml`. Code Connect mappings exist as repository artifacts (`artifacts/code-connect/`); publishing them to Figma was refused because it needs an Organization or Enterprise plan |
+| Docs site and Figma | Partial | The docs site is deployed to www.oddkin.dev by `docs.yml`, with `llms.txt`, the support policy, and the change-impact page. Code Connect mappings exist as repository artifacts (`artifacts/code-connect/`); publishing them to Figma was refused because it needs an Organization or Enterprise plan |
 
 Known gaps:
 
 - Fully parallel browser runs are not reliable; serial per-engine runs are the evidence ([release-process.md](../release-process.md) §3).
 - Screen-reader and Safari-on-hardware evidence is parked until hardware is available (P3), and the owner's own accessibility review is pending (P1.4).
-- Several package READMEs state old statuses (release plan §7).
-- There is no support process, security policy (`SECURITY.md`), or trusted publishing (RF-12, RF-13).
+- The package READMEs were corrected for `1.0.0-beta.1` (RF-01); no check keeps them true yet (RF-02).
+- The support policy ([docs/support.md](../support.md)) and `SECURITY.md` exist (RF-04, RF-13); trusted publishing does not (RF-12).
 - One fixture library is not built with Oddkin (plain custom elements). Its examples reach every tool through `oddkin-analyze --manifest` (ADR 0048 §3), but no library made with another authoring library is a fixture yet.
 - Impact reports record tool versions, not the source revision or whether the working tree was dirty.
 - There is no hosted service of any kind: no identity, tenancy, persistence, billing, or service security controls.
@@ -322,21 +323,21 @@ Built only after pilot demand is recorded:
 
 None of it exists.
 
-## 6. Milestones (technical items)
+## 6. Milestones
 
-| Milestone | Technical items | Today |
-| --- | --- | --- |
-| T0, baseline | Package tiers and versions (versions done; tiers are D-1); repair stale documentation (RF-01 to RF-03; CF.1); one end-to-end assurance demonstration from a clean checkout (§7; CF.2); release evidence from a clean checkout (RF-09 in CF.1; RF-10) | Partial |
-| T1, external local preview | Installation in an external repository (RF-11); the standard-CEM baseline (B; CF.3); portable snapshots and reports with provenance (C); a prototype that ingests customer-CI results (D, step 1; CF.2); two observed onboarding sessions (RF-18) | Planned, except Workbench's CEM input |
-| T2, hosted pilot | GitHub App; an organization and project model; persistent reports and artifacts; pull-request checks | Planned |
-| T3, repeatable beta | Onboarding that needs no help from the repository author; baseline approvals; agent-context releases; a support and incident process for the service | Planned |
-| T4, general availability | Security and privacy review; service reliability objectives; customer-controlled retention; billing, cancellation, and export paths; an artifact migration policy | Planned |
+| Milestone | Technical items | Business items | Today (2026-11-01) |
+| --- | --- | --- | --- |
+| T0, baseline (two to three weeks) | Package tiers and versions (D-1, D-2); repair stale documentation (RF-01 to RF-03; CF.1); one end-to-end assurance demonstration from a clean checkout (§7; CF.2); release evidence from a clean checkout (RF-09, RF-10) | Recruit design partners | Technical items done except RF-02's check; no design partner recorded |
+| T1, external local preview (four to six weeks) | Installation in an external repository (RF-11); the standard-CEM baseline (B; CF.3); portable snapshots and reports with provenance (C); a prototype that ingests customer-CI results (D, step 1; CF.2); two observed onboarding sessions (RF-18) | — | CF.3 and the in-repository CI report are done; the rest is Planned |
+| T2, hosted pilot (six to ten weeks) | GitHub App; an organization and project model; persistent reports and artifacts; pull-request checks | Manual billing and support; the first paid pilot active | Planned |
+| T3, repeatable paid beta | Onboarding that needs no help from the repository author; baseline approvals; agent-context releases; a support and incident process for the service | Three paying customers; a reusable onboarding process; workspace pricing; evidence that at least one risk or meaningful review cost was avoided | Planned |
+| T4, general availability | Security and privacy review; service reliability objectives; customer-controlled retention; billing, cancellation, and export paths; an artifact migration policy | Stable billing; support coverage; at least five referenceable customers or a deliberate private-enterprise strategy | Planned |
 
-The original milestones also hold business items (design partners, pilots, customers, pricing), which the owner tracks outside the repository. Their durations (T0 two to three weeks, T1 four to six, T2 six to ten) predate this audit.
+The durations are the owner's of 2026-10-29 and predate the audit. The business items come from the owner's original milestones; the [business plan](./business-plan.md) §14 and the [scorecard](./commercial-readiness-scorecard.md) gates B–D track them.
 
 ## 7. Technical requirements from the business planning
 
-The owner's go-to-market and pilot planning (outside the repository) needs these technical deliverables. The state of each on 2026-10-29 is in brackets, with the change-impact demonstration's updates of 2026-10-30.
+The [go-to-market plan](./go-to-market-and-pricing.md) and the [pilot playbook](./customer-discovery-and-pilot-playbook.md) need these technical deliverables. The state of each on 2026-10-29 is in brackets, with the updates of 2026-10-30 and 2026-11-01.
 
 **The first demonstration** uses a real change and shows:
 
@@ -350,13 +351,13 @@ The owner's go-to-market and pilot planning (outside the repository) needs these
 
 - a recorded five-minute demonstration of the change above [Planned];
 - a public sample impact report [recorded in [docs/impact-demo/](../impact-demo/README.md) by `scripts/impact-demo.mjs`, and presented on the docs site's `/change-impact` page, which is generated from it];
-- a sample release evidence bundle [RF-09, RF-10];
-- a before-and-after agent task that shows fewer unsupported API uses [needs an evaluation harness; Planned];
-- a security and data-flow overview, and an architecture page on local versus hosted data [Planned; RF-17 for the docs site];
-- a limitations page [RF-04, RF-08];
+- a sample release evidence bundle [every CI run keeps one (RF-09, RF-10); attaching `1.0.0-beta.1`'s to its GitHub Release is the owner's (D-11)];
+- a before-and-after agent task that shows fewer unsupported API uses [needs an evaluation harness; Planned. One agent run built pages from the packaged kit alone (`tests/agent-run/`), without a comparison];
+- a security and data-flow overview, and an architecture page on local versus hosted data [`SECURITY.md` exists; the rest is Planned; RF-17 for the docs site];
+- a limitations page [docs/support.md, on the docs site at /support/policy (RF-04); release notes (RF-08)];
 - an installation guide that takes under 15 minutes in observation [RF-18].
 
-**Historical-change assessment.** Before a pilot, the tools run on a team's base and changed revisions. They report what resolved, what stayed unknown, the selected checks with reason paths, and how this differs from the team's own process. [`scripts/impact.mjs --base-ref` does this inside this repository only; another repository depends on B.] False positives and possible false negatives are recorded by hand. A historical analysis is never presented as proof of future prevention.
+**Historical-change assessment.** Before a pilot, the tools run on a team's base and changed revisions. They report what resolved, what stayed unknown, the selected checks with reason paths, and how this differs from the team's own process. [`scripts/impact.mjs --base-ref` does this inside this repository only; for another repository, `oddkin-impact` reads a library's CEM (CF.3), and nothing builds its revisions yet.] False positives and possible false negatives are recorded by hand. A historical analysis is never presented as proof of future prevention.
 
 **Pilot deliverables:**
 
@@ -434,15 +435,12 @@ None of these is measured automatically today. The impact report's JSON already 
 
 ## 11. Next technical actions
 
-The owner set this order on 2026-10-29 (O-4), and IMPLEMENTATION_PLAN.md holds it.
+The owner set this order on 2026-10-29 (O-4), and IMPLEMENTATION_PLAN.md holds it. State on 2026-11-01:
 
-1. Close P0: a green CI, P0.3, P0.4, and P0.5 step 5. Then cut `1.0.0-beta.1` (P0.8).
-2. CF.1, the release trust basics: RF-01 to RF-04 and RF-09.
-3. CF.2, the change-impact demonstration:
-   - a scripted, reproducible change between two commits;
-   - its report produced in CI and published as a job summary and an artifact. This is D's step 1, and it defines the smallest artifact set a CI uploads (C);
-   - a docs page that presents the sample report.
-4. CF.3, libraries not built with Oddkin (B).
+1. Close P0 and cut `1.0.0-beta.1` (P0.8). [Done: published 2026-11-01; P0.1, P0.3, P0.4, P0.5, and P0.8 are ticked. Open: P0.2's share-link check, P0.6's first scheduled registry run, P0.7 (docs site).]
+2. CF.1, the release trust basics: RF-01 to RF-04 and RF-09. [RF-01, RF-03, RF-04, and RF-09 are done; RF-02's check is open.]
+3. CF.2, the change-impact demonstration. [Done: the scripted change, the report in CI as a job summary and an artifact, and the docs page.]
+4. CF.3, libraries not built with Oddkin (B). [Done.]
 5. The P1 items tier CF needs: P1.6 (analyzer), P1.7 (conformance and visual baselines), and P1.1 (theming).
 
 Not placed yet: the external fixture repository (RF-11, D-6) and the other release tasks; product patterns Phase 0 (O-8).
