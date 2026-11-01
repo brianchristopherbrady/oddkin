@@ -67,6 +67,14 @@ export type Fact =
   | 'examples'
   | 'support-intro'
   | `support-${SupportSection}`
+  /** The change-impact run recorded in docs/impact-demo. */
+  | 'impact-commits'
+  | 'impact-summary'
+  | 'impact-changes'
+  | 'impact-affected'
+  | 'impact-checks'
+  | 'impact-kit'
+  | 'impact-reproduce'
   | 'token-categories'
   | 'token-pipeline'
   | 'token-trace'

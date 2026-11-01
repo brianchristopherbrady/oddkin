@@ -4724,3 +4724,13 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Gates | `npm run typecheck`; `npx vitest run --project node`; `npm run lint` | All exit 0; 126 files, 1,557 tests passed |
 
 **Not verified here:** `e2e/packed-consumers.spec.ts` with its longer wait (290 s per consumer build, was 170 s): only its timeouts changed.
+## 2026-11-01 — Docs: the change-impact page (CF.2; round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Docs tests | `npx vitest run tests/docs` | 31 passed. New: the page against `docs/impact-demo/report.json` and `README.md` (the base commit link, both commits, "6 changes: 1 incompatible, 4 review, 1 informational.", every change with its classification and the possible rename, the four paths, "29 checks selected: 29 passed, in Chromium, Firefox, and WebKit.", each example, the note, the five kit files, and the reproduce commands). The Tools sidebar lists Change impact after Analyzer and agents |
+| The facts | `node .tmp/impact-facts.mjs` | Changes incompatible first (`part:odd-menu#item`, removed, possible rename to `part:odd-menu#menuitem`); checks by component: odd-combobox 11, odd-menu 5, odd-picker 8, odd-split-button 5, each passed in Chromium, Firefox, and WebKit; kit changes `item` → `menuitem`, `color.surface.specimen` light `#efedfc` → `#f3f1fd`, and the `inputs` and `sha256` fingerprints |
+| Layout | Dev server on port 4184, Playwright at 320, 390, 768, and 1440 px | No page overflow at any width; the five tables scroll in their own regions |
+| Accessibility | `node .tmp/axe-change-impact.mjs` (axe-core, WCAG 2.0–2.2 A and AA) | No violations in light or dark mode at 1440 and 390 px |
+| Static checks | `npx tsc -b apps/docs`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check` (changed files); `npm run lint:contracts`; `node scripts/check-page-layout.mjs`; `node scripts/check-vocabulary.mjs` | Clean |
+| e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts` (Chromium) | 16 passed (1.3 min) |

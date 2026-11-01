@@ -213,10 +213,59 @@ describe('authored docs pages', async () => {
     for (const page of pages) {
       const html = renderPage(page, facts);
       const ids = [...html.matchAll(/<pre class="code" id="([^"]+)"/g)].map(([, id]) => id);
+      // A fact can hold code too: the change-impact page's commands, from the recorded run.
+      const generated = [...(page.intro ?? []), ...page.sections.flatMap((s) => s.blocks)]
+        .flatMap((b) => ('fact' in b ? facts[b.fact] : []))
+        .filter((b) => 'code' in b).length;
       expect(new Set(ids).size, page.path).toBe(ids.length);
-      expect(ids.length, page.path).toBe(codeBlocks(page).length);
+      expect(ids.length, page.path).toBe(codeBlocks(page).length + generated);
       for (const id of ids) expect(html, page.path).toContain(`<odd-copy-button from="${id}">`);
     }
+  });
+
+  it('present the recorded change-impact run as its report and README give it', async () => {
+    interface Report {
+      changes: { id: string; classification: string; possibleRename?: string }[];
+      affected: { components: { id: string; via: string[] }[] };
+      checks: { id: string; state: string }[];
+    }
+    const dir = `${root}docs/impact-demo/`;
+    const report = JSON.parse(readFileSync(`${dir}report.json`, 'utf8')) as Report;
+    const readme = readFileSync(`${dir}README.md`, 'utf8');
+    const html = renderPage(
+      pages.find((p) => p.path === 'change-impact')!,
+      facts,
+    );
+    const shown = text(html);
+    // The commits, linked to the base on GitHub.
+    const { repository } = await siteFacts(root);
+    const base = /^- Base: `([0-9a-f]+)`/m.exec(readme)![1];
+    expect(html).toContain(`<a href="${repository}/commit/${base}">${base}</a>`);
+    for (const [, sha, subject] of readme.matchAll(/^\s+\d+\. `([0-9a-f]+)`, (.+)$/gm))
+      expect(shown).toContain(`${sha}${subject}`);
+    // The counts the README gives, and every change, path, and check of the report.
+    expect(shown).toContain(/^\d+ changes: [^.]+\./m.exec(readme)![0]);
+    for (const change of report.changes) {
+      expect(html).toContain(`<th scope="row"><code>${change.id}</code></th>`);
+      expect(html).toContain(`<td>${change.classification}</td>`);
+      if (change.possibleRename)
+        expect(shown).toContain(`possible rename to ${change.possibleRename}`);
+    }
+    for (const { via } of report.affected.components) expect(shown).toContain(via.join(' → '));
+    const passed = report.checks.filter((c) => c.state === 'passed').length;
+    expect(shown).toContain(
+      `${report.checks.length} checks selected: ${passed} passed, in Chromium, Firefox, and WebKit.`,
+    );
+    for (const check of report.checks)
+      expect(shown).toContain(check.id.replace(/^example:[^/]+\//, ''));
+    if (passed === report.checks.length)
+      expect(shown).toContain('passing checks do not make a contract change compatible');
+    // The kit files that differ, and the commands that reproduce the run.
+    const kit = readFileSync(`${dir}kit.diff`, 'utf8');
+    for (const [, file] of kit.matchAll(/^diff --git a\/kits\/base\/(\S+)/gm))
+      expect(html).toContain(`<th scope="row"><code>${file}</code></th>`);
+    const reproduce = /^## Reproduce\s+```sh\n([\s\S]*?)```/m.exec(readme)![1]!.trim();
+    expect(html).toContain(`<code>${reproduce}</code></pre>`);
   });
 });
 
@@ -333,6 +382,7 @@ describe('the docs shell', async () => {
     );
     expect(sectionNav(shell('/ai'))).toEqual([
       'Analyzer and agents /tooling',
+      'Change impact /change-impact',
       'AI interfaces /ai [page]',
     ]);
     expect(sectionNav(shell('/architecture/scope-ownership'))).toEqual([

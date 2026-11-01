@@ -1,6 +1,6 @@
 import { foundationPages } from './foundations.js';
 
-import { agents, browserSupport, frameworks } from './guides.js';
+import { agents, browserSupport, changeImpact, frameworks } from './guides.js';
 import { composition, formsAccessibility, layout, theming } from './guides-core.js';
 import { gettingStarted, guides, recipes } from './landing.js';
 import { groups, type Group, type Page } from './model.js';
@@ -28,6 +28,7 @@ export const pages: readonly Page[] = [
   formsAccessibility,
   composition,
   agents,
+  changeImpact,
   recipes,
   architecture,
   roadmap,
@@ -60,7 +61,7 @@ export const clientPages: readonly ClientPage[] = [
 const order: Record<Group, readonly string[]> = {
   'Start here': ['', 'getting-started', 'installation'],
   Build: ['components', 'foundations', 'core', 'guides', 'ai'],
-  Explore: ['theme-studio', 'workbench', 'tooling', 'recipes'],
+  Explore: ['theme-studio', 'workbench', 'tooling', 'change-impact', 'recipes'],
   Project: ['architecture', 'roadmap', 'support'],
 };
 
@@ -131,7 +132,7 @@ export const primaryLinks: readonly { label: string; path: string; section: read
       // Figma's Tools goes to /workbench; until that page exists, to the section's first page.
       label: 'Tools',
       path: ['workbench', 'tooling'].find((path) => routeExists(path)) ?? 'workbench',
-      section: ['workbench', 'tooling', 'ai'],
+      section: ['workbench', 'tooling', 'change-impact', 'ai'],
     },
   ];
 
@@ -192,6 +193,7 @@ export const sections: readonly NavSection[] = [
       { path: 'theme-studio' },
       { path: 'workbench' },
       { path: 'tooling', label: 'Analyzer and agents' },
+      { path: 'change-impact' },
       { path: 'ai' },
     ],
     note: ['Explore the tools'],

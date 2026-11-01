@@ -349,7 +349,7 @@ The owner's go-to-market and pilot planning (outside the repository) needs these
 **Launch material that needs engineering:**
 
 - a recorded five-minute demonstration of the change above [Planned];
-- a public sample impact report [recorded in [docs/impact-demo/](../docs/impact-demo/README.md) by `scripts/impact-demo.mjs`; the docs page is Agent 3's];
+- a public sample impact report [recorded in [docs/impact-demo/](../docs/impact-demo/README.md) by `scripts/impact-demo.mjs`, and presented on the docs site's `/change-impact` page, which is generated from it];
 - a sample release evidence bundle [RF-09, RF-10];
 - a before-and-after agent task that shows fewer unsupported API uses [needs an evaluation harness; Planned];
 - a security and data-flow overview, and an architecture page on local versus hosted data [Planned; RF-17 for the docs site];

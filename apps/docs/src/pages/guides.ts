@@ -357,3 +357,247 @@ if (!result.ok) console.table(result.diagnostics);`,
     },
   ],
 };
+
+const project = repository.replace(/\/blob\/main\/$/, '');
+
+/**
+ * Change impact (IMPLEMENTATION_PLAN.md CF.2): the recorded run in docs/impact-demo, generated from
+ * its report, and the evidence the site's claims rest on.
+ */
+export const changeImpact: Page = {
+  path: 'change-impact',
+  group: 'Explore',
+  eyebrow: 'Tools',
+  title: 'Change impact',
+  summary:
+    'What a change to a component library breaks, which components it reaches and by what path, and which examples check it, from the files two builds publish.',
+  sections: [
+    {
+      id: 'how',
+      title: 'How it works',
+      blocks: [
+        {
+          p: [
+            { code: 'oddkin-impact' },
+            ' (in ',
+            { code: '@oddkin/analyzer' },
+            ') takes a snapshot of each revision’s built packages: the Custom Elements Manifest, ',
+            { code: 'oddkin.metadata.json' },
+            ', the package exports, and a hash of each module they name. It reads these files and runs none of the code. Each change between two snapshots is classified:',
+          ],
+        },
+        {
+          list: [
+            [
+              { strong: 'Incompatible' },
+              ': a removed component, property, attribute, event, method, slot, part, CSS property, custom state, registration, export, or token; a token whose type or unit changed; a property whose values narrowed.',
+            ],
+            [
+              { strong: 'Review' },
+              ': any other change to a contract, such as a token value, a template, a style, or a widened type. A person decides.',
+            ],
+            [{ strong: 'Informational' }, ': an addition, or a change to descriptions only.'],
+          ],
+        },
+        {
+          p: [
+            'From each change it follows the dependencies (a style that reads a token, a definition that uses a style, a component built with another) to the components it affects. Their examples are the checks it selects, each with the path that selected it. A check passes only when every run of it passed; a check that did not run is never shown as passing.',
+          ],
+        },
+        {
+          code: {
+            lang: 'sh',
+            verify: 'none',
+            code: `# A snapshot of each revision's built package directories
+npx oddkin-impact snapshot <package-dir>... --out base.json
+npx oddkin-impact snapshot <package-dir>... --out head.json
+# The changes, the affected components, and the selected checks
+npx oddkin-impact compare base.json head.json --markdown report.md --json report.json`,
+          },
+        },
+        {
+          p: [
+            { code: '--theme' },
+            ' and ',
+            { code: '--inspection' },
+            ' add a theme’s tokens to a snapshot. ',
+            { code: '--results' },
+            ' merges the results of the checks you ran, and ',
+            { code: 'compare' },
+            ' then exits with 1 when one failed. Everything runs locally: there is no hosted service, and nothing is published.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'sample',
+      title: 'A recorded change',
+      blocks: [
+        {
+          p: [
+            'In this repository, ',
+            { code: 'scripts/impact-demo.mjs' },
+            ' makes a real change and reports on it. In a temporary worktree it commits two edits on a base commit (the menu’s ',
+            { code: 'item' },
+            ' part becomes ',
+            { code: 'menuitem' },
+            ', and the default theme’s specimen surface gets lighter), builds both revisions with their own build steps, compares them, and runs the selected checks on the head’s build in three browsers. This page is generated from the run recorded in ',
+            { link: 'docs/impact-demo', href: `${project}/tree/main/docs/impact-demo` },
+            '.',
+          ],
+        },
+        { fact: 'impact-commits' },
+        { fact: 'impact-summary' },
+      ],
+    },
+    {
+      id: 'changes',
+      title: 'What changed',
+      blocks: [
+        {
+          p: [
+            'Renaming the part breaks a consumer’s ',
+            { code: 'odd-menu::part(item)' },
+            ' rule, and no test notices. Items are matched by id, so without a migration record a rename is a removal and an addition: the report notes the likely rename, as the two parts have the same contract, and still counts the removal.',
+          ],
+        },
+        { fact: 'impact-changes' },
+      ],
+    },
+    {
+      id: 'affected',
+      title: 'What it affects',
+      blocks: [
+        { p: ['Each path runs from a changed item to the component it reaches.'] },
+        { fact: 'impact-affected' },
+      ],
+    },
+    {
+      id: 'checks',
+      title: 'What checks it',
+      blocks: [
+        {
+          p: [
+            'The examples of the affected components, run on the head’s build. ',
+            { link: 'The report', href: `${repository}docs/impact-demo/report.md` },
+            ' lists each check with its path.',
+          ],
+        },
+        { fact: 'impact-checks' },
+      ],
+    },
+    {
+      id: 'agent-context',
+      title: 'What agents read',
+      blocks: [
+        {
+          p: [
+            'The agent kits of both revisions, packaged with the same ',
+            { code: 'oddkin-kit' },
+            ', differ where the change does, so an agent that reads the head’s kit finds the new part and the new value. Each ',
+            { code: 'kit.json' },
+            ' holds a fingerprint of the kit’s inputs (',
+            { code: 'inputs' },
+            ') and the hash of the metadata it was written from (',
+            { code: 'sha256' },
+            '), so a kit that no longer matches its package is detectable.',
+          ],
+        },
+        { fact: 'impact-kit' },
+      ],
+    },
+    {
+      id: 'reproduce',
+      title: 'Reproduce it',
+      blocks: [
+        { p: ['In a checkout of the repository:'] },
+        { fact: 'impact-reproduce' },
+        {
+          p: [
+            'The files go to ',
+            { code: '.oddkin/impact/demo' },
+            '; ',
+            { code: '--record <dir>' },
+            ' copies the ones recorded here. The script exits with 1 when a selected check fails.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'evidence',
+      title: 'The evidence',
+      blocks: [
+        { p: ['What the site’s claims rest on, where each is kept:'] },
+        {
+          cards: [
+            {
+              title: 'CI in three browsers',
+              text: 'Each push to main and each pull request: lint, type checks, the build, the unit tests, the browser and end-to-end tests in Chromium, Firefox, and WebKit, the packed packages, and a change-impact report against its base in the job summary.',
+              href: `${project}/actions/workflows/ci.yml`,
+              action: 'View the CI runs',
+              meta: '.github/workflows/ci.yml',
+            },
+            {
+              title: 'Fresh installs',
+              text: 'New Vite, React, Vue, Svelte, and Angular projects install the packed packages and their own build tools, type-check when they use TypeScript, and are tested from their production builds. Each week, the same tests install the published packages from npm.',
+              href: `${repository}e2e/fresh-consumers.spec.ts`,
+              action: 'View the fresh-install tests',
+              meta: 'e2e/fresh-consumers.spec.ts',
+            },
+            {
+              title: 'Change-impact analysis',
+              text: 'How snapshots, classifications, dependency paths, and check states work, and what is not built yet.',
+              href: `${repository}docs/architecture/change-impact-and-verification.md`,
+              action: 'Read the change-impact analysis',
+              meta: 'docs/architecture',
+            },
+            {
+              title: 'Architecture decisions',
+              text: 'Every decision record, with its area and status, as the records give them.',
+              href: '/architecture#decisions',
+              action: 'View the decision records',
+              meta: 'docs/architecture/decisions',
+            },
+            {
+              title: 'The recorded run',
+              text: 'The patch, the report in Markdown and JSON, and the kit diff this page is generated from.',
+              href: `${project}/tree/main/docs/impact-demo`,
+              action: 'View the recorded files',
+              meta: 'docs/impact-demo',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'limits',
+      title: 'Limits',
+      blocks: [
+        {
+          list: [
+            [
+              'The snapshot and report formats are not frozen: they can change in a minor release (',
+              {
+                link: 'ADR 0047',
+                href: `${repository}docs/architecture/decisions/0047-m8-checkpoint-candidate-v1-contracts.md`,
+              },
+              ').',
+            ],
+            [
+              'A path is only as complete as its inputs. A module whose source was not supplied, a package that was not read, or a dynamic definition is listed as a coverage gap, and widens the selection to every example of its package.',
+            ],
+            ['Visual differences and component-family mappings are not compared yet.'],
+            [
+              'A library described only by a standard Custom Elements Manifest gets its changes and affected components; it gets checks where it publishes examples (',
+              {
+                link: 'libraries not built with Oddkin',
+                href: `${repository}docs/architecture/libraries-without-oddkin.md`,
+              },
+              ').',
+            ],
+          ],
+        },
+      ],
+    },
+  ],
+};
