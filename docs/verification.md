@@ -4734,3 +4734,11 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Accessibility | `node .tmp/axe-change-impact.mjs` (axe-core, WCAG 2.0–2.2 A and AA) | No violations in light or dark mode at 1440 and 390 px |
 | Static checks | `npx tsc -b apps/docs`; `npx tsc -p tsconfig.tests.json`; `npx prettier --check` (changed files); `npm run lint:contracts`; `node scripts/check-page-layout.mjs`; `node scripts/check-vocabulary.mjs` | Clean |
 | e2e | `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts` (Chromium) | 16 passed (1.3 min) |
+
+## 2026-11-01 — The deployed `llms.txt` (round 10, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Deploy | GitHub Actions runs on `main` (public API) | "Docs site" on 44d0a0b: completed, success. CI on 44d0a0b was still running at the time |
+| Live index | `node .tmp/check-live-llms.mjs` | https://www.oddkin.dev/llms.txt answers 200 and starts with "# Oddkin" and the README's one-line description. All 170 links answer 200 |
+| Live kits | The same script | The served `GUIDE.md` of `@oddkin/components` and `@oddkin/ai`, and the composition reference, equal this checkout's packaged kits. The served `odd-input` reference carries 44d0a0b's `reportValidity()` description, so the deploy is of that commit |
