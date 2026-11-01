@@ -1,6 +1,6 @@
 # Libraries not built with Oddkin
 
-Status: 2026-10-30 (CF.3 in IMPLEMENTATION_PLAN.md; Workstream B in the [technical plan](../../future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md)). The decisions are in [ADR 0048](./decisions/0048-libraries-not-built-with-oddkin.md).
+Status: 2026-10-30 (CF.3 in IMPLEMENTATION_PLAN.md; Workstream B in the [technical plan](../commercialization/technical-commercialization-plan.md)). The decisions are in [ADR 0048](./decisions/0048-libraries-not-built-with-oddkin.md).
 
 This page describes what Workbench, change impact (`oddkin-impact`), and agent kits (`oddkin-kit`) do with a component library described only by a standard [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest). It also lists what each layer of Oddkin enrichment adds, and what is not built yet. Each claim names its test.
 

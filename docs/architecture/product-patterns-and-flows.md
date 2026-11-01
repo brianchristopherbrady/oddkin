@@ -38,7 +38,7 @@ The first product value is not autonomous product design. It is making a design 
 | Impact graph | Items: component, class, property, attribute, event, method, slot, part, cssprop, state, registration, export, definition, template, style, token, theme, product, example, and suite. Checks: `example:<tag>/<name>` and `suite:<id>#<tag>`, per product | No recipe, model, route, or pattern items; scenarios would be a third kind of check |
 | Routes | `@oddkin/app`'s router declares routes in application code | No artifact records a stable route identity |
 | Agent kits | The package kits ship `GUIDE.md`, `kit.json`, `llms.txt`, and `references/` (components, tokens, recipes, stylesheets, models, `choosing-components.md`, `composition.md`). The generator can also write `json/` bundles | No query operations: the owner skipped `@oddkin/agent` and MCP (IMPLEMENTATION_PLAN.md P2.2). No consumer kit command yet (P0.5 step 5) |
-| Agent evaluation | [agent-tooling.md](../docs/architecture/agent-tooling.md) §11 proposes one; P0.4 has a real agent build a page from a kit | No evaluation harness |
+| Agent evaluation | [agent-tooling.md](./agent-tooling.md) §11 proposes one; P0.4 has a real agent build a page from a kit | No evaluation harness |
 | Figma | Code Connect mappings are repository artifacts (`artifacts/code-connect/`); publishing them to Figma was refused because it needs an Organization or Enterprise plan | Figma references stay provenance only |
 | Schemas | 16 in `docs/schemas`, named `https://oddkin.dev/schemas/<name>/v1.json` | The three pattern schemas in §12 follow this convention |
 | Decisions | The highest ADR is 0047 | The Phase 0 ADR takes the next number |

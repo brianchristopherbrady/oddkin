@@ -12,7 +12,7 @@ The aim is to make correct, maintainable components easy to write and easy to do
 
 **Owner direction (2026-10-28).** Work in priority order. First come the foundations people need to install Oddkin and build with it, working together as one system. Then Workbench and the AI tooling must work end to end. Then the remaining foundations, and only then new capability, starting with the SVG icon packages. The milestones (M0–M12) and the numbered sections stay as the detailed backlog and the evidence record; this section sets the order and the owners. Take an item when its tier is reached, or earlier when an item in a higher tier depends on it. Tick an item here and in the milestone item it names.
 
-**Owner direction (2026-10-29).** Two goals set the order after P0. The docs site is Oddkin's showcase, so it must be polished and work reliably. And the foundations for commercializing Oddkin come next ([future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md](./future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md), decisions O-4 and O-5). After P0 comes tier CF. Then come the P1 items that tier CF needs (P1.6, P1.7, P1.1) and P1.2's quality items, and then the rest of P1. The catalog does not grow: P1.2's new component families and collections, Theme Studio beyond its baseline flow (P1.5), the SVG icons (P2.1), and Workbench completion (P2.3) are parked. `@oddkin/agent` and MCP (P2.2) stay skipped.
+**Owner direction (2026-10-29).** Two goals set the order after P0. The docs site is Oddkin's showcase, so it must be polished and work reliably. And the foundations for commercializing Oddkin come next ([docs/commercialization/technical-commercialization-plan.md](./docs/commercialization/technical-commercialization-plan.md), decisions O-4 and O-5). After P0 comes tier CF. Then come the P1 items that tier CF needs (P1.6, P1.7, P1.1) and P1.2's quality items, and then the rest of P1. The catalog does not grow: P1.2's new component families and collections, Theme Studio beyond its baseline flow (P1.5), the SVG icons (P2.1), and Workbench completion (P2.3) are parked. `@oddkin/agent` and MCP (P2.2) stay skipped.
 
 **Lanes** (log, tools, and prompts in `C:\SLT_Backup_10-21-2026\oddkin-lanes`: `lanes-r10.md`, `prompts/round-10/`):
 
@@ -109,9 +109,9 @@ Exit criteria:
 
 ### CF: commercialization foundations (after P0's exit; owner, 2026-10-29)
 
-The details are in [future_plans/](./future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md). In order:
+The details are in the [technical commercialization plan](./docs/commercialization/technical-commercialization-plan.md); [docs/commercialization/](./docs/commercialization/README.md) holds it with the readiness scorecard, the release-foundation plan, and the owner's business plans. In order:
 
-- [ ] **CF.1 Release trust basics (Agent 1, with Agent 3).** From the [release-foundation plan](./future_plans/implementation/RELEASE_FOUNDATION_IMPLEMENTATION_PLAN.md):
+- [ ] **CF.1 Release trust basics (Agent 1, with Agent 3).** From the [release-foundation plan](./docs/commercialization/release-foundation-plan.md):
   - README and status statements taken from generated facts, and a check that keeps them true (RF-01, RF-02; Agent 3 writes the READMEs);
   - accessibility wording that names its evidence (RF-03; owner decision D-7);
   - a public browser and Node support policy that lists its limitations (RF-04);
@@ -201,7 +201,9 @@ The details are in [future_plans/](./future_plans/TECHNICAL_COMMERCIALIZATION_PL
 | Document | Role |
 | --- | --- |
 | **This plan** | Single source of truth for scope, milestones, and acceptance |
-| [future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md](./future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md) | The technical work of the commercialization path: workstreams A–G, readiness gates, owner decisions; tier CF comes from it |
+| [docs/commercialization/technical-commercialization-plan.md](./docs/commercialization/technical-commercialization-plan.md) | The technical work of the commercialization path: workstreams A–G, readiness gates, owner decisions; tier CF comes from it |
+| [docs/commercialization/](./docs/commercialization/README.md) | The commercialization documents: the technical plan, the release-foundation plan, the readiness scorecard, and the owner's business, go-to-market, and customer-discovery plans |
+| [docs/architecture/product-patterns-and-flows.md](./docs/architecture/product-patterns-and-flows.md) | The proposed product pattern and flow contract layer (parked behind tier CF, decision O-8) |
 | [docs/architecture/packages.md](./docs/architecture/packages.md) | Package boundaries, dependency map, entry points |
 | [docs/architecture/core-contracts.md](./docs/architecture/core-contracts.md) | Authoring, lifecycle, `Scope`, reactivity, templates, stores, resources, router |
 | [docs/architecture/theming-and-styling.md](./docs/architecture/theming-and-styling.md) | Theme config, token pipeline, spacing, scopes, outputs, styling, layout roles/conditions/profiles |

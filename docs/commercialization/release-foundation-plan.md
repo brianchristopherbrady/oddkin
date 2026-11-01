@@ -2,7 +2,7 @@
 
 Status: proposed (Agent 1, 2026-10-29). Planning only: nothing here is implemented by this document, and no version, `private` flag, license, or publish state changes because of it.
 
-Scope: [TECHNICAL_COMMERCIALIZATION_PLAN.md](../TECHNICAL_COMMERCIALIZATION_PLAN.md) Workstream A, "Release foundation", and Milestone T0's release items; [COMMERCIAL_READINESS_SCORECARD.md](../COMMERCIAL_READINESS_SCORECARD.md) Gate A, "Public technical preview".
+Scope: [technical-commercialization-plan.md](./technical-commercialization-plan.md) Workstream A, "Release foundation", and Milestone T0's release items; [commercial-readiness-scorecard.md](./commercial-readiness-scorecard.md) Gate A, "Public technical preview".
 
 Evidence base: `main` on 2026-10-29 (the commit that adds this file), the eight package manifests and READMEs, `docs/release-process.md`, `docs/verification.md`, `docs/progress-log.md`, `IMPLEMENTATION_PLAN.md`, the npm registry (`npm view @oddkin/core dist-tags`: `beta` and `latest` are `1.0.0-beta.0`), and GitHub CI run 40945402821 at `6486921`.
 
@@ -18,7 +18,7 @@ Evidence base: `main` on 2026-10-29 (the commit that adds this file), the eight 
 
 ## Where this plan departs from its sources
 
-The owner's original commercialization documents (commit `cdad50c`) were written against an older state. They said the packages "remain private and versioned `0.0.0`" and asked that "preview versions replace `0.0.0`" (Gate A). In fact all eight packages have been public on npm at `1.0.0-beta.0` since 2026-10-28, by the owner's decision of 2026-10-27 ([release-process.md](../../docs/release-process.md) §5). This plan therefore starts from a published beta, not from private packages. The technical documents in `future_plans/` have since been rewritten to match the repository (Appendix A). Two consequences remain:
+The owner's original commercialization documents (commit `cdad50c`) were written against an older state. They said the packages "remain private and versioned `0.0.0`" and asked that "preview versions replace `0.0.0`" (Gate A). In fact all eight packages have been public on npm at `1.0.0-beta.0` since 2026-10-28, by the owner's decision of 2026-10-27 ([release-process.md](../release-process.md) §5). This plan therefore starts from a published beta, not from private packages. The technical documents in `future_plans/` have since been rewritten to match the repository (Appendix A). Two consequences remain:
 
 - The "public package cut" is no longer about what is installable: all eight are published. npm allows unpublishing a version within 72 hours (beta.0's window closes on 2026-10-31), and later only under narrow conditions, and unpublishing working packages would break installs. The cut is now about support tiers and messaging (§4).
 - The original technical plan recommended `@oddkin/workbench` "as `0.x`". It is published as `1.0.0-beta.0`, and every `0.x` version sorts below that, so the version line is an owner decision (§5, D-2).
@@ -51,7 +51,7 @@ The work stops at Gate A. It adds no components, no product-pattern contracts, a
 | Installation from the registry | Verify | `ODDKIN_CONSUMERS_FROM=beta`: fresh apps 15/15 and golden path 15/15, locally, 2026-10-29; `registry-smoke.yml` exists | No GitHub run yet (weekly, Mondays) |
 | Independent external repository | Planned | Every consumer lives in this repository | RF-11 |
 | Changelogs | Planned | Policy: per-package changelogs from 1.0.0 (release-process §1) | Intentional until 1.0.0 |
-| Release notes for betas | Partial | Owner decision 2026-10-29; [docs/releases/1.0.0-beta.1.md](../../docs/releases/1.0.0-beta.1.md) is a draft | Known issues, upgrade steps (RF-08) |
+| Release notes for betas | Partial | Owner decision 2026-10-29; [docs/releases/1.0.0-beta.1.md](../releases/1.0.0-beta.1.md) is a draft | Known issues, upgrade steps (RF-08) |
 | Root README status | Verify | Says eight packages at `1.0.0-beta.0`, 54 + 24 elements; metadata agrees (54, 24) | Other root README lines are stale (§7) |
 | Package README statuses | Stale | `tokens` "M2 in progress", `components` "M4 in progress … four elements", `state` "M6 in progress", `ai` "Depends on … core … components" (now peers) | RF-01, RF-02 |
 | Browser support statement | Verify | README floor (Chrome/Edge 130, Firefox 132, Safari 18.2); matrix checked 2026-10-26 | Safari on hardware and screen readers unverified; floor re-resolve before 1.0.0 (release-process §3) |
@@ -345,7 +345,7 @@ External dependencies:
 **Decided by the owner on 2026-10-30: all eleven, as recommended below.** Specifics:
 
 - D-1: the README lists Workbench and the change-impact tools right after the primary packages.
-- D-4: the claims and limitations are in [docs/support.md](../../docs/support.md).
+- D-4: the claims and limitations are in [docs/support.md](../support.md).
 - D-5 and D-6 come after beta.1.
 - D-10: beta.1 is cut once CI passes on the release commit; P0.4's remaining items go to beta.2 unless they have landed by then.
 
@@ -427,7 +427,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the revised descriptions and README lines.
 - **Done when:** each accessibility statement names its evidence and says screen readers are not yet verified.
 - **Risks:** wording disagreement; the owner decides.
-- **State (2026-10-30, Agent 1):** the components description no longer says "Accessible"; the root, components, and AI READMEs name the keyboard and axe-core evidence and say screen readers are not yet verified, linking [docs/support.md](../../docs/support.md#accessibility). Open: the docs site's copy (Agent 3) and the RF-02 rule.
+- **State (2026-10-30, Agent 1):** the components description no longer says "Accessible"; the root, components, and AI READMEs name the keyboard and axe-core evidence and say screen readers are not yet verified, linking [docs/support.md](../support.md#accessibility). Open: the docs site's copy (Agent 3) and the RF-02 rule.
 
 ### RF-04 Public support policy
 
@@ -440,7 +440,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the policy.
 - **Done when:** each supported range names its evidence, and each unverified area (Safari hardware, screen readers, pnpm, Yarn, Node below 24, webpack) is a listed limitation.
 - **Risks:** promising more than CI checks.
-- **State (2026-10-30, Agent 1):** [docs/support.md](../../docs/support.md) states the browser floor, accessibility evidence, Node for the tools and the browser packages, TypeScript 5.9 or newer, the tested framework versions, npm 11 and the tested bundlers, and copies on one page, each with its evidence, and lists pnpm, Yarn, webpack, Rspack, Node below 24, mobile browsers, Apple hardware, and screen readers as untested. The README links it. Open: the docs site page (Agent 3) and an RF-02 check of the README's floor.
+- **State (2026-10-30, Agent 1):** [docs/support.md](../support.md) states the browser floor, accessibility evidence, Node for the tools and the browser packages, TypeScript 5.9 or newer, the tested framework versions, npm 11 and the tested bundlers, and copies on one page, each with its evidence, and lists pnpm, Yarn, webpack, Rspack, Node below 24, mobile browsers, Apple hardware, and screen readers as untested. The README links it. Open: the docs site page (Agent 3) and an RF-02 check of the README's floor.
 
 ### RF-05 Coverage for claimed ranges
 
@@ -637,7 +637,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 | License and ownership decisions are recorded. | Verified | MIT in README, manifests, `LICENSE`; the owner owns `@oddkin` and confirmed MIT on 2026-10-30 (D-9) | — | Already true |
 | Export, declaration, files, side-effect, and `customElements` checks pass from tarballs. | Verified | `verify:packs`, CI run 40945402821 | RF-06 (extras) | Stays green in each release run |
 | Clean external installation completes the quick start. | Partial | Registry runs of in-repository fixtures (local, 2026-10-29) | RF-11 | The external repository's CI passes against the published version |
-| Browser and Node support policy is published. | Partial | [docs/support.md](../../docs/support.md) (2026-10-30), linked from the README | RF-04 (docs site page), RF-05 | The policy page exists with evidence and limitations |
+| Browser and Node support policy is published. | Partial | [docs/support.md](../support.md) (2026-10-30), linked from the README | RF-04 (docs site page), RF-05 | The policy page exists with evidence and limitations |
 | Known limitations are visible. | Partial | Component pages' known limitations; release-process §3 | RF-08, RF-04 | Release notes and the policy list them |
 | Serial Chromium, Firefox, and WebKit evidence is current. | Verify | CI per-engine steps; one failing Workbench test | P0.6 (Agent 2), RF-10 | A green CI run on the release commit, in the evidence bundle |
 | Parallel-run limitation is documented. | Verified | release-process §3 | RF-01 (README line) | Also in the README's commands |

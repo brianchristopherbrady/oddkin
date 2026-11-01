@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// The release evidence bundle (release-evidence.v0; RELEASE_FOUNDATION_IMPLEMENTATION_PLAN.md
+// The release evidence bundle (release-evidence.v0; docs/commercialization/release-foundation-plan.md
 // RF-09, RF-10): what this checkout would publish, with its hashes, and the checks that ran on it.
 //   node scripts/release/evidence.mjs --out <dir> [--allow-dirty] [--ci]
 // Writes <dir>/evidence.json and <dir>/EVIDENCE.md. A local run needs no network. Check results

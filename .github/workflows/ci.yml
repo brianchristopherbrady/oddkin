@@ -58,7 +58,7 @@ jobs:
         env:
           IMPACT_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         run: node scripts/ci/impact-summary.mjs --out release-evidence/impact
-      # The release evidence (RELEASE_FOUNDATION_IMPLEMENTATION_PLAN.md RF-09, RF-10): the packages
+      # The release evidence (docs/commercialization/release-foundation-plan.md RF-09, RF-10): the packages
       # as npm packs them, the generated files' hashes, the test counts, and the step times.
       - if: ${{ !cancelled() }}
         env:

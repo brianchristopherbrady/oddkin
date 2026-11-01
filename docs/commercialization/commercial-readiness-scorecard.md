@@ -4,11 +4,11 @@ Status: proposed gates. Rewritten on 2026-10-29 from the owner's scorecard (the 
 
 A gate passes only with recorded evidence; code that exists is not enough. This file keeps the technical lines. The owner tracks the commercial lines (offers, pricing, contracts, payment, target accounts, interviews, buyers, revenue, references, and case studies) outside the repository.
 
-Classes, as in the [technical plan](./TECHNICAL_COMMERCIALIZATION_PLAN.md): **Verified**, **Verify**, **Partial**, **Planned** (not started), **Owner**, **Stale**, **Unknown**. Lines about a hosted service stay Planned until a service exists.
+Classes, as in the [technical plan](./technical-commercialization-plan.md): **Verified**, **Verify**, **Partial**, **Planned** (not started), **Owner**, **Stale**, **Unknown**. Lines about a hosted service stay Planned until a service exists.
 
 ## Gate A: public technical preview
 
-The release plan maps each line to its evidence and tasks ([RELEASE_FOUNDATION_IMPLEMENTATION_PLAN.md](./implementation/RELEASE_FOUNDATION_IMPLEMENTATION_PLAN.md) §22). On 2026-10-29, 8 of 23 lines are Verified.
+The release plan maps each line to its evidence and tasks ([release-foundation-plan.md](./release-foundation-plan.md) §22). On 2026-10-29, 8 of 23 lines are Verified.
 
 | Line | Class | Next |
 | --- | --- | --- |
@@ -43,7 +43,7 @@ The release plan maps each line to its evidence and tasks ([RELEASE_FOUNDATION_I
 | One repository not built with Oddkin has completed local analysis. | Planned | The analyzer reads Oddkin-authored components only; Workbench reads standard CEM, and P0.3 adds a fixture for it (Workstream B) |
 | Customer CI can upload or export agreed artifacts. | Partial | Reports export as JSON and Markdown files, and CI results merge with `oddkin-impact compare --results`; there is no upload path (C, D) |
 | Snapshots and reports contain source and tool provenance. | Partial | Tool versions and artifact hashes are recorded; the source revision and dirty state are not (C) |
-| Unresolved edges widen verification conservatively. | Verify | The impact prototype ([change-impact-and-verification.md](../docs/architecture/change-impact-and-verification.md) §2.5) and its tests; not yet run on an external library |
+| Unresolved edges widen verification conservatively. | Verify | The impact prototype ([change-impact-and-verification.md](../architecture/change-impact-and-verification.md) §2.5) and its tests; not yet run on an external library |
 | Reports never imply a pass when execution is missing. | Verify | The `not-executed` state and `mergeResults` (§2.4, §2.7); not yet run on an external library |
 | Customer data can be exported and deleted. | Planned | Today every artifact is a local file; this applies once a service stores data |
 | Secrets are excluded from artifacts by default. | Partial | Snapshots store hashes, not sources; nothing scans for secrets; the evidence bundle's test checks for environment values (RF-09) |

@@ -3,7 +3,7 @@
 - **Status:** Accepted (§1, §2, and §3's examples implemented; §4 decides the direction, nothing is built)
 - **Date:** 2026-10-30
 - **Area:** Metadata, Workbench, change impact, agent kits
-- **Detailed contract:** [libraries-without-oddkin.md](../libraries-without-oddkin.md); IMPLEMENTATION_PLAN.md CF.3; the [technical plan](../../../future_plans/TECHNICAL_COMMERCIALIZATION_PLAN.md) Workstream B
+- **Detailed contract:** [libraries-without-oddkin.md](../libraries-without-oddkin.md); IMPLEMENTATION_PLAN.md CF.3; the [technical plan](../../commercialization/technical-commercialization-plan.md) Workstream B
 
 ## Context
 
