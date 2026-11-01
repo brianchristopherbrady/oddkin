@@ -5,7 +5,7 @@ import { bundleConsumers } from '../examples/duplicate-core/build.mjs';
 // (core-contracts.md §5.1): both from the workspace, and with consumer A on the last release
 // from npm. The bundles are built in memory and served by request interception.
 // The last published version; move it on with each release (release-process.md §5).
-const RELEASED = '1.0.0-beta.0';
+const RELEASED = '1.0.0-beta.1';
 
 interface Copy {
   core: {
@@ -73,17 +73,17 @@ for (const released of [undefined, RELEASED])
       expect(distinct).toEqual({ signal: true, element: true, button: true });
       await expect(page.locator('a-greeting p')).toHaveText('A says hello, Ada');
       await expect(page.getByRole('button', { name: 'Registered by consumer A' })).toBeVisible();
-      // Development builds list each copy that knows the list (1.0.0-beta.0 predates it), and the
-      // second one listed warns once, with both versions.
+      // Development builds list each copy (from 1.0.0-beta.1; 1.0.0-beta.0 predates the list), and
+      // the second one listed warns once, with both versions.
       const listed = await page.evaluate(
         () =>
           (globalThis as unknown as Record<symbol, string[] | undefined>)[
             Symbol.for('oddkin.core.copies')
           ] ?? [],
       );
-      if (!released) expect(listed).toHaveLength(2);
+      expect(listed).toHaveLength(2);
       const copies = warnings.filter((text) => text.startsWith('[core.copies]'));
-      expect(copies).toHaveLength(listed.length > 1 ? 1 : 0);
+      expect(copies).toHaveLength(1);
       for (const text of copies)
         expect(text).toMatch(
           /Two copies of @oddkin\/core run on this page \(\d[^ ]* and \d[^ ]*\)/,

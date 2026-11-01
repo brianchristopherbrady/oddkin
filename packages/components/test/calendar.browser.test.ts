@@ -641,11 +641,13 @@ describe('odd-calendar', () => {
     );
     await userEvent.hover(day('2026-10-04'));
     expect(getComputedStyle(day('2026-10-04')).backgroundColor).toBe('rgba(0, 0, 0, 0)');
-    // Today is outlined in the action colour.
+    // Today is outlined in the action colour. With no value the grid moves to today's month, and a
+    // cell that showed another date there fades its outline in: wait for it.
     el.value = '';
     el.min = '';
     await settle(el);
     const today = el.shadowRoot!.querySelector('[aria-current="date"]')!;
+    await Promise.all(today.getAnimations().map((animation) => animation.finished));
     expect(getComputedStyle(today).borderTopColor).toBe(
       themeValue('color', '--odd-color-action-default'),
     );

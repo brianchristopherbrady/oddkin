@@ -4715,6 +4715,7 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Same as the packages | The same script, against `packages/components/agent/` and `packages/ai/agent/` | 104 and 68 files served, each byte for byte the packaged kit's; no extra or missing file |
 
 **Not verified here:** the deployed site, since d91f3e6 is not on origin yet, and the dev server's `/llms.txt` (Agent 3's e2e covers it in three engines).
+
 ## 2026-11-01 — `reportValidity()` described as it behaves; a longer wait for packed consumers (round 10, Agent 1; Agent 2's agent-run findings)
 
 | Check | Command | Result |
@@ -4724,6 +4725,7 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Gates | `npm run typecheck`; `npx vitest run --project node`; `npm run lint` | All exit 0; 126 files, 1,557 tests passed |
 
 **Not verified here:** `e2e/packed-consumers.spec.ts` with its longer wait (290 s per consumer build, was 170 s): only its timeouts changed.
+
 ## 2026-11-01 — Docs: the change-impact page (CF.2; round 10, Agent 3)
 
 | Check | Command | Result |
@@ -4742,3 +4744,29 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Deploy | GitHub Actions runs on `main` (public API) | "Docs site" on 44d0a0b: completed, success. CI on 44d0a0b was still running at the time |
 | Live index | `node .tmp/check-live-llms.mjs` | https://www.oddkin.dev/llms.txt answers 200 and starts with "# Oddkin" and the README's one-line description. All 170 links answer 200 |
 | Live kits | The same script | The served `GUIDE.md` of `@oddkin/components` and `@oddkin/ai`, and the composition reference, equal this checkout's packaged kits. The served `odd-input` reference carries 44d0a0b's `reportValidity()` description, so the deploy is of that commit |
+
+## 2026-11-01 — 1.0.0-beta.1 on npm (P0.8, round 10, Agent 1)
+
+The owner approved each step on npmjs.com. The publish ran in the release worktree at `35b6dcd`, clean, with the build the release evidence records.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Publish | `node scripts/release/publish.mjs --publish` (npm 11.19.1, signed in with `npm login --auth-type=web`), twice | The first run published tokens and core and moved tokens' `latest`; core's `latest` move ended with `E404 … /-/v1/done?authId=…` when its approval was not given in time. The second printed "Already on npm with these contents" for tokens and core, moved core's `latest`, and published the other six, each with its `latest` move: "Published 6 packages and moved latest for 7 (2 already there)" |
+| Approvals | npm's web approval page, one per step | Each publish and each `latest` move asked, except the analyzer and workbench publishes, which came shortly after an approval |
+| Registry | Each package's document from registry.npmjs.org (the fields of `npm view <name>@1.0.0-beta.1 dist`), against `release-evidence/1.0.0-beta.1/evidence.json` | All eight have the recorded integrity, shasum, and file count; `beta` and `latest` both name `1.0.0-beta.1`. ai, components, and workbench appeared a few minutes after their publish (npm: "Your package is being processed") |
+| Fresh install | `npm install @oddkin/core@beta @oddkin/components@beta` in an empty folder; `npm ls --all` | 3 packages: components, core, and tokens at `1.0.0-beta.1`, one copy of core |
+| Tag | `git tag -a v1.0.0-beta.1 35b6dcd`; `git push origin v1.0.0-beta.1` | On GitHub, on `35b6dcd`, the commit the evidence records |
+| Two versions of core | `npx playwright test e2e/duplicate-core.spec.ts` (three engines), with `RELEASED = '1.0.0-beta.1'` installed from npm | 30 passed. Both copies are listed and the second warns once, now that the released copy has the list too |
+| Registry smoke | `registry-smoke.yml`'s step run here: `ODDKIN_CONSUMERS_FROM=1.0.0-beta.1 npx playwright test e2e/fresh-consumers.spec.ts e2e/packed-consumers.spec.ts e2e/components-only.spec.ts e2e/autoload.spec.ts e2e/golden-path.spec.ts`, Chromium, then Firefox and WebKit | 32 passed (2.3 min); 60 passed and 4 skipped, the accessibility-tree test being Chromium only (4.3 min). Each consumer project's lockfile resolves every `@oddkin` package to registry.npmjs.org at 1.0.0-beta.1 (13 projects) |
+
+**Not verified here:** the GitHub Release, which is the owner's: the notes and both evidence bundles (D-11). The CI artifact `release-evidence-1` of run 41168839415 expires on 2026-11-30. The scheduled `registry-smoke.yml` run on GitHub (Mondays, 06:00 UTC), whose specs pass here.
+
+## 2026-11-01 — The calendar's Figma test after October (round 10, Agent 1)
+
+CI on `8111aff` failed one test in all three engines: `calendar.browser.test.ts`, "matches Figma calendar", where today's outline read `rgba(0, 0, 0, 0)`. The release commit's run passed it on 2026-10-31, and no file in core, tokens, or components changed between the two.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reproduced | `npx vitest run --project browser --browser.name=chromium packages/components/test/calendar.browser.test.ts -t "matches Figma calendar"` on 2026-11-01 | 1 failed, with the same values |
+| Cause | Read from the test and the calendar's styles | The test shows October 2026, then clears the value, which moves the grid to today's month. From 1 November that month differs, so the cell that now holds today showed another date before and fades its outline in (`border-color` over `motion.duration.fast`); the test read the colour at once |
+| Fix | The test waits for that cell's animations before reading, as it already does after hovering | The whole file: Chromium 22 passed; Firefox and WebKit 21 passed and 1 skipped (Chromium only) |
