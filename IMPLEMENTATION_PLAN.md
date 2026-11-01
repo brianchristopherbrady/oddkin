@@ -14,15 +14,51 @@ The aim is to make correct, maintainable components easy to write and easy to do
 
 **Owner direction (2026-10-29).** Two goals set the order after P0. The docs site is Oddkin's showcase, so it must be polished and work reliably. And the foundations for commercializing Oddkin come next ([docs/commercialization/technical-commercialization-plan.md](./docs/commercialization/technical-commercialization-plan.md), decisions O-4 and O-5). After P0 comes tier CF. Then come the P1 items that tier CF needs (P1.6, P1.7, P1.1) and P1.2's quality items, and then the rest of P1. The catalog does not grow: P1.2's new component families and collections, Theme Studio beyond its baseline flow (P1.5), the SVG icons (P2.1), and Workbench completion (P2.3) are parked. `@oddkin/agent` and MCP (P2.2) stay skipped.
 
+**Owner direction (2026-11-01).** Theme Studio has a new direction (P1.5), and its seven items are scheduled below; the other parked items stay parked. Work on the docs site pauses (P0.7 and new pages) until the foundations and tooling are built. During the pause the site gets only corrections of statements that are untrue and fixes that keep its tests green; new pages, including `/theme-studio`, wait. Agent 3 takes `@oddkin/tokens` and P1.1 from Agent 1, and Agent 1 takes the lead on P1.7 from Agent 2, whose queue is now Theme Studio and the analyzer. Agent 1 set the order of work below for the owner on 2026-11-01.
+
 **Lanes** (log, tools, and prompts in `C:\SLT_Backup_10-21-2026\oddkin-lanes`: `lanes-r10.md`, `prompts/round-10/`):
 
 | Lane | Owns |
 | --- | --- |
-| Agent 1, runtime foundations and release | `@oddkin/core`, `state`, `app`, `tokens`, and `components` (every element; not `src/composition/`); the CSS recipes and compatibility data; size budgets; packed consumers; CI; releases. Later `@oddkin/icons` |
+| Agent 1, runtime foundations and release | `@oddkin/core`, `state`, `app`, and `components` (every element; not `src/composition/`); the CSS recipes and compatibility data; size budgets; packed consumers; CI; releases and the release-foundation tasks. Later `@oddkin/icons` |
 | Agent 2, tooling | `@oddkin/workbench` (Theme Studio and the panels other sites embed), `@oddkin/analyzer`, `@oddkin/ai`, the composition schema, the agent kits and `llms.txt`, and the AI examples |
-| Agent 3, documentation | the docs site (`apps/docs`, its workflow and tests). Figma fidelity comes first, then content that is accurate and covers every package, including the package READMEs |
+| Agent 3, theming and documentation | `@oddkin/tokens` (the generator, the `oddkin-tokens` command, theme files, DTCG output) and theming-and-styling.md, from Agent 1 on 2026-11-01; the accuracy of every package README and its check (RF-02); the docs site (`apps/docs`, its workflow and tests), paused except fixes |
 
-Agents 1 and 2 no longer work on the docs site. They answer Agent 3's questions and fix, in their own packages, what Agent 3 reports.
+Agents 1 and 2 do not work on the docs site. They answer Agent 3's questions and fix, in their own packages, what Agent 3 reports.
+
+### Order of work (set 2026-11-01)
+
+Each agent takes its next item in this order. An item waits only for what its row names. Finish and land the work already in progress first.
+
+| Agent | # | Item | Waits for |
+| --- | --- | --- | --- |
+| 1 | 1 | CF.4, RF-19: the error-message audit. List every documented diagnostic code and message in the packages; each message names what to do, or links to the page that does. Fixes go to the owning lane | — |
+| 1 | — | P0.6: the first scheduled `registry-smoke.yml` run on GitHub (2026-11-02, 06:00 UTC). Fix what it finds, then tick P0.6. Taken when the run finishes | The scheduled run |
+| 1 | 2 | CF.4, RF-12 and RF-13: publishing from GitHub Actions with provenance, needed before `1.0.0-beta.2` (D-5); Dependabot, an informational `npm audit`, and the SBOM in the evidence bundle | The owner links each package to the workflow on npmjs.com |
+| 1 | 3 | P1.7: conformance suites for the catalog's components and the ADR 0043 role compatibility check, then visual baselines (the CI side) | Agent 2 for Workbench's side of the baselines |
+| 1 | 4 | P1.2's quality items, then P1.3 | — |
+| 2 | 1 | P0.2's last item: a share link from the published Workbench `1.0.0-beta.1`, opened by the current one | — |
+| 2 | 2 | P1.5, items 1 and 2: Theme Studio as one embeddable panel, used in Workbench, with screens of any documented component and its examples, and composition screens for Oddkin's components with the four starter screens. The composition vocabulary gains native table elements for the app-layout screen, since the catalog has no table and the data grid stays parked | — |
+| 2 | 3 | P1.5, item 5: save to file from the Workbench dev server, after showing the diff, for one theme file | — |
+| 2 | 4 | P1.6: the analyzer writes a library's composition catalog and schemas from its metadata, so Theme Studio's composition screens work with a library's own components (P1.5, item 2) | — |
+| 2 | 5 | P1.5, item 4: products, with saving that writes only the edited file | Agent 3's P1.1 base file and product role overrides |
+| 2 | 6 | P1.5, items 3 and 6: the remaining controls with the ramp and contrast views; a team's own app on its dev server | P1.1's missing token domains, for the controls that need them |
+| 2 | 7 | P1.6's remaining items, starting with the technical plan's Workstream C provenance: the source revision and dirty state in impact snapshots and reports (Gate B) | — |
+| 3 | 1 | CF.1, RF-02: the README status check in `npm run lint` (`scripts/check-readme-status.mjs` and its test; Agent 1 has agreed to the lint change) | — |
+| 3 | 2 | P1.1: a theme file that builds on a shared base file, then product role overrides and several themes in one document | — |
+| 3 | 3 | Docs fixes only: the Themes page stops presenting `odd-theme-scope` as shipping (it is only designed, theming-and-styling.md §5; plain `data-odd-*` attributes do the same); the Firefox docs journey (`e2e/docs.spec.ts:60`) if it fails on CI again | — |
+| 3 | 4 | P1.1's remaining items: the missing CSS token domains (Theme Studio's controls need some), DTCG output checked by an independent reader, equivalent CSS, SCSS, and TS consumption, and P3 values | — |
+
+After the docs pause (Agent 3): the docs site's `/theme-studio` page with Agent 2's panel, the guide from Theme Studio to a build (P1.5, items 1 and 7), RF-17, then P0.7.
+
+Waiting for the owner: the external fixture repository (D-6), for RF-11 and RF-18; npm trusted publishers (RF-12); `homepage` and `bugs` in the manifests (RF-06); the `1.0.0-beta.1` GitHub Release with its evidence (D-11); private vulnerability reporting on GitHub (`SECURITY.md`); whether `odd-theme-scope` stays in the design now that there is no runtime theme provider (Agent 1 recommends dropping it).
+
+Why this order:
+
+- **Dependencies first.** Theme Studio's products need P1.1's base file and product role overrides, so those lead Agent 3's P1.1. Composition screens for a library's own components need P1.6's catalog generation, which Agent 2 does before them. Everything else in Theme Studio starts now.
+- **Gate A.** The first commercialization gate, the public technical preview, has 15 of its 23 lines verified (the [scorecard](./docs/commercialization/commercial-readiness-scorecard.md)). RF-02 and RF-19 are its lines that agents can close alone; RF-11 and RF-18 need the owner's repository and observers.
+- **The next release.** `1.0.0-beta.2` needs trusted publishing (D-5).
+- **Parallel lanes.** P1.7, which tier CF needs, moves to Agent 1 so that it does not wait behind Agent 2's Theme Studio and analyzer work.
 
 ### P0: people can install Oddkin and build with it (now)
 
@@ -100,7 +136,7 @@ Exit criteria:
   - Covers M12 "Full unit/type/browser suite…" and M1's CI item.
   - *(2026-10-28, Agent 1: `ci.yml` runs the build, the node project, and the browser project per engine with `--no-file-parallelism`; its e2e run includes P0.1's fresh apps; `registry-smoke.yml` installs from the registry weekly and by hand. The Linux-only failures at 8d20b26 were the app header's reflow test (a wider default font; fixed) and WebKit's Tab order on Linux (both orders accepted); the AI layout failure went to Agent 2 and the docs Firefox failure to Agent 3. Until branch protection fits the push-to-`main` flow, a red run blocks the next push: Agent 1 fixes it or sends it to its lane first. The e2e step runs P0.5's golden path (2026-10-29). 2026-10-29: the first fully green runs, 40976886045 at `b50ed7e` (28 min 50 s) and 40978743390 at `da8a486` (27 min 54 s): the browser project 4 to 4.5 min per engine and e2e about 13 min (1,047 passed); every step's time is in docs/verification.md. Remaining: the registry smoke's first result.)*
   - *(2026-11-01, Agent 1: CI on `8111aff` and `44d0a0b` failed one test in every engine, the calendar's Figma test, which depended on the date from 1 November; fixed in the test. The registry smoke's specs pass here against the published 1.0.0-beta.1 (P0.1). Remaining: the scheduled run's first result on GitHub.)*
-- [ ] **P0.7 Docs site (Agent 3).** Figma fidelity for every route first, then accurate content for every package and its README, then the coverage gaps (M11's documentation items, §5f). Agent 3's prompts set the detail; Agents 1 and 2 support it.
+- [!] **P0.7 Docs site (Agent 3).** Paused by the owner on 2026-11-01 until the foundations and tooling are built, except corrections and fixes that keep its tests green (the order of work above). When it resumes: Figma fidelity for every route first, then accurate content for every package and its README, then the coverage gaps (M11's documentation items, §5f). Agent 3's prompts set the detail; Agents 1 and 2 support it.
 - [x] **P0.8 1.0.0-beta.1 (Agent 1; the owner publishes).** After P0.1–P0.6's fixes: the release checklist (release-process.md §5), changelogs, `set-versions --next`, and the dry run. The owner publishes.
   - *(2026-10-29, Agent 1: `set-versions --next`, rehearsed on main and reverted, steps the eight packages, the docs app's ranges, and core's `VERSION` to 1.0.0-beta.1, and its `--check` passes. At the cut: `npm install`, `npm test` (the contract records carry the version), `npm run verify:metadata`, the §3 checks, the dry run, and the prose that names `1.0.0-beta.0` (the root README and `packages/core/README.md`, Agent 3; release-process.md §5's tag commands). Release-process §1 writes no changelog for a beta; betas get release notes instead (owner, 2026-10-29), drafted in [docs/releases/1.0.0-beta.1.md](./docs/releases/1.0.0-beta.1.md) and completed at the cut. Waiting for a green CI (Agent 2's coverage test), P0.3 and P0.4 (Agent 2), and the owner's go.)*
   - *(2026-10-30, owner decisions D-1 to D-11, as the release-foundation plan recommends: beta.1 is cut once CI passes on the release commit (D-10); P0.4's remaining items go to beta.2 unless they have landed by then. The accessibility wording (D-7), the support policy (D-4), and `SECURITY.md` (D-8) land first, so they ship in beta.1. The evidence of the release commit's CI run is attached to the GitHub Release (D-11).)*
@@ -111,7 +147,7 @@ Exit criteria:
 
 The details are in the [technical commercialization plan](./docs/commercialization/technical-commercialization-plan.md); [docs/commercialization/](./docs/commercialization/README.md) holds it with the readiness scorecard, the release-foundation plan, and the owner's business plans. In order:
 
-- [ ] **CF.1 Release trust basics (Agent 1, with Agent 3).** From the [release-foundation plan](./docs/commercialization/release-foundation-plan.md):
+- [ ] **CF.1 Release trust basics (Agent 1, with Agent 3).** From the [release-foundation plan](./docs/commercialization/release-foundation-plan.md): (2026-11-01: only RF-02 remains, Agent 3's)
   - README and status statements taken from generated facts, and a check that keeps them true (RF-01, RF-02; Agent 3 writes the READMEs);
   - accessibility wording that names its evidence (RF-03; owner decision D-7);
   - a public browser and Node support policy that lists its limitations (RF-04);
@@ -134,10 +170,17 @@ The details are in the [technical commercialization plan](./docs/commercializati
     - *(2026-10-30, Agent 2: it does, for what a CEM states. The snapshot reads the API, the registration, the exports, and each class's module (hashed). It no longer claims a metadata artifact it did not read. With no examples, a change selects no checks, and the report lists each affected component nothing checks as a coverage gap ([change-impact-and-verification.md](./docs/architecture/change-impact-and-verification.md) §2.7).)*
   - an ADR for adapters to other metadata sources.
     - *(2026-10-30, Agent 2: [ADR 0048](./docs/architecture/decisions/0048-libraries-not-built-with-oddkin.md). The manifest is read directly. Enrichment is a layer keyed by tag; examples come first, needing an analyzer mode for libraries it did not extract. Adapters are static readers that write contracts Oddkin already has, built when a pilot needs one: Storybook stories, DTCG tokens, then framework docgen.)*
+- [ ] **CF.4 Gate A's remaining release work (Agent 1; set 2026-11-01).** The [release-foundation plan](./docs/commercialization/release-foundation-plan.md)'s tasks that Gate A still needs, beyond CF.1:
+  - RF-19, the error-message audit (Agent 1 lists the codes; each lane fixes its own messages);
+  - RF-12, trusted publishing with provenance, before `1.0.0-beta.2` (D-5);
+  - RF-13's rest: Dependabot, an informational `npm audit`, and the SBOM (`SECURITY.md` is done);
+  - RF-05, evidence for any Node or package-manager range the support policy claims beyond what is tested;
+  - with the owner: RF-06 (`homepage` and `bugs` in the manifests, after the owner's OK), RF-11 (the external fixture repository, D-6), and RF-18 (two observed installations);
+  - after the docs pause: RF-17 (Agent 3).
 
 ### P1: finish the foundations (after tier CF; P1.6, P1.7, and P1.1 first, as tier CF needs them)
 
-- [ ] **P1.1 Theming (Agent 1).**
+- [ ] **P1.1 Theming (Agent 3, from Agent 1 on 2026-11-01).** The base file and product role overrides come first, as Theme Studio's products need them.
   - M9's generator items:
     - product role overrides and several themes in one document. The default theme pins its approved roles, so a product that sets only `brand.primary` cannot recolour its actions or links (multi-product.md §9);
     - a theme file that builds on a shared base file, so products themed separately (a file each, in one monorepo or not) share a base without copying it, and Theme Studio saves only the file it edited (owner, 2026-11-01; P1.5). Today only a JS or TS configuration can import a base;
@@ -155,7 +198,7 @@ The details are in the [technical commercialization plan](./docs/commercializati
 - [ ] **P1.3 Core semantics (Agent 1).** §3.2's bounded inspection, M8's comprehension review of the binding rule, and M8's scope and direction item.
 - [ ] **P1.4 Accessibility and guidance (the owner).** The owner will run its own agentic accessibility flow over the components later (2026-10-28), so no agent runs the sweep over every element (M8). Agents keep each element they touch accessible and tested. Guidance with correct and incorrect example pairs (M10) stays deferred.
 - [ ] **P1.5 Theme Studio (Agent 2).** Polish the baseline flow from P0.3 (load a theme, edit it, preview light and dark, and export, all by keyboard too); it is one of the docs site's showcase features. The rest of M9's Theme Studio items are parked (owner, 2026-10-29): controls for every category, specimens, role mapping, token inspection, visualizations, layout roles, comparison, undo, share, save to file, and complete keyboard and screen-reader operation of every control.
-  - **Direction (owner, 2026-11-01, recorded by Agent 3).** Theme Studio is a development tool: a team tries styles on realistic screens, then keeps the result as a theme file in its repository. Production apps switch only between light and dark, which one generated stylesheet already holds. No end user switches or edits a theme, so there is no runtime theme provider: re-theming an app means replacing its theme file and rebuilding. It serves app teams styling Oddkin's components and library authors styling their own. A team may have several products, in one monorepo or not, each themed differently. No drag-and-drop builder. These items take up some of the parked ones above; when they start, against P1.6, P1.7, and P1.1, is the owner's call.
+  - **Direction (owner, 2026-11-01, recorded by Agent 3).** Theme Studio is a development tool: a team tries styles on realistic screens, then keeps the result as a theme file in its repository. Production apps switch only between light and dark, which one generated stylesheet already holds. No end user switches or edits a theme, so there is no runtime theme provider: re-theming an app means replacing its theme file and rebuilding. It serves app teams styling Oddkin's components and library authors styling their own. A team may have several products, in one monorepo or not, each themed differently. No drag-and-drop builder. These items take up some of the parked ones above. The owner scheduled them on 2026-11-01; the order of work at the top places each one: items 1, 2, and 5 start now; the composition screens for a library's own components follow P1.6's catalog generation; item 4 follows P1.1's base file and product role overrides (Agent 3); the docs site's `/theme-studio` page and item 7 wait for the end of the docs pause.
     - [ ] One Theme Studio in two places: an embeddable panel, like the catalog and component panels, on the docs site at `/theme-studio` with Oddkin's components (Agent 3 embeds it), and in each library's Workbench with that library's components.
     - [ ] Screens to preview, each in light and dark: any documented component with its examples, beside the role specimens, and screens as composition documents (`validateComposition`, `renderComposition`). Starter screens come with it for Oddkin's components: a report card, a settings form, a sign-in dialog, and an app layout with navigation and a table. A team edits a screen's JSON, or pastes a document an agent wrote from the packaged kit, as in `tests/agent-run/settings-app/settings.composition.json`. Actions do nothing in a preview. For a library's own components, the analyzer generates the composition catalog and schemas from its metadata.
     - [ ] Controls for what teams try: typography, radius (a choice of shape, as the reference has), elevation, and motion, beside today's colours, spacing, and overrides; the ramp and contrast views (workbench.md §6.3, §8).
@@ -163,9 +206,9 @@ The details are in the [technical commercialization plan](./docs/commercializati
     - [ ] Save to file in the Workbench dev server, after showing the diff (workbench.md §9), writing only the edited file. On the docs site, which has no project to write to, export downloads the same file and its CSS.
     - [ ] A team's own app: on its dev server, a small development-only script receives the draft's CSS and replaces one stylesheet, as the preview frames do, so a team tries styles on its real screens. Opt-in; nothing of it ships.
     - [ ] Docs: going from Theme Studio to a build, for one product and for several (Agent 3).
-- [ ] **P1.6 Analyzer and metadata (Agent 2).** §5c, M4's analyzer relationships, and the remainder of M8's metadata and tooling review.
+- [ ] **P1.6 Analyzer and metadata (Agent 2).** §5c, M4's analyzer relationships, and the remainder of M8's metadata and tooling review. Next slice (2026-11-01): the composition catalog and schemas generated from a library's metadata, as `scripts/build-composition-schemas.mjs` does for `@oddkin/components` today, so `validateComposition` and `renderComposition` work with a library's own components (P1.5, item 2).
   - *(2026-10-30, Agent 2: first slice, examples for libraries not built with Oddkin (§5c's standard-CEM input; ADR 0048 §3): `oddkin-analyze --manifest`, used by Workbench, change impact, and the kits.)*
-- [ ] **P1.7 Assurance (Agent 2, with Agent 1).** Conformance suites per catalog component (M10), the ADR 0043 role compatibility check, and visual baselines (M5).
+- [ ] **P1.7 Assurance (Agent 1, with Agent 2; Agent 1 leads from 2026-11-01).** Conformance suites per catalog component (M10), the ADR 0043 role compatibility check, and visual baselines (M5). Agent 2 owns the Workbench side: `runConformance` and the baseline review in Workbench.
 
 ### P2: new capability on the foundations
 
@@ -177,7 +220,7 @@ The details are in the [technical commercialization plan](./docs/commercializati
   - Prerequisites: P0.6 (CI), P0.3 (Workbench), and the `icon.size.*` tokens.
 - [ ] **P2.2 Agent package and MCP (Agent 2).** D7 (`@oddkin/agent`) and the optional MCP adapter stay skipped (owner, 2026-10-27, confirmed 2026-10-28: not fundamental yet). They return only with the owner's approval. Confirmed again on 2026-10-29 (the technical plan's O-5): revisit once P0.5 step 5's kit command and a release-to-release context diff exist, and then only as a thin read-only adapter over the kit files.
 - [ ] **P2.3 Workbench completion (Agent 2).** Parked (owner, 2026-10-29) unless the docs site needs an item: M11's Workbench items (composition previews, model editors, content customization, API comparison, explanations, reproductions, product comparison) and §5d.2.
-- [ ] **P2.4 Products (Agents 1 and 2).** M9's products-and-modes items, built on P1.1's overrides.
+- [ ] **P2.4 Products (Agents 2 and 3).** M9's products-and-modes items, built on P1.1's overrides; Theme Studio's product item (P1.5) comes first.
 
 ### P3: the v1 freeze, then parked work
 
@@ -189,7 +232,8 @@ The details are in the [technical commercialization plan](./docs/commercializati
   - M0's research backlog;
   - migration walkthroughs (M11), which wait for the docs content pass;
   - screen-reader and Safari runtime evidence, which needs hardware;
-  - the catalog's growth during the commercialization window (owner, 2026-10-29): P1.2's new component families and collections, Theme Studio beyond its baseline flow (P1.5), the SVG icons (P2.1), and Workbench completion (P2.3).
+  - the catalog's growth during the commercialization window (owner, 2026-10-29): P1.2's new component families and collections, Theme Studio beyond its baseline flow and the seven items of its 2026-11-01 direction (P1.5), the SVG icons (P2.1), and Workbench completion (P2.3);
+  - work on the docs site (P0.7 and new pages), except corrections and fixes that keep its tests green (owner, 2026-11-01).
 
 **Every tier.**
 - Each file has one owner, the lane in the table above; post before changing another lane's file.
@@ -1583,6 +1627,7 @@ Use §12 as the direct-source reading map; keep decisions tied to executable evi
   - Agent 1: runtime foundations and release. It takes over core, tokens, compatibility, performance, and release from Agent 3.
   - Agent 2: Workbench, the analyzer, AI, and the agent kits.
   - Agent 3: the docs site.
+  - 2026-11-01 (owner): the docs site pauses; Agent 3 takes `@oddkin/tokens` and P1.1 from Agent 1, and Agent 1 leads P1.7. The order of work is at the top of this file.
 - Log: `C:\SLT_Backup_10-21-2026\oddkin-lanes\lanes-r10.md`.
 - Prompts: `prompts/round-10/agent-N.md`.
 

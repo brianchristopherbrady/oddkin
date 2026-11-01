@@ -51,7 +51,7 @@ The workstreams in §5 relate to it as follows.
 
 | Workstream | In the priority plan | Not in it yet |
 | --- | --- | --- |
-| A. Release foundation | P0.1, P0.2, P0.5, P0.6, and P0.8 (Agent 1); CF.1: RF-01 to RF-04 and RF-09, with RF-10 (evidence in CI) done beside RF-09 | The other release-plan tasks: the external fixture repository, trusted publishing, the security policy |
+| A. Release foundation | P0.1, P0.2, P0.5, P0.6, and P0.8 (Agent 1); CF.1: RF-01 to RF-04 and RF-09, with RF-10 (evidence in CI) done beside RF-09; CF.4 (2026-11-01): RF-05, RF-06, RF-11 to RF-13, RF-18, RF-19, and RF-17 after the docs pause | — |
 | B. Generalize assurance inputs | P0.3's standard-CEM fixture library (Agent 2); CF.3; P1.6, analyzer and metadata | Framework inputs (task 5); identities across releases (task 6) |
 | C. Assurance artifact protocol | The impact prototype (M5), which CF.2 uses | Provenance, verification plan, approval, evidence, and context-release formats |
 | D. Pull-request integration | CF.2: the impact report in CI (step 1) | The hosted GitHub App (step 2) |
@@ -443,7 +443,7 @@ The owner set this order on 2026-10-29 (O-4), and IMPLEMENTATION_PLAN.md holds i
 4. CF.3, libraries not built with Oddkin (B). [Done.]
 5. The P1 items tier CF needs: P1.6 (analyzer), P1.7 (conformance and visual baselines), and P1.1 (theming).
 
-Not placed yet: the external fixture repository (RF-11, D-6) and the other release tasks; product patterns Phase 0 (O-8).
+Not placed yet: product patterns Phase 0 (O-8). On 2026-11-01 the owner also scheduled Theme Studio's new direction (IMPLEMENTATION_PLAN.md P1.5) and paused the docs site; the order of work at the top of IMPLEMENTATION_PLAN.md places both, with the release tasks above as CF.4.
 
 ## 12. Product patterns
 
