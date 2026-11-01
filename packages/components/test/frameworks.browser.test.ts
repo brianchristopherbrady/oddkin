@@ -79,7 +79,8 @@ describe('odd-side-nav in frameworks without Oddkin state', () => {
     expect(el.expanded).toEqual([]);
     expect(toggle(el).getAttribute('aria-expanded')).toBe('false');
 
-    toggle(el).click();
+    // The handler's state update comes from a DOM event, so React schedules it: flush it here.
+    flushSync(() => toggle(el).click());
     el = await sideNav();
     expect(toggles).toEqual([{ id: 'guides', expanded: true }]);
     expect(el.expanded).toEqual(['guides']);

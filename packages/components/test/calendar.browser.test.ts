@@ -20,6 +20,7 @@ beforeEach(() => {
   document.body.append(container);
 });
 afterEach(async () => {
+  vi.useRealTimers();
   await userEvent.unhover(document.body);
   container.remove();
   flush();
@@ -585,6 +586,9 @@ describe('odd-calendar', () => {
   });
 
   it('matches Figma calendar: surface, rows, cells, and their states', async () => {
+    // Today in the month shown, so clearing the value below keeps the grid on October 2026.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 9, 28, 12));
     const { el, part, day } = await mount(
       `<odd-calendar value="2026-10-26" first-day="1" min="2026-10-05"></odd-calendar>`,
     );
@@ -641,13 +645,11 @@ describe('odd-calendar', () => {
     );
     await userEvent.hover(day('2026-10-04'));
     expect(getComputedStyle(day('2026-10-04')).backgroundColor).toBe('rgba(0, 0, 0, 0)');
-    // Today is outlined in the action colour. With no value the grid moves to today's month, and a
-    // cell that showed another date there fades its outline in: wait for it.
+    // Today is outlined in the action colour.
     el.value = '';
     el.min = '';
     await settle(el);
     const today = el.shadowRoot!.querySelector('[aria-current="date"]')!;
-    await Promise.all(today.getAnimations().map((animation) => animation.finished));
     expect(getComputedStyle(today).borderTopColor).toBe(
       themeValue('color', '--odd-color-action-default'),
     );

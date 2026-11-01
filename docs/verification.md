@@ -4770,3 +4770,16 @@ CI on `8111aff` failed one test in all three engines: `calendar.browser.test.ts`
 | Reproduced | `npx vitest run --project browser --browser.name=chromium packages/components/test/calendar.browser.test.ts -t "matches Figma calendar"` on 2026-11-01 | 1 failed, with the same values |
 | Cause | Read from the test and the calendar's styles | The test shows October 2026, then clears the value, which moves the grid to today's month. From 1 November that month differs, so the cell that now holds today showed another date before and fades its outline in (`border-color` over `motion.duration.fast`); the test read the colour at once |
 | Fix | The test waits for that cell's animations before reading, as it already does after hovering | The whole file: Chromium 22 passed; Firefox and WebKit 21 passed and 1 skipped (Chromium only) |
+
+## 2026-11-01 — CI on `f67bdd2`: the calendar passes; a React fixture's race in WebKit (round 10, Agent 1)
+
+CI run 41353564510 on `f67bdd2`: Vitest Chromium 2,856 and Firefox 2,801 passed, WebKit 2,807 passed and 1 failed; e2e 1,133 passed and 1 failed. The calendar's Figma test passed in all three engines.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Calendar on a fixed date | The Figma test now fakes only `Date`, at 28 October 2026, as the file's midnight test does, and every test restores the real clock; the wait for the outline's fade is gone | Run here on 2026-11-01, the whole file: Chromium 22 passed; Firefox and WebKit 21 passed and 1 skipped (Chromium only) |
+| WebKit: `frameworks.browser.test.ts:85` | "React 19: properties in, controlled expansion through odd-toggle, keyed updates" read `el.expanded` as `[]` after the toggle's click | The `odd-toggle` handler sets React state from an event React does not delegate, so React schedules that render, and two frames were not always enough under CI load. The click now runs in `flushSync`, as the test's other updates do. The file: 4 passed in each of Chromium, Firefox, and WebKit |
+| Firefox: `e2e/docs.spec.ts:60` (Agent 3's) | "docs guides, …": the side navigation guide's heading was not visible within 15 s. Run here: `e2e-when-free.mjs 1 … e2e/docs.spec.ts --project=firefox --repeat-each=3 --workers=1` | 27 passed (7.7 min), the journey 3 of 3: not reproduced; sent to Agent 3 |
+| Gates | `npm run typecheck`; `npm run lint`; `npx prettier --check` on both test files | All exit 0 |
+
+**Not verified here:** the next CI run, on this commit.
