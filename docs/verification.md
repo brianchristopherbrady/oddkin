@@ -4715,3 +4715,12 @@ On the release commit, in a worktree with no other changes: first as `fd4d020`, 
 | Same as the packages | The same script, against `packages/components/agent/` and `packages/ai/agent/` | 104 and 68 files served, each byte for byte the packaged kit's; no extra or missing file |
 
 **Not verified here:** the deployed site, since d91f3e6 is not on origin yet, and the dev server's `/llms.txt` (Agent 3's e2e covers it in three engines).
+## 2026-11-01 — `reportValidity()` described as it behaves; a longer wait for packed consumers (round 10, Agent 1; Agent 2's agent-run findings)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Agent 2's seven commits before the push | `npm ci`, `npm run build`, `npm run typecheck`, `npm run lint` in a second worktree at `8111aff` (the first stays on the 1.0.0-beta.1 release commit until it is published) | All exit 0; pushed `35b6dcd..8111aff` |
+| The reference text | `npm run build`, then `custom-elements.json` | `odd-input`'s `reportValidity` reads "As `checkValidity()`, and the browser shows `validationMessage` in its own popup while the field shows its invalid state; only `error` puts a message under the field." 24 declarations carry the method |
+| Gates | `npm run typecheck`; `npx vitest run --project node`; `npm run lint` | All exit 0; 126 files, 1,557 tests passed |
+
+**Not verified here:** `e2e/packed-consumers.spec.ts` with its longer wait (290 s per consumer build, was 170 s): only its timeouts changed.

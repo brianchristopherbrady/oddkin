@@ -16,7 +16,8 @@ interface Packed {
   imports: Record<string, string>;
   files: string[];
 }
-async function ready(name: string, timeout = 170_000): Promise<Packed> {
+// A consumer's first request builds it: npm pack took about 30 s a package on a loaded machine.
+async function ready(name: string, timeout = 290_000): Promise<Packed> {
   const api = await request.newContext();
   try {
     const response = await api.get(`${server}/${name}/__ready`, { timeout });
@@ -50,7 +51,7 @@ const violations = (page: Page) =>
 
 test.describe('core only', () => {
   test.beforeAll(async () => {
-    test.setTimeout(180_000);
+    test.setTimeout(300_000);
     await ready('core-only');
   });
 
@@ -79,7 +80,7 @@ test.describe('core only', () => {
 
 test.describe('CSS only', () => {
   test.beforeAll(async () => {
-    test.setTimeout(180_000);
+    test.setTimeout(300_000);
     await ready('css-only');
   });
 
@@ -112,7 +113,7 @@ test.describe('CSS only', () => {
 
 test.describe('CSS only with the recipes', () => {
   test.beforeAll(async () => {
-    test.setTimeout(180_000);
+    test.setTimeout(300_000);
     await ready('css-recipes');
   });
 
@@ -168,7 +169,7 @@ test.describe('full application', () => {
   test.beforeAll(async () => {
     // Six packages to pack and install, beside the other consumers being prepared.
     test.setTimeout(300_000);
-    await ready('full-app', 290_000);
+    await ready('full-app');
   });
 
   for (const source of [

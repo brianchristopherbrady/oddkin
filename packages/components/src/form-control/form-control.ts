@@ -117,7 +117,10 @@ export class OddkinFormControl extends OddkinElement.with({
   checkValidity(): boolean {
     return this.internals.checkValidity();
   }
-  /** As `checkValidity()`, and an invalid field also shows its error to the user. */
+  /**
+   * As `checkValidity()`, and the browser shows `validationMessage` in its own popup while the field
+   * shows its invalid state; only `error` puts a message under the field.
+   */
   reportValidity(): boolean {
     return this.internals.reportValidity();
   }
