@@ -1,0 +1,44 @@
+{
+  "made": {
+    "by": "@oddkin/workbench@1.0.0-beta.1",
+    "packages": {
+      "@oddkin/workbench": "1.0.0-beta.1",
+      "@oddkin/components": "1.0.0-beta.1",
+      "@oddkin/core": "1.0.0-beta.1",
+      "@oddkin/tokens": "1.0.0-beta.1",
+      "@oddkin/analyzer": "1.0.0-beta.1",
+      "@oddkin/app": "1.0.0-beta.1",
+      "@oddkin/state": "1.0.0-beta.1"
+    },
+    "from": "npm, installed into a new directory outside the workspace",
+    "with": "scripts/workbench-share-fixture.mjs",
+    "steps": [
+      "oddkin workbench dev on a project documenting @oddkin/components@1.0.0-beta.1",
+      "components/odd-button: appearance (attribute) ghost, default slot text \"Publish\", --odd-button-background rgb(1, 2, 3)",
+      "preview settings: Mode Dark, Direction Right to left, Width Custom 360",
+      "Copy example link"
+    ],
+    "date": "2026-11-02"
+  },
+  "link": "http://127.0.0.1:4291/components/odd-button?preview=eyJ2IjoxLCJraW5kIjoiY29tcG9uZW50IiwiY29tcG9uZW50Ijoib2RkLWJ1dHRvbiIsInByZXNldCI6ImRlZmF1bHQiLCJhdHRyaWJ1dGVzIjp7ImFwcGVhcmFuY2UiOiJnaG9zdCJ9LCJzbG90cyI6eyJkZWZhdWx0IjoiUHVibGlzaCJ9LCJzdHlsZXMiOnsiLS1vZGQtYnV0dG9uLWJhY2tncm91bmQiOiJyZ2IoMSwgMiwgMykifSwicHJldmlldyI6eyJtb2RlIjoiZGFyayIsImRpcmVjdGlvbiI6InJ0bCIsIndpZHRoIjozNjB9fQ#interactive-example",
+  "payload": {
+    "v": 1,
+    "kind": "component",
+    "component": "odd-button",
+    "preset": "default",
+    "attributes": {
+      "appearance": "ghost"
+    },
+    "slots": {
+      "default": "Publish"
+    },
+    "styles": {
+      "--odd-button-background": "rgb(1, 2, 3)"
+    },
+    "preview": {
+      "mode": "dark",
+      "direction": "rtl",
+      "width": 360
+    }
+  }
+}

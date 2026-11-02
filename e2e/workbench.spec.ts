@@ -432,6 +432,70 @@ test.describe('Workbench shell', () => {
       await expect.poll(background, { timeout: 10_000 }).not.toBe('rgb(1, 2, 3)');
       await expect(page.locator('#interactive-example .wb-status')).toBeEmpty();
     });
+
+    test.describe('a share link the published Workbench 1.0.0-beta.1 made (release-process.md §1)', () => {
+      // Recorded from npm by scripts/workbench-share-fixture.mjs; its preview parameter on this
+      // Workbench's page for the same component. Each test loads the page once: a load takes
+      // seconds in Firefox.
+      const recorded = JSON.parse(
+        readFileSync('packages/workbench/test/fixtures/share-1.0.0-beta.1.json', 'utf8'),
+      ) as { link: string; payload: { attributes: Record<string, string> } };
+      const encode = (payload: object) =>
+        Buffer.from(JSON.stringify(payload)).toString('base64url');
+      const status = (page: Page) => page.locator('#interactive-example .wb-status');
+      const button = (page: Page) =>
+        page.frameLocator('oddkin-workbench-component iframe').first().locator('odd-button');
+
+      test('opens with every name it carries and its preview settings', async ({ page }) => {
+        const errors: string[] = [];
+        page.on('pageerror', (error) => errors.push(error.message));
+        const encoded = new URL(recorded.link).searchParams.get('preview')!;
+        await open(page, `components/odd-button?preview=${encoded}`, 'Button');
+        await expect(button(page)).toHaveText('Publish', { timeout: 20_000 });
+        await expect(button(page)).toHaveAttribute('appearance', 'ghost');
+        await expect
+          .poll(() =>
+            button(page).evaluate((el) => {
+              const wrapper = el.closest<HTMLElement>('[dir]');
+              return [
+                getComputedStyle(el.shadowRoot!.querySelector('button')!).backgroundColor,
+                el.ownerDocument.documentElement.dataset['oddMode'],
+                wrapper?.dir,
+                wrapper?.style.inlineSize,
+              ];
+            }),
+          )
+          .toEqual(['rgb(1, 2, 3)', 'dark', 'rtl', '360px']);
+        await expect(page.getByRole('combobox', { name: /^Mode/ })).toHaveValue('dark');
+        await expect(page.getByRole('spinbutton', { name: /^Width in px/ })).toHaveValue('360');
+        await expect(status(page)).toBeEmpty();
+        expect(errors).toEqual([]);
+      });
+
+      test('drops, with a note, a name the component no longer declares', async ({ page }) => {
+        const retired = {
+          ...recorded.payload,
+          attributes: { ...recorded.payload.attributes, retired: 'yes' },
+        };
+        await open(page, `components/odd-button?preview=${encode(retired)}`, 'Button');
+        await expect(status(page)).toHaveText('Ignored attribute "retired".');
+        await expect(button(page)).toHaveAttribute('appearance', 'ghost', { timeout: 20_000 });
+        await expect(button(page)).not.toHaveAttribute('retired');
+      });
+
+      test('is refused when its version is another, and the default example shows', async ({
+        page,
+      }) => {
+        await open(
+          page,
+          `components/odd-button?preview=${encode({ ...recorded.payload, v: 2 })}`,
+          'Button',
+        );
+        await expect(status(page)).toHaveText('The preview link uses an unsupported version.');
+        await expect(button(page)).toHaveText('Save', { timeout: 20_000 });
+        await expect(button(page)).not.toHaveAttribute('appearance', 'ghost');
+      });
+    });
   });
 
   test('records startup timing', async ({ page }, testInfo) => {

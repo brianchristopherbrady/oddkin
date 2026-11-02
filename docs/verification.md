@@ -4833,3 +4833,12 @@ CI run 41353564510 on `f67bdd2`: Vitest Chromium 2,856 and Firefox 2,801 passed,
 | The local evidence | SHA-256 of each download against `release-evidence/1.0.0-beta.1/` in the release checkout | Both identical |
 | The CI evidence | `Expand-Archive` on the downloaded zip | `evidence.json`, `EVIDENCE.md`, `impact/`, and `results/` (e2e and Vitest JSON); `EVIDENCE.md` names commit `35b6dcd2e327`, clean, and CI run 41168839415; the zip has the artifact's size, 352,682 B |
 | Scorecard | Gate A's lines counted by status | Verified 16, Partial 3, Planned 1, Unknown 2, Owner 1 |
+
+## 2026-11-01 — Share links across versions (P0.2; round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The link | `node scripts/workbench-share-fixture.mjs` | npm installed `@oddkin/workbench`, `components`, `core`, `tokens`, `analyzer`, `app`, and `state` 1.0.0-beta.1 into a new temporary directory; that Workbench's dev server served odd-button; the copied link carries `appearance` ghost, the default slot "Publish", `--odd-button-background` rgb(1, 2, 3), and dark, rtl, 360 px. Written to `packages/workbench/test/fixtures/share-1.0.0-beta.1.json` |
+| Node | `npx vitest run --project node packages/workbench/test/share-compat.test.ts` | 3 passed: decoded against the current odd-button page with no problems; with `appearance` no longer declared, it is dropped with "Ignored attribute "appearance"."; a version 2 link is refused |
+| E2E | `e2e/workbench.spec.ts --grep=published --repeat-each=2`, three engines, `--workers=1` | 18 of 18. The current dev server shows the link's button (text, attribute, background, dark, rtl, 360 px) with no note; an added undeclared attribute is dropped with its note; a version 2 link shows the refusal and the default example. Run as one test with three page loads, Firefox went over the 30 s test timeout, so it is three tests with one load each |
+| Mutations | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutate-share.json` | 3 of 3 killed: version 1 refused, undeclared names dropped without a note, any version accepted |
