@@ -61,7 +61,7 @@ Waiting for the owner: one run by hand of `oddkin-quickstart` with version `0.0.
 Why this order:
 
 - **Dependencies first.** Theme Studio's products need P1.1's base file and product role overrides, so those lead Agent 3's P1.1. Composition screens for a library's own components need P1.6's catalog generation, which Agent 2 does before them. Everything else in Theme Studio starts now.
-- **Gate A.** The first commercialization gate, the public technical preview, has 17 of its 23 lines verified (the [scorecard](./docs/commercialization/commercial-readiness-scorecard.md)). RF-02 and RF-19 are its lines that agents can close alone; RF-18 needs observers.
+- **Gate A.** The first commercialization gate, the public technical preview, has 18 of its 23 lines verified (the [scorecard](./docs/commercialization/commercial-readiness-scorecard.md)). RF-19 is its line that agents can close alone; RF-18 needs observers.
 - **The next release.** `1.0.0-beta.2` needs trusted publishing (D-5).
 - **Parallel lanes.** P1.7, which tier CF needs, moves to Agent 1 so that it does not wait behind Agent 2's Theme Studio and analyzer work.
 
