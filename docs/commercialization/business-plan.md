@@ -5,7 +5,7 @@ Last reviewed: 2026-10-29; repository facts checked on 2026-11-01
 
 ## 1. Executive summary
 
-Oddkin is a browser-native component and design-system platform with a differentiated assurance layer. Its repository already connects component definitions, design tokens, metadata, documentation, examples, generated agent guidance, change-impact analysis (a prototype), and verification evidence. Figma Code Connect mappings exist as repository artifacts; they are not yet part of that chain.
+Oddkin is a browser-native component and design-system platform with a differentiated assurance layer. Its repository already connects component definitions, design tokens, metadata, documentation, examples, generated agent guidance, change-impact analysis (a prototype), and verification evidence. Figma Code Connect mappings are published to Figma (by the owner, 2026-10-27), from their source in the repository; they are not yet part of that chain.
 
 The proposed business is not primarily the sale of UI components. It is a hybrid open-source and commercial business:
 

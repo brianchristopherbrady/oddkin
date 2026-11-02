@@ -11,7 +11,7 @@ Last reviewed: 2026-10-29; repository facts checked on 2026-11-01
 
 ### Short description
 
-Oddkin Assurance connects component contracts, design tokens, examples, products, tests, and agent guidance, and will add Figma mappings (today Code Connect mappings are repository artifacts only). It turns a UI-system change into an explainable impact report and a focused verification plan.
+Oddkin Assurance connects component contracts, design tokens, examples, products, tests, and agent guidance, and will add Figma mappings to that chain (today the Code Connect mappings are published to Figma, but change impact does not follow them yet). It turns a UI-system change into an explainable impact report and a focused verification plan.
 
 ### Avoid leading with
 

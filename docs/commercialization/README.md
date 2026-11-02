@@ -52,7 +52,7 @@ Both:
 
 Oddkin is not most defensible as another frontend framework. Its strongest differentiated assets are:
 
-- a versioned contract chain from component definitions and tokens through metadata, documentation, examples, agent guidance, and tests, with Figma Code Connect mappings kept in the repository (not yet published to Figma, which needs an Organization or Enterprise plan);
+- a versioned contract chain from component definitions and tokens through metadata, documentation, examples, agent guidance, and tests, with Figma Code Connect mappings published to Figma by the owner on 2026-10-27 (their source in the repository);
 - graph-based change-impact analysis with reason paths and conservative check selection (a prototype, `oddkin-impact`);
 - generated, package-version-matched agent kits rather than generic AI instructions (`oddkin-kit`; shipped in `@oddkin/components` and `@oddkin/ai`);
 - a framework-neutral AI interaction library covering agent workflows beyond chat (`@oddkin/ai`);

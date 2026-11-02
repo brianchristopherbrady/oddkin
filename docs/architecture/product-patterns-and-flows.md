@@ -39,7 +39,7 @@ The first product value is not autonomous product design. It is making a design 
 | Routes | `@oddkin/app`'s router declares routes in application code | No artifact records a stable route identity |
 | Agent kits | The package kits ship `GUIDE.md`, `kit.json`, `llms.txt`, and `references/` (components, tokens, recipes, stylesheets, models, `choosing-components.md`, `composition.md`). The generator can also write `json/` bundles | No query operations: the owner skipped `@oddkin/agent` and MCP (IMPLEMENTATION_PLAN.md P2.2). No consumer kit command yet (P0.5 step 5) |
 | Agent evaluation | [agent-tooling.md](./agent-tooling.md) §11 proposes one; P0.4 has a real agent build a page from a kit | No evaluation harness |
-| Figma | Code Connect mappings are repository artifacts (`artifacts/code-connect/`); publishing them to Figma was refused because it needs an Organization or Enterprise plan | Figma references stay provenance only |
+| Figma | Code Connect mappings for every built family are published to Figma: the owner published them on 2026-10-27 (ADR 0046 D8; Code Connect needs an Organization or Enterprise plan). Their source is in the repository (`artifacts/code-connect/`), with Agent 1's check of each mapping against the code | Figma references stay provenance only |
 | Schemas | 16 in `docs/schemas`, named `https://oddkin.dev/schemas/<name>/v1.json` | The three pattern schemas in §12 follow this convention |
 | Decisions | The highest ADR is 0047 | The Phase 0 ADR takes the next number |
 | Accessibility evidence | axe checks in the e2e suite. Screen-reader and Safari-on-hardware evidence is parked until hardware is available (P3), and the owner's own accessibility review is pending (P1.4) | Phase 4's manual assistive-technology reviews depend on both |
@@ -611,7 +611,7 @@ The first version supports authored references to:
 - Figma file;
 - page;
 - section or flow node;
-- component-set mappings from the Code Connect work (repository artifacts in `artifacts/code-connect/`; publishing them to Figma needs an Organization or Enterprise plan);
+- component-set mappings from the Code Connect work (published to Figma by the owner on 2026-10-27; their source in `artifacts/code-connect/`);
 - optional review status.
 
 Figma remains a design source and review surface, not the executable pattern contract. A later experiment may compare Figma flow connections, component instances, and variables with the authored pattern. It must report differences without automatically rewriting either side.
