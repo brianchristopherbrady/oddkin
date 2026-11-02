@@ -4875,3 +4875,16 @@ CI failed `e2e/docs.spec.ts:60`, in "docs guides, metadata references, local sea
 | Gates | `npm run typecheck`; `npm run lint`; `npx vitest run tests/docs` | Exit 0. Lint: every step passed except `prettier --check .`, which flagged two of my untracked notes in `.agent-notes/`; formatted, it passes. 31 passed |
 
 **Not verified here:** CI on this commit, under CI's load.
+
+## 2026-11-01 — RF-02: the README status check in `npm run lint` (round 11, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Fixtures | `npx vitest run --project node tests/release/readme-status.test.ts` | 8 passed. Each rule fails on stale fixture text with its line and message and passes on current text: a milestone status; a prerelease or `versioned` version, or an `@oddkin/x@` pin, that is not the manifest's; a count that is not the metadata's, as `@oddkin/x` N or N (AI \| component) elements; a command no `bin` provides, inline on a line about commands or first in a shell block's line, with `npx` skipped and other blocks ignored; a peer called a dependency in its package's README; a supported-browser version that is not the floor; an accessibility claim without the screen-reader limit. The last test reads the repository: the facts come from the manifests, metadata, and `features.json`, all nine READMEs are covered, and none has a problem |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-readme.json`: 31 probes on `scripts/check-readme-status.mjs` (each rule switched off or loosened, fences never closing, the facts not read, the root README dropped) | 31 killed. The first run left 3 alive (a fence that never closes, a peer stated as a runtime dependency, the root README's version); a fixture was added for each |
+| The command line on stale text | `.tmp/readme-cli-fail.mjs`: one stale line appended to a real README, `node scripts/check-readme-status.mjs` run, the file restored byte for byte; seven cases | Exit 1 each time, with the file and line: `packages/tokens/README.md:70`, "M2 in progress"; `README.md:64`, 1.0.0-beta.0 against the manifests' 1.0.0-beta.1; `packages/components/README.md:62`, "53 elements" against the metadata's 54; `README.md:64`, the command oddkin-agent, which no `bin` provides (the message lists the five that do); `packages/ai/README.md:111` twice, `@oddkin/core` and `@oddkin/components` called dependencies but peers; `packages/components/README.md:62`, Firefox 131 against the floor's 132; `README.md:64`, "Accessible, themed" without the screen-reader limit. Restored: exit 0 |
+| What it found | `node scripts/check-readme-status.mjs` before the corrections | `packages/analyzer/README.md:51` and `packages/workbench/README.md:5`, "versioned `1.0.0`" against `1.0.0-beta.1`; both now say the package shares the other Oddkin packages' version |
+| Lint | `npm run lint` | Exit 0; its new step prints "README status OK: 9 READMEs against the manifests, metadata, bins, and browser floor." |
+| Gates | `npm run typecheck`; `npx vitest run --project node tests/release`; `node scripts/agent-kit/agents-md.mjs --check`; `node scripts/agent-kit/package-kits.mjs --check` | Exit 0; 14 passed and 1 skipped; AGENTS.md's managed section and both packaged kits current after the root `package.json` change |
+
+**Not verified here:** the check in CI's lint step, on this commit.

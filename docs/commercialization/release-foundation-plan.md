@@ -415,6 +415,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the check, run in CI through lint.
 - **Done when:** lint fails on "M<n> in progress", a version that is not the manifest's, an element count that is not the metadata's, a command name no `bin` provides, or a dependency described as a dependency when it is a peer.
 - **Risks:** false positives in prose; keep the rules narrow and the messages specific.
+- **State (2026-11-01, Agent 3):** done. `npm run lint` runs `scripts/check-readme-status.mjs` (`lint:readme`, after the build that writes the metadata) on the root README and the eight package READMEs, and fails with `file:line: message` on each of the five, and on two rules for RF-03 and RF-04: a supported-browser version that is not the floor in `docs/compatibility/features.json`, and a line calling the elements accessible or WCAG-conformant without saying that screen readers are not yet verified. Commands are the inline ones on lines about commands and the first word of each shell block's lines. `tests/release/readme-status.test.ts` holds the fixtures. It found two stale lines, Workbench's and the analyzer's "versioned `1.0.0`", now corrected.
 
 ### RF-03 Accessibility wording to evidence
 
@@ -427,7 +428,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the revised descriptions and README lines.
 - **Done when:** each accessibility statement names its evidence and says screen readers are not yet verified.
 - **Risks:** wording disagreement; the owner decides.
-- **State (2026-10-30, Agent 1):** the components description no longer says "Accessible"; the root, components, and AI READMEs name the keyboard and axe-core evidence and say screen readers are not yet verified, linking [docs/support.md](../support.md#accessibility). Open: the docs site's copy (Agent 3) and the RF-02 rule.
+- **State (2026-10-30, Agent 1):** the components description no longer says "Accessible"; the root, components, and AI READMEs name the keyboard and axe-core evidence and say screen readers are not yet verified, linking [docs/support.md](../support.md#accessibility). Open: the docs site's copy (Agent 3) and the RF-02 rule. (2026-11-01, Agent 3: the RF-02 rule is in `npm run lint`.)
 
 ### RF-04 Public support policy
 
@@ -440,7 +441,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the policy.
 - **Done when:** each supported range names its evidence, and each unverified area (Safari hardware, screen readers, pnpm, Yarn, Node below 24, webpack) is a listed limitation.
 - **Risks:** promising more than CI checks.
-- **State (2026-10-30, Agent 1):** [docs/support.md](../support.md) states the browser floor, accessibility evidence, Node for the tools and the browser packages, TypeScript 5.9 or newer, the tested framework versions, npm 11 and the tested bundlers, and copies on one page, each with its evidence, and lists pnpm, Yarn, webpack, Rspack, Node below 24, mobile browsers, Apple hardware, and screen readers as untested. The README links it. Open: the docs site page (Agent 3) and an RF-02 check of the README's floor.
+- **State (2026-10-30, Agent 1):** [docs/support.md](../support.md) states the browser floor, accessibility evidence, Node for the tools and the browser packages, TypeScript 5.9 or newer, the tested framework versions, npm 11 and the tested bundlers, and copies on one page, each with its evidence, and lists pnpm, Yarn, webpack, Rspack, Node below 24, mobile browsers, Apple hardware, and screen readers as untested. The README links it. Open: the docs site page (Agent 3) and an RF-02 check of the README's floor. (2026-11-01, Agent 3: the RF-02 check of every README's floor is in `npm run lint`.)
 
 ### RF-05 Coverage for claimed ranges
 
@@ -635,7 +636,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 | Public package cut is decided. | Partial | All eight public (2026-10-27); tiers and the version line decided on 2026-10-30 (D-1, D-2); not yet in the README or release-process §1 | RF-01, RF-16 | Tiers recorded in release-process §1 and the README |
 | Preview versions replace `0.0.0`. | Verified | `1.0.0-beta.0` on npm, `beta` and `latest` | — | Already true (the line's wording is stale) |
 | Package privacy flags match the release decision. | Verified | No `private` in the eight; docs app and root private | — | Already true |
-| README status matches the generated catalog. | Stale | §7 | RF-01, RF-02 | The lint check passes |
+| README status matches the generated catalog. | Verified | `npm run lint` checks every README against the manifests, metadata, `bin` maps, and browser floor (RF-02, 2026-11-01) | RF-01, RF-02 | The lint check passes |
 | Changelogs and release notes exist. | Partial | beta.1 draft; changelogs from 1.0.0 by policy | RF-08 | Notes complete at the cut |
 | License and ownership decisions are recorded. | Verified | MIT in README, manifests, `LICENSE`; the owner owns `@oddkin` and confirmed MIT on 2026-10-30 (D-9) | — | Already true |
 | Export, declaration, files, side-effect, and `customElements` checks pass from tarballs. | Verified | `verify:packs`, CI run 40945402821 | RF-06 (extras) | Stays green in each release run |

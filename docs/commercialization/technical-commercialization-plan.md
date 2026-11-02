@@ -80,7 +80,7 @@ Known gaps:
 
 - Fully parallel browser runs are not reliable; serial per-engine runs are the evidence ([release-process.md](../release-process.md) §3).
 - Screen-reader and Safari-on-hardware evidence is parked until hardware is available (P3), and the owner's own accessibility review is pending (P1.4).
-- The package READMEs were corrected for `1.0.0-beta.1` (RF-01); no check keeps them true yet (RF-02).
+- The package READMEs were corrected for `1.0.0-beta.1` (RF-01), and `npm run lint` keeps them true (RF-02, 2026-11-01).
 - The support policy ([docs/support.md](../support.md)) and `SECURITY.md` exist (RF-04, RF-13); trusted publishing does not (RF-12).
 - One fixture library is not built with Oddkin (plain custom elements). Its examples reach every tool through `oddkin-analyze --manifest` (ADR 0048 §3), but no library made with another authoring library is a fixture yet.
 - Impact reports record tool versions, not the source revision or whether the working tree was dirty.
@@ -327,7 +327,7 @@ None of it exists.
 
 | Milestone | Technical items | Business items | Today (2026-11-01) |
 | --- | --- | --- | --- |
-| T0, baseline (two to three weeks) | Package tiers and versions (D-1, D-2); repair stale documentation (RF-01 to RF-03; CF.1); one end-to-end assurance demonstration from a clean checkout (§7; CF.2); release evidence from a clean checkout (RF-09, RF-10) | Recruit design partners | Technical items done except RF-02's check; no design partner recorded |
+| T0, baseline (two to three weeks) | Package tiers and versions (D-1, D-2); repair stale documentation (RF-01 to RF-03; CF.1); one end-to-end assurance demonstration from a clean checkout (§7; CF.2); release evidence from a clean checkout (RF-09, RF-10) | Recruit design partners | Technical items done; no design partner recorded |
 | T1, external local preview (four to six weeks) | Installation in an external repository (RF-11); the standard-CEM baseline (B; CF.3); portable snapshots and reports with provenance (C); a prototype that ingests customer-CI results (D, step 1; CF.2); two observed onboarding sessions (RF-18) | — | CF.3 and the in-repository CI report are done; the rest is Planned |
 | T2, hosted pilot (six to ten weeks) | GitHub App; an organization and project model; persistent reports and artifacts; pull-request checks | Manual billing and support; the first paid pilot active | Planned |
 | T3, repeatable paid beta | Onboarding that needs no help from the repository author; baseline approvals; agent-context releases; a support and incident process for the service | Three paying customers; a reusable onboarding process; workspace pricing; evidence that at least one risk or meaningful review cost was avoided | Planned |
@@ -438,7 +438,7 @@ None of these is measured automatically today. The impact report's JSON already 
 The owner set this order on 2026-10-29 (O-4), and IMPLEMENTATION_PLAN.md holds it. State on 2026-11-01:
 
 1. Close P0 and cut `1.0.0-beta.1` (P0.8). [Done: published 2026-11-01; P0.1, P0.3, P0.4, P0.5, and P0.8 are ticked. Open: P0.2's share-link check, P0.6's first scheduled registry run, P0.7 (docs site).]
-2. CF.1, the release trust basics: RF-01 to RF-04 and RF-09. [RF-01, RF-03, RF-04, and RF-09 are done; RF-02's check is open.]
+2. CF.1, the release trust basics: RF-01 to RF-04 and RF-09. [Done: RF-02's check was the last, on 2026-11-01.]
 3. CF.2, the change-impact demonstration. [Done: the scripted change, the report in CI as a job summary and an artifact, and the docs page.]
 4. CF.3, libraries not built with Oddkin (B). [Done.]
 5. The P1 items tier CF needs: P1.6 (analyzer), P1.7 (conformance and visual baselines), and P1.1 (theming).

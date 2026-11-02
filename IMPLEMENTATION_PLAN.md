@@ -153,8 +153,9 @@ Exit criteria:
 
 The details are in the [technical commercialization plan](./docs/commercialization/technical-commercialization-plan.md); [docs/commercialization/](./docs/commercialization/README.md) holds it with the readiness scorecard, the release-foundation plan, and the owner's business plans. In order:
 
-- [ ] **CF.1 Release trust basics (Agent 1, with Agent 3).** From the [release-foundation plan](./docs/commercialization/release-foundation-plan.md): (2026-11-01: only RF-02 remains, Agent 3's)
+- [x] **CF.1 Release trust basics (Agent 1, with Agent 3).** From the [release-foundation plan](./docs/commercialization/release-foundation-plan.md): (2026-11-01: done; RF-02 was the last item)
   - README and status statements taken from generated facts, and a check that keeps them true (RF-01, RF-02; Agent 3 writes the READMEs);
+    - *(2026-11-01, Agent 3: RF-02 done. `npm run lint` runs `scripts/check-readme-status.mjs` on the root and package READMEs: a milestone status, a version or element count the manifests and metadata do not have, a command no `bin` provides, a peer called a dependency, a browser version that is not the floor, and an accessibility claim that does not say screen readers are not yet verified each fail with the file and line.)*
   - accessibility wording that names its evidence (RF-03; owner decision D-7);
   - a public browser and Node support policy that lists its limitations (RF-04);
     - *(2026-10-30, Agent 1: D-7 and D-4 decided. The components description drops "Accessible"; the root, components, and AI READMEs name the keyboard and axe-core evidence and say screen readers are not yet verified. [docs/support.md](./docs/support.md) is the support policy, linked from the README, with `SECURITY.md` beside it. Open: the docs site's copy and a page for the policy (Agent 3), and RF-02's checks.)*

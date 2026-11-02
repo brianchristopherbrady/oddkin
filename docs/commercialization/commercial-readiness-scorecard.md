@@ -8,7 +8,7 @@ Classes, as in the [technical plan](./technical-commercialization-plan.md): **Ve
 
 ## Gate A: public technical preview
 
-On 2026-11-01, 17 of 23 lines are Verified (8 on 2026-10-29).
+On 2026-11-01, 18 of 23 lines are Verified (8 on 2026-10-29).
 
 ### Product and release
 
@@ -17,7 +17,7 @@ On 2026-11-01, 17 of 23 lines are Verified (8 on 2026-10-29).
 | Public package cut is decided. | Verified | Owner decisions D-1 and D-2 (2026-10-30); the root README lists the packages in that order |
 | Preview versions replace `0.0.0`. | Verified | All eight at `1.0.0-beta.1` on npm since 2026-11-01 (`beta` and `latest`; `1.0.0-beta.0` on 2026-10-28) |
 | Package privacy flags match the release decision. | Verified | No package is `private`; all eight are public under the owner's `@oddkin` scope |
-| README status matches the generated catalog. | Partial | Corrected for `1.0.0-beta.1` (RF-01, 2026-10-30); the check that keeps it true is RF-02 |
+| README status matches the generated catalog. | Verified | Corrected for `1.0.0-beta.1` (RF-01, 2026-10-30); `npm run lint` fails when a README's milestone status, version, element count, command, dependency kind, browser floor, or accessibility claim disagrees with the manifests, metadata, `bin` maps, or compatibility data (RF-02, 2026-11-01) |
 | Changelogs and release notes exist. | Verified | Each beta has release notes ([1.0.0-beta.1](../releases/1.0.0-beta.1.md)); changelogs start at 1.0.0 ([release-process.md](../release-process.md) §1) |
 | License and ownership decisions are recorded. | Verified | MIT in the README, the manifests, and `LICENSE`; confirmed by the owner on 2026-10-30 (O-1, D-9) |
 | Export, declaration, files, side-effect, and `customElements` checks pass from tarballs. | Verified | `npm run verify:packs` in CI |
@@ -163,7 +163,7 @@ Record:
 ## Current status, 2026-11-01
 
 - **Technical foundation:** strong. The published beta `1.0.0-beta.1` (2026-11-01), with CI green on `8830ef5`.
-- **Public preview readiness (Gate A):** 17 of 23 lines Verified; the rest are the README check (RF-02), a sample report outside this repository (RF-11), and the product-experience lines (RF-16 to RF-19).
+- **Public preview readiness (Gate A):** 18 of 23 lines Verified; the rest are a sample report outside this repository (RF-11) and the product-experience lines (RF-16 to RF-19).
 - **External installation evidence:** fresh projects in this repository install the published packages and pass in three engines; no external repository yet.
 - **Libraries not built with Oddkin:** Workbench, change impact, and the agent kits read their Custom Elements Manifest (CF.3); no external library has been run.
 - **Paid-pilot readiness:** not yet established; the offer and playbook are drafted.
