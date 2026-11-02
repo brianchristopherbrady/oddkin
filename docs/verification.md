@@ -4888,3 +4888,29 @@ CI failed `e2e/docs.spec.ts:60`, in "docs guides, metadata references, local sea
 | Gates | `npm run typecheck`; `npx vitest run --project node tests/release`; `node scripts/agent-kit/agents-md.mjs --check`; `node scripts/agent-kit/package-kits.mjs --check` | Exit 0; 14 passed and 1 skipped; AGENTS.md's managed section and both packaged kits current after the root `package.json` change |
 
 **Not verified here:** the check in CI's lint step, on this commit.
+
+## 2026-11-01 — Disabled button appearances
+
+Primary keeps its fill, secondary keeps its surface and outline, and ghost stays transparent. The whole control uses 50% opacity, including its label and icons. Selected toggles retain both selection colours. The custom element and native CSS share the treatment; forced-colors uses full opacity.
+
+| Check | Result |
+| --- | --- |
+| Figma source | Updated 12 disabled variants in the md/sm/lg button, iconButton and toggleButton families, plus two direct light/dark disabled specimens in `E7LfRysny8V3qU24tv082i`. Existing component IDs and semantic colour bindings retained. |
+| Visual review | Inspected the editable light/dark comparison at node `685:3157`, including all sizes, appearances and toggle values. Widened comparison cells to show the complete control bounds. Library edits have not been published. |
+| `npm run build` | Exit 0. Existing side-effect import warnings emitted by the demo bundler. |
+| Prettier on the three changed source/test files; `git diff --check` | Exit 0. |
+| Browser files: `button.browser.test.ts`, `styling.browser.test.ts` | Chromium and WebKit: four files passed, 65 tests passed and one Chromium-only test skipped. The initial Firefox session did not connect. |
+| Firefox alone, same two files | 30 tests passed, one Chromium-only test skipped, two timed out waiting for pointer actions: the existing form-submitter click and pressed-toggle test's `restPointer` hover. No style assertion failed. The disabled-appearance matrix passed. Firefox verification is incomplete; these timeouts were not repaired by altering component behavior or weakening tests. |
+
+The restricted runner initially could not find browser binaries, then could not access the local test page. The runs above used the installed browser directory and the permitted browser runner. No npm package or Figma library publication performed.
+
+## 2026-11-01 — The owner's disabled buttons on main (round 11, Agent 1)
+
+The owner's commit `e44c4fe4` ("updates buttons disabled styles"), made in the original checkout on `1a00e85`, cherry-picked onto `main` unchanged; the owner's record rows above came with it. Follow-ups in Agent 1's commit: `styling-contract.browser.test.ts` expected the old disabled look (sunken surface, disabled text, transparent border, whatever the variables) and now expects the variables' colours at 50% opacity; theming-and-styling.md's "States win" says the same; `docs/compatibility/matrix.md` regenerated (three button stylesheets gain features: `opacity` and the forced-colours rule).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Build | `npm run build` | Exit 0 |
+| Button, styling, contract, and the 8 components that use the button styles, three engines | `browser-set.mjs` on `button`, `styling`, `styling-contract`, `calendar`, `carousel`, `color-picker`, `combobox`, `copy-button`, `menu`, `picker`, `split-button` | Chromium 193 passed; Firefox 188 passed, 5 skipped; WebKit 187 passed, 6 skipped (engine-specific tests); no failure |
+| Types, size | `npm run typecheck`; `node scripts/check-size.mjs` | Exit 0; `button.css` 1,004 B gzip of 1,024 |
+| Lint | `npm run lint` | First exit 1: the compatibility matrix was out of date; after `node scripts/compat/check-css.mjs --write`, exit 0 (0 problems) |

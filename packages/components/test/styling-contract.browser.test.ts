@@ -341,11 +341,13 @@ describe('roles and attributes', () => {
     await input!.updateComplete;
     flush();
     const control = getComputedStyle(partOf(button!, 'control'));
+    // Disabled keeps the button's colours, variables included, and dims the whole control.
     expect([control.backgroundColor, control.color, control.borderTopColor]).toEqual([
-      resolve(button!, 'background-color', 'var(--odd-color-surface-sunken)'),
-      resolve(button!, 'color', 'var(--odd-color-text-disabled)'),
-      resolve(button!, 'border-top-color', 'transparent'),
+      'rgb(1, 2, 3)',
+      'rgb(4, 5, 6)',
+      'rgb(7, 8, 9)',
     ]);
+    expect(control.opacity).toBe('0.5');
     expect(getComputedStyle(partOf(input!, 'control')).borderTopColor).toBe(
       resolve(input!, 'border-top-color', 'var(--odd-color-danger-foreground)'),
     );

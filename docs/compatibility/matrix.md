@@ -123,7 +123,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/tokens/dist/css/default.css` | yes | 15 |
 | `packages/components/dist/css/avatar-group.css` | yes | 11 |
 | `packages/components/dist/css/base.css` | yes | 12 |
-| `packages/components/dist/css/button.css` | yes | 53 |
+| `packages/components/dist/css/button.css` | yes | 54 |
 | `packages/components/dist/css/description-list.css` | yes | 28 |
 | `packages/components/dist/css/divider.css` | yes | 21 |
 | `packages/components/dist/css/field.css` | yes | 59 |
@@ -147,9 +147,9 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/breadcrumbs/breadcrumbs.recipe.styles.js (breadcrumbsRecipeStyles)` | yes | 11 |
 | `packages/components/dist/breadcrumbs/breadcrumbs.structural.styles.js (breadcrumbsStructuralStyles)` | yes | 38 |
 | `packages/components/dist/breadcrumbs/breadcrumbs.styles.js (breadcrumbsStyles)` | yes | 14 |
-| `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 52 |
+| `packages/components/dist/button/button.native.styles.js (nativeButtonStyles)` | yes | 53 |
 | `packages/components/dist/button/button.structural.styles.js (buttonStructuralStyles)` | yes | 35 |
-| `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 28 |
+| `packages/components/dist/button/button.styles.js (buttonStyles)` | yes | 31 |
 | `packages/components/dist/calendar/calendar.recipe.styles.js (calendarRecipeStyles)` | yes | 13 |
 | `packages/components/dist/calendar/calendar.structural.styles.js (calendarStructuralStyles)` | yes | 44 |
 | `packages/components/dist/calendar/calendar.styles.js (calendarStyles)` | yes | 28 |
