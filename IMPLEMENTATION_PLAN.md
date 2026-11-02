@@ -30,6 +30,8 @@ Agents 1 and 2 do not work on the docs site. They answer Agent 3's questions and
 
 Each agent takes its next item in this order. An item waits only for what its row names. Finish and land the work already in progress first.
 
+Finish first (owner, 2026-11-01: work already started comes before new items). Agent 1 fills `oddkin-quickstart` (RF-11), which the owner created on 2026-11-01 and which holds only its README and licence: the docs' quick starts copied verbatim, one React app, and a workflow that tests them from npm in three engines (the release plan's §12). Agent 3 fixes the docs journey (`e2e/docs.spec.ts:60`), which failed on CI again, in WebKit on `4754ffd` after Firefox on `f67bdd2`. The owner attaches the three evidence files to the `1.0.0-beta.1` GitHub Release (D-11).
+
 | Agent | # | Item | Waits for |
 | --- | --- | --- | --- |
 | 1 | 1 | CF.4, RF-19: the error-message audit. List every documented diagnostic code and message in the packages; each message names what to do, or links to the page that does. Fixes go to the owning lane | — |
@@ -47,14 +49,14 @@ Each agent takes its next item in this order. An item waits only for what its ro
 | 2 | 7 | P1.6's remaining items, starting with the technical plan's Workstream C provenance: the source revision and dirty state in impact snapshots and reports (Gate B) | — |
 | 3 | 1 | CF.1, RF-02: the README status check in `npm run lint` (`scripts/check-readme-status.mjs` and its test; Agent 1 has agreed to the lint change) | — |
 | 3 | 2 | P1.1: a theme file that builds on a shared base file, then product role overrides and several themes in one document | — |
-| 3 | 3 | Docs fixes only: `odd-theme-scope` is dropped (owner, 2026-11-01), so the Themes page and theming-and-styling.md §5 stop mentioning it (plain `data-odd-*` attributes set the scopes); the Firefox docs journey (`e2e/docs.spec.ts:60`) if it fails on CI again | — |
+| 3 | 3 | Docs fixes only: `odd-theme-scope` is dropped (owner, 2026-11-01), so the Themes page and theming-and-styling.md §5 stop mentioning it (plain `data-odd-*` attributes set the scopes) | — |
 | 3 | 4 | P1.1's remaining items: the missing CSS token domains (Theme Studio's controls need some), DTCG output checked by an independent reader, equivalent CSS, SCSS, and TS consumption, and P3 values | — |
 
 After the docs pause (Agent 3): the docs site's `/theme-studio` page with Agent 2's panel, the guide from Theme Studio to a build (P1.5, items 1 and 7), RF-17, then P0.7.
 
-Owner decisions of 2026-11-01, on the list below: `odd-theme-scope` is dropped; `odd-table` is unparked (its scope, a data table without the data grid's virtualization and editing, was set by Agent 1 for the owner to review); `homepage` and `bugs` are in every manifest, with `keywords` (RF-06, done); private vulnerability reporting is on; the owner creates the external fixture repository from Agent 1's prompt (D-6) and adds the trusted publishers when the workflow is ready.
+Owner decisions of 2026-11-01, on the list below: `odd-theme-scope` is dropped; `odd-table` is unparked (its scope, a data table without the data grid's virtualization and editing, was set by Agent 1 for the owner to review); `homepage` and `bugs` are in every manifest, with `keywords` (RF-06, done); private vulnerability reporting is on; the owner created the external fixture repository, `oddkin-quickstart` (D-6), which Agent 1 fills, and adds the trusted publishers when the workflow is ready.
 
-Waiting for the owner: the external fixture repository (RF-11), then observers for RF-18; the trusted publishers on npmjs.com, within 2 days of the first publish from `release.yml` (RF-12); the `1.0.0-beta.1` GitHub Release with its evidence (D-11), which is not public yet.
+Waiting for the owner: the three evidence files on the `1.0.0-beta.1` GitHub Release, published as a pre-release on 2026-11-01 without them (D-11); observers for RF-18; the trusted publishers on npmjs.com, within 2 days of the first publish from `release.yml` (RF-12).
 
 Why this order:
 
@@ -145,7 +147,7 @@ Exit criteria:
   - *(2026-10-29, Agent 1: `set-versions --next`, rehearsed on main and reverted, steps the eight packages, the docs app's ranges, and core's `VERSION` to 1.0.0-beta.1, and its `--check` passes. At the cut: `npm install`, `npm test` (the contract records carry the version), `npm run verify:metadata`, the §3 checks, the dry run, and the prose that names `1.0.0-beta.0` (the root README and `packages/core/README.md`, Agent 3; release-process.md §5's tag commands). Release-process §1 writes no changelog for a beta; betas get release notes instead (owner, 2026-10-29), drafted in [docs/releases/1.0.0-beta.1.md](./docs/releases/1.0.0-beta.1.md) and completed at the cut. Waiting for a green CI (Agent 2's coverage test), P0.3 and P0.4 (Agent 2), and the owner's go.)*
   - *(2026-10-30, owner decisions D-1 to D-11, as the release-foundation plan recommends: beta.1 is cut once CI passes on the release commit (D-10); P0.4's remaining items go to beta.2 unless they have landed by then. The accessibility wording (D-7), the support policy (D-4), and `SECURITY.md` (D-8) land first, so they ship in beta.1. The evidence of the release commit's CI run is attached to the GitHub Release (D-11).)*
   - *(2026-10-30, Agent 1: cut at `7c889ab`: versions 1.0.0-beta.1, the release notes complete, and the owner's steps up to the dry run passing on it (first as `fd4d020`; run again as `1c3a040` after the rebase onto Agent 2's kit fix `6677001`, which ships in it; `7c889ab` differs from it in no package file). Waiting for its CI run, then the owner's publish.)*
-  - *(2026-11-01, Agent 1: published from `35b6dcd`, the owner approving each step on npm. All eight at `1.0.0-beta.1`, `beta` and `latest`, each identical to the release evidence; tag `v1.0.0-beta.1`. Left for the owner: the GitHub Release with the notes and both evidence bundles (D-11).)*
+  - *(2026-11-01, Agent 1: published from `35b6dcd`, the owner approving each step on npm. All eight at `1.0.0-beta.1`, `beta` and `latest`, each identical to the release evidence; tag `v1.0.0-beta.1`. The owner published the GitHub Release the same day, a pre-release with the notes; the two evidence bundles are still to be attached (D-11).)*
 
 ### CF: commercialization foundations (after P0's exit; owner, 2026-10-29)
 

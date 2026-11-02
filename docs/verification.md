@@ -4810,3 +4810,17 @@ CI run 41353564510 on `f67bdd2`: Vitest Chromium 2,856 and Firefox 2,801 passed,
 | The task | `ci-watch-task.ps1`, then `Start-ScheduledTask -TaskName oddkin-ci-watch` | Registered for the signed-in user, every hour with no end (`PT1H`); the manual start returned 0 and logged "ok: 3 workflows, 0 posted" |
 
 **Not verified here:** the `report` job on GitHub, which runs once this commit is pushed; a real failure post, since no watched run has failed since the watcher started.
+
+## 2026-11-01 — The beta.1 GitHub Release; unfinished work (round 10, Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The GitHub Release | GitHub's API: `GET /repos/brianchristopherbrady/oddkin/releases`, then the release's assets | One release, `v1.0.0-beta.1`, "Oddkin 1.0.0-beta.1", pre-release, published 2026-11-02 01:40 UTC; the notes have 5 links, all absolute; 0 assets |
+| The CI evidence still downloadable | `GET /repos/brianchristopherbrady/oddkin/actions/runs/41168839415/artifacts` | `release-evidence-1`, 352,682 B, expires 2026-11-30 |
+| Agent 3's `3133f9d` before the push | `npx vitest run --project node tests/ci/failure-issue.test.ts`; `npm run typecheck`; `npm run lint`; `actions/github-script` tag `v9` read through GitHub's API | 3 passed; exit 0; exit 0; the tag exists |
+| CI on `4754ffd` and `7fe2abd` | Runs 41369432939 and 41369653373 | `4754ffd`: e2e 1,133 passed and 1 failed, WebKit `e2e/docs.spec.ts:60` (the Side navigation heading not visible within 15 s), every Vitest project passed. `7fe2abd`: passed |
+| Unmerged work | `git branch --no-merged main`, `git stash list`, and each worktree's `git status` | `wip/agent-2` (28 files) and `wip/agent-3` (4 files), both from 2026-10-26, and two stashes of 2026-10-27: every file they change has changed on `main` since. Every worktree's `HEAD` is in `main`; none has uncommitted tracked files |
+| Open issues | `GET /repos/brianchristopherbrady/oddkin/issues?state=open` and `/pulls` | None |
+| `oddkin-quickstart` | `GET /repos/brianchristopherbrady/oddkin-quickstart` and its contents | Public; one commit, "Initial commit"; `LICENSE` and `README.md` only |
+
+**Not verified here:** CI on this commit.
