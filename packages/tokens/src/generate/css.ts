@@ -184,6 +184,24 @@ function emitBlocks(theme: ResolvedTheme, lightDark: boolean): string {
           ]
         : [`[data-odd-${scope.kind}="${scope.name}"]`];
     parts.push(block(selectors, tokenDeclarations(scope.tokens.values(), modes, lightDark)));
+    // A mode scope inside the product re-declares base expressions for the roles the product
+    // overrides: re-apply them, and the roles that read them, there (specificity 0,2,0).
+    if (scope.kind === 'product' && scope.roles && modes.length > 1) {
+      const reapplied = new Set([
+        ...scope.roles,
+        ...dependents(tokens, new Set(scope.roles), modes),
+      ]);
+      parts.push(
+        block(
+          [`[data-odd-product="${scope.name}"] [data-odd-mode]`],
+          tokenDeclarations(
+            [...scope.tokens.values()].filter((t) => reapplied.has(t.name)),
+            modes,
+            lightDark,
+          ),
+        ),
+      );
+    }
   }
   return parts.filter(Boolean).join('\n');
 }

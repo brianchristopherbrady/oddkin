@@ -28,12 +28,30 @@ JSON form uses `"$schema": "https://…/@oddkin/tokens/schema.json"` with the sa
 ### Precedence
 
 ```
-Oddkin defaults → preset → user configuration → explicit overrides (by stable token name)
+Oddkin defaults → preset → user configuration (a base file first, then each file that extends it, §1.1) → explicit overrides (by stable token name)
 ```
 
 Each resolved token records its origin so tools can label values as *generated*, *preset*, *configured*, or *overridden*. Generated files are never edited by hand; overrides target stable names.
 
 This is configuration precedence. Runtime precedence in the browser — component overrides, unlayered application CSS, scoped attributes, system preferences, library defaults — is defined in [css-architecture.md](./css-architecture.md) §5.3.
+
+### 1.1 Base files (implemented, P1.1)
+
+A theme file can build on a shared base file and set only what differs, so products themed separately (a file each, in one repository or several) share a base without copying it, and a tool that edits one product saves only that file (Theme Studio, P1.5).
+
+```json
+{
+  "$schema": "./node_modules/@oddkin/tokens/schema/theme-config.v1.schema.json",
+  "extends": "@acme/brand/base.theme.json",
+  "name": "checkout",
+  "brand": { "primary": "#0f766e" },
+  "overrides": { "color.link": null }
+}
+```
+
+- **`extends`** names one base file: a path relative to the file, used as written, or a package export resolved with Node's resolution from the file's folder. A base may extend another; a cycle is `config.extends.cycle`, and a base that cannot be found is `config.load`. A file with `extends` need not set `brand`.
+- **Merge**, base first: `brand`, `status`, `overrides`, `products` (and each product's `brand` and `overrides`), `density`, `conditions`, and `profiles` (and each profile's roles) merge by key. Everything else, `spacing`, `modes`, `name`, and `preset` included, replaces the base's whole, as does the value of each entry. In those maps of named entries, `null` removes the base's entry. `$schema` and `extends` are not inherited. JS and TS configs may use `extends` too.
+- **Where it runs.** `loadConfig()` (`@oddkin/tokens/node`, so `oddkin-tokens`) follows the chain and returns the merged model with `layers`: each file from the root base to the one loaded, as written. `mergeThemes(base, file)` and `layerOf(layers, pointer)` (`@oddkin/tokens/theme`) are pure and browser-safe: the first merges, the second names the file that set, or removed, the value at a diagnostic's path. The CLI prints that file beside each diagnostic (`file` in `--json`). `generate()` reads no files: a model that still has `extends` fails with `config.extends.unresolved`.
 
 ## 2. Pipeline
 
@@ -188,7 +206,7 @@ A guaranteed-invalid toggle (`initial`) selects its fallback; an empty toggle co
 
 Evidence: [research/experiments/light-dark](../../research/experiments/light-dark/README.md).
 
-Consequences: product scopes may change only brand inputs (reference tokens), and contrast-selected roles choose steps that pass for the base brand and every product, so role expressions are identical in every scope. Product-specific role overrides are not supported yet. A nested `data-odd-theme` scope re-declares all tokens, but mode/product/density scopes inside it use the expressions of the last loaded theme file; one theme per document is the supported case for now.
+Consequences: refs-only product scopes keep role expressions identical in every scope, because contrast-selected roles choose steps that pass for the base brand and every product. A product may also set its own colour roles (`products.<id>.overrides`, P1.1): semantic colour roles only, since reference ramps follow its brand inputs and foundations, sizes, and layout stay shared (`product.category`). Its rule declares them with the roles that read them, and contrast is checked in the product. A mode scope inside the product re-declares the base expressions of those roles, so the product adds one more rule, `[data-odd-product="<id>"] [data-odd-mode]`, that re-applies them there (specificity 0,2,0, emitted before profiles, whose re-application wins ties). Not supported: a product nested inside a product that overrides roles, where mode scopes inside the inner product take the outer product's roles. A nested `data-odd-theme` scope re-declares all tokens, but mode/product/density scopes inside it use the expressions of the last loaded theme file; one theme per document is the supported case for now.
 
 Mode toggles must never be registered with `@property`: registration would give them an initial value and break the guaranteed-invalid selection ([css-architecture.md](./css-architecture.md) §7).
 

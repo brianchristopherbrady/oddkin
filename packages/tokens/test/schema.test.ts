@@ -1,7 +1,7 @@
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
-import { generate, type ThemeConfig } from '../src/index.js';
+import { generate, type ThemeConfig, type ThemeExtension } from '../src/index.js';
 import { cases } from './fixtures/cases.js';
 
 const schema = JSON.parse(
@@ -80,7 +80,12 @@ describe('theme-config.v1 JSON Schema', () => {
           snap: '0.125rem',
         },
         modes: ['light', 'dark'],
-        products: { clinic: { brand: { primary: '#0f766e', neutral: '#78716c' } } },
+        products: {
+          clinic: {
+            brand: { primary: '#0f766e', neutral: '#78716c' },
+            overrides: { 'color.link': { light: '#0f766e', dark: '#5eead4' } },
+          },
+        },
         density: { compact: { scale: 0.75 } },
         conditions: {
           'navigation.expanded': { container: 'side-nav', minInlineSize: '40rem' },
@@ -143,12 +148,49 @@ describe('theme-config.v1 JSON Schema', () => {
         }
       }
     }
-    expect(drafts).toBe(584);
+    expect(drafts).toBe(616);
+  });
+
+  it('accepts a file that extends a base, with removals, which the generator needs merged first', () => {
+    const extending: ThemeExtension[] = [
+      { extends: './base.theme.json' },
+      {
+        extends: '@acme/brand/base.theme.json',
+        name: 'checkout',
+        brand: { primary: '#0f766e' },
+        products: { kiosk: { overrides: { 'color.action.default': '{ref.brand.700}' } } },
+      },
+    ];
+    const removals = {
+      extends: './base.theme.json',
+      brand: { neutral: null },
+      status: { info: null },
+      overrides: { 'color.link': null },
+      products: { retired: null, clinic: { overrides: { 'color.link': null } } },
+      density: { compact: null },
+      conditions: { 'page.wide': null },
+      profiles: { 'navigation.compact': null, 'list.dense': { 'layout.gap': null } },
+    };
+    for (const config of [...extending, removals]) {
+      expect(validate(config), JSON.stringify(validate.errors)).toBe(true);
+      expect(generate(config).diagnostics.map((d) => [d.code, d.path])).toEqual([
+        ['config.extends.unresolved', '/extends'],
+      ]);
+    }
+    // Without a base, brand.primary is required; a removal there, or an empty extends, is invalid.
+    for (const config of [
+      { brand: {} },
+      { brand: { primary: null } },
+      { extends: '' },
+      { extends: './base.theme.json', brand: { primary: null } },
+    ])
+      expect(validate(config), JSON.stringify(config)).toBe(false);
   });
 
   it('covers exactly the top-level ThemeConfig keys', () => {
-    const keys: Array<keyof ThemeConfig> = [
+    const keys: Array<keyof ThemeConfig | keyof ThemeExtension> = [
       '$schema',
+      'extends',
       'name',
       'preset',
       'brand',

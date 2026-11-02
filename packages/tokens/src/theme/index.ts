@@ -2,6 +2,7 @@
  * `@oddkin/tokens/theme` — theme configuration types and `defineTheme`. DOM-free.
  */
 export { defineTheme } from './types.js';
+export { layerOf, mergeThemes, type ThemeLayer } from './merge.js';
 export type {
   BrandConfig,
   ColorInput,
@@ -21,4 +22,5 @@ export type {
   SpacingConfig,
   StatusConfig,
   ThemeConfig,
+  ThemeExtension,
 } from './types.js';

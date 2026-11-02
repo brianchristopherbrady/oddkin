@@ -2,8 +2,9 @@
  * `@oddkin/tokens/node` — file I/O around the pure generator: config loading and writing
  * outputs. Node only. The generator itself is `@oddkin/tokens/generate`.
  */
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { extname, join, resolve } from 'node:path';
+import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import { dirname, extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
   emitConditionsModule,
@@ -16,17 +17,27 @@ import {
   type Diagnostic,
   type GenerateResult,
 } from '../generate/index.js';
+import { layerOf, mergeThemes, type ThemeLayer } from '../theme/merge.js';
+
+export type { ThemeLayer } from '../theme/merge.js';
 
 export type OutputFormat = 'css' | 'ts' | 'json' | 'dtcg';
 export const OUTPUT_FORMATS: readonly OutputFormat[] = ['css', 'ts', 'json', 'dtcg'];
 
 export interface LoadResult {
+  /** The merged model, ready for `generate()`; undefined when loading failed. */
   readonly config: unknown;
   readonly diagnostics: readonly Diagnostic[];
+  /**
+   * The theme's files from the root base to the file loaded, each with its own model before
+   * merging (one layer when the file extends nothing). `layerOf` names the file that set a value.
+   */
+  readonly layers: readonly ThemeLayer[];
 }
 
 const loadError = (path: string, message: string, suggestion?: string): LoadResult => ({
   config: undefined,
+  layers: [],
   diagnostics: [
     suggestion
       ? {
@@ -102,9 +113,82 @@ function jsonModel(
  * TypeScript configs rely on Node's type stripping (erasable syntax only; no type
  * checking or path aliases) — type-check them separately or precompile to JS.
  * JS and TS configs are trusted code: loading them executes them.
+ *
+ * A file that `extends` a base (a path relative to it, or a package export) is merged on top of
+ * it, and so on down to a file that extends nothing (theming-and-styling.md §1.1).
  */
 export async function loadConfig(file: string): Promise<LoadResult> {
-  const path = resolve(file);
+  const layers: ThemeLayer[] = [];
+  let path = resolve(file);
+  let label = file;
+  for (;;) {
+    if (layers.some((layer) => layer.file === path)) {
+      const chain = [...[...layers].reverse().map((layer) => layer.file), path];
+      return {
+        config: undefined,
+        layers: [],
+        diagnostics: [
+          {
+            code: 'config.extends.cycle',
+            severity: 'error',
+            path: '/extends',
+            message: `${file}: its bases extend each other: ${chain.map((p) => relative(process.cwd(), p)).join(' → ')}.`,
+            suggestion: 'Remove extends from the file that should be the root base.',
+          },
+        ],
+      };
+    }
+    const loaded = await loadModel(path, label);
+    if (loaded.diagnostics.length) return loaded;
+    layers.unshift({ file: path, config: loaded.config });
+    const base = isRecord(loaded.config) ? loaded.config['extends'] : undefined;
+    if (base === undefined) break;
+    if (typeof base !== 'string' || base === '')
+      return {
+        config: undefined,
+        layers: [],
+        diagnostics: [
+          {
+            code: 'config.type',
+            severity: 'error',
+            path: '/extends',
+            message: `${label}: extends must name the base theme file.`,
+            suggestion:
+              'Use a path relative to this file ("./base.theme.json") or a package export ("@acme/brand/base.theme.json").',
+          },
+        ],
+      };
+    let next: string;
+    try {
+      next =
+        base.startsWith('.') || isAbsolute(base)
+          ? resolve(dirname(path), base)
+          : createRequire(path).resolve(base);
+      await access(next);
+    } catch {
+      return loadError(
+        label,
+        `cannot find its base "${base}".`,
+        'A relative path is resolved from this file’s folder; a package export must be installed and listed in the package’s exports.',
+      );
+    }
+    path = next;
+    label = relative(process.cwd(), next) || next;
+  }
+  const [root, ...rest] = layers as [ThemeLayer, ...ThemeLayer[]];
+  const config = rest.reduce<unknown>(
+    (merged, layer) =>
+      isRecord(merged) && isRecord(layer.config) ? mergeThemes(merged, layer.config) : layer.config,
+    root.config,
+  );
+  return { config, diagnostics: [], layers };
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/** One file's JSON-compatible model, before any base is merged under it. */
+async function loadModel(path: string, file: string): Promise<LoadResult> {
   const extension = extname(path);
   try {
     let config: unknown;
@@ -126,7 +210,9 @@ export async function loadConfig(file: string): Promise<LoadResult> {
       );
     const diagnostics: Diagnostic[] = [];
     const model = jsonModel(config, '', file, [], diagnostics);
-    return diagnostics.length ? { config: undefined, diagnostics } : { config: model, diagnostics };
+    return diagnostics.length
+      ? { config: undefined, diagnostics, layers: [] }
+      : { config: model, diagnostics, layers: [] };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const hint = ['.ts', '.mts'].includes(extension)
@@ -188,13 +274,20 @@ export async function buildTheme(config: unknown, options: BuildOptions): Promis
   return { result, files };
 }
 
-/** Readable diagnostics, one per line, with suggestions indented. */
-export function formatDiagnostics(diagnostics: readonly Diagnostic[]): string {
+/**
+ * Readable diagnostics, one per line, with suggestions indented. With the `layers` of a theme that
+ * extends a base, each line names the file its value came from.
+ */
+export function formatDiagnostics(
+  diagnostics: readonly Diagnostic[],
+  layers: readonly ThemeLayer[] = [],
+): string {
   return diagnostics
-    .map(
-      (d) =>
-        `${d.severity} ${d.code}${d.path ? ` ${d.path}` : ''}: ${d.message}${d.suggestion ? `\n  → ${d.suggestion}` : ''}`,
-    )
+    .map((d) => {
+      const layer = layers.length > 1 ? layerOf(layers, d.path) : undefined;
+      const where = layer ? ` (${relative(process.cwd(), layer.file) || layer.file})` : '';
+      return `${d.severity} ${d.code}${d.path ? ` ${d.path}` : ''}${where}: ${d.message}${d.suggestion ? `\n  → ${d.suggestion}` : ''}`;
+    })
     .join('\n');
 }
 

@@ -9,7 +9,13 @@ export const cases: Record<string, ThemeConfig> = {
     spacing: { strategy: 'ratio', base: '0.75rem', ratio: 1.5, stepsBelow: 2, stepsAbove: 3 },
     products: {
       clinic: { brand: { primary: '#0f766e' } },
-      studio: { brand: { primary: '#e11d48', neutral: '#78716c' } },
+      studio: {
+        brand: { primary: '#e11d48', neutral: '#78716c' },
+        overrides: {
+          'color.action.default': { light: '{ref.brand.700}', dark: '{ref.brand.300}' },
+          'color.surface.default': { light: '#fffaf9', dark: '{ref.neutral.900}' },
+        },
+      },
     },
     density: { compact: { scale: 0.75 }, spacious: { scale: 1.25 } },
   },

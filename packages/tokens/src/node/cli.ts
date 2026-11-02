@@ -3,6 +3,7 @@
  * Exit codes: 0 success, 1 diagnostics (errors, or warnings with --strict), 2 usage error.
  */
 import { access, writeFile } from 'node:fs/promises';
+import { relative } from 'node:path';
 import { parseArgs } from 'node:util';
 import {
   buildTheme,
@@ -13,6 +14,7 @@ import {
   type OutputFormat,
 } from './index.js';
 import { generate, isLayerName, type Diagnostic } from '../generate/index.js';
+import { layerOf, type ThemeLayer } from '../theme/merge.js';
 
 const USAGE = `Usage:
   oddkin-tokens init [file]                 Write a starter oddkin.theme.json (never overwrites)
@@ -37,9 +39,20 @@ const stdio: Io = {
   err: (text) => process.stderr.write(`${text}\n`),
 };
 
-function report(diagnostics: readonly Diagnostic[], json: boolean, io: Io): void {
-  if (json) io.out(JSON.stringify(diagnostics, null, 2));
-  else if (diagnostics.length) io.err(formatDiagnostics(diagnostics));
+/** Diagnostics as text or JSON; for a theme that extends a base, each names its file. */
+function report(
+  diagnostics: readonly Diagnostic[],
+  json: boolean,
+  io: Io,
+  layers: readonly ThemeLayer[] = [],
+): void {
+  if (json) {
+    const file = (d: Diagnostic) => {
+      const layer = layers.length > 1 ? layerOf(layers, d.path) : undefined;
+      return layer ? { ...d, file: relative(process.cwd(), layer.file) || layer.file } : d;
+    };
+    io.out(JSON.stringify(diagnostics.map(file), null, 2));
+  } else if (diagnostics.length) io.err(formatDiagnostics(diagnostics, layers));
 }
 
 function failed(diagnostics: readonly Diagnostic[], strict: boolean): boolean {
@@ -116,7 +129,7 @@ export async function run(argv: readonly string[], io: Io = stdio): Promise<numb
 
   if (command === 'check') {
     const { diagnostics } = generate(loaded.config);
-    report(diagnostics, values.json, io);
+    report(diagnostics, values.json, io, loaded.layers);
     const bad = failed(diagnostics, values.strict);
     if (!bad && !values.json)
       io.out(
@@ -130,7 +143,7 @@ export async function run(argv: readonly string[], io: Io = stdio): Promise<numb
     formats: formats as OutputFormat[],
     ...(cssLayer === undefined ? {} : { cssLayer }),
   });
-  report(result.diagnostics, values.json, io);
+  report(result.diagnostics, values.json, io, loaded.layers);
   if (failed(result.diagnostics, values.strict)) return 1;
   if (!values.json) for (const file of files) io.out(`wrote ${file}`);
   return 0;

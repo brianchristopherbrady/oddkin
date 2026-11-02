@@ -5,10 +5,38 @@
   "description": "ThemeConfig for @oddkin/tokens. Structural checks only; the generator also validates units, references, cycles, tiers, contrast, and target sizes.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["brand"],
+  "anyOf": [
+    {
+      "required": ["brand"],
+      "properties": {
+        "brand": {
+          "type": "object",
+          "required": ["primary"],
+          "properties": {
+            "primary": {
+              "$ref": "#/$defs/color"
+            }
+          }
+        }
+      }
+    },
+    {
+      "required": ["extends"],
+      "properties": {
+        "extends": {
+          "type": "string"
+        }
+      }
+    }
+  ],
   "properties": {
     "$schema": {
       "type": "string"
+    },
+    "extends": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The base theme file this one builds on: a path relative to this file, or a package export. The loader merges the base under this file (theming-and-styling.md §1.1)."
     },
     "name": {
       "type": "string",
@@ -21,13 +49,19 @@
     "brand": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["primary"],
       "properties": {
         "primary": {
           "$ref": "#/$defs/color"
         },
         "neutral": {
-          "$ref": "#/$defs/color"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/color"
+            },
+            {
+              "$ref": "#/$defs/removal"
+            }
+          ]
         }
       }
     },
@@ -36,16 +70,44 @@
       "additionalProperties": false,
       "properties": {
         "danger": {
-          "$ref": "#/$defs/color"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/color"
+            },
+            {
+              "$ref": "#/$defs/removal"
+            }
+          ]
         },
         "success": {
-          "$ref": "#/$defs/color"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/color"
+            },
+            {
+              "$ref": "#/$defs/removal"
+            }
+          ]
         },
         "warning": {
-          "$ref": "#/$defs/color"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/color"
+            },
+            {
+              "$ref": "#/$defs/removal"
+            }
+          ]
         },
         "info": {
-          "$ref": "#/$defs/color"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/color"
+            },
+            {
+              "$ref": "#/$defs/removal"
+            }
+          ]
         }
       }
     },
@@ -153,22 +215,46 @@
         "$ref": "#/$defs/segment"
       },
       "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "brand": {
+        "anyOf": [
+          {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "primary": {
-                "$ref": "#/$defs/color"
+              "brand": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "primary": {
+                    "$ref": "#/$defs/color"
+                  },
+                  "neutral": {
+                    "$ref": "#/$defs/color"
+                  }
+                }
               },
-              "neutral": {
-                "$ref": "#/$defs/color"
+              "overrides": {
+                "type": "object",
+                "description": "Colour roles for this product only, by stable name; its scope re-declares them and the roles that read them.",
+                "propertyNames": {
+                  "$ref": "#/$defs/tokenName"
+                },
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/overrideValue"
+                    },
+                    {
+                      "$ref": "#/$defs/removal"
+                    }
+                  ]
+                }
               }
             }
+          },
+          {
+            "$ref": "#/$defs/removal"
           }
-        }
+        ]
       }
     },
     "density": {
@@ -177,16 +263,23 @@
         "$ref": "#/$defs/segment"
       },
       "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["scale"],
-        "properties": {
-          "scale": {
-            "type": "number",
-            "exclusiveMinimum": 0,
-            "maximum": 2
+        "anyOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["scale"],
+            "properties": {
+              "scale": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 2
+              }
+            }
+          },
+          {
+            "$ref": "#/$defs/removal"
           }
-        }
+        ]
       }
     },
     "conditions": {
@@ -195,68 +288,75 @@
         "$ref": "#/$defs/tokenName"
       },
       "additionalProperties": {
-        "oneOf": [
+        "anyOf": [
           {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["container"],
-            "properties": {
-              "container": {
-                "oneOf": [
-                  {
-                    "type": "string",
-                    "pattern": "^[a-zA-Z_][\\w-]*$"
-                  },
-                  {
-                    "const": true
-                  }
-                ]
-              },
-              "minInlineSize": {
-                "$ref": "#/$defs/length"
-              },
-              "maxInlineSize": {
-                "$ref": "#/$defs/length"
-              },
-              "minWidth": {
-                "$ref": "#/$defs/length"
-              },
-              "maxWidth": {
-                "$ref": "#/$defs/length"
-              }
-            }
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["media"],
-            "properties": {
-              "media": {
+            "oneOf": [
+              {
                 "type": "object",
                 "additionalProperties": false,
-                "minProperties": 1,
+                "required": ["container"],
                 "properties": {
+                  "container": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^[a-zA-Z_][\\w-]*$"
+                      },
+                      {
+                        "const": true
+                      }
+                    ]
+                  },
+                  "minInlineSize": {
+                    "$ref": "#/$defs/length"
+                  },
+                  "maxInlineSize": {
+                    "$ref": "#/$defs/length"
+                  },
                   "minWidth": {
                     "$ref": "#/$defs/length"
                   },
                   "maxWidth": {
                     "$ref": "#/$defs/length"
-                  },
-                  "prefersReducedMotion": {
-                    "enum": ["reduce", "no-preference"]
-                  },
-                  "prefersColorScheme": {
-                    "enum": ["light", "dark"]
-                  },
-                  "prefersContrast": {
-                    "enum": ["more", "less", "no-preference", "custom"]
-                  },
-                  "forcedColors": {
-                    "enum": ["active", "none"]
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["media"],
+                "properties": {
+                  "media": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "minProperties": 1,
+                    "properties": {
+                      "minWidth": {
+                        "$ref": "#/$defs/length"
+                      },
+                      "maxWidth": {
+                        "$ref": "#/$defs/length"
+                      },
+                      "prefersReducedMotion": {
+                        "enum": ["reduce", "no-preference"]
+                      },
+                      "prefersColorScheme": {
+                        "enum": ["light", "dark"]
+                      },
+                      "prefersContrast": {
+                        "enum": ["more", "less", "no-preference", "custom"]
+                      },
+                      "forcedColors": {
+                        "enum": ["active", "none"]
+                      }
+                    }
                   }
                 }
               }
-            }
+            ]
+          },
+          {
+            "$ref": "#/$defs/removal"
           }
         ]
       }
@@ -267,13 +367,27 @@
         "$ref": "#/$defs/tokenName"
       },
       "additionalProperties": {
-        "type": "object",
-        "propertyNames": {
-          "$ref": "#/$defs/tokenName"
-        },
-        "additionalProperties": {
-          "$ref": "#/$defs/overrideValue"
-        }
+        "anyOf": [
+          {
+            "type": "object",
+            "propertyNames": {
+              "$ref": "#/$defs/tokenName"
+            },
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/overrideValue"
+                },
+                {
+                  "$ref": "#/$defs/removal"
+                }
+              ]
+            }
+          },
+          {
+            "$ref": "#/$defs/removal"
+          }
+        ]
       }
     },
     "overrides": {
@@ -282,7 +396,14 @@
         "$ref": "#/$defs/tokenName"
       },
       "additionalProperties": {
-        "$ref": "#/$defs/overrideValue"
+        "anyOf": [
+          {
+            "$ref": "#/$defs/overrideValue"
+          },
+          {
+            "$ref": "#/$defs/removal"
+          }
+        ]
       }
     }
   },
@@ -327,6 +448,10 @@
           }
         }
       ]
+    },
+    "removal": {
+      "type": "null",
+      "description": "In a file that extends a base: removes the base's entry."
     }
   }
 }

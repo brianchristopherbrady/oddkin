@@ -6,13 +6,13 @@ Theme configuration, the pure token generator, and its outputs. Browser entry po
 
 | Entry | Contents |
 | --- | --- |
-| `@oddkin/tokens/theme` | `ThemeConfig` types and `defineTheme()` |
+| `@oddkin/tokens/theme` | `ThemeConfig` and `ThemeExtension` types, `defineTheme()`, and `mergeThemes()` and `layerOf()` for theme files that extend a base |
 | `@oddkin/tokens/generate` | `generate(config, { css })` → `{ ok, diagnostics, theme, css }`; `resolveTheme`, `resolveToken`, `emitCss`, `LAYER_ORDER`, `BROWSER_FLOOR`, `ABOVE_FLOOR_SYNTAX`, spacing, colour, and contrast utilities; `ROLE_CONTRACTS` and `contrastReport(theme)` (semantic colour contracts) |
 | `@oddkin/tokens/refs` | `token('space.md')` → `'var(--odd-space-md)'`, `tokenVariable()`, `TokenName` (default theme) |
 | `@oddkin/tokens/conditions` | Named conditions as `{ kind, query, atRule }` literal container/media queries |
 | `@oddkin/tokens/values` | Literal values of the default theme (`{ light, dark }` for mode-dependent tokens) |
 | `@oddkin/tokens/css/default.css` | The default theme as CSS custom properties |
-| `@oddkin/tokens/node` | `loadConfig` (JSON, JS, or TS → the JSON-compatible model), `buildTheme`, `formatDiagnostics` (Node only) |
+| `@oddkin/tokens/node` | `loadConfig` (JSON, JS, or TS → the JSON-compatible model, with the base files it `extends`), `buildTheme`, `formatDiagnostics` (Node only) |
 | `@oddkin/tokens/schema.json` | JSON Schema (draft 2020-12) for JSON configs |
 | `@oddkin/tokens` | Re-exports `theme` and `generate` |
 
@@ -35,6 +35,22 @@ oddkin-tokens build oddkin.theme.json --out tokens [--format css,ts,json,dtcg] [
 ```
 
 `build` writes `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.conditions.ts` (typed for that theme's token names), `<name>.inspect.json`, `<name>.contrast.json` (every declared role pair measured in each mode and product, with a stable `id` per pair; `@oddkin/tokens/inspect/default.contrast.json` for the default theme; a measurement, not an accessibility certification), and one DTCG Format Module 2025.10 document per mode, `<name>.<mode>.tokens.json` (`emitDtcg` in `./generate`; lossless, lossy, and unsupported mappings are listed in theming-and-styling.md §6.1; no DTCG Resolver support is claimed). Exit codes: 0 success, 1 diagnostics, 2 usage. Configs may be JSON, ESM JS, or `.ts` via Node's type stripping (erasable syntax only; type-check separately). JS and TS configs are executed: treat them as trusted code. A loaded config must be JSON data: functions, class instances, non-finite numbers, and cycles are `config.notJson` errors with their paths, so the CLI generates from the same model Theme Studio edits.
+
+## Base files and products
+
+A theme file can build on a shared base file and set only what differs, so products themed separately (an app each, in one repository or several) share one base without copying it:
+
+```json
+{
+  "extends": "@acme/brand/base.theme.json",
+  "name": "checkout",
+  "brand": { "primary": "#0f766e" }
+}
+```
+
+`extends` is a path relative to the file, used as written, or a package export; a base may extend another. Objects of named entries merge by key (`brand`, `status`, `overrides`, `products`, `density`, `conditions`, `profiles`), everything else (`spacing`, `modes`, `name`, …) replaces the base's, and `null` removes an entry the base sets. `loadConfig` and `oddkin-tokens` follow `extends`, and each diagnostic names the file its value came from. `generate()` takes the merged model; in a browser, `mergeThemes(base, file)` merges one.
+
+One stylesheet can also hold several products (`products:`, scoped with `data-odd-product="<id>"`). A product sets its brand inputs and, under `overrides`, its own colour roles, such as `"color.action.default": { "light": "{ref.brand.700}", "dark": "{ref.brand.300}" }`. The default theme pins its roles, so this is how a product recolours its actions and links. Contrast is checked in each product. Do not nest a product inside one that overrides roles: mode scopes inside the inner product would take the outer product's roles.
 
 ## In a browser or Worker
 

@@ -1,6 +1,7 @@
+import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
-import { cssVariable, generate } from '../src/generate/index.js';
+import { cssVariable, generate, resolveToken } from '../src/generate/index.js';
 import { CONTRAST_ROLES } from '../src/generate/preset.js';
 import type { ThemeConfig } from '../src/theme/index.js';
 
@@ -34,7 +35,7 @@ const productRule = (css: string | undefined, name: string) =>
 const productRules = (css: string | undefined) =>
   (css ?? '').match(/\[data-odd-product="[^"]+"\] \{[^}]*\}/g) ?? [];
 const withoutProducts = (css: string | undefined) =>
-  (css ?? '').replace(/\n\n *\[data-odd-product="[^"]+"\] \{[^}]*\}/g, '');
+  (css ?? '').replace(/\n\n *\[data-odd-product="[^"]+"\]( \[data-odd-mode\])? \{[^}]*\}/g, '');
 const declared = (rule: string) => rule.match(/--odd-[\w-]+(?=:)/g) ?? [];
 
 describe('multi-product token fixtures', () => {
@@ -98,5 +99,137 @@ describe('multi-product token fixtures', () => {
     expect(limit).toBeLessThanOrEqual(declared(sizes[1]!.rules[0]!).length);
     // gzip grows by less than the raw rules: product rules share their structure.
     expect(sizes[4]!.gzip - sizes[0]!.gzip).toBeLessThan(sizes[4]!.bytes - sizes[0]!.bytes);
+  });
+});
+
+describe('product colour roles (products.<id>.overrides)', () => {
+  const shipped = JSON.parse(
+    readFileSync(new URL('../themes/default.theme.json', import.meta.url), 'utf8'),
+  ) as ThemeConfig;
+  const green = (overrides?: Record<string, unknown>) =>
+    ({
+      ...shipped,
+      products: { green: { brand: { primary: '#047857' }, ...(overrides ? { overrides } : {}) } },
+    }) as ThemeConfig;
+  const ACTIONS = {
+    'color.action.default': { light: '{ref.brand.700}', dark: '{ref.brand.300}' },
+    'color.action.hover': { light: '{ref.brand.800}', dark: '{ref.brand.200}' },
+    'color.action.pressed': { light: '{ref.brand.900}', dark: '{ref.brand.400}' },
+  };
+
+  it('recolour the actions, links, and focus ring the default theme pins (multi-product.md §9)', () => {
+    const pinned = generate(green());
+    // Brand inputs alone change the product's ramps, not the roles the theme pins.
+    expect(resolveToken(pinned.theme!, 'color.link', { product: 'green', mode: 'light' })).toBe(
+      '#6250e8',
+    );
+    const recoloured = generate(green(ACTIONS));
+    expect(recoloured.diagnostics).toEqual([]);
+    const theme = recoloured.theme!;
+    for (const mode of ['light', 'dark'] as const) {
+      const step = resolveToken(theme, mode === 'light' ? 'ref.brand.700' : 'ref.brand.300', {
+        product: 'green',
+        mode,
+      });
+      for (const role of ['color.action.default', 'color.link', 'color.focus.ring'])
+        expect(resolveToken(theme, role, { product: 'green', mode }), `${role} ${mode}`).toBe(step);
+      expect(resolveToken(theme, 'color.link', { mode })).toBe(
+        resolveToken(pinned.theme!, 'color.link', { mode }),
+      );
+    }
+    // Still one rule, and one more that re-applies the roles in mode scopes inside the product.
+    expect(productRules(recoloured.css)).toHaveLength(1);
+    const roles = [
+      '--odd-color-action-default',
+      '--odd-color-action-hover',
+      '--odd-color-action-pressed',
+      '--odd-color-link',
+      '--odd-color-focus-ring',
+    ];
+    expect(declared(productRule(recoloured.css, 'green')!)).toEqual(expect.arrayContaining(roles));
+    const reapplied = /\[data-odd-product="green"\] \[data-odd-mode\] \{[^}]*\}/.exec(
+      recoloured.css ?? '',
+    )?.[0];
+    expect(declared(reapplied ?? '')).toEqual(expect.arrayContaining(roles));
+    expect(declared(reapplied ?? '')).not.toContain('--odd-ref-brand-700');
+    expect(withoutProducts(recoloured.css)).toBe(withoutProducts(pinned.css));
+    expect(pinned.css).not.toContain('[data-odd-mode] {');
+  });
+
+  it('changing one product’s roles leaves the base and every other product byte-identical', () => {
+    const before = generate({ ...BASE, products: products(10) }).css;
+    const surface = { 'color.surface.default': { light: '#fffaf5', dark: '{ref.neutral.900}' } };
+    const after = generate({
+      ...BASE,
+      products: { ...products(10), p3: { brand: { primary: BRANDS[2]! }, overrides: surface } },
+    }).css;
+    for (let i = 1; i <= 10; i++) {
+      const name = `p${i}`;
+      if (name === 'p3') expect(productRule(after, name)).not.toBe(productRule(before, name));
+      else expect(productRule(after, name), name).toBe(productRule(before, name));
+    }
+    expect(withoutProducts(after)).toBe(withoutProducts(before));
+  });
+
+  it('a product that sets only roles is not redundant', () => {
+    expect(generate({ ...BASE, products: { quiet: {} } }).diagnostics.map((d) => d.code)).toEqual([
+      'product.redundant',
+    ]);
+    const surface = { 'color.surface.default': { light: '#fbfaff', dark: '{ref.neutral.900}' } };
+    const { diagnostics, css } = generate({
+      ...BASE,
+      products: { quiet: { overrides: surface } },
+    });
+    expect(diagnostics.map((d) => d.code)).not.toContain('product.redundant');
+    expect(declared(productRule(css, 'quiet')!)).toContain('--odd-color-surface-default');
+  });
+
+  it('report what a product cannot override at the product’s path', () => {
+    const { ok, diagnostics } = generate({
+      ...BASE,
+      products: {
+        p: {
+          brand: { primary: '#0f766e' },
+          overrides: {
+            'ref.brand.500': '#000000',
+            'space.md': '1rem',
+            'card.padding': '1rem',
+            'color.acton.default': '#000000',
+            'color.link': 3,
+            'color.focus.ring': '{color.nope}',
+          },
+        },
+      },
+    } as never);
+    expect(ok).toBe(false);
+    const at = (token: string) => `/products/p/overrides/${token}`;
+    expect(diagnostics.map((d) => [d.code, d.path])).toEqual([
+      ['product.category', at('ref.brand.500')],
+      ['product.category', at('space.md')],
+      ['product.category', at('card.padding')],
+      ['override.unknown', at('color.acton.default')],
+      ['override.invalid', at('color.link')],
+      ['alias.missing', at('color.focus.ring')],
+    ]);
+    expect(diagnostics[0]?.suggestion).toContain('set brand.primary or brand.neutral');
+    expect(diagnostics[3]?.suggestion).toBe('Did you mean "color.action.default"?');
+  });
+
+  it('warn about a role the base already has, and suggest the product’s own fix for contrast', () => {
+    const redundant = generate(green({ 'color.link': '{color.action.default}' }));
+    expect(redundant.diagnostics.map((d) => [d.code, d.path])).toEqual([
+      ['override.redundant', '/products/green/overrides/color.link'],
+    ]);
+    const low = generate(
+      green({ 'color.action.default': { light: '{ref.brand.600}', dark: '{ref.brand.300}' } }),
+    );
+    expect(low.ok).toBe(true);
+    expect(low.diagnostics.map((d) => [d.code, d.path])).toEqual([
+      ['contrast.fail', '/tokens/color.link'],
+    ]);
+    expect(low.diagnostics[0]?.message).toContain('in light mode for product "green"');
+    expect(low.diagnostics[0]?.suggestion).toContain(
+      'Set products["green"].overrides["color.link"].light to "{ref.brand.700}"',
+    );
   });
 });

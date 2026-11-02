@@ -185,12 +185,14 @@ function correction(
 /**
  * One `contrast.fail` warning per foreground role and mode, naming every background it fails
  * on, with an explicit correction when a reference step of the role's ramp passes them all.
+ * `overridesAt` names where the suggested override goes (a product's own, for a product).
  */
 export function checkContrast(
   tokens: TokenMap,
   modes: readonly Mode[],
   label: string,
   d: DiagnosticList,
+  overridesAt = 'overrides',
 ): void {
   const measured = new Map<string, ContrastEntry[]>();
   for (const entry of measure(tokens, modes)) {
@@ -228,7 +230,9 @@ export function checkContrast(
       .join('; ');
     const fix = correction(tokens, entries);
     const target =
-      modes.length > 1 ? `overrides["${foreground}"].${mode}` : `overrides["${foreground}"]`;
+      modes.length > 1
+        ? `${overridesAt}["${foreground}"].${mode}`
+        : `${overridesAt}["${foreground}"]`;
     const suggestion = fix
       ? `Set ${target} to "${fix.value}" (${fix.hex}, at least ${fix.ratio.toFixed(2)}:1 on each), the closest step that passes, or change the background. Brand inputs are never changed automatically.`
       : 'No reference step of this role passes; choose another value or change the background. Brand inputs are never changed automatically.';

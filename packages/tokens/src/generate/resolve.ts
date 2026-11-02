@@ -51,6 +51,8 @@ export interface ScopeTokens {
   readonly tokens: TokenMap;
   /** Names that actually changed (the rest is re-declared alias closure). */
   readonly changed: readonly string[];
+  /** For a product: the roles it overrides (`products.<id>.overrides`), which its mode scopes re-apply. */
+  readonly roles?: readonly string[];
 }
 
 export interface ResolvedTheme {
@@ -74,6 +76,7 @@ type StatusSeeds = Readonly<Record<StatusName, Oklch>>;
 
 const TOP_LEVEL = [
   '$schema',
+  'extends',
   'name',
   'preset',
   'brand',
@@ -302,6 +305,15 @@ export function resolveTheme(input: unknown): ResolveResult {
   unknownKeys(input, TOP_LEVEL, '', d);
   if (input['$schema'] !== undefined && typeof input['$schema'] !== 'string')
     d.error('config.type', '/$schema', '$schema must be a string: the JSON Schema URL or path.');
+  if (input['extends'] !== undefined) {
+    d.error(
+      'config.extends.unresolved',
+      '/extends',
+      `This theme extends ${JSON.stringify(input['extends'])}, and the generator reads no files.`,
+      'Load it with loadConfig() from @oddkin/tokens/node, as oddkin-tokens does, or merge its base into it with mergeThemes() from @oddkin/tokens/theme.',
+    );
+    return { theme: undefined, diagnostics: d.items };
+  }
   const config = input as unknown as ThemeConfig;
 
   const name = given(config.name, 'default');
@@ -367,7 +379,12 @@ export function resolveTheme(input: unknown): ResolveResult {
   const spacing = generateSpacing(given(config.spacing, DEFAULT_SPACING), d, '/spacing');
 
   const products = given(config.products, {});
-  const productInputs: Array<{ name: string; primary: Oklch; neutral: Oklch | undefined }> = [];
+  const productInputs: Array<{
+    name: string;
+    primary: Oklch;
+    neutral: Oklch | undefined;
+    overrides: Record<string, unknown>;
+  }> = [];
   if (!isRecord(products)) d.error('config.type', '/products', 'products must be an object.');
   else {
     for (const [productName, product] of Object.entries(products)) {
@@ -378,17 +395,30 @@ export function resolveTheme(input: unknown): ResolveResult {
         d.error('config.type', path, 'A product must be an object.');
         continue;
       }
-      unknownKeys(product, ['brand'], path, d);
+      unknownKeys(product, ['brand', 'overrides'], path, d);
       const brand = product['brand'];
       if (brand !== undefined && !isRecord(brand))
         d.error('config.type', `${path}/brand`, 'brand must be an object.');
       const b = isRecord(brand) ? brand : {};
       unknownKeys(b, ['primary', 'neutral'], `${path}/brand`, d);
+      const roles = product['overrides'];
+      if (roles !== undefined && !isRecord(roles))
+        d.error(
+          'config.type',
+          `${path}/overrides`,
+          'overrides must be an object of role names to values.',
+        );
       const p =
         b['primary'] === undefined ? primary : color(b['primary'], `${path}/brand/primary`, d);
       const n =
         b['neutral'] === undefined ? neutral : color(b['neutral'], `${path}/brand/neutral`, d);
-      if (p) productInputs.push({ name: productName, primary: p, neutral: n });
+      if (p)
+        productInputs.push({
+          name: productName,
+          primary: p,
+          neutral: n,
+          overrides: isRecord(roles) ? roles : {},
+        });
     }
   }
 
@@ -534,18 +564,44 @@ export function resolveTheme(input: unknown): ResolveResult {
 
   const scopes: ScopeTokens[] = [];
   productInputs.forEach((product, i) => {
+    const path = pointer('products', product.name);
     const refs = refTokens(productRamps[i] as Ramps);
     const changed = refs.filter((r) => (sorted.get(r.name) as TokenDefinition).value !== r.value);
-    if (changed.length === 0)
+    if (changed.length === 0 && Object.keys(product.overrides).length === 0)
       d.warn(
         'product.redundant',
-        pointer('products', product.name),
+        path,
         `Product "${product.name}" has the base brand colours, so its scope changes nothing.`,
-        'Give it its own brand colours, or remove it.',
+        'Give it its own brand colours or roles, or remove it.',
       );
-    const variant = withRefs(sorted, changed);
-    checkContrast(variant, modes, ` for product "${product.name}"`, d);
-    scopes.push(scope('product', product.name, sorted, changed, modes));
+    const roles = productRoles(product.overrides, sorted, modes, path, d);
+    const variant = withRefs(withRefs(sorted, changed), roles);
+    // Errors in a product's roles point at that product, as a profile's point at the profile.
+    const names = new Set(roles.map((role) => role.name));
+    const graph = new DiagnosticList();
+    validateGraph(variant, graph);
+    for (const item of graph.items) {
+      const token = item.path
+        .replace(/^\/tokens\//, '')
+        .replace(/~1/g, '/')
+        .replace(/~0/g, '~');
+      if (!names.has(token) && item.code !== 'alias.cycle') continue;
+      const at = `${path}/overrides${pointer(token)}`;
+      if (item.severity === 'error') d.error(item.code, at, item.message, item.suggestion);
+      else d.warn(item.code, at, item.message, item.suggestion);
+    }
+    if (graph.hasErrors) return;
+    checkContrast(
+      variant,
+      modes,
+      ` for product "${product.name}"`,
+      d,
+      `products["${product.name}"].overrides`,
+    );
+    const productScope = scope('product', product.name, sorted, [...changed, ...roles], modes);
+    scopes.push(
+      roles.length ? { ...productScope, roles: [...names].sort(compareNames) } : productScope,
+    );
   });
   for (const entry of densityInputs) {
     const changed: TokenDefinition[] = [];
@@ -697,6 +753,63 @@ export function resolveTheme(input: unknown): ResolveResult {
 
   if (d.hasErrors) return { theme: undefined, diagnostics: d.items };
   return { theme: { name, modes, tokens: sorted, scopes, conditions }, diagnostics: d.items };
+}
+
+/**
+ * A product's colour roles (`products.<id>.overrides`), validated against the base theme: colour
+ * roles only, since reference ramps follow the product's brand inputs and foundations, layout,
+ * and sizes are shared by every product.
+ */
+function productRoles(
+  overrides: Readonly<Record<string, unknown>>,
+  base: TokenMap,
+  modes: readonly Mode[],
+  path: string,
+  d: DiagnosticList,
+): TokenDefinition[] {
+  const roles: TokenDefinition[] = [];
+  for (const [tokenName, raw] of Object.entries(overrides)) {
+    const at = `${path}/overrides${pointer(tokenName)}`;
+    const target = base.get(tokenName);
+    if (!target) {
+      const suggestion = closest(tokenName, base.keys());
+      d.error(
+        'override.unknown',
+        at,
+        `No token named "${tokenName}".`,
+        suggestion
+          ? `Did you mean "${suggestion}"?`
+          : 'Overrides replace existing tokens; they do not create new ones.',
+      );
+      continue;
+    }
+    if (target.type !== 'color' || target.category === 'reference') {
+      d.error(
+        'product.category',
+        at,
+        `A product overrides colour roles only; "${tokenName}" is a ${target.category} ${target.type} token.`,
+        target.category === 'reference'
+          ? 'A product’s reference ramps follow its brand inputs: set brand.primary or brand.neutral in the product.'
+          : 'Set it in overrides for every product, use a profile for layout and component roles, or give the product its own theme file that extends a shared base.',
+      );
+      continue;
+    }
+    const value = asTokenValue(raw);
+    if (value === undefined) {
+      d.error('override.invalid', at, 'An override is a string or { "light": …, "dark": … }.');
+      continue;
+    }
+    const effective = checkValue(target, value, modes, at, d);
+    if (compileValue(effective, modes) === compileValue(target.value, modes))
+      d.warn(
+        'override.redundant',
+        at,
+        `"${tokenName}" already has this value in the base theme.`,
+        'Remove the override; it changes no output.',
+      );
+    roles.push({ ...target, value: effective, origin: 'overridden', provenance: at });
+  }
+  return roles;
 }
 
 function scope(

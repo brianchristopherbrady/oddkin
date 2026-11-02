@@ -462,7 +462,7 @@
   }
 
   [data-odd-product="studio"] {
-    --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
     --odd-color-action-hover: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
     --odd-color-action-pressed: var(--odd-mode-light, var(--odd-ref-brand-800)) var(--odd-mode-dark, var(--odd-ref-brand-200));
     --odd-color-border-default: var(--odd-mode-light, var(--odd-ref-neutral-200)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
@@ -476,7 +476,7 @@
     --odd-color-selection-background: var(--odd-color-action-default);
     --odd-color-selection-foreground: var(--odd-color-text-on-action);
     --odd-color-selection-surface: var(--odd-mode-light, var(--odd-ref-brand-100)) var(--odd-mode-dark, var(--odd-ref-brand-900));
-    --odd-color-surface-default: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-surface-default: var(--odd-mode-light, #fffaf9) var(--odd-mode-dark, var(--odd-ref-neutral-900));
     --odd-color-surface-hover: var(--odd-mode-light, var(--odd-ref-neutral-100)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
     --odd-color-surface-raised: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-900));
     --odd-color-surface-specimen: var(--odd-mode-light, var(--odd-ref-brand-50)) var(--odd-mode-dark, var(--odd-ref-brand-900));
@@ -507,6 +507,12 @@
     --odd-ref-neutral-800: #46413e;
     --odd-ref-neutral-900: #312d2a;
     --odd-ref-neutral-950: #1d1a18;
+  }
+
+  [data-odd-product="studio"] [data-odd-mode] {
+    --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-selection-background: var(--odd-color-action-default);
+    --odd-color-surface-default: var(--odd-mode-light, #fffaf9) var(--odd-mode-dark, var(--odd-ref-neutral-900));
   }
 
   [data-odd-density="compact"] {

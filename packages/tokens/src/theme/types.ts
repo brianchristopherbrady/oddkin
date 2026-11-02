@@ -67,8 +67,14 @@ export interface ModeValues {
 export type OverrideValue = string | ModeValues;
 
 export interface ProductConfig {
-  /** Brand inputs for this product. Roles keep the base theme's expressions; only reference tokens change. */
+  /** Brand inputs for this product: its reference ramps. Roles keep the base theme's expressions unless `overrides` sets them. */
   readonly brand?: Partial<BrandConfig>;
+  /**
+   * Semantic and component roles for this product only, by stable name, e.g.
+   * `{ "color.action.default": "{ref.brand.600}" }`. Its scope re-declares them and the roles that
+   * read them; contrast is checked in the product.
+   */
+  readonly overrides?: Readonly<Record<string, OverrideValue>>;
 }
 
 export interface DensityConfig {
@@ -128,9 +134,20 @@ export interface ThemeConfig {
 }
 
 /**
+ * A theme that builds on a base file and sets only what differs; it may omit `brand`. The loader
+ * (`loadConfig` in `@oddkin/tokens/node`, or `mergeThemes`) merges the base under it before
+ * generation (theming-and-styling.md §1.1).
+ */
+export interface ThemeExtension extends Omit<ThemeConfig, 'brand'> {
+  /** The base theme file: a path relative to this file, or a package export. */
+  readonly extends: string;
+  readonly brand?: Partial<BrandConfig>;
+}
+
+/**
  * Identity function that types a theme configuration. JSON configs use the same shape
  * with `"$schema"` pointing at `@oddkin/tokens/schema.json`.
  */
-export function defineTheme<const C extends ThemeConfig>(config: C): C {
+export function defineTheme<const C extends ThemeConfig | ThemeExtension>(config: C): C {
   return config;
 }
