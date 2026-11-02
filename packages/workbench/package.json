@@ -25,7 +25,8 @@
     "./dist/frame/index.js",
     "./dist/panels/component-define.js",
     "./dist/panels/foundation-define.js",
-    "./dist/panels/catalog-define.js"
+    "./dist/panels/catalog-define.js",
+    "./dist/panels/theme-studio-define.js"
   ],
   "engines": {
     "node": ">=24.12"
@@ -109,6 +110,14 @@
     "./panels/catalog/define": {
       "types": "./dist/panels/catalog-define.d.ts",
       "default": "./dist/panels/catalog-define.js"
+    },
+    "./panels/theme-studio": {
+      "types": "./dist/panels/theme-studio-panel.d.ts",
+      "default": "./dist/panels/theme-studio-panel.js"
+    },
+    "./panels/theme-studio/define": {
+      "types": "./dist/panels/theme-studio-define.d.ts",
+      "default": "./dist/panels/theme-studio-define.js"
     },
     "./package.json": "./package.json"
   },

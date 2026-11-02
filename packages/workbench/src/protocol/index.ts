@@ -80,6 +80,16 @@ export interface FrameSpecimenPayload {
   readonly settings?: FrameSettings;
 }
 
+/** A composition document, rendered by its library's own renderer (Theme Studio screens). */
+export interface FrameCompositionPayload {
+  /** The module that exports `renderComposition` and `NATIVE`, e.g. `@oddkin/components/composition`. */
+  readonly renderer: string;
+  /** Tag → registration entry: the elements the document may use, loaded before it renders. */
+  readonly registrations: Readonly<Record<string, string>>;
+  readonly document: JsonValue;
+  readonly settings?: FrameSettings;
+}
+
 export interface FrameThemePayload {
   readonly cssText: string;
 }
@@ -162,6 +172,11 @@ export type FrameRequest =
       readonly kind: 'specimen';
       readonly id: number;
       readonly payload: FrameSpecimenPayload;
+    })
+  | (Envelope & {
+      readonly kind: 'composition';
+      readonly id: number;
+      readonly payload: FrameCompositionPayload;
     })
   | (Envelope & { readonly kind: 'set'; readonly id: number; readonly payload: FrameSetPayload })
   | (Envelope & { readonly kind: 'slot'; readonly id: number; readonly payload: FrameSlotPayload })
@@ -354,6 +369,17 @@ export function isFrameSpecimenPayload(value: unknown): value is FrameSpecimenPa
   );
 }
 
+export function isFrameCompositionPayload(value: unknown): value is FrameCompositionPayload {
+  return (
+    isRecord(value) &&
+    typeof value['renderer'] === 'string' &&
+    value['renderer'].length > 0 &&
+    isStringRecord(value['registrations']) &&
+    isJsonValue(value['document']) &&
+    (value['settings'] === undefined || isFrameSettings(value['settings']))
+  );
+}
+
 /** Validates the common envelope and its JSON payload, without accepting a specific version. */
 export function isFrameMessage(value: unknown): value is FrameMessage {
   if (!isRecord(value)) return false;
@@ -374,6 +400,7 @@ export function isFrameMessage(value: unknown): value is FrameMessage {
       return !Object.hasOwn(value, 'id') && !Object.hasOwn(value, 'replyTo');
     case 'mount':
     case 'specimen':
+    case 'composition':
     case 'set':
     case 'slot':
     case 'reset':
@@ -449,6 +476,7 @@ export function isFrameRequest(value: unknown): value is FrameRequest {
     ![
       'mount',
       'specimen',
+      'composition',
       'set',
       'slot',
       'reset',
@@ -465,6 +493,8 @@ export function isFrameRequest(value: unknown): value is FrameRequest {
       return isFrameMountPayload(request.payload);
     case 'specimen':
       return isFrameSpecimenPayload(request.payload);
+    case 'composition':
+      return isFrameCompositionPayload(request.payload);
     case 'set': {
       if (!isRecord(request.payload)) return false;
       const hasProperty = typeof request.payload['property'] === 'string';

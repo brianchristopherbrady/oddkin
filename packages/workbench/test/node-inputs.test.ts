@@ -263,8 +263,11 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
             '.': './index.js',
             './elements/*': './dist/elements/*.js',
             './elements/secret': null,
+            './composition': './dist/composition.js',
           },
         }),
+        'node_modules/@plain/kit/dist/composition.js':
+          'export function renderComposition() {}\nexport const NATIVE = {};\n',
         'node_modules/@plain/kit/custom-elements.json': JSON.stringify({
           schemaVersion: '2.1.0',
           modules: [
@@ -314,6 +317,12 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
       { 'plain-chip': '@plain/kit/elements/chip', 'plain-badge': '@plain/kit' },
       { 'plain-old': '@plain/old/src/old.js' },
       { 'plain-indexed': '@plain/indexed' },
+    ]);
+    // Theme Studio's composition renderer: a `./composition` export that resolves to a file.
+    expect(inputs.libraries.map((library) => library.composition)).toEqual([
+      '@plain/kit/composition',
+      undefined,
+      undefined,
     ]);
   });
 

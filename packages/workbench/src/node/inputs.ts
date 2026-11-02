@@ -274,6 +274,7 @@ export async function loadInputs(
     const examples = await loadExampleSets(pkg.dir, metadata, out, dataFiles, exampleFiles);
     // Importers use the name the package is installed under.
     const registrations = cemRegistrations({ ...(pkg.manifest as PackageManifest), name }, cem);
+    const renderer = resolveExport(pkg.manifest, './composition');
     libraries.push({
       name,
       version: pkg.version,
@@ -281,6 +282,9 @@ export async function loadInputs(
       ...(metadata ? { metadata } : {}),
       ...(examples.length ? { examples } : {}),
       ...(Object.keys(registrations).length ? { registrations } : {}),
+      ...(renderer && existsSync(join(pkg.dir, renderer))
+        ? { composition: `${name}/composition` }
+        : {}),
     });
   }
   for (const file of explicitCem) {

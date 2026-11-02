@@ -30,6 +30,8 @@ export interface LibraryInput {
    * Used when the Oddkin enrichment names no `registration`.
    */
   readonly registrations?: Readonly<Record<string, string>>;
+  /** The module that renders the package's composition documents: its `./composition` export. */
+  readonly composition?: string;
 }
 
 /** One component's examples as plain data (`@oddkin/workbench/examples` `ExamplesJSON`). */
@@ -163,7 +165,32 @@ export interface SpecimenRole {
   readonly source: 'config' | 'example';
 }
 
-/** Theme Studio (workbench.md ?6): the baseline configuration, its generator, and specimens. */
+/** Theme Studio's screens beside the role specimens, each shown in light and dark. */
+export interface ThemeStudioScreens {
+  /** Each documented component with a registration entry and examples with published values. */
+  readonly components: readonly {
+    readonly tag: string;
+    readonly title: string;
+    /** In example order; `role` is the example's name. Incorrect examples are left out. */
+    readonly items: readonly Omit<SpecimenRole, 'source'>[];
+    /** Labels of examples not shown: their setup code runs on the component's page only. */
+    readonly omitted: readonly string[];
+  }[];
+  /** Composition documents, when a documented package exports a renderer (`./composition`). */
+  readonly composition?: {
+    /** The renderer's import specifier, e.g. `@oddkin/components/composition`. */
+    readonly renderer: string;
+    /** Tag → registration entry of the package's documented elements. */
+    readonly registrations: Readonly<Record<string, string>>;
+    readonly starters: readonly {
+      readonly id: string;
+      readonly title: string;
+      readonly document: JsonObject;
+    }[];
+  };
+}
+
+/** Theme Studio (workbench.md §6): the baseline configuration, its generator, and specimens. */
 export interface ThemeStudioPageData extends PageDataBase {
   readonly kind: 'tool';
   readonly studio: {
@@ -174,6 +201,8 @@ export interface ThemeStudioPageData extends PageDataBase {
     /** URL of the generation worker (the library's own `@oddkin/tokens/generate`). */
     readonly worker?: string;
     readonly roles: readonly SpecimenRole[];
+    /** Absent from page data written before screens were added. */
+    readonly screens?: ThemeStudioScreens;
     /** Absent inputs, each with what supplies it; shown on the page, never guessed. */
     readonly missing: readonly { readonly item: string; readonly supply: string }[];
   };

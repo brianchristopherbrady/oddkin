@@ -1,4 +1,9 @@
+import { readdirSync, readFileSync } from 'node:fs';
+import { validateComposition } from '@oddkin/components/composition';
+import { Ajv2020 } from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 import { describe, expect, it } from 'vitest';
+import { STARTERS } from '../src/data/starters.js';
 import { themeStudioPage } from '../src/data/theme-studio.js';
 import type { ComponentPageData, ThemeStudioPageData } from '../src/data/types.js';
 import { resolveWorkbenchConfig } from '../src/config/index.js';
@@ -207,6 +212,125 @@ describe('Theme Studio page data', () => {
     expect(page.studio.missing.slice(0, 2).map((m) => m.item)).toEqual(['generator', 'config']);
   });
 
+  it("offers each component's examples as a screen, and documents when a package renders them", () => {
+    const out = new DiagnosticList();
+    const mark = (page: ComponentPageData, marks: Record<string, object>): ComponentPageData => ({
+      ...page,
+      examples: page.examples.map((e) => ({
+        ...e,
+        definition: { ...(e['definition'] as object), ...marks[e['name'] as string] },
+      })),
+    });
+    const button = mark(
+      component('acme-button', [
+        { name: 'default', slots: { default: 'Go' } },
+        { name: 'wrong' },
+        { name: 'setup' },
+      ]),
+      { wrong: { incorrect: { explanation: 'Not like this.' } }, setup: { hasFixture: true } },
+    );
+    // Its fixture runs from the page's example module, which a screen does not load.
+    const chip = mark(component('acme-chip', [{ name: 'a' }, { name: 'b' }]), {
+      b: { hasFixture: true },
+    });
+    const pages = [
+      { ...button, exampleModule: '/acme-button.examples.js' },
+      // An example whose values were not published has nothing to show.
+      { ...chip, examples: [...chip.examples, { id: 'example:acme-chip/raw', name: 'raw' }] },
+      { ...component('acme-card', [{ name: 'plain' }]), enrichment: {} },
+      { ...component('acme-badge', [{ name: 'a' }]), package: '@acme/other' },
+      // Nothing to show without its setup: no screen, but documents may use it.
+      mark(component('acme-dialog', [{ name: 'open' }]), { open: { hasFixture: true } }),
+    ];
+    const page = themeStudioPage('theme-studio', pages, configWith(), {}, out, {
+      titles: new Map([
+        ['components/acme-button', 'Button'],
+        ['components/acme-chip', 'Chip'],
+      ]),
+      composition: { package: '@acme/ui', renderer: '@acme/ui/composition' },
+    });
+    expect(page.studio.screens?.components).toEqual([
+      // By title; a page without one keeps its tag.
+      {
+        tag: 'acme-badge',
+        title: 'acme-badge',
+        items: [expect.objectContaining({ role: 'a' })],
+        omitted: [],
+      },
+      {
+        tag: 'acme-button',
+        title: 'Button',
+        items: [
+          {
+            role: 'default',
+            label: 'default',
+            tag: 'acme-button',
+            registration: '@acme/ui/define/acme-button',
+            example: 'example:acme-button/default',
+            properties: {},
+            attributes: {},
+            slots: { '': 'Go' },
+          },
+        ],
+        omitted: ['setup'],
+      },
+      {
+        tag: 'acme-chip',
+        title: 'Chip',
+        items: [expect.objectContaining({ role: 'a' })],
+        omitted: ['b', 'raw'],
+      },
+    ]);
+    // Documents may use the renderer's package's registered elements; no starters but Oddkin's.
+    expect(page.studio.screens?.composition).toEqual({
+      renderer: '@acme/ui/composition',
+      registrations: {
+        'acme-button': '@acme/ui/define/acme-button',
+        'acme-chip': '@acme/ui/define/acme-chip',
+        'acme-dialog': '@acme/ui/define/acme-dialog',
+      },
+      starters: [],
+    });
+    const without = themeStudioPage('theme-studio', pages, configWith(), {}, out);
+    expect(without.studio.screens?.composition).toBeUndefined();
+    expect(without.studio.screens?.components.map((c) => c.title)).toEqual([
+      'acme-badge',
+      'acme-button',
+      'acme-chip',
+    ]);
+    expect(out.items).toEqual([]);
+  });
+
+  it("starts Oddkin's composition screens from documents valid by both checks", () => {
+    const repo = new URL('../../../', import.meta.url);
+    const dir = new URL('packages/components/schemas/composition/', repo);
+    const ajv = new Ajv2020({ strict: false });
+    addFormats.default(ajv);
+    ajv.addSchema(
+      JSON.parse(
+        readFileSync(
+          new URL('packages/components/schemas/oddkin.navigation.v1.json', repo),
+          'utf8',
+        ),
+      ),
+    );
+    for (const file of readdirSync(dir))
+      ajv.addSchema(JSON.parse(readFileSync(new URL(file, dir), 'utf8')));
+    const schema = ajv.getSchema('https://oddkin.dev/schemas/composition/composition.v1.json')!;
+    expect(STARTERS.map((s) => s.title)).toEqual([
+      'Report card',
+      'Settings form',
+      'Sign-in dialog',
+    ]);
+    for (const starter of STARTERS) {
+      expect(schema(starter.document), JSON.stringify(schema.errors)).toBe(true);
+      expect(validateComposition(starter.document), starter.id).toEqual({
+        ok: true,
+        diagnostics: [],
+      });
+    }
+  });
+
   // A whole build of the Oddkin fixture, as in node-build.test.ts: 15 s alone on a busy machine,
   // past the default limit when the other test files run beside it.
   it(
@@ -262,6 +386,24 @@ describe('Theme Studio page data', () => {
         `import { generate } from ${JSON.stringify(build.frameImportMap?.imports['@oddkin/tokens/generate'])};`,
       );
       expect(build.diagnostics.filter((d) => d.code.startsWith('node.themeStudio'))).toEqual([]);
+      // Screens: every component with examples, and documents for @oddkin/components' renderer.
+      const screens = page.studio.screens!;
+      expect(screens.components.find((c) => c.tag === 'odd-button')).toMatchObject({
+        title: 'Button',
+        items: expect.arrayContaining([expect.objectContaining({ role: 'primary' })]),
+      });
+      expect(screens.composition).toMatchObject({
+        renderer: '@oddkin/components/composition',
+        registrations: { 'odd-card': '@oddkin/components/define/card' },
+        starters: STARTERS,
+      });
+      // Each element the starters use is registered; elements of @oddkin/ai are not.
+      const tags = JSON.stringify(STARTERS)
+        .match(/"odd-[a-z-]+"/g)!
+        .map((t) => JSON.parse(t));
+      for (const tag of tags) expect(screens.composition?.registrations).toHaveProperty([tag]);
+      expect(screens.composition?.registrations).not.toHaveProperty(['odd-message']);
+      expect(build.frameImportMap?.imports['@oddkin/components/composition']).toBeDefined();
     },
   );
 
@@ -287,5 +429,28 @@ describe('Theme Studio page data', () => {
         payload: { items: [{ ...item, example: 'example:other/primary' }] },
       }),
     ).toBe(false);
+  });
+
+  it('validates composition requests: a renderer, registrations by tag, and a JSON document', () => {
+    const envelope = { protocol: 'oddkin.frame', version: 1, frame: 'f', generation: 1, id: 1 };
+    const payload = {
+      renderer: '@acme/ui/composition',
+      registrations: { 'acme-button': '/x.js' },
+      document: { version: 1, root: [] },
+    };
+    const request = (value: unknown) =>
+      isFrameRequest({ ...envelope, kind: 'composition', payload: value });
+    expect(request(payload)).toBe(true);
+    // The renderer judges the document; the protocol only needs JSON.
+    expect(request({ ...payload, document: null, settings: { mode: 'dark' } })).toBe(true);
+    for (const bad of [
+      { ...payload, renderer: '' },
+      { ...payload, renderer: 1 },
+      { ...payload, registrations: ['/x.js'] },
+      { ...payload, registrations: { 'acme-button': 1 } },
+      { renderer: payload.renderer, registrations: payload.registrations },
+      { ...payload, settings: { mode: 'sepia' } },
+    ])
+      expect(request(bad), JSON.stringify(bad)).toBe(false);
   });
 });

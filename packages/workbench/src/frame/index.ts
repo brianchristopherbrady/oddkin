@@ -7,6 +7,7 @@ import {
   isFrameRequest,
   isFrameSpecimenPayload,
   isJsonValue,
+  type FrameCompositionPayload,
   type FrameIdentity,
   type FrameMountPayload,
   type FrameRequest,
@@ -25,6 +26,7 @@ interface Runtime {
   lastRequest: number;
   mount: FrameMountPayload | undefined;
   element: HTMLElement | undefined;
+  composition: { dispose(): void } | undefined;
   theme: CSSStyleSheet | undefined;
   wrapper: HTMLElement;
   registrations: Map<string, string>;
@@ -96,6 +98,8 @@ function clearElement(runtime: Runtime) {
   runtime.mountScope = undefined;
   runtime.element?.remove();
   runtime.element = undefined;
+  runtime.composition?.dispose();
+  runtime.composition = undefined;
 }
 
 function loadRegistration(runtime: Runtime, registration: string): Promise<void> {
@@ -114,20 +118,25 @@ function loadRegistration(runtime: Runtime, registration: string): Promise<void>
   );
 }
 
-/** Load a component's registration once per frame and create it with its initial state. */
+/** Load a tag's registration once per frame; a different entry for a loaded tag is refused. */
+async function register(runtime: Runtime, tag: string, registration: string) {
+  const existing = runtime.registrations.get(tag);
+  if (existing && existing !== registration)
+    throw new RegistrationIncompatibleError(
+      `The <${tag}> registration changed; replace this frame before mounting it again.`,
+    );
+  await loadRegistration(runtime, registration);
+  if (!runtime.window.customElements.get(tag))
+    throw new Error(`Registration did not define <${tag}>.`);
+  runtime.registrations.set(tag, registration);
+}
+
+/** Create a component with its initial state, once its registration has loaded. */
 async function createPreviewElement(
   runtime: Runtime,
   config: FrameMountPayload,
 ): Promise<HTMLElement> {
-  const existing = runtime.registrations.get(config.tag);
-  if (existing && existing !== config.registration)
-    throw new RegistrationIncompatibleError(
-      `The <${config.tag}> registration changed; replace this frame before mounting it again.`,
-    );
-  await loadRegistration(runtime, config.registration);
-  const constructor = runtime.window.customElements.get(config.tag);
-  if (!constructor) throw new Error(`Registration did not define <${config.tag}>.`);
-  runtime.registrations.set(config.tag, config.registration);
+  await register(runtime, config.tag, config.registration);
   const element = runtime.document.createElement(config.tag);
   for (const [name, value] of Object.entries(config.properties ?? {}))
     Reflect.set(element, name, value);
@@ -217,6 +226,51 @@ async function specimen(runtime: Runtime, config: FrameSpecimenPayload): Promise
     list.append(figure);
   }
   runtime.wrapper.append(list);
+}
+
+interface CompositionModule {
+  readonly renderComposition?: (
+    document: unknown,
+    target: ParentNode,
+    options: { readonly allow: readonly string[] },
+  ) => { readonly ok: boolean; readonly diagnostics: readonly unknown[]; dispose(): void };
+  readonly NATIVE?: Readonly<Record<string, unknown>>;
+}
+
+/** The tags a document's nodes name, so their registrations load before it renders. */
+function tagsOf(nodes: unknown, found = new Set<string>()): Set<string> {
+  if (Array.isArray(nodes))
+    for (const node of nodes as { element?: unknown; children?: unknown }[]) {
+      if (typeof node?.element === 'string') found.add(node.element);
+      tagsOf(node?.children, found);
+    }
+  return found;
+}
+
+/** Render a document with its library's renderer; its actions do nothing in a preview. */
+async function composition(runtime: Runtime, config: FrameCompositionPayload) {
+  clearElement(runtime);
+  runtime.mount = undefined;
+  runtime.wrapper.replaceChildren();
+  applySettings(runtime, config.settings);
+  const { registrations } = config;
+  for (const tag of tagsOf((config.document as { root?: unknown } | null)?.root))
+    if (Object.hasOwn(registrations, tag))
+      await register(runtime, tag, registrations[tag] as string);
+  const module = (await import(/* @vite-ignore */ config.renderer)) as CompositionModule;
+  if (typeof module.renderComposition !== 'function')
+    throw new Error(`${config.renderer} does not export renderComposition.`);
+  const rendered = module.renderComposition(config.document, runtime.wrapper, {
+    allow: [...Object.keys(registrations), ...Object.keys(module.NATIVE ?? {})],
+  });
+  runtime.composition = rendered;
+  // Reply once the elements have rendered, so the host sees their effects (a dialog's focus).
+  await Promise.all(
+    [...runtime.wrapper.querySelectorAll('*')].map(
+      (element) => (element as Element & { updateComplete?: Promise<unknown> }).updateComplete,
+    ),
+  );
+  return { ok: rendered.ok, diagnostics: rendered.diagnostics as JsonValue };
 }
 
 function replaceTheme(runtime: Runtime, cssText: string) {
@@ -346,6 +400,8 @@ async function handle(runtime: Runtime, scope: Scope, request: FrameRequest) {
           throw new TypeError('specimen requires valid role items.');
         await specimen(runtime, request.payload);
         return { mounted: request.payload.items.length };
+      case 'composition':
+        return await composition(runtime, request.payload);
       case 'set': {
         if (!runtime.element) throw new Error('There is no mounted component to update.');
         if (request.payload.cssProperty !== undefined) {
@@ -423,6 +479,7 @@ export function installFrameRuntime(win: Window = window): void {
     lastRequest: 0,
     mount: undefined,
     element: undefined,
+    composition: undefined,
     theme: undefined,
     wrapper,
     registrations: new Map(),

@@ -33,6 +33,7 @@ export const ENTRIES = [
   'workbench-panel-component',
   'workbench-panel-foundation',
   'workbench-panel-catalog',
+  'workbench-panel-theme-studio',
   'workbench-shell',
   'workbench-frame',
 ];
@@ -134,6 +135,10 @@ export const BUDGETS = {
   // 18 KiB; measured 17,772 on 2026-10-28 (16,849 before: the search hint, count pills, category
   // buttons, and cards with a preview header and a footer; `preview` and `groups`). Was 17 KiB.
   'workbench-panel-catalog': 18432,
+  // 22.5 KiB from 2026-11-02 (Agent 2; requested in the lanes at 11:03): measured 21,908, the
+  // public Theme Studio panel (P1.5): the generation host, the theme model and its form, light and
+  // dark preview frames, and the screens (components and composition documents).
+  'workbench-panel-theme-studio': 23040,
   // 51 KiB; measured 51,248 on 2026-10-28 (48,972 before: the catalog and component reference
   // above, both in the shell). Was 49 KiB (48,775 measured on 2026-10-22): the shell with router,
   // search, and every page renderer. 54 KiB from 2026-10-28 (Agent 2): measured 54,117 with the
@@ -141,11 +146,14 @@ export const BUDGETS = {
   // Theme Studio's Export made the unsplit bundle 55,709 against 55,296; split, the initial load
   // was 51,987 B in 2 chunks and Theme Studio a 4,852 B chunk.
   'workbench-shell': 54272,
-  // 5.5 KiB from 2026-10-29: Theme Studio, which the shell imports on its route (LAZY).
-  'workbench-theme-studio': 5632,
+  // 5.5 KiB from 2026-10-29: Theme Studio, which the shell imports on its route (LAZY). 6 KiB from
+  // 2026-11-02 (Agent 2; requested at 11:03): measured 5,968 with the screens (P1.5 items 1 and 2:
+  // the screen picker, the composition editor and its diagnostics, latest-wins sending to the
+  // frames, and giving the focus back from a frame).
+  'workbench-theme-studio': 6144,
   // 7.5 KiB; measured 6,786 on 2026-10-28 (7,055 before: the frame imports a registration with
   // import() instead of an inline module script): the preview frame runtime (protocol, Scope,
-  // mount, specimen, theme).
+  // mount, specimen, theme). Measured 7,472 on 2026-11-02 with the composition request.
   'workbench-frame': 7680,
 };
 

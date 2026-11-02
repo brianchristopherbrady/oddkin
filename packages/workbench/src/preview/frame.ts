@@ -264,7 +264,10 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
     if (scope.disposed || !port)
       throw new PreviewFrameError('frame.disposed', 'The preview frame is not connected.');
     const id = ++nextRequestId;
-    const limit = kind === 'mount' || kind === 'specimen' ? mountTimeoutMs : timeoutMs;
+    const limit =
+      kind === 'mount' || kind === 'specimen' || kind === 'composition'
+        ? mountTimeoutMs
+        : timeoutMs;
     return new Promise<JsonValue | undefined>((resolve, reject) => {
       const releaseTimer = scope.timeout(() => {
         pending.delete(id);

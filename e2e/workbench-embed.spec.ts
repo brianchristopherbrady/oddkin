@@ -33,6 +33,16 @@ Object.assign(document.querySelector('oddkin-component-panel'), {
 });
 `;
 
+const themeHost = `import '@oddkin/workbench/panels/theme-studio/define';
+
+const json = async (path) => (await fetch(path)).json();
+const index = await json('/_oddkin/index.json');
+Object.assign(document.querySelector('oddkin-theme-studio-panel'), {
+  frameUrl: '/_oddkin/frame.html',
+  page: await json('/_oddkin/' + index.pages['theme-studio']),
+});
+`;
+
 let server: Server;
 let origin = '';
 
@@ -62,14 +72,26 @@ test.beforeAll(async () => {
     </main>
   </body>
 </html>`;
+  const studio = page
+    .replace('/host.js', '/theme-host.js')
+    .replace(
+      /<main>[\s\S]*<\/main>/,
+      '<main><oddkin-theme-studio-panel></oddkin-theme-studio-panel></main>',
+    );
+  const pages: Record<string, string> = {
+    '': page,
+    'host.js': host,
+    'theme-studio': studio,
+    'theme-host.js': themeHost,
+  };
   server = createServer((request, response) => {
     const path = decodeURIComponent(new URL(request.url ?? '/', 'http://site').pathname).slice(1);
-    const body = path === '' ? page : path === 'host.js' ? host : files.get(path);
+    const body = Object.hasOwn(pages, path) ? pages[path] : files.get(path);
     if (body === undefined) {
       response.writeHead(404).end();
       return;
     }
-    const type = TYPES[extname(path || 'index.html')] ?? 'application/octet-stream';
+    const type = TYPES[extname(path) || '.html'] ?? 'application/octet-stream';
     response.writeHead(200, { 'content-type': type });
     if (typeof body === 'string') response.end(body);
     else createReadStream(body.source).pipe(response);
@@ -110,5 +132,47 @@ test('a page of its own embeds the catalog and a live, editable component panel'
   await links.nth(2).click();
   await expect(panel.locator('#examples-title')).toBeFocused();
   await expect(links.nth(2)).toHaveAttribute('aria-current', 'true');
+  expect(errors).toEqual([]);
+});
+
+test('a page of its own embeds Theme Studio, with any screen in light and dark', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto(`${origin}/theme-studio`);
+  const panel = page.locator('oddkin-theme-studio-panel');
+  const frames = [0, 1].map((i) => page.frameLocator('oddkin-theme-studio-panel iframe').nth(i));
+  for (const frame of frames)
+    await expect(frame.locator('figure[data-role="primaryAction"] > odd-button')).toBeAttached({
+      timeout: 45_000,
+    });
+  await expect(panel.locator('#live-preview .wb-status')).toContainText('Generated in', {
+    timeout: 30_000,
+  });
+  const screen = panel.locator('#ts-screen');
+  await screen.selectOption({ label: 'Card' });
+  for (const frame of frames)
+    await expect(frame.locator('figure > odd-card').first()).toBeAttached();
+  await screen.selectOption({ label: 'Sign-in dialog' });
+  for (const [i, frame] of frames.entries()) {
+    await expect(frame.locator('odd-dialog[open] odd-input#email')).toBeAttached({
+      timeout: 20_000,
+    });
+    await expect(frame.locator('[data-oddkin-preview]')).toHaveAttribute(
+      'data-odd-mode',
+      i ? 'dark' : 'light',
+    );
+  }
+  // A draft edit restyles the screen in place.
+  const cell = panel.locator('input[data-path="/overrides/color.action.default/light"]');
+  await cell.fill('#0a7d33');
+  await cell.dispatchEvent('change');
+  const background = () =>
+    frames[0]!
+      .locator('odd-button[appearance="primary"]')
+      .evaluate((el) => getComputedStyle(el.shadowRoot!.querySelector('button')!).backgroundColor);
+  await expect.poll(background).toBe('rgb(10, 125, 51)');
   expect(errors).toEqual([]);
 });

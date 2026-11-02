@@ -1,9 +1,10 @@
 /**
  * Theme Studio content (workbench.md §6, workbench-pages.md §8): one draft of the library's theme
  * configuration, edited through a form and a JSON editor; generated in a Worker by the library's
- * own generator; applied to light and dark specimen frames as a preview-owned stylesheet, so the
- * real components update in place (no remount). An invalid draft keeps the last valid theme and
- * lists the generator's diagnostics with their configuration paths.
+ * own generator; applied to light and dark frames as a preview-owned stylesheet, so the real
+ * components update in place (no remount). An invalid draft keeps the last valid theme and
+ * lists the generator's diagnostics with their configuration paths. The frames show one screen:
+ * the role specimens, one component's examples, or a composition document.
  */
 import { OddkinElement, prop } from '@oddkin/core/element';
 import { styleMap } from '@oddkin/core/helpers/style-map';
@@ -18,7 +19,7 @@ import {
   type GenerationResult,
   type ThemeGeneration,
 } from '../preview/theme-generation.js';
-import type { FrameSpecimenItem } from '../protocol/index.js';
+import type { FrameSpecimenItem, JsonValue } from '../protocol/index.js';
 import { contentStyles, panelHostStyles } from './styles.js';
 import {
   exportBlocked,
@@ -32,6 +33,46 @@ import {
 } from './theme-model.js';
 
 const MODES = ['light', 'dark'] as const;
+
+type Studio = ThemeStudioPageData['studio'];
+
+interface Problem {
+  readonly path?: string;
+  readonly message?: string;
+  readonly code?: string;
+  readonly severity?: string;
+}
+
+/** Diagnostics with their paths: the generator's, or the composition renderer's. */
+const problemList = (label: string, problems: readonly Problem[]) =>
+  problems.length
+    ? html`<ul class="wb-list" aria-label=${label}>
+        ${problems.map(
+          (d) =>
+            html`<li data-severity=${d.severity ?? 'error'}>
+              <code>${d.path || '/'}</code> ${d.message ?? d.code ?? ''}
+            </li>`,
+        )}
+      </ul>`
+    : nothing;
+
+/** A composition's JSON, or its syntax error; the renderer validates its shape. */
+function parseJson(text: string): { readonly value?: JsonValue; readonly error?: string } {
+  try {
+    return { value: JSON.parse(text) as JsonValue };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+/** The screen shown first: the role specimens, else the first component or composition. */
+function firstScreen(studio: Studio | undefined): string {
+  const screens = studio?.screens;
+  if (!studio || studio.roles.length) return 'specimens';
+  const component = screens?.components[0];
+  if (component) return `component:${component.tag}`;
+  return screens?.composition ? `composition:${screens.composition.starters[0]?.id ?? ''}` : '';
+}
 
 export class ThemeStudioElement extends OddkinElement.with({
   page: prop.object<ThemeStudioPageData>({ description: 'The Theme Studio page data.' }),
@@ -55,6 +96,16 @@ export class ThemeStudioElement extends OddkinElement.with({
   /** Why the generator cannot run, or ''. */
   readonly #unavailable = signal('');
   readonly #exported = signal('');
+  /** `specimens`, `component:<tag>`, or `composition:<id>` (`composition:` is the team's own). */
+  readonly #screen = signal('specimens');
+  /** The composition shown, as edited; each composition screen keeps its own text. */
+  readonly #text = signal('');
+  readonly #texts = new Map<string, string>();
+  readonly #textError = signal('');
+  readonly #problems = signal<readonly Problem[]>([]);
+  /** Per frame, the screen request in flight; frames whose screen changed meanwhile. */
+  readonly #sending = new Map<IsolatedPreview, Promise<void>>();
+  readonly #again = new Set<IsolatedPreview>();
   readonly #hosts: readonly [HTMLDivElement, HTMLDivElement];
   #previews: IsolatedPreview[] = [];
   #generation: ThemeGeneration | undefined;
@@ -72,7 +123,7 @@ export class ThemeStudioElement extends OddkinElement.with({
     return this.#draft.peek();
   }
 
-  /** Light and dark specimen frames, in that order. */
+  /** Light and dark frames, in that order. */
   get previews(): readonly IsolatedPreview[] {
     return this.#previews;
   }
@@ -102,6 +153,7 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#studioScope?.dispose();
     this.#studioScope = undefined;
     this.#previews = [];
+    this.#again.clear();
     this.#generation = undefined;
     this.#css = undefined;
     for (const host of this.#hosts) host.replaceChildren();
@@ -118,6 +170,8 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#pending.value = false;
     this.#unavailable.value = '';
     this.#exported.value = '';
+    this.#texts.clear();
+    this.#choose(firstScreen(studio), false);
     if (!page || !studio?.config || !studio.worker) return;
     const scope = createScope({ name: 'workbench-theme-studio' });
     this.#studioScope = scope;
@@ -130,47 +184,200 @@ export class ThemeStudioElement extends OddkinElement.with({
         this.#status.value = { text: `Generation unavailable: ${message}`, alert: true };
       },
     );
-    if (frameUrl && studio.roles.length) this.#specimens(scope, page, frameUrl);
+    if (frameUrl && firstScreen(studio)) this.#frames(scope, frameUrl);
     this.#pending.value = true;
     this.#generation.request(studio.config);
   }
 
-  #specimens(scope: Scope, page: ThemeStudioPageData, frameUrl: string): void {
-    const items: FrameSpecimenItem[] = page.studio.roles.map((role) => ({
-      role: role.role,
-      label: role.label,
-      tag: role.tag,
-      registration: role.registration,
-      example: role.example,
-      properties: role.properties,
-      attributes: role.attributes,
-      slots: role.slots,
-    }));
+  #frames(scope: Scope, frameUrl: string): void {
     MODES.forEach((mode, i) => {
       const preview = createIsolatedPreview({
         document: this.ownerDocument,
         container: this.#hosts[i] as HTMLDivElement,
         frameUrl,
-        title: `Theme specimen (${mode})`,
+        title: `Theme preview (${mode})`,
       });
       preview.iframe.style.blockSize = '40rem';
-      scope.add(() => preview.dispose(), 'specimen frame');
+      scope.add(() => preview.dispose(), 'theme preview frame');
       this.#previews.push(preview);
-      void preview.ready
-        .then(() => preview.request('specimen', { items, settings: { mode } }))
+      void this.#send(preview, i)
         .then(() => (this.#css === undefined ? undefined : this.#theme(preview, this.#css)))
-        .catch((error: unknown) => {
-          if (!scope.disposed)
-            this.#status.value = {
-              text: `Specimen unavailable: ${error instanceof Error ? error.message : String(error)}`,
-              alert: true,
-            };
-        });
+        .catch((error: unknown) => this.#failed(scope, error));
     });
+  }
+
+  #failed(scope: Scope | undefined, error: unknown): void {
+    if (scope && !scope.disposed)
+      this.#status.value = {
+        text: `Preview unavailable: ${error instanceof Error ? error.message : String(error)}`,
+        alert: true,
+      };
+  }
+
+  /** Show a screen in both frames; a composition screen starts from its own text. */
+  #choose(screen: string, send = true): void {
+    const composition = this.page?.studio.screens?.composition;
+    this.#screen.value = screen;
+    this.#problems.value = [];
+    this.#textError.value = '';
+    if (screen.startsWith('composition:')) {
+      const id = screen.slice('composition:'.length);
+      const starter = composition?.starters.find((s) => s.id === id)?.document;
+      this.#text.value =
+        this.#texts.get(screen) ?? JSON.stringify(starter ?? { version: 1, root: [] }, null, 2);
+    }
+    if (send) this.#showAll();
+  }
+
+  #showAll(): void {
+    const scope = this.#studioScope;
+    const root = this.shadowRoot ?? this.ownerDocument;
+    const focused = root.activeElement;
+    void Promise.all(this.#previews.map((preview, i) => this.#send(preview, i))).then(
+      () => {
+        // A modal dialog on the screen took the focus into its frame: give it back (Firefox
+        // does once the frame is blurred and this window has the focus).
+        const frame = this.#previews.find((preview) => preview.iframe === root.activeElement);
+        if (!(focused instanceof HTMLElement) || !frame) return;
+        frame.iframe.blur();
+        this.ownerDocument.defaultView?.focus();
+        focused.focus({ preventScroll: true });
+      },
+      (error: unknown) => this.#failed(scope, error),
+    );
+  }
+
+  /** Latest wins: a frame renders one screen at a time, then only the newest one asked for. */
+  #send(preview: IsolatedPreview, i: number): Promise<void> {
+    const sending = this.#sending.get(preview);
+    if (sending) {
+      this.#again.add(preview);
+      return sending;
+    }
+    const run = (async () => {
+      try {
+        await preview.ready;
+        do {
+          this.#again.delete(preview);
+          await this.#show(preview, i);
+        } while (this.#again.has(preview));
+      } finally {
+        this.#sending.delete(preview);
+      }
+    })();
+    this.#sending.set(preview, run);
+    return run;
+  }
+
+  /** Send the screen to one frame; the light frame's reply lists a document's problems. */
+  async #show(preview: IsolatedPreview, i: number): Promise<void> {
+    const studio = this.page?.studio;
+    const screen = this.#screen.peek();
+    const settings = { mode: MODES[i] ?? 'light' };
+    if (!studio) return;
+    if (screen.startsWith('composition:')) {
+      const composition = studio.screens?.composition;
+      const parsed = parseJson(this.#text.peek());
+      if (!composition || parsed.error !== undefined) return;
+      const reply = (await preview.request('composition', {
+        renderer: composition.renderer,
+        registrations: composition.registrations,
+        document: parsed.value ?? null,
+        settings,
+      })) as { diagnostics?: readonly Problem[] } | undefined;
+      // A newer screen on its way brings its own.
+      if (i === 0 && !this.#again.has(preview)) this.#problems.value = reply?.diagnostics ?? [];
+      return;
+    }
+    const items: readonly FrameSpecimenItem[] =
+      screen === 'specimens'
+        ? studio.roles
+        : (studio.screens?.components.find((c) => `component:${c.tag}` === screen)?.items ?? []);
+    await preview.request('specimen', { items, settings });
   }
 
   #theme(preview: IsolatedPreview, css: string) {
     return preview.request('theme', { cssText: css });
+  }
+
+  #edit(text: string): void {
+    const parsed = parseJson(text);
+    this.#text.value = text;
+    this.#texts.set(this.#screen.peek(), text);
+    this.#textError.value = parsed.error ?? '';
+    if (parsed.error === undefined) this.#showAll();
+  }
+
+  /** The screen picker; a composition screen adds its JSON and the renderer's diagnostics. */
+  #screens(studio: Studio) {
+    const screens = studio.screens;
+    if (!screens) return nothing;
+    const screen = this.#screen.value;
+    const composition = screens.composition;
+    const component = screens.components.find((c) => `component:${c.tag}` === screen);
+    const option = (value: string, label: string) =>
+      html`<option value=${value} ?selected=${value === screen}>${label}</option>`;
+    return html`<div class="wb-field">
+        <label for="ts-screen">Screen</label>
+        <select
+          id="ts-screen"
+          @change=${(event: Event) => this.#choose((event.target as HTMLSelectElement).value)}
+        >
+          ${studio.roles.length ? option('specimens', 'Role specimens') : nothing}
+          ${
+            screens.components.length
+              ? html`<optgroup label="Components">
+                  ${screens.components.map((c) => option(`component:${c.tag}`, c.title))}
+                </optgroup>`
+              : nothing
+          }
+          ${
+            composition
+              ? html`<optgroup label="Compositions">
+                  ${composition.starters.map((s) => option(`composition:${s.id}`, s.title))}
+                  ${option('composition:', 'Your document')}
+                </optgroup>`
+              : nothing
+          }
+        </select>
+      </div>
+      ${
+        component?.omitted.length
+          ? html`<p class="wb-muted">
+              Not shown here, as their setup code runs on the component's page:
+              ${component.omitted.join(', ')}.
+            </p>`
+          : nothing
+      }
+      ${
+        composition && screen.startsWith('composition:')
+          ? html`<div class="wb-field wb-json">
+                <label for="ts-composition">Composition (JSON)</label>
+                <textarea
+                  id="ts-composition"
+                  class="wb-code"
+                  rows="12"
+                  spellcheck="false"
+                  aria-describedby="ts-composition-note"
+                  .value=${this.#text.value}
+                  @input=${(event: Event) =>
+                    this.#edit((event.target as HTMLTextAreaElement).value)}
+                ></textarea>
+                <p
+                  id="ts-composition-note"
+                  class=${this.#textError.value ? 'wb-error' : 'wb-muted'}
+                >
+                  ${
+                    this.#textError.value
+                      ? `Not rendered: ${this.#textError.value}`
+                      : html`Rendered by <code>${composition.renderer}</code>; its actions do
+                          nothing here.`
+                  }
+                </p>
+              </div>
+              ${problemList('Composition diagnostics', this.#problems.value)}`
+          : nothing
+      }`;
   }
 
   /** A valid result replaces the specimens' theme sheet; an invalid one keeps the last valid. */
@@ -396,6 +603,7 @@ export class ThemeStudioElement extends OddkinElement.with({
       </section>
       <section id="live-preview" aria-labelledby="live-preview-title">
         <h2 id="live-preview-title">Live preview</h2>
+        ${this.#screens(studio)}
         <p class="wb-status" role=${status.alert || (result && !result.ok) ? 'alert' : 'status'}>
           ${
             status.text ||
@@ -406,18 +614,7 @@ export class ThemeStudioElement extends OddkinElement.with({
               : '')
           }
         </p>
-        ${
-          problems.length
-            ? html`<ul class="wb-list" aria-label="Generator diagnostics">
-                ${problems.map(
-                  (d) =>
-                    html`<li data-severity=${d.severity ?? 'error'}>
-                      <code>${d.path || '/'}</code> ${d.message ?? d.code ?? ''}
-                    </li>`,
-                )}
-              </ul>`
-            : nothing
-        }
+        ${problemList('Generator diagnostics', problems)}
         <div class="wb-previews wb-pair">
           ${MODES.map(
             (mode, i) =>
@@ -428,7 +625,7 @@ export class ThemeStudioElement extends OddkinElement.with({
           )}
         </div>
         ${
-          studio.roles.length
+          studio.roles.length && this.#screen.value === 'specimens'
             ? html`<p class="wb-muted">
                 Roles:
                 ${studio.roles.map((r) => `${r.label} (<${r.tag}>, ${r.source === 'config' ? 'configured' : 'claimed by its example'})`).join(' · ')}.
@@ -442,7 +639,8 @@ export class ThemeStudioElement extends OddkinElement.with({
         <p>
           The draft is generated by the library's own theme generator in a Worker; the newest edit
           wins and older results are discarded. Generated CSS replaces one stylesheet in each
-          specimen frame, so the components keep their state.
+          preview frame, so the components keep their state. A composition is rendered by the
+          library's own renderer, which refuses an invalid document whole.
         </p>
         ${
           studio.missing.length

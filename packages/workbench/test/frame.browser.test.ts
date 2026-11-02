@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+﻿import { afterEach, describe, expect, it } from 'vitest';
 import { scopeStats } from '@oddkin/core/scope';
 import { userEvent } from 'vitest/browser';
 import { createIsolatedPreview, previewProtocolStats } from '../src/preview/frame.js';
@@ -18,6 +18,7 @@ async function until(check: () => boolean, message: string) {
 const frameUrl = new URL('./fixtures/frame-test.html', import.meta.url).href;
 const registration = new URL('./fixtures/frame-element.ts', import.meta.url).href;
 const alternateRegistration = new URL('./fixtures/frame-element-alt.ts', import.meta.url).href;
+const renderer = new URL('./fixtures/frame-renderer.ts', import.meta.url).href;
 
 function createPreview(messages: FrameNotification[] = []) {
   const preview = createIsolatedPreview({
@@ -288,12 +289,96 @@ describe('isolated preview frames', () => {
     expect(specimens.iframe.contentDocument?.querySelector('fixture-button')?.shadowRoot).not.toBe(
       null,
     );
+    // And so do compositions.
+    const composition = create({ timeoutMs: 2_000 });
+    await composition.ready;
+    await composition.request('composition', {
+      renderer,
+      registrations: { 'fixture-button': slow },
+      document: { version: 1, root: [{ element: 'fixture-button' }] },
+    });
+    expect(
+      composition.iframe.contentDocument?.querySelector('fixture-button')?.shadowRoot,
+    ).not.toBe(null);
     // A fetch that never settles within the mount timeout is still reported.
     const bounded = create({ mountTimeoutMs: 500 });
     await bounded.ready;
     await expect(bounded.request('mount', payload({ registration: slow }))).rejects.toMatchObject({
       code: 'frame.request.timeout',
     });
+  });
+
+  it('renders a composition with its renderer, after loading the elements it names', async () => {
+    const preview = createPreview();
+    await preview.ready;
+    const doc = preview.iframe.contentDocument!;
+    const wrapper = doc.querySelector('[data-oddkin-preview]')!;
+    const missing = new URL('./missing-registration.ts', import.meta.url).href;
+    const updating = new URL('./fixtures/frame-element-updating.ts', import.meta.url).href;
+    // A tag the document does not name is never loaded (its entry here would fail).
+    const base = {
+      renderer,
+      registrations: {
+        'fixture-button': registration,
+        'fixture-updating': updating,
+        'fixture-unused': missing,
+      },
+      settings: { mode: 'dark' as const },
+    };
+    const valid = {
+      version: 1,
+      root: [
+        { element: 'p', children: ['Hello'] },
+        { element: 'fixture-button', attributes: { id: 'save' } },
+        { element: 'fixture-updating' },
+      ],
+    };
+    expect(await preview.request('composition', { ...base, document: valid })).toEqual({
+      ok: true,
+      diagnostics: [],
+    });
+    expect(wrapper.querySelector(':scope > p')?.textContent).toBe('Hello');
+    // Registered before it rendered: the element was created upgraded.
+    expect(wrapper.querySelector('#save')?.shadowRoot).not.toBeNull();
+    // The reply waits for the elements' updates, so a host sees their effects (a dialog's focus).
+    expect(wrapper.querySelector('fixture-updating')?.hasAttribute('data-updated')).toBe(true);
+    expect(doc.documentElement.dataset['oddMode']).toBe('dark');
+
+    // Refused whole: an element outside the registrations and the renderer's natives.
+    const refused = await preview.request('composition', {
+      ...base,
+      document: { version: 1, root: [{ element: 'p', children: ['Gone'] }, { element: 'b' }] },
+    });
+    expect(refused).toEqual({
+      ok: false,
+      diagnostics: [expect.objectContaining({ code: 'fixture.refused', path: '/root/1/element' })],
+    });
+    expect(wrapper.childElementCount).toBe(0);
+    expect(wrapper.getAttribute('data-disposed')).toBe('1');
+
+    // The next request replaces a composition; a specimen does too.
+    await preview.request('composition', { ...base, document: valid });
+    await preview.request('specimen', {
+      items: [{ ...payload(), role: 'primaryAction', label: 'Primary' }],
+    });
+    expect(wrapper.getAttribute('data-disposed')).toBe('2');
+    expect(wrapper.querySelector(':scope > p')).toBeNull();
+    expect(wrapper.querySelectorAll('fixture-button')).toHaveLength(1);
+
+    await expect(
+      preview.request('composition', {
+        ...base,
+        registrations: { 'fixture-button': alternateRegistration },
+        document: valid,
+      }),
+    ).rejects.toMatchObject({ code: 'frame.registration.incompatible' });
+    await expect(
+      preview.request('composition', { ...base, renderer: registration, document: valid }),
+    ).rejects.toMatchObject({
+      code: 'frame.composition.failed',
+      message: expect.stringContaining('does not export renderComposition'),
+    });
+    expect(wrapper.querySelector('[role="alert"]')).not.toBeNull();
   });
 
   it('sends requests one at a time: a change made during a slow mount reaches its element', async () => {

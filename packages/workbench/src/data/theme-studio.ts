@@ -6,6 +6,7 @@
 import type { ResolvedWorkbenchConfig } from '../config/index.js';
 import type { DiagnosticList } from '../internal/diagnostics.js';
 import { presets, registrationOf } from '../panels/model.js';
+import { STARTERS } from './starters.js';
 import {
   DATA_VERSION,
   PAGE_FORMAT,
@@ -13,6 +14,7 @@ import {
   type JsonObject,
   type SpecimenRole,
   type ThemeStudioPageData,
+  type ThemeStudioScreens,
 } from './types.js';
 
 /** The default `theme-specimen` recipe's roles, in display order, with their captions. */
@@ -42,12 +44,65 @@ export interface ThemeStudioInput {
 
 const roleId = (value: string) => value.replace(/^role:/, '');
 
+/** What the screens need beyond the component pages. */
+export interface ScreensInput {
+  /** Page id → navigation title. */
+  readonly titles: ReadonlyMap<string, string>;
+  /** The documented package that exports a composition renderer, and its specifier. */
+  readonly composition?: { readonly package: string; readonly renderer: string };
+}
+
+/** Each component's examples with published values, and the composition starters. */
+function screensOf(components: readonly ComponentPageData[], input: ScreensInput) {
+  const screens: ThemeStudioScreens['components'][number][] = [];
+  const registrations: Record<string, string> = {};
+  for (const page of components) {
+    const registration = registrationOf(page);
+    if (!registration) continue;
+    if (page.package === input.composition?.package) registrations[page.tag] = registration;
+    const items: ThemeStudioScreens['components'][number]['items'][number][] = [];
+    const omitted: string[] = [];
+    for (const example of presets(page)) {
+      if (example.incorrect) continue;
+      if (!example.state || example.fixture) omitted.push(example.label);
+      else
+        items.push({
+          role: example.name,
+          label: example.label,
+          tag: page.tag,
+          registration,
+          example: example.id as SpecimenRole['example'],
+          properties: example.state.properties,
+          attributes: example.state.attributes,
+          slots: example.state.slots,
+        });
+    }
+    if (items.length)
+      screens.push({ tag: page.tag, title: input.titles.get(page.id) ?? page.tag, items, omitted });
+  }
+  const composition = input.composition;
+  return {
+    components: screens.sort((a, b) => a.title.localeCompare(b.title)),
+    ...(composition
+      ? {
+          composition: {
+            renderer: composition.renderer,
+            registrations,
+            // Written against @oddkin/components' catalog.
+            starters: composition.package === '@oddkin/components' ? STARTERS : [],
+          },
+        }
+      : {}),
+  };
+}
+
 export function themeStudioPage(
   id: string,
   components: readonly ComponentPageData[],
   config: ResolvedWorkbenchConfig,
   input: ThemeStudioInput,
   out: DiagnosticList,
+  screens: ScreensInput = { titles: new Map() },
 ): ThemeStudioPageData {
   const role = (
     name: string,
@@ -147,6 +202,7 @@ export function themeStudioPage(
       ...(input.source ? { source: input.source } : {}),
       ...(input.worker ? { worker: input.worker } : {}),
       roles,
+      screens: screensOf(components, screens),
       missing,
     },
   };

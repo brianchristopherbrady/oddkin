@@ -1,14 +1,16 @@
-import { afterEach, describe, expect, it } from 'vitest';
+﻿import { afterEach, describe, expect, it } from 'vitest';
 import { settled } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import '../src/panels/component-define.js';
 import '../src/panels/foundation-define.js';
 import '../src/panels/catalog-define.js';
+import '../src/panels/theme-studio-define.js';
 import {
   buildWorkbenchData,
   type ComponentPageData,
   type WorkbenchData,
 } from '../src/data/index.js';
+import type { ThemeStudioPageData } from '../src/data/types.js';
 import type { CemPackage, OddkinMetadataLike } from '../src/pages/index.js';
 import type { OddkinComponentPanel } from '../src/panels/component.js';
 import { previewProtocolStats } from '../src/preview/frame.js';
@@ -913,6 +915,156 @@ describe('<oddkin-component-panel>', () => {
     await until(() => probe(0)!.closest('[dir]')?.getAttribute('dir') === 'rtl', 'right to left');
     expect(probe(0)).toBe(element);
 
+    panel.remove();
+    await settled();
+    expect(previewProtocolStats().liveFrames).toBe(frames);
+    expect(scopeStats()).toEqual(before);
+  });
+});
+
+describe('<oddkin-theme-studio-panel>', () => {
+  const button = new URL('./fixtures/frame-element.ts', import.meta.url).href;
+  const item = (role: string, label: string, text: string) => ({
+    role,
+    label,
+    tag: 'fixture-button',
+    registration: button,
+    example: `example:fixture-button/${role}` as const,
+    properties: { label: text },
+    attributes: {},
+    slots: {},
+  });
+  const starter = {
+    version: 1,
+    root: [{ element: 'p', children: ['Hello'] }, { element: 'fixture-button' }],
+  };
+  const studioPage = (): ThemeStudioPageData => ({
+    format: 'oddkin.workbench-page',
+    version: 1,
+    id: 'theme-studio',
+    kind: 'tool',
+    studio: {
+      config: { brand: { primary: '#123456' } },
+      worker: new URL('./fixtures/theme-worker.ts', import.meta.url).href,
+      roles: [{ ...item('primaryAction', 'Primary action', 'Save'), source: 'example' }],
+      screens: {
+        components: [
+          {
+            tag: 'fixture-button',
+            title: 'Fixture button',
+            items: [item('default', 'Default', 'Go'), item('quiet', 'Quiet', 'Later')],
+            omitted: ['With setup'],
+          },
+        ],
+        composition: {
+          renderer: new URL('./fixtures/frame-renderer.ts', import.meta.url).href,
+          registrations: { 'fixture-button': button },
+          starters: [{ id: 'hello', title: 'Hello', document: starter }],
+        },
+      },
+      missing: [],
+    },
+  });
+
+  it('shows each screen in light and dark frames, under the generated theme', async () => {
+    const before = scopeStats();
+    const frames = previewProtocolStats().liveFrames;
+    const panel = document.createElement('oddkin-theme-studio-panel');
+    panel.frameUrl = frameUrl;
+    panel.page = studioPage();
+    mounted.push(panel);
+    document.body.append(panel);
+    const root = panel.shadowRoot!;
+    const docs = () => panel.previews.map((preview) => preview.iframe.contentDocument);
+    const shown = (selector: string) =>
+      docs().length === 2 && docs().every((doc) => !!doc?.querySelector(selector));
+    const text = (doc: Document | null | undefined) =>
+      doc?.querySelector('[data-oddkin-preview] > p')?.textContent;
+    // The generated CSS is each frame's theme sheet, and it stays across screens.
+    const themed = () =>
+      docs().every((doc) =>
+        [...(doc?.adoptedStyleSheets ?? [])].some((sheet) =>
+          [...sheet.cssRules].some((rule) => rule.cssText.includes('#123456')),
+        ),
+      );
+    await until(() => shown('figure[data-role="primaryAction"] > fixture-button'), 'specimens');
+    await until(themed, 'the generated theme');
+    expect(docs().map((doc) => doc?.documentElement.dataset['oddMode'])).toEqual(['light', 'dark']);
+
+    const select = () => root.querySelector<HTMLSelectElement>('#ts-screen')!;
+    expect([...select().options].map((option) => option.textContent?.trim())).toEqual([
+      'Role specimens',
+      'Fixture button',
+      'Hello',
+      'Your document',
+    ]);
+    const pick = (value: string) => {
+      select().value = value;
+      select().dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    pick('component:fixture-button');
+    await until(() => shown('figure[data-role="quiet"] > fixture-button'), 'the component');
+    expect(docs()[1]?.querySelectorAll('figure')).toHaveLength(2);
+    expect(root.querySelector('#live-preview')?.textContent).toContain('With setup');
+    expect(themed()).toBe(true);
+
+    pick('composition:hello');
+    await until(() => shown('[data-oddkin-preview] > fixture-button'), 'the starter');
+    const editor = () => root.querySelector<HTMLTextAreaElement>('#ts-composition')!;
+    expect(JSON.parse(editor().value)).toEqual(starter);
+    const type = (value: string) => {
+      editor().value = value;
+      editor().dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    type('{ "version": 1, "root": [{ "element": "p", "children": ["Edited"] }] }');
+    await until(() => docs().every((doc) => text(doc) === 'Edited'), 'the edit in both frames');
+    // Latest wins: a burst of edits renders only the newest once the frame is free.
+    const sent: string[] = [];
+    const light = panel.previews[0]!;
+    const request = light.request.bind(light);
+    Object.assign(light, {
+      request: (kind: string, payload?: unknown) => {
+        if (kind === 'composition') sent.push(JSON.stringify(payload));
+        return request(kind as never, payload as never);
+      },
+    });
+    for (let i = 1; i <= 20; i++)
+      type(`{ "version": 1, "root": [{ "element": "p", "children": ["Edit ${i}"] }] }`);
+    await until(() => docs().every((doc) => text(doc) === 'Edit 20'), 'the newest edit');
+    expect(sent).toHaveLength(1);
+    expect(sent[0]).toContain('Edit 20');
+    // A render that takes the focus into a frame (a modal dialog) gives it back to the editor.
+    editor().focus();
+    type(
+      '{ "version": 1, "root": [{ "element": "p", "attributes": { "tabindex": "0", "data-focus": "" }, "children": ["Focus"] }] }',
+    );
+    await until(() => docs().every((doc) => text(doc) === 'Focus'), 'the focusing document');
+    await until(() => root.activeElement === editor(), 'the focus back in the editor');
+    // Text that does not parse keeps the document shown and says why.
+    type('{ "version": ');
+    await settled();
+    expect(root.querySelector('#ts-composition-note')?.textContent).toContain('Not rendered');
+    expect(text(docs()[0])).toBe('Focus');
+    // A refused document renders nothing, and its diagnostics name the path.
+    type('{ "version": 1, "root": [{ "element": "b" }] }');
+    const problems = () => root.querySelector('[aria-label="Composition diagnostics"]');
+    await until(() => !!problems(), 'the diagnostics');
+    expect(problems()?.textContent).toContain('/root/0/element');
+    expect(text(docs()[0])).toBeUndefined();
+
+    // Each composition screen keeps its own text; the reader's own starts empty.
+    pick('composition:');
+    await settled();
+    expect(JSON.parse(editor().value)).toEqual({ version: 1, root: [] });
+    expect(problems()).toBeNull();
+    pick('composition:hello');
+    await settled();
+    expect(editor().value).toContain('"b"');
+
+    pick('specimens');
+    await until(() => shown('figure[data-role="primaryAction"]'), 'specimens again');
+    expect(themed()).toBe(true);
+    expect(previewProtocolStats().liveFrames).toBe(frames + 2);
     panel.remove();
     await settled();
     expect(previewProtocolStats().liveFrames).toBe(frames);

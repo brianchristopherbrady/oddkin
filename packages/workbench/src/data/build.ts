@@ -300,7 +300,13 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
     const components = Object.values(pages).filter(
       (page): page is ComponentPageData => page.kind === 'component',
     );
-    pages[studio.id] = themeStudioPage(studio.id, components, config, input.theme ?? {}, out);
+    const renderer = input.libraries.find((library) => library.composition);
+    pages[studio.id] = themeStudioPage(studio.id, components, config, input.theme ?? {}, out, {
+      titles: new Map(registry.pages.map((page) => [page.id, page.title])),
+      ...(renderer?.composition
+        ? { composition: { package: renderer.name, renderer: renderer.composition } }
+        : {}),
+    });
     files[studio.id] = pageFile(studio.id);
   }
 

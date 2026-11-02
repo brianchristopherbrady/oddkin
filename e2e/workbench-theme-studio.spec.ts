@@ -158,4 +158,113 @@ test.describe('Theme Studio', () => {
     await expect(css).toBeDisabled();
     await expect(page.locator('#ts-export-note')).toContainText('The JSON has an error');
   });
+
+  const frames = (page: Page) =>
+    [0, 1].map((i) => page.frameLocator('oddkin-workbench-theme-studio iframe').nth(i));
+
+  test("shows any component's examples under the same theme, in light and dark", async ({
+    page,
+  }) => {
+    await page.locator('#ts-screen').selectOption({ label: 'Button' });
+    for (const frame of frames(page)) {
+      await expect(frame.locator('figure[data-role="ghost"] > odd-button')).toBeAttached();
+      const tags = await frame
+        .locator('figure > :last-child')
+        .evaluateAll((all) => [...new Set(all.map((el) => el.localName))]);
+      expect(tags).toEqual(['odd-button']);
+    }
+    // Examples whose setup code runs on the component's page are named, not shown.
+    await expect(page.locator('#live-preview')).toContainText('Not shown here');
+    const cell = page.locator('input[data-path="/overrides/color.action.default/light"]');
+    await cell.fill('#0a7d33');
+    await cell.dispatchEvent('change');
+    const background = (i: number) =>
+      frames(page)
+        [i]!.locator('figure[data-role="primary"] > odd-button')
+        .evaluate(
+          (el) => getComputedStyle(el.shadowRoot!.querySelector('button')!).backgroundColor,
+        );
+    await expect.poll(() => background(0)).toBe('rgb(10, 125, 51)');
+    expect(await background(1)).not.toBe('rgb(10, 125, 51)');
+  });
+
+  test('renders starter screens and a document an agent wrote, whose actions do nothing', async ({
+    page,
+  }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    const screen = page.locator('#ts-screen');
+    const editor = page.locator('#ts-composition');
+    await screen.selectOption({ label: 'Report card' });
+    for (const [i, frame] of frames(page).entries()) {
+      // The first composition loads the renderer and its elements' module graphs.
+      await expect(frame.locator('odd-card > odd-stat')).toHaveCount(2, { timeout: 20_000 });
+      await expect(frame.locator('[data-oddkin-preview]')).toHaveAttribute(
+        'data-odd-mode',
+        MODES[i]!,
+      );
+    }
+    expect(JSON.parse(await editor.inputValue())).toMatchObject({ version: 1 });
+    await screen.selectOption({ label: 'Sign-in dialog' });
+    for (const frame of frames(page))
+      await expect(frame.locator('odd-dialog[open] odd-input#password')).toBeAttached();
+    await screen.selectOption({ label: 'Settings form' });
+    const save = frames(page)[0]!.locator('odd-button', { hasText: 'Save' });
+    await expect(save).toBeAttached();
+    await save.click();
+    await expect(frames(page)[0]!.locator('odd-card')).toBeAttached();
+    await expect(status(page)).not.toHaveAttribute('role', 'alert');
+
+    // A team pastes the document an agent wrote from the packaged kit.
+    await screen.selectOption({ label: 'Your document' });
+    await editor.fill(
+      readFileSync('tests/agent-run/settings-app/settings.composition.json', 'utf8'),
+    );
+    for (const frame of frames(page))
+      await expect(frame.locator('odd-card > odd-switch#digest')).toBeAttached();
+    expect(errors).toEqual([]);
+  });
+
+  test('explains documents it cannot render, and keeps each screen and the focus', async ({
+    page,
+  }) => {
+    const screen = page.locator('#ts-screen');
+    const editor = page.locator('#ts-composition');
+    await screen.selectOption({ label: 'Settings form' });
+    const [light] = frames(page);
+    await expect(light!.locator('odd-card > odd-textarea')).toBeAttached({ timeout: 20_000 });
+    await editor.fill((await editor.inputValue()).replace('"Save"', '"Save changes"'));
+    for (const frame of frames(page))
+      await expect(frame.locator('odd-button', { hasText: 'Save changes' })).toBeAttached();
+    // Text that does not parse keeps the document shown.
+    await editor.fill('{ "version": 1, ');
+    await expect(page.locator('#ts-composition-note')).toContainText('Not rendered');
+    await expect(light!.locator('odd-button', { hasText: 'Save changes' })).toBeAttached();
+    // The renderer refuses a document whole and says where.
+    await editor.fill(
+      '{ "version": 1, "root": [{ "element": "odd-card", "children": [{ "element": "script" }] }] }',
+    );
+    await expect(page.getByRole('list', { name: 'Composition diagnostics' })).toContainText(
+      '/root/0/children/0/element',
+    );
+    await expect(light!.locator('odd-card')).toHaveCount(0);
+    // Each screen keeps its own text.
+    await screen.selectOption({ label: 'Report card' });
+    await expect(light!.locator('odd-card > odd-stat')).toHaveCount(2);
+    await screen.selectOption({ label: 'Settings form' });
+    await expect(editor).toHaveValue(/"script"/);
+
+    // A modal dialog in a frame does not take the focus from the editor.
+    await screen.selectOption({ label: 'Sign-in dialog' });
+    const dialog = light!.locator('odd-dialog[open]');
+    await expect(dialog).toBeAttached();
+    await dialog.evaluate((el) => ((el as HTMLElement & { seen?: true }).seen = true));
+    await editor.focus();
+    await page.keyboard.press('ControlOrMeta+End');
+    await page.keyboard.type(' ');
+    await expect
+      .poll(() => dialog.evaluate((el) => (el as HTMLElement & { seen?: true }).seen === true))
+      .toBe(false);
+    await expect(editor).toBeFocused();
+  });
 });
