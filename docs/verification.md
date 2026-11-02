@@ -4948,3 +4948,12 @@ The file format was proposed to Agent 2 on 2026-11-01 at 21:07, and Agent 2 agre
 | Gates | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Exit 0; exit 0; exit 0, the default theme 3,096 B gzip of its 3,136 B budget |
 
 **Not verified here:** CI on this commit. A product nested inside a product that overrides roles is documented as not supported (theming-and-styling.md §5.1).
+
+## 2026-11-02 — Docs: odd-theme-scope removed; scope composition corrected (round 11, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| No mention left | `git grep -n odd-theme-scope -- apps docs/architecture/theming-and-styling.md` | No match (exit 1). `layout-recipes.md` already records the owner's decision |
+| Docs tests | `npx tsc -b apps/docs`; `npx vitest run --project node tests/docs` | Exit 0; 33 passed, including every fact rendered and every link reaching a page. The §5.4 table, which the Themes page renders, parses with its two new rows |
+| Browser tests | `git grep` for the Themes page in `e2e/` and `tests/docs` | None reads `/foundations/themes`. The change is text in server-rendered pages, so no e2e was run for it |
+| Gates | `npm run typecheck`; `npm run lint` | Both exit 0 |

@@ -225,7 +225,7 @@ Direction: token names carry no physical direction (`control.padding.inline.*`, 
 
 ### 5.4 Composition and precedence of scope axes (implemented, plan item 244)
 
-The CSS never contains a cross-product rule: each product, density, and profile is one rule (a profile also re-applies itself inside nested scopes, §5), and mode is two toggles. Legal compositions and what wins:
+The CSS never contains a rule per combination of scope values: each product, density, and profile is one rule, and mode is two toggles. A profile also re-applies itself inside nested scopes (§5), and a product with its own colour roles re-applies them inside its mode scopes (§5.1). Legal compositions and what wins:
 
 | Situation | Result |
 | --- | --- |
@@ -233,6 +233,8 @@ The CSS never contains a cross-product rule: each product, density, and profile 
 | Several axes on **one** element | Rules have equal specificity; emission order decides overlapping roles: products, then densities, then profiles, all after the mode rules. In practice only densities and profiles overlap (both touch layout and component roles), and the profile wins |
 | Two profiles on one element (`data-odd-profile="a b"`) setting the same role | The profile that comes later in the configuration wins; the attribute's list order does not matter. Reported as `profile.overlap` with both paths |
 | A profile on an ancestor and a density nested inside it | The profile still applies (its re-application selector) |
+| A mode scope inside a product with its own colour roles | The product's roles apply (its re-application selector, 0,2,0); a profile's re-application, emitted later, wins where both set a role |
+| A product nested inside a product that overrides roles | Not supported: mode scopes inside the inner product take the outer product's roles |
 | A nested `data-odd-theme` | Re-declares every token: outer products, densities, and profiles stop applying inside it; mode toggles still come from outside |
 | `overrides` vs. scopes | Overrides change the base values every scope starts from; a scope that re-declares a role still wins inside it |
 
@@ -259,7 +261,7 @@ Unlayered application CSS therefore overrides generated values whatever the styl
 ### Modes and density
 - `light`/`dark` via `[data-odd-mode]`; `system` via `@media (prefers-color-scheme)` applied when no explicit mode is set.
 - Density (`comfortable`/`compact`) changes spacing and control sizing only; it does not change font sizes (text-size preference belongs to the user agent) and never reduces targets below the documented minimum.
-- `odd-theme-scope` (component package) is a convenience that sets these attributes; plain elements with the same attributes work identically.
+- Scopes are plain attributes on any element: `data-odd-mode`, `data-odd-theme`, `data-odd-product`, and `data-odd-density`, with `data-odd-profile` for profiles.
 
 ## 6. Outputs
 

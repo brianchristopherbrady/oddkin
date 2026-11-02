@@ -406,9 +406,17 @@ export const foundationThemes = child({
       blocks: [
         {
           p: [
-            'Density changes spacing and control sizing only, never font sizes, and never takes a target below the documented minimum. ',
-            { code: 'odd-theme-scope' },
-            ' sets these attributes for you; plain elements with the same attributes work identically.',
+            'Density changes spacing and control sizing only, never font sizes, and never takes a target below the documented minimum. The scopes are plain attributes on any element: ',
+            { code: 'data-odd-mode' },
+            ', ',
+            { code: 'data-odd-theme' },
+            ', ',
+            { code: 'data-odd-product' },
+            ', and ',
+            { code: 'data-odd-density' },
+            ', with ',
+            { code: 'data-odd-profile' },
+            ' for profiles.',
           ],
         },
         { fact: 'scope-attributes' },
@@ -420,7 +428,7 @@ export const foundationThemes = child({
       blocks: [
         {
           p: [
-            'The generated CSS has no rule for a combination of scopes: each product, density, and profile is one rule, and mode is two toggles.',
+            'The generated CSS has no rule per combination of scope values: each product, density, and profile is one rule, and mode is two toggles. A profile, or a product with its own colour roles, adds one rule that re-applies it inside nested scopes.',
           ],
         },
         { fact: 'scope-composition' },
