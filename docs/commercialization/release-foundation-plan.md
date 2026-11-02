@@ -44,7 +44,7 @@ The work stops at Gate A. It adds no components, no product-pattern contracts, a
 | Public package cut and messaging | Owner | Owner decision 2026-10-27 (all eight); the original technical plan recommended a narrower set and Workbench as `0.x` | Support tiers and messaging (D-1, D-2) |
 | Version stepping (`set-versions --next`, `--check`) | Verify | Rehearsed and reverted on 2026-10-29 (plan P0.8); beta.1 not cut | A real cut (RF-15) |
 | `latest` follows betas | Verified | `publish.mjs` moves `latest`; registry shows `latest` = `1.0.0-beta.0` | None |
-| Manifest hygiene: exports, `types`, `files`, `sideEffects`, license, `customElements`, bins | Verified | `npm run verify:packs` passed in CI run 40945402821 (2026-10-29); rules in `scripts/verify-packs.mjs` lines 53–93, 216–224 | `homepage`, `bugs`, and `keywords` are absent (RF-06) |
+| Manifest hygiene: exports, `types`, `files`, `sideEffects`, license, `customElements`, bins | Verified | `npm run verify:packs` passed in CI run 40945402821 (2026-10-29); rules in `scripts/verify-packs.mjs` lines 53–93, 216–224 | `homepage`, `bugs`, and `keywords` added 2026-11-01 (RF-06; not in a CI run yet) |
 | Every export imports in Node | Verified | `verify-packs.mjs` imports every specifier, including `define/*`, in Node 24 | Only Node 24 is tested (RF-05) |
 | No third-party runtime dependency; no lifecycle scripts | Verified | `verify-packs.mjs` "unexpected runtime dependencies"; no `install`/`prepare` scripts in any manifest | None |
 | Packed-consumer matrix from tarballs | Verified | CI e2e at `6486921`: 1,014 passed, 12 skipped (fresh Vite, React, Vue, Svelte, and Angular apps, the golden path, and the packed consumers) | §11 gaps |
@@ -131,7 +131,7 @@ Why not narrow by unpublishing: installs already resolve these versions, and npm
 | `bin` paths without `./` (npm 11 drops them) | `tokens`, `analyzer`, `workbench` | `verify-packs.mjs` lines 90–93 | Verified | — |
 | `engines` | Tools only | none | Partial | RF-04 decides whether runtime packages state one |
 | Peer dependencies keep one core per install | `components`, `state`, `app`, `ai` | `tests/architecture/single-core.test.ts` | Verified | — |
-| `homepage`, `bugs`, `keywords` | Absent | none | Planned | RF-06 |
+| `homepage`, `bugs`, `keywords` | All eight (2026-11-01) | `verify-packs.mjs` lines 89–95, with the exact `repository.url` | Verified | RF-06 (done) |
 | `publishConfig` `{access: public, tag: beta}` | All eight | `set-versions.mjs --check` | Verified | — |
 | Provenance on published versions | None | — | Planned | RF-12 |
 
@@ -316,7 +316,7 @@ Version 0 (2026-10-29) writes `evidence.json` and `EVIDENCE.md`; in CI, also `re
 | Workflow permissions | `contents: read`, and in `ci.yml` `actions: read` (the evidence reads its job's step times); Pages deploy uses `id-token: write` in its own job | Verified | — |
 | Action pinning | Major tags (`@v7`), not commits | Partial | RF-13 (pin by SHA, or record the decision) |
 | Dependency updates | No Dependabot or Renovate | Planned | RF-13 |
-| Vulnerability reporting | `SECURITY.md` (2026-10-30) sends reports to GitHub private vulnerability reporting, which the owner enables in the repository settings | Partial | RF-13 |
+| Vulnerability reporting | `SECURITY.md` (2026-10-30) sends reports to GitHub private vulnerability reporting, which the owner enabled (GitHub's API reports it enabled on 2026-11-01) | Partial | RF-13 |
 | Provenance and SBOM | None | Planned | RF-12, RF-09 |
 | Publishing credentials | The owner's interactive 2FA; no stored token | Verified for now | RF-12 |
 | Analyzer's bundled TypeScript | Exact `typescript@5.9.3`, Node-only | Verified | Track its advisories (RF-13) |
@@ -465,6 +465,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the eight manifests with the three fields, and the new `verify-packs` rules.
 - **Done when:** every manifest has the three fields and `verify-packs` enforces them.
 - **Risks:** none significant.
+- **State (2026-11-01, Agent 1, with the owner's OK):** done. Every manifest has `homepage` (`https://www.oddkin.dev`), `bugs` (the GitHub issues), and five `keywords`. `verify-packs` requires the first two exactly, a non-empty `keywords`, and the exact `repository.url` that trusted publishing needs (RF-12); breaking all four in one manifest fails it with four messages. They reach npm's package pages with the next publish.
 
 ### RF-07 Impact report against the previous release
 
@@ -539,6 +540,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** `release.yml`; provenance attestations on npm.
 - **Done when:** a beta publishes from CI with provenance shown on npm, and `latest` is moved by a verified method.
 - **Risks:** the dist-tag question in §15; misconfiguration. The local path remains.
+- **State (2026-11-01, Agent 1; npm's trusted publishing documentation, read that day):** each package gets a trusted publisher on npmjs.com (Settings, Trusted publishing, GitHub Actions) naming `brianchristopherbrady`, `oddkin`, the workflow file `release.yml`, and the environment `npm`, with **Allow npm dist-tag** ticked: OIDC now covers `npm dist-tag` (npm 11.21 or later), which answers §15, so the workflow moves `latest` itself. A new trusted publisher expires unless a publish uses it within 2 days, so the owner adds them when the workflow is ready for the beta.2 publish. Provenance is automatic for a public repository and package. `repository.url` must match the repository exactly; `verify-packs` checks it (RF-06). After the first publish from CI, the owner may set each package to "Require two-factor authentication and disallow tokens".
 
 ### RF-13 Security policy and dependency hygiene
 

@@ -7,7 +7,18 @@
     "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
     "directory": "packages/analyzer"
   },
+  "homepage": "https://www.oddkin.dev",
+  "bugs": {
+    "url": "https://github.com/brianchristopherbrady/oddkin/issues"
+  },
   "description": "Node-only static analysis of Oddkin component libraries: Custom Elements Manifest and oddkin.metadata.json, without executing component code, and the agent kits generated from them.",
+  "keywords": [
+    "oddkin",
+    "custom-elements-manifest",
+    "static-analysis",
+    "web-components",
+    "agent-kit"
+  ],
   "type": "module",
   "sideEffects": false,
   "engines": {

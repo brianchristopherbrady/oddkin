@@ -205,7 +205,7 @@ Compose existing components and layout primitives with a few meaningful options,
 ```
 
 - `layout.css` is generated from the same helpers and Oddkin defaults; classes expose override custom properties (`--odd-stack-gap`, `--odd-split-side-width`, …); §12 lists them.
-- **Custom element or native element + recipe?** Use a custom element when it adds behavior, managed semantics/ARIA, keyboard handling, an attribute/property API that frameworks need, or establishes a container contract (`odd-theme-scope`, `odd-scroll-region`, `odd-container`). Use a native element with a recipe class when the wrapper would only apply layout (`stack`, `row`, `grid`, `autoGrid`, `split`). The final list of layout elements is decided in M10 from this rule.
+- **Custom element or native element + recipe?** Use a custom element when it adds behavior, managed semantics/ARIA, keyboard handling, an attribute/property API that frameworks need, or establishes a container contract (`odd-scroll-region`, `odd-container`). Use a native element with a recipe class when the wrapper would only apply layout (`stack`, `row`, `grid`, `autoGrid`, `split`), or only set attributes: theme scopes are plain `data-odd-*` attributes on any element (theming-and-styling.md §5; the `odd-theme-scope` element was dropped by the owner on 2026-11-01). The final list of layout elements is decided in M10 from this rule.
 - The same token contracts appear in native elements, custom components, and ordinary CSS; docs examples show all three side by side.
 
 ## 8. Metadata

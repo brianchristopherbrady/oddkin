@@ -7,7 +7,18 @@
     "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
     "directory": "packages/workbench"
   },
+  "homepage": "https://www.oddkin.dev",
+  "bugs": {
+    "url": "https://github.com/brianchristopherbrady/oddkin/issues"
+  },
   "description": "Metadata-driven documentation tooling. DOM-free example, configuration, page-registry, data-file, and conformance contracts; a test-runner integration.",
+  "keywords": [
+    "oddkin",
+    "documentation",
+    "workbench",
+    "web-components",
+    "custom-elements"
+  ],
   "type": "module",
   "sideEffects": [
     "./dist/app/define.js",

@@ -4783,3 +4783,17 @@ CI run 41353564510 on `f67bdd2`: Vitest Chromium 2,856 and Firefox 2,801 passed,
 | Gates | `npm run typecheck`; `npm run lint`; `npx prettier --check` on both test files | All exit 0 |
 
 **Not verified here:** the next CI run, on this commit.
+
+## 2026-11-01 — Owner decisions; manifest links and keywords (RF-06) (round 10, Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Manifests | `npm run verify:packs`, before and after the keywords | Exit 0 both times (132 s, 69 s): all eight packages pass, the new rules included; 31 docs snippets resolve against the packed packages |
+| The new rules fail when broken | A `.tmp` script sets, in `@oddkin/state`'s manifest, `homepage` without `www`, `bugs.url` ending `/issue`, `repository.url` naming `Oddkin`, and empty `keywords`, runs `node scripts/verify-packs.mjs`, and restores the file | Exit 1 with exactly those four failures for `@oddkin/state`; the manifest restored byte for byte |
+| Versions | `node scripts/release/set-versions.mjs --check --runtime 1.0.0-beta.1 --tools 1.0.0-beta.1 --public` | 8 packages, publishable |
+| Agent kits | `node scripts/agent-kit/package-kits.mjs --check` | Stale after each manifest edit (`kit.json` fingerprints `package.json`); regenerated, then current |
+| The owner's GitHub settings | GitHub's API: `GET /repos/brianchristopherbrady/oddkin/private-vulnerability-reporting` and `GET /repos/brianchristopherbrady/oddkin/releases/tags/v1.0.0-beta.1` | `{"enabled":true}`; the release answers 404, so it is not public (a draft is visible only when signed in) |
+| Gates | `npm run lint`; `npm run typecheck`; `npx prettier --check` and the relative-link check on the changed documents | All exit 0; no broken link |
+| `npm run verify:metadata` | In this worktree | Exit 1: the worktree has never run `npm test`, so it has no browser test records (234 missing, none stale). Its other two steps pass when run alone: `check-vocabulary.mjs` 0 findings, and the kits current |
+
+**Not verified here:** CI on this commit; the new fields on npm's package pages, which arrive with the next publish.

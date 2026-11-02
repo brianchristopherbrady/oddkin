@@ -7,7 +7,18 @@
     "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
     "directory": "packages/components"
   },
+  "homepage": "https://www.oddkin.dev",
+  "bugs": {
+    "url": "https://github.com/brianchristopherbrady/oddkin/issues"
+  },
   "description": "Themed custom elements, Oddkin layout presets, and component metadata.",
+  "keywords": [
+    "oddkin",
+    "web-components",
+    "custom-elements",
+    "design-system",
+    "ui-components"
+  ],
   "type": "module",
   "sideEffects": [
     "./dist/**/*.define.js"

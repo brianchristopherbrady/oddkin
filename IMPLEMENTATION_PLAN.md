@@ -33,12 +33,13 @@ Each agent takes its next item in this order. An item waits only for what its ro
 | Agent | # | Item | Waits for |
 | --- | --- | --- | --- |
 | 1 | 1 | CF.4, RF-19: the error-message audit. List every documented diagnostic code and message in the packages; each message names what to do, or links to the page that does. Fixes go to the owning lane | — |
+| 1 | 2 | P1.2: `odd-table`, the data table the owner unparked on 2026-11-01. Rows and columns from data (a model with its JSON Schema, so composition documents and agents can use it), sortable columns, row selection, and empty, loading, and error states, rendered as a native table on the `.odd-table` recipe. No virtualization or editing: the data grid stays parked | — |
 | 1 | — | P0.6: the first scheduled `registry-smoke.yml` run on GitHub (2026-11-02, 06:00 UTC). Fix what it finds, then tick P0.6. Taken when the run finishes | The scheduled run |
-| 1 | 2 | CF.4, RF-12 and RF-13: publishing from GitHub Actions with provenance, needed before `1.0.0-beta.2` (D-5); Dependabot, an informational `npm audit`, and the SBOM in the evidence bundle | The owner links each package to the workflow on npmjs.com |
-| 1 | 3 | P1.7: conformance suites for the catalog's components and the ADR 0043 role compatibility check, then visual baselines (the CI side) | Agent 2 for Workbench's side of the baselines |
-| 1 | 4 | P1.2's quality items, then P1.3 | — |
+| 1 | 3 | CF.4, RF-12 and RF-13: publishing from GitHub Actions with provenance (`.github/workflows/release.yml`), needed before `1.0.0-beta.2` (D-5); Dependabot, an informational `npm audit`, and the SBOM in the evidence bundle | The owner adds the trusted publishers on npmjs.com within 2 days of the first publish from the workflow |
+| 1 | 4 | P1.7: conformance suites for the catalog's components and the ADR 0043 role compatibility check, then visual baselines (the CI side) | Agent 2 for Workbench's side of the baselines |
+| 1 | 5 | P1.2's quality items, then P1.3 | — |
 | 2 | 1 | P0.2's last item: a share link from the published Workbench `1.0.0-beta.1`, opened by the current one | — |
-| 2 | 2 | P1.5, items 1 and 2: Theme Studio as one embeddable panel, used in Workbench, with screens of any documented component and its examples, and composition screens for Oddkin's components with the four starter screens. The composition vocabulary gains native table elements for the app-layout screen, since the catalog has no table and the data grid stays parked | — |
+| 2 | 2 | P1.5, items 1 and 2: Theme Studio as one embeddable panel, used in Workbench, with screens of any documented component and its examples, and composition screens for Oddkin's components with the four starter screens. The app-layout screen's table is `odd-table` (Agent 1's item 2); until it lands, that screen comes last | — |
 | 2 | 3 | P1.5, item 5: save to file from the Workbench dev server, after showing the diff, for one theme file | — |
 | 2 | 4 | P1.6: the analyzer writes a library's composition catalog and schemas from its metadata, so Theme Studio's composition screens work with a library's own components (P1.5, item 2) | — |
 | 2 | 5 | P1.5, item 4: products, with saving that writes only the edited file | Agent 3's P1.1 base file and product role overrides |
@@ -46,12 +47,14 @@ Each agent takes its next item in this order. An item waits only for what its ro
 | 2 | 7 | P1.6's remaining items, starting with the technical plan's Workstream C provenance: the source revision and dirty state in impact snapshots and reports (Gate B) | — |
 | 3 | 1 | CF.1, RF-02: the README status check in `npm run lint` (`scripts/check-readme-status.mjs` and its test; Agent 1 has agreed to the lint change) | — |
 | 3 | 2 | P1.1: a theme file that builds on a shared base file, then product role overrides and several themes in one document | — |
-| 3 | 3 | Docs fixes only: the Themes page stops presenting `odd-theme-scope` as shipping (it is only designed, theming-and-styling.md §5; plain `data-odd-*` attributes do the same); the Firefox docs journey (`e2e/docs.spec.ts:60`) if it fails on CI again | — |
+| 3 | 3 | Docs fixes only: `odd-theme-scope` is dropped (owner, 2026-11-01), so the Themes page and theming-and-styling.md §5 stop mentioning it (plain `data-odd-*` attributes set the scopes); the Firefox docs journey (`e2e/docs.spec.ts:60`) if it fails on CI again | — |
 | 3 | 4 | P1.1's remaining items: the missing CSS token domains (Theme Studio's controls need some), DTCG output checked by an independent reader, equivalent CSS, SCSS, and TS consumption, and P3 values | — |
 
 After the docs pause (Agent 3): the docs site's `/theme-studio` page with Agent 2's panel, the guide from Theme Studio to a build (P1.5, items 1 and 7), RF-17, then P0.7.
 
-Waiting for the owner: the external fixture repository (D-6), for RF-11 and RF-18; npm trusted publishers (RF-12); `homepage` and `bugs` in the manifests (RF-06); the `1.0.0-beta.1` GitHub Release with its evidence (D-11); private vulnerability reporting on GitHub (`SECURITY.md`); whether `odd-theme-scope` stays in the design now that there is no runtime theme provider (Agent 1 recommends dropping it).
+Owner decisions of 2026-11-01, on the list below: `odd-theme-scope` is dropped; `odd-table` is unparked (its scope, a data table without the data grid's virtualization and editing, was set by Agent 1 for the owner to review); `homepage` and `bugs` are in every manifest, with `keywords` (RF-06, done); private vulnerability reporting is on; the owner creates the external fixture repository from Agent 1's prompt (D-6) and adds the trusted publishers when the workflow is ready.
+
+Waiting for the owner: the external fixture repository (RF-11), then observers for RF-18; the trusted publishers on npmjs.com, within 2 days of the first publish from `release.yml` (RF-12); the `1.0.0-beta.1` GitHub Release with its evidence (D-11), which is not public yet.
 
 Why this order:
 
@@ -175,7 +178,8 @@ The details are in the [technical commercialization plan](./docs/commercializati
   - RF-12, trusted publishing with provenance, before `1.0.0-beta.2` (D-5);
   - RF-13's rest: Dependabot, an informational `npm audit`, and the SBOM (`SECURITY.md` is done);
   - RF-05, evidence for any Node or package-manager range the support policy claims beyond what is tested;
-  - with the owner: RF-06 (`homepage` and `bugs` in the manifests, after the owner's OK), RF-11 (the external fixture repository, D-6), and RF-18 (two observed installations);
+  - with the owner: RF-11 (the external fixture repository, D-6) and RF-18 (two observed installations);
+  - RF-06: done 2026-11-01 with the owner's OK. Every manifest has `homepage` (https://www.oddkin.dev), `bugs` (the GitHub issues), and `keywords`, and `verify-packs` requires them and the exact `repository.url` that trusted publishing needs;
   - after the docs pause: RF-17 (Agent 3).
 
 ### P1: finish the foundations (after tier CF; P1.6, P1.7, and P1.1 first, as tier CF needs them)
@@ -190,6 +194,7 @@ The details are in the [technical commercialization plan](./docs/commercializati
     - P3 values.
   - §5.1's open items: adopted-sheet ownership and the DTCG resolver experiment.
 - [ ] **P1.2 Components (Agent 1).** The catalog does not grow (owner, 2026-10-29). M10's remaining Figma families and the collections, with their CSS contracts, are parked (P3), unless the docs site's design needs a family or a pilot asks for one. What remains:
+  - `odd-table` first (unparked by the owner on 2026-11-01; the order of work's Agent 1 item 2): a data table from a model and its JSON Schema, with sortable columns, row selection, and empty, loading, and error states, on the `.odd-table` recipe. Theme Studio's app-layout starter screen uses it;
   - first, M4's partial items: the details of `odd-button`, `odd-input`, and `odd-card`; the scripted keyboard suite; framework remount behaviour;
   - M10's customization levels, including level 4's typed anatomy contracts;
   - §5f's localization contracts and its loading and fallback presentation.
@@ -226,7 +231,7 @@ The details are in the [technical commercialization plan](./docs/commercializati
 
 - [ ] **P3.1 v1 freeze (Agent 1; the owner settles the cut).** M12: the browser floor re-resolved and the matrix regenerated, the floor probe, the final freeze over the shipped APIs, and the policies.
 - **Parked until the owner reopens them:**
-  - the data grid ([DATA_GRID_IMPLEMENTATION_PLAN.md](./DATA_GRID_IMPLEMENTATION_PLAN.md));
+  - the data grid ([DATA_GRID_IMPLEMENTATION_PLAN.md](./DATA_GRID_IMPLEMENTATION_PLAN.md)): virtualization, editing, grouping, and pivoting. The data table `odd-table` is unparked (P1.2, owner 2026-11-01);
   - comparative benchmarks (D4, §8.2);
   - the ergonomics studies (§8.3);
   - M0's research backlog;

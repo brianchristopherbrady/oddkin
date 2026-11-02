@@ -7,7 +7,18 @@
     "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
     "directory": "packages/ai"
   },
+  "homepage": "https://www.oddkin.dev",
+  "bugs": {
+    "url": "https://github.com/brianchristopherbrady/oddkin/issues"
+  },
   "description": "Optional AI interaction elements, headless controllers, and stream adapters for conversation, inline assistance, research, and agent workflows.",
+  "keywords": [
+    "oddkin",
+    "ai",
+    "chat",
+    "streaming",
+    "web-components"
+  ],
   "type": "module",
   "sideEffects": [
     "./dist/**/*.define.js"

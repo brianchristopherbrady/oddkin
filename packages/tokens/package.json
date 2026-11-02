@@ -7,7 +7,18 @@
     "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
     "directory": "packages/tokens"
   },
+  "homepage": "https://www.oddkin.dev",
+  "bugs": {
+    "url": "https://github.com/brianchristopherbrady/oddkin/issues"
+  },
   "description": "Theme configuration, pure token generation, and CSS, JSON, DTCG, and TypeScript outputs. Browser entry points are DOM-free.",
+  "keywords": [
+    "oddkin",
+    "design-tokens",
+    "theme",
+    "css-custom-properties",
+    "dtcg"
+  ],
   "type": "module",
   "sideEffects": false,
   "exports": {

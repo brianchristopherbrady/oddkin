@@ -24,6 +24,11 @@ const node = (args, cwd) =>
   });
 const npm = (args, cwd) => node([npmCli, ...args], cwd);
 
+// Manifest links for npm's package pages (docs/commercialization/release-foundation-plan.md RF-06).
+const REPOSITORY_URL = 'git+https://github.com/brianchristopherbrady/oddkin.git';
+const HOMEPAGE = 'https://www.oddkin.dev';
+const ISSUES_URL = 'https://github.com/brianchristopherbrady/oddkin/issues';
+
 const packagesDir = join(root, 'packages');
 const names = [];
 for (const entry of await readdir(packagesDir, { withFileTypes: true })) {
@@ -81,6 +86,13 @@ try {
     if (manifest.sideEffects === undefined) failures.push(`${name}: sideEffects is not declared`);
     if (manifest.repository?.directory !== directory)
       failures.push(`${name}: repository.directory is not ${directory}`);
+    // npm trusted publishing (RF-12) requires repository.url to name the publishing repository exactly.
+    if (manifest.repository?.url !== REPOSITORY_URL)
+      failures.push(`${name}: repository.url is not ${REPOSITORY_URL}`);
+    if (manifest.homepage !== HOMEPAGE) failures.push(`${name}: homepage is not ${HOMEPAGE}`);
+    if (manifest.bugs?.url !== ISSUES_URL) failures.push(`${name}: bugs.url is not ${ISSUES_URL}`);
+    if (!Array.isArray(manifest.keywords) || !manifest.keywords.length)
+      failures.push(`${name}: no keywords`);
     for (const [key, value] of Object.entries(manifest.exports ?? {}))
       if (
         /\.m?js$/.test(typeof value === 'string' ? value : (value?.default ?? '')) &&
@@ -378,5 +390,5 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; each tarball has LICENSE and README.md, and each manifest its licence, description, repository directory, module type, sideEffects, and types for every JavaScript export; runtime imports and declarations resolve; typed token refs reject an unknown name; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}; agent kits match their packed metadata in ${kits.join(' and ')}. Tarballs: ${sizes.join('; ')}.`,
+  `Packed-consumer verification OK: ${names.map((p) => p.name).join(', ')} installed from tarballs outside the workspace; each tarball has LICENSE and README.md, and each manifest its licence, description, keywords, repository URL and directory, homepage, issues URL, module type, sideEffects, and types for every JavaScript export; runtime imports and declarations resolve; typed token refs reject an unknown name; React, Vue, and Svelte typings type-check from the installed packages; no third-party runtime dependencies outside Node-only tooling; ${contractCount} core contracts resolve offline from the installed package; an independent CEM consumer (custom-element-vs-code-integration) read ${cemConsumers.join(' and ')}; agent kits match their packed metadata in ${kits.join(' and ')}. Tarballs: ${sizes.join('; ')}.`,
 );

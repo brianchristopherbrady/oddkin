@@ -116,7 +116,7 @@ On 2026-11-01, 15 of 23 lines are Verified (8 on 2026-10-29).
 | Audit logging covers sensitive actions. | Planned | — |
 | Data retention and deletion are tested. | Planned | — |
 | Subprocessors and hosting regions are documented. | Planned | — |
-| Vulnerability reporting and incident response exist. | Partial | [SECURITY.md](../../SECURITY.md) covers the packages through GitHub private vulnerability reporting (enabling it is the owner's); no service incident response |
+| Vulnerability reporting and incident response exist. | Partial | [SECURITY.md](../../SECURITY.md) covers the packages through GitHub private vulnerability reporting, enabled by the owner (checked 2026-11-01); no service incident response |
 | Billing, cancellation, and export paths work. | Planned | — |
 
 ### Product

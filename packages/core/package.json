@@ -7,7 +7,18 @@
     "url": "git+https://github.com/brianchristopherbrady/oddkin.git",
     "directory": "packages/core"
   },
+  "homepage": "https://www.oddkin.dev",
+  "bugs": {
+    "url": "https://github.com/brianchristopherbrady/oddkin/issues"
+  },
   "description": "Authoring foundation: reactive primitives, Scope, OddkinElement, templates, styles, layout recipes, collections, models, registration.",
+  "keywords": [
+    "oddkin",
+    "web-components",
+    "custom-elements",
+    "signals",
+    "reactive"
+  ],
   "type": "module",
   "sideEffects": false,
   "exports": {
