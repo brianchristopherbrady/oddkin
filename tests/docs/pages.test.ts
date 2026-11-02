@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { init, parse } from 'es-module-lexer';
 import { describe, expect, it } from 'vitest';
 import { docsFacts, siteFacts } from '../../apps/docs/facts.mjs';
 import {
@@ -146,6 +148,49 @@ describe('authored docs pages', async () => {
         expect(['module', 'markup', 'css', 'none'], `${page.path} #${section}`).toContain(
           code.verify,
         );
+  });
+
+  // Found by copying the quick starts into oddkin-quickstart (RF-11, 2026-11-01).
+  it('show the React sample that `npm run typecheck` checks', () => {
+    const guide = pages.find((page) => page.path === 'installation/frameworks')!;
+    const sample = codeBlocks(guide).find(({ section }) => section === 'react')!.code.code;
+    const fixture = readFileSync(`${root}tests/frameworks/react/docs-shell.tsx`, 'utf8');
+    expect(fixture.replace(/^(?:\/\/.*\n)+/, '').trimEnd()).toBe(sample);
+  });
+
+  it('list in the import map sample every entry the button loads', async () => {
+    await init;
+    const sample = codeBlocks(pages.find((page) => page.path === 'installation')!)
+      .map(({ code }) => code.code)
+      .find((code) => code.includes('<script type="importmap">'))!;
+    const map = /<script type="importmap">([\s\S]*?)<\/script>/.exec(sample)?.[1] ?? '{}';
+    const { imports } = JSON.parse(map) as { imports: Record<string, string> };
+    // Every specifier the built files import, each entry resolved as the map's URLs are: through
+    // its package's `exports`, under the default condition.
+    const fileOf = (specifier: string) => {
+      const [, name = '', ...rest] = specifier.split('/');
+      const manifest = JSON.parse(readFileSync(`${root}packages/${name}/package.json`, 'utf8')) as {
+        exports: Record<string, string | { default: string }>;
+      };
+      const target = manifest.exports[rest.length ? `./${rest.join('/')}` : '.']!;
+      return join(root, 'packages', name, typeof target === 'string' ? target : target.default);
+    };
+    const loaded = new Set(['@oddkin/components/define/button']);
+    const seen = new Set<string>();
+    const visit = (file: string) => {
+      if (seen.has(file)) return;
+      seen.add(file);
+      for (const { specifier } of parse(readFileSync(file, 'utf8'))[0]) {
+        if (!specifier) continue;
+        if (specifier.startsWith('.')) visit(resolve(dirname(file), specifier));
+        else {
+          loaded.add(specifier);
+          visit(fileOf(specifier));
+        }
+      }
+    };
+    visit(fileOf('@oddkin/components/define/button'));
+    expect(Object.keys(imports).sort()).toEqual([...loaded].sort());
   });
 
   it('show the support policy as docs/support.md says it, section by section', async () => {

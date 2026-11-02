@@ -37,13 +37,21 @@ export const frameworks: Page = {
           ],
         },
         {
+          // Type-checked as tests/frameworks/react/docs-shell.tsx (tests/docs/pages.test.ts).
           code: {
             lang: 'ts',
             verify: 'none',
             code: `import type {} from '@oddkin/components/frameworks/react';
 import '@oddkin/components/define/side-nav';
+import type { NavigationItem } from '@oddkin/components/side-nav';
 
-export function Shell({ items }) {
+export function Shell({
+  items,
+  run,
+}: {
+  items: readonly NavigationItem[];
+  run: (action: string) => void;
+}) {
   return (
     <odd-side-nav
       label="Primary"

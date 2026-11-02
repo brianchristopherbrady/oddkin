@@ -4914,3 +4914,19 @@ The owner's commit `e44c4fe4` ("updates buttons disabled styles"), made in the o
 | Button, styling, contract, and the 8 components that use the button styles, three engines | `browser-set.mjs` on `button`, `styling`, `styling-contract`, `calendar`, `carousel`, `color-picker`, `combobox`, `copy-button`, `menu`, `picker`, `split-button` | Chromium 193 passed; Firefox 188 passed, 5 skipped; WebKit 187 passed, 6 skipped (engine-specific tests); no failure |
 | Types, size | `npm run typecheck`; `node scripts/check-size.mjs` | Exit 0; `button.css` 1,004 B gzip of 1,024 |
 | Lint | `npm run lint` | First exit 1: the compatibility matrix was out of date; after `node scripts/compat/check-css.mjs --write`, exit 0 (0 problems) |
+## 2026-11-01 — Docs corrections from oddkin-quickstart (round 11, Agent 3)
+
+Agent 1 copied the docs' quick starts exactly into `oddkin-quickstart` (RF-11) and reported four gaps on 2026-11-01 at 19:25.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The React sample, before | The Framework guides' `Shell` copied into `tests/frameworks/react/docs-shell.tsx`; `npx tsc -p tsconfig.jsx.json` (strict, as Vite's react-ts template) | 2 errors, Agent 1's: TS7031 "Binding element 'items' implicitly has an 'any' type" and TS2304 "Cannot find name 'run'" |
+| The React sample, after | The same with `Shell`'s props typed (`items: readonly NavigationItem[]`, from `@oddkin/components/side-nav`, and `run: (action: string) => void`), as in `oddkin-quickstart/react/src/Shell.tsx` | Exit 0. `tests/docs/pages.test.ts` "show the React sample that `npm run typecheck` checks": the page's sample equals the fixture below its comment |
+| The import map's entries | `.tmp/import-closure.mjs`: from `@oddkin/components/define/button`, every specifier the built files import, each entry resolved through its package's `exports` (default condition) | 6 entries: `define/button`, `@oddkin/core/element`, `core/styles`, `@oddkin/tokens/refs`, `core/template`, `core/reactive`; the 4 beyond the page's 2 are the ones Agent 1's browser reported. The sample lists the 6; "list in the import map sample every entry the button loads" walks the built files the same way and compares |
+| The new tests fail on drift | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-docs-samples.json`: `core/reactive` removed from the map; the sample's `run` type changed | Both killed (1 failed, 21 passed) |
+| The samples against the packed packages | `npm run verify:packs` | Exit 0; "Docs snippets resolve against packed @oddkin/core, tokens, components, state, and app (35 authored samples)", 31 before: the map's 6 URLs are the files the exports name, and the two new module samples import published entries (`@oddkin/tokens/css/default.css`, `@oddkin/components/define/button`) |
+| Docs tests | `npx vitest run --project node tests/docs` | 33 passed |
+| Docs e2e | `e2e-when-free.mjs 3 …`: `e2e/docs.spec.ts` and `e2e/docs-site.spec.ts` in Chromium; `e2e/docs.spec.ts` in Firefox, then WebKit | Chromium 17 passed (1.1 min); Firefox 10 passed (2.4 min); WebKit 10 passed (1.4 min) |
+| Gates | `npm run typecheck`; `npm run lint` | Both exit 0 |
+
+**Not verified here:** the Vite commands themselves, which `oddkin-quickstart`'s `vite-typescript` project runs (create-vite 9.3.3 there; the page says `vite@latest`); its copies update after this lands.

@@ -14,6 +14,10 @@ export const startTokens: Page = {
       id: 'load',
       title: 'Load a theme stylesheet',
       blocks: [
+        { p: ['Install the tokens package, the only one this page uses:'] },
+        {
+          code: { lang: 'sh', verify: 'none', code: 'npm install @oddkin/tokens@beta' },
+        },
         {
           p: [
             'The default theme is one stylesheet, the ',
@@ -29,6 +33,16 @@ export const startTokens: Page = {
             verify: 'markup',
             code: '<link rel="stylesheet" href="/node_modules/@oddkin/tokens/dist/css/default.css" />',
           },
+        },
+        {
+          p: [
+            'The link points into ',
+            { code: 'node_modules' },
+            ', so serve the page from the project’s root with any static file server. With a bundler, import the stylesheet from a module instead:',
+          ],
+        },
+        {
+          code: { lang: 'js', verify: 'module', code: "import '@oddkin/tokens/css/default.css';" },
         },
       ],
     },

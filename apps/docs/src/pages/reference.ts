@@ -31,6 +31,50 @@ export const install: Page = {
       ],
     },
     {
+      id: 'bundler',
+      title: 'With a bundler',
+      blocks: [
+        {
+          p: [
+            'For an app built with Vite or another bundler, start from the bundler’s own template, then install the packages. With Vite and TypeScript:',
+          ],
+        },
+        {
+          code: {
+            lang: 'sh',
+            verify: 'none',
+            code: `npm create vite@latest my-app -- --template vanilla-ts
+cd my-app
+npm install @oddkin/tokens@beta @oddkin/core@beta @oddkin/components@beta`,
+          },
+        },
+        {
+          p: [
+            'Import the theme stylesheet and the elements you use from the entry module (',
+            { code: 'src/main.ts' },
+            ' in that template). The bundler resolves both, so there is no import map or ',
+            { code: 'node_modules' },
+            ' link to write.',
+          ],
+        },
+        {
+          code: {
+            lang: 'js',
+            verify: 'module',
+            code: `import '@oddkin/tokens/css/default.css';
+import '@oddkin/components/define/button';`,
+          },
+        },
+        {
+          p: [
+            'Then write the elements in the page’s HTML, as ',
+            { link: 'Components in any app', href: '/getting-started/components' },
+            ' shows.',
+          ],
+        },
+      ],
+    },
+    {
       id: 'esm',
       title: 'Native ES modules and import maps',
       blocks: [
@@ -51,6 +95,10 @@ export const install: Page = {
   {
     "imports": {
       "@oddkin/core/element": "/node_modules/@oddkin/core/dist/prod/element/index.js",
+      "@oddkin/core/reactive": "/node_modules/@oddkin/core/dist/prod/reactive/index.js",
+      "@oddkin/core/styles": "/node_modules/@oddkin/core/dist/prod/styles/index.js",
+      "@oddkin/core/template": "/node_modules/@oddkin/core/dist/prod/template/index.js",
+      "@oddkin/tokens/refs": "/node_modules/@oddkin/tokens/dist/refs/index.js",
       "@oddkin/components/define/button": "/node_modules/@oddkin/components/dist/button/button.define.js"
     }
   }
@@ -62,13 +110,17 @@ export const install: Page = {
         },
         {
           p: [
-            'An element entry imports further core entries; list each one the browser reports as unresolved, or generate the map from the packages’ ',
+            'These are the six entries ',
+            { code: 'odd-button' },
+            ' loads. Other elements import further entries: list each one the browser reports as unresolved, or generate the map from the packages’ ',
             { code: 'exports' },
             ' with ',
             { code: 'createImportMap()' },
             ' from ',
             { code: '@oddkin/workbench/data' },
-            '. ',
+            '. The links point into ',
+            { code: 'node_modules' },
+            ', so serve the page from the project’s root with any static file server. ',
             { code: 'examples/components-only' },
             ' in the repository is a complete page with its map and a strict Content Security Policy.',
           ],
