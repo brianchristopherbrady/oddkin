@@ -254,6 +254,27 @@ test('unknown local references render a not-found state', async ({ page }) => {
   expect((await page.request.get(`${docs}/favicon.ico`)).status()).toBe(404);
 });
 
+test('code samples keep their place while their copy buttons register', async ({ page }) => {
+  // A click below a sample must not end off its target (the docs journey's lost click, 2026-11-01).
+  let release = () => {};
+  const held = new Promise<void>((resolve) => (release = resolve));
+  await page.route(/copy-button/, async (route) => {
+    await held;
+    await route.continue();
+  });
+  await page.goto(`${docs}/guides/layout`, { waitUntil: 'domcontentloaded' });
+  const link = page.getByRole('link', { name: 'side navigation guide' });
+  await expect(page.locator('odd-copy-button:not(:defined)').first()).toBeAttached();
+  const heights = () =>
+    page.locator('.code-toolbar').evaluateAll((bars) => bars.map((bar) => bar.clientHeight));
+  const before = { bars: await heights(), link: (await link.boundingBox())?.y };
+  release();
+  await expect(page.locator('odd-copy-button:not(:defined)')).toHaveCount(0, {
+    timeout: catalogLoad,
+  });
+  expect({ bars: await heights(), link: (await link.boundingBox())?.y }).toEqual(before);
+});
+
 test('the AI page shows a live conversation and links every AI element to its reference', async ({
   page,
 }) => {

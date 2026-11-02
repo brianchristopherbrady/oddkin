@@ -465,6 +465,11 @@ odd-side-nav:not(:defined) > a {
   background: var(--odd-color-surface-sunken);
 }
 
+/* The copy button (a small control) registers after the first paint: hold its height meanwhile. */
+.code-toolbar {
+  min-block-size: var(--odd-control-height-sm);
+}
+
 .code-label {
   color: var(--odd-color-text-primary);
   font-size: var(--odd-font-size-sm);

@@ -4857,3 +4857,21 @@ CI run 41353564510 on `f67bdd2`: Vitest Chromium 2,856 and Firefox 2,801 passed,
 | P0.2's last item | Agent 2's `c9ffbc0e` before the push: `npx vitest run --project node packages/workbench/test/share-compat.test.ts`; `npm run typecheck`; `npm run lint` | 3 passed; exit 0; exit 0 |
 
 **Not verified yet:** a failed run reaching the owner and Agent 1 (needs the owner's run by hand with version `0.0.0-check`); `ci-watch` posting for `oddkin-quickstart`.
+## 2026-11-01 — The docs journey's lost click (round 11, Agent 3)
+
+CI failed `e2e/docs.spec.ts:60`, in "docs guides, metadata references, local search, and shadow-root links", in Firefox (run 41353564510, on `f67bdd2`) and in WebKit (run 41369432939, on `4754ffd`): after the click on "side navigation guide", the "Side navigation" heading was not found within 15 s. Every other test passed in both runs.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| CI's report | `.tmp/ci-annotations.mjs`: the failed jobs' logs through GitHub's API | Both runs: `toBeVisible()` failed with "element(s) not found"; 1,133 passed and 1 failed |
+| The step's timeline | `.tmp/journey-timeline.mjs`: the journey in a plain Node Playwright script, logging `framenavigated`, `pageerror`, `requestfailed`, `console`, and each pointer event's target | Firefox passed here. Each click's `pointerdown`, `mouseup`, and `click` reached the link, then the page navigated. The only page errors were module loads cut off while the previous page unloaded |
+| What moves the link | `.tmp/link-shift.mjs`: `/guides/layout` loaded with the modules of `odd-side-nav`, `odd-container`, and `odd-copy-button` held; the link's box recorded, the modules released, the box recorded again. Then each module held alone (Firefox) | All three held: the link moves down 11 px in each engine (y 1529 to 1540 in Firefox and WebKit, 1528 to 1539 in Chromium). Held alone, `odd-side-nav` and `odd-container` move nothing; `odd-copy-button` accounts for the 11 px |
+| Why | `.tmp/copy-button-box.mjs` (Chromium): the code toolbar before and after `odd-copy-button` registers | 887 × 21 px with the button unregistered (0 × 0); 887 × 32 px after, the button 74.61 × 32 px. `--odd-control-height-sm` is 2rem |
+| The race, widened | `.tmp/lost-click.mjs`: the copy button's module held; the pointer goes down on the link, the module is released and the element registers, then the pointer comes up | Before the fix, the 21 px link moved 11 px in every engine. Chromium's click landed on the `a` and the heading showed; Firefox's and WebKit's landed on the `p`, and the heading never showed. After the fix, the link moved 0 px, and in all three engines the click landed on the `a` and the heading showed |
+| The fix | `apps/docs/styles.css`: `.code-toolbar { min-block-size: var(--odd-control-height-sm); }` | No timeout changed |
+| The new test fails without the fix | `e2e/docs.spec.ts`, "code samples keep their place while their copy buttons register": it holds `/copy-button/`, measures the code toolbars and the link, releases, and measures again. Run in Chromium with the rule removed | 1 failed: the toolbar 32 px instead of 21, the link's y 1539.05 instead of 1528.05. With the rule restored, it passes |
+| The spec in three engines | `node ../oddkin-lanes/tools/e2e-when-free.mjs 3 … e2e/docs.spec.ts --project=<engine> --workers=1`, Chromium with `e2e/docs-site.spec.ts` as well | Firefox 10 passed (4.5 min); Chromium 17 passed (1.4 min); WebKit 10 passed (1.6 min). The journey and the new test passed in each |
+| Under memory pressure | Earlier runs here with 0.4 to 1.5 GB of free memory | Unrelated tests timed out: 10 failed in a run of all three engines; 5 failed in WebKit alone, and 4 of those passed when rerun alone. "every published component is listed under its category" timed out in WebKit both with the rule and with it removed. With 2.8 GB free, the runs above passed |
+| Gates | `npm run typecheck`; `npm run lint`; `npx vitest run tests/docs` | Exit 0. Lint: every step passed except `prettier --check .`, which flagged two of my untracked notes in `.agent-notes/`; formatted, it passes. 31 passed |
+
+**Not verified here:** CI on this commit, under CI's load.
