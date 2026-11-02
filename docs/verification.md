@@ -4824,3 +4824,12 @@ CI run 41353564510 on `f67bdd2`: Vitest Chromium 2,856 and Firefox 2,801 passed,
 | `oddkin-quickstart` | `GET /repos/brianchristopherbrady/oddkin-quickstart` and its contents | Public; one commit, "Initial commit"; `LICENSE` and `README.md` only |
 
 **Not verified here:** CI on this commit.
+
+## 2026-11-01 — The beta.1 GitHub Release's evidence (D-11) (round 10, Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Assets | GitHub's API: the release `v1.0.0-beta.1`, then each asset's download URL, without signing in | 3 assets, all `uploaded` and downloadable: `evidence.json` 4,432 B, `EVIDENCE.md` 1,955 B, `release-evidence-1.zip` 352,682 B |
+| The local evidence | SHA-256 of each download against `release-evidence/1.0.0-beta.1/` in the release checkout | Both identical |
+| The CI evidence | `Expand-Archive` on the downloaded zip | `evidence.json`, `EVIDENCE.md`, `impact/`, and `results/` (e2e and Vitest JSON); `EVIDENCE.md` names commit `35b6dcd2e327`, clean, and CI run 41168839415; the zip has the artifact's size, 352,682 B |
+| Scorecard | Gate A's lines counted by status | Verified 16, Partial 3, Planned 1, Unknown 2, Owner 1 |

@@ -515,7 +515,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the evidence artifact of each CI run on `main`.
 - **Done when:** each run on `main` keeps a downloadable evidence artifact (with an agreed retention). The release run's artifact is attached to the GitHub Release when D-11 is yes.
 - **Risks:** reporter changes affect other agents' local output; enable them only when `CI` is set.
-- **State (2026-10-29, Agent 1):** in `ci.yml`. The Vitest steps add the JSON reporter beside `default` and `github-actions`, and Playwright adds its JSON reporter when `CI` is set. After `verify:packs`, CI writes the change-impact report (CF.2) and the evidence with `--ci`, which reads the job's step times from the GitHub API (`actions: read`), and uploads `release-evidence/` as `release-evidence-<attempt>`, kept 30 days, from every run that was not cancelled. Attaching it to a GitHub Release waits for D-11.
+- **State (2026-10-29, Agent 1):** in `ci.yml`. The Vitest steps add the JSON reporter beside `default` and `github-actions`, and Playwright adds its JSON reporter when `CI` is set. After `verify:packs`, CI writes the change-impact report (CF.2) and the evidence with `--ci`, which reads the job's step times from the GitHub API (`actions: read`), and uploads `release-evidence/` as `release-evidence-<attempt>`, kept 30 days, from every run that was not cancelled. Attaching it to a GitHub Release waits for D-11. (2026-11-01: D-11 is yes, and the `1.0.0-beta.1` GitHub Release carries its CI run's `release-evidence-1` beside the local `evidence.json` and `EVIDENCE.md`, attached by the owner.)
 
 ### RF-11 External fixture repository
 

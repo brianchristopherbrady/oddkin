@@ -8,7 +8,7 @@ Classes, as in the [technical plan](./technical-commercialization-plan.md): **Ve
 
 ## Gate A: public technical preview
 
-On 2026-11-01, 15 of 23 lines are Verified (8 on 2026-10-29).
+On 2026-11-01, 16 of 23 lines are Verified (8 on 2026-10-29).
 
 ### Product and release
 
@@ -36,7 +36,7 @@ On 2026-11-01, 15 of 23 lines are Verified (8 on 2026-10-29).
 | Size budgets pass. | Verified | CI `npm run size` |
 | Compatibility matrix is current. | Verified | `lint:css` |
 | No accessibility claim exceeds recorded evidence. | Verified | The npm description, the READMEs, and the docs site name the keyboard and axe-core evidence and say screen readers are not yet verified (RF-03, D-7) |
-| Release evidence bundle is downloadable. | Partial | Every CI run keeps it as the artifact `release-evidence-<attempt>` (RF-09, RF-10); attaching the `1.0.0-beta.1` bundles to its GitHub Release is the owner's (D-11) |
+| Release evidence bundle is downloadable. | Verified | The `1.0.0-beta.1` GitHub Release carries its CI run's `release-evidence-1` and the local `evidence.json` and `EVIDENCE.md` (D-11, attached by the owner 2026-11-01; downloaded and checked that day: the local files identical, the CI bundle for `35b6dcd`); every CI run keeps `release-evidence-<attempt>` (RF-09, RF-10) |
 
 ### Product experience
 
@@ -163,7 +163,7 @@ Record:
 ## Current status, 2026-11-01
 
 - **Technical foundation:** strong. The published beta `1.0.0-beta.1` (2026-11-01), with CI green on `8830ef5`.
-- **Public preview readiness (Gate A):** 15 of 23 lines Verified; the rest are the README check (RF-02), installation and a sample report outside this repository (RF-11), the GitHub Release's evidence (D-11), and the product-experience lines (RF-16 to RF-19).
+- **Public preview readiness (Gate A):** 16 of 23 lines Verified; the rest are the README check (RF-02), installation and a sample report outside this repository (RF-11), and the product-experience lines (RF-16 to RF-19).
 - **External installation evidence:** fresh projects in this repository install the published packages and pass in three engines; no external repository yet.
 - **Libraries not built with Oddkin:** Workbench, change impact, and the agent kits read their Custom Elements Manifest (CF.3); no external library has been run.
 - **Paid-pilot readiness:** not yet established; the offer and playbook are drafted.

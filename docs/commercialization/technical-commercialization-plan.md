@@ -351,7 +351,7 @@ The [go-to-market plan](./go-to-market-and-pricing.md) and the [pilot playbook](
 
 - a recorded five-minute demonstration of the change above [Planned];
 - a public sample impact report [recorded in [docs/impact-demo/](../impact-demo/README.md) by `scripts/impact-demo.mjs`, and presented on the docs site's `/change-impact` page, which is generated from it];
-- a sample release evidence bundle [every CI run keeps one (RF-09, RF-10); attaching `1.0.0-beta.1`'s to its GitHub Release is the owner's (D-11)];
+- a sample release evidence bundle [every CI run keeps one (RF-09, RF-10), and the `1.0.0-beta.1` GitHub Release carries its bundles (D-11, 2026-11-01)];
 - a before-and-after agent task that shows fewer unsupported API uses [needs an evaluation harness; Planned. One agent run built pages from the packaged kit alone (`tests/agent-run/`), without a comparison];
 - a security and data-flow overview, and an architecture page on local versus hosted data [`SECURITY.md` exists; the rest is Planned; RF-17 for the docs site];
 - a limitations page [docs/support.md, on the docs site at /support/policy (RF-04); release notes (RF-08)];

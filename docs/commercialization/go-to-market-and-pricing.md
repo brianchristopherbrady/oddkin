@@ -166,7 +166,7 @@ State on 2026-11-01:
 | --- | --- |
 | Five-minute recorded demo | Not made |
 | Public sample impact report | Exists: https://www.oddkin.dev/change-impact, from [docs/impact-demo](../impact-demo/README.md) |
-| Sample release evidence bundle | Exists: every CI run keeps one (`release-evidence-<attempt>`), and the release notes of `1.0.0-beta.1` name the bundle to attach to its GitHub Release (owner decision D-11) |
+| Sample release evidence bundle | Exists: every CI run keeps one (`release-evidence-<attempt>`), and the `1.0.0-beta.1` GitHub Release carries its bundles (owner decision D-11, attached 2026-11-01) |
 | Before/after agent task | One recorded agent run built pages from the packaged kit alone ([tests/agent-run](../../tests/agent-run/README.md)); no before/after comparison |
 | Security and data-flow overview | [SECURITY.md](../../SECURITY.md) covers vulnerability reports; no data-flow overview (nothing leaves the user's machine today) |
 | Clear limitations page | Exists: [docs/support.md](../support.md), at https://www.oddkin.dev/support/policy |
