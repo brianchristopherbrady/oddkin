@@ -67,20 +67,23 @@ export const buttonStyles = css`
   :host([appearance='ghost']) button {
     background: var(--odd-button-background, transparent);
   }
-  /* :host matches the appearance rules' specificity. */
+  /* Retain each appearance's fill, outline and content colour; mute the whole control. */
   :host button:disabled {
-    border-color: transparent;
-    background: ${token('color.surface.sunken')};
-    color: ${token('color.text.disabled')};
+    opacity: 0.5;
   }
   /* A pressed toggle (Figma toggleButton On) takes the selection colours in every appearance. As
      specific as the hover and active rules, and later, so they leave it unchanged. */
-  :host([toggle]) button[aria-pressed='true']:enabled:not([aria-disabled='true']) {
+  :host([toggle]) button[aria-pressed='true']:enabled:not([aria-disabled='true']),
+  :host([toggle]) button[aria-pressed='true']:disabled {
     border-color: transparent;
     background: ${token('color.selection.background')};
     color: ${token('color.selection.foreground')};
   }
-  :host([toggle]) button[aria-pressed='true']:disabled {
-    background: ${token('color.selection.background')};
+  @media (forced-colors: active) {
+    :host button:disabled {
+      opacity: 1;
+      color: GrayText;
+      border-color: GrayText;
+    }
   }
 `;

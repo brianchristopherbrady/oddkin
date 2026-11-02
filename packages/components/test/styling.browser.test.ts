@@ -222,6 +222,7 @@ describe('native <button> styling path (button.css)', () => {
     'border-top-left-radius',
     'background-color',
     'color',
+    'opacity',
     'font-family',
     'font-size',
     'font-weight',
@@ -274,11 +275,16 @@ describe('native <button> styling path (button.css)', () => {
     expect(all).toHaveLength(36);
     for (const [control, native] of all)
       expect(styles(native), native.outerHTML).toEqual(styles(control));
-    // The disabled look differs from the enabled one (it once lost to the appearance rules).
-    const [primary, disabledPrimary] = all;
-    expect(getComputedStyle(disabledPrimary![1]).backgroundColor).not.toBe(
-      getComputedStyle(primary![1]).backgroundColor,
-    );
+    // Disabling retains each appearance's visual identity in both themes and all sizes.
+    for (let i = 0; i < all.length; i += 2) {
+      const enabled = getComputedStyle(all[i]![1]);
+      const disabled = getComputedStyle(all[i + 1]![1]);
+      expect(disabled.backgroundColor).toBe(enabled.backgroundColor);
+      expect(disabled.borderTopColor).toBe(enabled.borderTopColor);
+      expect(disabled.color).toBe(enabled.color);
+      expect(enabled.opacity).toBe('1');
+      expect(disabled.opacity).toBe('0.5');
+    }
   });
 
   it('matches a pressed toggle, enabled, disabled, and hovered', async () => {

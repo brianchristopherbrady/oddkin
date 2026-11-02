@@ -87,22 +87,18 @@ export const nativeButtonStyles = css`
     background: var(--odd-button-background, ${token('color.surface.sunken')});
   }
   .odd-button:disabled {
-    border-color: transparent;
-    background: ${token('color.surface.sunken')};
-    color: ${token('color.text.disabled')};
+    opacity: 0.5;
   }
   .odd-button:disabled,
   .odd-button[aria-disabled='true'] {
     cursor: not-allowed;
   }
   /* The pressed state twice: as specific as the hover and active rules, and later. */
-  .odd-button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']) {
+  .odd-button[aria-pressed='true'][aria-pressed='true']:enabled:not([aria-disabled='true']),
+  .odd-button[aria-pressed='true']:disabled {
     border-color: transparent;
     background: ${token('color.selection.background')};
     color: ${token('color.selection.foreground')};
-  }
-  .odd-button[aria-pressed='true']:disabled {
-    background: ${token('color.selection.background')};
   }
   .odd-button:focus-visible {
     outline: ${token('focus.width')} solid ${token('color.focus.ring')};
@@ -113,6 +109,7 @@ export const nativeButtonStyles = css`
       border: 1px solid ButtonText;
     }
     .odd-button:disabled {
+      opacity: 1;
       color: GrayText;
       border-color: GrayText;
     }
