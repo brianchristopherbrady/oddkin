@@ -4842,3 +4842,18 @@ CI run 41353564510 on `f67bdd2`: Vitest Chromium 2,856 and Firefox 2,801 passed,
 | Node | `npx vitest run --project node packages/workbench/test/share-compat.test.ts` | 3 passed: decoded against the current odd-button page with no problems; with `appearance` no longer declared, it is dropped with "Ignored attribute "appearance"."; a version 2 link is refused |
 | E2E | `e2e/workbench.spec.ts --grep=published --repeat-each=2`, three engines, `--workers=1` | 18 of 18. The current dev server shows the link's button (text, attribute, background, dark, rtl, 360 px) with no note; an added undeclared attribute is dropped with its note; a version 2 link shows the refusal and the default example. Run as one test with three page loads, Firefox went over the 30 s test timeout, so it is three tests with one load each |
 | Mutations | `node ../oddkin-lanes/tools/mutate.mjs .tmp/mutate-share.json` | 3 of 3 killed: version 1 refused, undeclared names dropped without a note, any version accepted |
+
+## 2026-11-01 — `oddkin-quickstart`: the docs' quick starts from npm (RF-11) (round 10, Agent 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Installs from npm | In each project: the docs' `npm install` with `@beta` (tokens only: `@oddkin/tokens@beta`); the two Vite projects first run `npm install` for their template | All exit 0; `1.0.0-beta.1` of tokens, core, and components |
+| Tokens CLI, as documented | `npx oddkin-tokens init`, `npx oddkin-tokens check oddkin.theme.json`, `npx oddkin-tokens build oddkin.theme.json --out tokens` | Exit 0; 8 files written |
+| The import map, as documented | The Installation page's two-entry map, then each entry the browser reports as unresolved, one reload at a time (Chromium) | Four rounds: `@oddkin/core/styles`, `@oddkin/tokens/refs`, `@oddkin/core/template`, `@oddkin/core/reactive`; then `odd-button` is defined and rendered with no error |
+| The React example, as documented | Copied exactly into `npm create vite@9.3.3 react -- --template react-ts`; `npx tsc -p tsconfig.app.json` (TypeScript 7.0.2) | Exit 1: TS7031 (`items` implicitly `any`) and TS2304 (`run` not defined). With the props typed and `run` taken as a prop: `npm run build` exit 0 |
+| Builds | `npm run build` in `vite-typescript/` (`tsc && vite build`) and `react/` (`tsc -b && vite build`) | Exit 0 (Vite 8.3.5); `button.disabled = true` type-checks on a queried `odd-button` |
+| Tests here | `npx playwright test` (Playwright 1.64.1; Agent 3's docs e2e ran at the same time, CPU at 100%) | Chromium and WebKit 12 of 12. Firefox: 3, then 1, different tests timed out while loading or closing pages, with Firefox graphics errors; every Firefox test passed in at least one run. Not counted as a pass here: see the CI run |
+| CI | Run 41382884741, `4296044`, push to main, `ubuntu-24.04` | Success in 1.6 min: every project installed and built, every test passed in Chromium, Firefox, and WebKit; the report job succeeded with no issue to close |
+| P0.2's last item | Agent 2's `c9ffbc0e` before the push: `npx vitest run --project node packages/workbench/test/share-compat.test.ts`; `npm run typecheck`; `npm run lint` | 3 passed; exit 0; exit 0 |
+
+**Not verified yet:** a failed run reaching the owner and Agent 1 (needs the owner's run by hand with version `0.0.0-check`); `ci-watch` posting for `oddkin-quickstart`.

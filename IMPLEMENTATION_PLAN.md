@@ -30,7 +30,7 @@ Agents 1 and 2 do not work on the docs site. They answer Agent 3's questions and
 
 Each agent takes its next item in this order. An item waits only for what its row names. Finish and land the work already in progress first.
 
-Finish first (owner, 2026-11-01: work already started comes before new items). Agent 1 fills `oddkin-quickstart` (RF-11), which the owner created on 2026-11-01 and which holds only its README and licence: the docs' quick starts copied verbatim, one React app, and a workflow that tests them from npm in three engines (the release plan's §12). Agent 3 fixes the docs journey (`e2e/docs.spec.ts:60`), which failed on CI again, in WebKit on `4754ffd` after Firefox on `f67bdd2`.
+Finish first (owner, 2026-11-01: work already started comes before new items). Agent 1 filled `oddkin-quickstart` (RF-11) on 2026-11-01 with the docs' quick starts copied from the site, one React app, and a workflow that tests them from npm in three engines (the release plan's §12); its first run is green, and RF-11 waits for the owner's failing run by hand. Agent 3 fixes the docs journey (`e2e/docs.spec.ts:60`), which failed on CI again, in WebKit on `4754ffd` after Firefox on `f67bdd2`.
 
 | Agent | # | Item | Waits for |
 | --- | --- | --- | --- |
@@ -56,12 +56,12 @@ After the docs pause (Agent 3): the docs site's `/theme-studio` page with Agent 
 
 Owner decisions of 2026-11-01, on the list below: `odd-theme-scope` is dropped; `odd-table` is unparked (its scope, a data table without the data grid's virtualization and editing, was set by Agent 1 for the owner to review); `homepage` and `bugs` are in every manifest, with `keywords` (RF-06, done); private vulnerability reporting is on; the owner created the external fixture repository, `oddkin-quickstart` (D-6), which Agent 1 fills, and adds the trusted publishers when the workflow is ready.
 
-Waiting for the owner: observers for RF-18; the trusted publishers on npmjs.com, within 2 days of the first publish from `release.yml` (RF-12).
+Waiting for the owner: one run by hand of `oddkin-quickstart` with version `0.0.0-check`, to see a failure reach the owner and Agent 1 (RF-11); observers for RF-18; the trusted publishers on npmjs.com, within 2 days of the first publish from `release.yml` (RF-12).
 
 Why this order:
 
 - **Dependencies first.** Theme Studio's products need P1.1's base file and product role overrides, so those lead Agent 3's P1.1. Composition screens for a library's own components need P1.6's catalog generation, which Agent 2 does before them. Everything else in Theme Studio starts now.
-- **Gate A.** The first commercialization gate, the public technical preview, has 15 of its 23 lines verified (the [scorecard](./docs/commercialization/commercial-readiness-scorecard.md)). RF-02 and RF-19 are its lines that agents can close alone; RF-11 and RF-18 need the owner's repository and observers.
+- **Gate A.** The first commercialization gate, the public technical preview, has 17 of its 23 lines verified (the [scorecard](./docs/commercialization/commercial-readiness-scorecard.md)). RF-02 and RF-19 are its lines that agents can close alone; RF-18 needs observers.
 - **The next release.** `1.0.0-beta.2` needs trusted publishing (D-5).
 - **Parallel lanes.** P1.7, which tier CF needs, moves to Agent 1 so that it does not wait behind Agent 2's Theme Studio and analyzer work.
 
@@ -89,12 +89,12 @@ Exit criteria:
   - Covers M12 "Independent consumers…", M11 "Every copied/generated example and exported theme verified in fresh directories…", and M1 "Node tooling's required compiler/build dependencies…".
   - *(2026-10-28, Agent 1: fresh Vite TypeScript (with Sass), React, Vue, and Svelte apps install the packed packages and their own build tools, type-check (TypeScript, TSX), build with Vite, and pass in three engines: they register the elements, report typed input, and submit the form with no console error (`tests/consumers/`, `e2e/fresh-consumers.spec.ts`, `scripts/packed-consumers.mjs`). The full app now also uses an AI element (`odd-suggestions` fills the form). `ODDKIN_CONSUMERS_FROM=<dist-tag>` installs from the registry instead (`.github/workflows/registry-smoke.yml`). 2026-10-29: an Angular CLI app (22.2.3, AOT with `strictTemplates`, on TypeScript 6.0.3 as Angular 22.2 requires) passes the same checks. Remaining: the registry run's first result.)*
   - *(2026-11-01, Agent 1: done. `registry-smoke.yml`'s step, run here against the published 1.0.0-beta.1, installs every consumer from npm (each lockfile resolves `@oddkin` to registry.npmjs.org) and passes in Chromium, Firefox, and WebKit: 32, and 60 with the Chromium-only accessibility-tree test skipped. CI runs the same pages from packed tarballs.)*
-- [ ] **P0.2 Cross-package compatibility (Agent 1).**
+- [x] **P0.2 Cross-package compatibility (Agent 1).**
   - Close §2.5's open items: two independently built consumers and duplicate core copies.
   - Make version ranges compatible across the packages, token outputs, metadata, configuration, and frames.
   - Make dependency declarations install a single core, and add duplicate-version diagnostics.
   - Covers M12 "Verify installed Node tool dependencies, optional framework declarations/adapters, duplicate-version diagnostics…".
-  - *(2026-10-28, Agent 1: one copy per install. `@oddkin/core` is a peer dependency of components, state, app, and ai; `@oddkin/state` of app; `@oddkin/components` of ai; `@oddkin/tokens` stays a dependency (release-process.md §1, `tests/architecture/single-core.test.ts`). Development builds record each copy of core under `Symbol.for('oddkin.core.copies')`, and the second copy warns once (`[core.copies]`) with both versions; production builds carry none of it (core-contracts.md §5.1; `packages/core/test/copies.browser.test.ts`, `e2e/duplicate-core.spec.ts`). 2026-10-29: the duplicate-core page also runs with one consumer on the published 1.0.0-beta.0, so two versions share a page; a same-origin frame is checked as another realm (`e2e/realms.spec.ts`); release-process.md §1 states the frame protocol and share-link rules as Workbench's code has them. Remaining: a share link from a released Workbench opened by the current one (Agent 2).)*
+  - *(2026-10-28, Agent 1: one copy per install. `@oddkin/core` is a peer dependency of components, state, app, and ai; `@oddkin/state` of app; `@oddkin/components` of ai; `@oddkin/tokens` stays a dependency (release-process.md §1, `tests/architecture/single-core.test.ts`). Development builds record each copy of core under `Symbol.for('oddkin.core.copies')`, and the second copy warns once (`[core.copies]`) with both versions; production builds carry none of it (core-contracts.md §5.1; `packages/core/test/copies.browser.test.ts`, `e2e/duplicate-core.spec.ts`). 2026-10-29: the duplicate-core page also runs with one consumer on the published 1.0.0-beta.0, so two versions share a page; a same-origin frame is checked as another realm (`e2e/realms.spec.ts`); release-process.md §1 states the frame protocol and share-link rules as Workbench's code has them. Remaining: a share link from a released Workbench opened by the current one (Agent 2). 2026-11-01: done in `c9ffbc0e` (Agent 2): a link made by the published Workbench `1.0.0-beta.1` opens in the current one, which drops names the component no longer declares and refuses another version (`packages/workbench/test/share-compat.test.ts`, `e2e/workbench.spec.ts`); P0.2 is done.)*
 - [x] **P0.3 Workbench in working order (Agent 2).**
   - **The consumer path.** A library author installs the packed `@oddkin/workbench` and `@oddkin/analyzer` and writes `oddkin.config.ts`. `oddkin workbench dev` and `oddkin workbench build` then work against an Oddkin library and against a standard-CEM fixture library.
   - **Component pages.** Each renders the real component in its frame. Editing attributes, properties, slots, and CSS custom properties in the API table updates the preview in place. Presets, Reset, the events log, and Copy example work, and the catalog's live previews load.
@@ -181,7 +181,7 @@ The details are in the [technical commercialization plan](./docs/commercializati
   - RF-12, trusted publishing with provenance, before `1.0.0-beta.2` (D-5);
   - RF-13's rest: Dependabot, an informational `npm audit`, and the SBOM (`SECURITY.md` is done);
   - RF-05, evidence for any Node or package-manager range the support policy claims beyond what is tested;
-  - with the owner: RF-11 (the external fixture repository, D-6) and RF-18 (two observed installations);
+  - with the owner: RF-11 (`oddkin-quickstart`, filled and green on 2026-11-01; the owner's failing run by hand is left) and RF-18 (two observed installations);
   - RF-06: done 2026-11-01 with the owner's OK. Every manifest has `homepage` (https://www.oddkin.dev), `bugs` (the GitHub issues), and `keywords`, and `verify-packs` requires them and the exact `repository.url` that trusted publishing needs;
   - after the docs pause: RF-17 (Agent 3).
 

@@ -49,7 +49,7 @@ The work stops at Gate A. It adds no components, no product-pattern contracts, a
 | No third-party runtime dependency; no lifecycle scripts | Verified | `verify-packs.mjs` "unexpected runtime dependencies"; no `install`/`prepare` scripts in any manifest | None |
 | Packed-consumer matrix from tarballs | Verified | CI e2e at `6486921`: 1,014 passed, 12 skipped (fresh Vite, React, Vue, Svelte, and Angular apps, the golden path, and the packed consumers) | §11 gaps |
 | Installation from the registry | Verify | `ODDKIN_CONSUMERS_FROM=beta`: fresh apps 15/15 and golden path 15/15, locally, 2026-10-29; `registry-smoke.yml` exists | No GitHub run yet (weekly, Mondays) |
-| Independent external repository | Planned | Every consumer lives in this repository | RF-11 |
+| Independent external repository | Verify | `oddkin-quickstart` (public, the owner's) tests the docs' quick starts from npm in three engines; first run green 2026-11-01. A failure reaching the owner and Agent 1 is not yet seen | RF-11 |
 | Changelogs | Planned | Policy: per-package changelogs from 1.0.0 (release-process §1) | Intentional until 1.0.0 |
 | Release notes for betas | Partial | Owner decision 2026-10-29; [docs/releases/1.0.0-beta.1.md](../releases/1.0.0-beta.1.md) is a draft | Known issues, upgrade steps (RF-08) |
 | Root README status | Verify | Says eight packages at `1.0.0-beta.0`, 54 + 24 elements; metadata agrees (54, 24) | Other root README lines are stale (§7) |
@@ -528,6 +528,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 - **Artifacts:** the repository, its workflow, and its run history.
 - **Done when:** its CI passes against the published beta with the docs' commands copied verbatim, and a failure notifies the owner and Agent 1.
 - **Risks:** drift between the docs and the copies; the copies are refreshed when the docs change.
+- **State (2026-11-01, Agent 1):** the owner created [oddkin-quickstart](https://github.com/brianchristopherbrady/oddkin-quickstart) (D-6), and Agent 1 filled it with the docs' quick starts as published for `1.0.0-beta.1`: tokens as CSS only, a page with an import map, Vite with TypeScript, and React. Its README lists what each project copies and what it adds where the docs leave something out; the gaps went to Agent 3. Its workflow runs on pushes to main, weekly, and by hand with a version, and a failure opens or comments on "Failing workflow: Quick start". First run green (41382884741). Left: one run by hand with version `0.0.0-check`, to see the failure reach the owner (email and issue) and Agent 1 (`ci-watch`). Starting it from the release step needs the owner's token (Actions: read and write); until then the owner starts it by hand after each publish.
 
 ### RF-12 Trusted publishing and provenance
 
@@ -638,7 +639,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 | Changelogs and release notes exist. | Partial | beta.1 draft; changelogs from 1.0.0 by policy | RF-08 | Notes complete at the cut |
 | License and ownership decisions are recorded. | Verified | MIT in README, manifests, `LICENSE`; the owner owns `@oddkin` and confirmed MIT on 2026-10-30 (D-9) | — | Already true |
 | Export, declaration, files, side-effect, and `customElements` checks pass from tarballs. | Verified | `verify:packs`, CI run 40945402821 | RF-06 (extras) | Stays green in each release run |
-| Clean external installation completes the quick start. | Partial | Registry runs of in-repository fixtures (local, 2026-10-29) | RF-11 | The external repository's CI passes against the published version |
+| Clean external installation completes the quick start. | Verified | `oddkin-quickstart`'s CI installs the published packages from npm and passes in three engines (run 41382884741, 2026-11-01) | RF-11 | The external repository's CI passes against the published version |
 | Browser and Node support policy is published. | Partial | [docs/support.md](../support.md) (2026-10-30), linked from the README | RF-04 (docs site page), RF-05 | The policy page exists with evidence and limitations |
 | Known limitations are visible. | Partial | Component pages' known limitations; release-process §3 | RF-08, RF-04 | Release notes and the policy list them |
 | Serial Chromium, Firefox, and WebKit evidence is current. | Verify | CI per-engine steps; one failing Workbench test | P0.6 (Agent 2), RF-10 | A green CI run on the release commit, in the evidence bundle |

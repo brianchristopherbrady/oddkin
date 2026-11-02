@@ -8,7 +8,7 @@ Classes, as in the [technical plan](./technical-commercialization-plan.md): **Ve
 
 ## Gate A: public technical preview
 
-On 2026-11-01, 16 of 23 lines are Verified (8 on 2026-10-29).
+On 2026-11-01, 17 of 23 lines are Verified (8 on 2026-10-29).
 
 ### Product and release
 
@@ -21,7 +21,7 @@ On 2026-11-01, 16 of 23 lines are Verified (8 on 2026-10-29).
 | Changelogs and release notes exist. | Verified | Each beta has release notes ([1.0.0-beta.1](../releases/1.0.0-beta.1.md)); changelogs start at 1.0.0 ([release-process.md](../release-process.md) §1) |
 | License and ownership decisions are recorded. | Verified | MIT in the README, the manifests, and `LICENSE`; confirmed by the owner on 2026-10-30 (O-1, D-9) |
 | Export, declaration, files, side-effect, and `customElements` checks pass from tarballs. | Verified | `npm run verify:packs` in CI |
-| Clean external installation completes the quick start. | Partial | Fresh projects install the published `1.0.0-beta.1` and pass in three engines (the registry smoke's specs, 2026-11-01); no installation outside this repository yet (RF-11) |
+| Clean external installation completes the quick start. | Verified | [oddkin-quickstart](https://github.com/brianchristopherbrady/oddkin-quickstart), the owner's public repository, follows the docs' quick starts from nothing: it installs `@oddkin/*@beta` from npm, builds, and passes in Chromium, Firefox, and WebKit (first run 41382884741, 2026-11-01; weekly from then on). Seeing a failure reach the owner and Agent 1 is RF-11's last step |
 | Browser and Node support policy is published. | Verified | [docs/support.md](../support.md), on the docs site at /support/policy (RF-04); evidence for more Node versions and package managers is RF-05 |
 | Known limitations are visible. | Verified | docs/support.md and the release notes' Known issues |
 
@@ -163,7 +163,7 @@ Record:
 ## Current status, 2026-11-01
 
 - **Technical foundation:** strong. The published beta `1.0.0-beta.1` (2026-11-01), with CI green on `8830ef5`.
-- **Public preview readiness (Gate A):** 16 of 23 lines Verified; the rest are the README check (RF-02), installation and a sample report outside this repository (RF-11), and the product-experience lines (RF-16 to RF-19).
+- **Public preview readiness (Gate A):** 17 of 23 lines Verified; the rest are the README check (RF-02), a sample report outside this repository (RF-11), and the product-experience lines (RF-16 to RF-19).
 - **External installation evidence:** fresh projects in this repository install the published packages and pass in three engines; no external repository yet.
 - **Libraries not built with Oddkin:** Workbench, change impact, and the agent kits read their Custom Elements Manifest (CF.3); no external library has been run.
 - **Paid-pilot readiness:** not yet established; the offer and playbook are drafted.
