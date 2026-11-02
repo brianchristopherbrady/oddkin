@@ -4797,3 +4797,16 @@ CI run 41353564510 on `f67bdd2`: Vitest Chromium 2,856 and Firefox 2,801 passed,
 | `npm run verify:metadata` | In this worktree | Exit 1: the worktree has never run `npm test`, so it has no browser test records (234 missing, none stale). Its other two steps pass when run alone: `check-vocabulary.mjs` 0 findings, and the kits current |
 
 **Not verified here:** CI on this commit; the new fields on npm's package pages, which arrive with the next publish.
+
+## 2026-11-01 — Failure alerts: issues from the workflows, and the hourly lanes watch (round 10, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The issue logic | `npx vitest run tests/ci/failure-issue.test.ts` | 3 passed. A failed run opens one issue labelled `ci-failure` and creates the label; the issue names each failed step, or the job alone when no step is marked. Later failures comment on it. The next passing run comments and closes it, and one more does nothing. Another workflow's issue, and a pull request with the same title, are left alone; a cancelled result does nothing |
+| Types and format | `npx tsc -p tsconfig.tests.json`; `npx prettier --check` on the new files and the three workflows | Clean; Prettier parses the workflows as YAML |
+| Boundaries | `node scripts/architecture/check-boundaries.mjs` | Boundaries OK |
+| The watcher, dry run | `node tools/ci-watch.mjs --dry-run` in `oddkin-lanes` | The latest runs of `ci.yml` and `docs.yml` on main passed; `registry-smoke.yml` has no run on GitHub yet, so it is not stale; `oddkin-quickstart` has no workflow yet. With a saved state saying CI was failing, it would post "CI passes again on main" with the run and its commit. A failed run's steps read like "verify: Run npx vitest run --project browser --browser.name=webkit…" (CI run 41348174536's failed steps) |
+| Windowless runs | `conhost.exe --headless node -e …` | Node ran without a window and wrote its file |
+| The task | `ci-watch-task.ps1`, then `Start-ScheduledTask -TaskName oddkin-ci-watch` | Registered for the signed-in user, every hour with no end (`PT1H`); the manual start returned 0 and logged "ok: 3 workflows, 0 posted" |
+
+**Not verified here:** the `report` job on GitHub, which runs once this commit is pushed; a real failure post, since no watched run has failed since the watcher started.

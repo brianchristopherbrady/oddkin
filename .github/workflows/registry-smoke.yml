@@ -41,3 +41,25 @@ jobs:
             test-results/
           if-no-files-found: ignore
           retention-days: 14
+
+  # A failed run opens or comments on the issue "Failing workflow: Registry smoke"; the next passing
+  # run closes it (scripts/ci/failure-issue.mjs).
+  report:
+    needs: smoke
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: scripts/ci
+      - uses: actions/github-script@v9
+        env:
+          RESULT: ${{ contains(needs.*.result, 'failure') && 'failure' || 'success' }}
+        with:
+          script: |
+            const { report } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/ci/failure-issue.mjs`);
+            await report({ github, context, result: process.env.RESULT });
