@@ -508,7 +508,7 @@ Only the colour palette comes from the design source (§10.1); every other value
 | Motion easing (`cubicBezier`) | `motion.easing.{standard,enter,exit,linear}` | `cubic-bezier(0.4, 0, 0.2, 1)`, `(0, 0, 0.2, 1)`, `(0.4, 0, 1, 1)`, `(0, 0, 1, 1)` |
 | Stacking | `z-index.{base,raised,sticky,overlay}` | 0, 1, 100, 200 — in-flow layers only; dialogs, popovers, and menus use the top layer (css-architecture.md §9) |
 
-**Inputs (implemented, P1.1; agreed with Workbench for Theme Studio, 2026-11-03).** Three optional inputs generate steps of the table from one or two numbers; unset, the steps keep the table's values. The schema states each input's range and the default a form starts from, and `INPUT_BOUNDS` (`@oddkin/tokens/generate`) holds the same bounds, so a form can draw each control from the schema alone.
+**Inputs (implemented, P1.1; the shape agreed with Workbench for Theme Studio on 2026-11-02).** Three optional inputs generate steps of the table from one or two numbers; unset, the steps keep the table's values. The schema states each input's range and the default a form starts from, so a form can draw each control from the schema alone; the generator checks the same bounds, and a test keeps the two equal.
 
 | Input | Range (schema default) | Generates |
 | --- | --- | --- |
