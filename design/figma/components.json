@@ -3,7 +3,7 @@
   "fileKey": "E7LfRysny8V3qU24tv082i",
   "fileName": "Document",
   "exportedAt": "2026-10-24",
-  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained.",
+  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained. Disabled appearances 2026-11-03, session b42199d2-3adf-43b5-b62d-d9c78c87071b: read-only components.export.js filtered to Oddkin/Common/button, button/sm, button/lg, iconButton, and toggleButton and the odd-button/primary/disabled light and dark specimens on page 158:22 (7 families / 69 definitions, each replaced in place after the owner's 2026-11-01 disabled-button change), transferred in three slices of 24000, 24000, and 28931 characters with verified length 76931 and FNV-1a 1223383616. Every preceding family and component id retained.",
   "pages": [
     { "id": "353:62", "name": "01 · Foundations" },
     { "id": "158:22", "name": "02 · Primitives" },
@@ -2764,7 +2764,7 @@
       "page": "158:22",
       "frame": "Definitions · Actions",
       "kind": "COMPONENT_SET",
-      "description": "Primary, secondary and ghost actions. Small 32 / medium 40 / large 48 px; focus and busy states. Existing @oddkin/components implementation; extra visual states remain specifications.",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Web component.\nFigma asset: Oddkin/Common/button.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &amp;#39;@oddkin/components/define/button&amp;#39;;\nimport &amp;#39;@oddkin/components/define/button&amp;#39;;\n&amp;lt;odd-button&amp;gt;&amp;lt;/odd-button&amp;gt;\nOptional side-effect-free class import: import { OddkinButton } from &amp;#39;@oddkin/components/button&amp;#39;; this class import alone does not register the tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nPrimary, secondary and ghost actions. Small 32 / medium 40 / large 48 px; focus and busy states.\n\nDisabled treatment: preserve the enabled appearance and selection state; apply 50% opacity to the complete control. Primary retains its fill, secondary retains its outline, ghost stays transparent. Labels and icons fade together. Forced-colors code uses system colours at full opacity.",
       "properties": [
         {
           "name": "Appearance",
@@ -2937,7 +2937,10 @@
           "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
-            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "fills": [
+              { "value": "Oddkin · Component roles/color/action/default", "variants": [7] },
+              { "value": "Oddkin · Component roles/color/surface/default", "variants": [13] }
+            ],
             "height": ["Oddkin · Component roles/control/height/md"],
             "itemSpacing": ["Oddkin · Component roles/control/gap"],
             "minHeight": ["Oddkin · Component roles/control/height/md"],
@@ -2945,16 +2948,23 @@
             "paddingLeft": ["Oddkin · Component roles/control/padding/inline/md"],
             "paddingRight": ["Oddkin · Component roles/control/padding/inline/md"],
             "paddingTop": ["Oddkin · Component roles/space/none"],
+            "strokes": [
+              { "value": "Oddkin · Component roles/color/border/strong", "variants": [13] }
+            ],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
-          }
+          },
+          "literals": { "opacity": [0.5], "strokeWeight": [{ "value": 1, "variants": [13] }] }
         },
         {
           "path": ["Button / Disabled", "Label"],
           "types": ["TEXT"],
           "in": [1, 7, 13],
           "bound": {
-            "fills": ["Oddkin · Component roles/color/text/disabled"],
+            "fills": [
+              { "value": "Oddkin · Component roles/color/text/on-action", "variants": [7] },
+              { "value": "Oddkin · Component roles/color/text/primary", "variants": [1, 13] }
+            ],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
             "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
             "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
@@ -3326,7 +3336,7 @@
       "page": "158:22",
       "frame": "Definitions · Actions",
       "kind": "COMPONENT_SET",
-      "description": "Canonical lg button family. All appearance and interaction states; original variant IDs preserved.",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Web component variation.\nFigma asset: Oddkin/Common/button/lg.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &amp;#39;@oddkin/components/define/button&amp;#39;;\nimport &amp;#39;@oddkin/components/define/button&amp;#39;;\n&amp;lt;odd-button&amp;gt;&amp;lt;/odd-button&amp;gt;\nOptional side-effect-free class import: import { OddkinButton } from &amp;#39;@oddkin/components/button&amp;#39;; this class import alone does not register the tag. This Figma family is a variation/configuration of its parent element, not a separate registered tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nCanonical lg button family. All appearance and interaction states; original variant IDs preserved.\n\nDisabled treatment: preserve the enabled appearance and selection state; apply 50% opacity to the complete control. Primary retains its fill, secondary retains its outline, ghost stays transparent. Labels and icons fade together. Forced-colors code uses system colours at full opacity.",
       "properties": [
         {
           "name": "Appearance",
@@ -3585,9 +3595,8 @@
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
             "fills": [
-              { "value": "Oddkin · Component roles/color/action/default", "variants": [6] },
-              { "value": "Oddkin · Component roles/color/surface/default", "variants": [12] },
-              { "value": "Oddkin · Component roles/color/surface/sunken", "variants": [1, 7, 13] }
+              { "value": "Oddkin · Component roles/color/action/default", "variants": [6, 7] },
+              { "value": "Oddkin · Component roles/color/surface/default", "variants": [12, 13] }
             ],
             "height": ["Oddkin · Component roles/control/height/lg"],
             "itemSpacing": ["Oddkin · Component roles/control/gap"],
@@ -3609,11 +3618,12 @@
               { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
             ],
             "strokes": [
-              { "value": "Oddkin · Component roles/color/border/strong", "variants": [12] }
+              { "value": "Oddkin · Component roles/color/border/strong", "variants": [12, 13] }
             ],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
-          }
+          },
+          "literals": { "opacity": [{ "value": 0.5, "variants": [1, 7, 13] }] }
         },
         {
           "path": ["Button / Large", "Label"],
@@ -3621,9 +3631,8 @@
           "in": [0, 1, 6, 7, 12, 13],
           "bound": {
             "fills": [
-              { "value": "Oddkin · Component roles/color/text/disabled", "variants": [1, 7, 13] },
-              { "value": "Oddkin · Component roles/color/text/on-action", "variants": [6] },
-              { "value": "Oddkin · Component roles/color/text/primary", "variants": [0, 12] }
+              { "value": "Oddkin · Component roles/color/text/on-action", "variants": [6, 7] },
+              { "value": "Oddkin · Component roles/color/text/primary", "variants": [0, 1, 12, 13] }
             ],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
             "fontSize": ["Oddkin · Repository tokens/repo/font/size/md"],
@@ -3774,7 +3783,7 @@
       "page": "158:22",
       "frame": "Definitions · Actions",
       "kind": "COMPONENT_SET",
-      "description": "Canonical sm button family. All appearance and interaction states; original variant IDs preserved.",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Web component variation.\nFigma asset: Oddkin/Common/button/sm.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &amp;#39;@oddkin/components/define/button&amp;#39;;\nimport &amp;#39;@oddkin/components/define/button&amp;#39;;\n&amp;lt;odd-button&amp;gt;&amp;lt;/odd-button&amp;gt;\nOptional side-effect-free class import: import { OddkinButton } from &amp;#39;@oddkin/components/button&amp;#39;; this class import alone does not register the tag. This Figma family is a variation/configuration of its parent element, not a separate registered tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nCanonical sm button family. All appearance and interaction states; original variant IDs preserved.\n\nDisabled treatment: preserve the enabled appearance and selection state; apply 50% opacity to the complete control. Primary retains its fill, secondary retains its outline, ghost stays transparent. Labels and icons fade together. Forced-colors code uses system colours at full opacity.",
       "properties": [
         {
           "name": "Appearance",
@@ -4160,9 +4169,8 @@
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
             "fills": [
-              { "value": "Oddkin · Component roles/color/action/default", "variants": [6] },
-              { "value": "Oddkin · Component roles/color/surface/default", "variants": [12] },
-              { "value": "Oddkin · Component roles/color/surface/sunken", "variants": [1, 7, 13] }
+              { "value": "Oddkin · Component roles/color/action/default", "variants": [6, 7] },
+              { "value": "Oddkin · Component roles/color/surface/default", "variants": [12, 13] }
             ],
             "height": ["Oddkin · Component roles/control/height/sm"],
             "itemSpacing": ["Oddkin · Component roles/control/gap"],
@@ -4184,11 +4192,12 @@
               { "value": "Oddkin · Component roles/border/width/default", "variants": [12, 13] }
             ],
             "strokes": [
-              { "value": "Oddkin · Component roles/color/border/strong", "variants": [12] }
+              { "value": "Oddkin · Component roles/color/border/strong", "variants": [12, 13] }
             ],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
-          }
+          },
+          "literals": { "opacity": [{ "value": 0.5, "variants": [1, 7, 13] }] }
         },
         {
           "path": ["Button / Small", "Label"],
@@ -4196,9 +4205,8 @@
           "in": [0, 1, 6, 7, 12, 13],
           "bound": {
             "fills": [
-              { "value": "Oddkin · Component roles/color/text/disabled", "variants": [1, 7, 13] },
-              { "value": "Oddkin · Component roles/color/text/on-action", "variants": [6] },
-              { "value": "Oddkin · Component roles/color/text/primary", "variants": [0, 12] }
+              { "value": "Oddkin · Component roles/color/text/on-action", "variants": [6, 7] },
+              { "value": "Oddkin · Component roles/color/text/primary", "variants": [0, 1, 12, 13] }
             ],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
             "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
@@ -5865,7 +5873,7 @@
       "page": "158:22",
       "frame": "Definitions · Actions",
       "kind": "COMPONENT_SET",
-      "description": "A compact action with a visible focus ring and a required accessible name. Design proposal; not a promised custom-element API.",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Web component variation.\nFigma asset: Oddkin/Common/iconButton.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &amp;#39;@oddkin/components/define/button&amp;#39;;\nimport &amp;#39;@oddkin/components/define/button&amp;#39;;\n&amp;lt;odd-button&amp;gt;&amp;lt;/odd-button&amp;gt;\nOptional side-effect-free class import: import { OddkinButton } from &amp;#39;@oddkin/components/button&amp;#39;; this class import alone does not register the tag. Provide an accessible label on odd-button. This Figma family is a variation/configuration of its parent element, not a separate registered tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nA compact action with a visible focus ring and a required accessible name.\n\nDisabled treatment: preserve the enabled appearance and selection state; apply 50% opacity to the complete control. Primary retains its fill, secondary retains its outline, ghost stays transparent. Labels and icons fade together. Forced-colors code uses system colours at full opacity.",
       "properties": [
         { "name": "Icon", "type": "INSTANCE_SWAP", "defaultValue": "Oddkin/Icon/plus" },
         { "name": "Show icon", "type": "BOOLEAN", "defaultValue": true },
@@ -5942,7 +5950,8 @@
             "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
             "topLeftRadius": ["Oddkin · Component roles/radius/none"],
             "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
+          },
+          "literals": { "opacity": [0.5] }
         },
         {
           "path": ["Icon button / Disabled", "Surface"],
@@ -5951,10 +5960,12 @@
           "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
-            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "strokes": ["Oddkin · Component roles/color/border/strong"],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
-          }
+          },
+          "literals": { "strokeWeight": [1] }
         },
         {
           "path": ["Icon button / Disabled", "Surface", "Leading icon"],
@@ -12211,7 +12222,7 @@
       "page": "158:22",
       "frame": "Definitions · Actions",
       "kind": "COMPONENT_SET",
-      "description": "An action with a persistent pressed state; pair colour with an inset marker. Design proposal; not a promised custom-element API. Selection/value and interaction state are independent axes; original component IDs retained.",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Web component variation.\nFigma asset: Oddkin/Common/toggleButton.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &amp;#39;@oddkin/components/define/button&amp;#39;;\nimport &amp;#39;@oddkin/components/define/button&amp;#39;;\n&amp;lt;odd-button&amp;gt;&amp;lt;/odd-button&amp;gt;\nOptional side-effect-free class import: import { OddkinButton } from &amp;#39;@oddkin/components/button&amp;#39;; this class import alone does not register the tag. Set toggle and pressed on odd-button. This Figma family is a variation/configuration of its parent element, not a separate registered tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nAn action with a persistent pressed state; pair colour with an inset marker. Selection/value and interaction state are independent axes; original component IDs retained.\n\nDisabled treatment: preserve the enabled appearance and selection state; apply 50% opacity to the complete control. Primary retains its fill, secondary retains its outline, ghost stays transparent. Labels and icons fade together. Forced-colors code uses system colours at full opacity.",
       "properties": [
         {
           "name": "State",
@@ -12293,7 +12304,8 @@
             "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
             "topLeftRadius": ["Oddkin · Component roles/radius/none"],
             "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
+          },
+          "literals": { "opacity": [0.5] }
         },
         {
           "path": ["Toggle button / Disabled", "Surface"],
@@ -12302,17 +12314,19 @@
           "bound": {
             "bottomLeftRadius": ["Oddkin · Component roles/control/radius"],
             "bottomRightRadius": ["Oddkin · Component roles/control/radius"],
-            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "strokes": ["Oddkin · Component roles/color/border/strong"],
             "topLeftRadius": ["Oddkin · Component roles/control/radius"],
             "topRightRadius": ["Oddkin · Component roles/control/radius"]
-          }
+          },
+          "literals": { "strokeWeight": [1] }
         },
         {
           "path": ["Toggle button / Disabled", "Surface", "Bold"],
           "types": ["TEXT"],
           "in": [1],
           "bound": {
-            "fills": ["Oddkin · Component roles/color/text/disabled"],
+            "fills": ["Oddkin · Component roles/color/text/primary"],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
             "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
             "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
@@ -12445,7 +12459,8 @@
             "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
             "topLeftRadius": ["Oddkin · Component roles/radius/none"],
             "topRightRadius": ["Oddkin · Component roles/radius/none"]
-          }
+          },
+          "literals": { "opacity": [{ "value": 0.5, "variants": [5] }] }
         },
         {
           "path": ["Toggle button / On", "Surface"],
@@ -12464,13 +12479,7 @@
           "types": ["TEXT"],
           "in": [4, 5, 6, 7],
           "bound": {
-            "fills": [
-              {
-                "value": "Oddkin · Component roles/color/selection/foreground",
-                "variants": [4, 6, 7]
-              },
-              { "value": "Oddkin · Component roles/color/text/disabled", "variants": [5] }
-            ],
+            "fills": ["Oddkin · Component roles/color/selection/foreground"],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
             "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
             "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
@@ -13918,7 +13927,7 @@
       "page": "158:22",
       "frame": "Implementation reference · Button & input",
       "kind": "COMPONENT",
-      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Web component specimen.\nFigma asset: odd-button/primary/disabled/dark.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &#39;@oddkin/components/define/button&#39;;\nimport &#39;@oddkin/components/define/button&#39;;\n&lt;odd-button&gt;&lt;/odd-button&gt;\nOptional side-effect-free class import: import { OddkinButton } from &#39;@oddkin/components/button&#39;; this class import alone does not register the tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nSource: packages/components/src/button. appearance=primary; size=md",
       "properties": [],
       "variants": [{ "id": "123:136", "name": "odd-button/primary/disabled/dark" }],
       "layers": [
@@ -13928,7 +13937,7 @@
           "bound": {
             "bottomLeftRadius": ["Oddkin · Repository tokens/repo/control/radius"],
             "bottomRightRadius": ["Oddkin · Repository tokens/repo/control/radius"],
-            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "fills": ["Oddkin · Component roles/color/action/default"],
             "height": ["Oddkin · Repository tokens/repo/control/height/md"],
             "itemSpacing": ["Oddkin · Repository tokens/repo/control/gap"],
             "paddingBottom": ["Oddkin · Repository tokens/repo/space/none"],
@@ -13937,13 +13946,14 @@
             "paddingTop": ["Oddkin · Repository tokens/repo/space/none"],
             "topLeftRadius": ["Oddkin · Repository tokens/repo/control/radius"],
             "topRightRadius": ["Oddkin · Repository tokens/repo/control/radius"]
-          }
+          },
+          "literals": { "opacity": [0.5] }
         },
         {
           "path": ["Button"],
           "types": ["TEXT"],
           "bound": {
-            "fills": ["Oddkin · Component roles/color/text/disabled"],
+            "fills": ["Oddkin · Component roles/color/text/on-action"],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
             "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
             "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
@@ -13960,7 +13970,7 @@
       "page": "158:22",
       "frame": "Implementation reference · Button & input",
       "kind": "COMPONENT",
-      "description": "Source: packages/components/src/button. appearance=primary; size=md",
+      "description": "ODDKIN IMPLEMENTATION TYPE: Web component specimen.\nFigma asset: odd-button/primary/disabled/light.\nRepository source: packages/components/src/button/button.ts.\nCode Connect export/name: OddkinButton.\nREGISTRATION/PUBLIC IMPORT: import &#39;@oddkin/components/define/button&#39;;\nimport &#39;@oddkin/components/define/button&#39;;\n&lt;odd-button&gt;&lt;/odd-button&gt;\nOptional side-effect-free class import: import { OddkinButton } from &#39;@oddkin/components/button&#39;; this class import alone does not register the tag.\nVARIANTS: appearance, size, selection, orientation and interaction-state examples inherit the parent implementation and imports. Translate an axis into a code property only when that property exists. Hover and focus are browser interaction states, not invented component props.\n\nDESIGN NOTES\nSource: packages/components/src/button. appearance=primary; size=md",
       "properties": [],
       "variants": [{ "id": "123:90", "name": "odd-button/primary/disabled/light" }],
       "layers": [
@@ -13970,7 +13980,7 @@
           "bound": {
             "bottomLeftRadius": ["Oddkin · Repository tokens/repo/control/radius"],
             "bottomRightRadius": ["Oddkin · Repository tokens/repo/control/radius"],
-            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "fills": ["Oddkin · Component roles/color/action/default"],
             "height": ["Oddkin · Repository tokens/repo/control/height/md"],
             "itemSpacing": ["Oddkin · Repository tokens/repo/control/gap"],
             "paddingBottom": ["Oddkin · Repository tokens/repo/space/none"],
@@ -13979,13 +13989,14 @@
             "paddingTop": ["Oddkin · Repository tokens/repo/space/none"],
             "topLeftRadius": ["Oddkin · Repository tokens/repo/control/radius"],
             "topRightRadius": ["Oddkin · Repository tokens/repo/control/radius"]
-          }
+          },
+          "literals": { "opacity": [0.5] }
         },
         {
           "path": ["Button"],
           "types": ["TEXT"],
           "bound": {
-            "fills": ["Oddkin · Component roles/color/text/disabled"],
+            "fills": ["Oddkin · Component roles/color/text/on-action"],
             "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
             "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
             "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],

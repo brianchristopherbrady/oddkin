@@ -5001,3 +5001,19 @@ Proposed to Agent 2 on 2026-11-02 at 11:25; Agent 2 agreed at 12:38 and asked fo
 | Gates | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Exit 0; exit 0; exit 0, the default theme 3,096 B gzip of its 3,136 B budget, unchanged |
 
 **Not verified here:** CI on this commit, and Theme Studio's controls, which are Agent 2's row 6. Elevation has no input.
+
+## 2026-11-03 — Issue #2's Figma half: the owner's disabled buttons in the Figma snapshot (round 11, Agent 1)
+
+The owner changed the disabled buttons in code (`688df11`) and in Figma (file `E7LfRysny8V3qU24tv082i`, 2026-11-01; the "Disabled button appearances" section of 2026-11-01). The figma-parity checks compare the elements with `design/figma/components.json`, which still held the old disabled look, so `figma-parity.browser.test.ts` (button, button/sm, and button/lg × primary, secondary, and ghost, Disabled) and `figma-parity.forms.browser.test.ts` (toggleButton Off/Disabled) have failed in three engines on CI since `f7ad58b` (issue #2). Figma MCP session `b42199d2-3adf-43b5-b62d-d9c78c87071b`, read-only. Light duty: no browser run here; the owner chose to let CI run the parity checks.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The nodes the owner edited | `use_figma`: the seven families and the 12 disabled variants by id, and frame `685:3157` | `159:439`, `181:2332`, `181:2390` (18 variants each), `159:471` (5), and `159:501` (8) are component sets on page 158:22, and `123:90` and `123:136` are components at opacity 0.5. The 12 ids are the sets' Disabled members. `685:3157`, "Review · Button disabled appearances", holds 48 instances and no component definition, so the export takes nothing from it |
+| The export | `components.export.js` through `use_figma`, filtered to the seven ids on page 158:22, run three times | 76,931 characters with FNV-1a 1223383616 in every run; the slices of 24,000, 24,000, and 28,931 characters join to the same length and hash |
+| Replaced in place | `.tmp/merge-figma-issue2.mjs` (each family by id), then `npx prettier --write design/figma/components.json` | 7 families, 69 definitions, 1,925 families as before. Names, pages, frames, kinds, variants (every component id), properties, and instance edges are unchanged; each description and the disabled variants' layers change. One sentence is appended to `source`; `exportedAt` stays 2026-10-24 |
+| Only those blocks change | `git diff --stat`, then the diff | 1 file, 59 insertions and 48 deletions, all in the seven families and `source`; the rest of the file is byte-identical |
+| What changed | The diff | button, button/sm, button/lg Disabled: the frame's fill is `color/action/default` (primary), `color/surface/default` with a `color/border/strong` stroke (secondary), or none (ghost), at opacity 0.5; the label is `color/text/on-action` (primary) or `color/text/primary`. iconButton Disabled and toggleButton Off/Disabled: a `color/surface/default` surface with a `color/border/strong` stroke, at opacity 0.5, and the toggle's label `color/text/primary`. toggleButton On/Disabled: opacity 0.5, the label `color/selection/foreground`. Both specimens: `color/action/default`, the label `color/text/on-action`, opacity 0.5. `color/text/disabled` appears in none of the seven families; `color/surface/sunken` remains only in the pressed ghost and secondary buttons |
+| Snapshot tests | `npx vitest run --project node packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts` | 2 files, 8 passed |
+| Format, types | `npx prettier --check design/figma/components.json`; `npm run typecheck` | Exit 0; exit 0 |
+
+**Not verified here:** the figma-parity browser checks, which CI runs in three engines, and the deployed docs. Issue #2 closes when CI passes on main.
