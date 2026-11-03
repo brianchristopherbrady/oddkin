@@ -35,10 +35,25 @@ Three optional inputs generate steps of those scales: `radius.scale` (0 to 3) mu
 ```sh
 oddkin-tokens init                                   # writes oddkin.theme.json
 oddkin-tokens check oddkin.theme.json [--strict] [--json]
-oddkin-tokens build oddkin.theme.json --out tokens [--format css,ts,json,dtcg] [--css-layer <name|none>]
+oddkin-tokens build oddkin.theme.json --out tokens [--format css,ts,scss,json,dtcg] [--css-layer <name|none>]
 ```
 
-`build` writes `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.conditions.ts` (typed for that theme's token names), `<name>.inspect.json`, `<name>.contrast.json` (every declared role pair measured in each mode and product, with a stable `id` per pair; `@oddkin/tokens/inspect/default.contrast.json` for the default theme; a measurement, not an accessibility certification), and one DTCG Format Module 2025.10 document per mode, `<name>.<mode>.tokens.json` (`emitDtcg` in `./generate`; lossless, lossy, and unsupported mappings are listed in theming-and-styling.md §6.1; no DTCG Resolver support is claimed). Exit codes: 0 success, 1 diagnostics, 2 usage. Configs may be JSON, ESM JS, or `.ts` via Node's type stripping (erasable syntax only; type-check separately). JS and TS configs are executed: treat them as trusted code. A loaded config must be JSON data: functions, class instances, non-finite numbers, and cycles are `config.notJson` errors with their paths, so the CLI generates from the same model Theme Studio edits.
+`build` writes `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`, `<name>.conditions.ts` (typed for that theme's token names), the Sass modules `<name>.refs.scss` and `<name>.values.scss`, `<name>.inspect.json`, `<name>.contrast.json` (every declared role pair measured in each mode and product, with a stable `id` per pair; `@oddkin/tokens/inspect/default.contrast.json` for the default theme; a measurement, not an accessibility certification), and one DTCG Format Module 2025.10 document per mode, `<name>.<mode>.tokens.json` (`emitDtcg` in `./generate`; lossless, lossy, and unsupported mappings are listed in theming-and-styling.md §6.1; no DTCG Resolver support is claimed). Exit codes: 0 success, 1 diagnostics, 2 usage. Configs may be JSON, ESM JS, or `.ts` via Node's type stripping (erasable syntax only; type-check separately). JS and TS configs are executed: treat them as trusted code. A loaded config must be JSON data: functions, class instances, non-finite numbers, and cycles are `config.notJson` errors with their paths, so the CLI generates from the same model Theme Studio edits.
+
+The default theme's Sass modules are published as `@oddkin/tokens/scss/refs` and `@oddkin/tokens/scss/values`; Dart Sass loads them with its Node package importer (`--pkg-importer=node`):
+
+```scss
+@use 'pkg:@oddkin/tokens/scss/refs' as oddkin;
+@use 'pkg:@oddkin/tokens/scss/values';
+
+.toolbar {
+  gap: oddkin.token('layout.gap'); // var(--odd-layout-gap): follows modes, products, and densities
+  padding: values.value('space.md'); // 1rem, compiled in
+  @include oddkin.when('navigation.expanded') {
+    flex-wrap: nowrap;
+  }
+}
+```
 
 ## Base files and products
 
@@ -85,4 +100,4 @@ The generated ramp step nearest a brand colour is used for its roles; the brand 
 
 Profiles (`data-odd-profile="navigation.compact"`) override layout and component roles with their alias closure and keep applying inside nested scopes; where two profiles set the same role on one element, the later one in the configuration wins. Conditions compile to literal queries; changing a threshold means regenerating.
 
-Design and limits: [theming-and-styling.md](../../docs/architecture/theming-and-styling.md). Not yet: Sass outputs, DTCG Resolver documents, and DTCG import.
+Design and limits: [theming-and-styling.md](../../docs/architecture/theming-and-styling.md). Not yet: DTCG Resolver documents and DTCG import.

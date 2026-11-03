@@ -1,6 +1,6 @@
 # Theming, token pipeline, and styling
 
-Status: §1–§5 and §10 are **implemented** in `@oddkin/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Of the outputs (§6), CSS, typed `refs` (`token()`, `TokenName`), literal `values`, and inspection JSON are implemented, as is the CLI (§9: `init`, `build`, `check`; JSON, ESM JS, and type-stripped `.ts` configs). Conditions and profiles (§11.2–§11.3, with the implementation notes in §11.7) and the unit policy are implemented. Generated CSS is emitted in the `odd.tokens` cascade layer (§5.2, ADR 0039), and token values outside the browser floor are diagnosed (`value.syntax.aboveFloor`, [css-architecture.md](./css-architecture.md) §4.2). Sass output and `inspect.computedToken` remain **proposals**.
+Status: §1–§5 and §10 are **implemented** in `@oddkin/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Of the outputs (§6), CSS, typed `refs` (`token()`, `TokenName`), literal `values`, the Sass modules, DTCG (§6.1), and inspection JSON are implemented, as is the CLI (§9: `init`, `build`, `check`; JSON, ESM JS, and type-stripped `.ts` configs). Conditions and profiles (§11.2–§11.3, with the implementation notes in §11.7) and the unit policy are implemented. Generated CSS is emitted in the `odd.tokens` cascade layer (§5.2, ADR 0039), and token values outside the browser floor are diagnosed (`value.syntax.aboveFloor`, [css-architecture.md](./css-architecture.md) §4.2). `inspect.computedToken` remains a **proposal**.
 
 ## 1. Configuration model
 
@@ -274,15 +274,17 @@ Unlayered application CSS therefore overrides generated values whatever the styl
 | Typed references | `refs` | `token('space.md')` → `'var(--odd-space-md)'`; DOM-free; no registration |
 | Literal values | `values` | `values.space.md === '0.75rem'`; explicit, never substituted for refs silently |
 | Computed values | `inspect.computedToken(name, element)` | Requires an element; reads `getComputedStyle` |
-| Sass refs | `scss/refs` | `oddkin.token('space.md')` → `var(--odd-space-md)`; follows runtime themes |
-| Sass literals | `scss/values` | `oddkin.value('space.md')` → `0.75rem`; compiled in, does not follow runtime themes. Use for arithmetic, colour functions, query thresholds |
-| Conditions | `conditions`, `scss/refs` (`$oddkin-conditions`, `oddkin.when()`) | Literal query strings; DOM-free |
+| Sass refs | `scss/refs` (`<name>.refs.scss` from the CLI) | `oddkin.token('space.md')` → `var(--odd-space-md)`, with an optional fallback; follows runtime themes; `oddkin.$tokens` maps each name to its custom property |
+| Sass literals | `scss/values` (`<name>.values.scss`) | `values.value('space.md')` → `1rem`, a Sass value (numbers with units, colours, lists); compiled in, does not follow runtime themes. A value that differs by mode needs `$mode: light` or `$mode: dark`. Use for arithmetic, colour functions, query thresholds |
+| Conditions | `conditions`, `scss/refs` (`oddkin.$conditions`, `@include oddkin.when()`) | Literal query strings; DOM-free |
 | Profiles | Included in theme CSS as `[data-odd-profile~="…"]` rules; profile data in `inspect` | Role overrides + alias closure |
 | DTCG JSON | `emitDtcg(theme, context)` in `generate`; `oddkin-tokens build --format dtcg` writes `<theme>.<mode>.tokens.json` | Format Module 2025.10, one complete document per context (§6.1); not a Resolver document |
 | Inspection metadata | `json/<theme>.inspect.json`, `inspect` | Config, formulas, origins, aliases, re-declaration sets, resolved values |
 | Validation report | CLI / `generate` | JSON + readable text |
 
-Breakpoints: media and container query conditions cannot use `var()`. Thresholds are defined as named conditions (§11.2) and emitted as literal query strings (`conditions`, Sass `$oddkin-conditions` / `oddkin.when()`), and optionally as `@custom-media` definitions for tooling that supports them.
+Breakpoints: media and container query conditions cannot use `var()`. Thresholds are defined as named conditions (§11.2) and emitted as literal query strings (`conditions`, Sass `oddkin.$conditions` / `oddkin.when()`), and optionally as `@custom-media` definitions for tooling that supports them.
+
+**Sass modules.** `@oddkin/tokens/scss/refs` and `@oddkin/tokens/scss/values` are the default theme's; `oddkin-tokens build` writes `<name>.refs.scss` and `<name>.values.scss` for a configured theme (`emitScssRefs`, `emitScssValues` in `./generate`). Dart Sass loads the published ones through its Node package importer: `@use 'pkg:@oddkin/tokens/scss/refs' as oddkin;` with `--pkg-importer=node`, or `importers: [new NodePackageImporter()]` in the JavaScript API. Unknown token or condition names, and a missing or unknown `$mode`, are Sass errors that name the theme. *(Verified in `packages/tokens/test/scss.test.ts`, with Dart Sass 1.107.1 (a dev dependency, owner, 2026-11-03): a stylesheet using every token, mode, and condition of the default and `products-density` themes compiles; `token()` gives the TypeScript `token()` text, `value()` the values module's literal (exactly, where Sass writes it back unchanged), and `when()` the condition's at-rule; the package importer loads the published modules. `scss.browser.test.ts`, in Chromium, Firefox, and WebKit: every value from `value()` computes as `var()` does at the theme's base in its mode; `token()` in Sass and TypeScript computes as `var()` inside a dark, compact, profiled scope; and `when()` matches where the conditions module's query matches.)*
 
 ### 6.1 DTCG 2025.10 output (implemented, plan item 245)
 
@@ -416,7 +418,7 @@ Theme Studio is part of `@oddkin/workbench`, so any library documented with Work
 
 ## 9. Configuration tooling
 
-- CLI: `oddkin-tokens init`, `build <config> --out <dir> --format css,json,scss,ts [--css-layer <name|none>]`, `check <config>`. Theme Studio calls the same pure generator.
+- CLI: `oddkin-tokens init`, `build <config> --out <dir> --format css,ts,scss,json,dtcg [--css-layer <name|none>]`, `check <config>`. Theme Studio calls the same pure generator.
 - Config formats: JSON and native ESM JS first. Local erasable `.ts` configs via verified Node type stripping (proposed minimum Node 24.12); type-check separately because stripping does not type-check or honour path aliases. Precompiled JS is the fallback. Published packages ship JS. [R28]
 - JSON model *(implemented)*: `loadConfig()` returns the configuration's JSON-compatible model, a plain-data copy with `undefined` properties dropped and `-0` written as `0`, as JSON does. Functions, class instances (`Map`, `Date`, …), non-finite numbers, `bigint`, array holes, and cycles are `config.notJson` errors at their paths. So the CLI and Theme Studio generate from the same model. *(Verified in `packages/tokens/test/cli.test.ts`.)*
 - DTCG: target Format Module 2025.10 explicitly and validate serialized types/aliases against it. It is a community-group format, not a browser standard or W3C Recommendation. [R29]
@@ -618,7 +620,7 @@ Consumed by layout recipes ([layout-recipes.md](./layout-recipes.md)) and ordina
 | Foundation value | `space.md` | `--odd-space-md` | Source for roles; avoid using directly in components |
 | Semantic layout role | `layout.gap`, `layout.inset`, `layout.item-min`, `layout.sidebar-width`, `layout.main-min`, `layout.measure` (40rem, `odd-container`'s content measure) | `--odd-layout-gap` | Page and recipe layout |
 | Component role | `navigation.item.padding.inline` | `--odd-navigation-item-padding-inline` | Consumed by the owning component (and documented for adapters) |
-| Named condition | `navigation.expanded` | Literal query string in generated CSS, `conditions` export, Sass `$oddkin-conditions`, metadata | Recipes, `@container`/`@media` rules |
+| Named condition | `navigation.expanded` | Literal query string in generated CSS, `conditions` export, Sass `oddkin.$conditions`, metadata | Recipes, `@container`/`@media` rules |
 | Profile | `navigation.compact` | Scope selector rule set re-declaring roles + affected alias closure | Coordinated overrides of explicit roles |
 
 Each token declares its category; the validator rejects disallowed references (e.g. a foundation token aliasing a component role, a profile overriding foundation values, a condition used as a value).
@@ -638,7 +640,7 @@ defineTheme({
 - Serialized to literal CSS: `@container side-nav (min-width: 40rem)` / `@media (min-width: 64rem)`. `var()` cannot appear in query conditions, so thresholds are always literal lengths.
 - **Compatibility baseline:** the config accepts logical names (`minInlineSize`, `maxInlineSize`) and plain `minWidth`/`maxWidth`; the baseline emits `min-width`/`max-width` (and `inline-size` only where needed) with literal lengths, named or unnamed containers, and `prefers-*` media features. Range syntax, style queries, and newer features are progressive enhancements behind an explicit `syntax: 'range'` option, each requiring browser verification before docs present them as supported.
 - Units: `rem` default; validator flags `px` thresholds as a warning (they ignore user font-size changes) and rejects `var()`, percentages, and unitless numbers.
-- Outputs: `@oddkin/tokens/conditions` (DOM-free map of name → query string), Sass map `$oddkin-conditions` plus mixin `oddkin.when('navigation.expanded') { … }`, DTCG JSON as a documented Oddkin extension (`$extensions["oddkin.condition"]`), and inspection metadata.
+- Outputs: `@oddkin/tokens/conditions` (DOM-free map of name → query string), the Sass map `oddkin.$conditions` plus the mixin `@include oddkin.when('navigation.expanded') { … }`, DTCG JSON as a documented Oddkin extension (`$extensions["oddkin.condition"]`), and inspection metadata.
 
 ### 11.3 Profiles
 
@@ -683,7 +685,7 @@ A narrow container changes arrangement; it does not automatically shrink every l
 ```
 ```scss
 // SCSS
-@use '@oddkin/tokens/scss/refs' as oddkin;
+@use 'pkg:@oddkin/tokens/scss/refs' as oddkin; // Dart Sass's Node package importer (§6)
 .toolbar { gap: oddkin.token('layout.gap'); @include oddkin.when('navigation.expanded') { flex-wrap: nowrap; } }
 ```
 ```ts

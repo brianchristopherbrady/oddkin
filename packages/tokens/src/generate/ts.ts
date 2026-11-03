@@ -27,12 +27,13 @@ export function token(name: TokenName, fallback?: string): string {
 `;
 }
 
-type Literal = string | { readonly light: string; readonly dark: string };
+/** A base-theme literal: one value, or one per mode where the modes differ. */
+export type Literal = string | { readonly light: string; readonly dark: string };
 interface Tree {
   [key: string]: Tree | Literal;
 }
 
-function literal(theme: ResolvedTheme, name: string): Literal {
+export function literal(theme: ResolvedTheme, name: string): Literal {
   const resolve = (mode: Mode) => resolveLiteral(theme.tokens, name, mode) ?? '';
   if (theme.modes.length < 2) return resolve(theme.modes[0] ?? 'light');
   // Aliases of mode-dependent tokens differ per mode too, so compare resolved literals.

@@ -1,8 +1,10 @@
 // Build generated token assets after `tsc -b`:
 // - @oddkin/tokens/css/default.css from packages/tokens/themes/default.theme.json (Node API)
+// - @oddkin/tokens/scss/refs and /scss/values, the default theme's Sass modules
 // - examples/tokens-css-only/generated/*.css via the real `oddkin-tokens` CLI binary
 import { spawnSync } from 'node:child_process';
-import { readFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { emitScssRefs, emitScssValues } from '../packages/tokens/dist/generate/index.js';
 import { buildTheme, formatDiagnostics } from '../packages/tokens/dist/node/index.js';
 
 const fail = (message) => {
@@ -23,7 +25,14 @@ const inspection = await buildTheme(config, {
   formats: ['json'],
 });
 if (!inspection.result.ok) fail(formatDiagnostics(inspection.result.diagnostics));
-const written = [...files, ...inspection.files];
+// Sass modules (`@use 'pkg:@oddkin/tokens/scss/refs' as oddkin;`), named for their export paths.
+await mkdir('packages/tokens/dist/scss', { recursive: true });
+const scss = [
+  ['packages/tokens/dist/scss/refs.scss', emitScssRefs(result.theme)],
+  ['packages/tokens/dist/scss/values.scss', emitScssValues(result.theme)],
+];
+for (const [path, text] of scss) await writeFile(path, text);
+const written = [...files, ...inspection.files, ...scss.map(([path]) => path)];
 
 const cli = spawnSync(
   process.execPath,

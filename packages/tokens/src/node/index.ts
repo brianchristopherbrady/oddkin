@@ -12,6 +12,8 @@ import {
   emitDtcg,
   emitInspectJson,
   emitRefsModule,
+  emitScssRefs,
+  emitScssValues,
   emitValuesModule,
   generate,
   type Diagnostic,
@@ -21,8 +23,8 @@ import { layerOf, mergeThemes, type ThemeLayer } from '../theme/merge.js';
 
 export type { ThemeLayer } from '../theme/merge.js';
 
-export type OutputFormat = 'css' | 'ts' | 'json' | 'dtcg';
-export const OUTPUT_FORMATS: readonly OutputFormat[] = ['css', 'ts', 'json', 'dtcg'];
+export type OutputFormat = 'css' | 'ts' | 'scss' | 'json' | 'dtcg';
+export const OUTPUT_FORMATS: readonly OutputFormat[] = ['css', 'ts', 'scss', 'json', 'dtcg'];
 
 export interface LoadResult {
   /** The merged model, ready for `generate()`; undefined when loading failed. */
@@ -237,8 +239,9 @@ export interface BuildResult {
 
 /**
  * Generate and write outputs: `<name>.css`, `<name>.refs.ts`, `<name>.values.ts`,
- * `<name>.conditions.ts`, `<name>.inspect.json` with `<name>.contrast.json` (the role-pair
- * report), and one DTCG 2025.10 `<name>.<mode>.tokens.json` per mode.
+ * `<name>.conditions.ts`, the Sass modules `<name>.refs.scss` and `<name>.values.scss`,
+ * `<name>.inspect.json` with `<name>.contrast.json` (the role-pair report), and one DTCG 2025.10
+ * `<name>.<mode>.tokens.json` per mode.
  */
 export async function buildTheme(config: unknown, options: BuildOptions): Promise<BuildResult> {
   const result = generate(
@@ -255,6 +258,11 @@ export async function buildTheme(config: unknown, options: BuildOptions): Promis
       [`${name}.refs.ts`, emitRefsModule(result.theme)],
       [`${name}.values.ts`, emitValuesModule(result.theme)],
       [`${name}.conditions.ts`, emitConditionsModule(result.theme)],
+    );
+  if (formats.includes('scss'))
+    outputs.push(
+      [`${name}.refs.scss`, emitScssRefs(result.theme)],
+      [`${name}.values.scss`, emitScssValues(result.theme)],
     );
   if (formats.includes('json'))
     outputs.push(

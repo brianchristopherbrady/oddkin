@@ -51,6 +51,8 @@
       "default": "./dist/node/index.js"
     },
     "./css/default.css": "./dist/css/default.css",
+    "./scss/refs": "./dist/scss/refs.scss",
+    "./scss/values": "./dist/scss/values.scss",
     "./inspect/default.json": "./dist/inspect/default.inspect.json",
     "./inspect/default.contrast.json": "./dist/inspect/default.contrast.json",
     "./schema.json": "./schema/theme-config.v1.schema.json",

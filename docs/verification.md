@@ -5070,3 +5070,20 @@ Read from GitHub's public API (runs, jobs, and issues); nothing ran locally for 
 | Gates | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Exit 0; exit 0; exit 0: `workbench-panel-theme-studio` now measures the initial load (LAZY): 22,844 B of 23,040; `workbench-theme-save`, the lazy save module, 1,051 of a new 1,152; `workbench-theme-studio` 6,189 of 6,400 (was 6,144); shell 53,232 of 54,272 and frame 7,466 of 7,680, unchanged |
 
 **Not verified here:** CI on this commit; saving a file that extends a base, which comes with products (item 4); the docs site's page, which waits for the docs pause.
+## 2026-11-03 — P1.1: Sass outputs and equivalent consumption (round 11, Agent 3, row 4)
+
+`sass` (Dart Sass) 1.107.1 is a root dev dependency, used only by tests (owner, 2026-11-03); the lockfile gained it and its dependencies only (`chokidar`, `immutable`, `readdirp`, and the optional `@parcel/watcher` builds).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Every token, mode, and condition | `scss.test.ts` | A stylesheet using all of them through `value()`, `token()`, and `when()` compiles for the default and `products-density` themes; its CSS for the default theme is the committed fixture `scss-consumer.css.txt`. `token()` gives the TypeScript `token()` text for every token; `value()` gives the values module's literal exactly for every value Sass writes back unchanged (more than half; colour functions, font stacks, and shadows are compared as computed styles below); `when()` gives each condition's at-rule |
+| Errors and fallbacks | `scss.test.ts` | `token('space.md', 4px)` is `var(--odd-space-md, 4px)`; an unknown token or condition, a value that differs by mode without `$mode`, and an unknown mode are Sass errors that name the theme |
+| Published modules | `scss.test.ts`; `node scripts/verify-packs.mjs` | `@oddkin/tokens/scss/refs` and `/scss/values` equal the emitters' output for the default theme, and `@use 'pkg:@oddkin/tokens/scss/…'` through Dart Sass's `NodePackageImporter` compiles; from the packed tarball the two exports resolve and hold the expected text (packed-consumer verification OK, `@oddkin/tokens` 129.0 KiB) |
+| CLI | `cli.test.ts` | `build` writes `<name>.refs.scss` and `<name>.values.scss` byte for byte; `--format sass` is a usage error |
+| Equivalent consumption, three engines | `scss.browser.test.ts` with `browser-set.mjs` | Chromium, Firefox, and WebKit, 3 of 3 each: every token's `value()` (in its mode) computes as `var()` at the theme's base, through `color`, `margin-left`, `line-height`, `font-weight`, `font-family`, `box-shadow`, `transition-duration`, or `transition-timing-function` by type; `token()` in Sass and in TypeScript computes as `var()` inside a dark, compact, `layout.compact` scope; `when()` matches exactly where the conditions module's at-rule matches, in a narrow and a wide `shell` container (both outcomes occur) |
+| Browser set | `browser-set.mjs` on the six tokens browser files, the components' conditions, multi-product, and side-nav scope tests, and Workbench's preview test | 64 passed in each of Chromium, Firefox, and WebKit |
+| Node tests | `npx vitest run --project node packages/tokens` with components' `css-sources`, Workbench's node tests, `tests/schemas`, `tests/architecture`, `tests/release`, and `tests/docs` | 406 passed and 1 skipped (43 files) |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-scss.json` (12 probes: the fallback, each error, container versus media, mode maps, grouping of comma lists, light and dark, names versus properties, at-rule versus query, the CLI format) | 12 of 12 killed. A first run had a 13th probe survive: tracking quotes when grouping comma lists changed no output, since parentheses around a single value change nothing, so every value with a comma is now grouped and the tracking is gone |
+| Gates | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Exit 0; exit 0; exit 0, the default theme's CSS unchanged at 3,096 B gzip |
+
+**Not verified here:** bundler Sass integrations (only Dart Sass's own importer is tested); CI on this commit.

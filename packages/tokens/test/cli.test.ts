@@ -1,7 +1,13 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { emitContrastReport, emitDtcg, generate } from '../src/index.js';
+import {
+  emitContrastReport,
+  emitDtcg,
+  emitScssRefs,
+  emitScssValues,
+  generate,
+} from '../src/index.js';
 import { run } from '../src/node/cli.js';
 import { loadConfig } from '../src/node/index.js';
 
@@ -82,6 +88,8 @@ describe('oddkin-tokens CLI', { timeout: 30_000 }, () => {
       expect(await readFile(at(`out/acme.${mode}.tokens.json`), 'utf8')).toBe(
         emitDtcg(theme, { mode }).text,
       );
+    expect(await readFile(at('out/acme.refs.scss'), 'utf8')).toBe(emitScssRefs(theme));
+    expect(await readFile(at('out/acme.values.scss'), 'utf8')).toBe(emitScssValues(theme));
   });
 
   it('loads ESM JavaScript and TypeScript configs (type stripping) identically to JSON', async () => {
@@ -179,7 +187,7 @@ describe('oddkin-tokens CLI', { timeout: 30_000 }, () => {
     expect((await cli('check', at('broken.json'))).err).toContain('config.load');
     expect((await cli('frobnicate')).code).toBe(2);
     expect((await cli('build')).code).toBe(2);
-    expect((await cli('build', at('acme.json'), '--format', 'scss')).code).toBe(2);
+    expect((await cli('build', at('acme.json'), '--format', 'sass')).code).toBe(2);
     expect((await cli('--help')).code).toBe(0);
   });
 

@@ -37,6 +37,7 @@ export {
   emitValuesModule,
   valuesTree,
 } from './ts.js';
+export { emitScssRefs, emitScssValues } from './scss.js';
 export { resolveTheme, resolveToken } from './resolve.js';
 export type { ResolveContext, ResolvedTheme, ResolveResult, ScopeTokens } from './resolve.js';
 export type { ContrastCorrection, Diagnostic, DiagnosticSeverity } from './diagnostics.js';
