@@ -82,6 +82,21 @@ export interface DensityConfig {
   readonly scale: number;
 }
 
+export interface RadiusConfig {
+  /** Multiplies `radius.xs` to `radius.2xl`; `radius.none` and `radius.full` stay. 0 to 3; unset, 1. */
+  readonly scale?: number;
+}
+
+export interface MotionConfig {
+  /** Multiplies the `motion.duration.*` steps; reduced motion stays `0ms`. Above 0, at most 2; unset, 1. */
+  readonly scale?: number;
+}
+
+export interface TypographyConfig {
+  /** Generates `font.size.xs` to `font.size.4xl`: `md` is `base`, each step `ratio` times the one below. */
+  readonly scale?: { readonly base: DimensionInput; readonly ratio: number };
+}
+
 /** Literal thresholds; `rem` recommended. Logical sizes apply to container queries only. */
 export interface ContainerCondition {
   /** Container name, or `true` for the nearest size container. */
@@ -121,6 +136,9 @@ export interface ThemeConfig {
   readonly brand: BrandConfig;
   readonly status?: StatusConfig;
   readonly spacing?: SpacingConfig;
+  readonly radius?: RadiusConfig;
+  readonly motion?: MotionConfig;
+  readonly typography?: TypographyConfig;
   /** Modes to generate. Defaults to `['light', 'dark']`. */
   readonly modes?: readonly Mode[];
   readonly products?: Readonly<Record<string, ProductConfig>>;

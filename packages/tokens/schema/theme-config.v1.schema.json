@@ -201,6 +201,59 @@
         }
       ]
     },
+    "radius": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Inputs for the radius scale; unset, the preset radii.",
+      "properties": {
+        "scale": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3,
+          "default": 1,
+          "description": "Multiplies radius.xs to radius.2xl; radius.none and radius.full stay."
+        }
+      }
+    },
+    "motion": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Inputs for motion; unset, the preset durations.",
+      "properties": {
+        "scale": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 2,
+          "default": 1,
+          "description": "Multiplies the motion.duration steps, in whole milliseconds; reduced motion stays 0ms."
+        }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Inputs for typography; unset, the preset font sizes.",
+      "properties": {
+        "scale": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["base", "ratio"],
+          "description": "Generates font.size.xs to font.size.4xl: md is base, each step ratio times the one below.",
+          "properties": {
+            "base": {
+              "$ref": "#/$defs/length",
+              "default": "1rem"
+            },
+            "ratio": {
+              "type": "number",
+              "exclusiveMinimum": 1,
+              "maximum": 2,
+              "default": 1.2
+            }
+          }
+        }
+      }
+    },
     "modes": {
       "type": "array",
       "minItems": 1,

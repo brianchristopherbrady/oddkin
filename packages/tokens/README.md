@@ -26,6 +26,8 @@ One brand colour produces a complete theme: OKLCH reference ramps (brand, neutra
 
 `@oddkin/tokens/css/default.css` is built from `themes/default.theme.json`: Electric iris (`#6250e8`) with the approved light and dark palette pinned as overrides (role table: docs/architecture/theming-and-styling.md §10.1, ADR 0041). All non-colour values are Oddkin's own scales (§10.2–§10.3, ADR 0042); font families are system stacks, and the package does not ship font files.
 
+Three optional inputs generate steps of those scales: `radius.scale` (0 to 3) multiplies `radius.xs`–`2xl`, `motion.scale` (above 0, at most 2) multiplies the durations in whole milliseconds, and `typography.scale: { base, ratio }` generates `font.size.xs`–`4xl` as base × ratio^n with `md` = base. The schema states each range and default; the inspection labels the steps `generated` with the input as provenance, and `overrides` still win (§10.3).
+
 ## CLI
 
 ```sh
@@ -48,7 +50,7 @@ A theme file can build on a shared base file and set only what differs, so produ
 }
 ```
 
-`extends` is a path relative to the file, used as written, or a package export; a base may extend another. Objects of named entries merge by key (`brand`, `status`, `overrides`, `products`, `density`, `conditions`, `profiles`), everything else (`spacing`, `modes`, `name`, …) replaces the base's, and `null` removes an entry the base sets. `loadConfig` and `oddkin-tokens` follow `extends`, and each diagnostic names the file its value came from. `generate()` takes the merged model; in a browser, `mergeThemes(base, file)` merges one.
+`extends` is a path relative to the file, used as written, or a package export; a base may extend another. Objects of named entries merge by key (`brand`, `status`, `radius`, `motion`, `typography`, `overrides`, `products`, `density`, `conditions`, `profiles`), everything else (`spacing`, `modes`, `name`, …) replaces the base's, and `null` removes an entry the base sets. `loadConfig` and `oddkin-tokens` follow `extends`, and each diagnostic names the file its value came from. `generate()` takes the merged model; in a browser, `mergeThemes(base, file)` merges one.
 
 One stylesheet can also hold several products (`products:`, scoped with `data-odd-product="<id>"`). A product sets its brand inputs and, under `overrides`, its own colour roles, such as `"color.action.default": { "light": "{ref.brand.700}", "dark": "{ref.brand.300}" }`. The default theme pins its roles, so this is how a product recolours its actions and links. Contrast is checked in each product. Do not nest a product inside one that overrides roles: mode scopes inside the inner product would take the outer product's roles.
 

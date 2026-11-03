@@ -4981,3 +4981,23 @@ CI's node project has failed `packages/components/test/metadata.test.ts` "traces
 | Types, format | `npm run typecheck`; `npx prettier --check packages/components/test/metadata.test.ts` | Exit 0 |
 
 **Not verified here:** the browser projects (light duty; CI runs them). Issue #2 stays open for its Figma half, the snapshot's disabled button, iconButton, and toggleButton variants.
+## 2026-11-03 — P1.1: foundation inputs for Theme Studio's controls (round 11, Agent 3, row 4)
+
+Proposed to Agent 2 on 2026-11-02 at 11:25; Agent 2 agreed at 12:38 and asked for four things, each checked below. Additive to schema v1.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Unset changes nothing | `inputs.test.ts`; the determinism fixtures in `generate.test.ts` | Empty `radius`, `motion`, and `typography`, and scales of 1, give the CSS of the theme without them; every fixture is unchanged |
+| Generated steps | `inputs.test.ts` | `radius.scale` 0.5: `radius.none` to `radius.full` are 0, 0.0625, 0.125, 0.25, 0.375, 0.5, 0.75 rem, and 9999px, and `control.radius` follows (0.25rem); 0 squares every step but `full`. `motion.scale` 0.5: 50, 100, 150, 250 ms, `reducedMotion` stays `0ms` and is still emitted under `prefers-reduced-motion`; 0.333 gives 33ms. `typography.scale` `1rem` × 1.25: 0.64, 0.8, 1, 1.25, 1.5625, 1.9531, 2.4414, 3.0518 rem, and `type.display.size` follows `4xl` |
+| (1) Ranges and defaults in the schema | `inputs.test.ts`, `schema.test.ts` | `radius.scale` 0 to 3, `motion.scale` above 0 and at most 2, `typography.scale.ratio` above 1 and at most 2, defaults 1, 1, 1.2, and `base` `1rem`; equal to the generator's `INPUT_BOUNDS`. Schema drafts: 680 (616 before; 8 new paths of 8 drafts), none accepted by the generator and rejected by the schema |
+| (2) Diagnostics at the input's pointer | `inputs.test.ts` | Out of range or not a number: `scale.invalidParameter` at `/radius/scale`, `/motion/scale`, `/typography/scale/ratio`; missing: `config.required` at `/typography/scale/base` or `/ratio`; `base` `0`: `unit.invalid`; not an object: `config.type`; `scal`: `config.unknownKey`, suggesting `scale`. A px base first gave 9 warnings, its own and one per generated size from the unit policy; it now gives one, `unit.discouraged` at `/typography/scale/base` |
+| (3) Labelled in the inspection | `inputs.test.ts` (`emitInspectJson`) | `radius.md`: `origin` `generated`, `provenance` `0.5rem × 2 (radius.scale)`; `font.size.lg`: `1rem × 1.2^1 (typography.scale)`; an override of `radius.lg` stays `overridden` |
+| (4) `base` and `ratio`, `md` = base | `inputs.test.ts` | As above; `font.size.md` is the base |
+| Base files | `inputs.test.ts` | `radius`, `motion`, and `typography` merge by key; `{ "scale": null }` in each removes the base's input, and the steps return to the preset |
+| Independent DTCG reader | `dtcg.test.ts` | A theme with `radius.scale` 0.5, `motion.scale` 0.333, and `typography.scale` `1rem` × 1.25 read by `@terrazzo/parser`: every token equals Oddkin's value |
+| Node tests | `npx vitest run --project node packages/tokens` with components' `css-sources`, Workbench's node tests, `tests/schemas`, `tests/architecture`, and `tests/release` | 356 passed and 1 skipped (38 files); new: `inputs.test.ts` (8 tests) |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the four tokens browser files, the components' conditions, multi-product, and side-nav scope tests, and Workbench's preview test | 57 passed in each of Chromium, Firefox, and WebKit |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-inputs.json` (15 probes: each bound, the radius steps, rounding, the font offsets, a zero base, unknown keys, a required ratio, the single px warning, the inputs not applied, the three merge rules, the generated label) | 15 of 15 killed |
+| Gates | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Exit 0; exit 0; exit 0, the default theme 3,096 B gzip of its 3,136 B budget, unchanged |
+
+**Not verified here:** CI on this commit, and Theme Studio's controls, which are Agent 2's row 6. Elevation has no input.

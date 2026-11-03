@@ -79,6 +79,9 @@ describe('theme-config.v1 JSON Schema', () => {
           steps: { xs: 1, sm: 2, md: 3, lg: 4.5, xl: 9 },
           snap: '0.125rem',
         },
+        radius: { scale: 0.5 },
+        motion: { scale: 1.5 },
+        typography: { scale: { base: '1rem', ratio: 1.25 } },
         modes: ['light', 'dark'],
         products: {
           clinic: {
@@ -148,7 +151,7 @@ describe('theme-config.v1 JSON Schema', () => {
         }
       }
     }
-    expect(drafts).toBe(616);
+    expect(drafts).toBe(680);
   });
 
   it('accepts a file that extends a base, with removals, which the generator needs merged first', () => {
@@ -196,6 +199,9 @@ describe('theme-config.v1 JSON Schema', () => {
       'brand',
       'status',
       'spacing',
+      'radius',
+      'motion',
+      'typography',
       'modes',
       'products',
       'density',

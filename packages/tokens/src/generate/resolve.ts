@@ -17,6 +17,7 @@ import { resolveConditions, type Condition } from './conditions.js';
 import { checkContrast, hexOf } from './contrast.js';
 import { closest, DiagnosticList, pointer, type Diagnostic } from './diagnostics.js';
 import { aboveFloorSyntax, floorLabel } from './floor.js';
+import { applyFoundationInputs, foundationInputs } from './inputs.js';
 import {
   compareNames,
   compileValue,
@@ -82,6 +83,9 @@ const TOP_LEVEL = [
   'brand',
   'status',
   'spacing',
+  'radius',
+  'motion',
+  'typography',
   'modes',
   'products',
   'density',
@@ -377,6 +381,7 @@ export function resolveTheme(input: unknown): ResolveResult {
   }
 
   const spacing = generateSpacing(given(config.spacing, DEFAULT_SPACING), d, '/spacing');
+  const inputs = foundationInputs(input, d);
 
   const products = given(config.products, {});
   const productInputs: Array<{
@@ -476,6 +481,7 @@ export function resolveTheme(input: unknown): ResolveResult {
       isModeValues(token.value) && modes.length === 1 ? token.value[modes[0] as Mode] : token.value;
     tokens.set(token.name, { ...token, value, origin: 'preset' });
   }
+  applyFoundationInputs(tokens, inputs);
 
   // Contrast-selected roles, valid for the base brand and every product brand.
   const productRamps = productInputs.map((p) => buildRamps(p.primary, p.neutral, seeds));
@@ -539,6 +545,12 @@ export function resolveTheme(input: unknown): ResolveResult {
       item.code === 'alias.missing' &&
       collapsed.has(item.path) &&
       item.message.includes('"space.')
+    )
+      continue;
+    // A px typography base is reported once, at /typography/scale/base.
+    if (
+      item.code === 'unit.discouraged' &&
+      tokens.get(item.path.slice('/tokens/'.length))?.provenance?.endsWith('(typography.scale)')
     )
       continue;
     d.items.push({ ...item, path: configPath(tokens, item.path) });

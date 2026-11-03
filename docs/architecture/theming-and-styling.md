@@ -14,6 +14,8 @@ export default defineTheme({
   preset: 'oddkin-default',          // optional
   brand: { primary: '#5b46e8' },   // the only required domain input
   spacing: { strategy: 'multiples', unit: '0.25rem', steps: { xs: 1, sm: 2, md: 3, lg: 4.5, xl: 9 } },
+  radius: { scale: 0.5 }, motion: { scale: 1.5 },          // §10.3
+  typography: { scale: { base: '1rem', ratio: 1.25 } },    // §10.3
   modes: ['light', 'dark'],
   products: { clinic: { brand: { primary: '#0f766e' } } },
   density: { compact: { scale: 0.75 } },
@@ -50,7 +52,7 @@ A theme file can build on a shared base file and set only what differs, so produ
 ```
 
 - **`extends`** names one base file: a path relative to the file, used as written, or a package export resolved with Node's resolution from the file's folder. A base may extend another; a cycle is `config.extends.cycle`, and a base that cannot be found is `config.load`. A file with `extends` need not set `brand`.
-- **Merge**, base first: `brand`, `status`, `overrides`, `products` (and each product's `brand` and `overrides`), `density`, `conditions`, and `profiles` (and each profile's roles) merge by key. Everything else, `spacing`, `modes`, `name`, and `preset` included, replaces the base's whole, as does the value of each entry. In those maps of named entries, `null` removes the base's entry. `$schema` and `extends` are not inherited. JS and TS configs may use `extends` too.
+- **Merge**, base first: `brand`, `status`, `radius`, `motion`, `typography` (§10.3), `overrides`, `products` (and each product's `brand` and `overrides`), `density`, `conditions`, and `profiles` (and each profile's roles) merge by key. Everything else, `spacing`, `modes`, `name`, and `preset` included, replaces the base's whole, as does the value of each entry. In those maps of named entries, `null` removes the base's entry (`"typography": { "scale": null }` drops a base's type scale). `$schema` and `extends` are not inherited. JS and TS configs may use `extends` too.
 - **Where it runs.** `loadConfig()` (`@oddkin/tokens/node`, so `oddkin-tokens`) follows the chain and returns the merged model with `layers`: each file from the root base to the one loaded, as written. `mergeThemes(base, file)` and `layerOf(layers, pointer)` (`@oddkin/tokens/theme`) are pure and browser-safe: the first merges, the second names the file that set, or removed, the value at a diagnostic's path. The CLI prints that file beside each diagnostic (`file` in `--json`). `generate()` reads no files: a model that still has `extends` fails with `config.extends.unresolved`.
 
 ## 2. Pipeline
@@ -505,6 +507,18 @@ Only the colour palette comes from the design source (§10.1); every other value
 | Motion duration (`duration`) | `motion.duration.{fast,normal,slow,slower}` | 100, 200, 300, 500 ms; **0ms under `prefers-reduced-motion: reduce`** |
 | Motion easing (`cubicBezier`) | `motion.easing.{standard,enter,exit,linear}` | `cubic-bezier(0.4, 0, 0.2, 1)`, `(0, 0, 0.2, 1)`, `(0.4, 0, 1, 1)`, `(0, 0, 1, 1)` |
 | Stacking | `z-index.{base,raised,sticky,overlay}` | 0, 1, 100, 200 — in-flow layers only; dialogs, popovers, and menus use the top layer (css-architecture.md §9) |
+
+**Inputs (implemented, P1.1; agreed with Workbench for Theme Studio, 2026-11-03).** Three optional inputs generate steps of the table from one or two numbers; unset, the steps keep the table's values. The schema states each input's range and the default a form starts from, and `INPUT_BOUNDS` (`@oddkin/tokens/generate`) holds the same bounds, so a form can draw each control from the schema alone.
+
+| Input | Range (schema default) | Generates |
+| --- | --- | --- |
+| `radius.scale` | 0 to 3 (1) | `radius.{xs,sm,md,lg,xl,2xl}`: the table's value × scale; `none` and `full` stay, and `control.radius` and `card.radius` follow as aliases |
+| `motion.scale` | above 0, at most 2 (1) | `motion.duration.*`: the table's value × scale, rounded to whole milliseconds; reduced motion stays `0ms` |
+| `typography.scale` | `base`, a positive length (`1rem`), and `ratio`, above 1 and at most 2 (1.2); both required | `font.size.{xs,sm,md,lg,xl,2xl,3xl,4xl}`: base × ratio^n for n = -2 … 5, so `md` is the base; rounded to four decimals, and the `type.*` styles follow |
+
+For example, `{ "radius": { "scale": 0.5 }, "motion": { "scale": 1.5 }, "typography": { "scale": { "base": "1rem", "ratio": 1.25 } } }` gives `radius.md` 0.25rem, `motion.duration.fast` 150ms, and font sizes of 0.64, 0.8, 1, 1.25, 1.5625, 1.9531, 2.4414, and 3.0518 rem. The schema default of 1.2 for `ratio` is a starting point, not the table: the table's sizes are not one ratio apart.
+
+The inspection labels each generated step `origin: "generated"`, with a provenance naming the input (`0.5rem × 2 (radius.scale)`, `1rem × 1.25^2 (typography.scale)`), and `overrides` still win over a generated step. Problems are reported at the input's own pointer: a number out of range or not a number is `scale.invalidParameter` at `/radius/scale`, `/motion/scale`, or `/typography/scale/ratio`; a missing `base` or `ratio` is `config.required`; a `base` that is not a positive length is `unit.invalid`; a px `base` is one `unit.discouraged` warning at `/typography/scale/base`, not one per generated size; and an unknown key is `config.unknownKey` with a suggestion. *(Verified in `packages/tokens/test/inputs.test.ts`.)*
 
 Reduced motion is emitted by the generator: tokens with a `reducedMotion` value are re-declared inside `@media (prefers-reduced-motion: reduce)` on the same selectors as the base declarations, so nested theme scopes cannot restore full motion and every alias of a duration follows. Components therefore get reduced motion by reading the duration tokens; essential motion (a progress spinner) keeps its own reduced-motion rule. Durations must not be relied on for cleanup (no `transitionend`-dependent logic, css-architecture.md §11).
 

@@ -18,6 +18,9 @@ const THEME: MergeRule = {
   keys: {
     brand: MAP,
     status: MAP,
+    radius: MAP,
+    motion: MAP,
+    typography: MAP,
     overrides: MAP,
     density: MAP,
     conditions: MAP,
@@ -46,12 +49,12 @@ function merge(base: unknown, layer: unknown, rule: MergeRule): unknown {
 
 /**
  * The theme `layer` on top of `base` (theming-and-styling.md §1.1). Objects of named entries merge
- * by key: `brand`, `status`, `overrides`, `products` (and each product's `brand` and
- * `overrides`), `density`, `conditions`, and `profiles` (and each profile's roles); `null` there
- * removes the base's entry. Everything else, `spacing` and `modes` included, is replaced whole,
- * as is each entry's value. `$schema` comes from `layer`; `layer`'s `extends` is consumed, and
- * `base`'s is kept, so a base that still extends another is reported by the generator until it is
- * merged too. Neither input is changed.
+ * by key: `brand`, `status`, `radius`, `motion`, `typography`, `overrides`, `products` (and each
+ * product's `brand` and `overrides`), `density`, `conditions`, and `profiles` (and each profile's
+ * roles); `null` there removes the base's entry. Everything else, `spacing` and `modes` included,
+ * is replaced whole, as is each entry's value. `$schema` comes from `layer`; `layer`'s `extends`
+ * is consumed, and `base`'s is kept, so a base that still extends another is reported by the
+ * generator until it is merged too. Neither input is changed.
  */
 export function mergeThemes(base: object, layer: object): Record<string, unknown> {
   const { $schema: _schema, ...inherited } = base as Record<string, unknown>;
