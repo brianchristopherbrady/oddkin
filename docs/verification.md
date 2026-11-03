@@ -5039,3 +5039,16 @@ Opt-in per theme, `"gamut": "p3"`, additive to schema v1 (theming-and-styling.md
 Also recorded: CSS and TS consumption are verified by existing tests (roles: `styling-contract.browser.test.ts`; conditions: `conditions-profiles.test.ts` and `conditions.browser.test.ts`); the Sass outputs need a Sass compiler to verify, and the owner approved `sass` as a root dev dependency used only by tests (2026-11-03, relayed by Agent 1).
 
 **Not verified here:** a P3 display, by eye; CI on this commit. The contrast report file stays a measurement of the sRGB values.
+
+## 2026-11-03 — P0.6 done: the scheduled registry smoke, and CI green again (round 11, Agent 1)
+
+Read from GitHub's public API (runs, jobs, and issues); nothing ran locally for this tick.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The first scheduled registry smoke | `actions/runs/41398232217` and its jobs | Registry smoke, event `schedule`, `f7ad58b`, 2026-11-02 06:10–06:14 UTC: success. `npm ci`, the three browsers, `npm run build`, then `npx playwright test` on the fresh-consumers, packed-consumers, components-only, autoload, and golden-path specs with `ODDKIN_CONSUMERS_FROM=beta` (81 s); the report job passed |
+| CI before the fix | runs 41706178131 (`f7e56c4`) and 41706672686 (`7a8053e`), their failure annotations | `f7e56c4`: the node project (`metadata.test.ts`) and the three browser steps (the figma-parity disabled button and toggleButton checks; 10 annotations a step, GitHub's limit); `7a8053e`: the three browser steps only. Every other step passed, e2e included |
+| CI on `4f03223` | `actions/runs/41712566479` and its jobs | success, every step, 38 min 54 s from start to end: npm ci 5 s; npx playwright install --with-deps chromium firefox webkit 48 s; npm run lint 46 s; npm run typecheck 8 s; npm run build 6 s; node project 50 s; browser project, chromium 4 min 37 s; browser project, firefox 5 min 12 s; browser project, webkit 4 min 48 s; npm run verify:metadata 1 s; npm run size 2 s; npm run test:e2e 20 min 21 s; npm run verify:packs 23 s; node scripts/ci/impact-summary.mjs 9 s; node scripts/release/evidence.mjs 4 s |
+| Issue #2 | `issues/2` and its events; the run's jobs | Closed by github-actions[bot] at 21:05:12 UTC, during run 41712566479's report job (21:05:07–21:05:15) |
+
+**Not verified here:** the report job's comment text, and the registry smoke's test count (its log needs sign-in; its e2e step ran 81 s and passed).
