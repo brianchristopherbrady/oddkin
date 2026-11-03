@@ -15,7 +15,9 @@
  *
  * Declarations are emitted into the `odd.tokens` cascade layer after the canonical Oddkin
  * layer order (ADR 0039), so unlayered application CSS overrides generated values whatever
- * the stylesheet order. Contract: css-architecture.md §5.
+ * the stylesheet order. Contract: css-architecture.md §5. A theme with Display P3 values
+ * re-declares them under `@media (color-gamut: p3)` on the same selectors, after the sRGB
+ * values (theming-and-styling.md §10.7).
  */
 import type { Mode, ModeValues } from '../theme/types.js';
 import {
@@ -107,6 +109,16 @@ function tokenDeclarations(
   return [...tokens].map((t) => [cssVariable(t.name), compileToken(t, modes, lightDark)] as const);
 }
 
+/** The Display P3 values, re-declared on the same selectors for displays that show them. */
+function wideGamut(selectors: readonly string[], tokens: Iterable<TokenDefinition>): string {
+  const declarations: Declaration[] = [...tokens]
+    .filter((t) => t.p3 !== undefined)
+    .map((t) => [cssVariable(t.name), t.p3 as string]);
+  return declarations.length
+    ? `@media (color-gamut: p3) {\n${block(selectors, declarations, '  ')}}\n`
+    : '';
+}
+
 /** Emit the theme as CSS custom properties. Deterministic: same theme and options, same bytes. */
 export function emitCss(theme: ResolvedTheme, options: CssOptions = {}): string {
   const layer = options.layer ?? DEFAULT_TOKEN_LAYER;
@@ -128,6 +140,7 @@ function emitBlocks(theme: ResolvedTheme, lightDark: boolean): string {
   const baseSelectors = [':root', `[data-odd-theme="${theme.name}"]`];
   const parts: string[] = [
     block(baseSelectors, tokenDeclarations(tokens.values(), modes, lightDark)),
+    wideGamut(baseSelectors, tokens.values()),
   ];
 
   if (modes.length === 1) {
@@ -202,6 +215,8 @@ function emitBlocks(theme: ResolvedTheme, lightDark: boolean): string {
         ),
       );
     }
+    if (scope.kind === 'product')
+      parts.push(wideGamut([`[data-odd-product="${scope.name}"]`], scope.tokens.values()));
   }
   return parts.filter(Boolean).join('\n');
 }

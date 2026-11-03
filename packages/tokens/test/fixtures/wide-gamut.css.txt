@@ -1,0 +1,533 @@
+/* @oddkin/tokens — theme "vivid". Generated file: change the theme configuration instead of editing it. */
+
+@layer odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities;
+
+@layer odd.tokens {
+  :root,
+  [data-odd-theme="vivid"] {
+    --odd-border-width-default: 1px;
+    --odd-border-width-strong: 2px;
+    --odd-card-padding: var(--odd-layout-inset);
+    --odd-card-radius: var(--odd-radius-lg);
+    --odd-color-accent-decorative: #dfedaa;
+    --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-action-hover: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-action-pressed: var(--odd-mode-light, var(--odd-ref-brand-800)) var(--odd-mode-dark, var(--odd-ref-brand-200));
+    --odd-color-border-default: var(--odd-mode-light, var(--odd-ref-neutral-200)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-border-strong: var(--odd-mode-light, var(--odd-ref-neutral-500)) var(--odd-mode-dark, var(--odd-ref-neutral-400));
+    --odd-color-canvas: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-danger-border: var(--odd-mode-light, var(--odd-ref-danger-200)) var(--odd-mode-dark, var(--odd-ref-danger-800));
+    --odd-color-danger-foreground: var(--odd-mode-light, var(--odd-ref-danger-600)) var(--odd-mode-dark, var(--odd-ref-danger-300));
+    --odd-color-danger-surface: var(--odd-mode-light, var(--odd-ref-danger-50)) var(--odd-mode-dark, var(--odd-ref-danger-950));
+    --odd-color-focus-ring: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-info-border: var(--odd-mode-light, var(--odd-ref-info-200)) var(--odd-mode-dark, var(--odd-ref-info-800));
+    --odd-color-info-foreground: var(--odd-mode-light, var(--odd-ref-info-600)) var(--odd-mode-dark, var(--odd-ref-info-400));
+    --odd-color-info-surface: var(--odd-mode-light, var(--odd-ref-info-50)) var(--odd-mode-dark, var(--odd-ref-info-950));
+    --odd-color-link: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-neutral-border: var(--odd-color-border-default);
+    --odd-color-neutral-foreground: var(--odd-color-text-secondary);
+    --odd-color-neutral-surface: var(--odd-color-surface-sunken);
+    --odd-color-scrim: var(--odd-mode-light, rgb(0 0 0 / 0.4)) var(--odd-mode-dark, rgb(0 0 0 / 0.6));
+    --odd-color-selection-background: var(--odd-color-action-default);
+    --odd-color-selection-foreground: var(--odd-color-text-on-action);
+    --odd-color-selection-surface: var(--odd-mode-light, var(--odd-ref-brand-100)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-success-border: var(--odd-mode-light, var(--odd-ref-success-200)) var(--odd-mode-dark, var(--odd-ref-success-800));
+    --odd-color-success-foreground: var(--odd-mode-light, var(--odd-ref-success-700)) var(--odd-mode-dark, var(--odd-ref-success-400));
+    --odd-color-success-surface: var(--odd-mode-light, var(--odd-ref-success-50)) var(--odd-mode-dark, var(--odd-ref-success-950));
+    --odd-color-surface-default: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-surface-hover: var(--odd-mode-light, var(--odd-ref-neutral-100)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-surface-raised: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-900));
+    --odd-color-surface-specimen: var(--odd-mode-light, var(--odd-ref-brand-50)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-surface-sunken: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-text-disabled: var(--odd-mode-light, var(--odd-ref-neutral-400)) var(--odd-mode-dark, var(--odd-ref-neutral-600));
+    --odd-color-text-on-action: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-text-primary: var(--odd-mode-light, var(--odd-ref-neutral-900)) var(--odd-mode-dark, var(--odd-ref-neutral-50));
+    --odd-color-text-secondary: var(--odd-mode-light, var(--odd-ref-neutral-700)) var(--odd-mode-dark, var(--odd-ref-neutral-300));
+    --odd-color-warning-border: var(--odd-mode-light, var(--odd-ref-warning-200)) var(--odd-mode-dark, var(--odd-ref-warning-800));
+    --odd-color-warning-foreground: var(--odd-mode-light, var(--odd-ref-warning-600)) var(--odd-mode-dark, var(--odd-ref-warning-400));
+    --odd-color-warning-surface: var(--odd-mode-light, var(--odd-ref-warning-50)) var(--odd-mode-dark, var(--odd-ref-warning-950));
+    --odd-control-gap: var(--odd-space-xs);
+    --odd-control-height-lg: 3rem;
+    --odd-control-height-md: 2.5rem;
+    --odd-control-height-sm: 2rem;
+    --odd-control-padding-inline-lg: var(--odd-space-md);
+    --odd-control-padding-inline-md: var(--odd-space-sm);
+    --odd-control-padding-inline-sm: var(--odd-space-xs);
+    --odd-control-radius: var(--odd-radius-md);
+    --odd-elevation-lg: var(--odd-mode-light, 0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)) var(--odd-mode-dark, 0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48));
+    --odd-elevation-md: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32));
+    --odd-elevation-none: none;
+    --odd-elevation-sm: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3));
+    --odd-elevation-xl: var(--odd-mode-light, 0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)) var(--odd-mode-dark, 0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6));
+    --odd-focus-offset: 2px;
+    --odd-focus-width: 2px;
+    --odd-font-family-display: var(--odd-font-family-sans);
+    --odd-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --odd-font-family-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --odd-font-size-2xl: 1.5rem;
+    --odd-font-size-3xl: 1.875rem;
+    --odd-font-size-4xl: 2.25rem;
+    --odd-font-size-lg: 1.125rem;
+    --odd-font-size-md: 1rem;
+    --odd-font-size-sm: 0.875rem;
+    --odd-font-size-xl: 1.25rem;
+    --odd-font-size-xs: 0.75rem;
+    --odd-font-weight-bold: 700;
+    --odd-font-weight-medium: 500;
+    --odd-font-weight-regular: 400;
+    --odd-font-weight-semibold: 600;
+    --odd-icon-size-lg: 1.5rem;
+    --odd-icon-size-md: 1.25rem;
+    --odd-icon-size-sm: 1rem;
+    --odd-layout-gap: var(--odd-space-md);
+    --odd-layout-inset: var(--odd-space-lg);
+    --odd-layout-item-min: 16rem;
+    --odd-layout-main-min: 20rem;
+    --odd-layout-measure: 40rem;
+    --odd-layout-sidebar-width: 16rem;
+    --odd-letter-spacing-normal: 0;
+    --odd-letter-spacing-tight: -0.025em;
+    --odd-letter-spacing-wide: 0.05em;
+    --odd-line-height-none: 1;
+    --odd-line-height-normal: 1.5;
+    --odd-line-height-relaxed: 1.625;
+    --odd-line-height-snug: 1.375;
+    --odd-line-height-tight: 1.25;
+    --odd-motion-duration-fast: 100ms;
+    --odd-motion-duration-normal: 200ms;
+    --odd-motion-duration-slow: 300ms;
+    --odd-motion-duration-slower: 500ms;
+    --odd-motion-easing-enter: cubic-bezier(0, 0, 0.2, 1);
+    --odd-motion-easing-exit: cubic-bezier(0.4, 0, 1, 1);
+    --odd-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+    --odd-motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --odd-navigation-indent: var(--odd-space-md);
+    --odd-navigation-item-gap: var(--odd-space-xs);
+    --odd-navigation-item-min-height: var(--odd-control-height-md);
+    --odd-navigation-item-padding-block: var(--odd-space-xs);
+    --odd-navigation-item-padding-inline: var(--odd-space-sm);
+    --odd-radius-2xl: 1.5rem;
+    --odd-radius-full: 9999px;
+    --odd-radius-lg: 0.75rem;
+    --odd-radius-md: 0.5rem;
+    --odd-radius-none: 0;
+    --odd-radius-sm: 0.25rem;
+    --odd-radius-xl: 1rem;
+    --odd-radius-xs: 0.125rem;
+    --odd-ref-brand-50: #e9fbe9;
+    --odd-ref-brand-100: #d5f6d5;
+    --odd-ref-brand-200: #aee9af;
+    --odd-ref-brand-300: #73d979;
+    --odd-ref-brand-400: #22c23e;
+    --odd-ref-brand-500: #00a22b;
+    --odd-ref-brand-600: #008622;
+    --odd-ref-brand-700: #006b19;
+    --odd-ref-brand-800: #005211;
+    --odd-ref-brand-900: #003909;
+    --odd-ref-brand-950: #002204;
+    --odd-ref-danger-50: #fff2f0;
+    --odd-ref-danger-100: #ffe4e0;
+    --odd-ref-danger-200: #ffc8c1;
+    --odd-ref-danger-300: #ffa196;
+    --odd-ref-danger-400: #f97165;
+    --odd-ref-danger-500: #e6443d;
+    --odd-ref-danger-600: #c92324;
+    --odd-ref-danger-700: #a50e15;
+    --odd-ref-danger-800: #80070d;
+    --odd-ref-danger-900: #5c0206;
+    --odd-ref-danger-950: #3a0002;
+    --odd-ref-info-50: #ecf7ff;
+    --odd-ref-info-100: #daeffe;
+    --odd-ref-info-200: #b7ddf9;
+    --odd-ref-info-300: #86c6f3;
+    --odd-ref-info-400: #53abe4;
+    --odd-ref-info-500: #0a8fd1;
+    --odd-ref-info-600: #0076af;
+    --odd-ref-info-700: #005e8c;
+    --odd-ref-info-800: #00476c;
+    --odd-ref-info-900: #00314c;
+    --odd-ref-info-950: #001d2f;
+    --odd-ref-neutral-0: #ffffff;
+    --odd-ref-neutral-50: #f4f5f4;
+    --odd-ref-neutral-100: #eaecea;
+    --odd-ref-neutral-200: #d5d8d5;
+    --odd-ref-neutral-300: #babfba;
+    --odd-ref-neutral-400: #9da49d;
+    --odd-ref-neutral-500: #818981;
+    --odd-ref-neutral-600: #697169;
+    --odd-ref-neutral-700: #545a53;
+    --odd-ref-neutral-800: #3f443f;
+    --odd-ref-neutral-900: #2b2f2b;
+    --odd-ref-neutral-950: #191b19;
+    --odd-ref-neutral-1000: #000000;
+    --odd-ref-success-50: #edf9ef;
+    --odd-ref-success-100: #dcf2e0;
+    --odd-ref-success-200: #bce3c3;
+    --odd-ref-success-300: #90d09d;
+    --odd-ref-success-400: #61b876;
+    --odd-ref-success-500: #2e9e52;
+    --odd-ref-success-600: #00853c;
+    --odd-ref-success-700: #006b2e;
+    --odd-ref-success-800: #005121;
+    --odd-ref-success-900: #003915;
+    --odd-ref-success-950: #00220a;
+    --odd-ref-warning-50: #fcf4e8;
+    --odd-ref-warning-100: #f9e9d3;
+    --odd-ref-warning-200: #efd3ac;
+    --odd-ref-warning-300: #e3b575;
+    --odd-ref-warning-400: #d09538;
+    --odd-ref-warning-500: #b37900;
+    --odd-ref-warning-600: #956300;
+    --odd-ref-warning-700: #774f00;
+    --odd-ref-warning-800: #5b3b00;
+    --odd-ref-warning-900: #402800;
+    --odd-ref-warning-950: #271700;
+    --odd-space-2xl: 3rem;
+    --odd-space-2xs: 0.25rem;
+    --odd-space-3xl: 4rem;
+    --odd-space-3xs: 0.125rem;
+    --odd-space-4xl: 6rem;
+    --odd-space-lg: 1.5rem;
+    --odd-space-md: 1rem;
+    --odd-space-none: 0;
+    --odd-space-sm: 0.75rem;
+    --odd-space-xl: 2rem;
+    --odd-space-xs: 0.5rem;
+    --odd-target-min: 1.5rem;
+    --odd-type-body-family: var(--odd-font-family-sans);
+    --odd-type-body-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-body-line-height: var(--odd-line-height-normal);
+    --odd-type-body-size: var(--odd-font-size-md);
+    --odd-type-body-weight: var(--odd-font-weight-regular);
+    --odd-type-code-family: var(--odd-font-family-mono);
+    --odd-type-code-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-code-line-height: var(--odd-line-height-normal);
+    --odd-type-code-size: var(--odd-font-size-sm);
+    --odd-type-code-weight: var(--odd-font-weight-regular);
+    --odd-type-display-family: var(--odd-font-family-display);
+    --odd-type-display-letter-spacing: var(--odd-letter-spacing-tight);
+    --odd-type-display-line-height: var(--odd-line-height-tight);
+    --odd-type-display-size: var(--odd-font-size-4xl);
+    --odd-type-display-weight: var(--odd-font-weight-semibold);
+    --odd-type-eyebrow-family: var(--odd-font-family-sans);
+    --odd-type-eyebrow-letter-spacing: var(--odd-letter-spacing-wide);
+    --odd-type-eyebrow-line-height: var(--odd-line-height-normal);
+    --odd-type-eyebrow-size: var(--odd-font-size-xs);
+    --odd-type-eyebrow-weight: var(--odd-font-weight-semibold);
+    --odd-type-section-family: var(--odd-font-family-display);
+    --odd-type-section-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-section-line-height: var(--odd-line-height-tight);
+    --odd-type-section-size: var(--odd-font-size-2xl);
+    --odd-type-section-weight: var(--odd-font-weight-semibold);
+    --odd-type-small-family: var(--odd-font-family-sans);
+    --odd-type-small-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-small-line-height: var(--odd-line-height-normal);
+    --odd-type-small-size: var(--odd-font-size-xs);
+    --odd-type-small-weight: var(--odd-font-weight-regular);
+    --odd-type-title-family: var(--odd-font-family-display);
+    --odd-type-title-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-title-line-height: var(--odd-line-height-snug);
+    --odd-type-title-size: var(--odd-font-size-xl);
+    --odd-type-title-weight: var(--odd-font-weight-semibold);
+    --odd-type-ui-family: var(--odd-font-family-sans);
+    --odd-type-ui-letter-spacing: var(--odd-letter-spacing-normal);
+    --odd-type-ui-line-height: var(--odd-line-height-snug);
+    --odd-type-ui-size: var(--odd-font-size-sm);
+    --odd-type-ui-weight: var(--odd-font-weight-medium);
+    --odd-z-index-base: 0;
+    --odd-z-index-overlay: 200;
+    --odd-z-index-raised: 1;
+    --odd-z-index-sticky: 100;
+  }
+
+  @media (color-gamut: p3) {
+    :root,
+    [data-odd-theme="vivid"] {
+      --odd-ref-brand-500: color(display-p3 0.1499 0.649 0.0959);
+      --odd-ref-brand-600: color(display-p3 0.0634 0.5419 0);
+      --odd-ref-brand-700: color(display-p3 0.0419 0.4335 0);
+      --odd-ref-brand-800: color(display-p3 0.0236 0.3297 0);
+      --odd-ref-brand-900: color(display-p3 0.0116 0.2313 0);
+      --odd-ref-brand-950: color(display-p3 0.0046 0.1393 0);
+      --odd-ref-info-700: color(display-p3 0.0784 0.3631 0.5717);
+    }
+  }
+
+  :root {
+    color-scheme: light;
+    --odd-mode-light: initial;
+    --odd-mode-dark: ;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-odd-mode]) {
+      color-scheme: dark;
+      --odd-mode-light: ;
+      --odd-mode-dark: initial;
+    }
+  }
+
+  [data-odd-mode="light"] {
+    color-scheme: light;
+    --odd-mode-light: initial;
+    --odd-mode-dark: ;
+    --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-action-hover: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-action-pressed: var(--odd-mode-light, var(--odd-ref-brand-800)) var(--odd-mode-dark, var(--odd-ref-brand-200));
+    --odd-color-border-default: var(--odd-mode-light, var(--odd-ref-neutral-200)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-border-strong: var(--odd-mode-light, var(--odd-ref-neutral-500)) var(--odd-mode-dark, var(--odd-ref-neutral-400));
+    --odd-color-canvas: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-danger-border: var(--odd-mode-light, var(--odd-ref-danger-200)) var(--odd-mode-dark, var(--odd-ref-danger-800));
+    --odd-color-danger-foreground: var(--odd-mode-light, var(--odd-ref-danger-600)) var(--odd-mode-dark, var(--odd-ref-danger-300));
+    --odd-color-danger-surface: var(--odd-mode-light, var(--odd-ref-danger-50)) var(--odd-mode-dark, var(--odd-ref-danger-950));
+    --odd-color-focus-ring: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-info-border: var(--odd-mode-light, var(--odd-ref-info-200)) var(--odd-mode-dark, var(--odd-ref-info-800));
+    --odd-color-info-foreground: var(--odd-mode-light, var(--odd-ref-info-600)) var(--odd-mode-dark, var(--odd-ref-info-400));
+    --odd-color-info-surface: var(--odd-mode-light, var(--odd-ref-info-50)) var(--odd-mode-dark, var(--odd-ref-info-950));
+    --odd-color-link: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-scrim: var(--odd-mode-light, rgb(0 0 0 / 0.4)) var(--odd-mode-dark, rgb(0 0 0 / 0.6));
+    --odd-color-selection-surface: var(--odd-mode-light, var(--odd-ref-brand-100)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-success-border: var(--odd-mode-light, var(--odd-ref-success-200)) var(--odd-mode-dark, var(--odd-ref-success-800));
+    --odd-color-success-foreground: var(--odd-mode-light, var(--odd-ref-success-700)) var(--odd-mode-dark, var(--odd-ref-success-400));
+    --odd-color-success-surface: var(--odd-mode-light, var(--odd-ref-success-50)) var(--odd-mode-dark, var(--odd-ref-success-950));
+    --odd-color-surface-default: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-surface-hover: var(--odd-mode-light, var(--odd-ref-neutral-100)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-surface-raised: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-900));
+    --odd-color-surface-specimen: var(--odd-mode-light, var(--odd-ref-brand-50)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-surface-sunken: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-text-disabled: var(--odd-mode-light, var(--odd-ref-neutral-400)) var(--odd-mode-dark, var(--odd-ref-neutral-600));
+    --odd-color-text-on-action: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-text-primary: var(--odd-mode-light, var(--odd-ref-neutral-900)) var(--odd-mode-dark, var(--odd-ref-neutral-50));
+    --odd-color-text-secondary: var(--odd-mode-light, var(--odd-ref-neutral-700)) var(--odd-mode-dark, var(--odd-ref-neutral-300));
+    --odd-color-warning-border: var(--odd-mode-light, var(--odd-ref-warning-200)) var(--odd-mode-dark, var(--odd-ref-warning-800));
+    --odd-color-warning-foreground: var(--odd-mode-light, var(--odd-ref-warning-600)) var(--odd-mode-dark, var(--odd-ref-warning-400));
+    --odd-color-warning-surface: var(--odd-mode-light, var(--odd-ref-warning-50)) var(--odd-mode-dark, var(--odd-ref-warning-950));
+    --odd-elevation-lg: var(--odd-mode-light, 0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)) var(--odd-mode-dark, 0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48));
+    --odd-elevation-md: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32));
+    --odd-elevation-sm: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3));
+    --odd-elevation-xl: var(--odd-mode-light, 0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)) var(--odd-mode-dark, 0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6));
+    --odd-color-neutral-foreground: var(--odd-color-text-secondary);
+    --odd-color-selection-foreground: var(--odd-color-text-on-action);
+    --odd-color-neutral-surface: var(--odd-color-surface-sunken);
+    --odd-color-neutral-border: var(--odd-color-border-default);
+    --odd-color-selection-background: var(--odd-color-action-default);
+  }
+
+  [data-odd-mode="dark"] {
+    color-scheme: dark;
+    --odd-mode-light: ;
+    --odd-mode-dark: initial;
+    --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-action-hover: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-action-pressed: var(--odd-mode-light, var(--odd-ref-brand-800)) var(--odd-mode-dark, var(--odd-ref-brand-200));
+    --odd-color-border-default: var(--odd-mode-light, var(--odd-ref-neutral-200)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-border-strong: var(--odd-mode-light, var(--odd-ref-neutral-500)) var(--odd-mode-dark, var(--odd-ref-neutral-400));
+    --odd-color-canvas: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-danger-border: var(--odd-mode-light, var(--odd-ref-danger-200)) var(--odd-mode-dark, var(--odd-ref-danger-800));
+    --odd-color-danger-foreground: var(--odd-mode-light, var(--odd-ref-danger-600)) var(--odd-mode-dark, var(--odd-ref-danger-300));
+    --odd-color-danger-surface: var(--odd-mode-light, var(--odd-ref-danger-50)) var(--odd-mode-dark, var(--odd-ref-danger-950));
+    --odd-color-focus-ring: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-info-border: var(--odd-mode-light, var(--odd-ref-info-200)) var(--odd-mode-dark, var(--odd-ref-info-800));
+    --odd-color-info-foreground: var(--odd-mode-light, var(--odd-ref-info-600)) var(--odd-mode-dark, var(--odd-ref-info-400));
+    --odd-color-info-surface: var(--odd-mode-light, var(--odd-ref-info-50)) var(--odd-mode-dark, var(--odd-ref-info-950));
+    --odd-color-link: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-scrim: var(--odd-mode-light, rgb(0 0 0 / 0.4)) var(--odd-mode-dark, rgb(0 0 0 / 0.6));
+    --odd-color-selection-surface: var(--odd-mode-light, var(--odd-ref-brand-100)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-success-border: var(--odd-mode-light, var(--odd-ref-success-200)) var(--odd-mode-dark, var(--odd-ref-success-800));
+    --odd-color-success-foreground: var(--odd-mode-light, var(--odd-ref-success-700)) var(--odd-mode-dark, var(--odd-ref-success-400));
+    --odd-color-success-surface: var(--odd-mode-light, var(--odd-ref-success-50)) var(--odd-mode-dark, var(--odd-ref-success-950));
+    --odd-color-surface-default: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-surface-hover: var(--odd-mode-light, var(--odd-ref-neutral-100)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-surface-raised: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-900));
+    --odd-color-surface-specimen: var(--odd-mode-light, var(--odd-ref-brand-50)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-surface-sunken: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-text-disabled: var(--odd-mode-light, var(--odd-ref-neutral-400)) var(--odd-mode-dark, var(--odd-ref-neutral-600));
+    --odd-color-text-on-action: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-text-primary: var(--odd-mode-light, var(--odd-ref-neutral-900)) var(--odd-mode-dark, var(--odd-ref-neutral-50));
+    --odd-color-text-secondary: var(--odd-mode-light, var(--odd-ref-neutral-700)) var(--odd-mode-dark, var(--odd-ref-neutral-300));
+    --odd-color-warning-border: var(--odd-mode-light, var(--odd-ref-warning-200)) var(--odd-mode-dark, var(--odd-ref-warning-800));
+    --odd-color-warning-foreground: var(--odd-mode-light, var(--odd-ref-warning-600)) var(--odd-mode-dark, var(--odd-ref-warning-400));
+    --odd-color-warning-surface: var(--odd-mode-light, var(--odd-ref-warning-50)) var(--odd-mode-dark, var(--odd-ref-warning-950));
+    --odd-elevation-lg: var(--odd-mode-light, 0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)) var(--odd-mode-dark, 0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48));
+    --odd-elevation-md: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32));
+    --odd-elevation-sm: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3));
+    --odd-elevation-xl: var(--odd-mode-light, 0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)) var(--odd-mode-dark, 0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6));
+    --odd-color-neutral-foreground: var(--odd-color-text-secondary);
+    --odd-color-selection-foreground: var(--odd-color-text-on-action);
+    --odd-color-neutral-surface: var(--odd-color-surface-sunken);
+    --odd-color-neutral-border: var(--odd-color-border-default);
+    --odd-color-selection-background: var(--odd-color-action-default);
+  }
+
+  [data-odd-mode="system"] {
+    color-scheme: light;
+    --odd-mode-light: initial;
+    --odd-mode-dark: ;
+    --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-action-hover: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-action-pressed: var(--odd-mode-light, var(--odd-ref-brand-800)) var(--odd-mode-dark, var(--odd-ref-brand-200));
+    --odd-color-border-default: var(--odd-mode-light, var(--odd-ref-neutral-200)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-border-strong: var(--odd-mode-light, var(--odd-ref-neutral-500)) var(--odd-mode-dark, var(--odd-ref-neutral-400));
+    --odd-color-canvas: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-danger-border: var(--odd-mode-light, var(--odd-ref-danger-200)) var(--odd-mode-dark, var(--odd-ref-danger-800));
+    --odd-color-danger-foreground: var(--odd-mode-light, var(--odd-ref-danger-600)) var(--odd-mode-dark, var(--odd-ref-danger-300));
+    --odd-color-danger-surface: var(--odd-mode-light, var(--odd-ref-danger-50)) var(--odd-mode-dark, var(--odd-ref-danger-950));
+    --odd-color-focus-ring: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-info-border: var(--odd-mode-light, var(--odd-ref-info-200)) var(--odd-mode-dark, var(--odd-ref-info-800));
+    --odd-color-info-foreground: var(--odd-mode-light, var(--odd-ref-info-600)) var(--odd-mode-dark, var(--odd-ref-info-400));
+    --odd-color-info-surface: var(--odd-mode-light, var(--odd-ref-info-50)) var(--odd-mode-dark, var(--odd-ref-info-950));
+    --odd-color-link: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-scrim: var(--odd-mode-light, rgb(0 0 0 / 0.4)) var(--odd-mode-dark, rgb(0 0 0 / 0.6));
+    --odd-color-selection-surface: var(--odd-mode-light, var(--odd-ref-brand-100)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-success-border: var(--odd-mode-light, var(--odd-ref-success-200)) var(--odd-mode-dark, var(--odd-ref-success-800));
+    --odd-color-success-foreground: var(--odd-mode-light, var(--odd-ref-success-700)) var(--odd-mode-dark, var(--odd-ref-success-400));
+    --odd-color-success-surface: var(--odd-mode-light, var(--odd-ref-success-50)) var(--odd-mode-dark, var(--odd-ref-success-950));
+    --odd-color-surface-default: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-surface-hover: var(--odd-mode-light, var(--odd-ref-neutral-100)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-surface-raised: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-900));
+    --odd-color-surface-specimen: var(--odd-mode-light, var(--odd-ref-brand-50)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-surface-sunken: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-text-disabled: var(--odd-mode-light, var(--odd-ref-neutral-400)) var(--odd-mode-dark, var(--odd-ref-neutral-600));
+    --odd-color-text-on-action: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-text-primary: var(--odd-mode-light, var(--odd-ref-neutral-900)) var(--odd-mode-dark, var(--odd-ref-neutral-50));
+    --odd-color-text-secondary: var(--odd-mode-light, var(--odd-ref-neutral-700)) var(--odd-mode-dark, var(--odd-ref-neutral-300));
+    --odd-color-warning-border: var(--odd-mode-light, var(--odd-ref-warning-200)) var(--odd-mode-dark, var(--odd-ref-warning-800));
+    --odd-color-warning-foreground: var(--odd-mode-light, var(--odd-ref-warning-600)) var(--odd-mode-dark, var(--odd-ref-warning-400));
+    --odd-color-warning-surface: var(--odd-mode-light, var(--odd-ref-warning-50)) var(--odd-mode-dark, var(--odd-ref-warning-950));
+    --odd-elevation-lg: var(--odd-mode-light, 0 4px 8px rgb(0 0 0 / 0.08), 0 12px 32px rgb(0 0 0 / 0.14)) var(--odd-mode-dark, 0 4px 8px rgb(0 0 0 / 0.32), 0 12px 32px rgb(0 0 0 / 0.48));
+    --odd-elevation-md: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.12), 0 4px 12px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.32));
+    --odd-elevation-sm: var(--odd-mode-light, 0 1px 2px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.08)) var(--odd-mode-dark, 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.3));
+    --odd-elevation-xl: var(--odd-mode-light, 0 8px 16px rgb(0 0 0 / 0.1), 0 24px 64px rgb(0 0 0 / 0.2)) var(--odd-mode-dark, 0 8px 16px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.6));
+    --odd-color-neutral-foreground: var(--odd-color-text-secondary);
+    --odd-color-selection-foreground: var(--odd-color-text-on-action);
+    --odd-color-neutral-surface: var(--odd-color-surface-sunken);
+    --odd-color-neutral-border: var(--odd-color-border-default);
+    --odd-color-selection-background: var(--odd-color-action-default);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    [data-odd-mode="system"] {
+      color-scheme: dark;
+      --odd-mode-light: ;
+      --odd-mode-dark: initial;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root,
+    [data-odd-theme="vivid"] {
+      --odd-motion-duration-fast: 0ms;
+      --odd-motion-duration-normal: 0ms;
+      --odd-motion-duration-slow: 0ms;
+      --odd-motion-duration-slower: 0ms;
+    }
+  }
+
+  [data-odd-motion="reduce"],
+  [data-odd-motion="reduce"] [data-odd-theme] {
+    --odd-motion-duration-fast: 0ms;
+    --odd-motion-duration-normal: 0ms;
+    --odd-motion-duration-slow: 0ms;
+    --odd-motion-duration-slower: 0ms;
+  }
+
+  [data-odd-product="coral"] {
+    --odd-color-action-default: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-action-hover: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-action-pressed: var(--odd-mode-light, var(--odd-ref-brand-800)) var(--odd-mode-dark, var(--odd-ref-brand-200));
+    --odd-color-border-default: var(--odd-mode-light, var(--odd-ref-neutral-200)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-border-strong: var(--odd-mode-light, var(--odd-ref-neutral-500)) var(--odd-mode-dark, var(--odd-ref-neutral-400));
+    --odd-color-canvas: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-focus-ring: var(--odd-mode-light, var(--odd-ref-brand-600)) var(--odd-mode-dark, var(--odd-ref-brand-400));
+    --odd-color-link: var(--odd-mode-light, var(--odd-ref-brand-700)) var(--odd-mode-dark, var(--odd-ref-brand-300));
+    --odd-color-neutral-border: var(--odd-color-border-default);
+    --odd-color-neutral-foreground: var(--odd-color-text-secondary);
+    --odd-color-neutral-surface: var(--odd-color-surface-sunken);
+    --odd-color-selection-background: var(--odd-color-action-default);
+    --odd-color-selection-foreground: var(--odd-color-text-on-action);
+    --odd-color-selection-surface: var(--odd-mode-light, var(--odd-ref-brand-100)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-surface-default: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-surface-hover: var(--odd-mode-light, var(--odd-ref-neutral-100)) var(--odd-mode-dark, var(--odd-ref-neutral-800));
+    --odd-color-surface-raised: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-900));
+    --odd-color-surface-specimen: var(--odd-mode-light, var(--odd-ref-brand-50)) var(--odd-mode-dark, var(--odd-ref-brand-900));
+    --odd-color-surface-sunken: var(--odd-mode-light, var(--odd-ref-neutral-50)) var(--odd-mode-dark, var(--odd-ref-neutral-1000));
+    --odd-color-text-disabled: var(--odd-mode-light, var(--odd-ref-neutral-400)) var(--odd-mode-dark, var(--odd-ref-neutral-600));
+    --odd-color-text-on-action: var(--odd-mode-light, var(--odd-ref-neutral-0)) var(--odd-mode-dark, var(--odd-ref-neutral-950));
+    --odd-color-text-primary: var(--odd-mode-light, var(--odd-ref-neutral-900)) var(--odd-mode-dark, var(--odd-ref-neutral-50));
+    --odd-color-text-secondary: var(--odd-mode-light, var(--odd-ref-neutral-700)) var(--odd-mode-dark, var(--odd-ref-neutral-300));
+    --odd-ref-brand-50: #fff2f0;
+    --odd-ref-brand-100: #ffe4e1;
+    --odd-ref-brand-200: #ffc8c3;
+    --odd-ref-brand-300: #ffa098;
+    --odd-ref-brand-400: #ff6b65;
+    --odd-ref-brand-500: #fa002a;
+    --odd-ref-brand-600: #d00021;
+    --odd-ref-brand-700: #a80019;
+    --odd-ref-brand-800: #810010;
+    --odd-ref-brand-900: #5c0009;
+    --odd-ref-brand-950: #3a0003;
+    --odd-ref-neutral-50: #f6f5f4;
+    --odd-ref-neutral-100: #edeaea;
+    --odd-ref-neutral-200: #dbd6d5;
+    --odd-ref-neutral-300: #c4bbba;
+    --odd-ref-neutral-400: #a99f9d;
+    --odd-ref-neutral-500: #8f8382;
+    --odd-ref-neutral-600: #776b6a;
+    --odd-ref-neutral-700: #5f5554;
+    --odd-ref-neutral-800: #48403f;
+    --odd-ref-neutral-900: #322c2b;
+    --odd-ref-neutral-950: #1e1919;
+  }
+
+  @media (color-gamut: p3) {
+    [data-odd-product="coral"] {
+      --odd-ref-brand-300: color(display-p3 1 0.61 0.5694);
+      --odd-ref-brand-400: color(display-p3 0.9843 0.3953 0.3667);
+      --odd-ref-brand-600: color(display-p3 0.7809 0 0.1193);
+      --odd-ref-brand-700: color(display-p3 0.6291 0 0.0877);
+    }
+  }
+
+  [data-odd-density="compact"] {
+    --odd-card-padding: var(--odd-layout-inset);
+    --odd-control-gap: var(--odd-space-xs);
+    --odd-control-height-lg: 2.25rem;
+    --odd-control-height-md: 1.875rem;
+    --odd-control-height-sm: 1.5rem;
+    --odd-control-padding-inline-lg: var(--odd-space-md);
+    --odd-control-padding-inline-md: var(--odd-space-sm);
+    --odd-control-padding-inline-sm: var(--odd-space-xs);
+    --odd-layout-gap: var(--odd-space-md);
+    --odd-layout-inset: var(--odd-space-lg);
+    --odd-navigation-indent: var(--odd-space-md);
+    --odd-navigation-item-gap: var(--odd-space-xs);
+    --odd-navigation-item-min-height: var(--odd-control-height-md);
+    --odd-navigation-item-padding-block: var(--odd-space-xs);
+    --odd-navigation-item-padding-inline: var(--odd-space-sm);
+    --odd-space-2xl: 2.25rem;
+    --odd-space-2xs: 0.1875rem;
+    --odd-space-3xl: 3rem;
+    --odd-space-3xs: 0.0938rem;
+    --odd-space-4xl: 4.5rem;
+    --odd-space-lg: 1.125rem;
+    --odd-space-md: 0.75rem;
+    --odd-space-sm: 0.5625rem;
+    --odd-space-xl: 1.5rem;
+    --odd-space-xs: 0.375rem;
+  }
+
+  [data-odd-profile~="navigation.compact"],
+  [data-odd-profile~="navigation.compact"] :is([data-odd-mode], [data-odd-product], [data-odd-density], [data-odd-theme]) {
+    --odd-navigation-indent: var(--odd-space-sm);
+    --odd-navigation-item-gap: calc(var(--odd-space-xs) / 2);
+    --odd-navigation-item-padding-block: calc(var(--odd-space-xs) / 2);
+    --odd-navigation-item-padding-inline: var(--odd-space-xs);
+  }
+
+  [data-odd-profile~="layout.compact"],
+  [data-odd-profile~="layout.compact"] :is([data-odd-mode], [data-odd-product], [data-odd-density], [data-odd-theme]) {
+    --odd-card-padding: var(--odd-layout-inset);
+    --odd-layout-gap: var(--odd-space-sm);
+    --odd-layout-inset: var(--odd-space-md);
+  }
+}

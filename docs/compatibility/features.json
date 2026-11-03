@@ -803,11 +803,25 @@
       "kind": "css",
       "bcd": ["css.at-rules.media.color-gamut", "css.types.color.color"],
       "webFeature": "color-gamut",
-      "adoption": "deferred",
-      "status": "evaluated",
-      "baseline": "Generated colours are gamut-mapped to sRGB hex, which every floor browser and display renders.",
+      "adoption": "foundation",
+      "status": "implemented",
+      "milestone": "M9",
+      "usedBy": [
+        "@oddkin/tokens generator, gamut: \"p3\": Display P3 values of generated ramp steps under @media (color-gamut: p3)"
+      ],
+      "baseline": "Generated colours are gamut-mapped to sRGB hex, which every floor browser and display renders; with gamut \"p3\", displays that report P3 also get the P3 values.",
       "useCase": "Richer brand ramps on P3 displays generated from the same OKLCH definitions.",
-      "decision": "Deferred to M9: emit P3 ramp values in a (color-gamut: p3) block from the canonical generator only after WCAG contrast is verified for the P3 values themselves; the sRGB values remain the baseline."
+      "decision": "Implemented in P1.1 (2026-11-03), opt-in per theme: a generated ramp step clipped to fit sRGB is also mapped into Display P3, where that adds at least 0.02 chroma (ΔEOK just-noticeable difference), and re-declared in a (color-gamut: p3) block after the sRGB values; a P3 value that would make a contracted role pair fail where sRGB passes is held back (theming-and-styling.md §10.7).",
+      "tests": [
+        {
+          "file": "packages/tokens/test/p3.browser.test.ts",
+          "name": "a P3 display gets the P3 values in every scope, products and nested themes included"
+        },
+        {
+          "file": "packages/tokens/test/p3.test.ts",
+          "name": "keep every contracted pair that passes in sRGB passing with the P3 values"
+        }
+      ]
     },
     {
       "id": "text-wrap-balance",

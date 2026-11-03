@@ -129,6 +129,7 @@ export function emitInspectJson(
       ...(t.density ? { density: true } : {}),
       ...(t.minimum ? { minimum: t.minimum } : {}),
       ...(t.reducedMotion !== undefined ? { reducedMotion: t.reducedMotion } : {}),
+      ...(t.p3 !== undefined ? { p3: t.p3 } : {}),
       ...(t.description ? { description: t.description } : {}),
     })),
     conditions: [...theme.conditions.values()],

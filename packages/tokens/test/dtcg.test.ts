@@ -26,6 +26,8 @@ const scaled = generate({
   motion: { scale: 0.333 },
   typography: { scale: { base: '1rem', ratio: 1.25 } },
 }).theme as ResolvedTheme;
+// Display P3 values (§10.7): lossy, with the P3 value in $extensions.
+const wide = generate(cases['wide-gamut']).theme as ResolvedTheme;
 
 const config = defineConfig(
   // 2025.10 §8.2: dimensions are px or rem only (Terrazzo also accepts em by default).
@@ -108,6 +110,7 @@ const contexts: Array<[name: string, theme: ResolvedTheme, context: ResolveConte
     { mode: 'light', density: 'compact', profiles: ['layout.compact', 'navigation.compact'] },
   ],
   ['scaled by the inputs, light', scaled, { mode: 'light' }],
+  ['with Display P3 values, dark coral', wide, { mode: 'dark', product: 'coral' }],
 ];
 
 describe('DTCG 2025.10 output', () => {

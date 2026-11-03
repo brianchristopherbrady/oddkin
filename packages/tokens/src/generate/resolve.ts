@@ -18,6 +18,7 @@ import { checkContrast, hexOf } from './contrast.js';
 import { closest, DiagnosticList, pointer, type Diagnostic } from './diagnostics.js';
 import { aboveFloorSyntax, floorLabel } from './floor.js';
 import { applyFoundationInputs, foundationInputs } from './inputs.js';
+import { holdBackP3, p3Step, withP3 } from './p3.js';
 import {
   compareNames,
   compileValue,
@@ -82,6 +83,7 @@ const TOP_LEVEL = [
   'preset',
   'brand',
   'status',
+  'gamut',
   'spacing',
   'radius',
   'motion',
@@ -156,18 +158,21 @@ function buildRamps(primary: Oklch, neutral: Oklch | undefined, status: StatusSe
   };
 }
 
-function refTokens(ramps: Ramps): TokenDefinition[] {
+/** Reference tokens of the ramps; with `wide`, also the Display P3 value of each step that gains from it. */
+function refTokens(ramps: Ramps, wide = false): TokenDefinition[] {
   const out: TokenDefinition[] = [];
   for (const [ramp, colors] of Object.entries(ramps)) {
     for (const c of colors) {
       const reduced = c.mapped.c < c.requested.c - 1e-6;
+      const p3 = wide ? p3Step(c.requested, c.mapped) : undefined;
       out.push({
         name: `ref.${ramp}.${c.step}`,
         category: 'reference',
         type: 'color',
         value: c.hex,
         origin: 'generated',
-        provenance: `${formatOklch(c.requested)}${reduced ? `, chroma reduced to ${formatOklch(c.mapped)} to fit sRGB` : ''}`,
+        provenance: `${formatOklch(c.requested)}${reduced ? `, chroma reduced to ${formatOklch(c.mapped)} to fit sRGB` : ''}${p3?.provenance ?? ''}`,
+        ...(p3 ? { p3: p3.value } : {}),
       });
     }
   }
@@ -366,6 +371,16 @@ export function resolveTheme(input: unknown): ResolveResult {
     if (seed) statusSeeds[tone] = seed;
   }
 
+  const gamut = given<unknown>(config.gamut, 'srgb');
+  if (gamut !== 'srgb' && gamut !== 'p3')
+    d.error(
+      'gamut.invalid',
+      '/gamut',
+      `${JSON.stringify(gamut)} is not a gamut Oddkin generates for.`,
+      'Use "p3" to add Display P3 values, or "srgb" (the default) for sRGB only.',
+    );
+  const wide = gamut === 'p3';
+
   const modes = given(config.modes, MODES);
   if (
     !Array.isArray(modes) ||
@@ -463,7 +478,7 @@ export function resolveTheme(input: unknown): ResolveResult {
   const seeds = statusSeeds as StatusSeeds;
   const ramps = buildRamps(primary, neutral, seeds);
   const tokens = new Map<string, TokenDefinition>();
-  for (const ref of refTokens(ramps)) tokens.set(ref.name, ref);
+  for (const ref of refTokens(ramps, wide)) tokens.set(ref.name, ref);
   const spacingOrigin = config.spacing ? 'generated' : 'preset';
   for (const step of spacing) {
     tokens.set(`space.${step.name}`, {
@@ -577,8 +592,11 @@ export function resolveTheme(input: unknown): ResolveResult {
   const scopes: ScopeTokens[] = [];
   productInputs.forEach((product, i) => {
     const path = pointer('products', product.name);
-    const refs = refTokens(productRamps[i] as Ramps);
-    const changed = refs.filter((r) => (sorted.get(r.name) as TokenDefinition).value !== r.value);
+    const refs = refTokens(productRamps[i] as Ramps, wide);
+    const changed = refs.filter((r) => {
+      const base = sorted.get(r.name) as TokenDefinition;
+      return base.value !== r.value || base.p3 !== r.p3;
+    });
     if (changed.length === 0 && Object.keys(product.overrides).length === 0)
       d.warn(
         'product.redundant',
@@ -764,7 +782,8 @@ export function resolveTheme(input: unknown): ResolveResult {
   }
 
   if (d.hasErrors) return { theme: undefined, diagnostics: d.items };
-  return { theme: { name, modes, tokens: sorted, scopes, conditions }, diagnostics: d.items };
+  const theme: ResolvedTheme = { name, modes, tokens: sorted, scopes, conditions };
+  return { theme: wide ? holdBackP3(theme) : theme, diagnostics: d.items };
 }
 
 /**
@@ -850,6 +869,8 @@ export interface ResolveContext {
   readonly density?: string;
   /** Profiles applied, in any order (precedence follows the configuration). */
   readonly profiles?: readonly string[];
+  /** `p3`: the Display P3 values, where the theme has them, as a P3 display shows them. */
+  readonly gamut?: 'srgb' | 'p3';
 }
 
 /** Literal value of a token in a context (e.g. for docs, tests, and inspection). */
@@ -868,7 +889,11 @@ export function resolveToken(
       for (const [k, v] of s.tokens) map.set(k, v);
     }
   }
-  return resolveLiteral(map, name, context.mode ?? theme.modes[0] ?? 'light');
+  return resolveLiteral(
+    context.gamut === 'p3' ? withP3(map) : map,
+    name,
+    context.mode ?? theme.modes[0] ?? 'light',
+  );
 }
 
 const LITERAL_OR_EXPRESSION = /\{[^{}]+\}|calc\(|min\(|max\(|clamp\(/;

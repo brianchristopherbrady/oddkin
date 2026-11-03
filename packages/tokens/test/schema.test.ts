@@ -73,6 +73,7 @@ describe('theme-config.v1 JSON Schema', () => {
         preset: 'oddkin-default',
         brand: { primary: '#5b46e8', neutral: '#78716c' },
         status: { danger: '#dc2626', success: '#16a34a', warning: '#d97706' },
+        gamut: 'p3',
         spacing: {
           strategy: 'multiples',
           unit: '0.25rem',
@@ -151,7 +152,7 @@ describe('theme-config.v1 JSON Schema', () => {
         }
       }
     }
-    expect(drafts).toBe(680);
+    expect(drafts).toBe(688);
   });
 
   it('accepts a file that extends a base, with removals, which the generator needs merged first', () => {
@@ -198,6 +199,7 @@ describe('theme-config.v1 JSON Schema', () => {
       'preset',
       'brand',
       'status',
+      'gamut',
       'spacing',
       'radius',
       'motion',

@@ -28,6 +28,8 @@ One brand colour produces a complete theme: OKLCH reference ramps (brand, neutra
 
 Three optional inputs generate steps of those scales: `radius.scale` (0 to 3) multiplies `radius.xs`–`2xl`, `motion.scale` (above 0, at most 2) multiplies the durations in whole milliseconds, and `typography.scale: { base, ratio }` generates `font.size.xs`–`4xl` as base × ratio^n with `md` = base. The schema states each range and default; the inspection labels the steps `generated` with the input as provenance, and `overrides` still win (§10.3).
 
+`"gamut": "p3"` also declares Display P3 values of the generated ramp steps that sRGB clips, under `@media (color-gamut: p3)`, where P3 adds visible chroma and every contracted role pair still passes; sRGB stays the baseline, and the default is `"srgb"` (§10.7).
+
 ## CLI
 
 ```sh

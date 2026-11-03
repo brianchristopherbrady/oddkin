@@ -111,6 +111,11 @@
         }
       }
     },
+    "gamut": {
+      "enum": ["srgb", "p3"],
+      "default": "srgb",
+      "description": "\"p3\" also emits Display P3 values of the generated ramps under @media (color-gamut: p3), where they keep visibly more chroma than sRGB and every contracted pair still passes; sRGB stays the baseline."
+    },
     "spacing": {
       "oneOf": [
         {

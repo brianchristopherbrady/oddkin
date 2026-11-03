@@ -135,6 +135,12 @@ export interface ThemeConfig {
   readonly preset?: 'oddkin-default';
   readonly brand: BrandConfig;
   readonly status?: StatusConfig;
+  /**
+   * `p3` also emits Display P3 values of the generated ramps under `@media (color-gamut: p3)`,
+   * where they keep visibly more chroma than sRGB and every contracted pair still passes; sRGB
+   * stays the baseline. Defaults to `srgb`.
+   */
+  readonly gamut?: 'srgb' | 'p3';
   readonly spacing?: SpacingConfig;
   readonly radius?: RadiusConfig;
   readonly motion?: MotionConfig;

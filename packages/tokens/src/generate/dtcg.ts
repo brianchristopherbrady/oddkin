@@ -144,7 +144,14 @@ function literal(token: TokenDefinition, text: string): Mapped {
   switch (token.type) {
     case 'color': {
       const value = color(text);
-      return value ? { kind: 'lossless', value } : unsupported(`colour syntax "${text}"`);
+      if (!value) return unsupported(`colour syntax "${text}"`);
+      return token.p3 !== undefined
+        ? {
+            kind: 'lossy',
+            value,
+            reason: `the Display P3 value (${token.p3}) under @media (color-gamut: p3) is only in $extensions`,
+          }
+        : { kind: 'lossless', value };
     }
     case 'dimension': {
       const value = dimension(text);
@@ -303,6 +310,7 @@ export function emitDtcg(theme: ResolvedTheme, context: ResolveContext = {}): Dt
     if (token.density) extension['density'] = true;
     if (token.minimum) extension['minimum'] = token.minimum;
     if (token.reducedMotion !== undefined) extension['reducedMotion'] = token.reducedMotion;
+    if (token.p3 !== undefined) extension['p3'] = token.p3;
     if (mapped.kind === 'lossy') extension['css'] = text;
     const node: { [key: string]: Json } = { $type: token.type, $value: mapped.value };
     if (token.description) node['$description'] = token.description;

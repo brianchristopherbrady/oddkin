@@ -5017,3 +5017,25 @@ The owner changed the disabled buttons in code (`688df11`) and in Figma (file `E
 | Format, types | `npx prettier --check design/figma/components.json`; `npm run typecheck` | Exit 0; exit 0 |
 
 **Not verified here:** the figma-parity browser checks, which CI runs in three engines, and the deployed docs. Issue #2 closes when CI passes on main.
+## 2026-11-03 — P1.1: Display P3 values (round 11, Agent 3, row 4)
+
+Opt-in per theme, `"gamut": "p3"`, additive to schema v1 (theming-and-styling.md §10.7).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Conversions | `p3.test.ts` | White maps to P3 (1, 1, 1); sRGB red to `color(display-p3 0.9175 0.2003 0.1386)`; the luminance of a P3 colour (CIE Y from the CSS Color 4 matrix) equals WCAG's sRGB luminance of the same colour to three decimals |
+| Unchanged unless asked | `p3.test.ts`; the determinism fixtures | `"srgb"` and no `gamut` give the same CSS, with no `color-gamut` rule; every existing fixture is unchanged |
+| Which steps | `p3.test.ts`; `.tmp/p3-probe.mjs` | `oklch(0.65 0.25 145)`: `ref.brand.500`–`950` and `ref.info.700`; each keeps the requested lightness and hue, gains at least 0.02 chroma over sRGB, and stays within the requested chroma; clipped steps without a value gain less. Hex brands (`#6250e8`, `#5b46e8`, `#0f766e`, `#047857`, `#2563eb`, `#d946ef`, `#f59e0b`): only `ref.info.700`; `#dc2626` adds `ref.brand.300`; `oklch(0.6 0.3 300)`, a violet, only `ref.info.700` (P3 shares sRGB's blue primary) |
+| CSS | `p3.test.ts`; the `wide-gamut` fixture | The base block on `:root` and `[data-odd-theme="vivid"]` right after the sRGB values; the product's block on `[data-odd-product="coral"]` after its rules, with its own four steps. A product whose step equals the base in sRGB but not in P3 re-declares it |
+| Contrast | `p3.test.ts`; `.tmp/p3-search.mjs` | In four themes, every contracted pair that passes in sRGB passes with the P3 values, in each mode and product. Held back with `color.link` overridden to `ref.brand.600` of `oklch(0.6 0.25 220)`: 4.502:1 on the light canvas in sRGB, 4.44:1 in P3 (rounded down, as reported); the step loses its P3 value, in the base theme or only in the product that sets the role, and the provenance says `Display P3 held back: color.link on color.canvas would be 4.44:1 (light), below 4.5:1`. A pair that already fails in sRGB holds nothing back. Across 720 generated brands (36 hues × 4 chromas × 5 lightnesses, 3,215 P3 steps), none was held back and no pair failed |
+| Outputs | `p3.test.ts`, `dtcg.test.ts` | The inspection's `p3`; `resolveToken(…, { gamut: 'p3' })` through role aliases; DTCG lists the step as lossy with the P3 value in `$extensions["dev.oddkin"].p3`, and `@terrazzo/parser` reads the `wide-gamut` theme (dark, product `coral`) with every token equal to Oddkin's |
+| Diagnostics | `p3.test.ts` | `"rec2020"`, `"P3"`, `3`, `null`, `true`, and `{}`: `gamut.invalid` at `/gamut`. Schema drafts: 688 (680 before; 8 for `gamut`), none accepted by the generator and rejected by the schema |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the four tokens browser files, `p3.browser.test.ts`, the components' conditions, multi-product, and side-nav scope tests, and Workbench's preview test | 61 passed in each of Chromium, Firefox, and WebKit. `p3.browser.test.ts` compares the computed colour of four roles in light and dark, in a product, its dark scope, and a theme scope nested in it, with the query forced to match, forced not to match, and as the engine reports; `generate.browser.test.ts` finds the `wide-gamut` CSS and DTCG byte-identical in each engine and a Worker |
+| Node tests | `npx vitest run --project node packages/tokens` with components' `css-sources`, Workbench's node tests, `tests/schemas`, `tests/architecture`, `tests/release`, and `tests/docs` | 401 passed and 1 skipped (42 files) |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-p3.json` (17 probes: the threshold, the hold-back and its sRGB rule and provenance, P3 luminance, mapping, and gamma, both CSS blocks, the option, its validation, the product comparison, the P3 context, DTCG, the inspection) | 17 of 17 killed |
+| Size | `.tmp/p3-growth.mjs`, raw / gzip -9 bytes | `oklch(0.65 0.25 145)` with product `coral`: 35,213 / 3,209 → 36,061 / 3,385; `#6250e8`: 31,756 / 3,011 → 31,906 / 3,049 |
+| Gates | `npm run typecheck`; `npm run lint` (with `npm run compat` regenerating matrix.md); `node scripts/check-size.mjs` | Exit 0; exit 0, 72 features, 0 problems; exit 0, the default theme 3,096 B gzip of 3,136, unchanged |
+
+Also recorded: CSS and TS consumption are verified by existing tests (roles: `styling-contract.browser.test.ts`; conditions: `conditions-profiles.test.ts` and `conditions.browser.test.ts`); the Sass outputs need a Sass compiler to verify, and the owner was asked about `sass` as a dev dependency.
+
+**Not verified here:** a P3 display, by eye; CI on this commit. The contrast report file stays a measurement of the sRGB values.

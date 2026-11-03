@@ -19,4 +19,11 @@ export const cases: Record<string, ThemeConfig> = {
     },
     density: { compact: { scale: 0.75 }, spacious: { scale: 1.25 } },
   },
+  // Display P3 values for the base theme and a product (theming-and-styling.md §10.7).
+  'wide-gamut': {
+    name: 'vivid',
+    brand: { primary: 'oklch(0.65 0.25 145)' },
+    gamut: 'p3',
+    products: { coral: { brand: { primary: 'oklch(0.6 0.26 25)' } } },
+  },
 };

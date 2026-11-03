@@ -1,9 +1,11 @@
 /**
  * Colour: OKLCH ramps mapped into sRGB by chroma reduction (hue and lightness kept),
- * and WCAG 2.x contrast. ADR 0006; theming-and-styling.md §10.
+ * Display P3 values mapped the same way, and WCAG 2.x contrast. ADR 0006;
+ * theming-and-styling.md §10, §10.7.
  *
- * OKLab conversion uses Björn Ottosson's published matrices (2020). Gamut mapping is a
- * fixed 24-step bisection on chroma, so results are deterministic across engines.
+ * OKLab conversion uses Björn Ottosson's published matrices (2020); Display P3 uses the
+ * CSS Color 4 sample-code matrices (D65). Gamut mapping is a fixed 24-step bisection on
+ * chroma, so results are deterministic across engines.
  */
 
 export interface Oklch {
@@ -53,6 +55,40 @@ function oklchToLinearSrgb({ l: L, c, h }: Oklch): Rgb {
 const EPSILON = 1e-6;
 const inGamut = (rgb: Rgb) => rgb.every((v) => v >= -EPSILON && v <= 1 + EPSILON);
 
+type Matrix = readonly [Rgb, Rgb, Rgb];
+const multiply = (m: Matrix, v: Rgb): Rgb => [
+  m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2],
+  m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
+  m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2],
+];
+// CSS Color 4 sample code (§18), exact fractions.
+const SRGB_TO_XYZ: Matrix = [
+  [506752 / 1228815, 87881 / 245763, 12673 / 70218],
+  [87098 / 409605, 175762 / 245763, 12673 / 175545],
+  [7918 / 409605, 87881 / 737289, 1001167 / 1053270],
+];
+const XYZ_TO_P3: Matrix = [
+  [446124 / 178915, -333277 / 357830, -72051 / 178915],
+  [-14852 / 17905, 63121 / 35810, 423 / 17905],
+  [11844 / 330415, -50337 / 660830, 316169 / 330415],
+];
+/** CIE Y of linear Display P3: the luminance row of the CSS Color 4 P3-to-XYZ matrix. */
+const P3_LUMINANCE: Rgb = [35783 / 156275, 247089 / 357200, 198249 / 2500400];
+const AXES = [0, 1, 2] as const;
+const SRGB_TO_P3 = AXES.map((i) =>
+  AXES.map(
+    (j) =>
+      XYZ_TO_P3[i][0] * SRGB_TO_XYZ[0][j] +
+      XYZ_TO_P3[i][1] * SRGB_TO_XYZ[1][j] +
+      XYZ_TO_P3[i][2] * SRGB_TO_XYZ[2][j],
+  ),
+) as unknown as Matrix;
+
+/** Linear Display P3 of an OKLCH colour (unbounded: out-of-gamut channels leave [0, 1]). */
+export function oklchToLinearP3(color: Oklch): readonly [number, number, number] {
+  return multiply(SRGB_TO_P3, oklchToLinearSrgb(color));
+}
+
 /** Parse `#rgb`, `#rrggbb`, or `oklch(L C H)`. */
 export function parseColor(input: unknown): Oklch | undefined {
   if (typeof input !== 'string') return undefined;
@@ -88,17 +124,42 @@ export function isTranslucentColor(input: string): boolean {
   );
 }
 
-/** Reduce chroma (keeping lightness and hue) until the colour fits sRGB. */
-export function gamutMap(color: Oklch): Oklch {
-  if (inGamut(oklchToLinearSrgb(color))) return color;
+/** Reduce chroma (keeping lightness and hue) until the colour fits. */
+function reduceChroma(color: Oklch, fits: (color: Oklch) => boolean): Oklch {
+  if (fits(color)) return color;
   let low = 0;
   let high = color.c;
   for (let i = 0; i < 24; i++) {
     const mid = (low + high) / 2;
-    if (inGamut(oklchToLinearSrgb({ l: color.l, c: mid, h: color.h }))) low = mid;
+    if (fits({ l: color.l, c: mid, h: color.h })) low = mid;
     else high = mid;
   }
   return { l: color.l, c: low, h: color.h };
+}
+
+/** Reduce chroma (keeping lightness and hue) until the colour fits sRGB. */
+export function gamutMap(color: Oklch): Oklch {
+  return reduceChroma(color, (c) => inGamut(oklchToLinearSrgb(c)));
+}
+
+/** Reduce chroma (keeping lightness and hue) until the colour fits Display P3. */
+export function gamutMapP3(color: Oklch): Oklch {
+  return reduceChroma(color, (c) => inGamut(oklchToLinearP3(c)));
+}
+
+const channel = (v: number) => Math.min(1, Math.max(0, toGamma(Math.min(1, Math.max(0, v)))));
+
+/** Gamut-mapped Display P3 text, `color(display-p3 r g b)` with four decimals. */
+export function toDisplayP3(color: Oklch): string {
+  const rgb = oklchToLinearP3(gamutMapP3(color));
+  return `color(display-p3 ${rgb.map((v) => String(Math.round(channel(v) * 10_000) / 10_000)).join(' ')})`;
+}
+
+const DISPLAY_P3 = /^color\(\s*display-p3\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\)$/i;
+
+/** True for the `color(display-p3 r g b)` text `toDisplayP3` writes. */
+export function isDisplayP3(text: string): boolean {
+  return DISPLAY_P3.test(text.trim());
 }
 
 /** Gamut-mapped sRGB hex (`#rrggbb`, lowercase). */
@@ -110,9 +171,21 @@ export function toHex(color: Oklch): string {
     .join('')}`;
 }
 
-/** WCAG 2.x relative luminance of an sRGB hex colour. */
-export function luminance(hex: string): number {
-  const digits = hex.slice(1);
+/**
+ * WCAG 2.x relative luminance of an sRGB hex colour, or of `color(display-p3 r g b)` (CIE Y from
+ * the P3 primaries, the same quantity WCAG's sRGB formula computes).
+ */
+export function luminance(color: string): number {
+  const p3 = DISPLAY_P3.exec(color.trim());
+  if (p3) {
+    const [r, g, b] = [p3[1], p3[2], p3[3]].map((c) => toLinear(Number(c))) as [
+      number,
+      number,
+      number,
+    ];
+    return P3_LUMINANCE[0] * r + P3_LUMINANCE[1] * g + P3_LUMINANCE[2] * b;
+  }
+  const digits = color.slice(1);
   const [r, g, b] = [0, 2, 4].map((i) => toLinear(parseInt(digits.slice(i, i + 2), 16) / 255)) as [
     number,
     number,

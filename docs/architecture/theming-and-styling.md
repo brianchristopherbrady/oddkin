@@ -1,6 +1,6 @@
 # Theming, token pipeline, and styling
 
-Status: §1–§5 and §10 are **implemented** in `@oddkin/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Of the outputs (§6), CSS, typed `refs` (`token()`, `TokenName`), literal `values`, and inspection JSON are implemented, as is the CLI (§9: `init`, `build`, `check`; JSON, ESM JS, and type-stripped `.ts` configs). Conditions and profiles (§11.2–§11.3, with the implementation notes in §11.7) and the unit policy are implemented. Generated CSS is emitted in the `odd.tokens` cascade layer (§5.2, ADR 0039), and token values outside the browser floor are diagnosed (`value.syntax.aboveFloor`, [css-architecture.md](./css-architecture.md) §4.2). Sass and DTCG outputs and `inspect.computedToken` remain **proposals**.
+Status: §1–§5 and §10 are **implemented** in `@oddkin/tokens` (`./theme`, `./generate`, `./schema.json`) for the M2 slice and verified in Node and three browser engines ([verification.md](../verification.md)); §5.1 records the implemented mode mechanism. Of the outputs (§6), CSS, typed `refs` (`token()`, `TokenName`), literal `values`, and inspection JSON are implemented, as is the CLI (§9: `init`, `build`, `check`; JSON, ESM JS, and type-stripped `.ts` configs). Conditions and profiles (§11.2–§11.3, with the implementation notes in §11.7) and the unit policy are implemented. Generated CSS is emitted in the `odd.tokens` cascade layer (§5.2, ADR 0039), and token values outside the browser floor are diagnosed (`value.syntax.aboveFloor`, [css-architecture.md](./css-architecture.md) §4.2). Sass output and `inspect.computedToken` remain **proposals**.
 
 ## 1. Configuration model
 
@@ -13,6 +13,7 @@ export default defineTheme({
   name: 'acme',
   preset: 'oddkin-default',          // optional
   brand: { primary: '#5b46e8' },   // the only required domain input
+  gamut: 'p3',                     // optional: Display P3 values as well, §10.7
   spacing: { strategy: 'multiples', unit: '0.25rem', steps: { xs: 1, sm: 2, md: 3, lg: 4.5, xl: 9 } },
   radius: { scale: 0.5 }, motion: { scale: 1.5 },          // §10.3
   typography: { scale: { base: '1rem', ratio: 1.25 } },    // §10.3
@@ -269,7 +270,7 @@ Unlayered application CSS therefore overrides generated values whatever the styl
 
 | Output | Entry | Notes |
 | --- | --- | --- |
-| CSS custom properties | `css/tokens.css`, `css/default.css`, `css/themes/<name>.css` | No runtime engine, store, or provider required; declarations in the `odd.tokens` layer (§5.2) |
+| CSS custom properties | `css/tokens.css`, `css/default.css`, `css/themes/<name>.css` | No runtime engine, store, or provider required; declarations in the `odd.tokens` layer (§5.2); with `gamut: "p3"`, Display P3 values under `@media (color-gamut: p3)` (§10.7) |
 | Typed references | `refs` | `token('space.md')` → `'var(--odd-space-md)'`; DOM-free; no registration |
 | Literal values | `values` | `values.space.md === '0.75rem'`; explicit, never substituted for refs silently |
 | Computed values | `inspect.computedToken(name, element)` | Requires an element; reads `getComputedStyle` |
@@ -293,7 +294,7 @@ Breakpoints: media and container query conditions cannot use `var()`. Thresholds
 
 | Oddkin type | 2025.10 value | Mapping |
 | --- | --- | --- |
-| `color` `#rrggbb` | `{ colorSpace: 'srgb', components: [r, g, b] (6 decimals), hex }` | lossless (`hex` exact) |
+| `color` `#rrggbb` | `{ colorSpace: 'srgb', components: [r, g, b] (6 decimals), hex }` | lossless (`hex` exact); **lossy** where a Display P3 value exists (§10.7; it is only in `$extensions`) |
 | `color` `oklch(L C H)` (overrides) | `{ colorSpace: 'oklch', components: [L, C, H] }` | lossless |
 | `dimension` `rem` / `px` / `0` | `{ value, unit }`; `0` → `{ value: 0, unit: 'px' }` | lossless |
 | `dimension` in `em` (`letter-spacing.tight/wide`) | — | **unsupported**: 2025.10 dimensions allow only `px` and `rem`, and `em` depends on the font size |
@@ -307,7 +308,7 @@ Breakpoints: media and container query conditions cannot use `var()`. Thresholds
 
 Unsupported tokens are omitted and listed with their type, original value, and reason under the root `$extensions["dev.oddkin"].unsupported`, so nothing is dropped silently. The default theme maps 201 tokens losslessly, 4 lossy (`motion.duration.*`), and 5 unsupported (`elevation.none`, `letter-spacing.tight/wide`, and the two `type.*.letter-spacing` aliases).
 
-**Oddkin extension (`$extensions["dev.oddkin"]`).** Per token: `category`, `origin`, and when present `provenance`, `density`, `minimum` (target-size floor), `reducedMotion`, and `css` (the original expression of a lossy value). On the root group: `format` (`"2025.10"`), `theme`, `context` (`mode` and any `product`, `density`, `profiles`), `conditions` (name → literal at-rule prelude), and `unsupported`. Readers that do not understand the extension still get valid tokens; the format requires them to preserve it.
+**Oddkin extension (`$extensions["dev.oddkin"]`).** Per token: `category`, `origin`, and when present `provenance`, `density`, `minimum` (target-size floor), `reducedMotion`, `p3` (the Display P3 value), and `css` (the original expression of a lossy value). On the root group: `format` (`"2025.10"`), `theme`, `context` (`mode` and any `product`, `density`, `profiles`), `conditions` (name → literal at-rule prelude), and `unsupported`. Readers that do not understand the extension still get valid tokens; the format requires them to preserve it.
 
 **Contexts, not modes.** 2025.10 has no modes or theming axes, so each mode, product, density, and profile combination is a separate complete document with that context's values. Composition across contexts (sets, modifiers, `resolutionOrder`) is the DTCG **Resolver**'s concern: no Resolver document is emitted and **no Resolver support is claimed** (plan item 246, M9). Import of DTCG documents is out of scope.
 
@@ -585,6 +586,26 @@ Every concern below has roles; component styles and the shared style modules in 
 | Overlay | `elevation.lg` floating, `elevation.xl` modal; `color.scrim` on the `::backdrop` of modal dialogs and drawers | Dialog, drawer, popover. *Owner:* scrim black at 40 % (light) / 60 % (dark); Figma has no scrim |
 | Focus ring | `color.focus.ring` (the action colour), `focus.width`, `focus.offset`; rows draw it inset with `radius.sm` | Every focus variant |
 | Progress | Track `color.surface.sunken`, fill `color.action.default`, radius `radius.sm` | `progress` |
+
+### 10.7 Display P3 values (implemented, P1.1)
+
+Ramps are generated in OKLCH and mapped into sRGB by reducing chroma (§10, ADR 0006), so a step whose requested colour lies outside sRGB loses chroma. With `"gamut": "p3"` (default `"srgb"`), each such step is also mapped into Display P3 the same way, keeping its lightness and hue, and the CSS re-declares it under `@media (color-gamut: p3)`. The sRGB values stay the baseline: every display gets them, and only displays that report P3 replace them.
+
+```css
+@media (color-gamut: p3) {
+  :root,
+  [data-odd-theme="vivid"] {
+    --odd-ref-brand-700: color(display-p3 0.0419 0.4335 0);
+  }
+}
+```
+
+- **Which steps.** Generated ramp steps only (brand, neutral, and status ramps, in the base theme and in each product), and only where P3 adds at least 0.02 chroma, the just-noticeable difference (ΔEOK) of CSS Color 4's gamut mapping; at equal lightness and hue, ΔEOK is the chroma difference. Overrides and pinned roles keep the value they were given. Display P3 shares sRGB's blue primary, so greens, reds, and oranges gain the most and blues and violets little. A brand given as sRGB hex is inside sRGB at its own lightness, so its ramps rarely gain; a brand given as `oklch()` beyond sRGB gains most: `oklch(0.65 0.25 145)` gets 6 brand steps and `ref.info.700`, while `#6250e8` gets only `ref.info.700`.
+- **Where.** The base theme's values sit in a block on its own selectors (`:root` and `[data-odd-theme]`) right after its sRGB values; a product's own steps sit in a block on `[data-odd-product]` after the product's rules. Roles alias the steps, so they follow in every mode, product, and nested theme scope without being re-declared.
+- **Contrast.** A P3 value is kept only while every contracted role pair (§10.4) that passes in sRGB also passes with the P3 values, in every mode and product, measured with WCAG 2.2's formula on the luminance of the P3 colour (CIE Y from the CSS Color 4 P3 matrix). Otherwise both colours of the pair go back to sRGB, and the step's provenance says which pair, e.g. `Display P3 held back: color.link on color.canvas would be 4.44:1 (light), below 4.5:1`. A pair that already fails in sRGB is the contrast check's to report and holds nothing back. Across 720 generated brand inputs (36 hues, 4 chromas, 5 lightnesses) no P3 value had to be held back, since generated roles keep a margin; the rule matters for overrides that sit at a minimum. The contrast report (`<name>.contrast.json`) stays a measurement of the sRGB values.
+- **Outputs.** The inspection shows each step's `p3` value and gives its P3 colour in the provenance (`oklch(0.46 0.225 145), chroma reduced to oklch(0.46 0.1447 145) to fit sRGB; Display P3: oklch(0.46 0.1963 145)`). `resolveToken(theme, name, { gamut: 'p3' })` resolves with the P3 values. DTCG output keeps the sRGB value and lists the step as lossy, with the P3 value in `$extensions["dev.oddkin"].p3` (§6.1). The typed `values` modules hold the sRGB values.
+
+*(Verified in `packages/tokens/test/p3.test.ts`: the conversions, which steps get a value and that each keeps lightness and hue, the CSS blocks for the base theme and a product, P3 contexts, the hold-back in the base theme and in a product, the inspection, DTCG, and `gamut.invalid`; `p3.browser.test.ts`: computed colours of four roles in light and dark, in a product, and in a theme scope nested in the product, with the query forced to match and not to match, and with the display each engine reports, in Chromium, Firefox, and WebKit; the `wide-gamut` fixture is byte-identical in Node, three engines, and a Worker; `dtcg.test.ts` reads it with `@terrazzo/parser`.)*
 
 ## 11. Layout roles, responsive conditions, and profiles
 

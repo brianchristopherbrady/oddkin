@@ -44,6 +44,11 @@ export interface TokenDefinition {
   readonly minimum?: string;
   /** Literal value declared under `prefers-reduced-motion: reduce`. */
   readonly reducedMotion?: string;
+  /**
+   * Display P3 value, `color(display-p3 r g b)`, declared under `@media (color-gamut: p3)` with
+   * the theme's `gamut: "p3"`; the sRGB `value` stays the baseline (theming-and-styling.md §10.7).
+   */
+  readonly p3?: string;
   readonly description?: string;
 }
 
