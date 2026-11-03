@@ -40,6 +40,10 @@ export interface ThemeStudioInput {
   readonly source?: string;
   /** URL of the generation worker module. */
   readonly worker?: string;
+  /** The dev server writes the theme file (workbench.md §9). */
+  readonly save?: ThemeStudioPageData['studio']['save'];
+  /** What a theme file the dev server cannot write needs instead. */
+  readonly unsaveable?: string;
 }
 
 const roleId = (value: string) => value.replace(/^role:/, '');
@@ -191,6 +195,7 @@ export function themeStudioPage(
       item: 'generator',
       supply: 'a documented package that depends on @oddkin/tokens (its ./generate export)',
     });
+  if (input.unsaveable) missing.push({ item: 'save', supply: input.unsaveable });
 
   return {
     format: PAGE_FORMAT,
@@ -201,6 +206,7 @@ export function themeStudioPage(
       ...(input.config ? { config: input.config } : {}),
       ...(input.source ? { source: input.source } : {}),
       ...(input.worker ? { worker: input.worker } : {}),
+      ...(input.save ? { save: input.save } : {}),
       roles,
       screens: screensOf(components, screens),
       missing,

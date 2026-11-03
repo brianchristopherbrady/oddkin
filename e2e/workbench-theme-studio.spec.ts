@@ -138,9 +138,10 @@ test.describe('Theme Studio', () => {
       name: 'default',
       overrides: { 'color.action.default': { light: '#0a7d33' } },
     });
-    await expect(page.locator('#export [role="status"]')).toHaveText(
-      'Downloaded default.theme.json.',
-    );
+    // The downloads' status; saving to the theme file, which the dev server offers, has its own.
+    await expect(
+      page.locator('#export').getByRole('status').filter({ hasText: 'Downloaded' }),
+    ).toHaveText('Downloaded default.theme.json.');
     await page.keyboard.press('Tab');
     await expect(css).toBeFocused();
     const [sheet] = await Promise.all([

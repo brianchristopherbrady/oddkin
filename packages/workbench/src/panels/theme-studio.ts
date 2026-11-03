@@ -21,6 +21,7 @@ import {
 } from '../preview/theme-generation.js';
 import type { FrameSpecimenItem, JsonValue } from '../protocol/index.js';
 import { contentStyles, panelHostStyles } from './styles.js';
+import type { ThemeSave } from './theme-save.js';
 import {
   exportBlocked,
   exportNames,
@@ -106,12 +107,15 @@ export class ThemeStudioElement extends OddkinElement.with({
   /** Per frame, the screen request in flight; frames whose screen changed meanwhile. */
   readonly #sending = new Map<IsolatedPreview, Promise<void>>();
   readonly #again = new Set<IsolatedPreview>();
+  /** Saving to the theme file, when the dev server offers it. */
+  readonly #save = signal<ThemeSave | undefined>(undefined);
   readonly #hosts: readonly [HTMLDivElement, HTMLDivElement];
   #previews: IsolatedPreview[] = [];
   #generation: ThemeGeneration | undefined;
   #studioScope: Scope | undefined;
   #css: string | undefined;
   #key: ThemeStudioPageData | undefined;
+  #frameUrl = '';
 
   constructor() {
     super();
@@ -138,8 +142,24 @@ export class ThemeStudioElement extends OddkinElement.with({
       const page = this.page;
       const frameUrl = this.frameUrl;
       untracked(() => {
-        if (page === this.#key) return;
+        const last = this.#key;
+        if (page === last) return;
         this.#key = page;
+        // A rebuild that leaves the theme file alone, or brings back the saved draft, keeps the
+        // reader's draft and screen: only the screens' data may have changed.
+        const kept = [last?.studio.config, this.#draft.peek()].map((c) => JSON.stringify(c));
+        if (
+          page &&
+          last &&
+          page.id === last.id &&
+          frameUrl === this.#frameUrl &&
+          page.studio.worker === last.studio.worker &&
+          kept.includes(JSON.stringify(page.studio.config))
+        ) {
+          this.#showAll();
+          return;
+        }
+        this.#frameUrl = frameUrl;
         this.#start(page, frameUrl);
       });
     });
@@ -171,8 +191,14 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#unavailable.value = '';
     this.#exported.value = '';
     this.#texts.clear();
+    this.#save.value = undefined;
     this.#choose(firstScreen(studio), false);
     if (!page || !studio?.config || !studio.worker) return;
+    const save = studio.save;
+    if (save)
+      void import('./theme-save.js').then(({ ThemeSave }) => {
+        if (this.#key === page) this.#save.value = new ThemeSave(save, () => this.#draft.peek());
+      });
     const scope = createScope({ name: 'workbench-theme-studio' });
     this.#studioScope = scope;
     this.#generation = createThemeGeneration(
@@ -399,17 +425,19 @@ export class ThemeStudioElement extends OddkinElement.with({
       this.#jsonError.value = '';
     }
     this.#exported.value = '';
+    this.#save.peek()?.discard();
     if (this.#generation) this.#pending.value = true;
     this.#generation?.request(draft);
   }
 
-  #blocked(): string {
+  /** Why the draft cannot be exported now, or, for a diff, `review`ed against the theme file. */
+  #blocked(review = false): string {
     return exportBlocked({
       generator: !!this.page?.studio.worker,
       jsonError: !!this.#jsonError.value,
       unavailable: this.#unavailable.value,
-      pending: this.#pending.value,
-      ok: this.#result.value?.ok,
+      pending: !review && this.#pending.value,
+      ok: review || this.#result.value?.ok,
     });
   }
 
@@ -452,6 +480,7 @@ export class ThemeStudioElement extends OddkinElement.with({
         ${blocked || 'The draft shown: its configuration, and the CSS generated from it.'}
       </p>
       <p class="wb-status" role="status">${this.#exported.value}</p>
+      ${this.#save.value?.render(this.#blocked(true), blocked) ?? nothing}
     </section>`;
   }
 
@@ -653,7 +682,9 @@ export class ThemeStudioElement extends OddkinElement.with({
                           ? `No specimen for the ${m.item.slice(5)} role.`
                           : m.item === 'config'
                             ? 'No theme configuration to edit.'
-                            : 'No theme generator.'
+                            : m.item === 'save'
+                              ? 'Saving to the theme file is not available.'
+                              : 'No theme generator.'
                       }
                       Supplied by ${m.supply}.
                     </li>`,

@@ -10,9 +10,12 @@ import {
 } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { EventEmitter } from 'node:events';
+import { request, type IncomingMessage } from 'node:http';
 import { afterAll, describe, expect, it, vi } from 'vitest';
+import type { ThemeStudioPageData } from '../src/data/types.js';
 import type { WorkbenchIndex } from '../src/data/index.js';
 import {
+  buildWorkbench,
   DevServerError,
   GeneratedDirectoryError,
   MARKER,
@@ -20,6 +23,7 @@ import {
   type DevServer,
   type UpdateEvent,
 } from '../src/node/index.js';
+import { fromThisPage } from '../src/node/server.js';
 import { acmeProject, removeProject } from './node-project.js';
 
 // Every watcher the server starts, so a test can make one fail.
@@ -60,6 +64,25 @@ async function serve(extra: Record<string, string> = {}, watch = true) {
 }
 
 const html = { headers: { accept: 'text/html,application/xhtml+xml' } };
+
+/** An HTTP request with exactly these headers (fetch decides `origin` and `host` itself). */
+function send(
+  url: URL,
+  init: { method: string; headers: Record<string, string>; body: string },
+): Promise<{ status: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    const headers = Object.fromEntries(Object.entries(init.headers).filter(([, v]) => v !== ''));
+    const req = request(url, { method: init.method, headers }, (res) => {
+      let text = '';
+      res.setEncoding('utf8');
+      res.on('data', (chunk: string) => (text += chunk));
+      res.on('end', () => resolve({ status: res.statusCode ?? 0, body: text }));
+    });
+    // A refused oversized body may reset the connection before the reply is read.
+    req.on('error', reject);
+    req.end(init.body);
+  });
+}
 
 /** Read `update` events from the live-update stream, skipping rebuilds that changed nothing. */
 async function subscribe(url: string) {
@@ -244,6 +267,139 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
     expect((error as DevServerError).diagnostics.map((d) => d.code)).toEqual([
       'config.library.missing',
     ]);
+  });
+
+  it("diffs Theme Studio's draft against the theme file, and writes it only when confirmed", async () => {
+    const theme = '{\n  "name": "acme",\n  "brand": { "primary": "#123456" }\n}\n';
+    const { dir, server, get } = await serve(
+      {
+        'oddkin.config.ts':
+          "export default { library: { packages: ['@acme/ui'] }, themeStudio: { themeConfig: './oddkin.theme.json' } };\n",
+        'oddkin.theme.json': theme,
+      },
+      false,
+    );
+    const index = (await (await get('_oddkin/index.json')).json()) as WorkbenchIndex;
+    const page = (await (
+      await get(`_oddkin/${index.pages['theme-studio']}`)
+    ).json()) as ThemeStudioPageData;
+    expect(page.studio.save).toEqual({ file: 'oddkin.theme.json', url: '/_oddkin/theme-file' });
+    const { origin, port } = new URL(server.url);
+    const post = (payload: unknown, headers: Record<string, string> = {}) =>
+      send(new URL('_oddkin/theme-file', server.url), {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', origin, ...headers },
+        body: typeof payload === 'string' ? payload : JSON.stringify(payload),
+      });
+    const file = () => readFileSync(join(dir, 'oddkin.theme.json'), 'utf8');
+    const draft = { name: 'acme', brand: { primary: '#0a7d33' } };
+
+    const diff = await post({ config: draft });
+    expect(diff.status).toBe(200);
+    const shown = JSON.parse(diff.body) as { version: string };
+    expect(shown).toEqual({
+      file: 'oddkin.theme.json',
+      version: expect.stringMatching(/^[0-9a-f]{16}$/),
+      lines: [
+        '@@ -1,4 +1,4 @@',
+        ' {',
+        '   "name": "acme",',
+        '-  "brand": { "primary": "#123456" }',
+        '+  "brand": { "primary": "#0a7d33" }',
+        ' }',
+      ],
+    });
+    expect(file()).toBe(theme);
+    // A write names the content the reader's diff was made from; anything else gets the new diff.
+    const stale = await post({ config: draft, version: '0000000000000000', write: true });
+    expect([stale.status, JSON.parse(stale.body)]).toEqual([409, shown]);
+    expect(file()).toBe(theme);
+    const written = await post({ config: draft, version: shown.version, write: true });
+    expect(JSON.parse(written.body)).toMatchObject({ written: true, lines: [] });
+    expect(file()).toBe('{\n  "name": "acme",\n  "brand": { "primary": "#0a7d33" }\n}\n');
+
+    // Only a Workbench page served here, on this machine: not another site, not a name rebound
+    // to this address, and only JSON bodies up to 1 MiB.
+    const refused = [
+      await post({ config: draft }, { origin: 'http://evil.example' }),
+      // A page on another port of this machine is another origin.
+      await post({ config: draft }, { origin: 'http://localhost:1' }),
+      await post(
+        { config: draft },
+        { origin: `http://evil.example:${port}`, host: `evil.example:${port}` },
+      ),
+      await post({ config: draft }, { 'sec-fetch-site': 'cross-site' }),
+      await post({ config: draft }, { origin: '' }),
+      await post({ config: draft }, { 'content-type': 'text/plain' }),
+      await post('{ not json'),
+      await post({ config: [1] }),
+      await post({ config: { notes: 'x'.repeat(1 << 20) } }),
+    ];
+    expect(refused.map((r) => r.status)).toEqual([403, 403, 403, 403, 403, 415, 400, 400, 413]);
+    expect((await get('_oddkin/theme-file')).status).toBe(404);
+    expect(file()).toBe('{\n  "name": "acme",\n  "brand": { "primary": "#0a7d33" }\n}\n');
+
+    // A client on another machine is refused even when its headers name this page.
+    const from = (remoteAddress: string) =>
+      fromThisPage({
+        socket: { remoteAddress },
+        headers: { origin, host: new URL(origin).host },
+      } as unknown as IncomingMessage);
+    expect(['127.0.0.1', '::1', '::ffff:127.0.0.1'].map(from)).toEqual([true, true, true]);
+    expect(['192.168.1.20', '::ffff:10.0.0.2', '127.0.0.2', ''].map(from)).toEqual([
+      false,
+      false,
+      false,
+      false,
+    ]);
+  });
+
+  it('offers saving only for a JSON theme file that extends no base, and only in the dev server', async () => {
+    const config = (file: string) =>
+      `export default { library: { packages: ['@acme/ui'] }, themeStudio: { themeConfig: './${file}' } };\n`;
+    const studio = async (files: Record<string, string>, save: boolean) => {
+      const dir = acmeProject(files);
+      projects.push(dir);
+      const build = await buildWorkbench({ config: dir, save });
+      const page = build.data?.pages['theme-studio'] as ThemeStudioPageData;
+      return { build, studio: page.studio };
+    };
+    const json = {
+      'oddkin.config.ts': config('a.theme.json'),
+      'a.theme.json': '{ "name": "a" }\n',
+    };
+    const built = await studio(json, false);
+    expect(built.studio.save).toBeUndefined();
+    expect(built.build.themeFile).toBeUndefined();
+    expect(built.studio.missing.map((m) => m.item)).not.toContain('save');
+
+    const code = await studio(
+      {
+        'oddkin.config.ts': config('a.theme.mjs'),
+        'a.theme.mjs': "export default { name: 'a' };\n",
+      },
+      true,
+    );
+    expect(code.studio.save).toBeUndefined();
+    expect(code.build.themeFile).toBeUndefined();
+    expect(code.studio.missing).toContainEqual({
+      item: 'save',
+      supply: expect.stringContaining('a .json theme file: a.theme.mjs is code'),
+    });
+
+    const based = await studio(
+      {
+        'oddkin.config.ts': config('a.theme.json'),
+        'a.theme.json': '{ "extends": "./base.theme.json", "name": "a" }\n',
+        'base.theme.json': '{ "name": "base", "brand": { "primary": "#123456" } }\n',
+      },
+      true,
+    );
+    expect(based.studio.save).toBeUndefined();
+    expect(based.studio.missing).toContainEqual({
+      item: 'save',
+      supply: expect.stringContaining('a.theme.json extends one'),
+    });
   });
 
   it('pushes updates for configuration, content, data, and module changes', async () => {

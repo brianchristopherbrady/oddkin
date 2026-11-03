@@ -3,6 +3,7 @@
  * preview frames, the packages they load, and the shell page (workbench.md §2.1). Used by
  * `workbench dev` now and by `workbench build` (M7).
  */
+import { extname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { ResolvedWorkbenchConfig, Routing } from '../config/index.js';
 import { buildWorkbenchData, pageFile, serializeData } from '../data/build.js';
@@ -47,6 +48,8 @@ export interface WorkbenchBuild {
   readonly frameImportMap: ImportMap | undefined;
   /** The shell page; undefined without a valid configuration. */
   readonly shell: string | undefined;
+  /** The theme file Theme Studio may write (`save` builds only). */
+  readonly themeFile?: string;
   readonly diagnostics: readonly WorkbenchDiagnostic[];
 }
 
@@ -55,6 +58,8 @@ export interface BuildOptions {
   readonly config?: string;
   /** Point the shell at the live-update stream (dev server). */
   readonly events?: boolean;
+  /** Let Theme Studio write the theme file through the dev server (workbench.md §9). */
+  readonly save?: boolean;
   /** Replaces the configuration's `hosting` values. */
   readonly hosting?: { readonly basePath?: string; readonly routing?: Routing };
 }
@@ -63,6 +68,25 @@ const versioned = (pkg: InstalledPackage) => `${pkg.name}@${pkg.version}`;
 
 /** Theme Studio's generation worker, next to the data files. */
 export const THEME_WORKER = 'theme-studio.worker.js';
+/** The dev server's endpoint for the theme file's diff and write. */
+export const THEME_FILE = 'theme-file';
+
+/** Whether Theme Studio may write the theme file, or what it needs instead. */
+function themeSave(
+  theme: NonNullable<WorkbenchInputs['theme']>,
+  root: string,
+): { file?: string; unsaveable?: string } {
+  const file = relative(root, theme.file).split(sep).join('/');
+  if (extname(theme.file).toLowerCase() !== '.json')
+    return {
+      unsaveable: `a .json theme file: ${file} is code, which Theme Studio does not rewrite (export the draft instead)`,
+    };
+  if (theme.extendsBase)
+    return {
+      unsaveable: `a theme file that extends no base: ${file} extends one, and saving it with its base comes with products`,
+    };
+  return { file };
+}
 
 /**
  * Workers have no import map, so the generator is imported by URL (its graph has no bare
@@ -174,12 +198,22 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
   // Theme Studio generates with the documented library's own generator, in a Worker.
   const generator = frame.importMap.imports['@oddkin/tokens/generate'];
   const worker = generator ? `${config.hosting.basePath}${ASSET_DIR}${THEME_WORKER}` : undefined;
+  const theme = inputs.theme;
+  const saving = options.save && theme ? themeSave(theme, loaded.root) : undefined;
+  const save = saving?.file
+    ? { file: saving.file, url: `${config.hosting.basePath}${ASSET_DIR}${THEME_FILE}` }
+    : undefined;
   const { data, diagnostics } = buildWorkbenchData({
     config,
     libraries: inputs.libraries,
     ...(inputs.docs ? { docs: inputs.docs } : {}),
     ...(inputs.tokens ? { tokens: inputs.tokens } : {}),
-    theme: { ...inputs.theme, ...(worker ? { worker } : {}) },
+    theme: {
+      ...(theme ? { config: theme.config, source: theme.source } : {}),
+      ...(worker ? { worker } : {}),
+      ...(save ? { save } : {}),
+      ...(saving?.unsaveable ? { unsaveable: saving.unsaveable } : {}),
+    },
     diagnostics: out.items,
   });
   const result = new DiagnosticList();
@@ -266,6 +300,7 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
       module: '@oddkin/workbench/app/define',
       preload: preloadGraph(shell.importMap, '@oddkin/workbench/app/define', roots),
     }),
+    ...(save && theme ? { themeFile: theme.file } : {}),
     diagnostics: result.items,
   };
 }

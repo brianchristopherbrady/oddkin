@@ -45,6 +45,9 @@ export const ENTRIES = [
  * files that import adds.
  */
 export const LAZY = {
+  'workbench-panel-theme-studio': {
+    'workbench-theme-save': 'packages/workbench/dist/panels/theme-save.js',
+  },
   'workbench-shell': { 'workbench-theme-studio': 'packages/workbench/dist/app/theme-studio.js' },
 };
 
@@ -137,8 +140,13 @@ export const BUDGETS = {
   'workbench-panel-catalog': 18432,
   // 22.5 KiB from 2026-11-02 (Agent 2; requested in the lanes at 11:03): measured 21,908, the
   // public Theme Studio panel (P1.5): the generation host, the theme model and its form, light and
-  // dark preview frames, and the screens (components and composition documents).
+  // dark preview frames, and the screens (components and composition documents). From 2026-11-03
+  // the initial load only (LAZY): measured 22,844 in 2 chunks, without saving to the theme file,
+  // which the panel imports only when the dev server offers it.
   'workbench-panel-theme-studio': 23040,
+  // 1.125 KiB from 2026-11-03 (Agent 2): measured 1,051, saving to the theme file (P1.5 item 5):
+  // the diff, the confirmed write, and its conflict and failure messages.
+  'workbench-theme-save': 1152,
   // 51 KiB; measured 51,248 on 2026-10-28 (48,972 before: the catalog and component reference
   // above, both in the shell). Was 49 KiB (48,775 measured on 2026-10-22): the shell with router,
   // search, and every page renderer. 54 KiB from 2026-10-28 (Agent 2): measured 54,117 with the
@@ -149,8 +157,11 @@ export const BUDGETS = {
   // 5.5 KiB from 2026-10-29: Theme Studio, which the shell imports on its route (LAZY). 6 KiB from
   // 2026-11-02 (Agent 2; requested at 11:03): measured 5,968 with the screens (P1.5 items 1 and 2:
   // the screen picker, the composition editor and its diagnostics, latest-wins sending to the
-  // frames, and giving the focus back from a frame).
-  'workbench-theme-studio': 6144,
+  // frames, and giving the focus back from a frame). 6.25 KiB from 2026-11-03 (Agent 2; requested
+  // in the lanes): measured 6,189 with saving to the theme file (P1.5 item 5): loading the save
+  // module, and keeping the draft and screen when a rebuild leaves the theme file alone or saves
+  // the draft.
+  'workbench-theme-studio': 6400,
   // 7.5 KiB; measured 6,786 on 2026-10-28 (7,055 before: the frame imports a registration with
   // import() instead of an inline module script): the preview frame runtime (protocol, Scope,
   // mount, specimen, theme). Measured 7,472 on 2026-11-02 with the composition request.

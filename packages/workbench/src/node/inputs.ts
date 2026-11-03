@@ -34,7 +34,14 @@ export interface WorkbenchInputs {
   readonly docs?: DocsContent;
   readonly tokens?: TokenInspectionLike;
   /** Theme Studio's baseline: `themeStudio.themeConfig` as its JSON model. */
-  readonly theme?: { readonly config: JsonObject; readonly source: string };
+  readonly theme?: {
+    readonly config: JsonObject;
+    readonly source: string;
+    /** The theme file's absolute path. */
+    readonly file: string;
+    /** It extends a base file (a P1.1 `extends`), so its model is merged. */
+    readonly extendsBase: boolean;
+  };
   /** Files read as data; a change to one rebuilds the data. */
   readonly dataFiles: readonly string[];
   /** Each loaded example set's source file, by component tag. */
@@ -349,7 +356,7 @@ async function loadThemeConfig(
   graph: readonly InstalledPackage[],
   out: DiagnosticList,
   dataFiles: string[],
-): Promise<{ config: JsonObject; source: string } | undefined> {
+): Promise<WorkbenchInputs['theme']> {
   const source = config.themeStudio.themeConfig;
   if (!source) return undefined;
   const file = resolve(root, source);
@@ -376,13 +383,19 @@ async function loadThemeConfig(
       loadConfig(file: string): Promise<{
         config: unknown;
         diagnostics: readonly { severity?: string; path?: string; message?: string }[];
+        layers?: readonly unknown[];
       }>;
     };
     const result = await tokens.loadConfig(file);
     for (const d of result.diagnostics)
       out.warn('node.themeStudio.config', `${source}${d.path ?? ''}: ${d.message ?? ''}`, path);
     if (!isObject(result.config)) return undefined;
-    return { config: result.config as JsonObject, source };
+    return {
+      config: result.config as JsonObject,
+      source,
+      file,
+      extendsBase: (result.layers?.length ?? 1) > 1,
+    };
   } catch (error) {
     out.warn(
       'node.themeStudio.config',

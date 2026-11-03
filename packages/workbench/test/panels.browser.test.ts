@@ -1,4 +1,4 @@
-﻿import { afterEach, describe, expect, it } from 'vitest';
+﻿import { afterEach, describe, expect, it, vi } from 'vitest';
 import { settled } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import '../src/panels/component-define.js';
@@ -1069,6 +1069,213 @@ describe('<oddkin-theme-studio-panel>', () => {
     await settled();
     expect(previewProtocolStats().liveFrames).toBe(frames);
     expect(scopeStats()).toEqual(before);
+  });
+
+  it('saves the draft to the theme file after showing the diff, when the dev server offers it', async () => {
+    const requests: Record<string, unknown>[] = [];
+    let version = 'v1';
+    let lines = ['@@ -1,1 +1,1 @@', '-{ "primary": "#123456" }', '+{ "primary": "#0a7d33" }'];
+    let gate: Promise<void> | undefined;
+    // Replies the panel has read, so a test can wait for one it held back.
+    let delivered = 0;
+    const fetchOriginal = globalThis.fetch;
+    const json = (status: number, value: unknown) => {
+      const response = new Response(JSON.stringify(value), {
+        status,
+        headers: { 'content-type': 'application/json' },
+      });
+      const read = response.json.bind(response);
+      response.json = async () => {
+        const body: unknown = await read();
+        delivered++;
+        return body;
+      };
+      return response;
+    };
+    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+      if (String(input) !== '/save-theme') return fetchOriginal(input, init);
+      const request = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      requests.push(request);
+      await gate;
+      if (request['write'] !== true) return json(200, { file: 'theme.json', version, lines });
+      if (request['version'] !== version) return json(409, { file: 'theme.json', version, lines });
+      return json(200, { file: 'theme.json', version: 'v3', lines: [], written: true });
+    });
+    try {
+      const base = studioPage();
+      const panel = document.createElement('oddkin-theme-studio-panel');
+      panel.frameUrl = frameUrl;
+      panel.page = {
+        ...base,
+        studio: { ...base.studio, save: { file: 'theme.json', url: '/save-theme' } },
+      };
+      mounted.push(panel);
+      document.body.append(panel);
+      const root = panel.shadowRoot!;
+      const button = (text: string) =>
+        [...root.querySelectorAll('button')].find((b) => b.textContent?.includes(text));
+      const status = () => root.querySelector('#export')?.textContent ?? '';
+      const diff = () => root.querySelector('[aria-label="Changes to theme.json"]');
+      await until(() => button('Save to theme.json')?.disabled === false, 'the save button');
+
+      button('Save to theme.json')!.click();
+      await until(() => !!diff(), 'the diff');
+      expect(diff()?.querySelector('pre')?.textContent).toBe(lines.join('\n'));
+      expect(status()).toContain('Review the changes to theme.json, then write it.');
+      expect(requests).toEqual([{ config: base.studio.config }]);
+
+      // The file changed on disk after the diff was shown: the new diff, and nothing written.
+      version = 'v2';
+      lines = [...lines, '+{ "name": "edited elsewhere" }'];
+      // A write waits for the generator to accept the draft.
+      await until(() => button('Write theme.json')?.disabled === false, 'the write button');
+      button('Write theme.json')!.click();
+      await until(() => status().includes('changed on disk'), 'the conflict');
+      expect(diff()?.querySelector('pre')?.textContent).toContain('edited elsewhere');
+      button('Write theme.json')!.click();
+      await until(() => status().includes('Saved theme.json.'), 'the write');
+      expect(requests.slice(1)).toEqual([
+        { config: base.studio.config, version: 'v1', write: true },
+        { config: base.studio.config, version: 'v2', write: true },
+      ]);
+      expect(diff()).toBeNull();
+
+      lines = [];
+      button('Save to theme.json')!.click();
+      await until(() => status().includes('theme.json already holds this draft.'), 'no change');
+      // A new draft makes a diff shown out of date.
+      lines = ['@@ -1,1 +1,1 @@', '-a', '+b'];
+      button('Save to theme.json')!.click();
+      await until(() => !!diff(), 'another diff');
+      const field = root.querySelector<HTMLInputElement>('#ts-brand-primary')!;
+      field.value = '#222222';
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+      await settled();
+      expect(diff()).toBeNull();
+      expect(status()).not.toContain('Review the changes');
+
+      // A review answered after a newer draft is dropped. The newer draft can be reviewed while
+      // it is generating (the click that ends an edit), and written once it is generated.
+      let answer!: () => void;
+      gate = new Promise<void>((resolve) => (answer = resolve));
+      button('Save to theme.json')!.click();
+      await until(() => requests.length === 6, 'the held review');
+      field.value = '#333333';
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+      await panel.updateComplete;
+      expect(root.querySelector('#ts-export-note')?.textContent).toContain('Generating');
+      expect(button('Save to theme.json')!.disabled).toBe(false);
+      gate = undefined;
+      let read = delivered;
+      answer();
+      await until(() => delivered === read + 1, 'the held reply');
+      await settled();
+      expect(diff()).toBeNull();
+      expect(status()).not.toContain('Review the changes');
+      button('Save to theme.json')!.click();
+      await until(() => !!diff(), "the newer draft's diff");
+      expect(requests[6]).toEqual({ config: panel.draft });
+      await until(() => button('Write theme.json')?.disabled === false, 'the write button');
+
+      // JSON that does not parse is not the draft: neither reviewed nor written.
+      const json = root.querySelector<HTMLTextAreaElement>('#ts-json')!;
+      const text = json.value;
+      json.value = '{ "brand": ';
+      json.dispatchEvent(new Event('input', { bubbles: true }));
+      await panel.updateComplete;
+      expect(button('Save to theme.json')!.disabled).toBe(true);
+      expect(button('Write theme.json')!.disabled).toBe(true);
+      json.value = text;
+      json.dispatchEvent(new Event('input', { bubbles: true }));
+      // A draft the generator refuses can be reviewed, not written.
+      field.value = 'invalid';
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+      await until(() => status().includes('This draft is invalid'), 'the refusal');
+      expect(button('Save to theme.json')!.disabled).toBe(false);
+      button('Save to theme.json')!.click();
+      await until(() => !!diff(), "the refused draft's diff");
+      expect(button('Write theme.json')!.disabled).toBe(true);
+
+      // A conflict answered after a newer draft shows no diff for the older one.
+      field.value = '#444444';
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+      button('Save to theme.json')!.click();
+      await until(() => !!diff(), 'a diff to write');
+      await until(() => button('Write theme.json')?.disabled === false, 'the write button');
+      version = 'v9';
+      const sent = requests.length;
+      gate = new Promise<void>((resolve) => (answer = resolve));
+      button('Write theme.json')!.click();
+      await until(() => requests.length === sent + 1, 'the held write');
+      field.value = '#555555';
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+      gate = undefined;
+      read = delivered;
+      answer();
+      await until(() => delivered === read + 1, 'the held conflict');
+      await settled();
+      expect(diff()).toBeNull();
+      expect(status()).not.toContain('changed on disk');
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('keeps the draft and screen when a rebuild leaves the theme file alone or saves the draft', async () => {
+    const panel = document.createElement('oddkin-theme-studio-panel');
+    panel.frameUrl = frameUrl;
+    panel.page = studioPage();
+    mounted.push(panel);
+    document.body.append(panel);
+    const root = panel.shadowRoot!;
+    const select = () => root.querySelector<HTMLSelectElement>('#ts-screen')!;
+    await until(() => panel.previews.length === 2, 'the frames');
+    const frames = panel.previews;
+    select().value = 'component:fixture-button';
+    select().dispatchEvent(new Event('change', { bubbles: true }));
+    const field = root.querySelector<HTMLInputElement>('#ts-brand-primary')!;
+    field.value = '#0a7d33';
+    field.dispatchEvent(new Event('change', { bubbles: true }));
+    const draft = panel.draft;
+    // New screens data, the same theme file: the draft, screen, and frames stay.
+    const items = studioPage().studio.screens!.components[0]!.items;
+    const rebuilt = studioPage();
+    panel.page = {
+      ...rebuilt,
+      studio: {
+        ...rebuilt.studio,
+        screens: {
+          ...rebuilt.studio.screens!,
+          components: [
+            {
+              tag: 'fixture-button',
+              title: 'Fixture button',
+              items: items.slice(0, 1),
+              omitted: [],
+            },
+          ],
+        },
+      },
+    };
+    await until(
+      () => panel.previews[1]?.iframe.contentDocument?.querySelectorAll('figure').length === 1,
+      'the new screens data',
+    );
+    expect([panel.draft, select().value]).toEqual([draft, 'component:fixture-button']);
+    expect(panel.previews).toBe(frames);
+    // The file now holds the draft, as after a save: still nothing restarts.
+    panel.page = { ...rebuilt, studio: { ...rebuilt.studio, config: draft as never } };
+    await settled();
+    expect([panel.draft, select().value]).toEqual([draft, 'component:fixture-button']);
+    expect(panel.previews).toBe(frames);
+    // Someone else changed the file: the new baseline replaces the draft.
+    panel.page = {
+      ...rebuilt,
+      studio: { ...rebuilt.studio, config: { brand: { primary: '#999999' } } },
+    };
+    await settled();
+    expect(panel.draft).toEqual({ brand: { primary: '#999999' } });
+    expect(panel.previews).not.toBe(frames);
   });
 });
 

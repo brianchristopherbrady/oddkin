@@ -4,7 +4,7 @@
  * An invalid edit keeps the last valid data and reports what is wrong.
  */
 import { statSync, watch, type FSWatcher } from 'node:fs';
-import { readFile, realpath, stat } from 'node:fs/promises';
+import { readFile, realpath, rename, stat, writeFile } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { basename, dirname, extname, isAbsolute, join, relative } from 'node:path';
@@ -12,7 +12,14 @@ import type { WorkbenchDiagnostic } from '../internal/diagnostics.js';
 import { CONFIG_FILES } from './config.js';
 import { writeGenerated } from './generated.js';
 import { DOCS_FILES } from './inputs.js';
-import { ASSET_DIR, buildWorkbench, formatDiagnostic, type WorkbenchBuild } from './workbench.js';
+import { diffLines, fileVersion, formatThemeFile } from './theme-file.js';
+import {
+  ASSET_DIR,
+  buildWorkbench,
+  formatDiagnostic,
+  THEME_FILE,
+  type WorkbenchBuild,
+} from './workbench.js';
 
 export const DEFAULT_PORT = 4175;
 
@@ -92,9 +99,44 @@ const inside = (file: string, dir: string) => {
 
 const OUTPUT = ['.oddkin', 'workbench'];
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/**
+ * A request from a Workbench page on this machine: a loopback client whose page has this
+ * server's own origin. Another site's page, or a name rebound to this address, is refused.
+ */
+export function fromThisPage(req: IncomingMessage): boolean {
+  const { origin, host } = req.headers;
+  if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress ?? ''))
+    return false;
+  if ((req.headers['sec-fetch-site'] ?? 'same-origin') !== 'same-origin') return false;
+  try {
+    const url = new URL(origin ?? '');
+    return url.host === host && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+/** The request body as text, or undefined past `limit` bytes (the rest is read and dropped). */
+async function body(req: IncomingMessage, limit: number): Promise<string | undefined> {
+  const chunks: Buffer[] = [];
+  let size = 0;
+  for await (const chunk of req as AsyncIterable<Buffer>) {
+    size += chunk.length;
+    if (size <= limit) chunks.push(chunk);
+  }
+  return size > limit ? undefined : Buffer.concat(chunks).toString('utf8');
+}
+
 export async function startDevServer(options: DevServerOptions = {}): Promise<DevServer> {
   const log = options.log ?? (() => {});
-  const buildOptions = { ...(options.config ? { config: options.config } : {}), events: true };
+  const buildOptions = {
+    ...(options.config ? { config: options.config } : {}),
+    events: true,
+    save: true,
+  };
   let current = await buildWorkbench(buildOptions);
   const config = current.config;
   if (!current.data || !config)
@@ -158,13 +200,50 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
     req.on('close', () => clients.delete(res));
   }
 
+  /** Theme Studio's save (workbench.md §9): the diff for a draft, then the write it confirms. */
+  async function themeFile(req: IncomingMessage, res: ServerResponse) {
+    const file = current.themeFile;
+    const text = 'text/plain; charset=utf-8';
+    const json = (status: number, value: unknown) =>
+      send(res, status, 'application/json; charset=utf-8', JSON.stringify(value));
+    if (!file) return notFound(res);
+    if (!fromThisPage(req))
+      return send(res, 403, text, 'Only a Workbench page on this machine writes the theme file.');
+    if (!/^application\/json\b/i.test(req.headers['content-type'] ?? ''))
+      return send(res, 415, text, 'Send the request as application/json.');
+    const raw = await body(req, 1 << 20);
+    if (raw === undefined) return send(res, 413, text, 'The draft is larger than 1 MiB.');
+    let request: unknown;
+    try {
+      request = JSON.parse(raw);
+    } catch {
+      return send(res, 400, text, 'The request is not JSON.');
+    }
+    if (!isRecord(request) || !isRecord(request['config']))
+      return send(res, 400, text, 'The request needs the draft as `config`, a JSON object.');
+    const before = await readFile(file, 'utf8');
+    const after = formatThemeFile(before, request['config']);
+    const shown = relative(current.root, file).split(/[\\/]/).join('/');
+    const diff = { file: shown, version: fileVersion(before), lines: diffLines(before, after) };
+    if (request['write'] !== true) return json(200, diff);
+    // The file changed since the reader saw the diff: they review the new one first.
+    if (request['version'] !== diff.version) return json(409, diff);
+    const temporary = `${file}.${process.pid}.tmp`;
+    await writeFile(temporary, after);
+    await rename(temporary, file);
+    log(`wrote ${shown}`);
+    return json(200, { file: shown, version: fileVersion(after), lines: [], written: true });
+  }
+
   async function handle(req: IncomingMessage, res: ServerResponse) {
+    const url = new URL(req.url ?? '/', 'http://localhost');
+    const path = url.pathname;
+    if (req.method === 'POST' && path === `${base}${ASSET_DIR}${THEME_FILE}`)
+      return themeFile(req, res);
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       res.writeHead(405, { allow: 'GET, HEAD' }).end();
       return;
     }
-    const url = new URL(req.url ?? '/', 'http://localhost');
-    const path = url.pathname;
     if (base !== '/' && path === base.slice(0, -1)) {
       res.writeHead(308, { location: `${base}${url.search}` }).end();
       return;

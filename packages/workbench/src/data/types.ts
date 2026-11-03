@@ -200,6 +200,13 @@ export interface ThemeStudioPageData extends PageDataBase {
     readonly source?: string;
     /** URL of the generation worker (the library's own `@oddkin/tokens/generate`). */
     readonly worker?: string;
+    /** In the dev server: the theme file it writes, after showing the diff (workbench.md §9). */
+    readonly save?: {
+      /** The file, relative to the project. */
+      readonly file: string;
+      /** POST `{ config }` for the diff; `{ config, version, write: true }` writes the file. */
+      readonly url: string;
+    };
     readonly roles: readonly SpecimenRole[];
     /** Absent from page data written before screens were added. */
     readonly screens?: ThemeStudioScreens;
