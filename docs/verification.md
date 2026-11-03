@@ -4968,3 +4968,16 @@ The file format was proposed to Agent 2 on 2026-11-01 at 21:07, and Agent 2 agre
 | Mutation probes | `node ../oddkin-lanes/tools/mutate.mjs` | 29 of 29 killed: 16 in the node project (screens data, renderer detection, protocol checks) and 13 in the browser (the frame's composition request, the panel's latest-wins sending, focus return, per-screen text, and the omitted examples' note) |
 | Size | `node scripts/check-size.mjs` | Exit 0. workbench-theme-studio 5,967 of 6,144; new workbench-panel-theme-studio 21,901 of 23,040; workbench-frame 7,466 of 7,680; workbench-shell 52,592 of 54,272; workbench-panel-component 31,533 of 32,768 |
 | Gates | `npm run typecheck`; `npm run lint` | Both exit 0 |
+
+## 2026-11-03 — Issue #2's metadata half: the disabled button's token traces (round 11, Agent 1)
+
+CI's node project has failed `packages/components/test/metadata.test.ts` "traces options and states to tokens" since `f7ad58b` (runs 41390393028 and 41502238094, issue #2). The owner's disabled buttons (`688df11`) replaced the disabled state's `color.text.disabled` with a literal `opacity: 0.5`, which is no token, so the generated metadata has no trace for the plain disabled state. The test now expects the disabled pressed toggle's background trace instead. Light duty: no browser run here.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The failure, before | `npx vitest run --project node packages/components/test/metadata.test.ts` on `f7e56c4`, after `npm run lint`'s build | 1 failed, 9 passed: the expected `color.text.disabled` trace is missing, as on CI |
+| The button's traces | `component:odd-button`'s `styleMappings` in the built `packages/components/oddkin.metadata.json` | 37 traces. The disabled state appears only with a pressed toggle: background `color.selection.background` and colour `color.selection.foreground`. The test's other expected traces are all present |
+| The test, after | The same command | 10 passed |
+| Types, format | `npm run typecheck`; `npx prettier --check packages/components/test/metadata.test.ts` | Exit 0 |
+
+**Not verified here:** the browser projects (light duty; CI runs them). Issue #2 stays open for its Figma half, the snapshot's disabled button, iconButton, and toggleButton variants.

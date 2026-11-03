@@ -190,7 +190,8 @@ describe('@oddkin/components published metadata', () => {
         'control | appearance="primary" | background -> color.action.default',
         'control | appearance="primary" (enabled, hover) @media (hover: hover) | background -> color.action.hover',
         'control | appearance="primary" (active, enabled) | background -> color.action.pressed',
-        'control | (disabled) | color -> color.text.disabled',
+        // Disabled dims with a literal opacity; a pressed toggle keeps its selection tokens.
+        'control | toggle (disabled, pressed) | background -> color.selection.background',
         'control | size="lg" | font-size -> type.body.size',
       ]),
     );
