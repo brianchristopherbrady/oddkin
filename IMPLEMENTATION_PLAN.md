@@ -203,7 +203,7 @@ The details are in the [technical commercialization plan](./docs/commercializati
     - DTCG output checked by an independent reader;
       - *(Done since 2026-10-21: `@terrazzo/parser`, a dev dependency, reads the DTCG output and each token is compared with Oddkin's resolver (`dtcg.test.ts`); 2026-11-03, it also reads a theme scaled by the inputs.)*
     - equivalent CSS, SCSS, and TS consumption;
-      - *(2026-11-03, Agent 3: CSS and TS consumption are verified (roles: `styling-contract.browser.test.ts`; conditions: `conditions-profiles.test.ts` and `conditions.browser.test.ts`). The Sass outputs do not exist yet, and verifying them needs a Sass compiler: asked the owner on 2026-11-03 whether `sass` may be a root dev dependency. Until then, SCSS is a recorded limitation.)*
+      - *(2026-11-03, Agent 3: CSS and TS consumption are verified (roles: `styling-contract.browser.test.ts`; conditions: `conditions-profiles.test.ts` and `conditions.browser.test.ts`). The Sass outputs do not exist yet, and verifying them needs a Sass compiler: the owner approved `sass` (Dart Sass) as a root dev dependency used only by tests on 2026-11-03, so the Sass outputs and their checks are next.)*
     - P3 values.
       - *(2026-11-03, Agent 3: done, opt-in with `"gamut": "p3"`. Generated ramp steps that sRGB clips get Display P3 values under `@media (color-gamut: p3)` where P3 adds at least 0.02 chroma; a value that would make a contracted pair fail where sRGB passes is held back, and its provenance says which pair (theming-and-styling.md §10.7, `p3.test.ts`, `p3.browser.test.ts`, features.json `wide-gamut-color`). The default theme is unchanged.)*
   - §5.1's open items: adopted-sheet ownership and the DTCG resolver experiment.

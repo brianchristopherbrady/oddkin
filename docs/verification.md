@@ -5036,6 +5036,6 @@ Opt-in per theme, `"gamut": "p3"`, additive to schema v1 (theming-and-styling.md
 | Size | `.tmp/p3-growth.mjs`, raw / gzip -9 bytes | `oklch(0.65 0.25 145)` with product `coral`: 35,213 / 3,209 → 36,061 / 3,385; `#6250e8`: 31,756 / 3,011 → 31,906 / 3,049 |
 | Gates | `npm run typecheck`; `npm run lint` (with `npm run compat` regenerating matrix.md); `node scripts/check-size.mjs` | Exit 0; exit 0, 72 features, 0 problems; exit 0, the default theme 3,096 B gzip of 3,136, unchanged |
 
-Also recorded: CSS and TS consumption are verified by existing tests (roles: `styling-contract.browser.test.ts`; conditions: `conditions-profiles.test.ts` and `conditions.browser.test.ts`); the Sass outputs need a Sass compiler to verify, and the owner was asked about `sass` as a dev dependency.
+Also recorded: CSS and TS consumption are verified by existing tests (roles: `styling-contract.browser.test.ts`; conditions: `conditions-profiles.test.ts` and `conditions.browser.test.ts`); the Sass outputs need a Sass compiler to verify, and the owner approved `sass` as a root dev dependency used only by tests (2026-11-03, relayed by Agent 1).
 
 **Not verified here:** a P3 display, by eye; CI on this commit. The contrast report file stays a measurement of the sRGB values.
