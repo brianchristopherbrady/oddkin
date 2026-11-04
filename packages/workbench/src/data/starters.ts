@@ -146,4 +146,80 @@ export const STARTERS: readonly {
       },
     ]),
   },
+  {
+    id: 'app-layout',
+    title: 'App layout',
+    document: document([
+      {
+        element: 'odd-split-panel',
+        attributes: { label: 'Resize navigation', position: 30, min: 20, max: 50 },
+        children: [
+          {
+            element: 'odd-side-nav',
+            slot: 'start',
+            attributes: { label: 'Primary', current: 'projects' },
+            properties: {
+              items: [
+                { id: 'overview', kind: 'link', label: 'Overview', href: '#overview' },
+                { id: 'projects', kind: 'link', label: 'Projects', href: '#projects', badge: '4' },
+                { id: 'reports', kind: 'link', label: 'Reports', href: '#reports' },
+                { id: 'settings', kind: 'link', label: 'Settings', href: '#settings' },
+              ],
+            },
+            children: [{ element: 'strong', slot: 'header', children: ['Acme'] }],
+          },
+          {
+            element: 'odd-container',
+            slot: 'end',
+            attributes: { measure: 'fluid' },
+            children: [
+              { element: 'h1', children: ['Projects'] },
+              {
+                element: 'odd-toolbar',
+                attributes: { label: 'Project actions' },
+                children: [
+                  {
+                    element: 'odd-button',
+                    attributes: { appearance: 'primary' },
+                    children: ['New project'],
+                    actions: { click: 'projects.create' },
+                  },
+                  {
+                    element: 'odd-button',
+                    attributes: { appearance: 'secondary' },
+                    children: ['Export'],
+                    actions: { click: 'projects.export' },
+                  },
+                ],
+              },
+              { element: 'p', children: ['Four projects, one at risk.'] },
+              {
+                element: 'odd-table',
+                attributes: {
+                  label: 'Projects',
+                  sort: 'tasks',
+                  direction: 'descending',
+                  selection: 'multiple',
+                },
+                properties: {
+                  columns: [
+                    { key: 'name', label: 'Project', sortable: true },
+                    { key: 'status', label: 'Status' },
+                    { key: 'tasks', label: 'Open tasks', align: 'end', sortable: true },
+                  ],
+                  rows: [
+                    { id: 'atlas', cells: { name: 'Atlas', status: 'On track', tasks: 12 } },
+                    { id: 'beacon', cells: { name: 'Beacon', status: 'At risk', tasks: 31 } },
+                    { id: 'cinder', cells: { name: 'Cinder', status: 'On track', tasks: 4 } },
+                    { id: 'delta', cells: { name: 'Delta', status: 'Paused', tasks: 7 } },
+                  ],
+                  selected: ['beacon', 'delta'],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ]),
+  },
 ];

@@ -100,6 +100,7 @@ function clearElement(runtime: Runtime) {
   runtime.element = undefined;
   runtime.composition?.dispose();
   runtime.composition = undefined;
+  delete runtime.wrapper.dataset['oddkinScreen'];
 }
 
 function loadRegistration(runtime: Runtime, registration: string): Promise<void> {
@@ -253,6 +254,8 @@ async function composition(runtime: Runtime, config: FrameCompositionPayload) {
   clearElement(runtime);
   runtime.mount = undefined;
   runtime.wrapper.replaceChildren();
+  // A document is a screen: laid out as a page, not centred as a specimen (the frame's style).
+  runtime.wrapper.dataset['oddkinScreen'] = '';
   applySettings(runtime, config.settings);
   const { registrations } = config;
   for (const tag of tagsOf((config.document as { root?: unknown } | null)?.root))

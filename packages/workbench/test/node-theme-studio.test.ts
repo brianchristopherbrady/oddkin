@@ -468,6 +468,7 @@ describe('Theme Studio page data', () => {
       'Report card',
       'Settings form',
       'Sign-in dialog',
+      'App layout',
     ]);
     for (const starter of STARTERS) {
       expect(schema(starter.document), JSON.stringify(schema.errors)).toBe(true);

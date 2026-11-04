@@ -343,6 +343,8 @@ describe('isolated preview frames', () => {
     // The reply waits for the elements' updates, so a host sees their effects (a dialog's focus).
     expect(wrapper.querySelector('fixture-updating')?.hasAttribute('data-updated')).toBe(true);
     expect(doc.documentElement.dataset['oddMode']).toBe('dark');
+    // A document is a screen, which the frame's page style lays out as a page.
+    expect(wrapper.hasAttribute('data-oddkin-screen')).toBe(true);
     // The renderer's own catalog is used as it is.
     expect(wrapper.hasAttribute('data-catalog')).toBe(false);
 
@@ -366,6 +368,7 @@ describe('isolated preview frames', () => {
     expect(wrapper.getAttribute('data-disposed')).toBe('2');
     expect(wrapper.querySelector(':scope > p')).toBeNull();
     expect(wrapper.querySelectorAll('fixture-button')).toHaveLength(1);
+    expect(wrapper.hasAttribute('data-oddkin-screen')).toBe(false);
 
     // A catalog generated for a package without a renderer of its own is added to the renderer's.
     const generated = {
@@ -388,6 +391,7 @@ describe('isolated preview frames', () => {
       message: expect.stringContaining('does not export renderComposition'),
     });
     expect(wrapper.querySelector('[role="alert"]')).not.toBeNull();
+    expect(wrapper.hasAttribute('data-oddkin-screen')).toBe(false);
   });
 
   it('sends requests one at a time: a change made during a slow mount reaches its element', async () => {

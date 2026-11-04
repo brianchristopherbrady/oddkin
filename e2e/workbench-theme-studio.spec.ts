@@ -216,6 +216,37 @@ test.describe('Theme Studio', () => {
     await expect(frames(page)[0]!.locator('odd-card')).toBeAttached();
     await expect(status(page)).not.toHaveAttribute('role', 'alert');
 
+    // The app layout: navigation beside a sorted table with two rows selected, in each mode's
+    // selection colours. A document is a screen: it fills the frame from the top, in the theme's
+    // body type, where an example is centred.
+    await screen.selectOption({ label: 'App layout' });
+    const selection: string[] = [];
+    for (const frame of frames(page)) {
+      await expect(frame.locator('odd-split-panel > odd-side-nav')).toBeAttached();
+      const table = frame.locator('odd-split-panel odd-table');
+      await expect(table.locator('tr[part="row"]')).toHaveCount(4);
+      await expect(table.locator('th[aria-sort="descending"]')).toContainText('Open tasks');
+      const selected = table.locator('tr[part="row"].selected');
+      await expect(selected).toHaveCount(2);
+      selection.push(
+        await selected.first().evaluate((row) => getComputedStyle(row).backgroundColor),
+      );
+      const layout = await frame.locator('odd-split-panel').evaluate((panel) => {
+        const screen = panel.parentElement!;
+        const heading = panel.querySelector('h1')!;
+        return {
+          share: panel.getBoundingClientRect().width / screen.clientWidth,
+          top: panel.getBoundingClientRect().top - screen.getBoundingClientRect().top,
+          font: getComputedStyle(heading).fontFamily,
+          page: getComputedStyle(document.body).fontFamily,
+        };
+      });
+      expect(layout.share).toBeGreaterThan(0.9);
+      expect(layout.top).toBeLessThan(40);
+      expect(layout.font).not.toBe(layout.page);
+    }
+    expect(selection[0]).not.toBe(selection[1]);
+
     // A team pastes the document an agent wrote from the packaged kit.
     await screen.selectOption({ label: 'Your document' });
     await editor.fill(

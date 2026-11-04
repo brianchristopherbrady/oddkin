@@ -5215,3 +5215,21 @@ Agent 2's finding (lanes, 2026-11-04, 12:15): with `generate({ brand: { primary:
 | After the rebase onto 021c727 (Theme Studio's products) | `npm run lint`; the tokens tests with Workbench's `node-theme-studio` and `node-server` tests; `browser-set.mjs` on Workbench's panels, the two tokens cascade tests, and the components' multi-product test; `e2e/workbench-theme-products.spec.ts` with the CSS-only example | Exit 0; 200 passed (19 files); 66 of 66 in each of Chromium, Firefox, and WebKit; 17 passed and 1 skipped in three engines |
 
 **Not verified here:** CI on this commit; a product nested inside another product (not supported, theming-and-styling.md §5.1).
+
+## 2026-11-04 — P1.5 item 2's last part: the App layout starter, and documents as screens (round 11, Agent 2, row 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The starter | `packages/workbench/test/node-theme-studio.test.ts` | Four starters, App layout last; each is valid by the published JSON Schemas (with every model schema the package publishes) and by `validateComposition`. Oddkin's Theme Studio build registers every element the starters use, `odd-split-panel`, `odd-side-nav`, `odd-container`, `odd-toolbar`, and `odd-table` among them |
+| The frame | `packages/workbench/test/frame.browser.test.ts` | A composition marks the frame's container as a screen; a specimen request after it, and a composition that fails, clear the mark |
+| End to end | `e2e/workbench-theme-studio.spec.ts` (the Oddkin fixture's dev server) | App layout in each frame: the side navigation in the split panel, four table rows, the tasks column sorted descending, and two rows selected, whose background differs between light and dark. The split panel spans more than 90% of the frame's width and starts within 40 px of its top, and the title's font is not the page's default. Passed in Chromium, Firefox, and WebKit |
+| Workbench e2e | `node ../oddkin-lanes/tools/e2e-when-free.mjs` with `workbench-theme-studio`, `workbench-embed`, `workbench-theme-save`, `workbench-composition-library`, `workbench-theme-products`, and `workbench-theme-base` in three engines; then `workbench`, `workbench-static`, `workbench-packed`, and `workbench-catalog` in Chromium | 42 passed in 5.1 min; 194 passed in 4.5 min |
+| Node tests | `npx vitest run --project node packages/workbench/test tests/architecture tests/release tests/schemas` | 219 passed and 1 skipped (23 files) |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on `panels.browser`, `shell.browser`, `frame.browser`, and `preview.browser` | 46 of 46 in Chromium, Firefox, and WebKit |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/probes-starter.json` and `.tmp/probes-starter-built.json` (4 probes: the screen mark set, and cleared for the next request; a duplicate row id; the navigation in a slot the split panel does not have) | 4 of 4 killed. The two frame probes first survived because the frame test loads the built runtime (`dist`); the probe tool now rebuilds before and after such a probe (`build`), and both were killed |
+| Seen | Screenshots of Theme Studio at 1440 × 1000 in Chromium (`.tmp`, not kept) | Before the screen layout, the frame centred the split panel at 272 px wide, with the table's headers wrapping inside words; after it, the panel is 646 px wide from the top of each frame. The report card and the settings form fill the frame, on the canvas |
+| Size | `node scripts/check-size.mjs` | `workbench-frame` 7,522 B of 7,680 (18 B more); the panels unchanged |
+| Packages | `node scripts/verify-packs.mjs` | OK |
+| Repository | `npm run typecheck`; `npm run lint` | Exit 0 |
+| After the rebase onto 346cce9 (Agent 3's P1.1 product isolation) | `npx tsc -b`; the node tests above; `workbench-theme-studio`, `workbench-theme-products`, and `workbench-theme-base` in Chromium | Exit 0; 219 passed and 1 skipped; 10 passed in 59 s |
+| Not verified | — | Documents still cannot space their own content: the starter separates its toolbar from its table with the paragraph between them, until P1.5 item 8 |
