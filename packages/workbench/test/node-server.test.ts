@@ -10,7 +10,7 @@ import {
 } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { EventEmitter } from 'node:events';
-import { request, type IncomingMessage } from 'node:http';
+import { request } from 'node:http';
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { ThemeStudioPageData } from '../src/data/types.js';
 import type { WorkbenchIndex } from '../src/data/index.js';
@@ -341,10 +341,7 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
 
     // A client on another machine is refused even when its headers name this page.
     const from = (remoteAddress: string) =>
-      fromThisPage({
-        socket: { remoteAddress },
-        headers: { origin, host: new URL(origin).host },
-      } as unknown as IncomingMessage);
+      fromThisPage({ socket: { remoteAddress }, headers: { origin, host: new URL(origin).host } });
     expect(['127.0.0.1', '::1', '::ffff:127.0.0.1'].map(from)).toEqual([true, true, true]);
     expect(['192.168.1.20', '::ffff:10.0.0.2', '127.0.0.2', ''].map(from)).toEqual([
       false,
@@ -400,6 +397,21 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
       item: 'save',
       supply: expect.stringContaining('a.theme.json extends one'),
     });
+  });
+
+  it("keeps the ./node entry's declarations free of node: modules, for consumers without @types/node", () => {
+    // verify-packs type-checks a consumer with lib DOM and no @types/node (CI issue #3).
+    const seen = new Set<string>();
+    const visit = (file: string) => {
+      if (seen.has(file)) return;
+      seen.add(file);
+      const text = readFileSync(file, 'utf8');
+      expect(text, file).not.toMatch(/["']node:/);
+      for (const [, path] of text.matchAll(/from ["'](\.\.?\/[^"']+)\.js["']/g))
+        visit(join(dirname(file), `${path}.d.ts`));
+    };
+    visit('packages/workbench/dist/node/index.d.ts');
+    expect([...seen].map((file) => file.split(/[\\/]/).pop())).toContain('server.d.ts');
   });
 
   it('pushes updates for configuration, content, data, and module changes', async () => {

@@ -103,16 +103,25 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
 /**
+ * The parts of a request `fromThisPage` reads, typed without Node's own types: the `./node`
+ * entry's declarations must not name a `node:` module, for consumers without `@types/node`.
+ */
+export interface PageRequest {
+  readonly headers: Readonly<Record<string, string | readonly string[] | undefined>>;
+  readonly socket: { readonly remoteAddress?: string | undefined };
+}
+
+/**
  * A request from a Workbench page on this machine: a loopback client whose page has this
  * server's own origin. Another site's page, or a name rebound to this address, is refused.
  */
-export function fromThisPage(req: IncomingMessage): boolean {
+export function fromThisPage(req: PageRequest): boolean {
   const { origin, host } = req.headers;
   if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress ?? ''))
     return false;
   if ((req.headers['sec-fetch-site'] ?? 'same-origin') !== 'same-origin') return false;
   try {
-    const url = new URL(origin ?? '');
+    const url = new URL(typeof origin === 'string' ? origin : '');
     return url.host === host && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
   } catch {
     return false;
