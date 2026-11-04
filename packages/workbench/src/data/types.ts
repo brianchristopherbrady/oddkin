@@ -192,6 +192,8 @@ export interface ThemeStudioScreens {
     readonly registrations: Readonly<Record<string, string>>;
     /** Catalog entries the renderer does not hold: packages without a renderer of their own. */
     readonly catalog?: JsonObject;
+    /** Stylesheets a document's natives use (the renderer's layout primitives), as specifiers. */
+    readonly stylesheets?: readonly string[];
     readonly starters: readonly {
       readonly id: string;
       readonly title: string;

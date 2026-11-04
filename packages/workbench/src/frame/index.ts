@@ -249,6 +249,21 @@ function tagsOf(nodes: unknown, found = new Set<string>()): Set<string> {
   return found;
 }
 
+/** Link a stylesheet a document uses, once per frame, and wait until it applies. */
+function linkStylesheet(runtime: Runtime, specifier: string): Promise<unknown> | undefined {
+  const href = import.meta.resolve(specifier);
+  const head = runtime.document.head;
+  if ([...head.querySelectorAll('link')].some((link) => link.href === href)) return undefined;
+  const link = runtime.document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  return new Promise((resolve, reject) => {
+    link.onload = resolve;
+    link.onerror = () => reject(new Error(`${specifier} did not load.`));
+    head.append(link);
+  });
+}
+
 /** Render a document with its library's renderer; its actions do nothing in a preview. */
 async function composition(runtime: Runtime, config: FrameCompositionPayload) {
   clearElement(runtime);
@@ -257,6 +272,7 @@ async function composition(runtime: Runtime, config: FrameCompositionPayload) {
   // A document is a screen: laid out as a page, not centred as a specimen (the frame's style).
   runtime.wrapper.dataset['oddkinScreen'] = '';
   applySettings(runtime, config.settings);
+  for (const specifier of config.stylesheets ?? []) await linkStylesheet(runtime, specifier);
   const { registrations } = config;
   for (const tag of tagsOf((config.document as { root?: unknown } | null)?.root))
     if (Object.hasOwn(registrations, tag))

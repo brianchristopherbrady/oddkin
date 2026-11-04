@@ -85,6 +85,10 @@ describe('packaged agent kits', () => {
     );
     expect(text).toContain('`composition.property.notPortable`');
     expect(text).toContain('@oddkin/components/schemas/composition/composition.v1.json');
+    // Layout: the containers, the classes they take, and the stylesheet the host loads.
+    expect(text).toMatch(
+      /- Layout: `div`, `section`, `header`, `footer` arrange their content with the `class` attribute, which takes only the layout primitives, separated by spaces: `odd-aspect-ratio`, .*`odd-stack-tight`\. The host page loads `@oddkin\/components\/css\/layout\.css`\./,
+    );
     expect(text).toContain('`odd-button`');
     // The example parses and names the document schema.
     const example = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(text)![1]!);

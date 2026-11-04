@@ -122,12 +122,19 @@ export async function compositionReference(library: Library): Promise<KitFile | 
     ...declaredTypes(types ? join(dir, types.replace(/index\.d\.ts$/, 'validate.d.ts')) : ''),
     ...declaredTypes(types ? join(dir, types.replace(/index\.d\.ts$/, 'render.d.ts')) : ''),
   ];
-  const { validateComposition, COMPOSITION_VERSION } = (await import(
+  const { validateComposition, COMPOSITION_VERSION, NATIVE } = (await import(
     pathToFileURL(join(dir, target)).href
   )) as {
     validateComposition: (document: unknown) => { ok: boolean; diagnostics?: unknown };
     COMPOSITION_VERSION: string;
+    NATIVE?: Readonly<Record<string, { readonly attributes: Readonly<Record<string, any>> }>>;
   };
+  // Natives whose class takes the layout primitives, and those classes.
+  const containers = Object.entries(NATIVE ?? {}).filter(
+    ([, entry]) => entry.attributes['class']?.classes,
+  );
+  const classes: readonly string[] = containers[0]?.[1].attributes['class'].classes ?? [];
+  const layoutSheet = exportsMap['./css/layout.css'] ? `${library.name}/css/layout.css` : undefined;
   const example = {
     $schema: documentSchema['$id'],
     version: COMPOSITION_VERSION,
@@ -177,8 +184,13 @@ export async function compositionReference(library: Library): Promise<KitFile | 
     '## Document',
     '',
     `- Schema: ${code(`${library.name}/schemas/composition/composition.v1.json`)} (${code(documentSchema['$id'])}). Required: ${((documentSchema['required'] as string[] | undefined) ?? []).map(code).join(', ')}; ${code('version')} is ${code(COMPOSITION_VERSION)}.`,
-    `- ${code('root')} and every ${code('children')}: an array of nodes. A node is a string (text) or an object with ${code('element')}: a published element (one schema each, below) or a native text element (${natives.map(code).join(', ')}).`,
+    `- ${code('root')} and every ${code('children')}: an array of nodes. A node is a string (text) or an object with ${code('element')}: a published element (one schema each, below) or a native element (${natives.map(code).join(', ')}).`,
     `- An element object: ${code('element')}, optional ${code('id')} (${firstSentence(defs['id']?.description)}), ${code('slot')} (${firstSentence(defs['slot']?.description)}), ${code('attributes')} (published attributes and properties only), ${code('children')}, and ${code('actions')}: event name to action name (${firstSentence(defs['action']?.description)}).`,
+    ...(containers.length
+      ? [
+          `- Layout: ${containers.map(([tag]) => code(tag)).join(', ')} arrange their content with the ${code('class')} attribute, which takes only the layout primitives, separated by spaces: ${classes.map(code).join(', ')}.${layoutSheet ? ` The host page loads ${code(layoutSheet)}.` : ''}`,
+        ]
+      : []),
     '- Values are data: no functions, no markup strings, no styles. The host maps action names to its own handlers.',
     '',
     '## Element schemas',

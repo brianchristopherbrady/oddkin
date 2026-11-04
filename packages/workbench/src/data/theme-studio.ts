@@ -104,6 +104,10 @@ function screensOf(components: readonly ComponentPageData[], input: ScreensInput
             renderer: composition.renderer,
             registrations,
             ...(composition.catalog ? { catalog: composition.catalog } : {}),
+            // The layout primitives Oddkin's native containers take (data-composition.md §8).
+            ...(composition.renderer === '@oddkin/components/composition'
+              ? { stylesheets: ['@oddkin/components/css/layout.css'] }
+              : {}),
             // Written against @oddkin/components' catalog.
             starters:
               composition.renderer === '@oddkin/components/composition' &&

@@ -1,6 +1,7 @@
 ﻿// The renderer contract (`renderComposition`, `NATIVE`, `CATALOG`) in miniature, for the frame's
 // tests: it refuses a document whose elements are not allowed or not registered, else appends
-// them, focuses a `data-focus` element, and names the catalog it was given in `data-catalog`.
+// them, focuses a `data-focus` element, names the catalog it was given in `data-catalog`, and
+// records a first paragraph's letter spacing when it rendered in `data-letter-spacing`.
 type Child = string | { element: string; attributes?: Record<string, string>; children?: Child[] };
 
 export const NATIVE = { p: {} };
@@ -43,6 +44,12 @@ export function renderComposition(
   };
   const nodes = root.map(create);
   target.append(...nodes);
+  const paragraph = target.querySelector(':scope > p');
+  if (paragraph)
+    target.setAttribute(
+      'data-letter-spacing',
+      target.ownerDocument.defaultView!.getComputedStyle(paragraph).letterSpacing,
+    );
   // As a modal dialog does when it opens.
   target.querySelector<HTMLElement>('[data-focus]')?.focus();
   const dispose = () => {

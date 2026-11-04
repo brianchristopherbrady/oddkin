@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oddkin.dev/schemas/composition/composition.v1.json",
   "title": "Oddkin composition",
-  "description": "An interface described as data: published Oddkin elements and native text elements, their attributes and properties, text, and events mapped to action names. Rendered by renderComposition() from @oddkin/components/composition.",
+  "description": "An interface described as data: published Oddkin elements, native text elements, and native containers laid out with the layout primitives of @oddkin/components/css/layout.css, their attributes and properties, text, and events mapped to action names. Rendered by renderComposition() from @oddkin/components/composition.",
   "$comment": "Also enforced by validateComposition(), not expressible here: a slot must be published by the parent; text only where the parent has a default slot; list items only in lists; unique ids; model rules; at most 16 levels and 500 nodes by default.",
   "type": "object",
   "additionalProperties": false,
@@ -72,6 +72,18 @@
         },
         {
           "$ref": "#/$defs/native-li"
+        },
+        {
+          "$ref": "#/$defs/native-div"
+        },
+        {
+          "$ref": "#/$defs/native-section"
+        },
+        {
+          "$ref": "#/$defs/native-header"
+        },
+        {
+          "$ref": "#/$defs/native-footer"
         },
         {
           "$ref": "odd-alert.v1.json"
@@ -604,6 +616,146 @@
         },
         "slot": {
           "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-div": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "div"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "type": "string",
+              "pattern": "^(?:odd-aspect-ratio|odd-auto-grid|odd-auto-grid-fit|odd-box|odd-box-none|odd-box-roomy|odd-center|odd-cluster|odd-grid|odd-grid-stretch|odd-row|odd-row-between|odd-split|odd-split-end|odd-stack|odd-stack-loose|odd-stack-tight)(?: +(?:odd-aspect-ratio|odd-auto-grid|odd-auto-grid-fit|odd-box|odd-box-none|odd-box-roomy|odd-center|odd-cluster|odd-grid|odd-grid-stretch|odd-row|odd-row-between|odd-split|odd-split-end|odd-stack|odd-stack-loose|odd-stack-tight))*$",
+              "description": "Layout classes, separated by spaces: odd-aspect-ratio, odd-auto-grid, odd-auto-grid-fit, odd-box, odd-box-none, odd-box-roomy, odd-center, odd-cluster, odd-grid, odd-grid-stretch, odd-row, odd-row-between, odd-split, odd-split-end, odd-stack, odd-stack-loose, odd-stack-tight."
+            }
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "section"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "type": "string",
+              "pattern": "^(?:odd-aspect-ratio|odd-auto-grid|odd-auto-grid-fit|odd-box|odd-box-none|odd-box-roomy|odd-center|odd-cluster|odd-grid|odd-grid-stretch|odd-row|odd-row-between|odd-split|odd-split-end|odd-stack|odd-stack-loose|odd-stack-tight)(?: +(?:odd-aspect-ratio|odd-auto-grid|odd-auto-grid-fit|odd-box|odd-box-none|odd-box-roomy|odd-center|odd-cluster|odd-grid|odd-grid-stretch|odd-row|odd-row-between|odd-split|odd-split-end|odd-stack|odd-stack-loose|odd-stack-tight))*$",
+              "description": "Layout classes, separated by spaces: odd-aspect-ratio, odd-auto-grid, odd-auto-grid-fit, odd-box, odd-box-none, odd-box-roomy, odd-center, odd-cluster, odd-grid, odd-grid-stretch, odd-row, odd-row-between, odd-split, odd-split-end, odd-stack, odd-stack-loose, odd-stack-tight."
+            }
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-header": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "header"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "type": "string",
+              "pattern": "^(?:odd-aspect-ratio|odd-auto-grid|odd-auto-grid-fit|odd-box|odd-box-none|odd-box-roomy|odd-center|odd-cluster|odd-grid|odd-grid-stretch|odd-row|odd-row-between|odd-split|odd-split-end|odd-stack|odd-stack-loose|odd-stack-tight)(?: +(?:odd-aspect-ratio|odd-auto-grid|odd-auto-grid-fit|odd-box|odd-box-none|odd-box-roomy|odd-center|odd-cluster|odd-grid|odd-grid-stretch|odd-row|odd-row-between|odd-split|odd-split-end|odd-stack|odd-stack-loose|odd-stack-tight))*$",
+              "description": "Layout classes, separated by spaces: odd-aspect-ratio, odd-auto-grid, odd-auto-grid-fit, odd-box, odd-box-none, odd-box-roomy, odd-center, odd-cluster, odd-grid, odd-grid-stretch, odd-row, odd-row-between, odd-split, odd-split-end, odd-stack, odd-stack-loose, odd-stack-tight."
+            }
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+          }
+        }
+      }
+    },
+    "native-footer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "const": "footer"
+        },
+        "id": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+        },
+        "slot": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "type": "string",
+              "pattern": "^(?:odd-aspect-ratio|odd-auto-grid|odd-auto-grid-fit|odd-box|odd-box-none|odd-box-roomy|odd-center|odd-cluster|odd-grid|odd-grid-stretch|odd-row|odd-row-between|odd-split|odd-split-end|odd-stack|odd-stack-loose|odd-stack-tight)(?: +(?:odd-aspect-ratio|odd-auto-grid|odd-auto-grid-fit|odd-box|odd-box-none|odd-box-roomy|odd-center|odd-cluster|odd-grid|odd-grid-stretch|odd-row|odd-row-between|odd-split|odd-split-end|odd-stack|odd-stack-loose|odd-stack-tight))*$",
+              "description": "Layout classes, separated by spaces: odd-aspect-ratio, odd-auto-grid, odd-auto-grid-fit, odd-box, odd-box-none, odd-box-roomy, odd-center, odd-cluster, odd-grid, odd-grid-stretch, odd-row, odd-row-between, odd-split, odd-split-end, odd-stack, odd-stack-loose, odd-stack-tight."
+            }
+          }
         },
         "children": {
           "type": "array",

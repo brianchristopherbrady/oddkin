@@ -315,6 +315,7 @@ describe('isolated preview frames', () => {
     const wrapper = doc.querySelector('[data-oddkin-preview]')!;
     const missing = new URL('./missing-registration.ts', import.meta.url).href;
     const updating = new URL('./fixtures/frame-element-updating.ts', import.meta.url).href;
+    const sheet = new URL('./fixtures/frame-screen.css', import.meta.url).href;
     // A tag the document does not name is never loaded (its entry here would fail).
     const base = {
       renderer,
@@ -323,6 +324,7 @@ describe('isolated preview frames', () => {
         'fixture-updating': updating,
         'fixture-unused': missing,
       },
+      stylesheets: [sheet],
       settings: { mode: 'dark' as const },
     };
     const valid = {
@@ -345,6 +347,14 @@ describe('isolated preview frames', () => {
     expect(doc.documentElement.dataset['oddMode']).toBe('dark');
     // A document is a screen, which the frame's page style lays out as a page.
     expect(wrapper.hasAttribute('data-oddkin-screen')).toBe(true);
+    // Its stylesheets were linked, and applied, before it rendered.
+    const links = () => doc.querySelectorAll(`link[href="${sheet}"]`).length;
+    expect(links()).toBe(1);
+    expect(wrapper.getAttribute('data-letter-spacing')).toBe('3px');
+    // So is a later document's new one, its elements and renderer already loaded.
+    const loose = new URL('./fixtures/frame-screen-loose.css', import.meta.url).href;
+    await preview.request('composition', { ...base, stylesheets: [sheet, loose], document: valid });
+    expect(wrapper.getAttribute('data-letter-spacing')).toBe('5px');
     // The renderer's own catalog is used as it is.
     expect(wrapper.hasAttribute('data-catalog')).toBe(false);
 
@@ -358,17 +368,19 @@ describe('isolated preview frames', () => {
       diagnostics: [expect.objectContaining({ code: 'fixture.refused', path: '/root/1/element' })],
     });
     expect(wrapper.childElementCount).toBe(0);
-    expect(wrapper.getAttribute('data-disposed')).toBe('1');
+    expect(wrapper.getAttribute('data-disposed')).toBe('2');
 
     // The next request replaces a composition; a specimen does too.
     await preview.request('composition', { ...base, document: valid });
     await preview.request('specimen', {
       items: [{ ...payload(), role: 'primaryAction', label: 'Primary' }],
     });
-    expect(wrapper.getAttribute('data-disposed')).toBe('2');
+    expect(wrapper.getAttribute('data-disposed')).toBe('3');
     expect(wrapper.querySelector(':scope > p')).toBeNull();
     expect(wrapper.querySelectorAll('fixture-button')).toHaveLength(1);
     expect(wrapper.hasAttribute('data-oddkin-screen')).toBe(false);
+    // Once per frame, however many documents.
+    expect(links()).toBe(1);
 
     // A catalog generated for a package without a renderer of its own is added to the renderer's.
     const generated = {

@@ -175,6 +175,18 @@ describe('compositionSchemas', () => {
     expect(defs['native-a']?.['properties']).toMatchObject({
       attributes: { properties: { href: { type: 'string', format: 'uri-reference' } } },
     });
+    // Containers take the layout classes only, separated by spaces, and name them.
+    const layout = (defs['native-section']?.['properties'] as Record<string, any>)['attributes']
+      .properties.class as { pattern: string; description: string };
+    const classes = new RegExp(layout.pattern);
+    expect(['odd-row odd-row-between', 'odd-stack'].map((v) => classes.test(v))).toEqual([
+      true,
+      true,
+    ]);
+    expect(['odd-row card', ' odd-stack', 'odd-stack\todd-row'].some((v) => classes.test(v))).toBe(
+      false,
+    );
+    expect(layout.description).toContain('odd-stack-tight');
   });
 
   it('validates documents for the library with a JSON Schema validator', () => {

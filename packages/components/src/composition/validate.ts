@@ -121,7 +121,27 @@ export function validateComposition(
         );
   };
 
+  const checkClasses = (classes: readonly string[], value: unknown, path: string) => {
+    if (typeof value !== 'string' || !/^\S+(?: +\S+)*$/.test(value))
+      return error(
+        'composition.class.invalid',
+        path,
+        `${JSON.stringify(value)} is not a list of class names.`,
+        'Separate the layout classes with spaces.',
+      );
+    for (const name of value.split(/ +/))
+      if (!classes.includes(name))
+        error(
+          'composition.class.unknown',
+          path,
+          `"${name}" is not a layout class.`,
+          `Use ${list(classes)}.`,
+        );
+  };
+
   const checkValue = (type: ValueType, value: unknown, path: string) => {
+    if (typeof type === 'object' && 'classes' in type)
+      return checkClasses(type.classes, value, path);
     const model = valueModel(type);
     if (!model)
       return error(

@@ -965,6 +965,7 @@ describe('<oddkin-theme-studio-panel>', () => {
           catalog: {
             'fixture-button': { attributes: {}, properties: {}, fixed: [], slots: [], events: [] },
           },
+          stylesheets: [new URL('./fixtures/frame-screen.css', import.meta.url).href],
           starters: [{ id: 'hello', title: 'Hello', document: starter }],
         },
       },
@@ -1016,6 +1017,10 @@ describe('<oddkin-theme-studio-panel>', () => {
 
     pick('composition:hello');
     await until(() => shown('[data-oddkin-preview] > fixture-button'), 'the starter');
+    // The document's stylesheets, linked once in each frame.
+    const sheet = new URL('./fixtures/frame-screen.css', import.meta.url).href;
+    const linked = () => docs().map((doc) => doc?.querySelectorAll(`link[href="${sheet}"]`).length);
+    expect(linked()).toEqual([1, 1]);
     const editor = () => root.querySelector<HTMLTextAreaElement>('#ts-composition')!;
     expect(JSON.parse(editor().value)).toEqual(starter);
     const type = (value: string) => {
@@ -1038,6 +1043,7 @@ describe('<oddkin-theme-studio-panel>', () => {
       type(`{ "version": 1, "root": [{ "element": "p", "children": ["Edit ${i}"] }] }`);
     await until(() => docs().every((doc) => text(doc) === 'Edit 20'), 'the newest edit');
     expect(sent).toHaveLength(1);
+    expect(linked()).toEqual([1, 1]);
     expect(sent[0]).toContain('Edit 20');
     // The catalog goes with each document, for the frame to add to the renderer's own.
     expect(JSON.parse(sent[0]!).catalog).toEqual(studioPage().studio.screens?.composition?.catalog);

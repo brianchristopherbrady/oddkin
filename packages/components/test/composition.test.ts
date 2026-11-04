@@ -104,6 +104,53 @@ describe('validateComposition', () => {
     ]);
   });
 
+  it('arranges content in native containers with the layout primitives only (P1.5 item 8)', () => {
+    const page = doc({
+      element: 'section',
+      attributes: { class: 'odd-stack' },
+      children: [
+        {
+          element: 'header',
+          attributes: { class: 'odd-row  odd-row-between' },
+          children: [
+            { element: 'h1', children: ['Projects'] },
+            { element: 'odd-button', children: ['New project'] },
+          ],
+        },
+        { element: 'div', children: ['Text', { element: 'footer' }] },
+      ],
+    });
+    expect(validateComposition(page)).toEqual({ ok: true, diagnostics: [] });
+    expect(
+      codes(
+        doc(
+          { element: 'div', attributes: { class: 'odd-stack card' } },
+          { element: 'div', attributes: { class: ' odd-stack' } },
+          { element: 'div', attributes: { class: ['odd-stack'] } },
+          { element: 'p', attributes: { class: 'odd-stack' } },
+          { element: 'odd-card', attributes: { class: 'odd-stack' } },
+          { element: 'div', attributes: { style: 'gap: 2rem' } },
+          { element: 'p', children: [{ element: 'div' }] },
+          { element: 'ul', children: [{ element: 'li', children: [{ element: 'section' }] }] },
+        ),
+      ),
+    ).toEqual([
+      ['composition.class.unknown', '/root/0/attributes/class'],
+      ['composition.class.invalid', '/root/1/attributes/class'],
+      ['composition.class.invalid', '/root/2/attributes/class'],
+      ['composition.attribute.unknown', '/root/3/attributes/class'],
+      ['composition.attribute.unknown', '/root/4/attributes/class'],
+      ['composition.value.executable', '/root/5/attributes/style'],
+      ['composition.element.misplaced', '/root/6/children/0/element'],
+      ['composition.element.misplaced', '/root/7/children/0/children/0/element'],
+    ]);
+    const [unknown] = validateComposition(
+      doc({ element: 'div', attributes: { class: 'odd-grid grid-3' } }),
+    ).diagnostics;
+    expect(unknown?.message).toBe('"grid-3" is not a layout class.');
+    expect(unknown?.suggestion).toContain('"odd-stack", "odd-stack-loose", "odd-stack-tight"');
+  });
+
   it('checks slots against the parent and text against its default slot', () => {
     expect(
       codes(
@@ -353,13 +400,20 @@ describe('the generated catalog and schemas', () => {
   it('describe every published element and native, one schema each plus the document', () => {
     const metadata = JSON.parse(
       readFileSync(new URL('packages/components/oddkin.metadata.json', repo), 'utf8'),
-    ) as { components: Record<string, { tag: string }> };
+    ) as {
+      components: Record<string, { tag: string }>;
+      stylesheets: Record<string, { classes: string[] }>;
+    };
     const tags = Object.values(metadata.components).map((c) => c.tag);
     expect(Object.keys(CATALOG).sort()).toEqual(tags.sort());
     expect(schemas.map((s) => s.$id.split('/').pop()).sort()).toEqual(
       ['composition.v1.json', ...tags.map((tag) => `${tag}.v1.json`)].sort(),
     );
     expect(Object.keys(NATIVE)).not.toContain('script');
+    // A container's class takes exactly the classes of css/layout.css.
+    const layout = [...(metadata.stylesheets['stylesheet:layout']?.classes ?? [])].sort();
+    for (const tag of ['div', 'section', 'header', 'footer'])
+      expect(NATIVE[tag]?.attributes['class'], tag).toEqual({ classes: layout });
   });
 
   it('agree with validateComposition on valid and invalid documents', () => {
@@ -370,6 +424,11 @@ describe('the generated catalog and schemas', () => {
         children: [{ element: 'h2', slot: 'header', children: ['Title'] }, 'Body'],
       },
       { element: 'odd-button', attributes: { disabled: true }, actions: { change: 'a.b' } },
+      {
+        element: 'section',
+        attributes: { class: 'odd-stack odd-stack-tight' },
+        children: [{ element: 'header', attributes: { class: 'odd-row' }, children: ['Title'] }],
+      },
     );
     expect([validate(valid), validateComposition(valid).ok]).toEqual([true, true]);
     for (const invalid of [
@@ -380,6 +439,9 @@ describe('the generated catalog and schemas', () => {
       doc({ element: 'odd-input', children: ['x'] }),
       doc({ element: 'odd-select', properties: { renderValue: 1 } }),
       doc({ element: 'odd-button', actions: { change: 'alert(1)' } }),
+      doc({ element: 'div', attributes: { class: 'odd-stack card' } }),
+      doc({ element: 'div', attributes: { class: 'odd-stack ' } }),
+      doc({ element: 'p', attributes: { class: 'odd-stack' } }),
       { version: 2, root: [] },
     ]) {
       expect([validate(invalid), validateComposition(invalid).ok], JSON.stringify(invalid)).toEqual(

@@ -234,16 +234,23 @@ test.describe('Theme Studio', () => {
       const layout = await frame.locator('odd-split-panel').evaluate((panel) => {
         const screen = panel.parentElement!;
         const heading = panel.querySelector('h1')!;
+        const page = getComputedStyle(panel.querySelector('section')!);
+        const header = getComputedStyle(panel.querySelector('header')!);
         return {
           share: panel.getBoundingClientRect().width / screen.clientWidth,
           top: panel.getBoundingClientRect().top - screen.getBoundingClientRect().top,
           font: getComputedStyle(heading).fontFamily,
           page: getComputedStyle(document.body).fontFamily,
+          // The document's containers, laid out by the frame's layout.css.
+          stack: [page.display, page.flexDirection, page.rowGap !== 'normal'],
+          row: [header.display, header.justifyContent],
         };
       });
       expect(layout.share).toBeGreaterThan(0.9);
       expect(layout.top).toBeLessThan(40);
       expect(layout.font).not.toBe(layout.page);
+      expect(layout.stack).toEqual(['flex', 'column', true]);
+      expect(layout.row).toEqual(['flex', 'space-between']);
     }
     expect(selection[0]).not.toBe(selection[1]);
 

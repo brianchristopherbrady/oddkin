@@ -410,6 +410,7 @@ export class ThemeStudioElement extends OddkinElement.with({
         ...(composition.catalog
           ? { catalog: composition.catalog as Readonly<Record<string, JsonValue>> }
           : {}),
+        ...(composition.stylesheets ? { stylesheets: composition.stylesheets } : {}),
         document: parsed.value ?? null,
         settings,
       })) as { diagnostics?: readonly Problem[] } | undefined;

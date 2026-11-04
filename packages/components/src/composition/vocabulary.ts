@@ -1,13 +1,17 @@
 /**
  * The vocabulary of a composition: how a published attribute or property value is written, the
- * catalog entry of an element, and the native text elements a composition may use. DOM-free.
+ * catalog entry of an element, and the native elements a composition may use. DOM-free.
  * Contract: docs/architecture/data-composition.md §8.
  */
 import { defineModel, m, type Model, type ModelDefinition, type Node } from '@oddkin/core/model';
 import { NavigationItemModel } from '../models/navigation.js';
 import { TableColumnModel, TableRowModel } from '../models/table.js';
+import { LAYOUT_CLASSES } from './catalog.js';
 
-/** How a value is written: a JSON scalar, a URL, a list of strings, an enum, texts, or a model. */
+/**
+ * How a value is written: a JSON scalar, a URL, a list of strings, an enum, texts, class names from
+ * a set (separated by spaces), or a model.
+ */
 export type ValueType =
   | 'string'
   | 'number'
@@ -16,6 +20,7 @@ export type ValueType =
   | 'strings'
   | { readonly enum: readonly string[] }
   | { readonly texts: readonly string[] }
+  | { readonly classes: readonly string[] }
   | { readonly model: string };
 
 /** What a composition may write on one element; generated from the published metadata. */
@@ -52,8 +57,17 @@ export interface NativeEntry {
 }
 
 const phrasing: NativeEntry = { attributes: {}, text: true, children: PHRASING };
+const CONTAINERS = ['div', 'section', 'header', 'footer'];
+const container: NativeEntry = {
+  attributes: { class: { classes: LAYOUT_CLASSES } },
+  text: true,
+  children: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', ...PHRASING, 'ul', 'ol', ...CONTAINERS],
+};
 
-/** The native elements a composition may use: text structure, never forms, media, or scripts. */
+/**
+ * The native elements a composition may use: text structure, and containers that arrange their
+ * content with the layout primitives; never forms, media, or scripts.
+ */
 export const NATIVE: Readonly<Record<string, NativeEntry>> = {
   p: phrasing,
   h1: phrasing,
@@ -73,6 +87,10 @@ export const NATIVE: Readonly<Record<string, NativeEntry>> = {
   ul: { attributes: {}, text: false, children: ['li'] },
   ol: { attributes: {}, text: false, children: ['li'] },
   li: { attributes: {}, text: true, children: [...PHRASING, 'ul', 'ol', 'p'] },
+  div: container,
+  section: container,
+  header: container,
+  footer: container,
 };
 
 /** The `@oddkin/core/model` schema node for a value type. */
@@ -83,6 +101,7 @@ export function valueNode(type: ValueType): Node {
   if (type === 'url') return m.url();
   if (type === 'strings') return m.array(m.string());
   if ('enum' in type) return m.enum(type.enum as [string, ...string[]]);
+  if ('classes' in type) return m.string();
   if ('texts' in type)
     return m.object(Object.fromEntries(type.texts.map((key) => [key, m.optional(m.string())])));
   const model = Object.hasOwn(MODELS, type.model) ? MODELS[type.model] : undefined;

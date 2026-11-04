@@ -417,7 +417,8 @@ describe('Theme Studio page data', () => {
       },
       starters: [],
     });
-    // A package without a renderer of its own: its generated catalog goes with the documents.
+    // A package without a renderer of its own: its generated catalog goes with the documents, and
+    // Oddkin's renderer brings the stylesheet its native containers use.
     const badge = { attributes: {}, properties: {}, fixed: [], slots: [''], events: [] };
     const generated = themeStudioPage('theme-studio', pages, configWith(), {}, out, {
       titles: new Map(),
@@ -431,6 +432,7 @@ describe('Theme Studio page data', () => {
       renderer: '@oddkin/components/composition',
       registrations: { 'acme-badge': '@acme/ui/define/acme-badge' },
       catalog: { 'acme-badge': badge },
+      stylesheets: ['@oddkin/components/css/layout.css'],
       starters: [],
     });
     // Oddkin's starters need Oddkin's renderer, whose catalog holds their elements.
@@ -550,13 +552,18 @@ describe('Theme Studio page data', () => {
       expect(screens.composition).toMatchObject({
         renderer: '@oddkin/components/composition',
         registrations: { 'odd-card': '@oddkin/components/define/card' },
+        stylesheets: ['@oddkin/components/css/layout.css'],
         starters: STARTERS,
       });
+      // The frame resolves the stylesheet through its import map.
+      expect(build.frameImportMap?.imports['@oddkin/components/css/layout.css']).toMatch(
+        /\/dist\/css\/layout\.css$/,
+      );
       // Each element the starters use is registered. @oddkin/ai has no renderer of its own: its
       // elements come with the catalog the analyzer generates from its manifest (P1.6).
       const tags = JSON.stringify(STARTERS)
-        .match(/"odd-[a-z-]+"/g)!
-        .map((t) => JSON.parse(t));
+        .match(/"element":"odd-[a-z-]+"/g)!
+        .map((t) => JSON.parse(t.slice('"element":'.length)));
       for (const tag of tags) expect(screens.composition?.registrations).toHaveProperty([tag]);
       expect(screens.composition?.registrations).toHaveProperty(['odd-message']);
       expect(screens.composition?.catalog).toHaveProperty(['odd-message']);

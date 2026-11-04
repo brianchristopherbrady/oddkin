@@ -525,11 +525,13 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     expect(seen.size).toBeGreaterThan(20);
     // Each served module is a file inside its package.
     for (const url of seen) expect(statSync(toFile(url)).isFile(), url).toBe(true);
-    // The real components' frames load the default token stylesheet; examples come from sources.
+    // The real components' frames load the default token stylesheet, and nothing else: a
+    // document's layout stylesheet comes with its composition request; examples come from sources.
     const frame = build.files.get('frame.html')!;
     expect(frame).toContain(
       `<link rel="stylesheet" href="/_oddkin/m/${oddkin('tokens')}/dist/css/default.css" />`,
     );
+    expect(frame.match(/rel="stylesheet"/g)).toHaveLength(1);
     const button = JSON.parse(
       build.files.get('pages/components/odd-button.json')!,
     ) as ComponentPageData;

@@ -1,0 +1,4 @@
+/* A document's stylesheet in the frame and panel tests: a composition request links it once. */
+[data-oddkin-preview] > p {
+  letter-spacing: 3px;
+}

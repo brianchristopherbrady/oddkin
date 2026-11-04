@@ -9,7 +9,10 @@ import { defineModel, m, type Model, type ModelDefinition, type Node } from '@od
 import { toJSONSchema } from '@oddkin/core/model/schema';
 import type { AnalyzerDiagnostic } from './extract.js';
 
-/** How a value is written: a JSON scalar, a URL, a list of strings, an enum, texts, or a model. */
+/**
+ * How a value is written: a JSON scalar, a URL, a list of strings, an enum, texts, class names from
+ * a set (separated by spaces), or a model.
+ */
 export type ValueType =
   | 'string'
   | 'number'
@@ -18,6 +21,7 @@ export type ValueType =
   | 'strings'
   | { readonly enum: readonly string[] }
   | { readonly texts: readonly string[] }
+  | { readonly classes: readonly string[] }
   | { readonly model: string };
 
 /** What a composition may write on one element. */
@@ -46,8 +50,39 @@ const PHRASING = ['span', 'strong', 'em', 'a'];
 const phrasing: NativeEntry = { attributes: {}, text: true, children: PHRASING };
 
 /**
- * The native text elements every composition may use, as `@oddkin/components/composition`
- * renders them (its `NATIVE`, which a test keeps equal to this one).
+ * The layout primitives of `@oddkin/components/css/layout.css`, the only classes a container
+ * takes (its generated `LAYOUT_CLASSES`; a test keeps the natives equal).
+ */
+const LAYOUT_CLASSES = [
+  'odd-aspect-ratio',
+  'odd-auto-grid',
+  'odd-auto-grid-fit',
+  'odd-box',
+  'odd-box-none',
+  'odd-box-roomy',
+  'odd-center',
+  'odd-cluster',
+  'odd-grid',
+  'odd-grid-stretch',
+  'odd-row',
+  'odd-row-between',
+  'odd-split',
+  'odd-split-end',
+  'odd-stack',
+  'odd-stack-loose',
+  'odd-stack-tight',
+];
+const CONTAINERS = ['div', 'section', 'header', 'footer'];
+const container: NativeEntry = {
+  attributes: { class: { classes: LAYOUT_CLASSES } },
+  text: true,
+  children: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', ...PHRASING, 'ul', 'ol', ...CONTAINERS],
+};
+
+/**
+ * The native elements every composition may use, as `@oddkin/components/composition` renders them
+ * (its `NATIVE`, which a test keeps equal to this one): text structure, and containers that
+ * arrange their content with the layout primitives.
  */
 export const NATIVE: Readonly<Record<string, NativeEntry>> = {
   p: phrasing,
@@ -72,6 +107,10 @@ export const NATIVE: Readonly<Record<string, NativeEntry>> = {
   ul: { attributes: {}, text: false, children: ['li'] },
   ol: { attributes: {}, text: false, children: ['li'] },
   li: { attributes: {}, text: true, children: [...PHRASING, 'ul', 'ol', 'p'] },
+  div: container,
+  section: container,
+  header: container,
+  footer: container,
 };
 
 export interface CatalogOptions {
@@ -226,6 +265,7 @@ function valueNode(type: Exclude<ValueType, { readonly model: string }>): Node {
   if (type === 'url') return m.url();
   if (type === 'strings') return m.array(m.string());
   if ('enum' in type) return m.enum(type.enum as [string, ...string[]]);
+  if ('classes' in type) return m.string();
   return m.object(Object.fromEntries(type.texts.map((key) => [key, m.optional(m.string())])));
 }
 
@@ -267,6 +307,14 @@ export function compositionSchemas(
       if (!url)
         throw new TypeError(`No schema URL for the model "${type.model}" (options.modelSchemas).`);
       return { $ref: url };
+    }
+    if (typeof type === 'object' && 'classes' in type) {
+      const name = `(?:${type.classes.join('|')})`;
+      return {
+        type: 'string',
+        pattern: `^${name}(?: +${name})*$`,
+        description: `Layout classes, separated by spaces: ${type.classes.join(', ')}.`,
+      };
     }
     const {
       $schema: _schema,
@@ -373,7 +421,7 @@ export function compositionSchemas(
     title: options.title ?? 'Composition',
     description:
       options.description ??
-      'An interface described as data: published elements and native text elements, their attributes and properties, text, and events mapped to action names. Rendered by renderComposition() from @oddkin/components/composition with this catalog.',
+      'An interface described as data: published elements, native text elements, and native containers laid out with the layout primitives, their attributes and properties, text, and events mapped to action names. Rendered by renderComposition() from @oddkin/components/composition with this catalog.',
     $comment:
       'Also enforced by validateComposition(), not expressible here: a slot must be published by the parent; text only where the parent has a default slot; list items only in lists; unique ids; model rules; at most 16 levels and 500 nodes by default.',
     type: 'object',

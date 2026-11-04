@@ -169,26 +169,32 @@ export const STARTERS: readonly {
             children: [{ element: 'strong', slot: 'header', children: ['Acme'] }],
           },
           {
-            element: 'odd-container',
+            element: 'section',
             slot: 'end',
-            attributes: { measure: 'fluid' },
+            attributes: { class: 'odd-stack' },
             children: [
-              { element: 'h1', children: ['Projects'] },
               {
-                element: 'odd-toolbar',
-                attributes: { label: 'Project actions' },
+                element: 'header',
+                attributes: { class: 'odd-row odd-row-between' },
                 children: [
+                  { element: 'h1', children: ['Projects'] },
                   {
-                    element: 'odd-button',
-                    attributes: { appearance: 'primary' },
-                    children: ['New project'],
-                    actions: { click: 'projects.create' },
-                  },
-                  {
-                    element: 'odd-button',
-                    attributes: { appearance: 'secondary' },
-                    children: ['Export'],
-                    actions: { click: 'projects.export' },
+                    element: 'odd-toolbar',
+                    attributes: { label: 'Project actions' },
+                    children: [
+                      {
+                        element: 'odd-button',
+                        attributes: { appearance: 'primary' },
+                        children: ['New project'],
+                        actions: { click: 'projects.create' },
+                      },
+                      {
+                        element: 'odd-button',
+                        attributes: { appearance: 'secondary' },
+                        children: ['Export'],
+                        actions: { click: 'projects.export' },
+                      },
+                    ],
                   },
                 ],
               },

@@ -280,8 +280,8 @@ A node is either text (a string, rendered as a text node) or an element with the
 
 | Field        | Accepts |
 | ------------ | ------- |
-| `element`    | A published `odd-*` element, or a native text element: `p`, `h1`–`h6`, `span`, `strong`, `em`, `a`, `ul`, `ol`, and `li`. List items only appear in lists. |
-| `attributes` | Published attributes, typed as the metadata types them: string; number; boolean (`true` writes the attribute, `false` leaves it out); or a string-literal enum. `href`, `src`, and `formaction` are URLs, and script URLs are refused. |
+| `element`    | A published `odd-*` element; a native text element: `p`, `h1`–`h6`, `span`, `strong`, `em`, `a`, `ul`, `ol`, and `li`; or a native container: `div`, `section`, `header`, and `footer` (Layout, below). List items only appear in lists; containers go where flow content does, never in text elements or list items. |
+| `attributes` | Published attributes, typed as the metadata types them: string; number; boolean (`true` writes the attribute, `false` leaves it out); or a string-literal enum. `href`, `src`, and `formaction` are URLs, and script URLs are refused. A container's `class` takes the layout primitives only. |
 | `properties` | Writable properties without an attribute whose values JSON can carry:<br>- strings, numbers, and booleans (`value`, `checked`);<br>- string lists (`values`, `expanded`);<br>- `strings` overrides;<br>- record lists with a published model (`odd-side-nav` `items`: `oddkin.navigation`). |
 | `children`   | Text and nodes. A child without `slot` goes to the parent's default slot; text is allowed only where the parent has one. An element without slots takes no children. |
 | `actions`    | A published event name mapped to an action name (`settings.save`, the `@oddkin/core/model` `actionRef` form). The host receives `onAction({ action, event, element, id })`. `odd-button` also maps `click`, which it stops at the host while disabled or loading. |
@@ -289,6 +289,7 @@ A node is either text (a string, rendered as a text node) or an element with the
 **Never allowed:**
 
 - `on*` attributes, `style`, and HTML strings: text is always text;
+- a `class` other than the layout primitives, and custom properties;
 - `<script>`, and any element outside the catalog;
 - `javascript:` URLs;
 - functions, elements, and other non-JSON values;
@@ -307,11 +308,14 @@ Record lists without a published model (`OptionRecord`, `MenuItemRecord`, `LinkR
   - `id.invalid`, `id.duplicate`;
   - `value.executable`;
   - `attribute.unknown`, `attribute.propertyOnly`;
+  - `class.invalid` (not class names separated by spaces), `class.unknown` (not a layout primitive);
   - `property.unknown`, `property.useAttribute`, `property.notPortable`;
   - `action.unknown`, `action.invalid`;
   - `depth.exceeded` (default 16 levels), `size.exceeded` (default 500 nodes).
 
 Each code has a failing example in `composition.test.ts`.
+
+**Layout (2026-11-04, P1.5 item 8, owner).** A document arranges its own content with Oddkin's layout primitives, as a page does: the native containers `div`, `section`, `header`, and `footer` take a `class` of the classes `@oddkin/components/css/layout.css` defines, separated by spaces, such as `odd-stack` or `odd-row odd-row-between`. The list is the stylesheet's own, from the metadata (`LAYOUT_CLASSES` in the generated catalog; the document schema's pattern). There is no layout element: a wrapper that only arranges its content is a native element with a recipe class (layout-recipes.md §7). Gaps and insets come from the presets (`odd-stack-tight`, `odd-stack-loose`, `odd-box-none`, `odd-box-roomy`) and the theme's layout roles, never from a value in the document (§6). The host loads `layout.css`, as its pages do: Workbench's Theme Studio names it in each composition request, and the frame links it once, through its import map, before the document renders. A host that renders a document inside a shadow root adopts the stylesheet there, since a document's stylesheets do not reach into it.
 
 **Rendering.** `renderComposition(document, target, { allow, onAction, limits })` validates first and refuses the whole document on any error, so nothing is rendered then. It also refuses when an element is not in the `allow` list (`composition.element.notAllowed`; natives included) or not registered in the target's own registry (`composition.element.unregistered`). Otherwise it:
 
@@ -324,7 +328,7 @@ It returns `{ ok, diagnostics, nodes, dispose }`; `dispose()` removes the nodes 
 
 **Schemas and versioning.** `scripts/build-composition-schemas.mjs` runs in `npm run build` after the metadata. It writes, with the generator every library uses (`@oddkin/analyzer/composition`, below):
 
-- `src/composition/catalog.ts`, what the runtime accepts;
+- `src/composition/catalog.ts`, what the runtime accepts, with the layout classes;
 - `packages/components/schemas/composition/<tag>.v1.json`, one per element;
 - `composition.v1.json`, the document, with the native elements and shared definitions.
 
@@ -341,7 +345,7 @@ It returns `{ ok, diagnostics, nodes, dispose }`; `dispose()` removes the nodes 
 
 `@oddkin/components` builds its own catalog with the same functions, with `modelTypes` for `NavigationEntry` and `odd-button`'s `click`; its catalog and schemas are byte for byte what the script wrote before (`--check`).
 
-**Size.** The entry is 8,053 B gzip with its catalog of 52 elements (about 45 B each), within its 8,704 B budget; 8,380 B on 2026-11-03 with 54 elements and the `catalog` option; 8,935 B on 2026-11-04 with odd-table and its two models, within a 9,216 B budget. It registers no element (`graph.test.ts`), and no other entry loads it (`check-size.mjs`, `consumers.test.ts`).
+**Size.** The entry is 8,053 B gzip with its catalog of 52 elements (about 45 B each), within its 8,704 B budget; 8,380 B on 2026-11-03 with 54 elements and the `catalog` option; 8,935 B on 2026-11-04 with odd-table and its two models, within a 9,216 B budget; 9,253 B the same day with layout in documents, within 9,472 B. It registers no element (`graph.test.ts`), and no other entry loads it (`check-size.mjs`, `consumers.test.ts`).
 
 **Not yet:**
 

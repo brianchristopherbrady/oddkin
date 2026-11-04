@@ -91,6 +91,11 @@ export interface FrameCompositionPayload {
    * `CATALOG`: the elements of documented packages without a renderer of their own.
    */
   readonly catalog?: Readonly<Record<string, JsonValue>>;
+  /**
+   * Stylesheets the document's natives use, such as `@oddkin/components/css/layout.css`, resolved
+   * through the frame's import map and linked once, before the document renders.
+   */
+  readonly stylesheets?: readonly string[];
   readonly document: JsonValue;
   readonly settings?: FrameSettings;
 }
@@ -382,6 +387,9 @@ export function isFrameCompositionPayload(value: unknown): value is FrameComposi
     isStringRecord(value['registrations']) &&
     (value['catalog'] === undefined ||
       (isRecord(value['catalog']) && isJsonValue(value['catalog']))) &&
+    (value['stylesheets'] === undefined ||
+      (Array.isArray(value['stylesheets']) &&
+        value['stylesheets'].every((item) => typeof item === 'string'))) &&
     isJsonValue(value['document']) &&
     (value['settings'] === undefined || isFrameSettings(value['settings']))
   );

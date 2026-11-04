@@ -785,3 +785,24 @@ export const CATALOG: Catalog = {
     events: [],
   },
 };
+
+/** The classes of css/layout.css, the only ones a document's native containers take. */
+export const LAYOUT_CLASSES: readonly string[] = [
+  'odd-aspect-ratio',
+  'odd-auto-grid',
+  'odd-auto-grid-fit',
+  'odd-box',
+  'odd-box-none',
+  'odd-box-roomy',
+  'odd-center',
+  'odd-cluster',
+  'odd-grid',
+  'odd-grid-stretch',
+  'odd-row',
+  'odd-row-between',
+  'odd-split',
+  'odd-split-end',
+  'odd-stack',
+  'odd-stack-loose',
+  'odd-stack-tight',
+];

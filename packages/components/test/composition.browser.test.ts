@@ -9,7 +9,7 @@ import {
   type CompositionDocument,
 } from '../src/composition/index.js';
 import './register.js';
-import { settle } from './probe.js';
+import { loadTheme, settle, themeValue } from './probe.js';
 
 // ADR 0046 D3 (data-composition.md §8): a composition renders what the same hand-written markup
 // renders, creates nothing it was not allowed to, and carries no executable value.
@@ -286,5 +286,63 @@ describe('renderComposition', () => {
       ['composition.element.unregistered', 'Import its registration entry first.'],
     ]);
     result.dispose();
+  });
+
+  it('lays out native containers with layout.css, as the same markup is (P1.5 item 8)', async () => {
+    const unload = await loadTheme();
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = new URL('../dist/css/layout.css', import.meta.url).href;
+    await new Promise((resolve, reject) => {
+      link.onload = resolve;
+      link.onerror = reject;
+      document.head.append(link);
+    });
+    try {
+      const target = container();
+      const result = renderComposition(
+        {
+          version: 1,
+          root: [
+            {
+              element: 'section',
+              attributes: { class: 'odd-stack' },
+              children: [
+                {
+                  element: 'header',
+                  attributes: { class: 'odd-row odd-row-between' },
+                  children: [
+                    { element: 'h1', children: ['Projects'] },
+                    { element: 'odd-button', children: ['New project'] },
+                  ],
+                },
+                { element: 'p', children: ['Four projects.'] },
+              ],
+            },
+          ],
+        },
+        target,
+        { allow: ALLOW },
+      );
+      expect(result.ok).toBe(true);
+      const hand = container();
+      hand.innerHTML =
+        '<section class="odd-stack"><header class="odd-row odd-row-between"><h1>Projects</h1><odd-button>New project</odd-button></header><p>Four projects.</p></section>';
+      await settleAll(target);
+      await settleAll(hand);
+      expect(serialize(target)).toBe(serialize(hand));
+      const section = getComputedStyle(target.querySelector('section')!);
+      const header = getComputedStyle(target.querySelector('header')!);
+      expect([section.display, section.flexDirection, section.rowGap]).toEqual([
+        'flex',
+        'column',
+        themeValue('row-gap', '--odd-layout-gap'),
+      ]);
+      expect([header.display, header.justifyContent]).toEqual(['flex', 'space-between']);
+      result.dispose();
+    } finally {
+      link.remove();
+      unload();
+    }
   });
 });

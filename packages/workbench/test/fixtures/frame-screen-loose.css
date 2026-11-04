@@ -1,0 +1,4 @@
+/* A later document's stylesheet in the frame test: linked, and applied, before that document renders. */
+main[data-oddkin-preview] > p {
+  letter-spacing: 5px;
+}
