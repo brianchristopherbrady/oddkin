@@ -369,6 +369,106 @@ if (!result.ok) console.table(result.diagnostics);`,
 const project = repository.replace(/\/blob\/main\/$/, '');
 
 /**
+ * The site's AI section (owner, 2026-11-02): the agent tooling that ships and the tooling that is
+ * planned, from docs/architecture/agent-tooling.md §6 and IMPLEMENTATION_PLAN.md P2.2. The AI
+ * interaction components are in the component catalog, under AI.
+ */
+export const aiTooling: Page = {
+  path: 'ai',
+  group: 'Explore',
+  eyebrow: 'Tools',
+  title: 'AI tooling',
+  summary:
+    'What coding agents get from Oddkin today, and the agent tooling that is planned but not yet scheduled.',
+  sections: [
+    {
+      id: 'today',
+      title: 'What ships today',
+      blocks: [
+        {
+          list: [
+            [
+              { code: '@oddkin/components' },
+              ' and ',
+              { code: '@oddkin/ai' },
+              ' each carry an agent kit generated from their own metadata: an entry guide, a reference per element, and an ',
+              { code: 'llms.txt' },
+              ' index. ',
+              { link: 'Agent tooling', href: '/tooling' },
+              ' shows how to point an agent at them, and how ',
+              { code: 'oddkin-kit' },
+              ' writes one for your own library.',
+            ],
+            [
+              'This site publishes the kits for the version it documents, indexed by its ',
+              { link: 'llms.txt', href: '/llms.txt' },
+              '.',
+            ],
+            [
+              'Composition documents describe an interface as data. They are checked against JSON Schemas generated from the metadata, and render only published elements, attributes, and properties.',
+            ],
+          ],
+        },
+      ],
+    },
+    {
+      id: 'planned',
+      title: 'Planned',
+      blocks: [
+        {
+          p: [
+            'An optional, development-only agent interface: read-only lookups over the same kits and metadata, as a command-line tool and an MCP server that share one implementation. Its results would be bounded, structured, and cite their source (the file, the metadata path, the version):',
+          ],
+        },
+        {
+          list: [
+            [
+              'find components by purpose, and inspect one: its API, imports, registration, and examples;',
+            ],
+            ['look up tokens and layout recipes;'],
+            [
+              'validate usage: unknown tags, attributes, properties, events, slots, tokens, and imports, rich values passed as attributes, and missing registrations.',
+            ],
+          ],
+        },
+        {
+          p: [
+            'Writing operations, such as scaffolding and migrations, would come after it, as patches to review before they are applied. The design is in ',
+            {
+              link: 'agent-tooling.md',
+              href: `${repository}docs/architecture/agent-tooling.md`,
+            },
+            '.',
+          ],
+        },
+        {
+          note: [
+            'None of this is scheduled. Until it is, the kits and the metadata are the interface. The ',
+            { link: 'roadmap', href: '/roadmap' },
+            ' lists what is in progress.',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'components',
+      title: 'AI interaction components',
+      blocks: [
+        {
+          p: [
+            'The elements of ',
+            { code: '@oddkin/ai' },
+            ', for conversation, inline assistance, research, and agent workflows, are in the ',
+            { link: 'component catalog', href: '/components?category=AI' },
+            ', each with its reference page. They never call a model: the application owns data, transport, persistence, and policy.',
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+/**
  * Change impact (IMPLEMENTATION_PLAN.md CF.2): the recorded run in docs/impact-demo, generated from
  * its report, and the evidence the site's claims rest on.
  */

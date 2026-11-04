@@ -106,7 +106,7 @@ const footerColumns: readonly [string, readonly [string, string][]][] = [
     [
       ['Theme Studio', 'theme-studio'],
       ['Workbench', 'workbench'],
-      ['AI interfaces', 'ai'],
+      ['AI tooling', 'ai'],
       ['Agent tooling', 'tooling'],
     ],
   ],

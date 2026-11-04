@@ -91,10 +91,11 @@ test('docs guides, metadata references, local search, and shadow-root links', as
     'aria-current',
     'page',
   );
-  // The catalog's filter is mirrored in the URL without a new entry, and typing keeps focus.
+  // The catalog's filter is mirrored in the URL without a new entry, and typing keeps focus. (A
+  // tag: "card" alone also finds odd-voice-input, whose summary says "discard".)
   const search = page.getByRole('searchbox', { name: 'Search components' });
-  await search.fill('card');
-  await expect(page).toHaveURL(`${docs}/components?q=card`);
+  await search.fill('odd-card');
+  await expect(page).toHaveURL(`${docs}/components?q=odd-card`);
   await expect(search).toBeFocused();
   await expect(page.getByText(/Showing 1 of \d+ components/)).toBeVisible();
   await search.fill('');
@@ -275,73 +276,98 @@ test('code samples keep their place while their copy buttons register', async ({
   expect({ bars: await heights(), link: (await link.boundingBox())?.y }).toEqual(before);
 });
 
-test('the AI page shows a live conversation and links every AI element to its reference', async ({
+test('the catalog lists the AI components under AI, and /ai is the AI tooling page', async ({
   page,
 }) => {
-  const metadata = (await (
-    await page.request.get(`${docs}/public/@oddkin/ai/oddkin.metadata.json`)
-  ).json()) as { components: Record<string, { tag: string }> };
-  const tags = Object.values(metadata.components).map(({ tag }) => tag);
-  await page.goto(`${docs}/ai`);
-  await expect(page.getByRole('heading', { name: 'AI interfaces', level: 1 })).toBeVisible({
+  const tags = async (name: string) =>
+    Object.values(
+      (
+        (await (
+          await page.request.get(`${docs}/public/@oddkin/${name}/oddkin.metadata.json`)
+        ).json()) as { components: Record<string, { tag: string }> }
+      ).components,
+    ).map(({ tag }) => tag);
+  const [ai, all] = [
+    await tags('ai'),
+    (await tags('components')).length + (await tags('ai')).length,
+  ];
+  await page.goto(`${docs}/components`);
+  await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible({
     timeout: catalogLoad,
   });
-  // The conversation and composer examples, composed; the conversation renders its records.
-  await expect(page.locator('.ai-example odd-conversation')).toContainText(
-    'Summarize the release notes.',
-    { timeout: catalogLoad },
-  );
-  await expect(
-    page.locator('.ai-example odd-conversation > odd-prompt-input[slot="composer"]'),
-  ).toBeAttached();
-  await expect(
-    page.getByRole('heading', { name: `${tags.length} interaction elements` }),
-  ).toBeVisible();
-  const links = page.locator('.ai-element-links a');
+  // AI is the last category (Figma 20:1877); the link under the catalog selects it.
+  const filters = page.locator('oddkin-catalog-panel .wb-categories button');
+  await expect(filters.last()).toHaveText('AI');
+  await page.getByRole('link', { name: 'Explore AI interaction components' }).click();
+  await expect(page).toHaveURL(`${docs}/components?category=AI`);
+  await expect(filters.last()).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByText(`Showing ${ai.length} of ${all} components`)).toBeVisible();
+  const links = page.locator('oddkin-catalog-panel a.wb-card-action');
   expect(
     (await links.evaluateAll((list) => list.map((a) => a.getAttribute('href')))).sort(),
-  ).toEqual(tags.map((tag) => `/components/${tag}`).sort());
-  await page.locator('.ai-element-links a[href="/components/odd-prompt-input"]').click();
+  ).toEqual(ai.map((tag) => `/components/${tag}`).sort());
+  await page.locator('oddkin-catalog-panel a[href="/components/odd-prompt-input"]').click();
   await expect(page.locator('#main .page-header .eyebrow')).toHaveText('AI · odd-prompt-input', {
     timeout: catalogLoad,
   });
   await expect(page.locator('oddkin-component-panel')).toBeVisible();
+  // The site's AI section covers AI tooling, and sends readers to the AI components in the catalog.
+  await page.goto(`${docs}/ai`);
+  await expect(page.getByRole('heading', { name: 'AI tooling', level: 1 })).toBeVisible();
+  await page.locator('#main').getByRole('link', { name: 'component catalog' }).click();
+  await expect(page).toHaveURL(`${docs}/components?category=AI`, { timeout: catalogLoad });
+  await expect(filters.last()).toHaveAttribute('aria-pressed', 'true', { timeout: catalogLoad });
 });
 
 test('every published component is listed under its category and has a reference page', async ({
   page,
 }) => {
-  const metadata = (await (
-    await page.request.get(`${docs}/public/@oddkin/components/oddkin.metadata.json`)
-  ).json()) as {
-    components: Record<string, { tag: string; category?: string; registration?: string }>;
-    categories: Record<string, { label: string }>;
-  };
-  const components = Object.values(metadata.components);
+  // @oddkin/components and @oddkin/ai: the catalog lists both packages (owner, 2026-11-02).
+  const components: {
+    tag: string;
+    registration?: string;
+    label: string | undefined;
+    name: string;
+  }[] = [];
+  for (const name of ['components', 'ai']) {
+    const metadata = (await (
+      await page.request.get(`${docs}/public/@oddkin/${name}/oddkin.metadata.json`)
+    ).json()) as {
+      components: Record<string, { tag: string; category?: string; registration?: string }>;
+      categories: Record<string, { label: string }>;
+    };
+    for (const component of Object.values(metadata.components))
+      components.push({
+        ...component,
+        name,
+        label: component.category ? metadata.categories[component.category]?.label : undefined,
+      });
+  }
   expect(components.length).toBeGreaterThan(0);
-  // A round trip per component (reference page, then back to the catalog): 0.4 s in Chromium,
-  // 0.65 s in WebKit, and 0.85 s in Firefox alone (54 components, 2026-10-27), about twice that
-  // beside other runs, and over 4 s with the machine busy (2026-10-28, Firefox and WebKit; the
-  // docs sidebar measured no part of it). A fixed budget failed as the catalog grew, so it grows
-  // with it.
-  test.setTimeout(30_000 + components.length * 5_000);
-  const count = (category: string) => components.filter((c) => c.category === category).length;
+  // A round trip per component of @oddkin/components (reference page, then back to the catalog):
+  // 0.4 s in Chromium, 0.65 s in WebKit, and 0.85 s in Firefox alone (54 components, 2026-10-27),
+  // about twice that beside other runs, and over 4 s with the machine busy (2026-10-28, Firefox
+  // and WebKit; the docs sidebar measured no part of it). A fixed budget failed as the catalog
+  // grew, so it grows with it. The AI test above opens one AI element's reference page from the
+  // catalog (the same page code), and Workbench's catalog test mounts every AI element.
+  const visited = components.filter((component) => component.name === 'components');
+  test.setTimeout(30_000 + visited.length * 5_000);
+  const count = (label: string) => components.filter((c) => c.label === label).length;
 
   await page.goto(`${docs}/components`);
   await expect(
     page.getByText(`Showing ${components.length} of ${components.length} components`),
   ).toBeVisible();
-  for (const { tag, category } of components) {
-    const label = category ? metadata.categories[category]?.label : undefined;
+  for (const { tag, label } of components) {
     expect(label, `${tag} has a category with a label`).toBeTruthy();
     const group = page.getByRole('region', {
-      name: `${label} (${count(category as string)})`,
+      name: `${label} (${count(label as string)})`,
       exact: true,
     });
     await expect(group.locator(`a[href="/components/${tag}"]`)).toBeVisible();
   }
   // Each reference page renders from the published metadata, reached through the catalog's links.
-  for (const { tag, registration } of components) {
+  for (const { tag, registration } of visited) {
     await page.locator(`oddkin-catalog-panel a[href="/components/${tag}"]`).click();
     // The first reference page also loads the component panel's modules (catalogLoad).
     await expect(page.locator('#main .page-header .eyebrow')).toHaveText(new RegExp(` · ${tag}$`), {
@@ -355,7 +381,7 @@ test('every published component is listed under its category and has a reference
       page.frameLocator('oddkin-component-panel iframe').first().locator(tag),
     ).toBeAttached({ timeout: catalogLoad });
     await page.goBack();
-    // The catalog renders its 54 live previews again (seconds in Firefox under load).
+    // The catalog renders its live previews again (seconds in Firefox under load).
     await expect(page.getByRole('heading', { name: 'Component catalog' })).toBeVisible({
       timeout: catalogLoad,
     });

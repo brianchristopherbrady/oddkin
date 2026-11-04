@@ -19,8 +19,8 @@ import { COMPONENT_TABS, previewExample, tabOf } from '../../apps/docs/src/refer
 // (apps/docs/snippets/verify.mjs checks them against packed packages).
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const clientRoutes = [
-  /^\/components(\/[a-z0-9-]+)?$/,
-  /^\/ai$/,
+  // The catalog, a category of it (`?category=AI`), and the reference pages.
+  /^\/components(\/[a-z0-9-]+|\?category=[A-Za-z]+)?$/,
   /^\/layout\/side-nav$/,
   /^\/architecture\/scope-ownership$/,
   /^\/search$/,
@@ -316,7 +316,8 @@ describe('authored docs pages', async () => {
 
 describe('the docs shell', async () => {
   const facts = await docsFacts(root);
-  // The catalog comes from the Workbench reference index the server builds; one page stands in.
+  // The catalog comes from the Workbench reference index the server builds; two pages stand in,
+  // one of them an AI element, which the catalog lists too.
   const release = await siteFacts(root, {
     registry: {
       pages: [
@@ -416,6 +417,7 @@ describe('the docs shell', async () => {
     expect(sectionNav(shell('/components/odd-button'))).toEqual([
       'Browse all /components',
       'Button /components/odd-button [page]',
+      'Conversation /components/odd-conversation',
     ]);
     expect(sectionNav(shell('/components'))[0]).toBe('Browse all /components [page]');
     expect(note(shell('/components'), 'components')).toBe('<p>@oddkin/components</p>');
@@ -425,10 +427,11 @@ describe('the docs shell', async () => {
     expect(note(shell('/foundations'), 'foundations')).toBe(
       '<p>@oddkin/tokens</p><p>Default theme baseline</p>',
     );
+    // The site's AI section is AI tooling; the AI interaction components are in the catalog.
     expect(sectionNav(shell('/ai'))).toEqual([
       'Analyzer and agents /tooling',
+      'AI tooling /ai [page]',
       'Change impact /change-impact',
-      'AI interfaces /ai [page]',
     ]);
     expect(sectionNav(shell('/architecture/scope-ownership'))).toEqual([
       'Architecture /architecture [true]',

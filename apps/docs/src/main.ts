@@ -10,8 +10,8 @@ import type {
 import { pages, type Page } from './pages/index.js';
 import { icons } from './pages/icons.js';
 import { repository } from './pages/model.js';
-import { AI_DESCRIPTION, renderAi, type AiData } from './ai.js';
 import {
+  AI_GROUP,
   catalogGroups,
   catalogPreviews,
   componentTabs,
@@ -170,18 +170,6 @@ const componentRoute = route({
   params: ({ tag }) => (tag && /^[a-z0-9-]+$/.test(tag) ? { tag } : undefined),
   title: ({ params }) => `<${params.tag}>`,
 });
-const aiRoute = route({
-  path: 'ai',
-  load: async ({ signal }: { signal: AbortSignal }): Promise<AiData> => {
-    const index = await loadIndex(signal);
-    const [conversation, composer] = await Promise.all([
-      loadComponent(index, 'odd-conversation', signal),
-      loadComponent(index, 'odd-prompt-input', signal),
-    ]);
-    return { index, conversation, composer };
-  },
-  title: 'AI interfaces',
-});
 const caseStudyRoute = route({
   path: 'architecture/scope-ownership',
   title: 'Case study: scope ownership',
@@ -201,7 +189,6 @@ const docsRoute = route({
     layoutGuideRoute,
     componentsRoute,
     componentRoute,
-    aiRoute,
     caseStudyRoute,
     searchRoute,
     notFoundRoute,
@@ -339,9 +326,9 @@ function renderComponents(main: HTMLElement, index: WorkbenchIndex, filter: Cata
   panel.addEventListener('oddkin-catalog-filter', (event) => {
     void router.navigate(catalogUrl(event.detail), { replace: true });
   });
-  // The AI elements have their own page (Figma 20:1926, under a divider).
+  // The AI interaction components, under the catalog's AI category (Figma 20:1877).
   const next = node('div', 'page-next');
-  const ai = makeLink('Explore AI interaction components', '/ai');
+  const ai = makeLink('Explore AI interaction components', `/components?category=${AI_GROUP}`);
   ai.className = 'odd-link';
   ai.append(arrowIcon());
   next.append(ai);
@@ -728,14 +715,7 @@ function renderRoute(state: RouterState): void {
       componentMeta(page),
       ...componentTabs(referencePanel(index, page)),
     );
-  } else if (last.route === aiRoute)
-    renderAi(
-      column,
-      last.data as AiData,
-      pageHeader('@oddkin/ai', 'AI interfaces', AI_DESCRIPTION),
-      panelHref,
-    );
-  else if (last.route === caseStudyRoute) renderCaseStudy(column);
+  } else if (last.route === caseStudyRoute) renderCaseStudy(column);
   else if (last.route === searchRoute) renderSearch(column, String(last.search ?? ''), data);
   else if (last.route === notFoundRoute)
     column.replaceChildren(

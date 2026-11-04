@@ -20,7 +20,7 @@ const cell = (text) => [text];
 /**
  * The shell's facts: the release version and license, the source repository, what Oddkin is, and
  * the catalog's reference pages from the Workbench `index` the server builds (the AI elements
- * have their own page, /ai, as in the catalog).
+ * included, as in the catalog).
  */
 export async function siteFacts(root, index) {
   const core = await json(join(root, 'packages/core/package.json'));
@@ -49,7 +49,7 @@ export async function siteFacts(root, index) {
     components: Object.keys(metadata.components).length,
     packages,
     catalog: (index?.registry.pages ?? [])
-      .filter((page) => page.kind === 'component' && page.visible && page.group !== 'AI')
+      .filter((page) => page.kind === 'component' && page.visible)
       .map((page) => ({ href: page.route, label: page.title }))
       .sort((a, b) => a.label.localeCompare(b.label, 'en')),
   };

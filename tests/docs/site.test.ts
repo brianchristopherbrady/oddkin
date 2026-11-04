@@ -126,8 +126,8 @@ describe('the static docs build', () => {
     const sidebar = html.slice(html.indexOf('<odd-side-nav'), html.indexOf('</odd-side-nav>'));
     for (const page of index.registry.pages.filter((p) => p.kind === 'component')) {
       const listed = sidebar.includes(`<a class="nav-section" href="${page.route}"`);
-      // The AI elements have their own page (/ai), as in the catalog.
-      expect(listed, page.route).toBe(page.group !== 'AI');
+      // The AI elements too, as in the catalog (owner, 2026-11-02).
+      expect(listed, page.route).toBe(true);
       const data = JSON.parse(readFileSync(join(out, '_oddkin', index.pages[page.id]!), 'utf8'));
       expect(existsSync(join(root, sourcePath(data))), page.id).toBe(true);
     }

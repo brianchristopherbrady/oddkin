@@ -58,23 +58,14 @@ function heading(id: string, eyebrow: string, title: string, lede: string): stri
 }
 
 function explore(site: SiteFacts): string {
-  const third = pick(
-    {
-      path: 'ai',
-      title: 'AI interfaces',
-      text: site.packages['@oddkin/ai'],
-      meta: '@oddkin/ai',
-      action: 'Explore AI interfaces',
-    },
-    {
-      path: 'core',
-      title: 'Core and state',
-      text: site.packages['@oddkin/core'],
-      meta: '@oddkin/core',
-      action: 'Read about core',
-    },
-  );
-  const cards = [
+  const cards: {
+    path: string;
+    href?: string;
+    title: string;
+    text: string | undefined;
+    meta: string;
+    action: string;
+  }[] = [
     {
       path: 'components',
       title: 'Components',
@@ -89,7 +80,15 @@ function explore(site: SiteFacts): string {
       meta: '@oddkin/tokens',
       action: 'Browse foundations',
     },
-    third,
+    // The AI interaction components are in the catalog, under AI (owner, 2026-11-02).
+    {
+      path: 'components',
+      href: '/components?category=AI',
+      title: 'AI components',
+      text: site.packages['@oddkin/ai'],
+      meta: '@oddkin/ai',
+      action: 'Browse AI components',
+    },
   ];
   return `<section class="home-section" aria-labelledby="explore-title">${heading(
     'explore-title',
@@ -97,7 +96,9 @@ function explore(site: SiteFacts): string {
     'Explore the framework',
     'Each package depends only on the ones it needs. Tokens work without JavaScript; components work in any framework or none; state, app services, and the tooling are optional.',
   )}<ul class="card-list odd-auto-grid odd-auto-grid-fit odd-grid-stretch" role="list">${cards
-    .map((card) => resourceCard({ ...card, text: card.text ?? '', href: `/${card.path}` }))
+    .map((card) =>
+      resourceCard({ ...card, text: card.text ?? '', href: card.href ?? `/${card.path}` }),
+    )
     .join('')}</ul></section>`;
 }
 

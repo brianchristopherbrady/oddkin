@@ -12,7 +12,7 @@ import type { FrameMountPayload, JsonValue } from '@oddkin/workbench/protocol';
 
 const DATA = '/_oddkin/';
 export const FRAME_URL = '/apps/docs/frame.html';
-/** The AI elements have their own page (/ai); the catalog lists every other category. */
+/** The AI elements' category: the catalog lists it last, as its own filter (Figma 20:1877). */
 export const AI_GROUP = 'AI';
 
 type Json = Record<string, unknown>;
@@ -53,14 +53,17 @@ export async function loadComponent(
   return page as unknown as ComponentPageData;
 }
 
-/** Catalog groups to list: every category but the AI elements. */
-export const catalogGroups = (index: WorkbenchIndex): string[] => [
-  ...new Set(
-    index.registry.pages
-      .filter((page) => page.kind === 'component' && page.group && page.group !== AI_GROUP)
-      .map((page) => page.group as string),
-  ),
-];
+/** Catalog groups to list: every category, in the registry's order, with the AI elements last. */
+export const catalogGroups = (index: WorkbenchIndex): string[] => {
+  const groups = [
+    ...new Set(
+      index.registry.pages
+        .filter((page) => page.kind === 'component' && page.group)
+        .map((page) => page.group as string),
+    ),
+  ];
+  return [...groups.filter((group) => group !== AI_GROUP), ...groups.filter((g) => g === AI_GROUP)];
+};
 
 /** A reference page's source file in the repository: a package's `dist/<path>.js` is `src/<path>.ts`. */
 export const sourcePath = (page: { package: string; module: string }): string =>
@@ -100,9 +103,6 @@ const opensNothing = (values: ExampleValues | undefined) =>
     ? values
     : undefined;
 
-const defaultValues = (page: ComponentPageData) =>
-  exampleValues(page.examples.find((entry) => entry['name'] === 'default'));
-
 /** An example a preview draws: its name (for its fixture), values, and whether it has a fixture. */
 export interface PreviewExample {
   readonly name: string;
@@ -126,22 +126,20 @@ export const previewExample = (page: ComponentPageData): PreviewExample | undefi
   page.examples.map(previewable).find((example) => example !== undefined);
 
 /**
- * A component's example as an element (its `default` unless `values` are given): its registration
- * loaded, then its attributes, properties, and (unless `slots` is false) slot text. Undefined
- * when it has no such example.
+ * A component's example as an element: its registration loaded, then the example's attributes,
+ * properties, and slot text. Undefined when the component has no registration.
  */
-export async function exampleElement(
+async function exampleElement(
   page: ComponentPageData,
-  { slots = true, values = defaultValues(page) }: { slots?: boolean; values?: ExampleValues } = {},
+  values: ExampleValues,
 ): Promise<HTMLElement | undefined> {
   const registration = page.enrichment?.['registration'];
-  if (typeof registration !== 'string' || !values) return undefined;
+  if (typeof registration !== 'string') return undefined;
   await import(registration);
   const element = document.createElement(page.tag);
   for (const [name, value] of Object.entries(values.attributes))
     if (typeof value === 'string') element.setAttribute(name, value);
   for (const [name, value] of Object.entries(values.properties)) Reflect.set(element, name, value);
-  if (!slots) return element;
   for (const [slot, text] of Object.entries(values.slots)) {
     if (typeof text !== 'string') continue;
     if (slot === 'default') element.append(text);
@@ -298,7 +296,7 @@ async function drawExample(
   host: HTMLElement,
   root: ShadowRoot,
 ): Promise<void> {
-  const element = await exampleElement(page, { values: example.values });
+  const element = await exampleElement(page, example.values);
   if (!element) return;
   if (FILL.has(page.tag)) host.style.inlineSize = '100%';
   root.replaceChildren(element);

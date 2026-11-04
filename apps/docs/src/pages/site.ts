@@ -1,6 +1,6 @@
 import { foundationPages } from './foundations.js';
 
-import { agents, browserSupport, changeImpact, frameworks } from './guides.js';
+import { agents, aiTooling, browserSupport, changeImpact, frameworks } from './guides.js';
 import { composition, formsAccessibility, layout, theming } from './guides-core.js';
 import { gettingStarted, guides, recipes } from './landing.js';
 import { groups, type Group, type Page } from './model.js';
@@ -28,6 +28,7 @@ export const pages: readonly Page[] = [
   formsAccessibility,
   composition,
   agents,
+  aiTooling,
   changeImpact,
   recipes,
   architecture,
@@ -47,7 +48,6 @@ export interface ClientPage {
 
 export const clientPages: readonly ClientPage[] = [
   { path: 'components', title: 'Components', group: 'Build' },
-  { path: 'ai', title: 'AI interfaces', group: 'Build' },
   { path: 'layout/side-nav', title: 'Layout: side navigation', group: 'Build', parent: 'guides' },
   {
     path: 'architecture/scope-ownership',
@@ -60,8 +60,8 @@ export const clientPages: readonly ClientPage[] = [
 /** Sidebar order within each group (the website map); pages not named here follow in page order. */
 const order: Record<Group, readonly string[]> = {
   'Start here': ['', 'getting-started', 'installation'],
-  Build: ['components', 'foundations', 'core', 'guides', 'ai'],
-  Explore: ['theme-studio', 'workbench', 'tooling', 'change-impact', 'recipes'],
+  Build: ['components', 'foundations', 'core', 'guides'],
+  Explore: ['theme-studio', 'workbench', 'tooling', 'ai', 'change-impact', 'recipes'],
   Project: ['architecture', 'roadmap', 'support'],
 };
 
@@ -132,7 +132,7 @@ export const primaryLinks: readonly { label: string; path: string; section: read
       // Figma's Tools goes to /workbench; until that page exists, to the section's first page.
       label: 'Tools',
       path: ['workbench', 'tooling'].find((path) => routeExists(path)) ?? 'workbench',
-      section: ['workbench', 'tooling', 'change-impact', 'ai'],
+      section: ['workbench', 'tooling', 'ai', 'change-impact'],
     },
   ];
 
@@ -193,8 +193,9 @@ export const sections: readonly NavSection[] = [
       { path: 'theme-studio' },
       { path: 'workbench' },
       { path: 'tooling', label: 'Analyzer and agents' },
-      { path: 'change-impact' },
+      // The site's AI section: AI tooling. The AI interaction components are in the catalog.
       { path: 'ai' },
+      { path: 'change-impact' },
     ],
     note: ['Explore the tools'],
   },
