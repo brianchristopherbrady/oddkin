@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/components/oddkin.table-columns.v1.json",
+  "title": "oddkin.table-columns",
+  "description": "Columns of a table, in order: the cell each shows, its header, and its sorting.",
+  "$comment": "Also enforced by validate(), not expressible here: uniqueIds(key).",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "key": {
+        "description": "Names the cell of each row that the column shows.",
+        "type": "string",
+        "minLength": 1
+      },
+      "label": {
+        "description": "Header text, which also names the column.",
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      },
+      "align": {
+        "description": "Alignment of the column (start).",
+        "enum": [
+          "start",
+          "center",
+          "end"
+        ]
+      },
+      "sortable": {
+        "description": "The header sorts the rows by this column.",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "key",
+      "label"
+    ]
+  }
+}

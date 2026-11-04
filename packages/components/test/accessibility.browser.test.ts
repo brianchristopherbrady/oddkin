@@ -170,6 +170,12 @@ const states = `
   <odd-tree label="Shared files" multiple data-items></odd-tree>
   <odd-tree label="Recent files" loading></odd-tree>
   <odd-tree label="Archived files"></odd-tree>
+  <odd-table label="Projects" data-table></odd-table>
+  <odd-table label="Projects by tasks" sort="tasks" direction="descending" selection="single" data-table data-selected="beacon"></odd-table>
+  <odd-table label="Shared projects" selection="multiple" data-table data-selected="atlas"></odd-table>
+  <odd-table label="Loading projects" loading data-columns></odd-table>
+  <odd-table label="Failed projects" error="The projects could not be loaded." data-columns><odd-button slot="error" size="sm">Try again</odd-button></odd-table>
+  <odd-table label="No projects" data-columns></odd-table>
   <odd-listbox label="Workspace role" name="role" description="Who can change things"><option value="viewer">Viewer</option><option value="editor" selected>Editor</option><option value="owner" disabled>Owner</option></odd-listbox>
   <odd-listbox label="Notify me about" name="topics" multiple required error="Choose at least one topic"><optgroup label="Activity"><option value="mentions" title="When someone mentions you">Mentions</option><option value="comments">Comments</option></optgroup><option value="digest">Weekly digest</option></odd-listbox>
   <odd-listbox label="Region" loading></odd-listbox>
@@ -245,6 +251,23 @@ async function audit(mode: 'light' | 'dark') {
       },
       { id: 'foundations', label: 'Foundations', lazy: true },
     ];
+  // Tables: columns, and rows where marked, with the selection their data-selected names.
+  for (const table of container.querySelectorAll<
+    HTMLElement & { columns?: unknown; rows?: unknown; selected?: unknown }
+  >('odd-table[data-table], odd-table[data-columns]')) {
+    table.columns = [
+      { key: 'name', label: 'Project', sortable: true },
+      { key: 'status', label: 'Status' },
+      { key: 'tasks', label: 'Open tasks', align: 'end', sortable: true },
+    ];
+    if (table.dataset['table'] === undefined) continue;
+    table.rows = [
+      { id: 'atlas', cells: { name: 'Atlas', status: 'On track', tasks: 12 } },
+      { id: 'beacon', cells: { name: 'Beacon', status: 'At risk', tasks: 31 } },
+      { id: 'delta', cells: { name: 'Delta', status: null, tasks: null } },
+    ];
+    if (table.dataset['selected']) table.selected = [table.dataset['selected']];
+  }
   document.body.append(container);
   try {
     for (const el of [

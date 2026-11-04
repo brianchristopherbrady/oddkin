@@ -148,6 +148,7 @@ describe('@oddkin/components/composition import graphs', () => {
       'composition/validate.js',
       'composition/vocabulary.js',
       'models/navigation.js',
+      'models/table.js',
     ]);
     expect(packages).toEqual(['@oddkin/core/model']);
   });

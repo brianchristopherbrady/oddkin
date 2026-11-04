@@ -36,6 +36,12 @@ export type Shape = Readonly<Record<string, Node>>;
 export interface ObjectNode<S extends Shape = Shape> extends Base<'object'> {
   readonly shape: S;
 }
+/** An object with any keys, every value following `values`: a map such as a table row's cells. */
+export interface RecordNode<S extends Node = Node> extends Base<'record'> {
+  readonly values: S;
+}
+/** A string, a finite number, a boolean, or null. */
+export type ScalarNode = Base<'scalar'>;
 export interface UnionNode<
   D extends string = string,
   V extends Readonly<Record<string, ObjectNode>> = Readonly<Record<string, ObjectNode>>,
@@ -68,6 +74,8 @@ export type Node =
   | OptionalNode<any>
   | ArrayNode<any>
   | ObjectNode<any>
+  | RecordNode<any>
+  | ScalarNode
   | UnionNode<any, any>
   | SelfNode
   | RecursiveNode<any>
@@ -99,27 +107,31 @@ type Flatten<T> = T extends object ? { [K in keyof T]: T[K] } : T;
 
 export type InferNode<N, R> = N extends JsonNode
   ? JsonValue
-  : N extends SelfNode
-    ? InferNode<R, R>
-    : N extends RecursiveNode<infer I>
-      ? InferNode<I, I>
-      : N extends StringNode
-        ? string
-        : N extends NumberNode
-          ? number
-          : N extends BooleanNode
-            ? boolean
-            : N extends EnumNode<infer V>
-              ? V
-              : N extends OptionalNode<infer I>
-                ? InferNode<I, R> | undefined
-                : N extends ArrayNode<infer I>
-                  ? InferNode<I, R>[]
-                  : N extends ObjectNode<infer S>
-                    ? Flatten<InferShape<S, R>>
-                    : N extends UnionNode<infer D, infer V>
-                      ? Flatten<InferUnion<D, V, R>>
-                      : unknown;
+  : N extends ScalarNode
+    ? string | number | boolean | null
+    : N extends SelfNode
+      ? InferNode<R, R>
+      : N extends RecursiveNode<infer I>
+        ? InferNode<I, I>
+        : N extends StringNode
+          ? string
+          : N extends NumberNode
+            ? number
+            : N extends BooleanNode
+              ? boolean
+              : N extends EnumNode<infer V>
+                ? V
+                : N extends OptionalNode<infer I>
+                  ? InferNode<I, R> | undefined
+                  : N extends ArrayNode<infer I>
+                    ? InferNode<I, R>[]
+                    : N extends RecordNode<infer I>
+                      ? { [key: string]: InferNode<I, R> }
+                      : N extends ObjectNode<infer S>
+                        ? Flatten<InferShape<S, R>>
+                        : N extends UnionNode<infer D, infer V>
+                          ? Flatten<InferUnion<D, V, R>>
+                          : unknown;
 
 /** The TypeScript type a schema node (or a defined model) describes. */
 export type Infer<T> = T extends { readonly schema: infer S } ? InferNode<S, S> : InferNode<T, T>;
@@ -178,6 +190,12 @@ export const m = {
       shape: Object.freeze({ ...shape }),
       ...extra({ description }),
     }) as ObjectNode<S>,
+  /** An object with any keys, each value following `values` (e.g. cells by column key). */
+  record: <S extends Node>(values: S, description?: string): RecordNode<S> =>
+    freeze({ kind: 'record', values, ...extra({ description }) }) as RecordNode<S>,
+  /** A string, a finite number, a boolean, or null: one plain JSON value. */
+  scalar: (description?: string): ScalarNode =>
+    freeze({ kind: 'scalar', ...extra({ description }) }),
   /** Discriminated union: `value[discriminator]` selects the variant. */
   union: <const D extends string, const V extends Readonly<Record<string, ObjectNode>>>(
     discriminator: D,

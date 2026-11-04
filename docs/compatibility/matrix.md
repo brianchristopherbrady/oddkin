@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-26** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)), text-wrap-balance (newly (2024-05-13)), scrollbar-gutter (newly (2024-12-11)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 235 stylesheets, 338 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 238 stylesheets, 338 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -272,6 +272,9 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/switch/switch.styles.js (switchStyles)` | yes | 10 |
 | `packages/components/dist/tab-panel/tab-panel.structural.styles.js (tabPanelStructuralStyles)` | yes | 6 |
 | `packages/components/dist/tab-panel/tab-panel.styles.js (tabPanelStyles)` | yes | 0 |
+| `packages/components/dist/table/table.recipe.styles.js (tableRecipeStyles)` | yes | 11 |
+| `packages/components/dist/table/table.structural.styles.js (tableStructuralStyles)` | yes | 41 |
+| `packages/components/dist/table/table.styles.js (tableStyles)` | yes | 18 |
 | `packages/components/dist/tabs/tabs.structural.styles.js (tabsStructuralStyles)` | yes | 41 |
 | `packages/components/dist/tabs/tabs.styles.js (tabsStyles)` | yes | 22 |
 | `packages/components/dist/textarea/textarea.structural.styles.js (textareaStructuralStyles)` | yes | 9 |

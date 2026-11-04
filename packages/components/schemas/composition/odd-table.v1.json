@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/composition/odd-table.v1.json",
+  "title": "odd-table",
+  "description": "A data table: rows and columns from data (`columns`, `rows`, both JSON), shown as a native table. Columns can sort the rows, rows can be selected, and the body shows a loading, error, or empty state in place of the rows. No virtualization or editing: for a few hundred rows at most.",
+  "$comment": "Slots: \"empty\", \"error\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "element"
+  ],
+  "properties": {
+    "element": {
+      "const": "odd-table"
+    },
+    "id": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/id"
+    },
+    "slot": {
+      "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/slot"
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Names the table.",
+          "default": ""
+        },
+        "sort": {
+          "type": "string",
+          "description": "Key of the column the rows are sorted by; empty for the given order.",
+          "default": ""
+        },
+        "direction": {
+          "enum": [
+            "ascending",
+            "descending"
+          ],
+          "description": "Direction of the sort.",
+          "default": "ascending"
+        },
+        "no-sort": {
+          "type": "boolean",
+          "description": "The table keeps rows in the given order: listen to `odd-sort` and assign `rows` in the new order. `sort` and `direction` still mark the header.",
+          "default": false
+        },
+        "selection": {
+          "enum": [
+            "none",
+            "multiple",
+            "single"
+          ],
+          "description": "Whether rows can be selected, one or several.",
+          "default": "none"
+        },
+        "loading": {
+          "type": "boolean",
+          "description": "Shows a busy row instead of the rows and marks the table busy.",
+          "default": false
+        },
+        "error": {
+          "type": "string",
+          "description": "An error message, shown instead of the rows (with the `error` slot).",
+          "default": ""
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "columns": {
+          "$ref": "https://oddkin.dev/schemas/components/oddkin.table-columns.v1.json",
+          "description": "The columns, in order (`oddkin.table-columns`)."
+        },
+        "rows": {
+          "$ref": "https://oddkin.dev/schemas/components/oddkin.table-rows.v1.json",
+          "description": "The rows (`oddkin.table-rows`); each cell is found by its column key."
+        },
+        "selected": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ids of the selected rows (at most one with `single`)."
+        },
+        "strings": {
+          "type": "object",
+          "properties": {
+            "loading": {
+              "type": "string"
+            },
+            "empty": {
+              "type": "string"
+            },
+            "yes": {
+              "type": "string"
+            },
+            "no": {
+              "type": "string"
+            },
+            "selection": {
+              "type": "string"
+            },
+            "selectRow": {
+              "type": "string"
+            },
+            "selectAll": {
+              "type": "string"
+            }
+          },
+          "description": "Localized string overrides; `selectRow` takes `{label}`."
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/node"
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "change": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "input": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
+        "odd-sort": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        }
+      }
+    }
+  }
+}

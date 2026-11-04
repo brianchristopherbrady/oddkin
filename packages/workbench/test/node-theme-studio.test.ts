@@ -454,14 +454,10 @@ describe('Theme Studio page data', () => {
     const dir = new URL('packages/components/schemas/composition/', repo);
     const ajv = new Ajv2020({ strict: false });
     addFormats.default(ajv);
-    ajv.addSchema(
-      JSON.parse(
-        readFileSync(
-          new URL('packages/components/schemas/oddkin.navigation.v1.json', repo),
-          'utf8',
-        ),
-      ),
-    );
+    // The published model schemas the element schemas reference (navigation, the table's).
+    const models = new URL('packages/components/schemas/', repo);
+    for (const file of readdirSync(models).filter((name) => name.endsWith('.v1.json')))
+      ajv.addSchema(JSON.parse(readFileSync(new URL(file, models), 'utf8')));
     for (const file of readdirSync(dir))
       ajv.addSchema(JSON.parse(readFileSync(new URL(file, dir), 'utf8')));
     const schema = ajv.getSchema('https://oddkin.dev/schemas/composition/composition.v1.json')!;
@@ -525,6 +521,7 @@ describe('Theme Studio page data', () => {
         'slider:odd-slider',
         'stat:odd-stat',
         'statusMarker:odd-status-marker',
+        'table:odd-table',
         'textArea:odd-textarea',
         'tree:odd-tree',
       ]);

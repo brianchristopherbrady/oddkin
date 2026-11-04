@@ -220,6 +220,64 @@ describe('m.json', () => {
   });
 });
 
+describe('m.record and m.scalar', () => {
+  const Rows = defineModel('acme.rows', {
+    version: 1,
+    schema: m.array(
+      m.object({ id: m.id(), cells: m.record(m.scalar(), 'Cell values by column key.') }),
+    ),
+  });
+  const ajv = new Ajv2020({ allErrors: true, strict: true });
+  const validate = ajv.compile(toJSONSchema(Rows));
+  const good = [{ id: 'r', cells: { name: 'Ada', age: 36, active: true, team: null } }];
+  const bad: unknown[] = [
+    [{ id: 'r', cells: { name: ['Ada'] } }],
+    [{ id: 'r', cells: { name: { first: 'Ada' } } }],
+    [{ id: 'r', cells: { age: Number.NaN } }],
+    [{ id: 'r', cells: ['Ada'] }],
+    [{ id: 'r', cells: 'Ada' }],
+  ];
+
+  it('accepts any keys whose values are strings, finite numbers, booleans, or null', () => {
+    expect(Rows.validate(good)).toEqual({ ok: true, value: good, diagnostics: [] });
+    expect(Rows.validate([{ id: 'r', cells: {} }]).ok).toBe(true);
+    expectTypeOf<Infer<typeof Rows>[number]['cells']>().toEqualTypeOf<{
+      [key: string]: string | number | boolean | null;
+    }>();
+  });
+
+  it('reports a value that is not a scalar at its key, and a cells value that is not an object', () => {
+    expect(bad.map((sample) => codes(Rows.validate(sample)))).toEqual([
+      [['model.type.mismatch', '/0/cells/name']],
+      [['model.type.mismatch', '/0/cells/name']],
+      [['model.type.mismatch', '/0/cells/age']],
+      [['model.type.mismatch', '/0/cells']],
+      [['model.type.mismatch', '/0/cells']],
+    ]);
+    expect(Rows.validate(bad[2]).diagnostics[0]?.message).toContain('a non-finite number');
+    // A key is a JSON pointer segment: "/" and "~" are escaped.
+    expect(codes(Rows.validate([{ id: 'r', cells: { 'a/b~c': [] } }]))).toEqual([
+      ['model.type.mismatch', '/0/cells/a~1b~0c'],
+    ]);
+  });
+
+  it('emits additionalProperties and an anyOf of the four types, which strict Ajv compiles', () => {
+    const schema = toJSONSchema(Rows) as {
+      items: { properties: Record<string, unknown> };
+    };
+    expect(schema.items.properties['cells']).toEqual({
+      description: 'Cell values by column key.',
+      type: 'object',
+      additionalProperties: {
+        anyOf: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }, { type: 'null' }],
+      },
+    });
+    // NaN cannot be written as JSON; the schema agrees with validate() on everything else.
+    for (const sample of [good, ...bad.filter((_, i) => i !== 2)])
+      expect(validate(sample), JSON.stringify(sample)).toBe(Rows.validate(sample).ok);
+  });
+});
+
 describe('nesting limit', () => {
   const Tree = defineModel('acme.tree', {
     version: 1,

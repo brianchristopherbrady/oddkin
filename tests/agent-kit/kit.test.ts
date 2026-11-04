@@ -44,6 +44,8 @@ describe('the @oddkin/components kit', () => {
       ...Object.keys(metadata.recipes).sort(),
       ...Object.keys(metadata.stylesheets).sort(),
       'model:oddkin.navigation',
+      'model:oddkin.table-columns',
+      'model:oddkin.table-rows',
       'json:components',
       'json:tokens',
       'json:recipes',

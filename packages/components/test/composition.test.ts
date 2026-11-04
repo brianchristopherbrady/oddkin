@@ -333,11 +333,10 @@ describe('the generated catalog and schemas', () => {
   );
   const ajv = new Ajv2020({ strict: false });
   addFormats.default(ajv);
-  ajv.addSchema(
-    JSON.parse(
-      readFileSync(new URL('packages/components/schemas/oddkin.navigation.v1.json', repo), 'utf8'),
-    ),
-  );
+  // The published model schemas the element schemas reference (oddkin.navigation, the table's).
+  const modelDir = new URL('packages/components/schemas/', repo);
+  for (const file of readdirSync(modelDir).filter((name) => name.endsWith('.v1.json')))
+    ajv.addSchema(JSON.parse(readFileSync(new URL(file, modelDir), 'utf8')));
   for (const schema of schemas) ajv.addSchema(schema);
   const validate = ajv.getSchema('https://oddkin.dev/schemas/composition/composition.v1.json')!;
 

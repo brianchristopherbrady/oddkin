@@ -47,6 +47,7 @@ forms, normalized to one model inside the element:
 | Values (`odd-select`, `odd-listbox`, `odd-combobox`, `odd-picker`, `odd-radio-group`, `odd-segmented-control`) | `<option value disabled selected title>`, `<optgroup label disabled>`; `title` is the option's description, as in accessible-description computation; a disabled group disables its options | `options: readonly OptionRecord[]` with `{ value, label, description?, disabled?, group?, icon? }` (`icon`: a URL, drawn by `odd-segmented-control` only) |
 | Actions (`odd-menu`, `odd-split-button`) | `<option value disabled title>` (value = item id), `<optgroup label>`, `<hr>` (separator) | `items: readonly MenuItemRecord[]`, by `kind`: an action `{ kind?: 'item', id, label, description?, icon?, shortcut?, disabled?, tone?: 'danger', items? }` (`items`: a submenu), a group `{ kind: 'group', label, items }`, a separator `{ kind: 'separator' }` |
 | Commands (`odd-command-palette`), hierarchies (`odd-tree`, `odd-picker` with `items`) | — (data-driven) | `items` (`{ id, label, … }`, tree items nest `children`) |
+| Tables (`odd-table`) | — (data-driven) | `columns: readonly TableColumn[]` (`{ key, label, align?, sortable? }`) and `rows: readonly TableRow[]` (`{ id, cells }`, each cell's value by column key), published models `oddkin.table-columns` and `oddkin.table-rows` |
 | Links (`odd-breadcrumbs`) | `<a href>` descendants (text = label), so a server-rendered `<ol><li><a href>` list works as written | `items: readonly LinkRecord[]` with `{ label, href }` |
 
 When both are present the property wins (even an empty array) and `collection.source.conflict` is reported once per
@@ -559,6 +560,21 @@ dispatches `input` and `change`; expanding dispatches `odd-toggle`, detail `{ id
 children: the row is busy until the host assigns new `items` in which the item has `children`). APG tree keyboard
 (arrows mirrored right to left, Home/End, `*`, Enter and Space, typeahead); one Tab stop, on the selected row. The
 rows, their expansion, and the hierarchy keys are one internal model shared with `odd-picker`'s tree.
+
+**`odd-table`** (P1.2, 2026-11-04; no Figma family yet: it draws a native table as the `.odd-table` recipe does) —
+`label`, `columns` and `rows` (properties, JSON, typed by the published models `oddkin.table-columns` and
+`oddkin.table-rows`: a column `{ key, label, align?: start | center | end, sortable? }`, a row `{ id, cells }` whose
+cells are text, numbers, true or false, or null by column key), `sort` (a column key) and `direction`
+(`ascending` | `descending`), `no-sort`, `selection` (`none` | `single` | `multiple`), `selected` (property: row
+ids), `loading`, `error` (text), `strings` (`loading`, `empty`, `yes`, `no`, `selection`, `selectRow`, `selectAll`),
+slots `empty`, `error`. A native `<table>` named by `label`, the first column's cells row headers. The table sorts its
+rows by `sort` and `direction`, stably (numbers as numbers, everything else as text by the page language's collation,
+empty cells last both ways); a sortable column's header is a button, the sorted one has `aria-sort`, and activating
+it dispatches `odd-sort`, detail `{ column, direction }`, cancelable; with `no-sort` the host orders `rows` itself.
+Selection is a radio or a checkbox per row, named "Select {first cell}", and a select-all checkbox (checked or mixed);
+the native `input` reaches the host after `selected` changes, then `change`. Loading, an error (announced, with the
+`error` slot after it), or no rows replace the body with one row spanning the columns, in that order. No
+virtualization, editing, pagination, filtering, or resizing (the data grid stays parked).
 
 ### 3.5 Overlays
 

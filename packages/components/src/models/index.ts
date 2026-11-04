@@ -2,3 +2,5 @@
 // element entries import only the types, so their bundles exclude validation.
 export { NavigationItemModel, navigationModel } from './navigation.js';
 export type { Navigation, NavigationItem } from './navigation.js';
+export { TableColumnModel, TableRowModel } from './table.js';
+export type { TableCell, TableColumn, TableRow } from './table.js';

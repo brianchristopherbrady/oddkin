@@ -80,6 +80,13 @@ export function toJSONSchema(model: Model, options: SchemaOptions = {}): JSONSch
         });
       case 'json':
         return withDescription(node, {});
+      case 'scalar':
+        // anyOf rather than a type array, which Ajv's strict mode rejects without allowUnionTypes.
+        return withDescription(node, {
+          anyOf: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }, { type: 'null' }],
+        });
+      case 'record':
+        return withDescription(node, { type: 'object', additionalProperties: emit(node.values) });
       case 'self':
         return { $ref: `#/$defs/${defName(node.target())}` };
       case 'recursive':

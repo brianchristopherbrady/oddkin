@@ -215,6 +215,9 @@
           "$ref": "odd-tab-panel.v1.json"
         },
         {
+          "$ref": "odd-table.v1.json"
+        },
+        {
           "$ref": "odd-tabs.v1.json"
         },
         {

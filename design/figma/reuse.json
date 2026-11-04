@@ -2154,6 +2154,7 @@
     "odd-suggestions": { "dependencies": [] },
     "odd-switch": { "dependencies": [] },
     "odd-tab-panel": { "dependencies": [] },
+    "odd-table": { "dependencies": [] },
     "odd-tabs": { "dependencies": ["odd-tab-panel"] },
     "odd-task-plan": { "dependencies": [] },
     "odd-textarea": { "dependencies": [] },

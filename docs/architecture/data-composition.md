@@ -207,6 +207,7 @@ export type NavigationItem = Infer<typeof NavigationItemModel>;
 | `model.migrate(data, fromVersion)`                    | Versioned migrations with diagnostics for unmigratable data                                                                        |
 | Model metadata                                        | Docs tables, Workbench data editors, `oddkin.metadata.json` (extracted by `@oddkin/analyzer`), agent input contracts, deprecations |
 
+- **Nodes:** `m.string`, `m.id`, `m.label`, `m.url`, `m.actionRef`, `m.number`, `m.boolean`, `m.enum`, `m.optional`, `m.array`, `m.object`, `m.union`, `m.recursive`, `m.json` (an opaque JSON payload), `m.record(values)` (an object with free keys, each value following `values`; JSON Schema `additionalProperties`), and `m.scalar()` (one string, finite number, boolean, or null). odd-table's rows use the last two: `cells: m.record(m.scalar())`, each cell's value by column key (2026-11-04).
 - **Diagnostics:** JSON-pointer path, code (`model.type.mismatch`, `model.required.missing`, `model.kind.unknown`, `model.variant.unsupported`, `model.ref.invalid`, `model.id.duplicate`, `model.label.empty`, `model.option.incompatible`, `model.version.unsupported`, `model.state.conflict`, `model.depth.exceeded`), message, suggestion.
 - **Component rules** (labels required, incompatible options) live in the model. Schema validity is not proof of accessibility or behavior; browser and accessibility verification still apply.
 - **Validation cost:** components do not validate trusted local data by default in production; development mode validates property assignments; external data is validated explicitly by the application (`model.validate`) or by an opt-in `validate` attribute/property.
@@ -340,7 +341,7 @@ It returns `{ ok, diagnostics, nodes, dispose }`; `dispose()` removes the nodes 
 
 `@oddkin/components` builds its own catalog with the same functions, with `modelTypes` for `NavigationEntry` and `odd-button`'s `click`; its catalog and schemas are byte for byte what the script wrote before (`--check`).
 
-**Size.** The entry is 8,053 B gzip with its catalog of 52 elements (about 45 B each), within its 8,704 B budget; 8,380 B on 2026-11-03 with 54 elements and the `catalog` option. It registers no element (`graph.test.ts`), and no other entry loads it (`check-size.mjs`, `consumers.test.ts`).
+**Size.** The entry is 8,053 B gzip with its catalog of 52 elements (about 45 B each), within its 8,704 B budget; 8,380 B on 2026-11-03 with 54 elements and the `catalog` option; 8,935 B on 2026-11-04 with odd-table and its two models, within a 9,216 B budget. It registers no element (`graph.test.ts`), and no other entry loads it (`check-size.mjs`, `consumers.test.ts`).
 
 **Not yet:**
 

@@ -89,7 +89,10 @@ export const BUDGETS = {
   // 8.5 KiB; measured 8,053 on 2026-10-26 (@oddkin/components/composition, ADR 0046 D3:
   // validateComposition and renderComposition with the generated catalog of 52 elements, about
   // 45 B gzip each, over @oddkin/core/model and the navigation model; no element registrations).
-  composition: 8704,
+  // 9 KiB since 2026-11-04, measured 8,935: odd-table's catalog entry and its two models
+  // (oddkin.table-columns, oddkin.table-rows, with core's record and scalar nodes), which
+  // validateComposition checks a table's columns and rows with.
+  composition: 9216,
   // 1,152 B; measured 1,098 on 2026-10-27 (@oddkin/components/autoload, ADR 0046 D9: the document
   // and shadow-root observers, the 53 define/* names, and core's diagnostics; each definition is
   // imported by URL at run time, outside this graph). Was 1,088 (1,046 measured): +52 B report a

@@ -30,6 +30,8 @@ import { sliderRecipe } from '../src/slider/slider.recipe.js';
 import { sliderRecipeStyles } from '../src/slider/slider.recipe.styles.js';
 import { treeRecipe } from '../src/tree/tree.recipe.js';
 import { treeRecipeStyles } from '../src/tree/tree.recipe.styles.js';
+import { tableRecipe } from '../src/table/table.recipe.js';
+import { tableRecipeStyles } from '../src/table/table.recipe.styles.js';
 import { breadcrumbsRecipe } from '../src/breadcrumbs/breadcrumbs.recipe.js';
 import { breadcrumbsRecipeStyles } from '../src/breadcrumbs/breadcrumbs.recipe.styles.js';
 import { calendarRecipe } from '../src/calendar/calendar.recipe.js';
@@ -71,6 +73,13 @@ const extracted = [
     source: './tree.recipe.ts',
     recipe: treeRecipe,
     styles: treeRecipeStyles,
+  },
+  {
+    file: '../src/table/table.recipe.styles.ts',
+    exportName: 'tableRecipeStyles',
+    source: './table.recipe.ts',
+    recipe: tableRecipe,
+    styles: tableRecipeStyles,
   },
   {
     file: '../src/command-palette/command-palette.recipe.styles.ts',

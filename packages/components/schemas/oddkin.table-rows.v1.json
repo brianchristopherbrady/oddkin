@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oddkin.dev/schemas/components/oddkin.table-rows.v1.json",
+  "title": "oddkin.table-rows",
+  "description": "Rows of a table: an id, and the value of each cell by column key.",
+  "$comment": "Also enforced by validate(), not expressible here: uniqueIds(id) among the rows.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "Identifies the row, for selection.",
+        "type": "string",
+        "minLength": 1
+      },
+      "cells": {
+        "description": "Cell values by column key: text, a number, true or false, or null for an empty cell.",
+        "type": "object",
+        "additionalProperties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "required": [
+      "id",
+      "cells"
+    ]
+  }
+}

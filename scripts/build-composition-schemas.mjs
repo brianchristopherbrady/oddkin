@@ -22,7 +22,11 @@ const cem = await json('custom-elements.json');
 
 const { catalog, diagnostics } = compositionCatalog(cem, {
   // Record types a published model describes (packages/components/src/models), by CEM type name.
-  modelTypes: { NavigationEntry: 'oddkin.navigation' },
+  modelTypes: {
+    NavigationEntry: 'oddkin.navigation',
+    TableColumn: 'oddkin.table-columns',
+    TableRow: 'oddkin.table-rows',
+  },
   // Native events an element's contract makes its activation, which the CEM does not list:
   // odd-button stops `click` at the host while disabled or loading, so a listener runs only on
   // activation.

@@ -681,6 +681,26 @@ export const CATALOG: Catalog = {
     slots: [''],
     events: [],
   },
+  'odd-table': {
+    attributes: {
+      label: 'string',
+      sort: 'string',
+      direction: { enum: ['ascending', 'descending'] },
+      'no-sort': 'boolean',
+      selection: { enum: ['none', 'multiple', 'single'] },
+      loading: 'boolean',
+      error: 'string',
+    },
+    properties: {
+      columns: { model: 'oddkin.table-columns' },
+      rows: { model: 'oddkin.table-rows' },
+      selected: 'strings',
+      strings: { texts: ['loading', 'empty', 'yes', 'no', 'selection', 'selectRow', 'selectAll'] },
+    },
+    fixed: [],
+    slots: ['empty', 'error'],
+    events: ['change', 'input', 'odd-sort'],
+  },
   'odd-tabs': {
     attributes: {
       label: 'string',

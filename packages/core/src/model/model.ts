@@ -45,7 +45,7 @@ function jsonProblem(value: unknown, depth: number): string | undefined {
       ? undefined
       : 'Expected a JSON value, received a non-finite number.';
   if (typeof value !== 'object') return `Expected a JSON value, received a ${typeof value}.`;
-  if (depth <= 0) return 'JSON value is nested too deeply.';
+  if (depth <= 0) return 'Nested too deeply: use a string, number, boolean, or null here.';
   if (Array.isArray(value)) {
     for (const item of value) {
       const problem = jsonProblem(item, depth - 1);
@@ -140,11 +140,23 @@ function check(node: Node, value: unknown, path: string, out: Collector): void {
       if (typeof value !== 'boolean')
         out.error('model.type.mismatch', at, `Expected a boolean, received ${describe(value)}.`);
       return;
-    case 'json': {
-      const problem = jsonProblem(value, node.maxDepth ?? 32);
+    // A scalar is JSON nested zero levels deep.
+    case 'json':
+    case 'scalar': {
+      const problem = jsonProblem(value, node.kind === 'json' ? (node.maxDepth ?? 32) : 0);
       if (problem) out.error('model.type.mismatch', at, problem);
       return;
     }
+    case 'record':
+      if (!isPlainObject(value))
+        return out.error(
+          'model.type.mismatch',
+          at,
+          `Expected an object, received ${describe(value)}.`,
+        );
+      for (const [key, item] of Object.entries(value))
+        check(node.values, item, `${path}/${escape(key)}`, out);
+      return;
     case 'enum':
       if (!(node.values as readonly unknown[]).includes(value)) {
         out.error(

@@ -5,6 +5,7 @@
  */
 import { defineModel, m, type Model, type ModelDefinition, type Node } from '@oddkin/core/model';
 import { NavigationItemModel } from '../models/navigation.js';
+import { TableColumnModel, TableRowModel } from '../models/table.js';
 
 /** How a value is written: a JSON scalar, a URL, a list of strings, an enum, texts, or a model. */
 export type ValueType =
@@ -35,6 +36,8 @@ export type Catalog = Readonly<Record<string, ElementEntry>>;
 /** Published models a property value may follow, by model name. */
 export const MODELS: Readonly<Record<string, Model>> = {
   [NavigationItemModel.name]: NavigationItemModel,
+  [TableColumnModel.name]: TableColumnModel,
+  [TableRowModel.name]: TableRowModel,
 };
 
 const URL_TARGETS = ['_blank', '_self', '_parent', '_top'];

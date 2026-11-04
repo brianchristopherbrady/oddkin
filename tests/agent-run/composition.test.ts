@@ -10,11 +10,10 @@ const repo = new URL('../../', import.meta.url);
 const schemaDir = new URL('packages/components/schemas/composition/', repo);
 const ajv = new Ajv2020({ strict: false });
 addFormats.default(ajv);
-ajv.addSchema(
-  JSON.parse(
-    readFileSync(new URL('packages/components/schemas/oddkin.navigation.v1.json', repo), 'utf8'),
-  ),
-);
+// The published model schemas the element schemas reference (navigation, the table's).
+const modelDir = new URL('packages/components/schemas/', repo);
+for (const file of readdirSync(modelDir).filter((name) => name.endsWith('.v1.json')))
+  ajv.addSchema(JSON.parse(readFileSync(new URL(file, modelDir), 'utf8')));
 for (const file of readdirSync(schemaDir))
   ajv.addSchema(JSON.parse(readFileSync(new URL(file, schemaDir), 'utf8')));
 const schema = ajv.getSchema('https://oddkin.dev/schemas/composition/composition.v1.json')!;

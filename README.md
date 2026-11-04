@@ -18,7 +18,7 @@ Packages are published under `@oddkin/*`; elements use the `odd-` prefix (`<odd-
 
 ## Status
 
-Beta. The eight packages are published on npm under the `beta` tag (`npm install @oddkin/core@beta`; [release-process.md](./docs/release-process.md) §5), and contracts may still change before 1.0.0. `@oddkin/components` has 54 elements and `@oddkin/ai` 24, each with contract-test evidence in three engines. See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for milestones and current state, and [docs/verification.md](./docs/verification.md) for recorded results.
+Beta. The eight packages are published on npm under the `beta` tag (`npm install @oddkin/core@beta`; [release-process.md](./docs/release-process.md) §5), and contracts may still change before 1.0.0. `@oddkin/components` has 55 elements and `@oddkin/ai` 24, each with contract-test evidence in three engines. See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for milestones and current state, and [docs/verification.md](./docs/verification.md) for recorded results.
 
 ## Repository layout
 

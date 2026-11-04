@@ -585,6 +585,18 @@
       "types": "./dist/switch/switch.define.d.ts",
       "default": "./dist/switch/switch.define.js"
     },
+    "./table": {
+      "types": "./dist/table/index.d.ts",
+      "default": "./dist/table/index.js"
+    },
+    "./table/foundation": {
+      "types": "./dist/table/foundation.d.ts",
+      "default": "./dist/table/foundation.js"
+    },
+    "./define/table": {
+      "types": "./dist/table/table.define.d.ts",
+      "default": "./dist/table/table.define.js"
+    },
     "./tab-panel": {
       "types": "./dist/tab-panel/index.d.ts",
       "default": "./dist/tab-panel/index.js"
