@@ -959,6 +959,10 @@ describe('<oddkin-theme-studio-panel>', () => {
         composition: {
           renderer: new URL('./fixtures/frame-renderer.ts', import.meta.url).href,
           registrations: { 'fixture-button': button },
+          // Generated for a package without a renderer of its own (P1.6).
+          catalog: {
+            'fixture-button': { attributes: {}, properties: {}, fixed: [], slots: [], events: [] },
+          },
           starters: [{ id: 'hello', title: 'Hello', document: starter }],
         },
       },
@@ -1033,6 +1037,8 @@ describe('<oddkin-theme-studio-panel>', () => {
     await until(() => docs().every((doc) => text(doc) === 'Edit 20'), 'the newest edit');
     expect(sent).toHaveLength(1);
     expect(sent[0]).toContain('Edit 20');
+    // The catalog goes with each document, for the frame to add to the renderer's own.
+    expect(JSON.parse(sent[0]!).catalog).toEqual(studioPage().studio.screens?.composition?.catalog);
     // A render that takes the focus into a frame (a modal dialog) gives it back to the editor.
     editor().focus();
     type(

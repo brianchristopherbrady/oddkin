@@ -52,8 +52,15 @@ const roleId = (value: string) => value.replace(/^role:/, '');
 export interface ScreensInput {
   /** Page id → navigation title. */
   readonly titles: ReadonlyMap<string, string>;
-  /** The documented package that exports a composition renderer, and its specifier. */
-  readonly composition?: { readonly package: string; readonly renderer: string };
+  /**
+   * The composition renderer, the documented packages whose elements a document may use, and the
+   * catalog entries generated for packages without a renderer of their own.
+   */
+  readonly composition?: {
+    readonly renderer: string;
+    readonly packages: readonly string[];
+    readonly catalog?: JsonObject;
+  };
 }
 
 /** Each component's examples with published values, and the composition starters. */
@@ -63,7 +70,7 @@ function screensOf(components: readonly ComponentPageData[], input: ScreensInput
   for (const page of components) {
     const registration = registrationOf(page);
     if (!registration) continue;
-    if (page.package === input.composition?.package) registrations[page.tag] = registration;
+    if (input.composition?.packages.includes(page.package)) registrations[page.tag] = registration;
     const items: ThemeStudioScreens['components'][number]['items'][number][] = [];
     const omitted: string[] = [];
     for (const example of presets(page)) {
@@ -92,8 +99,13 @@ function screensOf(components: readonly ComponentPageData[], input: ScreensInput
           composition: {
             renderer: composition.renderer,
             registrations,
+            ...(composition.catalog ? { catalog: composition.catalog } : {}),
             // Written against @oddkin/components' catalog.
-            starters: composition.package === '@oddkin/components' ? STARTERS : [],
+            starters:
+              composition.renderer === '@oddkin/components/composition' &&
+              composition.packages.includes('@oddkin/components')
+                ? STARTERS
+                : [],
           },
         }
       : {}),

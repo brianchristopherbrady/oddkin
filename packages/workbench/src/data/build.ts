@@ -300,11 +300,22 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
     const components = Object.values(pages).filter(
       (page): page is ComponentPageData => page.kind === 'component',
     );
-    const renderer = input.libraries.find((library) => library.composition);
+    // A package's own renderer, and the packages whose generated catalog @oddkin/components' renders.
+    const own = input.libraries.find((library) => library.composition && !library.catalog);
+    const generated = input.libraries.filter((library) => library.composition && library.catalog);
+    const renderer = own?.composition ?? generated[0]?.composition;
     pages[studio.id] = themeStudioPage(studio.id, components, config, input.theme ?? {}, out, {
       titles: new Map(registry.pages.map((page) => [page.id, page.title])),
-      ...(renderer?.composition
-        ? { composition: { package: renderer.name, renderer: renderer.composition } }
+      ...(renderer
+        ? {
+            composition: {
+              renderer,
+              packages: [...(own ? [own.name] : []), ...generated.map((library) => library.name)],
+              ...(generated.length
+                ? { catalog: Object.assign({}, ...generated.map((library) => library.catalog)) }
+                : {}),
+            },
+          }
         : {}),
     });
     files[studio.id] = pageFile(studio.id);

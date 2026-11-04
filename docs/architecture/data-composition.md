@@ -321,7 +321,7 @@ Each code has a failing example in `composition.test.ts`.
 
 It returns `{ ok, diagnostics, nodes, dispose }`; `dispose()` removes the nodes and the listeners. A rendered composition matches the same hand-written markup in light and shadow DOM, names, and roles (`composition.browser.test.ts`, three engines).
 
-**Schemas and versioning.** `scripts/build-composition-schemas.mjs` runs in `npm run build` after the metadata. It writes:
+**Schemas and versioning.** `scripts/build-composition-schemas.mjs` runs in `npm run build` after the metadata. It writes, with the generator every library uses (`@oddkin/analyzer/composition`, below):
 
 - `src/composition/catalog.ts`, what the runtime accepts;
 - `packages/components/schemas/composition/<tag>.v1.json`, one per element;
@@ -331,14 +331,24 @@ It returns `{ ok, diagnostics, nodes, dispose }`; `dispose()` removes the nodes 
 
 `version` is 1. New elements, attributes, and events do not change it. A change to the document's shape increments it, with a migration.
 
-**Size.** The entry is 8,053 B gzip with its catalog of 52 elements (about 45 B each), within its 8,704 B budget. It registers no element (`graph.test.ts`), and no other entry loads it (`check-size.mjs`, `consumers.test.ts`).
+**A library's own elements (2026-11-03, P1.6).** The catalog and schemas are generated from a Custom Elements Manifest alone, so any library gets them, built with Oddkin or not:
+
+- `@oddkin/analyzer/composition`: `compositionCatalog(manifest, { modelTypes, events })` reads every declared custom element. Attributes typed as string, number, boolean, or a union of string literals (either quote style) are writable; `href`, `src`, and `formaction` are URLs. An attribute of another type, and a boolean attribute that is on by default (markup cannot turn it off), are left out with a warning (`analyzer.composition.attributeType`, `analyzer.composition.booleanDefault`). Writable properties without an attribute follow the property table above; a list of records is portable only when `modelTypes` names its published model, and is listed as not portable otherwise. `events` adds activation events the manifest does not list (`odd-button`'s `click`). `compositionSchemas(catalog, manifest, { base, modelSchemas, title, description })` writes the schemas above; without a `base` they carry no `$id` and refer to each other by file name.
+- `oddkin-analyze --composition` writes `oddkin.composition.json` (`{ "version": 1, "catalog": … }`) and `schemas/composition/`, for the library to publish.
+- `validateComposition(document, { catalog })` and `renderComposition(document, target, { catalog, allow })` take a library's catalog instead of Oddkin's; a value that follows a model `@oddkin/components` does not publish is `composition.property.notPortable`.
+- Workbench's Theme Studio generates the catalog of each documented package without a renderer of its own and renders its elements with `@oddkin/components/composition`, beside Oddkin's (workbench.md §6).
+
+`@oddkin/components` builds its own catalog with the same functions, with `modelTypes` for `NavigationEntry` and `odd-button`'s `click`; its catalog and schemas are byte for byte what the script wrote before (`--check`).
+
+**Size.** The entry is 8,053 B gzip with its catalog of 52 elements (about 45 B each), within its 8,704 B budget; 8,380 B on 2026-11-03 with 54 elements and the `catalog` option. It registers no element (`graph.test.ts`), and no other entry loads it (`check-size.mjs`, `consumers.test.ts`).
 
 **Not yet:**
 
 - the A2UI catalog adapter (waits for A2UI 1.0: on 2026-10-27 <https://a2ui.org/> lists v0.9.1 as current and v1.0 as a release candidate);
 - `$ref` data and `$binding` (the earlier sketch);
 - keyed updates of a rendered composition (render again instead);
-- `@oddkin/ai` elements in the catalog.
+- `@oddkin/ai` elements in Oddkin's catalog (Workbench's Theme Studio generates theirs, as for any package without a renderer);
+- a library's own models: its record lists are not portable until the renderer can validate them.
 
 AI support never makes this schema mandatory: agent tooling recommends templates, data models, or hybrids by the §9 criteria and works without the composition schema ([agent-tooling.md](./agent-tooling.md) §8).
 

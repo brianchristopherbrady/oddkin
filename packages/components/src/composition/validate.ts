@@ -7,6 +7,7 @@ import { CATALOG } from './catalog.js';
 import {
   NATIVE,
   valueModel,
+  type Catalog,
   type ElementEntry,
   type NativeEntry,
   type ValueType,
@@ -50,6 +51,15 @@ export interface CompositionValidation {
   readonly diagnostics: readonly CompositionDiagnostic[];
 }
 
+export interface ValidateCompositionOptions {
+  readonly limits?: CompositionLimits;
+  /**
+   * The elements a document may use: Oddkin's published catalog by default, or a library's, as
+   * `oddkin-analyze --composition` writes it (`oddkin.composition.json`).
+   */
+  readonly catalog?: Catalog;
+}
+
 const ID = /^[A-Za-z][\w-]*$/;
 const ACTION = /^[a-z][a-zA-Z0-9-]*(?:\.[a-zA-Z0-9-]+)*$/;
 const DOCUMENT_KEYS = ['$schema', 'version', 'root'];
@@ -83,7 +93,7 @@ const ROOT: Context = { slots: undefined, text: true, natives: FLOW, elements: t
 /** Check a composition document; `ok` is false when any diagnostic is an error. */
 export function validateComposition(
   document: unknown,
-  options: { readonly limits?: CompositionLimits } = {},
+  options: ValidateCompositionOptions = {},
 ): CompositionValidation {
   const out: CompositionDiagnostic[] = [];
   const error = (code: string, path: string, message: string, suggestion?: string): void => {
@@ -93,6 +103,8 @@ export function validateComposition(
         : { code, severity: 'error', path: path || '/', message },
     );
   };
+  const catalog = options.catalog ?? CATALOG;
+  const elements = options.catalog ? 'an element of the catalog' : 'an odd-* element';
   const maxDepth = options.limits?.depth ?? 16;
   const maxNodes = options.limits?.nodes ?? 500;
   const ids = new Map<string, string>();
@@ -110,7 +122,15 @@ export function validateComposition(
   };
 
   const checkValue = (type: ValueType, value: unknown, path: string) => {
-    for (const d of valueModel(type).validate(value).diagnostics)
+    const model = valueModel(type);
+    if (!model)
+      return error(
+        'composition.property.notPortable',
+        path,
+        `This value follows the model "${(type as { model: string }).model}", which this renderer does not publish.`,
+        'Set it from the host application after rendering.',
+      );
+    for (const d of model.validate(value).diagnostics)
       out.push({ ...d, path: d.path === '/' ? path : `${path}${d.path}` });
   };
 
@@ -234,23 +254,25 @@ export function validateComposition(
     const tag = node['element'];
     if (typeof tag !== 'string')
       return error('composition.required.missing', `${path}/element`, 'Missing "element".');
-    const entry = Object.hasOwn(CATALOG, tag) ? CATALOG[tag] : undefined;
+    const entry = Object.hasOwn(catalog, tag) ? catalog[tag] : undefined;
     const native = Object.hasOwn(NATIVE, tag) ? NATIVE[tag] : undefined;
     if (!entry && !native)
       return error(
         'composition.element.unknown',
         `${path}/element`,
         `"${tag}" is not a published element.`,
-        tag.startsWith('odd-')
-          ? 'Use an element from @oddkin/components/oddkin.metadata.json.'
-          : `Use an odd-* element or ${list(Object.keys(NATIVE))}.`,
+        options.catalog
+          ? `Use ${list([...Object.keys(catalog), ...Object.keys(NATIVE)])}.`
+          : tag.startsWith('odd-')
+            ? 'Use an element from @oddkin/components/oddkin.metadata.json.'
+            : `Use ${elements} or ${list(Object.keys(NATIVE))}.`,
       );
     if ((native && !context.natives.includes(tag)) || (entry && !context.elements))
       error(
         'composition.element.misplaced',
         `${path}/element`,
         `"${tag}" is not allowed here.`,
-        `Use ${list(context.natives)}${context.elements ? ', text, or an odd-* element' : ''}.`,
+        `Use ${list(context.natives)}${context.elements ? `, text, or ${elements}` : ''}.`,
       );
 
     const slot = node['slot'];

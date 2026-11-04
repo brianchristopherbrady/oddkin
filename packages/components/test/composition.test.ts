@@ -8,6 +8,7 @@ import {
   CATALOG,
   NATIVE,
   validateComposition,
+  type Catalog,
   type CompositionNode,
 } from '../src/composition/index.js';
 
@@ -275,6 +276,53 @@ describe('validateComposition', () => {
     const many = Array.from({ length: 501 }, () => 'x');
     expect(codes(doc(...many))).toEqual([['composition.size.exceeded', '/root/500']]);
     expect(validateComposition(doc(...many), { limits: { nodes: 501 } }).ok).toBe(true);
+  });
+
+  it("takes a library's own catalog, as oddkin-analyze --composition writes it (P1.6)", () => {
+    const catalog: Catalog = {
+      'plain-chip': {
+        attributes: { label: 'string', tone: { enum: ['neutral', 'info'] } },
+        properties: { count: 'number', items: { model: 'acme.items' } },
+        fixed: [],
+        slots: ['', 'icon'],
+        events: ['plain-remove'],
+      },
+    };
+    const chip = doc({
+      element: 'plain-chip',
+      attributes: { label: 'Draft', tone: 'info' },
+      properties: { count: 2 },
+      children: ['Draft', { element: 'span', slot: 'icon', children: ['*'] }],
+      actions: { 'plain-remove': 'chip.remove' },
+    });
+    expect(validateComposition(chip, { catalog })).toEqual({ ok: true, diagnostics: [] });
+    // Oddkin's catalog is the default, and is replaced, not extended.
+    expect(codes(chip)).toEqual([['composition.element.unknown', '/root/0/element']]);
+    const other = validateComposition(
+      doc(
+        { element: 'odd-badge' },
+        { element: 'plain-chip', attributes: { tone: 'loud' }, properties: { items: [] } },
+        { element: 'ul', children: [{ element: 'plain-chip' }] },
+      ),
+      { catalog },
+    );
+    expect(other.diagnostics.map((d) => [d.code, d.path, d.suggestion])).toEqual([
+      [
+        'composition.element.unknown',
+        '/root/0/element',
+        `Use "plain-chip", ${Object.keys(NATIVE)
+          .map((tag) => `"${tag}"`)
+          .join(', ')}.`,
+      ],
+      ['model.value.invalid', '/root/1/attributes/tone', 'Use one of: "neutral", "info".'],
+      // A model this package does not publish cannot be checked, so it is not written.
+      [
+        'composition.property.notPortable',
+        '/root/1/properties/items',
+        'Set it from the host application after rendering.',
+      ],
+      ['composition.element.misplaced', '/root/2/children/0/element', 'Use "li".'],
+    ]);
   });
 });
 

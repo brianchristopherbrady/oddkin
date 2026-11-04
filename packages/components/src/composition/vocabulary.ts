@@ -91,9 +91,13 @@ const models = new Map<string, Model>();
 // The untyped overload: a value node chosen at run time has no static type to infer.
 const define = defineModel as unknown as (name: string, definition: ModelDefinition<Node>) => Model;
 
-/** The model that validates one value of a type (a published model keeps its own rules). */
-export function valueModel(type: ValueType): Model {
-  if (typeof type === 'object' && 'model' in type) return MODELS[type.model] as Model;
+/**
+ * The model that validates one value of a type (a published model keeps its own rules), or
+ * undefined for a model this package does not publish.
+ */
+export function valueModel(type: ValueType): Model | undefined {
+  if (typeof type === 'object' && 'model' in type)
+    return Object.hasOwn(MODELS, type.model) ? MODELS[type.model] : undefined;
   const key = JSON.stringify(type);
   let model = models.get(key);
   if (!model) {

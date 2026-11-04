@@ -38,6 +38,10 @@
       "types": "./dist/impact.d.ts",
       "default": "./dist/impact.js"
     },
+    "./composition": {
+      "types": "./dist/composition.d.ts",
+      "default": "./dist/composition.js"
+    },
     "./kit": {
       "types": "./dist/kit/index.d.ts",
       "default": "./dist/kit/index.js"
@@ -49,6 +53,7 @@
     "README.md"
   ],
   "dependencies": {
+    "@oddkin/core": "^1.0.0-beta.1",
     "typescript": "5.9.3"
   },
   "publishConfig": {

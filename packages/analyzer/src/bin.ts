@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 /**
- * oddkin-analyze <tsconfig> [--out dir] [--name n --version v] [--no-history] [--strict] [--json]
- * oddkin-analyze --manifest <custom-elements.json> [--out dir] [--name n --version v] [--strict] [--json]
+ * oddkin-analyze <tsconfig> [--out dir] [--name n --version v] [--no-history] [--composition] [--strict] [--json]
+ * oddkin-analyze --manifest <custom-elements.json> [--out dir] [--name n --version v] [--composition] [--strict] [--json]
  * Exit codes: 0 success, 1 errors (or warnings with --strict), 2 usage error.
  */
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import {
   analyze,
   analyzeManifest,
+  compositionFiles,
   gitHistory,
   stableJson,
   writeOutputs,
@@ -17,10 +18,11 @@ import {
 } from './index.js';
 
 const USAGE =
-  'Usage: oddkin-analyze <tsconfig.json> [--out <dir>] [--name <library> --version <version>] [--no-history] [--strict] [--json]\n' +
-  '       oddkin-analyze --manifest <custom-elements.json> [--out <dir>] [--name <library> --version <version>] [--strict] [--json]\n' +
+  'Usage: oddkin-analyze <tsconfig.json> [--out <dir>] [--name <library> --version <version>] [--no-history] [--composition] [--strict] [--json]\n' +
+  '       oddkin-analyze --manifest <custom-elements.json> [--out <dir>] [--name <library> --version <version>] [--composition] [--strict] [--json]\n' +
   '  Updated dates come from git history unless --no-history; without full history (no git, a shallow clone) pages carry only authored @updated dates.\n' +
-  '  --manifest: a library not built with Oddkin. Its examples are read against its own manifest, and only oddkin.metadata.json is written.';
+  '  --manifest: a library not built with Oddkin. Its examples are read against its own manifest, and only oddkin.metadata.json is written (with --composition, also the catalog and schemas).\n' +
+  "  --composition: also write the composition catalog (oddkin.composition.json) and its JSON Schemas (schemas/composition/), so composition documents can use the library's elements.";
 
 let parsed;
 try {
@@ -33,6 +35,7 @@ try {
       name: { type: 'string' },
       version: { type: 'string' },
       history: { type: 'boolean', default: true },
+      composition: { type: 'boolean', default: false },
       strict: { type: 'boolean', default: false },
       json: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
@@ -61,10 +64,13 @@ const library =
 
 let diagnostics: readonly AnalyzerDiagnostic[];
 let files: string[];
+let manifest: unknown;
+let metadata: Record<string, unknown>;
 if (values.manifest) {
   let result;
   try {
     result = analyzeManifest({ manifest: values.manifest, ...library });
+    manifest = JSON.parse(await readFile(values.manifest, 'utf8')) as unknown;
   } catch (error) {
     console.error(`${error instanceof Error ? error.message : String(error)}\n${USAGE}`);
     process.exit(2);
@@ -73,6 +79,7 @@ if (values.manifest) {
   const file = join(values.out, 'oddkin.metadata.json');
   await writeFile(file, stableJson(result.metadata));
   diagnostics = result.diagnostics;
+  metadata = result.metadata;
   files = [file];
 } else {
   const history = values.history ? gitHistory(dirname(resolve(project as string))) : undefined;
@@ -83,10 +90,25 @@ if (values.manifest) {
   });
   files = await writeOutputs(result, values.out);
   diagnostics = result.diagnostics;
+  manifest = result.manifest;
+  metadata = result.metadata;
   if (values.history && !history && !values.json)
     console.error(
       'note: no full git history (no repository, or a shallow clone); pages carry only authored @updated dates.',
     );
+}
+if (values.composition) {
+  const name = (metadata['library'] as { name?: unknown } | undefined)?.name;
+  const composition = compositionFiles(manifest, {
+    ...(typeof name === 'string' ? { title: `${name} composition` } : {}),
+  });
+  for (const [path, text] of composition.files) {
+    const file = join(values.out, ...path.split('/'));
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, text);
+    files.push(file);
+  }
+  diagnostics = [...diagnostics, ...composition.diagnostics];
 }
 if (values.json) console.log(JSON.stringify(diagnostics, null, 2));
 else {

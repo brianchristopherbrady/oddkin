@@ -57,6 +57,18 @@ export type { LibraryInfo } from './emit.js';
 export { foundationsFrom } from './foundations.js';
 export type { InspectedToken, InspectionSource, TokenInspection } from './foundations.js';
 export { gitHistory, type SourceHistory } from './history.js';
+export {
+  compositionCatalog,
+  compositionFiles,
+  compositionSchemas,
+  NATIVE as COMPOSITION_NATIVE,
+  type Catalog as CompositionCatalog,
+  type CatalogOptions as CompositionCatalogOptions,
+  type ElementEntry as CompositionElementEntry,
+  type NativeEntry as CompositionNativeEntry,
+  type SchemaOptions as CompositionSchemaOptions,
+  type ValueType as CompositionValueType,
+} from './composition.js';
 
 /** This package's version, which every metadata file records as `oddkinVersion`. */
 export const ANALYZER_VERSION: string = (

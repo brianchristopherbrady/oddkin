@@ -5,6 +5,7 @@
  */
 import type { JsonValue } from '@oddkin/core/model';
 import { CATALOG } from './catalog.js';
+import type { Catalog } from './vocabulary.js';
 import {
   validateComposition,
   type CompositionDiagnostic,
@@ -29,6 +30,8 @@ export interface RenderCompositionOptions {
   /** Called for each mapped event; the composition never carries a handler. */
   readonly onAction?: (action: CompositionAction) => void;
   readonly limits?: CompositionLimits;
+  /** The elements a document may use: Oddkin's published catalog by default, or a library's. */
+  readonly catalog?: Catalog;
 }
 
 export interface RenderedComposition {
@@ -54,7 +57,11 @@ export function renderComposition(
   target: ParentNode,
   options: RenderCompositionOptions,
 ): RenderedComposition {
-  const validation = validateComposition(document, { limits: options.limits ?? {} });
+  const catalog = options.catalog ?? CATALOG;
+  const validation = validateComposition(document, {
+    limits: options.limits ?? {},
+    ...(options.catalog ? { catalog } : {}),
+  });
   if (!validation.ok) return refused(validation.diagnostics);
   const root = (document as CompositionDocument).root;
   const owner = (target as Node).ownerDocument ?? (target as unknown as Document);
@@ -72,13 +79,15 @@ export function renderComposition(
           path: at,
           message: `"${node.element}" is not in this renderer's allow-list.`,
         });
-      else if (Object.hasOwn(CATALOG, node.element) && !registry?.get(node.element))
+      else if (Object.hasOwn(catalog, node.element) && !registry?.get(node.element))
         diagnostics.push({
           code: 'composition.element.unregistered',
           severity: 'error',
           path: at,
           message: `"${node.element}" is not registered.`,
-          suggestion: `Import its registration entry first, e.g. @oddkin/components/define/${node.element.slice(4)}.`,
+          suggestion: options.catalog
+            ? 'Import its registration entry first.'
+            : `Import its registration entry first, e.g. @oddkin/components/define/${node.element.slice(4)}.`,
         });
       walk(node.children ?? [], `${path}/${i}/children`);
     });

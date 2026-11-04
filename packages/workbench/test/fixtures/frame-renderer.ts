@@ -1,15 +1,19 @@
-﻿// The renderer contract (`renderComposition`, `NATIVE`) in miniature, for the frame's tests: it
-// refuses a document whose elements are not allowed or not registered, else appends them, and
-// focuses a `data-focus` element.
+﻿// The renderer contract (`renderComposition`, `NATIVE`, `CATALOG`) in miniature, for the frame's
+// tests: it refuses a document whose elements are not allowed or not registered, else appends
+// them, focuses a `data-focus` element, and names the catalog it was given in `data-catalog`.
 type Child = string | { element: string; attributes?: Record<string, string>; children?: Child[] };
 
 export const NATIVE = { p: {} };
+export const CATALOG = { 'fixture-button': {} };
 
 export function renderComposition(
   document: { root?: Child[] } | null,
   target: Element,
-  options: { allow: readonly string[] },
+  options: { allow: readonly string[]; catalog?: Record<string, unknown> },
 ) {
+  if (options.catalog)
+    target.setAttribute('data-catalog', Object.keys(options.catalog).sort().join(' '));
+  else target.removeAttribute('data-catalog');
   const root = document?.root ?? [];
   const diagnostics: { code: string; severity: string; path: string; message: string }[] = [];
   const check = (nodes: Child[], path: string) =>

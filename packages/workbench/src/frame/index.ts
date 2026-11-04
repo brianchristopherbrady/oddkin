@@ -232,9 +232,10 @@ interface CompositionModule {
   readonly renderComposition?: (
     document: unknown,
     target: ParentNode,
-    options: { readonly allow: readonly string[] },
+    options: { readonly allow: readonly string[]; readonly catalog?: unknown },
   ) => { readonly ok: boolean; readonly diagnostics: readonly unknown[]; dispose(): void };
   readonly NATIVE?: Readonly<Record<string, unknown>>;
+  readonly CATALOG?: Readonly<Record<string, unknown>>;
 }
 
 /** The tags a document's nodes name, so their registrations load before it renders. */
@@ -262,6 +263,8 @@ async function composition(runtime: Runtime, config: FrameCompositionPayload) {
     throw new Error(`${config.renderer} does not export renderComposition.`);
   const rendered = module.renderComposition(config.document, runtime.wrapper, {
     allow: [...Object.keys(registrations), ...Object.keys(module.NATIVE ?? {})],
+    // Generated entries for elements the renderer's own catalog does not hold.
+    ...(config.catalog ? { catalog: { ...module.CATALOG, ...config.catalog } } : {}),
   });
   runtime.composition = rendered;
   // Reply once the elements have rendered, so the host sees their effects (a dialog's focus).

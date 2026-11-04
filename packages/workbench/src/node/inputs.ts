@@ -5,6 +5,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { compositionCatalog } from '@oddkin/analyzer/composition';
 import { DOCS_SCHEMA, type DocsContent, type ResolvedWorkbenchConfig } from '../config/index.js';
 import { exportedSpecifier, resolveExport, type PackageManifest } from '../data/import-map.js';
 import type {
@@ -282,6 +283,10 @@ export async function loadInputs(
     // Importers use the name the package is installed under.
     const registrations = cemRegistrations({ ...(pkg.manifest as PackageManifest), name }, cem);
     const renderer = resolveExport(pkg.manifest, './composition');
+    const own = renderer !== undefined && existsSync(join(pkg.dir, renderer));
+    // Without a renderer of its own, @oddkin/components' renders the catalog generated from the
+    // package's manifest (P1.6), as `oddkin-analyze --composition` writes it.
+    const catalog = !own && cem ? compositionCatalog(cem).catalog : {};
     libraries.push({
       name,
       version: pkg.version,
@@ -289,9 +294,14 @@ export async function loadInputs(
       ...(metadata ? { metadata } : {}),
       ...(examples.length ? { examples } : {}),
       ...(Object.keys(registrations).length ? { registrations } : {}),
-      ...(renderer && existsSync(join(pkg.dir, renderer))
+      ...(own
         ? { composition: `${name}/composition` }
-        : {}),
+        : Object.keys(catalog).length
+          ? {
+              composition: '@oddkin/components/composition',
+              catalog: catalog as unknown as JsonObject,
+            }
+          : {}),
     });
   }
   for (const file of explicitCem) {

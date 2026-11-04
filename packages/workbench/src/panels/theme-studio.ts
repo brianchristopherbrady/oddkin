@@ -308,6 +308,9 @@ export class ThemeStudioElement extends OddkinElement.with({
       const reply = (await preview.request('composition', {
         renderer: composition.renderer,
         registrations: composition.registrations,
+        ...(composition.catalog
+          ? { catalog: composition.catalog as Readonly<Record<string, JsonValue>> }
+          : {}),
         document: parsed.value ?? null,
         settings,
       })) as { diagnostics?: readonly Problem[] } | undefined;

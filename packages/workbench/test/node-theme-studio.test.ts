@@ -247,7 +247,7 @@ describe('Theme Studio page data', () => {
         ['components/acme-button', 'Button'],
         ['components/acme-chip', 'Chip'],
       ]),
-      composition: { package: '@acme/ui', renderer: '@acme/ui/composition' },
+      composition: { renderer: '@acme/ui/composition', packages: ['@acme/ui'] },
     });
     expect(page.studio.screens?.components).toEqual([
       // By title; a page without one keeps its tag.
@@ -291,6 +291,31 @@ describe('Theme Studio page data', () => {
       },
       starters: [],
     });
+    // A package without a renderer of its own: its generated catalog goes with the documents.
+    const badge = { attributes: {}, properties: {}, fixed: [], slots: [''], events: [] };
+    const generated = themeStudioPage('theme-studio', pages, configWith(), {}, out, {
+      titles: new Map(),
+      composition: {
+        renderer: '@oddkin/components/composition',
+        packages: ['@acme/other'],
+        catalog: { 'acme-badge': badge },
+      },
+    });
+    expect(generated.studio.screens?.composition).toEqual({
+      renderer: '@oddkin/components/composition',
+      registrations: { 'acme-badge': '@acme/ui/define/acme-badge' },
+      catalog: { 'acme-badge': badge },
+      starters: [],
+    });
+    // Oddkin's starters need Oddkin's renderer, whose catalog holds their elements.
+    const elsewhere = themeStudioPage('theme-studio', pages, configWith(), {}, out, {
+      titles: new Map(),
+      composition: {
+        renderer: '@acme/ui/composition',
+        packages: ['@acme/ui', '@oddkin/components'],
+      },
+    });
+    expect(elsewhere.studio.screens?.composition?.starters).toEqual([]);
     const without = themeStudioPage('theme-studio', pages, configWith(), {}, out);
     expect(without.studio.screens?.composition).toBeUndefined();
     expect(without.studio.screens?.components.map((c) => c.title)).toEqual([
@@ -397,12 +422,15 @@ describe('Theme Studio page data', () => {
         registrations: { 'odd-card': '@oddkin/components/define/card' },
         starters: STARTERS,
       });
-      // Each element the starters use is registered; elements of @oddkin/ai are not.
+      // Each element the starters use is registered. @oddkin/ai has no renderer of its own: its
+      // elements come with the catalog the analyzer generates from its manifest (P1.6).
       const tags = JSON.stringify(STARTERS)
         .match(/"odd-[a-z-]+"/g)!
         .map((t) => JSON.parse(t));
       for (const tag of tags) expect(screens.composition?.registrations).toHaveProperty([tag]);
-      expect(screens.composition?.registrations).not.toHaveProperty(['odd-message']);
+      expect(screens.composition?.registrations).toHaveProperty(['odd-message']);
+      expect(screens.composition?.catalog).toHaveProperty(['odd-message']);
+      expect(screens.composition?.catalog).not.toHaveProperty(['odd-card']);
       expect(build.frameImportMap?.imports['@oddkin/components/composition']).toBeDefined();
     },
   );
@@ -443,6 +471,7 @@ describe('Theme Studio page data', () => {
     expect(request(payload)).toBe(true);
     // The renderer judges the document; the protocol only needs JSON.
     expect(request({ ...payload, document: null, settings: { mode: 'dark' } })).toBe(true);
+    expect(request({ ...payload, catalog: { 'acme-chip': { slots: [''] } } })).toBe(true);
     for (const bad of [
       { ...payload, renderer: '' },
       { ...payload, renderer: 1 },
@@ -450,6 +479,8 @@ describe('Theme Studio page data', () => {
       { ...payload, registrations: { 'acme-button': 1 } },
       { renderer: payload.renderer, registrations: payload.registrations },
       { ...payload, settings: { mode: 'sepia' } },
+      { ...payload, catalog: ['acme-chip'] },
+      { ...payload, catalog: { 'acme-chip': () => {} } },
     ])
       expect(request(bad), JSON.stringify(bad)).toBe(false);
   });

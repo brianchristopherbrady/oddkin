@@ -318,11 +318,19 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
       { 'plain-old': '@plain/old/src/old.js' },
       { 'plain-indexed': '@plain/indexed' },
     ]);
-    // Theme Studio's composition renderer: a `./composition` export that resolves to a file.
+    // Theme Studio's composition renderer: a `./composition` export that resolves to a file, or,
+    // for a package without one, @oddkin/components' with the catalog the analyzer generates from
+    // the package's manifest (P1.6).
     expect(inputs.libraries.map((library) => library.composition)).toEqual([
       '@plain/kit/composition',
+      '@oddkin/components/composition',
+      '@oddkin/components/composition',
+    ]);
+    const empty = { attributes: {}, properties: {}, fixed: [], slots: [], events: [] };
+    expect(inputs.libraries.map((library) => library.catalog)).toEqual([
       undefined,
-      undefined,
+      { 'plain-old': empty },
+      { 'plain-indexed': empty },
     ]);
   });
 

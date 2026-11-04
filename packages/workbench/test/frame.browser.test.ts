@@ -343,6 +343,8 @@ describe('isolated preview frames', () => {
     // The reply waits for the elements' updates, so a host sees their effects (a dialog's focus).
     expect(wrapper.querySelector('fixture-updating')?.hasAttribute('data-updated')).toBe(true);
     expect(doc.documentElement.dataset['oddMode']).toBe('dark');
+    // The renderer's own catalog is used as it is.
+    expect(wrapper.hasAttribute('data-catalog')).toBe(false);
 
     // Refused whole: an element outside the registrations and the renderer's natives.
     const refused = await preview.request('composition', {
@@ -364,6 +366,13 @@ describe('isolated preview frames', () => {
     expect(wrapper.getAttribute('data-disposed')).toBe('2');
     expect(wrapper.querySelector(':scope > p')).toBeNull();
     expect(wrapper.querySelectorAll('fixture-button')).toHaveLength(1);
+
+    // A catalog generated for a package without a renderer of its own is added to the renderer's.
+    const generated = {
+      'fixture-updating': { attributes: {}, properties: {}, fixed: [], slots: [], events: [] },
+    };
+    await preview.request('composition', { ...base, catalog: generated, document: valid });
+    expect(wrapper.getAttribute('data-catalog')).toBe('fixture-button fixture-updating');
 
     await expect(
       preview.request('composition', {

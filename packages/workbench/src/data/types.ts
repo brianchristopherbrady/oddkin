@@ -32,6 +32,11 @@ export interface LibraryInput {
   readonly registrations?: Readonly<Record<string, string>>;
   /** The module that renders the package's composition documents: its `./composition` export. */
   readonly composition?: string;
+  /**
+   * The package's composition catalog, generated from its manifest (`@oddkin/analyzer`), when the
+   * renderer is not its own: `composition` then names `@oddkin/components/composition`.
+   */
+  readonly catalog?: JsonObject;
 }
 
 /** One component's examples as plain data (`@oddkin/workbench/examples` `ExamplesJSON`). */
@@ -176,12 +181,17 @@ export interface ThemeStudioScreens {
     /** Labels of examples not shown: their setup code runs on the component's page only. */
     readonly omitted: readonly string[];
   }[];
-  /** Composition documents, when a documented package exports a renderer (`./composition`). */
+  /**
+   * Composition documents, when a documented package exports a renderer (`./composition`), or the
+   * analyzer generated a catalog for one that does not.
+   */
   readonly composition?: {
     /** The renderer's import specifier, e.g. `@oddkin/components/composition`. */
     readonly renderer: string;
-    /** Tag → registration entry of the package's documented elements. */
+    /** Tag → registration entry of the elements a document may use. */
     readonly registrations: Readonly<Record<string, string>>;
+    /** Catalog entries the renderer does not hold: packages without a renderer of their own. */
+    readonly catalog?: JsonObject;
     readonly starters: readonly {
       readonly id: string;
       readonly title: string;

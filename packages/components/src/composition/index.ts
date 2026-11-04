@@ -1,8 +1,9 @@
 /**
  * `@oddkin/components/composition`: interfaces described as data, for agents generating
- * structured output and saved compositions. Validates documents against the published catalog
- * and renders them without executable values. Never imported by element entries.
- * Contract: docs/architecture/data-composition.md §8; schemas in `schemas/composition/`.
+ * structured output and saved compositions. Validates documents against the published catalog,
+ * or a library's own (`catalog`), and renders them without executable values. Never imported by
+ * element entries. Contract: docs/architecture/data-composition.md §8; schemas in
+ * `schemas/composition/`.
  */
 export {
   COMPOSITION_VERSION,
@@ -13,6 +14,7 @@ export {
   type CompositionLimits,
   type CompositionNode,
   type CompositionValidation,
+  type ValidateCompositionOptions,
 } from './validate.js';
 export {
   renderComposition,

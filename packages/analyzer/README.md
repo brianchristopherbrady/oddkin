@@ -1,9 +1,9 @@
 # @oddkin/analyzer
 
-Node-only static analysis for Oddkin component libraries. Produces a standard Custom Elements Manifest (`custom-elements.json`, schema 2.1.0) and the Oddkin enrichment manifest (`oddkin.metadata.json`) **without importing or executing** the analyzed code. Development tooling: it depends on the TypeScript 5.9 compiler and is never part of a browser bundle.
+Node-only static analysis for Oddkin component libraries. Produces a standard Custom Elements Manifest (`custom-elements.json`, schema 2.1.0) and the Oddkin enrichment manifest (`oddkin.metadata.json`) **without importing or executing** the analyzed code. Development tooling: it depends on the TypeScript 5.9 compiler, and on `@oddkin/core`'s DOM-free model for the composition schemas, and is never part of a browser bundle.
 
 ```sh
-oddkin-analyze tsconfig.json --out . [--name my-lib --version 1.0.0] [--strict] [--json]
+oddkin-analyze tsconfig.json --out . [--name my-lib --version 1.0.0] [--composition] [--strict] [--json]
 ```
 
 ```ts
@@ -22,6 +22,10 @@ oddkin-analyze --manifest custom-elements.json --out . [--strict] [--json]
 ```
 
 It reads the `defineExamples` files under the package by parsing them, checks each tag against the manifest, and writes only `oddkin.metadata.json`, which describes no components. Export it as `./oddkin.metadata.json`: Workbench then shows presets and examples, change impact selects the examples as checks, and the kits list them. `analyzeManifest({ manifest })` is the same in code.
+
+## Composition catalog
+
+`--composition`, in either mode, also writes what a composition document ([data-composition.md](../../docs/architecture/data-composition.md) §8) may use of the library's elements, generated from its manifest: `oddkin.composition.json` (`{ "version": 1, "catalog": … }`) and its JSON Schemas in `schemas/composition/` (one per element, and `composition.v1.json` for the document). Pass the catalog to `validateComposition(document, { catalog })` and `renderComposition(document, target, { catalog, allow })` from `@oddkin/components/composition`; agents write documents against the schemas. Attributes typed as string, number, boolean, or a union of string literals are writable; an attribute of another type, or a boolean attribute that is on by default, is left out with a warning (`analyzer.composition.*`). Writable properties without an attribute are written as JSON when their type allows it; the others are listed as not portable. `@oddkin/analyzer/composition` exports `compositionCatalog(manifest, { modelTypes, events })`, `compositionSchemas(catalog, manifest, { base, modelSchemas, title, description })`, and `compositionFiles`, without loading TypeScript; `@oddkin/components` builds its own catalog with them.
 
 Contract and limits: [metadata-and-analyzer.md](../../docs/architecture/metadata-and-analyzer.md) §8; front-end decision: ADR 0018.
 

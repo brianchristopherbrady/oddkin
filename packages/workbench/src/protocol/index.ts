@@ -86,6 +86,11 @@ export interface FrameCompositionPayload {
   readonly renderer: string;
   /** Tag → registration entry: the elements the document may use, loaded before it renders. */
   readonly registrations: Readonly<Record<string, string>>;
+  /**
+   * Catalog entries the renderer does not hold (`@oddkin/analyzer/composition`), added to its own
+   * `CATALOG`: the elements of documented packages without a renderer of their own.
+   */
+  readonly catalog?: Readonly<Record<string, JsonValue>>;
   readonly document: JsonValue;
   readonly settings?: FrameSettings;
 }
@@ -375,6 +380,8 @@ export function isFrameCompositionPayload(value: unknown): value is FrameComposi
     typeof value['renderer'] === 'string' &&
     value['renderer'].length > 0 &&
     isStringRecord(value['registrations']) &&
+    (value['catalog'] === undefined ||
+      (isRecord(value['catalog']) && isJsonValue(value['catalog']))) &&
     isJsonValue(value['document']) &&
     (value['settings'] === undefined || isFrameSettings(value['settings']))
   );

@@ -233,4 +233,58 @@ describe('renderComposition', () => {
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(flag).not.toHaveBeenCalled();
   });
+
+  it("renders a library's own elements with its catalog (P1.6)", async () => {
+    // A plain custom element, as a library not built with Oddkin has them.
+    class PlainChip extends HTMLElement {
+      count = 0;
+    }
+    if (!customElements.get('plain-chip')) customElements.define('plain-chip', PlainChip);
+    const catalog = {
+      'plain-chip': {
+        attributes: { label: 'string', removable: 'boolean' },
+        properties: { count: 'number' },
+        fixed: [],
+        slots: [''],
+        events: ['plain-remove'],
+      },
+      'plain-unregistered': { attributes: {}, properties: {}, fixed: [], slots: [], events: [] },
+    } as const;
+    const target = container();
+    const actions: string[] = [];
+    const result = renderComposition(
+      {
+        version: 1,
+        root: [
+          {
+            element: 'plain-chip',
+            attributes: { label: 'Draft', removable: true },
+            properties: { count: 3 },
+            actions: { 'plain-remove': 'chip.remove' },
+            children: ['Draft'],
+          },
+        ],
+      },
+      target,
+      { allow: ['plain-chip'], catalog, onAction: (action) => actions.push(action.action) },
+    );
+    expect([result.ok, result.diagnostics]).toEqual([true, []]);
+    const chip = target.querySelector('plain-chip') as PlainChip;
+    expect([chip.getAttribute('label'), chip.hasAttribute('removable'), chip.count]).toEqual([
+      'Draft',
+      true,
+      3,
+    ]);
+    chip.dispatchEvent(new Event('plain-remove'));
+    expect(actions).toEqual(['chip.remove']);
+    const refused = renderComposition(
+      { version: 1, root: [{ element: 'plain-unregistered' }] },
+      container(),
+      { allow: ['plain-unregistered'], catalog },
+    );
+    expect(refused.diagnostics.map((d) => [d.code, d.suggestion])).toEqual([
+      ['composition.element.unregistered', 'Import its registration entry first.'],
+    ]);
+    result.dispose();
+  });
 });
