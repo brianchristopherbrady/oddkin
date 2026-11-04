@@ -1,9 +1,11 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { validateComposition } from '@oddkin/components/composition';
 import { layerOf, mergeThemes } from '@oddkin/tokens/theme';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { STARTERS } from '../src/data/starters.js';
 import { themeStudioPage } from '../src/data/theme-studio.js';
 import type { ComponentPageData, ThemeStudioPageData } from '../src/data/types.js';
@@ -23,6 +25,7 @@ import {
   type ThemeField,
 } from '../src/panels/theme-model.js';
 import { isFrameRequest } from '../src/protocol/index.js';
+import { acmeProject, removeProject } from './node-project.js';
 
 const component = (
   tag: string,
@@ -529,7 +532,7 @@ describe('Theme Studio page data', () => {
       // Workers have no import map: the library's own generator, by URL, and its own merge of
       // theme files on a base.
       expect(worker).toContain(
-        `import { generate } from ${JSON.stringify(build.frameImportMap?.imports['@oddkin/tokens/generate'])};`,
+        `import * as tokens from ${JSON.stringify(build.frameImportMap?.imports['@oddkin/tokens/generate'])};`,
       );
       expect(worker).toContain(
         `import { mergeThemes } from ${JSON.stringify(build.frameImportMap?.imports['@oddkin/tokens/theme'])};`,
@@ -560,6 +563,81 @@ describe('Theme Studio page data', () => {
       expect(build.frameImportMap?.imports['@oddkin/components/composition']).toBeDefined();
     },
   );
+
+  it("merges a draft's bases and gives each product's values, in Theme Studio's Worker", async () => {
+    const dir = acmeProject();
+    try {
+      const build = await buildWorkbench({ config: dir });
+      const imports = build.frameImportMap?.imports ?? {};
+      // The Worker as built, importing the workspace's own @oddkin/tokens from disk.
+      let text = build.files.get(THEME_WORKER) ?? '';
+      for (const name of ['generate', 'theme'])
+        text = text.replace(
+          JSON.stringify(imports[`@oddkin/tokens/${name}`]),
+          JSON.stringify(pathToFileURL(resolve(`packages/tokens/dist/${name}/index.js`)).href),
+        );
+      const replies: Record<string, unknown>[] = [];
+      let listener: ((event: { data: unknown }) => void) | undefined;
+      vi.stubGlobal('self', {
+        addEventListener: (_type: string, handle: typeof listener) => (listener = handle),
+        postMessage: (message: Record<string, unknown>) => replies.push(message),
+      });
+      const file = join(dir, 'theme-studio.worker.mjs');
+      writeFileSync(file, text);
+      await import(pathToFileURL(file).href);
+      const run = (draft: object, bases: object[], products?: string[]) => {
+        listener?.({
+          data: { id: replies.length, draft, bases, ...(products ? { products } : {}) },
+        });
+        return replies.at(-1) as { ok: boolean; css?: string; values?: Record<string, string> };
+      };
+      const canvas = (light: string) => ({ 'color.canvas': { light, dark: '#101010' } });
+      const base = { brand: { primary: '#123456' }, overrides: canvas('#ffffff') };
+      const products = {
+        kiosk: { brand: { primary: '#aa0000' }, overrides: canvas('#fafafa') },
+        lobby: {},
+      };
+      const product = { extends: './base.json', products };
+      const first = run(product, [base], ['kiosk', 'lobby']);
+      expect(first).toMatchObject({ ok: true, values: { kiosk: expect.any(String) } });
+      expect(first.css).toContain('[data-odd-product="kiosk"]');
+      // An edit to the base's canvas changes lobby, which inherits it, not kiosk, which sets its
+      // own; an edit to its primary changes both, as kiosk's ramps it does not re-declare (the
+      // info tone) follow the theme's: values, not keys, say which products change.
+      const rebased = run(product, [{ ...base, overrides: canvas('#eeeeee') }], ['kiosk', 'lobby']);
+      expect(rebased.values?.['kiosk']).toBe(first.values?.['kiosk']);
+      expect(rebased.values?.['lobby']).not.toBe(first.values?.['lobby']);
+      const primary = run(
+        product,
+        [{ ...base, brand: { primary: '#0a7d33' } }],
+        ['kiosk', 'lobby'],
+      );
+      expect(primary.values?.['lobby']).not.toBe(first.values?.['lobby']);
+      // An edit to one product's overrides leaves another's values byte for byte (multi-product.md
+      // §3). An edit to a product's brand does not yet: the generator selects the contrast roles
+      // for every product's brand at once (reported to Agent 3 on 2026-11-04, a P1.1 fix in their
+      // queue), and the check, which compares values, names what it changes.
+      const edited = {
+        ...product,
+        products: { ...products, kiosk: { ...products.kiosk, overrides: canvas('#f0f0f0') } },
+      };
+      const isolated = run(edited, [base], ['kiosk', 'lobby']);
+      expect(isolated.values?.['lobby']).toBe(first.values?.['lobby']);
+      expect(isolated.values?.['kiosk']).not.toBe(first.values?.['kiosk']);
+      // The file is merged on its base, not under it: its own primary wins whatever the base's.
+      const own = { ...product, brand: { primary: '#222222' } };
+      const lobby = run(own, [base], ['lobby']).values;
+      expect(run(own, [{ ...base, brand: { primary: '#999999' } }], ['lobby']).values).toEqual(
+        lobby,
+      );
+      expect(lobby?.['lobby']).not.toBe(first.values?.['lobby']);
+      // Without products, no values.
+      expect(run(base, [])).not.toHaveProperty('values');
+    } finally {
+      vi.unstubAllGlobals();
+      removeProject(dir);
+    }
+  });
 
   it('validates specimen requests like mounts, item by item', () => {
     const envelope = { protocol: 'oddkin.frame', version: 1, frame: 'f', generation: 1, id: 1 };

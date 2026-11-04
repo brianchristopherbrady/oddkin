@@ -106,8 +106,16 @@ const SPACING: Readonly<
   explicit: [['snap', 'Snap to', 'length']],
 };
 
-/** The form over a draft: only fields that apply to it (e.g. the chosen spacing strategy). */
-export function themeFields(config: unknown, bases: readonly ThemeBase[] = []): ThemeFieldGroup[] {
+/**
+ * The form over a draft: only fields that apply to it (e.g. the chosen spacing strategy). For a
+ * `product` (its `products` entry, with its theme among the bases), its brand inputs and role
+ * overrides, the only values a product sets (multi-product.md §9).
+ */
+export function themeFields(
+  config: unknown,
+  bases: readonly ThemeBase[] = [],
+  product = false,
+): ThemeFieldGroup[] {
   const field = (
     path: ConfigPath,
     unit: ConfigPath,
@@ -133,24 +141,26 @@ export function themeFields(config: unknown, bases: readonly ThemeBase[] = []): 
       id: 'inputs',
       title: 'Theme inputs',
       note: 'Foundation inputs: ramps and roles are generated from them.',
-      fields: BRAND.map(([group, key, label]) =>
+      fields: BRAND.filter(([group]) => !product || group === 'brand').map(([group, key, label]) =>
         field([group, key], [group, key], label, 'color', 'foundation input'),
       ),
     },
   ];
   const spacing = getPath(ownerOf(config, bases, ['spacing'])?.config ?? config, ['spacing']);
   const strategy = isRecord(spacing) ? spacing['strategy'] : undefined;
-  groups.push({
-    id: 'spacing',
-    title: 'Spacing',
-    note:
-      typeof strategy === 'string' && SPACING[strategy]
-        ? `Strategy: ${strategy}. Change the strategy or its steps in the JSON editor.`
-        : 'No spacing strategy configured: the generator default applies. Add `spacing` in the JSON editor.',
-    fields: (typeof strategy === 'string' ? (SPACING[strategy] ?? []) : []).map(
-      ([key, label, kind]) => field(['spacing', key], ['spacing'], label, kind, 'foundation input'),
-    ),
-  });
+  if (!product)
+    groups.push({
+      id: 'spacing',
+      title: 'Spacing',
+      note:
+        typeof strategy === 'string' && SPACING[strategy]
+          ? `Strategy: ${strategy}. Change the strategy or its steps in the JSON editor.`
+          : 'No spacing strategy configured: the generator default applies. Add `spacing` in the JSON editor.',
+      fields: (typeof strategy === 'string' ? (SPACING[strategy] ?? []) : []).map(
+        ([key, label, kind]) =>
+          field(['spacing', key], ['spacing'], label, kind, 'foundation input'),
+      ),
+    });
   // Overrides merge by token, each replaced whole; null removes a base's (theming §1.1).
   const tokens = new Map<string, unknown>();
   for (const layer of [...bases, { config }]) {

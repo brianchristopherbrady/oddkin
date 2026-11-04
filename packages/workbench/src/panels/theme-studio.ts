@@ -21,7 +21,7 @@ import {
   type GenerationResult,
   type ThemeGeneration,
 } from '../preview/theme-generation.js';
-import type { FrameSpecimenItem, JsonValue } from '../protocol/index.js';
+import type { FrameSettings, FrameSpecimenItem, JsonValue } from '../protocol/index.js';
 import { contentStyles, panelHostStyles } from './styles.js';
 import type { ThemeProducts } from './theme-products.js';
 import type { ThemeSave } from './theme-save.js';
@@ -32,6 +32,7 @@ import {
   parseDraft,
   pathText,
   setField,
+  setPath,
   themeFields,
   type ThemeBase,
   type ThemeField,
@@ -98,6 +99,8 @@ export class ThemeStudioElement extends OddkinElement.with({
   readonly #drafts = new Map<string, unknown>();
   /** The file edited. */
   readonly #file = signal('');
+  /** A product of the edited file being edited (its `products` entry), or '' for the file. */
+  readonly #product = signal('');
   readonly #json = signal('');
   readonly #jsonError = signal('');
   readonly #result = signal<GenerationResult | undefined>(undefined);
@@ -120,6 +123,8 @@ export class ThemeStudioElement extends OddkinElement.with({
   /** Per frame, the screen request in flight; frames whose screen changed meanwhile. */
   readonly #sending = new Map<IsolatedPreview, Promise<void>>();
   readonly #again = new Set<IsolatedPreview>();
+  /** Frames beside the light and dark pair (Compare), with their settings; the products own them. */
+  readonly #attached = new Map<IsolatedPreview, FrameSettings>();
   /** Saving to the theme file, when the dev server offers it: the edited file's, of `#saves`. */
   readonly #save = signal<ThemeSave | undefined>(undefined);
   readonly #saves = new Map<string, ThemeSave>();
@@ -196,6 +201,7 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#studioScope?.dispose();
     this.#studioScope = undefined;
     this.#previews = [];
+    this.#attached.clear();
     this.#again.clear();
     this.#generation = undefined;
     this.#css = undefined;
@@ -208,9 +214,10 @@ export class ThemeStudioElement extends OddkinElement.with({
     const studio = page?.studio;
     this.#drafts.clear();
     for (const [file, config] of models(studio)) this.#drafts.set(file, config);
-    // The theme file is the last of its files.
-    const file = models(studio).at(-1)?.[0] ?? '';
+    // The first configured theme's file; of one theme on bases, the last of its files.
+    const file = studio?.themes?.[0]?.file ?? models(studio).at(-1)?.[0] ?? '';
     this.#file.value = file;
+    this.#product.value = '';
     const draft = this.#drafts.get(file);
     this.#draft.value = draft;
     this.#json.value = draft ? JSON.stringify(draft, null, 2) : '';
@@ -261,12 +268,37 @@ export class ThemeStudioElement extends OddkinElement.with({
           get files() {
             return host.page?.studio.files ?? files;
           },
+          get themes() {
+            return host.page?.studio.themes;
+          },
           get file() {
             return host.#file.value;
           },
+          get product() {
+            return host.#product.value;
+          },
+          get css() {
+            return host.#css;
+          },
           draft: (file) => this.#drafts.get(file),
           bases: (file) => this.#bases(file),
-          open: (file) => this.#open(file),
+          open: (file, product) => this.#open(file, product),
+          set: (path, value) => this.#setDraft(setPath(this.#draft.peek(), path, value)),
+          frame: (container, title) => {
+            const preview = createIsolatedPreview({
+              document: this.ownerDocument,
+              container,
+              frameUrl,
+              title,
+            });
+            preview.iframe.style.blockSize = '40rem';
+            return preview;
+          },
+          attach: (preview, settings) => {
+            this.#attached.set(preview, settings);
+            return this.#send(preview);
+          },
+          detach: (preview) => this.#attached.delete(preview),
         });
       });
     }
@@ -283,7 +315,7 @@ export class ThemeStudioElement extends OddkinElement.with({
       preview.iframe.style.blockSize = '40rem';
       scope.add(() => preview.dispose(), 'theme preview frame');
       this.#previews.push(preview);
-      void this.#send(preview, i)
+      void this.#send(preview)
         .then(() => (this.#css === undefined ? undefined : this.#theme(preview, this.#css)))
         .catch((error: unknown) => this.#failed(scope, error));
     });
@@ -316,7 +348,9 @@ export class ThemeStudioElement extends OddkinElement.with({
     const scope = this.#studioScope;
     const root = this.shadowRoot ?? this.ownerDocument;
     const focused = root.activeElement;
-    void Promise.all(this.#previews.map((preview, i) => this.#send(preview, i))).then(
+    void Promise.all(
+      [...this.#previews, ...this.#attached.keys()].map((preview) => this.#send(preview)),
+    ).then(
       () => {
         // A modal dialog on the screen took the focus into its frame: give it back (Firefox
         // does once the frame is blurred and this window has the focus).
@@ -331,7 +365,7 @@ export class ThemeStudioElement extends OddkinElement.with({
   }
 
   /** Latest wins: a frame renders one screen at a time, then only the newest one asked for. */
-  #send(preview: IsolatedPreview, i: number): Promise<void> {
+  #send(preview: IsolatedPreview): Promise<void> {
     const sending = this.#sending.get(preview);
     if (sending) {
       this.#again.add(preview);
@@ -342,7 +376,7 @@ export class ThemeStudioElement extends OddkinElement.with({
         await preview.ready;
         do {
           this.#again.delete(preview);
-          await this.#show(preview, i);
+          await this.#show(preview);
         } while (this.#again.has(preview));
       } finally {
         this.#sending.delete(preview);
@@ -352,11 +386,19 @@ export class ThemeStudioElement extends OddkinElement.with({
     return run;
   }
 
-  /** Send the screen to one frame; the light frame's reply lists a document's problems. */
-  async #show(preview: IsolatedPreview, i: number): Promise<void> {
+  /**
+   * Send the screen to one frame: the pair in its mode, with the product edited; a compared frame
+   * with its own settings. The light frame's reply lists a document's problems.
+   */
+  async #show(preview: IsolatedPreview): Promise<void> {
     const studio = this.page?.studio;
     const screen = this.#screen.peek();
-    const settings = { mode: MODES[i] ?? 'light' };
+    const i = this.#previews.indexOf(preview);
+    const product = this.#product.peek();
+    const settings: FrameSettings = this.#attached.get(preview) ?? {
+      mode: MODES[i] ?? 'light',
+      ...(product ? { product } : {}),
+    };
     if (!studio) return;
     if (screen.startsWith('composition:')) {
       const composition = studio.screens?.composition;
@@ -476,6 +518,7 @@ export class ThemeStudioElement extends OddkinElement.with({
       void this.#theme(preview, result.css).catch(() => {
         // Not connected yet: the sheet is applied once its specimen has mounted.
       });
+    this.#products.peek()?.applied(result.css);
   }
 
   #setDraft(draft: unknown, fromJson = false): void {
@@ -490,16 +533,23 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#generate();
   }
 
-  /** Edit another file of the theme; each keeps its draft. */
-  #open(file: string): void {
-    const draft = this.#drafts.get(file);
-    this.#file.value = file;
-    this.#draft.value = draft;
-    this.#json.value = JSON.stringify(draft, null, 2);
-    this.#jsonError.value = '';
-    this.#exported.value = '';
-    this.#save.value = this.#saves.get(file);
-    this.#generate();
+  /**
+   * Edit another file of the theme, each keeping its draft, or a product of a file (its
+   * `products` entry), which the frames then show.
+   */
+  #open(file: string, product = ''): void {
+    this.#product.value = product;
+    if (file !== this.#file.peek()) {
+      const draft = this.#drafts.get(file);
+      this.#file.value = file;
+      this.#draft.value = draft;
+      this.#json.value = JSON.stringify(draft, null, 2);
+      this.#jsonError.value = '';
+      this.#exported.value = '';
+      this.#save.value = this.#saves.get(file);
+      this.#generate();
+    }
+    this.#showAll();
   }
 
   /** The files `file` builds on, root base first, each with its draft. */
@@ -589,7 +639,17 @@ export class ThemeStudioElement extends OddkinElement.with({
   }
 
   #change(field: ThemeField, input: string): void {
-    this.#setDraft(setField(this.#draft.peek(), field, fieldValue(field, input), this.#bases()));
+    const value = fieldValue(field, input);
+    const form = this.#product.peek() ? this.#products.peek()?.form() : undefined;
+    this.#setDraft(
+      form
+        ? setPath(
+            this.#draft.peek(),
+            form.path,
+            form.value(setField(form.config, field, value, form.bases)),
+          )
+        : setField(this.#draft.peek(), field, value, this.#bases()),
+    );
   }
 
   #field(field: ThemeField) {
@@ -637,7 +697,15 @@ export class ThemeStudioElement extends OddkinElement.with({
     const draft = this.#draft.value;
     const result = this.#result.value;
     const status = this.#status.value;
-    const groups = draft === undefined ? [] : themeFields(draft, this.#bases(this.#file.value));
+    // A product's entries, over what it inherits from its theme; else the file's own.
+    const product = this.#product.value;
+    const form = product ? this.#products.value?.form() : undefined;
+    const groups =
+      draft === undefined
+        ? []
+        : form
+          ? themeFields(form.config, form.bases, true)
+          : themeFields(draft, this.#bases(this.#file.value));
     const problems = result?.diagnostics ?? [];
     // The file edited: one of a theme's files on a base, else the theme file.
     const source = studio.files ? this.#file.value : studio.source;
@@ -648,7 +716,9 @@ export class ThemeStudioElement extends OddkinElement.with({
         ${
           source
             ? html`<p class="wb-muted">
-                Draft of <code>${source}</code>. Edits stay in this page until exported.
+                Draft of
+                <code>${source}</code>${product ? html`, product <code>${product}</code>` : ''}.
+                Edits stay in this page until exported.
               </p>`
             : nothing
         }
@@ -768,6 +838,7 @@ export class ThemeStudioElement extends OddkinElement.with({
               </div>`,
           )}
         </div>
+        ${this.#products.value?.compare() ?? nothing}
         ${
           studio.roles.length && this.#screen.value === 'specimens'
             ? html`<p class="wb-muted">

@@ -464,6 +464,64 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
     });
   });
 
+  it('lists the files of several themes once each, and the themes by name', async () => {
+    const dir = acmeProject({
+      'oddkin.config.ts':
+        "export default { library: { packages: ['@acme/ui'] }, themeStudio: { themes: { clinic: './clinic.theme.json', portal: './portal.theme.json', gone: './gone.theme.json' } } };\n",
+      'base.theme.json': '{ "name": "base", "brand": { "primary": "#123456" } }\n',
+      'clinic.theme.json': '{ "extends": "./base.theme.json", "name": "clinic" }\n',
+      'portal.theme.json':
+        '{ "extends": "./base.theme.json", "name": "portal", "products": { "kiosk": { "brand": { "primary": "#aa0000" } } } }\n',
+    });
+    projects.push(dir);
+    const build = await buildWorkbench({ config: dir, save: true });
+    const { studio } = build.data?.pages['theme-studio'] as ThemeStudioPageData;
+    const url = '/_oddkin/theme-file';
+    expect(studio.files?.map((f) => [f.file, f.base, f.save])).toEqual([
+      ['base.theme.json', undefined, url],
+      ['clinic.theme.json', 'base.theme.json', url],
+      ['portal.theme.json', 'base.theme.json', url],
+    ]);
+    expect(studio.themes).toEqual([
+      { file: 'clinic.theme.json', name: 'clinic' },
+      { file: 'portal.theme.json', name: 'portal' },
+    ]);
+    // The first theme is the baseline, as themeConfig's would be.
+    expect([studio.source, studio.save?.file]).toEqual([
+      './clinic.theme.json',
+      'clinic.theme.json',
+    ]);
+    expect(studio.config).toMatchObject({ name: 'clinic', brand: { primary: '#123456' } });
+    expect([...(build.themeFiles?.keys() ?? [])]).toEqual([
+      'base.theme.json',
+      'clinic.theme.json',
+      'portal.theme.json',
+    ]);
+    expect(build.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'node.themeStudio.config',
+        path: '/themeStudio/themes/gone',
+        message: expect.stringContaining('themeStudio.themes.gone'),
+      }),
+    );
+    // Two themes on no base are listed too: each is a draft of its own.
+    const two = acmeProject({
+      'oddkin.config.ts':
+        "export default { library: { packages: ['@acme/ui'] }, themeStudio: { themeConfig: './a.theme.json', themes: { b: './b.theme.json' } } };\n",
+      'a.theme.json': '{ "name": "a" }\n',
+      'b.theme.json': '{ "name": "b" }\n',
+    });
+    projects.push(two);
+    const pair = (await buildWorkbench({ config: two })).data?.pages[
+      'theme-studio'
+    ] as ThemeStudioPageData;
+    expect(pair.studio.files?.map((f) => f.file)).toEqual(['a.theme.json', 'b.theme.json']);
+    expect(pair.studio.themes).toEqual([
+      { file: 'a.theme.json' },
+      { file: 'b.theme.json', name: 'b' },
+    ]);
+  });
+
   it("writes the file of the theme a save names, and only the theme's own files", async () => {
     const product = '{\n  "extends": "./base.theme.json",\n  "name": "product"\n}\n';
     const base = '{\n  "name": "base",\n  "brand": { "primary": "#123456" }\n}\n';

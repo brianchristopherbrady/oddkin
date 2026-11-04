@@ -52,6 +52,12 @@
         "enabled": { "type": "boolean", "default": true },
         "route": { "type": "string", "default": "/theme-studio" },
         "themeConfig": { "type": "string" },
+        "themes": {
+          "type": "object",
+          "description": "Several themes, by name: a theme file per product (each may extend a shared base file); themeConfig, when set, comes first",
+          "propertyNames": { "pattern": "^[A-Za-z0-9][\\w.-]*$" },
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        },
         "preview": {
           "type": "object",
           "additionalProperties": false,

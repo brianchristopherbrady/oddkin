@@ -1,0 +1,9 @@
+{
+  "library": { "packages": ["@acme/ui"] },
+  "themeStudio": {
+    "themes": {
+      "clinic": "../apps/clinic/clinic.theme.json",
+      "portal": "../apps/portal/portal.theme.json"
+    }
+  }
+}

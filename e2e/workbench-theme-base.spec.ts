@@ -51,7 +51,7 @@ test('edits each file of a theme on a base, and saves the file edited alone', as
     timeout: 45_000,
   });
   const picker = page.locator('#ts-file');
-  const status = page.locator('#generate [role="status"]');
+  const status = page.locator('#ts-impact');
   const primary = page.locator('#ts-brand-primary');
   const action = page.locator('input[data-path="/overrides/color.action.default/light"]');
 

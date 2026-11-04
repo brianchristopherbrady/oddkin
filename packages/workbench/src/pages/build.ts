@@ -272,7 +272,12 @@ export function buildPageRegistry(input: RegistryInput): {
     kind: 'tool',
     title: 'Theme Studio',
     // Without a theme config or token data, only declared CSS custom properties can be edited.
-    available: config.themeStudio.themeConfig || metadata.tokens ? 'full' : 'partial',
+    available:
+      config.themeStudio.themeConfig ||
+      Object.keys(config.themeStudio.themes ?? {}).length ||
+      metadata.tokens
+        ? 'full'
+        : 'partial',
     nav: { card: false, sidebar: false, search: true },
     sections: [],
     ...(config.navigation.legacyRedirects && studioRoute !== '/foundations/theme-studio'

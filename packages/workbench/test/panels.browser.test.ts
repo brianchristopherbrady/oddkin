@@ -14,6 +14,7 @@ import {
 import type { ThemeStudioPageData } from '../src/data/types.js';
 import type { CemPackage, OddkinMetadataLike } from '../src/pages/index.js';
 import type { OddkinComponentPanel } from '../src/panels/component.js';
+import { getPath } from '../src/panels/theme-model.js';
 import { previewProtocolStats } from '../src/preview/frame.js';
 
 // The public panels (`@oddkin/workbench/panels/*`) over a probe component that records every
@@ -1287,7 +1288,7 @@ describe('<oddkin-theme-studio-panel>', () => {
           .find((o) => o.value === file)
           ?.textContent?.replace(/\s+/g, ' ')
           .trim();
-      const status = () => root.querySelector('#generate [role="status"]')?.textContent?.trim();
+      const status = () => root.querySelector('#ts-impact')?.textContent?.trim();
 
       // The theme file is edited first, as written: the base's values are not in its draft.
       await until(() => themed('#123456'), "the base's primary, generated under the product");
@@ -1318,7 +1319,7 @@ describe('<oddkin-theme-studio-panel>', () => {
         'value',
         JSON.stringify(product, null, 2),
       );
-      expect(root.querySelector('#generate')?.textContent).toContain(
+      expect(root.querySelector('#generate')?.textContent?.replace(/\s+/g, ' ')).toContain(
         'Draft of product.theme.json.',
       );
       // Edits made while a draft is generating are generated on the bases too.
@@ -1344,7 +1345,9 @@ describe('<oddkin-theme-studio-panel>', () => {
       open('base.theme.json');
       await settled();
       expect(panel.draft).toEqual(baseTheme);
-      expect(root.querySelector('#generate')?.textContent).toContain('Draft of base.theme.json.');
+      expect(root.querySelector('#generate')?.textContent?.replace(/\s+/g, ' ')).toContain(
+        'Draft of base.theme.json.',
+      );
       expect(root.querySelector('#export')?.textContent).toContain('Download base.theme.json');
       expect(root.querySelector('#ts-file-note')?.textContent).toContain(
         'Products on it: product.theme.json.',
@@ -1466,7 +1469,7 @@ describe('<oddkin-theme-studio-panel>', () => {
     expect(root.querySelector('#ts-file-note')?.textContent?.trim()).toBe(
       'Products on it: leaf.json.',
     );
-    expect(root.querySelector('#generate [role="status"]')?.textContent?.trim()).toBe('');
+    expect(root.querySelector('#ts-impact')?.textContent?.trim()).toBe('');
     // A rebuild that renames a file restarts: each draft belongs to its file.
     panel.page = {
       ...page,
@@ -1501,17 +1504,26 @@ describe('<oddkin-theme-studio-panel>', () => {
       scope,
       {
         files,
+        themes: undefined,
         file: 'base.json',
+        product: '',
+        css: undefined,
         draft: (file) => drafts.get(file),
         bases: (file) =>
           file === 'base.json' ? [] : [{ file: 'base.json', config: drafts.get('base.json') }],
         open: () => {},
+        set: () => {},
+        frame: () => {
+          throw new Error('This test compares nothing.');
+        },
+        attach: async () => {},
+        detach: () => {},
       },
     );
     const host = document.createElement('div');
     const status = () => {
       render(products.render(), host);
-      return host.querySelector('[role="status"]')?.textContent?.trim();
+      return host.querySelector('#ts-impact')?.textContent?.trim();
     };
     try {
       await products.check();
@@ -1528,6 +1540,246 @@ describe('<oddkin-theme-studio-panel>', () => {
       drafts.set('base.json', files[0]!.config);
       await Promise.all([older, products.check()]);
       expect(status()).toBe('');
+    } finally {
+      scope.dispose();
+    }
+  });
+
+  it('edits each theme and the products of a file, adds a product, and compares chosen ones', async () => {
+    const frames = previewProtocolStats().liveFrames;
+    const page = studioPage();
+    const canvas = { 'color.canvas': { light: '#ffffff', dark: '#000000' } };
+    const base = { brand: { primary: '#123456' }, overrides: canvas };
+    const clinic = { extends: './base.theme.json', brand: { primary: '#0a7d33' } };
+    const portal = {
+      extends: './base.theme.json',
+      products: { kiosk: { brand: { primary: '#aa0000' } }, lobby: {} },
+    };
+    const files = [
+      { file: 'base.theme.json', config: base },
+      { file: 'clinic.theme.json', config: clinic, base: 'base.theme.json' },
+      { file: 'portal.theme.json', config: portal, base: 'base.theme.json' },
+    ];
+    const themes = [
+      { file: 'clinic.theme.json', name: 'clinic' },
+      { file: 'portal.theme.json', name: 'portal' },
+    ];
+    const panel = document.createElement('oddkin-theme-studio-panel');
+    panel.frameUrl = frameUrl;
+    panel.page = { ...page, studio: { ...page.studio, files, themes } };
+    mounted.push(panel);
+    document.body.append(panel);
+    const root = panel.shadowRoot!;
+    const sheets = (previews: readonly { iframe: HTMLIFrameElement }[], value: string) =>
+      previews.length > 0 &&
+      previews.every((preview) =>
+        [...(preview.iframe.contentDocument?.adoptedStyleSheets ?? [])].some((sheet) =>
+          [...sheet.cssRules].some((rule) => rule.cssText.includes(value)),
+        ),
+      );
+    const picker = () => root.querySelector<HTMLSelectElement>('#ts-file')!;
+    const open = (value: string) => {
+      picker().value = value;
+      picker().dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    const set = (target: HTMLInputElement | null, value: string) => {
+      target!.value = value;
+      target!.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    const input = (id: string) => root.querySelector<HTMLInputElement>(`#${id}`);
+    const status = () => root.querySelector('#ts-impact')?.textContent?.trim();
+    const text = (selector: string) =>
+      root.querySelector(selector)?.textContent?.replace(/\s+/g, ' ').trim();
+
+    // The first theme is edited first; the picker lists every file and each file's products.
+    await until(() => sheets(panel.previews, '#0a7d33'), "clinic's primary");
+    await until(() => !!picker(), 'the picker');
+    expect([...picker().options].map((o) => o.textContent?.trim())).toEqual([
+      'base.theme.json (base)',
+      'clinic',
+      'portal',
+      'portal / kiosk',
+      'portal / lobby',
+    ]);
+    expect(picker().value).toBe('clinic.theme.json');
+
+    // A product of a file: its own entries over its theme, shown with the product's setting.
+    const productOf = (iframe: HTMLIFrameElement) =>
+      iframe.contentDocument?.querySelector<HTMLElement>('[data-oddkin-preview]')?.dataset[
+        'oddProduct'
+      ];
+    open('portal.theme.json#kiosk');
+    await until(
+      () => panel.previews.every((p) => productOf(p.iframe) === 'kiosk'),
+      'the product in both frames',
+    );
+    expect(panel.draft).toEqual(portal);
+    expect(text('#generate')).toContain('Draft of portal.theme.json, product kiosk.');
+    expect(input('ts-brand-primary')?.value).toBe('#aa0000');
+    expect(input('ts-status-danger')).toBeNull();
+    expect(root.querySelector('[data-group="spacing"]')).toBeNull();
+    const row = root.querySelector('[data-group="overrides"] tbody tr');
+    expect(row?.querySelector('th')?.textContent).toContain('from base.theme.json');
+    set(input('ts-brand-primary'), '#bb0000');
+    await until(() => sheets(panel.previews, '#bb0000'), "kiosk's new primary");
+    // An inherited override is copied into the product, then edited; lobby is untouched.
+    set(row?.querySelector('input') ?? null, '#fafafa');
+    await settled();
+    expect(panel.draft).toEqual({
+      ...portal,
+      products: {
+        kiosk: {
+          brand: { primary: '#bb0000' },
+          overrides: { 'color.canvas': { light: '#fafafa', dark: '#000000' } },
+        },
+        lobby: {},
+      },
+    });
+    await until(() => !!status(), 'what the edit changes');
+    expect(status()).toBe('This edit changes no product. Unchanged: portal / lobby.');
+
+    // A new product from a brand colour, in the file edited; a bad name or a taken one says so.
+    const add = (name: string, colour: string) => {
+      set(input('ts-new-product'), name);
+      set(input('ts-new-brand'), colour);
+      root.querySelector<HTMLFormElement>('form[aria-label="New product"]')!.requestSubmit();
+    };
+    const message = () => root.querySelector('#ts-product-status')?.textContent?.trim();
+    add('kiosk', '#00aa55');
+    await settled();
+    expect(message()).toBe('portal.theme.json already has a product kiosk.');
+    add('a b', '#00aa55');
+    await settled();
+    expect(message()).toBe('Name the product with letters, digits, "-", and "_".');
+    add('museum', '#00aa55');
+    await settled();
+    expect(message()).toBe('Added museum to the draft of portal.theme.json.');
+    expect(getPath(panel.draft, ['products', 'museum'])).toEqual({
+      brand: { primary: '#00aa55' },
+    });
+    expect(picker().value).toBe('portal.theme.json#museum');
+    await until(() => sheets(panel.previews, '#00aa55'), "museum's primary");
+
+    // Compare: chosen products beside the one edited, in light and dark, on the same screen.
+    const choices = () => [
+      ...root.querySelectorAll<HTMLLabelElement>('fieldset[data-group="compare"] label'),
+    ];
+    const choice = (label: string) =>
+      choices()
+        .find((l) => l.textContent?.trim() === label)
+        ?.querySelector('input');
+    expect(choices().map((l) => l.textContent?.trim())).toEqual([
+      'clinic',
+      'portal',
+      'portal / kiosk',
+      'portal / lobby',
+    ]);
+    const check = (label: string, on: boolean) => {
+      const box = choice(label)!;
+      box.checked = on;
+      box.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    const compared = (label: string) =>
+      [
+        ...(root.querySelector(`section[aria-label="${label}"]`)?.querySelectorAll('iframe') ?? []),
+      ].map((iframe) => ({ iframe }));
+    check('clinic', true);
+    check('portal / kiosk', true);
+    await until(() => sheets(compared('clinic'), '#0a7d33'), "clinic's frames");
+    await until(() => sheets(compared('portal / kiosk'), '#bb0000'), "kiosk's frames");
+    expect(compared('portal / kiosk').map(({ iframe }) => productOf(iframe))).toEqual([
+      'kiosk',
+      'kiosk',
+    ]);
+    expect(previewProtocolStats().liveFrames).toBe(frames + 6);
+    // Compared products of the file edited take each new CSS; compared frames follow the screen.
+    set(input('ts-brand-primary'), '#00bb66');
+    await until(() => sheets(compared('portal / kiosk'), '#00bb66'), "the edit beside kiosk's");
+    const screen = root.querySelector<HTMLSelectElement>('#ts-screen')!;
+    screen.value = 'component:fixture-button';
+    screen.dispatchEvent(new Event('change', { bubbles: true }));
+    await until(
+      () =>
+        compared('clinic').every(
+          ({ iframe }) => !!iframe.contentDocument?.querySelector('figure[data-role="quiet"]'),
+        ),
+      'the screen in the compared frames',
+    );
+    check('clinic', false);
+    await settled();
+    expect(root.querySelector('section[aria-label="clinic"]')).toBeNull();
+    expect(previewProtocolStats().liveFrames).toBe(frames + 4);
+
+    // The base: an edit names each theme and product it changes; compared files follow it.
+    open('base.theme.json');
+    set(input('ts-brand-primary'), '#222222');
+    // The museum edit's result shows until the base edit's replaces it.
+    const based =
+      'This edit changes portal, portal / lobby. Unchanged: clinic, portal / kiosk, portal / museum.';
+    await until(() => status() === based, 'what the base edit changes');
+    await until(() => sheets(compared('portal / kiosk'), '#222222'), 'kiosk on the edited base');
+  });
+
+  it("lists a file's products as merged, and forms a product over its theme and bases", async () => {
+    const { ThemeProducts } = await import('../src/panels/theme-products.js');
+    const { themeFields } = await import('../src/panels/theme-model.js');
+    const scope = createScope({ name: 'theme products form test' });
+    const files = [
+      {
+        file: 'base.json',
+        config: {
+          brand: { primary: '#111111' },
+          products: { kiosk: { brand: { neutral: '#555555' } }, retired: {} },
+        },
+      },
+      {
+        file: 'portal.json',
+        config: { brand: { neutral: '#888888' }, products: { kiosk: {}, retired: null } },
+        base: 'base.json',
+      },
+    ];
+    const drafts = new Map<string, unknown>(files.map((f) => [f.file, f.config]));
+    const products = new ThemeProducts(
+      new URL('./fixtures/theme-worker.ts', import.meta.url).href,
+      scope,
+      {
+        files,
+        themes: [{ file: 'portal.json', name: 'portal' }],
+        file: 'portal.json',
+        product: 'kiosk',
+        css: undefined,
+        draft: (file) => drafts.get(file),
+        bases: (file) =>
+          file === 'base.json' ? [] : [{ file: 'base.json', config: drafts.get('base.json') }],
+        open: () => {},
+        set: () => {},
+        frame: () => {
+          throw new Error('This test compares nothing.');
+        },
+        attach: async () => {},
+        detach: () => {},
+      },
+    );
+    const host = document.createElement('div');
+    try {
+      render(products.render(), host);
+      // A product a base declares belongs to the files on it, unless a file removes it (null).
+      expect([...host.querySelectorAll('option')].map((o) => o.textContent?.trim())).toEqual([
+        'base.json (base)',
+        'base.json / kiosk',
+        'base.json / retired',
+        'portal',
+        'portal / kiosk',
+      ]);
+      // A product's own entries win over its theme's, and a base's entries for it over the
+      // file's theme: kiosk's neutral comes from the base's kiosk, not portal's theme.
+      const form = products.form()!;
+      const neutral = themeFields(form.config, form.bases, true)[0]?.fields[1];
+      expect(neutral?.inherited).toEqual({ file: 'base.json (kiosk)', value: '#555555' });
+      expect(form.path).toEqual(['products', 'kiosk']);
+      expect(form.value({ brand: { primary: '#222222' } })).toEqual({
+        brand: { primary: '#222222' },
+      });
     } finally {
       scope.dispose();
     }

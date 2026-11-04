@@ -14,7 +14,7 @@ import {
   type ImportMap,
   type PackageManifest,
 } from '../data/import-map.js';
-import type { WorkbenchData } from '../data/types.js';
+import type { JsonObject, WorkbenchData } from '../data/types.js';
 import { DiagnosticList, isObject, type WorkbenchDiagnostic } from '../internal/diagnostics.js';
 import { loadWorkbenchConfig } from './config.js';
 import { exampleModule, registrationsByTag } from './example-modules.js';
@@ -87,23 +87,29 @@ function unwritable(file: string, shown: string): string | undefined {
 
 /**
  * Workers have no import map, so the generator is imported by URL (its graph has no bare
- * specifiers). Requests are `{ id, draft, bases }`: a file's draft, generated on its bases' drafts
- * (root first), merged with the library's own `mergeThemes` as its CLI merges the files. Replies
+ * specifiers). Requests are `{ id, draft, bases, products? }`: a file's draft, generated on its
+ * bases' drafts (root first), merged with the library's own `mergeThemes` as its CLI merges the
+ * files; with `products`, the reply also carries each product's values, every token in each mode
+ * and gamut (`resolveToken`), so a check compares a product's values, not its file's CSS. Replies
  * carry plain data only (theming §8).
  */
 const themeWorker = (
   generator: string,
   merge: string | undefined,
-) => `import { generate } from ${JSON.stringify(generator)};
+) => `import * as tokens from ${JSON.stringify(generator)};
 ${merge ? `import { mergeThemes } from ${JSON.stringify(merge)};` : 'const mergeThemes = undefined;'}
 
+const valuesOf = (theme, product) =>
+  JSON.stringify([...theme.tokens.keys()].flatMap((name) => theme.modes.flatMap((mode) => ['srgb', 'p3'].map((gamut) => tokens.resolveToken(theme, name, { mode, product, gamut }) ?? null))));
+
 self.addEventListener('message', (event) => {
-  const { id, draft, bases = [] } = event.data;
+  const { id, draft, bases = [], products } = event.data;
   const start = performance.now();
   try {
     if (bases.length && !mergeThemes) throw new Error('This @oddkin/tokens cannot merge a base file: it has no ./theme mergeThemes.');
-    const result = generate(bases.length ? [...bases, draft].reduce((merged, layer) => mergeThemes(merged, layer)) : draft);
-    self.postMessage({ id, ok: result.ok, css: result.css, diagnostics: result.diagnostics, ms: performance.now() - start });
+    const result = tokens.generate(bases.length ? [...bases, draft].reduce((merged, layer) => mergeThemes(merged, layer)) : draft);
+    const values = products && result.ok && tokens.resolveToken ? Object.fromEntries(products.map((product) => [product, valuesOf(result.theme, product)])) : undefined;
+    self.postMessage({ id, ok: result.ok, css: result.css, diagnostics: result.diagnostics, ms: performance.now() - start, ...(values ? { values } : {}) });
   } catch (error) {
     self.postMessage({ id, ok: false, diagnostics: [{ severity: 'error', code: 'generate.failed', path: '', message: String(error) }], ms: performance.now() - start });
   }
@@ -203,14 +209,23 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
   const generator = frame.importMap.imports['@oddkin/tokens/generate'];
   const worker = generator ? `${config.hosting.basePath}${ASSET_DIR}${THEME_WORKER}` : undefined;
   const theme = inputs.theme;
+  const themes = inputs.themes ?? [];
   const shown = (file: string) => relative(loaded.root, file).split(sep).join('/');
-  // In the dev server, each file of the theme Theme Studio may write, by the path it shows.
+  // The files of every theme, each once, root base first, with the file each extends.
+  const all = new Map<string, { config: JsonObject; base?: string }>();
+  for (const { layers } of themes)
+    layers.forEach((layer, i) => {
+      const below = layers[i - 1];
+      if (!all.has(layer.file))
+        all.set(layer.file, { config: layer.config, ...(below ? { base: below.file } : {}) });
+    });
+  // In the dev server, each file of the themes Theme Studio may write, by the path it shows.
   const writable = new Map<string, string>();
   const reasons = new Map<string, string>();
-  for (const layer of options.save ? (theme?.layers ?? []) : []) {
-    const reason = unwritable(layer.file, shown(layer.file));
-    if (reason) reasons.set(layer.file, reason);
-    else writable.set(shown(layer.file), layer.file);
+  for (const file of options.save ? all.keys() : []) {
+    const reason = unwritable(file, shown(file));
+    if (reason) reasons.set(file, reason);
+    else writable.set(shown(file), file);
   }
   const url = `${config.hosting.basePath}${ASSET_DIR}${THEME_FILE}`;
   const save =
@@ -218,24 +233,20 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
       ? { file: shown(theme.file), url }
       : undefined;
   const unsaveable = theme && reasons.get(theme.file);
-  // A theme on a base: each file as written, so Theme Studio edits and saves one without the other.
-  const layers =
-    theme && theme.layers.length > 1
-      ? theme.layers.map((layer, i) => {
-          const below = theme.layers[i - 1];
-          const reason = reasons.get(layer.file);
-          return {
-            file: shown(layer.file),
-            config: layer.config,
-            ...(below ? { base: shown(below.file) } : {}),
-            ...(reason
-              ? { unsaveable: reason }
-              : writable.has(shown(layer.file))
-                ? { save: url }
-                : {}),
-          };
-        })
-      : undefined;
+  // Several themes, or a theme on a base: each file as written, so Theme Studio edits and saves
+  // one without another.
+  const listed = themes.length > 1 || themes.some((t) => t.layers.length > 1);
+  const listedFiles = listed
+    ? [...all].map(([file, { config, base }]) => {
+        const reason = reasons.get(file);
+        return {
+          file: shown(file),
+          config,
+          ...(base ? { base: shown(base) } : {}),
+          ...(reason ? { unsaveable: reason } : writable.has(shown(file)) ? { save: url } : {}),
+        };
+      })
+    : undefined;
   const { data, diagnostics } = buildWorkbenchData({
     config,
     libraries: inputs.libraries,
@@ -243,7 +254,15 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
     ...(inputs.tokens ? { tokens: inputs.tokens } : {}),
     theme: {
       ...(theme ? { config: theme.config, source: theme.source } : {}),
-      ...(layers ? { files: layers } : {}),
+      ...(listedFiles
+        ? {
+            files: listedFiles,
+            themes: themes.map((t) => ({
+              file: shown(t.file),
+              ...(t.name === undefined ? {} : { name: t.name }),
+            })),
+          }
+        : {}),
       ...(worker ? { worker } : {}),
       ...(save ? { save } : {}),
       ...(unsaveable ? { unsaveable } : {}),

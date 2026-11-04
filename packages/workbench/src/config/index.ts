@@ -47,6 +47,11 @@ export interface WorkbenchConfig {
     readonly enabled?: boolean;
     readonly route?: string;
     readonly themeConfig?: string;
+    /**
+     * Several themes, by name: a theme file per product, as each app in a monorepo links its own
+     * stylesheet. Each may extend a shared base file. `themeConfig`, when set, comes first.
+     */
+    readonly themes?: Readonly<Record<string, string>>;
     readonly preview?: {
       readonly recipe?: string;
       readonly roles?: Readonly<
@@ -91,6 +96,7 @@ export interface ResolvedWorkbenchConfig {
     readonly enabled: boolean;
     readonly route: string;
     readonly themeConfig?: string;
+    readonly themes: Readonly<Record<string, string>>;
     readonly preview: NonNullable<NonNullable<WorkbenchConfig['themeStudio']>['preview']>;
   };
   readonly products: {
@@ -130,6 +136,8 @@ const TOP_LEVEL = new Set([
   'assets',
 ]);
 const BASE_PATH = /^\/(.*\/)?$/;
+/** A theme's name in `themeStudio.themes`, as Theme Studio shows it. */
+const THEME_NAME = /^[A-Za-z0-9][\w.-]*$/;
 
 /**
  * Validate a configuration (from `oddkin.config.*` or JSON) and apply defaults. Returns
@@ -222,6 +230,16 @@ export function resolveWorkbenchConfig(input: unknown): {
       '/themeStudio/route',
     );
   }
+  const themes: Record<string, string> = {};
+  for (const [name, file] of Object.entries(c.themeStudio?.themes ?? {})) {
+    if (!THEME_NAME.test(name) || typeof file !== 'string' || !file)
+      out.error(
+        'config.themeStudio.themes',
+        `themeStudio.themes.${name} must name a theme file, under a name of letters, digits, ".", "_", and "-".`,
+        `/themeStudio/themes/${name}`,
+      );
+    else themes[name] = file;
+  }
   const placement = c.products?.placement ?? ['foundations'];
   placement.forEach((p, i) => {
     if (p !== 'foundations' && p !== 'primary') {
@@ -265,6 +283,7 @@ export function resolveWorkbenchConfig(input: unknown): {
         enabled: c.themeStudio?.enabled ?? true,
         route,
         ...(themeConfig === undefined ? {} : { themeConfig }),
+        themes,
         preview: c.themeStudio?.preview ?? {},
       },
       products: {

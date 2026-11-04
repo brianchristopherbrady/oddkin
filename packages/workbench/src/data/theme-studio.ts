@@ -44,8 +44,10 @@ export interface ThemeStudioInput {
   readonly save?: ThemeStudioPageData['studio']['save'];
   /** What a theme file the dev server cannot write needs instead. */
   readonly unsaveable?: string;
-  /** A theme file on a base: its files, root base first (P1.1 `extends`). */
+  /** Several themes, or a theme file on a base: their files, root base first (P1.1 `extends`). */
   readonly files?: ThemeStudioPageData['studio']['files'];
+  /** With `files`: the configured themes. */
+  readonly themes?: ThemeStudioPageData['studio']['themes'];
 }
 
 const roleId = (value: string) => value.replace(/^role:/, '');
@@ -202,7 +204,7 @@ export function themeStudioPage(
   if (!input.config)
     missing.unshift({
       item: 'config',
-      supply: 'themeStudio.themeConfig (a theme configuration file)',
+      supply: 'themeStudio.themeConfig or themeStudio.themes (theme configuration files)',
     });
   if (!input.worker)
     missing.unshift({
@@ -220,6 +222,7 @@ export function themeStudioPage(
       ...(input.config ? { config: input.config } : {}),
       ...(input.source ? { source: input.source } : {}),
       ...(input.files ? { files: input.files } : {}),
+      ...(input.themes ? { themes: input.themes } : {}),
       ...(input.worker ? { worker: input.worker } : {}),
       ...(input.save ? { save: input.save } : {}),
       roles,

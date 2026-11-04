@@ -223,10 +223,16 @@ export interface ThemeStudioPageData extends PageDataBase {
     /** The configuration file, as `themeStudio.themeConfig` names it. */
     readonly source?: string;
     /**
-     * A theme file on a base (P1.1 `extends`): its files from the root base to the theme file,
-     * each as written, so Theme Studio edits and saves one without copying another into it.
+     * Several themes, or a theme file on a base (P1.1 `extends`): their files, each once, root
+     * base first, each as written, so Theme Studio edits and saves one without copying another
+     * into it.
      */
     readonly files?: readonly ThemeStudioFile[];
+    /**
+     * With `files`: the configured themes, in order (`themeStudio.themeConfig`, then
+     * `themeStudio.themes`), each by its file in `files` and its name.
+     */
+    readonly themes?: readonly { readonly file: string; readonly name?: string }[];
     /** URL of the generation worker (the library's own `@oddkin/tokens/generate`). */
     readonly worker?: string;
     /** In the dev server: the theme file it writes, after showing the diff (workbench.md §9). */

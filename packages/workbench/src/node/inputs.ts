@@ -28,25 +28,33 @@ export const DOCS_FILES = [
   'oddkin.docs.json',
 ] as const;
 
+/** A configured theme, loaded. */
+export interface ThemeInput {
+  /** Its name in `themeStudio.themes`; none for `themeStudio.themeConfig`. */
+  readonly name?: string;
+  /** The merged model: the file on its bases. */
+  readonly config: JsonObject;
+  /** As the configuration writes it. */
+  readonly source: string;
+  /** The theme file's absolute path. */
+  readonly file: string;
+  /**
+   * Its files from the root base to the theme file (P1.1 `extends`), each with its absolute path
+   * and its own model as written; one when it extends no base.
+   */
+  readonly layers: readonly { readonly file: string; readonly config: JsonObject }[];
+}
+
 export interface WorkbenchInputs {
   readonly libraries: readonly LibraryInput[];
   /** The documented packages and their runtime dependencies: what preview frames load. */
   readonly graph: readonly InstalledPackage[];
   readonly docs?: DocsContent;
   readonly tokens?: TokenInspectionLike;
-  /** Theme Studio's baseline: `themeStudio.themeConfig` as its JSON model. */
-  readonly theme?: {
-    /** The merged model: the file on its bases. */
-    readonly config: JsonObject;
-    readonly source: string;
-    /** The theme file's absolute path. */
-    readonly file: string;
-    /**
-     * Its files from the root base to the theme file (P1.1 `extends`), each with its absolute path
-     * and its own model as written; one when it extends no base.
-     */
-    readonly layers: readonly { readonly file: string; readonly config: JsonObject }[];
-  };
+  /** Theme Studio's baseline: the first configured theme (`themes[0]`). */
+  readonly theme?: ThemeInput;
+  /** Every configured theme: `themeStudio.themeConfig` first, then `themeStudio.themes`. */
+  readonly themes?: readonly ThemeInput[];
   /** Files read as data; a change to one rebuilds the data. */
   readonly dataFiles: readonly string[];
   /** Each loaded example set's source file, by component tag. */
@@ -345,10 +353,10 @@ export async function loadInputs(
     }
   }
 
-  const theme = await loadThemeConfig(root, config, graph, out, dataFiles);
+  const themes = await loadThemes(root, config, graph, out, dataFiles);
   const content = await loadContent(root, config, out);
   return {
-    ...(theme ? { theme } : {}),
+    ...(themes[0] ? { theme: themes[0], themes } : {}),
     libraries,
     graph,
     ...(content.docs ? { docs: content.docs } : {}),
@@ -360,63 +368,72 @@ export async function loadInputs(
 }
 
 /**
- * `themeStudio.themeConfig` as the JSON-compatible model, loaded with the project's own
- * `@oddkin/tokens/node` `loadConfig()` (theming-and-styling.md ?9): the CLI and Theme Studio
- * start from the same model. JS and TS configurations are trusted project code.
+ * Each configured theme as its JSON-compatible model, `themeStudio.themeConfig` first, then
+ * `themeStudio.themes` by name, loaded with the project's own `@oddkin/tokens/node`
+ * `loadConfig()` (theming-and-styling.md §9): the CLI and Theme Studio start from the same model.
+ * JS and TS configurations are trusted project code.
  */
-async function loadThemeConfig(
+async function loadThemes(
   root: string,
   config: ResolvedWorkbenchConfig,
   graph: readonly InstalledPackage[],
   out: DiagnosticList,
   dataFiles: string[],
-): Promise<WorkbenchInputs['theme']> {
-  const source = config.themeStudio.themeConfig;
-  if (!source) return undefined;
-  const file = resolve(root, source);
-  const path = '/themeStudio/themeConfig';
-  if (!existsSync(file)) {
-    out.warn('node.themeStudio.config', `themeStudio.themeConfig: ${file} does not exist.`, path);
-    return undefined;
-  }
-  dataFiles.push(file);
+): Promise<ThemeInput[]> {
+  const { themeConfig, themes } = config.themeStudio;
+  const sources: { readonly name?: string; readonly source: string; readonly key: string }[] = [
+    ...(themeConfig ? [{ source: themeConfig, key: 'themeConfig' }] : []),
+    ...Object.entries(themes).map(([name, source]) => ({ name, source, key: `themes/${name}` })),
+  ];
+  if (!sources.length) return [];
   const dir =
     graph.find((pkg) => pkg.name === '@oddkin/tokens')?.dir ??
     findPackageDir('@oddkin/tokens', root);
   const entry = dir ? resolveExport(readPackage(dir).manifest, './node') : undefined;
-  if (!dir || !entry) {
-    out.warn(
-      'node.themeStudio.loader',
-      'themeStudio.themeConfig needs @oddkin/tokens (its ./node export) installed to load the configuration.',
-      path,
-    );
-    return undefined;
+  const loaded: ThemeInput[] = [];
+  for (const { source, key, ...named } of sources) {
+    const file = resolve(root, source);
+    const path = `/themeStudio/${key}`;
+    const label = `themeStudio.${key.replace('/', '.')}`;
+    if (!existsSync(file)) {
+      out.warn('node.themeStudio.config', `${label}: ${file} does not exist.`, path);
+      continue;
+    }
+    if (!dataFiles.includes(file)) dataFiles.push(file);
+    if (!dir || !entry) {
+      out.warn(
+        'node.themeStudio.loader',
+        `${label} needs @oddkin/tokens (its ./node export) installed to load the configuration.`,
+        path,
+      );
+      continue;
+    }
+    try {
+      const tokens = (await import(pathToFileURL(join(dir, entry)).href)) as {
+        loadConfig(file: string): Promise<{
+          config: unknown;
+          diagnostics: readonly { severity?: string; path?: string; message?: string }[];
+          layers?: readonly { file: string; config: unknown }[];
+        }>;
+      };
+      const result = await tokens.loadConfig(file);
+      for (const d of result.diagnostics)
+        out.warn('node.themeStudio.config', `${source}${d.path ?? ''}: ${d.message ?? ''}`, path);
+      if (!isObject(result.config)) continue;
+      // A loader without layers (before P1.1's `extends`) read the file alone.
+      const layers = (result.layers ?? [{ file, config: result.config }]).map((layer) => ({
+        file: layer.file,
+        config: (isObject(layer.config) ? layer.config : {}) as JsonObject,
+      }));
+      for (const layer of layers) if (!dataFiles.includes(layer.file)) dataFiles.push(layer.file);
+      loaded.push({ ...named, config: result.config as JsonObject, source, file, layers });
+    } catch (error) {
+      out.warn(
+        'node.themeStudio.config',
+        `${label}: ${error instanceof Error ? error.message : String(error)}`,
+        path,
+      );
+    }
   }
-  try {
-    const tokens = (await import(pathToFileURL(join(dir, entry)).href)) as {
-      loadConfig(file: string): Promise<{
-        config: unknown;
-        diagnostics: readonly { severity?: string; path?: string; message?: string }[];
-        layers?: readonly { file: string; config: unknown }[];
-      }>;
-    };
-    const result = await tokens.loadConfig(file);
-    for (const d of result.diagnostics)
-      out.warn('node.themeStudio.config', `${source}${d.path ?? ''}: ${d.message ?? ''}`, path);
-    if (!isObject(result.config)) return undefined;
-    // A loader without layers (before P1.1's `extends`) read the file alone.
-    const layers = (result.layers ?? [{ file, config: result.config }]).map((layer) => ({
-      file: layer.file,
-      config: (isObject(layer.config) ? layer.config : {}) as JsonObject,
-    }));
-    for (const layer of layers) if (!dataFiles.includes(layer.file)) dataFiles.push(layer.file);
-    return { config: result.config as JsonObject, source, file, layers };
-  } catch (error) {
-    out.warn(
-      'node.themeStudio.config',
-      `themeStudio.themeConfig: ${error instanceof Error ? error.message : String(error)}`,
-      path,
-    );
-    return undefined;
-  }
+  return loaded;
 }

@@ -30,7 +30,7 @@ describe('workbench config', () => {
         legacyRedirects: true,
       },
       categories: { definitions: [], assign: {}, fallback: 'Other components' },
-      themeStudio: { enabled: true, route: '/theme-studio' },
+      themeStudio: { enabled: true, route: '/theme-studio', themes: {} },
       products: {
         enabled: false,
         placement: ['foundations'],
@@ -93,6 +93,24 @@ describe('workbench config', () => {
       ['config.product.duplicate', '/products/sources/1'],
     ]);
     expect(resolveWorkbenchConfig(null).diagnostics.map((d) => d.code)).toEqual(['config.invalid']);
+  });
+
+  it('takes several themes by name, each a theme file', () => {
+    const themes = { clinic: './clinic.theme.json', 'portal.v2': '../portal/theme.json' };
+    expect(
+      resolveWorkbenchConfig({ library: { packages: ['x'] }, themeStudio: { themes } }).config
+        ?.themeStudio.themes,
+    ).toEqual(themes);
+    const { config, diagnostics } = resolveWorkbenchConfig({
+      library: { packages: ['x'] },
+      themeStudio: { themes: { 'clinic / kiosk': './k.json', portal: '', '-x': './x.json' } },
+    });
+    expect(config).toBeUndefined();
+    expect(diagnostics.map((d) => [d.code, d.path])).toEqual([
+      ['config.themeStudio.themes', '/themeStudio/themes/clinic / kiosk'],
+      ['config.themeStudio.themes', '/themeStudio/themes/portal'],
+      ['config.themeStudio.themes', '/themeStudio/themes/-x'],
+    ]);
   });
 
   it('defineDocs produces schema-valid authored content', () => {
