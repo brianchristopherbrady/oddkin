@@ -1605,7 +1605,8 @@ describe('<oddkin-catalog-panel>', () => {
     expect(root.querySelector('odd-card a.wb-card-action')?.getAttribute('href')).toBe(
       '/docs/components/wb-probe',
     );
-    expect(root.querySelector('.wb-card-tag')?.textContent).toBe('wb-probe');
+    expect(root.querySelector('.wb-card-tag code')?.textContent).toBe('wb-probe');
+    expect(root.querySelector('.wb-card-tag .wb-card-package')?.textContent).toBe('@probe/ui');
     expect(root.querySelector('iframe')).toBeNull();
     expect(root.querySelector('.wb-card-preview')).toBeNull();
     const events: unknown[] = [];
@@ -1633,6 +1634,16 @@ describe('<oddkin-catalog-panel>', () => {
     expect(await columns(400)).toBe(1);
     expect(await columns(640)).toBe(2);
     expect(await columns(1000)).toBe(3);
+    // The package ends the tag's row, on the tag's line (Figma 20:1877).
+    const box = (selector: string) => root.querySelector(selector)!.getBoundingClientRect();
+    const [row, tag, from] = [
+      box('.wb-card-tag'),
+      box('.wb-card-tag code'),
+      box('.wb-card-package'),
+    ];
+    expect(Math.abs(from.right - row.right)).toBeLessThan(1);
+    expect(from.left).toBeGreaterThan(tag.right);
+    expect(from.top < tag.bottom && tag.top < from.bottom).toBe(true);
   });
 
   it('shows host previews in the cards and lists only the given categories', async () => {

@@ -15,7 +15,12 @@ import { buildPageRegistry } from '../pages/build.js';
 import { FOUNDATIONS } from '../pages/defaults.js';
 import { registrationOf } from '../panels/model.js';
 import { themeStudioPage, type ThemeStudioInput } from './theme-studio.js';
-import type { CemDeclaration, OddkinMetadataLike, PageEntry } from '../pages/types.js';
+import type {
+  CemDeclaration,
+  OddkinMetadataLike,
+  PageEntry,
+  PageRegistry,
+} from '../pages/types.js';
 import {
   DATA_VERSION,
   INDEX_FORMAT,
@@ -244,7 +249,7 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
   const { config, diagnostics: configDiagnostics } = resolveWorkbenchConfig(input.config);
   if (!config) return { data: undefined, diagnostics: [...loading, ...configDiagnostics] };
   const metadata = mergeMetadata(input.libraries, out);
-  const { registry, diagnostics: registryDiagnostics } = buildPageRegistry({
+  const { registry: built, diagnostics: registryDiagnostics } = buildPageRegistry({
     config,
     cem: input.libraries.flatMap((library) => (library.cem ? [library.cem] : [])),
     metadata,
@@ -252,9 +257,20 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
   });
   // The registry resolves the same configuration again; its diagnostics include the config's.
   out.items.unshift(...loading, ...registryDiagnostics);
-  if (!registry) return { data: undefined, diagnostics: out.items };
+  if (!built) return { data: undefined, diagnostics: out.items };
 
   const declared = declarations(input.libraries);
+  // Each component's card names the package it installs from (Figma 20:1877).
+  const registry: PageRegistry = {
+    ...built,
+    pages: built.pages.map((page) => {
+      const from =
+        page.kind === 'component'
+          ? declared.get(page.id.slice('components/'.length))?.package
+          : undefined;
+      return from === undefined ? page : { ...page, package: from };
+    }),
+  };
   const inspection = input.tokens
     ? new Map(input.tokens.tokens.map((token) => [token.name, token] as const))
     : undefined;

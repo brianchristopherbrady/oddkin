@@ -298,10 +298,19 @@ test('the catalog lists the AI components under AI, and /ai is the AI tooling pa
   // AI is the last category (Figma 20:1877); the link under the catalog selects it.
   const filters = page.locator('oddkin-catalog-panel .wb-categories button');
   await expect(filters.last()).toHaveText('AI');
+  // Each card names the package its component installs from, after the tag.
+  await expect(
+    page.locator(
+      'oddkin-catalog-panel odd-card:has(a[href="/components/odd-button"]) .wb-card-tag',
+    ),
+  ).toHaveText(/^\s*odd-button\s+@oddkin\/components\s*$/);
   await page.getByRole('link', { name: 'Explore AI interaction components' }).click();
   await expect(page).toHaveURL(`${docs}/components?category=AI`);
   await expect(filters.last()).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByText(`Showing ${ai.length} of ${all} components`)).toBeVisible();
+  await expect(page.locator('oddkin-catalog-panel .wb-card-package')).toHaveText(
+    ai.map(() => '@oddkin/ai'),
+  );
   const links = page.locator('oddkin-catalog-panel a.wb-card-action');
   expect(
     (await links.evaluateAll((list) => list.map((a) => a.getAttribute('href')))).sort(),

@@ -180,7 +180,14 @@ function card(ctx: ViewContext, page: PageEntry, level: 2 | 3) {
       ${level === 2 ? html`<h2>${page.title}</h2>` : html`<h3>${page.title}</h3>`}
       ${page.summary ? html`<p>${inline(page.summary)}</p>` : nothing} ${metaLine(page, ctx.lang)}
       <div class="wb-card-footer" slot="footer">
-        ${tag ? html`<p class="wb-card-tag"><code>${tag}</code></p>` : nothing}
+        ${
+          tag
+            ? html`<p class="wb-card-tag odd-row odd-row-between">
+                <code>${tag}</code>
+                ${page.package ? html`<span class="wb-card-package">${page.package}</span>` : nothing}
+              </p>`
+            : nothing
+        }
         <a
           class="wb-card-action"
           href=${ctx.href(page.route)}

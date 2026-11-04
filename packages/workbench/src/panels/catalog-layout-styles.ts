@@ -41,6 +41,11 @@ export const catalogLayoutStyles = css`
     display: grid;
     place-items: center;
   }
+  .wb-content .wb-card-tag {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--odd-space-md);
+  }
   @container wb-content (width >= 32rem) {
     .wb-content .wb-cards {
       grid-template-columns: repeat(2, minmax(0, 1fr));

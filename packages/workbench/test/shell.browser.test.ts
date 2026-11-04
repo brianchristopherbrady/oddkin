@@ -118,11 +118,23 @@ describe('<oddkin-workbench>', () => {
     ]);
     expect(cardLink(shell, 'Button').textContent).toBe('View reference');
     expect(cardLink(shell, 'Button').getAttribute('aria-label')).toBe('View reference: Button');
-    expect([...shell.querySelectorAll('.wb-card-tag')].map((p) => p.textContent)).toEqual([
-      'acme-card',
-      'acme-button',
-      'acme-side-nav',
+    expect(
+      [...shell.querySelectorAll('.wb-card-tag')].map((p) => [
+        p.querySelector('code')?.textContent,
+        p.querySelector('.wb-card-package')?.textContent,
+      ]),
+    ).toEqual([
+      ['acme-card', '@acme/ui'],
+      ['acme-button', '@acme/ui'],
+      ['acme-side-nav', '@acme/ui'],
     ]);
+    // The layout classes put the package at the end of the tag's row, on its line (Figma 20:1877).
+    const [row, tag, from] = ['', ' code', ' .wb-card-package'].map((part) =>
+      shell.querySelector(`.wb-card-tag${part}`)!.getBoundingClientRect(),
+    ) as [DOMRect, DOMRect, DOMRect];
+    expect(Math.abs(from.right - row.right)).toBeLessThan(1);
+    expect(from.left).toBeGreaterThan(tag.right);
+    expect(from.top < tag.bottom && tag.top < from.bottom).toBe(true);
 
     cardLink(shell, 'Button').click();
     await until(() => heading(shell) === 'Button', 'Button');

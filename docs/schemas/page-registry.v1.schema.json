@@ -27,6 +27,7 @@
         "title": { "type": "string" },
         "summary": { "type": "string" },
         "group": { "type": "string" },
+        "package": { "type": "string", "minLength": 1, "description": "Component pages: the package the component installs from (the first documented package whose manifest declares the tag)" },
         "tags": { "type": "array", "items": { "type": "string" } },
         "updated": { "type": "string", "format": "date", "description": "Omitted when unknown (ADR 0027)" },
         "order": { "type": "integer" },
@@ -54,7 +55,8 @@
         "legacyRoutes": { "type": "array", "items": { "type": "string", "pattern": "^/" } }
       },
       "allOf": [
-        { "if": { "type": "object", "properties": { "kind": { "const": "tool" }, "id": { "const": "theme-studio" } }, "required": ["kind", "id"] }, "then": { "type": "object", "properties": { "section": { "const": "theme-studio" }, "nav": { "type": "object", "properties": { "card": { "const": false } }, "required": ["card"] } } } }
+        { "if": { "type": "object", "properties": { "kind": { "const": "tool" }, "id": { "const": "theme-studio" } }, "required": ["kind", "id"] }, "then": { "type": "object", "properties": { "section": { "const": "theme-studio" }, "nav": { "type": "object", "properties": { "card": { "const": false } }, "required": ["card"] } } } },
+        { "if": { "type": "object", "required": ["package"] }, "then": { "type": "object", "properties": { "kind": { "const": "component" } } } }
       ]
     }
   }

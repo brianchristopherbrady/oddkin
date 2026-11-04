@@ -56,12 +56,28 @@ export const catalogStyles = css`
     margin: var(--odd-space-xs) 0 0;
     color: var(--odd-color-text-secondary);
   }
+  /* The tag, and the package it installs from at the row's other end (Figma 20:1877). */
   .wb-card .wb-card-tag {
+    --odd-row-gap: var(--odd-space-md);
+    align-items: baseline;
     margin: 0;
     padding-block-start: var(--odd-space-sm);
     border-block-start: var(--odd-border-width-default) solid var(--odd-color-border-default);
     color: var(--odd-color-text-primary);
     font-size: var(--odd-font-size-sm);
+  }
+  .wb-card-tag code {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+  .wb-card .wb-card-package {
+    flex: none;
+    max-inline-size: 50%;
+    color: var(--odd-color-text-secondary);
+    font-size: var(--odd-font-size-xs);
+    font-weight: var(--odd-font-weight-medium);
+    text-align: end;
+    overflow-wrap: anywhere;
   }
   a.wb-card-action {
     display: block;

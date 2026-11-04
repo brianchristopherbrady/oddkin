@@ -26,6 +26,12 @@ export interface PageEntry {
   readonly summary?: string;
   /** Sidebar and catalog group (component category). */
   readonly group?: string;
+  /**
+   * Component pages: the package the component installs from, the first documented package whose
+   * manifest declares the tag. Set by the Workbench data (`buildWorkbenchData`), which knows the
+   * packages; its card shows it.
+   */
+  readonly package?: string;
   readonly tags?: readonly string[];
   /** ISO date, only from authored content or source history (ADR 0027); never build time. */
   readonly updated?: string;

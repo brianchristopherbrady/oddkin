@@ -5143,3 +5143,20 @@ The owner's docs request of 2026-11-02 (Agent 3's item 5 since 2026-11-03), exce
 | Gates | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs` | Exit 0; exit 0; exit 0 with the new budgets: `workbench-panel-theme-studio` 23,774 B of 24,064, `workbench-theme-studio` 7,141 of 7,424, and the new lazy `workbench-theme-products` 1,098 of 1,152 |
 
 **Not verified here:** CI on this commit; the second piece of row 5 (several themes, a file's `products:`, comparing products, a new product from a brand colour).
+
+## 2026-11-03 — Item 5, Workbench side: each catalog card names its package (round 11, Agent 3)
+
+The registry's component entries name the package their component installs from (`PageEntry.package`, page-registry.v1, additive). The Workbench data sets it from the first documented package whose manifest declares the tag, as for the page's source and registration (Agent 2's notes of 2026-11-03, 16:30). The card's tag row puts it at the other end (Figma "Oddkin Docs Website" 20:1877, "Element and package": the tag on the left, the package on the right, 16 px apart, in 12 px medium secondary text); the shell arranges the row with `odd-row odd-row-between`, and the catalog panel with its layout sheet in its shadow root.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Registry | `packages/workbench/test/data.test.ts` | With `@oddkin/components` and `@oddkin/ai`, every component entry names its package (`odd-button`, `@oddkin/components`; `odd-citation`, `@oddkin/ai`) and no other entry has one, and the registry validates against page-registry.v1; a tag two manifests declare takes the first one's package |
+| Schema | `tests/schemas` | `package` is a non-empty string, on component pages only: the valid example has one on a component page, and `page-registry.invalid-package-on-overview.json` is rejected |
+| Cards, three engines | `panels.browser.test.ts`, `shell.browser.test.ts`, and `card-previews.browser.test.ts` through `browser-set.mjs` | 31 passed in each of Chromium, Firefox, and WebKit: the panel and the shell show the tag and its package, and the package ends the row (right edges within 1 px), after the tag and on its line |
+| The docs catalog, three engines | `e2e/docs.spec.ts`, the AI test | Passes in Chromium, Firefox, and WebKit: `odd-button`'s row reads "odd-button @oddkin/components", and with AI selected the 24 cards all name `@oddkin/ai` |
+| The docs catalog at 1440 and 390 px | the docs dev server on a private port, measured in a browser | At 1440 px, all 78 rows are one line, with the package at the row's end and nothing overflowing. At 390 px, `odd-segmented-control` and `odd-validation-summary` wrap onto two lines while their packages stay on one line at the end; nothing overflows |
+| Workbench e2e | `e2e/workbench.spec.ts` and `e2e/workbench-catalog.spec.ts`, Chromium | 181 passed (4.2 min) |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-card-package.json` (7 probes) | 7 of 7 killed: no package in the registry; the schema allowing a package on any page; a card without its package; the shell's row without its layout classes, or without `odd-row-between`; the panel's row without `space-between`, or not a flex row |
+| Gates | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs`; node tests | Exit 0; exit 0 (page layout: the panel's row is listed with its layout sheet's reason); exit 0, `workbench-panel-catalog` 18,094 B gzip of 18,432 (176 B more) and `workbench-shell` 53,411 of 54,272; Workbench's node tests with `tests/schemas`, `tests/docs`, `tests/architecture`, and `tests/release`, 242 passed and 1 skipped (25 files) |
+
+**Not verified here:** CI on this commit; a package name longer than half the row (capped there, where it wraps), which no documented package has.

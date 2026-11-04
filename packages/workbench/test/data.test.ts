@@ -1,4 +1,6 @@
 import { readFileSync } from 'node:fs';
+import { Ajv2020 } from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 import { describe, expect, it } from 'vitest';
 import { defineDocs, type WorkbenchConfig } from '../src/config/index.js';
 import {
@@ -267,6 +269,19 @@ describe('Workbench data from published outputs', () => {
     expect(ids).toContain('components/odd-citation');
     const citation = both.data.pages['components/odd-citation'] as ComponentPageData;
     expect(citation.package).toBe('@oddkin/ai');
+    // The registry names the package of each component, for its card, and of nothing else.
+    const { registry } = both.data.index;
+    const ajv = new Ajv2020({ strict: true, strictRequired: false, allowUnionTypes: true });
+    addFormats.default(ajv);
+    const validRegistry = ajv.compile(json('../../../docs/schemas/page-registry.v1.schema.json'));
+    expect(validRegistry(registry), JSON.stringify(validRegistry.errors)).toBe(true);
+    const packageOf = (id: string) => registry.pages.find((p) => p.id === id)?.package;
+    expect([packageOf('components/odd-button'), packageOf('components/odd-citation')]).toEqual([
+      '@oddkin/components',
+      '@oddkin/ai',
+    ]);
+    for (const page of registry.pages)
+      expect(page.package === undefined, page.id).toBe(page.kind !== 'component');
     // Both packages publish the same core contracts: no conflict is reported.
     expect(both.diagnostics.filter((d) => d.code === 'data.metadata.conflict')).toEqual([]);
     expect(both.data.index.libraries.map((l) => l.name)).toEqual([
@@ -356,6 +371,9 @@ describe('Workbench data from published outputs', () => {
     const page = data.pages['components/odd-button'] as ComponentPageData;
     expect(page.package).toBe('@oddkin/components');
     expect(page.module).toBe('dist/button/button.js');
+    expect(data.index.registry.pages.find((p) => p.id === 'components/odd-button')?.package).toBe(
+      '@oddkin/components',
+    );
   });
 
   it('supports standard CEM alone: component pages without enrichment', () => {

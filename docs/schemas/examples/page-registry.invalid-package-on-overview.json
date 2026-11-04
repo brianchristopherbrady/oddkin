@@ -1,0 +1,7 @@
+{
+  "schema": "https://oddkin.dev/schemas/page-registry/v1.json",
+  "basePath": "/",
+  "pages": [
+    { "id": "components", "route": "/components", "section": "components", "kind": "overview", "title": "Components", "package": "@oddkin/components", "visible": true, "availability": "full", "nav": { "primary": true, "search": true }, "sections": [] }
+  ]
+}

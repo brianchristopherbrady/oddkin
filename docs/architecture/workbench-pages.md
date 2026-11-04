@@ -21,6 +21,7 @@ interface PageEntry {
   kind: 'overview' | 'foundation' | 'component' | 'tool' | 'guide';
   title: Fact<string>; summary?: Fact<string>; eyebrow?: string;
   group?: string;                      // sidebar/catalog group (component category)
+  package?: string;                    // component pages: the package the component installs from
   tags?: string[]; updated?: Fact<string>;   // ISO date; omitted when unknown
   order?: number;
   visible: boolean;                    // computed from data availability + config
@@ -101,6 +102,7 @@ Built first, from the library's actual spacing contracts:
 - Header with built-in summary (overridable). Any testing, accessibility, or compatibility statement appears only when backed by project evidence (`verified` provenance or an authored statement linked to a check); the reference's verification paragraph is never copied.
 - **Search** by name, tag name, summary, and tags. **Category filter** from the library's configured categories ("All categories" default). **Result count** ("Showing N of M").
 - Groups: heading with count, optional group description, card grid (title, summary, `Updated · tags`). Categories come from metadata/config (`@category` tag, enrichment, or config mapping). Components without a category go to a configurable fallback group (default "Other components"). No forced Layout / Primitive / Composite taxonomy.
+- A component's card names its tag and, at the other end of the same row, the package it installs from (owner, 2026-11-02; Figma "Oddkin Docs Website" 20:1877). The registry's `package` holds it: the Workbench data sets it on component pages from the first documented package whose manifest declares the tag, as for the page's source and registration.
 - Filter and search state live in the URL (`?q=&category=`) and are shareable.
 - Live previews (owner, 2026-10-29, P0.3; this replaces "no live previews or iframes in cards"): the card of each component with a registration shows its first example, in a frame in Workbench's shell or as a node the host supplies (`preview(page)`, apps/docs). The index lists those components (`previews`), so the other cards stay plain. Frames are created as their cards near the view and load two at a time, a card scrolled past before its turn waits until it comes back, they are inert (the card's link stays its only stop), and they are released when the catalog closes. At most twelve frames are kept: past that, the frames of the cards out of view longest are released and load again when their cards come back, as a frame does whose card a filter took out and back (moving a frame reloads its document). The shell's own realm still loads no component module.
 
