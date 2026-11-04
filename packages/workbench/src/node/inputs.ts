@@ -36,12 +36,16 @@ export interface WorkbenchInputs {
   readonly tokens?: TokenInspectionLike;
   /** Theme Studio's baseline: `themeStudio.themeConfig` as its JSON model. */
   readonly theme?: {
+    /** The merged model: the file on its bases. */
     readonly config: JsonObject;
     readonly source: string;
     /** The theme file's absolute path. */
     readonly file: string;
-    /** It extends a base file (a P1.1 `extends`), so its model is merged. */
-    readonly extendsBase: boolean;
+    /**
+     * Its files from the root base to the theme file (P1.1 `extends`), each with its absolute path
+     * and its own model as written; one when it extends no base.
+     */
+    readonly layers: readonly { readonly file: string; readonly config: JsonObject }[];
   };
   /** Files read as data; a change to one rebuilds the data. */
   readonly dataFiles: readonly string[];
@@ -393,19 +397,20 @@ async function loadThemeConfig(
       loadConfig(file: string): Promise<{
         config: unknown;
         diagnostics: readonly { severity?: string; path?: string; message?: string }[];
-        layers?: readonly unknown[];
+        layers?: readonly { file: string; config: unknown }[];
       }>;
     };
     const result = await tokens.loadConfig(file);
     for (const d of result.diagnostics)
       out.warn('node.themeStudio.config', `${source}${d.path ?? ''}: ${d.message ?? ''}`, path);
     if (!isObject(result.config)) return undefined;
-    return {
-      config: result.config as JsonObject,
-      source,
-      file,
-      extendsBase: (result.layers?.length ?? 1) > 1,
-    };
+    // A loader without layers (before P1.1's `extends`) read the file alone.
+    const layers = (result.layers ?? [{ file, config: result.config }]).map((layer) => ({
+      file: layer.file,
+      config: (isObject(layer.config) ? layer.config : {}) as JsonObject,
+    }));
+    for (const layer of layers) if (!dataFiles.includes(layer.file)) dataFiles.push(layer.file);
+    return { config: result.config as JsonObject, source, file, layers };
   } catch (error) {
     out.warn(
       'node.themeStudio.config',

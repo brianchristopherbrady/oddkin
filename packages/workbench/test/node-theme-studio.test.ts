@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { validateComposition } from '@oddkin/components/composition';
+import { layerOf, mergeThemes } from '@oddkin/tokens/theme';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { describe, expect, it } from 'vitest';
@@ -15,8 +16,11 @@ import {
   fieldValue,
   getPath,
   parseDraft,
+  pathText,
+  setField,
   setPath,
   themeFields,
+  type ThemeField,
 } from '../src/panels/theme-model.js';
 import { isFrameRequest } from '../src/protocol/index.js';
 
@@ -99,6 +103,125 @@ describe('Theme Studio editor model', () => {
       ['overrides.radius.md'],
     ]);
     expect(overrides.rows?.[0]?.cells[0]).toMatchObject({ origin: 'explicit override' });
+  });
+
+  it('says which file sets each value of a draft on bases, as the merge of theme files does', () => {
+    const root = {
+      brand: { primary: '#123456', neutral: '#777777' },
+      spacing: { strategy: 'multiples', unit: '4px', snap: '2px' },
+      overrides: { 'color.canvas': { light: '#fff', dark: '#000' }, 'radius.md': '6px' },
+    };
+    const mid = {
+      extends: './root.json',
+      brand: { neutral: '#666666' },
+      status: { info: '#0055aa' },
+      overrides: { 'radius.md': null },
+    };
+    const product = {
+      extends: './mid.json',
+      brand: { neutral: '#888888' },
+      overrides: { 'color.link': { light: '#00f', dark: '#99f' } },
+    };
+    const bases = [
+      { file: 'root.json', config: root },
+      { file: 'mid.json', config: mid },
+    ];
+    const groups = themeFields(product, bases);
+    const fields = groups.flatMap((g) => [...g.fields, ...(g.rows ?? []).flatMap((r) => r.cells)]);
+    const at = (path: string) => fields.find((f) => pathText(f.path) === path)!;
+    expect(at('/brand/primary')).toMatchObject({
+      value: undefined,
+      unit: ['brand', 'primary'],
+      inherited: { file: 'root.json', value: '#123456' },
+    });
+    expect(at('/brand/neutral')).toMatchObject({ value: '#888888' });
+    expect(at('/brand/neutral')).not.toHaveProperty('inherited');
+    // The nearest base that sets a value wins over the root's.
+    expect(
+      themeFields({}, bases)
+        .flatMap((g) => g.fields)
+        .find((f) => f.label === 'Neutral')?.inherited,
+    ).toEqual({ file: 'mid.json', value: '#666666' });
+    expect(at('/status/info').inherited).toEqual({ file: 'mid.json', value: '#0055aa' });
+    expect(at('/status/danger').inherited).toBeUndefined();
+    // Spacing is merged whole: its fields follow the base's strategy and belong to its file.
+    expect(groups[1]?.fields.map((f) => [f.path[1], f.unit, f.inherited])).toEqual([
+      ['unit', ['spacing'], { file: 'root.json', value: '4px' }],
+      ['snap', ['spacing'], { file: 'root.json', value: '2px' }],
+    ]);
+    // Overrides merge by token: the base's, less the one a base removes, then the draft's own.
+    expect(groups[2]?.rows?.map((r) => [r.token, r.inherited])).toEqual([
+      ['color.canvas', 'root.json'],
+      ['color.link', undefined],
+    ]);
+    expect(at('/overrides/color.canvas/dark').inherited).toEqual({
+      file: 'root.json',
+      value: '#000',
+    });
+    expect(at('/overrides/color.link/light').value).toBe('#00f');
+    // The file each field names is the one @oddkin/tokens' layerOf names for what is merged whole.
+    const layers = [...bases, { file: 'product.json', config: product }];
+    const owner = (field: ThemeField) =>
+      field.inherited?.file ??
+      (getPath(product, field.unit) === undefined ? undefined : 'product.json');
+    for (const field of fields)
+      expect(layerOf(layers, pathText(field.unit))?.file, pathText(field.path)).toBe(owner(field));
+    // Without bases, nothing is inherited; overrides that are not an object replace the bases'.
+    expect(
+      themeFields(root)
+        .flatMap((g) => g.fields)
+        .some((f) => f.inherited),
+    ).toBe(false);
+    expect(themeFields({ overrides: null }, bases)[2]?.rows).toEqual([]);
+  });
+
+  it('edits a draft on bases without copying more than the merge replaces', () => {
+    const base = {
+      brand: { primary: '#123456' },
+      spacing: { strategy: 'multiples', unit: '4px', snap: '2px' },
+      overrides: { 'color.canvas': { light: '#fff', dark: '#000' } },
+    };
+    const bases = [{ file: 'base.json', config: base }];
+    const product = { extends: './base.json' };
+    const fields = themeFields(product, bases).flatMap((g) => [
+      ...g.fields,
+      ...(g.rows ?? []).flatMap((r) => r.cells),
+    ]);
+    const at = (path: string) => fields.find((f) => pathText(f.path) === path)!;
+    // A value merged by name is set alone.
+    expect(setField(product, at('/brand/primary'), '#0a7d33', bases)).toEqual({
+      extends: './base.json',
+      brand: { primary: '#0a7d33' },
+    });
+    // Spacing and an override's token are replaced whole: the draft takes them, then the edit.
+    const spaced = setField(product, at('/spacing/unit'), '8px', bases);
+    expect(spaced).toEqual({
+      extends: './base.json',
+      spacing: { strategy: 'multiples', unit: '8px', snap: '2px' },
+    });
+    const dark = setField(product, at('/overrides/color.canvas/dark'), '#111', bases);
+    expect(dark).toEqual({
+      extends: './base.json',
+      overrides: { 'color.canvas': { light: '#fff', dark: '#111' } },
+    });
+    // Merged as the CLI merges them, each edit is the base with only that change.
+    expect(mergeThemes(base, spaced as object)['spacing']).toEqual({
+      strategy: 'multiples',
+      unit: '8px',
+      snap: '2px',
+    });
+    expect(mergeThemes(base, dark as object)['overrides']).toEqual({
+      'color.canvas': { light: '#fff', dark: '#111' },
+    });
+    // Clearing what the draft inherits changes nothing; clearing its own value removes it.
+    expect(setField(product, at('/brand/primary'), undefined, bases)).toBe(product);
+    expect(setField(spaced, themeFields(spaced, bases)[1]!.fields[0]!, undefined, bases)).toEqual({
+      extends: './base.json',
+      spacing: { strategy: 'multiples', snap: '2px' },
+    });
+    // The base is never changed.
+    expect(base.spacing.unit).toBe('4px');
+    expect(base.overrides['color.canvas'].dark).toBe('#000');
   });
 
   it('turns entries into configuration values and never applies broken JSON', () => {
@@ -406,10 +529,16 @@ describe('Theme Studio page data', () => {
         'tree:odd-tree',
       ]);
       const worker = build.files.get(THEME_WORKER)!;
-      // Workers have no import map: the library's own generator, by URL.
+      // Workers have no import map: the library's own generator, by URL, and its own merge of
+      // theme files on a base.
       expect(worker).toContain(
         `import { generate } from ${JSON.stringify(build.frameImportMap?.imports['@oddkin/tokens/generate'])};`,
       );
+      expect(worker).toContain(
+        `import { mergeThemes } from ${JSON.stringify(build.frameImportMap?.imports['@oddkin/tokens/theme'])};`,
+      );
+      // The default theme extends no base: one draft, as before.
+      expect(page.studio.files).toBeUndefined();
       expect(build.diagnostics.filter((d) => d.code.startsWith('node.themeStudio'))).toEqual([]);
       // Screens: every component with examples, and documents for @oddkin/components' renderer.
       const screens = page.studio.screens!;

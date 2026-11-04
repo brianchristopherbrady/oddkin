@@ -1,7 +1,8 @@
 /**
  * Theme Studio's save to file through the dev server (workbench.md §9): the diff of the draft
  * against the theme file first, then the write the reader confirms. Loaded only when the page
- * data offers it (`studio.save`), so a site that embeds the panel never loads it.
+ * data offers it (`studio.save`, or a file's `save` in `studio.files`), so a site that embeds the
+ * panel never loads it. A request names the file it saves.
  */
 import { signal } from '@oddkin/core/reactive';
 import { html, nothing } from '@oddkin/core/template';
@@ -58,7 +59,7 @@ export class ThemeSave {
     const config = this.draft();
     const { file } = this.target;
     try {
-      const { reply } = await this.#post({ config });
+      const { reply } = await this.#post({ file, config });
       // A newer draft made this review out of date while it was on its way.
       if (this.draft() !== config) return;
       if (!reply) throw new Error('the dev server did not answer with a diff.');
@@ -81,6 +82,7 @@ export class ThemeSave {
     const { file } = this.target;
     try {
       const { status, reply } = await this.#post({
+        file,
         config: shown.config,
         version: shown.reply.version,
         write: true,

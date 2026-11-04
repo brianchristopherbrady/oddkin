@@ -50,6 +50,11 @@ export interface WorkbenchBuild {
   readonly shell: string | undefined;
   /** The theme file Theme Studio may write (`save` builds only). */
   readonly themeFile?: string;
+  /**
+   * Every file of the theme Theme Studio may write, the theme file and its bases, by the path the
+   * page shows (`save` builds only).
+   */
+  readonly themeFiles?: ReadonlyMap<string, string>;
   readonly diagnostics: readonly WorkbenchDiagnostic[];
 }
 
@@ -71,34 +76,33 @@ export const THEME_WORKER = 'theme-studio.worker.js';
 /** The dev server's endpoint for the theme file's diff and write. */
 export const THEME_FILE = 'theme-file';
 
-/** Whether Theme Studio may write the theme file, or what it needs instead. */
-function themeSave(
-  theme: NonNullable<WorkbenchInputs['theme']>,
-  root: string,
-): { file?: string; unsaveable?: string } {
-  const file = relative(root, theme.file).split(sep).join('/');
-  if (extname(theme.file).toLowerCase() !== '.json')
-    return {
-      unsaveable: `a .json theme file: ${file} is code, which Theme Studio does not rewrite (export the draft instead)`,
-    };
-  if (theme.extendsBase)
-    return {
-      unsaveable: `a theme file that extends no base: ${file} extends one, and saving it with its base comes with products`,
-    };
-  return { file };
+/** Why Theme Studio may not write a theme file, or undefined when it may (workbench.md §9). */
+function unwritable(file: string, shown: string): string | undefined {
+  if (extname(file).toLowerCase() !== '.json')
+    return `a .json theme file: ${shown} is code, which Theme Studio does not rewrite (export the draft instead)`;
+  if (shown.split('/').includes('node_modules'))
+    return `a theme file of this project: ${shown} belongs to an installed package`;
+  return undefined;
 }
 
 /**
  * Workers have no import map, so the generator is imported by URL (its graph has no bare
- * specifiers). Requests are `{ id, draft }`; replies carry plain data only (theming ?8).
+ * specifiers). Requests are `{ id, draft, bases }`: a file's draft, generated on its bases' drafts
+ * (root first), merged with the library's own `mergeThemes` as its CLI merges the files. Replies
+ * carry plain data only (theming §8).
  */
-const themeWorker = (generator: string) => `import { generate } from ${JSON.stringify(generator)};
+const themeWorker = (
+  generator: string,
+  merge: string | undefined,
+) => `import { generate } from ${JSON.stringify(generator)};
+${merge ? `import { mergeThemes } from ${JSON.stringify(merge)};` : 'const mergeThemes = undefined;'}
 
 self.addEventListener('message', (event) => {
-  const { id, draft } = event.data;
+  const { id, draft, bases = [] } = event.data;
   const start = performance.now();
   try {
-    const result = generate(draft);
+    if (bases.length && !mergeThemes) throw new Error('This @oddkin/tokens cannot merge a base file: it has no ./theme mergeThemes.');
+    const result = generate(bases.length ? [...bases, draft].reduce((merged, layer) => mergeThemes(merged, layer)) : draft);
     self.postMessage({ id, ok: result.ok, css: result.css, diagnostics: result.diagnostics, ms: performance.now() - start });
   } catch (error) {
     self.postMessage({ id, ok: false, diagnostics: [{ severity: 'error', code: 'generate.failed', path: '', message: String(error) }], ms: performance.now() - start });
@@ -199,10 +203,39 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
   const generator = frame.importMap.imports['@oddkin/tokens/generate'];
   const worker = generator ? `${config.hosting.basePath}${ASSET_DIR}${THEME_WORKER}` : undefined;
   const theme = inputs.theme;
-  const saving = options.save && theme ? themeSave(theme, loaded.root) : undefined;
-  const save = saving?.file
-    ? { file: saving.file, url: `${config.hosting.basePath}${ASSET_DIR}${THEME_FILE}` }
-    : undefined;
+  const shown = (file: string) => relative(loaded.root, file).split(sep).join('/');
+  // In the dev server, each file of the theme Theme Studio may write, by the path it shows.
+  const writable = new Map<string, string>();
+  const reasons = new Map<string, string>();
+  for (const layer of options.save ? (theme?.layers ?? []) : []) {
+    const reason = unwritable(layer.file, shown(layer.file));
+    if (reason) reasons.set(layer.file, reason);
+    else writable.set(shown(layer.file), layer.file);
+  }
+  const url = `${config.hosting.basePath}${ASSET_DIR}${THEME_FILE}`;
+  const save =
+    theme && !reasons.has(theme.file) && options.save
+      ? { file: shown(theme.file), url }
+      : undefined;
+  const unsaveable = theme && reasons.get(theme.file);
+  // A theme on a base: each file as written, so Theme Studio edits and saves one without the other.
+  const layers =
+    theme && theme.layers.length > 1
+      ? theme.layers.map((layer, i) => {
+          const below = theme.layers[i - 1];
+          const reason = reasons.get(layer.file);
+          return {
+            file: shown(layer.file),
+            config: layer.config,
+            ...(below ? { base: shown(below.file) } : {}),
+            ...(reason
+              ? { unsaveable: reason }
+              : writable.has(shown(layer.file))
+                ? { save: url }
+                : {}),
+          };
+        })
+      : undefined;
   const { data, diagnostics } = buildWorkbenchData({
     config,
     libraries: inputs.libraries,
@@ -210,9 +243,10 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
     ...(inputs.tokens ? { tokens: inputs.tokens } : {}),
     theme: {
       ...(theme ? { config: theme.config, source: theme.source } : {}),
+      ...(layers ? { files: layers } : {}),
       ...(worker ? { worker } : {}),
       ...(save ? { save } : {}),
-      ...(saving?.unsaveable ? { unsaveable: saving.unsaveable } : {}),
+      ...(unsaveable ? { unsaveable } : {}),
     },
     diagnostics: out.items,
   });
@@ -253,7 +287,11 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
     }
   }
   for (const [id, page] of Object.entries(pages)) files.set(pageFile(id), serializeData(page));
-  if (generator) files.set(THEME_WORKER, themeWorker(generator));
+  if (generator)
+    files.set(
+      THEME_WORKER,
+      themeWorker(generator, frame.importMap.imports['@oddkin/tokens/theme']),
+    );
   files.set('frame.importmap.json', `${JSON.stringify(frame.importMap, null, 2)}\n`);
   files.set('shell.importmap.json', `${JSON.stringify(shell.importMap, null, 2)}\n`);
   const assetsForFrames = frameAssets(
@@ -301,6 +339,7 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
       preload: preloadGraph(shell.importMap, '@oddkin/workbench/app/define', roots),
     }),
     ...(save && theme ? { themeFile: theme.file } : {}),
+    ...(writable.size ? { themeFiles: writable } : {}),
     diagnostics: result.items,
   };
 }

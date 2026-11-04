@@ -23,8 +23,11 @@ export interface GenerationResult {
 }
 
 export interface ThemeGeneration {
-  /** Generate `draft`; supersedes every earlier request that has not produced a result. */
-  request(draft: unknown): void;
+  /**
+   * Generate `draft` on its `bases` (their models, root first, merged under it as the theme's
+   * files are); supersedes every earlier request that has not produced a result.
+   */
+  request(draft: unknown, bases?: readonly unknown[]): void;
   readonly stats: {
     readonly sent: number;
     readonly superseded: number;
@@ -44,11 +47,11 @@ export function createThemeGeneration(
   const stats = { sent: 0, superseded: 0, delivered: 0 };
   let nextId = 0;
   let inFlight: number | undefined;
-  let queued: { readonly draft: unknown } | undefined;
-  const send = (draft: unknown) => {
+  let queued: { readonly draft: unknown; readonly bases: readonly unknown[] } | undefined;
+  const send = (draft: unknown, bases: readonly unknown[]) => {
     inFlight = ++nextId;
     stats.sent++;
-    worker.postMessage({ id: inFlight, draft });
+    worker.postMessage({ id: inFlight, draft, bases });
   };
   scope.listen(worker, 'message', (event: MessageEvent<GenerationResult>) => {
     if (event.data.id !== inFlight) return;
@@ -57,7 +60,7 @@ export function createThemeGeneration(
       stats.superseded++;
       const next = queued;
       queued = undefined;
-      send(next.draft);
+      send(next.draft, next.bases);
       return;
     }
     stats.delivered++;
@@ -69,12 +72,12 @@ export function createThemeGeneration(
     onError(event.message || 'The theme generator could not be loaded.');
   });
   return {
-    request(draft) {
+    request(draft, bases = []) {
       if (scope.disposed) return;
-      if (inFlight === undefined) send(draft);
+      if (inFlight === undefined) send(draft, bases);
       else {
         if (queued) stats.superseded++;
-        queued = { draft };
+        queued = { draft, bases };
       }
     },
     stats,

@@ -209,13 +209,16 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
     req.on('close', () => clients.delete(res));
   }
 
-  /** Theme Studio's save (workbench.md §9): the diff for a draft, then the write it confirms. */
+  /**
+   * Theme Studio's save (workbench.md §9): the diff for a draft, then the write it confirms. It
+   * writes the file the request names among the theme's own (`file`), else the theme file.
+   */
   async function themeFile(req: IncomingMessage, res: ServerResponse) {
-    const file = current.themeFile;
+    const files = current.themeFiles;
     const text = 'text/plain; charset=utf-8';
     const json = (status: number, value: unknown) =>
       send(res, status, 'application/json; charset=utf-8', JSON.stringify(value));
-    if (!file) return notFound(res);
+    if (!files?.size) return notFound(res);
     if (!fromThisPage(req))
       return send(res, 403, text, 'Only a Workbench page on this machine writes the theme file.');
     if (!/^application\/json\b/i.test(req.headers['content-type'] ?? ''))
@@ -230,6 +233,15 @@ export async function startDevServer(options: DevServerOptions = {}): Promise<De
     }
     if (!isRecord(request) || !isRecord(request['config']))
       return send(res, 400, text, 'The request needs the draft as `config`, a JSON object.');
+    const named = request['file'];
+    const file = typeof named === 'string' ? files.get(named) : current.themeFile;
+    if (!file)
+      return send(
+        res,
+        403,
+        text,
+        `Theme Studio writes only its theme's own files: ${[...files.keys()].join(', ')}.`,
+      );
     const before = await readFile(file, 'utf8');
     const after = formatThemeFile(before, request['config']);
     const shown = relative(current.root, file).split(/[\\/]/).join('/');

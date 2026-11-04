@@ -2,7 +2,8 @@
  * Theme Studio's editor model (workbench.md §6.3), DOM-free: the form fields a draft offers, in
  * groups that follow the design file's variable collections (theme inputs, then role overrides
  * with one column per mode), and immutable edits by configuration path. The form and the JSON
- * editor change the same draft; nothing here generates tokens.
+ * editor change the same draft; nothing here generates tokens. A draft on base files (P1.1
+ * `extends`) is one file's own layer: each field says whether it sets the value or which base does.
  */
 
 export type ConfigPath = readonly string[];
@@ -11,18 +12,34 @@ type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 /** How a value enters the theme (workbench.md §6.3). */
 export type ValueOrigin = 'foundation input' | 'explicit override';
 
+/** A file the draft builds on, root base first, with its own model (theming §1.1). */
+export interface ThemeBase {
+  readonly file: string;
+  readonly config: unknown;
+}
+
 export interface ThemeField {
   readonly path: ConfigPath;
   readonly label: string;
   readonly kind: 'color' | 'length' | 'number' | 'integer' | 'text';
   readonly origin: ValueOrigin;
+  /** The draft's own value; undefined when it sets none. */
   readonly value: string | number | undefined;
+  /**
+   * What a file sets or inherits whole, `path` or a part of it (theming §1.1): a spacing field
+   * belongs to `spacing`, an override's mode to its token.
+   */
+  readonly unit: ConfigPath;
+  /** When the draft does not set `unit`: the base that does, and its value at `path`. */
+  readonly inherited?: { readonly file: string; readonly value: string | number | undefined };
 }
 
 export interface OverrideRow {
   readonly token: string;
   /** One cell per mode; a single value applies to every mode. */
   readonly cells: readonly ThemeField[];
+  /** The base the token's override comes from, when the draft does not set it. */
+  readonly inherited?: string;
 }
 
 export interface ThemeFieldGroup {
@@ -90,22 +107,38 @@ const SPACING: Readonly<
 };
 
 /** The form over a draft: only fields that apply to it (e.g. the chosen spacing strategy). */
-export function themeFields(config: unknown): ThemeFieldGroup[] {
+export function themeFields(config: unknown, bases: readonly ThemeBase[] = []): ThemeFieldGroup[] {
+  const field = (
+    path: ConfigPath,
+    unit: ConfigPath,
+    label: string,
+    kind: ThemeField['kind'],
+    origin: ValueOrigin,
+  ): ThemeField => {
+    const owner = ownerOf(config, bases, unit);
+    return {
+      path,
+      label,
+      kind,
+      origin,
+      value: scalar(getPath(config, path)),
+      unit,
+      ...(owner
+        ? { inherited: { file: owner.file, value: scalar(getPath(owner.config, path)) } }
+        : {}),
+    };
+  };
   const groups: ThemeFieldGroup[] = [
     {
       id: 'inputs',
       title: 'Theme inputs',
       note: 'Foundation inputs: ramps and roles are generated from them.',
-      fields: BRAND.map(([group, key, label]) => ({
-        path: [group, key],
-        label,
-        kind: 'color',
-        origin: 'foundation input',
-        value: scalar(getPath(config, [group, key])),
-      })),
+      fields: BRAND.map(([group, key, label]) =>
+        field([group, key], [group, key], label, 'color', 'foundation input'),
+      ),
     },
   ];
-  const spacing = getPath(config, ['spacing']);
+  const spacing = getPath(ownerOf(config, bases, ['spacing'])?.config ?? config, ['spacing']);
   const strategy = isRecord(spacing) ? spacing['strategy'] : undefined;
   groups.push({
     id: 'spacing',
@@ -115,17 +148,19 @@ export function themeFields(config: unknown): ThemeFieldGroup[] {
         ? `Strategy: ${strategy}. Change the strategy or its steps in the JSON editor.`
         : 'No spacing strategy configured: the generator default applies. Add `spacing` in the JSON editor.',
     fields: (typeof strategy === 'string' ? (SPACING[strategy] ?? []) : []).map(
-      ([key, label, kind]) => ({
-        path: ['spacing', key],
-        label,
-        kind,
-        origin: 'foundation input' as const,
-        value: scalar(getPath(config, ['spacing', key])),
-      }),
+      ([key, label, kind]) => field(['spacing', key], ['spacing'], label, kind, 'foundation input'),
     ),
   });
-  const overrides = getPath(config, ['overrides']);
-  const entries = isRecord(overrides) ? Object.entries(overrides) : [];
+  // Overrides merge by token, each replaced whole; null removes a base's (theming §1.1).
+  const tokens = new Map<string, unknown>();
+  for (const layer of [...bases, { config }]) {
+    const overrides = getPath(layer.config, ['overrides']);
+    if (overrides !== undefined && !isRecord(overrides)) tokens.clear();
+    for (const [token, value] of isRecord(overrides) ? Object.entries(overrides) : [])
+      if (value === null) tokens.delete(token);
+      else tokens.set(token, value);
+  }
+  const entries = [...tokens];
   const modes = [
     ...new Set(entries.flatMap(([, value]) => (isRecord(value) ? Object.keys(value) : []))),
   ];
@@ -137,28 +172,52 @@ export function themeFields(config: unknown): ThemeFieldGroup[] {
       : 'No explicit overrides: every role is generated.',
     fields: [],
     modes,
-    rows: entries.map(([token, value]) => ({
-      token,
-      cells: isRecord(value)
-        ? modes.map((mode) => ({
-            path: ['overrides', token, mode],
-            label: `${token} (${mode})`,
-            kind: 'text' as const,
-            origin: 'explicit override' as const,
-            value: scalar(value[mode]),
-          }))
-        : [
-            {
-              path: ['overrides', token],
-              label: token,
-              kind: 'text' as const,
-              origin: 'explicit override' as const,
-              value: scalar(value),
-            },
-          ],
-    })),
+    rows: entries.map(([token, value]) => {
+      const unit = ['overrides', token];
+      const owner = ownerOf(config, bases, unit);
+      const cell = (path: ConfigPath, label: string) =>
+        field(path, unit, label, 'text', 'explicit override');
+      return {
+        token,
+        cells: isRecord(value)
+          ? modes.map((mode) => cell([...unit, mode], `${token} (${mode})`))
+          : [cell(unit, token)],
+        ...(owner ? { inherited: owner.file } : {}),
+      };
+    }),
   });
   return groups;
+}
+
+/** Whether `value` has `path` as its own keys (a JSON model has no undefined values). */
+function owns(value: unknown, path: ConfigPath): boolean {
+  let current = value;
+  for (const key of path) {
+    if (!isRecord(current) || !Object.hasOwn(current, key)) return false;
+    current = current[key];
+  }
+  return true;
+}
+
+/** The nearest base that sets `unit`, when the draft does not. */
+const ownerOf = (draft: unknown, bases: readonly ThemeBase[], unit: ConfigPath) =>
+  owns(draft, unit) ? undefined : bases.findLast((base) => owns(base.config, unit));
+
+/**
+ * The draft with a form entry set. A value merged whole that the draft inherits (spacing, an
+ * override's token) is first copied from the base that sets it, so the draft keeps the rest of it
+ * (theming §1.1); bases are never changed. Clearing an inherited entry changes nothing.
+ */
+export function setField(
+  draft: unknown,
+  field: ThemeField,
+  value: string | number | undefined,
+  bases: readonly ThemeBase[] = [],
+): unknown {
+  const owner = ownerOf(draft, bases, field.unit);
+  if (owner && value === undefined) return draft;
+  const own = owner ? setPath(draft, field.unit, getPath(owner.config, field.unit)) : draft;
+  return setPath(own, field.path, value);
 }
 
 /** A form entry as the configuration value it writes; empty clears the key. */

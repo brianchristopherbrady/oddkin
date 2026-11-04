@@ -44,6 +44,8 @@ export interface ThemeStudioInput {
   readonly save?: ThemeStudioPageData['studio']['save'];
   /** What a theme file the dev server cannot write needs instead. */
   readonly unsaveable?: string;
+  /** A theme file on a base: its files, root base first (P1.1 `extends`). */
+  readonly files?: ThemeStudioPageData['studio']['files'];
 }
 
 const roleId = (value: string) => value.replace(/^role:/, '');
@@ -217,6 +219,7 @@ export function themeStudioPage(
     studio: {
       ...(input.config ? { config: input.config } : {}),
       ...(input.source ? { source: input.source } : {}),
+      ...(input.files ? { files: input.files } : {}),
       ...(input.worker ? { worker: input.worker } : {}),
       ...(input.save ? { save: input.save } : {}),
       roles,

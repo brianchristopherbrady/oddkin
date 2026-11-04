@@ -4,7 +4,9 @@
  * own generator; applied to light and dark frames as a preview-owned stylesheet, so the real
  * components update in place (no remount). An invalid draft keeps the last valid theme and
  * lists the generator's diagnostics with their configuration paths. The frames show one screen:
- * the role specimens, one component's examples, or a composition document.
+ * the role specimens, one component's examples, or a composition document. A theme on base files
+ * (P1.1 `extends`) has a draft per file: the one edited is generated on its bases' drafts, and
+ * saving writes it alone.
  */
 import { OddkinElement, prop } from '@oddkin/core/element';
 import { styleMap } from '@oddkin/core/helpers/style-map';
@@ -21,6 +23,7 @@ import {
 } from '../preview/theme-generation.js';
 import type { FrameSpecimenItem, JsonValue } from '../protocol/index.js';
 import { contentStyles, panelHostStyles } from './styles.js';
+import type { ThemeProducts } from './theme-products.js';
 import type { ThemeSave } from './theme-save.js';
 import {
   exportBlocked,
@@ -28,8 +31,9 @@ import {
   fieldValue,
   parseDraft,
   pathText,
-  setPath,
+  setField,
   themeFields,
+  type ThemeBase,
   type ThemeField,
 } from './theme-model.js';
 
@@ -75,6 +79,11 @@ function firstScreen(studio: Studio | undefined): string {
   return screens?.composition ? `composition:${screens.composition.starters[0]?.id ?? ''}` : '';
 }
 
+/** Each file's model as the page has it: '' is the theme file of a theme without bases. */
+const models = (studio: Studio | undefined): readonly (readonly [string, unknown])[] =>
+  studio?.files?.map((f) => [f.file, f.config] as const) ??
+  (studio?.config ? [['', studio.config]] : []);
+
 export class ThemeStudioElement extends OddkinElement.with({
   page: prop.object<ThemeStudioPageData>({ description: 'The Theme Studio page data.' }),
   frameUrl: prop.string({
@@ -85,6 +94,10 @@ export class ThemeStudioElement extends OddkinElement.with({
   static override styles: StyleInput = [panelHostStyles, contentStyles];
 
   readonly #draft = signal<unknown>(undefined);
+  /** Each file's draft, by file (`models`); `#draft` is the edited file's. */
+  readonly #drafts = new Map<string, unknown>();
+  /** The file edited. */
+  readonly #file = signal('');
   readonly #json = signal('');
   readonly #jsonError = signal('');
   readonly #result = signal<GenerationResult | undefined>(undefined);
@@ -107,8 +120,11 @@ export class ThemeStudioElement extends OddkinElement.with({
   /** Per frame, the screen request in flight; frames whose screen changed meanwhile. */
   readonly #sending = new Map<IsolatedPreview, Promise<void>>();
   readonly #again = new Set<IsolatedPreview>();
-  /** Saving to the theme file, when the dev server offers it. */
+  /** Saving to the theme file, when the dev server offers it: the edited file's, of `#saves`. */
   readonly #save = signal<ThemeSave | undefined>(undefined);
+  readonly #saves = new Map<string, ThemeSave>();
+  /** A theme on bases: its file picker and products, loaded when the page lists its files. */
+  readonly #products = signal<ThemeProducts | undefined>(undefined);
   readonly #hosts: readonly [HTMLDivElement, HTMLDivElement];
   #previews: IsolatedPreview[] = [];
   #generation: ThemeGeneration | undefined;
@@ -145,16 +161,23 @@ export class ThemeStudioElement extends OddkinElement.with({
         const last = this.#key;
         if (page === last) return;
         this.#key = page;
-        // A rebuild that leaves the theme file alone, or brings back the saved draft, keeps the
-        // reader's draft and screen: only the screens' data may have changed.
-        const kept = [last?.studio.config, this.#draft.peek()].map((c) => JSON.stringify(c));
+        // A rebuild that leaves the theme's files alone, or brings back their saved drafts, keeps
+        // the reader's drafts and screen: only the screens' data may have changed.
+        const before = models(last?.studio);
+        const after = models(page?.studio);
+        const json = (value: unknown) => JSON.stringify(value);
         if (
           page &&
           last &&
           page.id === last.id &&
           frameUrl === this.#frameUrl &&
           page.studio.worker === last.studio.worker &&
-          kept.includes(JSON.stringify(page.studio.config))
+          after.length === before.length &&
+          after.every(
+            ([file, config], i) =>
+              file === before[i]?.[0] &&
+              [before[i]?.[1], this.#drafts.get(file)].map(json).includes(json(config)),
+          )
         ) {
           this.#showAll();
           return;
@@ -176,14 +199,21 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#again.clear();
     this.#generation = undefined;
     this.#css = undefined;
+    this.#products.value = undefined;
     for (const host of this.#hosts) host.replaceChildren();
   }
 
   #start(page: ThemeStudioPageData | undefined, frameUrl: string): void {
     this.#stop();
     const studio = page?.studio;
-    this.#draft.value = studio?.config;
-    this.#json.value = studio?.config ? JSON.stringify(studio.config, null, 2) : '';
+    this.#drafts.clear();
+    for (const [file, config] of models(studio)) this.#drafts.set(file, config);
+    // The theme file is the last of its files.
+    const file = models(studio).at(-1)?.[0] ?? '';
+    this.#file.value = file;
+    const draft = this.#drafts.get(file);
+    this.#draft.value = draft;
+    this.#json.value = draft ? JSON.stringify(draft, null, 2) : '';
     this.#jsonError.value = '';
     this.#result.value = undefined;
     this.#status.value = { text: '', alert: false };
@@ -192,12 +222,21 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#exported.value = '';
     this.#texts.clear();
     this.#save.value = undefined;
+    this.#saves.clear();
     this.#choose(firstScreen(studio), false);
     if (!page || !studio?.config || !studio.worker) return;
-    const save = studio.save;
-    if (save)
+    const targets: (readonly [string, { readonly file: string; readonly url: string }])[] =
+      studio.files
+        ? studio.files.flatMap((f) => (f.save ? [[f.file, { file: f.file, url: f.save }]] : []))
+        : studio.save
+          ? [['', studio.save]]
+          : [];
+    if (targets.length)
       void import('./theme-save.js').then(({ ThemeSave }) => {
-        if (this.#key === page) this.#save.value = new ThemeSave(save, () => this.#draft.peek());
+        if (this.#key !== page) return;
+        for (const [key, target] of targets)
+          this.#saves.set(key, new ThemeSave(target, () => this.#drafts.get(key)));
+        this.#save.value = this.#saves.get(this.#file.peek());
       });
     const scope = createScope({ name: 'workbench-theme-studio' });
     this.#studioScope = scope;
@@ -211,8 +250,26 @@ export class ThemeStudioElement extends OddkinElement.with({
       },
     );
     if (frameUrl && firstScreen(studio)) this.#frames(scope, frameUrl);
-    this.#pending.value = true;
-    this.#generation.request(studio.config);
+    this.#generate();
+    const { files, worker } = studio;
+    if (files) {
+      const host = this;
+      void import('./theme-products.js').then(({ ThemeProducts }) => {
+        if (this.#key !== page) return;
+        this.#products.value = new ThemeProducts(worker, scope, {
+          // The page's files, as a rebuild that keeps the drafts (a save) replaces them.
+          get files() {
+            return host.page?.studio.files ?? files;
+          },
+          get file() {
+            return host.#file.value;
+          },
+          draft: (file) => this.#drafts.get(file),
+          bases: (file) => this.#bases(file),
+          open: (file) => this.#open(file),
+        });
+      });
+    }
   }
 
   #frames(scope: Scope, frameUrl: string): void {
@@ -422,6 +479,7 @@ export class ThemeStudioElement extends OddkinElement.with({
   }
 
   #setDraft(draft: unknown, fromJson = false): void {
+    this.#drafts.set(this.#file.peek(), draft);
     this.#draft.value = draft;
     if (!fromJson) {
       this.#json.value = JSON.stringify(draft, null, 2);
@@ -429,8 +487,39 @@ export class ThemeStudioElement extends OddkinElement.with({
     }
     this.#exported.value = '';
     this.#save.peek()?.discard();
+    this.#generate();
+  }
+
+  /** Edit another file of the theme; each keeps its draft. */
+  #open(file: string): void {
+    const draft = this.#drafts.get(file);
+    this.#file.value = file;
+    this.#draft.value = draft;
+    this.#json.value = JSON.stringify(draft, null, 2);
+    this.#jsonError.value = '';
+    this.#exported.value = '';
+    this.#save.value = this.#saves.get(file);
+    this.#generate();
+  }
+
+  /** The files `file` builds on, root base first, each with its draft. */
+  #bases(file = this.#file.peek()): ThemeBase[] {
+    const files = this.page?.studio.files ?? [];
+    const baseOf = (name: string) => files.find((f) => f.file === name)?.base;
+    const bases: ThemeBase[] = [];
+    for (let base = baseOf(file); base && bases.length < files.length; base = baseOf(base))
+      bases.unshift({ file: base, config: this.#drafts.get(base) });
+    return bases;
+  }
+
+  /** Generate the edited file's draft on its bases' drafts. */
+  #generate(): void {
     if (this.#generation) this.#pending.value = true;
-    this.#generation?.request(draft);
+    this.#generation?.request(
+      this.#draft.peek(),
+      this.#bases().map((base) => base.config),
+    );
+    void this.#products.peek()?.check();
   }
 
   /** Why the draft cannot be exported now, or, for a diff, `review`ed against the theme file. */
@@ -467,6 +556,9 @@ export class ThemeStudioElement extends OddkinElement.with({
   #exportSection(source: string | undefined) {
     const blocked = this.#blocked();
     const names = exportNames(source);
+    const unsaveable = this.page?.studio.files?.find(
+      (f) => f.file === this.#file.value,
+    )?.unsaveable;
     const button = (kind: 'config' | 'css', name: string) =>
       html`<button
         type="button"
@@ -484,21 +576,43 @@ export class ThemeStudioElement extends OddkinElement.with({
       </p>
       <p class="wb-status" role="status">${this.#exported.value}</p>
       ${this.#save.value?.render(this.#blocked(true), blocked) ?? nothing}
+      ${unsaveable ? html`<p class="wb-muted">Saving needs ${unsaveable}.</p>` : nothing}
     </section>`;
+  }
+
+  /** The value a field shows as its placeholder: the base's, or the generator's. */
+  #placeholder(field: ThemeField): string {
+    const inherited = field.inherited;
+    return inherited
+      ? `${inherited.value ?? 'Not set'} (from ${inherited.file})`
+      : 'Not set (generated)';
+  }
+
+  #change(field: ThemeField, input: string): void {
+    this.#setDraft(setField(this.#draft.peek(), field, fieldValue(field, input), this.#bases()));
   }
 
   #field(field: ThemeField) {
     const id = `ts-${field.path.join('-')}`;
+    const shown = field.value ?? field.inherited?.value;
     const swatch =
       field.kind === 'color' &&
-      typeof field.value === 'string' &&
-      globalThis.CSS?.supports('color', field.value)
+      typeof shown === 'string' &&
+      globalThis.CSS?.supports('color', shown)
         ? html`<span
             class="wb-swatch"
             aria-hidden="true"
-            style=${styleMap({ background: field.value })}
+            style=${styleMap({ background: shown })}
           ></span>`
         : nothing;
+    // On a base: whether this file sets the value, or which base does.
+    const where = !this.page?.studio.files
+      ? ''
+      : field.inherited
+        ? ` · from ${field.inherited.file}`
+        : field.value === undefined
+          ? ''
+          : ' · set in this file';
     return html`<div class="wb-field">
       <label for=${id}>${field.label}</label>
       <span class="wb-cell-controls"
@@ -507,19 +621,13 @@ export class ThemeStudioElement extends OddkinElement.with({
           type=${field.kind === 'number' || field.kind === 'integer' ? 'number' : 'text'}
           step=${field.kind === 'integer' ? '1' : 'any'}
           .value=${field.value === undefined ? '' : String(field.value)}
-          placeholder="Not set (generated)"
+          placeholder=${this.#placeholder(field)}
           data-path=${pathText(field.path)}
           aria-describedby=${`${id}-origin`}
           @change=${(event: Event) =>
-            this.#setDraft(
-              setPath(
-                this.#draft.peek(),
-                field.path,
-                fieldValue(field, (event.target as HTMLInputElement).value),
-              ),
-            )}
+            this.#change(field, (event.target as HTMLInputElement).value)}
       /></span>
-      <span id=${`${id}-origin`} class="wb-muted">${field.origin}</span>
+      <span id=${`${id}-origin`} class="wb-muted">${field.origin}${where}</span>
     </div>`;
   }
 
@@ -529,15 +637,18 @@ export class ThemeStudioElement extends OddkinElement.with({
     const draft = this.#draft.value;
     const result = this.#result.value;
     const status = this.#status.value;
-    const groups = draft === undefined ? [] : themeFields(draft);
+    const groups = draft === undefined ? [] : themeFields(draft, this.#bases(this.#file.value));
     const problems = result?.diagnostics ?? [];
+    // The file edited: one of a theme's files on a base, else the theme file.
+    const source = studio.files ? this.#file.value : studio.source;
     return html`<div class="wb-content">
       <section id="generate" aria-labelledby="generate-title">
         <h2 id="generate-title">Generate</h2>
+        ${this.#products.value?.render() ?? nothing}
         ${
-          studio.source
+          source
             ? html`<p class="wb-muted">
-                Draft of <code>${studio.source}</code>. Edits stay in this page until exported.
+                Draft of <code>${source}</code>. Edits stay in this page until exported.
               </p>`
             : nothing
         }
@@ -572,24 +683,25 @@ export class ThemeStudioElement extends OddkinElement.with({
                             (row) => row.token,
                             (row) =>
                               html`<tr>
-                                <th scope="row"><code>${row.token}</code></th>
+                                <th scope="row">
+                                  <code>${row.token}</code>${
+                                    row.inherited
+                                      ? html` <span class="wb-muted">from ${row.inherited}</span>`
+                                      : nothing
+                                  }
+                                </th>
                                 ${row.cells.map(
                                   (cell) =>
                                     html`<td>
                                       <input
                                         aria-label=${cell.label}
                                         .value=${cell.value === undefined ? '' : String(cell.value)}
+                                        placeholder=${cell.inherited ? this.#placeholder(cell) : ''}
                                         data-path=${pathText(cell.path)}
                                         @change=${(event: Event) =>
-                                          this.#setDraft(
-                                            setPath(
-                                              this.#draft.peek(),
-                                              cell.path,
-                                              fieldValue(
-                                                cell,
-                                                (event.target as HTMLInputElement).value,
-                                              ),
-                                            ),
+                                          this.#change(
+                                            cell,
+                                            (event.target as HTMLInputElement).value,
                                           )}
                                       />
                                     </td>`,
@@ -665,7 +777,7 @@ export class ThemeStudioElement extends OddkinElement.with({
             : nothing
         }
       </section>
-      ${draft === undefined ? nothing : this.#exportSection(studio.source)}
+      ${draft === undefined ? nothing : this.#exportSection(source)}
       <section id="method" aria-labelledby="method-title">
         <h2 id="method-title">Method and limits</h2>
         <p>

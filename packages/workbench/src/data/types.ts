@@ -200,14 +200,33 @@ export interface ThemeStudioScreens {
   };
 }
 
+/** One file of a theme on a base, in Theme Studio's page data. */
+export interface ThemeStudioFile {
+  /** The file, relative to the project. */
+  readonly file: string;
+  /** Its own JSON model, as written (`extends` included). */
+  readonly config: JsonObject;
+  /** The file it extends, as another entry's `file`. */
+  readonly base?: string;
+  /** In the dev server: the endpoint that writes it, as `studio.save.url` does the theme file... */
+  readonly save?: string;
+  /** ...or why it does not write it. */
+  readonly unsaveable?: string;
+}
+
 /** Theme Studio (workbench.md §6): the baseline configuration, its generator, and specimens. */
 export interface ThemeStudioPageData extends PageDataBase {
   readonly kind: 'tool';
   readonly studio: {
-    /** The baseline theme configuration's JSON model. */
+    /** The baseline theme configuration's JSON model (merged on its bases, if any). */
     readonly config?: JsonObject;
     /** The configuration file, as `themeStudio.themeConfig` names it. */
     readonly source?: string;
+    /**
+     * A theme file on a base (P1.1 `extends`): its files from the root base to the theme file,
+     * each as written, so Theme Studio edits and saves one without copying another into it.
+     */
+    readonly files?: readonly ThemeStudioFile[];
     /** URL of the generation worker (the library's own `@oddkin/tokens/generate`). */
     readonly worker?: string;
     /** In the dev server: the theme file it writes, after showing the diff (workbench.md §9). */

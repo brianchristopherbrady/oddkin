@@ -1,6 +1,7 @@
 ﻿import { afterEach, describe, expect, it, vi } from 'vitest';
 import { settled } from '@oddkin/core/reactive';
-import { scopeStats } from '@oddkin/core/scope';
+import { createScope, scopeStats } from '@oddkin/core/scope';
+import { render } from '@oddkin/core/template';
 import '../src/panels/component-define.js';
 import '../src/panels/foundation-define.js';
 import '../src/panels/catalog-define.js';
@@ -1128,7 +1129,7 @@ describe('<oddkin-theme-studio-panel>', () => {
       await until(() => !!diff(), 'the diff');
       expect(diff()?.querySelector('pre')?.textContent).toBe(lines.join('\n'));
       expect(status()).toContain('Review the changes to theme.json, then write it.');
-      expect(requests).toEqual([{ config: base.studio.config }]);
+      expect(requests).toEqual([{ file: 'theme.json', config: base.studio.config }]);
 
       // The file changed on disk after the diff was shown: the new diff, and nothing written.
       version = 'v2';
@@ -1141,8 +1142,8 @@ describe('<oddkin-theme-studio-panel>', () => {
       button('Write theme.json')!.click();
       await until(() => status().includes('Saved theme.json.'), 'the write');
       expect(requests.slice(1)).toEqual([
-        { config: base.studio.config, version: 'v1', write: true },
-        { config: base.studio.config, version: 'v2', write: true },
+        { file: 'theme.json', config: base.studio.config, version: 'v1', write: true },
+        { file: 'theme.json', config: base.studio.config, version: 'v2', write: true },
       ]);
       expect(diff()).toBeNull();
 
@@ -1180,7 +1181,7 @@ describe('<oddkin-theme-studio-panel>', () => {
       expect(status()).not.toContain('Review the changes');
       button('Save to theme.json')!.click();
       await until(() => !!diff(), "the newer draft's diff");
-      expect(requests[6]).toEqual({ config: panel.draft });
+      expect(requests[6]).toEqual({ file: 'theme.json', config: panel.draft });
       await until(() => button('Write theme.json')?.disabled === false, 'the write button');
 
       // JSON that does not parse is not the draft: neither reviewed nor written.
@@ -1224,6 +1225,311 @@ describe('<oddkin-theme-studio-panel>', () => {
       expect(status()).not.toContain('changed on disk');
     } finally {
       spy.mockRestore();
+    }
+  });
+
+  it('edits each file of a theme on a base: generated on its bases, saved alone', async () => {
+    const requests: Record<string, unknown>[] = [];
+    const fetchOriginal = globalThis.fetch;
+    const spy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+      if (String(input) !== '/save-theme') return fetchOriginal(input, init);
+      const request = JSON.parse(String(init?.body)) as Record<string, unknown>;
+      requests.push(request);
+      const reply = { file: request['file'], version: 'v1', lines: ['@@ -1 +1 @@', '-a', '+b'] };
+      return new Response(JSON.stringify(reply), {
+        headers: { 'content-type': 'application/json' },
+      });
+    });
+    try {
+      const page = studioPage();
+      const baseTheme = {
+        brand: { primary: '#123456', neutral: '#777777' },
+        spacing: { strategy: 'multiples', unit: '4px' },
+        overrides: { 'color.canvas': { light: '#ffffff', dark: '#000000' } },
+      };
+      const product = { extends: './base.theme.json', brand: { neutral: '#888888' } };
+      const files = [
+        { file: 'base.theme.json', config: baseTheme, save: '/save-theme' },
+        {
+          file: 'product.theme.json',
+          config: product,
+          base: 'base.theme.json',
+          save: '/save-theme',
+        },
+      ];
+      const panel = document.createElement('oddkin-theme-studio-panel');
+      panel.frameUrl = frameUrl;
+      panel.page = { ...page, studio: { ...page.studio, files } };
+      mounted.push(panel);
+      document.body.append(panel);
+      const root = panel.shadowRoot!;
+      const docs = () => panel.previews.map((preview) => preview.iframe.contentDocument);
+      const themed = (value: string) =>
+        docs().length === 2 &&
+        docs().every((doc) =>
+          [...(doc?.adoptedStyleSheets ?? [])].some((sheet) =>
+            [...sheet.cssRules].some((rule) => rule.cssText.includes(value)),
+          ),
+        );
+      const input = (id: string) => root.querySelector<HTMLInputElement>(`#${id}`)!;
+      const origin = (id: string) => root.querySelector(`#${id}-origin`)?.textContent?.trim();
+      const set = (target: HTMLInputElement, value: string) => {
+        target.value = value;
+        target.dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      const picker = () => root.querySelector<HTMLSelectElement>('#ts-file')!;
+      const open = (file: string) => {
+        picker().value = file;
+        picker().dispatchEvent(new Event('change', { bubbles: true }));
+      };
+      const label = (file: string) =>
+        [...picker().options]
+          .find((o) => o.value === file)
+          ?.textContent?.replace(/\s+/g, ' ')
+          .trim();
+      const status = () => root.querySelector('#generate [role="status"]')?.textContent?.trim();
+
+      // The theme file is edited first, as written: the base's values are not in its draft.
+      await until(() => themed('#123456'), "the base's primary, generated under the product");
+      await until(() => !!root.querySelector('#ts-file'), 'the file picker');
+      expect(panel.draft).toEqual(product);
+      expect([label('base.theme.json'), label('product.theme.json'), picker().value]).toEqual([
+        'base.theme.json (base)',
+        'product.theme.json',
+        'product.theme.json',
+      ]);
+      expect(root.querySelector('#ts-file-note')?.textContent).toContain(
+        'Builds on base.theme.json',
+      );
+      expect([input('ts-brand-primary').value, input('ts-brand-primary').placeholder]).toEqual([
+        '',
+        '#123456 (from base.theme.json)',
+      ]);
+      expect(origin('ts-brand-primary')).toBe('foundation input · from base.theme.json');
+      expect([input('ts-brand-neutral').value, origin('ts-brand-neutral')]).toEqual([
+        '#888888',
+        'foundation input · set in this file',
+      ]);
+      expect(input('ts-spacing-unit').placeholder).toBe('4px (from base.theme.json)');
+      const canvas = root.querySelector('[data-group="overrides"] tbody tr')!;
+      expect(canvas.querySelector('th')?.textContent).toContain('from base.theme.json');
+      expect(canvas.querySelector('input')?.placeholder).toBe('#ffffff (from base.theme.json)');
+      expect(root.querySelector('#ts-json')).toHaveProperty(
+        'value',
+        JSON.stringify(product, null, 2),
+      );
+      expect(root.querySelector('#generate')?.textContent).toContain(
+        'Draft of product.theme.json.',
+      );
+      // Edits made while a draft is generating are generated on the bases too.
+      const delivered = panel.generation!.delivered;
+      set(input('ts-brand-neutral'), '#999999');
+      set(input('ts-brand-neutral'), '#888888');
+      await until(() => panel.generation!.delivered === delivered + 1, 'the newest draft');
+      expect(panel.generation!.superseded).toBeGreaterThan(0);
+      expect(themed('#123456')).toBe(true);
+
+      // A spacing field it inherits: the file takes the whole spacing, then the edit.
+      set(input('ts-spacing-unit'), '8px');
+      await settled();
+      expect(panel.draft).toEqual({ ...product, spacing: { strategy: 'multiples', unit: '8px' } });
+      expect(origin('ts-spacing-unit')).toBe('foundation input · set in this file');
+      // Clearing a value it inherits changes nothing.
+      set(input('ts-brand-primary'), '');
+      await settled();
+      expect(panel.draft).not.toHaveProperty(['brand', 'primary']);
+      expect(label('product.theme.json')).toBe('product.theme.json (edited)');
+
+      // The base: its own draft, and the products an edit to it changes.
+      open('base.theme.json');
+      await settled();
+      expect(panel.draft).toEqual(baseTheme);
+      expect(root.querySelector('#generate')?.textContent).toContain('Draft of base.theme.json.');
+      expect(root.querySelector('#export')?.textContent).toContain('Download base.theme.json');
+      expect(root.querySelector('#ts-file-note')?.textContent).toContain(
+        'Products on it: product.theme.json.',
+      );
+      expect(origin('ts-brand-primary')).toBe('foundation input · set in this file');
+      set(input('ts-brand-primary'), '#222222');
+      await until(() => themed('#222222'), 'the edited base');
+      await until(() => !!status(), 'the products it changes');
+      expect(status()).toBe('This edit changes product.theme.json.');
+
+      // The product, generated on the edited base; then a primary of its own.
+      open('product.theme.json');
+      await until(() => themed('#222222'), 'the product on the edited base');
+      expect(input('ts-brand-primary').placeholder).toBe('#222222 (from base.theme.json)');
+      expect(status()).toBe('');
+      set(input('ts-brand-primary'), '#0a7d33');
+      await until(() => themed('#0a7d33'), "the product's own primary");
+      open('base.theme.json');
+      set(input('ts-brand-primary'), '#333333');
+      await until(
+        () => status() === 'This edit changes no product. Unchanged: product.theme.json.',
+        'unchanged',
+      );
+
+      // Saving writes the file edited, its own draft alone.
+      const save = (file: string) =>
+        [...root.querySelectorAll('button')].find((b) =>
+          b.textContent?.includes(`Save to ${file}`),
+        );
+      await until(() => save('base.theme.json')?.disabled === false, 'the save button');
+      save('base.theme.json')!.click();
+      await until(() => requests.length === 1, 'the review');
+      expect(requests[0]).toEqual({
+        file: 'base.theme.json',
+        config: { ...baseTheme, brand: { primary: '#333333', neutral: '#777777' } },
+      });
+      open('product.theme.json');
+      await until(() => save('product.theme.json')?.disabled === false, 'its save button');
+      save('product.theme.json')!.click();
+      await until(() => requests.length === 2, 'the second review');
+      expect(requests[1]).toEqual({
+        file: 'product.theme.json',
+        config: {
+          extends: './base.theme.json',
+          brand: { neutral: '#888888', primary: '#0a7d33' },
+          spacing: { strategy: 'multiples', unit: '8px' },
+        },
+      });
+
+      // The rebuild after a save (the base now holds its draft) keeps every draft, and the base
+      // is no longer marked edited.
+      const saved = requests[0]!['config'] as typeof baseTheme;
+      panel.page = {
+        ...page,
+        studio: { ...page.studio, files: [{ ...files[0]!, config: saved }, files[1]!] },
+      };
+      await settled();
+      expect(panel.draft).toEqual(requests[1]!['config']);
+      expect([label('base.theme.json'), label('product.theme.json')]).toEqual([
+        'base.theme.json (base)',
+        'product.theme.json (edited)',
+      ]);
+
+      // A file the dev server does not write says why (a rebuild with a changed base restarts).
+      panel.page = {
+        ...page,
+        studio: {
+          ...page.studio,
+          files: [
+            {
+              file: 'base.theme.json',
+              config: { ...baseTheme, name: 'base' },
+              unsaveable: 'a .json theme file: base is code',
+            },
+            files[1]!,
+          ],
+        },
+      };
+      await until(() => panel.draft === product, 'the new page');
+      await until(() => !!picker(), 'the file picker again');
+      open('base.theme.json');
+      await settled();
+      expect(save('base.theme.json')).toBeUndefined();
+      expect(root.querySelector('#export')?.textContent).toContain(
+        'Saving needs a .json theme file: base is code.',
+      );
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('generates a file on its bases in order, the root first, and names only products', async () => {
+    const page = studioPage();
+    const files = [
+      { file: 'root.json', config: { brand: { primary: '#111111' } } },
+      { file: 'mid.json', config: { brand: { primary: '#222222' } }, base: 'root.json' },
+      { file: 'leaf.json', config: { name: 'leaf' }, base: 'mid.json' },
+    ];
+    const panel = document.createElement('oddkin-theme-studio-panel');
+    panel.frameUrl = frameUrl;
+    panel.page = { ...page, studio: { ...page.studio, files } };
+    mounted.push(panel);
+    document.body.append(panel);
+    const root = panel.shadowRoot!;
+    const themed = (value: string) =>
+      panel.previews.length === 2 &&
+      panel.previews.every((preview) =>
+        [...(preview.iframe.contentDocument?.adoptedStyleSheets ?? [])].some((sheet) =>
+          [...sheet.cssRules].some((rule) => rule.cssText.includes(value)),
+        ),
+      );
+    await until(() => themed('#222222'), 'the nearest base wins');
+    await until(() => !!root.querySelector('#ts-file'), 'the file picker');
+    const picker = root.querySelector<HTMLSelectElement>('#ts-file')!;
+    picker.value = 'root.json';
+    picker.dispatchEvent(new Event('change', { bubbles: true }));
+    await settled();
+    // A base that builds on another is not a product.
+    expect(root.querySelector('#ts-file-note')?.textContent?.trim()).toBe(
+      'Products on it: leaf.json.',
+    );
+    expect(root.querySelector('#generate [role="status"]')?.textContent?.trim()).toBe('');
+    // A rebuild that renames a file restarts: each draft belongs to its file.
+    panel.page = {
+      ...page,
+      studio: {
+        ...page.studio,
+        files: [
+          files[0]!,
+          { ...files[1]!, file: 'middle.json' },
+          { ...files[2]!, base: 'middle.json' },
+        ],
+      },
+    };
+    await until(() => !!root.querySelector('#ts-file option[value="middle.json"]'), 'the rename');
+    const renamed = root.querySelector<HTMLSelectElement>('#ts-file')!;
+    renamed.value = 'middle.json';
+    renamed.dispatchEvent(new Event('change', { bubbles: true }));
+    await settled();
+    expect(panel.draft).toEqual({ brand: { primary: '#222222' } });
+  });
+
+  it('checks only an edited base, and keeps only the newest check', async () => {
+    const { ThemeProducts } = await import('../src/panels/theme-products.js');
+    const scope = createScope({ name: 'theme products test' });
+    const files = [
+      { file: 'base.json', config: { brand: { primary: '#111111' } } },
+      { file: 'a.json', config: {}, base: 'base.json' },
+      { file: 'b.json', config: { brand: { primary: '#222222' } }, base: 'base.json' },
+    ];
+    const drafts = new Map<string, unknown>(files.map((f) => [f.file, f.config]));
+    const products = new ThemeProducts(
+      new URL('./fixtures/theme-worker.ts', import.meta.url).href,
+      scope,
+      {
+        files,
+        file: 'base.json',
+        draft: (file) => drafts.get(file),
+        bases: (file) =>
+          file === 'base.json' ? [] : [{ file: 'base.json', config: drafts.get('base.json') }],
+        open: () => {},
+      },
+    );
+    const host = document.createElement('div');
+    const status = () => {
+      render(products.render(), host);
+      return host.querySelector('[role="status"]')?.textContent?.trim();
+    };
+    try {
+      await products.check();
+      expect(status()).toBe('');
+      expect(host.querySelector('#ts-file-note')?.textContent?.trim()).toBe(
+        'Products on it: a.json, b.json.',
+      );
+      drafts.set('base.json', { brand: { primary: '#333333' } });
+      await products.check();
+      expect(status()).toBe('This edit changes a.json. Unchanged: b.json.');
+      // An edit undone while the check of the edit runs: only the newest check counts.
+      drafts.set('base.json', { brand: { primary: '#444444' } });
+      const older = products.check();
+      drafts.set('base.json', files[0]!.config);
+      await Promise.all([older, products.check()]);
+      expect(status()).toBe('');
+    } finally {
+      scope.dispose();
     }
   });
 

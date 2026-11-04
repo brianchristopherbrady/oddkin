@@ -351,7 +351,7 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
     ]);
   });
 
-  it('offers saving only for a JSON theme file that extends no base, and only in the dev server', async () => {
+  it('offers saving each JSON file of a theme, its bases too, and only in the dev server', async () => {
     const config = (file: string) =>
       `export default { library: { packages: ['@acme/ui'] }, themeStudio: { themeConfig: './${file}' } };\n`;
     const studio = async (files: Record<string, string>, save: boolean) => {
@@ -359,7 +359,7 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
       projects.push(dir);
       const build = await buildWorkbench({ config: dir, save });
       const page = build.data?.pages['theme-studio'] as ThemeStudioPageData;
-      return { build, studio: page.studio };
+      return { dir, build, studio: page.studio };
     };
     const json = {
       'oddkin.config.ts': config('a.theme.json'),
@@ -368,7 +368,10 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
     const built = await studio(json, false);
     expect(built.studio.save).toBeUndefined();
     expect(built.build.themeFile).toBeUndefined();
+    expect(built.build.themeFiles).toBeUndefined();
     expect(built.studio.missing.map((m) => m.item)).not.toContain('save');
+    // A theme file on no base is one draft, as before.
+    expect(built.studio.files).toBeUndefined();
 
     const code = await studio(
       {
@@ -379,23 +382,132 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
     );
     expect(code.studio.save).toBeUndefined();
     expect(code.build.themeFile).toBeUndefined();
+    expect(code.build.themeFiles).toBeUndefined();
     expect(code.studio.missing).toContainEqual({
       item: 'save',
       supply: expect.stringContaining('a .json theme file: a.theme.mjs is code'),
     });
 
-    const based = await studio(
+    // Each file of a theme on bases is its own draft, as written: the theme file is saved, and
+    // so is a base of the project; one in an installed package or in code is not.
+    const files = {
+      'oddkin.config.ts': config('a.theme.json'),
+      'a.theme.json': '{ "extends": "./mid.theme.json", "name": "a" }\n',
+      'mid.theme.json':
+        '{ "extends": "@acme/brand/base.theme.json", "status": { "info": "#0055aa" } }\n',
+      'node_modules/@acme/brand/package.json':
+        '{ "name": "@acme/brand", "version": "1.0.0", "exports": { "./base.theme.json": "./base.theme.json" } }\n',
+      'node_modules/@acme/brand/base.theme.json':
+        '{ "name": "base", "brand": { "primary": "#123456" } }\n',
+    };
+    const based = await studio(files, true);
+    const url = '/_oddkin/theme-file';
+    expect(based.studio.save).toEqual({ file: 'a.theme.json', url });
+    expect(based.studio.missing.map((m) => m.item)).not.toContain('save');
+    expect(based.studio.files).toEqual([
+      {
+        file: 'node_modules/@acme/brand/base.theme.json',
+        config: { name: 'base', brand: { primary: '#123456' } },
+        unsaveable: expect.stringContaining(
+          'node_modules/@acme/brand/base.theme.json belongs to an installed package',
+        ),
+      },
+      {
+        file: 'mid.theme.json',
+        config: { extends: '@acme/brand/base.theme.json', status: { info: '#0055aa' } },
+        base: 'node_modules/@acme/brand/base.theme.json',
+        save: url,
+      },
+      {
+        file: 'a.theme.json',
+        config: { extends: './mid.theme.json', name: 'a' },
+        base: 'mid.theme.json',
+        save: url,
+      },
+    ]);
+    // The baseline is still the merged model, as the CLI builds it.
+    expect(based.studio.config).toEqual({
+      name: 'a',
+      brand: { primary: '#123456' },
+      status: { info: '#0055aa' },
+    });
+    expect([...(based.build.themeFiles ?? [])]).toEqual([
+      ['mid.theme.json', join(based.dir, 'mid.theme.json')],
+      ['a.theme.json', join(based.dir, 'a.theme.json')],
+    ]);
+    // A change to any file of the theme rebuilds the page.
+    expect(based.build.inputs?.dataFiles).toEqual(
+      expect.arrayContaining(
+        ['a.theme.json', 'mid.theme.json', 'node_modules/@acme/brand/base.theme.json'].map((f) =>
+          join(based.dir, ...f.split('/')),
+        ),
+      ),
+    );
+    // A static build lists the files without saving.
+    expect((await studio(files, false)).studio.files?.map((f) => Object.keys(f))).toEqual([
+      ['file', 'config'],
+      ['file', 'config', 'base'],
+      ['file', 'config', 'base'],
+    ]);
+    // In code, a base is read-only too.
+    const coded = await studio(
       {
         'oddkin.config.ts': config('a.theme.json'),
-        'a.theme.json': '{ "extends": "./base.theme.json", "name": "a" }\n',
-        'base.theme.json': '{ "name": "base", "brand": { "primary": "#123456" } }\n',
+        'a.theme.json': '{ "extends": "./base.theme.mjs" }\n',
+        'base.theme.mjs': "export default { name: 'base' };\n",
       },
       true,
     );
-    expect(based.studio.save).toBeUndefined();
-    expect(based.studio.missing).toContainEqual({
-      item: 'save',
-      supply: expect.stringContaining('a.theme.json extends one'),
+    expect(coded.studio.files?.[0]).toMatchObject({
+      file: 'base.theme.mjs',
+      unsaveable: expect.stringContaining('a .json theme file: base.theme.mjs is code'),
+    });
+  });
+
+  it("writes the file of the theme a save names, and only the theme's own files", async () => {
+    const product = '{\n  "extends": "./base.theme.json",\n  "name": "product"\n}\n';
+    const base = '{\n  "name": "base",\n  "brand": { "primary": "#123456" }\n}\n';
+    const { dir, server } = await serve(
+      {
+        'oddkin.config.ts':
+          "export default { library: { packages: ['@acme/ui'] }, themeStudio: { themeConfig: './product.theme.json' } };\n",
+        'product.theme.json': product,
+        'base.theme.json': base,
+        'other.theme.json': base,
+      },
+      false,
+    );
+    const { origin } = new URL(server.url);
+    const post = (payload: unknown) =>
+      send(new URL('_oddkin/theme-file', server.url), {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', origin },
+        body: JSON.stringify(payload),
+      });
+    const read = (file: string) => readFileSync(join(dir, file), 'utf8');
+    const draft = { name: 'base', brand: { primary: '#0a7d33' } };
+    const diff = await post({ file: 'base.theme.json', config: draft });
+    const shown = JSON.parse(diff.body) as { file: string; version: string };
+    expect([diff.status, shown.file]).toEqual([200, 'base.theme.json']);
+    const written = await post({
+      file: 'base.theme.json',
+      config: draft,
+      version: shown.version,
+      write: true,
+    });
+    expect(JSON.parse(written.body)).toMatchObject({ file: 'base.theme.json', written: true });
+    expect(read('base.theme.json')).toBe(
+      '{\n  "name": "base",\n  "brand": { "primary": "#0a7d33" }\n}\n',
+    );
+    // The product file is untouched: saving a base never copies it into a product, or back.
+    expect(read('product.theme.json')).toBe(product);
+    // No request names a file outside the theme, or a path that leads elsewhere.
+    for (const file of ['other.theme.json', '../base.theme.json', 'oddkin.config.ts', 'x'])
+      expect((await post({ file, config: draft })).status).toBe(403);
+    expect(read('other.theme.json')).toBe(base);
+    // Without a name, a save writes the theme file, as before.
+    expect(JSON.parse((await post({ config: { name: 'product' } })).body)).toMatchObject({
+      file: 'product.theme.json',
     });
   });
 
