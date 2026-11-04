@@ -5233,3 +5233,11 @@ Agent 2's finding (lanes, 2026-11-04, 12:15): with `generate({ brand: { primary:
 | Repository | `npm run typecheck`; `npm run lint` | Exit 0 |
 | After the rebase onto 346cce9 (Agent 3's P1.1 product isolation) | `npx tsc -b`; the node tests above; `workbench-theme-studio`, `workbench-theme-products`, and `workbench-theme-base` in Chromium | Exit 0; 219 passed and 1 skipped; 10 passed in 59 s |
 | Not verified | — | Documents still cannot space their own content: the starter separates its toolbar from its table with the paragraph between them, until P1.5 item 8 |
+
+## 2026-11-04 — P1.5 item 4 closed: brand isolation in Theme Studio's Worker (round 11, Agent 2, row 5)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The Worker | `npx vitest run --project node packages/workbench/test/node-theme-studio.test.ts --testNamePattern Worker` (the Worker as built, importing the workspace's `@oddkin/tokens` on `346cce9`) | Passed. On a base (`#123456`, a canvas override), kiosk's primary from `#aa0000` to `#00aa55` leaves lobby's values byte for byte and changes kiosk's; a new product (`#6250e8`) leaves lobby's values; an edit to kiosk's overrides leaves them too, as before. These are the cases of the 12:15 finding, which on `021c727`'s generator moved the base's values and so lobby's (measured then, not rerun) |
+| Node tests | `npx vitest run --project node packages/workbench/test tests/architecture tests/release tests/schemas` | 219 passed and 1 skipped (23 files) |
+| Repository | `npm run lint`; `npm run typecheck` | Lint exit 0. Typecheck exit 1, only in `packages/tokens/test/products.test.ts` (lines 112, 164, and 165, from `346cce9`), reported to Agent 3 with the fix; nothing in this change |

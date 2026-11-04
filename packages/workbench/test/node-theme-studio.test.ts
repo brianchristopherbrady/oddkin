@@ -614,10 +614,8 @@ describe('Theme Studio page data', () => {
         ['kiosk', 'lobby'],
       );
       expect(primary.values?.['lobby']).not.toBe(first.values?.['lobby']);
-      // An edit to one product's overrides leaves another's values byte for byte (multi-product.md
-      // §3). An edit to a product's brand does not yet: the generator selects the contrast roles
-      // for every product's brand at once (reported to Agent 3 on 2026-11-04, a P1.1 fix in their
-      // queue), and the check, which compares values, names what it changes.
+      // An edit to one product, to its overrides or its brand, leaves another's values byte for
+      // byte (multi-product.md §3), and so does a new product.
       const edited = {
         ...product,
         products: { ...products, kiosk: { ...products.kiosk, overrides: canvas('#f0f0f0') } },
@@ -625,6 +623,18 @@ describe('Theme Studio page data', () => {
       const isolated = run(edited, [base], ['kiosk', 'lobby']);
       expect(isolated.values?.['lobby']).toBe(first.values?.['lobby']);
       expect(isolated.values?.['kiosk']).not.toBe(first.values?.['kiosk']);
+      const rebranded = {
+        ...product,
+        products: { ...products, kiosk: { ...products.kiosk, brand: { primary: '#00aa55' } } },
+      };
+      const brand = run(rebranded, [base], ['kiosk', 'lobby']);
+      expect(brand.values?.['lobby']).toBe(first.values?.['lobby']);
+      expect(brand.values?.['kiosk']).not.toBe(first.values?.['kiosk']);
+      const added = {
+        ...product,
+        products: { ...products, museum: { brand: { primary: '#6250e8' } } },
+      };
+      expect(run(added, [base], ['lobby']).values).toEqual({ lobby: first.values?.['lobby'] });
       // The file is merged on its base, not under it: its own primary wins whatever the base's.
       const own = { ...product, brand: { primary: '#222222' } };
       const lobby = run(own, [base], ['lobby']).values;
