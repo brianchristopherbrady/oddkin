@@ -443,6 +443,18 @@ Finish with:
 5. Test, browser, accessibility, and performance evidence.
 6. Remaining blockers and host-application integration responsibilities.
 
+## AI-14. Design fidelity and the Oddkin design framework
+
+Added at the owner's request on 2026-11-04 ([IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md), P1.8; Agent 3, with Agent 2 reading each change in `packages/ai`).
+
+Match the design. Compare every element with its families on page 0:1, "04 · AI components", of the Figma design file `E7LfRysny8V3qU24tv082i` (https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin---Design-Framework?node-id=0-1), in light and dark, by measurement: spacing, sizes, type, colour roles, borders, radii, and states. Refresh that page in `design/figma/components.json` first; its 48 families, each element's specimen in light and dark, date from 2026-10-22.
+
+Draw with the Oddkin design framework. Every visual value comes from the tokens (component and semantic roles), the CSS recipes, and the layout primitives, or from the Oddkin components the element already uses. Replace a literal colour, size, or spacing wherever a token or recipe exists. Keep both modes and forced colours working.
+
+Keep the evidence. Add Figma-parity tests for the AI families in three engines, built like `packages/components/test/figma-parity.*.browser.test.ts` on `parity.ts`, and list each accepted difference with its reason. The metadata keeps tracing each element's styles to tokens.
+
+Keep the public API. A change to attributes, properties, parts, slots, events, or custom properties is decided by the package owner (Agent 2).
+
 ## Primary references
 
 Use the relevant sections of these sources to validate decisions. Record the versions inspected for any protocol or dependency adopted.
