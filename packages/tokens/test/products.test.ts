@@ -36,10 +36,10 @@ function deepFreeze<T>(value: T): T {
 }
 const productRule = (css: string | undefined, name: string) =>
   new RegExp(`\\[data-odd-product="${name}"\\] \\{[^}]*\\}`).exec(css ?? '')?.[0];
-const productRules = (css: string | undefined) =>
+const productRules = (css: string | undefined): string[] =>
   (css ?? '').match(/\[data-odd-product="[^"]+"\] \{[^}]*\}/g) ?? [];
 // A product's rule, and the one that re-applies its own roles in its mode scopes.
-const scopeRules = (css: string | undefined, name = '[^"]+') =>
+const scopeRules = (css: string | undefined, name = '[^"]+'): string[] =>
   (css ?? '').match(
     new RegExp(`\\[data-odd-product="${name}"\\]( \\[data-odd-mode\\])? \\{[^}]*\\}`, 'g'),
   ) ?? [];
@@ -160,10 +160,10 @@ describe('product isolation (multi-product.md §3)', () => {
     }).theme!;
     const others = [undefined, 'p1', 'p2', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10'];
     for (const product of others)
-      for (const mode of MODES)
-        expect(resolved(after, { mode, product }), `${product} ${mode}`).toEqual(
-          resolved(before, { mode, product }),
-        );
+      for (const mode of MODES) {
+        const context: ResolveContext = product ? { mode, product } : { mode };
+        expect(resolved(after, context), `${product} ${mode}`).toEqual(resolved(before, context));
+      }
   });
 
   it('an override equal to a step is redundant only where no brand needs another step', () => {
