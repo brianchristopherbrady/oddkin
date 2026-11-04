@@ -447,7 +447,7 @@ Finish with:
 
 Added at the owner's request on 2026-11-04 ([IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md), P1.8; Agent 3, with Agent 2 reading each change in `packages/ai`).
 
-Review the contracts first. For each element, from a user's view: what it is for, whether its API (attributes, properties, slots, events, states) and examples make that clear, and whether its behaviour does what its reference says. Start with `odd-change-review`, whose current implementation the owner could not follow (2026-11-04). The package owner (Agent 2) decides each change; an element whose contract changes is styled after the change.
+Review the contracts first. For each element, from a user's view: what it is for, whether its API (attributes, properties, slots, events, states) and examples make that clear, and whether its behaviour does what its reference says. Start with `odd-change-review`, whose current implementation the owner could not follow (2026-11-04). The package owner (Agent 2) decides each change; an element whose contract changes is styled after the change. The findings, per element: [research/ai-contract-review.md](./research/ai-contract-review.md).
 
 Match the design. Compare every element with its families on page 0:1, "04 · AI components", of the Figma design file `E7LfRysny8V3qU24tv082i` (https://www.figma.com/design/E7LfRysny8V3qU24tv082i/Oddkin---Design-Framework?node-id=0-1), in light and dark, by measurement: spacing, sizes, type, colour roles, borders, radii, and states. Refresh that page in `design/figma/components.json` first; its 48 families, each element's specimen in light and dark, date from 2026-10-22.
 
