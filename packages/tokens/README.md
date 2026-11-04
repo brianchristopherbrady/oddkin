@@ -7,7 +7,7 @@ Theme configuration, the pure token generator, and its outputs. Browser entry po
 | Entry | Contents |
 | --- | --- |
 | `@oddkin/tokens/theme` | `ThemeConfig` and `ThemeExtension` types, `defineTheme()`, and `mergeThemes()` and `layerOf()` for theme files that extend a base |
-| `@oddkin/tokens/generate` | `generate(config, { css })` → `{ ok, diagnostics, theme, css }`; `resolveTheme`, `resolveToken`, `emitCss`, `LAYER_ORDER`, `BROWSER_FLOOR`, `ABOVE_FLOOR_SYNTAX`, spacing, colour, and contrast utilities; `ROLE_CONTRACTS` and `contrastReport(theme)` (semantic colour contracts) |
+| `@oddkin/tokens/generate` | `generate(config, { css })` → `{ ok, diagnostics, theme, css }`; `resolveTheme`, `resolveToken`, `resolveTokens`, `emitCss`, `LAYER_ORDER`, `BROWSER_FLOOR`, `ABOVE_FLOOR_SYNTAX`, spacing, colour, and contrast utilities; `ROLE_CONTRACTS` and `contrastReport(theme)` (semantic colour contracts) |
 | `@oddkin/tokens/refs` | `token('space.md')` → `'var(--odd-space-md)'`, `tokenVariable()`, `TokenName` (default theme) |
 | `@oddkin/tokens/conditions` | Named conditions as `{ kind, query, atRule }` literal container/media queries |
 | `@oddkin/tokens/values` | Literal values of the default theme (`{ light, dark }` for mode-dependent tokens) |
@@ -91,6 +91,8 @@ self.onmessage = ({ data: { id, draft } }) => {
 ```
 
 For the same configuration, `css` is byte-identical to what `oddkin-tokens build` writes (`--css-layer x` is `generate(config, { css: { layer: 'x' } })`). In a page or preview frame, construct the sheet with that document's `CSSStyleSheet`, adopt it once, and update it with `replaceSync(css)`.
+
+To compare whole contexts, `resolveTokens(theme, { mode, product, density, profiles, gamut })` gives every token's literal value in one pass, as a `Map` from token name to value; `resolveToken(theme, name, context)` gives one.
 
 Generated CSS starts with Oddkin's layer order (`@layer odd.reset, odd.tokens, odd.base, odd.layout, odd.components, odd.utilities;`) and places every declaration in `odd.tokens`, so unlayered page CSS overrides any generated value regardless of stylesheet order. `--css-layer vendor.theme` emits a different layer; `--css-layer none` emits unlayered CSS (ADR 0039).
 

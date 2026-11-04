@@ -27,6 +27,23 @@ describe('browser generation', () => {
       expect(outputs[`${name}.dtcg`], `${name}.dtcg`).toBe(
         await (await fetch(new URL(`./fixtures/${name}.tokens.json.txt`, import.meta.url))).text(),
       );
+      // Every token's value in the Worker's context, as resolveToken gives it here.
+      const theme = generate(cases[name]).theme as ResolvedTheme;
+      const scope = theme.scopes[0];
+      const context: ResolveContext = {
+        mode: 'dark',
+        gamut: 'p3',
+        ...(scope?.kind === 'product' ? { product: scope.name } : {}),
+        ...(scope?.kind === 'density' ? { density: scope.name } : {}),
+        ...(scope?.kind === 'profile' ? { profiles: [scope.name] } : {}),
+      };
+      const values = JSON.parse(outputs[`${name}.values`] ?? '[]') as [string, string][];
+      expect(
+        values.map(([token]) => token),
+        `${name}.values`,
+      ).toEqual([...theme.tokens.keys()]);
+      for (const [token, value] of values)
+        expect(value, `${name} ${token}`).toBe(resolveToken(theme, token, context));
     }
   });
   for (const [name, config] of Object.entries(cases)) {

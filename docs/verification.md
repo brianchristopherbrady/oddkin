@@ -5274,3 +5274,17 @@ Cause: only the home's document has `data-home` on `.site-layout`, which hides t
 | Gates | `npm run typecheck`; `npm run lint` (with the page-layout check); `npx vitest run --project node tests/docs` | Exit 0; exit 0; 31 passed |
 
 **Not verified here:** CI on this commit; the CI WebKit stop's cause.
+
+## 2026-11-04 — `resolveTokens(theme, context)` (round 11, Agent 3)
+
+For Theme Studio's Worker (Agent 2, lanes, 2026-11-03 18:08): every literal for one context in one pass, importable by URL in a Worker. `resolveTokens` returns a `Map` from each token name, in the theme's order, to what `resolveToken(theme, name, context)` gives; a token that does not resolve (a missing reference or a cycle) is left out, as `resolveToken` gives it no value. Both now share the step that applies a context's scopes and gamut; `resolveLiterals` in `graph.ts` resolves each reference once.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Equal to `resolveToken` | `packages/tokens/test/generate.test.ts`, "resolveTokens" | In each fixture theme (brand-only, products-density, wide-gamut), in no context, each mode in sRGB and P3, each mode with each product, density, and profile, and each mode in P3 with a product, a density, and every profile at once: the keys are the theme's tokens in order and every value equals `resolveToken`'s. Tokens with a missing reference, two that refer to each other, and one that reads them are left out, and the rest are unchanged |
+| In a module Worker, three engines | `generate.browser.test.ts` and `worker.browser.test.ts` through `browser-set.mjs` | 27 passed in each of Chromium, Firefox, and WebKit: the Worker fixture posts each case's values in dark, P3, and its first scope, and each equals `resolveToken` in the page. The built `dist/generate` has no bare import specifiers and exports `resolveTokens` |
+| Speed | `.tmp/resolve-tokens-bench.mjs` (the shipped default theme with ten products: the base and each product, in each mode and gamut, 44 contexts of 233 tokens) | 306.7 ms with a `resolveToken` call per token, 8.5 ms with `resolveTokens` per context (mean of 5 runs after a warm-up), with the same values |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-resolve-tokens.json` (6 probes) | 6 of 6 killed: an unresolved reference still giving a value; unresolved tokens kept; no cycle check; no memo (a token read twice then looks circular); the context's scopes ignored; the context's mode ignored |
+| Gates | `npm run typecheck`; `npm run lint`; `node scripts/check-size.mjs`; the tokens node tests with Workbench's `node-theme-studio` test | Exit 0; exit 0; exit 0; 189 passed (18 files) |
+
+**Not verified here:** CI on this commit; Theme Studio's Worker using it, which is Agent 2's change.

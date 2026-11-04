@@ -11,9 +11,13 @@ import {
   generateSpacing,
   parseColor,
   resolveToken,
+  resolveTokens,
   ROLE_CONTRACTS,
   toHex,
   type Diagnostic,
+  type ResolveContext,
+  type ResolvedTheme,
+  type ScopeTokens,
 } from '../src/index.js';
 import { DiagnosticList } from '../src/generate/diagnostics.js';
 import { CONTRAST_ROLES, contractBackgrounds, TONES } from '../src/generate/preset.js';
@@ -785,6 +789,66 @@ describe('scopes and alias closure', () => {
     // One declaration per mode-dependent role: 29, then 40 with the tone, selection, and scrim roles.
     expect(stats.mode).toBeLessThan(48);
     for (const count of Object.values(stats.scopes)) expect(count).toBeLessThan(60);
+  });
+});
+
+describe('resolveTokens', () => {
+  const contextOf = (scope: ScopeTokens): ResolveContext =>
+    scope.kind === 'product'
+      ? { product: scope.name }
+      : scope.kind === 'density'
+        ? { density: scope.name }
+        : { profiles: [scope.name] };
+
+  it("gives each token resolveToken's value, in every context of each fixture theme", () => {
+    for (const [name, config] of Object.entries(cases)) {
+      const theme = generate(config).theme as ResolvedTheme;
+      const first = (kind: ScopeTokens['kind']) => theme.scopes.find((s) => s.kind === kind)?.name;
+      const product = first('product');
+      const density = first('density');
+      // Every axis at once: a product, a density, and every profile.
+      const all: ResolveContext = {
+        ...(product ? { product } : {}),
+        ...(density ? { density } : {}),
+        profiles: theme.scopes.filter((s) => s.kind === 'profile').map((s) => s.name),
+      };
+      const contexts: ResolveContext[] = [
+        {},
+        ...theme.modes.flatMap((mode) => [
+          ...(['srgb', 'p3'] as const).map((gamut) => ({ mode, gamut })),
+          ...theme.scopes.map((scope) => ({ mode, ...contextOf(scope) })),
+          { mode, gamut: 'p3' as const, ...all },
+        ]),
+      ];
+      for (const context of contexts) {
+        const values = resolveTokens(theme, context);
+        const label = `${name} ${JSON.stringify(context)}`;
+        expect([...values.keys()], label).toEqual([...theme.tokens.keys()]);
+        for (const [token, value] of values)
+          expect(value, `${label} ${token}`).toBe(resolveToken(theme, token, context));
+      }
+    }
+  });
+
+  it('leaves out a token whose reference is missing or circular, as resolveToken resolves none', () => {
+    const theme = generate(cases['brand-only']).theme as ResolvedTheme;
+    const radius = theme.tokens.get('radius.md')!;
+    const tokens = new Map(theme.tokens);
+    const broken = [
+      ['x.missing', '{x.nowhere}'],
+      ['x.a', '{x.b}'],
+      ['x.b', '{x.a}'],
+      ['x.c', 'calc({x.a} * 2)'],
+    ] as const;
+    for (const [name, value] of broken) tokens.set(name, { ...radius, name, value });
+    const withBroken: ResolvedTheme = { ...theme, tokens };
+    const values = resolveTokens(withBroken);
+    for (const [name] of broken) {
+      expect(values.has(name), name).toBe(false);
+      expect(resolveToken(withBroken, name), name).toBeUndefined();
+    }
+    expect(values.size).toBe(theme.tokens.size);
+    expect(values.get('radius.md')).toBe(resolveToken(theme, 'radius.md'));
   });
 });
 

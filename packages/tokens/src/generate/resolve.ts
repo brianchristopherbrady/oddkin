@@ -26,6 +26,7 @@ import {
   isModeValues,
   references,
   resolveLiteral,
+  resolveLiterals,
   validateGraph,
   type TokenDefinition,
   type TokenMap,
@@ -905,12 +906,8 @@ export interface ResolveContext {
   readonly gamut?: 'srgb' | 'p3';
 }
 
-/** Literal value of a token in a context (e.g. for docs, tests, and inspection). */
-export function resolveToken(
-  theme: ResolvedTheme,
-  name: string,
-  context: ResolveContext = {},
-): string | undefined {
+/** The tokens a context sees: the theme's, with the scopes it applies, in P3 if asked. */
+function contextTokens(theme: ResolvedTheme, context: ResolveContext): TokenMap {
   const map = new Map(theme.tokens);
   for (const s of theme.scopes) {
     if (
@@ -921,11 +918,31 @@ export function resolveToken(
       for (const [k, v] of s.tokens) map.set(k, v);
     }
   }
+  return context.gamut === 'p3' ? withP3(map) : map;
+}
+
+/** Literal value of a token in a context (e.g. for docs, tests, and inspection). */
+export function resolveToken(
+  theme: ResolvedTheme,
+  name: string,
+  context: ResolveContext = {},
+): string | undefined {
   return resolveLiteral(
-    context.gamut === 'p3' ? withP3(map) : map,
+    contextTokens(theme, context),
     name,
     context.mode ?? theme.modes[0] ?? 'light',
   );
+}
+
+/**
+ * The literal value of every token in a context, in one pass: for each name, what `resolveToken`
+ * gives in that context (for comparing whole contexts, as Theme Studio's Worker does).
+ */
+export function resolveTokens(
+  theme: ResolvedTheme,
+  context: ResolveContext = {},
+): Map<string, string> {
+  return resolveLiterals(contextTokens(theme, context), context.mode ?? theme.modes[0] ?? 'light');
 }
 
 const LITERAL_OR_EXPRESSION = /\{[^{}]+\}|calc\(|min\(|max\(|clamp\(/;

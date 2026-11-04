@@ -253,6 +253,38 @@ export function resolveLiteral(
   return failed ? undefined : out;
 }
 
+/**
+ * Every token's literal value for one mode, as `resolveLiteral` gives each, with each reference
+ * resolved once. Tokens that do not resolve (a missing reference, a cycle) are left out.
+ */
+export function resolveLiterals(tokens: TokenMap, mode: Mode): Map<string, string> {
+  const done = new Map<string, string | undefined>();
+  const started = new Set<string>();
+  const literal = (name: string): string | undefined => {
+    if (done.has(name)) return done.get(name);
+    const token = tokens.get(name);
+    // Started and not done: the token is on the current path, so the path is a cycle.
+    if (!token || started.has(name)) return undefined;
+    started.add(name);
+    const text = isModeValues(token.value) ? token.value[mode] : token.value;
+    let failed = false;
+    const out = text.replace(REFERENCE, (_, ref: string) => {
+      const value = literal(ref);
+      if (value === undefined) failed = true;
+      return value ?? '';
+    });
+    const value = failed ? undefined : out;
+    done.set(name, value);
+    return value;
+  };
+  const values = new Map<string, string>();
+  for (const name of tokens.keys()) {
+    const value = literal(name);
+    if (value !== undefined) values.set(name, value);
+  }
+  return values;
+}
+
 /** Stable natural ordering of token names (numeric segments compare numerically). */
 export function compareNames(a: string, b: string): number {
   const as = a.split('.');
