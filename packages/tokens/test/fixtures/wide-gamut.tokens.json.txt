@@ -81,7 +81,7 @@
           "dev.oddkin": {
             "category": "semantic",
             "origin": "generated",
-            "provenance": "brand step nearest the page tone with at least 4.5:1 against color.text.on-action in every product (light: lightest passing; dark: darkest passing)"
+            "provenance": "brand step nearest the page tone with at least 4.5:1 against color.text.on-action (light: lightest passing; dark: darkest passing)"
           }
         }
       },
@@ -160,7 +160,7 @@
           "dev.oddkin": {
             "category": "semantic",
             "origin": "generated",
-            "provenance": "danger step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover and color.danger.surface in every product (light: lightest passing; dark: darkest passing)"
+            "provenance": "danger step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover and color.danger.surface (light: lightest passing; dark: darkest passing)"
           }
         }
       },
@@ -183,7 +183,7 @@
           "dev.oddkin": {
             "category": "semantic",
             "origin": "generated",
-            "provenance": "brand step nearest the page tone with at least 3:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover and color.surface.specimen and color.selection.surface in every product (light: lightest passing; dark: darkest passing)"
+            "provenance": "brand step nearest the page tone with at least 3:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover and color.surface.specimen and color.selection.surface (light: lightest passing; dark: darkest passing)"
           }
         }
       }
@@ -207,7 +207,7 @@
           "dev.oddkin": {
             "category": "semantic",
             "origin": "generated",
-            "provenance": "info step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.info.surface in every product (light: lightest passing; dark: darkest passing)"
+            "provenance": "info step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.info.surface (light: lightest passing; dark: darkest passing)"
           }
         }
       },
@@ -229,7 +229,7 @@
         "dev.oddkin": {
           "category": "semantic",
           "origin": "generated",
-          "provenance": "brand step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover in every product (light: lightest passing; dark: darkest passing)"
+          "provenance": "brand step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.surface.sunken and color.surface.hover (light: lightest passing; dark: darkest passing)"
         }
       }
     },
@@ -337,7 +337,7 @@
           "dev.oddkin": {
             "category": "semantic",
             "origin": "generated",
-            "provenance": "success step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.success.surface in every product (light: lightest passing; dark: darkest passing)"
+            "provenance": "success step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.success.surface (light: lightest passing; dark: darkest passing)"
           }
         }
       },
@@ -467,7 +467,7 @@
           "dev.oddkin": {
             "category": "semantic",
             "origin": "generated",
-            "provenance": "warning step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.warning.surface in every product (light: lightest passing; dark: darkest passing)"
+            "provenance": "warning step nearest the page tone with at least 4.5:1 against color.canvas and color.surface.default and color.surface.raised and color.warning.surface (light: lightest passing; dark: darkest passing)"
           }
         }
       },

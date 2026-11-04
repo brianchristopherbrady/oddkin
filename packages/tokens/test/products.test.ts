@@ -1,8 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
-import { cssVariable, generate, resolveToken } from '../src/generate/index.js';
-import { CONTRAST_ROLES } from '../src/generate/preset.js';
+import {
+  generate,
+  resolveToken,
+  type ResolveContext,
+  type ResolvedTheme,
+} from '../src/generate/index.js';
 import type { ThemeConfig } from '../src/theme/index.js';
 
 // Multi-product token fixtures (multi-product.md, ADR 0033): 1, 2, 3, and 10 products.
@@ -34,9 +38,20 @@ const productRule = (css: string | undefined, name: string) =>
   new RegExp(`\\[data-odd-product="${name}"\\] \\{[^}]*\\}`).exec(css ?? '')?.[0];
 const productRules = (css: string | undefined) =>
   (css ?? '').match(/\[data-odd-product="[^"]+"\] \{[^}]*\}/g) ?? [];
+// A product's rule, and the one that re-applies its own roles in its mode scopes.
+const scopeRules = (css: string | undefined, name = '[^"]+') =>
+  (css ?? '').match(
+    new RegExp(`\\[data-odd-product="${name}"\\]( \\[data-odd-mode\\])? \\{[^}]*\\}`, 'g'),
+  ) ?? [];
 const withoutProducts = (css: string | undefined) =>
   (css ?? '').replace(/\n\n *\[data-odd-product="[^"]+"\]( \[data-odd-mode\])? \{[^}]*\}/g, '');
 const declared = (rule: string) => rule.match(/--odd-[\w-]+(?=:)/g) ?? [];
+const MODES = ['light', 'dark'] as const;
+/** Every token's literal value in one context. */
+const resolved = (theme: ResolvedTheme, context: ResolveContext) =>
+  Object.fromEntries(
+    [...theme.tokens.keys()].map((name) => [name, resolveToken(theme, name, context)]),
+  );
 
 describe('multi-product token fixtures', () => {
   it('a single-product theme needs no product configuration and emits no product scopes', () => {
@@ -58,15 +73,9 @@ describe('multi-product token fixtures', () => {
       // colour roles that read them, and only those whose value differs from the base theme.
       for (const rule of rules)
         for (const name of declared(rule)) expect(name).toMatch(/^--odd-(ref|color)-/);
-      // Without the product rules, the output is the single-product theme, except contrast-
-      // selected roles: they share one reference step that passes in every product (ADR 0006).
-      const single = (generate(BASE).css ?? '').split('\n');
-      const changed = withoutProducts(first.css)
-        .split('\n')
-        .filter((line, i) => line !== single[i]);
-      expect(withoutProducts(first.css).split('\n')).toHaveLength(single.length);
-      const selected = new Set(CONTRAST_ROLES.map((role) => cssVariable(role.name)));
-      for (const line of changed) expect(selected).toContain(/^\s*(--odd-[\w-]+):/.exec(line)?.[1]);
+      // Without the product rules, the output is the single-product theme byte for byte: each
+      // brand has its own contrast steps, and a product never moves the base's (§3).
+      expect(withoutProducts(first.css)).toBe(generate(BASE).css);
     },
   );
 
@@ -78,27 +87,114 @@ describe('multi-product token fixtures', () => {
     }).css;
     for (let i = 1; i <= 10; i++) {
       const name = `p${i}`;
-      if (name === 'p3') expect(productRule(after, name)).not.toBe(productRule(before, name));
-      else expect(productRule(after, name), name).toBe(productRule(before, name));
+      if (name === 'p3') expect(scopeRules(after, name)).not.toEqual(scopeRules(before, name));
+      else expect(scopeRules(after, name), name).toEqual(scopeRules(before, name));
     }
     expect(withoutProducts(after)).toBe(withoutProducts(before));
   });
 
-  it('grows by exactly one rule per product, bounded by the colour tokens', () => {
+  it('grows by the product rules alone, bounded by the colour tokens', () => {
     const sizes = [0, 1, 2, 3, 10].map((n) => {
       const { css } = generate(n ? { ...BASE, products: products(n) } : BASE);
-      const rules = productRules(css);
-      return { n, rules, bytes: css!.length, gzip: gzipSync(css!).length };
+      return { n, rules: productRules(css), all: scopeRules(css), bytes: css!.length };
     });
-    const separator = sizes[1]!.bytes - sizes[0]!.bytes - sizes[1]!.rules[0]!.length;
-    for (const size of sizes) {
-      const ruleBytes = size.rules.reduce((sum, rule) => sum + rule.length + separator, 0);
-      expect(size.bytes - sizes[0]!.bytes, `${size.n} products`).toBe(ruleBytes);
-    }
+    const [none, one] = sizes as [(typeof sizes)[0], (typeof sizes)[0]];
+    const length = (rules: string[]) => rules.reduce((sum, rule) => sum + rule.length, 0);
+    const separator = (one.bytes - none.bytes - length(one.all)) / one.all.length;
+    expect(Number.isInteger(separator)).toBe(true);
+    for (const size of sizes)
+      expect(size.bytes - none.bytes, `${size.n} products`).toBe(
+        length(size.all) + size.all.length * separator,
+      );
     const limit = Math.max(...sizes[4]!.rules.map((rule) => declared(rule).length));
-    expect(limit).toBeLessThanOrEqual(declared(sizes[1]!.rules[0]!).length);
+    expect(limit).toBeLessThanOrEqual(declared(one.rules[0]!).length);
+    // A product's mode scopes re-apply only colour roles its brand needs other steps for.
+    for (const rule of sizes[4]!.all.filter((rule) => !sizes[4]!.rules.includes(rule)))
+      for (const name of declared(rule)) expect(name).toMatch(/^--odd-color-/);
     // gzip grows by less than the raw rules: product rules share their structure.
-    expect(sizes[4]!.gzip - sizes[0]!.gzip).toBeLessThan(sizes[4]!.bytes - sizes[0]!.bytes);
+    const gzip = (n: number) =>
+      gzipSync(generate(n ? { ...BASE, products: products(n) } : BASE).css!).length;
+    expect(gzip(10) - gzip(0)).toBeLessThan(sizes[4]!.bytes - none.bytes);
+  });
+});
+
+describe('product isolation (multi-product.md §3)', () => {
+  // P1.1 (2026-11-04): a product's brand used to move the base's contrast-selected steps.
+  it.each(['#aa0000', '#00aa55'])(
+    'a product with brand %s leaves every base value unchanged, in each mode and gamut',
+    (primary) => {
+      const bases: ThemeConfig[] = [
+        { brand: { primary: '#123456' } },
+        { brand: { primary: 'oklch(0.65 0.25 145)' }, gamut: 'p3' },
+      ];
+      for (const base of bases) {
+        const alone = generate(base).theme!;
+        const kiosk = generate({ ...base, products: { kiosk: { brand: { primary } } } }).theme!;
+        for (const mode of MODES)
+          for (const gamut of ['srgb', 'p3'] as const)
+            expect(resolved(kiosk, { mode, gamut })).toEqual(resolved(alone, { mode, gamut }));
+      }
+    },
+  );
+
+  it('a product resolves every token as its brand would alone', () => {
+    const brands = [...BRANDS, '#aa0000', '#00aa55', '#facc15'];
+    const theme = generate({
+      ...BASE,
+      products: Object.fromEntries(brands.map((primary, i) => [`p${i}`, { brand: { primary } }])),
+    }).theme!;
+    brands.forEach((primary, i) => {
+      const alone = generate({ brand: { primary } }).theme!;
+      for (const mode of MODES)
+        expect(resolved(theme, { mode, product: `p${i}` }), `${primary} ${mode}`).toEqual(
+          resolved(alone, { mode }),
+        );
+    });
+  });
+
+  it('changing one product’s brand changes no value of the base or another product', () => {
+    const before = generate({ ...BASE, products: products(10) }).theme!;
+    const after = generate({
+      ...BASE,
+      products: { ...products(10), p3: { brand: { primary: '#14532d' } } },
+    }).theme!;
+    const others = [undefined, 'p1', 'p2', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10'];
+    for (const product of others)
+      for (const mode of MODES)
+        expect(resolved(after, { mode, product }), `${product} ${mode}`).toEqual(
+          resolved(before, { mode, product }),
+        );
+  });
+
+  it('an override equal to a step is redundant only where no brand needs another step', () => {
+    const one = generate({ ...BASE, products: products(1) }).theme!;
+    const base = one.tokens.get('color.link')!.value;
+    const own = one.scopes[0]!.tokens.get('color.link')!.value;
+    // p1's brand needs another link step than the base's.
+    expect(one.scopes[0]!.roles).toContain('color.link');
+    const codes = (config: object) =>
+      generate({ ...BASE, ...config }).diagnostics.map((d) => [d.code, d.path]);
+    expect(codes({ overrides: { 'color.link': base } })).toEqual([
+      ['override.redundant', '/overrides/color.link'],
+    ]);
+    // The base's override pins the base's step in p1 too, where it fails: not redundant.
+    const fails = [['contrast.fail', '/tokens/color.link']];
+    expect(codes({ overrides: { 'color.link': base }, products: products(1) })).toEqual(fails);
+    const p1 = (overrides: object) => ({
+      products: { p1: { brand: { primary: BRANDS[0]! }, overrides } },
+    });
+    expect(codes(p1({ 'color.link': own }))).toEqual([
+      ['override.redundant', '/products/p1/overrides/color.link'],
+    ]);
+    expect(codes(p1({ 'color.link': base }))).toEqual(fails);
+    // Its own link replaces the step it would take; each role is re-applied once.
+    const pinned = generate({ ...BASE, ...p1({ 'color.link': base }) }).theme!.scopes[0]!;
+    expect(pinned.roles).toEqual(one.scopes[0]!.roles);
+    expect(pinned.tokens.get('color.link')?.value).toEqual(base);
+    // Where p1 sets the role itself, the base's override no longer reaches it.
+    expect(codes({ overrides: { 'color.link': base }, ...p1({ 'color.link': own }) })).toEqual([
+      ['override.redundant', '/overrides/color.link'],
+    ]);
   });
 });
 

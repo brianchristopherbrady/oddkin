@@ -93,7 +93,9 @@ describe('scope axes compose without cross-products', () => {
     expect(new Set(generate(all).diagnostics.map((d) => d.code))).toEqual(
       new Set(['profile.overlap']),
     );
-    expect(blocks(css(all), 'product')).toHaveLength(n);
+    // A product whose brand needs other contrast steps re-applies them in its mode scopes.
+    const reapplying = generate(all).theme?.scopes.filter((s) => s.roles).length ?? 0;
+    expect(blocks(css(all), 'product')).toHaveLength(n + reapplying);
     expect(blocks(css(all), 'density')).toHaveLength(n);
     // The base preset already has two profiles.
     expect(blocks(css(all), 'profile')).toHaveLength(n + 2);

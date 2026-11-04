@@ -53,7 +53,10 @@ export interface ScopeTokens {
   readonly tokens: TokenMap;
   /** Names that actually changed (the rest is re-declared alias closure). */
   readonly changed: readonly string[];
-  /** For a product: the roles it overrides (`products.<id>.overrides`), which its mode scopes re-apply. */
+  /**
+   * For a product: the roles it overrides (`products.<id>.overrides`) and the contrast roles its
+   * brand needs other steps for, which its mode scopes re-apply.
+   */
   readonly roles?: readonly string[];
 }
 
@@ -201,10 +204,14 @@ function withRefs(base: TokenMap, refs: readonly TokenDefinition[]): Map<string,
   return map;
 }
 
-/** Choose role steps that pass for every brand variant (base and products). */
+/**
+ * Choose role steps for one brand: the base theme's, or a product's (multi-product.md §3: a
+ * product's brand never moves the base's steps; a product whose brand needs other steps
+ * re-declares those roles in its own scope).
+ */
 function contrastRoles(
-  variants: readonly Map<string, TokenDefinition>[],
-  ramps: readonly Ramps[],
+  tokens: Map<string, TokenDefinition>,
+  ramps: Ramps,
   modes: readonly Mode[],
 ): TokenDefinition[] {
   const chosen = new Map<string, Record<Mode, number>>();
@@ -221,23 +228,18 @@ function contrastRoles(
         );
         continue;
       }
-      let index = mode === 'light' ? 0 : RAMP.length - 1;
-      variants.forEach((tokens, v) => {
-        const against = role.against
-          .map((name) => hexOf(tokens, name, mode))
-          .filter((hex): hex is string => !!hex);
-        const colors = (ramps[v] as Ramps)[role.ramp];
-        const order =
-          mode === 'light' ? colors.map((_, i) => i) : colors.map((_, i) => colors.length - 1 - i);
-        const pass = order.find((i) =>
-          against.every(
-            (hex) => contrastRatio((colors[i] as { hex: string }).hex, hex) >= role.minimum,
-          ),
-        );
-        const pick = pass ?? (mode === 'light' ? colors.length - 1 : 0);
-        index = mode === 'light' ? Math.max(index, pick) : Math.min(index, pick);
-      });
-      indices[mode] = index;
+      const against = role.against
+        .map((name) => hexOf(tokens, name, mode))
+        .filter((hex): hex is string => !!hex);
+      const colors = ramps[role.ramp];
+      const order =
+        mode === 'light' ? colors.map((_, i) => i) : colors.map((_, i) => colors.length - 1 - i);
+      const pass = order.find((i) =>
+        against.every(
+          (hex) => contrastRatio((colors[i] as { hex: string }).hex, hex) >= role.minimum,
+        ),
+      );
+      indices[mode] = pass ?? (mode === 'light' ? colors.length - 1 : 0);
     }
     chosen.set(role.name, indices);
     const step = (mode: Mode) =>
@@ -258,7 +260,7 @@ function contrastRoles(
 
 function describeRole(role: ContrastRole): string {
   if (role.from) return `${role.shift} step(s) further from the page than ${role.from}`;
-  return `${role.ramp} step nearest the page tone with at least ${role.minimum}:1 against ${role.against.join(' and ')} in every product (light: lightest passing; dark: darkest passing)`;
+  return `${role.ramp} step nearest the page tone with at least ${role.minimum}:1 against ${role.against.join(' and ')} (light: lightest passing; dark: darkest passing)`;
 }
 
 function asTokenValue(value: unknown): TokenValue | undefined {
@@ -498,11 +500,14 @@ export function resolveTheme(input: unknown): ResolveResult {
   }
   applyFoundationInputs(tokens, inputs);
 
-  // Contrast-selected roles, valid for the base brand and every product brand.
+  // Contrast-selected roles, each brand's own: the base's from the base brand alone, so a
+  // product never moves the base's values (multi-product.md §3); a product's are compared
+  // with the base's below, and those that differ go into its scope.
   const productRamps = productInputs.map((p) => buildRamps(p.primary, p.neutral, seeds));
-  const variantRamps = [ramps, ...productRamps];
-  const variants = variantRamps.map((r) => withRefs(tokens, refTokens(r)));
-  for (const role of contrastRoles(variants, variantRamps, modes)) tokens.set(role.name, role);
+  const roleSets = [ramps, ...productRamps].map((r) =>
+    contrastRoles(withRefs(tokens, refTokens(r)), r, modes),
+  );
+  for (const role of roleSets[0] as TokenDefinition[]) tokens.set(role.name, role);
 
   // Explicit overrides by stable name.
   if (isRecord(overrides)) {
@@ -527,7 +532,18 @@ export function resolveTheme(input: unknown): ResolveResult {
         continue;
       }
       const effective = checkValue(existing, value, modes, path, d);
-      if (compileValue(effective, modes) === compileValue(existing.value, modes))
+      const compiled = compileValue(effective, modes);
+      // Equal to the base's role, the override still pins it in a product whose brand steps it
+      // differently.
+      const pins = productInputs.some((product, i) => {
+        const own = (roleSets[i + 1] as TokenDefinition[]).find((role) => role.name === tokenName);
+        return (
+          own !== undefined &&
+          !Object.hasOwn(product.overrides, tokenName) &&
+          compileValue(own.value, modes) !== compiled
+        );
+      });
+      if (compiled === compileValue(existing.value, modes) && !pins)
         d.warn(
           'override.redundant',
           path,
@@ -593,21 +609,36 @@ export function resolveTheme(input: unknown): ResolveResult {
   productInputs.forEach((product, i) => {
     const path = pointer('products', product.name);
     const refs = refTokens(productRamps[i] as Ramps, wide);
-    const changed = refs.filter((r) => {
+    const changedRefs = refs.filter((r) => {
       const base = sorted.get(r.name) as TokenDefinition;
       return base.value !== r.value || base.p3 !== r.p3;
     });
-    if (changed.length === 0 && Object.keys(product.overrides).length === 0)
+    // The contrast roles the product's brand needs another step for, unless the base pins them
+    // with an override.
+    const steps = (roleSets[i + 1] as TokenDefinition[]).filter((role) => {
+      const base = sorted.get(role.name) as TokenDefinition;
+      return (
+        base.origin === 'generated' &&
+        compileValue(role.value, modes) !== compileValue(base.value, modes)
+      );
+    });
+    if (
+      changedRefs.length === 0 &&
+      steps.length === 0 &&
+      Object.keys(product.overrides).length === 0
+    )
       d.warn(
         'product.redundant',
         path,
         `Product "${product.name}" has the base brand colours, so its scope changes nothing.`,
         'Give it its own brand colours or roles, or remove it.',
       );
-    const roles = productRoles(product.overrides, sorted, modes, path, d);
-    const variant = withRefs(withRefs(sorted, changed), roles);
+    const roles = productRoles(product.overrides, withRefs(sorted, steps), modes, path, d);
     // Errors in a product's roles point at that product, as a profile's point at the profile.
     const names = new Set(roles.map((role) => role.name));
+    const stepped = steps.filter((role) => !names.has(role.name));
+    const changed = [...changedRefs, ...stepped];
+    const variant = withRefs(withRefs(sorted, changed), roles);
     const graph = new DiagnosticList();
     validateGraph(variant, graph);
     for (const item of graph.items) {
@@ -629,9 +660,9 @@ export function resolveTheme(input: unknown): ResolveResult {
       `products["${product.name}"].overrides`,
     );
     const productScope = scope('product', product.name, sorted, [...changed, ...roles], modes);
-    scopes.push(
-      roles.length ? { ...productScope, roles: [...names].sort(compareNames) } : productScope,
-    );
+    // Its mode scopes re-apply the roles it sets and those it steps differently from the base.
+    const reapplied = [...names, ...stepped.map((role) => role.name)].sort(compareNames);
+    scopes.push(reapplied.length ? { ...productScope, roles: reapplied } : productScope);
   });
   for (const entry of densityInputs) {
     const changed: TokenDefinition[] = [];
@@ -787,9 +818,10 @@ export function resolveTheme(input: unknown): ResolveResult {
 }
 
 /**
- * A product's colour roles (`products.<id>.overrides`), validated against the base theme: colour
- * roles only, since reference ramps follow the product's brand inputs and foundations, layout,
- * and sizes are shared by every product.
+ * A product's colour roles (`products.<id>.overrides`), validated against the product's values
+ * without them (the base theme's, and the contrast roles its brand steps itself): colour roles
+ * only, since reference ramps follow the product's brand inputs and foundations, layout, and sizes
+ * are shared by every product.
  */
 function productRoles(
   overrides: Readonly<Record<string, unknown>>,
@@ -835,7 +867,7 @@ function productRoles(
       d.warn(
         'override.redundant',
         at,
-        `"${tokenName}" already has this value in the base theme.`,
+        `"${tokenName}" already has this value in this product.`,
         'Remove the override; it changes no output.',
       );
     roles.push({ ...target, value: effective, origin: 'overridden', provenance: at });

@@ -86,6 +86,8 @@ describe('inspection metadata', () => {
       '[data-odd-profile~="navigation.compact"]',
       '[data-odd-profile~="layout.compact"]',
     ]);
-    expect(data.scopes[1]?.redeclared).toContain('color.action.default');
+    // The clinic brand needs its own action step; the roles that read it are re-declared.
+    expect(data.scopes[1]?.changed).toContain('color.action.default');
+    expect(data.scopes[1]?.redeclared).toContain('color.selection.background');
   });
 });

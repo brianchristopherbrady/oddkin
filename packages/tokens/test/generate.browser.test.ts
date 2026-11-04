@@ -57,7 +57,9 @@ describe('generated CSS in a real cascade', () => {
       <div data-odd-mode="light" id="light"><i></i>
         <div data-odd-mode="dark" id="dark"><i></i>
           <div data-odd-product="clinic" id="dark-clinic"><i></i>
-            <div data-odd-mode="light" id="dark-clinic-light"><i></i></div>
+            <div data-odd-mode="light" id="dark-clinic-light"><i></i>
+              <div data-odd-mode="dark" id="dark-clinic-light-dark"><i></i></div>
+            </div>
           </div>
           <div data-odd-density="compact" id="dark-compact"><i></i></div>
           <div data-odd-mode="system" id="system"><i></i></div>
@@ -109,6 +111,8 @@ describe('generated CSS in a real cascade', () => {
     ['dark', { mode: 'dark' }],
     ['dark-clinic', { mode: 'dark', product: 'clinic' }],
     ['dark-clinic-light', { mode: 'light', product: 'clinic' }],
+    // Clinic's brand needs its own action, link, and focus steps: mode scopes inside it keep them.
+    ['dark-clinic-light-dark', { mode: 'dark', product: 'clinic' }],
     ['dark-compact', { mode: 'dark', density: 'compact' }],
     ['studio', { mode: 'light', product: 'studio' }],
     ['studio-dark', { mode: 'dark', product: 'studio' }],
@@ -139,7 +143,7 @@ describe('generated CSS in a real cascade', () => {
   };
   const colors = [...theme.tokens.values()].filter((t) => t.type === 'color').map((t) => t.name);
   for (const [id, context] of expectations.filter(([id]) =>
-    ['light', 'dark', 'dark-clinic-light', 'studio-dark'].includes(id),
+    ['light', 'dark', 'dark-clinic-light', 'dark-clinic-light-dark', 'studio-dark'].includes(id),
   )) {
     it(`resolves all ${colors.length} colour roles in ${id} like the generator`, () => {
       const el = (root.querySelector(`#${id}`) as HTMLElement).appendChild(

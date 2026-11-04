@@ -198,7 +198,8 @@ function emitBlocks(theme: ResolvedTheme, lightDark: boolean): string {
         : [`[data-odd-${scope.kind}="${scope.name}"]`];
     parts.push(block(selectors, tokenDeclarations(scope.tokens.values(), modes, lightDark)));
     // A mode scope inside the product re-declares base expressions for the roles the product
-    // overrides: re-apply them, and the roles that read them, there (specificity 0,2,0).
+    // overrides or steps itself: re-apply them, and the roles that read them, there
+    // (specificity 0,2,0).
     if (scope.kind === 'product' && scope.roles && modes.length > 1) {
       const reapplied = new Set([
         ...scope.roles,

@@ -70,11 +70,16 @@ describe('token scopes across shadow roots', () => {
     collect(
       shadow(q('unadopted-host'), '<div data-odd-density="compact"><i id="unadopted"></i></div>'),
     );
-    // …but it applies when the generated CSS is adopted in that shadow root too.
+    // …but it applies when the generated CSS is adopted in that shadow root too. Clinic re-applies
+    // the roles its brand steps in its mode scopes, a selector that cannot cross the boundary
+    // either: a mode scope in the shadow tree repeats the product (documented limit, §5.3).
     collect(
       shadow(
         q('adopted-host'),
-        '<div data-odd-density="compact"><i id="adopted"></i><div data-odd-mode="light"><i id="adopted-light"></i></div></div>',
+        `<div data-odd-density="compact"><i id="adopted"></i>
+           <div data-odd-mode="light" data-odd-product="clinic"><i id="adopted-light"></i></div>
+           <div data-odd-mode="light"><i id="adopted-light-lost"></i></div>
+         </div>`,
         true,
       ),
     );
@@ -197,5 +202,19 @@ describe('token scopes across shadow roots', () => {
     expect(key('in-theme')).not.toBe(key('on-host'));
     expect(read('in-theme').colorScheme).toBe('dark');
     expect(read('slotted').colorScheme).toBe('light');
+  });
+
+  it('a mode scope in a shadow tree that does not repeat the product takes the base steps', () => {
+    const step = (theme.tokens.get('color.link')?.value as { light: string }).light;
+    const context = { mode: 'light', product: 'clinic' } as const;
+    const own = theme.scopes[0]?.tokens.get('color.link')?.value as { light: string };
+    expect(step).not.toBe(own.light);
+    // The base's link step, read with clinic's references, instead of clinic's own step.
+    expect(read('adopted-light-lost').outlineColor).toBe(
+      rgb(resolveToken(theme, step.slice(1, -1), context)),
+    );
+    expect(read('adopted-light-lost').outlineColor).not.toBe(
+      rgb(resolveToken(theme, 'color.link', context)),
+    );
   });
 });

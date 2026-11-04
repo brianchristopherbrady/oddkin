@@ -750,7 +750,17 @@ describe('scopes and alias closure', () => {
 
   it('re-declares only changed tokens and their dependents', () => {
     const clinic = scope('product:clinic');
-    expect(clinic?.changed.every((n) => /^ref\.(brand|neutral)\./.test(n))).toBe(true);
+    // Its brand's references, and the contrast roles its brand needs other steps for, which its
+    // mode scopes re-apply.
+    const stepped = clinic?.changed.filter((n) => !/^ref\.(brand|neutral)\./.test(n));
+    expect(stepped).toEqual([
+      'color.action.default',
+      'color.action.hover',
+      'color.action.pressed',
+      'color.focus.ring',
+      'color.link',
+    ]);
+    expect(clinic?.roles).toEqual(stepped);
     expect([...(clinic?.tokens.keys() ?? [])]).toEqual(
       expect.arrayContaining(['ref.brand.600', 'color.action.default', 'color.surface.specimen']),
     );
