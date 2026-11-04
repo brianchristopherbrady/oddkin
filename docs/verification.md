@@ -5241,3 +5241,21 @@ Agent 2's finding (lanes, 2026-11-04, 12:15): with `generate({ brand: { primary:
 | The Worker | `npx vitest run --project node packages/workbench/test/node-theme-studio.test.ts --testNamePattern Worker` (the Worker as built, importing the workspace's `@oddkin/tokens` on `346cce9`) | Passed. On a base (`#123456`, a canvas override), kiosk's primary from `#aa0000` to `#00aa55` leaves lobby's values byte for byte and changes kiosk's; a new product (`#6250e8`) leaves lobby's values; an edit to kiosk's overrides leaves them too, as before. These are the cases of the 12:15 finding, which on `021c727`'s generator moved the base's values and so lobby's (measured then, not rerun) |
 | Node tests | `npx vitest run --project node packages/workbench/test tests/architecture tests/release tests/schemas` | 219 passed and 1 skipped (23 files) |
 | Repository | `npm run lint`; `npm run typecheck` | Lint exit 0. Typecheck exit 1, only in `packages/tokens/test/products.test.ts` (lines 112, 164, and 165, from `346cce9`), reported to Agent 3 with the fix; nothing in this change |
+
+## 2026-11-04 — CI on 26504cd: `odd-table`'s `direction` and the stale kits (round 11, Agent 3)
+
+Agent 1's report (lanes, 13:43): on CI run 41911756609, `npm run verify:metadata`, the golden path in three engines, and `npm run verify:packs` failed, and the kits in the packed packages differed from the kits regenerated from them (25 of 68 files in `@oddkin/ai`, 56 of 108 in `@oddkin/components`).
+
+Cause: `odd-table`'s `direction` property, a name ADR 0045's vocabulary keeps for orientation. `verify:metadata` runs `verify-metadata.mjs`, which attaches the browser evidence to each package's metadata, then `check-vocabulary.mjs`, then `package-kits.mjs`. The vocabulary check failed, so the kits were not rewritten after the evidence was attached, and every later comparison of the kits with the metadata failed. The property is now `sortDirection` (attribute `sort-direction`), and `odd-sort`'s detail is `{ column, sortDirection }`. No published version had the old name: 1.0.0-beta.1 predates `odd-table`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Vocabulary | `node scripts/check-vocabulary.mjs` | Before: `vocabulary.synonym <odd-table> direction: use orientation instead of "direction"`, 1 finding. After: 0 findings |
+| Evidence, three engines | `browser-set.mjs` on both contract tests, the table test, and the accessibility test | 1,008 passed and 54 skipped in each of Chromium, Firefox, and WebKit; the evidence records are current |
+| CI's metadata step | `npm run verify:metadata` | Exit 0: 2,219 verified facts across 55 elements and 481 across 24, no vocabulary findings, and the kits written (68 and 108 files) |
+| Packed consumers | `npm run verify:packs` | OK with the evidence attached: the agent kits match their packed metadata in `@oddkin/ai` and `@oddkin/components` (149.9 and 374.3 KiB unpacked) |
+| Golden path, three engines | `e2e/golden-path.spec.ts` through the e2e lock | 21 passed |
+| Gates | `npm run typecheck`; `npm run lint`; node tests for the components, Workbench's Theme Studio, `tests/agent-run`, and `tests/docs` | Exit 0 (with the previous commit); exit 0; 516 passed and 1 skipped (25 files) |
+| After the rebase onto d080313 (Agent 2's App layout starter, which sorted its table with `direction`) | The starter's `odd-table` takes the `sort-direction` attribute; `npm run build`; `node scripts/check-vocabulary.mjs`; Workbench's `node-theme-studio` test with the components' composition test; `e2e/workbench-theme-studio.spec.ts` in three engines; `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` | Exit 0; 0 findings; 28 passed (the starter valid by the published schemas, which first refused it as `sortDirection`, a property name, among the attributes); 24 passed in Chromium, Firefox, and WebKit, the tasks column sorted descending; exit 0 each |
+
+**Not verified here:** CI on this commit. `check-vocabulary.mjs` is not part of `npm run lint`, so a new or renamed element runs it before landing.

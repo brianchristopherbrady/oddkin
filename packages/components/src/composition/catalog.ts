@@ -685,7 +685,7 @@ export const CATALOG: Catalog = {
     attributes: {
       label: 'string',
       sort: 'string',
-      direction: { enum: ['ascending', 'descending'] },
+      'sort-direction': { enum: ['ascending', 'descending'] },
       'no-sort': 'boolean',
       selection: { enum: ['none', 'multiple', 'single'] },
       loading: 'boolean',

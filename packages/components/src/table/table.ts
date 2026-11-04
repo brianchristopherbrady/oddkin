@@ -21,8 +21,8 @@ export type TableSortDirection = 'ascending' | 'descending';
 export interface TableSortDetail {
   /** Key of the column to sort by. */
   readonly column: string;
-  /** The direction asked for. */
-  readonly direction: TableSortDirection;
+  /** The sort direction asked for. */
+  readonly sortDirection: TableSortDirection;
 }
 
 /** The user asked to sort by a column. Cancel it to keep the current order. */
@@ -32,7 +32,7 @@ export const tableSortEvent = event<TableSortDetail>('odd-sort', {
   cancelable: true,
   intent: 'user',
   description:
-    'A sortable header was activated; `detail` names the column and the new direction. Unless canceled, the table sets `sort` and `direction`.',
+    'A sortable header was activated; `detail` names the column and the new sort direction. Unless canceled, the table sets `sort` and `sortDirection`.',
 });
 /** The user changed the selection (`selected`): the native `input` of the row's control. */
 export const tableInputEvent = event('input', {
@@ -54,8 +54,8 @@ const isEmpty = (value: TableCell | undefined): value is null | undefined | '' =
   value === null || value === undefined || value === '';
 
 /**
- * Rows in the order `sort` and `direction` give, stably: numbers as numbers, anything else as text
- * by `collator` (so false comes before true), and empty cells last in both directions.
+ * Rows in the order `sort` and `sortDirection` give, stably: numbers as numbers, anything else as
+ * text by `collator` (so false comes before true), and empty cells last in both directions.
  */
 export function sortRows(
   rows: readonly TableRow[],
@@ -110,7 +110,7 @@ export class OddkinTable extends OddkinElement.with({
     reflect: true,
     description: 'Key of the column the rows are sorted by; empty for the given order.',
   }),
-  direction: prop.enum(['ascending', 'descending'], {
+  sortDirection: prop.enum(['ascending', 'descending'], {
     default: 'ascending',
     reflect: true,
     description: 'Direction of the sort.',
@@ -118,7 +118,7 @@ export class OddkinTable extends OddkinElement.with({
   noSort: prop.boolean({
     reflect: true,
     description:
-      'The table keeps rows in the given order: listen to `odd-sort` and assign `rows` in the new order. `sort` and `direction` still mark the header.',
+      'The table keeps rows in the given order: listen to `odd-sort` and assign `rows` in the new order. `sort` and `sortDirection` still mark the header.',
   }),
   selection: prop.enum(['none', 'single', 'multiple'], {
     default: 'none',
@@ -162,7 +162,7 @@ export class OddkinTable extends OddkinElement.with({
     const rows = this.rows ?? [];
     if (this.noSort || !this.sort) return rows;
     const collator = new Intl.Collator(langOf(this) ?? undefined, { numeric: true });
-    return sortRows(rows, this.sort, this.direction, collator);
+    return sortRows(rows, this.sort, this.sortDirection, collator);
   }
 
   /** @internal Text of a cell. */
@@ -186,11 +186,11 @@ export class OddkinTable extends OddkinElement.with({
 
   /** @internal Template handler: a sortable header was activated. */
   _sortBy(column: TableColumn): void {
-    const direction: TableSortDirection =
-      this.sort === column.key && this.direction === 'ascending' ? 'descending' : 'ascending';
-    if (!this.emit(tableSortEvent, { column: column.key, direction })) return;
+    const sortDirection: TableSortDirection =
+      this.sort === column.key && this.sortDirection === 'ascending' ? 'descending' : 'ascending';
+    if (!this.emit(tableSortEvent, { column: column.key, sortDirection })) return;
     this.sort = column.key;
-    this.direction = direction;
+    this.sortDirection = sortDirection;
   }
 
   /**

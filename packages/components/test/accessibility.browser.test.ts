@@ -171,7 +171,7 @@ const states = `
   <odd-tree label="Recent files" loading></odd-tree>
   <odd-tree label="Archived files"></odd-tree>
   <odd-table label="Projects" data-table></odd-table>
-  <odd-table label="Projects by tasks" sort="tasks" direction="descending" selection="single" data-table data-selected="beacon"></odd-table>
+  <odd-table label="Projects by tasks" sort="tasks" sort-direction="descending" selection="single" data-table data-selected="beacon"></odd-table>
   <odd-table label="Shared projects" selection="multiple" data-table data-selected="atlas"></odd-table>
   <odd-table label="Loading projects" loading data-columns></odd-table>
   <odd-table label="Failed projects" error="The projects could not be loaded." data-columns><odd-button slot="error" size="sm">Try again</odd-button></odd-table>

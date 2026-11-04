@@ -198,7 +198,7 @@ export const STARTERS: readonly {
                 attributes: {
                   label: 'Projects',
                   sort: 'tasks',
-                  direction: 'descending',
+                  'sort-direction': 'descending',
                   selection: 'multiple',
                 },
                 properties: {

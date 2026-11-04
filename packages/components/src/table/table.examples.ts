@@ -28,10 +28,10 @@ export default defineExamples('odd-table', {
   },
   sorted: {
     label: 'Sorted',
-    props: { label: 'Projects', columns, rows, sort: 'tasks', direction: 'descending' },
+    props: { label: 'Projects', columns, rows, sort: 'tasks', sortDirection: 'descending' },
     preset: true,
     guidance:
-      'Set `sort` and `direction` to show the rows sorted; a sortable header sorts them on activation and reports `odd-sort`. Empty cells stay last.',
+      'Set `sort` and `sortDirection` to show the rows sorted; a sortable header sorts them on activation and reports `odd-sort`. Empty cells stay last.',
   },
   single: {
     label: 'One row selected',

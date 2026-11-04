@@ -28,12 +28,13 @@ export const tableTemplate = (table: OddkinTable) => {
 
   const header = (column: TableColumn) => {
     const sorted = table.sort === column.key;
-    const glyph = sorted && (table.direction === 'descending' ? chevronDownGlyph : chevronUpGlyph);
+    const glyph =
+      sorted && (table.sortDirection === 'descending' ? chevronDownGlyph : chevronUpGlyph);
     return html`<th
       part="header-cell"
       scope="col"
       class=${alignClass(column)}
-      aria-sort=${sorted ? table.direction : null}
+      aria-sort=${sorted ? table.sortDirection : null}
     >
       ${
         column.sortable

@@ -564,13 +564,13 @@ rows, their expansion, and the hierarchy keys are one internal model shared with
 **`odd-table`** (P1.2, 2026-11-04; no Figma family yet: it draws a native table as the `.odd-table` recipe does) —
 `label`, `columns` and `rows` (properties, JSON, typed by the published models `oddkin.table-columns` and
 `oddkin.table-rows`: a column `{ key, label, align?: start | center | end, sortable? }`, a row `{ id, cells }` whose
-cells are text, numbers, true or false, or null by column key), `sort` (a column key) and `direction`
-(`ascending` | `descending`), `no-sort`, `selection` (`none` | `single` | `multiple`), `selected` (property: row
+cells are text, numbers, true or false, or null by column key), `sort` (a column key) and `sort-direction`
+(`ascending` | `descending`; not `direction`, which ADR 0045 keeps for orientation), `no-sort`, `selection` (`none` | `single` | `multiple`), `selected` (property: row
 ids), `loading`, `error` (text), `strings` (`loading`, `empty`, `yes`, `no`, `selection`, `selectRow`, `selectAll`),
 slots `empty`, `error`. A native `<table>` named by `label`, the first column's cells row headers. The table sorts its
-rows by `sort` and `direction`, stably (numbers as numbers, everything else as text by the page language's collation,
+rows by `sort` and `sort-direction`, stably (numbers as numbers, everything else as text by the page language's collation,
 empty cells last both ways); a sortable column's header is a button, the sorted one has `aria-sort`, and activating
-it dispatches `odd-sort`, detail `{ column, direction }`, cancelable; with `no-sort` the host orders `rows` itself.
+it dispatches `odd-sort`, detail `{ column, sortDirection }`, cancelable; with `no-sort` the host orders `rows` itself.
 Selection is a radio or a checkbox per row, named "Select {first cell}", and a select-all checkbox (checked or mixed);
 the native `input` reaches the host after `selected` changes, then `change`. Loading, an error (announced, with the
 `error` slot after it), or no rows replace the body with one row spanning the columns, in that order. No

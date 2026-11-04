@@ -33,7 +33,7 @@
           "description": "Key of the column the rows are sorted by; empty for the given order.",
           "default": ""
         },
-        "direction": {
+        "sort-direction": {
           "enum": [
             "ascending",
             "descending"
@@ -43,7 +43,7 @@
         },
         "no-sort": {
           "type": "boolean",
-          "description": "The table keeps rows in the given order: listen to `odd-sort` and assign `rows` in the new order. `sort` and `direction` still mark the header.",
+          "description": "The table keeps rows in the given order: listen to `odd-sort` and assign `rows` in the new order. `sort` and `sortDirection` still mark the header.",
           "default": false
         },
         "selection": {

@@ -50,8 +50,8 @@ async function mount(props: Partial<OddkinTable> = {}, html = '') {
   await settle(el);
   const log: string[] = [];
   el.addEventListener('odd-sort', (e) => {
-    const { column, direction } = (e as CustomEvent<TableSortDetail>).detail;
-    log.push(`sort ${column} ${direction}`);
+    const { column, sortDirection } = (e as CustomEvent<TableSortDetail>).detail;
+    log.push(`sort ${column} ${sortDirection}`);
   });
   el.addEventListener('input', () => log.push(`input ${el.selected}`));
   el.addEventListener('change', () => log.push(`change ${el.selected}`));
@@ -98,18 +98,18 @@ describe('<odd-table>', () => {
     );
   });
 
-  it('sorts by sort and direction, stably, with empty cells last both ways', async () => {
+  it('sorts by sort and sortDirection, stably, with empty cells last both ways', async () => {
     const { el } = await mount({ sort: 'tasks' });
     expect(column(el, 0)).toEqual(['cinder 10', 'cinder 9', 'Atlas', 'beacon', 'Delta']);
     expect(header(el, 'Open tasks').getAttribute('aria-sort')).toBe('ascending');
     expect(header(el, 'Project').hasAttribute('aria-sort')).toBe(false);
-    el.direction = 'descending';
+    el.sortDirection = 'descending';
     await settle(el);
     expect(column(el, 0)).toEqual(['beacon', 'Atlas', 'cinder 10', 'cinder 9', 'Delta']);
     expect(header(el, 'Open tasks').getAttribute('aria-sort')).toBe('descending');
     // Text compares by the language's collation, numbers inside it numerically.
     el.sort = 'name';
-    el.direction = 'ascending';
+    el.sortDirection = 'ascending';
     await settle(el);
     expect(column(el, 0)).toEqual(['Atlas', 'beacon', 'cinder 9', 'cinder 10', 'Delta']);
     // An unknown column, or no sort, keeps the given order.
@@ -151,16 +151,16 @@ describe('<odd-table>', () => {
     const sortButton = (label: string) => header(el, label).querySelector('button')!;
     await userEvent.click(sortButton('Open tasks'));
     await settle(el);
-    expect([el.sort, el.direction, el.getAttribute('sort'), el.getAttribute('direction')]).toEqual([
-      'tasks',
-      'ascending',
-      'tasks',
-      'ascending',
-    ]);
+    expect([
+      el.sort,
+      el.sortDirection,
+      el.getAttribute('sort'),
+      el.getAttribute('sort-direction'),
+    ]).toEqual(['tasks', 'ascending', 'tasks', 'ascending']);
     expect(column(el, 0)[0]).toBe('cinder 10');
     await userEvent.click(sortButton('Open tasks'));
     await settle(el);
-    expect(el.direction).toBe('descending');
+    expect(el.sortDirection).toBe('descending');
     await userEvent.click(sortButton('Project'));
     await settle(el);
     expect(log).toEqual(['sort tasks ascending', 'sort tasks descending', 'sort name ascending']);
@@ -168,15 +168,15 @@ describe('<odd-table>', () => {
     sortButton('Project').focus();
     await userEvent.keyboard('{Enter}');
     await settle(el);
-    expect(el.direction).toBe('descending');
+    expect(el.sortDirection).toBe('descending');
     el.addEventListener('odd-sort', (e) => e.preventDefault(), { once: true });
     await userEvent.click(sortButton('Open tasks'));
     await settle(el);
-    expect([el.sort, el.direction]).toEqual(['name', 'descending']);
+    expect([el.sort, el.sortDirection]).toEqual(['name', 'descending']);
   });
 
   it('with no-sort keeps the given order and still marks the sorted header', async () => {
-    const { el, log } = await mount({ noSort: true, sort: 'tasks', direction: 'descending' });
+    const { el, log } = await mount({ noSort: true, sort: 'tasks', sortDirection: 'descending' });
     expect(el.hasAttribute('no-sort')).toBe(true);
     expect(column(el, 0)).toEqual(['beacon', 'Atlas', 'Delta', 'cinder 10', 'cinder 9']);
     expect(header(el, 'Open tasks').getAttribute('aria-sort')).toBe('descending');
