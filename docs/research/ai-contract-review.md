@@ -8,6 +8,18 @@ Each finding is one of:
 - **Examples**: the API is right, but the examples or the reference do not show it. No API change.
 - **Decide**: a change to the contract (behaviour, records, attributes, properties, parts, strings, or events), for Agent 2.
 
+## Across the elements (2026-11-04)
+
+What a reader sees: each AI element's reference page, in Chromium at 1280 px, its first example (`.tmp/ai-element-shots.mjs`, not kept).
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| C1 | Examples | No example of any AI element has a `fixture`, so nothing plays the host. Seventeen of the 24 elements only ask the host to act (events), so on their reference pages and in Workbench these controls show nothing happening, or a pending state that never ends: `odd-action-approval` (Approve, Reject), `odd-activity` (Stop, Resume, Retry), `odd-change-review` (Accept, Reject, Undo), `odd-checkpoint` (Restore), `odd-citation` (Show in sources), `odd-context-picker` (Add files, Add link, Remove), `odd-conversation` (Load earlier messages, Try again), `odd-inline-assist` (Rewrite, Explain, Summarize), `odd-message` (edit, regenerate), `odd-message-branch` (‹ ›), `odd-prompt-input` (Send), `odd-question` (Answer, Skip), `odd-response-feedback` (Send feedback), `odd-suggestions` (each suggestion and its ↑), `odd-task-plan` (Respond), `odd-tool-call` (Retry), and `odd-voice-input` (Start voice input: the example's scripted adapter has an empty script, so it hears nothing). The others act on their own (`odd-artifact`'s revisions, preview, copy, and download; `odd-model-select`'s choice; `odd-transcript`'s edits) or only show (`odd-ai-label`, `odd-response`, `odd-sources`, `odd-usage-meter`). | One example per element whose fixture plays the host with the package's own pieces, so the reader sees the request, the record change, and the new state: `DocumentSession` (change review, inline assist), `ConversationController` with the simulated transport (conversation, message, branch, activity, prompt input, suggestions, feedback), `createScriptedVoiceAdapter` with a script (voice input), and a few lines that replace the record for the rest (approval, checkpoint, question, tool call, task plan, context picker, citation). |
+| C2 | Examples | `odd-conversation`'s first example puts the text "Composer goes here" in its `composer` slot. | An `odd-prompt-input` there, wired to the same host (C1). |
+| C3 | Examples | Each item in `odd-context-picker`'s example has an inspect button (▾) that opens "No preview available." | One item with a preview, so the control shows what it is for. |
+
+The glyph-only buttons (`odd-suggestions`' ↑, `odd-context-picker`'s ▾ and ✕) have accessible names ("Send {label}", "Inspect …", "Remove …"); what they show belongs to the design pass.
+
 ## `odd-change-review` (2026-11-04)
 
 **What a user sees today.** The reference page's only example, in Chromium at 1280 px: a card titled "Make it specific", the line "~~The~~Builds ~~build~~take ~~is~~40% ~~very~~less ~~slow.~~time.", the word "Proposed", and Accept and Reject. Accept sends `odd-change-accept` and nothing changes, because the example has no host to apply the change. A screen reader hears "[deleted: The][inserted: Builds] [deleted: build][inserted: take]…".
