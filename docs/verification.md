@@ -5259,3 +5259,18 @@ Cause: `odd-table`'s `direction` property, a name ADR 0045's vocabulary keeps fo
 | After the rebase onto d080313 (Agent 2's App layout starter, which sorted its table with `direction`) | The starter's `odd-table` takes the `sort-direction` attribute; `npm run build`; `node scripts/check-vocabulary.mjs`; Workbench's `node-theme-studio` test with the components' composition test; `e2e/workbench-theme-studio.spec.ts` in three engines; `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` | Exit 0; 0 findings; 28 passed (the starter valid by the published schemas, which first refused it as `sortDirection`, a property name, among the attributes); 24 passed in Chromium, Firefox, and WebKit, the tasks column sorted descending; exit 0 each |
 
 **Not verified here:** CI on this commit. `check-vocabulary.mjs` is not part of `npm run lint`, so a new or renamed element runs it before landing.
+
+## 2026-11-04 — Item 7: the Components page reached from the home keeps its sidebar (round 11, Agent 3)
+
+The owner's report (relayed by Agent 1, lanes 13:20): on www.oddkin.dev, the home, then Components in the header, shows the catalog with no sidebar and against the left edge; the home, then Foundations, and Foundations, then Components, show the sidebar.
+
+Cause: only the home's document has `data-home` on `.site-layout`, which hides the sidebar at 55.5rem and wider and sets `#main`'s inset to 0 (`apps/docs/styles.css`). Foundations is an authored page, so the client loads its document; the catalog is a client page, which the client rendered into the home's document, changing only the container's measure. The client now also removes `data-home` there (`apps/docs/src/main.ts`).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The new journey | `e2e/docs.spec.ts`, "the header link from the home opens Components beside the sidebar, as loaded directly" (1155 × 900, the owner's width), in Chromium without the fix and then with it (`.tmp/home-journey-check.mjs`) | Without the fix it fails: after the catalog shows, the sidebar is hidden. With it, it passes: the sidebar shows with "Browse all" current, the heading starts right of the sidebar, and the heading's position and the sidebar's width match `/components` loaded directly within 1 px |
+| The docs e2e, three engines | `e2e/docs.spec.ts` | 33 passed in 9.4 min: the 11 tests in each of Chromium, Firefox, and WebKit, the new journey and the long journey with its new waits included |
+| The WebKit stop on CI (d7dfcb6) | `.tmp/journey-scroll.mjs` and `.tmp/journey-stress.mjs` on the docs dev server; `.tmp/guides-shift.mjs` | Not reproduced: 16 replays of the journey's first steps in WebKit, four at a time, all reached the side navigation guide. With the client held, the "Read the layout guide" link on `/guides` keeps its place (642, 727 at 1280 × 720) in all three engines when the client boots, and the only scrolls after Playwright reveals it are its own and the router's scroll to the top after the click. The journey now waits for each authored page's document (`main[data-page]`) and the URL, so a next stop names the lost step |
+| Gates | `npm run typecheck`; `npm run lint` (with the page-layout check); `npx vitest run --project node tests/docs` | Exit 0; exit 0; 31 passed |
+
+**Not verified here:** CI on this commit; the CI WebKit stop's cause.

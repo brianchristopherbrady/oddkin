@@ -641,8 +641,10 @@ function renderRoute(state: RouterState): void {
     return;
   }
   delete main.dataset['page'];
-  // Only the home (an authored document) fills the width; the client's pages are constrained.
+  // Only the home (an authored document) fills the width and hides the sidebar; the client's
+  // pages are constrained, beside the sidebar, also when they replace the home in its document.
   column.closest('odd-container')?.setAttribute('measure', 'constrained');
+  main.closest('[data-home]')?.removeAttribute('data-home');
   if (state.status === 'error' || last?.status === 'error') {
     const error =
       state.status === 'error' ? state.error : last?.status === 'error' ? last.error : undefined;

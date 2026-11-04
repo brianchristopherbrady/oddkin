@@ -55,7 +55,15 @@ test('docs guides, metadata references, local search, and shadow-root links', as
 
   // The layout guide's route loads its element modules before it commits (catalogLoad).
   await sidebar.getByRole('link', { name: 'Guides' }).click();
+  // An authored page is the server's document for its path (`data-page`); the URL moves before
+  // that document loads. Each step waits for it, so a stop says which one never came (CI,
+  // WebKit, d7dfcb6: the journey stopped after "Read the layout guide", not reproduced here).
+  await expect(page.locator('main[data-page="guides"]')).toBeAttached({ timeout: catalogLoad });
   await page.getByRole('link', { name: 'Read the layout guide' }).click();
+  await expect(page).toHaveURL(`${docs}/guides/layout`);
+  await expect(page.locator('main[data-page="guides/layout"]')).toBeAttached({
+    timeout: catalogLoad,
+  });
   await page.getByRole('link', { name: 'side navigation guide' }).click();
   await expect(page.getByRole('heading', { name: 'Side navigation', exact: true })).toBeVisible({
     timeout: catalogLoad,
@@ -274,6 +282,42 @@ test('code samples keep their place while their copy buttons register', async ({
     timeout: catalogLoad,
   });
   expect({ bars: await heights(), link: (await link.boundingBox())?.y }).toEqual(before);
+});
+
+test('the header link from the home opens Components beside the sidebar, as loaded directly', async ({
+  page,
+}) => {
+  // The owner's report (2026-11-04): home, then Components in the header, showed the catalog with
+  // no sidebar and against the left edge, because the client kept the home's full-width layout.
+  // At the owner's width, where the home hides the sidebar.
+  await page.setViewportSize({ width: 1155, height: 900 });
+  await page.goto(`${docs}/`);
+  await expect(page.locator('.specimen :not(:defined)')).toHaveCount(0, { timeout: catalogLoad });
+  const sidebar = page.locator('#docs-nav');
+  await expect(sidebar).toBeHidden();
+  const primary = page.getByRole('navigation', { name: 'Primary' });
+  await primary.getByRole('link', { name: 'Components' }).click();
+  await expect(page).toHaveURL(`${docs}/components`, { timeout: catalogLoad });
+  const heading = page.getByRole('heading', { name: 'Component catalog' });
+  await expect(heading).toBeVisible({ timeout: catalogLoad });
+  await expect(sidebar).toBeVisible();
+  await expect(sidebar.getByRole('link', { name: 'Browse all' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  const boxes = async () => ({
+    sidebar: await sidebar.boundingBox(),
+    heading: await heading.boundingBox(),
+  });
+  const reached = await boxes();
+  expect(reached.heading!.x).toBeGreaterThan(reached.sidebar!.x + reached.sidebar!.width);
+  // The same layout as the server's document for /components.
+  await page.goto(`${docs}/components`);
+  await expect(heading).toBeVisible({ timeout: catalogLoad });
+  await expect(sidebar).toBeVisible();
+  const loaded = await boxes();
+  expect(Math.abs(reached.heading!.x - loaded.heading!.x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(reached.sidebar!.width - loaded.sidebar!.width)).toBeLessThanOrEqual(1);
 });
 
 test('the catalog lists the AI components under AI, and /ai is the AI tooling page', async ({
