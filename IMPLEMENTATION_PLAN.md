@@ -41,7 +41,7 @@ Finish first (owner, 2026-11-01: work already started comes before new items). A
 | 1 | 4 | P1.7: conformance suites for the catalog's components and the ADR 0043 role compatibility check, then visual baselines (the CI side) | Agent 2 for Workbench's side of the baselines |
 | 1 | 5 | P1.2's quality items, then P1.3 | — |
 | 2 | 1 | P0.2's last item: a share link from the published Workbench `1.0.0-beta.1`, opened by the current one | — |
-| 2 | 2 | P1.5, items 1 and 2: Theme Studio as one embeddable panel, used in Workbench, with screens of any documented component and its examples, and composition screens for Oddkin's components with the four starter screens. The app-layout screen's table is `odd-table` (Agent 3's item 6, moved from Agent 1 on 2026-11-03); until it lands, that screen comes last | — |
+| 2 | 2 | P1.5, items 1 and 2: Theme Studio as one embeddable panel, used in Workbench, with screens of any documented component and its examples, and composition screens for Oddkin's components with the four starter screens. The app-layout screen's table is `odd-table` (Agent 3's item 6, moved from Agent 1 on 2026-11-03), which landed on 2026-11-04 (`1e05a28`): that screen, the last of this row, comes next after the piece in progress (finish first) | — |
 | 2 | 3 | P1.5, item 5: save to file from the Workbench dev server, after showing the diff, for one theme file | — |
 | 2 | 4 | P1.6: the analyzer writes a library's composition catalog and schemas from its metadata, so Theme Studio's composition screens work with a library's own components (P1.5, item 2) | — |
 | 2 | 5 | P1.5, item 4: products, with saving that writes only the edited file | Agent 3's P1.1 base file and product role overrides |
