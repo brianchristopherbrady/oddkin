@@ -509,6 +509,19 @@ describe('selection, review, and controls', () => {
     await sync();
     expect(doc.getSnapshot().text).toBe('The quick fox.');
     expect($$(el, '.state').map(text)[0]).toBe('Undone');
+    // Without a label, the name stops short of 60 rather than split a surrogate pair.
+    el.proposals = [
+      {
+        proposalId: 'c',
+        baseRevision: base,
+        range: { start: 10, end: 13 },
+        original: 'fox',
+        replacement: `${'a'.repeat(59)}\u{1F98A} and more`,
+        status: 'proposed',
+      },
+    ];
+    await settle(el);
+    expect($(el, '.proposal > [role="group"]')!.getAttribute('aria-label')).toBe('a'.repeat(59));
   });
 
   it('odd-change-review: a rewrite reads whole between its context; Dismiss when out of date, Undo only where the host can undo', async () => {

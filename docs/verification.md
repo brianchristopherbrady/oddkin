@@ -5406,3 +5406,20 @@ For Theme Studio's Worker (Agent 2, lanes, 2026-11-03 18:08): every literal for 
 | Node tests | `npx vitest run --project node` | 1,672 passed and 2 skipped (134 files) |
 | Packages | `npm run verify:packs` | OK |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs` | Exit 0 each |
+
+## 2026-11-05 — P1.8 item 8: odd-change-review's two fixes from Agent 2's read, and the landing (round 11, Agent 3)
+
+Agent 2's OK of the two commits above (lanes, 2026-11-05 00:20) asked for two fixes before they land. Rebased on `4a0218b`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The context after a line break | `packages/ai/test/controllers.test.ts` | A proposal for a whole line with its line break gets `{ before: '', after: '' }`; before the fix its after-context was the next line, "Last line." |
+| The group name | `packages/ai/test/elements.browser.test.ts` (A17) | Without a label, a proposal whose new text has an astral character at the 60th code unit is named by its first 59, never half a surrogate pair |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-cr-fixes.json` (the context taking the next line; a plain 60-unit cut) | 2 of 2 killed |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI elements, layout, examples, reflow, and contract tests with the components' contract test | 1,048 passed and 54 skipped in each of Chromium, Firefox, and WebKit |
+| Metadata | then `npm run verify:metadata` | 484 verified facts across 24 AI elements and 2,219 across 55 component elements; vocabulary 0 findings |
+| E2E | `node ../oddkin-lanes/tools/e2e-when-free.mjs` with `e2e/docs.spec.ts:323`, `:448`, `:473` and `e2e/ai-demos.spec.ts:237`, `:256`, `--workers=1` | 21 passed in three engines |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,181 B of 51,200, `ai-headless` 13,628, `ai:styles` 4,984, unchanged |
+| Node tests | `npx vitest run --project node` | 1,676 passed and 2 skipped (134 files) |
+| Packages | `npm run verify:packs` | OK |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs` | Exit 0 each |

@@ -132,7 +132,13 @@ const isSpace = (char: string | undefined) => char !== undefined && /\s/u.test(c
 function contextAround(text: string, range: TextRange): { before: string; after: string } {
   const lineStart = text.lastIndexOf('\n', range.start - 1) + 1;
   const newline = text.indexOf('\n', range.end);
-  const lineEnd = newline === -1 ? text.length : newline;
+  // A range that takes its line break ends there: the next line is not its context.
+  const lineEnd =
+    range.end > range.start && text[range.end - 1] === '\n'
+      ? range.end
+      : newline === -1
+        ? text.length
+        : newline;
   let from = Math.max(lineStart, range.start - CONTEXT);
   if (from > lineStart && !isSpace(text[from - 1])) {
     const space = text.slice(from, range.start).search(/\s/u);

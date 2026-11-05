@@ -272,6 +272,8 @@ describe('DocumentSession and text ranges', () => {
       after: ' thirteen fourteen.',
     });
     expect(propose('First').context).toEqual({ before: '', after: ' line.' });
+    // A whole line with its line break (a code proposal): the next line is not its context.
+    expect(propose(`${line}\n`, { proposalId: 'line' }).context).toEqual({ before: '', after: '' });
     // A host's own context is kept; a proposal that cannot apply gets none.
     const own = { before: 'Above: ', after: '' };
     expect(propose('Last', { context: own }).context).toEqual(own);

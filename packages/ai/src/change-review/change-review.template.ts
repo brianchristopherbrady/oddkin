@@ -1,7 +1,13 @@
 import { html, repeat } from '@oddkin/core/template';
 import type { DiffSegment } from '../controllers/diff.js';
-import type { EditProposal } from '../controllers/document.js';
+import { isBoundary, type EditProposal } from '../controllers/document.js';
 import type { OddkinChangeReview } from './change-review.js';
+
+/** A proposal's name without a label: its first 60 characters, never half a surrogate pair. */
+const groupName = (p: EditProposal) => {
+  const text = p.replacement || p.original;
+  return text.slice(0, text.length <= 60 || isBoundary(text, 60) ? 60 : 59);
+};
 
 /** The change between its muted context; `show` leaves out the deletions or the insertions. */
 const segments = (
@@ -55,11 +61,7 @@ export const changeReviewTemplate = (host: OddkinChangeReview) => {
           const status = host._status(p.status, p.error?.message);
           const undo = p.status === 'applied' && p.undoable !== false;
           return html`<li part="proposal" class="proposal" data-status=${p.status}>
-            <div
-              class="body"
-              role="group"
-              aria-label=${p.label || (p.replacement || p.original).slice(0, 60)}
-            >
+            <div class="body" role="group" aria-label=${p.label || groupName(p)}>
               <p part="label" class="label" ?hidden=${!p.label}>${p.label ?? ''}</p>
               ${
                 view === 'split'
