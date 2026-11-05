@@ -5482,3 +5482,14 @@ Agent 2's OK of the two commits above (lanes, 2026-11-05 00:20) asked for two fi
 | Node tests | `npx vitest run --project node` | 1,690 passed and 2 skipped (135 files) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-readme-status.mjs` | Exit 0 each; README status OK (9 READMEs) |
 | Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-row8g.json` (3 probes: a published copy that drifted by one space; Workbench's `files` without `schemas`; the analyzer without the `./schemas/*.json` export) | 3 of 3 killed |
+
+## 2026-11-05 — P1.6, §5c: a manifest from published declarations (round 11, Agent 2, row 8)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The manifest | `packages/analyzer/test/declarations.test.ts` (a temporary package: `dist/index.d.ts` re-exporting `toggle.d.ts` and `badge.d.ts`) | Valid against the pinned CEM schema; modules `dist/badge.js` and `dist/toggle.js`. `ToggleSwitch` (`toggle-switch`, exported): its description, `HTMLElement` superclass, the fields `checked` (documented), `disabled`, `pressed` (read-only), `label` (a getter and setter, documented), `count` (a getter alone, read-only), and the method `toggle(force?: boolean): void`; no static, private, protected, or `_`-prefixed member; attributes `checked` and `disabled` (`boolean`), event `toggle-change` (`CustomEvent<{ checked: boolean }>`), the default and `icon` slots, part `track`, CSS property `--toggle-color`, state `on`. `StatusBadge`: its field `tone`. No `custom-element-definition` export. Diagnostics: `analyzer.declarations.unknown` (info) for each element, naming what it leaves out, and `analyzer.declarations.unresolved` for `mystery-thing` (a type alias) and `fancy-link` (`HTMLAnchorElement`, the DOM's) |
+| No tags | The same, for a declaration file without `HTMLElementTagNameMap` | An empty manifest and `analyzer.declarations.noTags` (warning) |
+| The command | `node packages/analyzer/dist/bin.js --declarations dist/index.d.ts --out out` in that package | Exit 0, writes `out/custom-elements.json` equal to `analyzeDeclarations`'s, prints the warning; `--strict` exits 1; `--manifest` beside it is a usage error, 2 |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-row8h.json` (8 probes: non-public members kept; a getter alone not read-only; a tag's `{type}` read as its name; the default slot named `-`; unknowns not reported; a type the package does not declare kept; no warning without tags; `@attr` not read) | 8 of 8 killed |
+| Node tests | `npx vitest run --project node` | 136 files; 1,693 passed, 2 skipped (was 1,690) |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs`, `node scripts/verify-packs.mjs` | Exit 0 each; packed consumers OK (`@oddkin/analyzer` 175.3 KiB) |

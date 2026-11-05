@@ -2,6 +2,7 @@
 /**
  * oddkin-analyze <tsconfig> [--out dir] [--name n --version v] [--no-history] [--composition] [--strict] [--json]
  * oddkin-analyze --manifest <custom-elements.json> [--out dir] [--name n --version v] [--composition] [--strict] [--json]
+ * oddkin-analyze --declarations <index.d.ts>... [--out dir] [--composition] [--strict] [--json]
  * Exit codes: 0 success, 1 errors (or warnings with --strict), 2 usage error.
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -9,6 +10,7 @@ import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import {
   analyze,
+  analyzeDeclarations,
   analyzeManifest,
   compositionFiles,
   gitHistory,
@@ -20,8 +22,10 @@ import {
 const USAGE =
   'Usage: oddkin-analyze <tsconfig.json> [--out <dir>] [--name <library> --version <version>] [--no-history] [--composition] [--strict] [--json]\n' +
   '       oddkin-analyze --manifest <custom-elements.json> [--out <dir>] [--name <library> --version <version>] [--composition] [--strict] [--json]\n' +
+  '       oddkin-analyze --declarations <index.d.ts>... [--out <dir>] [--composition] [--strict] [--json]\n' +
   '  Updated dates come from git history unless --no-history; without full history (no git, a shallow clone) pages carry only authored @updated dates.\n' +
   '  --manifest: a library not built with Oddkin. Its examples are read against its own manifest, and only oddkin.metadata.json is written (with --composition, also the catalog and schemas).\n' +
+  "  --declarations: a library that publishes types but no manifest. custom-elements.json is written from what its declarations state, relative to the working directory: the tags in HTMLElementTagNameMap, each element's public members, and its JSDoc tags.\n" +
   "  --composition: also write the composition catalog (oddkin.composition.json) and its JSON Schemas (schemas/composition/), so composition documents can use the library's elements.";
 
 let parsed;
@@ -32,6 +36,7 @@ try {
     options: {
       out: { type: 'string', default: '.' },
       manifest: { type: 'string' },
+      declarations: { type: 'string', multiple: true },
       name: { type: 'string' },
       version: { type: 'string' },
       history: { type: 'boolean', default: true },
@@ -52,7 +57,8 @@ if (values.help) {
 }
 const [project] = positionals;
 if (
-  !project === !values.manifest ||
+  [project, values.manifest, values.declarations].filter((input) => input !== undefined).length !==
+    1 ||
   positionals.length > 1 ||
   (values.name === undefined) !== (values.version === undefined)
 ) {
@@ -80,6 +86,15 @@ if (values.manifest) {
   await writeFile(file, stableJson(result.metadata));
   diagnostics = result.diagnostics;
   metadata = result.metadata;
+  files = [file];
+} else if (values.declarations) {
+  const result = analyzeDeclarations({ declarations: values.declarations, root: process.cwd() });
+  await mkdir(values.out, { recursive: true });
+  const file = join(values.out, 'custom-elements.json');
+  await writeFile(file, stableJson(result.manifest));
+  diagnostics = result.diagnostics;
+  manifest = result.manifest;
+  metadata = {};
   files = [file];
 } else {
   const history = values.history ? gitHistory(dirname(resolve(project as string))) : undefined;

@@ -27,6 +27,13 @@ import type { SourceHistory } from './history.js';
 
 export type { ExampleInfo } from './examples.js';
 export {
+  analyzeDeclarations,
+  type DeclarationsAnalyzeOptions,
+  type DeclarationsAnalyzeResult,
+  type DeclarationsManifest,
+  type DeclaredElement,
+} from './declarations.js';
+export {
   contractIndex,
   contractPackage,
   resolveContract,

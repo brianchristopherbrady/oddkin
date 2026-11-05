@@ -23,6 +23,14 @@ oddkin-analyze --manifest custom-elements.json --out . [--strict] [--json]
 
 It reads the `defineExamples` files under the package by parsing them, checks each tag against the manifest, and writes only `oddkin.metadata.json`, which describes no components. Export it as `./oddkin.metadata.json`: Workbench then shows presets and examples, change impact selects the examples as checks, and the kits list them. `analyzeManifest({ manifest })` is the same in code.
 
+A library that publishes types but no manifest gets one from its declarations:
+
+```sh
+oddkin-analyze --declarations dist/index.d.ts --out . [--strict] [--json]
+```
+
+It writes `custom-elements.json` with what the declarations state and nothing more: the tags in `HTMLElementTagNameMap`, each element's public members and their types, and the JSDoc tags declarations keep (`@slot`, `@csspart`, `@cssprop`, `@cssstate`, `@fires`, `@attr`), with module paths relative to the working directory. Declarations cannot say which module registers a tag, its attributes without `@attr`, or its defaults; the manifest leaves them out, and an `analyzer.declarations.unknown` diagnostic says so for each element. `analyzeDeclarations({ declarations, root })` is the same in code.
+
 Workbench, change impact, and the kits read a package's metadata beside its manifest through `checkMetadata(metadata, manifest)` from `@oddkin/analyzer/metadata`. The manifest says which elements exist, so the enrichment and examples of a tag it does not declare are left out with a warning (`metadata.component.undeclared`, `metadata.example.undeclared`), and metadata of a schema other than `oddkin-metadata.v1` is not read (`metadata.schema.unsupported`, an error). Details: [metadata-and-analyzer.md](../../docs/architecture/metadata-and-analyzer.md) §8.
 
 ## Composition catalog
