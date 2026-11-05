@@ -6,6 +6,7 @@ import { strings } from '../internal/strings.js';
 export const MODEL_SELECT_STRINGS = {
   label: 'Model',
   unavailable: '{label} (unavailable)',
+  unavailableReason: '{label} (unavailable: {reason})',
   capabilities: 'Capabilities',
   none: 'No models available',
 };

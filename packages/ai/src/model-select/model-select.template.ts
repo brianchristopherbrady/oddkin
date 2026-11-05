@@ -26,7 +26,14 @@ export const modelSelectTemplate = (host: OddkinModelSelect) => {
               ?disabled=${!model.available}
               ?selected=${model.id === host.value}
             >
-              ${model.available ? model.label : format(t.unavailable, { label: model.label })}
+              ${
+                model.available
+                  ? model.label
+                  : format(model.reason ? t.unavailableReason : t.unavailable, {
+                      label: model.label,
+                      reason: model.reason ?? '',
+                    })
+              }
             </option>`,
         )}
       </select>

@@ -17,8 +17,15 @@ export const sourcesStyles = css`
     font-size: ${token('font.size.sm')};
   }
   .item {
+    position: relative;
     padding: ${token('space.2xs')} ${token('space.xs')};
     border-radius: ${token('radius.sm')};
+  }
+  .number {
+    position: absolute;
+    inset-inline-end: 100%;
+    white-space: nowrap;
+    color: ${token('color.text.secondary')};
   }
   .item[data-revealed='true'] {
     background: ${token('color.surface.hover')};

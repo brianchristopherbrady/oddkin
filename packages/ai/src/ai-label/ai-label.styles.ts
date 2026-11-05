@@ -18,8 +18,11 @@ export const aiLabelStyles = css`
     cursor: pointer;
   }
   .label::before {
-    content: '\\2726';
+    content: '\\25B8' / '';
     margin-inline-end: ${token('space.2xs')};
+  }
+  [open] > .label::before {
+    content: '\\25BE' / '';
   }
   .details,
   .notes,

@@ -19,4 +19,18 @@ export default defineExamples('odd-ai-label', {
     label: 'Edited by a person',
     props: { provenance: { kind: 'edited', notes: 'Reviewed and edited by the author.' } },
   },
+  assisted: {
+    label: 'AI assisted',
+    props: {
+      provenance: {
+        kind: 'assisted',
+        model: 'Example model',
+        notes: 'Written by the author with suggestions they accepted.',
+      },
+    },
+  },
+  human: {
+    label: 'Written by a person',
+    props: { provenance: { kind: 'human' } },
+  },
 });

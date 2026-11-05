@@ -5673,3 +5673,21 @@ Agent 2's decisions of 2026-11-05 (lanes, 11:18) on the reviews of `odd-action-a
 | Metadata | `npm run build`; `npx vitest run --project node packages/ai/test`; `npm run verify:metadata` | The voice input's default is no longer computed (its definition is listed), and the inline assist's default renders `odd-change-review`; 94 node tests passed; components 2,219 verified facts across 55 elements and AI 484 across 24, in three engines (the components' records refreshed with their contract test, 830 passed in each engine); vocabulary 0 findings |
 | Docs site and Workbench | `e2e-when-free.mjs` on `e2e/docs.spec.ts:448` and `:473` in three engines, then `e2e/workbench-catalog.spec.ts` in Chromium | 6 passed; 158 passed |
 | Repository | `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Each exit 0; sizes unchanged (examples are not in the bundles) |
+## 2026-11-05 — P1.8 item 8: the seven reviewed elements that act on their own, as decided (round 11, Agent 3)
+
+Agent 2's decisions of 2026-11-05 (lanes, 11:26) on the reviews of `odd-ai-label`, `odd-artifact`, `odd-model-select`, `odd-response`, `odd-sources`, `odd-transcript`, and `odd-usage-meter`. On `ba08984`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The changes | `packages/ai/test/elements.browser.test.ts` | The AI label's marker is ▸, and ▾ once open, each with an empty alternative. The sources show "1." and "2.", hidden from screen readers, each before its title on the title's first line, on one line (in Chromium the period wrapped under the number until `white-space: nowrap`). The artifact's summary reads "Revision 2: Added highlights". The model select's options read Fast, Thorough, and "Vision (unavailable: Not enabled for this workspace.)", and an option with no reason "Audio (unavailable)". The transcript's interim line reads "Listening: and add the" |
+| The new host | the same file | The editable transcript: correcting the second segment to "Invite the design team." comes back in `segments` |
+| Accessible names | `.tmp/b2-visual.mjs` on the docs dev server: Chromium's accessibility tree (CDP) | The tool call's summary is named "Web search Finished Find current browser support data." and the AI label's "AI generated", with no triangle |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-b2-decided.json` and `.tmp/mutants-b2-nowrap.json` (10 probes: the sparkle back; no open marker; numbers from 0; numbers read aloud; the summary without its revision; the reason form always; never; Hearing again; the host dropping the correction; the number wrapping) | 10 of 10 killed |
+| Metadata | `packages/ai/test/examples.test.ts`; the contract tests in three engines, then `npm run verify:metadata` | 5 of 5; 484 verified facts across 24 AI elements and 2,219 across 55 component elements; vocabulary 0 findings |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI elements, layout, examples, reflow, and contract tests with the components' contract test | 1,060 passed and 54 skipped in each of Chromium, Firefox, and WebKit |
+| E2E | `node ../oddkin-lanes/tools/e2e-when-free.mjs` with `e2e/docs.spec.ts:323`, `:448`, and `:473` and `e2e/ai-demos.spec.ts:237` and `:256`, `--workers=1` | 21 passed |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,302 B of 51,456 (51,202 before); `ai:styles` 5,055 of 5,120 |
+| Compatibility | `npm run compat` | The matrix counts the sources' new declarations |
+| Node tests | `npx vitest run --project node` | 1,696 passed and 2 skipped; `packages/analyzer/test/impact-cli.test.ts` timed out at 20 s with the machine loaded and passed alone (6 of 6) |
+| Packs | `npm run verify:packs` | Exit 0 |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs` | Exit 0 each |

@@ -1,4 +1,5 @@
 import { html } from '@oddkin/core/template';
+import { format } from '../internal/strings.js';
 import type { OddkinArtifact } from './artifact.js';
 
 /** Anatomy: a labelled region with `header`, a `preview` container, and a `source` view. */
@@ -55,7 +56,13 @@ export const artifactTemplate = (host: OddkinArtifact) => {
       </div>
     </div>
     <p class="muted" ?hidden=${previewable}>${t.noPreview}</p>
-    <p class="summary muted" ?hidden=${!revision.summary}>${revision.summary ?? ''}</p>
+    <p class="summary muted" ?hidden=${!revision.summary}>
+      ${
+        revision.summary
+          ? format(t.revisionSummary, { number: revision.number, summary: revision.summary })
+          : ''
+      }
+    </p>
     <div part="preview" class="preview" ?hidden=${mode !== 'preview'}></div>
     <pre part="source" class="source" tabindex="0" ?hidden=${mode !== 'source'}>
 ${revision.content}</pre>

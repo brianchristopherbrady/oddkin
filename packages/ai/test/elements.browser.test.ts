@@ -527,6 +527,7 @@ describe('selection, review, and controls', () => {
           { id: 'fast', label: 'Fast', available: true, capabilities: ['text'] },
           { id: 'deep', label: 'Deep', available: true, capabilities: ['text', 'tools'] },
           { id: 'vision', label: 'Vision', available: false, reason: 'Not in your plan' },
+          { id: 'audio', label: 'Audio', available: false },
         ];
         e.value = 'fast';
       },
@@ -541,7 +542,8 @@ describe('selection, review, and controls', () => {
     expect([...select.options].map((o) => [o.textContent?.trim(), o.disabled])).toEqual([
       ['Fast', false],
       ['Deep', false],
-      ['Vision (unavailable)', true],
+      ['Vision (unavailable: Not in your plan)', true],
+      ['Audio (unavailable)', true],
     ]);
     el.addEventListener('odd-model-change', (e) => e.preventDefault(), { once: true });
     select.value = 'fast';
@@ -1604,6 +1606,85 @@ describe('odd-question and odd-task-plan examples', () => {
       expect(text($(el, '[part="steps"] > li:nth-child(3) .detail'))).toBe('Minor version');
       expect(text($(el, '[part="progress"] span'))).toBe('2 of 4 steps done');
       expect($(el, '[data-step]')).toBeNull();
+    } finally {
+      mounted.dispose();
+    }
+  });
+});
+
+describe('the elements that act on their own or only show (contract review, 2026-11-05)', () => {
+  const example = async (folder: string, name = 'default') => {
+    await import(`../src/${folder}/${folder}.define.ts`);
+    const { default: set } = (await import(`../src/${folder}/${folder}.examples.ts`)) as {
+      default: Parameters<typeof mountExample>[0];
+    };
+    const mounted = await mountExample(set, name, container);
+    await settle(mounted.element as unknown as { updateComplete: Promise<void> });
+    return mounted;
+  };
+
+  it('the AI label shows a disclosure marker; sources show their numbers to sighted readers only', async () => {
+    const label = await example('ai-label');
+    try {
+      const summary = $(label.element, 'summary')!;
+      const marker = () => getComputedStyle(summary, '::before').content;
+      expect(marker()).toBe('"\u25B8" / ""');
+      ($(label.element, 'details') as HTMLDetailsElement).open = true;
+      expect(marker()).toBe('"\u25BE" / ""');
+    } finally {
+      label.dispose();
+    }
+    const sources = await example('sources');
+    try {
+      const numbers = $$(sources.element, '.item > .number');
+      expect(numbers.map(text)).toEqual(['1.', '2.']);
+      expect(numbers.every((n) => n.getAttribute('aria-hidden') === 'true')).toBe(true);
+      // Each number stands before its title, on the title's first line, on one line itself.
+      const [first] = $$(sources.element, '.item');
+      const box = (selector: string) => first!.querySelector(selector)!.getBoundingClientRect();
+      expect(Math.round(box('.number').top)).toBe(Math.round(box('.title').top));
+      expect(box('.number').right).toBeLessThanOrEqual(box('.title').left);
+      expect(box('.number').height).toBeLessThanOrEqual(box('.muted').height + 1);
+    } finally {
+      sources.dispose();
+    }
+  });
+
+  it("says what it shows: a revision's summary, an unavailable model's reason, interim text Listening", async () => {
+    const artifact = await example('artifact');
+    try {
+      expect(text($(artifact.element, '.summary'))).toBe('Revision 2: Added highlights');
+    } finally {
+      artifact.dispose();
+    }
+    const select = await example('model-select');
+    try {
+      expect(
+        [...$(select.element, 'select')!.querySelectorAll('option')].map((o) => text(o)),
+      ).toEqual(['Fast', 'Thorough', 'Vision (unavailable: Not enabled for this workspace.)']);
+    } finally {
+      select.dispose();
+    }
+    const transcript = await example('transcript');
+    try {
+      expect(text($(transcript.element, '[part="interim"]'))).toBe('Listening: and add the');
+    } finally {
+      transcript.dispose();
+    }
+  });
+
+  it("the editable transcript's host keeps each correction", async () => {
+    const mounted = await example('transcript', 'editable');
+    try {
+      const el = mounted.element as HTMLElementTagNameMap['odd-transcript'];
+      const area = $$(el, 'textarea')[1] as HTMLTextAreaElement;
+      area.value = 'Invite the design team.';
+      area.dispatchEvent(new Event('change', { bubbles: true }));
+      await settle(el);
+      expect(el.segments.map((s) => s.text)).toEqual([
+        'Schedule a review for Thursday.',
+        'Invite the design team.',
+      ]);
     } finally {
       mounted.dispose();
     }

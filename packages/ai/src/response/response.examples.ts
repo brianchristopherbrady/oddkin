@@ -37,4 +37,14 @@ export default defineExamples('odd-response', {
     },
     guidance: 'Partial output stays visible next to the failure.',
   },
+  interrupted: {
+    label: 'Interrupted',
+    props: { text: 'Container queries respond to the component', status: 'interrupted' },
+    guidance: 'The connection ended before the answer did; what arrived stays, marked incomplete.',
+  },
+  cancelled: {
+    label: 'Stopped',
+    props: { text: 'Container queries respond to the component', status: 'cancelled' },
+    guidance: 'The user stopped the answer; the partial text is kept.',
+  },
 });

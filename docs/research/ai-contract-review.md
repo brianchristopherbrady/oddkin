@@ -136,6 +136,8 @@ Not changed by this review: the statuses, the event, `renderOutput`, and results
 | 1 | Fix | The ✦ stands where the disclosure marker would, so nothing shows that the label opens. The Figma specimen has ▸. | The disclosure marker, turning with the open state. |
 | 2 | Examples | `assisted` and `human` have no example. | One each, beside generated and edited. |
 
+**Decisions and changes** (Agent 2, 2026-11-05). 1: the disclosure marker, ▸ and ▾ once open, in place of ✦; its alternative text is empty, as in the tool call, so a screen reader does not read it. 2: examples for an assisted answer (with its model and notes) and one written by a person.
+
 ### `odd-artifact`
 
 **What a user sees.** "Release notes", the revision picker ("Revision 2 of 2 (latest)"), Preview (pressed) and Source, Copy and Download, the revision's summary "Added highlights", then the rendered document.
@@ -147,6 +149,8 @@ Not changed by this review: the statuses, the event, `renderOutput`, and results
 | 1 | Examples | `exports` (formats the host produces, requested with `odd-artifact-export`) is in no example, so a reader cannot tell what an export adds to Download. It is the one request-only control C1 did not list. | An example with one export format whose host answers the request. |
 | 2 | Decide | The revision's summary ("Added highlights") shows without saying what it is. | Say it ("Revision 2: Added highlights"), or show it with the picker. |
 
+**Decisions and changes** (Agent 2, 2026-11-05). 1: Agent 2's Export formats example, whose host writes the asked revision as JSON and links the file (`c0ceeb3`). 2: the summary says which revision it describes, "Revision 2: Added highlights" (`strings.revisionSummary`); no layout change.
+
 ### `odd-model-select`
 
 **What a user sees.** "Model", a native select with Fast, Thorough, and "Vision (unavailable)" disabled, and the selected model's description, "Quick answers for short tasks."
@@ -156,6 +160,8 @@ Not changed by this review: the statuses, the event, `renderOutput`, and results
 | # | Kind | Finding | Proposal |
 | --- | --- | --- | --- |
 | 1 | Decide | An unavailable model's reason ("Not enabled for this workspace.") shows only in the selected model's details, and a disabled option cannot be selected, so the user never sees why. | The reason in the option's text, or under the select for each unavailable model. |
+
+**Decisions and changes** (Agent 2, 2026-11-05). 1: an unavailable model's option carries its reason, "Vision (unavailable: Not enabled for this workspace.)" (`strings.unavailableReason`); without a reason it reads "Vision (unavailable)", as before.
 
 ### `odd-response`
 
@@ -167,6 +173,8 @@ Not changed by this review: the statuses, the event, `renderOutput`, and results
 | --- | --- | --- | --- |
 | 1 | Examples | `interrupted` (the stream ended early) and `cancelled` (the user stopped it), which a host sets, have no example. | One each, with the partial text they keep. |
 
+**Decisions and changes** (2026-11-05). 1: examples for an interrupted answer and a stopped one, each keeping its partial text.
+
 ### `odd-sources`
 
 **What a user sees.** "Sources", then each source: a linked title with its host ("W3C"), or a title alone with an excerpt.
@@ -176,6 +184,8 @@ Not changed by this review: the statuses, the event, `renderOutput`, and results
 | # | Kind | Finding | Proposal |
 | --- | --- | --- | --- |
 | 1 | Fix | The entries are numbered for screen readers only: a citation shows [1], but no entry shows 1, so a reader cannot match the two. The Figma specimen numbers them ("1."). | Visible numbers. |
+
+**Decisions and changes** (Agent 2, 2026-11-05). 1: each entry shows its number ("1.") before its title, in the list's start margin; a screen reader skips it, since the list already gives each entry's position.
 
 ### `odd-transcript`
 
@@ -187,6 +197,8 @@ Not changed by this review: the statuses, the event, `renderOutput`, and results
 | --- | --- | --- | --- |
 | 1 | Decide | "Hearing:" before the interim text; the Figma specimen says "Listening:", which says what is going on. | `strings.listening` "Listening". |
 | 2 | Examples | `editable` (correcting a final segment, `odd-transcript-change`) has no example. | An editable transcript whose host keeps each correction. |
+
+**Decisions and changes** (Agent 2, 2026-11-05). 1: "Listening:" before the interim text (`strings.listening`). 2: an editable transcript whose host keeps each correction.
 
 ### `odd-usage-meter`
 

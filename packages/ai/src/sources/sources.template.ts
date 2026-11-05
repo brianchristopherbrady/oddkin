@@ -17,7 +17,7 @@ export const sourcesTemplate = (host: OddkinSources) => {
       ${repeat(
         host.sources,
         (s) => s.sourceId,
-        (s) => {
+        (s, index) => {
           const url = s.url ? safeUrl(s.url) : undefined;
           const title = s.title || displayHost(url) || t.untitled;
           return html`<li
@@ -27,6 +27,7 @@ export const sourcesTemplate = (host: OddkinSources) => {
             data-source-id=${s.sourceId}
             data-revealed=${revealed === s.sourceId ? 'true' : 'false'}
           >
+            <span class="number" aria-hidden="true">${index + 1}.</span>
             ${
               url
                 ? html`<a

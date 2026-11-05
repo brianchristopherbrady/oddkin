@@ -9,6 +9,7 @@ import { MarkdownView, type MarkdownOptions } from '../markdown/render.js';
 export const ARTIFACT_STRINGS = {
   revision: 'Revision',
   revisionOption: 'Revision {number} of {count}',
+  revisionSummary: 'Revision {number}: {summary}',
   current: '(latest)',
   preview: 'Preview',
   source: 'Source',

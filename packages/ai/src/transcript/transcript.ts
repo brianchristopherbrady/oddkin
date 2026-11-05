@@ -5,7 +5,7 @@ import { strings } from '../internal/strings.js';
 
 export const TRANSCRIPT_STRINGS = {
   label: 'Transcript',
-  listening: 'Hearing',
+  listening: 'Listening',
   empty: 'Nothing transcribed yet.',
   edit: 'Edit segment {index}',
 };
