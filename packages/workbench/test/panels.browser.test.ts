@@ -1,4 +1,4 @@
-﻿import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { settled } from '@oddkin/core/reactive';
 import { createScope, scopeStats } from '@oddkin/core/scope';
 import { render } from '@oddkin/core/template';
@@ -1939,10 +1939,14 @@ describe('<oddkin-theme-studio-panel>', () => {
     check('portal / kiosk', true);
     await until(() => sheets(compared('clinic'), '#0a7d33'), "clinic's frames");
     await until(() => sheets(compared('portal / kiosk'), '#bb0000'), "kiosk's frames");
-    expect(compared('portal / kiosk').map(({ iframe }) => productOf(iframe))).toEqual([
-      'kiosk',
-      'kiosk',
-    ]);
+    // A frame's product setting can arrive after its CSS (CI run 41995923296, Chromium).
+    await until(
+      () =>
+        compared('portal / kiosk')
+          .map(({ iframe }) => productOf(iframe))
+          .join() === 'kiosk,kiosk',
+      "kiosk's product in both frames",
+    );
     expect(previewProtocolStats().liveFrames).toBe(frames + 6);
     // Compared products of the file edited take each new CSS; compared frames follow the screen.
     set(input('ts-brand-primary'), '#00bb66');

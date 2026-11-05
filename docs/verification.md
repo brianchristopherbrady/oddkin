@@ -5464,3 +5464,10 @@ Agent 2's OK of the two commits above (lanes, 2026-11-05 00:20) asked for two fi
 | A plain library | `cem analyze --globs chip.js index.js` on a copy of `tests/consumers/workbench/plain-widgets`, then `oddkin-analyze --manifest custom-elements.json` and `oddkin-impact snapshot .` from this worktree's build | Exit 0 each. Against the hand-written manifest: the same tag, registration, and three attributes; four properties plus four stray fields (`adoptedStyleSheets`, `name`, `textContent`, `type`); no event, slot, part, or CSS property. The snapshot: 22 items, 16 edges, 0 unresolved, no metadata diagnostic |
 | Kept as a test | `tests/libraries-without-oddkin/examples.test.ts` with `plain-chip.cem-analyzer.json` (that 1.0.0 manifest) | Workbench builds the page with its registration and three examples and no manifest or metadata diagnostic; `readPackage` reports nothing and the snapshot has the component, registration, and examples; the kits' context has no diagnostic, the registration, and the examples. 4 of 4 in the file |
 | Repository | `npm run typecheck`, `npm run lint` | Exit 0 each |
+
+## 2026-11-05 — CI flake: the Compare test waits for each frame's product (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The panels in three engines | `node ../oddkin-lanes/tools/browser-set.mjs --out .tmp/flake-set packages/workbench/test/panels.browser.test.ts` | 28 of 28 in each of Chromium, Firefox, and WebKit |
+| The Compare test again | `npx vitest run --project browser --browser.name=chromium packages/workbench/test/panels.browser.test.ts -t "compares chosen"`, three times | Passed each time |
