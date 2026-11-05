@@ -195,3 +195,128 @@ Not changed by this review: the statuses, the event, `renderOutput`, and results
 **What it is for.** Usage figures exactly as the host supplies them, each marked measured, estimated, or unknown; it never computes one.
 
 No contract finding. For the design pass: the Figma specimen puts each value at the end of its row ("240 / 1,000", "Estimated: 120") and has no meter; which wording stays is the design pass's question.
+
+## The elements that need a host (2026-11-05)
+
+`odd-activity`, `odd-citation`, `odd-context-picker`, `odd-conversation`, `odd-inline-assist`, `odd-message`, `odd-message-branch`, `odd-prompt-input`, `odd-response-feedback`, `odd-suggestions`, and `odd-voice-input`: each only asks, and Agent 2's examples now play the host (C1: `5a0708f`, `679d852`, `ecdc27b`). Each was read from its reference page's interactive example, driven, and from its Figma specimen.
+
+### `odd-activity`
+
+**What a user sees.** "Responding…" and Stop. Stop shows "Stopping… waiting for confirmation.", then "Stopped" with Retry; Retry shows "Sending…", then "Responding…" again. The "Connection lost" example says "Disconnected. The response may still be generating." with Stop and Resume.
+
+**What it is for.** The state of the current run, kept apart from the state of the connection, with only the recovery actions the adapter supports.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Examples | A failed run (its message, then Retry), a run using tools ("Running Web search"), one waiting for approval or for the user's input, and the `interrupted` status (the stream ended early; the Figma specimen's state, with Resume) have no example. | One each. |
+
+### `odd-citation`
+
+**What a user sees.** A marker, "1", before the host's source list ("Sources", then "1." Web Content Accessibility Guidelines 2.2, w3.org, and its excerpt). Activating the marker opens a preview of the source with Open source and Show in sources, which marks the source in the list. The unresolved example's preview says "This source is not available. The response referenced it, but no source record was supplied."
+
+**What it is for.** Pointing from a claim in generated text to its source, with a preview that keyboard, screen reader, and touch users reach without hover.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Decide | Show in sources sends `odd-citation-open`, then, unless it is cancelled, `odd-source-reveal`. The source calls `odd-source-reveal` internal (the nearest message's default action), yet the example's host listens to it and the reference lists it with the public events, so a host outside a message cannot tell which of the two to use. | Make `odd-source-reveal` public and say that a host outside a message listens to it; or have such a host cancel `odd-citation-open` and reveal the source itself. |
+
+### `odd-context-picker`
+
+**What a user sees.** Three items, each with its kind, name, and status, Inspect (▾), and Remove (✕): "q3-report.pdf", Ready, 471 KB; "Release notes", a link, Processing…; "scan.tiff", Failed, "This file type cannot be read." Then Add files, a link field ("https://"), and Add link. The host adds each new item as uploading or processing and marks it ready a moment later.
+
+**What it is for.** Choosing, inspecting, and removing the context sent with the next request; adding only asks, and the items are the host's records.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Examples | An empty picker ("No context added."), a disabled one, and the selected-text and document kinds have no example. | One each. |
+
+For the design pass: in two of the three items, Remove (✕) wraps under the row at the reference page's width.
+
+### `odd-conversation`
+
+**What a user sees.** Load earlier messages; "You", "Summarize the release notes.", Copy and Edit; "Assistant", the answer, Copy, 👍, and 👎; "Connected"; then the composer. A sent message streams its simulated answer; Load earlier messages brings back the exchange before.
+
+**What it is for.** A whole conversation: the messages as a feed, earlier history on request, following the newest message unless the user is reading earlier ones, the run's status, and the composer.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Examples | History that fails to load ("Earlier messages could not be loaded." and Try again) and Jump to latest (new messages below what the user is reading) have no example. | A transport whose first history request fails; a conversation short enough that a streamed answer arrives below the fold. |
+
+The status slot's "Connected" is in Agent 2's next example change (lanes, 12:17).
+
+### `odd-inline-assist`
+
+**What a user sees.** Rewrite, Explain, and Summarize; "5 characters selected"; then the host's sentence with "build" marked. Each action shows "Working on “Explain”…", then the host's answer under the toolbar.
+
+**What it is for.** Help with selected text: each request carries the selection and its revision, so an answer for changed text is caught; rewrites become proposals for `odd-change-review`, while explanations and summaries show in the element.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Examples | The host answers Rewrite in the result area ("compile step"), but the reference says a rewrite becomes a proposal for `odd-change-review`, so the example teaches another flow. | The host turns Rewrite into a proposal in an `odd-change-review` under the sentence (Accept replaces the word), or the example offers Explain and Summarize only. |
+| 2 | Examples | A stale selection ("The text changed after you selected it. Select it again."), a failed request, no selection, and Translate with its languages have no example. | One each. |
+
+### `odd-message`
+
+**What a user sees.** "Assistant" with its AI label; "Use a container query on the card" with citation 1; the sources ("1." CSS Containment Module Level 3, w3.org); Copy, Regenerate, 👍, and 👎. Regenerate streams a new answer for a moment, then replaces the message; a rating goes pending, then recorded. The user's message has Copy and Edit; Edit opens a field, and sending it replaces the message.
+
+**What it is for.** One message from a conversation record: its parts in order, with explicit fallbacks for unknown parts and missing records, and the actions on it.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Examples | Only text and sources show. Reasoning, files, tool calls, approvals, artifacts, data parts, and the fallbacks (an unknown part, a missing record, data that fails validation) have no example. | An assistant message with reasoning, a tool call, and an artifact; one with each fallback. |
+
+### `odd-message-branch`
+
+**What a user sees.** ‹ "2 / 3" ›, read as "Version 2 of 3", and the host's current answer after it. The arrows move to the other answers; each is unavailable at its end.
+
+**What it is for.** Moving between alternative versions of a message; every version stays in the history.
+
+No contract finding.
+
+### `odd-prompt-input`
+
+**What a user sees.** "Replying in #design"; the field ("Ask anything"); the word "Attach", the element's 📎 Attach files, and the word "Model"; Send. A sent message shows "Sending…", then the host's "Sent: …" under the composer.
+
+**What it is for.** Writing and sending the next message, with attachments; sending only asks, and the draft survives a failed send.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Fix | The incorrect example "Content in a toolbar slot" tells the reader to use `above` for context over the field; there is no such slot: it is `header`. | `header`. |
+| 2 | Examples | The default fills `toolbar-start` and `toolbar-end` with the words "Attach" and "Model", which read as controls but are not; "Attach" stands beside the element's own Attach files. | Real controls (an `odd-model-select`, an `odd-voice-input`), or nothing in those slots. |
+| 3 | Examples | A failed send (its message, with the draft kept: `fail()`), attachments in their states (uploading, failed), and `enterBehavior: 'newline'` have no example. | A host that fails the first send; attachments the host marks uploading, then one failed; Ctrl+Enter to send. |
+
+For the design pass: Attach files shows 📎, drawn by the platform's emoji font; the Figma specimen says "Attach".
+
+### `odd-response-feedback`
+
+**What a user sees.** 👍 and 👎, nothing else. Choosing 👎 opens "What went wrong? (optional)" with its reasons, "Comment (optional)", Send feedback, and Cancel; sending shows "Sending feedback…", then "Thanks. Your feedback was recorded."
+
+**What it is for.** Rating one response, with optional reasons and a comment; the outcome shown is the one the host records.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Decide | The ratings show only 👍 and 👎, drawn by the platform's emoji font; their names (Good response, Bad response) are for screen readers only. The Figma specimen labels them in text. The same buttons show under each message in `odd-message` and `odd-conversation`. | The names as visible text, with or without the symbols. |
+| 2 | Examples | "Negative rating with reasons" passes a record that is still idle, which the element does not show (it shows a record's rating once submitted), so the example looks like the default and no reasons appear. A failed record ("Feedback was not sent: …") has no example. | A submitted negative rating (pressed, with the thanks), and a failed one. |
+
+### `odd-suggestions`
+
+**What a user sees.** "Summarize" and "List risks", each with a send button (↑), and the host's Message field beside them, a few characters wide. Choosing a suggestion puts its prompt in the field; ↑ sends it at once ("Sent: …").
+
+**What it is for.** Offering follow-up prompts, with inserting (to edit first) and sending as separate intents.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Examples | The host's field sits beside the suggestions, a few characters wide, so a prompt put in it cannot be read; the same field in `odd-voice-input`. | The field under the element, as wide as the example. |
+| 2 | Examples | `insertOnly` (no send buttons) and `disabled` have no example. | One each. |
+
+### `odd-voice-input`
+
+**What a user sees.** "● Start voice input" and the host's Message field beside it, a few characters wide. Starting shows "Listening…", the interim text, Stop recording, and Cancel recording; once stopped, Use transcript puts "Summarize the release notes." in the field, and Clear discards it.
+
+**What it is for.** Dictation: starting, keeping, or discarding a recording, with the permission, device, and interruption states, through a replaceable adapter.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Decide | While recording, the status says "Listening…" and the nested transcript says "Listening:" before the interim text (since `odd-transcript` 1). | Hide the status while interim text shows (the transcript says it), or keep both. |
+| 2 | Examples | The only example builds its adapter at run time (`createScriptedVoiceAdapter`), so the analyzer reads none of its values (the examples test lists it as computed): the metadata, the agent kits, and Theme Studio have none for this element. | Literal props, with the adapter set by the fixture. |
+| 3 | Examples | Denied permission, no microphone, an unsupported browser, and an interrupted recording have no example, though a host must expect each. | Scripted adapters that deny permission, find no device, or stop early. |

@@ -5640,3 +5640,14 @@ Agent 2's decisions of 2026-11-05 (lanes, 11:18) on the reviews of `odd-action-a
 | Node tests | `npx vitest run --project node` | 1,693 passed and 2 skipped; `icon-catalog.test.ts` timed out at 20 s with the machine loaded and passed alone (4 of 4) |
 | Agent 2's review | `packages/ai/test/elements.browser.test.ts` in each engine, after the marker's empty alternative | 29 passed in each of Chromium, Firefox, and WebKit |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs` | Exit 0 each |
+
+## 2026-11-05 — P1.8: contract reviews of the eleven AI elements that need a host (round 11, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| What a user sees | `.tmp/c3-ref-read.mjs` on the docs dev server in Chromium at 1280 px: each reference page's interactive example, its visible text and a one-viewport shot (not kept) | As `docs/research/ai-contract-review.md` describes it for the eleven elements; no page errors |
+| The Figma specimens | Figma MCP `get_metadata` of the light specimens 124:217, 124:414, 124:86, 124:192, 124:347, 124:154, 124:174, 124:50, 124:498, 124:116, and 124:548 | The feedback specimen labels its ratings in text ("Good response", "Bad response"); the prompt input's says "Attach"; the voice input's shows "Listening…" with Stop recording and Cancel recording |
+| The citation's events | `packages/ai/src/citation/citation.ts` | Show in sources emits `odd-citation-open`, then, if not cancelled, `odd-source-reveal`, whose declaration is commented "Internal" |
+| The feedback record | `packages/ai/src/response-feedback/response-feedback.template.ts` | A record's rating is shown only once its status is `submitted`; the form opens on the user's own choice |
+| The prompt input's slots | `packages/ai/src/prompt-input/prompt-input.ts` | `header`, `toolbar-start`, and `toolbar-end`; no `above` |
+| Repository | `npx prettier --check docs/research/ai-contract-review.md` | Exit 0 |
