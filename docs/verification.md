@@ -5552,3 +5552,14 @@ On `a55a52c`.
 | Node tests | `npx vitest run --project node` | 1,694 passed and 2 skipped (134 files) |
 | Packages | `npm run verify:packs` | OK |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs` | Exit 0 each. The first build after the rebase stopped once at `tsc -b` (TS2307: `@oddkin/analyzer/metadata` not found from Workbench's node files); the next build passed |
+
+## 2026-11-05 — P1.8, row 9: C1's second batch of Agent 2's AI examples play the host (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The four examples | `packages/ai/test/elements.browser.test.ts`, "C1 examples play the host: suggestions, feedback, answer branches, the composer" (each default example through `mountExample`) | Suggestions: choosing Summarize puts "Summarize this page in three bullets." in the host's field, and its send button makes the host say "Sent: Summarize this page in three bullets.". Feedback: a positive rating sent is `pending`, then `submitted`. Branches: the second answer shows; Next shows the third (`m2c`, index 3, "Use a grid with auto-fit columns."), Previous the second again. Composer: a typed message sent sets `loading`, then the host acknowledges it: the field is empty and the host says "Sent: Draft the release notes." |
+| AI browser files | `node ../oddkin-lanes/tools/browser-set.mjs` on `examples.browser`, `elements.browser`, `layout.browser`, and `contract.browser` (`packages/ai/test`) | 218 passed and 4 skipped in each of Chromium, Firefox, and WebKit |
+| Metadata | `npm run build`; `packages/ai/test/examples.test.ts` (suggestions' fixture renders `odd-textarea`); the components' contract test in three engines (830 passed, 50 skipped each); `npm run verify:metadata` | AI node tests 94 of 94; verify:metadata exit 0: 484 verified AI facts across 24 elements, 2,219 across 55 components |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-r9c.json` (7 probes in Chromium: a chosen prompt never reaching the field; a sent prompt not shown; feedback never submitted; the branch switch ignored; no next answer after the second; the composer never acknowledged, or not loading while the host works) | 7 of 7 killed |
+| End to end | `e2e/docs.spec.ts:448` and `:473` in Chromium, Firefox, and WebKit (one worker); `e2e/workbench-catalog.spec.ts` in Chromium | 6 passed; 158 passed |
+| Repository | `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Exit 0 each; node 1,694 passed and 2 skipped (136 files) |

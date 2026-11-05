@@ -810,6 +810,93 @@ describe('selection, review, and controls', () => {
     }
   });
 
+  it('C1 examples play the host: suggestions, feedback, answer branches, the composer', async () => {
+    await import('../src/suggestions/suggestions.define.js');
+    await import('../src/response-feedback/response-feedback.define.js');
+    await import('../src/message-branch/message-branch.define.js');
+    await import('../src/prompt-input/prompt-input.define.js');
+    await import('@oddkin/components/define/textarea');
+    const until = async (check: () => boolean, what: string) => {
+      for (let i = 0; i < 200 && !check(); i++) await new Promise((r) => setTimeout(r, 25));
+      expect(check(), what).toBe(true);
+    };
+
+    // Suggestions: choosing puts the prompt in the host's field; the send button sends it.
+    const suggestionsSet = (await import('../src/suggestions/suggestions.examples.js')).default;
+    const suggestions = await mountExample(suggestionsSet, 'default', container);
+    try {
+      const el = suggestions.element;
+      const field = suggestions.root.querySelector('odd-textarea')!;
+      $(el, '[part="suggestion"]')!.click();
+      await settle(el);
+      expect(field.value).toBe('Summarize this page in three bullets.');
+      $(el, '[part="send"]')!.click();
+      await settle(el);
+      expect(suggestions.root.querySelector('p')!.textContent).toBe(
+        'Sent: Summarize this page in three bullets.',
+      );
+    } finally {
+      suggestions.dispose();
+    }
+
+    // Feedback: a rating sent is pending, then submitted.
+    const feedbackSet = (await import('../src/response-feedback/response-feedback.examples.js'))
+      .default;
+    const feedback = await mountExample(feedbackSet, 'default', container);
+    try {
+      const el = feedback.element;
+      $(el, '[data-rating="positive"]')!.click();
+      await settle(el);
+      $(el, 'form odd-button[type="submit"]')!.click();
+      await settle(el);
+      expect(el.feedback).toMatchObject({ messageId: 'm2', rating: 'positive', status: 'pending' });
+      await until(() => el.feedback?.status === 'submitted', 'submitted');
+    } finally {
+      feedback.dispose();
+    }
+
+    // Answer branches: Next shows the third answer, Previous the second again.
+    const branchSet = (await import('../src/message-branch/message-branch.examples.js')).default;
+    const branch = await mountExample(branchSet, 'default', container);
+    try {
+      const el = branch.element;
+      const answer = () => branch.root.querySelector('p')!.textContent;
+      expect(answer()).toBe('Use a container query on the card.');
+      $(el, '[data-direction="next"]')!.click();
+      await settle(el);
+      expect([el.messageId, el.branch?.index, answer()]).toEqual([
+        'm2c',
+        3,
+        'Use a grid with auto-fit columns.',
+      ]);
+      $(el, '[data-direction="previous"]')!.click();
+      await settle(el);
+      expect([el.messageId, el.branch?.index]).toEqual(['m2', 2]);
+    } finally {
+      branch.dispose();
+    }
+
+    // Composer: a message sent is taken a moment later; the field clears and the host says so.
+    const composerSet = (await import('../src/prompt-input/prompt-input.examples.js')).default;
+    const composer = await mountExample(composerSet, 'default', container);
+    try {
+      const el = composer.element;
+      const input = $(el, '[part="input"]') as HTMLTextAreaElement;
+      input.value = 'Draft the release notes.';
+      input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      await settle(el);
+      $(el, '[part="form"]')!.dispatchEvent(new Event('submit', { cancelable: true }));
+      await settle(el);
+      expect(el.loading).toBe(true);
+      await until(() => !el.loading, 'acknowledged');
+      await settle(el);
+      expect(composer.root.querySelector('p')!.textContent).toBe('Sent: Draft the release notes.');
+      expect(($(el, '[part="input"]') as HTMLTextAreaElement).value).toBe('');
+    } finally {
+      composer.dispose();
+    }
+  });
+
   it('odd-inline-assist: toolbar keyboard, stale selections, and request detail with revision', async () => {
     const el = await mount(
       'odd-inline-assist',

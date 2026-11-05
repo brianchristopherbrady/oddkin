@@ -1,4 +1,5 @@
 import { defineExamples } from '@oddkin/workbench/examples';
+import { html } from '@oddkin/core/template';
 import type {} from './prompt-input.js';
 
 export default defineExamples('odd-prompt-input', {
@@ -12,7 +13,26 @@ export default defineExamples('odd-prompt-input', {
     slots: { header: 'Replying in #design', 'toolbar-start': 'Attach', 'toolbar-end': 'Model' },
     recommended: true,
     guidance:
-      'Enter sends by default; Shift+Enter adds a line. Sending is unavailable until the host allows it.',
+      'Enter sends by default; Shift+Enter adds a line. Sending only asks (`odd-prompt-submit`): the host takes the message, and the composer clears once the host calls `acknowledge()`, or keeps the text after `fail()`. Here the host acknowledges a moment later and says what was sent.',
+    // The host: it takes each message a moment later and shows what it sent.
+    fixture({ scope, element, mount }) {
+      const composer = element as HTMLElement & {
+        loading: boolean;
+        acknowledge(submissionId: string): void;
+      };
+      const sent = mount(html`<p></p>`);
+      scope.listen(element, 'odd-prompt-submit', (event) => {
+        const { text, submissionId } = (
+          event as CustomEvent<{ readonly text: string; readonly submissionId: string }>
+        ).detail;
+        composer.loading = true;
+        scope.timeout(() => {
+          composer.loading = false;
+          composer.acknowledge(submissionId);
+          sent.textContent = `Sent: ${text}`;
+        }, 600);
+      });
+    },
   },
   disabledFalse: {
     label: 'Enabled with disabled="false"',
