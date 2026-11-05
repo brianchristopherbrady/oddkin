@@ -7,6 +7,9 @@ playwright-report
 docs/schemas
 packages/ai/schemas
 packages/components/schemas
+# Copies of docs/schemas files, kept byte for byte (scripts/sync-tool-schemas.mjs).
+packages/workbench/schemas
+packages/analyzer/schemas
 package-lock.json
 packages/tokens/test/fixtures/*.css.txt
 packages/tokens/src/generated

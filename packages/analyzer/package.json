@@ -50,10 +50,12 @@
       "types": "./dist/kit/index.d.ts",
       "default": "./dist/kit/index.js"
     },
+    "./schemas/*.json": "./schemas/*.json",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "schemas",
     "README.md"
   ],
   "dependencies": {

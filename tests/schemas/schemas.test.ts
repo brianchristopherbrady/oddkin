@@ -37,4 +37,26 @@ describe('draft JSON Schemas', () => {
     const valid = validate!(read(join(dir, 'examples', file)));
     expect(valid, JSON.stringify(validate!.errors)).toBe(file.includes('.valid.'));
   });
+
+  // Copies the packages publish for editors and exported artifacts (scripts/sync-tool-schemas.mjs).
+  it.each([
+    ['workbench', ['docs-content', 'workbench-config']],
+    ['analyzer', ['comparison-snapshot', 'impact-report', 'product']],
+  ])('@oddkin/%s publishes its copies unchanged', (name, schemas) => {
+    const pkg = fileURLToPath(new URL(`../../packages/${name}/`, import.meta.url));
+    const manifest = read(join(pkg, 'package.json')) as {
+      files: string[];
+      exports: Record<string, unknown>;
+    };
+    expect(manifest.files).toContain('schemas');
+    expect(manifest.exports['./schemas/*.json']).toBe('./schemas/*.json');
+    expect(readdirSync(join(pkg, 'schemas')).sort()).toEqual(
+      schemas.map((schema) => `${schema}.v1.schema.json`),
+    );
+    for (const schema of schemas)
+      expect(
+        readFileSync(join(pkg, 'schemas', `${schema}.v1.schema.json`), 'utf8'),
+        `${name}/schemas/${schema}: run node scripts/sync-tool-schemas.mjs`,
+      ).toBe(readFileSync(join(dir, `${schema}.v1.schema.json`), 'utf8'));
+  });
 });

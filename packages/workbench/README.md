@@ -15,6 +15,7 @@ Metadata-driven documentation tooling for any custom-element library. **Status:*
 | `@oddkin/workbench/panels/{catalog,component,foundation,theme-studio}` | The embeddable panels' classes; `…/define` registers `<oddkin-catalog-panel>`, `<oddkin-component-panel>`, `<oddkin-foundation-panel>`, or `<oddkin-theme-studio-panel>` (see [Embedding the panels](#embedding-the-panels)) |
 | `@oddkin/workbench/frame` | The preview frame runtime, imported by the frame document |
 | `@oddkin/workbench/theme-link` | Development only. `linkThemeStudio({ studio, stylesheet?, studioWindow?, document? })`, loaded by a team's own app so Theme Studio's draft replaces one of its stylesheets (see [A team's own app](#a-teams-own-app)) |
+| `@oddkin/workbench/schemas/*.json` | The JSON Schemas of `oddkin.config.json` (`workbench-config.v1.schema.json`) and of `oddkin.docs.json` (`docs-content.v1.schema.json`), for editors: name the first in the file's `"$schema"` (`./node_modules/@oddkin/workbench/schemas/workbench-config.v1.schema.json`), and map the second to its file in the editor's settings (VS Code: `json.schemas`) |
 
 The examples, config, pages, and data entries import without a DOM and have no runtime dependencies (`@oddkin/core` is used for types only). Shipped component code never imports them; colocated `*.examples.ts` files may, because they are development-only sources excluded from the package build (ADR 0021).
 

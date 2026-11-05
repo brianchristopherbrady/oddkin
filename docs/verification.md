@@ -5471,3 +5471,14 @@ Agent 2's OK of the two commits above (lanes, 2026-11-05 00:20) asked for two fi
 | --- | --- | --- |
 | The panels in three engines | `node ../oddkin-lanes/tools/browser-set.mjs --out .tmp/flake-set packages/workbench/test/panels.browser.test.ts` | 28 of 28 in each of Chromium, Firefox, and WebKit |
 | The Compare test again | `npx vitest run --project browser --browser.name=chromium packages/workbench/test/panels.browser.test.ts -t "compares chosen"`, three times | Passed each time |
+
+## 2026-11-05 — P1.6, §5c: Workbench and the analyzer publish their users' file schemas (round 11, Agent 2, row 8)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The copies | `node scripts/sync-tool-schemas.mjs --check` before and after `node scripts/sync-tool-schemas.mjs` | Before: exit 1, five copies stale (none written yet); after: "Tool schemas written: 5", then "checked: 5", exit 0 |
+| The sync check | `tests/schemas/schemas.test.ts` | Each package lists `schemas` in `files`, exports `./schemas/*.json`, holds exactly its copies (Workbench: `docs-content`, `workbench-config`; analyzer: `comparison-snapshot`, `impact-report`, `product`), each equal to `docs/schemas`'s file; the file: 30 of 30 |
+| Packs | `node scripts/verify-packs.mjs` | OK; `npm pack --dry-run` of `@oddkin/analyzer` lists `schemas/comparison-snapshot.v1.schema.json`, `impact-report.v1.schema.json`, and `product.v1.schema.json` |
+| Node tests | `npx vitest run --project node` | 1,690 passed and 2 skipped (135 files) |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-readme-status.mjs` | Exit 0 each; README status OK (9 READMEs) |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-row8g.json` (3 probes: a published copy that drifted by one space; Workbench's `files` without `schemas`; the analyzer without the `./schemas/*.json` export) | 3 of 3 killed |

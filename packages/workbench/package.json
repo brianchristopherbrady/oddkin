@@ -123,10 +123,12 @@
       "types": "./dist/panels/theme-studio-define.d.ts",
       "default": "./dist/panels/theme-studio-define.js"
     },
+    "./schemas/*.json": "./schemas/*.json",
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "schemas",
     "README.md"
   ],
   "dependencies": {
