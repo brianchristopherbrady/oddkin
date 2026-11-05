@@ -34,7 +34,7 @@ Finish first (owner, 2026-11-01: work already started comes before new items). A
 
 | Agent | # | Item | Waits for |
 | --- | --- | --- | --- |
-| 1 | 1 | CF.4, RF-19: the error-message audit. List every documented diagnostic code and message in the packages; each message names what to do, or links to the page that does. Fixes go to the owning lane | The owner ends Agent 1's light duty (set 2026-11-02: Agent 1 syncs the lanes and pushes `main`) |
+| 1 | 1 | Moved to Agent 2 by the owner on 2026-11-05: RF-19, the error-message audit, is Agent 2's item 10 | — |
 | 1 | 2 | Moved to Agent 3 by the owner on 2026-11-03: `odd-table` is Agent 3's item 6 | — |
 | 1 | — | P0.6: done on 2026-11-03. The first scheduled `registry-smoke.yml` run passed (41398232217, 2026-11-02), and CI is green again on `4f03223` (run 41712566479) | — |
 | 1 | 3 | CF.4, RF-12 and RF-13: publishing from GitHub Actions with provenance (`.github/workflows/release.yml`), needed before `1.0.0-beta.2` (D-5); Dependabot, an informational `npm audit`, and the SBOM in the evidence bundle | The owner ends Agent 1's light duty; then the owner adds the trusted publishers on npmjs.com within 2 days of the first publish from the workflow |
@@ -49,6 +49,7 @@ Finish first (owner, 2026-11-01: work already started comes before new items). A
 | 2 | 7 | Done on 2026-11-04, apart from elevation, which waits for the owner's decision on its inputs. P1.5, items 3 and 6: the remaining controls with the ramp and contrast views; a team's own app on its dev server | P1.1's missing token domains, for the controls that need them |
 | 2 | 8 | Done on 2026-11-05, apart from the anatomy contracts, which wait for P1.2's quality items (Agent 1's item 5), and Workbench's controls and preview isolation, parked with §5d.1's Workbench work. P1.6's remaining items, starting with the technical plan's Workstream C provenance: the source revision and dirty state in impact snapshots and reports (Gate B) | — |
 | 2 | 9 | P1.8 with Agent 3 (owner's priority, 2026-11-05): the AI contract review's C1 to C3 (`docs/research/ai-contract-review.md`), an example per element whose fixture plays the host, split by element so Agent 3 reaches the Figma refresh and the design pass sooner. Agent 3 keeps the elements it posts; Agent 2 takes the rest, and Agent 3 reads Agent 2's examples for clarity | Agent 3's list of the elements it keeps |
+| 2 | 10 | CF.4, RF-19 (moved from Agent 1 by the owner on 2026-11-05; Agent 1's light duty had paused it): the error-message audit, the Gate A line agents can close alone. A script lists every documented diagnostic code with its message, in every package, and flags each message that neither names what to do nor links to the page that does; the install and first-run paths come first. Agent 2 fixes its own packages; wording for core, state, app, and components goes to Agent 1 as a `REVIEW`, and for tokens to Agent 3. Done when the list is clean: then tick RF-19 under CF.4 and its line in the scorecard | — |
 | 3 | 1 | Done on 2026-11-01. CF.1, RF-02: the README status check in `npm run lint` (`scripts/check-readme-status.mjs` and its test; Agent 1 has agreed to the lint change) | — |
 | 3 | 2 | P1.1: a theme file that builds on a shared base file, then product role overrides and several themes in one document. Base files and product role overrides done on 2026-11-02; several themes in one document remain | — |
 | 3 | 3 | Done on 2026-11-02. Docs fixes only: `odd-theme-scope` is dropped (owner, 2026-11-01), so the Themes page and theming-and-styling.md §5 stop mentioning it (plain `data-odd-*` attributes set the scopes) | — |
@@ -65,6 +66,8 @@ Owner decisions of 2026-11-01, on the list below: `odd-theme-scope` is dropped; 
 Owner decisions of 2026-11-03: `odd-table` moves to Agent 3 (its item 6); Agent 3 may add `sass` (Dart Sass, MIT) as a root dev dependency, used only by tests; the owner's docs request of 2026-11-02 is Agent 3's item 5.
 
 Owner decisions of 2026-11-04: the AI components get a design pass, P1.8 below, as Agent 3's item 8 once its current work is done. The owner offered it to Agent 2 as well; it stays with Agent 3, whose queue is shorter and who did the docs site's Figma passes and owns the tokens, while Agent 2, whose package it is, reads each change. After looking at the AI components, the owner widened the pass to their contracts as well (`odd-change-review` first), and put a major docs bug ahead of it: the Components page's sidebar is missing when the page is reached from the home page (Agent 3's item 7).
+
+Owner decisions of 2026-11-05: the AI contract review's host-playing examples (C1 to C3) are split by element between Agents 2 and 3 (Agent 2's item 9), so Agent 3 reaches the Figma refresh and the design pass sooner. RF-19, the error-message audit, moves from Agent 1, whose light duty paused it, to Agent 2 as its item 10, once Agent 2 had no open row left. Agent 1 stays on light duty, and pushes on the landers' own checks while the owner asks for no builds on its side.
 
 Waiting for the owner: observers for RF-18; the trusted publishers on npmjs.com, within 2 days of the first publish from `release.yml` (RF-12).
 
@@ -190,7 +193,7 @@ The details are in the [technical commercialization plan](./docs/commercializati
   - an ADR for adapters to other metadata sources.
     - *(2026-10-30, Agent 2: [ADR 0048](./docs/architecture/decisions/0048-libraries-not-built-with-oddkin.md). The manifest is read directly. Enrichment is a layer keyed by tag; examples come first, needing an analyzer mode for libraries it did not extract. Adapters are static readers that write contracts Oddkin already has, built when a pilot needs one: Storybook stories, DTCG tokens, then framework docgen.)*
 - [ ] **CF.4 Gate A's remaining release work (Agent 1; set 2026-11-01).** The [release-foundation plan](./docs/commercialization/release-foundation-plan.md)'s tasks that Gate A still needs, beyond CF.1:
-  - RF-19, the error-message audit (Agent 1 lists the codes; each lane fixes its own messages);
+  - RF-19, the error-message audit (Agent 2 from 2026-11-05, its item 10: it lists the codes; each lane fixes its own messages);
   - RF-12, trusted publishing with provenance, before `1.0.0-beta.2` (D-5);
   - RF-13's rest: Dependabot, an informational `npm audit`, and the SBOM (`SECURITY.md` is done);
   - RF-05, evidence for any Node or package-manager range the support policy claims beyond what is tested;
