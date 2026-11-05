@@ -5722,3 +5722,17 @@ Five more AI elements against their Figma specimens, light and dark. On `ddc9059
 | Metadata | `npm run verify:metadata` | Exit 0 |
 | Size | `node scripts/check-size.mjs` | `ai-chat` 51,418 B of 51,456 (51,331 before: the sources' rows); `ai:styles` 5,084 of 5,120 |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node packages/ai/test` (94 passed), `npm run compat` | Exit 0 each |
+
+## 2026-11-05 — P1.8 item 8: the AI design pass, third batch (round 11, Agent 3)
+
+Three more AI elements against their Figma specimens, light and dark. On `7aa5518`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `packages/ai/test/figma-parity.browser.test.ts` in Chromium, before the changes | `odd-suggestions`: no gap inside each pill (Figma `space.xs`), buttons rounded full with `space.sm` padding and 1 px block padding (`radius.md`, `space.xs`, none), the send button's corners squared. `odd-response-feedback`: the comment's label in primary text (secondary). `odd-voice-input`, recording: no difference |
+| After | the same file, in Chromium, Firefox, and WebKit | 26 of 26 in each engine (thirteen elements, light and dark) |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-d3.json` (3 probes: no gap in the pill; the old button padding; the comment's label in primary text) | 3 of 3 killed |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI parity, elements, layout, examples, reflow, and contract tests | 256 passed and 4 skipped in each of Chromium, Firefox, and WebKit |
+| Metadata | `packages/ai/test/metadata.test.ts`; `npm run verify:metadata` | The suggestion and send buttons now both trace their inline padding to `space.xs` (the test expected `space.sm` for the suggestion); 94 passed; exit 0 |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,423 B of 51,456 (51,418 before); `ai:styles` 5,053 of 5,120 (5,084: the send button's overrides went) |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npm run compat` | Exit 0 each |

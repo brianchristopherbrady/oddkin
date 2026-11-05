@@ -403,3 +403,133 @@ describe('Figma parity: odd-sources', () => {
       expectNone(compare(`odd-sources/One source/${mode}`, {}, targets));
     });
 });
+
+describe('Figma parity: odd-suggestions', () => {
+  for (const mode of MODES)
+    it(`Insert and send (${mode})`, async () => {
+      await import('../src/suggestions/suggestions.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-suggestions></odd-suggestions>',
+      ) as HTMLElementTagNameMap['odd-suggestions'];
+      el.suggestions = [
+        { id: 'summarize', label: 'Summarize', prompt: 'Summarize this document.' },
+        { id: 'explain', label: 'Explain the key points', prompt: 'Explain the key points.' },
+      ];
+      await settle(el);
+      const items = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.item')];
+      const targets: Target[] = [
+        { layer: ['Actions'], el: shadow(el, '[part="list"]'), kind: 'frame', gap: 'column-gap' },
+      ];
+      for (const [i, pill, label] of [
+        [0, 'Actions', 'Summarize'],
+        [1, 'Actions [2]', 'Explain the key points'],
+      ] as const) {
+        const insert = items[i]!.querySelector<HTMLElement>('[part="suggestion"]')!;
+        const send = items[i]!.querySelector<HTMLElement>('[part="send"]')!;
+        targets.push(
+          { layer: ['Actions', pill], el: items[i]!, kind: 'frame', gap: 'column-gap' },
+          { layer: ['Actions', pill, label], el: insert, kind: 'frame' },
+          { layer: ['Actions', pill, label, label], el: insert, kind: 'text' },
+          { layer: ['Actions', pill, '↑'], el: send, kind: 'frame' },
+          { layer: ['Actions', pill, '↑', '↑'], el: send, kind: 'text' },
+        );
+      }
+      expectNone(compare(`odd-suggestions/Insert and send/${mode}`, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-response-feedback', () => {
+  for (const mode of MODES)
+    it(`Negative rating, drafting (${mode})`, async () => {
+      await import('../src/response-feedback/response-feedback.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-response-feedback></odd-response-feedback>',
+      ) as HTMLElementTagNameMap['odd-response-feedback'];
+      el.messageId = 'm2';
+      await settle(el);
+      shadow(el, '[data-rating="negative"]').click();
+      await settle(el);
+      const good = shadow(el, '[data-rating="positive"]');
+      const bad = shadow(el, '[data-rating="negative"]');
+      const form = shadow(el, '[part="form"]');
+      const field = form.querySelector('textarea')!;
+      restyle(field);
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Actions'], el: shadow(el, '.actions'), kind: 'frame', gap: 'column-gap' },
+        {
+          layer: ['Actions', 'Good response'],
+          el: good,
+          kind: 'frame',
+          fields: [['minHeight', 'min-block-size']],
+        },
+        { layer: ['Actions', 'Good response', 'Good response'], el: good, kind: 'text' },
+        {
+          layer: ['Actions', 'Bad response'],
+          el: bad,
+          kind: 'frame',
+          fields: [['minHeight', 'min-block-size']],
+        },
+        { layer: ['Actions', 'Bad response', 'Bad response'], el: bad, kind: 'text' },
+        { layer: ['Comment (optional)'], el: form.querySelector('.field span')!, kind: 'text' },
+        { layer: ['Native field'], el: field, kind: 'frame' },
+        { layer: ['Native field', 'Text'], el: field, kind: 'text' },
+        {
+          layer: ['Actions [2]'],
+          el: form.querySelector<HTMLElement>('.actions')!,
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+      ];
+      expectNone(compare(`odd-response-feedback/Negative rating · drafting/${mode}`, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-voice-input', () => {
+  for (const mode of MODES)
+    it(`Recording (${mode})`, async () => {
+      await import('../src/voice-input/voice-input.define.js');
+      const { createScriptedVoiceAdapter } = await import('../src/controllers/voice.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-voice-input></odd-voice-input>',
+      ) as HTMLElementTagNameMap['odd-voice-input'];
+      // A script that hears nothing for a minute: the element stays recording.
+      el.adapter = createScriptedVoiceAdapter([{ after: 60_000, final: 'Never heard.' }]);
+      await settle(el);
+      const record = shadow(el, '.record');
+      record.click();
+      for (let i = 0; i < 40 && record.getAttribute('aria-pressed') !== 'true'; i++)
+        await settle(el);
+      for (let i = 0; i < 40 && !/Listening/.test(shadow(el, '[part="status"]').textContent!); i++)
+        await settle(el);
+      const cancel = shadow(el, '[part="controls"] > button:nth-of-type(2)');
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
+        {
+          layer: ['Actions'],
+          el: shadow(el, '[part="controls"]'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        {
+          layer: ['Actions', '● Stop recording'],
+          el: record,
+          kind: 'frame',
+          fields: [['minHeight', 'min-block-size']],
+        },
+        { layer: ['Actions', '● Stop recording', '● Stop recording'], el: record, kind: 'text' },
+        {
+          layer: ['Actions', 'Cancel recording'],
+          el: cancel,
+          kind: 'frame',
+          fields: [['minHeight', 'min-block-size']],
+        },
+        { layer: ['Actions', 'Cancel recording', 'Cancel recording'], el: cancel, kind: 'text' },
+        { layer: ['Listening…'], el: shadow(el, '[part="status"]'), kind: 'text' },
+      ];
+      expectNone(compare(`odd-voice-input/Recording/${mode}`, {}, targets));
+    });
+});

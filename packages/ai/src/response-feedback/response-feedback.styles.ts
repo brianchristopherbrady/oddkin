@@ -20,6 +20,7 @@ export const responseFeedbackStyles = css`
   }
   legend,
   .field span {
+    color: ${token('color.text.secondary')};
     font-size: ${token('font.size.sm')};
   }
   .check {

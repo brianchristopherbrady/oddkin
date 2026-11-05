@@ -12,6 +12,7 @@ export const suggestionsStyles = css`
   }
   .item {
     display: inline-flex;
+    gap: ${token('space.xs')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('radius.full')};
     background: ${token('color.surface.default')};
@@ -19,20 +20,15 @@ export const suggestionsStyles = css`
   button {
     min-block-size: ${token('target.min')};
     min-inline-size: ${token('target.min')};
-    padding-inline: ${token('space.sm')};
+    padding-block: 0;
+    padding-inline: ${token('space.xs')};
     border: 0;
-    border-radius: ${token('radius.full')};
+    border-radius: ${token('control.radius')};
     background: transparent;
     color: inherit;
     font: inherit;
     font-size: ${token('font.size.sm')};
     cursor: pointer;
-  }
-  .send {
-    padding-inline: ${token('space.xs')};
-    border-inline-start: ${token('border.width.default')} solid ${token('color.border.default')};
-    border-start-start-radius: 0;
-    border-end-start-radius: 0;
   }
   button:disabled {
     color: ${token('color.text.disabled')};

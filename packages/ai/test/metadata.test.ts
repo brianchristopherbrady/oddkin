@@ -88,8 +88,8 @@ describe('@oddkin/ai published metadata', { timeout: 30_000 }, () => {
     )
       .filter((m) => m['cssProperty'] === 'padding-inline')
       .map((m) => `${m['part']} -> ${m['token']}`);
-    // `button` styles both buttons; `.send` outranks it on the send button.
-    expect(padding).toEqual(['suggestion -> space.sm', 'send -> space.xs']);
+    // `button` styles both buttons alike, as the Figma specimen pads them.
+    expect(padding).toEqual(['suggestion -> space.xs', 'send -> space.xs']);
   });
 
   it('publishes typed intent events with their request semantics', () => {

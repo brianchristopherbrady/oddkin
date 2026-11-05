@@ -327,7 +327,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/sources/sources.recipe.styles.js (sourcesRecipeStyles)` | yes | 14 |
 | `packages/ai/dist/sources/sources.styles.js (sourcesStyles)` | yes | 25 |
 | `packages/ai/dist/suggestions/suggestions.recipe.styles.js (suggestionsRecipeStyles)` | yes | 11 |
-| `packages/ai/dist/suggestions/suggestions.styles.js (suggestionsStyles)` | yes | 41 |
+| `packages/ai/dist/suggestions/suggestions.styles.js (suggestionsStyles)` | yes | 38 |
 | `packages/ai/dist/task-plan/task-plan.recipe.styles.js (taskPlanRecipeStyles)` | yes | 15 |
 | `packages/ai/dist/task-plan/task-plan.styles.js (taskPlanStyles)` | yes | 32 |
 | `packages/ai/dist/tool-call/tool-call.recipe.styles.js (toolCallRecipeStyles)` | yes | 12 |
