@@ -42,5 +42,18 @@ export default defineExamples('odd-tool-call', {
       },
       capabilities: { retry: { available: true } },
     },
+    guidance:
+      'Retry sends a request; the host runs the call again and passes back the record with its result.',
+    // The host: runs the call again, this time with a result.
+    fixture({ scope, element }) {
+      scope.listen(element, 'odd-tool-retry', () => {
+        element.tool = {
+          toolCallId: 't3',
+          toolName: 'search',
+          status: 'output-available',
+          output: { results: 3 },
+        };
+      });
+    },
   },
 });

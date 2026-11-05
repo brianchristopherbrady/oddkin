@@ -471,6 +471,9 @@ test('serves llms.txt, linking the agent kits under its own address', async ({ r
 });
 
 test('every catalog card shows a live example', async ({ page }) => {
+  // Every card in turn (79 on 2026-11-05): Firefox took 21 to 29 s, and over 30 s on a loaded
+  // machine, too close to the default 30 s; each new card and fixture adds to it.
+  test.slow();
   await page.goto(`${docs}/components`);
   await expect(page.getByText(/Showing \d+ of \d+ components/)).toBeVisible({
     timeout: catalogLoad,

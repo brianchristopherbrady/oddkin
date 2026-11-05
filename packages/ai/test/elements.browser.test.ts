@@ -331,6 +331,56 @@ describe('odd-tool-call and odd-action-approval', () => {
       'Decisions are not available here.',
     );
   });
+
+  it('their examples play the host: Retry runs the call again; each decision is recorded', async () => {
+    await import('../src/tool-call/tool-call.define.js');
+    await import('../src/action-approval/action-approval.define.js');
+    const { default: tools } = await import('../src/tool-call/tool-call.examples.js');
+    const failed = await mountExample(tools, 'failed', container);
+    try {
+      const el = failed.element;
+      expect(text($(el, '.status'))).toBe('Failed');
+      $(el, '.failure button')!.click();
+      await settle(el);
+      expect(text($(el, '.status'))).toBe('Finished');
+      expect($(el, '[part="result"] pre')?.textContent).toContain('"results": 3');
+      expect($(el, '.failure')).toBeNull();
+    } finally {
+      failed.dispose();
+    }
+    const { default: approvals } =
+      await import('../src/action-approval/action-approval.examples.js');
+    const approved = await mountExample(approvals, 'default', container);
+    try {
+      const el = approved.element;
+      $(el, 'odd-button[appearance="primary"]')!.click();
+      await settle(el);
+      expect(el.approval).toMatchObject({ status: 'approved', decision: 'approve' });
+      expect(text($(el, '.state'))).toBe(
+        'Approved. The action runs separately; its result appears with the action.',
+      );
+      expect($(el, '[part="actions"]')!.hidden).toBe(true);
+    } finally {
+      approved.dispose();
+    }
+    const rejected = await mountExample(approvals, 'default', container);
+    try {
+      const el = rejected.element;
+      const reason = $(el, '.reason textarea') as HTMLTextAreaElement;
+      reason.value = 'Not before Friday.';
+      reason.dispatchEvent(new Event('input', { bubbles: true }));
+      $$(el, '[part="actions"] odd-button')[1]!.click();
+      await settle(el);
+      expect(el.approval).toMatchObject({
+        status: 'rejected',
+        decision: 'reject',
+        reason: 'Not before Friday.',
+      });
+      expect(text($(el, '.state'))).toBe('Rejected. The action will not run.');
+    } finally {
+      rejected.dispose();
+    }
+  });
 });
 
 describe('odd-checkpoint', () => {
@@ -371,6 +421,23 @@ describe('odd-checkpoint', () => {
     el.checkpoint = record('restored', { outcome: 'Workspace matches step 3.' });
     await settle(el);
     expect(text($(el, '.state'))).toBe('Restored. Workspace matches step 3.');
+  });
+
+  it('its default example plays the host: a confirmed restore comes back restored', async () => {
+    await import('../src/checkpoint/checkpoint.define.js');
+    const { default: set } = await import('../src/checkpoint/checkpoint.examples.js');
+    const mounted = await mountExample(set, 'default', container);
+    try {
+      const el = mounted.element;
+      $(el, '[part="actions"] odd-button')!.click();
+      await settle(el);
+      $(el, '[data-confirm]')!.click();
+      await settle(el);
+      expect(el.checkpoint?.status).toBe('restored');
+      expect(text($(el, '.state'))).toBe('Restored. Restored the document to 09:30.');
+    } finally {
+      mounted.dispose();
+    }
   });
 });
 
@@ -965,5 +1032,69 @@ describe('odd-message fallbacks and provenance', () => {
     el.addEventListener('odd-plan-input-request', (e) => requests.push((e as CustomEvent).detail));
     ($(el, '[data-step="4"]') as HTMLElement).click();
     expect(requests).toEqual([{ planId: 'p', stepId: '4' }]);
+  });
+});
+
+describe('odd-question and odd-task-plan examples', () => {
+  it("odd-question's default example plays the host: an answer or a skip comes back recorded", async () => {
+    await import('../src/question/question.define.js');
+    const { default: set } = await import('../src/question/question.examples.js');
+    const answered = await mountExample(set, 'default', container);
+    try {
+      const el = answered.element;
+      $$(el, 'input[name="choice"]')[1]!.click();
+      $(el, 'odd-button[type="submit"]')!.click();
+      await settle(el);
+      expect(el.question).toMatchObject({ status: 'submitted', answer: { choice: 'eng' } });
+      expect(text($(el, '.state'))).toBe('Answered.');
+    } finally {
+      answered.dispose();
+    }
+    const skipped = await mountExample(set, 'default', container);
+    try {
+      const el = skipped.element;
+      $(el, '[part="actions"] odd-button[appearance="ghost"]')!.click();
+      await settle(el);
+      expect(el.question?.status).toBe('skipped');
+      expect(text($(el, '.state'))).toBe('Skipped.');
+    } finally {
+      skipped.dispose();
+    }
+  });
+
+  it("odd-task-plan's default example plays the host: Respond asks the step's question, and the answer completes the step", async () => {
+    await import('../src/task-plan/task-plan.define.js');
+    await import('../src/question/question.define.js');
+    const { default: set } = await import('../src/task-plan/task-plan.examples.js');
+    const mounted = await mountExample(set, 'default', container);
+    try {
+      const el = mounted.element;
+      expect(mounted.root.querySelector('odd-question')).toBeNull();
+      $(el, '[data-step="c"]')!.click();
+      const question = mounted.root.querySelector('odd-question')!;
+      await settle(question);
+      expect(document.activeElement).toBe(question);
+      expect(text($(question, 'legend'))).toBe('Major or minor?');
+      // Respond again keeps the one question.
+      $(el, '[data-step="c"]')!.click();
+      await settle(question);
+      expect(mounted.root.querySelectorAll('odd-question')).toHaveLength(1);
+      $$(question, 'input[name="choice"]')[1]!.click();
+      $(question, 'odd-button[type="submit"]')!.click();
+      await settle(question);
+      await settle(el);
+      expect(text($(question, '.state'))).toBe('Answered.');
+      expect(el.plan?.steps.map((step) => step.status)).toEqual([
+        'done',
+        'active',
+        'done',
+        'pending',
+      ]);
+      expect(text($(el, '[part="steps"] > li:nth-child(3) .detail'))).toBe('Minor version');
+      expect(text($(el, '[part="progress"] span'))).toBe('2 of 4 steps done');
+      expect($(el, '[data-step]')).toBeNull();
+    } finally {
+      mounted.dispose();
+    }
   });
 });

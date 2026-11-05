@@ -115,6 +115,7 @@ describe('@oddkin/ai examples', () => {
     const uses: Record<string, string[]> = {
       'odd-change-review/default': ['component:odd-textarea'],
       'odd-citation/default': ['component:odd-sources'],
+      'odd-task-plan/default': ['component:odd-question'],
       'odd-voice-input/default': ['component:odd-textarea'],
     };
     const expected = Object.fromEntries(
