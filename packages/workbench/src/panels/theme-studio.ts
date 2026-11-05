@@ -494,8 +494,7 @@ export class ThemeStudioElement extends OddkinElement.with({
       ${
         component?.omitted.length
           ? html`<p class="wb-muted">
-              Not shown here, as their setup code runs on the component's page:
-              ${component.omitted.join(', ')}.
+              Not shown here, as code computes their values: ${component.omitted.join(', ')}.
             </p>`
           : nothing
       }

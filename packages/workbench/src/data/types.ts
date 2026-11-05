@@ -178,7 +178,7 @@ export interface ThemeStudioScreens {
     readonly title: string;
     /** In example order; `role` is the example's name. Incorrect examples are left out. */
     readonly items: readonly Omit<SpecimenRole, 'source'>[];
-    /** Labels of examples not shown: their setup code runs on the component's page only. */
+    /** Labels of examples not shown: code computes their values, so none were published. */
     readonly omitted: readonly string[];
   }[];
   /**

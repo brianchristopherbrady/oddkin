@@ -277,9 +277,15 @@ function stateFrom(name: string, values: Record<string, unknown>): PreviewState 
 
 /**
  * Presets from authored examples (`defineExamples`). Values come from the published example
- * definition (`definition`); without it the example is listed but cannot be applied.
+ * definition (`definition`); without it the example is listed but cannot be applied. An example
+ * with a fixture has values only where a frame can run that fixture (the page names its example
+ * module), unless `withoutSetup` asks for its published values anyway (Theme Studio's screens,
+ * which run no setup code).
  */
-export function presets(page: ComponentPageData): PresetEntry[] {
+export function presets(
+  page: ComponentPageData,
+  options: { readonly withoutSetup?: boolean } = {},
+): PresetEntry[] {
   return page.examples.flatMap((example: JsonObject): PresetEntry[] => {
     const name = text(example['name']);
     const id = text(example['id']);
@@ -288,7 +294,10 @@ export function presets(page: ComponentPageData): PresetEntry[] {
     const fixture = definition?.['hasFixture'] === true;
     // A frame runs the fixture from the example module, when the page names one.
     const requiresFixture = fixture && !page.exampleModule;
-    const state = definition && !requiresFixture ? stateFrom(name, definition) : undefined;
+    const state =
+      definition && (!requiresFixture || options.withoutSetup)
+        ? stateFrom(name, definition)
+        : undefined;
     const incorrect = isRecord(definition?.['incorrect'])
       ? (definition['incorrect'] as Record<string, unknown>)
       : isRecord(example['incorrect'])

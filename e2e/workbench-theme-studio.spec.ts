@@ -263,8 +263,10 @@ test.describe('Theme Studio', () => {
         .evaluateAll((all) => [...new Set(all.map((el) => el.localName))]);
       expect(tags).toEqual(['odd-button']);
     }
-    // Examples whose setup code runs on the component's page are named, not shown.
-    await expect(page.locator('#live-preview')).toContainText('Not shown here');
+    // An example with setup code is shown by its values, captioned as without that code.
+    await expect(frames(page)[0]!.locator('figure[data-role="inForm"] > figcaption')).toHaveText(
+      'Submits a form (without its setup code)',
+    );
     const cell = page.locator('input[data-path="/overrides/color.action.default/light"]');
     await cell.fill('#0a7d33');
     await cell.dispatchEvent('change');

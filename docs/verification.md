@@ -5602,3 +5602,14 @@ On `a55a52c`.
 | Before | The four AI browser files together in Firefox (`browser-set.mjs`, in the runs of row 9's second and third batches) | `layout.browser.test.ts`, "stacks the scroller, status, and composer; the feed stacks its messages", timed out at 15 s in two runs of three; the file passed alone each time (29 of 29) |
 | After | `node ../oddkin-lanes/tools/browser-set.mjs --engines firefox` on `examples.browser`, `elements.browser`, `layout.browser`, and `contract.browser` (`packages/ai/test`) | 224 passed and 4 skipped, in each of two runs |
 | Repository | `npm run typecheck`; `npx prettier --check packages/ai/test/layout.browser.test.ts` | Exit 0 each |
+
+## 2026-11-05 — Theme Studio shows examples with setup code, by their published values (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `e2e/workbench-theme-studio.spec.ts:255` in Chromium, its Button screen expecting `inForm` (which has a fixture) by its values; `.tmp/ts-screens-before.mjs` on `packages/ai/oddkin.metadata.json` | The Button screen named "Submits a form" as not shown: Theme Studio's screens are built before the Workbench attaches example modules to the pages, so no example with a fixture had values there. Among the AI elements, 19 examples with published values were hidden: 10 elements had no screen (8 for their fixtures; `odd-checkpoint` and `odd-voice-input` publish no values) and 6 lost their recommended example |
+| After | `.tmp/ts-screens2.mjs` on the same metadata | 24 AI elements, 39 examples shown, 19 of them captioned as without their setup code; no screen for `odd-checkpoint` and `odd-voice-input` only |
+| Screens | `packages/workbench/test/node-theme-studio.test.ts` and `panels-model.test.ts` | 28 passed: an example with a fixture is shown as "… (without its setup code)" beside one without, alone, and on a page that names no example module; an example without published values is named, not shown; component pages' presets are unchanged |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-ts2.json` (screens without `withoutSetup`; the old rule back; no caption; `presets` ignoring the option) | 4 of 4 killed |
+| End to end | `node ../oddkin-lanes/tools/e2e-when-free.mjs` on the five `e2e/workbench-theme-*.spec.ts` in Chromium, then `e2e/workbench-theme-studio.spec.ts:255` in Firefox and WebKit | 14 passed (the Button screen shows "Submits a form (without its setup code)"); 2 passed |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Exit 0 each; node 1,694 passed and 2 skipped (136 files); workbench-shell 53,454 of 54,272 B, workbench-theme-studio 8,159 of 8,192 B |

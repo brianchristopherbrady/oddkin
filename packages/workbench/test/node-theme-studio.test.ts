@@ -441,7 +441,8 @@ describe('Theme Studio page data', () => {
       ]),
       { wrong: { incorrect: { explanation: 'Not like this.' } }, setup: { hasFixture: true } },
     );
-    // Its fixture runs from the page's example module, which a screen does not load.
+    // Its fixture needs the page's example module, which this page lacks: a screen runs no setup
+    // code, so it shows the published values all the same.
     const chip = mark(component('acme-chip', [{ name: 'a' }, { name: 'b' }]), {
       b: { hasFixture: true },
     });
@@ -451,12 +452,12 @@ describe('Theme Studio page data', () => {
       { ...chip, examples: [...chip.examples, { id: 'example:acme-chip/raw', name: 'raw' }] },
       { ...component('acme-card', [{ name: 'plain' }]), enrichment: {} },
       { ...component('acme-badge', [{ name: 'a' }]), package: '@acme/other' },
-      // Every example needs its setup code: shown by its values, without that code.
+      // Its only example needs its setup code: shown by its values, without that code.
       {
         ...mark(component('acme-dialog', [{ name: 'open' }]), { open: { hasFixture: true } }),
         exampleModule: '/acme-dialog.examples.js',
       },
-      // Without the example module its values are not published: no screen, but documents may use it.
+      // Without the example module as well.
       mark(component('acme-sheet', [{ name: 'open' }]), { open: { hasFixture: true } }),
     ];
     const page = themeStudioPage('theme-studio', pages, configWith(), {}, out, {
@@ -481,6 +482,12 @@ describe('Theme Studio page data', () => {
         omitted: [],
       },
       {
+        tag: 'acme-sheet',
+        title: 'acme-sheet',
+        items: [expect.objectContaining({ role: 'open', label: 'open (without its setup code)' })],
+        omitted: [],
+      },
+      {
         tag: 'acme-button',
         title: 'Button',
         items: [
@@ -494,14 +501,19 @@ describe('Theme Studio page data', () => {
             attributes: {},
             slots: { '': 'Go' },
           },
+          // Beside an example without setup code, one with it is shown by its values too.
+          expect.objectContaining({ role: 'setup', label: 'setup (without its setup code)' }),
         ],
-        omitted: ['setup'],
+        omitted: [],
       },
       {
         tag: 'acme-chip',
         title: 'Chip',
-        items: [expect.objectContaining({ role: 'a' })],
-        omitted: ['b', 'raw'],
+        items: [
+          expect.objectContaining({ role: 'a' }),
+          expect.objectContaining({ role: 'b', label: 'b (without its setup code)' }),
+        ],
+        omitted: ['raw'],
       },
     ]);
     // Documents may use the renderer's package's registered elements; no starters but Oddkin's.
@@ -549,6 +561,7 @@ describe('Theme Studio page data', () => {
       'acme-button',
       'acme-chip',
       'acme-dialog',
+      'acme-sheet',
     ]);
     expect(out.items).toEqual([]);
   });

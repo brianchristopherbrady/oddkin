@@ -79,11 +79,10 @@ function screensOf(components: readonly ComponentPageData[], input: ScreensInput
     if (input.composition?.packages.includes(page.package)) registrations[page.tag] = registration;
     const items: ThemeStudioScreens['components'][number]['items'][number][] = [];
     const omitted: string[] = [];
-    const usable = presets(page).filter((example) => !example.incorrect);
-    // When every example needs its setup code, a screen shows their values without it.
-    const withoutSetup = !usable.some((example) => example.state && !example.fixture);
-    for (const example of usable) {
-      if (!example.state || (example.fixture && !withoutSetup)) omitted.push(example.label);
+    // An example with setup code shows its published values, captioned as without that code.
+    for (const example of presets(page, { withoutSetup: true })) {
+      if (example.incorrect) continue;
+      if (!example.state) omitted.push(example.label);
       else
         items.push({
           role: example.name,
