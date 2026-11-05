@@ -110,3 +110,78 @@ Not changed by this review: the record, the event, progress (done and skipped st
 | 2 | Examples | `awaiting-approval` with its bound `approval` (an `odd-action-approval` inside the call) has no example, though it is where approval and tool call meet; nor do `input-streaming`, `executing`, `denied`, and `cancelled`. | An example of a call awaiting approval whose host moves it to running and finished on Approve, or to denied on Reject; and the other states. |
 
 Not changed by this review: the statuses, the event, `renderOutput`, and results rendered as text unless a host renders them.
+
+## The elements that act on their own or only show (2026-11-05)
+
+`odd-ai-label`, `odd-artifact`, `odd-model-select`, `odd-response`, `odd-sources`, `odd-transcript`, and `odd-usage-meter`: none needs a host to see what it does (C1), so each was read from its reference page's interactive example and its Figma specimen.
+
+### `odd-ai-label`
+
+**What a user sees.** A small pill, "✦ AI generated". Activating it opens the origin details the example supplies and "Information supplied by the application; not independently verified."
+
+**What it is for.** Marking content as generated or assisted by AI, or edited or written by a person, with the origin details the application supplies; it never asserts accuracy.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Fix | The ✦ stands where the disclosure marker would, so nothing shows that the label opens. The Figma specimen has ▸. | The disclosure marker, turning with the open state. |
+| 2 | Examples | `assisted` and `human` have no example. | One each, beside generated and edited. |
+
+### `odd-artifact`
+
+**What a user sees.** "Release notes", the revision picker ("Revision 2 of 2 (latest)"), Preview (pressed) and Source, Copy and Download, the revision's summary "Added highlights", then the rendered document.
+
+**What it is for.** An output the user keeps: its revisions, a preview and the source, copy and download of the canonical content, and export formats the host produces.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Examples | `exports` (formats the host produces, requested with `odd-artifact-export`) is in no example, so a reader cannot tell what an export adds to Download. It is the one request-only control C1 did not list. | An example with one export format whose host answers the request. |
+| 2 | Decide | The revision's summary ("Added highlights") shows without saying what it is. | Say it ("Revision 2: Added highlights"), or show it with the picker. |
+
+### `odd-model-select`
+
+**What a user sees.** "Model", a native select with Fast, Thorough, and "Vision (unavailable)" disabled, and the selected model's description, "Quick answers for short tasks."
+
+**What it is for.** Choosing the model for the next request among those the application offers, with what each can do and why one is unavailable.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Decide | An unavailable model's reason ("Not enabled for this workspace.") shows only in the selected model's details, and a disabled option cannot be selected, so the user never sees why. | The reason in the option's text, or under the select for each unavailable model. |
+
+### `odd-response`
+
+**What a user sees.** "Container queries respond to the **component**, not the viewport", a citation [1], a code block with Copy code, and Copy response.
+
+**What it is for.** Assistant output that may stream, rendered from Markdown that stays inert; copy uses the source text.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Examples | `interrupted` (the stream ended early) and `cancelled` (the user stopped it), which a host sets, have no example. | One each, with the partial text they keep. |
+
+### `odd-sources`
+
+**What a user sees.** "Sources", then each source: a linked title with its host ("W3C"), or a title alone with an excerpt.
+
+**What it is for.** The list a response's citations point to, in citation order.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Fix | The entries are numbered for screen readers only: a citation shows [1], but no entry shows 1, so a reader cannot match the two. The Figma specimen numbers them ("1."). | Visible numbers. |
+
+### `odd-transcript`
+
+**What a user sees.** Two final segments, then the interim text in italics, "Hearing: and add the".
+
+**What it is for.** Speech-to-text as it arrives: final segments, which the user may correct, and interim text that may still change.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Decide | "Hearing:" before the interim text; the Figma specimen says "Listening:", which says what is going on. | `strings.listening` "Listening". |
+| 2 | Examples | `editable` (correcting a final segment, `odd-transcript-change`) has no example. | An editable transcript whose host keeps each correction. |
+
+### `odd-usage-meter`
+
+**What a user sees.** Context window, "48,000 tokens of 128,000 tokens (measured)" with a meter; Output, "1,200 tokens (estimated)"; Cost, "Unknown".
+
+**What it is for.** Usage figures exactly as the host supplies them, each marked measured, estimated, or unknown; it never computes one.
+
+No contract finding. For the design pass: the Figma specimen puts each value at the end of its row ("240 / 1,000", "Estimated: 120") and has no meter; which wording stays is the design pass's question.

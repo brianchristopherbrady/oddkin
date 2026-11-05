@@ -5563,3 +5563,11 @@ On `a55a52c`.
 | Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-r9c.json` (7 probes in Chromium: a chosen prompt never reaching the field; a sent prompt not shown; feedback never submitted; the branch switch ignored; no next answer after the second; the composer never acknowledged, or not loading while the host works) | 7 of 7 killed |
 | End to end | `e2e/docs.spec.ts:448` and `:473` in Chromium, Firefox, and WebKit (one worker); `e2e/workbench-catalog.spec.ts` in Chromium | 6 passed; 158 passed |
 | Repository | `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Exit 0 each; node 1,694 passed and 2 skipped (136 files) |
+
+## 2026-11-05 — P1.8: contract reviews of the seven AI elements that act on their own or only show (round 11, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| What a user sees | `.tmp/ai-ref-shots.mjs` on the docs dev server in Chromium at 1280 px (screens not kept) | Each reference page's interactive example, as `docs/research/ai-contract-review.md` describes it for `odd-ai-label`, `odd-artifact`, `odd-model-select`, `odd-response`, `odd-sources`, `odd-transcript`, and `odd-usage-meter` |
+| The Figma specimens | Figma MCP `get_screenshot` of the light specimens 124:456, 124:468, 124:72, 124:144, 124:442, 124:566, and 124:530 | The AI label's summary has a disclosure marker (▸); the sources are numbered ("1."); the transcript's interim text reads "Listening:"; the usage values sit at the end of their rows with no meter |
+| The model's reason | `packages/ai/src/model-select/model-select.template.ts` | The reason is rendered only in the selected model's details, and an unavailable model's option is disabled |
