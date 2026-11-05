@@ -81,7 +81,19 @@
       "type": "object",
       "required": ["versions"],
       "additionalProperties": false,
-      "properties": { "versions": { "type": "object", "additionalProperties": { "type": "string" } } }
+      "properties": {
+        "versions": { "type": "object", "additionalProperties": { "type": "string" } },
+        "source": {
+          "type": "object",
+          "description": "The snapshot's source revision and dirty state, when it recorded them (oddkin-impact snapshot --source)",
+          "required": ["revision", "dirty"],
+          "additionalProperties": false,
+          "properties": {
+            "revision": { "type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$" },
+            "dirty": { "type": "boolean" }
+          }
+        }
+      }
     },
     "affected": {
       "type": "object",

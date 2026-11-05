@@ -164,6 +164,19 @@ export interface SnapshotInputs {
   readonly migrations?: readonly Migration[];
   /** Versions of what produced the inputs (analyzer, generator, core, schemas). */
   readonly versions?: Readonly<Record<string, string>>;
+  /** The source revision the inputs were built from (`gitSource`), when known. */
+  readonly source?: SourceProvenance;
+}
+
+/**
+ * Where a snapshot's inputs came from (technical plan, Workstream C): the commit, and whether the
+ * working tree had changes the commit does not hold, so the revision alone may not rebuild them.
+ */
+export interface SourceProvenance {
+  /** The commit's full id. */
+  readonly revision: string;
+  /** Uncommitted changes, tracked or untracked, were present. */
+  readonly dirty: boolean;
 }
 
 // ---- snapshot ----
@@ -229,6 +242,8 @@ export interface SnapshotEdge {
 export interface ComparisonSnapshot {
   readonly schema: typeof SNAPSHOT_SCHEMA;
   readonly versions: Readonly<Record<string, string>>;
+  /** The source revision and dirty state, when the snapshot's maker knew them. */
+  readonly source?: SourceProvenance;
   /** Packages read, with the hashes of the artifacts the items came from. */
   readonly packages: readonly {
     name: string;
@@ -603,6 +618,9 @@ export function createSnapshot(inputs: SnapshotInputs): ComparisonSnapshot {
   return {
     schema: SNAPSHOT_SCHEMA,
     versions: { ...(inputs.versions ?? {}) },
+    ...(inputs.source
+      ? { source: { revision: inputs.source.revision, dirty: inputs.source.dirty } }
+      : {}),
     packages,
     items: Object.fromEntries(sortBy(Object.entries(items), ([id]) => id)),
     edges: sortBy(
@@ -648,10 +666,15 @@ export interface Affected {
   readonly product?: string;
   readonly via: readonly string[];
 }
+/** What a report's base or head was made from. */
+export interface ReportSide {
+  readonly versions: Readonly<Record<string, string>>;
+  readonly source?: SourceProvenance;
+}
 export interface ImpactReport {
   readonly schema: typeof IMPACT_SCHEMA;
-  readonly base: { readonly versions: Readonly<Record<string, string>> };
-  readonly head: { readonly versions: Readonly<Record<string, string>> };
+  readonly base: ReportSide;
+  readonly head: ReportSide;
   /** Present when item-level selection was replaced by full verification. */
   readonly fallback?: { readonly kind: 'full'; readonly reasons: readonly string[] };
   readonly changes: readonly Change[];
@@ -1025,10 +1048,14 @@ export function compareSnapshots(
       affectedProducts.set(context.id, [...(first.via ?? [])]);
   }
 
+  const side = (snapshot: ComparisonSnapshot): ReportSide => ({
+    versions: snapshot.versions,
+    ...(snapshot.source ? { source: snapshot.source } : {}),
+  });
   return {
     schema: IMPACT_SCHEMA,
-    base: { versions: base.versions },
-    head: { versions: head.versions },
+    base: side(base),
+    head: side(head),
     ...(fallback.length ? { fallback: { kind: 'full' as const, reasons: fallback } } : {}),
     changes,
     affected: {
@@ -1147,6 +1174,12 @@ export function renderImpactMarkdown(report: ImpactReport): string {
     `${report.changes.length} changes (${incompatible} incompatible) · ${report.affected.products.length} products affected · ${report.checks.length} checks${states.length ? ` (${states.join(', ')})` : ''}`,
     '',
   );
+  // Where each side came from: a dirty tree's snapshot cannot be rebuilt from its revision alone.
+  const source = (label: string, side: ReportSide) =>
+    side.source
+      ? `- ${label}: \`${side.source.revision.slice(0, 12)}\`${side.source.dirty ? ', with uncommitted changes' : ''}`
+      : `- ${label}: revision not recorded`;
+  lines.push(source('Base', report.base), source('Head', report.head), '');
   if (report.fallback)
     lines.push(
       '## Full verification',

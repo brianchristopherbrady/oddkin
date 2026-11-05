@@ -1,4 +1,5 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -179,5 +180,49 @@ describe('oddkin-impact', () => {
       2,
     );
     expect(err.at(-1)).toContain('--suite bad');
+  });
+
+  it('records the revision and dirty state of the repository --source names', () => {
+    const repo = path('repo');
+    mkdirSync(repo);
+    const git = (...args: string[]) =>
+      execFileSync(
+        'git',
+        ['-c', 'user.name=Oddkin', '-c', 'user.email=oddkin@example.invalid', ...args],
+        { cwd: repo, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+      ).trim();
+    git('init', '-q');
+    writeFileSync(join(repo, 'a.txt'), 'a\n');
+    git('add', 'a.txt');
+    git('-c', 'commit.gpgsign=false', 'commit', '-q', '-m', 'a');
+    const revision = git('rev-parse', 'HEAD');
+    const source = (out: string) => {
+      expect(main(['snapshot', components, '--source', repo, '--out', path(out)], io().io)).toBe(0);
+      return (JSON.parse(readFileSync(path(out), 'utf8')) as ComparisonSnapshot).source;
+    };
+    expect(source('clean.json')).toEqual({ revision, dirty: false });
+    // A tracked file changed, then an untracked one: either makes the tree dirty.
+    writeFileSync(join(repo, 'a.txt'), 'b\n');
+    expect(source('edited.json')).toEqual({ revision, dirty: true });
+    git('checkout', '--', 'a.txt');
+    writeFileSync(join(repo, 'new.txt'), 'new\n');
+    expect(source('untracked.json')).toEqual({ revision, dirty: true });
+    // The report says where each side was built.
+    const { out, io: streams } = io();
+    expect(main(['compare', path('clean.json'), path('edited.json')], streams)).toBe(0);
+    expect(out.join('\n')).toContain(
+      `- Base: \`${revision.slice(0, 12)}\`\n- Head: \`${revision.slice(0, 12)}\`, with uncommitted changes\n`,
+    );
+    // A directory in no repository is a usage error, not a snapshot without provenance.
+    const outside = mkdtempSync(join(tmpdir(), 'oddkin-no-repo-'));
+    try {
+      const { err, io: failing } = io();
+      expect(
+        main(['snapshot', components, '--source', outside, '--out', path('x.json')], failing),
+      ).toBe(2);
+      expect(err.join('\n')).toContain('not in a git repository');
+    } finally {
+      rmSync(outside, { recursive: true, force: true });
+    }
   });
 });

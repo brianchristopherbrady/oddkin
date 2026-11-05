@@ -4,7 +4,7 @@
  *   oddkin-impact snapshot <package-dir>... --out <snapshot.json>
  *       [--theme <ThemeConfig.json> --inspection <name.inspect.json>]
  *       [--product <product.json>]... [--suite <id>@<version>:<tag>,<tag>]...
- *       [--migrations <migrations.json>] [--tool <name>=<version>]...
+ *       [--migrations <migrations.json>] [--tool <name>=<version>]... [--source <repo-dir>]
  *   oddkin-impact compare <base.json> <head.json>
  *       [--baseline <results.json>] [--results <results.json>]...
  *       [--json <report.json>] [--markdown <report.md>]
@@ -14,6 +14,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { parseArgs } from 'node:util';
+import { gitSource } from './history.js';
 import {
   compareSnapshots,
   createSnapshot,
@@ -29,7 +30,7 @@ import {
 } from './impact.js';
 
 export const USAGE = `Usage:
-  oddkin-impact snapshot <package-dir>... --out <snapshot.json> [--theme <config.json> --inspection <inspect.json>] [--product <product.json>]... [--suite <id>@<version>:<tag>,...]... [--migrations <file.json>] [--tool <name>=<version>]...
+  oddkin-impact snapshot <package-dir>... --out <snapshot.json> [--theme <config.json> --inspection <inspect.json>] [--product <product.json>]... [--suite <id>@<version>:<tag>,...]... [--migrations <file.json>] [--tool <name>=<version>]... [--source <repo-dir>]
   oddkin-impact compare <base.json> <head.json> [--baseline <results.json>] [--results <results.json>]... [--json <report.json>] [--markdown <report.md>]`;
 
 const readJson = <T>(path: string) => JSON.parse(readFileSync(path, 'utf8')) as T;
@@ -58,6 +59,7 @@ export function main(argv: readonly string[], io: Io): number {
         suite: { type: 'string', multiple: true },
         migrations: { type: 'string' },
         tool: { type: 'string', multiple: true },
+        source: { type: 'string' },
         baseline: { type: 'string' },
         results: { type: 'string', multiple: true },
         json: { type: 'string' },
@@ -97,6 +99,12 @@ export function main(argv: readonly string[], io: Io): number {
           return [spec.slice(0, at), spec.slice(at + 1)];
         }),
       );
+      // The revision and dirty state of the repository the packages were built from.
+      const source = values.source === undefined ? undefined : gitSource(values.source);
+      if (values.source !== undefined && !source)
+        throw new Error(
+          `--source ${values.source}: not in a git repository with a commit, or git is not installed`,
+        );
       const inputs: SnapshotInputs = {
         packages: rest.map(readPackage),
         ...(values.theme && values.inspection
@@ -106,6 +114,7 @@ export function main(argv: readonly string[], io: Io): number {
         suites,
         ...(values.migrations ? { migrations: readJson<Migration[]>(values.migrations) } : {}),
         versions,
+        ...(source ? { source } : {}),
       };
       const snapshot = createSnapshot(inputs);
       write(values.out, `${JSON.stringify(snapshot, null, 2)}\n`);

@@ -5,6 +5,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { relative, resolve, sep } from 'node:path';
+import type { SourceProvenance } from './impact.js';
 
 export interface SourceHistory {
   /** The last commit date (`YYYY-MM-DD`) of each file that has one, keyed by the path given. */
@@ -61,4 +62,21 @@ export function gitHistory(root: string): SourceHistory | undefined {
       return dates;
     },
   };
+}
+
+/**
+ * The commit checked out in the git repository containing `root`, and whether its working tree
+ * has changes the commit does not hold (tracked or untracked, ignored files aside), for impact
+ * snapshots' provenance; `undefined` when git or the repository is unavailable.
+ */
+export function gitSource(root: string): SourceProvenance | undefined {
+  const git = (args: readonly string[]) =>
+    execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+  try {
+    const revision = git(['rev-parse', '--verify', 'HEAD']).trim();
+    const dirty = git(['status', '--porcelain', '--untracked-files=normal']).trim() !== '';
+    return { revision, dirty };
+  } catch {
+    return undefined;
+  }
 }

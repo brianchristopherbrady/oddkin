@@ -83,7 +83,7 @@ Known gaps:
 - The package READMEs were corrected for `1.0.0-beta.1` (RF-01), and `npm run lint` keeps them true (RF-02, 2026-11-01).
 - The support policy ([docs/support.md](../support.md)) and `SECURITY.md` exist (RF-04, RF-13); trusted publishing does not (RF-12).
 - One fixture library is not built with Oddkin (plain custom elements). Its examples reach every tool through `oddkin-analyze --manifest` (ADR 0048 §3), but no library made with another authoring library is a fixture yet.
-- Impact reports record tool versions, not the source revision or whether the working tree was dirty.
+- Impact snapshots record the source revision and whether the working tree was dirty when the snapshot names the repository (`oddkin-impact snapshot --source`, 2026-11-05), and reports carry both sides'; nothing uses them to decide selection or reuse yet.
 - There is no hosted service of any kind: no identity, tenancy, persistence, billing, or service security controls.
 - Nothing measures product usage. `@oddkin/ai` leaves telemetry to the host by design.
 
@@ -204,7 +204,7 @@ Required properties:
 | --- | --- |
 | Content hashes | Snapshots hash artifacts and sources; kits fingerprint their inputs |
 | Explicit tool and schema versions | Snapshots record the analyzer, generator, core, and schema versions; `--tool` adds others |
-| Source revision and dirty-state provenance | Missing |
+| Source revision and dirty-state provenance | Snapshots record the commit and dirty state with `--source`; reports and their Markdown carry both sides' (2026-11-05). Kits record no revision |
 | Deterministic serialization | Identical builds give identical snapshots (change-impact-and-verification.md §2.7); not specified for every artifact |
 | No secrets or source contents by default | Snapshots store hashes, not sources; nothing scans for secrets |
 | Exportable without the hosted service | Every artifact is a local file today |

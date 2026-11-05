@@ -437,6 +437,34 @@ describe('change impact states and fallbacks', () => {
     expect(markdown).toContain('| selected | `example:acme-dialog/default` | p1 |');
     expect(markdown).toContain('`definition:acme-dialog`');
   });
+
+  it('records where each side was built: its revision and dirty state, in the report too', () => {
+    const a = `${'0123456789abcdef'.repeat(2)}01234567`;
+    const b = `${'fedcba9876543210'.repeat(2)}fedcba98`;
+    const base = createSnapshot({ ...library(1), source: { revision: a, dirty: false } });
+    const head = createSnapshot({ ...library(1), source: { revision: b, dirty: true } });
+    expect([base.source, head.source]).toEqual([
+      { revision: a, dirty: false },
+      { revision: b, dirty: true },
+    ]);
+    const report = compareSnapshots(base, head);
+    expect([report.base.source, report.head.source]).toEqual([base.source, head.source]);
+    expect(report.base.versions).toEqual(base.versions);
+    for (const snapshot of [base, head])
+      expect(validSnapshot(snapshot), ajv.errorsText()).toBe(true);
+    expect(validReport(report), ajv.errorsText(validReport.errors)).toBe(true);
+    expect(renderImpactMarkdown(report)).toContain(
+      '- Base: `0123456789ab`\n- Head: `fedcba987654`, with uncommitted changes\n',
+    );
+    // Without provenance, neither has any, and the report says so.
+    const plain = compareSnapshots(createSnapshot(library(1)), createSnapshot(library(1)));
+    expect(plain.base).not.toHaveProperty('source');
+    expect(renderImpactMarkdown(plain)).toContain(
+      '- Base: revision not recorded\n- Head: revision not recorded\n',
+    );
+    // A revision that is not a full commit id fails the schemas.
+    expect(validSnapshot({ ...base, source: { revision: 'main', dirty: false } })).toBe(false);
+  });
 });
 
 describe('a library described by a standard CEM alone (CF.3)', () => {

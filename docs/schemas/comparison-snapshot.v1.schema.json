@@ -13,6 +13,16 @@
       "description": "Versions of what produced the inputs (analyzer, generator, core, schemas). Any difference invalidates reuse.",
       "additionalProperties": { "type": "string" }
     },
+    "source": {
+      "type": "object",
+      "description": "Where the inputs were built: the commit, and whether the working tree had changes it does not hold (oddkin-impact snapshot --source). Absent when not recorded.",
+      "required": ["revision", "dirty"],
+      "additionalProperties": false,
+      "properties": {
+        "revision": { "type": "string", "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$" },
+        "dirty": { "type": "boolean" }
+      }
+    },
     "packages": {
       "type": "array",
       "items": {

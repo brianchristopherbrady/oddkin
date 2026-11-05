@@ -108,6 +108,9 @@ export async function snapshot(root, out) {
       '--tool',
       `${name}=${buildHash(join(root, dir))}`,
     ]),
+    // The checkout's commit and whether it had uncommitted changes (Workstream C provenance).
+    '--source',
+    root,
     '--out',
     out,
   ]);
