@@ -159,4 +159,36 @@ describe('a library not built with Oddkin, with examples', () => {
       '- [oddkin.metadata.json](../oddkin.metadata.json): the examples by stable id',
     );
   });
+
+  it('every tool reads the manifest the community analyzer writes (schema 1.0.0)', async () => {
+    // `cem analyze --globs chip.js index.js` (@custom-elements-manifest/analyzer 0.11.0) on the
+    // fixture's sources, 2026-11-05 (docs/research/cem-analyzer-adapter.md).
+    const generated = readFileSync(
+      join(repo, 'tests/libraries-without-oddkin/plain-chip.cem-analyzer.json'),
+      'utf8',
+    );
+    expect((JSON.parse(generated) as { schemaVersion: string }).schemaVersion).toBe('1.0.0');
+    const { root, pkg } = project((dir) =>
+      writeFileSync(join(dir, 'custom-elements.json'), generated),
+    );
+    const build = await buildWorkbench({ config: root });
+    expect(
+      build.diagnostics.filter((d) => /^(node\.(cem|examples|metadata)|metadata)\./.test(d.code)),
+    ).toEqual([]);
+    const page = build.data!.pages['components/plain-chip'] as ComponentPageData;
+    expect(page.registration).toBe('@plain/widgets/chip.js');
+    expect(page.examples.map((e) => e['id'])).toEqual(EXAMPLES);
+    const read = readPackage(pkg);
+    expect(read.diagnostics).toEqual([]);
+    const items = Object.keys(createSnapshot({ packages: [read] }).items);
+    expect(items).toEqual(
+      expect.arrayContaining(['component:plain-chip', 'registration:plain-chip', ...EXAMPLES]),
+    );
+    const context = resolveProjectContext(root);
+    expect(context.diagnostics).toEqual([]);
+    expect(context.context.packages).toEqual([
+      expect.objectContaining({ registrations: { 'plain-chip': '@plain/widgets/chip.js' } }),
+    ]);
+    expect(context.context.examples).toEqual(EXAMPLES);
+  });
 });

@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "chip.js",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "PlainChip",
+          "members": [
+            {
+              "kind": "field",
+              "name": "#count",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#labelPart",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#countPart",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "#removePart",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "label"
+            },
+            {
+              "kind": "field",
+              "name": "tone"
+            },
+            {
+              "kind": "field",
+              "name": "removable"
+            },
+            {
+              "kind": "field",
+              "name": "count",
+              "description": "A property only: no attribute sets it."
+            },
+            {
+              "kind": "method",
+              "name": "#render",
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "adoptedStyleSheets",
+              "type": {
+                "text": "array"
+              },
+              "default": "[styles]"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "default": "'icon'"
+            },
+            {
+              "kind": "field",
+              "name": "type",
+              "type": {
+                "text": "string"
+              },
+              "default": "'button'"
+            },
+            {
+              "kind": "field",
+              "name": "textContent",
+              "type": {
+                "text": "string"
+              },
+              "default": "'\\u00d7'"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "label"
+            },
+            {
+              "name": "tone"
+            },
+            {
+              "name": "removable"
+            }
+          ],
+          "superclass": {
+            "name": "HTMLElement"
+          },
+          "tagName": "plain-chip",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "PlainChip",
+          "declaration": {
+            "name": "PlainChip",
+            "module": "chip.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "plain-chip",
+          "declaration": {
+            "name": "PlainChip",
+            "module": "chip.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "index.js",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "PlainChip",
+          "declaration": {
+            "name": "PlainChip",
+            "module": "./chip.js"
+          }
+        }
+      ]
+    }
+  ]
+}
