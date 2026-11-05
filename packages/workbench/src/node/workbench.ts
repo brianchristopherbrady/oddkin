@@ -90,8 +90,9 @@ function unwritable(file: string, shown: string): string | undefined {
  * specifiers). Requests are `{ id, draft, bases, products? }`: a file's draft, generated on its
  * bases' drafts (root first), merged with the library's own `mergeThemes` as its CLI merges the
  * files; with `products`, the reply also carries each product's values, every token in each mode
- * and gamut (`resolveToken`), so a check compares a product's values, not its file's CSS. Replies
- * carry plain data only (theming §8).
+ * and gamut (`resolveTokens` in one pass, or `resolveToken` per token where the library has only
+ * that), so a check compares a product's values, not its file's CSS. Replies carry plain data
+ * only (theming §8).
  */
 const themeWorker = (
   generator: string,
@@ -100,7 +101,13 @@ const themeWorker = (
 ${merge ? `import { mergeThemes } from ${JSON.stringify(merge)};` : 'const mergeThemes = undefined;'}
 
 const valuesOf = (theme, product) =>
-  JSON.stringify([...theme.tokens.keys()].flatMap((name) => theme.modes.flatMap((mode) => ['srgb', 'p3'].map((gamut) => tokens.resolveToken(theme, name, { mode, product, gamut }) ?? null))));
+  JSON.stringify(theme.modes.flatMap((mode) => ['srgb', 'p3'].map((gamut) => {
+    const context = { mode, product, gamut };
+    return tokens.resolveTokens ? [...tokens.resolveTokens(theme, context)] : [...theme.tokens.keys()].flatMap((name) => {
+      const value = tokens.resolveToken(theme, name, context);
+      return value === undefined ? [] : [[name, value]];
+    });
+  })));
 
 self.addEventListener('message', (event) => {
   const { id, draft, bases = [], products } = event.data;

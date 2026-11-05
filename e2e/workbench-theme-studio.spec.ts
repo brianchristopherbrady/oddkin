@@ -119,6 +119,50 @@ test.describe('Theme Studio', () => {
     expect(stats['superseded']).toBeGreaterThan(0);
   });
 
+  test('shapes corners, controls, motion, type, and gamut from the scale inputs', async ({
+    page,
+  }) => {
+    const style = () =>
+      specimen(page, 0, 'primaryAction').evaluate((el) => {
+        const css = getComputedStyle(el);
+        const target = el.shadowRoot?.querySelector('button') ?? el;
+        return {
+          radius: getComputedStyle(target).borderTopLeftRadius,
+          duration: css.getPropertyValue('--odd-motion-duration-normal').trim(),
+          size: css.getPropertyValue('--odd-font-size-md').trim(),
+          p3: [...el.ownerDocument.adoptedStyleSheets].some((sheet) =>
+            [...sheet.cssRules].some((rule) => rule.cssText.includes('color-gamut: p3')),
+          ),
+        };
+      });
+    expect(await style()).toEqual({ radius: '8px', duration: '200ms', size: '1rem', p3: false });
+    const choose = (path: string, label: string) =>
+      page.locator(`select[data-path="${path}"]`).selectOption({ label });
+    await choose('/radius/scale', 'Square');
+    await expect.poll(async () => (await style()).radius).toBe('0px');
+    await choose('/overrides/control.radius', 'Pill');
+    await expect.poll(async () => (await style()).radius).toBe('9999px');
+    const fill = async (path: string, value: string) => {
+      const input = page.locator(`input[data-path="${path}"]`);
+      await input.fill(value);
+      await input.dispatchEvent('change');
+    };
+    await fill('/motion/scale', '2');
+    await fill('/typography/scale/base', '1.25rem');
+    await fill('/typography/scale/ratio', '1.25');
+    await choose('/gamut', 'Display P3 where supported');
+    await expect
+      .poll(style)
+      .toEqual({ radius: '9999px', duration: '400ms', size: '1.25rem', p3: true });
+    expect(JSON.parse(await page.locator('#ts-json').inputValue())).toMatchObject({
+      radius: { scale: 0 },
+      motion: { scale: 2 },
+      typography: { scale: { base: '1.25rem', ratio: 1.25 } },
+      gamut: 'p3',
+      overrides: { 'control.radius': '{radius.full}' },
+    });
+  });
+
   test('exports the draft it shows, by keyboard, once that draft is generated', async ({
     page,
   }) => {

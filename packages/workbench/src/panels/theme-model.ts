@@ -18,10 +18,15 @@ export interface ThemeBase {
   readonly config: unknown;
 }
 
+/** A value a `choice` field offers, with its label. */
+export type ThemeOption = readonly [label: string, value: string | number];
+
 export interface ThemeField {
   readonly path: ConfigPath;
   readonly label: string;
-  readonly kind: 'color' | 'length' | 'number' | 'integer' | 'text';
+  readonly kind: 'color' | 'length' | 'number' | 'integer' | 'text' | 'choice';
+  /** For `choice`: the values offered; a draft's other value is kept and shown as itself. */
+  readonly options?: readonly ThemeOption[];
   readonly origin: ValueOrigin;
   /** The draft's own value; undefined when it sets none. */
   readonly value: string | number | undefined;
@@ -107,6 +112,40 @@ const SPACING: Readonly<
 };
 
 /**
+ * The scale inputs of theme config v1, by path: the corner shape is a choice of radius scales, and
+ * pill controls an override of `control.radius`. The generator checks the schema's limits. Each
+ * is merged by its first two keys (the type scale whole).
+ */
+const SHAPE: readonly (readonly [string, string, ThemeField['kind'], (readonly ThemeOption[])?])[] =
+  [
+    [
+      'radius/scale',
+      'Corners',
+      'choice',
+      [
+        ['Square', 0],
+        ['Subtle', 0.5],
+        ['Standard', 1],
+        ['Round', 2],
+        ['Extra round', 3],
+      ],
+    ],
+    ['overrides/control.radius', 'Control corners', 'choice', [['Pill', '{radius.full}']]],
+    ['motion/scale', 'Motion duration scale', 'number'],
+    ['typography/scale/base', 'Font size md', 'length'],
+    ['typography/scale/ratio', 'Font size ratio', 'number'],
+    [
+      'gamut',
+      'Colour gamut',
+      'choice',
+      [
+        ['sRGB', 'srgb'],
+        ['Display P3 where supported', 'p3'],
+      ],
+    ],
+  ];
+
+/**
  * The form over a draft: only fields that apply to it (e.g. the chosen spacing strategy). For a
  * `product` (its `products` entry, with its theme among the bases), its brand inputs and role
  * overrides, the only values a product sets (multi-product.md §9).
@@ -122,12 +161,14 @@ export function themeFields(
     label: string,
     kind: ThemeField['kind'],
     origin: ValueOrigin,
+    options?: readonly ThemeOption[],
   ): ThemeField => {
     const owner = ownerOf(config, bases, unit);
     return {
       path,
       label,
       kind,
+      ...(options ? { options } : {}),
       origin,
       value: scalar(getPath(config, path)),
       unit,
@@ -160,6 +201,23 @@ export function themeFields(
         ([key, label, kind]) =>
           field(['spacing', key], ['spacing'], label, kind, 'foundation input'),
       ),
+    });
+  if (!product)
+    groups.push({
+      id: 'shape',
+      title: 'Shape, motion, and type',
+      note: 'Foundation inputs: the radius, duration, and font-size steps are generated from them.',
+      fields: SHAPE.map(([text, label, kind, options]) => {
+        const path = text.split('/');
+        return field(
+          path,
+          path.slice(0, 2),
+          label,
+          kind,
+          path[0] === 'overrides' ? 'explicit override' : 'foundation input',
+          options,
+        );
+      }),
     });
   // Overrides merge by token, each replaced whole; null removes a base's (theming §1.1).
   const tokens = new Map<string, unknown>();
@@ -234,6 +292,8 @@ export function setField(
 export function fieldValue(field: ThemeField, input: string): string | number | undefined {
   const text = input.trim();
   if (text === '') return undefined;
+  const option = field.options?.find(([, value]) => String(value) === text);
+  if (option) return option[1];
   if (field.kind === 'number' || field.kind === 'integer') {
     const number = Number(text);
     return Number.isFinite(number) ? number : text;

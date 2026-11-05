@@ -156,8 +156,10 @@ export const BUDGETS = {
   // load on their own (workbench-theme-products), only for a theme on a base. 24 KiB from 2026-11-04
   // (Agent 2; requested in the lanes): measured 24,108 with several themes and the products of a
   // file: the product edited (its form and the frames' product setting) and the frames Compare
-  // attaches; the picker, Compare, and the new product are in workbench-theme-products.
-  'workbench-panel-theme-studio': 24576,
+  // attaches; the picker, Compare, and the new product are in workbench-theme-products. 25 KiB
+  // from 2026-11-04 (Agent 2; requested in the lanes): measured 24,612 with the shape, motion,
+  // type, and gamut inputs (P1.5 item 3): choice fields, and the group of six inputs.
+  'workbench-panel-theme-studio': 25600,
   // 1.125 KiB from 2026-11-03 (Agent 2): measured 1,051, saving to the theme file (P1.5 item 5):
   // the diff, the confirmed write, and its conflict and failure messages.
   'workbench-theme-save': 1152,
@@ -182,8 +184,10 @@ export const BUDGETS = {
   // module, and keeping the draft and screen when a rebuild leaves the theme file alone or saves
   // the draft. 7.25 KiB from 2026-11-03 (Agent 2; requested in the lanes): measured 7,141 with
   // themes on base files (P1.5 item 4), as the panel above. 7.5 KiB from 2026-11-04 (Agent 2):
-  // measured 7,459 with the products of a file, as the panel above.
-  'workbench-theme-studio': 7680,
+  // measured 7,459 with the products of a file, as the panel above. 8 KiB from 2026-11-04 (Agent
+  // 2; requested in the lanes): measured 7,949 with the shape, motion, type, and gamut inputs, as
+  // the panel above.
+  'workbench-theme-studio': 8192,
   // 7.5 KiB; measured 6,786 on 2026-10-28 (7,055 before: the frame imports a registration with
   // import() instead of an inline module script): the preview frame runtime (protocol, Scope,
   // mount, specimen, theme). Measured 7,472 on 2026-11-02 with the composition request.

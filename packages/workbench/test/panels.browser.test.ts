@@ -1085,6 +1085,68 @@ describe('<oddkin-theme-studio-panel>', () => {
     expect(scopeStats()).toEqual(before);
   });
 
+  it('offers the corner shape, pill controls, and gamut as choices that write the draft', async () => {
+    const panel = document.createElement('oddkin-theme-studio-panel');
+    const page = studioPage();
+    panel.frameUrl = frameUrl;
+    panel.page = {
+      ...page,
+      studio: {
+        ...page.studio,
+        config: { brand: { primary: '#123456' }, radius: { scale: 1.25 } },
+      },
+    };
+    mounted.push(panel);
+    document.body.append(panel);
+    const root = panel.shadowRoot!;
+    const choice = (path: string) =>
+      root.querySelector<HTMLSelectElement>(`select[data-path="${path}"]`)!;
+    await until(() => !!choice('/radius/scale'), 'the shape group');
+    const options = (path: string) =>
+      [...choice(path).options].map((o) => [o.value, o.textContent?.trim(), o.selected]);
+    // A value the choice does not offer, set in the JSON, is kept and shown as itself.
+    expect(options('/radius/scale')).toEqual([
+      ['', 'Not set (generated)', false],
+      ['0', 'Square', false],
+      ['0.5', 'Subtle', false],
+      ['1', 'Standard', false],
+      ['2', 'Round', false],
+      ['3', 'Extra round', false],
+      ['1.25', '1.25', true],
+    ]);
+    const pick = async (path: string, value: string) => {
+      choice(path).value = value;
+      choice(path).dispatchEvent(new Event('change', { bubbles: true }));
+      await settled();
+    };
+    const draft = () => JSON.parse(root.querySelector<HTMLTextAreaElement>('#ts-json')!.value);
+    await pick('/radius/scale', '0');
+    expect(draft().radius).toEqual({ scale: 0 });
+    expect(options('/radius/scale').map(([value, , selected]) => [value, selected])).toEqual([
+      ['', false],
+      ['0', true],
+      ['0.5', false],
+      ['1', false],
+      ['2', false],
+      ['3', false],
+    ]);
+    // Pill controls are an override of control.radius, also a row of the overrides table.
+    await pick('/overrides/control.radius', '{radius.full}');
+    expect(draft().overrides).toEqual({ 'control.radius': '{radius.full}' });
+    expect(root.querySelector('[data-group="overrides"] tbody th')?.textContent).toContain(
+      'control.radius',
+    );
+    expect(
+      root.querySelector(`#${CSS.escape('ts-overrides-control.radius-origin')}`)?.textContent,
+    ).toContain('explicit override');
+    await pick('/gamut', 'p3');
+    expect(draft().gamut).toBe('p3');
+    // The empty choice removes the value: the generator's default applies.
+    await pick('/overrides/control.radius', '');
+    expect(draft().overrides).toEqual({});
+    expect(choice('/overrides/control.radius').value).toBe('');
+  });
+
   it('saves the draft to the theme file after showing the diff, when the dev server offers it', async () => {
     const requests: Record<string, unknown>[] = [];
     let version = 'v1';
@@ -1252,6 +1314,7 @@ describe('<oddkin-theme-studio-panel>', () => {
       const baseTheme = {
         brand: { primary: '#123456', neutral: '#777777' },
         spacing: { strategy: 'multiples', unit: '4px' },
+        radius: { scale: 2 },
         overrides: { 'color.canvas': { light: '#ffffff', dark: '#000000' } },
       };
       const product = { extends: './base.theme.json', brand: { neutral: '#888888' } };
@@ -1318,6 +1381,11 @@ describe('<oddkin-theme-studio-panel>', () => {
         'foundation input · set in this file',
       ]);
       expect(input('ts-spacing-unit').placeholder).toBe('4px (from base.theme.json)');
+      // A choice the draft inherits names the base's option.
+      expect(
+        root.querySelector<HTMLSelectElement>('#ts-radius-scale')?.options[0]?.textContent?.trim(),
+      ).toBe('Round (from base.theme.json)');
+      expect(origin('ts-radius-scale')).toBe('foundation input · from base.theme.json');
       const canvas = root.querySelector('[data-group="overrides"] tbody tr')!;
       expect(canvas.querySelector('th')?.textContent).toContain('from base.theme.json');
       expect(canvas.querySelector('input')?.placeholder).toBe('#ffffff (from base.theme.json)');

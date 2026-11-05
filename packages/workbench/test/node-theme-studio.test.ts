@@ -76,7 +76,7 @@ describe('Theme Studio editor model', () => {
       spacing: { strategy: 'ratio', base: '1rem', ratio: 1.5, stepsBelow: 2, stepsAbove: 3 },
       overrides: { 'color.canvas': { light: '#fff', dark: '#000' }, 'radius.md': '6px' },
     });
-    expect(groups.map((g) => g.id)).toEqual(['inputs', 'spacing', 'overrides']);
+    expect(groups.map((g) => g.id)).toEqual(['inputs', 'spacing', 'shape', 'overrides']);
     expect(groups[0]?.fields.map((f) => f.path.join('.'))).toEqual([
       'brand.primary',
       'brand.neutral',
@@ -99,7 +99,7 @@ describe('Theme Studio editor model', () => {
       ),
     ).toEqual(['unit', 'snap']);
     expect(themeFields({})[1]?.fields).toEqual([]);
-    const overrides = groups[2]!;
+    const overrides = groups[3]!;
     expect(overrides.modes).toEqual(['light', 'dark']);
     expect(overrides.rows?.map((r) => r.cells.map((c) => c.path.join('.')))).toEqual([
       ['overrides.color.canvas.light', 'overrides.color.canvas.dark'],
@@ -153,7 +153,7 @@ describe('Theme Studio editor model', () => {
       ['snap', ['spacing'], { file: 'root.json', value: '2px' }],
     ]);
     // Overrides merge by token: the base's, less the one a base removes, then the draft's own.
-    expect(groups[2]?.rows?.map((r) => [r.token, r.inherited])).toEqual([
+    expect(groups[3]?.rows?.map((r) => [r.token, r.inherited])).toEqual([
       ['color.canvas', 'root.json'],
       ['color.link', undefined],
     ]);
@@ -175,7 +175,51 @@ describe('Theme Studio editor model', () => {
         .flatMap((g) => g.fields)
         .some((f) => f.inherited),
     ).toBe(false);
-    expect(themeFields({ overrides: null }, bases)[2]?.rows).toEqual([]);
+    expect(themeFields({ overrides: null }, bases)[3]?.rows).toEqual([]);
+  });
+
+  it('offers the shape, motion, type, and gamut inputs, the corners and gamut as choices', () => {
+    const base = {
+      radius: { scale: 2 },
+      typography: { scale: { base: '1rem', ratio: 1.2 } },
+      gamut: 'p3',
+    };
+    const bases = [{ file: 'base.json', config: base }];
+    const draft = { extends: './base.json', motion: { scale: 0.5 }, overrides: {} };
+    const shape = themeFields(draft, bases).find((g) => g.id === 'shape')!;
+    expect(shape.fields.map((f) => [pathText(f.path), f.kind, f.origin, f.value])).toEqual([
+      ['/radius/scale', 'choice', 'foundation input', undefined],
+      ['/overrides/control.radius', 'choice', 'explicit override', undefined],
+      ['/motion/scale', 'number', 'foundation input', 0.5],
+      ['/typography/scale/base', 'length', 'foundation input', undefined],
+      ['/typography/scale/ratio', 'number', 'foundation input', undefined],
+      ['/gamut', 'choice', 'foundation input', undefined],
+    ]);
+    const at = (path: string) => shape.fields.find((f) => pathText(f.path) === path)!;
+    const [corners, pill, gamut] = ['/radius/scale', '/overrides/control.radius', '/gamut'].map(at);
+    expect(corners?.inherited).toEqual({ file: 'base.json', value: 2 });
+    expect(corners?.options?.map(([, value]) => value)).toEqual([0, 0.5, 1, 2, 3]);
+    expect(gamut?.inherited).toEqual({ file: 'base.json', value: 'p3' });
+    // A choice writes the option's value: a number for the radius scale, an alias for pill.
+    expect(fieldValue(corners!, '0.5')).toBe(0.5);
+    expect(fieldValue(pill!, '{radius.full}')).toBe('{radius.full}');
+    expect(fieldValue(gamut!, 'srgb')).toBe('srgb');
+    expect(fieldValue(corners!, '')).toBeUndefined();
+    expect(setField(draft, pill!, '{radius.full}', bases)).toEqual({
+      ...draft,
+      overrides: { 'control.radius': '{radius.full}' },
+    });
+    // The type scale is replaced whole, as the merge replaces it: an edit keeps the base's base.
+    expect(setField(draft, at('/typography/scale/ratio'), 1.25, bases)).toEqual({
+      ...draft,
+      typography: { scale: { base: '1rem', ratio: 1.25 } },
+    });
+    expect(setField(draft, at('/motion/scale'), undefined, bases)).toEqual({
+      ...draft,
+      motion: {},
+    });
+    // A product sets brand inputs and overrides only.
+    expect(themeFields({}, bases, true).map((g) => g.id)).toEqual(['inputs', 'overrides']);
   });
 
   it('edits a draft on bases without copying more than the merge replaces', () => {
@@ -651,6 +695,22 @@ describe('Theme Studio page data', () => {
       expect(lobby?.['lobby']).not.toBe(first.values?.['lobby']);
       // Without products, no values.
       expect(run(base, [])).not.toHaveProperty('values');
+      // A library with only resolveToken gives the same values, one token at a time.
+      const generator = JSON.stringify(
+        pathToFileURL(resolve('packages/tokens/dist/generate/index.js')).href,
+      );
+      const older = join(dir, 'older-generate.mjs');
+      writeFileSync(
+        older,
+        `import * as tokens from ${generator};\nexport const { generate, resolveToken } = tokens;\n`,
+      );
+      const olderWorker = join(dir, 'older.worker.mjs');
+      writeFileSync(
+        olderWorker,
+        text.replace(generator, JSON.stringify(pathToFileURL(older).href)),
+      );
+      await import(pathToFileURL(olderWorker).href);
+      expect(run(product, [base], ['kiosk', 'lobby']).values).toEqual(first.values);
     } finally {
       vi.unstubAllGlobals();
       removeProject(dir);

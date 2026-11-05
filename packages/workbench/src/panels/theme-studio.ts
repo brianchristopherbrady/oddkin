@@ -634,8 +634,9 @@ export class ThemeStudioElement extends OddkinElement.with({
   /** The value a field shows as its placeholder: the base's, or the generator's. */
   #placeholder(field: ThemeField): string {
     const inherited = field.inherited;
+    const value = inherited?.value;
     return inherited
-      ? `${inherited.value ?? 'Not set'} (from ${inherited.file})`
+      ? `${field.options?.find(([, option]) => option === value)?.[0] ?? value ?? 'Not set'} (from ${inherited.file})`
       : 'Not set (generated)';
   }
 
@@ -674,20 +675,49 @@ export class ThemeStudioElement extends OddkinElement.with({
         : field.value === undefined
           ? ''
           : ' · set in this file';
+    const change = (event: Event) =>
+      this.#change(field, (event.target as HTMLInputElement | HTMLSelectElement).value);
+    // A choice keeps a value it does not offer (set in the JSON editor), shown as itself.
+    const options = field.options ?? [];
+    const offered = options.some(([, value]) => value === field.value);
     return html`<div class="wb-field">
       <label for=${id}>${field.label}</label>
       <span class="wb-cell-controls"
-        >${swatch}<input
-          id=${id}
-          type=${field.kind === 'number' || field.kind === 'integer' ? 'number' : 'text'}
-          step=${field.kind === 'integer' ? '1' : 'any'}
-          .value=${field.value === undefined ? '' : String(field.value)}
-          placeholder=${this.#placeholder(field)}
-          data-path=${pathText(field.path)}
-          aria-describedby=${`${id}-origin`}
-          @change=${(event: Event) =>
-            this.#change(field, (event.target as HTMLInputElement).value)}
-      /></span>
+        >${swatch}${
+          field.kind === 'choice'
+            ? html`<select
+                id=${id}
+                data-path=${pathText(field.path)}
+                aria-describedby=${`${id}-origin`}
+                @change=${change}
+              >
+                <option value="" .selected=${field.value === undefined}>
+                  ${this.#placeholder(field)}
+                </option>
+                ${[
+                  ...options,
+                  ...(offered || field.value === undefined
+                    ? []
+                    : [[`${field.value}`, field.value] as const]),
+                ].map(
+                  ([label, value]) =>
+                    html`<option value=${value} .selected=${value === field.value}>
+                      ${label}
+                    </option>`,
+                )}
+              </select>`
+            : html`<input
+                id=${id}
+                type=${field.kind === 'number' || field.kind === 'integer' ? 'number' : 'text'}
+                step=${field.kind === 'integer' ? '1' : 'any'}
+                .value=${field.value === undefined ? '' : String(field.value)}
+                placeholder=${this.#placeholder(field)}
+                data-path=${pathText(field.path)}
+                aria-describedby=${`${id}-origin`}
+                @change=${change}
+              />`
+        }</span
+      >
       <span id=${`${id}-origin`} class="wb-muted">${field.origin}${where}</span>
     </div>`;
   }
