@@ -1,37 +1,45 @@
 import { html, repeat } from '@oddkin/core/template';
 import type { DiffSegment } from '../controllers/diff.js';
+import type { EditProposal } from '../controllers/document.js';
 import type { OddkinChangeReview } from './change-review.js';
 
+/** The change between its muted context; `show` leaves out the deletions or the insertions. */
 const segments = (
   host: OddkinChangeReview,
+  p: EditProposal,
   diff: readonly DiffSegment[],
   show: 'both' | 'before' | 'after',
 ) => {
   const t = host._strings;
-  return diff.map((s) =>
-    s.kind === 'equal'
-      ? s.text
-      : s.kind === 'delete'
-        ? show === 'after'
-          ? null
-          : html`<del
-              ><span class="visually-hidden">[${t.deleted}: </span>${s.text}<span
-                class="visually-hidden"
-                >]</span
-              ></del
-            >`
-        : show === 'before'
-          ? null
-          : html`<ins
-              ><span class="visually-hidden">[${t.inserted}: </span>${s.text}<span
-                class="visually-hidden"
-                >]</span
-              ></ins
-            >`,
-  );
+  return html`<span class="segments"
+    ><span class="context">${p.context?.before ?? ''}</span>${diff.map((s) =>
+      s.kind === 'equal'
+        ? s.text
+        : s.kind === 'delete'
+          ? show === 'after'
+            ? null
+            : html`<del
+                ><span class="visually-hidden">[${t.deleted}: </span>${s.text}<span
+                  class="visually-hidden"
+                  >]</span
+                ></del
+              >`
+          : show === 'before'
+            ? null
+            : html`<ins
+                ><span class="visually-hidden">[${t.inserted}: </span>${s.text}<span
+                  class="visually-hidden"
+                  >]</span
+                ></ins
+              >`,
+    )}<span class="context">${p.context?.after ?? ''}</span></span
+  >`;
 };
 
-/** Anatomy: a labelled `list` of `proposal` items, each a named group with a `diff`, status, and actions. */
+/**
+ * Anatomy: a labelled `list` of `proposal` items, each a named group with its `label`, `diff`
+ * (the change between its muted context), `status`, and `actions`.
+ */
 export const changeReviewTemplate = (host: OddkinChangeReview) => {
   const t = host._strings;
   const code = host.granularity === 'lines';
@@ -45,70 +53,77 @@ export const changeReviewTemplate = (host: OddkinChangeReview) => {
         (p) => {
           const diff = host._diff(p);
           const status = host._status(p.status, p.error?.message);
+          const undo = p.status === 'applied' && p.undoable !== false;
           return html`<li part="proposal" class="proposal" data-status=${p.status}>
             <div
               class="body"
               role="group"
               aria-label=${p.label || (p.replacement || p.original).slice(0, 60)}
             >
-              <p class="label" ?hidden=${!p.label}>${p.label ?? ''}</p>
+              <p part="label" class="label" ?hidden=${!p.label}>${p.label ?? ''}</p>
               ${
                 view === 'split'
                   ? html`<div part="diff" class="split">
                       <div>
                         <p class="muted">${t.before}</p>
                         <div class=${code ? 'text code' : 'text'}>
-                          <span class="segments">${segments(host, diff, 'before')}</span>
+                          ${segments(host, p, diff, 'before')}
                         </div>
                       </div>
                       <div>
                         <p class="muted">${t.after}</p>
                         <div class=${code ? 'text code' : 'text'}>
-                          <span class="segments">${segments(host, diff, 'after')}</span>
+                          ${segments(host, p, diff, 'after')}
                         </div>
                       </div>
                     </div>`
                   : html`<div part="diff" class=${code ? 'text code' : 'text'}>
-                      <span class="segments">${segments(host, diff, 'both')}</span>
+                      ${segments(host, p, diff, 'both')}
                     </div>`
               }
-              <p class="state" data-status=${p.status}>${status}</p>
-              <div class="actions">
-                ${
-                  p.status === 'proposed'
-                    ? html`<odd-button
-                        size="sm"
-                        appearance="primary"
-                        data-id=${p.proposalId}
-                        data-action="accept"
-                        @click=${host._act}
-                        >${t.accept}</odd-button
-                      >`
-                    : null
-                }
-                ${
-                  p.status === 'proposed' || p.status === 'stale'
-                    ? html`<odd-button
-                        size="sm"
-                        data-id=${p.proposalId}
-                        data-action="reject"
-                        @click=${host._act}
-                        >${t.reject}</odd-button
-                      >`
-                    : null
-                }
-                ${
-                  p.status === 'applied'
-                    ? html`<odd-button
-                        size="sm"
-                        data-id=${p.proposalId}
-                        data-action="undo"
-                        @click=${host._act}
-                        >${t.undo}</odd-button
-                      >`
-                    : null
-                }
-              </div>
+              <p part="status" class="state" data-status=${p.status} ?hidden=${!status}>
+                ${status}
+              </p>
+              ${
+                p.status === 'proposed' || p.status === 'stale' || undo
+                  ? html`<div part="actions" class="actions">
+                      ${
+                        p.status === 'proposed'
+                          ? html`<odd-button
+                              size="sm"
+                              appearance="primary"
+                              data-id=${p.proposalId}
+                              data-action="accept"
+                              @click=${host._act}
+                              >${t.accept}</odd-button
+                            >`
+                          : null
+                      }
+                      ${
+                        p.status === 'proposed' || p.status === 'stale'
+                          ? html`<odd-button
+                              size="sm"
+                              data-id=${p.proposalId}
+                              data-action="reject"
+                              @click=${host._act}
+                              >${p.status === 'stale' ? t.dismiss : t.reject}</odd-button
+                            >`
+                          : null
+                      }
+                      ${
+                        undo
+                          ? html`<odd-button
+                              size="sm"
+                              data-id=${p.proposalId}
+                              data-action="undo"
+                              @click=${host._act}
+                              >${t.undo}</odd-button
+                            >`
+                          : null
+                      }
+                    </div>`
+                  : null
+              }
             </div>
           </li>`;
         },

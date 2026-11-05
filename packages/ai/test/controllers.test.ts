@@ -15,6 +15,7 @@ import {
   fromCodePointOffset,
   isValidRange,
   toCodePointOffset,
+  type EditProposal,
 } from '../src/controllers/document.js';
 import { VoiceController, createScriptedVoiceAdapter } from '../src/controllers/voice.js';
 import {
@@ -244,6 +245,76 @@ describe('DocumentSession and text ranges', () => {
         original: 'slow',
       }).status,
     ).toBe('failed');
+  });
+
+  it('gives a proposal the text around its range on its line, cut at a word boundary', () => {
+    const line =
+      'One two three four five six seven eight nine ten eleven twelve thirteen fourteen.';
+    const doc = new DocumentSession(`First line.\n${line}\nLast line.`);
+    const base = doc.getSnapshot().revision;
+    const propose = (word: string, more: Partial<EditProposal> = {}) => {
+      const start = doc.getSnapshot().text.indexOf(word);
+      return doc.propose({
+        proposalId: word,
+        baseRevision: base,
+        range: { start, end: start + word.length },
+        original: word,
+        replacement: word.toUpperCase(),
+        ...more,
+      });
+    };
+    expect(propose('three').context).toEqual({
+      before: 'One two ',
+      after: ' four five six seven eight nine ten…',
+    });
+    expect(propose('twelve').context).toEqual({
+      before: '…five six seven eight nine ten eleven ',
+      after: ' thirteen fourteen.',
+    });
+    expect(propose('First').context).toEqual({ before: '', after: ' line.' });
+    // A host's own context is kept; a proposal that cannot apply gets none.
+    const own = { before: 'Above: ', after: '' };
+    expect(propose('Last', { context: own }).context).toEqual(own);
+    expect(propose('nine', { original: 'ten' }).context).toBeUndefined();
+    doc.setText('Changed.');
+    expect(propose('ten').status).toBe('stale');
+    expect(
+      doc.getSnapshot().proposals.find((p) => p.proposalId === 'ten')?.context,
+    ).toBeUndefined();
+  });
+
+  it('marks the one applied proposal that undo can revert', () => {
+    const doc = new DocumentSession('a b c');
+    const propose = (id: string, start: number) =>
+      doc.propose({
+        proposalId: id,
+        baseRevision: doc.getSnapshot().revision,
+        range: { start, end: start + 1 },
+        original: id,
+        replacement: id.toUpperCase(),
+      });
+    const undoable = () =>
+      Object.fromEntries(doc.getSnapshot().proposals.map((p) => [p.proposalId, p.undoable]));
+    propose('a', 0);
+    expect(undoable()).toEqual({ a: undefined });
+    doc.accept('a');
+    expect(undoable()).toEqual({ a: true });
+    propose('b', 2);
+    doc.accept('b');
+    expect(undoable()).toEqual({ a: false, b: true });
+    expect(doc.undo('a')).toEqual({ ok: false, reason: 'not-applied' });
+    expect(doc.undo('b')).toMatchObject({ ok: true });
+    // An undone proposal has no flag; the earlier change stays applied, but the text changed since.
+    expect(undoable()).toEqual({ a: false, b: undefined });
+    expect(doc.getSnapshot().proposals.find((p) => p.proposalId === 'b')).not.toHaveProperty(
+      'undoable',
+    );
+    expect(doc.undo('a')).toEqual({ ok: false, reason: 'stale' });
+    propose('c', 4);
+    doc.accept('c');
+    expect(undoable()).toEqual({ a: false, b: undefined, c: true });
+    doc.setText('A b C!');
+    expect(undoable()).toEqual({ a: false, b: undefined, c: false });
   });
 
   it('diffs words and lines and reproduces both inputs', () => {

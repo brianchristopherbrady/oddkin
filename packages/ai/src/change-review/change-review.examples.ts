@@ -94,7 +94,7 @@ export default defineExamples('odd-change-review', {
     },
     preset: true,
     guidance:
-      'When a proposal rewrites a sentence, `view="split"` shows the text before and after side by side; inline, the words of two different sentences interleave.',
+      'When a proposal rewrites a sentence, `view="split"` shows the text before and after side by side; inline shows the old sentence struck through, then the new one.',
   },
   statuses: {
     label: 'Every status',
@@ -110,12 +110,22 @@ export default defineExamples('odd-change-review', {
           status: 'applied',
         },
         {
+          proposalId: 'p6',
+          baseRevision: 'v1',
+          range: { start: 4, end: 9 },
+          original: 'build',
+          replacement: 'release build',
+          label: 'Applied before a later change, so it can no longer be undone',
+          status: 'applied',
+          undoable: false,
+        },
+        {
           proposalId: 'p2',
           baseRevision: 'v1',
           range: { start: 27, end: 40 },
           original: 'every release',
           replacement: 'each release',
-          label: 'Rejected',
+          label: 'Rejected: the reader turned it down',
           status: 'rejected',
         },
         {
@@ -150,6 +160,6 @@ export default defineExamples('odd-change-review', {
     },
     preset: true,
     guidance:
-      'Every status comes from the proposals the host passes in. `accept-pending` and `undo-pending` are for a host that applies asynchronously; a `DocumentSession` applies at once.',
+      'Every status comes from the proposals the host passes in. `accept-pending` and `undo-pending` are for a host that applies asynchronously; a `DocumentSession` applies at once. An applied proposal offers Undo unless its `undoable` is `false`, as `DocumentSession` sets it on every change but the latest. An out-of-date proposal offers Dismiss.',
   },
 });

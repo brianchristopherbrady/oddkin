@@ -511,6 +511,89 @@ describe('selection, review, and controls', () => {
     expect($$(el, '.state').map(text)[0]).toBe('Undone');
   });
 
+  it('odd-change-review: a rewrite reads whole between its context; Dismiss when out of date, Undo only where the host can undo', async () => {
+    const doc = new DocumentSession('The build is very slow. Contact the team.');
+    const el = await mount(
+      'odd-change-review',
+      () => import('../src/change-review/change-review.define.js'),
+      () => {},
+    );
+    const sync = async () => {
+      el.proposals = [...doc.getSnapshot().proposals];
+      await settle(el);
+    };
+    const requests: string[] = [];
+    const id = (e: Event) => (e as CustomEvent<{ proposalId: string }>).detail.proposalId;
+    el.addEventListener('odd-change-accept', (e) => {
+      requests.push(`accept ${id(e)}`);
+      doc.accept(id(e));
+    });
+    el.addEventListener('odd-change-reject', (e) => {
+      requests.push(`reject ${id(e)}`);
+      doc.reject(id(e));
+    });
+    const base = doc.getSnapshot().revision;
+    doc.propose({
+      proposalId: 'rewrite',
+      baseRevision: base,
+      range: { start: 0, end: 23 },
+      original: 'The build is very slow.',
+      replacement: 'Builds take 40% less time.',
+      label: 'Make it specific',
+    });
+    doc.propose({
+      proposalId: 'who',
+      baseRevision: base,
+      range: { start: 24, end: 41 },
+      original: 'Contact the team.',
+      replacement: 'Write to the release team.',
+    });
+    await sync();
+    const item = (i: number) => $$(el, '.proposal')[i]!;
+    const actions = (li: Element) =>
+      [...li.querySelectorAll('[part="actions"] odd-button')].map(text);
+    // One deletion, then one insertion, not word by word; the text around them muted.
+    expect([...item(0).querySelectorAll('del, ins')].map(text)).toEqual([
+      '[deleted: The build is very slow.]',
+      '[inserted: Builds take 40% less time.]',
+    ]);
+    expect(text(item(0).querySelector('[part="diff"]'))).toBe(
+      '[deleted: The build is very slow.][inserted: Builds take 40% less time.] Contact the team.',
+    );
+    expect([...item(1).querySelectorAll('.context')].map(text)).toEqual([
+      'The build is very slow.',
+      '',
+    ]);
+    // Changes that an unchanged word separates stay apart.
+    expect([...item(1).querySelectorAll('del, ins')].map(text)).toEqual([
+      '[deleted: Contact ]',
+      '[inserted: Write to ]',
+      '[inserted: release]',
+    ]);
+    // Awaiting review: no status text. The label, status, and actions are parts.
+    expect(text(item(0).querySelector('[part="label"]'))).toBe('Make it specific');
+    expect((item(0).querySelector('[part="status"]') as HTMLElement).hidden).toBe(true);
+    expect(actions(item(0))).toEqual(['Accept', 'Reject']);
+    (item(0).querySelector('[data-action="accept"]') as HTMLElement).click();
+    await sync();
+    expect(doc.getSnapshot().text).toBe('Builds take 40% less time. Contact the team.');
+    expect(actions(item(0))).toEqual(['Undo']);
+    // The other proposal was made for the earlier text: out of date, so Dismiss.
+    expect(text(item(1).querySelector('[part="status"]'))).toContain('Out of date');
+    expect(actions(item(1))).toEqual(['Dismiss']);
+    (item(1).querySelector('[data-action="reject"]') as HTMLElement).click();
+    await sync();
+    expect(text(item(1).querySelector('[part="status"]'))).toBe('Rejected');
+    expect(item(1).querySelector('[part="actions"]')).toBeNull();
+    // After a user edit the session can no longer undo the change, so no Undo.
+    doc.setText(`${doc.getSnapshot().text} Soon.`);
+    await sync();
+    expect(doc.getSnapshot().proposals[0]).toMatchObject({ status: 'applied', undoable: false });
+    expect(text(item(0).querySelector('[part="status"]'))).toBe('Applied');
+    expect(item(0).querySelector('[part="actions"]')).toBeNull();
+    expect(requests).toEqual(['accept rewrite', 'reject who']);
+  });
+
   it("odd-change-review: its default example plays the host, so the reader sees each request's outcome", async () => {
     await import('../src/change-review/change-review.define.js');
     await import('@oddkin/components/define/textarea');

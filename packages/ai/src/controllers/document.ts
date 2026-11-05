@@ -98,7 +98,18 @@ export interface EditProposal {
   readonly original: string;
   readonly replacement: string;
   readonly label?: string | undefined;
+  /**
+   * The text around `range` in `baseRevision`, which the review shows muted around the change so
+   * the reader sees where it applies. `DocumentSession.propose` fills it when the host does not.
+   */
+  readonly context?: { readonly before: string; readonly after: string } | undefined;
   readonly status: ProposalStatus;
+  /**
+   * Whether Undo can revert this applied proposal; `false` hides Undo, and absent offers it.
+   * `DocumentSession` sets it on every applied proposal: `true` only on the most recent change,
+   * while nothing has changed since.
+   */
+  readonly undoable?: boolean | undefined;
   /** Revision produced by applying this proposal. */
   readonly appliedRevision?: string | undefined;
   readonly error?: PublicError | undefined;
@@ -108,6 +119,36 @@ export interface DocumentState {
   readonly text: string;
   readonly revision: string;
   readonly proposals: readonly EditProposal[];
+}
+
+/** About how many characters of context `DocumentSession.propose` keeps on each side. */
+const CONTEXT = 40;
+const isSpace = (char: string | undefined) => char !== undefined && /\s/u.test(char);
+
+/**
+ * The text around `range` on its lines: up to `CONTEXT` characters on each side, cut at a word
+ * boundary, with an ellipsis where it was cut.
+ */
+function contextAround(text: string, range: TextRange): { before: string; after: string } {
+  const lineStart = text.lastIndexOf('\n', range.start - 1) + 1;
+  const newline = text.indexOf('\n', range.end);
+  const lineEnd = newline === -1 ? text.length : newline;
+  let from = Math.max(lineStart, range.start - CONTEXT);
+  if (from > lineStart && !isSpace(text[from - 1])) {
+    const space = text.slice(from, range.start).search(/\s/u);
+    from = space === -1 ? (isBoundary(text, from) ? from : from + 1) : from + space;
+  }
+  while (from < range.start && from > lineStart && isSpace(text[from])) from++;
+  let to = Math.min(lineEnd, range.end + CONTEXT);
+  if (to < lineEnd && !isSpace(text[to])) {
+    const space = text.slice(range.end, to).search(/\s\S*$/u);
+    to = space === -1 ? (isBoundary(text, to) ? to : to - 1) : range.end + space;
+  }
+  while (to > range.end && to < lineEnd && isSpace(text[to - 1])) to--;
+  return {
+    before: `${from > lineStart ? '…' : ''}${text.slice(from, range.start)}`,
+    after: `${text.slice(range.end, to)}${to < lineEnd ? '…' : ''}`,
+  };
 }
 
 export type ApplyResult =
@@ -121,7 +162,8 @@ export type ApplyResult =
  * A host-owned document with revision tracking. Accepting a proposal applies it only when the
  * document is still at the proposal's base revision; otherwise it becomes `stale` and the newer
  * content is never overwritten. Undo reverts only the most recent applied change when the
- * document has not changed since.
+ * document has not changed since; each applied proposal's `undoable` says whether it is that one.
+ * A proposal gets the text around its range as `context` unless the host gives its own.
  */
 export class DocumentSession {
   readonly #state: Signal<DocumentState>;
@@ -150,14 +192,14 @@ export class DocumentSession {
     const now = this.#state.peek();
     if (text === now.text) return now.revision;
     const revision = this.#nextRevision();
-    this.#state.value = {
+    this.#undo.length = 0;
+    this.#set({
       text,
       revision,
       proposals: now.proposals.map((p) =>
         p.status === 'proposed' ? { ...p, status: 'stale' } : p,
       ),
-    };
-    this.#undo.length = 0;
+    });
     return revision;
   }
 
@@ -173,16 +215,19 @@ export class DocumentSession {
       status = 'failed';
     const record: EditProposal = {
       ...proposal,
+      ...(status === 'proposed' && !proposal.context
+        ? { context: contextAround(now.text, proposal.range) }
+        : {}),
       status,
       ...(status === 'failed'
         ? { error: { code: 'ai.edit.range', message: 'The proposal does not match the text.' } }
         : {}),
     };
-    this.#state.value = {
+    this.#set({
       ...now,
       proposals: [...now.proposals.filter((p) => p.proposalId !== record.proposalId), record],
-    };
-    return record;
+    });
+    return this.#state.peek().proposals.find((p) => p.proposalId === record.proposalId)!;
   }
 
   /** Accept and apply a proposal to its base revision. */
@@ -211,7 +256,7 @@ export class DocumentSession {
       beforeRevision: now.revision,
       afterRevision: revision,
     });
-    this.#state.value = {
+    this.#set({
       text,
       revision,
       proposals: now.proposals.map((p) =>
@@ -221,7 +266,7 @@ export class DocumentSession {
             ? { ...p, status: 'stale' }
             : p,
       ),
-    };
+    });
     return { ok: true, revision };
   }
 
@@ -242,21 +287,39 @@ export class DocumentSession {
     if (last.afterRevision !== now.revision) return { ok: false, reason: 'stale' };
     this.#undo.pop();
     const revision = this.#nextRevision();
-    this.#state.value = {
+    this.#set({
       text: last.before,
       revision,
       proposals: now.proposals.map((p) =>
         p.proposalId === proposalId ? { ...p, status: 'undone' } : p,
       ),
-    };
+    });
     return { ok: true, revision };
   }
 
   #setStatus(proposalId: string, status: ProposalStatus): void {
     const now = this.#state.peek();
-    this.#state.value = {
+    this.#set({
       ...now,
       proposals: now.proposals.map((p) => (p.proposalId === proposalId ? { ...p, status } : p)),
+    });
+  }
+
+  /** The next state, each applied proposal marked whether Undo can revert it. */
+  #set(next: DocumentState): void {
+    const last = this.#undo[this.#undo.length - 1];
+    const latest = last?.afterRevision === next.revision ? last.proposalId : undefined;
+    this.#state.value = {
+      ...next,
+      proposals: next.proposals.map((p) => {
+        if (p.status !== 'applied') {
+          if (p.undoable === undefined) return p;
+          const { undoable: _, ...rest } = p;
+          return rest;
+        }
+        const undoable = p.proposalId === latest;
+        return p.undoable === undoable ? p : { ...p, undoable };
+      }),
     };
   }
 

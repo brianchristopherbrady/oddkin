@@ -30,6 +30,10 @@ export const changeReviewStyles = css`
   .segments {
     white-space: pre-wrap;
   }
+  /* The unchanged text around a change, so the reader sees where it applies. */
+  .context {
+    color: ${token('color.text.secondary')};
+  }
   .code {
     padding: ${token('space.xs')};
     border-radius: ${token('radius.sm')};
