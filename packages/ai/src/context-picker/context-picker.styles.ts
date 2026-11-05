@@ -14,18 +14,24 @@ export const contextPickerStyles = css`
     list-style: none;
   }
   .item {
-    padding: ${token('space.2xs')} ${token('space.xs')};
+    padding: ${token('space.sm')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('radius.sm')};
     background: ${token('color.surface.default')};
   }
-  .label {
+  .details {
     flex: 1 1 8rem;
     min-inline-size: 0;
   }
-  .kind {
+  .details .muted {
     font-size: ${token('font.size.xs')};
-    text-transform: uppercase;
+  }
+  .inspect {
+    padding-inline: ${token('space.sm')};
+  }
+  .add {
+    gap: ${token('space.sm')};
+    padding-block-start: ${token('space.2xs')};
   }
   .excerpt {
     max-block-size: 10rem;

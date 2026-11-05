@@ -3,5 +3,5 @@
 import { unsafeCSS } from '@oddkin/core/styles';
 
 export const citationRecipeStyles = unsafeCSS(
-  '@layer odd.layout.base {\n  .preview {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-2xs);\n    min-inline-size: 0;\n  }\n}\n',
+  '@layer odd.layout.base {\n  .preview {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-sm);\n    min-inline-size: 0;\n  }\n  .identity {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-2xs);\n    min-inline-size: 0;\n  }\n}\n',
 );

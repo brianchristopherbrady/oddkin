@@ -88,7 +88,10 @@ export const BUDGETS = {
   // (ai-contract-review.md), measured 51,181 before, 51,202 with the tool call's silent
   // disclosure marker, and 51,297 with the AI label's marker, the sources' visible numbers, and
   // the artifact's revision label.
-  'ai-chat': 51456,
+  // 51,968 since 2026-11-05 (Agent 1's call), for the AI design pass (owner, 2026-11-04;
+  // IMPLEMENTATION_PLAN.md P1.8): measured 51,302 before the pass and 51,457 after its fourth
+  // batch. When the pass ends, this becomes the smallest 256 B step above the final measure.
+  'ai-chat': 51968,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
@@ -361,7 +364,10 @@ export const CSS_BUDGETS = {
   // 5 KiB; measured 4,388 on 2026-10-18: every @oddkin/ai element sheet together. 4,846 on
   // 2026-10-27 with the AI layout recipes (+343 B: each extracted sheet counts once on its own and
   // once inside the element sheet it opens).
-  'ai:styles': 5120,
+  // 5,376 since 2026-11-05 (Agent 1's call), for the AI design pass (owner, 2026-11-04;
+  // IMPLEMENTATION_PLAN.md P1.8): measured 5,108 after its fourth batch. When the pass ends, this
+  // becomes the smallest 256 B step above the final measure.
+  'ai:styles': 5376,
 };
 
 /** Gzip sizes of the shipped CSS: generated token CSS and component style modules. */

@@ -16,10 +16,16 @@ import {
 // must resolve to (parity.ts). The AI elements register the components they use from the built
 // package, so the components' sources are not registered here.
 useParity({ register: false });
-deliberate([
-  /^odd-sources\/One source\/(light|dark)\s+Numbered source row (paddingLeft|paddingTop|topLeftRadius) /,
-  'Each source keeps a small padding and radius, so the highlight of a revealed source surrounds its text.',
-]);
+deliberate(
+  [
+    /^odd-sources\/One source\/(light|dark)\s+Numbered source row (paddingLeft|paddingTop|topLeftRadius) /,
+    'Each source keeps a small padding and radius, so the highlight of a revealed source surrounds its text.',
+  ],
+  [
+    /^odd-citation\/Resolved · expanded\/(light|dark)\s+(Citation marker · 1 paddingLeft|1 textStyle) /,
+    'In running text the marker stays a superscript at three quarters of the text size, with a little inline padding; the specimen draws it 32 px square in the preview card.',
+  ],
+);
 
 const MODES = ['light', 'dark'] as const;
 afterEach(() => {
@@ -531,5 +537,110 @@ describe('Figma parity: odd-voice-input', () => {
         { layer: ['Listening…'], el: shadow(el, '[part="status"]'), kind: 'text' },
       ];
       expectNone(compare(`odd-voice-input/Recording/${mode}`, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-citation', () => {
+  for (const mode of MODES)
+    it(`Resolved, expanded (${mode})`, async () => {
+      await import('../src/citation/citation.define.js');
+      inMode(mode);
+      const el = mount('<odd-citation></odd-citation>') as HTMLElementTagNameMap['odd-citation'];
+      el.sourceId = 'example';
+      el.index = 1;
+      el.source = {
+        type: 'source',
+        id: 's1',
+        sourceId: 'example',
+        title: 'Example source',
+        url: 'https://example.com/source',
+        publisher: 'Example publisher',
+        excerpt: 'An excerpt supplied by the host.',
+      };
+      await settle(el);
+      const trigger = shadow(el, '[part="trigger"]');
+      trigger.click();
+      await settle(el);
+      const preview = shadow(el, '[part="preview"]');
+      const show = shadow(el, '.preview .text-button');
+      const header = 'Citation header';
+      const identity = [header, 'Source identity'];
+      const targets: Target[] = [
+        { layer: [], el: preview, kind: 'frame', gap: 'row-gap' },
+        { layer: [header, 'Citation marker · 1'], el: trigger, kind: 'frame' },
+        { layer: [header, 'Citation marker · 1', '1'], el: trigger, kind: 'text' },
+        { layer: identity, el: shadow(el, '.identity'), kind: 'frame', gap: 'row-gap' },
+        { layer: [...identity, 'Example source'], el: shadow(el, '.title'), kind: 'text' },
+        { layer: [...identity, 'Example publisher'], el: shadow(el, '.host'), kind: 'text' },
+        { layer: ['An excerpt supplied by the host.'], el: shadow(el, '.excerpt'), kind: 'text' },
+        {
+          layer: ['Actions'],
+          el: shadow(el, '.preview .actions'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        { layer: ['Actions', 'Open source'], el: shadow(el, '.link'), kind: 'frame' },
+        { layer: ['Actions', 'Open source', 'Open source'], el: shadow(el, '.link'), kind: 'text' },
+        {
+          layer: ['Actions', 'Show in sources'],
+          el: show,
+          kind: 'frame',
+          fields: [['minHeight', 'min-block-size']],
+        },
+        { layer: ['Actions', 'Show in sources', 'Show in sources'], el: show, kind: 'text' },
+      ];
+      expectNone(compare(`odd-citation/Resolved · expanded/${mode}`, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-context-picker', () => {
+  for (const mode of MODES)
+    it(`Ready context (${mode})`, async () => {
+      await import('../src/context-picker/context-picker.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-context-picker></odd-context-picker>',
+      ) as HTMLElementTagNameMap['odd-context-picker'];
+      el.items = [{ id: 'c1', kind: 'file', label: 'Example document.txt', status: 'ready' }];
+      await settle(el);
+      const item = 'Context item · file details / status / actions';
+      const details = [item, 'File details'];
+      const tools = [item, 'Item actions'];
+      const [inspect, remove] = el.shadowRoot!.querySelectorAll<HTMLElement>('.tools > button');
+      const add = shadow(el, '[part="add"] > .text-button');
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: [item], el: shadow(el, '[part="item"]'), kind: 'frame' },
+        { layer: details, el: shadow(el, '.details'), kind: 'frame', gap: 'row-gap' },
+        {
+          layer: [...details, 'Example document.txt'],
+          el: shadow(el, '.details .label'),
+          kind: 'text',
+        },
+        { layer: [...details, 'File'], el: shadow(el, '.details .muted'), kind: 'text' },
+        { layer: [item, 'Status'], el: shadow(el, '.status'), kind: 'frame' },
+        { layer: [item, 'Status', 'Ready'], el: shadow(el, '.status'), kind: 'text' },
+        { layer: tools, el: shadow(el, '.tools'), kind: 'frame', gap: 'column-gap' },
+        { layer: [...tools, 'Inspect'], el: inspect!, kind: 'frame' },
+        { layer: [...tools, 'Inspect', '▾'], el: inspect!, kind: 'text' },
+        { layer: [...tools, '✕'], el: remove!, kind: 'frame' },
+        { layer: [...tools, '✕', '✕'], el: remove!, kind: 'text' },
+        {
+          layer: ['Add context'],
+          el: shadow(el, '[part="add"]'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        { layer: ['Add context', 'Add files'], el: add, kind: 'frame' },
+        { layer: ['Add context', 'Add files', 'Add files'], el: add, kind: 'text' },
+      ];
+      expectNone(compare(`odd-context-picker/Ready context/${mode}`, {}, targets));
+      // The item's details, status, and actions are space.sm apart, as Figma spaces them.
+      const probe = document.createElement('div');
+      probe.style.columnGap = 'var(--odd-space-sm)';
+      el.after(probe);
+      expect(getComputedStyle(shadow(el, '.row')).columnGap).toBe(
+        getComputedStyle(probe).columnGap,
+      );
     });
 });

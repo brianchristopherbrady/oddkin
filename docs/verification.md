@@ -5736,3 +5736,18 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | Metadata | `packages/ai/test/metadata.test.ts`; `npm run verify:metadata` | The suggestion and send buttons now both trace their inline padding to `space.xs` (the test expected `space.sm` for the suggestion); 94 passed; exit 0 |
 | Size | `node scripts/check-size.mjs` | `ai-chat` 51,423 B of 51,456 (51,418 before); `ai:styles` 5,053 of 5,120 (5,084: the send button's overrides went) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npm run compat` | Exit 0 each |
+
+## 2026-11-05 — P1.8 item 8: the AI design pass, fourth batch (round 11, Agent 3)
+
+`odd-citation` and `odd-context-picker` against their Figma specimens, light and dark. On `a9ca3b0`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `packages/ai/test/figma-parity.browser.test.ts` in Chromium, before the changes | `odd-citation`: the preview raised with `space.sm` padding and 4 px between its parts (Figma: the default surface, `space.md` padding, `space.sm` gap), the title bold (UI style, 500), the host at 14 px (Oddkin/Small, 12), Open source unpadded (`space.xs`), the marker's border in the default colour (strong) with 1 px block padding (none). `odd-context-picker`: items padded `space.2xs`/`space.xs` (`space.sm`), their parts 8 px apart (`space.sm`), the kind uppercase before the name (Figma: under it, at 12 px), Inspect padded like Remove (`space.sm`), the add row 8 px apart (`space.sm`) |
+| After | the same file, in Chromium, Firefox, and WebKit | 30 of 30 in each engine (fifteen elements, light and dark); one more accepted difference: the inline marker's size and inline padding |
+| Visual | `.tmp/d4-shots.mjs` on the docs dev server (not kept) | The citation's open preview and the context picker's cards; Remove stays on its item's row |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-d4.json` (7 probes: the old preview padding; a bold title; title and host apart; the old item padding; the item actions spread; Inspect as narrow as Remove; the kind at body size) | 7 of 7 killed |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI parity, elements, layout, examples, reflow, and contract tests | 260 passed and 4 skipped in each of Chromium, Firefox, and WebKit |
+| Metadata | `npm run verify:metadata` | Exit 0 |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,457 B of 51,968 (51,423 before; the budget was 51,456, raised on Agent 1's call of 14:46 for the rest of the pass); `ai:styles` 5,108 of 5,376 (5,120); `ai-response` 21,264 of 21,504 (21,188: the citation) |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node packages/ai/test` (94 passed), `npm run compat` | Exit 0 each |

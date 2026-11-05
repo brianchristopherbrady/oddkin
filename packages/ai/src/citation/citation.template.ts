@@ -35,10 +35,12 @@ export const citationTemplate = (host: OddkinCitation) => {
     >
       ${
         source
-          ? html`<strong class="title">${title}</strong>
-              <span class="muted host" ?hidden=${!source.publisher && !url}
-                >${source.publisher ?? displayHost(url) ?? ''}</span
-              >
+          ? html`<span class="identity">
+                <strong class="title">${title}</strong>
+                <span class="muted host" ?hidden=${!source.publisher && !url}
+                  >${source.publisher ?? displayHost(url) ?? ''}</span
+                >
+              </span>
               <span class="excerpt" ?hidden=${!source.excerpt}>${source.excerpt ?? ''}</span>
               <span class="actions">
                 ${

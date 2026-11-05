@@ -16,35 +16,40 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
           const open = expanded.has(item.id);
           return html`<li part="item" class="item" data-status=${item.status}>
             <div class="row">
-              <span class="kind muted">${host._kind(item)}</span>
-              <span class="label">${item.label}</span>
+              <span class="details">
+                <span class="label">${item.label}</span>
+                <span class="muted"
+                  >${[host._kind(item), host._size(item)].filter(Boolean).join(' · ')}</span
+                >
+              </span>
               <span
                 class="status"
                 data-tone=${item.status === 'failed' ? 'danger' : item.status === 'ready' ? 'success' : ''}
                 >${t[item.status]}</span
               >
-              <span class="muted">${host._size(item)}</span>
-              <button
-                class="text-button"
-                type="button"
-                data-id=${item.id}
-                aria-expanded=${open ? 'true' : 'false'}
-                aria-controls=${`preview-${item.id}`}
-                aria-label=${host._label(open ? 'hide' : 'inspect', item)}
-                @click=${host._toggle}
-              >
-                <span aria-hidden="true">${open ? '\u25B4' : '\u25BE'}</span>
-              </button>
-              <button
-                class="text-button"
-                type="button"
-                data-id=${item.id}
-                aria-label=${host._label('remove', item)}
-                ?disabled=${host.disabled}
-                @click=${host._remove}
-              >
-                <span aria-hidden="true">✕</span>
-              </button>
+              <span class="tools">
+                <button
+                  class="text-button inspect"
+                  type="button"
+                  data-id=${item.id}
+                  aria-expanded=${open ? 'true' : 'false'}
+                  aria-controls=${`preview-${item.id}`}
+                  aria-label=${host._label(open ? 'hide' : 'inspect', item)}
+                  @click=${host._toggle}
+                >
+                  <span aria-hidden="true">${open ? '\u25B4' : '\u25BE'}</span>
+                </button>
+                <button
+                  class="text-button"
+                  type="button"
+                  data-id=${item.id}
+                  aria-label=${host._label('remove', item)}
+                  ?disabled=${host.disabled}
+                  @click=${host._remove}
+                >
+                  <span aria-hidden="true">✕</span>
+                </button>
+              </span>
             </div>
             <p class="error" ?hidden=${!item.error}>${item.error?.message ?? ''}</p>
             <div class="preview" id=${`preview-${item.id}`} ?hidden=${!open}>

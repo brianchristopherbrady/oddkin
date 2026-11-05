@@ -389,7 +389,9 @@ describe('odd-citation', () => {
     await el.updateComplete;
     flush();
     await frames();
-    expectColumn($(el, '.preview'), space('2xs'));
+    // As the Figma specimen: the identity, excerpt, and actions space.sm apart; title over host.
+    expectColumn($(el, '.preview'), space('sm'));
+    expectColumn($(el, '.identity'), space('2xs'));
   });
 });
 
@@ -523,10 +525,11 @@ describe('odd-checkpoint', () => {
 describe('odd-context-picker', () => {
   it('stacks the items; an item is a centred row that wraps; the URL form is a row', async () => {
     const el = await example('context-picker');
-    expectColumn($(el, '.base'), space('xs'));
+    // space.sm between the parts and inside an item's row, as the Figma specimen spaces them.
+    expectColumn($(el, '.base'), space('sm'));
     expectColumn($(el, '.list'), space('2xs'));
     const row = $(el, '.row');
-    expectRow(row, space('xs'));
+    expectRow(row, space('sm'));
     expectRow($(el, '.url'), space('2xs'), { align: 'stretch' });
     await expectWraps(row, '8rem');
     // The URL field keeps its own width, so the button moves under it.
