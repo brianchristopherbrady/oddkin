@@ -1,4 +1,5 @@
 import { defineExamples } from '@oddkin/workbench/examples';
+import { html } from '@oddkin/core/template';
 import type {} from './artifact.js';
 
 const artifact = {
@@ -27,6 +28,36 @@ export default defineExamples('odd-artifact', {
   source: {
     label: 'Source',
     props: { artifact, view: 'source' },
+  },
+  exports: {
+    label: 'Export formats',
+    props: { artifact, exports: [{ format: 'json', label: 'Export JSON' }] },
+    guidance:
+      "Copy and Download use the revision's own content. Each format in `exports` only asks (`odd-artifact-export` with the format and the revision); the host produces the file. Here the host writes the revision as JSON and links it.",
+    fixture({ scope, element, mount }) {
+      const exported = mount(html`<p></p>`);
+      scope.listen<GlobalEventHandlersEventMap['odd-artifact-export']>(
+        element,
+        'odd-artifact-export',
+        ({ detail }) => {
+          const record = element.artifact;
+          const revision = record?.revisions.find((r) => r.revisionId === detail.revisionId);
+          if (detail.format !== 'json' || !record || !revision) return;
+          const json = JSON.stringify(
+            { title: record.title, revision: revision.number, content: revision.content },
+            null,
+            2,
+          );
+          const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+          scope.add(() => URL.revokeObjectURL(url));
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${record.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.json`;
+          link.textContent = link.download;
+          exported.replaceChildren(`Revision ${revision.number} as JSON: `, link);
+        },
+      );
+    },
   },
   codeView: {
     label: 'Unsupported view',

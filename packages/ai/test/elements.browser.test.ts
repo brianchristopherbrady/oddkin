@@ -1037,6 +1037,31 @@ describe('selection, review, and controls', () => {
     }
   });
 
+  it('odd-artifact: its exports example plays the host, which writes the revision as JSON', async () => {
+    await import('../src/artifact/artifact.define.js');
+    const artifactSet = (await import('../src/artifact/artifact.examples.js')).default;
+    const output = await mountExample(artifactSet, 'exports', container);
+    try {
+      const el = output.element;
+      $(el, '[data-format="json"]')!.click();
+      await settle(el);
+      const line = output.root.querySelector('p')!;
+      const link = line.querySelector('a')!;
+      expect([line.textContent, link.download, link.href.startsWith('blob:')]).toEqual([
+        'Revision 2 as JSON: release-notes.json',
+        'release-notes.json',
+        true,
+      ]);
+      expect(await (await fetch(link.href)).json()).toEqual({
+        title: 'Release notes',
+        revision: 2,
+        content: '# Release notes\n\n- Faster builds',
+      });
+    } finally {
+      output.dispose();
+    }
+  });
+
   it('odd-inline-assist: toolbar keyboard, stale selections, and request detail with revision', async () => {
     const el = await mount(
       'odd-inline-assist',

@@ -5583,3 +5583,14 @@ On `a55a52c`.
 | Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-r9d.json` (13 probes in Chromium: the composer outside its slot, never busy, never cleared; nothing sent; no earlier messages; the other requests unbound; no new attempt on Regenerate, or one that never completes; feedback never submitted; an edit ignored; a stop never confirmed; Retry keeping the old attempt; Resume never reconnecting) | 13 of 13 killed |
 | End to end | `node ../oddkin-lanes/tools/e2e-when-free.mjs` on `e2e/docs.spec.ts:448` (a live example runs its setup script) and `:473` (every catalog card shows a live example) in three engines, then `e2e/workbench-catalog.spec.ts` in Chromium | 6 passed; 158 passed (every component previews in light and dark, loading only its own module graph, and its snippets run) |
 | Repository | `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Exit 0 each; node 1,694 passed and 2 skipped (136 files) |
+
+## 2026-11-05 — P1.8, row 9: the artifact's exports example plays the host (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The example | `packages/ai/test/elements.browser.test.ts`, "odd-artifact: its exports example plays the host, which writes the revision as JSON" (through `mountExample`) | Export JSON makes the host say "Revision 2 as JSON: release-notes.json" with a `blob:` link named `release-notes.json`, whose content is `{ title: 'Release notes', revision: 2, content: '# Release notes\n\n- Faster builds' }` |
+| AI browser files | `node ../oddkin-lanes/tools/browser-set.mjs` on `examples.browser`, `elements.browser`, `layout.browser`, and `contract.browser` (`packages/ai/test`) | 224 passed and 4 skipped in each of Chromium, Firefox, and WebKit |
+| Metadata | `npm run build`; the AI node tests; the components' contract test in three engines; `npm run verify:metadata` | AI node tests exit 0; the components' contract 830 passed and 50 skipped in each engine; verify:metadata exit 0: 484 verified AI facts across 24 elements, 2,219 across 55 components |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-r9e.json` (4 probes in Chromium: the request ignored; another revision exported; a link that leads nowhere; the content left out) | 4 of 4 killed |
+| End to end | `node ../oddkin-lanes/tools/e2e-when-free.mjs` on `e2e/docs.spec.ts:448` (a live example runs its setup script) and `:473` (every catalog card shows a live example) in three engines, then `e2e/workbench-catalog.spec.ts` in Chromium | 6 passed; 158 passed |
+| Repository | `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Exit 0 each; node 1,694 passed and 2 skipped (136 files) |
