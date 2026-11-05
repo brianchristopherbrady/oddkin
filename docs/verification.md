@@ -5613,3 +5613,12 @@ On `a55a52c`.
 | Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-ts2.json` (screens without `withoutSetup`; the old rule back; no caption; `presets` ignoring the option) | 4 of 4 killed |
 | End to end | `node ../oddkin-lanes/tools/e2e-when-free.mjs` on the five `e2e/workbench-theme-*.spec.ts` in Chromium, then `e2e/workbench-theme-studio.spec.ts:255` in Firefox and WebKit | 14 passed (the Button screen shows "Submits a form (without its setup code)"); 2 passed |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Exit 0 each; node 1,694 passed and 2 skipped (136 files); workbench-shell 53,454 of 54,272 B, workbench-theme-studio 8,159 of 8,192 B |
+
+## 2026-11-05 — RF-19: the diagnostic list and its first audit (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The list | `node scripts/list-diagnostics.mjs --write` | `docs/diagnostics.md`: 504 messages, 352 codes; 190 flagged, 43 computed at run time to review |
+| Its reading | `npx vitest run --project node tests/release/diagnostics.test.ts` | 3 passed: codes and messages from emitter calls, a development-only `new OddkinError()` message, a suggestion, `{ code, message }` records, a code-to-message map, and a reported error (computed); a button's label and a file name are not codes; the flags; the rendered table |
+| Coverage | `.tmp/diag-missing.mjs`: code-like literals in `packages/*/src` that the list does not hold | Token names, model and layer ids, CSS feature ids, and file names, and these codes whose messages come from elsewhere: `ai.stream.error`, `ai.tool.failed`, `ai.tool.input`, `agent.guidance.unknownReference`, `analyzer.config.invalid`, `analyzer.examples.dynamic`, six `app.*`, `model.version.unsupported`, five `reactive.*` and `scope.*`, four `state.*`; they are the next pass's |
+| Repository | `npm run typecheck`; `npx prettier --check docs/diagnostics.md` | Exit 0 each |
