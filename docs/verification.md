@@ -5374,3 +5374,19 @@ For Theme Studio's Worker (Agent 2, lanes, 2026-11-03 18:08): every literal for 
 | --- | --- | --- |
 | The claims against the code | `git grep -n "import("` in `packages/analyzer/src` and `packages/workbench/src/node` | The analyzer's only import of project code is `kit/package-kit.ts` (the package's `./composition` entry); Workbench's Node side imports configuration, content, and example modules through `loadDefault` (`node/config.ts`, `node/inputs.ts`) and the project's `@oddkin/tokens/node` for theme files (`node/inputs.ts`); project kits read their inputs with `readFileSync` (`kit/context.ts`). The analyzer's fixture libraries throw on import (`tests/fixtures/analyzer-*`), which `analyzer.test.ts`, `composite.test.ts`, and the others analyze |
 | Docs | `npx prettier --check` on the changed files; `node scripts/check-readme-status.mjs` | Formatted; README status OK (9 READMEs) |
+## 2026-11-04 — P1.8 item 8: odd-change-review's examples and labelled groups (round 11, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The default example | `packages/ai/test/elements.browser.test.ts` (new: "its default example plays the host", mounted with `mountExample`) | The Document field holds "The build is very slow, so every release waits a day."; Accept makes it "The build is slow (12 minutes), so every release waits a day." with the status Applied; Undo restores it, Undone. Mounted again, an edit to the text puts the proposal out of date, and Reject marks it Rejected |
+| The groups | the same file's A17 test | Each proposal's content is a group named by its label ("Word choice") or by the start of its new text ("hare") |
+| The docs | A script on the docs dev server in Chromium (`.tmp/change-review-shots2.mjs`; screenshots not kept) | The reference page's live example shows the review and the Document field; Accept changes the field's text, and the review shows Applied and Undo. The catalog card shows the review, with the field below it |
+| Docs e2e | `node ../oddkin-lanes/tools/e2e-when-free.mjs` with `e2e/docs.spec.ts`'s "the catalog lists the AI components under AI", "a live example runs its setup script", and "every catalog card shows a live example" in three engines; then `e2e/ai-demos.spec.ts`'s two change-review journeys of the writing demo | 9 passed; 12 passed |
+| Metadata | `packages/ai/test/examples.test.ts`; both contract tests in three engines, then `npm run verify:metadata` | The default example's metadata has `hasFixture` and `uses: ["component:odd-textarea"]`, which the test now expects; 2,219 verified facts across 55 component elements and 481 across 24 AI elements; vocabulary 0 findings |
+| Workbench | `packages/workbench/test/node-inputs.test.ts` | An example module with fixtures registers its element from the element's own package (`@oddkin/ai/define/change-review`); the test assumed `@oddkin/components`, since no AI example had a fixture |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI elements, layout, examples, reflow, and contract tests and the components' contract test | 1,047 passed and 54 skipped in Chromium and in WebKit. In Firefox 1,046: `reflow.browser`'s "legends follow a shrinking container" failed for `odd-question` and passed alone (2 of 2), load noise |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-change-review.json` (4 probes: the content not a group; the group named by its label only; the example not accepting; the example ignoring edits) | 4 of 4 killed |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,181 B of 51,200, unchanged; `ai:styles` 4,939 of 5,120 |
+| Node tests | `npx vitest run --project node` | 1,670 passed and 2 skipped (134 files) |
+| Packages | `npm run verify:packs` | OK |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs` on `2186c35` | Exit 0 each |

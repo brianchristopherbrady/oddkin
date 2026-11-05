@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
+import { mountExample } from '@oddkin/workbench/testing';
 import { createScriptedVoiceAdapter } from '../src/controllers/voice.js';
 import { DocumentSession } from '../src/controllers/document.js';
 import { highlight } from '../src/highlight/index.js';
@@ -496,6 +497,10 @@ describe('selection, review, and controls', () => {
     await sync();
     expect(text($(el, 'del'))).toBe('[deleted: quick]');
     expect(text($(el, 'ins'))).toBe('[inserted: swift]');
+    // Each proposal is a group named by its label, or by the start of its new text.
+    expect(
+      $$(el, '.proposal > [role="group"]').map((group) => group.getAttribute('aria-label')),
+    ).toEqual(['Word choice', 'hare']);
     ($(el, 'odd-button[data-action="accept"]') as HTMLElement).click();
     await sync();
     expect(doc.getSnapshot().text).toBe('The swift fox.');
@@ -504,6 +509,46 @@ describe('selection, review, and controls', () => {
     await sync();
     expect(doc.getSnapshot().text).toBe('The quick fox.');
     expect($$(el, '.state').map(text)[0]).toBe('Undone');
+  });
+
+  it("odd-change-review: its default example plays the host, so the reader sees each request's outcome", async () => {
+    await import('../src/change-review/change-review.define.js');
+    await import('@oddkin/components/define/textarea');
+    const { default: set } = await import('../src/change-review/change-review.examples.js');
+    const before = 'The build is very slow, so every release waits a day.';
+    const mounted = await mountExample(set, 'default', container);
+    try {
+      const el = mounted.element;
+      const field = mounted.root.querySelector('odd-textarea')!;
+      const act = async (action: string) => {
+        $(el, `odd-button[data-action="${action}"]`)!.click();
+        await settle(el);
+      };
+      expect(field.value).toBe(before);
+      await act('accept');
+      expect(field.value).toBe('The build is slow (12 minutes), so every release waits a day.');
+      expect($$(el, '.state').map(text)).toEqual(['Applied']);
+      await act('undo');
+      expect(field.value).toBe(before);
+      expect($$(el, '.state').map(text)).toEqual(['Undone']);
+    } finally {
+      mounted.dispose();
+    }
+    // An edit to the text puts a pending proposal out of date, and Reject removes it.
+    const again = await mountExample(set, 'default', container);
+    try {
+      const el = again.element;
+      const field = again.root.querySelector('odd-textarea')!;
+      field.value = `${before} Soon.`;
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+      await settle(el);
+      expect($$(el, '.state').map(text)).toEqual([expect.stringContaining('Out of date')]);
+      $(el, 'odd-button[data-action="reject"]')!.click();
+      await settle(el);
+      expect($$(el, '.state').map(text)).toEqual(['Rejected']);
+    } finally {
+      again.dispose();
+    }
   });
 
   it('odd-inline-assist: toolbar keyboard, stale selections, and request detail with revision', async () => {

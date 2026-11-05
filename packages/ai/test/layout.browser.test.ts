@@ -491,7 +491,7 @@ describe('odd-change-review', () => {
       };
     });
     expectColumn($(el, '.list'), space('sm'));
-    expectColumn($(el, '.proposal'), space('xs'));
+    expectColumn($(el, '.proposal .body'), space('xs'));
     const split = $(el, '.split');
     expectRow(split, space('sm'), { align: 'stretch' });
     container.style.inlineSize = '20rem';

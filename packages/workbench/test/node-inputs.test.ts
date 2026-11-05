@@ -575,7 +575,7 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
         specifiers.filter((s) => !resolves(s)),
         file,
       ).toEqual([]);
-      expect(specifiers, file).toContain(`@oddkin/components/define/${page.tag.slice(4)}`);
+      expect(specifiers, file).toContain(`${page.package}/define/${page.tag.slice(4)}`);
       expect(code, file).toMatch(
         /export \{ render as oddkinFrameRender \} from '@oddkin\/core\/template';\n$/,
       );

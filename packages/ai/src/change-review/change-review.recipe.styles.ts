@@ -3,5 +3,5 @@
 import { unsafeCSS } from '@oddkin/core/styles';
 
 export const changeReviewRecipeStyles = unsafeCSS(
-  '@layer odd.layout.base {\n  .list {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-sm);\n    min-inline-size: 0;\n  }\n  .proposal {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-xs);\n    min-inline-size: 0;\n  }\n  .split {\n    display: grid;\n    grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));\n    gap: var(--odd-space-sm);\n  }\n}\n',
+  '@layer odd.layout.base {\n  .list {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-sm);\n    min-inline-size: 0;\n  }\n  .body {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-xs);\n    min-inline-size: 0;\n  }\n  .split {\n    display: grid;\n    grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));\n    gap: var(--odd-space-sm);\n  }\n}\n',
 );

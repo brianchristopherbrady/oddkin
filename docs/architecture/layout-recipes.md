@@ -374,7 +374,7 @@ Round 9 (converted 2026-10-28 by Agent 1, which took over the rows Agent 2 and A
 | ai/activity/activity.styles.ts | Agent 2 | `.base` row({ gap: space.xs, wrap: true }) | — |
 | ai/ai-label/ai-label.styles.ts | Agent 2 | `.details div` row({ gap: space.xs, align: 'stretch' }) | `.label`: inline box: glyph and label inside the element box |
 | ai/artifact/artifact.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.header` row({ gap: space.xs, wrap: true }) | — |
-| ai/change-review/change-review.styles.ts | Agent 2 | `.list` stack({ gap: space.sm }); `.proposal` stack({ gap: space.xs }); `.split` autoGrid({ min: '14rem', fill: 'auto-fit', gap: space.sm }) | — |
+| ai/change-review/change-review.styles.ts | Agent 2 | `.list` stack({ gap: space.sm }); `.body` (each proposal's group, 2026-11-04) stack({ gap: space.xs }); `.split` autoGrid({ min: '14rem', fill: 'auto-fit', gap: space.sm }) | — |
 | ai/checkpoint/checkpoint.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.confirm` stack({ gap: space.xs }) | — |
 | ai/citation/citation.styles.ts | Agent 2 | `.preview` stack({ gap: space.2xs }) | `.trigger`: inline box: glyph and label inside the element box |
 | ai/context-picker/context-picker.styles.ts | Agent 2 | `.base` stack({ gap: space.xs }); `.list` stack({ gap: space.2xs }); `.row` row({ gap: space.xs, wrap: true }); `.url` row({ gap: space.2xs, align: 'stretch', wrap: true }) | — |

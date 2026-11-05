@@ -32,12 +32,14 @@ export const CHANGE_REVIEW_STRINGS = {
 /**
  * Review proposed edits as before/after or inline word or line diffs; accept, reject, or undo
  * each one. Every action is a request; statuses (applied, stale, undone) come from the records,
- * which only apply to the revision they were proposed for.
+ * which only apply to the revision they were proposed for. A host that applies asynchronously
+ * sets `accept-pending` or `undo-pending` while it works ("Applying…", "Undoing…");
+ * `DocumentSession` applies at once.
  *
  * @csspart list - Proposals.
  * @csspart proposal - One proposal.
  * @csspart diff - Diff view.
- * @a11y Deletions and insertions use `<del>`/`<ins>` with visually hidden "deleted"/"inserted" text, so meaning does not rely on colour or strikethrough. Each proposal is a labelled group.
+ * @a11y Deletions and insertions use `<del>`/`<ins>` with visually hidden "deleted"/"inserted" text, so meaning does not rely on colour or strikethrough. Each proposal is a list item holding a group named by its label (without one, by the start of its new text), so its actions are announced with it.
  * @keyboard Tab through proposals' actions; Enter or Space activates.
  * @useFor Reviewing AI-proposed edits to text or code before they change the document.
  * @notFor Version-control diffs of whole files.

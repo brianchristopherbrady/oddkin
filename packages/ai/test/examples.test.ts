@@ -111,6 +111,10 @@ describe('@oddkin/ai examples', () => {
       'odd-checkpoint/restored',
       'odd-voice-input/default',
     ]);
+    // Elements each fixture renders besides its own, read from literal markup.
+    const uses: Record<string, string[]> = {
+      'odd-change-review/default': ['component:odd-textarea'],
+    };
     const expected = Object.fromEntries(
       Object.entries(files).flatMap(([path, set]) =>
         Object.entries(set.examples).map(([name, example]) => [
@@ -120,6 +124,7 @@ describe('@oddkin/ai examples', () => {
             name,
             file: path.replace(/^\.\.\//, ''),
             ...(example.fixture ? { hasFixture: true } : {}),
+            ...(uses[`${set.component}/${name}`] ? { uses: uses[`${set.component}/${name}`] } : {}),
             ...(example.previewRoles
               ? { previewRoles: example.previewRoles.map((role) => `role:${role}`) }
               : {}),
