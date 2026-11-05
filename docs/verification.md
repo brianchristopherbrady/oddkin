@@ -5446,3 +5446,12 @@ Agent 2's OK of the two commits above (lanes, 2026-11-05 00:20) asked for two fi
 | Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-row8d.json` (9 probes: a snapshot without the product's examples; a listed id that is no example check not reported; the list ignored; an affected component's examples all run; an example reached for its own sake run unlisted; a changed product running every example; no gap for a component the list misses; any example covering in a listing product; the snapshot schema without products' examples) | 9 of 9 killed |
 | Node tests | `npx vitest run --project node` | 1,686 passed and 2 skipped (135 files) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs`, `node scripts/verify-packs.mjs` | Exit 0 each; the packed `@oddkin/analyzer` resolves its declarations with the new `examples` fields |
+
+## 2026-11-05 — P1.6: the rest of M8's metadata and tooling review (round 11, Agent 2, row 8)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The review's claims | Read the tests it cites: `packages/{components,ai}/test/examples.test.ts` and `examples.browser.test.ts`, `packages/ai/test/contract.browser.test.ts`, `packages/workbench/test/coverage.browser.test.ts` (its coverage model lists `examples/examples` and the presets), `tests/examples/public-imports.test.ts`, `tests/impact/selected.browser.test.ts`, `packages/components/test/accessibility.browser.test.ts` (axe over chosen states), and `e2e/workbench-theme-studio.spec.ts` (in-place edits, the last valid theme, newest-only generation) | As metadata-and-analyzer.md §10.1 states them |
+| One edit's generated outputs | `packages/workbench/test/node-theme-studio.test.ts`, "changes only the edited role in the edited mode ..." (the default theme, then Theme Studio's `setPath` of `/overrides/color.action.default/light` to `#0a7d33`, each through `generate` and `emitInspectJson`) | `color.action.default` becomes `#0a7d33` in light; the changed roles are it and the three that reference it (`color.focus.ring`, `color.link`, `color.selection.background`); no dark value changes. The file: 16 of 16 |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-row8e.json` (2 probes on `setPath`: an edit that drops the draft's other values; an edit written at the wrong key) | 2 of 2 killed |
+| Repository | `npm run typecheck`, `npm run lint` | Exit 0 each |

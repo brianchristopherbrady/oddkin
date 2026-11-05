@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { validateComposition } from '@oddkin/components/composition';
-import { contrastReport, generate, resolveToken } from '@oddkin/tokens/generate';
+import { contrastReport, emitInspectJson, generate, resolveToken } from '@oddkin/tokens/generate';
 import { layerOf, mergeThemes } from '@oddkin/tokens/theme';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
@@ -69,6 +69,47 @@ describe('Theme Studio editor model', () => {
     expect(draft.overrides.a.light).toBe('1');
     expect(getPath(setPath(draft, ['brand', 'primary'], undefined), ['brand'])).toEqual({});
     expect(getPath(setPath({}, ['spacing', 'unit'], '4px'), ['spacing', 'unit'])).toBe('4px');
+  });
+
+  it('changes only the edited role in the edited mode, and the roles that reference it (workbench.md §6.4)', () => {
+    const base = JSON.parse(
+      readFileSync(resolve('packages/tokens/themes/default.theme.json'), 'utf8'),
+    ) as object;
+    const edited = setPath(base, ['overrides', 'color.action.default', 'light'], '#0a7d33');
+    type Token = { name: string; definition: unknown; value: unknown };
+    const tokens = (config: unknown) =>
+      new Map(
+        (
+          JSON.parse(emitInspectJson(generate(config as never).theme!)) as { tokens: Token[] }
+        ).tokens.map((t) => [t.name, t] as const),
+      );
+    const before = tokens(base);
+    const after = tokens(edited);
+    const changed = [...after.values()]
+      .filter((t) => JSON.stringify(t.value) !== JSON.stringify(before.get(t.name)?.value))
+      .map((t) => t.name);
+    // What the edit may reach: the role itself and, through references, the roles that alias it.
+    const reach = new Set(['color.action.default']);
+    for (let grew = true; grew;) {
+      grew = false;
+      for (const t of after.values())
+        if (
+          !reach.has(t.name) &&
+          [...reach].some((name) => JSON.stringify(t.definition).includes(`{${name}}`))
+        ) {
+          reach.add(t.name);
+          grew = true;
+        }
+    }
+    expect(changed).toContain('color.action.default');
+    expect(changed.length).toBeGreaterThan(1);
+    expect(changed.filter((name) => !reach.has(name))).toEqual([]);
+    // The explicit value, and in the light mode only.
+    const value = (map: Map<string, Token>, name: string) =>
+      map.get(name)!.value as { light: string; dark: string };
+    expect(value(after, 'color.action.default').light).toBe('#0a7d33');
+    for (const name of changed)
+      expect(value(after, name).dark, name).toBe(value(before, name).dark);
   });
 
   it('offers only the fields that apply to the draft, overrides by mode', () => {
