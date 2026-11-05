@@ -41,3 +41,70 @@ The glyph-only buttons (`odd-suggestions`' ↑, `odd-context-picker`'s ▾ and �
 Not changed by this review: the element's name, `view` (`inline` or `split`), `granularity` (`words` or `lines`), `announce`, the events and their detail (`{ proposalId }`), the empty state, and the `<del>` and `<ins>` with their hidden words. The design pass for this element waits for the decisions on 2 to 6 and 9.
 
 **Decisions and changes.** Agent 2 accepted all nine, with these choices. (2) In the rendering, for the word diff only: `diffWords` stays the exact word diff `@oddkin/ai/controllers` exports. (3) `DocumentSession.propose` fills `context` with the text on the range's lines, up to about 40 characters on each side, cut at a word boundary with an ellipsis; a host may give its own or none, and `label` still says what the edit is for. The review shows it muted in both views. (4) `undoable` is optional: `false` hides Undo, and absent offers it, as in beta.1. `DocumentSession` sets it on every applied proposal, `true` only on the change it can undo, and updates it as the document changes. (5) `strings.proposed` stays in the type, unused and deprecated, until the next major release. (7) Without a label, the group is named by the start of its new text (its old text for a deletion), which says which change it is better than "Change n". 1, 7, and 8 were made first (no API change); 2 to 6 and 9 after them. Agent 2's read of both (2026-11-05) asked for two fixes, made before they landed: a range that ends with its line break (a whole line of code) takes no context from the next line, and the name from the new text stops short of 60 characters rather than split a surrogate pair.
+
+## `odd-action-approval` (2026-11-05)
+
+**What a user sees today.** The reference page's interactive example, in Chromium at 1280 px: "Send email", its summary, "Affects: team@example.com", "Risk: medium", the change "Subject ~~Draft~~ Release 2.0", "Waiting for your decision", a "Reason (optional)" field, and Approve and Reject. Since C1's first batch the example's host records the decision, and the element shows "Approved. The action runs separately; its result appears with the action." or "Rejected. The action will not run."
+
+**What it is for**, as the reference could say it: asking the user to allow one action an agent proposes (a tool call, a write, a purchase): what it does, what it affects, what it changes, how risky it is, and a decision with an optional reason. The element collects intent only. The host records the decision against the proposal's revision and runs the action or not; approving never means the action succeeded.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Decide | "Reason (optional)" sits above both buttons, but only Reject sends it (`reason` is `undefined` for Approve): a reason typed before Approve is dropped without a word. | Say what it is for: "Reason for rejecting (optional)" (`strings.reason`). Or send the reason with either decision. |
+| 2 | Examples | Only `requested` has an example. `decision-failed` (the error, then the actions again), `expired`, and `superseded` are states a host sets, and Edit (`editApproval`, `odd-approval-edit`) is in no example, so a reader cannot tell what Edit leads to. | Examples for a failed decision, an expired request, and a superseded one; one with Edit, whose host passes back the next revision. |
+| 3 | Examples | The reference does not say that `odd-tool-call` shows the approval bound to a call (its `approval` property), or what the host does with `toolCallId`. | Say it, and show it in the tool call's example (`odd-tool-call` 2). |
+
+Not changed by this review: the events and their detail, the statuses, `capabilities`, `announce`, and the duplicate guard per revision. For the design pass: the Figma specimen shows the change's before and after on their own lines, labelled, in a shaded box, and a one-line reason field.
+
+## `odd-checkpoint` (2026-11-05)
+
+**What a user sees today.** "Before the rewrite", its description, "Restoring replaces:" with Document text and Open proposals, the status "Available", and Restore…. Restore… asks "Restore to “Before the rewrite”? The items listed above are replaced. Work after this point is not kept unless the application saves it." with Restore this checkpoint and Keep current state. Since C1, the example's host confirms, and the element shows "Restored. Restored the document to 09:30."
+
+**What it is for.** A restore point: what restoring replaces, an explicit confirmation, and the outcome the application confirms; it shows success only when the record says `restored`.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Decide | "Available" is printed under every checkpoint that can be restored, as "Proposed" was in the change review: it says nothing that Restore… does not. | No status text for `available`; `strings.available` stays, unused, as `strings.proposed` did. |
+| 2 | Examples | Both examples spread a shared constant, so the analyzer records no values for them: the metadata, the agent kits, and Theme Studio have none for this element. | Literal values in both examples. |
+| 3 | Examples | `restore-failed` and `unavailable` have no example, and `createdAt` ("Created {time}") is in none. | A failed restore (its error, and Restore… again) and an unavailable checkpoint; `createdAt` in one. |
+
+Not changed by this review: the confirmation step, the events, the statuses, and focus moving to the confirmation and back.
+
+## `odd-question` (2026-11-05)
+
+**What a user sees today.** "Which audience is this summary for?", the choices Executives, Engineers ("Keeps technical detail."), and Other, an unlabelled text field, and Answer and Skip. Since C1, the example's host records the answer or the skip, and the element shows "Answered." or "Skipped."
+
+**What it is for.** A question an assistant asks before it continues: one choice, several, a short form, or free text, with an answer of the user's own when the host allows it. Each answer is bound to the question's revision.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Fix | With `allowCustom`, the text field shows below Other whether Other is chosen or not, and its label ("Your answer") is only for screen readers. A user who picks Engineers and types in the field sends `{ choice: 'eng' }`: what they typed is dropped. | Typing in the field chooses Other, and the field has a visible label; or the field shows only while Other is chosen. |
+| 2 | Examples | `multi-choice` and `text` have no example, nor do `expired` and `failed`, which a host sets. | Examples for both kinds and for a failed answer (its message, and Answer again). |
+
+Not changed by this review: the kinds, the answer shapes (`{ choice }`, `{ choices }`, `{ custom }`, `{ text }`, `{ fields }`), the events, and the revision binding. For the design pass: the Figma specimen's primary action reads "Submit".
+
+## `odd-task-plan` (2026-11-05)
+
+**What a user sees today.** "Prepare the release", a progress bar with "1 of 4 steps done", then each step with a symbol, its title, and its status below it: Collect changes, Done; Run checks, In progress, "Running in parallel" with Unit tests (Done) and Browser tests (In progress); Choose a version, Needs input, "Needs your input: Major or minor?" and Respond; Publish, "Blocked: Waiting for the version." Since C1, Respond shows the step's question, and the answer completes the step.
+
+**What it is for.** An agent's plan as it runs: ordered steps, work running in parallel within a step, what blocks a step, and what the agent needs from the user.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Decide | A step that needs input says so twice: its status "Needs input", then "Needs your input: Major or minor?" with Respond. | The request with Respond only; the status text stays for a step without an `inputRequest`. |
+| 2 | Examples | `failed` and `skipped` are in no example. | A plan with a failed step and the steps after it. |
+
+Not changed by this review: the record, the event, progress (done and skipped steps of all steps), and the status read after each title. For the design pass: the Figma specimen has no progress bar ("1 of 2 complete"), and each step's status sits at the end of its row.
+
+## `odd-tool-call` (2026-11-05)
+
+**What a user sees today.** "Web search", the status "Finished", and "Find current browser support data." The arguments and the result are in a native disclosure, but its summary shows no marker, so nothing says they are there; activating the summary opens Arguments and Result, each as formatted JSON.
+
+**What it is for.** One call an agent makes to a tool: its name and purpose, its arguments as they stream and once complete, where it stands (preparing, ready, awaiting approval, running, finished, failed, denied, cancelled), its result or error, and Retry when the host supports it. Complete arguments never read as success.
+
+| # | Kind | Finding | Proposal |
+| --- | --- | --- | --- |
+| 1 | Fix | The summary has no disclosure marker (`display: flex` on `summary` removes it), so the arguments and the result are hidden with nothing showing they exist. The Figma specimen has one. | A visible marker that turns with the open state. |
+| 2 | Examples | `awaiting-approval` with its bound `approval` (an `odd-action-approval` inside the call) has no example, though it is where approval and tool call meet; nor do `input-streaming`, `executing`, `denied`, and `cancelled`. | An example of a call awaiting approval whose host moves it to running and finished on Approve, or to denied on Reject; and the other states. |
+
+Not changed by this review: the statuses, the event, `renderOutput`, and results rendered as text unless a host renders them.

@@ -5526,3 +5526,11 @@ Agent 2's OK of the two commits above (lanes, 2026-11-05 00:20) asked for two fi
 | Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-r9b.json` (8 probes in Chromium: the field never takes the transcript; no pending state; no answer; no reveal; an empty source list; an added item never appearing, never ready; Remove ignored) | 8 of 8 killed |
 | End to end | `node ../oddkin-lanes/tools/e2e-when-free.mjs` on `e2e/docs.spec.ts:448` (a live example runs its setup script) and `:473` (every catalog card shows a live example) in three engines, then `e2e/workbench-catalog.spec.ts` in Chromium | 6 passed; 158 passed (every component previews in light and dark, loading only its own module graph, and its snippets run) |
 | Repository | `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Exit 0 each; node 1,694 passed and 2 skipped (136 files) |
+
+## 2026-11-05 — P1.8: the AI components page checked current, and five contract reviews (round 11, Agent 3)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The Figma page | Figma MCP `use_figma` (session `d9d4373c-4193-4377-b937-347173338b8f`), read-only: `exportComponents(figma, ['0:1'], '2026-11-05')` from `design/figma/components.export.js`, returning its length and FNV-1a checksum; `.tmp/figma-ai-local.mjs` prints the committed page the same way | Both 279,358 characters with checksum 1184090116: the 48 families of "04 · AI components" are unchanged since the export of 2026-10-22, so `design/figma/components.json` is current and stays as it is. The file still has the same five pages |
+| What a user sees | `.tmp/ai-ref-shots.mjs` on the docs dev server in Chromium at 1280 px (screens not kept) | Each reference page's interactive example, as `docs/research/ai-contract-review.md` describes it for the five elements |
+| The Figma specimens | Figma MCP `get_screenshot` of the light specimens 124:249, 124:325, 124:303, 124:285, and 124:231 | The approval's change shows before and after on their own lines; the question's action reads "Submit"; the task plan has no progress bar and puts each status at the end of its row; the tool call's summary has a disclosure marker |
