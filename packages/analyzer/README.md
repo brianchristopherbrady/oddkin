@@ -50,6 +50,10 @@ Exit codes: 0 success; 1 a stale, missing, or over-budget kit, or a stale `AGENT
 
 A library not built with Oddkin gets a kit from its standard Custom Elements Manifest alone (the package's `customElements` field). Each component reference lists the API the manifest states and the registration entry: the package export that loads the module with the tag's `custom-element-definition`. The guide says that property-only values, event intents, guidance, examples, and verification are unknown. When the package also exports the `oddkin.metadata.json` that `oddkin-analyze --manifest` writes, each reference lists its examples too.
 
+## What runs your code
+
+Analysis, the composition catalog, change impact, and project kits read a library's sources, examples, manifests, and builds as text and JSON; none of them imports or executes them. One command does: `oddkin-kit package` imports the package's built `./composition` entry, when it has one, to check the kit's composition example with the package's own validator. Like the package's build, run it only on packages you trust. `oddkin-analyze` (for page dates, unless `--no-history`) and `oddkin-impact snapshot --source` run `git` in the directory they are given. Details: [metadata-and-analyzer.md](../../docs/architecture/metadata-and-analyzer.md) §7.
+
 ## Stability
 
 The analyzer shares the other Oddkin packages' version, but only its outputs follow candidate v1 contracts: Custom Elements Manifest 2.1.0, `oddkin-metadata.v1`, `diagnostic.v1`, and the agent kits' `agent-kit.v1` and `project-context.v1`. Its own contracts are **not frozen by 1.0.0** ([ADR 0047](../../docs/architecture/decisions/0047-m8-checkpoint-candidate-v1-contracts.md)): the impact snapshot and report (`comparison-snapshot.v1`, `impact-report.v1`) and the `product.v1` input `oddkin-impact` reads. Until they are frozen they can change in a minor release; only frozen contracts wait for a major ([release-process.md](../../docs/release-process.md) §1).

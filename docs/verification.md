@@ -5367,3 +5367,10 @@ For Theme Studio's Worker (Agent 2, lanes, 2026-11-03 18:08): every literal for 
 | Node tests | `npx vitest run --project node` | 1,674 passed and 2 skipped (134 files) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs`, `node scripts/verify-packs.mjs` | Exit 0 each |
 | Not run here | `node scripts/impact.mjs compare --base-ref <ref>` (builds a second revision in a temporary worktree) | CI's impact summary runs it on the next push |
+
+## 2026-11-05 — P1.6, §5c: what runs project code (round 11, Agent 2, row 8)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The claims against the code | `git grep -n "import("` in `packages/analyzer/src` and `packages/workbench/src/node` | The analyzer's only import of project code is `kit/package-kit.ts` (the package's `./composition` entry); Workbench's Node side imports configuration, content, and example modules through `loadDefault` (`node/config.ts`, `node/inputs.ts`) and the project's `@oddkin/tokens/node` for theme files (`node/inputs.ts`); project kits read their inputs with `readFileSync` (`kit/context.ts`). The analyzer's fixture libraries throw on import (`tests/fixtures/analyzer-*`), which `analyzer.test.ts`, `composite.test.ts`, and the others analyze |
+| Docs | `npx prettier --check` on the changed files; `node scripts/check-readme-status.mjs` | Formatted; README status OK (9 READMEs) |
