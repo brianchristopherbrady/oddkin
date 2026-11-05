@@ -114,6 +114,8 @@ describe('@oddkin/ai examples', () => {
     // Elements each fixture renders besides its own, read from literal markup.
     const uses: Record<string, string[]> = {
       'odd-change-review/default': ['component:odd-textarea'],
+      'odd-citation/default': ['component:odd-sources'],
+      'odd-voice-input/default': ['component:odd-textarea'],
     };
     const expected = Object.fromEntries(
       Object.entries(files).flatMap(([path, set]) =>

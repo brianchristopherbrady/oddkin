@@ -647,6 +647,102 @@ describe('selection, review, and controls', () => {
     }
   });
 
+  it('C1 examples play the host: a voice transcript, an assist answer, a source, context items', async () => {
+    await import('../src/voice-input/voice-input.define.js');
+    await import('../src/inline-assist/inline-assist.define.js');
+    await import('../src/citation/citation.define.js');
+    await import('../src/sources/sources.define.js');
+    await import('../src/context-picker/context-picker.define.js');
+    await import('@oddkin/components/define/textarea');
+    const until = async (check: () => boolean, what: string) => {
+      for (let i = 0; i < 200 && !check(); i++) await new Promise((r) => setTimeout(r, 25));
+      expect(check(), what).toBe(true);
+    };
+    const button = (el: Element, label: string) =>
+      $$(el, 'button').find((b) => text(b) === label && !b.hidden)!;
+
+    // Voice input: start, hear the script, stop, use it; the host's field takes the text.
+    const voiceSet = (await import('../src/voice-input/voice-input.examples.js')).default;
+    const voice = await mountExample(voiceSet, 'default', container);
+    try {
+      const el = voice.element;
+      const field = voice.root.querySelector('odd-textarea')!;
+      const transcript = $(el, 'odd-transcript') as HTMLElement & {
+        segments: readonly { text: string }[];
+      };
+      $(el, 'button.record')!.click();
+      await until(
+        () => transcript.segments.some((s) => s.text.includes('release notes')),
+        'the scripted speech',
+      );
+      $(el, 'button.record')!.click();
+      await until(() => Boolean(button(el, 'Use transcript')), 'Use transcript');
+      button(el, 'Use transcript').click();
+      await settle(el);
+      expect(field.value).toBe('Summarize the release notes.');
+    } finally {
+      voice.dispose();
+    }
+
+    // Inline assist: Explain is pending, then the host's answer shows.
+    const assistSet = (await import('../src/inline-assist/inline-assist.examples.js')).default;
+    const assist = await mountExample(assistSet, 'default', container);
+    try {
+      const el = assist.element;
+      $(el, '[data-action="explain"]')!.click();
+      await settle(el);
+      expect(el.status).toBe('pending');
+      await until(() => el.status === 'complete', 'the answer');
+      await settle(el);
+      expect(el.shadowRoot!.textContent).toContain('turns sources into the files that ship');
+    } finally {
+      assist.dispose();
+    }
+
+    // Citation: Show in sources reveals the source in the host's list.
+    const citationSet = (await import('../src/citation/citation.examples.js')).default;
+    const citation = await mountExample(citationSet, 'default', container);
+    try {
+      const el = citation.element;
+      const list = citation.root.querySelector('odd-sources')!;
+      const revealed: string[] = [];
+      const reveal = list.reveal.bind(list);
+      list.reveal = (id: string) => {
+        revealed.push(id);
+        return reveal(id);
+      };
+      $(el, '[part="trigger"]')!.click();
+      await settle(el);
+      button(el, 'Show in sources').click();
+      await settle(el);
+      expect(revealed).toEqual(['wcag']);
+      expect(list.sources).toHaveLength(1);
+    } finally {
+      citation.dispose();
+    }
+
+    // Context picker: a link is added as processing, then ready; Remove takes an item away.
+    const pickerSet = (await import('../src/context-picker/context-picker.examples.js')).default;
+    const picker = await mountExample(pickerSet, 'default', container);
+    try {
+      const el = picker.element;
+      const input = $(el, 'input[type="url"]') as HTMLInputElement;
+      input.value = 'https://example.com/paper';
+      $(el, 'form.url')!.dispatchEvent(new Event('submit', { cancelable: true }));
+      await settle(el);
+      expect(el.items.at(-1)).toMatchObject({
+        label: 'https://example.com/paper',
+        status: 'processing',
+      });
+      await until(() => el.items.at(-1)?.status === 'ready', 'ready');
+      $(el, '[aria-label="Remove scan.tiff"]')!.click();
+      await settle(el);
+      expect(el.items.map((item) => item.id)).not.toContain('f2');
+    } finally {
+      picker.dispose();
+    }
+  });
+
   it('odd-inline-assist: toolbar keyboard, stale selections, and request detail with revision', async () => {
     const el = await mount(
       'odd-inline-assist',
