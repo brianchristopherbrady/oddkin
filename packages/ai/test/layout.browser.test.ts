@@ -220,7 +220,8 @@ describe('odd-conversation', () => {
       '<div slot="status">Connected</div><textarea slot="composer"></textarea>',
     );
     expectColumn($(el, '.base'), space('xs'));
-    expectColumn($(el, '.feed'), space('lg'));
+    // space.md between the messages, as the Figma specimen spaces them.
+    expectColumn($(el, '.feed'), space('md'));
   });
 
   it('centres the history row, which wraps', async () => {
@@ -433,9 +434,14 @@ describe('odd-artifact', () => {
       },
     );
     expectColumn($(el, '.base'), space('xs'));
+    // As the Figma specimen: the title and revision space.sm apart; the actions, then the view
+    // choice at the end of the next row.
     const header = $(el, '.header');
-    expectRow(header, space('xs'));
+    expectRow(header, space('sm'));
     await expectWraps(header, '12rem');
+    expect(getComputedStyle($(el, '.toolbar')).justifyContent).toBe('space-between');
+    expectRow($(el, '.toolbar > .actions'), space('xs'));
+    expectRow($(el, '.view'), space('sm'));
   });
 });
 

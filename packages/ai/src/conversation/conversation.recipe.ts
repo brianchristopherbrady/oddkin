@@ -9,7 +9,7 @@ export const conversationRecipe = defineLayoutRecipe({
   name: 'conversation',
   regions: {
     base: stack({ gap: token('space.xs') }),
-    feed: stack({ gap: token('space.lg') }),
+    feed: stack({ gap: token('space.md') }),
     history: row({ gap: token('space.xs'), align: 'stretch', wrap: true, justify: 'center' }),
     empty: row({ gap: token('space.xs'), align: 'stretch', wrap: true, justify: 'center' }),
   },

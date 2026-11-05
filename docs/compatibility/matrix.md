@@ -297,7 +297,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/activity/activity.recipe.styles.js (activityRecipeStyles)` | yes | 11 |
 | `packages/ai/dist/activity/activity.styles.js (activityStyles)` | yes | 28 |
 | `packages/ai/dist/ai-label/ai-label.styles.js (aiLabelStyles)` | yes | 19 |
-| `packages/ai/dist/artifact/artifact.recipe.styles.js (artifactRecipeStyles)` | yes | 12 |
+| `packages/ai/dist/artifact/artifact.recipe.styles.js (artifactRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/artifact/artifact.styles.js (artifactStyles)` | yes | 36 |
 | `packages/ai/dist/change-review/change-review.recipe.styles.js (changeReviewRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/change-review/change-review.styles.js (changeReviewStyles)` | yes | 36 |

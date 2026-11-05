@@ -25,6 +25,10 @@ deliberate(
     /^odd-citation\/Resolved · expanded\/(light|dark)\s+(Citation marker · 1 paddingLeft|1 textStyle) /,
     'In running text the marker stays a superscript at three quarters of the text size, with a little inline padding; the specimen draws it 32 px square in the preview card.',
   ],
+  [
+    /^odd-artifact\/Preview · first revision\/(light|dark)\s+Artifact preview itemSpacing /,
+    'The preview flows the rendered Markdown, whose blocks keep their own margins.',
+  ],
 );
 
 const MODES = ['light', 'dark'] as const;
@@ -642,5 +646,161 @@ describe('Figma parity: odd-context-picker', () => {
       expect(getComputedStyle(shadow(el, '.row')).columnGap).toBe(
         getComputedStyle(probe).columnGap,
       );
+    });
+});
+
+describe('Figma parity: odd-conversation', () => {
+  for (const mode of MODES)
+    it(`Two-message feed (${mode})`, async () => {
+      await import('../src/conversation/conversation.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-conversation></odd-conversation>',
+      ) as HTMLElementTagNameMap['odd-conversation'];
+      el.state = {
+        conversationId: 'c1',
+        revision: 1,
+        tools: {},
+        approvals: {},
+        artifacts: {},
+        attempts: {},
+        branches: {},
+        capabilities: {},
+        history: 'complete',
+        hasMoreHistory: false,
+        feedback: {},
+        messages: [
+          {
+            id: 'm1',
+            role: 'user',
+            parts: [{ type: 'text', id: 't1', text: 'Summarize this document.' }],
+          },
+          {
+            id: 'm2',
+            role: 'assistant',
+            parentId: 'm1',
+            parts: [{ type: 'text', id: 't2', text: 'Here is the document summary.' }],
+          },
+        ],
+      };
+      await settle(el);
+      const [user, assistant] = el.shadowRoot!.querySelectorAll('odd-message');
+      await settle(user!);
+      await settle(assistant!);
+      const copy = shadow(assistant!, '[part="footer"] > .text-button');
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="feed"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['You'], el: shadow(user!, '.role'), kind: 'text' },
+        {
+          layer: ['Summarize this document.'],
+          el: shadow(user!, '[part="content"]'),
+          kind: 'text',
+        },
+        { layer: ['Assistant'], el: shadow(assistant!, '.role'), kind: 'text' },
+        {
+          layer: ['Here is the document summary.'],
+          el: shadow(assistant!, '[part="content"]'),
+          kind: 'text',
+        },
+        {
+          layer: ['Actions'],
+          el: shadow(assistant!, '[part="footer"]'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        { layer: ['Actions', 'Copy'], el: copy, kind: 'frame' },
+        { layer: ['Actions', 'Copy', 'Copy'], el: copy, kind: 'text' },
+      ];
+      expectNone(compare(`odd-conversation/Two-message feed/${mode}`, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-prompt-input', () => {
+  for (const mode of MODES)
+    it(`Draft ready (${mode})`, async () => {
+      await import('../src/prompt-input/prompt-input.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-prompt-input></odd-prompt-input>',
+      ) as HTMLElementTagNameMap['odd-prompt-input'];
+      el.capabilities = { send: { available: true }, attachments: { available: true } };
+      await settle(el);
+      const input = shadow(el, '[part="input"]') as HTMLTextAreaElement;
+      input.value = 'Summarize this document.';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await settle(el);
+      restyle(input);
+      const attach = shadow(el, '[part="toolbar"] > .text-button');
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="form"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Input'], el: input, kind: 'frame' },
+        { layer: ['Input', 'Summarize this document.'], el: input, kind: 'text' },
+        {
+          layer: ['Actions'],
+          el: shadow(el, '[part="toolbar"]'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+        { layer: ['Actions', 'Attach'], el: attach, kind: 'frame' },
+        { layer: ['Actions', 'Attach', 'Attach'], el: attach, kind: 'text' },
+      ];
+      expectNone(compare(`odd-prompt-input/Draft ready/${mode}`, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-artifact', () => {
+  for (const mode of MODES)
+    it(`Preview, first revision (${mode})`, async () => {
+      await import('../src/artifact/artifact.define.js');
+      inMode(mode);
+      const el = mount('<odd-artifact></odd-artifact>') as HTMLElementTagNameMap['odd-artifact'];
+      el.artifact = {
+        artifactId: 'a1',
+        title: 'Example artifact',
+        kind: 'markdown',
+        currentRevisionId: 'r1',
+        revisions: [{ revisionId: 'r1', number: 1, content: 'Example document content.' }],
+      };
+      await settle(el);
+      const button = (selector: string) => shadow(el, selector);
+      const [copy, download] = el.shadowRoot!.querySelectorAll<HTMLElement>(
+        '.actions:not([role]) > .text-button',
+      );
+      const heading = 'Artifact title and revision';
+      const view = ['Actions', 'View selection'];
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '.base'), kind: 'frame', gap: 'row-gap' },
+        { layer: [heading, 'Example artifact'], el: shadow(el, '.title'), kind: 'text' },
+        {
+          layer: [heading, 'Revision 1'],
+          el: shadow(el, '[part="header"] > .muted'),
+          kind: 'text',
+        },
+        { layer: ['Actions', 'Copy'], el: copy!, kind: 'frame' },
+        { layer: ['Actions', 'Copy', 'Copy'], el: copy!, kind: 'text' },
+        { layer: ['Actions', 'Download'], el: download!, kind: 'frame' },
+        { layer: ['Actions', 'Download', 'Download'], el: download!, kind: 'text' },
+        { layer: view, el: shadow(el, '.actions[role="group"]'), kind: 'frame', gap: 'column-gap' },
+        { layer: [...view, 'Preview'], el: button('[data-view="preview"]'), kind: 'frame' },
+        {
+          layer: [...view, 'Preview', 'Preview'],
+          el: button('[data-view="preview"]'),
+          kind: 'text',
+        },
+        { layer: [...view, 'Source'], el: button('[data-view="source"]'), kind: 'frame' },
+        { layer: [...view, 'Source', 'Source'], el: button('[data-view="source"]'), kind: 'text' },
+        {
+          layer: ['Artifact preview'],
+          el: shadow(el, '[part="preview"]'),
+          kind: 'frame',
+          gap: 'row-gap',
+        },
+        {
+          layer: ['Artifact preview', 'Example document content.'],
+          el: shadow(el, '[part="preview"]'),
+          kind: 'text',
+        },
+      ];
+      expectNone(compare(`odd-artifact/Preview · first revision/${mode}`, {}, targets));
     });
 });

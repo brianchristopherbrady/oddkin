@@ -27,7 +27,16 @@ export const artifactTemplate = (host: OddkinArtifact) => {
       <span class="muted" ?hidden=${a.revisions.length > 1}
         >${host._revisionLabel(revision, a.revisions.length)}</span
       >
-      <div class="actions" role="group" aria-label=${t.view} ?hidden=${!previewable}>
+    </div>
+    <div class="toolbar">
+      <div class="actions">
+        <button class="text-button" type="button" @click=${host._copy}>${t.copy}</button>
+        <button class="text-button" type="button" data-format="source" @click=${host._export}>
+          ${t.download}
+        </button>
+        ${host.exports.map((e) => html`<button class="text-button" type="button" data-format=${e.format} @click=${host._export}>${e.label}</button>`)}
+      </div>
+      <div class="actions view" role="group" aria-label=${t.view} ?hidden=${!previewable}>
         <button
           class="text-button"
           type="button"
@@ -46,13 +55,6 @@ export const artifactTemplate = (host: OddkinArtifact) => {
         >
           ${t.source}
         </button>
-      </div>
-      <div class="actions">
-        <button class="text-button" type="button" @click=${host._copy}>${t.copy}</button>
-        <button class="text-button" type="button" data-format="source" @click=${host._export}>
-          ${t.download}
-        </button>
-        ${host.exports.map((e) => html`<button class="text-button" type="button" data-format=${e.format} @click=${host._export}>${e.label}</button>`)}
       </div>
     </div>
     <p class="muted" ?hidden=${previewable}>${t.noPreview}</p>

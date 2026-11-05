@@ -12,7 +12,6 @@ export const artifactStyles = css`
     background: ${token('color.surface.default')};
   }
   .title {
-    flex: 1 1 12rem;
     margin: 0;
     font-weight: ${token('font.weight.semibold')};
   }
@@ -33,9 +32,15 @@ export const artifactStyles = css`
     font: inherit;
     font-size: ${token('font.size.sm')};
   }
+  .view {
+    gap: ${token('space.sm')};
+  }
   .preview {
     min-inline-size: 0;
+    padding: ${token('space.sm')};
     overflow-x: auto;
+    border-radius: ${token('radius.sm')};
+    background: ${token('color.surface.sunken')};
   }
   .preview > :first-child {
     margin-block-start: 0;

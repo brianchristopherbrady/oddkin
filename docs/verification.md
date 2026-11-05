@@ -5751,3 +5751,18 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | Metadata | `npm run verify:metadata` | Exit 0 |
 | Size | `node scripts/check-size.mjs` | `ai-chat` 51,457 B of 51,968 (51,423 before; the budget was 51,456, raised on Agent 1's call of 14:46 for the rest of the pass); `ai:styles` 5,108 of 5,376 (5,120); `ai-response` 21,264 of 21,504 (21,188: the citation) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node packages/ai/test` (94 passed), `npm run compat` | Exit 0 each |
+
+## 2026-11-05 — P1.8 item 8: the AI design pass, fifth batch (round 11, Agent 3)
+
+`odd-conversation`, `odd-prompt-input`, and `odd-artifact` against their Figma specimens, light and dark. On `fba265a`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `packages/ai/test/figma-parity.browser.test.ts` in Chromium, before the changes | `odd-conversation`: messages 24 px apart (Figma `space.md`, 16). `odd-artifact`: the view choice 8 px apart (`space.sm`, 12), the preview unframed (the sunken surface, `radius.sm`, `space.sm` padding); its title, revision, view choice, and actions in one row, where the specimen has the title and revision, then Copy and Download with the view choice at the end. `odd-prompt-input`, with a draft: no difference |
+| After | the same file, in Chromium, Firefox, and WebKit | 36 of 36 in each engine (eighteen elements, light and dark); one more accepted difference: the artifact preview's Markdown keeps its own block margins |
+| Visual | `.tmp/c3-ref-read.mjs` on the docs dev server (not kept) | The artifact's two rows and framed preview; the conversation's spacing |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-d5.json` (4 probes: the view choice as tight as the actions; the preview unframed; the view choice not at the row's end; messages `space.lg` apart again) | 4 of 4 killed |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI parity, elements, layout, examples, reflow, and contract tests | 266 passed and 4 skipped in each of Chromium, Firefox, and WebKit |
+| Metadata | `npm run verify:metadata` | Exit 0 |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,569 B of 51,968 (51,457 before); `ai:styles` 5,144 of 5,376 (5,108) |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node packages/ai/test` (94 passed), `npm run compat` | Exit 0 each |
