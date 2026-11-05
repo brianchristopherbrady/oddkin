@@ -39,12 +39,10 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
     <p id="label" class="label">${c.label}</p>
     <p class="muted" ?hidden=${!created}>${created ?? ''}</p>
     <p class="description">${c.description}</p>
-    <div ?hidden=${!c.restores.length}>
-      <p class="muted">${t.restores}</p>
-      <ul part="restores" class="restores">
-        ${c.restores.map((item) => html`<li>${item}</li>`)}
-      </ul>
-    </div>
+    <p class="muted" ?hidden=${!c.restores.length}>${t.restores}</p>
+    <ul part="restores" class="restores" ?hidden=${!c.restores.length}>
+      ${c.restores.map((item) => html`<li>${item}</li>`)}
+    </ul>
     <p class="state" data-tone=${tone} ?hidden=${!status}>${status}</p>
     <div part="actions" class="actions" ?hidden=${confirming || pending}>
       <odd-button

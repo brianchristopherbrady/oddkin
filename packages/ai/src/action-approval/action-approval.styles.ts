@@ -2,7 +2,10 @@ import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 import { actionApprovalRecipeStyles } from './action-approval.recipe.styles.js';
 
-/** The arrangement is the layout recipe in `action-approval.recipe.ts`. */
+/**
+ * The arrangement is the layout recipe in `action-approval.recipe.ts`. The visible "Before:" and
+ * "After:" say which is which, so neither change line is struck through or underlined.
+ */
 export const actionApprovalStyles = css`
   ${actionApprovalRecipeStyles}
   .base {
@@ -24,7 +27,14 @@ export const actionApprovalStyles = css`
   .title {
     font-weight: ${token('font.weight.semibold')};
   }
+  .target {
+    font-size: ${token('font.size.sm')};
+    color: ${token('color.text.secondary')};
+  }
   .changes {
+    padding: ${token('space.xs')};
+    border-radius: ${token('radius.sm')};
+    background: ${token('color.surface.sunken')};
     font-size: ${token('font.size.sm')};
   }
   .change-label {
@@ -32,6 +42,7 @@ export const actionApprovalStyles = css`
   }
   del {
     color: ${token('color.danger.foreground')};
+    text-decoration: none;
   }
   ins {
     color: ${token('color.success.foreground')};
@@ -39,6 +50,7 @@ export const actionApprovalStyles = css`
   }
   .state {
     font-size: ${token('font.size.sm')};
+    color: ${token('color.text.secondary')};
   }
   .state[data-tone='success'] {
     color: ${token('color.success.foreground')};
@@ -50,7 +62,7 @@ export const actionApprovalStyles = css`
     flex: 1 1 100%;
   }
   textarea {
-    min-block-size: ${token('target.min')};
+    min-block-size: ${token('control.height.md')};
     padding: ${token('space.2xs')} ${token('space.xs')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('control.radius')};

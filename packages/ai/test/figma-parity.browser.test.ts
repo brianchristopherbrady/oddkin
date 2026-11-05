@@ -52,6 +52,13 @@ const restyle = (el: HTMLElement) => {
   void getComputedStyle(el).color;
   el.style.removeProperty('--odd-restyle');
 };
+/** A space token's size in pixels, from a probe placed after `el`. */
+const space = (el: Element, name: string) => {
+  const probe = document.createElement('div');
+  probe.style.rowGap = `var(--odd-space-${name})`;
+  el.after(probe);
+  return parseFloat(getComputedStyle(probe).rowGap);
+};
 
 describe('Figma parity: odd-activity', () => {
   for (const mode of MODES)
@@ -886,5 +893,208 @@ describe('Figma parity: odd-task-plan', () => {
         );
       }
       expectNone(compare(`odd-task-plan/One done · one active/${mode}`, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-question', () => {
+  for (const mode of MODES)
+    it(`Choice, requested (${mode})`, async () => {
+      await import('../src/question/question.define.js');
+      inMode(mode);
+      const el = mount('<odd-question></odd-question>') as HTMLElementTagNameMap['odd-question'];
+      el.question = {
+        questionId: 'q1',
+        revision: 1,
+        prompt: 'Which format would you prefer?',
+        kind: 'choice',
+        options: [
+          { id: 'short', label: 'Short summary' },
+          { id: 'detailed', label: 'Detailed summary' },
+        ],
+        status: 'requested',
+      };
+      await settle(el);
+      const [first, second] = el.shadowRoot!.querySelectorAll<HTMLElement>('.option');
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="form"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Which format would you prefer?'], el: shadow(el, '.prompt'), kind: 'text' },
+        { layer: ['○  Short summary'], el: first!, kind: 'text' },
+        { layer: ['○  Detailed summary'], el: second!, kind: 'text' },
+        {
+          layer: ['Actions'],
+          el: shadow(el, '[part="actions"]'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+      ];
+      expectNone(compare(`odd-question/Choice · requested/${mode}`, {}, targets));
+      // As the specimen: the prompt and each option space.xs apart.
+      const top = (node: Element) => node.getBoundingClientRect().top;
+      const bottom = (node: Element) => node.getBoundingClientRect().bottom;
+      expect(Math.round(top(second!) - bottom(first!))).toBe(space(el, 'xs'));
+    });
+});
+
+describe('Figma parity: odd-checkpoint', () => {
+  for (const mode of MODES)
+    it(`Available (${mode})`, async () => {
+      await import('../src/checkpoint/checkpoint.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-checkpoint></odd-checkpoint>',
+      ) as HTMLElementTagNameMap['odd-checkpoint'];
+      el.checkpoint = {
+        checkpointId: 'c1',
+        label: 'Before revision',
+        description: 'Saved document state.',
+        restores: ['Document content'],
+        status: 'available',
+      };
+      el.capabilities = { restoreCheckpoint: { available: true } };
+      await settle(el);
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Before revision'], el: shadow(el, '.label'), kind: 'text' },
+        { layer: ['Saved document state.'], el: shadow(el, '.description'), kind: 'text' },
+        {
+          layer: ['Restoring replaces:'],
+          el: shadow(el, '[part="restores"]').previousElementSibling!,
+          kind: 'text',
+        },
+        { layer: ['• Document content'], el: shadow(el, '[part="restores"] li'), kind: 'text' },
+        {
+          layer: ['Actions'],
+          el: shadow(el, '[part="actions"]'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+      ];
+      expectNone(compare(`odd-checkpoint/Available/${mode}`, {}, targets));
+      // As the specimen: the list starts at the text's edge, space.xs under its lead-in.
+      const list = shadow(el, '[part="restores"]');
+      const lead = list.previousElementSibling!.getBoundingClientRect();
+      const item = list.querySelector('li')!.getBoundingClientRect();
+      expect(Math.round(item.left)).toBe(Math.round(lead.left));
+      expect(Math.round(item.top - lead.bottom)).toBe(space(el, 'xs'));
+    });
+});
+
+describe('Figma parity: odd-change-review', () => {
+  for (const mode of MODES)
+    it(`Proposed, split view (${mode})`, async () => {
+      await import('../src/change-review/change-review.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-change-review view="split"></odd-change-review>',
+      ) as HTMLElementTagNameMap['odd-change-review'];
+      el.proposals = [
+        {
+          proposalId: 'p1',
+          baseRevision: 'v1',
+          range: { start: 0, end: 13 },
+          original: 'Original text',
+          replacement: 'Revised text',
+          status: 'proposed',
+        },
+      ];
+      await settle(el);
+      const [before, after] = el.shadowRoot!.querySelectorAll<HTMLElement>('.split > .side');
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '.body'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Actions'], el: shadow(el, '.split'), kind: 'frame', gap: 'column-gap' },
+        { layer: ['Actions', 'Before'], el: before!, kind: 'frame', gap: 'row-gap' },
+        { layer: ['Actions', 'Before', 'Before'], el: before!.querySelector('p')!, kind: 'text' },
+        {
+          layer: ['Actions', 'Before', 'Original text'],
+          el: before!.querySelector('del')!,
+          kind: 'text',
+        },
+        { layer: ['Actions', 'After'], el: after!, kind: 'frame', gap: 'row-gap' },
+        { layer: ['Actions', 'After', 'After'], el: after!.querySelector('p')!, kind: 'text' },
+        {
+          layer: ['Actions', 'After', 'Revised text'],
+          el: after!.querySelector('ins')!,
+          kind: 'text',
+        },
+        {
+          layer: ['Actions [2]'],
+          el: shadow(el, '[part="actions"]'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+      ];
+      expectNone(compare(`odd-change-review/Proposed · split view/${mode}`, {}, targets));
+      // As the specimen, the split view's sides are the cards: the proposal around them is not.
+      const proposal = getComputedStyle(shadow(el, '[part="proposal"]'));
+      expect([proposal.borderTopStyle, proposal.paddingTop]).toEqual(['none', '0px']);
+      expect(proposal.backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    });
+});
+
+describe('Figma parity: odd-action-approval', () => {
+  for (const mode of MODES)
+    it(`Requested (${mode})`, async () => {
+      await import('../src/action-approval/action-approval.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-action-approval></odd-action-approval>',
+      ) as HTMLElementTagNameMap['odd-action-approval'];
+      el.approval = {
+        approvalId: 'ap1',
+        revision: 1,
+        title: 'Update example document',
+        summary: 'Review the proposed change.',
+        target: 'example.txt',
+        changes: [{ label: '', before: 'Original text', after: 'Revised text' }],
+        risk: 'low',
+        status: 'requested',
+      };
+      el.capabilities = { respondToApproval: { available: true } };
+      await settle(el);
+      const field = shadow(el, 'textarea');
+      restyle(field);
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Update example document'], el: shadow(el, '.title'), kind: 'text' },
+        { layer: ['Review the proposed change.'], el: shadow(el, '.summary'), kind: 'text' },
+        { layer: ['Affects: example.txt'], el: shadow(el, '.target'), kind: 'text' },
+        { layer: ['Risk: low'], el: shadow(el, '.target + .muted'), kind: 'text' },
+        {
+          layer: ['Proposed changes'],
+          el: shadow(el, '[part="changes"]'),
+          kind: 'frame',
+          gap: 'row-gap',
+        },
+        {
+          layer: ['Proposed changes', 'Before: Original text'],
+          el: shadow(el, 'del'),
+          kind: 'text',
+        },
+        { layer: ['Proposed changes', 'After: Revised text'], el: shadow(el, 'ins'), kind: 'text' },
+        { layer: ['Waiting for your decision'], el: shadow(el, '.state'), kind: 'text' },
+        { layer: ['Reason (optional)'], el: shadow(el, '.reason .muted'), kind: 'text' },
+        {
+          layer: ['Native field'],
+          el: field,
+          kind: 'frame',
+          fields: [['minHeight', 'min-block-size']],
+        },
+        { layer: ['Native field', 'Text'], el: field, kind: 'text' },
+        {
+          layer: ['Actions'],
+          el: shadow(el, '[part="actions"]'),
+          kind: 'frame',
+          gap: 'column-gap',
+        },
+      ];
+      expectNone(compare(`odd-action-approval/Requested/${mode}`, {}, targets));
+      // As the specimen: each change reads "Before: …" and "After: …", in sight, one under the
+      // other and space.xs apart.
+      const del = shadow(el, 'del');
+      const ins = shadow(el, 'ins');
+      expect(del.textContent!.replace(/\s+/g, ' ').trim()).toBe('Before: Original text');
+      expect(el.shadowRoot!.querySelector('.changes .visually-hidden')).toBeNull();
+      const gap = ins.getBoundingClientRect().top - del.getBoundingClientRect().bottom;
+      expect(Math.round(gap)).toBe(space(el, 'xs'));
     });
 });

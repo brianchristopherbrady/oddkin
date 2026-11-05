@@ -66,13 +66,13 @@ export const changeReviewTemplate = (host: OddkinChangeReview) => {
               ${
                 view === 'split'
                   ? html`<div part="diff" class="split">
-                      <div>
+                      <div class="side">
                         <p class="muted">${t.before}</p>
                         <div class=${code ? 'text code' : 'text'}>
                           ${segments(host, p, diff, 'before')}
                         </div>
                       </div>
-                      <div>
+                      <div class="side">
                         <p class="muted">${t.after}</p>
                         <div class=${code ? 'text code' : 'text'}>
                           ${segments(host, p, diff, 'after')}

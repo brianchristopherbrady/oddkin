@@ -475,7 +475,7 @@ const settle = async (el: Updating) => {
 };
 
 describe('odd-action-approval', () => {
-  it('stacks the card and its changes; each change is a row that wraps', async () => {
+  it("stacks the card, its changes, and each change's label and lines", async () => {
     const el = await example('action-approval', 'default', (props) => ({
       ...props,
       approval: {
@@ -486,15 +486,14 @@ describe('odd-action-approval', () => {
         ],
       },
     }));
+    // space.xs, as the Figma specimen spaces the card's parts and the before and after lines.
     expectColumn($(el, '.base'), space('xs'));
-    expectColumn($(el, '.changes'), space('2xs'));
-    const change = $(el, '.change');
-    expectRow(change, space('xs'), { align: 'stretch' });
+    expectColumn($(el, '.changes'), space('xs'));
+    expectColumn($(el, '.change'), space('xs'));
     expectColumn($(el, '.reason'), space('2xs'));
     // The shared action row wraps: the reason takes a line of its own above the buttons.
     const [reason, ...buttons] = items($(el, '.actions'));
     expect(buttons.every((box) => box.top >= reason!.bottom)).toBe(true);
-    await expectWraps(change, '7rem');
   });
 });
 
@@ -508,13 +507,16 @@ describe('odd-change-review', () => {
         view: 'split',
       };
     });
-    expectColumn($(el, '.list'), space('sm'));
-    expectColumn($(el, '.proposal .body'), space('xs'));
+    // As the Figma specimen: side by side, the two sides are cards space.xs apart, each label
+    // space.xs above its text, and a proposal's parts space.sm apart; proposals space.lg apart.
+    expectColumn($(el, '.list'), space('lg'));
+    expectColumn($(el, '.proposal .body'), space('sm'));
+    expectColumn($(el, '.side'), space('xs'));
     const split = $(el, '.split');
-    expectRow(split, space('sm'), { align: 'stretch' });
+    expectRow(split, space('xs'), { align: 'stretch' });
     container.style.inlineSize = '20rem';
     await frames();
-    expectColumn(split, space('sm'));
+    expectColumn(split, space('xs'));
   });
 });
 
@@ -601,7 +603,8 @@ describe('odd-question', () => {
   it('stacks the form and the options; an option is a centred row', async () => {
     const el = await example('question');
     expectColumn($(el, '.form'), space('xs'));
-    expectColumn($(el, '.options'), space('2xs'));
+    // space.xs between the options, as the Figma specimen spaces them.
+    expectColumn($(el, '.options'), space('xs'));
     expectRow($(el, '.option'), space('xs'));
   });
 

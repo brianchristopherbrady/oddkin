@@ -47,21 +47,13 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
             ${approval.changes.map(
               (change) =>
                 html`<div class="change">
-                  <span class="change-label">${change.label}</span>
+                  <span class="change-label" ?hidden=${!change.label}>${change.label}</span>
                   ${
                     change.before !== undefined
-                      ? html`<del
-                          ><span class="visually-hidden">${t.before}: </span>${change.before}</del
-                        >`
+                      ? html`<del>${t.before}: ${change.before}</del>`
                       : null
                   }
-                  ${
-                    change.after !== undefined
-                      ? html`<ins
-                          ><span class="visually-hidden">${t.after}: </span>${change.after}</ins
-                        >`
-                      : null
-                  }
+                  ${change.after !== undefined ? html`<ins>${t.after}: ${change.after}</ins>` : null}
                 </div>`,
             )}
           </div>`

@@ -90,8 +90,9 @@ export const BUDGETS = {
   // the artifact's revision label.
   // 51,968 since 2026-11-05 (Agent 1's call), for the AI design pass (owner, 2026-11-04;
   // IMPLEMENTATION_PLAN.md P1.8): measured 51,302 before the pass and 51,457 after its fourth
-  // batch. When the pass ends, this becomes the smallest 256 B step above the final measure.
-  'ai-chat': 51968,
+  // batch. 51,712 since the pass ended (2026-11-05), the smallest 256 B step above its final
+  // measure, 51,605.
+  'ai-chat': 51712,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
@@ -365,8 +366,8 @@ export const CSS_BUDGETS = {
   // 2026-10-27 with the AI layout recipes (+343 B: each extracted sheet counts once on its own and
   // once inside the element sheet it opens).
   // 5,376 since 2026-11-05 (Agent 1's call), for the AI design pass (owner, 2026-11-04;
-  // IMPLEMENTATION_PLAN.md P1.8): measured 5,108 after its fourth batch. When the pass ends, this
-  // becomes the smallest 256 B step above the final measure.
+  // IMPLEMENTATION_PLAN.md P1.8): measured 5,108 after its fourth batch. The pass ended
+  // (2026-11-05) at 5,223, and 5,376 stays the smallest 256 B step above it.
   'ai:styles': 5376,
 };
 

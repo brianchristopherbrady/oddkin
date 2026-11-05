@@ -18,9 +18,9 @@ export const checkpointStyles = css`
     font-weight: ${token('font.weight.semibold')};
   }
   .restores {
-    margin: ${token('space.2xs')} 0 0;
-    padding-inline-start: ${token('space.lg')};
-    font-size: ${token('font.size.sm')};
+    margin: 0;
+    padding: 0;
+    list-style-position: inside;
   }
   .state {
     font-size: ${token('font.size.sm')};

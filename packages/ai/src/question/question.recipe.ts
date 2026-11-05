@@ -9,7 +9,7 @@ export const questionRecipe = defineLayoutRecipe({
   name: 'question',
   regions: {
     form: stack({ gap: token('space.xs') }),
-    options: stack({ gap: token('space.2xs') }),
+    options: stack({ gap: token('space.xs') }),
     option: row({ gap: token('space.xs') }),
     field: stack({ gap: token('space.2xs') }),
   },
