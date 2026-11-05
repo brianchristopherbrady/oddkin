@@ -225,4 +225,60 @@ describe('oddkin-impact', () => {
       rmSync(outside, { recursive: true, force: true });
     }
   });
+
+  it("snapshots metadata only for the manifest's elements, and stops at a schema it does not read", () => {
+    const pkg = path('stale-package');
+    mkdirSync(pkg);
+    writeFileSync(
+      join(pkg, 'package.json'),
+      JSON.stringify({ name: 'x-ui', version: '1.0.0', customElements: 'custom-elements.json' }),
+    );
+    writeFileSync(
+      join(pkg, 'custom-elements.json'),
+      JSON.stringify({
+        schemaVersion: '2.1.0',
+        modules: [
+          {
+            kind: 'javascript-module',
+            path: 'a.js',
+            declarations: [{ kind: 'class', name: 'A', customElement: true, tagName: 'x-a' }],
+          },
+        ],
+      }),
+    );
+    const metadata = (schema: string) =>
+      JSON.stringify({
+        schema,
+        components: { 'component:x-gone': { tag: 'x-gone', registration: 'x-ui/gone' } },
+        examples: {
+          'example:x-gone/default': { component: 'component:x-gone', name: 'default' },
+        },
+      });
+    writeFileSync(
+      join(pkg, 'oddkin.metadata.json'),
+      metadata('https://oddkin.dev/schemas/oddkin-metadata/v1.json'),
+    );
+    const stale = io();
+    expect(main(['snapshot', pkg, '--out', path('stale.json')], stale.io)).toBe(0);
+    expect(stale.err.map((line) => line.split(':')[0])).toEqual([
+      'warning metadata.component.undeclared',
+      'warning metadata.example.undeclared',
+    ]);
+    const items = Object.keys(
+      (JSON.parse(readFileSync(path('stale.json'), 'utf8')) as ComparisonSnapshot).items,
+    );
+    expect(items).toContain('component:x-a');
+    expect(items.filter((id) => id.includes('x-gone'))).toEqual([]);
+    // Metadata of a later schema is not read, and the snapshot is not written without it.
+    writeFileSync(
+      join(pkg, 'oddkin.metadata.json'),
+      metadata('https://oddkin.dev/schemas/oddkin-metadata/v2.json'),
+    );
+    const later = io();
+    expect(main(['snapshot', pkg, '--out', path('later.json')], later.io)).toBe(2);
+    expect(later.err[0]).toMatch(
+      /^error metadata\.schema\.unsupported: x-ui\/oddkin\.metadata\.json/,
+    );
+    expect(later.err.at(-1)).toContain('could not be read');
+  });
 });

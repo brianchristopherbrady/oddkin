@@ -80,6 +80,58 @@ describe('a library described by a standard CEM alone', () => {
     expect(project.context.capabilityPaths).toEqual([]);
   });
 
+  it("reads its metadata's examples only for the manifest's elements, and no metadata of an unknown schema", () => {
+    const root = consumer();
+    const dir = join(root, 'node_modules/@plain/widgets');
+    const pkg = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'));
+    pkg.exports['./oddkin.metadata.json'] = './oddkin.metadata.json';
+    writeFileSync(join(dir, 'package.json'), JSON.stringify(pkg));
+    const metadata = (schema: string) =>
+      JSON.stringify({
+        schema,
+        components: {},
+        examples: {
+          'example:plain-chip/basic': {
+            component: 'component:plain-chip',
+            name: 'basic',
+            file: 'chip.examples.js',
+          },
+          'example:plain-gone/basic': {
+            component: 'component:plain-gone',
+            name: 'basic',
+            file: 'gone.examples.js',
+          },
+        },
+      });
+    writeFileSync(
+      join(dir, 'oddkin.metadata.json'),
+      metadata('https://oddkin.dev/schemas/oddkin-metadata/v1.json'),
+    );
+    const project = resolveProjectContext(root);
+    const library = project.libraries.find((l) => l.name === '@plain/widgets');
+    expect(library?.standard).toEqual({
+      cemFile: 'custom-elements.json',
+      metadataFile: 'oddkin.metadata.json',
+    });
+    expect(Object.keys(library?.metadata['examples'] ?? {})).toEqual(['example:plain-chip/basic']);
+    expect(project.diagnostics).toEqual([
+      expect.objectContaining({ code: 'metadata.example.undeclared', severity: 'warning' }),
+    ]);
+    // A later schema is not read: the library is what its manifest states.
+    writeFileSync(
+      join(dir, 'oddkin.metadata.json'),
+      metadata('https://oddkin.dev/schemas/oddkin-metadata/v2.json'),
+    );
+    const later = resolveProjectContext(root);
+    expect(later.libraries.find((l) => l.name === '@plain/widgets')?.standard).toEqual({
+      cemFile: 'custom-elements.json',
+    });
+    expect(later.context.packages[0]).not.toHaveProperty('metadata');
+    expect(later.diagnostics).toEqual([
+      expect.objectContaining({ code: 'metadata.schema.unsupported', severity: 'error' }),
+    ]);
+  });
+
   it('registers through an export that re-exports the defining module, or says none does', () => {
     const cem = JSON.parse(readFileSync(join(FIXTURE, 'custom-elements.json'), 'utf8'));
     const only = (exports: Record<string, string>) =>

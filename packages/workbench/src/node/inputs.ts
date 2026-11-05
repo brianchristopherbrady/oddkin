@@ -6,6 +6,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { extname, isAbsolute, join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { compositionCatalog } from '@oddkin/analyzer/composition';
+import { checkMetadata } from '@oddkin/analyzer/metadata';
 import { DOCS_SCHEMA, type DocsContent, type ResolvedWorkbenchConfig } from '../config/index.js';
 import { exportedSpecifier, resolveExport, type PackageManifest } from '../data/import-map.js';
 import type {
@@ -288,8 +289,23 @@ export async function loadInputs(
     const metadataFile = metadataPath ? join(pkg.dir, metadataPath) : undefined;
     let metadata: OddkinMetadataLike | undefined;
     if (metadataFile && existsSync(metadataFile)) {
-      metadata = readJson(metadataFile, out, 'node.metadata.invalid') as OddkinMetadataLike;
+      const read = readJson(metadataFile, out, 'node.metadata.invalid');
       dataFiles.push(metadataFile);
+      // The manifest says which elements exist; stale or unknown metadata is reported, not read.
+      if (read !== undefined) {
+        const checked = checkMetadata(
+          isObject(read) ? read : {},
+          cem,
+          `${name}/${(metadataPath as string).replace(/^\.\//, '')}`,
+        );
+        for (const d of checked.diagnostics)
+          out[d.severity === 'error' ? 'error' : 'warn'](
+            d.code,
+            d.message,
+            `/library/packages/${name}`,
+          );
+        metadata = checked.metadata as OddkinMetadataLike | undefined;
+      }
     }
     const examples = await loadExampleSets(pkg.dir, metadata, out, dataFiles, exampleFiles);
     // Importers use the name the package is installed under.

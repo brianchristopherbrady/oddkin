@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { checkMetadata } from '../metadata.js';
 
 export const CONTEXT_SCHEMA = 'https://oddkin.dev/schemas/project-context/v1.json';
 
@@ -430,10 +431,21 @@ export function resolveProjectContext(
       .map((subpath) => (subpath === '.' ? name : `${name}${subpath.slice(1)}`));
     const metadataFile = exportTarget(manifest, './oddkin.metadata.json');
     const cemFile = (manifest['customElements'] as string | undefined)?.replace(/^\.\//, '');
+    const cem =
+      cemFile && existsSync(join(dir, cemFile)) ? readJson(join(dir, cemFile)) : undefined;
+    // The manifest says which elements exist; stale or unknown metadata is reported, not read.
+    let metadata: Record<string, any> | undefined;
     if (metadataFile && existsSync(join(dir, metadataFile))) {
-      const metadata = readJson(join(dir, metadataFile));
-      const cem =
-        cemFile && existsSync(join(dir, cemFile)) ? readJson(join(dir, cemFile)) : undefined;
+      const checked = checkMetadata(
+        readJson(join(dir, metadataFile)),
+        cem,
+        `${name}/${metadataFile}`,
+      );
+      for (const { code, severity, message } of checked.diagnostics)
+        diagnostics.push({ code, severity, message });
+      metadata = checked.metadata;
+    }
+    if (metadataFile && metadata) {
       // Metadata that describes no components enriches a library not built with Oddkin, whose
       // components are what its manifest states.
       const standard =
@@ -458,9 +470,8 @@ export function resolveProjectContext(
         owned,
         ...(standard ? { standard } : {}),
       });
-    } else if (cemFile && existsSync(join(dir, cemFile))) {
+    } else if (cem && cemFile) {
       // A library not built with Oddkin: what its standard CEM states, and nothing more.
-      const cem = readJson(join(dir, cemFile));
       const components = standardComponents(name, manifest, cem);
       const registrations = Object.values<any>(components).filter((c) => c.registration);
       if (registrations.length)

@@ -42,6 +42,10 @@
       "types": "./dist/composition.d.ts",
       "default": "./dist/composition.js"
     },
+    "./metadata": {
+      "types": "./dist/metadata.d.ts",
+      "default": "./dist/metadata.js"
+    },
     "./kit": {
       "types": "./dist/kit/index.d.ts",
       "default": "./dist/kit/index.js"

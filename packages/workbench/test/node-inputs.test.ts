@@ -240,6 +240,47 @@ describe('inputs and builds', { timeout: 60_000 }, () => {
     expect(inputs.contentFiles).toHaveLength(5);
   });
 
+  it("reads enrichment only for the manifest's elements, and no metadata of an unknown schema", async () => {
+    const dir = track(acmeProject());
+    const file = join(dir, 'node_modules', '@acme', 'ui', 'oddkin.metadata.json');
+    const metadata = JSON.parse(readFileSync(file, 'utf8')) as Record<string, any>;
+    // Stale metadata: an element the manifest no longer declares, and its example.
+    writeFileSync(
+      file,
+      JSON.stringify({
+        ...metadata,
+        components: { ...metadata['components'], 'component:acme-gone': { tag: 'acme-gone' } },
+        examples: {
+          ...metadata['examples'],
+          'example:acme-gone/default': { component: 'component:acme-gone', name: 'default' },
+        },
+      }),
+    );
+    const { config } = await loadWorkbenchConfig(dir);
+    const out = new DiagnosticList();
+    const inputs = await loadInputs(dir, config!, out);
+    expect(out.items.map((d) => `${d.severity} ${d.code} ${d.path}`)).toEqual([
+      'warning metadata.component.undeclared /library/packages/@acme/ui',
+      'warning metadata.example.undeclared /library/packages/@acme/ui',
+    ]);
+    expect(out.items[0]?.message).toContain('@acme/ui/oddkin.metadata.json describes <acme-gone>');
+    const read = inputs.libraries[0]?.metadata;
+    expect(Object.keys(read?.components ?? {})).toEqual(Object.keys(metadata['components']));
+    expect(Object.keys(read?.examples ?? {})).toEqual(Object.keys(metadata['examples'] ?? {}));
+    // A later schema is not read at all: an error, and the package is read from its manifest.
+    writeFileSync(
+      file,
+      JSON.stringify({ ...metadata, schema: 'https://oddkin.dev/schemas/oddkin-metadata/v2.json' }),
+    );
+    const later = new DiagnosticList();
+    const again = await loadInputs(dir, config!, later);
+    expect(later.items.map((d) => `${d.severity} ${d.code}`)).toEqual([
+      'error metadata.schema.unsupported',
+    ]);
+    expect(again.libraries[0]?.metadata).toBeUndefined();
+    expect(again.libraries[0]?.cem?.modules).toHaveLength(3);
+  });
+
   it("reads a standard-CEM element's registration from its custom-element-definition export", async () => {
     const definition = (path: string, tag: string) => ({
       kind: 'javascript-module',

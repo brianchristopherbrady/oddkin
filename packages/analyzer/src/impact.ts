@@ -12,6 +12,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { checkMetadata, type MetadataDiagnostic } from './metadata.js';
 
 export const SNAPSHOT_SCHEMA = 'https://oddkin.dev/schemas/comparison-snapshot/v1.json';
 export const IMPACT_SCHEMA = 'https://oddkin.dev/schemas/impact-report/v1.json';
@@ -1120,9 +1121,13 @@ export function mergeResults(report: ImpactReport, results: readonly CheckResult
 /**
  * The snapshot inputs of a built package directory: `package.json` (name, version, exports),
  * its `customElements` manifest, `oddkin.metadata.json`, and the sources of every module its
- * elements, definitions, and examples name. Missing sources stay missing (coverage gaps).
+ * elements, definitions, and examples name. Missing sources stay missing (coverage gaps). The
+ * metadata is read through `checkMetadata`: what it says of tags the manifest does not declare is
+ * left out, and metadata of an unknown schema is not read; `diagnostics` says which.
  */
-export function readPackage(dir: string): SnapshotInputs['packages'][number] {
+export function readPackage(
+  dir: string,
+): SnapshotInputs['packages'][number] & { readonly diagnostics: readonly MetadataDiagnostic[] } {
   const json = <T>(path: string) => JSON.parse(readFileSync(join(dir, path), 'utf8')) as T;
   const pkg = json<{
     name: string;
@@ -1131,9 +1136,14 @@ export function readPackage(dir: string): SnapshotInputs['packages'][number] {
     customElements?: string;
   }>('package.json');
   const manifest = json<CemManifest>(pkg.customElements ?? 'custom-elements.json');
-  const metadata = existsSync(join(dir, 'oddkin.metadata.json'))
-    ? json<MetadataInput>('oddkin.metadata.json')
+  const checked = existsSync(join(dir, 'oddkin.metadata.json'))
+    ? checkMetadata(
+        json<MetadataInput>('oddkin.metadata.json'),
+        manifest,
+        `${pkg.name}/oddkin.metadata.json`,
+      )
     : undefined;
+  const metadata = checked?.metadata;
   const paths = new Set<string>([
     ...manifest.modules
       .filter((m) => m.declarations?.some((d) => d.tagName))
@@ -1156,6 +1166,7 @@ export function readPackage(dir: string): SnapshotInputs['packages'][number] {
     ...(metadata ? { metadata } : {}),
     ...(pkg.exports ? { exports: pkg.exports } : {}),
     modules,
+    diagnostics: checked?.diagnostics ?? [],
   };
 }
 

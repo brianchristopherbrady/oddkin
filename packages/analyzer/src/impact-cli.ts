@@ -105,8 +105,14 @@ export function main(argv: readonly string[], io: Io): number {
         throw new Error(
           `--source ${values.source}: not in a git repository with a commit, or git is not installed`,
         );
+      const packages = rest.map(readPackage);
+      for (const { severity, code, message } of packages.flatMap((p) => p.diagnostics))
+        io.err(`${severity} ${code}: ${message}`);
+      // Without its metadata a package's examples and definitions would vanish from the snapshot.
+      if (packages.some((p) => p.diagnostics.some((d) => d.severity === 'error')))
+        throw new Error('a package metadata file could not be read; see the errors above');
       const inputs: SnapshotInputs = {
-        packages: rest.map(readPackage),
+        packages,
         ...(values.theme && values.inspection
           ? { theme: { config: readJson(values.theme), inspection: readJson(values.inspection) } }
           : {}),
