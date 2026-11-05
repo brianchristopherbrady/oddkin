@@ -5594,3 +5594,11 @@ On `a55a52c`.
 | Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-r9e.json` (4 probes in Chromium: the request ignored; another revision exported; a link that leads nowhere; the content left out) | 4 of 4 killed |
 | End to end | `node ../oddkin-lanes/tools/e2e-when-free.mjs` on `e2e/docs.spec.ts:448` (a live example runs its setup script) and `:473` (every catalog card shows a live example) in three engines, then `e2e/workbench-catalog.spec.ts` in Chromium | 6 passed; 158 passed |
 | Repository | `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Exit 0 each; node 1,694 passed and 2 skipped (136 files) |
+
+## 2026-11-05 — Flake fix: the AI conversation layout test loads its module graph first (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | The four AI browser files together in Firefox (`browser-set.mjs`, in the runs of row 9's second and third batches) | `layout.browser.test.ts`, "stacks the scroller, status, and composer; the feed stacks its messages", timed out at 15 s in two runs of three; the file passed alone each time (29 of 29) |
+| After | `node ../oddkin-lanes/tools/browser-set.mjs --engines firefox` on `examples.browser`, `elements.browser`, `layout.browser`, and `contract.browser` (`packages/ai/test`) | 224 passed and 4 skipped, in each of two runs |
+| Repository | `npm run typecheck`; `npx prettier --check packages/ai/test/layout.browser.test.ts` | Exit 0 each |

@@ -203,6 +203,9 @@ const text = (id: string, role: string, value: string) => ({
 
 describe('odd-conversation', () => {
   const define = () => import('../src/conversation/conversation.define.js');
+  // The largest module graph here (every element a message can show): load it before the
+  // tests, outside their time limit, so a busy machine cannot time out the first one.
+  beforeAll(define, 60_000);
 
   it('stacks the scroller, status, and composer; the feed stacks its messages', async () => {
     const el = await mount<Updating & { state: unknown }>(
