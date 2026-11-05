@@ -84,7 +84,11 @@ export const BUDGETS = {
   // direction, item templates evaluated before the DOM changes) cost 34 B here (50,671 before).
   // 51,200 (50 KiB) since 2026-10-27, measured 50,980: the AI layout recipes (layout-recipes.md
   // §14, 21 elements and the shared action row, extracted at build time) cost 275 B here.
-  'ai-chat': 51200,
+  // 51,456 since 2026-11-05 (Agent 1's call): the fixes decided in the AI contract reviews
+  // (ai-contract-review.md), measured 51,181 before, 51,202 with the tool call's silent
+  // disclosure marker, and 51,297 with the AI label's marker, the sources' visible numbers, and
+  // the artifact's revision label.
+  'ai-chat': 51456,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

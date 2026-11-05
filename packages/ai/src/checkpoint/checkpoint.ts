@@ -14,6 +14,7 @@ export const CHECKPOINT_STRINGS = {
   cancel: 'Keep current state',
   confirmText:
     'Restore to “{label}”? The items listed above are replaced. Work after this point is not kept unless the application saves it.',
+  /** @deprecated Unused: a checkpoint that can be restored shows no status. Removed at the next major release. */
   available: 'Available',
   'restore-pending': 'Restoring… Not restored yet.',
   restored: 'Restored. {outcome}',
@@ -32,7 +33,7 @@ export const CHECKPOINT_STRINGS = {
  * @csspart restores - The list of state the restore replaces.
  * @csspart actions - Restore and confirmation controls.
  * @a11y A labelled group; restore needs an explicit confirmation step; status is text.
- * @keyboard Tab and Enter or Space; focus moves to the confirmation and back to the status when controls disappear.
+ * @keyboard Tab and Enter or Space; when controls disappear, focus moves to the confirmation, or back to the status (to Restore… when no status shows).
  * @useFor Restoring agent or editor state to an earlier point.
  * @notFor Undoing a single text edit; use the change review's undo.
  * @customization 1 2
@@ -49,7 +50,7 @@ export class OddkinCheckpoint extends OddkinElement.with({
     description: 'Announce outcomes (when no surrounding surface does).',
   }),
   strings: prop.object<Partial<typeof CHECKPOINT_STRINGS>>({
-    description: 'Localized string overrides.',
+    description: 'Localized string overrides; `available` is unused (deprecated).',
   }),
 }) {
   static override events = {
@@ -102,14 +103,17 @@ export class OddkinCheckpoint extends OddkinElement.with({
   };
 
   protected override mounted(scope: Scope): void {
-    // While confirming, a vanished control hands focus to the confirmation, else to the status.
+    // While confirming, a vanished control hands focus to the confirmation, else to the status,
+    // or to Restore… when there is no status.
     scope.use(
       new FocusRecovery({
         root: () => this.shadowRoot,
         fallback: () =>
           (this._confirming.peek()
             ? this.shadowRoot?.querySelector<HTMLElement>('[data-confirm]')
-            : undefined) ?? this.shadowRoot?.querySelector<HTMLElement>('.state'),
+            : undefined) ??
+          this.shadowRoot?.querySelector<HTMLElement>('.state:not([hidden])') ??
+          this.shadowRoot?.querySelector<HTMLElement>('[part="actions"] odd-button'),
       }),
     );
     let previous: CheckpointRecord['status'] | undefined;

@@ -106,11 +106,7 @@ describe('@oddkin/ai examples', () => {
     );
     // Examples whose values the source computes (imported or built at run time): the analyzer
     // records no definition for them.
-    const computed = new Set([
-      'odd-checkpoint/default',
-      'odd-checkpoint/restored',
-      'odd-voice-input/default',
-    ]);
+    const computed = new Set(['odd-voice-input/default']);
     // Elements each fixture renders besides its own, read from literal markup.
     const uses: Record<string, string[]> = {
       'odd-change-review/default': ['component:odd-textarea'],

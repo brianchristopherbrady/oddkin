@@ -1,18 +1,17 @@
 import { defineExamples } from '@oddkin/workbench/examples';
 import type {} from './checkpoint.js';
 
-const checkpoint = {
-  checkpointId: 'c1',
-  label: 'Before the rewrite',
-  description: 'The document and its open proposals as they were at 09:30.',
-  restores: ['Document text', 'Open proposals'],
-} as const;
-
 export default defineExamples('odd-checkpoint', {
   default: {
     label: 'Available checkpoint',
     props: {
-      checkpoint: { ...checkpoint, restores: [...checkpoint.restores], status: 'available' },
+      checkpoint: {
+        checkpointId: 'c1',
+        label: 'Before the rewrite',
+        description: 'The document and its open proposals as they were at 09:30.',
+        restores: ['Document text', 'Open proposals'],
+        status: 'available',
+      },
       capabilities: { restoreCheckpoint: { available: true } },
     },
     recommended: true,
@@ -33,10 +32,40 @@ export default defineExamples('odd-checkpoint', {
     label: 'Restored',
     props: {
       checkpoint: {
-        ...checkpoint,
-        restores: [...checkpoint.restores],
+        checkpointId: 'c2',
+        label: 'Before the rewrite',
+        description: 'The document and its open proposals as they were at 09:30.',
+        restores: ['Document text', 'Open proposals'],
         status: 'restored',
         outcome: 'Restored the document to 09:30.',
+      },
+    },
+  },
+  failed: {
+    label: 'Restore failed',
+    props: {
+      checkpoint: {
+        checkpointId: 'c3',
+        label: 'Before the rewrite',
+        description: 'The document and its open proposals as they were at 09:30.',
+        restores: ['Document text', 'Open proposals'],
+        status: 'restore-failed',
+        error: { code: 'checkpoint.conflict', message: 'The document is open in another tab.' },
+      },
+      capabilities: { restoreCheckpoint: { available: true } },
+    },
+    guidance: 'The host could not restore: the element says why, and Restore… can be tried again.',
+  },
+  unavailable: {
+    label: 'Cannot be restored',
+    props: {
+      checkpoint: {
+        checkpointId: 'c4',
+        label: 'Before the import',
+        description: 'The workspace as it was before the import.',
+        restores: ['Imported files'],
+        createdAt: '2026-11-05T08:00:00Z',
+        status: 'unavailable',
       },
     },
   },

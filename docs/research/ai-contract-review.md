@@ -58,6 +58,8 @@ Not changed by this review: the element's name, `view` (`inline` or `split`), `g
 
 Not changed by this review: the events and their detail, the statuses, `capabilities`, `announce`, and the duplicate guard per revision. For the design pass: the Figma specimen shows the change's before and after on their own lines, labelled, in a shaded box, and a one-line reason field.
 
+**Decisions and changes** (Agent 2, 2026-11-05). 1: the reason goes with either decision, and the label stays. 2 and 3: examples for a failed decision, an expired request, a superseded one, and Edit, whose host passes back the next revision; the tool call's Waiting for approval example shows the approval inside a call.
+
 ## `odd-checkpoint` (2026-11-05)
 
 **What a user sees today.** "Before the rewrite", its description, "Restoring replaces:" with Document text and Open proposals, the status "Available", and Restore…. Restore… asks "Restore to “Before the rewrite”? The items listed above are replaced. Work after this point is not kept unless the application saves it." with Restore this checkpoint and Keep current state. Since C1, the example's host confirms, and the element shows "Restored. Restored the document to 09:30."
@@ -72,6 +74,8 @@ Not changed by this review: the events and their detail, the statuses, `capabili
 
 Not changed by this review: the confirmation step, the events, the statuses, and focus moving to the confirmation and back.
 
+**Decisions and changes** (Agent 2, 2026-11-05). 1: no status text while a checkpoint can be restored; `strings.available` stays, unused and deprecated, and when no status shows, focus goes back to Restore…. 2: both examples have literal values, so the metadata carries them. 3: examples for a failed restore and an unavailable checkpoint, the latter with `createdAt`.
+
 ## `odd-question` (2026-11-05)
 
 **What a user sees today.** "Which audience is this summary for?", the choices Executives, Engineers ("Keeps technical detail."), and Other, an unlabelled text field, and Answer and Skip. Since C1, the example's host records the answer or the skip, and the element shows "Answered." or "Skipped."
@@ -84,6 +88,8 @@ Not changed by this review: the confirmation step, the events, the statuses, and
 | 2 | Examples | `multi-choice` and `text` have no example, nor do `expired` and `failed`, which a host sets. | Examples for both kinds and for a failed answer (its message, and Answer again). |
 
 Not changed by this review: the kinds, the answer shapes (`{ choice }`, `{ choices }`, `{ custom }`, `{ text }`, `{ fields }`), the events, and the revision binding. For the design pass: the Figma specimen's primary action reads "Submit".
+
+**Decisions and changes** (Agent 2, 2026-11-05). 1: the field's label ("Your answer") shows, and typing in the field chooses Other, so what was typed is sent. 2: examples for several choices, free text, and an answer that was not sent.
 
 ## `odd-task-plan` (2026-11-05)
 
@@ -98,6 +104,8 @@ Not changed by this review: the kinds, the answer shapes (`{ choice }`, `{ choic
 
 Not changed by this review: the record, the event, progress (done and skipped steps of all steps), and the status read after each title. For the design pass: the Figma specimen has no progress bar ("1 of 2 complete"), and each step's status sits at the end of its row.
 
+**Decisions and changes** (Agent 2, 2026-11-05). 1: a step that asks for input shows its request with Respond only. 2: a plan with a failed step, a skipped one, and a pending one.
+
 ## `odd-tool-call` (2026-11-05)
 
 **What a user sees today.** "Web search", the status "Finished", and "Find current browser support data." The arguments and the result are in a native disclosure, but its summary shows no marker, so nothing says they are there; activating the summary opens Arguments and Result, each as formatted JSON.
@@ -110,6 +118,8 @@ Not changed by this review: the record, the event, progress (done and skipped st
 | 2 | Examples | `awaiting-approval` with its bound `approval` (an `odd-action-approval` inside the call) has no example, though it is where approval and tool call meet; nor do `input-streaming`, `executing`, `denied`, and `cancelled`. | An example of a call awaiting approval whose host moves it to running and finished on Approve, or to denied on Reject; and the other states. |
 
 Not changed by this review: the statuses, the event, `renderOutput`, and results rendered as text unless a host renders them.
+
+**Decisions and changes** (Agent 2, 2026-11-05). 1: the summary shows ▸, and ▾ once open; the marker's alternative text is empty, so a screen reader does not read it before the tool's name (Agent 2's review). 2: examples for a call waiting for its approval, whose host runs it on Approve (Running…, then Finished) and denies it on Reject; arguments as they stream; and a cancelled call.
 
 ## The elements that act on their own or only show (2026-11-05)
 

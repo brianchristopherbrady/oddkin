@@ -19,20 +19,27 @@ export const taskPlanTemplate = (host: OddkinTaskPlan) => {
       ${repeat(
         plan.steps,
         (step) => step.id,
-        (step) =>
-          html`<li class="step" data-status=${step.status}>
+        (step) => {
+          // A step that asks for input says so once: its request, with Respond.
+          const asks = step.status === 'needs-input' && !!step.inputRequest;
+          return html`<li class="step" data-status=${step.status}>
             <span class="symbol" aria-hidden="true">${host._symbol(step.status)}</span>
             <div class="body">
               <span class="step-title">${step.title}</span>
-              <span class="visually-hidden">, ${host._status(step.status, step.blocker)}</span>
-              <span class="muted" aria-hidden="true"
-                >${host._status(step.status, step.blocker)}</span
-              >
+              ${
+                asks
+                  ? null
+                  : html`<span class="visually-hidden"
+                        >, ${host._status(step.status, step.blocker)}</span
+                      ><span class="muted" aria-hidden="true"
+                        >${host._status(step.status, step.blocker)}</span
+                      >`
+              }
               <span class="detail" ?hidden=${!step.detail}>${step.detail ?? ''}</span>
               ${
-                step.status === 'needs-input' && step.inputRequest
+                asks
                   ? html`<span class="request"
-                      >${format(t.needsInput, { request: step.inputRequest })}
+                      >${format(t.needsInput, { request: step.inputRequest ?? '' })}
                       <button
                         class="text-button"
                         type="button"
@@ -68,7 +75,8 @@ export const taskPlanTemplate = (host: OddkinTaskPlan) => {
                   : null
               }
             </div>
-          </li>`,
+          </li>`;
+        },
       )}
     </ol>
   </section>`;

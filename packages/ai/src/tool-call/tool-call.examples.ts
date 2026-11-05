@@ -56,4 +56,77 @@ export default defineExamples('odd-tool-call', {
       });
     },
   },
+  approval: {
+    label: 'Waiting for approval',
+    props: {
+      tool: {
+        toolCallId: 't4',
+        toolName: 'send_email',
+        title: 'Send email',
+        purpose: 'Share the release notes.',
+        status: 'awaiting-approval',
+        input: { to: 'team@example.com', subject: 'Release 2.0' },
+        approvalId: 'ap1',
+      },
+      approval: {
+        approvalId: 'ap1',
+        toolCallId: 't4',
+        revision: 1,
+        title: 'Send the release notes',
+        target: 'team@example.com',
+        risk: 'medium',
+        status: 'requested',
+      },
+      capabilities: { respondToApproval: { available: true } },
+    },
+    guidance:
+      'A call that needs approval shows its approval after it. The decision is a request: the host records it, then runs the call (Running…, then Finished) or does not (Not run: denied).',
+    // The host: records the decision, then runs the call, or does not.
+    fixture({ scope, element }) {
+      scope.listen<GlobalEventHandlersEventMap['odd-approval-decide']>(
+        element,
+        'odd-approval-decide',
+        ({ detail }) => {
+          const { approval, tool } = element;
+          if (!approval || !tool || approval.revision !== detail.revision) return;
+          const approved = detail.decision === 'approve';
+          element.approval = {
+            ...approval,
+            status: approved ? 'approved' : 'rejected',
+            decision: detail.decision,
+          };
+          element.tool = { ...tool, status: approved ? 'executing' : 'denied' };
+          if (approved)
+            scope.timeout(() => {
+              element.tool = { ...tool, status: 'output-available', output: { sent: 1 } };
+            }, 600);
+        },
+      );
+    },
+  },
+  streaming: {
+    label: 'Preparing arguments',
+    props: {
+      tool: {
+        toolCallId: 't5',
+        toolName: 'search',
+        title: 'Web search',
+        status: 'input-streaming',
+        inputText: '{"q": "container que',
+      },
+    },
+    guidance: 'Arguments stream in as the model writes them; partial text is shown as it is.',
+  },
+  cancelled: {
+    label: 'Cancelled',
+    props: {
+      tool: {
+        toolCallId: 't6',
+        toolName: 'search',
+        title: 'Web search',
+        status: 'cancelled',
+        input: { q: 'weather' },
+      },
+    },
+  },
 });

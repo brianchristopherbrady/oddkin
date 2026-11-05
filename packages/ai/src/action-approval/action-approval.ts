@@ -108,7 +108,7 @@ export class OddkinActionApproval extends OddkinElement.with({
       revision: approval.revision,
       toolCallId: approval.toolCallId,
       decision,
-      reason: decision === 'reject' ? this._reason.peek() || undefined : undefined,
+      reason: this._reason.peek() || undefined,
     });
   };
   /** @internal */

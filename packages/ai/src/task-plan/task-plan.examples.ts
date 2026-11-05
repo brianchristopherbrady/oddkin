@@ -96,4 +96,26 @@ export default defineExamples('odd-task-plan', {
       );
     },
   },
+  failed: {
+    label: 'A step failed',
+    props: {
+      plan: {
+        planId: 'p2',
+        title: 'Prepare the release',
+        steps: [
+          { id: 'a', title: 'Collect changes', status: 'done' },
+          { id: 'b', title: 'Run checks', status: 'failed', detail: 'Two browser tests failed.' },
+          {
+            id: 'c',
+            title: 'Choose a version',
+            status: 'skipped',
+            detail: 'Not asked: the checks failed.',
+          },
+          { id: 'd', title: 'Publish', status: 'pending' },
+        ],
+      },
+    },
+    guidance:
+      'A failed step says why in its detail; what happens to the steps after it is the agent’s to report.',
+  },
 });

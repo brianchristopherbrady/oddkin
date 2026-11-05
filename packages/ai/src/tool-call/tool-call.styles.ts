@@ -19,6 +19,12 @@ export const toolCallStyles = css`
     padding: ${token('space.xs')} ${token('space.sm')};
     cursor: pointer;
   }
+  .summary::before {
+    content: '\\25B8' / '';
+  }
+  [open] > .summary::before {
+    content: '\\25BE' / '';
+  }
   .name {
     font-family: ${token('font.family.mono')};
     font-size: ${token('font.size.sm')};

@@ -103,6 +103,13 @@ export class OddkinQuestion extends OddkinElement.with({
     this.emit(questionSkipEvent, { questionId: q.questionId, revision: q.revision });
   };
 
+  /** @internal Typing an answer of one's own chooses Other, so what was typed is sent. */
+  readonly _onCustom = (event: Event): void => {
+    if (!(event.target as HTMLInputElement).value) return;
+    const other = this.shadowRoot?.querySelector<HTMLInputElement>('input[value="__other"]');
+    if (other) other.checked = true;
+  };
+
   #answer(q: QuestionRecord, data: FormData): JsonValue | undefined {
     const custom = String(data.get('custom') ?? '').trim();
     switch (q.kind) {

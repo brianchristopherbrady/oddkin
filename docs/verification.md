@@ -5622,3 +5622,21 @@ On `a55a52c`.
 | Its reading | `npx vitest run --project node tests/release/diagnostics.test.ts` | 3 passed: codes and messages from emitter calls, a development-only `new OddkinError()` message, a suggestion, `{ code, message }` records, a code-to-message map, and a reported error (computed); a button's label and a file name are not codes; the flags; the rendered table |
 | Coverage | `.tmp/diag-missing.mjs`: code-like literals in `packages/*/src` that the list does not hold | Token names, model and layer ids, CSS feature ids, and file names, and these codes whose messages come from elsewhere: `ai.stream.error`, `ai.tool.failed`, `ai.tool.input`, `agent.guidance.unknownReference`, `analyzer.config.invalid`, `analyzer.examples.dynamic`, six `app.*`, `model.version.unsupported`, five `reactive.*` and `scope.*`, four `state.*`; they are the next pass's |
 | Repository | `npm run typecheck`; `npx prettier --check docs/diagnostics.md` | Exit 0 each |
+
+## 2026-11-05 — P1.8 item 8: the five reviewed elements' changes, as decided (round 11, Agent 3)
+
+Agent 2's decisions of 2026-11-05 (lanes, 11:18) on the reviews of `odd-action-approval`, `odd-checkpoint`, `odd-question`, `odd-task-plan`, and `odd-tool-call`. On `c06e1b5`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The changes | `packages/ai/test/elements.browser.test.ts` | A reason typed before Approve is recorded ("Ship before noon."). A checkpoint that can be restored shows no status, and Keep current state hands focus back to Restore…. A step that needs input reads "Notify Needs your input: Which channel? Respond". The question's field is labelled "Your answer" for everyone; typing "Designers" after choosing Executives chooses Other and sends `{ custom: 'Designers' }`. The tool call's summary marker is ▸, and ▾ once open, each with an empty alternative (`"▸" / ""` computed in Chromium, Firefox, and WebKit), so it stays out of the summary's accessible name |
+| The new hosts | the same file | The tool call waiting for approval: Approve shows Running…, then Finished; Reject shows "Not run: denied". The approval to edit: Edit brings revision 2 with the new subject, and Approve then records revision 2 |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-b1-decided.json` (9 probes: the reason with Reject only; Available printed again; no focus fallback to Restore…; Needs input said twice; typing leaving Other unchosen; the label hidden again; the marker not turning; an approved call never finishing; Edit keeping the revision) | 9 of 9 killed |
+| Metadata | `packages/ai/test/examples.test.ts`; the contract tests in three engines, then `npm run verify:metadata` | The checkpoint's examples now carry their values (no longer computed), and the approval's default and edit examples have fixtures; 484 verified facts across 24 AI elements and 2,219 across 55 component elements; vocabulary 0 findings |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI elements, layout, examples, reflow, and contract tests with the components' contract test | 1,055 passed and 54 skipped in each of Chromium, Firefox, and WebKit |
+| E2E | `node ../oddkin-lanes/tools/e2e-when-free.mjs` with `e2e/docs.spec.ts:323`, `:448`, and `:473`, `--workers=1` | 8 passed; `:323` timed out in Firefox at 32.6 s with the machine loaded, and passed alone (19.3 s) |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,202 B of 51,456 (51,181 before: the marker's two rules with their empty alternatives, less the shorter reason; the budget was 51,200, raised on Agent 1's call of 12:38); `ai:styles` 5,015 of 5,120 |
+| Compatibility | `npm run compat` | The matrix counts two more declarations in the tool call's styles |
+| Node tests | `npx vitest run --project node` | 1,693 passed and 2 skipped; `icon-catalog.test.ts` timed out at 20 s with the machine loaded and passed alone (4 of 4) |
+| Agent 2's review | `packages/ai/test/elements.browser.test.ts` in each engine, after the marker's empty alternative | 29 passed in each of Chromium, Firefox, and WebKit |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs` | Exit 0 each |

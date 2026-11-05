@@ -18,7 +18,7 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
         ? format(t['restore-failed'], { message: c.error?.message ?? '' })
         : c.status === 'unavailable'
           ? t.unavailable
-          : t.available;
+          : '';
   const tone =
     c.status === 'restored'
       ? 'success'
@@ -45,7 +45,7 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
         ${c.restores.map((item) => html`<li>${item}</li>`)}
       </ul>
     </div>
-    <p class="state" data-tone=${tone}>${status}</p>
+    <p class="state" data-tone=${tone} ?hidden=${!status}>${status}</p>
     <div part="actions" class="actions" ?hidden=${confirming || pending}>
       <odd-button
         size="sm"

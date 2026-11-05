@@ -129,6 +129,7 @@ export interface ApprovalDecideDetail {
   readonly revision: number;
   readonly toolCallId: string | undefined;
   readonly decision: 'approve' | 'reject';
+  /** What the user typed in the reason field, with either decision. */
   readonly reason: string | undefined;
 }
 export const approvalDecideEvent = event<ApprovalDecideDetail>('odd-approval-decide', {

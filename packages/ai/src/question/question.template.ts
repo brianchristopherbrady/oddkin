@@ -49,8 +49,8 @@ export const questionTemplate = (host: OddkinQuestion) => {
                         <span>${t.other}</span>
                       </label>
                       <label class="field"
-                        ><span class="visually-hidden">${t.otherLabel}</span
-                        ><input type="text" name="custom"
+                        ><span>${t.otherLabel}</span
+                        ><input type="text" name="custom" @input=${host._onCustom}
                       /></label>`
                   : null
               }

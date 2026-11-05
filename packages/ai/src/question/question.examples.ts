@@ -59,4 +59,52 @@ export default defineExamples('odd-question', {
       },
     },
   },
+  multiple: {
+    label: 'Several choices',
+    props: {
+      question: {
+        questionId: 'q3',
+        revision: 1,
+        prompt: 'Which formats should the export include?',
+        kind: 'multi-choice',
+        options: [
+          { id: 'pdf', label: 'PDF' },
+          { id: 'docx', label: 'Word' },
+          { id: 'md', label: 'Markdown' },
+        ],
+        status: 'requested',
+      },
+    },
+  },
+  text: {
+    label: 'Free text',
+    props: {
+      question: {
+        questionId: 'q4',
+        revision: 1,
+        prompt: 'What should the summary emphasize?',
+        kind: 'text',
+        status: 'requested',
+      },
+    },
+  },
+  failed: {
+    label: 'Answer not sent',
+    props: {
+      question: {
+        questionId: 'q5',
+        revision: 1,
+        prompt: 'Which audience is this summary for?',
+        kind: 'choice',
+        options: [
+          { id: 'exec', label: 'Executives' },
+          { id: 'eng', label: 'Engineers' },
+        ],
+        status: 'failed',
+        error: { code: 'question.offline', message: 'The assistant is offline.' },
+      },
+    },
+    guidance:
+      'The host could not deliver the answer: the element says why and lets the user answer again.',
+  },
 });

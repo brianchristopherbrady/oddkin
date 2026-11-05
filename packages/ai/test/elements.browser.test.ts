@@ -217,6 +217,13 @@ describe('odd-tool-call and odd-action-approval', () => {
       },
     );
     expect(text($(el, '.status'))).toBe('Preparing arguments…');
+    // The summary shows a disclosure marker that turns with the open state;
+    // its empty alternative keeps it out of the summary's accessible name.
+    const marker = () => getComputedStyle($(el, '.summary')!, '::before').content;
+    expect(marker()).toBe('"\u25B8" / ""');
+    ($(el, 'details') as HTMLDetailsElement).open = true;
+    expect(marker()).toBe('"\u25BE" / ""');
+    ($(el, 'details') as HTMLDetailsElement).open = false;
     el.tool = tool('input-available', { input: { q: 'weather' } });
     await settle(el);
     expect(text($(el, '.status'))).toBe('Arguments ready; not run yet');
@@ -353,9 +360,17 @@ describe('odd-tool-call and odd-action-approval', () => {
     const approved = await mountExample(approvals, 'default', container);
     try {
       const el = approved.element;
+      // The reason goes with either decision.
+      const reason = $(el, '.reason textarea') as HTMLTextAreaElement;
+      reason.value = 'Ship before noon.';
+      reason.dispatchEvent(new Event('input', { bubbles: true }));
       $(el, 'odd-button[appearance="primary"]')!.click();
       await settle(el);
-      expect(el.approval).toMatchObject({ status: 'approved', decision: 'approve' });
+      expect(el.approval).toMatchObject({
+        status: 'approved',
+        decision: 'approve',
+        reason: 'Ship before noon.',
+      });
       expect(text($(el, '.state'))).toBe(
         'Approved. The action runs separately; its result appears with the action.',
       );
@@ -379,6 +394,55 @@ describe('odd-tool-call and odd-action-approval', () => {
       expect(text($(el, '.state'))).toBe('Rejected. The action will not run.');
     } finally {
       rejected.dispose();
+    }
+  });
+
+  it('their examples play the host: an approved call runs, a rejected one is denied; Edit brings the next revision', async () => {
+    await import('../src/tool-call/tool-call.define.js');
+    const { default: tools } = await import('../src/tool-call/tool-call.examples.js');
+    const decide = async (button: number) => {
+      const mounted = await mountExample(tools, 'approval', container);
+      const approval = $(mounted.element, 'odd-action-approval')!;
+      await settle(approval as unknown as { updateComplete: Promise<void> });
+      $$(approval, '[part="actions"] odd-button')[button]!.click();
+      await settle(mounted.element);
+      return mounted;
+    };
+    const status = (el: Element) => {
+      flush();
+      return text($(el, '.status'));
+    };
+    const approved = await decide(0);
+    try {
+      expect(status(approved.element)).toBe('Running…');
+      expect(approved.element.approval?.status).toBe('approved');
+      await expect
+        .poll(() => status(approved.element), { timeout: 3000, interval: 20 })
+        .toBe('Finished');
+    } finally {
+      approved.dispose();
+    }
+    const denied = await decide(1);
+    try {
+      expect(status(denied.element)).toBe('Not run: denied');
+      expect(denied.element.approval?.status).toBe('rejected');
+    } finally {
+      denied.dispose();
+    }
+    const { default: approvals } =
+      await import('../src/action-approval/action-approval.examples.js');
+    const edited = await mountExample(approvals, 'edit', container);
+    try {
+      const el = edited.element;
+      $$(el, '[part="actions"] odd-button')[2]!.click();
+      await settle(el);
+      expect(el.approval).toMatchObject({ revision: 2, status: 'requested' });
+      expect(text($(el, '[part="changes"]'))).toContain('Release 2.0 notes');
+      $(el, 'odd-button[appearance="primary"]')!.click();
+      await settle(el);
+      expect(el.approval).toMatchObject({ revision: 2, status: 'approved' });
+    } finally {
+      edited.dispose();
     }
   });
 });
@@ -406,6 +470,15 @@ describe('odd-checkpoint', () => {
     );
     const requests: unknown[] = [];
     el.addEventListener('odd-checkpoint-restore', (e) => requests.push((e as CustomEvent).detail));
+    // No status while it can be restored; Keep current state hands focus back to Restore….
+    expect($(el, '.state')!.hidden).toBe(true);
+    $(el, '[part="actions"] odd-button')!.click();
+    await settle(el);
+    ($(el, '.confirm odd-button[appearance="ghost"]') as HTMLElement).focus();
+    $(el, '.confirm odd-button[appearance="ghost"]')!.click();
+    await settle(el);
+    await frames(2);
+    expect(el.shadowRoot!.activeElement).toBe($(el, '[part="actions"] odd-button'));
     $(el, '[part="actions"] odd-button')!.click();
     await settle(el);
     expect(text($(el, '.confirm'))).toContain('Restore to “Before refactor”?');
@@ -1280,6 +1353,10 @@ describe('odd-message fallbacks and provenance', () => {
     expect(text($(el, '[part="progress"] span'))).toBe('1 of 4 steps done');
     expect(text($(el, '[part="steps"]'))).toContain('Blocked: Needs credentials');
     expect(text($(el, '[part="steps"]'))).toContain('Running in parallel');
+    // A step that asks for input says so once: its request, with Respond.
+    expect(text($(el, '[data-status="needs-input"] .body'))).toBe(
+      'Notify Needs your input: Which channel? Respond',
+    );
     const requests: unknown[] = [];
     el.addEventListener('odd-plan-input-request', (e) => requests.push((e as CustomEvent).detail));
     ($(el, '[data-step="4"]') as HTMLElement).click();
@@ -1311,6 +1388,23 @@ describe('odd-question and odd-task-plan examples', () => {
       expect(text($(el, '.state'))).toBe('Skipped.');
     } finally {
       skipped.dispose();
+    }
+    // An answer of one's own, under a visible label: typing it chooses Other.
+    const own = await mountExample(set, 'default', container);
+    try {
+      const el = own.element;
+      const field = $(el, 'input[name="custom"]') as HTMLInputElement;
+      expect(field.labels?.[0]?.querySelector('.visually-hidden')).toBeNull();
+      expect(text(field.labels?.[0])).toBe('Your answer');
+      $$(el, 'input[name="choice"]')[0]!.click();
+      field.value = 'Designers';
+      field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      expect(($(el, 'input[value="__other"]') as HTMLInputElement).checked).toBe(true);
+      $(el, 'odd-button[type="submit"]')!.click();
+      await settle(el);
+      expect(el.question).toMatchObject({ status: 'submitted', answer: { custom: 'Designers' } });
+    } finally {
+      own.dispose();
     }
   });
 
