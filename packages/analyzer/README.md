@@ -64,6 +64,36 @@ A library not built with Oddkin gets a kit from its standard Custom Elements Man
 
 `@oddkin/analyzer/schemas/*.json` holds the JSON Schemas of the files change impact reads and writes: `product.v1.schema.json` (`oddkin-impact snapshot --product`), and `comparison-snapshot.v1.schema.json` and `impact-report.v1.schema.json` (what `snapshot` and `compare --json` write), so an editor or a CI step can validate them.
 
+## Editors
+
+Editors read the standard manifest; Oddkin writes no editor format of its own ([metadata-and-analyzer.md](../../docs/architecture/metadata-and-analyzer.md) §4). For VS Code, the community generator `custom-element-vs-code-integration` turns it into HTML custom data. Give it a `referencesTemplate`, and each tag's hover links to the reference the installed package ships in its agent kit, which describes the version you have:
+
+```js
+// oddkin-html-data.mjs: run it again after installing or updating Oddkin.
+import { readFile, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { getVsCodeHtmlCustomData } from 'custom-element-vs-code-integration';
+
+const require = createRequire(import.meta.url);
+const tags = [];
+for (const name of ['@oddkin/components', '@oddkin/ai']) {
+  const root = dirname(require.resolve(`${name}/package.json`));
+  const { customElements } = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
+  const manifest = JSON.parse(await readFile(join(root, customElements), 'utf8'));
+  const link = (tag) => pathToFileURL(join(root, 'agent/references/components', `${tag}.md`)).href;
+  const data = getVsCodeHtmlCustomData(manifest, {
+    hideLogs: true,
+    referencesTemplate: (_, tag) => [{ name: `${name} reference`, url: link(tag) }],
+  });
+  tags.push(...JSON.parse(data).tags);
+}
+await writeFile('.vscode/oddkin.html-data.json', JSON.stringify({ version: 1.1, tags }));
+```
+
+Then add `"html.customData": ["./.vscode/oddkin.html-data.json"]` to `.vscode/settings.json`. The links are file URLs on your machine, so leave the generated file out of version control. A JSON file links to its schema the same way: `"$schema"` names the installed copy by its path from the file (`./node_modules/@oddkin/tokens/schema/theme-config.v1.schema.json`, as `oddkin-tokens init` writes). A schema's `$id` (`https://oddkin.dev/schemas/…`) is its name, not its location.
+
 ## What runs your code
 
 Analysis, the composition catalog, change impact, and project kits read a library's sources, examples, manifests, and builds as text and JSON; none of them imports or executes them. One command does: `oddkin-kit package` imports the package's built `./composition` entry, when it has one, to check the kit's composition example with the package's own validator. Like the package's build, run it only on packages you trust. `oddkin-analyze` (for page dates, unless `--no-history`) and `oddkin-impact snapshot --source` run `git` in the directory they are given. Details: [metadata-and-analyzer.md](../../docs/architecture/metadata-and-analyzer.md) §7.

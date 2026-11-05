@@ -5493,3 +5493,16 @@ Agent 2's OK of the two commits above (lanes, 2026-11-05 00:20) asked for two fi
 | Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-row8h.json` (8 probes: non-public members kept; a getter alone not read-only; a tag's `{type}` read as its name; the default slot named `-`; unknowns not reported; a type the package does not declare kept; no warning without tags; `@attr` not read) | 8 of 8 killed |
 | Node tests | `npx vitest run --project node` | 136 files; 1,693 passed, 2 skipped (was 1,690) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs`, `node scripts/verify-packs.mjs` | Exit 0 each; packed consumers OK (`@oddkin/analyzer` 175.3 KiB) |
+
+## 2026-11-05 — P1.6, §5c: installed-version links (round 11, Agent 2, row 8)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The schema's address | `Invoke-WebRequest -Method Head` on `https://www.oddkin.dev/schemas/composition/composition.v1.json` and `https://oddkin.dev/schemas/composition/composition.v1.json` | 404 both; `https://www.oddkin.dev/` 200 |
+| The kit's composition example | `tests/agent-kit/package-kits.test.ts`, "document the composition entry" | The example's `$schema` is `./node_modules/@oddkin/components/schemas/composition/composition.v1.json`; the kit says the `$id` is the schema's name, not its location |
+| Workbench's starters | `packages/workbench/test/node-theme-studio.test.ts`, "starts Oddkin's composition screens" | Each of the four starters names the same installed copy, and passes the schema and `validateComposition` as before |
+| The editor recipe, in the test | `tests/agent-kit/package-kits.test.ts`, "give each element the reference an editor's hover links to" | `getVsCodeHtmlCustomData` with the README's `referencesTemplate`, on `@oddkin/components` and `@oddkin/ai`: each tag has one reference, a file URL to `agent/references/components/<tag>.md` in its package, and the kit has that file |
+| The editor recipe, as written | The README's script, run from the repository root (output to `.tmp/`), then each reference's file checked | 79 tags (55 and 24), each with a reference to an existing file, for example `file:///C:/…/packages/components/agent/references/components/odd-button.md`. Not checked: following the link from VS Code's hover |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-row8i.json` (3 probes: the kit example names the `$id`; the kit drops the sentence on the `$id`; the starters name the `$id`) | 3 of 3 killed |
+| Node tests | `npx vitest run --project node` | 136 files; 1,694 passed, 2 skipped (was 1,693) |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs`, `node scripts/verify-packs.mjs` | Exit 0 each; packed consumers OK |

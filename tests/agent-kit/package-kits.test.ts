@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { describe, expect, it, vi } from 'vitest';
 import { resolveProjectContext } from '../../packages/analyzer/src/kit/context.js';
@@ -90,9 +91,39 @@ describe('packaged agent kits', () => {
       /- Layout: `div`, `section`, `header`, `footer` arrange their content with the `class` attribute, which takes only the layout primitives, separated by spaces: `odd-aspect-ratio`, .*`odd-stack-tight`\. The host page loads `@oddkin\/components\/css\/layout\.css`\./,
     );
     expect(text).toContain('`odd-button`');
-    // The example parses and names the document schema.
+    // The example parses and names the installed copy of the document schema, which an editor
+    // can load; the schema's $id is only its name.
     const example = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(text)![1]!);
-    expect(example.$schema).toBe('https://oddkin.dev/schemas/composition/composition.v1.json');
+    expect(example.$schema).toBe(
+      './node_modules/@oddkin/components/schemas/composition/composition.v1.json',
+    );
+    expect(text).toContain(
+      '`https://oddkin.dev/schemas/composition/composition.v1.json`, is its name, not its location.',
+    );
+  });
+
+  it("give each element the reference an editor's hover links to (analyzer README, Editors)", async () => {
+    // The README's recipe: the community VS Code generator, with links into the installed kit.
+    const { getVsCodeHtmlCustomData } = await import('custom-element-vs-code-integration');
+    for (const name of ['@oddkin/components', '@oddkin/ai']) {
+      const root = join(repo, 'packages', name.slice('@oddkin/'.length));
+      const file = json(`packages/${name.slice('@oddkin/'.length)}/package.json`).customElements;
+      const manifest = JSON.parse(readFileSync(join(root, file), 'utf8'));
+      const link = (tag: string) =>
+        pathToFileURL(join(root, 'agent/references/components', `${tag}.md`)).href;
+      const data = JSON.parse(
+        getVsCodeHtmlCustomData(manifest, {
+          hideLogs: true,
+          referencesTemplate: (_, tag) => [{ name: `${name} reference`, url: link(tag!) }],
+        }),
+      ) as { tags: { name: string; references: { name: string; url: string }[] }[] };
+      const { files } = await packageKit(project, library(name));
+      expect(data.tags.length).toBeGreaterThan(20);
+      for (const tag of data.tags) {
+        expect(tag.references).toEqual([{ name: `${name} reference`, url: link(tag.name) }]);
+        expect(files.has(`references/components/${tag.name}.md`), tag.name).toBe(true);
+      }
+    }
   });
 
   it('come out the same from the installed package, so a project can check them', async () => {

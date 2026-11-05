@@ -136,7 +136,7 @@ export async function compositionReference(library: Library): Promise<KitFile | 
   const classes: readonly string[] = containers[0]?.[1].attributes['class'].classes ?? [];
   const layoutSheet = exportsMap['./css/layout.css'] ? `${library.name}/css/layout.css` : undefined;
   const example = {
-    $schema: documentSchema['$id'],
+    $schema: `./node_modules/${library.name}/schemas/composition/composition.v1.json`,
     version: COMPOSITION_VERSION,
     root: [
       {
@@ -183,7 +183,8 @@ export async function compositionReference(library: Library): Promise<KitFile | 
       : []),
     '## Document',
     '',
-    `- Schema: ${code(`${library.name}/schemas/composition/composition.v1.json`)} (${code(documentSchema['$id'])}). Required: ${((documentSchema['required'] as string[] | undefined) ?? []).map(code).join(', ')}; ${code('version')} is ${code(COMPOSITION_VERSION)}.`,
+    `- Schema: ${code(`${library.name}/schemas/composition/composition.v1.json`)}. Required: ${((documentSchema['required'] as string[] | undefined) ?? []).map(code).join(', ')}; ${code('version')} is ${code(COMPOSITION_VERSION)}.`,
+    `- ${code('$schema')} is optional, for editors: the installed copy's path from the document, as in the example below for a document beside ${code('package.json')}. The schema's ${code('$id')}, ${code(documentSchema['$id'])}, is its name, not its location.`,
     `- ${code('root')} and every ${code('children')}: an array of nodes. A node is a string (text) or an object with ${code('element')}: a published element (one schema each, below) or a native element (${natives.map(code).join(', ')}).`,
     `- An element object: ${code('element')}, optional ${code('id')} (${firstSentence(defs['id']?.description)}), ${code('slot')} (${firstSentence(defs['slot']?.description)}), ${code('attributes')} (published attributes and properties only), ${code('children')}, and ${code('actions')}: event name to action name (${firstSentence(defs['action']?.description)}).`,
     ...(containers.length

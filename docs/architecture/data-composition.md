@@ -241,7 +241,7 @@ An interface described as data, for agents that generate structured output, for 
 
 ```json
 {
-  "$schema": "https://oddkin.dev/schemas/composition/composition.v1.json",
+  "$schema": "./node_modules/@oddkin/components/schemas/composition/composition.v1.json",
   "version": 1,
   "root": [
     {
@@ -275,6 +275,8 @@ A node is either text (a string, rendered as a text node) or an element with the
 - `id`, unique in the document;
 - `slot`, a published slot of the parent;
 - `attributes`, `properties`, `children`, and `actions`.
+
+`$schema` is optional and only for editors: the installed copy's path from the document, as above for a document beside `package.json`, so an editor checks it against the installed version. The schemas' `$id`s (`https://oddkin.dev/schemas/composition/…`) are their names, not their locations.
 
 **What a document may contain.** Everything is generated from the published metadata (`custom-elements.json`, `oddkin.metadata.json`); nothing is hand-written per element.
 

@@ -564,6 +564,10 @@ describe('Theme Studio page data', () => {
         ok: true,
         diagnostics: [],
       });
+      // An editor loads the installed copy; the schema's $id is only its name.
+      expect(starter.document['$schema']).toBe(
+        './node_modules/@oddkin/components/schemas/composition/composition.v1.json',
+      );
     }
   });
 

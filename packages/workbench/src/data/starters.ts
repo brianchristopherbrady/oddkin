@@ -5,7 +5,7 @@
 import type { JsonObject } from './types.js';
 
 const document = (root: readonly JsonObject[]): JsonObject => ({
-  $schema: 'https://oddkin.dev/schemas/composition/composition.v1.json',
+  $schema: './node_modules/@oddkin/components/schemas/composition/composition.v1.json',
   version: 1,
   root,
 });
