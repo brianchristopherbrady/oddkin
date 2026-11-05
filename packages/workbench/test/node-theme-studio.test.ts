@@ -451,8 +451,13 @@ describe('Theme Studio page data', () => {
       { ...chip, examples: [...chip.examples, { id: 'example:acme-chip/raw', name: 'raw' }] },
       { ...component('acme-card', [{ name: 'plain' }]), enrichment: {} },
       { ...component('acme-badge', [{ name: 'a' }]), package: '@acme/other' },
-      // Nothing to show without its setup: no screen, but documents may use it.
-      mark(component('acme-dialog', [{ name: 'open' }]), { open: { hasFixture: true } }),
+      // Every example needs its setup code: shown by its values, without that code.
+      {
+        ...mark(component('acme-dialog', [{ name: 'open' }]), { open: { hasFixture: true } }),
+        exampleModule: '/acme-dialog.examples.js',
+      },
+      // Without the example module its values are not published: no screen, but documents may use it.
+      mark(component('acme-sheet', [{ name: 'open' }]), { open: { hasFixture: true } }),
     ];
     const page = themeStudioPage('theme-studio', pages, configWith(), {}, out, {
       titles: new Map([
@@ -467,6 +472,12 @@ describe('Theme Studio page data', () => {
         tag: 'acme-badge',
         title: 'acme-badge',
         items: [expect.objectContaining({ role: 'a' })],
+        omitted: [],
+      },
+      {
+        tag: 'acme-dialog',
+        title: 'acme-dialog',
+        items: [expect.objectContaining({ role: 'open', label: 'open (without its setup code)' })],
         omitted: [],
       },
       {
@@ -500,6 +511,7 @@ describe('Theme Studio page data', () => {
         'acme-button': '@acme/ui/define/acme-button',
         'acme-chip': '@acme/ui/define/acme-chip',
         'acme-dialog': '@acme/ui/define/acme-dialog',
+        'acme-sheet': '@acme/ui/define/acme-sheet',
       },
       starters: [],
     });
@@ -536,6 +548,7 @@ describe('Theme Studio page data', () => {
       'acme-badge',
       'acme-button',
       'acme-chip',
+      'acme-dialog',
     ]);
     expect(out.items).toEqual([]);
   });

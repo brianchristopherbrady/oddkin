@@ -5506,3 +5506,12 @@ Agent 2's OK of the two commits above (lanes, 2026-11-05 00:20) asked for two fi
 | Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-row8i.json` (3 probes: the kit example names the `$id`; the kit drops the sentence on the `$id`; the starters name the `$id`) | 3 of 3 killed |
 | Node tests | `npx vitest run --project node` | 136 files; 1,694 passed, 2 skipped (was 1,693) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs`, `node scripts/verify-packs.mjs` | Exit 0 each; packed consumers OK |
+
+## 2026-11-05 — P1.8, row 9: Theme Studio keeps a screen for a component whose examples all need setup code (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Screens | `packages/workbench/test/node-theme-studio.test.ts` | `acme-dialog`, whose only example has a fixture and an example module, now has a screen with that example by its values, captioned "open (without its setup code)"; `acme-sheet`, the same without an example module (no published values), has none; `acme-button` and `acme-chip`, which have static examples, still name their fixture examples as omitted (`setup`; `b`, `raw`). 16 of 16 |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs .tmp/probes-r9a.json` (4 probes: such examples still left out; a fixture example counted as showable; fixture examples shown beside static ones; no caption) | 4 of 4 killed |
+| Node tests | `npx vitest run --project node` | 1,694 passed and 2 skipped (136 files) |
+| Repository | `npm run build`, `npm run typecheck`, `node scripts/check-size.mjs`, `npm run lint` | Exit 0 each, apart from lint's last step, `format:check`, on the test file; formatted, then `prettier --check` on the changed files passed and the file's tests again 16 of 16 |
