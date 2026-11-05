@@ -3,14 +3,16 @@ import { token } from '@oddkin/tokens/refs';
 
 /**
  * Arrangement of the tool call (layout-recipes.md §14): the summary and the failure line in
- * centred rows that wrap, the body's input and output stacked. The host stacks the call and its
- * approval itself: a region is a class, and the host has none.
+ * centred rows that wrap (the summary's name takes a line of its own, as in the Figma specimen),
+ * the body's input and output stacked, each a label over its code. The host stacks the call and
+ * its approval itself: a region is a class, and the host has none.
  */
 export const toolCallRecipe = defineLayoutRecipe({
   name: 'tool-call',
   regions: {
     summary: row({ gap: token('space.xs'), wrap: true }),
     body: stack({ gap: token('space.xs') }),
+    section: stack({ gap: token('space.xs') }),
     failure: row({ gap: token('space.xs'), wrap: true }),
   },
 });

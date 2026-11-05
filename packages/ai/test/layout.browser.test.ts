@@ -636,26 +636,33 @@ describe('odd-response-feedback', () => {
 describe('odd-task-plan', () => {
   it('stacks the plan, its steps and tasks; a step and a task sit on the baseline', async () => {
     const el = await example('task-plan');
-    expectColumn($(el, '.base'), space('sm'));
-    const progress = $(el, '.progress');
-    expectRow(progress, space('xs'));
+    // As the Figma specimen: space.xs between title, progress, and steps; a step's status at the
+    // end of its title's line.
+    expectColumn($(el, '.base'), space('xs'));
     expectColumn($(el, '.steps'), space('xs'));
     expectColumn($(el, '.tasks'), space('xs'));
     expectRow($(el, '.step'), space('xs'), { align: 'baseline' });
     // A task's symbol, title, and status are one line each.
     expectRow($(el, '.task'), space('xs'), { align: 'unseen' });
-    expectColumn($(el, '.body'), 2);
-    await expectWraps(progress, '10rem');
+    const body = $(el, '.body');
+    const [title, status] = [...body.children].filter(
+      (child) => !child.classList.contains('visually-hidden'),
+    );
+    expect(Math.round(status!.getBoundingClientRect().right)).toBe(
+      Math.round(body.getBoundingClientRect().right),
+    );
+    expect(title!.getBoundingClientRect().right).toBeLessThanOrEqual(
+      status!.getBoundingClientRect().left,
+    );
   });
 });
 
 describe('odd-tool-call', () => {
-  it('lines up the summary and the failure in centred rows that wrap', async () => {
+  it('puts the summary’s name over its status; the failure is a centred row that wraps', async () => {
     const el = await example('tool-call', 'failed');
-    const summary = $(el, '.summary');
-    expectRow(summary, space('xs'));
+    // As the Figma specimen: the name on a line of its own, the status space.xs under it.
+    expectColumn($(el, '.summary'), space('xs'));
     expectRow($(el, '.failure'), space('xs'));
-    await expectWraps(summary, '8rem');
     await expectWraps($(el, '.failure'), '8rem');
   });
 

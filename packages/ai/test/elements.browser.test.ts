@@ -219,7 +219,7 @@ describe('odd-tool-call and odd-action-approval', () => {
     expect(text($(el, '.status'))).toBe('Preparing arguments…');
     // The summary shows a disclosure marker that turns with the open state;
     // its empty alternative keeps it out of the summary's accessible name.
-    const marker = () => getComputedStyle($(el, '.summary')!, '::before').content;
+    const marker = () => getComputedStyle($(el, '.name')!, '::before').content;
     expect(marker()).toBe('"\u25B8" / ""');
     ($(el, 'details') as HTMLDetailsElement).open = true;
     expect(marker()).toBe('"\u25BE" / ""');
@@ -272,9 +272,10 @@ describe('odd-tool-call and odd-action-approval', () => {
         ),
         resolved('border-top-color', `var(--odd-color-${border})`),
       ];
-      // Neutral (no tone), success and danger (filled, with a currentColor border), and active.
+      // Neutral (no tone) as the Figma specimen draws it, the same as active; success and danger
+      // (filled, with a currentColor border).
       expect(await look('input-available')).toEqual(
-        colours('text-secondary', 'none', 'border-default'),
+        colours('text-primary', 'none', 'border-strong'),
       );
       expect(await look('output-available')).toEqual(
         colours('success-foreground', 'success-surface', 'success-foreground'),

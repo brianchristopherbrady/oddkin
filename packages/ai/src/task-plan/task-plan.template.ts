@@ -12,7 +12,6 @@ export const taskPlanTemplate = (host: OddkinTaskPlan) => {
   return html`<section class="base" part="base" aria-labelledby="title">
     <p id="title" class="title">${plan.title || t.label}</p>
     <div part="progress" class="progress">
-      <progress .max=${Math.max(total, 1)} .value=${done} aria-label=${progressText}></progress>
       <span class="muted">${progressText}</span>
     </div>
     <ol part="steps" class="steps">

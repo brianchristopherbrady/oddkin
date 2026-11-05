@@ -50,7 +50,7 @@ export const aiElementStyles = css`
     border-color: currentColor;
     background: var(--_tone-surface);
   }
-  .status[data-tone='active'] {
+  .status:is([data-tone=''], [data-tone='active']) {
     border-color: ${token('color.border.strong')};
     color: ${token('color.text.primary')};
   }

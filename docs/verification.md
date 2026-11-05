@@ -5766,3 +5766,18 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | Metadata | `npm run verify:metadata` | Exit 0 |
 | Size | `node scripts/check-size.mjs` | `ai-chat` 51,569 B of 51,968 (51,457 before); `ai:styles` 5,144 of 5,376 (5,108) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node packages/ai/test` (94 passed), `npm run compat` | Exit 0 each |
+
+## 2026-11-05 — P1.8 item 8: the AI design pass, sixth batch (round 11, Agent 3)
+
+`odd-tool-call` and `odd-task-plan` against their Figma specimens, light and dark. On `d317919`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `packages/ai/test/figma-parity.browser.test.ts` in Chromium, before the changes | `odd-tool-call`: the card unpadded (Figma `space.sm`; the summary and body padded instead), the name at 600 (Oddkin/Code, 400), the neutral status pill with the default border and secondary text (strong border, primary), the Arguments label at 12 px and 600 (Oddkin/Component/Field/small, 14 and 400), the code box unbordered with `radius.sm` at 12 px (the default border, `radius.lg`, 14 px). `odd-task-plan`: parts 12 px apart (`space.xs`, 8), each step's status under its title 2 px away (at the end of the title's line, `space.sm`), the done step's title in primary text (success), the active one at 600 (Oddkin/Component/Button/lg, 500) |
+| After | the same file, in Chromium, Firefox, and WebKit | 40 of 40 in each engine (twenty elements, light and dark); the tool call's name, status, and arguments stand one under another |
+| Visual | `.tmp/c3-ref-read.mjs` on the docs dev server (not kept) | The tool call's card; the task plan's statuses at the ends of their lines, without the bar |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-d6.json` (6 probes: the card unpadded; the name on the status's line; the code box unbordered; the neutral pill as before; the done step in primary text; the status under the title) | 6 of 6 killed |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI parity, elements, layout, examples, reflow, and contract tests | 270 passed and 4 skipped in each of Chromium, Firefox, and WebKit |
+| Metadata | `npm run verify:metadata` | Exit 0 |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,587 B of 51,968 (51,569 before); `ai:styles` 5,154 of 5,376 (5,144) |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node packages/ai/test` (94 passed), `npm run compat` | Exit 0 each |

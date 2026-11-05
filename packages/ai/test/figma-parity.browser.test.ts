@@ -804,3 +804,87 @@ describe('Figma parity: odd-artifact', () => {
       expectNone(compare(`odd-artifact/Preview · first revision/${mode}`, {}, targets));
     });
 });
+
+describe('Figma parity: odd-tool-call', () => {
+  for (const mode of MODES)
+    it(`Arguments ready, not executed (${mode})`, async () => {
+      await import('../src/tool-call/tool-call.define.js');
+      inMode(mode);
+      const el = mount('<odd-tool-call></odd-tool-call>') as HTMLElementTagNameMap['odd-tool-call'];
+      el.tool = {
+        toolCallId: 't1',
+        toolName: 'example_tool',
+        status: 'input-available',
+        input: { document: 'example.txt' },
+      };
+      await settle(el);
+      (shadow(el, 'details') as HTMLDetailsElement).open = true;
+      await settle(el);
+      const family = `odd-tool-call/Arguments ready · not executed/${mode}`;
+      const code = shadow(el, '[part="arguments"] .code');
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame' },
+        { layer: ['▾ example_tool'], el: shadow(el, '.name'), kind: 'text' },
+        { layer: ['Status'], el: shadow(el, '.status'), kind: 'frame' },
+        {
+          layer: ['Status', 'Arguments ready; not run yet'],
+          el: shadow(el, '.status'),
+          kind: 'text',
+        },
+        { layer: ['Arguments'], el: shadow(el, '[part="arguments"] .label'), kind: 'text' },
+        { layer: ['Arguments [2]'], el: code, kind: 'frame' },
+        { layer: layer(family, '{ "document"'), el: code, kind: 'text' },
+      ];
+      expectNone(compare(family, {}, targets));
+      // Figma's column: the name, then the status on its own line, then the arguments, xs apart.
+      const top = (selector: string) => shadow(el, selector).getBoundingClientRect().top;
+      expect(top('.status')).toBeGreaterThan(shadow(el, '.name').getBoundingClientRect().bottom);
+      expect(top('[part="arguments"] .label')).toBeGreaterThan(
+        shadow(el, '.status').getBoundingClientRect().bottom,
+      );
+    });
+});
+
+describe('Figma parity: odd-task-plan', () => {
+  for (const mode of MODES)
+    it(`One done, one active (${mode})`, async () => {
+      await import('../src/task-plan/task-plan.define.js');
+      inMode(mode);
+      const el = mount('<odd-task-plan></odd-task-plan>') as HTMLElementTagNameMap['odd-task-plan'];
+      el.plan = {
+        planId: 'p1',
+        title: 'Example plan',
+        steps: [
+          { id: 's1', title: 'Read the document', status: 'done' },
+          { id: 's2', title: 'Prepare the summary', status: 'active' },
+        ],
+      };
+      await settle(el);
+      const steps = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.step')];
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Example plan'], el: shadow(el, '.title'), kind: 'text' },
+        { layer: ['1 of 2 complete'], el: shadow(el, '[part="progress"] .muted'), kind: 'text' },
+      ];
+      for (const [i, row, title, status] of [
+        [0, 'Plan step', '✓  Read the document', 'Done'],
+        [1, 'Plan step [2]', '◌  Prepare the summary', 'In progress'],
+      ] as const) {
+        const body = steps[i]!.querySelector<HTMLElement>('.body')!;
+        targets.push(
+          { layer: [row], el: body, kind: 'frame', gap: 'column-gap' },
+          {
+            layer: [row, title],
+            el: body.querySelector<HTMLElement>('.step-title')!,
+            kind: 'text',
+          },
+          {
+            layer: [row, status],
+            el: body.querySelector<HTMLElement>(':scope > .muted')!,
+            kind: 'text',
+          },
+        );
+      }
+      expectNone(compare(`odd-task-plan/One done · one active/${mode}`, {}, targets));
+    });
+});

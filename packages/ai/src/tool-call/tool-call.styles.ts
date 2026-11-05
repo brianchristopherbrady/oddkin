@@ -10,36 +10,36 @@ export const toolCallStyles = css`
     gap: ${token('space.xs')};
   }
   .base {
+    padding: ${token('space.sm')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};
     border-radius: ${token('radius.md')};
     background: ${token('color.surface.default')};
   }
   .summary {
     min-block-size: ${token('target.min')};
-    padding: ${token('space.xs')} ${token('space.sm')};
     cursor: pointer;
   }
-  .summary::before {
+  .name::before {
     content: '\\25B8' / '';
+    margin-inline-end: ${token('space.2xs')};
   }
-  [open] > .summary::before {
+  [open] > .summary > .name::before {
     content: '\\25BE' / '';
   }
   .name {
+    flex-basis: 100%;
     font-family: ${token('font.family.mono')};
     font-size: ${token('font.size.sm')};
-    font-weight: ${token('font.weight.semibold')};
   }
   .purpose {
     flex-basis: 100%;
   }
   .body {
-    padding: 0 ${token('space.sm')} ${token('space.sm')};
+    padding-block-start: ${token('space.xs')};
   }
   .label {
-    margin: 0 0 ${token('space.2xs')};
-    font-size: ${token('font.size.xs')};
-    font-weight: ${token('font.weight.semibold')};
+    margin: 0;
+    font-size: ${token('font.size.sm')};
     color: ${token('color.text.secondary')};
   }
   .code {
@@ -47,14 +47,16 @@ export const toolCallStyles = css`
     max-block-size: 16rem;
     padding: ${token('space.xs')};
     overflow: auto;
-    border-radius: ${token('radius.sm')};
+    border: ${token('border.width.default')} solid ${token('color.border.default')};
+    border-radius: ${token('radius.lg')};
     background: ${token('color.surface.sunken')};
     font-family: ${token('font.family.mono')};
-    font-size: ${token('font.size.xs')};
+    font-size: ${token('font.size.sm')};
     white-space: pre-wrap;
   }
   .failure {
-    padding: ${token('space.xs')} ${token('space.sm')};
+    margin-block-start: ${token('space.xs')};
+    padding-block-start: ${token('space.xs')};
     border-block-start: ${token('border.width.default')} solid ${token('color.danger.foreground')};
   }
 `;

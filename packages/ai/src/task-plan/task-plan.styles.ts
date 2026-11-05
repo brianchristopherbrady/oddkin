@@ -9,14 +9,20 @@ export const taskPlanStyles = css`
     margin: 0;
     font-weight: ${token('font.weight.semibold')};
   }
-  progress {
-    inline-size: min(100%, 16rem);
-  }
   .steps,
   .tasks {
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  .body {
+    flex: 1 1 auto;
+  }
+  .step-title {
+    flex: 1 1 auto;
+  }
+  .body > :is(.detail, .request, .parallel, .tasks) {
+    flex-basis: 100%;
   }
   .task {
     font-size: ${token('font.size.sm')};
@@ -27,7 +33,8 @@ export const taskPlanStyles = css`
     text-align: center;
     color: ${token('color.text.secondary')};
   }
-  [data-status='done'] > .symbol {
+  [data-status='done'] > .symbol,
+  [data-status='done'] > .body > .step-title {
     color: ${token('color.success.foreground')};
   }
   [data-status='failed'] > .symbol,
@@ -36,7 +43,7 @@ export const taskPlanStyles = css`
   }
   [data-status='active'] > .body > .step-title,
   [data-status='needs-input'] > .body > .step-title {
-    font-weight: ${token('font.weight.semibold')};
+    font-weight: ${token('font.weight.medium')};
   }
   .detail,
   .request {
