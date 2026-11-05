@@ -34,12 +34,12 @@ Finish first (owner, 2026-11-01: work already started comes before new items). A
 
 | Agent | # | Item | Waits for |
 | --- | --- | --- | --- |
-| 1 | 1 | CF.4, RF-19: the error-message audit. List every documented diagnostic code and message in the packages; each message names what to do, or links to the page that does. Fixes go to the owning lane | — |
+| 1 | 1 | CF.4, RF-19: the error-message audit. List every documented diagnostic code and message in the packages; each message names what to do, or links to the page that does. Fixes go to the owning lane | The owner ends Agent 1's light duty (set 2026-11-02: Agent 1 syncs the lanes and pushes `main`) |
 | 1 | 2 | Moved to Agent 3 by the owner on 2026-11-03: `odd-table` is Agent 3's item 6 | — |
 | 1 | — | P0.6: done on 2026-11-03. The first scheduled `registry-smoke.yml` run passed (41398232217, 2026-11-02), and CI is green again on `4f03223` (run 41712566479) | — |
-| 1 | 3 | CF.4, RF-12 and RF-13: publishing from GitHub Actions with provenance (`.github/workflows/release.yml`), needed before `1.0.0-beta.2` (D-5); Dependabot, an informational `npm audit`, and the SBOM in the evidence bundle | The owner adds the trusted publishers on npmjs.com within 2 days of the first publish from the workflow |
-| 1 | 4 | P1.7: conformance suites for the catalog's components and the ADR 0043 role compatibility check, then visual baselines (the CI side) | Agent 2 for Workbench's side of the baselines |
-| 1 | 5 | P1.2's quality items, then P1.3 | — |
+| 1 | 3 | CF.4, RF-12 and RF-13: publishing from GitHub Actions with provenance (`.github/workflows/release.yml`), needed before `1.0.0-beta.2` (D-5); Dependabot, an informational `npm audit`, and the SBOM in the evidence bundle | The owner ends Agent 1's light duty; then the owner adds the trusted publishers on npmjs.com within 2 days of the first publish from the workflow |
+| 1 | 4 | P1.7: conformance suites for the catalog's components and the ADR 0043 role compatibility check, then visual baselines (the CI side) | The owner ends Agent 1's light duty; Agent 2 for Workbench's side of the baselines |
+| 1 | 5 | P1.2's quality items, then P1.3 | The owner ends Agent 1's light duty |
 | 2 | 1 | P0.2's last item: a share link from the published Workbench `1.0.0-beta.1`, opened by the current one | — |
 | 2 | 2 | Done on 2026-11-04. P1.5, items 1 and 2: Theme Studio as one embeddable panel, used in Workbench, with screens of any documented component and its examples, and composition screens for Oddkin's components with the four starter screens. The app-layout screen's table is `odd-table` (Agent 3's item 6, moved from Agent 1 on 2026-11-03, landed on 2026-11-04 as `1e05a28`) | — |
 | 2 | 3 | Done on 2026-11-03. P1.5, item 5: save to file from the Workbench dev server, after showing the diff, for one theme file | — |
