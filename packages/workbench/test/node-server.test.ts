@@ -464,6 +464,24 @@ describe('workbench dev server', { timeout: 60_000 }, () => {
     });
   });
 
+  it("offers a team's own app with the draft, only in the dev server", async () => {
+    const dir = acmeProject({
+      'oddkin.config.ts':
+        "export default { library: { packages: ['@acme/ui'] }, themeStudio: { themeConfig: './a.theme.json', app: 'http://localhost:5173/' } };\n",
+      'a.theme.json': '{ "name": "a" }\n',
+    });
+    projects.push(dir);
+    const studio = async (save: boolean) =>
+      (
+        (await buildWorkbench({ config: dir, save })).data?.pages[
+          'theme-studio'
+        ] as ThemeStudioPageData
+      ).studio;
+    expect((await studio(true)).app).toBe('http://localhost:5173/');
+    // A built site has no app beside it.
+    expect(await studio(false)).not.toHaveProperty('app');
+  });
+
   it('lists the files of several themes once each, and the themes by name', async () => {
     const dir = acmeProject({
       'oddkin.config.ts':

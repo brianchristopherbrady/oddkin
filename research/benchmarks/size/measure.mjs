@@ -36,6 +36,7 @@ export const ENTRIES = [
   'workbench-panel-theme-studio',
   'workbench-shell',
   'workbench-frame',
+  'workbench-theme-link',
 ];
 
 /**
@@ -49,6 +50,7 @@ export const LAZY = {
     'workbench-theme-save': 'packages/workbench/dist/panels/theme-save.js',
     'workbench-theme-products': 'packages/workbench/dist/panels/theme-products.js',
     'workbench-theme-views': 'packages/workbench/dist/panels/theme-views.js',
+    'workbench-theme-app': 'packages/workbench/dist/panels/theme-app.js',
   },
   'workbench-shell': { 'workbench-theme-studio': 'packages/workbench/dist/app/theme-studio.js' },
 };
@@ -175,6 +177,9 @@ export const BUDGETS = {
   // colours are SVG fills: with the style-map helper, the shell's initial load gained a shared
   // chunk (53,686 B against 53,439).
   'workbench-theme-views': 1408,
+  // 0.75 KiB from 2026-11-04 (Agent 2): measured 630, a team's own app with the draft (P1.5 item
+  // 6): opening the app, its ready message, and sending each CSS; loaded only with `studio.app`.
+  'workbench-theme-app': 768,
   // 51 KiB; measured 51,248 on 2026-10-28 (48,972 before: the catalog and component reference
   // above, both in the shell). Was 49 KiB (48,775 measured on 2026-10-22): the shell with router,
   // search, and every page renderer. 54 KiB from 2026-10-28 (Agent 2): measured 54,117 with the
@@ -198,6 +203,10 @@ export const BUDGETS = {
   // import() instead of an inline module script): the preview frame runtime (protocol, Scope,
   // mount, specimen, theme). Measured 7,472 on 2026-11-02 with the composition request.
   'workbench-frame': 7680,
+  // 0.75 KiB from 2026-11-04 (Agent 2): measured 707, `@oddkin/workbench/theme-link`, which a
+  // team's app loads in development only to take Theme Studio's draft (P1.5 item 6); 456 before
+  // its origin check threw core's coded `OddkinError` (Agent 1's security read).
+  'workbench-theme-link': 768,
 };
 
 /**

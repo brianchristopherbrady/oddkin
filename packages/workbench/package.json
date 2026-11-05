@@ -87,6 +87,10 @@
       "types": "./dist/frame/index.d.ts",
       "default": "./dist/frame/index.js"
     },
+    "./theme-link": {
+      "types": "./dist/theme-link/index.d.ts",
+      "default": "./dist/theme-link/index.js"
+    },
     "./panels/component": {
       "types": "./dist/panels/component.d.ts",
       "default": "./dist/panels/component.js"

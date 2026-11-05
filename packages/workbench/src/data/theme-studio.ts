@@ -48,6 +48,8 @@ export interface ThemeStudioInput {
   readonly files?: ThemeStudioPageData['studio']['files'];
   /** With `files`: the configured themes. */
   readonly themes?: ThemeStudioPageData['studio']['themes'];
+  /** The dev server opens a team's own app with the draft (`themeStudio.app`). */
+  readonly app?: string;
 }
 
 const roleId = (value: string) => value.replace(/^role:/, '');
@@ -229,6 +231,7 @@ export function themeStudioPage(
       ...(input.themes ? { themes: input.themes } : {}),
       ...(input.worker ? { worker: input.worker } : {}),
       ...(input.save ? { save: input.save } : {}),
+      ...(input.app ? { app: input.app } : {}),
       roles,
       screens: screensOf(components, screens),
       missing,

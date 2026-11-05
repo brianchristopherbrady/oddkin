@@ -52,6 +52,11 @@ export interface WorkbenchConfig {
      * stylesheet. Each may extend a shared base file. `themeConfig`, when set, comes first.
      */
     readonly themes?: Readonly<Record<string, string>>;
+    /**
+     * A team's own app on its dev server, e.g. `http://localhost:5173/`: in `oddkin workbench dev`,
+     * Theme Studio opens it with the draft, which `@oddkin/workbench/theme-link` applies there.
+     */
+    readonly app?: string;
     readonly preview?: {
       readonly recipe?: string;
       readonly roles?: Readonly<
@@ -97,6 +102,7 @@ export interface ResolvedWorkbenchConfig {
     readonly route: string;
     readonly themeConfig?: string;
     readonly themes: Readonly<Record<string, string>>;
+    readonly app?: string;
     readonly preview: NonNullable<NonNullable<WorkbenchConfig['themeStudio']>['preview']>;
   };
   readonly products: {
@@ -138,6 +144,15 @@ const TOP_LEVEL = new Set([
 const BASE_PATH = /^\/(.*\/)?$/;
 /** A theme's name in `themeStudio.themes`, as Theme Studio shows it. */
 const THEME_NAME = /^[A-Za-z0-9][\w.-]*$/;
+
+/** Whether `value` is an absolute http or https URL. */
+function httpUrl(value: unknown): boolean {
+  try {
+    return typeof value === 'string' && /^https?:$/.test(new URL(value).protocol);
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Validate a configuration (from `oddkin.config.*` or JSON) and apply defaults. Returns
@@ -240,6 +255,13 @@ export function resolveWorkbenchConfig(input: unknown): {
       );
     else themes[name] = file;
   }
+  const app = c.themeStudio?.app;
+  if (app !== undefined && !httpUrl(app))
+    out.error(
+      'config.themeStudio.app',
+      `themeStudio.app "${String(app)}" must be the http or https URL of the app on its dev server.`,
+      '/themeStudio/app',
+    );
   const placement = c.products?.placement ?? ['foundations'];
   placement.forEach((p, i) => {
     if (p !== 'foundations' && p !== 'primary') {
@@ -284,6 +306,7 @@ export function resolveWorkbenchConfig(input: unknown): {
         route,
         ...(themeConfig === undefined ? {} : { themeConfig }),
         themes,
+        ...(app === undefined ? {} : { app }),
         preview: c.themeStudio?.preview ?? {},
       },
       products: {

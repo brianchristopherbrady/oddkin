@@ -58,6 +58,11 @@
           "propertyNames": { "pattern": "^[A-Za-z0-9][\\w.-]*$" },
           "additionalProperties": { "type": "string", "minLength": 1 }
         },
+        "app": {
+          "type": "string",
+          "pattern": "^https?://",
+          "description": "A team's own app on its dev server (http or https URL): in oddkin workbench dev, Theme Studio opens it with the draft, which @oddkin/workbench/theme-link applies there"
+        },
         "preview": {
           "type": "object",
           "additionalProperties": false,

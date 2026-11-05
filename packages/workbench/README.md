@@ -14,6 +14,7 @@ Metadata-driven documentation tooling for any custom-element library. **Status:*
 | `@oddkin/workbench/testing` | `mountExample(set, name, container?)` runs an authored example and its fixture in a browser test; `runConformance` runs a conformance suite with the project's own `expect` |
 | `@oddkin/workbench/panels/{catalog,component,foundation,theme-studio}` | The embeddable panels' classes; `…/define` registers `<oddkin-catalog-panel>`, `<oddkin-component-panel>`, `<oddkin-foundation-panel>`, or `<oddkin-theme-studio-panel>` (see [Embedding the panels](#embedding-the-panels)) |
 | `@oddkin/workbench/frame` | The preview frame runtime, imported by the frame document |
+| `@oddkin/workbench/theme-link` | Development only. `linkThemeStudio({ studio, stylesheet?, studioWindow?, document? })`, loaded by a team's own app so Theme Studio's draft replaces one of its stylesheets (see [A team's own app](#a-teams-own-app)) |
 
 The examples, config, pages, and data entries import without a DOM and have no runtime dependencies (`@oddkin/core` is used for types only). Shipped component code never imports them; colocated `*.examples.ts` files may, because they are development-only sources excluded from the package build (ADR 0021).
 
@@ -57,6 +58,22 @@ A site that renders its own pages can show the catalog, component, foundation, a
    Theme Studio edits a draft of the library's theme configuration (`themeStudio.themeConfig`, or several by name in `themeStudio.themes`, a theme file per product) and generates it in the worker; the result restyles both frames in place. Beside the colour, spacing, and override fields, the form offers the corner shape, pill control corners, the motion and type scales, and the colour gamut. **Ramps** shows each generated ramp step by step, and **Contrast** the generator's own contrast report of the role pairs the theme contracts (WCAG 2.x ratios, failures first; not an accessibility certification), for the theme or product the frames show; both need a `@oddkin/tokens` with `contrastReport`. Several themes, or a theme file that extends a base file, have a draft per file (the page file's `studio.files`): a **Theme file** picker chooses the file, or a product a file declares (its `products` entries), to edit; the file is generated on its bases' drafts, and a product is shown in the frames through their product setting; each field says which file sets its value; **New product** adds one from a brand colour; **Compare** shows chosen themes and products beside the one edited; the page names the themes and products an edit changes; and saving writes the file edited alone. The frames show one screen at a time, in light and dark: the role specimens, any documented component with its examples (examples whose setup code needs the component's page are named, not shown), or a composition document. Composition screens appear when a documented package exports a renderer as `./composition` (`renderComposition` and `NATIVE`, as `@oddkin/components` does); the frame imports it through its import map and allows the package's documented elements and the renderer's native elements. A documented package without a renderer of its own gets the catalog the analyzer generates from its manifest (`@oddkin/analyzer/composition`, as `oddkin-analyze --composition` writes it), and `@oddkin/components/composition` renders its elements, beside Oddkin's when both are documented. They start from starter documents for `@oddkin/components` (a report card, a settings form, a sign-in dialog, an app layout) and "Your document", where a reader pastes a document, for example one an agent wrote from the packaged kit. The renderer refuses a document whole and the panel lists its diagnostics with their paths; a document's actions do nothing in a preview.
 
 6. **Ordering.** A frame handles requests one at a time, in the order they were sent, and `createIsolatedPreview` sends each one after the previous one has settled (its timeout counts from then). An edit made while a preview still loads its module graph applies to the element that mount creates.
+
+## A team's own app
+
+To try a draft on the app's real screens, set `themeStudio.app` to the app's URL on its dev server (for example `http://localhost:5173/`), and load the theme link in the app in development only:
+
+```ts
+// In the app's entry, development only (Vite shown); nothing of it belongs in a production build.
+if (import.meta.env.DEV) {
+  const { linkThemeStudio } = await import('@oddkin/workbench/theme-link');
+  linkThemeStudio({ studio: 'http://127.0.0.1:4175', stylesheet: 'link[href$="theme.css"]' });
+}
+```
+
+In `oddkin workbench dev`, Theme Studio then has **Open `<url>` with the draft**: it opens the app in a window of its own, and sends the newest valid CSS, then each newer one, which replaces the named stylesheet (disabled while a draft applies) as the preview frames' theme sheet is replaced, so the app keeps its state. Without `stylesheet`, the draft is added after the app's stylesheets. Each side takes messages only from the other's window at the other's origin (`studio` is Theme Studio's, an http or https URL; anything else throws `themeLink.studio.invalid`), and a page that Theme Studio did not open does nothing. `linkThemeStudio` returns a function that removes the draft and enables the stylesheet again.
+
+Limits, and why it is development only: the draft's CSS is trusted input from the team's own Theme Studio, and like any CSS it can request URLs (`url()`, fonts) wherever the app's own Content Security Policy allows. The app's window keeps `window.opener`, which the messages need, so the app can reach and navigate Theme Studio's window; that is acceptable for the team's own app on its own dev server, which is why its URL comes only from the Workbench configuration.
 
 ## Registry rules
 

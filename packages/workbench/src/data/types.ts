@@ -244,6 +244,11 @@ export interface ThemeStudioPageData extends PageDataBase {
       /** POST `{ config }` for the diff; `{ config, version, write: true }` writes the file. */
       readonly url: string;
     };
+    /**
+     * In the dev server: a team's own app (`themeStudio.app`), which Theme Studio opens with the
+     * draft for `@oddkin/workbench/theme-link` to apply.
+     */
+    readonly app?: string;
     readonly roles: readonly SpecimenRole[];
     /** Absent from page data written before screens were added. */
     readonly screens?: ThemeStudioScreens;

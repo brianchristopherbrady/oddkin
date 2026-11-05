@@ -1209,6 +1209,116 @@ describe('<oddkin-theme-studio-panel>', () => {
     expect(root.querySelector('#contrast')).not.toBeNull();
   });
 
+  it("opens a team's own app with the draft, and sends it each newer CSS", async () => {
+    // The app's window: an iframe whose script records what it receives and sends what the test
+    // hands it, so its messages come from that window.
+    const app = document.createElement('iframe');
+    app.srcdoc = `<script>
+      window.received = [];
+      addEventListener('message', (event) => {
+        if (event.data && event.data.relay) parent.postMessage(event.data.relay, '*');
+        else window.received.push(event.data);
+      });
+    </script>`;
+    const loaded = new Promise((resolve) => app.addEventListener('load', resolve, { once: true }));
+    document.body.append(app);
+    await loaded;
+    const appWindow = app.contentWindow as Window & { received: { css?: string }[] };
+    const open = vi.spyOn(window, 'open').mockReturnValue(appWindow);
+    try {
+      const page = studioPage();
+      const url = `${location.origin}/app/`;
+      const panel = document.createElement('oddkin-theme-studio-panel');
+      panel.frameUrl = frameUrl;
+      panel.page = { ...page, studio: { ...page.studio, app: url } };
+      mounted.push(panel);
+      document.body.append(panel);
+      const root = panel.shadowRoot!;
+      const button = () =>
+        [...root.querySelectorAll('#live-preview button')].find((b) =>
+          b.textContent?.includes('with the draft'),
+        );
+      const status = () => root.querySelector('#ts-app-status')?.textContent?.trim();
+      await until(() => !!button() && !!panel.generation?.delivered, 'the app button');
+      expect(button()?.textContent?.trim()).toBe(`Open ${url} with the draft`);
+      (button() as HTMLButtonElement).click();
+      expect(open).toHaveBeenCalledWith(url, 'oddkin-theme-app');
+      await settled();
+      expect(status()).toBe(`Opened ${url}; waiting for its @oddkin/workbench/theme-link.`);
+      // A ready message from another window than the app's is not taken.
+      const ready = { protocol: 'oddkin.theme-link', version: 1, type: 'ready' };
+      window.postMessage(ready, '*');
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      expect(appWindow.received).toEqual([]);
+      // The app's: it gets the newest CSS at once, then each newer one, at its origin.
+      appWindow.postMessage({ relay: ready }, '*');
+      await until(() => appWindow.received.length === 1, 'the CSS');
+      expect(appWindow.received[0]).toEqual({
+        protocol: 'oddkin.theme-link',
+        version: 1,
+        type: 'css',
+        css: ':root { --fixture-primary: #123456; }',
+      });
+      await settled();
+      expect(status()).toBe(`Showing the draft in ${location.origin}.`);
+      const primary = root.querySelector<HTMLInputElement>('#ts-brand-primary')!;
+      primary.value = '#0a7d33';
+      primary.dispatchEvent(new Event('change', { bubbles: true }));
+      await until(() => appWindow.received.length === 2, 'the newer CSS');
+      expect(appWindow.received[1]?.css).toBe(':root { --fixture-primary: #0a7d33; }');
+      // A closed app gets nothing more, and the page says so.
+      app.remove();
+      primary.value = '#0a7d34';
+      primary.dispatchEvent(new Event('change', { bubbles: true }));
+      await until(() => status() === 'The app is closed.', 'the closed app');
+    } finally {
+      open.mockRestore();
+      app.remove();
+    }
+  });
+
+  it("takes the app's ready message only from the app's origin", async () => {
+    const app = document.createElement('iframe');
+    app.srcdoc = `<script>
+      window.received = [];
+      addEventListener('message', (event) => {
+        if (event.data && event.data.relay) parent.postMessage(event.data.relay, '*');
+        else window.received.push(event.data);
+      });
+    </script>`;
+    const loaded = new Promise((resolve) => app.addEventListener('load', resolve, { once: true }));
+    document.body.append(app);
+    await loaded;
+    const appWindow = app.contentWindow as Window & { received: unknown[] };
+    const open = vi.spyOn(window, 'open').mockReturnValue(appWindow);
+    try {
+      // The window opened is at this page's origin, not the configured app's.
+      const page = studioPage();
+      const panel = document.createElement('oddkin-theme-studio-panel');
+      panel.frameUrl = frameUrl;
+      panel.page = { ...page, studio: { ...page.studio, app: 'http://app.invalid:5173/' } };
+      mounted.push(panel);
+      document.body.append(panel);
+      const root = panel.shadowRoot!;
+      const button = () =>
+        [...root.querySelectorAll<HTMLButtonElement>('#live-preview button')].find((b) =>
+          b.textContent?.includes('with the draft'),
+        );
+      await until(() => !!button() && !!panel.generation?.delivered, 'the app button');
+      button()!.click();
+      appWindow.postMessage(
+        { relay: { protocol: 'oddkin.theme-link', version: 1, type: 'ready' } },
+        '*',
+      );
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      expect(appWindow.received).toEqual([]);
+      expect(root.querySelector('#ts-app-status')?.textContent).toContain('waiting');
+    } finally {
+      open.mockRestore();
+      app.remove();
+    }
+  });
+
   it('saves the draft to the theme file after showing the diff, when the dev server offers it', async () => {
     const requests: Record<string, unknown>[] = [];
     let version = 'v1';

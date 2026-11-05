@@ -281,6 +281,8 @@ export async function buildWorkbench(options: BuildOptions = {}): Promise<Workbe
       ...(worker ? { worker } : {}),
       ...(save ? { save } : {}),
       ...(unsaveable ? { unsaveable } : {}),
+      // The dev server's only, as saving is: a built site has no app beside it.
+      ...(options.save && config.themeStudio.app ? { app: config.themeStudio.app } : {}),
     },
     diagnostics: out.items,
   });

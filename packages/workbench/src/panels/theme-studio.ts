@@ -24,6 +24,7 @@ import {
 } from '../preview/theme-generation.js';
 import type { FrameSettings, FrameSpecimenItem, JsonValue } from '../protocol/index.js';
 import { contentStyles, panelHostStyles } from './styles.js';
+import type { ThemeApp } from './theme-app.js';
 import type { ThemeProducts } from './theme-products.js';
 import type { ThemeSave } from './theme-save.js';
 import type { contrastView, rampsView } from './theme-views.js';
@@ -132,6 +133,8 @@ export class ThemeStudioElement extends OddkinElement.with({
   readonly #saves = new Map<string, ThemeSave>();
   /** A theme on bases: its file picker and products, loaded when the page lists its files. */
   readonly #products = signal<ThemeProducts | undefined>(undefined);
+  /** A team's own app, opened with the draft, when the dev server offers one (`studio.app`). */
+  readonly #app = signal<ThemeApp | undefined>(undefined);
   /** The ramp and contrast views, loaded with the first result that carries them. */
   readonly #views = signal<
     { readonly rampsView: typeof rampsView; readonly contrastView: typeof contrastView } | undefined
@@ -218,6 +221,7 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#generation = undefined;
     this.#css = undefined;
     this.#products.value = undefined;
+    this.#app.value = undefined;
     this.#shown.value = undefined;
     for (const host of this.#hosts) host.replaceChildren();
   }
@@ -271,7 +275,11 @@ export class ThemeStudioElement extends OddkinElement.with({
     );
     if (frameUrl && firstScreen(studio)) this.#frames(scope, frameUrl);
     this.#generate();
-    const { files, worker } = studio;
+    const { app, files, worker } = studio;
+    if (app)
+      void import('./theme-app.js').then(({ ThemeApp }) => {
+        if (this.#key === page) this.#app.value = new ThemeApp(app, scope, this.#css);
+      });
     if (files) {
       const host = this;
       void import('./theme-products.js').then(({ ThemeProducts }) => {
@@ -533,6 +541,7 @@ export class ThemeStudioElement extends OddkinElement.with({
         // Not connected yet: the sheet is applied once its specimen has mounted.
       });
     this.#products.peek()?.applied(result.css);
+    this.#app.peek()?.applied(result.css);
     if (result.views) {
       const view = this.#view;
       this.#shown.value = {
@@ -900,7 +909,7 @@ export class ThemeStudioElement extends OddkinElement.with({
               </div>`,
           )}
         </div>
-        ${this.#products.value?.compare() ?? nothing}
+        ${this.#products.value?.compare() ?? nothing} ${this.#app.value?.render() ?? nothing}
         ${
           studio.roles.length && this.#screen.value === 'specimens'
             ? html`<p class="wb-muted">

@@ -113,6 +113,19 @@ describe('workbench config', () => {
     ]);
   });
 
+  it("takes a team's own app as an http or https URL", () => {
+    const app = (value: unknown) =>
+      resolveWorkbenchConfig({ library: { packages: ['x'] }, themeStudio: { app: value } });
+    expect(app('http://localhost:5173/').config?.themeStudio.app).toBe('http://localhost:5173/');
+    expect(app('https://app.test/start').config?.themeStudio.app).toBe('https://app.test/start');
+    expect(app(undefined).config?.themeStudio).not.toHaveProperty('app');
+    for (const value of ['localhost:5173', '/app', 'javascript:alert(1)', 'ftp://x.test/', 5173])
+      expect(
+        app(value).diagnostics.map((d) => [d.code, d.path]),
+        String(value),
+      ).toEqual([['config.themeStudio.app', '/themeStudio/app']]);
+  });
+
   it('defineDocs produces schema-valid authored content', () => {
     const docs = defineDocs({
       locale: 'en',
