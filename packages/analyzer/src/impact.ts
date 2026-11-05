@@ -128,6 +128,7 @@ export interface ProductManifest {
   };
   /** Applicable component tags; omitted means all. */
   readonly components?: readonly string[];
+  /** Applicable examples (`example:<tag>/<name>`); omitted means every example of its components. */
   readonly examples?: readonly string[];
 }
 /** An authoritative rename: a migration entry, `@renamedFrom`, or a token replacement. */
@@ -255,8 +256,13 @@ export interface ComparisonSnapshot {
   readonly edges: readonly SnapshotEdge[];
   /** Dependencies that could not be resolved; they widen selection for their package. */
   readonly unresolved: readonly { item: string; package?: string; reason: string }[];
-  /** Product contexts: id and the tokens its scope sets. */
-  readonly products: readonly { id: string; sets: string[]; components?: string[] }[];
+  /** Product contexts: id, the tokens its scope sets, and the components and examples it applies to. */
+  readonly products: readonly {
+    id: string;
+    sets: string[];
+    components?: string[];
+    examples?: string[];
+  }[];
   readonly migrations: readonly Migration[];
 }
 
@@ -600,10 +606,21 @@ export function createSnapshot(inputs: SnapshotInputs): ComparisonSnapshot {
     for (const token of new Set(sets)) edge(id, `token:${token}`, 'sets', 'configuration');
     for (const tag of product.components ?? allTags)
       edge(id, `component:${tag}`, 'applies', 'configuration');
+    // The examples it lists are the only ones checked in its context.
+    const examples = product.examples ? [...new Set(product.examples)].sort() : undefined;
+    for (const example of examples ?? []) {
+      if (items[example]?.kind === 'example') edge(id, example, 'applies', 'configuration');
+      else
+        unresolved.push({
+          item: id,
+          reason: `lists ${example}, which is not an example check of the packages read; it is not run`,
+        });
+    }
     products.push({
       id: product.id,
       sets: [...new Set(sets)].sort(),
       ...(product.components ? { components: [...product.components].sort() } : {}),
+      ...(examples ? { examples } : {}),
     });
   }
 
@@ -828,8 +845,16 @@ export function compareSnapshots(
         id: p.id as string | undefined,
         sets: new Set(p.sets.map((t) => `token:${t}`)),
         components: p.components,
+        examples: p.examples ? new Set(p.examples) : undefined,
       }))
-    : [{ id: undefined, sets: new Set<string>(), components: undefined }];
+    : [
+        {
+          id: undefined,
+          sets: new Set<string>(),
+          components: undefined,
+          examples: undefined as Set<string> | undefined,
+        },
+      ];
   const productOf = new Map(head.products.map((p) => [p.id, p] as const));
 
   // Roots: every changed item, documentation-only changes excepted.
@@ -847,6 +872,9 @@ export function compareSnapshots(
       .map((e) => e.from);
   const applies = (context: (typeof contexts)[number], tag: string) =>
     !context.components || context.components.includes(tag);
+  /** An example of an applicable component that the product lists, or every one if it lists none. */
+  const runs = (context: (typeof contexts)[number], example: string, tag: string) =>
+    applies(context, tag) && (!context.examples || context.examples.has(example));
   const select = (check: Check) => {
     const key = `${check.id}@${check.product ?? ''}`;
     if (!selected.has(key)) selected.set(key, check);
@@ -894,13 +922,14 @@ export function compareSnapshots(
         via: via.get(component) as string[],
       });
       for (const example of examplesOf(head, tag))
-        select({
-          id: example,
-          ...(context.id ? { product: context.id } : {}),
-          state: 'selected',
-          reason: 'an input on its path changed',
-          via: [...(via.get(component) as string[]), example],
-        });
+        if (runs(context, example, tag))
+          select({
+            id: example,
+            ...(context.id ? { product: context.id } : {}),
+            state: 'selected',
+            reason: 'an input on its path changed',
+            via: [...(via.get(component) as string[]), example],
+          });
       for (const e of head.edges.filter((e) => e.kind === 'suite' && e.to === component))
         select({
           id: `${e.from}#${tag}`,
@@ -928,7 +957,7 @@ export function compareSnapshots(
         const tag = head.edges
           .find((e) => e.kind === 'example' && e.from === id)
           ?.to.slice('component:'.length);
-        if (tag && applies(context, tag))
+        if (tag && runs(context, id, tag))
           select({
             id,
             ...(context.id ? { product: context.id } : {}),
@@ -954,7 +983,7 @@ export function compareSnapshots(
         const tag = head.edges
           .find((e) => e.kind === 'example' && e.from === id)
           ?.to.slice('component:'.length);
-        return tag && applies(context, tag) ? [{ id, package: entry.package }] : [];
+        return tag && runs(context, id, tag) ? [{ id, package: entry.package }] : [];
       }),
     ...head.edges
       .filter((e) => e.kind === 'suite' && applies(context, e.to.slice('component:'.length)))
@@ -984,6 +1013,21 @@ export function compareSnapshots(
   for (const id of new Set(affectedComponents.map((a) => a.id)))
     if (head.items[id] && !checked.has(id))
       coverageGaps.push({ item: id, reason: 'affected, and no example or suite checks it' });
+  // In a product that lists its examples, an affected component may have none of them.
+  for (const a of affectedComponents) {
+    const listed = contexts.find((c) => c.id === a.product)?.examples;
+    if (!listed || !head.items[a.id] || !checked.has(a.id)) continue;
+    const covered = head.edges.some(
+      (e) =>
+        e.to === a.id &&
+        (e.kind === 'suite' || ((e.kind === 'example' || e.kind === 'uses') && listed.has(e.from))),
+    );
+    if (!covered)
+      coverageGaps.push({
+        item: a.id,
+        reason: `affected in product ${a.product}, and no example it lists or suite checks it`,
+      });
+  }
   const affectedPackages = new Set(
     [...roots, ...affectedComponents.map((a) => a.id)]
       .map((id) => head.items[id]?.package ?? base.items[id]?.package)

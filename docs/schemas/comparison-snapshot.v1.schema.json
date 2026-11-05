@@ -95,7 +95,12 @@
         "properties": {
           "id": { "type": "string" },
           "sets": { "type": "array", "items": { "type": "string" }, "description": "Tokens the product's scope sets itself" },
-          "components": { "type": "array", "items": { "type": "string" } }
+          "components": { "type": "array", "items": { "type": "string" } },
+          "examples": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^example:" },
+            "description": "The examples the product lists (product.v1): the only ones checked in its context"
+          }
         }
       }
     },

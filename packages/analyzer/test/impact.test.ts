@@ -190,6 +190,51 @@ describe.each([1, 2, 3, 10])('change impact with %i product(s)', (n) => {
     expect(report.affected.products.map((a) => a.id)).toEqual(['product:p1']);
   });
 
+  it('a product that lists its examples is checked with those alone, and says what they miss', () => {
+    const lists = (inputs: LibraryInputs, examples: string[]) => {
+      inputs.products![0]!.examples = examples;
+    };
+    const report = impact(n, (head) => edit(head, 'dist/button/button.template.js'), {
+      both: (inputs) => lists(inputs, ['example:acme-button/primary', 'example:acme-gone/default']),
+    });
+    // p1 runs acme-button/primary and the suites; the dialog's example is not one it lists.
+    expect(selected(report)).toEqual(
+      expectChecks(n, (p) =>
+        p === 'p1'
+          ? ['example:acme-button/primary', ...SUITE_BUTTON, ...SUITE_QUIET]
+          : only(p, [
+              ...BUTTON,
+              ...QUIET,
+              ...DIALOG,
+              ...SUITE_BUTTON,
+              ...SUITE_QUIET,
+              ...USES_BUTTON,
+            ]),
+      ),
+    );
+    expect(report.coverageGaps).toEqual([
+      {
+        item: 'product:p1',
+        reason:
+          'lists example:acme-gone/default, which is not an example check of the packages read; it is not run',
+      },
+      {
+        item: 'component:acme-dialog',
+        reason: 'affected in product p1, and no example it lists or suite checks it',
+      },
+    ]);
+    // A changed list is a changed product: every check it now applies to, and only those.
+    const changed = impact(n, (head) => lists(head, ['example:acme-card/default']), {
+      both: (inputs) => lists(inputs, ['example:acme-button/primary']),
+    });
+    expect(changed.changes.map((c) => c.id)).toEqual(['product:p1']);
+    expect(selected(changed)).toEqual(
+      expectChecks(n, (p) =>
+        p === 'p1' ? ['example:acme-card/default', ...SUITE_BUTTON, ...SUITE_QUIET] : [],
+      ),
+    );
+  });
+
   it('a dynamic dependency widens selection to every example of the package', () => {
     const report = impact(n, (head) => {
       head.packages[0]!.metadata!.diagnostics = [

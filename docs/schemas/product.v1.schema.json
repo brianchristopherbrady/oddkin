@@ -26,7 +26,11 @@
       "properties": { "density": { "type": "string" }, "profiles": { "type": "array", "items": { "type": "string" } } }
     },
     "components": { "type": "array", "items": { "type": "string" }, "description": "Applicable component tags; omitted means all" },
-    "examples": { "type": "array", "items": { "type": "string", "pattern": "^example:" } },
+    "examples": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^example:" },
+      "description": "Applicable examples (example:<tag>/<name>): change impact checks only these in the product's context; omitted means every example of its applicable components"
+    },
     "guidance": { "type": "string" }
   }
 }
