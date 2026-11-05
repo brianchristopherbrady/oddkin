@@ -6,9 +6,7 @@ import { activityRecipeStyles } from './activity.recipe.styles.js';
 export const activityStyles = css`
   ${activityRecipeStyles}
   .base {
-    min-block-size: ${token('target.min')};
-    color: ${token('color.text.secondary')};
-    font-size: ${token('font.size.sm')};
+    min-block-size: ${token('control.height.lg')};
   }
   .base[data-status='failed'] {
     color: ${token('color.danger.foreground')};

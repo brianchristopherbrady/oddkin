@@ -59,13 +59,14 @@ export const aiElementStyles = css`
     font-size: ${token('font.size.sm')};
   }
   .text-button {
-    min-block-size: ${token('target.min')};
+    min-block-size: ${token('control.height.sm')};
     min-inline-size: ${token('target.min')};
+    padding-block: 0;
     padding-inline: ${token('space.xs')};
-    border: ${token('border.width.default')} solid transparent;
+    border: ${token('border.width.default')} solid ${token('color.border.strong')};
     border-radius: ${token('control.radius')};
-    background: transparent;
-    color: inherit;
+    background: ${token('color.surface.default')};
+    color: ${token('color.text.primary')};
     font: inherit;
     font-size: ${token('font.size.sm')};
     cursor: pointer;

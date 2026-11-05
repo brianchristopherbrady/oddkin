@@ -11,7 +11,7 @@ export const aiLabelTemplate = (host: OddkinAiLabel) => {
   const when = formatTime(p.generatedAt, langOf(host));
   const hasDetails = !!(p.model || p.provider || when || p.notes);
   return html`<details class="base" part="base">
-    <summary part="label" class="label" data-kind=${p.kind}>${label}</summary>
+    <summary part="label" class="label text-button" data-kind=${p.kind}>${label}</summary>
     <dl part="details" class="details" ?hidden=${!hasDetails}>
       <div ?hidden=${!p.model}>
         <dt>${t.model}</dt>

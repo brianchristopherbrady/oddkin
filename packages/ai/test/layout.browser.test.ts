@@ -333,7 +333,8 @@ describe('odd-activity', () => {
       },
     );
     const base = $(el, '.base');
-    expectRow(base, space('xs'));
+    // space.sm between the status and its actions, as the Figma specimen spaces them.
+    expectRow(base, space('sm'));
     await expectWraps(base, '6rem');
   });
 });
@@ -532,7 +533,8 @@ describe('odd-inline-assist', () => {
     const el = await example('inline-assist', 'result');
     expectColumn($(el, '.base'), space('xs'));
     const toolbar = $(el, '.toolbar');
-    expectRow(toolbar, space('2xs'), { align: 'stretch' });
+    // space.xs between the actions, as the Figma specimen spaces them.
+    expectRow(toolbar, space('xs'), { align: 'stretch' });
     await expectWraps(toolbar, '8rem');
   });
 

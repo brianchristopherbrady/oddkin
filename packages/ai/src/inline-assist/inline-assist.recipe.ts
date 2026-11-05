@@ -9,7 +9,7 @@ export const inlineAssistRecipe = defineLayoutRecipe({
   name: 'inline-assist',
   regions: {
     base: stack({ gap: token('space.xs') }),
-    toolbar: row({ gap: token('space.2xs'), align: 'stretch', wrap: true }),
+    toolbar: row({ gap: token('space.xs'), align: 'stretch', wrap: true }),
     language: row({ gap: token('space.xs'), wrap: true }),
   },
 });

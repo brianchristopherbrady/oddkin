@@ -7,7 +7,7 @@ export const messageStyles = css`
   ${messageRecipeStyles}
   .role {
     font-size: ${token('font.size.sm')};
-    font-weight: ${token('font.weight.semibold')};
+    font-weight: ${token('font.weight.medium')};
     color: ${token('color.text.secondary')};
   }
   .base[data-role='user'] .content {
@@ -55,8 +55,5 @@ export const messageStyles = css`
     background: ${token('color.surface.default')};
     color: inherit;
     font: inherit;
-  }
-  .footer {
-    gap: ${token('space.2xs')};
   }
 `;

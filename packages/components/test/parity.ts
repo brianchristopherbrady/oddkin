@@ -64,10 +64,15 @@ let container: HTMLElement;
 // Paths relative to the repository root (the Vitest root).
 const json = async (path: string) => JSON.parse(await commands.readFile(path));
 
-/** Registers the hooks every parity file needs: elements, the snapshot, the default theme, cleanup. */
-export function useParity() {
+/**
+ * Registers the hooks every parity file needs: elements, the snapshot, the default theme, cleanup.
+ * `register: false` leaves the components unregistered, for a package whose elements register the
+ * components they use from the built package (`@oddkin/ai`): registering the sources as well would
+ * define each tag twice.
+ */
+export function useParity({ register = true }: { register?: boolean } = {}) {
   beforeAll(async () => {
-    await import('./register.js');
+    if (register) await import('./register.js');
     const [components, variables] = await Promise.all([
       json('design/figma/components.json'),
       json('design/figma/variables.json'),

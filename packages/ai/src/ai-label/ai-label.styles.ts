@@ -9,13 +9,7 @@ export const aiLabelStyles = css`
   .label {
     display: inline-flex;
     align-items: center;
-    min-block-size: ${token('target.min')};
-    padding-inline: ${token('space.xs')};
-    border-radius: ${token('radius.full')};
-    color: ${token('color.text.secondary')};
-    font-weight: ${token('font.weight.medium')};
     list-style: none;
-    cursor: pointer;
   }
   .label::before {
     content: '\\25B8' / '';

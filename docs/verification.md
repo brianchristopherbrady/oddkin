@@ -5691,3 +5691,19 @@ Agent 2's decisions of 2026-11-05 (lanes, 11:26) on the reviews of `odd-ai-label
 | Node tests | `npx vitest run --project node` | 1,696 passed and 2 skipped; `packages/analyzer/test/impact-cli.test.ts` timed out at 20 s with the machine loaded and passed alone (6 of 6) |
 | Packs | `npm run verify:packs` | Exit 0 |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs` | Exit 0 each |
+
+## 2026-11-05 — P1.8 item 8: the AI design pass, first batch (round 11, Agent 3)
+
+Five AI elements and the shared text button against their Figma specimens (page 0:1, `design/figma/components.json`), light and dark. On `3e20b9f`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `packages/ai/test/figma-parity.browser.test.ts` in Chromium, before the changes | `odd-activity`: gap 8 px (Figma `space.sm`, 12), minimum height 24 px (`control.height.lg`, 48), Resume transparent with no border (`color.surface.default`, `color.border.strong`), block padding 1 px (none), status text secondary at 14 px (primary, Oddkin/Body 16 px). `odd-message-branch`: gap 0 (`space.xs`), no minimum height (`control.height.sm`), arrows transparent with no border. `odd-inline-assist`: the toolbar framed (padding, border, radius, raised fill; Figma none) with a 4 px gap (`space.xs`). `odd-message`: the role label at 600 (Oddkin/UI, 500), actions 4 px apart (`space.xs`). `odd-ai-label`: the summary a borderless pill (radius full) at 12 px, secondary, 500 (a bordered surface button, radius md, 32 px, primary, 14 px at 400) |
+| After | the same file, in Chromium, Firefox, and WebKit | 10 of 10 in each engine (five elements, light and dark); Copy starts the message's action row |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-d1.json` (6 probes: ghost text buttons; the activity's old minimum height; a semibold role; the empty branch control keeping its place; the summary not a text button; no branch minimum height) | 6 of 6 killed |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI parity, elements, layout, examples, reflow, and contract tests with the components' display parity test | 266 passed and 4 skipped in each of Chromium, Firefox, and WebKit |
+| Markers | `.tmp/marker-engines.mjs` on the docs dev server | WebKit and Firefox draw one marker (▸) on the AI label and the tool call |
+| Metadata | `npm run verify:metadata` | Exit 0 |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,331 B of 51,456 (51,302 before); `ai:styles` 5,057 of 5,120; `ai-response` 21,188 of 21,504 (21,192) |
+| Compatibility | `npm run compat` | The matrix counts fewer declarations in the AI label's, the activity's, and the shared element styles |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node packages/ai/test` (94 passed) | Exit 0 each |

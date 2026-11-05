@@ -5,12 +5,6 @@ import { inlineAssistRecipeStyles } from './inline-assist.recipe.styles.js';
 /** The arrangement is the layout recipe in `inline-assist.recipe.ts`. */
 export const inlineAssistStyles = css`
   ${inlineAssistRecipeStyles}
-  .toolbar {
-    padding: ${token('space.2xs')};
-    border: ${token('border.width.default')} solid ${token('color.border.default')};
-    border-radius: ${token('radius.md')};
-    background: ${token('color.surface.raised')};
-  }
   .toolbar [aria-disabled='true'] {
     color: ${token('color.text.disabled')};
     cursor: not-allowed;

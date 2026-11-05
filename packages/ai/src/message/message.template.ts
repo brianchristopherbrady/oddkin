@@ -149,6 +149,7 @@ export const messageTemplate = (host: OddkinMessage) => {
     }
     <div part="footer" class="footer actions" ?hidden=${editing !== undefined}>
       <odd-message-branch
+        ?hidden=${(host.branch?.count ?? 0) < 2}
         .messageId=${m.id}
         .branch=${host.branch}
         .capabilities=${host.capabilities}
