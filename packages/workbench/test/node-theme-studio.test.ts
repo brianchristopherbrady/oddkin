@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { validateComposition } from '@oddkin/components/composition';
+import { contrastReport, generate, resolveToken } from '@oddkin/tokens/generate';
 import { layerOf, mergeThemes } from '@oddkin/tokens/theme';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
@@ -695,6 +696,27 @@ describe('Theme Studio page data', () => {
       expect(lobby?.['lobby']).not.toBe(first.values?.['lobby']);
       // Without products, no values.
       expect(run(base, [])).not.toHaveProperty('values');
+      // With a view (a product, or '' for the theme), the reply carries that one's views: each
+      // ramp step's value, and the library's own contrast report of its role pairs.
+      const view = (name: string) => {
+        listener?.({ data: { id: replies.length, draft: product, bases: [base], view: name } });
+        return (replies.at(-1) as { views?: { ramps: unknown[]; contrast: unknown[] } }).views;
+      };
+      const merged = generate(mergeThemes(base, product)).theme!;
+      const steps = [...merged.tokens.keys()].filter((name) => name.startsWith('ref.'));
+      expect(steps).toContain('ref.brand.500');
+      for (const name of ['', 'kiosk']) {
+        const views = view(name);
+        expect(views?.ramps).toEqual(
+          steps.map((step) => [step, resolveToken(merged, step, { product: name })]),
+        );
+        expect(views?.contrast).toEqual(
+          contrastReport(merged).filter((pair) => (pair.product ?? '') === name),
+        );
+        expect(views?.contrast.length).toBeGreaterThan(0);
+      }
+      expect(view('kiosk')?.ramps).not.toEqual(view('')?.ramps);
+      expect(run(product, [base], ['kiosk'])).not.toHaveProperty('views');
       // A library with only resolveToken gives the same values, one token at a time.
       const generator = JSON.stringify(
         pathToFileURL(resolve('packages/tokens/dist/generate/index.js')).href,
@@ -711,6 +733,8 @@ describe('Theme Studio page data', () => {
       );
       await import(pathToFileURL(olderWorker).href);
       expect(run(product, [base], ['kiosk', 'lobby']).values).toEqual(first.values);
+      // Without a contrast report, a library's Worker sends no views.
+      expect(view('')).toBeUndefined();
     } finally {
       vi.unstubAllGlobals();
       removeProject(dir);

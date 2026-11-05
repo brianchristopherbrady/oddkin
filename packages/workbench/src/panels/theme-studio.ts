@@ -20,11 +20,13 @@ import {
   createThemeGeneration,
   type GenerationResult,
   type ThemeGeneration,
+  type ThemeViews,
 } from '../preview/theme-generation.js';
 import type { FrameSettings, FrameSpecimenItem, JsonValue } from '../protocol/index.js';
 import { contentStyles, panelHostStyles } from './styles.js';
 import type { ThemeProducts } from './theme-products.js';
 import type { ThemeSave } from './theme-save.js';
+import type { contrastView, rampsView } from './theme-views.js';
 import {
   exportBlocked,
   exportNames,
@@ -130,6 +132,16 @@ export class ThemeStudioElement extends OddkinElement.with({
   readonly #saves = new Map<string, ThemeSave>();
   /** A theme on bases: its file picker and products, loaded when the page lists its files. */
   readonly #products = signal<ThemeProducts | undefined>(undefined);
+  /** The ramp and contrast views, loaded with the first result that carries them. */
+  readonly #views = signal<
+    { readonly rampsView: typeof rampsView; readonly contrastView: typeof contrastView } | undefined
+  >(undefined);
+  /** The last valid result's views, and what they are for. */
+  readonly #shown = signal<{ readonly views: ThemeViews; readonly label: string } | undefined>(
+    undefined,
+  );
+  /** The product (or '' for the theme) the newest generation request asked views for. */
+  #view = '';
   readonly #hosts: readonly [HTMLDivElement, HTMLDivElement];
   #previews: IsolatedPreview[] = [];
   #generation: ThemeGeneration | undefined;
@@ -206,6 +218,7 @@ export class ThemeStudioElement extends OddkinElement.with({
     this.#generation = undefined;
     this.#css = undefined;
     this.#products.value = undefined;
+    this.#shown.value = undefined;
     for (const host of this.#hosts) host.replaceChildren();
   }
 
@@ -520,6 +533,15 @@ export class ThemeStudioElement extends OddkinElement.with({
         // Not connected yet: the sheet is applied once its specimen has mounted.
       });
     this.#products.peek()?.applied(result.css);
+    if (result.views) {
+      const view = this.#view;
+      this.#shown.value = {
+        views: result.views,
+        label: view ? `for product ${view}` : 'for the theme',
+      };
+      if (!this.#views.peek())
+        void import('./theme-views.js').then((module) => (this.#views.value = module));
+    }
   }
 
   #setDraft(draft: unknown, fromJson = false): void {
@@ -539,6 +561,7 @@ export class ThemeStudioElement extends OddkinElement.with({
    * `products` entry), which the frames then show.
    */
   #open(file: string, product = ''): void {
+    const shown = this.#product.peek();
     this.#product.value = product;
     if (file !== this.#file.peek()) {
       const draft = this.#drafts.get(file);
@@ -549,7 +572,7 @@ export class ThemeStudioElement extends OddkinElement.with({
       this.#exported.value = '';
       this.#save.value = this.#saves.get(file);
       this.#generate();
-    }
+    } else if (product !== shown) this.#generate(false);
     this.#showAll();
   }
 
@@ -563,14 +586,19 @@ export class ThemeStudioElement extends OddkinElement.with({
     return bases;
   }
 
-  /** Generate the edited file's draft on its bases' drafts. */
-  #generate(): void {
+  /**
+   * Generate the edited file's draft on its bases' drafts, with the views of the product shown;
+   * `check` also names the products an edit changes.
+   */
+  #generate(check = true): void {
     if (this.#generation) this.#pending.value = true;
+    this.#view = this.#product.peek();
     this.#generation?.request(
       this.#draft.peek(),
       this.#bases().map((base) => base.config),
+      this.#view,
     );
-    void this.#products.peek()?.check();
+    if (check) void this.#products.peek()?.check();
   }
 
   /** Why the draft cannot be exported now, or, for a diff, `review`ed against the theme file. */
@@ -738,6 +766,8 @@ export class ThemeStudioElement extends OddkinElement.with({
           ? themeFields(form.config, form.bases, true)
           : themeFields(draft, this.#bases(this.#file.value));
     const problems = result?.diagnostics ?? [];
+    const shown = this.#shown.value;
+    const views = this.#views.value;
     // The file edited: one of a theme's files on a base, else the theme file.
     const source = studio.files ? this.#file.value : studio.source;
     return html`<div class="wb-content">
@@ -846,6 +876,7 @@ export class ThemeStudioElement extends OddkinElement.with({
               </div>`
         }
       </section>
+      ${shown && views ? views.rampsView(shown.views, shown.label) : nothing}
       <section id="live-preview" aria-labelledby="live-preview-title">
         <h2 id="live-preview-title">Live preview</h2>
         ${this.#screens(studio)}
@@ -879,6 +910,7 @@ export class ThemeStudioElement extends OddkinElement.with({
             : nothing
         }
       </section>
+      ${shown && views ? views.contrastView(shown.views, shown.label) : nothing}
       ${draft === undefined ? nothing : this.#exportSection(source)}
       <section id="method" aria-labelledby="method-title">
         <h2 id="method-title">Method and limits</h2>

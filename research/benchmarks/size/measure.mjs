@@ -48,6 +48,7 @@ export const LAZY = {
   'workbench-panel-theme-studio': {
     'workbench-theme-save': 'packages/workbench/dist/panels/theme-save.js',
     'workbench-theme-products': 'packages/workbench/dist/panels/theme-products.js',
+    'workbench-theme-views': 'packages/workbench/dist/panels/theme-views.js',
   },
   'workbench-shell': { 'workbench-theme-studio': 'packages/workbench/dist/app/theme-studio.js' },
 };
@@ -169,6 +170,11 @@ export const BUDGETS = {
   // products of a file: the picker of files and products, a new product from a brand colour,
   // Compare's frames and their CSS, and each product's values compared before and after an edit.
   'workbench-theme-products': 3072,
+  // 1.375 KiB from 2026-11-04 (Agent 2): measured 1,282, the ramp and contrast views (P1.5 item 3,
+  // workbench.md §8): the ramps table, and the generator's contrast report, failures first. Its
+  // colours are SVG fills: with the style-map helper, the shell's initial load gained a shared
+  // chunk (53,686 B against 53,439).
+  'workbench-theme-views': 1408,
   // 51 KiB; measured 51,248 on 2026-10-28 (48,972 before: the catalog and component reference
   // above, both in the shell). Was 49 KiB (48,775 measured on 2026-10-22): the shell with router,
   // search, and every page renderer. 54 KiB from 2026-10-28 (Agent 2): measured 54,117 with the

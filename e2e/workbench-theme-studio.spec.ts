@@ -163,6 +163,51 @@ test.describe('Theme Studio', () => {
     });
   });
 
+  test('shows the ramps and the contrast of the role pairs, as the generator reports them', async ({
+    page,
+  }) => {
+    const ramps = page.locator('#ramps');
+    await expect(ramps.locator('thead th')).toHaveText([
+      'Step',
+      ...['brand', 'danger', 'info', 'neutral', 'success', 'warning'],
+    ]);
+    await expect(ramps.locator('tbody th')).toHaveText([
+      '0',
+      '50',
+      '100',
+      '200',
+      '300',
+      '400',
+      '500',
+      '600',
+      '700',
+      '800',
+      '900',
+      '950',
+      '1000',
+    ]);
+    const summary = page.locator('#ts-contrast-summary');
+    await expect(summary).toHaveText(
+      /^\s*\d+ role pairs for the theme: \d+ pass, 0 fail,\s+\d+ exempt\.\s*$/,
+    );
+    const fill = async (selector: string, value: string) => {
+      const input = page.locator(selector);
+      await input.fill(value);
+      await input.dispatchEvent('change');
+    };
+    // The brand ramp's 500 step follows the primary.
+    const brand = ramps.locator('tbody tr:nth-child(7) td:nth-child(2) code');
+    const before = (await brand.textContent()) ?? '';
+    await fill('#ts-brand-primary', '#0a7d33');
+    await expect(brand).not.toHaveText(before);
+    // A low-contrast override still generates; its failing pairs come first.
+    await fill('input[data-path="/overrides/color.text.secondary/light"]', '#bbbbbb');
+    await expect(summary).not.toContainText(' 0 fail');
+    const first = page.locator('#contrast tbody tr').first();
+    await expect(first).toHaveAttribute('data-status', 'fail');
+    await expect(first.locator('th')).toContainText('color.text.secondary');
+  });
+
   test('exports the draft it shows, by keyboard, once that draft is generated', async ({
     page,
   }) => {

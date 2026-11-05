@@ -87,12 +87,14 @@ function unwritable(file: string, shown: string): string | undefined {
 
 /**
  * Workers have no import map, so the generator is imported by URL (its graph has no bare
- * specifiers). Requests are `{ id, draft, bases, products? }`: a file's draft, generated on its
- * bases' drafts (root first), merged with the library's own `mergeThemes` as its CLI merges the
- * files; with `products`, the reply also carries each product's values, every token in each mode
- * and gamut (`resolveTokens` in one pass, or `resolveToken` per token where the library has only
- * that), so a check compares a product's values, not its file's CSS. Replies carry plain data
- * only (theming §8).
+ * specifiers). Requests are `{ id, draft, bases, products?, view? }`: a file's draft, generated on
+ * its bases' drafts (root first), merged with the library's own `mergeThemes` as its CLI merges
+ * the files; with `products`, the reply also carries each product's values, every token in each
+ * mode and gamut (`resolveTokens` in one pass, or `resolveToken` per token where the library has
+ * only that), so a check compares a product's values, not its file's CSS. With `view` (a product,
+ * or '' for the theme), it carries that one's views: each ramp step's value and the library's own
+ * contrast report of its role pairs (`contrastReport`), where the library has one. Replies carry
+ * plain data only (theming §8).
  */
 const themeWorker = (
   generator: string,
@@ -109,14 +111,20 @@ const valuesOf = (theme, product) =>
     });
   })));
 
+const viewsOf = (theme, product) => ({
+  ramps: [...theme.tokens].filter(([name, token]) => name.startsWith('ref.') && token.type === 'color').map(([name]) => [name, tokens.resolveToken(theme, name, { product })]),
+  contrast: tokens.contrastReport(theme).filter((pair) => (pair.product ?? '') === product),
+});
+
 self.addEventListener('message', (event) => {
-  const { id, draft, bases = [], products } = event.data;
+  const { id, draft, bases = [], products, view } = event.data;
   const start = performance.now();
   try {
     if (bases.length && !mergeThemes) throw new Error('This @oddkin/tokens cannot merge a base file: it has no ./theme mergeThemes.');
     const result = tokens.generate(bases.length ? [...bases, draft].reduce((merged, layer) => mergeThemes(merged, layer)) : draft);
     const values = products && result.ok && tokens.resolveToken ? Object.fromEntries(products.map((product) => [product, valuesOf(result.theme, product)])) : undefined;
-    self.postMessage({ id, ok: result.ok, css: result.css, diagnostics: result.diagnostics, ms: performance.now() - start, ...(values ? { values } : {}) });
+    const views = typeof view === 'string' && result.ok && tokens.contrastReport ? viewsOf(result.theme, view) : undefined;
+    self.postMessage({ id, ok: result.ok, css: result.css, diagnostics: result.diagnostics, ms: performance.now() - start, ...(values ? { values } : {}), ...(views ? { views } : {}) });
   } catch (error) {
     self.postMessage({ id, ok: false, diagnostics: [{ severity: 'error', code: 'generate.failed', path: '', message: String(error) }], ms: performance.now() - start });
   }

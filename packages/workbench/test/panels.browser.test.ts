@@ -1147,6 +1147,68 @@ describe('<oddkin-theme-studio-panel>', () => {
     expect(choice('/overrides/control.radius').value).toBe('');
   });
 
+  it('shows the generated ramps and contrast pairs of the theme shown, failures first', async () => {
+    const panel = document.createElement('oddkin-theme-studio-panel');
+    panel.frameUrl = frameUrl;
+    panel.page = studioPage();
+    mounted.push(panel);
+    document.body.append(panel);
+    const root = panel.shadowRoot!;
+    const cells = (selector: string) =>
+      [...root.querySelectorAll(selector)].map((cell) =>
+        cell.textContent?.replace(/\s+/g, ' ').trim(),
+      );
+    await until(() => !!root.querySelector('#ramps') && !!root.querySelector('#contrast'), 'views');
+    // The reference's order: Generate, Ramps, Live preview, Contrast, then Export.
+    expect([...root.querySelectorAll('.wb-content > section')].map((s) => s.id)).toEqual([
+      'generate',
+      'ramps',
+      'live-preview',
+      'contrast',
+      'export',
+      'method',
+    ]);
+    // A column per ramp as the generator lists them, a row per step in numeric order.
+    expect(cells('#ramps thead th')).toEqual(['Step', 'neutral', 'brand']);
+    expect(cells('#ramps tbody th')).toEqual(['0', '500', '1000']);
+    expect(cells('#ramps tbody tr:nth-child(2) td')).toEqual(['', '#123456']);
+    expect(cells('#ts-contrast-summary')).toEqual([
+      '2 role pairs for the theme: 1 pass, 1 fail, 0 exempt.',
+    ]);
+    expect(cells('#contrast tbody tr:first-child > *')).toEqual([
+      'color.text.primary on color.canvas',
+      'dark',
+      'Aa',
+      '1.60:1',
+      '4.5:1, 1.4.3',
+      'fail',
+    ]);
+    expect(
+      [...root.querySelectorAll('#contrast tbody tr')].map((row) =>
+        row.getAttribute('data-status'),
+      ),
+    ).toEqual(['fail', 'pass']);
+    // The sample: the pair's foreground on its background.
+    const sample = root.querySelector('#contrast tbody tr:first-child svg')!;
+    expect([...sample.querySelectorAll('[fill]')].map((e) => e.getAttribute('fill'))).toEqual([
+      '#ffffff',
+      '#cccccc',
+    ]);
+    expect(root.querySelector('#ramps svg rect')?.getAttribute('fill')).toBe('#ffffff');
+    // An edit updates the views; an invalid draft keeps the last valid ones.
+    const primary = root.querySelector<HTMLInputElement>('#ts-brand-primary')!;
+    const set = (value: string) => {
+      primary.value = value;
+      primary.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    set('#0a7d33');
+    await until(() => cells('#ramps tbody tr:nth-child(2) td')[1] === '#0a7d33', 'the edit');
+    set('invalid');
+    await until(() => !!root.querySelector('#live-preview [role="alert"]'), 'the invalid draft');
+    expect(cells('#ramps tbody tr:nth-child(2) td')[1]).toBe('#0a7d33');
+    expect(root.querySelector('#contrast')).not.toBeNull();
+  });
+
   it('saves the draft to the theme file after showing the diff, when the dev server offers it', async () => {
     const requests: Record<string, unknown>[] = [];
     let version = 'v1';
@@ -1687,6 +1749,9 @@ describe('<oddkin-theme-studio-panel>', () => {
       () => panel.previews.every((p) => productOf(p.iframe) === 'kiosk'),
       'the product in both frames',
     );
+    // The ramp and contrast views are the product's.
+    await until(() => !!text('#ts-contrast-summary')?.includes('for product kiosk'), 'its views');
+    expect(text('#ramps tbody tr:nth-child(2) td:last-child')).toBe('#aa0000');
     expect(panel.draft).toEqual(portal);
     expect(text('#generate')).toContain('Draft of portal.theme.json, product kiosk.');
     expect(input('ts-brand-primary')?.value).toBe('#aa0000');
@@ -1733,6 +1798,9 @@ describe('<oddkin-theme-studio-panel>', () => {
     });
     expect(picker().value).toBe('portal.theme.json#museum');
     await until(() => sheets(panel.previews, '#00aa55'), "museum's primary");
+    // Another product of the same file: the views follow it.
+    await until(() => !!text('#ts-contrast-summary')?.includes('for product museum'), 'its views');
+    expect(text('#ramps tbody tr:nth-child(2) td:last-child')).toBe('#00aa55');
 
     // Compare: chosen products beside the one edited, in light and dark, on the same screen.
     const choices = () => [
