@@ -2,8 +2,6 @@ import { defineExamples } from '@oddkin/workbench/examples';
 import { html } from '@oddkin/core/template';
 import type {} from './suggestions.js';
 
-type Choice = CustomEvent<{ readonly suggestionId: string; readonly prompt: string }>;
-
 export default defineExamples('odd-suggestions', {
   default: {
     label: 'Suggested prompts',
@@ -22,12 +20,20 @@ export default defineExamples('odd-suggestions', {
         html`<odd-textarea label="Message" rows="2" resize="auto"></odd-textarea>`,
       ) as HTMLElement & { value: string };
       const sent = mount(html`<p></p>`);
-      scope.listen(element, 'odd-suggestion-select', (event) => {
-        field.value = (event as Choice).detail.prompt;
-      });
-      scope.listen(element, 'odd-suggestion-submit', (event) => {
-        sent.textContent = `Sent: ${(event as Choice).detail.prompt}`;
-      });
+      scope.listen<GlobalEventHandlersEventMap['odd-suggestion-select']>(
+        element,
+        'odd-suggestion-select',
+        ({ detail }) => {
+          field.value = detail.prompt;
+        },
+      );
+      scope.listen<GlobalEventHandlersEventMap['odd-suggestion-submit']>(
+        element,
+        'odd-suggestion-submit',
+        ({ detail }) => {
+          sent.textContent = `Sent: ${detail.prompt}`;
+        },
+      );
     },
   },
 });

@@ -897,6 +897,146 @@ describe('selection, review, and controls', () => {
     }
   });
 
+  it('C1 examples play the host: the conversation and its composer, a message, the activity line', async () => {
+    await import('../src/conversation/conversation.define.js');
+    await import('../src/prompt-input/prompt-input.define.js');
+    await import('../src/message/message.define.js');
+    await import('../src/activity/activity.define.js');
+    const until = async (check: () => boolean, what: string) => {
+      for (let i = 0; i < 200 && !check(); i++) await new Promise((r) => setTimeout(r, 25));
+      expect(check(), what).toBe(true);
+    };
+    const send = async (composer: HTMLElementTagNameMap['odd-prompt-input'], value: string) => {
+      const input = $(composer, '[part="input"]') as HTMLTextAreaElement;
+      input.value = value;
+      input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      await settle(composer);
+      $(composer, '[part="form"]')!.dispatchEvent(new Event('submit', { cancelable: true }));
+    };
+
+    // Conversation: the composer in the composer slot sends; the answer streams in; Load
+    // earlier messages brings back the exchange before.
+    const conversationSet = (await import('../src/conversation/conversation.examples.js')).default;
+    const chat = await mountExample(conversationSet, 'default', container);
+    try {
+      const el = chat.element;
+      const composer = el.querySelector('odd-prompt-input')!;
+      expect(composer.slot).toBe('composer');
+      const texts = () =>
+        el
+          .store!.getSnapshot()
+          .messages.map((m) => m.parts.map((p) => (p.type === 'text' ? p.text : '')).join(''));
+      expect(texts()).toEqual([
+        'Summarize the release notes.',
+        'Builds are faster and the side navigation gained project kinds.',
+      ]);
+      await send(composer, 'What else changed?');
+      await until(() => composer.loading, 'answering');
+      await until(() => !composer.loading, 'answered');
+      expect(texts().slice(2)).toEqual([
+        'What else changed?',
+        'A simulated answer, streamed in small pieces like a real one.',
+      ]);
+      expect(($(composer, '[part="input"]') as HTMLTextAreaElement).value).toBe('');
+      await settle(el);
+      $(el, '.history button:not([hidden])')!.click();
+      await until(() => texts().length === 6, 'the earlier exchange');
+      expect(texts().slice(0, 2)).toEqual([
+        'What shipped this week?',
+        'Version 2.4, with its release notes.',
+      ]);
+    } finally {
+      chat.dispose();
+    }
+
+    // Empty: the same host; the first message starts the conversation.
+    const empty = await mountExample(conversationSet, 'empty', container);
+    try {
+      const el = empty.element;
+      await send(el.querySelector('odd-prompt-input')!, 'Hello');
+      await until(() => el.store!.getSnapshot().messages.length === 2, 'the first answer');
+    } finally {
+      empty.dispose();
+    }
+
+    // Message: Regenerate streams a new answer, then replaces the message; feedback is recorded.
+    const messageSet = (await import('../src/message/message.examples.js')).default;
+    const answer = await mountExample(messageSet, 'default', container);
+    try {
+      const el = answer.element;
+      const regenerate = () => $$(el, 'button').find((b) => text(b) === 'Regenerate');
+      regenerate()!.click();
+      await settle(el);
+      expect(el.attempt).toMatchObject({ attemptId: 'at2', status: 'streaming' });
+      expect(regenerate()).toBeUndefined();
+      await until(() => el.attempt?.status === 'completed', 'the new answer');
+      await settle(el);
+      expect(el.text).toContain('@container');
+      const feedback = $(
+        el,
+        'odd-response-feedback',
+      ) as HTMLElementTagNameMap['odd-response-feedback'];
+      $(feedback, '[data-rating="positive"]')!.click();
+      await settle(feedback);
+      $(feedback, 'form odd-button[type="submit"]')!.click();
+      await settle(el);
+      expect(el.feedback).toMatchObject({ messageId: 'm2', rating: 'positive', status: 'pending' });
+      await until(() => el.feedback?.status === 'submitted', 'submitted');
+    } finally {
+      answer.dispose();
+    }
+
+    // User message: Edit sends the new text, and the host replaces the message with it.
+    const question = await mountExample(messageSet, 'user', container);
+    try {
+      const el = question.element;
+      $(el, '[data-action="edit"]')!.click();
+      await settle(el);
+      const field = $(el, '.edit textarea') as HTMLTextAreaElement;
+      field.value = 'How do I make the card responsive without media queries?';
+      field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      await settle(el);
+      $(el, 'form.edit')!.dispatchEvent(new Event('submit', { cancelable: true }));
+      await settle(el);
+      expect(el.text).toBe('How do I make the card responsive without media queries?');
+    } finally {
+      question.dispose();
+    }
+
+    // Activity: Stop is confirmed a moment later; Retry starts a new attempt; Resume reconnects.
+    const activitySet = (await import('../src/activity/activity.examples.js')).default;
+    const action = (el: Element, name: string) => $(el, `[data-action="${name}"]`);
+    const run = await mountExample(activitySet, 'default', container);
+    try {
+      const el = run.element;
+      action(el, 'stop')!.click();
+      await settle(el);
+      expect(el.attempt?.stop).toBe('requested');
+      await until(() => el.attempt?.status === 'cancelled', 'stopped');
+      await settle(el);
+      action(el, 'retry')!.click();
+      await settle(el);
+      expect(el.attempt).toMatchObject({
+        attemptId: 'at2',
+        relation: 'retry',
+        status: 'submitted',
+      });
+      await until(() => el.attempt?.status === 'streaming', 'streaming again');
+    } finally {
+      run.dispose();
+    }
+    const lost = await mountExample(activitySet, 'interrupted', container);
+    try {
+      const el = lost.element;
+      action(el, 'resume')!.click();
+      await settle(el);
+      expect(el.attempt?.connection).toBe('reconnecting');
+      await until(() => el.attempt?.connection === 'open', 'reconnected');
+    } finally {
+      lost.dispose();
+    }
+  });
+
   it('odd-inline-assist: toolbar keyboard, stale selections, and request detail with revision', async () => {
     const el = await mount(
       'odd-inline-assist',

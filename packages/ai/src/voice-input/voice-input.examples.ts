@@ -22,10 +22,13 @@ export default defineExamples('odd-voice-input', {
       const field = mount(
         html`<odd-textarea label="Message" rows="2" resize="auto"></odd-textarea>`,
       ) as HTMLElement & { value: string };
-      scope.listen(element, 'odd-voice-transcript', (event) => {
-        const { text } = (event as CustomEvent<{ readonly text: string }>).detail;
-        field.value = field.value ? `${field.value} ${text}` : text;
-      });
+      scope.listen<GlobalEventHandlersEventMap['odd-voice-transcript']>(
+        element,
+        'odd-voice-transcript',
+        ({ detail }) => {
+          field.value = field.value ? `${field.value} ${detail.text}` : detail.text;
+        },
+      );
     },
   },
 });

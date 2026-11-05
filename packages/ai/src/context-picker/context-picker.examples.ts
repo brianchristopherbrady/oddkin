@@ -1,21 +1,8 @@
 import { defineExamples } from '@oddkin/workbench/examples';
+import type { ContextItem } from '../contracts/types.js';
 import type {} from './context-picker.js';
 
-type Item = {
-  readonly id: string;
-  readonly kind: 'file' | 'url';
-  readonly label: string;
-  readonly status: 'uploading' | 'processing' | 'ready' | 'failed';
-  readonly url?: string;
-  readonly size?: number;
-  readonly preview?: string;
-  readonly error?: { readonly code: string; readonly message: string };
-};
-type AddDetail =
-  | { readonly kind: 'file'; readonly files: readonly File[] }
-  | { readonly kind: 'url'; readonly url: string };
-
-const items: Item[] = [
+const items: ContextItem[] = [
   {
     id: 'f1',
     kind: 'file',
@@ -48,40 +35,45 @@ export default defineExamples('odd-context-picker', {
     guidance:
       'Add files, Add link, and Remove only ask (`odd-context-add`, `odd-context-remove`); an item appears or goes once the host changes `items`. Here the host adds each item as uploading or processing and marks it ready a moment later. Inspect shows the `preview` of an item.',
     fixture({ scope, element }) {
-      const picker = element as HTMLElement & { items: readonly Item[] };
       let added = 0;
-      scope.listen(element, 'odd-context-add', (event) => {
-        const detail = (event as CustomEvent<AddDetail>).detail;
-        const next: Item[] =
-          detail.kind === 'url'
-            ? [
-                {
+      scope.listen<GlobalEventHandlersEventMap['odd-context-add']>(
+        element,
+        'odd-context-add',
+        ({ detail }) => {
+          const next: ContextItem[] =
+            detail.kind === 'url'
+              ? [
+                  {
+                    id: `added-${++added}`,
+                    kind: 'url',
+                    label: detail.url,
+                    url: detail.url,
+                    status: 'processing',
+                  },
+                ]
+              : detail.files.map((file) => ({
                   id: `added-${++added}`,
-                  kind: 'url',
-                  label: detail.url,
-                  url: detail.url,
-                  status: 'processing',
-                },
-              ]
-            : detail.files.map((file) => ({
-                id: `added-${++added}`,
-                kind: 'file',
-                label: file.name,
-                size: file.size,
-                status: 'uploading',
-              }));
-        picker.items = [...picker.items, ...next];
-        const ids = new Set(next.map((item) => item.id));
-        scope.timeout(() => {
-          picker.items = picker.items.map((item) =>
-            ids.has(item.id) ? { ...item, status: 'ready' } : item,
-          );
-        }, 600);
-      });
-      scope.listen(element, 'odd-context-remove', (event) => {
-        const { itemId } = (event as CustomEvent<{ readonly itemId: string }>).detail;
-        picker.items = picker.items.filter((item) => item.id !== itemId);
-      });
+                  kind: 'file',
+                  label: file.name,
+                  size: file.size,
+                  status: 'uploading',
+                }));
+          element.items = [...element.items, ...next];
+          const ids = new Set(next.map((item) => item.id));
+          scope.timeout(() => {
+            element.items = element.items.map((item) =>
+              ids.has(item.id) ? { ...item, status: 'ready' } : item,
+            );
+          }, 600);
+        },
+      );
+      scope.listen<GlobalEventHandlersEventMap['odd-context-remove']>(
+        element,
+        'odd-context-remove',
+        ({ detail }) => {
+          element.items = element.items.filter((item) => item.id !== detail.itemId);
+        },
+      );
     },
   },
 });

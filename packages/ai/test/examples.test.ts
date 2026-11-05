@@ -115,6 +115,8 @@ describe('@oddkin/ai examples', () => {
     const uses: Record<string, string[]> = {
       'odd-change-review/default': ['component:odd-textarea'],
       'odd-citation/default': ['component:odd-sources'],
+      'odd-conversation/default': ['component:odd-prompt-input'],
+      'odd-conversation/empty': ['component:odd-prompt-input'],
       'odd-suggestions/default': ['component:odd-textarea'],
       'odd-task-plan/default': ['component:odd-question'],
       'odd-voice-input/default': ['component:odd-textarea'],

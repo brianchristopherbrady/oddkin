@@ -22,14 +22,15 @@ export default defineExamples('odd-citation', {
       'Show in sources sends `odd-source-reveal`; the host owns the source list and reveals the source there. Here the host is an `odd-sources` list after the citation.',
     // The host: the answer's source list, which reveals the source the citation asks for.
     fixture({ scope, element, mount }) {
-      const list = mount(html`<odd-sources label="Sources"></odd-sources>`) as HTMLElement & {
-        sources: readonly unknown[];
-        reveal(sourceId: string): void;
-      };
-      list.sources = [(element as HTMLElement & { source: unknown }).source];
-      scope.listen(element, 'odd-source-reveal', (event) => {
-        list.reveal((event as CustomEvent<{ readonly sourceId: string }>).detail.sourceId);
-      });
+      const list = mount(
+        html`<odd-sources label="Sources"></odd-sources>`,
+      ) as HTMLElementTagNameMap['odd-sources'];
+      list.sources = element.source ? [element.source] : [];
+      scope.listen<GlobalEventHandlersEventMap['odd-source-reveal']>(
+        element,
+        'odd-source-reveal',
+        ({ detail }) => list.reveal(detail.sourceId),
+      );
     },
   },
   unresolved: {

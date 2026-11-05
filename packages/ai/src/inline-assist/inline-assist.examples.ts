@@ -1,4 +1,5 @@
 import { defineExamples } from '@oddkin/workbench/examples';
+import { html } from '@oddkin/core/template';
 import type {} from './inline-assist.js';
 
 const selection = { start: 4, end: 9, revision: 'v1', text: 'build' };
@@ -14,25 +15,29 @@ const answers: Readonly<Record<string, string>> = {
   summarize: 'Builds turn sources into shippable files.',
 };
 
-type Assist = HTMLElement & { status: string; pendingAction: string; result: string };
-
 export default defineExamples('odd-inline-assist', {
   default: {
     label: 'Ask about a selection',
     props: { selection, documentRevision: 'v1', actions },
     recommended: true,
     guidance:
-      'The element only asks: each action sends `odd-assist-request` with the selection and its revision; the host works on it, sets `status` to `pending`, then to `complete` with a `result` (or `failed` with an `error`). Here the host answers from a script after a moment.',
-    fixture({ scope, element }) {
-      const assist = element as Assist;
-      scope.listen(element, 'odd-assist-request', (event) => {
-        const { action } = (event as CustomEvent<{ readonly action: string }>).detail;
-        Object.assign(assist, { status: 'pending', pendingAction: action, result: '' });
-        scope.timeout(
-          () => Object.assign(assist, { status: 'complete', result: answers[action] ?? '' }),
-          600,
-        );
-      });
+      'The element only asks: each action sends `odd-assist-request` with the selection and its revision; the host works on it, sets `status` to `pending`, then to `complete` with a `result` (or `failed` with an `error`). Here the host answers from a script after a moment, about the word selected in its document.',
+    fixture({ scope, element, mount }) {
+      // The host's document, revision v1, with the selection (characters 4 to 9) marked.
+      mount(html`<p>The <mark>build</mark> takes twelve minutes on every pull request.</p>`);
+      scope.listen<GlobalEventHandlersEventMap['odd-assist-request']>(
+        element,
+        'odd-assist-request',
+        ({ detail }) => {
+          element.status = 'pending';
+          element.pendingAction = detail.action;
+          element.result = '';
+          scope.timeout(() => {
+            element.status = 'complete';
+            element.result = answers[detail.action] ?? '';
+          }, 600);
+        },
+      );
     },
   },
   result: {

@@ -9,11 +9,6 @@ const answers = [
   { id: 'm2c', text: 'Use a grid with auto-fit columns.' },
 ];
 
-type Branch = HTMLElement & {
-  messageId: string;
-  branch: { index: number; count: number; previousId?: string; nextId?: string };
-};
-
 export default defineExamples('odd-message-branch', {
   default: {
     label: 'Second of three answers',
@@ -26,12 +21,11 @@ export default defineExamples('odd-message-branch', {
     guidance:
       'The arrows only ask (`odd-branch-switch` names the answer to show); the host shows it and passes back the new position. Here the host keeps three answers and shows the current one after the control.',
     fixture({ scope, element, mount }) {
-      const control = element as Branch;
       const answer = mount(html`<p></p>`);
       const show = (id: string) => {
         const at = answers.findIndex((a) => a.id === id);
-        control.messageId = id;
-        control.branch = {
+        element.messageId = id;
+        element.branch = {
           index: at + 1,
           count: answers.length,
           ...(at > 0 ? { previousId: answers[at - 1]!.id } : {}),
@@ -39,9 +33,11 @@ export default defineExamples('odd-message-branch', {
         };
         answer.textContent = answers[at]!.text;
       };
-      scope.listen(element, 'odd-branch-switch', (event) => {
-        show((event as CustomEvent<{ readonly targetMessageId: string }>).detail.targetMessageId);
-      });
+      scope.listen<GlobalEventHandlersEventMap['odd-branch-switch']>(
+        element,
+        'odd-branch-switch',
+        ({ detail }) => show(detail.targetMessageId),
+      );
       show('m2');
     },
   },
