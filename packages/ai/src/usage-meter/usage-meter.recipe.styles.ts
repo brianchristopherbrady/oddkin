@@ -3,5 +3,5 @@
 import { unsafeCSS } from '@oddkin/core/styles';
 
 export const usageMeterRecipeStyles = unsafeCSS(
-  '@layer odd.layout.base {\n  .list {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-xs);\n    min-inline-size: 0;\n  }\n}\n',
+  '@layer odd.layout.base {\n  .list {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-sm);\n    min-inline-size: 0;\n  }\n}\n',
 );

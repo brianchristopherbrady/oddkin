@@ -7,24 +7,21 @@ export const usageMeterStyles = css`
   ${usageMeterRecipeStyles}
   .list {
     margin: 0;
-    font-size: ${token('font.size.sm')};
   }
   .entry {
     display: grid;
     grid-template-columns: minmax(6rem, max-content) 1fr;
-    gap: ${token('space.xs')};
+    gap: ${token('space.sm')};
     align-items: baseline;
   }
   dt {
     color: ${token('color.text.secondary')};
+    font-size: ${token('font.size.sm')};
   }
   dd {
     display: grid;
     gap: ${token('space.2xs')};
     margin: 0;
-  }
-  .entry[data-precision='estimated'] .value {
-    font-style: italic;
   }
   .entry[data-precision='unknown'] .value {
     color: ${token('color.text.secondary')};

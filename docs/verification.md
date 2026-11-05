@@ -5707,3 +5707,18 @@ Five AI elements and the shared text button against their Figma specimens (page 
 | Size | `node scripts/check-size.mjs` | `ai-chat` 51,331 B of 51,456 (51,302 before); `ai:styles` 5,057 of 5,120; `ai-response` 21,188 of 21,504 (21,192) |
 | Compatibility | `npm run compat` | The matrix counts fewer declarations in the AI label's, the activity's, and the shared element styles |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node packages/ai/test` (94 passed) | Exit 0 each |
+
+## 2026-11-05 — P1.8 item 8: the AI design pass, second batch (round 11, Agent 3)
+
+Five more AI elements against their Figma specimens, light and dark. On `ddc9059`.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Before | `packages/ai/test/figma-parity.browser.test.ts` in Chromium, before the changes | `odd-sources`: no card (Figma: the default surface and border, `radius.md`, `space.md` padding, `space.sm` gap), the heading secondary at 600 (UI style: primary, 500), the host at 14 px (Oddkin/Small, 12), the excerpt secondary (primary). `odd-transcript`: no gap between its parts (`space.xs`), the interim line at 16 px (14). `odd-usage-meter`: entries and columns 8 px apart (`space.sm`, 12), values at 14 px (Oddkin/Body, 16). `odd-response` and `odd-model-select`: no difference |
+| After | the same file, in Chromium, Firefox, and WebKit | 20 of 20 in each engine (ten elements, light and dark); one accepted difference, a source row's padding and radius, kept for the highlight of a revealed source |
+| WebKit's native select | a WebKit-only experiment (not kept), then the parity file | WebKit reported a new `<select>`'s colours from the select mounted before it (the other mode's) until the select's own style was invalidated; the parity file now touches the select's style before reading it |
+| Mutation | `node ../oddkin-lanes/tools/mutate.mjs` on `.tmp/mutants-d2.json` and `.tmp/mutants-d2b.json` (6 probes: no card padding; a semibold heading; the host at the list's size; interim text at body size; the old entry gap; title and host on separate lines) | 6 of 6 killed |
+| Three engines | `node ../oddkin-lanes/tools/browser-set.mjs` on the AI parity, elements, layout, examples, reflow, and contract tests | 250 passed and 4 skipped in Chromium and Firefox; in WebKit the select's stale colours failed the model select in dark (above), then the parity file passed in each engine |
+| Metadata | `npm run verify:metadata` | Exit 0 |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,418 B of 51,456 (51,331 before: the sources' rows); `ai:styles` 5,084 of 5,120 |
+| Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node packages/ai/test` (94 passed), `npm run compat` | Exit 0 each |

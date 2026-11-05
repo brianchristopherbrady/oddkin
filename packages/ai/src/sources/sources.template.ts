@@ -28,21 +28,25 @@ export const sourcesTemplate = (host: OddkinSources) => {
             data-revealed=${revealed === s.sourceId ? 'true' : 'false'}
           >
             <span class="number" aria-hidden="true">${index + 1}.</span>
-            ${
-              url
-                ? html`<a
-                    class="title"
-                    href=${url}
-                    rel="noopener noreferrer nofollow"
-                    target="_blank"
-                    >${title}</a
-                  >`
-                : html`<span class="title">${title}</span>`
-            }
-            <span class="muted" ?hidden=${!s.publisher && !url}
-              >${s.publisher ?? displayHost(url) ?? ''}</span
-            >
-            <span class="excerpt" ?hidden=${!s.excerpt}>${s.excerpt ?? ''}</span>
+            <span class="source">
+              <span class="line">
+                ${
+                  url
+                    ? html`<a
+                        class="title"
+                        href=${url}
+                        rel="noopener noreferrer nofollow"
+                        target="_blank"
+                        >${title}</a
+                      >`
+                    : html`<span class="title">${title}</span>`
+                }
+                <span class="muted" ?hidden=${!s.publisher && !url}
+                  >${s.publisher ?? displayHost(url) ?? ''}</span
+                >
+              </span>
+              <span class="excerpt" ?hidden=${!s.excerpt}>${s.excerpt ?? ''}</span>
+            </span>
           </li>`;
         },
       )}

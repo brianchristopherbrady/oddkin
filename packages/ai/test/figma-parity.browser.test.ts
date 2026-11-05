@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   compare,
+  deliberate,
   expectNone,
   figma,
   mount,
@@ -15,6 +16,10 @@ import {
 // must resolve to (parity.ts). The AI elements register the components they use from the built
 // package, so the components' sources are not registered here.
 useParity({ register: false });
+deliberate([
+  /^odd-sources\/One source\/(light|dark)\s+Numbered source row (paddingLeft|paddingTop|topLeftRadius) /,
+  'Each source keeps a small padding and radius, so the highlight of a revealed source surrounds its text.',
+]);
 
 const MODES = ['light', 'dark'] as const;
 afterEach(() => {
@@ -28,6 +33,15 @@ const shadow = (el: Element, selector: string) =>
 /** A layer's path whose last name starts with `start` (Figma truncates long text layer names). */
 const layer = (family: string, start: string) =>
   figma.get(family)!.layers.find((l) => l.path.at(-1)?.startsWith(start))!.path;
+/**
+ * WebKit reports a new native control's style as shared from an earlier one (in the other mode,
+ * the other mode's colours) until the control's own style is invalidated: touch it first.
+ */
+const restyle = (el: HTMLElement) => {
+  el.style.setProperty('--odd-restyle', '1');
+  void getComputedStyle(el).color;
+  el.style.removeProperty('--odd-restyle');
+};
 
 describe('Figma parity: odd-activity', () => {
   for (const mode of MODES)
@@ -203,5 +217,189 @@ describe('Figma parity: odd-ai-label', () => {
         { layer: ['Actions', '▸ AI generated', '▸ AI generated'], el: label, kind: 'text' },
       ];
       expectNone(compare(`odd-ai-label/Generated · collapsed/${mode}`, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-response', () => {
+  for (const mode of MODES)
+    it(`Streaming (${mode})`, async () => {
+      await import('../src/response/response.define.js');
+      inMode(mode);
+      const el = mount('<odd-response></odd-response>') as HTMLElementTagNameMap['odd-response'];
+      el.text = 'The document describes three related ideas. The first is';
+      el.status = 'streaming';
+      await settle(el);
+      const family = `odd-response/Streaming/${mode}`;
+      const status = shadow(el, '[part="status"]');
+      const targets: Target[] = [
+        // The column's gap is the status line's top margin.
+        { layer: [], el: status, kind: 'frame', fields: [['itemSpacing', 'margin-block-start']] },
+        {
+          layer: layer(family, 'The document describes'),
+          el: shadow(el, '[part="content"]'),
+          kind: 'text',
+        },
+        { layer: ['Generating…'], el: status, kind: 'text' },
+      ];
+      expectNone(compare(family, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-transcript', () => {
+  for (const mode of MODES)
+    it(`Final and interim text (${mode})`, async () => {
+      await import('../src/transcript/transcript.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-transcript></odd-transcript>',
+      ) as HTMLElementTagNameMap['odd-transcript'];
+      el.segments = [{ id: 'a', text: 'Summarize the document.', final: true }];
+      el.interim = 'Include the key points';
+      await settle(el);
+      const family = `odd-transcript/Final and interim text/${mode}`;
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '.base'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Summarize the document.'], el: shadow(el, '.segment'), kind: 'text' },
+        { layer: layer(family, 'Listening:'), el: shadow(el, '[part="interim"]'), kind: 'text' },
+      ];
+      expectNone(compare(family, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-usage-meter', () => {
+  for (const mode of MODES)
+    it(`Measured, estimated, unknown (${mode})`, async () => {
+      await import('../src/usage-meter/usage-meter.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-usage-meter></odd-usage-meter>',
+      ) as HTMLElementTagNameMap['odd-usage-meter'];
+      el.usage = [
+        {
+          kind: 'input-tokens',
+          label: 'Input tokens',
+          used: 240,
+          limit: 1000,
+          unit: 'tokens',
+          precision: 'measured',
+        },
+        {
+          kind: 'output-tokens',
+          label: 'Output tokens',
+          used: 120,
+          unit: 'tokens',
+          precision: 'estimated',
+        },
+        { kind: 'cost', label: 'Cost', precision: 'unknown' },
+      ];
+      await settle(el);
+      const entries = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.entry')];
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="list"]'), kind: 'frame', gap: 'row-gap' },
+      ];
+      for (const [i, row, label, value] of [
+        [0, 'Usage row · Input tokens', 'Input tokens', '240 / 1,000'],
+        [1, 'Usage row · Output tokens', 'Output tokens', 'Estimated: 120'],
+        [2, 'Usage row · Cost', 'Cost', 'Unknown'],
+      ] as const)
+        targets.push(
+          { layer: [row], el: entries[i]!, kind: 'frame', gap: 'column-gap' },
+          { layer: [row, label], el: entries[i]!.querySelector('dt')!, kind: 'text' },
+          {
+            layer: [row, value],
+            el: entries[i]!.querySelector<HTMLElement>('.value')!,
+            kind: 'text',
+          },
+        );
+      expectNone(compare(`odd-usage-meter/Measured / estimated / unknown/${mode}`, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-model-select', () => {
+  for (const mode of MODES)
+    it(`Available model (${mode})`, async () => {
+      await import('../src/model-select/model-select.define.js');
+      inMode(mode);
+      const el = mount(
+        '<odd-model-select></odd-model-select>',
+      ) as HTMLElementTagNameMap['odd-model-select'];
+      el.models = [
+        {
+          id: 'example',
+          label: 'Example model',
+          description: 'Example host-provided model description.',
+          available: true,
+        },
+      ];
+      el.value = 'example';
+      await settle(el);
+      restyle(shadow(el, '[part="select"]'));
+      const family = `odd-model-select/Available model/${mode}`;
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '.field'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Model'], el: shadow(el, '[part="label"]'), kind: 'text' },
+        {
+          layer: ['Native field'],
+          el: shadow(el, '[part="select"]'),
+          kind: 'frame',
+          fields: [['minHeight', 'min-block-size']],
+        },
+        {
+          layer: ['Native field', 'Example model'],
+          el: shadow(el, '[part="select"]'),
+          kind: 'text',
+        },
+        {
+          layer: layer(family, 'Example host-provided'),
+          el: shadow(el, '[part="details"]'),
+          kind: 'text',
+        },
+      ];
+      expectNone(compare(family, {}, targets));
+    });
+});
+
+describe('Figma parity: odd-sources', () => {
+  for (const mode of MODES)
+    it(`One source (${mode})`, async () => {
+      await import('../src/sources/sources.define.js');
+      inMode(mode);
+      const el = mount('<odd-sources></odd-sources>') as HTMLElementTagNameMap['odd-sources'];
+      el.sources = [
+        {
+          type: 'source',
+          id: 's1',
+          sourceId: 'example',
+          title: 'Example source',
+          url: 'https://example.com/source',
+          publisher: 'Example publisher',
+          excerpt: 'An excerpt supplied by the host.',
+        },
+      ];
+      await settle(el);
+      const item = shadow(el, '.item');
+      const row = 'Numbered source row';
+      const content = [row, 'Source content'];
+      const heading = [...content, 'Title and publisher'];
+      const targets: Target[] = [
+        { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
+        { layer: ['Sources'], el: shadow(el, '.heading'), kind: 'text' },
+        { layer: [row], el: item, kind: 'frame', gap: 'column-gap' },
+        { layer: [row, '1.'], el: shadow(el, '.number'), kind: 'text' },
+        { layer: content, el: shadow(el, '.source'), kind: 'frame', gap: 'row-gap' },
+        { layer: heading, el: shadow(el, '.line'), kind: 'frame', gap: 'column-gap' },
+        { layer: [...heading, '1. Example source'], el: shadow(el, '.title'), kind: 'text' },
+        {
+          layer: [...heading, 'Example publisher'],
+          el: item.querySelector<HTMLElement>('.muted')!,
+          kind: 'text',
+        },
+        {
+          layer: [...content, 'An excerpt supplied by the host.'],
+          el: shadow(el, '.excerpt'),
+          kind: 'text',
+        },
+      ];
+      expectNone(compare(`odd-sources/One source/${mode}`, {}, targets));
     });
 });

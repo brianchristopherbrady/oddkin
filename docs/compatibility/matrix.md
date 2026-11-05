@@ -324,8 +324,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/response/response.styles.js (responseStyles)` | yes | 61 |
 | `packages/ai/dist/response-feedback/response-feedback.recipe.styles.js (responseFeedbackRecipeStyles)` | yes | 12 |
 | `packages/ai/dist/response-feedback/response-feedback.styles.js (responseFeedbackStyles)` | yes | 24 |
-| `packages/ai/dist/sources/sources.recipe.styles.js (sourcesRecipeStyles)` | yes | 8 |
-| `packages/ai/dist/sources/sources.styles.js (sourcesStyles)` | yes | 22 |
+| `packages/ai/dist/sources/sources.recipe.styles.js (sourcesRecipeStyles)` | yes | 14 |
+| `packages/ai/dist/sources/sources.styles.js (sourcesStyles)` | yes | 25 |
 | `packages/ai/dist/suggestions/suggestions.recipe.styles.js (suggestionsRecipeStyles)` | yes | 11 |
 | `packages/ai/dist/suggestions/suggestions.styles.js (suggestionsStyles)` | yes | 41 |
 | `packages/ai/dist/task-plan/task-plan.recipe.styles.js (taskPlanRecipeStyles)` | yes | 15 |
@@ -333,9 +333,9 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/tool-call/tool-call.recipe.styles.js (toolCallRecipeStyles)` | yes | 12 |
 | `packages/ai/dist/tool-call/tool-call.styles.js (toolCallStyles)` | yes | 38 |
 | `packages/ai/dist/transcript/transcript.recipe.styles.js (transcriptRecipeStyles)` | yes | 7 |
-| `packages/ai/dist/transcript/transcript.styles.js (transcriptStyles)` | yes | 20 |
+| `packages/ai/dist/transcript/transcript.styles.js (transcriptStyles)` | yes | 19 |
 | `packages/ai/dist/usage-meter/usage-meter.recipe.styles.js (usageMeterRecipeStyles)` | yes | 7 |
-| `packages/ai/dist/usage-meter/usage-meter.styles.js (usageMeterStyles)` | yes | 21 |
+| `packages/ai/dist/usage-meter/usage-meter.styles.js (usageMeterStyles)` | yes | 19 |
 | `packages/ai/dist/voice-input/voice-input.recipe.styles.js (voiceInputRecipeStyles)` | yes | 7 |
 | `packages/ai/dist/voice-input/voice-input.styles.js (voiceInputStyles)` | yes | 29 |
 | `packages/core/test/fixtures/side-nav.recipe.css.txt` | yes | 27 |

@@ -7,5 +7,5 @@ import { token } from '@oddkin/tokens/refs';
  */
 export const usageMeterRecipe = defineLayoutRecipe({
   name: 'usage-meter',
-  regions: { list: stack({ gap: token('space.xs') }) },
+  regions: { list: stack({ gap: token('space.sm') }) },
 });

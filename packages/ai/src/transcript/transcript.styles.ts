@@ -24,6 +24,6 @@ export const transcriptStyles = css`
   }
   .interim {
     color: ${token('color.text.secondary')};
-    font-style: italic;
+    font-size: ${token('font.size.sm')};
   }
 `;

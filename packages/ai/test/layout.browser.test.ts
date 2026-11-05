@@ -357,7 +357,13 @@ describe('odd-sources', () => {
       },
     );
     expectColumn($(el, '.list'), space('xs'));
-    expectColumn($(el, '.item'), 2);
+    // As the Figma specimen: the number before the source, whose title and host share a line
+    // (the host is smaller text, so its baseline alignment shows in the computed style only).
+    expectRow($(el, '.item'), space('sm'), { align: 'unseen' });
+    expect(getComputedStyle($(el, '.item')).alignItems).toContain('start');
+    expectColumn($(el, '.source'), space('xs'));
+    expectRow($(el, '.line'), space('sm'), { align: 'unseen' });
+    expect(getComputedStyle($(el, '.line')).alignItems).toContain('baseline');
   });
 });
 
@@ -655,7 +661,8 @@ describe('odd-tool-call', () => {
 describe('odd-usage-meter', () => {
   it('stacks the entries', async () => {
     const el = await example('usage-meter');
-    expectColumn($(el, '.list'), space('xs'));
+    // space.sm between the entries, as the Figma specimen spaces them.
+    expectColumn($(el, '.list'), space('sm'));
   });
 });
 

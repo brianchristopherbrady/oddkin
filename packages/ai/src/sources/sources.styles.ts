@@ -5,25 +5,27 @@ import { sourcesRecipeStyles } from './sources.recipe.styles.js';
 /** The arrangement is the layout recipe in `sources.recipe.ts`. */
 export const sourcesStyles = css`
   ${sourcesRecipeStyles}
+  .base {
+    padding: ${token('space.md')};
+    border: ${token('border.width.default')} solid ${token('color.border.default')};
+    border-radius: ${token('radius.md')};
+    background: ${token('color.surface.default')};
+  }
   .heading {
-    margin: 0 0 ${token('space.xs')};
+    margin: 0;
     font-size: ${token('font.size.sm')};
-    font-weight: ${token('font.weight.semibold')};
-    color: ${token('color.text.secondary')};
+    font-weight: ${token('font.weight.medium')};
   }
   .list {
     margin: 0;
-    padding-inline-start: ${token('space.lg')};
+    padding: 0;
     font-size: ${token('font.size.sm')};
   }
   .item {
-    position: relative;
     padding: ${token('space.2xs')} ${token('space.xs')};
     border-radius: ${token('radius.sm')};
   }
   .number {
-    position: absolute;
-    inset-inline-end: 100%;
     white-space: nowrap;
     color: ${token('color.text.secondary')};
   }
@@ -37,7 +39,7 @@ export const sourcesStyles = css`
   span.title {
     color: inherit;
   }
-  .excerpt {
-    color: ${token('color.text.secondary')};
+  .line .muted {
+    font-size: ${token('font.size.xs')};
   }
 `;
