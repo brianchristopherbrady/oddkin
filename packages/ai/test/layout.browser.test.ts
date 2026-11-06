@@ -601,15 +601,12 @@ describe('odd-response-feedback', () => {
   });
 
   it('centres the outcome beside the rating actions', async () => {
-    const el = await example('response-feedback', 'negative', (props) => ({
-      ...props,
-      feedback: { messageId: 'm2', rating: 'negative', status: 'submitted' },
-    }));
+    const el = await example('response-feedback', 'negative');
     expectRow($(el, '.actions'), space('xs'));
   });
 
   it('stacks the reasons form; a reason is a centred row', async () => {
-    const el = await example('response-feedback', 'negative');
+    const el = await example('response-feedback');
     $(el, '[data-rating="negative"]').click();
     await settle(el);
     expectColumn($(el, '.base'), space('xs'));

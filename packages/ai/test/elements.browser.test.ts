@@ -813,6 +813,8 @@ describe('selection, review, and controls', () => {
       const transcript = $(el, 'odd-transcript') as HTMLElement & {
         segments: readonly { text: string }[];
       };
+      // The fixture gives the adapter; the element takes it on its next update.
+      await settle(el);
       $(el, 'button.record')!.click();
       await until(
         () => transcript.segments.some((s) => s.text.includes('release notes')),
@@ -971,6 +973,166 @@ describe('selection, review, and controls', () => {
     } finally {
       composer.dispose();
     }
+  });
+
+  it("the contract review's examples play the host: a rewrite to review, a translation, a failed send, uploads, recorded feedback, voice failures", async () => {
+    await import('../src/inline-assist/inline-assist.define.js');
+    await import('../src/change-review/change-review.define.js');
+    await import('../src/prompt-input/prompt-input.define.js');
+    await import('../src/response-feedback/response-feedback.define.js');
+    await import('../src/voice-input/voice-input.define.js');
+    const until = async (check: () => boolean, what: string) => {
+      for (let i = 0; i < 200 && !check(); i++) await new Promise((r) => setTimeout(r, 25));
+      expect(check(), what).toBe(true);
+    };
+
+    // Inline assist: Rewrite becomes a proposal under the sentence; Accept replaces the word,
+    // and the selection is then out of date.
+    const assistSet = (await import('../src/inline-assist/inline-assist.examples.js')).default;
+    const assist = await mountExample(assistSet, 'default', container);
+    try {
+      const el = assist.element;
+      const review = assist.root.querySelector('odd-change-review')!;
+      expect(assist.root.querySelector('mark')!.textContent).toBe('build');
+      $(el, '[data-action="rewrite"]')!.click();
+      await settle(el);
+      expect(el.status).toBe('pending');
+      await until(() => review.proposals.length === 1, 'the proposal');
+      expect(review.proposals[0]).toMatchObject({
+        original: 'build',
+        replacement: 'compile step',
+        status: 'proposed',
+      });
+      await settle(review);
+      $(review, 'odd-button[data-action="accept"]')!.click();
+      await settle(review);
+      await settle(el);
+      expect(assist.root.querySelector('p')!.textContent).toBe(
+        'The compile step takes twelve minutes on every pull request.',
+      );
+      expect(text($(el, '#message'))).toBe(
+        'The text changed after you selected it. Select it again.',
+      );
+    } finally {
+      assist.dispose();
+    }
+    const translate = await mountExample(assistSet, 'translate', container);
+    try {
+      const el = translate.element;
+      const select = $(el, 'select') as HTMLSelectElement;
+      select.value = 'de';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      $(el, '[data-action="translate"]')!.click();
+      await until(() => el.status === 'complete', 'the translation');
+      expect(el.result).toContain('(German)');
+    } finally {
+      translate.dispose();
+    }
+
+    // Composer: the first send fails and the draft stays; the second is taken.
+    const composerSet = (await import('../src/prompt-input/prompt-input.examples.js')).default;
+    const failing = await mountExample(composerSet, 'failedSend', container);
+    try {
+      const el = failing.element;
+      const input = () => $(el, '[part="input"]') as HTMLTextAreaElement;
+      el.submit();
+      await until(() => !el.loading, 'the failure');
+      await settle(el);
+      expect(text($(el, '[part="status"]'))).toBe(
+        'The message was not sent: you are offline. Your message was kept; you can edit it and send again.',
+      );
+      expect(input().value).toBe('Draft the release notes.');
+      el.submit();
+      await until(() => !el.loading, 'acknowledged');
+      await settle(el);
+      expect(failing.root.querySelector('p')!.textContent).toBe('Sent: Draft the release notes.');
+      expect(input().value).toBe('');
+    } finally {
+      failing.dispose();
+    }
+    // Attachments: the host uploads one and fails the other; sending then asks to remove it.
+    const uploads = await mountExample(composerSet, 'attachments', container);
+    try {
+      const el = uploads.element;
+      const statuses = () => $$(el, '.attachment').map((li) => li.dataset['status']);
+      await until(() => statuses().join() === 'uploaded,failed', 'the uploads');
+      expect(text($$(el, '.attachment')[1]!.querySelector('.error'))).toBe('The upload failed.');
+      el.value = 'Here are the notes.';
+      el.submit();
+      await settle(el);
+      expect(text($(el, '[part="status"]'))).toBe('Remove or replace attachments that failed.');
+    } finally {
+      uploads.dispose();
+    }
+    // Enter adds a line; Ctrl+Enter sends.
+    const newline = await mountExample(composerSet, 'newline', container);
+    try {
+      const el = newline.element;
+      const input = $(el, '[part="input"]') as HTMLTextAreaElement;
+      el.value = 'First line';
+      await settle(el);
+      const enter = (init: KeyboardEventInit) =>
+        input.dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, ...init }),
+        );
+      expect(enter({})).toBe(true);
+      expect(el.loading).toBe(false);
+      expect(enter({ ctrlKey: true })).toBe(false);
+      expect(el.loading).toBe(true);
+      await until(() => !el.loading, 'acknowledged');
+      expect(newline.root.querySelector('p')!.textContent).toBe('Sent: First line');
+    } finally {
+      newline.dispose();
+    }
+
+    // Feedback: a recorded negative rating is pressed with the thanks; after a failure the
+    // user rates again, and the second attempt is recorded.
+    const feedbackSet = (await import('../src/response-feedback/response-feedback.examples.js'))
+      .default;
+    const recorded = await mountExample(feedbackSet, 'negative', container);
+    try {
+      const el = recorded.element;
+      await settle(el);
+      expect($(el, '[data-rating="negative"]')!.getAttribute('aria-pressed')).toBe('true');
+      expect(text($(el, '.outcome'))).toBe('Thanks. Your feedback was recorded.');
+    } finally {
+      recorded.dispose();
+    }
+    const failed = await mountExample(feedbackSet, 'failed', container);
+    try {
+      const el = failed.element;
+      expect(text($(el, '.outcome'))).toBe('Feedback was not sent: The server did not answer.');
+      $(el, '[data-rating="negative"]')!.click();
+      await settle(el);
+      const send = $(el, 'form odd-button[type="submit"]')!;
+      expect(text(send)).toBe('Try again');
+      send.click();
+      await settle(el);
+      await until(() => el.feedback?.status === 'submitted', 'recorded');
+    } finally {
+      failed.dispose();
+    }
+
+    // Voice input: each failure says what happened.
+    const voiceSet = (await import('../src/voice-input/voice-input.examples.js')).default;
+    const said = async (name: string, expected: string, start = true) => {
+      const mounted = await mountExample(voiceSet, name, container);
+      try {
+        const el = mounted.element;
+        await settle(el);
+        if (start) $(el, 'button.record')!.click();
+        await until(() => text($(el, '[part="status"]')) === expected, `${name}: ${expected}`);
+      } finally {
+        mounted.dispose();
+      }
+    };
+    await said(
+      'denied',
+      'Microphone permission was denied. Allow it in your browser settings to use voice input.',
+    );
+    await said('noDevice', 'No microphone is available.');
+    await said('interrupted', 'Recording was interrupted.');
+    await said('unsupported', 'Voice input is not available in this browser or app.', false);
   });
 
   it('C1 examples play the host: the conversation and its composer, a message, the activity line', async () => {

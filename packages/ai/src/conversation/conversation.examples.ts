@@ -135,7 +135,7 @@ export default defineExamples('odd-conversation', {
         feedback: {},
       },
     },
-    slots: { status: 'Connected' },
+    slots: { status: 'Connected to the assistant' },
     recommended: true,
     guidance:
       'Give it a store (or a state snapshot); it never fetches or sends by itself. Here the store is a `ConversationController` on a simulated transport: the composer in the `composer` slot sends to it, each answer streams in, and Load earlier messages brings back the exchange before.',
