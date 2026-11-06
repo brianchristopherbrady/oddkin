@@ -226,7 +226,13 @@ export class DocumentSession {
         : {}),
       status,
       ...(status === 'failed'
-        ? { error: { code: 'ai.edit.range', message: 'The proposal does not match the text.' } }
+        ? {
+            error: {
+              code: 'ai.edit.range',
+              message:
+                'The proposal does not match the text; propose it again against the current text.',
+            },
+          }
         : {}),
     };
     this.#set({

@@ -44,7 +44,7 @@ export function loadFailure(file: string, error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
   const hint = ['.ts', '.mts'].includes(extname(file))
     ? ' TypeScript files need Node 24.12 or later with erasable syntax only; otherwise compile them to .js.'
-    : '';
+    : ' Fix the file, then run the command again.';
   return `${file}: ${message}${hint}`;
 }
 
@@ -74,12 +74,15 @@ export async function loadWorkbenchConfig(
     if (!file) {
       out.error(
         'node.config.missing',
-        `No Workbench configuration in ${path} (looked for ${CONFIG_FILES.join(', ')}).`,
+        `No Workbench configuration in ${path} (looked for ${CONFIG_FILES.join(', ')}); create one there, or pass --config <file>.`,
       );
       return { file: undefined, root: path, config: undefined, diagnostics: out.items };
     }
   } else if (!existsSync(path)) {
-    out.error('node.config.missing', `${path} does not exist.`);
+    out.error(
+      'node.config.missing',
+      `${path} does not exist; pass --config the configuration file or its directory.`,
+    );
     return { file: undefined, root: dirname(path), config: undefined, diagnostics: out.items };
   }
   const root = dirname(file);

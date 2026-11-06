@@ -17,6 +17,9 @@ export interface ListedDiagnostic extends Diagnostic {
 
 export declare function namesAnAction(text: string): boolean;
 
+/** `text` with each run-time value (`${…}`, nested or not, and `{name}`) replaced by `x`. */
+export declare function withoutValues(text: string): string;
+
 export declare function extractDiagnostics(source: string, file?: string): Diagnostic[];
 
 export declare function listDiagnostics(base?: string): ListedDiagnostic[];

@@ -234,7 +234,7 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
       exampleDiagnostics.push({
         code: 'analyzer.examples.unknownComponent',
         severity: 'warning',
-        message: `Example "${example.name}" is for <${example.component}>, which this library does not register.`,
+        message: `Example "${example.name}" is for <${example.component}>, which this library does not register; fix the example's tag, or register the element.`,
         source: example.location,
       });
   const paths = modulePaths(program, root, packageJson);
@@ -261,7 +261,7 @@ export function analyze(options: AnalyzeOptions): AnalyzeResult {
       code: 'analyzer.contract.unresolved',
       severity: 'warning',
       message: coreContracts
-        ? `${id} is not in @oddkin/core ${coreContracts.version}'s contracts.json.`
+        ? `${id} is not in @oddkin/core ${coreContracts.version}'s contracts.json; upgrade @oddkin/core.`
         : `${id} cannot be resolved: @oddkin/core/contracts.json is not installed for ${root}.`,
     }));
   const diagnostics = sortDiagnostics([
@@ -414,7 +414,7 @@ export function analyzeManifest(options: ManifestAnalyzeOptions): ManifestAnalyz
       .map((example): AnalyzerDiagnostic => ({
         code: 'analyzer.examples.unknownComponent',
         severity: 'warning',
-        message: `Example "${example.name}" is for <${example.component}>, which ${manifestFile} does not declare.`,
+        message: `Example "${example.name}" is for <${example.component}>, which ${manifestFile} does not declare; fix the example's tag, or declare the element.`,
         source: example.location,
       })),
   ]);

@@ -103,7 +103,11 @@ export function normalizePart(
     return {
       part: { type: 'unsupported', id, originalType: type },
       diagnostics: [
-        { code: 'ai.part.unsupported', path, message: `Part type "${type}" is not supported.` },
+        {
+          code: 'ai.part.unsupported',
+          path,
+          message: `Part type "${type}" is not supported, so a fallback shows; send it as a data part with a renderer, or leave it out.`,
+        },
       ],
     };
   }
@@ -117,7 +121,7 @@ export function normalizePart(
         {
           code: 'ai.part.invalid',
           path,
-          message: `Part "${type}" is invalid and is not rendered.`,
+          message: `Part "${type}" is invalid and is not rendered; fix the fields the next diagnostics name.`,
         },
         ...toDiagnostics(errors, path, '/parts/0'),
       ],

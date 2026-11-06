@@ -180,7 +180,7 @@ export function themeStudioPage(
     else
       out.warn(
         'data.themeStudio.role',
-        `themeStudio.preview.roles.${name}: <${tag}> is not a documented component with a registration entry and that example.`,
+        `themeStudio.preview.roles.${name}: <${tag}> is not a documented component with a registration entry and that example; name one that is.`,
         `/themeStudio/preview/roles/${name}`,
       );
   }

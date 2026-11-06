@@ -211,7 +211,7 @@ export function resolveWorkbenchConfig(input: unknown): {
     if (!KNOWN_SECTIONS.includes(section)) {
       out.warn(
         'config.navigation.unknown',
-        `navigation.primary entry "${section}" is not a Workbench section (${KNOWN_SECTIONS.join(', ')}).`,
+        `navigation.primary entry "${section}" is not a Workbench section; use one of ${KNOWN_SECTIONS.join(', ')}.`,
         `/navigation/primary/${i}`,
       );
     }
@@ -222,7 +222,7 @@ export function resolveWorkbenchConfig(input: unknown): {
     if (seen.has(d.id)) {
       out.error(
         'config.category.duplicate',
-        `Category id "${d.id}" is defined twice.`,
+        `Category id "${d.id}" is defined twice; remove one of the definitions.`,
         `/categories/definitions/${i}`,
       );
     }
@@ -232,7 +232,7 @@ export function resolveWorkbenchConfig(input: unknown): {
     if (!seen.has(id)) {
       out.error(
         'config.category.unknown',
-        `categories.assign maps <${tag}> to "${id}", which is not in categories.definitions.`,
+        `categories.assign maps <${tag}> to "${id}", which is not in categories.definitions; define it there, or assign another category.`,
         `/categories/assign/${tag}`,
       );
     }
@@ -277,7 +277,7 @@ export function resolveWorkbenchConfig(input: unknown): {
     if (productIds.has(source.id)) {
       out.error(
         'config.product.duplicate',
-        `Product id "${source.id}" is configured twice.`,
+        `Product id "${source.id}" is configured twice; remove one, or give it another id.`,
         `/products/sources/${i}`,
       );
     }

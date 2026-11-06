@@ -121,7 +121,7 @@ export function checkExamples<E extends Element>(
   if (!TAG.test(set.component)) {
     out.error(
       'examples.component.invalid',
-      `"${set.component}" is not a valid custom element name.`,
+      `"${set.component}" is not a valid custom element name; use a lowercase name with a hyphen, such as "my-button".`,
       '/component',
     );
   }
@@ -142,7 +142,7 @@ export function checkExamples<E extends Element>(
       if (properties && !properties.has(key)) {
         out.error(
           'examples.prop.unknown',
-          `<${set.component}> has no public property "${key}" (example "${name}").`,
+          `<${set.component}> has no public property "${key}" (example "${name}"); remove it, or check its spelling.`,
           `${path}/props/${key}`,
         );
       }
@@ -151,7 +151,7 @@ export function checkExamples<E extends Element>(
       if (slots && !slots.has(slot)) {
         out.error(
           'examples.slot.unknown',
-          `<${set.component}> declares no slot "${slot}" (example "${name}").`,
+          `<${set.component}> declares no slot "${slot}" (example "${name}"); use one of its slots: ${[...slots].join(', ')}.`,
           `${path}/slots/${slot}`,
         );
       }
@@ -232,7 +232,9 @@ export function validateUsage<E extends Element>(
       else if (!property && !GLOBAL_ATTRIBUTE.test(attribute))
         out.error(
           'usage.attribute.unknown',
-          `<${tag}> has no attribute "${attribute}"${named ? `; use "${named.attribute}"` : ''}.`,
+          named
+            ? `<${tag}> has no attribute "${attribute}"; use "${named.attribute}".`
+            : `<${tag}> has no attribute "${attribute}"; remove it.`,
           at,
         );
       else if (property?.type === 'boolean' && value === 'false')
@@ -246,7 +248,7 @@ export function validateUsage<E extends Element>(
         if (value !== null && allowed && !allowed.includes(value))
           out.error(
             'usage.attribute.value',
-            `<${tag}> ${attribute}="${value}" is not one of ${allowed.join(', ')}; the default is used.`,
+            `<${tag}> ${attribute}="${value}" is not one of ${allowed.join(', ')}, so the default is used; use one of those.`,
             at,
           );
       }
@@ -255,7 +257,7 @@ export function validateUsage<E extends Element>(
       if (!slots.has(slot))
         out.error(
           'usage.slot.unknown',
-          `<${tag}> declares no slot "${slot}"; the content is not shown.`,
+          `<${tag}> declares no slot "${slot}", so the content is not shown; put it in one of its slots: ${[...slots].join(', ')}.`,
           `${path}/slots/${slot}`,
         );
   }

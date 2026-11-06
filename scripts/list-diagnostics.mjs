@@ -21,12 +21,33 @@ const FILE = /\.(c?m?js|ts|json|css|html|md|txt|svg|png|woff2?)$/;
 const EMITTER =
   /^(error|warn|warning|info|report|diagnose|diagnostic|fail|invalid|issue|problem)$|Error$/i;
 
+/** `text` with each run-time value (`${…}`, nested or not, and `{name}`) replaced by `x`. */
+export function withoutValues(text) {
+  let out = '';
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '$' && text[i + 1] === '{') {
+      let depth = 0;
+      let j = i + 1;
+      for (; j < text.length; j++) {
+        if (text[j] === '{') depth++;
+        else if (text[j] === '}' && --depth === 0) break;
+      }
+      out += 'x';
+      i = j;
+    } else out += text[i];
+  }
+  return out.replace(/\{[\w.]+\}/g, 'x');
+}
+
+/** Words a message says itself, beside the values it fills in. */
+const ownWords = (text) => withoutValues(text).match(/[A-Za-z]{2,}/g)?.length ?? 0;
+
 /**
  * Whether a message names what to do, or links to the page that does: an instruction (an
  * imperative, or `must`, `should`, `needs`, `instead`), or a link.
  */
 export function namesAnAction(text) {
-  const t = text.replace(/\$\{[^}]*\}|\{[^}]*\}/g, 'x');
+  const t = withoutValues(text);
   if (/https?:\/\/|\bdocs\/|\.md\b|\bsee\b/i.test(t)) return true;
   if (/\bnothing to do\b|\bno action\b/i.test(t)) return true;
   if (
@@ -36,7 +57,7 @@ export function namesAnAction(text) {
   )
     return true;
   return new RegExp(
-    `(^|[.;:!?(]\\s*|\\b(?:then|or|and|to|please)\\s+)(${VERBS.join('|')})\\b`,
+    `(^|[.;:!?]\\s+|\\(\\s*|\\b(?:then|or|and|please)\\s+)(${VERBS.join('|')})\\b`,
     'i',
   ).test(t);
 }
@@ -82,6 +103,7 @@ const VERBS = [
   'pass',
   'pick',
   'point',
+  'propose',
   'provide',
   'publish',
   'put',
@@ -127,7 +149,14 @@ const text = (node, sf) => {
 };
 const wordy = (s) => s !== undefined && /[A-Za-z]/.test(s) && /\s/.test(s.trim());
 const severityOf = (callee) =>
-  /warn/i.test(callee) ? 'warning' : /info/i.test(callee) ? 'info' : 'error';
+  /warn/i.test(callee)
+    ? 'warning'
+    : /info/i.test(callee)
+      ? 'info'
+      : /error/i.test(callee)
+        ? 'error'
+        : '';
+const SEVERITIES = ['error', 'warning', 'info'];
 /** The called name: `out.error` → `error`, `this.#invalid` → `invalid`. */
 const calleeName = (node) =>
   (ts.isPropertyAccessExpression(node) ? node.name.getText() : node.getText()).replace(/^#/, '');
@@ -158,9 +187,12 @@ export function extractDiagnostics(source, file = 'source.ts') {
           .filter((_, i) => i !== at)
           .map((a) => text(a, sf))
           .filter(wordy);
+        const stated = args.map((a) => text(a, sf)).find((s) => SEVERITIES.includes(s));
         out.push({
           code: code(args[at]),
-          severity: ts.isNewExpression(node) ? 'error' : severityOf(calleeName(node.expression)),
+          severity: ts.isNewExpression(node)
+            ? 'error'
+            : (stated ?? severityOf(calleeName(node.expression))),
           message: texts[0] ?? '',
           ...(texts[1] ? { suggestion: texts[1] } : {}),
           line: line(node),
@@ -214,8 +246,12 @@ export function listDiagnostics(base = root) {
               package: dir,
               file: relative(base, full).replace(/\\/g, '/'),
               ...d,
-              // A message computed at run time is reviewed by hand (null).
-              action: d.message ? namesAnAction(`${d.message} ${d.suggestion ?? ''}`) : null,
+              // A message computed at run time, or one that only forwards another's (no words of
+              // its own), is reviewed by hand (null).
+              action:
+                ownWords(d.message) > 1
+                  ? namesAnAction(`${d.message} ${d.suggestion ?? ''}`)
+                  : null,
             });
       }
     };

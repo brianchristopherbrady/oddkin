@@ -459,6 +459,7 @@ export function extract(program: ts.Program, root: string): Extraction {
           'analyzer.dynamic.value',
           defaultNode,
           `${className}.${name}: the default is computed; it is recorded as unknown.`,
+          'Use a literal default to document it.',
         );
       }
       const description = stringOf(options.get('description'));
@@ -1371,7 +1372,7 @@ export function extract(program: ts.Program, root: string): Extraction {
         'analyzer.metadata.invalid',
         tag,
         `${className}: explicit metadata ${comment}: ${problems.join('; ')}.`,
-        undefined,
+        'Fix the comment as each problem says; until then its metadata is not used.',
         'error',
       );
       return undefined;
@@ -1514,6 +1515,7 @@ export function extract(program: ts.Program, root: string): Extraction {
             'analyzer.dynamic.definition',
             element,
             `${owner}: spread styles are not analyzed.`,
+            'List the stylesheets instead of spreading them.',
           );
         else stylesFrom(element, refs, nodes, reads, texts, owner);
       }
@@ -1723,6 +1725,7 @@ export function extract(program: ts.Program, root: string): Extraction {
             'analyzer.dynamic.definition',
             property,
             'compose(): only a spread of another compose() definition can be analyzed.',
+            'Spread a definition made by compose(), or list its entries.',
           );
           continue;
         }
@@ -1762,6 +1765,7 @@ export function extract(program: ts.Program, root: string): Extraction {
           'analyzer.dynamic.definition',
           property,
           'compose(): computed entries are not analyzed.',
+          'Write each entry as a plain property.',
         );
         continue;
       }

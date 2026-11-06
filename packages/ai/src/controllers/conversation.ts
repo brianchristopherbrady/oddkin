@@ -82,17 +82,17 @@ export interface SendInput {
 
 const SEND_FAILED: PublicError = {
   code: 'ai.send.failed',
-  message: 'The message could not be sent.',
+  message: 'The message could not be sent. Try again.',
   retryable: true,
 };
 const DECISION_FAILED: PublicError = {
   code: 'ai.approval.failed',
-  message: 'The decision could not be submitted.',
+  message: 'The decision could not be submitted. Try again.',
   retryable: true,
 };
 const STREAM_FAILED: PublicError = {
   code: 'ai.stream.failed',
-  message: 'The response failed.',
+  message: 'The response failed. Try again.',
   retryable: true,
 };
 
@@ -434,7 +434,7 @@ export class ConversationController implements ExternalSource<ConversationState>
       this.#report({
         code: 'ai.stop.stale',
         path: '',
-        message: 'Ignored a stop response for an older request.',
+        message: 'Ignored a stop response for an older request; nothing to do.',
         attemptId,
       });
       return { ok: false, reason: 'stale' };
@@ -646,7 +646,7 @@ export class ConversationController implements ExternalSource<ConversationState>
         status: 'failed',
         error: toPublicError(error, {
           code: 'ai.feedback.failed',
-          message: 'Feedback was not sent.',
+          message: 'Feedback was not sent. Try again.',
         }),
       };
     }
@@ -702,7 +702,7 @@ export class ConversationController implements ExternalSource<ConversationState>
       this.#report({
         code: 'ai.event.stale',
         path: '',
-        message: `Dropped a late "${event?.type}" event.`,
+        message: `Dropped a late "${event?.type}" event of an attempt that is no longer current; nothing to do.`,
         attemptId,
       });
       return;
@@ -711,7 +711,7 @@ export class ConversationController implements ExternalSource<ConversationState>
       this.#report({
         code: 'ai.event.invalid',
         path: '',
-        message: 'Dropped a malformed event.',
+        message: 'Dropped a malformed event; check that the transport sends AI events with a type.',
         attemptId,
       });
       return;
@@ -720,7 +720,7 @@ export class ConversationController implements ExternalSource<ConversationState>
       this.#report({
         code: 'ai.event.duplicate',
         path: '',
-        message: `Dropped a replayed "${event.type}" event.`,
+        message: `Dropped a replayed "${event.type}" event; nothing to do.`,
         attemptId,
       });
       return;
@@ -731,7 +731,7 @@ export class ConversationController implements ExternalSource<ConversationState>
       this.#report({
         code: 'ai.event.afterTerminal',
         path: '',
-        message: `Dropped "${event.type}" after the attempt ended.`,
+        message: `Dropped "${event.type}" after the attempt ended; check that the transport sends nothing after finish, abort, or error.`,
         attemptId,
       });
       return;
@@ -895,7 +895,8 @@ export class ConversationController implements ExternalSource<ConversationState>
           this.#report({
             code: 'ai.snapshot.scope',
             path: '',
-            message: 'Ignored a snapshot for another message.',
+            message:
+              "Ignored a snapshot for another message; check the snapshot names the attempt's message.",
             attemptId: id,
           });
           return;
@@ -921,7 +922,7 @@ export class ConversationController implements ExternalSource<ConversationState>
         this.#report({
           code: 'ai.event.metadata',
           path: '',
-          message: 'Provider metadata (not rendered).',
+          message: 'Provider metadata is not rendered; nothing to do.',
           attemptId: id,
         });
         return;
@@ -929,7 +930,7 @@ export class ConversationController implements ExternalSource<ConversationState>
         this.#report({
           code: 'ai.event.unknown',
           path: '',
-          message: `Ignored unknown event "${(event as { type: string }).type}".`,
+          message: `Ignored unknown event "${(event as { type: string }).type}"; check the transport's mapping to AI events.`,
           attemptId: id,
         });
     }
@@ -1007,7 +1008,7 @@ export class ConversationController implements ExternalSource<ConversationState>
       this.#report({
         code: 'ai.approval.stale',
         path: '',
-        message: 'Ignored an older approval revision.',
+        message: 'Ignored an older approval revision; nothing to do.',
         attemptId: attempt.attemptId,
       });
       return;
@@ -1071,7 +1072,7 @@ export class ConversationController implements ExternalSource<ConversationState>
         this.#report({
           code: 'ai.tool.transition',
           path: '',
-          message: `Ignored ${t.status} → ${status} for ${toolCallId}.`,
+          message: `Ignored ${t.status} → ${status} for ${toolCallId}; check the order of the transport's tool events.`,
         });
         return t;
       }

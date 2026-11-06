@@ -3,6 +3,7 @@ import {
   extractDiagnostics,
   namesAnAction,
   renderDiagnostics,
+  withoutValues,
   type ListedDiagnostic,
 } from '../../scripts/list-diagnostics.mjs';
 
@@ -16,6 +17,7 @@ describe('the diagnostic list', () => {
       out.warn('data.tokens.missing', \`Foundations reference tokens; \${n} are unknown.\`);
       throw new OddkinError('app.root.missing', DEV ? 'There is no root. Pass a root to createApp().' : '');
       report('analyzer.dynamic.tagName', node, 'The name is computed.', 'Use a string literal.');
+      report('analyzer.metadata.invalid', tag, 'The comment is invalid.', undefined, 'error');
       this.#report({ code: 'ai.event.stale', message: 'Dropped a late event.' });
       const STRINGS = { 'ai.attachment.size': '{name} is larger than {limit}.' };
       reportOddkinError(error, { code: 'autoload.import.failed', origin: tag });
@@ -33,7 +35,8 @@ describe('the diagnostic list', () => {
         undefined,
       ],
       ['app.root.missing', 'error', 'There is no root. Pass a root to createApp().', undefined],
-      ['analyzer.dynamic.tagName', 'error', 'The name is computed.', 'Use a string literal.'],
+      ['analyzer.dynamic.tagName', '', 'The name is computed.', 'Use a string literal.'],
+      ['analyzer.metadata.invalid', 'error', 'The comment is invalid.', undefined],
       ['ai.event.stale', '', 'Dropped a late event.', undefined],
       ['ai.attachment.size', '', '{name} is larger than {limit}.', undefined],
       // Its message is the reported error's: reviewed by hand.
@@ -42,6 +45,10 @@ describe('the diagnostic list', () => {
   });
 
   it('flags a message that names no action and links nowhere', () => {
+    // Values filled in at run time are not the message's words, nested or not.
+    expect(withoutValues('Ignored ${a ? `${b} now` : "c"} for {name}.')).toBe('Ignored x for x.');
+    expect(namesAnAction('Ignored ${a ? `use ${b}` : ""}.')).toBe(false);
+    expect(namesAnAction('categories.assign maps <x-a> to "b".')).toBe(false);
     expect(namesAnAction('Category id "x" is defined twice.')).toBe(false);
     expect(namesAnAction('Dropped a late event.')).toBe(false);
     expect(namesAnAction('hosting.basePath "/x" must start and end with "/".')).toBe(true);

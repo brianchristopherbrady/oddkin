@@ -116,7 +116,11 @@ async function loadContent(
   const loaded: string[] = [];
   for (const file of files) {
     if (!existsSync(file)) {
-      out.error('node.content.missing', `Content file ${file} does not exist.`, '/content/files');
+      out.error(
+        'node.content.missing',
+        `Content file ${file} does not exist; fix its path in content.files, or create it.`,
+        '/content/files',
+      );
       continue;
     }
     if (extname(file) === '.md') {
@@ -148,7 +152,7 @@ async function loadContent(
       if (id in pages)
         out.warn(
           'node.content.duplicate',
-          `${file} describes page "${id}" again; the first file's content is kept.`,
+          `${file} describes page "${id}" again; the first file's content is kept. Keep each page in one file.`,
           `/pages/${id}`,
         );
       else pages[id] = page;
@@ -336,7 +340,7 @@ export async function loadInputs(
     if (!graph.some((pkg) => inside(file, pkg.dir)))
       out.warn(
         'node.cem.unattributed',
-        `library.cem lists ${file}, which is not inside any documented package; it is ignored.`,
+        `library.cem lists ${file}, which is not inside any documented package, so it is ignored; add its package to library.packages, or remove it from library.cem.`,
         '/library/cem',
       );
   }
@@ -346,7 +350,7 @@ export async function loadInputs(
   if (sources.length > 1) {
     out.warn(
       'node.tokens.sources',
-      `Foundations reference ${sources.length} token inspections; ${sources[0]?.package}${(sources[0]?.export ?? '').slice(1)} is used.`,
+      `Foundations reference ${sources.length} token inspections; ${sources[0]?.package}${(sources[0]?.export ?? '').slice(1)} is used. List the package whose foundations name the one you want first in library.packages.`,
       '/foundations',
     );
   }
@@ -363,7 +367,7 @@ export async function loadInputs(
     } else {
       out.warn(
         'node.tokens.missing',
-        `The token inspection ${source.package}${source.export.slice(1)} that the foundations reference was not found.`,
+        `The token inspection ${source.package}${source.export.slice(1)} that the foundations reference was not found; install its package, or build it so the file exists.`,
         '/foundations',
       );
     }
@@ -412,7 +416,11 @@ async function loadThemes(
     const path = `/themeStudio/${key}`;
     const label = `themeStudio.${key.replace('/', '.')}`;
     if (!existsSync(file)) {
-      out.warn('node.themeStudio.config', `${label}: ${file} does not exist.`, path);
+      out.warn(
+        'node.themeStudio.config',
+        `${label}: ${file} does not exist; fix the path, or create the theme file.`,
+        path,
+      );
       continue;
     }
     if (!dataFiles.includes(file)) dataFiles.push(file);

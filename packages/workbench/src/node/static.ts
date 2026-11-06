@@ -80,7 +80,7 @@ async function publishedFiles(
     if (listed)
       out.warn(
         'node.build.filesPattern',
-        `${name}: "files" uses patterns; every file in the package is considered.`,
+        `${name}: "files" uses patterns, so every file in the package is considered; list plain paths to copy only those.`,
         `/packages/${name}/files`,
       );
     files = await walk(dir);
@@ -145,7 +145,7 @@ export async function embedFiles(
       if (!files.has(url.slice(base.length)))
         out.warn(
           'node.build.unpublished',
-          `"${specifier}" maps to ${url}, which is not among its package's published files; importing it fails.`,
+          `"${specifier}" maps to ${url}, which is not among its package's published files, so importing it fails; add the file to the package's "files".`,
           `/${name}/imports/${specifier}`,
         );
     }

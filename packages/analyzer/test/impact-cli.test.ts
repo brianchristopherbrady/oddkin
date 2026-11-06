@@ -182,6 +182,7 @@ describe('oddkin-impact', () => {
     expect(err.at(-1)).toContain('--suite bad');
   });
 
+  // Four snapshots of a package and several git commands: over 20 s on a busy machine.
   it('records the revision and dirty state of the repository --source names', () => {
     const repo = path('repo');
     mkdirSync(repo);
@@ -224,7 +225,7 @@ describe('oddkin-impact', () => {
     } finally {
       rmSync(outside, { recursive: true, force: true });
     }
-  });
+  }, 60_000);
 
   it("snapshots metadata only for the manifest's elements, and stops at a schema it does not read", () => {
     const pkg = path('stale-package');

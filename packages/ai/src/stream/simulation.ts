@@ -219,7 +219,11 @@ export function createSimulatedTransport(options: SimulationOptions): SimulatedT
     async resume(target, sink) {
       await wait(controls.acceptDelay);
       const run = runs.get(target.attemptId);
-      if (!run) throw { code: 'ai.resume.notFound', message: 'There is no response to resume.' };
+      if (!run)
+        throw {
+          code: 'ai.resume.notFound',
+          message: 'There is no response to resume. Send the message again.',
+        };
       run.sink = sink;
       run.dropped = false;
       run.delivered = Math.max(0, run.delivered - controls.replayOverlap);
@@ -232,7 +236,11 @@ export function createSimulatedTransport(options: SimulationOptions): SimulatedT
       if (run.ended) return 'already-finished';
       switch (controls.stopBehavior) {
         case 'fail':
-          throw { code: 'ai.stop.failed', message: 'The stop request failed.', retryable: true };
+          throw {
+            code: 'ai.stop.failed',
+            message: 'The stop request failed. Try again.',
+            retryable: true,
+          };
         case 'unknown':
           return 'unknown';
         case 'already-finished':
@@ -253,12 +261,12 @@ export function createSimulatedTransport(options: SimulationOptions): SimulatedT
         throw toPublicError(
           {
             code: 'ai.approval.failed',
-            message: 'The decision could not be recorded.',
+            message: 'The decision could not be recorded. Try again.',
             retryable: true,
           },
           {
             code: 'ai.approval.failed',
-            message: 'The decision could not be recorded.',
+            message: 'The decision could not be recorded. Try again.',
           },
         );
       const outcome = controls.decisionOutcome;
@@ -289,7 +297,7 @@ export function createSimulatedTransport(options: SimulationOptions): SimulatedT
       if (controls.failFeedback)
         throw {
           code: 'ai.feedback.failed',
-          message: 'Feedback could not be sent.',
+          message: 'Feedback could not be sent. Try again.',
           retryable: true,
         };
     },

@@ -103,13 +103,13 @@ export function packageGraph(
       if (next.requiredBy)
         out.warn(
           'node.package.missing',
-          `${next.requiredBy} depends on ${next.name}, which is not installed; modules that import it fail to load.`,
+          `${next.requiredBy} depends on ${next.name}, which is not installed, so modules that import it fail to load; install it (npm install ${next.name}).`,
           `/packages/${next.requiredBy}/dependencies/${next.name}`,
         );
       else
         out.error(
           'node.package.missing',
-          `Package "${next.name}" is not installed (looked for node_modules/${next.name} from ${next.from} upwards).`,
+          `Package "${next.name}" is not installed (looked for node_modules/${next.name} from ${next.from} upwards); install it, or remove it from library.packages.`,
           `/library/packages/${next.name}`,
         );
       continue;
@@ -119,7 +119,7 @@ export function packageGraph(
     } catch (error) {
       out.error(
         'node.package.unreadable',
-        `${next.name}: package.json could not be read (${error instanceof Error ? error.message : String(error)}).`,
+        `${next.name}: package.json could not be read (${error instanceof Error ? error.message : String(error)}); reinstall the package.`,
         `/packages/${next.name}`,
       );
     }

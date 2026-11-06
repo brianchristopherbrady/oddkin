@@ -102,7 +102,7 @@ describe('analyzeManifest: examples for a library not built with Oddkin', () => 
         code: 'analyzer.examples.unknownComponent',
         severity: 'warning',
         message:
-          'Example "basic" is for <plain-other>, which custom-elements.json does not declare.',
+          'Example "basic" is for <plain-other>, which custom-elements.json does not declare; fix the example\'s tag, or declare the element.',
         source: { file: 'other.examples.js', line: 2, column: 48 },
       },
     ]);

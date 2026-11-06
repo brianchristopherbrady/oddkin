@@ -158,7 +158,7 @@ export function analyzeDeclarations(
         diagnostics.push({
           code: 'analyzer.declarations.unresolved',
           severity: 'warning',
-          message: `<${tag}> maps to ${entry.type?.getText() ?? 'no type'}, which is not a class or interface these declarations define: it is left out.`,
+          message: `<${tag}> maps to ${entry.type?.getText() ?? 'no type'}, which is not a class or interface these declarations define: it is left out. Point the tag at a class or interface they define.`,
           source: where(entry),
         });
         continue;

@@ -113,7 +113,10 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
   };
 
   scope.add(() => {
-    const error = new PreviewFrameError('frame.disposed', 'The preview frame was disposed.');
+    const error = new PreviewFrameError(
+      'frame.disposed',
+      'The preview frame was disposed, so its pending requests end; create a new frame to preview again.',
+    );
     finishReady(error);
     rejectPending(error);
     generationScope?.dispose(error);
@@ -148,7 +151,7 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
         fail(
           new PreviewFrameError(
             'frame.handshake.timeout',
-            `Frame did not connect within ${timeoutMs} ms.`,
+            `Frame did not connect within ${timeoutMs} ms; check that the frame page loads (its URL, and errors in its console).`,
           ),
         ),
       timeoutMs,
@@ -177,7 +180,7 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
       fail(
         new PreviewFrameError(
           'frame.version.incompatible',
-          `Frame protocol ${message.version} is incompatible with host protocol ${FRAME_PROTOCOL_VERSION}.`,
+          `Frame protocol ${message.version} is incompatible with host protocol ${FRAME_PROTOCOL_VERSION}; use the frame page of the host's Workbench version.`,
         ),
       );
       return;
@@ -195,7 +198,12 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
     }
     const Channel = win.MessageChannel;
     if (!Channel) {
-      fail(new PreviewFrameError('frame.channel.unavailable', 'MessageChannel is unavailable.'));
+      fail(
+        new PreviewFrameError(
+          'frame.channel.unavailable',
+          'MessageChannel is unavailable in the frame; run previews in a browser that supports it.',
+        ),
+      );
       return;
     }
     const channel = new Channel();
@@ -260,9 +268,15 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
   ): Promise<JsonValue | undefined> => {
     await requestReady;
     if (identity().generation !== requestIdentity.generation)
-      throw new PreviewFrameError('frame.generation.superseded', 'The preview frame was replaced.');
+      throw new PreviewFrameError(
+        'frame.generation.superseded',
+        'The preview frame was replaced; send the request again if it still matters.',
+      );
     if (scope.disposed || !port)
-      throw new PreviewFrameError('frame.disposed', 'The preview frame is not connected.');
+      throw new PreviewFrameError(
+        'frame.disposed',
+        'The preview frame is not connected; wait for it to load, or create a new frame.',
+      );
     const id = ++nextRequestId;
     const limit =
       kind === 'mount' || kind === 'specimen' || kind === 'composition'
@@ -271,7 +285,12 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
     return new Promise<JsonValue | undefined>((resolve, reject) => {
       const releaseTimer = scope.timeout(() => {
         pending.delete(id);
-        reject(new PreviewFrameError('frame.request.timeout', `Frame request ${id} timed out.`));
+        reject(
+          new PreviewFrameError(
+            'frame.request.timeout',
+            `Frame request ${id} timed out; check the frame's console for errors, then retry.`,
+          ),
+        );
       }, limit);
       pending.set(id, {
         resolve: (value) => {
@@ -329,11 +348,14 @@ export function createIsolatedPreview(options: IsolatedPreviewOptions): Isolated
     reload() {
       if (scope.disposed)
         return Promise.reject(
-          new PreviewFrameError('frame.disposed', 'The preview frame is not connected.'),
+          new PreviewFrameError(
+            'frame.disposed',
+            'The preview frame is not connected; create a new frame to reload.',
+          ),
         );
       const error = new PreviewFrameError(
         'frame.generation.superseded',
-        'The preview frame was replaced by a new generation.',
+        'The preview frame reloaded, so requests made before end; send them again if they still matter.',
       );
       finishReady(error);
       rejectPending(error);

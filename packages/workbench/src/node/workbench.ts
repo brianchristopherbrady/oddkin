@@ -160,7 +160,7 @@ function frameAssets(
     if (/^(\.{0,2}\/|[a-z]+:)/i.test(specifier))
       out.warn(
         'node.assets.unsupported',
-        `Asset "${specifier}" is a path or URL; frames load package export specifiers (for example "@scope/pkg/theme.css") for now.`,
+        `Asset "${specifier}" is a path or URL; use a package export specifier instead (for example "@scope/pkg/theme.css").`,
         `/assets/${i}`,
       );
   });
@@ -175,7 +175,7 @@ function frameAssets(
     if (!pkg || !path) {
       out.warn(
         'node.assets.unresolved',
-        `Asset "${specifier}" does not resolve: ${pkg ? `${name} does not export "${subpath}"` : `${name} is not a documented package or one of their dependencies`}.`,
+        `Asset "${specifier}" does not resolve: ${pkg ? `${name} does not export "${subpath}"` : `${name} is not a documented package or one of their dependencies`}. Check the specifier against the package's exports.`,
         index >= 0 ? `/assets/${index}` : '/assets',
       );
       continue;
@@ -186,7 +186,7 @@ function frameAssets(
     else
       out.warn(
         'node.assets.kind',
-        `Asset "${specifier}" is neither a stylesheet nor a font; frames load only those.`,
+        `Asset "${specifier}" is neither a stylesheet nor a font, and frames load only those; remove it from assets.`,
         index >= 0 ? `/assets/${index}` : '/assets',
       );
   }

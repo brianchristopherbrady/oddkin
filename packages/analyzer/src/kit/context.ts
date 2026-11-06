@@ -264,7 +264,7 @@ function workspaceDirs(
       diagnostics.push({
         code: 'agent.context.workspacePattern',
         severity: 'warning',
-        message: `Workspace pattern "${pattern}" is not read (only "dir" and "dir/*"); its packages are missing from the context.`,
+        message: `Workspace pattern "${pattern}" is not read (only "dir" and "dir/*"), so its packages are missing from the context; list their directories, or use "dir/*".`,
       });
   }
   return dirs;
@@ -525,7 +525,7 @@ export function resolveProjectContext(
     diagnostics.push({
       code: 'agent.context.themes',
       severity: 'warning',
-      message: `Foundations reference ${sources.length} token inspections; the first (${first.package} ${first.export}) describes the theme.`,
+      message: `Foundations reference ${sources.length} token inspections; the first (${first.package} ${first.export}) describes the theme. Keep one in the foundations if another is meant.`,
     });
   const inspectionFile =
     options.inspection ??

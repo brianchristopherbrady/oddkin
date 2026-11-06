@@ -87,7 +87,7 @@ function mergeMetadata(
         } else if (JSON.stringify(target[id]) !== JSON.stringify(entry)) {
           out.warn(
             'data.metadata.conflict',
-            `${library.name} and ${owner.get(`${field}/${id}`)} both describe ${field} "${id}" differently; the first is used.`,
+            `${library.name} and ${owner.get(`${field}/${id}`)} both describe ${field} "${id}" differently; the first is used. Keep the description in one of them.`,
             `/${field}/${id}`,
           );
         }
@@ -220,7 +220,7 @@ function foundationPage(
       if (inspection) {
         out.warn(
           'data.token.missing',
-          `${page.id} lists token "${name}", which the token inspection does not contain; its value is shown as unknown.`,
+          `${page.id} lists token "${name}", which the token inspection does not contain; its value is shown as unknown. Check the name, or regenerate the inspection.`,
           `/pages/${page.id}/tokens/${name}`,
         );
       }
@@ -277,7 +277,7 @@ export function buildWorkbenchData(input: WorkbenchDataInput): {
   if (!inspection && Object.keys(metadata.foundations ?? {}).length > 0) {
     out.warn(
       'data.tokens.missing',
-      'Foundations reference tokens, but no token inspection was supplied; their values are shown as unknown.',
+      'Foundations reference tokens, but no token inspection was supplied; their values are shown as unknown. Supply the token inspection the foundations name.',
       '/foundations',
     );
   }

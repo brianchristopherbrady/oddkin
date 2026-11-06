@@ -145,7 +145,7 @@ export function buildPageRegistry(input: RegistryInput): {
     if (!FOUNDATIONS.some((f) => `foundation:${f.id}` === key)) {
       out.warn(
         'pages.foundation.unknown',
-        `Enrichment declares unknown foundation "${key}".`,
+        `Enrichment declares unknown foundation "${key}"; use one of ${FOUNDATIONS.map((f) => `foundation:${f.id}`).join(', ')}.`,
         `/foundations/${key}`,
       );
     }
@@ -189,7 +189,7 @@ export function buildPageRegistry(input: RegistryInput): {
     if (categoryId && !category) {
       out.warn(
         'pages.category.unknown',
-        `<${tag}> is assigned to unknown category "${categoryId}".`,
+        `<${tag}> is assigned to unknown category "${categoryId}"; define it in categories.definitions, or assign another.`,
         `/components/${tag}`,
       );
     }
@@ -245,7 +245,7 @@ export function buildPageRegistry(input: RegistryInput): {
     if (!elements.some((e) => e.declaration.tagName === tag)) {
       out.warn(
         'pages.component.noCem',
-        `Enrichment describes <${tag}>, which is not in the CEM input.`,
+        `Enrichment describes <${tag}>, which is not in the CEM input; check the tag, or add its package to library.packages.`,
         `/components/component:${tag}`,
       );
     }
@@ -297,7 +297,7 @@ export function buildPageRegistry(input: RegistryInput): {
     if (count === 0) {
       out.warn(
         'pages.products.empty',
-        'Products and modes is enabled but no product sources resolved; the page is hidden.',
+        'Products and modes is enabled but no product sources resolved, so the page is hidden; add products.sources, or set products.enabled to false.',
         '/products',
       );
     }
@@ -386,7 +386,7 @@ function applyContent(
     if (!draft) {
       out.warn(
         'content.page.unknown',
-        `Enrichment docs refer to unknown page "${id}".`,
+        `Enrichment docs refer to unknown page "${id}"; check the page id.`,
         `/docs/${id}`,
       );
       continue;
@@ -402,7 +402,7 @@ function applyContent(
       else
         out.warn(
           'content.updated.invalid',
-          `Updated date "${meta.updated.value}" is not YYYY-MM-DD; omitted.`,
+          `Updated date "${meta.updated.value}" is not YYYY-MM-DD, so it is omitted; write it as, for example, 2026-11-05.`,
           `/docs/${id}/updated`,
         );
     }
@@ -416,7 +416,7 @@ function applyContent(
     if (!draft) {
       out.warn(
         'content.page.unknown',
-        `Authored content refers to unknown page "${key}".`,
+        `Authored content refers to unknown page "${key}"; check the page id, or add an alias.`,
         `/pages/${key}`,
       );
       continue;
@@ -436,7 +436,7 @@ function applyPage(draft: Draft, content: PageContent, key: string, out: Diagnos
     else
       out.warn(
         'content.updated.invalid',
-        `Updated date "${content.updated}" is not YYYY-MM-DD; omitted.`,
+        `Updated date "${content.updated}" is not YYYY-MM-DD, so it is omitted; write it as, for example, 2026-11-05.`,
         `/pages/${key}/updated`,
       );
   }
@@ -444,7 +444,7 @@ function applyPage(draft: Draft, content: PageContent, key: string, out: Diagnos
   if (content.visible === true && draft.available === 'unavailable') {
     out.warn(
       'content.visible.unavailable',
-      `"${draft.id}" has no data to show; authored visible: true is ignored.`,
+      `"${draft.id}" has no data to show, so authored visible: true is ignored; remove it.`,
       `/pages/${key}/visible`,
     );
   }
@@ -453,7 +453,7 @@ function applyPage(draft: Draft, content: PageContent, key: string, out: Diagnos
     if (index === -1) {
       out.warn(
         'content.section.unknown',
-        `Page "${draft.id}" has no section "${sectionId}".`,
+        `Page "${draft.id}" has no section "${sectionId}"; use one of ${draft.sections.map((s) => s.id).join(', ') || 'none'}.`,
         `/pages/${key}/sections/${sectionId}`,
       );
       continue;

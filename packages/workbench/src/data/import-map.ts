@@ -82,7 +82,7 @@ function subpaths(
   if (!isObject(exports)) {
     out.warn(
       'data.importMap.exports',
-      `${pkg.name}: "exports" is not a string, array, or object.`,
+      `${pkg.name}: "exports" is not a string, array, or object, so none of its exports are mapped; fix its package.json.`,
       `/${pkg.name}/exports`,
     );
     return {};
@@ -93,7 +93,7 @@ function subpaths(
   if (relative.length !== keys.length) {
     out.warn(
       'data.importMap.exports',
-      `${pkg.name}: "exports" mixes subpaths and conditions; Node rejects it, so it is skipped.`,
+      `${pkg.name}: "exports" mixes subpaths and conditions; Node rejects it, so it is skipped. Put the conditions under a subpath such as ".".`,
       `/${pkg.name}/exports`,
     );
     return {};
@@ -194,7 +194,7 @@ export function createImportMap(
       if (first !== pkg.version) {
         out.warn(
           'data.importMap.duplicate',
-          `${pkg.name} is in the module graph as ${first ?? 'an unversioned copy'} and ${pkg.version ?? 'an unversioned copy'}; the document loads ${first ?? 'the first'} only.`,
+          `${pkg.name} is in the module graph as ${first ?? 'an unversioned copy'} and ${pkg.version ?? 'an unversioned copy'}; the document loads ${first ?? 'the first'} only. Install one version (align the dependents' ranges, then npm dedupe).`,
           `/${pkg.name}`,
         );
       }

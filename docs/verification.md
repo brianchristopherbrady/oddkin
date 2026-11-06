@@ -5651,3 +5651,15 @@ Agent 2's decisions of 2026-11-05 (lanes, 11:18) on the reviews of `odd-action-a
 | The feedback record | `packages/ai/src/response-feedback/response-feedback.template.ts` | A record's rating is shown only once its status is `submitted`; the form opens on the user's own choice |
 | The prompt input's slots | `packages/ai/src/prompt-input/prompt-input.ts` | `header`, `toolbar-start`, and `toolbar-end`; no `above` |
 | Repository | `npx prettier --check docs/research/ai-contract-review.md` | Exit 0 |
+
+## 2026-11-05 — RF-19: Agent 2's packages' messages name what to do (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The list | `node scripts/list-diagnostics.mjs --write` | 504 messages; 86 flagged, none in `@oddkin/workbench` (94 messages, 6 computed to review), `@oddkin/analyzer` (58, 3), or `@oddkin/ai` (42, 7). Left for Agent 1 (core 38, components 10, state 4, app 1) and Agent 3 (tokens 33) |
+| The reviewed ones | By hand: each message of Agent 2's packages marked *review* | They forward another tool's text (TypeScript's configuration errors, token configuration diagnostics, a configuration file's load error, now followed by what to do), or their text is a code the panel words (`products.disabled`), or the composer's attachment strings (`ai.attachment.*`, now naming the file to choose), or the server's own error text (`ai.stream.error`, `ai.tool.*`) |
+| Its reading | `npx vitest run --project node tests/release/diagnostics.test.ts` | 3 passed, with nested run-time values, a dotted name, and a severity argument |
+| AI | `browser-set.mjs` on the four AI browser files | Chromium and Firefox: 225 passed, 4 skipped each. WebKit: 223 passed, 4 skipped, and 2 failed with the machine at 100% CPU (the approval example read after the host had already finished its 600 ms run, and a 15 s timeout); the file alone then passed (30 of 30). The next commit reads the approval example's running state right after the click: with the host's run cut to 0 ms it still passes (Chromium), and the file passes in each engine (30 of 30) |
+| Workbench | `browser-set.mjs --engines chromium` on `frame`, `preview`, `panels`, and `conformance` (`packages/workbench/test`) | 50 passed in Chromium (4 files), before the rebase, which brought no Workbench change |
+| Metadata | `npm run build`; AI node tests; `npm run verify:metadata` | Build exit 0; `verify:metadata`: components 2,219 verified facts across 55 elements and AI 484 across 24, in three engines; vocabulary 0 findings |
+| Repository | `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs`, and `npx vitest run --project node` on the AI, Workbench, and release tests and the analyzer's manifest and impact-cli tests | Typecheck exit 0; lint exit 0; size: every entry within its budget (ai-chat 51,252 B of 51,456); the node set (31 files, 278 tests): 264 passed, 13 timed out with the machine at 100% CPU (in evidence, impact-cli, node-cli, node-inputs, node-server, and node-theme-studio), then each file alone: each passed (evidence 6, 1 skipped; impact-cli 6; node-cli 5; node-inputs 22; node-server 14; node-theme-studio 16) |

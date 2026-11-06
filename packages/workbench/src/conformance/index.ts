@@ -111,12 +111,21 @@ export function checkConformance(suite: ConformanceSuite): WorkbenchDiagnostic[]
   const seen = new Set<string>();
   suite.cases.forEach((c, index) => {
     const path = `/cases/${index}`;
-    if (seen.has(c.id)) out.error('conformance.case.duplicate', `Case "${c.id}" repeats.`, path);
+    if (seen.has(c.id))
+      out.error(
+        'conformance.case.duplicate',
+        `Case "${c.id}" repeats; give each case its own id.`,
+        path,
+      );
     seen.add(c.id);
     if (c.kind === 'invariant' && !(c.change && CHANGES.includes(c.change)))
       out.error('conformance.invariant.change', `Invariant "${c.id}" must name a change.`, path);
     if (c.kind === 'assertion' && c.change)
-      out.error('conformance.assertion.change', `Assertion "${c.id}" names a change.`, path);
+      out.error(
+        'conformance.assertion.change',
+        `Assertion "${c.id}" names a change; remove it, or make the case an invariant.`,
+        path,
+      );
   });
   return out.items;
 }

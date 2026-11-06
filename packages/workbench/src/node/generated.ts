@@ -40,7 +40,7 @@ function checkPath(path: string): void {
   if (bad || path === MARKER)
     throw new GeneratedDirectoryError(
       'node.generated.path',
-      `"${path}" is not a relative path inside the generated directory.`,
+      `"${path}" is not a relative path inside the generated directory; use one without empty, ".", or ".." segments.`,
     );
 }
 

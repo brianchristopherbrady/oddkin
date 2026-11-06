@@ -78,7 +78,10 @@ export class UiMessageStreamReader {
   /** Translate one SSE event. */
   read(event: SseEvent): AiEvent[] {
     if (this.#done) {
-      this.#diagnose({ code: 'ui-stream.afterDone', message: 'Ignored data after [DONE].' });
+      this.#diagnose({
+        code: 'ui-stream.afterDone',
+        message: 'Ignored data after [DONE]; check that the server ends the stream there.',
+      });
       return [];
     }
     if (event.data === '[DONE]') {
@@ -89,7 +92,11 @@ export class UiMessageStreamReader {
     try {
       parsed = JSON.parse(event.data);
     } catch {
-      this.#diagnose({ code: 'ui-stream.json', message: 'Ignored a chunk that is not JSON.' });
+      this.#diagnose({
+        code: 'ui-stream.json',
+        message:
+          'Ignored a chunk that is not JSON; check that the server sends UI message stream chunks.',
+      });
       return [];
     }
     if (
@@ -97,7 +104,11 @@ export class UiMessageStreamReader {
       parsed === null ||
       typeof (parsed as Chunk).type !== 'string'
     ) {
-      this.#diagnose({ code: 'ui-stream.chunk', message: 'Ignored a chunk without a type.' });
+      this.#diagnose({
+        code: 'ui-stream.chunk',
+        message:
+          'Ignored a chunk without a type; check that the server sends UI message stream chunks.',
+      });
       return [];
     }
     return this.translate(parsed as Chunk);
@@ -108,7 +119,7 @@ export class UiMessageStreamReader {
     const invalid = (field: string): AiEvent[] => {
       this.#diagnose({
         code: 'ui-stream.invalid',
-        message: `Ignored "${chunk.type}": invalid ${field}.`,
+        message: `Ignored "${chunk.type}": invalid ${field}; check the chunk against the UI message stream protocol.`,
       });
       return [];
     };
@@ -339,7 +350,7 @@ export class UiMessageStreamReader {
         }
         this.#diagnose({
           code: 'ui-stream.unsupported',
-          message: `Ignored unsupported chunk "${chunk.type}".`,
+          message: `Ignored unsupported chunk "${chunk.type}"; nothing to do unless the response needs it.`,
         });
         return [];
     }
@@ -462,7 +473,7 @@ export function createUiMessageStreamTransport(
     if (response.headers.get(UI_MESSAGE_STREAM_HEADER) !== UI_MESSAGE_STREAM_VERSION)
       diagnose({
         code: 'ui-stream.header',
-        message: `Missing ${UI_MESSAGE_STREAM_HEADER}: ${UI_MESSAGE_STREAM_VERSION}.`,
+        message: `Missing ${UI_MESSAGE_STREAM_HEADER}: ${UI_MESSAGE_STREAM_VERSION}; send the header with the stream response.`,
       });
     void pump(response, sink, replay, controller);
   };
@@ -538,7 +549,8 @@ export function createUiMessageStreamTransport(
               return result.status;
             throw toPublicError(undefined, {
               code: 'ai.approval.response',
-              message: 'The decision response was not understood.',
+              message:
+                'The decision response was not understood; check what the server returns for a decision.',
             });
           },
         }

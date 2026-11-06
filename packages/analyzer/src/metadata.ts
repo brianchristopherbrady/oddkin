@@ -92,7 +92,7 @@ export function checkMetadata<M extends object>(
           : {
               code: 'metadata.example.undeclared',
               severity: 'warning',
-              message: `${file} lists example ${id} for <${name}>, which the package's Custom Elements Manifest does not declare: it is not read.`,
+              message: `${file} lists example ${id} for <${name}>, which the package's Custom Elements Manifest does not declare: it is not read. Run oddkin-analyze again if the element was removed or renamed.`,
               subject: id,
             },
       );
