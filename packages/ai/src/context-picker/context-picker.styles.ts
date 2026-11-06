@@ -24,7 +24,8 @@ export const contextPickerStyles = css`
     min-inline-size: 0;
   }
   .details .muted {
-    font-size: ${token('font.size.xs')};
+    font-size: ${token('type.small.size')};
+    line-height: ${token('type.small.line-height')};
   }
   .inspect {
     padding-inline: ${token('space.sm')};

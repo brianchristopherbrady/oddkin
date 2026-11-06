@@ -34,6 +34,7 @@ deliberate(
 const MODES = ['light', 'dark'] as const;
 afterEach(() => {
   delete document.documentElement.dataset['oddMode'];
+  delete document.documentElement.dataset['oddDensity'];
 });
 const inMode = (mode: string) => {
   document.documentElement.dataset['oddMode'] = mode;
@@ -605,10 +606,16 @@ describe('Figma parity: odd-citation', () => {
 });
 
 describe('Figma parity: odd-context-picker', () => {
-  for (const mode of MODES)
-    it(`Ready context (${mode})`, async () => {
+  // Compact density too: a raw length that equals its token at the default density differs there.
+  const cases: [string, string][] = [
+    ...MODES.map((m): [string, string] => [m, '']),
+    ['light', 'compact'],
+  ];
+  for (const [mode, density] of cases)
+    it(`Ready context (${mode}${density ? `, ${density} density` : ''})`, async () => {
       await import('../src/context-picker/context-picker.define.js');
       inMode(mode);
+      if (density) document.documentElement.dataset['oddDensity'] = density;
       const el = mount(
         '<odd-context-picker></odd-context-picker>',
       ) as HTMLElementTagNameMap['odd-context-picker'];
@@ -629,7 +636,7 @@ describe('Figma parity: odd-context-picker', () => {
           kind: 'text',
         },
         { layer: [...details, 'File'], el: shadow(el, '.details .muted'), kind: 'text' },
-        { layer: [item, 'Status'], el: shadow(el, '.status'), kind: 'frame' },
+        { layer: [item, 'Status'], el: shadow(el, '.status'), kind: 'frame', gap: 'column-gap' },
         { layer: [item, 'Status', 'Ready'], el: shadow(el, '.status'), kind: 'text' },
         { layer: tools, el: shadow(el, '.tools'), kind: 'frame', gap: 'column-gap' },
         { layer: [...tools, 'Inspect'], el: inspect!, kind: 'frame' },
@@ -653,6 +660,22 @@ describe('Figma parity: odd-context-picker', () => {
       expect(getComputedStyle(shadow(el, '.row')).columnGap).toBe(
         getComputedStyle(probe).columnGap,
       );
+      // The texts follow the type roles Figma binds: a theme that sets a role reaches them.
+      const roles = {
+        'body-family': 'serif',
+        'body-size': '20px',
+        'body-line-height': '2',
+        'small-size': '10px',
+        'small-line-height': '3',
+      };
+      for (const [role, value] of Object.entries(roles))
+        el.style.setProperty(`--odd-type-${role}`, value);
+      const font = (selector: string) => {
+        const style = getComputedStyle(shadow(el, selector));
+        return [style.fontFamily, style.fontSize, style.lineHeight];
+      };
+      expect(font('.details .label')).toEqual(['serif', '20px', '40px']);
+      expect(font('.details .muted')).toEqual(['serif', '10px', '30px']);
     });
 });
 
@@ -832,7 +855,7 @@ describe('Figma parity: odd-tool-call', () => {
       const targets: Target[] = [
         { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame' },
         { layer: ['▾ example_tool'], el: shadow(el, '.name'), kind: 'text' },
-        { layer: ['Status'], el: shadow(el, '.status'), kind: 'frame' },
+        { layer: ['Status'], el: shadow(el, '.status'), kind: 'frame', gap: 'column-gap' },
         {
           layer: ['Status', 'Arguments ready; not run yet'],
           el: shadow(el, '.status'),

@@ -19,9 +19,9 @@ export const aiElementStyles = css`
     display: block;
     min-inline-size: 0;
     color: ${token('color.text.primary')};
-    font-family: ${token('font.family.sans')};
-    font-size: ${token('font.size.md')};
-    line-height: ${token('line-height.normal')};
+    font-family: ${token('type.body.family')};
+    font-size: ${token('type.body.size')};
+    line-height: ${token('type.body.line-height')};
     overflow-wrap: anywhere;
   }
   .muted {
@@ -31,8 +31,8 @@ export const aiElementStyles = css`
   .status {
     display: inline-flex;
     align-items: center;
-    gap: ${token('space.2xs')};
-    padding-block: 0.125rem;
+    gap: ${token('space.none')};
+    padding-block: ${token('space.3xs')};
     padding-inline: ${token('space.xs')};
     border: ${token('border.width.default')} solid var(--_tone-border);
     border-radius: ${token('radius.full')};
