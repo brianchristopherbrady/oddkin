@@ -314,7 +314,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/internal/ai-element.recipe.styles.js (aiElementRecipeStyles)` | yes | 11 |
 | `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 43 |
 | `packages/ai/dist/message/message.recipe.styles.js (messageRecipeStyles)` | yes | 12 |
-| `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 35 |
+| `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 37 |
 | `packages/ai/dist/message-branch/message-branch.styles.js (messageBranchStyles)` | yes | 6 |
 | `packages/ai/dist/model-select/model-select.styles.js (modelSelectStyles)` | yes | 9 |
 | `packages/ai/dist/prompt-input/prompt-input.recipe.styles.js (promptInputRecipeStyles)` | yes | 13 |

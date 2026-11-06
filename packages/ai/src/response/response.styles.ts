@@ -1,20 +1,23 @@
 import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 
-/** Typography for rendered Markdown plus response states. */
+/**
+ * Typography for rendered Markdown plus response states. The first- and last-child resets follow
+ * the block margins, whose `:is()` ties with them in specificity.
+ */
 export const responseStyles = css`
-  .content > :first-child {
-    margin-block-start: 0;
-  }
-  .content > :last-child {
-    margin-block-end: 0;
-  }
   .content :is(p, ul, ol, blockquote, .code-block, .table-scroll, hr) {
     margin-block: 0 ${token('space.sm')};
   }
   .content :is(h2, h3, h4, h5, h6) {
     margin-block: ${token('space.md')} ${token('space.xs')};
     line-height: ${token('line-height.tight')};
+  }
+  .content > :first-child {
+    margin-block-start: 0;
+  }
+  .content > :last-child {
+    margin-block-end: 0;
   }
   .content h3 {
     font-size: ${token('font.size.lg')};

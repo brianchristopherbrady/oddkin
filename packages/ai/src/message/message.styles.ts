@@ -6,8 +6,10 @@ import { messageRecipeStyles } from './message.recipe.styles.js';
 export const messageStyles = css`
   ${messageRecipeStyles}
   .role {
-    font-size: ${token('font.size.sm')};
-    font-weight: ${token('font.weight.medium')};
+    font-size: ${token('type.ui.size')};
+    font-weight: ${token('type.ui.weight')};
+    line-height: ${token('type.ui.line-height')};
+    letter-spacing: ${token('type.ui.letter-spacing')};
     color: ${token('color.text.secondary')};
   }
   .base[data-role='user'] .content {

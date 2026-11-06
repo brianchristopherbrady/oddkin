@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { commands } from 'vitest/browser';
 import {
   compare,
   deliberate,
@@ -59,6 +60,12 @@ const space = (el: Element, name: string) => {
   probe.style.rowGap = `var(--odd-space-${name})`;
   el.after(probe);
   return parseFloat(getComputedStyle(probe).rowGap);
+};
+/** A Figma text style's line height in pixels: parity.ts compares only the PIXELS ones. */
+const figmaLineHeight = async (name: string) => {
+  const { textStyles } = JSON.parse(await commands.readFile('design/figma/variables.json'));
+  const style = textStyles.find((s: { name: string }) => s.name === name);
+  return `${(style.fontSize * style.lineHeight.value) / 100}px`;
 };
 
 describe('Figma parity: odd-activity', () => {
@@ -742,6 +749,29 @@ describe('Figma parity: odd-conversation', () => {
         { layer: ['Actions', 'Copy', 'Copy'], el: copy, kind: 'text' },
       ];
       expectNone(compare(`odd-conversation/Two-message feed/${mode}`, {}, targets));
+      // The role labels draw in Figma's UI text style, through the UI type role.
+      const lineHeight = await figmaLineHeight('Oddkin/UI');
+      for (const message of [user!, assistant!])
+        expect(getComputedStyle(shadow(message, '.role')).lineHeight).toBe(lineHeight);
+      // No margin under the reply's last block: the content ends with its text, as in Figma.
+      const response = shadow(assistant!, 'odd-response');
+      await settle(response);
+      const last = response.shadowRoot!.querySelector('.content')!.lastElementChild!;
+      expect(shadow(assistant!, '[part="content"]').getBoundingClientRect().bottom).toBeCloseTo(
+        last.getBoundingClientRect().bottom,
+        1,
+      );
+      el.style.setProperty('--odd-type-ui-size', '10px');
+      el.style.setProperty('--odd-type-ui-weight', '700');
+      el.style.setProperty('--odd-type-ui-line-height', '2');
+      el.style.setProperty('--odd-type-ui-letter-spacing', '1px');
+      const role = getComputedStyle(shadow(user!, '.role'));
+      expect([role.fontSize, role.fontWeight, role.lineHeight, role.letterSpacing]).toEqual([
+        '10px',
+        '700',
+        '20px',
+        '1px',
+      ]);
     });
 });
 
