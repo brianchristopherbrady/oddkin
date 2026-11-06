@@ -99,7 +99,7 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
             code: 'collection.key.missing',
             severity: 'error',
             path: at,
-            message: `Item at ${at} has no key; it is not rendered.`,
+            message: `Item at ${at} has no key, so it is not rendered; give each item a key.`,
           });
           return;
         }
@@ -150,7 +150,7 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
             code: 'collection.depth.exceeded',
             severity: 'error',
             path: `${at}/${childSegment}`,
-            message: `Items nested deeper than ${maxDepth} levels at ${at}/${childSegment} are not rendered.`,
+            message: `Items nested deeper than ${maxDepth} levels at ${at}/${childSegment} are not rendered; flatten the data, or raise maxDepth.`,
           });
           return;
         }
@@ -210,7 +210,9 @@ export function collection<T>(options: CollectionOptions<T>): Collection<T> {
       if (!untracked(() => model.value.byKey.has(key))) {
         throw new OddkinError(
           'collection.key.unknown',
-          DEV ? `No entry with key ${JSON.stringify(key)}.` : '',
+          DEV
+            ? `No entry with key ${JSON.stringify(key)}; pass scopeFor() the key of an item in the collection.`
+            : '',
         );
       }
       let scope = scopes.get(key);

@@ -60,6 +60,9 @@ describe('the diagnostic list', () => {
     expect(namesAnAction('Dropped a late event, as expected after a stop: nothing to do.')).toBe(
       true,
     );
+    expect(namesAnAction('Unknown option "x". Did you mean "y"?')).toBe(true);
+    expect(namesAnAction('profile "p" may only declare custom properties.')).toBe(true);
+    expect(namesAnAction('brand.primary is required.')).toBe(true);
   });
 
   it('lists each package with its flags, and computed messages for review', () => {

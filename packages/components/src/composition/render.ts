@@ -77,7 +77,7 @@ export function renderComposition(
           code: 'composition.element.notAllowed',
           severity: 'error',
           path: at,
-          message: `"${node.element}" is not in this renderer's allow-list.`,
+          message: `"${node.element}" is not in this renderer's allow-list; add it to the allow option, or use another element.`,
         });
       else if (Object.hasOwn(catalog, node.element) && !registry?.get(node.element))
         diagnostics.push({

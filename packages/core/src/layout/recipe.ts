@@ -95,7 +95,9 @@ export function recipeModel(recipe: LayoutRecipe): RecipeModel {
   if (!model)
     throw new OddkinError(
       'recipe.unknown',
-      DEV ? 'Not a layout recipe created by defineLayoutRecipe.' : '',
+      DEV
+        ? 'Not a layout recipe created by defineLayoutRecipe; pass the recipe that defineLayoutRecipe() returns.'
+        : '',
     );
   return model;
 }
@@ -121,7 +123,7 @@ function regionProps(
       fail(
         owner,
         'recipe.region.unknown',
-        `${where} names region "${region}", which the recipe does not define (regions: ${[...known].join(', ')}).`,
+        `${where} names region "${region}", which the recipe does not define; use one of its regions (${[...known].join(', ')}), or define "${region}".`,
       );
     }
     const props = out.get(region) ?? new Map<string, string>();
@@ -136,7 +138,7 @@ function regionProps(
         fail(
           owner,
           'recipe.helper.conflict',
-          `${where}, region "${region}", layer ${where.split(' ')[0]}: helpers set conflicting ${property} (${previous} and ${value}).`,
+          `${where}, region "${region}", layer ${where.split(' ')[0]}: helpers set conflicting ${property} (${previous} and ${value}); remove one of the two helpers.`,
         );
       }
       props.set(property, value);
@@ -211,7 +213,11 @@ function parseCondition(
 
 function cssQuery(owner: { name: string }, key: string, query: string): string {
   if (/[;{}<>\\]|\/\*/.test(query) || query.trim() === '')
-    fail(owner, 'recipe.condition.invalid', `condition "${key}" has an invalid query.`);
+    fail(
+      owner,
+      'recipe.condition.invalid',
+      `condition "${key}" has an invalid query; write a non-empty media or container query without ;, braces, angle brackets, backslashes, or comments.`,
+    );
   return query.trim();
 }
 
@@ -348,18 +354,22 @@ function buildModel(definition: RecipeDefinition, base?: RecipeModel): RecipeMod
   let container: RecipeModel['container'];
   if (containerInput) {
     if (containerInput.region && containerInput.selector)
-      fail(owner, 'recipe.container.invalid', 'container takes region or selector, not both.');
+      fail(
+        owner,
+        'recipe.container.invalid',
+        'container takes region or selector, not both; remove one.',
+      );
     if (containerInput.region && !known.has(containerInput.region))
       fail(
         owner,
         'recipe.region.unknown',
-        `container region "${containerInput.region}" is not defined.`,
+        `container region "${containerInput.region}" is not defined; name one of the recipe's regions.`,
       );
     if (containerInput.name !== undefined && !/^[a-zA-Z_][\w-]*$/.test(containerInput.name))
       fail(
         owner,
         'recipe.container.invalid',
-        `container name "${containerInput.name}" is not a CSS identifier.`,
+        `container name "${containerInput.name}" is not a CSS identifier; start with a letter or "_", then use letters, digits, "-", and "_".`,
       );
     container = { ...containerInput, type: containerInput.type ?? 'inline-size' };
   }
@@ -370,7 +380,7 @@ function buildModel(definition: RecipeDefinition, base?: RecipeModel): RecipeMod
       fail(
         owner,
         'recipe.container.missing',
-        `condition "${condition.key}" queries the nearest container, but the recipe declares no container and the query names none.`,
+        `condition "${condition.key}" queries the nearest container, but the recipe declares no container and the query names none; declare a container, or name one in the query.`,
       );
     }
     const selfRegion = container?.region;
@@ -379,14 +389,19 @@ function buildModel(definition: RecipeDefinition, base?: RecipeModel): RecipeMod
       fail(
         owner,
         'recipe.container.self',
-        `condition "${condition.key}" styles region "${selfRegion}", which is the container it queries; a container query only styles descendants.`,
+        `condition "${condition.key}" styles region "${selfRegion}", which is the container it queries; a container query only styles descendants: style a region inside "${selfRegion}" instead.`,
       );
     }
   }
 
   const parts = definition.parts ?? base?.parts ?? [];
   for (const part of parts)
-    if (!known.has(part)) fail(owner, 'recipe.region.unknown', `part "${part}" is not a region.`);
+    if (!known.has(part))
+      fail(
+        owner,
+        'recipe.region.unknown',
+        `part "${part}" is not a region; list only the recipe's regions in parts.`,
+      );
 
   return {
     name,

@@ -443,7 +443,7 @@ class RouterImpl implements Router {
             throw new OddkinError(
               'app.router.redirect',
               DEV
-                ? `${this.#label()} stopped after ${MAX_REDIRECTS} redirects in a row at "${location.path}"; the redirects probably form a loop.`
+                ? `${this.#label()} stopped after ${MAX_REDIRECTS} redirects in a row at "${location.path}"; the redirects probably form a loop. Check the routes' redirect targets.`
                 : '',
             );
           }

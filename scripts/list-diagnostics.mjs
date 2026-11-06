@@ -44,14 +44,14 @@ const ownWords = (text) => withoutValues(text).match(/[A-Za-z]{2,}/g)?.length ??
 
 /**
  * Whether a message names what to do, or links to the page that does: an instruction (an
- * imperative, or `must`, `should`, `needs`, `instead`), or a link.
+ * imperative, or `must`, `may only`, `is required`, `instead`), a suggested name, or a link.
  */
 export function namesAnAction(text) {
   const t = withoutValues(text);
   if (/https?:\/\/|\bdocs\/|\.md\b|\bsee\b/i.test(t)) return true;
-  if (/\bnothing to do\b|\bno action\b/i.test(t)) return true;
+  if (/\bnothing to do\b|\bno action\b|\bdid you mean\b/i.test(t)) return true;
   if (
-    /\b(must|should|needs?|requires?|expects?|expected|instead|only accepts?|allows? (at most|at least|only)|cannot|can't|do not|don't)\b/i.test(
+    /\b(must|should|needs?|requires?|expects?|expected|instead|only accepts?|allows? (at most|at least|only)|may (only|not)|(is|are) required|cannot|can't|do not|don't)\b/i.test(
       t,
     )
   )
@@ -84,6 +84,7 @@ const VERBS = [
   'edit',
   'enable',
   'export',
+  'extend',
   'fix',
   'flatten',
   'give',
@@ -95,6 +96,7 @@ const VERBS = [
   'list',
   'load',
   'make',
+  'map',
   'mark',
   'move',
   'name',
@@ -103,6 +105,7 @@ const VERBS = [
   'pass',
   'pick',
   'point',
+  'prefer',
   'propose',
   'provide',
   'publish',
@@ -110,6 +113,7 @@ const VERBS = [
   'raise',
   'read',
   'rebuild',
+  'reference',
   'register',
   'reinstall',
   'reload',
@@ -122,6 +126,7 @@ const VERBS = [
   'run',
   'select',
   'send',
+  'separate',
   'set',
   'spell',
   'split',

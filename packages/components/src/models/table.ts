@@ -19,7 +19,7 @@ const uniqueRowIds: ModelRule = {
         ? report(
             `/${index}/id`,
             'model.id.duplicate',
-            `${JSON.stringify(id)} is already used at /${seen.get(id)}/id.`,
+            `${JSON.stringify(id)} is already used at /${seen.get(id)}/id; give each row its own id.`,
           )
         : seen.set(id, index),
     );

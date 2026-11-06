@@ -53,7 +53,7 @@ export function cssValue(value: unknown, where: string): string {
     throw new OddkinError(
       'recipe.value.invalid',
       DEV
-        ? `${where}: ${JSON.stringify(value)} is not a CSS value (no ;, braces, angle brackets, backslashes, or comments).`
+        ? `${where}: ${JSON.stringify(value)} is not a CSS value; use a non-empty value without ;, braces, angle brackets, backslashes, or comments.`
         : '',
     );
   }
@@ -138,7 +138,7 @@ function keyword(
   if (!allowed.has(value))
     throw new OddkinError(
       'recipe.value.invalid',
-      DEV ? `${where}: "${value}" is not one of ${[...allowed].join(', ')}.` : '',
+      DEV ? `${where}: "${value}" is not allowed; use one of ${[...allowed].join(', ')}.` : '',
     );
   return value;
 }
@@ -245,7 +245,9 @@ export function createLayoutHelpers(overrides: Partial<LayoutDefaults> = {}): La
           if (!/^(--)?[a-z][a-z0-9-]*$/.test(property))
             throw new OddkinError(
               'recipe.value.invalid',
-              DEV ? `"${property}" is not a CSS property name.` : '',
+              DEV
+                ? `"${property}" is not a CSS property name; use a lowercase name, such as "gap" or "--gap".`
+                : '',
             );
           return [property, cssValue(value, `css ${property}`)] as const;
         }),

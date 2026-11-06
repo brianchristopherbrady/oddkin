@@ -119,7 +119,7 @@ function check(node: Node, value: unknown, path: string, out: Collector): void {
       if (node.maxLength !== undefined && value.length > node.maxLength)
         out.error('model.value.invalid', at, `Must be at most ${node.maxLength} characters.`);
       if (node.pattern !== undefined && !new RegExp(node.pattern, 'u').test(value))
-        out.error('model.value.invalid', at, `Does not match ${node.pattern}.`);
+        out.error('model.value.invalid', at, `Must match ${node.pattern}.`);
       return;
     }
     case 'number':
@@ -254,7 +254,7 @@ function checkObject(
     const at = `${path}/${escape(key)}`;
     if (!Object.hasOwn(value, key) || value[key] === undefined) {
       if (child.kind !== 'optional')
-        out.error('model.required.missing', at, `Missing required "${key}".`);
+        out.error('model.required.missing', at, `Missing required "${key}"; add it.`);
       continue;
     }
     check(child, value[key], at, out);
@@ -264,7 +264,7 @@ function checkObject(
       out.warn(
         'model.property.unknown',
         `${path}/${escape(key)}`,
-        `"${key}" is not part of the model and is ignored.`,
+        `"${key}" is not part of the model and is ignored; remove it.`,
       );
   }
 }
@@ -288,7 +288,7 @@ export function uniqueIds(property = 'id'): ModelRule {
               report(
                 `${path}/${escape(property)}`,
                 'model.id.duplicate',
-                `${JSON.stringify(id)} is already used at ${first}.`,
+                `${JSON.stringify(id)} is already used at ${first}; use a different ${property}.`,
               );
             else seen.set(id, `${path}/${escape(property)}`);
           }
@@ -395,7 +395,7 @@ export function defineModel(name: string, definition: ModelDefinition<Node>): an
           current = step(current);
         } catch (error) {
           return fail(
-            `Migration of "${name}" to version ${version} failed: ${error instanceof Error ? error.message : String(error)}`,
+            `Migration of "${name}" to version ${version} failed; check migrations[${version}]: ${error instanceof Error ? error.message : String(error)}`,
             'model.migration.failed',
           );
         }

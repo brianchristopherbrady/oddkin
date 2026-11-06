@@ -198,7 +198,7 @@ export class OddkinElement extends ElementBase {
         throw new OddkinError(
           'element.prop.duplicate',
           DEV
-            ? `Property "${name}" is already declared by ${Base.name}. Each property is declared once.`
+            ? `Property "${name}" is already declared by ${Base.name}; rename it, or remove this declaration.`
             : '',
         );
       }
@@ -215,7 +215,9 @@ export class OddkinElement extends ElementBase {
       if (definition.reflect && !attribute) {
         throw new OddkinError(
           'element.prop.reflectWithoutAttribute',
-          DEV ? `Property "${name}" reflects but has no attribute.` : '',
+          DEV
+            ? `Property "${name}" reflects but has no attribute; name an attribute, or remove reflect.`
+            : '',
         );
       }
       if (attribute) {
@@ -235,7 +237,9 @@ export class OddkinElement extends ElementBase {
         if (owner) {
           throw new OddkinError(
             'element.attribute.duplicate',
-            DEV ? `Attribute "${attribute}" is used by both "${owner}" and "${name}".` : '',
+            DEV
+              ? `Attribute "${attribute}" is used by both "${owner}" and "${name}"; give one of them another attribute name.`
+              : '',
           );
         }
         attributes.set(attribute, name);

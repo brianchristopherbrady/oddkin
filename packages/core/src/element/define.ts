@@ -128,7 +128,7 @@ function defineElement<C extends CustomElementConstructor>(
     throw new OddkinError(
       'registry.name.invalid',
       DEV
-        ? `"${tagName}" is not a valid custom element name. Names start with a lowercase letter, contain a hyphen, and have no uppercase letters.`
+        ? `"${tagName}" is not a valid custom element name. Use a name that starts with a lowercase letter, contains a hyphen, and has no uppercase letters.`
         : '',
     );
   }

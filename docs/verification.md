@@ -5800,3 +5800,15 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | Metadata | `npm run verify:metadata` | Exit 0 |
 | Size | `node scripts/check-size.mjs` | `ai-chat` 51,605 B of 51,712 (51,587 before); `ai:styles` 5,223 of 5,376 (5,154). The pass's budgets end as Agent 1 asked: each the smallest 256 B step above its final measure. The notes on the new rules are in the style modules' doc comments: CSS comments ship in the sheets (the two cost 182 B of `ai:styles`) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `npx vitest run --project node` (1,697 passed, 2 skipped), `node scripts/verify-packs.mjs`, `npm run compat` | Exit 0 each |
+
+## 2026-11-06 — RF-19: core, state, app, and components messages name what to do (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The list | `node scripts/list-diagnostics.mjs --write` | 504 messages; 18 flagged, all in `@oddkin/tokens` (Agent 3's); none in core, state, app, or components |
+| Quotes of the old messages | `git grep -F -f` the old wordings in every package's tests, the agent kits, examples, end-to-end specs, and the docs site | None quotes a changed message (app's production test matches "redirects in a row", which stays) |
+| Node | `npx vitest run --project node packages/core packages/state packages/app packages/components tests/release/diagnostics.test.ts` | 747 passed, 1 skipped (core, state, app, components, and the list's reading with its new phrases) |
+| Chromium | `browser-set.mjs --engines chromium` on core's, state's, and app's browser tests and components' composition, collection, table, and layout tests | 355 passed |
+| AI | `browser-set.mjs` on every `packages/ai/test/*.browser.test.ts` | 303 passed, 4 skipped, in each of Chromium, Firefox, and WebKit |
+| Metadata | The components' contract test in three engines (830 passed, 50 skipped, in each), then `npm run verify:metadata` | Components 2,219 verified facts across 55 elements and AI 485 across 24; vocabulary 0 findings |
+| Repository | `npm run build`, `npm run typecheck`, `node scripts/check-size.mjs`, `npm run lint`, on main `c67c85b` | Each exit 0. Size: `ai-chat` 51,703 B of 51,712 (main 51,683; core's model and collection messages ship in production, so `model.property.unknown` reads only "…; remove it." to fit), `composition` 9,363 of 9,472, `list` 11,577 of 11,776, `ai-headless` 13,843 of 14,336 |

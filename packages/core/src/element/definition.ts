@@ -74,7 +74,7 @@ export function compose<E extends OddkinElement>(
       throw new OddkinError(
         'definition.dependency.invalid',
         DEV
-          ? `compose({ name: "${init.name}" }): dependency "${role}" is not a definition created by compose().`
+          ? `compose({ name: "${init.name}" }): dependency "${role}" is not a definition created by compose(); pass the definition that compose() returned.`
           : '',
       );
     }

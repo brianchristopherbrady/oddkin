@@ -36,7 +36,9 @@ export function tag<E extends OddkinElement>(definition: ElementDefinition<E>): 
   if (!NAME.test(name))
     throw new OddkinError(
       'template.tagRef.invalid',
-      DEV ? `"${name}" is not a custom element name that a template can write.` : '',
+      DEV
+        ? `"${name}" is not a custom element name that a template can write; use a lowercase ASCII name with a hyphen, such as "my-element".`
+        : '',
     );
   return Object.freeze({ [TAG_REF]: name }) as TagRef<E>;
 }

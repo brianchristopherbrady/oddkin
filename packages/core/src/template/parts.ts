@@ -338,7 +338,7 @@ function safeUrl(value: unknown, name: string): unknown {
       new OddkinError(
         'template.url.unsafe',
         DEV
-          ? `Blocked a script URL bound to "${name}". Oddkin does not allow javascript: or vbscript: URLs in URL bindings.`
+          ? `Blocked a script URL bound to "${name}". Oddkin does not allow javascript: or vbscript: URLs in URL bindings. Use an event listener for script instead.`
           : '',
       ),
       { code: 'template.url.unsafe' },

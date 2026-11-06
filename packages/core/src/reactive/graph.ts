@@ -239,7 +239,9 @@ class ComputedNode<T> extends ReadableNode<T> implements Consumer {
     if (this.#computing) {
       throw new OddkinError(
         'reactive.cycle',
-        DEV ? `${label('Computed value', this.name)} depends on itself.` : '',
+        DEV
+          ? `${label('Computed value', this.name)} depends on itself; a computed value cannot read itself, directly or through other computed values.`
+          : '',
       );
     }
     if (!this.#stale && this.#globalSeen === globalVersion) return;
@@ -521,7 +523,7 @@ function flushListeners(): void {
           new OddkinError(
             'reactive.flush.runaway',
             DEV
-              ? `Subscribers kept changing values after ${MAX_LISTENER_PASSES} passes; notifications stopped.`
+              ? `Subscribers kept changing values after ${MAX_LISTENER_PASSES} passes; notifications stopped. Check for subscribers that write values they listen to.`
               : '',
           ),
           { code: 'reactive.flush.runaway' },
@@ -600,7 +602,7 @@ export function flush(): void {
           new OddkinError(
             'reactive.flush.runaway',
             DEV
-              ? `Effects kept scheduling work after ${MAX_FLUSH_PASSES} passes; the flush stopped. An effect probably writes a value it also reads.`
+              ? `Effects kept scheduling work after ${MAX_FLUSH_PASSES} passes; the flush stopped. An effect probably writes a value it also reads: read it with peek().`
               : '',
           ),
           { code: 'reactive.flush.runaway' },

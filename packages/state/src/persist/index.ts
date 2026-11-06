@@ -170,7 +170,9 @@ export function persist<T, P>(
       storage = undefined;
       fail(
         'state.persist.read',
-        DEV ? `Reading "${key}" from storage failed; the store keeps working in memory.` : '',
+        DEV
+          ? `Reading "${key}" from storage failed; the store keeps working in memory. Check that the page may use storage (private browsing and sandboxed frames can block it).`
+          : '',
         error,
       );
     }
@@ -282,7 +284,7 @@ export function persist<T, P>(
         fail(
           'state.persist.serialize',
           DEV
-            ? `The state for "${key}" could not be serialized (for example a cycle or a BigInt with JSON); it was not written.`
+            ? `The state for "${key}" could not be serialized (for example a cycle or a BigInt with JSON); it was not written. Select only serializable state, or pass serialize and deserialize options that handle it.`
             : '',
           error,
         );
@@ -296,7 +298,7 @@ export function persist<T, P>(
         fail(
           'state.persist.write',
           DEV
-            ? `Writing "${key}" to storage failed (for example the quota is exceeded); later changes try again.`
+            ? `Writing "${key}" to storage failed (for example the quota is exceeded); later changes try again. Select less state to persist if the quota is exceeded.`
             : '',
           error,
         );
@@ -329,7 +331,11 @@ export function persist<T, P>(
       try {
         storage.removeItem(key);
       } catch (error) {
-        fail('state.persist.write', DEV ? `Removing "${key}" from storage failed.` : '', error);
+        fail(
+          'state.persist.write',
+          DEV ? `Removing "${key}" from storage failed; call clear() again to retry.` : '',
+          error,
+        );
         return;
       }
       blocked = false;

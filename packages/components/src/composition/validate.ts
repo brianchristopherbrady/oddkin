@@ -261,7 +261,12 @@ export function validateComposition(
       return;
     }
     if (typeof node === 'string') {
-      if (!context.text) error('composition.text.unsupported', path, 'Text is not allowed here.');
+      if (!context.text)
+        error(
+          'composition.text.unsupported',
+          path,
+          'Text is not allowed here; wrap it in an element.',
+        );
       return;
     }
     if (!isPlain(node))
@@ -273,7 +278,11 @@ export function validateComposition(
     unknownKeys(node, NODE_KEYS, path);
     const tag = node['element'];
     if (typeof tag !== 'string')
-      return error('composition.required.missing', `${path}/element`, 'Missing "element".');
+      return error(
+        'composition.required.missing',
+        `${path}/element`,
+        'Missing "element"; name the element to render.',
+      );
     const entry = Object.hasOwn(catalog, tag) ? catalog[tag] : undefined;
     const native = Object.hasOwn(NATIVE, tag) ? NATIVE[tag] : undefined;
     if (!entry && !native)
@@ -328,7 +337,7 @@ export function validateComposition(
         error(
           'composition.id.duplicate',
           `${path}/id`,
-          `"${id}" is already used at ${ids.get(id)}.`,
+          `"${id}" is already used at ${ids.get(id)}; give each node its own id.`,
         );
       else ids.set(id, `${path}/id`);
     }
@@ -339,11 +348,20 @@ export function validateComposition(
     if (node['properties'] !== undefined) {
       if (entry) checkProperties(node['properties'], `${path}/properties`, tag, entry);
       else
-        error('composition.property.unknown', `${path}/properties`, `${tag} takes no properties.`);
+        error(
+          'composition.property.unknown',
+          `${path}/properties`,
+          `${tag} takes no properties; set attributes instead.`,
+        );
     }
     if (node['actions'] !== undefined) {
       if (entry) checkActions(node['actions'], `${path}/actions`, tag, entry);
-      else error('composition.action.unknown', `${path}/actions`, `${tag} dispatches no events.`);
+      else
+        error(
+          'composition.action.unknown',
+          `${path}/actions`,
+          `${tag} dispatches no events; remove "actions".`,
+        );
     }
 
     const children = node['children'];
@@ -354,7 +372,7 @@ export function validateComposition(
       return error(
         'composition.children.unsupported',
         `${path}/children`,
-        `${tag} has no slots; its content comes from attributes and properties.`,
+        `${tag} has no slots; set its content with attributes and properties instead of children.`,
       );
     if (depth + 1 > maxDepth)
       return error(

@@ -201,7 +201,7 @@ export class Scope {
         new OddkinError(
           'scope.cleanup.error',
           DEV
-            ? `A ${entry.label} cleanup${this.name ? ` in scope "${this.name}"` : ''} threw.`
+            ? `A ${entry.label} cleanup${this.name ? ` in scope "${this.name}"` : ''} threw, and the other cleanups still ran; fix the error reported as its cause.`
             : '',
           { cause: error },
         ),

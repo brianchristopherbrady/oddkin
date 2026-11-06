@@ -321,7 +321,9 @@ export function buildTemplateHtml(strings: readonly string[]): {
       case BOGUS:
         throw new OddkinError(
           'template.binding.position',
-          DEV ? `${location(strings, i)} is inside a comment.` : '',
+          DEV
+            ? `${location(strings, i)} is inside a comment; move the binding out of it, or remove the comment.`
+            : '',
         );
       default:
         throw new OddkinError(
@@ -335,7 +337,7 @@ export function buildTemplateHtml(strings: readonly string[]): {
   if (state !== TEXT && state !== RAW) {
     throw new OddkinError(
       'template.parse.unclosed',
-      DEV ? 'The template ends inside a tag, attribute, or comment.' : '',
+      DEV ? 'The template ends inside a tag, attribute, or comment; close it.' : '',
     );
   }
   return { html: out, attributes };
@@ -420,7 +422,7 @@ export function prepareTemplate(
     throw new OddkinError(
       'template.parse.mismatch',
       DEV
-        ? `Found ${actual} of ${expected} bindings after parsing. Bindings inside a nested <template> element or in markup the HTML parser moves (e.g. text directly inside <table>) are not supported.`
+        ? `Found ${actual} of ${expected} bindings after parsing. Bindings inside a nested <template> element or in markup the HTML parser moves (e.g. text directly inside <table>) are not supported. Move such bindings to an element the parser keeps in place, such as a <td> inside a <tr>.`
         : '',
     );
   }
