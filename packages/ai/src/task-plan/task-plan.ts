@@ -33,9 +33,9 @@ const SYMBOL: Record<StepStatus, string> = {
  * for input.
  *
  * @csspart base - The section labelled by the plan's title.
- * @csspart progress - The native progress bar and its text.
+ * @csspart progress - The progress text ("2 of 4 steps done").
  * @csspart steps - The ordered list of steps.
- * @a11y An ordered list; each step's status is text (symbols are decorative). Progress is a labelled native `<progress>` with a text equivalent.
+ * @a11y An ordered list; each step's status is text (symbols are decorative). Progress is text.
  * @keyboard Tab reaches "Respond" buttons on steps that need input.
  * @useFor Showing multi-step agent work as it proceeds.
  * @notFor Static checklists the user edits.

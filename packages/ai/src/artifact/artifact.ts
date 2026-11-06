@@ -42,7 +42,8 @@ export interface ExportFormat {
  * source modes, application-provided renderers, and export actions. Copy and the default
  * download use the canonical revision content.
  *
- * @csspart header - Title, revision picker, view toggle, and actions.
+ * @csspart header - Title and revision (a revision picker when there are several).
+ * @csspart toolbar - Copy, Download, and the exports, then the preview and source view toggle.
  * @csspart preview - Preview container (renderer output).
  * @csspart source - Source view.
  * @a11y A labelled region. The view toggle uses `aria-pressed`; the revision picker is a native select.

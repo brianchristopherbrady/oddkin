@@ -2,7 +2,7 @@ import { html } from '@oddkin/core/template';
 import { format } from '../internal/strings.js';
 import type { OddkinArtifact } from './artifact.js';
 
-/** Anatomy: a labelled region with `header`, a `preview` container, and a `source` view. */
+/** Anatomy: a labelled region with `header`, `toolbar`, a `preview` container, and a `source` view. */
 export const artifactTemplate = (host: OddkinArtifact) => {
   const t = host._strings;
   const a = host.artifact;
@@ -28,7 +28,7 @@ export const artifactTemplate = (host: OddkinArtifact) => {
         >${host._revisionLabel(revision, a.revisions.length)}</span
       >
     </div>
-    <div class="toolbar">
+    <div part="toolbar" class="toolbar">
       <div class="actions">
         <button class="text-button" type="button" @click=${host._copy}>${t.copy}</button>
         <button class="text-button" type="button" data-format="source" @click=${host._export}>

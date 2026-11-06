@@ -5673,6 +5673,7 @@ Agent 2's decisions of 2026-11-05 (lanes, 11:18) on the reviews of `odd-action-a
 | Metadata | `npm run build`; `npx vitest run --project node packages/ai/test`; `npm run verify:metadata` | The voice input's default is no longer computed (its definition is listed), and the inline assist's default renders `odd-change-review`; 94 node tests passed; components 2,219 verified facts across 55 elements and AI 484 across 24, in three engines (the components' records refreshed with their contract test, 830 passed in each engine); vocabulary 0 findings |
 | Docs site and Workbench | `e2e-when-free.mjs` on `e2e/docs.spec.ts:448` and `:473` in three engines, then `e2e/workbench-catalog.spec.ts` in Chromium | 6 passed; 158 passed |
 | Repository | `npm run typecheck`, `npm run lint`, `npx vitest run --project node`, `node scripts/check-size.mjs` | Each exit 0; sizes unchanged (examples are not in the bundles) |
+
 ## 2026-11-05 — P1.8 item 8: the seven reviewed elements that act on their own, as decided (round 11, Agent 3)
 
 Agent 2's decisions of 2026-11-05 (lanes, 11:26) on the reviews of `odd-ai-label`, `odd-artifact`, `odd-model-select`, `odd-response`, `odd-sources`, `odd-transcript`, and `odd-usage-meter`. On `ba08984`.
