@@ -161,7 +161,10 @@ describe('odd-prompt-input', () => {
       [...el.shadowRoot!.querySelectorAll('.attachment .name')].map((n) => n.textContent);
     expect(names()).toEqual(['pic.png']);
     const issues = [...el.shadowRoot!.querySelectorAll('#issues li')].map((n) => n.textContent);
-    expect(issues).toEqual(['doc.txt: type refusé', 'big.png is larger than 4 B.']);
+    expect(issues).toEqual([
+      'doc.txt: type refusé',
+      'big.png is larger than 4 B. Choose a smaller file.',
+    ]);
     expect(area.getAttribute('aria-describedby')).toContain('issues');
     // Paste uses the same path; engines that drop clipboardData from synthetic events are skipped.
     const pasted = new DataTransfer();
