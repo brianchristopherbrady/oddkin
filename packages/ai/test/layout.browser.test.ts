@@ -632,7 +632,8 @@ describe('odd-response-feedback', () => {
     expectColumn($(el, '.base'), space('xs'));
     expectColumn($(el, '.form'), space('xs'));
     expectRow($(el, '.check'), space('xs'), { text: true });
-    expectColumn($(el, '.field'), space('2xs'));
+    // space.xs from the comment's label to its field, as the Figma specimen spaces them.
+    expectColumn($(el, '.field'), space('xs'));
   });
 });
 

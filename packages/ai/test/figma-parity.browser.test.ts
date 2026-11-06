@@ -509,6 +509,12 @@ describe('Figma parity: odd-response-feedback', () => {
         },
       ];
       expectNone(compare(`odd-response-feedback/Negative rating · drafting/${mode}`, {}, targets));
+      // Figma's comment field spans the 636 px specimen, space.xs under its label.
+      el.style.inlineSize = '636px';
+      const box = field.getBoundingClientRect();
+      expect(box.width).toBe(el.getBoundingClientRect().width);
+      const label = form.querySelector('.field span')!.getBoundingClientRect();
+      expect(box.top - label.bottom).toBeCloseTo(space(el, 'xs'), 1);
     });
 });
 

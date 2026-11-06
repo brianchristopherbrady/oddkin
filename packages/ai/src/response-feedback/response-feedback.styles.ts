@@ -5,9 +5,6 @@ import { responseFeedbackRecipeStyles } from './response-feedback.recipe.styles.
 /** The arrangement is the layout recipe in `response-feedback.recipe.ts`. */
 export const responseFeedbackStyles = css`
   ${responseFeedbackRecipeStyles}
-  .form {
-    max-inline-size: 36rem;
-  }
   fieldset {
     /* Not a grid: WebKit keeps a grid fieldset's legend at its old width after the container shrinks. */
     display: flex;

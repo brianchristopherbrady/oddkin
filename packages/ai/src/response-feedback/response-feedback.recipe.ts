@@ -11,6 +11,6 @@ export const responseFeedbackRecipe = defineLayoutRecipe({
     base: stack({ gap: token('space.xs') }),
     form: stack({ gap: token('space.xs') }),
     check: row({ gap: token('space.xs') }),
-    field: stack({ gap: token('space.2xs') }),
+    field: stack({ gap: token('space.xs') }),
   },
 });
