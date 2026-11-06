@@ -400,34 +400,37 @@ describe('odd-tool-call and odd-action-approval', () => {
   it('their examples play the host: an approved call runs, a rejected one is denied; Edit brings the next revision', async () => {
     await import('../src/tool-call/tool-call.define.js');
     const { default: tools } = await import('../src/tool-call/tool-call.examples.js');
+    const status = (el: Element) => {
+      flush();
+      return text($(el, '.status'));
+    };
     const decide = async (button: number) => {
       const mounted = await mountExample(tools, 'approval', container);
       const approval = $(mounted.element, 'odd-action-approval')!;
       await settle(approval as unknown as { updateComplete: Promise<void> });
       $$(approval, '[part="actions"] odd-button')[button]!.click();
+      // Read at once: the approved run ends after 600 ms, which settle can outlast under load.
+      const first = status(mounted.element);
       await settle(mounted.element);
-      return mounted;
-    };
-    const status = (el: Element) => {
-      flush();
-      return text($(el, '.status'));
+      return { mounted, first };
     };
     const approved = await decide(0);
     try {
-      expect(status(approved.element)).toBe('Running…');
-      expect(approved.element.approval?.status).toBe('approved');
+      expect(approved.first).toBe('Running…');
+      expect(approved.mounted.element.approval?.status).toBe('approved');
       await expect
-        .poll(() => status(approved.element), { timeout: 3000, interval: 20 })
+        .poll(() => status(approved.mounted.element), { timeout: 3000, interval: 20 })
         .toBe('Finished');
     } finally {
-      approved.dispose();
+      approved.mounted.dispose();
     }
     const denied = await decide(1);
     try {
-      expect(status(denied.element)).toBe('Not run: denied');
-      expect(denied.element.approval?.status).toBe('rejected');
+      expect(denied.first).toBe('Not run: denied');
+      expect(status(denied.mounted.element)).toBe('Not run: denied');
+      expect(denied.mounted.element.approval?.status).toBe('rejected');
     } finally {
-      denied.dispose();
+      denied.mounted.dispose();
     }
     const { default: approvals } =
       await import('../src/action-approval/action-approval.examples.js');
