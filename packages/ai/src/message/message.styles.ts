@@ -23,16 +23,10 @@ export const messageStyles = css`
     margin: 0;
     white-space: pre-wrap;
   }
-  .reasoning summary {
-    min-block-size: ${token('target.min')};
-    color: ${token('color.text.secondary')};
-    font-size: ${token('font.size.sm')};
-    cursor: pointer;
-  }
+  /* The disclosure draws the surface; the reasoning reads as its secondary content, in prose weight. */
   .reasoning odd-response {
-    padding-inline-start: ${token('space.sm')};
-    border-inline-start: ${token('border.width.default')} solid ${token('color.border.default')};
     color: ${token('color.text.secondary')};
+    font-weight: ${token('font.weight.regular')};
   }
   .file {
     margin: 0;

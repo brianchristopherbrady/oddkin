@@ -239,7 +239,8 @@ describe('Figma parity: odd-ai-label', () => {
       const el = mount('<odd-ai-label></odd-ai-label>') as HTMLElementTagNameMap['odd-ai-label'];
       el.provenance = { kind: 'generated', model: 'Example model' };
       await settle(el);
-      const label = shadow(el, '[part="label"]');
+      // The label is the summary of the odd-disclosure the element composes.
+      const label = shadow(shadow(el, 'odd-disclosure'), '[part="summary"]');
       const targets: Target[] = [
         { layer: [], el, kind: 'frame' },
         {

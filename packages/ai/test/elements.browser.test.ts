@@ -48,6 +48,18 @@ const $$ = (el: Element, selector: string) => [
 ];
 const text = (el: Element | null | undefined) =>
   (el?.textContent ?? '').replace(/\s+/g, ' ').trim();
+/** Loads the default theme's tokens; the returned function removes them. */
+const loadTheme = async () => {
+  const theme = document.createElement('link');
+  theme.rel = 'stylesheet';
+  theme.href = new URL('../../tokens/dist/css/default.css', import.meta.url).href;
+  await new Promise((resolve, reject) => {
+    theme.onload = resolve;
+    theme.onerror = reject;
+    document.head.append(theme);
+  });
+  return () => theme.remove();
+};
 
 describe('registration', () => {
   // The first test of the file pays for transforming the package's modules; allow for that
@@ -1492,10 +1504,42 @@ describe('odd-message fallbacks and provenance', () => {
       'Structured content “unknown” was not shown because it did not pass validation.',
     ]);
     const label = $(el, 'odd-ai-label')!;
-    expect(text(label.shadowRoot!.querySelector('summary'))).toBe('AI generated');
-    expect(text(label.shadowRoot!.querySelector('details'))).toContain(
-      'not independently verified',
-    );
+    const disclosure = $(label, 'odd-disclosure')!;
+    expect(text($(disclosure, '[part="summary"]'))).toBe('AI generated');
+    expect(text(disclosure)).toContain('not independently verified');
+  });
+
+  it('shows reasoning in a closed disclosure, as secondary text in the prose weight', async () => {
+    const removeTheme = await loadTheme();
+    try {
+      const el = await mount(
+        'odd-message',
+        () => import('../src/message/message.define.js'),
+        (e) => {
+          e.message = {
+            id: 'm',
+            role: 'assistant',
+            parts: [
+              { type: 'reasoning', id: 'r', text: 'Checking two sources.' },
+              { type: 'text', id: 't', text: 'The answer.' },
+            ],
+          };
+        },
+      );
+      const reasoning = $(el, '.reasoning') as HTMLElementTagNameMap['odd-disclosure'];
+      expect(reasoning.localName).toBe('odd-disclosure');
+      expect(reasoning.label).toBe('Reasoning');
+      const response = reasoning.querySelector('odd-response')!;
+      expect(response.checkVisibility()).toBe(false);
+      reasoning.open = true;
+      await settle(reasoning);
+      expect(response.checkVisibility()).toBe(true);
+      const style = getComputedStyle(response);
+      expect(style.fontWeight).toBe('400');
+      expect(style.color).toBe(getComputedStyle($(el, '.role')!).color);
+    } finally {
+      removeTheme();
+    }
   });
 
   it('odd-task-plan: steps, parallel tasks, blockers, progress, and input requests', async () => {
@@ -1630,15 +1674,43 @@ describe('the elements that act on their own or only show (contract review, 2026
   };
 
   it('the AI label shows a disclosure marker; sources show their numbers to sighted readers only', async () => {
+    const removeTheme = await loadTheme();
     const label = await example('ai-label');
     try {
-      const summary = $(label.element, 'summary')!;
-      const marker = () => getComputedStyle(summary, '::before').content;
-      expect(marker()).toBe('"\u25B8" / ""');
-      ($(label.element, 'details') as HTMLDetailsElement).open = true;
-      expect(marker()).toBe('"\u25BE" / ""');
+      // The disclosure's marker stands before the label, as Figma draws it, and turns when open.
+      const disclosure = $(
+        label.element,
+        'odd-disclosure',
+      ) as HTMLElementTagNameMap['odd-disclosure'];
+      const summary = $(disclosure, '[part="summary"]')!;
+      const marker = $(disclosure, '[part="marker"]')!;
+      const box = (el: Element) => el.getBoundingClientRect();
+      expect(box(marker).right).toBeLessThanOrEqual(box($(disclosure, '[part="label"]')!).left);
+      // Closed, the label is only its summary: the disclosure draws no surface around it.
+      expect(box(label.element).width).toBeCloseTo(box(summary).width, 1);
+      // Figma's regular weight, even inside bold text.
+      const host = label.element as HTMLElement;
+      host.style.fontWeight = '700';
+      expect(getComputedStyle(summary).fontWeight).toBe('400');
+      host.style.removeProperty('font-weight');
+      expect(marker.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+      const closed = marker.innerHTML;
+      disclosure.open = true;
+      await settle(disclosure);
+      expect(marker.innerHTML).not.toBe(closed);
+      expect(disclosure.querySelector('.details')?.checkVisibility()).toBe(true);
+      // The summary stays the element's `label` part for the page's styles.
+      const style = document.createElement('style');
+      style.textContent = 'odd-ai-label::part(label) { text-decoration-line: underline; }';
+      document.head.append(style);
+      try {
+        expect(getComputedStyle(summary).textDecorationLine).toBe('underline');
+      } finally {
+        style.remove();
+      }
     } finally {
       label.dispose();
+      removeTheme();
     }
     const sources = await example('sources');
     try {

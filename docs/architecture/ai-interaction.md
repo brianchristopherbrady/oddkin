@@ -15,7 +15,7 @@ Status: implemented and verified for the scope in [IMPLEMENTATION_PLAN.md §5j](
 | Voice | `@oddkin/ai/voice/web-speech`, `@oddkin/ai/voice/recorder` | browser APIs when called | Optional capture/transcription adapters |
 | Elements | `@oddkin/ai/<name>`, `@oddkin/ai/define/<name>` | browser | Presentation state only (focus, open/closed, scroll position, local drafts) |
 
-Dependencies: `@oddkin/core`, `@oddkin/tokens` (refs only), `@oddkin/components` (`odd-button`). Forbidden: state, app, analyzer, workbench, agent, any third-party runtime package, any framework. Enforced by `scripts/architecture/boundaries.config.mjs` (`npm run lint:boundaries`) and by the import-graph checks in `npm run size`.
+Dependencies: `@oddkin/core`, `@oddkin/tokens` (refs only), `@oddkin/components` (`odd-button`, `odd-disclosure`, the layout primitives, and the shared styles). Forbidden: state, app, analyzer, workbench, agent, any third-party runtime package, any framework. Enforced by `scripts/architecture/boundaries.config.mjs` (`npm run lint:boundaries`) and by the import-graph checks in `npm run size`.
 
 **One authoritative source per surface.** A conversation element reads either `source` (an `ExternalSource<ConversationState>`: `ConversationController` or an application store adapted with `selectSource`/`createConversationView`) or a controlled `state` snapshot. Elements never copy records into their own state, never mutate records, and never echo programmatic assignments as user-intent events. Every user action is a typed event that *requests* an operation; outcomes arrive as changed records. The controller is one possible owner; an application store is another (agent demo).
 
@@ -38,7 +38,7 @@ Element-owned resources (timers, listeners, object URLs created for previews, ow
 | C11 | Change review | `odd-change-review` | `DocumentSession`, `diffWords`/`diffLines` | `ins`/`del` |
 | C12 | Alternative responses | `odd-message-branch` | `regenerate`, `edit`, `switchBranch` | — |
 | C13 | Clarifying questions | `odd-question` | `QuestionModel` | native form controls |
-| C14 | AI provenance | `odd-ai-label` | `provenanceSchema` | native `details` |
+| C14 | AI provenance | `odd-ai-label` | `provenanceSchema` | `odd-disclosure` |
 | C15 | Suggested follow-ups | `odd-suggestions` | `controllerIntents` (`odd-suggestion-select`/`-submit`) | — |
 | C16 | Response feedback | `odd-response-feedback` | `submitFeedback` | `aria-pressed` buttons |
 | C17 | Model selection | `odd-model-select` | `ModelOptionModel` | native `select` |

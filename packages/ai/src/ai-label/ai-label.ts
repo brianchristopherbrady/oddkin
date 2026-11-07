@@ -15,13 +15,13 @@ export const AI_LABEL_STRINGS = {
 
 /**
  * A provenance label for generated or assisted content, with the origin details the application
- * supplied in a native disclosure. Shows information as supplied; it never asserts accuracy.
+ * supplied in an `odd-disclosure`. Shows information as supplied; it never asserts accuracy.
  *
- * @csspart base - The native disclosure around the label and its details.
- * @csspart label - The visible label (the disclosure summary).
+ * @csspart base - The `odd-disclosure` around the label and its details.
+ * @csspart label - The visible label: the disclosure's summary.
  * @csspart details - The origin details.
- * @a11y The label is a native `<summary>`; its details are read in document order when expanded.
- * @keyboard Enter or Space toggles the details (native disclosure).
+ * @a11y The label is the disclosure's native `<summary>`, named by the label text; the marker is hidden from assistive technology. Its details are read in document order when expanded.
+ * @keyboard Enter or Space toggles the details.
  * @useFor Marking responses, artifacts, or edits as AI generated or assisted, with origin details.
  * @notFor Asserting factual accuracy or safety; use the host's own review states.
  * @limitation Labels and details are application-supplied; nothing is inferred from content.

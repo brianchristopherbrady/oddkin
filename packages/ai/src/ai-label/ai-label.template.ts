@@ -2,7 +2,10 @@ import { html } from '@oddkin/core/template';
 import { formatTime, langOf } from '../internal/strings.js';
 import type { OddkinAiLabel } from './ai-label.js';
 
-/** Anatomy: a native `<details>` whose `summary` is the label and whose body lists the origin. */
+/**
+ * Anatomy: an `odd-disclosure` (`base`) whose summary, exported as `label`, is the label and
+ * whose content lists the origin.
+ */
 export const aiLabelTemplate = (host: OddkinAiLabel) => {
   const t = host._strings;
   const p = host.provenance;
@@ -10,10 +13,13 @@ export const aiLabelTemplate = (host: OddkinAiLabel) => {
   const label = p.label ?? t[p.kind];
   const when = formatTime(p.generatedAt, langOf(host));
   const hasDetails = !!(p.model || p.provider || when || p.notes);
-  return html`<details class="base" part="base">
-    <summary part="label" class="label odd-button" data-size="sm" data-kind=${p.kind}>
-      ${label}
-    </summary>
+  return html`<odd-disclosure
+    class="base"
+    part="base"
+    exportparts="summary: label"
+    label=${label}
+    data-kind=${p.kind}
+  >
     <dl part="details" class="details" ?hidden=${!hasDetails}>
       <div ?hidden=${!p.model}>
         <dt>${t.model}</dt>
@@ -30,5 +36,5 @@ export const aiLabelTemplate = (host: OddkinAiLabel) => {
     </dl>
     <p class="notes" ?hidden=${!p.notes}>${p.notes ?? ''}</p>
     <p class="muted">${t.disclaimer}</p>
-  </details>`;
+  </odd-disclosure>`;
 };

@@ -1,3 +1,4 @@
+import { disclosureDefinition } from '@oddkin/components/disclosure';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { OddkinAiLabel } from './ai-label.js';
@@ -9,4 +10,5 @@ export const aiLabelDefinition = compose({
   element: OddkinAiLabel,
   template: aiLabelTemplate,
   styles: [aiBaseStyles, aiLabelStyles],
+  dependencies: { disclosure: disclosureDefinition },
 });

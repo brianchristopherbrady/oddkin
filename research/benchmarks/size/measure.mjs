@@ -101,7 +101,9 @@ export const BUDGETS = {
   // 52,608 since 2026-11-06 (Agent 1's call), the smallest 64 B step: measured 52,566 (+791) once
   // the AI buttons are native buttons drawn by nativeButtonStyles instead of the private
   // .text-button (audit step 2; the sheet is 4,019 B minified, and ai:styles loses 84 B).
-  'ai-chat': 52608,
+  // 54,720 since 2026-11-06 (Agent 1's call), the smallest 64 B step: measured 54,675 (+2,109)
+  // once odd-message's reasoning and odd-ai-label compose odd-disclosure (audit step 3).
+  'ai-chat': 54720,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
@@ -378,8 +380,10 @@ export const CSS_BUDGETS = {
   // once inside the element sheet it opens).
   // 5,376 since 2026-11-05 (Agent 1's call), for the AI design pass (owner, 2026-11-04;
   // IMPLEMENTATION_PLAN.md P1.8): measured 5,108 after its fourth batch. The pass ended
-  // (2026-11-05) at 5,223, and 5,376 stays the smallest 256 B step above it.
-  'ai:styles': 5376,
+  // (2026-11-05) at 5,223, and 5,376 stays the smallest 256 B step above it. 5,504 since
+  // 2026-11-06 (Agent 1's call), the smallest 64 B step: measured 5,497 (+230) once odd-ai-label
+  // draws its label through the parts of the odd-disclosure it composes (audit step 3).
+  'ai:styles': 5504,
 };
 
 /** Gzip sizes of the shipped CSS: generated token CSS and component style modules. */

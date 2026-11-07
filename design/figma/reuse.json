@@ -2008,7 +2008,10 @@
       "reason": "Approve, reject, and edit are complete buttons (Figma: button ×2)."
     },
     "odd-activity": { "dependencies": [] },
-    "odd-ai-label": { "dependencies": [] },
+    "odd-ai-label": {
+      "dependencies": ["odd-disclosure"],
+      "reason": "The reveal is a complete odd-disclosure (owner, 2026-11-06), its summary drawn as the label through the disclosure's parts."
+    },
     "odd-alert": { "dependencies": [] },
     "odd-artifact": { "dependencies": [] },
     "odd-avatar": { "dependencies": [] },
@@ -2088,13 +2091,14 @@
         "odd-ai-label",
         "odd-artifact",
         "odd-button",
+        "odd-disclosure",
         "odd-message-branch",
         "odd-response",
         "odd-response-feedback",
         "odd-sources",
         "odd-tool-call"
       ],
-      "reason": "A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, artifacts, branch, feedback, AI label) and odd-button for save/cancel while editing; each is a complete widget authors also place alone."
+      "reason": "A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, artifacts, branch, feedback, AI label), reasoning in an odd-disclosure, and odd-button for save/cancel while editing; each is a complete widget authors also place alone."
     },
     "odd-message-branch": { "dependencies": [] },
     "odd-model-select": {

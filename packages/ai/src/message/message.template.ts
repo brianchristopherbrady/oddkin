@@ -33,14 +33,13 @@ const part = (host: OddkinMessage, p: MessagePart, lastText: boolean, c: PartCon
           ></odd-response>`
         : html`<p class="plain-text">${p.text}</p>`;
     case 'reasoning':
-      return html`<details class="reasoning">
-        <summary>${t.reasoning}</summary>
+      return html`<odd-disclosure class="reasoning" label=${t.reasoning}>
         <odd-response
           .text=${p.text}
           .status=${host._textStatus(p, false)}
           .markdown=${c.markdown}
         ></odd-response>
-      </details>`;
+      </odd-disclosure>`;
     case 'file': {
       const url = p.url ? safeUrl(p.url) : undefined;
       return html`<p class="file">
