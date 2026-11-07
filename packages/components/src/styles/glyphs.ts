@@ -6,6 +6,12 @@ import { html } from '@oddkin/core/template';
 // Content-Security-Policy needs no `img-src`. One export per glyph, so bundles keep only those
 // they render. Decorative: the control or text beside a glyph carries the meaning.
 
+/**
+ * Makes a glyph where it is declared. Bundlers keep every tagged template at the top of a module,
+ * but drop a call marked pure whose result is unused: so a bundle keeps only the glyphs it renders.
+ */
+const glyph = <T>(make: () => T): T => make();
+
 /** Glyph geometry: 1em square, stroked in `currentColor`; `.mirror` glyphs flip right to left. */
 export const glyphStyles = css`
   .glyph {
@@ -29,109 +35,169 @@ export const glyphStyles = css`
   }
 `;
 
-export const checkGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M5 10.5l3.5 3.5L15 7" />
-</svg>`;
-export const minusGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M5 10h10" />
-</svg>`;
-export const plusGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M10 5v10M5 10h10" />
-</svg>`;
-export const closeGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M6 6l8 8M14 6l-8 8" />
-</svg>`;
-export const chevronDownGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M6 8l4 4 4-4" />
-</svg>`;
-export const chevronUpGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M6 12l4-4 4 4" />
-</svg>`;
+export const checkGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M5 10.5l3.5 3.5L15 7" />
+    </svg>`,
+);
+export const minusGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M5 10h10" />
+    </svg>`,
+);
+export const plusGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M10 5v10M5 10h10" />
+    </svg>`,
+);
+export const closeGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M6 6l8 8M14 6l-8 8" />
+    </svg>`,
+);
+export const chevronDownGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M6 8l4 4 4-4" />
+    </svg>`,
+);
+export const chevronUpGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M6 12l4-4 4 4" />
+    </svg>`,
+);
 /** Points to the inline end: right in left-to-right text, left in right-to-left text. */
-export const chevronEndGlyph = html`<svg
-  class="glyph mirror"
-  viewBox="0 0 20 20"
-  aria-hidden="true"
->
-  <path d="M8 6l4 4-4 4" />
-</svg>`;
+export const chevronEndGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph mirror" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M8 6l4 4-4 4" />
+    </svg>`,
+);
 /** Points to the inline start. */
-export const chevronStartGlyph = html`<svg
-  class="glyph mirror"
-  viewBox="0 0 20 20"
-  aria-hidden="true"
->
-  <path d="M12 6l-4 4 4 4" />
-</svg>`;
+export const chevronStartGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph mirror" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M12 6l-4 4 4 4" />
+    </svg>`,
+);
 /** Points to the inline end. */
-export const arrowEndGlyph = html`<svg class="glyph mirror" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M4 10h12M12 6l4 4-4 4" />
-</svg>`;
+export const arrowEndGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph mirror" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M4 10h12M12 6l4 4-4 4" />
+    </svg>`,
+);
 /** Points to the inline start. */
-export const arrowStartGlyph = html`<svg
-  class="glyph mirror"
-  viewBox="0 0 20 20"
-  aria-hidden="true"
->
-  <path d="M16 10H4M8 6l-4 4 4 4" />
-</svg>`;
-export const searchGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <circle cx="8.5" cy="8.5" r="4.5" />
-  <path d="M12 12l4 4" />
-</svg>`;
-export const moreGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <circle class="dot" cx="5" cy="10" r="1.25" />
-  <circle class="dot" cx="10" cy="10" r="1.25" />
-  <circle class="dot" cx="15" cy="10" r="1.25" />
-</svg>`;
-export const externalGlyph = html`<svg class="glyph mirror" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M11 4h5v5M16 4l-7 7M14 12v4H4V6h4" />
-</svg>`;
-export const uploadGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M10 13V4M6 8l4-4 4 4M4 13v3h12v-3" />
-</svg>`;
-export const fileGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M5 3h6l4 4v10H5zM11 3v4h4" />
-</svg>`;
-export const infoGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <circle cx="10" cy="10" r="7" />
-  <path d="M10 9v5" />
-  <circle class="dot" cx="10" cy="6.5" r="1" />
-</svg>`;
-export const warningGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M10 3.5l7 12.5H3z" />
-  <path d="M10 8.5V12" />
-  <circle class="dot" cx="10" cy="14" r="0.9" />
-</svg>`;
-export const checkCircleGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <circle cx="10" cy="10" r="7" />
-  <path d="M7 10.25l2 2 4-4.5" />
-</svg>`;
+export const arrowStartGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph mirror" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M16 10H4M8 6l-4 4 4 4" />
+    </svg>`,
+);
+export const searchGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="8.5" cy="8.5" r="4.5" />
+      <path d="M12 12l4 4" />
+    </svg>`,
+);
+export const moreGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <circle class="dot" cx="5" cy="10" r="1.25" />
+      <circle class="dot" cx="10" cy="10" r="1.25" />
+      <circle class="dot" cx="15" cy="10" r="1.25" />
+    </svg>`,
+);
+export const externalGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph mirror" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M11 4h5v5M16 4l-7 7M14 12v4H4V6h4" />
+    </svg>`,
+);
+export const uploadGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M10 13V4M6 8l4-4 4 4M4 13v3h12v-3" />
+    </svg>`,
+);
+export const fileGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M5 3h6l4 4v10H5zM11 3v4h4" />
+    </svg>`,
+);
+export const infoGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="10" r="7" />
+      <path d="M10 9v5" />
+      <circle class="dot" cx="10" cy="6.5" r="1" />
+    </svg>`,
+);
+export const warningGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M10 3.5l7 12.5H3z" />
+      <path d="M10 8.5V12" />
+      <circle class="dot" cx="10" cy="14" r="0.9" />
+    </svg>`,
+);
+export const checkCircleGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="10" r="7" />
+      <path d="M7 10.25l2 2 4-4.5" />
+    </svg>`,
+);
 /** The rating star (design/icons/general/star.svg); filled with `fill: currentColor` when on. */
-export const starGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M10 2l2.5 5 5.5 1-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1z" />
-</svg>`;
+export const starGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M10 2l2.5 5 5.5 1-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1z" />
+    </svg>`,
+);
 /** The clock beside a relative time (design/icons/general/clock.svg). */
-export const clockGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <circle cx="10" cy="10" r="8" />
-  <path d="M10 5v5l4 2" />
-</svg>`;
+export const clockGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="10" r="8" />
+      <path d="M10 5v5l4 2" />
+    </svg>`,
+);
 /** The date picker's calendar button (design/icons/general/calendar.svg). */
-export const calendarGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <rect x="2" y="4" width="16" height="14" rx="1" />
-  <path d="M2 8h16M6 2v4M14 2v4M6 12h2M12 12h2" />
-</svg>`;
+export const calendarGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <rect x="2" y="4" width="16" height="14" rx="1" />
+      <path d="M2 8h16M6 2v4M14 2v4M6 12h2M12 12h2" />
+    </svg>`,
+);
 /** The copy action (design/icons/general/copy.svg): a sheet in front of another. */
-export const copyGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <rect x="6" y="6" width="12" height="12" rx="1" />
-  <path d="M3 14H2V2h12v1" />
-</svg>`;
+export const copyGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <rect x="6" y="6" width="12" height="12" rx="1" />
+      <path d="M3 14H2V2h12v1" />
+    </svg>`,
+);
 /** A person (design/icons/general/person.svg): the count of chosen people in a multiple field. */
-export const userGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <circle cx="10" cy="5" r="3" />
-  <path d="M3 18v-3c0-7 14-7 14 0v3" />
-</svg>`;
+export const userGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="5" r="3" />
+      <path d="M3 18v-3c0-7 14-7 14 0v3" />
+    </svg>`,
+);
 /** An upward arrow (design/icons/general/direction-arrow-bold-up.svg); rotated for downward. */
-export const arrowUpGlyph = html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
-  <path d="M10 18V2M4 8l6-6 6 6" />
-</svg>`;
+export const arrowUpGlyph = /* @__PURE__ */ glyph(
+  () =>
+    html`<svg class="glyph" viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M10 18V2M4 8l6-6 6 6" />
+    </svg>`,
+);

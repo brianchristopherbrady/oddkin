@@ -5959,3 +5959,16 @@ On `f7f7e02`. The owner, 2026-11-06: tokens are the source of truth; run an audi
 | Repository | `npm run typecheck`, `npm run lint` | Exit 0 each |
 | Size | `node scripts/check-size.mjs` | Exit 0. `ai-chat` 51,779 B of 51,840 (51,775 on `f7f7e02`: +4 for the focus offset); `ai:styles` 5,353 of 5,376; `tokens:default.css` 3,096 of 3,136 (descriptions are not in the CSS, and no Workbench bundle contains them) |
 | Not done | — | No Figma change (the owner: Figma follows the tokens; the parity tests keep mapping its variables). Raw lengths are outside the check: a literal `4px` offset passes it, and the review rule against raw values still applies |
+
+## 2026-11-07 — A bundle keeps only the glyphs it renders (round 11, Agent 2)
+
+Found while measuring row 11 step d: `odd-copy-button` renders two glyphs, but its bundle carried all 24 of the shared glyph module (`packages/components/src/styles/glyphs.ts`).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Why | A probe bundle with esbuild (the size script's settings: bundle, minify, ESM) of three glyph-like constants, one of them imported | An unused tagged template stays even when marked `/* @__PURE__ */` (the mark applies to calls); an unused call marked pure that makes it goes |
+| The promise kept | `packages/components/test/glyphs.test.ts`, new: bundles `copyGlyph` alone from the glyph module | 1 passed: the copy glyph's path is in the bundle, the check's and the star's are not |
+| Size | `node scripts/check-size.mjs`, after `npm run build`, compared bucket by bucket with the run before | `ai-chat` 54,419 B gzip (was 55,023); every other bucket unchanged |
+| Components and AI elements | `browser-set.mjs` on every `packages/components/test/*.browser.test.ts` and `packages/ai/test/*.browser.test.ts` | Chromium: 2,506 passed, 55 skipped (93 files). Firefox: 2,448 passed, 111 skipped, and 2 timed out under load (date picker, split button), which passed alone (18 of 18). WebKit: 2,457 passed, 103 skipped, and 1 failed (a combobox row colour read while the pointer rested on it), which passed alone (19 passed, 1 skipped) |
+| Probes | `mutate.mjs`, 2 mutants: the check glyph not marked pure; the star made by an unmarked call | 2 killed |
+| Repository | `npm run typecheck`, `npx vitest run --project node`, `npm run lint` | Each exit 0; node 1,702 passed, 2 skipped (before the new test) |
