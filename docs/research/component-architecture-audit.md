@@ -8,7 +8,7 @@ A first pass over the public custom elements of `@oddkin/components` and `@oddki
 
 The AI package comes first. The owner asked for this audit on 2026-11-06.
 
-**Status:** proposed. Nothing in the packages changed in this pass. Removals, consolidations, and breaking API changes wait for the owner's decisions (§10) and the implementation plan (§9).
+**Status:** approved by the owner on 2026-11-06; §10 records the decisions. Agent 2 implements the plan (§9) as its items 11 to 13 in [IMPLEMENTATION_PLAN.md](../../IMPLEMENTATION_PLAN.md). Nothing in the packages changed in this first pass.
 
 **Basis:**
 
@@ -67,7 +67,7 @@ The AI package comes first. The owner asked for this audit on 2026-11-06.
    - `odd-message-branch`: internalize. Only `odd-message` renders it.
    - `odd-suggestions`: convert to a pattern. It is a labelled group of buttons, and the choice between inserting and sending belongs to the host.
 
-   Both are flagged as uncertain (§10).
+   The owner agreed to both on 2026-11-06 (§10).
 3. **Ten AI elements need refinement:** they should compose existing primitives instead of re-implementing them. Their public APIs stay, except where §6.1 renames a renderer hook (with deprecated aliases).
 4. **`@oddkin/components` is in good shape:**
    - Its overlaps are deliberate. Each follows a distinct WAI-ARIA pattern or visual contract over shared modules:
@@ -78,13 +78,13 @@ The AI package comes first. The owner asked for this audit on 2026-11-06.
      - toast and alert.
    - Two refinements make it composable from other packages:
      - **Export the native-button stylesheet for shadow roots.** `odd-button`'s look is kept equal to this sheet, but it is published only as a document stylesheet. That gap is why the AI package grew its own button style.
-     - **Consider a `summary` slot on `odd-disclosure`.** Its summary is text only, so disclosures whose summary carries status, such as a tool call, cannot use it.
+     - **Add a `summary` slot to `odd-disclosure`** (owner, 2026-11-06). Its summary is text only, so disclosures whose summary carries status, such as a tool call, cannot use it.
 5. **Patterns already have a home.** They can live in:
    - the CSS recipes (`.odd-stepper`, `.odd-timeline`, `.odd-description-list`, the layout classes);
    - the composition documents;
    - the docs site.
 
-   §7 proposes a page format and the first ten patterns.
+   §7 proposes a page format and the first eight patterns.
 6. **Size is the binding constraint:**
    - `ai-chat` measures 51,683 of its 51,712-byte budget, and `ai:styles` 5,351 of 5,376 (measured at `8eee44c`).
    - Composing foundational elements into AI elements costs bytes that must be measured. Deleting the private styles saves some.
@@ -358,7 +358,8 @@ Each element below lists its responsibilities, the reason for its disposition, t
 - **Consumer impact:**
   - Hosts that render `<odd-message-branch>` themselves would switch to the pattern.
   - Hosts that listen for `odd-branch-switch` are unaffected.
-- **Confidence: medium.** A host building a custom message layout may want the element. If the owner prefers, keep it public and document it as a part of `odd-message`.
+- **Confidence: medium.** A host building a custom message layout may want the element.
+- **Owner, 2026-11-06:** internalize.
 
 **`odd-response`: Keep (P1 for copy).**
 
@@ -395,7 +396,8 @@ Each element below lists its responsibilities, the reason for its disposition, t
   - Hosts replace the element with a few lines of markup and two listeners, documented in the pattern.
   - `examples/ai-research/index.html` uses it and would migrate.
   - The Figma specimen stays, as the pattern's picture.
-- **Confidence: medium.** The element's pair of intents is a small contract that agents read from metadata. If the owner values that for AI-first use, keep it and refine it to `odd-button` (P2).
+- **Confidence: medium.** The element's pair of intents is a small contract that agents read from metadata.
+- **Owner, 2026-11-06:** convert to a pattern.
 
 **`odd-model-select`: Refine (P2).**
 
@@ -408,7 +410,7 @@ Each element below lists its responsibilities, the reason for its disposition, t
 - **Consumer impact:**
   - The parts `label` and `select` would change. `select` would become the inner `odd-select`.
   - `examples/ai-research/index.html` uses it.
-- **Alternative:** the "Model choice" pattern, `odd-select` with a description line. The owner chooses (§10).
+- **Owner, 2026-11-06:** keep the element, composing `odd-select`. A "Model choice" pattern is not needed.
 
 **`odd-context-picker`: Refine (P2).**
 
@@ -534,7 +536,7 @@ Each element below lists its responsibilities, the reason for its disposition, t
   - `odd-disclosure` for the reveal (its `label` is the provenance label), styled through its `summary` part to read as a badge;
   - the `.odd-description-list` recipe for the details.
 - **Consumer impact:** the parts change. `examples/ai-writing/index.html` uses it.
-- **Alternative:** the "Provenance label" pattern. The owner chooses (§10).
+- **Owner, 2026-11-06:** keep the element, composing `odd-disclosure`.
 
 **`odd-citation`: Keep.**
 
@@ -698,11 +700,11 @@ None is redundant enough to consolidate before 1.0.
 - **Migration:** none.
 - **Priority:** P1, §9 step 1.
 
-### 5.2 `odd-disclosure`: consider a `summary` slot
+### 5.2 `odd-disclosure`: add a `summary` slot
 
 - **Current:** the summary is the `label` text ([disclosure.ts:22–41](../../packages/components/src/disclosure/disclosure.ts#L22-L41)).
 - **Proposal:** a named `summary` slot that replaces the label when filled. It would be additive and non-breaking, and would let disclosures with a rich summary compose it: `odd-tool-call` (name, purpose, status), and possibly `odd-context-picker`.
-- **Uncertain.** A rich summary inside a native `<summary>` must stay one accessible name, without interactive content. The components lane should design it with its accessibility tests first.
+- **Owner, 2026-11-06: yes.** A rich summary inside a native `<summary>` must stay one accessible name, without interactive content, so Agent 2 designs it with its accessibility tests first.
 - **Priority:** P2.
 
 ## 6. Cross-component synthesis
@@ -712,7 +714,7 @@ None is redundant enough to consolidate before 1.0.
 | S1 | Custom implementations where foundational ones exist | §3: buttons, toggles, disclosures, copy, selects, text areas, toolbar, status | §9 steps 1–4 |
 | S2 | Duplicated behaviour inside a package | The decision guard in 3 elements; `FocusRecovery` set up in 5 | One internal controller (step 2) |
 | S3 | A missing composition point: document stylesheets and recipes cannot be adopted inside another element's shadow root | `nativeButtonStyles` (§5.1); the `.odd-stepper` and `.odd-description-list` recipes that task-plan, ai-label, and usage-meter would use | Export shadow-root forms of what other packages need (step 1) |
-| S4 | A primitive slightly too narrow to compose | `odd-disclosure`'s text-only summary (§5.2) | A `summary` slot, if the design holds |
+| S4 | A primitive slightly too narrow to compose | `odd-disclosure`'s text-only summary (§5.2) | A `summary` slot (owner, 2026-11-06) |
 | S5 | Inconsistent extension APIs | `renderers`, `artifactRenderers`, and `renderTool` on conversation and message ([conversation.ts:84–90](../../packages/ai/src/conversation/conversation.ts#L84-L90)); `renderOutput` on tool-call ([tool-call.ts:48](../../packages/ai/src/tool-call/tool-call.ts#L48)); `renderers` by kind on artifact ([artifact.ts:69](../../packages/ai/src/artifact/artifact.ts#L69)) | One convention (§6.1) |
 | S6 | Insufficient composability: almost no slots in AI elements | 2 of 24 have slots | Slots for static additions (§6.1) |
 | S7 | Unnecessary public exposure | `odd-message-branch` is rendered only by `odd-message` | Internalize (step 7) |
@@ -756,7 +758,7 @@ Oddkin already has the pieces:
 
 ### Page format
 
-One page per pattern, in a "Patterns" section of the docs site:
+One page per pattern, in a "Patterns" section of the docs site. The docs site is paused except fixes (owner, 2026-11-01), so the patterns ship first as composition documents with example tests, listed in the agent kits (Agent 2), and the pages follow when the pause ends (Agent 3). Each page has:
 
 1. **The problem.** One paragraph.
 2. **The elements and recipes,** linked to their pages.
@@ -779,8 +781,6 @@ The agent kits list the patterns next to the elements.
 | --- | --- | --- |
 | Suggested prompts | Replaces `odd-suggestions` | `odd-button`s in a labelled `.odd-cluster` group; host wiring to `odd-prompt-input` |
 | Branch navigation | Complements the internalized `odd-message-branch` | Two `odd-button`s and the position text over the `branch` record |
-| Provenance label | The alternative to `odd-ai-label` (§10) | `odd-disclosure` and `dl.odd-description-list` |
-| Model choice | The alternative to `odd-model-select` (§10) | `odd-select` and a description line |
 | Reasoning disclosure | How a message shows reasoning | `odd-disclosure` |
 | Copy action | How any AI output offers copying | `odd-copy-button` with `value` or `from` |
 | Empty conversation | The conversation's `empty` slot | `odd-empty-state` with suggested prompts |
@@ -812,11 +812,11 @@ Accessibility never moves backwards: each step keeps an element's existing behav
 - regenerates the metadata and agent kits;
 - measures size, and posts `BUDGET` where a budget must rise.
 
-**Lanes:** `packages/ai` is Agent 2's, and the AI design pass Agent 3's. `@oddkin/components` is Agent 1's, but Agent 1 is on light duty, so the owner assigns that work.
+**Lanes (owner, 2026-11-06):** Agent 2 implements every step, the components ones (step 1 and §5.2) included, as its items 11 to 13; Agent 1 reads the components changes and the budget raises. Agent 3's fidelity work (row X3) touches the same AI styles, so Agents 2 and 3 agree their order in the lanes.
 
 1. **Shadow-root exports (P1).**
    - Export `nativeButtonStyles` from `@oddkin/components` (§5.1) and pin it in the export-list tests.
-   - If the owner agrees, also export the shadow-root forms of the stepper and description-list recipes (S3).
+   - Where a refinement needs them, also export shadow-root forms of the stepper and description-list recipes (S3), as additive exports.
    - Non-breaking. Depends on nothing.
 2. **AI shared internals (P1).**
    - Replace `.text-button` with the native button styles in the 16 folders.
@@ -831,38 +831,42 @@ Accessibility never moves backwards: each step keeps an element's existing behav
    - `odd-task-plan`;
    - `odd-tool-call` (after §5.2) and `odd-context-picker`;
    - `odd-inline-assist`, `odd-artifact`, `odd-question`, and `odd-response-feedback`;
-   - `odd-model-select` and `odd-ai-label`, as the owner decides.
+   - `odd-model-select` and `odd-ai-label`, which stay elements (owner).
 
    Agent 2 reads every change.
 5. **Renderer convention (§6.1).** New names, with the old ones as deprecated aliases. Agent 2 designs it. Independent of steps 1–4.
 6. **Patterns.**
-   - The docs site's Patterns section and the page format of §7.
-   - The ten patterns, each with an example test, and a parity check where Figma has a specimen.
+   - The eight patterns of §7 as composition documents, each with an example test, and a parity check where Figma has a specimen (Agent 2).
    - The agent kits list them.
-   - Owners: Agent 3 for the docs, with Agent 2 for the AI patterns.
    - Patterns over unchanged elements can start at once. The others follow the steps that change their elements.
+   - The docs site's Patterns section, in the page format of §7, waits for the docs pause to end (Agent 3).
 7. **Public API reductions (P3),** after the owner's decisions and once the patterns exist.
    - Deprecate `odd-message-branch` and `odd-suggestions` in the next beta. They are marked `@deprecated` with the replacement and a migration note, and `examples/ai-research` moves to the pattern.
    - Remove their public registrations one beta later.
 
-## 10. Decisions for the owner, and uncertain recommendations
+## 10. The owner's decisions, and open questions
+
+| Question | Recommendation | Confidence | Owner, 2026-11-06 |
+| --- | --- | --- | --- |
+| `odd-suggestions`: element or pattern? | Pattern | Medium | Pattern |
+| `odd-message-branch`: public or internal? | Internal | Medium | Internal |
+| `odd-ai-label`: an element composing `odd-disclosure`, or the "Provenance label" pattern? | Element | Medium | Element |
+| `odd-model-select`: an element composing `odd-select`, or the "Model choice" pattern? | Element | Medium | Element |
+| `odd-disclosure`: add a `summary` slot? | Yes, if the accessibility design holds | Medium | Yes |
+| Raise `ai-chat` for foundation reuse? | Yes, per change, with measurements | Medium | Yes, per change, each raise measured |
+| Who implements the components steps while Agent 1 is on light duty? | The owner assigns | — | Agent 2 |
+
+Still open, with no change before they are decided:
 
 | Question | Recommendation | Confidence |
 | --- | --- | --- |
-| `odd-suggestions`: element or pattern? | Pattern | Medium |
-| `odd-message-branch`: public or internal? | Internal | Medium |
-| `odd-ai-label`: an element composing `odd-disclosure`, or the "Provenance label" pattern? | Element | Medium |
-| `odd-model-select`: an element composing `odd-select`, or the "Model choice" pattern? | Element | Medium |
 | `odd-citation`: move the preview into an `odd-popover`, so the paragraph does not reflow when it opens? | No. The inline panel is a deliberate accessibility choice, and a popover would bring the positioning controller (its own 3,840-byte budget) into `ai-chat`. Revisit only with user research. | Medium |
-| `odd-disclosure`: add a `summary` slot? | Yes, if the accessibility design holds | Medium |
-| `odd-container`: keep, or document `.odd-center` instead? | Count its uses first; no change before then | Low |
+| `odd-container`: keep, or document `.odd-center` instead? | Count its uses first | Low |
 | `odd-transcript`: public, or internal to `odd-voice-input`? | Public for now | Medium |
-| Raise `ai-chat` for foundation reuse? | Yes, per change, with measurements | Medium |
-| Who implements the components steps while Agent 1 is on light duty? | The owner assigns | — |
 
 ## 11. What this pass changed
 
-This pass changed no package code; this document is its record. The one isolated, non-breaking correction it found, exporting `nativeButtonStyles`, is §9 step 1. It is left to the components lane because the export lists are pinned by browser tests, which this pass did not run (Agent 1 is on light duty).
+This pass changed no package code; this document is its record, with the owner's decisions of 2026-11-06 (§10). The one isolated, non-breaking correction it found, exporting `nativeButtonStyles`, is §9 step 1. It is left to the components lane because the export lists are pinned by browser tests, which this pass did not run (Agent 1 is on light duty).
 
 ## Appendix A. Public API of each element
 
