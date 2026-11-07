@@ -3,7 +3,7 @@
   "$id": "https://oddkin.dev/schemas/composition/odd-disclosure.v1.json",
   "title": "odd-disclosure",
   "description": "One trigger that shows or hides one related region: a native `<details>` and `<summary>`. Disclosures that share a `name` in the same tree form an accordion: opening one closes the others, and adjacent ones draw as one surface.",
-  "$comment": "Slots: default. A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
+  "$comment": "Slots: default, \"summary\". A child names a slot with \"slot\"; text and children without \"slot\" go to the default slot.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -25,7 +25,7 @@
       "properties": {
         "label": {
           "type": "string",
-          "description": "The summary text; names the disclosure button.",
+          "description": "The summary text; names the disclosure button. The `summary` slot, when it has content, shows in its place.",
           "default": ""
         },
         "open": {

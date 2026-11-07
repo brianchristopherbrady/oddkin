@@ -3,8 +3,9 @@ import { chevronDownGlyph, chevronEndGlyph } from '../styles/glyphs.js';
 import type { OddkinDisclosure } from './disclosure.js';
 
 /**
- * Anatomy: `part="base"` around a native `<details>` with the `summary` (the `label` text and the
- * `marker` chevron) and the `content` region holding the default slot.
+ * Anatomy: `part="base"` around a native `<details>` with the `summary` (the `label` text, or the
+ * `summary` slot's content in its place, and the `marker` chevron) and the `content` region
+ * holding the default slot.
  */
 export const disclosureTemplate = (disclosure: OddkinDisclosure) =>
   html`<div part="base" class="disclosure">
@@ -16,7 +17,10 @@ export const disclosureTemplate = (disclosure: OddkinDisclosure) =>
         tabindex=${disclosure.disabled ? '-1' : null}
         @click=${disclosure._onClick}
       >
-        <span part="label" class="label">${disclosure.label}</span
+        <span part="label" class="label"
+          ><slot name="summary" @slotchange=${disclosure._onSummary}
+            >${disclosure.label}</slot
+          ></span
         ><span part="marker" class="marker"
           >${disclosure.open ? chevronDownGlyph : chevronEndGlyph}</span
         >

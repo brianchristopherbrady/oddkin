@@ -303,7 +303,7 @@ export const CATALOG: Catalog = {
     attributes: { label: 'string', open: 'boolean', name: 'string', disabled: 'boolean' },
     properties: {},
     fixed: [],
-    slots: [''],
+    slots: ['', 'summary'],
     events: ['toggle'],
   },
   'odd-drawer': {

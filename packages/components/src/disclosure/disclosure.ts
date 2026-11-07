@@ -14,22 +14,31 @@ export const disclosureToggleEvent = event('toggle', {
 // Connected disclosures: a group (`name`) spans shadow roots, which native `<details name>` cannot.
 const members = new Set<OddkinDisclosure>();
 
+/** What a summary must not hold: it is one button, and controls inside it would nest. */
+const INTERACTIVE =
+  'a[href],button,input,select,textarea,details,iframe,[tabindex],[contenteditable]';
+const interactive = (el: Element): boolean =>
+  [el, ...el.querySelectorAll('*')].some(
+    (node) => node.matches(INTERACTIVE) || [...(node.shadowRoot?.children ?? [])].some(interactive),
+  );
+
 /**
  * One trigger that shows or hides one related region: a native `<details>` and `<summary>`.
  * Disclosures that share a `name` in the same tree form an accordion: opening one closes the
  * others, and adjacent ones draw as one surface.
  *
  * @slot - The content shown while open.
+ * @slot summary - Rich summary content shown in place of `label`: text and elements that are not interactive, such as a badge or a status. It names the disclosure button.
  * @csspart base - The surface.
  * @csspart summary - The native `<summary>`: the button that opens and closes it.
- * @csspart label - The summary text.
+ * @csspart label - The summary text, or the `summary` slot's content.
  * @csspart marker - The chevron.
  * @csspart content - The region around the default slot.
  * @cssprop --odd-disclosure-radius - Corner radius of the surface.
  * @cssprop --odd-disclosure-background - Background of the surface.
  * @cssstate joined-start - The previous sibling is a disclosure of the same group; the two share a divider.
  * @cssstate joined-end - The next sibling is a disclosure of the same group.
- * @a11y The summary is a native disclosure button named by `label`; its expanded state comes from the platform. Content stays in the light DOM and in reading order, and find-in-page opens a closed disclosure that holds a match. Disabled: the summary leaves the Tab order and reports `aria-disabled`.
+ * @a11y The summary is a native disclosure button named by `label`, or by the content of the `summary` slot when it has some; its expanded state comes from the platform. The summary is one button, so the slot takes no links or controls: they would nest, and a warning (`disclosure.summary.interactive`) says so. Content stays in the light DOM and in reading order, and find-in-page opens a closed disclosure that holds a match. Disabled: the summary leaves the Tab order and reports `aria-disabled`.
  * @keyboard Tab reaches the summary; Enter or Space opens and closes it.
  * @previewRole disclosure
  * @useFor Optional detail, advanced settings, and frequently asked questions (an accordion with `name`).
@@ -40,7 +49,8 @@ const members = new Set<OddkinDisclosure>();
 export class OddkinDisclosure extends OddkinElement.with({
   label: prop.string({
     default: '',
-    description: 'The summary text; names the disclosure button.',
+    description:
+      'The summary text; names the disclosure button. The `summary` slot, when it has content, shows in its place.',
   }),
   open: prop.boolean({ reflect: true, description: 'Shows the content.' }),
   name: prop.string({
@@ -57,11 +67,27 @@ export class OddkinDisclosure extends OddkinElement.with({
   static override events = { toggle: disclosureToggleEvent };
   declare readonly _events?: ElementEvents<typeof OddkinDisclosure>;
 
+  #warned = false;
+
   /** @internal Summary activation: the host's `open` is the one source of the state. */
   readonly _onClick = (event: MouseEvent): void => {
     event.preventDefault();
     if (!this.disabled) this.open = !this.open;
   };
+
+  /** @internal The `summary` slot's assigned content changed, the first assignment included. */
+  readonly _onSummary = (event: Event): void => {
+    this.#checkSummary(event.currentTarget as HTMLSlotElement);
+  };
+
+  /** Warns once if the summary holds something interactive, which would nest in its button. */
+  #checkSummary(slot: HTMLSlotElement): void {
+    if (this.#warned || !slot.assignedElements({ flatten: true }).some(interactive)) return;
+    this.#warned = true;
+    console.warn(
+      `[disclosure.summary.interactive] <${this.localName}> has a link or control in its summary, which is one button: move it into the content.`,
+    );
+  }
 
   /**
    * @internal The inner `<details>` changed. The platform may open it itself (find-in-page), so its

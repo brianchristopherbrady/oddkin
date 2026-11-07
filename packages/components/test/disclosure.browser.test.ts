@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { cdp, server, userEvent } from 'vitest/browser';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
@@ -84,6 +84,108 @@ describe('odd-disclosure', () => {
     expect(part(el, 'content').querySelector('slot')!.assignedNodes()[0]!.textContent).toBe(
       'Additional options.',
     );
+  });
+
+  it('takes a rich summary in its summary slot: one button, showing the slotted content only', async () => {
+    const root = await mount(
+      '<odd-disclosure label="Search"><span slot="summary">Web search <strong>Running</strong></span>Results.</odd-disclosure><button>after</button>',
+    );
+    const el = root.firstElementChild as OddkinDisclosure;
+    const summary = part(el, 'summary');
+    const slotted = el.querySelector<HTMLElement>('[slot="summary"]')!;
+    const slot = summary.querySelector<HTMLSlotElement>('slot[name="summary"]')!;
+    expect(slot.assignedElements()).toEqual([slotted]);
+    // The slotted content replaces the label, which stays the fallback for an empty slot.
+    const fallback = document.createRange();
+    fallback.selectNodeContents(slot);
+    expect(fallback.toString()).toBe('Search');
+    expect(fallback.getBoundingClientRect().width).toBe(0);
+    expect(slotted.getBoundingClientRect().width).toBeGreaterThan(0);
+    // One Tab stop: the summary.
+    expect(await tabPath(root, 2)).toEqual(['summary:Search', 'button:after']);
+    // Activating the slotted content opens it, as the summary does.
+    slotted.querySelector('strong')!.click();
+    await settle(el);
+    expect(el.open).toBe(true);
+    // Emptied, the slot shows the label again.
+    slotted.remove();
+    await settle(el);
+    expect(fallback.getBoundingClientRect().width).toBeGreaterThan(0);
+  });
+
+  it.runIf(server.browser === 'chromium')(
+    'the accessibility tree names the summary by its slotted content alone, then by the label',
+    async () => {
+      const root = await mount(
+        '<odd-disclosure label="Search"><span slot="summary">Web search <strong>Running</strong></span>Results.</odd-disclosure>',
+      );
+      const el = root.firstElementChild as OddkinDisclosure;
+      const session = cdp();
+      await session.send('Accessibility.enable');
+      try {
+        // Tests run in a frame: search the tree of every frame.
+        type Frame = { frame: { id: string }; childFrames?: Frame[] };
+        const ids = (tree: Frame): string[] => [
+          tree.frame.id,
+          ...(tree.childFrames ?? []).flatMap((child) => ids(child)),
+        ];
+        type Node = { role?: { value: string }; name?: { value: string } };
+        const summaries = async () => {
+          const { frameTree } = (await session.send('Page.getFrameTree')) as { frameTree: Frame };
+          const nodes: Node[] = [];
+          for (const frameId of ids(frameTree))
+            nodes.push(
+              ...(
+                (await session.send('Accessibility.getFullAXTree', { frameId })) as {
+                  nodes: Node[];
+                }
+              ).nodes,
+            );
+          return nodes
+            .filter((n) => n.role?.value === 'DisclosureTriangle')
+            .map((n) => n.name?.value);
+        };
+        expect(await summaries()).toEqual(['Web search Running']);
+        el.querySelector('[slot="summary"]')!.remove();
+        await settle(el);
+        expect(await summaries()).toEqual(['Search']);
+      } finally {
+        await session.send('Accessibility.disable');
+      }
+    },
+  );
+
+  it('warns once when its summary slot holds interactive content, which would nest controls', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    try {
+      const root = await mount(
+        '<odd-disclosure label="Plan"><span slot="summary">Plan <a href="#plan">Edit</a></span>Steps.</odd-disclosure>' +
+          '<odd-disclosure label="Count"><span slot="summary">Count <odd-badge>2</odd-badge></span>Text.</odd-disclosure>' +
+          '<odd-disclosure label="Draft"><span slot="summary">Draft <odd-button>Send</odd-button></span>Text.</odd-disclosure>',
+      );
+      const plan = root.firstElementChild as OddkinDisclosure;
+      const messages = () => warn.mock.calls.map(([message]) => String(message));
+      // Said as the content arrives, for a link and for an element whose shadow root holds a
+      // button; a badge renders a shadow root without controls: no warning.
+      const warning = expect.stringMatching(
+        /^\[disclosure\.summary\.interactive\] <odd-disclosure> /,
+      );
+      expect(messages()).toEqual([warning, warning]);
+      // More interactive content later says nothing new.
+      const button = document.createElement('button');
+      button.slot = 'summary';
+      button.textContent = 'Remove';
+      plan.append(button);
+      await settle(plan);
+      expect(messages()).toHaveLength(2);
+      // Interactive content arriving later in a quiet one is said then.
+      const count = plan.nextElementSibling as OddkinDisclosure;
+      count.append(Object.assign(document.createElement('input'), { slot: 'summary' }));
+      await settle(count);
+      expect(messages()).toEqual([warning, warning, warning]);
+    } finally {
+      warn.mockRestore();
+    }
   });
 
   it('dispatches one toggle at the host per change, whatever changed it', async () => {

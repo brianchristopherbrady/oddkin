@@ -41,6 +41,18 @@ export default defineExamples('odd-disclosure', {
       host.remove();
     },
   },
+  richSummary: {
+    label: 'Rich summary',
+    props: { label: 'Web search' },
+    slots: { default: 'Searched three sources; two answered.' },
+    guidance:
+      'The `summary` slot shows formatted text, a badge, or a status in place of `label`, and names the disclosure button. Keep links and buttons in the content: the summary is one button.',
+    fixture({ element, mount }) {
+      element.prepend(
+        mount(html`<span slot="summary"><strong>Web search</strong>, 3 sources</span>`),
+      );
+    },
+  },
   disabled: {
     label: 'Disabled',
     props: { label: 'Advanced settings', disabled: true },
@@ -54,16 +66,6 @@ export default defineExamples('odd-disclosure', {
       explanation:
         'Boolean attributes are on when present, whatever their value: open="false" opens the disclosure. Leave the attribute out.',
       diagnostic: 'usage.boolean.false',
-      correct: 'default',
-    },
-  },
-  summarySlot: {
-    label: 'Summary as slot content',
-    slots: { summary: 'Advanced settings' },
-    incorrect: {
-      explanation:
-        '`odd-disclosure` has no summary slot: the summary text is `label`. Slotted text with an unknown slot name is never shown, and the disclosure button has no name.',
-      diagnostic: 'usage.slot.unknown',
       correct: 'default',
     },
   },

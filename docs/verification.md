@@ -5862,3 +5862,17 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | Metadata | `npm run build`, then `npm run verify:metadata` | 2,219 verified facts across 55 elements (`@oddkin/components`) and 485 across 24 (`@oddkin/ai`); vocabulary: 0 findings |
 | Repository | `npm run typecheck`, `npm run compat`, `npm run lint`, `node scripts/verify-packs.mjs` | Each exit 0 (the first lint stopped on the formatting of the test file, fixed with Prettier). The compatibility matrix counts 40 declarations in `aiLabelStyles` (19 before) and 31 in `messageStyles` (37 before) |
 | Size | `node scripts/check-size.mjs` | `ai-chat` 54,675 B (52,566 before, +2,109: `odd-disclosure`'s class, template, glyphs, and sheets); `ai:styles` 5,497 B (+230, the label drawn through the disclosure's parts). Budgets 54,720 and 5,504, the smallest 64 B steps above (Agent 1's call) |
+
+## 2026-11-06 — odd-disclosure: a summary slot (round 11, Agent 2; row 12, step a)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Tests first | `disclosure.browser.test.ts` with the two new tests, before the slot existed (Chromium) | The two new tests failed (no slot to assign to; no warning); 12 passed |
+| The disclosure | `browser-set.mjs` on `packages/components/test/disclosure.browser.test.ts` | Chromium: 15 passed. Firefox and WebKit: 13 passed, 2 skipped (the Chromium-only accessibility-tree and forced-colours tests). The accessibility tree names the summary "Web search Running" from the slotted content, and "Search", the label, once the slot is empty |
+| The components it touches | `browser-set.mjs` on the disclosure, examples, accessibility, composition, navigation parity, and contract browser tests | Chromium: 885 passed, 50 skipped. Firefox and WebKit: 883 passed, 52 skipped |
+| The AI elements | `browser-set.mjs` on every `packages/ai/test/*.browser.test.ts` (reasoning and the AI label compose `odd-disclosure`) | 305 passed, 4 skipped, in each engine |
+| Probes | `mutate.mjs`, 7 mutants | 6 killed: the label shown beside the slotted summary, another slot name, the warning repeated, shadow roots not searched, links not counted, slot changes not checked. One is equivalent: a click stopped at the slot still opens the disclosure, through the native summary's activation |
+| Node tests | `npx vitest run --project node` | 1,700 passed, 2 skipped (138 files) |
+| Metadata | `npm run build`, then `npm run verify:metadata` | 2,220 verified facts across 55 elements (`@oddkin/components`; 2,219 before, the slot) and 485 across 24 (`@oddkin/ai`); vocabulary: 0 findings |
+| Repository | `npm run typecheck`, `npm run compat`, `npm run lint`, `node scripts/verify-packs.mjs` | Each exit 0 |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 54,925 B (54,675 before, +250: the slot and its warning in the `odd-disclosure` each message carries; a shorter warning saved 24 B); `components:disclosure` 762 B, unchanged (no new CSS). Budget 54,976, the smallest 64 B step above (Agent 1's call) |

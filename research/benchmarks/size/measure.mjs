@@ -103,7 +103,9 @@ export const BUDGETS = {
   // .text-button (audit step 2; the sheet is 4,019 B minified, and ai:styles loses 84 B).
   // 54,720 since 2026-11-06 (Agent 1's call), the smallest 64 B step: measured 54,675 (+2,109)
   // once odd-message's reasoning and odd-ai-label compose odd-disclosure (audit step 3).
-  'ai-chat': 54720,
+  // 54,976 since 2026-11-06 (Agent 1's call), the smallest 64 B step: measured 54,925 (+250)
+  // with odd-disclosure's summary slot and its warning for interactive content (audit §5.2).
+  'ai-chat': 54976,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

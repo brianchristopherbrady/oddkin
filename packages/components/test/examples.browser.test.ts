@@ -125,10 +125,6 @@ describe('authored examples', () => {
     'odd-switch/onAttribute': { observe: (el) => el['checked'], wrong: false },
     'odd-chip/removableFalse': { observe: (el) => el['removable'], wrong: true },
     'odd-disclosure/openFalse': { observe: (el) => el['open'], wrong: true },
-    'odd-disclosure/summarySlot': {
-      observe: (el) => el.shadowRoot!.querySelector('[part="label"]')!.textContent,
-      wrong: '',
-    },
     'odd-tabs/orientationColumn': { observe: (el) => el['orientation'], wrong: 'horizontal' },
     'odd-toolbar/orientationRow': { observe: (el) => el['orientation'], wrong: 'horizontal' },
     'odd-split-panel/orientationColumn': {
