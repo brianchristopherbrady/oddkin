@@ -187,6 +187,15 @@ export function extractDiagnostics(source, file = 'source.ts') {
     ) {
       const args = [...node.arguments];
       const at = args.findIndex((a) => code(a));
+      // console.warn(`[code] message`): a development warning leads its message with its code.
+      const led = at < 0 ? /^\[([^\]\s]+)\] ([\s\S]+)$/.exec(text(args[0], sf) ?? '') : null;
+      if (led && CODE.test(led[1]))
+        out.push({
+          code: led[1],
+          severity: severityOf(calleeName(node.expression)),
+          message: led[2],
+          line: line(node),
+        });
       if (at >= 0) {
         const texts = args
           .filter((_, i) => i !== at)

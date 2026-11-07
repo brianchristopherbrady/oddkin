@@ -21,6 +21,8 @@ describe('the diagnostic list', () => {
       this.#report({ code: 'ai.event.stale', message: 'Dropped a late event.' });
       const STRINGS = { 'ai.attachment.size': '{name} is larger than {limit}.' };
       reportOddkinError(error, { code: 'autoload.import.failed', origin: tag });
+      console.warn(\`[core.copies] Two copies run (\${a}). Install one copy.\`);
+      console.warn('[not a code] Text in brackets.');
       button('footer', 'primary', 'Sign in', 'signIn.submit');
       files.set('kit.json', JSON.stringify(manifest));
     `;
@@ -41,6 +43,8 @@ describe('the diagnostic list', () => {
       ['ai.attachment.size', '', '{name} is larger than {limit}.', undefined],
       // Its message is the reported error's: reviewed by hand.
       ['autoload.import.failed', '', '', undefined],
+      // A development warning that leads with its code in brackets.
+      ['core.copies', 'warning', 'Two copies run (${a}). Install one copy.', undefined],
     ]);
   });
 

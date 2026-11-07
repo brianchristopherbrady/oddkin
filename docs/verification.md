@@ -5922,3 +5922,10 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | The AI elements | `browser-set.mjs` on every `packages/ai/test/*.browser.test.ts` | 317 passed, 4 skipped, in each engine |
 | Repository | `npx vitest run --project node packages/ai/test`, `npm run verify:metadata`, `npm run compat`, `npm run typecheck`, `npm run lint` | Each exit 0 |
 | Probes | None: the change removes comments only, and the size check measures it | — |
+
+## 2026-11-07 — The diagnostics list reads bracketed development warnings (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The reader | `tests/release/diagnostics.test.ts`, extended: a `console.warn` whose message leads with `[core.copies]` is read as that code with the rest as its message; `[not a code]` is not | 3 passed |
+| The list | `node scripts/list-diagnostics.mjs --write`, then `node scripts/list-diagnostics.mjs` | 510 messages, 21 flagged (was 504 and 18): six warnings added, `disclosure.summary.interactive` and `ai.renderers.legacy` naming an action, `collection.source.conflict` (twice) and `model.kind.unknown` flagged; the check then exits 0 |
