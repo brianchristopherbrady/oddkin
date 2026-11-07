@@ -20,6 +20,8 @@ export const MESSAGE_BRANCH_STRINGS = {
  * @keyboard Tab to the buttons; Enter or Space switches.
  * @useFor Alternative responses and edited prompts.
  * @notFor Pagination of unrelated content.
+ * @deprecated As a public element: `odd-message` draws it from its `branch` record, and its registration entry goes in the next beta. A host with its own message layout uses the Branch navigation pattern.
+ * @migration patterns/branch-navigation/README.md in the package
  * @customization 1 2
  * @category AI
  */

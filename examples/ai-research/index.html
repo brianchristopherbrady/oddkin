@@ -61,12 +61,25 @@
         </aside>
         <main class="main odd-stack">
           <odd-conversation label="Research conversation">
+            <!-- The Suggested prompts pattern (@oddkin/ai/patterns/suggested-prompts). -->
+            <div slot="status" class="odd-cluster" role="group" aria-label="Suggested prompts">
+              <odd-button
+                size="sm"
+                data-prompt="Summarize recent ocean warming evidence with sources."
+                >Summarize ocean warming</odd-button
+              >
+              <odd-button size="sm" data-prompt="Run the search but make the tool fail."
+                >Make a tool fail</odd-button
+              >
+              <odd-button size="sm" data-prompt="Answer, but drop the connection midway."
+                >Drop the connection</odd-button
+              >
+            </div>
             <odd-prompt-input
               slot="composer"
               label="Ask a research question"
               placeholder="Ask about ocean warming…"
             >
-              <odd-suggestions slot="header"></odd-suggestions>
               <odd-model-select slot="toolbar-start" label="Model"></odd-model-select>
             </odd-prompt-input>
           </odd-conversation>

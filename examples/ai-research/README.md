@@ -1,6 +1,6 @@
 # Research assistant (simulated)
 
-A static demonstration of `@oddkin/ai`: composer with attachments and suggestions, context picker with simulated upload progress, model selection, streaming Markdown with citations (one deliberately unresolved), a streamed tool call, sources, a revisioned artifact, usage with measured/estimated/unknown values, history loading, stop, disconnect and resume, and conversation isolation.
+A static demonstration of `@oddkin/ai`: composer with attachments, suggested prompts (the Suggested prompts pattern, `@oddkin/ai/patterns/suggested-prompts`), context picker with simulated upload progress, model selection, streaming Markdown with citations (one deliberately unresolved), a streamed tool call, sources, a revisioned artifact, usage with measured/estimated/unknown values, history loading, stop, disconnect and resume, and conversation isolation.
 
 Everything is simulated by `createSimulatedTransport` with deterministic fixtures (`src/fixtures.js`); no network requests, model, or credentials.
 

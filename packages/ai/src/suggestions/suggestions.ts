@@ -19,6 +19,8 @@ export const SUGGESTIONS_STRINGS = {
  * @keyboard Tab between buttons; Enter or Space activates.
  * @useFor Follow-up prompts and quick actions after a response.
  * @notFor Navigation menus.
+ * @deprecated Use the Suggested prompts pattern: `odd-button` elements in a labelled group that fill the composer. Removed in the next beta.
+ * @migration patterns/suggested-prompts/README.md in the package
  * @customization 1 2
  * @category AI
  */

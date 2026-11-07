@@ -88,10 +88,10 @@ Elements use properties for records and typed, bubbling, composed events for int
 | `odd-activity`, `odd-task-plan` | Run status and recovery actions; plans with parallel tasks, blockers, input requests |
 | `odd-artifact` | Revisions, preview/source, copy, export, host renderers |
 | `odd-inline-assist`, `odd-change-review` | Selection actions; before/after review with accept, reject, undo |
-| `odd-message-branch` | Alternative responses and edited prompts |
+| `odd-message-branch` | Deprecated as a public element: `odd-message` draws its versions; for your own message layout, the Branch navigation pattern |
 | `odd-question` | Clarifying questions: choices, forms, custom answers |
 | `odd-ai-label` | Provenance supplied by the application |
-| `odd-suggestions` | Insert or send suggested prompts |
+| `odd-suggestions` | Deprecated: the Suggested prompts pattern |
 | `odd-response-feedback` | Ratings with reasons and comments |
 | `odd-model-select` | Application-provided models with availability |
 | `odd-usage-meter` | Measured, estimated, and unknown usage |

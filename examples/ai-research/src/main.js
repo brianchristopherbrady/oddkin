@@ -1,9 +1,9 @@
 // Research assistant demo: composer, context, streaming Markdown with citations, tools, sources,
 // artifacts, usage, history, stop/disconnect/resume, and isolation. Simulated; no network.
+import '@oddkin/components/define/button';
 import '@oddkin/ai/define/conversation';
 import '@oddkin/ai/define/prompt-input';
 import '@oddkin/ai/define/context-picker';
-import '@oddkin/ai/define/suggestions';
 import '@oddkin/ai/define/model-select';
 import '@oddkin/ai/define/usage-meter';
 import {
@@ -21,7 +21,6 @@ import {
   models,
   otherConversation,
   researchScript,
-  suggestions,
 } from './fixtures.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -29,7 +28,6 @@ const app = $('#app');
 const conversation = $('odd-conversation');
 const composer = $('odd-prompt-input');
 const picker = $('odd-context-picker');
-const suggestionList = $('odd-suggestions');
 const modelSelect = $('odd-model-select');
 const usage = $('odd-usage-meter');
 const log = $('#log');
@@ -52,7 +50,13 @@ conversation.store = controller;
 conversation.markdown = { highlight, linkTarget: '_blank' };
 conversation.feedbackReasons = ['Inaccurate', 'Missing sources', 'Too long'];
 composer.controller = draft;
-suggestionList.suggestions = suggestions;
+// Suggested prompts (@oddkin/ai/patterns/suggested-prompts): a suggestion fills the composer and
+// focuses it; the person sends it.
+for (const button of document.querySelectorAll('[data-prompt]'))
+  button.addEventListener('click', () => {
+    composer.value = button.dataset.prompt;
+    composer.focus();
+  });
 modelSelect.models = models;
 modelSelect.value = 'sim-deep';
 

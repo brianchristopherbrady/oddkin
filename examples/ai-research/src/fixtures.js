@@ -232,16 +232,6 @@ export const otherConversation = {
   ],
 };
 
-export const suggestions = [
-  {
-    id: 's1',
-    label: 'Summarize ocean warming',
-    prompt: 'Summarize recent ocean warming evidence with sources.',
-  },
-  { id: 's2', label: 'Make a tool fail', prompt: 'Run the search but make the tool fail.' },
-  { id: 's3', label: 'Drop the connection', prompt: 'Answer, but drop the connection midway.' },
-];
-
 export const models = [
   {
     id: 'sim-fast',

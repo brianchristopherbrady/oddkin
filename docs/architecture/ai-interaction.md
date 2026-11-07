@@ -36,10 +36,10 @@ Element-owned resources (timers, listeners, object URLs created for previews, ow
 | C09 | Generated artifacts | `odd-artifact` | `ArtifactModel` | `MarkdownView`, host renderers |
 | C10 | Inline assistance | `odd-inline-assist` | `captureSelection`, `DocumentSession` | APG toolbar pattern |
 | C11 | Change review | `odd-change-review` | `DocumentSession`, `diffWords`/`diffLines` | `ins`/`del` |
-| C12 | Alternative responses | `odd-message-branch` | `regenerate`, `edit`, `switchBranch` | — |
+| C12 | Alternative responses | `odd-message`, which draws its versions (`odd-message-branch` is deprecated as a public element; the Branch navigation pattern) | `regenerate`, `edit`, `switchBranch` | — |
 | C13 | Clarifying questions | `odd-question` | `QuestionModel` | native form controls |
 | C14 | AI provenance | `odd-ai-label` | `provenanceSchema` | `odd-disclosure` |
-| C15 | Suggested follow-ups | `odd-suggestions` | `controllerIntents` (`odd-suggestion-select`/`-submit`) | — |
+| C15 | Suggested follow-ups | The Suggested prompts pattern (`odd-suggestions` is deprecated) | `controllerIntents` (`odd-suggestion-select`/`-submit`) | — |
 | C16 | Response feedback | `odd-response-feedback` | `submitFeedback` | `aria-pressed` buttons |
 | C17 | Model selection | `odd-model-select` | `ModelOptionModel` | native `select` |
 | C18 | Usage display | `odd-usage-meter` | `UsageModel` | native `meter` (only when `used` and `limit` are known) |

@@ -5900,3 +5900,15 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | Probes | `mutate.mjs`, 6 mutants: the composer not focused, the first version's previous button enabled, the answer copying rendered text, no announcer, no listener revealing the source, and the kit listing no patterns | 6 killed |
 | Node tests | `npx vitest run --project node` | 1,701 passed, 2 skipped (138 files) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run lint`, `node scripts/verify-packs.mjs`, `node scripts/check-size.mjs` | Each exit 0; the `@oddkin/ai` tarball is 448.5 KiB with the patterns (434.9 before); no bundle changes size |
+
+## 2026-11-07 — odd-suggestions and odd-message-branch deprecated; the research example uses the Suggested prompts pattern (round 11, Agent 2; row 13, step b)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The kits | `tests/agent-kit/package-kits.test.ts`, new: the AI guide marks `<odd-suggestions>` and `<odd-message-branch>` deprecated (and not `<odd-message>`); the suggestions reference opens with the deprecation and its migration; the choosing guide says it first; `odd-message`'s `renderTool` row says it is deprecated | 45 passed (6 files); the AI guide is 7,499 of 8,192 bytes |
+| Found while testing | The same test, first run | The `@migration` tags began with `@oddkin/…`, which the doc comment parser read as another tag, so the metadata held an empty migration; they now name the page's path in the package |
+| The research example | `e2e/ai-demos.spec.ts` (`e2e-when-free.mjs`, two workers), with the research test starting from the suggestion "Summarize ocean warming": the composer holds its prompt and has focus, then Enter sends it | 63 passed in Chromium, Firefox, and WebKit, from the workspace build and from the packed packages |
+| The AI elements | `browser-set.mjs` on every `packages/ai/test/*.browser.test.ts` | 317 passed, 4 skipped, in each engine |
+| Probes | `mutate.mjs`, 4 mutants of the kit generator: no mark in the guide, no notice in the reference, no line in the choosing guide, a deprecated property not marked | 4 killed |
+| Node tests | `npx vitest run --project node` | 1,702 passed, 2 skipped (138 files) |
+| Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run lint`, `node scripts/verify-packs.mjs`, `node scripts/check-size.mjs` | Each exit 0; 486 verified facts across 24 elements (`@oddkin/ai`); vocabulary: 0 findings |

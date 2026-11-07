@@ -164,6 +164,21 @@ function classImport(library: Library, component: any): string | undefined {
   return specifiers[0];
 }
 
+/** The component's own deprecation in the metadata, if any (not its members'). */
+function deprecationOf(
+  component: any,
+): Array<{ reason?: string; replacement?: string; migration?: string }> {
+  return (component.deprecations ?? []).filter((d: any) => d.id === `component:${component.tag}`);
+}
+
+/** The reference's notice for a deprecated component: the reason, and where to go instead. */
+function deprecationNotice(component: any): string[] {
+  return deprecationOf(component).map(
+    (d) =>
+      `**Deprecated.** ${d.reason ?? ''}${d.replacement ? ` Replacement: ${code(d.replacement)}.` : ''}${d.migration ? ` Migration: ${code(d.migration)}.` : ''}\n`,
+  );
+}
+
 function componentReference(
   library: Library,
   component: any,
@@ -195,6 +210,7 @@ function componentReference(
       : `Package ${code(library.name)} ${library.version}${category ? ` · category ${category}` : ''}. Generated from \`custom-elements.json\` and \`oddkin.metadata.json\`; facts are extracted unless marked authored or verified.`,
     '',
     ...(declaration.description ? [declaration.description, ''] : []),
+    ...deprecationNotice(component),
     '## Import and register',
     '',
     component.registration
@@ -229,7 +245,9 @@ function componentReference(
               : 'none',
         f.type?.text ?? '',
         f.default ?? '',
-        f.description ?? '',
+        f.deprecated
+          ? `Deprecated: ${f.deprecated} ${f.description ?? ''}`.trim()
+          : (f.description ?? ''),
       ]),
     ) || 'None.\n',
     ...(methods.length
@@ -250,7 +268,9 @@ function componentReference(
         code(e.name),
         e.type?.text ?? '',
         intents.get(e.name) ?? 'unknown (not declared)',
-        e.description ?? '',
+        e.deprecated
+          ? `Deprecated: ${e.deprecated} ${e.description ?? ''}`.trim()
+          : (e.description ?? ''),
       ]),
     ) || 'None.\n',
   ];
@@ -356,6 +376,7 @@ function choosingReference(
     lines.push(`## ${label}`, '');
     for (const c of list) {
       const facts = [
+        ...deprecationOf(c).map((d) => `  - Deprecated: ${d.reason ?? 'yes'}`),
         ...(c.useFor ?? []).map((f: any) => `  - Use for: ${f.value}`),
         ...(c.notFor ?? []).map((f: any) => `  - Not for: ${f.value}`),
       ];
@@ -516,6 +537,10 @@ function guide(
   const irregular = components.filter((c) => c.registration && c.registration !== defineEntry(c));
   const unregistered = components.filter((c) => !c.registration);
   const byCategory = new Map<string, string[]>();
+  // A deprecated component stays listed, marked, so an agent reads why before using it.
+  const deprecated = new Set(components.filter((c) => deprecationOf(c).length).map((c) => c.tag));
+  const listed = (tag: string) =>
+    `${code(`<${tag}>`)}${deprecated.has(tag) ? ' (deprecated)' : ''}`;
   for (const c of components) {
     const label: string = c.category ? (categories[c.category]?.label ?? c.category) : 'Other';
     byCategory.set(label, [...(byCategory.get(label) ?? []), c.tag]);
@@ -574,10 +599,8 @@ function guide(
       : 'Each has a reference at `references/components/<tag>.md` with its exact API, guidance, and examples.',
     '',
     ...(groups.length === 1 && groups[0]![0] === 'Other'
-      ? [`- ${groups[0]![1].map((t) => code(`<${t}>`)).join(', ')}`]
-      : groups.map(
-          ([label, tags]) => `- **${label}:** ${tags.map((t) => code(`<${t}>`)).join(', ')}`,
-        )),
+      ? [`- ${groups[0]![1].map(listed).join(', ')}`]
+      : groups.map(([label, tags]) => `- **${label}:** ${tags.map(listed).join(', ')}`)),
     '',
     'Choosing between them: references/choosing-components.md.',
     ...refs('pattern').map(

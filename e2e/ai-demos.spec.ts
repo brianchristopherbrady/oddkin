@@ -149,7 +149,13 @@ for (const site of SITES) {
         await expect(page.getByText('I am preparing a brief on ocean warming.')).toBeVisible();
 
         const composer = page.getByRole('textbox', { name: 'Ask a research question' });
-        await composer.fill('Summarize ocean warming');
+        // The Suggested prompts pattern: a suggestion fills the composer and focuses it.
+        await page
+          .getByRole('group', { name: 'Suggested prompts' })
+          .getByRole('button', { name: 'Summarize ocean warming' })
+          .click();
+        await expect(composer).toHaveValue('Summarize recent ocean warming evidence with sources.');
+        await expect(composer).toBeFocused();
         await composer.press('Enter');
         await expect(composer).toHaveValue('');
         await expect(state(page)).toContainText('attempt completed', { timeout: 45_000 });
