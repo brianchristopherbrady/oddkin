@@ -5941,3 +5941,21 @@ The first fidelity pass: each element measured on the fidelity bench in light an
 | Probes | `mutate.mjs`, 9 probes, each restoring a pre-fix rule | 9 of 9 killed |
 | Repository | `npm run typecheck`, `npm run lint`, `node scripts/check-size.mjs` (Agent 1's gate when applying) | Exit 0 each; `ai-chat` 51,683 B of 51,712, `ai:styles` 5,351 of 5,376 |
 | Figma | Q4 (owner): `strokesIncludedInLayout` set on 242 main components (AI 90, Primitives 56, Composed 96), so Figma's strokes take space as CSS borders do; 437 instance layers followed | Read back: none left off. Not in the snapshot's export, so `design/figma/components.json` is unchanged |
+
+## 2026-11-06 — The token register (round 11, Agent 3)
+
+On `f7f7e02`. The owner, 2026-11-06: tokens are the source of truth; run an audit whenever tokens appear or are used wrongly; remove a role with no semantic purpose (asked first about `--odd-control-radius`).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The review | Scripts in `.tmp` over the default theme's inspection, the preset's profiles, Theme Studio's fields, and every shipped stylesheet | 233 tokens; 20 roles whose value is one other token. A first draft that compared only values proposed removing 14; the profiles and Theme Studio show that each has a purpose. Theme Studio's "Control corners" overrides `control.radius` alone. The `layout.compact` and `navigation.compact` profiles change `layout.*` and `navigation.*`, and `card.padding` follows `layout.inset`. `card.*` are `odd-card`'s CSS properties. `navigation.item.min-height` keeps the target minimum. The theme file sets `color.link` and `color.focus.ring`, each with its own contrast minimum. Nothing removed; the 18 without a description got one |
+| The check, first run | `node scripts/check-tokens.mjs` | 1 problem: `odd-conversation`'s message focus ring, `outline-offset` `space.2xs` (4 px; every other ring uses `focus.offset`, 2 px). Fixed |
+| The check | The same | 233 tokens, 139 read directly by 219 shipped stylesheets, 0 problems. The 58 `--odd-*` names that are not tokens are each a documented element property or layout knob |
+| Its test | `npx vitest run --project node tests/tokens/token-register.test.ts` | 10 passed: the repository passes, and each rule catches its case |
+| Probes | `mutate.mjs`, 40 probes on the check, the register, the preset, and the inspection (`.tmp/probes-token-register-2.json`) | 40 of 40 killed, each by a failing case. A first run skipped 13 (the new files had CRLF line endings) and counted a build that did not compile as a kill; the second run fixed both |
+| Fixtures | `UPDATE_FIXTURES=1 npx vitest run --project node packages/tokens/test/generate.test.ts` | The three DTCG fixtures gain the 18 descriptions (`$description`), nothing else |
+| Node | `npx vitest run --project node` | 1,710 passed, 2 skipped |
+| Three engines | `browser-set.mjs` on `packages/ai/test/conversation.browser.test.ts`, the AI `figma-parity.browser.test.ts`, and every `packages/tokens/test/*.browser.test.ts` | 112 passed in each of Chromium, Firefox, and WebKit |
+| Repository | `npm run typecheck`, `npm run lint` | Exit 0 each |
+| Size | `node scripts/check-size.mjs` | Exit 0. `ai-chat` 51,779 B of 51,840 (51,775 on `f7f7e02`: +4 for the focus offset); `ai:styles` 5,353 of 5,376; `tokens:default.css` 3,096 of 3,136 (descriptions are not in the CSS, and no Workbench bundle contains them) |
+| Not done | — | No Figma change (the owner: Figma follows the tokens; the parity tests keep mapping its variables). Raw lengths are outside the check: a literal `4px` offset passes it, and the review rule against raw values still applies |

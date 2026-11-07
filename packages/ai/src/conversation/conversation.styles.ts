@@ -34,7 +34,7 @@ export const conversationStyles = css`
   }
   .feed > odd-message:focus-visible {
     outline: ${token('focus.width')} solid ${token('color.focus.ring')};
-    outline-offset: ${token('space.2xs')};
+    outline-offset: ${token('focus.offset')};
   }
   .history,
   .empty {

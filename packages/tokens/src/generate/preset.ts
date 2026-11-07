@@ -196,11 +196,22 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
     minimum: 'target.min',
   }),
   t('control.height.lg', 'semantic', 'dimension', '3rem', { density: true, minimum: 'target.min' }),
-  t('control.padding.inline.sm', 'semantic', 'dimension', '{space.xs}'),
-  t('control.padding.inline.md', 'semantic', 'dimension', '{space.sm}'),
-  t('control.padding.inline.lg', 'semantic', 'dimension', '{space.md}'),
-  t('control.gap', 'semantic', 'dimension', '{space.xs}'),
-  t('control.radius', 'semantic', 'dimension', '{radius.md}'),
+  t('control.padding.inline.sm', 'semantic', 'dimension', '{space.xs}', {
+    description: 'Inline padding of size sm controls (buttons, fields, chips, segments).',
+  }),
+  t('control.padding.inline.md', 'semantic', 'dimension', '{space.sm}', {
+    description: 'Inline padding of size md controls, the default size.',
+  }),
+  t('control.padding.inline.lg', 'semantic', 'dimension', '{space.md}', {
+    description: 'Inline padding of size lg controls.',
+  }),
+  t('control.gap', 'semantic', 'dimension', '{space.xs}', {
+    description: 'Space between the parts inside a control: icon and label, chips, option marks.',
+  }),
+  t('control.radius', 'semantic', 'dimension', '{radius.md}', {
+    description:
+      'Corners of every control (buttons, fields, chips, option rows, tabs, pagination). Its own token so a theme can round controls alone, e.g. {radius.full} for pills, and leave surfaces on card.radius.',
+  }),
 
   // Semantic: text styles (family, size, weight, line height, letter spacing)
   ...textStyle('display', 'display', '4xl', 'semibold', 'tight', 'tight'),
@@ -224,7 +235,9 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
   t('color.selection.background', 'semantic', 'color', '{color.action.default}', {
     description: 'Selected controls; selection is also shown by a check or marker.',
   }),
-  t('color.selection.foreground', 'semantic', 'color', '{color.text.on-action}'),
+  t('color.selection.foreground', 'semantic', 'color', '{color.text.on-action}', {
+    description: 'Text and marks on color.selection.background.',
+  }),
   t('color.selection.surface', 'semantic', 'color', mode('{ref.brand.100}', '{ref.brand.900}'), {
     description:
       'Selected rows (listbox options, menu items) under color.text.primary, with a check mark; hover stays color.surface.hover.',
@@ -235,9 +248,15 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
       description: 'Decorative tone edge; not a control boundary, so no contrast minimum.',
     }),
   ]),
-  t('color.neutral.foreground', 'semantic', 'color', '{color.text.secondary}'),
-  t('color.neutral.surface', 'semantic', 'color', '{color.surface.sunken}'),
-  t('color.neutral.border', 'semantic', 'color', '{color.border.default}'),
+  t('color.neutral.foreground', 'semantic', 'color', '{color.text.secondary}', {
+    description: 'Neutral tone (ADR 0045 tone="neutral"): text and icons, like the other tones.',
+  }),
+  t('color.neutral.surface', 'semantic', 'color', '{color.surface.sunken}', {
+    description: 'Neutral tone: the tinted surface of badges, alerts, and markers.',
+  }),
+  t('color.neutral.border', 'semantic', 'color', '{color.border.default}', {
+    description: 'Neutral tone: the decorative edge of tone surfaces.',
+  }),
   t('color.scrim', 'semantic', 'color', mode('rgb(0 0 0 / 0.4)', 'rgb(0 0 0 / 0.6)'), {
     description: 'Modal backdrops (::backdrop of dialogs and drawers).',
   }),
@@ -258,25 +277,50 @@ export const PRESET_TOKENS: readonly PresetToken[] = [
   t('color.border.strong', 'semantic', 'color', mode('{ref.neutral.500}', '{ref.neutral.400}')),
 
   // Card
-  t('card.padding', 'component', 'dimension', '{layout.inset}'),
-  t('card.radius', 'component', 'dimension', '{radius.lg}'),
+  t('card.padding', 'component', 'dimension', '{layout.inset}', {
+    description:
+      'Inner padding of card surfaces (odd-card, odd-stat, the file drop zone). Follows layout.inset, so the layout.compact profile tightens it.',
+  }),
+  t('card.radius', 'component', 'dimension', '{radius.lg}', {
+    description:
+      'Corners of contained surfaces: cards, dialogs and drawers, toasts, tables, trees, tabs, toolbars, and disclosures. Its own token so a theme can change surfaces alone; controls use control.radius.',
+  }),
 
   // Layout roles
-  t('layout.gap', 'layout', 'dimension', '{space.md}'),
-  t('layout.inset', 'layout', 'dimension', '{space.lg}'),
+  t('layout.gap', 'layout', 'dimension', '{space.md}', {
+    description:
+      'Default space between blocks in the layout recipes (stack, cluster, grid, split). The layout.compact profile sets it to {space.sm}.',
+  }),
+  t('layout.inset', 'layout', 'dimension', '{space.lg}', {
+    description:
+      'Default inner padding of regions and of card.padding. The layout.compact profile sets it to {space.md}.',
+  }),
   t('layout.item-min', 'layout', 'dimension', '16rem'),
   t('layout.sidebar-width', 'layout', 'dimension', '16rem'),
   t('layout.main-min', 'layout', 'dimension', '20rem'),
   t('layout.measure', 'layout', 'dimension', '40rem'),
 
   // Navigation component roles (side-nav)
-  t('navigation.item.padding.inline', 'component', 'dimension', '{space.sm}'),
-  t('navigation.item.padding.block', 'component', 'dimension', '{space.xs}'),
+  t('navigation.item.padding.inline', 'component', 'dimension', '{space.sm}', {
+    description:
+      'Inline padding of navigation rows (side nav, tree). The navigation.compact profile sets it to {space.xs}.',
+  }),
+  t('navigation.item.padding.block', 'component', 'dimension', '{space.xs}', {
+    description: 'Block padding of navigation rows; halved by the navigation.compact profile.',
+  }),
   t('navigation.item.min-height', 'component', 'dimension', '{control.height.md}', {
     minimum: 'target.min',
+    description:
+      'Minimum height of navigation rows; never below target.min, whatever a theme or density sets.',
   }),
-  t('navigation.item.gap', 'component', 'dimension', '{space.xs}'),
-  t('navigation.indent', 'component', 'dimension', '{space.md}'),
+  t('navigation.item.gap', 'component', 'dimension', '{space.xs}', {
+    description:
+      'Space between navigation rows and inside a row; halved by the navigation.compact profile.',
+  }),
+  t('navigation.indent', 'component', 'dimension', '{space.md}', {
+    description:
+      'Indent of each nested navigation level. The navigation.compact profile sets it to {space.sm}.',
+  }),
 ];
 
 /** What a contract protects; see theming-and-styling.md §10.4. */

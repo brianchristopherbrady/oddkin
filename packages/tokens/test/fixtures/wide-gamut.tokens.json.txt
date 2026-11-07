@@ -33,6 +33,7 @@
     "padding": {
       "$type": "dimension",
       "$value": "{layout.inset}",
+      "$description": "Inner padding of card surfaces (odd-card, odd-stat, the file drop zone). Follows layout.inset, so the layout.compact profile tightens it.",
       "$extensions": {
         "dev.oddkin": {
           "category": "component",
@@ -43,6 +44,7 @@
     "radius": {
       "$type": "dimension",
       "$value": "{radius.lg}",
+      "$description": "Corners of contained surfaces: cards, dialogs and drawers, toasts, tables, trees, tabs, toolbars, and disclosures. Its own token so a theme can change surfaces alone; controls use control.radius.",
       "$extensions": {
         "dev.oddkin": {
           "category": "component",
@@ -237,6 +239,7 @@
       "border": {
         "$type": "color",
         "$value": "{color.border.default}",
+        "$description": "Neutral tone: the decorative edge of tone surfaces.",
         "$extensions": {
           "dev.oddkin": {
             "category": "semantic",
@@ -247,6 +250,7 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.text.secondary}",
+        "$description": "Neutral tone (ADR 0045 tone=\"neutral\"): text and icons, like the other tones.",
         "$extensions": {
           "dev.oddkin": {
             "category": "semantic",
@@ -257,6 +261,7 @@
       "surface": {
         "$type": "color",
         "$value": "{color.surface.sunken}",
+        "$description": "Neutral tone: the tinted surface of badges, alerts, and markers.",
         "$extensions": {
           "dev.oddkin": {
             "category": "semantic",
@@ -299,6 +304,7 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.text.on-action}",
+        "$description": "Text and marks on color.selection.background.",
         "$extensions": {
           "dev.oddkin": {
             "category": "semantic",
@@ -487,6 +493,7 @@
     "gap": {
       "$type": "dimension",
       "$value": "{space.xs}",
+      "$description": "Space between the parts inside a control: icon and label, chips, option marks.",
       "$extensions": {
         "dev.oddkin": {
           "category": "semantic",
@@ -546,6 +553,7 @@
         "lg": {
           "$type": "dimension",
           "$value": "{space.md}",
+          "$description": "Inline padding of size lg controls.",
           "$extensions": {
             "dev.oddkin": {
               "category": "semantic",
@@ -556,6 +564,7 @@
         "md": {
           "$type": "dimension",
           "$value": "{space.sm}",
+          "$description": "Inline padding of size md controls, the default size.",
           "$extensions": {
             "dev.oddkin": {
               "category": "semantic",
@@ -566,6 +575,7 @@
         "sm": {
           "$type": "dimension",
           "$value": "{space.xs}",
+          "$description": "Inline padding of size sm controls (buttons, fields, chips, segments).",
           "$extensions": {
             "dev.oddkin": {
               "category": "semantic",
@@ -578,6 +588,7 @@
     "radius": {
       "$type": "dimension",
       "$value": "{radius.md}",
+      "$description": "Corners of every control (buttons, fields, chips, option rows, tabs, pagination). Its own token so a theme can round controls alone, e.g. {radius.full} for pills, and leave surfaces on card.radius.",
       "$extensions": {
         "dev.oddkin": {
           "category": "semantic",
@@ -1117,6 +1128,7 @@
     "gap": {
       "$type": "dimension",
       "$value": "{space.md}",
+      "$description": "Default space between blocks in the layout recipes (stack, cluster, grid, split). The layout.compact profile sets it to {space.sm}.",
       "$extensions": {
         "dev.oddkin": {
           "category": "layout",
@@ -1127,6 +1139,7 @@
     "inset": {
       "$type": "dimension",
       "$value": "{space.lg}",
+      "$description": "Default inner padding of regions and of card.padding. The layout.compact profile sets it to {space.md}.",
       "$extensions": {
         "dev.oddkin": {
           "category": "layout",
@@ -1384,6 +1397,7 @@
     "indent": {
       "$type": "dimension",
       "$value": "{space.md}",
+      "$description": "Indent of each nested navigation level. The navigation.compact profile sets it to {space.sm}.",
       "$extensions": {
         "dev.oddkin": {
           "category": "component",
@@ -1395,6 +1409,7 @@
       "gap": {
         "$type": "dimension",
         "$value": "{space.xs}",
+        "$description": "Space between navigation rows and inside a row; halved by the navigation.compact profile.",
         "$extensions": {
           "dev.oddkin": {
             "category": "component",
@@ -1405,6 +1420,7 @@
       "min-height": {
         "$type": "dimension",
         "$value": "{control.height.md}",
+        "$description": "Minimum height of navigation rows; never below target.min, whatever a theme or density sets.",
         "$extensions": {
           "dev.oddkin": {
             "category": "component",
@@ -1417,6 +1433,7 @@
         "block": {
           "$type": "dimension",
           "$value": "{space.xs}",
+          "$description": "Block padding of navigation rows; halved by the navigation.compact profile.",
           "$extensions": {
             "dev.oddkin": {
               "category": "component",
@@ -1427,6 +1444,7 @@
         "inline": {
           "$type": "dimension",
           "$value": "{space.sm}",
+          "$description": "Inline padding of navigation rows (side nav, tree). The navigation.compact profile sets it to {space.xs}.",
           "$extensions": {
             "dev.oddkin": {
               "category": "component",

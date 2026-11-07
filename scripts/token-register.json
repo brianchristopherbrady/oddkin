@@ -1,0 +1,141 @@
+{
+  "$comment": "The reviewed token set of the default theme (scripts/check-tokens.mjs; theming-and-styling.md §10.8). Every token belongs to one family. A new token fails the check until it joins a family here, with a reviewer's reason; a role whose value only names another token also needs a description in packages/tokens/src/generate/preset.ts.",
+  "families": [
+    {
+      "name": "Reference palette",
+      "tokens": ["ref.*"],
+      "purpose": "The palette ramps (ADR 0041). Only semantic roles read them; components never do."
+    },
+    {
+      "name": "Spacing",
+      "tokens": ["space.*"],
+      "purpose": "The spacing scale (theming-and-styling.md §4), scaled by density."
+    },
+    {
+      "name": "Radius",
+      "tokens": ["radius.*"],
+      "purpose": "The corner scale; radius.scale generates its steps."
+    },
+    {
+      "name": "Border width",
+      "tokens": ["border.width.*"],
+      "purpose": "Hairline and strong strokes."
+    },
+    {
+      "name": "Focus",
+      "tokens": ["focus.*"],
+      "purpose": "The focus ring's width and offset (WCAG 2.4.13)."
+    },
+    {
+      "name": "Font family",
+      "tokens": ["font.family.*"],
+      "purpose": "Sans, display, and mono stacks; display is the brand's heading family."
+    },
+    {
+      "name": "Font size",
+      "tokens": ["font.size.*"],
+      "purpose": "The type scale; typography.scale generates it."
+    },
+    {
+      "name": "Font weight",
+      "tokens": ["font.weight.*"],
+      "purpose": "The four weights the text styles use."
+    },
+    {
+      "name": "Line height",
+      "tokens": ["line-height.*"],
+      "purpose": "Unitless line heights of the text styles."
+    },
+    {
+      "name": "Letter spacing",
+      "tokens": ["letter-spacing.*"],
+      "purpose": "Tracking of the text styles."
+    },
+    { "name": "Icon size", "tokens": ["icon.size.*"], "purpose": "Icon boxes." },
+    {
+      "name": "Target",
+      "tokens": ["target.min"],
+      "purpose": "The minimum target size (WCAG 2.5.8); control and row heights never go below it."
+    },
+    {
+      "name": "Elevation",
+      "tokens": ["elevation.*"],
+      "purpose": "Shadows by surface: sm controls, md cards, lg popovers and menus, xl dialogs."
+    },
+    {
+      "name": "Motion",
+      "tokens": ["motion.duration.*", "motion.easing.*"],
+      "purpose": "Durations (0ms under reduced motion) and easings."
+    },
+    {
+      "name": "Stacking",
+      "tokens": ["z-index.*"],
+      "purpose": "In-flow layers only; overlays use the top layer."
+    },
+    {
+      "name": "Control",
+      "tokens": ["control.height.*", "control.padding.inline.*", "control.gap", "control.radius"],
+      "purpose": "The control box at sm, md, and lg, shared by every control so they line up; control.radius lets a theme round controls alone."
+    },
+    {
+      "name": "Text styles",
+      "tokens": ["type.*"],
+      "purpose": "The eight text styles (ADR 0042), each family, size, weight, line height, and letter spacing, so a style is used whole."
+    },
+    {
+      "name": "Colour: surfaces and text",
+      "tokens": [
+        "color.canvas",
+        "color.surface.*",
+        "color.text.*",
+        "color.border.*",
+        "color.scrim"
+      ],
+      "purpose": "Neutral roles (ADR 0041), checked by the contrast contracts."
+    },
+    {
+      "name": "Colour: action, link, and focus",
+      "tokens": ["color.action.*", "color.link", "color.focus.ring"],
+      "purpose": "Brand roles, each held to its own contrast minimum: labels on actions 4.5:1, links 4.5:1, the focus ring 3:1."
+    },
+    {
+      "name": "Colour: selection",
+      "tokens": ["color.selection.*"],
+      "purpose": "Selected controls and rows, always with a second cue (a check or a marker)."
+    },
+    {
+      "name": "Colour: tones",
+      "tokens": [
+        "color.neutral.*",
+        "color.info.*",
+        "color.success.*",
+        "color.warning.*",
+        "color.danger.*"
+      ],
+      "purpose": "The five meaning tones (ADR 0045), each foreground, surface, and border."
+    },
+    {
+      "name": "Colour: decoration",
+      "tokens": ["color.accent.decorative"],
+      "purpose": "The palette's decorative accent (ADR 0041); never status, text, or interaction."
+    },
+    {
+      "name": "Card",
+      "tokens": ["card.padding", "card.radius"],
+      "purpose": "Contained surfaces (cards, dialogs, toasts, tables, trees); also odd-card's CSS properties."
+    },
+    {
+      "name": "Layout",
+      "tokens": ["layout.*"],
+      "purpose": "Layout recipe roles: gaps, insets, and sizes; the layout.compact profile changes the gap and inset."
+    },
+    {
+      "name": "Navigation",
+      "tokens": ["navigation.*"],
+      "purpose": "Side nav and tree rows; the navigation.compact profile changes them."
+    }
+  ],
+  "offered": {
+    "color.accent.decorative": "Offered to consumers for decoration (ADR 0041, theming-and-styling.md §10.1); no Oddkin element draws decoration."
+  }
+}
