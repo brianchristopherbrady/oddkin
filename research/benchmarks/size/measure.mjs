@@ -105,7 +105,10 @@ export const BUDGETS = {
   // once odd-message's reasoning and odd-ai-label compose odd-disclosure (audit step 3).
   // 54,976 since 2026-11-06 (Agent 1's call), the smallest 64 B step: measured 54,925 (+250)
   // with odd-disclosure's summary slot and its warning for interactive content (audit §5.2).
-  'ai-chat': 54976,
+  // 55,296 since 2026-11-07 (Agent 1's call), the smallest 64 B step: measured 55,274 (+349)
+  // with one renderers property by extension point, its deprecated aliases, and the old shape
+  // read for one beta (audit §6.1); removing the aliases next beta gives most of it back.
+  'ai-chat': 55296,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

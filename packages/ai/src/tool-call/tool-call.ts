@@ -1,6 +1,7 @@
 import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import type { ApprovalRecord, Capabilities, ToolCallRecord } from '../contracts/types.js';
 import { toolRetryEvent } from '../events.js';
+import type { Renderers } from '../internal/renderers.js';
 import { strings } from '../internal/strings.js';
 
 export const TOOL_CALL_STRINGS = {
@@ -35,7 +36,7 @@ export type ToolOutputRenderer = (tool: ToolCallRecord) => Node | undefined;
  * @keyboard Enter or Space toggles the details.
  * @useFor Showing what an agent or model asked a tool to do, and what happened.
  * @notFor Arbitrary log output.
- * @limitation Results render as formatted JSON text unless a host `renderOutput` returns a node.
+ * @limitation Results render as formatted JSON text unless the host's `renderers.toolOutput` returns a node.
  * @customization 1 2
  * @category AI
  */
@@ -45,8 +46,15 @@ export class OddkinToolCall extends OddkinElement.with({
     description: 'Approval bound to this call, when one was requested.',
   }),
   capabilities: prop.object<Capabilities>({ description: 'Passed to the nested approval.' }),
+  renderers: prop.object<Renderers>({
+    description: 'Host renderers by extension point; uses `toolOutput`.',
+  }),
+  /**
+   * @deprecated Pass `renderers.toolOutput`; read until the next beta.
+   * @replacement renderers
+   */
   renderOutput: prop.object<{ render: ToolOutputRenderer }>({
-    description: 'Host renderer for results (`{ render(tool) }`).',
+    description: 'Deprecated: `renderers.toolOutput`.',
   }),
   strings: prop.object<Partial<typeof TOOL_CALL_STRINGS>>({
     description: 'Localized string overrides.',
@@ -79,7 +87,8 @@ export class OddkinToolCall extends OddkinElement.with({
   _output(): Node | string | undefined {
     const tool = this.tool;
     if (!tool || tool.output === undefined) return undefined;
-    return this.renderOutput?.render(tool) ?? JSON.stringify(tool.output, null, 2);
+    const render = this.renderers?.toolOutput ?? this.renderOutput?.render.bind(this.renderOutput);
+    return render?.(tool) ?? JSON.stringify(tool.output, null, 2);
   }
 }
 

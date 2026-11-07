@@ -23,7 +23,7 @@ export const conversationTemplate = (host: OddkinConversation) => {
     (attempt.status !== 'completed' || attempt.stop === 'too-late' || attempt.stop === 'unknown') &&
     !(attempt.status === 'cancelled' && attempt.stop !== 'unknown');
   // Repeat items render untracked during commit: read everything they use here.
-  const { markdown, renderers, artifactRenderers, renderTool, feedbackReasons } = host;
+  const { markdown, _renderers: renderers, feedbackReasons } = host;
   return html`<div class="base" part="base">
     <div part="scroller" class="scroller" tabindex="-1">
       <div class="history" ?hidden=${!showHistory && history !== 'error'}>
@@ -79,8 +79,6 @@ export const conversationTemplate = (host: OddkinConversation) => {
               .capabilities=${state?.capabilities}
               .markdown=${markdown}
               .renderers=${renderers}
-              .artifactRenderers=${artifactRenderers}
-              .renderTool=${renderTool}
               .feedbackReasons=${feedbackReasons}
             ></odd-message>`,
         )}

@@ -5876,3 +5876,15 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | Metadata | `npm run build`, then `npm run verify:metadata` | 2,220 verified facts across 55 elements (`@oddkin/components`; 2,219 before, the slot) and 485 across 24 (`@oddkin/ai`); vocabulary: 0 findings |
 | Repository | `npm run typecheck`, `npm run compat`, `npm run lint`, `node scripts/verify-packs.mjs` | Each exit 0 |
 | Size | `node scripts/check-size.mjs` | `ai-chat` 54,925 B (54,675 before, +250: the slot and its warning in the `odd-disclosure` each message carries; a shorter warning saved 24 B); `components:disclosure` 762 B, unchanged (no new CSS). Budget 54,976, the smallest 64 B step above (Agent 1's call) |
+
+## 2026-11-07 — One renderers property by extension point (round 11, Agent 2; row 12, step c)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The convention | `packages/ai/test/elements.browser.test.ts`, new test: a message given `renderers` by point draws a `data` part, a tool result, and an artifact preview with them; the same message with `renderers` as a map of `data` renderers, `artifactRenderers`, and `renderTool` draws the same, with one `ai.renderers.legacy` warning; a point in `renderers` wins over its old property; a tool call alone still reads `renderOutput`, and an artifact alone its old map by kind. The two earlier renderer tests use the new shape | 36 passed in each of Chromium, Firefox, and WebKit |
+| The AI elements | `browser-set.mjs` on every `packages/ai/test/*.browser.test.ts` | 306 passed, 4 skipped, in each engine. After the shorter descriptions and warning (below): the elements and AI contract tests, 200 passed, 4 skipped, in each |
+| Probes | `mutate.mjs`, 7 mutants: the old data map not recognised, no warning, the old properties winning, `artifactRenderers` ignored, a message not handing `renderers` to its tool calls, a tool call ignoring `renderOutput`, an artifact ignoring its old map | 7 killed |
+| Node tests | `npx vitest run --project node` | 1,700 passed, 2 skipped (138 files); after the shorter strings, the AI node tests passed 96 of 96 |
+| Metadata | `npm run build`, then `npm run verify:metadata` | 486 verified facts across 24 elements (`@oddkin/ai`; 485 before) and 2,220 across 55 (`@oddkin/components`); vocabulary: 0 findings |
+| Repository | `npm run typecheck`, `npm run lint`, `node scripts/verify-packs.mjs` | Each exit 0 |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 55,384 B at first; shorter property descriptions and warning (they ship in the bundle) brought it to 55,274 B (54,925 before, +349: the renderers module, the deprecated properties, the old shape read for one beta, and the tool call's new property). Budget 55,296, the smallest 64 B step above (Agent 1's call) |

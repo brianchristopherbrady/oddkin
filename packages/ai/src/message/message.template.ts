@@ -12,8 +12,7 @@ interface PartContext {
   readonly artifacts: OddkinMessage['artifacts'];
   readonly capabilities: OddkinMessage['capabilities'];
   readonly markdown: OddkinMessage['markdown'];
-  readonly artifactRenderers: OddkinMessage['artifactRenderers'];
-  readonly renderTool: OddkinMessage['renderTool'];
+  readonly renderers: OddkinMessage['_renderers'];
   readonly sources: OddkinMessage['_sources'];
   readonly error: NonNullable<OddkinMessage['attempt']>['error'];
 }
@@ -56,7 +55,7 @@ const part = (host: OddkinMessage, p: MessagePart, lastText: boolean, c: PartCon
         .tool=${tool}
         .approval=${tool.approvalId ? c.approvals?.[tool.approvalId] : undefined}
         .capabilities=${c.capabilities}
-        .renderOutput=${c.renderTool}
+        .renderers=${c.renderers}
       ></odd-tool-call>`;
     }
     case 'approval': {
@@ -73,7 +72,7 @@ const part = (host: OddkinMessage, p: MessagePart, lastText: boolean, c: PartCon
       return html`<odd-artifact
         .artifact=${artifact}
         revision-id=${p.revisionId ?? ''}
-        .renderers=${c.artifactRenderers}
+        .renderers=${c.renderers}
         .markdown=${c.markdown}
       ></odd-artifact>`;
     }
@@ -109,12 +108,10 @@ export const messageTemplate = (host: OddkinMessage) => {
     artifacts: host.artifacts,
     capabilities: host.capabilities,
     markdown: host.markdown,
-    artifactRenderers: host.artifactRenderers,
-    renderTool: host.renderTool,
+    renderers: host._renderers,
     sources,
     error: host.attempt?.error,
   };
-  void host.renderers;
   return html`<div class="base" data-role=${m.role}>
     <div part="header" class="header">
       <span class="role">${t[m.role]}</span>

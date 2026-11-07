@@ -3,6 +3,7 @@ import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { ArtifactRecord, ArtifactRevision } from '../contracts/types.js';
 import { announceEvent, artifactExportEvent, artifactRevisionEvent } from '../events.js';
+import { rendererCache, type Renderers } from '../internal/renderers.js';
 import { format, strings } from '../internal/strings.js';
 import { MarkdownView, type MarkdownOptions } from '../markdown/render.js';
 
@@ -66,8 +67,8 @@ export class OddkinArtifact extends OddkinElement.with({
     reflect: true,
     description: 'Preview or source view.',
   }),
-  renderers: prop.object<Readonly<Record<string, ArtifactRenderer>>>({
-    description: 'Host renderers by artifact kind.',
+  renderers: prop.object<Renderers>({
+    description: 'Host renderers by extension point; uses `artifact` (by kind).',
   }),
   exports: prop.array<ExportFormat>({
     description: 'Extra export formats offered through `odd-artifact-export`.',
@@ -88,6 +89,12 @@ export class OddkinArtifact extends OddkinElement.with({
 
   /** @internal Bumps whenever the preview is re-rendered. */
   readonly _previews = signal(0);
+  readonly #renderers = rendererCache('artifact');
+
+  /** @internal The preview renderers by kind. */
+  get _kinds(): Renderers['artifact'] {
+    return this.#renderers(this.renderers).artifact;
+  }
 
   /** @internal */
   get _strings(): typeof ARTIFACT_STRINGS {
@@ -108,8 +115,7 @@ export class OddkinArtifact extends OddkinElement.with({
   get _previewable(): boolean {
     const kind = this.artifact?.kind;
     return (
-      !!kind &&
-      (!!this.renderers?.[kind] || kind === 'markdown' || kind === 'code' || kind === 'text')
+      !!kind && (!!this._kinds?.[kind] || kind === 'markdown' || kind === 'code' || kind === 'text')
     );
   }
 
@@ -186,7 +192,7 @@ export class OddkinArtifact extends OddkinElement.with({
         const revision = this.revision;
         const mode = this.view;
         const options = this.markdown ?? {};
-        const renderer = a ? this.renderers?.[a.kind] : undefined;
+        const renderer = a ? this._kinds?.[a.kind] : undefined;
         // A different artifact resets the viewed revision (presentation state).
         if (a && identity !== undefined && identity !== a.artifactId && this.revisionId)
           this.revisionId = '';

@@ -14,8 +14,8 @@ import {
 import { isActive } from '../controllers/transitions.js';
 import { historyRequestEvent } from '../events.js';
 import { format, strings } from '../internal/strings.js';
+import { rendererCache, type Renderers } from '../internal/renderers.js';
 import type { MarkdownOptions } from '../markdown/render.js';
-import type { DataRenderer } from '../message/message.js';
 import type { ToolOutputRenderer } from '../tool-call/tool-call.js';
 
 export const CONVERSATION_STRINGS = {
@@ -81,14 +81,22 @@ export class OddkinConversation extends OddkinElement.with({
     description: 'How much the surface announces.',
   }),
   markdown: prop.object<MarkdownOptions>({ description: 'Markdown options for every message.' }),
-  renderers: prop.object<Readonly<Record<string, DataRenderer>>>({
-    description: 'Validated renderers for `data` parts.',
+  renderers: prop.object<Renderers>({
+    description: 'Host renderers by extension point: `data`, `artifact`, `toolOutput`.',
   }),
+  /**
+   * @deprecated Pass `renderers.artifact`; read until the next beta.
+   * @replacement renderers
+   */
   artifactRenderers: prop.object<Readonly<Record<string, ArtifactRenderer>>>({
-    description: 'Artifact renderers by kind.',
+    description: 'Deprecated: `renderers.artifact`.',
   }),
+  /**
+   * @deprecated Pass `renderers.toolOutput`; read until the next beta.
+   * @replacement renderers
+   */
   renderTool: prop.object<{ render: ToolOutputRenderer }>({
-    description: 'Renderer for tool results.',
+    description: 'Deprecated: `renderers.toolOutput`.',
   }),
   feedbackReasons: prop.array<string>({ description: 'Reasons offered for negative feedback.' }),
   strings: prop.object<Partial<typeof CONVERSATION_STRINGS & AnnouncementStrings>>({
@@ -110,6 +118,12 @@ export class OddkinConversation extends OddkinElement.with({
   #anchor: { id: string; offset: number } | undefined;
   #programmatic = false;
   #positions = new Map<string, ScrollPosition>();
+  readonly #renderers = rendererCache('data');
+
+  /** @internal The renderers in use, handed to every message. */
+  get _renderers(): Renderers {
+    return this.#renderers(this.renderers, this.artifactRenderers, this.renderTool);
+  }
 
   /** @internal */
   get _strings(): typeof CONVERSATION_STRINGS {

@@ -210,6 +210,20 @@ All events bubble and are composed (they cross nested shadow roots). Dispatch *r
 
 Framework bindings: React 19 sets properties for custom elements and listens with lowercase `on<event-name>` props (`onodd-approval-decide`); Vue uses `.prop` binding or property detection and `@odd-approval-decide` / `onOddApprovalDecide`. Verified in `frameworks.browser.test.ts` in three engines.
 
+### 6.2 Renderers
+
+Content a host draws itself goes through one property, `renderers`, on `odd-conversation`, `odd-message`, `odd-tool-call`, and `odd-artifact` (component-architecture-audit.md §6.1; 2026-11-06). Its keys are the extension points:
+
+| Point | For | Renderer |
+| --- | --- | --- |
+| `data` | `data` parts, by `name` | `{ validate(data), render(data, part) }`: validates the untrusted data, then returns a node; data that fails shows the fallback |
+| `artifact` | Artifact previews, by `kind` | `(revision, artifact, container)`: renders into the preview and may return a cleanup, run when the preview is replaced |
+| `toolOutput` | Tool results | `(tool)`: returns a node, or undefined for the formatted JSON |
+
+One object serves every element: a conversation hands its `renderers` to each message, and a message to its tool calls and artifacts, each taking its own point. The renderers keep the signatures they had, since changing them would break every host renderer for no gain to users.
+
+Read until the next beta, deprecated: `artifactRenderers` and `renderTool` (`{ render }`) on conversation and message, and `renderOutput` (`{ render }`) on tool call; a point given in `renderers` wins over them. `renderers` in its earlier shape, a map of `data` renderers on conversation and message or of artifact renderers by kind on artifact, is still read, with one warning (`ai.renderers.legacy`).
+
 ## 7. Composer, selection, scrolling, resources
 
 ### 7.1 Composer (`odd-prompt-input`, `ComposerController`)
@@ -226,7 +240,7 @@ Offsets are **UTF-16 code units** (JavaScript string indices, `selectionStart`),
 
 ### 7.4 Artifacts and checkpoints
 
-Artifacts keep `artifactId` across revisions; the viewer shows preview or source, a revision selector, copy, and export of the canonical source; hosts register `artifactRenderers` by kind. Checkpoints list what restoring replaces, require an explicit confirmation, and show success only after the host's record says `restored`.
+Artifacts keep `artifactId` across revisions; the viewer shows preview or source, a revision selector, copy, and export of the canonical source; hosts register `artifact` renderers by kind (`renderers`, §6.2). Checkpoints list what restoring replaces, require an explicit confirmation, and show success only after the host's record says `restored`.
 
 ### 7.5 Voice
 

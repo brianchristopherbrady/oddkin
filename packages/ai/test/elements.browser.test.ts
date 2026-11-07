@@ -6,6 +6,7 @@ import { createScriptedVoiceAdapter } from '../src/controllers/voice.js';
 import { DocumentSession } from '../src/controllers/document.js';
 import { highlight } from '../src/highlight/index.js';
 import type { ApprovalRecord, CheckpointRecord, ToolCallRecord } from '../src/contracts/types.js';
+import type { ArtifactRenderer } from '../src/artifact/artifact.js';
 
 let container: HTMLElement;
 beforeEach(() => {
@@ -1401,12 +1402,14 @@ describe('selection, review, and controls', () => {
           ],
         };
         e.renderers = {
-          chart: (revision, _artifact, target) => {
-            live++;
-            const node = document.createElement('p');
-            node.textContent = `chart:${revision.content}`;
-            target.append(node);
-            return () => live--;
+          artifact: {
+            chart: (revision, _artifact, target) => {
+              live++;
+              const node = document.createElement('p');
+              node.textContent = `chart:${revision.content}`;
+              target.append(node);
+              return () => live--;
+            },
           },
         };
       },
@@ -1490,9 +1493,11 @@ describe('odd-message fallbacks and provenance', () => {
           ],
         };
         e.renderers = {
-          chart: {
-            validate: (d) => Array.isArray(d),
-            render: () => document.createElement('canvas'),
+          data: {
+            chart: {
+              validate: (d) => Array.isArray(d),
+              render: () => document.createElement('canvas'),
+            },
           },
         };
       },
@@ -1539,6 +1544,103 @@ describe('odd-message fallbacks and provenance', () => {
       expect(style.color).toBe(getComputedStyle($(el, '.role')!).color);
     } finally {
       removeTheme();
+    }
+  });
+
+  it('takes one renderers object by extension point; the old names and shape work for one beta', async () => {
+    const node = (content: string) =>
+      Object.assign(document.createElement('p'), { textContent: content });
+    const chart = { validate: (d: unknown) => Array.isArray(d), render: () => node('data:chart') };
+    const preview: ArtifactRenderer = (revision, _artifact, target) => {
+      target.append(node(`artifact:${revision.content}`));
+    };
+    const output = (tool: ToolCallRecord) => node(`tool:${tool.toolName}`);
+    const records = (e: HTMLElementTagNameMap['odd-message']) => {
+      e.message = {
+        id: 'm',
+        role: 'assistant',
+        parts: [
+          { type: 'data', id: 'd', name: 'chart', data: [1] },
+          { type: 'tool-call', id: 't', toolCallId: 't1' },
+          { type: 'artifact', id: 'a', artifactId: 'a1' },
+        ],
+      };
+      e.tools = {
+        t1: {
+          toolCallId: 't1',
+          toolName: 'search',
+          status: 'output-available',
+          output: { hits: 1 },
+        },
+      };
+      e.artifacts = {
+        a1: {
+          artifactId: 'a1',
+          title: 'Report',
+          kind: 'chart',
+          currentRevisionId: 'r1',
+          revisions: [{ revisionId: 'r1', number: 1, content: 'v1' }],
+        },
+      };
+    };
+    const shown = async (el: HTMLElementTagNameMap['odd-message']) => {
+      const tool = $(el, 'odd-tool-call') as HTMLElementTagNameMap['odd-tool-call'];
+      const artifact = $(el, 'odd-artifact') as HTMLElementTagNameMap['odd-artifact'];
+      await settle(tool);
+      await settle(artifact);
+      return [
+        text($(el, '[part="content"]')),
+        text($(tool, '[part="result"]')),
+        text($(artifact, '[part="preview"]')),
+      ];
+    };
+    const define = () => import('../src/message/message.define.js');
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    try {
+      const current = await mount('odd-message', define, (e) => {
+        records(e);
+        e.renderers = { data: { chart }, artifact: { chart: preview }, toolOutput: output };
+      });
+      const expected = ['data:chart', 'Result tool:search', 'artifact:v1'];
+      expect(await shown(current)).toEqual(expected);
+      expect(warn).not.toHaveBeenCalled();
+      // Until the next beta: renderers as a map of data renderers, artifactRenderers, renderTool.
+      const legacy = await mount('odd-message', define, (e) => {
+        records(e);
+        e.renderers = { chart } as never;
+        e.artifactRenderers = { chart: preview };
+        e.renderTool = { render: output };
+      });
+      expect(await shown(legacy)).toEqual(expected);
+      expect(warn.mock.calls.map(([message]) => String(message))).toEqual([
+        expect.stringMatching(/^\[ai\.renderers\.legacy\] /),
+      ]);
+      // A point given in renderers wins over its old property.
+      legacy.renderers = { toolOutput: () => node('tool:new') };
+      await settle(legacy);
+      expect((await shown(legacy))[1]).toBe('Result tool:new');
+      // A tool call on its own still reads renderOutput.
+      const tool = await mount(
+        'odd-tool-call',
+        () => import('../src/tool-call/tool-call.define.js'),
+        (e) => {
+          e.tool = legacy.tools!['t1']!;
+          e.renderOutput = { render: output };
+        },
+      );
+      expect(text($(tool, '[part="result"]'))).toBe('Result tool:search');
+      // An artifact on its own still reads renderers as a map by kind.
+      const artifact = await mount(
+        'odd-artifact',
+        () => import('../src/artifact/artifact.define.js'),
+        (e) => {
+          e.artifact = legacy.artifacts!['a1']!;
+          e.renderers = { chart: preview } as never;
+        },
+      );
+      expect(text($(artifact, '[part="preview"]'))).toBe('artifact:v1');
+    } finally {
+      warn.mockRestore();
     }
   });
 
