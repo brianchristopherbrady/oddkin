@@ -2237,7 +2237,7 @@
       "status": "existing (odd-button + css/button.css)",
       "code": [
         "odd-button",
-        "AI .text-button (looks like ghost/sm; Figma page 0:1 draws AI actions as button/sm instances)",
+        "the AI elements' native buttons (nativeButtonStyles, size sm, regular weight; Figma page 0:1 draws AI actions as button/sm instances)",
         "odd-menu (trigger part)",
         "odd-split-button (primary part)",
         "odd-copy-button (button part)"

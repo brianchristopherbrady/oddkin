@@ -29,7 +29,8 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
               >
               <span class="tools">
                 <button
-                  class="text-button inspect"
+                  class="odd-button inspect"
+                  data-size="sm"
                   type="button"
                   data-id=${item.id}
                   aria-expanded=${open ? 'true' : 'false'}
@@ -40,7 +41,8 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
                   <span aria-hidden="true">${open ? '\u25B4' : '\u25BE'}</span>
                 </button>
                 <button
-                  class="text-button"
+                  class="odd-button"
+                  data-size="sm"
                   type="button"
                   data-id=${item.id}
                   aria-label=${host._label('remove', item)}
@@ -64,7 +66,8 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
     <div part="add" class="actions add">
       <input type="file" multiple accept=${host.accept || null} hidden @change=${host._onFiles} />
       <button
-        class="text-button"
+        class="odd-button"
+        data-size="sm"
         type="button"
         ?disabled=${host.disabled}
         @click=${host._pickFiles}
@@ -84,7 +87,7 @@ export const contextPickerTemplate = (host: OddkinContextPicker) => {
                   aria-invalid=${host._urlError.value ? 'true' : null}
                 />
               </label>
-              <button class="text-button" type="submit" ?disabled=${host.disabled}>
+              <button class="odd-button" data-size="sm" type="submit" ?disabled=${host.disabled}>
                 ${t.addUrl}
               </button>
             </form>`

@@ -693,3 +693,18 @@ describe('odd-voice-input', () => {
     expectColumn($(el, '.base'), space('xs'));
   });
 });
+
+describe('buttons', () => {
+  it('keep the target width, however short their label', async () => {
+    const probe = container.appendChild(document.createElement('div'));
+    probe.style.inlineSize = 'var(--odd-target-min)';
+    const target = probe.getBoundingClientRect().width;
+    probe.remove();
+    // Previous and next are one glyph each.
+    const el = await example('message-branch');
+    const buttons = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.odd-button')];
+    expect(buttons.length).toBeGreaterThan(1);
+    for (const button of buttons)
+      expect(button.getBoundingClientRect().width).toBeGreaterThanOrEqual(target);
+  });
+});

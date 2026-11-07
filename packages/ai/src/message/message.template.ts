@@ -154,10 +154,10 @@ export const messageTemplate = (host: OddkinMessage) => {
         .branch=${host.branch}
         .capabilities=${host.capabilities}
       ></odd-message-branch>
-      ${host.text ? html`<button class="text-button" type="button" @click=${host._copy}>${t.copy}</button>` : null}
+      ${host.text ? html`<button class="odd-button" data-size="sm" type="button" @click=${host._copy}>${t.copy}</button>` : null}
       ${
         assistant && host._can('regenerate') && terminal && m.attemptId
-          ? html`<button class="text-button" type="button" @click=${host._regenerate}>
+          ? html`<button class="odd-button" data-size="sm" type="button" @click=${host._regenerate}>
               ${t.regenerate}
             </button>`
           : null
@@ -165,7 +165,8 @@ export const messageTemplate = (host: OddkinMessage) => {
       ${
         m.role === 'user' && host._can('edit')
           ? html`<button
-              class="text-button"
+              class="odd-button"
+              data-size="sm"
               type="button"
               data-action="edit"
               @click=${host._startEdit}

@@ -30,15 +30,24 @@ export const artifactTemplate = (host: OddkinArtifact) => {
     </div>
     <div part="toolbar" class="toolbar">
       <div class="actions">
-        <button class="text-button" type="button" @click=${host._copy}>${t.copy}</button>
-        <button class="text-button" type="button" data-format="source" @click=${host._export}>
+        <button class="odd-button" data-size="sm" type="button" @click=${host._copy}>
+          ${t.copy}
+        </button>
+        <button
+          class="odd-button"
+          data-size="sm"
+          type="button"
+          data-format="source"
+          @click=${host._export}
+        >
           ${t.download}
         </button>
-        ${host.exports.map((e) => html`<button class="text-button" type="button" data-format=${e.format} @click=${host._export}>${e.label}</button>`)}
+        ${host.exports.map((e) => html`<button class="odd-button" data-size="sm" type="button" data-format=${e.format} @click=${host._export}>${e.label}</button>`)}
       </div>
       <div class="actions view" role="group" aria-label=${t.view} ?hidden=${!previewable}>
         <button
-          class="text-button"
+          class="odd-button"
+          data-size="sm"
           type="button"
           data-view="preview"
           aria-pressed=${mode === 'preview' ? 'true' : 'false'}
@@ -47,7 +56,8 @@ export const artifactTemplate = (host: OddkinArtifact) => {
           ${t.preview}
         </button>
         <button
-          class="text-button"
+          class="odd-button"
+          data-size="sm"
           type="button"
           data-view="source"
           aria-pressed=${mode === 'source' ? 'true' : 'false'}

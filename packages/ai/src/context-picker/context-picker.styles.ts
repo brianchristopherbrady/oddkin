@@ -28,7 +28,7 @@ export const contextPickerStyles = css`
     line-height: ${token('type.small.line-height')};
   }
   .inspect {
-    padding-inline: ${token('space.sm')};
+    --odd-button-padding-inline: ${token('space.sm')};
   }
   .add {
     gap: ${token('space.sm')};

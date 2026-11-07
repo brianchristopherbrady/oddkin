@@ -57,7 +57,8 @@ export const promptInputTemplate = (host: OddkinPromptInput) => {
             <span class="muted">${host._bytes(a.size)} · ${label}</span>
             <span class="error" ?hidden=${!a.error}>${a.error?.message ?? ''}</span>
             <button
-              class="text-button"
+              class="odd-button"
+              data-size="sm"
               type="button"
               data-id=${a.id}
               aria-label=${format(t.remove, { name: a.name })}
@@ -94,7 +95,8 @@ export const promptInputTemplate = (host: OddkinPromptInput) => {
       ${
         attachments
           ? html`<button
-                class="text-button"
+                class="odd-button"
+                data-size="sm"
                 type="button"
                 ?disabled=${host.disabled}
                 @click=${host._pick}

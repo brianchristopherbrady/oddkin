@@ -41,7 +41,12 @@ export const toolCallTemplate = (host: OddkinToolCall) => {
               <span class="error">${tool.error?.message ?? t['output-error']}</span>
               ${
                 tool.retryable
-                  ? html`<button class="text-button" type="button" @click=${host._retry}>
+                  ? html`<button
+                      class="odd-button"
+                      data-size="sm"
+                      type="button"
+                      @click=${host._retry}
+                    >
                       ${t.retry}
                     </button>`
                   : null

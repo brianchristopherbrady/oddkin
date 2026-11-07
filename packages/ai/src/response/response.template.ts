@@ -21,6 +21,8 @@ export const responseTemplate = (host: OddkinResponse) => {
   return html`<div part="content" class="content"></div>
     <p part="status" class="status-line" data-status=${status} ?hidden=${!message}>${message}</p>
     <div part="actions" class="actions" ?hidden=${!host.copyable || status === 'streaming'}>
-      <button class="text-button" type="button" @click=${host._copy}>${t.copy}</button>
+      <button class="odd-button" data-size="sm" type="button" @click=${host._copy}>
+        ${t.copy}
+      </button>
     </div>`;
 };

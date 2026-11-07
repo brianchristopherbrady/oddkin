@@ -201,7 +201,8 @@ export class OddkinResponse extends OddkinElement.with({
       codeActions: (code) => {
         const button = doc.createElement('button');
         button.type = 'button';
-        button.className = 'text-button copy-code';
+        button.className = 'odd-button copy-code';
+        button.dataset['size'] = 'sm';
         button.textContent = t.copyCode;
         button.addEventListener('click', () => void this.copy(code));
         return button;

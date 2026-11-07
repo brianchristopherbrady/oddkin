@@ -54,7 +54,9 @@ export const citationTemplate = (host: OddkinCitation) => {
                       >`
                     : null
                 }
-                <button class="text-button" type="button" @click=${host._show}>${t.show}</button>
+                <button class="odd-button" data-size="sm" type="button" @click=${host._show}>
+                  ${t.show}
+                </button>
               </span>`
           : html`<span class="muted">${t.unavailable}</span>`
       }

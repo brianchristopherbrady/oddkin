@@ -12,7 +12,8 @@ export const voiceInputTemplate = (host: OddkinVoiceInput) => {
   return html`<div class="base" part="base">
     <div part="controls" class="actions">
       <button
-        class="record text-button"
+        class="record odd-button"
+        data-size="sm"
         type="button"
         aria-pressed=${recording ? 'true' : 'false'}
         ?disabled=${host.disabled || unsupported || state.status === 'processing'}
@@ -20,11 +21,18 @@ export const voiceInputTemplate = (host: OddkinVoiceInput) => {
       >
         <span class="dot" aria-hidden="true"></span>${recording ? t.stop : t.start}
       </button>
-      <button class="text-button" type="button" ?hidden=${!recording} @click=${host._cancel}>
+      <button
+        class="odd-button"
+        data-size="sm"
+        type="button"
+        ?hidden=${!recording}
+        @click=${host._cancel}
+      >
         ${t.cancel}
       </button>
       <button
-        class="text-button"
+        class="odd-button"
+        data-size="sm"
         type="button"
         ?hidden=${recording || !hasText}
         @click=${host._use}
@@ -32,7 +40,8 @@ export const voiceInputTemplate = (host: OddkinVoiceInput) => {
         ${t.use}
       </button>
       <button
-        class="text-button"
+        class="odd-button"
+        data-size="sm"
         type="button"
         ?hidden=${recording || !hasText}
         @click=${host._clear}

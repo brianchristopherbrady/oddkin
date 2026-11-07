@@ -16,7 +16,8 @@ export const messageBranchTemplate = (host: OddkinMessageBranch) => {
     title=${host._unavailable || ''}
   >
     <button
-      class="text-button"
+      class="odd-button"
+      data-size="sm"
       type="button"
       data-direction="previous"
       aria-label=${t.previous}
@@ -32,7 +33,8 @@ export const messageBranchTemplate = (host: OddkinMessageBranch) => {
       >
     </span>
     <button
-      class="text-button"
+      class="odd-button"
+      data-size="sm"
       type="button"
       data-direction="next"
       aria-label=${t.next}

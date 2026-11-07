@@ -1,6 +1,7 @@
 import {
   focusRingStyles,
   hostStyles,
+  nativeButtonStyles,
   toneStyles,
   visuallyHiddenStyles,
 } from '@oddkin/components/styles';
@@ -10,8 +11,9 @@ import { aiElementRecipeStyles } from './ai-element.recipe.styles.js';
 
 /**
  * Styles every `@oddkin/ai` element adds to the shared component primitives: host text
- * defaults, status labels (coloured by `data-tone` through the shared tone styles), action rows
- * (the layout recipe in `ai-element.recipe.ts`), and text buttons.
+ * defaults, status labels (coloured by `data-tone` through the shared tone styles), and action
+ * rows (the layout recipe in `ai-element.recipe.ts`). Buttons are native
+ * `<button class="odd-button" data-size="sm">`, drawn by `nativeButtonStyles` like `odd-button`.
  */
 export const aiElementStyles = css`
   ${aiElementRecipeStyles}
@@ -58,39 +60,14 @@ export const aiElementStyles = css`
     color: ${token('color.danger.foreground')};
     font-size: ${token('font.size.sm')};
   }
-  .text-button {
-    min-block-size: ${token('control.height.sm')};
+  /* Figma draws the AI elements' buttons in the Field/small text style: regular weight. */
+  .odd-button {
     min-inline-size: ${token('target.min')};
-    padding-block: 0;
-    padding-inline: ${token('space.xs')};
-    border: ${token('border.width.default')} solid ${token('color.border.strong')};
-    border-radius: ${token('control.radius')};
-    background: ${token('color.surface.default')};
-    color: ${token('color.text.primary')};
-    font: inherit;
-    font-size: ${token('font.size.sm')};
-    cursor: pointer;
-  }
-  .text-button[aria-pressed='true'] {
-    border-color: ${token('color.selection.background')};
-    background: ${token('color.selection.background')};
-    color: ${token('color.selection.foreground')};
-  }
-  .text-button:disabled {
-    color: ${token('color.text.disabled')};
-    cursor: not-allowed;
-  }
-  @media (hover: hover) {
-    .text-button:not(:disabled, [aria-pressed='true']):hover {
-      background: ${token('color.surface.hover')};
-    }
+    font-weight: ${token('font.weight.regular')};
   }
   @media (forced-colors: active) {
     .status {
       border-color: CanvasText;
-    }
-    .text-button {
-      border-color: ButtonText;
     }
   }
 `;
@@ -101,5 +78,6 @@ export const aiBaseStyles: readonly StyleInput[] = [
   visuallyHiddenStyles,
   focusRingStyles,
   toneStyles,
+  nativeButtonStyles,
   aiElementStyles,
 ];

@@ -28,7 +28,8 @@ export const conversationTemplate = (host: OddkinConversation) => {
     <div part="scroller" class="scroller" tabindex="-1">
       <div class="history" ?hidden=${!showHistory && history !== 'error'}>
         <button
-          class="text-button"
+          class="odd-button"
+          data-size="sm"
           type="button"
           ?hidden=${history !== 'idle'}
           @click=${host._requestHistory}
@@ -38,7 +39,8 @@ export const conversationTemplate = (host: OddkinConversation) => {
         <span class="muted" ?hidden=${history !== 'loading'}>${t.loading}</span>
         <span class="error" ?hidden=${history !== 'error'}>${t.historyError}</span>
         <button
-          class="text-button"
+          class="odd-button"
+          data-size="sm"
           type="button"
           ?hidden=${history !== 'error'}
           @click=${host._requestHistory}

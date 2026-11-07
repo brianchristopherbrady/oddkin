@@ -27,7 +27,8 @@ export const inlineAssistTemplate = (host: OddkinInlineAssist) => {
       ${host._actions.map(
         (action, i) =>
           html`<button
-            class="text-button"
+            class="odd-button"
+            data-size="sm"
             type="button"
             tabindex=${i === active ? '0' : '-1'}
             data-action=${action.id}

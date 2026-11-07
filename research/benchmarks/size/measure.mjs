@@ -75,7 +75,10 @@ export const BUDGETS = {
   resize: 3328,
   reactive: 2048, // 2 KiB; measured 1,892
   'ai-headless': 14336, // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation)
-  'ai-response': 21504, // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations)
+  // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations). 21,952 since
+  // 2026-11-06 (Agent 1's call): measured 21,915 (+644) with the native-button sheet for its copy
+  // buttons (component-architecture-audit.md §9, step 2).
+  'ai-response': 21952,
   // 49.5 KiB; measured 50,340 on 2026-10-23 with odd-button's toggle and the description hook
   // tooltips use (48,782 on 2026-10-18: odd-conversation + odd-prompt-input, all nested elements;
   // +625 B since the shared core focus, announce, and observe controllers replaced AI-internal
@@ -95,7 +98,10 @@ export const BUDGETS = {
   // 51,840 since 2026-11-06 (Agent 1's call; the owner allows raises per measured change for the
   // component architecture audit), and from here in 64 B steps, not 256: measured 51,775 (+72 from
   // 51,703) with the shared decision controller (component-architecture-audit.md §9, step 2).
-  'ai-chat': 51840,
+  // 52,608 since 2026-11-06 (Agent 1's call), the smallest 64 B step: measured 52,566 (+791) once
+  // the AI buttons are native buttons drawn by nativeButtonStyles instead of the private
+  // .text-button (audit step 2; the sheet is 4,019 B minified, and ai:styles loses 84 B).
+  'ai-chat': 52608,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

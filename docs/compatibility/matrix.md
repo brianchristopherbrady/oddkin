@@ -306,13 +306,13 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/citation/citation.recipe.styles.js (citationRecipeStyles)` | yes | 7 |
 | `packages/ai/dist/citation/citation.styles.js (citationStyles)` | yes | 47 |
 | `packages/ai/dist/context-picker/context-picker.recipe.styles.js (contextPickerRecipeStyles)` | yes | 14 |
-| `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 38 |
+| `packages/ai/dist/context-picker/context-picker.styles.js (contextPickerStyles)` | yes | 39 |
 | `packages/ai/dist/conversation/conversation.recipe.styles.js (conversationRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/conversation/conversation.styles.js (conversationStyles)` | yes | 51 |
 | `packages/ai/dist/inline-assist/inline-assist.recipe.styles.js (inlineAssistRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/inline-assist/inline-assist.styles.js (inlineAssistStyles)` | yes | 31 |
 | `packages/ai/dist/internal/ai-element.recipe.styles.js (aiElementRecipeStyles)` | yes | 11 |
-| `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 43 |
+| `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 34 |
 | `packages/ai/dist/message/message.recipe.styles.js (messageRecipeStyles)` | yes | 12 |
 | `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 37 |
 | `packages/ai/dist/message-branch/message-branch.styles.js (messageBranchStyles)` | yes | 6 |

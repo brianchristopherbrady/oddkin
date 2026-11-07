@@ -40,7 +40,8 @@ export const taskPlanTemplate = (host: OddkinTaskPlan) => {
                   ? html`<span class="request"
                       >${format(t.needsInput, { request: step.inputRequest ?? '' })}
                       <button
-                        class="text-button"
+                        class="odd-button"
+                        data-size="sm"
                         type="button"
                         data-step=${step.id}
                         @click=${host._respond}

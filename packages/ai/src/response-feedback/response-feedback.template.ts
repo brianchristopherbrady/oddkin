@@ -21,7 +21,8 @@ export const responseFeedbackTemplate = (host: OddkinResponseFeedback) => {
   return html`<div part="base" class="base" role="group" aria-label=${t.label}>
     <div class="actions">
       <button
-        class="text-button"
+        class="odd-button"
+        data-size="sm"
         type="button"
         data-rating="positive"
         aria-pressed=${rating === 'positive' ? 'true' : 'false'}
@@ -31,7 +32,8 @@ export const responseFeedbackTemplate = (host: OddkinResponseFeedback) => {
         <span aria-hidden="true">👍</span><span class="visually-hidden">${t.positive}</span>
       </button>
       <button
-        class="text-button"
+        class="odd-button"
+        data-size="sm"
         type="button"
         data-rating="negative"
         aria-pressed=${rating === 'negative' ? 'true' : 'false'}

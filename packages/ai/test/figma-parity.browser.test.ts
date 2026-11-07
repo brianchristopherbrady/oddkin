@@ -7,6 +7,7 @@ import {
   figma,
   mount,
   settle,
+  transitions,
   useParity,
   type Target,
 } from '../../components/test/parity.js';
@@ -29,6 +30,10 @@ deliberate(
   [
     /^odd-artifact\/Preview · first revision\/(light|dark)\s+Artifact preview itemSpacing /,
     'The preview flows the rendered Markdown, whose blocks keep their own margins.',
+  ],
+  [
+    /^odd-[a-z-]+\/.+\/(light|dark)\s+.+ strokes \(--odd-color-selection-background\): border-block-start-color rgba\(0, 0, 0, 0\), /,
+    "A pressed button's border is transparent over its selection fill, as odd-button's is: the same pixels as the selection stroke Figma binds.",
   ],
 );
 
@@ -108,6 +113,7 @@ describe('Figma parity: odd-activity', () => {
         { layer: ['Status and recovery', 'Actions', 'Resume', 'Resume'], el: resume, kind: 'text' },
         { layer: layer(family, 'Connection ended'), el: shadow(el, '.text'), kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(family, {}, targets));
     });
 });
@@ -140,6 +146,7 @@ describe('Figma parity: odd-message-branch', () => {
         { layer: ['Actions', '›'], el: next!, kind: 'frame' },
         { layer: ['Actions', '›', '›'], el: next!, kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-message-branch/Alternative 2 of 3/${mode}`, {}, targets));
     });
 });
@@ -177,6 +184,7 @@ describe('Figma parity: odd-inline-assist', () => {
           { layer: ['Actions', label], el: button(id), kind: 'frame' },
           { layer: ['Actions', label, label], el: button(id), kind: 'text' },
         );
+      await transitions(targets);
       expectNone(compare(`odd-inline-assist/Selection ready/${mode}`, {}, targets));
     });
 });
@@ -197,7 +205,7 @@ describe('Figma parity: odd-message', () => {
       el.capabilities = { regenerate: { available: true } };
       await settle(el);
       const [copy, regenerate] = el.shadowRoot!.querySelectorAll<HTMLElement>(
-        '[part="footer"] > .text-button',
+        '[part="footer"] > .odd-button',
       );
       const family = `odd-message/Assistant · completed/${mode}`;
       const targets: Target[] = [
@@ -214,6 +222,7 @@ describe('Figma parity: odd-message', () => {
         { layer: ['Actions', 'Regenerate'], el: regenerate!, kind: 'frame' },
         { layer: ['Actions', 'Regenerate', 'Regenerate'], el: regenerate!, kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(family, {}, targets));
       // Copy starts the row, as in Figma: the branch control takes no place without versions.
       expect(copy!.getBoundingClientRect().left).toBe(
@@ -241,6 +250,7 @@ describe('Figma parity: odd-ai-label', () => {
         },
         { layer: ['Actions', '▸ AI generated', '▸ AI generated'], el: label, kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-ai-label/Generated · collapsed/${mode}`, {}, targets));
     });
 });
@@ -266,6 +276,7 @@ describe('Figma parity: odd-response', () => {
         },
         { layer: ['Generating…'], el: status, kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(family, {}, targets));
     });
 });
@@ -287,6 +298,7 @@ describe('Figma parity: odd-transcript', () => {
         { layer: ['Summarize the document.'], el: shadow(el, '.segment'), kind: 'text' },
         { layer: layer(family, 'Listening:'), el: shadow(el, '[part="interim"]'), kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(family, {}, targets));
     });
 });
@@ -336,6 +348,7 @@ describe('Figma parity: odd-usage-meter', () => {
             kind: 'text',
           },
         );
+      await transitions(targets);
       expectNone(compare(`odd-usage-meter/Measured / estimated / unknown/${mode}`, {}, targets));
     });
 });
@@ -380,6 +393,7 @@ describe('Figma parity: odd-model-select', () => {
           kind: 'text',
         },
       ];
+      await transitions(targets);
       expectNone(compare(family, {}, targets));
     });
 });
@@ -425,6 +439,7 @@ describe('Figma parity: odd-sources', () => {
           kind: 'text',
         },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-sources/One source/${mode}`, {}, targets));
     });
 });
@@ -460,6 +475,7 @@ describe('Figma parity: odd-suggestions', () => {
           { layer: ['Actions', pill, '↑', '↑'], el: send, kind: 'text' },
         );
       }
+      await transitions(targets);
       expectNone(compare(`odd-suggestions/Insert and send/${mode}`, {}, targets));
     });
 });
@@ -508,6 +524,7 @@ describe('Figma parity: odd-response-feedback', () => {
           gap: 'column-gap',
         },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-response-feedback/Negative rating · drafting/${mode}`, {}, targets));
       // Figma's comment field spans the 636 px specimen, space.xs under its label.
       el.style.inlineSize = '636px';
@@ -561,6 +578,7 @@ describe('Figma parity: odd-voice-input', () => {
         { layer: ['Actions', 'Cancel recording', 'Cancel recording'], el: cancel, kind: 'text' },
         { layer: ['Listening…'], el: shadow(el, '[part="status"]'), kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-voice-input/Recording/${mode}`, {}, targets));
     });
 });
@@ -587,7 +605,7 @@ describe('Figma parity: odd-citation', () => {
       trigger.click();
       await settle(el);
       const preview = shadow(el, '[part="preview"]');
-      const show = shadow(el, '.preview .text-button');
+      const show = shadow(el, '.preview .odd-button');
       const header = 'Citation header';
       const identity = [header, 'Source identity'];
       const targets: Target[] = [
@@ -614,6 +632,7 @@ describe('Figma parity: odd-citation', () => {
         },
         { layer: ['Actions', 'Show in sources', 'Show in sources'], el: show, kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-citation/Resolved · expanded/${mode}`, {}, targets));
     });
 });
@@ -638,7 +657,7 @@ describe('Figma parity: odd-context-picker', () => {
       const details = [item, 'File details'];
       const tools = [item, 'Item actions'];
       const [inspect, remove] = el.shadowRoot!.querySelectorAll<HTMLElement>('.tools > button');
-      const add = shadow(el, '[part="add"] > .text-button');
+      const add = shadow(el, '[part="add"] > .odd-button');
       const targets: Target[] = [
         { layer: [], el: shadow(el, '[part="base"]'), kind: 'frame', gap: 'row-gap' },
         { layer: [item], el: shadow(el, '[part="item"]'), kind: 'frame' },
@@ -665,6 +684,7 @@ describe('Figma parity: odd-context-picker', () => {
         { layer: ['Add context', 'Add files'], el: add, kind: 'frame' },
         { layer: ['Add context', 'Add files', 'Add files'], el: add, kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-context-picker/Ready context/${mode}`, {}, targets));
       // The item's details, status, and actions are space.sm apart, as Figma spaces them.
       const probe = document.createElement('div');
@@ -730,7 +750,7 @@ describe('Figma parity: odd-conversation', () => {
       const [user, assistant] = el.shadowRoot!.querySelectorAll('odd-message');
       await settle(user!);
       await settle(assistant!);
-      const copy = shadow(assistant!, '[part="footer"] > .text-button');
+      const copy = shadow(assistant!, '[part="footer"] > .odd-button');
       const targets: Target[] = [
         { layer: [], el: shadow(el, '[part="feed"]'), kind: 'frame', gap: 'row-gap' },
         { layer: ['You'], el: shadow(user!, '.role'), kind: 'text' },
@@ -754,6 +774,7 @@ describe('Figma parity: odd-conversation', () => {
         { layer: ['Actions', 'Copy'], el: copy, kind: 'frame' },
         { layer: ['Actions', 'Copy', 'Copy'], el: copy, kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-conversation/Two-message feed/${mode}`, {}, targets));
       // The role labels draw in Figma's UI text style, through the UI type role.
       const lineHeight = await figmaLineHeight('Oddkin/UI');
@@ -796,7 +817,7 @@ describe('Figma parity: odd-prompt-input', () => {
       input.dispatchEvent(new Event('input', { bubbles: true }));
       await settle(el);
       restyle(input);
-      const attach = shadow(el, '[part="toolbar"] > .text-button');
+      const attach = shadow(el, '[part="toolbar"] > .odd-button');
       const targets: Target[] = [
         { layer: [], el: shadow(el, '[part="form"]'), kind: 'frame', gap: 'row-gap' },
         { layer: ['Input'], el: input, kind: 'frame' },
@@ -810,6 +831,7 @@ describe('Figma parity: odd-prompt-input', () => {
         { layer: ['Actions', 'Attach'], el: attach, kind: 'frame' },
         { layer: ['Actions', 'Attach', 'Attach'], el: attach, kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-prompt-input/Draft ready/${mode}`, {}, targets));
     });
 });
@@ -830,7 +852,7 @@ describe('Figma parity: odd-artifact', () => {
       await settle(el);
       const button = (selector: string) => shadow(el, selector);
       const [copy, download] = el.shadowRoot!.querySelectorAll<HTMLElement>(
-        '.actions:not([role]) > .text-button',
+        '.actions:not([role]) > .odd-button',
       );
       const heading = 'Artifact title and revision';
       const view = ['Actions', 'View selection'];
@@ -867,6 +889,7 @@ describe('Figma parity: odd-artifact', () => {
           kind: 'text',
         },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-artifact/Preview · first revision/${mode}`, {}, targets));
     });
 });
@@ -901,6 +924,7 @@ describe('Figma parity: odd-tool-call', () => {
         { layer: ['Arguments [2]'], el: code, kind: 'frame' },
         { layer: layer(family, '{ "document"'), el: code, kind: 'text' },
       ];
+      await transitions(targets);
       expectNone(compare(family, {}, targets));
       // Figma's column: the name, then the status on its own line, then the arguments, xs apart.
       const top = (selector: string) => shadow(el, selector).getBoundingClientRect().top;
@@ -951,6 +975,7 @@ describe('Figma parity: odd-task-plan', () => {
           },
         );
       }
+      await transitions(targets);
       expectNone(compare(`odd-task-plan/One done · one active/${mode}`, {}, targets));
     });
 });
@@ -986,6 +1011,7 @@ describe('Figma parity: odd-question', () => {
           gap: 'column-gap',
         },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-question/Choice · requested/${mode}`, {}, targets));
       // As the specimen: the prompt and each option space.xs apart.
       const top = (node: Element) => node.getBoundingClientRect().top;
@@ -1028,6 +1054,7 @@ describe('Figma parity: odd-checkpoint', () => {
           gap: 'column-gap',
         },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-checkpoint/Available/${mode}`, {}, targets));
       // As the specimen: the list starts at the text's edge, space.xs under its lead-in.
       const list = shadow(el, '[part="restores"]');
@@ -1082,6 +1109,7 @@ describe('Figma parity: odd-change-review', () => {
           gap: 'column-gap',
         },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-change-review/Proposed · split view/${mode}`, {}, targets));
       // As the specimen, the split view's sides are the cards: the proposal around them is not.
       const proposal = getComputedStyle(shadow(el, '[part="proposal"]'));
@@ -1146,6 +1174,7 @@ describe('Figma parity: odd-action-approval', () => {
           gap: 'column-gap',
         },
       ];
+      await transitions(targets);
       expectNone(compare(`odd-action-approval/Requested/${mode}`, {}, targets));
       // As the specimen: each change reads "Before: …" and "After: …", in sight, one under the
       // other and space.xs apart.

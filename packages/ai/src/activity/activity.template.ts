@@ -16,9 +16,9 @@ export const activityTemplate = (host: OddkinActivity) => {
     <span class="indicator" aria-hidden="true" ?hidden=${!busy}></span>
     <span class="text" tabindex="-1">${host._text()}</span>
     <span part="actions" class="actions">
-      ${actions.stop ? html`<button class="text-button" type="button" data-action="stop" @click=${host._act}>${t.stop}</button>` : null}
-      ${actions.resume ? html`<button class="text-button" type="button" data-action="resume" @click=${host._act}>${t.resume}</button>` : null}
-      ${actions.retry ? html`<button class="text-button" type="button" data-action="retry" @click=${host._act}>${t.retry}</button>` : null}
+      ${actions.stop ? html`<button class="odd-button" data-size="sm" type="button" data-action="stop" @click=${host._act}>${t.stop}</button>` : null}
+      ${actions.resume ? html`<button class="odd-button" data-size="sm" type="button" data-action="resume" @click=${host._act}>${t.resume}</button>` : null}
+      ${actions.retry ? html`<button class="odd-button" data-size="sm" type="button" data-action="retry" @click=${host._act}>${t.retry}</button>` : null}
     </span>
   </div>`;
 };
