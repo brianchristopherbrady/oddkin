@@ -2,7 +2,10 @@ import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 import { questionRecipeStyles } from './question.recipe.styles.js';
 
-/** The arrangement is the layout recipe in `question.recipe.ts`. */
+/**
+ * The arrangement is the layout recipe in `question.recipe.ts`. The fieldset is a flex column,
+ * not a grid: WebKit keeps a grid fieldset's legend at its old width after the container shrinks.
+ */
 export const questionStyles = css`
   ${questionRecipeStyles}
   .form {
@@ -12,7 +15,6 @@ export const questionStyles = css`
     background: ${token('color.surface.raised')};
   }
   fieldset {
-    /* Not a grid: WebKit keeps a grid fieldset's legend at its old width after the container shrinks. */
     display: flex;
     flex-direction: column;
     gap: ${token('space.xs')};

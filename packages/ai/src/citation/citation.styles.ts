@@ -2,7 +2,10 @@ import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 import { citationRecipeStyles } from './citation.recipe.styles.js';
 
-/** The arrangement is the layout recipe in `citation.recipe.ts`. */
+/**
+ * The arrangement is the layout recipe in `citation.recipe.ts`. On touch, the trigger keeps a
+ * 24px minimum target (`::after`) without changing the inline marker size.
+ */
 export const citationStyles = css`
   ${citationRecipeStyles}
   :host {
@@ -28,7 +31,6 @@ export const citationStyles = css`
     vertical-align: super;
     cursor: pointer;
   }
-  /* Touch: keep a 24px minimum target without changing the inline marker size. */
   .trigger::after {
     content: '';
     position: absolute;

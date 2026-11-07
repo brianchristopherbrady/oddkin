@@ -2,7 +2,10 @@ import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 import { artifactRecipeStyles } from './artifact.recipe.styles.js';
 
-/** The arrangement is the layout recipe in `artifact.recipe.ts`. */
+/**
+ * The arrangement is the layout recipe in `artifact.recipe.ts`. The revision select is never
+ * wider than the header: a wide font in a narrow container clips its label instead.
+ */
 export const artifactStyles = css`
   ${artifactRecipeStyles}
   .base {
@@ -22,7 +25,6 @@ export const artifactStyles = css`
     min-inline-size: 0;
   }
   select {
-    /* Never wider than the header: a wide font in a narrow container clips the label instead. */
     max-inline-size: 100%;
     min-block-size: ${token('target.min')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};

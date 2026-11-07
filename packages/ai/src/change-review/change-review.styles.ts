@@ -4,7 +4,9 @@ import { changeReviewRecipeStyles } from './change-review.recipe.styles.js';
 
 /**
  * The arrangement is the layout recipe in `change-review.recipe.ts`. Side by side, the two sides
- * are the cards, and proposals sit further apart than their parts.
+ * are the cards, and proposals sit further apart than their parts. Only the diff segments
+ * preserve whitespace (template whitespace around them collapses); the unchanged text around a
+ * change (`.context`) shows the reader where it applies.
  */
 export const changeReviewStyles = css`
   ${changeReviewRecipeStyles}
@@ -48,11 +50,9 @@ export const changeReviewStyles = css`
   .label {
     font-weight: ${token('font.weight.semibold')};
   }
-  /* Only the diff segments preserve whitespace; template whitespace around them collapses. */
   .segments {
     white-space: pre-wrap;
   }
-  /* The unchanged text around a change, so the reader sees where it applies. */
   .context {
     color: ${token('color.text.secondary')};
   }

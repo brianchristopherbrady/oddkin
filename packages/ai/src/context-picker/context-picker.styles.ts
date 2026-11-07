@@ -2,7 +2,10 @@ import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 import { contextPickerRecipeStyles } from './context-picker.recipe.styles.js';
 
-/** The arrangement is the layout recipe in `context-picker.recipe.ts`. */
+/**
+ * The arrangement is the layout recipe in `context-picker.recipe.ts`. The URL field keeps its
+ * own width, but never wider than the form (narrow containers, wide fonts).
+ */
 export const contextPickerStyles = css`
   ${contextPickerRecipeStyles}
   p {
@@ -46,7 +49,6 @@ export const contextPickerStyles = css`
     min-inline-size: 0;
   }
   input[type='url'] {
-    /* Its own width, but never wider than the form (narrow containers, wide fonts). */
     max-inline-size: 100%;
     min-block-size: ${token('target.min')};
     padding-inline: ${token('space.xs')};

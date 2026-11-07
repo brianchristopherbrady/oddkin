@@ -2,11 +2,14 @@ import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 import { responseFeedbackRecipeStyles } from './response-feedback.recipe.styles.js';
 
-/** The arrangement is the layout recipe in `response-feedback.recipe.ts`. */
+/**
+ * The arrangement is the layout recipe in `response-feedback.recipe.ts`. The fieldset is a flex
+ * column, not a grid: WebKit keeps a grid fieldset's legend at its old width after the container
+ * shrinks.
+ */
 export const responseFeedbackStyles = css`
   ${responseFeedbackRecipeStyles}
   fieldset {
-    /* Not a grid: WebKit keeps a grid fieldset's legend at its old width after the container shrinks. */
     display: flex;
     flex-direction: column;
     gap: ${token('space.2xs')};

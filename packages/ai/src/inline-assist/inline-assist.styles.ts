@@ -2,7 +2,10 @@ import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 import { inlineAssistRecipeStyles } from './inline-assist.recipe.styles.js';
 
-/** The arrangement is the layout recipe in `inline-assist.recipe.ts`. */
+/**
+ * The arrangement is the layout recipe in `inline-assist.recipe.ts`. The language select is
+ * never wider than its row (narrow containers, wide fonts).
+ */
 export const inlineAssistStyles = css`
   ${inlineAssistRecipeStyles}
   .toolbar [aria-disabled='true'] {
@@ -10,7 +13,6 @@ export const inlineAssistStyles = css`
     cursor: not-allowed;
   }
   select {
-    /* Never wider than the language row (narrow containers, wide fonts). */
     max-inline-size: 100%;
     min-block-size: ${token('target.min')};
     border: ${token('border.width.default')} solid ${token('color.border.default')};

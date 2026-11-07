@@ -77,8 +77,10 @@ export const BUDGETS = {
   'ai-headless': 14336, // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation)
   // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations). 21,952 since
   // 2026-11-06 (Agent 1's call): measured 21,915 (+644) with the native-button sheet for its copy
-  // buttons (component-architecture-audit.md §9, step 2).
-  'ai-response': 21952,
+  // buttons (component-architecture-audit.md §9, step 2). 21,824 since 2026-11-07 (Agent 1's call),
+  // the smallest 64 B step: measured 21,818 (-97) once the AI sheets' CSS comments moved into doc
+  // comments.
+  'ai-response': 21824,
   // 49.5 KiB; measured 50,340 on 2026-10-23 with odd-button's toggle and the description hook
   // tooltips use (48,782 on 2026-10-18: odd-conversation + odd-prompt-input, all nested elements;
   // +625 B since the shared core focus, announce, and observe controllers replaced AI-internal
@@ -108,7 +110,9 @@ export const BUDGETS = {
   // 55,296 since 2026-11-07 (Agent 1's call), the smallest 64 B step: measured 55,274 (+349)
   // with one renderers property by extension point, its deprecated aliases, and the old shape
   // read for one beta (audit §6.1); removing the aliases next beta gives most of it back.
-  'ai-chat': 55296,
+  // 55,040 since 2026-11-07, the smallest 64 B step: measured 55,023 (-251) once the AI sheets'
+  // CSS comments moved into their doc comments (comments inside css`` ship in every bundle).
+  'ai-chat': 55040,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
@@ -388,7 +392,9 @@ export const CSS_BUDGETS = {
   // (2026-11-05) at 5,223, and 5,376 stays the smallest 256 B step above it. 5,504 since
   // 2026-11-06 (Agent 1's call), the smallest 64 B step: measured 5,497 (+230) once odd-ai-label
   // draws its label through the parts of the odd-disclosure it composes (audit step 3).
-  'ai:styles': 5504,
+  // 5,376 again since 2026-11-07: measured 4,990 (-507) once the AI sheets' CSS comments moved
+  // into their doc comments.
+  'ai:styles': 5376,
 };
 
 /** Gzip sizes of the shipped CSS: generated token CSS and component style modules. */

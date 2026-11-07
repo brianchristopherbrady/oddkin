@@ -2,7 +2,10 @@ import { css } from '@oddkin/core/styles';
 import { token } from '@oddkin/tokens/refs';
 import { messageRecipeStyles } from './message.recipe.styles.js';
 
-/** The arrangement is the layout recipe in `message.recipe.ts`. */
+/**
+ * The arrangement is the layout recipe in `message.recipe.ts`. Reasoning sits in an
+ * `odd-disclosure`, which draws the surface; its text reads as secondary content, in prose weight.
+ */
 export const messageStyles = css`
   ${messageRecipeStyles}
   .role {
@@ -23,7 +26,6 @@ export const messageStyles = css`
     margin: 0;
     white-space: pre-wrap;
   }
-  /* The disclosure draws the surface; the reasoning reads as its secondary content, in prose weight. */
   .reasoning odd-response {
     color: ${token('color.text.secondary')};
     font-weight: ${token('font.weight.regular')};

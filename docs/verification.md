@@ -5912,3 +5912,13 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | Probes | `mutate.mjs`, 4 mutants of the kit generator: no mark in the guide, no notice in the reference, no line in the choosing guide, a deprecated property not marked | 4 killed |
 | Node tests | `npx vitest run --project node` | 1,702 passed, 2 skipped (138 files) |
 | Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run lint`, `node scripts/verify-packs.mjs`, `node scripts/check-size.mjs` | Each exit 0; 486 verified facts across 24 elements (`@oddkin/ai`); vocabulary: 0 findings |
+
+## 2026-11-07 — The AI style sheets' CSS comments move into doc comments (round 11, Agent 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Size | `node scripts/check-size.mjs`, after `npm run build` | `ai-chat` 55,023 B gzip (was 55,274), budget 55,040; `ai:styles` 4,990 B (was 5,497), budget 5,376; `ai-response` 21,818 B (was 21,915), budget 21,824 |
+| No comment left in a sheet | `git grep -n -E "^\s+/\* " -- "packages/ai/src/*/*.styles.ts"` | No match |
+| The AI elements | `browser-set.mjs` on every `packages/ai/test/*.browser.test.ts` | 317 passed, 4 skipped, in each engine |
+| Repository | `npx vitest run --project node packages/ai/test`, `npm run verify:metadata`, `npm run compat`, `npm run typecheck`, `npm run lint` | Each exit 0 |
+| Probes | None: the change removes comments only, and the size check measures it | — |
