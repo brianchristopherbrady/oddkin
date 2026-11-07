@@ -74,6 +74,8 @@ Owner decisions of 2026-11-05: the AI contract review's host-playing examples (C
 
 Owner decisions of 2026-11-06, on the component architecture audit ([docs/research/component-architecture-audit.md](./docs/research/component-architecture-audit.md), §10): `odd-suggestions` becomes a composition pattern, and `odd-message-branch` an internal part of `odd-message`; `odd-ai-label` and `odd-model-select` stay elements, composing `odd-disclosure` and `odd-select`; `odd-disclosure` gets a `summary` slot; the `ai-chat` budget may rise change by change, each raise measured; and Agent 2 implements the audit, its `@oddkin/components` steps included, as its items 11 to 13, because Agent 1 is on light duty. Agent 1 reads the components changes and the budget raises.
 
+Owner decisions of 2026-11-07: `odd-copy-button` shows a successful copy in a small popover by the button instead of its inline status text, so nothing on the screen moves; a failure keeps the inline message and the selected text box, which the user acts on. Agent 2 builds it with its row 11 step d (the copy button's announcement through the nearest announcer, and a fallback that keeps line breaks); Figma follows.
+
 Waiting for the owner: observers for RF-18; the trusted publishers on npmjs.com, within 2 days of the first publish from `release.yml` (RF-12).
 
 Why this order:
