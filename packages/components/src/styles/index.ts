@@ -15,4 +15,5 @@ export { controlIndicatorStyles } from './control-indicator.styles.js';
 export { overlaySurfaceStructuralStyles } from './overlay-surface.structural.styles.js';
 export { overlaySurfaceStyles } from './overlay-surface.styles.js';
 export { TONES, toneGlyph, toneStyles, type Tone } from './tone.styles.js';
+export { nativeButtonStyles } from '../button/button.native.styles.js';
 export * from './glyphs.js';

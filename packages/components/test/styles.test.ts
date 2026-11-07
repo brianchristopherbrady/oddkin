@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import * as styles from '../src/styles/index.js';
 import { hostStyles, focusRingStyles, visuallyHiddenStyles } from '../src/styles/index.js';
+import { nativeButtonStyles } from '../src/button/button.native.styles.js';
 import { documentStylesheets } from '../src/css/index.js';
 
 // Shared style primitives and the opt-in document stylesheets (built by `npm run build`).
@@ -16,6 +18,34 @@ const declarations = (text: string, selector: string) => {
 };
 
 describe('shared style primitives', () => {
+  it('are the sheets other shadow roots adopt, the native-button sheet among them', () => {
+    expect(
+      Object.keys(styles)
+        .filter((name) => name.endsWith('Styles'))
+        .sort(),
+    ).toEqual([
+      'controlIndicatorStructuralStyles',
+      'controlIndicatorStyles',
+      'controlStyles',
+      'fieldStructuralStyles',
+      'focusRingStyles',
+      'glyphStyles',
+      'hostStyles',
+      'nativeButtonStyles',
+      'navRowStructuralStyles',
+      'navRowStyles',
+      'optionRowStructuralStyles',
+      'optionRowStyles',
+      'overlaySurfaceStructuralStyles',
+      'overlaySurfaceStyles',
+      'spinnerStyles',
+      'toneStyles',
+      'visuallyHiddenStyles',
+    ]);
+    // One sheet: `css/button.css` and the elements that draw native buttons use the same one.
+    expect(styles.nativeButtonStyles).toBe(nativeButtonStyles);
+  });
+
   it('keeps structural primitives free of theme tokens', () => {
     for (const sheet of [hostStyles, visuallyHiddenStyles])
       expect(sheet.cssText).not.toMatch(/--odd-/);

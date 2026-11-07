@@ -50,7 +50,7 @@ import { hostStyles, focusRingStyles, visuallyHiddenStyles } from '@oddkin/compo
 // styles: [hostStyles, myStructuralStyles, focusRingStyles, visuallyHiddenStyles, myStyles]
 ```
 
-Each primitive is one constructed sheet per document, shared by every component that adopts it. For pages, opt in to `@oddkin/components/css/reset.css`, `base.css` (theme-driven body text, links, focus ring), and `utilities.css` (`.odd-visually-hidden`, `.odd-focus-ring`); each sits in its Oddkin cascade layer, so unlayered page CSS overrides it.
+Each primitive is one constructed sheet per document, shared by every component that adopts it. `nativeButtonStyles` makes a native `<button class="odd-button">` in your own shadow root look like `odd-button` (`data-appearance`, `data-size`, `data-full-width`, and `aria-pressed`), for many light buttons without an element each. For pages, opt in to `@oddkin/components/css/reset.css`, `base.css` (theme-driven body text, links, focus ring), and `utilities.css` (`.odd-visually-hidden`, `.odd-focus-ring`); each sits in its Oddkin cascade layer, so unlayered page CSS overrides it.
 
 ## Styling and browser support
 

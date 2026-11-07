@@ -351,7 +351,9 @@ export const CSS_BUDGETS = {
   // chevron every form control shares (717 before: spinner, tone, glyphs, host, focus ring, visually
   // hidden). 3,091 on 2026-10-28 (+39) once the navigation row's current or selected marker became a
   // straight ::before bar (Figma NavigationItem) instead of a border bent by the row's radius.
-  'components:shared': 3136,
+  // 3,520 since 2026-11-06 (Agent 1's call): measured 3,479 (+343) once the entry exports
+  // nativeButtonStyles for shadow roots (component-architecture-audit.md §9, step 1).
+  'components:shared': 3520,
   'components:document': 768, // measured 612 on 2026-10-18: reset.css + base.css + utilities.css
   // measured 660 on 2026-10-24 (411 on 2026-10-18): layout.css page-author classes, with
   // Figma's Oddkin/Layout variants, .odd-box, .odd-center, .odd-aspect-ratio, and the presets

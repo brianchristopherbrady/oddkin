@@ -5812,3 +5812,14 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | AI | `browser-set.mjs` on every `packages/ai/test/*.browser.test.ts` | 303 passed, 4 skipped, in each of Chromium, Firefox, and WebKit |
 | Metadata | The components' contract test in three engines (830 passed, 50 skipped, in each), then `npm run verify:metadata` | Components 2,219 verified facts across 55 elements and AI 485 across 24; vocabulary 0 findings |
 | Repository | `npm run build`, `npm run typecheck`, `node scripts/check-size.mjs`, `npm run lint`, on main `c67c85b` | Each exit 0. Size: `ai-chat` 51,703 B of 51,712 (main 51,683; core's model and collection messages ship in production, so `model.property.unknown` reads only "…; remove it." to fit), `composition` 9,363 of 9,472, `list` 11,577 of 11,776, `ai-headless` 13,843 of 14,336 |
+
+## 2026-11-06 — `nativeButtonStyles` from `@oddkin/components/styles` (round 11, Agent 2; audit step 1)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The export | `npx vitest run --project node packages/components/test/styles.test.ts packages/components/test/consumers.test.ts packages/components/test/metadata.test.ts` | 186 passed: the entry's sheets are pinned, `nativeButtonStyles` among them and the same object as the button's sheet; no consumer entry loads tooling |
+| Probes | `mutate.mjs`, 2 mutants of `packages/components/src/styles/index.ts` (the export removed; another sheet under its name) | 2 of 2 killed |
+| The native button | `browser-set.mjs` on `styling.browser.test.ts` and `button.browser.test.ts` | Chromium 33 passed; Firefox and WebKit 32 passed, 1 skipped |
+| Packages | `node scripts/verify-packs.mjs` | Every package installed from its tarball; declarations resolve |
+| Repository | `npm run build`, `npm run typecheck`, `npx vitest run --project node`, `node scripts/build-metadata.mjs`, `node scripts/check-vocabulary.mjs`, `npm run compat`, `npm run lint` | Each exit 0; node 1,698 passed, 2 skipped; no metadata warnings; vocabulary 0 findings; the compatibility matrix unchanged |
+| Size | `node scripts/check-size.mjs` | `components:shared`, the gzip of every sheet the entry exports, 3,479 B (was 3,136, its budget): the sheet is now one of them. No consumer bundle changes. Budget 3,520 (BUDGET to Agent 1) |
