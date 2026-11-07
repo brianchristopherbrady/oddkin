@@ -3,7 +3,7 @@ import type { Scope } from '@oddkin/core/scope';
 import { diffLines, diffWords, type DiffSegment } from '../controllers/diff.js';
 import type { EditProposal, ProposalStatus } from '../controllers/document.js';
 import { announceEvent, changeAcceptEvent, changeRejectEvent, changeUndoEvent } from '../events.js';
-import { FocusRecovery } from '@oddkin/core/controllers/focus';
+import { DecisionController } from '../internal/decision.js';
 import { format, strings } from '../internal/strings.js';
 
 export const CHANGE_REVIEW_STRINGS = {
@@ -172,10 +172,9 @@ export class OddkinChangeReview extends OddkinElement.with({
 
   protected override mounted(scope: Scope): void {
     scope.use(
-      new FocusRecovery({
-        root: () => this.shadowRoot,
-        fallback: () => this.shadowRoot?.querySelector<HTMLElement>('[part="list"]'),
-      }),
+      new DecisionController(this, () =>
+        this.shadowRoot?.querySelector<HTMLElement>('[part="list"]'),
+      ),
     );
     let previous = new Map<string, ProposalStatus>();
     scope.effect(

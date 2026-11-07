@@ -7,7 +7,7 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
   const t = host._strings;
   const c = host.checkpoint;
   if (!c) return html``;
-  const requested = host._requested.value === c.checkpointId;
+  const requested = host._decisions.asked(c.checkpointId);
   const pending = c.status === 'restore-pending' || (requested && c.status === 'available');
   const confirming = host._confirming.value && !pending;
   const status = pending

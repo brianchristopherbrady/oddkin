@@ -11,7 +11,7 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   const blocked = host._blocked;
   const pending =
     approval.status === 'decision-pending' || (blocked === '' && approval.status === 'requested');
-  const decided = host._requested.value?.split(':').pop();
+  const decided = host._decisions.choice(host._key(approval));
   const actionable = approval.status === 'requested' || approval.status === 'decision-failed';
   const statusText =
     approval.status === 'decision-failed'

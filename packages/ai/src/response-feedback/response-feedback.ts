@@ -3,7 +3,7 @@ import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { FeedbackRecord } from '../contracts/types.js';
 import { announceEvent, feedbackSubmitEvent } from '../events.js';
-import { FocusRecovery } from '@oddkin/core/controllers/focus';
+import { DecisionController } from '../internal/decision.js';
 import { strings } from '../internal/strings.js';
 
 export const FEEDBACK_STRINGS = {
@@ -110,10 +110,7 @@ export class OddkinResponseFeedback extends OddkinElement.with({
 
   protected override mounted(scope: Scope): void {
     scope.use(
-      new FocusRecovery({
-        root: () => this.shadowRoot,
-        fallback: () => this.shadowRoot?.querySelector<HTMLElement>('.outcome'),
-      }),
+      new DecisionController(this, () => this.shadowRoot?.querySelector<HTMLElement>('.outcome')),
     );
     let previous: string | undefined;
     scope.effect(

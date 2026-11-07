@@ -92,7 +92,10 @@ export const BUDGETS = {
   // IMPLEMENTATION_PLAN.md P1.8): measured 51,302 before the pass and 51,457 after its fourth
   // batch. 51,712 since the pass ended (2026-11-05), the smallest 256 B step above its final
   // measure, 51,605.
-  'ai-chat': 51712,
+  // 51,840 since 2026-11-06 (Agent 1's call; the owner allows raises per measured change for the
+  // component architecture audit), and from here in 64 B steps, not 256: measured 51,775 (+72 from
+  // 51,703) with the shared decision controller (component-architecture-audit.md §9, step 2).
+  'ai-chat': 51840,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

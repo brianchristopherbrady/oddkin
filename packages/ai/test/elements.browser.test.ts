@@ -327,6 +327,11 @@ describe('odd-tool-call and odd-action-approval', () => {
       expect.objectContaining({ revision: 1 }),
       expect.objectContaining({ revision: 2, decision: 'approve' }),
     ]);
+    // A failed decision releases the guard: the same revision can be decided again.
+    el.approval = approval('decision-failed', 2);
+    await settle(el);
+    approve().click();
+    expect(decisions).toHaveLength(3);
     el.approval = approval('approved', 2);
     await settle(el);
     expect($(el, '[part="actions"]')!.hidden).toBe(true);

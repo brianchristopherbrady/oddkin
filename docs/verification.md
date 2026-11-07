@@ -5823,3 +5823,13 @@ Three more AI elements against their Figma specimens, light and dark. On `7aa551
 | Packages | `node scripts/verify-packs.mjs` | Every package installed from its tarball; declarations resolve |
 | Repository | `npm run build`, `npm run typecheck`, `npx vitest run --project node`, `node scripts/build-metadata.mjs`, `node scripts/check-vocabulary.mjs`, `npm run compat`, `npm run lint` | Each exit 0; node 1,698 passed, 2 skipped; no metadata warnings; vocabulary 0 findings; the compatibility matrix unchanged |
 | Size | `node scripts/check-size.mjs` | `components:shared`, the gzip of every sheet the entry exports, 3,479 B (was 3,136, its budget): the sheet is now one of them. No consumer bundle changes. Budget 3,520 (BUDGET to Agent 1) |
+
+## 2026-11-06 — One internal controller for the AI decision guard and focus recovery (round 11, Agent 2; audit step 2)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| The guard | `npx vitest run --project node packages/ai/test` (with the new `decision.test.ts`) | Passed: one request per key, held while the record waits, released by another key or the host's answer, and reactive |
+| The elements | `browser-set.mjs` on every `packages/ai/test/*.browser.test.ts`, with A10 extended: after `decision-failed`, the same revision is decided again | 303 passed, 4 skipped, in each of Chromium, Firefox, and WebKit |
+| Probes | `mutate.mjs`, 8 mutants of `decision.ts`, run against the node test and the elements' browser tests | 7 killed. The survivor, a second `request()` overwriting the first, is equivalent in the elements, which check `asked()` before asking; the node test kills it |
+| Repository | `npm run build`, `npm run typecheck`, `node scripts/build-metadata.mjs`, `npm run lint` | Each exit 0; no metadata warnings |
+| Size | `node scripts/check-size.mjs` | `ai-chat` 51,775 B (51,703 before, +72; holding a `FocusRecovery` instead of extending it cost 84). The audit (§8) expected a small saving from this step; the one shared implementation costs 72 B. Budget 51,840 (Agent 1's call), the smallest 64 B step above; the budget now moves in 64 B steps |

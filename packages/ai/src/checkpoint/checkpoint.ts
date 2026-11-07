@@ -4,7 +4,7 @@ import type { Scope } from '@oddkin/core/scope';
 import { can, unavailableReason } from '../contracts/normalize.js';
 import type { Capabilities, CheckpointRecord } from '../contracts/types.js';
 import { announceEvent, checkpointRestoreEvent } from '../events.js';
-import { FocusRecovery } from '@oddkin/core/controllers/focus';
+import { DecisionController } from '../internal/decision.js';
 import { format, formatTime, langOf, strings } from '../internal/strings.js';
 
 export const CHECKPOINT_STRINGS = {
@@ -61,8 +61,20 @@ export class OddkinCheckpoint extends OddkinElement.with({
 
   /** @internal Confirmation step (presentation state). */
   readonly _confirming = signal(false);
-  /** @internal Restore requested from this view for this checkpoint id. */
-  readonly _requested = signal<string | undefined>(undefined);
+  /**
+   * @internal Restore requested from this view for a checkpoint id; focus recovery. While
+   * confirming, a vanished control hands focus to the confirmation, else to the status, or to
+   * Restore… when there is no status.
+   */
+  readonly _decisions = new DecisionController(
+    this,
+    () =>
+      (this._confirming.peek()
+        ? this.shadowRoot?.querySelector<HTMLElement>('[data-confirm]')
+        : undefined) ??
+      this.shadowRoot?.querySelector<HTMLElement>('.state:not([hidden])') ??
+      this.shadowRoot?.querySelector<HTMLElement>('[part="actions"] odd-button'),
+  );
 
   /** @internal */
   get _strings(): typeof CHECKPOINT_STRINGS {
@@ -95,36 +107,25 @@ export class OddkinCheckpoint extends OddkinElement.with({
   /** @internal */
   readonly _restore = (): void => {
     const c = this.checkpoint;
-    if (!c || this._unavailable !== undefined || this._requested.peek() === c.checkpointId) return;
+    if (!c || this._unavailable !== undefined || this._decisions.asked(c.checkpointId)) return;
     if (c.status === 'restore-pending') return;
     this._confirming.value = false;
-    this._requested.value = c.checkpointId;
+    this._decisions.request(c.checkpointId);
     this.emit(checkpointRestoreEvent, { checkpointId: c.checkpointId });
   };
 
   protected override mounted(scope: Scope): void {
-    // While confirming, a vanished control hands focus to the confirmation, else to the status,
-    // or to Restore… when there is no status.
-    scope.use(
-      new FocusRecovery({
-        root: () => this.shadowRoot,
-        fallback: () =>
-          (this._confirming.peek()
-            ? this.shadowRoot?.querySelector<HTMLElement>('[data-confirm]')
-            : undefined) ??
-          this.shadowRoot?.querySelector<HTMLElement>('.state:not([hidden])') ??
-          this.shadowRoot?.querySelector<HTMLElement>('[part="actions"] odd-button'),
-      }),
-    );
+    scope.use(this._decisions);
     let previous: CheckpointRecord['status'] | undefined;
     scope.effect(
       () => {
         const c = this.checkpoint;
         if (!c) return;
-        if (c.status !== 'restore-pending' && c.status !== 'available')
-          this._requested.value = undefined;
-        if (c.status === 'available' && previous === 'restore-pending')
-          this._requested.value = undefined;
+        this._decisions.settle(
+          c.checkpointId,
+          (c.status !== 'restore-pending' && c.status !== 'available') ||
+            (c.status === 'available' && previous === 'restore-pending'),
+        );
         if (
           this.announce !== 'none' &&
           previous &&

@@ -3,7 +3,7 @@ import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
 import type { JsonValue, QuestionRecord } from '../contracts/types.js';
 import { announceEvent, questionAnswerEvent, questionSkipEvent } from '../events.js';
-import { FocusRecovery } from '@oddkin/core/controllers/focus';
+import { DecisionController } from '../internal/decision.js';
 import { format, formatTime, langOf, strings } from '../internal/strings.js';
 
 export const QUESTION_STRINGS = {
@@ -54,8 +54,10 @@ export class OddkinQuestion extends OddkinElement.with({
   };
   declare readonly _events?: ElementEvents<typeof OddkinQuestion>;
 
-  /** @internal `questionId:revision` requested from this view. */
-  readonly _requested = signal<string | undefined>(undefined);
+  /** @internal The answer requested from this view for a question revision; focus recovery. */
+  readonly _decisions = new DecisionController(this, () =>
+    this.shadowRoot?.querySelector<HTMLElement>('.state'),
+  );
   /** @internal Validation message for choice questions. */
   readonly _invalid = signal('');
 
@@ -75,7 +77,7 @@ export class OddkinQuestion extends OddkinElement.with({
     const q = this.question;
     if (!q) return true;
     if (q.status !== 'requested' && q.status !== 'failed') return true;
-    return this._requested.value === `${q.questionId}:${q.revision}`;
+    return this._decisions.asked(`${q.questionId}:${q.revision}`);
   }
 
   /** @internal */
@@ -91,7 +93,7 @@ export class OddkinQuestion extends OddkinElement.with({
       return;
     }
     this._invalid.value = '';
-    this._requested.value = `${q.questionId}:${q.revision}`;
+    this._decisions.request(`${q.questionId}:${q.revision}`);
     this.emit(questionAnswerEvent, { questionId: q.questionId, revision: q.revision, answer });
   };
 
@@ -99,7 +101,7 @@ export class OddkinQuestion extends OddkinElement.with({
   readonly _skip = (): void => {
     const q = this.question;
     if (!q || this._locked) return;
-    this._requested.value = `${q.questionId}:${q.revision}`;
+    this._decisions.request(`${q.questionId}:${q.revision}`);
     this.emit(questionSkipEvent, { questionId: q.questionId, revision: q.revision });
   };
 
@@ -145,21 +147,14 @@ export class OddkinQuestion extends OddkinElement.with({
   }
 
   protected override mounted(scope: Scope): void {
-    scope.use(
-      new FocusRecovery({
-        root: () => this.shadowRoot,
-        fallback: () => this.shadowRoot?.querySelector<HTMLElement>('.state'),
-      }),
-    );
+    scope.use(this._decisions);
     let seen: string | undefined;
     scope.effect(
       () => {
         const q = this.question;
         if (!q) return;
         const key = `${q.questionId}:${q.revision}`;
-        const requested = this._requested.peek();
-        if (requested && (requested !== key || q.status === 'failed'))
-          this._requested.value = undefined;
+        this._decisions.settle(key, q.status === 'failed');
         if (this.announce !== 'none' && seen !== key && q.status === 'requested')
           this.emit(announceEvent, {
             text: format(this._strings.announceAsked, { prompt: q.prompt }),

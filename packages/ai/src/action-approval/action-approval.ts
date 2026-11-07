@@ -4,7 +4,7 @@ import type { Scope } from '@oddkin/core/scope';
 import { can, unavailableReason } from '../contracts/normalize.js';
 import type { ApprovalRecord, ApprovalStatus, Capabilities } from '../contracts/types.js';
 import { announceEvent, approvalDecideEvent, approvalEditEvent } from '../events.js';
-import { FocusRecovery } from '@oddkin/core/controllers/focus';
+import { DecisionController } from '../internal/decision.js';
 import { format, formatTime, langOf, strings } from '../internal/strings.js';
 
 export const APPROVAL_STRINGS = {
@@ -76,14 +76,21 @@ export class OddkinActionApproval extends OddkinElement.with({
   };
   declare readonly _events?: ElementEvents<typeof OddkinActionApproval>;
 
-  /** @internal `approvalId:revision:decision` requested from this view, until the record changes. */
-  readonly _requested = signal<string | undefined>(undefined);
+  /** @internal The decision requested from this view, until the record changes; focus recovery. */
+  readonly _decisions = new DecisionController(this, () =>
+    this.shadowRoot?.querySelector<HTMLElement>('.state'),
+  );
   /** @internal Local draft of the rejection reason. */
   readonly _reason = signal('');
 
   /** @internal */
   get _strings(): typeof APPROVAL_STRINGS {
     return strings(APPROVAL_STRINGS, this.strings);
+  }
+
+  /** @internal The guard's key: an approval and its revision. */
+  _key(approval: ApprovalRecord): string {
+    return `${approval.approvalId}:${approval.revision}`;
   }
 
   /** @internal Whether a decision can be requested now, and why not otherwise. */
@@ -93,8 +100,7 @@ export class OddkinActionApproval extends OddkinElement.with({
     if (!can(this.capabilities, 'respondToApproval'))
       return unavailableReason(this.capabilities, 'respondToApproval') ?? this._strings.unavailable;
     if (approval.status !== 'requested' && approval.status !== 'decision-failed') return '';
-    if (this._requested.value?.startsWith(`${approval.approvalId}:${approval.revision}:`))
-      return '';
+    if (this._decisions.asked(this._key(approval))) return '';
     return undefined;
   }
 
@@ -102,7 +108,7 @@ export class OddkinActionApproval extends OddkinElement.with({
   readonly _decide = (decision: 'approve' | 'reject'): void => {
     const approval = this.approval;
     if (!approval || this._blocked !== undefined) return;
-    this._requested.value = `${approval.approvalId}:${approval.revision}:${decision}`;
+    this._decisions.request(this._key(approval), decision);
     this.emit(approvalDecideEvent, {
       approvalId: approval.approvalId,
       revision: approval.revision,
@@ -136,25 +142,15 @@ export class OddkinActionApproval extends OddkinElement.with({
   }
 
   protected override mounted(scope: Scope): void {
-    scope.use(
-      new FocusRecovery({
-        root: () => this.shadowRoot,
-        fallback: () => this.shadowRoot?.querySelector<HTMLElement>('.state'),
-      }),
-    );
+    scope.use(this._decisions);
     let seen: { key: string; status: ApprovalStatus } | undefined;
     scope.effect(
       () => {
         const approval = this.approval;
         if (!approval) return;
-        const key = `${approval.approvalId}:${approval.revision}`;
+        const key = this._key(approval);
         // A different proposal (or a failed decision) releases the local duplicate guard.
-        const requested = this._requested.peek();
-        if (
-          requested &&
-          (!requested.startsWith(`${key}:`) || approval.status === 'decision-failed')
-        )
-          this._requested.value = undefined;
+        this._decisions.settle(key, approval.status === 'decision-failed');
         const changed = !seen || seen.key !== key || seen.status !== approval.status;
         const announceNew = !seen ? approval.status === 'requested' : changed;
         seen = { key, status: approval.status };
