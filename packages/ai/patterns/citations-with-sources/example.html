@@ -1,0 +1,35 @@
+<!-- Citations with sources: numbered markers in an answer, and the list they reveal. Load @oddkin/tokens/css/default.css and @oddkin/components/css/layout.css on the page. -->
+<div class="odd-stack">
+  <odd-response></odd-response>
+  <odd-sources label="Sources"></odd-sources>
+</div>
+<script type="module">
+  import '@oddkin/ai/define/response';
+  import '@oddkin/ai/define/sources';
+
+  const sources = [
+    {
+      type: 'source',
+      id: 's1',
+      sourceId: 'report',
+      title: 'Annual report',
+      url: 'https://example.com/report',
+    },
+    {
+      type: 'source',
+      id: 's2',
+      sourceId: 'survey',
+      title: 'Customer survey',
+      url: 'https://example.com/survey',
+    },
+  ];
+  const response = document.querySelector('odd-response');
+  const list = document.querySelector('odd-sources');
+  response.sources = sources;
+  response.text = 'Revenue grew by a fifth [^report], and most customers renewed [^survey].';
+  list.sources = sources;
+  // "Show in sources": reveal the entry, and stop outer handlers from doing it again.
+  document.addEventListener('odd-source-reveal', (event) => {
+    if (list.reveal(event.detail.sourceId)) event.preventDefault();
+  });
+</script>

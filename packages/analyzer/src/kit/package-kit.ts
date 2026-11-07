@@ -214,6 +214,51 @@ export async function compositionReference(library: Library): Promise<KitFile | 
   };
 }
 
+/**
+ * The reference for a package's composition patterns (`patterns/index.json`, shipped with the
+ * package; component-architecture-audit.md section 7): each pattern's title, summary, elements,
+ * and the files to read. `undefined` when the package has none.
+ */
+export function patternsReference(library: Library): KitFile | undefined {
+  const index = join(library.dir, 'patterns', 'index.json');
+  if (!existsSync(index)) return undefined;
+  const { patterns = [] } = JSON.parse(readFileSync(index, 'utf8')) as {
+    patterns?: Array<{
+      id: string;
+      title: string;
+      summary: string;
+      replaces?: string;
+      elements: string[];
+      recipes?: string[];
+    }>;
+  };
+  if (!patterns.length) return undefined;
+  const file = (id: string, name: string) =>
+    existsSync(join(library.dir, 'patterns', id, name))
+      ? [code(`${library.name}/patterns/${id}/${name}`)]
+      : [];
+  const text = [
+    `# ${library.name} ${library.version}: patterns`,
+    '',
+    'Recommended arrangements of existing elements, with no element of their own. Each has a page (the problem, the elements, interaction and accessibility, responsive behaviour, states, when to use it, and its tests) and a working example in plain HTML, shipped in the package.',
+    '',
+    ...patterns.flatMap((p) => [
+      `## ${p.title}`,
+      '',
+      `${p.summary}${p.replaces ? ` Replaces ${code(`<${p.replaces}>`)}.` : ''}`,
+      '',
+      `- Elements: ${p.elements.map((tag) => code(`<${tag}>`)).join(', ')}${p.recipes?.length ? `; recipes: ${p.recipes.map(code).join(', ')}` : ''}.`,
+      `- Read: ${[...file(p.id, 'README.md'), ...file(p.id, 'example.html'), ...file(p.id, 'composition.json')].join(', ')}.`,
+      '',
+    ]),
+  ].join('\n');
+  return {
+    path: 'references/patterns.md',
+    text,
+    entry: { id: 'patterns', kind: 'pattern', provenance: 'authored' },
+  };
+}
+
 /** llms.txt (llmstxt.org) for the packaged kit: the guide first, then every reference. */
 export function llmsText(library: Library, manifest: KitManifest): string {
   const description: string = library.manifest['description'] ?? '';
@@ -269,9 +314,10 @@ export async function packageKit(
   library: Library,
 ): Promise<{ dir: string; files: Map<string, string>; manifest: KitManifest }> {
   const composition = await compositionReference(library);
+  const patterns = patternsReference(library);
   const { files, manifest } = generateKit(project, library.name, {
     packaged: true,
-    extra: composition ? [composition] : [],
+    extra: [composition, patterns].filter((file): file is KitFile => !!file),
   });
   manifest.packaging = ['llms-txt'];
   files.set('kit.json', `${JSON.stringify(manifest, null, 2)}\n`);

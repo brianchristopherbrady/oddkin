@@ -1,0 +1,63 @@
+{
+  "$comment": "Composition patterns of @oddkin/ai (component-architecture-audit.md section 7): recommended arrangements of existing elements, each with a working example and tests, and no element of its own. The agent kit lists them.",
+  "patterns": [
+    {
+      "id": "suggested-prompts",
+      "title": "Suggested prompts",
+      "summary": "Offer a few prompts the user can start from: buttons in a labelled group that fill the composer.",
+      "replaces": "odd-suggestions",
+      "elements": ["odd-button", "odd-prompt-input"],
+      "recipes": [".odd-cluster"]
+    },
+    {
+      "id": "branch-navigation",
+      "title": "Branch navigation",
+      "summary": "Move between versions of a message: previous and next buttons around the position.",
+      "replaces": "odd-message-branch",
+      "elements": ["odd-button"],
+      "recipes": [".odd-row"]
+    },
+    {
+      "id": "reasoning-disclosure",
+      "title": "Reasoning disclosure",
+      "summary": "Show a model's reasoning on request, collapsed by default.",
+      "elements": ["odd-disclosure", "odd-response"],
+      "recipes": []
+    },
+    {
+      "id": "copy-action",
+      "title": "Copy action",
+      "summary": "Offer copying for any AI output, from its canonical text or from an element on the page.",
+      "elements": ["odd-copy-button"],
+      "recipes": []
+    },
+    {
+      "id": "empty-conversation",
+      "title": "Empty conversation",
+      "summary": "Tell people what they can do before the first message, with prompts to start from.",
+      "elements": ["odd-conversation", "odd-empty-state", "odd-button", "odd-prompt-input"],
+      "recipes": [".odd-cluster"]
+    },
+    {
+      "id": "chat-layout",
+      "title": "Chat layout",
+      "summary": "A conversation, its composer, and a side panel for sources or artifacts that stacks on narrow screens.",
+      "elements": ["odd-conversation", "odd-prompt-input", "odd-split-panel"],
+      "recipes": [".odd-split"]
+    },
+    {
+      "id": "citations-with-sources",
+      "title": "Citations with sources",
+      "summary": "Inline citation markers in a response, and the numbered list of sources they reveal.",
+      "elements": ["odd-response", "odd-citation", "odd-sources"],
+      "recipes": []
+    },
+    {
+      "id": "approval-outside-a-tool-call",
+      "title": "Approval outside a tool call",
+      "summary": "Ask for a decision on any action the application is about to take, on its own.",
+      "elements": ["odd-action-approval"],
+      "recipes": []
+    }
+  ]
+}

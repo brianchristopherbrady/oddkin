@@ -100,6 +100,10 @@ Elements use properties for records and typed, bubbling, composed events for int
 
 Full API (properties, attributes, events, slots, parts, CSS properties) is in `custom-elements.json` and `oddkin.metadata.json`; record schemas in `schemas/`.
 
+## Patterns
+
+Arrangements of these elements for common needs, with no element of their own, each with a page and a working example in plain HTML: [patterns/](patterns/index.json) (shipped in the package, and listed in its agent kit). Suggested prompts, branch navigation, reasoning disclosure, copy action, empty conversation, chat layout, citations with sources, and approval outside a tool call.
+
 ## States you must report
 
 Elements show what records say. Report loading, empty, interrupted, denied, stale, failed, and recovered states through records (`AttemptRecord.status`, tool/approval/question/checkpoint `status`, `PublicError`) and capabilities (`{ available: false, reason }`). An event is a request: the element stays pending until the record changes.

@@ -1,0 +1,11 @@
+<!-- Reasoning disclosure: a model's reasoning, collapsed under its name. Load @oddkin/tokens/css/default.css on the page. -->
+<odd-disclosure label="Reasoning">
+  <odd-response></odd-response>
+</odd-disclosure>
+<script type="module">
+  import '@oddkin/components/define/disclosure';
+  import '@oddkin/ai/define/response';
+
+  const reasoning = document.querySelector('odd-disclosure > odd-response');
+  reasoning.text = 'The question asks for **two** sources, so I check both before answering.';
+</script>

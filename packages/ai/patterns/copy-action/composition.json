@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "root": [
+    {
+      "element": "div",
+      "attributes": { "class": "odd-row" },
+      "children": [
+        { "element": "span", "id": "command", "children": ["npm install @oddkin/ai"] },
+        {
+          "element": "odd-copy-button",
+          "attributes": { "from": "command", "label": "Copy command" },
+          "actions": { "odd-copy": "command.copied" }
+        }
+      ]
+    }
+  ]
+}

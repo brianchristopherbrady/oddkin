@@ -73,6 +73,7 @@
               "stylesheet",
               "model",
               "composition",
+              "pattern",
               "task",
               "json"
             ]

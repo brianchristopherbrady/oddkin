@@ -63,6 +63,28 @@ describe('packaged agent kits', () => {
     expect(manifest.entries.some((e) => e.kind === 'composition')).toBe(false);
   });
 
+  it("list a package's patterns beside its components (component-architecture-audit.md section 7)", async () => {
+    const { files, manifest } = await packageKit(project, library('@oddkin/ai'));
+    expect(manifest.entries.filter((e) => e.kind === 'pattern')).toEqual([
+      { id: 'patterns', path: 'references/patterns.md', kind: 'pattern', provenance: 'authored' },
+    ]);
+    expect(files.get('GUIDE.md')).toContain('each with a working example: references/patterns.md.');
+    const text = files.get('references/patterns.md')!;
+    const { patterns } = json('packages/ai/patterns/index.json') as {
+      patterns: { id: string; title: string }[];
+    };
+    for (const { id, title } of patterns) {
+      expect(text).toContain(`\n## ${title}\n`);
+      expect(text).toContain(`\`@oddkin/ai/patterns/${id}/README.md\``);
+      expect(text).toContain(`\`@oddkin/ai/patterns/${id}/example.html\``);
+    }
+    // A composition document only where the pattern has one.
+    expect(text).toContain('`@oddkin/ai/patterns/copy-action/composition.json`');
+    expect(text).not.toContain('chat-layout/composition.json');
+    const components = await packageKit(project, library('@oddkin/components'));
+    expect(components.manifest.entries.some((e) => e.kind === 'pattern')).toBe(false);
+  });
+
   it('document the composition entry from what the package publishes', async () => {
     const { files } = await packageKit(project, library('@oddkin/components'));
     const text = files.get('references/composition.md')!;

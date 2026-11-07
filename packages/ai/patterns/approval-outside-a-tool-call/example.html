@@ -1,0 +1,33 @@
+<!-- Approval outside a tool call: a decision on any action the application is about to take. Load @oddkin/tokens/css/default.css on the page. -->
+<div class="approval-panel">
+  <odd-action-approval announce="important"></odd-action-approval>
+</div>
+<script type="module">
+  import '@oddkin/ai/define/action-approval';
+  import { createAnnouncer } from '@oddkin/ai/announce';
+
+  // One announcer for the surface: the approval's outcome is spoken from its live regions.
+  createAnnouncer(document.querySelector('.approval-panel'));
+  const approval = document.querySelector('odd-action-approval');
+  approval.capabilities = { respondToApproval: { available: true } };
+  approval.approval = {
+    approvalId: 'send-notes',
+    revision: 1,
+    title: 'Send the release notes',
+    summary: 'Emails the release notes the assistant drafted to the team.',
+    target: 'team@example.com',
+    changes: [{ label: 'Subject', before: 'Draft', after: 'Release 2.0' }],
+    risk: 'medium',
+    status: 'requested',
+  };
+  // The host decides; a decision made on an older revision is ignored.
+  approval.addEventListener('odd-approval-decide', ({ detail }) => {
+    const current = approval.approval;
+    if (current.revision !== detail.revision) return;
+    approval.approval = {
+      ...current,
+      status: detail.decision === 'approve' ? 'approved' : 'rejected',
+      decision: detail.decision,
+    };
+  });
+</script>

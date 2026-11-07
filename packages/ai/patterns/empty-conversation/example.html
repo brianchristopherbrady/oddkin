@@ -1,0 +1,30 @@
+<!-- Empty conversation: what the assistant does, and prompts to start from, before the first message. Load @oddkin/tokens/css/default.css and @oddkin/components/css/layout.css on the page. -->
+<odd-conversation label="Conversation">
+  <odd-empty-state slot="empty" label="Ask about your documents">
+    Answers come from the documents you add, with their sources. Nothing is sent until you press
+    Send.
+    <div slot="footer" class="odd-cluster" role="group" aria-label="Suggested prompts">
+      <odd-button size="sm" data-prompt="Summarize this document in five points."
+        >Summarize a document</odd-button
+      >
+      <odd-button size="sm" data-prompt="Compare these two reports."
+        >Compare two reports</odd-button
+      >
+      <odd-button size="sm" data-prompt="Draft a reply to this email.">Draft a reply</odd-button>
+    </div>
+  </odd-empty-state>
+  <odd-prompt-input slot="composer" label="Message"></odd-prompt-input>
+</odd-conversation>
+<script type="module">
+  import '@oddkin/components/define/button';
+  import '@oddkin/components/define/empty-state';
+  import '@oddkin/ai/define/conversation';
+  import '@oddkin/ai/define/prompt-input';
+
+  const input = document.querySelector('odd-prompt-input');
+  for (const button of document.querySelectorAll('[data-prompt]'))
+    button.addEventListener('click', () => {
+      input.value = button.dataset.prompt;
+      input.focus();
+    });
+</script>

@@ -1,0 +1,35 @@
+<!-- Branch navigation: previous and next around the position of a message among its versions. Load @oddkin/tokens/css/default.css and @oddkin/components/css/layout.css on the page. -->
+<div class="odd-row" role="group" aria-label="Versions" data-message="m2">
+  <odd-button size="sm" appearance="ghost" label="Previous version" data-step="previous"
+    >‹</odd-button
+  >
+  <span class="position"></span>
+  <odd-button size="sm" appearance="ghost" label="Next version" data-step="next">›</odd-button>
+</div>
+<script type="module">
+  import '@oddkin/components/define/button';
+
+  const group = document.querySelector('[aria-label="Versions"]');
+  let branch = { index: 2, count: 3, previousId: 'm2a', nextId: 'm2c' };
+  const draw = () => {
+    group.hidden = branch.count < 2;
+    group.querySelector('.position').textContent = `Version ${branch.index} of ${branch.count}`;
+    group.querySelector('[data-step="previous"]').disabled = !branch.previousId;
+    group.querySelector('[data-step="next"]').disabled = !branch.nextId;
+  };
+  group.addEventListener('click', (event) => {
+    const step = event.target.closest('[data-step]')?.dataset.step;
+    const targetId =
+      step === 'previous' ? branch.previousId : step === 'next' ? branch.nextId : undefined;
+    if (!targetId) return;
+    // The host switches; the same request odd-message sends.
+    group.dispatchEvent(
+      new CustomEvent('odd-branch-switch', {
+        bubbles: true,
+        composed: true,
+        detail: { messageId: group.dataset.message, targetMessageId: targetId },
+      }),
+    );
+  });
+  draw();
+</script>

@@ -1,0 +1,26 @@
+<!-- Suggested prompts: buttons in a labelled group that fill the composer. Load @oddkin/tokens/css/default.css and @oddkin/components/css/layout.css on the page. -->
+<div class="odd-stack">
+  <div class="odd-cluster" role="group" aria-label="Suggested prompts">
+    <odd-button size="sm" data-prompt="Summarize this document in five points."
+      >Summarize this document</odd-button
+    >
+    <odd-button size="sm" data-prompt="List the decisions this document records."
+      >List the decisions</odd-button
+    >
+    <odd-button size="sm" data-prompt="Which questions does this document leave open?"
+      >Find open questions</odd-button
+    >
+  </div>
+  <odd-prompt-input label="Message" placeholder="Ask a question…"></odd-prompt-input>
+</div>
+<script type="module">
+  import '@oddkin/components/define/button';
+  import '@oddkin/ai/define/prompt-input';
+
+  const input = document.querySelector('odd-prompt-input');
+  for (const button of document.querySelectorAll('[data-prompt]'))
+    button.addEventListener('click', () => {
+      input.value = button.dataset.prompt;
+      input.focus();
+    });
+</script>

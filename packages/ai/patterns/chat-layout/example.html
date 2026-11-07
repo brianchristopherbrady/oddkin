@@ -1,0 +1,34 @@
+<!-- Chat layout: a conversation and a side pane, side by side or stacked. Load @oddkin/tokens/css/default.css and @oddkin/components/css/layout.css on the page. -->
+<odd-split-panel label="Resize conversation" position="65" min="40" max="80">
+  <odd-conversation slot="start" label="Conversation">
+    <odd-prompt-input slot="composer" label="Message"></odd-prompt-input>
+  </odd-conversation>
+  <section slot="end" aria-label="Sources">
+    <odd-sources label="Sources"></odd-sources>
+  </section>
+</odd-split-panel>
+<script type="module">
+  import '@oddkin/components/define/split-panel';
+  import '@oddkin/ai/define/conversation';
+  import '@oddkin/ai/define/prompt-input';
+  import '@oddkin/ai/define/sources';
+
+  // The split follows its own width: stacked below 48rem, the conversation on top. The change
+  // waits for the next frame, outside the observer's callback, since it resizes what it observes.
+  const layout = document.querySelector('odd-split-panel');
+  const stackBelow = 48 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  new ResizeObserver(([entry]) => {
+    const orientation = entry.contentRect.width < stackBelow ? 'vertical' : 'horizontal';
+    if (layout.orientation !== orientation)
+      requestAnimationFrame(() => (layout.orientation = orientation));
+  }).observe(layout);
+  document.querySelector('odd-sources').sources = [
+    {
+      type: 'source',
+      id: 's1',
+      sourceId: 'report',
+      title: 'Annual report',
+      url: 'https://example.com/report',
+    },
+  ];
+</script>

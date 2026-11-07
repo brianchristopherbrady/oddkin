@@ -1,0 +1,17 @@
+<!-- Copy action: copy an answer's canonical text, or text shown on the page. Load @oddkin/tokens/css/default.css and @oddkin/components/css/layout.css on the page. -->
+<div class="odd-stack">
+  <div class="odd-row">
+    <odd-copy-button class="answer" label="Copy answer"></odd-copy-button>
+  </div>
+  <div class="odd-row">
+    <code id="command">npm install @oddkin/ai</code>
+    <odd-copy-button from="command" label="Copy command"></odd-copy-button>
+  </div>
+</div>
+<script type="module">
+  import '@oddkin/components/define/copy-button';
+
+  // The record's canonical Markdown, not the rendered text.
+  const answer = { text: 'Use **one** `renderers` object for every element.' };
+  document.querySelector('odd-copy-button.answer').value = answer.text;
+</script>

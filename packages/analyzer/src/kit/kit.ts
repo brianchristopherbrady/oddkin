@@ -30,6 +30,7 @@ export interface KitEntry {
     | 'stylesheet'
     | 'model'
     | 'composition'
+    | 'pattern'
     | 'task'
     | 'json';
   provenance: 'extracted' | 'authored' | 'verified';
@@ -579,6 +580,10 @@ function guide(
         )),
     '',
     'Choosing between them: references/choosing-components.md.',
+    ...refs('pattern').map(
+      (e) =>
+        `\nPatterns that arrange them for common needs, each with a working example: ${e.path}.`,
+    ),
     '',
     '## Rules from the metadata',
     '',

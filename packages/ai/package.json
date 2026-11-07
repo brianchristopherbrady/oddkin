@@ -324,6 +324,7 @@
     "dist",
     "schemas",
     "agent",
+    "patterns",
     "custom-elements.json",
     "oddkin.metadata.json",
     "README.md"
