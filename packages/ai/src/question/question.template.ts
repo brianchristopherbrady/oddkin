@@ -1,5 +1,6 @@
 import { html } from '@oddkin/core/template';
 import { decisionRow } from '../internal/decision-row.js';
+import { expiryBadge } from '../internal/expiry.js';
 import { format } from '../internal/strings.js';
 import type { OddkinQuestion } from './question.js';
 
@@ -17,11 +18,10 @@ export const questionTemplate = (host: OddkinQuestion) => {
   const inFlight = asked || q.status === 'submitting';
   const choice = q.kind === 'choice' || q.kind === 'multi-choice';
   const inputType = q.kind === 'choice' ? 'radio' : 'checkbox';
-  const expires = host._expires();
   return html`<form part="form" class="form" @submit=${host._submit} novalidate>
     <fieldset ?disabled=${locked}>
       <legend class="prompt">${q.prompt}</legend>
-      <p class="muted" ?hidden=${!expires}>${expires ?? ''}</p>
+      ${open || inFlight ? expiryBadge(host, q.expiresAt, t.expires) : null}
       ${
         choice
           ? html`<div class="options">

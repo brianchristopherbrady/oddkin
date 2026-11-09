@@ -2650,3 +2650,58 @@ describe('the elements that act on their own or only show (contract review, 2026
     }
   });
 });
+
+describe('the expiry (Figma page 08)', () => {
+  it('shows when a request expires as a badge while it is open: a warning from five minutes before, nothing when absent or unformattable (Figma page 08, Expiry)', async () => {
+    const at = (minutes: number) => new Date(Date.now() + minutes * 60_000).toISOString();
+    const approval = await mount(
+      'odd-action-approval',
+      () => import('../src/action-approval/action-approval.define.js'),
+      (e) => {
+        e.approval = {
+          approvalId: 'ap',
+          revision: 1,
+          title: 'Deploy',
+          status: 'requested',
+          expiresAt: at(60),
+        };
+        e.capabilities = { respondToApproval: { available: true } };
+      },
+    );
+    const badge = (el: Element) => $(el, 'odd-badge.expiry');
+    const show = async (
+      expiresAt: string | undefined,
+      status: ApprovalRecord['status'] = 'requested',
+    ) => {
+      approval.approval = { ...approval.approval!, expiresAt, status };
+      await settle(approval);
+      return badge(approval);
+    };
+    expect(badge(approval)?.getAttribute('tone')).toBe('neutral');
+    expect(text(badge(approval))).toMatch(/^Expires /);
+    expect((await show(at(4)))?.getAttribute('tone')).toBe('warning');
+    expect(await show(undefined)).toBeNull();
+    expect(await show('not a date')).toBeNull();
+    // Only the record says it expired: then the outcome speaks, and no badge.
+    expect(await show(at(-1), 'expired')).toBeNull();
+    expect(text($(approval, '.outcome'))).toBe(
+      'This request expired before a decision was recorded.',
+    );
+    const question = await mount(
+      'odd-question',
+      () => import('../src/question/question.define.js'),
+      (e) => {
+        e.question = {
+          questionId: 'q',
+          revision: 1,
+          prompt: 'Which audience?',
+          kind: 'text',
+          status: 'requested',
+          expiresAt: at(2),
+        };
+      },
+    );
+    expect(badge(question)?.getAttribute('tone')).toBe('warning');
+    expect(text(badge(question))).toMatch(/^Answer by /);
+  });
+});

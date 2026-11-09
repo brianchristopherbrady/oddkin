@@ -1,6 +1,7 @@
 import { html } from '@oddkin/core/template';
 import { can } from '../contracts/normalize.js';
 import { decisionRow, type DecisionState } from '../internal/decision-row.js';
+import { expiryBadge } from '../internal/expiry.js';
 import { scopeChoice } from '../internal/scope-choice.js';
 import { format } from '../internal/strings.js';
 import type { OddkinActionApproval } from './action-approval.js';
@@ -37,7 +38,6 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
             tone: status === 'approved' ? 'success' : status === 'rejected' ? 'danger' : undefined,
           },
         };
-  const expires = host._expires();
   return html`<div
     part="base"
     class="base"
@@ -50,9 +50,10 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
     <p class="target" ?hidden=${!approval.target}>
       <span class="muted">${t.target}:</span> ${approval.target ?? ''}
     </p>
-    <p class="muted" ?hidden=${!approval.risk && !expires}>
-      ${approval.risk ? format(t.risk, { risk: t[approval.risk] }) : ''} ${expires ?? ''}
+    <p class="muted" ?hidden=${!approval.risk}>
+      ${approval.risk ? format(t.risk, { risk: t[approval.risk] }) : ''}
     </p>
+    ${actionable || pending ? expiryBadge(host, approval.expiresAt, t.expires) : null}
     ${
       approval.changes?.length
         ? html`<div part="changes" class="changes" role="group" aria-label=${t.changes}>

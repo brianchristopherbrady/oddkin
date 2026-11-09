@@ -5,7 +5,7 @@ import { can, unavailableReason } from '../contracts/normalize.js';
 import type { Capabilities, JsonValue, QuestionRecord } from '../contracts/types.js';
 import { announceEvent, questionAnswerEvent, questionSkipEvent } from '../events.js';
 import { DecisionController } from '../internal/decision.js';
-import { format, formatTime, langOf, strings } from '../internal/strings.js';
+import { format, strings } from '../internal/strings.js';
 
 export const QUESTION_STRINGS = {
   other: 'Other',
@@ -73,12 +73,6 @@ export class OddkinQuestion extends OddkinElement.with({
   /** @internal */
   get _strings(): typeof QUESTION_STRINGS {
     return strings(QUESTION_STRINGS, this.strings);
-  }
-
-  /** @internal */
-  _expires(): string | undefined {
-    const time = formatTime(this.question?.expiresAt, langOf(this));
-    return time ? format(this._strings.expires, { time }) : undefined;
   }
 
   /** @internal Why answers cannot be sent, when the capabilities given say so. */

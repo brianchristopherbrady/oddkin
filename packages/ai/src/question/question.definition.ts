@@ -1,3 +1,4 @@
+import { badgeDefinition } from '@oddkin/components/badge';
 import { buttonDefinition } from '@oddkin/components/button';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
@@ -11,5 +12,5 @@ export const questionDefinition = compose({
   element: OddkinQuestion,
   template: questionTemplate,
   styles: [aiBaseStyles, decisionRowStyles, questionStyles],
-  dependencies: { button: buttonDefinition },
+  dependencies: { badge: badgeDefinition, button: buttonDefinition },
 });

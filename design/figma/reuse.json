@@ -15,10 +15,10 @@
   "counts": {
     "style": 121,
     "slot": 54,
-    "deferred": 21,
+    "deferred": 20,
     "controller": 18,
     "native": 7,
-    "element": 23
+    "element": 24
   },
   "references": [
     {
@@ -198,8 +198,8 @@
       "source": "Oddkin/AI/Internal/BadgePresentation",
       "sourceId": "837:2455",
       "count": 2,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "element",
+      "reason": "The expiry (packages/ai/src/internal/expiry.ts) renders a complete odd-badge, a warning from five minutes before; BadgePresentation is its Figma-only adapter (ADR 0049)."
     },
     {
       "consumer": "Oddkin/AI/Internal/ScopeChoice",
@@ -2220,8 +2220,8 @@
   ],
   "elements": {
     "odd-action-approval": {
-      "dependencies": ["odd-button"],
-      "reason": "Approve, reject, and edit are complete buttons (Figma: button ×2)."
+      "dependencies": ["odd-badge", "odd-button"],
+      "reason": "Approve, reject, and edit are complete buttons (Figma: button ×2); the expiry is a complete odd-badge (Figma page 08, Expiry)."
     },
     "odd-activity": {
       "dependencies": ["odd-badge"],
@@ -2339,8 +2339,8 @@
       "reason": "Send and stop are complete buttons (Figma: button ×1)."
     },
     "odd-question": {
-      "dependencies": ["odd-button"],
-      "reason": "Submit and skip are complete buttons (Figma: button/sm ×2)."
+      "dependencies": ["odd-badge", "odd-button"],
+      "reason": "Submit and skip are complete buttons (Figma: button/sm ×2); the expiry is a complete odd-badge (Figma page 08, Expiry)."
     },
     "odd-radio-group": { "dependencies": [] },
     "odd-rating": { "dependencies": [] },

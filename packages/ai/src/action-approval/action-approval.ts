@@ -5,7 +5,7 @@ import { can, scopesValid, unavailableReason } from '../contracts/normalize.js';
 import type { ApprovalRecord, ApprovalStatus, Capabilities } from '../contracts/types.js';
 import { announceEvent, approvalDecideEvent, approvalEditEvent } from '../events.js';
 import { DecisionController } from '../internal/decision.js';
-import { format, formatTime, langOf, strings } from '../internal/strings.js';
+import { format, strings } from '../internal/strings.js';
 
 export const APPROVAL_STRINGS = {
   approve: 'Approve',
@@ -206,12 +206,6 @@ export class OddkinActionApproval extends OddkinElement.with({
         id: (event.target as HTMLInputElement | HTMLSelectElement).value,
       };
   };
-
-  /** @internal */
-  _expires(): string | undefined {
-    const time = formatTime(this.approval?.expiresAt, langOf(this));
-    return time ? format(this._strings.expires, { time }) : undefined;
-  }
 
   protected override mounted(scope: Scope): void {
     scope.use(this._decisions);

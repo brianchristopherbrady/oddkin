@@ -1,3 +1,4 @@
+import { badgeDefinition } from '@oddkin/components/badge';
 import { buttonDefinition } from '@oddkin/components/button';
 import {
   controlIndicatorStructuralStyles,
@@ -23,5 +24,5 @@ export const actionApprovalDefinition = compose({
     scopeChoiceStyles,
     actionApprovalStyles,
   ],
-  dependencies: { button: buttonDefinition },
+  dependencies: { badge: badgeDefinition, button: buttonDefinition },
 });
