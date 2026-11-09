@@ -134,7 +134,10 @@ export const BUDGETS = {
   // once odd-message composes odd-question for question parts (ADR 0049 slice 3).
   // 60,288 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 60,252 (+88) with
   // the shared decision row configured per element (ADR 0049 slice 4).
-  'ai-chat': 60288,
+  // 60,736 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 60,673 (+1,148 from
+  // 59,525, after row 18's removals) with Figma page 08's Status and Waiting parts: odd-activity
+  // shows the attempt's wait as an odd-badge above its counts.
+  'ai-chat': 60736,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

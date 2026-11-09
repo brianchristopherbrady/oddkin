@@ -311,9 +311,16 @@ describe('odd-conversation', () => {
     );
     await settle(el);
     const activity = () =>
-      el.shadowRoot!.querySelector('odd-activity')!.shadowRoot!.querySelector('.text')?.textContent;
+      [
+        ...el.shadowRoot!.querySelector('odd-activity')!.shadowRoot!.querySelector('.text')!
+          .childNodes,
+      ]
+        .filter((node) => node.nodeType !== Node.COMMENT_NODE)
+        .map((node) => node.textContent!.trim())
+        .filter(Boolean)
+        .join(' ');
     // The attempt waits for the person while its approval does.
-    expect(activity()).toBe('Waiting for your input');
+    expect(activity()).toBe('Waiting for your input 1 approval needs your response.');
     const seen: unknown[] = [];
     document.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail), {
       once: true,

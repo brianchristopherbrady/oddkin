@@ -541,6 +541,7 @@ Status: **approved** (2026-10-24). 244 references; controller 18, deferred 35, e
 | Element | Dependencies | Reason |
 | --- | --- | --- |
 | `odd-action-approval` | `odd-button` | Approve, reject, and edit are complete buttons (Figma: button ×2). |
+| `odd-activity` | `odd-badge` | The attempt's wait shows who acts next as a complete odd-badge, the status part of Figma page 08 (Oddkin/AI/Internal/Waiting), above its counts. |
 | `odd-ai-label` | `odd-disclosure` | The reveal is a complete odd-disclosure (owner, 2026-11-06), its summary drawn as the label through the disclosure's parts. |
 | `odd-artifact` | `odd-copy-button` | Copy is a complete odd-copy-button (owner, 2026-11-06) for the revision's canonical content. |
 | `odd-change-review` | `odd-button` | Accept, reject, and undo are complete buttons (Figma: button/sm ×2). |
@@ -565,7 +566,7 @@ Status: **approved** (2026-10-24). 244 references; controller 18, deferred 35, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (53) has no element dependency.
+Every other element (52) has no element dependency.
 
 #### Shared homes
 

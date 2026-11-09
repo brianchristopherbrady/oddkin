@@ -1,8 +1,9 @@
 import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
+import { listFormat, plural } from '@oddkin/core/i18n';
 import { can } from '../contracts/normalize.js';
 import type { AttemptRecord, Capabilities, ToolCallRecord } from '../contracts/types.js';
 import { attemptResumeEvent, attemptRetryEvent, promptStopEvent } from '../events.js';
-import { format, strings } from '../internal/strings.js';
+import { format, formatNumber, langOf, strings } from '../internal/strings.js';
 import { isActive } from '../controllers/transitions.js';
 
 export const ACTIVITY_STRINGS = {
@@ -14,6 +15,18 @@ export const ACTIVITY_STRINGS = {
   'awaiting-input': 'Waiting for your input',
   sending: 'Sending your response…',
   continuing: 'Waiting for the assistant to continue…',
+  approvals: '{count} approvals',
+  approvalsOne: '{count} approval',
+  questions: '{count} questions',
+  questionsOne: '{count} question',
+  needResponse: '{requests} need your response.',
+  needResponseOne: '{requests} needs your response.',
+  recorded: '{count} responses recorded.',
+  recordedOne: '{count} response recorded.',
+  stillNeed: '{count} requests still need your input.',
+  stillNeedOne: '{count} request still needs your input.',
+  sendingDetail: 'Your response is being recorded. No further action is needed yet.',
+  continuingDetail: 'Responses recorded. The paused run has not resumed yet.',
   completed: 'Done',
   cancelled: 'Stopped',
   failed: 'Failed: {message}',
@@ -64,11 +77,11 @@ export class OddkinActivity extends OddkinElement.with({
     return strings(ACTIVITY_STRINGS, this.strings);
   }
 
-  /** @internal The status line. */
-  _text(): string {
+  /** @internal A stop, connection, or failure notice, which comes before the wait. */
+  _notice(): string | undefined {
     const t = this._strings;
     const a = this.attempt;
-    if (!a) return '';
+    if (!a) return undefined;
     if (a.stop === 'requested') return t.stopping;
     if (a.stop === 'too-late') return t.tooLate;
     if ((a.stop === 'unknown' || a.stop === 'failed') && !(a.status === 'cancelled'))
@@ -76,11 +89,63 @@ export class OddkinActivity extends OddkinElement.with({
     if (a.connection === 'reconnecting') return t.reconnecting;
     if (a.connection === 'disconnected' && isActive(a.status)) return t.disconnected;
     if (a.status === 'failed') return format(t.failed, { message: a.error?.message ?? '' });
-    // The controller's wait descriptor: requests for the person first, then responses on their way.
-    const wait = a.status === 'streaming' || a.status === 'awaiting-input' ? a.wait : undefined;
-    if (wait?.action.length) return t['awaiting-input'];
-    if (wait?.submitting.length) return t.sending;
-    if (wait && a.status === 'awaiting-input') return t.continuing;
+    return undefined;
+  }
+
+  /**
+   * @internal The attempt's wait as page 08's Waiting part: who acts next (the status badge) and
+   * the counts. Requests for the person come first, then responses on their way.
+   */
+  _wait(): { status: string; label: string; detail: string } | undefined {
+    const t = this._strings;
+    const a = this.attempt;
+    const wait =
+      a && (a.status === 'streaming' || a.status === 'awaiting-input') ? a.wait : undefined;
+    if (!wait || this._notice() !== undefined) return undefined;
+    const lang = langOf(this);
+    const count = (n: number, one: string, other: string) =>
+      format(plural(n, { one, other }, lang), { count: formatNumber(n, lang) });
+    const { action, submitting } = wait;
+    if (action.length && submitting.length)
+      return {
+        status: 'needs-input',
+        label: t['awaiting-input'],
+        detail: `${count(submitting.length, t.recordedOne, t.recorded)} ${count(action.length, t.stillNeedOne, t.stillNeed)}`,
+      };
+    if (action.length) {
+      const approvals = action.filter((r) => r.kind === 'approval').length;
+      const questions = action.length - approvals;
+      const requests = listFormat(lang).format([
+        ...(approvals ? [count(approvals, t.approvalsOne, t.approvals)] : []),
+        ...(questions ? [count(questions, t.questionsOne, t.questions)] : []),
+      ]);
+      return {
+        status: 'needs-input',
+        label: t['awaiting-input'],
+        detail: format(
+          plural(action.length, { one: t.needResponseOne, other: t.needResponse }, lang),
+          {
+            requests,
+          },
+        ),
+      };
+    }
+    if (submitting.length)
+      return { status: 'submitting', label: t.sending, detail: t.sendingDetail };
+    if (a!.status === 'awaiting-input')
+      return { status: 'waiting', label: t.continuing, detail: t.continuingDetail };
+    return undefined;
+  }
+
+  /** @internal The status line. */
+  _text(): string {
+    const t = this._strings;
+    const a = this.attempt;
+    if (!a) return '';
+    const notice = this._notice();
+    if (notice !== undefined) return notice;
+    const wait = this._wait();
+    if (wait) return wait.label;
     if (a.status === 'streaming') {
       const running = this.tools.filter(
         (tool) => tool.status === 'executing' || tool.status === 'input-streaming',

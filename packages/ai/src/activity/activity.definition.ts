@@ -1,3 +1,4 @@
+import { badgeDefinition } from '@oddkin/components/badge';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { OddkinActivity } from './activity.js';
@@ -9,4 +10,5 @@ export const activityDefinition = compose({
   element: OddkinActivity,
   template: activityTemplate,
   styles: [aiBaseStyles, activityStyles],
+  dependencies: { badge: badgeDefinition },
 });

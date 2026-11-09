@@ -2205,6 +2205,37 @@ describe('odd-question and odd-task-plan examples', () => {
 });
 
 describe('odd-activity', () => {
+  it('the status badge marks attention and follows the tone map (Figma page 08, Status)', async () => {
+    const { render } = await import('@oddkin/core/template');
+    const { statusBadge } = await import('../src/internal/status.js');
+    const tones = [
+      'requested',
+      'expired',
+      'needs-input',
+      'submitting',
+      'approved',
+      'failed',
+      'rejected',
+      'cancelled',
+      'superseded',
+    ].map((status) => {
+      const host = container.appendChild(document.createElement('div'));
+      render(statusBadge(status, status), host);
+      const badge = host.querySelector('odd-badge')!;
+      return [badge.textContent, badge.getAttribute('tone')];
+    });
+    expect(tones).toEqual([
+      ['requested', 'warning'],
+      ['expired', 'warning'],
+      ['needs-input', 'warning'],
+      ['submitting', 'info'],
+      ['approved', 'success'],
+      ['failed', 'danger'],
+      ['rejected', 'danger'],
+      ['cancelled', 'neutral'],
+      ['superseded', 'neutral'],
+    ]);
+  });
   it("reads the attempt's wait: the person's turn, a response on its way, then the work (ADR 0049)", async () => {
     const attempt = (extra: Partial<AttemptRecord>): AttemptRecord => ({
       attemptId: 'at',
@@ -2230,14 +2261,58 @@ describe('odd-activity', () => {
       await settle(el);
       return text($(el, '.text'));
     };
-    const ap = { kind: 'approval', id: 'ap' } as const;
-    expect(await line({ status: 'awaiting-input', wait: { action: [ap], submitting: [] } })).toBe(
+    // The wait as page 08's Waiting part: the status badge, then the counts.
+    const waiting = async (extra: Partial<AttemptRecord>) => {
+      el.attempt = attempt(extra);
+      await settle(el);
+      const badge = $(el, '.waiting odd-badge');
+      return [badge?.getAttribute('tone'), text(badge), text($(el, '.waiting .detail'))];
+    };
+    const ap = (id: string) => ({ kind: 'approval', id }) as const;
+    const q = (id: string) => ({ kind: 'question', id }) as const;
+    expect(
+      await waiting({
+        status: 'awaiting-input',
+        wait: { action: [ap('a1'), ap('a2'), q('q1')], submitting: [] },
+      }),
+    ).toEqual([
+      'warning',
       'Waiting for your input',
-    );
-    expect(await line({ wait: { action: [], submitting: [ap] } })).toBe('Sending your response…');
-    expect(await line({ status: 'awaiting-input', wait: { action: [], submitting: [] } })).toBe(
+      '2 approvals and 1 question need your response.',
+    ]);
+    expect(
+      await waiting({ status: 'awaiting-input', wait: { action: [ap('a1')], submitting: [] } }),
+    ).toEqual(['warning', 'Waiting for your input', '1 approval needs your response.']);
+    expect(
+      await waiting({
+        status: 'awaiting-input',
+        wait: { action: [q('q1'), q('q2')], submitting: [ap('a1')] },
+      }),
+    ).toEqual([
+      'warning',
+      'Waiting for your input',
+      '1 response recorded. 2 requests still need your input.',
+    ]);
+    expect(await waiting({ wait: { action: [], submitting: [ap('a1')] } })).toEqual([
+      'info',
+      'Sending your response…',
+      'Your response is being recorded. No further action is needed yet.',
+    ]);
+    expect(
+      await waiting({ status: 'awaiting-input', wait: { action: [], submitting: [] } }),
+    ).toEqual([
+      'info',
       'Waiting for the assistant to continue…',
-    );
+      'Responses recorded. The paused run has not resumed yet.',
+    ]);
+    // A notice comes before the wait.
+    expect(
+      await line({
+        status: 'awaiting-input',
+        connection: 'reconnecting',
+        wait: { action: [ap('a1')], submitting: [] },
+      }),
+    ).toBe('Reconnecting…');
     // A host's attempt without a descriptor reads from its status alone.
     expect(await line({ status: 'awaiting-input' })).toBe('Waiting for your input');
     expect(await line({})).toBe('Responding…');

@@ -32,4 +32,11 @@ export const activityStyles = css`
     flex: 1 1 auto;
     min-inline-size: 0;
   }
+  .detail {
+    font-size: ${token('type.small.size')};
+    font-weight: ${token('type.small.weight')};
+    line-height: ${token('type.small.line-height')};
+    letter-spacing: ${token('type.small.letter-spacing')};
+    color: ${token('color.text.secondary')};
+  }
 `;

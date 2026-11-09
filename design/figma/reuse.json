@@ -2223,7 +2223,10 @@
       "dependencies": ["odd-button"],
       "reason": "Approve, reject, and edit are complete buttons (Figma: button ×2)."
     },
-    "odd-activity": { "dependencies": [] },
+    "odd-activity": {
+      "dependencies": ["odd-badge"],
+      "reason": "The attempt's wait shows who acts next as a complete odd-badge, the status part of Figma page 08 (Oddkin/AI/Internal/Waiting), above its counts."
+    },
     "odd-ai-label": {
       "dependencies": ["odd-disclosure"],
       "reason": "The reveal is a complete odd-disclosure (owner, 2026-11-06), its summary drawn as the label through the disclosure's parts."

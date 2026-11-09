@@ -3,5 +3,5 @@
 import { unsafeCSS } from '@oddkin/core/styles';
 
 export const activityRecipeStyles = unsafeCSS(
-  '@layer odd.layout.base {\n  .base {\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    gap: var(--odd-space-sm);\n    flex-wrap: wrap;\n    min-inline-size: 0;\n  }\n}\n',
+  '@layer odd.layout.base {\n  .base {\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    gap: var(--odd-space-sm);\n    flex-wrap: wrap;\n    min-inline-size: 0;\n  }\n  .waiting {\n    display: flex;\n    flex-direction: column;\n    gap: var(--odd-space-xs);\n    min-inline-size: 0;\n    align-items: start;\n  }\n}\n',
 );
