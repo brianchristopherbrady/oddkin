@@ -1,7 +1,7 @@
-import { live } from '@oddkin/core/helpers/live';
 import { html } from '@oddkin/core/template';
 import { can } from '../contracts/normalize.js';
 import { decisionRow, type DecisionState } from '../internal/decision-row.js';
+import { scopeChoice } from '../internal/scope-choice.js';
 import { format } from '../internal/strings.js';
 import type { OddkinActionApproval } from './action-approval.js';
 
@@ -71,41 +71,16 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
           </div>`
         : null
     }
-    ${
-      scopes.length === 1
-        ? html`<p part="scope" class="scope">
-            <span class="muted">${t.scope}:</span> ${scopes[0]?.label}
-            <span class="muted" ?hidden=${!scopes[0]?.description}>
-              — ${scopes[0]?.description ?? ''}</span
-            >
-          </p>`
-        : scopes.length
-          ? html`<fieldset part="scope" class="scopes" ?disabled=${blocked !== undefined}>
-              <legend class="muted">${t.scope}</legend>
-              ${scopes.map(
-                (s) =>
-                  html`<label class="choice">
-                    <span class="indicator">
-                      <input
-                        type="radio"
-                        class="indicator-box"
-                        name="scope"
-                        .value=${s.id}
-                        .checked=${live(scope === s.id)}
-                        @change=${host._onScope}
-                      />
-                      <span class="indicator-mark indicator-dot"></span>
-                    </span>
-                    <span class="label"
-                      >${s.label}<span class="muted" ?hidden=${!s.description}>
-                        — ${s.description ?? ''}</span
-                      ></span
-                    >
-                  </label>`,
-              )}
-            </fieldset>`
-          : null
-    }
+    ${scopeChoice(
+      {
+        scopes,
+        chosen: scope,
+        reset: host._scopeReset(approval),
+        disabled: blocked !== undefined,
+        onChange: host._onScope,
+      },
+      t,
+    )}
     <p class="state" ?hidden=${status !== 'requested' || pending}>${t.requested}</p>
     <label class="reason" ?hidden=${!actionable && !pending}>
       <span class="muted">${t.reason}</span>
@@ -141,7 +116,12 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
       ],
       state,
     )}
-    <p class="muted" ?hidden=${!actionable || pending || !approveBlocked || !!blocked}>
+    <p
+      class="muted"
+      ?hidden=${
+        !actionable || pending || !approveBlocked || !!blocked || approveBlocked === t.scopeRequired
+      }
+    >
       ${approveBlocked ?? ''}
     </p>
   </div>`;

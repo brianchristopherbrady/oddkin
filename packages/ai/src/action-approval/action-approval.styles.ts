@@ -28,8 +28,7 @@ export const actionApprovalStyles = css`
   .title {
     font-weight: ${token('font.weight.semibold')};
   }
-  .target,
-  .scope {
+  .target {
     font-size: ${token('font.size.sm')};
     color: ${token('color.text.secondary')};
   }
@@ -53,27 +52,6 @@ export const actionApprovalStyles = css`
   .state {
     font-size: ${token('font.size.sm')};
     color: ${token('color.text.secondary')};
-  }
-  .scopes {
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-  legend {
-    padding: 0;
-  }
-  /* The radio look of odd-radio-group on the shared control indicator: a round box and a dot. */
-  .indicator-box,
-  .indicator-dot {
-    border-radius: ${token('radius.full')};
-  }
-  .indicator-dot {
-    inline-size: 40%;
-    block-size: 40%;
-    background: currentColor;
-  }
-  .indicator-box:checked ~ .indicator-dot {
-    visibility: visible;
   }
   textarea {
     min-block-size: ${token('control.height.md')};

@@ -13,9 +13,9 @@
     "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
-    "style": 119,
+    "style": 121,
     "slot": 54,
-    "deferred": 23,
+    "deferred": 21,
     "controller": 18,
     "native": 7,
     "element": 23
@@ -207,8 +207,8 @@
       "source": "Oddkin/AI/Internal/ScopeOption",
       "sourceId": "839:2463",
       "count": 12,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "The scope choice (packages/ai/src/internal/scope-choice.ts) draws its options itself, one module for both parts."
     },
     {
       "consumer": "Oddkin/AI/Internal/ScopeOption",
@@ -216,8 +216,8 @@
       "source": "Oddkin/Common/radio",
       "sourceId": "159:1209",
       "count": 6,
-      "class": "deferred",
-      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+      "class": "style",
+      "reason": "Each option is a native radio drawn round by the shared control-indicator sheets, as odd-radio-group's options are."
     },
     {
       "consumer": "Oddkin/AI/Internal/Status",

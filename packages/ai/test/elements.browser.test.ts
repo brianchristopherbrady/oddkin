@@ -355,30 +355,38 @@ describe('odd-tool-call and odd-action-approval', () => {
     const approve = (el: Element) => $(el, 'odd-button[appearance="primary"]') as HTMLButtonElement;
     const reject = (el: Element) => $$(el, '[part="actions"] odd-button')[1] as HTMLButtonElement;
     const note = (el: Element) => text($(el, '.decision + .muted'));
+    const hint = (el: Element) => text($(el, '.scope-hint'));
     const radios = (el: Element) => $$(el, 'input[name="scope"]') as HTMLInputElement[];
 
-    it('two or more: the person chooses, and Approve sends the choice; a new revision resets it', async () => {
+    it('two to four: the person chooses, and Approve sends the choice; a new revision asks again, default or not', async () => {
       const el = await scoped(approval());
       expect(text($(el, 'legend'))).toBe('Approval covers');
-      // Nothing is chosen because it comes first.
+      // Nothing is chosen for the person.
       expect(radios(el).map((r) => r.checked)).toEqual([false, false]);
       expect(approve(el).disabled).toBe(true);
-      expect(note(el)).toBe('Choose what your approval covers.');
+      expect(hint(el)).toBe('Choose what your approval covers.');
+      // The scope choice says it; the line below the decision row does not repeat it.
+      expect(($(el, '.decision + .muted') as HTMLElement).hidden).toBe(true);
+      expect(radios(el)[1]!.getAttribute('aria-describedby')).toBe('scope-1');
+      expect(text($(el, '#scope-1'))).toBe('Until you sign out.');
       radios(el)[1]!.click();
       await settle(el);
       expect(approve(el).disabled).toBe(false);
-      expect(note(el)).toBe('');
       const seen: unknown[] = [];
       el.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail));
       approve(el).click();
       expect(seen).toEqual([
         { approvalId: 'ap', revision: 1, decision: 'approve', reason: undefined, scope: 'session' },
       ]);
-      // A new revision drops the choice; a valid default stands until the person picks another.
+      // A new revision drops the choice and asks again; a default chooses nothing (owner).
       el.approval = approval({ revision: 2, defaultScopeId: 'once' });
       await settle(el);
-      expect(radios(el).map((r) => r.checked)).toEqual([true, false]);
-      expect(approve(el).disabled).toBe(false);
+      expect(radios(el).map((r) => r.checked)).toEqual([false, false]);
+      expect(approve(el).disabled).toBe(true);
+      expect(hint(el)).toBe('This proposal changed. Choose the scope again.');
+      radios(el)[0]!.click();
+      await settle(el);
+      expect(hint(el)).toBe('Choose what your approval covers.');
       // A rejection never carries a scope.
       reject(el).click();
       expect(seen.at(-1)).toEqual({
@@ -390,16 +398,44 @@ describe('odd-tool-call and odd-action-approval', () => {
       });
     });
 
-    it('one scope is explained without a choice, and goes with Approve', async () => {
+    it('above four: a select whose chosen scope is described below it', async () => {
+      const many = ['a', 'b', 'c', 'd', 'e'].map((id) => ({
+        id,
+        label: `Scope ${id}`,
+        description: `About ${id}.`,
+      }));
+      const el = await scoped(approval({ scopes: many }));
+      const select = $(el, 'select') as HTMLSelectElement;
+      expect(radios(el)).toHaveLength(0);
+      expect(select.labels?.[0]?.textContent?.trim()).toBe('Approval covers');
+      expect(select.value).toBe('');
+      expect(text($(el, '#scope-description'))).toBe('Select a scope to enable Approve.');
+      expect(approve(el).disabled).toBe(true);
+      select.value = 'c';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      await settle(el);
+      expect(text($(el, '#scope-description'))).toBe('About c.');
+      const seen: unknown[] = [];
+      el.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail));
+      approve(el).click();
+      expect(seen).toEqual([expect.objectContaining({ decision: 'approve', scope: 'c' })]);
+    });
+
+    it('one scope is explained without a choice, and goes with Approve; none covers this action only', async () => {
       const el = await scoped(approval({ scopes: [scopes[1]!] }));
       expect(radios(el)).toHaveLength(0);
-      expect(text($(el, '[part="scope"]'))).toBe(
-        'Approval covers: Writes to /docs this session — Until you sign out.',
-      );
+      expect([...el.shadowRoot!.querySelectorAll('[part="scope"] p')].map(text)).toEqual([
+        'Approval covers',
+        'Writes to /docs this session',
+        'Until you sign out.',
+      ]);
       const seen: unknown[] = [];
       el.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail));
       approve(el).click();
       expect(seen).toEqual([expect.objectContaining({ decision: 'approve', scope: 'session' })]);
+      el.approval = approval({ revision: 2, scopes: undefined });
+      await settle(el);
+      expect(text($(el, '[part="scope"] .scope-label'))).toBe('Applies to this action only.');
     });
 
     it('invalid scopes, or a host that cannot carry one, refuse Approve with the reason; Reject stays', async () => {

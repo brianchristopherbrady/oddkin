@@ -140,7 +140,10 @@ export const BUDGETS = {
   // 60,992 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 60,968 (+295) with
   // Figma page 08's decision row: its stack and lines, each element's setups, and buttons keyed by
   // action.
-  'ai-chat': 60992,
+  // 61,632 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 61,589 (+621) with
+  // Figma page 08's scope choice: internal/scope-choice.ts (3.0 KB minified: its templates for no
+  // scope, one, radios, and a native select, and its styles) replacing the approval's radios.
+  'ai-chat': 61632,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.
