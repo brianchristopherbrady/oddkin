@@ -516,12 +516,15 @@ export class ConversationController implements ExternalSource<ConversationState>
    * Submit a decision for one approval revision. Repeated activation, stale revisions, and
    * expired proposals are refused without a request. The approval stays `submitting`
    * until the backend acknowledges it; acknowledgment does not mean the action succeeded.
+   * `scope` goes only with `approve`: one of the revision's scopes, else its only scope or its
+   * default; a transport without `approvalScopes` cannot carry one, so the decision is refused.
    */
   async decide(
     approvalId: string,
     revision: number,
     decision: 'approve' | 'reject',
     reason?: string,
+    scope?: string,
   ): Promise<ActionResult> {
     const state = this.#state.peek();
     const approval = state.approvals[approvalId];
@@ -541,6 +544,24 @@ export class ConversationController implements ExternalSource<ConversationState>
             ? 'stale'
             : 'duplicate',
       };
+    const scopes = approval.scopes ?? [];
+    const chosen =
+      decision === 'reject' || scope !== undefined
+        ? scope
+        : scopes.length === 1
+          ? scopes[0]?.id
+          : approval.defaultScopeId;
+    // A rejection never carries a scope; an approval carries one of this revision's, if it offers any.
+    if (
+      decision === 'reject'
+        ? chosen !== undefined
+        : scopes.length
+          ? !scopes.some((s) => s.id === chosen)
+          : chosen !== undefined
+    )
+      return { ok: false, reason: 'invalid' };
+    if (chosen !== undefined && !can(state.capabilities, 'approvalScopes'))
+      return { ok: false, reason: 'unavailable' };
     if (approval.expiresAt && Date.parse(approval.expiresAt) <= Date.now()) {
       this.#setApproval(approvalId, revision, 'expired');
       return { ok: false, reason: 'stale' };
@@ -548,8 +569,14 @@ export class ConversationController implements ExternalSource<ConversationState>
     this.#pendingDecisions.add(key);
     const generation = this.#generation;
     this.#updateApproval(approvalId, (a) => {
-      const { error: _error, ...rest } = a;
-      return { ...rest, status: 'submitting', decision, ...(reason ? { reason } : {}) };
+      const { error: _error, scope: _scope, ...rest } = a;
+      return {
+        ...rest,
+        status: 'submitting',
+        decision,
+        ...(reason ? { reason } : {}),
+        ...(chosen !== undefined ? { scope: chosen } : {}),
+      };
     });
     const attempt = approval.attemptId ? state.attempts[approval.attemptId] : undefined;
     try {
@@ -562,6 +589,7 @@ export class ConversationController implements ExternalSource<ConversationState>
         revision,
         decision,
         reason,
+        ...(chosen !== undefined ? { scope: chosen } : {}),
       });
       if (generation !== this.#generation) return { ok: false, reason: 'stale' };
       const status: ApprovalStatus =

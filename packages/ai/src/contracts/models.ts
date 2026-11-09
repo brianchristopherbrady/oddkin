@@ -36,6 +36,7 @@ export const capabilitiesSchema = m.object(
     regenerate: m.optional(capabilitySchema),
     switchBranch: m.optional(capabilitySchema),
     respondToApproval: m.optional(capabilitySchema),
+    approvalScopes: m.optional(capabilitySchema),
     editApproval: m.optional(capabilitySchema),
     restoreCheckpoint: m.optional(capabilitySchema),
     voice: m.optional(capabilitySchema),
@@ -182,8 +183,20 @@ export const ApprovalModel = defineModel('oddkin.ai.approval', {
       ),
     ),
     risk: m.optional(m.enum(['low', 'medium', 'high'])),
+    scopes: m.optional(
+      m.array(
+        m.object({
+          id: m.id(),
+          label: m.string({ minLength: 1 }),
+          description: m.optional(m.string()),
+        }),
+        { description: 'Host-defined; the host enforces each.' },
+      ),
+    ),
+    defaultScopeId: m.optional(m.id()),
     status: m.enum(approvalStatusValues),
     decision: m.optional(m.enum(['approve', 'reject'])),
+    scope: m.optional(m.id()),
     reason: m.optional(m.string()),
     expiresAt: timestamp(),
     error: m.optional(publicErrorSchema),

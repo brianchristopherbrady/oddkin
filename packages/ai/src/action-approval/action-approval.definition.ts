@@ -1,4 +1,8 @@
 import { buttonDefinition } from '@oddkin/components/button';
+import {
+  controlIndicatorStructuralStyles,
+  controlIndicatorStyles,
+} from '@oddkin/components/styles';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { OddkinActionApproval } from './action-approval.js';
@@ -9,6 +13,11 @@ export const actionApprovalDefinition = compose({
   name: 'odd-action-approval',
   element: OddkinActionApproval,
   template: actionApprovalTemplate,
-  styles: [aiBaseStyles, actionApprovalStyles],
+  styles: [
+    aiBaseStyles,
+    controlIndicatorStructuralStyles,
+    controlIndicatorStyles,
+    actionApprovalStyles,
+  ],
   dependencies: { button: buttonDefinition },
 });

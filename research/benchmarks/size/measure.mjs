@@ -74,7 +74,10 @@ export const BUDGETS = {
   'active-descendant': 3328,
   resize: 3328,
   reactive: 2048, // 2 KiB; measured 1,892
-  'ai-headless': 14336, // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation)
+  // 14 KiB; measured 13,391 on 2026-10-18 (controller + contracts + core model validation).
+  // 14,528 since 2026-11-09 (Agent 1's call): measured 14,469 (+316 from 14,153) with approval
+  // scopes in the model and the controller's scope rules (ADR 0049 slice 3).
+  'ai-headless': 14528,
   // 21 KiB; measured 20,607 (one registered odd-response with Markdown and citations). 21,952 since
   // 2026-11-06 (Agent 1's call): measured 21,915 (+644) with the native-button sheet for its copy
   // buttons (component-architecture-audit.md §9, step 2). 21,824 since 2026-11-07 (Agent 1's call),
@@ -122,7 +125,10 @@ export const BUDGETS = {
   // 56,768 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 56,760 (+147 from
   // 56,613) with the withdrawn approval's wording and odd-activity reading the attempt's wait
   // (ADR 0049 slice 2). At 99.99 %, the next change needs its own measured raise.
-  'ai-chat': 56768,
+  // 58,048 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 58,029 (+1,269
+  // from 56,760) with approval scopes (ADR 0049 slice 3): the choice in odd-action-approval and
+  // the model (+685), and its radios drawn by the shared control-indicator sheets (+584).
+  'ai-chat': 58048,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

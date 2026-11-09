@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
   AiEvent,
+  ApprovalDecision,
+  ApprovalRecord,
+  Capabilities,
   ConversationState,
   ConversationTransport,
   EventSink,
@@ -658,6 +661,160 @@ describe('ConversationController: tools and approvals', () => {
     fail = false;
     await c.decide('ap', 1, 'approve');
     expect(c.getSnapshot().approvals['ap']?.status).toBe('approved');
+  });
+});
+
+describe('ConversationController: approval scopes (ADR 0049 §6 item 3)', () => {
+  const SCOPED = { ...ALL, approvalScopes: { available: true } };
+  const scopes = [
+    { id: 'once', label: 'This change only' },
+    { id: 'session', label: 'Writes to /docs this session', description: 'Until you sign out.' },
+  ];
+  const scoped = (extra: Partial<ApprovalRecord> = {}): AiEvent => ({
+    type: 'approval-request',
+    approval: {
+      approvalId: 'ap',
+      revision: 1,
+      title: 'Write',
+      status: 'requested',
+      scopes,
+      ...extra,
+    },
+  });
+  const recording = (capabilities: Capabilities = SCOPED) => {
+    const decisions: ApprovalDecision[] = [];
+    const diagnostics: string[] = [];
+    const { transport, sink } = manual({
+      capabilities,
+      decide: async (d) => (decisions.push(d), 'accepted'),
+    });
+    const c = new ConversationController({
+      transport,
+      onDiagnostic: (d) => diagnostics.push(d.code),
+    });
+    return { c, sink, decisions, diagnostics };
+  };
+
+  it('an approval goes with one of its scopes, chosen by the person; a rejection with none', async () => {
+    const { c, sink, decisions } = recording();
+    await c.send({ text: 'q' });
+    push(sink(), scoped());
+    // Two scopes and no default: nothing is chosen because it comes first.
+    expect(await c.decide('ap', 1, 'approve')).toEqual({ ok: false, reason: 'invalid' });
+    expect(await c.decide('ap', 1, 'approve', undefined, 'forever')).toEqual({
+      ok: false,
+      reason: 'invalid',
+    });
+    expect(await c.decide('ap', 1, 'reject', 'no', 'once')).toEqual({
+      ok: false,
+      reason: 'invalid',
+    });
+    expect(decisions).toEqual([]);
+    expect(await c.decide('ap', 1, 'approve', undefined, 'session')).toEqual({ ok: true });
+    expect(decisions).toEqual([
+      expect.objectContaining({
+        approvalId: 'ap',
+        revision: 1,
+        decision: 'approve',
+        scope: 'session',
+      }),
+    ]);
+    expect(c.getSnapshot().approvals['ap']).toMatchObject({ status: 'approved', scope: 'session' });
+  });
+
+  it('the only scope or a valid default goes without a choice; repeated ids or an unknown default fail the request', async () => {
+    const { c, sink, decisions, diagnostics } = recording();
+    await c.send({ text: 'q' });
+    push(
+      sink(),
+      scoped({ approvalId: 'one', scopes: [{ id: 'once', label: 'This change only' }] }),
+      scoped({ approvalId: 'default', defaultScopeId: 'once' }),
+      scoped({ approvalId: 'unknown', defaultScopeId: 'forever' }),
+      scoped({
+        approvalId: 'twice',
+        scopes: [
+          { id: 'a', label: 'A' },
+          { id: 'a', label: 'B' },
+        ],
+      }),
+      scoped({ approvalId: 'plain', scopes: undefined }),
+    );
+    expect(Object.keys(c.getSnapshot().approvals)).toEqual(['one', 'default', 'plain']);
+    expect(diagnostics.filter((code) => code === 'ai.approval.scopes')).toHaveLength(2);
+    expect(await c.decide('one', 1, 'approve')).toEqual({ ok: true });
+    expect(await c.decide('default', 1, 'approve')).toEqual({ ok: true });
+    // Without scopes the approval covers this revision only: a scope has nothing to name.
+    expect(await c.decide('plain', 1, 'approve', undefined, 'once')).toEqual({
+      ok: false,
+      reason: 'invalid',
+    });
+    expect(await c.decide('plain', 1, 'approve')).toEqual({ ok: true });
+    expect(decisions.map((d) => d.scope)).toEqual(['once', 'once', undefined]);
+    expect(decisions[2]).not.toHaveProperty('scope');
+  });
+
+  it('a transport that cannot carry a scope refuses the scoped approval and never drops the choice', async () => {
+    const { c, sink, decisions } = recording(ALL);
+    await c.send({ text: 'q' });
+    push(sink(), scoped());
+    expect(await c.decide('ap', 1, 'approve', undefined, 'once')).toEqual({
+      ok: false,
+      reason: 'unavailable',
+    });
+    expect(c.getSnapshot().approvals['ap']?.status).toBe('requested');
+    // A rejection carries no scope, so it still goes.
+    expect(await c.decide('ap', 1, 'reject')).toEqual({ ok: true });
+    expect(decisions).toHaveLength(1);
+    expect(decisions[0]).not.toHaveProperty('scope');
+  });
+
+  it('deciding again after a failure records only the new decision, without the old scope', async () => {
+    let fail = true;
+    const { transport, sink } = manual({
+      capabilities: SCOPED,
+      decide: async () => (fail ? Promise.reject(new Error('offline')) : 'accepted'),
+    });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    push(sink(), scoped());
+    await c.decide('ap', 1, 'approve', undefined, 'session');
+    expect(c.getSnapshot().approvals['ap']).toMatchObject({ status: 'failed', scope: 'session' });
+    fail = false;
+    expect(await c.decide('ap', 1, 'reject')).toEqual({ ok: true });
+    expect(c.getSnapshot().approvals['ap']).toMatchObject({
+      status: 'rejected',
+      decision: 'reject',
+    });
+    expect(c.getSnapshot().approvals['ap']?.scope).toBeUndefined();
+  });
+
+  it('scopes changing during a submission: the new revision resets the choice; the late outcome is stale', async () => {
+    let release!: (outcome: 'accepted') => void;
+    const { transport, sink } = manual({
+      capabilities: SCOPED,
+      decide: () => new Promise((r) => (release = r)),
+    });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    push(sink(), scoped());
+    const deciding = c.decide('ap', 1, 'approve', undefined, 'session');
+    expect(c.getSnapshot().approvals['ap']).toMatchObject({
+      status: 'submitting',
+      scope: 'session',
+    });
+    push(
+      sink(),
+      scoped({ revision: 2, scopes: [scopes[0]!, { id: 'all', label: 'Every write' }] }),
+    );
+    release('accepted');
+    expect(await deciding).toEqual({ ok: false, reason: 'stale' });
+    expect(c.getSnapshot().approvals['ap']).toMatchObject({ revision: 2, status: 'requested' });
+    expect(c.getSnapshot().approvals['ap']?.scope).toBeUndefined();
+    // The old revision's scope names nothing now.
+    expect(await c.decide('ap', 2, 'approve', undefined, 'session')).toEqual({
+      ok: false,
+      reason: 'invalid',
+    });
   });
 });
 

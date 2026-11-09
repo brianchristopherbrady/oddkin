@@ -497,6 +497,34 @@
               "high"
             ]
           },
+          "scopes": {
+            "description": "Host-defined; the host enforces each.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "label"
+              ]
+            }
+          },
+          "defaultScopeId": {
+            "type": "string",
+            "minLength": 1
+          },
           "status": {
             "enum": [
               "requested",
@@ -514,6 +542,10 @@
               "approve",
               "reject"
             ]
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
           },
           "reason": {
             "type": "string"

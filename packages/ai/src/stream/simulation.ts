@@ -90,6 +90,7 @@ const DEFAULT_CAPABILITIES: Capabilities = {
   edit: { available: true },
   switchBranch: { available: true },
   respondToApproval: { available: true },
+  approvalScopes: { available: true },
   history: { available: true },
   feedback: { available: true },
   attachments: { available: true },

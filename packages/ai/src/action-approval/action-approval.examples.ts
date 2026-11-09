@@ -17,6 +17,7 @@ const recordDecisions = ({
         status: detail.decision === 'approve' ? 'approved' : 'rejected',
         decision: detail.decision,
         ...(detail.reason ? { reason: detail.reason } : {}),
+        ...(detail.scope ? { scope: detail.scope } : {}),
       };
     },
   );
@@ -78,6 +79,34 @@ export default defineExamples('odd-action-approval', {
         },
       );
     },
+  },
+  scopes: {
+    label: 'Choose what the approval covers',
+    props: {
+      approval: {
+        approvalId: 'ap6',
+        revision: 1,
+        title: 'Write to /docs',
+        summary: 'Updates the release notes.',
+        target: '/docs/release-notes.md',
+        status: 'requested',
+        scopes: [
+          { id: 'once', label: 'This change only' },
+          {
+            id: 'session',
+            label: 'Writes to /docs this session',
+            description: 'Until you sign out.',
+          },
+        ],
+      },
+      capabilities: {
+        respondToApproval: { available: true },
+        approvalScopes: { available: true },
+      },
+    },
+    guidance:
+      'The host offers the scopes and enforces each; the element collects the choice and sends it with Approve only. Nothing is chosen because it comes first: give `defaultScopeId` to choose one.',
+    fixture: recordDecisions,
   },
   failed: {
     label: 'Decision not recorded',

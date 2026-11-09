@@ -131,6 +131,8 @@ export interface ApprovalDecideDetail {
   readonly decision: 'approve' | 'reject';
   /** What the user typed in the reason field, with either decision. */
   readonly reason: string | undefined;
+  /** The scope chosen, with `approve` only: one of the revision's `scopes`, the only one, or the default. */
+  readonly scope?: string | undefined;
 }
 export const approvalDecideEvent = event<ApprovalDecideDetail>('odd-approval-decide', {
   bubbles: true,

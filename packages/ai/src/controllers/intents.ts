@@ -98,7 +98,7 @@ export function controllerIntents(
       report('odd-branch-switch')(controller.switchBranch(detail.targetMessageId)),
     'odd-approval-decide': (detail) =>
       void controller
-        .decide(detail.approvalId, detail.revision, detail.decision, detail.reason)
+        .decide(detail.approvalId, detail.revision, detail.decision, detail.reason, detail.scope)
         .then(report('odd-approval-decide')),
     'odd-feedback-submit': (detail) =>
       void controller

@@ -83,7 +83,7 @@ describe('contracts', () => {
       stop: { available: false, reason: 'No stop endpoint' },
       voice: { available: false },
     });
-    expect(CAPABILITY_NAMES).toHaveLength(16);
+    expect(CAPABILITY_NAMES).toHaveLength(17);
   });
 });
 

@@ -285,6 +285,33 @@ describe('UI message stream transport (recorded fixtures)', () => {
     expect(controller.getSnapshot().messages).toEqual([]);
   });
 
+  it('carries an approval scope only where it posts decisions (ADR 0049 §6 item 3)', async () => {
+    const bodies: unknown[] = [];
+    const transport = createUiMessageStreamTransport({
+      api: '/x',
+      decideApi: () => '/decide',
+      fetch: async (_url, init) => {
+        bodies.push(JSON.parse(String(init?.body)));
+        return new Response(JSON.stringify({ status: 'accepted' }), { status: 200 });
+      },
+    });
+    expect(transport.capabilities.approvalScopes).toEqual({ available: true });
+    const target = { conversationId: 'c', runId: 'r', attemptId: 'a' };
+    await transport.decide!({
+      ...target,
+      approvalId: 'ap',
+      revision: 1,
+      decision: 'approve',
+      scope: 'session',
+    });
+    expect(bodies).toEqual([expect.objectContaining({ approvalId: 'ap', scope: 'session' })]);
+    const without = createUiMessageStreamTransport({ api: '/x' });
+    expect(without.capabilities.approvalScopes).toEqual({
+      available: false,
+      reason: 'Approvals are not supported.',
+    });
+  });
+
   it('A06: a replayed resume rebuilds the message without duplicates or a new attempt', async () => {
     const bytes = new Uint8Array(fixture('research.sse'));
     let calls = 0;

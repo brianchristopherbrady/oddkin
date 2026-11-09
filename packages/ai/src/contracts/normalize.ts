@@ -179,8 +179,38 @@ function normalizeRecord<T>(
 
 export const normalizeToolCall = (raw: unknown, path = ''): Normalized<ToolCallRecord> =>
   normalizeRecord(ToolCallModel, raw, path);
-export const normalizeApproval = (raw: unknown, path = ''): Normalized<ApprovalRecord> =>
-  normalizeRecord(ApprovalModel, raw, path);
+
+/**
+ * Whether an approval's scopes are valid configuration (ADR 0049 §6 item 3): each id once, and a
+ * default only when it is offered.
+ */
+export function scopesValid(approval: ApprovalRecord): boolean {
+  const ids = approval.scopes?.map((scope) => scope.id) ?? [];
+  return (
+    new Set(ids).size === ids.length &&
+    (approval.defaultScopeId === undefined || ids.includes(approval.defaultScopeId))
+  );
+}
+
+/** Validate an approval; invalid scopes fail it, since no choice under them could be honoured. */
+export function normalizeApproval(raw: unknown, path = ''): Normalized<ApprovalRecord> {
+  const result = normalizeRecord<ApprovalRecord>(ApprovalModel, raw, path);
+  return !result.value || scopesValid(result.value)
+    ? result
+    : {
+        ok: false,
+        value: undefined,
+        diagnostics: [
+          ...result.diagnostics,
+          {
+            code: 'ai.approval.scopes',
+            path: `${path}/scopes`,
+            message:
+              'Scope ids repeat, or the default scope is not offered; give each scope its own id and offer the default.',
+          },
+        ],
+      };
+}
 export const normalizeArtifact = (raw: unknown, path = ''): Normalized<ArtifactRecord> =>
   normalizeRecord(ArtifactModel, raw, path);
 
@@ -227,6 +257,7 @@ export const CAPABILITY_NAMES: readonly CapabilityName[] = [
   'regenerate',
   'switchBranch',
   'respondToApproval',
+  'approvalScopes',
   'editApproval',
   'restoreCheckpoint',
   'voice',

@@ -410,7 +410,10 @@ export interface UiMessageStreamTransportOptions {
    * any other 2xx response is reported as `unknown`.
    */
   readonly stopApi?: (target: AttemptTarget) => string;
-  /** POST endpoint for approval decisions returning `{ "status": "accepted" | "stale" | "expired" }`. */
+  /**
+   * POST endpoint for approval decisions returning `{ "status": "accepted" | "stale" | "expired" }`.
+   * Enables `respondToApproval` and `approvalScopes`: the body is the decision, `scope` included.
+   */
   readonly decideApi?: (decision: ApprovalDecision) => string;
   readonly fetch?: typeof fetch;
   readonly headers?: () => Record<string, string>;
@@ -435,6 +438,9 @@ export function createUiMessageStreamTransport(
     options.fetch ?? ((...args: Parameters<typeof fetch>) => globalThis.fetch(...args));
   const connections = new Map<string, AbortController>();
   const diagnose = options.onDiagnostic ?? (() => {});
+  const decisions = options.decideApi
+    ? { available: true }
+    : { available: false, reason: 'Approvals are not supported.' };
   const capabilities: Capabilities = {
     send: { available: true },
     disconnect: { available: true },
@@ -448,9 +454,8 @@ export function createUiMessageStreamTransport(
     resume: options.resumeApi
       ? { available: true }
       : { available: false, reason: 'This service cannot resume responses.' },
-    respondToApproval: options.decideApi
-      ? { available: true }
-      : { available: false, reason: 'Approvals are not supported.' },
+    respondToApproval: decisions,
+    approvalScopes: decisions,
     ...options.capabilities,
   };
 

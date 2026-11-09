@@ -328,6 +328,101 @@ describe('odd-tool-call and odd-action-approval', () => {
     expect(($(el, '[part="actions"]') as HTMLElement).hidden).toBe(true);
   });
 
+  describe('scopes (ADR 0049 §6 item 3)', () => {
+    const scopes = [
+      { id: 'once', label: 'This change only' },
+      { id: 'session', label: 'Writes to /docs this session', description: 'Until you sign out.' },
+    ];
+    const both = { respondToApproval: { available: true }, approvalScopes: { available: true } };
+    const approval = (extra: Partial<ApprovalRecord> = {}): ApprovalRecord => ({
+      approvalId: 'ap',
+      revision: 1,
+      title: 'Write',
+      status: 'requested',
+      scopes,
+      ...extra,
+    });
+    const scoped = (record: ApprovalRecord) =>
+      mount(
+        'odd-action-approval',
+        () => import('../src/action-approval/action-approval.define.js'),
+        (e) => {
+          e.approval = record;
+          e.capabilities = both;
+        },
+      );
+    const approve = (el: Element) => $(el, 'odd-button[appearance="primary"]') as HTMLButtonElement;
+    const reject = (el: Element) => $$(el, '[part="actions"] odd-button')[1] as HTMLButtonElement;
+    const note = (el: Element) => text($(el, '.actions + .muted'));
+    const radios = (el: Element) => $$(el, 'input[name="scope"]') as HTMLInputElement[];
+
+    it('two or more: the person chooses, and Approve sends the choice; a new revision resets it', async () => {
+      const el = await scoped(approval());
+      expect(text($(el, 'legend'))).toBe('Approval covers');
+      // Nothing is chosen because it comes first.
+      expect(radios(el).map((r) => r.checked)).toEqual([false, false]);
+      expect(approve(el).disabled).toBe(true);
+      expect(note(el)).toBe('Choose what your approval covers.');
+      radios(el)[1]!.click();
+      await settle(el);
+      expect(approve(el).disabled).toBe(false);
+      expect(note(el)).toBe('');
+      const seen: unknown[] = [];
+      el.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail));
+      approve(el).click();
+      expect(seen).toEqual([
+        { approvalId: 'ap', revision: 1, decision: 'approve', reason: undefined, scope: 'session' },
+      ]);
+      // A new revision drops the choice; a valid default stands until the person picks another.
+      el.approval = approval({ revision: 2, defaultScopeId: 'once' });
+      await settle(el);
+      expect(radios(el).map((r) => r.checked)).toEqual([true, false]);
+      expect(approve(el).disabled).toBe(false);
+      // A rejection never carries a scope.
+      reject(el).click();
+      expect(seen.at(-1)).toEqual({
+        approvalId: 'ap',
+        revision: 2,
+        decision: 'reject',
+        reason: undefined,
+        scope: undefined,
+      });
+    });
+
+    it('one scope is explained without a choice, and goes with Approve', async () => {
+      const el = await scoped(approval({ scopes: [scopes[1]!] }));
+      expect(radios(el)).toHaveLength(0);
+      expect(text($(el, '[part="scope"]'))).toBe(
+        'Approval covers: Writes to /docs this session — Until you sign out.',
+      );
+      const seen: unknown[] = [];
+      el.addEventListener('odd-approval-decide', (e) => seen.push((e as CustomEvent).detail));
+      approve(el).click();
+      expect(seen).toEqual([expect.objectContaining({ decision: 'approve', scope: 'session' })]);
+    });
+
+    it('invalid scopes, or a host that cannot carry one, refuse Approve with the reason; Reject stays', async () => {
+      const el = await scoped(approval({ scopes: [scopes[0]!, { id: 'once', label: 'Again' }] }));
+      const refused = async (reason: string) => {
+        await settle(el);
+        expect(approve(el).disabled).toBe(true);
+        expect(reject(el).disabled).toBe(false);
+        expect(note(el)).toBe(reason);
+      };
+      await refused('Its choices are not valid; it cannot be approved.');
+      el.approval = approval({ revision: 2, defaultScopeId: 'forever' });
+      await refused('Its choices are not valid; it cannot be approved.');
+      el.approval = approval({ revision: 3, defaultScopeId: 'once' });
+      el.capabilities = {
+        respondToApproval: { available: true },
+        approvalScopes: { available: false, reason: 'This service records no scopes.' },
+      };
+      await refused('This service records no scopes.');
+      el.capabilities = { respondToApproval: { available: true } };
+      await refused('Approving with these choices is not available here.');
+    });
+  });
+
   it('status labels take their colours from the shared tone styles', async () => {
     const theme = document.createElement('link');
     theme.rel = 'stylesheet';

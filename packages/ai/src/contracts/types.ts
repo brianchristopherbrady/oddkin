@@ -252,6 +252,8 @@ export interface ApprovalDecision extends AttemptTarget {
   readonly revision: number;
   readonly decision: 'approve' | 'reject';
   readonly reason?: string | undefined;
+  /** The scope approved (one of the revision's `scopes`); only with `approve`, never with `reject`. */
+  readonly scope?: string | undefined;
 }
 
 /**

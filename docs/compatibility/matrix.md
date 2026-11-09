@@ -293,7 +293,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/validation-summary/validation-summary.structural.styles.js (validationSummaryStructuralStyles)` | yes | 23 |
 | `packages/components/dist/validation-summary/validation-summary.styles.js (validationSummaryStyles)` | yes | 14 |
 | `packages/ai/dist/action-approval/action-approval.recipe.styles.js (actionApprovalRecipeStyles)` | yes | 7 |
-| `packages/ai/dist/action-approval/action-approval.styles.js (actionApprovalStyles)` | yes | 28 |
+| `packages/ai/dist/action-approval/action-approval.styles.js (actionApprovalStyles)` | yes | 33 |
 | `packages/ai/dist/activity/activity.recipe.styles.js (activityRecipeStyles)` | yes | 11 |
 | `packages/ai/dist/activity/activity.styles.js (activityStyles)` | yes | 28 |
 | `packages/ai/dist/ai-label/ai-label.styles.js (aiLabelStyles)` | yes | 40 |

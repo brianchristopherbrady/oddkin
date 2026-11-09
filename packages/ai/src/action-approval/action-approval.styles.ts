@@ -17,7 +17,8 @@ export const actionApprovalStyles = css`
   .base[data-status='approved'],
   .base[data-status='rejected'],
   .base[data-status='expired'],
-  .base[data-status='superseded'] {
+  .base[data-status='superseded'],
+  .base[data-status='cancelled'] {
     border-width: ${token('border.width.default')};
     border-color: ${token('color.border.default')};
   }
@@ -27,7 +28,8 @@ export const actionApprovalStyles = css`
   .title {
     font-weight: ${token('font.weight.semibold')};
   }
-  .target {
+  .target,
+  .scope {
     font-size: ${token('font.size.sm')};
     color: ${token('color.text.secondary')};
   }
@@ -60,6 +62,27 @@ export const actionApprovalStyles = css`
   }
   .reason {
     flex: 1 1 100%;
+  }
+  .scopes {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  legend {
+    padding: 0;
+  }
+  /* The radio look of odd-radio-group on the shared control indicator: a round box and a dot. */
+  .indicator-box,
+  .indicator-dot {
+    border-radius: ${token('radius.full')};
+  }
+  .indicator-dot {
+    inline-size: 40%;
+    block-size: 40%;
+    background: currentColor;
+  }
+  .indicator-box:checked ~ .indicator-dot {
+    visibility: visible;
   }
   textarea {
     min-block-size: ${token('control.height.md')};

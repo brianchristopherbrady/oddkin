@@ -1,7 +1,7 @@
 import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
 import type { Scope } from '@oddkin/core/scope';
-import { can, unavailableReason } from '../contracts/normalize.js';
+import { can, scopesValid, unavailableReason } from '../contracts/normalize.js';
 import type { ApprovalRecord, ApprovalStatus, Capabilities } from '../contracts/types.js';
 import { announceEvent, approvalDecideEvent, approvalEditEvent } from '../events.js';
 import { DecisionController } from '../internal/decision.js';
@@ -21,6 +21,10 @@ export const APPROVAL_STRINGS = {
   medium: 'medium',
   high: 'high',
   expires: 'Expires {time}',
+  scope: 'Approval covers',
+  scopeRequired: 'Choose what your approval covers.',
+  scopeInvalid: 'Its choices are not valid; it cannot be approved.',
+  scopeUnavailable: 'Approving with these choices is not available here.',
   requested: 'Waiting for your decision',
   submitting: 'Submitting your decision…',
   approved: 'Approved. The action runs separately; its result appears with the action.',
@@ -46,8 +50,9 @@ export const APPROVAL_STRINGS = {
  *
  * @csspart base - The approval surface.
  * @csspart changes - Before/after list.
+ * @csspart scope - What an approval covers: the one scope explained, or a choice among several.
  * @csspart actions - Decision controls.
- * @a11y A labelled group. Decision buttons are native buttons; while a decision is pending they are disabled and the status text explains why. Before/after values carry visually hidden "Before"/"After" labels.
+ * @a11y A labelled group. Decision buttons are native buttons; while a decision is pending they are disabled and the status text explains why. Before/after values carry visually hidden "Before"/"After" labels. Two or more scopes are native radio buttons in a fieldset whose legend says what they choose; Approve stays disabled, with the reason beside it, until one is chosen.
  * @keyboard Tab to the controls; Enter or Space decides.
  * @useFor Human approval of agent actions (tool calls, writes, purchases).
  * @notFor Confirming the user's own direct actions; use a dialog.
@@ -84,6 +89,8 @@ export class OddkinActionApproval extends OddkinElement.with({
   );
   /** @internal Local draft of the rejection reason. */
   readonly _reason = signal('');
+  /** @internal The scope the person chose, for the revision it was chosen on. */
+  readonly _scope = signal<{ key: string; id: string } | undefined>(undefined);
 
   /** @internal */
   get _strings(): typeof APPROVAL_STRINGS {
@@ -106,16 +113,44 @@ export class OddkinActionApproval extends OddkinElement.with({
     return undefined;
   }
 
+  /**
+   * @internal The scope Approve sends: the person's choice for this revision, else the only scope,
+   * else the default. A new revision drops the choice.
+   */
+  _scopeOf(approval: ApprovalRecord): string | undefined {
+    const own = this._scope.value;
+    const scopes = approval.scopes ?? [];
+    return own?.key === this._key(approval)
+      ? own.id
+      : scopes.length === 1
+        ? scopes[0]?.id
+        : approval.defaultScopeId;
+  }
+
+  /** @internal Why Approve cannot be requested now: as `_blocked`, or for want of a valid scope. */
+  get _approveBlocked(): string | undefined {
+    const blocked = this._blocked;
+    const approval = this.approval;
+    if (blocked !== undefined || !approval?.scopes?.length) return blocked;
+    const t = this._strings;
+    if (!scopesValid(approval)) return t.scopeInvalid;
+    if (!can(this.capabilities, 'approvalScopes'))
+      return unavailableReason(this.capabilities, 'approvalScopes') ?? t.scopeUnavailable;
+    return this._scopeOf(approval) === undefined ? t.scopeRequired : undefined;
+  }
+
   /** @internal */
   readonly _decide = (decision: 'approve' | 'reject'): void => {
     const approval = this.approval;
-    if (!approval || this._blocked !== undefined) return;
+    if (!approval || (decision === 'approve' ? this._approveBlocked : this._blocked) !== undefined)
+      return;
     this._decisions.request(this._key(approval), decision);
     this.emit(approvalDecideEvent, {
       approvalId: approval.approvalId,
       revision: approval.revision,
       decision,
       reason: this._reason.peek() || undefined,
+      scope: decision === 'approve' ? this._scopeOf(approval) : undefined,
     });
   };
   /** @internal */
@@ -134,6 +169,15 @@ export class OddkinActionApproval extends OddkinElement.with({
   /** @internal */
   readonly _onReason = (event: Event): void => {
     this._reason.value = (event.target as HTMLTextAreaElement).value;
+  };
+  /** @internal */
+  readonly _onScope = (event: Event): void => {
+    const approval = this.approval;
+    if (approval)
+      this._scope.value = {
+        key: this._key(approval),
+        id: (event.target as HTMLInputElement).value,
+      };
   };
 
   /** @internal */

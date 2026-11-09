@@ -41,6 +41,7 @@ const CAPS = {
   stop: { available: true },
   history: { available: true },
   respondToApproval: { available: true },
+  approvalScopes: { available: true },
   regenerate: { available: true },
   feedback: { available: true },
 };
@@ -308,6 +309,37 @@ describe('odd-conversation', () => {
     expect(activity()).toBe('Responding…');
     expect(controller.getSnapshot().tools['t']?.status).toBe('input-available');
     expect(gate()).toBe('Arguments ready; not run yet');
+    release();
+  });
+
+  it('a scope chosen in a nested approval reaches the controller with the decision (ADR 0049)', async () => {
+    const { controller, sink } = harness();
+    const { el, articles } = await mount(controller);
+    const release = bindIntents(el, controllerIntents(controller));
+    await controller.send({ text: 'Write it' });
+    push(sink(), {
+      type: 'approval-request',
+      approval: {
+        approvalId: 'ap',
+        revision: 1,
+        title: 'Write /docs',
+        status: 'requested',
+        scopes: [
+          { id: 'once', label: 'This change only' },
+          { id: 'session', label: 'Writes to /docs this session' },
+        ],
+      },
+    });
+    await settle(el);
+    const approval = articles().at(-1)!.shadowRoot!.querySelector('odd-action-approval')!;
+    approval.shadowRoot!.querySelectorAll<HTMLInputElement>('input[name="scope"]')[1]!.click();
+    await settle(approval);
+    (approval.shadowRoot!.querySelector('odd-button[appearance="primary"]') as HTMLElement).click();
+    await settle(el);
+    expect(controller.getSnapshot().approvals['ap']).toMatchObject({
+      status: 'approved',
+      scope: 'session',
+    });
     release();
   });
 
