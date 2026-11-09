@@ -31,7 +31,7 @@ RF-19's audit ([release-foundation-plan.md](./commercialization/release-foundati
 | `ai.approval.stale` | — | Ignored an older approval revision; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:1224` |
 | `ai.question.stale` | — | Ignored an older question revision; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:1230` |
 | `ai.tool.transition` | — | Ignored {t.status} → {status} for {toolCallId}; check the order of the transport's tool events. | yes | `packages/ai/src/controllers/conversation.ts:1301` |
-| `ai.edit.range` | — | The proposal does not match the text; propose it again against the current text. | yes | `packages/ai/src/controllers/document.ts:223` |
+| `ai.edit.range` | — | The proposal does not match the text; propose it again against the current text. | yes | `packages/ai/src/controllers/document.ts:224` |
 | `ai.attachment.type` | — | {name} is not an accepted file type. Choose another file. | yes | `packages/ai/src/prompt-input/prompt-input.ts:35` |
 | `ai.attachment.size` | — | {name} is larger than {limit}. Choose a smaller file. | yes | `packages/ai/src/prompt-input/prompt-input.ts:36` |
 | `ai.attachment.count` | — | You can attach up to {limit} files. Remove one to add another. | yes | `packages/ai/src/prompt-input/prompt-input.ts:37` |

@@ -1,13 +1,17 @@
 /**
- * The diff view shared by the agent workflow elements (ADR 0049 §4): word or line diffs with
- * merged runs, muted context, and `<del>`/`<ins>` with visually hidden labels, so a change never
- * relies on colour or strikethrough. `odd-change-review` draws its proposals with it; the
- * approval's `changes` follow with the redesign.
+ * The diff view shared by the agent workflow elements (ADR 0049 §4; Figma page 08, DiffView): word
+ * or line diffs with merged runs, and `<del>`/`<ins>` with visually hidden labels, so a change
+ * never relies on colour or strikethrough. A word diff reads inline, as one line; a line diff, and
+ * any split view, reads as a Before block and an After block (side by side when split, stacked
+ * below 30rem). The unchanged text around a change opens from a disclosure (Show context), and a
+ * long line diff waits behind its count, in a 240 px scroll region when open. `odd-change-review`
+ * draws its proposals with it; the approval's `changes` follow with page 09 (row 21).
  */
 import { css } from '@oddkin/core/styles';
 import { html } from '@oddkin/core/template';
 import { token } from '@oddkin/tokens/refs';
 import { diffLines, diffWords, type DiffSegment } from '../controllers/diff.js';
+import { format } from './strings.js';
 
 /**
  * A run of word changes that only whitespace separates, as one deletion followed by one insertion,
@@ -52,24 +56,45 @@ export const diffText = (
 ): readonly DiffSegment[] =>
   granularity === 'lines' ? diffLines(before, after) : mergeRuns(diffWords(before, after));
 
+/**
+ * A line diff is long above this many changed lines (a replaced line counted once): it waits
+ * behind its count, and scrolls in a 240 px region when open. Word diffs never wait: prose
+ * reflows. An Oddkin default (Agent 1, 2026-11-09), for the designer to change with page 11.
+ */
+export const LONG_DIFF_LINES = 10;
+
+/** The lines a line diff changes: each run of changes counts the larger of its lines out and in. */
+export function changedLines(diff: readonly DiffSegment[]): number {
+  let total = 0;
+  let removed = 0;
+  let added = 0;
+  for (const s of diff) {
+    if (s.kind === 'equal') {
+      total += Math.max(removed, added);
+      removed = added = 0;
+    } else {
+      const lines = s.text.split('\n').length - (s.text.endsWith('\n') ? 1 : 0);
+      if (s.kind === 'delete') removed += lines;
+      else added += lines;
+    }
+  }
+  return total + Math.max(removed, added);
+}
+
 /** What assistive technology hears around each change. */
 export interface DiffLabels {
   readonly deleted: string;
   readonly inserted: string;
 }
 
-/**
- * The change between its muted context; `show` leaves out the deletions or the insertions (the
- * two sides of a split view).
- */
+/** The change: its unchanged text with its deletions, its insertions (`show`), or both. */
 export const diffView = (
   diff: readonly DiffSegment[],
   labels: DiffLabels,
-  context: { readonly before?: string | undefined; readonly after?: string | undefined } = {},
   show: 'both' | 'before' | 'after' = 'both',
 ) =>
   html`<span class="segments"
-    ><span class="context">${context.before ?? ''}</span>${diff.map((s) =>
+    >${diff.map((s) =>
       s.kind === 'equal'
         ? s.text
         : s.kind === 'delete'
@@ -89,15 +114,121 @@ export const diffView = (
                   >]</span
                 ></ins
               >`,
-    )}<span class="context">${context.after ?? ''}</span></span
+    )}</span
   >`;
 
+/** What the diff view says beyond its changes. */
+export interface DiffStrings extends DiffLabels {
+  readonly before: string;
+  readonly after: string;
+  /** A diff that changes nothing. */
+  readonly empty: string;
+  readonly showContext: string;
+  readonly hideContext: string;
+  /** A long diff, collapsed; takes `{count}`. */
+  readonly reviewLines: string;
+  /** A long diff, open; takes `{count}`. */
+  readonly hideLines: string;
+  /** The scroll region of an open long diff; takes `{count}`. */
+  readonly changedLines: string;
+}
+
+/** One change to draw, and which of its disclosures the person opened. */
+export interface DiffSetup {
+  readonly diff: readonly DiffSegment[];
+  readonly granularity: 'words' | 'lines';
+  readonly view: 'inline' | 'split';
+  readonly context?:
+    { readonly before?: string | undefined; readonly after?: string | undefined } | undefined;
+  /** Names the change's disclosures: `<key>:context` and `<key>:lines`. */
+  readonly key: string;
+  /** The names of the disclosures the person opened. */
+  readonly opened: ReadonlySet<string>;
+  /** A disclosure was opened or closed; its `data-key` names it. */
+  readonly onToggle: (event: Event) => void;
+}
+
 /**
- * The diff's look. Only the segments preserve whitespace (template whitespace around them
- * collapses); the context is muted; `.code` sets a line diff in the monospace face.
+ * One change (Figma page 08, DiffView). Its context and a long line diff open from an
+ * `odd-disclosure`. While the context is open the change sits inside its disclosure, between the
+ * context before and after it; otherwise it follows the closed disclosure, once.
+ */
+export const diffPart = (s: DiffSetup, t: DiffStrings) => {
+  if (!s.diff.some((segment) => segment.kind !== 'equal'))
+    return html`<p class="diff-empty">${t.empty}</p>`;
+  const code = s.granularity === 'lines';
+  const text = code ? 'text code' : 'text';
+  const change =
+    code || s.view === 'split'
+      ? html`<div class=${s.view === 'split' ? 'split' : 'sides'}>
+          <div class="side">
+            <p class="muted">${t.before}</p>
+            <div class=${text}>${diffView(s.diff, t, 'before')}</div>
+          </div>
+          <div class="side">
+            <p class="muted">${t.after}</p>
+            <div class=${text}>${diffView(s.diff, t, 'after')}</div>
+          </div>
+        </div>`
+      : html`<div class=${text}>${diffView(s.diff, t)}</div>`;
+  const count = code ? changedLines(s.diff) : 0;
+  if (count > LONG_DIFF_LINES) {
+    const key = `${s.key}:lines`;
+    const open = s.opened.has(key);
+    const n = { count: String(count) };
+    return html`<odd-disclosure
+      class="long"
+      data-key=${key}
+      label=${format(open ? t.hideLines : t.reviewLines, n)}
+      .open=${open}
+      @toggle=${s.onToggle}
+    >
+      ${
+        open
+          ? html`<div
+              class="scroll"
+              role="region"
+              aria-label=${format(t.changedLines, n)}
+              tabindex="0"
+            >
+              ${change}
+            </div>`
+          : null
+      }
+    </odd-disclosure>`;
+  }
+  const { before, after } = s.context ?? {};
+  if (!before && !after) return change;
+  const key = `${s.key}:context`;
+  const open = s.opened.has(key);
+  const context = code ? 'context code' : 'context';
+  return html`<odd-disclosure
+      class="context-toggle"
+      data-key=${key}
+      label=${open ? t.hideContext : t.showContext}
+      .open=${open}
+      @toggle=${s.onToggle}
+    >
+      ${
+        open
+          ? html`<p class=${context} ?hidden=${!before}>${before ?? ''}</p>
+              ${change}
+              <p class=${context} ?hidden=${!after}>${after ?? ''}</p>`
+          : null
+      }
+    </odd-disclosure>
+    ${open ? null : change}`;
+};
+
+/**
+ * The diff's look. Only the segments and the context preserve whitespace (template whitespace
+ * around them collapses); the context is muted; `.code` sets a line diff in the monospace face.
+ * The caller's `.diff` is the container (`odd-diff`) a split view measures: below 30rem (Figma
+ * page 08's compact density) its sides stack. An open long diff scrolls in a 240 px (15rem) region.
  */
 export const diffViewStyles = css`
-  .segments {
+  .segments,
+  .context {
     white-space: pre-wrap;
   }
   .context {
@@ -110,6 +241,22 @@ export const diffViewStyles = css`
     font-family: ${token('font.family.mono')};
     font-size: ${token('font.size.sm')};
     overflow-x: auto;
+  }
+  .diff {
+    container: odd-diff / inline-size;
+  }
+  @container odd-diff (inline-size < 30rem) {
+    .split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .scroll {
+    max-block-size: 15rem;
+    overflow: auto;
+  }
+  .diff-empty {
+    font-size: ${token('font.size.sm')};
+    color: ${token('color.text.secondary')};
   }
   del {
     background: ${token('color.danger.surface')};

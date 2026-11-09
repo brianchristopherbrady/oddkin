@@ -82,6 +82,7 @@ The owner's design pages in `E7LfRysny8V3qU24tv082i`: "07 · AI redesign · Inde
 - Scopes: described radio rows (option A) for two to four scopes, a select with the chosen scope's description (option B) above four; the compact option C is not used by default.
 - The approval's optional reason collapses into a disclosure when empty, stays open once written, and resets with a new revision.
 - Expiry is emphasized as soon five minutes before `expiresAt`: an Oddkin default that never changes the record.
+- A line diff is long above 10 changed lines, a replaced line counted once (`LONG_DIFF_LINES` in `packages/ai/src/internal/diff-view.ts`): it waits behind its count and scrolls in a 240 px region when open. Word diffs never wait, since prose reflows. An Oddkin default (Agent 1, 2026-11-09), for the designer to change with page 11 (change review).
 - The approval shows its changes as Before and After blocks, as drawn, and gains no `granularity` property (replacing that part of §6 item 3).
 - Attention badges for `requested`, `expired`, and needs-input are added; outcome wording stays neutral.
 

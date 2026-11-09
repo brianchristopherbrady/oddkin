@@ -167,6 +167,8 @@ Every diagnostic includes the recipe name, region, layer, and property.
 
 **Prefer intrinsic layouts** (`autoGrid`, wrapping `row`, `split`) and add explicit conditions only when a composition needs a real transition (e.g. a navigation that changes from one column to three).
 
+**The AI elements' densities** (Figma pages 08 and 09: compact below 480 px, wide from 720 px) are raw container queries in the AI sheets, `30rem` and `45rem`, as `odd-side-nav` (40rem), `odd-description-list`, and `odd-stepper` (36rem) use theirs, until more elements need a named theme condition (P1.1; Agent 1, 2026-11-09). Their containers are namespaced, as above: the diff view's split stacks below 30rem of its `odd-diff` container (`packages/ai/src/internal/diff-view.ts`).
+
 **Not adopted:** broad helpers such as `containerScale(container, button)`. Their effect on a nested component is ambiguous unless backed by explicit role contracts; profiles (§6) are that contract.
 
 ## 6. Roles, conditions, and profiles in recipes

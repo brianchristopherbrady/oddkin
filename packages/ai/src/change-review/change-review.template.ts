@@ -1,7 +1,7 @@
 import { html, repeat } from '@oddkin/core/template';
 import { isBoundary, type EditProposal } from '../controllers/document.js';
 import { decisionRow, type DecisionAction, type DecisionState } from '../internal/decision-row.js';
-import { diffView } from '../internal/diff-view.js';
+import { diffPart } from '../internal/diff-view.js';
 import type { OddkinChangeReview } from './change-review.js';
 
 /** A proposal's name without a label: its first 60 characters, never half a surrogate pair. */
@@ -91,14 +91,15 @@ const setup = (
 
 /**
  * Anatomy: a labelled `list` of `proposal` items, each a named group with its `label`, `diff`
- * (the change between its muted context), `status`, and `actions`.
+ * (Figma page 08's diff view: the context and a long line diff behind disclosures), `status`, and
+ * `actions`.
  */
 export const changeReviewTemplate = (host: OddkinChangeReview) => {
   const t = host._strings;
-  const code = host.granularity === 'lines';
-  const view = host.view;
-  // Read here, where the render tracks it: repeat calls its template later.
+  const { granularity, view } = host;
+  // Read here, where the render tracks them: repeat calls its template later.
   const requests = host._asked.value;
+  const opened = host._opened.value;
   return html`<div class="base" role="group" aria-label=${t.label}>
     <p class="muted" ?hidden=${!!host.proposals.length}>${t.empty}</p>
     <ol part="list" class="list" tabindex="-1">
@@ -106,31 +107,24 @@ export const changeReviewTemplate = (host: OddkinChangeReview) => {
         host.proposals,
         (p) => p.proposalId,
         (p) => {
-          const diff = host._diff(p);
           const { line, row } = setup(host, p, requests);
           return html`<li part="proposal" class="proposal" data-status=${p.status}>
             <div class="body" role="group" aria-label=${p.label || groupName(p)}>
               <p part="label" class="label" ?hidden=${!p.label}>${p.label ?? ''}</p>
-              ${
-                view === 'split'
-                  ? html`<div part="diff" class="split">
-                      <div class="side">
-                        <p class="muted">${t.before}</p>
-                        <div class=${code ? 'text code' : 'text'}>
-                          ${diffView(diff, t, p.context, 'before')}
-                        </div>
-                      </div>
-                      <div class="side">
-                        <p class="muted">${t.after}</p>
-                        <div class=${code ? 'text code' : 'text'}>
-                          ${diffView(diff, t, p.context, 'after')}
-                        </div>
-                      </div>
-                    </div>`
-                  : html`<div part="diff" class=${code ? 'text code' : 'text'}>
-                      ${diffView(diff, t, p.context)}
-                    </div>`
-              }
+              <div part="diff" class="diff">
+                ${diffPart(
+                  {
+                    diff: host._diff(p),
+                    granularity,
+                    view,
+                    context: p.context,
+                    key: p.proposalId,
+                    opened,
+                    onToggle: host._onDiffToggle,
+                  },
+                  t,
+                )}
+              </div>
               <p
                 part="status"
                 class="state outcome"

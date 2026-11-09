@@ -1,4 +1,5 @@
 import { buttonDefinition } from '@oddkin/components/button';
+import { disclosureDefinition } from '@oddkin/components/disclosure';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { decisionRowStyles } from '../internal/decision-row.styles.js';
@@ -11,5 +12,5 @@ export const changeReviewDefinition = compose({
   element: OddkinChangeReview,
   template: changeReviewTemplate,
   styles: [aiBaseStyles, decisionRowStyles, changeReviewStyles],
-  dependencies: { button: buttonDefinition },
+  dependencies: { button: buttonDefinition, disclosure: disclosureDefinition },
 });

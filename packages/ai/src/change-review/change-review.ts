@@ -15,6 +15,11 @@ export const CHANGE_REVIEW_STRINGS = {
   after: 'After',
   deleted: 'deleted',
   inserted: 'inserted',
+  showContext: 'Show context',
+  hideContext: 'Hide context',
+  reviewLines: '{count} changed lines · Review changes',
+  hideLines: 'Hide {count} changed lines',
+  changedLines: '{count} changed lines',
   accept: 'Accept',
   reject: 'Reject',
   dismiss: 'Dismiss',
@@ -40,7 +45,10 @@ export const CHANGE_REVIEW_STRINGS = {
  * each one. Every action is a request; statuses (applied, stale, undone) come from the records,
  * which only apply to the revision they were proposed for. A host that applies asynchronously
  * sets `applying` or `undoing` while it works ("Applying…", "Undoing…");
- * `DocumentSession` applies at once. A proposal's `context` shows muted around its change; Undo
+ * `DocumentSession` applies at once. A proposal's `context` opens around its change from a
+ * disclosure ("Show context"), and a line diff that changes more than ten lines waits behind its
+ * count ("12 changed lines · Review changes") and scrolls in a region of its own when open; a
+ * proposal that changes nothing says so. Undo
  * is offered on an applied proposal unless its `undoable` is `false`. An out-of-date proposal
  * offers Dismiss, which sends `odd-change-reject`.
  *
@@ -50,7 +58,7 @@ export const CHANGE_REVIEW_STRINGS = {
  * @csspart diff - Diff view.
  * @csspart status - A proposal's status ("Applied", "Out of date: …"); none while it awaits review.
  * @csspart actions - A proposal's Accept, Reject or Dismiss, and Undo.
- * @a11y Deletions and insertions use `<del>`/`<ins>` with visually hidden "deleted"/"inserted" text, so meaning does not rely on colour or strikethrough. Each proposal is a list item holding a group named by its label (without one, by the start of its new text), so its actions are announced with it.
+ * @a11y Deletions and insertions use `<del>`/`<ins>` with visually hidden "deleted"/"inserted" text, so meaning does not rely on colour or strikethrough. A line diff, and either diff side by side, reads as a Before block then an After block, each labelled. The context and a long line diff open from `odd-disclosure`s, whose summaries say what they show; an open long diff is a named scroll region in the Tab order. Each proposal is a list item holding a group named by its label (without one, by the start of its new text), so its actions are announced with it.
  * @keyboard Tab through proposals' actions; Enter or Space activates. Focus stays on the chosen button while its request is in flight; when the button goes, focus moves to its proposal's status, never to Undo.
  * @useFor Reviewing AI-proposed edits to text or code before they change the document.
  * @notFor Version-control diffs of whole files.
@@ -100,6 +108,17 @@ export class OddkinChangeReview extends OddkinElement.with({
   >(new Map());
   /** Each proposal's last action from this view, for the outcome's wording. */
   readonly #last = new Map<string, string>();
+  /** @internal The diff disclosures the person opened: `<proposalId>:context` or `:lines`. */
+  readonly _opened = signal<ReadonlySet<string>>(new Set());
+
+  /** @internal A diff disclosure was opened or closed. */
+  readonly _onDiffToggle = (event: Event): void => {
+    const key = (event.currentTarget as HTMLElement).dataset['key']!;
+    const opened = new Set(this._opened.peek());
+    if ((event as ToggleEvent).newState === 'open') opened.add(key);
+    else opened.delete(key);
+    this._opened.value = opened;
+  };
 
   /** @internal */
   _last(proposalId: string): string | undefined {

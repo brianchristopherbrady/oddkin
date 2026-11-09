@@ -92,8 +92,9 @@ export interface EditProposal {
   readonly replacement: string;
   readonly label?: string | undefined;
   /**
-   * The text around `range` in `baseRevision`, which the review shows muted around the change so
-   * the reader sees where it applies. `DocumentSession.propose` fills it when the host does not.
+   * The text around `range` in `baseRevision`, which the review shows around the change (from a
+   * disclosure, "Show context") so the reader sees where it applies. `DocumentSession.propose`
+   * fills it when the host does not.
    */
   readonly context?: { readonly before: string; readonly after: string } | undefined;
   readonly status: ProposalStatus;

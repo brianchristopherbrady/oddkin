@@ -1271,16 +1271,28 @@ describe('selection, review, and controls', () => {
     const item = (i: number) => $$(el, '.proposal')[i]!;
     const actions = (li: Element) =>
       [...li.querySelectorAll('[part="actions"] odd-button')].map(text);
-    // One deletion, then one insertion, not word by word; the text around them muted.
+    // One deletion, then one insertion, not word by word; the text around them behind Show context.
     expect([...item(0).querySelectorAll('del, ins')].map(text)).toEqual([
       '[deleted: The build is very slow.]',
       '[inserted: Builds take 40% less time.]',
     ]);
     expect(text(item(0).querySelector('[part="diff"]'))).toBe(
-      '[deleted: The build is very slow.][inserted: Builds take 40% less time.] Contact the team.',
+      '[deleted: The build is very slow.][inserted: Builds take 40% less time.]',
     );
     // The diff keeps the proposal's own spaces and line breaks.
     expect(getComputedStyle(item(0).querySelector('.segments')!).whiteSpace).toBe('pre-wrap');
+    const context = item(1).querySelector(
+      '.context-toggle',
+    ) as HTMLElementTagNameMap['odd-disclosure'];
+    expect(context.label).toBe('Show context');
+    expect(item(1).querySelectorAll('.context')).toHaveLength(0);
+    const opened = new Promise((resolve) =>
+      context.addEventListener('toggle', resolve, { once: true }),
+    );
+    context.shadowRoot!.querySelector('summary')!.click();
+    await opened;
+    await sync();
+    expect(context.label).toBe('Hide context');
     expect([...item(1).querySelectorAll('.context')].map(text)).toEqual([
       'The build is very slow.',
       '',
@@ -1313,6 +1325,147 @@ describe('selection, review, and controls', () => {
     expect(text(item(0).querySelector('[part="status"]'))).toBe('Applied');
     expect(item(0).querySelector('[part="actions"]')).toBeNull();
     expect(requests).toEqual(['accept rewrite', 'reject who']);
+  });
+
+  describe('odd-change-review: the diff view (Figma page 08)', () => {
+    const proposal = (extra: Partial<EditProposal> = {}): EditProposal => ({
+      proposalId: 'p',
+      baseRevision: 'v1',
+      range: { start: 0, end: 34 },
+      original: 'The service will launch very soon.',
+      replacement: 'The service will launch on 18 November.',
+      status: 'requested',
+      ...extra,
+    });
+    const review = (
+      proposals: EditProposal[],
+      props: Partial<Pick<HTMLElementTagNameMap['odd-change-review'], 'view' | 'granularity'>> = {},
+    ) =>
+      mount(
+        'odd-change-review',
+        () => import('../src/change-review/change-review.define.js'),
+        (e) => {
+          Object.assign(e, props);
+          e.proposals = proposals;
+        },
+      );
+    type Disclosure = HTMLElementTagNameMap['odd-disclosure'];
+    /** Opens or closes a disclosure as the person does, once it reports the toggle. */
+    const toggle = async (el: HTMLElementTagNameMap['odd-change-review'], selector: string) => {
+      const disclosure = $(el, selector) as Disclosure;
+      const toggled = new Promise((resolve) =>
+        disclosure.addEventListener('toggle', resolve, { once: true }),
+      );
+      disclosure.shadowRoot!.querySelector('summary')!.click();
+      await toggled;
+      await settle(el);
+      return disclosure;
+    };
+    const lines = (n: number, value: string) =>
+      Array.from({ length: n }, (_, i) => `"key${i}": "${value}",\n`).join('');
+
+    it('keeps the context behind Show context; open, the change reads once, between its context', async () => {
+      const context = { before: 'After the final review, ', after: ' Customers get an email.' };
+      const el = await review([proposal({ context })]);
+      const disclosure = $(el, '.context-toggle') as Disclosure;
+      expect(disclosure.label).toBe('Show context');
+      expect(disclosure.open).toBe(false);
+      expect($$(el, '.context')).toHaveLength(0);
+      expect($$(el, 'del, ins').map(text)).toEqual([
+        '[deleted: very soon.]',
+        '[inserted: on 18 November.]',
+      ]);
+      await toggle(el, '.context-toggle');
+      expect(disclosure.label).toBe('Hide context');
+      expect([...disclosure.querySelectorAll('.context, .text')].map(text)).toEqual([
+        'After the final review,',
+        'The service will launch [deleted: very soon.][inserted: on 18 November.]',
+        'Customers get an email.',
+      ]);
+      expect($$(el, 'del')).toHaveLength(1);
+      // It stays open when the record changes, and when the host puts the element back.
+      el.proposals = [proposal({ context, status: 'applied' })];
+      await settle(el);
+      const parent = el.parentElement!;
+      el.remove();
+      parent.append(el);
+      await settle(el);
+      expect(($(el, '.context-toggle') as Disclosure).open).toBe(true);
+      expect($$(el, '.context')).toHaveLength(2);
+      await toggle(el, '.context-toggle');
+      expect($$(el, '.context')).toHaveLength(0);
+      expect($$(el, 'del')).toHaveLength(1);
+    });
+
+    it('waits behind its count above ten changed lines, a replaced line counted once; open, it scrolls in a named region', async () => {
+      const el = await review(
+        [
+          proposal({
+            original: lines(11, 'a'),
+            replacement: lines(11, 'b'),
+            context: { before: 'x', after: '' },
+          }),
+        ],
+        { granularity: 'lines' },
+      );
+      const disclosure = $(el, '.long') as Disclosure;
+      expect(disclosure.label).toBe('11 changed lines · Review changes');
+      expect($$(el, 'del, ins')).toHaveLength(0);
+      // A long diff offers no context of its own.
+      expect($(el, '.context-toggle')).toBeNull();
+      await toggle(el, '.long');
+      expect(disclosure.label).toBe('Hide 11 changed lines');
+      const region = $(el, '.scroll')!;
+      expect(region.getAttribute('role')).toBe('region');
+      expect(region.getAttribute('aria-label')).toBe('11 changed lines');
+      expect(region.tabIndex).toBe(0);
+      expect(getComputedStyle(region).maxBlockSize).toBe('240px');
+      expect(region.scrollHeight).toBeGreaterThan(region.clientHeight);
+      // Its Before block, then its After block.
+      expect($$(el, '.scroll .side > .muted').map(text)).toEqual(['Before', 'After']);
+      // Ten changed lines are not long; nor are five lines replaced by six and one removed, which
+      // change seven, not twelve.
+      el.proposals = [
+        proposal({ proposalId: 'q', original: lines(10, 'a'), replacement: lines(10, 'b') }),
+        proposal({
+          proposalId: 'r',
+          original: `${lines(5, 'a')}same\n${lines(6, 'c')}`,
+          replacement: `${lines(6, 'b')}same\n${lines(5, 'c')}`,
+        }),
+      ];
+      await settle(el);
+      expect($(el, '.long')).toBeNull();
+      // A word diff never waits, however many lines it changes.
+      el.granularity = 'words';
+      el.proposals = [proposal({ original: lines(30, 'a'), replacement: lines(30, 'b') })];
+      await settle(el);
+      expect($(el, '.long')).toBeNull();
+      expect($$(el, 'del').length).toBeGreaterThan(0);
+    });
+
+    it('draws a line diff as a Before block over an After block; split, side by side down to 30rem', async () => {
+      const el = await review(
+        [proposal({ original: 'const retries = 3;\n', replacement: 'const retries = 5;\n' })],
+        { granularity: 'lines' },
+      );
+      const sides = () => $$(el, '.side').map((side) => side.getBoundingClientRect());
+      expect($$(el, '.sides .side > .muted').map(text)).toEqual(['Before', 'After']);
+      expect(sides()[1]!.top).toBeGreaterThan(sides()[0]!.bottom - 1);
+      el.view = 'split';
+      el.style.display = 'block';
+      el.style.inlineSize = '40rem';
+      await settle(el);
+      expect(sides()[1]!.top).toBe(sides()[0]!.top);
+      el.style.inlineSize = '29rem';
+      await frames(2);
+      expect(sides()[1]!.top).toBeGreaterThan(sides()[0]!.bottom - 1);
+    });
+
+    it('says when a proposal changes nothing', async () => {
+      const el = await review([proposal({ replacement: 'The service will launch very soon.' })]);
+      expect(text($(el, '.diff-empty'))).toBe('No proposed changes.');
+      expect($$(el, 'del, ins')).toHaveLength(0);
+    });
   });
 
   it('odd-change-review asks once, keeps focus on the chosen button while it waits, then on the status, never on Undo (Figma page 08)', async () => {
