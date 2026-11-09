@@ -56,7 +56,46 @@ Still to do: slices 2 to 4, 6, and 7 in this order in Agent 2's lane, and slice 
 | 6 | The renderer aliases, the public registrations of `odd-message-branch` and `odd-suggestions`, and the unused deprecated strings removed, with every consumer | Agent 2, item 18 |
 | 7 | Patterns, examples, generated contracts, and agent kits brought in line | Agent 2, item 19 |
 
-Waiting for the owner's Figma: the visual redesign of `odd-action-approval` and its neighbouring workflow elements (§8), the decision row's new look with it, the scope choice's visual composition, and the audit's step 4 refinements of `odd-tool-call` (`odd-badge` for its status, `odd-disclosure`) and `odd-question` (the composed form controls), since each changes their look (slice 4). Done by no slice, and recorded as limitations: user testing, testing with real assistive technology, and the docs site's Patterns pages (docs pause).
+Waiting for the owner's Figma: the visual redesign of `odd-action-approval` and its neighbouring workflow elements (§8), the decision row's new look with it, the scope choice's visual composition, and the audit's step 4 refinements of `odd-tool-call` (`odd-badge` for its status, `odd-disclosure`) and `odd-question` (the composed form controls), since each changes their look (slice 4). Done by no slice, and recorded as limitations: user testing, testing with real assistive technology, and the docs site's Patterns pages (docs pause). *Update, 2026-11-09: the shared parts and the approval are drawn (below).*
+
+## The design specs (Figma pages 07 to 09, reviewed 2026-11-09)
+
+The owner's design pages in `E7LfRysny8V3qU24tv082i`: "07 · AI redesign · Index" (`805:2`), "08 · AI · Shared parts · Interaction spec" (`805:3`), and "09 · AI · Action approval · Interaction spec" (`805:4`), drawn against `main` at `0350306`. Pages 10 to 30 are not started: the designer stopped after 09 for review. Agent 1 read them on 2026-11-09 (text, component sets, and two screenshots).
+
+**How the elements are built.** Each public element composes internal parts, and the code mirrors them in `packages/ai/src/internal/`. Nothing public is added: no new tags, properties, slots, renderers, events, or CSS custom properties; only new localized strings for the proposed copy.
+
+| Figma internal part (`Oddkin/AI/Internal/...`) | Code | Used by |
+| --- | --- | --- |
+| `Status`: a compact badge for the state, an outcome line for what it means | `status.ts` | All of them |
+| `DecisionRow/Approval`, `/Question`, `/ChangeReview`, `/Checkpoint`, `/ReviewUndo`, `/ReviewDismiss`, `/CheckpointConfirmation`: one mechanism, a setup per operation | `decision-row.ts` on `decision.ts` | Approval, question, change review, checkpoint |
+| `ScopeChoice` and `ScopeOption` | A scope-choice module, moved out of `action-approval` | Approval |
+| `DiffView`, read-only | `diff-view.ts` | Approval, change review |
+| `Expiry` and `Waiting` | `formatTime`, and the activity's wait wording | Approval, question; activity |
+| `ReasonField`: `odd-textarea` inside `odd-disclosure` | The approval's reason | Approval |
+| `BadgePresentation`, `DisclosureTrigger` | None: Figma-only adapters of `odd-badge` and `odd-disclosure` | — |
+
+**What the specs add.** The status badge with an outcome line, and attention badges for `requested`, `expired`, and needs-input. Focus that stays on the chosen control while sending, moves to the outcome line (`tabindex=-1`) only when the focused control goes away, and never lands on Undo by itself. A restored `submitting` record with no local choice shows generic pending wording and loads no button. The approval laid out by its container: below 480 px compact (16 px padding, stacked 48 px controls), 480 to 719 px full (24 px padding), from 720 px a 640 px default capped at 720 px. Tab order diff, scope, reason, Approve, Reject, Edit, and no Enter-to-approve shortcut. `announce` off by default. Without `approvalScopes`, Approve is blocked and Reject stays; a confirmed scope comes only from the host record ("Scope details were not supplied." when it is missing). Absent change sides are omitted, an empty string is shown as an empty value, and no record renders nothing. The diff's context opens in a disclosure; long diffs sit in a disclosure with a 240 px scroll region; split views stack below 480 px. Expiry is omitted when absent or unformattable, and nothing counts down.
+
+**Decisions on the designer's open questions** (Agent 1, 2026-11-09: the owner asked Agent 1 to decide while away and reviews later):
+
+- Pages 07 to 09 are the build spec, and the designer continues with pages 10 to 30.
+- Scopes: described radio rows (option A) for two to four scopes, a select with the chosen scope's description (option B) above four; the compact option C is not used by default.
+- The approval's optional reason collapses into a disclosure when empty, stays open once written, and resets with a new revision.
+- Expiry is emphasized as soon five minutes before `expiresAt`: an Oddkin default that never changes the record.
+- The approval shows its changes as Before and After blocks, as drawn, and gains no `granularity` property (replacing that part of §6 item 3).
+- Attention badges for `requested`, `expired`, and needs-input are added; outcome wording stays neutral.
+
+**Gaps.** The design records the pages cite (`C:\SLT_Backup_10-21-2026\ai-redesign\*.json`) are not on disk. The Figma-only adapters exist because the badge, textarea, and disclosure specimens on pages 02 and 03 have fixed geometry: making those primitives responsive in Figma is the owner's follow-up, followed by a snapshot refresh (Agent 1).
+
+**Rows.**
+
+| What | Row |
+| --- | --- |
+| The shared parts of page 08, for all four decision elements | Agent 2, item 20 |
+| `odd-action-approval` to page 09 | Agent 2, item 21 |
+| The page 08 and 09 families exported into the design snapshot, for the parity tests | Agent 1, when item 20 starts |
+| Agent 3's visual refinements of item 9 | Wait for their pages (21 to 28); the `odd-citation` and `odd-transcript` tests go ahead |
+| Pages 10 to 30 | The owner's design session, then one implementation row per approved page |
 
 ## Context
 
@@ -211,7 +250,7 @@ Every intent event names its record and revision: `{ approvalId, revision, … }
    Execution progress and results still come from the tool record. The controller links the approval (`approvalId`) without moving the tool. `denied` stays: the backend refusing to run the call. **Correction (owner, 2026-11-09):** a generic `tool-denied` never manufactures a person's rejection. When the action can no longer run, the controller withdraws a linked approval that is still unresolved (`cancelled`) and leaves a terminal decision as it is; an adapter whose protocol carries an explicit, authoritative authorization rejection reports that approval outcome separately. An approval followed by a failed execution stays `approved`.
 2. **The attempt owns waiting** (`odd-activity` reads only the attempt since `7980090`). Tool records may name the running tools, but `odd-activity` never scans them for human input. The controller keeps the aggregate across every live approval and question of the attempt in a small typed wait descriptor on the attempt, which tells input that needs the person's action from responses being submitted. It recomputes the descriptor after every request, submission, failure, retry, resolution, replacement, and withdrawal, so one resolution never clears another open request. When the last request resolves, the attempt takes the latest authoritative run phase: approval does not mean executing or completed. A stop request, a disconnected transport, or an ended message is not a terminal attempt: where the protocol represents a paused workflow, an approval or a question followed by the stream's completion stays answerable. Only a terminal attempt withdraws its open requests (`cancelled`).
 3. **`ApprovalRecord`:**
-   - `changes` render through the shared read-only diff view, with `granularity` (`words` or `lines`, as `odd-change-review` names it);
+   - `changes` render through the shared read-only diff view, as Before and After blocks; the approval gains no `granularity` property (Agent 1, 2026-11-09, from the design specs);
    - **permission scopes** (owner, 2026-11-09): optional `scopes`, `[{ id, label, description? }]` with opaque ids, and `defaultScopeId`, offered by the host, whose backend defines, validates, enforces, and persists what each scope means. The element collects intent only: no permission storage, authentication, or policy engine.
      - No scopes, or an empty list: the approval covers this action at this revision only.
      - One scope: no selector, and the scope stays visibly explained.

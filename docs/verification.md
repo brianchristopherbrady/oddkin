@@ -6142,3 +6142,18 @@ CI run 42606505101 on `0350306` failed in WebKit only: `toast.browser.test.ts:11
 | Node | `npx vitest run --project node` | 1,742 passed, 2 skipped (140 files) |
 | Probes | `mutate.mjs`, 16 mutants: the loading button disabled with the others; no button loading; every button loading; the buttons losing their action names; the row ignoring the element's size; ignoring each button's appearance; Answer no submit button; the change review's buttons losing their proposal; Edit offered without the capability; Approve ignoring what blocks only Approve (a scope to choose); Answer never loading; Skip enabled while the question is locked; confirming a restore focusing Keep current state; Restore… ignoring the host's unavailable capability; a stale proposal losing Dismiss; a stale proposal saying Reject | 16 killed; three survived the first run (Edit without the capability, the confirmation's focus, Restore… while unavailable), so the elements file now checks each, which kills them |
 | Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run size`, `npm run compat`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `node scripts/verify-packs.mjs`, `node scripts/list-diagnostics.mjs --write` | Each exit 0, size after the raise: `ai-chat` 60,252 B gzip (+88 from 60,164: the row and each element's configuration; budget 60,288, Agent 1's call), `ai-headless` 15,044 (0), `ai-response` 24,623 (0); vocabulary 0 findings; the packed consumers pass; `docs/diagnostics.md` unchanged (515 messages, none flagged) |
+
+## 2026-11-09 — The owner's AI design specs, Figma pages 07 to 09 (round 11, Agent 1)
+
+Read-only review through the Figma MCP (session `44c8c725`), file `E7LfRysny8V3qU24tv082i`. No tests ran.
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Pages | `get_metadata` without a node | 07 · AI redesign · Index (`805:2`), 08 · AI · Shared parts · Interaction spec (`805:3`), 09 · AI · Action approval · Interaction spec (`805:4`); pages 10 to 30 not created |
+| Page 07 | `use_figma`, read-only: each section's text | Pages 07 to 09 ready for review; three open questions (scope appearance, optional reason, expiry threshold); drawn against `main` at `0350306` |
+| Page 08 | `use_figma`, read-only: sections, component sets, and text | `Oddkin/AI/Internal/` Status, DecisionRow (Approval, Question, ChangeReview, Checkpoint, ReviewUndo, ReviewDismiss, CheckpointConfirmation), ScopeChoice, ScopeOption, DiffView, Expiry, Waiting, ReasonField, BadgePresentation; desktop and phone flows for each decision row; anatomy, keyboard, layout, research, open questions, and checks sections |
+| Page 09 | `use_figma`, read-only: sections and text | `Oddkin/AI/ActionApproval/Proposal`; state matrix, capabilities, optional values, restored pending, layouts at 320 to 1024 px, flows (decide, fail and retry, remote and host transitions, revision reset, keyboard, pending races, reason and scope receipts), API-to-design mapping: no public API change |
+| Visual check | `get_screenshot` of `829:2209` and `817:2451` | The shared-parts before and after in light and dark, and the scope choice with no default |
+| Design records | `Test-Path C:\SLT_Backup_10-21-2026\ai-redesign` | False: the records the pages cite are not on disk |
+
+**Not verified here:** the designs in a browser, user testing, and assistive technology; the page counts and contrast samples the pages say are recorded elsewhere.
