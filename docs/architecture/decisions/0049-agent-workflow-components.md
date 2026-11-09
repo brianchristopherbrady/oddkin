@@ -130,7 +130,7 @@ These interactions repeat across the five. Each becomes one internal module of `
 | Shared interaction | Module (internal) | Used by |
 | --- | --- | --- |
 | Diff view: word or line diffs, merged runs, context, inline or split, `<del>`/`<ins>` with visually hidden labels | `internal/diff-view.ts`, moved out of `odd-change-review` (`mergeRuns`, the diff template and styles), on `controllers/diff.ts` | `odd-change-review`, `odd-action-approval` (`changes`) |
-| Decision row: native buttons drawn by `nativeButtonStyles`, the chosen button loading while the request is in flight, the others disabled, focus kept by `DecisionController` | `internal/decision-row.ts`, beside `internal/decision.ts` | `odd-action-approval`, `odd-question`, `odd-change-review`, `odd-checkpoint` |
+| Decision row: native buttons drawn by `nativeButtonStyles`, the chosen button loading while the request is in flight, the others disabled, focus kept by `DecisionController` | `internal/decision-row.ts`, beside `internal/decision.ts`; lands with the redesign (§8), because one row changes the four elements' buttons | `odd-action-approval`, `odd-question`, `odd-change-review`, `odd-checkpoint` |
 | Status: one vocabulary (§5) and one map from status to tone; `odd-badge` for compact status, a toned line for an outcome | `internal/status.ts` | All five, and `odd-checkpoint` |
 | Expandable details | `odd-disclosure` (public, in `@oddkin/components`; its `summary` slot since row 12) | `odd-tool-call`; `odd-action-approval` for long changes |
 | Expiry and times | `formatTime` (exists) | `odd-action-approval`, `odd-question` |
@@ -166,7 +166,7 @@ Every intent event names its record and revision: `{ approvalId, revision, … }
    - the transport's optional `answer?()`.
    
    An adapter maps its protocol's way of asking (an AI SDK client tool, an AG-UI interrupt) to these events. The renames of §5 apply.
-5. **The shared modules of §4,** with `odd-change-review`'s statuses renamed (§5).
+5. **The shared modules of §4,** with `odd-change-review`'s statuses renamed (§5): the diff view and the status map first, drawn as today; the decision row with the redesign (§8), since one row changes the four elements' buttons (Agent 1, 2026-11-08).
 6. **Documentation and generated contracts:**
    - ai-interaction.md §3, §4.4 to §4.6, and §6.1;
    - the element references, the agent kits, the composition catalog, and `docs/diagnostics.md`;
