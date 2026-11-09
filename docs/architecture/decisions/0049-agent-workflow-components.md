@@ -231,7 +231,7 @@ Every intent event names its record and revision: `{ approvalId, revision, … }
    - `odd-question` stays usable on its own with host-owned records; the conversation is one more composition.
    
    The existing adapters map their protocol's way of asking to these events. The renames of §5 apply.
-5. **The shared modules of §4,** with `odd-change-review`'s statuses renamed (§5): the diff view and the status map (done, `dadb0ac`), then the decision row, configured per element, with today's presentation (owner, 2026-11-09, replacing the note of 2026-11-08 that moved it to the redesign).
+5. **The shared modules of §4,** with `odd-change-review`'s statuses renamed (§5): the diff view and the status map (done, `dadb0ac`), then the decision row, configured per element, with today's presentation (done, `d1809a61`; owner, 2026-11-09, replacing the note of 2026-11-08 that moved it to the redesign).
 6. **Documentation and generated contracts:**
    - ai-interaction.md §3, §4.4 to §4.6, and §6.1;
    - the element references, the agent kits, the composition catalog, and `docs/diagnostics.md`;
