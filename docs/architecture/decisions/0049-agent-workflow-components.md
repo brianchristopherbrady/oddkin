@@ -56,7 +56,7 @@ Still to do: slices 2 to 4, 6, and 7 in this order in Agent 2's lane, and slice 
 | 6 | The renderer aliases, the public registrations of `odd-message-branch` and `odd-suggestions`, and the unused deprecated strings removed, with every consumer | Agent 2, item 18 |
 | 7 | Patterns, examples, generated contracts, and agent kits brought in line | Agent 2, item 19 |
 
-Waiting for the owner's Figma: the visual redesign of `odd-action-approval` and its neighbouring workflow elements (§8), the decision row's new look with it, and the scope choice's visual composition. Done by no slice, and recorded as limitations: user testing, testing with real assistive technology, and the docs site's Patterns pages (docs pause).
+Waiting for the owner's Figma: the visual redesign of `odd-action-approval` and its neighbouring workflow elements (§8), the decision row's new look with it, the scope choice's visual composition, and the audit's step 4 refinements of `odd-tool-call` (`odd-badge` for its status, `odd-disclosure`) and `odd-question` (the composed form controls), since each changes their look (slice 4). Done by no slice, and recorded as limitations: user testing, testing with real assistive technology, and the docs site's Patterns pages (docs pause).
 
 ## Context
 
@@ -182,7 +182,7 @@ These interactions repeat across the five. Each becomes one internal module of `
 | Shared interaction | Module (internal) | Used by |
 | --- | --- | --- |
 | Read-only diff view: word or line diffs, merged runs, context, inline or split, `<del>`/`<ins>` with visually hidden labels; it renders change data and decides nothing | `internal/diff-view.ts`, moved out of `odd-change-review` (`mergeRuns`, the diff template and styles), on `controllers/diff.ts` | `odd-change-review`, `odd-action-approval` (`changes`) |
-| Decision row: native buttons drawn by `nativeButtonStyles`, the chosen button loading while the request is in flight, the others disabled, focus kept by `DecisionController`. Each element configures its own actions, button size, and which buttons show loading, so today's presentation stays until the redesign (owner, 2026-11-09) | `internal/decision-row.ts`, beside `internal/decision.ts` | `odd-action-approval`, `odd-question`, `odd-change-review`, `odd-checkpoint` |
+| Decision row: `odd-button`s, as today (the native button sheet has no loading state), the chosen button loading while the request is in flight, the others disabled, focus kept by `DecisionController`. Each element configures its own actions, button size, and which buttons show loading, so today's presentation stays until the redesign (owner, 2026-11-09) | `internal/decision-row.ts`, beside `internal/decision.ts` | `odd-action-approval`, `odd-question`, `odd-change-review`, `odd-checkpoint` |
 | Status: one vocabulary (§5) and one map from status to tone; `odd-badge` for compact status, a toned line for an outcome | `internal/status.ts` | All five, and `odd-checkpoint` |
 | Expandable details | `odd-disclosure` (public, in `@oddkin/components`; its `summary` slot since row 12) | `odd-tool-call`; `odd-action-approval` for long changes |
 | Expiry and times | `formatTime` (exists) | `odd-action-approval`, `odd-question` |

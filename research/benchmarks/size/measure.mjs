@@ -132,7 +132,9 @@ export const BUDGETS = {
   // the model (+685), and its radios drawn by the shared control-indicator sheets (+584).
   // 60,224 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 60,164 (+2,135)
   // once odd-message composes odd-question for question parts (ADR 0049 slice 3).
-  'ai-chat': 60224,
+  // 60,288 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 60,252 (+88) with
+  // the shared decision row configured per element (ADR 0049 slice 4).
+  'ai-chat': 60288,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

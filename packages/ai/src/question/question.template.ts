@@ -1,4 +1,5 @@
 import { html } from '@oddkin/core/template';
+import { decisionRow } from '../internal/decision-row.js';
 import { format } from '../internal/strings.js';
 import type { OddkinQuestion } from './question.js';
 
@@ -97,18 +98,27 @@ export const questionTemplate = (host: OddkinQuestion) => {
       class="actions"
       ?hidden=${q.status !== 'requested' && q.status !== 'failed'}
     >
-      <odd-button
-        type="submit"
-        appearance="primary"
-        size="sm"
-        ?disabled=${locked && !pending}
-        ?loading=${pending}
-        @click=${host._submit}
-        >${t.submit}</odd-button
-      >
-      <odd-button size="sm" appearance="ghost" ?disabled=${locked} @click=${host._skip}
-        >${t.skip}</odd-button
-      >
+      ${decisionRow(
+        'sm',
+        [
+          {
+            action: 'answer',
+            label: t.submit,
+            appearance: 'primary',
+            type: 'submit',
+            disabled: locked,
+            onClick: host._submit,
+          },
+          {
+            action: 'skip',
+            label: t.skip,
+            appearance: 'ghost',
+            disabled: locked,
+            onClick: host._skip,
+          },
+        ],
+        pending ? 'answer' : undefined,
+      )}
     </div>
   </form>`;
 };

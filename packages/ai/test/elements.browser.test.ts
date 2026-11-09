@@ -643,6 +643,105 @@ describe('odd-tool-call and odd-action-approval', () => {
   });
 });
 
+describe('the shared decision row (ADR 0049 §4)', () => {
+  type Button = HTMLElement & { disabled: boolean };
+  const row = (el: Element) => $$(el, '[part="actions"] odd-button') as Button[];
+  const look = (el: Element) =>
+    row(el).map((b) => [
+      b.dataset['action'],
+      b.getAttribute('size'),
+      b.getAttribute('appearance'),
+      b.getAttribute('type'),
+    ]);
+  const state = (el: Element) =>
+    row(el).map((b) => [b.hasAttribute('loading'), b.hasAttribute('disabled')]);
+
+  it("keeps each element's buttons: the approval's decision loads, the others wait", async () => {
+    const el = await mount(
+      'odd-action-approval',
+      () => import('../src/action-approval/action-approval.define.js'),
+      (e) => {
+        e.approval = { approvalId: 'ap', revision: 1, title: 'Deploy', status: 'requested' };
+        e.capabilities = { respondToApproval: { available: true } };
+      },
+    );
+    // Edit only where the host allows it.
+    expect(look(el).map(([action]) => action)).toEqual(['approve', 'reject']);
+    el.capabilities = {
+      respondToApproval: { available: true },
+      editApproval: { available: true },
+    };
+    await settle(el);
+    // odd-button reflects its defaults: the medium size and the secondary appearance.
+    expect(look(el)).toEqual([
+      ['approve', 'md', 'primary', null],
+      ['reject', 'md', 'secondary', null],
+      ['edit', 'md', 'ghost', null],
+    ]);
+    expect(state(el)).toEqual([
+      [false, false],
+      [false, false],
+      [false, false],
+    ]);
+    row(el)[1]!.click();
+    await settle(el);
+    expect(state(el)).toEqual([
+      [false, true],
+      [true, false],
+      [false, true],
+    ]);
+  });
+
+  it("keeps the question's small buttons: Answer loads for an answer or a skip, Skip never", async () => {
+    const el = await mount(
+      'odd-question',
+      () => import('../src/question/question.define.js'),
+      (e) => {
+        e.question = {
+          questionId: 'q',
+          revision: 1,
+          prompt: 'Which audience?',
+          kind: 'text',
+          status: 'requested',
+        };
+      },
+    );
+    expect(look(el)).toEqual([
+      ['answer', 'sm', 'primary', 'submit'],
+      ['skip', 'sm', 'ghost', null],
+    ]);
+    row(el)[1]!.click();
+    await settle(el);
+    expect(state(el)).toEqual([
+      [true, false],
+      [false, true],
+    ]);
+  });
+
+  it("keeps the checkpoint's Restore… disabled, with the host's reason, while restoring is unavailable", async () => {
+    const el = await mount(
+      'odd-checkpoint',
+      () => import('../src/checkpoint/checkpoint.define.js'),
+      (e) => {
+        e.checkpoint = {
+          checkpointId: 'cp',
+          label: 'Before',
+          description: 'Files as of step 3.',
+          restores: ['src/'],
+          status: 'available',
+        };
+        e.capabilities = { restoreCheckpoint: { available: false, reason: 'Read-only.' } };
+      },
+    );
+    expect(look(el)).toEqual([['restore', 'sm', 'secondary', null]]);
+    expect(state(el)).toEqual([[false, true]]);
+    expect(text($(el, '[part="actions"] .muted'))).toBe('Read-only.');
+    el.capabilities = { restoreCheckpoint: { available: true } };
+    await settle(el);
+    expect(state(el)).toEqual([[false, false]]);
+  });
+});
+
 describe('odd-checkpoint', () => {
   it('approval and checkpoint statuses take their tones from one map (ADR 0049 §4)', async () => {
     const approval = await mount(
@@ -725,10 +824,14 @@ describe('odd-checkpoint', () => {
     );
     const requests: unknown[] = [];
     el.addEventListener('odd-checkpoint-restore', (e) => requests.push((e as CustomEvent).detail));
-    // No status while it can be restored; Keep current state hands focus back to Restore….
+    // No status while it can be restored. Restore… hands focus to the confirmation, and Keep
+    // current state hands it back to Restore….
     expect($(el, '.state')!.hidden).toBe(true);
+    ($(el, '[part="actions"] odd-button') as HTMLElement).focus();
     $(el, '[part="actions"] odd-button')!.click();
     await settle(el);
+    await frames(2);
+    expect(el.shadowRoot!.activeElement).toBe($(el, '[data-action="confirm"]'));
     ($(el, '.confirm odd-button[appearance="ghost"]') as HTMLElement).focus();
     $(el, '.confirm odd-button[appearance="ghost"]')!.click();
     await settle(el);
@@ -737,7 +840,7 @@ describe('odd-checkpoint', () => {
     $(el, '[part="actions"] odd-button')!.click();
     await settle(el);
     expect(text($(el, '.confirm'))).toContain('Restore to “Before refactor”?');
-    $(el, '[data-confirm]')!.click();
+    $(el, '[data-action="confirm"]')!.click();
     await settle(el);
     expect(requests).toEqual([{ checkpointId: 'cp' }]);
     expect(text($(el, '.state'))).toBe('Restoring… Not restored yet.');
@@ -759,7 +862,7 @@ describe('odd-checkpoint', () => {
       const el = mounted.element;
       $(el, '[part="actions"] odd-button')!.click();
       await settle(el);
-      $(el, '[data-confirm]')!.click();
+      $(el, '[data-action="confirm"]')!.click();
       await settle(el);
       expect(el.checkpoint?.status).toBe('restored');
       expect(text($(el, '.state'))).toBe('Restored. Restored the document to 09:30.');

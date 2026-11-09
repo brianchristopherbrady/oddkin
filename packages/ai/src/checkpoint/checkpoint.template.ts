@@ -1,4 +1,5 @@
 import { html } from '@oddkin/core/template';
+import { decisionRow } from '../internal/decision-row.js';
 import { toneOf } from '../internal/status.js';
 import { format } from '../internal/strings.js';
 import type { OddkinCheckpoint } from './checkpoint.js';
@@ -39,12 +40,14 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
     </ul>
     <p class="state" data-tone=${tone} ?hidden=${!status}>${status}</p>
     <div part="actions" class="actions" ?hidden=${confirming || pending}>
-      <odd-button
-        size="sm"
-        ?disabled=${unavailable !== undefined || c.status === 'unavailable'}
-        @click=${host._ask}
-        >${t.restore}</odd-button
-      >
+      ${decisionRow('sm', [
+        {
+          action: 'restore',
+          label: t.restore,
+          disabled: unavailable !== undefined || c.status === 'unavailable',
+          onClick: host._ask,
+        },
+      ])}
       <span class="muted" ?hidden=${!unavailable || c.status === 'unavailable'}
         >${unavailable ?? ''}</span
       >
@@ -52,10 +55,10 @@ export const checkpointTemplate = (host: OddkinCheckpoint) => {
     <div class="confirm" role="group" aria-labelledby="confirm-text" ?hidden=${!confirming}>
       <p id="confirm-text">${format(t.confirmText, { label: c.label })}</p>
       <div class="actions">
-        <odd-button data-confirm size="sm" appearance="primary" @click=${host._restore}
-          >${t.confirm}</odd-button
-        >
-        <odd-button size="sm" appearance="ghost" @click=${host._cancel}>${t.cancel}</odd-button>
+        ${decisionRow('sm', [
+          { action: 'confirm', label: t.confirm, appearance: 'primary', onClick: host._restore },
+          { action: 'cancel', label: t.cancel, appearance: 'ghost', onClick: host._cancel },
+        ])}
       </div>
     </div>
   </div>`;

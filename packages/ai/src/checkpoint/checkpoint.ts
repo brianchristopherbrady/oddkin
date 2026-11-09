@@ -70,7 +70,7 @@ export class OddkinCheckpoint extends OddkinElement.with({
     this,
     () =>
       (this._confirming.peek()
-        ? this.shadowRoot?.querySelector<HTMLElement>('[data-confirm]')
+        ? this.shadowRoot?.querySelector<HTMLElement>('[data-action="confirm"]')
         : undefined) ??
       this.shadowRoot?.querySelector<HTMLElement>('.state:not([hidden])') ??
       this.shadowRoot?.querySelector<HTMLElement>('[part="actions"] odd-button'),

@@ -1,5 +1,6 @@
 import { html, repeat } from '@oddkin/core/template';
 import { isBoundary, type EditProposal } from '../controllers/document.js';
+import { decisionRow } from '../internal/decision-row.js';
 import { diffView } from '../internal/diff-view.js';
 import type { OddkinChangeReview } from './change-review.js';
 
@@ -56,40 +57,27 @@ export const changeReviewTemplate = (host: OddkinChangeReview) => {
               ${
                 p.status === 'requested' || p.status === 'stale' || undo
                   ? html`<div part="actions" class="actions">
-                      ${
-                        p.status === 'requested'
-                          ? html`<odd-button
-                              size="sm"
-                              appearance="primary"
-                              data-id=${p.proposalId}
-                              data-action="accept"
-                              @click=${host._act}
-                              >${t.accept}</odd-button
-                            >`
-                          : null
-                      }
-                      ${
-                        p.status === 'requested' || p.status === 'stale'
-                          ? html`<odd-button
-                              size="sm"
-                              data-id=${p.proposalId}
-                              data-action="reject"
-                              @click=${host._act}
-                              >${p.status === 'stale' ? t.dismiss : t.reject}</odd-button
-                            >`
-                          : null
-                      }
-                      ${
-                        undo
-                          ? html`<odd-button
-                              size="sm"
-                              data-id=${p.proposalId}
-                              data-action="undo"
-                              @click=${host._act}
-                              >${t.undo}</odd-button
-                            >`
-                          : null
-                      }
+                      ${decisionRow('sm', [
+                        p.status === 'requested' && {
+                          action: 'accept',
+                          label: t.accept,
+                          appearance: 'primary',
+                          id: p.proposalId,
+                          onClick: host._act,
+                        },
+                        (p.status === 'requested' || p.status === 'stale') && {
+                          action: 'reject',
+                          label: p.status === 'stale' ? t.dismiss : t.reject,
+                          id: p.proposalId,
+                          onClick: host._act,
+                        },
+                        undo && {
+                          action: 'undo',
+                          label: t.undo,
+                          id: p.proposalId,
+                          onClick: host._act,
+                        },
+                      ])}
                     </div>`
                   : null
               }

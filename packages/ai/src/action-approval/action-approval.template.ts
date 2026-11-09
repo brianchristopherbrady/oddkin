@@ -1,6 +1,7 @@
 import { live } from '@oddkin/core/helpers/live';
 import { html } from '@oddkin/core/template';
 import { can } from '../contracts/normalize.js';
+import { decisionRow } from '../internal/decision-row.js';
 import { toneOf } from '../internal/status.js';
 import { format } from '../internal/strings.js';
 import type { OddkinActionApproval } from './action-approval.js';
@@ -105,29 +106,32 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
           ?disabled=${blocked !== undefined}
         ></textarea>
       </label>
-      <odd-button
-        appearance="primary"
-        ?disabled=${approveBlocked !== undefined && !(pending && decided === 'approve')}
-        ?loading=${pending && decided === 'approve'}
-        @click=${host._approve}
-        >${t.approve}</odd-button
-      >
-      <odd-button
-        ?disabled=${blocked !== undefined && !(pending && decided === 'reject')}
-        ?loading=${pending && decided === 'reject'}
-        @click=${host._reject}
-        >${t.reject}</odd-button
-      >
-      ${
-        can(host.capabilities, 'editApproval')
-          ? html`<odd-button
-              appearance="ghost"
-              ?disabled=${blocked !== undefined}
-              @click=${host._edit}
-              >${t.edit}</odd-button
-            >`
-          : null
-      }
+      ${decisionRow(
+        undefined,
+        [
+          {
+            action: 'approve',
+            label: t.approve,
+            appearance: 'primary',
+            disabled: approveBlocked !== undefined,
+            onClick: host._approve,
+          },
+          {
+            action: 'reject',
+            label: t.reject,
+            disabled: blocked !== undefined,
+            onClick: host._reject,
+          },
+          can(host.capabilities, 'editApproval') && {
+            action: 'edit',
+            label: t.edit,
+            appearance: 'ghost',
+            disabled: blocked !== undefined,
+            onClick: host._edit,
+          },
+        ],
+        pending ? decided : undefined,
+      )}
     </div>
     <p class="muted" ?hidden=${!actionable || !approveBlocked}>${approveBlocked ?? ''}</p>
   </div>`;
