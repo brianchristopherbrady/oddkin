@@ -79,8 +79,10 @@ export const BUDGETS = {
   // 2026-11-06 (Agent 1's call): measured 21,915 (+644) with the native-button sheet for its copy
   // buttons (component-architecture-audit.md §9, step 2). 21,824 since 2026-11-07 (Agent 1's call),
   // the smallest 64 B step: measured 21,818 (-97) once the AI sheets' CSS comments moved into doc
-  // comments.
-  'ai-response': 21824,
+  // comments. 24,640 since 2026-11-08 (Agent 1's call), the smallest 64 B step: measured 24,623
+  // (+2,805) with odd-copy-button for the copy action and each code block (audit step 3), its
+  // confirmation popover on the shared overlay look (owner, 2026-11-07), and its announcer.
+  'ai-response': 24640,
   // 49.5 KiB; measured 50,340 on 2026-10-23 with odd-button's toggle and the description hook
   // tooltips use (48,782 on 2026-10-18: odd-conversation + odd-prompt-input, all nested elements;
   // +625 B since the shared core focus, announce, and observe controllers replaced AI-internal
@@ -112,7 +114,10 @@ export const BUDGETS = {
   // read for one beta (audit §6.1); removing the aliases next beta gives most of it back.
   // 55,040 since 2026-11-07, the smallest 64 B step: measured 55,023 (-251) once the AI sheets'
   // CSS comments moved into their doc comments (comments inside css`` ship in every bundle).
-  'ai-chat': 55040,
+  // 56,576 since 2026-11-08 (Agent 1's call), the smallest 64 B step: measured 56,560 (+2,138)
+  // with odd-copy-button in response, message, and artifact and its confirmation popover (audit
+  // step 3; owner, 2026-11-07), after the glyphs a bundle does not render left it (-604).
+  'ai-chat': 56576,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

@@ -238,12 +238,20 @@ renders no `<time>`. It does not update itself (Figma: not a live clock): set `d
 **`odd-copy-button`** (`copyButton`) — copies text to the clipboard: `value`, or the text of the element whose id
 is `from` (an input or textarea: its value), in the same document or shadow root. A native button (part `button`) with
 the small secondary `odd-button` look from the shared button module and the copy glyph (the check while copied);
-`label` (default `strings.copy`, "Copy"), `disabled`. On success it writes `navigator.clipboard.writeText`, shows
-and politely announces "Copied to clipboard." for two seconds (part `status`), and dispatches `odd-copy` (detail
-`{ value }`, not cancelable). When the browser refuses (permission denied, an insecure page without the Clipboard API)
-it shows and assertively announces "Could not copy. Select the text." in the danger colour and offers a manual copy: it
-selects the `from` element's text, or shows `value` selected in a read-only field (part `fallback`) and moves focus
-there. `copy(): Promise<boolean>` copies from script.
+`label` (default `strings.copy`, "Copy"), `disabled`. On success it writes `navigator.clipboard.writeText`, politely
+announces "Copied to clipboard.", shows it for two seconds in a small popover (part `confirmation`, owner 2026-11-07) so
+nothing on the page moves, and dispatches `odd-copy` (detail `{ value }`, not cancelable). The popover is a manual
+popover in the top layer with the overlay look, its text in the small role and the secondary colour as Figma draws the
+copied state, padded `space.2xs` `space.xs`: placed once when shown, `space.2xs`
+above the button (below it when there is no room above), centred on it within the viewport; it takes no focus, is hidden
+from assistive technology (the announcement says it), and goes after the two seconds or on any scroll in the trees
+between the button and the page. When the browser refuses (permission denied, an insecure page without the Clipboard API)
+it shows (part `status`) and assertively announces "Could not copy. Select the text." in the danger colour and offers a
+manual copy: it selects the `from` element's text, or shows `value` selected in a read-only field (part `fallback`, a text area when the
+text has line breaks, so they survive) and moves focus there. Each outcome goes first to the surface around the button
+as `odd-announce` (cancelable, composed; detail `{ text, priority, key }`): the surface's one announcer (an `@oddkin/ai`
+conversation, `createAnnouncer`) takes and cancels it, and only an outcome nobody took is said by the button's own live
+regions. `copy(): Promise<boolean>` copies from script.
 
 **`odd-stat`** (`stat`) — one metric on the card surface (`card.padding`, `card.radius`, a `color.border.default`
 border): `label` (secondary UI role), `value: string` (formatted by the author; the display role), and the context in

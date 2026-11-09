@@ -2013,7 +2013,10 @@
       "reason": "The reveal is a complete odd-disclosure (owner, 2026-11-06), its summary drawn as the label through the disclosure's parts."
     },
     "odd-alert": { "dependencies": [] },
-    "odd-artifact": { "dependencies": [] },
+    "odd-artifact": {
+      "dependencies": ["odd-copy-button"],
+      "reason": "Copy is a complete odd-copy-button (owner, 2026-11-06) for the revision's canonical content."
+    },
     "odd-avatar": { "dependencies": [] },
     "odd-badge": { "dependencies": [] },
     "odd-breadcrumbs": { "dependencies": [] },
@@ -2091,6 +2094,7 @@
         "odd-ai-label",
         "odd-artifact",
         "odd-button",
+        "odd-copy-button",
         "odd-disclosure",
         "odd-message-branch",
         "odd-response",
@@ -2098,7 +2102,7 @@
         "odd-sources",
         "odd-tool-call"
       ],
-      "reason": "A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, artifacts, branch, feedback, AI label), reasoning in an odd-disclosure, and odd-button for save/cancel while editing; each is a complete widget authors also place alone."
+      "reason": "A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, artifacts, branch, feedback, AI label), reasoning in an odd-disclosure, copy with odd-copy-button, and odd-button for save/cancel while editing; each is a complete widget authors also place alone."
     },
     "odd-message-branch": { "dependencies": [] },
     "odd-model-select": {
@@ -2123,8 +2127,8 @@
     "odd-radio-group": { "dependencies": [] },
     "odd-rating": { "dependencies": [] },
     "odd-response": {
-      "dependencies": ["odd-citation"],
-      "reason": "Inline citations are complete odd-citation widgets authors also place alone."
+      "dependencies": ["odd-citation", "odd-copy-button"],
+      "reason": "Inline citations are complete odd-citation widgets authors also place alone; the copy action and each code block's copy are complete odd-copy-button widgets (owner, 2026-11-06)."
     },
     "odd-response-feedback": {
       "dependencies": ["odd-button"],

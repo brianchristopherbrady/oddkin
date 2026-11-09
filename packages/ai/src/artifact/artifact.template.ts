@@ -1,5 +1,5 @@
 import { html } from '@oddkin/core/template';
-import { format } from '../internal/strings.js';
+import { copyStrings, format } from '../internal/strings.js';
 import type { OddkinArtifact } from './artifact.js';
 
 /** Anatomy: a labelled region with `header`, `toolbar`, a `preview` container, and a `source` view. */
@@ -30,9 +30,11 @@ export const artifactTemplate = (host: OddkinArtifact) => {
     </div>
     <div part="toolbar" class="toolbar">
       <div class="actions">
-        <button class="odd-button" data-size="sm" type="button" @click=${host._copy}>
-          ${t.copy}
-        </button>
+        <odd-copy-button
+          .value=${revision.content}
+          label=${t.copy}
+          .strings=${copyStrings(t)}
+        ></odd-copy-button>
         <button
           class="odd-button"
           data-size="sm"

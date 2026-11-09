@@ -18,7 +18,7 @@ export const ARTIFACT_STRINGS = {
   copy: 'Copy',
   download: 'Download',
   copied: 'Copied to clipboard.',
-  copyFailed: 'Copying failed.',
+  copyFailed: 'Could not copy. Select the text.',
   noPreview: 'No preview is available for this kind of artifact; showing the source.',
 };
 
@@ -130,24 +130,6 @@ export class OddkinArtifact extends OddkinElement.with({
   /** @internal */
   readonly _setMode = (event: Event): void => {
     this.view = (event.currentTarget as HTMLElement).dataset['view'] as 'preview' | 'source';
-  };
-  /** @internal */
-  readonly _copy = async (): Promise<void> => {
-    const t = this._strings;
-    try {
-      await navigator.clipboard.writeText(this.revision?.content ?? '');
-      this.emit(announceEvent, {
-        text: t.copied,
-        priority: 'polite',
-        key: `artifact-copy:${Date.now()}`,
-      });
-    } catch {
-      this.emit(announceEvent, {
-        text: t.copyFailed,
-        priority: 'polite',
-        key: `artifact-copy-failed:${Date.now()}`,
-      });
-    }
   };
   /** @internal */
   readonly _export = (event: Event): void => {

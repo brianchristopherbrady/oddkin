@@ -10,7 +10,7 @@ export default defineExamples('odd-copy-button', {
     recommended: true,
     preset: true,
     guidance:
-      'Give it the text with `value`, or name the element that shows it with `from`. It says "Copied to clipboard." or, when the browser refuses, selects the text for a manual copy.',
+      'Give it the text with `value`, or name the element that shows it with `from`. A small popover says "Copied to clipboard."; when the browser refuses, it says so beside the button and selects the text for a manual copy.',
   },
   labelled: {
     label: 'Own label',

@@ -9,3 +9,9 @@ export function formatTime(
 ): string | undefined {
   return formatDate(iso, locale);
 }
+
+/** An element's copy outcome strings, as the `strings` of the `odd-copy-button` it renders. */
+export const copyStrings = (t: { copied: string; copyFailed: string }) => ({
+  copied: t.copied,
+  failed: t.copyFailed,
+});

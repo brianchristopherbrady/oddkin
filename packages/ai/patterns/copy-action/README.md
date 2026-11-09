@@ -15,7 +15,7 @@ People copy what an assistant wrote: an answer, a command, a snippet. The copy m
 ## Interaction and accessibility
 
 - The button is named by its text ("Copy", or its `label`), and Enter or Space copies.
-- The outcome is shown beside the button and announced: "Copied to clipboard.", or, when the browser refuses, "Could not copy. Select the text." with the text selected for a manual copy.
+- The outcome is announced, and shown without moving anything on the page: "Copied to clipboard." in a small popover by the button, or, when the browser refuses, "Could not copy. Select the text." beside it, with the text selected for a manual copy.
 - Copy the record's text, never the rendered DOM: Markdown repairs and citation markers are presentation.
 
 ## Responsive behaviour

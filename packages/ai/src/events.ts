@@ -8,6 +8,7 @@
  * the exception, a notification from any source (`intent: 'notification'`). Options are literal
  * so the analyzer can publish them. Contract: docs/architecture/ai-interaction.md §7.
  */
+import type { AnnounceDetail } from '@oddkin/components/copy-button';
 import { event, type EventDetail } from '@oddkin/core/element';
 import type { JsonValue } from './contracts/types.js';
 import type { AttachmentState } from './controllers/composer.js';
@@ -364,12 +365,8 @@ export const transcriptChangeEvent = event<{ readonly segmentId: string; readonl
   },
 );
 
-export interface AnnounceDetail {
-  readonly text: string;
-  readonly priority: 'polite' | 'assertive';
-  /** Identical keys are announced once per surface. */
-  readonly key: string;
-}
+// One detail type for both packages' `odd-announce` entries in the global event map.
+export type { AnnounceDetail };
 export const announceEvent = event<AnnounceDetail>('odd-announce', {
   bubbles: true,
   composed: true,

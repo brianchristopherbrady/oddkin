@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oddkin.dev/schemas/composition/odd-copy-button.v1.json",
   "title": "odd-copy-button",
-  "description": "A button that copies text to the clipboard: `value`, or the form value or text of the element named by `from`. It says the outcome in words, \"Copied to clipboard.\" for two seconds or \"Could not copy. Select the text.\" (announced as well), and when the browser refuses (no permission, an insecure page, no Clipboard API) it selects the text so the user can copy it by hand.",
+  "description": "A button that copies text to the clipboard: `value`, or the form value or text of the element named by `from`. A copy is confirmed by \"Copied to clipboard.\" in a small popover beside the button for two seconds, so nothing on the page moves. When the browser refuses (no permission, an insecure page, no Clipboard API) it says \"Could not copy. Select the text.\" beside the button and selects the text so the user can copy it by hand. Both outcomes are announced.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -69,6 +69,9 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "odd-announce": {
+          "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
+        },
         "odd-copy": {
           "$ref": "https://oddkin.dev/schemas/composition/composition.v1.json#/$defs/action"
         }

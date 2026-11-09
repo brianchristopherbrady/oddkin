@@ -1,3 +1,4 @@
+import { copyButtonDefinition } from '@oddkin/components/copy-button';
 import { compose } from '@oddkin/core/element';
 import { aiBaseStyles } from '../internal/base.styles.js';
 import { OddkinArtifact } from './artifact.js';
@@ -9,4 +10,5 @@ export const artifactDefinition = compose({
   element: OddkinArtifact,
   template: artifactTemplate,
   styles: [aiBaseStyles, artifactStyles],
+  dependencies: { copyButton: copyButtonDefinition },
 });

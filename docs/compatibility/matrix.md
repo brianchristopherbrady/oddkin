@@ -175,8 +175,8 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/components/dist/command-palette/command-palette.styles.js (commandPaletteStyles)` | yes | 24 |
 | `packages/components/dist/container/container.structural.styles.js (containerStructuralStyles)` | yes | 6 |
 | `packages/components/dist/container/container.styles.js (containerStyles)` | yes | 5 |
-| `packages/components/dist/copy-button/copy-button.structural.styles.js (copyButtonStructuralStyles)` | yes | 12 |
-| `packages/components/dist/copy-button/copy-button.styles.js (copyButtonStyles)` | yes | 11 |
+| `packages/components/dist/copy-button/copy-button.structural.styles.js (copyButtonStructuralStyles)` | yes | 17 |
+| `packages/components/dist/copy-button/copy-button.styles.js (copyButtonStyles)` | yes | 12 |
 | `packages/components/dist/date-picker/date-picker.structural.styles.js (datePickerStructuralStyles)` | yes | 18 |
 | `packages/components/dist/date-picker/date-picker.styles.js (datePickerStyles)` | yes | 14 |
 | `packages/components/dist/dialog/dialog.recipe.styles.js (dialogRecipeStyles)` | yes | 14 |
@@ -312,7 +312,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/inline-assist/inline-assist.recipe.styles.js (inlineAssistRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/inline-assist/inline-assist.styles.js (inlineAssistStyles)` | yes | 31 |
 | `packages/ai/dist/internal/ai-element.recipe.styles.js (aiElementRecipeStyles)` | yes | 11 |
-| `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 34 |
+| `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 35 |
 | `packages/ai/dist/message/message.recipe.styles.js (messageRecipeStyles)` | yes | 12 |
 | `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 31 |
 | `packages/ai/dist/message-branch/message-branch.styles.js (messageBranchStyles)` | yes | 6 |

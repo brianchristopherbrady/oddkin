@@ -4,7 +4,7 @@ import type { Scope } from '@oddkin/core/scope';
 import type { SourceRecord } from '../citation/citation.js';
 import type { PublicError } from '../contracts/types.js';
 import { announceEvent } from '../events.js';
-import { strings } from '../internal/strings.js';
+import { copyStrings, strings } from '../internal/strings.js';
 import { MarkdownView, type MarkdownOptions } from '../markdown/render.js';
 
 export const RESPONSE_STRINGS = {
@@ -16,7 +16,7 @@ export const RESPONSE_STRINGS = {
   copy: 'Copy response',
   copyCode: 'Copy code',
   copied: 'Copied to clipboard.',
-  copyFailed: 'Copying failed.',
+  copyFailed: 'Could not copy. Select the text.',
   image: 'Image',
 };
 
@@ -30,7 +30,7 @@ export type ResponseStatus = 'streaming' | 'complete' | 'interrupted' | 'cancell
  *
  * @csspart content - The rendered Markdown.
  * @csspart status - Status line (generating, interrupted, stopped, failed).
- * @csspart actions - Copy action.
+ * @csspart actions - Copy action (`odd-copy-button`).
  * @cssprop --odd-response-code-background - Code block background.
  * @a11y Streaming text is not a live region (no per-token announcements); outcomes are announced by the surface's announcer. Committed blocks keep their DOM, so focus and selection inside them survive streaming.
  * @keyboard Code blocks and wide tables are scrollable and focusable.
@@ -104,9 +104,6 @@ export class OddkinResponse extends OddkinElement.with({
       return false;
     }
   }
-
-  /** @internal */
-  readonly _copy = (): void => void this.copy();
 
   protected override mounted(scope: Scope): void {
     const content = this.shadowRoot?.querySelector<HTMLElement>('[part="content"]');
@@ -199,12 +196,11 @@ export class OddkinResponse extends OddkinElement.with({
         return el;
       },
       codeActions: (code) => {
-        const button = doc.createElement('button');
-        button.type = 'button';
-        button.className = 'odd-button copy-code';
-        button.dataset['size'] = 'sm';
-        button.textContent = t.copyCode;
-        button.addEventListener('click', () => void this.copy(code));
+        const button = doc.createElement('odd-copy-button');
+        button.className = 'copy-code';
+        button.label = t.copyCode;
+        button.value = code;
+        button.strings = copyStrings(t);
         return button;
       },
     };

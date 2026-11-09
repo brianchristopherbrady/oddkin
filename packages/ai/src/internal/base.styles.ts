@@ -14,7 +14,8 @@ import { aiElementRecipeStyles } from './ai-element.recipe.styles.js';
  * defaults, status labels (coloured by `data-tone` through the shared tone styles), and action
  * rows (the layout recipe in `ai-element.recipe.ts`). Buttons are native
  * `<button class="odd-button" data-size="sm">`, drawn by `nativeButtonStyles` like `odd-button`;
- * Figma draws them in the Field/small text style, so they take the regular weight here.
+ * Figma draws them in the Field/small text style, so they take the regular weight here, as does
+ * the button of each copy action (`odd-copy-button`).
  */
 export const aiElementStyles = css`
   ${aiElementRecipeStyles}
@@ -61,7 +62,8 @@ export const aiElementStyles = css`
     color: ${token('color.danger.foreground')};
     font-size: ${token('font.size.sm')};
   }
-  .odd-button {
+  .odd-button,
+  odd-copy-button::part(button) {
     min-inline-size: ${token('target.min')};
     font-weight: ${token('font.weight.regular')};
   }

@@ -542,6 +542,7 @@ Status: **approved** (2026-10-24). 220 references; controller 18, deferred 11, e
 | --- | --- | --- |
 | `odd-action-approval` | `odd-button` | Approve, reject, and edit are complete buttons (Figma: button ×2). |
 | `odd-ai-label` | `odd-disclosure` | The reveal is a complete odd-disclosure (owner, 2026-11-06), its summary drawn as the label through the disclosure's parts. |
+| `odd-artifact` | `odd-copy-button` | Copy is a complete odd-copy-button (owner, 2026-11-06) for the revision's canonical content. |
 | `odd-change-review` | `odd-button` | Accept, reject, and undo are complete buttons (Figma: button/sm ×2). |
 | `odd-checkbox-group` | `odd-checkbox` | The choices are complete odd-checkbox elements the author places; each is form-associated on its own, and the group adds the legend, description, error, and required-one rule. |
 | `odd-checkpoint` | `odd-button` | Restore and confirm are complete buttons (Figma: button/sm ×1). |
@@ -550,11 +551,11 @@ Status: **approved** (2026-10-24). 220 references; controller 18, deferred 11, e
 | `odd-conversation` | `odd-activity`, `odd-message` | Renders one odd-message per message record and an odd-activity for run status; both are complete widgets authors also place alone, and no ARIA ID crosses (each labels itself). Repeated per message: the per-instance cost is measured in the lifetime harness. |
 | `odd-date-picker` | `odd-calendar` | The popup holds a complete odd-calendar (a definition dependency) that shares the date picker’s value, bounds, first day, disabled-date hook, read-only state, and strings. |
 | `odd-menu` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
-| `odd-message` | `odd-action-approval`, `odd-ai-label`, `odd-artifact`, `odd-button`, `odd-disclosure`, `odd-message-branch`, `odd-response`, `odd-response-feedback`, `odd-sources`, `odd-tool-call` | A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, artifacts, branch, feedback, AI label), reasoning in an odd-disclosure, and odd-button for save/cancel while editing; each is a complete widget authors also place alone. |
+| `odd-message` | `odd-action-approval`, `odd-ai-label`, `odd-artifact`, `odd-button`, `odd-copy-button`, `odd-disclosure`, `odd-message-branch`, `odd-response`, `odd-response-feedback`, `odd-sources`, `odd-tool-call` | A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, artifacts, branch, feedback, AI label), reasoning in an odd-disclosure, copy with odd-copy-button, and odd-button for save/cancel while editing; each is a complete widget authors also place alone. |
 | `odd-picker` | `odd-avatar`, `odd-icon` | Tree item icons are drawn by the complete odd-icon widget authors also place alone; the avatars view nests odd-avatar, as on odd-combobox. |
 | `odd-prompt-input` | `odd-button` | Send and stop are complete buttons (Figma: button ×1). |
 | `odd-question` | `odd-button` | Submit and skip are complete buttons (Figma: button/sm ×2). |
-| `odd-response` | `odd-citation` | Inline citations are complete odd-citation widgets authors also place alone. |
+| `odd-response` | `odd-citation`, `odd-copy-button` | Inline citations are complete odd-citation widgets authors also place alone; the copy action and each code block's copy are complete odd-copy-button widgets (owner, 2026-11-06). |
 | `odd-response-feedback` | `odd-button` | Submit and cancel are complete buttons (Figma: button/sm ×2). |
 | `odd-segmented-control` | `odd-icon` | Option icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-split-button` | `odd-menu` | The menu half is a complete odd-menu (Figma splitAction: a button and a Menu), with its keyboard, submenus, and odd-action events; the primary half is a native button part. |
@@ -564,7 +565,7 @@ Status: **approved** (2026-10-24). 220 references; controller 18, deferred 11, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (56) has no element dependency.
+Every other element (55) has no element dependency.
 
 #### Shared homes
 

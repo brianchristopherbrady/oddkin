@@ -15,7 +15,7 @@ Status: implemented and verified for the scope in [IMPLEMENTATION_PLAN.md §5j](
 | Voice | `@oddkin/ai/voice/web-speech`, `@oddkin/ai/voice/recorder` | browser APIs when called | Optional capture/transcription adapters |
 | Elements | `@oddkin/ai/<name>`, `@oddkin/ai/define/<name>` | browser | Presentation state only (focus, open/closed, scroll position, local drafts) |
 
-Dependencies: `@oddkin/core`, `@oddkin/tokens` (refs only), `@oddkin/components` (`odd-button`, `odd-disclosure`, the layout primitives, and the shared styles). Forbidden: state, app, analyzer, workbench, agent, any third-party runtime package, any framework. Enforced by `scripts/architecture/boundaries.config.mjs` (`npm run lint:boundaries`) and by the import-graph checks in `npm run size`.
+Dependencies: `@oddkin/core`, `@oddkin/tokens` (refs only), `@oddkin/components` (`odd-button`, `odd-copy-button`, `odd-disclosure`, the layout primitives, and the shared styles). Forbidden: state, app, analyzer, workbench, agent, any third-party runtime package, any framework. Enforced by `scripts/architecture/boundaries.config.mjs` (`npm run lint:boundaries`) and by the import-graph checks in `npm run size`.
 
 **One authoritative source per surface.** A conversation element reads either `source` (an `ExternalSource<ConversationState>`: `ConversationController` or an application store adapted with `selectSource`/`createConversationView`) or a controlled `state` snapshot. Elements never copy records into their own state, never mutate records, and never echo programmatic assignments as user-intent events. Every user action is a typed event that *requests* an operation; outcomes arrive as changed records. The controller is one possible owner; an application store is another (agent demo).
 
@@ -26,14 +26,14 @@ Element-owned resources (timers, listeners, object URLs created for previews, ow
 | ID | Pattern | Element(s) | Controller / helper | Reuses |
 | --- | --- | --- | --- | --- |
 | C01 | Prompt composer | `odd-prompt-input` | `ComposerController` | native `textarea`/file input, `odd-button`, `live()` |
-| C02 | Conversation/messages | `odd-conversation`, `odd-message` | `ConversationController`, `createConversationView` | `repeat()`, `Scope`, signals |
-| C03 | Streaming response | `odd-response` | `MarkdownView` | DOM-only rendering, `@oddkin/ai/highlight` |
+| C02 | Conversation/messages | `odd-conversation`, `odd-message` | `ConversationController`, `createConversationView` | `repeat()`, `Scope`, signals, `odd-copy-button` |
+| C03 | Streaming response | `odd-response` | `MarkdownView` | DOM-only rendering, `@oddkin/ai/highlight`, `odd-copy-button` |
 | C04 | Citations/sources | `odd-citation`, `odd-sources` | — | native `button`/links |
 | C05 | Tool execution | `odd-tool-call` | `TOOL_TRANSITIONS` | native `details` |
 | C06 | Action approval | `odd-action-approval` | `ConversationController.decide` | `odd-button` |
 | C07 | Context selection | `odd-context-picker` | host records (`ContextItemModel`) | native file/URL inputs |
 | C08 | Agent activity/plans | `odd-activity`, `odd-task-plan` | `isActive`, attempt records | native lists |
-| C09 | Generated artifacts | `odd-artifact` | `ArtifactModel` | `MarkdownView`, host renderers |
+| C09 | Generated artifacts | `odd-artifact` | `ArtifactModel` | `MarkdownView`, host renderers, `odd-copy-button` |
 | C10 | Inline assistance | `odd-inline-assist` | `captureSelection`, `DocumentSession` | APG toolbar pattern |
 | C11 | Change review | `odd-change-review` | `DocumentSession`, `diffWords`/`diffLines` | `ins`/`del` |
 | C12 | Alternative responses | `odd-message`, which draws its versions (`odd-message-branch` is deprecated as a public element; the Branch navigation pattern) | `regenerate`, `edit`, `switchBranch` | — |

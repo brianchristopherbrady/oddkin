@@ -204,7 +204,8 @@ describe('Figma parity: odd-message', () => {
       };
       el.capabilities = { regenerate: { available: true } };
       await settle(el);
-      const [copy, regenerate] = el.shadowRoot!.querySelectorAll<HTMLElement>(
+      const copy = shadow(shadow(el, '[part="footer"] > odd-copy-button'), '[part="button"]');
+      const [regenerate] = el.shadowRoot!.querySelectorAll<HTMLElement>(
         '[part="footer"] > .odd-button',
       );
       const family = `odd-message/Assistant · completed/${mode}`;
@@ -217,15 +218,15 @@ describe('Figma parity: odd-message', () => {
           kind: 'text',
         },
         { layer: ['Actions'], el: shadow(el, '[part="footer"]'), kind: 'frame', gap: 'column-gap' },
-        { layer: ['Actions', 'Copy'], el: copy!, kind: 'frame' },
-        { layer: ['Actions', 'Copy', 'Copy'], el: copy!, kind: 'text' },
+        { layer: ['Actions', 'Copy'], el: copy, kind: 'frame' },
+        { layer: ['Actions', 'Copy', 'Copy'], el: copy, kind: 'text' },
         { layer: ['Actions', 'Regenerate'], el: regenerate!, kind: 'frame' },
         { layer: ['Actions', 'Regenerate', 'Regenerate'], el: regenerate!, kind: 'text' },
       ];
       await transitions(targets);
       expectNone(compare(family, {}, targets));
       // Copy starts the row, as in Figma: the branch control takes no place without versions.
-      expect(copy!.getBoundingClientRect().left).toBe(
+      expect(copy.getBoundingClientRect().left).toBe(
         shadow(el, '[part="footer"]').getBoundingClientRect().left,
       );
     });
@@ -751,7 +752,10 @@ describe('Figma parity: odd-conversation', () => {
       const [user, assistant] = el.shadowRoot!.querySelectorAll('odd-message');
       await settle(user!);
       await settle(assistant!);
-      const copy = shadow(assistant!, '[part="footer"] > .odd-button');
+      const copy = shadow(
+        shadow(assistant!, '[part="footer"] > odd-copy-button'),
+        '[part="button"]',
+      );
       const targets: Target[] = [
         { layer: [], el: shadow(el, '[part="feed"]'), kind: 'frame', gap: 'row-gap' },
         { layer: ['You'], el: shadow(user!, '.role'), kind: 'text' },
@@ -852,7 +856,8 @@ describe('Figma parity: odd-artifact', () => {
       };
       await settle(el);
       const button = (selector: string) => shadow(el, selector);
-      const [copy, download] = el.shadowRoot!.querySelectorAll<HTMLElement>(
+      const copy = shadow(shadow(el, '.actions:not([role]) > odd-copy-button'), '[part="button"]');
+      const [download] = el.shadowRoot!.querySelectorAll<HTMLElement>(
         '.actions:not([role]) > .odd-button',
       );
       const heading = 'Artifact title and revision';
@@ -865,8 +870,8 @@ describe('Figma parity: odd-artifact', () => {
           el: shadow(el, '[part="header"] > .muted'),
           kind: 'text',
         },
-        { layer: ['Actions', 'Copy'], el: copy!, kind: 'frame' },
-        { layer: ['Actions', 'Copy', 'Copy'], el: copy!, kind: 'text' },
+        { layer: ['Actions', 'Copy'], el: copy, kind: 'frame' },
+        { layer: ['Actions', 'Copy', 'Copy'], el: copy, kind: 'text' },
         { layer: ['Actions', 'Download'], el: download!, kind: 'frame' },
         { layer: ['Actions', 'Download', 'Download'], el: download!, kind: 'text' },
         { layer: view, el: shadow(el, '.actions[role="group"]'), kind: 'frame', gap: 'column-gap' },

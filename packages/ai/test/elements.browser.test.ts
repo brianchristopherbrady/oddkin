@@ -115,6 +115,32 @@ describe('odd-response', () => {
     }
   });
 
+  it('copies with odd-copy-buttons in its strings: the action copies the source, a code block its code', async () => {
+    const el = await mount('odd-response', define, (e) => {
+      e.copyable = true;
+      e.text = 'Run this:\n\n```sh\nnpm install\nnpm test\n```';
+      e.strings = { copy: 'Copier la réponse', copyCode: 'Copier le code', copied: 'Copié.' };
+    });
+    const written: string[] = [];
+    const clipboard = vi
+      .spyOn(navigator.clipboard, 'writeText')
+      .mockImplementation(async (t) => void written.push(t));
+    try {
+      const action = $(el, '[part="actions"] > odd-copy-button')!;
+      const code = $(el, '[part="content"] .code-block odd-copy-button')!;
+      expect([text($(action, 'button')), text($(code, 'button'))]).toEqual([
+        'Copier la réponse',
+        'Copier le code',
+      ]);
+      $(action, 'button')!.click();
+      $(code, 'button')!.click();
+      await expect.poll(() => written).toEqual([el.text, 'npm install\nnpm test']);
+      await expect.poll(() => text($(action, '[part="confirmation"]'))).toBe('Copié.');
+    } finally {
+      clipboard.mockRestore();
+    }
+  });
+
   it('A14: adversarial content stays inert through Markdown, URLs, highlighting, and updates', async () => {
     const errors: unknown[] = [];
     const onError = (e: ErrorEvent) => errors.push(e.message);

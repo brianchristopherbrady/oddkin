@@ -248,7 +248,7 @@ export const CATALOG: Catalog = {
     properties: { strings: { texts: ['copy', 'copied', 'failed'] } },
     fixed: [],
     slots: [],
-    events: ['odd-copy'],
+    events: ['odd-announce', 'odd-copy'],
   },
   'odd-date-picker': {
     attributes: {

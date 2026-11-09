@@ -3,7 +3,7 @@ import { html, repeat } from '@oddkin/core/template';
 import { can } from '../contracts/normalize.js';
 import type { MessagePart } from '../contracts/types.js';
 import { safeUrl } from '../markdown/url.js';
-import { format } from '../internal/strings.js';
+import { copyStrings, format } from '../internal/strings.js';
 import type { OddkinMessage } from './message.js';
 
 interface PartContext {
@@ -150,7 +150,7 @@ export const messageTemplate = (host: OddkinMessage) => {
         .branch=${host.branch}
         .capabilities=${host.capabilities}
       ></odd-message-branch>
-      ${host.text ? html`<button class="odd-button" data-size="sm" type="button" @click=${host._copy}>${t.copy}</button>` : null}
+      ${host.text ? html`<odd-copy-button .value=${host.text} label=${t.copy} .strings=${copyStrings(t)}></odd-copy-button>` : null}
       ${
         assistant && host._can('regenerate') && terminal && m.attemptId
           ? html`<button class="odd-button" data-size="sm" type="button" @click=${host._regenerate}>

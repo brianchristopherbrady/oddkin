@@ -1,3 +1,4 @@
+import { copyButtonDefinition } from '@oddkin/components/copy-button';
 import { compose } from '@oddkin/core/element';
 import { citationDefinition } from '../citation/citation.definition.js';
 import { aiBaseStyles } from '../internal/base.styles.js';
@@ -10,5 +11,5 @@ export const responseDefinition = compose({
   element: OddkinResponse,
   template: responseTemplate,
   styles: [aiBaseStyles, responseStyles],
-  dependencies: { citation: citationDefinition },
+  dependencies: { citation: citationDefinition, copyButton: copyButtonDefinition },
 });

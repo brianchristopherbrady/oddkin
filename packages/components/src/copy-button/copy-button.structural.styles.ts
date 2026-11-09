@@ -1,6 +1,6 @@
 import { css } from '@oddkin/core/styles';
 
-/** The button and its status in a row that wraps. No tokens. */
+/** The button and its status in a row that wraps; the confirmation placed by script. No tokens. */
 export const copyButtonStructuralStyles = css`
   :host {
     display: inline-block;
@@ -14,5 +14,10 @@ export const copyButtonStructuralStyles = css`
   .fallback {
     min-inline-size: 0;
     font: inherit;
+  }
+  .confirmation {
+    inset: auto;
+    margin: 0;
+    white-space: nowrap;
   }
 `;

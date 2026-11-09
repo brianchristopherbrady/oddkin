@@ -1,4 +1,5 @@
 import { buttonDefinition } from '@oddkin/components/button';
+import { copyButtonDefinition } from '@oddkin/components/copy-button';
 import { disclosureDefinition } from '@oddkin/components/disclosure';
 import { compose } from '@oddkin/core/element';
 import { actionApprovalDefinition } from '../action-approval/action-approval.definition.js';
@@ -21,6 +22,7 @@ export const messageDefinition = compose({
   styles: [aiBaseStyles, messageStyles],
   dependencies: {
     button: buttonDefinition,
+    copyButton: copyButtonDefinition,
     disclosure: disclosureDefinition,
     response: responseDefinition,
     sources: sourcesDefinition,

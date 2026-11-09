@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { flush } from '@oddkin/core/reactive';
 import { scopeStats } from '@oddkin/core/scope';
 import type {
@@ -184,14 +184,16 @@ describe('odd-conversation', () => {
     const firstParagraph = response().shadowRoot!.querySelector('[part="content"] p')!;
     // The reader scrolls up and focuses a control in an earlier message.
     await scrollTo(scroller, 200);
-    const copy = articles()[2]!.shadowRoot!.querySelector<HTMLButtonElement>('.footer button')!;
+    const copyButton = articles()[2]!.shadowRoot!.querySelector('.footer odd-copy-button')!;
+    const copy = copyButton.shadowRoot!.querySelector<HTMLButtonElement>('button')!;
     copy.focus();
     const top = scroller.scrollTop;
     for (let i = 0; i < 30; i++)
       push(sink(), { type: 'text-delta', partId: 'p', delta: `More streamed words ${i}. ` });
     await settle(el);
     expect(scroller.scrollTop).toBe(top);
-    expect(articles()[2]!.shadowRoot!.activeElement).toBe(copy);
+    expect(articles()[2]!.shadowRoot!.activeElement).toBe(copyButton);
+    expect(copyButton.shadowRoot!.activeElement).toBe(copy);
     expect(response().shadowRoot!.querySelector('[part="content"] p')).toBe(firstParagraph);
     expect(firstParagraph.isConnected).toBe(true);
     const jump = el.shadowRoot!.querySelector<HTMLButtonElement>('[part="jump"]')!;
@@ -229,6 +231,28 @@ describe('odd-conversation', () => {
     expect(all).toContain('Response complete.');
     expect(all).not.toContain('token');
     expect(el.shadowRoot!.querySelectorAll('[aria-live]')).toHaveLength(2);
+  });
+
+  it('A21: a message copies with odd-copy-button, whose outcome the conversation announces', async () => {
+    const { controller } = harness();
+    controller.load({ conversationId: 'c', messages: messages(0, 2) });
+    const { el, articles } = await mount(controller);
+    const written: string[] = [];
+    const clipboard = vi
+      .spyOn(navigator.clipboard, 'writeText')
+      .mockImplementation(async (t) => void written.push(t));
+    try {
+      const copy = articles()[1]!.shadowRoot!.querySelector('.footer odd-copy-button')!;
+      copy.shadowRoot!.querySelector('button')!.click();
+      await expect
+        .poll(() => el.shadowRoot!.querySelector('#polite')!.textContent)
+        .toBe('Copied to clipboard.');
+      expect(written).toEqual([paragraph(1)]);
+      // The surface has one announcer: the button's own live region stays silent.
+      expect(copy.shadowRoot!.querySelector('.polite')!.textContent).toBe('');
+    } finally {
+      clipboard.mockRestore();
+    }
   });
 
   it('A16: intents from nested shadow roots reach the host binding; the record decides the outcome', async () => {

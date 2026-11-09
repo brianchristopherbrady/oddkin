@@ -228,7 +228,8 @@ describe('Figma parity: odd-copy-button (copyButton)', () => {
         expectNone(
           compare('Oddkin/Common/copyButton', { State: state }, [
             { layer: [], el: part('base'), kind: 'frame', gap: 'column-gap' },
-            { layer: [text], el: part('status'), kind: 'text' },
+            // A copy is confirmed in a popover (owner, 2026-11-07); a failure stays inline.
+            { layer: [text], el: part(refuse ? 'status' : 'confirmation'), kind: 'text' },
           ]),
         );
       } finally {

@@ -32,7 +32,7 @@ export const MESSAGE_STRINGS = {
   reasoning: 'Reasoning',
   copy: 'Copy',
   copied: 'Copied to clipboard.',
-  copyFailed: 'Copying failed.',
+  copyFailed: 'Could not copy. Select the text.',
   regenerate: 'Regenerate',
   edit: 'Edit',
   save: 'Send edited message',
@@ -171,20 +171,6 @@ export class OddkinMessage extends OddkinElement.with({
     return can(this.capabilities, name);
   }
 
-  /** @internal */
-  readonly _copy = async (): Promise<void> => {
-    const t = this._strings;
-    try {
-      await navigator.clipboard.writeText(this.text);
-      this.emit(announceEvent, { text: t.copied, priority: 'polite', key: `copy:${Date.now()}` });
-    } catch {
-      this.emit(announceEvent, {
-        text: t.copyFailed,
-        priority: 'polite',
-        key: `copy-failed:${Date.now()}`,
-      });
-    }
-  };
   /** @internal */
   readonly _regenerate = (): void => {
     const m = this.message;

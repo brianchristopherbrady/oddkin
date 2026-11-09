@@ -1,6 +1,8 @@
 import { compose } from '@oddkin/core/element';
 import { nativeButtonStyles } from '../button/button.native.styles.js';
 import { glyphStyles } from '../styles/glyphs.js';
+import { overlaySurfaceStructuralStyles } from '../styles/overlay-surface.structural.styles.js';
+import { overlaySurfaceStyles } from '../styles/overlay-surface.styles.js';
 import { visuallyHiddenStyles } from '../styles/visually-hidden.styles.js';
 import { focusRingStyles } from '../styles/focus-ring.styles.js';
 import { hostStyles } from '../styles/host.styles.js';
@@ -16,10 +18,12 @@ export const copyButtonDefinition = compose({
   styles: [
     hostStyles,
     copyButtonStructuralStyles,
+    overlaySurfaceStructuralStyles,
     glyphStyles,
     visuallyHiddenStyles,
     focusRingStyles,
     nativeButtonStyles,
+    overlaySurfaceStyles,
     copyButtonStyles,
   ],
 });
