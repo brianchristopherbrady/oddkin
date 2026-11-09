@@ -5,7 +5,7 @@ import { bundleConsumers } from '../examples/duplicate-core/build.mjs';
 // (core-contracts.md §5.1): both from the workspace, and with consumer A on the last release
 // from npm. The bundles are built in memory and served by request interception.
 // The last published version; move it on with each release (release-process.md §5).
-const RELEASED = '1.0.0-beta.1';
+const RELEASED = '1.0.0-beta.2';
 
 interface Copy {
   core: {

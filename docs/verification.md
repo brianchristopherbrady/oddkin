@@ -5987,3 +5987,23 @@ Found while measuring row 11 step d: `odd-copy-button` renders two glyphs, but i
 | Repository checks | Prettier on `design/figma/context-picker-redesign.json`, JSON parsing with recorded error-array checks, and `git diff --check`: exit 0. |
 
 **Not verified here:** user task testing; browser keyboard, screen-reader, forced-colors or search/provider behavior of the proposed implementation. Prototype transitions use authored fixtures. Runtime source and generated metadata were not changed; the shipped C07 tests do not validate this redesign. No Figma library publication performed.
+
+## 2026-11-08 — 1.0.0-beta.2 published (round 11, Agent 1)
+
+The owner asked to publish to npm by hand with two-factor approval in Chrome (trusted publishing, RF-12, is not set up). Release commit `2a46230` (`set-versions.mjs --next`, the lockfile, core's `VERSION`, the core README line).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Light gate on the release commit | `gate-light.mjs 2a46230 --size tests packages scripts` | Typecheck, lint (with the build), node 140 files (1,713 passed, 2 skipped), size: pass |
+| CI on the release commit | run 42553316320 | Success: lint, types, build, node, browsers in three engines, metadata, size, e2e, packed packages |
+| Clean install and build | `npm ci`; `node scripts/release/clean.mjs`; `npm run build` | Exit 0 |
+| Packed packages | `npm run verify:packs` | OK: eight tarballs installed outside the workspace; docs snippets resolve (35) |
+| Agent kits | `node scripts/agent-kit/package-kits.mjs --check` | Current in both packages |
+| Release evidence | `node scripts/release/evidence.mjs --out release-evidence/1.0.0-beta.2` | Eight packages, seven files hashed, commit `2a4623054954` |
+| Dry run | `node scripts/release/publish.mjs` | Eight packages would publish with `--tag beta`, `latest` would move for eight; no npm rewrite |
+| Change impact against 1.0.0-beta.1 | `oddkin-impact snapshot` of the published 1.0.0-beta.1 and of this build (components and AI), then `compare` | 544 changes, none incompatible |
+| Publish | `node scripts/release/publish.mjs --publish`, each step approved by the owner in Chrome; three of four runs stopped at an approval that did not complete, and each rerun skipped what npm already had | Eight packages published, `latest` moved for eight (finished 2026-11-09 04:07 UTC) |
+| Published contents | `npm view <name>@1.0.0-beta.2 dist.integrity` against the evidence; each package's dist-tags from registry.npmjs.org | 8 of 8 match; all eight have `beta` and `latest` at 1.0.0-beta.2. ai, analyzer, and workbench appeared a few minutes after their publish, components after about 15 |
+| Tag | `git tag -a v1.0.0-beta.2 2a46230`; `git push origin v1.0.0-beta.2` | Pushed |
+| Two copies of core, one the published release | `RELEASED = '1.0.0-beta.2'`; `npx playwright test e2e/duplicate-core.spec.ts --project=chromium` (e2e lock held) | 10 passed, consumer A on core 1.0.0-beta.2 from npm |
+| Not done here | — | The GitHub Release (the owner: notes and both evidence bundles) |
