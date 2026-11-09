@@ -54,4 +54,10 @@ export const messageStyles = css`
     color: inherit;
     font: inherit;
   }
+  .versions {
+    min-block-size: ${token('control.height.sm')};
+  }
+  .position {
+    font-variant-numeric: tabular-nums;
+  }
 `;

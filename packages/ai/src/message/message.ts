@@ -1,6 +1,6 @@
 import { OddkinElement, prop, type ElementEvents } from '@oddkin/core/element';
 import { signal } from '@oddkin/core/reactive';
-import { can } from '../contracts/normalize.js';
+import { can, unavailableReason } from '../contracts/normalize.js';
 import type {
   ApprovalRecord,
   ArtifactRecord,
@@ -16,7 +16,12 @@ import type {
   ToolCallRecord,
 } from '../contracts/types.js';
 import type { ResponseStatus } from '../response/response.js';
-import { announceEvent, messageEditEvent, messageRegenerateEvent } from '../events.js';
+import {
+  announceEvent,
+  branchSwitchEvent,
+  messageEditEvent,
+  messageRegenerateEvent,
+} from '../events.js';
 import { revealSourceEvent } from '../citation/citation.js';
 import { format, strings } from '../internal/strings.js';
 import type { Renderers } from '../internal/renderers.js';
@@ -44,6 +49,10 @@ export const MESSAGE_STRINGS = {
   artifactMissing: 'An artifact is referenced but its record is missing.',
   dataInvalid: 'Structured content “{name}” was not shown because it did not pass validation.',
   file: 'Attachment',
+  versions: 'Versions',
+  previousVersion: 'Previous version',
+  nextVersion: 'Next version',
+  version: 'Version {index} of {count}',
 };
 
 /** A registered renderer for `data` parts: validates untrusted data before rendering it. */
@@ -60,7 +69,7 @@ export interface DataRenderer {
  * @csspart header - Role label and provenance.
  * @csspart content - The parts.
  * @csspart footer - Actions, versions, and feedback.
- * @a11y The role label is visible text. Inside `odd-conversation` the host element is a feed article. Editing moves focus into the edit field only after the user chooses Edit, and back to Edit when cancelled.
+ * @a11y The role label is visible text. Inside `odd-conversation` the host element is a feed article. Editing moves focus into the edit field only after the user chooses Edit, and back to Edit when cancelled. Versions are a labelled group of previous and next buttons with the position as text (“Version 2 of 3”).
  * @keyboard Tab through actions; Escape cancels editing.
  * @useFor Rendering a message from a conversation record.
  * @notFor Free-form chat bubbles without records.
@@ -101,6 +110,7 @@ export class OddkinMessage extends OddkinElement.with({
   static override events = {
     'odd-message-edit': messageEditEvent,
     'odd-message-regenerate': messageRegenerateEvent,
+    'odd-branch-switch': branchSwitchEvent,
     'odd-announce': announceEvent,
   };
   declare readonly _events?: ElementEvents<typeof OddkinMessage>;
@@ -153,6 +163,22 @@ export class OddkinMessage extends OddkinElement.with({
   _can(name: 'regenerate' | 'edit' | 'feedback'): boolean {
     return can(this.capabilities, name);
   }
+
+  /** @internal Why switching versions is unavailable, if it is. */
+  get _versionsOff(): string | undefined {
+    return can(this.capabilities, 'switchBranch')
+      ? undefined
+      : (unavailableReason(this.capabilities, 'switchBranch') ?? '');
+  }
+
+  /** @internal Asks the host to show the previous or next version; the host switches. */
+  readonly _switch = (event: Event): void => {
+    const direction = (event.currentTarget as HTMLElement).dataset['direction'];
+    const target = direction === 'previous' ? this.branch?.previousId : this.branch?.nextId;
+    const m = this.message;
+    if (m && target && this._versionsOff === undefined)
+      this.emit(branchSwitchEvent, { messageId: m.id, targetMessageId: target });
+  };
 
   /** @internal */
   readonly _regenerate = (): void => {

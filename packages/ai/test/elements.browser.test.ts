@@ -914,26 +914,6 @@ describe('selection, review, and controls', () => {
     ]);
   });
 
-  it('odd-suggestions: insert and send are distinct intents', async () => {
-    const el = await mount(
-      'odd-suggestions',
-      () => import('../src/suggestions/suggestions.define.js'),
-      (e) => {
-        e.suggestions = [{ id: 's1', label: 'Compare prices', prompt: 'Compare the prices' }];
-      },
-    );
-    const events: string[] = [];
-    el.addEventListener('odd-suggestion-select', () => events.push('select'));
-    el.addEventListener('odd-suggestion-submit', () => events.push('submit'));
-    $(el, '[part="suggestion"]')!.click();
-    $(el, '[part="send"]')!.click();
-    expect(events).toEqual(['select', 'submit']);
-    expect($(el, '[part="send"]')!.getAttribute('aria-label')).toBe('Send: Compare prices');
-    el.disabled = true;
-    await settle(el);
-    expect(($(el, '[part="suggestion"]') as HTMLButtonElement).disabled).toBe(true);
-  });
-
   it('A15: odd-usage-meter shows measured, estimated, and unknown values as supplied', async () => {
     const el = await mount(
       'odd-usage-meter',
@@ -1247,34 +1227,15 @@ describe('selection, review, and controls', () => {
     }
   });
 
-  it('C1 examples play the host: suggestions, feedback, answer branches, the composer', async () => {
-    await import('../src/suggestions/suggestions.define.js');
+  it('C1 examples play the host: feedback, message versions, the composer', async () => {
     await import('../src/response-feedback/response-feedback.define.js');
-    await import('../src/message-branch/message-branch.define.js');
+    await import('../src/message/message.define.js');
     await import('../src/prompt-input/prompt-input.define.js');
     await import('@oddkin/components/define/textarea');
     const until = async (check: () => boolean, what: string) => {
       for (let i = 0; i < 200 && !check(); i++) await new Promise((r) => setTimeout(r, 25));
       expect(check(), what).toBe(true);
     };
-
-    // Suggestions: choosing puts the prompt in the host's field; the send button sends it.
-    const suggestionsSet = (await import('../src/suggestions/suggestions.examples.js')).default;
-    const suggestions = await mountExample(suggestionsSet, 'default', container);
-    try {
-      const el = suggestions.element;
-      const field = suggestions.root.querySelector('odd-textarea')!;
-      $(el, '[part="suggestion"]')!.click();
-      await settle(el);
-      expect(field.value).toBe('Summarize this page in three bullets.');
-      $(el, '[part="send"]')!.click();
-      await settle(el);
-      expect(suggestions.root.querySelector('p')!.textContent).toBe(
-        'Sent: Summarize this page in three bullets.',
-      );
-    } finally {
-      suggestions.dispose();
-    }
 
     // Feedback: a rating sent is pending, then submitted.
     const feedbackSet = (await import('../src/response-feedback/response-feedback.examples.js'))
@@ -1292,25 +1253,29 @@ describe('selection, review, and controls', () => {
       feedback.dispose();
     }
 
-    // Answer branches: Next shows the third answer, Previous the second again.
-    const branchSet = (await import('../src/message-branch/message-branch.examples.js')).default;
-    const branch = await mountExample(branchSet, 'default', container);
+    // Versions: Next shows the third answer, Previous the second again.
+    const messageSet = (await import('../src/message/message.examples.js')).default;
+    const versions = await mountExample(messageSet, 'versions', container);
     try {
-      const el = branch.element;
-      const answer = () => branch.root.querySelector('p')!.textContent;
-      expect(answer()).toBe('Use a container query on the card.');
+      const el = versions.element;
+      const position = () => text($(el, '.versions .visually-hidden'));
+      expect([el.text, position()]).toEqual([
+        'Use a container query on the card.',
+        'Version 2 of 3',
+      ]);
       $(el, '[data-direction="next"]')!.click();
       await settle(el);
-      expect([el.messageId, el.branch?.index, answer()]).toEqual([
+      expect([el.message?.id, el.text, position()]).toEqual([
         'm2c',
-        3,
         'Use a grid with auto-fit columns.',
+        'Version 3 of 3',
       ]);
+      expect(($(el, '[data-direction="next"]') as HTMLButtonElement).disabled).toBe(true);
       $(el, '[data-direction="previous"]')!.click();
       await settle(el);
-      expect([el.messageId, el.branch?.index]).toEqual(['m2', 2]);
+      expect([el.message?.id, el.branch?.index]).toEqual(['m2', 2]);
     } finally {
-      branch.dispose();
+      versions.dispose();
     }
 
     // Composer: a message sent is taken a moment later; the field clears and the host says so.
@@ -1896,6 +1861,50 @@ describe('odd-message fallbacks and provenance', () => {
     const disclosure = $(label, 'odd-disclosure')!;
     expect(text($(disclosure, '[part="summary"]'))).toBe('AI generated');
     expect(text(disclosure)).toContain('not independently verified');
+  });
+
+  it('draws its versions from its branch record and asks the host to switch', async () => {
+    const el = await mount(
+      'odd-message',
+      () => import('../src/message/message.define.js'),
+      (e) => {
+        e.message = { id: 'm2', role: 'assistant', parts: [{ type: 'text', id: 't', text: 'B' }] };
+        e.branch = { index: 1, count: 1 };
+      },
+    );
+    expect($(el, '.versions')).toBeNull();
+    el.branch = { index: 2, count: 3, previousId: 'm1', nextId: 'm3' };
+    el.capabilities = { switchBranch: { available: true } };
+    await settle(el);
+    const group = $(el, '.versions')!;
+    const [previous, next] = $$(el, '.versions button') as HTMLButtonElement[];
+    expect([
+      group.getAttribute('role'),
+      group.getAttribute('aria-label'),
+      text(group.querySelector('.visually-hidden')),
+      previous!.getAttribute('aria-label'),
+      next!.getAttribute('aria-label'),
+    ]).toEqual(['group', 'Versions', 'Version 2 of 3', 'Previous version', 'Next version']);
+    const switches: unknown[] = [];
+    el.addEventListener('odd-branch-switch', (e) => switches.push((e as CustomEvent).detail));
+    next!.click();
+    previous!.click();
+    expect(switches).toEqual([
+      { messageId: 'm2', targetMessageId: 'm3' },
+      { messageId: 'm2', targetMessageId: 'm1' },
+    ]);
+    el.branch = { index: 1, count: 3, nextId: 'm2b' };
+    await settle(el);
+    expect([previous!.disabled, next!.disabled]).toEqual([true, false]);
+    el.capabilities = { switchBranch: { available: false, reason: 'Read-only.' } };
+    await settle(el);
+    expect([previous!.disabled, next!.disabled, group.title]).toEqual([true, true, 'Read-only.']);
+    el.strings = { versions: 'Versionen', version: 'Version {index} von {count}' };
+    await settle(el);
+    expect([
+      group.getAttribute('aria-label'),
+      text(group.querySelector('.visually-hidden')),
+    ]).toEqual(['Versionen', 'Version 1 von 3']);
   });
 
   it('shows reasoning in a closed disclosure, as secondary text in the prose weight', async () => {

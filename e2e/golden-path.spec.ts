@@ -146,9 +146,12 @@ test('the app uses the library on its theme, with the router, state, and an AI e
   expect(brand).toBe(report.library.brand);
   expect(await tally.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(rgb(brand));
 
-  // The AI element: a suggested name renames the greeting through the store.
+  // The suggested names (the Suggested prompts pattern) and the AI element that marks them: a
+  // suggested name renames the greeting through the store.
   const greeting = page.locator('acme-greeting p');
   await expect(greeting).toHaveText('Hello, Ada!');
+  await expect(page.getByRole('group', { name: 'Suggested names' })).toBeVisible();
+  await expect(page.getByText('AI generated')).toBeVisible();
   await page.getByRole('button', { name: 'Grace' }).click();
   await expect(greeting).toHaveText('Hello, Grace!');
 

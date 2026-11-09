@@ -1,6 +1,6 @@
 # Branch navigation
 
-**Replaces** the public `odd-message-branch`, which becomes internal to `odd-message`.
+**Replaces** the public `odd-message-branch`: `odd-message` now draws its versions itself (ADR 0049).
 
 ## The problem
 

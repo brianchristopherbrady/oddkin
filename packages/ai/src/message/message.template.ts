@@ -94,6 +94,49 @@ const part = (host: OddkinMessage, p: MessagePart, lastText: boolean, c: PartCon
   }
 };
 
+/** The message's versions, from its `branch` record: previous, the position, next. */
+const versions = (host: OddkinMessage) => {
+  const branch = host.branch;
+  if (!branch || branch.count < 2) return null;
+  const t = host._strings;
+  const off = host._versionsOff !== undefined;
+  return html`<div
+    class="versions actions"
+    role="group"
+    aria-label=${t.versions}
+    title=${host._versionsOff || ''}
+  >
+    <button
+      class="odd-button"
+      data-size="sm"
+      type="button"
+      data-direction="previous"
+      aria-label=${t.previousVersion}
+      ?disabled=${off || !branch.previousId}
+      @click=${host._switch}
+    >
+      <span aria-hidden="true">‹</span>
+    </button>
+    <span class="position muted">
+      <span aria-hidden="true">${branch.index} / ${branch.count}</span>
+      <span class="visually-hidden"
+        >${format(t.version, { index: branch.index, count: branch.count })}</span
+      >
+    </span>
+    <button
+      class="odd-button"
+      data-size="sm"
+      type="button"
+      data-direction="next"
+      aria-label=${t.nextVersion}
+      ?disabled=${off || !branch.nextId}
+      @click=${host._switch}
+    >
+      <span aria-hidden="true">›</span>
+    </button>
+  </div>`;
+};
+
 /** Anatomy: `header` (role, provenance), `content` (parts in order, then sources), and `footer`. */
 export const messageTemplate = (host: OddkinMessage) => {
   const t = host._strings;
@@ -154,12 +197,7 @@ export const messageTemplate = (host: OddkinMessage) => {
         : null
     }
     <div part="footer" class="footer actions" ?hidden=${editing !== undefined}>
-      <odd-message-branch
-        ?hidden=${(host.branch?.count ?? 0) < 2}
-        .messageId=${m.id}
-        .branch=${host.branch}
-        .capabilities=${host.capabilities}
-      ></odd-message-branch>
+      ${versions(host)}
       ${host.text ? html`<odd-copy-button .value=${host.text} label=${t.copy} .strings=${copyStrings(t)}></odd-copy-button>` : null}
       ${
         assistant && host._can('regenerate') && terminal && m.attemptId

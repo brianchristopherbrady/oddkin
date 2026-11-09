@@ -4,7 +4,8 @@ import '@acme/widgets/theme.css';
 import '@oddkin/components/css/layout.css';
 import '@acme/widgets/define/greeting';
 import '@acme/widgets/define/tally';
-import '@oddkin/ai/define/suggestions';
+import '@oddkin/ai/define/ai-label';
+import '@oddkin/components/define/button';
 import '@oddkin/components/define/card';
 import { createApp } from '@oddkin/app/app';
 import { createRouter, route } from '@oddkin/app/router';
@@ -37,20 +38,19 @@ function element<K extends keyof HTMLElementTagNameMap>(
 }
 
 function home({ name, count }: State): HTMLElement {
-  // Suggested names: choosing one renames the greeting through the store.
-  const suggestions = element('odd-suggestions', {
-    insertOnly: true,
-    strings: { label: 'Suggested names' },
-    suggestions: ['Grace', 'Katherine'].map((label) => ({
-      id: label.toLowerCase(),
-      label,
-      prompt: label,
-    })),
+  // Suggested names (the Suggested prompts pattern), marked by odd-ai-label: choosing one renames
+  // the greeting through the store.
+  const names = ['Grace', 'Katherine'].map((suggested) => {
+    const button = element('odd-button', { size: 'sm' }, suggested);
+    button.addEventListener('click', () =>
+      store.update((state) => ({ ...state, name: suggested })),
+    );
+    return button;
   });
-  suggestions.addEventListener('odd-suggestion-select', (event) => {
-    const { prompt } = (event as CustomEvent<{ prompt: string }>).detail;
-    store.update((state) => ({ ...state, name: prompt }));
-  });
+  const label = element('odd-ai-label', { provenance: { kind: 'generated' } });
+  const suggestions = element('div', { className: 'odd-cluster' }, ...names, label);
+  suggestions.setAttribute('role', 'group');
+  suggestions.setAttribute('aria-label', 'Suggested names');
   const tally = element('acme-tally', { label: 'Presses', count });
   tally.addEventListener('count-change', (event) => {
     const { count: next } = (event as CustomEvent<{ count: number }>).detail;

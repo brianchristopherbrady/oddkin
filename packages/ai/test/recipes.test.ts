@@ -47,9 +47,6 @@ import { responseFeedbackStyles } from '../src/response-feedback/response-feedba
 import { sourcesRecipe } from '../src/sources/sources.recipe.js';
 import { sourcesRecipeStyles } from '../src/sources/sources.recipe.styles.js';
 import { sourcesStyles } from '../src/sources/sources.styles.js';
-import { suggestionsRecipe } from '../src/suggestions/suggestions.recipe.js';
-import { suggestionsRecipeStyles } from '../src/suggestions/suggestions.recipe.styles.js';
-import { suggestionsStyles } from '../src/suggestions/suggestions.styles.js';
 import { taskPlanRecipe } from '../src/task-plan/task-plan.recipe.js';
 import { taskPlanRecipeStyles } from '../src/task-plan/task-plan.recipe.styles.js';
 import { taskPlanStyles } from '../src/task-plan/task-plan.styles.js';
@@ -100,7 +97,6 @@ const extracted: readonly (readonly [string, LayoutRecipe, CSSResult, CSSResult]
     responseFeedbackStyles,
   ],
   ['sources/sources', sourcesRecipe, sourcesRecipeStyles, sourcesStyles],
-  ['suggestions/suggestions', suggestionsRecipe, suggestionsRecipeStyles, suggestionsStyles],
   ['task-plan/task-plan', taskPlanRecipe, taskPlanRecipeStyles, taskPlanStyles],
   ['tool-call/tool-call', toolCallRecipe, toolCallRecipeStyles, toolCallStyles],
   ['transcript/transcript', transcriptRecipe, transcriptRecipeStyles, transcriptStyles],

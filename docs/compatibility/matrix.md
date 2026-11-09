@@ -7,7 +7,7 @@
 - **Baseline Widely Available on 2026-10-26** (computed from web-features): Chrome 123 · Chrome Android 123 · Edge 123 · Firefox 124 · Firefox Android 124 · Safari 17.4 · Safari iOS 17.4.
 - **Implemented foundations above Baseline Widely Available:** custom-states (newly (2024-05-17)), text-wrap-balance (newly (2024-05-13)), scrollbar-gutter (newly (2024-12-11)).
 - **Floor exceptions:** cursor-keywords (Safari iOS), popover-api (Safari iOS), resize (Firefox Android, Safari iOS); consequences are listed with each feature.
-- **Shipped and example CSS:** 238 stylesheets, 340 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
+- **Shipped and example CSS:** 235 stylesheets, 340 distinct compatibility keys, no ungated feature outside the floor. Ungated shipped CSS needs at least Chrome 125 (`css.selectors.state`) · Edge 125 (`css.selectors.state`) · Firefox 126 (`css.selectors.state`) · Safari 18.2 (`css.properties.scrollbar-gutter`); the floor is higher because of the JavaScript and DOM features below.
 
 Legend: ✓ *n* — fully supported at the floor (first full version *n*); partial / ✗ — not fully supported at the floor (first full version in brackets). Baseline: widely / newly available (date) or limited.
 
@@ -314,8 +314,7 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/internal/ai-element.recipe.styles.js (aiElementRecipeStyles)` | yes | 11 |
 | `packages/ai/dist/internal/base.styles.js (aiElementStyles)` | yes | 35 |
 | `packages/ai/dist/message/message.recipe.styles.js (messageRecipeStyles)` | yes | 12 |
-| `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 31 |
-| `packages/ai/dist/message-branch/message-branch.styles.js (messageBranchStyles)` | yes | 6 |
+| `packages/ai/dist/message/message.styles.js (messageStyles)` | yes | 34 |
 | `packages/ai/dist/model-select/model-select.styles.js (modelSelectStyles)` | yes | 9 |
 | `packages/ai/dist/prompt-input/prompt-input.recipe.styles.js (promptInputRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/prompt-input/prompt-input.styles.js (promptInputStyles)` | yes | 62 |
@@ -326,8 +325,6 @@ The token generator reports `value.syntax.aboveFloor` (or explains `color.invali
 | `packages/ai/dist/response-feedback/response-feedback.styles.js (responseFeedbackStyles)` | yes | 22 |
 | `packages/ai/dist/sources/sources.recipe.styles.js (sourcesRecipeStyles)` | yes | 14 |
 | `packages/ai/dist/sources/sources.styles.js (sourcesStyles)` | yes | 25 |
-| `packages/ai/dist/suggestions/suggestions.recipe.styles.js (suggestionsRecipeStyles)` | yes | 11 |
-| `packages/ai/dist/suggestions/suggestions.styles.js (suggestionsStyles)` | yes | 38 |
 | `packages/ai/dist/task-plan/task-plan.recipe.styles.js (taskPlanRecipeStyles)` | yes | 13 |
 | `packages/ai/dist/task-plan/task-plan.styles.js (taskPlanStyles)` | yes | 32 |
 | `packages/ai/dist/tool-call/tool-call.recipe.styles.js (toolCallRecipeStyles)` | yes | 12 |

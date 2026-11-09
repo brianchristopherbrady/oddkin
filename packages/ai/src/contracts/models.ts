@@ -384,15 +384,6 @@ export const FeedbackModel = defineModel('oddkin.ai.feedback', {
   }),
 });
 
-export const SuggestionModel = defineModel('oddkin.ai.suggestion', {
-  version: 1,
-  schema: m.object({
-    id: m.id(),
-    label: m.label(),
-    prompt: m.string({ description: 'Text inserted or submitted.' }),
-  }),
-});
-
 export const TranscriptSegmentModel = defineModel('oddkin.ai.transcript-segment', {
   version: 1,
   schema: m.object({

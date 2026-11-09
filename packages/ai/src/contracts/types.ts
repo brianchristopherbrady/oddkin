@@ -14,7 +14,6 @@ import type {
   ModelOptionModel,
   PlanModel,
   QuestionModel,
-  SuggestionModel,
   ToolCallModel,
   TranscriptSegmentModel,
   UsageModel,
@@ -52,7 +51,6 @@ export type QuestionStatus = QuestionRecord['status'];
 export type ContextItem = Infer<typeof ContextItemModel>;
 export type ModelOption = Infer<typeof ModelOptionModel>;
 export type FeedbackRecord = Infer<typeof FeedbackModel>;
-export type Suggestion = Infer<typeof SuggestionModel>;
 export type TranscriptSegment = Infer<typeof TranscriptSegmentModel>;
 export type ConversationSnapshot = Infer<typeof ConversationSnapshotModel>;
 

@@ -27,8 +27,6 @@ export interface IntentHandlers {
   ): void;
   'odd-question-skip'(detail: { questionId: string; revision: number }, event: Event): void;
   'odd-feedback-submit'(detail: FeedbackSubmitDetail, event: Event): void;
-  'odd-suggestion-submit'(detail: { suggestionId: string; prompt: string }, event: Event): void;
-  'odd-suggestion-select'(detail: { suggestionId: string; prompt: string }, event: Event): void;
   'odd-tool-retry'(detail: { toolCallId: string }, event: Event): void;
 }
 
@@ -121,8 +119,5 @@ export function controllerIntents(
           ...(detail.comment ? { comment: detail.comment } : {}),
         })
         .then(report('odd-feedback-submit')),
-    'odd-suggestion-submit': (detail) =>
-      void controller.send({ text: detail.prompt }).then(report('odd-suggestion-submit')),
-    'odd-suggestion-select': (detail) => composer?.setText(detail.prompt),
   };
 }

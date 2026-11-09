@@ -197,28 +197,6 @@ export const artifactRevisionEvent = event<{
   description: 'The viewed revision changed (presentation state).',
 });
 
-export const suggestionSelectEvent = event<{
-  readonly suggestionId: string;
-  readonly prompt: string;
-}>('odd-suggestion-select', {
-  bubbles: true,
-  composed: true,
-  cancelable: false,
-  intent: 'user',
-  description: 'Insert the suggestion into the composer without sending.',
-});
-
-export const suggestionSubmitEvent = event<{
-  readonly suggestionId: string;
-  readonly prompt: string;
-}>('odd-suggestion-submit', {
-  bubbles: true,
-  composed: true,
-  cancelable: false,
-  intent: 'user',
-  description: 'Send the suggestion as a prompt.',
-});
-
 export interface FeedbackSubmitDetail {
   readonly messageId: string;
   readonly rating: 'positive' | 'negative';
@@ -408,8 +386,6 @@ declare global {
     'odd-prompt-submit': CustomEvent<EventDetail<typeof promptSubmitEvent>>;
     'odd-question-answer': CustomEvent<EventDetail<typeof questionAnswerEvent>>;
     'odd-question-skip': CustomEvent<EventDetail<typeof questionSkipEvent>>;
-    'odd-suggestion-select': CustomEvent<EventDetail<typeof suggestionSelectEvent>>;
-    'odd-suggestion-submit': CustomEvent<EventDetail<typeof suggestionSubmitEvent>>;
     'odd-tool-retry': CustomEvent<EventDetail<typeof toolRetryEvent>>;
     'odd-transcript-change': CustomEvent<EventDetail<typeof transcriptChangeEvent>>;
     'odd-voice-transcript': CustomEvent<EventDetail<typeof voiceTranscriptEvent>>;

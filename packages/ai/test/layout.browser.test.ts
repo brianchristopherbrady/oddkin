@@ -396,24 +396,6 @@ describe('odd-citation', () => {
   });
 });
 
-describe('odd-suggestions', () => {
-  it('lines up the suggestions in a row that wraps', async () => {
-    const el = await mount<Updating & { suggestions: unknown }>(
-      'odd-suggestions',
-      () => import('../src/suggestions/suggestions.define.js'),
-      (e) => {
-        e.suggestions = [
-          { id: 'summarize', label: 'Summarize', prompt: 'Summarize this page.' },
-          { id: 'risks', label: 'List risks', prompt: 'What are the risks?' },
-        ];
-      },
-    );
-    const list = $(el, '.list');
-    expectRow(list, space('xs'), { align: 'stretch' });
-    await expectWraps(list, '10rem');
-  });
-});
-
 describe('odd-artifact', () => {
   it('stacks header, summary, and view; the header is a centred row that wraps', async () => {
     const el = await mount<Updating & { artifact: unknown; view: string }>(
@@ -701,9 +683,9 @@ describe('buttons', () => {
     probe.style.inlineSize = 'var(--odd-target-min)';
     const target = probe.getBoundingClientRect().width;
     probe.remove();
-    // Previous and next are one glyph each.
-    const el = await example('message-branch');
-    const buttons = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.odd-button')];
+    // A message's previous and next versions are one glyph each.
+    const el = await example('message', 'versions');
+    const buttons = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.versions .odd-button')];
     expect(buttons.length).toBeGreaterThan(1);
     for (const button of buttons)
       expect(button.getBoundingClientRect().width).toBeGreaterThanOrEqual(target);

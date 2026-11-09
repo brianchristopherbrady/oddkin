@@ -13,7 +13,6 @@ export {
   ModelOptionModel,
   PlanModel,
   QuestionModel,
-  SuggestionModel,
   ToolCallModel,
   TranscriptSegmentModel,
   UsageModel,

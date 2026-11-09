@@ -30,14 +30,12 @@ const TAGS = [
   'conversation',
   'inline-assist',
   'message',
-  'message-branch',
   'model-select',
   'prompt-input',
   'question',
   'response',
   'response-feedback',
   'sources',
-  'suggestions',
   'task-plan',
   'tool-call',
   'transcript',
@@ -83,13 +81,6 @@ describe('@oddkin/ai published metadata', { timeout: 30_000 }, () => {
     ).filter((m) => !m['part'] && m['cssProperty'] === 'font-size');
     // aiElementStyles sets font.size.md; the label's own sheet, loaded later, wins.
     expect(host.map((m) => m['token'])).toEqual(['font.size.xs']);
-    const padding = (
-      metadata['components']['component:odd-suggestions'].styleMappings as Record<string, string>[]
-    )
-      .filter((m) => m['cssProperty'] === 'padding-inline')
-      .map((m) => `${m['part']} -> ${m['token']}`);
-    // `button` styles both buttons alike, as the Figma specimen pads them.
-    expect(padding).toEqual(['suggestion -> space.xs', 'send -> space.xs']);
   });
 
   it('publishes typed intent events with their request semantics', () => {
@@ -152,7 +143,6 @@ describe('@oddkin/ai published metadata', { timeout: 30_000 }, () => {
         'model-option',
         'plan',
         'question',
-        'suggestion',
         'tool-call',
         'transcript-segment',
         'usage',

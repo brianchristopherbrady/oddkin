@@ -118,24 +118,28 @@ describe('Figma parity: odd-activity', () => {
     });
 });
 
-describe('Figma parity: odd-message-branch', () => {
+// The specimen keeps its odd-message-branch name in Figma; odd-message draws its versions now.
+describe('Figma parity: odd-message versions', () => {
   for (const mode of MODES)
     it(`Alternative 2 of 3 (${mode})`, async () => {
-      await import('../src/message-branch/message-branch.define.js');
+      await import('../src/message/message.define.js');
       inMode(mode);
-      const el = mount(
-        '<odd-message-branch></odd-message-branch>',
-      ) as HTMLElementTagNameMap['odd-message-branch'];
-      el.messageId = 'm2';
+      const el = mount('<odd-message></odd-message>') as HTMLElementTagNameMap['odd-message'];
+      el.message = {
+        id: 'm2',
+        role: 'assistant',
+        parts: [{ type: 'text', id: 't1', text: 'The second answer.' }],
+      };
       el.branch = { index: 2, count: 3, previousId: 'm1', nextId: 'm3' };
       el.capabilities = { switchBranch: { available: true } };
       await settle(el);
-      const [previous, next] = el.shadowRoot!.querySelectorAll<HTMLElement>('button');
+      const group = shadow(el, '.versions');
+      const [previous, next] = group.querySelectorAll<HTMLElement>('button');
       const targets: Target[] = [
-        { layer: [], el, kind: 'frame' },
+        { layer: [], el: group, kind: 'frame' },
         {
           layer: ['Actions'],
-          el: shadow(el, '[part="base"]'),
+          el: group,
           kind: 'frame',
           gap: 'column-gap',
           fields: [['minHeight', 'min-block-size']],
@@ -443,42 +447,6 @@ describe('Figma parity: odd-sources', () => {
       ];
       await transitions(targets);
       expectNone(compare(`odd-sources/One source/${mode}`, {}, targets));
-    });
-});
-
-describe('Figma parity: odd-suggestions', () => {
-  for (const mode of MODES)
-    it(`Insert and send (${mode})`, async () => {
-      await import('../src/suggestions/suggestions.define.js');
-      inMode(mode);
-      const el = mount(
-        '<odd-suggestions></odd-suggestions>',
-      ) as HTMLElementTagNameMap['odd-suggestions'];
-      el.suggestions = [
-        { id: 'summarize', label: 'Summarize', prompt: 'Summarize this document.' },
-        { id: 'explain', label: 'Explain the key points', prompt: 'Explain the key points.' },
-      ];
-      await settle(el);
-      const items = [...el.shadowRoot!.querySelectorAll<HTMLElement>('.item')];
-      const targets: Target[] = [
-        { layer: ['Actions'], el: shadow(el, '[part="list"]'), kind: 'frame', gap: 'column-gap' },
-      ];
-      for (const [i, pill, label] of [
-        [0, 'Actions', 'Summarize'],
-        [1, 'Actions [2]', 'Explain the key points'],
-      ] as const) {
-        const insert = items[i]!.querySelector<HTMLElement>('[part="suggestion"]')!;
-        const send = items[i]!.querySelector<HTMLElement>('[part="send"]')!;
-        targets.push(
-          { layer: ['Actions', pill], el: items[i]!, kind: 'frame', gap: 'column-gap' },
-          { layer: ['Actions', pill, label], el: insert, kind: 'frame' },
-          { layer: ['Actions', pill, label, label], el: insert, kind: 'text' },
-          { layer: ['Actions', pill, '↑'], el: send, kind: 'frame' },
-          { layer: ['Actions', pill, '↑', '↑'], el: send, kind: 'text' },
-        );
-      }
-      await transitions(targets);
-      expectNone(compare(`odd-suggestions/Insert and send/${mode}`, {}, targets));
     });
 });
 

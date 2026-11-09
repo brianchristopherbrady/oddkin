@@ -22,7 +22,7 @@ describe('@oddkin/ai customization levels', () => {
   const components = Object.values(metadata['components']) as Record<string, any>[];
 
   it('every element declares levels 1 and 2, as authored', () => {
-    expect(components).toHaveLength(24);
+    expect(components).toHaveLength(22);
     for (const c of components)
       expect([
         c['tag'],

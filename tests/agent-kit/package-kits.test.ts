@@ -85,22 +85,12 @@ describe('packaged agent kits', () => {
     expect(components.manifest.entries.some((e) => e.kind === 'pattern')).toBe(false);
   });
 
-  it('say which components are deprecated, and where to go instead', async () => {
+  it('mark nothing deprecated where nothing is (ADR 0049 slice 6)', async () => {
     const { files } = await packageKit(project, library('@oddkin/ai'));
-    const guide = files.get('GUIDE.md')!;
-    expect(guide).toContain('`<odd-suggestions>` (deprecated)');
-    expect(guide).toContain('`<odd-message-branch>` (deprecated)');
-    expect(guide).not.toContain('`<odd-message>` (deprecated)');
-    const reference = files.get('references/components/odd-suggestions.md')!;
-    expect(reference).toContain('**Deprecated.** Use the Suggested prompts pattern');
-    expect(reference).toContain(
-      'Migration: `patterns/suggested-prompts/README.md in the package`.',
-    );
-    expect(files.get('references/choosing-components.md')).toContain(
-      '- `<odd-suggestions>`\n  - Deprecated: Use the Suggested prompts pattern',
-    );
-    // No member is deprecated any more (ADR 0049 slice 6); kit.test.ts covers deprecated members.
-    expect(files.get('references/components/odd-message.md')).not.toContain('Deprecated:');
+    for (const [path, text] of files)
+      if (path.endsWith('.md')) expect(text, path).not.toMatch(/\(deprecated\)|Deprecated[.:]/);
+    expect(files.has('references/components/odd-suggestions.md')).toBe(false);
+    expect(files.has('references/components/odd-message-branch.md')).toBe(false);
   });
 
   it('document the composition entry from what the package publishes', async () => {

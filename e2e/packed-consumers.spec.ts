@@ -180,8 +180,10 @@ test.describe('full application', () => {
       const errors = await open(page, source.url);
       await expect(page.locator('body')).toHaveAttribute('data-ready', 'true');
       await expect(page).toHaveTitle('Profile · Full application');
-      // The AI element: choosing a suggested name puts it in the field.
-      await expect(page.getByRole('list', { name: 'Suggested names' })).toBeVisible();
+      // The suggested names (the Suggested prompts pattern) and the AI element that marks them:
+      // choosing a name puts it in the field.
+      await expect(page.getByRole('group', { name: 'Suggested names' })).toBeVisible();
+      await expect(page.getByText('AI generated')).toBeVisible();
       await page.getByRole('button', { name: 'Grace', exact: true }).click();
       await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Grace');
       await page.getByRole('button', { name: 'Save' }).click();

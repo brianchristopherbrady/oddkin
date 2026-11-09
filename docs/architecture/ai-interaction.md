@@ -36,10 +36,10 @@ Element-owned resources (timers, listeners, object URLs created for previews, ow
 | C09 | Generated artifacts | `odd-artifact` | `ArtifactModel` | `MarkdownView`, host renderers, `odd-copy-button` |
 | C10 | Inline assistance | `odd-inline-assist` | `captureSelection`, `DocumentSession` | APG toolbar pattern |
 | C11 | Change review | `odd-change-review` | `DocumentSession`, `diffWords`/`diffLines` | `ins`/`del` |
-| C12 | Alternative responses | `odd-message`, which draws its versions (`odd-message-branch` is deprecated as a public element; the Branch navigation pattern) | `regenerate`, `edit`, `switchBranch` | — |
+| C12 | Alternative responses | `odd-message`, which draws its versions from its `branch` record (the Branch navigation pattern for a message layout of your own) | `regenerate`, `edit`, `switchBranch` | — |
 | C13 | Clarifying questions | `odd-question` | `QuestionModel` | native form controls |
 | C14 | AI provenance | `odd-ai-label` | `provenanceSchema` | `odd-disclosure` |
-| C15 | Suggested follow-ups | The Suggested prompts pattern (`odd-suggestions` is deprecated) | `controllerIntents` (`odd-suggestion-select`/`-submit`) | — |
+| C15 | Suggested follow-ups | The Suggested prompts pattern (`odd-button`s in a labelled group that fill the composer) | — | — |
 | C16 | Response feedback | `odd-response-feedback` | `submitFeedback` | `aria-pressed` buttons |
 | C17 | Model selection | `odd-model-select` | `ModelOptionModel` | native `select` |
 | C18 | Usage display | `odd-usage-meter` | `UsageModel` | native `meter` (only when `used` and `limit` are known) |
@@ -65,7 +65,7 @@ All records are defined once with `@oddkin/core/model` in `packages/ai/src/contr
 | Checkpoint | `oddkin.ai.checkpoint` | `checkpointId` | `restores` lists every replaced state; `outcome` host-confirmed |
 | Plan | `oddkin.ai.plan` | `planId` | steps with `tasks` (parallel), `blocker`, `inputRequest` |
 | Question | `oddkin.ai.question` | `questionId` + `revision` | choice, multi-choice, form, text; custom answers; `attemptId` in a conversation |
-| Context item, model option, feedback, suggestion, transcript segment, conversation snapshot | `oddkin.ai.*` | `id` | see schemas |
+| Context item, model option, feedback, transcript segment, conversation snapshot | `oddkin.ai.*` | `id` | see schemas |
 
 `AttemptRecord`, `ConversationState`, `Capabilities`, `PublicError`, and `AiEvent` are TypeScript contracts (runtime state, not persisted). `PublicError` carries `code`, user-presentable `message`, and `retryable`; diagnostic details stay in host logs. Runtime resources (File, streams, AbortControllers, DOM selections) never appear in records.
 
@@ -207,7 +207,6 @@ All events bubble and are composed (they cross nested shadow roots). Dispatch *r
 | `odd-citation-open` | `sourceId`, `resolved` | yes (default reveals the source) | Local |
 | `odd-artifact-export` | `artifactId`, `revisionId`, `format` | yes (default downloads canonical source) | Local default |
 | `odd-artifact-revision-change` | `artifactId`, `revisionId` | no | Presentation state changed |
-| `odd-suggestion-select` / `-submit` | `suggestionId`, `prompt` | no | Insert into composer / send |
 | `odd-feedback-submit` | `messageId`, `rating`, `reasons`, `comment` | no | Request; confirmed by the feedback record |
 | `odd-model-change` | `modelId`, `previousModelId` | yes (veto keeps the previous model) | Selection |
 | `odd-checkpoint-restore` | `checkpointId` | no | Request |

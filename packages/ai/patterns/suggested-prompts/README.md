@@ -1,6 +1,6 @@
 # Suggested prompts
 
-**Replaces** `odd-suggestions`, which is deprecated.
+**Replaces** `odd-suggestions`, removed in favour of this pattern (ADR 0049).
 
 ## The problem
 

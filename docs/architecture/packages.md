@@ -176,7 +176,7 @@ Files inside a folder import siblings directly, never through their own `index.t
 | `./markdown`, `./highlight` | Streaming Markdown renderer and URL policy; optional highlighter | renders into a given node | none |
 | `./announce` | `createAnnouncer(container)` | when called | none |
 | `./voice/web-speech`, `./voice/recorder` | Optional voice adapters | when called | none |
-| `./<element>` | Element class, template, styles, definition, strings (24 elements, e.g. `./conversation`, `./prompt-input`) | yes | none |
+| `./<element>` | Element class, template, styles, definition, strings (22 elements, e.g. `./conversation`, `./prompt-input`) | yes | none |
 | `./define/<element>` | Registers one element and its dependencies | yes | registers `odd-*` |
 | `./schemas/*.json`, `./custom-elements.json`, `./oddkin.metadata.json` | Generated record schemas and metadata | data | — |
 

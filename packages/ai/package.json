@@ -185,16 +185,6 @@
       "development": "./dist/message/message.define.js",
       "default": "./dist/prod/message/message.define.js"
     },
-    "./message-branch": {
-      "types": "./dist/message-branch/index.d.ts",
-      "development": "./dist/message-branch/index.js",
-      "default": "./dist/prod/message-branch/index.js"
-    },
-    "./define/message-branch": {
-      "types": "./dist/message-branch/message-branch.define.d.ts",
-      "development": "./dist/message-branch/message-branch.define.js",
-      "default": "./dist/prod/message-branch/message-branch.define.js"
-    },
     "./model-select": {
       "types": "./dist/model-select/index.d.ts",
       "development": "./dist/model-select/index.js",
@@ -254,16 +244,6 @@
       "types": "./dist/sources/sources.define.d.ts",
       "development": "./dist/sources/sources.define.js",
       "default": "./dist/prod/sources/sources.define.js"
-    },
-    "./suggestions": {
-      "types": "./dist/suggestions/index.d.ts",
-      "development": "./dist/suggestions/index.js",
-      "default": "./dist/prod/suggestions/index.js"
-    },
-    "./define/suggestions": {
-      "types": "./dist/suggestions/suggestions.define.d.ts",
-      "development": "./dist/suggestions/suggestions.define.js",
-      "default": "./dist/prod/suggestions/suggestions.define.js"
     },
     "./task-plan": {
       "types": "./dist/task-plan/index.d.ts",

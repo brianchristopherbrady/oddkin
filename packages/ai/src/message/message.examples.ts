@@ -1,5 +1,5 @@
 import { defineExamples } from '@oddkin/workbench/examples';
-import type { AttemptRecord } from '../contracts/types.js';
+import type { AttemptRecord, BranchPosition, MessageRecord } from '../contracts/types.js';
 import type {} from './message.js';
 
 const source = {
@@ -26,6 +26,27 @@ const attempt = (attemptId: string, status: 'streaming' | 'completed'): AttemptR
   connection: status === 'streaming' ? 'open' : 'closed',
   stop: 'none',
 });
+// Three answers to one prompt, in the order they were generated.
+const versions = [
+  { id: 'm2a', text: 'Use a media query on the page.' },
+  { id: 'm2', text: 'Use a container query on the card.' },
+  { id: 'm2c', text: 'Use a grid with auto-fit columns.' },
+];
+const version = (id: string): MessageRecord => ({
+  id,
+  role: 'assistant',
+  parentId: 'm1',
+  parts: [{ type: 'text', id: 't1', text: versions.find((v) => v.id === id)?.text ?? '' }],
+});
+const position = (id: string): BranchPosition => {
+  const at = versions.findIndex((v) => v.id === id);
+  return {
+    index: at + 1,
+    count: versions.length,
+    ...(at > 0 ? { previousId: versions[at - 1]!.id } : {}),
+    ...(at < versions.length - 1 ? { nextId: versions[at + 1]!.id } : {}),
+  };
+};
 
 export default defineExamples('odd-message', {
   default: {
@@ -111,6 +132,31 @@ export default defineExamples('odd-message', {
             role: 'user',
             parts: [{ type: 'text', id: 't0', text: detail.text }],
           };
+        },
+      );
+    },
+  },
+  versions: {
+    label: 'Second of three answers',
+    props: {
+      message: {
+        id: 'm2',
+        role: 'assistant',
+        parentId: 'm1',
+        parts: [{ type: 'text', id: 't1', text: 'Use a container query on the card.' }],
+      },
+      branch: { index: 2, count: 3, previousId: 'm2a', nextId: 'm2c' },
+      capabilities: { switchBranch: { available: true } },
+    },
+    guidance:
+      'The arrows only ask (`odd-branch-switch` names the version to show); the host shows that message and passes back its position. Here the host keeps three answers to one prompt.',
+    fixture({ scope, element }) {
+      scope.listen<GlobalEventHandlersEventMap['odd-branch-switch']>(
+        element,
+        'odd-branch-switch',
+        ({ detail }) => {
+          element.message = version(detail.targetMessageId);
+          element.branch = position(detail.targetMessageId);
         },
       );
     },

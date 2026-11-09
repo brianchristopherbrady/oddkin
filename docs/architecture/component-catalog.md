@@ -236,10 +236,10 @@ on `odd-button`, §6). Node ids: `design/figma/components.json`.
 | `odd-prompt-input/Draft ready` | `odd-prompt-input` | a non-empty draft, send enabled | `button` (send) |
 | `odd-model-select/Available model` | `odd-model-select` | `models` with the selected model available | — |
 | `odd-context-picker/Ready context` | `odd-context-picker` | `items` ready | — |
-| `odd-suggestions/Insert and send` | `odd-suggestions` | default (not `insert-only`) | — |
+| `odd-suggestions/Insert and send` | none: removed (ADR 0049); the Suggested prompts pattern | — | — |
 | `odd-response/Streaming` | `odd-response` | `status="streaming"` | — |
 | `odd-message/Assistant · completed` | `odd-message` | assistant message, attempt complete | — |
-| `odd-message-branch/Alternative 2 of 3` | `odd-message-branch` | `branch` with three alternatives, the second current | — |
+| `odd-message-branch/Alternative 2 of 3` | `odd-message` (its versions; ADR 0049) | `branch` with three alternatives, the second current | — |
 | `odd-conversation/Two-message feed` | `odd-conversation` | a snapshot with two messages | — (drawn flat; code renders `odd-message`) |
 | `odd-activity/Interrupted · resume available` | `odd-activity` | attempt `interrupted`, resume capability | — |
 | `odd-tool-call/Arguments ready · not executed` | `odd-tool-call` | tool record with arguments, not run | — |
@@ -258,7 +258,7 @@ on `odd-button`, §6). Node ids: `design/figma/components.json`.
 | `odd-voice-input/Recording` | `odd-voice-input` | recording | — (code renders `odd-transcript`) |
 | `odd-transcript/Final and interim text` | `odd-transcript` | final segments plus interim text | — |
 
-All 24 elements have exactly one definition (one state) each; the other states of each element are not drawn.
+All 24 drawn elements have exactly one definition (one state) each; the other states of each element are not drawn. Two of them left the code (ADR 0049): `odd-suggestions` (removed) and `odd-message-branch` (drawn by `odd-message`); their definitions stay until the designer retires them.
 The AI definitions use the shared "Oddkin · Repository tokens" and moded "Oddkin · Component roles"
 collections. The former "Oddkin · Shared theme" collection has been retired. The original 36 button/input
 implementation references now sit on Primitives; the 48 AI definitions remain on page 0:1.
@@ -551,7 +551,7 @@ Status: **approved** (2026-10-24). 220 references; controller 18, deferred 11, e
 | `odd-conversation` | `odd-activity`, `odd-message` | Renders one odd-message per message record and an odd-activity for run status; both are complete widgets authors also place alone, and no ARIA ID crosses (each labels itself). Repeated per message: the per-instance cost is measured in the lifetime harness. |
 | `odd-date-picker` | `odd-calendar` | The popup holds a complete odd-calendar (a definition dependency) that shares the date picker’s value, bounds, first day, disabled-date hook, read-only state, and strings. |
 | `odd-menu` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
-| `odd-message` | `odd-action-approval`, `odd-ai-label`, `odd-artifact`, `odd-button`, `odd-copy-button`, `odd-disclosure`, `odd-message-branch`, `odd-question`, `odd-response`, `odd-response-feedback`, `odd-sources`, `odd-tool-call` | A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, questions, artifacts, branch, feedback, AI label), reasoning in an odd-disclosure, copy with odd-copy-button, and odd-button for save/cancel while editing; each is a complete widget authors also place alone. |
+| `odd-message` | `odd-action-approval`, `odd-ai-label`, `odd-artifact`, `odd-button`, `odd-copy-button`, `odd-disclosure`, `odd-question`, `odd-response`, `odd-response-feedback`, `odd-sources`, `odd-tool-call` | A message renders the record parts it carries with the elements that own them (response, sources, tool calls, approvals, questions, artifacts, feedback, AI label), reasoning in an odd-disclosure, copy with odd-copy-button, and odd-button for save/cancel while editing; each is a complete widget authors also place alone. Its versions are its own previous and next native buttons. |
 | `odd-picker` | `odd-avatar`, `odd-icon` | Tree item icons are drawn by the complete odd-icon widget authors also place alone; the avatars view nests odd-avatar, as on odd-combobox. |
 | `odd-prompt-input` | `odd-button` | Send and stop are complete buttons (Figma: button ×1). |
 | `odd-question` | `odd-button` | Submit and skip are complete buttons (Figma: button/sm ×2). |
@@ -565,7 +565,7 @@ Status: **approved** (2026-10-24). 220 references; controller 18, deferred 11, e
 | `odd-tree` | `odd-icon` | Item icons are drawn by the complete odd-icon widget authors also place alone. |
 | `odd-voice-input` | `odd-transcript` | Shows the live odd-transcript widget authors also place alone. |
 
-Every other element (55) has no element dependency.
+Every other element (53) has no element dependency.
 
 #### Shared homes
 
