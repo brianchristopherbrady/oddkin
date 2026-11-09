@@ -19,11 +19,11 @@ export const CHANGE_REVIEW_STRINGS = {
   undo: 'Undo',
   /** @deprecated Unused: a proposal awaiting review shows no status. Removed at the next major release. */
   proposed: 'Proposed',
-  'accept-pending': 'Applying…',
+  applying: 'Applying…',
   applied: 'Applied',
   rejected: 'Rejected',
   stale: 'Out of date: the text changed after this suggestion was made, so it cannot be applied.',
-  'undo-pending': 'Undoing…',
+  undoing: 'Undoing…',
   undone: 'Undone',
   failed: 'Could not apply: {message}',
   announceApplied: 'Change applied.',
@@ -70,7 +70,7 @@ function mergeRuns(diff: readonly DiffSegment[]): DiffSegment[] {
  * Review proposed edits as before/after or inline word or line diffs; accept, reject, or undo
  * each one. Every action is a request; statuses (applied, stale, undone) come from the records,
  * which only apply to the revision they were proposed for. A host that applies asynchronously
- * sets `accept-pending` or `undo-pending` while it works ("Applying…", "Undoing…");
+ * sets `applying` or `undoing` while it works ("Applying…", "Undoing…");
  * `DocumentSession` applies at once. A proposal's `context` shows muted around its change; Undo
  * is offered on an applied proposal unless its `undoable` is `false`. An out-of-date proposal
  * offers Dismiss, which sends `odd-change-reject`.
@@ -143,7 +143,7 @@ export class OddkinChangeReview extends OddkinElement.with({
   /** @internal The status text; none while a proposal awaits review. */
   _status(status: ProposalStatus, message?: string): string {
     const t = this._strings;
-    if (status === 'proposed') return '';
+    if (status === 'requested') return '';
     return status === 'failed' ? format(t.failed, { message: message ?? '' }) : t[status];
   }
 
@@ -154,9 +154,9 @@ export class OddkinChangeReview extends OddkinElement.with({
     const action = el.dataset['action'];
     const proposal = this.proposals.find((p) => p.proposalId === proposalId);
     if (!proposal) return;
-    if (action === 'accept' && proposal.status === 'proposed')
+    if (action === 'accept' && proposal.status === 'requested')
       this.emit(changeAcceptEvent, { proposalId });
-    if (action === 'reject' && (proposal.status === 'proposed' || proposal.status === 'stale'))
+    if (action === 'reject' && (proposal.status === 'requested' || proposal.status === 'stale'))
       this.emit(changeRejectEvent, { proposalId });
     if (action === 'undo' && proposal.status === 'applied' && proposal.undoable !== false)
       this.emit(changeUndoEvent, { proposalId });

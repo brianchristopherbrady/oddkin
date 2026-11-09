@@ -311,7 +311,7 @@ $('#app').addEventListener('odd-question-answer', (event) => {
   store.update(() => ({ question: { ...q, status: 'submitting' } }));
   later(500, () => {
     store.update((s) => ({
-      question: { ...s.question, status: 'submitted', answer: event.detail.answer },
+      question: { ...s.question, status: 'answered', answer: event.detail.answer },
     }));
     say(`Thanks. Writing notes for ${JSON.stringify(event.detail.answer)}.`);
     setAttempt({ status: 'streaming' });
@@ -338,7 +338,7 @@ $('#app').addEventListener('odd-approval-decide', (event) => {
   // The backend checks the revision: a decision for an older proposal is stale.
   if (!a || a.revision !== event.detail.revision || a.status !== 'requested') return;
   store.update(() => ({
-    approval: { ...a, status: 'decision-pending', decision: event.detail.decision },
+    approval: { ...a, status: 'submitting', decision: event.detail.decision },
   }));
   later(700, () => {
     const current = store.getSnapshot().approval;
@@ -432,8 +432,7 @@ $('#delay').addEventListener(
 );
 $('#revise').addEventListener('click', () => {
   const a = store.getSnapshot().approval;
-  if (a && (a.status === 'requested' || a.status === 'decision-pending'))
-    requestApproval(a.revision + 1);
+  if (a && (a.status === 'requested' || a.status === 'submitting')) requestApproval(a.revision + 1);
 });
 
 render();

@@ -95,9 +95,10 @@
       "enum": [
         "requested",
         "submitting",
-        "submitted",
+        "answered",
         "skipped",
         "expired",
+        "superseded",
         "failed"
       ]
     },

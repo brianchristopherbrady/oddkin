@@ -1086,7 +1086,7 @@ describe('Figma parity: odd-change-review', () => {
           range: { start: 0, end: 13 },
           original: 'Original text',
           replacement: 'Revised text',
-          status: 'proposed',
+          status: 'requested',
         },
       ];
       await settle(el);

@@ -12,9 +12,10 @@ export const QUESTION_STRINGS = {
   submit: 'Answer',
   skip: 'Skip',
   submitting: 'Sending your answer…',
-  submitted: 'Answered.',
+  answered: 'Answered.',
   skipped: 'Skipped.',
   expired: 'This question expired; answers are no longer accepted.',
+  superseded: 'This question changed. Answer the new version.',
   failed: 'Your answer was not sent: {message}',
   required: 'Choose an option or enter an answer.',
   expires: 'Answer by {time}',
@@ -24,8 +25,8 @@ export const QUESTION_STRINGS = {
 
 /**
  * A clarifying question from an assistant or agent: choices, a structured form, or free text,
- * with an optional custom answer. Submitted, skipped, expired, and failed states come from the
- * record; answers are bound to the question revision.
+ * with an optional custom answer. Answered, skipped, expired, superseded, and failed states come
+ * from the record; answers are bound to the question revision.
  *
  * @csspart form - The native form.
  * @csspart actions - Answer and skip.

@@ -10,19 +10,19 @@ export const actionApprovalTemplate = (host: OddkinActionApproval) => {
   if (!approval) return html``;
   const blocked = host._blocked;
   const pending =
-    approval.status === 'decision-pending' || (blocked === '' && approval.status === 'requested');
+    approval.status === 'submitting' || (blocked === '' && approval.status === 'requested');
   const decided = host._decisions.choice(host._key(approval));
-  const actionable = approval.status === 'requested' || approval.status === 'decision-failed';
+  const actionable = approval.status === 'requested' || approval.status === 'failed';
   const statusText =
-    approval.status === 'decision-failed'
-      ? format(t['decision-failed'], { message: approval.error?.message ?? '' })
+    approval.status === 'failed'
+      ? format(t.failed, { message: approval.error?.message ?? '' })
       : pending
-        ? t['decision-pending']
+        ? t.submitting
         : t[approval.status];
   const tone =
     approval.status === 'approved'
       ? 'success'
-      : approval.status === 'decision-failed' || approval.status === 'rejected'
+      : approval.status === 'failed' || approval.status === 'rejected'
         ? 'danger'
         : 'active';
   const expires = host._expires();

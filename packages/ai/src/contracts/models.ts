@@ -152,12 +152,12 @@ export const ToolCallModel = defineModel('oddkin.ai.tool-call', {
 
 export const approvalStatusValues = [
   'requested',
-  'decision-pending',
+  'submitting',
   'approved',
   'rejected',
   'expired',
   'superseded',
-  'decision-failed',
+  'failed',
 ] as const;
 
 export const ApprovalModel = defineModel('oddkin.ai.approval', {
@@ -302,7 +302,15 @@ export const QuestionModel = defineModel('oddkin.ai.question', {
       ),
     ),
     allowCustom: m.optional(m.boolean('Offer a free-text answer.')),
-    status: m.enum(['requested', 'submitting', 'submitted', 'skipped', 'expired', 'failed']),
+    status: m.enum([
+      'requested',
+      'submitting',
+      'answered',
+      'skipped',
+      'expired',
+      'superseded',
+      'failed',
+    ]),
     answer: m.optional(m.json()),
     expiresAt: timestamp(),
     error: m.optional(publicErrorSchema),

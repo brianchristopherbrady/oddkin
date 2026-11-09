@@ -87,10 +87,10 @@ export const changeReviewTemplate = (host: OddkinChangeReview) => {
                 ${status}
               </p>
               ${
-                p.status === 'proposed' || p.status === 'stale' || undo
+                p.status === 'requested' || p.status === 'stale' || undo
                   ? html`<div part="actions" class="actions">
                       ${
-                        p.status === 'proposed'
+                        p.status === 'requested'
                           ? html`<odd-button
                               size="sm"
                               appearance="primary"
@@ -102,7 +102,7 @@ export const changeReviewTemplate = (host: OddkinChangeReview) => {
                           : null
                       }
                       ${
-                        p.status === 'proposed' || p.status === 'stale'
+                        p.status === 'requested' || p.status === 'stale'
                           ? html`<odd-button
                               size="sm"
                               data-id=${p.proposalId}

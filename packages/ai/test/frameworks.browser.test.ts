@@ -80,7 +80,6 @@ describe('framework bindings (A16)', () => {
       {
         approvalId: 'ap',
         revision: 1,
-        toolCallId: undefined,
         decision: 'approve',
         reason: undefined,
       },

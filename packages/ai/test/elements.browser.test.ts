@@ -299,14 +299,8 @@ describe('odd-tool-call and odd-action-approval', () => {
       return status();
     };
     expect(status()).toEqual(['Waiting for approval', 'active']);
-    expect(await show('input-available', 'decision-pending')).toEqual([
-      'Waiting for approval',
-      'active',
-    ]);
-    expect(await show('input-available', 'decision-failed')).toEqual([
-      'Waiting for approval',
-      'active',
-    ]);
+    expect(await show('input-available', 'submitting')).toEqual(['Waiting for approval', 'active']);
+    expect(await show('input-available', 'failed')).toEqual(['Waiting for approval', 'active']);
     for (const gate of ['rejected', 'expired', 'superseded'] as const)
       expect(await show('input-available', gate)).toEqual(['Not run', '']);
     // Approval is not execution: an approved call is ready until it runs.
@@ -408,7 +402,7 @@ describe('odd-tool-call and odd-action-approval', () => {
       expect.objectContaining({ revision: 2, decision: 'approve' }),
     ]);
     // A failed decision releases the guard: the same revision can be decided again.
-    el.approval = approval('decision-failed', 2);
+    el.approval = approval('failed', 2);
     await settle(el);
     approve().click();
     expect(decisions).toHaveLength(3);
@@ -748,7 +742,7 @@ describe('selection, review, and controls', () => {
         range: { start: 10, end: 13 },
         original: 'fox',
         replacement: `${'a'.repeat(59)}\u{1F98A} and more`,
-        status: 'proposed',
+        status: 'requested',
       },
     ];
     await settle(el);
@@ -1089,7 +1083,7 @@ describe('selection, review, and controls', () => {
       expect(review.proposals[0]).toMatchObject({
         original: 'build',
         replacement: 'compile step',
-        status: 'proposed',
+        status: 'requested',
       });
       await settle(review);
       $(review, 'odd-button[data-action="accept"]')!.click();
@@ -1760,7 +1754,7 @@ describe('odd-question and odd-task-plan examples', () => {
       $$(el, 'input[name="choice"]')[1]!.click();
       $(el, 'odd-button[type="submit"]')!.click();
       await settle(el);
-      expect(el.question).toMatchObject({ status: 'submitted', answer: { choice: 'eng' } });
+      expect(el.question).toMatchObject({ status: 'answered', answer: { choice: 'eng' } });
       expect(text($(el, '.state'))).toBe('Answered.');
     } finally {
       answered.dispose();
@@ -1788,9 +1782,20 @@ describe('odd-question and odd-task-plan examples', () => {
       expect(($(el, 'input[value="__other"]') as HTMLInputElement).checked).toBe(true);
       $(el, 'odd-button[type="submit"]')!.click();
       await settle(el);
-      expect(el.question).toMatchObject({ status: 'submitted', answer: { custom: 'Designers' } });
+      expect(el.question).toMatchObject({ status: 'answered', answer: { custom: 'Designers' } });
     } finally {
       own.dispose();
+    }
+    // A newer revision replaced the question: it says so and takes no answer (ADR 0049 §5).
+    const replaced = await mountExample(set, 'default', container);
+    try {
+      const el = replaced.element;
+      el.question = { ...el.question!, status: 'superseded' };
+      await settle(el);
+      expect(text($(el, '.state'))).toBe('This question changed. Answer the new version.');
+      expect(($(el, 'fieldset') as HTMLFieldSetElement).disabled).toBe(true);
+    } finally {
+      replaced.dispose();
     }
   });
 

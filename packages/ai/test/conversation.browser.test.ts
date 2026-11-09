@@ -295,7 +295,7 @@ describe('odd-conversation', () => {
     approve.click();
     approve.click();
     expect(seen).toEqual([
-      { approvalId: 'ap', revision: 1, toolCallId: 't', decision: 'approve', reason: undefined },
+      { approvalId: 'ap', revision: 1, decision: 'approve', reason: undefined },
     ]);
     await settle(el);
     expect(controller.getSnapshot().approvals['ap']?.status).toBe('approved');

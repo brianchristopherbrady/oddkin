@@ -90,7 +90,7 @@ Transport connection, attempt, tool, approval, and stop are **separate state mac
 
 `interrupted` = the stream ended without a terminal event: the client lost track of the work; it is never shown as completion (A06). `relation` (`new`, `retry`, `regenerate`, `edit`) and `parentAttemptId` link attempts. A request that is never accepted removes its optimistic messages (A02).
 
-`awaiting-input` = the work waits for the person. The controller moves a streaming attempt there while one of its approvals waits (`requested`, or `decision-failed` after a decision that did not reach the backend), and back to `streaming` once none does; `odd-activity` reads only this status, never the tools or approvals (ADR 0049). A stream that finishes with `awaiting-input` keeps the attempt waiting without a stream; one that closes while an approval waits, without a terminal event, is `interrupted`.
+`awaiting-input` = the work waits for the person. The controller moves a streaming attempt there while one of its approvals waits (`requested`, or `failed` after a decision that did not reach the backend), and back to `streaming` once none does; `odd-activity` reads only this status, never the tools or approvals (ADR 0049). A stream that finishes with `awaiting-input` keeps the attempt waiting without a stream; one that closes while an approval waits, without a terminal event, is `interrupted`.
 
 ### 4.2 Connection
 
@@ -113,15 +113,15 @@ A terminal event arriving while stop is `requested` sets stop to `confirmed` (if
 
 `input-streaming → input-available | output-error | cancelled`; `input-available → executing | output-available | output-error | denied | cancelled`; `executing → output-available | output-error | cancelled`; `output-error → executing` (host retry). Complete arguments are shown as "Arguments ready; not run yet", never as success (A08). Each tool keeps its own identity and state (A09).
 
-A call that needs approval links it (`approvalId`) and keeps its own status: the approval alone states the gate (ADR 0049). Until the call runs, `odd-tool-call` words the gate from it: "Waiting for approval" while it is unresolved (`requested`, `decision-pending`, `decision-failed`), "Not run" once it is `rejected`, `expired`, or `superseded`. `denied` is the backend refusing to run the call, with or without an approval; when an adapter reports it while the call's approval is unresolved, the controller marks that approval `rejected`, so the two records never disagree.
+A call that needs approval links it (`approvalId`) and keeps its own status: the approval alone states the gate (ADR 0049). Until the call runs, `odd-tool-call` words the gate from it: "Waiting for approval" while it is unresolved (`requested`, `submitting`, `failed`), "Not run" once it is `rejected`, `expired`, or `superseded`. `denied` is the backend refusing to run the call, with or without an approval; when an adapter reports it while the call's approval is unresolved, the controller marks that approval `rejected`, so the two records never disagree.
 
 ### 4.5 Approvals
 
-`requested → decision-pending | approved | rejected | expired | superseded`; `decision-pending → approved | rejected | decision-failed | expired | superseded`; `decision-failed → decision-pending | approved | rejected | expired | superseded`. Decisions target one `approvalId` **and revision**. The element sends one decision per revision (double activation is ignored) and shows it as pending until the record changes; a new revision resets the guard and marks the old one `superseded`; the controller refuses decisions for stale, expired, or already decided revisions and maps transport outcomes `stale`/`expired`. **Approval is never shown as success of the action**: the tool's own status reports execution (A10).
+`requested → submitting | approved | rejected | expired | superseded`; `submitting → approved | rejected | failed | expired | superseded`; `failed → submitting | approved | rejected | expired | superseded`. Approvals, questions, and edit proposals share one vocabulary for decisions (ADR 0049 §5): `requested` waits for the person; `submitting` has the request in flight (`applying` or `undoing` for a proposal the host applies); `failed` lets the person decide again. Decisions target one `approvalId` **and revision**. The element sends one decision per revision (double activation is ignored) and shows it as pending until the record changes; a new revision resets the guard and marks the old one `superseded`; the controller refuses decisions for stale, expired, or already decided revisions and maps transport outcomes `stale`/`expired`. **Approval is never shown as success of the action**: the tool's own status reports execution (A10).
 
 ### 4.6 Other mutations
 
-Checkpoint restore: `available → restore-pending → restored | restore-failed`; success text appears only when the host's record says `restored` (A20). Questions: `requested → submitting → submitted | failed`, `skipped`, `expired`, per revision. Feedback: `idle → pending → submitted | failed`. Document proposals: §8.3.
+Checkpoint restore: `available → restore-pending → restored | restore-failed`; success text appears only when the host's record says `restored` (A20). Questions: `requested → submitting → answered | failed`, `skipped`, `expired`, and `superseded` once a newer revision replaces the question, per revision. Feedback: `idle → pending → submitted | failed`. Document proposals (§7.3): `requested`, then `applied`, `rejected`, `stale`, or `failed`, and an applied one `undone`; a host that applies asynchronously shows `applying` or `undoing` meanwhile.
 
 ## 5. Streams and adapters
 
@@ -193,7 +193,7 @@ All events bubble and are composed (they cross nested shadow roots). Dispatch *r
 | `odd-message-regenerate` | `messageId`, `attemptId` | no | Request an alternative |
 | `odd-attempt-retry` / `odd-attempt-resume` | `attemptId` | no | Request (resume never starts new work) |
 | `odd-branch-switch` | `messageId`, `targetMessageId` | no | Request |
-| `odd-approval-decide` | `approvalId`, `revision`, `toolCallId`, `decision`, `reason` | no | Request; pending until the record changes |
+| `odd-approval-decide` | `approvalId`, `revision`, `decision`, `reason` (the host reads the call from the record) | no | Request; pending until the record changes |
 | `odd-approval-edit` | `approvalId`, `revision` | no | Request |
 | `odd-tool-retry` | `toolCallId` | no | Request |
 | `odd-citation-open` | `sourceId`, `resolved` | yes (default reveals the source) | Local |

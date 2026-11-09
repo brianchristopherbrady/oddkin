@@ -80,14 +80,7 @@ export function captureSelection(
 }
 
 export type ProposalStatus =
-  | 'proposed'
-  | 'accept-pending'
-  | 'applied'
-  | 'rejected'
-  | 'stale'
-  | 'undo-pending'
-  | 'undone'
-  | 'failed';
+  'requested' | 'applying' | 'applied' | 'rejected' | 'stale' | 'undoing' | 'undone' | 'failed';
 
 export interface EditProposal {
   readonly proposalId: string;
@@ -203,7 +196,7 @@ export class DocumentSession {
       text,
       revision,
       proposals: now.proposals.map((p) =>
-        p.status === 'proposed' ? { ...p, status: 'stale' } : p,
+        p.status === 'requested' ? { ...p, status: 'stale' } : p,
       ),
     });
     return revision;
@@ -212,7 +205,7 @@ export class DocumentSession {
   /** Register a proposal from the assistant. Invalid ranges are rejected; stale ones recorded as stale. */
   propose(proposal: Omit<EditProposal, 'status'>): EditProposal {
     const now = this.#state.peek();
-    let status: ProposalStatus = 'proposed';
+    let status: ProposalStatus = 'requested';
     if (proposal.baseRevision !== now.revision) status = 'stale';
     else if (
       !isValidRange(now.text, proposal.range) ||
@@ -221,7 +214,7 @@ export class DocumentSession {
       status = 'failed';
     const record: EditProposal = {
       ...proposal,
-      ...(status === 'proposed' && !proposal.context
+      ...(status === 'requested' && !proposal.context
         ? { context: contextAround(now.text, proposal.range) }
         : {}),
       status,
@@ -247,7 +240,7 @@ export class DocumentSession {
     const now = this.#state.peek();
     const proposal = now.proposals.find((p) => p.proposalId === proposalId);
     if (!proposal) return { ok: false, reason: 'not-found' };
-    if (proposal.status !== 'proposed')
+    if (proposal.status !== 'requested')
       return { ok: false, reason: proposal.status === 'stale' ? 'stale' : 'invalid' };
     if (proposal.baseRevision !== now.revision) {
       this.#setStatus(proposalId, 'stale');
@@ -274,7 +267,7 @@ export class DocumentSession {
       proposals: now.proposals.map((p) =>
         p.proposalId === proposalId
           ? { ...p, status: 'applied', appliedRevision: revision }
-          : p.status === 'proposed'
+          : p.status === 'requested'
             ? { ...p, status: 'stale' }
             : p,
       ),
@@ -285,7 +278,7 @@ export class DocumentSession {
   reject(proposalId: string): ApplyResult {
     const proposal = this.#state.peek().proposals.find((p) => p.proposalId === proposalId);
     if (!proposal) return { ok: false, reason: 'not-found' };
-    if (proposal.status !== 'proposed' && proposal.status !== 'stale')
+    if (proposal.status !== 'requested' && proposal.status !== 'stale')
       return { ok: false, reason: 'invalid' };
     this.#setStatus(proposalId, 'rejected');
     return { ok: true, revision: this.#state.peek().revision };

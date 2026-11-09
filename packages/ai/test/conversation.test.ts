@@ -349,7 +349,7 @@ describe('ConversationController: tools and approvals', () => {
     // A10: double activation sends one decision.
     const first = c.decide('ap', 1, 'approve');
     expect(await c.decide('ap', 1, 'approve')).toEqual({ ok: false, reason: 'duplicate' });
-    expect(c.getSnapshot().approvals['ap']?.status).toBe('decision-pending');
+    expect(c.getSnapshot().approvals['ap']?.status).toBe('submitting');
     resolveDecision('accepted');
     await first;
     expect(decisions).toEqual(['ap:1:approve']);
@@ -513,7 +513,7 @@ describe('ConversationController: tools and approvals', () => {
       approval: { approvalId: 'ap', revision: 1, title: 'Go', status: 'requested' },
     });
     await c.decide('ap', 1, 'approve');
-    expect(c.getSnapshot().approvals['ap']?.status).toBe('decision-failed');
+    expect(c.getSnapshot().approvals['ap']?.status).toBe('failed');
     fail = false;
     await c.decide('ap', 1, 'approve');
     expect(c.getSnapshot().approvals['ap']?.status).toBe('approved');

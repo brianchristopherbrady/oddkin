@@ -88,7 +88,7 @@ export default defineExamples('odd-action-approval', {
         title: 'Send email',
         target: 'team@example.com',
         risk: 'medium',
-        status: 'decision-failed',
+        status: 'failed',
         decision: 'approve',
         error: { code: 'approval.unreachable', message: 'The approval service did not answer.' },
       },

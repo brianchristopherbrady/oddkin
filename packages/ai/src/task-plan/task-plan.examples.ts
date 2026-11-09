@@ -59,7 +59,7 @@ export default defineExamples('odd-task-plan', {
             const { choice } = detail.answer as { readonly choice: string };
             question.question = {
               ...question.question!,
-              status: 'submitted',
+              status: 'answered',
               answer: detail.answer,
             };
             const plan = element.plan!;

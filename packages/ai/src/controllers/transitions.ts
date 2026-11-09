@@ -48,9 +48,9 @@ export const TOOL_TRANSITIONS: Table<ToolStatus> = {
 
 export const APPROVAL_TRANSITIONS: Table<ApprovalStatus> = {
   // approved/rejected directly: decided elsewhere (another client or an automatic policy).
-  requested: ['decision-pending', 'approved', 'rejected', 'expired', 'superseded'],
-  'decision-pending': ['approved', 'rejected', 'decision-failed', 'expired', 'superseded'],
-  'decision-failed': ['decision-pending', 'approved', 'rejected', 'expired', 'superseded'],
+  requested: ['submitting', 'approved', 'rejected', 'expired', 'superseded'],
+  submitting: ['approved', 'rejected', 'failed', 'expired', 'superseded'],
+  failed: ['submitting', 'approved', 'rejected', 'expired', 'superseded'],
   approved: [],
   rejected: [],
   expired: [],
@@ -59,7 +59,7 @@ export const APPROVAL_TRANSITIONS: Table<ApprovalStatus> = {
 
 /** The approval waits for the person: not decided yet, or the decision did not reach the backend. */
 export const awaitsPerson = (status: ApprovalStatus): boolean =>
-  status === 'requested' || status === 'decision-failed';
+  status === 'requested' || status === 'failed';
 
 export const CONNECTION_TRANSITIONS: Table<ConnectionState> = {
   idle: ['connecting', 'open', 'closed'],

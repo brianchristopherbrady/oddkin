@@ -509,7 +509,7 @@ export class ConversationController implements ExternalSource<ConversationState>
 
   /**
    * Submit a decision for one approval revision. Repeated activation, stale revisions, and
-   * expired proposals are refused without a request. The approval stays `decision-pending`
+   * expired proposals are refused without a request. The approval stays `submitting`
    * until the backend acknowledges it; acknowledgment does not mean the action succeeded.
    */
   async decide(
@@ -526,7 +526,7 @@ export class ConversationController implements ExternalSource<ConversationState>
     if (approval.revision !== revision) return { ok: false, reason: 'stale' };
     const key = `${approvalId}:${revision}`;
     if (this.#pendingDecisions.has(key)) return { ok: false, reason: 'duplicate' };
-    if (approval.status !== 'requested' && approval.status !== 'decision-failed')
+    if (approval.status !== 'requested' && approval.status !== 'failed')
       return {
         ok: false,
         reason:
@@ -540,7 +540,7 @@ export class ConversationController implements ExternalSource<ConversationState>
     const generation = this.#generation;
     this.#updateApproval(approvalId, (a) => {
       const { error: _error, ...rest } = a;
-      return { ...rest, status: 'decision-pending', decision, ...(reason ? { reason } : {}) };
+      return { ...rest, status: 'submitting', decision, ...(reason ? { reason } : {}) };
     });
     const attempt = approval.attemptId ? state.attempts[approval.attemptId] : undefined;
     try {
@@ -568,10 +568,10 @@ export class ConversationController implements ExternalSource<ConversationState>
     } catch (error) {
       if (generation !== this.#generation) return { ok: false, reason: 'stale' };
       const current = this.#state.peek().approvals[approvalId];
-      if (current?.revision === revision && current.status === 'decision-pending')
+      if (current?.revision === revision && current.status === 'submitting')
         this.#updateApproval(approvalId, (a) => ({
           ...a,
-          status: 'decision-failed',
+          status: 'failed',
           error: toPublicError(error, DECISION_FAILED),
         }));
       return { ok: false, reason: 'rejected', error: toPublicError(error, DECISION_FAILED) };

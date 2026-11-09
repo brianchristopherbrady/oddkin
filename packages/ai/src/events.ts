@@ -128,7 +128,6 @@ export const branchSwitchEvent = event<{
 export interface ApprovalDecideDetail {
   readonly approvalId: string;
   readonly revision: number;
-  readonly toolCallId: string | undefined;
   readonly decision: 'approve' | 'reject';
   /** What the user typed in the reason field, with either decision. */
   readonly reason: string | undefined;

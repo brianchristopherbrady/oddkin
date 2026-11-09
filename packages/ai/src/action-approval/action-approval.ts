@@ -22,12 +22,12 @@ export const APPROVAL_STRINGS = {
   high: 'high',
   expires: 'Expires {time}',
   requested: 'Waiting for your decision',
-  'decision-pending': 'Submitting your decision…',
+  submitting: 'Submitting your decision…',
   approved: 'Approved. The action runs separately; its result appears with the action.',
   rejected: 'Rejected. The action will not run.',
   expired: 'This request expired before a decision was recorded.',
   superseded: 'This proposal changed. Review the new version before deciding.',
-  'decision-failed': 'Your decision was not recorded: {message}',
+  failed: 'Your decision was not recorded: {message}',
   unavailable: 'Decisions are not available here.',
   announceRequested: 'Approval needed: {title}',
   announceApproved: 'Approved: {title}',
@@ -99,7 +99,7 @@ export class OddkinActionApproval extends OddkinElement.with({
     if (!approval) return this._strings.unavailable;
     if (!can(this.capabilities, 'respondToApproval'))
       return unavailableReason(this.capabilities, 'respondToApproval') ?? this._strings.unavailable;
-    if (approval.status !== 'requested' && approval.status !== 'decision-failed') return '';
+    if (approval.status !== 'requested' && approval.status !== 'failed') return '';
     if (this._decisions.asked(this._key(approval))) return '';
     return undefined;
   }
@@ -112,7 +112,6 @@ export class OddkinActionApproval extends OddkinElement.with({
     this.emit(approvalDecideEvent, {
       approvalId: approval.approvalId,
       revision: approval.revision,
-      toolCallId: approval.toolCallId,
       decision,
       reason: this._reason.peek() || undefined,
     });
@@ -150,7 +149,7 @@ export class OddkinActionApproval extends OddkinElement.with({
         if (!approval) return;
         const key = this._key(approval);
         // A different proposal (or a failed decision) releases the local duplicate guard.
-        this._decisions.settle(key, approval.status === 'decision-failed');
+        this._decisions.settle(key, approval.status === 'failed');
         const changed = !seen || seen.key !== key || seen.status !== approval.status;
         const announceNew = !seen ? approval.status === 'requested' : changed;
         seen = { key, status: approval.status };
@@ -165,7 +164,7 @@ export class OddkinActionApproval extends OddkinElement.with({
                 ? t.announceRejected
                 : approval.status === 'expired'
                   ? t.announceExpired
-                  : approval.status === 'decision-failed'
+                  : approval.status === 'failed'
                     ? t.announceFailed
                     : undefined;
         if (text)

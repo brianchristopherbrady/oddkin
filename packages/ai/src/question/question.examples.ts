@@ -29,7 +29,7 @@ export default defineExamples('odd-question', {
         ({ detail }) => {
           const question = element.question;
           if (!question || question.revision !== detail.revision) return;
-          element.question = { ...question, status: 'submitted', answer: detail.answer };
+          element.question = { ...question, status: 'answered', answer: detail.answer };
         },
       );
       scope.listen<GlobalEventHandlersEventMap['odd-question-skip']>(

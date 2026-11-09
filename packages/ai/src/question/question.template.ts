@@ -12,15 +12,11 @@ export const questionTemplate = (host: OddkinQuestion) => {
     q.status === 'submitting' || (locked && (q.status === 'requested' || q.status === 'failed'));
   const status = pending
     ? t.submitting
-    : q.status === 'submitted'
-      ? t.submitted
-      : q.status === 'skipped'
-        ? t.skipped
-        : q.status === 'expired'
-          ? t.expired
-          : q.status === 'failed'
-            ? format(t.failed, { message: q.error?.message ?? '' })
-            : '';
+    : q.status === 'failed'
+      ? format(t.failed, { message: q.error?.message ?? '' })
+      : q.status === 'requested'
+        ? ''
+        : t[q.status];
   const choice = q.kind === 'choice' || q.kind === 'multi-choice';
   const inputType = q.kind === 'choice' ? 'radio' : 'checkbox';
   const expires = host._expires();

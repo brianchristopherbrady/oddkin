@@ -63,12 +63,12 @@
     "status": {
       "enum": [
         "requested",
-        "decision-pending",
+        "submitting",
         "approved",
         "rejected",
         "expired",
         "superseded",
-        "decision-failed"
+        "failed"
       ]
     },
     "decision": {
