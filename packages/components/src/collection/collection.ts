@@ -294,7 +294,7 @@ export class CollectionSource<R> implements Controller {
       if (this.#warned || !this.#options.property() || !this.#declared.value.records.length) return;
       this.#warned = true;
       console.warn(
-        `[collection.source.conflict] <${host.localName}> has both \`${this.#options.name}\` and declarative children; \`${this.#options.name}\` wins and the children are ignored.`,
+        `[collection.source.conflict] <${host.localName}> has both \`${this.#options.name}\` and declarative children; \`${this.#options.name}\` wins. Remove one of them.`,
       );
     });
   }

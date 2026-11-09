@@ -54,7 +54,7 @@ const loadError = (path: string, message: string, suggestion?: string): LoadResu
 });
 
 const NOT_JSON_SUGGESTION =
-  'The CLI and Theme Studio generate from the same JSON model: compute values in the module, but export plain objects, arrays, strings, finite numbers, booleans, and null.';
+  'The CLI and Theme Studio generate from the same JSON model: export plain objects, arrays, strings, finite numbers, booleans, and null, computing values in the module first.';
 
 /**
  * Copy a configuration into its JSON-compatible model (what `JSON.parse(JSON.stringify(value))`

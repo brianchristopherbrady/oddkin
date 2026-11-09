@@ -86,7 +86,7 @@ function range(
       d.error(
         'condition.range.empty',
         `${path}/${min}`,
-        `${min} (${formatDimension(a)}) is greater than ${max} (${formatDimension(b)}); the condition can never match.`,
+        `${min} (${formatDimension(a)}) is greater than ${max} (${formatDimension(b)}); the condition can never match. Set ${min} below ${max}.`,
       );
     }
   }
@@ -110,7 +110,7 @@ export function parseCondition(
       'Use dot-separated lowercase segments, e.g. "navigation.expanded".',
     );
   if (!isRecord(input)) {
-    d.error('config.type', path, 'A condition is an object with "container" or "media".');
+    d.error('config.type', path, 'Write a condition as an object with "container" or "media".');
     return undefined;
   }
   const config = input as unknown as ConditionConfig;
@@ -121,7 +121,7 @@ export function parseCondition(
         d.error(
           'config.unknownKey',
           `${path}/${key}`,
-          `Unknown option "${key}" in a media condition.`,
+          `Unknown option "${key}" in a media condition. Remove it: a media condition takes only "media".`,
         );
     if (!isRecord(config.media)) {
       d.error('config.type', `${path}/media`, 'media must be an object.');

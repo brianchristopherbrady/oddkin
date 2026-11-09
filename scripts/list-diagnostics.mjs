@@ -142,8 +142,21 @@ const VERBS = [
   'write',
 ];
 
+/** The initializer of the `const` an identifier names, declared in a scope around it. */
+const declared = (id) => {
+  for (let scope = id.parent; scope; scope = scope.parent) {
+    if (!ts.isSourceFile(scope) && !ts.isBlock(scope)) continue;
+    for (const s of scope.statements)
+      if (ts.isVariableStatement(s) && s.declarationList.flags & ts.NodeFlags.Const)
+        for (const d of s.declarationList.declarations)
+          if (ts.isIdentifier(d.name) && d.name.text === id.text) return d.initializer;
+  }
+  return undefined;
+};
 const text = (node, sf) => {
   if (!node) return undefined;
+  // `const suggestion = …; report(code, message, suggestion)`: the text it names.
+  if (ts.isIdentifier(node)) return text(declared(node), sf);
   if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
   if (ts.isTemplateExpression(node)) return node.getText(sf).slice(1, -1);
   if (ts.isParenthesizedExpression(node)) return text(node.expression, sf);
@@ -215,7 +228,8 @@ export function extractDiagnostics(source, file = 'source.ts') {
     }
     if (ts.isObjectLiteralExpression(node)) {
       const props = new Map();
-      for (const p of node.properties)
+      for (const p of node.properties) {
+        if (ts.isShorthandPropertyAssignment(p)) props.set(p.name.text, p.name);
         if (ts.isPropertyAssignment(p) && p.name) {
           const key = ts.isStringLiteral(p.name) ? p.name.text : p.name.getText(sf);
           props.set(key, p.initializer);
@@ -224,6 +238,7 @@ export function extractDiagnostics(source, file = 'source.ts') {
           if (code(p.name) && !FILE.test(p.name.text) && wordy(message))
             out.push({ code: p.name.text, severity: '', message, line: line(p) });
         }
+      }
       const c = code(props.get('code'));
       const message = text(props.get('message'), sf);
       if (c) {

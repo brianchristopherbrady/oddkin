@@ -8,7 +8,7 @@ Classes, as in the [technical plan](./technical-commercialization-plan.md): **Ve
 
 ## Gate A: public technical preview
 
-On 2026-11-01, 18 of 23 lines are Verified (8 on 2026-10-29).
+On 2026-11-08, 19 of 23 lines are Verified (18 on 2026-11-01, 8 on 2026-10-29).
 
 ### Product and release
 
@@ -44,7 +44,7 @@ On 2026-11-01, 18 of 23 lines are Verified (8 on 2026-10-29).
 | --- | --- | --- |
 | Installation guide takes less than 15 minutes in observation. | Planned | RF-18 |
 | A sample project produces a useful impact report. | Partial | The recorded demonstration on Oddkin itself ([docs/impact-demo](../impact-demo/README.md), https://www.oddkin.dev/change-impact; CF.2); not yet on a sample project outside this repository |
-| Error messages identify the corrective action. | Unknown | RF-19 |
+| Error messages identify the corrective action. | Verified | RF-19: [docs/diagnostics.md](../diagnostics.md): 510 messages, none flagged (`node scripts/list-diagnostics.mjs --strict`, 2026-11-08) |
 | The docs distinguish local, hosted, implemented, and planned capabilities. | Unknown | RF-17 |
 | The primary message does not require understanding every Oddkin package. | Owner | D-1, RF-16, RF-17 |
 
@@ -163,7 +163,7 @@ Record:
 ## Current status, 2026-11-01
 
 - **Technical foundation:** strong. The published beta `1.0.0-beta.1` (2026-11-01), with CI green on `8830ef5`.
-- **Public preview readiness (Gate A):** 18 of 23 lines Verified; the rest are a sample report outside this repository (RF-11) and the product-experience lines (RF-16 to RF-19).
+- **Public preview readiness (Gate A):** 19 of 23 lines Verified; the rest are a sample report outside this repository (RF-11) and the product-experience lines (RF-16 to RF-18).
 - **External installation evidence:** fresh projects in this repository install the published packages and pass in three engines; no external repository yet.
 - **Libraries not built with Oddkin:** Workbench, change impact, and the agent kits read their Custom Elements Manifest (CF.3); no external library has been run.
 - **Paid-pilot readiness:** not yet established; the offer and playbook are drafted.

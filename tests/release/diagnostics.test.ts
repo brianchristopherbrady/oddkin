@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   extractDiagnostics,
+  listDiagnostics,
   namesAnAction,
   renderDiagnostics,
   withoutValues,
@@ -25,6 +26,10 @@ describe('the diagnostic list', () => {
       console.warn('[not a code] Text in brackets.');
       button('footer', 'primary', 'Sign in', 'signIn.submit');
       files.set('kit.json', JSON.stringify(manifest));
+      const hint = near ? \`Did you mean "\${near}"?\` : undefined;
+      out.error('alias.missing', path, 'The token is unknown.', hint);
+      const suggestion = 'Set a darker value.';
+      d.items.push({ code: 'contrast.fail', severity: 'warning', message: 'Too low.', suggestion });
     `;
     expect(
       extractDiagnostics(source).map((d) => [d.code, d.severity, d.message, d.suggestion]),
@@ -45,6 +50,9 @@ describe('the diagnostic list', () => {
       ['autoload.import.failed', '', '', undefined],
       // A development warning that leads with its code in brackets.
       ['core.copies', 'warning', 'Two copies run (${a}). Install one copy.', undefined],
+      // A suggestion named by a const: an argument, or a shorthand property.
+      ['alias.missing', 'error', 'The token is unknown.', 'Did you mean "${near}"?'],
+      ['contrast.fail', 'warning', 'Too low.', 'Set a darker value.'],
     ]);
   });
 
@@ -107,5 +115,12 @@ describe('the diagnostic list', () => {
       '| `b.c` | — | *(computed at run time)* | *review* | `packages/state/src/b.ts:1` |',
     ]);
     expect(text).toMatch(/## @oddkin\/core[\s\S]*## @oddkin\/state/);
+  });
+
+  it('finds no message in the packages that names no action (RF-19 done on 2026-11-08)', () => {
+    const flagged = listDiagnostics()
+      .filter((d) => d.action === false)
+      .map((d) => `${d.file}:${d.line} ${d.code}: ${d.message}`);
+    expect(flagged).toEqual([]);
   });
 });

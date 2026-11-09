@@ -73,7 +73,7 @@ The work stops at Gate A. It adds no components, no product-pattern contracts, a
 | Release evidence bundle | Planned | CI uploads Playwright reports only on failure; `verification.md` is written by hand | RF-09, RF-10 |
 | Impact report against the previous release | Planned | `oddkin-impact snapshot` and `compare` exist; release-process §3 leaves this unticked "once there is one", and there is one now | RF-07 |
 | Accessibility claims | Stale | The components manifest says "Accessible, themed custom elements"; screen-reader evidence is absent (release-process §3, ADR 0047); the owner runs their own accessibility flow (plan P1.4) | RF-03 |
-| Error messages with a corrective action | Unknown | Analyzer diagnostics carry a suggestion; core and Workbench codes have messages; never audited | RF-19 |
+| Error messages with a corrective action | Verified | [docs/diagnostics.md](../diagnostics.md): 510 messages, none flagged (`node scripts/list-diagnostics.mjs --strict`, 2026-11-08) | RF-19 |
 | Docs distinguish implemented from planned | Unknown | The docs site has a Roadmap page from milestone counts; no hosted capability exists | RF-17 |
 | npm trusted publishing and provenance | Planned | `publish.mjs` runs on the owner's machine with npm's web 2FA prompt per package (16 per beta) | RF-12 |
 | Security policy and supply-chain hygiene | Partial | Workflow `permissions: contents: read`; no `SECURITY.md`, no Dependabot, actions pinned by tag, not by commit | RF-13 |
@@ -653,7 +653,7 @@ Each task lands as its own slice with its tests, a progress-log row, and verific
 | Release evidence bundle is downloadable. | Planned | none | RF-09, RF-10 | Attached to the run (and release) |
 | Installation guide takes less than 15 minutes in observation. | Planned | none | RF-18 | Two observed sessions |
 | A sample project produces a useful impact report. | Partial | Impact tests with real snapshots | RF-07 | The beta.0-to-beta.1 report in the bundle and the notes |
-| Error messages identify the corrective action. | Unknown | Not audited | RF-19 | The audit's list is clean |
+| Error messages identify the corrective action. | Verified | [docs/diagnostics.md](../diagnostics.md): 510 messages, none flagged (`node scripts/list-diagnostics.mjs --strict`, 2026-11-08) | RF-19 | The audit's list is clean |
 | The docs distinguish local, hosted, implemented, and planned capabilities. | Unknown | Roadmap page only | RF-17 | Docs e2e and review |
 | The primary message does not require understanding every Oddkin package. | Owner | The README lists all eight first | RF-16, RF-17 (D-1) | The README and home page lead with the primary tier |
 

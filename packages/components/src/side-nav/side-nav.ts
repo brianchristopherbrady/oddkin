@@ -164,7 +164,7 @@ export class OddkinSideNav extends OddkinElement.with({
     if (this.#unknownKinds.has(kind)) return;
     this.#unknownKinds.add(kind);
     console.warn(
-      `[model.kind.unknown] <${this.localName}> has entries of kind "${kind}", which is not built in or registered in \`kinds\`; they are not rendered.`,
+      `[model.kind.unknown] <${this.localName}> has entries of kind "${kind}", which is not built in or registered in \`kinds\`; they are not rendered. Register it in \`kinds\`.`,
     );
   }
 
@@ -217,7 +217,7 @@ export class OddkinSideNav extends OddkinElement.with({
     if (this.items && declarative && !this.#warnedConflict) {
       this.#warnedConflict = true;
       console.warn(
-        '[collection.source.conflict] <odd-side-nav> has both `items` and slotted entries; `items` wins and the slotted entries are not rendered.',
+        '[collection.source.conflict] <odd-side-nav> has both `items` and slotted entries; `items` wins. Remove one of them.',
       );
     }
   }

@@ -120,7 +120,7 @@ export function validateGraph(tokens: TokenMap, diagnostics: DiagnosticList): vo
       diagnostics.error(
         'token.duplicate',
         path,
-        `"${token.name}" and "${clash}" both emit ${variable}.`,
+        `"${token.name}" and "${clash}" both emit ${variable}. Rename one of them.`,
       );
     variables.set(variable, token.name);
 

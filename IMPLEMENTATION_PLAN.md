@@ -82,7 +82,7 @@ Waiting for the owner: observers for RF-18; the trusted publishers on npmjs.com,
 Why this order:
 
 - **Dependencies first.** Theme Studio's products need P1.1's base file and product role overrides, so those lead Agent 3's P1.1. Composition screens for a library's own components need P1.6's catalog generation, which Agent 2 does before them. Everything else in Theme Studio starts now.
-- **Gate A.** The first commercialization gate, the public technical preview, has 18 of its 23 lines verified (the [scorecard](./docs/commercialization/commercial-readiness-scorecard.md)). RF-19 is its line that agents can close alone; RF-18 needs observers.
+- **Gate A.** The first commercialization gate, the public technical preview, has 19 of its 23 lines verified (the [scorecard](./docs/commercialization/commercial-readiness-scorecard.md)), RF-19 since 2026-11-08; RF-18 needs observers.
 - **The next release.** `1.0.0-beta.2` needs trusted publishing (D-5).
 - **Parallel lanes.** P1.7, which tier CF needs, moves to Agent 1 so that it does not wait behind Agent 2's Theme Studio and analyzer work.
 
@@ -201,7 +201,7 @@ The details are in the [technical commercialization plan](./docs/commercializati
   - an ADR for adapters to other metadata sources.
     - *(2026-10-30, Agent 2: [ADR 0048](./docs/architecture/decisions/0048-libraries-not-built-with-oddkin.md). The manifest is read directly. Enrichment is a layer keyed by tag; examples come first, needing an analyzer mode for libraries it did not extract. Adapters are static readers that write contracts Oddkin already has, built when a pilot needs one: Storybook stories, DTCG tokens, then framework docgen.)*
 - [ ] **CF.4 Gate A's remaining release work (Agent 1; set 2026-11-01).** The [release-foundation plan](./docs/commercialization/release-foundation-plan.md)'s tasks that Gate A still needs, beyond CF.1:
-  - RF-19, the error-message audit (Agent 2 from 2026-11-05, its item 10: it lists the codes; each lane fixes its own messages);
+  - [x] RF-19, the error-message audit (Agent 2 from 2026-11-05, its item 10): done on 2026-11-08. [docs/diagnostics.md](./docs/diagnostics.md) lists 510 messages, and each names what to do or links to the page that does (`node scripts/list-diagnostics.mjs --strict`);
   - RF-12, trusted publishing with provenance, before `1.0.0-beta.2` (D-5);
   - RF-13's rest: Dependabot, an informational `npm audit`, and the SBOM (`SECURITY.md` is done);
   - RF-05, evidence for any Node or package-manager range the support policy claims beyond what is tested;

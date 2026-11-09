@@ -70,7 +70,11 @@ function checkFinite(
   diagnostics: DiagnosticList,
 ): number | undefined {
   if (typeof value !== 'number' || !Number.isFinite(value)) {
-    diagnostics.error('number.nonFinite', path, `${JSON.stringify(value)} is not a finite number.`);
+    diagnostics.error(
+      'number.nonFinite',
+      path,
+      `${JSON.stringify(value)} is not a finite number. Give a number, such as 1.25.`,
+    );
     return undefined;
   }
   return value;
@@ -207,7 +211,7 @@ export function generateSpacing(
         diagnostics.error(
           'scale.namesMismatch',
           `${path}/names`,
-          `names has ${names.length} entries but the scale has ${below + above + 1} steps.`,
+          `names has ${names.length} entries but the scale has ${below + above + 1} steps. Give one name per step.`,
         );
       }
     }
@@ -255,7 +259,7 @@ export function generateSpacing(
         diagnostics.error(
           'unit.mismatch',
           `${path}/snap`,
-          `snap is in ${snap.unit} but step "${step.name}" is in ${step.value.unit}.`,
+          `snap is in ${snap.unit} but step "${step.name}" is in ${step.value.unit}. Use one unit for both.`,
         );
       }
     }
@@ -265,7 +269,11 @@ export function generateSpacing(
   const names = new Set<string>();
   for (const step of steps) {
     if (names.has(step.name))
-      diagnostics.error('token.duplicate', path, `Spacing step "${step.name}" is defined twice.`);
+      diagnostics.error(
+        'token.duplicate',
+        path,
+        `Spacing step "${step.name}" is defined twice. Remove one of the definitions.`,
+      );
     names.add(step.name);
   }
   return diagnostics.items.slice(before).some((d) => d.severity === 'error') ? undefined : steps;

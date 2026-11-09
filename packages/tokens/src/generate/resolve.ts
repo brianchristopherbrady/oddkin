@@ -413,7 +413,12 @@ export function resolveTheme(input: unknown): ResolveResult {
     for (const [productName, product] of Object.entries(products)) {
       const path = pointer('products', productName);
       if (!SEGMENT.test(productName))
-        d.error('product.name.invalid', path, `"${productName}" is not a valid product name.`);
+        d.error(
+          'product.name.invalid',
+          path,
+          `"${productName}" is not a valid product name.`,
+          'Use lowercase letters and digits, with single hyphens between words, e.g. "docs-site".',
+        );
       if (!isRecord(product)) {
         d.error('config.type', path, 'A product must be an object.');
         continue;
@@ -452,7 +457,12 @@ export function resolveTheme(input: unknown): ResolveResult {
     for (const [densityName, entry] of Object.entries(density)) {
       const path = pointer('density', densityName);
       if (!SEGMENT.test(densityName))
-        d.error('density.name.invalid', path, `"${densityName}" is not a valid density name.`);
+        d.error(
+          'density.name.invalid',
+          path,
+          `"${densityName}" is not a valid density name.`,
+          'Use lowercase letters and digits, with single hyphens between words, e.g. "compact".',
+        );
       const scale = isRecord(entry) ? entry['scale'] : undefined;
       if (isRecord(entry)) unknownKeys(entry, ['scale'], path, d);
       if (typeof scale !== 'number' || !Number.isFinite(scale) || scale <= 0 || scale > 2) {
@@ -529,7 +539,11 @@ export function resolveTheme(input: unknown): ResolveResult {
       }
       const value = asTokenValue(raw);
       if (value === undefined) {
-        d.error('override.invalid', path, 'An override is a string or { "light": …, "dark": … }.');
+        d.error(
+          'override.invalid',
+          path,
+          'Write an override as a string or { "light": …, "dark": … }.',
+        );
         continue;
       }
       const effective = checkValue(existing, value, modes, path, d);
@@ -716,7 +730,7 @@ export function resolveTheme(input: unknown): ResolveResult {
       );
     }
     if (!isRecord(input)) {
-      d.error('config.type', path, 'A profile is an object of role names to values.');
+      d.error('config.type', path, 'Write a profile as an object of role names to values.');
       continue;
     }
     const changed: TokenDefinition[] = [];
@@ -747,7 +761,7 @@ export function resolveTheme(input: unknown): ResolveResult {
         d.error(
           'override.invalid',
           at,
-          'A profile value is a string or { "light": …, "dark": … }.',
+          'Write each profile value as a string or { "light": …, "dark": … }.',
         );
         continue;
       }
@@ -757,7 +771,7 @@ export function resolveTheme(input: unknown): ResolveResult {
           'profile.overlap',
           at,
           `"${tokenName}" is also set by profile "${owner}" (${pointer('profiles', owner)}${pointer(tokenName)}).`,
-          `Where both apply to one element, "${profileName}" wins because it comes later in the configuration; data-odd-profile list order does not change this.`,
+          `Set it in one profile only, or keep both knowingly: where both apply to one element, "${profileName}" wins because it comes later in the configuration; data-odd-profile list order does not change this.`,
         );
       } else roleOwners.set(tokenName, profileName);
       const profileValue = checkValue(target, value, modes, at, d);
@@ -860,7 +874,11 @@ function productRoles(
     }
     const value = asTokenValue(raw);
     if (value === undefined) {
-      d.error('override.invalid', at, 'An override is a string or { "light": …, "dark": … }.');
+      d.error(
+        'override.invalid',
+        at,
+        'Write an override as a string or { "light": …, "dark": … }.',
+      );
       continue;
     }
     const effective = checkValue(target, value, modes, at, d);
