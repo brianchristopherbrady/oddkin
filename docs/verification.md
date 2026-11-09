@@ -6177,3 +6177,17 @@ Read-only review through the Figma MCP (session `44c8c725`), file `E7LfRysny8V3q
 | The stack in a browser | `e2e/golden-path.spec.ts` and `e2e/packed-consumers.spec.ts` (`e2e-when-free.mjs`, 2 workers): the golden path app and the full-app example, from the workspace build and the packed tarballs, find the suggested names' group and the AI label and use a suggested name | 42 passed in three engines |
 | Probes | `mutate.mjs`, 6 mutants: the message asking for the wrong version; ignoring `switchBranch`; one version showing the control; the first version offering Previous; the last offering Next; the host's reason hidden | 6 killed |
 | Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run size`, `npm run compat`, `npm run lint`, `node scripts/check-vocabulary.mjs`, `node scripts/verify-packs.mjs`, `node scripts/list-diagnostics.mjs --write`, `node design/figma/reuse.render.mjs --write` | Each exit 0 (lint after the README count); `ai-chat` 59,525 B gzip (-313 from 59,838; budget 60,288), `ai-headless` 15,016 (-28), `ai-response` 24,557 (-66); vocabulary 0 findings; the packed consumers pass; `docs/diagnostics.md` 514 messages, none flagged |
+
+## 2026-11-09 — The AI redesign's families in the Figma snapshot (round 11, Agent 1, item 6)
+
+Read-only export through the Figma MCP (session `f420d5e6`), file `E7LfRysny8V3qU24tv082i`, with the oddkin-figma skill's `make-export.mjs` code (`design/figma/components.export.js`, filtered to 17 family ids on pages `805:3` and `805:4`).
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Families on the pages | `use_figma`, read-only: component sets and standalone components of `805:3` and `805:4` | 16 on page 08 (`Oddkin/AI/Internal/...`), 1 on page 09 (`Oddkin/AI/ActionApproval/Proposal`, 30 variants) |
+| Export size | `use_figma`, read-only: the export with its length and FNV-1a | 122,953 characters, FNV-1a 1828535913 |
+| Transfer | Six `use_figma` slices (24,000 characters each, the last 2,953), each saved verbatim and checked by its own length and FNV-1a; then joined | Each slice OK; joined length and FNV-1a equal the export's |
+| Snapshot and map | A script: the 17 families and their 2 pages appended, existing entries untouched; 24 references inserted in order as `deferred`; `npx prettier --write`; `node design/figma/reuse.render.mjs --write` | 1,942 families, 7 pages; 244 references, deferred 11 to 35; `git diff --numstat` insert-only apart from the counts, the class text, the `source` sentence, and the catalog's generated rows |
+| Node tests | `npx vitest run --project node packages/components/test/figma-reuse.test.ts packages/components/test/figma-icons.test.ts packages/components/test/figma-component-export.test.ts` | 3 files, 9 tests passed |
+
+**Not verified here:** the browser parity tests (CI runs them; no test compares the new families yet: Agent 2's items 20 and 21 add those comparisons).

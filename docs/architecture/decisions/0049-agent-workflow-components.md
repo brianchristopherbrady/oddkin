@@ -93,7 +93,7 @@ The owner's design pages in `E7LfRysny8V3qU24tv082i`: "07 · AI redesign · Inde
 | --- | --- |
 | The shared parts of page 08, for all four decision elements | Agent 2, item 20 |
 | `odd-action-approval` to page 09 | Agent 2, item 21 |
-| The page 08 and 09 families exported into the design snapshot, for the parity tests | Agent 1, when item 20 starts |
+| The page 08 and 09 families exported into the design snapshot, for the parity tests | Agent 1, item 6: done on 2026-11-09 |
 | Agent 3's visual refinements of item 9 | Wait for their pages (21 to 28); the `odd-citation` and `odd-transcript` tests go ahead |
 | Pages 10 to 30 | The owner's design session, then one implementation row per approved page |
 

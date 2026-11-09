@@ -3,13 +3,15 @@
   "fileKey": "E7LfRysny8V3qU24tv082i",
   "fileName": "Document",
   "exportedAt": "2026-10-24",
-  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained. Disabled appearances 2026-11-03, session b42199d2-3adf-43b5-b62d-d9c78c87071b: read-only components.export.js filtered to Oddkin/Common/button, button/sm, button/lg, iconButton, and toggleButton and the odd-button/primary/disabled light and dark specimens on page 158:22 (7 families / 69 definitions, each replaced in place after the owner's 2026-11-01 disabled-button change), transferred in three slices of 24000, 24000, and 28931 characters with verified length 76931 and FNV-1a 1223383616. Every preceding family and component id retained.",
+  "source": "Figma MCP use_figma, session 51307544-dbff-40ce-b63f-0aded50b66e8, 2026-10-22. Fresh read-only exportComponents() from design/figma/components.export.js, one page context per call, after page reorganization and creation of the GIS and healthcare icon sets. Four page exports were transferred in nine LZW-compressed slices and decoded with verified length and FNV-1a checksums: Primitives 449006/1169077545; Composed components 553127/107971310; AI components 279668/1374620522; Icons 151359/132732527. Foundations contains no components. All 203 prior family IDs, 533 prior component IDs and 169 nested-instance edges are preserved. The Plugin API exposes no file version or lastModified. Targeted refresh after layout repairs and avatar appearance work: session dea6c8f6-08d3-4ba0-82b4-7e208345aae8, read-only exportComponents() for Primitives (length 454043, FNV-1a 3079122047) and Composed components (553127, 107971310), transferred in six checked LZW slices. Other pages retained from the preceding export. All 661 preceding component IDs remain; 24 avatar appearance variants were added, with one shared AvatarItem reference edge (24 instances). Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Icons-only refresh, session 9ab0ff68-e465-4e96-b02a-07b61e1d5832: 12 disjoint sorted exportComponents() batches, each decoded with verified UTF-16 length and FNV-1a checksum. One consolidated catalog with 1,153 editable original outline icon components (913 General, 175 GIS, 65 Healthcare), covering all 3,170 reference IDs in gis-icons.json. All 685 preceding component IDs and all 170 reuse edges are preserved. Other pages retained from the prior snapshot. Healthcare-only expansion, session ae8e7a5d-40b3-4d67-afd3-7dea1bd5b14e: fresh read-only exportComponents() in eight disjoint sorted batches, transferred with verified UTF-16 lengths and FNV-1a checksums. All 746 healthcare-only-icons.json IDs are indexed, with 570 new original outline assets and 37 existing canonical assets reused. Icons total 1,723 (913 General, 175 GIS, 635 Healthcare); all 1,676 preceding definition IDs and all 170 reuse edges remain. Other components retained from the prior snapshot. Full icon consistency audit, session c94aad69-1bdd-48a4-a5b7-6e1d3c643b3a: all 1723 existing canvases and 5809 physical vector strokes verified in Figma; artwork and IDs unchanged. 68 icons reassigned by semantic purpose, with 949 General, 156 GIS and 618 Healthcare. Component namespaces and source descriptions synchronized from the committed change ledger; unchanged vector layers retained. Layout addition 2026-10-23: Figma MCP use_figma session eadc1913-eb96-4008-96c0-57f03a39dba3, components.export.js filtered to Oddkin/Layout/ on page 158:22, 12 families / 24 definitions / 11 slot-content references. All preceding families retained. Icon size/alignment repair 2026-10-23, Figma session e0f104df-f6a0-4d3a-9f5b-202c751815e4: shared Artwork constraints now scale on all 1723 icon sources; all component IDs and SVG artwork retained. Targeted component export refresh for 9 affected families; icon-layouts.json records source constraints, compact icon samples and row geometry. Reuse review 2026-10-23, session 0a22b541-ac41-4a23-8ff6-62bef55ebb77: targeted refresh of 12 families after field-role, disabled-state, radio naming, shared glyph and Info badge repairs; nested Form placeholder override is recorded separately in text-contrast.json. Picker addition 2026-10-24, session 62fc8aeb-a32b-403d-920e-255d92d5cb5d: 24 Listbox/Tree and single/multiple variants; existing field/popover/Tree extended with linked picker anatomy. Authored slot contents are exported with their containing path; inherited source layers remain with their source family. Existing family and variant IDs preserved; see picker.json for displayed examples and geometry checks. Common controls 2026-10-24, session eb0bc585-abda-4048-ac7e-830ecaaa57fe: 15 new families / 77 definitions, three added number states, small-button property binding repair. Eleven requested controls plus their calendar, day, swatch, star and code-cell anatomy; no runtime elements added. See common-controls.json for organization and measured checks. Composed additions 2026-10-27, session 7002425c-0f4c-4f23-91e6-158c86b5c519: read-only components.export.js filtered to the carousel, hoverCard, contextMenu, and appHeader sets on page 356:62 (4 families / 17 definitions), transferred in two slices with verified length 40129 and FNV-1a 2408851036. All preceding families retained. Disabled appearances 2026-11-03, session b42199d2-3adf-43b5-b62d-d9c78c87071b: read-only components.export.js filtered to Oddkin/Common/button, button/sm, button/lg, iconButton, and toggleButton and the odd-button/primary/disabled light and dark specimens on page 158:22 (7 families / 69 definitions, each replaced in place after the owner's 2026-11-01 disabled-button change), transferred in three slices of 24000, 24000, and 28931 characters with verified length 76931 and FNV-1a 1223383616. Every preceding family and component id retained. The AI redesign's shared parts and action approval added by Agent 1 for the parity tests (ADR 0049, \"The design specs\"; pages 805:3 and 805:4) (2026-11-09, Figma MCP session f420d5e6-fefc-4a3b-8555-df6a4874dab6): read-only components.export.js filtered to 17 families (179 definitions), transferred in 6 slices with verified length 122953 and FNV-1a 1828535913; appended after the existing families, with their pages. Every other family and every component id retained.",
   "pages": [
     { "id": "353:62", "name": "01 · Foundations" },
     { "id": "158:22", "name": "02 · Primitives" },
     { "id": "356:62", "name": "03 · Composed components" },
     { "id": "0:1", "name": "04 · AI components" },
-    { "id": "359:2", "name": "05 · Icons" }
+    { "id": "359:2", "name": "05 · Icons" },
+    { "id": "805:3", "name": "08 · AI · Shared parts · Interaction spec" },
+    { "id": "805:4", "name": "09 · AI · Action approval · Interaction spec" }
   ],
   "families": [
     {
@@ -110727,6 +110729,4326 @@
         }
       ],
       "instances": []
+    },
+    {
+      "id": "837:2455",
+      "name": "Oddkin/AI/Internal/BadgePresentation",
+      "page": "805:3",
+      "frame": "07 · Semantic action setups and control states",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        { "name": "Label", "type": "TEXT", "defaultValue": "Waiting for your decision" },
+        {
+          "name": "Tone",
+          "type": "VARIANT",
+          "defaultValue": "Neutral",
+          "variantOptions": ["Neutral", "Success", "Warning", "Danger", "Info"]
+        }
+      ],
+      "variants": [
+        { "id": "837:2435", "name": "Tone=Danger", "values": { "Tone": "Danger" } },
+        { "id": "837:2445", "name": "Tone=Info", "values": { "Tone": "Info" } },
+        { "id": "837:2405", "name": "Tone=Neutral", "values": { "Tone": "Neutral" } },
+        { "id": "837:2415", "name": "Tone=Success", "values": { "Tone": "Success" } },
+        { "id": "837:2425", "name": "Tone=Warning", "values": { "Tone": "Warning" } }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Badge / Danger"],
+          "types": ["FRAME"],
+          "in": [0],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Badge / Danger", "Surface"],
+          "types": ["FRAME"],
+          "in": [0],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/danger/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "minHeight": ["Oddkin · Component roles/control/height/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/xs"],
+            "paddingRight": ["Oddkin · Component roles/space/xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        {
+          "path": ["Badge / Danger", "Surface", "Icon · warning"],
+          "types": ["INSTANCE"],
+          "in": [0]
+        },
+        {
+          "path": ["Badge / Danger", "Surface", "Waiting for your decision"],
+          "types": ["TEXT"],
+          "in": [0],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Status"]
+          },
+          "properties": { "characters": ["Label"] }
+        },
+        {
+          "path": ["Badge / Info"],
+          "types": ["FRAME"],
+          "in": [1],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Badge / Info", "Surface"],
+          "types": ["FRAME"],
+          "in": [1],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/info/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "minHeight": ["Oddkin · Component roles/control/height/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/xs"],
+            "paddingRight": ["Oddkin · Component roles/space/xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        { "path": ["Badge / Info", "Surface", "Icon · info"], "types": ["INSTANCE"], "in": [1] },
+        {
+          "path": ["Badge / Info", "Surface", "Waiting for your decision"],
+          "types": ["TEXT"],
+          "in": [1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/info/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Status"]
+          },
+          "properties": { "characters": ["Label"] }
+        },
+        {
+          "path": ["Badge / Neutral"],
+          "types": ["FRAME"],
+          "in": [2],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Badge / Neutral", "Surface"],
+          "types": ["FRAME"],
+          "in": [2],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/neutral/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "minHeight": ["Oddkin · Component roles/control/height/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/xs"],
+            "paddingRight": ["Oddkin · Component roles/space/xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        { "path": ["Badge / Neutral", "Surface", "Icon · info"], "types": ["INSTANCE"], "in": [2] },
+        {
+          "path": ["Badge / Neutral", "Surface", "Waiting for your decision"],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/neutral/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Status"]
+          },
+          "properties": { "characters": ["Label"] }
+        },
+        {
+          "path": ["Badge / Success"],
+          "types": ["FRAME"],
+          "in": [3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Badge / Success", "Surface"],
+          "types": ["FRAME"],
+          "in": [3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/success/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "minHeight": ["Oddkin · Component roles/control/height/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/xs"],
+            "paddingRight": ["Oddkin · Component roles/space/xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        {
+          "path": ["Badge / Success", "Surface", "Icon · checkCircle"],
+          "types": ["INSTANCE"],
+          "in": [3]
+        },
+        {
+          "path": ["Badge / Success", "Surface", "Waiting for your decision"],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/success/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Status"]
+          },
+          "properties": { "characters": ["Label"] }
+        },
+        {
+          "path": ["Badge / Warning"],
+          "types": ["FRAME"],
+          "in": [4],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Badge / Warning", "Surface"],
+          "types": ["FRAME"],
+          "in": [4],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/warning/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "minHeight": ["Oddkin · Component roles/control/height/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/xs"],
+            "paddingRight": ["Oddkin · Component roles/space/xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        {
+          "path": ["Badge / Warning", "Surface", "Icon · warning"],
+          "types": ["INSTANCE"],
+          "in": [4]
+        },
+        {
+          "path": ["Badge / Warning", "Surface", "Waiting for your decision"],
+          "types": ["TEXT"],
+          "in": [4],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/warning/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/xs"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/medium"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Status"]
+          },
+          "properties": { "characters": ["Label"] }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Icon/checkCircle",
+          "sourceId": "159:339",
+          "count": 1,
+          "variants": [],
+          "overriddenFields": ["height", "name", "strokes", "width"]
+        },
+        {
+          "source": "Oddkin/Icon/info",
+          "sourceId": "159:333",
+          "count": 2,
+          "variants": [],
+          "overriddenFields": ["height", "name", "strokes", "width"]
+        },
+        {
+          "source": "Oddkin/Icon/warning",
+          "sourceId": "159:336",
+          "count": 2,
+          "variants": [],
+          "overriddenFields": ["height", "name", "strokes", "width"]
+        }
+      ]
+    },
+    {
+      "id": "807:427",
+      "name": "Oddkin/AI/Internal/DecisionRow/Approval",
+      "page": "805:3",
+      "frame": "03 · Decision row · Approval",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        {
+          "name": "Error",
+          "type": "TEXT",
+          "defaultValue": "Your decision was not recorded: The service did not answer."
+        },
+        {
+          "name": "Outcome",
+          "type": "TEXT",
+          "defaultValue": "Approved. The action runs separately; its result appears with the action."
+        },
+        {
+          "name": "Secondary outcome",
+          "type": "TEXT",
+          "defaultValue": "Rejected. The action will not run."
+        },
+        { "name": "Show edit", "type": "BOOLEAN", "defaultValue": true },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Ready",
+          "variantOptions": [
+            "Ready",
+            "SubmittingPrimary",
+            "SubmittingSecondary",
+            "Failed",
+            "Resolved",
+            "Unavailable",
+            "ResolvedSecondary"
+          ]
+        },
+        {
+          "name": "Unavailable reason",
+          "type": "TEXT",
+          "defaultValue": "Decisions are not available here."
+        }
+      ],
+      "variants": [
+        {
+          "id": "807:371",
+          "name": "State=Failed, Density=Compact",
+          "values": { "State": "Failed", "Density": "Compact" }
+        },
+        {
+          "id": "807:237",
+          "name": "State=Failed, Density=Full",
+          "values": { "State": "Failed", "Density": "Full" }
+        },
+        {
+          "id": "807:293",
+          "name": "State=Ready, Density=Compact",
+          "values": { "State": "Ready", "Density": "Compact" }
+        },
+        {
+          "id": "807:129",
+          "name": "State=Ready, Density=Full",
+          "values": { "State": "Ready", "Density": "Full" }
+        },
+        {
+          "id": "807:398",
+          "name": "State=Resolved, Density=Compact",
+          "values": { "State": "Resolved", "Density": "Compact" }
+        },
+        {
+          "id": "807:264",
+          "name": "State=Resolved, Density=Full",
+          "values": { "State": "Resolved", "Density": "Full" }
+        },
+        {
+          "id": "859:3557",
+          "name": "State=ResolvedSecondary, Density=Compact",
+          "values": { "State": "ResolvedSecondary", "Density": "Compact" }
+        },
+        {
+          "id": "859:3555",
+          "name": "State=ResolvedSecondary, Density=Full",
+          "values": { "State": "ResolvedSecondary", "Density": "Full" }
+        },
+        {
+          "id": "807:319",
+          "name": "State=SubmittingPrimary, Density=Compact",
+          "values": { "State": "SubmittingPrimary", "Density": "Compact" }
+        },
+        {
+          "id": "807:167",
+          "name": "State=SubmittingPrimary, Density=Full",
+          "values": { "State": "SubmittingPrimary", "Density": "Full" }
+        },
+        {
+          "id": "807:345",
+          "name": "State=SubmittingSecondary, Density=Compact",
+          "values": { "State": "SubmittingSecondary", "Density": "Compact" }
+        },
+        {
+          "id": "807:204",
+          "name": "State=SubmittingSecondary, Density=Full",
+          "values": { "State": "SubmittingSecondary", "Density": "Full" }
+        },
+        {
+          "id": "807:400",
+          "name": "State=Unavailable, Density=Compact",
+          "values": { "State": "Unavailable", "Density": "Compact" }
+        },
+        {
+          "id": "807:266",
+          "name": "State=Unavailable, Density=Full",
+          "values": { "State": "Unavailable", "Density": "Full" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions · native buttons"],
+          "types": ["FRAME"],
+          "in": [0, 1, 2, 3, 8, 9, 10, 11, 12, 13],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": [
+              { "value": "Oddkin · Component roles/space/none", "variants": [0, 2, 8, 10, 12] },
+              { "value": "Oddkin · Component roles/space/xs", "variants": [1, 3, 9, 11, 13] }
+            ],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions · native buttons", "native button · Approve · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Approve · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [10, 11, 12, 13]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Approve · Loading"],
+          "types": ["INSTANCE"],
+          "in": [8, 9]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Edit · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3],
+          "properties": { "visible": ["Show edit"] }
+        },
+        {
+          "path": ["actions · native buttons", "native button · Edit · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [8, 9, 10, 11, 12, 13],
+          "properties": { "visible": ["Show edit"] }
+        },
+        {
+          "path": ["actions · native buttons", "native button · Reject · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Reject · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [8, 9, 12, 13]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Reject · Loading"],
+          "types": ["INSTANCE"],
+          "in": [10, 11]
+        },
+        {
+          "path": ["capability reason"],
+          "types": ["TEXT"],
+          "in": [12, 13],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Unavailable reason"] }
+        },
+        {
+          "path": ["inline error · proposed copy"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Error"] }
+        },
+        {
+          "path": ["state · pending"],
+          "types": ["TEXT"],
+          "in": [8, 9, 10, 11],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["state · tabindex=-1 after disappearing action"],
+          "types": ["TEXT"],
+          "in": [4, 5, 6, 7],
+          "bound": {
+            "fills": [
+              { "value": "Oddkin · Component roles/color/danger/foreground", "variants": [6, 7] },
+              { "value": "Oddkin · Component roles/color/success/foreground", "variants": [4, 5] }
+            ],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          },
+          "properties": {
+            "characters": [
+              { "value": "Outcome", "variants": [4, 5] },
+              { "value": "Secondary outcome", "variants": [6, 7] }
+            ]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 30,
+          "variants": [
+            "Appearance=ghost, Size=md, State=Default",
+            "Appearance=ghost, Size=md, State=Disabled",
+            "Appearance=primary, Size=md, State=Default",
+            "Appearance=primary, Size=md, State=Disabled",
+            "Appearance=primary, Size=md, State=Loading",
+            "Appearance=secondary, Size=md, State=Default",
+            "Appearance=secondary, Size=md, State=Disabled",
+            "Appearance=secondary, Size=md, State=Loading"
+          ],
+          "overriddenFields": ["boundVariables", "height", "layoutGrow", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "807:820",
+      "name": "Oddkin/AI/Internal/DecisionRow/ChangeReview",
+      "page": "805:3",
+      "frame": "03 · Decision row · ChangeReview",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        {
+          "name": "Error",
+          "type": "TEXT",
+          "defaultValue": "Could not apply: The service did not answer."
+        },
+        { "name": "Outcome", "type": "TEXT", "defaultValue": "Applied" },
+        { "name": "Secondary outcome", "type": "TEXT", "defaultValue": "Rejected" },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Ready",
+          "variantOptions": [
+            "Ready",
+            "SubmittingPrimary",
+            "SubmittingSecondary",
+            "Failed",
+            "Resolved",
+            "Unavailable",
+            "ResolvedSecondary"
+          ]
+        },
+        {
+          "name": "Unavailable reason",
+          "type": "TEXT",
+          "defaultValue": "This change cannot be applied now."
+        }
+      ],
+      "variants": [
+        {
+          "id": "807:780",
+          "name": "State=Failed, Density=Compact",
+          "values": { "State": "Failed", "Density": "Compact" }
+        },
+        {
+          "id": "807:686",
+          "name": "State=Failed, Density=Full",
+          "values": { "State": "Failed", "Density": "Full" }
+        },
+        {
+          "id": "807:726",
+          "name": "State=Ready, Density=Compact",
+          "values": { "State": "Ready", "Density": "Compact" }
+        },
+        {
+          "id": "807:632",
+          "name": "State=Ready, Density=Full",
+          "values": { "State": "Ready", "Density": "Full" }
+        },
+        {
+          "id": "807:799",
+          "name": "State=Resolved, Density=Compact",
+          "values": { "State": "Resolved", "Density": "Compact" }
+        },
+        {
+          "id": "807:705",
+          "name": "State=Resolved, Density=Full",
+          "values": { "State": "Resolved", "Density": "Full" }
+        },
+        {
+          "id": "859:3687",
+          "name": "State=ResolvedSecondary, Density=Compact",
+          "values": { "State": "ResolvedSecondary", "Density": "Compact" }
+        },
+        {
+          "id": "859:3685",
+          "name": "State=ResolvedSecondary, Density=Full",
+          "values": { "State": "ResolvedSecondary", "Density": "Full" }
+        },
+        {
+          "id": "807:744",
+          "name": "State=SubmittingPrimary, Density=Compact",
+          "values": { "State": "SubmittingPrimary", "Density": "Compact" }
+        },
+        {
+          "id": "807:650",
+          "name": "State=SubmittingPrimary, Density=Full",
+          "values": { "State": "SubmittingPrimary", "Density": "Full" }
+        },
+        {
+          "id": "807:762",
+          "name": "State=SubmittingSecondary, Density=Compact",
+          "values": { "State": "SubmittingSecondary", "Density": "Compact" }
+        },
+        {
+          "id": "807:668",
+          "name": "State=SubmittingSecondary, Density=Full",
+          "values": { "State": "SubmittingSecondary", "Density": "Full" }
+        },
+        {
+          "id": "807:801",
+          "name": "State=Unavailable, Density=Compact",
+          "values": { "State": "Unavailable", "Density": "Compact" }
+        },
+        {
+          "id": "807:707",
+          "name": "State=Unavailable, Density=Full",
+          "values": { "State": "Unavailable", "Density": "Full" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions · native buttons"],
+          "types": ["FRAME"],
+          "in": [0, 1, 2, 3, 8, 9, 10, 11, 12, 13],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": [
+              { "value": "Oddkin · Component roles/space/none", "variants": [0, 2, 8, 10, 12] },
+              { "value": "Oddkin · Component roles/space/xs", "variants": [1, 3, 9, 11, 13] }
+            ],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions · native buttons", "native button · Accept · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Accept · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [10, 11, 12, 13]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Accept · Loading"],
+          "types": ["INSTANCE"],
+          "in": [8, 9]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Reject · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Reject · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [8, 9, 12, 13]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Reject · Loading"],
+          "types": ["INSTANCE"],
+          "in": [10, 11]
+        },
+        {
+          "path": ["capability reason"],
+          "types": ["TEXT"],
+          "in": [12, 13],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Unavailable reason"] }
+        },
+        {
+          "path": ["inline error · proposed copy"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Error"] }
+        },
+        {
+          "path": ["state · pending"],
+          "types": ["TEXT"],
+          "in": [8, 9, 10, 11],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["state · tabindex=-1 after disappearing action"],
+          "types": ["TEXT"],
+          "in": [4, 5, 6, 7],
+          "bound": {
+            "fills": [
+              { "value": "Oddkin · Component roles/color/danger/foreground", "variants": [6, 7] },
+              { "value": "Oddkin · Component roles/color/text/secondary", "variants": [4, 5] }
+            ],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          },
+          "properties": {
+            "characters": [
+              { "value": "Outcome", "variants": [4, 5] },
+              { "value": "Secondary outcome", "variants": [6, 7] }
+            ]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 20,
+          "variants": [
+            "Appearance=primary, Size=md, State=Default",
+            "Appearance=primary, Size=md, State=Disabled",
+            "Appearance=primary, Size=md, State=Loading",
+            "Appearance=secondary, Size=md, State=Default",
+            "Appearance=secondary, Size=md, State=Disabled",
+            "Appearance=secondary, Size=md, State=Loading"
+          ],
+          "overriddenFields": ["boundVariables", "height", "layoutGrow", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "807:940",
+      "name": "Oddkin/AI/Internal/DecisionRow/Checkpoint",
+      "page": "805:3",
+      "frame": "03 · Decision row · Checkpoint",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        {
+          "name": "Error",
+          "type": "TEXT",
+          "defaultValue": "Restore failed: The service did not answer."
+        },
+        {
+          "name": "Outcome",
+          "type": "TEXT",
+          "defaultValue": "Restored. The document and three proposals returned to 09:30."
+        },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Ready",
+          "variantOptions": ["Ready", "SubmittingPrimary", "Failed", "Resolved", "Unavailable"]
+        },
+        {
+          "name": "Unavailable reason",
+          "type": "TEXT",
+          "defaultValue": "This checkpoint cannot be restored."
+        }
+      ],
+      "variants": [
+        {
+          "id": "807:916",
+          "name": "State=Failed, Density=Compact",
+          "values": { "State": "Failed", "Density": "Compact" }
+        },
+        {
+          "id": "807:861",
+          "name": "State=Failed, Density=Full",
+          "values": { "State": "Failed", "Density": "Full" }
+        },
+        {
+          "id": "807:885",
+          "name": "State=Ready, Density=Compact",
+          "values": { "State": "Ready", "Density": "Compact" }
+        },
+        {
+          "id": "807:830",
+          "name": "State=Ready, Density=Full",
+          "values": { "State": "Ready", "Density": "Full" }
+        },
+        {
+          "id": "807:927",
+          "name": "State=Resolved, Density=Compact",
+          "values": { "State": "Resolved", "Density": "Compact" }
+        },
+        {
+          "id": "807:872",
+          "name": "State=Resolved, Density=Full",
+          "values": { "State": "Resolved", "Density": "Full" }
+        },
+        {
+          "id": "807:895",
+          "name": "State=SubmittingPrimary, Density=Compact",
+          "values": { "State": "SubmittingPrimary", "Density": "Compact" }
+        },
+        {
+          "id": "807:840",
+          "name": "State=SubmittingPrimary, Density=Full",
+          "values": { "State": "SubmittingPrimary", "Density": "Full" }
+        },
+        {
+          "id": "807:929",
+          "name": "State=Unavailable, Density=Compact",
+          "values": { "State": "Unavailable", "Density": "Compact" }
+        },
+        {
+          "id": "807:874",
+          "name": "State=Unavailable, Density=Full",
+          "values": { "State": "Unavailable", "Density": "Full" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions · native buttons"],
+          "types": ["FRAME"],
+          "in": [0, 1, 2, 3, 6, 7, 8, 9],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": [
+              { "value": "Oddkin · Component roles/space/none", "variants": [0, 2, 6, 8] },
+              { "value": "Oddkin · Component roles/space/xs", "variants": [1, 3, 7, 9] }
+            ],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions · native buttons", "native button · Restore… · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Restore… · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [8, 9]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Restore… · Loading"],
+          "types": ["INSTANCE"],
+          "in": [6, 7]
+        },
+        {
+          "path": ["capability reason"],
+          "types": ["TEXT"],
+          "in": [8, 9],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Unavailable reason"] }
+        },
+        {
+          "path": ["inline error · proposed copy"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Error"] }
+        },
+        {
+          "path": ["state · pending"],
+          "types": ["TEXT"],
+          "in": [6, 7],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["state · tabindex=-1 after disappearing action"],
+          "types": ["TEXT"],
+          "in": [4, 5],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/success/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          },
+          "properties": { "characters": ["Outcome"] }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 8,
+          "variants": [
+            "Appearance=primary, Size=md, State=Default",
+            "Appearance=primary, Size=md, State=Disabled",
+            "Appearance=primary, Size=md, State=Loading"
+          ],
+          "overriddenFields": ["boundVariables", "height", "layoutGrow", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "826:1858",
+      "name": "Oddkin/AI/Internal/DecisionRow/CheckpointConfirmation",
+      "page": "805:3",
+      "frame": "03b · Additional decision setup · CheckpointConfirmation",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        { "name": "Error", "type": "TEXT", "defaultValue": "The request could not be recorded." },
+        { "name": "Outcome", "type": "TEXT", "defaultValue": "Restored the document to 09:30." },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Ready",
+          "variantOptions": ["Ready", "Submitting", "Failed", "Resolved", "Unavailable"]
+        },
+        {
+          "name": "Unavailable reason",
+          "type": "TEXT",
+          "defaultValue": "This action is not available now."
+        }
+      ],
+      "variants": [
+        {
+          "id": "826:1818",
+          "name": "State=Failed, Density=Compact",
+          "values": { "State": "Failed", "Density": "Compact" }
+        },
+        {
+          "id": "826:1738",
+          "name": "State=Failed, Density=Full",
+          "values": { "State": "Failed", "Density": "Full" }
+        },
+        {
+          "id": "826:1782",
+          "name": "State=Ready, Density=Compact",
+          "values": { "State": "Ready", "Density": "Compact" }
+        },
+        {
+          "id": "826:1698",
+          "name": "State=Ready, Density=Full",
+          "values": { "State": "Ready", "Density": "Full" }
+        },
+        {
+          "id": "826:1837",
+          "name": "State=Resolved, Density=Compact",
+          "values": { "State": "Resolved", "Density": "Compact" }
+        },
+        {
+          "id": "826:1757",
+          "name": "State=Resolved, Density=Full",
+          "values": { "State": "Resolved", "Density": "Full" }
+        },
+        {
+          "id": "826:1800",
+          "name": "State=Submitting, Density=Compact",
+          "values": { "State": "Submitting", "Density": "Compact" }
+        },
+        {
+          "id": "826:1720",
+          "name": "State=Submitting, Density=Full",
+          "values": { "State": "Submitting", "Density": "Full" }
+        },
+        {
+          "id": "826:1839",
+          "name": "State=Unavailable, Density=Compact",
+          "values": { "State": "Unavailable", "Density": "Compact" }
+        },
+        {
+          "id": "826:1759",
+          "name": "State=Unavailable, Density=Full",
+          "values": { "State": "Unavailable", "Density": "Full" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions"],
+          "types": ["FRAME"],
+          "in": [0, 1, 2, 3, 6, 7, 8, 9],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": [
+              { "value": "Oddkin · Component roles/space/none", "variants": [0, 2, 6, 8] },
+              { "value": "Oddkin · Component roles/space/xs", "variants": [1, 3, 7, 9] }
+            ],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions", "native button · Keep current state · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions", "native button · Keep current state · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [6, 7, 8, 9]
+        },
+        {
+          "path": ["actions", "native button · Restore this checkpoint · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions", "native button · Restore this checkpoint · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [8, 9]
+        },
+        {
+          "path": ["actions", "native button · Restore this checkpoint · Loading"],
+          "types": ["INSTANCE"],
+          "in": [6, 7]
+        },
+        {
+          "path": ["capability reason · proposed copy"],
+          "types": ["TEXT"],
+          "in": [8, 9],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Unavailable reason"] }
+        },
+        {
+          "path": ["pending · proposed copy"],
+          "types": ["TEXT"],
+          "in": [6, 7],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["proposed copy · error"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Error"] }
+        },
+        {
+          "path": ["state · focus target"],
+          "types": ["TEXT"],
+          "in": [4, 5],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/success/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          },
+          "properties": { "characters": ["Outcome"] }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 16,
+          "variants": [
+            "Appearance=primary, Size=md, State=Default",
+            "Appearance=primary, Size=md, State=Disabled",
+            "Appearance=primary, Size=md, State=Loading",
+            "Appearance=secondary, Size=md, State=Default",
+            "Appearance=secondary, Size=md, State=Disabled"
+          ],
+          "overriddenFields": ["boundVariables", "height", "layoutGrow", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "807:625",
+      "name": "Oddkin/AI/Internal/DecisionRow/Question",
+      "page": "805:3",
+      "frame": "03 · Decision row · Question",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        {
+          "name": "Error",
+          "type": "TEXT",
+          "defaultValue": "Your answer was not sent: The service did not answer."
+        },
+        { "name": "Outcome", "type": "TEXT", "defaultValue": "Answered." },
+        { "name": "Secondary outcome", "type": "TEXT", "defaultValue": "Skipped." },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Ready",
+          "variantOptions": [
+            "Ready",
+            "SubmittingPrimary",
+            "SubmittingSecondary",
+            "Failed",
+            "Resolved",
+            "Unavailable",
+            "ResolvedSecondary"
+          ]
+        },
+        {
+          "name": "Unavailable reason",
+          "type": "TEXT",
+          "defaultValue": "Answers are not available here."
+        }
+      ],
+      "variants": [
+        {
+          "id": "807:585",
+          "name": "State=Failed, Density=Compact",
+          "values": { "State": "Failed", "Density": "Compact" }
+        },
+        {
+          "id": "807:491",
+          "name": "State=Failed, Density=Full",
+          "values": { "State": "Failed", "Density": "Full" }
+        },
+        {
+          "id": "807:531",
+          "name": "State=Ready, Density=Compact",
+          "values": { "State": "Ready", "Density": "Compact" }
+        },
+        {
+          "id": "807:437",
+          "name": "State=Ready, Density=Full",
+          "values": { "State": "Ready", "Density": "Full" }
+        },
+        {
+          "id": "807:604",
+          "name": "State=Resolved, Density=Compact",
+          "values": { "State": "Resolved", "Density": "Compact" }
+        },
+        {
+          "id": "807:510",
+          "name": "State=Resolved, Density=Full",
+          "values": { "State": "Resolved", "Density": "Full" }
+        },
+        {
+          "id": "859:3622",
+          "name": "State=ResolvedSecondary, Density=Compact",
+          "values": { "State": "ResolvedSecondary", "Density": "Compact" }
+        },
+        {
+          "id": "859:3620",
+          "name": "State=ResolvedSecondary, Density=Full",
+          "values": { "State": "ResolvedSecondary", "Density": "Full" }
+        },
+        {
+          "id": "807:549",
+          "name": "State=SubmittingPrimary, Density=Compact",
+          "values": { "State": "SubmittingPrimary", "Density": "Compact" }
+        },
+        {
+          "id": "807:455",
+          "name": "State=SubmittingPrimary, Density=Full",
+          "values": { "State": "SubmittingPrimary", "Density": "Full" }
+        },
+        {
+          "id": "807:567",
+          "name": "State=SubmittingSecondary, Density=Compact",
+          "values": { "State": "SubmittingSecondary", "Density": "Compact" }
+        },
+        {
+          "id": "807:473",
+          "name": "State=SubmittingSecondary, Density=Full",
+          "values": { "State": "SubmittingSecondary", "Density": "Full" }
+        },
+        {
+          "id": "807:606",
+          "name": "State=Unavailable, Density=Compact",
+          "values": { "State": "Unavailable", "Density": "Compact" }
+        },
+        {
+          "id": "807:512",
+          "name": "State=Unavailable, Density=Full",
+          "values": { "State": "Unavailable", "Density": "Full" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions · native buttons"],
+          "types": ["FRAME"],
+          "in": [0, 1, 2, 3, 8, 9, 10, 11, 12, 13],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": [
+              { "value": "Oddkin · Component roles/space/none", "variants": [0, 2, 8, 10, 12] },
+              { "value": "Oddkin · Component roles/space/xs", "variants": [1, 3, 9, 11, 13] }
+            ],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions · native buttons", "native button · Answer · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Answer · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [10, 11, 12, 13]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Answer · Loading"],
+          "types": ["INSTANCE"],
+          "in": [8, 9]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Skip · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Skip · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [8, 9, 12, 13]
+        },
+        {
+          "path": ["actions · native buttons", "native button · Skip · Loading"],
+          "types": ["INSTANCE"],
+          "in": [10, 11]
+        },
+        {
+          "path": ["capability reason"],
+          "types": ["TEXT"],
+          "in": [12, 13],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Unavailable reason"] }
+        },
+        {
+          "path": ["inline error · proposed copy"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Error"] }
+        },
+        {
+          "path": ["state · pending"],
+          "types": ["TEXT"],
+          "in": [8, 9, 10, 11],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["state · tabindex=-1 after disappearing action"],
+          "types": ["TEXT"],
+          "in": [4, 5, 6, 7],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          },
+          "properties": {
+            "characters": [
+              { "value": "Outcome", "variants": [4, 5] },
+              { "value": "Secondary outcome", "variants": [6, 7] }
+            ]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 20,
+          "variants": [
+            "Appearance=primary, Size=md, State=Default",
+            "Appearance=primary, Size=md, State=Disabled",
+            "Appearance=primary, Size=md, State=Loading",
+            "Appearance=secondary, Size=md, State=Default",
+            "Appearance=secondary, Size=md, State=Disabled",
+            "Appearance=secondary, Size=md, State=Loading"
+          ],
+          "overriddenFields": ["boundVariables", "height", "layoutGrow", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "826:1691",
+      "name": "Oddkin/AI/Internal/DecisionRow/ReviewDismiss",
+      "page": "805:3",
+      "frame": "03b · Additional decision setup · ReviewDismiss",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        { "name": "Error", "type": "TEXT", "defaultValue": "The request could not be recorded." },
+        { "name": "Outcome", "type": "TEXT", "defaultValue": "Dismissed" },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Ready",
+          "variantOptions": ["Ready", "Submitting", "Failed", "Resolved", "Unavailable"]
+        },
+        {
+          "name": "Unavailable reason",
+          "type": "TEXT",
+          "defaultValue": "This action is not available now."
+        }
+      ],
+      "variants": [
+        {
+          "id": "826:1667",
+          "name": "State=Failed, Density=Compact",
+          "values": { "State": "Failed", "Density": "Compact" }
+        },
+        {
+          "id": "826:1623",
+          "name": "State=Failed, Density=Full",
+          "values": { "State": "Failed", "Density": "Full" }
+        },
+        {
+          "id": "826:1647",
+          "name": "State=Ready, Density=Compact",
+          "values": { "State": "Ready", "Density": "Compact" }
+        },
+        {
+          "id": "826:1603",
+          "name": "State=Ready, Density=Full",
+          "values": { "State": "Ready", "Density": "Full" }
+        },
+        {
+          "id": "826:1678",
+          "name": "State=Resolved, Density=Compact",
+          "values": { "State": "Resolved", "Density": "Compact" }
+        },
+        {
+          "id": "826:1634",
+          "name": "State=Resolved, Density=Full",
+          "values": { "State": "Resolved", "Density": "Full" }
+        },
+        {
+          "id": "826:1657",
+          "name": "State=Submitting, Density=Compact",
+          "values": { "State": "Submitting", "Density": "Compact" }
+        },
+        {
+          "id": "826:1613",
+          "name": "State=Submitting, Density=Full",
+          "values": { "State": "Submitting", "Density": "Full" }
+        },
+        {
+          "id": "826:1680",
+          "name": "State=Unavailable, Density=Compact",
+          "values": { "State": "Unavailable", "Density": "Compact" }
+        },
+        {
+          "id": "826:1636",
+          "name": "State=Unavailable, Density=Full",
+          "values": { "State": "Unavailable", "Density": "Full" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions"],
+          "types": ["FRAME"],
+          "in": [0, 1, 2, 3, 6, 7, 8, 9],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": [
+              { "value": "Oddkin · Component roles/space/none", "variants": [0, 2, 6, 8] },
+              { "value": "Oddkin · Component roles/space/xs", "variants": [1, 3, 7, 9] }
+            ],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions", "native button · Dismiss · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions", "native button · Dismiss · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [8, 9]
+        },
+        {
+          "path": ["actions", "native button · Dismiss · Loading"],
+          "types": ["INSTANCE"],
+          "in": [6, 7]
+        },
+        {
+          "path": ["capability reason · proposed copy"],
+          "types": ["TEXT"],
+          "in": [8, 9],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Unavailable reason"] }
+        },
+        {
+          "path": ["pending · proposed copy"],
+          "types": ["TEXT"],
+          "in": [6, 7],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["proposed copy · error"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Error"] }
+        },
+        {
+          "path": ["state · focus target"],
+          "types": ["TEXT"],
+          "in": [4, 5],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          },
+          "properties": { "characters": ["Outcome"] }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 8,
+          "variants": [
+            "Appearance=secondary, Size=md, State=Default",
+            "Appearance=secondary, Size=md, State=Disabled",
+            "Appearance=secondary, Size=md, State=Loading"
+          ],
+          "overriddenFields": ["boundVariables", "height", "layoutGrow", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "826:1596",
+      "name": "Oddkin/AI/Internal/DecisionRow/ReviewUndo",
+      "page": "805:3",
+      "frame": "03b · Additional decision setup · ReviewUndo",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        { "name": "Error", "type": "TEXT", "defaultValue": "The change could not be undone." },
+        { "name": "Outcome", "type": "TEXT", "defaultValue": "Undone" },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Ready",
+          "variantOptions": ["Ready", "Submitting", "Failed", "Resolved", "Unavailable"]
+        },
+        {
+          "name": "Unavailable reason",
+          "type": "TEXT",
+          "defaultValue": "This action is not available now."
+        }
+      ],
+      "variants": [
+        {
+          "id": "826:1572",
+          "name": "State=Failed, Density=Compact",
+          "values": { "State": "Failed", "Density": "Compact" }
+        },
+        {
+          "id": "826:1524",
+          "name": "State=Failed, Density=Full",
+          "values": { "State": "Failed", "Density": "Full" }
+        },
+        {
+          "id": "826:1552",
+          "name": "State=Ready, Density=Compact",
+          "values": { "State": "Ready", "Density": "Compact" }
+        },
+        {
+          "id": "826:1500",
+          "name": "State=Ready, Density=Full",
+          "values": { "State": "Ready", "Density": "Full" }
+        },
+        {
+          "id": "826:1583",
+          "name": "State=Resolved, Density=Compact",
+          "values": { "State": "Resolved", "Density": "Compact" }
+        },
+        {
+          "id": "826:1535",
+          "name": "State=Resolved, Density=Full",
+          "values": { "State": "Resolved", "Density": "Full" }
+        },
+        {
+          "id": "826:1562",
+          "name": "State=Submitting, Density=Compact",
+          "values": { "State": "Submitting", "Density": "Compact" }
+        },
+        {
+          "id": "826:1514",
+          "name": "State=Submitting, Density=Full",
+          "values": { "State": "Submitting", "Density": "Full" }
+        },
+        {
+          "id": "826:1585",
+          "name": "State=Unavailable, Density=Compact",
+          "values": { "State": "Unavailable", "Density": "Compact" }
+        },
+        {
+          "id": "826:1537",
+          "name": "State=Unavailable, Density=Full",
+          "values": { "State": "Unavailable", "Density": "Full" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/sm"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions"],
+          "types": ["FRAME"],
+          "in": [0, 1, 2, 3, 6, 7, 8, 9],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": [
+              { "value": "Oddkin · Component roles/space/none", "variants": [0, 2, 6, 8] },
+              { "value": "Oddkin · Component roles/space/xs", "variants": [1, 3, 7, 9] }
+            ],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["actions", "native button · Undo · Default"],
+          "types": ["INSTANCE"],
+          "in": [0, 1, 2, 3]
+        },
+        {
+          "path": ["actions", "native button · Undo · Disabled"],
+          "types": ["INSTANCE"],
+          "in": [8, 9]
+        },
+        {
+          "path": ["actions", "native button · Undo · Loading"],
+          "types": ["INSTANCE"],
+          "in": [6, 7]
+        },
+        {
+          "path": ["capability reason · proposed copy"],
+          "types": ["TEXT"],
+          "in": [8, 9],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Unavailable reason"] }
+        },
+        {
+          "path": ["pending · proposed copy"],
+          "types": ["TEXT"],
+          "in": [6, 7],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["proposed copy · error"],
+          "types": ["TEXT"],
+          "in": [0, 1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Error"] }
+        },
+        {
+          "path": ["state · focus target"],
+          "types": ["TEXT"],
+          "in": [4, 5],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          },
+          "properties": { "characters": ["Outcome"] }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 8,
+          "variants": [
+            "Appearance=secondary, Size=md, State=Default",
+            "Appearance=secondary, Size=md, State=Disabled",
+            "Appearance=secondary, Size=md, State=Loading"
+          ],
+          "overriddenFields": ["boundVariables", "height", "layoutGrow", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "809:671",
+      "name": "Oddkin/AI/Internal/DiffView",
+      "page": "805:3",
+      "frame": "05 · Read-only diff view",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Content",
+          "type": "VARIANT",
+          "defaultValue": "Typical",
+          "variantOptions": ["Typical", "Long", "Empty"]
+        },
+        {
+          "name": "Context",
+          "type": "VARIANT",
+          "defaultValue": "Collapsed",
+          "variantOptions": ["Collapsed", "Expanded"]
+        },
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        {
+          "name": "Granularity",
+          "type": "VARIANT",
+          "defaultValue": "Words",
+          "variantOptions": ["Words", "Lines"]
+        },
+        { "name": "Label", "type": "TEXT", "defaultValue": "Proposed changes" },
+        { "name": "Show label", "type": "BOOLEAN", "defaultValue": true },
+        {
+          "name": "View",
+          "type": "VARIANT",
+          "defaultValue": "Inline",
+          "variantOptions": ["Inline", "Split"]
+        }
+      ],
+      "variants": [
+        {
+          "id": "809:668",
+          "name": "View=Inline, Granularity=Lines, Context=Collapsed, Density=Full, Content=Empty",
+          "values": {
+            "View": "Inline",
+            "Granularity": "Lines",
+            "Context": "Collapsed",
+            "Density": "Full",
+            "Content": "Empty"
+          }
+        },
+        {
+          "id": "809:641",
+          "name": "View=Inline, Granularity=Lines, Context=Collapsed, Density=Full, Content=Long",
+          "values": {
+            "View": "Inline",
+            "Granularity": "Lines",
+            "Context": "Collapsed",
+            "Density": "Full",
+            "Content": "Long"
+          }
+        },
+        {
+          "id": "809:532",
+          "name": "View=Inline, Granularity=Lines, Context=Collapsed, Density=Full, Content=Typical",
+          "values": {
+            "View": "Inline",
+            "Granularity": "Lines",
+            "Context": "Collapsed",
+            "Density": "Full",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "825:1475",
+          "name": "View=Inline, Granularity=Lines, Context=Expanded, Density=Full, Content=Long",
+          "values": {
+            "View": "Inline",
+            "Granularity": "Lines",
+            "Context": "Expanded",
+            "Density": "Full",
+            "Content": "Long"
+          }
+        },
+        {
+          "id": "809:550",
+          "name": "View=Inline, Granularity=Lines, Context=Expanded, Density=Full, Content=Typical",
+          "values": {
+            "View": "Inline",
+            "Granularity": "Lines",
+            "Context": "Expanded",
+            "Density": "Full",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "809:503",
+          "name": "View=Inline, Granularity=Words, Context=Collapsed, Density=Full, Content=Typical",
+          "values": {
+            "View": "Inline",
+            "Granularity": "Words",
+            "Context": "Collapsed",
+            "Density": "Full",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "809:521",
+          "name": "View=Inline, Granularity=Words, Context=Expanded, Density=Full, Content=Typical",
+          "values": {
+            "View": "Inline",
+            "Granularity": "Words",
+            "Context": "Expanded",
+            "Density": "Full",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "852:2848",
+          "name": "View=Split, Granularity=Lines, Context=Collapsed, Density=Compact, Content=Typical",
+          "values": {
+            "View": "Split",
+            "Granularity": "Lines",
+            "Context": "Collapsed",
+            "Density": "Compact",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "809:590",
+          "name": "View=Split, Granularity=Lines, Context=Collapsed, Density=Full, Content=Typical",
+          "values": {
+            "View": "Split",
+            "Granularity": "Lines",
+            "Context": "Collapsed",
+            "Density": "Full",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "809:630",
+          "name": "View=Split, Granularity=Lines, Context=Expanded, Density=Compact, Content=Typical",
+          "values": {
+            "View": "Split",
+            "Granularity": "Lines",
+            "Context": "Expanded",
+            "Density": "Compact",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "809:608",
+          "name": "View=Split, Granularity=Lines, Context=Expanded, Density=Full, Content=Typical",
+          "values": {
+            "View": "Split",
+            "Granularity": "Lines",
+            "Context": "Expanded",
+            "Density": "Full",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "852:2828",
+          "name": "View=Split, Granularity=Words, Context=Collapsed, Density=Compact, Content=Typical",
+          "values": {
+            "View": "Split",
+            "Granularity": "Words",
+            "Context": "Collapsed",
+            "Density": "Compact",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "809:561",
+          "name": "View=Split, Granularity=Words, Context=Collapsed, Density=Full, Content=Typical",
+          "values": {
+            "View": "Split",
+            "Granularity": "Words",
+            "Context": "Collapsed",
+            "Density": "Full",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "809:619",
+          "name": "View=Split, Granularity=Words, Context=Expanded, Density=Compact, Content=Typical",
+          "values": {
+            "View": "Split",
+            "Granularity": "Words",
+            "Context": "Expanded",
+            "Density": "Compact",
+            "Content": "Typical"
+          }
+        },
+        {
+          "id": "809:579",
+          "name": "View=Split, Granularity=Words, Context=Expanded, Density=Full, Content=Typical",
+          "values": {
+            "View": "Split",
+            "Granularity": "Words",
+            "Context": "Expanded",
+            "Density": "Full",
+            "Content": "Typical"
+          }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/md"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "topRightRadius": ["Oddkin · Component roles/radius/md"]
+          }
+        },
+        {
+          "path": ["Proposed changes"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          },
+          "properties": {
+            "characters": [
+              { "value": "Label", "variants": [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 13, 14] }
+            ],
+            "visible": [
+              { "value": "Show label", "variants": [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 13, 14] }
+            ]
+          }
+        },
+        {
+          "path": ["changes · read-only comparison"],
+          "types": ["FRAME"],
+          "in": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["changes · read-only comparison", "After · inserted"],
+          "types": ["FRAME"],
+          "in": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/success/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/sm"],
+            "paddingLeft": ["Oddkin · Component roles/space/sm"],
+            "paddingRight": ["Oddkin · Component roles/space/sm"],
+            "paddingTop": ["Oddkin · Component roles/space/sm"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        {
+          "path": ["changes · read-only comparison", "After · inserted", "After · inserted"],
+          "types": ["TEXT"],
+          "in": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/success/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["changes · read-only comparison", "After · inserted", "canonical after"],
+          "types": ["TEXT"],
+          "in": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14],
+          "bound": {
+            "fills": [
+              {
+                "value": "Oddkin · Component roles/color/success/foreground",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              },
+              {
+                "value": "Oddkin · Component roles/color/text/primary",
+                "variants": [11, 12, 13, 14]
+              }
+            ],
+            "fontFamily": [
+              {
+                "value": "Oddkin · Repository tokens/figma/font/family/mono",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              },
+              {
+                "value": "Oddkin · Repository tokens/figma/font/family/sans",
+                "variants": [11, 12, 13, 14]
+              }
+            ],
+            "fontSize": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/size",
+                "variants": [11, 12, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/size",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              }
+            ],
+            "fontWeight": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/weight",
+                "variants": [11, 12, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/weight",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              }
+            ],
+            "letterSpacing": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/letter-spacing",
+                "variants": [11, 12, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/letter-spacing",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              }
+            ],
+            "textRangeFills": [
+              {
+                "value": "Oddkin · Component roles/color/success/foreground",
+                "variants": [11, 12, 13, 14]
+              },
+              {
+                "value": "Oddkin · Component roles/color/text/primary",
+                "variants": [11, 12, 13, 14]
+              }
+            ],
+            "textStyle": [
+              { "value": "Oddkin/Body", "variants": [11, 12, 13, 14] },
+              { "value": "Oddkin/Code", "variants": [1, 2, 3, 4, 7, 8, 9, 10] }
+            ]
+          },
+          "literals": { "fills": [{ "value": "mixed", "variants": [11, 12, 13, 14] }] }
+        },
+        {
+          "path": ["changes · read-only comparison", "Before · deleted"],
+          "types": ["FRAME"],
+          "in": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/sm"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/danger/surface"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/sm"],
+            "paddingLeft": ["Oddkin · Component roles/space/sm"],
+            "paddingRight": ["Oddkin · Component roles/space/sm"],
+            "paddingTop": ["Oddkin · Component roles/space/sm"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/sm"],
+            "topRightRadius": ["Oddkin · Component roles/radius/sm"]
+          }
+        },
+        {
+          "path": ["changes · read-only comparison", "Before · deleted", "Before · deleted"],
+          "types": ["TEXT"],
+          "in": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/danger/foreground"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["changes · read-only comparison", "Before · deleted", "canonical before"],
+          "types": ["TEXT"],
+          "in": [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14],
+          "bound": {
+            "fills": [
+              {
+                "value": "Oddkin · Component roles/color/danger/foreground",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              },
+              {
+                "value": "Oddkin · Component roles/color/text/primary",
+                "variants": [11, 12, 13, 14]
+              }
+            ],
+            "fontFamily": [
+              {
+                "value": "Oddkin · Repository tokens/figma/font/family/mono",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              },
+              {
+                "value": "Oddkin · Repository tokens/figma/font/family/sans",
+                "variants": [11, 12, 13, 14]
+              }
+            ],
+            "fontSize": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/size",
+                "variants": [11, 12, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/size",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              }
+            ],
+            "fontWeight": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/weight",
+                "variants": [11, 12, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/weight",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              }
+            ],
+            "letterSpacing": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/letter-spacing",
+                "variants": [11, 12, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/letter-spacing",
+                "variants": [1, 2, 3, 4, 7, 8, 9, 10]
+              }
+            ],
+            "textRangeFills": [
+              {
+                "value": "Oddkin · Component roles/color/danger/foreground",
+                "variants": [11, 12, 13, 14]
+              },
+              {
+                "value": "Oddkin · Component roles/color/text/primary",
+                "variants": [11, 12, 13, 14]
+              }
+            ],
+            "textStyle": [
+              { "value": "Oddkin/Body", "variants": [11, 12, 13, 14] },
+              { "value": "Oddkin/Code", "variants": [1, 2, 3, 4, 7, 8, 9, 10] }
+            ]
+          },
+          "literals": { "fills": [{ "value": "mixed", "variants": [11, 12, 13, 14] }] }
+        },
+        {
+          "path": ["changes · read-only comparison", "word diff · merged phrase runs"],
+          "types": ["TEXT"],
+          "in": [5, 6],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textRangeFills": [
+              "Oddkin · Component roles/color/danger/foreground",
+              "Oddkin · Component roles/color/success/foreground",
+              "Oddkin · Component roles/color/text/primary"
+            ],
+            "textStyle": ["Oddkin/Body"]
+          },
+          "literals": { "fills": ["mixed"] }
+        },
+        {
+          "path": ["context.after"],
+          "types": ["TEXT"],
+          "in": [4, 6, 7, 9, 10, 11, 13, 14],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": [
+              {
+                "value": "Oddkin · Repository tokens/figma/font/family/mono",
+                "variants": [4, 7, 9, 10]
+              },
+              {
+                "value": "Oddkin · Repository tokens/figma/font/family/sans",
+                "variants": [6, 11, 13, 14]
+              }
+            ],
+            "fontSize": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/size",
+                "variants": [6, 11, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/size",
+                "variants": [4, 7, 9, 10]
+              }
+            ],
+            "fontWeight": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/weight",
+                "variants": [6, 11, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/weight",
+                "variants": [4, 7, 9, 10]
+              }
+            ],
+            "letterSpacing": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/letter-spacing",
+                "variants": [6, 11, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/letter-spacing",
+                "variants": [4, 7, 9, 10]
+              }
+            ],
+            "textStyle": [
+              { "value": "Oddkin/Body", "variants": [6, 11, 13, 14] },
+              { "value": "Oddkin/Code", "variants": [4, 7, 9, 10] }
+            ]
+          }
+        },
+        {
+          "path": ["context.before"],
+          "types": ["TEXT"],
+          "in": [4, 6, 7, 9, 10, 11, 13, 14],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": [
+              {
+                "value": "Oddkin · Repository tokens/figma/font/family/mono",
+                "variants": [4, 7, 9, 10]
+              },
+              {
+                "value": "Oddkin · Repository tokens/figma/font/family/sans",
+                "variants": [6, 11, 13, 14]
+              }
+            ],
+            "fontSize": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/size",
+                "variants": [6, 11, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/size",
+                "variants": [4, 7, 9, 10]
+              }
+            ],
+            "fontWeight": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/weight",
+                "variants": [6, 11, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/weight",
+                "variants": [4, 7, 9, 10]
+              }
+            ],
+            "letterSpacing": [
+              {
+                "value": "Oddkin · Repository tokens/repo/type/body/letter-spacing",
+                "variants": [6, 11, 13, 14]
+              },
+              {
+                "value": "Oddkin · Repository tokens/repo/type/code/letter-spacing",
+                "variants": [4, 7, 9, 10]
+              }
+            ],
+            "textStyle": [
+              { "value": "Oddkin/Body", "variants": [6, 11, 13, 14] },
+              { "value": "Oddkin/Code", "variants": [4, 7, 9, 10] }
+            ]
+          }
+        },
+        {
+          "path": ["disclosure trigger · 12 changed lines · Review changes"],
+          "types": ["INSTANCE"],
+          "in": [1, 3]
+        },
+        {
+          "path": ["disclosure trigger · Hide context"],
+          "types": ["INSTANCE"],
+          "in": [4, 6, 9, 10, 13, 14]
+        },
+        {
+          "path": ["disclosure trigger · Show context"],
+          "types": ["INSTANCE"],
+          "in": [1, 2, 3, 5, 7, 8, 11, 12]
+        },
+        {
+          "path": ["proposed copy · empty diff"],
+          "types": ["TEXT"],
+          "in": [0],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/AI/Internal/DisclosureTrigger",
+          "sourceId": "812:627",
+          "count": 16,
+          "variants": [],
+          "overriddenFields": ["componentProperties", "height", "name", "reactions", "width"]
+        }
+      ]
+    },
+    {
+      "id": "812:627",
+      "name": "Oddkin/AI/Internal/DisclosureTrigger",
+      "page": "805:3",
+      "frame": "07 · Semantic action setups and control states",
+      "kind": "COMPONENT",
+      "description": "Internal responsive composition of the existing native Oddkin ghost button and chevronRight icon. Used as the trigger presentation for odd-disclosure. Existing disclosure specimens have fixed-position children; originals remain untouched. Button is aria-expanded, aria-controls; Enter/Space toggles. No new public API.",
+      "properties": [],
+      "variants": [{ "id": "812:627", "name": "Oddkin/AI/Internal/DisclosureTrigger" }],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        { "path": ["native button · Show context · Default"], "types": ["INSTANCE"] }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/button",
+          "sourceId": "159:439",
+          "count": 1,
+          "variants": ["Appearance=ghost, Size=md, State=Default"],
+          "overriddenFields": [
+            "boundVariables",
+            "height",
+            "layoutGrow",
+            "name",
+            "primaryAxisAlignItems",
+            "width"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "810:575",
+      "name": "Oddkin/AI/Internal/Expiry",
+      "page": "805:3",
+      "frame": "06 · Time and waiting",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Later",
+          "variantOptions": ["Later", "Soon", "Passed"]
+        }
+      ],
+      "variants": [
+        { "id": "810:551", "name": "State=Later", "values": { "State": "Later" } },
+        { "id": "810:573", "name": "State=Passed", "values": { "State": "Passed" } },
+        { "id": "810:562", "name": "State=Soon", "values": { "State": "Soon" } }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["This request expired before a decision was recorded."],
+          "types": ["TEXT"],
+          "in": [1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          }
+        },
+        { "path": ["odd-badge · Expires 10:05"], "types": ["INSTANCE"], "in": [2] },
+        { "path": ["odd-badge · Expires 11:30"], "types": ["INSTANCE"], "in": [0] }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/AI/Internal/BadgePresentation",
+          "sourceId": "837:2455",
+          "count": 2,
+          "variants": ["Tone=Neutral", "Tone=Warning"],
+          "overriddenFields": ["height", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "834:2353",
+      "name": "Oddkin/AI/Internal/ReasonField",
+      "page": "805:3",
+      "frame": "07 · Semantic action setups and control states",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Draft",
+          "type": "TEXT",
+          "defaultValue": "Use the pilot region agreed with the support team."
+        },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Empty",
+          "variantOptions": ["Empty", "Filled", "Focus", "Disabled"]
+        }
+      ],
+      "variants": [
+        { "id": "834:2347", "name": "State=Disabled", "values": { "State": "Disabled" } },
+        { "id": "834:2328", "name": "State=Empty", "values": { "State": "Empty" } },
+        { "id": "834:2334", "name": "State=Filled", "values": { "State": "Filled" } },
+        { "id": "834:2340", "name": "State=Focus", "values": { "State": "Focus" } }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Textarea / Disabled"],
+          "types": ["FRAME"],
+          "in": [0],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Textarea / Disabled", "Surface"],
+          "types": ["FRAME"],
+          "in": [0],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/md"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/sm"],
+            "paddingLeft": ["Oddkin · Component roles/space/sm"],
+            "paddingRight": ["Oddkin · Component roles/space/sm"],
+            "paddingTop": ["Oddkin · Component roles/space/sm"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/strong"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "topRightRadius": ["Oddkin · Component roles/radius/md"]
+          }
+        },
+        {
+          "path": ["Textarea / Disabled", "Surface", "reason draft"],
+          "types": ["TEXT"],
+          "in": [0],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/disabled"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          },
+          "properties": { "characters": ["Draft"] }
+        },
+        {
+          "path": ["Textarea / Disabled", "reason label"],
+          "types": ["TEXT"],
+          "in": [0],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/disabled"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Textarea / Empty"],
+          "types": ["FRAME"],
+          "in": [1],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Textarea / Empty", "Surface"],
+          "types": ["FRAME"],
+          "in": [1],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/md"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/sm"],
+            "paddingLeft": ["Oddkin · Component roles/space/sm"],
+            "paddingRight": ["Oddkin · Component roles/space/sm"],
+            "paddingTop": ["Oddkin · Component roles/space/sm"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/strong"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "topRightRadius": ["Oddkin · Component roles/radius/md"]
+          }
+        },
+        {
+          "path": ["Textarea / Empty", "Surface", "reason draft"],
+          "types": ["TEXT"],
+          "in": [1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          }
+        },
+        {
+          "path": ["Textarea / Empty", "reason label"],
+          "types": ["TEXT"],
+          "in": [1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Textarea / Filled"],
+          "types": ["FRAME"],
+          "in": [2],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Textarea / Filled", "Surface"],
+          "types": ["FRAME"],
+          "in": [2],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/md"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/sm"],
+            "paddingLeft": ["Oddkin · Component roles/space/sm"],
+            "paddingRight": ["Oddkin · Component roles/space/sm"],
+            "paddingTop": ["Oddkin · Component roles/space/sm"],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/strong"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "topRightRadius": ["Oddkin · Component roles/radius/md"]
+          }
+        },
+        {
+          "path": ["Textarea / Filled", "Surface", "reason draft"],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          },
+          "properties": { "characters": ["Draft"] }
+        },
+        {
+          "path": ["Textarea / Filled", "reason label"],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Textarea / Focus"],
+          "types": ["FRAME"],
+          "in": [3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/2xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/2xs"],
+            "paddingRight": ["Oddkin · Component roles/space/2xs"],
+            "paddingTop": ["Oddkin · Component roles/space/2xs"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Textarea / Focus", "Surface"],
+          "types": ["FRAME"],
+          "in": [3],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/md"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/sm"],
+            "paddingLeft": ["Oddkin · Component roles/space/sm"],
+            "paddingRight": ["Oddkin · Component roles/space/sm"],
+            "paddingTop": ["Oddkin · Component roles/space/sm"],
+            "strokeBottomWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeLeftWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeRightWeight": ["Oddkin · Component roles/focus/width"],
+            "strokeTopWeight": ["Oddkin · Component roles/focus/width"],
+            "strokes": ["Oddkin · Component roles/color/focus/ring"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "topRightRadius": ["Oddkin · Component roles/radius/md"]
+          }
+        },
+        {
+          "path": ["Textarea / Focus", "Surface", "reason draft"],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/body/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/body/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/body/letter-spacing"],
+            "textStyle": ["Oddkin/Body"]
+          },
+          "properties": { "characters": ["Draft"] }
+        },
+        {
+          "path": ["Textarea / Focus", "reason label"],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        }
+      ],
+      "instances": []
+    },
+    {
+      "id": "808:514",
+      "name": "Oddkin/AI/Internal/ScopeChoice",
+      "page": "805:3",
+      "frame": "04 · Permission scope",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "None",
+          "variantOptions": [
+            "None",
+            "One",
+            "Required",
+            "Selected",
+            "Defaulted",
+            "Approved",
+            "Reset"
+          ]
+        }
+      ],
+      "variants": [
+        { "id": "808:489", "name": "State=Approved", "values": { "State": "Approved" } },
+        { "id": "808:467", "name": "State=Defaulted", "values": { "State": "Defaulted" } },
+        { "id": "808:417", "name": "State=None", "values": { "State": "None" } },
+        { "id": "808:420", "name": "State=One", "values": { "State": "One" } },
+        { "id": "808:424", "name": "State=Required", "values": { "State": "Required" } },
+        { "id": "808:493", "name": "State=Reset", "values": { "State": "Reset" } },
+        { "id": "808:445", "name": "State=Selected", "values": { "State": "Selected" } }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/md"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/surface/sunken"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/md"],
+            "paddingLeft": ["Oddkin · Component roles/space/md"],
+            "paddingRight": ["Oddkin · Component roles/space/md"],
+            "paddingTop": ["Oddkin · Component roles/space/md"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/md"],
+            "topRightRadius": ["Oddkin · Component roles/radius/md"]
+          }
+        },
+        {
+          "path": ["Allows this tool to update the launch configuration in this conversation"],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["Applies to this action only."],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          }
+        },
+        {
+          "path": ["Approved scope: This action only"],
+          "types": ["TEXT"],
+          "in": [0],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["Choose how long this approval applies."],
+          "types": ["TEXT"],
+          "in": [4, 6],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["For this conversation"],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        },
+        {
+          "path": ["No additional actions are authorized."],
+          "types": ["TEXT"],
+          "in": [0],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["Selected by your workspace policy. You can change this."],
+          "types": ["TEXT"],
+          "in": [1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["This proposal changed. Choose the scope again."],
+          "types": ["TEXT"],
+          "in": [5],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["scope option · For this conversation"],
+          "types": ["FRAME"],
+          "in": [1, 4, 5, 6],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["scope option · For this conversation", "odd-radio · For this conversation"],
+          "types": ["INSTANCE"],
+          "in": [1, 4, 5, 6]
+        },
+        {
+          "path": ["scope option · For this conversation", "scope.description"],
+          "types": ["TEXT"],
+          "in": [1, 4, 5, 6],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["scope option · For this tool in this workspace"],
+          "types": ["FRAME"],
+          "in": [1, 4, 5, 6],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": [
+            "scope option · For this tool in this workspace",
+            "odd-radio · For this tool in this workspace"
+          ],
+          "types": ["INSTANCE"],
+          "in": [1, 4, 5, 6]
+        },
+        {
+          "path": ["scope option · For this tool in this workspace", "scope.description"],
+          "types": ["TEXT"],
+          "in": [1, 4, 5, 6],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["scope option · This action only"],
+          "types": ["FRAME"],
+          "in": [1, 4, 5, 6],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/none"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["scope option · This action only", "odd-radio · This action only"],
+          "types": ["INSTANCE"],
+          "in": [1, 4, 5, 6]
+        },
+        {
+          "path": ["scope option · This action only", "scope.description"],
+          "types": ["TEXT"],
+          "in": [1, 4, 5, 6],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["scope · existing part"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/AI/Internal/ScopeOption",
+          "sourceId": "839:2463",
+          "count": 12,
+          "variants": ["Selection=Checked, State=Default", "Selection=Unchecked, State=Default"],
+          "overriddenFields": ["height", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "839:2463",
+      "name": "Oddkin/AI/Internal/ScopeOption",
+      "page": "805:3",
+      "frame": "04 · Permission scope",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Description",
+          "type": "TEXT",
+          "defaultValue": "Ask again for any other action."
+        },
+        { "name": "Label", "type": "TEXT", "defaultValue": "This action only" },
+        {
+          "name": "Selection",
+          "type": "VARIANT",
+          "defaultValue": "Unchecked",
+          "variantOptions": ["Unchecked", "Checked"]
+        },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Default",
+          "variantOptions": ["Default", "Focus", "Disabled"]
+        }
+      ],
+      "variants": [
+        {
+          "id": "839:2432",
+          "name": "Selection=Checked, State=Default",
+          "values": { "Selection": "Checked", "State": "Default" }
+        },
+        {
+          "id": "839:2450",
+          "name": "Selection=Checked, State=Disabled",
+          "values": { "Selection": "Checked", "State": "Disabled" }
+        },
+        {
+          "id": "839:2441",
+          "name": "Selection=Checked, State=Focus",
+          "values": { "Selection": "Checked", "State": "Focus" }
+        },
+        {
+          "id": "839:2405",
+          "name": "Selection=Unchecked, State=Default",
+          "values": { "Selection": "Unchecked", "State": "Default" }
+        },
+        {
+          "id": "839:2421",
+          "name": "Selection=Unchecked, State=Disabled",
+          "values": { "Selection": "Unchecked", "State": "Disabled" }
+        },
+        {
+          "id": "839:2413",
+          "name": "Selection=Unchecked, State=Focus",
+          "values": { "Selection": "Unchecked", "State": "Focus" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": [
+              { "value": "Oddkin · Component roles/radius/none", "variants": [0, 1, 3, 4] },
+              { "value": "Oddkin · Component roles/radius/sm", "variants": [2, 5] }
+            ],
+            "bottomRightRadius": [
+              { "value": "Oddkin · Component roles/radius/none", "variants": [0, 1, 3, 4] },
+              { "value": "Oddkin · Component roles/radius/sm", "variants": [2, 5] }
+            ],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "minHeight": ["Oddkin · Component roles/control/height/lg"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "strokeBottomWeight": [
+              { "value": "Oddkin · Component roles/focus/width", "variants": [2, 5] }
+            ],
+            "strokeLeftWeight": [
+              { "value": "Oddkin · Component roles/focus/width", "variants": [2, 5] }
+            ],
+            "strokeRightWeight": [
+              { "value": "Oddkin · Component roles/focus/width", "variants": [2, 5] }
+            ],
+            "strokeTopWeight": [
+              { "value": "Oddkin · Component roles/focus/width", "variants": [2, 5] }
+            ],
+            "strokes": [
+              { "value": "Oddkin · Component roles/color/focus/ring", "variants": [2, 5] }
+            ],
+            "topLeftRadius": [
+              { "value": "Oddkin · Component roles/radius/none", "variants": [0, 1, 3, 4] },
+              { "value": "Oddkin · Component roles/radius/sm", "variants": [2, 5] }
+            ],
+            "topRightRadius": [
+              { "value": "Oddkin · Component roles/radius/none", "variants": [0, 1, 3, 4] },
+              { "value": "Oddkin · Component roles/radius/sm", "variants": [2, 5] }
+            ]
+          }
+        },
+        {
+          "path": ["Scope label and description"],
+          "types": ["FRAME"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/2xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/xs"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/md"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["Scope label and description", "scope.description"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Description"] }
+        },
+        {
+          "path": ["Scope label and description", "scope.label"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": [
+              { "value": "Oddkin · Component roles/color/text/disabled", "variants": [1, 4] },
+              { "value": "Oddkin · Component roles/color/text/primary", "variants": [0, 2, 3, 5] }
+            ],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/ui/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/ui/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/ui/letter-spacing"],
+            "textStyle": ["Oddkin/UI"]
+          },
+          "properties": { "characters": ["Label"] }
+        },
+        { "path": ["native radio indicator"], "types": ["INSTANCE"] }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/Common/radio",
+          "sourceId": "159:1209",
+          "count": 6,
+          "variants": [
+            "Selection=Checked, State=Default",
+            "Selection=Checked, State=Disabled",
+            "Selection=Unchecked, State=Default",
+            "Selection=Unchecked, State=Disabled"
+          ],
+          "overriddenFields": ["height", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "806:181",
+      "name": "Oddkin/AI/Internal/Status",
+      "page": "805:3",
+      "frame": "02 · Status presentation",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Form",
+          "type": "VARIANT",
+          "defaultValue": "Compact",
+          "variantOptions": ["Compact", "Outcome"]
+        },
+        {
+          "name": "State",
+          "type": "VARIANT",
+          "defaultValue": "Requested",
+          "variantOptions": [
+            "Requested",
+            "Submitting",
+            "Failed",
+            "Approved",
+            "Rejected",
+            "Expired",
+            "Superseded",
+            "Cancelled",
+            "Unavailable",
+            "NeedsInput",
+            "ResponseSubmitting"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "806:67",
+          "name": "State=Approved, Form=Compact",
+          "values": { "State": "Approved", "Form": "Compact" }
+        },
+        {
+          "id": "806:83",
+          "name": "State=Approved, Form=Outcome",
+          "values": { "State": "Approved", "Form": "Outcome" }
+        },
+        {
+          "id": "806:129",
+          "name": "State=Cancelled, Form=Compact",
+          "values": { "State": "Cancelled", "Form": "Compact" }
+        },
+        {
+          "id": "806:140",
+          "name": "State=Cancelled, Form=Outcome",
+          "values": { "State": "Cancelled", "Form": "Outcome" }
+        },
+        {
+          "id": "806:103",
+          "name": "State=Expired, Form=Compact",
+          "values": { "State": "Expired", "Form": "Compact" }
+        },
+        {
+          "id": "806:114",
+          "name": "State=Expired, Form=Outcome",
+          "values": { "State": "Expired", "Form": "Outcome" }
+        },
+        {
+          "id": "806:49",
+          "name": "State=Failed, Form=Compact",
+          "values": { "State": "Failed", "Form": "Compact" }
+        },
+        {
+          "id": "806:65",
+          "name": "State=Failed, Form=Outcome",
+          "values": { "State": "Failed", "Form": "Outcome" }
+        },
+        {
+          "id": "806:155",
+          "name": "State=NeedsInput, Form=Compact",
+          "values": { "State": "NeedsInput", "Form": "Compact" }
+        },
+        {
+          "id": "806:166",
+          "name": "State=NeedsInput, Form=Outcome",
+          "values": { "State": "NeedsInput", "Form": "Outcome" }
+        },
+        {
+          "id": "806:85",
+          "name": "State=Rejected, Form=Compact",
+          "values": { "State": "Rejected", "Form": "Compact" }
+        },
+        {
+          "id": "806:101",
+          "name": "State=Rejected, Form=Outcome",
+          "values": { "State": "Rejected", "Form": "Outcome" }
+        },
+        {
+          "id": "806:13",
+          "name": "State=Requested, Form=Compact",
+          "values": { "State": "Requested", "Form": "Compact" }
+        },
+        {
+          "id": "806:29",
+          "name": "State=Requested, Form=Outcome",
+          "values": { "State": "Requested", "Form": "Outcome" }
+        },
+        {
+          "id": "806:168",
+          "name": "State=ResponseSubmitting, Form=Compact",
+          "values": { "State": "ResponseSubmitting", "Form": "Compact" }
+        },
+        {
+          "id": "806:179",
+          "name": "State=ResponseSubmitting, Form=Outcome",
+          "values": { "State": "ResponseSubmitting", "Form": "Outcome" }
+        },
+        {
+          "id": "806:31",
+          "name": "State=Submitting, Form=Compact",
+          "values": { "State": "Submitting", "Form": "Compact" }
+        },
+        {
+          "id": "806:47",
+          "name": "State=Submitting, Form=Outcome",
+          "values": { "State": "Submitting", "Form": "Outcome" }
+        },
+        {
+          "id": "806:116",
+          "name": "State=Superseded, Form=Compact",
+          "values": { "State": "Superseded", "Form": "Compact" }
+        },
+        {
+          "id": "806:127",
+          "name": "State=Superseded, Form=Outcome",
+          "values": { "State": "Superseded", "Form": "Outcome" }
+        },
+        {
+          "id": "806:142",
+          "name": "State=Unavailable, Form=Compact",
+          "values": { "State": "Unavailable", "Form": "Compact" }
+        },
+        {
+          "id": "806:153",
+          "name": "State=Unavailable, Form=Outcome",
+          "values": { "State": "Unavailable", "Form": "Outcome" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        { "path": ["odd-badge · Approved"], "types": ["INSTANCE"], "in": [0] },
+        { "path": ["odd-badge · Expired"], "types": ["INSTANCE"], "in": [4] },
+        { "path": ["odd-badge · Needs your input"], "types": ["INSTANCE"], "in": [8] },
+        { "path": ["odd-badge · Not recorded"], "types": ["INSTANCE"], "in": [6] },
+        { "path": ["odd-badge · Rejected"], "types": ["INSTANCE"], "in": [10] },
+        { "path": ["odd-badge · Sending response"], "types": ["INSTANCE"], "in": [14] },
+        { "path": ["odd-badge · Submitting"], "types": ["INSTANCE"], "in": [16] },
+        { "path": ["odd-badge · Superseded"], "types": ["INSTANCE"], "in": [18] },
+        { "path": ["odd-badge · Unavailable"], "types": ["INSTANCE"], "in": [20] },
+        { "path": ["odd-badge · Waiting for your decision"], "types": ["INSTANCE"], "in": [12] },
+        { "path": ["odd-badge · Withdrawn"], "types": ["INSTANCE"], "in": [2] },
+        {
+          "path": ["state · focus recovery target"],
+          "types": ["TEXT"],
+          "in": [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21],
+          "bound": {
+            "fills": [
+              { "value": "Oddkin · Component roles/color/danger/foreground", "variants": [7, 11] },
+              { "value": "Oddkin · Component roles/color/success/foreground", "variants": [1] },
+              {
+                "value": "Oddkin · Component roles/color/text/secondary",
+                "variants": [3, 5, 9, 13, 15, 17, 19, 21]
+              }
+            ],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          }
+        }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/AI/Internal/BadgePresentation",
+          "sourceId": "837:2455",
+          "count": 11,
+          "variants": ["Tone=Danger", "Tone=Info", "Tone=Neutral", "Tone=Success", "Tone=Warning"],
+          "overriddenFields": [
+            "boundVariables",
+            "counterAxisSizingMode",
+            "height",
+            "itemSpacing",
+            "name",
+            "paddingBottom",
+            "paddingLeft",
+            "paddingRight",
+            "paddingTop",
+            "primaryAxisSizingMode",
+            "width"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "810:615",
+      "name": "Oddkin/AI/Internal/Waiting",
+      "page": "805:3",
+      "frame": "06 · Time and waiting",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Phase",
+          "type": "VARIANT",
+          "defaultValue": "NeedsInput",
+          "variantOptions": ["NeedsInput", "Submitting", "Mixed", "Continuing"]
+        }
+      ],
+      "variants": [
+        { "id": "846:2840", "name": "Phase=Continuing", "values": { "Phase": "Continuing" } },
+        { "id": "810:603", "name": "Phase=Mixed", "values": { "Phase": "Mixed" } },
+        { "id": "810:579", "name": "Phase=NeedsInput", "values": { "Phase": "NeedsInput" } },
+        { "id": "810:591", "name": "Phase=Submitting", "values": { "Phase": "Submitting" } }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["1 response recorded. 2 requests still need your input."],
+          "types": ["TEXT"],
+          "in": [1],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["2 approvals and 1 question need your response."],
+          "types": ["TEXT"],
+          "in": [2],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["Responses recorded. The paused run has not resumed yet."],
+          "types": ["TEXT"],
+          "in": [0],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["Your response is being recorded. No further action is needed yet."],
+          "types": ["TEXT"],
+          "in": [3],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        { "path": ["odd-badge · Sending your response…"], "types": ["INSTANCE"], "in": [3] },
+        {
+          "path": ["odd-badge · Waiting for the assistant to continue…"],
+          "types": ["INSTANCE"],
+          "in": [0]
+        },
+        { "path": ["odd-badge · Waiting for your input"], "types": ["INSTANCE"], "in": [1, 2] }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/AI/Internal/BadgePresentation",
+          "sourceId": "837:2455",
+          "count": 4,
+          "variants": ["Tone=Info", "Tone=Warning"],
+          "overriddenFields": ["height", "name", "width"]
+        }
+      ]
+    },
+    {
+      "id": "813:436",
+      "name": "Oddkin/AI/ActionApproval/Proposal",
+      "page": "805:4",
+      "frame": "03 · Revised component",
+      "kind": "COMPONENT_SET",
+      "properties": [
+        {
+          "name": "Content",
+          "type": "VARIANT",
+          "defaultValue": "Typical",
+          "variantOptions": [
+            "Typical",
+            "Minimal",
+            "ScopeRequired",
+            "ScopeSelected",
+            "ScopeDefaulted",
+            "OneScope",
+            "NewRevision",
+            "NoChanges",
+            "ReasonEntered",
+            "Long",
+            "Soon",
+            "Reject",
+            "MultipleChanges"
+          ]
+        },
+        {
+          "name": "Density",
+          "type": "VARIANT",
+          "defaultValue": "Full",
+          "variantOptions": ["Full", "Compact"]
+        },
+        {
+          "name": "Recorded reason",
+          "type": "TEXT",
+          "defaultValue": "Reason: Use the pilot region agreed with the support team."
+        },
+        { "name": "Show recorded reason", "type": "BOOLEAN", "defaultValue": false },
+        {
+          "name": "Status",
+          "type": "VARIANT",
+          "defaultValue": "requested",
+          "variantOptions": [
+            "requested",
+            "submitting",
+            "failed",
+            "approved",
+            "rejected",
+            "expired",
+            "superseded",
+            "cancelled"
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "id": "813:1489",
+          "name": "Status=approved, Content=Typical, Density=Compact",
+          "values": { "Status": "approved", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "813:249",
+          "name": "Status=approved, Content=Typical, Density=Full",
+          "values": { "Status": "approved", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "813:1640",
+          "name": "Status=cancelled, Content=Typical, Density=Compact",
+          "values": { "Status": "cancelled", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "813:400",
+          "name": "Status=cancelled, Content=Typical, Density=Full",
+          "values": { "Status": "cancelled", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "813:1568",
+          "name": "Status=expired, Content=Typical, Density=Compact",
+          "values": { "Status": "expired", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "813:328",
+          "name": "Status=expired, Content=Typical, Density=Full",
+          "values": { "Status": "expired", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "813:1199",
+          "name": "Status=failed, Content=ScopeSelected, Density=Full",
+          "values": { "Status": "failed", "Content": "ScopeSelected", "Density": "Full" }
+        },
+        {
+          "id": "813:1422",
+          "name": "Status=failed, Content=Typical, Density=Compact",
+          "values": { "Status": "failed", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "813:182",
+          "name": "Status=failed, Content=Typical, Density=Full",
+          "values": { "Status": "failed", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "813:1529",
+          "name": "Status=rejected, Content=Typical, Density=Compact",
+          "values": { "Status": "rejected", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "813:289",
+          "name": "Status=rejected, Content=Typical, Density=Full",
+          "values": { "Status": "rejected", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "813:987",
+          "name": "Status=requested, Content=Long, Density=Full",
+          "values": { "Status": "requested", "Content": "Long", "Density": "Full" }
+        },
+        {
+          "id": "813:437",
+          "name": "Status=requested, Content=Minimal, Density=Full",
+          "values": { "Status": "requested", "Content": "Minimal", "Density": "Full" }
+        },
+        {
+          "id": "849:8970",
+          "name": "Status=requested, Content=MultipleChanges, Density=Compact",
+          "values": { "Status": "requested", "Content": "MultipleChanges", "Density": "Compact" }
+        },
+        {
+          "id": "849:8865",
+          "name": "Status=requested, Content=MultipleChanges, Density=Full",
+          "values": { "Status": "requested", "Content": "MultipleChanges", "Density": "Full" }
+        },
+        {
+          "id": "813:795",
+          "name": "Status=requested, Content=NewRevision, Density=Full",
+          "values": { "Status": "requested", "Content": "NewRevision", "Density": "Full" }
+        },
+        {
+          "id": "813:886",
+          "name": "Status=requested, Content=NoChanges, Density=Full",
+          "values": { "Status": "requested", "Content": "NoChanges", "Density": "Full" }
+        },
+        {
+          "id": "813:733",
+          "name": "Status=requested, Content=OneScope, Density=Full",
+          "values": { "Status": "requested", "Content": "OneScope", "Density": "Full" }
+        },
+        {
+          "id": "813:929",
+          "name": "Status=requested, Content=ReasonEntered, Density=Full",
+          "values": { "Status": "requested", "Content": "ReasonEntered", "Density": "Full" }
+        },
+        {
+          "id": "813:643",
+          "name": "Status=requested, Content=ScopeDefaulted, Density=Full",
+          "values": { "Status": "requested", "Content": "ScopeDefaulted", "Density": "Full" }
+        },
+        {
+          "id": "813:454",
+          "name": "Status=requested, Content=ScopeRequired, Density=Full",
+          "values": { "Status": "requested", "Content": "ScopeRequired", "Density": "Full" }
+        },
+        {
+          "id": "813:553",
+          "name": "Status=requested, Content=ScopeSelected, Density=Full",
+          "values": { "Status": "requested", "Content": "ScopeSelected", "Density": "Full" }
+        },
+        {
+          "id": "813:1053",
+          "name": "Status=requested, Content=Soon, Density=Full",
+          "values": { "Status": "requested", "Content": "Soon", "Density": "Full" }
+        },
+        {
+          "id": "813:1276",
+          "name": "Status=requested, Content=Typical, Density=Compact",
+          "values": { "Status": "requested", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "813:13",
+          "name": "Status=requested, Content=Typical, Density=Full",
+          "values": { "Status": "requested", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "813:1123",
+          "name": "Status=submitting, Content=Reject, Density=Full",
+          "values": { "Status": "submitting", "Content": "Reject", "Density": "Full" }
+        },
+        {
+          "id": "813:1346",
+          "name": "Status=submitting, Content=Typical, Density=Compact",
+          "values": { "Status": "submitting", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "813:103",
+          "name": "Status=submitting, Content=Typical, Density=Full",
+          "values": { "Status": "submitting", "Content": "Typical", "Density": "Full" }
+        },
+        {
+          "id": "813:1604",
+          "name": "Status=superseded, Content=Typical, Density=Compact",
+          "values": { "Status": "superseded", "Content": "Typical", "Density": "Compact" }
+        },
+        {
+          "id": "813:364",
+          "name": "Status=superseded, Content=Typical, Density=Full",
+          "values": { "Status": "superseded", "Content": "Typical", "Density": "Full" }
+        }
+      ],
+      "layers": [
+        {
+          "path": [],
+          "types": ["COMPONENT"],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/lg"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/lg"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "fills": ["Oddkin · Component roles/color/surface/default"],
+            "itemSpacing": ["Oddkin · Component roles/space/md"],
+            "paddingBottom": [
+              {
+                "value": "Oddkin · Component roles/space/lg",
+                "variants": [
+                  1, 3, 5, 6, 8, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 27, 29
+                ]
+              },
+              {
+                "value": "Oddkin · Component roles/space/md",
+                "variants": [0, 2, 4, 7, 9, 13, 23, 26, 28]
+              }
+            ],
+            "paddingLeft": [
+              {
+                "value": "Oddkin · Component roles/space/lg",
+                "variants": [
+                  1, 3, 5, 6, 8, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 27, 29
+                ]
+              },
+              {
+                "value": "Oddkin · Component roles/space/md",
+                "variants": [0, 2, 4, 7, 9, 13, 23, 26, 28]
+              }
+            ],
+            "paddingRight": [
+              {
+                "value": "Oddkin · Component roles/space/lg",
+                "variants": [
+                  1, 3, 5, 6, 8, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 27, 29
+                ]
+              },
+              {
+                "value": "Oddkin · Component roles/space/md",
+                "variants": [0, 2, 4, 7, 9, 13, 23, 26, 28]
+              }
+            ],
+            "paddingTop": [
+              {
+                "value": "Oddkin · Component roles/space/lg",
+                "variants": [
+                  1, 3, 5, 6, 8, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 27, 29
+                ]
+              },
+              {
+                "value": "Oddkin · Component roles/space/md",
+                "variants": [0, 2, 4, 7, 9, 13, 23, 26, 28]
+              }
+            ],
+            "strokeBottomWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeLeftWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeRightWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokeTopWeight": ["Oddkin · Component roles/border/width/default"],
+            "strokes": ["Oddkin · Component roles/color/border/default"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/lg"],
+            "topRightRadius": ["Oddkin · Component roles/radius/lg"]
+          }
+        },
+        {
+          "path": ["actions · shared decision row"],
+          "types": ["INSTANCE"],
+          "in": [6, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
+        },
+        {
+          "path": ["approval.reason · host confirmed"],
+          "types": ["TEXT"],
+          "in": [0, 1, 9, 10],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          },
+          "properties": { "characters": ["Recorded reason"], "visible": ["Show recorded reason"] }
+        },
+        {
+          "path": ["approval.summary"],
+          "types": ["TEXT"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 29
+          ],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          }
+        },
+        {
+          "path": ["approval.target"],
+          "types": ["TEXT"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 29
+          ],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/mono"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/code/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/code/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/code/letter-spacing"],
+            "textStyle": ["Oddkin/Code"]
+          }
+        },
+        {
+          "path": ["approval.title"],
+          "types": ["TEXT"],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/primary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/md"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/semibold"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/AI/title"]
+          }
+        },
+        { "path": ["changes · Rollout"], "types": ["INSTANCE"], "in": [13, 14] },
+        { "path": ["changes · Support notifications"], "types": ["INSTANCE"], "in": [13, 14] },
+        {
+          "path": ["changes · shared read-only diff"],
+          "types": ["INSTANCE"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+            26, 27, 28, 29
+          ]
+        },
+        {
+          "path": ["disclosure trigger · Reason (optional)"],
+          "types": ["INSTANCE"],
+          "in": [11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 26, 27]
+        },
+        {
+          "path": ["odd-textarea · Reason (optional)"],
+          "types": ["INSTANCE"],
+          "in": [6, 7, 8, 18, 25]
+        },
+        {
+          "path": ["risk and expiry"],
+          "types": ["FRAME"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+            25, 26, 27, 28, 29
+          ],
+          "bound": {
+            "bottomLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "bottomRightRadius": ["Oddkin · Component roles/radius/none"],
+            "counterAxisSpacing": ["Oddkin · Component roles/space/none"],
+            "itemSpacing": ["Oddkin · Component roles/space/xs"],
+            "paddingBottom": ["Oddkin · Component roles/space/none"],
+            "paddingLeft": ["Oddkin · Component roles/space/none"],
+            "paddingRight": ["Oddkin · Component roles/space/none"],
+            "paddingTop": ["Oddkin · Component roles/space/none"],
+            "topLeftRadius": ["Oddkin · Component roles/radius/none"],
+            "topRightRadius": ["Oddkin · Component roles/radius/none"]
+          }
+        },
+        {
+          "path": ["risk and expiry", "approval.expiresAt"],
+          "types": ["TEXT"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25,
+            26, 27, 28, 29
+          ],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/type/small/size"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/type/small/weight"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/type/small/letter-spacing"],
+            "textStyle": ["Oddkin/Small"]
+          }
+        },
+        {
+          "path": ["risk and expiry", "odd-badge · Expires 10:05"],
+          "types": ["INSTANCE"],
+          "in": [22]
+        },
+        {
+          "path": ["risk and expiry", "odd-badge · Risk: high"],
+          "types": ["INSTANCE"],
+          "in": [11]
+        },
+        {
+          "path": ["risk and expiry", "odd-badge · Risk: medium"],
+          "types": ["INSTANCE"],
+          "in": [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+            26, 27, 28, 29
+          ]
+        },
+        { "path": ["scope · Approved"], "types": ["INSTANCE"], "in": [0, 1] },
+        { "path": ["scope · Defaulted"], "types": ["INSTANCE"], "in": [19] },
+        {
+          "path": ["scope · None"],
+          "types": ["INSTANCE"],
+          "in": [7, 8, 9, 10, 11, 12, 13, 14, 16, 18, 22, 23, 24, 25, 26, 27]
+        },
+        { "path": ["scope · One"], "types": ["INSTANCE"], "in": [17] },
+        { "path": ["scope · Required"], "types": ["INSTANCE"], "in": [20] },
+        { "path": ["scope · Reset"], "types": ["INSTANCE"], "in": [15] },
+        { "path": ["scope · Selected"], "types": ["INSTANCE"], "in": [6, 21] },
+        {
+          "path": ["state"],
+          "types": ["TEXT"],
+          "in": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+          "bound": {
+            "fills": ["Oddkin · Component roles/color/text/secondary"],
+            "fontFamily": ["Oddkin · Repository tokens/figma/font/family/sans"],
+            "fontSize": ["Oddkin · Repository tokens/repo/font/size/sm"],
+            "fontWeight": ["Oddkin · Repository tokens/repo/font/weight/regular"],
+            "letterSpacing": ["Oddkin · Repository tokens/repo/letter-spacing/normal"],
+            "textStyle": ["Oddkin/Component/Field/small"]
+          }
+        },
+        { "path": ["state · approved"], "types": ["INSTANCE"], "in": [0, 1] },
+        { "path": ["state · cancelled"], "types": ["INSTANCE"], "in": [2, 3] },
+        { "path": ["state · expired"], "types": ["INSTANCE"], "in": [4, 5] },
+        { "path": ["state · rejected"], "types": ["INSTANCE"], "in": [9, 10] },
+        { "path": ["state · superseded"], "types": ["INSTANCE"], "in": [28, 29] }
+      ],
+      "instances": [
+        {
+          "source": "Oddkin/AI/Internal/BadgePresentation",
+          "sourceId": "837:2455",
+          "count": 30,
+          "variants": ["Tone=Danger", "Tone=Neutral", "Tone=Warning"],
+          "overriddenFields": ["height", "name", "width"]
+        },
+        {
+          "source": "Oddkin/AI/Internal/DecisionRow/Approval",
+          "sourceId": "807:427",
+          "count": 20,
+          "variants": [
+            "State=Failed, Density=Compact",
+            "State=Failed, Density=Full",
+            "State=Ready, Density=Compact",
+            "State=Ready, Density=Full",
+            "State=SubmittingPrimary, Density=Compact",
+            "State=SubmittingPrimary, Density=Full",
+            "State=SubmittingSecondary, Density=Full"
+          ],
+          "overriddenFields": [
+            "componentProperties",
+            "counterAxisSizingMode",
+            "height",
+            "layoutAlign",
+            "name",
+            "primaryAxisSizingMode",
+            "textAutoResize",
+            "width"
+          ]
+        },
+        {
+          "source": "Oddkin/AI/Internal/DiffView",
+          "sourceId": "809:671",
+          "count": 32,
+          "variants": [
+            "View=Inline, Granularity=Lines, Context=Collapsed, Density=Full, Content=Typical",
+            "View=Inline, Granularity=Lines, Context=Expanded, Density=Full, Content=Long"
+          ],
+          "overriddenFields": [
+            "characters",
+            "counterAxisSizingMode",
+            "height",
+            "layoutAlign",
+            "name",
+            "primaryAxisSizingMode",
+            "styledTextSegments",
+            "textAutoResize",
+            "visible",
+            "width"
+          ]
+        },
+        {
+          "source": "Oddkin/AI/Internal/DisclosureTrigger",
+          "sourceId": "812:627",
+          "count": 14,
+          "variants": [],
+          "overriddenFields": ["boundVariables", "componentProperties", "height", "name", "width"]
+        },
+        {
+          "source": "Oddkin/AI/Internal/ReasonField",
+          "sourceId": "834:2353",
+          "count": 5,
+          "variants": ["State=Disabled", "State=Filled"],
+          "overriddenFields": ["height", "name", "primaryAxisSizingMode", "width"]
+        },
+        {
+          "source": "Oddkin/AI/Internal/ScopeChoice",
+          "sourceId": "808:514",
+          "count": 24,
+          "variants": [
+            "State=Approved",
+            "State=Defaulted",
+            "State=None",
+            "State=One",
+            "State=Required",
+            "State=Reset",
+            "State=Selected"
+          ],
+          "overriddenFields": [
+            "height",
+            "layoutAlign",
+            "name",
+            "primaryAxisSizingMode",
+            "textAutoResize",
+            "width"
+          ]
+        },
+        {
+          "source": "Oddkin/AI/Internal/Status",
+          "sourceId": "806:181",
+          "count": 10,
+          "variants": [
+            "State=Approved, Form=Outcome",
+            "State=Cancelled, Form=Outcome",
+            "State=Expired, Form=Outcome",
+            "State=Rejected, Form=Outcome",
+            "State=Superseded, Form=Outcome"
+          ],
+          "overriddenFields": ["height", "layoutAlign", "name", "width"]
+        }
+      ]
     }
   ]
 }

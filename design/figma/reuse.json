@@ -10,17 +10,233 @@
     "slot": "Slot content: the author supplies it; no dependency.",
     "native": "Native element: the platform draws it; no dependency.",
     "independent": "Looks alike, independent: no shared decision.",
-    "deferred": "Not classified (data grid, deferred by the owner)."
+    "deferred": "Not classified: the data grid (deferred by the owner) and the AI redesign's parts until they are built (ADR 0049, \"The design specs\")."
   },
   "counts": {
     "style": 116,
     "slot": 54,
-    "deferred": 11,
+    "deferred": 35,
     "controller": 18,
     "native": 7,
     "element": 14
   },
   "references": [
+    {
+      "consumer": "Oddkin/AI/ActionApproval/Proposal",
+      "consumerId": "813:436",
+      "source": "Oddkin/AI/Internal/BadgePresentation",
+      "sourceId": "837:2455",
+      "count": 30,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/ActionApproval/Proposal",
+      "consumerId": "813:436",
+      "source": "Oddkin/AI/Internal/DecisionRow/Approval",
+      "sourceId": "807:427",
+      "count": 20,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/ActionApproval/Proposal",
+      "consumerId": "813:436",
+      "source": "Oddkin/AI/Internal/DiffView",
+      "sourceId": "809:671",
+      "count": 32,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/ActionApproval/Proposal",
+      "consumerId": "813:436",
+      "source": "Oddkin/AI/Internal/DisclosureTrigger",
+      "sourceId": "812:627",
+      "count": 14,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/ActionApproval/Proposal",
+      "consumerId": "813:436",
+      "source": "Oddkin/AI/Internal/ReasonField",
+      "sourceId": "834:2353",
+      "count": 5,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/ActionApproval/Proposal",
+      "consumerId": "813:436",
+      "source": "Oddkin/AI/Internal/ScopeChoice",
+      "sourceId": "808:514",
+      "count": 24,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/ActionApproval/Proposal",
+      "consumerId": "813:436",
+      "source": "Oddkin/AI/Internal/Status",
+      "sourceId": "806:181",
+      "count": 10,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/BadgePresentation",
+      "consumerId": "837:2455",
+      "source": "Oddkin/Icon/checkCircle",
+      "sourceId": "159:339",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/BadgePresentation",
+      "consumerId": "837:2455",
+      "source": "Oddkin/Icon/info",
+      "sourceId": "159:333",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/BadgePresentation",
+      "consumerId": "837:2455",
+      "source": "Oddkin/Icon/warning",
+      "sourceId": "159:336",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/DecisionRow/Approval",
+      "consumerId": "807:427",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 30,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/DecisionRow/ChangeReview",
+      "consumerId": "807:820",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 20,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/DecisionRow/Checkpoint",
+      "consumerId": "807:940",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 8,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/DecisionRow/CheckpointConfirmation",
+      "consumerId": "826:1858",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 16,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/DecisionRow/Question",
+      "consumerId": "807:625",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 20,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/DecisionRow/ReviewDismiss",
+      "consumerId": "826:1691",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 8,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/DecisionRow/ReviewUndo",
+      "consumerId": "826:1596",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 8,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/DiffView",
+      "consumerId": "809:671",
+      "source": "Oddkin/AI/Internal/DisclosureTrigger",
+      "sourceId": "812:627",
+      "count": 16,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/DisclosureTrigger",
+      "consumerId": "812:627",
+      "source": "Oddkin/Common/button",
+      "sourceId": "159:439",
+      "count": 1,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/Expiry",
+      "consumerId": "810:575",
+      "source": "Oddkin/AI/Internal/BadgePresentation",
+      "sourceId": "837:2455",
+      "count": 2,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/ScopeChoice",
+      "consumerId": "808:514",
+      "source": "Oddkin/AI/Internal/ScopeOption",
+      "sourceId": "839:2463",
+      "count": 12,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/ScopeOption",
+      "consumerId": "839:2463",
+      "source": "Oddkin/Common/radio",
+      "sourceId": "159:1209",
+      "count": 6,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/Status",
+      "consumerId": "806:181",
+      "source": "Oddkin/AI/Internal/BadgePresentation",
+      "sourceId": "837:2455",
+      "count": 11,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
+    {
+      "consumer": "Oddkin/AI/Internal/Waiting",
+      "consumerId": "810:615",
+      "source": "Oddkin/AI/Internal/BadgePresentation",
+      "sourceId": "837:2455",
+      "count": 4,
+      "class": "deferred",
+      "reason": "Not built yet: Agent 2 classifies this reference when it builds the part (the AI redesign, ADR 0049 \"The design specs\"; rows 20 and 21)."
+    },
     {
       "consumer": "Oddkin/Common/CheckboxOption",
       "consumerId": "258:824",
