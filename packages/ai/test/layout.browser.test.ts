@@ -438,10 +438,11 @@ describe('odd-artifact', () => {
     // choice at the end of the next row.
     const header = $(el, '.header');
     expectRow(header, space('sm'));
-    await expectWraps(header, '12rem');
     expect(getComputedStyle($(el, '.toolbar')).justifyContent).toBe('space-between');
     expectRow($(el, '.toolbar > .actions'), space('xs'));
     expectRow($(el, '.view'), space('sm'));
+    // Last: the container stays narrow after it, where the toolbar's rows wrap in a wide font.
+    await expectWraps(header, '12rem');
   });
 });
 

@@ -6044,3 +6044,11 @@ The owner asked to publish to npm by hand with two-factor approval in Chrome (tr
 | Elements | `browser-set.mjs` on the AI contract, conversation (new: the activity line reads "Waiting for your input" while the approval waits, then "Responding…"), elements, layout, and Figma parity files | 288 passed, 4 skipped in each of Chromium, Firefox, and WebKit |
 | Probes | `mutate.mjs`, 5 mutants: an approval request leaves the attempt streaming; a decision on its way still waits; a closed stream keeps the wait; a finished wait streams again after the decision; the activity scans the tools for approvals again | 5 killed |
 | Repository | `npm run build`, `npm run typecheck`, `npm run verify:metadata`, `npm run size`, `npm run lint` | Each exit 0; `ai-headless` 13,948 B gzip (+105), `ai-chat` 56,543 (−17), `ai-response` 24,623 (0): no budget changes |
+
+## 2026-11-08 — The artifact layout test measures its rows before the narrow check (round 11, Agent 2; CI on 7980090)
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Reproduced | The artifact test in Chromium, with the test's wide font (Verdana) adopted for the toolbar checks after the 12rem wrap check | Fails as CI did: items on the first line, expected 1 to be greater than 1 |
+| The fix in a wide font | The reordered test, with the wide font adopted for the row checks at 40rem | 2 passed |
+| The file | `browser-set.mjs packages/ai/test/layout.browser.test.ts` | 30 passed in each of Chromium, Firefox, and WebKit |
