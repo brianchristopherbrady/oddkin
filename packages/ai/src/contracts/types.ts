@@ -93,6 +93,26 @@ export interface AttemptRecord {
   readonly stop: StopState;
   readonly error?: PublicError | undefined;
   readonly usage?: Usage | undefined;
+  /** What the attempt waits for; set by the conversation controller while it waits. */
+  readonly wait?: AttemptWait | undefined;
+}
+
+/** An open approval or question an attempt waits on. */
+export interface WaitRequest {
+  readonly kind: 'approval' | 'question';
+  readonly id: string;
+}
+
+/**
+ * What an attempt waits for (ADR 0049 §6 item 2), recomputed after every change to its approvals
+ * and questions. Both lists empty: the person has answered everything, and the attempt waits for
+ * the work to continue.
+ */
+export interface AttemptWait {
+  /** Requests that need the person: not decided yet, or a decision that did not reach the backend. */
+  readonly action: readonly WaitRequest[];
+  /** Responses on their way to the backend. */
+  readonly submitting: readonly WaitRequest[];
 }
 
 export type HistoryState = 'idle' | 'loading' | 'complete' | 'error';
@@ -181,7 +201,8 @@ export type AiEvent = EventIdentity &
         readonly type: 'approval-resolved';
         readonly approvalId: string;
         readonly revision: number;
-        readonly status: 'approved' | 'rejected' | 'expired' | 'superseded';
+        /** `cancelled`: the host or backend withdrew the request, or its action can no longer run. */
+        readonly status: 'approved' | 'rejected' | 'expired' | 'superseded' | 'cancelled';
       }
     | { readonly type: 'artifact'; readonly artifact: ArtifactRecord }
     | { readonly type: 'usage'; readonly usage: Usage }

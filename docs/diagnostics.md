@@ -14,20 +14,20 @@ RF-19's audit ([release-foundation-plan.md](./commercialization/release-foundati
 | `ai.attachment.type` | — | *(computed at run time)* | *review* | `packages/ai/src/controllers/composer.ts:138` |
 | `ai.attachment.size` | — | *(computed at run time)* | *review* | `packages/ai/src/controllers/composer.ts:146` |
 | `ai.attachment.count` | — | *(computed at run time)* | *review* | `packages/ai/src/controllers/composer.ts:154` |
-| `ai.send.failed` | — | The message could not be sent. Try again. | yes | `packages/ai/src/controllers/conversation.ts:84` |
-| `ai.approval.failed` | — | The decision could not be submitted. Try again. | yes | `packages/ai/src/controllers/conversation.ts:89` |
-| `ai.stream.failed` | — | The response failed. Try again. | yes | `packages/ai/src/controllers/conversation.ts:94` |
-| `ai.stop.stale` | — | Ignored a stop response for an older request; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:437` |
-| `ai.feedback.failed` | — | Feedback was not sent. Try again. | yes | `packages/ai/src/controllers/conversation.ts:650` |
-| `ai.event.stale` | — | Dropped a late "{event?.type}" event of an attempt that is no longer current; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:706` |
-| `ai.event.invalid` | — | Dropped a malformed event; check that the transport sends AI events with a type. | yes | `packages/ai/src/controllers/conversation.ts:715` |
-| `ai.event.duplicate` | — | Dropped a replayed "{event.type}" event; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:724` |
-| `ai.event.afterTerminal` | — | Dropped "{event.type}" after the attempt ended; check that the transport sends nothing after finish, abort, or error. | yes | `packages/ai/src/controllers/conversation.ts:735` |
-| `ai.snapshot.scope` | — | Ignored a snapshot for another message; check the snapshot names the attempt's message. | yes | `packages/ai/src/controllers/conversation.ts:904` |
-| `ai.event.metadata` | — | Provider metadata is not rendered; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:932` |
-| `ai.event.unknown` | — | Ignored unknown event "{(event as { type: string }).type}"; check the transport's mapping to AI events. | yes | `packages/ai/src/controllers/conversation.ts:940` |
-| `ai.approval.stale` | — | Ignored an older approval revision; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:1037` |
-| `ai.tool.transition` | — | Ignored {t.status} → {status} for {toolCallId}; check the order of the transport's tool events. | yes | `packages/ai/src/controllers/conversation.ts:1102` |
+| `ai.send.failed` | — | The message could not be sent. Try again. | yes | `packages/ai/src/controllers/conversation.ts:86` |
+| `ai.approval.failed` | — | The decision could not be submitted. Try again. | yes | `packages/ai/src/controllers/conversation.ts:91` |
+| `ai.stream.failed` | — | The response failed. Try again. | yes | `packages/ai/src/controllers/conversation.ts:96` |
+| `ai.stop.stale` | — | Ignored a stop response for an older request; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:442` |
+| `ai.feedback.failed` | — | Feedback was not sent. Try again. | yes | `packages/ai/src/controllers/conversation.ts:662` |
+| `ai.event.stale` | — | Dropped a late "{event?.type}" event of an attempt that is no longer current; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:717` |
+| `ai.event.invalid` | — | Dropped a malformed event; check that the transport sends AI events with a type. | yes | `packages/ai/src/controllers/conversation.ts:726` |
+| `ai.event.duplicate` | — | Dropped a replayed "{event.type}" event; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:735` |
+| `ai.event.afterTerminal` | — | Dropped "{event.type}" after the attempt ended; check that the transport sends nothing after finish, abort, or error. | yes | `packages/ai/src/controllers/conversation.ts:746` |
+| `ai.snapshot.scope` | — | Ignored a snapshot for another message; check the snapshot names the attempt's message. | yes | `packages/ai/src/controllers/conversation.ts:915` |
+| `ai.event.metadata` | — | Provider metadata is not rendered; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:944` |
+| `ai.event.unknown` | — | Ignored unknown event "{(event as { type: string }).type}"; check the transport's mapping to AI events. | yes | `packages/ai/src/controllers/conversation.ts:952` |
+| `ai.approval.stale` | — | Ignored an older approval revision; nothing to do. | yes | `packages/ai/src/controllers/conversation.ts:1073` |
+| `ai.tool.transition` | — | Ignored {t.status} → {status} for {toolCallId}; check the order of the transport's tool events. | yes | `packages/ai/src/controllers/conversation.ts:1138` |
 | `ai.edit.range` | — | The proposal does not match the text; propose it again against the current text. | yes | `packages/ai/src/controllers/document.ts:223` |
 | `ai.renderers.legacy` | warning | Pass { {legacy}: … } to renderers; the old map works until the next beta. | yes | `packages/ai/src/internal/renderers.ts:39` |
 | `ai.attachment.type` | — | {name} is not an accepted file type. Choose another file. | yes | `packages/ai/src/prompt-input/prompt-input.ts:35` |
@@ -39,16 +39,16 @@ RF-19's audit ([release-foundation-plan.md](./commercialization/release-foundati
 | `ai.approval.failed` | — | The decision could not be recorded. Try again. | yes | `packages/ai/src/stream/simulation.ts:262` |
 | `ai.approval.failed` | — | The decision could not be recorded. Try again. | yes | `packages/ai/src/stream/simulation.ts:267` |
 | `ai.feedback.failed` | — | Feedback could not be sent. Try again. | yes | `packages/ai/src/stream/simulation.ts:298` |
-| `ui-stream.afterDone` | — | Ignored data after [DONE]; check that the server ends the stream there. | yes | `packages/ai/src/stream/ui-message-stream.ts:81` |
-| `ui-stream.json` | — | Ignored a chunk that is not JSON; check that the server sends UI message stream chunks. | yes | `packages/ai/src/stream/ui-message-stream.ts:95` |
-| `ui-stream.chunk` | — | Ignored a chunk without a type; check that the server sends UI message stream chunks. | yes | `packages/ai/src/stream/ui-message-stream.ts:107` |
-| `ui-stream.invalid` | — | Ignored "{chunk.type}": invalid {field}; check the chunk against the UI message stream protocol. | yes | `packages/ai/src/stream/ui-message-stream.ts:120` |
-| `ai.stream.error` | — | *(computed at run time)* | *review* | `packages/ai/src/stream/ui-message-stream.ts:214` |
-| `ai.tool.input` | — | *(computed at run time)* | *review* | `packages/ai/src/stream/ui-message-stream.ts:248` |
-| `ai.tool.failed` | — | *(computed at run time)* | *review* | `packages/ai/src/stream/ui-message-stream.ts:306` |
-| `ui-stream.unsupported` | — | Ignored unsupported chunk "{chunk.type}"; nothing to do unless the response needs it. | yes | `packages/ai/src/stream/ui-message-stream.ts:351` |
-| `ui-stream.header` | — | Missing {UI_MESSAGE_STREAM_HEADER}: {UI_MESSAGE_STREAM_VERSION}; send the header with the stream response. | yes | `packages/ai/src/stream/ui-message-stream.ts:474` |
-| `ai.approval.response` | — | The decision response was not understood; check what the server returns for a decision. | yes | `packages/ai/src/stream/ui-message-stream.ts:550` |
+| `ui-stream.afterDone` | — | Ignored data after [DONE]; check that the server ends the stream there. | yes | `packages/ai/src/stream/ui-message-stream.ts:88` |
+| `ui-stream.json` | — | Ignored a chunk that is not JSON; check that the server sends UI message stream chunks. | yes | `packages/ai/src/stream/ui-message-stream.ts:102` |
+| `ui-stream.chunk` | — | Ignored a chunk without a type; check that the server sends UI message stream chunks. | yes | `packages/ai/src/stream/ui-message-stream.ts:114` |
+| `ui-stream.invalid` | — | Ignored "{chunk.type}": invalid {field}; check the chunk against the UI message stream protocol. | yes | `packages/ai/src/stream/ui-message-stream.ts:127` |
+| `ai.stream.error` | — | *(computed at run time)* | *review* | `packages/ai/src/stream/ui-message-stream.ts:221` |
+| `ai.tool.input` | — | *(computed at run time)* | *review* | `packages/ai/src/stream/ui-message-stream.ts:255` |
+| `ai.tool.failed` | — | *(computed at run time)* | *review* | `packages/ai/src/stream/ui-message-stream.ts:317` |
+| `ui-stream.unsupported` | — | Ignored unsupported chunk "{chunk.type}"; nothing to do unless the response needs it. | yes | `packages/ai/src/stream/ui-message-stream.ts:368` |
+| `ui-stream.header` | — | Missing {UI_MESSAGE_STREAM_HEADER}: {UI_MESSAGE_STREAM_VERSION}; send the header with the stream response. | yes | `packages/ai/src/stream/ui-message-stream.ts:491` |
+| `ai.approval.response` | — | The decision response was not understood; check what the server returns for a decision. | yes | `packages/ai/src/stream/ui-message-stream.ts:567` |
 
 ## @oddkin/analyzer
 

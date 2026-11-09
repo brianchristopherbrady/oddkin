@@ -90,9 +90,9 @@ export class OddkinToolCall extends OddkinElement.with({
     const gate = this.approval?.status;
     return !gate || gate === 'approved' || !tool.status.startsWith('input-')
       ? tool.status
-      : gate === 'rejected' || gate === 'expired' || gate === 'superseded'
-        ? 'notRun'
-        : 'waiting';
+      : gate === 'requested' || gate === 'submitting' || gate === 'failed'
+        ? 'waiting'
+        : 'notRun';
   }
 
   /** @internal */

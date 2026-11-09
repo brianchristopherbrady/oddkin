@@ -27,6 +27,7 @@ import type {
   AttemptRelation,
   AttemptStatus,
   AttemptTarget,
+  AttemptWait,
   BranchPosition,
   Capabilities,
   ConversationSnapshot,
@@ -40,6 +41,7 @@ import type {
   PublicError,
   ToolCallRecord,
   ToolStatus,
+  WaitRequest,
 } from '../contracts/types.js';
 import { createId } from '../internal/ids.js';
 import {
@@ -152,8 +154,11 @@ export class ConversationController implements ExternalSource<ConversationState>
   #sinks = new Map<string, Sink>();
   #replay = new Map<string, ReplayState>();
   #stepStart = new Map<string, number>();
-  /** Attempts whose stream finished awaiting input: they wait without a stream. */
-  #finishedWaiting = new Set<string>();
+  /**
+   * Attempts whose stream ended paused for input (`finish` with `awaiting-input`): they wait without
+   * a stream until new events arrive. `true` when requests were open at the pause.
+   */
+  #paused = new Map<string, boolean>();
   #pendingDecisions = new Set<string>();
   #pendingStops = new Map<string, number>();
   #disposed = false;
@@ -530,7 +535,11 @@ export class ConversationController implements ExternalSource<ConversationState>
       return {
         ok: false,
         reason:
-          approval.status === 'expired' || approval.status === 'superseded' ? 'stale' : 'duplicate',
+          approval.status === 'expired' ||
+          approval.status === 'superseded' ||
+          approval.status === 'cancelled'
+            ? 'stale'
+            : 'duplicate',
       };
     if (approval.expiresAt && Date.parse(approval.expiresAt) <= Date.now()) {
       this.#setApproval(approvalId, revision, 'expired');
@@ -564,6 +573,9 @@ export class ConversationController implements ExternalSource<ConversationState>
             ? 'expired'
             : 'superseded';
       this.#setApproval(approvalId, revision, status);
+      // The record decides: a request withdrawn or decided elsewhere meanwhile keeps its outcome.
+      if (this.#state.peek().approvals[approvalId]?.status !== status)
+        return { ok: false, reason: 'stale' };
       return outcome === 'accepted' ? { ok: true } : { ok: false, reason: 'stale' };
     } catch (error) {
       if (generation !== this.#generation) return { ok: false, reason: 'stale' };
@@ -694,8 +706,7 @@ export class ConversationController implements ExternalSource<ConversationState>
       ...a,
       connection: 'closed',
       // A closed connection is not completion: without a terminal event the outcome is unknown.
-      status:
-        isTerminal(a.status) || this.#finishedWaiting.has(attemptId) ? a.status : 'interrupted',
+      status: isTerminal(a.status) || this.#paused.has(attemptId) ? a.status : 'interrupted',
     }));
   }
 
@@ -861,10 +872,10 @@ export class ConversationController implements ExternalSource<ConversationState>
         return;
       case 'tool-denied': {
         this.#moveTool(event.toolCallId, 'denied');
-        // The backend refused the call: an approval still open is rejected with it.
+        // A refusal is not a person's rejection: an approval still open is withdrawn.
         const now = this.#state.peek();
         const approval = now.approvals[now.tools[event.toolCallId]?.approvalId ?? ''];
-        if (approval) this.#setApproval(approval.approvalId, approval.revision, 'rejected');
+        if (approval) this.#setApproval(approval.approvalId, approval.revision, 'cancelled');
         return;
       }
       case 'approval-request':
@@ -919,7 +930,8 @@ export class ConversationController implements ExternalSource<ConversationState>
         return;
       }
       case 'finish':
-        if (event.status === 'awaiting-input') this.#finishedWaiting.add(id);
+        // Paused for input: the requests stay answerable without a stream.
+        if (event.status === 'awaiting-input') this.#paused.set(id, !!this.#wait(id));
         this.#terminate(id, event.status ?? 'completed');
         return;
       case 'abort':
@@ -947,7 +959,8 @@ export class ConversationController implements ExternalSource<ConversationState>
   }
 
   #markStreaming(attemptId: string): void {
-    let started = false;
+    // Events after a paused end: the work goes on, so the wait is recomputed without the pause.
+    let started = this.#paused.delete(attemptId);
     this.#updateAttempt(attemptId, (a) => {
       const connection =
         a.connection === 'connecting' || a.connection === 'reconnecting' ? 'open' : a.connection;
@@ -955,26 +968,49 @@ export class ConversationController implements ExternalSource<ConversationState>
         a.status === 'submitted' || a.status === 'accepted' || a.status === 'interrupted'
           ? 'streaming'
           : a.status;
-      started = status !== a.status;
+      started ||= status !== a.status;
       return connection === a.connection && status === a.status ? a : { ...a, connection, status };
     });
     // A resumed stream may find an approval still waiting.
     if (started) this.#syncWaiting(attemptId);
   }
 
-  /** While one of its approvals waits for the person, a streaming attempt awaits input. */
+  /** The attempt's open requests: those that need the person, and those being submitted. */
+  #wait(attemptId: string): AttemptWait | undefined {
+    const action: WaitRequest[] = [];
+    const submitting: WaitRequest[] = [];
+    for (const approval of Object.values(this.#state.peek().approvals)) {
+      if (approval.attemptId !== attemptId) continue;
+      const request: WaitRequest = { kind: 'approval', id: approval.approvalId };
+      if (approval.status === 'submitting') submitting.push(request);
+      else if (awaitsPerson(approval.status)) action.push(request);
+    }
+    return action.length || submitting.length ? { action, submitting } : undefined;
+  }
+
+  /**
+   * Recompute the attempt's wait descriptor after any change to its requests, so one resolution
+   * never clears another open request. A streaming attempt awaits input while a request needs the
+   * person and streams again once none does; an attempt paused for requests keeps an empty
+   * descriptor once they are answered, waiting for the work to go on (ADR 0049 §6 item 2).
+   */
   #syncWaiting(attemptId: string): void {
-    const now = this.#state.peek();
-    const waiting = Object.values(now.approvals).some(
-      (approval) => approval.attemptId === attemptId && awaitsPerson(approval.status),
-    );
-    this.#updateAttempt(attemptId, (a) =>
-      waiting && a.status === 'streaming'
-        ? { ...a, status: 'awaiting-input' }
-        : !waiting && a.status === 'awaiting-input' && !this.#finishedWaiting.has(attemptId)
-          ? { ...a, status: 'streaming' }
-          : a,
-    );
+    const wait =
+      this.#wait(attemptId) ??
+      (this.#paused.get(attemptId) ? { action: [], submitting: [] } : undefined);
+    const asks = !!wait?.action.length;
+    this.#updateAttempt(attemptId, (a) => {
+      const { wait: before, ...rest } = a;
+      if (isTerminal(a.status)) return before ? rest : a;
+      const status: AttemptStatus =
+        asks && a.status === 'streaming'
+          ? 'awaiting-input'
+          : !asks && a.status === 'awaiting-input' && !this.#paused.has(attemptId)
+            ? 'streaming'
+            : a.status;
+      if (status === a.status && JSON.stringify(before) === JSON.stringify(wait)) return a;
+      return { ...rest, status, ...(wait ? { wait } : {}) };
+    });
   }
 
   #terminate(attemptId: string, status: AttemptStatus, error?: PublicError): void {
@@ -1133,8 +1169,16 @@ export class ConversationController implements ExternalSource<ConversationState>
     const attempt = now.attempts[attemptId];
     if (!attempt) return;
     const next = update(attempt);
-    if (next !== attempt)
-      this.#commit({ ...now, attempts: { ...now.attempts, [attemptId]: next } });
+    if (next === attempt) return;
+    this.#commit({ ...now, attempts: { ...now.attempts, [attemptId]: next } });
+    // Only a terminal attempt withdraws its open requests (ADR 0049 §6 item 2); it waits no more.
+    if (isTerminal(next.status) && !isTerminal(attempt.status)) {
+      this.#paused.delete(attemptId);
+      for (const approval of Object.values(this.#state.peek().approvals))
+        if (approval.attemptId === attemptId)
+          this.#setApproval(approval.approvalId, approval.revision, 'cancelled');
+      this.#syncWaiting(attemptId);
+    }
   }
 
   #updateMessage(messageId: string, update: (m: MessageRecord) => MessageRecord): void {
@@ -1270,7 +1314,7 @@ export class ConversationController implements ExternalSource<ConversationState>
     this.#sinks.clear();
     this.#replay.clear();
     this.#stepStart.clear();
-    this.#finishedWaiting.clear();
+    this.#paused.clear();
     this.#pendingDecisions.clear();
     this.#pendingStops.clear();
     this.#preferred.clear();

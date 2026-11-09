@@ -378,7 +378,7 @@ describe('ConversationController: tools and approvals', () => {
     approval: { approvalId, revision: 1, title: approvalId, status: 'requested' },
   });
 
-  it('a denied call rejects its approval while it is open, and only then', async () => {
+  it('a refusal withdraws an open approval, never rejects it, and keeps a decision', async () => {
     const { transport, sink } = manual({ decide: async () => 'accepted' });
     const c = new ConversationController({ transport, onDiagnostic: () => {} });
     await c.send({ text: 'q' });
@@ -395,18 +395,120 @@ describe('ConversationController: tools and approvals', () => {
         },
       },
     ];
-    push(sink(), ...gated('a'), ...gated('b'), { type: 'tool-denied', toolCallId: 'a' });
+    push(sink(), ...gated('a'), ...gated('b'), ...gated('r'), {
+      type: 'tool-denied',
+      toolCallId: 'a',
+    });
     let s = c.getSnapshot();
     expect(s.tools['a']).toMatchObject({ status: 'denied', approvalId: 'ap-a' });
-    // The two records never disagree: an approval cannot stay open for a refused call.
-    expect(s.approvals['ap-a']?.status).toBe('rejected');
+    // A backend refusal is not the person's rejection: the approval is withdrawn.
+    expect(s.approvals['ap-a']?.status).toBe('cancelled');
+    expect(await c.decide('ap-a', 1, 'approve')).toEqual({ ok: false, reason: 'stale' });
     expect(await c.decide('ap-b', 1, 'approve')).toEqual({ ok: true });
-    // Refused after approval (the backend decides last): the approval keeps its decision.
-    push(sink(), { type: 'tool-denied', toolCallId: 'b' });
+    // An explicit rejection comes from the protocol's own outcome.
+    push(sink(), {
+      type: 'approval-resolved',
+      approvalId: 'ap-r',
+      revision: 1,
+      status: 'rejected',
+    });
+    // Refused after the decision (the backend decides last): each approval keeps its decision.
+    push(
+      sink(),
+      { type: 'tool-denied', toolCallId: 'b' },
+      { type: 'tool-denied', toolCallId: 'r' },
+    );
     s = c.getSnapshot();
     expect(s.tools['b']?.status).toBe('denied');
     expect(s.approvals['ap-b']?.status).toBe('approved');
+    expect(s.approvals['ap-r']?.status).toBe('rejected');
     expect(attempt(c)?.status).toBe('streaming');
+    expect(attempt(c)?.wait).toBeUndefined();
+  });
+
+  const ref = (id: string) => ({ kind: 'approval', id });
+
+  it("an attempt's wait names its open requests and tells action from submission", async () => {
+    let release!: (outcome: 'accepted') => void;
+    const { transport, sink } = manual({ decide: () => new Promise((r) => (release = r)) });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    push(sink(), { type: 'text-delta', partId: 'p', delta: 'x' }, request('a'), request('b'));
+    expect(attempt(c)).toMatchObject({
+      status: 'awaiting-input',
+      wait: { action: [ref('a'), ref('b')], submitting: [] },
+    });
+    const deciding = c.decide('b', 1, 'approve');
+    expect(attempt(c)?.wait).toEqual({ action: [ref('a')], submitting: [ref('b')] });
+    // Resolved in another order than asked: one resolution never clears another open request.
+    release('accepted');
+    await deciding;
+    expect(attempt(c)).toMatchObject({
+      status: 'awaiting-input',
+      wait: { action: [ref('a')], submitting: [] },
+    });
+    // Withdrawn by the backend: the last open request goes, and the attempt streams again.
+    push(sink(), { type: 'approval-resolved', approvalId: 'a', revision: 1, status: 'cancelled' });
+    expect(c.getSnapshot().approvals['a']?.status).toBe('cancelled');
+    expect(attempt(c)?.status).toBe('streaming');
+    expect(attempt(c)?.wait).toBeUndefined();
+  });
+
+  it('a remote resolution before the local acknowledgment stands; a contrary one wins', async () => {
+    const releases: ((outcome: 'accepted') => void)[] = [];
+    const { transport, sink } = manual({
+      decide: () => new Promise((r) => releases.push(r)),
+    });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    push(sink(), request('a'), request('b'));
+    const a = c.decide('a', 1, 'approve');
+    const b = c.decide('b', 1, 'approve');
+    push(
+      sink(),
+      { type: 'approval-resolved', approvalId: 'a', revision: 1, status: 'approved' },
+      { type: 'approval-resolved', approvalId: 'b', revision: 1, status: 'rejected' },
+    );
+    releases.forEach((release) => release('accepted'));
+    expect(await a).toEqual({ ok: true });
+    // Decided elsewhere first: the record keeps that outcome, and the late answer says so.
+    expect(await b).toEqual({ ok: false, reason: 'stale' });
+    expect(c.getSnapshot().approvals['b']?.status).toBe('rejected');
+  });
+
+  it('only a terminal attempt withdraws its open requests; a late decision changes nothing', async () => {
+    let release!: (outcome: 'accepted') => void;
+    let stopped!: (outcome: 'cancelled') => void;
+    const { transport, sink } = manual({
+      decide: () => new Promise((r) => (release = r)),
+      stop: () => new Promise((r) => (stopped = r)),
+    });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    const ending: [string, AiEvent | 'stop'][] = [
+      ['completed', { type: 'finish' }],
+      ['failed', { type: 'error', error: { code: 'e', message: 'Broke.' } }],
+      ['cancelled', 'stop'],
+    ];
+    for (const [status, end] of ending) {
+      await c.send({ text: status });
+      push(sink(), request(`${status}-a`), request(`${status}-b`));
+      const deciding = c.decide(`${status}-b`, 1, 'approve');
+      if (end === 'stop') {
+        // A stop request is not the end: the requests stay answerable until the work stops.
+        const stopping = c.stop();
+        expect(c.getSnapshot().approvals[`${status}-a`]?.status).toBe('requested');
+        stopped('cancelled');
+        expect(await stopping).toMatchObject({ ok: true });
+      } else push(sink(), end);
+      expect(attempt(c)?.status).toBe(status);
+      expect(attempt(c)?.wait).toBeUndefined();
+      expect(c.getSnapshot().approvals[`${status}-a`]?.status).toBe('cancelled');
+      expect(c.getSnapshot().approvals[`${status}-b`]?.status).toBe('cancelled');
+      // The decision sent before the end arrives late: the record keeps the withdrawal.
+      release('accepted');
+      expect(await deciding).toEqual({ ok: false, reason: 'stale' });
+      expect(c.getSnapshot().approvals[`${status}-b`]?.status).toBe('cancelled');
+    }
   });
 
   it('an attempt awaits input while one of its approvals waits for the person', async () => {
@@ -440,14 +542,51 @@ describe('ConversationController: tools and approvals', () => {
   });
 
   it('an attempt that finished awaiting input keeps waiting without a stream', async () => {
-    const { transport, sink } = manual({ decide: async () => 'accepted' });
+    const resumed: EventSink[] = [];
+    const { transport, sink } = manual({
+      decide: async () => 'accepted',
+      resume: async (_target, s) => void resumed.push(s),
+    });
     const c = new ConversationController({ transport, onDiagnostic: () => {} });
     await c.send({ text: 'q' });
     push(sink(), request('a'), { type: 'finish', status: 'awaiting-input' });
     sink().close();
-    expect(attempt(c)).toMatchObject({ status: 'awaiting-input', connection: 'closed' });
+    // The protocol paused the work: the approval stays answerable.
+    expect(attempt(c)).toMatchObject({
+      status: 'awaiting-input',
+      connection: 'closed',
+      wait: { action: [ref('a')], submitting: [] },
+    });
     expect(await c.decide('a', 1, 'approve')).toEqual({ ok: true });
-    expect(attempt(c)?.status).toBe('awaiting-input');
+    // Answered: approval is not completion; the attempt waits for the work to go on.
+    expect(attempt(c)).toMatchObject({
+      status: 'awaiting-input',
+      wait: { action: [], submitting: [] },
+    });
+    // The work goes on: the attempt takes the run's phase again, and its wait ends.
+    expect(await c.resume()).toMatchObject({ ok: true });
+    push(resumed[0] as EventSink, { type: 'text-delta', partId: 'p', delta: 'done' });
+    expect(attempt(c)?.status).toBe('streaming');
+    expect(attempt(c)?.wait).toBeUndefined();
+    push(resumed[0] as EventSink, { type: 'finish' });
+    expect(attempt(c)?.status).toBe('completed');
+  });
+
+  it('a paused attempt that ends waits no more, and keeps its decisions', async () => {
+    const { transport, sink } = manual({
+      decide: async () => 'accepted',
+      stop: async () => 'cancelled',
+    });
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    await c.send({ text: 'q' });
+    push(sink(), request('a'), { type: 'finish', status: 'awaiting-input' });
+    sink().close();
+    await c.decide('a', 1, 'approve');
+    expect(attempt(c)?.wait).toEqual({ action: [], submitting: [] });
+    expect(await c.stop()).toMatchObject({ ok: true });
+    expect(attempt(c)?.status).toBe('cancelled');
+    expect(attempt(c)?.wait).toBeUndefined();
+    expect(c.getSnapshot().approvals['a']?.status).toBe('approved');
   });
 
   it('a stream that ends while an approval waits is interrupted', async () => {
@@ -458,6 +597,8 @@ describe('ConversationController: tools and approvals', () => {
     expect(attempt(c)?.status).toBe('awaiting-input');
     sink().close();
     expect(attempt(c)).toMatchObject({ status: 'interrupted', connection: 'closed' });
+    // Interrupted is not the end: the request stays open for a resumed stream.
+    expect(c.getSnapshot().approvals['a']?.status).toBe('requested');
   });
 
   it('A10: a changed proposal supersedes the old revision; stale and expired decisions are refused', async () => {
@@ -610,6 +751,30 @@ describe('announcement policy', () => {
     for (let i = 0; i < 50; i++) push(sink(), { type: 'text-delta', partId: 'p', delta: `w${i} ` });
     push(sink(), { type: 'finish' });
     expect(announced).toEqual(['Message sent.', 'Assistant is responding.', 'Response complete.']);
+  });
+
+  it('announces a withdrawn approval once, as withdrawn', async () => {
+    const { transport, sink } = manual();
+    const c = new ConversationController({ transport, onDiagnostic: () => {} });
+    const announced: string[] = [];
+    let previous = c.getSnapshot();
+    c.subscribe(() => {
+      const next = c.getSnapshot();
+      announced.push(...describeConversationChange(previous, next, 'all').map((a) => a.text));
+      previous = next;
+    });
+    await c.send({ text: 'q' });
+    const approval = {
+      approvalId: 'ap',
+      revision: 1,
+      title: 'Deploy',
+      status: 'requested',
+    } as const;
+    push(sink(), { type: 'approval-request', approval }, { type: 'finish' });
+    expect(announced.filter((text) => text.includes('Deploy'))).toEqual([
+      'Approval needed: Deploy',
+      'Approval withdrawn: Deploy',
+    ]);
   });
 });
 

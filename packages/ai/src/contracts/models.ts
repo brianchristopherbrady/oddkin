@@ -158,6 +158,7 @@ export const approvalStatusValues = [
   'expired',
   'superseded',
   'failed',
+  'cancelled',
 ] as const;
 
 export const ApprovalModel = defineModel('oddkin.ai.approval', {
@@ -310,6 +311,7 @@ export const QuestionModel = defineModel('oddkin.ai.question', {
       'expired',
       'superseded',
       'failed',
+      'cancelled',
     ]),
     answer: m.optional(m.json()),
     expiresAt: timestamp(),

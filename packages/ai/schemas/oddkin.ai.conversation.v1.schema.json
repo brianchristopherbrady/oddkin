@@ -505,7 +505,8 @@
               "rejected",
               "expired",
               "superseded",
-              "failed"
+              "failed",
+              "cancelled"
             ]
           },
           "decision": {

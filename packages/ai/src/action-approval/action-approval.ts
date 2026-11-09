@@ -28,12 +28,14 @@ export const APPROVAL_STRINGS = {
   expired: 'This request expired before a decision was recorded.',
   superseded: 'This proposal changed. Review the new version before deciding.',
   failed: 'Your decision was not recorded: {message}',
+  cancelled: 'This request was withdrawn; there is nothing to decide.',
   unavailable: 'Decisions are not available here.',
   announceRequested: 'Approval needed: {title}',
   announceApproved: 'Approved: {title}',
   announceRejected: 'Rejected: {title}',
   announceExpired: 'Approval expired: {title}',
   announceFailed: 'Decision not recorded: {title}',
+  announceCancelled: 'Approval withdrawn: {title}',
 };
 
 /**
@@ -166,7 +168,9 @@ export class OddkinActionApproval extends OddkinElement.with({
                   ? t.announceExpired
                   : approval.status === 'failed'
                     ? t.announceFailed
-                    : undefined;
+                    : approval.status === 'cancelled'
+                      ? t.announceCancelled
+                      : undefined;
         if (text)
           this.emit(announceEvent, {
             text: format(text, { title: approval.title }),

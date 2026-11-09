@@ -99,7 +99,8 @@
         "skipped",
         "expired",
         "superseded",
-        "failed"
+        "failed",
+        "cancelled"
       ]
     },
     "answer": {},

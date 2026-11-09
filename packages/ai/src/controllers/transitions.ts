@@ -48,13 +48,14 @@ export const TOOL_TRANSITIONS: Table<ToolStatus> = {
 
 export const APPROVAL_TRANSITIONS: Table<ApprovalStatus> = {
   // approved/rejected directly: decided elsewhere (another client or an automatic policy).
-  requested: ['submitting', 'approved', 'rejected', 'expired', 'superseded'],
-  submitting: ['approved', 'rejected', 'failed', 'expired', 'superseded'],
-  failed: ['submitting', 'approved', 'rejected', 'expired', 'superseded'],
+  requested: ['submitting', 'approved', 'rejected', 'expired', 'superseded', 'cancelled'],
+  submitting: ['approved', 'rejected', 'failed', 'expired', 'superseded', 'cancelled'],
+  failed: ['submitting', 'approved', 'rejected', 'expired', 'superseded', 'cancelled'],
   approved: [],
   rejected: [],
   expired: [],
   superseded: [],
+  cancelled: [],
 };
 
 /** The approval waits for the person: not decided yet, or the decision did not reach the backend. */

@@ -137,6 +137,24 @@ describe('UI message stream reader', () => {
         .map((e) => e.type),
     ).toEqual(['tool-executing']);
   });
+
+  it('ends a stream that still asks for approval paused for input, so the request stays open', () => {
+    const asking = (): UiMessageStreamReader => {
+      const reader = new UiMessageStreamReader();
+      reader.translate({ type: 'tool-input-start', toolCallId: 't', toolName: 'pay' });
+      reader.translate({ type: 'tool-approval-request', toolCallId: 't', approvalId: 'ap' });
+      return reader;
+    };
+    const end = (reader: UiMessageStreamReader) => reader.translate({ type: 'finish' }).at(-1);
+    expect(end(asking())).toEqual({ type: 'finish', status: 'awaiting-input' });
+    // Answered in the stream, or the tool ended: the run is simply over.
+    const answered = asking();
+    answered.translate({ type: 'tool-approval-response', approvalId: 'ap', approved: true });
+    expect(end(answered)).toEqual({ type: 'finish' });
+    const refused = asking();
+    refused.translate({ type: 'tool-output-denied', toolCallId: 't' });
+    expect(end(refused)).toEqual({ type: 'finish' });
+  });
 });
 
 // ---- Transport over fetch with recorded fixtures ----

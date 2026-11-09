@@ -10,6 +10,9 @@
  *   Resumed streams are full replays (the SDK default): the first `start` of a resumed
  *   connection becomes `message-reset`, and the replay rebuilds the message.
  * - Unsupported or malformed chunks become diagnostics and are not rendered.
+ * - Paused work: the protocol ends a stream that asks for an approval, and the decision continues
+ *   it. A `finish` while a requested approval is unanswered ends `awaiting-input`, so the approval
+ *   stays answerable and the attempt does not complete (ADR 0049 §6 item 2).
  * - Information loss: `providerMetadata`, `messageMetadata`, `custom` parts, `finish-step`,
  *   `finishReason`, preliminary tool outputs, and transient data parts are not rendered.
  * DOM-free (uses `fetch`, `TextDecoder`, and `ReadableStream` only when called).
@@ -64,6 +67,10 @@ export class UiMessageStreamReader {
   #files = 0;
   #data = 0;
   readonly #toolNames = new Map<string, string>();
+  /** Requested approvals not answered yet, by approval id: their tool call ids. */
+  readonly #asking = new Map<string, string>();
+  /** Tool calls that ended: output, error, or refusal. */
+  readonly #ended = new Set<string>();
 
   constructor(options: { replay?: boolean; onDiagnostic?: (d: StreamDiagnostic) => void } = {}) {
     this.#replay = options.replay ?? false;
@@ -257,6 +264,7 @@ export class UiMessageStreamReader {
         if (!toolCallId || !approvalId) return invalid('toolCallId or approvalId');
         const toolName = this.#toolNames.get(toolCallId) ?? 'tool';
         const reason = str(chunk['reason']);
+        this.#asking.set(approvalId, toolCallId);
         return [
           ...this.#ensureTool(toolCallId, chunk),
           {
@@ -276,6 +284,7 @@ export class UiMessageStreamReader {
         const approvalId = str(chunk['approvalId']);
         const approved = chunk['approved'];
         if (!approvalId || typeof approved !== 'boolean') return invalid('approvalId or approved');
+        this.#asking.delete(approvalId);
         return [
           {
             type: 'approval-resolved',
@@ -291,6 +300,7 @@ export class UiMessageStreamReader {
         if (!isJson(output)) return invalid('output');
         // A preliminary output means the tool is still running; only the final output settles it.
         if (chunk['preliminary'] === true) return [{ type: 'tool-executing', toolCallId }];
+        this.#ended.add(toolCallId);
         return [
           { type: 'tool-executing', toolCallId },
           { type: 'tool-output', toolCallId, output },
@@ -298,6 +308,7 @@ export class UiMessageStreamReader {
       }
       case 'tool-output-error':
         if (!toolCallId) return invalid('toolCallId');
+        this.#ended.add(toolCallId);
         return [
           { type: 'tool-executing', toolCallId },
           {
@@ -311,6 +322,7 @@ export class UiMessageStreamReader {
         ];
       case 'tool-output-denied':
         if (!toolCallId) return invalid('toolCallId');
+        this.#ended.add(toolCallId);
         return [{ type: 'tool-denied', toolCallId }];
       case 'start-step':
         return [{ type: 'step-start' }];
@@ -322,7 +334,12 @@ export class UiMessageStreamReader {
         const events: AiEvent[] = [];
         if (chunk['messageMetadata'] !== undefined)
           events.push(this.#metadata(chunk['messageMetadata']));
-        events.push({ type: 'finish' });
+        // Calls that settled no longer wait for their approval.
+        for (const [approvalId, toolCallId] of this.#asking)
+          if (this.#ended.has(toolCallId)) this.#asking.delete(approvalId);
+        events.push(
+          this.#asking.size ? { type: 'finish', status: 'awaiting-input' } : { type: 'finish' },
+        );
         return events;
       }
       case 'abort':

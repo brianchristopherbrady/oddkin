@@ -16,6 +16,7 @@ export const QUESTION_STRINGS = {
   skipped: 'Skipped.',
   expired: 'This question expired; answers are no longer accepted.',
   superseded: 'This question changed. Answer the new version.',
+  cancelled: 'This question was withdrawn; no answer is needed.',
   failed: 'Your answer was not sent: {message}',
   required: 'Choose an option or enter an answer.',
   expires: 'Answer by {time}',

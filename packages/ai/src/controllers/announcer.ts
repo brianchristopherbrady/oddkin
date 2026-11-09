@@ -28,6 +28,7 @@ export interface AnnouncementStrings {
   readonly approvalRejected: string;
   readonly approvalExpired: string;
   readonly approvalSuperseded: string;
+  readonly approvalCancelled: string;
   readonly toolFailed: string;
   readonly historyLoaded: string;
 }
@@ -49,6 +50,7 @@ export const DEFAULT_ANNOUNCEMENTS: AnnouncementStrings = {
   approvalRejected: 'Rejected: {title}',
   approvalExpired: 'Approval expired: {title}',
   approvalSuperseded: 'The proposal changed: {title}. Review it again.',
+  approvalCancelled: 'Approval withdrawn: {title}',
   toolFailed: '{tool} failed.',
   historyLoaded: 'Earlier messages loaded.',
 };
@@ -180,7 +182,9 @@ export function describeConversationChange(
             ? format(strings.approvalRejected, { title })
             : approval.status === 'expired'
               ? format(strings.approvalExpired, { title })
-              : undefined;
+              : approval.status === 'cancelled'
+                ? format(strings.approvalCancelled, { title })
+                : undefined;
     if (text) out.push({ text, priority: 'polite', key, level: 'important' });
   }
   for (const tool of Object.values(next.tools)) {

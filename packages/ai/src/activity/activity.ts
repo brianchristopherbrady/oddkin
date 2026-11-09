@@ -12,6 +12,8 @@ export const ACTIVITY_STRINGS = {
   tools: 'Running {count} tools: {names}',
   tool: 'Running {names}',
   'awaiting-input': 'Waiting for your input',
+  sending: 'Sending your response…',
+  continuing: 'Waiting for the assistant to continue…',
   completed: 'Done',
   cancelled: 'Stopped',
   failed: 'Failed: {message}',
@@ -74,6 +76,11 @@ export class OddkinActivity extends OddkinElement.with({
     if (a.connection === 'reconnecting') return t.reconnecting;
     if (a.connection === 'disconnected' && isActive(a.status)) return t.disconnected;
     if (a.status === 'failed') return format(t.failed, { message: a.error?.message ?? '' });
+    // The controller's wait descriptor: requests for the person first, then responses on their way.
+    const wait = a.status === 'streaming' || a.status === 'awaiting-input' ? a.wait : undefined;
+    if (wait?.action.length) return t['awaiting-input'];
+    if (wait?.submitting.length) return t.sending;
+    if (wait && a.status === 'awaiting-input') return t.continuing;
     if (a.status === 'streaming') {
       const running = this.tools.filter(
         (tool) => tool.status === 'executing' || tool.status === 'input-streaming',

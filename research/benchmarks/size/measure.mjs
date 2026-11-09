@@ -119,7 +119,10 @@ export const BUDGETS = {
   // step 3; owner, 2026-11-07), after the glyphs a bundle does not render left it (-604).
   // 56,640 since 2026-11-08 (Agent 1's call), the smallest 64 B step: measured 56,617 (+74 from
   // 56,543) once odd-tool-call words its gate from its approval (ADR 0049 §6 item 1).
-  'ai-chat': 56640,
+  // 56,768 since 2026-11-09 (Agent 1's call), the smallest 64 B step: measured 56,760 (+147 from
+  // 56,613) with the withdrawn approval's wording and odd-activity reading the attempt's wait
+  // (ADR 0049 slice 2). At 99.99 %, the next change needs its own measured raise.
+  'ai-chat': 56768,
   // 16 KiB; measured 15,715 on 2026-10-18 (registered odd-side-nav with keyed repeat, project
   // item kinds, and the shared core FocusRecovery controller (+374 B); the recipe CSS is
   // extracted at build time, so the recipe engine (3.4 KiB) is not loaded). Was 15 KiB.

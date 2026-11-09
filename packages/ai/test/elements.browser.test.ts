@@ -5,7 +5,12 @@ import { mountExample } from '@oddkin/workbench/testing';
 import { createScriptedVoiceAdapter } from '../src/controllers/voice.js';
 import { DocumentSession } from '../src/controllers/document.js';
 import { highlight } from '../src/highlight/index.js';
-import type { ApprovalRecord, CheckpointRecord, ToolCallRecord } from '../src/contracts/types.js';
+import type {
+  ApprovalRecord,
+  AttemptRecord,
+  CheckpointRecord,
+  ToolCallRecord,
+} from '../src/contracts/types.js';
 import type { ArtifactRenderer } from '../src/artifact/artifact.js';
 
 let container: HTMLElement;
@@ -301,13 +306,26 @@ describe('odd-tool-call and odd-action-approval', () => {
     expect(status()).toEqual(['Waiting for approval', 'active']);
     expect(await show('input-available', 'submitting')).toEqual(['Waiting for approval', 'active']);
     expect(await show('input-available', 'failed')).toEqual(['Waiting for approval', 'active']);
-    for (const gate of ['rejected', 'expired', 'superseded'] as const)
+    for (const gate of ['rejected', 'expired', 'superseded', 'cancelled'] as const)
       expect(await show('input-available', gate)).toEqual(['Not run', '']);
     // Approval is not execution: an approved call is ready until it runs.
     expect(await show('input-available', 'approved')).toEqual(['Arguments ready; not run yet', '']);
     // Once the call runs or settles, it speaks for itself.
     expect(await show('executing', 'approved')).toEqual(['Running…', 'active']);
     expect(await show('denied', 'rejected')).toEqual(['Not run: denied', 'danger']);
+  });
+
+  it('a withdrawn approval says so and offers no decision (ADR 0049 §5)', async () => {
+    const el = await mount(
+      'odd-action-approval',
+      () => import('../src/action-approval/action-approval.define.js'),
+      (e) => {
+        e.approval = { approvalId: 'ap', revision: 1, title: 'Deploy', status: 'cancelled' };
+        e.capabilities = { respondToApproval: { available: true } };
+      },
+    );
+    expect(text($(el, '.state'))).toBe('This request was withdrawn; there is nothing to decide.');
+    expect(($(el, '[part="actions"]') as HTMLElement).hidden).toBe(true);
   });
 
   it('status labels take their colours from the shared tone styles', async () => {
@@ -1855,6 +1873,11 @@ describe('odd-question and odd-task-plan examples', () => {
       await settle(el);
       expect(text($(el, '.state'))).toBe('This question changed. Answer the new version.');
       expect(($(el, 'fieldset') as HTMLFieldSetElement).disabled).toBe(true);
+      // Withdrawn when its run ended: nothing to answer.
+      el.question = { ...el.question!, status: 'cancelled' };
+      await settle(el);
+      expect(text($(el, '.state'))).toBe('This question was withdrawn; no answer is needed.');
+      expect(($(el, 'fieldset') as HTMLFieldSetElement).disabled).toBe(true);
     } finally {
       replaced.dispose();
     }
@@ -1894,6 +1917,46 @@ describe('odd-question and odd-task-plan examples', () => {
     } finally {
       mounted.dispose();
     }
+  });
+});
+
+describe('odd-activity', () => {
+  it("reads the attempt's wait: the person's turn, a response on its way, then the work (ADR 0049)", async () => {
+    const attempt = (extra: Partial<AttemptRecord>): AttemptRecord => ({
+      attemptId: 'at',
+      runId: 'r',
+      conversationId: 'c',
+      messageId: 'm',
+      promptId: 'p',
+      relation: 'new',
+      status: 'streaming',
+      connection: 'open',
+      stop: 'none',
+      ...extra,
+    });
+    const el = await mount(
+      'odd-activity',
+      () => import('../src/activity/activity.define.js'),
+      (e) => {
+        e.attempt = attempt({});
+      },
+    );
+    const line = async (extra: Partial<AttemptRecord>) => {
+      el.attempt = attempt(extra);
+      await settle(el);
+      return text($(el, '.text'));
+    };
+    const ap = { kind: 'approval', id: 'ap' } as const;
+    expect(await line({ status: 'awaiting-input', wait: { action: [ap], submitting: [] } })).toBe(
+      'Waiting for your input',
+    );
+    expect(await line({ wait: { action: [], submitting: [ap] } })).toBe('Sending your response…');
+    expect(await line({ status: 'awaiting-input', wait: { action: [], submitting: [] } })).toBe(
+      'Waiting for the assistant to continue…',
+    );
+    // A host's attempt without a descriptor reads from its status alone.
+    expect(await line({ status: 'awaiting-input' })).toBe('Waiting for your input');
+    expect(await line({})).toBe('Responding…');
   });
 });
 
