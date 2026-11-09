@@ -1,6 +1,6 @@
 {
   "name": "@oddkin/ai",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -330,14 +330,14 @@
     "README.md"
   ],
   "dependencies": {
-    "@oddkin/tokens": "^1.0.0-beta.1"
+    "@oddkin/tokens": "^1.0.0-beta.2"
   },
   "peerDependencies": {
-    "@oddkin/components": "^1.0.0-beta.1",
-    "@oddkin/core": "^1.0.0-beta.1"
+    "@oddkin/components": "^1.0.0-beta.2",
+    "@oddkin/core": "^1.0.0-beta.2"
   },
   "devDependencies": {
-    "@oddkin/workbench": "^1.0.0-beta.1"
+    "@oddkin/workbench": "^1.0.0-beta.2"
   },
   "publishConfig": {
     "access": "public",

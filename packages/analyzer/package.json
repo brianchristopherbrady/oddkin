@@ -1,6 +1,6 @@
 {
   "name": "@oddkin/analyzer",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -59,7 +59,7 @@
     "README.md"
   ],
   "dependencies": {
-    "@oddkin/core": "^1.0.0-beta.1",
+    "@oddkin/core": "^1.0.0-beta.2",
     "typescript": "5.9.3"
   },
   "publishConfig": {
